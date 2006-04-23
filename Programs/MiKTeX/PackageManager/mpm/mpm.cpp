@@ -1,0 +1,1383 @@
+/* mpm.cpp: MiKTeX Package Manager (console version)
+
+   Copyright (C) 2003-2006 Christian Schenk
+
+   This file is part of MiKTeX Package Manager.
+
+   MiKTeX Package Manager is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   MiKTeX Package Manager is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with MiKTeX Package Manager; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+#include "StdAfx.h"
+
+#include "internal.h"
+
+#include "mpm-version.h"
+
+#if ! defined(THE_NAME_OF_THE_GAME)
+#  define THE_NAME_OF_THE_GAME T_("MiKTeX Package Manager")
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+#  define STANDALONE 0
+#else
+#  define STANDALONE 1
+#endif
+
+#define MYPKG T_("miktex-bin")
+
+#if defined(MIKTEX_UNICODE)
+#  define tcout wcout
+#  define tcerr wcerr
+#else
+#  define tcout cout
+#  define tcerr cerr
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+const MIKTEXCHAR PATH_DELIMITER = T_(';');
+#define PATH_DELIMITER_STRING T_(";")
+#else
+const MIKTEXCHAR PATH_DELIMITER = T_(':');
+#define PATH_DELIMITER_STRING T_(":")
+#endif
+
+const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
+  MIKTEX_TRACE_CORE T_(",")
+  MIKTEX_TRACE_CURL T_(",")
+  MIKTEX_TRACE_ERROR T_(",")
+  MIKTEX_TRACE_FNDB T_(",")
+  MIKTEX_TRACE_MPM
+  ;
+
+/* _________________________________________________________________________
+
+   PackageInfoComparer
+   _________________________________________________________________________ */
+
+class PackageInfoComparer
+{
+public:
+  bool
+  operator() (/*[in]*/ const PackageInfo & pi1,
+	      /*[in]*/ const PackageInfo & pi2)
+    const
+  {
+    return (PathName::Compare(pi1.deploymentName, pi2.deploymentName) < 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   UpdateInfoComparer
+   _________________________________________________________________________ */
+
+class UpdateInfoComparer
+{
+public:
+  bool
+  operator() (/*[in]*/ const PackageInstaller::UpdateInfo & ui1,
+	      /*[in]*/ const PackageInstaller::UpdateInfo & ui2)
+    const
+  {
+    return (PathName::Compare(ui1.deploymentName, ui2.deploymentName) < 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   Application
+   _________________________________________________________________________ */
+
+class Application
+  : public IPackageInstallerCallback
+{
+public:
+  Application ()
+    : verbose (false),
+      quiet (false)
+  {
+    void (* oldHandlerFunc) (int);
+    oldHandlerFunc = signal(SIGINT, Application::SignalHandler);
+    if (oldHandlerFunc == SIG_ERR)
+      {
+	Error (T_("signal() failed for some reason."));
+      }
+    if (oldHandlerFunc != SIG_DFL)
+      {
+	if (signal(SIGINT, oldHandlerFunc) == SIG_ERR)
+	  {
+	    Error (T_("signal() failed for some reason."));
+	  }
+      }
+  }
+
+  // IPackageInstallerCallback impl
+public:
+  virtual
+  void
+  MPMCALL
+  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+
+  // IPackageInstallerCallback impl
+public:
+  virtual
+  bool
+  MPMCALL
+  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+
+  // IPackageInstallerCallback impl
+public:
+  virtual
+  bool
+  MPMCALL
+  OnProgress (/*[in]*/ Notification	nf);
+
+public:
+  void
+  Main (/*[in]*/ int			argc,
+	/*[in]*/ const MIKTEXCHAR **	argv);
+
+private:
+  void
+  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	   /*[in]*/			...);
+
+private:
+  void
+  Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	   /*[in]*/			...);
+
+private:
+  MIKTEXNORETURN
+  void
+  Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	 /*[in]*/			...);
+
+private:
+  void
+  UpdateDb ();
+
+private:
+  void
+  RunIniTeXMF (/*[in*/ const MIKTEXCHAR *	lpszCommandLine);
+
+private:
+  void
+  Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
+	   /*[in]*/ const vector<tstring> &	toBeRemoved);
+
+private:
+  void
+  FindUpdates ();
+
+private:
+  void
+  Update (/*[in]*/ const vector<tstring> &	updates);
+
+private:
+  bool
+  GetContainerPath (/*[in]*/ const tstring &	deploymentName,
+		    /*[in,out]*/ tstring &	path);
+
+private:
+  bool
+  GetDirectories (/*[in]*/ const tstring &	deploymentName,
+		  /*[in,out]*/ tstring &	directories);
+
+private:
+  void
+  List (/*[in]*/ bool csv);
+
+private:
+  void
+  ListRepositories (/*[in]*/ bool csv);
+
+private:
+  void
+  PickRepositoryUrl ();
+
+private:
+  void
+  PrintFiles (/*[in]*/ const vector<tstring> & files);
+
+private:
+  void
+  PrintPackageInfo (/*[in]*/ const tstring & deploymentName);
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  RestartWindowed ();
+#endif
+
+private:
+  void
+  ReadFileList (/*[in]*/ const PathName &	path,
+		/*[in,out]*/ vector<tstring> &	files);
+
+private:
+  static
+  void
+  SignalHandler (/*[in]*/ int sig);
+
+private:
+  PackageManagerPtr pPackageManager;
+
+private:
+  SessionWrapper pSession;
+
+private:
+  static const struct poptOption aoption[];
+
+private:
+  static volatile bool interrupted;
+
+private:
+  bool verbose;
+
+private:
+  bool quiet;
+
+private:
+  tstring repository;
+
+private:
+  ProxySettings proxySettings;
+};
+
+/* _________________________________________________________________________
+
+   Option
+   _________________________________________________________________________ */
+
+enum Option
+{
+  OPT_AAA = 1,
+  OPT_CSV,
+  OPT_FIND_UPDATES,
+  OPT_HHELP,
+  OPT_INSTALL,
+  OPT_INSTALL_ROOT,
+  OPT_INSTALL_SOME,
+  OPT_LIST,
+  OPT_LIST_REPOSITORIES,
+  OPT_PICK_REPOSITORY_URL,
+  OPT_PRINT_PACKAGE_INFO,
+  OPT_PROXY,			// experimental
+  OPT_PROXY_PASSWORD,		// experimental
+  OPT_PROXY_USER,		// experimental
+  OPT_QUIET,
+  OPT_REPOSITORY,
+  OPT_SET_REPOSITORY,
+  OPT_TRACE,
+  OPT_UNINSTALL,
+  OPT_UPDATE,
+  OPT_UPDATE_ALL,
+  OPT_UPDATE_DB,
+  OPT_UPDATE_FNDB,
+  OPT_UPDATE_SOME,
+  OPT_VERBOSE,
+  OPT_VERSION,
+};
+
+/* _________________________________________________________________________
+
+   Application::aoption
+   _________________________________________________________________________ */
+
+const struct poptOption Application::aoption[] = {
+
+  {				// experimental
+    T_("csv"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
+    T_("Output comma-separated value lists."), 0,
+  },
+
+  {
+    T_("find-updates"), 0, POPT_ARG_NONE, 0, OPT_FIND_UPDATES,
+    T_("Test the package repository for updates, then print the list of\
+ updateable packages."), 0,
+  },
+
+#if defined(MIKTEX_WINDOWS)
+  {
+    T_("hhelp"), 0, POPT_ARG_NONE, 0, OPT_HHELP,
+    T_("Show the manual page in an HTMLHelp window and")
+    T_(" exit when the window is closed."), 0
+  },
+#endif
+
+  {
+    T_("install"), 0, POPT_ARG_STRING, 0, OPT_INSTALL,
+    T_("Install the specified package."),
+    T_("PACKAGE")
+  },
+
+#if STANDALONE
+  {
+    T_("install-root"), 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
+    T_("\
+Use the specified directory as the installation destination."),
+    T_("DIR")
+  },
+#endif
+
+  {
+    T_("install-some"), 0, POPT_ARG_STRING, 0, OPT_INSTALL_SOME,
+    T_("Install packages listed (line-by-line) in the specified file."),
+    T_("FILE")
+  },
+
+  {
+    T_("list"), 0, POPT_ARG_NONE, 0, OPT_LIST,
+    T_("List the contents of the package database:\
+ for each package, print the installation status, the number of files,\
+ the size, and the name."), 0
+  },
+
+  {
+    T_("list-repositories"), 0, POPT_ARG_NONE, 0, OPT_LIST_REPOSITORIES,
+    T_("\
+Download the list of known package repository URLs from\
+ the MiKTeX project server, then print the list."), 0
+  },
+
+  {
+    T_("pick-repository-url"), 0, POPT_ARG_NONE, 0, OPT_PICK_REPOSITORY_URL,
+    T_("\
+Pick a suitable package repository URL and print it."), 0
+  },
+
+  {
+    T_("print-package-info"), 0, POPT_ARG_STRING, 0, OPT_PRINT_PACKAGE_INFO,
+    T_("Print detailed information about the specified package."),
+    T_("PACKAGE")
+  },
+
+  {
+    T_("proxy"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
+    T_("Use the specified proxy host[:port]."),
+    T_("HOST[:PORT]")
+  },
+
+  {
+    T_("proxy-password"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_PROXY_PASSWORD,
+    T_("Use the specified password for proxy authentication."),
+    T_("PASSWORD")
+  },
+
+  {
+    T_("proxy-user"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_PROXY_USER,
+    T_("Use the specified user for proxy authentication."),
+    T_("USER")
+  },
+
+  {
+    T_("quiet"), 0, POPT_ARG_NONE, 0, OPT_QUIET,
+    T_("Suppress all output (except errors)."), 0
+  },
+
+  {
+    T_("repository"), 0, POPT_ARG_STRING, 0, OPT_REPOSITORY,
+    T_("\
+Use the specified location as the package repository.\
+  The location can be either a fully qualified path name\
+ (a local package repository) or an URL (a remote package repository)."),
+    T_("LOCATION")
+  },
+
+#if defined(MIKTEX_WINDOWS)
+  {
+    T_("set-repository"), 0, POPT_ARG_STRING, 0, OPT_SET_REPOSITORY,
+    T_("Register the location of the default package repository.\
+  The location can be either a fully qualified path name\
+ (a local package repository) or an URL (a remote package repository)."),
+    T_("LOCATION")
+  },
+#endif
+
+  {
+    T_("trace"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_TRACE,
+    T_("\
+Turn on tracing.\
+  TRACESTREAMS, if specified, is a comma-separated list of trace stream names\
+ (see the MiKTeX manual)."),
+    T_("TRACESTREAMS"),
+  },
+
+  {
+    T_("uninstall"), 0, POPT_ARG_STRING, 0, OPT_UNINSTALL,
+    T_("Uninstall the specified package."),
+    T_("PACKAGE")
+  },
+
+  {
+    T_("update"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_UPDATE,
+    T_("Update the specified package, if an updated version\
+ is available in the package repository.  Install all updateable\
+ packages, if the package name is omitted."),
+    T_("PACKAGE")
+  },
+
+  {
+    T_("update-all"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_UPDATE_ALL,
+    T_("Test the package repository for updates, then install\
+ all updateable packages."),
+    0,
+  },
+
+  {
+    T_("update-db"), 0, POPT_ARG_NONE, 0, OPT_UPDATE_DB,
+    T_("Synchronize the local package database with\
+ the package repository."), 0
+  },
+
+  {				// experimental
+    T_("update-fndb"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_UPDATE_FNDB,
+    T_("Update mpm.fndb."), 0
+  },
+
+  {
+    T_("update-some"), 0, POPT_ARG_STRING, 0, OPT_UPDATE_SOME,
+    T_("Update packages listed (line-by-line) in the specified file."),
+    T_("FILE")
+  },
+
+  {
+    T_("verbose"), 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
+    T_("Turn on verbose output mode."), 0
+  },
+
+  {
+    T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
+    T_("Show version information and exit."), 0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   Application::interrupted
+   _________________________________________________________________________ */
+
+volatile bool Application::interrupted = false;
+
+/* _________________________________________________________________________
+
+   Application::Message
+   _________________________________________________________________________ */
+
+void
+Application::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		      /*[in]*/				...)
+{
+  if (quiet)
+    {
+      return;
+    }
+  va_list arglist;
+  va_start (arglist, lpszFormat);
+  tcout << Utils::FormatString(lpszFormat, arglist);
+  va_end (arglist);
+}
+
+/* _________________________________________________________________________
+
+   Application::Verbose
+   _________________________________________________________________________ */
+
+void
+Application::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		      /*[in]*/				...)
+{
+  if (! verbose)
+    {
+      return;
+    }
+  va_list arglist;
+  va_start (arglist, lpszFormat);
+  tcout << Utils::FormatString(lpszFormat, arglist);
+  va_end (arglist);
+}
+
+/* _________________________________________________________________________
+
+   Application::Error
+   _________________________________________________________________________ */
+
+MIKTEXNORETURN
+void
+Application::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
+		    /*[in]*/				...)
+{
+  va_list arglist;
+  va_start (arglist, lpszFormat);
+  tcerr << T_("mpm") << T_(": ")
+	<< Utils::FormatString(lpszFormat, arglist) << endl;
+  va_end (arglist);
+  throw (1);
+}
+
+/* _________________________________________________________________________
+
+   Application::ReportLine
+   _________________________________________________________________________ */
+
+void
+MPMCALL
+Application::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+{
+  Verbose (T_("%s\n"), lpszLine);
+}
+
+/* _________________________________________________________________________
+
+   Application::OnRetryableError
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+Application::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+{
+  lpszMessage;
+  return (false);
+}
+
+/* _________________________________________________________________________
+
+   Application::OnProgress
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+Application::OnProgress (/*[in]*/ Notification		nf)
+{
+  nf;
+  return (! interrupted);
+}
+
+/* _________________________________________________________________________
+
+   Application::UpdateDb
+   _________________________________________________________________________ */
+
+void
+Application::UpdateDb ()
+{
+  auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
+  if (! repository.empty())
+    {
+      pInstaller->SetRepository (repository);
+    }
+  pInstaller->SetCallback (this);
+  pInstaller->UpdateDb ();
+  pInstaller->Dispose ();
+}
+
+/* _________________________________________________________________________
+
+   Application::RunIniTeXMF
+   _________________________________________________________________________ */
+
+void
+Application::RunIniTeXMF (/*[in*/ const MIKTEXCHAR *	lpszArguments)
+{
+#if STANDALONE
+  lpszArguments;
+  return;
+#else
+  PathName exePath;
+  if (! pSession->FindFile(T_("initexmf"), FileType::EXE, exePath))
+    {
+      Error (T_("The MiKTeX configuration utility could not be found."));
+    }
+  tstring arguments (lpszArguments);
+#if 0
+  if (verbose)
+    {
+      arguments += T_(" --verbose");
+    }
+#endif
+  pSession->UnloadFilenameDatabase ();
+  Process::Run (exePath, arguments.c_str());
+#endif
+}
+
+/* _________________________________________________________________________
+
+   Application::Install
+   _________________________________________________________________________ */
+
+void
+Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
+		      /*[in]*/ const vector<tstring> &	toBeRemoved)
+{
+  for (vector<tstring>::const_iterator it = toBeInstalled.begin();
+       it != toBeInstalled.end();
+       ++ it)
+    {
+      PackageInfo packageInfo = pPackageManager->GetPackageInfo(*it);
+      if (packageInfo.IsInstalled())
+	{
+	  Error (T_("Package \"%s\" is already installed."), it->c_str());
+	}
+    }
+
+  for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+       it != toBeRemoved.end();
+       ++ it)
+    {
+      PackageInfo packageInfo = pPackageManager->GetPackageInfo(*it);
+      if (! packageInfo.IsInstalled())
+	{
+	  Error (T_("Package \"%s\" is not installed."), it->c_str());
+	}
+    }
+       
+  auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
+
+  if (! repository.empty())
+    {
+      pInstaller->SetRepository (repository);
+    }
+
+  pInstaller->SetCallback (this);
+  pInstaller->SetFileLists (toBeInstalled, toBeRemoved);
+  pInstaller->InstallRemove ();
+  pInstaller->Dispose ();
+  if (toBeInstalled.size() == 1)
+    {
+      Message (T_("Package \"%s\" has been successfully installed.\n"),
+	       toBeInstalled[0].c_str());
+    }
+  else if (toBeInstalled.size() > 1)
+    {
+      Message (T_("%u packages have been successfully installed.\n"),
+	       toBeInstalled.size());
+    }
+  if (toBeRemoved.size() == 1)
+    {
+      Message (T_("Package \"%s\" has been successfully removed.\n"),
+	       toBeRemoved[0].c_str());
+    }
+  else if (toBeRemoved.size() > 1)
+    {
+      Message (T_("%u packages have been successfully removed.\n"),
+	       toBeRemoved.size());
+    }
+  RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
+}
+
+/* _________________________________________________________________________
+
+   Application::FindUpdates
+   _________________________________________________________________________ */
+
+void
+Application::FindUpdates ()
+{
+  auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
+  if (repository.length() > 0)
+    {
+      pInstaller->SetRepository (repository);
+    }
+  pInstaller->SetCallback (this);
+  pInstaller->FindUpdates ();
+  vector<PackageInstaller::UpdateInfo> updates = pInstaller->GetUpdates();
+  pInstaller->Dispose ();
+  if (updates.size() == 0)
+    {
+      Message (T_("There are currently no updates available.\n"));
+    }
+  else
+    {
+      sort (updates.begin(), updates.end(), UpdateInfoComparer());
+      for (vector<PackageInstaller::UpdateInfo>::const_iterator
+	     it = updates.begin();
+	   it != updates.end();
+	   ++ it)
+	{
+	  tcout << it->deploymentName << T_('\n');
+	}
+    }
+}
+
+/* _________________________________________________________________________
+
+   Application::Update
+   _________________________________________________________________________ */
+
+void
+Application::Update (/*[in]*/ const vector<tstring> &	updates)
+{
+  auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
+  if (repository.length() > 0)
+    {
+      pInstaller->SetRepository (repository);
+    }
+  pInstaller->SetCallback (this);
+  pInstaller->FindUpdates ();
+  vector<PackageInstaller::UpdateInfo> serverUpdates
+    = pInstaller->GetUpdates();
+  vector<tstring> updates2;
+  for (vector<PackageInstaller::UpdateInfo>::const_iterator it =
+	 serverUpdates.begin();
+       it != serverUpdates.end();
+       ++ it)
+    {
+      updates2.push_back (it->deploymentName);
+    }
+  sort (updates2.begin(), updates2.end());
+  vector<tstring> toBeInstalled;
+  if (updates.size() == 0)
+    {
+      if (updates2.size() == 0)
+	{
+	  Message (T_("There are currently no updates available.\n"));
+	}
+      toBeInstalled = updates2;
+    }
+  else
+    {
+      for (vector<tstring>::const_iterator it = updates.begin();
+	   it != updates.end();
+	   ++ it)
+	{
+	  PackageInfo packageInfo = pPackageManager->GetPackageInfo(*it);
+	  if (! packageInfo.IsInstalled())
+	    {
+	      Error (T_("Package \"%s\" is not installed."), it->c_str());
+	    }
+	  if (binary_search(updates2.begin(), updates2.end(), *it))
+	    {
+	      toBeInstalled.push_back (*it);
+	    }
+	  else
+	    {
+	      Message (T_("Package \"%s\" is up to date.\n"), it->c_str());
+	    }
+	}
+    }
+  if (toBeInstalled.size() == 0)
+    {
+      return;
+    }
+  if (binary_search(updates2.begin(), updates2.end(), MYPKG)
+      && ! (toBeInstalled.size() == 1 && toBeInstalled[0] == MYPKG))
+    {
+      Error (T_("Package \"") MYPKG T_("\" must be updated separately."));
+    }
+  pInstaller->SetFileLists (toBeInstalled, vector<tstring>());
+  pInstaller->InstallRemove ();
+  pInstaller->Dispose ();
+  if (toBeInstalled.size() == 1)
+    {
+      Message (T_("Package \"%s\" has been successfully updated.\n"),
+	       toBeInstalled[0].c_str());
+    }
+  else if (toBeInstalled.size() > 1)
+    {
+      Message (T_("%u packages have been successfully updated.\n"),
+	       toBeInstalled.size());
+    }
+  RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
+}
+
+/* _________________________________________________________________________
+
+   Application::GetContainerPath
+   _________________________________________________________________________ */
+
+bool
+Application::GetContainerPath (/*[in]*/ const tstring &	deploymentName,
+			       /*[in,out]*/ tstring &	path)
+{
+  PackageInfo pi = pPackageManager->GetPackageInfo(deploymentName);
+  if (pi.requiredBy.size() == 0)
+    {
+      return (false);
+    }
+  tstring parent;
+  GetContainerPath (pi.requiredBy[0], parent);
+  path = parent;
+  path += PathName::DirectoryDelimiter;
+  path += pi.requiredBy[0];
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   Application::GetDirectories
+   _________________________________________________________________________ */
+
+bool
+Application::GetDirectories (/*[in]*/ const tstring &	deploymentName,
+			     /*[in,out]*/ tstring &	directories)
+{
+  set<tstring> setDirectories;
+  PackageInfo pi = pPackageManager->GetPackageInfo(deploymentName);
+  for (vector<tstring>::const_iterator it = pi.runFiles.begin();
+       it != pi.runFiles.end();
+       ++ it)
+    {
+      PathName path (*it);
+      if (! path.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
+	{
+	  setDirectories.insert (path.RemoveFileSpec().Get());
+	}
+    }
+  for (set<tstring>::const_iterator it = setDirectories.begin();
+       it != setDirectories.end();
+       ++ it)
+    {
+      if (it != setDirectories.begin())
+	{
+	  directories += PATH_DELIMITER;
+	}
+      directories += *it;
+    }
+  return (true);
+}
+/* _________________________________________________________________________
+
+   Application::List
+   _________________________________________________________________________ */
+
+void
+Application::List (/*[in]*/ bool csv)
+{
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  set<PackageInfo, PackageInfoComparer> setPi;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      if (packageInfo.IsPureContainer())
+	{
+	  continue;
+	}
+      setPi.insert (packageInfo);
+    }
+  if (setPi.size() == 0)
+    {
+      Message (T_("The package database files have not been installed.\n"));
+    }
+  for (set<PackageInfo, PackageInfoComparer>::const_iterator
+	 it = setPi.begin();
+       it != setPi.end();
+       ++ it)
+    {
+      if (csv)
+	{
+	  tstring path;
+	  GetContainerPath (it->deploymentName, path);
+	  tstring directories;
+	  GetDirectories (it->deploymentName, directories);
+	  tcout << path << T_('\\') << it->deploymentName << T_(',')
+		<< directories << T_('\n');
+	}
+      else
+	{
+	  tcout << (it->IsInstalled() ? T_('i') : T_('-'))
+		<< T_("  ") << setw(5) << static_cast<int>(it->GetNumFiles())
+		<< T_(" ")
+		<< setw(10) << left << static_cast<int>(it->GetSize())
+		<< resetiosflags(ios_base::left)
+		<< T_("  ") << it->deploymentName
+		<< endl;
+	}
+    }
+  pIter->Dispose ();
+}
+
+/* _________________________________________________________________________
+
+   Application::ListRepositories
+   _________________________________________________________________________ */
+
+void
+Application::ListRepositories (/*[in]*/ bool csv)
+{
+  csv;
+  pPackageManager->DownloadRepositoryList ();
+  vector<RepositoryInfo> repositories = pPackageManager->GetRepositories();
+  if (repositories.size() == 0)
+    {
+      Message (T_("No package repositories are currently available.\n"));
+    }
+  for (vector<RepositoryInfo>::const_iterator
+	 it = repositories.begin();
+       it != repositories.end();
+       ++ it)
+    {
+      tcout << it->url << T_('\n');
+    }
+}
+
+/* _________________________________________________________________________
+
+   Application::PickRepositoryUrl
+   _________________________________________________________________________ */
+
+void
+Application::PickRepositoryUrl ()
+{
+  tcout << pPackageManager->PickRepositoryUrl() << endl;
+}
+
+/* _________________________________________________________________________
+
+   Application::PrintFiles
+   _________________________________________________________________________ */
+
+void
+Application::PrintFiles (/*[in]*/ const vector<tstring> & files)
+{
+  for (vector<tstring>::const_iterator it = files.begin();
+       it != files.end();
+       ++ it)
+    {
+      PathName path = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+      tstring disp;
+      if (! PackageManager::StripTeXMFPrefix(*it, disp))
+	{
+	  disp = *it;
+	}
+      path += disp;
+      tcout << T_("  ") << path.ToString() << T_('\n');
+    }
+}
+
+/* _________________________________________________________________________
+
+   Application::PrintPackageInfo
+   _________________________________________________________________________ */
+
+void
+Application::PrintPackageInfo (/*[in]*/ const tstring & deploymentName)
+{
+  PackageInfo packageInfo = pPackageManager->GetPackageInfo(deploymentName);
+  tcout << T_("name: ") << packageInfo.deploymentName << T_('\n')
+	<< T_("title: ") << packageInfo.title << T_('\n');
+  if (packageInfo.runFiles.size() > 0)
+    {
+      tcout << T_("run-time files:\n");
+      PrintFiles (packageInfo.runFiles);
+    }
+  if (packageInfo.docFiles.size() > 0)
+    {
+      tcout << T_("documentation files:\n");
+      PrintFiles (packageInfo.docFiles);
+    }
+  if (packageInfo.sourceFiles.size() > 0)
+    {
+      tcout << T_("source files:\n");
+      PrintFiles (packageInfo.sourceFiles);
+    }
+}
+
+/* _________________________________________________________________________
+
+   Application::RestartWindowed
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+void
+Application::RestartWindowed ()
+{
+  Verbose (T_("Restarting in windowed mode...\n"));
+
+  // locate mpm.exe
+  PathName mpm;
+  if (! SessionWrapper(true)->FindFile(T_("mpm.exe"),
+				       FileType::EXE,
+				       mpm))
+    {
+      Error (T_("Could not restart in windowed mode: mpm.exe not found."));
+    }
+
+  // start mpm.exe
+  PROCESS_INFORMATION processInformation;
+  STARTUPINFO startupInformation;
+  ZeroMemory (&startupInformation, sizeof(startupInformation));
+  BOOL done =
+    CreateProcess(0,
+		  mpm.GetBuffer(),
+		  0,
+		  0,
+		  TRUE,
+		  0,
+		  0,
+		  0,
+		  &startupInformation,
+		  &processInformation);
+  CloseHandle (processInformation.hThread);
+  CloseHandle (processInformation.hProcess);
+  if (! done)
+    {
+      Error (T_("Could not restart in windowed mode."));
+    }
+}
+#endif
+
+/* _________________________________________________________________________
+
+   Application::ReadFileList
+   _________________________________________________________________________ */
+
+void
+Application::ReadFileList (/*[in]*/ const PathName &		path,
+			   /*[in,out]*/ vector<tstring> &	files)
+{
+  StreamReader reader (path);
+  tstring line;
+  while (reader.ReadLine(line))
+    {
+      Tokenizer tok (line.c_str(), T_(" \t\n\r"));
+      if (tok.GetCurrent() != 0)
+	{
+	  files.push_back (tok.GetCurrent());
+	}
+    }
+  reader.Close ();
+}
+
+/* _________________________________________________________________________
+
+   Application::Main
+   _________________________________________________________________________ */
+
+void
+Application::Main (/*[in]*/ int			argc,
+		   /*[in]*/ const MIKTEXCHAR **	argv)
+{
+  StartupConfig startupConfig;
+  Session::InitInfo initInfo;
+  initInfo.SetProgramInvocationName (argv[0]);
+
+  bool optCsv = false;
+  bool optFindUpdates = false;
+  bool optList = false;
+  bool optListRepositories = false;
+  bool optPickRepositoryUrl = false;
+  bool optPrintPackageInfo = false;
+  bool optSetRepository = false;
+  bool optUpdate = false;
+  bool optUpdateAll = false;
+  bool optUpdateDb = false;
+  bool optUpdateFndb = false;
+  bool optVersion = false;
+  tstring deploymentName;
+  vector<tstring> installSome;
+  vector<tstring> updateSome;
+  vector<tstring> toBeInstalled;
+  vector<tstring> updates;
+  vector<tstring> toBeRemoved;
+
+  Cpopt popt (argc, argv, aoption);
+
+  //  popt.SetOtherOptionHelp (T_("[OPTION...]"));
+
+  // process command-line options
+  int option;
+  while ((option = popt.GetNextOpt()) >= 0)
+    {
+      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      switch (option)
+	{
+	case OPT_CSV:
+	  optCsv = true;
+	  break;
+	case OPT_FIND_UPDATES:
+	  optFindUpdates = true;
+	  break;
+#if defined (MIKTEX_WINDOWS)
+	case OPT_HHELP:
+	  {
+	    SessionWrapper(true)->ShowManualPageAndWait (0, MIKTEXHELP_MPMCON);
+	    return;
+	  }
+#endif
+	case OPT_INSTALL:
+	  toBeInstalled.push_back (lpszOptArg);
+	  break;
+	case OPT_INSTALL_ROOT:
+	  startupConfig.installRoot = lpszOptArg;
+	  break;
+	case OPT_INSTALL_SOME:
+	  installSome.push_back (lpszOptArg);
+	  break;
+	case OPT_LIST:
+	  optList = true;
+	  break;
+	case OPT_LIST_REPOSITORIES:
+	  optListRepositories = true;
+	  break;
+	case OPT_PICK_REPOSITORY_URL:
+	  optPickRepositoryUrl = true;
+	  break;
+	case OPT_PRINT_PACKAGE_INFO:
+	  optPrintPackageInfo = true;
+	  deploymentName = lpszOptArg;
+	  break;
+	case OPT_PROXY:
+	  proxySettings.proxy = lpszOptArg;
+	  break;
+	case OPT_PROXY_USER:
+	  proxySettings.user = lpszOptArg;
+	  break;
+	case OPT_PROXY_PASSWORD:
+	  proxySettings.password = lpszOptArg;
+	  break;
+	case OPT_QUIET:
+	  if (verbose)
+	    {
+	      Error (T_("Cannot be --verbose and --quiet at the same time."));
+	    }
+	  quiet = true;
+	  break;
+	case OPT_REPOSITORY:
+	  repository = lpszOptArg;
+	  break;
+	case OPT_SET_REPOSITORY:
+	  optSetRepository = true;
+	  repository = lpszOptArg;
+	  break;
+	case OPT_TRACE:
+	  if (lpszOptArg == 0)
+	    {
+	      initInfo.SetTraceFlags (DEFAULT_TRACE_STREAMS);
+	    }
+	  else
+	    {
+	      initInfo.SetTraceFlags (lpszOptArg);
+	    }
+	  break;
+	case OPT_UNINSTALL:
+	  toBeRemoved.push_back (lpszOptArg);
+	  break;
+	case OPT_UPDATE:
+	  if (lpszOptArg != 0)
+	    {
+	      if (optUpdateAll)
+		{
+		  Error (T_("Already updating all packages."));
+		}
+	      optUpdate = true;
+	      updates.push_back (lpszOptArg);
+	    }
+	  else
+	    {
+	      if (optUpdate)
+		{
+		  Error (T_("Already updating selected packages."));
+		}
+	      optUpdateAll = true;
+	    }
+	  break;
+	case OPT_UPDATE_ALL:
+	  if (optUpdate)
+	    {
+	      Error (T_("Already updating selected packages."));
+	    }
+	  optUpdateAll = true;
+	  break;
+	case OPT_UPDATE_DB:
+	  optUpdateDb = true;
+	  break;
+	case OPT_UPDATE_FNDB:
+	  optUpdateFndb = true;
+	  break;
+	case OPT_UPDATE_SOME:
+	  updateSome.push_back (lpszOptArg);
+	  break;
+	case OPT_VERBOSE:
+	  if (quiet)
+	    {
+	      Error (T_("Cannot be --verbose and --quiet at the same time."));
+	    }
+	  verbose = true;
+	  break;
+	case OPT_VERSION:
+	  optVersion = true;
+	  break;
+	}
+    }
+
+  if (option != -1)
+    {
+      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      msg += T_(": ");
+      msg += popt.Strerror(option);
+      Error (T_("%s"), msg.c_str());
+    }
+      
+  if (popt.GetArgs() != 0)
+    {
+      Error (T_("This utility does not accept non-option arguments."));
+    }
+
+  if (optVersion)
+    {
+      tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+					       VersionNumber(VER_FILEVERSION))
+	    << T_("\n\
+Copyright (C) 2005-2006 Christian Schenk\n\
+This is free software; see the source for copying conditions.  There is NO\n\
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
+	    << endl;
+      return;
+    }
+
+  initInfo.SetStartupConfig (startupConfig);
+
+  pSession.CreateSession (initInfo);
+
+  pPackageManager.Create ();
+  pPackageManager->SetProxyServer (proxySettings);
+
+  bool restartWindowed = true;
+
+  if (optSetRepository)
+    {
+      pPackageManager->SetRemotePackageRepository (repository);
+      restartWindowed = false;
+    }
+
+  if (optUpdateFndb && ! optUpdateDb)
+    {
+      pPackageManager->CreateMpmFndb ();
+      restartWindowed = false;
+    }
+
+  if (optUpdateDb)
+    {
+      UpdateDb ();
+      restartWindowed = false;
+    }
+
+  if (optFindUpdates)
+    {
+      FindUpdates ();
+      restartWindowed = false;
+    }
+
+  vector<tstring>::const_iterator it;
+
+  for (it = installSome.begin(); it != installSome.end(); ++ it)
+    {
+      ReadFileList (*it, toBeInstalled);
+    }
+
+  if (toBeInstalled.size() > 0 || toBeRemoved.size() > 0)
+    {
+      Install (toBeInstalled, toBeRemoved);
+      restartWindowed = false;
+    }
+
+  for (it = updateSome.begin(); it != updateSome.end(); ++ it)
+    {
+      ReadFileList (*it, updates);
+    }
+
+  if (optUpdateAll || updates.size() > 0)
+    {
+      Update (updates);
+      restartWindowed = false;
+    }
+
+  if (optList)
+    {
+      List (optCsv);
+      restartWindowed = false;
+    }
+
+  if (optListRepositories)
+    {
+      ListRepositories (optCsv);
+      restartWindowed = false;
+    }
+
+  if (optPickRepositoryUrl)
+    {
+      PickRepositoryUrl ();
+      restartWindowed = false;
+    }
+
+  if (optPrintPackageInfo)
+    {
+      PrintPackageInfo (deploymentName);
+      restartWindowed = false;
+    }
+  
+#if ! STANDALONE
+  if (restartWindowed)
+    {
+      RestartWindowed ();
+    }
+#endif
+  
+  pPackageManager.Release ();
+  pSession.Reset ();
+}
+
+/* _________________________________________________________________________
+
+   Application::SignalHandler
+   _________________________________________________________________________ */
+
+extern "C"
+void
+Application::SignalHandler (/*[in]*/ int sig)
+{
+  sig;
+  interrupted = true;
+  signal (SIGINT, SignalHandler);
+}
+
+/* _________________________________________________________________________
+
+   main
+   _________________________________________________________________________ */
+
+int
+main (/*[in]*/ MIKTEXCHARINT		argc,
+      /*[in]*/ const MIKTEXCHAR **	argv)
+{
+  try
+    {
+      Application app;
+      app.Main (argc, argv);
+      return (0);
+    }
+  catch (const MiKTeXException & e)
+    {
+      Utils::PrintException (e);
+      return (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
+      return (1);
+    }
+  catch (int rc)
+    {
+      return (rc);
+    }
+}

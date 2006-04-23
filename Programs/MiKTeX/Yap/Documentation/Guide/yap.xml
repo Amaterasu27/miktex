@@ -1,0 +1,368 @@
+<?xml-stylesheet type="text/xsl" href="html.xsl" ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
+
+<!ENTITY rev "2.5.2273">
+<!ENTITY yaprev "2.5.2273">
+<!ENTITY date "March 23, 2006">
+<!ENTITY month "March 2006">
+
+<!ENTITY MiKTeX "<application>MiKTeX</application>">
+<!ENTITY Yap "<application>Yap</application>">
+<!ENTITY DVI "<acronym>DVI</acronym>">
+<!ENTITY CDR "<acronym>CD-R</acronym>">
+<!ENTITY TeX "<application>TeX</application>">
+<!ENTITY Dvips "<application>Dvips</application>">
+<!ENTITY PostScript "<application>PostScript</application>">
+<!ENTITY Ghostscript "<application>Ghostscript</application>">
+
+<!ENTITY commandline SYSTEM "commandline.xml">
+<!ENTITY customizing SYSTEM "customizing.xml">
+<!ENTITY dvisearch SYSTEM "dvisearch.xml">
+<!ENTITY graphics SYSTEM "graphics.xml">
+<!ENTITY keyboard SYSTEM "keyboard.xml">
+<!ENTITY menus SYSTEM "menus.xml">
+<!ENTITY printing SYSTEM "printing.xml">
+<!ENTITY prompt "C:\> ">
+<!ENTITY specials SYSTEM "specials.xml">
+<!ENTITY tools SYSTEM "tools.xml">
+<!ENTITY tracestreams SYSTEM "tracestreams.xml">
+<!ENTITY tracing SYSTEM "tracing.xml">
+<!ENTITY troubleshooting SYSTEM "troubleshooting.xml">
+]>
+
+<book>
+  
+<bookinfo>
+<title>&Yap; User's Guide</title>
+<edition>&rev; (&Yap; &yaprev;)</edition>
+<author>
+<firstname>Christian</firstname>
+<surname>Schenk</surname>
+</author>
+<copyright>
+<year>2004</year>
+<holder>MiKTeX.org</holder>
+</copyright>
+<date>&date;</date>
+<legalnotice>
+<para>Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.</para>
+<para>Permission is granted to copy and distribute modified versions
+of this manual under the conditions for verbatim copying, provided
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.</para>
+<para>Permission is granted to copy and distribute translations of
+this manual into another language, under the above conditions for
+modified versions, except that this permission notice may be stated in
+a translation approved by the Free Software Foundation.</para>
+</legalnotice>
+</bookinfo>
+
+<preface>
+
+<title>About this document</title>
+
+<para>This is version &rev; of the &Yap;
+manual.  It corresponds to
+&Yap;&nbsp;&yaprev;.</para>
+</preface>
+  
+<chapter>
+
+<?dbhh topicname="HIDR_MAINFRAME" topicid="0"?>
+
+<title>About &Yap;</title>
+
+<!-- borrowed from XDVI help file-->
+
+<para>You use &Yap; (Yet Another Previewer) to view &DVI; files, such
+as are produced by &TeX;.</para>
+
+<para>&Yap; has the capability of showing the file shrunken by various
+(integer) factors, and also has a <quote>magnifying glass</quote>
+which allows one to see a small part of the unshrunk image
+momentarily.</para>
+
+<para>Before displaying any page or part thereof, &Yap; checks to see
+if the &DVI; file has changed since the last time it was displayed.
+If this is the case, then &Yap; will reinitialize itself for the
+modified &DVI; file</para>
+
+</chapter>
+
+<chapter id="opening">
+
+<?dbhh topicname="HID_FILE_MRU_FILE1" topicid=""?>
+<?dbhh topicname="AFX_HIDD_FILEOPEN" topicid=""?>
+
+<title>How to open a file</title>
+
+<indexterm>
+<primary>&DVI; file</primary>
+<secondary>opening</secondary>
+</indexterm>
+      
+<para>There are several ways to open a file:</para>
+
+<itemizedlist>
+<listitem><para>by double-clicking a &DVI; file icon</para></listitem>
+<listitem><para>by dragging a &DVI; file icon to the
+&Yap; application window</para></listitem>
+<listitem><para>by specifying a  file name on the
+&Yap; command-line (see <xref linkend="commandline"/>).</para></listitem>
+<listitem><para>by clicking <guimenu>Open...</guimenu> on the
+<guimenu>File</guimenu> menu.</para></listitem>
+<listitem><para>by clicking an <acronym>MRU</acronym> (most recently used}
+<indexterm> 
+<primary><acronym>MRU</acronym> (most recently used) files</primary>
+<secondary>opeing</secondary>
+</indexterm>
+item on the <guimenu>File</guimenu> menu.</para></listitem>
+</itemizedlist>
+
+<para>You can open more than one file with a single instance of
+&Yap;.</para>
+
+</chapter>
+
+<chapter>
+
+<?dbhh topicname="HIDR_DVITYPE" topicid="0"?>
+
+<title>Viewing documents</title>
+
+<section>
+
+<title>Magnifying and Reducing the View</title>
+
+<indexterm>
+<primary>magnifying</primary>
+<secondary>the view</secondary>
+</indexterm>
+
+<index>
+<indexterm>
+<primary>reducing</primary>
+<secondary>the view</secondary>
+</indexterm>
+</index>
+
+<indexterm>
+<primary>zooming</primary>
+</indexterm>
+
+<para>To increase magnification, either click the <guilabel>Zoom
+In</guilabel> button on the tool bar, or press <keycap>+</keycap> on
+the numeric keypad.</para>
+
+<para>To decrease magnification, either click the <guilabel>Zoom
+Out</guilabel> button on the tool bar, or press <keycap>-</keycap> on
+the numeric keypad.</para>
+
+</section>
+
+<section>
+
+<title>Viewing Through a Magnifying Glass</title>
+
+<indexterm>
+<primary>magnifying glass</primary>
+</indexterm>
+
+<para>&Yap; offers three different magnifying glasses: small, medium
+and large.</para>
+
+<para>To view through a magnifying glass:</para>
+
+<procedure>
+<step><para>Click the <guilabel>Magnifying Glass</guilabel> button on
+the tool bar.</para></step>
+<step><para>Press the left mouse button
+alone to activate the small magnifying glass.  In combination with the
+<keycap>Shift</keycap> key, the medium sized magnifying glass will be
+opened.  In combination with the <keycap>Control</keycap> key, the
+large magnifying glass will be opened.</para></step>
+<step><para>Move the magnifying glass
+over the area you want to inspect.</para></step>
+<step><para>Release the left mouse button
+to close the magnifying glass.</para></step>
+</procedure>
+
+<para>For performance reasons, &Yap; does not render &PostScript;
+specials in the magnifying glass.</para>
+
+<para>You can change the properties of the three magnifying glasses.
+See <xref linkend="magglass"/>.</para>
+
+</section>
+
+<section>
+
+<title>Setting the Page Layout</title>
+
+<indexterm>
+<primary>page layout</primary>
+<secondary>setting the</secondary>
+</indexterm>
+<para>You can use four page layouts when viewing &DVI;
+documents:</para>
+
+<itemizedlist>
+<listitem>
+<para>Single Page Layout displays
+one page in the document at a time.</para></listitem>
+<listitem><para>Double Page Layout displays
+two pages in the document at a time.</para></listitem>
+<listitem><para>Continuous/Single Page Layout arranges
+the pages in a continuous vertical column.</para></listitem>
+<listitem><para>Continuous/Double Page Layout arranges the pages side by
+side in a continuous vertical column.</para></listitem>
+</itemizedlist>
+
+<para>To set the page layout, either click one of the four layout
+buttons in the tool bar, or click one of the four layout commands on
+the context menu.</para>
+
+</section>
+
+<section>
+      
+<title>Presenting Documents in Full Screen View</title>
+
+<indexterm>
+<primary>full screen mode</primary>
+</indexterm>
+
+<indexterm>
+<primary>presentations</primary>
+</indexterm>
+
+<para>In Full Screen view, &DVI; pages fill the entire screen; the
+menu bar, tool bar and status bar are hidden.  Full Screen view is
+often used for presentations.  The pointer remains active in Full
+Screen view so that you can click links.  You can use keybord
+shortcuts (<xref linkend="keyboard"/>) for navigational and
+magnification commands.</para>
+
+<para>To present a document in Full Screen view, click <guilabel>Full
+Screen</guilabel> on the <guimenu>View</guimenu> menu.  To exit Full
+Screen view, press <keycap>Escape</keycap>.</para>
+
+</section>
+
+<section id="gotopage">
+
+<?dbhh topicname="HIDD_GOTOPAGE" topicid="0"?>
+
+<title><guilabel>Goto Page</guilabel> Dialog Box</title>
+
+<indexterm>
+<primary>page</primary>
+<secondary>displaying a random</secondary>
+</indexterm>
+
+<para>The <guilabel>Goto Page</guilabel> dialog lets you
+select a &TeX; page number. The corresponding document location
+is scrolled into view when you close the dialog box.</para>
+
+</section>
+
+</chapter>
+
+&keyboard;
+
+&tools;
+
+&printing;
+
+&dvisearch;
+
+&customizing;
+
+&menus;
+
+&graphics;
+
+&commandline;
+
+<chapter id="docprop">
+
+<title>Document Properties</title>
+
+<indexterm>
+<primary>&DVI; document</primary>
+<secondary>properties</secondary>
+</indexterm>
+
+<section>
+
+<?dbhh topicname="HIDD_DOC_PROP_FONTS" topicid="0"?>
+
+<title><guilabel>Fonts</guilabel></title>
+
+<indexterm>
+<primary>fonts</primary>
+<secondary>listing</secondary>
+</indexterm>
+
+<para>This page lists all loaded. If a font could not be loaded, then
+it appears as <computeroutput>&gt;&gt;&gt; Not loadable - double-click
+to see details</computeroutput>. You will get a detailed problem
+description, when you double-click the entry.</para>
+
+</section>
+
+</chapter>
+
+&tracing;
+
+&troubleshooting;
+
+&specials;
+
+<chapter>
+
+<title>&Yap; Copyright</title>
+
+<indexterm>
+<primary>Copyright</primary>
+</indexterm>
+
+<para>The following copyright notice applies to the &Yap; program.
+The copyright and copying permissions for this manual appear near the
+beginning of this document.</para>
+
+<para>Copyright (C) 1996-2003 MiKTeX.org</para>
+
+<para>&Yap; is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.</para>
+
+<para>&Yap; is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the
+<indexterm>
+<primary>warranty</primary>
+<secondary>&Yap; comes without any</secondary>
+</indexterm>
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.</para>
+
+<para>You should have received a copy of the GNU General Public
+License along with &Yap;; if not, write to the Free Software
+Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+USA.</para>
+
+</chapter>
+
+</book>
+
+<!--
+Local Variables:
+mode:xml
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

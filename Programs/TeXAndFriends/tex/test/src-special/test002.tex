@@ -1,0 +1,18 @@
+\documentclass[11pt]{article}
+
+\begin{document}
+\section{Problemreport}
+Today I installed the update 3 for Mik\TeX\ 1.11, mainly 
+because Pdf\TeX\ didn't work anymore after the last update. 
+Of course I also was impressed by the automatic inclusion
+of source specials. But not for long. After changing my 
+\LaTeX\ calls into \mbox{\texttt{latex --src-specials 
+mydoc}} it shows a different behaviour with
+paragraphs!
+
+\paragraph{Look here,} this line is indented if compiled 
+with src-specials, which it shouldn't. It is not without! 
+Some text follows, to make the paragraph a little longer.
+Just ignore it.
+
+\enddocument

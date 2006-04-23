@@ -1,0 +1,7 @@
+EXPORTS
+	ListPSResourceFiles	@1
+	ListPSResourceTypes	@2
+	FreePSResourceStorage	@3
+	SetPSResourcePolicy	@4
+	EnumeratePSResourceFiles	@5
+	CheckPSResourceTime	@6

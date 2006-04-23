@@ -1,0 +1,17 @@
+<varlistentry>
+<term><option>-terminal=oem</option></term>
+<listitem><para>Use the active code page
+<indexterm>
+<primary>-terminal=oem</primary>
+</indexterm>
+(e.g., <literal>437 </literal>) for console output.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

@@ -1,0 +1,24 @@
+<varlistentry>
+<term><option>-mem-min=<replaceable>n</replaceable></option></term>
+<listitem>
+<para>Set the internal compiler variable <varname>mem_min</varname> to
+<replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-mem-min=n</primary>
+</indexterm>
+<para><varname>mem_min</varname> is the smallest index in the
+internal memory array; must be
+<literal>0</literal> or more; must be equal to
+<varname>mem_bot</varname> in the <emphasis>INI</emphasis> variant
+of the compiler, otherwise less than or equal to
+<varname>mem_bot</varname>}.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

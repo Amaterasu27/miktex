@@ -1,0 +1,19 @@
+<varlistentry>
+<term><option>-save-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>save_size</varname> to
+<replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-save-size=n</primary>
+</indexterm>
+<para><varname>save_size</varname> is the amount of space for
+saving values outside of current group.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

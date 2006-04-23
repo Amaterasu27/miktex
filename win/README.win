@@ -1,0 +1,75 @@
+Copyright (C) 2000-2006 Christian Schenk
+  
+This file is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+  
+This file is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+  
+You should have received a copy of the GNU General Public License
+along with This file; if not, write to the Free Software Foundation,
+59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+------------------------------------------------------------------------
+
+This 'README' file belongs to the MiKTeX source distribution.  It
+briefly describes the build process on Windows systems.
+
+OS Requirements
+---------------
+
+	* Microsoft Windows XP
+
+	* Command extensions must be enabled (cmd /E:ON)
+
+Build Tools
+-----------
+
+	* Microsoft Visual C++ 8.0 Professional
+		http://msdn.microsoft.com/vstudio/
+
+	* Cygwin
+		http://www.cygwin.com
+
+	* junction.exe
+		http://www.sysinternals.com/ntw2k/source/misc.shtml#junction
+
+	* ActivePerl
+		http://www.activestate.com/Products/ActivePerl/
+
+	* xsltproc
+		http://xmlsoft.org/XSLT/
+
+Documentation System
+--------------------
+
+	* ImageMagick
+		http://www.imagemagick.org
+
+        * Microsoft HTML Help SDK
+		http://msdn.microsoft.com
+
+	* MiKTeX
+		http://www.miktex.org
+
+Configuring
+-----------
+
+	Open 'miktex.inc' with Notepad; check the following variables:
+
+	convert
+	prefix
+	tmdir
+
+        Run 'configure.cmd' to set up the build environment.
+
+Build
+-----
+
+	Use the 'build.cmd' script to build MiKTeX.
+
+	All output is written to 'build-x86.log'.

@@ -1,0 +1,20 @@
+<varlistentry>
+<term><option>-half-error-line=<replaceable>n</replaceable></option></term>
+<listitem>
+<para>Set the internal compiler variable <varname>half_error_line</varname> to
+<indexterm>
+<primary>-half-error=n</primary>
+</indexterm>
+<replaceable>n</replaceable>.</para>
+<para><varname>half_error_line</varname> is the width of first
+lines of contexts in terminal error messages.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

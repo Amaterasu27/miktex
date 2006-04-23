@@ -1,0 +1,65 @@
+/* version.h.in: MiKTeX version information			-*- C++ -*-
+
+   Copyright (C) 1996-2006 Christian Schenk
+
+   This file is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+   
+   This file is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this file; if not, write to the Free Software
+   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA. */
+
+#ifndef MIKTEX_VERSION__1C6156ED_C5E6_45C0_A962_0F7335E84C35__INCLUDED_H_
+#define MIKTEX_VERSION__1C6156ED_C5E6_45C0_A962_0F7335E84C35__INCLUDED_H_
+
+#define MIKTEX_MAJOR_VERSION @MIKTEX_MAJOR_VERSION@
+#define MIKTEX_MINOR_VERSION @MIKTEX_MINOR_VERSION@
+#define MIKTEX_J2000_VERSION @MIKTEX_J2000_VERSION@
+
+#define MIKTEX_RELEASE_STATE @MIKTEX_RELEASE_STATE@
+#define MIKTEX_RELEASE_NUMBER @MIKTEX_RELEASE_NUMBER@
+#define MIKTEX_RELEASE_NUMBER_STR "@MIKTEX_RELEASE_NUMBER@"
+
+#define MIKTEX_MAJOR_VERSION_STR "@MIKTEX_MAJOR_VERSION@"
+#define MIKTEX_MINOR_VERSION_STR "@MIKTEX_MINOR_VERSION@"
+#define MIKTEX_J2000_VERSION_STR "@MIKTEX_J2000_VERSION@"
+
+#define MIKTEX_SERIES_INT @MIKTEX_MAJOR_VERSION@ * 100 + @MIKTEX_MINOR_VERSION@
+
+#define MIKTEX_SERIES_STR "@MIKTEX_MAJOR_VERSION@.@MIKTEX_MINOR_VERSION@"
+
+#define MIKTEX_VERSION @MIKTEX_MAJOR_VERSION@,@MIKTEX_MINOR_VERSION@,@MIKTEX_J2000_VERSION@,0
+
+#define MIKTEX_PRODUCTNAME_STR "@PACKAGE_NAME@"
+
+#define MIKTEX_COMPANYNAME_STR "MiKTeX.org"
+
+#define MIKTEX_VERSION_STR "@MIKTEX_VERSION_STR@"
+
+#define MIKTEX_BANNER_STR MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
+
+#ifndef MIKTEX_LEGALCOPYRIGHT_STR
+#define MIKTEX_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2006 Christian Schenk"
+#endif
+
+#ifndef MIKTEX_BUILD_COMMENT_STR
+#define MIKTEX_BUILD_COMMENT_STR ""
+#endif
+
+#ifndef MIKTEX_BUILD_SPECIAL_STR
+#define MIKTEX_BUILD_SPECIAL_STR ""
+#endif
+
+#ifndef MIKTEX_LEGALTRADEMARKS_STR
+#define MIKTEX_LEGALTRADEMARKS_STR ""
+#endif
+
+#endif

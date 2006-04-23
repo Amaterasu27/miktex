@@ -1,0 +1,112 @@
+<chapter id="tools">
+
+<title>&Yap; Tools</title>
+
+<para>&Yap; provides several tools for browsing the
+&DVI; document.</para>
+
+<section>
+
+<title>Browsing Source Specials</title>
+
+<indexterm>
+<primary>source specials</primary>
+<secondary>browsing</secondary>
+</indexterm>
+<para>The command
+<menuchoice>
+<guimenu>Tools</guimenu>
+<guimenuitem>Source Specials...</guimenuitem>
+</menuchoice>
+opens the the Source Specials window.</para>
+
+<section>
+
+<title>Source Specials Window</title>
+
+<para>This window lists all source specials found in the current
+&DVI; document.</para>
+
+<para>The <guilabel>Goto</guilabel> button brings into view the
+portion of the &DVI; document which
+contains the selected source special.</para>
+
+<para>The <guilabel>Edit Source</guilabel> button invokes an editor to
+edit the <application>TeX</application> source corresponding to the
+selected source special.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>Hand Tool</title>
+
+<indexterm>
+<primary>hand tool</primary>
+<secondary>selecting the</secondary>
+</indexterm>
+
+<para>The hand tool allows you to scroll the page by moving the cursor
+while the left mouse button is pressed. You select the Hand Tool with
+the command
+<menuchoice>
+<guimenu>Tools</guimenu>
+<guimenuitem>Hand Tool</guimenuitem>
+</menuchoice>
+or byclicking the corresponding button in the toolbar.</para>
+
+</section>
+
+<section>
+
+<title>Magnifying Glasses</title>
+
+<indexterm>
+<primary>magnifying glass</primary>
+<secondary>activating the</secondary>
+</indexterm>
+
+<para>The magnifying glass allows you to view a small part of the
+unshrunk page.  You select this tool with the command
+<menuchoice>
+<guimenu>Tools</guimenu>
+<guimenuitem>Magnifying Glass</guimenuitem>
+</menuchoice>
+or by clicking the corresponding button in the toolbar.</para>
+
+<para>You can choose between three sizes:</para>
+
+<orderedlist>
+<listitem><para>Pressing the left mouse button
+activates the small magnifying glass.</para></listitem>
+<listitem><para>Pressing the left mouse button in combination with the
+<keycap>Shift</keycap> key activates the medium sized
+magnifying glass.</para></listitem>
+<listitem><para>Pressing the left mouse button in combination with the
+<keycap>Control</keycap> key activates the large
+magnifying glass.</para></listitem>
+</orderedlist>
+
+<para>The three magnifying
+glasses are fully customizable (see <xref linkend="magglass"/>).</para>
+
+<para>Furthermore, you can specify the power of the magnifying glass
+by entering a numerical prefix argument.  The argument is interpreted
+as a shrink factor for the text inside the magnifying glass.  A shrink
+factor of <literal>1</literal> (the default) results in a maximum
+magnification.</para>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("yap.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

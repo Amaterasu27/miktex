@@ -1,0 +1,35 @@
+EXPORTS
+	ppm_writeppm
+	ppm_init
+	pm_bitfini
+	pm_bitread
+	pm_bitinit
+	ppm_writeppmrow
+	ppm_writeppminit
+	ppm_parsecolor
+	ppm_readppm
+	ppm_readppmrow
+	ppm_readppminit
+	ppm_computecolorhist
+	ppm_freecolorhist
+	ppm_addtocolorhash
+	ppm_lookupcolor
+	ppm_alloccolorhash
+	ppm_pbmmaxval DATA
+	ppm_colorhisttocolorhash
+	pm_bitwrite
+	ppm_freecolorhash
+	ppm_addtocolorhist
+	ppm_colorname
+	ppmd_filledrectangle
+	ppmd_line
+	ppmd_fill
+	ppmd_fill_drawproc
+	ppmd_fill_init
+	ppmd_polyspline
+	ppmd_circle
+	ppmd_setlineclip
+	ppmd_setlinetype
+	ppmd_point_drawproc
+	ppmd_spline3
+	ppm_readppminitrest

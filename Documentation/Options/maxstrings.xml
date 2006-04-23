@@ -1,0 +1,19 @@
+<varlistentry>
+<term><option>-max-strings=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>max_strings</varname> to
+<indexterm>
+<primary>-max-strings=n</primary>
+</indexterm>
+<replaceable>n</replaceable>.</para>
+<para><varname>max_strings</varname> is the maximum number of
+strings.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

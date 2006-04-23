@@ -1,0 +1,130 @@
+<!ENTITY codename25 "The Uninvited">
+<!ENTITY codename30 "?">
+<!ENTITY codename40 "Tamer of the Tux">
+<!ENTITY AdobeReader "<application>Adobe&nbsp;Reader</application>">
+<!ENTITY API "<acronym>API</acronym>">
+<!ENTITY BibTeX "<application>BibTeX</application>">
+<!ENTITY CDR "<abbrev>CD-R</abbrev>">
+<!ENTITY DVDminR "<abbrev>DVD-R</abbrev>">
+<!ENTITY CTAN "<acronym>CTAN</acronym>">
+<!ENTITY ConTeXt "<application>ConTeXt</application>">
+<!ENTITY DANTEeV "DANTE&nbsp;e.V.">
+<!ENTITY DVI "<acronym>DVI</acronym>">
+<!ENTITY DebugView "<application>DebugView</application>">
+<!ENTITY Dvipdfm "<application>Dvipdfm</application>">
+<!ENTITY Dvipdfmx "<application>Dvipdfmx</application>">
+<!ENTITY Dvips "<application>Dvips</application>">
+<!ENTITY EPS "<acronym>EPS</acronym>">
+<!ENTITY PC "<acronym>PC</acronym>">
+<!ENTITY FAQ "<acronym>FAQ</acronym>">
+<!ENTITY FSF "<acronym>FSF</acronym>">
+<!ENTITY FNDB "<acronym>FNDB</acronym>">
+<!ENTITY FTP "<acronym>FTP</acronym>">
+<!ENTITY Ghostscript "<application>Ghostscript</application>">
+<!ENTITY GUI "<acronym>GUI</acronym>">
+<!ENTITY HTML "<acronym>HTML</acronym>">
+<!ENTITY LaTeX "<application>LaTeX</application>">
+<!ENTITY METAFONT "<application>METAFONT</application>">
+<!ENTITY MO "<acronym>MO</acronym>">
+<!ENTITY MPM "<acronym>MPM</acronym>">
+<!ENTITY MakeIndex "<application>MakeIndex</application>">
+<!ENTITY MetaPost "<application>MetaPost</application>">
+<!ENTITY Microsoft "Microsoft">
+<!ENTITY MiKTeXNetInstaller "<application>MiKTeX Net Installer</application>">
+<!ENTITY MiKTeX "<application>MiKTeX</application>">
+<!ENTITY MiKTeX25 "<application>MiKTeX&nbsp;2.5</application>">
+<!ENTITY MiKTeXOptions "<application>&MiKTeX; Options</application>">
+<!ENTITY MiKTeXPackageManager "<application>&MiKTeX; Package Manager</application>">
+<!ENTITY MiKTeXPrintUtility "<application>&MiKTeX; Print Utility</application>">
+<!ENTITY MiKTeXSetupWizard "<application>&MiKTeX; Setup Wizard</application>">
+<!ENTITY MiKTeXTools "<application>&MiKTeX; Tools</application>">
+<!ENTITY MiKTeXUpdateWizard "<application>&MiKTeX; Update Wizard</application>">
+<!ENTITY NTS "<application>NTS</application>">
+<!ENTITY PDF "<acronym>PDF</acronym>">
+<!ENTITY Perl "<application>Perl</application>">
+<!ENTITY PostScript "<application>PostScript</application>">
+<!ENTITY TCX "<acronym>TCX</acronym>">
+<!ENTITY TDS "<acronym>TDS</acronym>">
+<!ENTITY TEXMF "<acronym>TEXMF</acronym>">
+<!ENTITY TeX "<application>TeX</application>">
+<!ENTITY TeXify "<application>TeXify</application>">
+<!ENTITY Texinfo "<application>Texinfo</application>">
+<!ENTITY TeXLive "<application>TeX&nbsp;Live</application>">
+<!ENTITY TrueType "TrueType">
+<!ENTITY Type1 "Type&nbsp;1">
+<!ENTITY URW "<acronym>URW</acronym>">
+<!ENTITY WinEdt "<application>WinEdt</application>">
+<!ENTITY Windows "<application>Windows</application>">
+<!ENTITY WindowsMe "<application>Windows&nbsp;Millennium Edition</application>">
+<!ENTITY Windows95 "<application>Windows&nbsp;95</application>">
+<!ENTITY Windows98 "<application>Windows&nbsp;98</application>">
+<!ENTITY Windows98SE "<application>Windows&nbsp;98 Second Edition</application>">
+<!ENTITY WindowsNT "<application>Windows&nbsp;NT</application>">
+<!ENTITY WindowsNT40 "<application>Windows&nbsp;NT&nbsp;4.0</application>">
+<!ENTITY Windows2000 "<application>Windows&nbsp;2000</application>">
+<!ENTITY WindowsServer2003 "<application>Windows Server&nbsp;2003</application>">
+<!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
+<!ENTITY GNU "<application>GNU</application>">
+<!ENTITY GNULinux "&GNU;/Linux">
+<!ENTITY Unix "<application>Unix</application>">
+<!ENTITY Unixlike "<application>&Unix;-like</application>">
+<!ENTITY UNIX "<application>UNIX&reg;</application>">
+<!ENTITY Yap "<application>Yap</application>">
+<!ENTITY bibtex "<command>bibtex</command>">
+<!ENTITY dvicopy "<command>dvicopy</command>">
+<!ENTITY dvips "<command>dvips</command>">
+<!ENTITY eOmega "<application>e-Omega</application>">
+<!ENTITY eTeX "<application>e-TeX</application>">
+<!ENTITY einitex "<command>einitex</command>">
+<!ENTITY elatex "<command>elatex</command>">
+<!ENTITY eplain "<command>eplain</command>">
+<!ENTITY pdfopen "<command>pdfopen</command>">
+<!ENTITY pdfclose "<command>pdfclose</command>">
+<!ENTITY etex "<command>etex</command>">
+<!ENTITY evirtex "<command>evirtex</command>">
+<!ENTITY findtexmf "<command>findtexmf</command>">
+<!ENTITY gftodvi "<command>gftodvi</command>">
+<!ENTITY inimf "<command>inimf</command>">
+<!ENTITY inimp "<command>inimp</command>">
+<!ENTITY iniomega "<command>iniomega</command>">
+<!ENTITY initex "<command>initex</command>">
+<!ENTITY initexmf "<command>initexmf</command>">
+<!ENTITY installdir "C:\Program Files\MiKTeX &MIKTEX_SERIES_STR;">
+<!ENTITY latex "<command>latex</command>">
+<!ENTITY localdir "C:\localtexmf">
+<!ENTITY localdircd "C:\MiKTeXDirect">
+<!ENTITY makeinfo "<command>makeinfo</command>">
+<!ENTITY mf "<command>mf</command>">
+<!ENTITY miktexrev "&MIKTEX_VERSION_STR;">
+<!ENTITY mpm "<command>mpm</command>">
+<!ENTITY mpost "<command>mpost</command>">
+<!ENTITY mtprint "<command>mtprint</command>">
+<!ENTITY networkfolder "\\server\miktex">
+<!ENTITY omega "<command>omega</command>">
+<!ENTITY pdfTeX "<application>pdfTeX</application>">
+<!ENTITY pdfeTeX "<application>pdf-e-TeX</application>">
+<!ENTITY pdfinitex "<command>pdfinitex</command>">
+<!ENTITY pdflatex "<command>pdflatex</command>">
+<!ENTITY pdftex "<command>pdftex</command>">
+<!ENTITY pdfvirtex "<command>pdfvirtex</command>">
+<!ENTITY progfldr "MiKTeX">
+<!ENTITY prompt "&gt; ">
+<!ENTITY setupexe "<filename>setup.exe</filename>">
+<!ENTITY tex "<command>tex</command>">
+<!ENTITY mthelp "<command>mthelp</command>">
+<!ENTITY texdoc "<command>texdoc</command>">
+<!ENTITY texi2dvi "<command>tex2dvi</command>">
+<!ENTITY texify "<command>texify</command>">
+<!ENTITY epstopdf "<command>epstopdf</command>">
+<!ENTITY virmf "<command>virmf</command>">
+<!ENTITY virmp "<command>virmp</command>">
+<!ENTITY viromega "<command>viromega</command>">
+<!ENTITY virtex "<command>virtex</command>">
+<!ENTITY hellip "<symbol>&#8230;</symbol>">
+<!ENTITY nbsp "<symbol>&#160;</symbol>">
+<!ENTITY ndash "<symbol>&#8211;</symbol>">
+<!ENTITY Omega "<application>Omega</application>">
+<!ENTITY TeXnicCenter "<application>TeXnicCenter</application>">
+<!ENTITY TeXnFriends "&TeX;&nbsp;&amp;&nbsp;Friends">
+<!ENTITY InternetExplorer "<application>Internet Explorer</application>">
+<!ENTITY InternetExplorer40 "<application>Internet Explorer&nbsp;4.0</application>">

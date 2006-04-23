@@ -1,0 +1,20 @@
+<varlistentry>
+<term><option>-mem-max=<replaceable>n</replaceable></option></term>
+<listitem>
+<para>Set the internal compiler variable <varname>mem_max</varname> to
+<replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-mem-max=n</primary>
+</indexterm>
+<para><varname>mem_max</varname> is the greatest index in the
+internal memory array.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

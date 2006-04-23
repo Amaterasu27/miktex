@@ -1,0 +1,21 @@
+EXPORTS
+	pnm_writepnm
+	pnm_init
+	pnm_writepnmrow
+	pnm_writepnminit
+	pnm_readpnmrow
+	pnm_readpnminit
+	pnm_pbmmaxval DATA
+	pnm_promoteformatrow
+	pnm_whitexel
+	pnm_blackxel
+	pnm_backgroundxelrow
+	pnm_readpnm
+	pnm_invertxel
+	pr_dump
+	mem_create
+	pr_load_image
+	pr_load_colormap
+	pr_load_header
+	pnm_promoteformat
+	pnm_backgroundxel

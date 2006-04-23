@@ -1,0 +1,167 @@
+<?xml-stylesheet type="text/xsl" href="html.xsl" ?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
+<!ENTITY % entities.ent SYSTEM "entities.ent">
+%entities.ent;
+<!ENTITY rev "2.5.2253">
+<!ENTITY month "March 2006">
+<!ENTITY date "3 March 2006">
+]>
+
+<article>
+
+<articleinfo>
+
+<title>The &MiKTeX; Roadmap</title>
+<date>&date;</date>
+<edition>&rev;</edition>
+
+<author>
+<firstname>Christian</firstname>
+<surname>Schenk</surname>
+</author>
+
+<copyright>
+<year>2006</year>
+<holder>Christian Schenk</holder>
+</copyright>
+
+<date>&date;</date>
+
+<legalnotice>
+
+<para>Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.</para>
+
+<para>Permission is granted to copy and distribute modified versions
+of this manual under the conditions for verbatim copying, provided
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.</para>
+
+<para>Permission is granted to copy and distribute translations of
+this manual into another language, under the above conditions for
+modified versions, except that this permission notice may be stated in
+a translation approved by the Free Software Foundation.</para>
+
+</legalnotice>
+
+</articleinfo>
+
+<note>
+<para>All information in this article is subject to change.</para>
+</note>
+
+<tip>
+<para>If you're interested, you can monitor &MiKTeX; development
+by subscribing to this Weblog:
+<ulink url="http://dojo.miktex.org/blogs/christian_schenk/archive/category/1001.aspx">http://dojo.miktex.org/blogs/christian_schenk/archive/category/1001.aspx</ulink></para>
+</tip>
+
+<section>
+
+<title>&MiKTeX; 2.5</title>
+
+<para>Release date: 2006/H1</para>
+
+<bridgehead renderas="sect3">Highlights:</bridgehead>
+
+<highlights>
+<itemizedlist>
+<listitem><para>&Yap; enhancements</para></listitem>
+<listitem><para>Improved update wizard UI</para></listitem>
+<listitem><para>New: &MiKTeX; Help Utility</para></listitem>
+<listitem><para>epstopdf improvements</para></listitem>
+<listitem><para>Upgrade: dvips 5.95b</para></listitem>
+<listitem><para>Upgrade: pdfTeX 1.30.6</para></listitem>
+</itemizedlist>
+</highlights>
+
+<section>
+
+<title>&Yap; enhancements</title>
+
+<para>&Yap; will be stabilized and developed further. For example, &PostScript;
+specials will be fully supported.</para>
+
+</section>
+
+<section>
+
+<title>New update wizard UI</title>
+
+<para>The user interface will be improved to allow a faster (less
+mouse-clicks) run.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>&MiKTeX; 2.6</title>
+
+<para>Release date: 2006/H2</para>
+
+<bridgehead renderas="sect3">Highlights:</bridgehead>
+
+<highlights>
+<itemizedlist>
+<listitem><para>&MiKTeX; for 64-bit &Windows; operating systems</para></listitem>
+<listitem><para>&Yap; enhancements</para></listitem>
+</itemizedlist>
+</highlights>
+
+<section>
+
+<title>&MiKTeX; for 64-bit &Windows; operating systems</title>
+
+<para>&MiKTeX; binaries for 64-bit &Windows; operating systems will be made available.</para>
+
+</section>
+
+<section>
+
+<title>&Yap;</title>
+
+<para>&Yap; will be a viewer for &PostScript;/&PDF; documents.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>&MiKTeX; 3.0</title>
+
+<para>Release date: 2008</para>
+
+<bridgehead renderas="sect3">Highlights:</bridgehead>
+
+<highlights>
+<itemizedlist>
+<listitem><para>&MiKTeX; for &Unixlike; operating systems, Phase 2</para></listitem>
+</itemizedlist>
+</highlights>
+
+<section>
+
+<title>&MiKTeX; for &Unixlike; operating systems, Phase 2</title>
+
+<para>Most &MiKTeX; utilities will run on &Unixlike; operating systems.
+The &GUI; applications (&Yap;, update wizard, and so on)
+will be reimplemented to use the Qt toolkit.</para>
+
+</section>
+
+</section>
+
+</article>
+
+<!--
+Local Variables:
+mode:xml
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

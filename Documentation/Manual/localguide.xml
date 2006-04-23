@@ -1,0 +1,53 @@
+<chapter id="localguide">
+    
+<title>Using &MiKTeX;</title>
+
+<section id="gettingstarted">
+
+<title>Getting Started</title>
+
+<para>If you have never used &TeX; before: we recommend that,
+<indexterm>
+<primary>local guide</primary>
+</indexterm>
+first of all, you work through a &TeX;/&LaTeX; tutorial. A good
+starting point is this this entry in the UK &TeX; &FAQ;:
+<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials</ulink>.</para>
+
+<para>&MiKTeX; doesn't differ very much from
+any other &TeX; system you might have used before.
+Typesetting with &MiKTeX; involves these steps:</para>
+<procedure>
+<step><para>Edit the &LaTeX; source with your
+favourite text document editor.</para></step>
+<step><para>Compile the &LaTeX; source into a &DVI; file,
+i.e., say something like
+<userinput>latex MyMastersThesis</userinput>.</para></step>
+<step><para>Open the result by double-clicking the &DVI;
+file (e.g., <filename>MyMastersThesis.dvi</filename>) in
+Windows Explorer.</para></step>
+</procedure>
+
+<para>You usually use a &LaTeX; editor to carry out these
+steps. The most prominent ones are listed here:
+<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=editors">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=editors</ulink>.</para>
+
+</section>
+
+&texfeatures;
+
+&texifying;
+
+&printing;
+
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

@@ -1,0 +1,703 @@
+% This is the pdfTeX FAQ.
+% It should compile using
+% latex FAQNAME
+%    or
+% pdflatex FAQNAME
+%
+% It uses an index with a special index style file.
+% 1) Make a file faq.ist with the following lines in it:
+%      actual '=' % = instead of deafult @
+%      item_1 "\t"
+%      delim_1 "--"
+% 2) makeindex FAQNAME -s faq.ist
+%  (sorry had to do it to include the symbol ``@'' in the index)
+% rerun: latex FAQNAME
+%
+% You need url.sty from CTAN//tex-archive/macros/latex/contrib/other/misc
+% and while you are at it, you *really* should get all of hyperref.
+%
+% A PDF and DVI version of this FAQ are available at
+% http://www.tug.org/applications/pdftex/
+%
+\documentclass[11pt]{article}
+
+% are we using pdftex or normaltex
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse
+\else
+   \pdfoutput=1
+   \pdftrue
+\fi
+
+\usepackage{makeidx}
+\usepackage{url}
+\usepackage{times} % saves a lot of ouptut space in PDF.  Delete if
+                   % you cannot get PS fonts working on your system.
+\ifpdf
+  \usepackage[pdftex,colorlinks=true,urlcolor=blue,pdfstartview=FitH]{hyperref}
+  \pdfcompresslevel=9
+\fi
+
+\makeindex
+
+
+\begin{document}
+
+\newcommand{\maintainer}{Jody Klymak \url{mailto:jklymak@apl.washington.edu}}
+
+\newcommand{\question}[3]{\subsubsection{#2}\label{q:#1}}
+% \question{label}{question title}{YYYY/MM/DD(last modification)}
+\newcommand{\sectionf}[2]{\section{#2} \label{sec:#1}}
+\newcommand{\subsectionf}[2]{\subsection{#2} \label{sec:#1}}
+
+\newcommand{\contributor}[3]{\index{#1=#1
+    \protect\url{#2}!Q\thesubsubsection}
+%    {\scriptsize Contributed by: #1 \url{#2}\\}
+}
+% \contributor{Name}{email}{YYYY/MM/DD}
+
+\newcommand{\pathf}[1]{\url{#1}}
+
+% make the index environment better....
+\renewcommand{\indexname}{Contributors}
+\renewenvironment{theindex}{
+ \appendix
+ \section{\indexname}
+ \begin{itemize}
+}
+{\end{itemize}}
+
+\title{
+  The pdfTeX FAQ \\
+  Version 0.10}
+
+\author{
+  Maintained by: Jody M. Klymak\\
+  \url{mailto:jklymak@apl.washington.edu} }
+
+\date{\today}
+
+\maketitle
+
+\begin{abstract}{ This document is a preliminary version of pdfTeX's
+    frequently asked questions (FAQ) and answers. If you can
+    contribute to this document, please mail Jody Klymak
+    (\url{mailto:jklymak@apl.washington.edu}) or pdfTeX's mailing list
+    (\url{mailto:pdftex@tug.org}). Including the key \verb+FAQ+ in the
+    subject line of your contribution will help the FAQ maintainer
+    stay organized.  This document is in TeX syntax. The character set
+    is ISO-8859-2.  }
+\end{abstract}
+
+\copyright{This document is freely distributable.}
+
+\tableofcontents
+
+\sectionf{General}{ General }
+
+\subsectionf{TeX_and_PDF}{ TeX and PDF }
+
+\question{What_is_pdfTeX}{ What is pdfTeX?  }{1998/09/10}
+
+{
+\contributor{Pavel Jan\'{\i}k
+    jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+  pdfTeX is a variant of well known typesetting program of prof.
+  Donald E.  Knuth -- TeX.  Output of Knuth's TeX is a file in DVI
+  format. The difference between TeX and pdfTeX is that pdfTeX
+  directly generates PDF. You can also create PDF with Adobe's
+  Distiller program, using a DVI to PostScript program to create PS
+  from TeX's DVI file.
+
+  WARNING: pdfTeX is alpha software!  }
+
+
+\question{What_is_TeX}{ What is TeX?  }{1998/09/10}
+
+{ \contributor{Pavel Jan\'{\i}k
+jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10} From `TeX -- The
+Program' by Donald E. Knuth: ``This is TeX, a document compiler
+intended to produce typesetting of high quality''. TeX is a batch
+oriented typesetting system. When we talk about TeX we mean the
+macro programming language as well as the program that interprets
+and executed this language.  }
+
+
+\question{What_is_PDF} { What is PDF?  }{1998/09/10}
+
+{ \contributor{Pavel Jan\'{\i}k jr}
+  {mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+  This question is answered
+  in the Adobe Systems' document \emph{Portable Document Format
+    Reference Manual} available at
+  \url{http://www.adobe.com/supportservice/devrelations/PDFS/TN/PDFSPEC.PDF}
+  on page 27. It can not be reproduced here for strange copyright
+  reasons.
+
+  Think of PDF as PostScript without programming constructs. A PDF
+  file consists of graphical objects tight together in such a way that
+  fast viewing is possible and incremental updates become possible.  }
+
+
+\question{How_can_I_view_a_PDF_file}{ How can I view a PDF file?}{1998/09/10}
+
+{ \contributor{Steve Phipps}{mailto:slpp@ix.netcom.com}{1998/09/14}
+  \contributor{Michael Sanders}{mailto:sanders@umich.edu}{1998/09/17}
+
+  There are several .pdf readers available as freeware over the
+  internet.
+
+  Adobe's Acrobat Reader is available for many operating systems,
+  including Windows 95, NT, and 3.1, Macintosh, Linux, Sun, and OS/2.
+  Download the self-installing executabale from Adobe's website:
+  \url{http://www.adobe.com/prodindex/acrobat/}.
+
+  Ghostscipt is a .ps interpreter and Ghostview is its graphical
+  front-end.  Ghostscript is also available for many operating
+  systems, including UNIX and VMS, MS-DOS, MS-Windows, OS/2 and
+  Macintosh.  See the Ghostscript homepage at
+  \url{http://www.cs.wisc.edu/~ghost/} for details, documentation, and
+  downloads.
+
+  Another previewer is xpdf, a PDF viewer for X maintained by Derek B.
+  Noonburg (\url{mailto:derekn@aimnet.com}) with a home page at
+  \url{http://www.aimnet.com/~derekn/xpdf}. Xpdf runs under the X
+  Window System on UNIX, VMS, and OS/2 and is designed to be small and
+  efficient.  It does not use the Motif or Xt libraries and only uses
+  standard X fonts.
+
+  [FIXME: some words about Xpdf and other PDF vievers] }
+
+
+\subsectionf{Authors}{ Authors }
+
+
+\question{Who_is_the_author_of_pdfTeX}{Who is the author of pdfTeX?}{1998/09/10}
+
+{
+\contributor{Pavel Jan\'{\i}k jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+  The primary author of pdfTeX is Han The Thanh
+  (\url{mailto:thanh@fi.muni.cz}).  [FIXME: in pdftex.ch there is also
+  Petr Sojka and the current head (rector) of Masaryk's University -
+  prof. Ji\v{r}\'{\i} Zlatu\v{s}ka.]  }
+
+
+\sectionf{Information}{ Information }
+\subsectionf{Locations}{Locations}
+
+\question{Where_can_I_find_pdfTeX}{Where can I find pdfTeX?}{1998/09/10}
+
+{
+
+\contributor{Pavel Jan\'{\i}k jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+[FIXME: \url{ftp://ftp.cstug.cz/pub/tex/local/cstug/{janik,thanh}}
+  daily mirror on \url{ftp://ftp.inet.cz/pub/Mirrors/pdfTeX} }
+
+
+\question{What_is_the_latest_version}{ What is the latest version?  }{1998/09/10}
+
+{
+
+\contributor{Pavel Jan\'{\i}k
+jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+The latest version of pdfTeX is pdfTeX-0.12n. This is the latest
+  version of pdfTeX approved by Han The Thanh (for now). After this
+  version the primary author (Han The Thanh) left Czech Republic and
+  is away for about three or four months. When he comes back, he will
+  continue on the pdfTeX's development. In the meantime pdfTeX's
+  maintainer is Pavel Jan\'{\i}k ml (he is also student of Masaryk's
+  University). He releases bug-fixes to pdfTeX-0.12n as versions
+  pdfTeX-0.12o-?, where `?' is a small number. The latest bug-fix
+  release is pdfTeX-0.12o-6.  }
+
+
+\question{Where_can_I_find_some_docs_about_pdfTeX}{ Where can I find
+  some docs about pdfTeX?  }{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+
+A website for the pdfTeX project is maintained by Sebastian Rahtz
+  (\url{mailto:s.rahtz@elsevier.co.uk}), and can
+  be found at:\\
+  \url{http://www.tug.org/applications/pdftex/}\\
+  In it you will find:
+  \begin{itemize}
+    \item The pdfTeX manual in PDF format:\\
+    \url{http://www.tug.org/applications/pdftex/pdftexman.pdf}\\
+    and HTML format:\\
+    \url{http://www.tug.org/applications/pdftex/pdftexman.html}
+    \item The pdfTeX mailing list archives:\\
+    \url{http://tug.org/ListsArchives/pdftex/threads.html}
+    \item This FAQ in PDF format:\\
+    \url{http://www.tug.org/applications/pdftex/pdfTeX-FAQ.pdf}\\
+    and DVI format:
+    \url{http://www.tug.org/applications/pdftex/pdfTeX-FAQ.dvi}
+  \end{itemize}
+
+  [FIXME: The best documentation is in the source files...]  }
+
+\question{Is_there_a_pdfTeX_mailing_list}{ Is there a pdfTeX mailing
+  list?}{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+
+Yes, to subscribe send mail to \url{mailto:majordomo@tug.org}, and
+  put the line:
+\begin{verbatim}
+subscribe pdftex username@hostname
+\end{verbatim}
+  in the body of the message, where username@hostname is your complete
+  email address.  }
+
+
+\question{Where_can_I_find_an_archive_of_the_pdfTeX_mailing_list} {
+  Where can I find an archive of the pdfTeX mailing list?  }{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+
+An ftp site of the mailing list, arranged chronologicaly can be
+  found at: \url{ftp://ftp.tug.org/mail-archives/pdftex/} Daily mirror
+  is also at \url{ftp://ftp.inet.cz/pub/Mirrors/pdfTeX-MailArchive/} }
+
+\question{How_do_I_get_new_versions_of_this_FAQ}{ How do I get new
+  versions of this FAQ?  }{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+
+  The TeX version of this document is periodically posted to pdfTeX's
+  mailing list.
+
+  It is also uploaded to
+  \url{http://www.tug.org/applications/pdftex/pdfTeX-FAQ.pdf}
+  with its LaTeX source:
+  \url{http://www.tug.org/applications/pdftex/pdfTeX-FAQ.tex} }
+
+
+\question{How_do_I_contribute_to_this_FAQ}{ How do I contribute to
+  this FAQ?  }{1998/09/24}
+
+{
+\contributor{Jody Klymak}{mailto:jklymak@apl.washington.edu}{1998/09/24}
+
+Send email to the FAQ maintainer: \maintainer with the word
+\texttt{FAQ} in the subject line.  If possible FAQ entries should be
+formatted like this example:
+
+\begin{verbatim}
+
+\question{This_is_a_template_faq_question}{This is a template faq question}{1998/09/24}
+
+{
+
+\contributor{Pavel Jan\'{\i}k jr}
+{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+\contributor{Jody Klymak}
+{mailto:jklymak@apl.washington.edu}{1998/09/24}
+
+This is a sample FAQ question.  It can reference other
+questions, like Question \ref{q:what_is_TeX}, or sections
+(See Section \ref{sec:General}).  This FAQ can be found
+at \url{http://www.tug.org/applications/pdftex/pdfTeX-FAQ.pdf},
+and is maintained by Jody Klymak
+\url{mailto:jklymak@apl.washington.edu}
+
+}
+
+\end{verbatim}
+
+}
+
+
+\sectionf{Installation}{ Installation }
+
+% some subsections for various OSes here
+\subsectionf{General_Installation}{General Installation}
+
+\question{How_do_I_install_the_latest_version_of_pdfTeX}{ How do I
+  install the latest version of pdfTeX?  }{1998/09/10}
+
+{ \contributor{Pavel Jan\'{\i}k
+    jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+[FIXME: see script Install and comment it!, add some URLS of web-*,
+  web2c-*, ...]  }
+
+
+\question{How_do_I_use_pdflatex}{ How do I use pdflatex (how to
+  generate pdflatex.fmt)?  }{1998/09/10}
+
+{ }
+
+
+\question{Why_use_pdflatex}{ Why use pdflatex vs (??? i.e.
+  latex2html)?  }{1998/09/10}
+
+{ }
+
+
+\question{How_do_I_compress_my_PDF_files}{ How do I compress my PDF
+  files?  }{1998/09/10}
+
+{
+
+\contributor{Pavel Jan\'{\i}k jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+pdfTeX can compress its output, but by default pdfTeX does not
+  (depending on your configuration). You can manually specify
+  compression from 0 to 9 in the source file by the tag
+  \verb+\pdfcompresslevel+:
+\begin{verbatim}
+        \pdfcompresslevel9
+\end{verbatim}
+  or in the configuration file (pdftex.cfg):
+\begin{verbatim}
+         compress_level 9
+\end{verbatim}
+  0 means no compression and 9 is the most (and the slowest)
+  compression.  }
+
+
+\question{What_can_I_do_with_this_pdftex.cfg_file}{ What can I do with
+  this pdftex.cfg file?  }{1998/09/10}
+
+{ }
+
+
+\question{How_can_I_make_a_document_portable_to_both_latex_and_pdflatex}{How
+  can I make a document portable to both latex and
+  pdflatex}{1998/09/23}
+
+{
+\contributor{Christian Kumpf}{mailto:kumpf@igd.fhg.de}{1998/09/23}
+
+Check for the existence of the variable \verb+\pdfoutput+:
+
+\begin{verbatim}
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse              % we are not running PDFLaTeX
+\else
+   \pdfoutput=1           % we are running PDFLaTeX
+   \pdftrue
+\fi
+
+\end{verbatim}
+
+Then use your new variable \verb+\ifpdf+
+\begin{verbatim}
+\ifpdf
+  \usepackage[pdftex]{graphicx}
+  \pdfcompresslevel=9
+\else
+  \usepackage{graphicx}
+\fi
+\end{verbatim}
+}
+
+
+\sectionf{Fonts_in_pdfTeX}{ Fonts in pdfTeX }
+
+
+\subsectionf{Fonts_in_general}{ Fonts in general }
+
+\question{What_kind_of_fonts_can_I_use}{ What kind of fonts can I use?
+  }{1998/09/10}
+
+{ }
+
+
+\subsectionf{Type1_fonts}{ Type1 fonts }
+
+\question{How_do_I_use_Type1_fonts}{ How do I use Type1 fonts?  }{1998/09/10}
+
+{ }
+
+
+\question{How_do_I_generate_TFM_files_for_Type1_fonts}{ How do I
+  generate TFM files for Type1 fonts?  }{1998/09/10}
+
+{ }
+
+
+\subsectionf{TrueType_fonts}{ TrueType fonts }
+
+\question{How_do_I_use_TrueType_fonts}{ How do I use TrueType fonts?
+  }{1998/09/10}
+
+{ }
+
+
+\question{How_do_I_generate_TFM_files_for_TrueType_fonts}{ How do I
+  generate TFM files for TrueType fonts?  }{1998/09/10}
+
+{ }
+
+
+\subsectionf{pk_fonts}{ pk fonts }
+
+\question{How_do_I_use_pk_fonts}{ How do I use pk fonts?
+  }{1998/09/10}
+
+{ }
+
+
+\question{Why_does_Acrobat_Reader_display_pk_fonts_so_poorly}{ Why does
+  Acrobat Reader display pk fonts so poorly?  }{1998/09/10}
+
+{ }
+
+
+
+\sectionf{Graphics}{ Graphics }
+
+
+\subsectionf{Graphics_in_general}{ Graphics in general }
+
+\question{How_do_I_include_pictures_in_pdfLaTeX}{ How do I include
+  pictures in pdfLaTeX?  }{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+
+  Pictures come in two formats, vector or bitmapped.  When possible,
+  use vector formats when making a PDF document since they can support
+  an arbitrary ammount of magnification.  So far, pdfLaTeX supports
+  graphics inclusions in PDF, JPEG, PNG, and MetaPost formats [FIXME:
+  what others?  Also which are vector or not?]
+
+  As with LaTeX, the best package for image inclusion is
+  graphics/graphicx, available on CTAN.  In order to get the graphicx
+  package working with pdflatex you must get
+  \url{http://tug.org/applications/pdftex/pdftex.def} and put it in
+  your TeX tree (mine is at
+  \path+C:\TeX\share\texmf\tex\latex\graphics+).  Then some slight
+  modifications to your source file:
+\begin{verbatim}
+%% In the preamble add
+\usepackage[pdftex]{graphicx}
+
+%% OPTIONAL: In the main document, immediately after \begin{document}
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+
+%% To include a graphics file
+\includegraphics{filename_to_include}
+\end{verbatim}
+  The package will then search for the filename with the above
+  extensions if one isn't provided. With this package the image can
+  also be scaled or cropped.  This uses D. Carlisle's ``graphics''
+  package and is available on CTAN at
+  \path+/macros/latex/packages/graphics+.  Note that by not including
+  file-extensions in the \verb+\includegraphics+ command, you can
+  maintain PDF and DVI versions of your document, especially if you
+  include postscript figures (see question
+  \ref{q:How_do_I_include_EPS_pictures} and question
+  \ref{q:How_can_I_make_a_document_portable_to_both_latex_and_pdflatex})}
+
+
+\subsectionf{Vector_Formats}{ Vector Formats }
+
+\question{How_do_I_include_PDF_pictures}{ How do I include PDF
+  pictures?  }{1998/09/23}
+
+{ \contributor{Carl Zmola}{zmola@campbellsci.com}{1998/09/23}
+
+  In order to include PDF pictures you need pdfLaTeX 0.12n or later.  Make sure that the PDF figure is
+  properly cropped. See Question
+  \ref{q:How_do_I_convert_an_EPS_figure_to_PDF} for how to do this for
+  EPS files.  [FIXME: How do you get Distiller to do this?] Then
+  follow the steps outlined in Question
+  \ref{q:How_do_I_include_pictures_in_pdfLaTeX}.
+
+}
+
+\question{How_do_I_include_EPS_pictures}{ How do I include EPS
+  pictures?  }{1998/09/10}
+
+{ \contributor{Jody Klymak}{jklymak@apl.washington.edu}{1998/09/18}
+  You cannot directly do so.  You must convert encapsulated postscript
+  pictures to PDF first, explained in question
+  \ref{q:How_do_I_convert_an_EPS_figure_to_PDF}, and then include them
+  (see question \ref{q:How_do_I_include_PDF_pictures})}
+
+\question{How_do_I_convert_an_EPS_figure_to_PDF}{ How do I convert an
+  EPS figure to PDF?  }
+
+{ \contributor {Colin Marquardt} {mailto:colin.marquardt@gmx.de}{1998/09/10}
+
+  You can use epstopdf (a Perl script which uses Ghostscript for
+  conversion) at \url{http://tug.org/applications/pdftex/epstopdf} or
+  Distiller to do the work for you. [FIXME: add an example here]
+
+  To use epstopdf, you need Perl 5. Usage of epstopdf is easy:
+\begin{verbatim}
+         epstopdf.pl myfile.eps
+\end{verbatim}
+  converts your eps-graphic file myfile.eps to the file myfile.pdf.
+
+  Valid options for epstopdf (v2.1) are: [FIXME]
+
+  Change the line
+\begin{verbatim}
+         $GS="gs";
+\end{verbatim}
+
+
+  in this script to the name of your Ghostscript executable if it is
+  different, e.g.
+\begin{verbatim}
+         $GS="gswin32c";
+\end{verbatim}
+  on a Win32 system.
+
+  On some systems it is necessary to invoke Perl explicitly, e.g.
+  with
+\begin{verbatim}
+perl epstopdf.pl myfile.eps
+\end{verbatim}
+
+[FIXME: How do you use distiller??]
+  }
+
+
+\question{Why_doesnt_my_pdf_picture_show_up_when_I_include_it?}
+  { Why doesn't my pdf picture show up when I include it?  }{1998/09/25}
+
+{ \contributor{Carl Zmola}{zmola@acm.org}{1998/09/25}
+
+  You are using Distiler to convert your .eps file to pdf.  Distiller
+  does not always set the bounding box correctly. The bounding box of
+  an enbedable pdf document must be the page size, and if any part of
+  your figure extends beyond the bounding box, the figure will not
+  show up.  There are two solutions.
+
+  \begin{enumerate}
+    \item{ Get texutil.pl from
+        \url{http://www.ntg.nl/context/zipped/texutil.zip} and say
+        \begin{verbatim}
+            texutil --fig --epspage file.eps
+        \end{verbatim}
+        and the file is corrected for distiller. (This solution is
+        from Hans Hagen \url{mailto:pragma@wxs.nl}.)}
+    \item{Instead of running distiller, use
+        \url{http://www.tug.org/applications/pdftex/epstopdf} (see
+        question \ref{q:How_do_I_convert_an_EPS_figure_to_PDF})}
+  \end{enumerate}
+
+  Another tool that might be of some help is \textit{aimaker}.
+  \textit{Aimaker} ia a perl script that is designed to convert
+  generic .eps files into .aieps files that can be read by adobe
+  ilustrator.  \textit{Aimaker} calculates the bounding box for the
+  eps file. \textit{Aimaker} is available at
+  \url{ftp://ftp.aos.princeton.edu/pub/olszewsk/aimaker.shar}
+}
+
+\subsectionf{Bitmap_Formats}{ Bitmap Formats }
+
+\question{How_do_I_include_TIFF_pictures}{ How do I include TIFF
+  pictures?  }{1998/09/10}
+
+{ }
+
+
+\subsectionf{Other_Graphics}{ Other Graphics }
+
+\question{How_can_I_use_MetaPost_in_pdfTeX}{ How can I use MetaPost in
+  pdfTeX?  }{1998/09/10}
+
+{ }
+
+
+\sectionf{Miscellaneous}{ Miscellaneous }
+
+\subsectionf{Kpathsea}{Kpathsea} \question{What_is_this_kpathsea?}{
+  What is this kpathsea?  }{ }
+
+
+\subsectionf{Hyperref}{ Hyperref }
+
+\question{What_is_hyperref}{ What is hyperref?  }{1998/09/10}
+
+{ \contributor{Pavel Jan\'{\i}k jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+  The hyperref package is a way of adding hyper-references to a LaTeX
+  document.  For instance, a reference to a figure in the text can be
+  marked up with a hyper-link, allowing the user to jump to the figure
+  without scrolling through a lot of text.  [FIXME: but for now see
+  the hyperref package documentation hyperref.dvi or manual.pdf] }
+
+The \texttt{hyperref} package is available on CTAN (or a CTAN mirror)
+at
+\url{ftp://ftp.ctan.org/tex-archive/macros/latex/contrib/supported/hyperref}
+
+
+\question{How_can_I_use_it}{ How can I use it?  }{1998/09/10}
+
+{ [FIXME: but for now
+  see the hyperref package documentation hyperref.dvi or manual.pdf] }
+
+
+\question{My_pdftex.cfg_says_to_use_A4...}{ My pdftex.cfg says to use
+  A4 paper, but the document comes out in Letter format.  }{1998/09/10}
+
+{ \contributor{Colin Marquardt} {mailto:colin.marquardt@gmx.de}{1998/09/10}
+  You certainly use hyperref. This package sets the page dimensions
+  according to your settings in LaTeX. If you do not specify
+  ``a4paper'' in your options to \verb+\documentclass+, it assumes
+  Letter paper and overrides the entries in your \verb+pdftex.cfg+
+  file.  }
+
+\question{I_get_the_message...}{ I get the message: ``Warning (ext1):
+  destination with the same identifier already exists!''  }{1998/09/10}
+
+{\contributor{Colin Marquardt} {mailto:colin.marquardt@gmx.de}{1998/09/10}
+  You get this message if you use hyperref and have some page numbers
+  more than once, e.g. when re-starting page numbering with each
+  chapter or having an appendix.
+
+  Circumvent this with
+\begin{verbatim}
+         \usepackage[pdftex,plainpages=false]{hyperref}
+\end{verbatim}
+  or put
+\begin{verbatim}
+         plainpages=false
+\end{verbatim}
+  into your hyperref.cfg.  }
+
+\subsectionf{ConTeXt}{ ConTeXt }
+
+
+\question{What_is_ConTeXt}{ What is ConTeXt?  }{1998/09/10}
+
+{ \contributor{Pavel Jan\'{\i}k jr}{mailto:Pavel.Janik@inet.cz}{1998/09/10}
+
+  ConTeXt is a full featured macro package that has build in support
+  for pdfTeX. More information can be found at
+  \url{http://www.ntg.nl/context} (manuals, source code, examples).  }
+
+
+\question{How_can_I_use_ConTeXt}{ How can I use ConTeXt?  }{1998/09/10}
+
+{ }
+
+\printindex
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+

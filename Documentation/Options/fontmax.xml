@@ -1,0 +1,19 @@
+<varlistentry>
+<term><option>-font-max=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>font_max</varname> to
+<indexterm>
+<primary>-font-max=n</primary>
+</indexterm>
+<replaceable>n</replaceable>.</para>
+<para><varname>font_max</varname> is the maximum internal
+font number; must not exceed <literal>5000</literal>.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

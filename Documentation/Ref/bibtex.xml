@@ -1,0 +1,155 @@
+<section id="bibtex">
+
+<?dbhh topicname="MIKTEXHELP_BIBTEX" topicid="0"?>
+
+<title>&bibtex;</title>
+
+<simplesect>
+
+<title>Synopsis</title>
+
+<cmdsynopsis>
+<command>bibtex</command>
+<arg><option>-alias=<replaceable>app</replaceable></option></arg>
+<arg><option>-disable-installer</option></arg>
+<arg><option>-enable-installer</option></arg>
+<sbr/>
+<arg><option>-help</option></arg>
+<arg><option>-hhelp</option></arg>
+<sbr/>
+<arg><option>-include-directory=<replaceable>dir</replaceable></option></arg>
+<arg><option>-min-crossrefs=<replaceable>n</replaceable></option></arg>
+<arg><option>-quiet</option></arg>
+<sbr/>
+<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
+<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
+<arg><option>-version</option></arg>
+<arg choice="opt"><replaceable>auxname</replaceable></arg>
+</cmdsynopsis>
+
+</simplesect>
+
+<simplesect>
+
+<title>Description</title>
+
+<para>&bibtex; reads the top-level auxiliary
+(<filename>.aux</filename>) file that was output during the running of
+&latex; or &tex; and creates a
+bibliography (<filename>.bbl</filename>) file that will be
+<indexterm>
+<primary>.bbl (bibliography file)</primary>
+</indexterm>
+incorporated into the document on subsequent runs of &LaTeX; or &TeX;.
+<indexterm>
+<primary>bibliography</primary>
+<secondary>creation</secondary>
+</indexterm>
+The <replaceable>auxname</replaceable> on the command-line must be
+given without the <filename>.aux</filename> extension.  If you don't
+<indexterm>
+<primary>.aux (auxiliary file)</primary>
+</indexterm>
+give the <replaceable>auxname</replaceable>, the program prompts you
+for it.</para>
+
+<para>&bibtex; looks up, in bibliographic database
+<indexterm>
+<primary>.bib (bibliographic database)</primary>
+</indexterm>
+(<filename>.bib</filename>) files specified by the <markup
+role="tex">\bibliography</markup> command, the entries specified by
+the <markup role="tex">\cite</markup> and <markup
+role="tex">\nocite</markup> commands in the &LaTeX; or &TeX; source
+file.  It formats the information from those entries according to
+instructions in a bibliography style (<filename>.bst</filename>) file
+<indexterm>
+<primary>.bst (bibliography style file)</primary>
+</indexterm>
+(specified by the <markup role="tex">\bibliographystyle</markup>
+command, and it outputs the results to the <filename>.bbl</filename>
+<indexterm>
+<primary>.bbl</primary>
+</indexterm>
+file.</para>
+
+<para>The &LaTeX; reference manual explains what a &LaTeX; source file
+must contain to work with &bibtex;.  Appendix&nbsp;B of the manual
+describes the format of the <filename>.bib</filename> files. The
+<citetitle>&BibTeX;ing</citetitle> document describes extensions and
+details of this format, and it gives other useful hints for using
+&bibtex;.</para>
+
+</simplesect>
+
+<simplesect>
+
+<title>Options</title>
+
+<variablelist>
+&optionalias;
+&optiondisableinstaller;
+&optionenableinstaller;
+&optionhelp;
+&optionhhelp;
+&optionincludedirectory;
+<varlistentry>
+<term><option>-min-crossrefs=<replaceable>n</replaceable></option></term>
+<listitem><para>Defines the minimum number of
+<indexterm>
+<primary>-min-crossrefs=n</primary>
+</indexterm>
+<command>crossref</command>s required for automatic inclusion of the
+<indexterm>
+<primary>cross-references</primary>
+<secondary>minimum number required</secondary>
+</indexterm>
+crossref'd entry on the citation list; the default is two.</para></listitem>
+</varlistentry>
+&optionquiet;
+&optionrecordpackageusages;
+&optiontrace;
+&optionversion;
+</variablelist>
+
+</simplesect>
+
+<simplesect>
+
+<title>See Also</title>
+
+<para><xref linkend="texifying"/></para>
+
+</simplesect>
+
+<simplesect>
+
+<title>Documentation</title>
+
+<variablelist>
+<varlistentry>
+<term><citetitle>&BibTeX;ing</citetitle></term>
+<listitem><para>Run <userinput>texdoc btxdoc</userinput></para></listitem>
+</varlistentry>
+<varlistentry>
+<term><citetitle>Designing &BibTeX; Styles</citetitle></term>
+<listitem><para>Run <userinput>texdoc btxhak</userinput></para></listitem>
+</varlistentry>
+<varlistentry>
+<term><citetitle>&LaTeX;: A Document Preparation System</citetitle></term>
+<listitem><para><acronym>ISBN</acronym> 0-201-52983-1</para></listitem>
+</varlistentry>
+</variablelist>
+
+</simplesect>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

@@ -1,0 +1,185 @@
+/* StdAfx.h:							-*- C++ -*-
+
+   Copyright (C) 1996-2006 Christian Schenk
+
+   This file is part of the MiKTeX Core Library.
+
+   The MiKTeX Core Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   The MiKTeX Core Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with the MiKTeX Core Library; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+#if defined(_MSC_VER)
+#  pragma once
+#endif
+
+#define EAD86981C92C904D808A5E6CEC64B90E
+#include <miktex/first.h>
+
+#if defined(HAVE_CONFIG_H)
+#  include "config.h"
+#endif
+
+#if defined(_MSC_VER)
+// C4786: identifier was truncated to 'number' characters in the debug
+// information
+#  pragma warning (disable: 4786)
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#  include <windows.h>
+#  include <aclapi.h>
+#  include <htmlhelp.h>
+#  include <shlwapi.h>
+#  include <shlobj.h>
+#endif
+
+#if defined(_MSC_VER)
+#  include <conio.h>
+#  include <direct.h>
+#  include <io.h>
+#  include <malloc.h>
+#  include <process.h>
+#  include <setjmpex.h>
+#  include <share.h>
+#endif
+
+#include <fcntl.h>
+
+#if defined(_MSC_VER) || defined(HAVE_SYS_STAT_H)
+#  include <sys/stat.h>
+#endif
+
+#if defined(HAVE_UNISTD_H)
+#  include <unistd.h>
+#endif
+
+#if defined(HAVE_SYS_UTIME_H)
+#  include <sys/utime.h>
+#endif
+
+#if defined(HAVE_UTIME_H)
+#  include <utime.h>
+#endif
+
+#if defined(HAVE_SYS_UTSNAME_H)
+#  include <sys/utsname.h>
+#endif
+
+#if defined(HAVE_SYS_STATVFS_H)
+#  include <sys/statvfs.h>
+#endif
+
+#if defined(HAVE_INTTYPES_H)
+#  include <inttypes.h>
+#endif
+
+#if defined(HAVE_DIRENT_H)
+#  include <dirent.h>
+#endif
+
+#if defined(HAVE_PTHREAD)
+#  include <pthread.h>
+#endif
+
+#if defined(HAVE_SYS_MMAN_H)
+#  include <sys/mman.h>
+#endif
+
+#if defined(HAVE_SYS_WAIT_H)
+#  include <sys/wait.h>
+#endif
+
+#if defined(_MSC_VER)
+#  pragma warning (push, 1)
+#  pragma warning (disable: 4702)
+#  pragma warning (disable: 4267)
+#endif
+
+#include <iostream>
+
+#if defined(_MSC_VER)
+#  include <hash_map>
+using stdext::hash_map;
+#  define USE_HASH_MAP
+#  include <hash_set>
+using stdext::hash_set;
+#  define USE_HASH_SET
+#endif
+
+// <todo>
+#if 0
+#if HAVE_STD_EXT_HASH_SET
+#  include <ext/hash_set>
+using std::hash_set;
+#  define USE_HASH_SET
+#elif HAVE_GNU_EXT_HASH_SET
+#  include <ext/hash_set>
+using __gnu_cxx::hash_set;
+#  define USE_HASH_SET
+#elif HAVE_GLOBAL_HASH_SET
+#  include <hash_set>
+#  define USE_HASH_SET
+#endif
+
+#if HAVE_STD_EXT_HASH_MAP
+#  include <ext/hash_map>
+using std::hash_map;
+#  define USE_HASH_MAP
+#elif HAVE_GNU_EXT_HASH_MAP
+#  include <ext/hash_map>
+using __gnu_cxx::hash_map;
+#  define USE_HASH_MAP
+#elif HAVE_GLOBAL_HASH_MAP
+#  include <hash_map>
+#  define USE_HASH_MAP
+#endif
+#endif
+// </todo>
+
+#include <algorithm>
+#include <bitset>
+#include <deque>
+#include <functional>
+#include <locale>
+#include <map>
+#include <set>
+#include <stack>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#if defined(_MSC_VER)
+#  pragma warning (pop)
+#endif
+
+using namespace std;
+
+#include <cassert>
+#include <climits>
+#include <cmath>
+#include <csignal>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+
+#include <errno.h>
+
+#include "miktex/md5.h"
+
+#if defined(MIKTEX_DLL)
+#  include "bzlib.h"
+#  include "zlib.h"
+#endif

@@ -1,0 +1,259 @@
+% This is `mltrip.tex' for MLTeX v2.2 (as of December 17, 1995).
+%
+% A test file to check for correct MLTeX implementations similar to
+% `trip.tex', Knuth's torture test for TeX.
+%
+% Copyright (C) 1997 by B. Raichle; all rights are reserved.
+%
+% MLTeX is copyright (C) 1990-92 by Michael J. Ferguson; all rights are reserved.
+% MLTeX Version 2.2 is copyright (C) 1995 by B. Raichle; all rights are reserved.
+% The TeX program is copyright (C) 1982 by D. E. Knuth.
+% TeX is a trademark of the American Mathematical Society.
+%
+%
+% Usage:
+%
+%  1. Run iniTeX with the MLTeX extensions on this file.
+%     Do not try to use plain-TeX or LaTeX.
+%  2. Compare the produced log file with the one provided.
+%  3. Take a look at the dvi file and compare it with the
+%     description at the end of the log file.
+%  4. (optional) Use dvitype to convert the dvi file to the
+%     ASCII representation of its contents using these options:
+%        Output level = 2
+%        Starting page = *          (default)
+%        Number of pages = 1000000  (default)
+%        Resolution = 7227/100
+%        New magnification = 0      (default)
+%     Compare the output with the provided file `mltrip.typ'.
+%
+%
+% Needs:
+%
+%  - MLTeX v2.2
+%  - font metric file  cmr10.tfm
+%  - dvitype (if you want to compare the dvi files)
+%
+%
+% Changes:
+%
+%  97/01/06 v1.0a
+%           - initial version
+%  97/01/08 v1.0b
+%           - added error count + \inputlineno test, fixed log output
+%  97/01/14 v1.0c
+%           - added tests for math character substitution
+%
+\catcode`\{=1 \catcode`\}=2 \catcode`\$=3 \catcode`\#=6 \catcode`\^=7
+\endlinechar=`\^^M\newlinechar=`\^^J \def\space{ } \nonstopmode
+%
+\def\typeout#1{\immediate\write16{#1}}
+\countdef\errorcount=254 \errorcount=0
+\def\error#1{\advance\errorcount 1%
+  \typeout{^^J^^J\space\space\space ERROR: #1^^J^^J}}
+%
+\typeout{^^J"Trip" test for MLTeX implementations (1997/01/14 v1.0c [br])^^J}
+%
+% check for plain-TeX:
+% we have to ensure that _no_ fonts are preloaded
+\expandafter\ifx\csname active\endcsname\relax \else
+  \typeout{Please (Ini)TeX this file, no plain-TeX, no LaTeX!^^J}
+  \expandafter
+  \endinput\csname @@end\expandafter\endcsname\expandafter\end\fi\relax
+% check for MLTeX
+\expandafter\ifx\csname charsubdef\endcsname\relax
+  \typeout{This test file can only be used with MLTeX!^^J}
+  \expandafter\endinput\expandafter\end\fi\relax
+% check for MLTeX v2.2
+% (former MLTeX versions have initialized \charsubdefmax with 0)
+\ifnum\charsubdefmax<0 \else
+  \typeout{...ouch, an old MLTeX version!^^J%
+           This test file can only be used with MLTeX v2.2 or newer!^^J}
+  \expandafter\endinput\expandafter\end\fi\relax
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\typeout{Test font load bug (in MLTeX < v2.2):}
+% define substitution of an existing char with a non-existing base char
+\charsubdef `\A=`\a 128
+% load font (which should be preloaded before!)
+\font\test=cmr10 \relax \test
+  \textfont0=\test \textfont1=\test
+\font\smalltest=cmr10 \relax % our symbols font
+\fontdimen22\smalltest=7pt
+  \textfont2=\smalltest \scriptfont2=\smalltest
+  \scriptscriptfont2=\smalltest
+\font\bigtest=cmr10 \relax % our extension font
+  \textfont3=\bigtest \scriptfont3=\bigtest
+  \scriptscriptfont3=\bigtest
+\thinmuskip=18mu plus 18mu
+\medmuskip=36mu plus 9mu minus 18mu
+\thickmuskip=54mu minus 18mu \relax
+%
+\hsize=2in \parindent=.5pt \parfillskip=0pt plus1fil\relax
+\baselineskip=12pt \topskip=10pt \relax
+\tracingonline=1\showboxbreadth=255\showboxdepth=255
+\tracinglostchars=1
+%%%\tracingcharsubdef=1
+\message{done.}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\typeout{Test assignments to \string\charsubdefmax:}
+\charsubdefmax=-1  % reset because of \charsubdef`\A ...
+\begingroup
+  %%%\tracingrestores=10
+  \count0=\charsubdefmax
+  \begingroup \charsubdef 224 =  `\` `a
+    \ifnum\charsubdefmax=224 \else
+      \error{\string\charsubdefmax\space set incorrectly (1)!}\fi
+  \endgroup
+  \ifnum\count0=\charsubdefmax \else
+    \error{\string\charsubdefmax\space reset incorrectly (1)!}\fi
+  % Test of a bug in MLTeX v2.2!
+  \begingroup \charsubdef 228 = `\" `a \global\charsubdef 224 = `\` `a
+    \ifnum\charsubdefmax=228\else
+      \error{\string\charsubdefmax\space set incorrectly (2)!}\fi
+  \endgroup
+  \ifnum\charsubdefmax=-1 \else % BUG: 224 was expected, not -1!
+    \error{\string\charsubdefmax\space reset incorrectly (2)!}\fi
+  % ...instead we use a simpler test:
+  \begingroup \charsubdef 226 =  `\^ `a \charsubdef 224 =  `\` `a
+    \ifnum\charsubdefmax=226 \else
+      \error{\string\charsubdefmax\space set incorrectly (3)!}\fi
+    \global\charsubdef 228 = `\" `a
+  \endgroup
+  \ifnum\charsubdefmax=228 \else
+    \error{\string\charsubdefmax\space reset incorrectly (3)!}\fi
+  % reset former value of \charsubdef and \charsubdefmax
+  \global\charsubdef 224=0 0
+  \global\charsubdef 228=0 0
+  \global\charsubdefmax=\count0
+\endgroup
+\message{done.}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\typeout{Test char substitution, box packing and repacking:}
+\charsubdef 224 =  18 `a  % "E0 \`a
+\charsubdef 225 =  19 `a  % "E1 \'a
+\charsubdef 226 =  94 `a  % "E2 \^a
+\charsubdef 228 = 127 `a  % "E4 \"a
+% define some substitutions whose characters doesn't exist in cmr10:
+\charsubdef 192 = 200 `a
+\charsubdef 193 = `a 129
+\charsubdef 194 = 128 129
+%
+\setbox2=\hbox{\char`a}\setbox4=\hbox{\char0}
+\message{<2 missing char warnings:}
+\setbox0=\hbox{\char224\char192\char193\char194}
+\message{>,}
+\ifdim\wd0=2\wd2 \else
+  \error{box width dimension set incorrectly (1)!}\fi
+%
+\setbox0=\hbox{\char224}
+\ifdim\wd0=\wd2 \else
+  \error{box width dimension set incorrectly (2)!}\fi
+% re-access character dimensions while substitution is disabled
+% (=> warning message, width of \char224 is first char in font, i.e. \char0)
+\message{<1 missing substitution warning:}
+{\charsubdefmax=0 \global\setbox0=\hbox{\unhbox0}}
+\message{>,}
+\ifdim\wd0=\wd4 \else
+  \error{box width dimension set incorrectly (3)!}\fi
+% re-box it again (=> no warning message!)
+\setbox0=\hbox{\unhbox0}
+\ifdim\wd0=\wd2 \else
+  \error{box width dimension set incorrectly (4)!}\fi
+%
+\message{<2 missing substitution warnings:}
+\setbox0=\vbox{\char224 \charsubdefmax=0\par}
+\message{>,}
+\message{done.}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%\typeout{Test math character substitutions:}
+%%\setbox0=\hbox{$\mathchar"2E0 % |fetch|
+%% \mathaccent"70E1 a % |fetch| + |make_math_accent|
+%% \mathaccent"7013 \mathchar"2E2 % |fetch|
+%% \mathop{\mathchar"0E4}{}% |fetch|
+%% \delimiter"43E03E1 % |var_delimiter|
+%% $}\showbox0
+%%\message{done.}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\typeout{Test dvi output with substitutions:}
+% define correct substitutions
+\charsubdef 192 =  18 `a  % \`a
+\charsubdef 193 =  19 `a  % \'a
+\charsubdef 194 =  94 `a  % \^a
+\charsubdef 196 = 127 `a  % \"a
+\charsubdef 199 =  24 `c  % \c{c}
+% define correct substitutions
+\charsubdef 204 =  18 16  % \`\i
+\charsubdef 205 =  19 16  % \'\i
+\charsubdef 206 =  94 16  % \^\i
+\charsubdef 208 = 127 16  % \"\i
+\charsubdef 207 =  24 `i  % \c{i}
+% define substitutions with non-existing characters
+\charsubdef 210 = 128 `a  % \`a
+\charsubdef 211 = 128 `a  % \'a
+\charsubdef 212 = 128 `a  % \^a
+\charsubdef 214 = 128 `a  % \"a
+\charsubdef 213 = 128 `c  % \c{c}
+% define correct substitutions
+\charsubdef 224 =  18 `a  % \`a
+\charsubdef 225 =  19 `a  % \'a
+\charsubdef 226 =  94 `a  % \^a
+\charsubdef 228 = 127 `a  % \"a
+\charsubdef 227 =  24 `c  % \c{c}
+%
+\setbox0=\vbox{%
+  \def\row#1 #2 #3 #4 {--\char#1--\hbox{\char#2}--\char#3--\char#4--\par}%
+  a-grave:      \row 192 204 210 224 %
+  a-acute:      \row 193 205 211 225 %
+  a-circonflex: \row 194 206 212 226 %
+  a-umlaut:     \row 196 208 214 228 %
+  c-cedille:    \row 199 207 213 227 %
+}
+%
+% redefine the correct substitutions 
+\charsubdef 204 =  18 `a  % \`a   <= \`\i
+\charsubdef 205 =  19 `a  % \'a   <= \'\i
+\charsubdef 206 =  94 `a  % \^a   <= \^\i
+\charsubdef 208 = 127 `a  % \"a   <= \"\i
+\charsubdef 207 =  24 `c  % \c{c} <= \c\i
+%
+\begingroup
+  \message{<Alternating 5 incomplete subst. + 5 missing subst. warnings:}
+  \charsubdefmax=223
+  \shipout\box0
+  \message{>,}
+\endgroup
+\message{done.}
+%
+\def\row#1#2#3{\space\space #1: -- \string#2#3 -- \string#2#3-- -- --}
+\typeout{^^J^^JTo complete the test:^^J=====================^^J^^J%
+1. Compare the log file with the one provided.^^J%
+2. Compare the dvi output:^^J%
+The dvi file should contain 5 lines of text, each line beginning^^J%
+with an ASCII description of the accented character, a colon^^J%
+followed by five en-dashes and two accented characters:^^J%
+  \row{a-grave}{\`}{a}^^J%
+  \row{a-acute}{\'}{a}^^J%
+  \row{a-circonflex}{\^}{a}^^J%
+  \row{a-umlaut}{\"}{a}^^J%
+  \row{c-cedille}{\c}{{c}}^^J%
+The spacing between the first accented character and the first^^J%
+two en-dashes has to be correct, whereas the en-dash after the^^J%
+second accented character has to touch the character!  Otherwise^^J%
+your MLTeX implementation is incorrect.^^J}
+%
+% Test for correct number of lines:
+\ifnum 255=\inputlineno \else
+  \error{`mltrip.tex' corrupted! (l.\the\inputlineno)}\fi
+\ifnum\errorcount>0 \error{There was atleast one error!}\fi
+\end\relax \typeout{Can't happen in MLTeX "trip" test!}
+%% End of file `mltrip.tex'.

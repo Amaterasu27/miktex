@@ -1,0 +1,129 @@
+<section id="mtprint">
+
+<?dbhh topicname="MIKTEXHELP_MTPRINT" topicid="0"?>
+
+<title>&mtprint;</title>
+
+<simplesect>
+
+<title>Synopsis</title>
+
+<cmdsynopsis>
+&mtprint;
+<arg><option>--even-only</option></arg>
+<arg><option>--help</option></arg>
+<arg><option>--help</option></arg>
+<sbr/>
+<arg><option>--landscape</option></arg>
+<arg><option>--odd-only</option></arg>
+<sbr/>
+<arg><option>--page-range=<replaceable>range</replaceable></option></arg>
+<arg><option>--print-method=<replaceable>method</replaceable></option></arg>
+<sbr/>
+<arg><option>--print-nothing</option></arg>
+<arg><option>--printer=<replaceable>printer</replaceable></option></arg>
+<sbr/>
+<arg><option>--usage</option></arg>
+<arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
+</cmdsynopsis>
+
+</simplesect>
+
+<simplesect>
+
+<title>Description</title>
+
+<para>&mtprint; sends &TeX; output files to a printing device.</para>
+
+</simplesect>
+
+<simplesect>
+
+<title>Options</title>
+
+<variablelist>
+<varlistentry>
+<term><option>--even-only</option></term>
+<listitem><para>Prints only even &TeX;
+<indexterm>
+<primary>--even-only</primary>
+</indexterm>
+pages.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--landscape</option></term>
+<listitem><para>Selects landscape output
+<indexterm>
+<primary>--landscape</primary>
+</indexterm>
+format.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--odd-only</option></term>
+<listitem><para>Prints only
+<indexterm>
+<primary>--odd-only</primary>
+</indexterm>
+odd &TeX; pages.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--page-range=<replaceable>range</replaceable></option></term>
+<listitem><para>Selects a &TeX; page range
+<indexterm>
+<primary>--page-range=range</primary>
+</indexterm>
+(e.g., 20&ndash;21). Multiple
+<option>--page-range</option> options accumulate</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>--print-method=<replaceable>method</replaceable></term>
+<listitem><para>Selects a print method.
+<indexterm>
+<primary>--print-method=method</primary>
+</indexterm>
+One of</para>
+<variablelist>
+<varlistentry>
+<term><option>psbmp</option></term>
+<listitem><para>This method uses &Dvips; and &Ghostscript; to
+produce the print output.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps</option></term>
+<listitem><para>This method uses &Dvips; to produce an intermediate
+&PostScript; file which will be sent to the printer. This only works
+for &PostScript; printers.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--print-nothing</option></term>
+<listitem><para>Simulates
+<indexterm>
+<primary>--print-nothing</primary>
+</indexterm>
+printing.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>--printer=<replaceable>printer</replaceable></term>
+<listitem><para>Selects a printing device. The default printer
+<indexterm>
+<primary>--printer=printer</primary>
+</indexterm>
+is used, if this option is omitted.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</simplesect>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

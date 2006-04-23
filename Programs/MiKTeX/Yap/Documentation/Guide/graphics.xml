@@ -1,0 +1,222 @@
+<chapter id="graphics">
+
+<title>Graphics Inclusions</title>
+
+<para> &Yap; supports the following graphics formats:</para>
+
+<variablelist>
+<varlistentry>
+<term><acronym>EMF</acronym></term>
+<listitem><para>Enhanced Metafiles (<filename>*.emf</filename>).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><acronym>WMF</acronym></term>
+<listitem><para><application>Windows</application>
+Metafiles (<filename>*.wmf</filename>).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><acronym>BMP</acronym></term>
+<listitem><para>Device-independant Bitmap (<filename>*.bmp</filename>).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><acronym>EPS</acronym></term>
+<listitem><para>Encapsulated <application>PostScript</application>
+(<filename>*.eps</filename>).</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><acronym>GIF</acronym></term>
+<term><acronym>PNG</acronym></term>
+<term><acronym>TIFF</acronym></term>
+<term>&hellip;</term>
+<listitem><para>All graphics formats that are supported by the
+<application>netpbm</application> graphics suite.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<section>
+
+<title><application>Windows</application> Metafiles</title>
+
+<para>&Yap; has built-in support for
+<application>Windows</application> Metafiles (<acronym>WMF</acronym>)
+and Enhanced Metafiles (<acronym>EMF</acronym>).</para>
+
+<section>
+
+<title>Example</title>
+
+<para>You can use the <varname>graphicx</varname> package to include
+<acronym>WMF</acronym>/<acronym>EMF</acronym> files.  For example, the
+following <application>LaTeX</application> code will include the
+<acronym>WMF</acronym> file <filename>drawing.wmf</filename>:</para>
+
+<informalexample>
+<screen>\usepackage{graphicx}
+\DeclareGraphicsRule{.wmf}{bmp}{}{}% declare WMF filename extension
+\begin{document}
+\includegraphics[width=2in,height=1in]{drawing.wmf}
+\end{document}</screen></informalexample>
+</section>
+
+</section>
+
+<section>
+
+<title>Windows Bitmap (<acronym>BMP</acronym>) Files</title>
+
+<para>&Yap; has built-in support for
+<application>Windows</application> Bitmap Files.</para>
+
+<section>
+
+<title>Example</title>
+
+<para>You can use the <varname>graphicx</varname> package to include
+<acronym>BMP</acronym> files.  For example, the following
+<application>LaTeX</application> code will include the
+<acronym>BMP</acronym> file <filename>picture.bmp</filename>:</para>
+
+<informalexample>
+<screen>\usepackage{graphicx}
+\begin{document}
+\includegraphics[width=2in,height=1in]{picture.bmp}
+\end{document}</screen>
+</informalexample>
+
+</section>
+
+</section>
+
+<section>
+
+<title>Encapsulated <application>PostScript</application></title>
+
+<para>&Yap; displays <acronym>EPS</acronym> figures with the help of
+<application>Ghostscript</application>.</para>
+
+<section>
+
+<title>Example</title>
+
+<para>You can use the <varname>graphicx</varname> package to include
+<acronym>EPS</acronym> files.  For example, the following
+<application>LaTeX</application> code will include the
+<acronym>EPS</acronym> file <filename>drawing.eps</filename>:</para>
+
+<informalexample>
+<screen>\usepackage{graphicx}
+\begin{document}
+\includegraphics{drawing.eps}
+\end{document}</screen>
+</informalexample>
+
+</section>
+
+</section>
+
+<section>
+
+<title>Other Graphics Formats</title>
+
+<para>&Yap; can convert almost any graphics file into an equivalent
+Windows Bitmap (<acronym>BMP</acronym>) file, provided that a suitable
+filter program is available. The <acronym>BMP</acronym> file will then
+be displayed instead of the original file.</para>
+
+<para>Many filters are included in the
+<application>netpbm</application> graphics suite, which can be
+downloaded from the <application>MiKTeX</application> download
+page.</para>
+
+<section>
+
+<title>Example</title>
+
+<para>You can use the <varname>graphicx</varname> package to include
+graphics files.  For example, the following
+<application>LaTeX</application> code will include the
+<acronym>GIF</acronym> file <filename>picture.gif</filename>:</para>
+
+<informalexample>
+<screen>\usepackage{graphicx}
+\DeclareGraphicsRule{.gif}{bmp}{}{}% declare GIF filename extension
+\begin{document}
+\includegraphics[width=2in,height=1in]{picture.gif}
+\end{document}</screen>
+</informalexample>
+
+</section>
+
+<section>
+
+<title>Specifying Filters</title>
+
+<para>New filters have to be specified in the
+<computeroutput>[Graphics]</computeroutput> section of the
+<application>MiKTeX</application> configuration file
+(<filename>miktex.ini</filename>).  A filter specification has the
+syntax
+<computeroutput>.<replaceable>xxx</replaceable>.bmp=<replaceable>command</replaceable></computeroutput>,
+where</para>
+
+<itemizedlist>
+<listitem><para><filename>.<replaceable>xxx</replaceable></filename> is
+the original file name extension</para></listitem>
+<listitem><para><replaceable>command</replaceable> is the command-line,
+which converts an <acronym>XXX</acronym> file into a <acronym>BMP</acronym> file.</para></listitem>
+</itemizedlist>
+
+<para>The command-line must contain the following place-holders:</para>
+
+<variablelist>
+<varlistentry>
+<term><option>%i</option></term>
+<listitem><para>The name of the input file which has to be converted.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>%o</option></term>
+<listitem><para>The name of the output (<acronym>BMP</acronym>) file.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<section>
+
+<title>Example</title>
+
+<para>The following specification defines a <acronym>GIF</acronym>
+filter:</para>
+
+<informalexample>
+<screen>[Graphics]
+.gif.bmp=giftopnm %i | ppmtobmp -windows > %o</screen>
+</informalexample>
+
+<para>This filter works as follows:</para>
+
+<orderedlist>
+<listitem><para><command>giftopnm</command> is used to convert the
+<filename>.gif</filename> file into a portable bitmap,
+which is written to a pipe (<filename>|</filename>).</para></listitem>
+<listitem><para><command>ppmtobmp</command> is used to convert the
+portable bitmap, which is read from the pipe, into the
+final <acronym>BMP</acronym> file.</para>
+</listitem>
+</orderedlist>
+
+</section>
+
+</section>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("yap.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

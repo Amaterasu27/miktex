@@ -1,0 +1,262 @@
+/* mpm.cpp:
+
+   Copyright (C) 2002-2006 Christian Schenk
+
+   This file is part of MiKTeX Package Manager.
+
+   MiKTeX Package Manager is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   MiKTeX Package Manager is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with MiKTeX Package Manager; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+#include "stdafx.h"
+#include "mpm.h"
+
+#include "MainFrame.h"
+#include "MpmDoc.h"
+#include "MpmView.h"
+#include "mpm-version.h"
+
+/* _________________________________________________________________________
+
+   Application Message Map
+   _________________________________________________________________________ */
+
+BEGIN_MESSAGE_MAP(PackageManagerApplication, CWinApp)
+  ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+  ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+  ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+  ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+END_MESSAGE_MAP();
+
+/* _________________________________________________________________________
+
+   PackageManagerApplication::PackageManagerApplication
+   _________________________________________________________________________ */
+
+PackageManagerApplication::PackageManagerApplication ()
+{
+  EnableHtmlHelp ();
+}
+
+/* _________________________________________________________________________
+
+   The one and only PackageManagerApplication object.
+   _________________________________________________________________________ */
+
+PackageManagerApplication theApp;
+
+/* _________________________________________________________________________
+
+   PackageManagerApplication::InitInstance
+   _________________________________________________________________________ */
+
+BOOL
+PackageManagerApplication::InitInstance ()
+{
+  CoInitialize (0);
+
+  InitCommonControls ();
+
+  if (! CWinApp::InitInstance())
+    {
+      CoUninitialize ();
+      return (FALSE);
+    }
+
+  try
+    {
+      pSession.CreateSession (Session::InitInfo(T_("mpm")));
+      TraceStream::SetTraceFlags ("error,mpm,config");
+      
+      SetRegistryKey (T_("MiK\\MiKTeX\\CurrentVersion"));
+      
+      LoadStdProfileSettings (0);
+      
+      CSingleDocTemplate * pDocTemplate =
+	new CSingleDocTemplate(IDR_MAINFRAME,
+			       RUNTIME_CLASS(MpmDoc),
+			       RUNTIME_CLASS(MainFrame),
+			       RUNTIME_CLASS(MpmView));
+      
+      AddDocTemplate(pDocTemplate);
+      
+      CCommandLineInfo cmdInfo;
+      ParseCommandLine(cmdInfo);
+      
+      if (! ProcessShellCommand(cmdInfo))
+	{
+	  pSession.Reset ();
+	  CoUninitialize ();
+	  return (FALSE);
+	}
+      
+      m_pMainWnd->ShowWindow (SW_SHOW);
+      m_pMainWnd->UpdateWindow ();
+
+      return (TRUE);
+    }
+
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (0, e);
+      pSession.Reset ();
+      CoUninitialize ();
+      return (FALSE);
+    }
+
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (0, e);
+      pSession.Reset ();
+      CoUninitialize ();
+      return (FALSE);
+    }
+}
+
+/* _________________________________________________________________________
+
+   AboutDialog
+   _________________________________________________________________________ */
+
+class AboutDialog : public CDialog
+{
+private:
+  enum { IDD = IDD_ABOUTBOX };
+
+protected:
+  DECLARE_MESSAGE_MAP();
+
+public:
+  AboutDialog ();
+
+protected:
+  virtual
+  void
+  DoDataExchange (/*[in]*/ CDataExchange * pDX);
+
+protected:
+  afx_msg
+  void
+  OnClickRegisterMiKTeXUser ();
+};
+
+/* _________________________________________________________________________
+
+   AboutDialog Message Map
+   _________________________________________________________________________ */
+
+BEGIN_MESSAGE_MAP(AboutDialog, CDialog)
+  ON_BN_CLICKED(ID_REGISTER_MIKTEX, &AboutDialog::OnClickRegisterMiKTeXUser)
+END_MESSAGE_MAP();
+
+/* _________________________________________________________________________
+
+   AboutDialog::AboutDialog
+   _________________________________________________________________________ */
+
+AboutDialog::AboutDialog ()
+  : CDialog (IDD)
+{
+}
+
+/* _________________________________________________________________________
+
+   AboutDialog::DoDataExchange
+   _________________________________________________________________________ */
+
+void
+AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
+{
+  try
+    {
+      CDialog::DoDataExchange (pDX);
+      if (! pDX->m_bSaveAndValidate)
+	{
+	  CString str;
+	  str.Format (T_("MiKTeX Package Manager (windowed mode) version %s"),
+		      VER_FILEVERSION_STR);
+	  str += T_("\r\n");
+	  str += MIKTEX_LEGALCOPYRIGHT_STR;
+	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);
+	  if (pWnd == 0)
+	    {
+	      UNEXPECTED_CONDITION (T_("AboutDialog::DoDataExchange"));
+	    }
+	  pWnd->SetWindowText (str);
+	}
+    }
+
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   AboutDialog::OnClickRegisterMiKTeXUser
+   _________________________________________________________________________ */
+
+void
+AboutDialog::OnClickRegisterMiKTeXUser ()
+{
+  try
+    {
+      Utils::RegisterMiKTeXUser ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerApplication::OnAppAbout
+   _________________________________________________________________________ */
+
+void
+PackageManagerApplication::OnAppAbout ()
+{
+  AboutDialog aboutDlg;
+  aboutDlg.DoModal ();
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerApplication::ExitInstance
+   _________________________________________________________________________ */
+
+int
+PackageManagerApplication::ExitInstance ()
+{
+  try
+    {
+      pSession.Reset ();
+    }
+  catch (const exception &)
+    {
+    }
+  int ret = CWinApp::ExitInstance();
+  CoUninitialize ();
+  return (ret);
+}

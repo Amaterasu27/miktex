@@ -1,0 +1,21 @@
+<varlistentry>
+<term><option>-mem-bot=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable
+<varname>mem_bot</varname> to
+<indexterm>
+<primary>-mem-bot=n</primary>
+</indexterm>
+<replaceable>n</replaceable>.</para>
+<para><varname>mem_bot</varname> is the smallest index in the
+internal memory array dumped by the <emphasis>INI</emphasis>
+variant of the compiler; must not be less than <varname>mem_min</varname>.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

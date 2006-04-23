@@ -1,0 +1,17 @@
+<varlistentry>
+<indexterm>
+<primary>--quiet</primary>
+</indexterm>
+<term><option>--quiet</option></term>
+<listitem><para>Suppress all output,
+except errors.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

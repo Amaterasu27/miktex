@@ -1,0 +1,31 @@
+
+This package (bmeps) contains a library and a command line
+tool to convert bitmap images to EPS.
+
+Bmeps is free software covered by the GNU Lesser General Public License
+(see the file COPYING for details), _except_ the files in the
+dvips-mods subdirectory.
+The files in the dvips-mods subdirectory are derived from the dvips
+sources found in the teTeX distribution. They remain under the original
+copyright and license conditions. The current stable version of dvips
+can be found in the tetex-src.tar.gz archive in the
+ftp://ftp.dante.de/tex-archive/systems/unix/teTeX/current/distrib directory.
+After unpacking the archive you will find a tetex-src-2.0.2/texk/dvipsk
+directory (the version name may vary). See the sources and docu in this
+directory for copyright and license details.
+
+For installation and usage instructions see the files in the
+DOCU subdirectory.
+
+You can contact me using the contact form
+http://www.fh-schmalkalden.de/url.php?/page/1026/select_wert/3023 on
+our faculty's web server.
+Please use "bmeps bug" or "bmeps suggestion" in the subject.
+
+The bugtracking and feature mechanisms on the SourceForge
+web site http://sourceforge.net/projects/bmeps can also be used,
+I check them approximately once per month.
+
+Dirk Krause
+2004-09-15
+

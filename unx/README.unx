@@ -1,0 +1,148 @@
+@PACKAGE_STRING@ README
+
+Copyright (C) 2005-2006 Christian Schenk
+  
+This file is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+  
+This file is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+  
+You should have received a copy of the GNU General Public License
+along with This file; if not, write to the Free Software Foundation,
+59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+------------------------------------------------------------------------
+
+This 'README' file belongs to the @PACKAGE_STRING@ package.
+
+FIRST THINGS FIRST
+------------------
+
+* The @PACKAGE_NAME@ package does not comprise a TeX system.
+  The package should be regarded as an addition to the TeX system
+  installed on your system.
+
+* The package is meant to be compiled on Unix-like operating systems.
+
+* The following utilities are included:
+  - initexmf: MiKTeX Configuration Utility
+  - mpm: MiKTeX Package Manager
+  - mthelp: MiKTeX Help Utility (experimental)
+
+For more information about the MiKTeX project, visit the project page
+at
+
+			    www.miktex.org
+
+PREREQUISITES
+-------------
+
+The @PACKAGE_NAME@ package is mostly written in C++.  It should work
+with any ANSI-compliant C++ compiler.
+
+The package depends on the availability of pthreads libraries and
+header files.
+
+It is required that libCURL (curl-devel package) is installed and
+usable, i.e.,
+
+    curl-config --version
+
+should output a line similar to this:
+
+    libcurl 7.11.1
+
+COMPILING THE PACKAGE
+---------------------
+
+Run the configure script to produce the makefiles customized for your
+system:
+
+    ./configure
+
+The configure script uses kpsewhich(1) (if available) to find existing
+TEXMF trees.  The package manager will install packages in the local
+TEXMF tree ($TEXMFLOCAL).  You can explicitly specify your prefered
+installation directory by setting the variable MIKTEX_INSTALLROOT.
+For example, to make your home TEXMF the installation directory, run
+configure like this:
+
+    ./configure MIKTEX_INSTALLROOT=/home/users/me/texmf
+
+Run the make utility to compile @PACKAGE_NAME@:
+
+    make
+
+Specify the 'install' target to install the binaries, libraries,
+header files, and reference pages:
+
+    make install
+
+USING THE MIKTEX CONFIGURATION UTILITY
+--------------------------------------
+
+The MiKTeX utilities may not work properly without the MiKTeX file
+name database.  You use the MiKTeX configuration utility to create the
+file name database files:
+
+    initexmf -u
+
+USING THE PACKAGE MANAGER
+-------------------------
+
+MPM (MiKTeX Package Manager) was originally intended to be a tool for
+MiKTeX users.  But the program can be helpful for users of other TeX
+systems too, because many of the MiKTeX packages are
+system-independent.
+
+First of all you should install the package database files on your
+system.  To do this, run
+
+    mpm --update-db
+
+This command retrieves the package database files from a remote
+package repository and installs them in the installation directory.
+To list the contents of the just installed package database, run
+
+    mpm --list
+
+To get detailed information about a package, run
+
+    mpm --print-package-info=PACKAGE
+
+If you want to install a package, run
+
+    mpm --install=PACKAGE
+
+USING THE MTHELP UTILITY
+------------------------
+
+The MTHELP utility can be used to lookup package documentation.
+
+Run
+
+    mthelp PACKAGE
+
+to view an HTML page wich contains links to the documentation files of
+a package.
+
+DOCUMENTATION
+-------------
+
+The following reference pages are in included: initexmf.1, mpm.1,
+mthelp.1.
+
+BUGS & ISSUES
+-------------
+
+Cygwin users: g++ 3.4.4 produces non-working executables; please use
+g++ 3.3.3 instead.
+
+Please visit the MiKTeX project page (www.miktex.org), if you find it
+difficult to install/use the package.  You will find references to
+online forums, mailing lists and issue trackers.

@@ -1,0 +1,349 @@
+<?dbhh topicname="MIKTEXHELP_MPMCON" topicid="0"?>
+
+<refentry id="mpm">
+
+<refmeta>
+<refentrytitle>mpm</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>mpm</refname>
+<refpurpose>&MiKTeX; package manager</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+
+<cmdsynopsis>
+&mpm;
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
+</cmdsynopsis>
+
+</refsynopsisdiv>
+
+<refsect1>
+
+<title>Description</title>
+
+<para>&MPM; (&MiKTeXPackageManager;) is used to install packages from
+a &MiKTeX; package repository.</para>
+
+<para>&MPM; was originally intended to be a tool for &MiKTeX; users.
+But the program can be helpful for users of other &TeX; systems too,
+because many of the &MiKTeX; packages are system-independent.</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Windows specific</title>
+
+<para>The package manager can be run in two modes:</para>
+<variablelist>
+<varlistentry>
+<term>batch</term>
+<listitem><para>&MPM; is driven by command-line options.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>windowed</term>
+<listitem><para>&MPM; shows a package list
+view with standard <acronym>GUI</acronym> controls (such as tool
+bar buttons and command menus).</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>&MPM; starts in windowed mode, if you do not specify any
+command-line options (see <xref linkend="mpmgui"/>).</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Options</title>
+
+<variablelist>
+<varlistentry>
+<term><option>--find-updates</option></term>
+<listitem>
+<indexterm>
+<primary>--find-updates</primary>
+</indexterm>
+<para>Test the package repository for updates, then print
+the list of updateable packages.</para></listitem>
+</varlistentry>
+&optionhelp;
+&optionhhelp;
+<varlistentry>
+<term><option>--install=<replaceable>package</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--install=package</primary>
+</indexterm>
+<para>Install the specified package.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--install-root=<replaceable>directory</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--install-root</primary>
+</indexterm>
+<para>Use the specified directory as the installation destination.
+The directory must be the root of a &TDS;-compliant
+directory tree.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--install-some=<replaceable>file</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--install-some=file</primary>
+</indexterm>
+<para>Install packages listed (line-by-line) in the specified
+file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--list</option></term>
+<listitem>
+<indexterm>
+<primary>--list</primary>
+</indexterm>
+<para>List the contents of the package database: for each package, print the
+installation status, the number of files, the size, and the name.</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><option>--list-repositories</option></term>
+<listitem><para>Download the list of known package repository URLs from
+the &MiKTeX; project server, then print the list.</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><option>--pick-repository-url</option></term>
+<listitem><para>Pick up a suitable URL from the package repository
+list and print it.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--print-package-info=<replaceable>package</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--print-package-info=package</primary>
+</indexterm>
+<para>Print detailed information about the
+specified package.</para></listitem>
+</varlistentry>
+&optionquiet;
+<varlistentry>
+<term><option>--repository=<replaceable>location</replaceable></option></term>
+<listitem><para>Use the specified location as the package repository.
+The location can be either a fully qualified path name (a local
+package repository) or an URL (a remote package repository).
+You can use the <option>--list-repositories</option> to retrieve
+a list of working package repository URLs.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--set-repository=<replaceable>location</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--set-repository=location</primary>
+</indexterm>
+<para>This option is only available on Windows systems:
+permanently register the location of the default package repository.
+The location can be either a fully qualified path name (a local
+package repository) or an URL (a remote package repository).
+Setting the environment variable <envar>MIKTEX_REPOSITORY</envar>
+has the same effect.</para></listitem>
+</varlistentry>
+&optiontrace;
+<varlistentry>
+<term><option>--uninstall=<replaceable>package</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--uninstall=package</primary>
+</indexterm>
+<para>Uninstall the specified package.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--update=<optional><replaceable>package</replaceable></optional></option></term>
+<listitem>
+<indexterm>
+<primary>--update=package</primary>
+</indexterm>
+<para>Update the specified package, if an updated version
+is available in the package repository.  Update all installed
+packages, if <replaceable>package</replaceable> is omitted.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--update-db</option></term>
+<listitem>
+<indexterm>
+<primary>--update-db</primary>
+</indexterm>
+<para>Synchronize the local package database with
+the package repository.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--update-some=<replaceable>file</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--update-some=file</primary>
+</indexterm>
+<para>Update packages listed (line-by-line) in the specified
+file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--verbose</option></term>
+<indexterm>
+<primary>--verbose</primary>
+</indexterm>
+<listitem><para>Turn on verbose output mode.</para></listitem>
+</varlistentry>
+&optionversion;
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
+<title>Installation Destination</title>
+
+<para>All files are installed in the &TEXMF; installation directory
+(usually &installdir;).  It may be necessary to specify the location
+of the installation directory, if you are running &MPM; as a
+standalone program, i.e., if &MiKTeX; is not the &TeX; system.</para>
+
+<para>The <option>--install-root</option> option allows you to set the
+installation directory for one invocation of &MPM;.  In order to
+permanently register the installation directory, you can set the
+environment variable <envar>MIKTEX_INSTALLROOT</envar>.</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Package Database</title>
+
+<para>All package information is retrieved from the package database,
+which must have been properly installed by running &MPM; with the
+<option>--update-db</option> option.</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Examples</title>
+
+<para>Set the installation destination for subsequent &MPM; invocations:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>MIKTEX_INSTALLROOT=/usr/local/share/texmf</userinput>
+<prompt>&prompt;</prompt><userinput>export MIKTEX_INSTALLROOT</userinput></screen>
+
+<para>Print the list of known package repository URLs:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --list-repositories</userinput></screen>
+
+<para>Retrieve the package database files from the FTP server
+<systemitem class="server">some.server</systemitem>:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --repository=ftp://some.server/miktex/packages/ \
+  --verbose --update-db</userinput></screen>
+
+<para>Print information about package a0poster:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --print-package-info a0poster</userinput></screen>
+
+<para>Install package a0poster:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --verbose --install a0poster</userinput></screen>
+
+<para>Update all installed packages:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --verbose --update</userinput></screen>
+
+
+<para>Print the list of installed packages:</para>
+
+<screen><prompt>&prompt;</prompt><userinput>mpm --list | grep ^i</userinput></screen>
+
+</refsect1>
+
+<refsect1>
+
+<title>Diagnostics</title>
+
+<para>You can use the
+<option>--trace=<replaceable>tracestreams</replaceable></option>
+option to control the amount of trace messages.
+The <replaceable>tracestreams</replaceable> argument is a comma-separated
+list of trace stream names:</para>
+
+&tracestreams;
+
+</refsect1>
+
+<refsect1>
+
+<title>Environment</title>
+
+<variablelist>
+
+<varlistentry>
+<term><envar>MIKTEX_INSTALLROOT</envar></term>
+<listitem>
+<indexterm>
+<primary>MIKTEX_INSTALLROOT</primary>
+</indexterm>
+<para>Directory to which files are to be installed.  This must be the
+root of a &TDS;-compliant directory tree.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><envar>MIKTEX_REPOSITORY</envar></term>
+<listitem>
+<indexterm>
+<primary>MIKTEX_REPOSITORY</primary>
+</indexterm>
+<para>Location of the package repository.  This can be either a fully
+qualified path name (a local package repository) or an URL
+(a remote package repository).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><envar>http_proxy</envar></term>
+<listitem><para>The proxy server to be used for <acronym>HTTP</acronym>.</para></listitem>
+</varlistentry>
+
+<varlistentry><term><envar>FTP_PROXY</envar></term>
+<listitem><para>The proxy server to be used for <acronym>FTP</acronym>.</para></listitem>
+</varlistentry>
+
+<varlistentry><term><envar>ALL_PROXY</envar></term>
+<listitem><para>The proxy server to be used, if no protocol-specific proxy is
+set.</para></listitem>
+</varlistentry>
+
+<varlistentry><term><envar>NO_PROXY</envar></term>
+<listitem><para>Comma-separated list of host names that should not go
+through  any proxy.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
+<title>See also</title>
+
+<para><ulink url="http://www.miktex.org">MiKTeX Project Page</ulink></para>
+
+</refsect1>
+
+</refentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "reference")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

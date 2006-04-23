@@ -1,0 +1,17 @@
+<varlistentry>
+<term><option>--version</option></term>
+<listitem>
+<indexterm>
+<primary>--version</primary>
+</indexterm>
+<para>Show version information and exit.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

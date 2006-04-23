@@ -1,0 +1,56 @@
+This is MLTeX, Version 3.14159 (INITEX)  16 JAN 1997 13:49
+MLTeX v2.2 enabled
+**mltrip
+(mltrip.tex
+
+"Trip" test for MLTeX implementations (1997/01/14 v1.0c [br])
+
+Test font load bug (in MLTeX < v2.2):
+done.
+Test assignments to \charsubdefmax:
+done.
+Test char substitution, box packing and repacking:
+<2 missing char warnings:
+Missing character: There is no ^^c1 in font cmr10!
+Missing character: There is no ^^c2 in font cmr10!
+>, <1 missing substitution warning:
+Missing character: There is no substitution for ^^e0 in font cmr10!
+>, <2 missing substitution warnings:
+Missing character: There is no substitution for ^^e0 in font cmr10!
+Missing character: There is no substitution for ^^e0 in font cmr10!
+>, done.
+Test dvi output with substitutions:
+<Alternating 5 incomplete subst. + 5 missing subst. warnings: [0
+Missing character: Incomplete substitution ^^d2 = ^^80 a in font cmr10!
+Missing character: There is no substitution for ^^e0 in font cmr10!
+Missing character: Incomplete substitution ^^d3 = ^^80 a in font cmr10!
+Missing character: There is no substitution for ^^e1 in font cmr10!
+Missing character: Incomplete substitution ^^d4 = ^^80 a in font cmr10!
+Missing character: There is no substitution for ^^e2 in font cmr10!
+Missing character: Incomplete substitution ^^d6 = ^^80 a in font cmr10!
+Missing character: There is no substitution for ^^e4 in font cmr10!
+Missing character: Incomplete substitution ^^d5 = ^^80 c in font cmr10!
+Missing character: There is no substitution for ^^e3 in font cmr10!
+] >, done.
+
+
+To complete the test:
+=====================
+
+1. Compare the log file with the one provided.
+2. Compare the dvi output:
+The dvi file should contain 5 lines of text, each line beginning
+with an ASCII description of the accented character, a colon
+followed by five en-dashes and two accented characters:
+  a-grave: -- \`a -- \`a-- -- --
+  a-acute: -- \'a -- \'a-- -- --
+  a-circonflex: -- \^a -- \^a-- -- --
+  a-umlaut: -- \"a -- \"a-- -- --
+  c-cedille: -- \c{c} -- \c{c}-- -- --
+The spacing between the first accented character and the first
+two en-dashes has to be correct, whereas the en-dash after the
+second accented character has to touch the character! Otherwise
+your MLTeX implementation is incorrect.
+
+ )
+Output written on mltrip.dvi (1 page, 384 bytes).

@@ -1,0 +1,17 @@
+<varlistentry>
+<term><option>-aux-directory=<replaceable>dir</replaceable></option></term>
+<listitem><para>Keep auxiliary files in <replaceable>dir</replaceable>.
+<indexterm>
+<primary>-aux-directory=dir</primary>
+</indexterm>
+This implies <option>-include-directory=<replaceable>dir</replaceable></option>.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

@@ -1,0 +1,1889 @@
+% interface=english modes=letter
+
+%D First we define ourselves some abbreviations, if only to 
+%D force consistency and to save typing. We use real small 
+%D capitals, not pseudo ones. 
+
+\setupsynonyms
+  [abbreviation]
+  [textstyle=smallcaps,
+   location=left,
+   width=broad,
+   sample=\POSTSCRIPT]
+
+\setupcapitals
+  [title=no]
+
+\abbreviation [AFM]        {afm}        {Adobe Font Metrics}
+\abbreviation [AMIGA]      {Amiga}      {Amiga hardware platform}
+\abbreviation [AMIWEB]     {AmiWeb2c}   {\AMIGA\ distribution}
+\abbreviation [ASCII]      {ascii}      {...}
+\abbreviation [CMACTEX]    {CMac\TeX}   {\MAC\ \WEBC\ distribution}
+\abbreviation [CONTEXT]    {\ConTeXt}   {general purpose macro package}
+\abbreviation [DJGPP]      {djgpp}      {...}
+\abbreviation [DVI]        {dvi}        {natural \TEX\ Device Independ fileformat}
+\abbreviation [EPSTOPDF]   {epstopdf}   {\EPS\ to \PDF\ conversion tool}
+\abbreviation [EPS]        {eps}        {Encapsulated PostScript}
+\abbreviation [ETEX]       {e-\TeX}     {an extension to \TEX}
+\abbreviation [FPTEX]      {fp\TeX}     {\WIN\ \WEBC\ distribution}
+\abbreviation [GNU]        {gnu}        {...}
+\abbreviation [JPEG]       {jpeg}       {Joined Photographic Expert Group}
+\abbreviation [LATEX]      {\LaTeX}     {general purpose macro package}
+\abbreviation [MAC]        {MacIntosh}  {MacIntosh hardware platform}
+\abbreviation [METAFONT]   {\MetaFont}  {graphic programming environment, bitmap output}
+\abbreviation [METAPOST]   {\MetaPost}  {graphic programming environment, vector output}
+\abbreviation [MIKTEX]     {MikTeX}     {\WIN\ distribution}
+\abbreviation [MSDOS]      {MSDos}      {Microsoft DOS platform (Intel)}
+\abbreviation [PDFETEX]    {pdfe-\TeX}  {\ETEX\ extension producing \PDF\ output}
+\abbreviation [PDFTEX]     {pdf\TeX}    {\TEX\ extension producing \PDF\ output}
+\abbreviation [PDF]        {pdf}        {Portable Document Format}
+\abbreviation [PERL]       {Perl}       {Perl programming environment}
+\abbreviation [PGC]        {pgc}        {\PDF\ glyph container}
+\abbreviation [PK]         {pk}         {Packed Bitmap Font}
+\abbreviation [PNG]        {png}        {Portable Network Graphics}
+\abbreviation [POSTSCRIPT] {PostScript} {PostScript}
+\abbreviation [RGB]        {rgb}        {Red Green Blue color specification}
+\abbreviation [TETEX]      {te\TeX}     {\UNIX\ \WEBC\ distribution}
+\abbreviation [TEXEXEC]    {\TeX exec}  {\CONTEXT\ command line interface}
+\abbreviation [TEXUTIL]    {\TeX util}  {\CONTEXT\ utility tool}
+\abbreviation [TEX]        {\TeX}       {typographic language and program}
+\abbreviation [TFM]        {tfm}        {\TEX\ Font Metrics}
+\abbreviation [TIF]        {tiff}       {Tagged Interchange File Format}
+\abbreviation [TUG]        {tug}        {\TEX\ Users Group}
+\abbreviation [UNIX]       {Unix}       {Unix platform}
+\abbreviation [URL]        {url}        {Uniform Resource Locator}
+\abbreviation [WEBC]       {Web2c}      {official multi||platform \WEB\ environment}
+\abbreviation [WEB]        {web}        {literate programming environment}
+\abbreviation [WIN]        {Win32}      {Microsoft Windows platform}
+\abbreviation [ZIP]        {zip}        {compressed file format}
+
+%D It makes sense to predefine the name of the author of \PDFTEX, 
+%D doesn't it? 
+
+\def\THANH{H\`an Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh}
+
+%D Because they are subjected to changes and spoil the 
+%D visual appearance of the \TEX\ source, \URL's are defined 
+%D here. 
+
+\useURL [updates]   [ftp://ftp.cstug.cz/pub/tex/local/cstug/thanh/pdftex-testing/latest]
+\useURL [win32]     [ctan:systems/win32]
+\useURL [amiga]     [ctan:systems/amiga/amiweb2c/]
+\useURL [examples]  [http://www.tug.org/applications/pdftex/]
+
+\useURL [fabrice]   [popineau@ese-metz.fr]
+\useURL [andreas]   [andreas.scherer@pobox.com]
+\useURL [christian] [cschenk@berlin.snafu.de]
+\useURL [context]   [http://www.ntg.nl/context/]
+
+\useURL [sebastian] [mailto:s.rahtz@elsevier.co.uk]    [] [s.rahtz@elsevier.co.uk]
+\useURL [thanh]     [mailto:thanh@informatics.muni.cz] [] [thanh@informatics.muni.cz] 
+\useURL [hans]      [mailto:pragma@wxs.nl]             [] [pragma@wxs.nl]             
+
+%D We typeset the \URL's in a monospaced font. 
+
+\setupurl
+  [style=type]
+
+%D The basic layout is pretty simple. Because we want non 
+%D european readers to read the whole text as well, a letter 
+%D size based alternative is offered too. Mode switching is 
+%D taken care of at the command line when running \TEXEXEC.
+
+\startmode[letter]
+
+  \setuppapersize
+    [letter][letter]
+
+\stopmode
+
+\setuplayout
+  [topspace=1.5cm,
+   backspace=2cm,
+   leftmargin=2cm,
+   width=middle,
+   footer=1.5cm,
+   header=1.5cm,
+   height=middle]
+
+%D For the moment we use the description mechanism to 
+%D typeset keywords etc. Well, I should have used capitals. 
+
+\definedescription
+  [description]
+  [location=serried,
+   width=broad]
+
+\definedescription
+  [PathDescription]
+  [location=left,
+   sample=TEXPSHEADERS,
+   width=broad,
+   headstyle=type]
+
+\definehead
+  [pdftexprimitive]
+  [subsubsection]
+
+\setuphead
+  [pdftexprimitive]
+  [style=,
+   before=\blank,
+   after=\blank,
+   numbercommand=\SubSub]
+
+%D The \type {\SubSub} command is rather simple and generates a
+%D triangle. This makes the primitives stand out a bit more. 
+
+\def\SubSub#1{$\blacktriangleright$}
+
+%D I could have said:
+%D
+%D \starttyping 
+%D \setupsection[section-5][previousnumber=no,bodypartconversion=empty]
+%D \setuplabeltext[subsubsection=$\blacktriangleright$]
+%D \stoptyping 
+%D
+%D but this is less clear.
+
+%D We use white space, but not too much. 
+
+\setupwhitespace
+  [medium]
+
+\setupblank
+  [medium]
+
+%D Verbatim things get a small margin. 
+
+\setuptyping
+  [margin=standard]
+
+%D Due to the lots of verbatim we will be a bit more 
+%D tolerant in breaking paragraphs into lines. 
+
+\setuptolerance
+  [verytolerant]
+
+%D We put the chapter and section numbers in the margin and 
+%D use bold fonts. 
+
+\setupheads
+  [alternative=margin]
+
+\setuphead
+  [section]
+  [style=\bfb]
+
+\setuphead
+  [subsection]
+  [style=\bfa]
+
+%D The small table of contents is limited to section titles 
+%D and is fully interactive. 
+
+\setuplist
+  [section]
+  [criterium=all,
+   interaction=all,
+   width=2em,
+   alternative=a]
+
+%D Ah, this manual is in english! 
+
+\mainlanguage
+  [en]
+
+%D We use Lucida Bright fonts, because they look so well on
+%D the screen. 
+
+\setupbodyfont
+  [lbr,10pt]
+
+%D This document is mildly interactive. Yes, H\'an's name 
+%D will end up ok in the document information data. 
+
+\setupinteraction
+  [state=start,
+   style=normal,
+   color=,
+  %display=width,
+   openaction=firstpage,
+   title=the pdfTeX users manual,
+   author={H\`an Th\^e Th\`anh, Sebastian Rahtz, Hans Hagen}]
+
+\setupinteractionscreen
+
+%D Some headers and footers will complete the layout. 
+
+\setupheadertexts
+  [The pdf\TeX\ user manual]
+
+\setupfootertexts
+  [pagenumber]
+
+%D For Tobias Burnus, who loves bookmarks, I've enabled 
+%D them. 
+
+\placebookmarks
+  [section,subsection,pdftexprimitive]
+
+%D The primitive definitions are specified a bit fuzzy using
+%D the next set of commands. Some day I'll write some proper
+%D macros to deal with this. 
+
+\unexpanded\def\TeXCom#1{\type {#1}}
+\unexpanded\def\TeXArg#1{{\tt\leftargument{\it#1}\rightargument}}
+\unexpanded\def\TeXWrd#1{\type {#1}}
+\unexpanded\def\TeXOpt#1{{\def|{\unskip\space\vl\space\ignorespaces}$\langle$#1$\rangle$}}
+\unexpanded\def\TeXDat#1{{\it#1}}
+\unexpanded\def\TeXNum  {{\it number\/}}
+\unexpanded\def\TeXDim  {{\it dimension\/}}
+\unexpanded\def\TeXTok  {{\it tokens\/}}
+
+%D The text starts here! 
+
+\starttext
+
+%D But first we typeset the title page. It has a background.
+%D This background, showing a piece of pdf code, will be 
+%D refered to later on.
+
+\NormalizeFontWidth
+  \TitleFont
+  {The pdf\TeX\ user manual}
+  \paperheight
+  {RegularBold}
+
+\setupbackgrounds
+  [page]
+  [background={title,joke,names,content}]
+
+\defineoverlay
+  [title]
+  [\hbox to \paperwidth
+     {\hfill
+      \TitleFont\setstrut
+      \roteer{The pdf\TeX\ user manual}%
+      \hskip\dp\strutbox}]
+
+\defineoverlay
+  [joke]
+  [\hbox to \paperwidth
+     {\TitleFont\setstrut
+      \dimen0=\overlaywidth
+      \advance\dimen0 by -\ht\strutbox
+      \advance\dimen0 by -\dp\strutbox
+      \advance\dimen0 by -1cm
+      \dimen2=\overlayheight
+      \advance\dimen2 by -1cm
+      \hskip.5cm\externalfigure[pdftex-z][type=pdf,width=\dimen0,height=\dimen2]%
+      \hfill}]
+
+\defineoverlay
+  [names]
+  [\vbox to \paperheight
+     {\dontcomplain
+      \TitleFont\setstrut
+      \setbox0=\hbox{\TeX}%
+      \hsize\paperwidth
+      \rightskip\ht0
+      \advance\rightskip\dp\strutbox
+      \advance\rightskip\dp\strutbox
+      \bfa \setupinterlinespace
+      \vfill
+      \hfill \THANH \endgraf
+      \hfill Sebastian Rahtz \endgraf
+      \hfill Hans Hagen
+      \vskip 1ex
+      \hfill \currentdate
+      \vskip 2ex}]
+
+\defineoverlay
+  [content]
+  [{\button[width=\overlaywidth,height=\overlayheight,frame=off]{}[contents]}]
+
+\startstandardmakeup
+
+%D The titlepage is generated using the background overlay 
+%D mechanism. This saves me the trouble of determining funny 
+%D skips and alignments. So no text goes here. 
+
+\stopstandardmakeup
+
+\setupbackgrounds
+  [page]
+  [background=]
+
+%D The inside title page is as follows. 
+
+\startstandardmakeup
+
+  \dontcomplain
+
+  \setupalign[left]
+
+  \start
+
+    \bfd The pdf\TeX\ manual
+
+    \bfa \setupinterlinespace
+
+    \vskip4ex
+
+    \leavevmode \from[thanh]     ---          \THANH\par
+    \leavevmode \from[sebastian] --- Sebastian Rahtz\par
+    \leavevmode \from[hans]      ---      Hans Hagen\par
+
+    \vskip2ex
+
+    \currentdate
+
+  \stop
+
+  \vfill
+
+  The title page of this manual    \par
+  represents the plain \TeX\ coded \par
+  text ``Welcome to pdf\TeX !''
+
+  \vskip\lineheight
+
+  \type{\pdfoutput=1}         \par
+  \type{\pdfcompresslevel=0}  \par
+  \type{\font\tenrm=tir}      \par
+  \type{\tenrm}               \par
+  \type{Welcome to pdf\TeX !} \par
+  \type{\end}                 \par
+
+\stopstandardmakeup
+
+%D We start with a small table of contents, typeset in 
+%D double column format. 
+
+\subject[contents]{Contents}
+
+\startcolumns
+\placelist[section]
+\stopcolumns
+
+%D And here it is: the main piece of text. 
+
+\section{Introduction}
+
+The main purpose of the \PDFTEX\ project was to create an extension of \TEX\
+that can create \PDF\ directly from \TEX\ source files and improve|/|enhance
+the result of \TEX\ typesetting with the help of \PDF. When \PDF\ output is
+not selected, \PDFTEX\ produces normal \DVI\ output, otherwise it produces
+\PDF\ output that looks identical to the \DVI\ output. The next stage of the
+project, apart from fixing any errors in the program, is to investigate
+alternative justification algorithms, possibly making use of multiple master
+fonts. 
+
+\PDFTEX\ is based on the original \TEX\ sources and \WEBC, and has been
+successfully compiled on \UNIX, \AMIGA, \WIN\ and \MSDOS\ systems. It is still
+under beta development and all features are liable to change. Despite its
+$\beta$||state, \PDFTEX\ produces excellent \PDF\ code.
+
+As \PDFTEX\ evolves, this manual will evolve and more background information
+will be added. Be patient with the authors. 
+
+\section{About \PDF} 
+
+The cover of this manual shows a simple \PDF\ file. Unless compression
+and|/|or encryption is applied, such a file is rather verbose and readable.
+The first line specifies the version used; currently \PDFTEX\ produces level
+1.2 output. Viewers are supposed to skip silently all those elements they are
+not able to handle.
+
+A \PDF\ file consist of objects. These objects can be recognized by their
+number and keywords:
+
+\starttyping
+8 0 obj << /Type /Catalog /Pages 6 0 R >> endobj
+\stoptyping
+
+Here \typ{8 0 obj ... endobj} is the object capsule. The first number is
+the object number. Later we will see that \PDFTEX\ gives access to this
+number. One can for instance create an object by using \type {\pdfobj} after
+which \type {\pdflastobj} returns the number. So
+
+\starttyping
+\pdfobj{/Type /Catalog /Pages 6 0 R}
+\stoptyping
+
+inserts an object in the file, while \type {\pdflastobj} returns the number
+\PDFTEX\ assigned to this object. The sequence \type{6 0 R} is an object
+reference, a pointer to another object. The second number (here a zero) is
+currently not used in \PDFTEX; it is the version number of the object. It is
+for instance used by \PDF\ editors, when they replace objects by new ones.
+
+In general this rather direct way of pushing objects in the files is rather
+useless and only makes sense when implementing for instance fill||in field
+support or annotation content reuse. We come to that later. Unless such
+direct objects are part of something larger, they will end up as isolated
+entities, not doing any harm but not doing any good either.
+
+When a viewer opens a \PDF\ file, it first goes to the end of the file. There
+it finds the keyword \type{startxref}, the signal where to look for the so
+called object cross reference table. This table provides fast access to the
+objects that make up the file. The actual starting point of the file is
+defined after the \type {trailer}. The \type{/Root} entry points to the
+catalog. In this catalog the viewer can find the page list, in our example we
+have only one page. The trailer also holds an \type{/Info} entry, which tells
+a bit more about the document. Just follow the thread:
+
+\startnarrower
+\type{/Root}  $\longrightarrow$ object~8 $\longrightarrow$
+\type{/Pages} $\longrightarrow$ object~6 $\longrightarrow$
+\type{/Kids}  $\longrightarrow$ object~2 $\longrightarrow$ page content
+\stopnarrower
+
+As soon as we add annotations, a fancy word for hyperlinks and alike, some
+more entries are present in the catalog. We invite users to take a look at
+the \PDF\ code of this file to get an impression of that.
+
+The page content is a stream of drawing operations. Such a stream can be
+compressed, where the level of compression can be set with \type
+{\pdfcompresslevel}. Let's take a closer look to this stream. First there is
+a transformation matrix, six numbers followed by \type{cm}. As in
+\POSTSCRIPT, the operator comes after the operands. Between \type {BT} and
+\type {ET} comes the text. A font switch can be recognized as \type{/F..}.
+The actual text goes between \type{()} to form a so called string. When one
+analyzes a file produced by a less sophisticated typesetting engine, whole
+sequences of words can be recognized. In \TEX\ however, the text comes out
+rather fragmented, mainly because a lot of kerning takes place. Because
+viewers can search in these streams, one can imagine that the average \TEX\
+produced files becomes more difficult as soon as the typesetting engine does
+a better job; \TEX\ cannot do less. 
+
+This one page example uses an Adobe Times Roman font. This is one of the
+14~fonts that is always present in the viewer application, and is called a
+base font. However, when we use for instance Computer Modern Roman, we have
+to make sure that this font is available, and the best way to do this is to
+embed it in the file. Just let your eyes follow the object thread and see how
+a font is described. The only thing missing in this example is the
+(partially) embedded glyph description file, which for the base fonts is not
+needed.
+
+In this simple file, we don't specify in what way the file should be opened,
+for instance full screen or clipped. A closer look at the page object
+(\typ{/Type /Page}) shows that a mediabox is part of the page description. A
+mediabox acts like the bounding box in a \POSTSCRIPT\ file. \PDFTEX\ users
+have access to this object by \type {\pdfpageattr}.
+
+Although in most cases macro packages will shield users from these internals,
+\PDFTEX\ provides access to many of the entries described here, either
+automatically by translating the \TEX\ data structures into \PDF\ ones, or
+directly by pushing entries to the catalog, page, info or self created
+objects. Those who, after this introduction, feel uncomfortable in how to
+proceed, are advised to read on but skip \in{section}[primitives]. Before we
+come to that section, we will describe how to get started with \PDFTEX.
+
+\section{Getting started}
+
+This section describes the steps needed to get \PDFTEX\ running on a system
+where \PDFTEX\ is not yet installed. Some \TEX\ distributions have \PDFTEX\
+as a component, like \TETEX, \FPTEX, \MIKTEX\ and \CMACTEX, so when you use
+one of them, you don't need to bother with the \PDFTEX\ installation. Note
+that the installation description in this manual is \WEBC||specific.
+
+For some years there is a \quote {moderate} successor to \TEX\ available,
+called \ETEX. Because the main stream macro packages start supporting this
+welcome extension, \PDFTEX\ also is available as \PDFETEX. Although in this
+document we will speak of \PDFTEX, we advise users to use \PDFETEX\ when
+available. That way they get the best of all worlds and are ready for the
+future. 
+
+\subsection{Getting sources and binaries}
+
+The latest sources of \PDFTEX\ are distributed together with precompiled binaries
+of \PDFTEX\ for some platforms, including Linux \footnote {The Linux binary
+is apparently compiled for the new \type {libc-6} (\GNU\ \filename
+{glibc-2.0}), which will not run for users of older Linux installations still
+based on \type {libc-5}.}, SGI IRIX, Sun SPARC Solaris and \MSDOS\ (\DJGPP).
+\footnote {The \DJGPP\ version is built by \DJGPP\ cross||compiler on Linux.}
+The primary location where one can fetch the source code is:
+
+\startnarrower
+\from[updates]
+\stopnarrower
+
+For \WIN\ systems (Windows 95, Windows NT) there are two packages that
+contain \PDFTEX, both in \from[win32]: \FPTEX, maintained by Fabrice
+Popineau, \from[fabrice], and \MIKTEX\ by Christian Schenk, \from[christian]. 
+
+A binary version of \PDFTEX\ for the \AMIGA\ is coming with the \AMIWEB\
+distribution (\from[amiga]) by Andreas Scherer (\from[andreas]). For the \MAC\
+there is \CMACTEX.
+
+\subsection{Compiling}
+
+If there is no precompiled binary of \PDFTEX\ for your system, you need to
+build \PDFTEX\ from sources. The compilation is expected to be easy on
+\UNIX||like systems and can be described best by example. Assuming that all
+needed files are downloaded to \filename {\$HOME/pdftex}, on a \UNIX\ system
+the following steps are needed to compile \PDFTEX:
+
+\starttyping
+cd \$HOME/pdftex
+gunzip < web-7.2.tar.gz | tar xvf -
+gunzip < web2c-7.2.tar.gz | tar xvf -
+gunzip < pdftex.tar.gz | tar xvf -
+mv pdftexdir web2c-7.2/web2c
+cd ./web2c-7.2
+./configure
+cd ./web2c
+make pdftex
+\stoptyping
+
+If you happen to have a previously configured source tree and just install a
+new version of \PDFTEX, you can avoid running \filename {configure} from the
+top||level directory. It's quicker to run \filename {config.status}, which
+will just regenerate the \type{Makefile}'s based on \filename {config.cache}:
+
+\starttyping
+cd web2c-7.2/web2c
+sh config.status
+make pdftex
+\stoptyping
+
+Apart from the binary of \PDFTEX\ the compilation also produces several other
+files which are needed for running \PDFTEX:
+
+\description {\filename{pdftex.pool}} so||called pool file, needed for
+creating formats, located in \filename {web2c-7.2/web2c}
+
+\description {\filename{texmf.cnf}} \WEBC\ run||time configuration file,
+located in \filename {web2c-7.2/kpathsea}
+
+\description {\filename{ttf2afm}} an external program to generate \AFM\ file
+from TrueType fonts, located in \filename {web2c-7.2/web2c/pdftexdir}
+
+Precompiled binaries are included in the \ZIP\ archive \filename
+{pdftex.zip}.
+
+\subsection{Getting \PDFTEX||specific platform||independent files}
+
+Apart from above||mentioned files, there is another \ZIP\ archive (\filename
+{pdftexlib-0.12.zip}) in \PDFTEX\ distribution which contains
+platform||independent files required for running \PDFTEX:
+
+\startitemize[packed]
+\item configuration file: \filename {pdftex.cfg}
+\item encoding vectors: \type {*.enc}
+\item map files: \type {*.map}
+\item macros: \type {*.tex}
+\stopitemize
+
+Unpacking this archive |<|don't forget \type {-d} option when using \type
+{pkunzip}|>| will create a \type {texmf} tree containing \PDFTEX||specific
+files.
+
+\subsection{Placing files}
+
+The next step is to place the binaries somewhere in \type {PATH}. If you want
+to use \LATEX, you also need to make a copy (or symbolic link) of \type
+{pdftex} and name it \type {pdflatex}. The files \filename {texmf.cnf} and
+\filename {pdftex.pool} and the directory \filename {texmf/}, created by
+unpacking the file \filename {pdftexlib-0.12.zip}, should be moved to the
+\quote {appropriate} place (see below). 
+
+\subsection{Setting search paths}
+
+\WEBC||based programs, including \PDFTEX, use the \WEBC\ run||time
+configuration file called \filename {texmf.cnf}. This file can be found via
+the user||set environment variable \type {TEXMFCNF} or via the compile||time
+default value if the former is not set. It is strongly recommended to use the
+first option. Next you need to edit \filename {texmf.cnf} so \PDFTEX\ can
+find all necessary files. Usually one has to edit \type {TEXMFS} and maybe
+some of the next variables. When running \PDFTEX, some extra search paths are
+used beyond those normally requested by \TEX\ itself:
+
+\PathDescription {VFFONTS} the path where \PDFTEX\ looks for virtual fonts
+
+\PathDescription {T1FONTS} the path where \PDFTEX\ looks for Type1 fonts
+
+\PathDescription {TTFONTS} the path where \PDFTEX\ looks for TrueType fonts
+
+\PathDescription {PKFONTS} the path where \PDFTEX\ looks for PK fonts
+
+\PathDescription {TEXPSHEADERS} the path where \PDFTEX\ looks for the
+configuration file \filename {pdftex.cfg}, font mapping files (\type
+{*.map}), encoding files (\type {*.enc}), and pictures
+
+\subsection[cfg]{The \PDFTEX\ configuration file}
+
+One has to keep in mind that, opposed to \DVI\ output, there is no
+postprocessing stage. This has several rather fundamental consequences, like
+one||pass graphic and font inclusion. When \TEX\ builds a page, the macro
+package used quite certain has a concept of page dimensions, which is not the
+same as paper dimensions. The reference point of the page is the top||left
+corner.
+
+Most \DVI\ postprocessors enable the user to specify the paper size, which
+often defaults to \quote {A4} or \quote{letter}. In most cases it does not
+harm that much to mix the two, because one will seldom put too small paper in
+the printer. And, if one does, one will certainly not do that a second time.
+In \PDF\ the paper size is part of the definition. This means that everything
+that is off page, is clipped off, it simply disappears. Even worse, just like
+in a \POSTSCRIPT\ file, the reference point is in the lower corner, which is
+opposite to \DVI's reference point. 
+
+And so, we've found one of the main reasons why \PDFTEX\ explicitly needs to
+know the paper dimensions. These dimensions can either be passed using the so
+called configuration file, or by using the primitives provided for this
+purpose. In this respect, the \PDFTEX\ configuration file can be compared to
+configuration files that come with \DVI\ postprocessors and|/|or command line
+options. Both contain information on the paper used, the fonts to be included
+and optimizations to be applied.
+
+When \PDFTEX\ starts, it reads the \WEBC\ configuration file as well as the
+\PDFTEX\ configuration file called \filename {pdftex.cfg}, searched for in
+the \type {TEXPSHEADERS} path. As \WEBC\ systems commonly specify a \quote
+{private} tree for \PDFTEX\ where configuration and map files are located,
+this allows individual users or projects to maintain customized versions of
+the configuration file. 
+
+The configuration file sets default values for the following parameters, all
+of which can be over||ridden in the \TEX\ source file:
+
+\description {output\_format} This integer parameter specifies whether the
+output format should be \DVI\ or \PDF. A positive value means \PDF\ output,
+otherwise we get \DVI\ output.
+
+\description {compress\_level} This integer parameter specifies the level of
+text and in||line graphics compression. \PDFTEX\ uses \ZIP\ compression as
+provided by \type {zlib}. A value of~0 means no compression, 1~means fastest,
+9~means best, 2..8 means something in between. Just set this value to~9,
+unless there is a good reason to do otherwise --- 0 is great for testing
+macros that use \type {\pdfliteral}.
+
+\description {decimal\_digits} This integer specifies the preciseness of real
+numbers in \PDF\ page descriptions. It gives the maximal number of decimal
+digits after the decimal point of real numbers. Valid values are in range
+0..5. A higher value means more precise output, but also results in a much
+larger file size and more time to display or print. In most cases the optimal
+value is~2. This parameter does {\em not} influence the precision of numbers
+used in raw \PDF\ code, like that used in \type {\pdfliterals} and annotation
+action specifications.
+
+\description {image\_resolution} When \PDFTEX\ is not able to determine the 
+natural dimensions of an image, it assumes a resolution of type 72~dots per 
+inch. Use this variable to change this default value.  
+
+\description {page\_width \& page\_height} These two dimension parameters
+specify the output medium dimensions (the paper, screen or whatever the page
+is put on). If they are not specified, the page width is calculated as
+$w_{\hbox{\txx box being shipped out}} + 2 \times (\hbox{horigin} +
+\hbox{\type{\hoffset}})$. The page height is calculated in a similar way.
+
+\description {horigin \& vorigin} These dimension parameters can be used to
+set the offset of the \TEX\ output box from the top left corner of the
+\quote {paper}.
+
+\description {map} This entry specifies the font mapping file, which is
+similar to those used by many \DVI\ to \POSTSCRIPT\ drivers. More than one
+map file can be specified, using multiple \type {map} lines. If the name of
+the map file is prefixed with a \type {+}, its values are appended to the
+existing set, otherwise they replace it. If no map files are given, the
+default value \filename {psfonts.map} is used.
+
+A typical \filename {pdftex.cfg} file looks like this, setting up output for
+A4 paper size and the standard \TEX\ offset of 1~inch, and loading two map
+files for fonts:
+
+\starttyping
+output_format    1
+compress_level   0
+decimal_digits   2
+image_resolution 300
+page_width       210mm
+page_height      297mm
+horigin          1in
+vorigin          1in
+map              standard.map
+map              +cm.map
+\stoptyping
+
+Dimensions can be specified as true, which makes them immune for
+magnification (when set). The previous example settings, apart from \type 
+{map}, can also be set during a \TEX\ run. This leaves a special case: 
+
+\description {include\_form\_resources} Sometimes embedded \PDF\
+illustrations can pose viewers for problems. When set to~1, this variable
+makes \PDFTEX\ take some precautions. Forget about it when you never
+encounteres problems. When all the programs you use conform to the \PDF\
+specifications, you will never need to set this variable. 
+
+\subsection{Creating formats}
+
+Formats for \PDFTEX\ are created in the same way as for \TEX. For plain
+\TEX\ and \LATEX\ it looks like:
+
+\starttyping
+pdftex -ini -fmt=pdftex   plain      \dump
+pdftex -ini -fmt=pdflatex latex.ltx
+\stoptyping
+
+In \CONTEXT\ the generation depends on the interface used. A format using the
+english user interface is generated with.
+
+\starttyping
+pdftex -ini -fmt=cont-en cont-en
+\stoptyping
+
+When properly set up, one can also use the \CONTEXT\ command line interface
+\TEXEXEC\ to generate one or more formats, like:
+
+\starttyping
+texexec --make en
+\stoptyping
+
+for an english format, or
+
+\starttyping
+texexec --make --tex=pdfetex en de
+\stoptyping
+
+for an english and german one, using \PDFETEX. Indeed, there is \PDFTEX\ as
+well as \PDFETEX, use it! Whatever macro package used, the formats should be
+placed in the \type {TEXFORMATS} path. We strongly recommend to use \PDFETEX,
+if only because the main stream macro packages (will) use it. 
+
+\subsection{Testing the installation}
+
+When everything is set up, you can test the installation. In the distribution
+there is a plain \TEX\ test file \filename {example.tex}. Process this file
+by saying:
+
+\starttyping
+pdftex example
+\stoptyping
+
+If the installation is ok, this run should produce a file called \filename
+{example.pdf}. The file \filename {example.tex} is also a good place to look
+how to use \PDFTEX's new primitives.
+
+\subsection{Common problems}
+
+The most common problem with installation is that \PDFTEX\ complains that
+something cannot be found. In such cases make sure that \type {TEXMFCNF} is
+set correctly, so \PDFTEX\ can find \filename {texmf.cnf}. The next best
+place to look|/|edit is the file \type {texmf.cnf}. When still in deep
+trouble, set \type {KPATHSEA_DEBUG=255} before running \PDFTEX\ or run
+\PDFTEX\ with option \type {-k 255}. It will cause \PDFTEX\ to write a lot of
+debugging information, that can be useful to trace problems. More options can
+be found in the \WEBC\ documentation. 
+
+Variables in \filename {texmf.cnf} can be overwritten by environment
+variables. Here are some of the most common problems you can encounter when
+getting started: 
+
+\startitemize
+
+\head  \type {I can't read tex.pool; bad path?}
+
+       \type {TEXMFCNF} is not set correctly and so \PDFTEX\ cannot find
+       \type {texmf.cnf}, or \type {TEXPOOL} in \filename {texmf.cnf}
+       doesn't contain a path to the pool file \filename {pdftex.pool}.
+
+\head  \type {You have to increase POOLSIZE.}
+
+       \PDFTEX\ cannot find \filename {texmf.cnf}, or the value of \type
+       {pool_size} specified in \filename {texmf.cnf} is not large enough
+       and must be increased. If \type {pool_size} is not specified in
+       \filename {texmf.cnf} then you can add something like
+
+\starttyping
+pool_size = 500000
+\stoptyping
+
+\head  \type {I can't find the format file `pdftex.fmt'!} \crlf
+       \type {I can't find the format file `pdflatex.fmt'!}
+
+       Format is not created (see above how to do that) or is not properly
+       placed. Make sure that \type {TEXFORMATS} in \filename {texmf.cnf}
+       contains the path to \filename {pdftex.fmt} or \filename {pdflatex.fmt}.
+
+\head  \type {Fatal format file error; I'm stymied.}
+
+       This appears if you forgot to regenerate the \type {.fmt} files after
+       installing a new version of the \PDFTEX\ binary and
+       \filename {pdftex.pool}.
+
+\head  \type {TEX.POOL doesn't match; TANGLE me again!} \crlf
+       \type {TEX.POOL doesn't match; TANGLE me again (or fix the path).}
+
+       This might appear if you forgot to install the proper
+       \filename {pdftex.pool} when installing a new version of the \PDFTEX\
+       binary.
+
+\item  \PDFTEX\ cannot find the configuration file \filename {pdftex.cfg},
+       one or more map files (\type {*.map}), encoding vectors (\type
+       {*.enc}), virtual fonts, Type~1 fonts, TrueType fonts or some image
+       file.
+
+       Make sure that the required file exists and the corresponding variable
+       in \filename {texmf.cnf} contains a path to the file. See above which
+       variables \PDFTEX\ needs apart from the ones \TEX\ uses.
+
+\stopitemize
+
+Normally the page content takes one object. This means that one seldom finds
+more than a few hundred objects in a file. This document for instance uses
+about 300 objects. In demanding applications this number can grow, especially
+when one uses a lot of widget annotations, shared annotations or other shared
+things. In these situations in \filename {texmf.cnf} one can enlarge \PDFTEX
+'s internal object table, for instance:
+
+\starttyping
+obj_tab_size = 400000
+\stoptyping
+
+\section{Macro packages supporting \PDFTEX}
+
+When producing \DVI\ output, for which one can use \PDFTEX\ as well as any
+other \TEX, part of the job is delegated to the \DVI\ postprocessor, either
+by directly providing this program with commands, or by means of \type
+{\specials}. Because \PDFTEX\ directly produces the final format, it has to
+everything itself, from handling color, graphics, hyperlink support,
+font||inclusion, upto page imposition and page manipulation.
+
+As a direct result, when one uses a high level macro package, the macros that
+take care of these features have to be set up properly. Specials for instance
+make no sense at all. Actually being a comment understood by \DVI\
+postprocessors |<|given that the macro package speaks the specific language
+of this postprocessor|>| a \type {\special} would end up as just a comment in
+the \PDF\ file, which is of no use. Therefore, \type {\special} issues a
+warning when \PDFTEX\ is in \PDF\ mode. 
+
+When one wants to get some insight to what extend \PDFTEX\ specific support
+is needed, one can start a file by saying:
+
+\starttyping
+\pdfoutput=1 \let\special\message
+\stoptyping
+
+or, if this leads to confusion,
+
+\starttyping
+\pdfoutput=1 \def\special#1{\write16{special: #1}}
+\stoptyping
+
+And see what happens. As soon as one \quote {special} message turns up, one
+knows for sure that some kind of \PDFTEX\ specific support is needed, and
+often the message itself gives a indication of what is needed. 
+
+Currently all main stream macro packages offer \PDFTEX\ support in one way or
+the other. When using such a package, it makes sense to turn on this support
+in the appropriate way, otherwise one cannot be sure if things are set up
+right. Remember that for instance the page and paper dimensions have to be
+taken care of, and only the macro package knows the details.
+
+\startitemize
+
+\item  For \LATEX\ users, Sebastian Rahtz' \type {hyperref} package has
+       substantial support for \PDFTEX, and provides access to most of its
+       features. In the simplest case, the user merely needs to load \type
+       {hyperref} with a \type {pdftex} option, and all cross||references
+       will be converted to \PDF\ hypertext links. \PDF\ output is
+       automatically selected, compression is turned on, and the page size is
+       set up correctly. Bookmarks are created to match the table of
+       contents.
+
+\item  The standard \LATEX\ \type {graphics} and \type {color} packages have
+       \type {pdftex} options, which allow use of normal color, text
+       rotation, and graphics inclusion commands.
+
+\item  The \CONTEXT\ macro package by Hans Hagen (\from[hans]) has very full
+       support for \PDFTEX\ in its generalized hypertext features. Support
+       for \PDFTEX\ is implemented as a special driver, and is invoked
+       by saying \type {\setupoutput[pdftex]} or feeding \TEXEXEC\ with the
+       \type{--pdf} option.
+
+\item  Hypertexted \PDF\ from \type {texinfo} documents can be created with
+       \filename {pdftexinfo.tex}, which is a slight modification of the
+       standard \type {texinfo} macros. This file is part of the \PDFTEX\
+       distribution.
+
+\item  A similar modification of \filename {webmac.tex}, called \filename
+       {pdfwebmac.tex}, allows production of hypertext'd \PDF\ versions of
+       programs written in \WEB. This is also part of the \PDFTEX\
+       distribution.
+
+\stopitemize
+
+Some nice samples of \PDFTEX\ output can be found on the \TUG\ web server, at
+\from[examples] and \from[context].
+
+\section{Setting up fonts}
+
+\PDFTEX\ can work with Type~1 and TrueType fonts, but a source must be
+available for all fonts used in the document, except for the 14~base fonts
+supplied by Acrobat Reader (Times, Helvetica, Courier, Symbol and Dingbats).
+It is possible to use \METAFONT||generated fonts in \PDFTEX --- but it is
+strongly recommended not to use \METAFONT||fonts if an equivalent is
+available in Type~1 or TrueType format, if only because bitmap Type~3 fonts
+render very poorly in Acrobat Reader. Given the free availability of Type~1
+versions of all the Computer Modern fonts, and the ability to use standard
+\POSTSCRIPT\ fonts, most \TEX\ users should be able to experiment with
+\PDFTEX.
+
+\subsection[mapfile]{Map files}
+
+\PDFTEX\ reads the map files, specified in the configuration file, see
+\in{section}[cfg], in which reencoding and partial downloading for each font
+are specified. Every font needed must be listed, each on a separate line,
+except \PK~fonts. The syntax of each line is similar to \type {dvips} map
+files \footnote {\type {dvips} map files can be used with \PDFTEX\ without
+problems.} and can contain up to the following (some are optional) fields:
+{\em texname}, {\em basename}, {\em fontflags}, {\em fontfile}, {\em
+encodingfile} and {\em special}. The only mandatory is {\em texname} and must
+be the first field. The rest is optional, but if {\em basename} is given, it
+must be the second field. Similarly if {\em fontflags} is given it must be
+the third field (if {\em basename} is present) or the second field (if {\em
+basename} is left out). It is possible to mix the positions of {\em
+fontfile}, {\em encodingfile} and {\em special}, however the first three
+fields must be given in fixed order.
+
+\startdescription {texname}
+
+sets the name of the \TFM\ file. This name must be given for each font.
+
+\stopdescription
+
+\startdescription {basename}
+
+sets the base (\POSTSCRIPT) font name. If not given then it will be taken
+from the font file. Specifying a name that doesn't match the name in the font
+file will cause \PDFTEX\ to write a warning, so it is best not to have this
+field specified if the font resource is available, which is the most common
+case. This option is primarily intended for use of base fonts and for
+compatibility with \type {dvips} map files. 
+
+\stopdescription
+
+\startdescription {fontflags}
+
+specify some characteristics of the font. The next description of these flags
+are taken, with a slight modification, from the \PDF\ Reference Manual (the
+section on Font Descriptor Flags).
+
+\startsmaller
+
+The value of the flags key in a font descriptor is a 32||bit integer that
+contains a collection of boolean attributes. These attributes are true if the
+corresponding bit is set to~1. \in{Table}[flags] specifies the meanings of
+the bits, with bit~1 being the least significant. Reserved bits must be set
+to zero.
+
+\placetable[here][flags]{The meaning of flags in the font descriptor.}
+\starttable[|c|l|]
+\HL
+\NC \bf bit position \NC \bf semantics                               \NC\AR
+\HL
+\NC 1                \NC Fixed-width font                            \NC\AR
+\NC 2                \NC Serif font                                  \NC\AR
+\NC 3                \NC Symbolic font                               \NC\AR
+\NC 4                \NC Script font                                 \NC\AR
+\NC 5                \NC Reserved                                    \NC\AR
+\NC 6                \NC Uses the Adobe Standard Roman Character Set \NC\AR
+\NC 7                \NC Italic                                      \NC\AR
+\NC 8--16            \NC Reserved                                    \NC\AR
+\NC 17               \NC All-cap font                                \NC\AR
+\NC 18               \NC Small-cap font                              \NC\AR
+\NC 19               \NC Force bold at small text sizes              \NC\AR
+\NC 20--32           \NC Reserved                                    \NC\AR
+\HL
+\stoptable
+
+All characters in a {\em fixed||width} font have the same width, while
+characters in a proportional font have different widths. Characters in a {\em
+serif font} have short strokes drawn at an angle on the top and bottom of
+character stems, while sans serif fonts do not have such strokes. A {\em
+symbolic font} contains symbols rather than letters and numbers. Characters
+in a {\em script font} resemble cursive handwriting. An {\em all||cap} font,
+which is typically used for display purposes such as titles or headlines,
+contains no lowercase letters. It differs from a {\em small||cap} font in
+that characters in the latter, while also capital letters, have been sized
+and their proportions adjusted so that they have the same size and stroke
+weight as lowercase characters in the same typeface family.
+
+Bit~6 in the flags field indicates that the font's character set conforms the
+Adobe Standard Roman Character Set, or a subset of that, and that it uses
+the standard names for those characters.
+
+Finally, bit~19 is used to determine whether or not bold characters are
+drawn with extra pixels even at very small text sizes. Typically, when
+characters are drawn at small sizes on very low resolution devices such as
+display screens, features of bold characters may appear only one pixel
+wide. Because this is the minimum feature width on a pixel||based device,
+ordinary non||bold characters also appear with one||pixel wide features, and
+cannot be distinguished from bold characters. If bit 19 is set, features of
+bold characters may be thickened at small text sizes.
+
+\stopsmaller
+
+If the font flags are not given, \PDFTEX\ treats it as being~4, a symbolic
+font. If you do not know the correct value, it would be best not to specify
+it, as specifying a bad value of font flags may cause troubles in viewers. On
+the other hand this option is not absolutely useless because it provides
+backward compatibility with older map files (see the fontfile description
+below).
+
+\stopdescription
+
+\startdescription {fontfile}
+
+sets the name of the font source file. This must be a Type~1 or TrueType font
+file. The font file name can be preceded by one or two special characters,
+which says how the font file should be handled.
+
+\startitemize
+
+\item  If it is preceded by a \type {<} the font file will be partly
+       downloaded, which means that only used glyphs (characters) are
+       embedded to the font. This is the most common use and is
+       {\em strongly recommended} for any font, as it ensures the
+       portability and reduces the size of the \PDF\ output. Partial fonts
+       are included in such a way that name and cache clashes are minimalized.
+
+\item  In case the font file name is preceded by a double \type{<<}, the font
+       file will be included entirely --- all glyphs of the font are
+       embedded, including the ones that are not used in the document. Apart
+       from causing large size \PDF\ output, this option may cause troubles
+       with TrueType fonts too, so it is not recommended. It might be useful
+       in case the font is untypical and can not be subsetted well by
+       \PDFTEX. {\em Beware: some font vendors forbid full font inclusion.}
+
+\item  In case nothing preceded the font file name, the font file is read but
+       nothing is embedded, only the font parameters are extracted to
+       generate the so||called font descriptor, which is used by Acrobat
+       Reader to simulate the font if needed. This option is useful only when
+       you do not want to embed the font (i.e.~to reduce the output size),
+       but wish to use the font metrics and let Acrobat Reader generate
+       instances that look close to the used font in case the font resource
+       is not installed on the system where the \PDF\ output will be viewed
+       or printed. To use this feature the font flags {\em must} be
+       specified, and it must have the bit~6 set on, which means that only
+       fonts with the Adobe Standard Roman Character Set can be simulated.
+       The only exception is in case of Symbolic font, which is not very
+       useful.
+
+\item  If the font file name is preceded by a \type {!}, the font is not read
+       at all, and is assumed to be available on the system. This option can
+       be used to create \PDF\ files which do not contain embedded fonts. The
+       \PDF\ output then works only on systems where the resource of the used
+       font is available. It's not very useful for document exchange, as the
+       \PDF\ is not \quote{portable} at all. On the other hand it is very
+       useful when you wish to speed up running of \PDFTEX\ during
+       interactive work, and only in a final version embed all used fonts.
+       Don't over||estimate gain in speed and when distributing files, always
+       embed the fonts! This feature requires Acrobat Reader to have access
+       to installed fonts on the system. This has been tested on Win95 and
+       \UNIX\ (Solaris). 
+
+\stopitemize
+
+Note that the standard 14~fonts are never downloaded, even when they are
+specified to be downloaded in map files.
+
+\stopdescription
+
+\startdescription {encoding}
+
+specifies the name of the file containing the external encoding vector to be
+used for the font. The file name may be preceded by a \type {<}, but the
+effect is the same. The format of the encoding vector is identical to that
+used by \type {dvips}. If no encoding is specified, the font's built||in
+default encoding is used. It may be omitted if you are sure that the font
+resource has the correct built||in encoding. In general this option is highly
+preferred and is {\em required} when subsetting a TrueType font.
+
+\stopdescription
+
+\startdescription {special}
+
+instructions can be used to manipulate fonts similar to the way \type {dvips}
+does. Currently only the keyword \type {SlantFont} is interpreted, other
+instructions are just ignored. 
+
+\stopdescription
+
+If a used font is not present in the map files, first \PDFTEX\ will look for
+a source with suffix \type {.pgc}, which is a so||called \PGC\ source (\PDF\
+Glyph Container) \footnote {This is a text file containing a \PDF\ Type~3
+font, created by \METAPOST\ using some utilities by Hans Hagen. In general
+\PGC\ files can contain whatever allowed in \PDF\ page description, which may
+be used to support fonts that are not available in \METAFONT. At the moment
+\PGC\ fonts are not very useful, as vector Type~3 fonts are not displayed
+very well in Acrobat Reader, but it may be more useful when Type~3 font
+handling gets better.}. If no \PGC\ source is available, \PDFTEX\ will try to
+use \PK~fonts in a normal way as \DVI\ drivers do, on||the||fly creating
+\PK~fonts if needed.
+
+Lines containing nothing apart from {\em texname} stand for scalable Type~3
+fonts. For scalable fonts as Type~1, TrueType and scalable Type~3 font, all
+the fonts loaded from a \TFM\ at various sizes will be included only once in
+the \PDF\ output. Thus if a font, let's say \type{csr10}, is described in one
+of the map files, then it will be treated as scalable. As a result the font
+source for csr10 will be included only once for \type {csr10}, \type {csr10
+at 12pt} etc. So \PDFTEX\ tries to do its best to avoid multiple downloading
+of identical font sources. Thus vector \PGC\ fonts should be specified as
+scalable Type~3 in map files like:
+
+\starttyping
+csr10
+\stoptyping
+
+It doesn't hurt much if a scalable Type~3 font is not given in map files,
+except that the font source will be downloaded multiple times for various
+sizes, which causes a much larger \PDF\ output. On the other hand if a font
+is in the map files is defined as scalable Type~3 font and its \PGC\ source
+is not scalable or not available, \PDFTEX\ will use \PK\ font instead; the
+\PDF\ output is still valid but some fonts may look ugly because of the
+scaled bitmap.
+
+To summarize this rather confusing story, we include some sample lines.
+
+Use a built||in font with font||specific encoding, i.e.~neither a download
+font nor an external encoding is given. A SlantFont is specified similarly as
+for \type {dvips}.
+
+\starttyping
+psyr   Symbol
+psyro  Symbol        ".167 SlantFont"
+pzdr   ZapfDingbats
+\stoptyping
+
+Use a built||in font with an external encoding. The \type {<} preceded
+encoding file may be left out.
+
+\starttyping
+ptmr8r   Times-Roman   <8r.enc
+ptmri8r  Times-Italic  <8r.enc
+ptmro8r  Times-Roman   <8r.enc  ".167 SlantFont"
+\stoptyping
+
+Use a partially downloaded font with an external encoding:
+
+\starttyping
+putr8r   Utopia-Regular  <8r.enc <putr8a.pfb
+putri8r  Utopia-Italic   <8r.enc <putri8a.pfb
+putro8r  Utopia-Regular  <8r.enc <putr8a.pfb   ".167 SlantFont"
+\stoptyping
+
+Use some faked font map entries:
+
+\starttyping
+logo8      <logo8.pfb
+logo9      <logo9.pfb
+logo10     <logo10.pfb
+logosl8    <logo8.pfb     ".25 SlantFont"
+logosl9    <logo9.pfb     ".25 SlantFont"
+logosl10   <logosl10.pfb
+logobf10   <logobf10.pfb
+\stoptyping
+
+Use an \ASCII\ subset of OT1 and T1:
+
+\starttyping
+ectt1000  cmtt10  <cmtt10.map  <tex256.enc
+\stoptyping
+
+Download a font entirely without reencoding:
+
+\starttyping
+pgsr8r GillSans  <<pgsr8a.pfb
+\stoptyping
+
+Partially download a font without reencoding:
+
+\starttyping
+pgsr8r GillSans  <pgsr8a.pfb
+\stoptyping
+
+Do not read the font at all --- the font is supposed to be installed on
+the system:
+
+\starttyping
+pgsr8r GillSans  !pgsr8a.pfb
+\stoptyping
+
+Entirely download a font with reencoding:
+
+\starttyping
+pgsr8r GillSans  <<pgsr8a.pfb  8r.enc
+\stoptyping
+
+Partially download a font with reencoding:
+
+\starttyping
+pgsr8r GillSans  <pgsr8a.pfb  8r.enc
+\stoptyping
+
+Sometimes we do not want to include a font, but need to extract parameters
+from the font file and reencode the font as well. This only works for fonts
+with Adobe Standard Encoding. The font flags specify how such a font looks
+like, so Acrobat Reader can generate similar instance if the font resource
+is not available on the target system.
+
+\starttyping
+pgsr8r GillSans  32  pgsr8a.pfb  8r.enc
+\stoptyping
+
+A TrueType font can be used in the same way as a Type~1 font:
+
+\starttyping
+verdana8r Verdana  <verdana.ttf  8r.enc
+\stoptyping
+
+\subsection{TrueType fonts}
+
+As mentioned above, \PDFTEX\ can work with TrueType fonts. Defining TrueType
+files is similar to Type~1 font. The only extra thing to do with
+TrueType is to create a \TFM\ file. There is a program called \type {ttf2afm}
+in the \PDFTEX\ distribution which can be used to extract \AFM\ from TrueType
+fonts. Usage is simple:
+
+\starttyping
+ttf2afm -e <encoding vector> -o <afm outputfile> <ttf input file> 
+\stoptyping
+
+A TrueType file can be recognized by its suffix \filename {ttf}. The optional
+{\em encoding} specifies the encoding, which is the same as the encoding
+vector used in map files for \PDFTEX\ and \type {dvips}. If the encoding is
+not given, all the glyphs of the \AFM\ output will be mapped to \type
+{/.notdef}. \type {ttf2afm} writes the output \AFM\ to standard output. If we
+need to know which glyphs are available in the font, we can run \type
+{ttf2afm} without encoding to get all glyph names. The resulting \AFM\ file
+can be used to generate a \TFM\ one by applying \filename {afm2tfm}.
+
+To use a new TrueType font the minimal steps may look like below. We suppose
+that \filename {test.map} is included in \filename {pdftex.cfg}.
+
+\starttyping
+ttf2afm -e 8r.enc -o times.afm times.ttf 
+afm2tfm times.afm -T 8r.enc
+echo "times TimesNewRomanPSMT <times.ttf <8r.enc" >>test.map
+\stoptyping
+
+The \POSTSCRIPT\ font name (\type {TimesNewRomanPSMT}) is reported by \type
+{afm2tfm}, but from \PDFTEX\ version 0.12l onwards it may be left out.
+
+The SlantFont transformation also works for TrueType fonts.
+
+\section[primitives]{New primitives}
+
+Here follows a short description of new primitives added by \PDFTEX. One way
+to learn more about how to use these primitives is to have a look at the file
+\filename {example.tex} in the \PDFTEX\ distribution. Each \PDFTEX\ specific
+primitive is prefixed by \type{\pdf}.
+
+\subsection{Document setup}
+
+\pdftexprimitive {\TeXCom{\pdfoutput} = \TeXNum}
+
+\bookmark{\type{\pdfoutput}}
+
+This Integer parameter specifies whether the output format should be \DVI\ or
+\PDF. Positive value means \PDF\ output, otherwise \DVI\ output. This
+parameter cannot be specified {\em after} shipping out the first page. In
+other words, this parameter must be set before \PDFTEX\ ships out the first
+page if we want \PDF\ output. This is the only one parameter that must be set
+to produce \PDF\ output. All others are optional.
+
+When \PDFTEX\ starts complaining about specials, one can be sure that the
+macro package is not aware of this mode. A simple way of making macros
+\PDFTEX\ aware is:
+
+\starttyping
+\ifx\pdfoutput\undefined \newcount\pdfoutput \fi
+
+\ifcase\pdfoutput DVI CODE \else PDF CODE \fi
+\stoptyping
+
+However, there are better ways to handle these things.
+
+\pdftexprimitive {\TeXCom{\pdfcompresslevel} = \TeXNum}
+
+\bookmark{\type{\pdfcompresslevel}}
+
+This integer parameter specifies the level of text compression via \type
+{zlib}. Zero means no compression, 1~means fastest, 9~means best, 2..8 means
+something in between. A value out of this range will be adjusted to the
+nearest meaningful value. Use a value of~9 for normal runs. 
+
+\pdftexprimitive {\TeXCom{\pdfpagewidth} = \TeXDim}
+
+\bookmark{\type{\pdfpagewidth}}
+
+This dimension parameter specifies the page width of the \PDF\ output. If not
+given then the page width will be calculated as mentioned above. Like the
+next one, this value replaces the value set in the configuration file. When
+part of the page falls of the paper or screen, you can be rather sure that
+this parameter is set wrong. 
+
+\pdftexprimitive {\TeXCom{\pdfpageheight} = \TeXDim}
+
+\bookmark{\type{\pdfpageheight}}
+
+Similar to the previous one, this dimension parameter specifying the page
+height of the \PDF\ output. If not given then the page height will be
+calculated as mentioned above. 
+
+\pdftexprimitive {\TeXCom{\pdfpagesattr} = \TeXTok}
+
+\bookmark{\type{\pdfpagesattr}}
+
+Use this token list parameter to specify optional attributes common for all
+pages of the \PDF\ output file. Some examples of attributes are \type
+{/MediaBox}, the rectangle specifying the natural size of the page, \type
+{/CropBox}, the rectangle specifying the region of the page being displayed
+and printed, and \type {/Rotate}, the number of degrees (in multiples of 90)
+the page should be rotated clockwise when it is displayed or printed. 
+
+\pdftexprimitive {\TeXCom{\pdfpageattr} = \TeXTok}
+
+\bookmark{\type{\pdfpageattr}}
+
+This is similar to \type {\pdfpagesattr}, but it takes priority to the former
+one. It can be used to overwrite any attribute given by \type {\pdfpagesattr}
+for individual pages.
+
+\subsection{The document info and catalog}
+
+\pdftexprimitive {\TeXCom {\pdfinfo} \TeXArg {info keys}}
+
+\bookmark{\type{\pdfinfo}}
+
+This allows the user to add information to the document info section; if this
+information is provided, it can be extracted by Acrobat Reader (version 3.1:
+menu option {\em Document Information, General}). The \TeXArg {info keys} is
+a set of data pairs, a key and a value. The key names are preceded by a \type
+{/}, and the values, being strings, are given between parentheses. All keys
+are optional. Possible keys are \type {/Author}, \type {/CreationDate}
+(defaults to current date), \type {/ModDate}, \type {/Creator} (defaults to
+\type {TeX}), \type {/Producer} (defaults to \type {pdfTeX}), \type {/Title},
+\type {/Subject}, and \type {/Keywords}.
+
+\type {/CreationDate} and \type {/ModDate} are expressed in the form \type
+{D:YYYYMMDDhhmmss}, where \type {YYYY} is the year, \type {MM} is the month,
+\type {DD} is the day, hh is the hour, \type {mm} is the minutes, and \type
+{ss} is the seconds.
+
+Multiple appearances of \type {\pdfinfo} will be concatenated to only
+one. If a key is given more than once, then the first appearance will take
+priority. An example of use of \type {\pdfinfo} may look like:
+
+\starttyping
+\pdfinfo
+  { /Title        (example.pdf)
+    /Creator      (TeX)
+    /Producer     (pdfTeX 0.15a)
+    /Author       (Tom and Jerry)
+    /CreationDate (D:19980212201000)
+    /ModDate      (D:19980212201000)
+    /Subject      (Example)
+    /Keywords     (pdfTeX) }
+\stoptyping
+
+\pdftexprimitive {\TeXCom {\pdfcatalog} \TeXArg {catalog keys} \TeXOpt {\TeXWrd
+{openaction} \TeXDat {action}}}
+
+\bookmark{\type{\pdfcatalog}}
+
+Similar to the document info section is the document catalog, where keys are
+\type {/URI}, which provides the base \URL\ of the document, and \type
+{/PageMode} determines how Acrobat displays the document on startup. The
+possibilities for the latter are explained in \in {Table} [pagemode]:
+
+\placetable[here][pagemode]{Supported \type{/PageMode} values.}
+\starttable[|l|l|]
+\HL
+\NC \bf value        \NC \bf meaning                            \NC\AR
+\HL
+\NC \tt /UseNone     \NC neither outline nor thumbnails visible \NC\AR
+\NC \tt /UseOutlines \NC outline visible                        \NC\AR
+\NC \tt /UseThumbs   \NC thumbnails visible                     \NC\AR
+\NC \tt /FullScreen  \NC full--screen mode                      \NC\AR
+\HL
+\stoptable
+
+In full||screen mode, there is no menu bar, window controls, nor any other
+window present. The default setting is \type {/UseNone}.
+
+The \TeXWrd {openaction} is the action provided when opening the document and
+is specified in the same way as internal links, see \in {section} [linking].
+Instead of using this method, one can also write the open action directly
+into the catalog. 
+
+\pdftexprimitive {\TeXCom {\pdfnames} \TeXArg {text}}
+
+\bookmark{\type{\pdfnames}}
+
+Inserts the text to \type {/Names} array. The text must be conform to the
+specifications as laid down in the \PDF\ Reference Manual, otherwise the
+document can be invalid.
+
+\subsection{Fonts} 
+
+\pdftexprimitive {\TeXCom {\font} \TeXWrd {...} \TeXNum \TeXWrd
+{stretch} \TeXNum \TeXWrd {shrink} \TeXNum \TeXWrd {step} \TeXNum}
+
+\bookmark{\type{\font}}
+
+Although still in an experimental stage, and therefore subjected to changes, 
+the next extension to the \TEX\ primitive \type {font} is worth mentioning. 
+
+\starttyping
+\font\somefont=somefile at 10pt stretch 30 shrink 20 step 10 
+\stoptyping
+
+The \type {stretch 30 shrink 20 step 5} means as much as: \quotation {hey
+\TEX, when things are going to bad, you may stretch the glyphs in this font
+as much as 3\% or shrink them by 2\%}. Because \PDFTEX\ uses internal
+datastructures with fixed widths, each additional width also means an
+additional font. For practical reasons \PDFTEX\ uses discrete steps, in this
+example a 1\% one. This means that for font \type {somefile} upto~6
+differently scaled alternatives are used. When no step is specified, 0.5\%
+steps are used. 
+
+Roughly spoken, the trick is as follows. Consider a text typeset in triple
+column mode. When \TEX\ cannot break a line in the appropriate way, the
+unbreakable parts of the word will stick into the margin. When \PDFTEX\ notes
+this, it will try to scale the glyphs in that line using fixed steps, until
+the line fits. When lines are too spacy, the opposite happens: \PDFTEX\
+starts scaling the glyphs until the white space gaps is acceptable. 
+
+The additional fonts are named as \type {somefile+10} or \type {somefile-15},
+and \TFM\ files with these names and appropriate dimensions must be
+available. So, each scaled font must have its own \TFM\ file! When no
+\TFM\ file can be found, \PDFTEX\ will try to generate it by executing the
+script \type {mktextfm}, when available and supported. 
+
+This mechanism is inspired on an optimization introduced first by Herman
+Zapf, which in itself goes back to optimizations used in the early days of
+typesetting: use different glyphs to optimize the greyness of a page. So,
+there are many, slightly different~a's, e's, etc. For practical
+reasons \PDFTEX\ does not use such huge glyph collections; it uses horizontal
+scaling instead. This is sub||optimal, and for many fonts, sort of offending
+to the design. But, when using \PDF, it's not that illogical at all: \PDF\
+viewers use so called Multiple Master fonts when no fonts are embedded
+and|/|or can be found on the target system. Such fonts are designed to adapt
+their design to the different scaling parameters. It is up to the user to
+determine to what extend mixing slightly remastered fonts can be used without
+violating the design. Think of an~O: when simply stretched, the vertical part
+of the glyph becomes thicker, and looks incompatible to an unscaled original.
+In a multiple master, one can decide to stretch but keep this thickness
+compatible. 
+
+\pdftexprimitive {\TeXCom {\pdfadjustspacing} \TeXNum} 
+
+\bookmark{\type{\pdfadjustspacing}}
+
+The output that \PDFTEX\ produces is pretty compatible with the normal \TEX\
+output: \TEX's typesetting engine is unchanged. The optimization described
+here, is turned of by default. At this moment there are two methods. When set
+to~1, simple stretching is applied. This alternative uses the normal \TFM\
+files, and is not related to the stretch and shrink as described in the
+previous section. When set to~2, the previously described multiple font 
+optimization comes into action. 
+
+\pdftexprimitive {\TeXCom {\efcode} \TeXNum} 
+
+\bookmark{\type{\efcode}}
+
+We didn't yet tell the whole story. One can imagine that some glyphs are more
+sensitive for scaling than others. The \type {\efcode} primitive can be used 
+to influence the stretchability of a glyph. The syntax is similar to \type 
+{\sfcode}, and default to~1000, meaning 100\%. 
+
+\starttyping
+\efcode`A=2500
+\efcode`O=0
+\stoptyping
+
+In this example an~A may stretch 2.5~times as much as normal and the~O is not
+to be stretched at all. The minimum and maximum stretch is however bound by
+the font specification, otherwise one would end up with more fonts inclusions
+than comfortable. 
+
+\subsection{Graphics inclusion}
+
+\pdftexprimitive {\TeXCom {\pdfimage} \TeXWrd {width} \TeXDim\ \TeXWrd
+{height} \TeXDim\ \TeXWrd {depth} \TeXDim\ \TeXArg {filename}}
+
+\bookmark{\type{\pdfimage}}
+
+Inserts an image, optionally changing width, height, depth or any combination
+of them. Default values are zero for depth and \quote {running} for height
+and width. If all of them are given, the image will be scaled to fit the
+specified values. If some of them (but not all) are given, the rest will be
+set to a value corresponding to the remaining ones so as to make the image
+size to yield the same proportion of $width:(height+depth)$ as the original
+image size, where depth is treated as zero. If none of them is given then the
+image will take its natural size. An image inserted at natural size often has
+a resolution 72 dots per inch in the output file, but some images may contain
+data specifying the image resolution, and in such a case the image will be
+scaled to the correct resolution. 
+
+The filename of the image must appear after the optional dimension
+parameters. The dimension of the image can be accessed by enclosing the \type
+{\pdfimage} command to a box and checking the dimensions of the box:
+
+\starttyping
+\setbox0=\hbox{\pdfimage {somefile.png}} 
+\stoptyping
+
+Now we can use \type {\wd0} and \type {\ht0} to question the natural size of
+the image as determined by \PDFTEX. When dimensions are specified before the
+\type {{somefile.pdf}}, the graphic is scaled to fit these. 
+
+The image type is specified by the extension of the given file name, so \type
+{.png} stands for \PNG\ image, \type {tif} for \TIF, and \type {.pdf} for
+\PDF\ file. Otherwise the image is treated as \JPEG\ (\type {jpg}).
+
+\pdftexprimitive {\TeXCom {\pdfimageresolution} = \TeXNum}
+
+\bookmark{\type{\pdfimageresolution}}
+
+We already mentioned the default resolution of 72 dots per inch. It is 
+possible to overrule this value by using this register. Of course this only 
+applies to bitmap \PNG, \TIF, and \JPEG\ illustrations.
+
+\subsection{XObject Forms}
+
+The next three primitives support a \PDF\ feature called \quote {object
+reuse} in \PDFTEX. The idea is to create a Form object in \PDF. The content
+of this XObject Form object corresponds to the content of a \TEX\ box, which
+can also contain pictures and references to other XObject Form objects as
+well. After that the XObject Form can be used by simply referring to its
+object number. This feature can be useful for large documents with a lot of
+similar elements, as it can reduce the duplication of identical objects. 
+
+\pdftexprimitive {\TeXCom {\pdfform} \TeXNum}
+
+\bookmark{\type{\pdfform}}
+
+Writes out the  \TEX\ box \TeXNum\ as a XObject Form to the PDF file.
+
+\pdftexprimitive {\TeXCom {\pdflastform}}
+
+\bookmark{\type{\pdflastform}}
+
+Returns the object number of the last XObject Form written to the \PDF\ file.
+
+\pdftexprimitive {\TeXCom {\pdfrefform} \TeXCom {\name}}
+
+\bookmark{\type{\pdfrefform}}
+
+Inserts a reference to the XObject Form called \TeXCom{\name}.
+
+As said, this feature can be used for reusing information. This mechanism
+also plays a role in typesetting fill||in form. Such widgets sometimes
+depends on visuals that show up on user request, but are hidden otherwise.
+
+\subsection{Annotations}
+
+\PDF\ level 1.2 provides four basic kinds of annotations:
+
+\startitemize[packed]
+\item hyperlinks, general navigation
+\item text clips (notes)
+\item movies
+\item sound fragments
+\stopitemize
+
+The first type differs from the other three in that there is a designated
+area involved on which one can click, or when moved over some action occurs.
+\PDFTEX\ is able to calculate this area, as we will see later. All
+annotations can be supported using the next two general annotation
+primitives.
+
+\pdftexprimitive {\TeXCom {\pdfannot} \TeXWrd {width} \TeXDim\ \TeXWrd {height}
+\TeXDim\ \TeXWrd {depth} \TeXDim\ \TeXArg {text}}
+
+\bookmark{\type{\pdfannot}}
+
+This primitive attaches an annotation at the current point in the text. The
+text is inserted as raw \PDF\ code to the contents of annotation.
+
+\pdftexprimitive {\TeXCom {\pdflastannot}}
+
+\bookmark{\type{\pdflastannot}}
+
+This primitive returns the object number of the last annotation created by
+\type {\pdfannot}. These two primitives allow users to create any annotation
+that cannot be created by \type {\pdfannotlink} (see below).
+
+\subsection[linking]{Destinations and links}
+
+The first type of annotation mentioned before, is implemented by three
+primitives. The first one is used to define a specific location as being
+referred to. This location is tied to the page, not the exact location on the
+page. The main reason for this is that \PDF\ maintains a dedicated list of
+these annotations |<|and some more when optimized|>| for the sole purpose of
+speed.
+
+\pdftexprimitive {\TeXCom {\pdfdest} \TeXOpt{\TeXWrd {num} \TeXDat {n} |
+\TeXWrd {name} \TeXDat {refname}} \TeXWrd {appearance}}
+
+\bookmark{\type{\pdfdest}}
+
+This primitive establishes a destination for links and bookmark outlines; the
+link is identified by either a number or a symbolic name, and the way the
+viewer is to display the page must be specified; \TeXWrd {appearance} must be
+one of those mentioned in \in{table}[appearance].
+
+\placetable[here][appearance]{The outline and destination appearances.}
+\starttable[|l|l|]
+\HL
+\NC \bf keyword \NC \bf meaning                                       \NC\AR
+\HL
+\NC \tt fit    \NC fit the page in the window                         \NC\AR
+\NC \tt fith   \NC fit the width of the page                          \NC\AR
+\NC \tt fitv   \NC fit the height of the page                         \NC\AR
+\NC \tt fitb   \NC fit the \quote{Bounding Box} of the page           \NC\AR
+\NC \tt fitbh  \NC fit the width of \quote{Bounding Box} of the page  \NC\AR
+\NC \tt fitbv  \NC fit the height of \quote{Bounding Box} of the page \NC\AR
+\NC \tt xyz    \NC keep the current zoom factor                       \NC\AR
+\HL
+\stoptable
+
+\type {xyz} can optionally be followed by \TeXWrd {zoom} \TeXDat {factor} to
+provide a fixed zoom||in. The \TeXDat {factor} is like \TEX\ magnification,
+i.e. 1000 is the \quote {normal} page view.
+
+\pdftexprimitive {\TeXCom {\pdfannotlink} \TeXWrd {width} \TeXDim\ \TeXWrd
+{height} \TeXDim\ \TeXWrd {depth} \TeXDim\ \TeXWrd {attr} \TeXArg
+{attributes} \TeXDat {action}}
+
+\bookmark{\type{\pdfannotlink}}
+
+Starts a hypertext link; if the optional dimensions are not specified, they
+will be calculated from the box containing the link. The \TeXArg {attributes}
+are explained in great detail in the \PDF\ Reference Manual and determine the
+appearance of the link. Typically, the attributes specify the color and
+thickness of any border around the link. Thus \typ {/C [0.9 0 0] /Border [0 0
+2]} specifies a color (in \RGB) of dark red, and a border thickness of
+2~points.
+
+While all graphics and text in a \PDF\ document have relative positions,
+annotations have internally hard||coded absolute positions. Again we're
+dealing with a speed optimization. The main disadvantage is that these
+annotations do {\em not} obey transformations issued by \type {\pdfliteral}'s
+
+The \TeXDat{action} can do many things; some possibilities are:
+
+\description {\TeXWrd{page} \TeXDat{n}} jump to page \TeXDat{n}
+
+\description {\TeXWrd{goto num} \TeXDat{n}} jump to point \TeXDat{n}
+
+\description {\TeXWrd{goto name} \TeXDat{refname}} jump to a point established as
+\TeXDat{refname} with \type {\pdfdest}
+
+\description {\TeXWrd{goto file} \TeXDat{filename}} open a local file; this can be
+used with a \TeXWrd{name} or \TeXWrd{page} specification, to point to a
+specific location on the file
+
+\description {\TeXWrd{thread num} \TeXDat{n}} jump to thread identified by
+\TeXDat{n}
+
+\description {\TeXWrd{thread name} \TeXDat{refname}} jump to thread identified
+by \TeXDat{refname}
+
+\description {\TeXWrd{user} \TeXArg{specification}} perform a user||specified
+action; the \PDF\ Reference Manual explains the possibilities; a typical use
+of this is to specify a \URL, e.g.\ \typ {/S /URI /URI (http://www.tug.org/)} 
+
+\pdftexprimitive {\TeXCom {\pdfendlink}}
+
+\bookmark{\type{\pdfendlink}}
+
+This primitive ends a link. All text between \type {\pdfannotlink} and \type
+{\pdfendlink} will be treated as part of this link. \PDFTEX\ may break the
+result across lines (or pages), in which case it will make several links with
+the same content.
+
+\subsection{Bookmarks}
+
+\pdftexprimitive {\TeXCom {\pdfoutline} \TeXDat {action} \TeXWrd {count}
+\TeXDat {n} \TeXArg {text}}
+
+\bookmark{\type{\pdfoutline}}
+
+This primitive creates an outline (or bookmark) entry. The first parameter
+specifies the action to be taken, and is the same as that allowed for \type
+{\pdfannotlink}. The \TeXWrd {count} specifies the number of direct
+subentries under this entry; specify~0 or omit it if this entry has no
+subentries. If the number is negative, then all subentries will be closed and
+the absolute value of this number specifies the number of subentries. The
+\TeXArg{text} is what will be shown in the outline window (note that this is
+limited to characters in the \PDF\ Document Encoding vector).
+
+\subsection{Article threads}
+
+\pdftexprimitive {\TeXCom {\pdfthread} \TeXOpt {\TeXWrd {num} \TeXDat {n} |
+\TeXWrd {name} \TeXDat {refname}}}
+
+\bookmark{\type{\pdfthread}}
+
+Starts an article thread; the corresponding \type {\pdfendthread} must be in
+the box in the same depth as the box containing \type {\pdfthread}. All boxes
+in this depth level will be treated as part of this thread. An identifier
+(\TeXDat {n} or \TeXDat {refname}) must be specified; threads with same
+identifiers will be joined together.
+
+\pdftexprimitive {\TeXCom {\pdfendthread}}
+
+\bookmark{\type{\pdfendthread}}
+
+Finishes the current thread.
+
+\pdftexprimitive {\TeXCom {\pdfthreadhoffset} \TeXDim}
+
+\bookmark{\type{\pdfthreadhoffset}}
+
+Specifies a threads horizontal margin.
+
+\pdftexprimitive {\TeXCom {\pdfthreadvoffset} \TeXDim}
+
+\bookmark{\type{\pdfthreadvoffset}}
+
+Specifies a threads vertical margin.
+
+\subsection{Miscellaneous}
+
+\pdftexprimitive{\TeXCom {\pdfliteral} \TeXArg {pdf code}}
+
+\bookmark{\type{\pdfliteral}}
+
+Like \type {\special} in normal \TeX, this command inserts raw \PDF\ code
+into the output. This allows support of color and text transformation. This
+primitive is heavily used in the \METAPOST\ inclusion macros.
+
+\pdftexprimitive{\TeXCom {\pdfobj} \TeXWrd {stream} \TeXArg {text}}
+
+\bookmark{\type{\pdfobj}}
+
+Similar to \type {\pdfliteral}, but the text is inserted as contents of an
+object. If the optional keyword \TeXWrd {stream} is given then the contents
+will be inserted as a stream.
+
+\pdftexprimitive {\TeXCom {\pdflastobj}}
+
+\bookmark{\type{\pdflastobj}}
+
+Returns the object number of the last object created by \type {\pdfobj}.
+These primitives provide a mechanism allowing insertion of a user||defined
+object into the \PDF\ output.
+
+\pdftexprimitive {\TeXCom {\pdffontprefix} \TeXArg {string}}
+
+\bookmark{\type{\pdffontprefix}}
+
+In the \PDF\ file produced by \PDFTEX, one can recognize a font switch by the
+prefix \type {F}, for instance \type {/F12} or \type {/F54}. This primitive
+can be used to force another prefix. This is only needed when one expects (or
+encounters) viewing problems with included \PDF\ illustrations that use
+similar prefixes. 
+
+\pdftexprimitive {\TeXCom {\pdfformprefix} \TeXArg {string}}
+
+\bookmark{\type{\pdfformprefix}}
+
+Forms are reusable graphic, textual or mixed objects. In the files made by 
+\PDFTEX\ such forms are internally identified by a number, which is not to be 
+confused with the object reference as reported by \type {\pdflastform}. Like 
+the previous and next primitive, this one can be used to overrule the default 
+prefix, which is \type {Fm}, like in \type {/Fm1}. 
+
+\pdftexprimitive {\TeXCom {\pdfimageprefix} \TeXArg {string}}
+
+\bookmark{\type{\pdfimageprefix}}
+
+Like \type {\pdffontprefix} and \type {\pdfformprefix}, this primitive
+overrules a default prefix, this time \type {Im}, such as \type {/Im58}.
+Forget about these three primitives when you never encountered viewing
+problems, unless you want more fancy prefixes. When you do encounter \PDF\
+inclusion problems, change one or more of these prefixes in your document
+setup, and in the configuration file set \type {include_form_resources} to~1. 
+
+\pdftexprimitive {\TeXCom {\pdftexversion}}
+
+\bookmark{\type{\pdftexversion}}
+
+Returns the version of \PDFTEX\ multiple by 100, e.g. for version \type
+{0.12x} it returns 12. This document is typeset with version~\the
+\pdftexversion .\pdftexrevision. 
+
+\pdftexprimitive {\TeXCom {\pdftexrevision}}
+
+\bookmark{\type{\pdftexrevision}}
+
+Returns the revision of \PDFTEX, e.g. for version \type {0.12x} it returns
+\type {x}.
+
+\section{Graphics and color}
+
+\PDFTEX\ supports inclusion of pictures in \PNG, \JPEG, \TIF\ and \PDF\
+format. The most common technique |<|the inclusion of \EPS\ figures|>| is
+replaced by \PDF\ inclusion. \EPS\ files can be converted to \PDF\ by
+GhostScript, Acrobat Distiller or other \POSTSCRIPT||to||\PDF\ convertors.
+The BoundingBox of a \PDF\ file is taken from CropBox if available, otherwise
+from the MediaBox. To get the right BoundingBox from a \EPS\ file, before
+converting to \PDF, it is necessary to transform the \EPS\ file so that the
+start point is at the (0,0)~coordinate and the page size is set exactly
+corresponding to the BoundingBox. A \PERL\ script (\EPSTOPDF) for this
+purpose has been written by Sebastian Rahtz. The \TEXUTIL\ utility script
+that comes with \CONTEXT\ can so a similar job. (Concerning this conversion,
+it handles complete directories, removes some garbage from files, takes
+precautions against duplicate conversion, etc.) 
+
+Other alternatives for graphics in \PDFTEX\ are:
+
+\description {\LATEX\ picture mode} Since this is implemented simply in terms
+of font characters, it works in exactly the same way as usual. 
+
+\description {Xy||pic} If the \POSTSCRIPT\ back||end is not requested, Xy-pic
+uses its own Type~1 fonts, and needs no special attention.
+
+\description {tpic} The \quote {tpic} \type {\special} commands (used in some
+macro packages) can be redefined to produce literal \PDF, using some macros
+written by Hans Hagen. 
+
+\description {\METAPOST} Although the output of \METAPOST\ is \POSTSCRIPT, it
+is in a highly simplified form, and a \METAPOST\ to \PDF\ conversion (written
+by Hans Hagen and Tanmoy Bhattacharya) is implemented as a set of macros
+which reads \METAPOST\ output and supports all of its features.
+
+\description {\PDF} It is possible to insert arbitrary one||page||only
+\PDF\ files, with their own fonts and graphics, into a document. The
+front page of this document is an example of such an insert, it is an 
+one page document generated by \PDFTEX.
+
+For new work, the \METAPOST\ route is highly recommended. For the future,
+Adobe has announced that they will define a specification for \quote
+{encapsulated \PDF}, and this should solve some of the present difficulties. 
+
+The inclusion of raw \POSTSCRIPT\ commands |<|a technique utilized by for
+instance the \type {pstricks} package|>| cannot be supported. Although \PDF\
+is a direct descendant of \POSTSCRIPT, it lacks any programming language
+commands, and cannot deal with arbitrary \POSTSCRIPT.
+
+\section{Formal syntax specification}
+
+{\em The formal syntax specification!}
+
+%D We did use some abbreviations. Only those really used 
+%D will end up in the following list. 
+
+\subject{Abbreviations}
+
+\placelistofabbreviations
+
+%D And then we're done. 
+
+\stoptext

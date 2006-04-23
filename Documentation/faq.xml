@@ -1,0 +1,787 @@
+<?xml-stylesheet type="text/xsl" href="html.xsl" ?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd"
+[
+<!ENTITY % entities.ent SYSTEM "entities.ent">
+%entities.ent;
+<!ENTITY rev "2.4.2236">
+<!ENTITY date "February 14, 2006">
+<!ENTITY month "February 2006">
+]>
+
+<!-- todo:
+     "how do i change the installation directory?"
+     "how do i view dvi files?"
+-->
+
+<article>
+
+<articleinfo>
+
+<title>&MiKTeX; &FAQ; (&date;)</title>
+
+<edition>&rev;</edition>
+
+<author>
+<firstname>Christian</firstname>
+<surname>Schenk</surname>
+</author>
+
+<copyright>
+<year>2001&ndash;2006</year>
+<holder>Christian Schenk</holder>
+</copyright>
+
+<date>&date;</date>
+
+<legalnotice>
+
+<para>Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.</para>
+
+<para>Permission is granted to copy and distribute modified versions
+of this manual under the conditions for verbatim copying, provided
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.</para>
+
+<para>Permission is granted to copy and distribute translations of
+this manual into another language, under the above conditions for
+modified versions, except that this permission notice may be stated in
+a translation approved by the Free Software Foundation.</para>
+
+</legalnotice>
+
+</articleinfo>
+
+<section id="aboutfaq">
+
+<title>About this document</title>
+
+<para>This is the official &MiKTeX; &FAQ;. It is available in the
+following formats:</para>
+
+<itemizedlist>
+<listitem><para>formatted in <ulink url="faq.html">HTML</ulink> entirely on one web page</para></listitem>
+<listitem><para>formatted in <ulink url="index.html">HTML</ulink> with one web page per section</para></listitem>
+</itemizedlist>
+
+</section>
+
+<section id="general">
+
+<title>General</title>
+
+<qandaset>
+
+<qandaentry id="aboutmiktex">
+<question>
+<para>What is &MiKTeX;?</para>
+</question>
+<answer>
+<para>&MiKTeX; is a complete
+&TeX; system for Windows.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="winver">
+<question>
+<para>Which &Windows; version is required for running
+&MiKTeX;?</para>
+</question>
+<answer>
+<para>&MiKTeX; requires one of the following &Windows; operating systems:</para>
+<itemizedlist>
+<listitem>
+<para>&WindowsServer2003;</para>
+</listitem>
+<listitem>
+<para>&WindowsXP;</para>
+</listitem>
+<listitem>
+<para>&Windows2000;</para>
+</listitem>
+<listitem>
+<para>&WindowsMe;</para>
+</listitem>
+<listitem>
+<para>&Windows98;, &Windows98SE;</para>
+</listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+
+<qandaentry id="license">
+<question>
+<para>Am I allowed to redistribute &MiKTeX;?</para>
+</question>
+<answer>
+<para>The &MiKTeX; distribution is a conglomerate of many software packages.
+To the best of our knowledge, all packages meet the requirements
+of the
+<ulink
+url="http://www.debian.org/social_contract#guidelines">Debian Free Software
+Guidelines</ulink>.
+This means that &MiKTeX; may be freely used,
+copied, modified, and redistributed.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="y2k">
+<question>
+<para>Is &MiKTeX; Year&nbsp;2000 compliant?</para>
+</question>
+<answer>
+<para>&MiKTeX; is Year&nbsp;2000 compliant to the extent that it has
+been designed and tested to be compliant.  But remember that &MiKTeX;
+comes with no warranty, and this applies to <acronym>Y2K</acronym>
+compliance.</para>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="setup">
+
+<title>Installation</title>
+
+<qandaset>
+
+<qandaentry id="downloading">
+<question>
+<para>How do I download &MiKTeX;?</para>
+</question>
+<answer>
+<para>You can use the &MiKTeX; <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783">setup
+wizard</ulink> to download the whole &MiKTeX;
+distribution.</para>
+<para>If you want to set up a minimal &MiKTeX; system, use the <quote>Small &MiKTeX;</quote> installer
+(see <xref linkend="smallmiktex"/>).</para>
+<para>Read the <ulink
+url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
+instructions</ulink>, for a detailed description of the download
+process.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="proxyauth">
+<question>
+<para>I'm behind a proxy/firewall which requires authentication.  How
+can I download &MiKTeX; in this
+situation?</para>
+</question>
+<answer>
+<para>The setup wizard handles proxy authentication.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="nowiz">
+<question>
+<para>Is it possible to download
+&MiKTeX; without the wizard?</para>
+</question>
+<answer>
+<para>You can use the batch file
+<filename>getrpr.bat</filename><footnote><para>The batch file
+<filename>getrpr.bat</filename> can be found in the
+&CTAN; directory
+<filename>systems/win32/miktex/setup</filename> together with
+<filename>wget.exe</filename>, which is also required.</para>
+</footnote> to download one of the &MiKTeX; package
+sets (Small, Large, Total).  Use it as follows:</para>
+<informalexample>
+<screen>
+&prompt;<userinput>getrpr <replaceable>remotedir</replaceable> <replaceable>packageset</replaceable> <replaceable>localdir</replaceable> [<replaceable>wgetoption</replaceable>...]</userinput>
+</screen>
+</informalexample>
+<para>For example, in order to download the large package set from the
+Dante &FTP; server:</para>
+<informalexample>
+<screen>
+&prompt;<userinput>getrpr ftp://ftp.dante.de/pub/tex/systems/win32/miktex/tm/packages large C:\miktextemp</userinput>
+</screen>
+</informalexample>
+<para>If you are behind a proxy, then you must must specify your proxy
+configuration by appending extra <command>wget</command> options at
+the end of the command-line.  See the <ulink
+url="http://www.gnu.org/software/wget/manual/html_node/index.html"><command>wget</command>
+manual</ulink> for more information.</para> <para>If you want to setup
+a mirror of the complete package repository, then you should get the
+<ulink
+url="http://www.samba.org/rsync/"><application>rsync</application></ulink>
+utility.  Use it as follows:</para>
+<informalexample>
+<screen>
+&prompt;<userinput>mkdir C:\miktexmirror</userinput>
+&prompt;<userinput>rsync -av sunsite.dk::projects/miktex/pub/tm C:\miktexmirror</userinput>
+&prompt;<userinput>rsync -av sunsite.dk::projects/miktex/pub/setup C:\miktexmirror</userinput>
+</screen>
+</informalexample>
+</answer>
+</qandaentry>
+
+<qandaentry id="installing">
+<question>
+<para>How do I install &MiKTeX;?</para>
+</question>
+<answer>
+<para>The &MiKTeX; distribution includes a
+setup wizard (<command>setup.exe</command>).  For most users it should
+be sufficient to start the wizard and then clicking the
+<guibutton>Next</guibutton> button until the installation process
+concludes.</para>
+<para>Read the <ulink
+url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
+instructions</ulink>, for a detailed description of the installation
+process.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="ie">
+<question>
+<para>Is it possible to install
+&MiKTeX; without installing &InternetExplorer;?</para>
+</question>
+<answer>
+<para>&MiKTeX; requires a recent version of
+<filename>wininet.dll</filename>.  This <acronym>DLL</acronym> is a
+part of newer &Windows; systems.  Older systems (i.e.,  &Windows95;,
+&WindowsNT;) must have at least &InternetExplorer40; installed
+(&InternetExplorer; includes <filename>wininet.dll</filename>).</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="smallmiktex">
+<question>
+<para>What is the <quote> Small &MiKTeX;</quote> installer?</para>
+</question>
+<answer>
+<para>The <quote>Small &MiKTeX;</quote> installer sets up a small (basic) &MiKTeX; system.
+Additional packages will be installed later, if necessary. This has the advantage of
+keeping a minimal &MiKTeX; system. On the other hand, you will need a fast connection
+to a &MiKTeX; repository.</para>
+<para>URL: <ulink url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003&amp;release_id=254373">http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003&amp;release_id=254373</ulink></para>
+</answer>
+</qandaentry>
+
+<qandaentry id="cd">
+<question>
+<para>Is &MiKTeX; available on CD?</para>
+</question>
+<answer>
+<para>Yes, see <ulink url="http://miktex.org/cd/">http://miktex.org/cd/</ulink>.</para>
+<para>The CD contains a live &MiKTeX; system, i.e., it allows you to run &MiKTeX;
+directly from the CD. Altenatively, you can install &MiKTeX; on your hard-disk.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="network">
+<question>
+<para>How do I share &MiKTeX; in a network?</para>
+<para>Get a copy of the &MiKTeX; CD (see <xref linkend="cd"/>) and make its contents available in your network,
+i.e., create a shared directory which
+points to the root directory of the CD. </para>
+<para>On your client PCs, run the setup wizard included on the CD. Choose <guilabel>Prepare to run MiKTeX from the CD</guilabel> as the primary setup task. The wizard will change the environment variable <envar>PATH</envar>.</para>
+</question>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="basics">
+
+<title>Support Options</title>
+
+<qandaset>
+
+<qandaentry id="using">
+<question>
+<para>I have installed &MiKTeX;.  How do I use it?</para>
+</question>
+<answer>
+<para>If you have never used &TeX; before: we recommend that, first of all, you work through a &TeX;/&LaTeX; tutorial. A good
+starting point is this resource:
+<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials</ulink>.</para>
+<para>&MiKTeX; doesn't differ very much from any other &TeX; system you might have used before.
+Typesetting with &MiKTeX; involves these steps:</para>
+<procedure>
+<step><para>Edit the &LaTeX; source with your favourite text editor.</para></step>
+<step><para>Compile the &LaTeX; source into a &DVI; file, i.e., say something like
+<userinput>latex MyMastersThesis</userinput>.</para></step>
+<step><para>Open the result by double-clicking the &DVI; file (e.g., <filename>MyMastersThesis.dvi</filename>) in Windows Explorer.</para></step>
+</procedure>
+<para>You usually use a &LaTeX; editor to carry out these
+steps (see <xref linkend="editing"/>).</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="editing">
+<question>
+<para>Which program should I use to edit &LaTeX; documents?</para>
+</question>
+<answer>
+<variablelist>
+<varlistentry>
+<term><ulink url="http://www.gnu.org/software/auctex/">AUCTeX</ulink></term>
+<listitem>
+<para>AUCTeX is an extensible package that supports writing and formatting &TeX; files for most variants of GNU Emacs.
+In recent versions of XEmacs, AUCTeX is usually already available as a package, though not necessarily up to date.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><ulink url="http://www.texniccenter.org/front_content.php?idcat=26">TeXnicCenter</ulink></term>
+<listitem>
+<para>TeXnicCenter (freeware) is an integrated development environment for developing &LaTeX;-documents.
+It is included on the &MiKTeX; CD.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><ulink url="http://www.winedt.com/">WinEdt</ulink></term>
+<listitem>
+<para>WinEdt (shareware) is a native editor and shell with a strong predisposition towards the creation of &LaTeX; documents.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="support">
+
+<title>Getting Help</title>
+
+<qandaset>
+
+<qandaentry id="projectpage">
+<question>
+<para>Is there a home page?</para>
+</question>
+<answer>
+<para>Yes.  The official project page is <ulink
+url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="ml">
+<question>
+<para>Is there a mailing list?</para>
+</question>
+<answer>
+<para>Yes (see <xref linkend="joiningml"/>).</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="joiningml">
+<question>
+<para>How can I join the mailing list?</para>
+</question>
+<answer>
+<para>To join the list, direct your browser to the <ulink
+url="http://lists.sourceforge.net/lists/listinfo/miktex-users">MiKTeX-Users
+Info Page</ulink> and fill out the form.</para>
+<para>You will receive instructions (via email) on how to use
+the mailing list.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="mlarchive">
+<question>
+<para>How can I read old articles?</para>
+</question>
+<answer>
+<para>To see the collection of prior postings to the MiKTeX-Users
+list, visit the <ulink
+url="http://www.geocrawler.com/redir-sf.php3?list=miktex-users">MiKTeX-Users
+Archives</ulink>.</para>
+<para>Until July 2002, the mailing list was sponsored by the Danish
+Society for Theoretical Statistics.  Postings to the old list are
+archived by <ulink
+url="http://groups.yahoo.com/group/miktex">Yahoo!</ulink>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="leavingml">
+<question>
+<para>How can I leave the mailing list?</para>
+</question>
+<answer>
+<para>Visit the <ulink
+url="http://lists.sourceforge.net/lists/listinfo/miktex-users">MiKTeX-Users
+Info Page</ulink> and enter you subscription email address to change
+your subscription status.</para>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="maintenance">
+
+<title>Maintenance</title>
+
+<qandaset>
+
+<qandaentry id="updates">
+<question>
+<para>How do I update my &MiKTeX; system?</para>
+</question>
+<answer>
+<para>You use &MiKTeXUpdateWizard;
+(<menuchoice><guimenu>Start</guimenu><guisubmenu>MiKTeX</guisubmenu><guimenuitem>MiKTeX
+Update Wizard</guimenuitem></menuchoice>) to update installed
+packages.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="styfiles">
+<question>
+<para>Which is the best directory to keep
+<filename>.sty</filename> files where
+&MiKTeX; can find them?</para>
+</question>
+<answer>
+<para>&MiKTeXPackageManager; takes care of the proper
+installation of well known &LaTeX; packages.</para>
+<para>If (for some reason) you have to install a package by hand, then
+you should copy the input files into the directory
+<filename>tex\latex\<replaceable>package</replaceable></filename>
+relative to the local &TEXMF; directory (usually
+<filename>&localdir;\</filename>).  Remember to refresh the file name
+database, so that &MiKTeX; finds the
+files (<xref linkend="refreshfndb"/>).</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="addinglang">
+<question>
+<para>How do I add new languages to the
+&LaTeX; format file?</para>
+</question>
+<answer>
+<para>You use &MiKTeXOptions; to add new languages.  This is explained
+in the manual.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="refreshfndb">
+<question>
+<para>How do I refresh the file name database?</para>
+</question>
+<answer>
+<para>If you have a command-prompt window open:</para>
+<informalexample>
+<screen>
+&prompt;<userinput>initexmf -u</userinput>
+</screen>
+</informalexample>
+<para>If you prefer to use the graphical user interface:</para>
+<procedure>
+<step>
+<para>Use the Start menu to start &MiKTeXOptions;.</para>
+</step>
+<step>
+<para>Click <guibutton>Refresh Now</guibutton>.</para>
+</step>
+</procedure>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="packages">
+
+<title>Packages</title>
+
+<qandaset>
+
+<qandaentry id="pkginst">
+<question>
+<para>How do I install package <replaceable>X</replaceable>?.</para>
+</question>
+<answer>
+<para>If package <replaceable>X</replaceable> is a part of the
+&MiKTeX; package repository, then you install it with the help of
+&MiKTeXPackageManager;.  This is explained in the manual. For the impatient: try it with
+<informalexample>
+<programlisting>mpm --verbose --install <replaceable>X</replaceable></programlisting>
+</informalexample>
+</para>
+<para>If package <replaceable>X</replaceable> is not (yet) in the
+repository, then you must install it manually.
+See also <xref
+linkend="styfiles"/>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="whichpkg">
+<question>
+<para>How can I find out which package the file
+<filename>x.y</filename> belongs to?</para>
+</question>
+<answer>
+<para>The search facility in &MiKTeXPackageManager; allows you to
+enter all or part of a file name. For example, enter
+<filename>colortbl.*</filename> to find out that
+<filename>colortbl.sty</filename> belongs to the package
+<filename>carlisle</filename>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="missingpkg">
+<question>
+<para>Why is package <replaceable>X</replaceable> not in the distribution?</para>
+</question>
+<answer>
+<para>There are two possible reasons:</para>
+<orderedlist>
+<listitem>
+<para>It is a new package of which the &MiKTeX; maintainers are not aware
+of.</para>
+</listitem>
+<listitem>
+<para>The package's license doesn't meet the requirements of the
+<ulink url="http://www.debian.org/social_contract#guidelines">Debian
+Free Software Guidelines</ulink>.
+The most prominent packages that fall into this category are:</para>
+<para>LaTeX2HTML TtH foiltex</para>
+</listitem>
+</orderedlist>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="texfeatures">
+
+<title>(La)&TeX;</title>
+
+<qandaset>
+
+<qandaentry id="texoutputfile">
+<question>
+<para>How do I set the output file name?</para>
+</question>
+<answer>
+<para>You can use option <option>--job-name</option>
+<indexterm>
+<primary>--job-name</primary>
+</indexterm>
+to set the name of the output file.
+</para>
+<para>For example, you would run
+<informalexample>
+<programlisting>pdflatex --job-name=dog cat.tex</programlisting>
+</informalexample>
+to create the &PDF; file
+<filename>dog.pdf</filename> instead of
+<filename>cat.pdf</filename>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="texoutputdir">
+<question>
+<para>How do I specify the output directory?</para>
+</question>
+<answer>
+<para>You can use the option <option>--output-directory</option>
+<indexterm>
+<primary>--output-directory</primary>
+</indexterm>
+<indexterm>
+<primary>Output files</primary>
+</indexterm>
+<indexterm>
+<primary>Output files</primary>
+<secondary>secifying location for</secondary>
+</indexterm>
+to specify an alternative location for all output files.</para>
+<para>For example, you would run
+<informalexample>
+<programlisting>pdflatex --output-directory=C:\temp mydoc.tex</programlisting>
+</informalexample>
+to deposit the output file (<filename>mydoc.pdf</filename>) in
+<filename>C:\temp\</filename>.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="srcspecials">
+<question>
+<para>How do I insert source specials into the &DVI; file?</para>
+</question>
+<answer>
+<para>You use the <option>--src</option>
+<indexterm>
+<primary>--src</primary>
+</indexterm>
+<indexterm>
+<primary>DVI file</primary>
+<secondary>inserting source file information</secondary>
+</indexterm>
+option to enrich the &DVI; file with source
+file information (aka <quote>source specials</quote>).</para>
+<para>Source specials enable the
+&DVI; previewer to synchronize
+<indexterm>
+<primary>DVI viewer</primary>
+</indexterm>
+<indexterm>
+<primary>Text editor</primary>
+</indexterm>
+with the text editor while you are editing the &TeX; source file.</para>
+<para>For example, run the
+<informalexample>
+<programlisting>latex --src mydoc.tex</programlisting>
+</informalexample>
+to enrich &DVI; file
+<filename>mydoc.dvi</filename> with source file information,
+i.e., <filename>mydoc.dvi</filename> will contain references
+<indexterm>
+<primary>DVI file</primary>
+<secondary>inserting source file information</secondary>
+</indexterm>
+to <filename>mydoc.tex</filename>.
+</para>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+<section id="dvips">
+
+<title>&Dvips;</title>
+
+<qandaset>
+
+<qandaentry id="distillinpdf">
+<question>
+<para>How do I produce &PostScript; for distilling to &PDF;?</para>
+</question>
+<answer>
+<para>You use the option <option>-Ppdf</option> to produce
+&PostScript; optimized for
+<indexterm>
+<primary>-Ppdf</primary>
+</indexterm>
+<indexterm>
+<primary>PDF</primary>
+</indexterm>
+<indexterm>
+<primary>PDF</primary>
+<secondary>distilling from PostScript</secondary>
+</indexterm>
+distilling to &PDF;.</para>
+<para>For example, the command
+<informalexample>
+<programlisting>dvips -Ppdf mydoc.dvi</programlisting>
+</informalexample>
+causes &Dvips; to use
+<orderedlist numeration="loweralpha">
+<listitem>
+<para>Type 1 fonts</para>
+</listitem>
+<listitem>
+<para>and an alternative rule drawing algorithm.</para>
+</listitem>
+</orderedlist>
+</para>
+</answer>
+</qandaentry>
+</qandaset>
+
+</section>
+
+<section id="yap">
+
+<title>&Yap;</title>
+
+<qandaset>
+
+<qandaentry id="pagehopping">
+<question>
+<para>How can I navigate to a random page?</para>
+</question>
+<answer>
+<para>You can type the page number followed by <keycap>g</keycap> to
+jump to a certain page.  For example, typing the key sequence
+<keycap>2</keycap><keycap>2</keycap><keycap>0</keycap><keycap>g</keycap>
+will direct <application>Yap</application> to page 220.</para>
+</answer>
+</qandaentry>
+</qandaset>
+
+</section>
+
+<section id="troubleshooting">
+
+<title>Troubleshooting</title>
+
+<qandaset>
+
+<qandaentry id="tracemessages">
+<question>
+<para>I want to see what's going on backstage. Where does &MiKTeX; write
+the trace messages?</para>
+</question>
+<answer>
+<para>&MiKTeX; programs log their actions into the DebugView window.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="debugview">
+<question>
+<para>How do I use the DebugView window?</para>
+</question>
+<answer>
+<para>First of all, you will need the DebugView program.
+To download DebugView, visit the DebugView page at
+<ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">http://www.sysinternals.com/ntw2k/freeware/debugview.shtml</ulink> and follow the
+download/installation instructions.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="traceoptions">
+<question>
+<para>How do I set the trace options?</para>
+</question>
+<answer>
+<para>Use the command-line option <option>--trace</option>, provided
+that the application supports it. For example, say something like</para>
+<informalexample>
+<programlisting>latex --trace=error,access mydoc.tex</programlisting>
+</informalexample>
+<para>if you want to trace file accesses while running &LaTeX;.
+See the &MiKTeX; manual, for a description of valid trace options.</para>
+<para>If the <option>--trace</option> isn't supported by the application,
+then there is either a GUI command (e.g.,
+<guimenuitem>Tracing</guimenuitem> on the <guimenu>View</guimenu> menu),
+or trace messages are on by default.</para>
+</answer>
+</qandaentry>
+
+</qandaset>
+
+</section>
+
+</article>
+
+<!--
+Local Variables:
+mode:xml
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

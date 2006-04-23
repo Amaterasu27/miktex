@@ -1,0 +1,287 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
+<!ENTITY % entities.ent SYSTEM "entities.ent">
+<!ENTITY % version.ent SYSTEM "version.ent">
+%version.ent;
+%entities.ent;
+<!ENTITY rev "2.5.2187">
+<!ENTITY month "December 2005">
+<!ENTITY date "December 27, 2005">
+
+<!ENTITY configuring SYSTEM "Manual/configuring.xml">
+<!ENTITY features SYSTEM "Manual/features.xml">
+<!ENTITY installing SYSTEM "Manual/installing.xml">
+<!ENTITY installins SYSTEM "Manual/installation-instructions.xml">
+<!ENTITY intro SYSTEM "Manual/intro.xml">
+<!ENTITY manbibtex SYSTEM "Ref/bibtex.xml">
+<!ENTITY mandvicopy SYSTEM "Ref/dvicopy.xml">
+<!ENTITY mandvips SYSTEM "Ref/dvips.xml">
+<!ENTITY manetex SYSTEM "Ref/etex.xml">
+<!ENTITY manfindtexmf SYSTEM "Ref/findtexmf.xml">
+<!ENTITY mangftodvi SYSTEM "Ref/gftodvi.xml">
+<!ENTITY maninitexmf SYSTEM "Ref/initexmf.xml">
+<!ENTITY manmf SYSTEM "Ref/mf.xml">
+<!ENTITY manmpm SYSTEM "Ref/mpm.xml">
+<!ENTITY manmpost SYSTEM "Ref/mpost.xml">
+<!ENTITY manmthelp SYSTEM "Ref/mthelp.xml">
+<!ENTITY manmtprint SYSTEM "Ref/mtprint.xml">
+<!ENTITY manomega SYSTEM "Ref/omega.xml">
+<!ENTITY manpdftex SYSTEM "Ref/pdftex.xml">
+<!ENTITY mantex SYSTEM "Ref/tex.xml">
+<!ENTITY mantexify SYSTEM "Ref/texify.xml">
+<!ENTITY miktexini SYSTEM "Manual/miktexini.xml">
+<!ENTITY optionalias SYSTEM "Options/alias.xml">
+<!ENTITY optionauxdirectory SYSTEM "Options/auxdirectory.xml">
+<!ENTITY optionbistacksize SYSTEM "Options/bistacksize.xml">
+<!ENTITY optionbufsize SYSTEM "Options/bufsize.xml">
+<!ENTITY optioncstyleerrors SYSTEM "Options/cstyleerrors.xml">
+<!ENTITY optiondisableinstaller SYSTEM "Options/disableinstaller.xml">
+<!ENTITY optionenableinstaller SYSTEM "Options/enableinstaller.xml">
+<!ENTITY optionenablewriteeighteen SYSTEM "Options/enablewriteeighteen.xml">
+<!ENTITY optionerrorline SYSTEM "Options/errorline.xml">
+<!ENTITY optionfontmax SYSTEM "Options/fontmax.xml">
+<!ENTITY optionfontmemsize SYSTEM "Options/fontmemsize.xml">
+<!ENTITY optionhalferrorline SYSTEM "Options/halferrorline.xml">
+<!ENTITY optionhaltonerror SYSTEM "Options/haltonerror.xml">
+<!ENTITY optionhelp SYSTEM "Options/help.xml">
+<!ENTITY optionhhelp SYSTEM "Options/hhelp.xml">
+<!ENTITY optionincludedirectory SYSTEM "Options/includedirectory.xml">
+<!ENTITY optioninitialize SYSTEM "Options/initialize.xml">
+<!ENTITY optioninteraction SYSTEM "Options/interaction.xml">
+<!ENTITY optionjobname SYSTEM "Options/jobname.xml">
+<!ENTITY optionjobtime SYSTEM "Options/jobtime.xml">
+<!ENTITY optionligtablesize SYSTEM "Options/ligtablesize.xml">
+<!ENTITY optionmaxinopen SYSTEM "Options/maxinopen.xml">
+<!ENTITY optionmaxprintline SYSTEM "Options/maxprintline.xml">
+<!ENTITY optionmaxstrings SYSTEM "Options/maxstrings.xml">
+<!ENTITY optionmaxwiggle SYSTEM "Options/maxwiggle.xml">
+<!ENTITY optionmembot SYSTEM "Options/membot.xml">
+<!ENTITY optionmemmax SYSTEM "Options/memmax.xml">
+<!ENTITY optionmemmin SYSTEM "Options/memmin.xml">
+<!ENTITY optionmemtop SYSTEM "Options/memtop.xml">
+<!ENTITY optionmovesize SYSTEM "Options/movesize.xml">
+<!ENTITY optionnestsize SYSTEM "Options/nestsize.xml">
+<!ENTITY optionoutputdirectory SYSTEM "Options/outputdirectory.xml">
+<!ENTITY optionparamsize SYSTEM "Options/paramsize.xml">
+<!ENTITY optionpathsize SYSTEM "Options/pathsize.xml">
+<!ENTITY optionpoolsize SYSTEM "Options/poolsize.xml">
+<!ENTITY optionquiet SYSTEM "Options/quiet.xml">
+<!ENTITY optionrecorder SYSTEM "Options/recorder.xml">
+<!ENTITY optionrecordpackageusages SYSTEM "Options/recordpackageusages.xml">
+<!ENTITY optionsavesize SYSTEM "Options/savesize.xml">
+<!ENTITY optionsrcspecials SYSTEM "Options/srcspecials.xml">
+<!ENTITY optionstacksize SYSTEM "Options/stacksize.xml">
+<!ENTITY optionstringvacancies SYSTEM "Options/stringvacancies.xml">
+<!ENTITY optiontcx SYSTEM "Options/tcx.xml">
+<!ENTITY optionterminal SYSTEM "Options/terminal.xml">
+<!ENTITY optiontimestatistics SYSTEM "Options/timestatistics.xml">
+<!ENTITY optiontrace SYSTEM "Options/trace.xml">
+<!ENTITY optiontrieopsize SYSTEM "Options/trieopsize.xml">
+<!ENTITY optiontriesize SYSTEM "Options/triesize.xml">
+<!ENTITY optiontrygz SYSTEM "Options/trygz.xml">
+<!ENTITY optionundump SYSTEM "Options/undump.xml">
+<!ENTITY optionversion SYSTEM "Options/version.xml">
+<!ENTITY printing SYSTEM "Manual/printing.xml">
+<!ENTITY tcxtables SYSTEM "Manual/tcxtables.xml">
+<!ENTITY texfeatures SYSTEM "Manual/texfeatures.xml">
+<!ENTITY texifying SYSTEM "Manual/texifying.xml">
+<!ENTITY pdftexcfg SYSTEM "Manual/pdftexcfg.xml">
+<!ENTITY updmapcfg SYSTEM "Manual/updmapcfg.xml">
+<!ENTITY localguide SYSTEM "Manual/localguide.xml">
+<!ENTITY tracestreams SYSTEM "Manual/tracestreams.xml">
+]>
+
+<book lang="en">
+
+<bookinfo>
+
+<title>&MiKTeX; &miktexrev; Manual</title>
+<subtitle>Revision &rev;</subtitle>
+
+<edition>&rev;</edition>
+
+<author>
+<firstname>Christian</firstname>
+<surname>Schenk</surname>
+</author>
+
+<!--
+<revhistory>
+<revision>
+<revnumber>2.4.1779</revnumber>
+<date>November 14, 2004</date>
+<authorinitials>csc</authorinitials>
+<revdescription><itemizedlist>
+<listitem><para>Added recipes for changing the default
+paper size for various programs.</para></listitem>
+</itemizedlist>
+</revdescription></revision>
+<revision>
+<revnumber>2.4.1765</revnumber>
+<date>October 31, 2004</date>
+<authorinitials>csc</authorinitials>
+<revdescription>
+<itemizedlist>
+<listitem><para><command>initexmf &minus;&minus;mkmaps</command> must
+be run when <filename>updmap.cfg</filename> has been edited.</para></listitem>
+<listitem><para>Added <filename>updmap.cfg</filename> appendix.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.4.1588</revnumber>
+<date>May 7, 2004</date>
+<authorinitials>csc</authorinitials>
+<revdescription>
+<itemizedlist>
+<listitem><para>Documented new setup options: <option>&minus;&minus;private</option>,
+ <option>&minus;&minus;shared</option>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.4.1545</revnumber>
+<date>March 25, 2004</date>
+<authorinitials>csc</authorinitials>
+<revdescription>
+<itemizedlist>
+<listitem><para>Documented
+<option>-time-statistics</option>. Added a recipe for
+modifying <filename>pdftex.cfg</filename>.</para></listitem>
+<listitem><para>Added an appendix for
+<filename>pdftex.cfg</filename>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.4.1520</revnumber>
+<date>February 29, 2004</date>
+<authorinitials>csc</authorinitials>
+<revdescription>
+<itemizedlist>
+<listitem><para>
+Added recipes for modifying <filename>miktex.ini</filename>
+and <filename>updmap.cfg</filename>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+</revhistory>
+-->
+
+<copyright>
+<year>2005</year>
+<holder>Christian Schenk</holder>
+</copyright>
+
+<date>&date;</date>
+
+<legalnotice>
+
+<para>Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.</para>
+
+<para>Permission is granted to copy and distribute modified versions
+of this manual under the conditions for verbatim copying, provided
+that the entire resulting derived work is distributed under the terms
+of a permission notice identical to this one.</para>
+
+<para>Permission is granted to copy and distribute translations of
+this manual into another language, under the above conditions for
+modified versions, except that this permission notice may be stated in
+a translation approved by the Free Software Foundation.</para>
+
+</legalnotice>
+
+</bookinfo>
+
+<preface id="preface">
+
+<title>About this Document</title>
+
+<para>This is version &rev; of the &MiKTeX;
+manual.  It corresponds to
+&MiKTeX;&nbsp;&miktexrev; as of &date;.</para>
+
+<para>The latest version of this document is
+<indexterm>
+<primary>MiKTeX manual</primary>
+<secondary>getting</secondary>
+</indexterm>
+available on the <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783"><citetitle>&MiKTeX; Download
+Page</citetitle></ulink> in various formats.</para>
+
+</preface>
+
+<toc/>
+
+&intro;
+
+&installing;
+
+&configuring;
+
+&localguide;
+
+<reference id="manpages">
+
+<referenceinfo>
+<productname>&PACKAGE_NAME;</productname>
+<productnumber>&MIKTEX_VERSION_STR;</productnumber>
+<author>
+<firstname>Christian</firstname>
+<surname>Schenk</surname>
+</author>
+</referenceinfo>
+
+<title>&MiKTeX; Reference Pages</title>
+
+<partinfo>
+
+<para>This chapter contains manual pages for various programs.  Only
+those programs are included which have non-standard features built in.
+Use the &texdoc; utility, to find documentation for programs not listed
+<indexterm>
+<primary>texdoc</primary>
+</indexterm>
+here.</para>
+
+</partinfo>
+
+<!--&manbibtex;-->
+<!--&mandvicopy;-->
+<!--&mandvips;-->
+<!--&manetex;-->
+<!--&manfindtexmf;-->
+<!--&mangftodvi;-->
+&maninitexmf;
+<!--&manmf;-->
+&manmpm;
+<!--&manmpost;-->
+&manmthelp;
+<!--&manmtprint;-->
+<!--&manomega;-->
+<!--&manpdftex;-->
+<!--&mantex;-->
+<!--&mantexify;-->
+
+</reference>
+
+&miktexini;
+&pdftexcfg;
+&updmapcfg;
+
+<index id="idx">
+<title>Index</title>
+</index>
+
+</book>
+
+<!--
+Local Variables:
+mode:xml
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

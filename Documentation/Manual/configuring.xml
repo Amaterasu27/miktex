@@ -1,0 +1,971 @@
+<chapter id="configuring">
+    
+<title>Configuring &MiKTeX;</title>
+
+<section id="updating">
+
+<title>Installing Updates</title>
+
+<para>You can use &MiKTeXUpdateWizard; to download and install the latest
+&MiKTeX; updates.
+<indexterm>
+<primary>MiKTeX Update Wizard</primary>
+<see>update wizard</see>
+</indexterm>
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>updating</secondary>
+</indexterm>
+<indexterm>
+<primary>packages</primary>
+<secondary>updating</secondary>
+</indexterm>
+<indexterm>
+<primary>updates</primary>
+<secondary>installing</secondary>
+</indexterm>
+</para>
+
+<section>
+
+<title>How It Works</title>
+
+<procedure>
+<step><para>&MiKTeXUpdateWizard; contacts a
+remote package repository and retrieves the updated package
+database.</para></step>
+<step><para>The time-stamps of local packages and remote packages are compared.
+If a remote package is newer than the corresponding local package,
+than that package is added to
+the <firstterm>update list</firstterm>.</para></step>
+<step><para>&MiKTeXUpdateWizard; goes through the
+update list and updates the packages.</para></step>
+</procedure>
+
+</section>
+
+<section>
+
+<title>Running &MiKTeXUpdateWizard;</title>
+
+<indexterm>
+<primary>update wizard</primary>
+<secondary>running</secondary>
+</indexterm>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Update Wizard</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The wizard starts and you are presented with the
+welcome page:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-welcome"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click <guibutton>Next &gt;</guibutton> to continue.</para></step>
+<step><para>The wizard asks you to choose a download source:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-download-type"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Choose <guilabel>Internet</guilabel> to install updates
+from a remote package repository. Choose <guilabel>Local folder</guilabel>,
+if you are mirroring a remote package repository on your computer.
+Chosse <guilabel>MiKTeX CD</guilabel>, if you have a new
+<indexterm>
+<primary>CD-R</primary>
+<secondary>installing updates</secondary>
+</indexterm>
+edition of the &MiKTeX; CD.</para>
+<para>Click <guibutton>Next &gt;</guibutton> to continue.</para></step>
+<step><para>If you have chosen to install packages from a
+remote package repository,
+&MiKTeXUpdateWizard; lists the available package
+repositories. Choose the nearest repository:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-remote-repository"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click <guibutton>Next &gt;</guibutton> to continue.</para></step>
+<step><para>A list of updateable packages is displayed. Choose the
+packages you wish to update:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-packagelist"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click
+<guibutton>Next &gt;</guibutton> to start the update process.</para></step>
+<step><para>&MiKTeXUpdateWizard; now updates the
+selected packages:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-progress"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click
+<guibutton>Next &gt;</guibutton> when the update operation is complete.</para></step>
+<step><para>&MiKTeXUpdateWizard; displays the last
+page:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/updatewiz-finish"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click <guilabel>Finish</guilabel> to close the wizard.</para></step>
+</procedure>
+
+<para>The wizard records update events into a log file by the name of
+<filename>update-<replaceable>currentdate</replaceable>.log</filename>.
+This file can be found in the &MiKTeX; config directory (usually
+<indexterm>
+<primary>log files</primary>
+<secondary>update wizard</secondary>
+</indexterm>
+<filename>&localdir;\miktex\config</filename>).</para>
+
+</section>
+
+</section>
+
+<section id="pkgmgt">
+
+<title>Package Management</title>
+
+<indexterm>
+<primary>package management</primary>
+</indexterm>
+
+<para>You use &MiKTeXPackageManager; (&MPM;) to
+install and remove packages.</para>
+
+<section>
+
+<title>What Is a Package?</title>
+
+<indexterm>
+<primary>package</primary>
+</indexterm>
+<indexterm>
+<primary>package</primary>
+<secondary>defined</secondary>
+</indexterm>
+
+<para>A package is a collection of files that (together) implement a
+specific feature.</para>
+
+</section>
+
+<section id="mpmgui">
+
+<title>Working With the Package Manager</title>
+
+<para>The package manager can be run in two modes: batch and
+windowed.</para>
+
+<para>&MPM; runs in batch mode if you specify command-line options
+such as <option>--install</option> and <option>--update</option> (see
+<xref linkend="mpm"/> for a list of available command-line
+options).</para>
+
+<para>To start the package manager in windowed mode, click
+<menuchoice><guimenu>Start</guimenu> <guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu> <guimenuitem>MiKTeX
+Package Manager</guimenuitem> </menuchoice>).
+You will see a window similar to this:</para>
+
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mpm"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+
+<section>
+
+<title>Installing Packages</title>
+
+<indexterm>
+<primary>packages</primary>
+<secondary>installing</secondary>
+</indexterm>
+
+<para>You install packages
+<indexterm>
+<primary>packages</primary>
+<secondary>installing</secondary>
+</indexterm>
+as follows:</para>
+
+<procedure>
+<step><para>Select all wanted packages in the list view.</para></step>
+<step><para>Click on <guibutton>+</guibutton>
+to install the packages.</para></step>
+</procedure>
+
+<para>For example: you want to install the &ConTeXt; package:</para>
+
+<procedure>
+<step><para>Locate and select the &ConTeXt; package in the list view, e.g., type the key sequence
+<keycombo action="seq">
+<keycap>C</keycap>
+<keycap>O</keycap>
+<keycap>N</keycap>
+<keycap>T</keycap>
+</keycombo>.</para></step>
+<step><para>You can now click
+<guibutton>+</guibutton> to install the package.</para></step>
+</procedure>
+
+</section>
+
+<section>
+
+<title>Searching Packages</title>
+
+<para>Sometimes you don't know the name of a package, but you know the
+<indexterm>
+<primary>packages</primary>
+<secondary>searching for</secondary>
+</indexterm>
+name of a file that belongs to the wanted package. In this case, enter
+the file name information in the file name edit control.  Note that
+the file name information can include wildcard characters
+(<filename>*?</filename>).</para>
+
+<para>For example: you need to download the class file
+<filename>weekly.cls</filename>:</para>
+
+<procedure>
+<step><para>Enter <userinput>weekly.cls</userinput> in the file name
+edit control.</para></step>
+<step><para>Click the <guibutton>Filter</guibutton> button.</para></step>
+</procedure>
+
+<para>The list view will be reduced to contain
+only the <filename>calendar</filename> package.
+Selecting <filename>calendar</filename> and pressing <guilabel>+</guilabel>
+will install the package.</para>
+
+</section>
+
+</section>
+
+<section id="autoinstall">
+
+<title>Automatic Package Installation</title>
+
+<para>The &MiKTeX; programs have the ability to install missing packages
+<indexterm>
+<primary>packages</primary>
+<secondary>automatic installation of</secondary>
+</indexterm>
+on-the-fly. You can configure this feature with &MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions;
+window opens. Click on the drop-down list labeled
+<guilabel>Install missing packages on-the-fly</guilabel>.</para></step>
+<step>
+<para>Select one of the following items:</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Yes</guilabel></term>
+<listitem><para>Choose this to enable
+automatic package installation.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>No</guilabel></term>
+<listitem><para>Choose this to disable
+automatic package installation.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Ask me first</guilabel></term>
+<listitem><para>Choose this, if you want to be asked
+everytime a package needs to be installed.</para></listitem>
+</varlistentry>
+</variablelist>
+</step>
+</procedure>
+
+</section>
+
+</section>
+
+<section id="rootmanager">
+
+<title>Managing &TEXMF; Directory Hierarchies</title>
+
+<indexterm>
+<primary>TEXMF directories</primary>
+<secondary>managing</secondary>
+</indexterm>
+
+<para>The standard setup process creates two &TEXMF;
+directories:</para>
+
+<itemizedlist>
+<listitem><para><filename>&installdir;</filename>: the installation
+directory (see <xref linkend="installdir"/>).</para></listitem>
+<listitem><para><filename>&localdir;</filename>: the local &TEXMF;
+directory (see <xref linkend="localdir"/>).</para></listitem>
+</itemizedlist>
+
+<para>You can manage the &TEXMF; directory
+hierarchies with the help of
+&MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions;
+window opens.  Click on the <guilabel>Roots</guilabel>
+tab.</para></step>
+<step><para>The <guilabel>Roots</guilabel> page displays a list of
+&TEXMF; root directories that are used by
+&MiKTeX;:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-roots"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+</step>
+</procedure>
+
+<section>
+
+<title>Using Additional &TEXMF; Directories</title>
+
+<indexterm>
+<primary>TEXMF directories</primary>
+<secondary>using additional</secondary>
+</indexterm>
+
+<para>You can incorporate additional &TDS;-compliant &TEXMF;
+directories into the &MiKTeX;
+setup.</para>
+
+<para>For example: you can store your own files
+in a personal &TEXMF; hierarchy rooted at <filename>C:\MyTeXMF</filename>.
+To use this &TEXMF; directory, follow this procedure:</para>
+
+<procedure>
+<step><para>Click <guibutton>Add</guibutton>.</para>
+</step>
+<step><para>In the <guilabel>Browse for Folder</guilabel> dialog box, locate
+and choose <filename>C:\MyTeXMF</filename>.</para></step>
+</procedure>
+
+<para><filename>C:\MyTeXMF</filename> will be added at the
+end of the list.
+You can move it to the second position (the local
+&TEXMF; directory should always be the first in the list),
+so that it gets a higher priority.</para>
+
+<important>
+<para>The &TEXMF; directory must be &TDS;-compliant.
+For example, if you want to use the directory for your own
+&LaTeX; style files, you should put your files into the
+directory <filename>tex\latex\mystuff</filename> relative to the
+&TEXMF; directory. Run <userinput>texdoc tds</userinput>, to
+learn everything about the &TDS;.</para>
+</important>
+
+</section>
+
+<section>
+
+<title>Changing the Search Order</title>
+
+<indexterm>
+<primary>TEXMF directories</primary>
+<secondary>changing search order</secondary>
+</indexterm>
+
+<para>The order in the list view determines the order in which the
+&TEXMF; directories are searched.</para>
+
+<para>You can change the search order as follows:</para>
+
+<procedure>
+<step><para>Select a directory.</para></step>
+<step><para>Click <guibutton>Up</guibutton> or <guibutton>Down</guibutton> to
+move the selection up or down in the list.</para></step>
+</procedure>
+
+<caution>
+<para>It is highly recommended that the local &TEXMF; directory is the first in the list.</para>
+</caution>
+
+</section>
+
+</section>
+
+<section id="fndbupdate">
+
+<title>Refreshing the File Name Database</title>
+
+<indexterm>
+<primary>file name database</primary>
+<secondary>defined</secondary>
+</indexterm>
+
+<indexterm>
+<primary>file name database</primary>
+<secondary>refreshing</secondary>
+</indexterm>
+
+<para>To speed up file search, &MiKTeX; makes use
+of a list of known file names.  This list is called the
+<firstterm>file name database</firstterm> (&FNDB;).</para>
+
+<para>It is strongly recommended that you update the file name database
+whenever files are added to or removed from one of the
+&TEXMF; directories.  You can update the file name
+database with the help of &MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions; window opens:</para>
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-general"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+<para>Click <guibutton>Refresh Now</guibutton>.</para></step>
+</procedure>
+
+</section>
+
+<section id="formats">
+
+<title>Managing Format Files</title>
+
+<para>Many programs can load internal data structures from so
+called <firstterm>format files</firstterm>. For example, &LaTeX; macros
+<indexterm>
+<primary>format files</primary>
+<secondary>defined</secondary>
+</indexterm>
+are stored in the file <filename>latex.efmt</filename>. This file
+is loaed by &eTeX;, when you start &latex;.</para>
+
+<section>
+
+<title>Refreshing Format Files</title>
+
+<indexterm>
+<primary>format files</primary>
+<secondary>refreshing</secondary>
+</indexterm>
+
+<para>The setup program has created standard
+format files in course of the installation process.  You can refresh
+these format files in
+&MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions; window opens. Click
+<guibutton>Update Now</guibutton> to refresh the formal files.</para></step>
+</procedure>
+
+<!-- TODO: when to refresh? -->
+
+</section>
+
+<section>
+
+<title>Defining New Format Files</title>
+
+<note>
+<para>Defining new format files is a task for experienced &TeX; users.</para>
+</note>
+
+<indexterm>
+<primary>format files</primary>
+<secondary>defining new</secondary>
+</indexterm>
+
+<para>&MiKTeXOptions; can assist you in
+defining a new format:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions; window
+opens.</para></step>
+<step><para>Click on the <guilabel>TeX Formats</guilabel> tab.
+You are presented
+with a list of known &TeX; formats.  To
+add an entry to this list, click <guibutton>New...</guibutton>.</para></step>
+<step><para>In the <guilabel>Format Definition</guilabel> dialog box,
+enter the following information:</para>
+<variablelist>
+<varlistentry>
+<term>Format name</term>
+<listitem><para>The name of the format.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Compiler</term>
+<listitem><para>The &TeX; compiler variant (engine)
+which creates the format file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Input file</term>
+<listitem><para>The name of the main input file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Output file</term>
+<listitem><para>The name of the format file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Preloaded format</term>
+<listitem><para>Optional: The name of another format, which must
+be loaded before the actual format file is created.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Descriptioin</term>
+<listitem><para>A one-line comment which describes
+the new format.</para></listitem>
+</varlistentry>
+</variablelist>
+</step>
+</procedure>
+
+<para>A new application file with the name of the format will be
+installed in the &MiKTeX; bin directory.
+This application file serves as a short-cut for <userinput><replaceable>compiler</replaceable>
+"&amp;<replaceable>format</replaceable>"</userinput>.
+For example, these two commands are equivalent:</para>
+
+<programlisting>latex sample2e
+etex "&amp;latex" sample2e</programlisting>
+
+</section>
+
+</section>
+
+<section id="regionalsettings">
+
+<title>Regional Settings</title>
+
+<section id="papersize">
+
+<title>Paper Size</title>
+
+<indexterm>
+<primary>paper size</primary>
+<secondary>changing</secondary>
+</indexterm>
+
+<para>The setup process configures all programs to use A4 as
+the default paper format. If this doesn't fit your needs, you have
+to edit configuration settings for the following programs:</para>
+
+<indexterm>
+<primary>paper size</primary>
+<secondary>default</secondary>
+</indexterm>
+
+<itemizedlist>
+<listitem><para>&Dvipdfm; (see <xref linkend="chgdvipdfmcfg"/>)</para></listitem>
+<listitem><para>&Dvipdfmx; (see <xref linkend="chgdvipdfmcfg"/>)</para></listitem>
+<listitem><para>&Dvips; (see <xref linkend="chgconfigps"/>)</para></listitem>
+<listitem><para>&pdfTeX; (see <xref linkend="chgpdftexcfg"/>)</para></listitem>
+</itemizedlist>
+
+</section>
+
+<section id="hyphenation">
+
+<title>Selecting Hyphenation Tables</title>
+
+<indexterm>
+<primary>hyphenation tables</primary>
+<secondary>selecting</secondary>
+</indexterm>
+
+<indexterm>
+<primary>languages</primary>
+<secondary>selecting</secondary>
+</indexterm>
+
+<para>You can control the loading of hyphenation tables with the help of
+&MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions;
+window opens.  Click on
+the <guilabel>Languages</guilabel> tab.</para></step>
+<step><para>You will presented with the list of available languages and
+corresponding hyphenation tables. Mark the languages, whose hyphenation
+tables shall be loaded by &TeX;.</para></step>
+</procedure>
+
+</section>
+
+</section>
+
+<section id="chgmiktexini">
+
+<title>Editing <filename>miktex.ini</filename></title>
+
+<para>The &MiKTeX; core components read a large part of configuration
+settings from the file <filename>miktex.ini</filename> (see <xref
+linkend="miktexini"/>).</para>
+
+<para>You must edit a local version of <filename>miktex.ini</filename>,
+if you have to change &MiKTeX; configuration settings.</para>
+
+<para>Settings in the local version of
+<filename>miktex.ini</filename> take precedence over those specified
+in the installed version, i.e., you can easily override settings such as
+<option>[TeX]Editor</option>.</para>
+
+<para>For example, follow these steps if you want to edit
+&TeX; files with &WinEdt;:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to open the
+directory <filename>miktex\config</filename> relative to
+the local &TEXMF; directory (see <xref linkend="localdir"/>).</para></step>
+<step><para>Create a local version of <filename>miktex.ini</filename>,
+if it doesn't yet exist: use the Explorer interface to create a new
+text document with the name of
+<filename>miktex.ini</filename>.</para></step>
+<step><para>Open <filename>miktex.ini</filename> with Notepad.</para></step>
+<step><para>Insert/change the following lines:</para>
+<programlisting>[TeX]
+Editor=winedt "[Open('%f');SelPar(%l,7)]"</programlisting></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database
+(see <xref linkend="fndbupdate"/>).</para></step>
+</procedure>
+
+</section>
+
+<section id="chgdvipdfmcfg">
+
+<title>Configuring &Dvipdfm;</title>
+
+<para>&Dvipdfm; configurations settings are read from the file
+<filename>config</filename>. The &Dvipdfm; manual (run
+<userinput>texdoc dvipdfm</userinput>) describes this file.</para>
+
+<note><para>The configuration file for &Dvipdfmx; (the successor of
+&Dvipdfm;) has the name <filename>dvipdfmx.cfg</filename>.</para></note>
+
+<para>You must edit a local version of <filename>config</filename>
+(resp. <filename>dvipdfmx.cfg</filename>),
+if you have to change &Dvipdfm; configuration settings.</para>
+
+<para>Settings in the local version of
+<filename>config</filename>
+(resp. <filename>dvipdfmx.cfg</filename>)
+take precedence over those specified
+in the installed version, i.e., you can easily override settings such as
+the paper format.</para>
+
+<indexterm>
+<primary>paper size</primary>
+<secondary>changing</secondary>
+</indexterm>
+
+<para>For example, follow these steps if want to change the default
+paper format to Letter:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to open the directory
+<filename>dvipdfm\config</filename> relative
+to the local &TEXMF; directory (see <xref linkend="localdir"/>).
+Possibly you have to create this directory, if it doesn't exist yet.</para></step>
+<step><para>Create a local version of <filename>config</filename>
+(resp. <filename>dvipdfmx.cfg</filename>),
+if it doesn't yet exist: use the Explorer interface to create a new
+text document with the name of
+<filename>config</filename> (resp. <filename>dvipdfmx.cfg</filename>).</para></step>
+<step><para>Open <filename>config</filename> (resp. <filename>dvipdfmx.cfg</filename>) with Notepad.</para></step>
+<step><para>Insert/change the following lines:</para>
+<programlisting>p letter
+</programlisting></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database
+(see <xref linkend="fndbupdate"/>).</para></step>
+</procedure>
+
+</section>
+
+<section id="chgconfigps">
+
+<title>Configuring &Dvips;</title>
+
+<para>&Dvips; configurations settings are read from the file
+<filename>config.ps</filename>. The &Dvips; manual (run
+<userinput>texdoc dvips</userinput>) describes
+this file.</para>
+
+<para>It is recommended that you edit a local version of
+<filename>config.ps</filename>, if you have to change
+&Dvips; configuration settings.</para>
+
+<para>Settings in the local version of
+<filename>config.ps</filename> take precedence over those specified
+in the installed version, i.e., you can easily override settings such as
+as the default paper format.</para>
+
+<indexterm>
+<primary>paper size</primary>
+<secondary>changing</secondary>
+</indexterm>
+
+<para>For example, follow these steps if you want to change the
+default paper size to Letter:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to create the
+<firstterm>local &Dvips; config directory</firstterm>,
+if it doesn't exist yet. The path to this directory is
+<filename>dvips\config</filename> relative to the local &TEXMF;
+directory (see <xref linkend="localdir"/>).</para></step>
+<step><para>Create a local version of <filename>config.ps</filename>,
+if it doesn't yet exist:</para>
+<procedure>
+<step><para>Use the Explorer interface to locate the installed
+version of <filename>config.ps</filename>. It can be found
+in the directory <filename>dvips\config</filename> relative
+to the installation directory (see <xref linkend="installdir"/>).</para></step>
+<step><para>Copy the installed version of <filename>config.ps</filename>
+into the local &Dvips; config directory.</para></step>
+</procedure>
+</step>
+<step><para>Open the local version of <filename>config.ps</filename>
+with Notepad.</para></step>
+<step><para>Select the desired paper size definition
+and cut it out. For example, cut out the following lines, if you want
+to use the Letter paper format:</para>
+<programlisting>@ letterSize 8.5in 11in
+
+</programlisting>
+</step>
+<step><para>Insert the Clipboard contents
+(the desired paper size definition) before the first paper size
+definition, i.e., the first line starting with <code>@</code>.</para></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database
+(see <xref linkend="fndbupdate"/>).</para></step>
+</procedure>
+
+</section>
+
+<section id="chgpdftexcfg">
+
+<title>Configuring &pdfTeX;</title>
+
+<para>&pdfTeX; configurations settings are read from the file
+<filename>pdftex.cfg</filename> when the &pdfTeX; format file
+is being created. See
+<xref linkend="pdftexcfg"/>, for details about this file.</para>
+
+<para>You must edit a local version of <filename>pdftex.cfg</filename>,
+if you have to change &pdfTeX; configuration settings.</para>
+
+<para>Settings in the local version of
+<filename>pdftex.cfg</filename> take precedence over those specified
+in the installed version, i.e., you can easily override settings such as
+the paper format.</para>
+
+<indexterm>
+<primary>paper size</primary>
+<secondary>changing</secondary>
+</indexterm>
+
+<para>For example, follow these steps if want to change the default
+paper format to Letter:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to open the directory
+<filename>pdftex\config</filename> relative
+to the local &TEXMF; directory (see <xref linkend="localdir"/>).
+Possibly you have to create this directory, if it doesn't exist yet.</para></step>
+<step><para>Create a local version of <filename>pdftex.cfg</filename>,
+if it doesn't yet exist: use the Explorer interface to create a new
+text document with the name of
+<filename>pdftex.cfg</filename>.</para></step>
+<step><para>Open <filename>pdftex.cfg</filename> with Notepad.</para></step>
+<step><para>Insert/change the following lines:</para>
+<programlisting>page_height 11 true in
+page_width 8.5 true in
+</programlisting></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database and create the &pdfTeX;
+format files
+(see <xref linkend="fndbupdate"/>).</para></step>
+</procedure>
+
+</section>
+
+<section id="psfonts">
+
+<title>Outline Fonts</title>
+
+<indexterm>
+<primary>Outline fonts</primary>
+<secondary>psfonts.map</secondary>
+</indexterm>
+
+<indexterm>
+<primary>PostScript Type 1 fonts</primary>
+<secondary>psfonts.map</secondary>
+</indexterm>
+
+<para>Information about outline fonts is stored in a file by the name of
+<filename>psfonts.map</filename>.  This file is created in the course
+of the setup/update process. It can be manually created by running
+<programlisting>
+initexmf --mkmaps
+</programlisting>
+<indexterm>
+<primary>psfonts.map</primary>
+<secondary>creating</secondary>
+</indexterm>
+at the command prompt.</para>
+
+<caution>
+<para>The contents of <filename>psfonts.map</filename> should never be
+edited: it will be overwritten by the &MiKTeX; update
+process.</para>
+</caution>
+
+<para><filename>psfonts.map</filename> depends on the
+file <filename>updmap.cfg</filename>. This configuration
+file contains declarative instructions (see
+<xref linkend="updmapcfg"/>), which will be used to
+build <filename>psfonts.map</filename>.</para>
+
+<section id="chgupdmapcfg">
+
+<title>Adding <filename>updmap.cfg</filename> Instructions</title>
+
+<para>You must edit a local version of <filename>updmap.cfg</filename>,
+if you want to add instructions (e.g., add new map files entries).</para>
+
+<para>Instructions in the local version of
+<filename>updmap.cfg</filename> take precedence over those specified
+in the main version, i.e., you can easily override options such as
+<option>dvipsPreferOutline</option>.</para>
+
+<para>For example, follow these steps if you want to add an entry for the
+map file <filename>xyz.map</filename>:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to open the directory
+<filename>miktex\config</filename> relative to the local &TEXMF;
+directory (see <xref linkend="localdir"/>).</para></step>
+<step><para>Create a local version of <filename>updmap.cfg</filename>,
+if it doesn't yet exist: use the Explorer interface to create a new
+text document with the name of
+<filename>updmap.cfg</filename>.</para></step>
+<step><para>Open <filename>updmap.cfg</filename> with Notepad.</para></step>
+<step><para>Insert the following line:</para>
+<programlisting>Map xyz.map</programlisting></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database (see
+<xref linkend="fndbupdate"/>.</para></step>
+<step><para>Run <command>initexmf --mkmaps</command> to rebuild
+<filename>psfonts.map</filename>.</para></step>
+</procedure>
+
+</section>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

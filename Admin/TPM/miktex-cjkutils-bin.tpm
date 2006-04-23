@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>CJK font utilities</TPM:Name>
+    <TPM:Title>CJK font utilities</TPM:Title>
+    <TPM:Version>2.5 Beta 5</TPM:Version>
+    <TPM:Date>Sun Apr 22 10:20:30 UTC 2006</TPM:Date>
+    <TPM:Description>
+      This package includes various CJK related font conversion tools:
+      hbf2gf.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\MiKTeX-cjklatex-2.dll
+texmf\miktex\bin\bg5+latex.exe
+texmf\miktex\bin\bg5+pdflatex.exe
+texmf\miktex\bin\bg5conv.exe
+texmf\miktex\bin\bg5latex.exe
+texmf\miktex\bin\bg5pdflatex.exe
+texmf\miktex\bin\bg5platex.exe
+texmf\miktex\bin\bg5ppdflatex.exe
+texmf\miktex\bin\cef5conv.exe
+texmf\miktex\bin\cef5latex.exe
+texmf\miktex\bin\cef5pdflatex.exe
+texmf\miktex\bin\cefconv.exe
+texmf\miktex\bin\ceflatex.exe
+texmf\miktex\bin\cefpdflatex.exe
+texmf\miktex\bin\cefsconv.exe
+texmf\miktex\bin\cefslatex.exe
+texmf\miktex\bin\cefspdflatex.exe
+texmf\miktex\bin\cjklatex.exe
+texmf\miktex\bin\extconv.exe
+texmf\miktex\bin\gbklatex.exe
+texmf\miktex\bin\gbkpdflatex.exe
+texmf\miktex\bin\hbf2gf.exe
+texmf\miktex\bin\sjisconv.exe
+texmf\miktex\bin\sjislatex.exe
+texmf\miktex\bin\sjispdflatex.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

@@ -1,0 +1,45 @@
+<section id="printutility">
+
+<title>&mtprint; The &MiKTeXPrintUtility;</title>
+
+<para>You can use the &MiKTeXPrintUtility; to send &TeX; output files
+(<filename>*.dvi</filename>) to a printing device.</para>
+
+<para>The &MiKTeXPrintUtility; is started in the command prompt window.
+To print the &DVI; file <filename>foo.dvi</filename>, do this:</para>
+
+<programlisting>mtprint foo.dvi</programlisting>
+
+<para>Printing works as follows:</para>
+
+<procedure>
+<step>
+<para>The &DVI; file is converted by &Dvips; into an intermediate &PostScript; file.</para>
+</step>
+<step>
+<para>The &PostScript; file is then processed by &Ghostscript; to produce
+a series of Windows Bitmaps.</para>
+</step>
+<step>
+<para>These bitmaps are then sent to the printer.</para>
+</step>
+</procedure>
+
+<para>If you have a &PostScript; printer, then you can speed up the
+process by using using the <option>--print-method</option> option:</para>
+
+<programlisting>mtprint --print-method=ps foo.dvi</programlisting>
+
+<para>This will omit steps 2 and 3, i.e., the intermediate &PostScript;
+file will be sent directly to the printer.</para>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

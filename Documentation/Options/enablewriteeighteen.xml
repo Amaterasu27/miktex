@@ -1,0 +1,23 @@
+<varlistentry>
+<term><option>-enable-write18</option></term>
+<listitem><para>Enable the <markup role="tex">\write18</markup> construct (see
+<indexterm>
+<primary>-enable-write18</primary>
+</indexterm>
+<indexterm>
+<primary>-shell-escape</primary>
+</indexterm>
+<indexterm>
+<primary>\write18 (run a program from within TeX)</primary>
+</indexterm>
+<xref linkend="writeeighteen"/>).</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

@@ -1,0 +1,943 @@
+<appendix id="miktexini">
+
+<title><filename>miktex.ini</filename>: The &MiKTeX; Configuration File</title>
+
+<para>&MiKTeX; reads configuration settings from the file
+<filename>miktex.ini</filename>.</para>
+
+<caution><para>It is highly recommended that you edit a local version of
+<filename>miktex.ini</filename> when changing
+configuration settings. See <xref linkend="chgmiktexini"/>,
+for more information.</para></caution>
+
+<section id="searchpaths">
+
+<title>About Search Paths</title>
+
+<para>Search paths are used by &MiKTeX; to
+<indexterm>
+<primary>search paths</primary>
+<secondary>defined</secondary>
+</indexterm>
+find files (such as &TeX; input files) within
+a comprehensive directory hierarchy.</para>
+
+<para>A search path is a semicolon-separated list of <firstterm>directory
+specifications</firstterm>.  &MiKTeX;
+traverses the list from left to right, when it searches for a file.</para>
+
+<para>A directory specification is a directory path with embedded
+<emphasis>control sequences</emphasis>.  The following control
+sequences can be used:</para>
+
+<variablelist>
+
+<varlistentry>
+<term><varname>%R</varname></term>
+<listitem><para>A placeholder for the
+&TEXMF; root directory.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><varname>//</varname></term>
+<listitem><para>A flag which causes
+&MiKTeX; to search recursively.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<section>
+
+<title>Example</title>
+
+<para>Assuming that
+<filename>&localdir;;&installdir;</filename> is the
+list of &TEXMF; root directories, the search path
+<filename>.;%R\tex\plain//;%R\tex\generic//;%R\tex//</filename> causes
+&TeX; to search its input files in the following locations:</para>
+
+<orderedlist>
+
+<listitem><para>In the current
+directory (<filename>.</filename>).</para></listitem>
+
+<listitem><para>In the directory <filename>&localdir;\tex\plain</filename>
+and in all folders below it.</para></listitem>
+
+<listitem><para>In the directory <filename>&installdir;\tex\plain</filename>
+and in all folders below it.</para></listitem>
+
+<listitem><para>In the directory
+<filename>&localdir;\tex\generic</filename> and in all
+folders below it.</para></listitem>
+
+<listitem><para>In the directory
+<filename>&installdir;\tex\generic</filename> and in all
+folders below it.</para></listitem>
+
+<listitem><para>In the directory
+<filename>&localdir;\tex</filename> and in all
+folders below it.</para></listitem>
+
+<listitem><para>In the directory
+<filename>&installdir;\tex</filename> and in all
+folders below it.</para></listitem>
+</orderedlist>
+
+</section>
+
+<section>
+
+<title>Testing a Search Path</title>
+
+<para>You can use &findtexmf; to test whether an
+input file can be found via the configured search path.</para>
+
+<para>For example, run <userinput>findtexmf a4.sty</userinput> to
+search for the &LaTeX; style file <filename>a4.sty</filename>.  If the
+search succeeds, then &findtexmf; reports the absolute
+path to the file, as in:</para>
+
+<informalexample>
+<screen><prompt>&prompt;</prompt><userinput>findtexmf a4.sty</userinput>
+&installdir;\tex\latex\ntgclass\a4.sty
+<prompt>&prompt;</prompt></screen>
+</informalexample>
+
+</section>
+
+</section>
+
+<section id="miktexinilayout">
+
+<title><filename>miktex.ini</filename> Settings</title>
+
+<para>The &MiKTeX; configuration file is divided into several named
+<firstterm>sections</firstterm>.  Each section contains configuration
+settings for a specific application or feature.</para>
+
+<para>A section starts with a line containing the name of the section
+in brackets, as in:</para>
+
+<informalexample>
+<screen>[TeX]</screen>
+</informalexample>
+
+<para>A section contains assignments to <firstterm>named
+values</firstterm>.  Each assignment stands on a separate line, as
+in:</para>
+
+<informalexample>
+<screen>Input Dirs=.;%R\tex\plain//;%R\tex\generic//;%R\tex//</screen>
+</informalexample>
+
+<section>
+
+<title>[bibtex]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para> Search path for &BibTeX; input
+files (both databases and style files).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>min_crossrefs=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Minimum number of cross-refs required for automatic
+<userinput>cite_list</userinput> inclusion.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[dvipdfm]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvipdfm; searches for the configuration file
+(<filename>config</filename>).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>MAPPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvipdfm; searches for font mapping files
+(<filename>*.map</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PSPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvipdfm; searches for font encoding files
+(<filename>*.enc</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[dvips]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>CONFIGPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvips; searches configuration files
+(<filename>config.*</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>ENCPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvips; searches for font encoding files
+(<filename>*.enc</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>GraphicsPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvips; searches for graphics files
+(<filename>*.eps</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>MAPPath=<replaceable></replaceable>searchpath</userinput></term>
+<listitem><para>Where &Dvips; searches for font mapping
+files (<filename>.map</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PSPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Dvips; searches for all sorts of &PostScript;
+related files (<filename>*.afm;*.pfb;*.pro</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+    
+<section>
+
+<title>[Graphics]</title>
+
+<para>The <userinput>[Graphics]</userinput> section contains graphics
+conversion rules.  A rule has the syntax:</para>
+
+<informalexample>
+<screen>.<replaceable>fromext</replaceable>.<replaceable>toext</replaceable>=<replaceable>commandline</replaceable></screen>
+</informalexample>
+      
+<para><filename>.<replaceable>fromext</replaceable></filename> is the
+file name extension of the source file.
+<filename>.<replaceable>toext</replaceable></filename> is the file
+name extension of the destination file.
+<replaceable>commandline</replaceable> is the command (plus arguments)
+which does the conversion.  The command-line may include the following
+placeholders:</para>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>%1</userinput></term>
+<listitem><para>The name of the input file.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>%o</userinput></term>
+<listitem><para>The name of the output file.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>The standard &MiKTeX; configuration file contains the following
+standard rules:</para>
+
+<informalexample>
+<screen>.gif.bmp=giftopnm "%i" | ppmtobmp -windows > "%o"
+.pcx.bmp=pcxtoppm "%i" | ppmtobmp -windows > "%o"
+.png.bmp=pngtopnm "%i" | ppmtobmp -windows > "%o"
+.tga.bmp=tgatoppm "%i" | ppmtobmp -windows > "%o"
+.tif.bmp=tifftopnm "%i" | ppmtobmp -windows > "%o"
+.tiff.bmp=tifftopnm "%i" | ppmtobmp -windows > "%o"</screen>
+</informalexample>
+
+</section>
+
+<section>
+
+<title>[MakeIndex]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>INDEXSTYLE=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Search path for &MakeIndex; style files
+(<filename>*.ist</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[MakePK]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>DestDir=<replaceable>path</replaceable></userinput></term>
+<listitem><para>Specifies the directory which receives newly created
+<acronym>PK</acronym> (Packed Raster Font) files.</para>
+<para>The
+specification may include special control sequences which will be
+replaced at run-time:</para>
+<variablelist>
+<varlistentry>
+<term><userinput>%m</userinput></term>
+<listitem><para>The &METAFONT; mode.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%d</userinput></term>
+<listitem><para>The horizontal resolution (in dots per inch).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%s</userinput></term>
+<listitem><para>The font supplier.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%t</userinput></term>
+<listitem><para>The typeface name.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[MakeTFM]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>DestDir=<replaceable>path</replaceable></userinput></term>
+<listitem>
+<para>Specifies the directory which receives newly
+<acronym>TFM</acronym> (&TeX;
+Font Metrics) files.</para>
+<para>The specification may include special control sequences which
+will be replaced at run-time:</para>
+<variablelist>
+<varlistentry>
+<term><userinput>%s</userinput></term>
+<listitem><para>The font supplier.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%t</userinput></term>
+<listitem><para>The typeface name.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[METAFONT]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem>
+<para>Search path.
+<indexterm>
+<primary>METAFONT</primary>
+</indexterm>
+<indexterm>
+<primary>METAFONT</primary>
+<secondary>search path</secondary>
+</indexterm>
+ for &METAFONT; input files</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>InputEnvVar=<replaceable>envvar</replaceable></userinput></term>
+<listitem><para>The name of an environment variable which contains
+additional input directories.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[MetaPost]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Search path for &MetaPost; input files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>InputEnvVar=<replaceable>envvar</replaceable></userinput></term>
+<listitem><para>The name of an environment variable which contains
+additional input directories.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[MiKTeX]</title>
+
+<para>The <userinput>[MiKTeX]</userinput> section contains general
+configuration settings and search path specifications.</para>
+
+<section>
+
+<title>Search Paths</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>AFMPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate Adobe font metric files
+(<filename>*.afm</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>BASEPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &METAFONT; to locate base files
+(<filename>*.base</filename>).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>ENCPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate font encoding files
+(<filename>*.enc</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>EXEPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem>
+<para>Used to locate &MiKTeX; executables
+(<filename>*.bat;*.com;*.exe).</filename></para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>FMTPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &TeX; (and derivatives) to locate format files
+(<filename>*.efmt;*.eofmt;*.fmt</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>GraphicsPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate all sorts of graphics files
+(<filename>*.bmp;*.eps;...</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>HBFPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by HBF2GF to locate <filename>.hbf</filename> files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>MAPPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by the MkFntMap utility to locate font mapping files
+(<filename>*.map</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>MEMPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &MetaPost; to locate <filename>.mem</filename>
+files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>OFMPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &Omega; and &eOmega; to locate font
+&Omega; metric files (<filename>*.ofm</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>OVFPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &Omega; and &eOmega; to locate
+&Omega; virtual fonts (<filename>*.ovf</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>OVPPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used OVP2OVF to locate locate <filename>.ovp</filename>
+files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PKPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate packed font raster files
+(<filename>*.pk</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PK File Name=<replaceable>filenamespec</replaceable></userinput></term>
+<listitem><para>File name convention for PK (packed raster) files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PSPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate all sorts of &PostScript;
+related files.</para></listitem>
+</varlistentry>
+	  
+<varlistentry>
+<term><userinput>TCXPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate character translation files
+(<filename>*.tcx</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>TFMPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate &TeX; font
+metric files (<filename>*.tfm</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>TTFPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate &TrueType; font files
+(<filename>*.ttc;*.ttf</filename>).</para></listitem>
+</varlistentry>
+	  
+<varlistentry>
+<term><userinput>Type1Path=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate &Type1; font files
+(<filename>*.pfa;*.pfb</filename>).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>VFPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used to locate virtual font files
+(<filename>*.vf</filename>).</para></listitem></varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>Memory Settings for &TeX; &amp; Friends</title>
+
+<para>The values described here are used by &TeX; &amp; Friends when
+allocating memory for internal data structures.</para>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>bistack_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Size of stack for bisection algorithms.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>buf_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of characters simultaneously present in current
+lines of open files and in control sequences between <markup
+role="tex">\csname</markup> and <markup
+role="tex">\endcsname</markup>; must not exceed 1073741823.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>error_line=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Width of context lines
+on terminal error messages.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>error_line=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Width of context lines
+on terminal error messages.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>font_max=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum internal font number; must not exceed 5000.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>font_mem_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Number of words of <varname>font_info</varname> for
+all fonts.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>half_error_line=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Width of first lines of contexts in terminal error
+messages; should be between 30 and
+(<varname>error_line</varname> - 15).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>lig_table_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of ligature/kern steps, must be
+at least 255 and at most 32510.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>max_in_open=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of input files and error insertions
+that can be going on simultaneously.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>max_print_line=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Width of longest text lines output; should be at least
+60.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>max_strings=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of strings; must not exceed
+1073741823.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>max_wiggle=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Number of autorounded points per cycle.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>mem_bot=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Smallest index in the mem array dumped by
+&initex;; must not be less than
+<varname>mem_min</varname>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>mem_max=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Greatest
+index in &TeX;'s internal <varname>mem</varname> array; must be
+strictly less than 1073741823.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>mem_min=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Smallest index in &TeX;'s internal
+<varname>mem</varname> array;
+must be 0 or more; must be equal to <varname>mem_bot</varname> in
+&initex;, otherwise
+&lt;=<varname>mem_bot</varname>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>mem_top=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Largest index in the mem array dumped by
+&initex;; must be substantially
+larger than 0 and not greater than
+<varname>mem_max</varname>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>move_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Space for storing moves in a single octant.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>nest_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of semantic levels simultaneously
+active.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>param_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of simultaneous macro parameters.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>path_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of knots between breakpoints of a path.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>pool_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of characters in strings, including all
+error messages and help texts, and the names of all
+fonts and control sequences; must exceed
+<varname>string_vacancies</varname> by the total
+length of &TeX;'s own
+strings, which is currently about
+<literal>23000</literal>.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>save_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Space for saving values outside of current group; must
+be at most 1073741823.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>stack_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of simultaneous input sources.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>string_vacancies=<replaceable>n</replaceable></userinput></term>
+<listitem><para>The minimum number of characters that should be
+available for the user's control sequences and font
+names, after &TeX;'s own
+error messages are stored.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>trie_op_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Space for <quote>opcodes</quote> in the hyphenation
+patterns.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>trie_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Space for hyphenation patterns; should be larger for
+&initex; than it is in production
+versions of &TeX;.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+</section>
+
+<section>
+
+<title>[Omega]</title>
+	
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>The search path for &Omega; input files.</para></listitem>
+</varlistentry>
+	
+<varlistentry>
+<term><userinput>OCPPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &Omega; searches
+for <acronym>OCP</acronym> files.</para></listitem>
+</varlistentry>
+	
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[otp2ocp]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by OTP2OCP to locate
+<filename>.otp</filename> files.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[pdfeTeX]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &pdfeTeX; searches for
+input files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PSPath=<replaceable>searchpath</replaceable>searchpath</userinput></term>
+<listitem><para>Where &pdfeTeX; searches for font mapping files
+(<filename>*.map</filename>) and font encoding
+files (<filename>.enc</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[pdfTeX]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>dest_names_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Maximum number of names in name tree of <acronym>PDF</acronym> output file.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &pdfTeX; searches for
+input files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>obj_tab_size=<replaceable>n</replaceable></userinput></term>
+<listitem><para>Minimum size of the cross-reference table for <acronym>PDF</acronym> output.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>PSPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Where &pdfTeX; searches for font mapping files
+(<filename>*.map</filename>) and font encoding
+files (<filename>.enc</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section id="miktexini-tex">
+
+<title>[TeX]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Editor=<replaceable>command</replaceable></userinput></term>
+<listitem><para>The command to be started when the user presses
+<keycap>e</keycap> in the error menu.</para>
+<para><replaceable>command</replaceable> may contain the
+following placeholders:</para>
+<variablelist>
+<varlistentry>
+<term><userinput>%f</userinput></term>
+<listitem><para>Will be replaced by the name of the input file
+that caused the error.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%h</userinput></term>
+<listitem><para>Will be replaced by a help text.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%l</userinput></term>
+<listitem><para>Will be replaced by the line number.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%m</userinput></term>
+<listitem><para>Will be replaced by the error message.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><userinput>%t</userinput></term>
+<listitem><para>Will be replaced by the name of
+the transcript file.</para></listitem>
+</varlistentry>
+</variablelist>
+<para>For example, a suitable value for
+&WinEdt; would be:</para>
+<informalexample>
+<screen>winedt %f -G(1,%l,0) -S(12,+1,0)</screen>
+</informalexample>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &TeX; to locate input files.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>InputEnvVar=<replaceable>envvar</replaceable></userinput></term>
+<listitem><para>The name of the environment variable which
+contains additional input directories.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>write18=<replaceable>val</replaceable></userinput></term>
+<listitem><para>Status of \write18 primitive. <replaceable>val</replaceable>
+must be on of: <literal>disable</literal>,
+<literal>enable</literal>.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[ttf2pk]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>ENCPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by TTF2PK to locate font encoding
+files (<filename>*.enc</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[ttf2tfm]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>ENCPath=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by TTF2TFM to locate font encoding
+files (<filename>*.enc</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+<section>
+
+<title>[Yap]</title>
+
+<variablelist>
+
+<varlistentry>
+<term><userinput>Input Dirs=<replaceable>searchpath</replaceable></userinput></term>
+<listitem><para>Used by &Yap; to locate &DVI; files
+(<filename>*.dvi</filename>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+</section>
+
+</appendix>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

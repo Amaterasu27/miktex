@@ -1,0 +1,24 @@
+<varlistentry>
+<term><option>-pool-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>pool_size</varname> to
+<replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-pool-size=n</primary>
+</indexterm>
+<para><varname>pool_size</varname> is the maximum number of
+characters in strings, including all error messages and
+help texts, and the names of all fonts and control
+sequences; must exceed
+<varname>string_vacancies</varname> by the total length
+of the program's own strings, which is currently about
+<literal>30000</literal>.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

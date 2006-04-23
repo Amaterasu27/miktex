@@ -1,0 +1,78 @@
+<variablelist>
+
+<varlistentry>
+<term><userinput>access</userinput></term>
+<listitem><para>file tests (<code>access()</code>,
+<code>stat()</code>)</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>config</userinput></term>
+<listitem><para>configuration settings</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>core</userinput></term>
+<listitem><para>core library</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>curl</userinput></term>
+<listitem><para>cURL library</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>error</userinput></term>
+<listitem><para>error conditions</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>filesearch</userinput></term>
+<listitem><para>file searching</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>fndb</userinput></term>
+<listitem><para>file name database accesses</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>fontinfo</userinput></term>
+<listitem><para>font information retrieval</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>mpm</userinput></term>
+<listitem><para>package manager</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>open</userinput></term>
+<listitem><para>file access operations (<code>fopen()</code>)</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>process</userinput></term>
+<listitem><para>execution of secondary processes</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>tempfile</userinput></term>
+<listitem><para>temporary files</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><userinput>time</userinput></term>
+<listitem><para>execution time</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

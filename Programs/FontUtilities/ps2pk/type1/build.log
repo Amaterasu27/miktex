@@ -1,0 +1,196 @@
+-*- Compilation -*-
+C:\work\miktex\ps2pk\type1 Sat 08/07/2004 20:26:07.02
+
+	mkdir WinRel
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  arith.c
+arith.c
+arith.c(360) : warning C4146: unary minus operator applied to unsigned type, result still unsigned
+arith.c(391) : warning C4146: unary minus operator applied to unsigned type, result still unsigned
+arith.c(418) : warning C4146: unary minus operator applied to unsigned type, result still unsigned
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  curves.c
+curves.c
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  fontfcn.c
+fontfcn.c
+fontfcn.c(111) : warning C4267: '=' : conversion from 'size_t' to 'unsigned short', possible loss of data
+fontfcn.c(267) : warning C4267: 'function' : conversion from 'size_t' to 'int', possible loss of data
+fontfcn.c(279) : warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  hints.c
+hints.c
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  lines.c
+lines.c
+lines.c(167) : warning C4244: '=' : conversion from 'LONG' to 'pel', possible loss of data
+lines.c(183) : warning C4244: '=' : conversion from 'LONG' to 'pel', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  objects.c
+objects.c
+objects.c(300) : warning C4146: unary minus operator applied to unsigned type, result still unsigned
+objects.c(301) : warning C4146: unary minus operator applied to unsigned type, result still unsigned
+objects.c(1089) : warning C4995: 'exit': name was marked as #pragma deprecated
+objects.c(1089) : warning C4996: 'miktex_exit' was declared deprecated
+        C:\work\miktex\lib\miktex.h(128) : see declaration of 'miktex_exit'
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  paths.c
+paths.c
+paths.c(240) : warning C4313: 'printf'  : '%d' in format string conflicts with argument 1 of type 'XYspace *'
+paths.c(461) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+paths.c(461) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'segment *'
+paths.c(665) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(665) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1103) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+paths.c(1103) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'XYspace *'
+paths.c(1136) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+paths.c(1136) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'int *'
+paths.c(1215) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'DOUBLE *'
+paths.c(1215) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'DOUBLE *'
+paths.c(1215) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'DOUBLE *'
+paths.c(1215) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 4 of type 'DOUBLE *'
+paths.c(1270) : warning C4244: 'initializing' : conversion from 'double' to 'fractpel', possible loss of data
+paths.c(1271) : warning C4244: 'initializing' : conversion from 'double' to 'fractpel', possible loss of data
+paths.c(1441) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+paths.c(1454) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1454) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1454) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+paths.c(1454) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+paths.c(1460) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1460) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1460) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+paths.c(1460) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+paths.c(1469) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1469) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1471) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1471) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1481) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1481) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1481) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+paths.c(1481) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+paths.c(1483) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1483) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1493) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+paths.c(1493) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+paths.c(1493) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+paths.c(1493) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+paths.c(1508) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  regions.c
+regions.c
+regions.c(322) : warning C4311: 'type cast' : pointer truncation from 'pel *' to 'int'
+regions.c(346) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(390) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'segment *'
+regions.c(467) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+regions.c(467) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+regions.c(488) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+regions.c(488) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+regions.c(518) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+regions.c(518) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+regions.c(610) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(676) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+regions.c(676) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+regions.c(676) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+regions.c(707) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(708) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(766) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(767) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(771) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(772) : warning C4244: '=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(824) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(824) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(824) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'edgelist *(__cdecl *)()'
+regions.c(828) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(828) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(828) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'edgelist *(__cdecl *)()'
+regions.c(906) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(906) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(906) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'edgelist *'
+regions.c(909) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(937) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(990) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1113) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1113) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(1154) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1154) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(1221) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(1221) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'edgelist *'
+regions.c(1373) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1373) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 2 of type 'edgelist *'
+regions.c(1382) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1431) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1432) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1433) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1434) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1437) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1438) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1443) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1444) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1447) : warning C4244: '+=' : conversion from 'fractpel' to 'pel', possible loss of data
+regions.c(1567) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'region *'
+regions.c(1677) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'region *'
+regions.c(1681) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+regions.c(1681) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+regions.c(1681) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 3 of type 'fractpel'
+regions.c(1681) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 4 of type 'fractpel'
+regions.c(1710) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1731) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+regions.c(1732) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'edgelist *'
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  scanfont.c
+scanfont.c
+scanfont.c(444) : warning C4267: 'function' : conversion from 'size_t' to 'int', possible loss of data
+scanfont.c(920) : warning C4305: 'function' : truncation from 'double' to 'float'
+scanfont.c(943) : warning C4305: 'function' : truncation from 'double' to 'float'
+scanfont.c(995) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1018) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1041) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1064) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1166) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1175) : warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+scanfont.c(1308) : warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  spaces.c
+spaces.c
+spaces.c(576) : warning C4244: '=' : conversion from 'DOUBLE' to 'fractpel', possible loss of data
+spaces.c(577) : warning C4244: '=' : conversion from 'DOUBLE' to 'fractpel', possible loss of data
+spaces.c(607) : warning C4244: '=' : conversion from 'DOUBLE' to 'fractpel', possible loss of data
+spaces.c(608) : warning C4244: '=' : conversion from 'DOUBLE' to 'fractpel', possible loss of data
+spaces.c(994) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 1 of type 'XYspace *'
+spaces.c(994) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 3 of type 'void (__cdecl *)()'
+spaces.c(994) : warning C4313: 'printf'  : '%x' in format string conflicts with argument 4 of type 'void (__cdecl *)()'
+spaces.c(997) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+spaces.c(997) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+spaces.c(1000) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 1 of type 'fractpel'
+spaces.c(1000) : warning C4313: 'printf'  : '%p' in format string conflicts with argument 2 of type 'fractpel'
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  t1funcs.c
+t1funcs.c
+t1funcs.c(237) : warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+t1funcs.c(272) : warning C4244: '=' : conversion from 'fractpel' to 'SHORT', possible loss of data
+t1funcs.c(273) : warning C4244: '=' : conversion from 'LONG' to 'SHORT', possible loss of data
+t1funcs.c(274) : warning C4244: '=' : conversion from 'fractpel' to 'SHORT', possible loss of data
+t1funcs.c(275) : warning C4244: '=' : conversion from 'LONG' to 'SHORT', possible loss of data
+t1funcs.c(170) : warning C4101: 'p' : unreferenced local variable
+t1funcs.c(357) : warning C4018: '>=' : signed/unsigned mismatch
+t1funcs.c(367) : warning C4018: '>=' : signed/unsigned mismatch
+t1funcs.c(380) : warning C4018: '>=' : signed/unsigned mismatch
+t1funcs.c(387) : warning C4244: '=' : conversion from '__w64 int' to 'ULONG', possible loss of data
+t1funcs.c(338) : warning C4101: 'pci' : unreferenced local variable
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  t1info.c
+t1info.c
+t1info.c(315) : warning C4244: 'function' : conversion from '__w64 int' to 'unsigned int', possible loss of data
+t1info.c(343) : warning C4267: 'function' : conversion from 'size_t' to 'unsigned int', possible loss of data
+t1info.c(351) : warning C4267: 'function' : conversion from 'size_t' to 'unsigned int', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  t1io.c
+t1io.c
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  t1snap.c
+t1snap.c
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  t1stub.c
+t1stub.c
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  token.c
+token.c
+token.c(627) : warning C4018: '<=' : signed/unsigned mismatch
+token.c(680) : warning C4244: '=' : conversion from 'DOUBLE' to 'float', possible loss of data
+token.c(707) : warning C4244: '=' : conversion from 'DOUBLE' to 'float', possible loss of data
+token.c(711) : warning C4244: '=' : conversion from 'DOUBLE' to 'float', possible loss of data
+token.c(1207) : warning C4244: '=' : conversion from '__w64 int' to 'int', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  type1.c
+type1.c
+type1.c(459) : warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+type1.c(820) : warning C4033: 'PSFakePop' must return a value
+type1.c(1150) : warning C4244: '=' : conversion from 'DOUBLE' to 'int', possible loss of data
+	cl /c /W3 /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MD /DMIKTEX /DMIKTEX_DLL /DTEXMF_DLL /DGNU_DLL /DREGEX_DLL /DMPM_DLL /DEXPAT_DLL /DPOPT_DLL /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5  -DHAVE_PROTOTYPES  -DKPATHSEA  -DUSE_MIKTEX_EXIT  -IC:\work\miktex\libkps  -FoWinRel\  util.c
+util.c
+util.c(77) : warning C4018: '>' : signed/unsigned mismatch
+util.c(79) : warning C4018: '<=' : signed/unsigned mismatch
+	lib /MACHINE:X86 /NOLOGO /LTCG -out:WinRel\type1.lib WinRel\arith.obj  WinRel\curves.obj  WinRel\fontfcn.obj  WinRel\hints.obj  WinRel\lines.obj  WinRel\objects.obj  WinRel\paths.obj  WinRel\regions.obj  WinRel\scanfont.obj  WinRel\spaces.obj  WinRel\t1funcs.obj  WinRel\t1info.obj  WinRel\t1io.obj  WinRel\t1snap.obj  WinRel\t1stub.obj  WinRel\token.obj  WinRel\type1.obj  WinRel\util.obj

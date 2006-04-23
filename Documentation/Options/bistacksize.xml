@@ -1,0 +1,18 @@
+<varlistentry>
+<term><option>-bistack-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>bistack_size</varname>
+to <replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-bistack-size=n</primary>
+</indexterm>
+<para><varname>bistack_size</varname> is the size of the stack for bisection algorithms.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

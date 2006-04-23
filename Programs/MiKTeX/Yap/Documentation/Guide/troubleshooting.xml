@@ -1,0 +1,242 @@
+<chapter>
+
+<title>Error Messages</title>
+
+<indexterm>
+<primary>error messages</primary>
+</indexterm>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_MAKE_BITMAP_FILE" topicid="0"?>
+
+<title><computeroutput>Cannot convert X.Y into a Windows Bitmap file...</computeroutput></title>
+
+<para>File <filename>X.Y</filename> cannot be converted into a Windows Bitmap file.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_LOCATE_GSEXE" topicid="0"?>
+
+<title><computeroutput>Cannot locate Ghostscript...</computeroutput></title>
+
+<para>&Ghostscript; cannot be found.</para>
+
+<para>&Ghostscript; is needed to render &PostScript; specials (e.g.
+<acronym>EPS</acronym> graphics). You can install it from the
+&MiKTeX; &CDR;.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_LOCATE_MTPRINT" topicid="0"?>
+
+<title><computeroutput>Cannot locate MiKTeX Print Utility...</computeroutput></title>
+
+<para>Cannot locate MiKTeX Print Utility (<filename>mtprint.exe</filename>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_OPEN_DVI_DOCUMENT" topicid="0"?>
+
+<title><computeroutput>Cannot open the DVI file...</computeroutput></title>
+
+<para>The DVI file cannot be opened for some reason.</para>
+
+<para>Make sure that the DVI file exists and that you can access it.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_ISEARCH" topicid="0"?>
+
+<title><computeroutput>Cannot open the TeX source file...</computeroutput></title>
+
+<para>The &DVI; file contains no source specials.</para>
+
+<para>Use the <option>-src-specials</option> option the next time you
+compile your <application>TeX</application> source file (see <xref
+linkend="srcspec"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_BAD_ISEARCH_COMMAND" topicid="0"?>
+
+<title><computeroutput>Cannot run "XXX" because...</computeroutput></title>
+
+<para>Cannot start the editor on the &TeX; source file.</para>
+
+<para>Make sure that command-line contains the placeholders <filename>%f</filename>
+and <filename>%l</filename>.</para>
+
+</section>
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_START_GHOSTSCRIPT" topicid="0"?>
+
+<title><computeroutput>Cannot start Ghostscript...</computeroutput></title>
+
+<para>&Ghostscript; cannot be started for some reason.</para>
+
+<para>You should inspect the diagnostic messages (<xref linkend="tracing"/>)
+to find the source of the problem.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_CANNOT_START_MTPRINT" topicid="0"?>
+
+<title><computeroutput>Cannot start MiKTeX Print Utility...</computeroutput></title>
+
+<para>MiKTeX Print Utility (<filename>mtprint.exe</filename>) cannot be started for some reason.</para>
+
+<para>You should inspect the diagnostic messages (<xref linkend="tracing"/>)
+to find the source of the problem.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_GS_OUTDATED" topicid="0"?>
+
+<title><computeroutput>Ghostscript 6.0 or better is required...</computeroutput></title>
+
+<para>An outdated version of &Ghostscript; is installed.</para>
+
+<para>&Yap; requires at least version 6.0 of &Ghostscript;.
+You can install it from the &MiKTeX; &CDR;.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_MISSING_FONTS" topicid="0"?>
+
+<title><computeroutput>Not all fonts could be loaded...</computeroutput></title>
+
+<para>Not all fonts could be loaded.</para>
+
+<para>You should inspect the document property sheet
+(<xref linkend="docprop"/>) to see which fonts
+could not be loaded.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_MFMODE_MISMATCH" topicid="0"?>
+
+<title><computeroutput>Printer resolution X does not match...</computeroutput></title>
+
+<para>The printer resolution does not match the selected METAFONT resolution.</para>
+
+<para>Either select a different METAFONT mode (<menuchoice>
+<guimenu>View</guimenu>
+<guimenuitem>Options...</guimenuitem>
+</menuchoice>), or change the printer resolution (<menuchoice>
+<guimenu>File</guimenu>
+<guimenuitem>Print Setup...</guimenuitem>
+</menuchoice>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_MTPRINT_FAILED" topicid="0"?>
+
+<title><computeroutput>MiKTeX Print Utility failed...</computeroutput></title>
+
+<para>MiKTeX Print Utility (<filename>mtprint.exe</filename>)
+failed for some reason.</para>
+
+<para>You should inspect the diagnostic messages (<xref linkend="tracing"/>)
+to find the source of the problem.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_PAGES_COULD_NOT_BE_PRINTED" topicid="0"?>
+
+<title><computeroutput>Some pages could not be printed...</computeroutput></title>
+
+<para>Some pages could not be printed.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_DVI_FILE_IN_USE" topicid="0"?>
+
+<title><computeroutput>The DVI file is currently used...</computeroutput></title>
+
+<para>The DVI file is currently used by another application.</para>
+
+<para>Wait a moment until the other application has released the DVI
+file.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_NO_SRC_SPECIALS" topicid="0"?>
+
+<title><computeroutput>This DVI document contains no source links...</computeroutput></title>
+
+<para>The &DVI; file contains no source specials.</para>
+
+<para>Use the <option>-src-specials</option> option the next time you
+compile your <application>TeX</application> source file (see
+<xref linkend="srcspec"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_DVI_FILE_NOT_FOUND" topicid="0"?>
+
+<title><computeroutput>The DVI file does not exist...</computeroutput></title>
+
+<para>The DVI file does not exist.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_BAD_DVI_FILE" topicid="0"?>
+
+<title><computeroutput>This is a bad DVI file...</computeroutput></title>
+
+<para>The DVI file cannot be processed because it is not valid.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HIDP_NOT_A_DVI_FILE" topicid="0"?>
+
+<title><computeroutput>This is not a DVI file...</computeroutput></title>
+
+<para>The file is not a DVI file.</para>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("yap.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

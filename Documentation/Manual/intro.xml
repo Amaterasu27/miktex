@@ -1,0 +1,293 @@
+<chapter id="intro">
+
+<title>Introduction</title>
+
+<section id="aboutmanual">
+
+<title>About this Manual</title>
+
+<para>This manual is about &MiKTeX;: the purpose of this manual is not
+to give an introduction into the world of &TeX;.  If you are not
+familiar with using &TeX; (and Friends), then please consider reading
+one of the tutorials available on the <ulink
+url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.</para>
+
+</section>
+
+&features;
+
+<section id="howtoget">
+
+<title>How to Get &MiKTeX;</title>
+
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>getting</secondary>
+</indexterm>
+
+<para>&MiKTeX; is available on the
+&CTAN;<footnote><para>Comprehenisive TeX Archive
+Network</para> </footnote> and on &CDR;/&DVDminR;.</para>
+
+<section>
+
+<title>Downloading from &CTAN;</title>
+
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>downloading</secondary>
+</indexterm>
+<para>You can download &MiKTeX; from &CTAN; with the help of
+&MiKTeXNetInstaller; (see <xref linkend="downloading"/>).</para>
+
+</section>
+
+<section id="miktexcdr">
+
+<title>&MiKTeX; on &CDR;/&DVDminR;</title>
+
+<para>If you cannot easily download more than 400&nbsp;MB (the
+complete &MiKTeX; distribution), then you may wish to obtain a copy of
+the &MiKTeX; &CDR;/&DVDminR;.  Visit <ulink url="http://miktex.org/CD/">the
+CD-R/DVD-R info page</ulink>, for more information.
+<indexterm>
+<primary>CD-R</primary>
+<secondary>obtaining</secondary>
+</indexterm>
+<indexterm>
+<primary>CD-R</primary>
+<secondary>running MiKTeX from the</secondary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX CD-R</primary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>CD-R</secondary>
+</indexterm></para>
+
+<para>The &MiKTeX; &CDR; allows you to install &MiKTeX; on the
+hard-disk or to run the programs directly from the &CDR;.</para>
+
+</section>
+
+<section id="otherapps">
+
+<title>Related Applications</title>
+
+<para>There are other applications you might be interested in
+installing:</para>
+
+<variablelist>
+
+<varlistentry>
+<term><application>ActivePerl</application></term>
+<listitem>
+<para><ulink
+url="http://www.activestate.com"><application>ActivePerl</application></ulink>
+is an implementation of
+<application>Perl</application> for <application>Windows</application>.
+A few utilities (e.g., <application>ConTeXt</application>)
+are <application>Perl</application> scripts.  You should install
+<application>ActivePerl</application>, if you want to use these
+utilities.
+<indexterm>
+<primary>Perl</primary>
+<secondary>getting</secondary>
+</indexterm>
+<indexterm>
+<primary>ActivePerl</primary>
+</indexterm></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&AdobeReader;</term>
+<listitem>
+<para><ulink
+ url="http://www.adobe.com/prodindex/acrobat/readstep.html">&AdobeReader;</ulink> is a &PDF; document viewer.
+<indexterm>
+<primary>PDF</primary>
+<secondary>viewing</secondary>
+</indexterm>
+<indexterm>
+<primary>Adobe Reader</primary>
+<secondary>getting</secondary>
+</indexterm></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><application>DebugView</application></term>
+<listitem>
+<para><application>DebugView</application> is a freeware application
+that lets you monitor diagnostic messages produced by
+&MiKTeX;.  You can download
+<application>DebugView</application> from the
+<ulink url="http://www.sysinternals.com">Sysinternals web site</ulink>.
+<indexterm>
+<primary>DebugView</primary>
+<secondary>getting</secondary>
+</indexterm></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>&TeXnicCenter;</term>
+<listitem><para><ulink url="http://www.toolscenter.org">&TeXnicCenter;</ulink> is a freeware &TeX; editor/shell.  It cooperates with &MiKTeX; with
+respect to forward and inverse &DVI;
+<indexterm>
+<primary>TeXnicCenter</primary>
+<secondary>getting</secondary>
+</indexterm>
+search (see <xref linkend="srcspecials"/>).</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</section>
+
+</section>
+
+<section id="registering">
+
+<title>Registration</title>
+
+<para>If you enjoy &MiKTeX; and want to support the project, then
+please consider registering &MiKTeX;.  Visit <ulink
+url="http://www.miktex.org/Donation.aspx">the &MiKTeX; donations page</ulink>,
+for more information.
+<indexterm>
+<primary>MiKTeX project</primary>
+<secondary>how to support the</secondary>
+</indexterm>
+<indexterm>
+<primary>donations</primary>
+</indexterm>
+<indexterm>
+<primary>registration</primary>
+</indexterm>
+<indexterm>
+<primary>donations</primary>
+</indexterm>
+<indexterm>
+<primary>email support</primary>
+</indexterm>
+<indexterm>
+<primary>support</primary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>registering</secondary>
+</indexterm></para>
+
+<para>Registered &MiKTeX; users are entitled
+to email support.
+<indexterm>
+<primary>email support</primary>
+<secondary>getting</secondary>
+</indexterm>
+<indexterm>
+<primary>support</primary>
+<secondary>email</secondary>
+</indexterm></para>
+
+</section>
+
+<section id="projectpage">
+
+<title>The &MiKTeX; Project Page</title>
+
+<para>The <ulink url="http://www.miktex.org">&MiKTeX; Project Page</ulink>
+is the address to turn to for &MiKTeX; related news &amp; information.
+<indexterm>
+<primary>project page</primary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX Project Page</primary>
+</indexterm></para>
+
+</section>
+
+<section id="lists">
+
+<title>The &MiKTeX; Mailing List</title>
+
+<para>There is a discussion list for &MiKTeX;
+users.  You can join
+this list by visiting the <ulink
+url="http://lists.sourceforge.net/lists/listinfo/miktex-users">MiKTeX-Users
+Info Page</ulink> and filling out the form provided there.</para>
+
+<para>To see the collection of prior postings to the mailing
+<indexterm>
+<primary>mailing list</primary>
+<secondary>archive</secondary>
+</indexterm>
+list, browse the <ulink
+url="http://www.geocrawler.com/redir-sf.php3?list=miktex-users">MiKTeX-Users
+Archives</ulink>.</para>
+
+</section>
+
+<section id="otherdoc">
+
+<title>Documentation</title>
+
+<para>Other &MiKTeX; related documentation
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>documentation</secondary>
+</indexterm>
+includes:</para>
+
+<variablelist>
+
+<varlistentry>
+<term>&FAQ;</term>
+<listitem>
+<para>Answers to frequently asked questions.
+<indexterm>
+<primary>FAQ (frequently asked questions)</primary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX</primary>
+<secondary>FAQ</secondary>
+</indexterm></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Tips &amp; Tricks</term>
+<listitem>
+<para>Some good advice for &MiKTeX; users.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Shortcuts to these documents can be found in the
+&MiKTeX; program folder (see <xref
+linkend="startmenu"/>) and on the project page.</para>
+
+<tip>
+<para>Use the &mthelp; utility to quickly access &TeX; related
+documentation. For example, enter
+<indexterm>
+<primary>mthelp</primary>
+</indexterm>
+<programlisting>mthelp memoir</programlisting>
+to view documentation of the memoir package.</para>
+</tip>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

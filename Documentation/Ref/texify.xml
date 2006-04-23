@@ -1,0 +1,287 @@
+<section id="texify">
+
+<?dbhh topicname="MIKTEXHELP_TEXIFY" topicid="0"?>
+
+<title>&texify;</title>
+
+<simplesect>
+
+<title>Synopsis</title>
+
+<cmdsynopsis>
+&texify;
+<arg><option>-@</option></arg>
+<group>
+<arg><option>--batch</option></arg>
+<arg><option>-b</option></arg>
+</group>
+<group>
+<arg><option>--clean</option></arg>
+<arg><option>-c</option></arg>
+</group>
+<group>
+<arg><option>--expand</option></arg>
+<arg><option>-e</option></arg>
+</group>
+<arg><option>-I <replaceable>dir</replaceable></option></arg>
+<group>
+<arg><option>--help</option></arg>
+<arg><option>-h</option></arg>
+</group>
+<sbr/>
+<group>
+<arg><option>--language=<replaceable>lang</replaceable></option></arg>
+<arg><option>-l <replaceable>lang</replaceable></option></arg>
+</group>
+<arg><option>--max-iterations=<replaceable>n</replaceable></option></arg>
+<arg><option>--mkidx-option=<replaceable>option</replaceable></option></arg>
+<sbr/>
+<group>
+<arg><option>--pdf</option></arg>
+<arg><option>--p</option></arg>
+</group>
+<group>
+<arg><option>--quiet</option></arg>
+<arg><option>-q</option></arg>
+<arg><option>--silent</option></arg>
+<arg><option>-s</option></arg>
+</group>
+<arg><option>--run-viewer</option></arg>
+<arg><option>--src</option></arg>
+<sbr/>
+<group>
+<arg><option>--texinfo=<replaceable>cmd</replaceable></option></arg>
+<arg><option>-t=<replaceable>cmd</replaceable></option></arg>
+</group>
+<arg><option>--tex-option=<replaceable>option</replaceable></option></arg>
+<sbr/>
+<group>
+<arg><option>--version</option></arg>
+<arg><option>-v</option></arg>
+</group>
+<group>
+<arg><option>--verbose</option></arg>
+<arg><option>-V</option></arg>
+</group>
+<arg><option>--viewer-option=<replaceable>option</replaceable></option></arg>
+<arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
+</cmdsynopsis>
+
+</simplesect>
+
+<simplesect>
+
+<title>Description</title>
+
+<para>&texify; runs &Texinfo; or &LaTeX; input files through &tex;
+(&pdftex;) in turn until all cross-references are resolved, building
+all indices.</para>
+
+<para>The directory containing each <replaceable>file</replaceable> is
+searched for included files.  The suffix of
+<replaceable>file</replaceable> is used to determine its language
+(&LaTeX; or &Texinfo;).</para>
+
+<para>&makeinfo; is used to perform &Texinfo; macro expansion before
+running &tex; when needed.</para>
+
+</simplesect>
+
+<simplesect>
+
+<title>Options</title>
+
+<variablelist>
+<varlistentry>
+<term><option>-@</option></term>
+<listitem><para>Use <markup role="tex">@input</markup> (instead of
+<markup role="tex">\input</markup>); for preloaded
+&Texinfo;.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--batch</option></term>
+<term><option>-b</option></term>
+<listitem><para>No
+<indexterm>
+<primary>--batch</primary>
+</indexterm>
+interaction.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--clean</option></term>
+<term><option>-c</option></term>
+<listitem><para>Remove all auxiliary
+<indexterm>
+<primary>--clean</primary>
+</indexterm>
+files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--expand</option></term>
+<term><option>-e</option></term>
+<listitem><para>Force macro expansion
+<indexterm>
+<primary>--expand</primary>
+</indexterm>
+using &makeinfo;.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>-I <replaceable>dir</replaceable></option></term>
+<listitem><para>Search <replaceable>dir</replaceable> for input files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--help</option></term>
+<term><option>-h</option></term>
+<listitem><para>Display help and exit
+<indexterm>
+<primary>--help</primary>
+</indexterm>
+successfully.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--language=<replaceable>lang</replaceable></option></term>
+<term><option>-l <replaceable>lang</replaceable></option></term>
+<listitem><para>Specify the language of input files: either
+<indexterm>
+<primary>--language=lang</primary>
+</indexterm>
+<varname>latex</varname> or <varname>texinfo</varname>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--max-iterations=<replaceable>n</replaceable></option></term>
+<listitem><para>Limits the number of iterations to prevent endless
+<indexterm>
+<primary>-max-iterations=n</primary>
+</indexterm>
+processing.  The default for
+<replaceable>n</replaceable> is <literal>5</literal>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--mkidx-option=<replaceable>option</replaceable></option></term>
+<listitem><para>Pass <replaceable>option</replaceable>
+<indexterm>
+<primary>--mkidx-option=option</primary>
+</indexterm>
+to the index generator.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--pdf</option></term>
+<term><option>-p</option></term>
+<listitem><para>Use &pdftex; (or
+<indexterm>
+<primary>--pdf</primary>
+</indexterm>
+&pdflatex;) for processing.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--quiet</option></term>
+<term><option>-q</option></term>
+<term><option>--silent</option></term>
+<term><option>-s</option></term>
+<listitem><para>No screen output unless errors
+<indexterm>
+<primary>--quiet</primary>
+</indexterm>
+plies <option>--batch</option>).</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--run-viewer</option></term>
+<listitem><para>Run a viewer on
+<indexterm>
+<primary>--run-viewer</primary>
+</indexterm>
+the resulting &DVI;
+(&PDF;) file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--src</option></term>
+<listitem><para>Pass <option>--src-specials</option> to
+<indexterm>
+<primary>--src</primary>
+</indexterm>
+the &TeX; compiler.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--texinfo=<replaceable>cmd</replaceable></option></term>
+<term><option>-t=<replaceable>cmd</replaceable></option></term>
+<listitem><para>Insert <replaceable>cmd</replaceable> after
+<indexterm>
+<primary>--texinfo=cmd</primary>
+</indexterm>
+<varname>@setfilename</varname> in copy of input
+file.  Multiple values accumulate.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--tex-option=<replaceable>option</replaceable></option></term>
+<listitem><para>Pass
+<indexterm>
+<primary>--tex-option=option</primary>
+</indexterm>
+<replaceable>option</replaceable> to the compiler.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--verbose</option></term>
+<term><option>-V</option></term>
+<listitem><para>Print information on what is
+<indexterm>
+<primary>--verbose</primary>
+</indexterm>
+being done.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--version</option></term>
+<term><option>-v</option></term>
+<listitem>
+<para>Display version information and exit
+<indexterm>
+<primary>--version</primary>
+</indexterm>
+successfully.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--viewer-option=<replaceable>option</replaceable></option></term>
+<listitem><para>Pass <replaceable>option</replaceable> to
+<indexterm>
+<primary>--viewer-option=option</primary>
+</indexterm>
+the viewer.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</simplesect>
+
+<simplesect>
+
+<title>Environment Variables</title>
+
+<para>The values of the <envar>BIBTEX</envar>, <envar>LATEX</envar>
+(or <envar>PDFLATEX</envar>), <envar>MAKEINDEX</envar>,
+<envar>MAKEINFO</envar>, <envar>TEX</envar> (or
+<envar>PDFTEX</envar>), and <envar>TEXINDEX</envar>
+environment variables are used to run those commands, if they are set.</para>
+
+</simplesect>
+
+<simplesect>
+
+<title>Aliases</title>
+
+<variablelist>
+<varlistentry>
+<term>&texi2dvi;</term>
+<listitem><para>Equivalent to &texify;.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</simplesect>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

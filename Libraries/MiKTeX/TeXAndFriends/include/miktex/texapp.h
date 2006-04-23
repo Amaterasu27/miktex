@@ -1,0 +1,565 @@
+/* texapp.h: TeX, pdfTeX, e-TeX, Omega				-*- C++ -*-
+
+   Copyright (C) 1996-2006 Christian Schenk
+
+   This file is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2, or (at your
+   option) any later version.
+
+   This file is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this file; if not, write to the Free Software
+   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA. */
+
+#if defined(_MSC_VER)
+#  pragma once
+#endif
+
+#if ! defined(GUARD_87C7C6104A0DDE499613CA76FF1B8B2F_)
+#define GUARD_87C7C6104A0DDE499613CA76FF1B8B2F_
+
+#include <miktex/texmfapp.h>
+
+#define MIKTEXMF_BEGIN_NAMESPACE		\
+  namespace MiKTeX {				\
+    namespace TeXAndFriends {
+
+#define MIKTEXMF_END_NAMESPACE			\
+    }						\
+  }
+
+MIKTEXMF_BEGIN_NAMESPACE;
+
+/* _________________________________________________________________________
+
+   SourceSpecials
+   _________________________________________________________________________ */
+
+class SourceSpecialsEnum
+{
+public:
+  enum EnumType {
+    Auto,
+    CarriageReturn,
+    Display,
+    HorizontalBox,
+    Math,
+    Paragraph,
+    ParagraphEnd,
+    VerticalBox,
+  };
+};
+
+typedef MiKTeX::Core::EnumWrapper<SourceSpecialsEnum> SourceSpecials;
+
+/* _________________________________________________________________________
+
+   TeXApp
+   _________________________________________________________________________ */
+
+class
+MIKTEXNOVTABLE
+TeXApp
+
+  : public TeXMFApp
+
+{
+public:
+  MIKTEXMFEXPORT
+  MIKTEXMFCALL
+  TeXApp ();
+
+  /* _______________________________________________________________________
+     
+     Init
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  MIKTEXMFAPI(void)
+  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+
+  /* _______________________________________________________________________
+     
+     Finalize
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MIKTEXMFAPI(void)
+  Finalize ();
+
+  /* _______________________________________________________________________
+     
+     OnTeXMFStartJob
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MIKTEXMFAPI(void)
+  OnTeXMFStartJob ();
+
+  /* _______________________________________________________________________
+     
+     AddOptions
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  MIKTEXMFAPI(void)
+  AddOptions ();
+  
+  /* _______________________________________________________________________
+     
+     GetDumpExtension
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  const MIKTEXCHAR *
+  MIKTEXMFCALL
+  GetDumpExtension ()
+    const
+  {
+    return (MIKTEXTEXT(".fmt"));
+  }
+
+  /* _______________________________________________________________________
+     
+     GetDumpFileType
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MiKTeX::Core::FileType
+  MIKTEXMFCALL
+  GetDumpFileType ()
+    const
+  {
+    return (MiKTeX::Core::FileType::FMT);
+  }
+
+  /* _______________________________________________________________________
+     
+     GetInputFileType
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MiKTeX::Core::FileType
+  MIKTEXMFCALL
+  GetInputFileType ()
+    const
+  {
+    return (MiKTeX::Core::FileType::TEX);
+  }
+
+  /* _______________________________________________________________________
+     
+     GetFormatIdent
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  int
+  MIKTEXMFCALL
+  GetFormatIdent ()
+    const
+  {
+#if defined(THEDATA)
+    return (THEDATA(formatident));
+#else
+    assert (false);
+    return (0);
+#endif
+  }
+
+  /* _______________________________________________________________________
+     
+     GetPoolFileType
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MiKTeX::Core::FileType
+  MIKTEXMFCALL
+  GetPoolFileType ()
+    const
+  {
+    return (MiKTeX::Core::FileType::TEXPOOL);
+  }
+
+  /* _______________________________________________________________________
+     
+     ProcessOption
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  MIKTEXMFAPI(bool)
+  ProcessOption (/*[in]*/ int			c,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+
+  /* _______________________________________________________________________
+     
+     AllocateMemory
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  void
+  AllocateMemory ()
+  {
+    GETPARAM (m_mem_bot, membot, mem_bot, 0);
+
+    TeXMFApp::AllocateMemory ();
+
+    GETPARAM (m_max_in_open, maxinopen, max_in_open, 50);
+    GETPARAM (m_nest_size, nestsize, nest_size, 500);
+    GETPARAM (m_save_size, savesize, save_size, 32768);
+    GETPARAM (m_trie_op_size, trieopsize, trie_op_size, 2048);
+    GETPARAM (m_trie_size, triesize, trie_size, 262000);
+   
+    Allocate (THEDATA(sourcefilenamestack), THEDATA(maxinopen));
+    Allocate (THEDATA(linestack), THEDATA(maxinopen));
+    Allocate (THEDATA(fullsourcefilenamestack), THEDATA(maxinopen));
+    Allocate (THEDATA(inputfile), THEDATA(maxinopen));
+    Allocate (THEDATA(hyfdistance), THEDATA(trieopsize));
+    Allocate (THEDATA(hyfnext), THEDATA(trieopsize));
+    Allocate (THEDATA(hyfnum), THEDATA(trieopsize));
+    Allocate (THEDATA(nest), THEDATA(nestsize) + 1);
+    Allocate (THEDATA(savestack), THEDATA(savesize) + 1);
+    Allocate (THEDATA(trie), THEDATA(triesize) + 1);
+    Allocate (THEDATA(triehash), THEDATA(triesize) + 1);
+    Allocate (THEDATA(triel), THEDATA(triesize) + 1);
+    Allocate (THEDATA(trieo), THEDATA(triesize) + 1);
+    Allocate (THEDATA(trieophash), 2 * THEDATA(trieopsize) + 1);
+    Allocate (THEDATA(trieopval), THEDATA(trieopsize));
+    Allocate (THEDATA(trier), THEDATA(triesize) + 1);
+    Allocate (THEDATA(trietaken), THEDATA(triesize));
+
+
+#if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
+    GETPARAM (m_font_max, fontmax, font_max, 1000);
+    GETPARAM (m_font_mem_size, fontmemsize, font_mem_size, 500000);
+
+    Allocate (THEDATA(bcharlabel), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(charbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(depthbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(extenbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontarea), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontbc), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontbchar), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontcheck), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontdsize), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontec), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontfalsebchar), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontglue), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
+    Allocate (THEDATA(fontname), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontparams), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontsize), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(fontused), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(heightbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(hyphenchar), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(italicbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(kernbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(ligkernbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(parambase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(skewchar), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate (THEDATA(triec), THEDATA(triesize) + 1);
+    Allocate (THEDATA(trieoplang), THEDATA(trieopsize));
+    Allocate (THEDATA(widthbase), THEDATA(fontmax) + 1 - constfontbase);
+#endif // MIKTEX_OMEGA
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+     
+     FreeMemory
+     _______________________________________________________________________ */
+
+public:
+  
+#if defined(THEDATA)
+  void
+  FreeMemory ()
+  {
+    TeXMFApp::FreeMemory ();
+
+    Free (THEDATA(linestack));
+    Free (THEDATA(inputstack));
+    Free (THEDATA(inputfile));
+    Free (THEDATA(fullsourcefilenamestack));
+    Free (THEDATA(sourcefilenamestack));
+    Free (THEDATA(hyfdistance));
+    Free (THEDATA(hyfnext));
+    Free (THEDATA(hyfnum));
+    Free (THEDATA(nest));
+    Free (THEDATA(savestack));
+    Free (THEDATA(trie));
+    Free (THEDATA(triec));
+    Free (THEDATA(triehash));
+    Free (THEDATA(triel));
+    Free (THEDATA(trieo));
+    Free (THEDATA(trieophash));
+    Free (THEDATA(trieoplang));
+    Free (THEDATA(trieopval));
+    Free (THEDATA(trier));
+    Free (THEDATA(trietaken));
+
+#if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
+    Free (THEDATA(bcharlabel));
+    Free (THEDATA(charbase));
+    Free (THEDATA(depthbase));
+    Free (THEDATA(extenbase));
+    Free (THEDATA(fontarea));
+    Free (THEDATA(fontbc));
+    Free (THEDATA(fontbchar));
+    Free (THEDATA(fontcheck));
+    Free (THEDATA(fontdsize));
+    Free (THEDATA(fontec));
+    Free (THEDATA(fontfalsebchar));
+    Free (THEDATA(fontglue));
+    Free (THEDATA(fontinfo));
+    Free (THEDATA(fontname));
+    Free (THEDATA(fontparams));
+    Free (THEDATA(fontsize));
+    Free (THEDATA(fontused));
+    Free (THEDATA(heightbase));
+    Free (THEDATA(hyphenchar));
+    Free (THEDATA(italicbase));
+    Free (THEDATA(kernbase));
+    Free (THEDATA(ligkernbase));
+    Free (THEDATA(parambase));
+    Free (THEDATA(skewchar));
+    Free (THEDATA(widthbase));
+#endif // MIKTEX_OMEGA
+  }
+#endif // THEDATA
+
+/* _________________________________________________________________________
+
+   CloseDviFile
+   _________________________________________________________________________ */
+
+public:
+  
+  template<class T>
+  bool
+  CloseDviFile (/*[in]*/ T & f)
+    const
+  {
+    TouchJobOutputFile (f);
+    return (MiKTeX::TeXAndFriends::CloseDviFile(&f));
+  }
+
+  /* _______________________________________________________________________
+     
+     MLTeXP
+     _______________________________________________________________________ */
+
+public:
+
+  bool
+  MLTeXP ()
+    const
+  {
+    return (enableMLTeX);
+  }
+
+  /* _______________________________________________________________________
+     
+     IsSourceSpecialOn
+     _______________________________________________________________________ */
+
+public:
+
+  bool
+  IsSourceSpecialOn (/*[in]*/ SourceSpecials s)
+    const
+  {
+    return (sourceSpecials[s.Get()]);
+  }
+
+  /* _______________________________________________________________________
+     
+     IsNewSource
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  bool
+  IsNewSource (/*[in]*/ int	sourceFileName,
+	       /*[in]*/ int	line)
+    const
+  {
+    MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
+    GetTeXString (szFileName, sourceFileName, MiKTeX::Core::BufferSizes::MaxPath);
+    return ((MiKTeX::Core::PathName::Compare(szFileName, lastSourceFilename.Get())
+	     != 0)
+	    || line != lastLineNum);
+  }
+#endif
+  
+  /* _______________________________________________________________________
+     
+     MakeSrcSpecial
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  int
+  MakeSrcSpecial (/*[in]*/ int	sourceFileName,
+		  /*[in]*/ int	line)
+  {
+    poolpointer oldpoolptr = THEDATA(poolptr);
+    MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
+    GetTeXString (szFileName, sourceFileName, MiKTeX::Core::BufferSizes::MaxPath);
+    const size_t BUFSIZE = MiKTeX::Core::BufferSizes::MaxPath + 100;
+    MIKTEXCHAR szBuf[BUFSIZE];
+#if _MSC_VER >= 1400
+    _stprintf_s (szBuf,
+		 BUFSIZE,
+		 MIKTEXTEXT("src:%d%s%s"),
+		 line,
+		 (_istdigit(*szFileName) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
+		 szFileName);
+#else
+    _stprintf (szBuf,
+	       MIKTEXTEXT("src:%d%s%s"),
+	       line,
+	       (_istdigit(*szFileName) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
+	       szFileName);
+#endif
+    size_t len = MiKTeX::Core::StrLen(szBuf);
+    CheckPoolPointer (THEDATA(poolptr), len);
+    MIKTEXCHAR * s = szBuf;
+    while (*s != 0)
+      {
+	THEDATA(strpool)[THEDATA(poolptr)++] = *s++;
+      }
+    return (oldpoolptr);
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+     
+     RememberSourceInfo
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  void
+  RememberSourceInfo (/*[in]*/ int	sourceFileName,
+		      /*[in]*/ int	line)
+  {
+    GetTeXString (lastSourceFilename.GetBuffer(),
+		  sourceFileName,
+		  MiKTeX::Core::BufferSizes::MaxPath);
+    lastLineNum = line;
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+     
+     Write18
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXMFAPI(bool)
+  Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+	   /*[out]*/ int &		exitCode)
+    const;
+
+  /* _______________________________________________________________________
+     
+     Variables
+     _______________________________________________________________________ */
+
+private:
+  bool enableWrite18;
+
+private:
+  bool enableMLTeX;
+  
+private:
+  int lastLineNum;
+
+private:
+  MiKTeX::Core::PathName lastSourceFilename;
+
+private:
+  std::bitset<32> sourceSpecials;
+  
+private:
+  int m_font_max;
+  
+private:
+  int m_font_mem_size;
+  
+private:
+  int m_max_in_open;
+  
+private:
+  int m_mem_bot;
+  
+private:
+  int m_nest_size;
+  
+private:
+  int m_save_size;
+  
+private:
+  int m_trie_op_size;
+  
+private:
+  int m_trie_size;
+};
+
+/* _________________________________________________________________________
+
+   AppendExt
+   _________________________________________________________________________ */
+
+#if defined(THEDATA)
+inline
+void
+AppendExt (/*[in]*/ strnumber e)
+{
+  MIKTEXCHAR szExt[MiKTeX::Core::BufferSizes::MaxPath];
+  GetTeXString (szExt, e, MiKTeX::Core::BufferSizes::MaxPath);
+  MiKTeX::Core::Utils::AppendString (THEDATA(nameoffile),
+			       (sizeof(THEDATA(nameoffile))
+				/ sizeof(THEDATA(nameoffile)[0])),
+			       szExt);
+}
+#endif
+
+MIKTEXMF_END_NAMESPACE;
+
+#undef MIKTEXMF_BEGIN_NAMESPACE
+#undef MIKTEXMF_END_NAMESPACE
+
+#endif	// texapp.h

@@ -1,0 +1,19 @@
+<varlistentry>
+<term><option>-param-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the internal compiler variable <varname>param_size</varname> to
+<replaceable>n</replaceable>.</para>
+<indexterm>
+<primary>-param-size=n</primary>
+</indexterm>
+<para><varname>param_size</varname> is the maximum number of
+simultaneous macro parameters.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

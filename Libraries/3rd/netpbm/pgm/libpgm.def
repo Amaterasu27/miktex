@@ -1,0 +1,10 @@
+EXPORTS
+	pgm_writepgm
+	pgm_init
+	pgm_writepgmrow
+	pgm_writepgminit
+	pgm_readpgmrow
+	pgm_readpgm
+	pgm_readpgminit
+	pgm_pbmmaxval DATA
+	pgm_readpgminitrest

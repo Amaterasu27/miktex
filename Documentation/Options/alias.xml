@@ -1,0 +1,17 @@
+<varlistentry>
+<term><option>-alias=<replaceable>app</replaceable></option></term>
+<listitem><para>Pretend to be <replaceable>app</replaceable>.
+<indexterm>
+<primary>-alias=app</primary>
+</indexterm>
+This affects both the format used and the search paths.</para></listitem>
+</varlistentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "section")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

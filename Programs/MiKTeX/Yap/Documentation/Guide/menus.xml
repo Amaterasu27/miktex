@@ -1,0 +1,432 @@
+<chapter>
+
+<title>Menus</title>
+
+<section>
+
+<title><guimenu>File</guimenu> Menu</title>
+
+<section>
+
+<?dbhh topicname="HID_FILE_OPEN" topicid="0"?>
+
+<title><guimenuitem>Open...</guimenuitem></title>
+
+<para>Brings up the <guimenuitem>Open</guimenuitem> dialog box.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_CLOSE" topicid="0"?>
+
+<title><guimenuitem>Close</guimenuitem></title>
+
+<para>Closes the active &DVI; window.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_PAGE_EDITOR" topicid="0"?>
+
+<title><guimenuitem>Edit TeX source</guimenuitem></title>
+
+<para>Opens the TeX source file in an editor.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_SAVE_AS" topicid="0"?>
+
+<title><guimenuitem>Save As...</guimenuitem></title>
+
+<para>Saves the active &DVI; document in a file.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_DOCUMENT_PROPERTIES" topicid="0"?>
+
+<title><guimenuitem>Document Properties...</guimenuitem></title>
+
+<para>Brings up the document property sheet
+(see <xref linkend="docprop"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_PRINT_SETUP" topicid="0"?>
+
+<title><guimenuitem>Print Setup...</guimenuitem></title>
+
+<para>Brings up the <guimenuitem>Print Setup</guimenuitem> dialog box.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_PRINT" topicid="0"?>
+
+<title><guimenuitem>Print...</guimenuitem></title>
+
+<para>Brings up the standard <guimenuitem>Print...</guimenuitem>
+dialog box (see <xref linkend="printstd"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_DVIPS" topicid="0"?>
+
+<title><guimenuitem>Print PostScript...</guimenuitem></title>
+
+<para>Brings up the <guimenuitem>Print PostScript...</guimenuitem>
+dialog box (see <xref linkend="printps"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FILE_EXIT" topicid="0"?>
+
+<title><guimenuitem>Exit</guimenuitem></title>
+
+<para>Closes &Yap;.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title><guimenu>View</guimenu> Menu</title>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_TOOLBAR" topicid="0"?>
+
+<title><guimenuitem>Toolbar</guimenuitem></title>
+
+<para>Shows or hides the toolbar.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_STATUS_BAR" topicid="0"?>
+
+<title><guimenuitem>Status Bar</guimenuitem></title>
+
+<para>Shows or hides the status bar.</para>
+
+</section>
+
+<section>
+
+<title><guisubmenu>Page Layout</guisubmenu></title>
+
+<section>
+
+<?dbhh topicname="HID_SINGLE_PAGE" topicid="0"?>
+
+<title><guimenuitem>Single Page</guimenuitem></title>
+
+<para>Switches to the single page layout.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_DOUBLE_PAGE" topicid="0"?>
+
+<title><guimenuitem>Double Page</guimenuitem></title>
+
+<para>Switches to the double page layout.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_CONTINUOUS_SINGLE" topicid="0"?>
+
+<title><guimenuitem>Continous / Single</guimenuitem></title>
+
+<para>Switches to the continuous/single page layout.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_CONTINUOUS_DOUBLE" topicid="0"?>
+
+<title><guimenuitem>Continous / Double</guimenuitem></title>
+
+<para>Switches to the continuous/double page layout.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_REFRESH" topicid="0"?>
+
+<title><guimenuitem>Refresh</guimenuitem></title>
+
+<para>Rescans the &DVI; file and updates the view.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_FULLSCREEN" topicid="0"?>
+
+<title><guimenuitem>Full Screen</guimenuitem></title>
+
+<para>Maximizes the &DVI; view to full screen.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_ZOOM_IN" topicid="0"?>
+
+<title><guimenuitem>Zoom In</guimenuitem></title>
+
+<para>Increases the magnification.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_ZOOM_OUT" topicid="0"?>
+
+<title><guimenuitem>Zoom Out</guimenuitem></title>
+
+<para>Reduces the magnification.</para>
+
+</section>
+
+<section>
+
+<title><guisubmenu>Go To</guisubmenu></title>
+
+<section>
+
+<?dbhh topicname="HID_BACK" topicid="0"?>
+
+<title><guimenuitem>Back</guimenuitem></title>
+
+<para>Returns to the last page visited</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FORWARD" topicid="0"?>
+
+<title><guimenuitem>Forward</guimenuitem></title>
+
+<para>Goes to the page viewed before clicking <guilabel>Back</guilabel>.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_NEXT_PAGE" topicid="0"?>
+
+<title><guimenuitem>Next Page</guimenuitem></title>
+
+<para>Goes to the next page.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_PREV_PAGE" topicid="0"?>
+
+<title><guimenuitem>Previous Page</guimenuitem></title>
+
+<para>Goes to the previous page.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_FIRST_PAGE" topicid="0"?>
+
+<title><guimenuitem>First Page</guimenuitem></title>
+
+<para>Goes to the first page.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_LAST_PAGE" topicid="0"?>
+
+<title><guimenuitem>Last Page</guimenuitem></title>
+
+<para>Goes to the Last page.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_GOTO_PAGE" topicid="0"?>
+
+<title><guimenuitem>Goto Page</guimenuitem></title>
+
+<para>Brings up the <guilabel>Goto Page</guilabel> dialog box
+(see <xref linkend="gotopage"/>).</para>
+
+</section>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_TRACE" topicid="0"?>
+
+<title>Trace</title>
+
+<para>Turns tracing (see <xref linkend="tracing"/>) on or off.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_VIEW_OPTIONS" topicid="0"?>
+
+<title>Options</title>
+
+<para>Brings up the <guilabel>Options</guilabel> property
+sheet (see <xref linkend="customizing"/>).</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title><guimenuitem>Tools</guimenuitem> Menu</title>
+
+<section>
+
+<?dbhh topicname="HID_TOOLS_SOURCESPECIALS" topicid="0"?>
+
+<title><guimenuitem>Source Links...</guimenuitem></title>
+
+<para>Brings up the <guilabel>Source Links</guilabel> dialog box
+(see <xref linkend="sourcelinks"/>).</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_TOOLS_ARROW" topicid="0"?>
+
+<title><guimenuitem>Standard Pointer</guimenuitem></title>
+
+<para>Seletcs the standard mouse pointer.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_TOOLS_HAND" topicid="0"?>
+
+<title><guimenuitem>Hand Tool</guimenuitem></title>
+
+<para>Seletcs the hand tool.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_TOOLS_MAGNIFYING_GLASS" topicid="0"?>
+
+<title><guimenuitem>Magnifying Glass</guimenuitem></title>
+
+<para>Selects the magnifying glass.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title><guimenu>Windows</guimenu></title>
+
+<section>
+
+<?dbhh topicname="HID_WINDOW_CASCADE" topicid="0"?>
+
+<title><guilabel>Cascade</guilabel></title>
+
+<para>Arranges windows so they overlap.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_WINDOW_TILE_VERT" topicid="0"?>
+
+<title><guilabel>Tile</guilabel></title>
+
+<para>Arranges windows as non-overlapping tiles.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title><guimenu>Help</guimenu></title>
+
+<section>
+
+<?dbhh topicname="HID_HELP_INDEX" topicid="0"?>
+
+<title><guilabel>Contents and Index</guilabel></title>
+
+<para>Opens Help.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_HELP_KEYBOARD" topicid="0"?>
+
+<title><guilabel>Keyboard Map</guilabel></title>
+
+<para>Displays Yap keyboard shortcuts.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_APP_ABOUT" topicid="0"?>
+
+<title><guilabel>About Yap...</guilabel></title>
+
+<para>Shows the <application>Yap</application> version info.</para>
+
+</section>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("yap.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

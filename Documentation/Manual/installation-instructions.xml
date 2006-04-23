@@ -1,0 +1,102 @@
+<section>
+
+<title>Prerequisites</title>
+
+<para>&MiKTeX; &MIKTEX_VERSION_STR; requires one of the following
+&Windows; operating systems:</para>
+
+<itemizedlist>
+<listitem><para></para>&WindowsServer2003;</listitem>
+<listitem><para></para>&WindowsXP;</listitem>
+<listitem><para></para>&Windows2000;</listitem>
+<listitem><para></para>&WindowsMe;</listitem>
+<listitem><para></para>&Windows98;, &Windows98SE;</listitem>
+</itemizedlist>
+
+<para>&MiKTeX; &MIKTEX_VERSION_STR; will not run on &Windows95;.</para>
+
+</section>
+
+<section>
+
+<title>Choosing an installation size</title>
+
+<para>You can choose between two installation sizes:</para>
+
+<variablelist>
+<varlistentry>
+<term>Basic &MiKTeX;</term>
+<listitem><para>A basic &MiKTeX; installation which gets you started.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Complete &MiKTeX;</term>
+<listitem><para>A complete &MiKTeX; installation.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>Choose Basic &MiKTeX;, if you have to download over a slow
+Internet connection or if you want to conserve disk space.  Missing
+files can be installed later (in the course of use).</para>
+
+</section>
+
+<section>
+
+<title>Shared vs. private installation</title>
+
+<para>You have the option to create a shared &MiKTeX; installation. Use
+this option if you are the administrator of your computer and if you want
+to install &MiKTeX; for all users. This option is not available if you
+are logged into a limited user account.</para>
+
+</section>
+
+<section>
+
+<title>Installing a basic &MiKTeX; system</title>
+
+<para>Get the <quote>Basic &MiKTeX; Installer</quote> from the <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003">download
+page</ulink> and run it.</para>
+
+</section>
+
+<section>
+
+<title>Installing a complete &MiKTeX; system</title>
+
+<para>Get the &MiKTeXNetInstaller; from the <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532">download
+page</ulink>. You will use the installer to a) download the &MiKTeX;
+distribution and b) install &MiKTeX;.</para>
+
+<section>
+
+<title>Download</title>
+
+<para>Start the installer and choose <guilabel>Download
+MiKTeX</guilabel> on the task page. You will be prompted for an
+installation size (choose <guilabel>Complete MiKTeX</guilabel>), a
+download source and a download destination.</para>
+
+</section>
+
+<section>
+
+<title>Install</title>
+
+<para>Start the installer a second time and choose <guilabel>Install
+&MiKTeX;</guilabel> on the task page.</para>
+
+</section>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../install.xml" "article")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

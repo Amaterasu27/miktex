@@ -1,0 +1,182 @@
+<chapter>
+
+<title>Specials</title>
+
+<indexterm>
+<primary>specials</primary>
+</indexterm>
+
+<para>This section documents the &DVI; specials which &Yap; is able
+to handle.</para>
+
+<section>
+
+<title>&PostScript; Specials</title>
+
+<indexterm>
+<primary>&PostScript; specials</primary>
+</indexterm>
+
+<variablelist>
+<varlistentry>
+<term><option>! <replaceable>string</replaceable></option></term>
+<listitem><para>Insert literal &PostScript;
+into user dictionary.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>" <replaceable>string</replaceable></option></term>
+<listitem><para>Insert literal &PostScript;.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps: <replaceable>string</replaceable></option></term>
+<listitem><para>Insert literal &PostScript;,
+with no protection.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps::[begin] <replaceable>string</replaceable></option></term>
+<listitem><para>Start inserting literal &PostScript;.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps:: <replaceable>string</replaceable></option></term>
+<listitem><para>Send literal &PostScript; to the interpreter.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps::[end] <replaceable>string</replaceable></option></term>
+<listitem><para>End sending literal &PostScript;.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>ps: plotfile <replaceable>file</replaceable></option></term>
+<listitem><para>Send file contents into <application>Ghostscript</application>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>header=<replaceable>file</replaceable></option></term>
+<listitem><para>Insert file contents into the user dictionary.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>PSfile="<replaceable>file</replaceable>"</option></term>
+<term><option>psfile=<replaceable>file</replaceable>}</option></term>
+<listitem><para>Insert graphics file.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title><application>HyperTeX</application> Specials</title>
+
+<variablelist>
+<varlistentry>
+<term><option>html:&lt;a href="<replaceable>hrefstring</replaceable>"></option></term>
+<listitem><para>Start a hyper reference.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>html:&lt;a name="<replaceable>namestring</replaceable>"></option></term>
+<listitem><para>Start a hyper label.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>html:&lt;/a></option></term>
+<listitem><para>End a hyperref/label.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title><application>emTeX</application> Specials</title>
+
+<variablelist>
+<varlistentry>
+<term><option>em: graph <replaceable>file</replaceable></option></term>
+<term><option>em: graph <replaceable>file</replaceable>,
+<replaceable>width</replaceable>, <replaceable>height</replaceable></option></term>
+<listitem><para>Display a graphics file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: message <replaceable>string</replaceable></option></term>
+<listitem><para>Writes a message to the <application>Yap</application> log file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: line <replaceable>p1</replaceable>,
+<replaceable>p2</replaceable></option></term>
+<term><option>em: line <replaceable>p1</replaceable>,
+<replaceable>p2</replaceable>, <replaceable>width</replaceable></option></term>
+<listitem><para>Draws a solid line between two points, which must have
+been defined with a previous <option>em: point</option>
+special.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: lineto</option></term>
+<listitem><para>Draws a solid line which starts at the coordinate set by
+the last <option>em: moveto</option> special and ends at
+the coordinate of the referenc point.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: linewidth <replaceable>width</replaceable></option></term>
+<listitem><para>Sets the default width of lines.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: moveto</option></term>
+<listitem><para>Defines the starting point for the next <option>em:
+lineto</option> special.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>em: point <replaceable>p</replaceable></option></term>
+<listitem><para>Defines point <replaceable>p</replaceable>, which gets
+the coordinates of the reference point.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title><application>DviWin</application> Specials</title>
+
+<variablelist>
+<varlistentry>
+<term><option>anisoscale <replaceable>file</replaceable>,
+<replaceable>width</replaceable>, <replaceable>height</replaceable></option></term>
+<listitem><para>Insert a graphics file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>src: <replaceable>line</replaceable>
+<replaceable>file</replaceable></option></term>
+<listitem><para>Insert source file information.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title>Color Specials</title>
+
+<variablelist>
+<varlistentry>
+<term><option>color push <replaceable>color</replaceable></option></term>
+<listitem><para>Push a color onto the color stack.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>color pop</option></term>
+<listitem><para>Pop the color stack.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>color reset</option></term>
+<listitem><para>Reset the color stack.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+</chapter>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("yap.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

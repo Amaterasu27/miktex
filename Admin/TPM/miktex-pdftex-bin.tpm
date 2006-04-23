@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/pdftex/">
+    <TPM:Name>pdfTeX bin</TPM:Name>
+    <TPM:Title>pdfTeX binaries</TPM:Title>
+    <TPM:Version>2.5 Beta 5</TPM:Version>
+    <TPM:Date>Sun Apr 22 10:20:30 UTC 2006</TPM:Date>
+    <TPM:Description>
+      This package includes the pdfTeX executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\MiKTeX-pdftex-3.dll
+texmf\miktex\bin\pdfinitex.exe
+texmf\miktex\bin\pdftex.exe
+texmf\miktex\bin\pdftosrc.exe
+texmf\miktex\bin\pdfvirtex.exe
+texmf\miktex\fmt\pdftex.pool
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

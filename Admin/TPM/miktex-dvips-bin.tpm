@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/dvips/">
+    <TPM:Name>Dvips bin</TPM:Name>
+    <TPM:Title>Dvips binaries</TPM:Title>
+    <TPM:Version>2.5 Beta 5</TPM:Version>
+    <TPM:Date>Sun Apr 22 10:20:30 UTC 2006</TPM:Date>
+    <TPM:Description>
+       This package includes the dvips executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\dvips.exe
+texmf\miktex\config\dvips.ini
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>
