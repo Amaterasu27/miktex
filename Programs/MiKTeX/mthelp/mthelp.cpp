@@ -784,7 +784,7 @@ MiKTeXHelp::Run (/*[in]*/ int		argc,
 	  PrintFiles (filesByPackage);
 	  PrintFiles (filesByName);
 	}
-      else if (optView)
+      else if (optView || filesByPackage.size() == 0)
 	{
 	  if (filesByPackage.size() > 0)
 	    {
