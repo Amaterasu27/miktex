@@ -72,6 +72,17 @@ url="http://sourceforge.net/tracker/?atid=110783&amp;group_id=10783&amp;func=bro
 
 <section>
 
+<title><filename>miktex.ini</filename> splitted</title>
+
+<para><filename>miktex.ini</filename> has been splitted into several
+application-specific configuration files. For example, &Yap;
+configuration settings are now contained in
+<filename>yap.ini</filename>.</para>
+
+</section>
+
+<section>
+
 <title>Installation directory</title>
 
 <para>The new installation default is <filename>C:\Program

@@ -313,11 +313,6 @@ const MIKTEXCHAR PATH_DELIMITER = T_(':');
 const MIKTEXCHAR * const RECURSION_INDICATOR = T_("//");
 const size_t RECURSION_INDICATOR_LENGTH = 2;
 
-#define MIKTEX_USER_RC_FILE T_(".miktex")
-
-#define MIKTEX_USER_INI_FILES						\
-  MIKTEX_USER_RC_FILE PATH_DELIMITER_STRING MIKTEX_INI_FILENAME
-
 /* _________________________________________________________________________
 
    U32

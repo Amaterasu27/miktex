@@ -25,6 +25,7 @@ includedinifiles = \
 maininifiles = \
 	amstex.ini \
 	context.ini \
+	core.ini \
 	cslatex.ini \
 	csplain.ini \
 	dvipdfm.ini \
@@ -36,7 +37,6 @@ maininifiles = \
 	lambda.ini \
 	latex.ini \
 	mex.ini \
-	miktex.ini \
 	omega.ini \
 	pdfetex.ini \
 	pdfjadetex.ini \
