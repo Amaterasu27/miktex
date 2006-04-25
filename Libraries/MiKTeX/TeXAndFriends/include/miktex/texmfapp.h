@@ -59,6 +59,7 @@
 #endif
 
 #include <miktex/inputline.h>
+#include <miktex/reg.h>
 
 #pragma warning (push, 1)
 #include <string>
@@ -84,17 +85,19 @@ MIKTEXMF_BEGIN_NAMESPACE;
    GETPARAM
    _________________________________________________________________________ */
 
-#define GETPARAM(option, varname, cfgname, defcfgval)			\
-{									\
-  if (option < 0)							\
-    {									\
-      THEDATA(varname) =						\
-        pSession->GetConfigValue(0, MIKTEXTEXT(#cfgname), defcfgval);	\
-    }									\
-  else									\
-    {									\
-      THEDATA(varname) = option;					\
-    }									\
+#define GETPARAM(option, varname, cfgname, defcfgval)		\
+{								\
+  if (option < 0)						\
+    {								\
+      THEDATA(varname) =					\
+        pSession->GetConfigValue(MIKTEX_REGKEY_WEB,		\
+                                 MIKTEXTEXT(#cfgname),		\
+                                 defcfgval);			\
+    }								\
+  else								\
+    {								\
+      THEDATA(varname) = option;				\
+    }								\
 }
 
 /* _________________________________________________________________________
