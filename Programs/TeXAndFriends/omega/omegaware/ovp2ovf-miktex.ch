@@ -1,6 +1,6 @@
 %% ovp2ovf-miktex.ch: WEB Change File for OVP2OVF
 %% 
-%% Copyright (C) 1998-2001 Christian Schenk <cs@miktex.org>
+%% Copyright (C) 1998-2006 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the

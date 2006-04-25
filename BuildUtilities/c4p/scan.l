@@ -1,6 +1,6 @@
  /* scan.l: C4P Lexical Scanner Specification		-*- C++ -*-
 
-    Copyright (C) 1991-2001 Christian Schenk <cs@miktex.org>
+    Copyright (C) 1991-2006 Christian Schenk
 
     This file is part of C4P.
 
