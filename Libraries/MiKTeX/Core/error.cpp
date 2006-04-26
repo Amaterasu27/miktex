@@ -141,7 +141,7 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
     }
 #if 1
   tstring env;
-  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env)
+  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
       && env == T_("1"))
     {
       DEBUG_BREAK ();
