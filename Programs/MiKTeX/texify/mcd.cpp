@@ -1666,7 +1666,7 @@ Driver::RunTeX ()
   if (! pSession->FindFile(lpszExeName, FileType::EXE, pathExe))
     {
       InstallProgram (lpszExeName);
-      if (pSession->FindFile(lpszExeName, FileType::EXE, pathExe))
+      if (! pSession->FindFile(lpszExeName, FileType::EXE, pathExe))
 	{
 	  FatalError (T_("%s could not be found."), Q_(lpszExeName));
 	}
