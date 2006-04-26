@@ -180,7 +180,7 @@ const struct poptOption FindTeXMF::aoption[] =
 {
   {
     T_("alias"), 0,
-    POPT_ARG_STRING, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
     T_("Pretend to be APP, i.e., use APP's configuration settings \
 when searching for files."),
@@ -189,21 +189,21 @@ when searching for files."),
 
   {
     T_("expand-path"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_PATH,
     T_("Undocumented"), T_("PATH"),
   },
 
   {
     T_("expand-var"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_VAR,
     T_("Undocumented"), T_("VAR"),
   },
 
   {
     T_("file-type"), 0,
-    POPT_ARG_STRING, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
     T_("The type of the file to search for."),
     T_("FILETYPE"),
@@ -211,7 +211,7 @@ when searching for files."),
 
   {
     T_("format"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
     T_("Undocumented"),
     T_("Format"),
@@ -219,7 +219,7 @@ when searching for files."),
 
   {
     T_("list-file-types"), 0,
-    POPT_ARG_NONE, 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_LIST_FILE_TYPES,
     T_("List known file types."),
     0,
@@ -227,7 +227,7 @@ when searching for files."),
 
   {
     T_("must-exist"), 0,
-    POPT_ARG_NONE, 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_MUST_EXIST,
     T_("Run the package installer, if necessary."),
     0,
@@ -235,7 +235,7 @@ when searching for files."),
 
   {
     T_("progname"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
     T_("Undocumented"),
     T_("PROGNAME"),
@@ -243,7 +243,7 @@ when searching for files."),
 
   {
     T_("show-path"), 0,
-    POPT_ARG_STRING, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_SHOW_PATH,
     T_("Show the search path for a certain file type."),
     T_("FILETYPE"),
@@ -251,15 +251,15 @@ when searching for files."),
 
   {
     T_("start"), 0,
-    POPT_ARG_NONE, 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_START,
     T_("Start ..."),
     0,
   },
 
   {
-    T_("version"), T_('V'),
-    POPT_ARG_NONE, 0,
+    T_("version"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
     0
