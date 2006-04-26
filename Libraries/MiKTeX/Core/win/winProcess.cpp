@@ -50,7 +50,7 @@ Process::Start (/*[in]*/ const ProcessStartInfo & startinfo)
 void
 winProcess::Create ()
 {
-  if (startinfo.FileName.length() == 0)
+  if (startinfo.FileName.empty())
     {
       INVALID_ARGUMENT (T_("winProcess::Create"), 0);
     }
@@ -237,7 +237,7 @@ winProcess::Create ()
       commandLine = T_('"');
       commandLine += startinfo.FileName;
       commandLine += T_('"');
-      if (startinfo.Arguments.length() > 0)
+      if (! startinfo.Arguments.empty())
 	{
 	  commandLine += T_(' ');
 	  commandLine += startinfo.Arguments;
