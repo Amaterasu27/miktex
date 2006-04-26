@@ -85,16 +85,21 @@ BEGIN_INTERNAL_NAMESPACE;
 
 /* _________________________________________________________________________
 
+   DEBUG_BREAK
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+#  define DEBUG_BREAK() DebugBreak()
+#else
+#  define DEBUG_BREAK()
+#endif
+
+/* _________________________________________________________________________
+
    Debug-dependant Macros
    _________________________________________________________________________ */
 
 #if ! defined(NDEBUG)
-
-#  if defined(MIKTEX_WINDOWS)
-#    define DEBUG_BREAK() DebugBreak()
-#  else
-#    define DEBUG_BREAK()
-#  endif
 
 #  define MIKTEX_ASSERT(expr)					\
   static_cast<void>						\
@@ -138,8 +143,6 @@ BEGIN_INTERNAL_NAMESPACE;
   MIKTEX_ASSERT_CHAR_BUFFER (buf, BufferSizes::MaxPath)
 
 #else
-
-#  define DEBUG_BREAK()
 
 #  define MIKTEX_ASSERT(expr)
 #  define MIKTEX_ASSERT_BUFFER(buf, n)
