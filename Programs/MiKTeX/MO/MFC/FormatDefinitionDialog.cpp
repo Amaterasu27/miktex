@@ -66,12 +66,11 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
 {
   CDialog::DoDataExchange (pDX);
 
-  DDX_CBString (pDX, IDC_COMPILER, compiler);
-  DDX_CBString (pDX, IDC_PRELOADED_FMT, preloadedFormat);
+  DDX_CBStringExact (pDX, IDC_COMPILER, compiler);
+  DDX_CBStringExact (pDX, IDC_PRELOADED_FMT, preloadedFormat);
   DDX_Check (pDX, IDC_EXCLUDE, exclude);
   DDX_Control (pDX, IDC_COMPILER, compilerComboBox);
   DDX_Control (pDX, IDC_PRELOADED_FMT, preloadedFormatComboBox);
-  DDX_Text (pDX, IDC_COMPILER, compiler);
   DDX_Text (pDX, IDC_DESCRIPTION, description);
   DDX_Text (pDX, IDC_FMT_NAME, formatName);
   DDX_Text (pDX, IDC_INPUT_NAME, inputName);
@@ -83,7 +82,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
     }
 
   pDX->PrepareEditCtrl (IDC_FMT_NAME);
-  if (formatName.GetLength() == 0)
+  if (formatName.IsEmpty())
     {
       AfxMessageBox (T_("You must specify a format name."),
 		     MB_ICONEXCLAMATION);
@@ -103,7 +102,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
     }
 
   pDX->PrepareEditCtrl (IDC_INPUT_NAME);
-  if (inputName.GetLength() == 0)
+  if (inputName.IsEmpty())
     {
       AfxMessageBox (T_("You must specify an input file name."),
 		     MB_ICONEXCLAMATION);
@@ -111,7 +110,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
     }
 
   pDX->PrepareCtrl (IDC_COMPILER);
-  if (compiler.GetLength() == 0)
+  if (compiler.IsEmpty())
     {
       AfxMessageBox (T_("You must choose a compiler."), MB_ICONEXCLAMATION);
       pDX->Fail ();
@@ -220,22 +219,7 @@ FormatDefinitionDialog::OnInitDialog ()
 	{
 	  compilerComboBox.AddString (it->c_str());
 	}
-      int idxSel =
-	compilerComboBox.FindStringExact(-1, formatInfo.compiler.c_str());
-      if (idxSel < 0 || compilerComboBox.SetCurSel(idxSel) < 0)
-	{
-	  UNEXPECTED_CONDITION (T_("FormatDefinitionDialog::OnInitDialog"));
-	}
-      if (preloadedFormat.GetLength() > 0)
-	{
-	  idxSel =
-	    preloadedFormatComboBox.FindStringExact(-1, preloadedFormat);
-	  if (idxSel < 0 || preloadedFormatComboBox.SetCurSel(idxSel) < 0)
-	    {
-	      UNEXPECTED_CONDITION
-		(T_("FormatDefinitionDialog::OnInitDialog"));
-	    }
-	}
+      UpdateData (FALSE);
     }
   catch (const MiKTeXException & e)
     {
