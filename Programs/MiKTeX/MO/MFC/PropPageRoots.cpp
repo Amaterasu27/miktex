@@ -637,13 +637,21 @@ PropPageTeXMFRoots::OnApply ()
 	{
 	  UNEXPECTED_CONDITION (T_("PropPageTeXMFRoots::OnApply"));
 	}
+
+      PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
       
       tstring str;
       for (vector<PathName>::const_iterator it = roots.begin();
 	   it != roots.end();
 	   ++ it)
 	{
-	  if (it != roots.begin())
+	  if (((policy & PolicyFlags::DataRootHighestPriority) != 0)
+	      && (*it == userDataRoot || *it == commonDataRoot
+		  || *it == userConfigRoot || *it == commonConfigRoot))
+	    {
+	      continue;
+	    }
+	  if (! str.empty())
 	    {
 	      str += T_(';');
 	    }
