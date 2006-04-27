@@ -741,15 +741,11 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
       INVALID_ARGUMENT (T_("SessionImpl::FindFilenameDatabase"), NUMTOSTR(r));
     }
 
-  PathName rel (GetRelativeFilenameDatabasePathName(r));
+  path = GetFilenameDatabasePathName(r);
 
-  for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
+  if (File::Exists(path))
     {
-      path.Set (rootDirectories[idx].get_Path(), rel);
-      if (File::Exists(path))
-	{
-	  return (true);
-	}
+      return (true);
     }
 
   if (r == MPM_ROOT)
