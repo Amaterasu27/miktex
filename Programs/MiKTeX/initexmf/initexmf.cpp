@@ -566,7 +566,7 @@ enum Option
   OPT_INSTALL_ROOT,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_RMFNDB,			// <internal/>
-  OPT_ROOT_DIRECTORIES,		// <internal/>
+  OPT_ROOTS,			// <internal/>
   OPT_SHARED_SETUP,		// <internal/>
   OPT_USER_CONFIG,		// <internal/>
   OPT_USER_DATA,		// <internal/>
@@ -727,7 +727,7 @@ const struct poptOption IniTeXMFApp::aoption[] = {
   {
     T_("roots"), T_('r'),
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_ROOT_DIRECTORIES,
+    OPT_ROOTS,
     T_("Register root directories."),
     T_("DIRS")
   },
@@ -1812,7 +1812,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  removeFndb = true;
 	  break;
 
-	case OPT_ROOT_DIRECTORIES:
+	case OPT_ROOTS:
 
 	  startupConfig.roots = lpszOptArg;
 	  break;
