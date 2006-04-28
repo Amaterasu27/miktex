@@ -180,10 +180,13 @@ PropPageFormats::MakeAlias (/*[in]*/ const FormatInfo & formatInfo)
   PathName pathBinDir =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
   PathName pathAlias (pathBinDir, formatInfo.name, T_(".exe"));
-  File::Copy (compilerPath, pathAlias);
-  if (! Fndb::FileExists(pathAlias))
+  if (compilerPath != pathAlias && ! File::Exists(pathAlias))
     {
-      Fndb::Add (pathAlias);
+      File::Copy (compilerPath, pathAlias);
+      if (! Fndb::FileExists(pathAlias))
+	{
+	  Fndb::Add (pathAlias);
+	}
     }
 }
 
