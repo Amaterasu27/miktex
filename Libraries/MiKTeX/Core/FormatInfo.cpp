@@ -106,52 +106,63 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
        lpszFormatName = pFormats->NextKey(szFormatName, BufferSizes::MaxPath))
     {
       FormatInfo_ formatInfo;
+      vector<FormatInfo_>::iterator it;
+      for (it = formats.begin(); it != formats.end(); ++ it)
+	{
+	  if (PathName::Compare(it->name, lpszFormatName) == 0)
+	    {
+	      formatInfo = *it;
+	      break;
+	    }
+	}
+      tstring val;
       formatInfo.cfgFile = cfgFile;
       formatInfo.name = lpszFormatName;
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("description"),
-				  formatInfo.description))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("description"),
+				val))
 	{
-	  formatInfo.description = T_("");
+	  formatInfo.description = val;
 	}
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("compiler"),
-				  formatInfo.compiler))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("compiler"),
+				val))
 	{
-	  FATAL_MIKTEX_ERROR (T_("SessionImpl::ReadFormatsIni"),
-			      T_("Invalid formats.ini entry (no compiler)."),
-			      lpszFormatName);
+	  formatInfo.compiler = val;
 	}
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("input"),
-				  formatInfo.inputFile))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("input"),
+				val))
 	{
-	  FATAL_MIKTEX_ERROR (T_("SessionImpl::ReadFormatsIni"),
-			      T_("Invalid formats.ini entry (no input file)."),
-			      lpszFormatName);
+	  formatInfo.inputFile = val;
 	}
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("output"),
-				  formatInfo.outputFile))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("output"),
+				val))
 	{
-	  formatInfo.outputFile = T_("");
+	  formatInfo.outputFile = val;
 	}
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("preloaded"),
-				  formatInfo.preloaded))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("preloaded"),
+				val))
 	{
-	  formatInfo.preloaded = T_("");
+	  formatInfo.preloaded = val;
 	}
-      tstring attributes;
-      if (! pFormats->TryGetValue(lpszFormatName,
-				  T_("attributes"),
-				  attributes))
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("attributes"),
+				val))
 	{
-	  attributes = T_("");
+	  formatInfo.exclude = (val == T_("exclude"));
 	}
-      formatInfo.exclude =  (attributes == T_("exclude"));
-      formatInfo.custom = custom;
-      formats.push_back (formatInfo);
+      if (it == formats.end())
+	{
+	  formatInfo.custom = custom;
+	  formats.push_back (formatInfo);
+	}
+      else
+	{
+	  *it = formatInfo;
+	}
     }
   pFormats.Release ();
 }
@@ -241,6 +252,12 @@ SessionImpl::WriteFormatsIni ()
 	  pFormats->PutValue (it->name.c_str(),
 			      T_("attributes"),
 			      T_("exclude"));
+	}
+      else
+	{
+	  pFormats->PutValue (it->name.c_str(),
+			      T_("attributes"),
+			      T_(""));
 	}
     }
 

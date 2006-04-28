@@ -302,6 +302,12 @@ struct FormatInfo
   bool exclude;
   /// Custom flag. Set, if this format was defined by the user.
   bool custom;
+
+  FormatInfo ()
+    : exclude (false),
+      custom (true)
+  {
+  }
 };
 
 /* _________________________________________________________________________
