@@ -1260,10 +1260,10 @@ public:
   }
 
 public:
-  tstring &
-  GetPackageVersion (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName,
-		     /*[out]*/ tstring &		version)
+  tstring
+  GetPackageVersion (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
+    tstring version;
     if (! TryGetValue(lpszDeploymentName, T_("Version"), version))
       {
 	version = T_("");

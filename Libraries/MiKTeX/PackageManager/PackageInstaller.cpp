@@ -593,15 +593,20 @@ PackageInstallerImpl::FindUpdates ()
 	{
 #if defined(MIKTEX_WINDOWS)
 	  // package not known/installed => must be installed if it is
-	  // an essential MiKTeX package
+	  // an essential MiKTeX package in the current series
 	  if ((dbLight.GetPackageLevel(lpszPackage).Get()
 	       <= PackageLevel::Essential)
 	      && IsMiKTeXPackage(lpszPackage))
 	    {
-	      trace_mpm->WriteFormattedLine (T_("libmpm"),
-					     T_("%s: new MiKTeX package"),
-					     lpszPackage);
-	      updates.push_back (updateInfo);
+	      tstring version = dbLight.GetPackageVersion(lpszPackage);
+	      int verCmp = CompareVersions(version, MIKTEX_SERIES_STR);
+	      if (verCmp == 0)
+		{
+		  trace_mpm->WriteFormattedLine (T_("libmpm"),
+						 T_("%s: new MiKTeX package"),
+						 lpszPackage);
+		  updates.push_back (updateInfo);
+		}
 	    }
 #endif
 	}
@@ -626,9 +631,8 @@ PackageInstallerImpl::FindUpdates ()
 	    (T_("libmpm"),
 	     T_("local digest: %s"),
 	     pPackageInfo->digest.ToString().c_str());
-	  tstring version;
 	  int verCmp =
-	    CompareVersions(dbLight.GetPackageVersion(lpszPackage, version),
+	    CompareVersions(dbLight.GetPackageVersion(lpszPackage),
 			    pPackageInfo->version);
 	  if (verCmp < 0)
 	    {
