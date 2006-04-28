@@ -47,7 +47,7 @@ WelcomePage::WelcomePage ()
   alwaysShow =
     (SessionWrapper(true)->GetConfigValue(T_("Update"),
 					  T_("alwaysWelcome"),
-					  true)
+					  false)
      ? TRUE
      : FALSE);
 }
