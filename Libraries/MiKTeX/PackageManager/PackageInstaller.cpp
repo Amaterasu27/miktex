@@ -143,7 +143,7 @@ PackageInstallerImpl::PackageInstallerImpl
       trace_mpm->WriteFormattedLine
 	(T_("libmpm"),
 	 T_("using default package repository: %s"),
-	 repository);
+	 repository.c_str());
       SetRepository (repository);
     }
 
