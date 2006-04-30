@@ -42,7 +42,7 @@ END_MESSAGE_MAP();
 WelcomePage::WelcomePage()
   : CPropertyPage(WelcomePage::IDD),
     pSheet (0),
-    thoroughly (FALSE)
+    thoroughly (TRUE)
 {
   m_psp.dwFlags |= PSP_HIDEHEADER;
   m_psp.dwFlags &= ~ PSP_HASHELP;
