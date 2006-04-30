@@ -173,9 +173,7 @@ FinishPage::OnWizardFinish ()
 			       SW_SHOWNORMAL)
 		  <= reinterpret_cast<HINSTANCE>(32))
 		{
-		  FATAL_MIKTEX_ERROR (T_("FinishPage::OnWizardFinish"),
-				      T_("The log file could not be opened."),
-				      0);
+		  Process::Start (T_("notepad.exe"), g_logFileName.Get());
 		}
 	    }
 	}
