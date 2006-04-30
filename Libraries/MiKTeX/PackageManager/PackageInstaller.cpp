@@ -2188,7 +2188,11 @@ PackageInstallerImpl::UpdateDb ()
       scratchDirectory.Leave ();
     }
 
+  // install mpm.ini
+  InstallDbLight ();
+
   // force a reload of the database
+  dbLight.Clear ();
   pManager->ClearAll ();
 
   // create the MPM file name database
