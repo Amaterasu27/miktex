@@ -508,11 +508,10 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
   else
     {
       // create the fndb file
-      // <fixme>the file name info isn't added, if the file exists</fixme>
+      // <fixme>the file name info hasn't been added, if the file
+      // exists</fixme>
       PathName pathFndbFile
-	= SessionImpl::theSession->GetSpecialPath(SpecialPath::UserDataRoot);
-      pathFndbFile +=
-	SessionImpl::theSession->GetRelativeFilenameDatabasePathName(root);
+	= SessionImpl::theSession->GetFilenameDatabasePathName(root);
       if (! Fndb::Create(pathFndbFile.Get(),
 		 SessionImpl::theSession->GetRootDirectory(root).Get(),
 			 0))
