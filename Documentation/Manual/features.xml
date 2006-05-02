@@ -24,9 +24,7 @@ by D.&nbsp;E.&nbsp;Knuth.
 </indexterm></para>
 
 <itemizedlist>
-<listitem><para>easy to install: &MiKTeX;
-comes with a setup program that allows you to install the
-distribution via the Internet</para>
+<listitem><para>easy to install</para>
 </listitem>
 <listitem><para>integrated package management: missing packages can be
 installed automatically (on-the-fly) during run-time</para></listitem>
@@ -47,8 +45,8 @@ capabilities</para>
 code is get-at-able for everyone</para></listitem>
 </itemizedlist>
 
-<para>The &MiKTeX; distribution consists of
-the following components:</para>
+<para>The &MiKTeX; distribution consists of the following
+components:</para>
 
 <variablelist>
 

@@ -90,6 +90,9 @@
 <!ENTITY initex "<command>initex</command>">
 <!ENTITY initexmf "<command>initexmf</command>">
 <!ENTITY installdir "C:\Program Files\MiKTeX &MIKTEX_SERIES_STR;">
+<!ENTITY userconfigdir "C:\Documents and Settings\User\Application Data\MiKTeX &MIKTEX_SERIES_STR;">
+<!ENTITY userdatadir "C:\Documents and Settings\User\Local SettingsApplication Data\MiKTeX &MIKTEX_SERIES_STR;">
+<!ENTITY commondatadir "C:\Documents and Settings\All Users\Application Data\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY latex "<command>latex</command>">
 <!ENTITY localdir "C:\localtexmf">
 <!ENTITY localdircd "C:\MiKTeXDirect">
@@ -107,7 +110,7 @@
 <!ENTITY pdflatex "<command>pdflatex</command>">
 <!ENTITY pdftex "<command>pdftex</command>">
 <!ENTITY pdfvirtex "<command>pdfvirtex</command>">
-<!ENTITY progfldr "MiKTeX">
+<!ENTITY progfldr "MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY prompt "&gt; ">
 <!ENTITY setupexe "<filename>setup.exe</filename>">
 <!ENTITY tex "<command>tex</command>">

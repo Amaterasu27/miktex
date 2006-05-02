@@ -4,9 +4,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2187">
-<!ENTITY month "December 2005">
-<!ENTITY date "December 27, 2005">
+<!ENTITY rev "2.5.2313">
+<!ENTITY month "May 2006">
+<!ENTITY date "May 02, 2006">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
@@ -169,7 +169,7 @@ and <filename>updmap.cfg</filename>.</para></listitem>
 -->
 
 <copyright>
-<year>2005</year>
+<year>2006</year>
 <holder>Christian Schenk</holder>
 </copyright>
 
@@ -199,8 +199,7 @@ a translation approved by the Free Software Foundation.</para>
 
 <title>About this Document</title>
 
-<para>This is version &rev; of the &MiKTeX;
-manual.  It corresponds to
+<para>This is version &rev; of the &MiKTeX; manual.  It corresponds to
 &MiKTeX;&nbsp;&miktexrev; as of &date;.</para>
 
 <para>The latest version of this document is
@@ -208,9 +207,9 @@ manual.  It corresponds to
 <primary>MiKTeX manual</primary>
 <secondary>getting</secondary>
 </indexterm>
-available on the <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783"><citetitle>&MiKTeX; Download
-Page</citetitle></ulink> in various formats.</para>
+available in <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783">various
+formats</ulink>.</para>
 
 </preface>
 

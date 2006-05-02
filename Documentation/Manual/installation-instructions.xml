@@ -13,7 +13,8 @@
 <listitem><para></para>&Windows98;, &Windows98SE;</listitem>
 </itemizedlist>
 
-<para>&MiKTeX; &MIKTEX_VERSION_STR; will not run on &Windows95;.</para>
+<para>&MiKTeX; &MIKTEX_VERSION_STR; will not run on &Windows95;
+systems.</para>
 
 </section>
 
@@ -21,21 +22,33 @@
 
 <title>Choosing an installation size</title>
 
-<para>You can choose between two installation sizes:</para>
+<para>You can choose between two
+<indexterm>
+<primary>installation size</primary>
+</indexterm>
+installation sizes:</para>
 
 <variablelist>
 <varlistentry>
 <term>Basic &MiKTeX;</term>
-<listitem><para>A basic &MiKTeX; installation which gets you started.</para></listitem>
+<listitem><para>A basic &MiKTeX; installation
+<indexterm>
+<primary>Basic MiKTeX</primary>
+</indexterm>
+which gets you started.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Complete &MiKTeX;</term>
-<listitem><para>A complete &MiKTeX; installation.</para></listitem>
+<listitem><para>A complete
+<indexterm>
+<primary>Compl</primary>
+</indexterm>
+&MiKTeX; installation.</para></listitem>
 </varlistentry>
 </variablelist>
 
 <para>Choose Basic &MiKTeX;, if you have to download over a slow
-Internet connection or if you want to conserve disk space.  Missing
+Internet connection, or if you want to conserve disk space.  Missing
 files can be installed later (in the course of use).</para>
 
 </section>
@@ -44,10 +57,17 @@ files can be installed later (in the course of use).</para>
 
 <title>Shared vs. private installation</title>
 
-<para>You have the option to create a shared &MiKTeX; installation. Use
-this option if you are the administrator of your computer and if you want
-to install &MiKTeX; for all users. This option is not available if you
-are logged into a limited user account.</para>
+<para>You have the option to create a shared &MiKTeX;
+<indexterm>
+<primary>shared installation</primary>
+</indexterm>
+<indexterm>
+<primary>private installation</primary>
+</indexterm>
+installation. Use this option if you are the administrator of your
+computer and if you want to install &MiKTeX; for all users. This
+option is not available if you are logged into a limited user
+account.</para>
 
 </section>
 
@@ -61,13 +81,13 @@ page</ulink> and run it.</para>
 
 </section>
 
-<section>
+<section id="netinstall">
 
 <title>Installing a complete &MiKTeX; system</title>
 
 <para>Get the &MiKTeXNetInstaller; from the <ulink
 url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532">download
-page</ulink>. You will use the installer to a) download the &MiKTeX;
+page</ulink>. You will use the installer to a) download the complete &MiKTeX;
 distribution and b) install &MiKTeX;.</para>
 
 <section>

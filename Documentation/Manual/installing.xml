@@ -12,6 +12,8 @@
 
 <title>Advanced Installation Options</title>
 
+<para>todo: move this out of the way</para>
+
 <section>
 
 <title>Driving &MiKTeXSetupWizard;</title>
@@ -36,7 +38,7 @@ syntax:</para>
 
 <cmdsynopsis>
 <command>&setupexe;</command>
-<arg choice="plain"><option>/C:"PreSetup setupwiz --setup-path=""#e"" <replaceable>options</replaceable>"</option></arg>
+<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable>"</option></arg>
 </cmdsynopsis>
 
 <para>Note that the placement of quotation marks is important, and
@@ -54,24 +56,29 @@ double quotation marks.</para>
 in unattended mode:</para>
       
 <informalexample>
-<screen><prompt>&prompt;</prompt><userinput>&setupexe; /C:"PreSetup setupwiz --setup-path=""#e"" --unattended"</userinput>
+<screen><prompt>&prompt;</prompt><userinput>&setupexe; /C:"setupwiz --setup-path=""#e"" --unattended"</userinput>
 <prompt>&prompt;</prompt></screen>
 </informalexample>
 
-<para>&MiKTeXSetupWizard; obeys the following command-line options:</para>
+<para>You can specify the following command-line options:</para>
       
 <variablelist>
 
 <varlistentry>
-<term><option>--additional-roots <replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional &TEXMF; root directories.
-<replaceable>dirs</replaceable> is a
-semicolon-separated list of fully qualified path names.</para></listitem>
+<term><option>--allow-unattended-reboot</option></term>
+<listitem><para>Restart the system, if necessary.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--common-config=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the location of the common configuration directory.
+This option requires administrative privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
-<term><option>--allow-unattended-reboot</option></term>
-<listitem><para>Restart the system, if necessary.</para></listitem>
+<term><option>--common-data=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the location of the common data directory.
+This option requires administrative privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
@@ -88,51 +95,57 @@ downloaded and/or installed.</para></listitem>
 	
 <varlistentry>
 <term><option>--install-from-local-repository</option></term>
-<listitem><para>Install &MiKTeX; from a local
-package repository.</para></listitem>
+<listitem><para>Install &MiKTeX; from a directory.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
-<term><option>--install-root <replaceable>dir</replaceable></option></term>
+<term><option>--install-root=<replaceable>dir</replaceable></option></term>
 <listitem><para>Install &MiKTeX; in the specified directory.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>--data-root <replaceable>dir</replaceable></option></term>
-<listitem><para>Install data files in the specified directory.
-This option requires administrative privileges.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><option>--local-package-repository <replaceable>dir</replaceable></option></term>
+<term><option>--local-package-repository=<replaceable>dir</replaceable></option></term>
 <listitem><para>Download into (Install from) the specified directory.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>--no-roots</option></term>
+<term><option>--no-additional-roots</option></term>
 <listitem><para>Do not integrate additional &TEXMF; root directories into
 the &MiKTeX; setup.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--private</option></term>
-<listitem><para>Install &MiKTeX; for the current user only.  This
-is the default.</para></listitem>
+<listitem><para>Install &MiKTeX; for the
+<indexterm>
+<primary>shared installation</primary>
+</indexterm>
+current user only.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
-<term><option>--program-folder <replaceable>name</replaceable></option></term>
-<listitem><para>Add shortcuts to the specified folder.</para></listitem>
+<term><option>--program-folder=<replaceable>name</replaceable></option></term>
+<listitem><para>Add shortcuts to the specified program folder.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
-<term><option>--remote-package-repository <replaceable>url</replaceable></option></term>
+<term><option>--remote-package-repository=<replaceable>url</replaceable></option></term>
 <listitem><para>Download from the specified the <acronym>URL</acronym>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
+<term><option>--roots=<replaceable>dirs</replaceable></option></term>
+<listitem><para>Register additional &TEXMF; root directories.
+<replaceable>dirs</replaceable> is a semicolon-separated list of fully
+qualified path names.</para></listitem>
+</varlistentry>
+	
+<varlistentry>
 <term><option>--shared</option></term>
 <listitem><para>Install &MiKTeX; for everyone using this computer.  This option
+<indexterm>
+<primary>shared installation</primary>
+</indexterm>
 requires administrative privileges.</para></listitem>
 </varlistentry>
 	
@@ -144,23 +157,20 @@ requires administrative privileges.</para></listitem>
 </indexterm></para></listitem>
 </varlistentry>
 	
+<varlistentry>
+<term><option>--user-config=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the location of the configuration directory for
+the current user.</para></listitem>
+</varlistentry>
+	
+<varlistentry>
+<term><option>--user-data=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the location of the data directory for
+the current user.</para></listitem>
+</varlistentry>
+
 </variablelist>
       
-<para>This is an example of a <filename>setupwiz.opt</filename>
-file:</para>
-	
-<informalexample>
-<screen>--install-from-local-repository
---local-package-repository \\mirrors\tm\packages
---install-root C:\texmf
---data-root C:\localtexmf
---unattended</screen>
-</informalexample>
-
-<para>In this example, &MiKTeX; is installed
-from the network directory <filename>\\mirrors\tm\packages\</filename>.
-The wizard is run in unattended mode.</para>
-
 </section>
     
 <section>
@@ -180,19 +190,7 @@ The wizard is run in unattended mode.</para>
 <secondary>network installation</secondary>
 </indexterm>
 
-<para>Setting up a shared network installation requires
-<indexterm>
-<primary>MiKTeX CD-R</primary>
-</indexterm>
-a copy of the &MiKTeX; &CDR; (see <xref linkend="miktexcdr"/>).</para>
-
-<para>Create a shared directory,
-say <filename>&networkfolder;\</filename>, which
-contains the contents of the &MiKTeX; &CDR;.</para>
-
-<para>The &MiKTeX; &CDR; comes with a special version of the
-setup wizard, which offers users the option
-<guilabel>Prepare to run MiKTeX from the CD</guilabel>.</para>
+<para>tbd</para>
 
 </section>
     
@@ -203,13 +201,25 @@ setup wizard, which offers users the option
 <title>Items in the Start Menu</title>
 
 <para>&MiKTeXSetupWizard; installs the
-following menu items in the <application>Windows</application>
+following menu items in the &Windows;
 <indexterm>
 <primary>start menu</primary>
 </indexterm>
 start menu:</para>
 
 <variablelist>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Help</guisubmenu>
+<guimenuitem>FAQ</guimenuitem>
+</menuchoice>
+<indexterm>
+<primary>FAQ (frequently asked questions)</primary>
+</indexterm></term>
+<listitem><para>Answers to frequently asked questions.</para></listitem>
+</varlistentry>
 
 <varlistentry>
 <term><menuchoice moreinfo="none">
@@ -227,30 +237,9 @@ start menu:</para>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
 <guisubmenu>Help</guisubmenu>
-<guimenuitem>MiKTeX FAQ</guimenuitem>
-</menuchoice>
-<indexterm>
-<primary>FAQ (frequently asked questions)</primary>
-</indexterm></term>
-<listitem><para>Answers to frequently asked questions.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guisubmenu>Help</guisubmenu>
-<guimenuitem>MiKTeX Manual</guimenuitem>
+<guimenuitem>Manual</guimenuitem>
 </menuchoice></term>
 <listitem><para>The &MiKTeX; manual.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guisubmenu>Help</guisubmenu>
-<guimenuitem>MiKTeX Tips</guimenuitem>
-</menuchoice></term>
-<listitem><para>Tips for &MiKTeX; users.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -283,56 +272,53 @@ start menu:</para>
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
-<guimenuitem>DVI Viewer</guimenuitem>
+<guisubmenu>MiKTeX on the Web</guisubmenu>
+<guimenuitem>Support</guimenuitem>
 </menuchoice></term>
-<listitem><para>A shortcut to the <acronym>DVI</acronym>
-file viewer.</para></listitem>
+<listitem><para>An Internet shortcut to the support page.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
+<guimenuitem>Browse packages</guimenuitem>
 </menuchoice></term>
-<listitem><para>A shortcut to the configuration utility.</para></listitem>
+<listitem><para>A shortcut to the &MiKTeX; package manager.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
-<guimenuitem>MiKTeX Package Manager</guimenuitem>
+<guimenuitem>Previewer</guimenuitem>
 </menuchoice></term>
-<listitem><para>A shortcut to the package manager.</para></listitem>
+<listitem><para>A shortcut to the &MiKTeX; previewer &Yap;.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
-<guimenuitem>MiKTeX Update Wizard</guimenuitem>
+<guimenuitem>Settings</guimenuitem>
 </menuchoice></term>
-<listitem><para>A shortcut to the update wizard.</para></listitem>
+<listitem><para>A shortcut to the &MiKTeX; configuration utility.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guimenuitem>Update</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the &MiKTeX; update wizard.</para></listitem>
 </varlistentry>
 
 </variablelist>
 
 </section>
 
-<section id="tds">
+<section id="directories">
 
-<title>The &TEXMF; Directory Hierarchy</title>
+<title>Directories</title>
 
-<para>A <firstterm>&TEXMF; directory</firstterm> is the root of a
-&TDS;<footnote><para>&TDS;: <application>TeX</application>
-<indexterm>
-<primary>TEXMF directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-directory structure</para></footnote>-compliant directory structure,
-as described in <citetitle>A Directory Structure for TeX Files</citetitle>
-(run <userinput>texdoc tds</userinput> to view this document).</para>
-
-<para>A standard &MiKTeX; system is composed of two &TEXMF;
-directories:</para>
+<para>The standard installation procedure creates up to four directories:</para>
 
 <itemizedlist>
 <listitem><para>The <firstterm>installation directory</firstterm>
@@ -340,83 +326,43 @@ contains the installed files of the &MiKTeX; distribution.
 <indexterm>
 <primary>installation directory</primary>
 <secondary>defined</secondary>
-</indexterm></para></listitem>
-<listitem>
-<para>
-The <firstterm>local &TEXMF; directory</firstterm>
-contains files that were created during the use of the &MiKTeX;
-programs.
+</indexterm>
+The default directory location
+is <filename>&installdir;</filename>.</para></listitem>
+<listitem><para>The <firstterm>user configuration directory</firstterm>
 <indexterm>
-<primary>local TEXMF directory</primary>
+<primary>user configuration directory</primary>
 <secondary>defined</secondary>
-</indexterm></para></listitem>
+</indexterm>
+contains user-specific configuration files.
+The default directory location
+is <filename>&userconfigdir;</filename>.</para></listitem>
+<listitem><para>The <firstterm>user data directory</firstterm>
+<indexterm>
+<primary>user data directory</primary>
+<secondary>defined</secondary>
+</indexterm>
+contains user-specific data files.
+The default directory location
+is <filename>&userdatadir;</filename>.</para></listitem>
+<listitem><para>The <firstterm>common configuration &amp; data directory</firstterm>
+<indexterm>
+<primary>common configuration directory</primary>
+<secondary>defined</secondary>
+</indexterm>
+<indexterm>
+<primary>common data directory</primary>
+<secondary>defined</secondary>
+</indexterm>
+contains common configuration and data files.
+The default directory location
+is <filename>&commondatadir;</filename>.</para></listitem>
 </itemizedlist>
 
-<para>You can declare additional &TEXMF; directories, if the need
-arises. For example, you can incorporate the &TEXMF; directory
-of another &TeX; system (such as &TeXLive;).
-Or you can create a personal &TEXMF; directory (say,
-<filename>C:\MyTeXMF</filename>) which serves as a
-repository for your own <application>TeX</application> related files.
-See <xref linkend="rootmanager"/>, for more information.
-<indexterm>
-<primary>TEXMF directories</primary>
-<secondary>using additional</secondary>
-</indexterm></para>
-
-<section id="installdir">
-
-<title>The Installation Directory</title>
-
-<caution><para>The contents of the installation directory
-must be regarded read-only, i.e., no files should be added,
-removed or changed here.</para></caution>
-
-<para>The installation directory is the root of a
-&TDS;-compliant directory hierarchy.
-<indexterm>
-<primary>
-&TDS; (<application>TeX</application> directory structure)
-</primary>
-</indexterm>
-It contains the files installed by the &MiKTeXSetupWizard;.</para>
-
-<para>If you have installed &MiKTeX; on the system drive, then
-the path to the installation directory is
-<filename>&installdir;</filename>, unless
-you have specified another path. You can use the &MiKTeXOptions;
-application to find out the path to the installation directory.</para>
-
-</section>
-
-<section id="localdir">
-
-<title>The Local &TEXMF; Directory</title>
-
-<para>The local &TEXMF; directory
-is the root of a &TDS;-compliant directory hierarchy.
-<indexterm>
-<primary>
-&TDS; (<application>TeX</application> directory structure)
-</primary>
-</indexterm>
-It contains
-files that are created during use of the &MiKTeX; programs. It can also
-contain your personal additions, such as your own style files.</para>
-
-<para>If you have installed &MiKTeX; on the system drive, then
-the path to the local &TEXMF; directory is
-<filename>&localdir;</filename>, unless
-you have specified another path.</para>
-
-<para>If you are running the &MiKTeX; programs from the &MiKTeX; CD,
-then the path to the local &TEXMF; directory is
-<filename>&localdircd;</filename>.</para>
-
-<para> You can use the &MiKTeXOptions;
-application to find out the path to the local &TEXMF; directory.</para>
-
-</section>
+<para>It is possible to integrate additional directories into a
+&MiKTeX; setup. For example, users often want to
+maintain a separate directory with their own style files. See <xref
+linkend="rootmanager"/>, for more information how to manage this.</para>
 
 </section>
 
@@ -442,7 +388,7 @@ application to find out the path to the local &TEXMF; directory.</para>
 <menuchoice><guimenu>Start</guimenu><guisubmenu>Settings</guisubmenu><guimenuitem>Control Panel</guimenuitem></menuchoice>).</para></step>
 
 <step><para>Click on the <guilabel>Software</guilabel> (resp.
-<guilabel>Add/Remve Programs</guilabel>) icon.</para></step>
+<guilabel>Add orRemove Programs</guilabel>) icon.</para></step>
 
 <step><para>Select <guimenuitem>&progfldr;</guimenuitem>.</para></step>
 
@@ -455,7 +401,7 @@ application to find out the path to the local &TEXMF; directory.</para>
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

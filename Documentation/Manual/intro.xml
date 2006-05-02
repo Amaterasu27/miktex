@@ -26,8 +26,8 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.
 </indexterm>
 
 <para>&MiKTeX; is available on the
-&CTAN;<footnote><para>Comprehenisive TeX Archive
-Network</para> </footnote> and on &CDR;/&DVDminR;.</para>
+&CTAN;<footnote><para>Comprehenisive TeX Archive Network</para>
+</footnote> and on &CDR;/&DVDminR;.</para>
 
 <section>
 
@@ -38,7 +38,7 @@ Network</para> </footnote> and on &CDR;/&DVDminR;.</para>
 <secondary>downloading</secondary>
 </indexterm>
 <para>You can download &MiKTeX; from &CTAN; with the help of
-&MiKTeXNetInstaller; (see <xref linkend="downloading"/>).</para>
+&MiKTeXNetInstaller; (see <xref linkend="netinstall"/>).</para>
 
 </section>
 
@@ -130,17 +130,6 @@ that lets you monitor diagnostic messages produced by
 <secondary>getting</secondary>
 </indexterm></para>
 </listitem>
-</varlistentry>
-
-<varlistentry>
-<term>&TeXnicCenter;</term>
-<listitem><para><ulink url="http://www.toolscenter.org">&TeXnicCenter;</ulink> is a freeware &TeX; editor/shell.  It cooperates with &MiKTeX; with
-respect to forward and inverse &DVI;
-<indexterm>
-<primary>TeXnicCenter</primary>
-<secondary>getting</secondary>
-</indexterm>
-search (see <xref linkend="srcspecials"/>).</para></listitem>
 </varlistentry>
 
 </variablelist>
@@ -257,26 +246,20 @@ includes:</para>
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term>Tips &amp; Tricks</term>
-<listitem>
-<para>Some good advice for &MiKTeX; users.</para>
-</listitem>
-</varlistentry>
 </variablelist>
 
-<para>Shortcuts to these documents can be found in the
-&MiKTeX; program folder (see <xref
-linkend="startmenu"/>) and on the project page.</para>
+<para>Shortcuts to these documents can be found in the &MiKTeX;
+program folder (see <xref linkend="startmenu"/>) and on the project
+page.</para>
 
 <tip>
-<para>Use the &mthelp; utility to quickly access &TeX; related
-documentation. For example, enter
+<para>Use the &mthelp; utility to quickly access general &TeX; related
+documentation. For example, run
 <indexterm>
 <primary>mthelp</primary>
 </indexterm>
-<programlisting>mthelp memoir</programlisting>
-to view documentation of the memoir package.</para>
+<userinput>mthelp memoir</userinput> to view documentation of the
+<filename>memoir</filename> package.</para>
 </tip>
 
 </section>
@@ -286,7 +269,7 @@ to view documentation of the memoir package.</para>
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:
