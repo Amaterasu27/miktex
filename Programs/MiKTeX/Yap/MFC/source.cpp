@@ -131,6 +131,35 @@ the page contains no source links."),
 
 /* _________________________________________________________________________
 
+   DviView::OnUpdatePageEditor
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdatePageEditor (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
+}
+
+/* _________________________________________________________________________
+
    DviView::OnToolsSourcespecials
    _________________________________________________________________________ */
 
@@ -141,7 +170,8 @@ DviView::OnToolsSourcespecials ()
     {
       if (pSourceSpecialDialog == 0)
 	{
-	  pSourceSpecialDialog = new SourceSpecialsDialog (this, GetDocument());
+	  pSourceSpecialDialog =
+	    new SourceSpecialsDialog (this, GetDocument());
 	  pSourceSpecialDialog->Create (IDD_SOURCE_SPECIALS, this);
 	}
     }
@@ -153,6 +183,35 @@ DviView::OnToolsSourcespecials ()
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateToolsSourcespecials
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateToolsSourcespecials (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________

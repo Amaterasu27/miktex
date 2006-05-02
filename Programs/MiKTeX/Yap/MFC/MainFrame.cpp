@@ -272,7 +272,8 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
       CDocument * pDoc = pChild->GetActiveDocument();
       DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
-      if (pDviView->GetCurrentPageIdx() < 0)
+      if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
+	  || pDviView->GetCurrentPageIdx() < 0)
 	{
 	  pCmdUI->SetText (T_(""));
 	  return;
@@ -374,7 +375,10 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
-      if (pDviView->IsZooming())
+      CDocument * pDoc = pChild->GetActiveDocument();
+      DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
+      if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
+	  || pDviView->IsZooming())
 	{
 	  // <fixme/>
 	  return;
@@ -424,67 +428,67 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pChild == 0)
 	{
 	  pCmdUI->SetText (T_(""));
+	  return;
 	}
-      else
+      CView * pView = pChild->GetActiveView();
+      if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  CView * pView = pChild->GetActiveView();
-	  int x, y;
-	  if (pView == 0
-	      || ! pView->IsKindOf(RUNTIME_CLASS(DviView))
-	      || ! reinterpret_cast<DviView*>(pView)->GetPoint(x, y))
-	    {
-	      pCmdUI->SetText (T_(""));
-	    }
-	  else
-	    {
+	  pCmdUI->SetText (T_(""));
+	  return;
+	}
+      CDocument * pDoc = pChild->GetActiveDocument();
+      DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
+      int x, y;
+      if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
+	  || ! reinterpret_cast<DviView*>(pView)->GetPoint(x, y))
+	{
+	  pCmdUI->SetText (T_(""));
+	  return;
+	}
 #define pxl2bp(pxl) (((pxl) * 72.0) / pDviDoc->GetDisplayResolution())
 #define pxl2cm(pxl) (((pxl) * 2.54) / pDviDoc->GetDisplayResolution())
 #define pxl2in(pxl) (((pxl) * 1.00) / pDviDoc->GetDisplayResolution())
 #define pxl2mm(pxl) (((pxl) * 25.4) / pDviDoc->GetDisplayResolution())
 #define pxl2pc(pxl) (((pxl) * 12.0) / pDviDoc->GetDisplayResolution())
-	      CDocument * pDoc = pChild->GetActiveDocument();
-	      DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
-	      double x2, y2;
-	      const MIKTEXCHAR * lpszUnit = 0;
-	      switch (g_pYapConfig->unit.Get())
-		{
-		case Units::Centimeters:
-		  x2 = pxl2cm(x);
-		  y2 = pxl2cm(y);
-		  lpszUnit = T_("cm");
-		  break;
-		case Units::Inches:
-		  x2 = pxl2in(x);
-		  y2 = pxl2in(y);
-		  lpszUnit = T_("in");
-		  break;
-		case Units::Millimeters:
-		  x2 = pxl2mm(x);
-		  y2 = pxl2mm(y);
-		  lpszUnit = T_("mm");
-		  break;
-		case Units::Picas:
-		  x2 = pxl2pc(x);
-		  y2 = pxl2pc(y);
-		  lpszUnit = T_("pc");
-		  break;
-		case Units::BigPoints:
-		  x2 = pxl2bp(x);
-		  y2 = pxl2bp(y);
-		  lpszUnit = T_("pt");
-		  break;
-		default:
-		  UNEXPECTED_CONDITION (T_("MainFrame::OnUpdatePoint"));
-		}
-	      CString str;
-	      int precision = 2;
-	      str.Format (T_("%.*f,%.*f%s"),
-			  precision, x2,
-			  precision, y2,
-			  lpszUnit);
-	      pCmdUI->SetText (str); 
-	    }
+      double x2, y2;
+      const MIKTEXCHAR * lpszUnit = 0;
+      switch (g_pYapConfig->unit.Get())
+	{
+	case Units::Centimeters:
+	  x2 = pxl2cm(x);
+	  y2 = pxl2cm(y);
+	  lpszUnit = T_("cm");
+	  break;
+	case Units::Inches:
+	  x2 = pxl2in(x);
+	  y2 = pxl2in(y);
+	  lpszUnit = T_("in");
+	  break;
+	case Units::Millimeters:
+	  x2 = pxl2mm(x);
+	  y2 = pxl2mm(y);
+	  lpszUnit = T_("mm");
+	  break;
+	case Units::Picas:
+	  x2 = pxl2pc(x);
+	  y2 = pxl2pc(y);
+	  lpszUnit = T_("pc");
+	  break;
+	case Units::BigPoints:
+	  x2 = pxl2bp(x);
+	  y2 = pxl2bp(y);
+	  lpszUnit = T_("pt");
+	  break;
+	default:
+	  UNEXPECTED_CONDITION (T_("MainFrame::OnUpdatePoint"));
 	}
+      CString str;
+      int precision = 2;
+      str.Format (T_("%.*f,%.*f%s"),
+		  precision, x2,
+		  precision, y2,
+		  lpszUnit);
+      pCmdUI->SetText (str); 
     }
 
   catch (const MiKTeXException & e)

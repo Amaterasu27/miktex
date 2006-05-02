@@ -108,7 +108,7 @@ DviDoc::OnOpenDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
       MIKTEX_ASSERT (pDvi == 0);
       MIKTEX_ASSERT (pDviSave == 0);
       MIKTEX_ASSERT (! isPrintContext);
-      pDvi = CreateDocument(lpszPathName);
+      CreateDocument (lpszPathName);
       return (TRUE);
     }
   catch (const MiKTeXException & e)
@@ -131,23 +131,8 @@ DviDoc::OnOpenDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
 DviPage *
 DviDoc::GetLoadedPage (/*[in]*/ int pageIdx)
 {
-  if (pDvi == 0)
-    {
-      UNEXPECTED_CONDITION ("DviDoc::GetLoadedPage");
-    }
-  try
-    {
-      return (pDvi->GetLoadedPage(pageIdx));
-    }
-  catch (const exception &)
-    {
-#if 0
-      delete pDvi;
-      pDvi = 0;
-      fileStatus = DVIFILE_NOT_LOADED;
-#endif
-      throw;
-    }
+  MIKTEX_ASSERT (pDvi != 0);
+  return (pDvi->GetLoadedPage(pageIdx));
 }
 
 /* _________________________________________________________________________
@@ -161,11 +146,12 @@ DviDoc::BeginDviPrinting (/*[in]*/ const CDC * pPrinterDC)
   UNUSED_ALWAYS (pPrinterDC);
   MIKTEX_ASSERT (! isPrintContext);
   MIKTEX_ASSERT (pDviSave == 0);
+  MIKTEX_ASSERT (pDvi != 0);
   isPrintContext = true;
   pDviSave = this->pDvi;
   try
     {
-      this->pDvi = CreateDocument(GetPathName());
+      CreateDocument (GetPathName());
     }
   catch (const exception &)
     {
@@ -201,7 +187,7 @@ DviDoc::EndDviPrinting ()
    DviDoc::CreateDocument
    _________________________________________________________________________ */
 
-Dvi *
+void
 DviDoc::CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
 {
   fileStatus = DVIFILE_NOT_LOADED;
@@ -212,7 +198,8 @@ DviDoc::CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
     {
       UNEXPECTED_CONDITION (T_("DviDoc::CreateDocument"));
     }
-  Dvi * pDvi =
+  MIKTEX_ASSERT (pDvi == 0);
+  pDvi =
     Dvi::Create(lpszPathName,
 		mfmode.szMnemonic,
 		GetResolution(),
@@ -227,7 +214,6 @@ DviDoc::CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
 		landscape,
 		this);
   fileStatus = DVIFILE_LOADED;
-  return (pDvi);
 }
 
 /* _________________________________________________________________________
@@ -239,7 +225,6 @@ void
 DviDoc::Reread ()
 {
   MIKTEX_ASSERT (! isPrintContext);
-  MIKTEX_ASSERT (this->pDvi != 0);
   Dvi * pDvi = this->pDvi;
   this->pDvi = 0;
   fileStatus = DVIFILE_NOT_LOADED;
@@ -247,7 +232,7 @@ DviDoc::Reread ()
     {
       delete pDvi;
     }
-  this->pDvi = CreateDocument(GetPathName());
+  CreateDocument (GetPathName());
 }
 
 /* _________________________________________________________________________
@@ -571,6 +556,7 @@ DviDoc::OnProgress (/*[in]*/ DviNotification	nf)
 {
   if (nf == DviNotification::BeginLoadFont)
     {
+      MIKTEX_ASSERT (pDvi != 0);
       tstring statusText = pDvi->GetStatusText();
       if (statusText.empty())
 	{

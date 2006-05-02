@@ -216,8 +216,13 @@ protected:
 protected:
   afx_msg
   void
-  OnFileDocumentProperties();
+  OnFileDocumentProperties ();
 
+protected:
+  afx_msg
+  void
+  OnUpdateFileDocumentProperties (/*[in]*/ CCmdUI * pCmdUI);
+  
 protected:
   afx_msg
   void
@@ -355,6 +360,11 @@ protected:
 protected:
   afx_msg
   void
+  OnUpdateFilePrint (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
   OnUpdateFirstPage (/*[in]*/ CCmdUI * pCmdUI);
 
 protected:
@@ -396,6 +406,31 @@ protected:
   afx_msg
   void
   OnUpdateZoomIn (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
+  OnUpdateFileDvips (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
+  OnUpdatePageEditor (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
+  OnUpdateZoomOut (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
+  OnUpdateToolsSourcespecials (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
+  OnUpdateGotoPage (/*[in]*/ CCmdUI * pCmdUI);
 
 protected:
   afx_msg

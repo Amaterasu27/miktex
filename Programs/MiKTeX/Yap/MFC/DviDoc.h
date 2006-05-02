@@ -227,7 +227,7 @@ public:
   Reread ();
 
 private:
-  Dvi *
+  void
   CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName);
 
 public:
@@ -541,6 +541,7 @@ inline
 vector<DviFontInfo>
 DviDoc::GetFontTable ()
 {
+  MIKTEX_ASSERT (pDvi != 0);
   return (pDvi->GetFontTable());
 }
 

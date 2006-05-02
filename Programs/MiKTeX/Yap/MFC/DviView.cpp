@@ -79,6 +79,8 @@ BEGIN_MESSAGE_MAP(DviView, CMyScrollView)
   ON_MESSAGE(WM_MAKEFONTS, OnMakeFonts)
   ON_UPDATE_COMMAND_UI(ID_BACK, OnUpdateBack)
   ON_UPDATE_COMMAND_UI(ID_DARKER_TEXT, OnUpdateDarkerText)
+  ON_UPDATE_COMMAND_UI(ID_FILE_DOCUMENT_PROPERTIES,
+		       OnUpdateFileDocumentProperties)
   ON_UPDATE_COMMAND_UI(ID_FIRST_PAGE, OnUpdateFirstPage)
   ON_UPDATE_COMMAND_UI(ID_FORWARD, OnUpdateForward)
   ON_UPDATE_COMMAND_UI(ID_LAST_PAGE, OnUpdateLastPage)
@@ -101,6 +103,13 @@ BEGIN_MESSAGE_MAP(DviView, CMyScrollView)
   ON_WM_MOUSEMOVE()
   ON_WM_RBUTTONDOWN()
   ON_WM_SETCURSOR()
+  ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &DviView::OnUpdateFilePrint)
+  ON_UPDATE_COMMAND_UI(ID_FILE_DVIPS, &DviView::OnUpdateFileDvips)
+  ON_UPDATE_COMMAND_UI(ID_PAGE_EDITOR, &DviView::OnUpdatePageEditor)
+  ON_UPDATE_COMMAND_UI(ID_ZOOM_OUT, &DviView::OnUpdateZoomOut)
+  ON_UPDATE_COMMAND_UI(ID_TOOLS_SOURCESPECIALS,
+		       &DviView::OnUpdateToolsSourcespecials)
+  ON_UPDATE_COMMAND_UI(ID_GOTO_PAGE, &DviView::OnUpdateGotoPage)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -196,7 +205,7 @@ DviView::OnActivateView (/*[in]*/ BOOL		activate,
 	  DviDoc::DviFileStatus fileStatus = pDoc->GetDviFileStatus();
 	  switch (fileStatus)
 	    {
-	      // case DviDoc::DVIFILE_LOST:
+	    case DviDoc::DVIFILE_LOST:
 	    case DviDoc::DVIFILE_MODIFIED:
 	      OnViewRefresh ();
 	      break;
@@ -294,35 +303,38 @@ DviView::OnUpdate (/*[in]*/ CView *	pSender,
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
 
-      CSize sizePage = pDoc->GetPaperSize();
-
-      int n = (g_pYapConfig->continuousView
-	       ? (g_pYapConfig->doublePage
-		  ? pDoc->GetRowCount()
-		  : pDoc->GetPageCount())
-	       : 1);
-
-      if (n <= 0)
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
 	{
-	  n = 1;
-	}
+	  CSize sizePage = pDoc->GetPaperSize();
 
-      CSize sizeTotal;
+	  int n = (g_pYapConfig->continuousView
+		   ? (g_pYapConfig->doublePage
+		      ? pDoc->GetRowCount()
+		      : pDoc->GetPageCount())
+		   : 1);
 
-      sizeTotal.cy = GetTopMargin();
-      sizeTotal.cy += n * sizePage.cy;
-      sizeTotal.cy += (n - 1) * GetVerticalInterPageOffset();
+	  if (n <= 0)
+	    {
+	      n = 1;
+	    }
 
-      sizeTotal.cx = GetLeftMargin();
-      sizeTotal.cx += sizePage.cx;
-      if (g_pYapConfig->doublePage)
-	{
+	  CSize sizeTotal;
+
+	  sizeTotal.cy = GetTopMargin();
+	  sizeTotal.cy += n * sizePage.cy;
+	  sizeTotal.cy += (n - 1) * GetVerticalInterPageOffset();
+
+	  sizeTotal.cx = GetLeftMargin();
 	  sizeTotal.cx += sizePage.cx;
-	  sizeTotal.cx += GetHorizontalInterPageOffset();
-	}
-      sizeTotal.cx += 10;
+	  if (g_pYapConfig->doublePage)
+	    {
+	      sizeTotal.cx += sizePage.cx;
+	      sizeTotal.cx += GetHorizontalInterPageOffset();
+	    }
+	  sizeTotal.cx += 10;
 
-      SetScrollSizes (MM_TEXT, sizeTotal, DeterminePageSize());
+	  SetScrollSizes (MM_TEXT, sizeTotal, DeterminePageSize());
+	}
 
       CMyScrollView::OnUpdate (pSender, lHint, pHint);
     }
@@ -676,24 +688,29 @@ DviView::OnNextPage ()
 void
 DviView::OnUpdateNextPage (/*[in]*/ CCmdUI * pCmdUI)
 {
+  BOOL enable = FALSE;
   try
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      int pageIdx = GetCurrentPageIdx();
-      if (pageIdx < 0)
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
-	}
-      if (g_pYapConfig->doublePage)
-	{
-	  pCmdUI->Enable (pDoc->IsOnRight(pageIdx)
-			  ? (pDoc->GetPageCount() - 1 > pageIdx)
-			  : (pDoc->GetPageCount() - 2 > pageIdx));
-	}
-      else
-	{
-	  pCmdUI->Enable (pDoc->GetPageCount() - 1 > pageIdx);
+	  int pageIdx = GetCurrentPageIdx();
+	  if (pageIdx < 0)
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
+	    }
+	  if (g_pYapConfig->doublePage)
+	    {
+	      enable =
+		(pDoc->IsOnRight(pageIdx)
+		 ? (pDoc->GetPageCount() - 1 > pageIdx)
+		 : (pDoc->GetPageCount() - 2 > pageIdx));
+	    }
+	  else
+	    {
+	      enable = (pDoc->GetPageCount() - 1 > pageIdx);
+	    }
 	}
     }
   catch (const MiKTeXException & e)
@@ -704,6 +721,7 @@ DviView::OnUpdateNextPage (/*[in]*/ CCmdUI * pCmdUI)
     {
       ErrorDialog::DoModal (this, e);
     }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -773,14 +791,20 @@ DviView::OnPrevPage ()
 void
 DviView::OnUpdatePrevPage (/*[in]*/ CCmdUI * pCmdUI)
 {
-   try
+  BOOL enable = FALSE;
+  try
     {
-      int pageIdx = GetCurrentPageIdx();
-      if (pageIdx < 0)
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
+	  int pageIdx = GetCurrentPageIdx();
+	  if (pageIdx < 0)
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
+	    }
+	  enable = (pageIdx > 0);
 	}
-      pCmdUI->Enable (pageIdx > 0);
     }
   catch (const MiKTeXException & e)
     {
@@ -790,6 +814,7 @@ DviView::OnUpdatePrevPage (/*[in]*/ CCmdUI * pCmdUI)
     {
       ErrorDialog::DoModal (this, e);
     }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1059,11 +1084,15 @@ DviView::OnLastPage ()
 void
 DviView::OnUpdateLastPage (/*[in]*/ CCmdUI * pCmdUI) 
 {
+  BOOL enable = FALSE;
   try
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      pCmdUI->Enable (pDoc->GetPageCount() - 1 > GetCurrentPageIdx());
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = (pDoc->GetPageCount() - 1 > GetCurrentPageIdx());
+	}
     }
   catch (const MiKTeXException & e)
     {
@@ -1073,6 +1102,7 @@ DviView::OnUpdateLastPage (/*[in]*/ CCmdUI * pCmdUI)
     {
       ErrorDialog::DoModal (this, e);
     }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1111,9 +1141,15 @@ DviView::OnFirstPage ()
 void
 DviView::OnUpdateFirstPage (/*[in]*/ CCmdUI * pCmdUI) 
 {
+  BOOL enable = FALSE;
   try
     {
-      pCmdUI->Enable (GetCurrentPageIdx() > 0);
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = (GetCurrentPageIdx() > 0);
+	}
     }
   catch (const MiKTeXException & e)
     {
@@ -1123,6 +1159,7 @@ DviView::OnUpdateFirstPage (/*[in]*/ CCmdUI * pCmdUI)
     {
       ErrorDialog::DoModal (this, e);
     }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1172,6 +1209,35 @@ DviView::OnGotoPage ()
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateGotoPage
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateGotoPage (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1294,11 +1360,15 @@ DviView::OnZoomIn ()
 void
 DviView::OnUpdateZoomIn (/*[in]*/ CCmdUI * pCmdUI) 
 {
+  BOOL enable = FALSE;
   try
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      pCmdUI->Enable (pDoc->GetDisplayShrinkFactor() > 1);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = (pDoc->GetDisplayShrinkFactor() > 1);
+	}
     }
   catch (const MiKTeXException & e)
     {
@@ -1308,6 +1378,7 @@ DviView::OnUpdateZoomIn (/*[in]*/ CCmdUI * pCmdUI)
     {
       ErrorDialog::DoModal (this, e);
     }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1330,6 +1401,35 @@ DviView::OnZoomOut ()
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateZoomOut
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateZoomOut (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________
@@ -1892,6 +1992,11 @@ DviView::GetPageUnderCursor (/*[in]*/ int &	pageIdx,
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
 
+  if (pDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED)
+    {
+      return (false);
+    }
+
   CPoint ptScroll = GetScrollPosition();
 
   if (g_pYapConfig->continuousView)
@@ -2207,6 +2312,35 @@ DviView::OnFileDocumentProperties ()
     {
       ErrorDialog::DoModal (this, e);
      }
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateFileDocumentProperties
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateFileDocumentProperties (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
 }
 
 /* _________________________________________________________________________

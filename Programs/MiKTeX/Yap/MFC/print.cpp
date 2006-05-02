@@ -204,6 +204,35 @@ DviView::OnFileDvips ()
 
 /* _________________________________________________________________________
 
+   DviView::OnUpdateFileDvips
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateFileDvips (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
+}
+
+/* _________________________________________________________________________
+
    DviView::PrintPostScript
    _________________________________________________________________________ */
 
@@ -212,9 +241,6 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
 			  /*[in]*/ const CString &		printerName,
 			  /*[in]*/ const DviView::PrintRange &	pr)
 {
-  DviDoc * pDoc = GetDocument();
-  ASSERT_VALID (pDoc);
-
   // locate mtprint.exe
   PathName mtprint;
   if (! SessionWrapper(true)->FindFile("mtprint.exe", FileType::EXE, mtprint))
@@ -314,3 +340,33 @@ DviView::OnPrint (/*[in]*/ CDC *	pDC,
       ErrorDialog::DoModal (this, e);
     }
 }
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateFilePrint
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateFilePrint (/*[in]*/ CCmdUI * pCmdUI)
+{
+  BOOL enable = FALSE;
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      if (pDoc->GetDviFileStatus() == DviDoc::DVIFILE_LOADED)
+	{
+	  enable = TRUE;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  pCmdUI->Enable (enable);
+}
+
