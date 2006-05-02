@@ -50,10 +50,10 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 
 /* _________________________________________________________________________
 
-   Debug-dependant Macros
+   Release-dependant Macros
    _________________________________________________________________________ */
 
-#if ! defined(NDEBUG)
+#if MIKTEX_RELEASE_STATE >= 2
 
 #  define MIKTEX_ASSERT(expr)					\
   static_cast<void>						\
