@@ -219,9 +219,9 @@ formats</ulink>.</para>
 
 &installing;
 
-&configuring;
-
 &localguide;
+
+&configuring;
 
 <chapter>
 
@@ -465,18 +465,214 @@ linkend="rootmanager"/>, for more information how to manage this.</para>
 
 </section>
 
+<section id="psfonts">
+
+<title>Outline Fonts</title>
+
+<indexterm>
+<primary>Outline fonts</primary>
+<secondary>psfonts.map</secondary>
+</indexterm>
+
+<indexterm>
+<primary>PostScript Type 1 fonts</primary>
+<secondary>psfonts.map</secondary>
+</indexterm>
+
+<para>Information about outline fonts is stored in a file by the name of
+<filename>psfonts.map</filename>.  This file is created in the course
+of the setup/update process. It can be manually created by running
+<programlisting>
+initexmf --mkmaps
+</programlisting>
+<indexterm>
+<primary>psfonts.map</primary>
+<secondary>creating</secondary>
+</indexterm>
+at the command prompt.</para>
+
+<caution>
+<para>The contents of <filename>psfonts.map</filename> should never be
+edited: it will be overwritten by the &MiKTeX; update
+process.</para>
+</caution>
+
+<para><filename>psfonts.map</filename> depends on the
+file <filename>updmap.cfg</filename>. This configuration
+file contains declarative instructions (see
+<xref linkend="updmapcfg"/>), which will be used to
+build <filename>psfonts.map</filename>.</para>
+
+<section id="chgupdmapcfg">
+
+<title>Adding <filename>updmap.cfg</filename> Instructions</title>
+
+<para>You must edit a local version of <filename>updmap.cfg</filename>,
+if you want to add instructions (e.g., add new map files entries).</para>
+
+<para>Instructions in the local version of
+<filename>updmap.cfg</filename> take precedence over those specified
+in the main version, i.e., you can easily override options such as
+<option>dvipsPreferOutline</option>.</para>
+
+<para>For example, follow these steps if you want to add an entry for the
+map file <filename>xyz.map</filename>:</para>
+
+<procedure>
+<step><para>Use the Explorer interface to open the directory
+<filename>miktex\config</filename> relative to the local &TEXMF;
+directory (see <xref linkend="localdir"/>).</para></step>
+<step><para>Create a local version of <filename>updmap.cfg</filename>,
+if it doesn't yet exist: use the Explorer interface to create a new
+text document with the name of
+<filename>updmap.cfg</filename>.</para></step>
+<step><para>Open <filename>updmap.cfg</filename> with Notepad.</para></step>
+<step><para>Insert the following line:</para>
+<programlisting>Map xyz.map</programlisting></step>
+<step><para>Save the file and exit Notepad.</para></step>
+<step><para>Refresh the file name database (see
+<xref linkend="fndbupdate"/>.</para></step>
+<step><para>Run <command>initexmf --mkmaps</command> to rebuild
+<filename>psfonts.map</filename>.</para></step>
+</procedure>
+
+</section>
+
+</section>
+
+&texfeatures;
+
+<section id="pkgmgt">
+
+<title>Package Management</title>
+
+<indexterm>
+<primary>package management</primary>
+</indexterm>
+
+<para>You use &MiKTeXPackageManager; (&MPM;) to
+install and remove packages.</para>
+
+<section>
+
+<title>What Is a Package?</title>
+
+<indexterm>
+<primary>package</primary>
+</indexterm>
+<indexterm>
+<primary>package</primary>
+<secondary>defined</secondary>
+</indexterm>
+
+<para>A package is a collection of files that (together) implement a
+specific feature.</para>
+
+</section>
+
+<section id="mpmgui">
+
+<title>Working With the Package Manager</title>
+
+<para>The package manager can be run in two modes: batch and
+windowed.</para>
+
+<para>&MPM; runs in batch mode if you specify command-line options
+such as <option>--install</option> and <option>--update</option> (see
+<xref linkend="mpm"/> for a list of available command-line
+options).</para>
+
+<para>To start the package manager in windowed mode, click
+<menuchoice><guimenu>Start</guimenu> <guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu> <guimenuitem>MiKTeX
+Package Manager</guimenuitem> </menuchoice>).
+You will see a window similar to this:</para>
+
+<informalfigure>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mpm"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</informalfigure>
+
+<section>
+
+<title>Installing Packages</title>
+
+<indexterm>
+<primary>packages</primary>
+<secondary>installing</secondary>
+</indexterm>
+
+<para>You install packages
+<indexterm>
+<primary>packages</primary>
+<secondary>installing</secondary>
+</indexterm>
+as follows:</para>
+
+<procedure>
+<step><para>Select all wanted packages in the list view.</para></step>
+<step><para>Click on <guibutton>+</guibutton>
+to install the packages.</para></step>
+</procedure>
+
+<para>For example: you want to install the &ConTeXt; package:</para>
+
+<procedure>
+<step><para>Locate and select the &ConTeXt; package in the list view, e.g., type the key sequence
+<keycombo action="seq">
+<keycap>C</keycap>
+<keycap>O</keycap>
+<keycap>N</keycap>
+<keycap>T</keycap>
+</keycombo>.</para></step>
+<step><para>You can now click
+<guibutton>+</guibutton> to install the package.</para></step>
+</procedure>
+
+</section>
+
+<section>
+
+<title>Searching Packages</title>
+
+<para>Sometimes you don't know the name of a package, but you know the
+<indexterm>
+<primary>packages</primary>
+<secondary>searching for</secondary>
+</indexterm>
+name of a file that belongs to the wanted package. In this case, enter
+the file name information in the file name edit control.  Note that
+the file name information can include wildcard characters
+(<filename>*?</filename>).</para>
+
+<para>For example: you need to download the class file
+<filename>weekly.cls</filename>:</para>
+
+<procedure>
+<step><para>Enter <userinput>weekly.cls</userinput> in the file name
+edit control.</para></step>
+<step><para>Click the <guibutton>Filter</guibutton> button.</para></step>
+</procedure>
+
+<para>The list view will be reduced to contain
+only the <filename>calendar</filename> package.
+Selecting <filename>calendar</filename> and pressing <guilabel>+</guilabel>
+will install the package.</para>
+
+</section>
+
+</section>
+
+</section>
+
 </chapter>
 
-<reference id="manpages">
-
-<referenceinfo>
-<productname>&PACKAGE_NAME;</productname>
-<productnumber>&MIKTEX_VERSION_STR;</productnumber>
-<author>
-<firstname>Christian</firstname>
-<surname>Schenk</surname>
-</author>
-</referenceinfo>
+<part>
 
 <title>&MiKTeX; Reference Pages</title>
 
@@ -509,7 +705,7 @@ here.</para>
 <!--&mantex;-->
 <!--&mantexify;-->
 
-</reference>
+</part>
 
 &miktexini;
 &pdftexcfg;

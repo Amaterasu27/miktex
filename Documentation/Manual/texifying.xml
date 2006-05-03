@@ -6,7 +6,7 @@
 <primary>texify</primary>
 </indexterm>
 
-<para><command>texify</command> is a command line utility that
+<para><command>texify</command> is a command-line utility that
 simplifies the creation of &DVI; (&PDF;) documents:
 <command>texify</command> automatically runs
 <application>LaTeX</application>

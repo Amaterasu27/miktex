@@ -53,13 +53,11 @@ screenshots_png = \
 	Images\mo-packages.png \
 	Images\mo-roots.png \
 	Images\mo-search-package.png \
-	Images\updatewiz-finish.png \
 	Images\updatewiz-download-type.png \
 	Images\updatewiz-packagelist.png \
 	Images\updatewiz-progress.png \
 	Images\updatewiz-remote-repository.png \
 	Images\updatewiz-source.png \
-	Images\updatewiz-welcome.png \
 	Images\mpm.png \
 	Images\yap-rotating.png \
 	Images\yap-ruler.png \
@@ -504,6 +502,74 @@ www\manual\miktexman.css: $(cssdir)\miktexman.css
 
 upload-manual: www-manual
 	$(sitecopy) --update manual
+
+# -----------------------------------------------------------------------------
+# Reference
+# -----------------------------------------------------------------------------
+
+refman.chm: \
+			$(cssdir)\miktexhelp.css \
+			$(html_manual_images) \
+			$(libdir)\include\miktex\help.h \
+			$(manual_xml_files)\
+			$(xsldir)\htmlhelp.xsl \
+			entities.ent \
+			version.ent \
+
+	if exist scratch $(rmdir) scratch
+	mkdir scratch
+	copy $(cssdir)\miktexhelp.css scratch
+	mkdir scratch\images
+	for %f in ($(html_manual_images)) \
+	  do copy %f scratch\images
+	$(xsltproc) \
+		--stringparam base.dir scratch/ \
+		--stringparam chunk.fast 1 \
+		--stringparam manifest.in.base.dir 1 \
+		$(xsldir)\htmlhelp.xsl \
+		refman.xml
+	cd scratch
+	copy $(libdir)\include\miktex\help.h context.h
+	-$(hhc) htmlhelp
+	copy htmlhelp.chm ..\refman.chm
+	cd ..
+	$(rmdir) scratch
+
+refman.tex: \
+			$(manual_xml_files) \
+			$(xsldir)\db2latex-common.xsl \
+			$(xsldir)\db2latex-manual.xsl \
+			entities.ent \
+
+	$(xsltproc) --output $@ $(xsldir)\db2latex-manual.xsl refman.xml
+
+refman.pdf: \
+			refman.tex \
+			png75 \
+
+	if exist scratch $(rmdir) scratch
+	mkdir scratch
+	mkdir scratch\images
+	copy png75\*.* scratch\images
+	cd scratch
+	$(texify) --pdf ..\refman.tex
+	copy refman.pdf ..\refman.pdf
+	cd ..
+	$(rmdir) scratch
+
+refman.dvi: \
+			refman.tex \
+			png75 \
+
+	if exist scratch $(rmdir) scratch
+	mkdir scratch
+	mkdir scratch\images
+	copy png75\*.* scratch\images
+	cd scratch
+	$(texify) ..\refman.tex
+	copy refman.dvi ..\refman.dvi
+	cd ..
+	$(rmdir) scratch
 
 # -----------------------------------------------------------------------------
 # Roadmap

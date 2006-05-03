@@ -95,9 +95,9 @@ distribution and b) install &MiKTeX;.</para>
 <title>Download</title>
 
 <para>Start the installer and choose <guilabel>Download
-MiKTeX</guilabel> on the task page. You will be prompted for an
+MiKTeX</guilabel> on the task page. You will be prompted to choose an
 installation size (choose <guilabel>Complete MiKTeX</guilabel>), a
-download source and a download destination.</para>
+download source and a destination directory.</para>
 
 </section>
 

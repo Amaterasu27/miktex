@@ -60,7 +60,7 @@ start menu:</para>
 <guisubmenu>MiKTeX on the Web</guisubmenu>
 <guimenuitem>Known Issues</guimenuitem>
 </menuchoice></term>
-<listitem><para>An Internet shortcut to the latest release notes.</para></listitem>
+<listitem><para>An Internet shortcut to the &MiKTeX; issues page.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -69,7 +69,7 @@ start menu:</para>
 <guisubmenu>MiKTeX on the Web</guisubmenu>
 <guimenuitem>MiKTeX Project Page</guimenuitem>
 </menuchoice></term>
-<listitem><para>An Internet shortcut to the project page.</para></listitem>
+<listitem><para>An Internet shortcut to the &MiKTeX; project page.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -78,7 +78,7 @@ start menu:</para>
 <guisubmenu>MiKTeX on the Web</guisubmenu>
 <guimenuitem>Registration</guimenuitem>
 </menuchoice></term>
-<listitem><para>An Internet shortcut to the registration form.</para></listitem>
+<listitem><para>An Internet shortcut to the &MiKTeX; registration page.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -87,7 +87,7 @@ start menu:</para>
 <guisubmenu>MiKTeX on the Web</guisubmenu>
 <guimenuitem>Support</guimenuitem>
 </menuchoice></term>
-<listitem><para>An Internet shortcut to the support page.</para></listitem>
+<listitem><para>An Internet shortcut to the &MiKTeX; support page.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -111,7 +111,7 @@ start menu:</para>
 <guimenu>&progfldr;</guimenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice></term>
-<listitem><para>A shortcut to the &MiKTeX; configuration utility.</para></listitem>
+<listitem><para>A shortcut to the &MiKTeXOptions;.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -130,7 +130,7 @@ start menu:</para>
 
 <title>Removing &MiKTeX;</title>
 
-<para>&MiKTeX; can be removed via the Windows control panel:
+<para>&MiKTeX; can be removed from your computer in the following way:
 <indexterm>
 <primary>uninstaller</primary>
 </indexterm>
@@ -144,13 +144,14 @@ start menu:</para>
 
 <procedure>
 
-<step><para>Open <application>Control Panel</application> (usually via
-<menuchoice><guimenu>Start</guimenu><guisubmenu>Settings</guisubmenu><guimenuitem>Control Panel</guimenuitem></menuchoice>).</para></step>
+<step><para>Open <application>Control Panel</application>.</para></step>
 
-<step><para>Click on the <guilabel>Software</guilabel> (resp.
-<guilabel>Add or Remove Programs</guilabel>) icon.</para></step>
+<step><para>Double-click <guilabel>Add or Remove
+Programs</guilabel>.</para></step>
 
-<step><para>Select <guimenuitem>&progfldr;</guimenuitem>.</para></step>
+<step><para>Click <guimenuitem>&progfldr;</guimenuitem>.</para></step>
+
+<step><para>Click <guimenuitem>Change/Remove</guimenuitem>.</para></step>
 
 </procedure>
 

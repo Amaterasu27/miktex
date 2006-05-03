@@ -6,13 +6,13 @@
 
 <title>Getting Started</title>
 
-<para>If you have never used &TeX; before: we recommend that,
+<para>If you have never used &TeX; before, then it is recommendable
 <indexterm>
 <primary>local guide</primary>
 </indexterm>
-first of all, you work through a &TeX;/&LaTeX; tutorial. A good
-starting point is this this entry in the UK &TeX; &FAQ;:
-<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials</ulink>.</para>
+to work through one of the &TeX;/&LaTeX; tutorials. A good
+starting point is this entry in the UK &TeX; &FAQ;:
+<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*</ulink>.</para>
 
 <para>&MiKTeX; doesn't differ very much from
 any other &TeX; system you might have used before.
@@ -34,12 +34,9 @@ steps. The most prominent ones are listed here:
 
 </section>
 
-&texfeatures;
-
 &texifying;
 
 &printing;
-
 
 </chapter>
 

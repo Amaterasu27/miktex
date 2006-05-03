@@ -1,44 +1,39 @@
-<section id="printutility">
+<section id="printing">
 
-<title>&mtprint; The &MiKTeXPrintUtility;</title>
+<title>Printing</title>
 
-<para>You can use the &MiKTeXPrintUtility; to send &TeX; output files
-(<filename>*.dvi</filename>) to a printing device.</para>
+<section>
 
-<para>The &MiKTeXPrintUtility; is started in the command prompt window.
-To print the &DVI; file <filename>foo.dvi</filename>, do this:</para>
+<title>Using a Viewer to Print &DVI;/&PDF; Files</title>
 
-<programlisting>mtprint foo.dvi</programlisting>
+<para>&TeX; output files
+(<filename>*.dvi</filename>/<filename>*.pdf</filename>) can be
+printed from within the viewer.</para>
 
-<para>Printing works as follows:</para>
+</section>
 
-<procedure>
-<step>
-<para>The &DVI; file is converted by &Dvips; into an intermediate &PostScript; file.</para>
-</step>
-<step>
-<para>The &PostScript; file is then processed by &Ghostscript; to produce
-a series of Windows Bitmaps.</para>
-</step>
-<step>
-<para>These bitmaps are then sent to the printer.</para>
-</step>
-</procedure>
+<section>
 
-<para>If you have a &PostScript; printer, then you can speed up the
-process by using using the <option>--print-method</option> option:</para>
+<title>Using &mtprint; to Print &DVI; Files</title>
 
-<programlisting>mtprint --print-method=ps foo.dvi</programlisting>
+<para>&DVI; files can also be printed with the help of the
+command-line utility &mtprint; (&MiKTeXPrintUtility;).</para>
 
-<para>This will omit steps 2 and 3, i.e., the intermediate &PostScript;
-file will be sent directly to the printer.</para>
+<para>For example, run <userinput>mtprint paper</userinput> to send
+the &DVI; file <filename>paper.dvi</filename> to the default &Windows;
+printer.</para>
+
+<para>See <xref linkend="mtprint"/>, for more information about
+&mtprint;</para>
+
+</section>
 
 </section>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:
