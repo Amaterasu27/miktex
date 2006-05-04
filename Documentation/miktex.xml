@@ -4,9 +4,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2313">
+<!ENTITY rev "2.5.2315">
 <!ENTITY month "May 2006">
-<!ENTITY date "May 02, 2006">
+<!ENTITY date "May 04, 2006">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">

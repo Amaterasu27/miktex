@@ -308,7 +308,7 @@ located in the directory tree rooted at <filename>C:\Local TeX
 Files</filename>. This tree might look as follows:</para>
 
 <figure id="localtexmf">
-<title>Sample Local Directory</title>
+<title>Sample &TeX; Directory Structure</title>
 <screenshot>
 <mediaobject>
 <imageobject>
