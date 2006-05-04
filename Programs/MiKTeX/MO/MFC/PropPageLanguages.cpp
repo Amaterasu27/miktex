@@ -320,7 +320,7 @@ The language definition file (languages.dat) could not be found."),
 	{
 	  Tokenizer tok (line.c_str(), T_(" \t\n"));
 	  const MIKTEXCHAR * lpsz = tok.GetCurrent();
-	  if (lpsz != 0)
+	  if (lpsz != 0 && *lpsz != T_('%'))
 	    {
 	      ++ tok;
 	      const MIKTEXCHAR * lpsz2 = tok.GetCurrent();
