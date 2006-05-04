@@ -261,18 +261,22 @@ Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 /* _________________________________________________________________________
 
    Process::Run
-
    _________________________________________________________________________ */
 
 void
 Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	      /*[in]*/ const MIKTEXCHAR *	lpszArguments)
 {
-  Process::Run (lpszFileName,
-		lpszArguments,
-		reinterpret_cast<IRunProcessCallback*>(0),
-		0,
-		0);
+  if (! Process::Run (lpszFileName,
+		      lpszArguments,
+		      reinterpret_cast<IRunProcessCallback*>(0),
+		      0,
+		      0))
+    {
+      FATAL_MIKTEX_ERROR (T_("Process::Run"),
+			  T_("The operation failed for some reason."),
+			  lpszFileName);
+    }
 }
 
 /* _________________________________________________________________________
