@@ -2,6 +2,128 @@
     
 <title>Maintenance</title>
 
+<section id="fndbupdate">
+
+<title>Refreshing the File Name Database</title>
+
+<indexterm>
+<primary>file name database</primary>
+<secondary>defined</secondary>
+</indexterm>
+
+<indexterm>
+<primary>file name database</primary>
+<secondary>refreshing</secondary>
+</indexterm>
+
+<para>To speed up file search, &MiKTeX; makes use
+of a list of known file names.  This list is called the
+<firstterm>file name database</firstterm> (&FNDB;).</para>
+
+<para>It is necessary that you refresh the file name database whenever
+you manually install &TeX;/&LaTeX;-related files (see ).</para>
+
+<para>You update the file name database with the help of
+&MiKTeXOptions;.</para>
+
+<para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>Settings</guimenuitem>
+</menuchoice> to open the &MiKTeXOptions; window (see <xref linkend="mo-general"/>).</para>
+
+<figure id="mo-general">
+<title>&MiKTeXOptions;: General Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-general"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+<para>Click <guibutton>Refresh FNDB</guibutton> to refresh the
+file name database.</para>
+
+</section>
+
+<section id="papersize">
+
+<title>Setting the Preferred Paper Format</title>
+
+<indexterm>
+<primary>paper format</primary>
+<secondary>setting</secondary>
+</indexterm>
+
+<para>You can set the preferred paper format with the help of
+&MiKTeXOptions;.</para>
+
+<para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>Settings</guimenuitem>
+</menuchoice> to open the &MiKTeXOptions; window
+(see <xref linkend="mo-general"/>).
+Select your preferred paper format from the drop-down list.</para>
+
+</section>
+
+<section id="hyphenation">
+
+<title>Selecting Hyphenation Tables</title>
+
+<indexterm>
+<primary>hyphenation tables</primary>
+<secondary>selecting</secondary>
+</indexterm>
+
+<indexterm>
+<primary>languages</primary>
+<secondary>selecting</secondary>
+</indexterm>
+
+<para>You can control the loading of hyphenation tables with the help of
+&MiKTeXOptions;.</para>
+
+<para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>Settings</guimenuitem>
+</menuchoice> to open the &MiKTeXOptions; window
+(see <xref linkend="mo-general"/>).</para>
+
+<para>Click on the <guilabel>Languages</guilabel> tab.  You will
+presented with the list of available languages and corresponding
+hyphenation tables (<xref linkend="mo-languages"/>).  Mark the
+languages, whose hyphenation tables shall be loaded by
+&TeX;/&LaTeX;.</para>
+
+<figure id="mo-languages">
+<title>&MiKTeXOptions;: Languages</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-languages"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+</section>
+
+
+
+
+
+
 <section id="updating">
 
 <title>Installing Updates</title>
@@ -110,62 +232,110 @@ process.</para>
 
 <title>Automatic Package Installation</title>
 
-<para>&MiKTeX; programs has the ability to automatically install
+<para>&MiKTeX; has the ability to automatically install
 <indexterm>
 <primary>packages</primary>
 <secondary>automatic installation of</secondary>
 </indexterm>
 missing packages.</para>
 
-<para>&MiKTeX; asks your permission before installing a package:</para>
+<para>&MiKTeX; asks your permission before installing a package (see
+<xref linkend="autoinstalldlg"/>.</para>
+
+<figure id="autoinstalldlg">
+<title>Automatic Package Installation</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/autoinstall"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <para>Click <guibutton>OK</guibutton> to start the installation of the
 package. Click <guibutton>Cancel</guibutton>, to cancel the
 installation. If you do not want to see this dialog in the future,
-then clear the mark from the check box <guilabel>Always show this
+clear the mark from the check box <guilabel>Always show this
 dialog before installing packages</guilabel>. Your decision will be
 remembered.</para>
 
 </section>
 
-<section id="rootmanager">
+<section id="localadditions">
 
-<title>Managing &TEXMF; Directory Hierarchies</title>
+<title>Integrating Local Additions</title>
 
 <indexterm>
-<primary>TEXMF directories</primary>
-<secondary>managing</secondary>
+<primary>local additions</primary>
+<secondary>intergrating</secondary>
 </indexterm>
 
-<para>The standard setup process creates two &TEXMF;
-directories:</para>
+<para>If you have files that you want to integrate into the &MiKTeX;
+setup, you have to register the root of the directory tree which
+contains the files. The directory tree must conform to the &TDS;
+standard, i.e., you must imitate the directory tree in the &MiKTeX;
+installation directory (usually
+<filename>&installdir;</filename>).</para>
 
-<itemizedlist>
-<listitem><para><filename>&installdir;</filename>: the installation
-directory (see <xref linkend="installdir"/>).</para></listitem>
-<listitem><para><filename>&localdir;</filename>: the local &TEXMF;
-directory (see <xref linkend="localdir"/>).</para></listitem>
-</itemizedlist>
+<section>
 
-<para>You can manage the &TEXMF; directory
-hierarchies with the help of
-&MiKTeXOptions;:</para>
+<title>&TeX; Directory Structure (&TDS;)</title>
 
-<procedure>
-<step><para>Click
+<para>Here is a brief summary of the &TDS; standard:</para>
+
+<para><filename>*.afm</filename> go in <filename><replaceable>root</replaceable>\fonts\afm\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+<para><filename>*.dvi</filename>, <filename>*.ps</filename> or <filename>*.pdf</filename> go in <filename><replaceable>root</replaceable>\doc\latex<replaceable>package</replaceable></filename></para>
+<para><filename>*.enc</filename> go in <filename><replaceable>root</replaceable>\fonts\enc\<replaceable>syntax</replaceable>\<replaceable>bundle</replaceable></filename></para>
+<para><filename>*.map</filename> go in <filename><replaceable>root</replaceable>\fonts\map\<replaceable>syntax</replaceable>\<replaceable>bundle</replaceable></filename></para>
+<para><filename>*.mf</filename> go in <filename><replaceable>root</replaceable>\fonts\source\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+<para><filename>*.pfb</filename> go in <filename><replaceable>root</replaceable>\fonts\type1\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+<para><filename>*.sty</filename>, <filename>*.cls</filename> or <filename>*.fd</filename>) go in <filename><replaceable>root</replaceable>\tex\latex\<replaceable>package</replaceable></filename></para>
+<para><filename>*.tfm</filename> go in <filename><replaceable>root</replaceable>\fonts\tfm\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+<para><filename>*.ttf</filename> go in <filename><replaceable>root</replaceable>\fonts\truetype\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+<para><filename>*.vf</filename> go in <filename><replaceable>root</replaceable>\fonts\vf\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
+
+<para>Please run <userinput>mthelp tds</userinput> to learn more about the &TDS;.</para>
+
+</section>
+
+<section>
+
+<title>Walkthrough: Registering a Local Directory Tree</title>
+
+<para>In this walkthrough, we assume that your local additions are
+located in the directory tree rooted at <filename>C:\Local TeX
+Files</filename>. This tree might look as follows:</para>
+
+<figure id="localtexmf">
+<title>Sample Local Directory</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/localtexmf"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+<para>You use &MiKTeXOptions; to register <filename>C:\Local TeX Files</filename>.
+Click
 <menuchoice>
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions;
-window opens.  Click on the <guilabel>Roots</guilabel>
-tab.</para></step>
-<step><para>The <guilabel>Roots</guilabel> page displays a list of
-&TEXMF; root directories that are used by
-&MiKTeX;:</para>
-<informalfigure>
+<guimenuitem>Settings</guimenuitem>
+</menuchoice> 
+to open the &MiKTeXOptions; window
+(see <xref linkend="mo-general"/>).</para>
+
+<para>Click on the <guilabel>Roots</guilabel> tab.
+The <guilabel>Roots</guilabel> page
+(see <xref linkend="mo-roots"/>)
+shows the list of currently registered root directories.</para>
+
+<figure id="mo-roots">
+<title>&MiKTeXOptions;: Roots</title>
 <screenshot>
 <mediaobject>
 <imageobject>
@@ -173,348 +343,13 @@ tab.</para></step>
 </imageobject>
 </mediaobject>
 </screenshot>
-</informalfigure>
-</step>
-</procedure>
+</figure>
 
-<section>
-
-<title>Using Additional &TEXMF; Directories</title>
-
-<indexterm>
-<primary>TEXMF directories</primary>
-<secondary>using additional</secondary>
-</indexterm>
-
-<para>You can incorporate additional &TDS;-compliant &TEXMF;
-directories into the &MiKTeX;
-setup.</para>
-
-<para>For example: you can store your own files
-in a personal &TEXMF; hierarchy rooted at <filename>C:\MyTeXMF</filename>.
-To use this &TEXMF; directory, follow this procedure:</para>
-
-<procedure>
-<step><para>Click <guibutton>Add</guibutton>.</para>
-</step>
-<step><para>In the <guilabel>Browse for Folder</guilabel> dialog box, locate
-and choose <filename>C:\MyTeXMF</filename>.</para></step>
-</procedure>
-
-<para><filename>C:\MyTeXMF</filename> will be added at the
-end of the list.
-You can move it to the second position (the local
-&TEXMF; directory should always be the first in the list),
-so that it gets a higher priority.</para>
-
-<important>
-<para>The &TEXMF; directory must be &TDS;-compliant.
-For example, if you want to use the directory for your own
-&LaTeX; style files, you should put your files into the
-directory <filename>tex\latex\mystuff</filename> relative to the
-&TEXMF; directory. Run <userinput>texdoc tds</userinput>, to
-learn everything about the &TDS;.</para>
-</important>
+<para>Click <guibutton>Add</guibutton>.  In the following dialog box
+(<guilabel>Browse for Folder</guilabel>), browse to <filename>C:\Local
+TeX Files</filename> and click <guibutton>OK</guibutton>.</para>
 
 </section>
-
-<section>
-
-<title>Changing the Search Order</title>
-
-<indexterm>
-<primary>TEXMF directories</primary>
-<secondary>changing search order</secondary>
-</indexterm>
-
-<para>The order in the list view determines the order in which the
-&TEXMF; directories are searched.</para>
-
-<para>You can change the search order as follows:</para>
-
-<procedure>
-<step><para>Select a directory.</para></step>
-<step><para>Click <guibutton>Up</guibutton> or <guibutton>Down</guibutton> to
-move the selection up or down in the list.</para></step>
-</procedure>
-
-<caution>
-<para>It is highly recommended that the local &TEXMF; directory is the first in the list.</para>
-</caution>
-
-</section>
-
-</section>
-
-<section id="fndbupdate">
-
-<title>Refreshing the File Name Database</title>
-
-<indexterm>
-<primary>file name database</primary>
-<secondary>defined</secondary>
-</indexterm>
-
-<indexterm>
-<primary>file name database</primary>
-<secondary>refreshing</secondary>
-</indexterm>
-
-<para>To speed up file search, &MiKTeX; makes use
-of a list of known file names.  This list is called the
-<firstterm>file name database</firstterm> (&FNDB;).</para>
-
-<para>It is strongly recommended that you update the file name database
-whenever files are added to or removed from one of the
-&TEXMF; directories.  You can update the file name
-database with the help of &MiKTeXOptions;:</para>
-
-<procedure>
-<step><para>Click
-<menuchoice>
-<guimenu>Start</guimenu>
-<guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions; window opens:</para>
-<informalfigure>
-<screenshot>
-<mediaobject>
-<imageobject>
-<imagedata fileref="images/mo-general"/>
-</imageobject>
-</mediaobject>
-</screenshot>
-</informalfigure>
-<para>Click <guibutton>Refresh Now</guibutton>.</para></step>
-</procedure>
-
-</section>
-
-<section id="formats">
-
-<title>Managing Format Files</title>
-
-<para>Many programs can load internal data structures from so
-called <firstterm>format files</firstterm>. For example, &LaTeX; macros
-<indexterm>
-<primary>format files</primary>
-<secondary>defined</secondary>
-</indexterm>
-are stored in the file <filename>latex.efmt</filename>. This file
-is loaed by &eTeX;, when you start &latex;.</para>
-
-<section>
-
-<title>Refreshing Format Files</title>
-
-<indexterm>
-<primary>format files</primary>
-<secondary>refreshing</secondary>
-</indexterm>
-
-<para>The setup program has created standard
-format files in course of the installation process.  You can refresh
-these format files in
-&MiKTeXOptions;:</para>
-
-<procedure>
-<step><para>Click
-<menuchoice>
-<guimenu>Start</guimenu>
-<guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions; window opens. Click
-<guibutton>Update Now</guibutton> to refresh the formal files.</para></step>
-</procedure>
-
-<!-- TODO: when to refresh? -->
-
-</section>
-
-<section>
-
-<title>Defining New Format Files</title>
-
-<note>
-<para>Defining new format files is a task for experienced &TeX; users.</para>
-</note>
-
-<indexterm>
-<primary>format files</primary>
-<secondary>defining new</secondary>
-</indexterm>
-
-<para>&MiKTeXOptions; can assist you in
-defining a new format:</para>
-
-<procedure>
-<step><para>Click
-<menuchoice>
-<guimenu>Start</guimenu>
-<guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions; window
-opens.</para></step>
-<step><para>Click on the <guilabel>TeX Formats</guilabel> tab.
-You are presented
-with a list of known &TeX; formats.  To
-add an entry to this list, click <guibutton>New...</guibutton>.</para></step>
-<step><para>In the <guilabel>Format Definition</guilabel> dialog box,
-enter the following information:</para>
-<variablelist>
-<varlistentry>
-<term>Format name</term>
-<listitem><para>The name of the format.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Compiler</term>
-<listitem><para>The &TeX; compiler variant (engine)
-which creates the format file.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Input file</term>
-<listitem><para>The name of the main input file.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Output file</term>
-<listitem><para>The name of the format file.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Preloaded format</term>
-<listitem><para>Optional: The name of another format, which must
-be loaded before the actual format file is created.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Descriptioin</term>
-<listitem><para>A one-line comment which describes
-the new format.</para></listitem>
-</varlistentry>
-</variablelist>
-</step>
-</procedure>
-
-<para>A new application file with the name of the format will be
-installed in the &MiKTeX; bin directory.
-This application file serves as a short-cut for <userinput><replaceable>compiler</replaceable>
-"&amp;<replaceable>format</replaceable>"</userinput>.
-For example, these two commands are equivalent:</para>
-
-<programlisting>latex sample2e
-etex "&amp;latex" sample2e</programlisting>
-
-</section>
-
-</section>
-
-<section id="regionalsettings">
-
-<title>Regional Settings</title>
-
-<section id="papersize">
-
-<title>Paper Size</title>
-
-<indexterm>
-<primary>paper size</primary>
-<secondary>changing</secondary>
-</indexterm>
-
-<para>The setup process configures all programs to use A4 as
-the default paper format. If this doesn't fit your needs, you have
-to edit configuration settings for the following programs:</para>
-
-<indexterm>
-<primary>paper size</primary>
-<secondary>default</secondary>
-</indexterm>
-
-<itemizedlist>
-<listitem><para>&Dvipdfm; (see <xref linkend="chgdvipdfmcfg"/>)</para></listitem>
-<listitem><para>&Dvipdfmx; (see <xref linkend="chgdvipdfmcfg"/>)</para></listitem>
-<listitem><para>&Dvips; (see <xref linkend="chgconfigps"/>)</para></listitem>
-<listitem><para>&pdfTeX; (see <xref linkend="chgpdftexcfg"/>)</para></listitem>
-</itemizedlist>
-
-</section>
-
-<section id="hyphenation">
-
-<title>Selecting Hyphenation Tables</title>
-
-<indexterm>
-<primary>hyphenation tables</primary>
-<secondary>selecting</secondary>
-</indexterm>
-
-<indexterm>
-<primary>languages</primary>
-<secondary>selecting</secondary>
-</indexterm>
-
-<para>You can control the loading of hyphenation tables with the help of
-&MiKTeXOptions;:</para>
-
-<procedure>
-<step><para>Click
-<menuchoice>
-<guimenu>Start</guimenu>
-<guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions;
-window opens.  Click on
-the <guilabel>Languages</guilabel> tab.</para></step>
-<step><para>You will presented with the list of available languages and
-corresponding hyphenation tables. Mark the languages, whose hyphenation
-tables shall be loaded by &TeX;.</para></step>
-</procedure>
-
-</section>
-
-</section>
-
-<section id="chgmiktexini">
-
-<title>Editing <filename>miktex.ini</filename></title>
-
-<para>The &MiKTeX; core components read a large part of configuration
-settings from the file <filename>miktex.ini</filename> (see <xref
-linkend="miktexini"/>).</para>
-
-<para>You must edit a local version of <filename>miktex.ini</filename>,
-if you have to change &MiKTeX; configuration settings.</para>
-
-<para>Settings in the local version of
-<filename>miktex.ini</filename> take precedence over those specified
-in the installed version, i.e., you can easily override settings such as
-<option>[TeX]Editor</option>.</para>
-
-<para>For example, follow these steps if you want to edit
-&TeX; files with &WinEdt;:</para>
-
-<procedure>
-<step><para>Use the Explorer interface to open the
-directory <filename>miktex\config</filename> relative to
-the local &TEXMF; directory (see <xref linkend="localdir"/>).</para></step>
-<step><para>Create a local version of <filename>miktex.ini</filename>,
-if it doesn't yet exist: use the Explorer interface to create a new
-text document with the name of
-<filename>miktex.ini</filename>.</para></step>
-<step><para>Open <filename>miktex.ini</filename> with Notepad.</para></step>
-<step><para>Insert/change the following lines:</para>
-<programlisting>[TeX]
-Editor=winedt "[Open('%f');SelPar(%l,7)]"</programlisting></step>
-<step><para>Save the file and exit Notepad.</para></step>
-<step><para>Refresh the file name database
-(see <xref linkend="fndbupdate"/>).</para></step>
-</procedure>
 
 </section>
 

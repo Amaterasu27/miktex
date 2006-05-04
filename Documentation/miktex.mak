@@ -48,7 +48,10 @@ html_docbook_images = \
 	$(dbxsldir)\images\warning.png \
 
 screenshots_png = \
+	Images\autoinstall.png \
+	Images\localtexmf.png \
 	Images\mo-general.png \
+	Images\mo-languages.png \
 	Images\mo-mark-package.png \
 	Images\mo-packages.png \
 	Images\mo-roots.png \

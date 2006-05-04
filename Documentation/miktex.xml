@@ -670,6 +670,127 @@ will install the package.</para>
 
 </section>
 
+<section id="formats">
+
+<title>Managing Format Files</title>
+
+<para>Many programs can load internal data structures from so
+called <firstterm>format files</firstterm>. For example, &LaTeX; macros
+<indexterm>
+<primary>format files</primary>
+<secondary>defined</secondary>
+</indexterm>
+are stored in the file <filename>latex.efmt</filename>. This file
+is loaed by &eTeX;, when you start &latex;.</para>
+
+<section>
+
+<title>Refreshing Format Files</title>
+
+<indexterm>
+<primary>format files</primary>
+<secondary>refreshing</secondary>
+</indexterm>
+
+<para>The setup program has created standard
+format files in course of the installation process.  You can refresh
+these format files in
+&MiKTeXOptions;:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions; window opens. Click
+<guibutton>Update Now</guibutton> to refresh the formal files.</para></step>
+</procedure>
+
+<!-- TODO: when to refresh? -->
+
+</section>
+
+<section>
+
+<title>Defining New Format Files</title>
+
+<note>
+<para>Defining new format files is a task for experienced &TeX; users.</para>
+</note>
+
+<indexterm>
+<primary>format files</primary>
+<secondary>defining new</secondary>
+</indexterm>
+
+<para>&MiKTeXOptions; can assist you in
+defining a new format:</para>
+
+<procedure>
+<step><para>Click
+<menuchoice>
+<guimenu>Start</guimenu>
+<guisubmenu>Programs</guisubmenu>
+<guisubmenu>&progfldr;</guisubmenu>
+<guimenuitem>MiKTeX Options</guimenuitem>
+</menuchoice>.</para></step>
+<step><para>The &MiKTeXOptions; window
+opens.</para></step>
+<step><para>Click on the <guilabel>TeX Formats</guilabel> tab.
+You are presented
+with a list of known &TeX; formats.  To
+add an entry to this list, click <guibutton>New...</guibutton>.</para></step>
+<step><para>In the <guilabel>Format Definition</guilabel> dialog box,
+enter the following information:</para>
+<variablelist>
+<varlistentry>
+<term>Format name</term>
+<listitem><para>The name of the format.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Compiler</term>
+<listitem><para>The &TeX; compiler variant (engine)
+which creates the format file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Input file</term>
+<listitem><para>The name of the main input file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Output file</term>
+<listitem><para>The name of the format file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Preloaded format</term>
+<listitem><para>Optional: The name of another format, which must
+be loaded before the actual format file is created.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Descriptioin</term>
+<listitem><para>A one-line comment which describes
+the new format.</para></listitem>
+</varlistentry>
+</variablelist>
+</step>
+</procedure>
+
+<para>A new application file with the name of the format will be
+installed in the &MiKTeX; bin directory.
+This application file serves as a short-cut for <userinput><replaceable>compiler</replaceable>
+"&amp;<replaceable>format</replaceable>"</userinput>.
+For example, these two commands are equivalent:</para>
+
+<programlisting>latex sample2e
+etex "&amp;latex" sample2e</programlisting>
+
+</section>
+
+</section>
+
+
 </chapter>
 
 <part>
