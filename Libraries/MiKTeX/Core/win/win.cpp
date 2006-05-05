@@ -693,6 +693,14 @@ Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
     {
       errorMessage += T_('.');
     }
+#if 1
+  tstring env;
+  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
+      && env == T_("1"))
+    {
+      DEBUG_BREAK ();
+    }
+#endif
   switch (errorCode)
     {
     case ERROR_ACCESS_DENIED:

@@ -236,6 +236,14 @@ Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
       programInvocationName =
 	SessionImpl::theSession->initInfo.GetProgramInvocationName();
     }
+#if 1
+  tstring env;
+  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
+      && env == T_("1"))
+    {
+      DEBUG_BREAK ();
+    }
+#endif
   switch (errorCode)
     {
     case EACCES:
