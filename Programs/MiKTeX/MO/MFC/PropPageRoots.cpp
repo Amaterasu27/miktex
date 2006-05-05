@@ -187,7 +187,7 @@ PropPageTeXMFRoots::OnAdd ()
       BROWSEINFO browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
       browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
-      browseInfo.lpszTitle = T_("Select the new TEXMF root directory:");
+      browseInfo.lpszTitle = T_("Select the root directory to be added:");
       LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
       if (pidl == 0)
 	{
