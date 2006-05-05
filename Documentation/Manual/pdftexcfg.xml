@@ -1,4 +1,4 @@
-<appendix id="pdftexcfg">
+<section id="pdftexcfg">
 
 <title><filename>pdftex.cfg</filename>: The &pdfTeX; Configuration File</title>
 
@@ -119,7 +119,7 @@ least 600 dots per inch, so this is a reasonable default.</para></listitem>
 
 </section>
 
-</appendix>
+</section>
 
 <!--
 Local Variables:

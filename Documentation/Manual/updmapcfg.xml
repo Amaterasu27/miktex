@@ -1,4 +1,4 @@
-<appendix id="updmapcfg">
+<section id="updmapcfg">
 
 <title><filename>updmap.cfg</filename>: Configuration Settings for Outline Fonts</title>
 
@@ -190,7 +190,7 @@ outline.</para></listitem>
 
 </section>
 
-</appendix>
+</section>
 
 <!--
 Local Variables:

@@ -272,11 +272,19 @@ remembered.</para>
 </indexterm>
 
 <para>If you have files that you want to integrate into the &MiKTeX;
-setup, you have to register the root of the directory tree which
+setup, you have several options:</para>
+
+<itemizedlist>
+<listitem><para>Set environment variables
+like <envar>TEXINPUTS</envar>.</para></listitem>
+<listitem><para>Use the command-line option
+<option>--include-directory</option>.</para></listitem>
+<listitem><para>Register the root of the directory tree which
 contains the files. The directory tree must conform to the &TDS;
 standard, i.e., you must imitate the directory tree in the &MiKTeX;
 installation directory (usually
-<filename>&installdir;</filename>).</para>
+<filename>&installdir;</filename>).</para></listitem>
+</itemizedlist>
 
 <section>
 
@@ -346,8 +354,54 @@ shows the list of currently registered root directories.</para>
 </figure>
 
 <para>Click <guibutton>Add</guibutton>.  In the following dialog box
-(<guilabel>Browse for Folder</guilabel>), browse to <filename>C:\Local
+(<xref linkend="browselocaltexmf"/>), browse to <filename>C:\Local
 TeX Files</filename> and click <guibutton>OK</guibutton>.</para>
+
+<figure id="browselocaltexmf">
+<title>Browsing to a Root Directory</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/browselocaltexmf"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+<para>The root directory will be appended to the list (<xref
+linkend="mo-roots2"/>).</para>
+
+<figure id="mo-roots2">
+<title>&MiKTeXOptions;: Root Directory Added</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-roots2"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+<para>You can move <filename>C:\Local TeX Files</filename> before the
+installation directory, if you want to prioritize your local files.
+Click <guilabel>C:\Local TeX Files</guilabel> to select the list
+entry. Then click <guibutton>Up</guibutton> to move it before the
+installation directory (<xref linkend="mo-roots3"/>).</para>
+
+<figure id="mo-roots3">
+<title>&MiKTeXOptions;: Root Directory Moved</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/mo-roots3"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
+<para>Click <guibutton>OK</guibutton> to close &MiKTeXOptions; The
+file name database will be refreshed. You files in <filename>C:\Local
+TeX Files</filename> are now available to &MiKTeX;.</para>
 
 </section>
 
@@ -355,11 +409,5 @@ TeX Files</filename> and click <guibutton>OK</guibutton>.</para>
 
 </chapter>
 
-<!--
-Local Variables:
-mode:xml
-sgml-parent-document: ("../miktex.xml" "book")
-sgml-indent-step: 0
-sgml-set-face: t
-End:
--->
+<!-- Local Variables: mode:xml sgml-parent-document: ("../miktex.xml"
+"book") sgml-indent-step: 0 sgml-set-face: t End: -->
