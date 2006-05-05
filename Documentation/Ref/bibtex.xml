@@ -1,35 +1,28 @@
-<section id="bibtex">
-
 <?dbhh topicname="MIKTEXHELP_BIBTEX" topicid="0"?>
 
-<title>&bibtex;</title>
+<refentry id="bibtex">
 
-<simplesect>
+<refmeta>
+<refentrytitle>bibtex</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>bibtex</refname>
+<refpurpose>make a bibliography for (La)&TeX;</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 <command>bibtex</command>
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-disable-installer</option></arg>
-<arg><option>-enable-installer</option></arg>
-<sbr/>
-<arg><option>-help</option></arg>
-<arg><option>-hhelp</option></arg>
-<sbr/>
-<arg><option>-include-directory=<replaceable>dir</replaceable></option></arg>
-<arg><option>-min-crossrefs=<replaceable>n</replaceable></option></arg>
-<arg><option>-quiet</option></arg>
-<sbr/>
-<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
-<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
-<arg><option>-version</option></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="opt"><replaceable>auxname</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
@@ -80,9 +73,9 @@ describes the format of the <filename>.bib</filename> files. The
 details of this format, and it gives other useful hints for using
 &bibtex;.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -95,10 +88,11 @@ details of this format, and it gives other useful hints for using
 &optionincludedirectory;
 <varlistentry>
 <term><option>-min-crossrefs=<replaceable>n</replaceable></option></term>
-<listitem><para>Defines the minimum number of
+<listitem>
 <indexterm>
 <primary>-min-crossrefs=n</primary>
 </indexterm>
+<para>Defines the minimum number of
 <command>crossref</command>s required for automatic inclusion of the
 <indexterm>
 <primary>cross-references</primary>
@@ -112,28 +106,49 @@ crossref'd entry on the citation list; the default is two.</para></listitem>
 &optionversion;
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
+
+<title>Environment</title>
+
+<variablelist>
+<varlistentry>
+<term><envar>BIBINPUTS</envar></term>
+<listitem>
+<indexterm>
+<primary>BIBINPUTS</primary>
+</indexterm>
+<para>Extra paths to locate <filename>.bib</filename>
+files.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><envar>BSTINPUTS</envar></term>
+<listitem>
+<indexterm>
+<primary>BSTINPUTS</primary>
+</indexterm>
+<para>Extra paths to locate <filename>.bst</filename>
+files.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+<refsect1>
 
 <title>See Also</title>
-
-<para><xref linkend="texifying"/></para>
-
-</simplesect>
-
-<simplesect>
-
-<title>Documentation</title>
 
 <variablelist>
 <varlistentry>
 <term><citetitle>&BibTeX;ing</citetitle></term>
-<listitem><para>Run <userinput>texdoc btxdoc</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp btxdoc</userinput></para></listitem>
 </varlistentry>
 <varlistentry>
 <term><citetitle>Designing &BibTeX; Styles</citetitle></term>
-<listitem><para>Run <userinput>texdoc btxhak</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp btxhak</userinput></para></listitem>
 </varlistentry>
 <varlistentry>
 <term><citetitle>&LaTeX;: A Document Preparation System</citetitle></term>
@@ -141,14 +156,14 @@ crossref'd entry on the citation list; the default is two.</para></listitem>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "reference")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

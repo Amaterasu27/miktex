@@ -1,75 +1,33 @@
-<section id="dvips">
-
 <?dbhh topicname="MIKTEXHELP_DVIPS" topicid="0"?>
 
-<title>&dvips;</title>
+<refentry id="dvips">
 
-<simplesect>
+<refmeta>
+<refentrytitle>dvips</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>dvips</refname>
+<refpurpose>convert a &DVI; file to &PostScript;</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
-&dvips;
-<arg><option>-a</option></arg>
-<arg><option>-A</option></arg>
-<arg><option>-b <replaceable>num</replaceable></option></arg>
-<arg><option>-B</option></arg>
-<arg><option>-c <replaceable>num</replaceable></option></arg>
-<arg><option>-C <replaceable>num</replaceable></option></arg>
-<arg><option>-d <replaceable>num</replaceable></option></arg>
-<arg><option>-D <replaceable>num</replaceable></option></arg>
-<sbr/>
-<arg><option>-e <replaceable>num</replaceable></option></arg>
-<arg><option>-E</option></arg>
-<arg><option>-f</option></arg>
-<arg><option>-F</option></arg>
-<arg><option>-G</option></arg>
-<arg><option>-h <replaceable>name</replaceable></option></arg>
-<arg><option>-i</option></arg>
-<arg><option>-I<replaceable>imageoptions</replaceable></option></arg>
-<sbr/>
-<arg><option>-k</option></arg>
-<arg><option>-K</option></arg>
-<arg><option>-l <replaceable>num</replaceable></option></arg>
-<arg><option>-m</option></arg>
-<arg><option>-M</option></arg>
-<arg><option>-n <replaceable>num</replaceable></option></arg>
-<arg><option>-N</option></arg>
-<arg><option>-o <replaceable>name</replaceable></option></arg>
-<arg><option>-O <replaceable>offset</replaceable></option></arg>
-<sbr/>
-<arg><option>-p <replaceable>num</replaceable></option></arg>
-<arg><option>-pp <replaceable>pagelist</replaceable></option></arg>
-<arg><option>-P <replaceable>printername</replaceable></option></arg>
-<arg><option>-q</option></arg>
-<arg><option>-r</option></arg>
-<arg><option>-R</option></arg>
-<sbr/>
-<arg><option>-s</option></arg>
-<arg><option>-S <replaceable>num</replaceable></option></arg>
-<arg><option>-t <replaceable>papertype</replaceable></option></arg>
-<arg><option>-T <replaceable>offset</replaceable></option></arg>
-<arg><option>-u <replaceable>name</replaceable></option></arg>
-<arg><option>-U</option></arg>
-<arg><option>-V</option></arg>
-<sbr/>
-<arg><option>-x <replaceable>num</replaceable></option></arg>
-<arg><option>-X <replaceable>num</replaceable></option></arg>
-<arg><option>-y <replaceable>num</replaceable></option></arg>
-<arg><option>-Y <replaceable>num</replaceable></option></arg>
-<arg><option>-z</option></arg>
-<arg><option>-Z</option></arg>
+<command>dvips</command>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="plain"><replaceable>dvifile</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
-<para>&dvips; takes a &DVI; file produced by &tex; (or by
-some other processor such as &gftodvi; and
+<para>&dvips; takes a &DVI; file produced by &TeX; (or by
+some other processor such as &gftodvi;) and
 <indexterm>
 <primary>gftodvi</primary>
 </indexterm>
@@ -85,9 +43,9 @@ the <filename>.dvi</filename>
 </indexterm>
 extension.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -585,26 +543,27 @@ file.</para></listitem>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
-<title>Documentation</title>
+<title>See Also</title>
 
 <variablelist>
 <varlistentry>
 <term><citetitle>&Dvips;: A &DVI;-to-&PostScript; Translator</citetitle></term>
-<listitem><para>Run <userinput>texdoc dvips</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp dvips</userinput></para></listitem>
 </varlistentry>
 </variablelist>
-</simplesect>
 
-</section>
+</refsect1>
+
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "reference")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

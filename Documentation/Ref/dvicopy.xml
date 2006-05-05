@@ -1,45 +1,35 @@
-<section id="dvicopy">
-
 <?dbhh topicname="MIKTEXHELP_DVICOPY" topicid="0"?>
 
-<title>&dvicopy;</title>
+<refentry id="dvicopy">
 
-<simplesect>
+<refmeta>
+<refentrytitle>dvicopy</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>dvicopy</refname>
+<refpurpose>produce modified copy of &DVI; file</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 <command>dvicopy</command>
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-disable-installer</option></arg>
-<arg><option>-enable-installer</option></arg>
-<sbr/>
-<arg><option>-help</option></arg>
-<arg><option>-hhelp</option></arg>
-<sbr/>
-<arg><option>-include-directory=<replaceable>dir</replaceable></option></arg>
-<arg><option>-mag=<replaceable>mag</replaceable></option></arg>
-<arg><option>-max-pages=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-page-start=<replaceable>page-spec</replaceable></option></arg>
-<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
-<arg><option>-select=<replaceable>range</replaceable></option></arg>
-<sbr/>
-<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
-<arg><option>-version</option></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="plain"><replaceable>indvi</replaceable></arg>
 <arg choice="plain"><replaceable>outdvi</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
-<para>&dvicopy; reads a &DVI; file,
-expands any references to virtual fonts to base fonts, and writes the
-resulting &DVI; file.  Thus you can use virtual fonts
+<para>&dvicopy; reads a &DVI; file, expands any references to virtual
+fonts to base fonts, and writes the resulting &DVI; file.  Thus you
+can use virtual fonts
 <indexterm>
 <primary>virtual fonts</primary>
 <secondary>resolving</secondary>
@@ -47,9 +37,9 @@ resulting &DVI; file.  Thus you can use virtual fonts
 even if your &DVI; processor does not support them,
 by passing the documents through &dvicopy; first.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -62,41 +52,45 @@ by passing the documents through &dvicopy; first.</para>
 &optionincludedirectory;
 <varlistentry>
 <term><option>-mag=<replaceable>mag</replaceable></option></term>
-<listitem><para>Override existing magnification with
+<listitem>
 <indexterm>
 <primary>-mag=mag</primary>
 </indexterm>
+<para>Override existing magnification with
 <replaceable>mag</replaceable>.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>-max-pages=<replaceable>n</replaceable></option></term>
-<listitem><para>Process <replaceable>n</replaceable> pages; default
-one million.  This option cannot be used together with
+<listitem>
 <indexterm>
 <primary>-max-pages=n</primary>
 </indexterm>
+<para>Process <replaceable>n</replaceable> pages; default
+one million.  This option cannot be used together with
 <option>-select</option>.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>-page-start=<replaceable>page-spec</replaceable></option></term>
-<listitem><para>Start at <replaceable>page-spec</replaceable>, for
+<listitem>
 <indexterm>
 <primary>-page-start=page-spec</primary>
 </indexterm>
+<para>Start at <replaceable>page-spec</replaceable>, for
 example 2 or 5.*.-2.  This option cannot be used together with
 <option>-select</option>.</para></listitem>
 </varlistentry>
 &optionrecordpackageusages;
 <varlistentry>
 <term><option>-select=<replaceable>sel</replaceable></option></term>
-<listitem><para>Select pages to be copied.</para><para> The syntax for
+<listitem>
+<indexterm>
+<primary>-select=sel</primary>
+</indexterm>
+<para>Select pages to be copied.</para><para> The syntax for
 <replaceable>sel</replaceable> is:
 <option><replaceable>start</replaceable>
 [<replaceable>n</replaceable>]</option>, where
 <replaceable>start</replaceable> is the starting page specification
-<indexterm>
-<primary>-select=sel</primary>
-</indexterm>
 (for example <userinput>2</userinput> or
 <userinput>5.*.-2</userinput>) and <replaceable>n</replaceable>
 (optional) is the maximum number of pages to be copied.</para>
@@ -108,14 +102,14 @@ options.  This option cannot be used together with
 &optionversion;
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "reference")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

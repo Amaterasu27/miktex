@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
@@ -27,9 +28,10 @@
 <!ENTITY manmtprint SYSTEM "Ref/mtprint.xml">
 <!ENTITY manomega SYSTEM "Ref/omega.xml">
 <!ENTITY manpdftex SYSTEM "Ref/pdftex.xml">
+<!ENTITY manpdftexcfg SYSTEM "Ref/pdftexcfg.xml">
 <!ENTITY mantex SYSTEM "Ref/tex.xml">
 <!ENTITY mantexify SYSTEM "Ref/texify.xml">
-<!ENTITY miktexini SYSTEM "Manual/miktexini.xml">
+<!ENTITY manupdmapcfg SYSTEM "Ref/updmapcfg.xml">
 <!ENTITY optionalias SYSTEM "Options/alias.xml">
 <!ENTITY optionauxdirectory SYSTEM "Options/auxdirectory.xml">
 <!ENTITY optionbistacksize SYSTEM "Options/bistacksize.xml">
@@ -83,10 +85,7 @@
 <!ENTITY optionversion SYSTEM "Options/version.xml">
 <!ENTITY printing SYSTEM "Manual/printing.xml">
 <!ENTITY tcxtables SYSTEM "Manual/tcxtables.xml">
-<!ENTITY texfeatures SYSTEM "Manual/texfeatures.xml">
 <!ENTITY texifying SYSTEM "Manual/texifying.xml">
-<!ENTITY pdftexcfg SYSTEM "Manual/pdftexcfg.xml">
-<!ENTITY updmapcfg SYSTEM "Manual/updmapcfg.xml">
 <!ENTITY localguide SYSTEM "Manual/localguide.xml">
 <!ENTITY tracestreams SYSTEM "Manual/tracestreams.xml">
 ]>
@@ -214,6 +213,10 @@ formats</ulink>.</para>
 </preface>
 
 <toc/>
+
+<part>
+
+<title>User Guide</title>
 
 &intro;
 
@@ -413,58 +416,6 @@ the current user.</para></listitem>
     
 </section>
 
-<section id="directories">
-
-<title>Directories</title>
-
-<para>The standard installation procedure creates up to four directories:</para>
-
-<itemizedlist>
-<listitem><para>The <firstterm>installation directory</firstterm>
-contains the installed files of the &MiKTeX; distribution.
-<indexterm>
-<primary>installation directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-The default directory location
-is <filename>&installdir;</filename>.</para></listitem>
-<listitem><para>The <firstterm>user configuration directory</firstterm>
-<indexterm>
-<primary>user configuration directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-contains user-specific configuration files.
-The default directory location
-is <filename>&userconfigdir;</filename>.</para></listitem>
-<listitem><para>The <firstterm>user data directory</firstterm>
-<indexterm>
-<primary>user data directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-contains user-specific data files.
-The default directory location
-is <filename>&userdatadir;</filename>.</para></listitem>
-<listitem><para>The <firstterm>common configuration &amp; data directory</firstterm>
-<indexterm>
-<primary>common configuration directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-<indexterm>
-<primary>common data directory</primary>
-<secondary>defined</secondary>
-</indexterm>
-contains common configuration and data files.
-The default directory location
-is <filename>&commondatadir;</filename>.</para></listitem>
-</itemizedlist>
-
-<para>It is possible to integrate additional directories into a
-&MiKTeX; setup. For example, users often want to
-maintain a separate directory with their own style files. See <xref
-linkend="rootmanager"/>, for more information how to manage this.</para>
-
-</section>
-
 <section id="psfonts">
 
 <title>Outline Fonts</title>
@@ -479,9 +430,10 @@ linkend="rootmanager"/>, for more information how to manage this.</para>
 <secondary>psfonts.map</secondary>
 </indexterm>
 
-<para>Information about outline fonts is stored in a file by the name of
-<filename>psfonts.map</filename>.  This file is created in the course
-of the setup/update process. It can be manually created by running
+<para>Information about outline fonts is stored in a file by the name
+of <filename>psfonts.map</filename>.  This file is created in the
+course of the setup/update process. It can be manually created by
+running
 <programlisting>
 initexmf --mkmaps
 </programlisting>
@@ -491,17 +443,17 @@ initexmf --mkmaps
 </indexterm>
 at the command prompt.</para>
 
-<caution>
-<para>The contents of <filename>psfonts.map</filename> should never be
-edited: it will be overwritten by the &MiKTeX; update
-process.</para>
-</caution>
-
 <para><filename>psfonts.map</filename> depends on the
 file <filename>updmap.cfg</filename>. This configuration
 file contains declarative instructions (see
 <xref linkend="updmapcfg"/>), which will be used to
 build <filename>psfonts.map</filename>.</para>
+
+<caution>
+<para>The contents of <filename>psfonts.map</filename> should never be
+edited directly. Your modifications get lost when you install new
+packages.</para>
+</caution>
 
 <section id="chgupdmapcfg">
 
@@ -540,11 +492,9 @@ text document with the name of
 
 </section>
 
-&texfeatures;
-
 <section id="pkgmgt">
 
-<title>Package Management</title>
+<title>Working With the Package Manager</title>
 
 <indexterm>
 <primary>package management</primary>
@@ -552,27 +502,6 @@ text document with the name of
 
 <para>You use &MiKTeXPackageManager; (&MPM;) to
 install and remove packages.</para>
-
-<section>
-
-<title>What Is a Package?</title>
-
-<indexterm>
-<primary>package</primary>
-</indexterm>
-<indexterm>
-<primary>package</primary>
-<secondary>defined</secondary>
-</indexterm>
-
-<para>A package is a collection of files that (together) implement a
-specific feature.</para>
-
-</section>
-
-<section id="mpmgui">
-
-<title>Working With the Package Manager</title>
 
 <para>The package manager can be run in two modes: batch and
 windowed.</para>
@@ -584,8 +513,7 @@ options).</para>
 
 <para>To start the package manager in windowed mode, click
 <menuchoice><guimenu>Start</guimenu> <guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu> <guimenuitem>MiKTeX
-Package Manager</guimenuitem> </menuchoice>).
+<guisubmenu>&progfldr;</guisubmenu> <guimenuitem>Browse Packages</guimenuitem> </menuchoice>).
 You will see a window similar to this:</para>
 
 <informalfigure>
@@ -668,8 +596,6 @@ will install the package.</para>
 
 </section>
 
-</section>
-
 <section id="formats">
 
 <title>Managing Format Files</title>
@@ -683,67 +609,25 @@ called <firstterm>format files</firstterm>. For example, &LaTeX; macros
 are stored in the file <filename>latex.efmt</filename>. This file
 is loaed by &eTeX;, when you start &latex;.</para>
 
-<section>
-
-<title>Refreshing Format Files</title>
-
-<indexterm>
-<primary>format files</primary>
-<secondary>refreshing</secondary>
-</indexterm>
-
-<para>The setup program has created standard
-format files in course of the installation process.  You can refresh
-these format files in
-&MiKTeXOptions;:</para>
-
-<procedure>
-<step><para>Click
-<menuchoice>
-<guimenu>Start</guimenu>
-<guisubmenu>Programs</guisubmenu>
-<guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions; window opens. Click
-<guibutton>Update Now</guibutton> to refresh the formal files.</para></step>
-</procedure>
-
-<!-- TODO: when to refresh? -->
-
-</section>
-
-<section>
-
-<title>Defining New Format Files</title>
-
-<note>
-<para>Defining new format files is a task for experienced &TeX; users.</para>
-</note>
-
 <indexterm>
 <primary>format files</primary>
 <secondary>defining new</secondary>
 </indexterm>
 
-<para>&MiKTeXOptions; can assist you in
-defining a new format:</para>
+<para>&MiKTeXOptions; can assist you in defining a new format:</para>
 
-<procedure>
-<step><para>Click
+<para>Click
 <menuchoice>
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
-<guimenuitem>MiKTeX Options</guimenuitem>
-</menuchoice>.</para></step>
-<step><para>The &MiKTeXOptions; window
-opens.</para></step>
-<step><para>Click on the <guilabel>TeX Formats</guilabel> tab.
+<guimenuitem>Settings</guimenuitem>
+</menuchoice> to open the &MiKTeXOptions; window (see <xref linkend="mo-general"/>).</para>
+<para>Click on the <guilabel>Formats</guilabel> tab.
 You are presented
-with a list of known &TeX; formats.  To
-add an entry to this list, click <guibutton>New...</guibutton>.</para></step>
-<step><para>In the <guilabel>Format Definition</guilabel> dialog box,
+with a list of known formats.  To
+add an entry to this list, click <guibutton>New...</guibutton>.</para>
+<para>In the <guilabel>Format Definition</guilabel> dialog box,
 enter the following information:</para>
 <variablelist>
 <varlistentry>
@@ -774,63 +658,46 @@ be loaded before the actual format file is created.</para></listitem>
 the new format.</para></listitem>
 </varlistentry>
 </variablelist>
-</step>
-</procedure>
 
 <para>A new application file with the name of the format will be
-installed in the &MiKTeX; bin directory.
-This application file serves as a short-cut for <userinput><replaceable>compiler</replaceable>
-"&amp;<replaceable>format</replaceable>"</userinput>.
-For example, these two commands are equivalent:</para>
+installed in the &MiKTeX; bin directory.  This application file serves
+as a short-cut for <userinput><replaceable>compiler</replaceable>
+"&amp;<replaceable>format</replaceable>"</userinput>.  For example,
+these two commands are equivalent:</para>
 
 <programlisting>latex sample2e
 etex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-</section>
-
-
 </chapter>
-
-<part>
-
-<title>&MiKTeX; Reference Pages</title>
-
-<partinfo>
-
-<para>This chapter contains manual pages for various programs.  Only
-those programs are included which have non-standard features built in.
-Use the &texdoc; utility, to find documentation for programs not listed
-<indexterm>
-<primary>texdoc</primary>
-</indexterm>
-here.</para>
-
-</partinfo>
-
-<!--&manbibtex;-->
-<!--&mandvicopy;-->
-<!--&mandvips;-->
-<!--&manetex;-->
-<!--&manfindtexmf;-->
-<!--&mangftodvi;-->
-&maninitexmf;
-<!--&manmf;-->
-&manmpm;
-<!--&manmpost;-->
-&manmthelp;
-<!--&manmtprint;-->
-<!--&manomega;-->
-<!--&manpdftex;-->
-<!--&mantex;-->
-<!--&mantexify;-->
 
 </part>
 
-&miktexini;
-&pdftexcfg;
-&updmapcfg;
+<part>
+
+<title>Reference</title>
+
+&manbibtex;
+&mandvicopy;
+&mandvips;
+&manetex;
+&manfindtexmf;
+&mangftodvi;
+&maninitexmf;
+&manmf;
+&manmpm;
+&manmpost;
+&manmthelp;
+&manmtprint;
+&manomega;
+&manpdftex;
+&manpdftexcfg;
+&mantex;
+&mantexify;
+&manupdmapcfg;
+
+</part>
 
 <index id="idx">
 <title>Index</title>

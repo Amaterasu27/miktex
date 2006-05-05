@@ -49,12 +49,15 @@ html_docbook_images = \
 
 screenshots_png = \
 	Images\autoinstall.png \
+	Images\browselocaltexmf.png \
 	Images\localtexmf.png \
 	Images\mo-general.png \
 	Images\mo-languages.png \
 	Images\mo-mark-package.png \
 	Images\mo-packages.png \
 	Images\mo-roots.png \
+	Images\mo-roots2.png \
+	Images\mo-roots3.png \
 	Images\mo-search-package.png \
 	Images\updatewiz-download-type.png \
 	Images\updatewiz-packagelist.png \
@@ -100,12 +103,9 @@ manual_xml_files = \
 	Manual\installing.xml \
 	Manual\intro.xml \
 	Manual\localguide.xml \
-	Manual\miktexini.xml \
 	Manual\printing.xml \
 	Manual\tcxtables.xml \
-	Manual\texfeatures.xml \
 	Manual\texifying.xml \
-	Manual\updmapcfg.xml \
 	Options\alias.xml \
 	Options\auxdirectory.xml \
 	Options\bufsize.xml \
@@ -159,8 +159,10 @@ manual_xml_files = \
 	Ref\mtprint.xml \
 	Ref\omega.xml \
 	Ref\pdftex.xml \
+	Ref\pdftexcfg.xml \
 	Ref\tex.xml \
 	Ref\texify.xml \
+	Ref\updmapcfg.xml \
 	miktex.xml \
 
 documents = $(html_files) $(chm_files) $(pdf_files)

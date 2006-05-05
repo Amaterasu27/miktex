@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
   <xsl:import href="db2latex-common.xsl"/>
-  <xsl:param name="refentry.generate.name" select="1"/>
   <xsl:param name="latex.documentclass">book</xsl:param>
   <xsl:param name="latex.documentclass.book">a4paper,10pt,oneside,openright</xsl:param>
   <xsl:param name="ulink.footnotes">1</xsl:param>
