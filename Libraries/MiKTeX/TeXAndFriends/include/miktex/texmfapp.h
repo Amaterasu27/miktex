@@ -399,7 +399,7 @@ public:
      Reallocate
      _______________________________________________________________________ */
 
-protected:
+public:
   template<typename T>
   T *
   Reallocate (/*[in,out]*/ T * &	p,

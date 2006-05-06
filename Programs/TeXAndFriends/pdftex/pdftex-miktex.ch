@@ -70,7 +70,7 @@ program PDFTEX; {all file names are defined dynamically}
 @x
         pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
 @y
-        REALLOC (pdf_mem, pdf_mem_size);
+        miktex_reallocate (pdf_mem, pdf_mem_size);
 @z
 
 % _____________________________________________________________________________

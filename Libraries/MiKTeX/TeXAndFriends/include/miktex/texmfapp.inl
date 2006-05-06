@@ -262,6 +262,20 @@ miktexremembereditinfo (/*[in]*/ int f,
   THEAPP.RememberEditInfo (f, l);
 }
 
+/* _________________________________________________________________________
+     
+   miktexreallocate
+   _________________________________________________________________________ */
+
+template<typename T>
+inline
+T *
+miktexreallocate (/*[in,out]*/ T * &	p,
+		  /*[in]*/ size_t	n)
+{
+  return (THEAPP.Reallocate(p, n));
+}
+
 MIKTEXMF_END_NAMESPACE;
 
 #undef MIKTEXMF_BEGIN_NAMESPACE
