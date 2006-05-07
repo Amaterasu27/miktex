@@ -25,6 +25,7 @@
 
    texshell /l=%l %f
    "C:\Program Files\LEd\LEd.exe" %f:%l
+   "C:\Program Files\wscite\SciTE.exe" "%f" -goto:%l
 
    Non-free
    ========
