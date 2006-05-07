@@ -144,21 +144,7 @@ LRESULT
 InstallDirPage::OnWizardBack ()
 {
   noDdv = true;
-  try
-    {
-      UINT prev = IDD_SHARED;
-      return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(prev)));
-    }
-  catch (const MiKTeXException & e)
-    {
-      pSheet->ReportError (e);
-      return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(-1)));
-    }
-  catch (const exception & e)
-    {
-      pSheet->ReportError (e);
-      return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(-1)));
-    }
+  return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(IDD_SHARED)));
 }
 
 /* _________________________________________________________________________
