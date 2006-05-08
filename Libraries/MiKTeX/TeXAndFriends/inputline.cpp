@@ -54,7 +54,7 @@ WebAppInputLine::Finalize ()
 {
   auxDirectory = T_("");
   fqNameOfFile = T_("");
-  nameOfFile = T_("");
+  lastInputFileName = T_("");
   outputDirectory = T_("");
   WebApp::Finalize ();
 }
@@ -243,11 +243,11 @@ OpenGzInputStream (/*[in]*/ const PathName & path)
    WebAppInputLine::UnmangleNameOfFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
-WebAppInputLine::UnmangleNameOfFile (/*[out]*/ MIKTEXCHAR *	lpszTo,
-				     /*[in]*/ const MIKTEXCHAR * lpszFrom)
+MIKTEXMFAPI(PathName)
+WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
 {
-  assert (lpszTo != 0);
+  PathName ret;
+  MIKTEXCHAR * lpszTo = ret.GetBuffer();
   C4PASSERTSTRING (lpszFrom);
   size_t l = StrLen(lpszFrom);
   size_t i;
@@ -267,6 +267,7 @@ WebAppInputLine::UnmangleNameOfFile (/*[out]*/ MIKTEXCHAR *	lpszTo,
 	}
     }
   lpszTo[i] = 0;
+  return (ret);
 }
 
 /* _________________________________________________________________________
@@ -281,24 +282,24 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ bool			text)
 {
   C4PASSERTSTRING (lpszPath);
-  UnmangleNameOfFile (nameOfFile.GetBuffer(), lpszPath);
+  PathName unmangled = UnmangleNameOfFile(lpszPath);
   bool isAuxFile =
-    ! (nameOfFile.HasExtension(T_(".dvi")) // <fixme/>
-       || nameOfFile.HasExtension(T_(".pdf")));
+    ! (unmangled.HasExtension(T_(".dvi")) // <fixme/>
+       || unmangled.HasExtension(T_(".pdf")));
   PathName path;
   if (isAuxFile && ! auxDirectory.Empty())
     {
-      path.Set (auxDirectory, nameOfFile);
+      path.Set (auxDirectory, unmangled);
       lpszPath = path.Get();
     }
   else if (outputDirectory[0] != 0)
     {
-      path.Set (outputDirectory, nameOfFile);
+      path.Set (outputDirectory, unmangled);
       lpszPath = path.Get();
     }
   else
     {
-      lpszPath = nameOfFile.Get();
+      lpszPath = unmangled.Get();
     }
   FILE * pfile =
     pSession->TryOpenFile(lpszPath,
@@ -325,9 +326,9 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
 {
   C4PASSERTSTRING (lpszFileName);
 
-  UnmangleNameOfFile (nameOfFile.GetBuffer(), lpszFileName);
-
-  if (! pSession->FindFile(nameOfFile, inputFileType, fqNameOfFile))
+  if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName),
+			   inputFileType,
+			   fqNameOfFile))
     {
       return (false);
     }
@@ -367,6 +368,8 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
 #ifdef PASCAL_TEXT_IO
   get (f);
 #endif
+
+  lastInputFileName = lpszFileName;
   
   return (true);
 }

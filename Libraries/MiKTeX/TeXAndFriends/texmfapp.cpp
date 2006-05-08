@@ -956,7 +956,7 @@ TeXMFApp::GetDefaultDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
 
 template<class T>
 int
-InitializeBuffer (/*[in]*/ T *			pBuffer,
+InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 		  /*[in]*/ FileType		inputFileType,
 		  /*[in]*/ bool			isTeXProgram)
 {
@@ -1065,7 +1065,7 @@ InitializeBuffer (/*[in]*/ T *			pBuffer,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(unsigned long)
-TeXMFApp::InitializeBufferA (unsigned char * pBuffer)
+TeXMFApp::InitializeBufferA (/*[in,out]*/ unsigned char * pBuffer)
 {
   assert (pBuffer != 0);
   return (InitializeBuffer<unsigned char>(pBuffer,
@@ -1079,7 +1079,7 @@ TeXMFApp::InitializeBufferA (unsigned char * pBuffer)
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(unsigned long)
-TeXMFApp::InitializeBufferW (unsigned __int16 * pBuffer)
+TeXMFApp::InitializeBufferW (/*[in,out]*/ unsigned __int16 * pBuffer)
 {
   assert (pBuffer != 0);
   return (InitializeBuffer<unsigned __int16>(pBuffer,

@@ -603,13 +603,14 @@ public:
   int
   GetJobName ()
   {				
-    if (jobName.length() == 0)
+    if (jobName.empty())
       {
 	MIKTEXCHAR szName[MiKTeX::Core::BufferSizes::MaxPath];
-	MiKTeX::Core::PathName::Split (GetFQNameOfFile(),
-				 0, 0,
-				 szName, MiKTeX::Core::BufferSizes::MaxPath,
-				 0, 0);
+	MiKTeX::Core::PathName::Split
+	  (lastInputFileName.Get(),
+	   0, 0,
+	   szName, MiKTeX::Core::BufferSizes::MaxPath,
+	   0, 0);
 	jobName = szName;
       }
     // <fixme>conserve strpool space</fixme>
@@ -1012,6 +1013,14 @@ PrintFileNameHelper (/*[in]*/ const MIKTEXCHAR * lpszBuf)
 	  ch = MiKTeX::Core::PathName::DirectoryDelimiter;
 	}
 #endif
+      if (ch == MIKTEXTEXT('*'))
+	{
+	  ch = MIKTEXTEXT(' ');
+	}
+      else if (ch == MIKTEXTEXT('?'))
+	{
+	  ch = MIKTEXTEXT('~');
+	}
       printchar (ch);
     }
 }
@@ -1027,19 +1036,21 @@ PrintFileName (/*[in]*/ strnumber	area,
   if (area != 0)
     {
       GetTeXString (szArea, area, MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcschr(szArea, MIKTEXTEXT(' '));
+      mustQuote = mustQuote || _tcspbrk(szArea, MIKTEXTEXT(" *?"));
     }
   MIKTEXCHAR szName[MiKTeX::Core::BufferSizes::MaxPath];
   if (name != 0)
     {
       GetTeXString (szName, name, MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcschr(szName, MIKTEXTEXT(' '));
+      mustQuote = mustQuote || _tcspbrk(szName, MIKTEXTEXT(" *?"));
     }
   MIKTEXCHAR szExtension[MiKTeX::Core::BufferSizes::MaxPath];
   if (extension)
     {
-      GetTeXString (szExtension, extension, MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcschr(szExtension, MIKTEXTEXT(' '));
+      GetTeXString (szExtension,
+		    extension,
+		    MiKTeX::Core::BufferSizes::MaxPath);
+      mustQuote = mustQuote || _tcspbrk(szExtension, MIKTEXTEXT(" *?"));
     }
   if (mustQuote)
     {
@@ -1065,11 +1076,41 @@ PrintFileName (/*[in]*/ strnumber	area,
 
 inline
 void
-miktexprintfilename (/*[in]*/ strnumber a,
-		     /*[in]*/ strnumber n,
-		     /*[in]*/ strnumber e)
+PrintFileName (/*[in]*/ strnumber	name,
+	       /*[in]*/ strnumber	extension)
 {
-  PrintFileName (a, n, e);
+  return (PrintFileName(0, name, extension));
+}
+
+inline
+void
+PrintFileName (/*[in]*/ strnumber	name)
+{
+  return (PrintFileName(0, name, 0));
+}
+
+inline
+void
+miktexprintfilename (/*[in]*/ strnumber area,
+		     /*[in]*/ strnumber name,
+		     /*[in]*/ strnumber extension)
+{
+  PrintFileName (area, name, extension);
+}
+
+inline
+void
+miktexprintfilename (/*[in]*/ strnumber name,
+		     /*[in]*/ strnumber extension)
+{
+  PrintFileName (name, extension);
+}
+
+inline
+void
+miktexprintfilename (/*[in]*/ strnumber name)
+{
+  PrintFileName (name);
 }
 #endif // THEDATA
 

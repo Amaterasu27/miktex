@@ -997,8 +997,6 @@ if c="""" then begin
 end;
 if (c=" " or c=tabulator) and (not quoted_filename) then more_name:=false
 else  begin
-  if (c="*") then c:=" "
-  else if (c="?") then c:="~";
   str_room(1); append_char(c); {contribute |c| to the current string}
   if (c="/") then
 @z
@@ -1224,7 +1222,7 @@ print_char("("); incr(open_parens); slow_print(name); update_terminal;
 @y
 if term_offset+length(full_source_filename_stack[in_open])>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
-print_char("("); incr(open_parens); slow_print(full_source_filename_stack[in_open]); update_terminal;
+print_char("("); incr(open_parens); miktex_print_file_name(full_source_filename_stack[in_open]); update_terminal;
 @z
 
 @x
@@ -1323,7 +1321,7 @@ else  begin
 @x
   print_nl("Output written on "); slow_print(output_file_name);
 @y
-  print_nl("Output written on "); miktex_print_filename(0, output_file_name, 0);
+  print_nl("Output written on "); miktex_print_filename(output_file_name);
 @z
 
 @x
@@ -1541,7 +1539,7 @@ end;
     end;
   end;
 @y
-    miktex_print_filename(0, log_name, 0); print_char(".");
+    miktex_print_filename(log_name); print_char(".");
     end;
   end;
 print_ln;

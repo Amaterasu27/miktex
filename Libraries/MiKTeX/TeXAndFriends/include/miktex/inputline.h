@@ -380,9 +380,8 @@ public:
 
 private:
 
-  MIKTEXMFAPI(void)
-  UnmangleNameOfFile (/*[out]*/ MIKTEXCHAR *		lpszTo,
-		      /*[in]*/ const MIKTEXCHAR *	lpszFrom);
+  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
 
   /* _______________________________________________________________________
      
@@ -394,9 +393,9 @@ protected:
   
 private:
   MiKTeX::Core::PathName fqNameOfFile;
-  
-private:
-  MiKTeX::Core::PathName nameOfFile;
+
+protected:
+  MiKTeX::Core::PathName lastInputFileName;
   
 protected:
   MiKTeX::Core::PathName outputDirectory;
