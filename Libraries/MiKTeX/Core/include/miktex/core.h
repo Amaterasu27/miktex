@@ -3670,6 +3670,11 @@ class
 StreamReader
 {
 public:
+  StreamReader ()
+  {
+  }
+
+public:
   MIKTEXEXPORT
   MIKTEXCALL
   StreamReader (/*[in]*/ const PathName & path);
@@ -3683,6 +3688,13 @@ public:
   StreamReader (/*[in]*/ bool readStdin)
     : stream (readStdin ? stdin : 0)
   {
+  }
+
+public:
+  void
+  Attach (/*[in]*/ FILE * pFile)
+  {
+    stream.Attach (pFile);
   }
 
 public:
@@ -5683,6 +5695,13 @@ public:
   void
   MIKTEXCALL
   SetDefaultPaperSize (/*[in]*/ const MIKTEXCHAR * lpszDvipsName)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  TryCreateFromTemplate (/*[in]*/ const PathName & path)
     = 0;
 
 public:

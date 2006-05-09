@@ -1981,6 +1981,12 @@ public:
   MIKTEXCALL
   SetDefaultPaperSize (/*[in]*/ const MIKTEXCHAR * lpszDvipsName);
 
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  TryCreateFromTemplate (/*[in]*/ const PathName & path);
+
   // -----------------------------------------------------------------------
   // *** public ***
 

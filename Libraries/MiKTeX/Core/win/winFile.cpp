@@ -557,6 +557,18 @@ File::Copy (/*[in]*/ const PathName &	source,
      Q_(source),
      Q_(dest));
 
+  if (File::Exists(dest))
+    {
+      unsigned long destAttributes = GetNativeAttributes(dest);
+      unsigned long destAttributes2 = destAttributes;
+      destAttributes2 &= ~ FILE_ATTRIBUTE_READONLY;
+      destAttributes2 &= ~ FILE_ATTRIBUTE_HIDDEN;
+      if (destAttributes != destAttributes2)
+	{
+	  SetNativeAttributes (dest, destAttributes2);
+	}
+    }
+
   if (! CopyFile(source.Get(), dest.Get(), FALSE))
     {
       FATAL_WINDOWS_ERROR (T_("CopyFile"), source.Get());

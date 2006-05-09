@@ -55,6 +55,28 @@ winProcess::Create ()
       INVALID_ARGUMENT (T_("winProcess::Create"), 0);
     }
 
+  PathName fileName;
+
+  if (Utils::IsAbsolutePath(startinfo.FileName.c_str()))
+    {
+      fileName = startinfo.FileName;
+    }
+  else
+    {
+      MIKTEXCHAR * lpszFilePart = 0;
+      if (SearchPath(0,
+		     startinfo.FileName.c_str(),
+		     0,
+		     static_cast<DWORD>(fileName.GetSize()),
+		     fileName.GetBuffer(),
+		     &lpszFilePart)
+	  == 0)
+	{
+	  INVALID_ARGUMENT (T_("winProcess::Create"),
+			    startinfo.FileName.c_str());
+	}
+    }
+
   // standard security attributes for pipes
   SECURITY_ATTRIBUTES const SAPIPE = {
     sizeof(SECURITY_ATTRIBUTES),
@@ -248,7 +270,7 @@ winProcess::Create ()
 	(T_("core"),
 	 T_("starting \"%s\""),
 	 commandLine.c_str());
-      if (! CreateProcess(startinfo.FileName.c_str(),
+      if (! CreateProcess(fileName.Get(),
 			  STRDUP(commandLine.c_str()).GetBuffer(),
 			  0,	// lpProcessAttributes
 			  0,	// lpThreadAttributes

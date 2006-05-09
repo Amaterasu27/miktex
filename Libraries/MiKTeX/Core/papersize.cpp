@@ -482,24 +482,168 @@ SessionImpl::SetDefaultPaperSize (/*[in]*/ const MIKTEXCHAR * lpszDvipsName)
 
 /* _________________________________________________________________________
 
+   StreamEditor
+   _________________________________________________________________________ */
+
+class
+StreamEditor
+{
+public:
+  StreamEditor (/*[in]*/ const PathName & path)
+    : path (path)
+  {
+    bak = path;
+    bak.Append (T_(".bak"), false);
+    File::Move (path, bak);
+    reader.Attach (File::Open(bak, FileMode::Open, FileAccess::Read));
+    writer.Attach (File::Open(path, FileMode::Create, FileAccess::Write));
+  }
+
+public:
+  bool
+  ReadLine (/*[out]*/ tstring & line)
+  {
+    return (reader.ReadLine(line));
+  }
+
+public:
+  void
+  WriteLine (/*[out]*/ const tstring & line)
+  {
+    writer.WriteLine (line);
+  }
+
+public:
+  void
+  WriteLine ()
+  {
+    writer.WriteLine ();
+  }
+
+public:
+  void
+  WriteFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		      /*[in]*/				...)
+  {
+    va_list marker;
+    va_start (marker, lpszFormat);
+    WriteLine (Utils::FormatString(lpszFormat, marker));
+    va_end (marker);
+  }
+
+public:
+  ~StreamEditor ()
+  {
+    try
+      {
+	reader.Close ();
+	writer.Close ();
+	File::Delete (bak);
+	if (! Fndb::FileExists(path))
+	  {
+	    Fndb::Add (path);
+	  }
+      }
+    catch (const exception &)
+      {
+      }
+  }
+
+private:
+  PathName path;
+
+private:
+  PathName bak;
+
+private:
+  StreamReader reader;
+
+private:
+  StreamWriter writer;
+};
+
+/* _________________________________________________________________________
+
+   SessionImpl::TryCreateFromTemplate
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+SessionImpl::TryCreateFromTemplate (/*[in]*/ const PathName & path)
+{
+  unsigned r = TryDeriveTEXMFRoot(path);
+  if (r == INVALID_ROOT_INDEX)
+    {
+      return (false);
+    }
+  const MIKTEXCHAR * lpszRelPath =
+    Utils::GetRelativizedPath(path.Get(), GetRootDirectory(r).Get());
+  if (lpszRelPath == 0)
+    {
+      UNEXPECTED_CONDITION (T_("SessionImpl::TryCreateFromTemplate"));
+    }
+  PathName configTemplate (GetSpecialPath(SpecialPath::InstallRoot));
+  configTemplate += lpszRelPath;
+  configTemplate.Append (T_(".template"), false);
+  if (File::Exists(configTemplate))
+    {
+      Directory::Create (PathName(path).RemoveFileSpec());
+      File::Copy (configTemplate, path);
+      FileAttributes attr = File::GetAttributes(path);
+      attr &= ~ FileAttributes(FileAttributes::ReadOnly);
+      File::SetAttributes (path, attr);
+      if (! Fndb::FileExists(path))
+	{
+	  Fndb::Add (path);
+	}
+      return (true);
+    }
+  else
+    {
+      return (false);
+    }
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::WriteDvipsPaperSizes
    _________________________________________________________________________ */
 
 void
 SessionImpl::WriteDvipsPaperSizes ()
 {
-  PathName configPs (GetSpecialPath(SpecialPath::ConfigRoot),
-		     MIKTEX_PATH_CONFIG_PS);
+  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
+		       MIKTEX_PATH_CONFIG_PS);
   
-  Directory::Create (PathName(configPs).RemoveFileSpec());
+  if (! File::Exists(configFile))
+    {
+      if (! TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	}
+    }
 
-  StreamWriter writer (configPs);
+  StreamEditor editor (configFile);
 
-  writer.WriteLine (T_("% DO NOT MODIFY THIS FILE!"));
-  writer.WriteLine ();
+  tstring line;
+  tstring lastLine;
 
-  writer.WriteLine (T_("@"));
-  writer.WriteLine ();
+  for (; editor.ReadLine(line); lastLine = line)
+    {
+      if (! line.empty() && line[0] == T_('@'))
+	{
+	  line = T_("");
+	}
+      if (! (line.empty() && lastLine.empty()))
+	{
+	  editor.WriteLine (line);
+	}
+    }
+
+  editor.WriteLine (T_("@"));
+  editor.WriteLine ();
 
   for (vector<DvipsPaperSizeInfo>::const_iterator it = dvipsPaperSizes.begin();
        it != dvipsPaperSizes.end();
@@ -509,16 +653,9 @@ SessionImpl::WriteDvipsPaperSizes ()
 	   it2 != it->definition.end();
 	   ++ it2)
 	{
-	  writer.WriteLine (it2->c_str());
+	  editor.WriteLine (it2->c_str());
 	}
-      writer.WriteLine ();
-    }
-
-  writer.Close ();
-
-  if (! Fndb::FileExists(configPs))
-    {
-      Fndb::Add (configPs);
+      editor.WriteLine ();
     }
 }
 
@@ -530,31 +667,37 @@ SessionImpl::WriteDvipsPaperSizes ()
 void
 SessionImpl::WriteDvipdfmPaperSize ()
 {
-  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
-		       MIKTEX_PATH_DVIPDFM_CONFIG);
-  
-  Directory::Create (PathName(configFile).RemoveFileSpec());
-
-  StreamWriter writer (configFile);
-
-  writer.WriteLine (T_("% DO NOT MODIFY THIS FILE!"));
-  writer.WriteLine ();
-
   if (dvipsPaperSizes.size() == 0)
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::WriteDvipdfmPaperSize"));
+      UNEXPECTED_CONDITION (T_("SessionImpl::WritePdfTeXPaperSize"));
     }
 
   DvipsPaperSizeInfo paperSizeInfo = dvipsPaperSizes[0];
 
-  writer.WriteFormattedLine (T_("p %s"), paperSizeInfo.name.c_str());
+  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
+		       MIKTEX_PATH_DVIPDFM_CONFIG);
 
-  writer.Close ();
-			     
-  if (! Fndb::FileExists(configFile))
+  if (! File::Exists(configFile))
     {
-      Fndb::Add (configFile);
+      if (! TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	}
     }
+
+  StreamEditor editor (configFile);
+  tstring line;
+  while (editor.ReadLine(line))
+    {
+      if (! (line.compare(0, 2, T_("p ")) == 0))
+	{
+	  editor.WriteLine (line);
+	}
+    }
+
+  editor.WriteFormattedLine (T_("p %s"), paperSizeInfo.name.c_str());
 }
 
 /* _________________________________________________________________________
@@ -565,33 +708,39 @@ SessionImpl::WriteDvipdfmPaperSize ()
 void
 SessionImpl::WriteDvipdfmxPaperSize ()
 {
-  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
-		       MIKTEX_PATH_DVIPDFMX_CONFIG);
-  
-  Directory::Create (PathName(configFile).RemoveFileSpec());
-
-  StreamWriter writer (configFile);
-
-  writer.WriteLine (T_("% DO NOT MODIFY THIS FILE!"));
-  writer.WriteLine ();
-
   if (dvipsPaperSizes.size() == 0)
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::WriteDvipdfmxPaperSize"));
+      UNEXPECTED_CONDITION (T_("SessionImpl::WritePdfTeXPaperSize"));
     }
 
   DvipsPaperSizeInfo paperSizeInfo = dvipsPaperSizes[0];
 
-  writer.WriteFormattedLine (T_("p %dbp,%dbp"),
+  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
+		       MIKTEX_PATH_DVIPDFMX_CONFIG);
+
+  if (! File::Exists(configFile))
+    {
+      if (! TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	}
+    }
+
+  StreamEditor editor (configFile);
+  tstring line;
+  while (editor.ReadLine(line))
+    {
+      if (! (line.compare(0, 2, T_("p ")) == 0))
+	{
+	  editor.WriteLine (line);
+	}
+    }
+
+  editor.WriteFormattedLine (T_("p %dbp,%dbp"),
 			     paperSizeInfo.width,
 			     paperSizeInfo.height);
-
-  writer.Close ();
-			     
-  if (! Fndb::FileExists(configFile))
-    {
-      Fndb::Add (configFile);
-    }
 }
 
 /* _________________________________________________________________________
@@ -602,16 +751,6 @@ SessionImpl::WriteDvipdfmxPaperSize ()
 void
 SessionImpl::WritePdfTeXPaperSize ()
 {
-  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
-		       MIKTEX_PATH_PDFTEX_CFG);
-  
-  Directory::Create (PathName(configFile).RemoveFileSpec());
-
-  StreamWriter writer (configFile);
-
-  writer.WriteLine (T_("% DO NOT MODIFY THIS FILE!"));
-  writer.WriteLine ();
-
   if (dvipsPaperSizes.size() == 0)
     {
       UNEXPECTED_CONDITION (T_("SessionImpl::WritePdfTeXPaperSize"));
@@ -619,16 +758,33 @@ SessionImpl::WritePdfTeXPaperSize ()
 
   DvipsPaperSizeInfo paperSizeInfo = dvipsPaperSizes[0];
 
-  writer.WriteFormattedLine (T_("page_width %d true bp"),
-			     paperSizeInfo.width);
+  PathName configFile (GetSpecialPath(SpecialPath::ConfigRoot),
+		       MIKTEX_PATH_PDFTEX_CFG);
 
-  writer.WriteFormattedLine (T_("page_height %d true bp"),
-			     paperSizeInfo.height);
-
-  writer.Close ();
-			     
-  if (! Fndb::FileExists(configFile))
+  if (! File::Exists(configFile))
     {
-      Fndb::Add (configFile);
+      if (! TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	}
     }
+
+  StreamEditor editor (configFile);
+  tstring line;
+  while (editor.ReadLine(line))
+    {
+      if (! (line.compare(0, 11, T_("page_width ")) == 0
+	     || line.compare(0, 12, T_("page_height ")) == 0))
+	{
+	  editor.WriteLine (line);
+	}
+    }
+
+  editor.WriteFormattedLine (T_("page_width %d true bp"),
+			     paperSizeInfo.width);
+  
+  editor.WriteFormattedLine (T_("page_height %d true bp"),
+			     paperSizeInfo.height);
 }
