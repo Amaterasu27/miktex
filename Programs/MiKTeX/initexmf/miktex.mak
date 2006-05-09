@@ -65,6 +65,7 @@ $(outdir)\initexmf.exe: $(outdir) $(initexmf_objects)
 		$(initexmf_objects) \
 		$(conlibsdll) \
 		user32.lib \
+		shell32.lib \
 		delayimp.lib
 	mt -nologo -manifest $@.manifest -outputresource:$@;1
 

@@ -423,6 +423,10 @@ private:
 
 private:
   void
+  EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszRelPath);
+
+private:
+  void
   MakeLinks ();
 
 private:
@@ -544,6 +548,7 @@ enum Option
   OPT_AAA = 256,
 
   OPT_DUMP,
+  OPT_EDIT_CONFIG_FILE,
   OPT_LIST_MODES,
   OPT_MKLINKS,
   OPT_MKMAPS,
@@ -618,6 +623,14 @@ const struct poptOption IniTeXMFApp::aoption[] = {
     OPT_DUMP,
     T_("Create format files."),
     T_("FORMAT")
+  },
+
+  {
+    T_("edit-config-file"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_EDIT_CONFIG_FILE,
+    T_("Open a config file in an editor."),
+    T_("APP")
   },
 
   {
@@ -1486,6 +1499,30 @@ IniTeXMFApp::MakeMaps ()
 
 /* _________________________________________________________________________
 
+   IniTeXMFApp::EditConfigFile
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszRelPath)
+{
+  PathName configFile
+    (pSession->GetSpecialPath(SpecialPath::ConfigRoot), lpszRelPath);
+  if (! File::Exists(configFile))
+    {
+      if (! pSession->TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	}
+    }
+  CommandLineBuilder commandLine;
+  commandLine.AppendArgument (configFile);
+  Process::Start (T_("notepad.exe"), commandLine.Get());
+}
+
+/* _________________________________________________________________________
+
    IniTeXMFApp::ReportMiKTeXVersion
    _________________________________________________________________________ */
 
@@ -1681,6 +1718,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 		  /*[in]*/ const MIKTEXCHAR **	argv)
 {
   vector<tstring> addFiles;
+  vector<tstring> editConfigFiles;
   vector<tstring> formats;
   vector<tstring> listDirectories;
   vector<tstring> removeFiles;
@@ -1726,6 +1764,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	    }
 	  optDump = true;
 	  break;
+
+	case OPT_EDIT_CONFIG_FILE:
+
+	  editConfigFiles.push_back (lpszOptArg);
+	  break;	  
 
 	case OPT_INSTALL_ROOT:
 
@@ -1998,6 +2041,36 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     {
       enumDir = *it;
       Fndb::Enumerate (*it, this);
+    }
+
+  for (vector<tstring>::const_iterator it = editConfigFiles.begin();
+       it != editConfigFiles.end();
+       ++ it)
+    {
+      if (*it == T_("pdftex"))
+	{
+	  EditConfigFile (MIKTEX_PATH_PDFTEX_CFG);
+	}
+      else if (*it == T_("dvips"))
+	{
+	  EditConfigFile (MIKTEX_PATH_CONFIG_PS);
+	}
+      else if (*it == T_("dvipdfm"))
+	{
+	  EditConfigFile (MIKTEX_PATH_DVIPDFM_CONFIG);
+	}
+      else if (*it == T_("dvipdfmx"))
+	{
+	  EditConfigFile (MIKTEX_PATH_DVIPDFMX_CONFIG);
+	}
+      else if (*it == T_("updmap"))
+	{
+	  EditConfigFile (MIKTEX_PATH_UPDMAP_CFG);
+	}
+      else
+	{
+	  FatalError (T_("Unknown config file."));
+	}
     }
 
   if (optListFormats)
