@@ -898,10 +898,10 @@ TeXMFApp::ProcessCommandLineOptions ()
 
   if (parseFirstLine
       && GetArgC() > 1
-      && ((dumpName.length() == 0
-	   && GetArgV()[1][0] != T_('&')
-	   && GetArgV()[1][0] != T_('\\'))
-	  || GetTcxFileName().GetLength() == 0))
+      && GetArgV()[1][0] != T_('&')
+      && GetArgV()[1][0] != T_('*') // <fixme/>
+      && GetArgV()[1][0] != T_('\\')
+      && (dumpName.empty() || GetTcxFileName().Empty()))
     {
       ParseFirstLine (GetArgV()[1]);
     }
