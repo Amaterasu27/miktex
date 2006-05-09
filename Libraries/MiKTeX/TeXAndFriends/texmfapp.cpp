@@ -160,7 +160,7 @@ TeXMFApp::OnTeXMFStartJob ()
     }
   pSession->PushBackAppName (appName.c_str());
   parseFirstLine =
-    pSession->GetConfigValue(0, MIKTEX_REGVAL_PARSE_FIRST_LINE, false);
+    pSession->GetConfigValue(0, MIKTEX_REGVAL_PARSE_FIRST_LINE, isTeXProgram);
   showFileLineErrorMessages =
     pSession->GetConfigValue(0, MIKTEX_REGVAL_FILE_LINE_ERRORS, false);
   clockStart = clock();
@@ -761,11 +761,14 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
 
   int opt;
 
-  for (Cpopt popt (argc - optidx, argv + optidx, &(GetOptions())[0]);
-       ((opt = popt.GetNextOpt()) >= 0);
-       )
+  if (optidx < argc)
     {
-      ProcessOption (opt, popt.GetOptArg());
+      for (Cpopt popt (argc - optidx, argv + optidx, &(GetOptions())[0]);
+	   ((opt = popt.GetNextOpt()) >= 0);
+	   )
+	{
+	  ProcessOption (opt, popt.GetOptArg());
+	}
     }
 }
 
