@@ -1,41 +1,28 @@
-<section id="gftodvi">
-
 <?dbhh topicname="MIKTEXHELP_GFTODVI" topicid="0"?>
 
-<title>&gftodvi;</title>
+<refentry id="gftodvi">
 
-<simplesect>
+<refmeta>
+<refentrytitle>gftodvi</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>gftodvi</refname>
+<refpurpose>make proof sheets from generic font files</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 &gftodvi;
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-disable-installer</option></arg>
-<arg><option>-enable-installer</option></arg>
-<arg><option>-gray-font=<replaceable>font</replaceable></option></arg>
-<sbr/>
-<arg><option>-help</option></arg>
-<arg><option>-hhelp</option></arg>
-<arg><option>-include-directory=<replaceable>dir</replaceable></option></arg>
-<sbr/>
-<arg><option>-label-font=<replaceable>font</replaceable></option></arg>
-<arg><option>-logo-font=<replaceable>font</replaceable></option></arg>
-<arg><option>-overflow-label-offset=<replaceable>real</replaceable></option></arg>
-<sbr/>
-<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
-<arg><option>-slant-font=<replaceable>font</replaceable></option></arg>
-<sbr/>
-<arg><option>-title-font=<replaceable>font</replaceable></option></arg>
-<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
-<sbr/>
-<arg><option>-version</option></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="opt"><replaceable>gffile</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
@@ -75,9 +62,9 @@ extension added. For example, the input file
 <filename>cmr10.2602gf</filename> would become
 <filename>cmr10.dvi</filename>.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -89,10 +76,11 @@ extension added. For example, the input file
 
 <varlistentry>
 <term><option>-gray-font=<replaceable>font</replaceable></option></term>
-<listitem><para>Sets the <quote>gray</quote> font.
+<listitem>
 <indexterm>
 <primary>-gray-font=font</primary>
 </indexterm>
+<para>Sets the <quote>gray</quote> font.
 Default is <filename>gray</filename>.</para></listitem>
 </varlistentry>
 
@@ -102,28 +90,31 @@ Default is <filename>gray</filename>.</para></listitem>
 
 <varlistentry>
 <term><option>-label-font=<replaceable>font</replaceable></option></term>
-<listitem><para>Sets the <quote>label</quote> font. Default is
+<listitem>
 <indexterm>
 <primary>-label-font=font</primary>
 </indexterm>
+<para>Sets the <quote>label</quote> font. Default is
 <filename>cmtt10</filename>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>-logo-font=<replaceable>font</replaceable></option></term>
-<listitem><para>Sets the <quote>logo</quote> font. Default is
+<listitem>
 <indexterm>
 <primary>-logo-font=font</primary>
 </indexterm>
+<para>Sets the <quote>logo</quote> font. Default is
 <filename>logo8</filename>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>-overflow-label-offset=<replaceable>real</replaceable></option></term>
-<listitem><para>Specifies the distance from the right edge of the
+<listitem>
 <indexterm>
 <primary>-overflow-label-offset=real</primary>
 </indexterm>
+<para>Specifies the distance from the right edge of the
 character bounding box at which the overflow equations (if
 any) are typeset. The value is given in points. The
 default is a little over two inches.</para></listitem>
@@ -133,19 +124,21 @@ default is a little over two inches.</para></listitem>
 
 <varlistentry>
 <term><option>-slant-font=<replaceable>font</replaceable></option></term>
-<listitem><para>Sets the <quote>slant</quote> font.
+<listitem>
 <indexterm>
 <primary>-slant-font=font</primary>
 </indexterm>
+<para>Sets the <quote>slant</quote> font.
 There is no default.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>-title-font=<replaceable>font</replaceable></option></term>
-<listitem><para>Sets the <quote>title</quote> font. Default is
+<listitem>
 <indexterm>
 <primary>-title-font=font</primary>
 </indexterm>
+<para>Sets the <quote>title</quote> font. Default is
 <filename>cmr8</filename>.</para></listitem>
 </varlistentry>
 
@@ -154,9 +147,9 @@ There is no default.</para></listitem>
 
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Documentation</title>
 
@@ -167,14 +160,14 @@ There is no default.</para></listitem>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

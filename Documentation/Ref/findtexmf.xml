@@ -1,29 +1,28 @@
-<section id="findtexmf">
-
 <?dbhh topicname="MIKTEXHELP_FINDTEXMF" topicid="0"?>
 
-<title>&findtexmf;</title>
+<refentry id="findtexmf">
 
-<simplesect>
+<refmeta>
+<refentrytitle>findtexmf</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>findtexmf</refname>
+<refpurpose>find &MiKTeX; files</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 &findtexmf;
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-help</option></arg>
-<arg><option>-file-type=<replaceable>filetype</replaceable></option></arg>
-<arg><option>-must-exist</option></arg>
-<arg><option>-show-path=<replaceable>filetype</replaceable></option></arg>
-<sbr/>
-<arg><option>-start</option></arg>
-<arg><option>-version</option></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
@@ -33,59 +32,64 @@ when looking for a file is inferred from the name given, by looking
 for a known extension.  If no known extension is found, the search path
 for &TeX; source files is used.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 <title>Options</title>
 
 <variablelist>
 <varlistentry>
 <term><option>-alias=<replaceable>app</replaceable></option></term>
-<listitem><para>Pretend to be <replaceable>app</replaceable> when finding
+<listitem>
 <indexterm>
 <primary>-alias=app</primary>
 </indexterm>
+<para>Pretend to be <replaceable>app</replaceable> when finding
 files.</para></listitem>
 </varlistentry>
 &optionhelp;
 <varlistentry>
 <term><option>-file-type=<replaceable>filetype</replaceable></option></term>
-<listitem><para>Use the specified file type
+<listitem>
 <indexterm>
 <primary>-file-type=filetype</primary>
 </indexterm>
+<para>Use the specified file type
 (see below).</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>-must-exist</option></term>
-<listitem><para>Install missing packages,
+<listitem>
 <indexterm>
 <primary>-must-exist</primary>
 </indexterm>
+<para>Install missing packages,
 if necessary.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>-show-path=<replaceable>filetype</replaceable></option></term>
-<listitem><para>Output search path for the specified
+<listitem>
 <indexterm>
 <primary>-show-path=filetype</primary>
 </indexterm>
+<para>Output search path for the specified
 file type (see below).</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>-start</option></term>
-<listitem><para>Start the associated program,
+<listitem>
 <indexterm>
 <primary>-start</primary>
 </indexterm>
+<para>Start the associated program,
 if the file was found.</para></listitem>
 </varlistentry>
 &optionversion;
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>File Types</title>
 
@@ -208,14 +212,14 @@ if the file was found.</para></listitem>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

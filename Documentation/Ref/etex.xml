@@ -1,80 +1,30 @@
-<section id="etex">
-
 <?dbhh topicname="MIKTEXHELP_ETEX" topicid="0"?>
 
-<title>&etex;</title>
+<refentry id="etex">
 
-<simplesect>
+<refmeta>
+<refentrytitle>etex</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>etex</refname>
+<refpurpose>extended &TeX;</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 &etex;
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-aux-directory=<replaceable>dir</replaceable></option></arg>
-<arg>-buf-size=<replaceable>n</replaceable></arg>
-<arg><option>-c-style-errors</option></arg>
-<sbr/>
-<arg><option>-disable-installer</option></arg>
-<arg><option>-enable-installer</option></arg>
-<arg><option>-enable-write18</option></arg>
-<arg><option>-error-line=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-font-max=<replaceable>n</replaceable></option></arg>
-<arg><option>-font-mem-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-half-error-line=<replaceable>n</replaceable></option></arg>
-<arg><option>-halt-on-error</option></arg>
-<arg><option>-help</option></arg>
-<arg><option>-hhelp</option></arg>
-<sbr/>
-<arg><option>-include-directory=<replaceable>folder</replaceable></option></arg>
-<arg><option>-initialize</option></arg>
-<arg><option>-interaction==<replaceable>mode</replaceable></option></arg>
-<sbr/>
-<arg><option>-job-name=<replaceable>name</replaceable></option></arg>
-<arg><option>-job-time=<replaceable>file</replaceable></option></arg>
-<sbr/>
-<arg><option>-max-in-open=<replaceable>n</replaceable></option></arg>
-<arg><option>-max-print-line=<replaceable>n</replaceable></option></arg>
-<arg><option>-max-strings=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-mem-bot=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-max=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-min=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-top=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-nest-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-output-directory=<replaceable>folder</replaceable></option></arg>
-<arg><option>-param-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-pool-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-quiet</option></arg>
-<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
-<arg><option>-recorder</option></arg>
-<sbr/>
-<arg><option>-save-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-src-specials</option></arg>
-<arg><option>-stack-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-string-vacancies=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-terminal=oem</option></arg>
-<arg><option>-time-statistics</option></arg>
-<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
-<arg><option>-trie-op-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-trie-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-undump=<replaceable>fmtname</replaceable></option></arg>
-<arg><option>-version</option></arg>
-<arg><replaceable>file</replaceable></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <group>
-<arg choice="opt" rep="repeat"><replaceable>command</replaceable></arg>
 <arg choice="opt"><replaceable>file</replaceable></arg>
+<arg choice="opt" rep="repeat">\<replaceable>command</replaceable></arg>
 </group></cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
@@ -119,9 +69,9 @@ the &initex; and &virtex; commands.</para>
 <para>&eTeX;'s handling of its command-line arguments is similar to
 that of &TeX;.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -173,9 +123,9 @@ that of &TeX;.</para>
 &optionversion;
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Aliases</title>
 
@@ -188,26 +138,26 @@ that of &TeX;.</para>
 <listitem><para>Equivalent to &etex;.</para></listitem>
 </varlistentry>
 </variablelist>
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
-<title>Documentation</title>
+<title>See also</title>
 
 <variablelist>
 <varlistentry>
 <term><citetitle>The &eTeX; manual</citetitle></term>
-<listitem><para>Run <userinput>texdoc etex-man</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp etex-man</userinput></para></listitem>
 </varlistentry>
 </variablelist>
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

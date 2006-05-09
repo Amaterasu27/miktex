@@ -459,32 +459,22 @@ packages.</para>
 
 <title>Adding <filename>updmap.cfg</filename> Instructions</title>
 
-<para>You must edit a local version of <filename>updmap.cfg</filename>,
-if you want to add instructions (e.g., add new map files entries).</para>
+<para>To edit <filename>updmap.cfg</filename>, run</para>
 
-<para>Instructions in the local version of
-<filename>updmap.cfg</filename> take precedence over those specified
-in the main version, i.e., you can easily override options such as
-<option>dvipsPreferOutline</option>.</para>
+<programlisting>
+initexmf --edit-config-file updmap
+</programlisting>
 
 <para>For example, follow these steps if you want to add an entry for the
 map file <filename>xyz.map</filename>:</para>
 
 <procedure>
-<step><para>Use the Explorer interface to open the directory
-<filename>miktex\config</filename> relative to the local &TEXMF;
-directory (see <xref linkend="localdir"/>).</para></step>
-<step><para>Create a local version of <filename>updmap.cfg</filename>,
-if it doesn't yet exist: use the Explorer interface to create a new
-text document with the name of
-<filename>updmap.cfg</filename>.</para></step>
-<step><para>Open <filename>updmap.cfg</filename> with Notepad.</para></step>
-<step><para>Insert the following line:</para>
+<step><para>Run <userinput>initexmf --edit-config-file updmap</userinput></para>
+</step>
+<step><para>Insert the following line at the end of the file:</para>
 <programlisting>Map xyz.map</programlisting></step>
 <step><para>Save the file and exit Notepad.</para></step>
-<step><para>Refresh the file name database (see
-<xref linkend="fndbupdate"/>.</para></step>
-<step><para>Run <command>initexmf --mkmaps</command> to rebuild
+<step><para>Run <userinput>initexmf --mkmaps</userinput> to rebuild
 <filename>psfonts.map</filename>.</para></step>
 </procedure>
 
