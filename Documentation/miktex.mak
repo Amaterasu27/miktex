@@ -156,6 +156,7 @@ manual_xml_files = \
 	Ref\mf.xml \
 	Ref\mpost.xml \
 	Ref\mthelp.xml \
+	Ref\setupwiz.xml \
 	Ref\mtprint.xml \
 	Ref\omega.xml \
 	Ref\pdftex.xml \

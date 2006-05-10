@@ -1,86 +1,84 @@
-<section id="mtprint">
-
 <?dbhh topicname="MIKTEXHELP_MTPRINT" topicid="0"?>
 
-<title>&mtprint;</title>
+<refentry id="mtprint">
 
-<simplesect>
+<refmeta>
+<refentrytitle>mtprint</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>mtprint</refname>
+<refpurpose>&MiKTeX; print utility</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 &mtprint;
-<arg><option>--even-only</option></arg>
-<arg><option>--help</option></arg>
-<arg><option>--help</option></arg>
-<sbr/>
-<arg><option>--landscape</option></arg>
-<arg><option>--odd-only</option></arg>
-<sbr/>
-<arg><option>--page-range=<replaceable>range</replaceable></option></arg>
-<arg><option>--print-method=<replaceable>method</replaceable></option></arg>
-<sbr/>
-<arg><option>--print-nothing</option></arg>
-<arg><option>--printer=<replaceable>printer</replaceable></option></arg>
-<sbr/>
-<arg><option>--usage</option></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
 </cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
 <para>&mtprint; sends &TeX; output files to a printing device.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
 <variablelist>
 <varlistentry>
 <term><option>--even-only</option></term>
-<listitem><para>Prints only even &TeX;
+<listitem>
 <indexterm>
 <primary>--even-only</primary>
 </indexterm>
+<para>Prints only even &TeX;
 pages.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--landscape</option></term>
-<listitem><para>Selects landscape output
+<listitem>
 <indexterm>
 <primary>--landscape</primary>
 </indexterm>
+<para>Selects landscape output
 format.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--odd-only</option></term>
-<listitem><para>Prints only
+<listitem>
 <indexterm>
 <primary>--odd-only</primary>
 </indexterm>
+<para>Prints only
 odd &TeX; pages.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--page-range=<replaceable>range</replaceable></option></term>
-<listitem><para>Selects a &TeX; page range
+<listitem>
 <indexterm>
 <primary>--page-range=range</primary>
 </indexterm>
+<para>Selects a &TeX; page range
 (e.g., 20&ndash;21). Multiple
 <option>--page-range</option> options accumulate</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>--print-method=<replaceable>method</replaceable></term>
-<listitem><para>Selects a print method.
+<listitem>
 <indexterm>
 <primary>--print-method=method</primary>
 </indexterm>
+<para>Selects a print method.
 One of</para>
 <variablelist>
 <varlistentry>
@@ -99,30 +97,31 @@ for &PostScript; printers.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--print-nothing</option></term>
-<listitem><para>Simulates
+<listitem>
 <indexterm>
 <primary>--print-nothing</primary>
 </indexterm>
-printing.</para></listitem>
+<para>Simulates printing.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>--printer=<replaceable>printer</replaceable></term>
-<listitem><para>Selects a printing device. The default printer
+<listitem>
 <indexterm>
 <primary>--printer=printer</primary>
 </indexterm>
+<para>Selects a printing device. The default printer
 is used, if this option is omitted.</para></listitem>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

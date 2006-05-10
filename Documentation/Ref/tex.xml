@@ -1,83 +1,30 @@
-<section id="tex">
-
 <?dbhh topicname="MIKTEXHELP_TEX" topicid="0"?>
 
-<title>&tex;</title>
+<refentry id="tex">
 
-<simplesect>
+<refmeta>
+<refentrytitle>tex</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
 
-<title>Synopsis</title>
+<refnamediv>
+<refname>tex</refname>
+<refpurpose>&TeX;</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
 
 <cmdsynopsis>
 &tex;
-<arg><option>-alias=<replaceable>app</replaceable></option></arg>
-<arg><option>-aux-directory=<replaceable>dir</replaceable></option></arg>
-<arg><option>-buf-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-c-style-errors</option></arg>
-<arg><option>-disable-installer</option></arg>
-<sbr/>
-<arg><option>-enable-installer</option></arg>
-<arg><option>-enable-write18</option></arg>
-<arg><option>-error-line=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-font-max=<replaceable>n</replaceable></option></arg>
-<arg><option>-font-mem-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-half-error-line=<replaceable>n</replaceable></option></arg>
-<arg><option>-halt-on-error</option></arg>
-<arg><option>-help</option></arg>
-<arg><option>-hhelp</option></arg>
-<sbr/>
-<arg><option>-include-directory=<replaceable>dir</replaceable></option></arg>
-<arg><option>-initialize</option></arg>
-<arg><option>-interaction==<replaceable>mode</replaceable></option></arg>
-<sbr/>
-<arg><option>-job-name=<replaceable>name</replaceable></option></arg>
-<arg><option>-job-time=<replaceable>file</replaceable></option></arg>
-<sbr/>
-<arg><option>-max-in-open=<replaceable>n</replaceable></option></arg>
-<arg><option>-max-print-line=<replaceable>n</replaceable></option></arg>
-<arg><option>-max-strings=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-mem-bot=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-max=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-min=<replaceable>n</replaceable></option></arg>
-<arg><option>-mem-top=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-nest-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-output-directory=<replaceable>dir</replaceable></option></arg>
-<arg><option>-param-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-pool-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-quiet</option></arg>
-<sbr/>
-<arg><option>-record-package-usages=<replaceable>file</replaceable></option></arg>
-<arg><option>-recorder</option></arg>
-<sbr/>
-<arg><option>-save-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-src-specials</option></arg>
-<arg><option>-stack-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-string-vacancies=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-tcx=<replaceable>tcxname</replaceable></option></arg>
-<arg><option>-terminal=oem</option></arg>
-<arg><option>-time-statistics</option></arg>
-<arg><option>-trace=<replaceable>traceflags</replaceable></option></arg>
-<arg><option>-trie-op-size=<replaceable>n</replaceable></option></arg>
-<arg><option>-trie-size=<replaceable>n</replaceable></option></arg>
-<sbr/>
-<arg><option>-undump=<replaceable>fmtname</replaceable></option></arg>
-<arg><option>-version</option></arg>
-<arg><replaceable>file</replaceable></arg>
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <group>
-<arg choice="opt" rep="repeat"><replaceable>command</replaceable></arg>
 <arg choice="opt"><replaceable>file</replaceable></arg>
-</group>
-</cmdsynopsis>
+<arg choice="opt" rep="repeat">\<replaceable>command</replaceable></arg>
+</group></cmdsynopsis>
 
-</simplesect>
+</refsynopsisdiv>
 
-<simplesect>
+<refsect1>
 
 <title>Description</title>
 
@@ -156,9 +103,9 @@ character (usually <keycombo>
 <keysym>Z</keysym>
 </keycombo>).</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Options</title>
 
@@ -204,9 +151,9 @@ character (usually <keycombo>
 &optionversion;
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Aliases</title>
 
@@ -223,17 +170,17 @@ character (usually <keycombo>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>See Also</title>
 
 <para>See <xref linkend="texify"/>, for an alternative way to invoke &TeX;.</para>
 
-</simplesect>
+</refsect1>
 
-<simplesect>
+<refsect1>
 
 <title>Documentation</title>
 
@@ -244,14 +191,14 @@ character (usually <keycombo>
 </varlistentry>
 </variablelist>
 
-</simplesect>
+</refsect1>
 
-</section>
+</refentry>
 
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:
