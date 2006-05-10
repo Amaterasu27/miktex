@@ -71,7 +71,7 @@ public:
   MakeFmt ()
     : engine (Engine::TeX),
       compatibilityMode (false),
-      noDumpPrimitive(false)
+      noDumpPrimitive (false)
   {
   }
 
@@ -210,13 +210,18 @@ private:
 
 private:
   void
-  ParsePdfConfigFiles (/*[in,out]*/ CommandLineBuilder & cmdArgs)
+  ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
     const;
   
 private:
   void
   ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
-		      /*[in,out]*/ CommandLineBuilder &	cmdArgs)
+		      /*[in,out]*/ vector<tstring> &	primitives)
+    const;
+
+private:
+  void
+  InstallPdftexConfigTex ()
     const;
   
 private:
@@ -344,7 +349,7 @@ MakeFmt::FindInputFile (/*[in]*/  const PathName &	inputName,
    _________________________________________________________________________ */
 
 void
-MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ CommandLineBuilder & cmdArgs)
+MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
   const
 {
   // read all configuration files in reverse order
@@ -360,7 +365,7 @@ MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ CommandLineBuilder & cmdArgs)
 			     searchSpec.c_str(),
 			     cfgFile))
 	{
-	  ParsePdfConfigFile (cfgFile, cmdArgs);
+	  ParsePdfConfigFile (cfgFile, primitives);
 	}
     }
 }
@@ -448,7 +453,7 @@ ParseLine (/*[in]*/ const tstring &	line,
 
 void
 MakeFmt::ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
-			     /*[in,out]*/ CommandLineBuilder &	cmdArgs)
+			     /*[in,out]*/ vector<tstring> &	primitives)
   const
 {
   AutoFILE pFile (File::Open(cfgFile, FileMode::Open, FileAccess::Read));
@@ -458,10 +463,46 @@ MakeFmt::ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
       tstring primitive;
       if (ParseLine(line, primitive))
 	{
-	  cmdArgs.AppendArgument (primitive);
+	  primitives.push_back (primitive);
 	}
     }
   pFile.Reset ();
+}
+
+/* _________________________________________________________________________
+
+   MakeFmt::InstallPdftexConfigTex
+   _________________________________________________________________________ */
+
+void
+MakeFmt::InstallPdftexConfigTex ()
+  const
+{
+  vector<tstring> primitives;
+  ParsePdfConfigFiles (primitives);
+  PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot),
+		       MIKTEX_PATH_PDFTEXCONFIG_TEX);
+  StreamWriter writer (configFile);
+  bool havePdfMinorVersion = false;
+  for (vector<tstring>::iterator it = primitives.begin();
+       it != primitives.end();
+       ++ it)
+    {
+      writer.WriteLine (*it);
+      if (it->compare(0, 25, T_("\\pdfoptionpdfminorversion")) == 0)
+	{
+	  havePdfMinorVersion = true;
+	}
+    }
+  if (! havePdfMinorVersion)
+    {
+      writer.WriteLine (T_("\\pdfoptionpdfminorversion=4"));
+    }
+  writer.Close ();
+  if (! Fndb::FileExists(configFile))
+    {
+      Fndb::Add (configFile);
+    }
 }
 
 /* _________________________________________________________________________
@@ -542,12 +583,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
     }
   if (IsPdf())
     {
-      ParsePdfConfigFiles (arguments);
-      if (_tcsstr(arguments.Get(), T_("\\pdfoptionpdfminorversion")) == 0)
-	{
-	  arguments.AppendArgument (T_("\\pdfoptionpdfminorversion=4"));
-	}
-      useInputPrimitive = true;
+      InstallPdftexConfigTex ();
     }
   if (useInputPrimitive)
     {

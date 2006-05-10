@@ -190,9 +190,12 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <section>
 
-<title>&pdfTeX;</title>
+<title>&pdfeTeX;</title>
 
-<para>&pdfTeX; has been upgraded to version 1.30.6.</para>
+<para>&pdfeTeX; has been upgraded to version 1.30.6.</para>
+
+<para>&pdfeTeX; is now the default engine, also for &DVI;
+output.</para>
 
 </section>
 
@@ -299,21 +302,11 @@ files. An &HTML; viewer is started to view the page.</para>
 mouse-clicks) run:</para>
 
 <orderedlist>
-<listitem><para>The welcome page can be skipped (see <xref
-linkend="updatewiz-welcome"/>).</para>
+<listitem><para>The welcome page can be skipped.</para>
 </listitem>
 <listitem><para>The last used update source is offered as
 the default (see <xref linkend="updatewiz-source"/>)</para></listitem>
 </orderedlist>
-
-<figure id="updatewiz-welcome">
-<title>&MiKTeXUpdateWizard;: welcome page</title>
-<mediaobject>
-<imageobject>
-<imagedata fileref="images/updatewiz-welcome"/>
-</imageobject>
-</mediaobject>
-</figure>
 
 <figure id="updatewiz-source">
 <title>&MiKTeXUpdateWizard;: update source</title>

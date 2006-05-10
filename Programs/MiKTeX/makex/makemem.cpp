@@ -21,7 +21,16 @@
 
 #include "internal.h"
 
-#define OPT_DESTNAME	1
+/* _________________________________________________________________________
+
+   Options
+   _________________________________________________________________________ */
+
+enum {
+  OPT_AAA = 1,
+  OPT_DESTNAME,
+  OPT_NO_DUMP
+};
 
 /* _________________________________________________________________________
 
@@ -31,6 +40,12 @@
 class MakeMem
   : public MakeUtility
 {
+public:
+  MakeMem ()
+    : noDumpPrimitive (false)
+  {
+  }
+
 public:
   virtual
   void
@@ -50,10 +65,14 @@ private:
 private:
   BEGIN_OPTION_MAP(MakeMem)
     OPTION_ENTRY_SET(OPT_DESTNAME, destinationName);
+    OPTION_ENTRY_TRUE (OPT_NO_DUMP, noDumpPrimitive)
   END_OPTION_MAP();
   
 private:
   PathName destinationName;
+
+private:
+  bool noDumpPrimitive;
 };
 
 /* _________________________________________________________________________
@@ -74,6 +93,7 @@ Options:\n\
 --debug, -d                         Print debugging information.\n\
 --dest-name NAME                    Destination file name.\n\
 --help, -h                          Print this help screen and exit.\n\
+--no-dump                           Don't issue the dump command.\n\
 --print-only, -n                    Print what commands would be executed.\n\
 --verbose, -v                       Print information on what is being done.\n\
 --version, -V                       Print the version number and exit.")
@@ -90,6 +110,7 @@ namespace {
   {
     COMMON_OPTIONS,
     T_("dest-name"),	required_argument,	0,	OPT_DESTNAME,
+    T_("no-dump"),	no_argument,	0,		OPT_NO_DUMP,
     0,			no_argument,		0,	0,
   };
 }
@@ -153,7 +174,14 @@ MakeMem::Run (/*[in]*/ int			argc,
   arguments.AppendOption (T_("--initialize"));
   arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
   arguments.AppendOption (T_("--halt-on-error"));
-  arguments.AppendArgument (name + T_(" dump"));
+  if (! noDumpPrimitive)
+    {
+      arguments.AppendArgument (name + T_(" dump"));
+    }
+  else
+    {
+      arguments.AppendArgument (name);
+    }
   if (! RunProcess(T_("mp"), arguments.Get()))
     {
       FatalError (T_("MetaPost failed on %s."), Q_(name));
