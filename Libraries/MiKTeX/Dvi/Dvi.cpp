@@ -1847,6 +1847,12 @@ DviImpl::GetStatusText ()
    DviImpl::PageLoader
    _________________________________________________________________________ */
 
+const unsigned long sleepDurationLowestPrio		= 1000;	// milliseconds
+const unsigned long sleepDurationBelowNormalPrio	=  100;
+const unsigned long sleepDurationNormalPrio		=   10;
+const unsigned long sleepDurationAboveNormalPrio	=    0;
+const unsigned long sleepDurationHighestPrio		=    0;
+
 const unsigned long limitBelowNormalPrio		=   2 * 1024 * 1024;
 const unsigned long limitNormalPrio			=  20 * 1024 * 1024;
 const unsigned long limitAboveNormalPrio		=  50 * 1024 * 1024;
@@ -1893,7 +1899,8 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 	}
 
       for (int pageIdx = This->currentPageIdx + 1;
-	   ((wait = WaitForSingleObject(This->hByeByteEvent, 0))
+	   ((wait = WaitForSingleObject(This->hByeByteEvent,
+					sleepDurationBelowNormalPrio))
 	    != WAIT_OBJECT_0);
 	   pageIdx += This->direction)
 	{
@@ -1969,12 +1976,6 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 
    DviImpl::GarbageCollector
    _________________________________________________________________________ */
-
-const unsigned long sleepDurationLowestPrio		= 1000;	// milliseconds
-const unsigned long sleepDurationBelowNormalPrio	=   10;
-const unsigned long sleepDurationNormalPrio		=    0;
-const unsigned long sleepDurationAboveNormalPrio	=    0;
-const unsigned long sleepDurationHighestPrio		=    0;
 
 const time_t timeKeepBitmapsLowestPrio			= 120; // seconds
 const time_t timeKeepBitmapsBelowNormalPrio		=  60;
