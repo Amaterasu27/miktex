@@ -482,6 +482,7 @@ MakeFmt::InstallPdftexConfigTex ()
   ParsePdfConfigFiles (primitives);
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot),
 		       MIKTEX_PATH_PDFTEXCONFIG_TEX);
+  Directory::Create (PathName(configFile).RemoveFileSpec());
   StreamWriter writer (configFile);
   bool havePdfMinorVersion = false;
   for (vector<tstring>::iterator it = primitives.begin();
