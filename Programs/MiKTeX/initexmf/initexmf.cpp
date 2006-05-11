@@ -1538,6 +1538,10 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 				       ? T_("yes")
 				       : T_("no"))
 	    << endl;
+      tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
+				     ? T_("yes")
+				     : T_("no"))
+	    << endl;
     }
 #endif
   tcout << T_("SharedSetup: ") << (sharedSetup == TriState::True
