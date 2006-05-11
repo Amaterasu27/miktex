@@ -253,6 +253,17 @@ ErrorDialogImpl::OnCopy ()
 
 /* _________________________________________________________________________
 
+   IsWindowsNT
+   _________________________________________________________________________ */
+
+bool
+IsWindowsNT ()
+{
+  return (GetVersion() < 0x80000000 ? true : false);
+}
+
+/* _________________________________________________________________________
+
    ErrorDialogImpl::CreateReport
    _________________________________________________________________________ */
 
@@ -278,12 +289,19 @@ ErrorDialogImpl::CreateReport ()
 	  TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
 	  s << T_("MiKTeX: ")
 	    << Utils::GetMiKTeXVersionString() << endl
-	    << T_("OS: ") << Utils::GetOSVersionString() << endl
-	    << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
-				       ? T_("yes")
-				       : T_("no"))
-	    << endl
-	    << T_("SharedSetup: ") << (sharedSetup == TriState::True
+	    << T_("OS: ") << Utils::GetOSVersionString() << endl;
+	  if (IsWindowsNT())
+	    {
+	      s << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+					   ? T_("yes")
+					   : T_("no"))
+		<< endl;
+	      s << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
+					 ? T_("yes")
+					 : T_("no"))
+		<< endl;
+	    }
+	  s << T_("SharedSetup: ") << (sharedSetup == TriState::True
 				       ? T_("yes")
 				       : (sharedSetup == TriState::False
 					  ? T_("no")
