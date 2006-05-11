@@ -961,6 +961,9 @@ SessionImpl::SessionImpl ()
     recordingPackageNames (false),
     refCount (0),
     runningAsAdministrator (TriState::Undetermined),
+#if defined(MIKTEX_WINDOWS)
+    runningAsPowerUser (TriState::Undetermined),
+#endif
     sharedSetup (TriState::Undetermined),
     makeFonts (true),
     pInstallPackageCallback (0),

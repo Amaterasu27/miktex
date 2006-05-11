@@ -1987,6 +1987,12 @@ public:
   MIKTEXCALL
   TryCreateFromTemplate (/*[in]*/ const PathName & path);
 
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  RunningAsPowerUser ();
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -2073,6 +2079,12 @@ private:
 private:
   bool
   GetATMFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  bool
+  RunningAs (/*[in]*/ DWORD localGroup);
 #endif
 
 public:
@@ -2537,6 +2549,11 @@ private:
 
 private:
   TriState runningAsAdministrator;
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  TriState runningAsPowerUser;
+#endif
 
 private:
   tstring applicationNames;

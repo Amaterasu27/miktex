@@ -1953,22 +1953,14 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 
 /* _________________________________________________________________________
 
-   SessionImpl::RunningAsAdministrator
+   SessionImpl::RunningAs
 
    See MSDN article "Windows NT Security" by Christopher Nefcy.
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
-SessionImpl::RunningAsAdministrator ()
+SessionImpl::RunningAs (/*[in]*/ DWORD localGroup)
 {
-  if (runningAsAdministrator != TriState::Undetermined)
-    {
-      return (runningAsAdministrator == TriState::True ? true : false);
-    }
-
-  runningAsAdministrator = TriState::False;
-
   HANDLE hThread;
 
   if (! OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hThread))
@@ -2024,7 +2016,7 @@ SessionImpl::RunningAsAdministrator ()
   if (! AllocateAndInitializeSid(&SystemSidAuthority,
 				 2,
 				 SECURITY_BUILTIN_DOMAIN_RID,
-				 DOMAIN_ALIAS_RID_ADMINS,
+				 localGroup,
 				 0, 0, 0, 0, 0, 0,
 				 &psidAdmin))
     {
@@ -2037,13 +2029,52 @@ SessionImpl::RunningAsAdministrator ()
     {
       if (EqualSid(ptg->Groups[i].Sid, psidAdmin))
 	{
-	  runningAsAdministrator = TriState::True;
 	  return (true);
 	}
     }
 
   return (false);
 }
+
+/* _________________________________________________________________________
+
+   SessionImpl::RunningAsAdministrator
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+SessionImpl::RunningAsAdministrator ()
+{
+  if (runningAsAdministrator == TriState::Undetermined)
+    {
+      runningAsAdministrator =
+	(RunningAs(DOMAIN_ALIAS_RID_ADMINS)
+	 ? TriState::True
+	 : TriState::False);
+    }
+  return (runningAsAdministrator == TriState::True ? true : false);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::RunningAsPowerUser
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+bool
+MIKTEXCALL
+SessionImpl::RunningAsPowerUser ()
+{
+  if (runningAsPowerUser == TriState::Undetermined)
+    {
+      runningAsPowerUser =
+	(RunningAs(DOMAIN_ALIAS_RID_POWER_USERS)
+	 ? TriState::True
+	 : TriState::False);
+    }
+  return (runningAsPowerUser == TriState::True ? true : false);
+}
+#endif
 
 /* _________________________________________________________________________
 

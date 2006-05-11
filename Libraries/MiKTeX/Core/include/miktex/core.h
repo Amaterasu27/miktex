@@ -5705,6 +5705,13 @@ public:
     = 0;
 
 public:
+  virtual
+  bool
+  MIKTEXCALL
+  RunningAsPowerUser ()
+    = 0;
+
+public:
   static
   MIKTEXEXPORT
   void
