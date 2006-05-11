@@ -66,9 +66,12 @@
 #include <miktex/core.h>
 #include <miktex/dvi.h>
 #include <miktex/paths.h>
+#include <miktex/reg.h>
 #include <miktex/trace.h>
 #include <miktex/version.h>
+
 #include <popt-miktex.h>
+
 #include <afxdlgs.h>
 
 using namespace MiKTeX::Core;

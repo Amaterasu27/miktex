@@ -144,4 +144,7 @@
 #define MIKTEX_REGVAL_DOC_SUFFIXES \
   MIKTEXTEXT("DocExtensions")
 
+#define MIKTEX_DVI_FILE_TYPE_IDENTIFIER \
+  MIKTEXTEXT("MiKTeX.Yap.dvi.") MIKTEXTEXT(MIKTEX_SERIES_STR)
+
 #endif	/* miktex/reg.h */

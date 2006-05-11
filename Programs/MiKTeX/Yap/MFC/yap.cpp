@@ -109,7 +109,8 @@ namespace {
    _________________________________________________________________________ */
 
 namespace {
-  bool regOrUnreg = false;
+  bool registering = false;
+  bool unregistering = false;
 }
 
 void
@@ -181,7 +182,7 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
 
 	case OPT_REGISTER:
 	  cmdInfo.m_nShellCommand = CCommandLineInfo::AppRegister;
-	  regOrUnreg = true;
+	  registering = true;
 	  break;
 
 	case OPT_TRACE:
@@ -190,7 +191,7 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
 
 	case OPT_UNREGISTER:
 	  cmdInfo.m_nShellCommand = CCommandLineInfo::AppUnregister;
-	  regOrUnreg = true;
+	  unregistering = true;
 	  break;
 
 	}
@@ -416,7 +417,8 @@ YapApplication::InitInstance ()
       YapApplication::EnableShellOpen ();
       
       // check to see if Yap is the default viewer
-      if (g_pYapConfig->checkFileTypeAssociations)
+      if ((registering || g_pYapConfig->checkFileTypeAssociations)
+	  && ! unregistering)
 	{
 	  MIKTEXCHAR szClass[BufferSizes::MaxPath];
 	  long size = BufferSizes::MaxPath;
@@ -425,14 +427,18 @@ YapApplication::InitInstance ()
 			       szClass,
 			       &size)
 	       == ERROR_SUCCESS)
-	      && (StringCompare(szClass, T_("DVI.Document"), true) != 0)
-	      && (AfxMessageBox(IDP_FILE_ASSOCIATION,
-				MB_YESNO,
-				IDP_FILE_ASSOCIATION)
-		  == IDYES))
+	      && ((StringCompare(szClass,
+				 MIKTEX_DVI_FILE_TYPE_IDENTIFIER,
+				 true)
+		   != 0))
+	      && (registering
+		  || (AfxMessageBox(IDP_FILE_ASSOCIATION,
+				    MB_YESNO,
+				    IDP_FILE_ASSOCIATION)
+		      == IDYES)))
 	    {
 	      // remove .dvi file association; will be restored later
-	      RegDeleteKey (HKEY_CLASSES_ROOT, T_(".dvi"));
+	      SHDeleteKey (HKEY_CLASSES_ROOT, T_(".dvi"));
 	    }
 	}
       
@@ -592,7 +598,7 @@ YapApplication::ExitInstance ()
   try
     {
       // save YAP configuration settings
-      if (! regOrUnreg && initialized)
+      if (! (registering || unregistering) && initialized)
 	{
 	  try
 	    {

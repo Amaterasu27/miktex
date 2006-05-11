@@ -920,7 +920,7 @@ IDR_MANIFEST            RT_MANIFEST             "res\\yap.manifest"
 STRINGTABLE 
 BEGIN
     IDP_FILE_ASSOCIATION    "Yap is not currently registered as the default DVI viewer.\nDo you wish to register Yap as the default DVI viewer?"
-    IDR_DVITYPE             "\nDVI\nDVI\nDVI Files (*.dvi)\n.dvi\nDVI.Document\nDVI Document"
+    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.2.5\nDVI File"
     IDR_MAINFRAME           "Yap"
     IDP_CHOOSE_EDITOR       "You must choose an editor so that Yap can perform the requested operation. Do you want to choose an editor now?"
 END

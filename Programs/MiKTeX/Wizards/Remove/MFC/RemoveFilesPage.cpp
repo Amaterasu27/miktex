@@ -569,7 +569,8 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ tstring &	path)
 void
 RemoveFilesPage::UnregisterPathNT ()
 {
-  if (SessionWrapper(true)->RunningAsAdministrator())
+  if (SessionWrapper(true)->RunningAsAdministrator()
+      || SessionWrapper(true)->RunningAsPowerUser())
     {
       UnregisterPathNT (true);
     }
@@ -718,7 +719,8 @@ RemoveFilesPage::RemoveRegistryKeys ()
 {
   bool shared =
     (! IsWindowsNT()
-     || SessionWrapper(true)->RunningAsAdministrator());
+     || SessionWrapper(true)->RunningAsAdministrator()
+     || SessionWrapper(true)->RunningAsPowerUser());
 
   if (shared && Exists(HKEY_LOCAL_MACHINE, MIKTEX_REGPATH_SERIES))
     {
@@ -761,10 +763,13 @@ RemoveFilesPage::RemoveRegistryKeys ()
       RemoveRegistryKey (HKEY_CURRENT_USER, MIKTEX_GPL_GHOSTSCRIPT);
     }
 
-  if (shared && yapIsDefaultViewer)
+  if (shared)
     {
-      RemoveRegistryKey (HKEY_CLASSES_ROOT, T_(".dvi"));
-      RemoveRegistryKey (HKEY_CLASSES_ROOT, T_("DVI.Document"));
+      if (yapIsDefaultViewer)
+	{
+	  RemoveRegistryKey (HKEY_CLASSES_ROOT, T_(".dvi"));
+	}
+      RemoveRegistryKey (HKEY_CLASSES_ROOT, MIKTEX_DVI_FILE_TYPE_IDENTIFIER);
     }
 }
   
