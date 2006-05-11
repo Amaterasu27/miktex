@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2321">
+<!ENTITY rev "2.5.2322">
 <!ENTITY month "May 2006">
-<!ENTITY date "May 10, 2006">
+<!ENTITY date "May 11, 2006">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
@@ -483,13 +483,13 @@ etex "&amp;latex" sample2e</programlisting>
 &maninitexmf;
 &manmf;
 &manmpm;
-&mansetupwiz;
 &manmpost;
 &manmthelp;
 &manmtprint;
 &manomega;
 &manpdftex;
 &manpdftexcfg;
+&mansetupwiz;
 &mantex;
 &mantexify;
 &manupdmapcfg;

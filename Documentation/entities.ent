@@ -112,7 +112,8 @@
 <!ENTITY pdfvirtex "<command>pdfvirtex</command>">
 <!ENTITY progfldr "MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY prompt "&gt; ">
-<!ENTITY setupexe "<filename>setup.exe</filename>">
+<!ENTITY basicmiktexexe "<command>basic-miktex-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</command>">
+<!ENTITY setupexe "<command>setup-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</command>">
 <!ENTITY tex "<command>tex</command>">
 <!ENTITY mthelp "<command>mthelp</command>">
 <!ENTITY texdoc "<command>texdoc</command>">

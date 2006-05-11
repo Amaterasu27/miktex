@@ -8,15 +8,22 @@
 </refmeta>
 
 <refnamediv>
-<refname>setupwiz</refname>
+<refdescriptor>setupwiz</refdescriptor>
+<refname>basic-miktex</refname>
+<refname>setup</refname>
 <refpurpose>&MiKTeX; setup wizard</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 
 <cmdsynopsis>
-setupwiz
-<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
+&basicmiktexexe;
+<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+</cmdsynopsis>
+
+<cmdsynopsis>
+&setupexe;
+<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
 </cmdsynopsis>
 
 </refsynopsisdiv>
@@ -24,6 +31,30 @@ setupwiz
 <refsect1>
 
 <title>Description</title>
+
+<para>&MiKTeXSetupWizard; is used to install &MiKTeX;.</para>
+
+<para>The wizard and the package files are packaged as a
+self-extracting installer.  There a two instances of the
+installer:</para>
+
+<variablelist>
+<varlistentry>
+<term>&basicmiktexexe;</term>
+<listitem>
+<para>The <quote>Small &MiKTeX;</quote> installer can be used to create
+a small (basic) &MiKTeX; system.
+install</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>&setupexe;</term>
+<listitem>
+<para>The net installer can be used to install a complete &MiKTeX;
+system.</para>
+</listitem>
+</varlistentry>
+</variablelist>
 
 <para>&MiKTeXSetupWizard; reads options from the file
 <indexterm>
