@@ -63,7 +63,9 @@ SharedInstallationPage::OnInitDialog ()
 
   try
     {
-      if (IsWindowsNT() && ! SessionWrapper(true)->RunningAsAdministrator())
+      if (IsWindowsNT()
+	  && ! (SessionWrapper(true)->RunningAsAdministrator()
+		|| SessionWrapper(true)->RunningAsPowerUser()))
 	{
 	  CWnd * pWnd = GetDlgItem(IDC_SHARED);
 	  if (pWnd == 0)

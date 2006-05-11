@@ -330,7 +330,8 @@ ParseSetupCommandLine2 (/*[in]*/ int				argc,
 	  break;
 
 	case OPT_COMMON_CONFIG:
-	  if (! SessionWrapper(true)->RunningAsAdministrator())
+	  if (! (SessionWrapper(true)->RunningAsAdministrator()
+		 || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -342,7 +343,8 @@ a common configuration directory."),
 	  break;
 
 	case OPT_COMMON_DATA:
-	  if (! SessionWrapper(true)->RunningAsAdministrator())
+	  if (! (SessionWrapper(true)->RunningAsAdministrator()
+		 || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -403,7 +405,8 @@ a common data directory."),
 	  break;
 
 	case OPT_SHARED:
-	  if (! SessionWrapper(true)->RunningAsAdministrator())
+	  if (! (SessionWrapper(true)->RunningAsAdministrator()
+		 || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -1733,7 +1736,9 @@ CreateProgramFolder ()
 void
 RegisterMiKTeXFileTypes ()
 {
-  if (! theApp.dryRun)
+  if (! theApp.dryRun
+      && (SessionWrapper(true)->RunningAsAdministrator()
+	  || SessionWrapper(true)->RunningAsPowerUser()))
     {
       PathName yap (theApp.startupConfig.installRoot);
       yap += MIKTEX_PATH_BIN_DIR;
@@ -2120,8 +2125,12 @@ LogHeader ()
   Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
   if (IsWindowsNT())
     {
-      Log (T_("Admin: %s\n"),
+      Log (T_("SystemAdmin: %s\n"),
 	   (SessionWrapper(true)->RunningAsAdministrator()
+	    ? T_("yes")
+	    : T_("false")));
+      Log (T_("PowerUser: %s\n"),
+	   (SessionWrapper(true)->RunningAsPowerUser()
 	    ? T_("yes")
 	    : T_("false")));
     }
