@@ -257,20 +257,29 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		/*[in,out]*/ unsigned char *	rgChar,
 		/*[in,out]*/ unsigned char *	rgOrd)
 {
-  assert (lpszFileName != 0);
   PathName tcxPath;
-  if (! SessionWrapper(true)->FindFile(lpszFileName,
-				       FileType::TCX,
-				       tcxPath))
+
+  if (! SessionWrapper(true)->FindFile(lpszFileName, FileType::TCX, tcxPath))
     {
       return (false);
     }
-  FileStream stream (File::Open(tcxPath, FileMode::Open, FileAccess::Read));
+
+  StreamReader reader (tcxPath);
+
   tstring line;
-  while (Utils::ReadUntilDelim(line, T_('\n'), stream.Get()))
+  int lineNumber = 0;
+
+  while (reader.ReadLine(line))
     {
+      ++ lineNumber;
+
       const MIKTEXCHAR * start;
       MIKTEXCHAR * end;
+
+      if (line.empty() || line[0] == T_('%'))
+	{
+	  continue;
+	}
 
       start = line.c_str();
 
@@ -315,7 +324,9 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       rgChar[xchridx] = static_cast<unsigned char>(xordidx);
       rgOrd[xordidx] = static_cast<unsigned char>(xchridx);
     }
-  stream.Close ();
+
+  reader.Close ();
+
   return (true);
 }
 
