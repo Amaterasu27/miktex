@@ -150,6 +150,9 @@ private:
 
 private:
   static const struct poptOption aoption[];
+
+private:
+  static const struct poptOption aoptionKpse[];
 };
 
 /* _________________________________________________________________________
@@ -188,17 +191,85 @@ when searching for files."),
   },
 
   {
+    T_("file-type"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_FILE_TYPE,
+    T_("The type of the file to search for."),
+    T_("FILETYPE"),
+  },
+
+  {
+    T_("list-file-types"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_LIST_FILE_TYPES,
+    T_("List known file types."),
+    0,
+  },
+
+  {
+    T_("must-exist"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_MUST_EXIST,
+    T_("Run the package installer, if necessary."),
+    0,
+  },
+
+  {
+    T_("show-path"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_SHOW_PATH,
+    T_("Show the search path for a certain file type."),
+    T_("FILETYPE"),
+  },
+
+  {
+    T_("start"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_START,
+    T_("Start the asoociated program."),
+    0,
+  },
+
+  {
+    T_("version"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_VERSION,
+    T_("Print version information and exit."),
+    0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   FindTeXMF::aoptionKpse
+   _________________________________________________________________________ */
+
+const struct poptOption FindTeXMF::aoptionKpse[] =
+{
+  {
+    T_("alias"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_ALIAS,
+    T_("Pretend to be APP, i.e., use APP's configuration settings \
+when searching for files."),
+    T_("APP"),
+  },
+
+  {
     T_("expand-path"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_PATH,
-    T_("Undocumented"), T_("PATH"),
+    T_("Deprecated."), T_("PATH"),
   },
 
   {
     T_("expand-var"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_VAR,
-    T_("Undocumented"), T_("VAR"),
+    T_("Deprecated."), T_("VAR"),
   },
 
   {
@@ -211,10 +282,10 @@ when searching for files."),
 
   {
     T_("format"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
-    T_("Undocumented"),
-    T_("Format"),
+    T_("Deprecated."),
+    T_("FORMAT"),
   },
 
   {
@@ -235,9 +306,9 @@ when searching for files."),
 
   {
     T_("progname"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN | POPT_ARGFLAG_ONEDASH, 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
-    T_("Undocumented"),
+    T_("Deprecated."),
     T_("PROGNAME"),
   },
 
@@ -253,7 +324,7 @@ when searching for files."),
     T_("start"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_START,
-    T_("Start ..."),
+    T_("Start the associated program."),
     0,
   },
 
@@ -268,7 +339,6 @@ when searching for files."),
   POPT_AUTOHELP
   POPT_TABLEEND
 };
-
 
 /* _________________________________________________________________________
 
@@ -291,13 +361,6 @@ FindTeXMF::FindTeXMF ()
 void
 FindTeXMF::ShowVersion ()
 {
-#if 0
-  if (kpseMode)
-    {
-      tcout << "kpathsea version 3.3.2" << endl;
-      return;
-    }
-#endif
   tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
 	<< T_("\n")
@@ -305,6 +368,11 @@ FindTeXMF::ShowVersion ()
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
+  if (kpseMode)
+    {
+      tcout << T_("warning: running in deprecated kpathsea emulation mode")
+	    << endl;
+    }
 }
 
 /* _________________________________________________________________________
@@ -418,8 +486,10 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 		  /*[in]*/ const MIKTEXCHAR **		argv)
 {
   kpseMode = (PathName::Compare(Utils::GetExeName(), T_("kpsewhich")) == 0);
+
+  bool needArg = true;
   
-  Cpopt popt (argc, argv, aoption);
+  Cpopt popt (argc, argv, (kpseMode ? aoptionKpse : aoption));
 
   int option;
   while ((option = popt.GetNextOpt()) >= 0)
@@ -430,7 +500,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 
 	case OPT_ALIAS:
 	    
-	  pSession->PushBackAppName (lpszOptArg);
+	  pSession->PushAppName (lpszOptArg);
 	  break;
 	  
 	case OPT_EXPAND_VAR:
@@ -452,11 +522,12 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	    }
 	  else
 	    {
-#if 1
+#if 0
 	      FatalError (T_("Unsupported kpathsea feature: %s."),
 			  lpszOptArg);
 #endif
 	    }
+	  needArg = false;
 	  break;
 
 	case OPT_EXPAND_PATH:
@@ -472,11 +543,12 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	    }
 	  else
 	    {
-#if 1
+#if 0
 	      FatalError (T_("Unsupported kpathsea feature: %s."),
 			  lpszOptArg);
 #endif
 	    }
+	  needArg = false;
 	  break;
 
 	case OPT_FILE_TYPE:
@@ -491,6 +563,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	case OPT_LIST_FILE_TYPES:
 
 	  ListFileTypes ();
+	  needArg = false;
 	  break;
 	    
 	case OPT_MUST_EXIST:
@@ -511,6 +584,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	      {
 		PrintSearchPath (searchPath.c_str());
 	      }
+	    needArg = false;
 	    break;
 	  }
 
@@ -540,7 +614,20 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 
   if (leftovers == 0)
     {
-      return;
+      if (! needArg)
+	{
+	  return;
+	}
+      else if (kpseMode)
+	{
+	  tcout << T_("warning: running in deprecated kpathsea emulation mode")
+		<< endl;
+	  throw (1);
+	}
+      else
+	{
+	  FatalError (T_("Missing argument. Try 'findtexmf --help'."));
+	}
     }
 
   for (; *leftovers != 0; ++ leftovers)
