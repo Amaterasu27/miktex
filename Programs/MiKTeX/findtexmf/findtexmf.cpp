@@ -453,7 +453,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	  else
 	    {
 #if 1
-	      FatalError (T_("Unsupported kpathsea feature (%s)."),
+	      FatalError (T_("Unsupported kpathsea feature: %s."),
 			  lpszOptArg);
 #endif
 	    }
@@ -473,7 +473,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	  else
 	    {
 #if 1
-	      FatalError (T_("Unsupported kpathsea feature (%s)."),
+	      FatalError (T_("Unsupported kpathsea feature: %s."),
 			  lpszOptArg);
 #endif
 	    }
@@ -484,7 +484,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	  fileType = pSession->DeriveFileType(lpszOptArg);
 	  if (fileType == FileType::None)
 	    {
-	      FatalError (T_("Unknown file type (%s)."), lpszOptArg);
+	      FatalError (T_("Unknown file type: %s."), lpszOptArg);
 	    }
 	  break;
 
