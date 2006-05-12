@@ -409,6 +409,11 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	,
 {
   try
     {
+      if (pInstaller.get() == 0)
+	{
+	  return (0);
+	}
+
       // get progress information
       PackageInstaller::ProgressInfo progressInfo =
 	pInstaller->GetProgressInfo();
