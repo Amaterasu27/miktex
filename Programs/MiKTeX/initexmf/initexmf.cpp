@@ -629,8 +629,9 @@ const struct poptOption IniTeXMFApp::aoption[] = {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
-    T_("Open a config file in an editor."),
-    T_("APP")
+    T_("Open the specified config file in an editor. FILE must be one of: \
+dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
+    T_("FILE")
   },
 
   {
