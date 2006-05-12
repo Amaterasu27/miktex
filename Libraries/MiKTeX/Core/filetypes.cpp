@@ -701,9 +701,9 @@ SessionImpl::RegisterFileTypes ()
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(false,
-				   MIKTEX_PATH_MIKTEX_CONFIG_DIR)
+				   MIKTEX_PATH_MIKTEX_CONFIG_DIR),
 		 SearchSpecBuilder(false,
-				   MIKTEX_PATH_WEB2C_DIR),
+				   MIKTEX_PATH_WEB2C_DIR)
 		 ),
      ListBuilder());
   
