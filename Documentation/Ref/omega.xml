@@ -107,7 +107,7 @@
 <variablelist>
 <varlistentry>
 <term><citetitle>Draft documentation for the &Omega; system</citetitle></term>
-<listitem><para>Run <userinput>texdoc omega-manual</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp omega-manual</userinput></para></listitem>
 </varlistentry>
 </variablelist>
 

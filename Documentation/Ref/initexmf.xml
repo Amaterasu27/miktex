@@ -36,7 +36,6 @@
 <variablelist>
 <varlistentry>
 <term><option>--dump</option></term>
-<term><option>--dump=<replaceable>fmtname</replaceable></option></term>
 <listitem>
 <indexterm>
 <primary>--dump</primary>
@@ -45,8 +44,24 @@
 <primary>format files</primary>
 <secondary>creating</secondary>
 </indexterm>
-<para>Either dump all format files, or dump
-the specified format file.</para></listitem>
+<para>Create all format files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--dump=<replaceable>fmtname</replaceable></option></term>
+<listitem><para>Dump the specified format file.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--edit-config-file=<replaceable>file</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--edit-config-file=file</primary>
+</indexterm>
+<para>Open the specified config file in an editor.
+<replaceable>file</replaceable> must be one of:
+<option>dvipdfm</option>, <option>dvipdfmx</option>,
+<option>dvips</option>, <option>pdftex</option>,
+<option>updmap</option>.</para>
+</listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--list-modes</option></term>
@@ -78,12 +93,10 @@ the specified format file.</para></listitem>
 <primary>psfonts.map</primary>
 <secondary>creating</secondary>
 </indexterm>
-<para>Create the file <filename>psfonts.map</filename>.
-See <xref linkend="psfonts"/>, for more information.</para></listitem>
+<para>Build the font map files.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--print-only</option></term>
-<term><option>-n</option></term>
 <listitem>
 <indexterm>
 <primary>--print-only</primary>
@@ -92,7 +105,6 @@ See <xref linkend="psfonts"/>, for more information.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--quiet</option></term>
-<term><option>-q</option></term>
 <listitem>
 <indexterm>
 <primary>--quiet</primary>
@@ -109,7 +121,6 @@ See <xref linkend="psfonts"/>, for more information.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--update-fndb</option></term>
-<term><option>-u</option></term>
 <listitem>
 <indexterm>
 <primary>--update-fndb</primary>
@@ -122,13 +133,11 @@ See <xref linkend="psfonts"/>, for more information.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--update-fndb=<replaceable>dir</replaceable></option></term>
-<term><option>-u<replaceable>dir</replaceable></option></term>
 <listitem><para>Refresh the file name database for a specific
 &TEXMF; tree.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--verbose</option></term>
-<term><option>-v</option></term>
 <listitem>
 <indexterm>
 <primary>--verbose</primary>
@@ -137,7 +146,6 @@ See <xref linkend="psfonts"/>, for more information.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--version</option></term>
-<term><option>-V</option></term>
 <listitem>
 <indexterm>
 <primary>--version</primary>
@@ -161,7 +169,7 @@ See <xref linkend="psfonts"/>, for more information.</para></listitem>
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "reference")
+sgml-parent-document: ("../miktex.xml" "reference")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

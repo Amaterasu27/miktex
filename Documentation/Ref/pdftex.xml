@@ -111,7 +111,7 @@ instead of &DVI;.</para>
 <variablelist>
 <varlistentry>
 <term><citetitle>The &pdfTeX; user manual</citetitle> (A4 version)</term>
-<listitem><para>Run <userinput>texdoc pdftex-a</userinput></para></listitem>
+<listitem><para>Run <userinput>mthelp pdftex-a</userinput></para></listitem>
 </varlistentry>
 </variablelist>
 

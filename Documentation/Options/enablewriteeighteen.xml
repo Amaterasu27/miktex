@@ -1,6 +1,6 @@
 <varlistentry>
 <term><option>-enable-write18</option></term>
-<listitem><para>Enable the <markup role="tex">\write18</markup> construct (see
+<listitem>
 <indexterm>
 <primary>-enable-write18</primary>
 </indexterm>
@@ -10,7 +10,8 @@
 <indexterm>
 <primary>\write18 (run a program from within TeX)</primary>
 </indexterm>
-<xref linkend="writeeighteen"/>).</para></listitem>
+<para>Enable the <markup role="tex">\write18</markup>
+construct.</para></listitem>
 </varlistentry>
 
 <!--

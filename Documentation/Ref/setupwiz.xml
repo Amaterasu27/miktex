@@ -40,23 +40,22 @@ installer:</para>
 
 <variablelist>
 <varlistentry>
-<term>&basicmiktexexe;</term>
+<term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
 <listitem>
-<para>The <quote>Small &MiKTeX;</quote> installer can be used to create
-a small (basic) &MiKTeX; system.
-install</para>
+<para>The <quote>Small &MiKTeX;</quote> installer can be used to set up
+a small (basic) &MiKTeX; system.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term>&setupexe;</term>
+<term>&MiKTeXNetInstaller; (&setupexe;)</term>
 <listitem>
-<para>The net installer can be used to install a complete &MiKTeX;
-system.</para>
+<para>The net installer can be used to set up a
+complete &MiKTeX; system.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 
-<para>&MiKTeXSetupWizard; reads options from the file
+<para>Both installers read options from the file
 <indexterm>
 <primary>setupwiz.opt</primary>
 </indexterm>
@@ -75,8 +74,13 @@ though this is a bit intricated.  You have to stick to the following
 syntax:</para>
 
 <cmdsynopsis>
-<command>&setupexe;</command>
-<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable>"</option></arg>
+&basicmiktexexe;
+<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+</cmdsynopsis>
+
+<cmdsynopsis>
+&setupexe;
+<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
 </cmdsynopsis>
 
 <para>Note that the placement of quotation marks is important, and
@@ -94,7 +98,7 @@ double quotation marks.</para>
 in unattended mode:</para>
       
 <informalexample>
-<screen><prompt>&prompt;</prompt><userinput>&setupexe; /C:"setupwiz --setup-path=""#e"" --unattended"</userinput>
+<screen><prompt>&prompt;</prompt><userinput>&basicmiktexexe; /C:"setupwiz --setup-path=""#e"" --unattended"</userinput>
 <prompt>&prompt;</prompt></screen>
 </informalexample>
 
@@ -114,13 +118,13 @@ in unattended mode:</para>
 <varlistentry>
 <term><option>--common-config=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the common configuration directory.
-This option requires administrative privileges.</para></listitem>
+This option requires administrator privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
 <term><option>--common-data=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the common data directory.
-This option requires administrative privileges.</para></listitem>
+This option requires administrator privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
@@ -137,7 +141,8 @@ downloaded and/or installed.</para></listitem>
 	
 <varlistentry>
 <term><option>--install-from-local-repository</option></term>
-<listitem><para>Install &MiKTeX; from a directory.</para></listitem>
+<listitem><para>Install &MiKTeX; from a directory (to be specified
+with the <option>--local-package-repository</option> option).</para></listitem>
 </varlistentry>
 	
 <varlistentry>
@@ -160,7 +165,7 @@ the &MiKTeX; setup.</para></listitem>
 <term><option>--private</option></term>
 <listitem><para>Install &MiKTeX; for the
 <indexterm>
-<primary>shared installation</primary>
+<primary>private installation</primary>
 </indexterm>
 current user only.</para></listitem>
 </varlistentry>
@@ -178,7 +183,7 @@ current user only.</para></listitem>
 <varlistentry>
 <term><option>--roots=<replaceable>dirs</replaceable></option></term>
 <listitem><para>Register additional &TEXMF; root directories.
-<replaceable>dirs</replaceable> is a semicolon-separated list of fully
+<replaceable>dirs</replaceable> must be a semicolon-separated list of fully
 qualified path names.</para></listitem>
 </varlistentry>
 	
@@ -188,7 +193,7 @@ qualified path names.</para></listitem>
 <indexterm>
 <primary>shared installation</primary>
 </indexterm>
-requires administrative privileges.</para></listitem>
+requires administrator privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>

@@ -166,6 +166,9 @@ manual_xml_files = \
 	Ref\updmapcfg.xml \
 	miktex.xml \
 
+manual_listings = \
+	filetypes
+
 documents = $(html_files) $(chm_files) $(pdf_files)
 
 .SUFFIXES: .png .eps .xml .bb
@@ -409,10 +412,14 @@ $(miktexsrcdir)\NEWS: \
 # Manual
 # -----------------------------------------------------------------------------
 
+filetypes:
+	findtexmf --list-file-types> $@
+
 miktex.chm: \
 			$(cssdir)\miktexhelp.css \
 			$(html_manual_images) \
 			$(libdir)\include\miktex\help.h \
+			$(manual_listings)\
 			$(manual_xml_files)\
 			$(xsldir)\htmlhelp.xsl \
 			entities.ent \
@@ -438,6 +445,7 @@ miktex.chm: \
 	$(rmdir) scratch
 
 miktex.tex: \
+			$(manual_listings)\
 			$(manual_xml_files) \
 			$(xsldir)\db2latex-common.xsl \
 			$(xsldir)\db2latex-manual.xsl \
@@ -494,6 +502,7 @@ www\manual\images:
 
 www\manual\index.html: \
 			www\manual \
+			$(manual_listings)\
 			$(manual_xml_files) \
 			$(xsldir)\htmlchunk.xsl \
 
@@ -517,6 +526,7 @@ refman.chm: \
 			$(cssdir)\miktexhelp.css \
 			$(html_manual_images) \
 			$(libdir)\include\miktex\help.h \
+			$(manual_listings)\
 			$(manual_xml_files)\
 			$(xsldir)\htmlhelp.xsl \
 			entities.ent \
@@ -542,6 +552,7 @@ refman.chm: \
 	$(rmdir) scratch
 
 refman.tex: \
+			$(manual_listings)\
 			$(manual_xml_files) \
 			$(xsldir)\db2latex-common.xsl \
 			$(xsldir)\db2latex-manual.xsl \
@@ -644,6 +655,7 @@ clean: mostlyclean
 	if exist www $(rmdir) www
 	if exist png75 $(rmdir) png75
 	if exist scratch $(rmdir) scratch
+	if exist filetypes del /f filetypes
 	for %f in ( \
 				$(chm_files) \
 				$(html_files) \

@@ -114,8 +114,7 @@ the current file.  The configuration value <parameter
 class="option">Editor</parameter> can be used to change the editor
 used.  It may contain a string with <literal>%f</literal> indicating
 where the filename goes and <literal>%l</literal> indicating where the
-decimal line number (if any) goes. See <xref linkend="miktexini-tex"/>
-for more information.</para>
+decimal line number (if any) goes.</para>
 
 <para>A convenient file is <filename>null.mf</filename>, containing
 nothing.  When &METAFONT; can't find the file it thinks you want to

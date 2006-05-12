@@ -31,6 +31,7 @@
 <!ENTITY MetaPost "<application>MetaPost</application>">
 <!ENTITY Microsoft "Microsoft">
 <!ENTITY MiKTeXNetInstaller "<application>MiKTeX Net Installer</application>">
+<!ENTITY BasicMiKTeXInstaller "<application>Basic MiKTeX Installer</application>">
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY MiKTeX25 "<application>MiKTeX&nbsp;2.5</application>">
 <!ENTITY MiKTeXOptions "<application>&MiKTeX; Options</application>">
@@ -116,7 +117,6 @@
 <!ENTITY setupexe "<command>setup-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</command>">
 <!ENTITY tex "<command>tex</command>">
 <!ENTITY mthelp "<command>mthelp</command>">
-<!ENTITY texdoc "<command>texdoc</command>">
 <!ENTITY texi2dvi "<command>tex2dvi</command>">
 <!ENTITY texify "<command>texify</command>">
 <!ENTITY epstopdf "<command>epstopdf</command>">

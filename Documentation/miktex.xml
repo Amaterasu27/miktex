@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2322">
+<!ENTITY rev "2.5.2323">
 <!ENTITY month "May 2006">
-<!ENTITY date "May 11, 2006">
+<!ENTITY date "May 12, 2006">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
@@ -89,6 +89,7 @@
 <!ENTITY texifying SYSTEM "Manual/texifying.xml">
 <!ENTITY localguide SYSTEM "Manual/localguide.xml">
 <!ENTITY tracestreams SYSTEM "Manual/tracestreams.xml">
+<!ENTITY filetypes SYSTEM "filetypes">
 ]>
 
 <book lang="en">
@@ -252,7 +253,7 @@ course of the setup/update process. It can be manually created by
 <primary>psfonts.map</primary>
 <secondary>creating</secondary>
 </indexterm>
-running <userinput>initexmf --mkmaps</userinput>.</para>
+running <userinput moreinfo="refentry">initexmf --mkmaps</userinput>.</para>
 
 <para><filename>psfonts.map</filename> depends on the
 file <filename>updmap.cfg</filename>. This configuration
@@ -266,24 +267,16 @@ edited directly. Your modifications get lost when you install new
 packages.</para>
 </caution>
 
-<para>To edit <filename>updmap.cfg</filename>, run <userinput>initexmf
---edit-config-file updmap</userinput>. This will open
-<filename>updmap.cfg</filename> in
-<application>Notepad.</application>.</para>
-
 <para>For example, follow these steps if you want to add an entry for
 the font map file <filename>xyz.map</filename>:</para>
 
 <procedure>
-<step><para>Run <userinput>initexmf --edit-config-file updmap</userinput>.
-The file <filename>updmap.cfg</filename> will be opened with
-<application>Notepad</application>.</para></step>
+<step><para>Run <userinput>initexmf --edit-config-file updmap</userinput>.</para></step>
 <step><para>Insert the following line at the end of the file:</para>
 <programlisting>Map xyz.map</programlisting></step>
-<step><para>Save the file and close
-<application>Notepad</application>.</para></step>
+<step><para>Save the file and close the editor.</para></step>
 <step><para>Run <userinput>initexmf --mkmaps</userinput> to rebuild
-<filename>psfonts.map</filename>.</para></step>
+the font map files.</para></step>
 </procedure>
 
 </section>
@@ -455,14 +448,14 @@ the new format.</para></listitem>
 </varlistentry>
 </variablelist>
 
-<para>A new application file with the name of the format will be
-installed in the &MiKTeX; bin directory.  This application file serves
+<para>A new executable file with the name of the format will be
+installed in the &MiKTeX; bin directory.  This executable serves
 as a short-cut for <userinput><replaceable>compiler</replaceable>
 "&amp;<replaceable>format</replaceable>"</userinput>.  For example,
 these two commands are equivalent:</para>
 
 <programlisting>latex sample2e
-etex "&amp;latex" sample2e</programlisting>
+pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 

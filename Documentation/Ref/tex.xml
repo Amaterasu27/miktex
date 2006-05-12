@@ -90,8 +90,7 @@ current file.  The configuration value <parameter
 class="option">Editor</parameter> can be used to change the editor
 used.  It may contain a string with <literal>%f</literal> indicating
 where the file name goes and <literal>%l</literal> indicating where
-the decimal line number (if any) goes. See <xref
-linkend="miktexini-tex"/> for more information.</para>
+the decimal line number (if any) goes.</para>
 
 <para>A convenient file is <filename>null.tex</filename>, containing
 nothing.  When &TeX; can't find a file it thinks you want to input, it
