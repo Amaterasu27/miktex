@@ -373,10 +373,12 @@ PropPageFormats::Refresh ()
       lvitem.iSubItem = 0;
       lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.name.c_str());
       lvitem.lParam = idx;
-      if (listControl.InsertItem(&lvitem) < 0)
+      int whereIndex = listControl.InsertItem(&lvitem);
+      if (whereIndex < 0)
 	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
 	}
+      lvitem.iItem = whereIndex;
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 1;
       lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.description.c_str());
