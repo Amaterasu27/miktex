@@ -396,7 +396,7 @@
   MIKTEXTEXT("tex")
 
 #define MIKTEX_PATH_WEB2C_DIR			\
-  MIKTEXTEXT("web2C")
+  MIKTEXTEXT("web2c")
 
 #if defined(MIKTEX_WINDOWS)
 # define MIKTEX_TEMP_DIR \

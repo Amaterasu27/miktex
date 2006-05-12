@@ -672,7 +672,10 @@ SessionImpl::RegisterFileTypes ()
      T_("texmfscripts"),
      0,
      ListBuilder(
+		 T_(".lua")
 		 T_(".pl")
+		 T_(".py")
+		 T_(".rb")
 		 ),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
@@ -698,9 +701,9 @@ SessionImpl::RegisterFileTypes ()
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(false,
-				   MIKTEX_PATH_WEB2C_DIR),
-		 SearchSpecBuilder(false,
 				   MIKTEX_PATH_MIKTEX_CONFIG_DIR)
+		 SearchSpecBuilder(false,
+				   MIKTEX_PATH_WEB2C_DIR),
 		 ),
      ListBuilder());
   
