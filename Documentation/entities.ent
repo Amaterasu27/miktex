@@ -95,8 +95,6 @@
 <!ENTITY userdatadir "C:\Documents and Settings\User\Local SettingsApplication Data\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY commondatadir "C:\Documents and Settings\All Users\Application Data\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY latex "<command>latex</command>">
-<!ENTITY localdir "C:\localtexmf">
-<!ENTITY localdircd "C:\MiKTeXDirect">
 <!ENTITY makeinfo "<command>makeinfo</command>">
 <!ENTITY mf "<command>mf</command>">
 <!ENTITY miktexrev "&MIKTEX_VERSION_STR;">

@@ -3,15 +3,16 @@
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd"
 [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
+<!ENTITY % version.ent SYSTEM "version.ent">
+%version.ent;
 %entities.ent;
-<!ENTITY rev "2.4.2236">
-<!ENTITY date "February 14, 2006">
-<!ENTITY month "February 2006">
+<!ENTITY rev "2.5.2323">
+<!ENTITY date "May 12, 2006">
+<!ENTITY month "May 2006">
 ]>
 
 <!-- todo:
-     "how do i change the installation directory?"
-     "how do i view dvi files?"
+     "how do I share MiKTeX in a network?"
 -->
 
 <article>
@@ -155,11 +156,11 @@ compliance.</para>
 </question>
 <answer>
 <para>You can use the &MiKTeX; <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783">setup
-wizard</ulink> to download the whole &MiKTeX;
+url="http://sourceforge.net/project/showfiles.php?group_id=10783">net
+installer</ulink> to download the whole &MiKTeX;
 distribution.</para>
-<para>If you want to set up a minimal &MiKTeX; system, use the <quote>Small &MiKTeX;</quote> installer
-(see <xref linkend="smallmiktex"/>).</para>
+<para>If you want to set up a basic &MiKTeX; system, use the <quote>Basic &MiKTeX;</quote> installer
+(see <xref linkend="basicmiktex"/>).</para>
 <para>Read the <ulink
 url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
 instructions</ulink>, for a detailed description of the download
@@ -184,35 +185,11 @@ situation?</para>
 &MiKTeX; without the wizard?</para>
 </question>
 <answer>
-<para>You can use the batch file
-<filename>getrpr.bat</filename><footnote><para>The batch file
-<filename>getrpr.bat</filename> can be found in the
-&CTAN; directory
-<filename>systems/win32/miktex/setup</filename> together with
-<filename>wget.exe</filename>, which is also required.</para>
-</footnote> to download one of the &MiKTeX; package
-sets (Small, Large, Total).  Use it as follows:</para>
-<informalexample>
-<screen>
-&prompt;<userinput>getrpr <replaceable>remotedir</replaceable> <replaceable>packageset</replaceable> <replaceable>localdir</replaceable> [<replaceable>wgetoption</replaceable>...]</userinput>
-</screen>
-</informalexample>
-<para>For example, in order to download the large package set from the
-Dante &FTP; server:</para>
-<informalexample>
-<screen>
-&prompt;<userinput>getrpr ftp://ftp.dante.de/pub/tex/systems/win32/miktex/tm/packages large C:\miktextemp</userinput>
-</screen>
-</informalexample>
-<para>If you are behind a proxy, then you must must specify your proxy
-configuration by appending extra <command>wget</command> options at
-the end of the command-line.  See the <ulink
-url="http://www.gnu.org/software/wget/manual/html_node/index.html"><command>wget</command>
-manual</ulink> for more information.</para> <para>If you want to setup
-a mirror of the complete package repository, then you should get the
+<para>You can use the
 <ulink
 url="http://www.samba.org/rsync/"><application>rsync</application></ulink>
-utility.  Use it as follows:</para>
+utility to create a local package repository. Use <command>rsync</command>
+as follows:</para>
 <informalexample>
 <screen>
 &prompt;<userinput>mkdir C:\miktexmirror</userinput>
@@ -228,11 +205,24 @@ utility.  Use it as follows:</para>
 <para>How do I install &MiKTeX;?</para>
 </question>
 <answer>
-<para>The &MiKTeX; distribution includes a
-setup wizard (<command>setup.exe</command>).  For most users it should
-be sufficient to start the wizard and then clicking the
-<guibutton>Next</guibutton> button until the installation process
-concludes.</para>
+<para>You use one of the installers to set up a
+ a &MiKTeX; system:</para>
+<variablelist>
+<varlistentry>
+<term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
+<listitem>
+<para>The <quote>Basic &MiKTeX;</quote> installer can be used to set up
+a basic &MiKTeX; system.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>&MiKTeXNetInstaller; (&setupexe;)</term>
+<listitem>
+<para>The net installer can be used to set up a
+complete &MiKTeX; system.</para>
+</listitem>
+</varlistentry>
+</variablelist>
 <para>Read the <ulink
 url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
 instructions</ulink>, for a detailed description of the installation
@@ -240,28 +230,14 @@ process.</para>
 </answer>
 </qandaentry>
 
-<qandaentry id="ie">
+<qandaentry id="basicmiktex">
 <question>
-<para>Is it possible to install
-&MiKTeX; without installing &InternetExplorer;?</para>
+<para>What is the <quote>Basic &MiKTeX;</quote> installer?</para>
 </question>
 <answer>
-<para>&MiKTeX; requires a recent version of
-<filename>wininet.dll</filename>.  This <acronym>DLL</acronym> is a
-part of newer &Windows; systems.  Older systems (i.e.,  &Windows95;,
-&WindowsNT;) must have at least &InternetExplorer40; installed
-(&InternetExplorer; includes <filename>wininet.dll</filename>).</para>
-</answer>
-</qandaentry>
-
-<qandaentry id="smallmiktex">
-<question>
-<para>What is the <quote> Small &MiKTeX;</quote> installer?</para>
-</question>
-<answer>
-<para>The <quote>Small &MiKTeX;</quote> installer sets up a small (basic) &MiKTeX; system.
-Additional packages will be installed later, if necessary. This has the advantage of
-keeping a minimal &MiKTeX; system. On the other hand, you will need a fast connection
+<para>The <quote>Basic &MiKTeX;</quote> installer sets up a basic &MiKTeX; system.
+Additional packages can be installed later, if necessary. This has the advantage of
+keeping a minimal &MiKTeX; system. On the other hand, you might need a fast connection
 to a &MiKTeX; repository.</para>
 <para>URL: <ulink url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003&amp;release_id=254373">http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003&amp;release_id=254373</ulink></para>
 </answer>
@@ -269,7 +245,7 @@ to a &MiKTeX; repository.</para>
 
 <qandaentry id="cd">
 <question>
-<para>Is &MiKTeX; available on CD?</para>
+<para>Is &MiKTeX; available on CD/DVD?</para>
 </question>
 <answer>
 <para>Yes, see <ulink url="http://miktex.org/cd/">http://miktex.org/cd/</ulink>.</para>
@@ -278,23 +254,13 @@ directly from the CD. Altenatively, you can install &MiKTeX; on your hard-disk.<
 </answer>
 </qandaentry>
 
-<qandaentry id="network">
-<question>
-<para>How do I share &MiKTeX; in a network?</para>
-<para>Get a copy of the &MiKTeX; CD (see <xref linkend="cd"/>) and make its contents available in your network,
-i.e., create a shared directory which
-points to the root directory of the CD. </para>
-<para>On your client PCs, run the setup wizard included on the CD. Choose <guilabel>Prepare to run MiKTeX from the CD</guilabel> as the primary setup task. The wizard will change the environment variable <envar>PATH</envar>.</para>
-</question>
-</qandaentry>
-
 </qandaset>
 
 </section>
 
 <section id="basics">
 
-<title>Support Options</title>
+<title>Basics</title>
 
 <qandaset>
 
@@ -337,12 +303,6 @@ In recent versions of XEmacs, AUCTeX is usually already available as a package, 
 <listitem>
 <para>TeXnicCenter (freeware) is an integrated development environment for developing &LaTeX;-documents.
 It is included on the &MiKTeX; CD.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><ulink url="http://www.winedt.com/">WinEdt</ulink></term>
-<listitem>
-<para>WinEdt (shareware) is a native editor and shell with a strong predisposition towards the creation of &LaTeX; documents.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -452,11 +412,22 @@ packages.</para>
 installation of well known &LaTeX; packages.</para>
 <para>If (for some reason) you have to install a package by hand, then
 you should copy the input files into the directory
-<filename>tex\latex\<replaceable>package</replaceable></filename>
-relative to the local &TEXMF; directory (usually
-<filename>&localdir;\</filename>).  Remember to refresh the file name
-database, so that &MiKTeX; finds the
-files (<xref linkend="refreshfndb"/>).</para>
+<filename>tex\latex\misc</filename>
+relative to a registered root directory. For example:</para>
+<procedure>
+<step>
+<para>Create the root directory <filename>C:\Local TeX Files</filename>.</para>
+</step>
+<step>
+<para>Create the sub-directory <filename>tex\latex\misc</filename>
+and copy your input files (<filename>*.sty</filename>,
+<filename>*.cls</filename>) here.</para>
+</step>
+<step>
+<para>Register the root directory (<filename>C:\Local TeX Files</filename>)
+in &MiKTeXOptions;.</para>
+</step>
+</procedure>
 </answer>
 </qandaentry>
 
@@ -479,7 +450,7 @@ in the manual.</para>
 <para>If you have a command-prompt window open:</para>
 <informalexample>
 <screen>
-&prompt;<userinput>initexmf -u</userinput>
+&prompt;<userinput>initexmf --update-fndb</userinput>
 </screen>
 </informalexample>
 <para>If you prefer to use the graphical user interface:</para>
@@ -551,9 +522,7 @@ of.</para>
 <listitem>
 <para>The package's license doesn't meet the requirements of the
 <ulink url="http://www.debian.org/social_contract#guidelines">Debian
-Free Software Guidelines</ulink>.
-The most prominent packages that fall into this category are:</para>
-<para>LaTeX2HTML TtH foiltex</para>
+Free Software Guidelines</ulink>.</para>
 </listitem>
 </orderedlist>
 </answer>
@@ -621,9 +590,9 @@ to deposit the output file (<filename>mydoc.pdf</filename>) in
 <para>How do I insert source specials into the &DVI; file?</para>
 </question>
 <answer>
-<para>You use the <option>--src</option>
+<para>You use the <option>--src-specials</option>
 <indexterm>
-<primary>--src</primary>
+<primary>--src-specials</primary>
 </indexterm>
 <indexterm>
 <primary>DVI file</primary>
