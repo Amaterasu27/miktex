@@ -557,7 +557,7 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::PROGRAMBINFILE,
-     T_("program binary files"),
+     T_("other binary files"),
      0,
      ListBuilder(),
      applicationSearchPath,
@@ -565,7 +565,7 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::PROGRAMTEXTFILE,
-     T_("program text files"),
+     T_("other text files"),
      0,
      ListBuilder(),
      applicationSearchPath,
