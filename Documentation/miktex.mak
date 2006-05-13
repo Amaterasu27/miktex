@@ -193,11 +193,17 @@ install: \
 	install-images \
 	install-miktex-documents \
 	install-local-guide \
+	install-www-manual \
 
 install-miktex-documents: $(documents)
 	if not exist $(miktexdocdir) mkdir $(miktexdocdir)
 	for %f in ($(documents)) do \
 	  copy %f $(miktexdocdir)
+
+install-www-manual: www-manual
+	if not exist $(miktexdocdir) mkdir $(miktexdocdir)
+	if exist $(miktexdocdir)\manual $(rmdir) $(miktexdocdir)\manual
+	xcopy /S /I www\manual $(miktexdocdir)\manual
 
 install-images: $(image_files_to_be_installed)
 	if not exist $(miktexdocdir)\images mkdir $(miktexdocdir)\images

@@ -42,8 +42,8 @@ installer:</para>
 <varlistentry>
 <term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
 <listitem>
-<para>The <quote>Small &MiKTeX;</quote> installer can be used to set up
-a small (basic) &MiKTeX; system.</para>
+<para>The <quote>Basic &MiKTeX;</quote> installer can be used to set up
+a basic &MiKTeX; system.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -75,19 +75,19 @@ syntax:</para>
 
 <cmdsynopsis>
 &basicmiktexexe;
-<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
 </cmdsynopsis>
 
 <cmdsynopsis>
 &setupexe;
-<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
 </cmdsynopsis>
 
 <para>Note that the placement of quotation marks is important, and
 that <option>#e</option> is surrounded with two pairs of
 double quotation marks.</para>
       
-<para>For example, this command starts the wizard
+<para>For example, this command starts the Basic &MiKTeX; installer
 <indexterm>
 <primary>unattended setup</primary>
 </indexterm>
