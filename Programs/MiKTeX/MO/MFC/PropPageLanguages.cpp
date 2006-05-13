@@ -405,6 +405,7 @@ PropPageLanguages::OnEdit ()
 	{
 	  languages[idx] = dlg.GetLanguage();
 	  RefreshRow (idx);
+	  SetModified ();
 	}
     }
   catch (const MiKTeXException & e)
@@ -721,7 +722,7 @@ PropPageLanguages::OnMoveUp ()
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
 	}
       
-      if (listControl.SortItems(CompareItems, 0))
+      if (! listControl.SortItems(CompareItems, 0))
         	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItems"), 0);
 	}
