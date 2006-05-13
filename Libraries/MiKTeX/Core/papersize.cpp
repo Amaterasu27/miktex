@@ -195,16 +195,14 @@ SessionImpl::ReadDvipsPaperSizes ()
 {
   for (unsigned r = GetNumberOfTEXMFRoots(); r > 0; -- r)
     {
-      PathName configPs;
+      PathName configPs (GetRootDirectory(r - 1), MIKTEX_PATH_CONFIG_PS);
 #undef BAD_PAPER_SIZE
 #define BAD_PAPER_SIZE()			\
   FATAL_MIKTEX_ERROR				\
     (T_("SessionImpl::ReadDvipsPaperSizes"),	\
      T_("Bad paper size definition."),		\
      configPs.Get())
-      if (FindFile(T_(MIKTEX_CONFIG_PS_FILENAME),
-		   FileType::DVIPSCONFIG,
-		   configPs))
+      if (File::Exists(configPs))
 	{
 	  StreamReader reader (configPs);
 	  tstring line;
