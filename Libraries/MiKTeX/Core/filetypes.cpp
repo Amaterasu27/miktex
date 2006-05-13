@@ -672,9 +672,9 @@ SessionImpl::RegisterFileTypes ()
      T_("texmfscripts"),
      0,
      ListBuilder(
-		 T_(".lua")
-		 T_(".pl")
-		 T_(".py")
+		 T_(".lua"),
+		 T_(".pl"),
+		 T_(".py"),
 		 T_(".rb")
 		 ),
      ListBuilder(
