@@ -148,7 +148,8 @@ DviDoc::BeginDviPrinting (/*[in]*/ const CDC * pPrinterDC)
   MIKTEX_ASSERT (pDviSave == 0);
   MIKTEX_ASSERT (pDvi != 0);
   isPrintContext = true;
-  pDviSave = this->pDvi;
+  pDviSave = pDvi;
+  pDvi = 0;
   try
     {
       CreateDocument (GetPathName());
