@@ -1444,7 +1444,8 @@ IniTeXMFApp::MakeLinks ()
 			       0, 0,
 			       szFileName, BufferSizes::MaxPath,
 			       szExt, BufferSizes::MaxPath);
-	      if (PathName::Compare(szExt, T_(".bat")) != 0)
+	      if (PathName::Compare(szExt, T_(".bat")) != 0
+		  && PathName::Compare(szExt, T_(".cmd")) != 0)
 		{
 		  continue;
 		}

@@ -35,23 +35,7 @@ bool
 SessionImpl::FindBatchFile (/*[in]*/ const MIKTEXCHAR *	lpszName,
 			    /*[out]*/ PathName &	path)
 {
-  MIKTEXCHAR szNameExt[BufferSizes::MaxPath];
-  PathName::Combine (szNameExt,
-		     BufferSizes::MaxPath,
-		     0,
-		     lpszName,
-		     T_(".bat"));
-  bool found = FindFile(szNameExt, FileType::EXE, path);
-  if (! found && IsWindowsNT())
-    {
-      PathName::Combine (szNameExt,
-			 BufferSizes::MaxPath,
-			 0,
-			 lpszName,
-			 T_(".cmd"));
-      found = FindFile(szNameExt, FileType::EXE, path);
-    }
-  return (found);
+  return (FindFile(lpszName, FileType::WindowsCommandScriptFile, path));
 }
 #endif
 
@@ -78,9 +62,10 @@ SessionImpl::RunBatch (/*[in]*/ int			argc,
   PathName scriptPath;
   if (! FindBatchFile(szName, scriptPath))
     {
-      FATAL_MIKTEX_ERROR (T_(""),
-			  T_("The batch script could not be found."),
-			  szName);
+      FATAL_MIKTEX_ERROR
+	(T_(""),
+	 T_("The Windows command script file could not be found."),
+	 szName);
     }
   
   // we cannot quote the command => remove all blanks from the script path

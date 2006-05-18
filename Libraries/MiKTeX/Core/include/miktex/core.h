@@ -3231,6 +3231,9 @@ public:
     WEB,
     WEB2C,
     SCRIPT,
+#if defined(MIKTEX_WINDOWS)
+    WindowsCommandScriptFile,
+#endif
   };
 };
 

@@ -842,6 +842,20 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_WEB2C_DIR)
 		 ),
      ListBuilder());
+
+#if defined(MIKTEX_WINDOWS)
+  RegisterFileType
+    (FileType::WindowsCommandScriptFile,
+     T_("Windows command script file"),
+     0,
+     ListBuilder(T_(".bat"),
+		 T_(".cmd")),
+     ListBuilder(
+		 SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
+		 exePath.c_str()
+		 ),
+     ListBuilder());
+#endif
 }
 
 /* _________________________________________________________________________
