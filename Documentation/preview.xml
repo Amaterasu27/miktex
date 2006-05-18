@@ -227,6 +227,9 @@ long time ago for the &TeXLive; distribution.</para>
 <listitem><para>Add <replaceable>options</replaceable> the the
 &Ghostscript; command-line.</para></listitem>
 </varlistentry>
+<varlistentry><term><option>--pdf-version=<replaceable>ver</replaceable></option></term>
+<listitem><para>Set the &PDF; version.</para></listitem>
+</varlistentry>
 <varlistentry><term><option>--print-only</option></term>
 <listitem><para>Print what would be done.</para></listitem>
 </varlistentry>

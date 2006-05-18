@@ -258,6 +258,9 @@ private:
   double enlarge;
 
 private:
+  tstring pdfVersion;
+
+private:
   static struct poptOption aoption[];
 };
 
@@ -285,7 +288,9 @@ enum Option
   OPT_NOFILTER,
   OPT_NOGS,
   OPT_NOHIRES,
+  OPT_NOPDFVERS,
   OPT_OUTFILE,
+  OPT_PDF_VERSION,
   OPT_PRINT_ONLY,
   OPT_TRACE,
   OPT_VERBOSE,
@@ -425,6 +430,14 @@ stream."),
   },
 
   {
+    _T("nopdfvers"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_NOPDFVERS,
+    T_("Do not set the PDF version."),
+    0
+  },
+  
+  {
     T_("outfile"), 0,
     POPT_ARG_STRING, 0,
     OPT_OUTFILE,
@@ -438,6 +451,22 @@ stream."),
     OPT_PRINT_ONLY,
     T_("Print what would be done."),
     0
+  },
+  
+  {
+    _T("pdf-version"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_PDF_VERSION,
+    T_("Set the PDF version."),
+    T_("PDFVER")
+  },
+  
+  {
+    _T("pdfvers"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_PDF_VERSION,
+    T_("Set the PDF version."),
+    T_("PDFVER")
   },
   
   {
@@ -842,6 +871,10 @@ EpsToPdfApp::PrepareOutput (/*[in]*/ bool			runAsFilter,
 #if 1				// 642845
       cmdLine.AppendOption (T_("-dAutoRotatePages="), T_("/None"));
 #endif
+      if (! pdfVersion.empty())
+	{
+	  cmdLine.AppendOption (T_("-dCompatibilityLevel="), pdfVersion);
+	}
       if (runAsFilter)
 	{
 	  cmdLine.AppendOption (T_("-sOutputFile="), T_("-"));
@@ -963,8 +996,14 @@ EpsToPdfApp::Run (/*[in]*/ int			argc,
 	case OPT_NOHIRES:
 	  hiResBoundingBox = false;
 	  break;
+	case OPT_NOPDFVERS:
+	  pdfVersion = T_("");
+	  break;
 	case OPT_OUTFILE:
 	  outFile = lpszOptArg;
+	  break;
+	case OPT_PDF_VERSION:
+	  pdfVersion = lpszOptArg;
 	  break;
 	case OPT_PRINT_ONLY:
 	  printOnly = true;
