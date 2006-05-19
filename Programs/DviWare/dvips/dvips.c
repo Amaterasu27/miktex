@@ -209,6 +209,7 @@ char queryoptions;
 #if defined(MIKTEX)
 int miktex_no_glyphs = 0;
 int miktex_no_rules = 0;
+int miktex_no_landscape = 0;
 #endif
 /*
  *   This routine calls the following externals:
@@ -1021,6 +1022,11 @@ case 'M':
     if (strcmp(p, "iKTeX:norules") == 0)
       {
 	miktex_no_rules = 1;
+	break;
+      }
+    if (strcmp(p, "iKTeX:nolandscape") == 0)
+      {
+	miktex_no_landscape = 1;
 	break;
       }
   }

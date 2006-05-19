@@ -53,6 +53,9 @@ extern char *figpath ;
 #endif
 extern int prettycolumn ;
 extern Boolean disablecomments ;
+#if defined(MIKTEX)
+extern int miktex_no_landscape;
+#endif
 
 #ifdef DEBUG
 extern integer debug_flag;
@@ -357,6 +360,12 @@ case 'l':
          landscape = 1 ;
       return ;
    }
+#if defined(MIKTEX)
+   if (miktex_no_landscape && landscape)
+     {
+       landscape = 0;
+     }
+#endif
    break ;
 case 'p':
    if (strncmp(p, "pos:", 4)==0) return ; /* positional specials */

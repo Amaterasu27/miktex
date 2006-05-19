@@ -99,6 +99,9 @@ extern struct papsiz *papsizes ;
 extern Boolean secure ;
 extern integer hpapersize, vpapersize ;
 extern int landscape ;
+#if defined(MIKTEX)
+extern int miktex_no_landscape;
+#endif
 /*
  *   To maintain a list of document fonts, we use the following
  *   pointer.
@@ -829,6 +832,12 @@ case 't' :
                   landscape = 1 ;
             } else
                paperfmt = newstring(PSname) ;
+#if defined(MIKTEX)
+	   if (miktex_no_landscape && landscape)
+	     {
+	       landscape = 0;
+	     }
+#endif
          }
          break ;
 default:

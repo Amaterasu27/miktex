@@ -79,6 +79,7 @@ extern Boolean noprocset, HPS_FLAG ;
 #if defined(MIKTEX)
 extern int miktex_no_glyphs;
 extern int miktex_no_rules;
+extern int miktex_no_landscape;
 #endif
 /*
  *   We need a few statics to take care of things.
@@ -1211,6 +1212,12 @@ void findpapersize P1H(void) {
                }
             }
          }
+#if defined(MIKTEX)
+	 if (miktex_no_landscape && landscape)
+	   {
+	     landscape = 0;
+	   }
+#endif
          finpapsiz = ps ;
       }
       if (finpapsiz == 0) {
