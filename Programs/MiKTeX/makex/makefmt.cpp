@@ -30,14 +30,8 @@ enum {
   OPT_AAA = 1,
   OPT_DESTNAME,
   OPT_ENGINE,
-  OPT_ETEX_COMP,
-  OPT_ETEX_EXT,
   OPT_JOB_TIME,
   OPT_NO_DUMP,
-  OPT_OMEGA,
-  OPT_PDFETEX_COMP,
-  OPT_PDFETEX_EXT,
-  OPT_PDFTEX,
   OPT_PRELOAD
 };
 
@@ -51,8 +45,6 @@ class EngineEnum
 public:
   enum EnumType {
     TeX,
-    eTeX,
-    pdfTeX,
     pdfETeX,
     Omega,
   };
@@ -70,7 +62,6 @@ class MakeFmt : public MakeUtility
 public:
   MakeFmt ()
     : engine (Engine::TeX),
-      compatibilityMode (false),
       noDumpPrimitive (false)
   {
   }
@@ -93,30 +84,11 @@ private:
 
 private:
   BEGIN_OPTION_MAP(MakeFmt)
-    OPTION_ENTRY (OPT_ENGINE,
-		  SetEngine(lpszOptArg))
-    OPTION_ENTRY (OPT_ETEX_COMP,
-		  (engine = Engine::eTeX,
-		   compatibilityMode = true))
-    OPTION_ENTRY (OPT_ETEX_EXT,
-		  (engine = Engine::eTeX,
-		   compatibilityMode = false))
-    OPTION_ENTRY (OPT_OMEGA,
-		  (engine = Engine::Omega,
-		   compatibilityMode = false))
-    OPTION_ENTRY (OPT_PDFETEX_COMP,
-		  (engine = Engine::pdfETeX,
-		   compatibilityMode = true))
-    OPTION_ENTRY (OPT_PDFETEX_EXT,
-		  (engine = Engine::pdfETeX,
-		   compatibilityMode = false))
-    OPTION_ENTRY (OPT_PDFTEX,
-		  (engine = Engine::pdfTeX,
-		   compatibilityMode = false))
-    OPTION_ENTRY_TRUE (OPT_NO_DUMP, noDumpPrimitive)
+    OPTION_ENTRY (OPT_ENGINE, SetEngine(lpszOptArg))
     OPTION_ENTRY_SET (OPT_DESTNAME, destinationName)
     OPTION_ENTRY_SET (OPT_JOB_TIME, jobTime)
     OPTION_ENTRY_SET (OPT_PRELOAD, preloadedFormat)
+    OPTION_ENTRY_TRUE (OPT_NO_DUMP, noDumpPrimitive)
   END_OPTION_MAP();
 
 private:
@@ -126,14 +98,6 @@ private:
     if (StringCompare(lpszEngine, T_("tex"), true) == 0)
       {
 	engine = Engine::TeX;
-      }
-    else if (StringCompare(lpszEngine, T_("etex"), true) == 0)
-      {
-	engine = Engine::eTeX;
-      }
-    else if (StringCompare(lpszEngine, T_("pdftex"), true) == 0)
-      {
-	engine = Engine::pdfTeX;
       }
     else if (StringCompare(lpszEngine, T_("pdfetex"), true) == 0)
       {
@@ -145,9 +109,8 @@ private:
       }
     else
       {
-	FatalError (T_("Invalid engine."));
+	FatalError (T_("Unknown engine."));
       }
-    compatibilityMode = false;
   }
 
 private:
@@ -158,10 +121,6 @@ private:
       {
       case Engine::TeX:
 	return (T_("tex"));
-      case Engine::eTeX:
-	return (T_("etex"));
-      case Engine::pdfTeX:
-	return (T_("pdftex"));
       case Engine::pdfETeX:
 	return (T_("pdfetex"));
       case Engine::Omega:
@@ -170,23 +129,6 @@ private:
     throw (1);
   }
 
-private:
-  const MIKTEXCHAR *
-  GetFormatFileExtension ()
-  {
-    switch (engine.Get())
-      {
-      case Engine::TeX:
-      case Engine::pdfTeX:
-      case Engine::Omega:
-	return (T_(".fmt"));
-      case Engine::eTeX:
-      case Engine::pdfETeX:
-	return (T_(".efmt"));
-      }
-    throw (1);
-  }
-  
 private:
   void
   FindInputFile (/*[in]*/ const PathName &	inputName,
@@ -197,7 +139,7 @@ private:
   IsPdf ()
     const
   {
-    return (engine == Engine::pdfTeX || engine == Engine::pdfETeX);
+    return (engine == Engine::pdfETeX);
   }
 
 private:
@@ -205,7 +147,7 @@ private:
   IsExtended ()
     const
   {
-    return (engine == Engine::eTeX || engine == Engine::pdfETeX);
+    return (engine == Engine::pdfETeX);
   }
 
 private:
@@ -226,9 +168,6 @@ private:
   
 private:
   Engine engine;
-
-private:
-  bool compatibilityMode;
 
 private:
   PathName destinationName;
@@ -261,19 +200,9 @@ Options:\n\
 --debug, -d                         Print debugging information.\n\
 --dest-name NAME                    Destination file name.\n\
 --engine=ENGINE                     Set the engine.\n\
---etex-compatibility-mode           Create an e-TeX format file in\n\
-                                    compatibility mode.\n\
---etex-extended-mode                Create an e-TeX format file in\n\
-                                    extended mode.\n\
 --help, -h                          Print this help screen and exit.\n\
 --job-time=FILE                     Job time is file's modification time.\n\
 --no-dump                           Don't issue the \\dump command.\n\
---omega                             Create an Omega format file.\n\
---pdftex                            Create a pdfTeX format file.\n\
---pdfetex-compatibility-mode        Create a pdf-e-TeX format file in\n\
-                                    compatibility mode.\n\
---pdfetex-extended-mode             Create a pdf-e-TeX format file in\n\
-                                    extended mode.\n\
 --preload FORMAT                    Format to be preloaded.\n\
 --print-only, -n                    Print what commands would be executed.\n\
 --verbose, -v                       Print information on what is being done.\n\
@@ -292,14 +221,8 @@ namespace {
     COMMON_OPTIONS,
     T_("dest-name"),	required_argument,	0,	OPT_DESTNAME,
     T_("engine"),	required_argument,	0,	OPT_ENGINE,
-    T_("etex-compatibility-mode"), no_argument,	0,	OPT_ETEX_COMP,
-    T_("etex-extended-mode"), no_argument,	0,	OPT_ETEX_EXT,
     T_("job-time"),		required_argument, 0,	OPT_JOB_TIME,
     T_("no-dump"),		no_argument,	0,	OPT_NO_DUMP,
-    T_("omega"),		no_argument,	0,	OPT_OMEGA,
-    T_("pdfetex-compatibility-mode"), no_argument, 0,	OPT_PDFETEX_COMP,
-    T_("pdfetex-extended-mode"), no_argument,	0,	OPT_PDFETEX_EXT,
-    T_("pdftex"),		no_argument,	0,	OPT_PDFTEX,
     T_("preload"),		required_argument, 0,	OPT_PRELOAD,
     0,			no_argument,		0,	0,
   };
@@ -552,12 +475,12 @@ MakeFmt::Run (/*[in]*/ int			argc,
 
   // make the format file name
   PathName formatFile (name);
-  formatFile.SetExtension (GetFormatFileExtension());
+  formatFile.SetExtension (MIKTEX_FORMAT_FILE_SUFFIX);
 
   // make fully qualified destination file name
   PathName pathDest (destinationDirectory,
 		     destinationName,
-		     GetFormatFileExtension());
+		     MIKTEX_FORMAT_FILE_SUFFIX);
   
   Verbose (T_("Creating the %s format file...\n"), Q_(destinationName));
 
@@ -583,7 +506,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (tstring(T_("&")) + preloadedFormat);
     }
-  if (IsExtended() && ! compatibilityMode && preloadedFormat.length() == 0)
+  if (IsExtended() && preloadedFormat.empty())
     {
       arguments.AppendArgument (T_("*\\relax"));
       useInputPrimitive = true;

@@ -909,8 +909,7 @@ FileCopyPage::RemoveFormatFiles ()
       return;
     }
   vector<tstring> toBeDeleted;
-  CollectFiles (toBeDeleted, pathFmt, T_(".efmt"));
-  CollectFiles (toBeDeleted, pathFmt, T_(".fmt"));
+  CollectFiles (toBeDeleted, pathFmt, MIKTEX_FORMAT_FILE_SUFFIX);
   for (vector<tstring>::const_iterator it = toBeDeleted.begin();
        it != toBeDeleted.end();
        ++ it)

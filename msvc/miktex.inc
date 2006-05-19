@@ -154,11 +154,13 @@ rel_etexdir = Programs\TeXAndFriends\etex
 rel_expatlibdir = Libraries\3rd\libexpat
 rel_expatstaticlibdir = Libraries\3rd\libexpat-static
 rel_findtexmfdir = Programs\MiKTeX\findtexmf
+rel_fofistaticlibdir = Programs\TeXAndFriends\pdftex\xpdf\fofi
 rel_freetypedir = Programs\FontUtilities\freetype
 rel_freetypelibdir = $(rel_freetypedir)\lib
 rel_gdlibdir = Libraries\3rd\libgd
 rel_gnulibdir = Libraries\3rd\libgnu
 rel_gnustaticlibdir = Libraries\3rd\libgnu-static
+rel_goostaticlibdir = Programs\TeXAndFriends\pdftex\xpdf\goo
 rel_gsf2pkdir = Programs\MiKTeX\gsf2pk
 rel_gsoapdir = Libraries\3rd\gsoap
 rel_gsoapstaticdir = Libraries\3rd\gsoap-static
@@ -218,6 +220,7 @@ rel_tifflibdir = Libraries\3rd\libtiff
 rel_updatewizdir = Programs\MiKTeX\Wizards\Update\MFC
 rel_webdir = Programs\TeXAndFriends\web
 rel_wsclientdir = Libraries\MiKTeX\WebServiceClients
+rel_xpdfstaticlibdir = Programs\TeXAndFriends\pdftex\xpdf\xpdf
 rel_yapdir = Programs\MiKTeX\Yap\MFC
 rel_zlibdir = Libraries\3rd\zlib
 
@@ -246,10 +249,12 @@ diblibdir = $(miktexsrcdir)\$(rel_diblibdir)
 dvilibdir = $(miktexsrcdir)\$(rel_dvilibdir)
 expatlibdir = $(miktexsrcdir)\$(rel_expatlibdir)
 expatstaticlibdir = $(miktexsrcdir)\$(rel_expatstaticlibdir)
+fofistaticlibdir = $(miktexsrcdir)\$(rel_fofistaticlibdir)
 freetypelibdir = $(miktexsrcdir)\$(rel_freetypelibdir)
 gdlibdir = $(miktexsrcdir)\$(rel_gdlibdir)
 gnulibdir = $(miktexsrcdir)\$(rel_gnulibdir)
 gnustaticlibdir = $(miktexsrcdir)\$(rel_gnustaticlibdir)
+goostaticlibdir = $(miktexsrcdir)\$(rel_goostaticlibdir)
 gsoapdir = $(miktexsrcdir)\$(rel_gsoapdir)
 gsoapstaticdir = $(miktexsrcdir)\$(rel_gsoapstaticdir)
 jpeglibdir = $(miktexsrcdir)\$(rel_jpeglibdir)
@@ -275,6 +280,7 @@ ppmlibdir = $(miktexsrcdir)\$(rel_ppmlibdir)
 texmflibdir = $(miktexsrcdir)\$(rel_texmflibdir)
 tifflibdir = $(miktexsrcdir)\$(rel_tifflibdir)
 wsclientdir = $(miktexsrcdir)\$(rel_wsclientdir)
+xpdfstaticlibdir = $(miktexsrcdir)\$(rel_xpdfstaticlibdir)
 zlibdir = $(miktexsrcdir)\$(rel_zlibdir)
 
 libdir = $(miktexsrcdir)\$(rel_libdir)
@@ -788,16 +794,8 @@ LATEX = $(latex)
 ## IniTeXMF
 initexmf = $(bindir)\initexmf
 
-## pdfTeX
-pdftex = $(bindir)\pdftex
-PDFTEX = $(pdftex)
-
 ## Extract bounding box
 ebb = $(bindir)\ebb
-
-## pdfLaTeX
-pdflatex = $(bindir)\pdflatex "&pdflatex"
-PDFLATEX = $(pdflatex)
 
 ## TeXify
 texify = $(bindir)\texify
@@ -956,7 +954,6 @@ dvi_dll_name =		MiKTeX-dvi-3
 dvicopy_dll_name =	MiKTeX-dvicopy-3
 dvitomp_dll_name =	MiKTeX-dvitomp-3
 dvitype_dll_name =	MiKTeX-dvitype-3
-etex_dll_name =		MiKTeX-etex-3
 cjklatex_dll_name =	MiKTeX-cjklatex-2
 expat_dll_name =	MiKTeX-expat-3
 findtexmf_dll_name =	MiKTeX-findtexmf-3
@@ -990,7 +987,6 @@ ovf2ovp_dll_name =	MiKTeX-ovf2ovp-3
 ovp2ovf_dll_name =	MiKTeX-ovp2ovf-3
 pbm_dll_name =		MiKTeX-pbm-3
 pdfetex_dll_name =	MiKTeX-pdfetex-3
-pdftex_dll_name =	MiKTeX-pdftex-3
 pgm_dll_name =		MiKTeX-pgm-3
 pltotf_dll_name =	MiKTeX-pltotf-3
 png_dll_name =		MiKTeX-png-3
@@ -1022,10 +1018,12 @@ dib_lib = $(diblibdir)\$(outdir)\dib.lib
 dvi_lib = $(dvilibdir)\$(outdir)\dvi.lib
 expat_lib = $(expatlibdir)\$(outdir)\expat.lib
 expat_static_lib = $(expatstaticlibdir)\$(outdir)\expat-static.lib
+fofi_static_lib = $(fofistaticlibdir)\$(outdir)\fofi.lib
 freetype_lib = $(freetypelibdir)\arch\win32\$(outdir)\freetype.lib
 gd_lib = $(gdlibdir)\$(outdir)\gd.lib
 gnu_lib = $(gnulibdir)\$(outdir)\gnu.lib
 gnu_static_lib = $(gnustaticlibdir)\$(outdir)\gnu-static.lib
+goo_static_lib = $(goostaticlibdir)\$(outdir)\goo.lib
 gsoap_lib = $(gsoapdir)\$(outdir)\gsoap.lib
 gsoap_static_lib = $(gsoapstaticdir)\$(outdir)\gsoap-static.lib
 jpeg_lib = $(jpeglibdir)\$(outdir)\libjpeg.lib
@@ -1053,6 +1051,7 @@ psres_lib = $(miktexsrcdir)\ps2pk\psres\$(outdir)\psres.lib
 regex_lib = $(gnulibdir)\$(outdir)\regex.lib
 texmf_lib = $(texmflibdir)\$(outdir)\texmf.lib
 tiff_lib = $(tifflibdir)\$(outdir)\libtiff.lib
+xpdf_static_lib = $(xpdfstaticlibdir)\$(outdir)\xpdf.lib
 zlib_lib = $(zlibdir)\$(outdir)\zlib.lib
 
 !if $(MIKTEX_RELEASE_STATE) == 4

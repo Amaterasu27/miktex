@@ -1,6 +1,6 @@
-/* pdftex-miktex.h:					-*- C++ -*-
+/* pdftex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 1998-2004 Christian Schenk
+   Copyright (C) 1998-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -41,6 +41,7 @@
 
 #ifdef __cplusplus
 
+#include <miktex/paths.h>
 #include <miktex/texapp.h>
 
 #ifndef MIKTEX_VIRTUAL_TEXAPP
@@ -58,13 +59,6 @@ class PDFTEXCLASS
   : MIKTEX_VIRTUAL_TEXAPP public TeXApp
 
 {
- protected:
-  void __stdcall
-  AddOptions ()
-  {
-    TeXApp::AddOptions ();
-  }
-
  public:
   void
   AllocateMemory ()
@@ -74,10 +68,10 @@ class PDFTEXCLASS
     GETPARAM (-1, pdfmemsize, pdf_mem_size, 65536);
     Allocate (THEDATA(pdfmem), THEDATA(pdfmemsize));
     
-    GETPARAM (-1, objtabsize, obj_tab_size, 65536);
+    GETPARAM (-1, objtabsize, obj_tab_size, 300000);
     Allocate (THEDATA(objtab), THEDATA(objtabsize));
 
-    GETPARAM (-1, destnamessize, dest_names_size, 20000);
+    GETPARAM (-1, destnamessize, dest_names_size, 300000);
     Allocate (THEDATA(destnames), THEDATA(destnamessize));
     
     Allocate (THEDATA(pdfcharused), THEDATA(fontmax) + 1 - constfontbase);

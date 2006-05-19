@@ -49,6 +49,10 @@
 /* suffix for file name database files */
 #define MIKTEX_FNDB_FILE_SUFFIX MIKTEXTEXT(".fndb")
 
+#define MIKTEX_FORMAT_FILE_SUFFIX MIKTEXTEXT(".fmt")
+
+#define MIKTEX_POOL_FILE_SUFFIX MIKTEXTEXT(".pool")
+
 #define MIKTEX_CABINET_FILE_SUFFIX MIKTEXTEXT(".cab")
 
 #define MIKTEX_TARBZIP2_FILE_SUFFIX MIKTEXTEXT(".tar.bz2")

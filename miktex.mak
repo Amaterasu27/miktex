@@ -72,6 +72,15 @@ projects = $(projects) $(prj_3rdparty_libs3)
 
 # -----------------------------------------------------------------------------
 
+prj_3rdparty_libs4 = \
+	$(rel_goostaticlibdir)		\
+	$(rel_fofistaticlibdir)		\
+	$(rel_xpdfstaticlibdir)		\
+
+projects = $(projects) $(prj_3rdparty_libs4)
+
+# -----------------------------------------------------------------------------
+
 prj_build_utilities2 = \
 	$(rel_c4pdir)		\
 	$(rel_cwebdir)		\
@@ -188,20 +197,6 @@ prj_tex = \
 	$(rel_texdir)		\
 
 projects = $(projects) $(prj_tex)
-
-# -----------------------------------------------------------------------------
-
-prj_etex = \
-	$(rel_etexdir)		\
-
-projects = $(projects) $(prj_etex)
-
-# -----------------------------------------------------------------------------
-
-prj_pdftex = \
-	$(rel_pdftexdir)	\
-
-projects = $(projects) $(prj_pdftex)
 
 # -----------------------------------------------------------------------------
 

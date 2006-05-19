@@ -1,6 +1,6 @@
 /* etex-miktex.h:					-*- C++ -*-
 
-   Copyright (C) 1998-2005 Christian Schenk
+   Copyright (C) 1998-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -54,16 +54,6 @@ class ETEXCLASS
   : MIKTEX_VIRTUAL_TEXAPP public TeXApp
 
 {
-protected:
-  virtual
-  void
-  MIKTEXMFCALL
-  AddOptions ()
-  {
-    TeXApp::AddOptions ();
-    AddOption (MIKTEXTEXT("efmt"), MIKTEXTEXT("undump"));
-  }
-
 public:
   void
   AllocateMemory ()
@@ -103,7 +93,7 @@ public:
   GetDumpExtension ()
     const
   {
-    return (MIKTEXTEXT(".efmt"));
+    return (MIKTEX_FORMAT_FILE_SUFFIX);
   }
 
 public:
@@ -112,7 +102,7 @@ public:
   GetDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("etex.efmt"));
+    return (MIKTEXTEXT("etex") MIKTEX_FORMAT_FILE_SUFFIX);
   }
 
 public:
@@ -121,7 +111,7 @@ public:
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("etex.pool"));
+    return (MIKTEXTEXT("etex") MIKTEX_POOL_FILE_SUFFIX);
   }
 
 public:

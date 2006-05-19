@@ -122,7 +122,6 @@ tex_miktex_stat_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-stat.ch
 tex_miktex_write18_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-write18.ch
 
 etex_miktex_ch = $(miktexsrcdir)\$(rel_etexdir)\etex-miktex.ch
-etex_miktex_fmt_ch = $(miktexsrcdir)\$(rel_etexdir)\etex-miktex-fmt.ch
 
 pdftex_pre_ch = $(miktexsrcdir)\$(rel_pdftexdir)\pdftex-pre.ch
 pdftex_post_ch = $(miktexsrcdir)\$(rel_pdftexdir)\pdftex-post.ch
@@ -145,7 +144,6 @@ miktex_tex_change_files = \
 
 miktex_etex_change_files = \
 	$(etex_miktex_ch) \
-	$(etex_miktex_fmt_ch) \
 
 pdfetex0_change_files = \
 	$(pdftex_pre_ch) \

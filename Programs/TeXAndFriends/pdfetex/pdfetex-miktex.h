@@ -1,6 +1,6 @@
 /* pdfetex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2005 Christian Schenk
+   Copyright (C) 2001-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -49,16 +49,6 @@ class PDFETEXCLASS
     public CeTeXApp
 
 {
-protected:
-  virtual
-  void
-  MIKTEXMFCALL
-  AddOptions ()
-  {
-    TeXApp::AddOptions ();
-    AddOption (MIKTEXTEXT("efmt"), MIKTEXTEXT("undump"));
-  }
-
 public:
   virtual
   void
@@ -91,7 +81,7 @@ public:
   GetDumpExtension ()
     const
   {
-    return (MIKTEXTEXT(".efmt"));
+    return (MIKTEX_FORMAT_FILE_SUFFIX);
   }
 
 public:
@@ -101,7 +91,7 @@ public:
   GetDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("pdfetex.efmt"));
+    return (MIKTEXTEXT("pdfetex") MIKTEX_FORMAT_FILE_SUFFIX);
   }
   
 public:
@@ -111,7 +101,7 @@ public:
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("pdfetex.pool"));
+    return (MIKTEXTEXT("pdfetex") MIKTEX_POOL_FILE_SUFFIX);
   }
   
 public:
