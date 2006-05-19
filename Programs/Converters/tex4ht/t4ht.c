@@ -1,23 +1,30 @@
 
-/********************************************************/
-/* t4ht.c                              2004-04-21-00:17 */
-/* Copyright (C) 1998--2004  Eitan M. Gurari            */
-/*                                                      */
-/* This program can redistributed and/or modified under */
-/* the terms of the LaTeX Project Public License        */
-/* Distributed from CTAN archives in directory          */
-/* macros/latex/base/lppl.txt; either version 1 of the  */
-/* License, or (at your option) any later version.      */
-/*                                                      */
-/* However, you are allowed to modify this program      */
-/* without changing its name, if you modify its         */
-/* signature. Changes to the signature can be           */
-/* introduced with a directive of the form              */
-/*      #define PLATFORM "signature"                    */
-/*                                                      */
-/*                           gurari@cis.ohio-state.edu  */
-/*               http://www.cis.ohio-state.edu/~gurari  */
-/********************************************************/
+/**********************************************************/
+/* t4ht.c                                2006-01-04-02:35 */
+/* Copyright (C) 1998--2006    Eitan M. Gurari            */
+/*                                                        */
+/* This work may be distributed and/or modified under the */
+/* conditions of the LaTeX Project Public License, either */
+/* version 1.3 of this license or (at your option) any    */
+/* later version. The latest version of this license is   */
+/* in                                                     */
+/*   http://www.latex-project.org/lppl.txt                */
+/* and version 1.3 or later is part of all distributions  */
+/* of LaTeX version 2003/12/01 or later.                  */
+/*                                                        */
+/* This work has the LPPL maintenance status "maintained".*/
+/*                                                        */
+/* This Current Maintainer of this work                   */
+/* is Eitan M. Gurari.                                    */
+/*                                                        */
+/* If you modify this program your changing its signature */
+/* with a directive of the following form will be         */
+/* appreciated.                                           */
+/*      #define PLATFORM "signature"                      */
+/*                                                        */
+/*                             gurari@cse.ohio-state.edu  */
+/*                 http://www.cse.ohio-state.edu/~gurari  */
+/**********************************************************/
 
 /* **********************************************
     Compiler options                            *
@@ -289,12 +296,6 @@
 #endif
 
 
-struct htf_struct{
-  Q_CHAR *key,  *body;
-  struct htf_struct *next;
-};
-
-
 struct empty_pic_struct{
   long int n;
   struct empty_pic_struct *next;
@@ -331,6 +332,12 @@ struct env_c_rec{
 struct sys_call_rec{
   Q_CHAR * filter;
   struct sys_call_rec *next;
+};
+
+
+struct htf_struct{
+  Q_CHAR *key,  *body, *media;
+  struct htf_struct *next;
 };
 
 
@@ -388,15 +395,15 @@ static Q_CHAR *noreuse = Q_NULL;
 U_CHAR *HOME_DIR;
 
 
-static struct htf_struct *htf_rec = (struct htf_struct *) 0;
-
-
 static struct env_c_rec *envChoice
        = (struct env_c_rec*) 0;
 
 
 static BOOL system_yes;
 static struct sys_call_rec *system_calls = (struct sys_call_rec *) 0;
+
+
+static struct htf_struct *htf_rec = (struct htf_struct *) 0;
 
 
 static BOOL status;
@@ -1423,19 +1430,19 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2004-04-21-00:17 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2004-04-21-00:17)\n");
+   (IGNORED) printf("t4ht.c (2006-01-04-02:35)\n");
 #endif
 #else
 #ifdef PLATFORM
-#if defined(MIKTEX)
-   (IGNORED) printf("t4ht.c (2004-04-21-00:17 %s MiKTeX)\n",PLATFORM);
+#  if defined(MIKTEX)
+   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s MiKTeX)\n",PLATFORM);
+#  else
+   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s kpathsea)\n",PLATFORM);
+#  endif
 #else
-   (IGNORED) printf("t4ht.c (2004-04-21-00:17 %s kpathsea)\n",PLATFORM);
-#endif
-#else
-   (IGNORED) printf("t4ht.c (2004-04-21-00:17 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2006-01-04-02:35 kpathsea)\n");
 #endif
 #endif
 
@@ -1736,6 +1743,7 @@ envname= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
  }
    if ( envname ){
       file = kpse_open_file (envname, kpse_program_text_format);
+      (IGNORED) printf("(%s)\n",  envname);
    }
    if( debug && file ){
       (IGNORED) printf(".......Open kpathsea %s\n", envname);
@@ -2248,17 +2256,37 @@ if( status ){
 }  }
 
 
-      if( status ){                          Q_CHAR *key, *body;
+      if( status ){            Q_CHAR *key, *body, *media;
          body = key = match[1];
          
 while( *body && (*body != ' ') ){ body++; }
-if( *body == ' ' ){ *(body++) = '\0'; }
+if( *body == ' ' ){ media = body; *(body++) = '\0'; }
+
+if( (int) strlen(body) > 6 ){
+   if(     (*(body) == '@')
+       &&  (*(body+1) == 'm')
+       &&  (*(body+2) == 'e')
+       &&  (*(body+3) == 'd')
+       &&  (*(body+4) == 'i')
+       &&  (*(body+5) == 'a') )
+     {
+    body += 6;
+    while( *body == ' ' ){ body++; }
+    media = body;
+    while( (*body != ' ') && (*body != '\0') ){ body++; }
+    if( *body == ' ' ){ *(body++) = '\0'; }
+    while( *body == ' ' ){ body++; }
+}  }
+
+
 if( *body ){
   if( *key ){ 
 p = m_alloc(struct htf_struct, 1);
 p->next =  (struct htf_struct *) 0;
 p->key =   m_alloc(char, (int) strlen(key) + 1);
 (IGNORED) strcpy( p->key, key );
+p->media =   m_alloc(char, (int) strlen(media) + 1);
+(IGNORED) strcpy( p->media, media );
 p->body =   m_alloc(char, (int) strlen(body) + 1);
 (IGNORED) strcpy( p->body, body );
 if( last_rec ){
@@ -2267,7 +2295,7 @@ if( last_rec ){
    htf_rec = last_rec = p;
 }
 if( debug ){
-   (IGNORED) printf(".......%s...%s\n", key, body);
+   (IGNORED) printf(".......%s...%s...%s\n", key, media, body);
 }
 
  }
@@ -2626,14 +2654,6 @@ while( eoln_ch != EOF ) {
       p = match[4];
       *(p + (int) strlen(p) - 2) = '\0';
       
-font_sty = htf_rec;
-while ( font_sty  ) {
-  if( eq_str(font_sty->key,match[1]) ){ break; }
-  font_sty = font_sty->next;
-}
-
-
-      
 {                                                  Q_CHAR *p;
    second =   (int)
               (  (int) get_long_int(match[3])
@@ -2649,7 +2669,11 @@ while ( font_sty  ) {
 }
 
 
-      if( font_sty || (second != 100) ){
+      
+font_sty = htf_rec;
+while ( font_sty  ) {
+  if( eq_str(font_sty->key,match[1]) ){
+      if( *(font_sty->media) == '\0'  ){
          
 (IGNORED) fprintf(css_file,
    (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
@@ -2669,7 +2693,51 @@ if( font_sty  ) {
 (IGNORED) fprintf(css_file, "}\n");
 
 
-}  }  }
+         second = 100;
+      } else {
+         
+(IGNORED) fprintf(css_file, "@media %s{", font_sty->media);
+(IGNORED) fprintf(css_file,
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}}\n");
+
+
+      }
+  }
+  font_sty = font_sty->next;
+}
+if( second != 100 ){ 
+(IGNORED) fprintf(css_file,
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( (second < 98) || (second > 102) ){
+   (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
+}
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}\n");
+
+ }
+
+
+}  }
 
 
 
@@ -2732,6 +2800,28 @@ while( eoln_ch != EOF ) {
 
 
            
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {
+  status = scan_until_end_str("", 1, TRUE, tmp_file);
+  
+{                          Q_CHAR *p, *q;
+                           int  n;
+  n = 0;  p = match[1];    q = match[2];
+  while ( (*p != '\0') ){
+    if (n == 13) { *(q-10) = '\0';  break;}
+    if( *p != ' ' ){ *(q++) = *p; n++; }
+    p++;
+  }
+  *q = '\0';
+}
+
+
+  if( !eq_str(match[2], "/*css.sty*/") ){
+     (IGNORED) fprintf(css_file, "%s\n", match[1]);
+  }
+}
+
+
         }
       }
       (IGNORED) fclose(tmp_file);

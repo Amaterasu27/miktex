@@ -1,23 +1,31 @@
 
-/********************************************************/
-/* htcmd.c                             2000-03-03-08:28 */
-/* Copyright (C) 2000        Eitan M. Gurari            */
-/*                                                      */
-/* This program can redistributed and/or modified under */
-/* the terms of the LaTeX Project Public License        */
-/* Distributed from CTAN archives in directory          */
-/* macros/latex/base/lppl.txt; either version 1 of the  */
-/* License, or (at your option) any later version.      */
-/*                                                      */
-/* However, you are allowed to modify this program      */
-/* without changing its name, if you modify its         */
-/* signature. Changes to the signature can be           */
-/* introduced with a directive of the form              */
-/*      #define PLATFORM "signature"                    */
-/*                                                      */
-/*                           gurari@cis.ohio-state.edu  */
-/*               http://www.cis.ohio-state.edu/~gurari  */
-/********************************************************/
+/**********************************************************/
+/* htcmd.c                               2004-12-16-16:20 */
+/* Copyright (C) 1996--2004    Eitan M. Gurari            */
+/*                                                        */
+/* This work may be distributed and/or modified under the */
+/* conditions of the LaTeX Project Public License, either */
+/* version 1.3 of this license or (at your option) any    */
+/* later version. The latest version of this license is   */
+/* in                                                     */
+/*   http://www.latex-project.org/lppl.txt                */
+/* and version 1.3 or later is part of all distributions  */
+/* of LaTeX version 2003/12/01 or later.                  */
+/*                                                        */
+/* This work has the LPPL maintenance status "maintained".*/
+/*                                                        */
+/* This Current Maintainer of this work                   */
+/* is Eitan M. Gurari.                                    */
+/*                                                        */
+/* However, you are allowed to modify this program        */
+/* without changing its name, if you modify its           */
+/* signature. Changes to the signature can be             */
+/* introduced with a directive of the form                */
+/*      #define PLATFORM "signature"                      */
+/*                                                        */
+/*                             gurari@cse.ohio-state.edu  */
+/*                 http://www.cse.ohio-state.edu/~gurari  */
+/**********************************************************/
 
 /* **********************************************
     Compiler options                            *
@@ -526,6 +534,7 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sig_err, TRUE);
 SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 #endif
 
+
 #else
 #ifdef SIGINT
   (void) signal(SIGINT,sig_err);    
@@ -534,9 +543,9 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 
 
 #ifdef PLATFORM
-   (IGNORED) printf("htcmd.c (2000-03-03-08:28 %s)\n",PLATFORM);
+   (IGNORED) printf("htcmd.c (2004-12-16-16:20 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("htcmd.c (2000-03-03-08:28)\n");
+   (IGNORED) printf("htcmd.c (2004-12-16-16:20)\n");
 #endif
   
 {                   C_CHAR   *yes = NULL;
