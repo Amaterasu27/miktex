@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/spc_dvips.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.9 2005/08/19 12:06:24 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -36,7 +36,6 @@
 
 #include "pdfdoc.h"
 
-#include "psimage.h"
 #include "mpost.h"
 
 #include "pdfximage.h"
@@ -55,6 +54,45 @@ static double pending_x     = 0.0;
 static double pending_y     = 0.0;
 static int    position_set  = 0;
 
+static char *
+parse_filename (char **pp, char *endptr)
+{
+  char  *r, *q = NULL, *p = *pp;
+  char   qchar;
+  int    n;
+
+  if (!p || p >= endptr)
+    return  NULL;
+  else if (*p == '\"' || *p == '\'')
+    qchar = *p++;
+  else {
+    qchar = ' ';
+  }
+  for (n = 0, q = p; p < endptr && *p != qchar; n++, p++);
+  if (qchar != ' ') {
+    if (*p != qchar)
+      return  NULL;
+    p++;
+  }
+  if (!q || n == 0)
+    return  NULL;
+
+#if  0
+  {
+    int  i;
+    for (i = 0; i < n && isprint(q[i]); i++);
+    if (i != n) {
+      WARN("Non printable char in filename string...");
+    }
+  }
+#endif
+
+  r = NEW(n + 1, char);
+  memcpy(r, q, n); r[n] = '\0';
+
+  *pp = p;
+  return  r;
+}
 
 /* =filename ... */
 static int
@@ -62,57 +100,44 @@ spc_handler_ps_file (struct spc_env *spe, struct spc_arg *args)
 {
   int            form_id;
   char          *filename;
-  transform_info p;
-  int            quoted = 0;
+  transform_info ti;
 
   ASSERT(spe && args);
 
   skip_white(&args->curptr, args->endptr);
   if (args->curptr + 1 >= args->endptr ||
       args->curptr[0] != '=') {
-    spe->errmsg = (char *) "No filename specified.";
-    return -1;
+    spc_warn(spe, "No filename specified for PSfile special.");
+    return  -1;
   }
   args->curptr++;
 
-  if (args->curptr[0] == '\"') {
-    args->curptr++;
-    quoted = 1;
-  }
-  filename = parse_val_ident(&args->curptr, args->endptr);
+  filename = parse_filename(&args->curptr, args->endptr);
   if (!filename) {
-    spe->errmsg = (char *) "Expecting filename but not found...";
-    return -1;
-  }
-  if (quoted) {
-    if (filename[strlen(filename)-1] == '\"') {
-      filename[strlen(filename)-1] = '\0';
-    } else {
-      spe->errmsg = (char *) "Invalid value.";
-      RELEASE(filename);
-      return -1;
-    }
+    spc_warn(spe, "No filename specified for PSfile special.");
+    return  -1;
   }
 
-  transform_info_clear(&p);
-  if (spc_util_read_dimension(&p, spe, args, 1) < 0) {
+  transform_info_clear(&ti);
+  if (spc_util_read_dimtrns(spe, &ti, args, 1) < 0) {
     RELEASE(filename);
-    return -1;
+    return  -1;
   }
 
   form_id = pdf_ximage_findresource(filename);
   if (form_id < 0) {
-    spe->errmsg = (char *) "Failed to open image file...";
+    spc_warn(spe, "Failed to read image file: %s", filename);
     RELEASE(filename);
-    return -1;
+    return  -1;
   }
   RELEASE(filename);
 
-  pdf_dev_put_image(form_id, &p, spe->x_user, spe->y_user);
+  pdf_dev_put_image(form_id, &ti, spe->x_user, spe->y_user);
 
-  return 0;
+  return  0;
 }
 
+/* This isn't correct implementation but dvipdfm supports... */
 static int
 spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
 {
@@ -123,20 +148,22 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
 
   ASSERT(spe && args);
 
+  spc_warn(spe, "ps:plotfile found (not properly implemented)");
+
   skip_white(&args->curptr, args->endptr);
-  filename = parse_val_ident(&args->curptr, args->endptr);
+  filename = parse_filename(&args->curptr, args->endptr);
   if (!filename) {
-    spe->errmsg = (char *) "Expecting filename but not found...";
+    spc_warn(spe, "Expecting filename but not found...");
     return -1;
   }
 
   form_id = pdf_ximage_findresource(filename);
   if (form_id < 0) {
-    spe->errmsg = (char *) "Could not find image...";
+    spc_warn(spe, "Could not open PS file: %s", filename);
     error = -1;
   } else {
     transform_info_clear(&p);
-    p.yscale = -1.0; p.xscale = 1.0;
+    p.matrix.d = -1.0; /* xscale = 1.0, yscale = -1.0 */
 #if 0
     /* I don't know how to treat this... */
     pdf_dev_put_image(form_id, &p,
@@ -147,7 +174,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
   }
   RELEASE(filename);
 
-  return error;
+  return  error;
 }
 
 static int
@@ -159,10 +186,8 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
 
   ASSERT(spe && args);
 
-  if (args->curptr >= args->endptr) {
-    spe->errmsg = (char *) "No literal PS code found.";
-    return -1;
-  }
+  if (args->curptr >= args->endptr)
+    return  -1;
 
   if (args->curptr + strlen(":[begin]") <= args->endptr &&
       !strncmp(args->curptr, ":[begin]", strlen(":[begin]"))) {
@@ -175,7 +200,7 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
   } else if (args->curptr + strlen(":[end]") <= args->endptr &&
 	     !strncmp(args->curptr, ":[end]", strlen(":[end]"))) {
     if (block_pending <= 0) {
-      spe->errmsg = (char *) "No corresponding ::[begin] found.";
+      spc_warn(spe, "No corresponding ::[begin] found.");
       return -1;
     }
     block_pending--;
@@ -206,19 +231,16 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
 			    args->endptr,
 			    x_user, y_user);
     if (error) {
-      spe->errmsg =
-	(char *) "Interpreting PS code failed!!! Output might be broken!!!";
+      spc_warn(spe, "Interpreting PS code failed!!! Output might be broken!!!");
       pdf_dev_grestore_to(gs_depth);
-    }
-
-    if (st_depth != mps_stack_depth()) {
-      WARN("Stack not empty after execution of inline PostScript code.");
-      WARN("Your macro package makes some assumption on internal behaviour of DVI drivers.");
-      WARN("It may not compatible with dvipdfmx.");
+    } else if (st_depth != mps_stack_depth()) {
+      spc_warn(spe, "Stack not empty after execution of inline PostScript code.");
+      spc_warn(spe, ">> Your macro package makes some assumption on internal behaviour of DVI drivers.");
+      spc_warn(spe, ">> It may not compatible with dvipdfmx.");
     }
   }
 
-  return error;
+  return  error;
 }
 
 static int
@@ -234,23 +256,30 @@ spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
   st_depth = mps_stack_depth();
   gs_depth = pdf_dev_current_depth();
 
+  {
+    pdf_tmatrix M;
+    M.a = M.d = 1.0; M.b = M.c = 0.0; M.e = spe->x_user; M.f = spe->y_user;
+    pdf_dev_concat(&M);
   error = mps_exec_inline(&args->curptr,
 			  args->endptr,
 			  spe->x_user, spe->y_user);
-  if (error) {
-    spe->errmsg =
-      (char *) "Interpreting PS code failed!!! Output might be broken!!!";
+    M.e = -spe->x_user; M.f = -spe->y_user;
+    pdf_dev_concat(&M);
   }
-  if (st_depth != mps_stack_depth()) {
-    WARN("Stack not empty after execution of inline PostScript code.");
-    WARN("Your macro package makes some assumption on internal behaviour of DVI drivers.");
-    WARN("It may not compatible with dvipdfmx.");
+  if (error)
+    spc_warn(spe, "Interpreting PS code failed!!! Output might be broken!!!");
+  else {
+    if (st_depth != mps_stack_depth()) {
+      spc_warn(spe, "Stack not empty after execution of inline PostScript code.");
+      spc_warn(spe, ">> Your macro package makes some assumption on internal behaviour of DVI drivers.");
+      spc_warn(spe, ">> It may not compatible with dvipdfmx.");
+    }
   }
 
   pdf_dev_grestore_to(gs_depth);
   pdf_dev_grestore();
 
-  return error;
+  return  error;
 }
 
 static struct spc_handler dvips_handlers[] = {
@@ -266,52 +295,52 @@ static struct spc_handler dvips_handlers[] = {
 int
 spc_dvips_at_begin_page (void)
 {
-  return 0;
+  return  0;
 }
 
 int
 spc_dvips_at_end_page (void)
 {
-  return 0;
+  mps_eop_cleanup();
+  return  0;
 }
 
 int
 spc_dvips_at_begin_document (void)
 {
-  return 0;
+  return  0;
 }
 
 int
 spc_dvips_at_end_document (void)
 {
-  return 0;
+  return  0;
 }
 
 int
-spc_dvips_check_special (const char *buffer, long size)
+spc_dvips_check_special (const char *buf, long len)
 {
   char *p, *endptr;
   int   i;
 
-  p      = (char *) buffer;
-  endptr =  p + size;
+  p      = (char *) buf;
+  endptr =  p + len;
 
   skip_white(&p, endptr);
-  if (p >= endptr) {
-    return 0;
-  }
+  if (p >= endptr)
+    return  0;
 
-  size = (long) (endptr - p);
+  len = (long) (endptr - p);
   for (i = 0;
        i < sizeof(dvips_handlers)/sizeof(struct spc_handler); i++) {
-    if (size >= strlen(dvips_handlers[i].key) &&
-	!strncmp(p, dvips_handlers[i].key,
-		 strlen(dvips_handlers[i].key))) {
-      return 1;
+    if (len >= strlen(dvips_handlers[i].key) &&
+        !memcmp(p, dvips_handlers[i].key,
+                strlen(dvips_handlers[i].key))) {
+      return  1;
     }
   }
 
-  return 0;
+  return  0;
 }
 
 int 
@@ -334,12 +363,15 @@ spc_dvips_setup_handler (struct spc_handler *handle,
   if (args->curptr < args->endptr &&
       args->curptr[0] == ':') {
     args->curptr++;
+  } else if (args->curptr+1 < args->endptr &&
+             args->curptr[0] == '"' && args->curptr[1] == ' ') {
+    args->curptr += 2;
   }
 
   keylen = (int) (args->curptr - key);
   if (keylen < 1) {
-    spe->errmsg = (char *) "No ps special found.";
-    return -1;
+    spc_warn(spe, "Not ps: special???");
+    return  -1;
   }
 
   for (i = 0;
@@ -354,9 +386,10 @@ spc_dvips_setup_handler (struct spc_handler *handle,
       handle->key  = (char *) "ps:";
       handle->exec = dvips_handlers[i].exec;
 
-      return 0;
+      return  0;
     }
   }
 
-  return -1;
+  return  -1;
 }
+

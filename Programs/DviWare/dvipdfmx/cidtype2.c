@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cidtype2.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.33 2005/07/17 09:53:38 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -25,21 +25,23 @@
  * GhostScript can't handle CIDToGIDMap correctly.
  */
 
-#include <stdlib.h>
-#include <limits.h>
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "system.h"
 #include "numbers.h"
 #include "mem.h"
 #include "error.h"
-
 #include "dpxfile.h"
 
-/* mangle_name() */
-#include "dpxutil.h"
-
-#include "pdflimits.h"
 #include "pdfobj.h"
+/* pseudo unique tag */
+#include "pdffont.h"
+
+#ifndef PDF_NAME_LEN_MAX
+#  define PDF_NAME_LEN_MAX 255
+#endif
 
 /* TrueType */
 #include "sfnt.h"
@@ -1039,8 +1041,11 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     ERROR("Could not obtain neccesary font info.");
   }
 
-  if (opt->embed)
-    mangle_name(fontname);
+  if (opt->embed) {
+    memmove(fontname + 7, fontname, strlen(fontname) + 1);
+    pdf_font_make_uniqueTag(fontname);
+    fontname[6] = '+';
+  }
 
   pdf_add_dict(font->descriptor,
 	       pdf_new_name("FontName"),

@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfencrypt.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.8 2005/07/20 08:49:55 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -94,22 +94,22 @@ static void compute_id_string (char *dviname, char *pdfname)
   sprintf (date_string, "%04d%02d%02d%02d%02d%02d",
 	   bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
 	   bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec);
-  MD5_write(&md5_ctx, date_string, strlen(date_string));
+  MD5_write(&md5_ctx, (unsigned char *)date_string, strlen(date_string));
   RELEASE (date_string);
 
   producer = NEW (strlen(PRODUCER)+strlen(PACKAGE)+strlen(VERSION), char);
   sprintf(producer, PRODUCER, PACKAGE, VERSION);
-  MD5_write(&md5_ctx, producer, strlen(producer));
+  MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
   RELEASE (producer);
 
-  MD5_write(&md5_ctx, dviname, strlen(dviname));
-  MD5_write(&md5_ctx, pdfname, strlen(pdfname));
+  MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
+  MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
   MD5_final(id_string, &md5_ctx);
 }
 
 static void passwd_padding (unsigned char *src, unsigned char *dst)
 {
-  register int len = strlen(src);
+  register int len = strlen((char *)src);
 
   if (len > MAX_STR_LEN)
     len = MAX_STR_LEN;
@@ -129,7 +129,7 @@ static void compute_owner_password (void)
    *    of Algorithm 3.2. If there is no owner password, use the user
    *    password instead. (See implementation note 17 in Appendix H.)
    */
-  passwd_padding((strlen(owner_passwd) > 0 ? owner_passwd : user_passwd), in_buf);
+  passwd_padding((unsigned char *)(strlen(owner_passwd) > 0 ? owner_passwd : user_passwd), in_buf);
   /*
    * 2. Initialize the MD5 hash function and pass the result of step 1
    *    as input to this function.
@@ -159,7 +159,7 @@ static void compute_owner_password (void)
    * 5. Pad or truncate the user password string as described in step 1
    *    of Algorithm 3.2.
    */
-  passwd_padding(user_passwd, in_buf);
+  passwd_padding((unsigned char *)user_passwd, in_buf);
   /*
    * 6. Encrypt the result of step 5, using an RC4 encryption function
    *    with the encryption key obtained in step 4.
@@ -306,7 +306,7 @@ static void compute_user_password (void)
    *    final invocation of the RC4 function and store the 32-byte
    *    result as the value of the U entry in the encryption dictionary.
    */
-  compute_encryption_key(user_passwd);
+  compute_encryption_key((unsigned char *)user_passwd);
 
   switch (revision) {
   case 2:
@@ -520,7 +520,7 @@ unsigned char *pdf_enc_id_string (void)
   static unsigned char result[MAX_STR_LEN+1];
 
   for (i = 0; i < MAX_KEY_LEN; i++)
-    sprintf(result+2*i, "%02x", id_string[i]);
+    sprintf((char *)(result+2*i), "%02x", id_string[i]);
 
   return result;
 }

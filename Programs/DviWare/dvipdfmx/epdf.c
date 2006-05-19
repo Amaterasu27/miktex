@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/epdf.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.14 2004/09/12 11:57:49 hirata Exp $
 
     This is dvipdfm, a DVI to PDF translator.
     Copyright (C) 1998, 1999 by Mark A. Wicks

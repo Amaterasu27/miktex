@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cmap.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cmap.h,v 1.15 2004/09/05 13:30:05 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

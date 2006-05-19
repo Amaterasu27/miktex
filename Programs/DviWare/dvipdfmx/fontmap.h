@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/fontmap.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.19 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -40,33 +40,36 @@
 
 /* Options */
 typedef struct fontmap_opt {
-  double slant, extend;
+  /* Synthetic font */
+  double slant, extend, bold;
+  /* comaptibility and other flags */
   long   mapc,  flags;
 
-  char  *otl_tags;
+  char  *otl_tags;    /* currently unused */
+  char  *tounicode;   /* not implemented yet */
 
-  /* For PK font support.
-   * Entries for PK font mapping automatically inserted
-   * by DVI interpreter.
-   */
-  double design_size;
+  double design_size; /* unused */
 
-  /* CIDFont option */
-  char  *charcoll;
-  int    index;
-  int    style;
+  char  *charcoll;    /* Adobe-Japan1-4, etc. */
+  int    index;       /* TTC index */
+  int    style;       /* ,Bold, etc. */
 } fontmap_opt;
 
 typedef struct fontmap_rec {
-  char *map_name;  /* for subfont support... */
-  char *sfd_name;  /* for subfont support... */
+  char  *map_name;
 
-  char *font_name;
-  char *enc_name;
+  char  *font_name;
+  char  *enc_name;
+
+  /* Subfont mapping: translate 8-bit charcode to 16-bit charcode
+   * via SFD.
+   */
+  struct {
+    char  *sfd_name;
+    char  *subfont_id;
+  } charmap;
 
   fontmap_opt opt;
-
-  int    deleted;   /* pdfTeX compatibility??? */
 } fontmap_rec;
 
 extern void         pdf_fontmap_set_verbose   (void);
@@ -78,16 +81,13 @@ extern void         pdf_close_fontmaps        (void);
 extern void         pdf_init_fontmap_record   (fontmap_rec *mrec);
 extern void         pdf_clear_fontmap_record  (fontmap_rec *mrec);
 
-extern void         pdf_load_fontmap_file     (const char  *filename, int mode);
+extern int          pdf_load_fontmap_file     (const char  *filename, int mode);
 extern int          pdf_read_fontmap_line     (fontmap_rec *mrec,
-					       const char  *mline, long mline_strlen);
+                                               const char  *mline, long mline_strlen);
 
-extern int          pdf_append_fontmap_record (fontmap_rec *mrec);
-extern int          pdf_remove_fontmap_record (const char  *tex_name);
-extern int          pdf_insert_fontmap_record (fontmap_rec *mrec);
-extern fontmap_rec *pdf_lookup_fontmap_record (const char  *tex_name);
-
-/* With SFD.... */
-extern fontmap_rec *pdf_lookup_fontmap_record2 (const char *tex_name, int *sfd_id);
+extern int          pdf_append_fontmap_record (const char  *kp, const fontmap_rec *mrec);
+extern int          pdf_remove_fontmap_record (const char  *kp);
+extern int          pdf_insert_fontmap_record (const char  *kp, const fontmap_rec *mrec);
+extern fontmap_rec *pdf_lookup_fontmap_record (const char  *kp);
 
 #endif /* _FONTMAP_H_ */

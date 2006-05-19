@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pst.c,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst.c,v 1.5 2004/07/27 12:08:47 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

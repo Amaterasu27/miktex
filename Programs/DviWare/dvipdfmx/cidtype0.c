@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cidtype0.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.34 2005/07/17 09:53:37 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -31,20 +31,16 @@
 #include "config.h"
 #endif
 
-#include <string.h>
-
 #include "system.h"
+#include "numbers.h"
 #include "mem.h"
 #include "error.h"
 
 #include "dpxfile.h"
 
 #include "pdfobj.h"
-
-/* ROUND() */
-#include "numbers.h"
-/* mangle_name() */
-#include "dpxutil.h"
+/* pseudo unique tag */
+#include "pdffont.h"
 
 /* Font info. from OpenType tables */
 #include "sfnt.h"
@@ -826,8 +822,11 @@ CIDFont_type0_open (CIDFont *font, const char *name,
        = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
     ERROR("Could not obtain neccesary font info.");
 
-  if (opt->embed)
-    mangle_name(fontname);
+  if (opt->embed) {
+    memmove(fontname + 7, fontname, strlen(fontname) + 1);
+    pdf_font_make_uniqueTag(fontname); 
+    fontname[6] = '+';
+  }
 
   pdf_add_dict(font->descriptor,
 	       pdf_new_name("FontName"),
@@ -1222,8 +1221,11 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
        = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
     ERROR("Could not obtain neccesary font info.");
 
-  if (opt->embed)
-    mangle_name(fontname);
+  if (opt->embed) {
+    memmove(fontname + 7, fontname, strlen(fontname) + 1);
+    pdf_font_make_uniqueTag(fontname);
+    fontname[6] = '+';
+  }
 
   pdf_add_dict(font->descriptor,
 	       pdf_new_name("FontName"),
@@ -1534,7 +1536,9 @@ CIDFont_type0_t1open (CIDFont *font, const char *name,
 	       pdf_new_name("Subtype"),
 	       pdf_new_name("CIDFontType0"));
 
-  mangle_name(fontname);
+  memmove(fontname + 7, fontname, strlen(fontname) + 1);
+  pdf_font_make_uniqueTag(fontname);
+  fontname[6] = '+';
 
   font->descriptor = pdf_new_dict();
   pdf_add_dict(font->descriptor,

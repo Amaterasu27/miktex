@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfdev.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.60 2005/08/12 18:22:24 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -82,6 +82,7 @@ static struct {
   2
 };
 
+
 double
 dev_unit_dviunit (void)
 {
@@ -97,6 +98,10 @@ static double ten_pow_inv[10] = {
   1.0, 0.1,  0.01,  0.001,  0.0001,  0.00001,  0.000001,  0.0000001,  0.00000001,  0.000000001
 };
 
+#define bpt2spt(b) ( (spt_t) round( (b) / dev_unit.dvi2pts  ) )
+#define spt2bpt(s) ( (s) * dev_unit.dvi2pts )
+#define dround_at(v,p) (ROUND( (v), ten_pow_inv[(p)] ))
+
 static int
 p_itoa (long value, char *buf)
 {
@@ -110,7 +115,7 @@ p_itoa (long value, char *buf)
   } else {
     sign  = 0;
   }
-    
+
   ndigits = 0;
   /* Generate at least one digit in reverse order */
   do {
@@ -130,153 +135,77 @@ p_itoa (long value, char *buf)
   }
   p[ndigits] = '\0';
 
-  return (sign ? ndigits + 1 : ndigits);
+  return  (sign ? ndigits + 1 : ndigits);
 }
 
-#if 0
-/* This isn't usefull at all. */
-
-#define ROUND_TOWARD_NINF 0
-#define ROUND_TOWARD_ZERO 1
-#define ROUND_HALF_UP     2
-#define ROUND_HALF_DOWN   3
-
-static int __round_mode = ROUND_HALF_UP;
-
-long
-dev_round (spt_t value, spt_t min_val, spt_t *error)
-{
-  spt_t delta;
-
-  switch (__round_mode) {
-  case ROUND_TOWARD_NINF: /* FLOOR */
-    delta = value % min_val;
-    break;
-  case ROUND_TOWARD_ZERO: /* DOWN */
-    delta = (value < 0) ? -((-value) % min_val) : value % min_val;
-    break;
-  case ROUND_HALF_DOWN:   /* .5 DOWN */
-    {
-      stp_t r;
-
-      r = ((value < 0) ? -value : value) % min_val;
-      if (2*r <= min_val) {
-	delta = (value < 0) ? -r : r;
-      } else {
-	delta = (value < 0) ? min_val - r : r - min_val;
-      }
-    }
-    break;
-  case ROUND_HALF_UP:     /* .5 UP */
-    {
-      spt_t r;
-
-      r = ((value < 0) ? -value : value) % min_val;
-      if (2*r < min_val) {
-	delta = (value < 0) ? -r : r;
-      } else {
-	delta = (value < 0) ? min_val - r : r - min_val;
-      }
-    }
-    break;
-  }
-  if (error)
-    *error = delta;
-
-  return value - delta;
-}
-#endif
-
-/*
- * dvipdfmx spend most of his time in dev_set_string() where integers
- * are used. Speed is not a matter for formatting floating points.
- */
+/* ... */
 static int
-p_dtoa (double value, int nddigits, char *buf)
+p_dtoa (double value, int prec, char *buf)
 {
-  int  ntotal = 0;
-  long ipart, dpart;
+  int    n;
+  char  *p, *q;
 
-  if (value < 0.0) {
-    buf[ntotal++] = '-';
-    value = -value;
-  }
-
-  if (nddigits > DEV_PRECISION_MAX)
-    nddigits = DEV_PRECISION_MAX;
-
-  value = ROUND(value, ten_pow_inv[nddigits]);
-  ipart = (long) value;
-  dpart = (long) (ten_pow[nddigits]*(value - ipart));
-
-  if (dpart == 0 && ipart == 0) {
-    buf[0] = '0';
-    ntotal =  1;
-  } else {
-    if (ipart != 0) {
-      ntotal += p_itoa(ipart, buf+ntotal);
+  n = sprintf(buf, "%.*f", prec, value);
+  /* find decimal-point */
+  for (p = buf + n - 1; p > buf && *p != '.'; p--);
+  if (p > buf) {
+    /* chop trailing zeros */
+    for (q = buf + n - 1; q > p && *q == '0'; q--) {
+      *q = '\0'; n--;
     }
-    if (dpart != 0) {
-      /* chop trailing zeros */
-      while ((dpart % 10) == 0) {
-	dpart /= 10;
-	nddigits--;
-      }
-      if (nddigits > 0) {
-	int n = nddigits;
-	buf[ntotal++] = '.';
-	while (n-- > 0) {
-	  buf[ntotal+n] = (dpart % 10) + '0';
-	  dpart /= 10;
-	}
-      }
-      ntotal += nddigits;
+    /* If a decimal point appears, at least one digit appears
+     * before it.
+     */
+    if (q == p) {
+      *q = '\0'; n--;
     }
   }
-  buf[ntotal] = '\0';
+  /* -0 --> 0 */
+  if (n == 2 && buf[0] == '-' && buf[1] == '0') {
+    buf[0] = '0'; buf[1] = '\0'; n = 1;
+  }
 
-  return ntotal;
+  return  n;
 }
 
 static int
 dev_sprint_bp (char *buf, spt_t value, spt_t *error)
 {
-  double value_in_bp;
-  double error_in_bp;
+  double  value_in_bp;
+  double  error_in_bp;
+  int     prec = dev_unit.precision;
 
-  value_in_bp = dev_unit.dvi2pts * value;
+  value_in_bp = spt2bpt(value);
   if (error) {
-    error_in_bp =
-      value_in_bp - ROUND(value_in_bp, ten_pow_inv[dev_unit.precision]);
-
-    *error = (spt_t) ROUND(error_in_bp / dev_unit.dvi2pts, 1.0);
+    error_in_bp = value_in_bp - dround_at(value_in_bp, prec);
+    *error = bpt2spt(error_in_bp);
   }
 
-  return p_dtoa(value_in_bp, dev_unit.precision, buf);
+  return  p_dtoa(value_in_bp, prec, buf);
 }
 
-/* Public functions:
- * They are affected by precision (set at device initialization).
- */
+/* They are affected by precision (set at device initialization). */
 int
 pdf_sprint_matrix (char *buf, const pdf_tmatrix *M)
 {
   int  len;
+  int  prec2 = MIN(dev_unit.precision + 2, DEV_PRECISION_MAX);
+  int  prec0 = MAX(dev_unit.precision, 2);
 
-  len  = p_dtoa(M->a, MIN(dev_unit.precision + 2, DEV_PRECISION_MAX), buf);
+  len  = p_dtoa(M->a, prec2, buf);
   buf[len++] = ' ';
-  len += p_dtoa(M->b, MIN(dev_unit.precision + 2, DEV_PRECISION_MAX), buf+len);
+  len += p_dtoa(M->b, prec2, buf+len);
   buf[len++] = ' ';
-  len += p_dtoa(M->c, MIN(dev_unit.precision + 2, DEV_PRECISION_MAX), buf+len);
+  len += p_dtoa(M->c, prec2, buf+len);
   buf[len++] = ' ';
-  len += p_dtoa(M->d, MIN(dev_unit.precision + 2, DEV_PRECISION_MAX), buf+len);
+  len += p_dtoa(M->d, prec2, buf+len);
   buf[len++] = ' ';
-  len += p_dtoa(M->e, MAX(dev_unit.precision, 2), buf+len);
+  len += p_dtoa(M->e, prec0, buf+len);
   buf[len++] = ' ';
-  len += p_dtoa(M->f, MAX(dev_unit.precision, 2), buf+len);
+  len += p_dtoa(M->f, prec0, buf+len);
   buf[len]   = '\0'; /* xxx_sprint_xxx NULL terminates strings. */
 
-  return len;
+  return  len;
 }
 
 int
@@ -293,7 +222,7 @@ pdf_sprint_rect (char *buf, const pdf_rect *rect)
   len += p_dtoa(rect->ury, dev_unit.precision, buf+len);
   buf[len]   = '\0'; /* xxx_sprint_xxx NULL terminates strings. */
 
-  return len;
+  return  len;
 }
 
 int
@@ -306,7 +235,7 @@ pdf_sprint_coord (char *buf, const pdf_coord *p)
   len += p_dtoa(p->y, dev_unit.precision, buf+len);
   buf[len]   = '\0'; /* xxx_sprint_xxx NULL terminates strings. */
 
-  return len;
+  return  len;
 }
 
 int
@@ -317,7 +246,19 @@ pdf_sprint_length (char *buf, double value)
   len = p_dtoa(value, dev_unit.precision, buf);
   buf[len] = '\0'; /* xxx_sprint_xxx NULL terminates strings. */
 
-  return len;
+  return  len;
+}
+
+
+int
+pdf_sprint_number (char *buf, double value)
+{
+  int  len;
+
+  len = p_dtoa(value, DEV_PRECISION_MAX, buf);
+  buf[len] = '\0'; /* xxx_sprint_xxx NULL terminates strings. */
+
+  return  len;
 }
 
 
@@ -417,6 +358,13 @@ static struct {
     int     rotate; /* TEXT_WMODE_XX */
   } matrix;
 
+  /* Fake bold parameter:
+   * If bold_param is positive, use text rendering mode
+   * fill-then-stroke with stroking line width specified
+   * by bold_param.
+   */
+  double    bold_param;
+
   /* Text composition (direction) mode. */
   int       dir_mode;
 
@@ -440,6 +388,8 @@ static struct {
   0, 0,          /* raise, leading */
   {0.0, 1.0, 0},
 
+  0.0,  /* Experimental boldness param */
+
   0,    /* dir_mode      */
 
   /* internal */
@@ -447,9 +397,9 @@ static struct {
   0     /* is_mb         */
 };
 
-#define FONTTYPE_SIMPLE    1
-#define FONTTYPE_BITMAP    2
-#define FONTTYPE_COMPOSITE 3
+#define PDF_FONTTYPE_SIMPLE    1
+#define PDF_FONTTYPE_BITMAP    2
+#define PDF_FONTTYPE_COMPOSITE 3
 
 struct dev_font {
   /* Needs to be big enough to hold name "Fxxx"
@@ -496,6 +446,7 @@ struct dev_font {
    */
   double   extend;
   double   slant;
+  double   bold;  /* Boldness prameter */
 
   /* Compatibility */
   int      remap; /* Obsolete */
@@ -590,9 +541,9 @@ reset_text_state (void)
       text_state.matrix.extend != 1.0 ||
       ROTATE_TEXT(text_state.matrix.rotate)) {
     dev_set_text_matrix(0, 0,
-			text_state.matrix.slant,
-			text_state.matrix.extend,
-			text_state.matrix.rotate);
+                        text_state.matrix.slant,
+                        text_state.matrix.extend,
+                        text_state.matrix.rotate);
   }
   text_state.ref_x = 0;
   text_state.ref_y = 0;
@@ -699,7 +650,7 @@ start_string (spt_t xpos, spt_t ypos, double slant, double extend, int rotate)
      *
      * We must care about rotation here but not extend/slant...
      * The extend and slant actually is font matrix.
-     */ 
+     */
     format_buffer[len++] = ' ';
     len += dev_sprint_bp(format_buffer+len, desired_delx, &error_dely);
     format_buffer[len++] = ' ';
@@ -817,7 +768,7 @@ dev_set_font (int font_id)
   font = GET_FONT(font_id);
   ASSERT(font); /* Caller should check font_id. */
 
-  text_state.is_mb = (font->format == FONTTYPE_COMPOSITE) ? 1 : 0;
+  text_state.is_mb = (font->format == PDF_FONTTYPE_COMPOSITE) ? 1 : 0;
 
   vert_font  = font->wmode ? 1 : 0;
   if (dev_param.autorotate) {
@@ -843,8 +794,8 @@ dev_set_font (int font_id)
 
   if (!font->used_on_this_page) { 
     pdf_doc_add_page_resource("Font",
-			      font->short_name,
-			      pdf_link_obj(font->resource));
+                              font->short_name,
+                              pdf_link_obj(font->resource));
     font->used_on_this_page = 1;
   }
 
@@ -857,26 +808,20 @@ dev_set_font (int font_id)
   format_buffer[len++] = 'f';
   pdf_doc_add_page_content(format_buffer, len);
 
+  if (font->bold > 0.0 || font->bold != text_state.bold_param) {
+    if (font->bold <= 0.0)
+      len = sprintf(format_buffer, " 0 Tr");
+    else
+      len = sprintf(format_buffer, " 2 Tr %.2f w", font->bold); /* _FIXME_ */
+    pdf_doc_add_page_content(format_buffer, len);
+  }
+  text_state.bold_param = font->bold;
+
   text_state.font_id    = font_id;
 
-  return 0;
+  return  0;
 }
 
-int
-pdf_dev_setfont (const char *font_name, spt_t ptsize)
-{
-  int  font_id;
-
-  font_id = pdf_dev_locate_font(font_name, ptsize);
-  if (font_id < 0) {
-    ERROR("Font %s (%g) not found.", font_name, ptsize * dev_unit.dvi2pts);
-    return -1;
-  }
-  if (font_id != text_state.font_id)
-    dev_set_font(font_id);
-
-  return 0;
-}
 
 /* Access text state parameters.
  */
@@ -944,7 +889,7 @@ handle_remap (unsigned char **str_ptr, int length)
 
 static int
 handle_multibyte_string (struct dev_font *font,
-			 unsigned char **str_ptr, int *str_len, int ctype)
+                         unsigned char **str_ptr, int *str_len, int ctype)
 {
   unsigned char *p;
   int            i, length;
@@ -952,29 +897,30 @@ handle_multibyte_string (struct dev_font *font,
   p      = *str_ptr;
   length = *str_len;
 
+  /* _FIXME_ */
   if (font->is_unicode) { /* UCS-4 */
     if (ctype == 1) {
       if (length * 4 >= FORMAT_BUF_SIZE) {
-	WARN("Too long string...");
-	return -1;
+        WARN("Too long string...");
+        return -1;
       }
       for (i = 0; i < length; i++) {
-	sbuf1[i*4  ] = font->ucs_group;
-	sbuf1[i*4+1] = font->ucs_plane;
-	sbuf1[i*4+2] = '\0';
-	sbuf1[i*4+3] = p[i];
+        sbuf1[i*4  ] = font->ucs_group;
+        sbuf1[i*4+1] = font->ucs_plane;
+        sbuf1[i*4+2] = '\0';
+        sbuf1[i*4+3] = p[i];
       }
       length *= 4;
     } else if (ctype == 2) {
       if (length * 2 >= FORMAT_BUF_SIZE) {
-	WARN("Too long string...");
-	return -1;
+        WARN("Too long string...");
+        return -1;
       }
       for (i = 0; i < length; i += 2) {
-	sbuf1[i*2  ] = font->ucs_group;
-	sbuf1[i*2+1] = font->ucs_plane;
-	sbuf1[i*2+2] = p[i];
-	sbuf1[i*2+3] = p[i+1];
+        sbuf1[i*2  ] = font->ucs_group;
+        sbuf1[i*2+1] = font->ucs_plane;
+        sbuf1[i*2+2] = p[i];
+        sbuf1[i*2+3] = p[i+1];
       }
       length *= 2;
     }
@@ -1012,7 +958,7 @@ handle_multibyte_string (struct dev_font *font,
     outbytesleft = FORMAT_BUF_SIZE;
 
     CMap_decode(cmap,
-		(const unsigned char **) &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+                (const unsigned char **) &inbuf, &inbytesleft, &outbuf, &outbytesleft);
     if (inbytesleft != 0) {
       WARN("CMap conversion failed. (%d bytes remains)", inbytesleft);
       return -1;
@@ -1032,13 +978,15 @@ handle_multibyte_string (struct dev_font *font,
  *     is properly encoded.
  *  n  Single character cosumes n bytes in input string.
  *
- * pdf_dev_setfont() must be called before this.
+ * _FIXME_
+ * -->
+ * selectfont(font_name, point_size) and show_string(pos, string)
  */
 void
 pdf_dev_set_string (spt_t xpos, spt_t ypos,
-		    const void *instr_ptr, int instr_len,
-		    spt_t width,
-		    int   font_id, int ctype)
+                    const void *instr_ptr, int instr_len,
+                    spt_t width,
+                    int   font_id, int ctype)
 {
   struct dev_font *font;
   unsigned char   *str_ptr; /* Pointer to the reencoded string. */
@@ -1067,22 +1015,22 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
   str_ptr = (unsigned char *) instr_ptr;
   length  = instr_len;
 
-  if (font->format == FONTTYPE_COMPOSITE) {
+  if (font->format == PDF_FONTTYPE_COMPOSITE) {
     if (handle_multibyte_string(font, &str_ptr, &length, ctype) < 0) {
       ERROR("Error in converting input string...");
       return;
     }
     if (font->used_chars != NULL) {
       for (i = 0; i < length; i += 2)
-	add_to_used_chars2(font->used_chars,
-			   (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
+        add_to_used_chars2(font->used_chars,
+                           (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
     }
   } else {
     if (font->remap)
       handle_remap(&str_ptr, length); /* length unchanged. */
     if (font->used_chars != NULL) {
       for (i = 0; i < length; i++)
-	font->used_chars[str_ptr[i]] = 1;
+        font->used_chars[str_ptr[i]] = 1;
     }
   }
 
@@ -1136,7 +1084,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
    */
   if (motion_state != STRING_MODE)
     string_mode(xpos, ypos,
-		font->slant, font->extend, text_state.matrix.rotate);
+                font->slant, font->extend, text_state.matrix.rotate);
   else if (kern != 0) {
     /*
      * Same issues as earlier. Use floating point for simplicity.
@@ -1171,7 +1119,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
     }
   } else {
     len += pdfobj_escape_str(format_buffer + len,
-			     FORMAT_BUF_SIZE - len, str_ptr, length);
+                             FORMAT_BUF_SIZE - len, str_ptr, length);
   }
   /* I think if you really care about speed, you should avoid memcopy here. */
   pdf_doc_add_page_content(format_buffer, len);
@@ -1185,7 +1133,7 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
   if (precision < 0 ||
       precision > DEV_PRECISION_MAX)
     WARN("Number of decimal digits out of range [0-%d].",
-	 DEV_PRECISION_MAX);
+         DEV_PRECISION_MAX);
 
   if (precision < 0) {
     dev_unit.precision  = 0;
@@ -1218,12 +1166,9 @@ pdf_close_device (void)
 
     for (i = 0; i < num_dev_fonts; i++) {
       if (dev_fonts[i].tex_name)
-	RELEASE(dev_fonts[i].tex_name);
-#if  0
-      /* ??? */
+        RELEASE(dev_fonts[i].tex_name);
       if (dev_fonts[i].resource)
-	pdf_release_obj(dev_fonts[i].resource);
-#endif
+        pdf_release_obj(dev_fonts[i].resource);
       dev_fonts[i].tex_name = NULL;
       dev_fonts[i].resource = NULL;
     }
@@ -1240,7 +1185,7 @@ pdf_close_device (void)
  * BOP, EOP, and FONT section.
  * BOP and EOP manipulate some of the same data structures
  * as the font stuff.
- */ 
+ */
 
 
 /*
@@ -1271,6 +1216,8 @@ pdf_dev_reset_fonts (void)
   text_state.matrix.slant  = 0.0;
   text_state.matrix.extend = 1.0;
   text_state.matrix.rotate = TEXT_WMODE_HH;
+
+  text_state.bold_param    = 0.0;
 
   text_state.is_mb         = 0;
 }
@@ -1334,6 +1281,8 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
     MESG("[extend:%g]", mrec->opt.extend);
   if (mrec->opt.slant  != 0.0)
     MESG("[slant:%g]",  mrec->opt.slant);
+  if (mrec->opt.bold   != 0.0) 
+    MESG("[bold:%g]",   mrec->opt.bold);
   if (mrec->opt.flags & FONTMAP_OPT_REMAP) 
     MESG("[remap]");
   if (mrec->opt.flags & FONTMAP_OPT_NOEMBED)
@@ -1360,118 +1309,29 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
 
 }
 
-
-static int
-locate_font (struct dev_font *font, const char *font_name, spt_t ptsize)
-{
-  int  font_id;
-  fontmap_rec *mrec;
-
-  /* Extend, slant and some other options are meaningless for
-   * pdf_font.
-   */
-  mrec = pdf_lookup_fontmap_record(font_name);
-  /*
-   * Get appropriate info from map file. (PK fonts at two different
-   * point sizes would be looked up twice unecessarily.)
-   */
-
-  if (verbose > 1)
-    print_fontmap(font_name, mrec);
-
-  font_id = pdf_font_findresource(font_name, ptsize * dev_unit.dvi2pts, mrec);
-  if (font_id < 0)
-    return -1;
-
-  font->short_name[0] = 'F';
-  p_itoa(num_phys_fonts+1, &font->short_name[1]); /* NULL terminated here */
-
-  font->used_on_this_page = 0;
-  
-  font->tex_name = NEW(strlen(font_name)+1, char);
-  strcpy(font->tex_name, font_name);
-  font->sptsize  = ptsize;
-
-  font->font_id  = font_id;
-
-  switch (pdf_get_font_subtype(font_id)) {
-  case PDF_FONT_FONTTYPE_TYPE3:
-    font->format = FONTTYPE_BITMAP;
-    break;
-  case PDF_FONT_FONTTYPE_TYPE0:
-    font->format = FONTTYPE_COMPOSITE;
-    break;
-  default:
-    font->format = FONTTYPE_SIMPLE;
-    break;
-  }
-
-  font->wmode      = pdf_get_font_wmode   (font_id);
-  font->enc_id     = pdf_get_font_encoding(font_id);
-
-  font->resource   = NULL; /* Don't ref obj until font is actually used. */  
-  font->used_chars = NULL;
-
-  font->extend     = 1.0;
-  font->slant      = 0.0;
-  font->remap      = 0;
-  font->mapc       = -1;
-  font->is_unicode = 0;
-  font->ucs_group  = 0;
-  font->ucs_plane  = 0;
-
-  if (mrec) {
-    font->extend = mrec->opt.extend;
-    font->slant  = mrec->opt.slant;
-    font->remap  = (int) (mrec->opt.flags & FONTMAP_OPT_REMAP);
-    if (mrec->opt.mapc >= 0)
-      font->mapc = (mrec->opt.mapc >> 8) & 0xff;
-    else {
-      font->mapc = -1;
-    }
-    if (mrec->enc_name &&
-	!strcmp(mrec->enc_name, "unicode")) {
-      font->is_unicode   = 1;
-      if (mrec->opt.mapc >= 0) {
-	font->ucs_group  = (mrec->opt.mapc >> 24) & 0xff;
-	font->ucs_plane  = (mrec->opt.mapc >> 16) & 0xff;
-      } else {
-	font->ucs_group  = 0;
-	font->ucs_plane  = 0;
-      }
-    } else {
-      font->is_unicode   = 0;
-    }
-  }
-
-  return font_id;
-}
-
+/* _FIXME_
+ * Font is identified with font_name and point_size as in DVI here.
+ * This may assign different resource name for same font at different
+ * point size even for scalable fonts.
+ */
 int
 pdf_dev_locate_font (const char *font_name, spt_t ptsize)
 {
-  int  font_id;
-  int  this_font;
+  int              i;
+  fontmap_rec     *mrec;
+  struct dev_font *font;
 
-  ASSERT(font_name);
+  if (!font_name)
+    return  -1;
 
   if (ptsize == 0) {
     ERROR("pdf_dev_locate_font() called with the zero ptsize.");
     return -1;
   }
 
-  for (font_id = 0; font_id < num_dev_fonts; font_id++) {
-    if (!strcmp(font_name, dev_fonts[font_id].tex_name)) {
-      /*
-       * Must match in name and size to resolve to the same device font.
-       * Scaleable fonts must match in name; however, this routine must
-       * return a different id if the ptsize is different.
-       */
-      if (ptsize == dev_fonts[font_id].sptsize)
-        return font_id;
-      else if (dev_fonts[font_id].format != FONTTYPE_BITMAP) {
-        break;
-      }
+  for (i = 0; i < num_dev_fonts; i++) {
+    if (!strcmp(font_name, dev_fonts[i].tex_name) && ptsize == dev_fonts[i].sptsize) {
+      return  i;
     }
   }
 
@@ -1483,59 +1343,90 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
     max_dev_fonts += 16;
     dev_fonts      = RENEW(dev_fonts, max_dev_fonts, struct dev_font);
   }
-  this_font = num_dev_fonts;
 
-  if (font_id < num_dev_fonts) {
-    /*
-     * A previously existing physical font can be used; however, this
-     * routine must return a distinct ID if the ptsizes are different.
-     * Copy the information from the previous record to the new record.
-     */
-    strcpy(dev_fonts[this_font].short_name, dev_fonts[font_id].short_name);
-    /*
-     * The value in used_on_this_page will be incorrect if the font
-     * has already been used on a page in a different point size.
-     * It's too hard to do right.  The only negative consequence is
-     * that there will be an attempt to add the resource to the page
-     * resource dict. However, the second attempt will do nothing.
-     */
-    dev_fonts[this_font].used_on_this_page = 0;
-    dev_fonts[this_font].tex_name = NEW (strlen(font_name) + 1, char);
-    strcpy(dev_fonts[this_font].tex_name, font_name);
-    dev_fonts[this_font].sptsize  = ptsize;
-    /*
-     * These two fonts are treated as having the same physical "used_chars".
-     */
-    dev_fonts[this_font].used_chars = dev_fonts[font_id].used_chars;
-    dev_fonts[this_font].resource   = dev_fonts[font_id].resource;
-    dev_fonts[this_font].format     = dev_fonts[font_id].format;
-    dev_fonts[this_font].font_id    = dev_fonts[font_id].font_id;
-    dev_fonts[this_font].extend     = dev_fonts[font_id].extend;
-    dev_fonts[this_font].slant      = dev_fonts[font_id].slant;
-    dev_fonts[this_font].remap      = dev_fonts[font_id].remap;
-    dev_fonts[this_font].mapc       = dev_fonts[font_id].mapc;
-    dev_fonts[this_font].wmode      = dev_fonts[font_id].wmode;
-    dev_fonts[this_font].enc_id     = dev_fonts[font_id].enc_id;
-    dev_fonts[this_font].is_unicode = dev_fonts[font_id].is_unicode;
-    dev_fonts[this_font].ucs_group  = dev_fonts[font_id].ucs_group;
-    dev_fonts[this_font].ucs_plane  = dev_fonts[font_id].ucs_plane;
-  } else {
-    font_id = locate_font(&dev_fonts[this_font], font_name, ptsize);
-    if (font_id < 0)
-      return -1;
+  font = &dev_fonts[num_dev_fonts];
+
+  /* New font */
+  mrec = pdf_lookup_fontmap_record(font_name);
+
+  if (verbose > 1)
+    print_fontmap(font_name, mrec);
+
+  font->font_id = pdf_font_findresource(font_name, ptsize * dev_unit.dvi2pts, mrec);
+  if (font->font_id < 0)
+    return  -1;
+
+  /* We found device font here. */
+  font->short_name[0] = 'F';
+  p_itoa(num_phys_fonts + 1, &font->short_name[1]); /* NULL terminated here */
+  num_phys_fonts++;
+
+  font->used_on_this_page = 0;
+
+  font->tex_name = NEW(strlen(font_name) + 1, char);
+  strcpy(font->tex_name, font_name);
+  font->sptsize  = ptsize;
+
+  switch (pdf_get_font_subtype(font->font_id)) {
+  case PDF_FONT_FONTTYPE_TYPE3:
+    font->format = PDF_FONTTYPE_BITMAP;
+    break;
+  case PDF_FONT_FONTTYPE_TYPE0:
+    font->format = PDF_FONTTYPE_COMPOSITE;
+    break;
+  default:
+    font->format = PDF_FONTTYPE_SIMPLE;
+    break;
   }
 
-  num_phys_fonts++;
-  num_dev_fonts++;
+  font->wmode      = pdf_get_font_wmode   (font->font_id);
+  font->enc_id     = pdf_get_font_encoding(font->font_id);
 
-  return this_font;
+  font->resource   = NULL; /* Don't ref obj until font is actually used. */  
+  font->used_chars = NULL;
+
+  font->extend     = 1.0;
+  font->slant      = 0.0;
+  font->bold       = 0.0;
+  font->remap      = 0;
+  font->mapc       = -1;
+  font->is_unicode = 0;
+  font->ucs_group  = 0;
+  font->ucs_plane  = 0;
+
+  if (mrec) {
+    font->extend = mrec->opt.extend;
+    font->slant  = mrec->opt.slant;
+    font->bold   = mrec->opt.bold;
+    font->remap  = (int) (mrec->opt.flags & FONTMAP_OPT_REMAP);
+    if (mrec->opt.mapc >= 0)
+      font->mapc = (mrec->opt.mapc >> 8) & 0xff;
+    else {
+      font->mapc = -1;
+    }
+    if (mrec->enc_name &&
+        !strcmp(mrec->enc_name, "unicode")) {
+      font->is_unicode   = 1;
+      if (mrec->opt.mapc >= 0) {
+        font->ucs_group  = (mrec->opt.mapc >> 24) & 0xff;
+        font->ucs_plane  = (mrec->opt.mapc >> 16) & 0xff;
+      } else {
+        font->ucs_group  = 0;
+        font->ucs_plane  = 0;
+      }
+    } else {
+      font->is_unicode   = 0;
+    }
+  }
+
+  return  num_dev_fonts++;
 }
-  
+
 
 /* This does not remember current stroking width. */
 static int
 dev_sprint_line (char *buf, spt_t width,
-		 spt_t p0_x, spt_t p0_y, spt_t p1_x, spt_t p1_y)
+                 spt_t p0_x, spt_t p0_y, spt_t p1_x, spt_t p1_y)
 {
   int    len = 0;
   double w;
@@ -1574,6 +1465,8 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
   graphics_mode();
 
   format_buffer[len++] = ' ';
+  format_buffer[len++] = 'q';
+  format_buffer[len++] = ' ';
   /* Don't use too thick line. */
   width_in_bp = ((width < height) ? width : height) * dev_unit.dvi2pts;
   if (width_in_bp < 0.0 || /* Shouldn't happen */
@@ -1598,36 +1491,38 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
        *  "Details of Graphics State Parameters", p. 185.
        */
       if (height < dev_unit.min_bp_val) {
-	WARN("Too thin line: height=%ld (%g bp)", height, width_in_bp);
-	WARN("Please consider using \"-d\" option.");
+        WARN("Too thin line: height=%ld (%g bp)", height, width_in_bp);
+        WARN("Please consider using \"-d\" option.");
       }
       len += dev_sprint_line(format_buffer+len,
-			     height,
-			     xpos,
-			     ypos + height/2,
-			     xpos + width,
-			     ypos + height/2);
+                             height,
+                             xpos,
+                             ypos + height/2,
+                             xpos + width,
+                             ypos + height/2);
     } else {
       if (width < dev_unit.min_bp_val) {
-	WARN("Too thin line: width=%ld (%g bp)", width, width_in_bp);
-	WARN("Please consider using \"-d\" option.");
+        WARN("Too thin line: width=%ld (%g bp)", width, width_in_bp);
+        WARN("Please consider using \"-d\" option.");
       }
       len += dev_sprint_line(format_buffer+len,
-			     width,
-			     xpos + width/2,
-			     ypos,
-			     xpos + width/2,
-			     ypos + height);
+                             width,
+                             xpos + width/2,
+                             ypos,
+                             xpos + width/2,
+                             ypos + height);
     }
   }
+  format_buffer[len++] = ' ';
+  format_buffer[len++] = 'Q';
   pdf_doc_add_page_content(format_buffer, len);
 }
 
 /* Rectangle in device space coordinate. */
 void
 pdf_dev_set_rect (pdf_rect *rect,
-		  spt_t x_user, spt_t y_user,
-		  spt_t width,  spt_t height, spt_t depth)
+                  spt_t x_user, spt_t y_user,
+                  spt_t width,  spt_t height, spt_t depth)
 {
   double      dev_x, dev_y;
   pdf_coord   p0, p1, p2, p3;
@@ -1775,89 +1670,61 @@ pdf_dev_set_param (int param_type, int value)
   return;
 }
 
-/*
- * Compute a transformation matrix
- * transformations are applied in the following
- * order: scaling, rotate, displacement.
- */
-static void
-make_matrix (pdf_tmatrix *M,
-	     double ref_x,  double ref_y,
-	     double xscale, double yscale,
-	     double rotate)
-{
-  double c, s;
-
-  c = cos(rotate);
-  s = sin(rotate);
-
-  M->a =  xscale * c; M->b = xscale * s;
-  M->c = -yscale * s; M->d = yscale * c;
-  M->e = ref_x; M->f = ref_y;
-}
 
 int
-pdf_dev_put_image (int xobj_id,
-		   transform_info *p,
-		   double ref_x, double ref_y)
+pdf_dev_put_image (int             id,
+                   transform_info *p,
+                   double          ref_x,
+                   double          ref_y)
 {
   char        *res_name;
-  pdf_tmatrix  matrix;
+  pdf_tmatrix  M;
+  pdf_rect     r;
   int          len = 0;
 
-  pdf_ximage_scale_image (xobj_id, p);
-
+  pdf_copymatrix(&M, &(p->matrix));
+  M.e += ref_x; M.f += ref_y;
+  /* Just rotate by -90, but not tested yet. Any problem if M has scaling? */
   if (dev_param.autorotate &&
       text_state.dir_mode) {
-    make_matrix(&matrix,
-		ref_x, ref_y, p->xscale, p->yscale,
-		p->rotate - 0.50 * M_PI);
-  } else {
-    make_matrix(&matrix,
-		ref_x, ref_y, p->xscale, p->yscale,
-		p->rotate);
+    double tmp;
+    tmp = -M.a; M.a = M.b; M.b = tmp;
+    tmp = -M.c; M.c = M.d; M.d = tmp;
   }
 
   graphics_mode();
   pdf_dev_gsave();
 
-  pdf_dev_concat(&matrix);
+  pdf_dev_concat(&M);
+
+  pdf_ximage_scale_image(id, &M, &r, p);
+  pdf_dev_concat(&M);
 
   /* Clip */
   if (p->flags & INFO_DO_CLIP) {
-    double width, height;
-
-    width  = p->bbox.urx - p->bbox.llx;
-    height = p->bbox.ury - p->bbox.lly;
-
+#if  0
     pdf_dev_newpath();
-    pdf_dev_moveto(0.0  , 0.0);
-    pdf_dev_lineto(width, 0.0);
-    pdf_dev_lineto(width, height);
-    pdf_dev_lineto(0.0  , height);
+    pdf_dev_moveto(r.llx, r.lly);
+    pdf_dev_lineto(r.urx, r.lly);
+    pdf_dev_lineto(r.urx, r.ury);
+    pdf_dev_lineto(r.llx, r.ury);
     pdf_dev_closepath();
     pdf_dev_clip();
     pdf_dev_newpath();
+#else
+    pdf_dev_rectclip(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
+#endif
   }
 
-  /* Adjust lower-left corner to reference point.
-   */
-  if ((p->flags & INFO_HAS_USER_BBOX) &&
-      (p->bbox.llx != 0.0 || p->bbox.lly != 0.0)) {
-    make_matrix(&matrix,
-		-p->bbox.llx, -p->bbox.lly, 1.0, 1.0, 0.0);
-    pdf_dev_concat(&matrix);
-  }
-
-  res_name = pdf_ximage_get_resname(xobj_id);
+  res_name = pdf_ximage_get_resname(id);
   len = sprintf(work_buffer, " /%s Do", res_name);
   pdf_doc_add_page_content(work_buffer, len);
 
   pdf_dev_grestore();
 
   pdf_doc_add_page_resource("XObject",
-			    res_name,
-			    pdf_ximage_get_reference(xobj_id));
+                            res_name,
+                            pdf_ximage_get_reference(id));
 
   return 0;
 }
@@ -1876,13 +1743,8 @@ transform_info_clear (transform_info *info)
   info->bbox.urx = 0.0;
   info->bbox.ury = 0.0;
 
-  /* Transformation */
-  info->xscale   = 1.0;
-  info->yscale   = 1.0;
-  info->rotate   = 0.0;
-
-  info->xoffset  = 0.0;
-  info->yoffset  = 0.0;
+  /* Transformation matrix */
+  pdf_setmatrix(&(info->matrix), 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
   info->flags    = 0;
 }

@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cid_basefont.h,v 1.3 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid_basefont.h,v 1.14 2005/06/27 11:54:50 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/vf.c,v 1.3 2005/07/03 20:02:30 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.16 2005/07/20 10:41:54 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -22,17 +22,20 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#include <stdio.h>
-#include <ctype.h>
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "system.h"
-#include "mfileio.h"
-#include "pdflimits.h"
 #include "numbers.h"
-#include "mem.h"
 #include "error.h"
-#include "tfm.h"
+#include "mem.h"
+
+#include "dpxfile.h"
+/* pdfdev... */
 #include "pdfdev.h"
+
+#include "tfm.h"
 #include "dvi.h"
 #include "vf.h"
 
@@ -764,7 +767,7 @@ static void vf_xxx (SIGNED_QUAD len, unsigned char **start, unsigned char *end)
       /*
        * Warning message from virtual font.
        */
-      if (!strncasecmp((char *)p, "Warning:", 8)) {
+      if (!memcmp((char *)p, "Warning:", 8)) {
 	WARN("VF:%s", p+8);
       } else {
 	dvi_do_special(buffer, len);

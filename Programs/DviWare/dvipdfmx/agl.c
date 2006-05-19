@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/agl.c,v 1.3 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.32 2005/07/20 10:41:54 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -45,6 +45,8 @@
 
 /* Hash */
 #include "dpxutil.h"
+
+#include "dpxfile.h"
 
 #include "unicode.h"
 
@@ -154,21 +156,21 @@ skip_capital (char **p, char *endptr)
   } else if (len >= 3 &&
 	     **p     == 'E' &&
 	     *(*p+1) == 't' &&
-	     *(*p+1) == 'h') {
+	     *(*p+2) == 'h') {
     *p  += 3;
     slen = 3;
   } else if (len >= 5 &&
 	     **p     == 'T' &&
 	     *(*p+1) == 'h' &&
-	     *(*p+1) == 'o' &&
-	     *(*p+2) == 'r' &&
-	     *(*p+3) == 'n') {
-    *p  += 3;
-    slen = 3;
+	     *(*p+2) == 'o' &&
+	     *(*p+3) == 'r' &&
+	     *(*p+4) == 'n') {
+    *p  += 5;
+    slen = 5;
   } else if (len >= 1 &&
 	     **p >= 'A' && **p <= 'Z') {
     *p  += 1;
-    slen = 3;
+    slen = 1;
   }
 
   return slen;
@@ -184,7 +186,7 @@ skip_modifier (char **p, char *endptr)
 
   for (i = 0; modifiers[i] != NULL; i++) {
     if ((len >= strlen(modifiers[i]) &&
-	 !strncasecmp(*p, modifiers[i], len))) {
+	 !memcmp(*p, modifiers[i], len))) {
       slen = strlen(modifiers[i]);
       *p  += slen;
       break;
@@ -365,6 +367,7 @@ void
 agl_init_map (void)
 {
   ht_init_table(&aglmap);
+  agl_load_listfile(AGL_EXTRA_LISTFILE, 0);
   if (agl_load_listfile(AGL_DEFAULT_LISTFILE, 0) < 0) {
     WARN("Failed to load AGL file \"%s\"...", AGL_DEFAULT_LISTFILE);
   }
@@ -391,22 +394,17 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
   char *p, *endptr, *nextptr;
   char  wbuf[WBUF_SIZE];
   FILE *fp;
-  char *fullname;
 
-#ifdef MIKTEX
-  if (!miktex_find_app_input_file("dvipdfm", filename, work_buffer))
-    fullname = NULL;
-  else {
-    fullname = work_buffer;
+  if (!filename)
+    return  -1;
+
+  fp = DPXFOPEN(filename, DPX_RES_TYPE_AGL);
+  if (!fp) {
+    return -1;
   }
-#else /* !MIKTEX */
-  fullname = kpse_find_file(filename, kpse_program_text_format, 0);
-#endif
-  if (!fullname)
-    return -1;
-  fp = MFOPEN(fullname, FOPEN_R_MODE);
-  if (!fp)
-    return -1;
+
+  if (verbose)
+    MESG("<AGL:%s", filename);
 
   while ((p = mfgets(wbuf, WBUF_SIZE, fp)) != NULL) {
     agl_name *agln, *duplicate;
@@ -430,7 +428,7 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
     if (!name || p[0] != ';') {
       WARN("Invalid AGL entry: %s", wbuf);
       if (name)
-	RELEASE(name);
+        RELEASE(name);
       continue;
     }
 
@@ -439,24 +437,26 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
 
     n_unicodes = 0;
     while (p < endptr &&
-	   ((p[0]  >= '0' && p[0] <= '9') ||
-	    (p[0]  >= 'A' && p[0] <= 'F'))) {
+           ((p[0]  >= '0' && p[0] <= '9') ||
+            (p[0]  >= 'A' && p[0] <= 'F'))
+          ) {
 
       if (n_unicodes >= AGL_MAX_UNICODES) {
-	WARN("Too many Unicode values");
-	break;
+        WARN("Too many Unicode values");
+        break;
       }
       unicodes[n_unicodes++] = strtol(p, &nextptr, 16);
 
       p = nextptr;
       skip_white(&p, endptr);
     }
+
     if (n_unicodes == 0) {
       WARN("AGL entry ignored (no mapping): %s", wbuf);
       RELEASE(name);
       continue;
     }
-      
+
     agln = agl_normalized_name(name);
     agln->n_components = n_unicodes;
     for (i = 0; i < n_unicodes; i++) {
@@ -468,21 +468,21 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
       ht_append_table(&aglmap, name, strlen(name), agln);
     else {
       while (duplicate->alternate)
-	duplicate = duplicate->alternate;
+        duplicate = duplicate->alternate;
       duplicate->alternate = agln;
     }
 
     if (verbose > 3) {
       if (agln->suffix)
-	MESG("agl: %s [%s.%s] -->", name, agln->name, agln->suffix);
+        MESG("agl: %s [%s.%s] -->", name, agln->name, agln->suffix);
       else
-	MESG("agl: %s [%s] -->", name, agln->name);
+        MESG("agl: %s [%s] -->", name, agln->name);
       for (i = 0; i < agln->n_components; i++) {
-	if (agln->unicodes[i] > 0xffff) {
-	  MESG(" U+%06X", agln->unicodes[i]);
-	} else {
-	  MESG(" U+%04X", agln->unicodes[i]);
-	}
+        if (agln->unicodes[i] > 0xffff) {
+          MESG(" U+%06X", agln->unicodes[i]);
+        } else {
+          MESG(" U+%04X", agln->unicodes[i]);
+        }
       }
       MESG("\n");
     }
@@ -490,7 +490,10 @@ agl_load_listfile (const char *filename, int format) /* format unused. */
     RELEASE(name);
     count++;
   }
-  MFCLOSE(fp);
+  DPXFCLOSE(fp);
+
+  if (verbose)
+    MESG(">");
 
   return count;
 }

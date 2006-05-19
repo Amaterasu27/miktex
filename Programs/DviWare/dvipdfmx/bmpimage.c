@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/bmpimage.c,v 1.2 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/bmpimage.c,v 1.2 2004/07/27 12:08:46 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

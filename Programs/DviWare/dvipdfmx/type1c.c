@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/type1c.c,v 1.3 2005/07/03 20:02:30 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.21 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -51,9 +51,6 @@
 
 #include "pdfencoding.h"
 #include "unicode.h"
-
-/* mangle_name() */
-#include "dpxutil.h"
 
 /* Font info. from OpenType tables */
 #include "sfnt.h"

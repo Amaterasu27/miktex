@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/spc_util.h,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.h,v 1.4 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -30,21 +30,13 @@
 
 #include "specials.h"
 
-extern int  spc_util_read_numbers (double *values, int count,
-				   struct spc_env *spe, struct spc_arg *args);
-
-/* colorsp 1: ((rgb|cmyk|hsb|gray) colorvalues)|colorname
- * colorsp 0: pdf_number|pdf_array
+/* syntax 1: ((rgb|cmyk|hsb|gray) colorvalues)|colorname
+ * syntax 0: pdf_number|pdf_array
+ *
+ * This is for reading *single* color specification.
  */
-extern int  spc_util_read_colorspec (pdf_color *colorspec,
-				     struct spc_env *spe, struct spc_arg *args,
-				     int colorsp);
-
-extern int  spc_util_read_dimension (transform_info *p,
-				     struct spc_env *spe, struct spc_arg *args,
-				     int dvipssp);
-
-extern char *parse_c_string (char **start, char *end);
-extern void  parse_key_val  (char **start, char *end, char **key, char **val);
+extern int  spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, int syntax);
+extern int  spc_util_read_dimtrns   (struct spc_env *spe, transform_info *dimtrns, struct spc_arg *args, int syntax);
+extern int  spc_util_read_length    (struct spc_env *spe, double *length, struct spc_arg *ap);
 
 #endif /* _SPC_UTIL_H_ */

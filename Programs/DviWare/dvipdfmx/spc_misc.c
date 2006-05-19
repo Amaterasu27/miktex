@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/spc_misc.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_misc.c,v 1.6 2005/08/08 18:00:11 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -73,94 +73,76 @@ spc_misc_at_end_document (void)
 }
 
 static int
-spc_handler_background (struct spc_env *spe, struct spc_arg *args)
+spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
 {
-  int        error;
-  pdf_color  colorspec;
-
-  error = spc_util_read_colorspec(&colorspec, spe, args, 1);
-  if (!error) {
-    pdf_color_set_bgcolor(&colorspec);
-  }
-
-  return error;
-}
-
-static int
-spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *args)
-{
-  int            form_id;
-  transform_info form_info;
-  char           filename[256];
-  double         width = 0.0, height = 0.0;
+  int            form_id, len;
+  transform_info ti;
+  char           filename[256], *fullname;
+  char           buf[512];
   FILE          *fp;
-  char          *fullname;
-  char           wbuf[256], *p, *endptr;
 
-  ASSERT(spe && args);
+  ASSERT(spe && ap);
 
-  if (args->curptr >= args->endptr) {
-    spe->errmsg = (char *) "No width/height/filename given.";
-    return -1;
+  if (ap->curptr >= ap->endptr) {
+    spc_warn(spe, "No width/height/filename given for postscriptbox special.");
+    return  -1;
   }
 
-  memset(filename, 0, 256);
-  if (sscanf(args->curptr, "{%lfpt}{%lfpt}{%256[^}]}",
-	     &width, &height, filename) != 3) {
-    spe->errmsg = (char *) "Unrecogzied postscriptbox special.";
-    return -1;
+  /* input is not NULL terminated */
+  len = (int) (ap->endptr - ap->curptr);
+  len = MIN(511, len);
+  memcpy(buf, ap->curptr, len);
+  buf[len] = '\0';
+
+  transform_info_clear(&ti);
+
+  spc_warn(spe, buf);
+  if (sscanf(buf, "{%lfpt}{%lfpt}{%255[^}]}",
+      &ti.width, &ti.height, filename) != 3) {
+    spc_warn(spe, "Syntax error in postscriptbox special?");
+    return  -1;
   }
+  ap->curptr = ap->endptr;
+
+  ti.width  *= 72.0 / 72.27;
+  ti.height *= 72.0 / 72.27;
 
   fullname = kpse_find_pict(filename);
   if (!fullname) {
-    spe->errmsg = (char *) "Image file not found.";
-    return -1;
+    spc_warn(spe, "Image file \"%s\" not found.", filename);
+    return  -1;
   }
 
   fp = MFOPEN(fullname, FOPEN_R_MODE);
+  if (!fp) {
+    spc_warn(spe, "Could not open image file: %s", fullname);
+    RELEASE(fullname);
+    return  -1;
+  }
   RELEASE(fullname);
 
-  if (!fp) {
-    spe->errmsg = (char *) "Could not open image file.";
-    return -1;
-  }
-
-  transform_info_clear(&form_info);
-
-  form_info.width  = width  * 72.0 / 72.27;
-  form_info.height = height * 72.0 / 72.27;
-  form_info.flags |= (INFO_HAS_WIDTH|INFO_HAS_HEIGHT);
+  ti.flags |= (INFO_HAS_WIDTH|INFO_HAS_HEIGHT);
 
   for (;;) {
-    p     = mfgets(wbuf, 256, fp);
-    if (!p) {
+    char  *p = mfgets(buf, 512, fp);
+    if (!p)
       break;
-    }
-    endptr = p + strlen(wbuf);
-
-    if (mps_scan_bbox(&p, endptr, &form_info.bbox) >= 0) {
-      form_info.flags |= INFO_HAS_USER_BBOX;
+    if (mps_scan_bbox(&p, p + strlen(p), &ti.bbox) >= 0) {
+      ti.flags |= INFO_HAS_USER_BBOX;
       break;
     }
   }
   MFCLOSE(fp);
 
-  if (!(form_info.flags & INFO_HAS_USER_BBOX)) {
-    spe->errmsg = (char *) "Could not find BoundingBox...";
-    return -1;
-  }
-
   form_id = pdf_ximage_findresource(filename);
   if (form_id < 0) {
-    spe->errmsg = (char *) "Failed to load image file...";
-    return -1;
+    spc_warn(spe, "Failed to load image file: %s", filename);
+    return  -1;
   }
 
-  pdf_dev_put_image(form_id, &form_info,
-		    spe->x_user, spe->y_user);
-  args->curptr = args->endptr;
+  pdf_dev_put_image(form_id, &ti, spe->x_user, spe->y_user);
 
-  return 0;
+  return  0;
 }
 
 static int
@@ -172,11 +154,11 @@ spc_handler_null (struct spc_env *spe, struct spc_arg *args)
 }
 
 static struct spc_handler misc_handlers[] = {
-  {"background",    spc_handler_background},
   {"postscriptbox", spc_handler_postscriptbox},
   {"landscape",     spc_handler_null}, /* handled at bop */
   {"papersize",     spc_handler_null}, /* handled at bop */
   {"src:",          spc_handler_null}, /* simply ignore  */
+  {"pos:",          spc_handler_null}, /* simply ignore  */
   {"om:",           spc_handler_null}  /* simply ignore  */
 };
 
@@ -228,7 +210,6 @@ spc_misc_setup_handler (struct spc_handler *handle,
 
   keylen = (int) (args->curptr - key);
   if (keylen < 1) {
-    spe->errmsg = (char *) "No valid key for special found.";
     return -1;
   }
 

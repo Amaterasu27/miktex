@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cff_limits.h,v 1.3 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_limits.h,v 1.3 2002/10/30 02:27:05 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

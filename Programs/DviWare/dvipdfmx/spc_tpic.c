@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/spc_tpic.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_tpic.c,v 1.3 2005/10/14 04:55:00 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -30,17 +30,19 @@
 #include "mem.h"
 #include "error.h"
 
-#include "pdfresource.h"
-#include "pdfparse.h"
+#include "numbers.h"
+#include "dpxutil.h"
+
 #include "pdfdoc.h"
 
-#include "pdfcolor.h"
 #include "pdfdraw.h"
 #include "pdfdev.h"
 
 #include "specials.h"
-#include "spc_util.h"
 #include "spc_tpic.h"
+
+#define  DEBUG 1
+#define  ENABLE_SPC_NAMESPACE 1
 
 /*
  * Following "constant" converts milli-inches to
@@ -49,146 +51,162 @@
 
 #define MI2DEV (0.072/pdf_dev_scale())
 
-static struct
+/*
+ * Value for 'sh' command 'g' is interpreted as
+ * 
+ *   gray color value 1-g for "solid"
+ *   opacity value g for "opacity"
+ *   shape value g for "shape"
+ */
+#define TPIC_MODE__FILL_SOLID   0
+#define TPIC_MODE__FILL_OPACITY 1
+#define TPIC_MODE__FILL_SHAPE   2
+
+#ifndef ISBLANK
+#  define ISBLANK(c) ( (c) == ' ' || (c) == '\t' )
+#endif
+
+static void
+skip_blank (char **pp, char *endptr)
 {
+  char  *p = *pp;
+  for ( ; p < endptr && ISBLANK(*p); p++);
+  *pp = p;
+}
+
+struct spc_tpic_
+{
+  struct {
+    int   fill;
+  } mode;
+
+  /* state */
   double     pen_size;
-  int        fill_shape;
+  int        fill_shape; /* boolean */
   double     fill_color;
-  pdf_coord *path;
-  long       path_length;
-  long       max_path_length;
-} tp_gstate = {
-  1.0, 0, 0.0, NULL, 0, 0
+
+  pdf_coord *points;
+  int        num_points;
+  int        max_points;
 };
 
-static void
-tpic_clear_state (void) 
-{
-  if (tp_gstate.path) {
-    RELEASE(tp_gstate.path);
-    tp_gstate.path = NULL;
-  }
-  tp_gstate.path_length     = 0;
-  tp_gstate.max_path_length = 0;
-  tp_gstate.fill_shape = 0;
-  tp_gstate.fill_color = 0.0;
-}
+#if  1
+static struct spc_tpic_ _tpic_state;
+#endif
 
-#define TPIC_DEFAULT_FILL_MODE 0
-
-static double default_fill_color = 0.5;
-static int    tp_fill_mode = TPIC_DEFAULT_FILL_MODE;
-
-void
-tpic_set_fill_mode (int mode)
-{
-  tp_fill_mode = mode;
-}
-
-int
-spc_tpic_at_begin_page (void)
-{
-  return 0;
-}
-
-int
-spc_tpic_at_end_page (void)
-{
-  if (tp_gstate.path_length > 0) {
-    WARN("Unflushed tpic path at end of the page.");
-  }
-
-  return 0;
-}
-
-int
-spc_tpic_at_begin_document (void)
-{
-  int  pdf_ver;
-
-  pdf_ver = pdf_get_version();
-  if (tp_fill_mode) {
-    if (pdf_ver < 4) {
-      WARN("Tpic shading support requires PDF version 1.4.");
-      tp_fill_mode = 0;
-    }
-  }
-
-  return 0;
-}
-
-int
-spc_tpic_at_end_document (void)
-{
-  if (tp_gstate.path_length > 0) {
-    WARN("Unflushed tpic path at end of the document.");
-  }
-  tpic_clear_state();
-
-  return 0;
-}
-
-/*
- * We can include line-width, dash pattern and other graphic state parameters
- * in ExtGState dictionary. But doing that is not efficient.
- * "g" is gray level.
+/* We use pdf_doc_add_page_content() here
+ * since we always draw isolated graphics.
  */
 static void
-set_shading (double g)
+tpic__clear (struct spc_tpic_ *tp) 
 {
-  pdf_obj *gs_obj, *gs_ref;
-  long     res_id;
-  char     resname[6]; /* GsXX */
-  char     wbuf[32];
-  int      alpha, len = 0;
-
-  /*
-   * The semantics of a fill_color of 0.0 or 0.5 will be to
-   * use current painting color known to dvipdfm.
-   */
-  if (tp_fill_mode != 1) {
-    if (g != 0.0) {
-      len = sprintf(wbuf, " %.2f g", g);
-    }
-  } else {
-    if (g == 1.0)
-      pdf_doc_add_page_content(" 1 g", 4);
-    else {
-      alpha = ROUND(255.0*(1.0-g), 1.0);
-      sprintf(resname, "GsT%02X", alpha);
-
-      res_id = pdf_findresource("ExtGState", resname);
-      if (res_id >= 0) {
-	gs_ref = pdf_get_resource_reference(res_id);
-      } else {
-	/* Acrobat 5/Linux not working...
-	 * Why???
-	 */
-	gs_obj = pdf_new_dict();
-	/* Type, BM, ... optional (omitted) */
-	pdf_add_dict(gs_obj,
-		     pdf_new_name("ca"), pdf_new_number(ROUND(alpha/255.0, 0.01)));
-	res_id = pdf_defineresource("ExtGState", resname,
-				    gs_obj, PDF_RES_FLUSH_IMMEDIATE);
-	gs_ref = pdf_get_resource_reference(res_id);
-      }
-      pdf_doc_add_page_resource("ExtGState", resname, gs_ref);
-      len = sprintf(wbuf, " /%s gs 0 g", resname);
-    }
+  if (tp->points) {
+    RELEASE(tp->points);
+    tp->points = NULL;
   }
-  pdf_doc_add_page_content(wbuf, len);
+  tp->num_points = 0;
+  tp->max_points = 0;
+  tp->fill_shape = 0;
+  tp->fill_color = 0.0;
+}
+
+
+static pdf_obj *
+create_xgstate (double a /* alpha */, int f_ais /* alpha is shape */)
+{
+  pdf_obj  *dict;
+
+  dict = pdf_new_dict();
+  pdf_add_dict(dict,
+               pdf_new_name("Type"),
+               pdf_new_name("ExtGState"));
+  if (f_ais) {
+    pdf_add_dict(dict,
+                 pdf_new_name("AIS"),
+                 pdf_new_boolean(1));
+  }
+  pdf_add_dict(dict,
+               pdf_new_name("ca"),
+               pdf_new_number(a));
+
+  return  dict;
+}
+
+static int
+check_resourcestatus (const char *category, const char *resname)
+{
+  pdf_obj  *dict1, *dict2;
+
+  dict1 = pdf_doc_current_page_resources();
+  if (!dict1)
+    return  0;
+
+  dict2 = pdf_lookup_dict(dict1, category);
+  if (dict2 &&
+      pdf_obj_typeof(dict2) == PDF_DICT) {
+    if (pdf_lookup_dict(dict2, resname))
+      return  1;
+  }
+  return  0;
+}
+
+static int
+set_linestyle (double pn, double da)
+{
+  double  dp[2]; /* dash pattern */
+
+  pdf_dev_setlinejoin(1);
+  pdf_dev_setmiterlimit(1.4);
+  pdf_dev_setlinewidth(pn);
+  if (da > 0.0) {
+    dp[0] =  da * 72.0;
+    pdf_dev_setdash(1, dp, 0);
+    pdf_dev_setlinecap(0);
+  } else if (da < 0.0) {
+    dp[0] =  pn;
+    dp[1] = -da * 72.0;
+    pdf_dev_setdash(2, dp, 0);
+    pdf_dev_setlinecap(1);
+  } else {
+    pdf_dev_setlinecap(0);
+  }
+  pdf_doc_add_page_content(" 0 G", 4);
+
+  return  0;
+}
+
+static int
+set_fillstyle (double g, double a, int f_ais)
+{
+  pdf_obj *dict;
+  char     resname[32];
+  char     buf[32];
+  int      alp, len = 0;
+
+  if (a > 0.0) {
+    alp = round(100.0 * a);
+    sprintf(resname, "_Tps_a%03d_", alp);
+    if (!check_resourcestatus("ExtGState", resname)) {
+      dict = create_xgstate(ROUND(0.01 * alp, 0.01), f_ais);
+      pdf_doc_add_page_resource("ExtGState",
+                                resname, pdf_ref_obj(dict));
+      pdf_release_obj(dict);
+    }
+    len += sprintf(buf + len, " /%s gs", resname);
+  }
+  len += sprintf(buf + len, " %.2f g", g);
+
+  pdf_doc_add_page_content(buf, len);
+
+  return  0;
 }
 
 
 static void
-show_path (int hidden) 
+showpath (int f_vp, int f_fs) /* visible_path, fill_shape */
 {
-  if (tp_gstate.fill_shape) {
-    set_shading(tp_gstate.fill_color);
-  }
-
-  if (!hidden) {
-    if (tp_gstate.fill_shape)
+  if (f_vp) {
+    if (f_fs)
       pdf_dev_flushpath('b', PDF_FILL_RULE_NONZERO);
     else {
       pdf_dev_flushpath('S', PDF_FILL_RULE_NONZERO);
@@ -198,72 +216,77 @@ show_path (int hidden)
      * Acrobat claims 'Q' as illegal operation when there are unfinished
      * path (a path without path-painting operator applied)?
      */
-    if (tp_gstate.fill_shape)
+    if (f_fs)
       pdf_dev_flushpath('f', PDF_FILL_RULE_NONZERO);
     else {
       pdf_dev_newpath();
     }
   }
-  tp_gstate.fill_color = 0.0;
-  tp_gstate.fill_shape = 0;
 }
 
-#define CLOSED_PATH() (tp_gstate.path[0].x == tp_gstate.path[tp_gstate.path_length-1].x && \
-		       tp_gstate.path[0].y == tp_gstate.path[tp_gstate.path_length-1].y)
+#define CLOSED_PATH(s) (\
+  (s)->points[0].x == (s)->points[(s)->num_points-1].x && \
+  (s)->points[0].y == (s)->points[(s)->num_points-1].y \
+)
 
 static int
-flush_path (struct spc_env *spe, struct spc_arg *args,
-	    int hidden, double dash_dot)
+tpic__polyline (struct spc_tpic_ *tp,
+                const pdf_coord  *c,
+                int               f_vp,
+                double            da)
 {
-  double  dash[2];
-  int     i;
+  pdf_tmatrix  M;
+  double       pn    = tp->pen_size;
+  int          f_fs  = tp->fill_shape;
+  int          f_ais = 0;
+  double       g     = 0.5;
+  double       a     = 0.0;
+  int          i, error = 0;
 
-  /* Make pen_size == 0 equivalent to hidden */
-  if (tp_gstate.pen_size == 0.0) {
-    hidden = 1;
+  /* Shading is applied only to closed path. */
+  f_fs  = CLOSED_PATH(tp) ? f_fs : 0;
+  f_vp  = (pn > 0.0) ? f_vp : 0;
+  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
+  switch (tp->mode.fill) {
+  case TPIC_MODE__FILL_SOLID:
+    g   = 1.0 - tp->fill_color;
+    a   = 0.0;
+    break;
+  case TPIC_MODE__FILL_SHAPE:
+  case TPIC_MODE__FILL_OPACITY:
+    if (tp->fill_color > 0.0) {
+      a = tp->fill_color;
+      g = 0.0;
+    } else {
+      a = 0.0;
+      g = 1.0;
+    }
+    break;
   }
 
-  if (tp_gstate.path_length <= 1) {
-    tpic_clear_state();
-    spe->errmsg = (char *) "Not enough points...";
-    return -1;
-  }
-
-  if (!hidden || tp_gstate.fill_shape) {
+  if (f_vp || f_fs) {
     pdf_dev_gsave();
 
-    pdf_dev_setlinecap (1);
-    pdf_dev_setlinejoin(1);
-    if (tp_gstate.pen_size != 0.0) {
-      pdf_dev_setlinewidth(tp_gstate.pen_size);
-    }
-    if (dash_dot > 0.0) {
-      dash[0] = dash_dot * 72.0;
-      pdf_dev_setdash(1, dash, 0);
-    } else if (dash_dot < 0.0) {
-      dash[0] =  tp_gstate.pen_size;
-      dash[1] = -dash_dot * 72.0;
-      pdf_dev_setdash(2, dash, 0);
-    }
+    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
+    pdf_dev_concat(&M);
 
-    pdf_dev_moveto(spe->x_user + tp_gstate.path[0].x,
-		   spe->y_user - tp_gstate.path[0].y);
-    for (i = 0;
-	 i < tp_gstate.path_length; i++) {
-      pdf_dev_lineto(spe->x_user + tp_gstate.path[i].x,
-		     spe->y_user - tp_gstate.path[i].y);
-    } 
-    /* Shading is applied only to closed path. */
-    if (!CLOSED_PATH()) {
-      tp_gstate.fill_shape = 0;
-    }
-    show_path(hidden);
+    if (f_vp)
+      set_linestyle(pn, da);
+    if (f_fs)
+      set_fillstyle(g, a, f_ais);
+
+    pdf_dev_moveto(tp->points[0].x, tp->points[0].y);
+    for (i = 0; i < tp->num_points; i++)
+      pdf_dev_lineto(tp->points[i].x, tp->points[i].y);
+
+    showpath(f_vp, f_fs);
 
     pdf_dev_grestore();
   }
-  tpic_clear_state();
 
-  return 0;
+  tpic__clear(tp);
+
+  return  error;
 }
 
 /*
@@ -287,333 +310,696 @@ flush_path (struct spc_env *spe, struct spc_arg *args,
  */
 
 static int
-spline_path (struct spc_env *spe, struct spc_arg *args, double dash_dot)
+tpic__spline (struct spc_tpic_ *tp,
+              const pdf_coord  *c,
+              int               f_vp,
+              double            da)
 {
-  double  values[6];
-  int     i;
+  double       v[6];
+  pdf_tmatrix  M;
+  double       pn    = tp->pen_size;
+  int          f_fs  = tp->fill_shape;
+  int          f_ais = 0;
+  double       g     = 0.5;
+  double       a     = 0.0;
+  int          i, error = 0;
 
-  /* Spline is meaningless for path length of less than 3 */
-  if (tp_gstate.path_length <= 2) {
-    tpic_clear_state();
-    spe->errmsg = (char *) "Not enough points...";
-    return -1;
+  f_fs  = CLOSED_PATH(tp) ? f_fs : 0;
+  f_vp  = (pn > 0.0) ? f_vp : 0;
+  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
+  switch (tp->mode.fill) {
+  case TPIC_MODE__FILL_SOLID:
+    g   = 1.0 - tp->fill_color;
+    a   = 0.0;
+    break;
+  case TPIC_MODE__FILL_SHAPE:
+  case TPIC_MODE__FILL_OPACITY:
+    if (tp->fill_color > 0.0) {
+      a = tp->fill_color;
+      g = 0.0;
+    } else {
+      a = 0.0;
+      g = 1.0;
+    }
+    break;
   }
 
-  pdf_dev_gsave();
-
-  pdf_dev_setmiterlimit(1.4);
-  if (tp_gstate.pen_size > 0.0) {
-    pdf_dev_setlinewidth(tp_gstate.pen_size);
-  }
-  if (dash_dot > 0.0) {
-    values[0] = dash_dot * 72.0;
-    pdf_dev_setdash(1, values, 0);
-  } else if (dash_dot < 0.0) {
-    values[0] =  tp_gstate.pen_size;
-    values[1] = -dash_dot * 72.0;
-    pdf_dev_setdash(2, values, 0);
-    pdf_dev_setlinecap(1);
-  }
-
-  pdf_dev_moveto(spe->x_user + tp_gstate.path[0].x,
-		 spe->y_user - tp_gstate.path[0].y);
-  values[0] = spe->x_user + 0.5*(tp_gstate.path[0].x + tp_gstate.path[1].x);
-  values[1] = spe->y_user - 0.5*(tp_gstate.path[0].y + tp_gstate.path[1].y);
-  pdf_dev_lineto(values[0], values[1]);
-
-  for (i = 1; i < tp_gstate.path_length - 1; i++) {
-    /* B-spline control points */
-
-    values[0] = spe->x_user + 0.5 * (tp_gstate.path[i-1].x + tp_gstate.path[i].x);
-    values[1] = spe->y_user - 0.5 * (tp_gstate.path[i-1].y + tp_gstate.path[i].y);
-    values[2] = spe->x_user + tp_gstate.path[i].x;
-    values[3] = spe->y_user - tp_gstate.path[i].y;
-    values[4] = spe->x_user + 0.5 * (tp_gstate.path[i].x + tp_gstate.path[i+1].x);
-    values[5] = spe->y_user - 0.5 * (tp_gstate.path[i].y + tp_gstate.path[i+1].y);
-
-    pdf_dev_bspline(values[0], values[1],
-		    values[2], values[3], values[4], values[5]);
-  } 
-
-  pdf_dev_lineto(spe->x_user + tp_gstate.path[i].x,
-		 spe->y_user - tp_gstate.path[i].y);
-
-  if (!CLOSED_PATH()) {
-    tp_gstate.fill_shape = 0;
-  }
-  show_path(0);
-
-  pdf_dev_grestore();
-
-  tpic_clear_state();
-
-  return 0;
-}
-
-static int
-arc (struct spc_env *spe, struct spc_arg *args, int hidden) 
-{
-  double values[6];
-
-  if (tp_gstate.pen_size == 0.0) {
-    hidden = 1;
-  }
-
-  if (spc_util_read_numbers(values, 6, spe, args) != 6) {
-    tpic_clear_state();
-    spe->errmsg = (char *) "Not enough parameters.";
-    return -1;
-  }
-
-  if (!hidden || tp_gstate.fill_shape) {
-    values[0] *= MI2DEV;
-    values[1] *= MI2DEV;
-    values[2] *= MI2DEV;
-    values[3] *= MI2DEV;
-    values[4] *= 180.0 / 3.1415926;
-    values[5] *= 180.0 / 3.1415926;
-
+  if ( f_vp || f_fs ) {
     pdf_dev_gsave();
 
-    pdf_dev_setlinecap(1);
-    if (tp_gstate.pen_size > 0.0) {
-      pdf_dev_setlinewidth(tp_gstate.pen_size);
-    }
-    pdf_dev_arcn(spe->x_user + values[0],
-		 spe->y_user - values[1],
-		 values[2], values[3], -values[4], -values[5]);
+    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
+    pdf_dev_concat(&M);
 
-    if ((int) (fabs(values[4] - values[5])+0.5) < 360) {
-      tp_gstate.fill_shape = 0;
-    }
+    if (f_vp)
+      set_linestyle(pn, da);
+    if (f_fs)
+      set_fillstyle(g, a, f_ais);
 
-    show_path(hidden);
+    pdf_dev_moveto(tp->points[0].x, tp->points[0].y);
+
+    v[0] = 0.5 * (tp->points[0].x + tp->points[1].x);
+    v[1] = 0.5 * (tp->points[0].y + tp->points[1].y);
+    pdf_dev_lineto(v[0], v[1]);
+    for (i = 1; i < tp->num_points - 1; i++) {
+      /* B-spline control points */
+      v[0] = 0.5 * (tp->points[i-1].x + tp->points[i].x);
+      v[1] = 0.5 * (tp->points[i-1].y + tp->points[i].y);
+      v[2] = tp->points[i].x;
+      v[3] = tp->points[i].y;
+      v[4] = 0.5 * (tp->points[i].x + tp->points[i+1].x);
+      v[5] = 0.5 * (tp->points[i].y + tp->points[i+1].y);
+      pdf_dev_bspline(v[0], v[1], v[2], v[3], v[4], v[5]);
+    }
+    pdf_dev_lineto(tp->points[i].x, tp->points[i].y);
+
+    showpath(f_vp, f_fs);
 
     pdf_dev_grestore();
   }
-  tpic_clear_state();
+  tpic__clear(tp);
 
-  return 0;
+  return  error;
 }
 
 static int
-spc_handler_tpic_pn (struct spc_env *spe, struct spc_arg *args)
+tpic__arc (struct spc_tpic_ *tp,
+           const pdf_coord  *c,
+           int               f_vp,
+           double            da,
+           double           *v /* 6 numbers */ )
 {
-  char  *number;
+  pdf_tmatrix  M;
+  double       pn    = tp->pen_size;
+  int          f_fs  = tp->fill_shape;
+  int          f_ais = 0;
+  double       g     = 0.5;
+  double       a     = 0.0;
 
-  ASSERT(spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  number = parse_number(&args->curptr, args->endptr);
-  if (!number) {
-    spe->errmsg = (char *) "Invalid pen size.";
-    return -1;
-  }
-  tp_gstate.pen_size = atof(number) * MI2DEV;
-  RELEASE(number);
-
-  return 0;
-}
-
-static int
-spc_handler_tpic_pa (struct spc_env *spe, struct spc_arg *args)
-{
-  double values[2];
-
-  ASSERT(spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  if (spc_util_read_numbers(values, 2, spe, args) != 2) {
-    spe->errmsg = (char *) "Missing numbers.";
-    return -1;
-  }
-
-  if (tp_gstate.path_length >= tp_gstate.max_path_length) {
-    tp_gstate.max_path_length += 256;
-    tp_gstate.path = RENEW(tp_gstate.path, tp_gstate.max_path_length, pdf_coord);
-  }
-  tp_gstate.path[tp_gstate.path_length].x = values[0] * MI2DEV;
-  tp_gstate.path[tp_gstate.path_length].y = values[1] * MI2DEV;
-  tp_gstate.path_length += 1;
-
-  return 0;
-}
-
-static int
-spc_handler_tpic_fp (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  return flush_path(spe, args, 0, 0.0);
-}
-
-static int
-spc_handler_tpic_ip (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  return flush_path(spe, args, 1, 0.0);
-}
-
-static int
-spc_handler_tpic_da (struct spc_env *spe, struct spc_arg *args)
-{
-  char  *token;
-  double dash = 0.0;
-
-  ASSERT(spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  token = parse_number(&args->curptr, args->endptr);
-  if (token) {
-    dash = atof(token);
-    RELEASE(token);
-  }
-
-  return flush_path(spe, args, 0, dash);
-}
-
-static int
-spc_handler_tpic_dt (struct spc_env *spe, struct spc_arg *args)
-{
-  char  *token;
-  double dash = 0.0;
-
-  ASSERT(spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  token = parse_number(&args->curptr, args->endptr);
-  if (token) {
-    dash = -atof(token);
-    RELEASE(token);
-  }
-
-  return flush_path(spe, args, 0, dash);
-}
-
-static int
-spc_handler_tpic_sp (struct spc_env *spe, struct spc_arg *args)
-{
-  char  *token;
-  double dash = 0.0;
-
-  ASSERT(spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  token = parse_number(&args->curptr, args->endptr);
-  if (token) {
-    dash = atof(token);
-    RELEASE(token);
-  }
-
-  return spline_path(spe, args, dash);
-}
-
-static int
-spc_handler_tpic_ar (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  return arc(spe, args, 0);
-}
-
-static int
-spc_handler_tpic_ia (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  return arc(spe, args, 1);
-}
-
-static int
-spc_handler_tpic_sh (struct spc_env *spe, struct spc_arg *args)
-{
-  char *number;
-
-  ASSERT(spe && args);
-
-  tp_gstate.fill_shape = 1;
-  tp_gstate.fill_color = default_fill_color;
-
-  skip_white(&args->curptr, args->endptr);
-  number = parse_number(&args->curptr, args->endptr);
-  if (number) {
-    tp_gstate.fill_color = 1.0 - atof(number);
-    RELEASE(number);
-  }
-
-  if (tp_gstate.fill_color > 1.0) {
-    tp_gstate.fill_color = 1.0;
-  }
-  if (tp_gstate.fill_color < 0.0) {
-    tp_gstate.fill_color = 0.0;
-  }
-
-  return 0;
-}
-
-static int
-spc_handler_tpic_wh (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  tp_gstate.fill_shape = 1;
-  tp_gstate.fill_color = 1.0;
-
-  return 0;
-}
-
-static int
-spc_handler_tpic_bk (struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  tp_gstate.fill_shape = 1;
-  tp_gstate.fill_color = 0.0;
-
-  return 0;
-}
-
-static int
-spc_handler_tpic_tx (struct spc_env *spe, struct spc_arg *args)
-{
-  long num = 0, den = 0;
-
-  ASSERT(spe && args);
-
-  tp_gstate.fill_shape = 1;
-
-  while (args->curptr++ < args->endptr) {
-    switch (*(args->curptr++)) {
-    case '0':
-      num += 0;
-    case '1': case '2': case '4': case '8':
-      num += 1;
-      break;
-    case '3': case '5': case '6': case '9':
-    case 'a': case 'A': case 'c': case 'C':
-      num += 2;
-      break;
-    case '7': case 'b': case 'B': case 'd':
-    case 'D':
-      num += 3;
-      break;
-    case 'f': case 'F':
-      num += 4;
-      break;
-    default:
-      break;
+  f_fs  = (round(fabs(v[4] - v[5]) + 0.5) >= 360) ? f_fs : 0;
+  f_vp  = (pn > 0.0) ? f_vp : 0;
+  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
+  switch (tp->mode.fill) {
+  case TPIC_MODE__FILL_SOLID:
+    g   = 1.0 - tp->fill_color;
+    a   = 0.0;
+    break;
+  case TPIC_MODE__FILL_SHAPE:
+  case TPIC_MODE__FILL_OPACITY:
+    if (tp->fill_color > 0.0) {
+      a = tp->fill_color;
+      g = 0.0;
+    } else {
+      a = 0.0;
+      g = 1.0;
     }
-    den += 16;
-  }
-  if (den != 0) {
-    default_fill_color = 1.0 - (float) (num)/(den);
-  } else {
-    default_fill_color = 0.5;
+    break;
   }
 
-  return 0;
+  if ( f_vp || f_fs ) {
+    pdf_dev_gsave();
+
+    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
+    pdf_dev_concat(&M);
+
+    if (f_vp)
+      set_linestyle(pn, da);
+    if (f_fs)
+      set_fillstyle(g, a, f_ais);
+
+    pdf_dev_arcx(v[0], v[1], v[2], v[3], v[4], v[5], +1, 0.0);
+
+    showpath(f_vp, f_fs);
+
+    pdf_dev_grestore();
+  }
+  tpic__clear(tp);
+
+  return  0;
 }
+
+#if  1
+static int
+spc_currentpoint (struct spc_env *spe, long *pg, pdf_coord *cp)
+{
+  *pg = 0;
+  cp->x = spe->x_user;
+  cp->y = spe->y_user;
+  return  0;
+}
+#endif
+
+static int
+spc_handler_tpic_pn (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  char  *q;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_float_decimal(&ap->curptr, ap->endptr);
+  if (!q) {
+    spc_warn(spe, "Invalid pen size specified?");
+    return -1;
+  }
+  tp->pen_size = atof(q) * MI2DEV;
+  RELEASE(q);
+
+  return  0;
+}
+
+static int
+spc_handler_tpic_pa (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  char   *q;
+  int     i;
+  double  v[2];
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  for (i = 0;
+       i < 2 && ap->curptr < ap->endptr; i++) {
+    q = parse_float_decimal(&ap->curptr, ap->endptr);
+    if (!q) {
+      spc_warn(spe, "Missing numbers for TPIC \"pa\" command.");
+      return  -1;
+    }
+    v[i] = atof(q);
+    RELEASE(q);
+    skip_blank(&ap->curptr, ap->endptr);
+  }
+  if (i != 2) {
+    spc_warn(spe, "Invalid arg for TPIC \"pa\" command.");
+    return  -1;
+  }
+
+  if (tp->num_points >= tp->max_points) {
+    tp->max_points += 256;
+    tp->points = RENEW(tp->points, tp->max_points, pdf_coord);
+  }
+  tp->points[tp->num_points].x = v[0] * MI2DEV;
+  tp->points[tp->num_points].y = v[1] * MI2DEV;
+  tp->num_points += 1;
+
+  return  0;
+}
+
+static int
+spc_handler_tpic_fp (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  pdf_coord  cp;
+  long       pg;
+
+  ASSERT(spe && ap && tp);
+
+  if (tp->num_points <= 1) {
+    spc_warn(spe, "Too few points (< 2) for polyline path.");
+    return  -1;
+  }
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__polyline(tp, &cp, 1, 0.0);
+}
+
+static int
+spc_handler_tpic_ip (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  pdf_coord  cp;
+  long       pg;
+
+  ASSERT(spe && ap && tp);
+
+  if (tp->num_points <= 1) {
+    spc_warn(spe, "Too few points (< 2) for polyline path.");
+    return  -1;
+  }
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__polyline(tp, &cp, 0, 0.0);
+}
+
+static int
+spc_handler_tpic_da (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  char      *q;
+  double     da = 0.0;
+  pdf_coord  cp;
+  long       pg;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_float_decimal(&ap->curptr, ap->endptr);
+  if (q) {
+    da = atof(q);
+    RELEASE(q);
+  }
+  if (tp->num_points <= 1) {
+    spc_warn(spe, "Too few points (< 2) for polyline path.");
+    return  -1;
+  }
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__polyline(tp, &cp, 1, da);
+}
+
+static int
+spc_handler_tpic_dt (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  char      *q;
+  double     da = 0.0;
+  pdf_coord  cp;
+  long       pg;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_float_decimal(&ap->curptr, ap->endptr);
+  if (q) {
+    da = -atof(q);
+    RELEASE(q);
+  }
+  if (tp->num_points <= 1) {
+    spc_warn(spe, "Too few points (< 2) for polyline path.");
+    return  -1;
+  }
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__polyline(tp, &cp, 1, da);
+}
+
+static int
+spc_handler_tpic_sp (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  char      *q;
+  double     da = 0.0;
+  pdf_coord  cp;
+  long       pg;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_float_decimal(&ap->curptr, ap->endptr);
+  if (q) {
+    da = atof(q);
+    RELEASE(q);
+  }
+  if (tp->num_points <= 2) {
+    spc_warn(spe, "Too few points (< 3) for spline path.");
+    return  -1;
+  }
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__spline(tp, &cp, 1, da);
+}
+
+static int
+spc_handler_tpic_ar (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  double     v[6];
+  pdf_coord  cp;
+  long       pg;
+  char      *q;
+  int        i;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  for (i = 0;
+       i < 6 && ap->curptr < ap->endptr; i++) {
+    q = parse_float_decimal(&ap->curptr, ap->endptr);
+    if (!q) {
+      spc_warn(spe, "Invalid args. in TPIC \"ar\" command.");
+      return  -1;
+    }
+    v[i] = atof(q);
+    RELEASE(q);
+    skip_blank(&ap->curptr, ap->endptr);
+  }
+  if (i != 6) {
+    spc_warn(spe, "Invalid arg for TPIC \"ar\" command.");
+    return  -1;
+  }
+
+  v[0] *= MI2DEV; v[1] *= MI2DEV;
+  v[2] *= MI2DEV; v[3] *= MI2DEV;
+  v[4] *= 180.0 / M_PI;
+  v[5] *= 180.0 / M_PI;
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__arc(tp, &cp, 1, 0.0, v);
+}
+
+static int
+spc_handler_tpic_ia (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  double     v[6];
+  pdf_coord  cp;
+  long       pg;
+  char      *q;
+  int        i;
+
+  ASSERT(spe && ap && tp);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  for (i = 0;
+       i < 6 && ap->curptr < ap->endptr; i++) {
+    q = parse_float_decimal(&ap->curptr, ap->endptr);
+    if (!q) {
+      spc_warn(spe, "Invalid args. in TPIC \"ia\" command.");
+      return  -1;
+    }
+    v[i] = atof(q);
+    RELEASE(q);
+    skip_blank(&ap->curptr, ap->endptr);
+  }
+  if (i != 6) {
+    spc_warn(spe, "Invalid arg for TPIC \"ia\" command.");
+    return  -1;
+  }
+
+  v[0] *= MI2DEV; v[1] *= MI2DEV;
+  v[2] *= MI2DEV; v[3] *= MI2DEV;
+  v[4] *= 180.0 / M_PI;
+  v[5] *= 180.0 / M_PI;
+
+  spc_currentpoint(spe, &pg, &cp);
+
+  return  tpic__arc(tp, &cp, 0, 0.0, v);
+}
+
+static int
+spc_handler_tpic_sh (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+  char   *q;
+
+  ASSERT(spe && ap && tp);
+
+  tp->fill_shape = 1;
+  tp->fill_color = 0.5;
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_float_decimal(&ap->curptr, ap->endptr);
+  if (q) {
+    tp->fill_color = atof(q);
+    RELEASE(q);
+  }
+
+  return  0;
+}
+
+static int
+spc_handler_tpic_wh (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+
+  ASSERT(spe && ap && tp);
+
+  tp->fill_shape = 1;
+  tp->fill_color = 0.0;
+
+  return  0;
+}
+
+static int
+spc_handler_tpic_bk (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+
+  ASSERT(spe && ap && tp);
+
+  tp->fill_shape = 1;
+  tp->fill_color = 1.0;
+
+  return  0;
+}
+
+static int
+spc_handler_tpic_tx (struct spc_env *spe,
+                     struct spc_arg *ap ) /* , void *dp) */
+{
+  struct  spc_tpic_ *tp = &_tpic_state;
+
+  ASSERT(spe && ap && tp);
+
+  spc_warn(spe, "TPIC command \"tx\" not supported.");
+
+  return  -1;
+}
+
+
+static int
+spc_handler_tpic__init (struct spc_env *spe,
+                        struct spc_arg *ap, void *dp)
+{
+  struct spc_tpic_ *tp = dp;
+
+#if  0
+  tp->mode.fill  = TPIC_MODE__FILL_SOLID;
+#endif 
+  tp->pen_size   = 1.0;
+  tp->fill_shape = 0;
+  tp->fill_color = 0.0;
+
+  tp->points     = NULL;
+  tp->num_points = 0;
+  tp->max_points = 0;
+
+  if (tp->mode.fill != TPIC_MODE__FILL_SOLID && pdf_get_version() < 4) {
+      spc_warn(spe, "Tpic shading support requires PDF version 1.4.");
+    tp->mode.fill = TPIC_MODE__FILL_SOLID;
+  }
+
+  return  0;
+}
+
+static int
+spc_handler_tpic__bophook (struct spc_env *spe,
+                           struct spc_arg *ap, void *dp)
+{
+  struct spc_tpic_ *tp = dp;
+
+  ASSERT(tp);
+
+  tpic__clear(tp);
+
+  return  0;
+}
+
+static int
+spc_handler_tpic__eophook (struct spc_env *spe,
+                           struct spc_arg *ap, void *dp)
+{
+  struct spc_tpic_ *tp = dp;
+
+  ASSERT(tp);
+
+  if (tp->num_points > 0)
+    spc_warn(spe, "Unflushed tpic path at end of the page.");
+  tpic__clear(tp);
+
+  return  0;
+}
+
+static int
+spc_handler_tpic__clean (struct spc_env *spe,
+                         struct spc_arg *ap, void *dp)
+{
+  struct spc_tpic_ *tp = dp;
+
+  ASSERT(tp);
+
+  if (tp->num_points > 0)
+    spc_warn(spe, "Unflushed tpic path at end of the document.");
+
+  tpic__clear(tp);
+#if  0
+  RELEASE(tp);
+#endif
+
+  return  0;
+}
+
+void
+tpic_set_fill_mode (int mode)
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  tp->mode.fill = mode;
+}
+
+
+int
+spc_tpic_at_begin_page (void)
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  return  spc_handler_tpic__bophook(NULL, NULL, tp);
+}
+
+int
+spc_tpic_at_end_page (void)
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  return  spc_handler_tpic__eophook(NULL, NULL, tp);
+}
+
+
+int
+spc_tpic_at_begin_document (void)
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  return  spc_handler_tpic__init(NULL, NULL, tp);
+}
+
+int
+spc_tpic_at_end_document (void)
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  return  spc_handler_tpic__clean(NULL, NULL, tp);
+}
+
+
+#if  DEBUG
+#include "pdfparse.h" /* parse_val_ident :( */
+
+static pdf_obj *
+spc_parse_kvpairs (struct spc_env *spe, struct spc_arg *ap)
+{
+  pdf_obj *dict;
+  char    *kp, *vp;
+  int      error = 0;
+
+  dict = pdf_new_dict();
+
+  skip_blank(&ap->curptr, ap->endptr);
+  while (!error && ap->curptr < ap->endptr) {
+    kp = parse_val_ident(&ap->curptr, ap->endptr);
+    if (!kp)
+      break;
+    skip_blank(&ap->curptr, ap->endptr);
+    if (ap->curptr < ap->endptr &&
+        ap->curptr[0] == '=') {
+      ap->curptr++;
+      skip_blank(&ap->curptr, ap->endptr);
+      if (ap->curptr == ap->endptr) {
+        RELEASE(kp);
+        error = -1;
+        break;
+      }
+      vp = parse_c_string(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        pdf_add_dict(dict,
+                     pdf_new_name(kp),
+                     pdf_new_string(vp, strlen(vp) + 1)); /* NULL terminate */
+        RELEASE(vp);
+      }
+    } else {
+      /* Treated as 'flag' */
+      pdf_add_dict(dict,
+                   pdf_new_name(kp),
+                   pdf_new_boolean(1));
+    }
+    RELEASE(kp);
+    if (!error)
+      skip_blank(&ap->curptr, ap->endptr);
+  }
+
+  if (error) {
+    pdf_release_obj(dict);
+    dict = NULL;
+  }
+
+  return  dict;
+}
+
+static int
+tpic_filter_getopts (pdf_obj *kp, pdf_obj *vp, void *dp)
+{
+  struct spc_tpic_ *tp = dp;
+  char  *k, *v;
+  int    error = 0;
+
+  ASSERT( kp && vp && tp );
+
+  k = pdf_name_value(kp);
+  if (!strcmp(k, "fill-mode")) {
+    if (pdf_obj_typeof(vp) != PDF_STRING) {
+      WARN("Invalid value for TPIC option fill-mode...");
+      error = -1;
+    } else {
+      v = pdf_string_value(vp);
+      if (!strcmp(v, "shape"))
+        tp->mode.fill = TPIC_MODE__FILL_SHAPE;
+      else if (!strcmp(v, "opacity"))
+        tp->mode.fill = TPIC_MODE__FILL_OPACITY;
+      else if (!strcmp(v, "solid"))
+        tp->mode.fill = TPIC_MODE__FILL_SOLID;
+      else {
+        WARN("Invalid value for TPIC option fill-mode: %s", v);
+        error = -1;
+      }
+    }
+  } else {
+    WARN("Unrecognized option for TPIC special handler: %s", k);
+    error = -1;
+  }
+
+  return  error;
+}
+
+static int
+spc_handler_tpic__setopts (struct spc_env *spe,
+                           struct spc_arg *ap ) /* , void *dp) */
+{
+  struct spc_tpic_ *tp = &_tpic_state;
+  pdf_obj  *dict;
+  int       error = 0;
+
+  dict  = spc_parse_kvpairs(spe, ap);
+  if (!dict)
+    return  -1;
+  error = pdf_foreach_dict(dict, tpic_filter_getopts, tp);
+  if (!error) {
+    if (tp->mode.fill != TPIC_MODE__FILL_SOLID &&
+        pdf_get_version() < 4) {
+      spc_warn(spe, "Transparent fill mode requires PDF version 1.4.");
+      tp->mode.fill = TPIC_MODE__FILL_SOLID;
+    }
+  }
+
+  return  error;
+}
+#endif  /* DEBUG */
+
 
 static struct spc_handler tpic_handlers[] = {
   {"pn", spc_handler_tpic_pn},
@@ -632,73 +1018,133 @@ static struct spc_handler tpic_handlers[] = {
 };
 
 int
-spc_tpic_check_special (const char *buffer, long size)
+spc_tpic_check_special (const char *buf, long len)
 {
-  char *p, *endptr;
-  int   i, keylen;
+  int    istpic = 0;
+  char  *q, *p, *endptr;
+  int    i, hasnsp = 0;
 
-  p      = (char *) buffer;
-  endptr = p + size;
+  p      = (char *) buf;
+  endptr = p + len;
 
-  skip_white(&p, endptr);
-  if (p >= endptr) {
-    return 0;
+  skip_blank(&p, endptr);
+#if  ENABLE_SPC_NAMESPACE
+  if (p + strlen("tpic:") < endptr &&
+      !memcmp(p, "tpic:", strlen("tpic:")))
+  {
+    p += strlen("tpic:");
+    hasnsp = 1;
   }
+#endif
+  q = parse_c_ident(&p, endptr);
 
-  size = (long) (endptr - p);
-  for (i = 0;
-       i < sizeof(tpic_handlers)/sizeof(struct spc_handler); i++) {
-    keylen = strlen(tpic_handlers[i].key);
-    if (size == keylen &&
-	!strncmp(p, tpic_handlers[i].key, keylen)) {
-      return 1;
-    } else if (size >= keylen + 1 &&
-	       !strncmp(p, tpic_handlers[i].key, keylen) &&
-	       isspace(p[keylen])) {
-      return 1;
+  if (!q)
+    istpic = 0;
+  else if (q && hasnsp && !strcmp(q, "__setopt__")) {
+#if  DEBUG
+    istpic = 1;
+#endif
+    RELEASE(q);
+  } else {
+    for (i = 0;
+         i < sizeof(tpic_handlers)/sizeof(struct spc_handler); i++) {
+      if (!strcmp(q, tpic_handlers[i].key)) {
+        istpic = 1;
+        break;
+      }
     }
+    RELEASE(q);
   }
 
-  return 0;
+  return  istpic;
 }
+
 
 int
-spc_tpic_setup_handler (struct spc_handler *handle,
-			struct spc_env *spe, struct spc_arg *args)
+spc_tpic_setup_handler (struct spc_handler *sph,
+                        struct spc_env *spe, struct spc_arg *ap)
 {
-  char  *key;
-  int    i, keylen;
+  char  *q;
+  int    i, hasnsp = 0, error = -1;
 
-  ASSERT(handle && spe && args);
+  ASSERT(sph && spe && ap);
 
-  skip_white(&args->curptr, args->endptr);
-
-  key = args->curptr;
-  while (args->curptr < args->endptr &&
-	 isalpha(args->curptr[0])) {
-    args->curptr++;
+  skip_blank(&ap->curptr, ap->endptr);
+#if  ENABLE_SPC_NAMESPACE
+  if (ap->curptr + strlen("tpic:") < ap->endptr &&
+      !memcmp(ap->curptr, "tpic:", strlen("tpic:")))
+  {
+    ap->curptr += strlen("tpic:");
+    hasnsp = 1;
   }
+#endif
+  q = parse_c_ident(&ap->curptr, ap->endptr);
 
-  keylen = (int) (args->curptr - key);
-  if (keylen < 1) {
-    spe->errmsg = (char *) "Could not find tpic special.";
-    return -1;
-  }
-
-  for (i = 0;
-       i < sizeof(tpic_handlers)/sizeof(struct spc_handler); i++) {
-    if (keylen == strlen(tpic_handlers[i].key) &&
-	!strncmp(key, tpic_handlers[i].key, keylen)) {
-
-      skip_white(&args->curptr, args->endptr);
-      args->command = (char *) tpic_handlers[i].key;
-
-      handle->key   = (char *) "tpic:";
-      handle->exec  = tpic_handlers[i].exec;
-
-      return 0;
+  if (!q)
+    error = -1;
+  else if (q && hasnsp && !strcmp(q, "__setopt__")) {
+#if  DEBUG
+    ap->command = (char *) "__setopt__";
+    sph->key    = (char *) "tpic:";
+    sph->exec   = spc_handler_tpic__setopts;
+    skip_blank(&ap->curptr, ap->endptr);
+    error = 0;
+#endif
+    RELEASE(q);
+  } else {
+    for (i = 0;
+         i < sizeof(tpic_handlers)/sizeof(struct spc_handler); i++) {
+      if (!strcmp(q, tpic_handlers[i].key)) {
+        ap->command = (char *) tpic_handlers[i].key;
+        sph->key    = (char *) "tpic:";
+        sph->exec   = tpic_handlers[i].exec;
+        skip_blank(&ap->curptr, ap->endptr);
+        error = 0;
+        break;
+      }
     }
+    RELEASE(q);
   }
 
-  return -1;
+  return  error;
 }
+
+
+#if  0
+int
+spc_load_tpic_special  (struct spc_env *spe, pdf_obj *lopts)
+{
+  struct spc_def   *spd;
+  struct spc_tpic_ *sd;
+
+  sd  = NEW(1, struct spc_tpic_);
+
+  spd = NEW(1, struct spc_def);
+  spc_init_def(spd);
+
+  spc_def_init   (spd, &spc_handler_tpic__init);
+  spc_def_setopts(spd, &spc_handler_tpic__setopts);
+  spc_def_bophook(spd, &spc_handler_tpic__bophook);
+  spc_def_eophook(spd, &spc_handler_tpic__eophook);
+  spc_def_clean  (spd, &spc_handler_tpic__clean);
+
+  spc_def_func(spd, "pn", &spc_handler_tpic_pn);
+  spc_def_func(spd, "pa", &spc_handler_tpic_pa);
+  spc_def_func(spd, "fp", &spc_handler_tpic_fp);
+  spc_def_func(spd, "ip", &spc_handler_tpic_ip);
+  spc_def_func(spd, "da", &spc_handler_tpic_da);
+  spc_def_func(spd, "dt", &spc_handler_tpic_dt);
+  spc_def_func(spd, "sp", &spc_handler_tpic_sp);
+  spc_def_func(spd, "ar", &spc_handler_tpic_ar);
+  spc_def_func(spd, "ia", &spc_handler_tpic_ia);
+  spc_def_func(spd, "sh", &spc_handler_tpic_sh);
+  spc_def_func(spd, "wh", &spc_handler_tpic_wh);
+  spc_def_func(spd, "bk", &spc_handler_tpic_bk);
+  spc_def_func(spd, "tx", &spc_handler_tpic_tx);
+
+  spc_add_special(spe, "tpic", spd, sd);
+
+  return  0;
+}
+#endif /* 0 */
+

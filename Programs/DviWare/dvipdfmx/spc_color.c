@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/spc_color.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.5 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -29,9 +29,9 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxutil.h"
 
 #include "pdfdev.h"
-#include "pdfparse.h"
 #include "pdfcolor.h"
 
 #include "specials.h"
@@ -39,28 +39,36 @@
 #include "spc_util.h"
 #include "spc_color.h"
 
+
+/* Color stack is actually placed into pdfcolor.c.
+ * The reason why we need to place stack there is
+ * that we must reinstall color after grestore and
+ * other operations that can change current color
+ * implicitely.
+ */
+
 int
 spc_color_at_begin_page (void)
 {
-  return 0;
+  return  0;
 }
 
 int
 spc_color_at_end_page (void)
 {
-  return 0;
+  return  0;
 }
 
 int
 spc_color_at_begin_document (void)
 {
-  return 0;
+  return  0;
 }
 
 int
 spc_color_at_end_document (void)
 {
-  return 0;
+  return  0;
 }
 
 static int
@@ -69,14 +77,14 @@ spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(&colorspec, spe, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
     pdf_color_push(); /* save currentcolor */
     pdf_dev_setcolor(&colorspec, 0);
     pdf_dev_setcolor(&colorspec, 1);
   }
 
-  return error;
+  return  error;
 }
 
 static int
@@ -84,85 +92,127 @@ spc_handler_color_pop  (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_color_pop();
 
-  return 0;
+  return  0;
 }
 
+/* _FIXME_ ... I don't understand this well.
+ * Dvips's implementation is to clear color stack and then
+ * push color?
+ */
 static int
 spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
 {
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(&colorspec, spe, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
-    pdf_color_set_default(&colorspec);
+    pdf_color_clear();
     pdf_dev_setcolor(&colorspec, 0);
     pdf_dev_setcolor(&colorspec, 1);
+    pdf_color_push(); /* save currentcolor */
   }
 
-  return error;
+  return  error;
 }
 
+
+/* This is from color special? */
+#include "pdfdoc.h"
+
+static int
+spc_handler_background (struct spc_env *spe, struct spc_arg *args)
+{
+  int        error;
+  pdf_color  colorspec;
+
+  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  if (!error)
+    pdf_doc_set_bgcolor(&colorspec);
+
+  return  error;
+}
+
+
+#ifndef ISBLANK
+#define ISBLANK(c) ((c) == ' ' || (c) == '\t' || (c) == '\v')
+#endif
+static void 
+skip_blank (char **pp, char *endptr)
+{
+  char  *p = *pp;
+  for ( ; p < endptr && ISBLANK(*p); p++);
+  *pp = p;
+}
 
 int
-spc_color_check_special (const char *buffer, long size)
+spc_color_check_special (const char *buf, long len)
 {
-  char *p, *endptr;
+  int   r = 0;
+  char *q, *p, *endptr;
 
-  p      = (char *) buffer;
-  endptr = p + size;
+  p      = (char *) buf;
+  endptr = p + len;
 
-  skip_white(&p, endptr);
-  size   = (long) (endptr - p);
-  if (size >= strlen("color") &&
-      !strncmp(p, "color", strlen("color"))) {
-    return 1;
-  }
-
-  return 0;
-}
-
-extern int
-spc_color_setup_handler (struct spc_handler *handle,
-			 struct spc_env *spe, struct spc_arg *args)
-{
-  char  *p, *q;
-
-  ASSERT(handle && spe && args);
-
-  skip_white(&args->curptr, args->endptr);
-  if (args->curptr + strlen("color") > args->endptr ||
-      strncmp(args->curptr, "color", strlen("color"))) {
-    spe->errmsg = (char *) "No valid key for color special found.";
-    return -1;
-  }
-
-  args->curptr += strlen("color");
-
-  skip_white(&args->curptr, args->endptr);
-
-  p = args->curptr;
-  q = parse_c_ident(&p, args->endptr);
+  skip_blank(&p, endptr);
+  q = parse_c_ident(&p, endptr);
   if (!q)
-    return -1;
-
-  if (!strcmp(q, "push")) {
-    args->command = (char *) "push";
-    handle->exec  = &spc_handler_color_push;
-    args->curptr = p;
-  } else if (!strcmp(q, "pop")) {
-    args->command = (char *) "pop";
-    handle->exec = &spc_handler_color_pop;
-    args->curptr = p;
-  } else {
-    /* Is this really allowed??? */
-    args->command = (char *) "";
-    handle->exec = &spc_handler_color_default;
+    return  0;
+  else if (!strcmp(q, "color"))
+    r = 1;
+  else if (!strcmp(q, "background")) {
+    r = 1;
   }
   RELEASE(q);
 
-  skip_white(&args->curptr, args->endptr);
+  return  r;
+}
 
+extern int
+spc_color_setup_handler (struct spc_handler *sph,
+			 struct spc_env *spe, struct spc_arg *ap)
+{
+  char  *p, *q;
+
+  ASSERT(sph && spe && ap);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  q = parse_c_ident(&ap->curptr, ap->endptr);
+  if (!q)
+    return  -1;
+  skip_blank(&ap->curptr, ap->endptr);
+
+  if (!strcmp(q, "background")) {
+    ap->command = (char *) "background";
+    sph->exec   = &spc_handler_background;
+    RELEASE(q);
+  } else if (!strcmp(q, "color")) { /* color */
+    RELEASE(q);
+    p = ap->curptr;
+
+    q = parse_c_ident(&p, ap->endptr);
+    if (!q)
+      return  -1;
+    else if (!strcmp(q, "push")) {
+      ap->command = (char *) "push";
+      sph->exec   = &spc_handler_color_push;
+      ap->curptr  = p;
+    } else if (!strcmp(q, "pop")) {
+      ap->command = (char *) "pop";
+      sph->exec   = &spc_handler_color_pop;
+      ap->curptr  = p;
+    } else { /* cmyk, rgb, ... */
+      ap->command = (char *) "";
+      sph->exec   = &spc_handler_color_default;
+    }
+    RELEASE(q);
+  } else {
+    spc_warn(spe, "Not color/background special?");
+    RELEASE(q);
+    return  -1;
+  }
+
+  skip_blank(&ap->curptr, ap->endptr);
   return  0;
 }
 

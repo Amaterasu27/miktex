@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfencoding.c,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.5 2005/07/21 08:23:46 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -662,7 +662,10 @@ check_unicode_mappable (pdf_encoding *encoding,	char *is_used)
       total_fail_count++;
       break;
     default: /* Unknown */
-      {
+      if (!encoding->glyphs[code] ||
+          !strcmp(encoding->glyphs[code], ".notdef"))
+         encoding->accessible[code] = UNICODE_INACCESSIBLE;
+      else {
         long  len;
         int   fail_count = 0;
         unsigned char *p, *endptr;

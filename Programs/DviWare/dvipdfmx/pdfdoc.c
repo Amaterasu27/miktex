@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfdoc.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/05 13:28:46 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -494,7 +494,7 @@ asn_date (char *date_string)
   struct tm  *bd_time;
 #ifndef HAVE_TIMEZONE
   #ifdef TM_GM_TOFF
-     #define timezone (bdtime->gm_toff)
+     #define timezone (bd_time->tm_gmtoff)
   #else
      #define timezone 0l
   #endif /* TM_GM_TOFF */
@@ -505,7 +505,7 @@ asn_date (char *date_string)
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  -timezone/3600, timezone % 3600);
+	  -timezone/3600, (timezone%3600)/60);
 
   return strlen(date_string);
 }
@@ -1519,7 +1519,9 @@ make_article (pdf_doc *p,
                  pdf_new_name("N"), pdf_ref_obj(first));
     pdf_add_dict(first,
                  pdf_new_name("V"), pdf_ref_obj(last));
-    pdf_release_obj(last);
+    if (first != last) {
+      pdf_release_obj(last);
+    }
     pdf_add_dict(art_dict,
                  pdf_new_name("F"), pdf_ref_obj(first));
     /* If article_info is supplied, we override article->info. */
@@ -1528,7 +1530,8 @@ make_article (pdf_doc *p,
                    pdf_new_name("I"), article_info);
     } else if (article->info) {
       pdf_add_dict(art_dict,
-                   pdf_new_name("I"), article->info);
+                   pdf_new_name("I"), pdf_ref_obj(article->info));
+      pdf_release_obj(article->info);
       article->info = NULL; /* We do not write as object reference. */
     }
     pdf_release_obj(first);
@@ -1905,26 +1908,31 @@ pdf_doc_finish_page (pdf_doc *p)
 }
 
 
+static pdf_color bgcolor = { 1, { 1.0 } };
+void
+pdf_doc_set_bgcolor (const pdf_color *color)
+{
+  if (color)
+    memcpy(&bgcolor, color, sizeof(pdf_color));
+  else { /* as clear... */
+    pdf_color_graycolor(&bgcolor, 1.0);
+  }
+}
+
 static void
 doc_fill_page_background (pdf_doc *p)
 {
   pdf_page  *currentpage;
-  pdf_color  bgcolor;
-  pdf_rect   bbox;
-  int        colormode;
+  pdf_rect   r;
+  int        cm;
   pdf_obj   *saved_content;
 
-  colormode = pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE);
-  if (!colormode) {
+  cm = pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE);
+  if (!cm || pdf_color_is_white(&bgcolor)) {
     return;
   }
 
-  pdf_color_get_bgcolor(&bgcolor);
-  if (pdf_color_is_white(&bgcolor)) {
-    return;
-  }
-
-  pdf_doc_get_mediabox(pdf_doc_current_page_number(), &bbox);
+  pdf_doc_get_mediabox(pdf_doc_current_page_number(), &r);
 
   currentpage = LASTPAGE(p);
   ASSERT(currentpage);
@@ -1936,17 +1944,10 @@ doc_fill_page_background (pdf_doc *p)
   currentpage->contents = currentpage->background;
 
   pdf_dev_gsave();
-
   pdf_color_push();
   pdf_dev_setcolor(&bgcolor, 1); /* is_fill */
-  pdf_dev_moveto(bbox.llx, bbox.lly);
-  pdf_dev_lineto(bbox.urx, bbox.lly);
-  pdf_dev_lineto(bbox.urx, bbox.ury);
-  pdf_dev_lineto(bbox.llx, bbox.ury);
-  pdf_dev_closepath();
-  pdf_dev_fill();
+  pdf_dev_rectfill(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
   pdf_color_pop();
-
   pdf_dev_grestore();
 
   currentpage->contents = saved_content;
@@ -1972,15 +1973,10 @@ pdf_doc_begin_page (double scale, double x_origin, double y_origin)
   return;
 }
 
-/* ... */
-#include "mpost.h"
 void
 pdf_doc_end_page (void)
 {
   pdf_doc *p = &pdoc;
-
-  /* Finish any pending PS specials */
-  mps_eop_cleanup();
 
   pdf_dev_eop();
   doc_fill_page_background(p);
@@ -2188,10 +2184,10 @@ pdf_doc_begin_grabbing (const char *ident,
   form->matrix.e = -ref_x;
   form->matrix.f = -ref_y;
 
-  form->cropbox.llx = cropbox->llx;
-  form->cropbox.lly = cropbox->lly;
-  form->cropbox.urx = cropbox->urx;
-  form->cropbox.ury = cropbox->ury;
+  form->cropbox.llx = ref_x + cropbox->llx;
+  form->cropbox.lly = ref_y + cropbox->lly;
+  form->cropbox.urx = ref_x + cropbox->urx;
+  form->cropbox.ury = ref_y + cropbox->ury;
 
   form->contents  = pdf_new_stream(STREAM_COMPRESS);
   form->resources = pdf_new_dict();
@@ -2219,7 +2215,8 @@ pdf_doc_begin_grabbing (const char *ident,
    * Make sure the object is self-contained by adding the
    * current font and color to the object stream.
    */
-  pdf_dev_reset();
+  pdf_dev_reset_fonts();
+  pdf_dev_reset_color();
 
   return xobj_id;
 }
@@ -2261,7 +2258,8 @@ pdf_doc_end_grabbing (void)
 
   p->pending_forms = fnode->prev;
 
-  pdf_dev_reset();
+  /* Here we do not need pdf_dev_reset_color(). */
+  pdf_dev_reset_fonts();
 
   RELEASE(fnode);
 

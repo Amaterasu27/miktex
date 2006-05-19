@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/otl_conf.c,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/otl_conf.c,v 1.6 2005/07/17 09:53:38 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -24,13 +24,11 @@
 #include "config.h"
 #endif /* _HAVE_CONFIG_H */
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "system.h"
 #include "error.h"
 #include "mem.h"
+#include "dpxfile.h"
+#include "dpxutil.h"
 
 #include "pdfobj.h"
 #include "pdfparse.h"
@@ -455,7 +453,6 @@ parse_block (pdf_obj *gclass, char **pp, char *endptr)
   return rule;
 }
 
-#include "mfileio.h"
 
 static pdf_obj *
 otl_read_conf (const char *conf_name)

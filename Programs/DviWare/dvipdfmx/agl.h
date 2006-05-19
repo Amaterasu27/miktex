@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/agl.h,v 1.3 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.h,v 1.17 2005/07/07 08:00:31 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,6 +26,7 @@
 #define _AGL_H_
 
 #define AGL_DEFAULT_LISTFILE "glyphlist.txt"
+#define AGL_EXTRA_LISTFILE "texglyphlist.txt"
 
 #define AGL_MAX_UNICODES 16
 struct agl_name {

@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/tfm.c,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.c,v 1.21 2005/07/27 15:47:44 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -362,6 +362,8 @@ tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
 {
   UNSIGNED_QUAD expected_size = 6;
 
+  /* Removed the warning message caused by EC TFM metric files.
+   *
   if (tfm->wlenfile != tfm_file_size / 4) {
     WARN("TFM file size is %ld bytes but it says it is %ld bytes!",
 	 tfm_file_size, tfm->wlenfile * 4);
@@ -370,6 +372,10 @@ tfm_check_size (struct tfm_font *tfm, SIGNED_QUAD tfm_file_size)
     } else {
       ERROR("Can't proceed...");
     }
+  }
+   */
+  if (tfm_file_size < tfm->wlenfile * 4) {
+    ERROR("Can't proceed...");
   }
 
   expected_size += (tfm->ec - tfm->bc + 1);

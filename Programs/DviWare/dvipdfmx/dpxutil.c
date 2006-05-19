@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/dpxutil.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.7 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -157,26 +157,6 @@ skip_white_spaces (unsigned char **s, unsigned char *endptr)
       break;
     else
       (*s)++;
-}
-
-void
-mangle_name(char *name)
-{
-  int i;
-  char ch;
-  static char first = 1;
-  memmove (name+7, name, strlen(name)+1);
-  /* The following procedure isn't very random, but it
-     doesn't need to be for this application. */
-  if (first) {
-    srand (time(NULL));
-    first = 0;
-  }
-  for (i=0; i<6; i++) {
-    ch = rand() % 26;
-    name[i] = ch+'A';
-  }
-  name[6] = '+';
 }
 
 void
@@ -431,10 +411,233 @@ ht_iter_next (struct ht_iter *iter)
   hent = (struct ht_entry *) iter->curr;
   hent = hent->next;
   while (!hent &&
-	 ++iter->index < HASH_TABLE_SIZE) {
+         ++iter->index < HASH_TABLE_SIZE) {
     hent = ht->table[iter->index];
   }
   iter->curr = hent;
 
   return (hent ? 0 : -1);
+}
+
+
+static int
+read_c_escchar (char *r, char **pp, char *endptr)
+{
+  int   c = 0, l = 1;
+  char *p = *pp;
+
+  switch (p[0]) {
+  case 'a' : c = '\a'; p++; break;
+  case 'b' : c = '\b'; p++; break;
+  case 'f' : c = '\f'; p++; break;
+  case 'n' : c = '\n'; p++; break;
+  case 'r' : c = '\r'; p++; break;
+  case 't' : c = '\t'; p++; break;
+  case 'v' : c = '\v'; p++; break;
+  case '\\': case '?': case '\'': case '\"':
+    c = p[0]; p++;
+    break;
+  case '\n': l = 0; p++; break;
+  case '\r':
+    {
+      p++;
+      if (p < endptr && p[0] == '\n')
+        p++;
+      l = 0;
+    }
+    break;
+  case '0': case '1': case '2': case '3':
+  case '4': case '5': case '6': case '7':
+    {
+      int  i;
+      for (c = 0, i = 0;
+           i < 3 && p < endptr &&
+           p[0] >= '0' && p[0] <= '7'; i++, p++)
+        c = (c << 3) + (p[0] - '0');
+    }
+    break;
+  case 'x':
+    {
+      int  i;
+      for (c = 0, i = 0, p++;
+           i < 2 && p < endptr && isxdigit(p[0]);
+           i++, p++)
+        c = (c << 4) +
+            (isdigit(p[0]) ?
+             p[0] - '0' :
+             (islower(p[0]) ? p[0] - 'a' + 10: p[0] - 'A' + 10));
+    }
+    break;
+  default:
+    WARN("Unknown escape char sequence: \\%c", p[0]);
+    l = 0; p++;
+    break;
+  }
+
+  if (r)
+    *r = (char) c;
+  *pp  = p;
+  return  l;
+}
+
+#define C_QUOTE  '"'
+#define C_ESCAPE '\\'
+static int
+read_c_litstrc (char *q, int len, char **pp, char *endptr)
+{
+  char  *p;
+  int    l = 0;
+#define Q_TERM          0
+#define Q_CONT         -1
+#define Q_ERROR_UNTERM -1
+#define Q_ERROR_INVAL  -2
+#define Q_ERROR_BUFF   -3
+  int    s = Q_CONT;
+
+  for (l = 0, p = *pp;
+       s == Q_CONT && p < endptr; ) {
+    switch (p[0]) {
+    case C_QUOTE:
+      s = Q_TERM; p++;
+      break;
+    case C_ESCAPE:
+      if (q && l == len)
+        s = Q_ERROR_BUFF;
+      else {
+        p++;
+        l += read_c_escchar(q ? &q[l] : NULL, &p, endptr);
+      }
+      break;
+    case '\n': case '\r':
+      s = Q_ERROR_INVAL;
+      break;
+    default:
+      if (q && l == len)
+        s = Q_ERROR_BUFF;
+      else {
+        if (!q)
+          l++;
+        else
+          q[l++] = p[0];
+        p++;
+      }
+      break;
+    }
+  }
+  if (s == Q_TERM) {
+    if (q && l == len)
+      s = Q_ERROR_BUFF;
+    else if (q)
+      q[l++] = '\0';
+  }
+
+  *pp = p;
+  return ((s == Q_TERM) ? l : s);
+}
+
+char *
+parse_c_string (char **pp, char *endptr)
+{
+  char  *q = NULL;
+  char  *p = *pp;
+  int    l = 0;
+
+  if (p >= endptr || p[0] != C_QUOTE)
+    return NULL;
+
+  p++;
+  l = read_c_litstrc(NULL, 0, &p, endptr);
+  if (l >= 0) {
+    q = NEW(l + 1, char);
+    p = *pp + 1;
+    l = read_c_litstrc(q, l + 1, &p, endptr);
+  }
+
+  *pp = p;
+  return  q;
+}
+
+#define ISCNONDIGITS(c) ( \
+  (c) == '_' || \
+  ((c) >= 'a' && (c) <= 'z') || \
+  ((c) >= 'A' && (c) <= 'Z') \
+)
+#define ISCIDENTCHAR(c) ( \
+  ISCNONDIGITS((c)) || \
+  ((c) >= '0' && (c) <= '9') \
+)
+
+char *
+parse_c_ident (char **pp, char *endptr)
+{
+  char  *q = NULL;
+  char  *p = *pp;
+  int    n;
+
+  if (p >= endptr || !ISCNONDIGITS(*p))
+    return NULL;
+
+  for (n = 0; p < endptr && ISCIDENTCHAR(*p); p++, n++);
+  q = NEW(n + 1, char);
+  memcpy(q, *pp, n); q[n] = '\0';
+
+  *pp = p;
+  return  q;
+}
+
+char *
+parse_float_decimal (char **pp, char *endptr)
+{
+  char  *q = NULL;
+  char  *p = *pp;
+  int    s = 0, n = 0;
+
+  if (p >= endptr)
+    return NULL;
+
+  if (p[0] == '+' || p[0] == '-')
+    p++;
+
+  /* 1. .01 001 001E-001 */
+  for (s = 0, n = 0; p < endptr && s >= 0; ) {
+    switch (p[0]) {
+    case '+': case '-':
+      if (s != 2)
+        s = -1;
+      else {
+        s = 3; p++;
+      }
+      break;
+    case '.':
+      if (s > 0)
+        s = -1;
+      else {
+        s =  1; p++;
+      }
+      break;
+    case '0': case '1': case '2': case '3': case '4':
+    case '5': case '6': case '7': case '8': case '9':
+      n++; p++;
+      break;
+    case 'E': case 'e':
+      if (n == 0 || s == 2)
+        s = -1;
+      else {
+        s = 2; p++;
+      }
+      break;
+    default:
+      s = -1;
+      break;
+    }
+  }
+
+  if (n != 0) {
+    n = (int) (p - *pp);
+    q = NEW(n + 1, char);
+    memcpy(q, *pp, n); q[n] = '\0';
+  }
+
+  *pp = p;
+  return  q;
 }

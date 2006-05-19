@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/tt_cmap.c,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.24 2005/07/08 14:18:05 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -665,7 +665,8 @@ load_cmap12 (struct cmap12 *map,
     for (ch  = map->groups[i].startCharCode;
 	 ch <= map->groups[i].endCharCode;
 	 ch++) {
-      gid = (USHORT) ((map->groups[i]).startGlyphID & 0xffff);
+      long  d = ch - map->groups[i].startCharCode;
+      gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       if (GIDToCIDMap) {
 	cid = ((GIDToCIDMap[2*gid] << 8)|GIDToCIDMap[2*gid+1]);
 	if (cid == 0)
@@ -984,20 +985,22 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
   memcpy(used_glyphs_copy, used_glyphs, 8192);
   for (count = 0, i = 0; i < map->nGroups; i++) {
     for (ch  = map->groups[i].startCharCode;
-	 ch <= map->groups[i].endCharCode; ch++) {
+         ch <= map->groups[i].endCharCode; ch++) {
       unsigned char *p;
       int      len;
+      long     d;
 
       p   = wbuf + 2;
-      gid = (USHORT) ((map->groups[i]).startGlyphID & 0xffff);
+      d   = ch - map->groups[i].startCharCode;
+      gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       if (is_used_char2(used_glyphs_copy, gid)) {
-	count++;
-	wbuf[0] = (gid >> 8) & 0xff;
-	wbuf[1] = (gid & 0xff);
-	len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
+        count++;
+        wbuf[0] = (gid >> 8) & 0xff;
+        wbuf[1] = (gid & 0xff);
+        len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
 
-	used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
-	CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
+        used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+        CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
       }
     }
   }

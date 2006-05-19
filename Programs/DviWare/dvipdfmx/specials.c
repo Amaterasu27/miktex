@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/specials.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.9 2005/08/15 16:40:10 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,14 +26,14 @@
 #include "config.h"
 #endif
 
+#include <stdarg.h>
+
 #include "system.h"
 #include "mem.h"
 #include "error.h"
 #include "numbers.h"
 
 #include "dvi.h"
-
-#include "pdflimits.h"
 
 #include "pdfobj.h"
 #include "pdfparse.h"
@@ -59,150 +59,101 @@ spc_set_verbose (void)
   verbose++;
 }
 
+
+void
+spc_warn (struct spc_env *spe, const char *fmt, ...)
+{
+  va_list  ap;
+  static char buf[1024];
+
+  va_start(ap, fmt);
+
+  vsprintf(buf, fmt, ap);
+  WARN(buf);
+
+  va_end(ap);
+
+  return;
+}
+
+
+/* This is currently just to make other spc_xxx to not directly
+ * call dvi_xxx.
+ */
+int
+spc_begin_annot (struct spc_env *spe, pdf_obj *dict)
+{
+  pdf_doc_begin_annot(dict);
+  dvi_tag_depth(); /* Tell dvi interpreter to handle line-break. */
+  return  0;
+}
+
+int
+spc_end_annot (struct spc_env *spe)
+{
+  dvi_untag_depth();
+  pdf_doc_end_annot();
+  return  0;
+}
+
+int
+spc_resume_annot (struct spc_env *spe)
+{
+  dvi_link_annot(1);
+  return  0;
+}
+
+int
+spc_suspend_annot (struct spc_env *spe)
+{
+  dvi_link_annot(0);
+  return  0;
+}
+
+
+
 static struct ht_table *named_objects = NULL;
 
-static int
-is_an_int (const char *s)
-{
-  if (!s || !*s)
-    return 0;
-  if (*s == '+' || *s == '-')
-    s++;
-  while (*s) {
-    if (!isdigit(*s))
-      return 0;
-    s++;
-  }
-
-  return 1;
-}
-
-static struct {
-  const char *key;
-  double      units;
-  int         is_true_unit;
-} unit_in_bps[] = {
-  {"pt",     (72.0/72.27), 0},
-  {"in",     (72.0),       0},
-  {"cm",     (72.0/2.54),  0},
-  {"mm",     (72.0/25.4),  0},
-  {"bp",     1.0,          0},
-  {"truept", (72.0/72.27), 1},
-  {"truein", (72.0),       1},
-  {"truecm", (72.0/2.54),  1},
-  {"truemm", (72.0/25.4),  1},
-  {"truebp", 1.0,          1}
-};
-#define NUM_KNOWN_UNITS (sizeof(unit_in_bps)/sizeof(unit_in_bps[0]))
-
-static double
-parse_one_unit (char **start, char *end)
-{
-  double result = -1.0;
-  char  *unit_str;
-  int    i;
-  double mag;
-
-  skip_white(start, end);
-  unit_str = parse_c_ident(start, end);
-  if (!unit_str) {
-    WARN("Expecting a unit here (e.g., in, cm, pt).");
-    dump(*start, end);
-  } else {
-    for (i = 0; i < NUM_KNOWN_UNITS; i++) {
-      if (!strcmp(unit_in_bps[i].key, unit_str)) {
-	result = unit_in_bps[i].units;
-	break;
-      }
-    }
-    if (i >= NUM_KNOWN_UNITS) {
-      WARN("Unknown unit of measurement \"%s\".", unit_str);
-      dump(*start, end);
-    } else {
-      if (unit_in_bps[i].is_true_unit) {
-	mag = dvi_tell_mag();
-	if (mag == 0.0) {
-	  result = unit_in_bps[i].units;
-	} else {
-	  result = unit_in_bps[i].units / mag;
-	}
-      } else {
-	result = unit_in_bps[i].units;
-      }
-    }
-    RELEASE(unit_str);
-  }
-
-  return result;
-}
-
-double
-parse_length (char **start, char *end)
-{
-  double val = 0.0, one_bp = 0.0;
-  char  *nextptr;
-
-  /* Our units does not start with "e". */
-  val = strtod(*start, &nextptr);
-  if (nextptr == *start) {
-    ERROR("Error in length specification: %s", *start);
-  } else if (nextptr < end && nextptr != NULL) {
-    one_bp = parse_one_unit(&nextptr, end);
-    if (one_bp <= 0.0)
-      ERROR("Unknown unit specified in: %s", nextptr);
-    else if (nextptr != NULL &&
-	     nextptr < end && !isspace(*nextptr) &&
-	     !strchr("([</,", *nextptr)) {
-      ERROR("Unknown unit specified in: %s", *start);
-    }
-  } else {
-    one_bp = 1.0;
-  }
-
-  *start = nextptr;
-  return (val * one_bp);
-}
-
-#define K_XPOS      0
-#define K_YPOS      1
-#define K_THISPAGE  2
-#define K_PREVPAGE  3
-#define K_NEXTPAGE  4
-#define K_PAGES     5
-#define K_NAMES     6
-#define K_RESOURCES 7
-#define K_CATALOG   8
-#define K_DOCINFO   9
-
-static struct {
-  const char *key_str;
-  int         key_id ;
-} reserved_keys[] = {
-  {"xpos",      K_XPOS},
-  {"ypos",      K_YPOS},
-  {"thispage",  K_THISPAGE},
-  {"prevpage",  K_PREVPAGE},
-  {"nextpage",  K_NEXTPAGE},
-  {"pages",     K_PAGES},
-  {"names",     K_NAMES},
-  {"resources", K_RESOURCES},
-  {"catalog",   K_CATALOG},
-  {"docinfo",   K_DOCINFO},
-  {NULL, -1}
+/* reserved keys */
+static const char *_rkeys[] = {
+#define  K_OBJ__XPOS      0
+#define  K_OBJ__YPOS      1
+  "xpos", "ypos",
+#define  K_OBJ__THISPAGE  2
+#define  K_OBJ__PREVPAGE  3
+#define  K_OBJ__NEXTPAGE  4
+  "thispage", "prevpage", "nextpage",
+#define  K_OBJ__RESOURCES 5
+  "resources",
+#define  K_OBJ__PAGES     6
+#define  K_OBJ__NAMES     7
+  "pages", "names",
+#define  K_OBJ__CATALOG   8
+#define  K_OBJ__DOCINFO   9
+  "catalog", "docinfo",
+#if  0
+#define  K_OBJ__TRAILER  10
+  "trailer",
+#endif /* NYI */
+  NULL
 };
 
+/* pageN where N is a positive integer.
+ * Note that page need not exist at this time.
+ */
 static int
-get_reserved_key (const char *key)
+ispageref (const char *key)
 {
-  int  i;
-
-  for (i = 0; reserved_keys[i].key_str; i++) {
-    if (!strcmp(reserved_keys[i].key_str, key)) {
-      return reserved_keys[i].key_id;
-    }
+  const char  *p;
+  if (strlen(key) <= strlen("page") ||
+      memcmp(key, "page", strlen("page")))
+    return  0;
+  else {
+    for (p = key + 4; *p && *p >= '0' && *p <= '9'; p++);
+    if (*p != '\0')
+      return  0;
   }
-
-  return -1;
+  return  1;
 }
 
 /*
@@ -211,55 +162,56 @@ get_reserved_key (const char *key)
 pdf_obj *
 spc_lookup_reference (const char *key)
 {
-  pdf_obj   *value = NULL;
-  pdf_coord  cp;
-  int        key_id;
+  pdf_obj    *value = NULL;
+  pdf_coord   cp;
+  int         k;
 
   ASSERT(named_objects);
-  ASSERT(key && key[0] != '\0');
 
-  key_id = get_reserved_key(key);
+  if (!key)
+    return  NULL;
 
-  switch (key_id) {
-  case K_XPOS:
+  for (k = 0; _rkeys[k] && strcmp(key, _rkeys[k]); k++);
+  switch (k) {
+  /* xpos and ypos must be position in device space here. */
+  case  K_OBJ__XPOS:
     cp.x = dvi_dev_xpos(); cp.y = 0.0;
     pdf_dev_transform(&cp, NULL);
     value = pdf_new_number(ROUND(cp.x, .01));
     break;
-  case K_YPOS:
+  case  K_OBJ__YPOS:
     cp.x = 0.0; cp.y = dvi_dev_ypos();
     pdf_dev_transform(&cp, NULL);
     value = pdf_new_number(ROUND(cp.y, .01));
     break;
-  case K_THISPAGE:
+  case  K_OBJ__THISPAGE:
     value = pdf_doc_this_page_ref();
     break;
-  case K_PREVPAGE:
+  case  K_OBJ__PREVPAGE:
     value = pdf_doc_prev_page_ref();
     break;
-  case K_NEXTPAGE:
+  case  K_OBJ__NEXTPAGE:
     value = pdf_doc_next_page_ref();
     break;
-  case K_PAGES:
+  case  K_OBJ__PAGES:
     value = pdf_ref_obj(pdf_doc_page_tree());
     break;
-  case K_NAMES:
+  case  K_OBJ__NAMES:
     value = pdf_ref_obj(pdf_doc_names());
     break;
-  case K_RESOURCES:
+  case  K_OBJ__RESOURCES:
     value = pdf_ref_obj(pdf_doc_current_page_resources());
     break;
-  case K_CATALOG:
+  case  K_OBJ__CATALOG:
     value = pdf_ref_obj(pdf_doc_catalog());
     break;
-  case K_DOCINFO:
+  case  K_OBJ__DOCINFO:
     value = pdf_ref_obj(pdf_doc_docinfo());
     break;
   default:
-    if (strlen(key) > 4 &&
-	!strncmp(key, "page", 4) && is_an_int(key + 4)) {
+    if (ispageref(key))
       value = pdf_doc_ref_page(atoi(key + 4));
-    } else {
+    else {
       value = pdf_names_lookup_reference(named_objects, key, strlen(key));
     }
     break;
@@ -269,49 +221,49 @@ spc_lookup_reference (const char *key)
     ERROR("Object reference %s not exist.", key);
   }
 
-  return value;
+  return  value;
 }
 
 pdf_obj *
 spc_lookup_object (const char *key)
 {
-  pdf_obj   *value = NULL;
-  pdf_coord  cp;
-  int        key_id;
+  pdf_obj    *value = NULL;
+  pdf_coord   cp;
+  int         k;
 
   ASSERT(named_objects);
-  ASSERT(key && key[0] != '\0');
 
-  key_id = get_reserved_key(key);
+  if (!key)
+    return  NULL;
 
-  /* First check for builtins first */
-  switch (key_id) {
-  case K_XPOS:
+  for (k = 0; _rkeys[k] && strcmp(key, _rkeys[k]); k++);
+  switch (k) {
+  case  K_OBJ__XPOS:
     cp.x = dvi_dev_xpos(); cp.y = 0.0;
     pdf_dev_transform(&cp, NULL);
     value = pdf_new_number(ROUND(cp.x, .01));
     break;
-  case K_YPOS:
+  case  K_OBJ__YPOS:
     cp.x = 0.0; cp.y = dvi_dev_ypos();
     pdf_dev_transform(&cp, NULL);
     value = pdf_new_number(ROUND(cp.y, .01));
     break;
-  case K_THISPAGE:
+  case  K_OBJ__THISPAGE:
     value = pdf_doc_this_page();
     break;
-  case K_PAGES:
+  case  K_OBJ__PAGES:
     value = pdf_doc_page_tree();
     break;
-  case K_NAMES:
+  case  K_OBJ__NAMES:
     value = pdf_doc_names();
     break;
-  case K_RESOURCES:
+  case  K_OBJ__RESOURCES:
     value = pdf_doc_current_page_resources();
     break;
-  case K_CATALOG:
+  case  K_OBJ__CATALOG:
     value = pdf_doc_catalog();
     break;
-  case K_DOCINFO:
+  case  K_OBJ__DOCINFO:
     value = pdf_doc_docinfo();
     break;
   default:
@@ -319,11 +271,13 @@ spc_lookup_object (const char *key)
     break;
   }
 
+/* spc_handler_pdfm_bead() in spc_pdfm.c controls NULL too.
   if (!value) {
     ERROR("Object reference %s not exist.", key);
   }
+*/
 
-  return value;
+  return  value;
 }
 
 void
@@ -331,15 +285,21 @@ spc_push_object (const char *key, pdf_obj *value)
 {
   int  error = 0;
 
-  ASSERT(value);
+  if (!key || !value)
+    return;
 
   if (PDF_OBJ_INDIRECTTYPE(value)) {
     pdf_names_add_reference(named_objects,
-			    key, strlen(key), value);
+                            key, strlen(key), value);
   } else {
     error = pdf_names_add_object(named_objects,
                                  key, strlen(key), value);
     if (!error) {
+      /* _FIXME_:
+       * Objects created by pdf:obj must always
+       * be written to output regardless of if
+       * they are actually used in document.
+       */
       pdf_obj *obj_ref = pdf_names_lookup_reference(named_objects,
                                                     key, strlen(key));
       if (obj_ref)
@@ -366,14 +326,13 @@ spc_clear_objects (void)
 
 static int
 spc_handler_unknown (struct spc_env *spe,
-		  struct spc_arg *args)
+                     struct spc_arg *args)
 {
   ASSERT(spe && args);
 
-  spe->errmsg  = (char *) "Unknown special ignored.";
   args->curptr = args->endptr;
 
-  return -1;
+  return  -1;
 }
 
 static void
@@ -390,27 +349,11 @@ init_special (struct spc_handler *special,
   spe->x_user = x_user;
   spe->y_user = y_user;
   spe->mag    = mag;
-  spe->errmsg = NULL;
+  spe->pg     = pdf_doc_current_page_number(); /* _FIXME_ */
 
   args->curptr = (char *) p;
   args->endptr = args->curptr + size;
-
-  return;
-}
-
-static void
-print_error (const char *spc_type,
-	     struct spc_env *spe, struct spc_arg *args)
-{
-  ASSERT(spe && args);
-
-  if (spe->errmsg) {
-    WARN("Interpreting special command %s (%s) failed with:",
-	 args->command, spc_type);
-    MESG("\n");
-    MESG(spe->errmsg);
-    MESG("\n");
-  }
+  args->base   = args->curptr;
 
   return;
 }
@@ -565,6 +508,54 @@ spc_exec_at_end_document (void)
   }
 
   return error;
+}
+
+static void
+print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
+{
+  char      *p, ebuf[64];
+  int       i;
+  long      pg = spe->pg;
+  pdf_coord c;
+
+  c.x = spe->x_user; c.y = spe->y_user;
+  pdf_dev_transform(&c, NULL);
+
+  WARN("Interpreting special command %s (%s) failed.", ap->command, name);
+  WARN(">> at page=\"%ld\" position=\"(%g, %g)\" (in PDF)", pg, c.x, c.y);
+  for (i = 0, p = ap->base; i < 63 && p < ap->endptr; p++) {
+    if (isprint(*p))
+      ebuf[i++] = *p;
+    else if (i + 4 < 63)
+      i += sprintf(ebuf + i, "\\x%02x", *p);
+    else
+      break;
+  }
+  ebuf[i] = '\0'; 
+  if (ap->curptr < ap->endptr) {
+    while (i-- > 60)
+      ebuf[i] = '.';
+  }
+  WARN(">> xxx \"%s\"", ebuf);
+
+  if (ap->curptr < ap->endptr) {
+    for (i = 0, p = ap->curptr; i < 63 && p < ap->endptr; p++) {
+      if (isprint(*p))
+        ebuf[i++] = *p;
+      else if (i + 4 < 63)
+        i += sprintf(ebuf + i, "\\x%02x", *p);
+      else
+        break;
+    }
+    ebuf[i] = '\0'; 
+    if (ap->curptr < ap->endptr) {
+      while (i-- > 60)
+        ebuf[i] = '.';
+    }
+    WARN(">> Reading special command stopped around >>%s<<", ebuf);
+
+    ap->curptr = ap->endptr;
+  }
 }
 
 int

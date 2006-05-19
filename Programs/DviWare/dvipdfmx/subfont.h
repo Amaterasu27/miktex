@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/subfont.h,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.h,v 1.8 2005/07/17 09:53:38 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -23,10 +23,11 @@
 #ifndef _SUBFONT_H_
 #define _SUBFONT_H_
 
-extern int load_sfd_record(char *sfd_name, char *sub_name);
-extern unsigned int lookup_sfd_record(int subfont_id, unsigned char s);
-extern void release_sfd_record(void);
-extern char *sfd_sfd_name(int subfont_id);
-extern char *sfd_sub_name(int subfont_id);
+extern void   subfont_set_verbose (void);
+
+extern unsigned short lookup_sfd_record(int rec_id, unsigned char code);
+
+extern int    sfd_load_record     (const char *sfd_name, const char *subfont_id);
+extern char **sfd_get_subfont_ids (const char *sfd_name, int *num_subfonts);
 
 #endif /* _SUBFONT_H_ */

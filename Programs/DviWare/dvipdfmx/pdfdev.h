@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfdev.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.18 2005/08/12 18:22:24 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -56,21 +56,14 @@ typedef struct
    * and/or shifted to fit within a box described by
    * those values.
    */
-  double   width;
-  double   height;
-  double   depth;
+  double      width;
+  double      height;
+  double      depth;
 
-  /* Should switch to pdf_tmatrix... */
-  double   xscale;
-  double   yscale;
-  double   rotate;
+  pdf_tmatrix matrix; /* transform matrix */
+  pdf_rect    bbox;   /* user_bbox */
 
-  double   xoffset;
-  double   yoffset;
-
-  pdf_rect bbox; /* user_bbox */
-
-  int      flags;
+  int         flags;
 } transform_info;
 #define INFO_HAS_USER_BBOX (1 << 0)
 #define INFO_HAS_WIDTH     (1 << 1)
@@ -86,6 +79,7 @@ extern int    pdf_sprint_matrix (char *buf, const pdf_tmatrix *p);
 extern int    pdf_sprint_rect   (char *buf, const pdf_rect    *p);
 extern int    pdf_sprint_coord  (char *buf, const pdf_coord   *p);
 extern int    pdf_sprint_length (char *buf, double value);
+extern int    pdf_sprint_number (char *buf, double value);
 
 /* unit_conv: multiplier for input unit (spt_t) to bp conversion.
  * precision: How many fractional digits preserved in output (not real

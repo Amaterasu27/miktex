@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfcolor.c,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.11 2005/08/18 04:36:20 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -38,8 +38,8 @@
 #include "pdfdoc.h"
 #include "pdfdev.h"
 
-#include "colors.h"
 #include "pdfcolor.h"
+
 
 static int verbose = 0;
 void
@@ -125,47 +125,6 @@ pdf_color_graycolor (pdf_color *color, double g)
 }
 
 
-int
-pdf_color_namedcolor (pdf_color *color, const char *colorname)
-{
-  int   i;
-
-  ASSERT(color);
-
-  for (i = 0; i < NUM_NAMED_COLORS; i++) {
-    if (!strcasecmp(colors_by_name[i].key, colorname)) {
-      switch (colors_by_name[i].colorspace) {
-      case PDF_COLORSPACE_TYPE_DEVICECMYK:
-	pdf_color_cmykcolor(color,
-			    colors_by_name[i].values[0],
-			    colors_by_name[i].values[1],
-			    colors_by_name[i].values[2],
-			    colors_by_name[i].values[3]);
-	return 0;
-	break;
-      case PDF_COLORSPACE_TYPE_DEVICERGB:
-	pdf_color_rgbcolor(color,
-			   colors_by_name[i].values[0],
-			   colors_by_name[i].values[1],
-			   colors_by_name[i].values[2]);
-	return 0;
-	break;
-      case PDF_COLORSPACE_TYPE_DEVICEGRAY:
-	pdf_color_graycolor(color,
-			    colors_by_name[i].values[0]);
-	return 0;
-	break;
-      }
-    }
-  }
-  if (i == NUM_NAMED_COLORS) {
-    WARN("Color \"%s\" not known.", colorname);
-    return -1;
-  }
-
-  return -1;
-}
-
 void
 pdf_color_copycolor (pdf_color *color1, const pdf_color *color2)
 {
@@ -219,6 +178,7 @@ pdf_color current_stroke = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
+#if  0
 /*
  * This routine is not a real color matching.
  */
@@ -229,27 +189,28 @@ compare_color (const pdf_color *color1, const pdf_color *color2)
     return -1;
 
   switch (color1->num_components) {
-  case 4:
+  case  4:
     if (color1->values[0] == color2->values[0] &&
 	color1->values[1] == color2->values[1] &&
 	color1->values[2] == color2->values[2] &&
 	color1->values[3] == color2->values[3])
       return 0;
     break;
-  case 3:
+  case  3:
     if (color1->values[0] == color2->values[0] &&
 	color1->values[1] == color2->values[1] &&
 	color1->values[2] == color2->values[2])
       return 0;
     break;
-  case 1:
+  case  1:
     if (color1->values[0] == color2->values[0])
       return 0;
     break;
   }
 
-  return -1;
+  return  -1;
 }
+#endif
 
 static int
 valid_color_values (pdf_color *validated, const pdf_color *color)
@@ -285,7 +246,7 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
   if (is_fill) {
     memcpy(color, &current_fill, sizeof(pdf_color));
   } else {
-    memcpy(color, &current_fill, sizeof(pdf_color));
+    memcpy(color, &current_stroke, sizeof(pdf_color));
   }
 
   return 0;
@@ -314,6 +275,8 @@ pdf_dev_setcolor (const pdf_color *color, int is_fill)
     return -1;
   }
 
+#if  0
+  /* There are much problems in this :( */
   if (is_fill) {
     if (!compare_color(&validated, &current_fill)) {
       return 0;
@@ -323,6 +286,7 @@ pdf_dev_setcolor (const pdf_color *color, int is_fill)
       return 0;
     }
   }
+#endif
 
   graphics_mode();
 
@@ -332,13 +296,13 @@ pdf_dev_setcolor (const pdf_color *color, int is_fill)
   }
 
   switch (validated.num_components) {
-  case 3:
+  case  3:
     pdf_doc_add_page_content((is_fill ? " rg" : " RG"), 3);
     break;
-  case 4:
+  case  4:
     pdf_doc_add_page_content((is_fill ? " k"  : " K" ), 2);
     break;
-  case 1:
+  case  1:
     pdf_doc_add_page_content((is_fill ? " g"  : " G" ), 2);
     break;
   default:
@@ -353,15 +317,11 @@ pdf_dev_setcolor (const pdf_color *color, int is_fill)
     memcpy(&current_stroke, &validated, sizeof(pdf_color));
   }
 
-  return 0;
+  return  0;
 }
 
 
-pdf_color bground_color = {
-  1,
-  {1.0, 0.0, 0.0, 0.0}
-};
-
+/* Dvipdfm special */
 pdf_color default_color = {
   1,
   {0.0, 0.0, 0.0, 0.0}
@@ -375,21 +335,6 @@ pdf_color_set_default (const pdf_color *color)
   memcpy(&default_color, color, sizeof(pdf_color));
 }
 
-void
-pdf_color_get_bgcolor (pdf_color *color)
-{
-  ASSERT(color);
-
-  memcpy(color, &bground_color, sizeof(pdf_color));
-}
-
-void
-pdf_color_set_bgcolor (const pdf_color *color)
-{
-  ASSERT(color);
-
-  memcpy(&bground_color, color, sizeof(pdf_color));
-}
 
 /*
  * Having color stack here is wrong.
@@ -424,8 +369,10 @@ pdf_dev_reset_color (void)
     strokecolor = default_color;
     fillcolor   = default_color;
   }
+#if  0
   pdf_color_graycolor(&current_stroke, 0.0);
   pdf_color_graycolor(&current_fill, 0.0);
+#endif
 
   pdf_dev_setcolor(&strokecolor, 0);
   pdf_dev_setcolor(&fillcolor, 1);
@@ -470,6 +417,12 @@ pdf_color_pop (void)
 
   if (current <  0) {
     WARN("End color with no corresponding begin color.");
+    /*
+     * In the case of mismatched push and pop, color_stack.next must set
+     * to be the default value, 0. Otherwise causes segmentation fault
+     * in the next push command.
+     */
+    pdf_color_clear();
     return;
   }
 

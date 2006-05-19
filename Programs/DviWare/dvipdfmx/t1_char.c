@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/t1_char.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_char.c,v 1.5 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -30,7 +30,6 @@
 #include <math.h>
 
 #include "system.h"
-#include "mfileio.h"
 #include "mem.h"
 #include "error.h"
 #include "numbers.h"
@@ -43,7 +42,6 @@
 
 #include "dpxutil.h"
 
-#include "t1crypt.h"
 #include "pst_obj.h"
 #include "pst.h"
 

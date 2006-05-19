@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdffont.c,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.15 2005/07/20 10:41:54 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -30,17 +30,17 @@
 #include <time.h>
 
 #include "system.h"
-#include "mfileio.h"
-#include "mem.h"
 #include "error.h"
+#include "mem.h"
+
+#include "dpxfile.h"
+#include "dpxutil.h"
 
 #include "pdfobj.h"
 
 #include "pdfencoding.h"
 #include "cmap.h"
 #include "unicode.h"
-
-#include "dpxutil.h"
 
 #include "type1.h"
 #include "type1c.h"
@@ -57,8 +57,7 @@
 
 static int __verbose = 0;
 
-#define PDFFONT_DEBUG_STR "Font"
-#define PDFFONT_DEBUG     3
+#define MREC_HAS_TOUNICODE(m) ((m) && (m)->opt.tounicode)
 
 void
 pdf_font_set_verbose (void)
@@ -89,8 +88,8 @@ pdf_font_set_dpi (int font_dpi)
 void
 pdf_font_make_uniqueTag (char *tag)
 {
-  int i;
-  char ch;
+  int    i;
+  char   ch;
   static char first = 1;
 
   if (first) {
@@ -103,7 +102,6 @@ pdf_font_make_uniqueTag (char *tag)
     tag[i] = ch + 'A';
   }
   tag[6] = '\0';
-
 }
 
 
@@ -240,11 +238,11 @@ pdf_clean_font_struct (pdf_font *font)
       RELEASE(font->usedchars);
 
     if (font->reference)
-      ERROR("%s: Object not flushed.", PDFFONT_DEBUG_STR);
+      ERROR("pdf_font>> Object not flushed.");
     if (font->resource)
-      ERROR("%s: Object not flushed.", PDFFONT_DEBUG_STR);
+      ERROR("pdf_font> Object not flushed.");
     if (font->descriptor)
-      ERROR("%s: Object not flushed.", PDFFONT_DEBUG_STR);
+      ERROR("pdf_font>> Object not flushed.");
 
     font->ident     = NULL;
     font->map_name  = NULL;
@@ -285,7 +283,7 @@ pdf_init_fonts (void)
 
 #define CHECK_ID(n) do {\
   if ((n) < 0 || (n) >= font_cache.count) {\
-    ERROR("%s: Invalid ID %d", PDFFONT_DEBUG_STR, (n));\
+    ERROR("Invalid font ID: %d", (n));\
   }\
 } while (0)
 #define GET_FONT(n)  (&(font_cache.fonts[(n)]))
@@ -389,11 +387,21 @@ pdf_get_font_encoding (int font_id)
   return font->encoding_id;
 }
 
+/* The rule for ToUnicode creation is:
+ *
+ *  If "tounicode" option is specified in fontmap, use that.
+ *  If there is ToUnicode CMap with same name as TFM, use that.
+ *  If no "tounicode" option is used and no ToUnicode CMap with
+ *  same name as TFM is found, create ToUnicode CMap from glyph
+ *  names and AGL file.
+ */
 static int
 try_load_ToUnicode_CMap (pdf_font *font)
 {
-  pdf_obj  *fontdict;
-  pdf_obj  *tounicode;
+  pdf_obj     *fontdict;
+  pdf_obj     *tounicode;
+  const char  *cmap_name = NULL;
+  fontmap_rec *mrec; /* Be sure fontmap is still alive here */
 
   ASSERT(font);
 
@@ -405,16 +413,28 @@ try_load_ToUnicode_CMap (pdf_font *font)
 
   ASSERT(font->map_name);
 
-  fontdict  = pdf_font_get_resource(font);
-  tounicode = pdf_load_ToUnicode_stream(font->map_name);
-  if (tounicode) {
+  mrec = pdf_lookup_fontmap_record(font->map_name);
+  if (MREC_HAS_TOUNICODE(mrec))
+    cmap_name = mrec->opt.tounicode;
+  else {
+    cmap_name = font->map_name;
+  }
 
-    if (__verbose) {
-      MESG("\npdf_font>> ToUnicode CMap loaded for \"%s\".\n", font->map_name);
+  fontdict  = pdf_font_get_resource(font);
+  tounicode = pdf_load_ToUnicode_stream(cmap_name);
+  if (!tounicode && MREC_HAS_TOUNICODE(mrec))
+    WARN("Failed to read ToUnicode mapping \"%s\"...", mrec->opt.tounicode);
+  else if (tounicode) {
+    if (pdf_obj_typeof(tounicode) != PDF_STREAM)
+      ERROR("Object returned by pdf_load_ToUnicode_stream() not stream object! (This must be bug)");
+    else if (pdf_stream_length(tounicode) > 0) {
+      pdf_add_dict(fontdict,
+                   pdf_new_name("ToUnicode"),
+                   pdf_ref_obj (tounicode)); /* _FIXME_ */
+      if (__verbose)
+        MESG("pdf_font>> ToUnicode CMap \"%s\" attached to font id=\"%s\".\n",
+             cmap_name, font->map_name);
     }
-    pdf_add_dict(fontdict,
-                 pdf_new_name("ToUnicode"),
-                 pdf_ref_obj (tounicode));
     pdf_release_obj(tounicode);
   }
 
@@ -519,21 +539,16 @@ pdf_font_findresource (const char *tex_name,
   int          font_id = -1;
   pdf_font    *font;
   int          encoding_id = -1, cmap_id = -1;
-  char        *fontname;
+  const char  *fontname;
 
   /*
    * Get appropriate info from map file. (PK fonts at two different
    * point sizes would be looked up twice unecessarily.)
    */
-  if (!mrec) {
-    fontname = (char *) tex_name;
-  } else {
-    fontname = mrec->font_name;
-  }
-
+  fontname = mrec ? mrec->font_name : tex_name;
   if (mrec && mrec->enc_name) {
-    if (!strstr(mrec->enc_name, ".enc") ||
-	strstr(mrec->enc_name, ".cmap")) {
+#define MAYBE_CMAP(s) (!strstr((s), ".enc") || strstr((s), ".cmap"))
+    if (MAYBE_CMAP(mrec->enc_name)) {
       cmap_id = CMap_cache_find(mrec->enc_name);
       if (cmap_id >= 0) {
 	CMap  *cmap;
@@ -560,7 +575,7 @@ pdf_font_findresource (const char *tex_name,
 		 CMap_get_name(cmap));
 	    MESG("pdf_font>> The -m <00> option will be assumed for \"%s\".\n", mrec->font_name);
 	  }
-	  mrec->opt.mapc = 0;
+	  mrec->opt.mapc = 0; /* _FIXME_ */
 	}
       } else if (!strcmp(mrec->enc_name, "unicode")) {
 	cmap_id = otf_load_Unicode_CMap(mrec->font_name,
@@ -576,9 +591,8 @@ pdf_font_findresource (const char *tex_name,
     }
     if (cmap_id < 0) {
       encoding_id = pdf_encoding_findresource(mrec->enc_name);
-      if (encoding_id < 0) {
+      if (encoding_id < 0)
 	ERROR("Could not find encoding file \"%s\".", mrec->enc_name);
-      }
     }
   }
 
@@ -621,13 +635,14 @@ pdf_font_findresource (const char *tex_name,
       font->subtype     = PDF_FONT_FONTTYPE_TYPE0;
       font->encoding_id = cmap_id;
 
-      mrec->opt.flags  &= ~FONTMAP_OPT_REMAP; /* FIXME */
+      mrec->opt.flags  &= ~FONTMAP_OPT_REMAP; /* _FIXME_ */
 
       font_cache.count++;
 
       if (__verbose) {
-	MESG("\npdf_font>> Type0 font \"%s\" (cmap_id=%d) loaded at font_id=%d.\n",
-	     mrec->font_name, cmap_id, font_id);
+	MESG("\npdf_font>> Type0 font \"%s\"", fontname);
+        MESG(" cmap_id=<%s,%d>", mrec->enc_name, font->encoding_id);
+        MESG(" opened at font_id=<%s,%d>.\n", tex_name, font_id);
       }
 
     }
@@ -712,14 +727,15 @@ pdf_font_findresource (const char *tex_name,
       font_cache.count++;
 
       if (__verbose) {
-	MESG("\npdf_font>> Simple font \"%s\" (enc_id=%d) opened at font_id=%d.\n",
-	     fontname, encoding_id, font_id);
+	MESG("\npdf_font>> Simple font \"%s\"", fontname);
+        MESG(" enc_id=<%s,%d>",
+             (mrec && mrec->enc_name) ? mrec->enc_name : "builtin", font->encoding_id);
+        MESG(" opened at font_id=<%s,%d>.\n", tex_name, font_id);
       }
-
     }
   }
 
-  return font_id;
+  return  font_id;
 }
 
 int 

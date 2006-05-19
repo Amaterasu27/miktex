@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/specials.h,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.h,v 1.3 2005/07/31 16:44:42 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -28,13 +28,13 @@
 struct spc_env {
   double x_user, y_user;
   double mag;
-
-  char  *errmsg;
+  long   pg;  /* current page in PDF */
 };
 
 struct spc_arg {
   char  *curptr;
   char  *endptr;
+  char  *base;
 
   char  *command;
 };
@@ -49,14 +49,19 @@ struct spc_handler {
 /* This should not use pdf_. */
 extern void    spc_set_verbose (void);
 
-/* This should be moved to dpxutils or somewhere... */
-extern double   parse_length       (char **start, char *end);
+#include <stdarg.h>
+extern void    spc_warn (struct spc_env *spe, const char *fmt, ...);
 
 #include "pdfobj.h"
 /* PDF parser shouldn't depend on this...
  */
 extern pdf_obj *spc_lookup_reference (const char *ident);
 extern pdf_obj *spc_lookup_object    (const char *ident);
+
+extern int      spc_begin_annot   (struct spc_env *spe, pdf_obj *annot_dict);
+extern int      spc_end_annot     (struct spc_env *spe);
+extern int      spc_resume_annot  (struct spc_env *spe);
+extern int      spc_suspend_annot (struct spc_env *spe);
 
 extern void     spc_push_object   (const char *key, pdf_obj *value);
 extern void     spc_flush_object  (const char *key);

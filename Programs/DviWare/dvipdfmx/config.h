@@ -98,7 +98,7 @@
 #undef TM_IN_SYS_TIME
 
 /* Version number of package */
-#define VERSION "20050627"
+#define VERSION "20051229"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

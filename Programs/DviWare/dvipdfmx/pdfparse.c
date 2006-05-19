@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfparse.c,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.c,v 1.39 2005/07/21 05:05:14 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -216,15 +216,6 @@ parse_val_ident (char **start, char *end)
 }
 
 char *
-parse_c_ident (char **start, char *end)
-{
-  static const char *valid_chars =
-    "0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
-
-  return parse_gen_ident(start, end, valid_chars);
-}
-
-char *
 parse_opt_ident (char **start, char *end)
 {
   if (*start < end && **start == '@') {
@@ -273,7 +264,7 @@ parse_pdf_number (char **pp, char *endptr)
     }
     sign = -1;
     p++;
-  } else if (p[0] == '+' || p[0] == '.') { /* Check '.' here */
+  } else if (p[0] == '+') {
     if (p + 1 >= endptr) {
       WARN("Could not find a numeric object.");
       return NULL;

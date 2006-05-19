@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/t1_load.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.9 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -43,7 +43,6 @@
 
 #include "dpxutil.h"
 
-#include "t1crypt.h"
 #include "pst_obj.h"
 #include "pst.h"
 
@@ -53,6 +52,42 @@
 #include "cff.h"
 
 #include "t1_load.h"
+
+/* Migrated from t1crypt */
+#define T1_EEKEY   55665u
+#define T1_CHARKEY 4330u
+
+#if  0
+/* We no longer need encryption. */
+static unsigned char  t1_encrypt    (unsigned char  plain);
+#endif /* 0 */
+static void           t1_crypt_init (unsigned short key);
+static unsigned char  t1_decrypt    (unsigned char  cipher);
+static unsigned short r = T1_EEKEY, c1 = 52845, c2 = 22719;
+
+#if  0
+static unsigned char t1_encrypt (unsigned char plain)
+{
+  unsigned char cipher;
+  cipher = (plain ^ (r >> 8));
+  r = (cipher + r) * c1 + c2;
+  return cipher;
+}
+#endif /* 0 */
+
+static void t1_crypt_init (unsigned short key)
+{
+  r = key;
+}
+
+static unsigned char t1_decrypt (unsigned char cipher)
+{
+  unsigned char plain;
+  plain = (cipher ^ (r >> 8));
+  r = (cipher + r) * c1 + c2;
+  return plain;
+}
+/* T1CRYPT */
 
 #define MATCH_NAME(t,n) ((t) && PST_NAMETYPE((t))    && !strncmp(pst_data_ptr((t)),(n),strlen((n))))
 #define MATCH_OP(t,n)   ((t) && PST_UNKNOWNTYPE((t)) && !strncmp(pst_data_ptr((t)),(n),strlen((n))))
@@ -518,7 +553,7 @@ parse_subrs (cff_font *font,
 
 	offsets[idx] = offset;
 	lengths[idx] = len - lenIV;
-	t1_crypt_init(CHARKEY);
+	t1_crypt_init(T1_CHARKEY);
 	for (j = 0; j < lenIV; j++)
 	  t1_decrypt(*((*start)+j));
 	for (j = lenIV; j < len  ; j++) {
@@ -669,7 +704,7 @@ parse_charstrings (cff_font *font,
     *start += 1;
     if (mode != 1) {
       if (lenIV >= 0) {
-	t1_crypt_init(CHARKEY);
+	t1_crypt_init(T1_CHARKEY);
 	for (j = 0; j < lenIV; j++)
 	  t1_decrypt(*((*start)+j));
 	if (gid == 0) {
@@ -1133,7 +1168,7 @@ t1_load_font (char **enc_vec, int mode, FILE *fp)
   } else {
     long i;
 
-    t1_crypt_init(EEKEY);
+    t1_crypt_init(T1_EEKEY);
     for (i = 0; i < length; i++) {
       buffer[i] = (unsigned char) t1_decrypt(buffer[i]);
     }

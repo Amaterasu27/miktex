@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/cid.c,v 1.3 2005/07/03 20:02:27 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.29 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -102,7 +102,8 @@ static struct {
 static void release_opt (cid_opt *opt);
 static CIDSysInfo *get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt);
 
-static int __verbose = 0;
+static int   __verbose   = 0;
+static long  cidoptflags = 0;
 
 void
 CIDFont_set_verbose (void)
@@ -480,6 +481,15 @@ CIDFont_base_open (CIDFont *font, const char *name, CIDSysInfo *cmap_csi, cid_op
     }
   }
 
+  if (cidoptflags & CIDFONT_FORCE_FIXEDPITCH) {
+    if (pdf_lookup_dict(fontdict, "W")) {
+       pdf_remove_dict(fontdict, "W");
+    }
+    if (pdf_lookup_dict(fontdict, "W2")) {
+       pdf_remove_dict(fontdict, "W2");
+    }
+  }
+
   pdf_add_dict(fontdict,   pdf_new_name("Type"),     pdf_new_name("Font"));
   pdf_add_dict(fontdict,   pdf_new_name("BaseFont"), pdf_new_name(fontname));
   pdf_add_dict(descriptor, pdf_new_name("Type"),     pdf_new_name("FontDescriptor"));
@@ -786,4 +796,5 @@ CIDFont_set_flags (long flags)
 {
   CIDFont_type0_set_flags(flags);
   CIDFont_type2_set_flags(flags);
+  cidoptflags |= flags;
 }

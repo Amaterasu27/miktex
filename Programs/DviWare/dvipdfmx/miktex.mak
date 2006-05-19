@@ -33,6 +33,7 @@ objects = \
 	$(outdir)\cmap_read.obj \
 	$(outdir)\cmap_write.obj \
 	$(outdir)\cs_type2.obj \
+	$(outdir)\dpxconf.obj \
 	$(outdir)\dpxcrypt.obj \
 	$(outdir)\dpxfile.obj \
 	$(outdir)\dpxutil.obj \
@@ -62,7 +63,6 @@ objects = \
 	$(outdir)\pdfximage.obj \
 	$(outdir)\pkfont.obj \
 	$(outdir)\pngimage.obj \
-	$(outdir)\psimage.obj \
 	$(outdir)\pst.obj \
 	$(outdir)\pst_obj.obj \
 	$(outdir)\sfnt.obj \
@@ -75,18 +75,17 @@ objects = \
 	$(outdir)\spc_util.obj \
 	$(outdir)\specials.obj \
 	$(outdir)\subfont.obj \
-	$(outdir)\t1crypt.obj \
+	$(outdir)\t1_char.obj \
+	$(outdir)\t1_load.obj \
 	$(outdir)\tfm.obj \
+	$(outdir)\truetype.obj \
 	$(outdir)\tt_aux.obj \
-	$(outdir)\tt_glyf.obj \
 	$(outdir)\tt_cmap.obj \
+	$(outdir)\tt_glyf.obj \
 	$(outdir)\tt_gsub.obj \
 	$(outdir)\tt_post.obj \
 	$(outdir)\tt_table.obj \
-	$(outdir)\truetype.obj \
 	$(outdir)\type0.obj \
-	$(outdir)\t1_char.obj \
-	$(outdir)\t1_load.obj \
 	$(outdir)\type1.obj \
 	$(outdir)\type1c.obj \
 	$(outdir)\unicode.obj \
@@ -105,6 +104,7 @@ sources = \
 	cmap_read.c \
 	cmap_write.c \
 	cs_type2.c \
+	dpxconf.c \
 	dpxcrypt.c \
 	dpxfile.c \
 	dpxutil.c \
@@ -134,7 +134,6 @@ sources = \
 	pdfximage.c \
 	pkfont.c \
 	pngimage.c \
-	psimage.c \
 	pst.c \
 	pst_obj.c \
 	sfnt.c \
@@ -147,18 +146,17 @@ sources = \
 	spc_util.c \
 	specials.c \
 	subfont.c \
-	t1crypt.c \
+	t1_char.c \
+	t1_load.c \
 	tfm.c \
+	truetype.c \
 	tt_aux.c \
-	tt_glyf.c \
 	tt_cmap.c \
+	tt_glyf.c \
 	tt_gsub.c \
 	tt_post.c \
 	tt_table.c \
-	truetype.c \
 	type0.c \
-	t1_char.c \
-	t1_load.c \
 	type1.c \
 	type1c.c \
 	unicode.c \

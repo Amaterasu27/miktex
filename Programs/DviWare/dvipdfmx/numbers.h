@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/numbers.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/numbers.h,v 1.9 2005/07/20 10:41:54 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -50,18 +50,33 @@ typedef signed long fixword;
 extern SIGNED_QUAD sqxfw (SIGNED_QUAD sq, fixword fw);
 extern SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide);
 
-#define ROUND(n,acc) (floor(((double)n)/(acc)+0.5)*(acc)) 
 #ifndef MAX
-  #define MAX(a,b) ((a)>(b)?(a):(b))
+#  define MAX(a,b) ((a)>(b)?(a):(b))
 #endif
 #ifndef MIN
-  #define MIN(a,b) ((a)<(b)?(a):(b))
+#  define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 #define ISODD(n) (((n)/2)*2!=(n))
 #define ISEVEN(n) (((n)/2)*2==(n))
 
 #ifndef M_PI
-#define M_PI (4.0*atan(1.0))
+#  define M_PI (4.0*atan(1.0))
 #endif
+
+#define ROUND(n,acc) (floor(((double)n)/(acc)+0.5)*(acc)) 
+
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#  define __C99__
+#endif
+
+#ifndef __C99__
+#  ifndef round
+#  define round(v) (floor((v) + 0.5))
+#  endif
+#  ifndef trunc
+#  define trunc(v) ((v) > 0.0 ? floor((v)) : ceil((v)))
+#  endif
+#endif
+#define round_at(v,acc) (round(((double)(v))/(acc))*(acc))
 
 #endif /* _NUMBERS_H_ */

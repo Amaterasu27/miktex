@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfobj.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.39 2005/08/30 07:53:37 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -683,7 +683,7 @@ write_number (pdf_number *number, FILE *file)
 {
   int count;
 
-  count = sprintf(format_buffer, "%.10g", number->value);
+  count = pdf_sprint_number(format_buffer, number->value);
 
   pdf_out(file, format_buffer, count);
 }
@@ -2271,7 +2271,7 @@ do { \
       if ( r != 3 ||
           ((flag != 'n' && flag != 'f') ||
            (flag == 'n' &&
-           (offset >= pdf_file_size || offset < 4)))) {
+           (offset >= pdf_file_size || (offset > 0 && offset < 4))))) {
         WARN("Invalid xref table entry [%lu]. PDF file is corrupt...", i);
         return  0;
       }

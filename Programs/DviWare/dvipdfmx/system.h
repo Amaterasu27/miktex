@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/system.h,v 1.4 2005/08/13 22:37:52 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/system.h,v 1.6 2004/01/11 02:51:33 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,9 +26,9 @@
 #define _SYSTEM_H_
 
 #ifdef MIKTEX
-#include "miktex/core.h"
+#include <miktex/core.h>
 #include "gnu-miktex.h"
-#include "miktex/kpsemu.h"
+#include <miktex/kpsemu.h>
 #else
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>

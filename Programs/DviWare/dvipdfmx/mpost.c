@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/mpost.c,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.35 2005/08/30 07:56:08 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -40,7 +40,6 @@
 
 #include "pdfobj.h"
 #include "pdfparse.h"
-#include "pdflimits.h"
 #include "pdfdev.h"
 #include "pdfdoc.h"
 
@@ -93,33 +92,38 @@ static int currentfont = -1;
 #define MP_CMODE_PTEXVERT 2
 static int mp_cmode = MP_CMODE_MPOST;
 
-static fontmap_rec *
-get_map_record (const char *tex_name, int *sfd_id)
-{
-  return pdf_lookup_fontmap_record2(tex_name, sfd_id);
-}
-
 static int
 mp_setfont (const char *font_name, double pt_size)
 {
+  const char     *name = font_name;
   struct mp_font *font;
-  int             subfont_id;
-  double          font_scale;
+  int             subfont_id = -1;
   fontmap_rec    *mrec;
 
   font = CURRENT_FONT();
 
   if (font) {
     if (!strcmp(font->font_name, font_name) &&
-	font->pt_size && pt_size)
-      return 0;
-  } else {
+        font->pt_size == pt_size)
+      return  0;
+  } else { /* No currentfont */
+/* ***TODO*** Here some problem exists! */
     font = &font_stack[0];
     font->font_name = NULL;
     currentfont = 0;
   }
 
-  mrec = get_map_record(font_name, &subfont_id);
+  mrec = pdf_lookup_fontmap_record(font_name);
+  if (mrec && mrec->charmap.sfd_name && mrec->charmap.subfont_id) {
+    subfont_id = sfd_load_record(mrec->charmap.sfd_name, mrec->charmap.subfont_id);
+  }
+
+  /* See comments in dvi_locate_font() in dvi.c. */
+  if (mrec && mrec->map_name) {
+    name = mrec->map_name;
+  } else {
+    name = font_name;
+  }
 
   if (font->font_name)
     RELEASE(font->font_name);
@@ -128,21 +132,15 @@ mp_setfont (const char *font_name, double pt_size)
   font->subfont_id = subfont_id;
   font->pt_size    = pt_size;
   font->tfm_id     = tfm_open(font_name, 0); /* Need not exist in MP mode */
+  font->font_id    = pdf_dev_locate_font(name,
+                                         (spt_t) (pt_size * dev_unit_dviunit()));
 
-  font_scale       = pt_size * dev_unit_dviunit();
-
-  if (!mrec) {
-    font->font_id = pdf_dev_locate_font(font_name,      (spt_t) font_scale);
-  } else {
-    /* Subfont... */
-    font->font_id = pdf_dev_locate_font(mrec->map_name, (spt_t) font_scale);
-  }
   if (font->font_id < 0) {
     ERROR("MPOST: No physical font assigned for \"%s\".", font_name);
     return 1;
   }
 
-  return 0;
+  return  0;
 }
 
 static void
@@ -200,13 +198,12 @@ static int
 is_fontname (const char *token)
 {
   fontmap_rec *mrec;
-  int          subfont_id;
 
-  mrec = get_map_record(token, &subfont_id);
+  mrec = pdf_lookup_fontmap_record(token);
   if (mrec)
-    return 1;
+    return  1;
 
-  return tfm_exists(token);
+  return  tfm_exists(token);
 }
 
 int
@@ -737,7 +734,7 @@ do_show (void)
     return 1;
   }
   if (font->font_id < 0) {
-    WARN("Currentfont not set."); /* Should not be error... */
+    WARN("mpost: not set."); /* Should not be error... */
     pdf_release_obj(text_str);
     return 1;
   }
@@ -874,6 +871,23 @@ do_texfig_operator (int opcode, double x_user, double y_user)
  */
 
 /*
+ * CTM(Current Transformation Matrix) means the transformation of User Space
+ * to Device Space coordinates. Because DVIPDFMx does not know the resolution
+ * of Device Space, we assume that the resolution is 1/1000.
+ */
+#define DEVICE_RESOLUTION 1000
+static int
+ps_dev_CTM (pdf_tmatrix *M)
+{
+  pdf_dev_currentmatrix(M);
+  M->a *= DEVICE_RESOLUTION; M->b *= DEVICE_RESOLUTION;
+  M->c *= DEVICE_RESOLUTION; M->d *= DEVICE_RESOLUTION;
+  M->e *= DEVICE_RESOLUTION; M->f *= DEVICE_RESOLUTION;
+
+  return 0;
+}
+
+/*
  * Again, the only piece that needs x_user and y_user is
  * that piece dealing with texfig.
  */
@@ -991,14 +1005,14 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 5);
     if (!error)
       error = pdf_dev_arc(values[0], values[1],
-			  values[2], values[2],
+			  values[2], /* rad */
 			  values[3], values[4]);
     break;
   case ARCN:
     error = pop_get_numbers(values, 5);
     if (!error)
       error = pdf_dev_arcn(values[0], values[1],
-			   values[2], values[2],
+			   values[2], /* rad */
 			   values[3], values[4]);
     break;
     
@@ -1238,11 +1252,10 @@ do_operator (const char *token, double x_user, double y_user)
       cp.x = pdf_number_value(tmp);
       pdf_release_obj(tmp);
 
-      if (has_matrix)
-	pdf_dev_dtransform(&cp, &matrix);
-      else {
-	pdf_dev_dtransform(&cp, NULL);
+      if (!has_matrix) {
+	ps_dev_CTM(&matrix); /* Here, we need real PostScript CTM */
       }
+      pdf_dev_dtransform(&cp, &matrix);
       PUSH(pdf_new_number(cp.x));
       PUSH(pdf_new_number(cp.y));
     }
@@ -1281,11 +1294,10 @@ do_operator (const char *token, double x_user, double y_user)
       cp.x = pdf_number_value(tmp);
       pdf_release_obj(tmp);
 
-      if (has_matrix)
-	pdf_dev_idtransform(&cp, &matrix);
-      else {
-	pdf_dev_idtransform(&cp, NULL);
+      if (!has_matrix) {
+	ps_dev_CTM(&matrix); /* Here, we need real PostScript CTM */
       }
+      pdf_dev_idtransform(&cp, &matrix);
       PUSH(pdf_new_number(cp.x));
       PUSH(pdf_new_number(cp.y));
       break;
@@ -1391,10 +1403,6 @@ mp_parse_body (char **start, char *end, double x_user, double y_user)
       }
     }
     skip_white(start, end);
-  }
-  if (error || *start < end) {
-    WARN("Remainder of line unparsed.");
-    dump(*start, end);
   }
 
   return error;
@@ -1510,6 +1518,9 @@ mps_include_page (const char *ident, FILE *fp)
   mp_cmode = MP_CMODE_MPOST;
   gs_depth = pdf_dev_current_depth();
   st_depth = mps_stack_depth();
+  /* At this point the gstate must be initialized, since it starts a new
+   * XObject. Note that it increase gs_depth by 1. */
+  pdf_dev_push_gstate();
 
   error = mp_parse_body(&p, endptr, 0.0, 0.0);
   RELEASE(buffer);
@@ -1520,6 +1531,8 @@ mps_include_page (const char *ident, FILE *fp)
     form_id = -1;
   }
 
+  /* It's time to pop the new gstate above. */
+  pdf_dev_pop_gstate();
   mps_stack_clear_to (st_depth);
   pdf_dev_grestore_to(gs_depth);
 

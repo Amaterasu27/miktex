@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfdoc.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.19 2005/07/30 11:44:18 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -127,7 +127,12 @@ extern void     pdf_doc_enable_thumbnails (int thumb_remove);
 
 /* PageLabels - */
 extern void     pdf_doc_set_pagelabel (long  page_start,
-				       const char *type,
-				       const void *prefix, int pfrx_len,
-				       long  counter_start);
+                                       const char *type,
+                                       const void *prefix, int pfrx_len,
+                                       long  counter_start);
+
+/* Similar to bop_content */
+#include "pdfcolor.h"
+extern void     pdf_doc_set_bgcolor   (const pdf_color *color);
+
 #endif /* _PDFDOC_H_ */

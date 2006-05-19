@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfparse.h,v 1.3 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfparse.h,v 1.14 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -39,7 +39,6 @@ extern char *parse_unsigned (char **start, char *end);
 
 extern char *parse_ident     (char **start, char *end);
 extern char *parse_val_ident (char **start, char *end);
-extern char *parse_c_ident   (char **start, char *end);
 extern char *parse_opt_ident (char **start, char *end);
 
 extern pdf_obj *parse_pdf_name    (char **pp, char *endptr);
@@ -51,7 +50,6 @@ extern pdf_obj *parse_pdf_dict    (char **pp, char *endptr);
 extern pdf_obj *parse_pdf_array   (char **pp, char *endptr);
 extern pdf_obj *parse_pdf_object  (char **pp, char *endptr);
 
-extern void     set_tounicode_cmap     (const char *cmap_name);
 extern pdf_obj *parse_pdf_tainted_dict (char **pp, char *endptr);
 
 #endif /* _PDFPARSE_H_ */

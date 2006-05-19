@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfximage.c,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.14 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,391 +26,377 @@
 #include "config.h"
 #endif
 
-#include <ctype.h>
-#include <math.h>
-#include <string.h>
-
 #include "system.h"
-#include "mem.h"
 #include "error.h"
+#include "mem.h"
 
-#include "mfileio.h"
+#include "dpxfile.h"
 
-#include "numbers.h"
-
-#include "pdflimits.h"
 #include "pdfobj.h"
 
 #include "pdfdoc.h"
-
 #include "pdfdev.h"
 #include "pdfdraw.h"
 
-#include "pdfparse.h"
-
 #include "epdf.h"
 #include "mpost.h"
-#include "psimage.h"
 #include "pngimage.h"
 #include "jpegimage.h"
 #include "bmpimage.h"
 
 #include "pdfximage.h"
 
-struct pdf_ximage {
-  char *ident;
-  char *filename;
-  int   subtype;
+/* From psimage.h */
+static int  check_for_ps    (FILE *fp);
+static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 
-  char  res_name[16];
 
-  void *info;
+#define IMAGE_TYPE_UNKNOWN -1
+#define IMAGE_TYPE_PDF      0
+#define IMAGE_TYPE_JPEG     1
+#define IMAGE_TYPE_PNG      2
+#define IMAGE_TYPE_MPS      4
+#define IMAGE_TYPE_EPS      5
+#define IMAGE_TYPE_BMP      6
 
-  pdf_obj *reference;
-  pdf_obj *resource;
+
+struct attr_
+{
+  long     width, height;
+  pdf_rect bbox;
 };
 
-#define PDF_XIMAGE_ALLOC_SIZE  5
-
-static int verbose = 0;
-
-void
-pdf_ximage_set_verbose (void)
+struct pdf_ximage_
 {
-  verbose++;
-}
+  char        *ident;
+  char         res_name[16];
 
-static struct
+  int          subtype;
+
+  struct attr_ attr;
+
+  char        *filename;
+  pdf_obj     *reference;
+  pdf_obj     *resource;
+};
+
+
+/* verbose, verbose, verbose... */
+struct opt_
 {
-  int  count;
-  int  capacity;
-  struct pdf_ximage *ximages;
-} ximage_cache = {
+  int    verbose;
+  char  *cmdtmpl;
+};
+
+static struct opt_ _opts = {
+  0, NULL
+};
+
+void pdf_ximage_set_verbose (void) { _opts.verbose++; }
+
+
+struct ic_
+{
+  int         count, capacity;
+  pdf_ximage *ximages;
+};
+
+static struct ic_  _ic = {
   0, 0, NULL
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *ximage)
+pdf_init_ximage_struct (pdf_ximage *I)
 {
-  ximage->ident    = NULL;
-  ximage->filename = NULL;
-  ximage->subtype  = -1;
-  memset(ximage->res_name, 0, 16);
-  ximage->info      = NULL;
-  ximage->reference = NULL;
-  ximage->resource  = NULL;
+  I->ident    = NULL;
+  I->filename = NULL;
+  I->subtype  = -1;
+  memset(I->res_name, 0, 16);
+  I->reference = NULL;
+  I->resource  = NULL;
+
+  I->attr.width = I->attr.height = 0;
+  I->attr.bbox.llx = I->attr.bbox.lly = 0;
+  I->attr.bbox.urx = I->attr.bbox.ury = 0;
 }
+
+static void
+pdf_clean_ximage_struct (pdf_ximage *I)
+{
+  if (I->ident)
+    RELEASE(I->ident);
+  if (I->filename)
+    RELEASE(I->filename);
+  if (I->reference)
+    pdf_release_obj(I->reference);
+  if (I->resource)
+    pdf_release_obj(I->resource);
+  pdf_init_ximage_struct(I);
+}
+
 
 void
 pdf_init_images (void)
 {
-  ASSERT(ximage_cache.ximages == NULL);
-
-  ximage_cache.count    = 0;
-  ximage_cache.capacity = 0;
-  ximage_cache.ximages  = NULL;
+  struct ic_ *ic = &_ic;
+  ic->count    = 0;
+  ic->capacity = 0;
+  ic->ximages  = NULL;
 }
 
 void
 pdf_close_images (void)
 {
-  int   i;
-
-  for (i = 0; i < ximage_cache.count; i++) {
-    struct pdf_ximage *p;
-
-    p = &ximage_cache.ximages[i];
-    if (p->ident)
-      RELEASE(p->ident);
-    p->ident = NULL;
-    if (p->filename)
-      RELEASE(p->filename);
-    p->filename = NULL;
-    if (p->resource)
-      pdf_release_obj(p->resource);
-    p->resource = NULL;
-    if (p->reference)
-      pdf_release_obj(p->reference);
-    p->reference = NULL;
-    if (p->info) {
-      if (p->subtype == PDF_XOBJECT_TYPE_IMAGE) {
-	RELEASE((ximage_info *) p->info);
-      } else {
-	RELEASE((xform_info *) p->info);
-      }
-    }
-    p->info = NULL;
+  struct ic_ *ic = &_ic;
+  if (ic->ximages) {
+    int  i;
+    for (i = 0; i < ic->count; i++)
+      pdf_clean_ximage_struct(&ic->ximages[i]);
+    RELEASE(ic->ximages);
   }
+  ic->ximages = NULL;
+  ic->count = ic->capacity = 0;
 
-  RELEASE(ximage_cache.ximages);
-  ximage_cache.ximages = NULL;
-  ximage_cache.count = ximage_cache.capacity = 0;
-
-  psimage_close(); /* release distiller template */
+  if (_opts.cmdtmpl)
+    RELEASE(_opts.cmdtmpl);
+  _opts.cmdtmpl = NULL;
 }
 
-static void
-scale_image (transform_info *p, const ximage_info *image_info)
-{
-  double xscale, yscale, xy_ratio;
-
-  xy_ratio = (double) image_info->width / image_info->height;
-  /* width and height overwrite scale. */
-  if ((p->flags & INFO_HAS_WIDTH) &&
-      (p->flags & INFO_HAS_HEIGHT)) {
-    xscale = p->width ;  /* 72dpi */
-    yscale = p->height; /* 72dpi */
-  } else if (p->flags & INFO_HAS_WIDTH) {
-    xscale = p->width;  /* 72dpi */
-    yscale = p->width  / xy_ratio;
-  } else if (p->flags & INFO_HAS_HEIGHT) {
-    yscale = p->height;
-    xscale = p->height * xy_ratio;
-  } else {
-    xscale = image_info->width  * 72.0 / 100.0;
-    yscale = image_info->height * 72.0 / 100.0;
-  }
-  xscale *= p->xscale;
-  yscale *= p->yscale;
-
-  /*
-   * Raster images are always scaled to width/height, not clipped.
-   */
-  p->bbox.llx = 0.0;
-  p->bbox.lly = 0.0;
-  p->bbox.urx = xscale;
-  p->bbox.ury = yscale;
-
-  p->xscale   = xscale;
-  p->yscale   = yscale;
-
-  if (verbose) {
-    /* This does not take account of transformation matrix. */
-    MESG("[dpi:%dx%d]",
-	 (int) ROUND(72.0 * image_info->width  / p->xscale, 1.0),
-	 (int) ROUND(72.0 * image_info->height / p->yscale, 1.0));
-  }
-}
-
-static void
-scale_form (transform_info *p, const xform_info *form_info)
-{
-  double xscale, yscale;
-  double width, height;
-
-  xscale = p->xscale;
-  yscale = p->yscale;
-
-  if (!(p->flags & INFO_HAS_USER_BBOX)) {
-    p->bbox.llx = form_info->bbox.llx;
-    p->bbox.lly = form_info->bbox.lly;
-    p->bbox.urx = form_info->bbox.urx;
-    p->bbox.ury = form_info->bbox.ury;
-  }
-
-  width  = p->bbox.urx - p->bbox.llx;
-  height = p->bbox.ury - p->bbox.lly;
-
-  if (p->flags & INFO_HAS_WIDTH) {
-    xscale = p->width  / width;
-    if (!(p->flags & INFO_HAS_HEIGHT)) {
-      yscale = xscale;
-    }
-  }
-  if (p->flags & INFO_HAS_HEIGHT) {
-    yscale = (p->depth + p->height) / height;
-    if (!(p->flags & INFO_HAS_WIDTH)) {
-      xscale = yscale;
-    }
-  }
-    
-  p->xscale = xscale;
-  p->yscale = yscale;
-}
-
-#define IMAGE_TYPE_UNKNOWN -1
-#define IMAGE_TYPE_PDF  0
-#define IMAGE_TYPE_JPEG 1
-#define IMAGE_TYPE_PNG  2
-#define IMAGE_TYPE_MPS  4
-#define IMAGE_TYPE_EPS  5
-#define IMAGE_TYPE_BMP  6
 
 static int
 source_image_type (FILE *fp)
 {
-  int image_type;
+  int  format = IMAGE_TYPE_UNKNOWN;
 
   rewind(fp);
   /*
    * Make sure we check for PS *after* checking for MP since
    * MP is a special case of PS.
    */
-  if (check_for_jpeg(fp)) {
-    image_type = IMAGE_TYPE_JPEG;
+  if (check_for_jpeg(fp))
+  {
+    format = IMAGE_TYPE_JPEG;
   }
-#ifdef HAVE_LIBPNG
-  else if (check_for_png(fp)) {
-    image_type = IMAGE_TYPE_PNG;
+#ifdef  HAVE_LIBPNG
+  else if (check_for_png(fp))
+  {
+    format = IMAGE_TYPE_PNG;
   }
 #endif
-  else if (check_for_bmp(fp)) {
-    image_type = IMAGE_TYPE_BMP;
+  else if (check_for_bmp(fp))
+  {
+    format = IMAGE_TYPE_BMP;
   } else if (check_for_pdf(fp)) {
-    image_type = IMAGE_TYPE_PDF;
+    format = IMAGE_TYPE_PDF;
   } else if (check_for_mp(fp)) {
-    image_type = IMAGE_TYPE_MPS;
+    format = IMAGE_TYPE_MPS;
   } else if (check_for_ps(fp)) {
-    image_type = IMAGE_TYPE_EPS;
+    format = IMAGE_TYPE_EPS;
   } else {
-    image_type = IMAGE_TYPE_UNKNOWN;
+    format = IMAGE_TYPE_UNKNOWN;
   }
   rewind(fp);
 
-  return image_type;
+  return  format;
+}
+
+#if  0
+#define KEYCMP(k,s) (strcmp(pdf_name_value((k)),(s)))
+static int
+filter_put_image_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
+{
+  struct attr_ *attr = dp;
+
+  if (KEYCMP(kp, "Width")) {
+    if (pdf_obj_typeof(vp) != PDF_NUMBER)
+      return  -1;
+    attr->width  = (long) pdf_number_value(vp);
+  } else if (KEYCMP(kp, "Height")) {
+    if (pdf_obj_typeof(vp) != PDF_NUMBER)
+      return  -1;
+    attr->height = (long) pdf_number_value(vp);
+  }
+
+  return  0;
 }
 
 static int
-load_image (const char *ident,
-	    const char *fullname, int image_type, FILE  *fp)
+filter_put_form_attr (pdf_obj *kp, pdf_obj *vp, void *dp)
 {
-  int         xobj_id;
-  pdf_ximage *ximage;
+  struct attr_ *attr = dp;
 
-  xobj_id = ximage_cache.count;
-  if (ximage_cache.count >= ximage_cache.capacity) {
-    ximage_cache.capacity += PDF_XIMAGE_ALLOC_SIZE;
-    ximage_cache.ximages   = RENEW(ximage_cache.ximages,
-				   ximage_cache.capacity, pdf_ximage);
+  if (KEYCMP(kp, "BBox")) {
+    if (pdf_array_length(vp) != 4)
+      return  -1;
+    else {
+      int     i;
+      double  v[4];
+      for (i = 0; i < 4; i++) {
+        pdf_obj *obj = pdf_get_array(vp, i);
+        if (pdf_obj_typeof(vp) != PDF_NUMBER)
+          return  -1;
+        else {
+          v = pdf_number_value(obj);
+        }
+      }
+      attr->bbox.llx = v[0]; attr->bbox.lly = v[1];
+      attr->bbox.urx = v[2]; attr->bbox.ury = v[3];
+    }
   }
-  ximage = &ximage_cache.ximages[xobj_id];
 
-  pdf_init_ximage_struct(ximage);
+  return  0;
+}
+#endif
 
-  switch (image_type) {
-  case IMAGE_TYPE_JPEG:
-    if (verbose)
+
+static int
+load_image (const char *ident,
+            const char *fullname, int format, FILE  *fp)
+{
+  struct ic_ *ic = &_ic;
+  int         id = -1; /* ret */
+  pdf_ximage *I;
+
+  id = ic->count;
+  if (ic->count >= ic->capacity) {
+    ic->capacity += 16;
+    ic->ximages   = RENEW(ic->ximages, ic->capacity, pdf_ximage);
+  }
+
+  I  = &ic->ximages[id];
+  pdf_init_ximage_struct(I);
+
+  switch (format) {
+  case  IMAGE_TYPE_JPEG:
+    if (_opts.verbose)
       MESG("[JPEG]");
-    if (jpeg_include_image(ximage, fp) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_IMAGE;
+    if (jpeg_include_image(I, fp) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
 #ifdef HAVE_LIBPNG
-  case IMAGE_TYPE_PNG:
-    if (verbose)
+  case  IMAGE_TYPE_PNG:
+    if (_opts.verbose)
       MESG("[PNG]");
-    if (png_include_image(ximage, fp) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_IMAGE;
+    if (png_include_image(I, fp) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
 #endif
-  case IMAGE_TYPE_BMP:
-    if (verbose)
+  case  IMAGE_TYPE_BMP:
+    if (_opts.verbose)
       MESG("[BMP]");
-    if (bmp_include_image(ximage, fp) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_IMAGE;
+    if (bmp_include_image(I, fp) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_IMAGE;
     break;
-  case IMAGE_TYPE_PDF:
-    if (verbose)
+  case  IMAGE_TYPE_PDF:
+    if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(ximage, fp) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_FORM;
+    if (pdf_include_page(I, fp) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_FORM;
     break;
-  case IMAGE_TYPE_EPS:
-    if (verbose)
+  case  IMAGE_TYPE_EPS:
+    if (_opts.verbose)
       MESG("[PS]");
-    if (ps_include_page(ximage, fullname) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_FORM;
+    if (ps_include_page(I, fullname) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_FORM;
     break;
   default:
-    if (verbose)
+    if (_opts.verbose)
       MESG("[UNKNOWN]");
-    if (ps_include_page(ximage, fullname) < 0)
-      return -1;
-    ximage->subtype  = PDF_XOBJECT_TYPE_FORM;
+    if (ps_include_page(I, fullname) < 0)
+      return  -1;
+    I->subtype  = PDF_XOBJECT_TYPE_FORM;
   }
 
-  ximage->filename = NEW(strlen(ident)+1, char);
-  ximage->ident    = NEW(strlen(ident)+1, char);
-  strcpy(ximage->filename, ident);
-  strcpy(ximage->ident,    ident);
+  I->filename = NEW(strlen(ident)+1, char);
+  I->ident    = NEW(strlen(ident)+1, char);
+  strcpy(I->filename, ident);
+  strcpy(I->ident,    ident);
 
-  switch (ximage->subtype) {
+  switch (I->subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
-    sprintf(ximage->res_name, "Im%d", xobj_id);
+    sprintf(I->res_name, "Im%d", id);
     break;
   case PDF_XOBJECT_TYPE_FORM:
-    sprintf(ximage->res_name, "Fm%d", xobj_id);
+    sprintf(I->res_name, "Fm%d", id);
     break;
   default:
-    ERROR("Unknown XObject subtype: %d", ximage->subtype);
+    ERROR("Unknown XObject subtype: %d", I->subtype);
     return -1;
   }
 
-  ximage_cache.count++;
+  ic->count++;
 
-  return xobj_id;
+  return  id;
 }
+
+
+#define dpx_find_file(n,d,s) (kpse_find_pict((n)))
+#define dpx_fopen(n,m) (MFOPEN((n),(m)))
+#define dpx_fclose(f)  (MFCLOSE((f)))
 
 int
 pdf_ximage_findresource (const char *ident)
 {
-  int         xobj_id;
-  pdf_ximage *ximage;
+  struct ic_ *ic = &_ic;
+  int         id = -1;
+  pdf_ximage *I;
   char       *fullname;
-  int         image_type;
+  int         format;
   FILE       *fp;
 
-  for (xobj_id = 0; xobj_id < ximage_cache.count; xobj_id++) {
-    ximage = &ximage_cache.ximages[xobj_id];
-    if (ximage->ident &&
-	!strcmp(ident, ximage->ident)) {
-      return xobj_id;
+  for (id = 0; id < ic->count; id++) {
+    I = &ic->ximages[id];
+    if (I->ident && !strcmp(ident, I->ident)) {
+      return  id;
     }
   }
 
-  fullname = kpse_find_pict(ident);
+  /* try loading image */
+  fullname = dpx_find_file(ident, "_pic_", "");
   if (!fullname) {
     WARN("Error locating image file \"%s\"", ident);
-    return -1;
+    return  -1;
   }
-  fp = MFOPEN(fullname, FOPEN_RBIN_MODE);
+
+  fp = dpx_fopen(fullname, FOPEN_RBIN_MODE);
   if (!fp) {
     WARN("Error opening image file \"%s\"", fullname);
     RELEASE(fullname);
-    return -1;
+    return  -1;
   }
-  if (verbose) {
+  if (_opts.verbose) {
     MESG("(Image:%s", ident);
-    if (verbose > 1)
+    if (_opts.verbose > 1)
       MESG("[%s]", fullname);
   }
 
-  image_type = source_image_type(fp);
-  switch (image_type) {
+  format = source_image_type(fp);
+  switch (format) {
   case IMAGE_TYPE_MPS:
-    if (verbose)
+    if (_opts.verbose)
       MESG("[MPS]");
-    xobj_id = mps_include_page(ident, fp);
+    id = mps_include_page(ident, fp);
     break;
   default:
-    xobj_id = load_image(ident, fullname, image_type, fp);
+    id = load_image(ident, fullname, format, fp);
     break;
   }
+  dpx_fclose(fp);
+
   RELEASE(fullname);
-  MFCLOSE(fp);
-  if (verbose)
+
+  if (_opts.verbose)
     MESG(")");
 
-  if (xobj_id < 0) {
+  if (id < 0)
     WARN("pdf: image inclusion failed for \"%s\".", ident);
-    return -1;
-  }
 
-  return xobj_id;
+  return  id;
 }
 
 void
@@ -441,20 +427,20 @@ pdf_ximage_init_image_info (ximage_info *info)
 }
 
 void
-pdf_ximage_set_image (pdf_ximage *ximage, void *image_info, pdf_obj *resource)
+pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
 {
-  pdf_obj *dict;
-  ximage_info *info;
+  pdf_obj     *dict;
+  ximage_info *info = image_info;
 
   if (!PDF_OBJ_STREAMTYPE(resource))
     ERROR("Image XObject must be stream type.");
 
-  ximage->subtype = PDF_XOBJECT_TYPE_IMAGE;
+  I->subtype = PDF_XOBJECT_TYPE_IMAGE;
 
-  info = NEW(1, ximage_info);
-  memcpy(info, image_info, sizeof(ximage_info));
-  ximage->info = info;
-  ximage->reference = pdf_ref_obj(resource);
+  I->attr.width  = info->width;
+  I->attr.height = info->height;
+
+  I->reference = pdf_ref_obj(resource);
 
   dict = pdf_stream_dict(resource);
   pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObject"));
@@ -462,118 +448,338 @@ pdf_ximage_set_image (pdf_ximage *ximage, void *image_info, pdf_obj *resource)
   pdf_add_dict(dict, pdf_new_name("Width"),   pdf_new_number(info->width));
   pdf_add_dict(dict, pdf_new_name("Height"),  pdf_new_number(info->height));
   pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
-	       pdf_new_number(info->bits_per_component));
+               pdf_new_number(info->bits_per_component));
 
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
-  ximage->resource  = NULL;
+  I->resource  = NULL;
 }
 
 void
-pdf_ximage_set_form (pdf_ximage *ximage,  void *info, pdf_obj *resource)
+pdf_ximage_set_form (pdf_ximage *I,  void *form_info, pdf_obj *resource)
 {
-  ximage->subtype   = PDF_XOBJECT_TYPE_FORM;
+  xform_info  *info = form_info;
 
-  ximage->info = NEW(1, xform_info);
-  memcpy(ximage->info, info, sizeof(xform_info));
-  ximage->reference = pdf_ref_obj(resource);
+  I->subtype   = PDF_XOBJECT_TYPE_FORM;
+  I->attr.bbox.llx = info->bbox.llx;
+  I->attr.bbox.lly = info->bbox.lly;
+  I->attr.bbox.urx = info->bbox.urx;
+  I->attr.bbox.ury = info->bbox.ury;
+
+  I->reference = pdf_ref_obj(resource);
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
-  ximage->resource  = NULL;
+  I->resource  = NULL;
 }
 
-#define CHECK_ID(n) do {\
-  if ((n) < 0 || (n) >= ximage_cache.count) {\
+
+#define CHECK_ID(c,n) do {\
+  if ((n) < 0 || (n) >= (c)->count) {\
     ERROR("Invalid XObject ID: %d", (n));\
   }\
 } while (0)
-#define GET_IMAGE(n) (&(ximage_cache.ximages[(n)]))
+#define GET_IMAGE(c,n) (&((c)->ximages[(n)]))
 
 pdf_obj *
-pdf_ximage_get_reference (int xobj_id)
+pdf_ximage_get_reference (int id)
 {
-  pdf_ximage *ximage;
+  struct ic_  *ic = &_ic;
+  pdf_ximage  *I;
 
-  CHECK_ID(xobj_id);
+  CHECK_ID(ic, id);
 
-  ximage = GET_IMAGE(xobj_id);
-  if (!ximage->reference) {
-    ximage->reference = pdf_ref_obj(ximage->resource);
-  }
+  I = GET_IMAGE(ic, id);
+  if (!I->reference)
+    I->reference = pdf_ref_obj(I->resource);
 
-  return pdf_link_obj(ximage->reference);
+  return  pdf_link_obj(I->reference);
 }
 
 int
 pdf_ximage_defineresource (const char *ident,
 			   int subtype, void *info, pdf_obj *resource)
 {
-  int xobj_id;
-  pdf_ximage *ximage;
+  struct ic_  *ic = &_ic;
+  int          id;
+  pdf_ximage  *I;
 
-  xobj_id = ximage_cache.count;
-  if (ximage_cache.count >= ximage_cache.capacity) {
-    ximage_cache.capacity += PDF_XIMAGE_ALLOC_SIZE;
-    ximage_cache.ximages   = RENEW(ximage_cache.ximages,
-				   ximage_cache.capacity, pdf_ximage);
+  id = ic->count;
+  if (ic->count >= ic->capacity) {
+    ic->capacity += 16;
+    ic->ximages   = RENEW(ic->ximages, ic->capacity, pdf_ximage);
   }
-  ximage = GET_IMAGE(xobj_id);
 
-  pdf_init_ximage_struct(ximage);
+  I = &ic->ximages[id];
+
+  pdf_init_ximage_struct(I);
   if (ident) {
-    ximage->ident = NEW(strlen(ident) + 1, char);
-    strcpy(ximage->ident, ident);
+    I->ident = NEW(strlen(ident) + 1, char);
+    strcpy(I->ident, ident);
   }
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
-    pdf_ximage_set_image(ximage, info, resource);
-    ximage->subtype = PDF_XOBJECT_TYPE_IMAGE;
-    sprintf(ximage->res_name, "Im%d", xobj_id);
+    pdf_ximage_set_image(I, info, resource);
+    I->subtype = PDF_XOBJECT_TYPE_IMAGE;
+    sprintf(I->res_name, "Im%d", id);
     break;
   case PDF_XOBJECT_TYPE_FORM:
-    pdf_ximage_set_form (ximage, info, resource);
-    ximage->subtype = PDF_XOBJECT_TYPE_FORM;
-    sprintf(ximage->res_name, "Fm%d", xobj_id);
+    pdf_ximage_set_form (I, info, resource);
+    I->subtype = PDF_XOBJECT_TYPE_FORM;
+    sprintf(I->res_name, "Fm%d", id);
     break;
   default:
     ERROR("Unknown XObject subtype: %d", subtype);
   }
-  ximage_cache.count++;
+  ic->count++;
 
-  return xobj_id;
+  return  id;
 }
 
-int
-pdf_ximage_scale_image (int xobj_id, transform_info *p)
+
+char *
+pdf_ximage_get_resname (int id)
 {
-  pdf_ximage  *ximage;
+  struct ic_  *ic = &_ic;
+  pdf_ximage  *I;
 
-  CHECK_ID(xobj_id);
+  CHECK_ID(ic, id);
 
-  ximage = GET_IMAGE(xobj_id);
+  I = GET_IMAGE(ic, id);
 
-  switch (ximage->subtype) {
-  case PDF_XOBJECT_TYPE_IMAGE:
-    scale_image(p, ximage->info);
-    break;
-  case PDF_XOBJECT_TYPE_FORM:
-    scale_form (p, ximage->info);
-    break;
-  default:
-    ERROR("Unknown XObject type: %d", ximage->subtype);
-    return -1;
+  return  I->res_name;
+}
+
+
+/* depth...
+ * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
+ * not as vertical dimension of scaled image. (And there are bugs.)
+ * This part contains incompatibile behaviour than dvipdfm!
+ */
+#define EBB_DPI 100
+static void
+scale_to_fit_I (pdf_tmatrix    *T,
+                transform_info *p,
+                pdf_ximage     *I)
+{
+  double  s_x, s_y;
+  long    wdx = I->attr.width;
+  long    htx = I->attr.height;
+  double  ar, dp;
+
+  if (htx == 0) {
+    WARN("Image height=0!");
+    htx = 1;
   }
 
+  ar = (double) wdx / htx;
+
+  /* only width/height --> uniform (keep aspect ratio)
+   * no width-height   --> uniform with 72dpi implied (?)
+   * both width-height --> non-uniform
+   */
+  if ( (p->flags & INFO_HAS_WIDTH ) &&
+       (p->flags & INFO_HAS_HEIGHT) ) {
+    s_x = p->width; s_y = p->height + p->depth;
+    dp  = p->depth;
+  } else if ( p->flags & INFO_HAS_WIDTH  ) {
+    s_x = p->width; s_y = s_x / ar;
+    dp  = 0.0;
+  } else if ( p->flags & INFO_HAS_HEIGHT ) {
+    s_y = p->height + p->depth; s_x = s_y * ar;
+    dp  = p->depth;
+  } else {
+    s_x = wdx * 72.0 / EBB_DPI;
+    s_y = htx * 72.0 / EBB_DPI;
+    dp  = 0.0;
+  }
+
+  T->a   = s_x;  T->c  = 0.0;
+  T->b   = 0.0;  T->d  = s_y;
+  T->e   = 0.0;  T->f  = -dp;
+
+  return;
+}
+
+
+static void
+scale_to_fit_F (pdf_tmatrix    *T,
+                transform_info *p,
+                pdf_ximage     *I)
+{
+  double  s_x, s_y, d_x, d_y;
+  double  wd0, ht0, dp;
+
+  if (p->flags & INFO_HAS_USER_BBOX) {
+    wd0 =  p->bbox.urx - p->bbox.llx;
+    ht0 =  p->bbox.ury - p->bbox.lly;
+    d_x = -p->bbox.llx;
+    d_y = -p->bbox.lly;
+  } else {
+    wd0 = I->attr.bbox.urx - I->attr.bbox.llx;
+    ht0 = I->attr.bbox.ury - I->attr.bbox.lly;
+    d_x = 0.0;
+    d_y = 0.0; 
+  }
+
+  if (wd0 == 0.0) {
+    WARN("Image width=0.0!");
+    wd0 = 1.0;
+  }
+  if (ht0 == 0.0) {
+    WARN("Image height=0.0!");
+    ht0 = 1.0;
+  }
+
+  if ( (p->flags & INFO_HAS_WIDTH ) &&
+       (p->flags & INFO_HAS_HEIGHT) ) {
+    s_x = p->width  / wd0;
+    s_y = (p->height + p->depth) / ht0;
+    dp  = p->depth;
+  } else if ( p->flags & INFO_HAS_WIDTH ) {
+    s_x = p->width  / wd0;
+    s_y = s_x;
+    dp  = 0.0;
+  } else if ( p->flags & INFO_HAS_HEIGHT) {
+    s_y = (p->height + p->depth) / ht0;
+    s_x = s_y;
+    dp  = p->depth;
+  } else {
+    s_x = s_y = 1.0;
+    dp  = 0.0;
+  }
+
+  T->a = s_x; T->c = 0.0;
+  T->b = 0.0; T->d = s_y;
+  T->e = s_x * d_x; T->f = s_y * d_y - dp;
+
+  return;
+}
+
+
+int
+pdf_ximage_scale_image (int            id,
+                        pdf_tmatrix    *M, /* ret */
+                        pdf_rect       *r, /* ret */
+                        transform_info *p  /* arg */
+                       )
+{
+  struct ic_  *ic = &_ic;
+  pdf_ximage  *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+
+  pdf_setmatrix(M, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+
+  switch (I->subtype) {
+  case PDF_XOBJECT_TYPE_IMAGE:
+    scale_to_fit_I(M, p, I);
+    r->llx = 0.0;
+    r->lly = 0.0;
+    r->urx = M->a;
+    r->ury = M->d;
+    break;
+  case PDF_XOBJECT_TYPE_FORM:
+    scale_to_fit_F(M, p, I);
+    if (p->flags & INFO_HAS_USER_BBOX) {
+      r->llx = p->bbox.llx;
+      r->lly = p->bbox.lly;
+      r->urx = p->bbox.urx;
+      r->ury = p->bbox.ury;
+    } else {
+      r->llx = I->attr.bbox.llx;
+      r->lly = I->attr.bbox.lly;
+      r->urx = I->attr.bbox.urx;
+      r->ury = I->attr.bbox.ury;
+    }
+    break;
+  }
+
+  return  0;
+}
+
+
+/* Migrated from psimage.c */
+
+void set_distiller_template (char *s) 
+{
+  if (_opts.cmdtmpl)
+    RELEASE(_opts.cmdtmpl);
+  if (!s || *s == '\0')
+    _opts.cmdtmpl = NULL;
+  else {
+    _opts.cmdtmpl = NEW(strlen(s) + 1, char);
+    strcpy(_opts.cmdtmpl, s);
+  }
+  return;
+}
+
+static int
+ps_include_page (pdf_ximage *ximage, const char *filename)
+{
+  char  *distiller_template = _opts.cmdtmpl;
+  char  *temp;
+  FILE  *fp;
+  int    error = 0;
+
+  if (!distiller_template) {
+    WARN("No image converter available for converting file \"%s\" to PDF format.", filename);
+    WARN(">> Please check if you have 'D' option in config file.");
+    return  -1;
+  }
+
+  temp = dpx_create_temp_file();
+  if (!temp) {
+    WARN("Failed to create temporary file for image conversion: %s", filename);
+    return  -1;
+  }
+
+  if (_opts.verbose > 1) {
+    MESG("\n");
+    MESG("pdf_image>> Converting file \"%s\" --> \"%s\" via:\n", filename, temp);
+    MESG("pdf_image>>   %s\n", distiller_template);
+    MESG("pdf_image>> ...");
+  }
+
+  error = dpx_file_apply_filter(distiller_template, filename, temp);
+  if (error) {
+    WARN("Image format conversion for \"%s\" failed...", filename);
+    dpx_delete_temp_file(temp);
+    return  error;
+  }
+
+  fp = MFOPEN(temp, FOPEN_RBIN_MODE);
+  if (!fp) {
+    WARN("Could not open conversion result \"%s\" for image \"%s\". Why?", temp, filename);
+    dpx_delete_temp_file(temp);
+    return  -1;
+  }
+  error = pdf_include_page(ximage, fp);
+  MFCLOSE(fp);
+
+  if (_opts.verbose > 1) {
+    MESG("pdf_image>> deleting file \"%s\"", temp);
+  }
+  dpx_delete_temp_file(temp); /* temp freed here */
+
+  if (error) {
+    WARN("Failed to include image file \"%s\"", filename);
+    WARN(">> Please check if");
+    WARN(">>   %s", distiller_template);
+    WARN(">>   %%o = output filename, %%i = input filename, %%b = input filename without suffix");
+    WARN(">> can really convert \"%s\" to PDF format image.", filename);
+  }
+
+  return  error;
+}
+
+static int check_for_ps (FILE *image_file) 
+{
+  rewind (image_file);
+  mfgets (work_buffer, WORK_BUFFER_SIZE, image_file);
+  if (!strncmp (work_buffer, "%!", 2))
+    return 1;
   return 0;
 }
 
-char *
-pdf_ximage_get_resname (int xobj_id)
-{
-  pdf_ximage  *ximage;
 
-  CHECK_ID(xobj_id);
-
-  ximage = GET_IMAGE(xobj_id);
-
-  return ximage->res_name;
-}

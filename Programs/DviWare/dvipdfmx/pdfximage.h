@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfximage.h,v 1.2 2005/07/03 20:02:29 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.8 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -49,14 +49,13 @@ typedef struct {
   pdf_tmatrix matrix;
 } xform_info;
 
-typedef struct pdf_ximage pdf_ximage;
+typedef struct pdf_ximage_ pdf_ximage;
 
 extern void     pdf_ximage_set_verbose    (void);
 
 extern void     pdf_init_images           (void);
 extern void     pdf_close_images          (void);
 
-extern int      pdf_ximage_scale_image    (int xobj_id, transform_info *p);
 extern char    *pdf_ximage_get_resname    (int xobj_id);
 extern pdf_obj *pdf_ximage_get_reference  (int xobj_id);
 
@@ -71,5 +70,14 @@ extern void pdf_ximage_init_form_info  (xform_info  *info);
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
 
+/* from psimage.h */
+extern void set_distiller_template (char *s);
+
+extern int
+pdf_ximage_scale_image (int            id,
+                        pdf_tmatrix    *M, /* ret */
+                        pdf_rect       *r, /* ret */
+                        transform_info *p  /* arg */
+                       );
 
 #endif /* _PDFXIMAGE_H_ */

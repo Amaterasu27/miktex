@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/dvipdfmx.c,v 1.9 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.45 2005/07/30 11:44:18 hirata Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -33,7 +33,10 @@
 
 #include "system.h"
 #include "mem.h"
+
+#include "dpxconf.h"
 #include "dpxfile.h"
+#include "dpxutil.h"
 
 #include "dvi.h"
 
@@ -43,15 +46,13 @@
 #include "pdfencrypt.h"
 
 #include "spc_tpic.h"
-#include "spc_util.h"
-#include "spc_pdfm.h"
 #include "specials.h"
 
-#include "psimage.h"
 #include "mpost.h"
 
 #include "fontmap.h"
 #include "pdffont.h"
+#include "pdfximage.h"
 #include "cid.h"
 
 extern void error_cleanup (void);
@@ -87,127 +88,8 @@ static double paper_width  = 595.0;
 static double paper_height = 842.0;
 static double x_offset = 72.0;
 static double y_offset = 72.0;
-static int  default_papersize = 1;
-static char landscape_mode    = 0;
+static char   landscape_mode    = 0;
 
-#ifdef HAVE_LIBPAPER
-#include <paper.h>
-#else /* !HAVE_LIBPAPER */
-struct paper {
-  const char* name;
-  double pswidth, psheight;
-};
-
-#ifndef DEFAULT_PAPER_NAME
-#define DEFAULT_PAPER_NAME "a4"
-#endif
-
-static const struct paper paperspecs[] = {
-  {"letter",  612.00,  792.00},
-  {"legal" ,  612.00, 1008.00},
-  {"ledger", 1224.00,  792.00},
-  {"tabloid", 792.00, 1224.00},
-  {"a6",      297.64,  420.91},
-  {"a5",      420.91,  595.27},
-  {"a4",      595.27,  841.82},
-  {"a3",      841.82, 1190.16},
-  /*
-   * The B series paper formats were first introduced in Japanese
-   * patch (jpatch). The size of b6, ..., b5var paper is JIS paper
-   * size for this reason. Please modify the following line or use
-   * libpaper if you need ISO paper sizes.
-   */
-#ifdef ISO_PAPERSIZE
-  {"b6",  354,  499},
-  {"b5",  501,  709},
-  {"b4",  709, 1002},
-  {"b3", 1002, 1418},
-#else
-  {"b6",      364.25,  515.91},
-  {"b5",      515.91,  728.50},
-  {"b4",      728.50, 1031.81},
-  {"b3",     1031.81, 1457.00},
-  {"b5var",   515.91,  651.97},
-#endif
-  /* -- */
-  {NULL, 0, 0},
-};
-
-#define paperinit()
-#define paperdone()
-#define paperpswidth(p)    (((p) && (p)->name) ? p->pswidth  : 0.0)
-#define paperpsheight(p)   (((p) && (p)->name) ? p->psheight : 0.0)
-#define papername(p)       (((p) && (p)->name) ? p->name : NULL)
-#define paperfirst()       &(paperspecs[0])
-#define papernext(p)       ((((p)+1) && ((p)+1)->name) ? (p+1) : NULL)
-
-#define defaultpapername() DEFAULT_PAPER_NAME
-#define systempapername()  DEFAULT_PAPER_NAME
-
-#define defaultpapersizefile() NULL
-#define systempapersizefile()  NULL
-
-static const struct paper *
-paperinfo (const char *ppspec)
-{
-  const struct paper *ppinfo;
-
-  ppinfo = paperfirst();
-  while (ppinfo && papername(ppinfo)) {
-    if (!strcasecmp(ppspec, papername(ppinfo)))
-      break;
-    ppinfo = papernext(ppinfo);
-  }
-
-  return ((ppinfo && papername(ppinfo)) ? ppinfo : NULL);
-}
-
-#endif /* !HAVE_LIBPAPER */
-
-static void paperconf (void)
-{
-  const struct paper *ppinfo;
-
-  fprintf(stdout, "Supported paper format:\n");
-  ppinfo = paperfirst();
-  while (ppinfo && papername(ppinfo)) {
-    fprintf(stdout, "  %s: %g %g\n",
-	    papername(ppinfo), paperpswidth(ppinfo), paperpsheight(ppinfo));
-    ppinfo = papernext(ppinfo);
-  }
-  if (systempapername() != NULL)
-    fprintf(stdout, "System default: %s\n", systempapername());
-  else if (defaultpapername() != NULL)
-    fprintf(stdout, "System default: %s\n", defaultpapername());
-
-  return;
-}
-
-static int
-get_mediasize (pdf_rect *rect, const char *ppspec)
-{
-  const struct paper *ppinfo;
-
-  ppinfo = paperinfo(ppspec);
-  if (ppinfo && papername(ppinfo)) {
-    rect->urx = paperpswidth(ppinfo);
-    rect->ury = paperpsheight(ppinfo);
-  } else {
-    char  *start, *end, *comma;
-
-    start = (char *) ppspec;
-    comma = strchr(start, ',');
-    end   = start + strlen(start);
-    if (!comma)
-      return -1;
-    rect->urx = parse_length(&start, comma);
-    start = comma + 1;
-    rect->ury = parse_length(&start, end);
-  }
-
-  rect->llx = rect->lly = 0.0;
-  return ((rect->urx <= 0.0 || rect->ury <= 0.0) ? -1 : 0);
-}
 
 char *dvi_filename = NULL, *pdf_filename = NULL;
 
@@ -224,7 +106,7 @@ set_default_pdf_filename(void)
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
-	     !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -284,142 +166,143 @@ usage (void)
   fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
   fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
-  fprintf (stdout, "Please type \"dvipdfmx -vh\" for the list of available paper format.\n\n");
-  if (verbose) {
-    paperconf();
-  }
-  fprintf (stdout, "\n");
 
   exit(1);
 }
 
-struct page_label
+
+static int
+read_length (double *vp, char **pp, char *endptr)
 {
-  char  type[2];
-  char *prefix;
-  unsigned long  start;
-};
+  char   *q, *p = *pp;
+  double  v, u = 1.0;
+  const char *_ukeys[] = {
+#define K_UNIT__PT  0
+#define K_UNIT__IN  1
+#define K_UNIT__CM  2
+#define K_UNIT__MM  3
+#define K_UNIT__BP  4
+    "pt", "in", "cm", "mm", "bp",
+     NULL
+  };
+  int     k, error = 0;
+
+  q = parse_float_decimal(&p, endptr);
+  if (!q) {
+    *vp = 0.0; *pp = p;
+    return  -1;
+  }
+
+  v = atof(q);
+  RELEASE(q);
+
+  q = parse_c_ident(&p, endptr);
+  if (q) {
+    if (strlen(q) > strlen("true") &&
+        !memcmp(q, "true", strlen("true"))) {
+      q += strlen("true"); /* just skip "true" */
+    }
+    for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
+    switch (k) {
+    case K_UNIT__PT: u *= 72.0 / 72.27; break;
+    case K_UNIT__IN: u *= 72.0; break;
+    case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+    case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+    case K_UNIT__BP: u *= 1.0 ; break;
+    default:
+      WARN("Unknown unit of measure: %s", q);
+      error = -1;
+      break;
+    }
+    RELEASE(q);
+  }
+
+  *vp = v * u; *pp = p;
+  return  error;
+}
+
+static void
+select_paper (const char *paperspec)
+{
+  const struct paper *pi;
+  int   error = 0;
+
+  pi = paperinfo(paperspec);
+  if (pi && papername(pi)) {
+    paper_width  = paperpswidth (pi);
+    paper_height = paperpsheight(pi);
+  } else {
+    char  *p = (char *) paperspec, *endptr, *comma;
+    comma  = strchr(p, ',');
+    endptr = p + strlen(p);
+    if (!comma)
+      ERROR("Unrecognized paper format: %s", paperspec);
+    error = read_length(&paper_width,  &p, comma);
+    p = comma + 1;
+    error = read_length(&paper_height, &p, endptr);
+  }
+  if (error || paper_width <= 0.0 || paper_height <= 0.0)
+    ERROR("Invalid paper size: %s (%.2fx%.2f)", paperspec, paper_width, paper_height);
+}
 
 struct page_range 
 {
   long first, last;
-  struct page_label *label;
 } *page_ranges = NULL;
 
 int num_page_ranges = 0;
 int max_page_ranges = 0;
 
-static struct page_label *
-parse_pagelabel (char **start, char *end)
-{
-  struct page_label *label;
-  char *next;
-  int   len;
-
-  if (*start >= end)
-    return NULL;
-
-  label = NEW(1, struct page_label);
-  label->type[0] = '\0';
-  label->type[1] = '\0';
-  label->start   = 1;
-  label->prefix  = NULL;
-
-  switch (**start) {
-  case 'D':
-  case 'r': case 'R':
-  case 'a': case 'A':
-    label->type[0] = **start;
-    *start += 1;
-    break;
-  case ':':
-    break;
-  default:
-    WARN("Invalid page label specified.");
-    *start += 1;
-    break;
-  }
-  if (*start < end && **start == ':') {
-    *start += 1;
-    label->start = strtoul(*start, &next, 10);
-    if (next == *start)
-      label->start = 1;
-    else
-      *start = next;
-  }
-  if (*start < end && **start == ':') {
-    *start += 1;
-    len = end - (*start);
-    if (len > 0) {
-      label->prefix = NEW(len + 1, char);
-      memcpy(label->prefix, *start, len);
-      label->prefix[len] = '\0';
-    }
-  }
-
-  *start = end;
-  return label;
-}
-
 static void
-select_pages (char *start, char *end)
+select_pages (const char *pagespec)
 {
-  char *number;
+  char  *q, *p = (char *) pagespec;
 
-  while (start < end) {
+  while (*p != '\0') {
     /* Enlarge page range table if necessary */
     if (num_page_ranges >= max_page_ranges) {
       max_page_ranges += 4;
-      page_ranges = RENEW (page_ranges, max_page_ranges, struct page_range);
+      page_ranges = RENEW(page_ranges, max_page_ranges, struct page_range);
     }
 
     page_ranges[num_page_ranges].first = 0;
     page_ranges[num_page_ranges].last  = 0;
-    page_ranges[num_page_ranges].label = NULL;
 
-    skip_white(&start, end);
-    number = parse_unsigned(&start, end); /* Can't be signed. */
-    if (number) {
-      page_ranges[num_page_ranges].first = atoi(number) - 1;
+    for ( ; *p && isspace(*p); p++);
+    q = parse_unsigned(&p, p + strlen(p)); /* Can't be signed. */
+    if (q) { /* '-' is allowed here */
+      page_ranges[num_page_ranges].first = atoi(q) - 1;
       page_ranges[num_page_ranges].last  = page_ranges[num_page_ranges].first;
-      RELEASE(number);
+      RELEASE(q);
     }
+    for ( ; *p && isspace(*p); p++);
 
-    skip_white(&start, end);
-    if (*start == '-') {
-      start++;
-      skip_white(&start, end);
+    if (*p == '-') {
+      for (++p; *p && isspace(*p); p++);
       page_ranges[num_page_ranges].last = -1;
-      if (start < end &&
-	  (number = parse_unsigned(&start, end))) {
-	page_ranges[num_page_ranges].last = atoi(number) - 1;
-	RELEASE(number);
+      if (*p) {
+        q = parse_unsigned(&p, p + strlen(p));
+        if (q) {
+          page_ranges[num_page_ranges].last = atoi(q) - 1;
+          RELEASE(q);
+        }
+        for ( ; *p && isspace(*p); p++);
       }
     } else {
       page_ranges[num_page_ranges].last = page_ranges[num_page_ranges].first;
     }
 
-    skip_white(&start, end);
-    if (*start == '/') {
-      char *next;
-
-      start++;
-      next = strchr(start, ',');
-      if (!next)
-	next = end;
-      page_ranges[num_page_ranges].label = parse_pagelabel(&start, next);
-    }
     num_page_ranges++;
 
-    skip_white(&start, end);
-    if (start < end && *start == ',') {
-      start += 1;
-    } else {
-      skip_white (&start, end);
-      if (start < end)
-	ERROR("Bad page range specification: %s", start);
+    if (*p == ',')
+      p++;
+    else  {
+      for ( ; *p && isspace(*p); p++);
+      if (*p)
+        ERROR("Bad page range specification: %s", p);
     }
   }
+  return;
 }
 
 #define POP_ARG() {argv += 1; argc -= 1;}
@@ -428,7 +311,7 @@ select_pages (char *start, char *end)
   fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
   usage();\
 }
- 
+
 static void
 do_args (int argc, char *argv[])
 {
@@ -438,186 +321,178 @@ do_args (int argc, char *argv[])
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
       case 'D':
-	CHECK_ARG(1, "PS->PDF conversion command line template");
-	set_distiller_template(argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "PS->PDF conversion command line template");
+        set_distiller_template(argv[1]);
+        POP_ARG();
+        break;
       case 'r':
-	CHECK_ARG(1, "bitmap font dpi");
-	font_dpi = atoi(argv[1]);
-	if (font_dpi <= 0)
-	  ERROR("Invalid bitmap font dpi specified: %s", argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "bitmap font dpi");
+        font_dpi = atoi(argv[1]);
+        if (font_dpi <= 0)
+          ERROR("Invalid bitmap font dpi specified: %s", argv[1]);
+        POP_ARG();
+        break;
       case 'm':
-	CHECK_ARG(1, "magnification value");
-	mag = strtod(argv[1], &nextptr);
-	if (mag < 0.0 || nextptr == argv[1])
-	  ERROR("Invalid magnification specifiied: %s", argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "magnification value");
+        mag = strtod(argv[1], &nextptr);
+        if (mag < 0.0 || nextptr == argv[1])
+          ERROR("Invalid magnification specifiied: %s", argv[1]);
+        POP_ARG();
+        break;
       case 'g':
-	CHECK_ARG(1, "annotation \"grow\" amount");
-	nextptr = argv[1];
-	annot_grow = parse_length(&nextptr, nextptr + strlen(nextptr));
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "annotation \"grow\" amount");
+        nextptr = argv[1];
+        read_length(&annot_grow, &nextptr, nextptr + strlen(nextptr));
+        POP_ARG();
+        break;
       case 'x':
-	CHECK_ARG(1, "horizontal offset value");
-	nextptr = argv[1];
-	x_offset = parse_length(&nextptr, nextptr + strlen(nextptr));
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "horizontal offset value");
+        nextptr = argv[1];
+        read_length(&x_offset, &nextptr, nextptr + strlen(nextptr));
+        POP_ARG();
+        break;
       case 'y':
-	CHECK_ARG(1, "vertical offset value");
-	nextptr = argv[1];
-	y_offset = parse_length(&nextptr, nextptr + strlen(nextptr));
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "vertical offset value");
+        nextptr = argv[1];
+        read_length(&y_offset, &nextptr, nextptr + strlen(nextptr));
+        POP_ARG();
+        break;
       case 'o':
-	CHECK_ARG(1, "output file name");
-	pdf_filename = NEW (strlen(argv[1])+1,char);
-	strcpy(pdf_filename, argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "output file name");
+        pdf_filename = NEW (strlen(argv[1])+1,char);
+        strcpy(pdf_filename, argv[1]);
+        POP_ARG();
+        break;
       case 's':
-	CHECK_ARG(1, "page selection specification");
-	select_pages(argv[1], argv[1] + strlen(argv[1]));
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "page selection specification");
+        select_pages(argv[1]);
+        POP_ARG();
+        break;
 #ifndef NO_THUMBNAIL
       case 'T':
-	pdf_doc_enable_thumbnails(1); /* remove after... */
-	break;
+        pdf_doc_enable_thumbnails(1); /* remove after... */
+        break;
       case 't':
-	pdf_doc_enable_thumbnails(0);
-	break;
+        pdf_doc_enable_thumbnails(0);
+        break;
 #endif /* !NO_THUMBNAIL */
       case 'p':
-	CHECK_ARG(1, "paper format/size");
-	{
-	  pdf_rect rect;
-
-	  if (get_mediasize(&rect, argv[1]) < 0) {
-	    ERROR("Unknown papersize format: \"%s\"", argv[1]);
-	  }
-	  paper_width  = rect.urx;
-	  paper_height = rect.ury;
-	  default_papersize = 0;
-	}
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "paper format/size");
+        select_paper(argv[1]);
+        POP_ARG();
+        break;
       case 'c':
-	ignore_colors = 1;
-	break;
+        ignore_colors = 1;
+        break;
       case 'l':
-	landscape_mode = 1;
-	break;
+        landscape_mode = 1;
+        break;
       case 'f':
-	CHECK_ARG(1, "fontmap file name");
-	if (opt_flags & OPT_FONTMAP_FIRST_MATCH)
-	  pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_APPEND);
-	else
-	  pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_REPLACE);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "fontmap file name");
+        if (opt_flags & OPT_FONTMAP_FIRST_MATCH)
+          pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_APPEND);
+        else
+          pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_REPLACE);
+        POP_ARG();
+        break;
       case 'e':
-	WARN("dvipdfm \"-e\" option not supported.");
-	break;
+        WARN("dvipdfm \"-e\" option not supported.");
+        break;
       case 'q':
-	really_quiet = 1;
-	break;
+        really_quiet = 1;
+        break;
       case 'v':
-	verbose++;
-	break;
+        verbose++;
+        break;
       case 'V':
-	{
-	  int ver_minor;
+      {
+        int ver_minor;
 
-	  if (isdigit(*(flag+1))) {
-	    flag++;
-	    ver_minor = atoi(flag);
-	  } else {
-	    CHECK_ARG(1, "PDF minor version number");
-	    ver_minor = atoi(argv[1]);
-	    POP_ARG();
-	  }
-	  if (ver_minor < 3 || ver_minor > 5) {
-	    WARN("PDF version 1.%d not supported. (1.3 used instead)", ver_minor);
-	    ver_minor = 3;
-	  }
-	  pdf_set_version((unsigned) ver_minor);
-	}
-	break;
-      case 'z': 
-	{
-	  int level;
+        if (isdigit(*(flag+1))) {
+          flag++;
+          ver_minor = atoi(flag);
+        } else {
+          CHECK_ARG(1, "PDF minor version number");
+          ver_minor = atoi(argv[1]);
+          POP_ARG();
+        }
+        if (ver_minor < 3 || ver_minor > 5) {
+          WARN("PDF version 1.%d not supported. (1.3 used instead)", ver_minor);
+          ver_minor = 3;
+        }
+        pdf_set_version((unsigned) ver_minor);
+      }
+      break;
+      case 'z':
+      {
+        int level;
 
-	  if (isdigit(*(flag+1))) {
-	    flag++;
-	    level = atoi(flag);
-	  } else {
-	    CHECK_ARG(1, "compression level");
-	    level = atoi(argv[1]);
-	    POP_ARG();
-	  }
-	  pdf_set_compression(level);
-	}
-	break;
+        if (isdigit(*(flag+1))) {
+          flag++;
+          level = atoi(flag);
+        } else {
+          CHECK_ARG(1, "compression level");
+          level = atoi(argv[1]);
+          POP_ARG();
+        }
+        pdf_set_compression(level);
+      }
+      break;
       case 'd': 
-	if (isdigit(*(flag+1))) {
-	  flag++;
-	  pdfdecimaldigits = atoi(flag);
-	} else {
-	  CHECK_ARG(1, "number of fractional digits");
-	  pdfdecimaldigits = atoi(argv[1]);
-	  POP_ARG();
-	}
-	break;
+        if (isdigit(*(flag+1))) {
+          flag++;
+          pdfdecimaldigits = atoi(flag);
+        } else {
+          CHECK_ARG(1, "number of fractional digits");
+          pdfdecimaldigits = atoi(argv[1]);
+          POP_ARG();
+        }
+        break;
       case 'S':
         do_encryption = 1;
-	break;
+        break;
       case 'K': 
-	CHECK_ARG(1, "encryption key bits");
-	key_bits = (unsigned) atoi(argv[1]);
-	if (key_bits < 40 || key_bits > 128)
-	  ERROR("Invalid encryption key bits specified: %s", argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "encryption key bits");
+        key_bits = (unsigned) atoi(argv[1]);
+        if (key_bits < 40 || key_bits > 128)
+          ERROR("Invalid encryption key bits specified: %s", argv[1]);
+        POP_ARG();
+        break;
       case 'P': 
-	CHECK_ARG(1, "encryption permission flag");
-	permission = (unsigned) strtoul(argv[1], &nextptr, 0);
-	if (nextptr == argv[1])
-	  ERROR("Invalid encryption permission flag: %s", argv[1]);
-	POP_ARG();
-	break;
+        CHECK_ARG(1, "encryption permission flag");
+        permission = (unsigned) strtoul(argv[1], &nextptr, 0);
+        if (nextptr == argv[1])
+          ERROR("Invalid encryption permission flag: %s", argv[1]);
+        POP_ARG();
+        break;
       case 'O':
-	/* Bookmark open level */
-	CHECK_ARG(1, "bookmark open level");
-	bookmark_open = atoi(argv[1]);
-	POP_ARG();
-	break;
+        /* Bookmark open level */
+        CHECK_ARG(1, "bookmark open level");
+        bookmark_open = atoi(argv[1]);
+        POP_ARG();
+        break;
       case 'M':
-	mp_mode = 1;
-	break;
+        mp_mode = 1;
+        break;
       case 'C':
-	CHECK_ARG(1, "a number");
-	{
-	  long flags;
+        CHECK_ARG(1, "a number");
+        {
+          long flags;
 
-	  flags = (unsigned) strtol(argv[1], &nextptr, 0);
-	  if (nextptr == argv[1])
-	    ERROR("Invalid flag: %s", argv[1]);
-	  if (flags < 0)
-	    opt_flags  = -flags;
-	  else
-	    opt_flags |=  flags;
-	}
-	POP_ARG();
-	break;
+          flags = (unsigned) strtol(argv[1], &nextptr, 0);
+          if (nextptr == argv[1])
+            ERROR("Invalid flag: %s", argv[1]);
+          if (flags < 0)
+            opt_flags  = -flags;
+          else
+            opt_flags |=  flags;
+        }
+        POP_ARG();
+        break;
       default:
-	fprintf (stderr, "Unknown option in \"%s\"", flag);
-	usage();
+        fprintf (stderr, "Unknown option in \"%s\"", flag);
+        usage();
+        break;
       }
     }
     POP_ARG();
@@ -664,18 +539,8 @@ cleanup (void)
     RELEASE(dvi_filename);
   if (pdf_filename)
     RELEASE(pdf_filename);
-  if (page_ranges) {
-    int i;
-
-    for (i = 0; i < num_page_ranges; i++) {
-      if (page_ranges[i].label) {
-	if (page_ranges[i].label->prefix)
-	  RELEASE(page_ranges[i].label->prefix);
-	RELEASE(page_ranges[i].label);
-      }
-    }
+  if (page_ranges)
     RELEASE(page_ranges);
-  }
 }
 
 static const char *default_config_file = "dvipdfmx.cfg";
@@ -738,16 +603,10 @@ read_config_file (const char *config)
 static void
 system_default (void)
 {
-  pdf_rect rect;
-
-  if (systempapername() != NULL &&
-      get_mediasize(&rect, systempapername()) >= 0) {
-    paper_width  = rect.urx;
-    paper_height = rect.ury;
-  } else if (defaultpapername() != NULL &&
-             get_mediasize(&rect, defaultpapername())) {
-    paper_width  = rect.urx;
-    paper_height = rect.ury;
+  if (systempapername() != NULL) {
+    select_paper(systempapername());
+  } else if (defaultpapername() != NULL) {
+    select_paper(defaultpapername());
   }
 }
 
@@ -773,7 +632,6 @@ do_dvi_pages (void)
   long     page_no, page_count, i, step;
   double   page_width, page_height;
   pdf_rect mediabox;
-  int      has_label;
 
   spc_exec_at_begin_document();
 
@@ -784,14 +642,12 @@ do_dvi_pages (void)
     }
     page_ranges[0].first = 0;
     page_ranges[0].last  = -1; /* last page */
-    page_ranges[0].label = NULL;
     num_page_ranges = 1;
   }
 
   page_width  = paper_width;
   page_height = paper_height;
   page_count  = 0;
-  has_label   = 0;
 
   mediabox.llx = 0.0;
   mediabox.lly = 0.0;
@@ -805,68 +661,47 @@ do_dvi_pages (void)
     if (page_ranges[i].last < 0)
       page_ranges[i].last += dvi_npages();
 
-    if (page_ranges[i].label || has_label) {
-      struct page_label *label;
-
-      has_label = 1;
-      label = page_ranges[i].label;
-      if (!label)
-	pdf_doc_set_pagelabel(page_count,
-			      NULL, NULL, 0, 1); /* reset */
-      else if (label->prefix) {
-	pdf_doc_set_pagelabel(page_count,
-			      label->type,
-			      label->prefix, strlen(label->prefix),
-			      label->start);
-      } else {
-	pdf_doc_set_pagelabel(page_count,
-			      label->type,
-			      NULL, 0, label->start);
-      }
-
-    }
     step    = (page_ranges[i].first <= page_ranges[i].last) ? 1 : -1;
     page_no = page_ranges[i].first;
     for (;;) {
       if (page_no < dvi_npages()) {
-	double w, h;
-	char   lm;
+        double w, h;
+        char   lm;
 
-	MESG("[%d", page_no+1);
-
-	/* Users want to change page size even after page is started! */
-	w = page_width; h = page_height; lm = landscape_mode;
-	dvi_scan_paper_size(page_no, &w, &h, &lm);
-	if (lm != landscape_mode) {
-	  SWAP(w, h);
-	  landscape_mode = lm;
-	}
-	if (page_width  != w || page_height != h) {
-	  page_width  = w;
-	  page_height = h;
-	}
-	if (page_width  != paper_width ||
-	    page_height != paper_height) {
-	  mediabox.llx = 0.0;
-	  mediabox.lly = 0.0;
-	  mediabox.urx = page_width;
-	  mediabox.ury = page_height;
-	  pdf_doc_set_mediabox(page_count+1, &mediabox);
-	}
-	dvi_do_page(page_no,
-		    page_width, page_height, x_offset, y_offset);
-	page_count++;
-	MESG("]");
+        MESG("[%d", page_no+1);
+        /* Users want to change page size even after page is started! */
+        w = page_width; h = page_height; lm = landscape_mode;
+        dvi_scan_paper_size(page_no, &w, &h, &lm);
+        if (lm != landscape_mode) {
+          SWAP(w, h);
+          landscape_mode = lm;
+        }
+        if (page_width  != w || page_height != h) {
+          page_width  = w;
+          page_height = h;
+        }
+        if (page_width  != paper_width ||
+            page_height != paper_height) {
+          mediabox.llx = 0.0;
+          mediabox.lly = 0.0;
+          mediabox.urx = page_width;
+          mediabox.ury = page_height;
+          pdf_doc_set_mediabox(page_count+1, &mediabox);
+        }
+        dvi_do_page(page_no,
+                    page_width, page_height, x_offset, y_offset);
+        page_count++;
+        MESG("]");
       }
 
       if (step > 0 &&
-	  page_no >= page_ranges[i].last)
-	break;
+          page_no >= page_ranges[i].last)
+        break;
       else if (step < 0 &&
-	       page_no <= page_ranges[i].last)
-	break;
+               page_no <= page_ranges[i].last)
+        break;
       else {
-	page_no += step;
+        page_no += step;
       }
     }
   }
@@ -881,18 +716,49 @@ do_dvi_pages (void)
 static void
 do_mps_pages (void)
 {
-  FILE *mps_file;
-  char *suffix;
+  FILE  *fp;
 
-  suffix = strstr(dvi_filename, ".dvi");
-  if (suffix && strlen(suffix) == strlen(".dvi"))
-    suffix[0] = '\0';
+  /* _FIXME_ */
+  fp = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
+  if (fp) {
+    mps_do_page(fp);
+    MFCLOSE(fp);
+  } else {
+    int   i, page_no, step, page_count = 0;
+    char *filename;
+    /* Process filename.1, filename.2,... */
+    filename = NEW(strlen(dvi_filename) + 16 + 1, char);
+    for (i = 0; i < num_page_ranges; i++) {
+      if (page_ranges[i].last < 0)
+        ERROR("Invalid page number for MPS input: -1");
 
-  mps_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
-  if (!mps_file)
-    ERROR("Could not open file: %s", dvi_filename);
-  mps_do_page(mps_file);
-  MFCLOSE(mps_file);
+      step    = (page_ranges[i].first <= page_ranges[i].last) ? 1 : -1;
+      page_no = page_ranges[i].first;
+      for (;;) {
+        sprintf(filename, "%s.%d", dvi_filename, page_no + 1);
+        fp = MFOPEN(filename, FOPEN_RBIN_MODE);
+        if (fp) {
+          MESG("[%d<%s>", page_no + 1, filename);
+          mps_do_page(fp);
+          page_count++;
+          MESG("]");
+          MFCLOSE(fp);
+        }
+        if (step > 0 &&
+            page_no >= page_ranges[i].last)
+          break;
+        else if (step < 0 &&
+                 page_no <= page_ranges[i].last)
+          break;
+        else {
+          page_no += step;
+        }
+      }
+    }
+    RELEASE(filename);
+    if (page_count == 0)
+      ERROR("No page output for \"%s\".", dvi_filename);
+  }
 }
 
 
@@ -930,7 +796,6 @@ main (int argc, char *argv[])
     read_config_file(default_config_file);
   }
 
-  default_papersize = 1; /* reset */
   do_args (argc, argv);
 
   if (really_quiet)

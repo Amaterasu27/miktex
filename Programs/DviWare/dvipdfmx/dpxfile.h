@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/dpxfile.h,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.h,v 1.6 2005/07/20 10:41:54 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -35,6 +35,7 @@
 #define DPX_RES_TYPE_ENC      0x20
 #define DPX_RES_TYPE_CMAP     0x21
 #define DPX_RES_TYPE_SFD      0x22
+#define DPX_RES_TYPE_AGL      0x23
 
 #define DPX_RES_TYPE_ICCPROFILE 0x30
 
@@ -44,6 +45,10 @@ extern FILE *dpx_open_file (const char *filename, int type);
 #define DPXFOPEN(n,t)  dpx_open_file((const char *)(n),(t))
 #define DPXFCLOSE(f)   MFCLOSE((f))
 
-extern void  dpx_file_set_verbose (void);
+extern void  dpx_file_set_verbose  (void);
+
+extern int   dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *output);
+extern char *dpx_create_temp_file  (void);
+extern void  dpx_delete_temp_file  (char *tmp); /* tmp freed here */
 
 #endif /* _DPXFILE_H_ */

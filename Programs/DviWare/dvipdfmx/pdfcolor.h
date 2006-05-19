@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/pdfcolor.h,v 1.2 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.h,v 1.6 2005/07/30 11:44:18 hirata Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -53,20 +53,16 @@ extern void       pdf_color_set_verbose   (void);
 
 extern int        pdf_dev_setcolor        (const pdf_color *color, int is_fill);
 
-extern void       pdf_dev_reset_color     (void);
-
 extern int        pdf_dev_currentcolor    (pdf_color *color, int is_fill);
 
-extern int        pdf_color_rgbcolor       (pdf_color *color,
-					    double r, double g, double b);
-extern int        pdf_color_cmykcolor      (pdf_color *color,
-					    double c, double m, double y, double k);
-extern int        pdf_color_graycolor      (pdf_color *color, double g);
-extern int        pdf_color_namedcolor     (pdf_color *color, const char *colorname);
+extern int        pdf_color_rgbcolor      (pdf_color *color,
+                                           double r, double g, double b);
+extern int        pdf_color_cmykcolor     (pdf_color *color,
+                                           double c, double m, double y, double k);
+extern int        pdf_color_graycolor     (pdf_color *color, double g);
+extern void       pdf_color_copycolor     (pdf_color *color1, const pdf_color *color2);
 
-extern void       pdf_color_copycolor      (pdf_color *color1, const pdf_color *color2);
-
-extern int        pdf_color_is_white       (pdf_color *color);
+extern int        pdf_color_is_white      (pdf_color *color);
 
 /* Not check size */
 extern pdf_obj *iccp_get_rendering_intent (const void *profile, long proflen);
@@ -88,13 +84,15 @@ extern int      pdf_get_colorspace_subtype        (int cspc_id);
 extern int      pdf_colorspace_load_ICCBased      (const char *ident,
 						   const char *profile_filename);
 
-/* Color special */
-extern void     pdf_color_get_bgcolor (pdf_color *color);
-extern void     pdf_color_set_bgcolor (const pdf_color *color);
+/* Color special
+ * See remark in spc_color.c.
+ */
 extern void     pdf_color_set_default (const pdf_color *color);
-
 extern void     pdf_color_push  (void);
 extern void     pdf_color_pop   (void);
 extern void     pdf_color_clear (void);
+
+/* Reinstall color */
+extern void     pdf_dev_reset_color   (void);
 
 #endif /* _PDF_COLOR_H_ */

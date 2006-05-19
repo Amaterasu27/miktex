@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfmx/dpxutil.h,v 1.3 2005/07/03 20:02:28 csc Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.h,v 1.7 2005/07/17 09:53:38 hirata Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -22,8 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#ifndef _MX_UTIL_H_
-#define _MX_UTIL_H_
+#ifndef _DPXUTIL_H_
+#define _DPXUTIL_H_
 
 #undef  MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -54,9 +54,6 @@ extern unsigned char ostrtouc (unsigned char **inbuf,
 			       unsigned char *inbufend, unsigned char *valid);
 extern unsigned char esctouc  (unsigned char **inbuf,
 			       unsigned char *inbufend, unsigned char *valid);
-
-extern void mangle_name (char *name);
-
 
 #define HASH_TABLE_SIZE 503
 
@@ -97,4 +94,8 @@ extern char *ht_iter_getkey (struct ht_iter *iter, int *keylen);
 extern void *ht_iter_getval (struct ht_iter *iter);
 extern int   ht_iter_next   (struct ht_iter *iter);
 
-#endif /* _MX_UTIL_H_ */
+extern char *parse_float_decimal (char **pp, char *endptr);
+extern char *parse_c_string      (char **pp, char *endptr);
+extern char *parse_c_ident       (char **pp, char *endptr);
+
+#endif /* _DPXUTIL_H_ */
