@@ -31,7 +31,6 @@ maininifiles = \
 	dvipdfm.ini \
 	dvipdfmx.ini \
 	dvips.ini \
-	etex.ini \
 	formats.ini \
 	jadetex.ini \
 	lambda.ini \
@@ -43,7 +42,6 @@ maininifiles = \
 	pdflatex.ini \
 	pdfmex.ini \
 	pdfplatex.ini \
-	pdftex.ini \
 	pdftexinfo.ini \
 	platex.ini \
 	t4ht.ini \
