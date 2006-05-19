@@ -1,0 +1,154 @@
+<?dbhh topicname="MIKTEXHELP_PDFETEX" topicid="0"?>
+
+<refentry id="pdfetex">
+
+<refmeta>
+<refentrytitle>pdfetex</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>pdfetex</refname>
+<refpurpose>&PDF; output from &eTeX;</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+
+<cmdsynopsis>
+&pdfetex;
+<arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
+<group>
+<arg choice="opt"><replaceable>file</replaceable></arg>
+<arg choice="opt" rep="repeat">\<replaceable>command</replaceable></arg>
+</group></cmdsynopsis>
+
+</refsynopsisdiv>
+
+<refsect1>
+
+<title>Description</title>
+
+<para>Run the &pdfeTeX; typesetter on <replaceable>file</replaceable>,
+usually creating <filename>file.pdf</filename>. If the file argument
+has no extension, <filename>.tex</filename> will be appended to
+it. Instead of a file name, a set of &pdfeTeX; commands can be given,
+the first of which must start with a backslash.</para>
+
+<para>&pdfeTeX; is a version of &eTeX; that can create &PDF; files as
+well as &DVI; files.</para>
+
+<para>In &PDF; mode, &pdfeTeX; can natively handle the &PDF;, &JPG;,
+and &PNG; graphics formats. &pdfeTeX;'s handling of its command-line
+arguments is similar to that of of the other TeX programs in the web2c
+implementation.</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Options</title>
+
+<variablelist>
+&optionalias;
+&optionauxdirectory;
+&optionbufsize;
+&optioncstyleerrors;
+&optiondisableinstaller;
+&optionenableinstaller;
+&optionenablewriteeighteen;
+&optionerrorline;
+&optionfontmax;
+&optionfontmemsize;
+&optionhalferrorline;
+&optionhaltonerror;
+&optionhelp;
+&optionhhelp;
+&optionincludedirectory;
+&optioninitialize;
+&optioninteraction;
+&optionjobname;
+&optionjobtime;
+&optionmaxinopen;
+&optionmaxprintline;
+&optionmaxstrings;
+&optionmembot;
+&optionmemmax;
+&optionmemmin;
+&optionmemtop;
+&optionnestsize;
+&optionoutputdirectory;
+&optionparamsize;
+&optionpoolsize;
+&optionquiet;
+&optionrecordpackageusages;
+&optionrecorder;
+&optionsavesize;
+&optionsrcspecials;
+&optionstacksize;
+&optionstringvacancies;
+&optiontcx;
+&optionterminal;
+&optiontimestatistics;
+&optiontrace;
+&optiontrieopsize;
+&optiontriesize;
+&optionundump;
+&optionversion;
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
+<title>Aliases</title>
+
+<variablelist>
+<varlistentry>
+<term>&pdfinitex;</term>
+<listitem><para>Equivalent to <userinput>pdfetex -ini</userinput>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&pdfvirtex;</term>
+<listitem><para>Equivalent to <userinput>pdfetex</userinput>.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
+<title>Files</title>
+
+<variablelist>
+<varlistentry>
+<term><filename>pdftex.cfg</filename></term>
+<listitem>
+<para>The &pdfeTeX; configuration file.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1>
+
+<title>See also</title>
+
+<variablelist>
+<varlistentry>
+<term><citetitle>The &pdfTeX; user manual</citetitle> (A4 version)</term>
+<listitem><para>Run <userinput>mthelp pdftex-a</userinput></para></listitem>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+</refentry>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

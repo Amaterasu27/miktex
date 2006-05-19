@@ -190,6 +190,22 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <section>
 
+<title>&Dvipdfmx;</title>
+
+<para>&Dvipdfmx; has been upgraded to version 20051229.</para>
+
+</section>
+
+<section>
+
+<title>tex4ht</title>
+
+<para>tex4ht has been upgraded to version 1.0.2006_05_06_0156.</para>
+
+</section>
+
+<section>
+
 <title>&pdfeTeX;</title>
 
 <para>&pdfeTeX; has been upgraded to version 1.30.6.</para>

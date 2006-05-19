@@ -149,7 +149,6 @@ manual_xml_files = \
 	Ref\bibtex.xml \
 	Ref\dvicopy.xml \
 	Ref\dvips.xml \
-	Ref\etex.xml \
 	Ref\findtexmf.xml \
 	Ref\gftodvi.xml \
 	Ref\initexmf.xml \
@@ -159,7 +158,7 @@ manual_xml_files = \
 	Ref\setupwiz.xml \
 	Ref\mtprint.xml \
 	Ref\omega.xml \
-	Ref\pdftex.xml \
+	Ref\pdfetex.xml \
 	Ref\pdftexcfg.xml \
 	Ref\tex.xml \
 	Ref\texify.xml \

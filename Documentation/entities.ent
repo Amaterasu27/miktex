@@ -42,6 +42,8 @@
 <!ENTITY MiKTeXUpdateWizard "<application>&MiKTeX; Update Wizard</application>">
 <!ENTITY NTS "<application>NTS</application>">
 <!ENTITY PDF "<acronym>PDF</acronym>">
+<!ENTITY JPG "<acronym>JPG</acronym>">
+<!ENTITY PNG "<acronym>PNG</acronym>">
 <!ENTITY Perl "<application>Perl</application>">
 <!ENTITY PostScript "<application>PostScript</application>">
 <!ENTITY TCX "<acronym>TCX</acronym>">
@@ -108,6 +110,7 @@
 <!ENTITY pdfinitex "<command>pdfinitex</command>">
 <!ENTITY pdflatex "<command>pdflatex</command>">
 <!ENTITY pdftex "<command>pdftex</command>">
+<!ENTITY pdfetex "<command>pdfetex</command>">
 <!ENTITY pdfvirtex "<command>pdfvirtex</command>">
 <!ENTITY progfldr "MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY prompt "&gt; ">

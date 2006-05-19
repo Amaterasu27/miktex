@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2324">
+<!ENTITY rev "2.5.2330">
 <!ENTITY month "May 2006">
-<!ENTITY date "May 13, 2006">
+<!ENTITY date "May 19, 2006">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
@@ -17,7 +17,6 @@
 <!ENTITY manbibtex SYSTEM "Ref/bibtex.xml">
 <!ENTITY mandvicopy SYSTEM "Ref/dvicopy.xml">
 <!ENTITY mandvips SYSTEM "Ref/dvips.xml">
-<!ENTITY manetex SYSTEM "Ref/etex.xml">
 <!ENTITY manfindtexmf SYSTEM "Ref/findtexmf.xml">
 <!ENTITY mangftodvi SYSTEM "Ref/gftodvi.xml">
 <!ENTITY maninitexmf SYSTEM "Ref/initexmf.xml">
@@ -28,7 +27,7 @@
 <!ENTITY manmtprint SYSTEM "Ref/mtprint.xml">
 <!ENTITY mansetupwiz SYSTEM "Ref/setupwiz.xml">
 <!ENTITY manomega SYSTEM "Ref/omega.xml">
-<!ENTITY manpdftex SYSTEM "Ref/pdftex.xml">
+<!ENTITY manpdfetex SYSTEM "Ref/pdfetex.xml">
 <!ENTITY manpdftexcfg SYSTEM "Ref/pdftexcfg.xml">
 <!ENTITY mantex SYSTEM "Ref/tex.xml">
 <!ENTITY mantexify SYSTEM "Ref/texify.xml">
@@ -396,7 +395,7 @@ called <firstterm>format files</firstterm>. For example, &LaTeX; macros
 <secondary>defined</secondary>
 </indexterm>
 are stored in the file <filename>latex.efmt</filename>. This file
-is loaed by &eTeX;, when you start &latex;.</para>
+is loaed by &pdfeTeX;, when you start &latex;.</para>
 
 <indexterm>
 <primary>format files</primary>
@@ -470,7 +469,6 @@ pdfetex "&amp;latex" sample2e</programlisting>
 &manbibtex;
 &mandvicopy;
 &mandvips;
-&manetex;
 &manfindtexmf;
 &mangftodvi;
 &maninitexmf;
@@ -480,7 +478,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 &manmthelp;
 &manmtprint;
 &manomega;
-&manpdftex;
+&manpdfetex;
 &manpdftexcfg;
 &mansetupwiz;
 &mantex;
