@@ -102,6 +102,7 @@ main (/*[in]*/ int			argc,
 					  5,
 					  DviAccess::Sequential,
 					  0));
+	  pDvi->Scan ();
 	  for (int i = 0; i < pDvi->GetNumberOfPages(); ++ i)
 	    {
 	      DviPage * pPage = pDvi->GetLoadedPage(i);

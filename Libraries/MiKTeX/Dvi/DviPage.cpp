@@ -1170,7 +1170,7 @@ DviPageImpl::StartDvips ()
 				 + T_(',')
 				 + NUMTOSTR(height) + T_("bp")));
     }
-
+  commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());

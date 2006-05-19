@@ -1600,6 +1600,12 @@ public:
   MIKTEXDVICALL
   Unlock();
 
+public:
+  virtual
+  void
+  MIKTEXDVICALL
+  Scan ();
+
 private:
   DviImpl (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
 	   /*[in]*/ const MIKTEXCHAR *		lpszMetafontMode,
@@ -1628,10 +1634,6 @@ private:
   void
   CheckCondition ();
   
-private:
-  void
-  Scan ();
-
 public:
   void
   Progress

@@ -1310,6 +1310,13 @@ public:
   MIKTEXDVICALL
   Unlock ()
     = 0;
+
+public:
+  virtual
+  void
+  MIKTEXDVICALL
+  Scan ()
+    = 0;
 };
 
 /* _________________________________________________________________________ */
