@@ -35,7 +35,7 @@ AC_PREREQ([2.59])
 #    J2000   days since Jan 1, 2000
 #    RCNUM   release candidate number
 #  BETANUM   beta number
-AC_INIT([MiKTeX Tools],[2.5.2325-beta-7])
+AC_INIT([MiKTeX Tools],[2.5.2330-beta-8])
 
 # write configuration settings into ./config.h
 AC_CONFIG_HEADERS([config.h])
@@ -145,7 +145,7 @@ AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/fndb/Makefile])
 AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/mmap/Makefile])
 AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/pathname/Makefile])
 AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/process/Makefile])
-AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/scratchdir/Makefile])
+AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/scartchdir/Makefile])
 AC_CONFIG_FILES([Libraries/MiKTeX/Core/test/thread/Makefile])
 AC_CONFIG_FILES([Libraries/MiKTeX/PackageManager/Makefile])
 AC_CONFIG_FILES([Makefile])
