@@ -77,7 +77,7 @@ public:
   {
     TeXApp::AllocateMemory ();
 
-    GETPARAM (-1, ocpbufsize, ocp_buf_size, 20000);
+    GETPARAM (-1, ocpbufsize, ocp_buf_size, 500000);
     GETPARAM (-1, ocplistinfosize, ocp_listinfo_size, 1000);
     GETPARAM (-1, ocplistlistsize, ocp_list_list_size, 1000);
     GETPARAM (-1, ocplstacksize, ocp_lstack_size, 1000);
