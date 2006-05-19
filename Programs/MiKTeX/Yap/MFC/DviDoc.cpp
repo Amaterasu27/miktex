@@ -214,6 +214,7 @@ DviDoc::CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
 		pSession->GetPaperSizeInfo(dvipsPaperName.c_str()),
 		landscape,
 		this);
+  pDvi->Scan ();
   fileStatus = DVIFILE_LOADED;
 }
 
