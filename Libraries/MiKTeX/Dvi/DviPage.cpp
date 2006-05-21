@@ -974,11 +974,11 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
 {
   try
     {
-      StartDvips ();
+      auto_ptr<Process> pDvips (StartDvips());
       auto_ptr<Thread>
 	pDvipsTranscriptReader
 	(Thread::Start(DvipsTranscriptReader, this));
-      StartGhostscript (shrinkFactor);
+      auto_ptr<Process> pGhostscript (StartGhostscript(shrinkFactor));
       auto_ptr<Thread>
 	pGhostscriptTranscriptReader
 	(Thread::Start(GhostscriptTranscriptReader, this));
@@ -1131,7 +1131,7 @@ DviPageImpl::Read (/*[out]*/ void *	pBuf,
    DviPageImpl::StartDvips
    _________________________________________________________________________ */
 
-void
+Process *
 DviPageImpl::StartDvips ()
 {
   // locate dvips.exe
@@ -1176,19 +1176,20 @@ DviPageImpl::StartDvips ()
   PathName dir (pDviImpl->GetDviFileName());
   dir.RemoveFileSpec ();
 
-  FILE * pFileDvipsOut = 0;
-  FILE * pFileDvipsErr = 0;
+  ProcessStartInfo processStartInfo;
 
-  Process::Start (dvipsPath.Get(),
-		  commandLine.Get(),
-		  0,
-		  0,
-		  &pFileDvipsOut,
-		  &pFileDvipsErr,
-		  dir.Get());
+  processStartInfo.Arguments = commandLine.Get();
+  processStartInfo.FileName = dvipsPath.Get();
+  processStartInfo.RedirectStandardError = true;
+  processStartInfo.RedirectStandardOutput = true;
+  processStartInfo.WorkingDirectory = dir.Get();
 
-  dvipsOut.Attach (pFileDvipsOut);
-  dvipsErr.Attach (pFileDvipsErr);
+  auto_ptr<Process> pDvips (Process::Start(processStartInfo));
+
+  dvipsOut.Attach (pDvips->get_StandardOutput());
+  dvipsErr.Attach (pDvips->get_StandardError());
+
+  return (pDvips.release());
 }
 
 /* _________________________________________________________________________
@@ -1196,7 +1197,7 @@ DviPageImpl::StartDvips ()
    DviPageImpl::StartGhostscript
    _________________________________________________________________________ */
 
-void
+Process *
 DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
 {
   PathName gsPath;
@@ -1237,17 +1238,17 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   commandLine.AppendOption (T_("-sOutputFile="), T_("-"));
   commandLine.AppendArgument (T_("-"));
 
-  FILE * pFileGsOut = 0;
-  FILE * pFileGsErr = 0;
+  ProcessStartInfo processStartInfo;
 
-  Process::Start (gsPath.Get(),
-		  commandLine.Get(),
-		  dvipsOut.Get(),
-		  0,
-		  &pFileGsOut,
-		  &pFileGsErr,
-		  0);
+  processStartInfo.Arguments = commandLine.Get();
+  processStartInfo.FileName = gsPath.Get();
+  processStartInfo.RedirectStandardError = true;
+  processStartInfo.RedirectStandardOutput = true;
 
-  gsOut.Attach (pFileGsOut);
-  gsErr.Attach (pFileGsErr);
+  auto_ptr<Process> pGhostscript (Process::Start(processStartInfo));
+
+  gsOut.Attach (pGhostscript->get_StandardOutput());
+  gsErr.Attach (pGhostscript->get_StandardError());
+
+  return (pGhostscript.release());
 }

@@ -1308,7 +1308,7 @@ private:
   MakeDibChunks (/*[in]*/ int shrinkFactor);
 
 private:
-  void
+  Process *
   StartDvips ();
 
 private:
@@ -1337,7 +1337,7 @@ public:
   OnNewChunk (/*[in]*/ DibChunk * pChunk);
 
 private:
-  void
+  Process *
   StartGhostscript (/*[in]*/ int shrinkFactor);
 
 private:
