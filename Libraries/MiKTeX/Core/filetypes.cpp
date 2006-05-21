@@ -407,7 +407,8 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
 		 SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
 		 ),
-     ListBuilder());
+     ListBuilder(T_("TEXPICTS"),
+		 T_("TEXINPUTS")));
   
   // <todo>FileType::GF</todo>
 
