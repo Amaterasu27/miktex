@@ -62,6 +62,10 @@ main (/*[in]*/ int		argc,
       app.EnableInstaller (MiKTeX::Core::TriState::False);
 #endif
 
+#if defined(BEQUIET)
+      app.SetQuietFlag (true);
+#endif
+
       int exitCode = MAINFUNC(argc, argv);
       
       app.Finalize ();
