@@ -167,6 +167,7 @@ $(outdir)\dvips.res: \
 $(outdir)\wrapper.obj: $(wrapper_cpp)
 	$(cc) $(cppstandard_aeh) \
 		-DCPLUSPLUSMAIN \
+		-DBEQUIET \
 		$(ccopt_enable_function_level_linking) \
 		$(ccopt_select_fastcall) \
 		$(ccopt_output_file)$(outdir)\ \

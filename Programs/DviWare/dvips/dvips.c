@@ -210,6 +210,7 @@ char queryoptions;
 int miktex_no_glyphs = 0;
 int miktex_no_rules = 0;
 int miktex_no_landscape = 0;
+int miktex_pedantic = 0;
 #endif
 /*
  *   This routine calls the following externals:
@@ -349,7 +350,11 @@ error_with_perror P2C(char *, s, char *, fname)
      putc ('\n', stderr);
    }
    
+#if defined(MIKTEX)
+   if (miktex_pedantic || *s=='!') {
+#else
    if (*s=='!') {
+#endif
       if (bitfile != NULL) {
          cleanprinter() ;
       }
@@ -668,7 +673,7 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
 	  -- i)
        {
 	 PathName configFile (SessionWrapper(true)->GetRootDirectory(i - 1));
-	 configFile += "dvips";
+	 configFile += "dvips/config";
 	 configFile += CONFIGFILE;
 	 if (File::Exists(configFile))
 	   {
@@ -1027,6 +1032,11 @@ case 'M':
     if (strcmp(p, "iKTeX:nolandscape") == 0)
       {
 	miktex_no_landscape = 1;
+	break;
+      }
+    if (strcmp(p, "iKTeX:pedantic") == 0)
+      {
+	miktex_pedantic = 1;
 	break;
       }
   }
