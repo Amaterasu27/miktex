@@ -244,7 +244,12 @@ The MiKTeX configuration utility could not be found.")),
     }
 
   // run initexmf.exe
-  return (Process::Run(exe, lpszArguments));
+  tstring arguments = lpszArguments;
+  if (GetQuietFlag())
+    {
+      arguments += T_(" --quiet");
+    }
+  return (Process::Run(exe, arguments.c_str()));
 #else
   UNUSED_ALWAYS (lpszArguments);
 #  warning Unimplemented::Application::RunIniTeXMF
