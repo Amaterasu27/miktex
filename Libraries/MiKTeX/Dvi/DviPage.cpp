@@ -972,13 +972,15 @@ DviPageImpl::GetNextHyperref (/*[in,out]*/ int & idx)
 void
 DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
 {
+  auto_ptr<Process> pDvips;
+  auto_ptr<Process> pGhostscript;
   try
     {
-      auto_ptr<Process> pDvips (StartDvips());
+      pDvips.reset (StartDvips());
       auto_ptr<Thread>
 	pDvipsTranscriptReader
 	(Thread::Start(DvipsTranscriptReader, this));
-      auto_ptr<Process> pGhostscript (StartGhostscript(shrinkFactor));
+      pGhostscript.reset (StartGhostscript(shrinkFactor));
       auto_ptr<Thread>
 	pGhostscriptTranscriptReader
 	(Thread::Start(GhostscriptTranscriptReader, this));
@@ -1012,6 +1014,20 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
   tracePage->WriteLine (T_("libdvi"), dvipsTranscript.c_str());
   tracePage->WriteLine (T_("libdvi"), T_("Ghostscript transcript:"));
   tracePage->WriteLine (T_("libdvi"), gsTranscript.c_str());
+  MIKTEX_ASSERT (pDvips.get() != 0);
+  if (pDvips->get_ExitCode() != 0)
+    {
+      FATAL_DVI_ERROR (T_("DviPageImpl::MakeDibChunks"),
+		       T_("The page could not be rendered."),
+		       dvipsTranscript.c_str());
+    }
+  MIKTEX_ASSERT (pGhostscript.get() != 0);
+  if (pGhostscript->get_ExitCode() != 0)
+    {
+      FATAL_DVI_ERROR (T_("DviPageImpl::MakeDibChunks"),
+		       T_("The page could not be rendered."),
+		       dvipsTranscript.c_str());
+    }
 }
 
 /* _________________________________________________________________________
@@ -1171,6 +1187,7 @@ DviPageImpl::StartDvips ()
 				 + NUMTOSTR(height) + T_("bp")));
     }
   commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
+  commandLine.AppendOption (T_("-MiKTeX:pedantic"));
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
@@ -1242,6 +1259,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
 
   processStartInfo.Arguments = commandLine.Get();
   processStartInfo.FileName = gsPath.Get();
+  processStartInfo.StandardInput = dvipsOut.Get();
   processStartInfo.RedirectStandardError = true;
   processStartInfo.RedirectStandardOutput = true;
 
