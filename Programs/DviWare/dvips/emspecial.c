@@ -1428,7 +1428,13 @@ void emgraph P3C(char *, filename, float, emwidth, float, emheight)
 			bmpgraph(f, fname, emwidth, emheight);
 			break;
 		default:
+#if defined(MIKTEX)
+		  sprintf (fname,
+			   "em:graph: %s: unsupported graphics file type",
+			   filename);
+#else
 			sprintf(fname,"em:graph: %s: File not found", filename);
+#endif
 			error(fname);
 	}
 	if (f != (FILE *)NULL)
