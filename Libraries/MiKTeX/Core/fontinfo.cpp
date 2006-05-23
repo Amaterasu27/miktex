@@ -188,7 +188,7 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 
   tstring line;
   bool bFound = false;
-  while (! bFound && Utils::ReadUntilDelim(line, T_('n'), stream.Get()) != 0)
+  while (! bFound && Utils::ReadUntilDelim(line, T_('\n'), stream.Get()) != 0)
     {
       Tokenizer tok (line.c_str(), WHITESPACE);
       if (tok.GetCurrent() == 0
