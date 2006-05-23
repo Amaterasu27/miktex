@@ -368,7 +368,7 @@ MakeMf::Run (/*[in]*/ int			argc,
       Verbose (T_("Writing on %s...\n"), Q_(pathDest));
       if (! printOnly)
 	{
-	  stream = File::Open(pathDest, FileMode::Open, FileAccess::Write);
+	  stream = File::Open(pathDest, FileMode::Create, FileAccess::Write);
 	  autoClose.Attach (stream);
 	}
     }
