@@ -375,11 +375,23 @@ public:
 
   /* _______________________________________________________________________
      
+     MangleNameOfFile
+     _______________________________________________________________________ */
+
+public:
+
+  static
+  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  MangleNameOfFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+
+  /* _______________________________________________________________________
+     
      UnmangleNameOfFile
      _______________________________________________________________________ */
 
-private:
+public:
 
+  static
   MIKTEXMFAPI(MiKTeX::Core::PathName)
   UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
 

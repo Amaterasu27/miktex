@@ -545,7 +545,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_JOB_NAME:
-      jobName = lpszOptArg;
+      jobName = MangleNameOfFile(lpszOptArg).Get();
       break;
 
     case OPT_JOB_TIME:
@@ -964,7 +964,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 		  /*[in]*/ bool			isTeXProgram)
 {
   int fileNameArgIdx = -1;
-  tstring fileName;
+  PathName fileName;
   bool mangleFileName = isTeXProgram;
 
   if (mangleFileName)
@@ -1012,42 +1012,24 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 	}
       if (fileNameArgIdx >= 0)
 	{
-	  // handle characters that might confuse TeX
-	  for (size_t i = 0; c4pargv[fileNameArgIdx][i] != 0; ++i)
-	    {
-	      if (c4pargv[fileNameArgIdx][i] == T_('\\'))
-		{
-		  fileName += T_('/');
-		}
-	      else if (c4pargv[fileNameArgIdx][i] == T_(' '))
-		{
-		  fileName += T_('*');
-		}
-	      else if (c4pargv[fileNameArgIdx][i] == T_('~'))
-		{
-		  fileName += T_('?');
-		}
-	      else
-		{
-		  fileName += c4pargv[fileNameArgIdx][i];
-		}
-	    }
+	  fileName =
+	    WebAppInputLine::MangleNameOfFile(c4pargv[fileNameArgIdx]);
 	}
     }
 
   // first = 0;
   unsigned last = 0;
-  for (int i = 1; i < c4pargc; ++ i)
+  for (int idx = 1; idx < c4pargc; ++ idx)
     {
       pBuffer[last++] = T_(' ');
       const MIKTEXCHAR * lpszOptArg;
-      if (i == fileNameArgIdx)
+      if (idx == fileNameArgIdx)
 	{
-	  lpszOptArg = fileName.c_str();
+	  lpszOptArg = fileName.Get();
 	}
       else
 	{
-	  lpszOptArg = c4pargv[i];
+	  lpszOptArg = c4pargv[idx];
 	}
       size_t len = StrLen(lpszOptArg);
       for (size_t j = 0; j < len; ++ j)

@@ -240,6 +240,46 @@ OpenGzInputStream (/*[in]*/ const PathName & path)
 
 /* _________________________________________________________________________
 
+   WebAppInputLine::MangleNameOfFile
+   _________________________________________________________________________ */
+
+PathName
+WebAppInputLine::MangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
+{
+  PathName ret;
+  MIKTEXCHAR * lpszTo = ret.GetBuffer();
+  C4PASSERTSTRING (lpszFrom);
+  size_t len = StrLen(lpszFrom);
+  if (len >= ret.GetSize())
+    {
+      INVALID_ARGUMENT (T_("WebAppInputLine::MangleNameOfFile"), lpszFrom);
+    }
+  size_t idx;
+  for (idx = 0; idx < len; ++ idx)
+    {
+      if (lpszFrom[idx] == T_(' '))
+	{
+	  lpszTo[idx] = T_('*');
+	}
+      else if (lpszFrom[idx] == T_('~'))
+	{
+	  lpszTo[idx] = T_('?');
+	}
+      else if (lpszFrom[idx] == T_('\\'))
+	{
+	  lpszTo[idx] = T_('/');
+	}
+      else
+	{
+	  lpszTo[idx] = lpszFrom[idx];
+	}
+    }
+  lpszTo[idx] = 0;
+  return (ret);
+}
+
+/* _________________________________________________________________________
+
    WebAppInputLine::UnmangleNameOfFile
    _________________________________________________________________________ */
 
@@ -249,24 +289,28 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
   PathName ret;
   MIKTEXCHAR * lpszTo = ret.GetBuffer();
   C4PASSERTSTRING (lpszFrom);
-  size_t l = StrLen(lpszFrom);
-  size_t i;
-  for (i = 0; i < l; ++ i)
+  size_t len = StrLen(lpszFrom);
+  if (len >= ret.GetSize())
     {
-      if (lpszFrom[i] == T_('*'))
+      INVALID_ARGUMENT (T_("WebAppInputLine::MangleNameOfFile"), lpszFrom);
+    }
+  size_t idx;
+  for (idx = 0; idx < len; ++ idx)
+    {
+      if (lpszFrom[idx] == T_('*'))
 	{
-	  lpszTo[i] = T_(' ');
+	  lpszTo[idx] = T_(' ');
 	}
-      else if (lpszFrom[i] == T_('?'))
+      else if (lpszFrom[idx] == T_('?'))
 	{
-	  lpszTo[i] = T_('~');
+	  lpszTo[idx] = T_('~');
 	}
       else
 	{
-	  lpszTo[i] = lpszFrom[i];
+	  lpszTo[idx] = lpszFrom[idx];
 	}
     }
-  lpszTo[i] = 0;
+  lpszTo[idx] = 0;
   return (ret);
 }
 
