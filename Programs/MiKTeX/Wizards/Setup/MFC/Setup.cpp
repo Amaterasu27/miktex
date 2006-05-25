@@ -410,7 +410,7 @@ a common data directory."),
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
-		 T_("You must have administrator privileges to setup \
+		 T_("You must have administrator privileges to set up \
 a shared MiKTeX system."),
 		 0);
 	    }
@@ -778,7 +778,6 @@ void
 SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 {
   theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
-  theApp.commonUserSetup = false;
   theApp.dryRun = cmdinfo.optDryRun;
   theApp.mustReboot = false;
   theApp.prefabricated = false;
@@ -813,7 +812,8 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 
   // shared setup
   theApp.commonUserSetup =
-    (cmdinfo.optShared
+    (SessionWrapper(true)->RunningAsAdministrator()
+     || cmdinfo.optShared
      || ! cmdinfo.startupConfig.commonDataRoot.Empty()
      || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
 

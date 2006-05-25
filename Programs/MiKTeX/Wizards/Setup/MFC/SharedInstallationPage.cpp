@@ -32,6 +32,7 @@
    _________________________________________________________________________ */
 
 BEGIN_MESSAGE_MAP(SharedInstallationPage, CPropertyPage)
+  ON_BN_CLICKED(IDC_SHARED, &SharedInstallationPage::OnShared)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -39,12 +40,12 @@ END_MESSAGE_MAP();
    SharedInstallationPage::SharedInstallationPage
    _________________________________________________________________________ */
 
-SharedInstallationPage::SharedInstallationPage()
+SharedInstallationPage::SharedInstallationPage ()
   : CPropertyPage (IDD,
 		   0,
 		   IDS_HEADER_SHARED,
 		   IDS_SUBHEADER_SHARED),
-    commonUserSetup (IsWindowsNT() ? 0 : 1),
+    commonUserSetup (-1),
     pSheet (0)
 {
 }
@@ -58,6 +59,8 @@ BOOL
 SharedInstallationPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
+
+  commonUserSetup = (theApp.commonUserSetup ? 0 : 1);
 
   BOOL ret = CPropertyPage::OnInitDialog();
 
@@ -205,4 +208,35 @@ SharedInstallationPage::OnKillActive ()
       theApp.commonUserSetup = (commonUserSetup == 0);
     }
   return (ret);
+}
+
+/* _________________________________________________________________________
+
+   SharedInstallationPage::OnShared
+   _________________________________________________________________________ */
+
+void
+SharedInstallationPage::OnShared ()
+{
+  try
+    {
+      if (IsWindowsNT()
+	  && ! (SessionWrapper(true)->RunningAsAdministrator()
+		|| SessionWrapper(true)->RunningAsPowerUser()))
+	{
+	  AfxMessageBox (T_("You must have administrator privileges to set up \
+a shared MiKTeX system."),
+			 MB_OK | MB_ICONSTOP);
+	  commonUserSetup = 1;
+	  UpdateData (FALSE);
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
+    }
 }

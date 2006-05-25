@@ -62,6 +62,11 @@ protected:
   BOOL
   OnKillActive ();
 
+protected:
+  afx_msg
+  void
+  OnShared ();
+
 private:
   int commonUserSetup;
   

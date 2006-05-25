@@ -91,8 +91,8 @@
 #define IDC_PROGRESS1_TITLE             1024
 #define IDC_PROGRESS2_TITLE             1025
 #define IDC_VIEW_RELNOTES               1029
-#define IDC_JUST_FOR_ME                 1035
-#define IDC_SHARED                      1036
+#define IDC_SHARED                      1035
+#define IDC_JUST_FOR_ME                 1036
 #define IDC_LIST_TEXMFROOTS             1039
 #define IDC_ADD                         1040
 #define IDC_DELETE                      1041
