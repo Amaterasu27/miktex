@@ -773,7 +773,7 @@ SessionImpl::RegisterFileTypes ()
 		 ));
 
   tstring ttfFontDirs;
-  if (! SessionImpl::theSession->GetPsFontDirs(ttfFontDirs))
+  if (! SessionImpl::theSession->GetTTFDirs(ttfFontDirs))
     {
       ttfFontDirs = T_("");
     }
