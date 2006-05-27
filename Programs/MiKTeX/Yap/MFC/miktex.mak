@@ -61,14 +61,10 @@ xml_files = \
 	..\Documentation\Guide\commandline.xml \
 	..\Documentation\Guide\customizing.xml \
 	..\Documentation\Guide\dvisearch.xml \
-	..\Documentation\Guide\graphics.xml \
 	..\Documentation\Guide\keyboard.xml \
 	..\Documentation\Guide\menus.xml \
 	..\Documentation\Guide\printing.xml \
-	..\Documentation\Guide\specials.xml \
 	..\Documentation\Guide\tools.xml \
-	..\Documentation\Guide\tracing.xml \
-	..\Documentation\Guide\troubleshooting.xml \
 	..\Documentation\Guide\yap.xml \
 
 yap.chm: \

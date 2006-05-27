@@ -290,11 +290,63 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 <section>
 
+<title><guisubmenu>Render Method</guisubmenu></title>
+
+<section>
+
+<?dbhh topicname="HID_PAGEMODE_DVIPS" topicid="0"?>
+
+<title><guimenuitem>Dvips</guimenuitem></title>
+
+<para>Selects the Dvips render method.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_PAGEMODE_PK" topicid="0"?>
+
+<title><guimenuitem>Pk</guimenuitem></title>
+
+<para>Selects the Pk render method.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title><guisubmenu>Text</guisubmenu></title>
+
+<section>
+
+<?dbhh topicname="HID_DARKER_TEXT" topicid="0"?>
+
+<title>Darker</title>
+
+<para>Makes the text more like the foreground.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_LIGHTER_TEXT" topicid="0"?>
+
+<title>Darker</title>
+
+<para>Makes the text more like the background.</para>
+
+</section>
+
+</section>
+
+<section>
+
 <?dbhh topicname="HID_VIEW_TRACE" topicid="0"?>
 
 <title>Trace</title>
 
-<para>Turns tracing (see <xref linkend="tracing"/>) on or off.</para>
+<para>Turns tracing on or off.</para>
 
 </section>
 
@@ -330,9 +382,9 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 <?dbhh topicname="HID_TOOLS_ARROW" topicid="0"?>
 
-<title><guimenuitem>Standard Pointer</guimenuitem></title>
+<title><guimenuitem>Ruler</guimenuitem></title>
 
-<para>Seletcs the standard mouse pointer.</para>
+<para>Selects ruler.</para>
 
 </section>
 
@@ -342,7 +394,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 <title><guimenuitem>Hand Tool</guimenuitem></title>
 
-<para>Seletcs the hand tool.</para>
+<para>Selects the hand tool.</para>
 
 </section>
 
@@ -405,6 +457,16 @@ sheet (see <xref linkend="customizing"/>).</para>
 <title><guilabel>Keyboard Map</guilabel></title>
 
 <para>Displays Yap keyboard shortcuts.</para>
+
+</section>
+
+<section>
+
+<?dbhh topicname="HID_REGISTER_MIKTEX" topicid="0"?>
+
+<title><guilabel>Register MiKTEX</guilabel></title>
+
+<para>Opens the &MiKTeX; registration page.</para>
 
 </section>
 

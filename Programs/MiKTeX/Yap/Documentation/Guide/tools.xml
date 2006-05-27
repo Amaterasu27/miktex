@@ -41,6 +41,22 @@ selected source special.</para>
 
 <section>
 
+<title>Ruler</title>
+
+<para>The ruler tool allows you to measure distances on a page.
+You select the ruler tool with the command
+<menuchoice>
+<guimenu>Tools</guimenu>
+<guimenuitem>Ruler</guimenuitem>
+</menuchoice>
+or by clicking the corresponding button on the toolbar.
+</para>
+
+
+</section>
+
+<section>
+
 <title>Hand Tool</title>
 
 <indexterm>
@@ -49,19 +65,27 @@ selected source special.</para>
 </indexterm>
 
 <para>The hand tool allows you to scroll the page by moving the cursor
-while the left mouse button is pressed. You select the Hand Tool with
+while the left mouse button is pressed. You select the hand Tool with
 the command
 <menuchoice>
 <guimenu>Tools</guimenu>
 <guimenuitem>Hand Tool</guimenuitem>
 </menuchoice>
-or byclicking the corresponding button in the toolbar.</para>
+or by clicking the corresponding button in the toolbar.</para>
+
+<para>Pressing the left mouse button activates the horizontal
+ruler. Pressing the left mouse button in combination with the
+<keycap>Shift</keycap> key activates the vertical
+ruler.</para>
+
+<para>You can change the measurement unit (see <xref
+linkend="displaysettings"/>).</para>
 
 </section>
 
 <section>
 
-<title>Magnifying Glasses</title>
+<title>Magnifying Glass</title>
 
 <indexterm>
 <primary>magnifying glass</primary>
@@ -89,10 +113,10 @@ magnifying glass.</para></listitem>
 magnifying glass.</para></listitem>
 </orderedlist>
 
-<para>The three magnifying
-glasses are fully customizable (see <xref linkend="magglass"/>).</para>
+<para>You can customize the appearance of the magnifying
+glass (see <xref linkend="magglass"/>).</para>
 
-<para>Furthermore, you can specify the power of the magnifying glass
+<para>You can specify the power of the magnifying glass
 by entering a numerical prefix argument.  The argument is interpreted
 as a shrink factor for the text inside the magnifying glass.  A shrink
 factor of <literal>1</literal> (the default) results in a maximum

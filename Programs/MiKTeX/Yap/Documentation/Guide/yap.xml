@@ -2,10 +2,10 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 
-<!ENTITY rev "2.5.2273">
-<!ENTITY yaprev "2.5.2273">
-<!ENTITY date "March 23, 2006">
-<!ENTITY month "March 2006">
+<!ENTITY rev "2.5.2338">
+<!ENTITY yaprev "2.5.2330">
+<!ENTITY date "May 27, 2006">
+<!ENTITY month "May 2006">
 
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY Yap "<application>Yap</application>">
@@ -19,16 +19,12 @@
 <!ENTITY commandline SYSTEM "commandline.xml">
 <!ENTITY customizing SYSTEM "customizing.xml">
 <!ENTITY dvisearch SYSTEM "dvisearch.xml">
-<!ENTITY graphics SYSTEM "graphics.xml">
 <!ENTITY keyboard SYSTEM "keyboard.xml">
 <!ENTITY menus SYSTEM "menus.xml">
 <!ENTITY printing SYSTEM "printing.xml">
 <!ENTITY prompt "C:\> ">
-<!ENTITY specials SYSTEM "specials.xml">
 <!ENTITY tools SYSTEM "tools.xml">
 <!ENTITY tracestreams SYSTEM "tracestreams.xml">
-<!ENTITY tracing SYSTEM "tracing.xml">
-<!ENTITY troubleshooting SYSTEM "troubleshooting.xml">
 ]>
 
 <book>
@@ -41,8 +37,8 @@
 <surname>Schenk</surname>
 </author>
 <copyright>
-<year>2004</year>
-<holder>MiKTeX.org</holder>
+<year>2006</year>
+<holder>Christian Schenk</holder>
 </copyright>
 <date>&date;</date>
 <legalnotice>
@@ -131,7 +127,7 @@ item on the <guimenu>File</guimenu> menu.</para></listitem>
 
 <?dbhh topicname="HIDR_DVITYPE" topicid="0"?>
 
-<title>Viewing documents</title>
+<title>Viewing &DVI; Files</title>
 
 <section>
 
@@ -142,12 +138,10 @@ item on the <guimenu>File</guimenu> menu.</para></listitem>
 <secondary>the view</secondary>
 </indexterm>
 
-<index>
 <indexterm>
 <primary>reducing</primary>
 <secondary>the view</secondary>
 </indexterm>
-</index>
 
 <indexterm>
 <primary>zooming</primary>
@@ -190,9 +184,6 @@ over the area you want to inspect.</para></step>
 to close the magnifying glass.</para></step>
 </procedure>
 
-<para>For performance reasons, &Yap; does not render &PostScript;
-specials in the magnifying glass.</para>
-
 <para>You can change the properties of the three magnifying glasses.
 See <xref linkend="magglass"/>.</para>
 
@@ -206,8 +197,8 @@ See <xref linkend="magglass"/>.</para>
 <primary>page layout</primary>
 <secondary>setting the</secondary>
 </indexterm>
-<para>You can use four page layouts when viewing &DVI;
-documents:</para>
+<para>You can choose among four page layouts when viewing &DVI;
+files:</para>
 
 <itemizedlist>
 <listitem>
@@ -269,27 +260,9 @@ is scrolled into view when you close the dialog box.</para>
 
 </section>
 
-</chapter>
+<section id="docprop">
 
-&keyboard;
-
-&tools;
-
-&printing;
-
-&dvisearch;
-
-&customizing;
-
-&menus;
-
-&graphics;
-
-&commandline;
-
-<chapter id="docprop">
-
-<title>Document Properties</title>
+<title>Viewing Document Properties</title>
 
 <indexterm>
 <primary>&DVI; document</primary>
@@ -307,55 +280,31 @@ is scrolled into view when you close the dialog box.</para>
 <secondary>listing</secondary>
 </indexterm>
 
-<para>This page lists all loaded. If a font could not be loaded, then
-it appears as <computeroutput>&gt;&gt;&gt; Not loadable - double-click
-to see details</computeroutput>. You will get a detailed problem
-description, when you double-click the entry.</para>
+<para>This page shows information about used fonts. If a font could
+not be loaded, then it appears as <computeroutput>&gt;&gt;&gt; Not
+loadable - double-click to see details</computeroutput>. You will get
+a detailed problem description, when you double-click the
+entry.</para>
+
+</section>
 
 </section>
 
 </chapter>
 
-&tracing;
+&tools;
 
-&troubleshooting;
+&printing;
 
-&specials;
+&dvisearch;
 
-<chapter>
+&customizing;
 
-<title>&Yap; Copyright</title>
+&keyboard;
 
-<indexterm>
-<primary>Copyright</primary>
-</indexterm>
+&menus;
 
-<para>The following copyright notice applies to the &Yap; program.
-The copyright and copying permissions for this manual appear near the
-beginning of this document.</para>
-
-<para>Copyright (C) 1996-2003 MiKTeX.org</para>
-
-<para>&Yap; is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2, or (at your option) any
-later version.</para>
-
-<para>&Yap; is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the
-<indexterm>
-<primary>warranty</primary>
-<secondary>&Yap; comes without any</secondary>
-</indexterm>
-implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the GNU General Public License for more details.</para>
-
-<para>You should have received a copy of the GNU General Public
-License along with &Yap;; if not, write to the Free Software
-Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-USA.</para>
-
-</chapter>
+&commandline;
 
 </book>
 

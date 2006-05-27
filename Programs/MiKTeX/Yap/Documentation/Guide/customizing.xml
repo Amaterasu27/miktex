@@ -39,53 +39,17 @@ vertical scroll position at a change of page.</para></listitem>
 </indexterm>
 horizontal scroll position at a change of page.</para></listitem>
 </varlistentry>
-</variablelist>
-
-</section>
-
-<section id="magglass">
-
-<?dbhh topicname="HIDD_MAGNIFYING_GLASS" topicid="0"?>
-
-<title>Magnifying Glass Propery Page</title>
-
-<para>This property page allows
-<indexterm>
-<primary>magnifying glass</primary>
-<secondary>customizing the</secondary>
-</indexterm>
-you to customize the three magnifying glasses:</para>
-
-<variablelist>
 <varlistentry>
-<term><guilabel>Hide mouse cursor</guilabel></term>
-<listitem><para>Check this button if the mouse cursor should not be
-visible while a magnifying glass is open.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Width</guilabel></term>
-<listitem><para>Enter the
-width (in screen pixels) of the rectangular
-magnifying glass window.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Height</guilabel></term>
-<listitem><para>Enter the height (in screen pixels) of the rectangular
-magnifying glass window.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Shrink Factor</guilabel></term>
-<listitem><para>Specify the shrink factor to be used in the magnifying
-glass window.  The shrink factor specifies the power
-of the magnifying glass.  A shrink factor of
-<literal>1</literal> results in a maximum
-magnification.</para></listitem>
+<term><guilabel>Show source specials</guilabel></term>
+<listitem><para>Check this button to cause
+&Yap; to show all source specials.</para>
+</listitem>
 </varlistentry>
 </variablelist>
 
 </section>
 
-<section>
+<section id="displaysettings">
 
 <?dbhh topicname="HIDD_DISPLAY" topicid="0"?>
 
@@ -96,7 +60,28 @@ change various display settings:</para>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Mode</guilabel></term>
+<term><guilabel>Unit</guilabel></term>
+<listitem>
+<para>The unit of measurement for the ruler.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Default render method</guilabel></term>
+<listitem>
+<para>Select the standard page render method.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Default shrink Factor</guilabel></term>
+<listitem><para>Specify the default
+<indexterm>
+<primary>shrink factor</primary>
+<secondary>setting the</secondary>
+</indexterm>
+shrink factor.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>METAFONT Mode</guilabel></term>
 <listitem><para>Specify the <application>METAFONT</application> mode
 <indexterm>
 <primary>METAFONT mode</primary>
@@ -109,48 +94,6 @@ needed, when new <acronym>PK</acronym> fonts are to be generated.  In
 principle, it doesn't matter what mode name you select here.  But it's
 recommended, that you use the same mode name as for the printer, since
 this reduces the invocations of the font-generator.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Shrink Factor</guilabel></term>
-<listitem><para>Specify the default
-<indexterm>
-<primary>shrink factor</primary>
-<secondary>setting the</secondary>
-</indexterm>
-shrink factor.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Paper Size</guilabel></term>
-<listitem><para>Specify the
-<indexterm>
-<primary>paper</primary>
-<secondary>size</secondary>
-</indexterm>
-paper type.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Orientation</guilabel></term>
-<listitem><para>Specify the orientation
-<indexterm>
-<primary>paper</primary>
-<secondary>orientation</secondary>
-</indexterm>
-of the paper.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Enable colored text</guilabel></term>
-<listitem><para>Check this button if you want &Yap; to interpret color
-<indexterm>
-<primary>color</primary>
-<secondary>disabling</secondary>
-</indexterm>
-<indexterm>
-<primary>color</primary>
-<secondary>enabling</secondary>
-</indexterm>
-specials (<filename>color.sty</filename>). You may want to uncheck
-this button if your display adapter supports only
-<literal>256</literal> different colors.</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -171,8 +114,22 @@ this button if your display adapter supports only
 change various printer settings:</para>
 
 <variablelist>
+
 <varlistentry>
-<term><guilabel>Mode</guilabel></term>
+<term><guilabel>Horizontal shift</guilabel></term>
+<term><guilabel>Vertical shift</guilabel></term>
+<listitem><para>Specify the the print offset.</para>
+<para>For some old printer models it may be necessary to adjust the
+<indexterm>
+<primary>printer</primary>
+<secondary>offsets</secondary>
+</indexterm>
+the print offset (i.e. the position, where printing begins).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>METAFONT mode</guilabel></term>
 <listitem><para>Specify the <application>METAFONT</application> mode
 <indexterm>
 <primary>METAFONT mode</primary>
@@ -186,18 +143,52 @@ must select a mode, that matches your printer resolution.</para>
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term><guilabel>x-shift</guilabel></term>
-<term><guilabel>y-shift</guilabel></term>
-<listitem><para>Specify the the print offset.</para>
-<para>For some old printer models it may be necessary to adjust the
+</variablelist>
+
+</section>
+
+<section id="magglass">
+
+<?dbhh topicname="HIDD_MAGNIFYING_GLASS" topicid="0"?>
+
+<title>Magnifying Glass Propery Page</title>
+
+<para>This property page allows
 <indexterm>
-<primary>printer</primary>
-<secondary>offsets</secondary>
+<primary>magnifying glass</primary>
+<secondary>customizing the</secondary>
 </indexterm>
-the print offset (i.e. the position, where printing begins).
-<guilabel>x-shift</guilabel>/<guilabel>y-shift</guilabel> gives the
-amount of pixels, an output page has to be shifted right/down.</para>
+you to customize the three magnifying glasses:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Width</guilabel></term>
+<listitem><para>Enter the
+width (in screen pixels) of the rectangular
+magnifying glass window.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Height</guilabel></term>
+<listitem><para>Enter the height (in screen pixels) of the rectangular
+magnifying glass window.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Shrink factor</guilabel></term>
+<listitem><para>Specify the shrink factor to be used in the magnifying
+glass window.  The shrink factor specifies the power
+of the magnifying glass.  A shrink factor of
+<literal>1</literal> results in a maximum
+magnification.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Hide mouse cursor</guilabel></term>
+<listitem><para>Check this button if the mouse cursor should not be
+visible while a magnifying glass is open.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Opacity</guilabel></term>
+<listitem>
+<para>The magnifying glass is partially transparent. Select the desired opacity level.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -208,84 +199,21 @@ amount of pixels, an output page has to be shifted right/down.</para>
 
 <?dbhh topicname="HIDD_INVERSE_SEARCH" topicid="0"?>
 
-<title>Inverse Search Property Page</title>
+<title>Inverse &DVI; Search Property Page</title>
 
 <indexterm>
 <primary>inverse &DVI; search</primary>
 <secondary>setting options for</secondary>
 </indexterm>
-<variablelist>
-<varlistentry>
-<term><guilabel>Program</guilabel></term>
-<listitem>
-<para>Specify the program &Yap; shall start to do the inverse
-<indexterm>
-<primary>&TeX; editor</primary>
-<secondary>specifying the</secondary>
-</indexterm>
-&DVI; search.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Command line</guilabel></term>
-<listitem><para>Specify the command line &Yap; shall execute to do the
-inverse &DVI; search.</para>
-<para>The command line may contain the following placeholders:</para>
-<variablelist>
-<varlistentry>
-<term><option>%f</option></term>
-<listitem><para>Expands to the name of the source file.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><option>%l</option></term>
-<listitem><para>Expands to the line
-number in the source file.</para></listitem>
-</varlistentry>
-</variablelist>
-</listitem>
-</varlistentry>
-</variablelist>
 
-</section>
+<para>You can choose a program for double-click events (inverse &DVI; search).</para>
 
-<section>
+<para>Click <guilabel>New...</guilabel> to add a new program to the
+list.</para>
 
-<?dbhh topicname="HIDD_GHOSTSCRIPT" topicid="0"?>
-
-<title>&PostScript; Property Page</title>
-
-<indexterm>
-<primary>&PostScript; settings</primary>
-</indexterm>
-
-<para>This property page allows you to configure &PostScript;
-support:</para>
-
-<variablelist>
-<varlistentry>
-<term><guilabel>Ignore &PostScript; specials</guilabel></term>
-<listitem><para>Check this button, if you want &Yap; to ignore all
-<indexterm>
-<primary>&PostScript; specials</primary>
-<secondary>ignoring</secondary>
-</indexterm>
-&PostScript; specials.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Quality</guilabel></term>
-<listitem><para>Here you can set the quality of the &PostScript;
-rendering.  Choose one of</para>
-<itemizedlist>
-<listitem><para>Monochome</para></listitem>
-<listitem><para>256 colors</para></listitem>
-<listitem><para>16 million colors
-<indexterm>
-<primary>anti-aliasing</primary>
-</indexterm>
-and anti-aliasing</para></listitem>
-</itemizedlist>
-</listitem>
-</varlistentry>
-</variablelist>
+<para>Click <guilabel>Change...</guilabel> to change the start options
+of the selected program. Please note that you cannot change the
+settings of automatically detected programs.</para>
 
 </section>
 
@@ -335,17 +263,8 @@ unconditionally.</para></listitem>
 
 <title>Advanced Property Page</title>
 
-<para>This property page allows you to set advanced options:</para>
-
 <variablelist>
-<varlistentry>
-<term><guilabel>Show source specials</guilabel></term>
-<listitem><para>Check this button to cause
-&Yap; to show all source specials.</para>
-</listitem>
-</varlistentry>
-<varlistentry><term><guilabel>Yap should check to see whether it is the
-default viewer</guilabel></term>
+<varlistentry><term><guilabel>DVI file (*.dvi)</guilabel></term>
 <listitem><para>Check this button, if &Yap;
 should check to see whether it is associated with the
 file extension <filename>.dvi</filename>.</para></listitem>
