@@ -125,17 +125,14 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
     }
 
   int option;
-  int argc;
-  const MIKTEXCHAR ** argv;
 
-  if (poptParseArgvString(lpszCommandLine, &argc, &argv) < 0)
-    {
-      UNEXPECTED_CONDITION (T_("ParseYapCommandLine"));
-    }
+  Argv argv;
 
-  AutoMemoryPointer autoFree (argv);
+  argv.Build (T_("yap"), lpszCommandLine);
 
-  Cpopt popt (argc, argv, aoption, POPT_CONTEXT_KEEP_FIRST);
+  Cpopt popt (argv.GetArgc(),
+	      const_cast<const MIKTEXCHAR **>(argv.GetArgv()),
+	      aoption);
 
   popt.SetOtherOptionHelp (T_("[OPTION...] [DVIFILE]"));
 

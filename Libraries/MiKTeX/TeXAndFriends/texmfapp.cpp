@@ -685,8 +685,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 
 MIKTEXMFAPI(bool)
 TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
-			  /*[out*/ int &			argc,
-			  /*[out]*/ const MIKTEXCHAR ** &	argv)
+			  /*[in,out]*/ MiKTeX::Core::Argv &	argv)
 {
   FileStream stream (File::Open(lpszPath, FileMode::Open, FileAccess::Read));
 
@@ -704,7 +703,9 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
       return (false);
     }
 
-  return (poptParseArgvString(&firstLine[2], &argc, &argv) >= 0);
+  argv.Build (T_(""), &firstLine[2]);
+
+  return (argv.GetArgc() > 1);
 }
 
 /* _________________________________________________________________________
@@ -724,24 +725,21 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
       return;
     }
 
-  int argc;
-  const MIKTEXCHAR ** argv;
+  Argv argv;
 
-  if (! ParseFirstLine(path.Get(), argc, argv))
+  if (! ParseFirstLine(path.Get(), argv))
     {
       return;
     }
 
-  AutoMemoryPointer autoFree (argv);
-
   int optidx;
 
-  if (argc > 0 && argv[0][0] != T_('-'))
+  if (argv.GetArgc() > 1 && argv[1][0] != T_('-'))
     {
-      optidx = 1;
-      if (dumpName.length() == 0)
+      optidx = 2;
+      if (dumpName.empty())
 	{
-	  tstring dumpName = argv[0];
+	  tstring dumpName = argv[1];
 	  PathName fileName (dumpName);
 	  if (fileName.GetExtension() == 0)
 	    {
@@ -756,14 +754,16 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
     }
   else
     {
-      optidx = 0;
+      optidx = 1;
     }
 
   int opt;
 
-  if (optidx < argc)
+  if (optidx < argv.GetArgc())
     {
-      for (Cpopt popt (argc - optidx, argv + optidx, &(GetOptions())[0]);
+      for (Cpopt popt (argv.GetArgc() - optidx,
+		       const_cast<const MIKTEXCHAR**>(argv.GetArgv()) + optidx,
+		       &(GetOptions())[0]);
 	   ((opt = popt.GetNextOpt()) >= 0);
 	   )
 	{

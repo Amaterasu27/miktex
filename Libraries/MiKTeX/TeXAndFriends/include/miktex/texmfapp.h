@@ -824,8 +824,7 @@ public:
   static
   MIKTEXMFAPI(bool)
   ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
-		  /*[out*/ int &			argc,
-		  /*[out]*/ const MIKTEXCHAR ** &	argv);
+		  /*[in,out]*/ MiKTeX::Core::Argv &	argv);
 
   /* _______________________________________________________________________
      
