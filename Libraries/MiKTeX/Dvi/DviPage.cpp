@@ -1188,6 +1188,7 @@ DviPageImpl::StartDvips ()
     }
   commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
   commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+  commandLine.AppendOption (T_("-MiKTeX:allowallpaths"));
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
