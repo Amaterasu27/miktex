@@ -2355,6 +2355,94 @@ Utils::RegisterMiKTeXUser ()
 
 /* _________________________________________________________________________
 
+   Argv::Build
+
+   Mimic the behaviour of CommandLineToArgvW().
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+{
+  argv.clear ();
+
+  argv.push_back (StrDup(lpszFileName));
+
+  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
+    {
+      // skip white space
+      for (; *lpsz == T_(' ') || *lpsz == T_('\t'); ++ lpsz)
+	{
+	}
+
+      if (*lpsz == 0)
+	{
+	  break;
+	}
+
+
+      // get the next argument
+      tstring arg;
+      bool inQuotation = false;
+      for (bool complete = false; ! complete; ++ lpsz)
+	{
+	  // count backslashes
+	  size_t nBackslashes = 0;
+	  for (; *lpsz == T_('\\'); ++ lpsz)
+	    {
+	      ++ nBackslashes;
+	    }
+
+	  bool quoteOrUnquote = false;
+
+	  // quotation mark madness
+	  if (lpsz[0] == T_('"'))
+	    {
+	      if (nBackslashes % 2 == 0)
+		{
+		  if (lpsz[1] == T_('"') && inQuotation)
+		    {
+		      // two quotation marks in quotation => one
+		      // quotation mark
+		      ++ lpsz;
+		    }
+		  else
+		    {
+		      // start/end of quotation
+		      inQuotation = ! inQuotation;
+		      quoteOrUnquote = true;
+		    }
+		}
+	      nBackslashes /= 2;
+	    }
+
+	  // write backslashes
+	  for (; nBackslashes > 0; -- nBackslashes)
+	    {
+	      arg += T_('\\');
+	    }
+
+	  // check to see if we have the complete argument
+	  if (*lpsz == 0 ||
+	      (*lpsz == T_(' ') || *lpsz == T_('\t')
+	       && ! inQuotation))
+	    {
+	      argv.push_back (StrDup(arg.c_str()));
+	      complete = true;
+	    }
+	  else if (! quoteOrUnquote)
+	    {
+	      arg += *lpsz;
+	    }
+	}
+    }
+
+  argv.push_back (0);
+}
+
+/* _________________________________________________________________________
+
    DllMain
 
    DLL entry/exit routine.

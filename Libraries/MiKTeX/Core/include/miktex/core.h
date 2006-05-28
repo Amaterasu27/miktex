@@ -4445,6 +4445,61 @@ struct ProcessStartInfo
 
 /* _________________________________________________________________________
 
+   Argv
+   _________________________________________________________________________ */
+
+class Argv
+{
+public:
+  MIKTEXEXPORT
+  MIKTEXCALL
+  Argv ();
+
+public:
+  MIKTEXEXPORT
+  virtual
+  MIKTEXCALL
+  ~Argv ();
+
+public:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	 /*[in]*/ const MIKTEXCHAR *	lpszArguments);
+
+public:
+  const MIKTEXCHAR * const *
+  GetArgv ()
+    const
+  {
+    return (&argv[0]);
+  }
+
+public:
+  int
+  GetArgc ()
+    const
+  {
+    assert (argv.size() > 0);
+    return (static_cast<int>(argv.size() - 1));
+  }
+
+public:
+  const MIKTEXCHAR *
+  operator[] (/*[in]*/ size_t idx)
+    const
+  {
+    assert (idx < argv.size());
+    return (argv[idx]);
+  }
+
+private:
+  std::vector<MIKTEXCHAR *> argv;
+};
+
+/* _________________________________________________________________________
+
    Process
    _________________________________________________________________________ */
 

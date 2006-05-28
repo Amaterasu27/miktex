@@ -194,129 +194,82 @@ private:
 
 /* _________________________________________________________________________
 
-   Argv
+   Argv::Build
+
+   "borrowed" from the popt library
    _________________________________________________________________________ */
 
-class Argv
+void
+MIKTEXCALL
+Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
 {
-public:
-  Argv ()
-  {
-    argv.push_back (0);
-  }
-
-public:
-  ~Argv ()
-  {
-    for (vector<MIKTEXCHAR*>::const_iterator it = argv.begin();
-	 it != argv.end() && *it != 0;
-	 ++ it)
-      {
-	free (*it);
-      }
-  }
-
-public:
-  // "borrowed" from the popt library
-  void
-  Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	 /*[in]*/ const MIKTEXCHAR *	lpszArguments)
-  {
-    argv.clear ();
-    argv.push_back (StrDup(lpszFileName));
-    tstring arg;
-    MIKTEXCHAR quote = 0;
-    for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
-      {
-	if (*lpsz == quote)
-	  {
-	    quote = 0;
-	  }
-	else if (quote != 0)
-	  {
-	    if (*lpsz == T_('\\'))
-	      {
-		++ lpsz;
-		if (*lpsz == 0)
+  argv.clear ();
+  argv.push_back (StrDup(lpszFileName));
+  tstring arg;
+  MIKTEXCHAR quote = 0;
+  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
+    {
+      if (*lpsz == quote)
+	{
+	  quote = 0;
+	}
+      else if (quote != 0)
+	{
+	  if (*lpsz == T_('\\'))
+	    {
+	      ++ lpsz;
+	      if (*lpsz == 0)
+		{
+		  FATAL_MIKTEX_ERROR (T_("Argv::Build"),
+				      T_("Invalid command-line."),
+				      lpszArguments);
+		}
+	      if (*lpsz != quote)
+		{
+		  arg += T_('\\');
+		}
+	    }
+	  arg += *lpsz;
+	}
+      else if (IsSpace(*lpsz))
+	{
+	  if (arg.length() > 0)
+	    {
+	      argv.push_back (StrDup(arg.c_str()));
+	      arg = T_("");
+	    }
+	}
+      else
+	{
+	  switch (*lpsz)
+	    {
+	    case T_('"'):
+	    case T_('\''):
+	      quote = *lpsz;
+	      break;
+	    case T_('\\'):
+	      ++ lpsz;
+	      if (*lpsz == 0)
 		  {
 		    FATAL_MIKTEX_ERROR (T_("Argv::Build"),
 					T_("Invalid command-line."),
 					lpszArguments);
 		  }
-		if (*lpsz != quote)
-		  {
-		    arg += T_('\\');
-		  }
-	      }
-	    arg += *lpsz;
-	  }
-	else if (IsSpace(*lpsz))
-	  {
-	    if (arg.length() > 0)
-	      {
-		argv.push_back (StrDup(arg.c_str()));
-		arg = T_("");
-	      }
-	  }
-	else
-	  {
-	    switch (*lpsz)
-	      {
-	      case T_('"'):
-	      case T_('\''):
-		quote = *lpsz;
-		break;
-	      case T_('\\'):
-		++ lpsz;
-		if (*lpsz == 0)
-		  {
-		    FATAL_MIKTEX_ERROR (T_("Argv::Build"),
-					T_("Invalid command-Line."),
-					lpszArguments);
-		  }
-		arg += *lpsz;
-		break;
-	      default:
-		arg += *lpsz;
-		break;
-	      }
-	  }
-      }
-    if (arg.length() > 0)
-      {
-	argv.push_back (StrDup(arg.c_str()));
-      }
-    argv.push_back (0);
-  }
-
-public:
-  void
-  Trace ()
-  {
-    if (SessionImpl::theSession->trace_process->IsEnabled())
-      {
-	SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-		 T_("process arguments:"));
-	for (vector<MIKTEXCHAR *>::const_iterator it = argv.begin();
-	     it != argv.end() && *it != 0;
-	     ++ it)
-	  {
-	    SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"), T_("  %s"), *it);
-	  }
-      }
-  }
-
-public:
-  char * const *
-  Get ()
-    const
-  {
-    return (&argv[0]);
-  }
-
-private:
-  vector<MIKTEXCHAR *> argv;
-};
+	      arg += *lpsz;
+	      break;
+	    default:
+	      arg += *lpsz;
+	      break;
+	    }
+	}
+    }
+  if (arg.length() > 0)
+    {
+      argv.push_back (StrDup(arg.c_str()));
+    }
+  argv.push_back (0);
+}
 
 /* _________________________________________________________________________
 
@@ -350,7 +303,6 @@ unxProcess::Create ()
 
   Argv argv;
   argv.Build (startinfo.FileName.c_str(), startinfo.Arguments.c_str());
-  argv.Trace ();
 
   Pipe pipeStdout;
   Pipe pipeStderr;
