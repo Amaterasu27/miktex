@@ -81,6 +81,10 @@ int to_close ;
 #ifdef KPATHSEA
 char *realnameoffile ;
 
+#if defined(MIKTEX)
+extern int miktex_allow_all_paths;
+#endif
+
 FILE *
 search P3C(kpse_file_format_type, format, char *, file, char *, mode)
 {
@@ -90,7 +94,11 @@ search P3C(kpse_file_format_type, format, char *, file, char *, mode)
   /* This change suggested by maj@cl.cam.ac.uk to disallow reading of
      arbitrary files.  Further modified by Y. Oiwa. */
 #ifndef SECURE
+#  if defined(MIKTEX)
+  if (secure && ! miktex_allow_all_paths) {
+#  else
   if (secure) {
+#  endif
 #endif
     /* an absolute path is denied */
     if (kpse_absolute_p (file, false)) return NULL;

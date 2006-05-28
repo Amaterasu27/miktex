@@ -211,6 +211,7 @@ int miktex_no_glyphs = 0;
 int miktex_no_rules = 0;
 int miktex_no_landscape = 0;
 int miktex_pedantic = 0;
+int miktex_allow_all_paths = 0;
 #endif
 /*
  *   This routine calls the following externals:
@@ -1037,6 +1038,11 @@ case 'M':
     if (strcmp(p, "iKTeX:pedantic") == 0)
       {
 	miktex_pedantic = 1;
+	break;
+      }
+    if (strcmp(p, "iKTeX:allowallpaths") == 0)
+      {
+	miktex_allow_all_paths = 1;
 	break;
       }
   }
