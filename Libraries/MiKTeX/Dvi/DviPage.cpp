@@ -1186,6 +1186,7 @@ DviPageImpl::StartDvips ()
 				 + T_(',')
 				 + NUMTOSTR(height) + T_("bp")));
     }
+  commandLine.AppendOption (T_("-Ic"));
   commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
   commandLine.AppendOption (T_("-MiKTeX:pedantic"));
   commandLine.AppendOption (T_("-MiKTeX:allowallpaths"));
