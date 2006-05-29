@@ -456,23 +456,21 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
 void
 MakeMpx::InvokeTeX (/*[in]*/ const MIKTEXCHAR * lpszTeXFileName)
 {
-  if (texProgram.length() == 0
+  if (texProgram.empty()
       && ! Utils::GetEnvironmentString(T_("TEX"), texProgram))
     {
-      int argc;
-      const MIKTEXCHAR ** argv;
-      if (TeXMFApp::ParseFirstLine(lpszTeXFileName, argc, argv))
+      Argv argv;
+      if (TeXMFApp::ParseFirstLine(lpszTeXFileName, argv))
 	{
-	  if (argc > 0 && argv[0][0] != T_('-'))
+	  if (argv.GetArgc() > 1 && argv[1][0] != T_('-'))
 	    {
-	      texProgram = argv[0];
+	      texProgram = argv[1];
 	      texProgram += T_(" -parse-first-line");
 	    }
-	  free (argv);
 	}
     }
 
-  if (texProgram.length() == 0)
+  if (texProgram.empty())
     {
       texProgram = T_("tex -parse-first-line");
     }
