@@ -28,6 +28,8 @@ cfg = Debug
 
 binaries = $(outdir)\yap.exe
 
+docdir = $(prefix)\doc\miktex
+
 documents = yap.chm
 
 all: common-all $(binaries) $(documents)
