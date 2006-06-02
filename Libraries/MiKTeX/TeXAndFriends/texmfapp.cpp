@@ -687,23 +687,23 @@ MIKTEXMFAPI(bool)
 TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
 			  /*[in,out]*/ MiKTeX::Core::Argv &	argv)
 {
-  FileStream stream (File::Open(lpszPath, FileMode::Open, FileAccess::Read));
+  StreamReader reader (lpszPath);
 
   tstring firstLine;
 
-  if (! Utils::ReadUntilDelim(firstLine, T_('\n'), stream.Get()))
+  if (! reader.ReadLine(firstLine))
     {
       return (false);
     }
 
-  stream.Close ();
+  reader.Close ();
 
   if (! (firstLine.substr(0, 2) == T_("%&")))
     {
       return (false);
     }
 
-  argv.Build (T_(""), &firstLine[2]);
+  argv.Build (T_("foo"), firstLine.c_str() + 2);
 
   return (argv.GetArgc() > 1);
 }
@@ -763,7 +763,8 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
     {
       for (Cpopt popt (argv.GetArgc() - optidx,
 		       const_cast<const MIKTEXCHAR**>(argv.GetArgv()) + optidx,
-		       &(GetOptions())[0]);
+		       &(GetOptions())[0],
+		       POPT_CONTEXT_KEEP_FIRST);
 	   ((opt = popt.GetNextOpt()) >= 0);
 	   )
 	{
