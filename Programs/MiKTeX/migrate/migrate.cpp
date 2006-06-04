@@ -23,6 +23,7 @@
 #include <atlbase.h>
 
 #include <miktex/core.h>
+#include <miktex/reg.h>
 
 using namespace std;
 using namespace MiKTeX::Core;
@@ -166,6 +167,18 @@ ReadRegistry24 ()
 void
 MigrateRegistry24 ()
 {
+  CRegKey root25;
+
+  if ((root25.Open(HKEY_LOCAL_MACHINE, MIKTEX_REGPATH_SERIES, KEY_READ)
+       == ERROR_SUCCESS)
+      || (root25.Open(HKEY_CURRENT_USER, MIKTEX_REGPATH_SERIES, KEY_READ)
+	  == ERROR_SUCCESS))
+    {
+      throw T_("registry settings already migrated");
+    }
+
+  root25.Close ();
+
   RegistrySettings24 settings24 = ReadRegistry24();
   
   Session::InitInfo initInfo (T_("migrate"),
@@ -186,16 +199,24 @@ MigrateRegistry24 ()
     }
 
   pSession->RegisterRootDirectories (startupConfig, doNothing);
-}
 
-/* _________________________________________________________________________
+  if (root25.Create((settings24.sharedMiKTeX
+		     ? HKEY_LOCAL_MACHINE
+		     : HKEY_CURRENT_USER),
+		    MIKTEX_REGPATH_SERIES T_("\\migrate"))
+      != ERROR_SUCCESS)
+    {
+      throw T_("the registry key could not be created");
+    }
 
-   Clean24
-   _________________________________________________________________________ */
+  if (root25.SetQWORDValue(T_("time"), static_cast<ULONGLONG>(time(0)))
+      != ERROR_SUCCESS)
+    {
+      throw T_("the registry key could not be written");
+    }
 
-void
-Clean24 ()
-{
+  root25.Close ();
+
 }
 
 /* _________________________________________________________________________
@@ -214,7 +235,6 @@ main (/*[in]*/ int			argc,
     {
       MigrateRegistry24 ();
       successCode = 0;
-      Clean24 ();
     }
   catch (const MIKTEXCHAR * lpszMessage)
     {
