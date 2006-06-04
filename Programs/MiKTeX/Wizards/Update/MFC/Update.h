@@ -211,6 +211,10 @@ public:
   BOOL
   InitInstance ();
 
+private:
+  bool
+  Upgrade (/*[out]*/ bool & upgrading);
+
 public:
   DECLARE_MESSAGE_MAP();
 };
@@ -222,6 +226,7 @@ public:
 
 extern PathName g_logFileName;
 extern PackageManagerPtr g_pManager;
+extern bool g_upgrading;
 
 /* _________________________________________________________________________
 

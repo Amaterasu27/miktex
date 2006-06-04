@@ -28,6 +28,7 @@ UpdateWizardApplication theApp;
 
 PathName g_logFileName;
 PackageManagerPtr g_pManager;
+bool g_upgrading;
 
 /* _________________________________________________________________________
 
@@ -238,6 +239,11 @@ UpdateWizardApplication::UpdateWizardApplication ()
 BOOL
 UpdateWizardApplication::InitInstance ()
 {
+  if (! Upgrade(g_upgrading))
+    {
+      return (FALSE);
+    }
+
   InitCommonControls ();
 
   if (FAILED(CoInitialize(0)))
@@ -281,6 +287,44 @@ UpdateWizardApplication::InitInstance ()
   CoUninitialize ();
   
   return (FALSE);
+}
+
+/* _________________________________________________________________________
+
+   UpdateWizardApplication::Upgrade
+   _________________________________________________________________________ */
+
+bool
+UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
+{
+  bool done = false;
+  upgrading = false;
+  try
+    {
+      Session::InitInfo initInfo (T_("upgrade"),
+				  Session::InitFlags::NoConfigFiles);
+      SessionWrapper pSession (initInfo);
+      PathName path;
+      if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+	}
+      if (path.GetFileNameWithoutExtension() == T_("upgrade"))
+	{
+	  Process::Run (T_("migrate"));
+	  upgrading = true;
+	}
+      done = true;
+    }
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
+    }
+  return (done);
 }
 
 /* _________________________________________________________________________

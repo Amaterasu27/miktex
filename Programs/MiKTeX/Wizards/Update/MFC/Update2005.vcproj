@@ -348,6 +348,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\..\..\Resources\Videos\filecopy.avi"
+			>
+		</File>
 	</Files>
 	<Globals>
 		<Global

@@ -144,7 +144,14 @@ BOOL
 TypePage::OnSetActive ()
 {
   noDdv = false;
-  pSheet->SetWizardButtons (PSWIZB_NEXT | PSWIZB_BACK);
+  if (g_upgrading)
+    {
+      pSheet->SetWizardButtons (PSWIZB_NEXT);
+    }
+  else
+    {
+      pSheet->SetWizardButtons (PSWIZB_NEXT | PSWIZB_BACK);
+    }
   return (CPropertyPage::OnSetActive());
 }
 

@@ -103,14 +103,15 @@ UpdateWizard::OnInitDialog ()
     {
       SetIcon (AfxGetApp()->LoadIcon (IDI_UPDATE), TRUE);
       CString title;
-      if (! title.LoadString(IDS_UPDATEWIZ))
+      if (! title.LoadString(g_upgrading ? IDS_UPGRADEWIZ : IDS_UPDATEWIZ))
 	{
 	  FATAL_WINDOWS_ERROR (T_("CString::LoadString"), 0);
 	}
       SetTitle (title);
-      if (SessionWrapper(true)->GetConfigValue(T_("Update"),
-					       T_("alwaysWelcome"),
-					       false))
+      if (! g_upgrading
+	  && SessionWrapper(true)->GetConfigValue(T_("Update"),
+						  T_("alwaysWelcome"),
+						  false))
 	{
 	  SetActivePage (&welcomePage);
 	}

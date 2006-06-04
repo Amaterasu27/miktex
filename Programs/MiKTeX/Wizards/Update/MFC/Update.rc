@@ -299,6 +299,7 @@ BEGIN
     IDS_HEADER_UPDATE       "Update Process"
     IDS_SUBHEADER_UPDATE    "Selected packages are being updated."
     IDS_CANCEL_UPDATE       "The update operation will now be cancelled."
+    IDS_UPGRADEWIZ          "Upgrade MiKTeX"
     IDS_HEADER_TYPE         "Update Source"
     IDS_SUBHEADER_TYPE      "Choose where you want to get updates from."
     IDS_HEADER_LOCAL        "Local Package Repository"

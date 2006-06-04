@@ -9,6 +9,7 @@
 #define IDS_HEADER_UPDATE               4
 #define IDS_SUBHEADER_UPDATE            5
 #define IDS_CANCEL_UPDATE               6
+#define IDS_UPGRADEWIZ                  7
 #define IDS_HEADER_TYPE                 9
 #define IDS_SUBHEADER_TYPE              10
 #define IDS_HEADER_LOCAL                11
