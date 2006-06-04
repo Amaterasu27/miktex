@@ -4644,6 +4644,14 @@ public:
   
 public:
   static
+  void
+  Run (/*[in]*/ const PathName &	fileName)
+  {
+    Run (fileName.Get(), 0);
+  }
+  
+public:
+  static
   MIKTEXEXPORT
   bool
   MIKTEXCALL
