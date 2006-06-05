@@ -176,6 +176,7 @@ rel_md5staticlibdir = Libraries\3rd\libmd5-static
 rel_md5walkdir = BuildUtilities\md5walk
 rel_mfdir = Programs\TeXAndFriends\mf
 rel_mfwaredir = Programs\TeXAndFriends\mfware
+rel_migratedir = Programs\MiKTeX\migrate
 rel_mikuilibdir = Libraries\MiKTeX\UI\MFC
 rel_mkfntmapdir = Programs\MiKTeX\mkfntmap
 rel_modir = Programs\MiKTeX\MO\MFC

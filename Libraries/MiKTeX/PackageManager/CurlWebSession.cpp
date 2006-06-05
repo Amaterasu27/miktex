@@ -39,7 +39,6 @@ const long DEFAULT_TIMEOUT_SECONDS = 60 * 60;
 
 CurlWebSession::CurlWebSession ()
   : pCurl (0),
-    haveProxySettings (false),
     trace_curl (TraceStream::Open(MIKTEX_TRACE_CURL))
 {
 }
@@ -117,12 +116,17 @@ CurlWebSession::Initialize ()
 
   SetOption (CURLOPT_NOSIGNAL, static_cast<long>(true));
 
-  if (! proxySettings.proxy.empty())
+  ProxySettings proxySettings = PackageManager::GetProxy();
+
+  if (proxySettings.useProxy)
     {
-      SetOption (CURLOPT_PROXY, proxySettings.proxy.c_str());
+      proxyPort = proxySettings.proxy;
+      proxyPort += T_(":");
+      proxyPort += NUMTOSTR(proxySettings.port);
+      SetOption (CURLOPT_PROXY, proxyPort.c_str());
     }
 
-  if (! (proxySettings.user.empty() && proxySettings.password.empty()))
+  if (proxySettings.authenticationRequired)
     {
       if (proxySettings.user.find(T_(':')) != tstring::npos)
 	{
@@ -223,18 +227,6 @@ CurlWebSession::DebugCallback (/*[in]*/ CURL *		pCurl,
     {
     }
   return (0);
-}
-
-/* _________________________________________________________________________
-
-   CurlWebSession::SetProxyServer
-   _________________________________________________________________________ */
-
-void
-CurlWebSession::SetProxyServer (/*[in]*/ const ProxySettings & proxySettings)
-{
-  haveProxySettings = true;
-  this->proxySettings = proxySettings;
 }
 
 #endif // libCURL

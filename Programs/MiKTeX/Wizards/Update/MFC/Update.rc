@@ -160,18 +160,19 @@ BEGIN
     CONTROL         "I want to get updated packages from a &remote package repository:",IDC_INSTALL_FROM_INTERNET,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,21,1,289,10
     CONTROL         "I want to get updated packages from a &local package repository:",IDC_INSTALL_FROM_LOCAL_REPOSITORY,
-                    "Button",BS_AUTORADIOBUTTON,21,60,289,10
+                    "Button",BS_AUTORADIOBUTTON,21,78,289,10
     CONTROL         "I want to get updated packages from a &MiKTeX CD/DVD.",IDC_INSTALL_FROM_CD,
-                    "Button",BS_AUTORADIOBUTTON,21,105,289,10
+                    "Button",BS_AUTORADIOBUTTON,21,123,289,10
     CONTROL         "Pick out a random repository.",IDC_RANDOM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,32,15,278,10
     CONTROL         "Last used remote package repository.",IDC_LAST_USED_REPOSITORY,
                     "Button",BS_AUTORADIOBUTTON,32,29,278,10
     CONTROL         "Let me choose a remote package repository.",IDC_CHOOSE_REPOSITORY,
                     "Button",BS_AUTORADIOBUTTON,32,43,278,10
+    PUSHBUTTON      "&Connection Settings...",IDC_CONNECTION_SETTINGS,32,58,93,14
     CONTROL         "Last used directory location.",IDC_LAST_USED_DIRECTORY,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,32,74,278,10
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,32,92,278,10
     CONTROL         "Let me specify a directory location.",IDC_SPECIFY_DIRECTORY,
-                    "Button",BS_AUTORADIOBUTTON,32,88,278,10
+                    "Button",BS_AUTORADIOBUTTON,32,106,278,10
 END
 
 IDD_REMOTE_REPOSITORY DIALOGEX 0, 0, 317, 143
@@ -198,6 +199,35 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     LTEXT           "Search for updates on this drive:",1047,20,1,289,8
     COMBOBOX        IDC_CD,20,11,119,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_CONNECTION_SETTINGS DIALOGEX 0, 0, 211, 91
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Connection Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Use a proxy server",IDC_USE_PROXY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,77,10
+    LTEXT           "&Address:",IDC_STATIC_ADDRESS,18,27,30,8
+    EDITTEXT        IDC_PROXY_HOST,51,24,82,14,ES_AUTOHSCROLL
+    LTEXT           "&Port:",IDC_STATIC_PORT,141,27,17,8
+    EDITTEXT        IDC_PROXY_PORT,161,24,26,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Au&thentication required",IDC_AUTH_REQUIRED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,47,91,10
+    DEFPUSHBUTTON   "OK",IDOK,98,70,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,70,50,14
+END
+
+IDD_PROXY_AUTHENTICATION DIALOGEX 0, 0, 146, 83
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Proxy Authentication"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Proxy authentication required.",IDC_STATIC,7,7,99,8
+    LTEXT           "&Name:",IDC_STATIC,19,23,22,8
+    EDITTEXT        IDC_PROXY_NAME,59,20,80,14,ES_AUTOHSCROLL
+    LTEXT           "&Password:",IDC_STATIC,19,42,34,8
+    EDITTEXT        IDC_PROXY_PASSWORD,59,39,80,14,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,34,62,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,89,62,50,14
 END
 
 
@@ -273,6 +303,22 @@ BEGIN
         RIGHTMARGIN, 309
         VERTGUIDE, 20
         TOPMARGIN, 1
+    END
+
+    IDD_CONNECTION_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 204
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 84
+    END
+
+    IDD_PROXY_AUTHENTICATION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 139
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
     END
 END
 #endif    // APSTUDIO_INVOKED

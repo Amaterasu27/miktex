@@ -393,9 +393,18 @@ struct RepositoryInfo
 
 struct ProxySettings
 {
+  bool useProxy;
   MiKTeX::Core::tstring proxy;
+  int port;
+  bool authenticationRequired;
   MiKTeX::Core::tstring user;
   MiKTeX::Core::tstring password;
+  ProxySettings ()
+    : useProxy (false),
+      authenticationRequired (false),
+      port (0)
+  {
+  }
 };
 
 /* _________________________________________________________________________
@@ -517,13 +526,6 @@ public:
   MPMCALL
   TryGetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName,
 		     /*[out]*/ PackageInfo &			packageInfo)
-    = 0;
-
-public:
-  virtual
-  void
-  MPMCALL
-  SetProxyServer (/*[in]*/ const ProxySettings & proxySettings)
     = 0;
 
 public:
@@ -655,6 +657,27 @@ public:
   MPMCALL
   StripTeXMFPrefix (/*[in]*/ const MiKTeX::Core::tstring &	str,
 		    /*[out]*/ MiKTeX::Core::tstring &		result);
+
+public:
+  static
+  MPMEXPORT
+  bool
+  MPMCALL
+  TryGetProxy (/*[out]*/ ProxySettings & proxySettings);
+
+public:
+  static
+  MPMEXPORT
+  ProxySettings
+  MPMCALL
+  GetProxy ();
+
+public:
+  static
+  MPMEXPORT
+  void
+  MPMCALL
+  SetProxy (/*[in]*/ const ProxySettings & proxySettings);
 };
 
 /// Smart pointer to a package manager interface.

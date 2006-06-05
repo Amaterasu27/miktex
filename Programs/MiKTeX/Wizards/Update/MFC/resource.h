@@ -29,7 +29,10 @@
 #define IDB_HEADER                      130
 #define IDI_UPDATE                      132
 #define IDA_UPDATE                      133
+#define IDD_CONNECTION_SETTINGS         134
 #define IDD_FINISH                      135
+#define IDD_DIALOG1                     136
+#define IDD_PROXY_AUTHENTICATION        136
 #define IDD_FILECOPY                    137
 #define IDD_TYPE                        143
 #define IDC_FILENAME                    212
@@ -47,12 +50,19 @@
 #define IDC_WELCOME                     1006
 #define IDC_LAST_USED_DIRECTORY         1006
 #define IDC_SPECIFY_DIRECTORY           1007
-#define IDC_CHECK1                      1008
 #define IDC_ALWAYS_SHOW                 1008
+#define IDC_USE_PROXY                   1008
 #define IDC_PROGRESS1                   1010
-#define IDC_BUTTON1                     1010
+#define IDC_CONNECTION_SETTINGS         1010
 #define IDC_PROGRESS2                   1011
+#define IDC_PROXY_HOST                  1011
+#define IDC_PROXY_PORT                  1012
+#define IDC_AUTH_REQUIRED               1013
+#define IDC_STATIC_ADDRESS              1016
+#define IDC_STATIC_PORT                 1017
+#define IDC_PROXY_NAME                  1020
 #define IDC_BROWSE                      1021
+#define IDC_PROXY_PASSWORD              1021
 #define IDC_PACKAGE                     1022
 #define IDC_PROGRESS1_TITLE             1024
 #define IDC_PROGRESS2_TITLE             1025
@@ -71,9 +81,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1021
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -1250,7 +1250,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   pSession.CreateSession (initInfo);
 
   pPackageManager.Create ();
-  pPackageManager->SetProxyServer (proxySettings);
+  pPackageManager->SetProxy (proxySettings);
 
   bool restartWindowed = true;
 

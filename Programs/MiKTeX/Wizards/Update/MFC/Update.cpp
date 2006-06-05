@@ -311,7 +311,16 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 	}
       if (path.GetFileNameWithoutExtension() == T_("upgrade"))
 	{
-	  Process::Run (T_("migrate"));
+	  PathName migrate;
+	  if (! pSession->FindFile(T_("migrate"), FileType::EXE, migrate))
+	    {
+	      FATAL_MIKTEX_ERROR (T_("UpdateWizardApplication::Upgrade"),
+				  T_("migrate.exe could not be found."),
+				  0);
+	    }
+	  MIKTEXCHAR szBuf[1024];
+	  size_t sizeBuf = 1024;
+	  Process::Run (migrate, 0, szBuf, &sizeBuf, 0);
 	  upgrading = true;
 	}
       done = true;

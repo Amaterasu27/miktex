@@ -199,16 +199,4 @@ winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
     }
 }
 
-/* _________________________________________________________________________
-
-   winWebSession::SetProxyServer
-   _________________________________________________________________________ */
-
-void
-winWebSession::SetProxyServer (/*[in]*/ const ProxySettings & proxySettings)
-{
-  UNUSED_ALWAYS (proxySettings);
-  UNIMPLEMENTED (T_("winWebSession::SetProxyServer"));
-}
-
 END_INTERNAL_NAMESPACE;

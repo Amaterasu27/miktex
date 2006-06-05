@@ -52,12 +52,6 @@ public:
 
 public:
   virtual
-  void
-  SetProxyServer (/*[in]*/ const ProxySettings & proxySettings)
-    = 0;
-
-public:
-  virtual
   WebFile *
   OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
 	   /*[in]*/ IProgressNotify_ *	pIProgressNotify)

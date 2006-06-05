@@ -81,6 +81,11 @@ protected:
   afx_msg
   void
   OnInstallFromCd ();
+
+protected:
+  afx_msg
+  void
+  OnConnectionSettings ();
   
 protected:
   void

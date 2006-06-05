@@ -931,12 +931,6 @@ public:
   TryGetPackageInfo (/*[in]*/ const tstring &	deploymentName,
 		     /*[out]*/ PackageInfo &	packageInfo);
 
-public:
-  virtual
-  void
-  MPMCALL
-  SetProxyServer (/*[in]*/ const ProxySettings & proxySettings);
-
 private:
   virtual
   bool
@@ -1113,6 +1107,12 @@ public:
 
 private:
   vector<RepositoryInfo> repositories;
+
+public:
+  static tstring proxyUser;
+
+public:
+  static tstring proxyPassword;
 };
 
 /* _________________________________________________________________________

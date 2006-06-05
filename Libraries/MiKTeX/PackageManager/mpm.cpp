@@ -40,6 +40,9 @@
 
 #include "mpm-version.h"
 
+tstring PackageManagerImpl::proxyUser;
+tstring PackageManagerImpl::proxyPassword;
+
 /* _________________________________________________________________________
 
    FatalSoapError
@@ -1332,6 +1335,17 @@ void
 PackageManagerImpl::DownloadRepositoryListWS ()
 {
   RepositorySoapProxy repositorySoapProxy;
+  ProxySettings proxySettings;
+  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+    {
+      repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
+      repositorySoapProxy.proxy_port = proxySettings.port;
+      if (proxySettings.authenticationRequired)
+	{
+	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+	}
+    }
   _mws__GetRepositories arg;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
@@ -1398,6 +1412,17 @@ PackageManagerImpl::PickRepositoryUrl ()
 {
 #if USE_WEB_SERVICE
   RepositorySoapProxy repositorySoapProxy;
+  ProxySettings proxySettings;
+  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+    {
+      repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
+      repositorySoapProxy.proxy_port = proxySettings.port;
+      if (proxySettings.authenticationRequired)
+	{
+	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+	}
+    }
   _mws__PickRepository arg;
   _mws__PickRepositoryResponse resp;
   if (repositorySoapProxy.PickRepository(&arg, &resp) != SOAP_OK)
@@ -2048,15 +2073,96 @@ PackageManager::StripTeXMFPrefix (/*[in]*/ const tstring &	str,
 
 /* _________________________________________________________________________
 
-   PackageManagerImpl::SetProxyServer
+   PackageManager::SetProxy
    _________________________________________________________________________ */
 
 void
 MPMCALL
-PackageManagerImpl::SetProxyServer
-(/*[in]*/ const ProxySettings & proxySettings)
+PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
 {
-  webSession->SetProxyServer (proxySettings);
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_USE_PROXY,
+			  proxySettings.useProxy);
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_PROXY_HOST,
+			  proxySettings.proxy.c_str());
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_PROXY_PORT,
+			  proxySettings.port);
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_PROXY_AUTH_REQ,
+			  proxySettings.authenticationRequired);
+  PackageManagerImpl::proxyUser = proxySettings.user;
+  PackageManagerImpl::proxyPassword = proxySettings.password;
+}
+
+/* _________________________________________________________________________
+
+   PackageManager::TryGetProxy
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
+{
+  tstring str;
+  if (! (SessionWrapper(true)
+	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			     MIKTEX_REGVAL_USE_PROXY,
+			     str)))
+    {
+      return (false);
+    }
+  proxySettings.useProxy = (str == T_("t"));
+  if (! (SessionWrapper(true)
+	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			     MIKTEX_REGVAL_PROXY_HOST,
+			     proxySettings.proxy)))
+    {
+      return (false);
+    }
+  if (! (SessionWrapper(true)
+	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			     MIKTEX_REGVAL_PROXY_PORT,
+			     str)))
+    {
+      return (false);
+    }
+  proxySettings.port = AToI(str.c_str());
+  if (! (SessionWrapper(true)
+	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			     MIKTEX_REGVAL_PROXY_AUTH_REQ,
+			     str)))
+    {
+      return (false);
+    }
+  proxySettings.authenticationRequired = (str == T_("t"));
+  proxySettings.user = PackageManagerImpl::proxyUser;
+  proxySettings.password = PackageManagerImpl::proxyPassword;
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   PackageManager::GetProxy
+   _________________________________________________________________________ */
+
+ProxySettings
+MPMCALL
+PackageManager::GetProxy ()
+{
+  ProxySettings proxySettings;
+  if (! TryGetProxy(proxySettings))
+    {
+      FATAL_MIKTEX_ERROR (T_("PackageManager::GetProxy"),
+			  T_("No proxy configuration settings."),
+			  0);
+    }
+  return (proxySettings);
 }
 
 /* _________________________________________________________________________

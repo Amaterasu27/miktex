@@ -25,6 +25,9 @@
 #include "TypePage.h"
 #include "UpdateWizard.h"
 
+#include "ConnectionSettingsDialog.h"
+#include "ProxyAuthenticationDialog.h"
+
 IMPLEMENT_DYNCREATE(TypePage, CPropertyPage);
 
 /* _________________________________________________________________________
@@ -37,6 +40,7 @@ BEGIN_MESSAGE_MAP(TypePage, CPropertyPage)
   ON_BN_CLICKED(IDC_INSTALL_FROM_INTERNET, &TypePage::OnInstallFromInternet)
   ON_BN_CLICKED(IDC_INSTALL_FROM_LOCAL_REPOSITORY,
 		&TypePage::OnInstallFromLocalRepository)
+  ON_BN_CLICKED(IDC_CONNECTION_SETTINGS, &TypePage::OnConnectionSettings)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -184,6 +188,20 @@ TypePage::OnWizardNext ()
   if (controlId == IDC_INSTALL_FROM_INTERNET)
     {
       ASSERT (IDC_RANDOM < IDC_CHOOSE_REPOSITORY);
+      ProxySettings proxySettings;
+      if (PackageManager::TryGetProxy(proxySettings)
+	  && proxySettings.authenticationRequired
+	  && proxySettings.user.empty())
+	{
+	  ProxyAuthenticationDialog dlg (this);
+	  if (dlg.DoModal() != IDOK)
+	    {
+	      return (-1);
+	    }
+	  proxySettings.user = dlg.GetName();
+	  proxySettings.password = dlg.GetPassword();
+	  PackageManager::SetProxy (proxySettings);
+	}
       int controlId2 =
 	GetCheckedRadioButton(IDC_RANDOM, IDC_CHOOSE_REPOSITORY);
       if (controlId2 == IDC_RANDOM)
@@ -390,4 +408,16 @@ TypePage::GetControl (/*[in]*/ UINT	controlId)
       UNEXPECTED_CONDITION (T_("TypePage::GetControl"));
     }
   return (pWnd);
+}
+
+/* _________________________________________________________________________
+
+   TypePage::OnConnectionSettings
+   _________________________________________________________________________ */
+
+void
+TypePage::OnConnectionSettings ()
+{
+  ConnectionSettingsDialog dlg (this);
+  dlg.DoModal ();
 }

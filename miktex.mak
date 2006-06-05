@@ -346,6 +346,13 @@ projects = $(projects) $(prj_package_composer)
 
 # -----------------------------------------------------------------------------
 
+prj_migrate = \
+	$(rel_migrate)	\
+
+projects = $(projects) $(prj_migrate)
+
+# -----------------------------------------------------------------------------
+
 prj_setup_wizard = \
 	$(rel_setupwizdir)	\
 

@@ -40,11 +40,6 @@ public:
 
 public:
   virtual
-  void
-  SetProxyServer (/*[in]*/ const ProxySettings & proxySettings);
-
-public:
-  virtual
   WebFile *
   OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
 	   /*[in]*/ IProgressNotify_ *	pIProgressNotify);
@@ -110,10 +105,7 @@ private:
 		 /*[in]*/ void *		pv);
 
 private:
-  bool haveProxySettings;
-
-private:
-  ProxySettings proxySettings;
+  tstring proxyPort;
 
 private:
   tstring userPassword;

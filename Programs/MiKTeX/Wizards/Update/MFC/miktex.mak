@@ -32,6 +32,12 @@ all: all-local
 
 configdir = $(prefix)\miktex\config
 
+extrasources = \
+		ConnectionSettingsDialog.cpp \
+		ConnectionSettingsDialog.h \
+		ProxyAuthenticationDialog.cpp \
+		ProxyAuthenticationDialog.h \
+
 install: all install-local
 	copy $(outdir)\updatewiz.exe $(configdir)\update.dat
 
@@ -48,9 +54,21 @@ distclean: clean distclean-local
 
 maintainer-clean: distclean maintainer-clean-local
 
-all-local:
+all-local: $(extrasources)
 
-install-local:
+install-local: $(extrasources)
+
+ConnectionSettingsDialog.cpp: $(mikuilibdir)\ConnectionSettingsDialog.cpp
+	copy $(mikuilibdir)\ConnectionSettingsDialog.cpp $@
+
+ConnectionSettingsDialog.h: $(mikuilibdir)\ConnectionSettingsDialog.h
+	copy $(mikuilibdir)\ConnectionSettingsDialog.h $@
+
+ProxyAuthenticationDialog.cpp: $(mikuilibdir)\ProxyAuthenticationDialog.cpp
+	copy $(mikuilibdir)\ProxyAuthenticationDialog.cpp $@
+
+ProxyAuthenticationDialog.h: $(mikuilibdir)\ProxyAuthenticationDialog.h
+	copy $(mikuilibdir)\ProxyAuthenticationDialog.h $@
 
 mostlyclean-local: common-mostlyclean
 
