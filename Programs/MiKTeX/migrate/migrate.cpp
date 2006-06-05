@@ -174,7 +174,11 @@ MigrateRegistry24 ()
       || (root25.Open(HKEY_CURRENT_USER, MIKTEX_REGPATH_SERIES, KEY_READ)
 	  == ERROR_SUCCESS))
     {
+#if 1
+      throw 0;
+#else
       throw T_("registry settings already migrated");
+#endif
     }
 
   root25.Close ();
@@ -246,6 +250,10 @@ main (/*[in]*/ int			argc,
     }
   catch (const exception &)
     {
+    }
+  catch (int sc)
+    {
+      successCode = sc;
     }
   return (successCode);
 }
