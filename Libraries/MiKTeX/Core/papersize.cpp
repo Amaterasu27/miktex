@@ -695,7 +695,8 @@ SessionImpl::WriteDvipdfmPaperSize ()
 	}
     }
 
-  editor.WriteFormattedLine (T_("p %s"), paperSizeInfo.name.c_str());
+  editor.WriteFormattedLine (T_("p %s"),
+			     MakeLower(paperSizeInfo.name).c_str());
 }
 
 /* _________________________________________________________________________

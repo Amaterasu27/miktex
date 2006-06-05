@@ -967,37 +967,6 @@ ClearString (/*[in,out]*/ MIKTEXCHAR *	lpsz)
 
 /* _________________________________________________________________________
 
-   MakeLower
-   _________________________________________________________________________ */
-
-inline
-void
-MakeLower (/*[out]*/ MIKTEXCHAR *	lpszBuf,
-	   /*[in]*/ size_t		bufSize,
-	   /*[in]*/ const MIKTEXCHAR *	lpszSource)
-{
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_tcscpy_s(lpszBuf, bufSize, lpszSource) != 0
-      || _tcslwr_s(lpszBuf, bufSize) != 0)
-    {
-      FATAL_CRT_ERROR (T_("MakeLower"), lpszSource);
-    }
-#else
-  UNUSED_ALWAYS (bufSize);
-  for (; *lpszSource != 0; ++ lpszSource, ++ lpszBuf)
-    {
-#  if defined(MIKTEX_UNICODE)
-      *lpszBuf = towlower(*lpszSource);
-#  else
-      *lpszBuf = tolower(*lpszSource);
-#  endif
-    }
-  *lpszBuf = 0;
-#endif
-}
-
-/* _________________________________________________________________________
-
    Quoted
    _________________________________________________________________________ */
 
@@ -2825,6 +2794,51 @@ SkipNonDigit (/*[in]*/ const MIKTEXCHAR * &	lpsz)
 #else
 #  define STSCANF sscanf
 #endif
+
+/* _________________________________________________________________________
+
+   MakeLower
+   _________________________________________________________________________ */
+
+inline
+MIKTEXCHAR *
+MakeLower (/*[out]*/ MIKTEXCHAR *	lpszBuf,
+	   /*[in]*/ size_t		bufSize,
+	   /*[in]*/ const MIKTEXCHAR *	lpszSource)
+{
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+  if (_tcscpy_s(lpszBuf, bufSize, lpszSource) != 0
+      || _tcslwr_s(lpszBuf, bufSize) != 0)
+    {
+      FATAL_CRT_ERROR (T_("MakeLower"), lpszSource);
+    }
+#else
+  UNUSED_ALWAYS (bufSize);
+  for (; *lpszSource != 0; ++ lpszSource, ++ lpszBuf)
+    {
+      *lpszBuf = ToLower(*lpszSource);
+    }
+  *lpszBuf = 0;
+#endif
+  return (lpszBuf);
+}
+
+/* _________________________________________________________________________
+
+   MakeLower
+   _________________________________________________________________________ */
+
+inline
+tstring
+MakeLower (/*[in]*/ const tstring &	str)
+{
+  tstring ret;
+  for (tstring::const_iterator it = str.begin(); it != str.end(); ++ it)
+    {
+      ret += ToLower(*it);
+    }
+  return (ret);
+}
 
 /* _________________________________________________________________________ */
 
