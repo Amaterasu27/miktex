@@ -1517,7 +1517,11 @@ ULogClose (/*[in]*/ bool finalize)
       if (finalize)
 	{
 	  ULogAddFile (GetLogFileName());
-	  RegisterUninstaller ();
+	  if (SessionWrapper(true)->RunningAsAdministrator()
+	      || SessionWrapper(true)->RunningAsPowerUser())
+	    {
+	      RegisterUninstaller ();
+	    }
 	}
     }
   catch (const exception &)
