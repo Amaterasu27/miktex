@@ -1947,7 +1947,19 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (triSharedSetup != TriState::Undetermined)
     {
-      pSession->SharedMiKTeXSetup (triSharedSetup.Get() == TriState::True);
+      TriState old = pSession->IsSharedMiKTeXSetup();
+      if ((old.Get() == TriState::True && triSharedSetup == TriState::False)
+	  || triSharedSetup == TriState::True)
+	{
+#if defined(MIKTEX_WINDOWS)
+	  if (! (pSession->RunningAsAdministrator()
+		 || pSession->RunningAsPowerUser()))
+	    {
+	      FatalError (T_("Administrator privileges required."));
+	    }
+#endif
+	  pSession->SharedMiKTeXSetup (triSharedSetup.Get() == TriState::True);
+	}
     }
 
   if (! startupConfig.roots.empty()
