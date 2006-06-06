@@ -476,15 +476,15 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
     {
 
     case OPT_AUX_DIRECTORY:
-      assert (lpszOptArg != 0);
-      if (! Directory::Exists(lpszOptArg))
+      auxDirectory = lpszOptArg;
+      auxDirectory.MakeAbsolute ();
+      if (! Directory::Exists(auxDirectory))
 	{
 	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
 			      T_("The specified directory does not exist."),
-			      lpszOptArg);
+			      auxDirectory.Get());
 	}
-      auxDirectory = lpszOptArg;
-      pSession->AddWorkingDirectory (lpszOptArg, true);
+      pSession->AddWorkingDirectory (auxDirectory.Get(), true);
       break;
 
     case OPT_BUF_SIZE:
@@ -600,19 +600,19 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_OUTPUT_DIRECTORY:
-      assert (lpszOptArg != 0);
-      if (! Directory::Exists(lpszOptArg))
+      outputDirectory = lpszOptArg;
+      outputDirectory.MakeAbsolute ();
+      if (! Directory::Exists(outputDirectory))
 	{
 	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
 			      T_("The specified directory does not exist."),
-			      lpszOptArg);
+			      outputDirectory.Get());
 	}
-      outputDirectory = lpszOptArg;
       if (auxDirectory[0] == 0)
 	{
-	  auxDirectory = lpszOptArg;
+	  auxDirectory = outputDirectory;
 	}
-      pSession->AddWorkingDirectory (lpszOptArg, true);
+      pSession->AddWorkingDirectory (outputDirectory.Get(), true);
       break;
 
     case OPT_PARAM_SIZE:

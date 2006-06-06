@@ -327,7 +327,9 @@ WebApp::ProcessOption (/*[in]*/ int			opt,
     case OPT_INCLUDE_DIRECTORY:
       if (Directory::Exists(lpszArg))
 	{
-	  pSession->AddWorkingDirectory (lpszArg, true);
+	  PathName path (lpszArg);
+	  path.MakeAbsolute ();
+	  pSession->AddWorkingDirectory (path.Get(), true);
 	}
       break;
     case OPT_HELP:
