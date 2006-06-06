@@ -4630,32 +4630,32 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const MIKTEXCHAR *	lpszArguments);
 
 public:
   static
   void
-  Run (/*[in]*/ const PathName &	fileName,
-       /*[in]*/ const MIKTEXCHAR *	lpszArguments)
-  {
-    Run (fileName.Get(), lpszArguments);
-  }
-  
-public:
-  static
-  void
   Run (/*[in]*/ const PathName &	fileName)
   {
-    Run (fileName.Get(), 0);
+    Run (fileName, 0);
   }
   
 public:
   static
   MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Run (/*[in]*/ const PathName &	fileName,
+       /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+       /*[int]*/ IRunProcessCallback *	pCallback);
+
+public:
+  static
+  MIKTEXEXPORT
   bool
   MIKTEXCALL
-  Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const MIKTEXCHAR *	lpszArguments,
        /*[int]*/ IRunProcessCallback *	pCallback,
        /*[out]*/ int *			pExitCode,
@@ -4663,66 +4663,14 @@ public:
 
 public:
   static
-  void
-  Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-       /*[in]*/ const MIKTEXCHAR *	lpszArguments,
-       /*[int]*/ IRunProcessCallback *	pCallback)
-  {
-    Run (lpszFileName, lpszArguments, pCallback, 0, 0);
-  }
-
-public:
-  static
-  void
-  Run (/*[in]*/ const PathName &	fileName,
-       /*[in]*/ const MIKTEXCHAR *	lpszArguments,
-       /*[int]*/ IRunProcessCallback *	pCallback)
-  {
-    Run (fileName.Get(), lpszArguments, pCallback, 0, 0);
-  }
-
-public:
-  static
-  bool
-  Run (/*[in]*/ const PathName &	fileName,
-       /*[in]*/ const MIKTEXCHAR *	lpszArguments,
-       /*[int]*/ IRunProcessCallback *	pCallback,
-       /*[out]*/ int *			pExitCode,
-       /*[in]*/  const MIKTEXCHAR *	lpszWorkingDirectory)
-  {
-    return (Run(fileName.Get(),
-		lpszArguments,
-		pCallback,
-		pExitCode,
-		lpszWorkingDirectory));
-  }
-  
-public:
-  static
   MIKTEXEXPORT
   bool
   MIKTEXCALL
-  Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const MIKTEXCHAR *	lpszArguments,
        /*[out]*/ void *			pBuf,
        /*[in,out]*/ size_t *		pBufSize,
        /*[out]*/ int *			pExitCode);
-
-public:
-  static
-  bool
-  Run (/*[in]*/ const PathName &	fileName,
-       /*[in]*/ const MIKTEXCHAR *	lpszArguments,
-       /*[out]*/ void *			pBuf,
-       /*[in,out]*/ size_t *		pBufSize,
-       /*[out]*/ int *			pExitCode)
-  {
-    return (Run(fileName.Get(),
-		lpszArguments,
-		pBuf,
-		pBufSize,
-		pExitCode));
-  }
 
 public:
   static

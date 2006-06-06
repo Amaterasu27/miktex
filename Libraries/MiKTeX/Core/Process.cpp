@@ -101,19 +101,18 @@ Process::Start (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+Process::Run (/*[in]*/ const PathName &		fileName,
 	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
 	      /*[out]*/ IRunProcessCallback *	pCallback,
 	      /*[out]*/ int *			pExitCode,
 	      /*[in]*/  const MIKTEXCHAR *	lpszWorkingDirectory)
 {
-  MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszWorkingDirectory);
 
   ProcessStartInfo startinfo;
 
-  startinfo.FileName = lpszFileName;
+  startinfo.FileName = fileName.Get();
 
   if (lpszArguments != 0)
     {
@@ -177,7 +176,7 @@ Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   else
     {
       TraceError (T_("\"%s\" returned %d"),
-		  lpszFileName,
+		  fileName.Get(),
 		  static_cast<int>(exitCode));
       return (false);
     }
@@ -231,7 +230,7 @@ END_ANONYMOUS_NAMESPACE;
    _________________________________________________________________________ */
 
 bool
-Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+Process::Run (/*[in]*/ const PathName &		fileName,
 	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
 	      /*[out]*/ void *			pBuf,
 	      /*[in,out]*/ size_t *		pBufSize,
@@ -242,7 +241,7 @@ Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   ProcessOutputBuffer buffer (pBuf, *pBufSize);
   size_t nMax = *pBufSize;
   bool done =
-    Process::Run(lpszFileName,
+    Process::Run(fileName,
 		 lpszArguments,
 		 &buffer,
 		 pExitCode,
@@ -264,10 +263,11 @@ Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 void
-Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+MIKTEXCALL
+Process::Run (/*[in]*/ const PathName &		fileName,
 	      /*[in]*/ const MIKTEXCHAR *	lpszArguments)
 {
-  if (! Process::Run (lpszFileName,
+  if (! Process::Run (fileName,
 		      lpszArguments,
 		      reinterpret_cast<IRunProcessCallback*>(0),
 		      0,
@@ -275,7 +275,26 @@ Process::Run (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     {
       FATAL_MIKTEX_ERROR (T_("Process::Run"),
 			  T_("The operation failed for some reason."),
-			  lpszFileName);
+			  fileName.Get());
+    }
+}
+
+/* _________________________________________________________________________
+
+   Process::Run
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+Process::Run (/*[in]*/ const PathName &		fileName,
+	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+	      /*[int]*/ IRunProcessCallback *	pCallback)
+{
+  if (! Run(fileName, lpszArguments, pCallback, 0, 0))
+    {
+      FATAL_MIKTEX_ERROR (T_("Process::Run"),
+			  T_("The operation failed for some reason."),
+			  fileName.Get());
     }
 }
 
