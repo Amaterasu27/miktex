@@ -375,6 +375,7 @@ TypePage::EnableButtons ()
   EnableControl (IDC_LAST_USED_REPOSITORY,
 		 sourceChoice == 0 && haveRemoteRepository);
   EnableControl (IDC_CHOOSE_REPOSITORY, sourceChoice == 0);
+  EnableControl (IDC_CONNECTION_SETTINGS, sourceChoice == 0);
 
   EnableControl (IDC_LAST_USED_DIRECTORY,
 		 sourceChoice == 1 && haveLocalRepository);
