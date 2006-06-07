@@ -331,7 +331,11 @@
 #define MIN_CROSSREFS               2
 #define WIZ_FN_SPACE                5000
 #define SINGLE_FN_SPACE             100
+#if defined(MIKTEX)
+#define ENT_STR_SIZE                250
+#else
 #define ENT_STR_SIZE                100
+#endif
 #define GLOB_STR_SIZE               1000
 #define LIT_STK_SIZE                100
 
