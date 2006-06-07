@@ -137,6 +137,19 @@ private:
 		/*[in]*/ const MIKTEXCHAR *	lpszLongest);
 
 private:
+  void
+  CheckRoot (/*[in]*/ const PathName & root);
+
+private:
+  static
+  INT
+  CALLBACK
+  BrowseCallbackProc (/*[in]*/ HWND hwnd, 
+		      /*[in]*/ UINT uMsg,
+		      /*[in]*/ LPARAM lParam, 
+		      /*[in]*/ LPARAM pData);
+
+private:
   CButton scanButton;
 
 private:

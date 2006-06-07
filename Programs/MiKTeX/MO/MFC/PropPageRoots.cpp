@@ -176,6 +176,51 @@ PropPageTeXMFRoots::OnScan ()
 
 /* _________________________________________________________________________
 
+   PropPageTeXMFRoots::BrowseCallbackProc
+   _________________________________________________________________________ */
+
+INT
+CALLBACK
+PropPageTeXMFRoots::BrowseCallbackProc (/*[in]*/ HWND	hwnd, 
+					/*[in]*/ UINT	uMsg,
+					/*[in]*/ LPARAM	lParam, 
+					/*[in]*/ LPARAM	pData)
+{
+  UNUSED_ALWAYS (lParam);
+
+  try
+    {
+      PropPageTeXMFRoots * This = reinterpret_cast<PropPageTeXMFRoots*>(pData);
+      switch (uMsg) 
+	{
+	case BFFM_INITIALIZED:
+	  MIKTEXCHAR szDrive[BufferSizes::MaxPath];
+	  PathName::Split (PathName().SetToCurrentDirectory().Get(),
+			   szDrive, BufferSizes::MaxPath,
+			   0, 0,
+			   0, 0,
+			   0, 0);
+	  if (szDrive[0] != 0)
+	    {
+	      PathName root (szDrive, T_("\\"), 0, 0);
+	      ::SendMessage (hwnd,
+			     BFFM_SETSELECTION,
+			     TRUE,
+			     reinterpret_cast<LPARAM>(root.Get()));
+	    }
+	  return (0);
+	default:
+	  return (0);
+	}
+    }
+  catch (const exception &)
+    {
+      return (0);
+    }
+}
+
+/* _________________________________________________________________________
+
    PropPageTeXMFRoots::OnAdd
    _________________________________________________________________________ */
 
@@ -187,7 +232,16 @@ PropPageTeXMFRoots::OnAdd ()
       BROWSEINFO browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
       browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
+      browseInfo.lpfn = BrowseCallbackProc;
+      browseInfo.lParam = reinterpret_cast<LPARAM>(this);
       browseInfo.lpszTitle = T_("Select the root directory to be added:");
+      LPITEMIDLIST pidlRoot = 0;
+      if (SHGetSpecialFolderLocation(0, CSIDL_DRIVES, &pidlRoot) != S_OK)
+	{
+	  FATAL_WINDOWS_ERROR (T_("SHGetSpecialFolderLocation"), 0);
+	}
+      AutoCoTaskMem autoFree (pidlRoot);
+      browseInfo.pidlRoot = pidlRoot;
       LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
       if (pidl == 0)
 	{
@@ -200,6 +254,7 @@ PropPageTeXMFRoots::OnAdd ()
 	{
 	  FATAL_WINDOWS_ERROR (T_("SHGetPathFromIDList"), 0);
 	}
+      CheckRoot (szDir);
       LV_ITEM lvitem;
       lvitem.iItem = listControl.GetItemCount();
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
@@ -223,6 +278,57 @@ PropPageTeXMFRoots::OnAdd ()
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   PropPageTeXMFRoots::CheckRoot
+   _________________________________________________________________________ */
+
+const MIKTEXCHAR * tdsDirs[] = {
+  T_("bibtex"),
+  T_("dvipdfm"),
+  T_("dvips"),
+  T_("fontname"),
+  T_("fonts"),
+  T_("makeindex"),
+  T_("metafont"),
+  T_("metapost"),
+  T_("mft"),
+  T_("miktex"),
+  T_("pdftex"),
+  T_("psutils"),
+  T_("scripts"),
+  T_("tex"),
+  T_("tpm"),
+  T_("ttf2pfb"),
+  T_("ttf2tfm"),
+};
+
+void
+PropPageTeXMFRoots::CheckRoot (/*[in]*/ const PathName & root)
+{
+  auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(root));
+  DirectoryEntry entry;
+  while (pLister->GetNext(entry))
+    {
+      if (entry.isDirectory)
+	{
+	  PathName name (entry.name);
+	  for (size_t idx = 0;
+	       idx < sizeof(tdsDirs) / sizeof(tdsDirs[0]);
+	       ++ idx)
+	    {
+	      if (name == tdsDirs[idx])
+		{
+		  return;
+		}
+	    }
+	}
+    }
+  FATAL_MIKTEX_ERROR (T_("PropPageTeXMFRoots::CheckRoot"),
+		      T_("Not a valid root directory."),
+		      root.Get());
 }
 
 /* _________________________________________________________________________
