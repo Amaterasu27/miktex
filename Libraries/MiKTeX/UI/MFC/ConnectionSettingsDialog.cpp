@@ -102,7 +102,6 @@ ConnectionSettingsDialog::DoDataExchange (/*[in]*/ CDataExchange* pDX)
   DDX_Check(pDX, IDC_AUTH_REQUIRED, proxyAuthenticationRequired);
 }
 
-
 /* _________________________________________________________________________
 
    ConnectionSettingsDialog::OnUseProxy
@@ -113,12 +112,19 @@ ConnectionSettingsDialog::OnUseProxy ()
 {
   try
     {
-      BOOL enable = (useProxyButton.GetCheck() == BST_CHECKED);
-      GetControl(IDC_STATIC_ADDRESS)->EnableWindow (enable);
-      GetControl(IDC_PROXY_HOST)->EnableWindow (enable);
-      GetControl(IDC_STATIC_PORT)->EnableWindow (enable);
-      GetControl(IDC_PROXY_PORT)->EnableWindow (enable);
-      GetControl(IDC_AUTH_REQUIRED)->EnableWindow (enable);
+      BOOL useProxy = (useProxyButton.GetCheck() == BST_CHECKED);
+      GetControl(IDC_STATIC_ADDRESS)->EnableWindow (useProxy);
+      GetControl(IDC_PROXY_HOST)->EnableWindow (useProxy);
+      GetControl(IDC_STATIC_PORT)->EnableWindow (useProxy);
+      GetControl(IDC_PROXY_PORT)->EnableWindow (useProxy);
+      GetControl(IDC_AUTH_REQUIRED)->EnableWindow (useProxy);
+      CString host;
+      CString port;
+      GetControl(IDC_PROXY_HOST)->GetWindowText (host);
+      GetControl(IDC_PROXY_PORT)->GetWindowText (port);
+      GetControl(IDOK)->EnableWindow (! useProxy
+				      || ! (host.IsEmpty()
+					    || port.IsEmpty()));
     }
   catch (const MiKTeXException & e)
     {
