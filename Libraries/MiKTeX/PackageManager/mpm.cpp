@@ -1264,7 +1264,7 @@ PackageManagerImpl::DownloadRepositoryListCSV ()
 
 #if USE_WEB_SERVICE
 MPMSTATICFUNC(RepositoryInfo)
-MakeRepositoryInfo (/*[in]*/ const mws__RepositoryInfo * pMwsRepositoryInfo)
+MakeRepositoryInfo (/*[in]*/ const mtrep__RepositoryInfo * pMwsRepositoryInfo)
 {
   RepositoryInfo repositoryInfo;
   if (pMwsRepositoryInfo->Country != 0)
@@ -1279,40 +1279,40 @@ MakeRepositoryInfo (/*[in]*/ const mws__RepositoryInfo * pMwsRepositoryInfo)
     }
   switch (pMwsRepositoryInfo->Integrity)
     {
-    case mws__Integrities__Corrupted:
+    case mtrep__Integrities__Corrupted:
       repositoryInfo.integrity = RepositoryIntegrity::Corrupted;
       break;
-    case mws__Integrities__Intact:
+    case mtrep__Integrities__Intact:
       repositoryInfo.integrity = RepositoryIntegrity::Intact;
       break;
-    case mws__Integrities__Unknown:
+    case mtrep__Integrities__Unknown:
       repositoryInfo.integrity = RepositoryIntegrity::Unknown;
       break;
     }
   switch (pMwsRepositoryInfo->Level)
     {
-    case mws__Levels__Essential:
+    case mtrep__Levels__Essential:
       repositoryInfo.packageLevel = PackageLevel::Essential;
       break;
-    case mws__Levels__Basic:
+    case mtrep__Levels__Basic:
       repositoryInfo.packageLevel = PackageLevel::Basic;
       break;
-    case mws__Levels__Advanced:
+    case mtrep__Levels__Advanced:
       repositoryInfo.packageLevel = PackageLevel::Advanced;
       break;
-    case mws__Levels__Complete:
+    case mtrep__Levels__Complete:
       repositoryInfo.packageLevel = PackageLevel::Complete;
       break;
     }
   switch (pMwsRepositoryInfo->Status)
     {
-    case mws__RepositoryStatus__Online:
+    case mtrep__RepositoryStatus__Online:
       repositoryInfo.status = RepositoryStatus::Online;
       break;
-    case mws__RepositoryStatus__Offline:
+    case mtrep__RepositoryStatus__Offline:
       repositoryInfo.status = RepositoryStatus::Offline;
       break;
-    case mws__RepositoryStatus__Unknown:
+    case mtrep__RepositoryStatus__Unknown:
       repositoryInfo.status = RepositoryStatus::Unknown;
       break;
     }
@@ -1346,16 +1346,16 @@ PackageManagerImpl::DownloadRepositoryListWS ()
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  _mws__GetRepositories arg;
+  _mtrep__GetRepositories arg;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
   arg.maxDelay = 10;
-  _mws__GetRepositoriesResponse resp;
+  _mtrep__GetRepositoriesResponse resp;
   if (repositorySoapProxy.GetRepositories(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
     }
-  for (vector<mws__RepositoryInfo*>::const_iterator it = 
+  for (vector<mtrep__RepositoryInfo*>::const_iterator it = 
 	 resp.GetRepositoriesResult->RepositoryInfo.begin();
        it != resp.GetRepositoriesResult->RepositoryInfo.end();
        ++ it)
@@ -1423,8 +1423,8 @@ PackageManagerImpl::PickRepositoryUrl ()
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  _mws__PickRepository arg;
-  _mws__PickRepositoryResponse resp;
+  _mtrep__PickRepository arg;
+  _mtrep__PickRepositoryResponse resp;
   if (repositorySoapProxy.PickRepository(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
