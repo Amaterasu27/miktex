@@ -245,10 +245,15 @@ InstallDirPage::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 	      Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
 				   CSIDL_PROGRAM_FILES,
 				   true);
-	    ::SendMessage (hwnd,
-			   BFFM_SETSELECTION,
-			   TRUE,
-			   reinterpret_cast<LPARAM>(root.Get()));
+	    CA2W lpszwRoot (root.Get());
+	    ::SendMessageW (hwnd,
+			    BFFM_SETSELECTION,
+			    TRUE,
+			    reinterpret_cast<LPARAM>(lpszwRoot.m_szBuffer));
+	    ::SendMessageW (hwnd,
+			    BFFM_SETEXPANDED,
+			    TRUE,
+			    reinterpret_cast<LPARAM>(lpszwRoot.m_szBuffer));
 	    return (0);
 	  }
 	default:
