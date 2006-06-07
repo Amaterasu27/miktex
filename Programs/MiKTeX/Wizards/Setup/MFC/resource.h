@@ -6,8 +6,8 @@
 #define IDI_SETUP                       1
 #define IDS_HEADER_SETTINGS             1
 #define IDS_SUBHEADER_SETTINGS          2
-#define IDS_ALREADY_INSTALLED           3
 #define IDS_INITEXMF                    4
+#define IDS_INSTALL_DIR_NOT_EMPTY       5
 #define IDS_CANCEL_DOWNLOAD             7
 #define IDS_CANCEL_SETUP                8
 #define IDS_OPTIONS                     9
@@ -123,7 +123,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        158
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1074
+#define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

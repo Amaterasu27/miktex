@@ -32,6 +32,7 @@
 
 BEGIN_MESSAGE_MAP(InstallDirPage, CPropertyPage)
   ON_EN_CHANGE(IDC_PATHNAME, OnChangePathName)
+  ON_BN_CLICKED(IDC_BROWSE, &InstallDirPage::OnBrowse)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -160,16 +161,17 @@ InstallDirPage::OnKillActive ()
     {
       try
 	{
-	  PathName uninstLog (m_strInstallDir);
-	  uninstLog += MIKTEX_PATH_UNINST_LOG;
-	  if (File::Exists(uninstLog))
+	  PathName dir (m_strInstallDir);
+	  if (Directory::Exists(dir))
 	    {
-	      AfxMessageBox (IDS_ALREADY_INSTALLED, MB_OK | MB_ICONSTOP);
-	      ret = FALSE;
-	    }
-	  else
-	    {
-	      theApp.startupConfig.installRoot = m_strInstallDir;
+	      auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(dir));
+	      DirectoryEntry entry;
+	      if (pLister->GetNext(entry))
+		{
+		  AfxMessageBox (IDS_INSTALL_DIR_NOT_EMPTY,
+				 MB_OK | MB_ICONSTOP);
+		  ret = FALSE;
+		}
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -206,7 +208,94 @@ InstallDirPage::OnChangePathName ()
       str.TrimLeft ();
       str.TrimRight ();
       pSheet->SetWizardButtons (PSWIZB_BACK
-				| (str.GetLength() > 0 ? PSWIZB_NEXT : 0));
+				| (str.IsEmpty() ? 0 : PSWIZB_NEXT));
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   InstallDirPage::BrowseCallbackProc
+   _________________________________________________________________________ */
+
+INT
+CALLBACK
+InstallDirPage::BrowseCallbackProc (/*[in]*/ HWND	hwnd, 
+				    /*[in]*/ UINT	uMsg,
+				    /*[in]*/ LPARAM	lParam, 
+				    /*[in]*/ LPARAM	pData)
+{
+  UNUSED_ALWAYS (lParam);
+
+  try
+    {
+      InstallDirPage * This = reinterpret_cast<InstallDirPage*>(pData);
+      switch (uMsg) 
+	{
+	case BFFM_INITIALIZED:
+	  {
+	    PathName root =
+	      Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
+				   CSIDL_PROGRAM_FILES,
+				   true);
+	    ::SendMessage (hwnd,
+			   BFFM_SETSELECTION,
+			   TRUE,
+			   reinterpret_cast<LPARAM>(root.Get()));
+	    return (0);
+	  }
+	default:
+	  return (0);
+	}
+    }
+  catch (const exception &)
+    {
+      return (0);
+    }
+}
+
+/* _________________________________________________________________________
+
+   InstallDirPage::OnBrowse
+   _________________________________________________________________________ */
+
+void
+InstallDirPage::OnBrowse ()
+{
+  try
+    {
+      BROWSEINFO browseInfo;
+      ZeroMemory (&browseInfo, sizeof(browseInfo));
+      browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
+      browseInfo.lpfn = BrowseCallbackProc;
+      browseInfo.lParam = reinterpret_cast<LPARAM>(this);
+      browseInfo.lpszTitle = T_("Select the MiKTEX installation directory:");
+      LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
+      if (pidl == 0)
+	{
+	  return;
+	}
+      MIKTEXCHAR szDir[BufferSizes::MaxPath];
+      BOOL done = SHGetPathFromIDList(pidl, szDir);
+      CoTaskMemFree (pidl);
+      if (! done)
+	{
+	  FATAL_WINDOWS_ERROR (T_("SHGetPathFromIDList"), 0);
+	}
+      CWnd * pWnd = GetDlgItem(IDC_PATHNAME);
+      if (pWnd == 0)
+	{
+	  UNEXPECTED_CONDITION (T_("InstallDirPage::OnBrowse"));
+	}
+      pWnd->SetWindowText (szDir);
+      OnChangePathName ();
     }
   catch (const MiKTeXException & e)
     {

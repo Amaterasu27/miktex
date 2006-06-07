@@ -66,11 +66,24 @@ protected:
   afx_msg
   void
   OnChangePathName ();
-  
+
+protected:
+  afx_msg
+  void
+  OnBrowse ();
+
+private:
+  static
+  INT
+  CALLBACK
+  BrowseCallbackProc (/*[in]*/ HWND hwnd, 
+		      /*[in]*/ UINT uMsg,
+		      /*[in]*/ LPARAM lParam, 
+		      /*[in]*/ LPARAM pData);
+
 private:
   CString m_strInstallDir;
 
-private:
 private:
   bool noDdv;
 

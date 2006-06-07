@@ -100,8 +100,9 @@ IDD_INSTALLDIR DIALOGEX 0, 0, 317, 143
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    EDITTEXT        IDC_PATHNAME,21,12,276,14,ES_AUTOHSCROLL
     LTEXT           "&Install MiKTeX to:",IDC_STATIC,21,1,56,8
+    EDITTEXT        IDC_PATHNAME,21,12,218,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_BROWSE,247,12,50,14
 END
 
 IDD_ADD_TEXMFROOTS DIALOGEX 0, 0, 317, 143
@@ -542,8 +543,9 @@ STRINGTABLE
 BEGIN
     IDS_HEADER_SETTINGS     "Settings"
     IDS_SUBHEADER_SETTINGS  "Set your preferences."
-    IDS_ALREADY_INSTALLED   "A previous MiKTeX was found in the specified directory."
     IDS_INITEXMF            "File name databases and format files"
+    IDS_INSTALL_DIR_NOT_EMPTY 
+                            "The specified installation directory is not empty."
     IDS_CANCEL_DOWNLOAD     "MiKTeX Setup Wizard will now stop the download. You can resume the download at a later date by running the wizard again."
     IDS_CANCEL_SETUP        "MiKTeX Setup Wizard will now cancel the installation."
     IDS_OPTIONS             "Settings"
