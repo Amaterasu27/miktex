@@ -56,44 +56,44 @@ SOAP_FMAC3 bool * SOAP_FMAC4 soap_in_bool(struct soap*, const char*, bool *, con
 
 SOAP_FMAC3S int SOAP_FMAC4S soap_s2bool(struct soap*, const char*, bool *);
 
-#ifndef SOAP_TYPE_mws__RepositoryStatus
-#define SOAP_TYPE_mws__RepositoryStatus (19)
+#ifndef SOAP_TYPE_mtrep__RepositoryStatus
+#define SOAP_TYPE_mtrep__RepositoryStatus (19)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_mws__RepositoryStatus(struct soap*, enum mws__RepositoryStatus *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_mws__RepositoryStatus(struct soap*, const enum mws__RepositoryStatus *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_mws__RepositoryStatus(struct soap*, const char*, int, const enum mws__RepositoryStatus *, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep__RepositoryStatus(struct soap*, enum mtrep__RepositoryStatus *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep__RepositoryStatus(struct soap*, const enum mtrep__RepositoryStatus *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep__RepositoryStatus(struct soap*, const char*, int, const enum mtrep__RepositoryStatus *, const char*);
 
-SOAP_FMAC3S const char* SOAP_FMAC4S soap_mws__RepositoryStatus2s(struct soap*, enum mws__RepositoryStatus);
-SOAP_FMAC3 enum mws__RepositoryStatus * SOAP_FMAC4 soap_get_mws__RepositoryStatus(struct soap*, enum mws__RepositoryStatus *, const char*, const char*);
-SOAP_FMAC3 enum mws__RepositoryStatus * SOAP_FMAC4 soap_in_mws__RepositoryStatus(struct soap*, const char*, enum mws__RepositoryStatus *, const char*);
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep__RepositoryStatus2s(struct soap*, enum mtrep__RepositoryStatus);
+SOAP_FMAC3 enum mtrep__RepositoryStatus * SOAP_FMAC4 soap_get_mtrep__RepositoryStatus(struct soap*, enum mtrep__RepositoryStatus *, const char*, const char*);
+SOAP_FMAC3 enum mtrep__RepositoryStatus * SOAP_FMAC4 soap_in_mtrep__RepositoryStatus(struct soap*, const char*, enum mtrep__RepositoryStatus *, const char*);
 
-SOAP_FMAC3S int SOAP_FMAC4S soap_s2mws__RepositoryStatus(struct soap*, const char*, enum mws__RepositoryStatus *);
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep__RepositoryStatus(struct soap*, const char*, enum mtrep__RepositoryStatus *);
 
-#ifndef SOAP_TYPE_mws__Levels
-#define SOAP_TYPE_mws__Levels (18)
+#ifndef SOAP_TYPE_mtrep__Levels
+#define SOAP_TYPE_mtrep__Levels (18)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_mws__Levels(struct soap*, enum mws__Levels *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_mws__Levels(struct soap*, const enum mws__Levels *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_mws__Levels(struct soap*, const char*, int, const enum mws__Levels *, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep__Levels(struct soap*, enum mtrep__Levels *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep__Levels(struct soap*, const enum mtrep__Levels *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep__Levels(struct soap*, const char*, int, const enum mtrep__Levels *, const char*);
 
-SOAP_FMAC3S const char* SOAP_FMAC4S soap_mws__Levels2s(struct soap*, enum mws__Levels);
-SOAP_FMAC3 enum mws__Levels * SOAP_FMAC4 soap_get_mws__Levels(struct soap*, enum mws__Levels *, const char*, const char*);
-SOAP_FMAC3 enum mws__Levels * SOAP_FMAC4 soap_in_mws__Levels(struct soap*, const char*, enum mws__Levels *, const char*);
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep__Levels2s(struct soap*, enum mtrep__Levels);
+SOAP_FMAC3 enum mtrep__Levels * SOAP_FMAC4 soap_get_mtrep__Levels(struct soap*, enum mtrep__Levels *, const char*, const char*);
+SOAP_FMAC3 enum mtrep__Levels * SOAP_FMAC4 soap_in_mtrep__Levels(struct soap*, const char*, enum mtrep__Levels *, const char*);
 
-SOAP_FMAC3S int SOAP_FMAC4S soap_s2mws__Levels(struct soap*, const char*, enum mws__Levels *);
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep__Levels(struct soap*, const char*, enum mtrep__Levels *);
 
-#ifndef SOAP_TYPE_mws__Integrities
-#define SOAP_TYPE_mws__Integrities (17)
+#ifndef SOAP_TYPE_mtrep__Integrities
+#define SOAP_TYPE_mtrep__Integrities (17)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_mws__Integrities(struct soap*, enum mws__Integrities *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_mws__Integrities(struct soap*, const enum mws__Integrities *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_mws__Integrities(struct soap*, const char*, int, const enum mws__Integrities *, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep__Integrities(struct soap*, enum mtrep__Integrities *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep__Integrities(struct soap*, const enum mtrep__Integrities *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep__Integrities(struct soap*, const char*, int, const enum mtrep__Integrities *, const char*);
 
-SOAP_FMAC3S const char* SOAP_FMAC4S soap_mws__Integrities2s(struct soap*, enum mws__Integrities);
-SOAP_FMAC3 enum mws__Integrities * SOAP_FMAC4 soap_get_mws__Integrities(struct soap*, enum mws__Integrities *, const char*, const char*);
-SOAP_FMAC3 enum mws__Integrities * SOAP_FMAC4 soap_in_mws__Integrities(struct soap*, const char*, enum mws__Integrities *, const char*);
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep__Integrities2s(struct soap*, enum mtrep__Integrities);
+SOAP_FMAC3 enum mtrep__Integrities * SOAP_FMAC4 soap_get_mtrep__Integrities(struct soap*, enum mtrep__Integrities *, const char*, const char*);
+SOAP_FMAC3 enum mtrep__Integrities * SOAP_FMAC4 soap_in_mtrep__Integrities(struct soap*, const char*, enum mtrep__Integrities *, const char*);
 
-SOAP_FMAC3S int SOAP_FMAC4S soap_s2mws__Integrities(struct soap*, const char*, enum mws__Integrities *);
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep__Integrities(struct soap*, const char*, enum mtrep__Integrities *);
 
 #ifndef SOAP_TYPE_std__string
 #define SOAP_TYPE_std__string (20)
@@ -109,125 +109,125 @@ SOAP_FMAC5 void SOAP_FMAC6 soap_delete_std__string(struct soap*, std::string*);
 SOAP_FMAC3 std::string * SOAP_FMAC4 soap_instantiate_std__string(struct soap*, int, const char*, const char*, size_t*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__string(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__GetRepositoriesResponse
-#define SOAP_TYPE__mws__GetRepositoriesResponse (16)
+#ifndef SOAP_TYPE__mtrep__GetRepositoriesResponse
+#define SOAP_TYPE__mtrep__GetRepositoriesResponse (16)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__GetRepositoriesResponse(struct soap*, const char*, int, const _mws__GetRepositoriesResponse *, const char*);
-SOAP_FMAC3 _mws__GetRepositoriesResponse * SOAP_FMAC4 soap_get__mws__GetRepositoriesResponse(struct soap*, _mws__GetRepositoriesResponse *, const char*, const char*);
-SOAP_FMAC3 _mws__GetRepositoriesResponse * SOAP_FMAC4 soap_in__mws__GetRepositoriesResponse(struct soap*, const char*, _mws__GetRepositoriesResponse *, const char*);
-SOAP_FMAC5 _mws__GetRepositoriesResponse * SOAP_FMAC6 soap_new__mws__GetRepositoriesResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__GetRepositoriesResponse(struct soap*, _mws__GetRepositoriesResponse*);
-SOAP_FMAC3 _mws__GetRepositoriesResponse * SOAP_FMAC4 soap_instantiate__mws__GetRepositoriesResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__GetRepositoriesResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__GetRepositoriesResponse(struct soap*, const char*, int, const _mtrep__GetRepositoriesResponse *, const char*);
+SOAP_FMAC3 _mtrep__GetRepositoriesResponse * SOAP_FMAC4 soap_get__mtrep__GetRepositoriesResponse(struct soap*, _mtrep__GetRepositoriesResponse *, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetRepositoriesResponse * SOAP_FMAC4 soap_in__mtrep__GetRepositoriesResponse(struct soap*, const char*, _mtrep__GetRepositoriesResponse *, const char*);
+SOAP_FMAC5 _mtrep__GetRepositoriesResponse * SOAP_FMAC6 soap_new__mtrep__GetRepositoriesResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__GetRepositoriesResponse(struct soap*, _mtrep__GetRepositoriesResponse*);
+SOAP_FMAC3 _mtrep__GetRepositoriesResponse * SOAP_FMAC4 soap_instantiate__mtrep__GetRepositoriesResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__GetRepositoriesResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__GetRepositories
-#define SOAP_TYPE__mws__GetRepositories (15)
+#ifndef SOAP_TYPE__mtrep__GetRepositories
+#define SOAP_TYPE__mtrep__GetRepositories (15)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__GetRepositories(struct soap*, const char*, int, const _mws__GetRepositories *, const char*);
-SOAP_FMAC3 _mws__GetRepositories * SOAP_FMAC4 soap_get__mws__GetRepositories(struct soap*, _mws__GetRepositories *, const char*, const char*);
-SOAP_FMAC3 _mws__GetRepositories * SOAP_FMAC4 soap_in__mws__GetRepositories(struct soap*, const char*, _mws__GetRepositories *, const char*);
-SOAP_FMAC5 _mws__GetRepositories * SOAP_FMAC6 soap_new__mws__GetRepositories(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__GetRepositories(struct soap*, _mws__GetRepositories*);
-SOAP_FMAC3 _mws__GetRepositories * SOAP_FMAC4 soap_instantiate__mws__GetRepositories(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__GetRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__GetRepositories(struct soap*, const char*, int, const _mtrep__GetRepositories *, const char*);
+SOAP_FMAC3 _mtrep__GetRepositories * SOAP_FMAC4 soap_get__mtrep__GetRepositories(struct soap*, _mtrep__GetRepositories *, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetRepositories * SOAP_FMAC4 soap_in__mtrep__GetRepositories(struct soap*, const char*, _mtrep__GetRepositories *, const char*);
+SOAP_FMAC5 _mtrep__GetRepositories * SOAP_FMAC6 soap_new__mtrep__GetRepositories(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__GetRepositories(struct soap*, _mtrep__GetRepositories*);
+SOAP_FMAC3 _mtrep__GetRepositories * SOAP_FMAC4 soap_instantiate__mtrep__GetRepositories(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__GetRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__GetAllRepositoriesResponse
-#define SOAP_TYPE__mws__GetAllRepositoriesResponse (14)
+#ifndef SOAP_TYPE__mtrep__GetAllRepositoriesResponse
+#define SOAP_TYPE__mtrep__GetAllRepositoriesResponse (14)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__GetAllRepositoriesResponse(struct soap*, const char*, int, const _mws__GetAllRepositoriesResponse *, const char*);
-SOAP_FMAC3 _mws__GetAllRepositoriesResponse * SOAP_FMAC4 soap_get__mws__GetAllRepositoriesResponse(struct soap*, _mws__GetAllRepositoriesResponse *, const char*, const char*);
-SOAP_FMAC3 _mws__GetAllRepositoriesResponse * SOAP_FMAC4 soap_in__mws__GetAllRepositoriesResponse(struct soap*, const char*, _mws__GetAllRepositoriesResponse *, const char*);
-SOAP_FMAC5 _mws__GetAllRepositoriesResponse * SOAP_FMAC6 soap_new__mws__GetAllRepositoriesResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__GetAllRepositoriesResponse(struct soap*, _mws__GetAllRepositoriesResponse*);
-SOAP_FMAC3 _mws__GetAllRepositoriesResponse * SOAP_FMAC4 soap_instantiate__mws__GetAllRepositoriesResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__GetAllRepositoriesResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__GetAllRepositoriesResponse(struct soap*, const char*, int, const _mtrep__GetAllRepositoriesResponse *, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositoriesResponse * SOAP_FMAC4 soap_get__mtrep__GetAllRepositoriesResponse(struct soap*, _mtrep__GetAllRepositoriesResponse *, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositoriesResponse * SOAP_FMAC4 soap_in__mtrep__GetAllRepositoriesResponse(struct soap*, const char*, _mtrep__GetAllRepositoriesResponse *, const char*);
+SOAP_FMAC5 _mtrep__GetAllRepositoriesResponse * SOAP_FMAC6 soap_new__mtrep__GetAllRepositoriesResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__GetAllRepositoriesResponse(struct soap*, _mtrep__GetAllRepositoriesResponse*);
+SOAP_FMAC3 _mtrep__GetAllRepositoriesResponse * SOAP_FMAC4 soap_instantiate__mtrep__GetAllRepositoriesResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__GetAllRepositoriesResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__GetAllRepositories
-#define SOAP_TYPE__mws__GetAllRepositories (13)
+#ifndef SOAP_TYPE__mtrep__GetAllRepositories
+#define SOAP_TYPE__mtrep__GetAllRepositories (13)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__GetAllRepositories(struct soap*, const char*, int, const _mws__GetAllRepositories *, const char*);
-SOAP_FMAC3 _mws__GetAllRepositories * SOAP_FMAC4 soap_get__mws__GetAllRepositories(struct soap*, _mws__GetAllRepositories *, const char*, const char*);
-SOAP_FMAC3 _mws__GetAllRepositories * SOAP_FMAC4 soap_in__mws__GetAllRepositories(struct soap*, const char*, _mws__GetAllRepositories *, const char*);
-SOAP_FMAC5 _mws__GetAllRepositories * SOAP_FMAC6 soap_new__mws__GetAllRepositories(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__GetAllRepositories(struct soap*, _mws__GetAllRepositories*);
-SOAP_FMAC3 _mws__GetAllRepositories * SOAP_FMAC4 soap_instantiate__mws__GetAllRepositories(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__GetAllRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__GetAllRepositories(struct soap*, const char*, int, const _mtrep__GetAllRepositories *, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositories * SOAP_FMAC4 soap_get__mtrep__GetAllRepositories(struct soap*, _mtrep__GetAllRepositories *, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositories * SOAP_FMAC4 soap_in__mtrep__GetAllRepositories(struct soap*, const char*, _mtrep__GetAllRepositories *, const char*);
+SOAP_FMAC5 _mtrep__GetAllRepositories * SOAP_FMAC6 soap_new__mtrep__GetAllRepositories(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__GetAllRepositories(struct soap*, _mtrep__GetAllRepositories*);
+SOAP_FMAC3 _mtrep__GetAllRepositories * SOAP_FMAC4 soap_instantiate__mtrep__GetAllRepositories(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__GetAllRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__PickRepositoryResponse
-#define SOAP_TYPE__mws__PickRepositoryResponse (12)
+#ifndef SOAP_TYPE__mtrep__PickRepositoryResponse
+#define SOAP_TYPE__mtrep__PickRepositoryResponse (12)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__PickRepositoryResponse(struct soap*, const char*, int, const _mws__PickRepositoryResponse *, const char*);
-SOAP_FMAC3 _mws__PickRepositoryResponse * SOAP_FMAC4 soap_get__mws__PickRepositoryResponse(struct soap*, _mws__PickRepositoryResponse *, const char*, const char*);
-SOAP_FMAC3 _mws__PickRepositoryResponse * SOAP_FMAC4 soap_in__mws__PickRepositoryResponse(struct soap*, const char*, _mws__PickRepositoryResponse *, const char*);
-SOAP_FMAC5 _mws__PickRepositoryResponse * SOAP_FMAC6 soap_new__mws__PickRepositoryResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__PickRepositoryResponse(struct soap*, _mws__PickRepositoryResponse*);
-SOAP_FMAC3 _mws__PickRepositoryResponse * SOAP_FMAC4 soap_instantiate__mws__PickRepositoryResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__PickRepositoryResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__PickRepositoryResponse(struct soap*, const char*, int, const _mtrep__PickRepositoryResponse *, const char*);
+SOAP_FMAC3 _mtrep__PickRepositoryResponse * SOAP_FMAC4 soap_get__mtrep__PickRepositoryResponse(struct soap*, _mtrep__PickRepositoryResponse *, const char*, const char*);
+SOAP_FMAC3 _mtrep__PickRepositoryResponse * SOAP_FMAC4 soap_in__mtrep__PickRepositoryResponse(struct soap*, const char*, _mtrep__PickRepositoryResponse *, const char*);
+SOAP_FMAC5 _mtrep__PickRepositoryResponse * SOAP_FMAC6 soap_new__mtrep__PickRepositoryResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__PickRepositoryResponse(struct soap*, _mtrep__PickRepositoryResponse*);
+SOAP_FMAC3 _mtrep__PickRepositoryResponse * SOAP_FMAC4 soap_instantiate__mtrep__PickRepositoryResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__PickRepositoryResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__PickRepository
-#define SOAP_TYPE__mws__PickRepository (11)
+#ifndef SOAP_TYPE__mtrep__PickRepository
+#define SOAP_TYPE__mtrep__PickRepository (11)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__PickRepository(struct soap*, const char*, int, const _mws__PickRepository *, const char*);
-SOAP_FMAC3 _mws__PickRepository * SOAP_FMAC4 soap_get__mws__PickRepository(struct soap*, _mws__PickRepository *, const char*, const char*);
-SOAP_FMAC3 _mws__PickRepository * SOAP_FMAC4 soap_in__mws__PickRepository(struct soap*, const char*, _mws__PickRepository *, const char*);
-SOAP_FMAC5 _mws__PickRepository * SOAP_FMAC6 soap_new__mws__PickRepository(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__PickRepository(struct soap*, _mws__PickRepository*);
-SOAP_FMAC3 _mws__PickRepository * SOAP_FMAC4 soap_instantiate__mws__PickRepository(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__PickRepository(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__PickRepository(struct soap*, const char*, int, const _mtrep__PickRepository *, const char*);
+SOAP_FMAC3 _mtrep__PickRepository * SOAP_FMAC4 soap_get__mtrep__PickRepository(struct soap*, _mtrep__PickRepository *, const char*, const char*);
+SOAP_FMAC3 _mtrep__PickRepository * SOAP_FMAC4 soap_in__mtrep__PickRepository(struct soap*, const char*, _mtrep__PickRepository *, const char*);
+SOAP_FMAC5 _mtrep__PickRepository * SOAP_FMAC6 soap_new__mtrep__PickRepository(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__PickRepository(struct soap*, _mtrep__PickRepository*);
+SOAP_FMAC3 _mtrep__PickRepository * SOAP_FMAC4 soap_instantiate__mtrep__PickRepository(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__PickRepository(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__TryGetRepositoryInfoResponse
-#define SOAP_TYPE__mws__TryGetRepositoryInfoResponse (10)
+#ifndef SOAP_TYPE__mtrep__TryGetRepositoryInfoResponse
+#define SOAP_TYPE__mtrep__TryGetRepositoryInfoResponse (10)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__TryGetRepositoryInfoResponse(struct soap*, const char*, int, const _mws__TryGetRepositoryInfoResponse *, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_get__mws__TryGetRepositoryInfoResponse(struct soap*, _mws__TryGetRepositoryInfoResponse *, const char*, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_in__mws__TryGetRepositoryInfoResponse(struct soap*, const char*, _mws__TryGetRepositoryInfoResponse *, const char*);
-SOAP_FMAC5 _mws__TryGetRepositoryInfoResponse * SOAP_FMAC6 soap_new__mws__TryGetRepositoryInfoResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__TryGetRepositoryInfoResponse(struct soap*, _mws__TryGetRepositoryInfoResponse*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_instantiate__mws__TryGetRepositoryInfoResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__TryGetRepositoryInfoResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__TryGetRepositoryInfoResponse(struct soap*, const char*, int, const _mtrep__TryGetRepositoryInfoResponse *, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_get__mtrep__TryGetRepositoryInfoResponse(struct soap*, _mtrep__TryGetRepositoryInfoResponse *, const char*, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_in__mtrep__TryGetRepositoryInfoResponse(struct soap*, const char*, _mtrep__TryGetRepositoryInfoResponse *, const char*);
+SOAP_FMAC5 _mtrep__TryGetRepositoryInfoResponse * SOAP_FMAC6 soap_new__mtrep__TryGetRepositoryInfoResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__TryGetRepositoryInfoResponse(struct soap*, _mtrep__TryGetRepositoryInfoResponse*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfoResponse * SOAP_FMAC4 soap_instantiate__mtrep__TryGetRepositoryInfoResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__TryGetRepositoryInfoResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__mws__TryGetRepositoryInfo
-#define SOAP_TYPE__mws__TryGetRepositoryInfo (9)
+#ifndef SOAP_TYPE__mtrep__TryGetRepositoryInfo
+#define SOAP_TYPE__mtrep__TryGetRepositoryInfo (9)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__mws__TryGetRepositoryInfo(struct soap*, const char*, int, const _mws__TryGetRepositoryInfo *, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_get__mws__TryGetRepositoryInfo(struct soap*, _mws__TryGetRepositoryInfo *, const char*, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_in__mws__TryGetRepositoryInfo(struct soap*, const char*, _mws__TryGetRepositoryInfo *, const char*);
-SOAP_FMAC5 _mws__TryGetRepositoryInfo * SOAP_FMAC6 soap_new__mws__TryGetRepositoryInfo(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mws__TryGetRepositoryInfo(struct soap*, _mws__TryGetRepositoryInfo*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate__mws__TryGetRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mws__TryGetRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep__TryGetRepositoryInfo(struct soap*, const char*, int, const _mtrep__TryGetRepositoryInfo *, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_get__mtrep__TryGetRepositoryInfo(struct soap*, _mtrep__TryGetRepositoryInfo *, const char*, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_in__mtrep__TryGetRepositoryInfo(struct soap*, const char*, _mtrep__TryGetRepositoryInfo *, const char*);
+SOAP_FMAC5 _mtrep__TryGetRepositoryInfo * SOAP_FMAC6 soap_new__mtrep__TryGetRepositoryInfo(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep__TryGetRepositoryInfo(struct soap*, _mtrep__TryGetRepositoryInfo*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate__mtrep__TryGetRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep__TryGetRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE_mws__ArrayOfRepositoryInfo
-#define SOAP_TYPE_mws__ArrayOfRepositoryInfo (8)
+#ifndef SOAP_TYPE_mtrep__ArrayOfRepositoryInfo
+#define SOAP_TYPE_mtrep__ArrayOfRepositoryInfo (8)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_mws__ArrayOfRepositoryInfo(struct soap*, const char*, int, const mws__ArrayOfRepositoryInfo *, const char*);
-SOAP_FMAC3 mws__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_get_mws__ArrayOfRepositoryInfo(struct soap*, mws__ArrayOfRepositoryInfo *, const char*, const char*);
-SOAP_FMAC3 mws__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_in_mws__ArrayOfRepositoryInfo(struct soap*, const char*, mws__ArrayOfRepositoryInfo *, const char*);
-SOAP_FMAC5 mws__ArrayOfRepositoryInfo * SOAP_FMAC6 soap_new_mws__ArrayOfRepositoryInfo(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mws__ArrayOfRepositoryInfo(struct soap*, mws__ArrayOfRepositoryInfo*);
-SOAP_FMAC3 mws__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_instantiate_mws__ArrayOfRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mws__ArrayOfRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep__ArrayOfRepositoryInfo(struct soap*, const char*, int, const mtrep__ArrayOfRepositoryInfo *, const char*);
+SOAP_FMAC3 mtrep__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_get_mtrep__ArrayOfRepositoryInfo(struct soap*, mtrep__ArrayOfRepositoryInfo *, const char*, const char*);
+SOAP_FMAC3 mtrep__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_in_mtrep__ArrayOfRepositoryInfo(struct soap*, const char*, mtrep__ArrayOfRepositoryInfo *, const char*);
+SOAP_FMAC5 mtrep__ArrayOfRepositoryInfo * SOAP_FMAC6 soap_new_mtrep__ArrayOfRepositoryInfo(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mtrep__ArrayOfRepositoryInfo(struct soap*, mtrep__ArrayOfRepositoryInfo*);
+SOAP_FMAC3 mtrep__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_instantiate_mtrep__ArrayOfRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mtrep__ArrayOfRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE_mws__RepositoryInfo
-#define SOAP_TYPE_mws__RepositoryInfo (7)
+#ifndef SOAP_TYPE_mtrep__RepositoryInfo
+#define SOAP_TYPE_mtrep__RepositoryInfo (7)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_mws__RepositoryInfo(struct soap*, const char*, int, const mws__RepositoryInfo *, const char*);
-SOAP_FMAC3 mws__RepositoryInfo * SOAP_FMAC4 soap_get_mws__RepositoryInfo(struct soap*, mws__RepositoryInfo *, const char*, const char*);
-SOAP_FMAC3 mws__RepositoryInfo * SOAP_FMAC4 soap_in_mws__RepositoryInfo(struct soap*, const char*, mws__RepositoryInfo *, const char*);
-SOAP_FMAC5 mws__RepositoryInfo * SOAP_FMAC6 soap_new_mws__RepositoryInfo(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mws__RepositoryInfo(struct soap*, mws__RepositoryInfo*);
-SOAP_FMAC3 mws__RepositoryInfo * SOAP_FMAC4 soap_instantiate_mws__RepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mws__RepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep__RepositoryInfo(struct soap*, const char*, int, const mtrep__RepositoryInfo *, const char*);
+SOAP_FMAC3 mtrep__RepositoryInfo * SOAP_FMAC4 soap_get_mtrep__RepositoryInfo(struct soap*, mtrep__RepositoryInfo *, const char*, const char*);
+SOAP_FMAC3 mtrep__RepositoryInfo * SOAP_FMAC4 soap_in_mtrep__RepositoryInfo(struct soap*, const char*, mtrep__RepositoryInfo *, const char*);
+SOAP_FMAC5 mtrep__RepositoryInfo * SOAP_FMAC6 soap_new_mtrep__RepositoryInfo(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mtrep__RepositoryInfo(struct soap*, mtrep__RepositoryInfo*);
+SOAP_FMAC3 mtrep__RepositoryInfo * SOAP_FMAC4 soap_instantiate_mtrep__RepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mtrep__RepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef WITH_NOGLOBAL
 
@@ -319,117 +319,117 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap*, int, int, vo
 
 #endif
 
-#ifndef SOAP_TYPE___mws__GetRepositories_
-#define SOAP_TYPE___mws__GetRepositories_ (51)
+#ifndef SOAP_TYPE___mtrep__GetRepositories_
+#define SOAP_TYPE___mtrep__GetRepositories_ (51)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__GetRepositories_(struct soap*, const struct __mws__GetRepositories_ *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__GetRepositories_(struct soap*, struct __mws__GetRepositories_ *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__GetRepositories_(struct soap*, const struct __mws__GetRepositories_ *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__GetRepositories_(struct soap*, const char*, int, const struct __mws__GetRepositories_ *, const char*);
-SOAP_FMAC3 struct __mws__GetRepositories_ * SOAP_FMAC4 soap_get___mws__GetRepositories_(struct soap*, struct __mws__GetRepositories_ *, const char*, const char*);
-SOAP_FMAC3 struct __mws__GetRepositories_ * SOAP_FMAC4 soap_in___mws__GetRepositories_(struct soap*, const char*, struct __mws__GetRepositories_ *, const char*);
-SOAP_FMAC5 struct __mws__GetRepositories_ * SOAP_FMAC6 soap_new___mws__GetRepositories_(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__GetRepositories_(struct soap*, struct __mws__GetRepositories_*);
-SOAP_FMAC3 struct __mws__GetRepositories_ * SOAP_FMAC4 soap_instantiate___mws__GetRepositories_(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__GetRepositories_(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__GetRepositories_(struct soap*, const struct __mtrep__GetRepositories_ *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__GetRepositories_(struct soap*, struct __mtrep__GetRepositories_ *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__GetRepositories_(struct soap*, const struct __mtrep__GetRepositories_ *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__GetRepositories_(struct soap*, const char*, int, const struct __mtrep__GetRepositories_ *, const char*);
+SOAP_FMAC3 struct __mtrep__GetRepositories_ * SOAP_FMAC4 soap_get___mtrep__GetRepositories_(struct soap*, struct __mtrep__GetRepositories_ *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__GetRepositories_ * SOAP_FMAC4 soap_in___mtrep__GetRepositories_(struct soap*, const char*, struct __mtrep__GetRepositories_ *, const char*);
+SOAP_FMAC5 struct __mtrep__GetRepositories_ * SOAP_FMAC6 soap_new___mtrep__GetRepositories_(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__GetRepositories_(struct soap*, struct __mtrep__GetRepositories_*);
+SOAP_FMAC3 struct __mtrep__GetRepositories_ * SOAP_FMAC4 soap_instantiate___mtrep__GetRepositories_(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__GetRepositories_(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__GetAllRepositories_
-#define SOAP_TYPE___mws__GetAllRepositories_ (49)
+#ifndef SOAP_TYPE___mtrep__GetAllRepositories_
+#define SOAP_TYPE___mtrep__GetAllRepositories_ (49)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__GetAllRepositories_(struct soap*, const struct __mws__GetAllRepositories_ *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__GetAllRepositories_(struct soap*, struct __mws__GetAllRepositories_ *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__GetAllRepositories_(struct soap*, const struct __mws__GetAllRepositories_ *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__GetAllRepositories_(struct soap*, const char*, int, const struct __mws__GetAllRepositories_ *, const char*);
-SOAP_FMAC3 struct __mws__GetAllRepositories_ * SOAP_FMAC4 soap_get___mws__GetAllRepositories_(struct soap*, struct __mws__GetAllRepositories_ *, const char*, const char*);
-SOAP_FMAC3 struct __mws__GetAllRepositories_ * SOAP_FMAC4 soap_in___mws__GetAllRepositories_(struct soap*, const char*, struct __mws__GetAllRepositories_ *, const char*);
-SOAP_FMAC5 struct __mws__GetAllRepositories_ * SOAP_FMAC6 soap_new___mws__GetAllRepositories_(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__GetAllRepositories_(struct soap*, struct __mws__GetAllRepositories_*);
-SOAP_FMAC3 struct __mws__GetAllRepositories_ * SOAP_FMAC4 soap_instantiate___mws__GetAllRepositories_(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__GetAllRepositories_(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__GetAllRepositories_(struct soap*, const struct __mtrep__GetAllRepositories_ *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__GetAllRepositories_(struct soap*, struct __mtrep__GetAllRepositories_ *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__GetAllRepositories_(struct soap*, const struct __mtrep__GetAllRepositories_ *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__GetAllRepositories_(struct soap*, const char*, int, const struct __mtrep__GetAllRepositories_ *, const char*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories_ * SOAP_FMAC4 soap_get___mtrep__GetAllRepositories_(struct soap*, struct __mtrep__GetAllRepositories_ *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories_ * SOAP_FMAC4 soap_in___mtrep__GetAllRepositories_(struct soap*, const char*, struct __mtrep__GetAllRepositories_ *, const char*);
+SOAP_FMAC5 struct __mtrep__GetAllRepositories_ * SOAP_FMAC6 soap_new___mtrep__GetAllRepositories_(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__GetAllRepositories_(struct soap*, struct __mtrep__GetAllRepositories_*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories_ * SOAP_FMAC4 soap_instantiate___mtrep__GetAllRepositories_(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__GetAllRepositories_(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__PickRepository_
-#define SOAP_TYPE___mws__PickRepository_ (47)
+#ifndef SOAP_TYPE___mtrep__PickRepository_
+#define SOAP_TYPE___mtrep__PickRepository_ (47)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__PickRepository_(struct soap*, const struct __mws__PickRepository_ *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__PickRepository_(struct soap*, struct __mws__PickRepository_ *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__PickRepository_(struct soap*, const struct __mws__PickRepository_ *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__PickRepository_(struct soap*, const char*, int, const struct __mws__PickRepository_ *, const char*);
-SOAP_FMAC3 struct __mws__PickRepository_ * SOAP_FMAC4 soap_get___mws__PickRepository_(struct soap*, struct __mws__PickRepository_ *, const char*, const char*);
-SOAP_FMAC3 struct __mws__PickRepository_ * SOAP_FMAC4 soap_in___mws__PickRepository_(struct soap*, const char*, struct __mws__PickRepository_ *, const char*);
-SOAP_FMAC5 struct __mws__PickRepository_ * SOAP_FMAC6 soap_new___mws__PickRepository_(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__PickRepository_(struct soap*, struct __mws__PickRepository_*);
-SOAP_FMAC3 struct __mws__PickRepository_ * SOAP_FMAC4 soap_instantiate___mws__PickRepository_(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__PickRepository_(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__PickRepository_(struct soap*, const struct __mtrep__PickRepository_ *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__PickRepository_(struct soap*, struct __mtrep__PickRepository_ *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__PickRepository_(struct soap*, const struct __mtrep__PickRepository_ *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__PickRepository_(struct soap*, const char*, int, const struct __mtrep__PickRepository_ *, const char*);
+SOAP_FMAC3 struct __mtrep__PickRepository_ * SOAP_FMAC4 soap_get___mtrep__PickRepository_(struct soap*, struct __mtrep__PickRepository_ *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__PickRepository_ * SOAP_FMAC4 soap_in___mtrep__PickRepository_(struct soap*, const char*, struct __mtrep__PickRepository_ *, const char*);
+SOAP_FMAC5 struct __mtrep__PickRepository_ * SOAP_FMAC6 soap_new___mtrep__PickRepository_(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__PickRepository_(struct soap*, struct __mtrep__PickRepository_*);
+SOAP_FMAC3 struct __mtrep__PickRepository_ * SOAP_FMAC4 soap_instantiate___mtrep__PickRepository_(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__PickRepository_(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__TryGetRepositoryInfo_
-#define SOAP_TYPE___mws__TryGetRepositoryInfo_ (45)
+#ifndef SOAP_TYPE___mtrep__TryGetRepositoryInfo_
+#define SOAP_TYPE___mtrep__TryGetRepositoryInfo_ (45)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__TryGetRepositoryInfo_(struct soap*, const struct __mws__TryGetRepositoryInfo_ *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__TryGetRepositoryInfo_(struct soap*, struct __mws__TryGetRepositoryInfo_ *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__TryGetRepositoryInfo_(struct soap*, const struct __mws__TryGetRepositoryInfo_ *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__TryGetRepositoryInfo_(struct soap*, const char*, int, const struct __mws__TryGetRepositoryInfo_ *, const char*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_get___mws__TryGetRepositoryInfo_(struct soap*, struct __mws__TryGetRepositoryInfo_ *, const char*, const char*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_in___mws__TryGetRepositoryInfo_(struct soap*, const char*, struct __mws__TryGetRepositoryInfo_ *, const char*);
-SOAP_FMAC5 struct __mws__TryGetRepositoryInfo_ * SOAP_FMAC6 soap_new___mws__TryGetRepositoryInfo_(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__TryGetRepositoryInfo_(struct soap*, struct __mws__TryGetRepositoryInfo_*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_instantiate___mws__TryGetRepositoryInfo_(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__TryGetRepositoryInfo_(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__TryGetRepositoryInfo_(struct soap*, const struct __mtrep__TryGetRepositoryInfo_ *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__TryGetRepositoryInfo_(struct soap*, struct __mtrep__TryGetRepositoryInfo_ *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__TryGetRepositoryInfo_(struct soap*, const struct __mtrep__TryGetRepositoryInfo_ *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__TryGetRepositoryInfo_(struct soap*, const char*, int, const struct __mtrep__TryGetRepositoryInfo_ *, const char*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_get___mtrep__TryGetRepositoryInfo_(struct soap*, struct __mtrep__TryGetRepositoryInfo_ *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_in___mtrep__TryGetRepositoryInfo_(struct soap*, const char*, struct __mtrep__TryGetRepositoryInfo_ *, const char*);
+SOAP_FMAC5 struct __mtrep__TryGetRepositoryInfo_ * SOAP_FMAC6 soap_new___mtrep__TryGetRepositoryInfo_(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__TryGetRepositoryInfo_(struct soap*, struct __mtrep__TryGetRepositoryInfo_*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_instantiate___mtrep__TryGetRepositoryInfo_(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__TryGetRepositoryInfo_(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__GetRepositories
-#define SOAP_TYPE___mws__GetRepositories (43)
+#ifndef SOAP_TYPE___mtrep__GetRepositories
+#define SOAP_TYPE___mtrep__GetRepositories (43)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__GetRepositories(struct soap*, const struct __mws__GetRepositories *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__GetRepositories(struct soap*, struct __mws__GetRepositories *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__GetRepositories(struct soap*, const struct __mws__GetRepositories *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__GetRepositories(struct soap*, const char*, int, const struct __mws__GetRepositories *, const char*);
-SOAP_FMAC3 struct __mws__GetRepositories * SOAP_FMAC4 soap_get___mws__GetRepositories(struct soap*, struct __mws__GetRepositories *, const char*, const char*);
-SOAP_FMAC3 struct __mws__GetRepositories * SOAP_FMAC4 soap_in___mws__GetRepositories(struct soap*, const char*, struct __mws__GetRepositories *, const char*);
-SOAP_FMAC5 struct __mws__GetRepositories * SOAP_FMAC6 soap_new___mws__GetRepositories(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__GetRepositories(struct soap*, struct __mws__GetRepositories*);
-SOAP_FMAC3 struct __mws__GetRepositories * SOAP_FMAC4 soap_instantiate___mws__GetRepositories(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__GetRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__GetRepositories(struct soap*, const struct __mtrep__GetRepositories *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__GetRepositories(struct soap*, struct __mtrep__GetRepositories *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__GetRepositories(struct soap*, const struct __mtrep__GetRepositories *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__GetRepositories(struct soap*, const char*, int, const struct __mtrep__GetRepositories *, const char*);
+SOAP_FMAC3 struct __mtrep__GetRepositories * SOAP_FMAC4 soap_get___mtrep__GetRepositories(struct soap*, struct __mtrep__GetRepositories *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__GetRepositories * SOAP_FMAC4 soap_in___mtrep__GetRepositories(struct soap*, const char*, struct __mtrep__GetRepositories *, const char*);
+SOAP_FMAC5 struct __mtrep__GetRepositories * SOAP_FMAC6 soap_new___mtrep__GetRepositories(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__GetRepositories(struct soap*, struct __mtrep__GetRepositories*);
+SOAP_FMAC3 struct __mtrep__GetRepositories * SOAP_FMAC4 soap_instantiate___mtrep__GetRepositories(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__GetRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__GetAllRepositories
-#define SOAP_TYPE___mws__GetAllRepositories (39)
+#ifndef SOAP_TYPE___mtrep__GetAllRepositories
+#define SOAP_TYPE___mtrep__GetAllRepositories (39)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__GetAllRepositories(struct soap*, const struct __mws__GetAllRepositories *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__GetAllRepositories(struct soap*, struct __mws__GetAllRepositories *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__GetAllRepositories(struct soap*, const struct __mws__GetAllRepositories *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__GetAllRepositories(struct soap*, const char*, int, const struct __mws__GetAllRepositories *, const char*);
-SOAP_FMAC3 struct __mws__GetAllRepositories * SOAP_FMAC4 soap_get___mws__GetAllRepositories(struct soap*, struct __mws__GetAllRepositories *, const char*, const char*);
-SOAP_FMAC3 struct __mws__GetAllRepositories * SOAP_FMAC4 soap_in___mws__GetAllRepositories(struct soap*, const char*, struct __mws__GetAllRepositories *, const char*);
-SOAP_FMAC5 struct __mws__GetAllRepositories * SOAP_FMAC6 soap_new___mws__GetAllRepositories(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__GetAllRepositories(struct soap*, struct __mws__GetAllRepositories*);
-SOAP_FMAC3 struct __mws__GetAllRepositories * SOAP_FMAC4 soap_instantiate___mws__GetAllRepositories(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__GetAllRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__GetAllRepositories(struct soap*, const struct __mtrep__GetAllRepositories *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__GetAllRepositories(struct soap*, struct __mtrep__GetAllRepositories *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__GetAllRepositories(struct soap*, const struct __mtrep__GetAllRepositories *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__GetAllRepositories(struct soap*, const char*, int, const struct __mtrep__GetAllRepositories *, const char*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories * SOAP_FMAC4 soap_get___mtrep__GetAllRepositories(struct soap*, struct __mtrep__GetAllRepositories *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories * SOAP_FMAC4 soap_in___mtrep__GetAllRepositories(struct soap*, const char*, struct __mtrep__GetAllRepositories *, const char*);
+SOAP_FMAC5 struct __mtrep__GetAllRepositories * SOAP_FMAC6 soap_new___mtrep__GetAllRepositories(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__GetAllRepositories(struct soap*, struct __mtrep__GetAllRepositories*);
+SOAP_FMAC3 struct __mtrep__GetAllRepositories * SOAP_FMAC4 soap_instantiate___mtrep__GetAllRepositories(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__GetAllRepositories(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__PickRepository
-#define SOAP_TYPE___mws__PickRepository (35)
+#ifndef SOAP_TYPE___mtrep__PickRepository
+#define SOAP_TYPE___mtrep__PickRepository (35)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__PickRepository(struct soap*, const struct __mws__PickRepository *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__PickRepository(struct soap*, struct __mws__PickRepository *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__PickRepository(struct soap*, const struct __mws__PickRepository *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__PickRepository(struct soap*, const char*, int, const struct __mws__PickRepository *, const char*);
-SOAP_FMAC3 struct __mws__PickRepository * SOAP_FMAC4 soap_get___mws__PickRepository(struct soap*, struct __mws__PickRepository *, const char*, const char*);
-SOAP_FMAC3 struct __mws__PickRepository * SOAP_FMAC4 soap_in___mws__PickRepository(struct soap*, const char*, struct __mws__PickRepository *, const char*);
-SOAP_FMAC5 struct __mws__PickRepository * SOAP_FMAC6 soap_new___mws__PickRepository(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__PickRepository(struct soap*, struct __mws__PickRepository*);
-SOAP_FMAC3 struct __mws__PickRepository * SOAP_FMAC4 soap_instantiate___mws__PickRepository(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__PickRepository(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__PickRepository(struct soap*, const struct __mtrep__PickRepository *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__PickRepository(struct soap*, struct __mtrep__PickRepository *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__PickRepository(struct soap*, const struct __mtrep__PickRepository *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__PickRepository(struct soap*, const char*, int, const struct __mtrep__PickRepository *, const char*);
+SOAP_FMAC3 struct __mtrep__PickRepository * SOAP_FMAC4 soap_get___mtrep__PickRepository(struct soap*, struct __mtrep__PickRepository *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__PickRepository * SOAP_FMAC4 soap_in___mtrep__PickRepository(struct soap*, const char*, struct __mtrep__PickRepository *, const char*);
+SOAP_FMAC5 struct __mtrep__PickRepository * SOAP_FMAC6 soap_new___mtrep__PickRepository(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__PickRepository(struct soap*, struct __mtrep__PickRepository*);
+SOAP_FMAC3 struct __mtrep__PickRepository * SOAP_FMAC4 soap_instantiate___mtrep__PickRepository(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__PickRepository(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___mws__TryGetRepositoryInfo
-#define SOAP_TYPE___mws__TryGetRepositoryInfo (31)
+#ifndef SOAP_TYPE___mtrep__TryGetRepositoryInfo
+#define SOAP_TYPE___mtrep__TryGetRepositoryInfo (31)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mws__TryGetRepositoryInfo(struct soap*, const struct __mws__TryGetRepositoryInfo *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___mws__TryGetRepositoryInfo(struct soap*, struct __mws__TryGetRepositoryInfo *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___mws__TryGetRepositoryInfo(struct soap*, const struct __mws__TryGetRepositoryInfo *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___mws__TryGetRepositoryInfo(struct soap*, const char*, int, const struct __mws__TryGetRepositoryInfo *, const char*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_get___mws__TryGetRepositoryInfo(struct soap*, struct __mws__TryGetRepositoryInfo *, const char*, const char*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_in___mws__TryGetRepositoryInfo(struct soap*, const char*, struct __mws__TryGetRepositoryInfo *, const char*);
-SOAP_FMAC5 struct __mws__TryGetRepositoryInfo * SOAP_FMAC6 soap_new___mws__TryGetRepositoryInfo(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mws__TryGetRepositoryInfo(struct soap*, struct __mws__TryGetRepositoryInfo*);
-SOAP_FMAC3 struct __mws__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate___mws__TryGetRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mws__TryGetRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep__TryGetRepositoryInfo(struct soap*, const struct __mtrep__TryGetRepositoryInfo *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep__TryGetRepositoryInfo(struct soap*, struct __mtrep__TryGetRepositoryInfo *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep__TryGetRepositoryInfo(struct soap*, const struct __mtrep__TryGetRepositoryInfo *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep__TryGetRepositoryInfo(struct soap*, const char*, int, const struct __mtrep__TryGetRepositoryInfo *, const char*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_get___mtrep__TryGetRepositoryInfo(struct soap*, struct __mtrep__TryGetRepositoryInfo *, const char*, const char*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_in___mtrep__TryGetRepositoryInfo(struct soap*, const char*, struct __mtrep__TryGetRepositoryInfo *, const char*);
+SOAP_FMAC5 struct __mtrep__TryGetRepositoryInfo * SOAP_FMAC6 soap_new___mtrep__TryGetRepositoryInfo(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep__TryGetRepositoryInfo(struct soap*, struct __mtrep__TryGetRepositoryInfo*);
+SOAP_FMAC3 struct __mtrep__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate___mtrep__TryGetRepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep__TryGetRepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef WITH_NOGLOBAL
 
@@ -470,95 +470,95 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_in_PointerToSOAP_ENV__Code(s
 
 #endif
 
-#ifndef SOAP_TYPE_PointerTo_mws__GetRepositoriesResponse
-#define SOAP_TYPE_PointerTo_mws__GetRepositoriesResponse (41)
+#ifndef SOAP_TYPE_PointerTo_mtrep__GetRepositoriesResponse
+#define SOAP_TYPE_PointerTo_mtrep__GetRepositoriesResponse (41)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__GetRepositoriesResponse(struct soap*, _mws__GetRepositoriesResponse *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__GetRepositoriesResponse(struct soap*, _mws__GetRepositoriesResponse *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__GetRepositoriesResponse(struct soap*, const char *, int, _mws__GetRepositoriesResponse *const*, const char *);
-SOAP_FMAC3 _mws__GetRepositoriesResponse ** SOAP_FMAC4 soap_get_PointerTo_mws__GetRepositoriesResponse(struct soap*, _mws__GetRepositoriesResponse **, const char*, const char*);
-SOAP_FMAC3 _mws__GetRepositoriesResponse ** SOAP_FMAC4 soap_in_PointerTo_mws__GetRepositoriesResponse(struct soap*, const char*, _mws__GetRepositoriesResponse **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__GetRepositoriesResponse(struct soap*, _mtrep__GetRepositoriesResponse *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__GetRepositoriesResponse(struct soap*, _mtrep__GetRepositoriesResponse *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__GetRepositoriesResponse(struct soap*, const char *, int, _mtrep__GetRepositoriesResponse *const*, const char *);
+SOAP_FMAC3 _mtrep__GetRepositoriesResponse ** SOAP_FMAC4 soap_get_PointerTo_mtrep__GetRepositoriesResponse(struct soap*, _mtrep__GetRepositoriesResponse **, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetRepositoriesResponse ** SOAP_FMAC4 soap_in_PointerTo_mtrep__GetRepositoriesResponse(struct soap*, const char*, _mtrep__GetRepositoriesResponse **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__GetRepositories
-#define SOAP_TYPE_PointerTo_mws__GetRepositories (40)
+#ifndef SOAP_TYPE_PointerTo_mtrep__GetRepositories
+#define SOAP_TYPE_PointerTo_mtrep__GetRepositories (40)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__GetRepositories(struct soap*, _mws__GetRepositories *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__GetRepositories(struct soap*, _mws__GetRepositories *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__GetRepositories(struct soap*, const char *, int, _mws__GetRepositories *const*, const char *);
-SOAP_FMAC3 _mws__GetRepositories ** SOAP_FMAC4 soap_get_PointerTo_mws__GetRepositories(struct soap*, _mws__GetRepositories **, const char*, const char*);
-SOAP_FMAC3 _mws__GetRepositories ** SOAP_FMAC4 soap_in_PointerTo_mws__GetRepositories(struct soap*, const char*, _mws__GetRepositories **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__GetRepositories(struct soap*, _mtrep__GetRepositories *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__GetRepositories(struct soap*, _mtrep__GetRepositories *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__GetRepositories(struct soap*, const char *, int, _mtrep__GetRepositories *const*, const char *);
+SOAP_FMAC3 _mtrep__GetRepositories ** SOAP_FMAC4 soap_get_PointerTo_mtrep__GetRepositories(struct soap*, _mtrep__GetRepositories **, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetRepositories ** SOAP_FMAC4 soap_in_PointerTo_mtrep__GetRepositories(struct soap*, const char*, _mtrep__GetRepositories **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__GetAllRepositoriesResponse
-#define SOAP_TYPE_PointerTo_mws__GetAllRepositoriesResponse (37)
+#ifndef SOAP_TYPE_PointerTo_mtrep__GetAllRepositoriesResponse
+#define SOAP_TYPE_PointerTo_mtrep__GetAllRepositoriesResponse (37)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__GetAllRepositoriesResponse(struct soap*, _mws__GetAllRepositoriesResponse *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__GetAllRepositoriesResponse(struct soap*, _mws__GetAllRepositoriesResponse *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__GetAllRepositoriesResponse(struct soap*, const char *, int, _mws__GetAllRepositoriesResponse *const*, const char *);
-SOAP_FMAC3 _mws__GetAllRepositoriesResponse ** SOAP_FMAC4 soap_get_PointerTo_mws__GetAllRepositoriesResponse(struct soap*, _mws__GetAllRepositoriesResponse **, const char*, const char*);
-SOAP_FMAC3 _mws__GetAllRepositoriesResponse ** SOAP_FMAC4 soap_in_PointerTo_mws__GetAllRepositoriesResponse(struct soap*, const char*, _mws__GetAllRepositoriesResponse **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__GetAllRepositoriesResponse(struct soap*, _mtrep__GetAllRepositoriesResponse *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__GetAllRepositoriesResponse(struct soap*, _mtrep__GetAllRepositoriesResponse *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__GetAllRepositoriesResponse(struct soap*, const char *, int, _mtrep__GetAllRepositoriesResponse *const*, const char *);
+SOAP_FMAC3 _mtrep__GetAllRepositoriesResponse ** SOAP_FMAC4 soap_get_PointerTo_mtrep__GetAllRepositoriesResponse(struct soap*, _mtrep__GetAllRepositoriesResponse **, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositoriesResponse ** SOAP_FMAC4 soap_in_PointerTo_mtrep__GetAllRepositoriesResponse(struct soap*, const char*, _mtrep__GetAllRepositoriesResponse **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__GetAllRepositories
-#define SOAP_TYPE_PointerTo_mws__GetAllRepositories (36)
+#ifndef SOAP_TYPE_PointerTo_mtrep__GetAllRepositories
+#define SOAP_TYPE_PointerTo_mtrep__GetAllRepositories (36)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__GetAllRepositories(struct soap*, _mws__GetAllRepositories *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__GetAllRepositories(struct soap*, _mws__GetAllRepositories *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__GetAllRepositories(struct soap*, const char *, int, _mws__GetAllRepositories *const*, const char *);
-SOAP_FMAC3 _mws__GetAllRepositories ** SOAP_FMAC4 soap_get_PointerTo_mws__GetAllRepositories(struct soap*, _mws__GetAllRepositories **, const char*, const char*);
-SOAP_FMAC3 _mws__GetAllRepositories ** SOAP_FMAC4 soap_in_PointerTo_mws__GetAllRepositories(struct soap*, const char*, _mws__GetAllRepositories **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__GetAllRepositories(struct soap*, _mtrep__GetAllRepositories *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__GetAllRepositories(struct soap*, _mtrep__GetAllRepositories *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__GetAllRepositories(struct soap*, const char *, int, _mtrep__GetAllRepositories *const*, const char *);
+SOAP_FMAC3 _mtrep__GetAllRepositories ** SOAP_FMAC4 soap_get_PointerTo_mtrep__GetAllRepositories(struct soap*, _mtrep__GetAllRepositories **, const char*, const char*);
+SOAP_FMAC3 _mtrep__GetAllRepositories ** SOAP_FMAC4 soap_in_PointerTo_mtrep__GetAllRepositories(struct soap*, const char*, _mtrep__GetAllRepositories **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__PickRepositoryResponse
-#define SOAP_TYPE_PointerTo_mws__PickRepositoryResponse (33)
+#ifndef SOAP_TYPE_PointerTo_mtrep__PickRepositoryResponse
+#define SOAP_TYPE_PointerTo_mtrep__PickRepositoryResponse (33)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__PickRepositoryResponse(struct soap*, _mws__PickRepositoryResponse *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__PickRepositoryResponse(struct soap*, _mws__PickRepositoryResponse *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__PickRepositoryResponse(struct soap*, const char *, int, _mws__PickRepositoryResponse *const*, const char *);
-SOAP_FMAC3 _mws__PickRepositoryResponse ** SOAP_FMAC4 soap_get_PointerTo_mws__PickRepositoryResponse(struct soap*, _mws__PickRepositoryResponse **, const char*, const char*);
-SOAP_FMAC3 _mws__PickRepositoryResponse ** SOAP_FMAC4 soap_in_PointerTo_mws__PickRepositoryResponse(struct soap*, const char*, _mws__PickRepositoryResponse **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__PickRepositoryResponse(struct soap*, _mtrep__PickRepositoryResponse *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__PickRepositoryResponse(struct soap*, _mtrep__PickRepositoryResponse *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__PickRepositoryResponse(struct soap*, const char *, int, _mtrep__PickRepositoryResponse *const*, const char *);
+SOAP_FMAC3 _mtrep__PickRepositoryResponse ** SOAP_FMAC4 soap_get_PointerTo_mtrep__PickRepositoryResponse(struct soap*, _mtrep__PickRepositoryResponse **, const char*, const char*);
+SOAP_FMAC3 _mtrep__PickRepositoryResponse ** SOAP_FMAC4 soap_in_PointerTo_mtrep__PickRepositoryResponse(struct soap*, const char*, _mtrep__PickRepositoryResponse **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__PickRepository
-#define SOAP_TYPE_PointerTo_mws__PickRepository (32)
+#ifndef SOAP_TYPE_PointerTo_mtrep__PickRepository
+#define SOAP_TYPE_PointerTo_mtrep__PickRepository (32)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__PickRepository(struct soap*, _mws__PickRepository *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__PickRepository(struct soap*, _mws__PickRepository *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__PickRepository(struct soap*, const char *, int, _mws__PickRepository *const*, const char *);
-SOAP_FMAC3 _mws__PickRepository ** SOAP_FMAC4 soap_get_PointerTo_mws__PickRepository(struct soap*, _mws__PickRepository **, const char*, const char*);
-SOAP_FMAC3 _mws__PickRepository ** SOAP_FMAC4 soap_in_PointerTo_mws__PickRepository(struct soap*, const char*, _mws__PickRepository **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__PickRepository(struct soap*, _mtrep__PickRepository *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__PickRepository(struct soap*, _mtrep__PickRepository *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__PickRepository(struct soap*, const char *, int, _mtrep__PickRepository *const*, const char *);
+SOAP_FMAC3 _mtrep__PickRepository ** SOAP_FMAC4 soap_get_PointerTo_mtrep__PickRepository(struct soap*, _mtrep__PickRepository **, const char*, const char*);
+SOAP_FMAC3 _mtrep__PickRepository ** SOAP_FMAC4 soap_in_PointerTo_mtrep__PickRepository(struct soap*, const char*, _mtrep__PickRepository **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__TryGetRepositoryInfoResponse
-#define SOAP_TYPE_PointerTo_mws__TryGetRepositoryInfoResponse (29)
+#ifndef SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfoResponse
+#define SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfoResponse (29)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__TryGetRepositoryInfoResponse(struct soap*, _mws__TryGetRepositoryInfoResponse *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__TryGetRepositoryInfoResponse(struct soap*, _mws__TryGetRepositoryInfoResponse *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__TryGetRepositoryInfoResponse(struct soap*, const char *, int, _mws__TryGetRepositoryInfoResponse *const*, const char *);
-SOAP_FMAC3 _mws__TryGetRepositoryInfoResponse ** SOAP_FMAC4 soap_get_PointerTo_mws__TryGetRepositoryInfoResponse(struct soap*, _mws__TryGetRepositoryInfoResponse **, const char*, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfoResponse ** SOAP_FMAC4 soap_in_PointerTo_mws__TryGetRepositoryInfoResponse(struct soap*, const char*, _mws__TryGetRepositoryInfoResponse **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__TryGetRepositoryInfoResponse(struct soap*, _mtrep__TryGetRepositoryInfoResponse *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__TryGetRepositoryInfoResponse(struct soap*, _mtrep__TryGetRepositoryInfoResponse *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__TryGetRepositoryInfoResponse(struct soap*, const char *, int, _mtrep__TryGetRepositoryInfoResponse *const*, const char *);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfoResponse ** SOAP_FMAC4 soap_get_PointerTo_mtrep__TryGetRepositoryInfoResponse(struct soap*, _mtrep__TryGetRepositoryInfoResponse **, const char*, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfoResponse ** SOAP_FMAC4 soap_in_PointerTo_mtrep__TryGetRepositoryInfoResponse(struct soap*, const char*, _mtrep__TryGetRepositoryInfoResponse **, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_mws__TryGetRepositoryInfo
-#define SOAP_TYPE_PointerTo_mws__TryGetRepositoryInfo (28)
+#ifndef SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfo
+#define SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfo (28)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mws__TryGetRepositoryInfo(struct soap*, _mws__TryGetRepositoryInfo *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mws__TryGetRepositoryInfo(struct soap*, _mws__TryGetRepositoryInfo *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mws__TryGetRepositoryInfo(struct soap*, const char *, int, _mws__TryGetRepositoryInfo *const*, const char *);
-SOAP_FMAC3 _mws__TryGetRepositoryInfo ** SOAP_FMAC4 soap_get_PointerTo_mws__TryGetRepositoryInfo(struct soap*, _mws__TryGetRepositoryInfo **, const char*, const char*);
-SOAP_FMAC3 _mws__TryGetRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTo_mws__TryGetRepositoryInfo(struct soap*, const char*, _mws__TryGetRepositoryInfo **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep__TryGetRepositoryInfo(struct soap*, _mtrep__TryGetRepositoryInfo *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep__TryGetRepositoryInfo(struct soap*, _mtrep__TryGetRepositoryInfo *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep__TryGetRepositoryInfo(struct soap*, const char *, int, _mtrep__TryGetRepositoryInfo *const*, const char *);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfo ** SOAP_FMAC4 soap_get_PointerTo_mtrep__TryGetRepositoryInfo(struct soap*, _mtrep__TryGetRepositoryInfo **, const char*, const char*);
+SOAP_FMAC3 _mtrep__TryGetRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTo_mtrep__TryGetRepositoryInfo(struct soap*, const char*, _mtrep__TryGetRepositoryInfo **, const char*);
 
-#ifndef SOAP_TYPE_PointerTomws__ArrayOfRepositoryInfo
-#define SOAP_TYPE_PointerTomws__ArrayOfRepositoryInfo (27)
+#ifndef SOAP_TYPE_PointerTomtrep__ArrayOfRepositoryInfo
+#define SOAP_TYPE_PointerTomtrep__ArrayOfRepositoryInfo (27)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomws__ArrayOfRepositoryInfo(struct soap*, mws__ArrayOfRepositoryInfo *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomws__ArrayOfRepositoryInfo(struct soap*, mws__ArrayOfRepositoryInfo *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomws__ArrayOfRepositoryInfo(struct soap*, const char *, int, mws__ArrayOfRepositoryInfo *const*, const char *);
-SOAP_FMAC3 mws__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomws__ArrayOfRepositoryInfo(struct soap*, mws__ArrayOfRepositoryInfo **, const char*, const char*);
-SOAP_FMAC3 mws__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomws__ArrayOfRepositoryInfo(struct soap*, const char*, mws__ArrayOfRepositoryInfo **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep__ArrayOfRepositoryInfo(struct soap*, mtrep__ArrayOfRepositoryInfo *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomtrep__ArrayOfRepositoryInfo(struct soap*, mtrep__ArrayOfRepositoryInfo *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomtrep__ArrayOfRepositoryInfo(struct soap*, const char *, int, mtrep__ArrayOfRepositoryInfo *const*, const char *);
+SOAP_FMAC3 mtrep__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomtrep__ArrayOfRepositoryInfo(struct soap*, mtrep__ArrayOfRepositoryInfo **, const char*, const char*);
+SOAP_FMAC3 mtrep__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomtrep__ArrayOfRepositoryInfo(struct soap*, const char*, mtrep__ArrayOfRepositoryInfo **, const char*);
 
-#ifndef SOAP_TYPE_PointerTomws__RepositoryInfo
-#define SOAP_TYPE_PointerTomws__RepositoryInfo (24)
+#ifndef SOAP_TYPE_PointerTomtrep__RepositoryInfo
+#define SOAP_TYPE_PointerTomtrep__RepositoryInfo (24)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomws__RepositoryInfo(struct soap*, mws__RepositoryInfo *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomws__RepositoryInfo(struct soap*, mws__RepositoryInfo *const*, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomws__RepositoryInfo(struct soap*, const char *, int, mws__RepositoryInfo *const*, const char *);
-SOAP_FMAC3 mws__RepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomws__RepositoryInfo(struct soap*, mws__RepositoryInfo **, const char*, const char*);
-SOAP_FMAC3 mws__RepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomws__RepositoryInfo(struct soap*, const char*, mws__RepositoryInfo **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep__RepositoryInfo(struct soap*, mtrep__RepositoryInfo *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomtrep__RepositoryInfo(struct soap*, mtrep__RepositoryInfo *const*, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomtrep__RepositoryInfo(struct soap*, const char *, int, mtrep__RepositoryInfo *const*, const char *);
+SOAP_FMAC3 mtrep__RepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomtrep__RepositoryInfo(struct soap*, mtrep__RepositoryInfo **, const char*, const char*);
+SOAP_FMAC3 mtrep__RepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomtrep__RepositoryInfo(struct soap*, const char*, mtrep__RepositoryInfo **, const char*);
 
 #ifndef SOAP_TYPE_PointerTostd__string
 #define SOAP_TYPE_PointerTostd__string (21)
@@ -589,17 +589,17 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out_string(struct soap*, const char*, int, char*c
 SOAP_FMAC3 char ** SOAP_FMAC4 soap_get_string(struct soap*, char **, const char*, const char*);
 SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap*, const char*, char **, const char*);
 
-#ifndef SOAP_TYPE_std__vectorTemplateOfPointerTomws__RepositoryInfo
-#define SOAP_TYPE_std__vectorTemplateOfPointerTomws__RepositoryInfo (25)
+#ifndef SOAP_TYPE_std__vectorTemplateOfPointerTomtrep__RepositoryInfo
+#define SOAP_TYPE_std__vectorTemplateOfPointerTomtrep__RepositoryInfo (25)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, const std::vector<mws__RepositoryInfo * >*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, std::vector<mws__RepositoryInfo * >*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, const char*, int, const std::vector<mws__RepositoryInfo * >*, const char*);
-SOAP_FMAC3 std::vector<mws__RepositoryInfo * >* SOAP_FMAC4 soap_in_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, const char*, std::vector<mws__RepositoryInfo * >*, const char*);
-SOAP_FMAC5 std::vector<mws__RepositoryInfo * > * SOAP_FMAC6 soap_new_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, std::vector<mws__RepositoryInfo * >*);
-SOAP_FMAC3 std::vector<mws__RepositoryInfo * > * SOAP_FMAC4 soap_instantiate_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__vectorTemplateOfPointerTomws__RepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, const std::vector<mtrep__RepositoryInfo * >*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, std::vector<mtrep__RepositoryInfo * >*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, const char*, int, const std::vector<mtrep__RepositoryInfo * >*, const char*);
+SOAP_FMAC3 std::vector<mtrep__RepositoryInfo * >* SOAP_FMAC4 soap_in_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, const char*, std::vector<mtrep__RepositoryInfo * >*, const char*);
+SOAP_FMAC5 std::vector<mtrep__RepositoryInfo * > * SOAP_FMAC6 soap_new_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, std::vector<mtrep__RepositoryInfo * >*);
+SOAP_FMAC3 std::vector<mtrep__RepositoryInfo * > * SOAP_FMAC4 soap_instantiate_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #endif
 

@@ -16,14 +16,14 @@ class SOAP_CMAC RepositorySoapProxy : public soap
 		RepositorySoapProxy(soap_mode imode, soap_mode omode);
 	virtual ~RepositorySoapProxy();
 	virtual	void RepositorySoapProxy_init(soap_mode imode, soap_mode omode);
-	virtual int TryGetRepositoryInfo(_mws__TryGetRepositoryInfo *mws__TryGetRepositoryInfo, _mws__TryGetRepositoryInfoResponse *mws__TryGetRepositoryInfoResponse);
-	virtual int PickRepository(_mws__PickRepository *mws__PickRepository, _mws__PickRepositoryResponse *mws__PickRepositoryResponse);
-	virtual int GetAllRepositories(_mws__GetAllRepositories *mws__GetAllRepositories, _mws__GetAllRepositoriesResponse *mws__GetAllRepositoriesResponse);
-	virtual int GetRepositories(_mws__GetRepositories *mws__GetRepositories, _mws__GetRepositoriesResponse *mws__GetRepositoriesResponse);
-	virtual int TryGetRepositoryInfo_(_mws__TryGetRepositoryInfo *mws__TryGetRepositoryInfo, _mws__TryGetRepositoryInfoResponse *mws__TryGetRepositoryInfoResponse);
-	virtual int PickRepository_(_mws__PickRepository *mws__PickRepository, _mws__PickRepositoryResponse *mws__PickRepositoryResponse);
-	virtual int GetAllRepositories_(_mws__GetAllRepositories *mws__GetAllRepositories, _mws__GetAllRepositoriesResponse *mws__GetAllRepositoriesResponse);
-	virtual int GetRepositories_(_mws__GetRepositories *mws__GetRepositories, _mws__GetRepositoriesResponse *mws__GetRepositoriesResponse);
+	virtual int TryGetRepositoryInfo(_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo, _mtrep__TryGetRepositoryInfoResponse *mtrep__TryGetRepositoryInfoResponse);
+	virtual int PickRepository(_mtrep__PickRepository *mtrep__PickRepository, _mtrep__PickRepositoryResponse *mtrep__PickRepositoryResponse);
+	virtual int GetAllRepositories(_mtrep__GetAllRepositories *mtrep__GetAllRepositories, _mtrep__GetAllRepositoriesResponse *mtrep__GetAllRepositoriesResponse);
+	virtual int GetRepositories(_mtrep__GetRepositories *mtrep__GetRepositories, _mtrep__GetRepositoriesResponse *mtrep__GetRepositoriesResponse);
+	virtual int TryGetRepositoryInfo_(_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo, _mtrep__TryGetRepositoryInfoResponse *mtrep__TryGetRepositoryInfoResponse);
+	virtual int PickRepository_(_mtrep__PickRepository *mtrep__PickRepository, _mtrep__PickRepositoryResponse *mtrep__PickRepositoryResponse);
+	virtual int GetAllRepositories_(_mtrep__GetAllRepositories *mtrep__GetAllRepositories, _mtrep__GetAllRepositoriesResponse *mtrep__GetAllRepositoriesResponse);
+	virtual int GetRepositories_(_mtrep__GetRepositories *mtrep__GetRepositories, _mtrep__GetRepositoriesResponse *mtrep__GetRepositoriesResponse);
 		const char *soap_endpoint;
 };
 #endif

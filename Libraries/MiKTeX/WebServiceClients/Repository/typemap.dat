@@ -75,7 +75,7 @@
 
 #	MiKTeX Web Services
 
-mws	= "http://miktex.org/"
+mtrep	= "http://miktex.org/2006/06/repository"
 
 #	For WhiteMesa interoperability testing round 2:
 

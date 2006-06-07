@@ -17,22 +17,22 @@
 \******************************************************************************/
 
 
-#ifndef SOAP_TYPE_mws__Integrities
-#define SOAP_TYPE_mws__Integrities (17)
-/* mws:Integrities */
-enum mws__Integrities {mws__Integrities__Intact = 0, mws__Integrities__Corrupted = 1, mws__Integrities__Unknown = 2};
+#ifndef SOAP_TYPE_mtrep__Integrities
+#define SOAP_TYPE_mtrep__Integrities (17)
+/* mtrep:Integrities */
+enum mtrep__Integrities {mtrep__Integrities__Intact = 0, mtrep__Integrities__Corrupted = 1, mtrep__Integrities__Unknown = 2};
 #endif
 
-#ifndef SOAP_TYPE_mws__Levels
-#define SOAP_TYPE_mws__Levels (18)
-/* mws:Levels */
-enum mws__Levels {mws__Levels__Essential = 0, mws__Levels__Basic = 1, mws__Levels__Advanced = 2, mws__Levels__Complete = 3};
+#ifndef SOAP_TYPE_mtrep__Levels
+#define SOAP_TYPE_mtrep__Levels (18)
+/* mtrep:Levels */
+enum mtrep__Levels {mtrep__Levels__Essential = 0, mtrep__Levels__Basic = 1, mtrep__Levels__Advanced = 2, mtrep__Levels__Complete = 3};
 #endif
 
-#ifndef SOAP_TYPE_mws__RepositoryStatus
-#define SOAP_TYPE_mws__RepositoryStatus (19)
-/* mws:RepositoryStatus */
-enum mws__RepositoryStatus {mws__RepositoryStatus__Online = 0, mws__RepositoryStatus__Offline = 1, mws__RepositoryStatus__Unknown = 2};
+#ifndef SOAP_TYPE_mtrep__RepositoryStatus
+#define SOAP_TYPE_mtrep__RepositoryStatus (19)
+/* mtrep:RepositoryStatus */
+enum mtrep__RepositoryStatus {mtrep__RepositoryStatus__Online = 0, mtrep__RepositoryStatus__Offline = 1, mtrep__RepositoryStatus__Unknown = 2};
 #endif
 
 /******************************************************************************\
@@ -48,185 +48,185 @@ enum mws__RepositoryStatus {mws__RepositoryStatus__Online = 0, mws__RepositorySt
 
 
 
-#ifndef SOAP_TYPE_mws__RepositoryInfo
-#define SOAP_TYPE_mws__RepositoryInfo (7)
-/* mws:RepositoryInfo */
-class SOAP_CMAC mws__RepositoryInfo
+#ifndef SOAP_TYPE_mtrep__RepositoryInfo
+#define SOAP_TYPE_mtrep__RepositoryInfo (7)
+/* mtrep:RepositoryInfo */
+class SOAP_CMAC mtrep__RepositoryInfo
 {
 public:
 	std::string *Country;	/* optional element of type xsd:string */
 	int Date;	/* required element of type xsd:int */
 	int Delay;	/* required element of type xsd:int */
 	std::string *Description;	/* optional element of type xsd:string */
-	enum mws__Integrities Integrity;	/* required element of type mws:Integrities */
-	enum mws__Levels Level;	/* required element of type mws:Levels */
-	enum mws__RepositoryStatus Status;	/* required element of type mws:RepositoryStatus */
+	enum mtrep__Integrities Integrity;	/* required element of type mtrep:Integrities */
+	enum mtrep__Levels Level;	/* required element of type mtrep:Levels */
+	enum mtrep__RepositoryStatus Status;	/* required element of type mtrep:RepositoryStatus */
 	std::string *Url;	/* optional element of type xsd:string */
 	int Version;	/* required element of type xsd:int */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 7; } /* = unique id SOAP_TYPE_mws__RepositoryInfo */
+	virtual int soap_type() const { return 7; } /* = unique id SOAP_TYPE_mtrep__RepositoryInfo */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         mws__RepositoryInfo() : Country(NULL), Description(NULL), Url(NULL), soap(NULL) { }
-	virtual ~mws__RepositoryInfo() { }
+	         mtrep__RepositoryInfo() : Country(NULL), Description(NULL), Url(NULL), soap(NULL) { }
+	virtual ~mtrep__RepositoryInfo() { }
 };
 #endif
 
-#ifndef SOAP_TYPE_mws__ArrayOfRepositoryInfo
-#define SOAP_TYPE_mws__ArrayOfRepositoryInfo (8)
-/* mws:ArrayOfRepositoryInfo */
-class SOAP_CMAC mws__ArrayOfRepositoryInfo
+#ifndef SOAP_TYPE_mtrep__ArrayOfRepositoryInfo
+#define SOAP_TYPE_mtrep__ArrayOfRepositoryInfo (8)
+/* mtrep:ArrayOfRepositoryInfo */
+class SOAP_CMAC mtrep__ArrayOfRepositoryInfo
 {
 public:
-	std::vector<mws__RepositoryInfo * >RepositoryInfo;	/* optional element of type mws:RepositoryInfo */
+	std::vector<mtrep__RepositoryInfo * >RepositoryInfo;	/* optional element of type mtrep:RepositoryInfo */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 8; } /* = unique id SOAP_TYPE_mws__ArrayOfRepositoryInfo */
+	virtual int soap_type() const { return 8; } /* = unique id SOAP_TYPE_mtrep__ArrayOfRepositoryInfo */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         mws__ArrayOfRepositoryInfo() : soap(NULL) { }
-	virtual ~mws__ArrayOfRepositoryInfo() { }
+	         mtrep__ArrayOfRepositoryInfo() : soap(NULL) { }
+	virtual ~mtrep__ArrayOfRepositoryInfo() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__TryGetRepositoryInfo
-#define SOAP_TYPE__mws__TryGetRepositoryInfo (9)
-/* mws:TryGetRepositoryInfo */
-class SOAP_CMAC _mws__TryGetRepositoryInfo
+#ifndef SOAP_TYPE__mtrep__TryGetRepositoryInfo
+#define SOAP_TYPE__mtrep__TryGetRepositoryInfo (9)
+/* mtrep:TryGetRepositoryInfo */
+class SOAP_CMAC _mtrep__TryGetRepositoryInfo
 {
 public:
 	std::string *url;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 9; } /* = unique id SOAP_TYPE__mws__TryGetRepositoryInfo */
+	virtual int soap_type() const { return 9; } /* = unique id SOAP_TYPE__mtrep__TryGetRepositoryInfo */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__TryGetRepositoryInfo() : url(NULL), soap(NULL) { }
-	virtual ~_mws__TryGetRepositoryInfo() { }
+	         _mtrep__TryGetRepositoryInfo() : url(NULL), soap(NULL) { }
+	virtual ~_mtrep__TryGetRepositoryInfo() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__TryGetRepositoryInfoResponse
-#define SOAP_TYPE__mws__TryGetRepositoryInfoResponse (10)
-/* mws:TryGetRepositoryInfoResponse */
-class SOAP_CMAC _mws__TryGetRepositoryInfoResponse
+#ifndef SOAP_TYPE__mtrep__TryGetRepositoryInfoResponse
+#define SOAP_TYPE__mtrep__TryGetRepositoryInfoResponse (10)
+/* mtrep:TryGetRepositoryInfoResponse */
+class SOAP_CMAC _mtrep__TryGetRepositoryInfoResponse
 {
 public:
 	bool TryGetRepositoryInfoResult;	/* RPC return element */	/* required element of type xsd:boolean */
-	mws__RepositoryInfo *repositoryInfo;	/* optional element of type mws:RepositoryInfo */
+	mtrep__RepositoryInfo *repositoryInfo;	/* optional element of type mtrep:RepositoryInfo */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 10; } /* = unique id SOAP_TYPE__mws__TryGetRepositoryInfoResponse */
+	virtual int soap_type() const { return 10; } /* = unique id SOAP_TYPE__mtrep__TryGetRepositoryInfoResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__TryGetRepositoryInfoResponse() : repositoryInfo(NULL), soap(NULL) { }
-	virtual ~_mws__TryGetRepositoryInfoResponse() { }
+	         _mtrep__TryGetRepositoryInfoResponse() : repositoryInfo(NULL), soap(NULL) { }
+	virtual ~_mtrep__TryGetRepositoryInfoResponse() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__PickRepository
-#define SOAP_TYPE__mws__PickRepository (11)
-/* mws:PickRepository */
-class SOAP_CMAC _mws__PickRepository
+#ifndef SOAP_TYPE__mtrep__PickRepository
+#define SOAP_TYPE__mtrep__PickRepository (11)
+/* mtrep:PickRepository */
+class SOAP_CMAC _mtrep__PickRepository
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 11; } /* = unique id SOAP_TYPE__mws__PickRepository */
+	virtual int soap_type() const { return 11; } /* = unique id SOAP_TYPE__mtrep__PickRepository */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__PickRepository() : soap(NULL) { }
-	virtual ~_mws__PickRepository() { }
+	         _mtrep__PickRepository() : soap(NULL) { }
+	virtual ~_mtrep__PickRepository() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__PickRepositoryResponse
-#define SOAP_TYPE__mws__PickRepositoryResponse (12)
-/* mws:PickRepositoryResponse */
-class SOAP_CMAC _mws__PickRepositoryResponse
+#ifndef SOAP_TYPE__mtrep__PickRepositoryResponse
+#define SOAP_TYPE__mtrep__PickRepositoryResponse (12)
+/* mtrep:PickRepositoryResponse */
+class SOAP_CMAC _mtrep__PickRepositoryResponse
 {
 public:
-	mws__RepositoryInfo *PickRepositoryResult;	/* RPC return element */	/* optional element of type mws:RepositoryInfo */
+	mtrep__RepositoryInfo *PickRepositoryResult;	/* RPC return element */	/* optional element of type mtrep:RepositoryInfo */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 12; } /* = unique id SOAP_TYPE__mws__PickRepositoryResponse */
+	virtual int soap_type() const { return 12; } /* = unique id SOAP_TYPE__mtrep__PickRepositoryResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__PickRepositoryResponse() : PickRepositoryResult(NULL), soap(NULL) { }
-	virtual ~_mws__PickRepositoryResponse() { }
+	         _mtrep__PickRepositoryResponse() : PickRepositoryResult(NULL), soap(NULL) { }
+	virtual ~_mtrep__PickRepositoryResponse() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__GetAllRepositories
-#define SOAP_TYPE__mws__GetAllRepositories (13)
-/* mws:GetAllRepositories */
-class SOAP_CMAC _mws__GetAllRepositories
+#ifndef SOAP_TYPE__mtrep__GetAllRepositories
+#define SOAP_TYPE__mtrep__GetAllRepositories (13)
+/* mtrep:GetAllRepositories */
+class SOAP_CMAC _mtrep__GetAllRepositories
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 13; } /* = unique id SOAP_TYPE__mws__GetAllRepositories */
+	virtual int soap_type() const { return 13; } /* = unique id SOAP_TYPE__mtrep__GetAllRepositories */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__GetAllRepositories() : soap(NULL) { }
-	virtual ~_mws__GetAllRepositories() { }
+	         _mtrep__GetAllRepositories() : soap(NULL) { }
+	virtual ~_mtrep__GetAllRepositories() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__GetAllRepositoriesResponse
-#define SOAP_TYPE__mws__GetAllRepositoriesResponse (14)
-/* mws:GetAllRepositoriesResponse */
-class SOAP_CMAC _mws__GetAllRepositoriesResponse
+#ifndef SOAP_TYPE__mtrep__GetAllRepositoriesResponse
+#define SOAP_TYPE__mtrep__GetAllRepositoriesResponse (14)
+/* mtrep:GetAllRepositoriesResponse */
+class SOAP_CMAC _mtrep__GetAllRepositoriesResponse
 {
 public:
-	mws__ArrayOfRepositoryInfo *GetAllRepositoriesResult;	/* RPC return element */	/* optional element of type mws:ArrayOfRepositoryInfo */
+	mtrep__ArrayOfRepositoryInfo *GetAllRepositoriesResult;	/* RPC return element */	/* optional element of type mtrep:ArrayOfRepositoryInfo */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 14; } /* = unique id SOAP_TYPE__mws__GetAllRepositoriesResponse */
+	virtual int soap_type() const { return 14; } /* = unique id SOAP_TYPE__mtrep__GetAllRepositoriesResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__GetAllRepositoriesResponse() : GetAllRepositoriesResult(NULL), soap(NULL) { }
-	virtual ~_mws__GetAllRepositoriesResponse() { }
+	         _mtrep__GetAllRepositoriesResponse() : GetAllRepositoriesResult(NULL), soap(NULL) { }
+	virtual ~_mtrep__GetAllRepositoriesResponse() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__GetRepositories
-#define SOAP_TYPE__mws__GetRepositories (15)
-/* mws:GetRepositories */
-class SOAP_CMAC _mws__GetRepositories
+#ifndef SOAP_TYPE__mtrep__GetRepositories
+#define SOAP_TYPE__mtrep__GetRepositories (15)
+/* mtrep:GetRepositories */
+class SOAP_CMAC _mtrep__GetRepositories
 {
 public:
 	bool onlyOnline;	/* required element of type xsd:boolean */
@@ -234,116 +234,116 @@ public:
 	int maxDelay;	/* required element of type xsd:int */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 15; } /* = unique id SOAP_TYPE__mws__GetRepositories */
+	virtual int soap_type() const { return 15; } /* = unique id SOAP_TYPE__mtrep__GetRepositories */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__GetRepositories() : soap(NULL) { }
-	virtual ~_mws__GetRepositories() { }
+	         _mtrep__GetRepositories() : soap(NULL) { }
+	virtual ~_mtrep__GetRepositories() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__mws__GetRepositoriesResponse
-#define SOAP_TYPE__mws__GetRepositoriesResponse (16)
-/* mws:GetRepositoriesResponse */
-class SOAP_CMAC _mws__GetRepositoriesResponse
+#ifndef SOAP_TYPE__mtrep__GetRepositoriesResponse
+#define SOAP_TYPE__mtrep__GetRepositoriesResponse (16)
+/* mtrep:GetRepositoriesResponse */
+class SOAP_CMAC _mtrep__GetRepositoriesResponse
 {
 public:
-	mws__ArrayOfRepositoryInfo *GetRepositoriesResult;	/* RPC return element */	/* optional element of type mws:ArrayOfRepositoryInfo */
+	mtrep__ArrayOfRepositoryInfo *GetRepositoriesResult;	/* RPC return element */	/* optional element of type mtrep:ArrayOfRepositoryInfo */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 16; } /* = unique id SOAP_TYPE__mws__GetRepositoriesResponse */
+	virtual int soap_type() const { return 16; } /* = unique id SOAP_TYPE__mtrep__GetRepositoriesResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _mws__GetRepositoriesResponse() : GetRepositoriesResult(NULL), soap(NULL) { }
-	virtual ~_mws__GetRepositoriesResponse() { }
+	         _mtrep__GetRepositoriesResponse() : GetRepositoriesResult(NULL), soap(NULL) { }
+	virtual ~_mtrep__GetRepositoriesResponse() { }
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__TryGetRepositoryInfo
-#define SOAP_TYPE___mws__TryGetRepositoryInfo (31)
+#ifndef SOAP_TYPE___mtrep__TryGetRepositoryInfo
+#define SOAP_TYPE___mtrep__TryGetRepositoryInfo (31)
 /* Operation wrapper: */
-struct __mws__TryGetRepositoryInfo
+struct __mtrep__TryGetRepositoryInfo
 {
 public:
-	_mws__TryGetRepositoryInfo *mws__TryGetRepositoryInfo;	/* optional element of type mws:TryGetRepositoryInfo */
+	_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo;	/* optional element of type mtrep:TryGetRepositoryInfo */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__PickRepository
-#define SOAP_TYPE___mws__PickRepository (35)
+#ifndef SOAP_TYPE___mtrep__PickRepository
+#define SOAP_TYPE___mtrep__PickRepository (35)
 /* Operation wrapper: */
-struct __mws__PickRepository
+struct __mtrep__PickRepository
 {
 public:
-	_mws__PickRepository *mws__PickRepository;	/* optional element of type mws:PickRepository */
+	_mtrep__PickRepository *mtrep__PickRepository;	/* optional element of type mtrep:PickRepository */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__GetAllRepositories
-#define SOAP_TYPE___mws__GetAllRepositories (39)
+#ifndef SOAP_TYPE___mtrep__GetAllRepositories
+#define SOAP_TYPE___mtrep__GetAllRepositories (39)
 /* Operation wrapper: */
-struct __mws__GetAllRepositories
+struct __mtrep__GetAllRepositories
 {
 public:
-	_mws__GetAllRepositories *mws__GetAllRepositories;	/* optional element of type mws:GetAllRepositories */
+	_mtrep__GetAllRepositories *mtrep__GetAllRepositories;	/* optional element of type mtrep:GetAllRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__GetRepositories
-#define SOAP_TYPE___mws__GetRepositories (43)
+#ifndef SOAP_TYPE___mtrep__GetRepositories
+#define SOAP_TYPE___mtrep__GetRepositories (43)
 /* Operation wrapper: */
-struct __mws__GetRepositories
+struct __mtrep__GetRepositories
 {
 public:
-	_mws__GetRepositories *mws__GetRepositories;	/* optional element of type mws:GetRepositories */
+	_mtrep__GetRepositories *mtrep__GetRepositories;	/* optional element of type mtrep:GetRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__TryGetRepositoryInfo_
-#define SOAP_TYPE___mws__TryGetRepositoryInfo_ (45)
+#ifndef SOAP_TYPE___mtrep__TryGetRepositoryInfo_
+#define SOAP_TYPE___mtrep__TryGetRepositoryInfo_ (45)
 /* Operation wrapper: */
-struct __mws__TryGetRepositoryInfo_
+struct __mtrep__TryGetRepositoryInfo_
 {
 public:
-	_mws__TryGetRepositoryInfo *mws__TryGetRepositoryInfo;	/* optional element of type mws:TryGetRepositoryInfo */
+	_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo;	/* optional element of type mtrep:TryGetRepositoryInfo */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__PickRepository_
-#define SOAP_TYPE___mws__PickRepository_ (47)
+#ifndef SOAP_TYPE___mtrep__PickRepository_
+#define SOAP_TYPE___mtrep__PickRepository_ (47)
 /* Operation wrapper: */
-struct __mws__PickRepository_
+struct __mtrep__PickRepository_
 {
 public:
-	_mws__PickRepository *mws__PickRepository;	/* optional element of type mws:PickRepository */
+	_mtrep__PickRepository *mtrep__PickRepository;	/* optional element of type mtrep:PickRepository */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__GetAllRepositories_
-#define SOAP_TYPE___mws__GetAllRepositories_ (49)
+#ifndef SOAP_TYPE___mtrep__GetAllRepositories_
+#define SOAP_TYPE___mtrep__GetAllRepositories_ (49)
 /* Operation wrapper: */
-struct __mws__GetAllRepositories_
+struct __mtrep__GetAllRepositories_
 {
 public:
-	_mws__GetAllRepositories *mws__GetAllRepositories;	/* optional element of type mws:GetAllRepositories */
+	_mtrep__GetAllRepositories *mtrep__GetAllRepositories;	/* optional element of type mtrep:GetAllRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___mws__GetRepositories_
-#define SOAP_TYPE___mws__GetRepositories_ (51)
+#ifndef SOAP_TYPE___mtrep__GetRepositories_
+#define SOAP_TYPE___mtrep__GetRepositories_ (51)
 /* Operation wrapper: */
-struct __mws__GetRepositories_
+struct __mtrep__GetRepositories_
 {
 public:
-	_mws__GetRepositories *mws__GetRepositories;	/* optional element of type mws:GetRepositories */
+	_mtrep__GetRepositories *mtrep__GetRepositories;	/* optional element of type mtrep:GetRepositories */
 };
 #endif
 
