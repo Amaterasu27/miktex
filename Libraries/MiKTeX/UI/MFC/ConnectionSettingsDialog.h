@@ -54,9 +54,23 @@ protected:
   OnUseProxy ();
 
 protected:
+  afx_msg
+  void
+  OnChangeHost ();
+
+protected:
+  afx_msg
+  void
+  OnChangePort ();
+
+protected:
   virtual
   void
   OnOK ();
+
+private:
+  void
+  EnableButtons ();
 
 private:
   CWnd *

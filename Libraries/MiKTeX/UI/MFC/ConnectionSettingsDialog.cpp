@@ -33,6 +33,8 @@ IMPLEMENT_DYNCREATE(ConnectionSettingsDialog, CDialog);
 
 BEGIN_MESSAGE_MAP(ConnectionSettingsDialog, CDialog)
   ON_BN_CLICKED(IDC_USE_PROXY, &ConnectionSettingsDialog::OnUseProxy)
+  ON_EN_CHANGE(IDC_PROXY_HOST, OnChangeHost)
+  ON_EN_CHANGE(IDC_PROXY_PORT, OnChangePort)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -54,7 +56,7 @@ ConnectionSettingsDialog::ConnectionSettingsDialog (/*[in]*/ CWnd * pParent)
     }
   else
     {
-      proxyPort = 0;
+      proxyPort = 8080;
       useProxy = FALSE;
       proxyAuthenticationRequired = FALSE;
     }
@@ -96,7 +98,7 @@ ConnectionSettingsDialog::DoDataExchange (/*[in]*/ CDataExchange* pDX)
   DDX_Control(pDX, IDC_USE_PROXY, useProxyButton);
   DDX_Control(pDX, IDC_AUTH_REQUIRED, proxyAuthenticationRequiredButton);
   DDX_Text(pDX, IDC_PROXY_PORT, proxyPort);
-  DDV_MinMaxInt(pDX, proxyPort, 0, 65535);
+  //DDV_MinMaxInt(pDX, proxyPort, 1, 65535);
   DDX_Check(pDX, IDC_USE_PROXY, useProxy);
   DDX_Text(pDX, IDC_PROXY_HOST, proxyHost);
   DDX_Check(pDX, IDC_AUTH_REQUIRED, proxyAuthenticationRequired);
@@ -112,19 +114,51 @@ ConnectionSettingsDialog::OnUseProxy ()
 {
   try
     {
-      BOOL useProxy = (useProxyButton.GetCheck() == BST_CHECKED);
-      GetControl(IDC_STATIC_ADDRESS)->EnableWindow (useProxy);
-      GetControl(IDC_PROXY_HOST)->EnableWindow (useProxy);
-      GetControl(IDC_STATIC_PORT)->EnableWindow (useProxy);
-      GetControl(IDC_PROXY_PORT)->EnableWindow (useProxy);
-      GetControl(IDC_AUTH_REQUIRED)->EnableWindow (useProxy);
-      CString host;
-      CString port;
-      GetControl(IDC_PROXY_HOST)->GetWindowText (host);
-      GetControl(IDC_PROXY_PORT)->GetWindowText (port);
-      GetControl(IDOK)->EnableWindow (! useProxy
-				      || ! (host.IsEmpty()
-					    || port.IsEmpty()));
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+    }
+  catch (const exception & e)
+    {
+      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+    }
+}
+
+/* _________________________________________________________________________
+
+   ConnectionSettingsDialog::OnChangeHost
+   _________________________________________________________________________ */
+
+void
+ConnectionSettingsDialog::OnChangeHost ()
+{
+  try
+    {
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+    }
+  catch (const exception & e)
+    {
+      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+    }
+}
+
+/* _________________________________________________________________________
+
+   ConnectionSettingsDialog::OnChangePort
+   _________________________________________________________________________ */
+
+void
+ConnectionSettingsDialog::OnChangePort ()
+{
+  try
+    {
+      EnableButtons ();
     }
   catch (const MiKTeXException & e)
     {
@@ -163,6 +197,29 @@ ConnectionSettingsDialog::OnOK ()
     {
       AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
     }
+}
+
+/* _________________________________________________________________________
+
+   ConnectionSettingsDialog::EnableButtons
+   _________________________________________________________________________ */
+
+void
+ConnectionSettingsDialog::EnableButtons ()
+{
+  BOOL useProxy = (useProxyButton.GetCheck() == BST_CHECKED);
+  GetControl(IDC_STATIC_ADDRESS)->EnableWindow (useProxy);
+  GetControl(IDC_PROXY_HOST)->EnableWindow (useProxy);
+  GetControl(IDC_STATIC_PORT)->EnableWindow (useProxy);
+  GetControl(IDC_PROXY_PORT)->EnableWindow (useProxy);
+  GetControl(IDC_AUTH_REQUIRED)->EnableWindow (useProxy);
+  CString host;
+  CString port;
+  GetControl(IDC_PROXY_HOST)->GetWindowText (host);
+  GetControl(IDC_PROXY_PORT)->GetWindowText (port);
+  GetControl(IDOK)->EnableWindow (! useProxy
+				  || ! (host.IsEmpty()
+					|| port.IsEmpty()));
 }
 
 /* _________________________________________________________________________
