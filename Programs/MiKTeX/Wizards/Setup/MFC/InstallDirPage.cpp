@@ -278,6 +278,7 @@ InstallDirPage::OnBrowse ()
     {
       BROWSEINFO browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
+      browseInfo.hwndOwner = GetSafeHwnd();
       browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
       browseInfo.lpfn = BrowseCallbackProc;
       browseInfo.lParam = reinterpret_cast<LPARAM>(this);
