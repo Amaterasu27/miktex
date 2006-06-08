@@ -116,36 +116,37 @@ CurlWebSession::Initialize ()
 
   SetOption (CURLOPT_NOSIGNAL, static_cast<long>(true));
 
-  ProxySettings proxySettings = PackageManager::GetProxy();
+  ProxySettings proxySettings;
 
-  if (proxySettings.useProxy)
+  bool haveProxySettings = PackageManager::TryGetProxy(proxySettings);
+
+  if (haveProxySettings && proxySettings.useProxy)
     {
       proxyPort = proxySettings.proxy;
       proxyPort += T_(":");
       proxyPort += NUMTOSTR(proxySettings.port);
       SetOption (CURLOPT_PROXY, proxyPort.c_str());
-    }
-
-  if (proxySettings.authenticationRequired)
-    {
-      if (proxySettings.user.find(T_(':')) != tstring::npos)
+      if (proxySettings.authenticationRequired)
 	{
-	  FATAL_MPM_ERROR
-	    (T_("CurlWebSession::Initialize"),
-	     T_("Unsupported proxy user name (colons are not supported)."),
-	     0);
+	  if (proxySettings.user.find(T_(':')) != tstring::npos)
+	    {
+	      FATAL_MPM_ERROR
+		(T_("CurlWebSession::Initialize"),
+		 T_("Unsupported proxy user name (colons are not supported)."),
+		 0);
+	    }
+	  if (proxySettings.password.find(T_(':')) != tstring::npos)
+	    {
+	      FATAL_MPM_ERROR
+		(T_("CurlWebSession::Initialize"),
+		 T_("Unsupported proxy password."),
+		 0);
+	    }
+	  userPassword = proxySettings.user;
+	  userPassword += T_(':');
+	  userPassword += proxySettings.password;
+	  SetOption (CURLOPT_PROXYUSERPWD, userPassword.c_str());
 	}
-      if (proxySettings.password.find(T_(':')) != tstring::npos)
-	{
-	  FATAL_MPM_ERROR
-	    (T_("CurlWebSession::Initialize"),
-	     T_("Unsupported proxy password."),
-	     0);
-	}
-      userPassword = proxySettings.user;
-      userPassword += T_(':');
-      userPassword += proxySettings.password;
-      SetOption (CURLOPT_PROXYUSERPWD, userPassword.c_str());
     }
 }
 
