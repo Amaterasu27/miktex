@@ -233,10 +233,13 @@ InstallDirPage::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 				    /*[in]*/ LPARAM	pData)
 {
   UNUSED_ALWAYS (lParam);
+  UNUSED_ALWAYS (pData);
 
   try
     {
+#if 0
       InstallDirPage * This = reinterpret_cast<InstallDirPage*>(pData);
+#endif
       switch (uMsg) 
 	{
 	case BFFM_INITIALIZED:

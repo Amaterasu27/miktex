@@ -187,10 +187,13 @@ PropPageTeXMFRoots::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 					/*[in]*/ LPARAM	pData)
 {
   UNUSED_ALWAYS (lParam);
+  UNUSED_ALWAYS (pData);
 
   try
     {
+#if 0
       PropPageTeXMFRoots * This = reinterpret_cast<PropPageTeXMFRoots*>(pData);
+#endif
       switch (uMsg) 
 	{
 	case BFFM_INITIALIZED:
