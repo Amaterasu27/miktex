@@ -90,7 +90,7 @@ MiKTeX::UI::InstallPackageMessageBox
 {
   SessionWrapper pSession (true);
   TriState enableInstaller
-    = pSession->GetConfigValue(0,
+    = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			       MIKTEX_REGVAL_AUTO_INSTALL,
 			       TriState(TriState::Undetermined));
   unsigned int ret;

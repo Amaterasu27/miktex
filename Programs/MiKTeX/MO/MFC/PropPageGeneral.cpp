@@ -69,7 +69,7 @@ PropPageGeneral::OnInitDialog ()
   try
     {
       switch (SessionWrapper(true)
-	      ->GetConfigValue(0,
+	      ->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			       MIKTEX_REGVAL_AUTO_INSTALL,
 			       TriState(TriState::Undetermined)).Get())
 	{
@@ -164,7 +164,7 @@ PropPageGeneral::OnApply ()
 	    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 				  MIKTEX_REGVAL_AUTO_INSTALL,
 				  tri.Get());
-	  installOnTheFly = previousInstallOnTheFly;
+	  previousInstallOnTheFly = installOnTheFly;
 	}
       if (paperSizeIndex != previousPaperSizeIndex)
 	{
