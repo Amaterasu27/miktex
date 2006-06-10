@@ -762,8 +762,8 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
     }
 
   if (value == T_("0")
-      || value == T_("enable")
-      || value == T_("on")
+      || value == T_("disable")
+      || value == T_("off")
       || value == T_("f")
       || value == T_("false")
       || value == T_("n")
@@ -772,14 +772,14 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       return (TriState::False);
     }
   else if (value == T_("1")
-	   || value == T_("disable")
-	   || value == T_("off")
+	   || value == T_("enable")
+	   || value == T_("on")
 	   || value == T_("t")
 	   || value == T_("true")
 	   || value == T_("y")
 	   || value == T_("yes"))
     {
-      return (TriState::False);
+      return (TriState::True);
     }
   else if (! (value == T_("")
 	      || value == T_("2")
