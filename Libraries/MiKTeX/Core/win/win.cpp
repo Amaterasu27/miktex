@@ -2369,7 +2369,7 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
   argv.push_back (StrDup(lpszFileName));
 
-  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
+  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; )
     {
       // skip white space
       for (; *lpsz == T_(' ') || *lpsz == T_('\t'); ++ lpsz)
@@ -2424,9 +2424,9 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	    }
 
 	  // check to see if we have the complete argument
-	  if (*lpsz == 0 ||
-	      (*lpsz == T_(' ') || *lpsz == T_('\t')
-	       && ! inQuotation))
+	  if (*lpsz == 0
+	      || ((*lpsz == T_(' ') || *lpsz == T_('\t'))
+		  && ! inQuotation))
 	    {
 	      argv.push_back (StrDup(arg.c_str()));
 	      complete = true;
