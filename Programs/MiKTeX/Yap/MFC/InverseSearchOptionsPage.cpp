@@ -398,7 +398,7 @@ MakeWinEdtCommandLine (/*[out]*/ tstring &	program,
       return (false);
     }
   program = pathWinEdt.Get();
-  arguments = T_("\"[Open('%f');SelLine(%l,8)]\"");
+  arguments = T_("\"[Open(|%f|);SelPar(%l,8)]\"");
   return (true);
 }
 
