@@ -173,6 +173,10 @@ InstallDirPage::OnKillActive ()
 		  ret = FALSE;
 		}
 	    }
+	  if (ret)
+	    {
+	      theApp.startupConfig.installRoot = m_strInstallDir;
+	    }
 	}
       catch (const MiKTeXException & e)
 	{
