@@ -14,6 +14,7 @@
 <!ENTITY Dvipdfm "<application>Dvipdfm</application>">
 <!ENTITY Dvipdfmx "<application>Dvipdfmx</application>">
 <!ENTITY Dvips "<application>Dvips</application>">
+<!ENTITY Dvipng "<application>Dvipng</application>">
 <!ENTITY EPS "<acronym>EPS</acronym>">
 <!ENTITY PC "<acronym>PC</acronym>">
 <!ENTITY FAQ "<acronym>FAQ</acronym>">

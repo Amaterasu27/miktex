@@ -51,12 +51,6 @@
 /* Define to 1 if you have the `FT_Library_Version' function. */
 #undef HAVE_FT_LIBRARY_VERSION
 
-/* Define to 1 if you have the `gdImageAlphaBlending' function. */
-#define HAVE_GDIMAGEALPHABLENDING 1
-
-/* Define to 1 if you have the `gdImageColorResolveAlpha' function. */
-#define HAVE_GDIMAGECOLORRESOLVEALPHA 1
-
 /* Define to 1 if you have the `gdImageCreateTrueColor' function. */
 #define HAVE_GDIMAGECREATETRUECOLOR 1
 
@@ -203,13 +197,13 @@
 #define PACKAGE_NAME "dvipng"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "dvipng 1.7"
+#define PACKAGE_STRING "dvipng 1.8"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "dvipng"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.7"
+#define PACKAGE_VERSION "1.8"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be

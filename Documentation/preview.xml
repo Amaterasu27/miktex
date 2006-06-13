@@ -198,6 +198,14 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <section>
 
+<title>&Dvipng;</title>
+
+<para>&Dvipng; has been upgraded to version 1.8.</para>
+
+</section>
+
+<section>
+
 <title>tex4ht</title>
 
 <para>tex4ht has been upgraded to version 1.0.2006_05_06_0156.</para>
