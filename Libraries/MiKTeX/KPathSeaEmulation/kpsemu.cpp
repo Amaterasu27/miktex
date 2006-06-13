@@ -245,6 +245,7 @@ KPSE::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     {
       return (0);
     }
+  result.ToUnix ();
   return (KPSE::StrDup(result.Get()));
 }
 
