@@ -186,7 +186,7 @@
   MIKTEXTEXT("vf")
 
 #define MIKTEX_PATH_MAKEINDEX_DIR		\
-  MIKTEXTEXT("makeinndex")
+  MIKTEXTEXT("makeindex")
 
 #define MIKTEX_PATH_METAFONT_DIR		\
   MIKTEXTEXT("metafont")
