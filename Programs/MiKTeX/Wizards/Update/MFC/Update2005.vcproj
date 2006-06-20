@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="..\..\..\..\..\Libraries\3rd\bzip2-static\Debug\bz2-static.lib ..\..\..\..\..\Libraries\3rd\libcurl-static\Debug\curl-static.lib ..\..\..\..\..\Libraries\3rd\libexpat-static\Debug\expat-static.lib ..\..\..\..\..\Libraries\3rd\libgnu-static\Debug\gnu-static.lib ..\..\..\..\..\Libraries\3rd\libmd5-static\Debug\md5-static.lib ..\..\..\..\..\Libraries\3rd\libmspack-static\Debug\mspack-static.lib ..\..\..\..\..\Libraries\MiKTeX\Core-static\Debug\core-static.lib ..\..\..\..\..\Libraries\MiKTeX\PackageManager-static\Debug\mpm-static.lib Winmm.lib Ws2_32.lib fdi.lib version.lib wininet.lib"
+				AdditionalDependencies="..\..\..\..\..\Libraries\3rd\bzip2-static\Debug\bz2-static.lib ..\..\..\..\..\Libraries\3rd\libcurl-static\Debug\curl-static.lib ..\..\..\..\..\Libraries\3rd\libexpat-static\Debug\expat-static.lib ..\..\..\..\..\Libraries\3rd\libgnu-static\Debug\gnu-static.lib ..\..\..\..\..\Libraries\3rd\libmd5-static\Debug\md5-static.lib ..\..\..\..\..\Libraries\3rd\libmspack-static\Debug\mspack-static.lib ..\..\..\..\..\Libraries\3rd\zlib-static\Debug\zlib-static.lib ..\..\..\..\..\Libraries\MiKTeX\Core-static\Debug\core-static.lib ..\..\..\..\..\Libraries\MiKTeX\PackageManager-static\Debug\mpm-static.lib Winmm.lib Ws2_32.lib fdi.lib version.lib wininet.lib"
 				OutputFile="$(OutDir)/updatewiz.exe"
 				DelayLoadDLLs="ADVAPI32.DLL;COMDLG32.DLL;GDI32.DLL;OLE32.DLL;OLEACC.DLL;OLEAUT32.DLL;SHELL32.DLL;SHLWAPI.DLL;WININET.DLL;WINSPOOL.DRV"
 				GenerateDebugInformation="true"
@@ -160,7 +160,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="..\..\..\..\..\Libraries\3rd\bzip2-static\Release\bz2-static.lib ..\..\..\..\..\Libraries\3rd\libcurl-static\Release\curl-static.lib ..\..\..\..\..\Libraries\3rd\libexpat-static\Release\expat-static.lib ..\..\..\..\..\Libraries\3rd\libgnu-static\Release\gnu-static.lib ..\..\..\..\..\Libraries\3rd\libmd5-static\Release\md5-static.lib ..\..\..\..\..\Libraries\3rd\libmspack-static\Release\mspack-static.lib ..\..\..\..\..\Libraries\MiKTeX\Core-static\Release\core-static.lib ..\..\..\..\..\Libraries\MiKTeX\PackageManager-static\Release\mpm-static.lib Winmm.lib Ws2_32.lib fdi.lib version.lib wininet.lib"
+				AdditionalDependencies="..\..\..\..\..\Libraries\3rd\bzip2-static\Release\bz2-static.lib ..\..\..\..\..\Libraries\3rd\libcurl-static\Release\curl-static.lib ..\..\..\..\..\Libraries\3rd\libexpat-static\Release\expat-static.lib ..\..\..\..\..\Libraries\3rd\libgnu-static\Release\gnu-static.lib ..\..\..\..\..\Libraries\3rd\libmd5-static\Release\md5-static.lib ..\..\..\..\..\Libraries\3rd\libmspack-static\Release\mspack-static.lib ..\..\..\..\..\Libraries\3rd\zlib-static\Release\zlib-static.lib ..\..\..\..\..\Libraries\MiKTeX\Core-static\Release\core-static.lib ..\..\..\..\..\Libraries\MiKTeX\PackageManager-static\Release\mpm-static.lib Winmm.lib Ws2_32.lib fdi.lib version.lib wininet.lib"
 				OutputFile="$(OutDir)/updatewiz.exe"
 				DelayLoadDLLs="ADVAPI32.DLL;COMDLG32.DLL;GDI32.DLL;OLE32.DLL;OLEACC.DLL;OLEAUT32.DLL;SHELL32.DLL;SHLWAPI.DLL;WININET.DLL;WINSPOOL.DRV"
 				GenerateDebugInformation="true"

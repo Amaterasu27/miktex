@@ -41,11 +41,13 @@ check: common-check
 # _____________________________________________________________________________
 
 cfg_objects = \
+	$(bz2_static_lib) \
 	$(md5_static_lib) \
 	$(miktex_static_lib) \
 	$(outdir)\cfg.obj \
 	$(outdir)\cfg.res \
 	$(popt_static_lib) \
+	$(zlib_static_lib) \
 
 $(outdir)\cfg.exe: \
 			$(outdir) \

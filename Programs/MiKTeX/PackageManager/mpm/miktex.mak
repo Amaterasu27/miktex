@@ -72,6 +72,7 @@ mpm_objects = \
 	$(outdir)\mpm.obj \
 	$(outdir)\mpm.res \
 	$(popt_static_lib) \
+	$(zlib_static_lib) \
 
 $(outdir)\mpm.com: $(outdir) $(mpm_objects)
 	$(link) $(conlflags) $(ldebug) \

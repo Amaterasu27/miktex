@@ -81,8 +81,10 @@ $(outdir)\conspawn.exe: \
 
 $(outdir)\copystart.exe: \
 			$(outdir) \
+			$(bz2_static_lib) \
 			$(md5_static_lib) \
 			$(miktex_static_lib) \
+			$(zlib_static_lib) \
 			copystart.cpp \
 
 	$(cc) \
@@ -98,8 +100,10 @@ $(outdir)\copystart.exe: \
 		copystart.cpp \
 		$(ccopt_link) \
 			$(linkopt_output_file)$@ \
+			$(bz2_static_lib) \
 			$(md5_static_lib) \
 			$(miktex_static_lib) \
+			$(zlib_static_lib) \
 			advapi32.lib \
 			delayimp.lib \
 			user32.lib \

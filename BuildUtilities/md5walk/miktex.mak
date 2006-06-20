@@ -41,11 +41,13 @@ check: common-check
 # _____________________________________________________________________________
 
 md5walk_objects = \
+	$(bz2_static_lib) \
 	$(md5_static_lib) \
 	$(miktex_static_lib) \
 	$(outdir)\md5walk.obj \
 	$(outdir)\md5walk.res \
 	$(popt_static_lib) \
+	$(zlib_static_lib) \
 
 $(outdir)\md5walk.exe: \
 			$(outdir) \

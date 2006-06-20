@@ -63,13 +63,14 @@ mpc_objects = \
 	$(bz2_static_lib) \
 	$(curl_static_lib) \
 	$(expat_static_lib) \
+	$(gnu_static_lib) \
 	$(md5_static_lib) \
 	$(miktex_static_lib) \
 	$(mpm_static_lib) \
 	$(mspack_static_lib) \
 	$(outdir)\mpc.obj \
 #	$(outdir)\mpc.res \
-	$(gnu_static_lib) \
+	$(zlib_static_lib) \
 
 $(outdir)\mpc.exe: $(outdir) $(mpc_objects)
 	$(link) $(conlflags) $(ldebug) \
