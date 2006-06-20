@@ -634,7 +634,7 @@ miktex_fopen (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   miktex_web2c_open_input
+   Web2C::OpenInput
    _________________________________________________________________________ */
 
 MIKTEXKPSAPI(int)
@@ -658,7 +658,7 @@ Web2C::OpenInput (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
       throw;
     }
   free (lpszPath);
-  return (1);
+  return (*ppfile == 0 ? 0 : 1);
 }
 
 /* _________________________________________________________________________
