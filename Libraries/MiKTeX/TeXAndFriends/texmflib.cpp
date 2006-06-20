@@ -366,23 +366,6 @@ MiKTeX::TeXAndFriends::InitializeCharTables
 
 /* _________________________________________________________________________
 
-   CloseDviFile
-   _________________________________________________________________________ */
-
-MIKTEXMFAPI(bool)
-MiKTeX::TeXAndFriends::CloseDviFile (/*[in]*/ void * p)
-{
-  MIKTEX_API_BEGIN ("CloseDviFile");
-  assert (p != 0);
-  C4PASSERTBUF (p, sizeof(bytefile));
-  reinterpret_cast<bytefile*>(p)->AssertValid ();
-  fclose (*reinterpret_cast<bytefile*>(p));
-  return (true);
-  MIKTEX_API_END ("CloseDviFile");
-}
-
-/* _________________________________________________________________________
-
    OpenMapFile
    _________________________________________________________________________ */
 

@@ -55,9 +55,6 @@
 
 MIKTEXMF_BEGIN_NAMESPACE;
 
-MIKTEXMFAPI(bool)
-CloseDviFile (/*[in]*/ void * p);
-
 MIKTEXMFAPI(void)
 ConsoleOem (/*[in]*/ bool b);
 

@@ -355,22 +355,6 @@ public:
   }
 #endif // THEDATA
 
-/* _________________________________________________________________________
-
-   CloseDviFile
-   _________________________________________________________________________ */
-
-public:
-  
-  template<class T>
-  bool
-  CloseDviFile (/*[in]*/ T & f)
-    const
-  {
-    TouchJobOutputFile (f);
-    return (MiKTeX::TeXAndFriends::CloseDviFile(&f));
-  }
-
   /* _______________________________________________________________________
      
      MLTeXP

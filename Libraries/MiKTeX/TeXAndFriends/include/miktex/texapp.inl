@@ -74,10 +74,10 @@ miktexappendext (/*[in]*/ strnumber e)
    _________________________________________________________________________ */
 
 inline
-bool
+void
 miktexclosedvifile (/*[in]*/ bytefile & f)
 {
-  return (THEAPP.CloseDviFile(f));
+  THEAPP.CloseFile (f);
 }
 
 /* _________________________________________________________________________
