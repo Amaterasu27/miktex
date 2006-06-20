@@ -28,7 +28,6 @@
    Utils::UncompressFile
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_DLL)
 void
 Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 		       /*[out]*/ PathName &		pathOut)
@@ -56,19 +55,15 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 				FileAccess::Write,
 				false));
 
-  gzFile gzfileIn = 0;
-  BZFILE * bzfileIn = 0;
+  FILE * pInputStream = 0;
 
-#if defined(MIKTEX_UNICODE)
-#  error Unimplemented: UncompressFile()
-#else
   if (PathName(lpszPathIn).HasExtension(T_(".gz")))
     {
-      gzfileIn = gzopen(lpszPathIn, T_("rb"));
+      pInputStream = SessionImpl::theSession->OpenGZipFile(lpszPathIn);
     }
   else if (PathName(lpszPathIn).HasExtension(T_(".bz2")))
     {
-      bzfileIn = BZ2_bzopen(lpszPathIn, T_("rb"));
+      pInputStream = SessionImpl::theSession->OpenBZip2File(lpszPathIn);
     }
   else
     {
@@ -76,61 +71,34 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 			  T_("Could not uncompress file."),
 			  lpszPathIn);
     }
-#endif
-
-  if (gzfileIn == 0 && bzfileIn == 0)
-    {
-      FATAL_MIKTEX_ERROR (T_("MiKTeX::Core::UncompressFile"),
-			  T_("The compressed file could not be opened."),
-			  lpszPathIn);
-    }
 
   unsigned char szBuf[4096];
+
   size_t len;
 
-  if (gzfileIn != 0)
+  try
     {
-      try
+      while ((len = fread(szBuf, 1, ARRAY_SIZE(szBuf), pInputStream)) > 0)
 	{
-	  while ((len = gzread(gzfileIn, szBuf, ARRAY_SIZE(szBuf))) > 0)
-	    {
-	      stream.Write (szBuf, len);
-	    }
+	  stream.Write (szBuf, len);
 	}
-      catch (const exception &)
-	{
-	  gzclose (gzfileIn);
-	  throw;
-	}
-      gzclose (gzfileIn);
     }
-  else if (bzfileIn != 0)
+  catch (const exception &)
     {
-      try
-	{
-	  while ((len = BZ2_bzread(bzfileIn, szBuf, ARRAY_SIZE (szBuf))) > 0)
-	    {
-	      stream.Write (szBuf, len);
-	    }
-	}
-      catch (const exception &)
-	{
-	  BZ2_bzclose (bzfileIn);
-	  throw;
-	}
-      BZ2_bzclose (bzfileIn);
+      SessionImpl::theSession->CloseFile (pInputStream);
+      throw;
     }
+
+  SessionImpl::theSession->CloseFile (pInputStream);
 
   pathOut = pathTempFileName;
 }
-#endif
 
 /* _________________________________________________________________________
 
    miktex_uncompress_file
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_DLL)
 MIKTEXAPI(void)
 miktex_uncompress_file (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 			/*[out]*/ MIKTEXCHAR *		lpszPathOut)
@@ -141,4 +109,3 @@ miktex_uncompress_file (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
   Utils::CopyString (lpszPathOut, BufferSizes::MaxPath, temp.Get());
   C_FUNC_END ();
 }
-#endif

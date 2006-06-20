@@ -179,7 +179,5 @@ using namespace std;
 
 #include "miktex/md5.h"
 
-#if defined(MIKTEX_DLL)
 #  include "bzlib.h"
 #  include "zlib.h"
-#endif

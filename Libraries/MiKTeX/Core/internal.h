@@ -1686,6 +1686,18 @@ public:
 
 public:
   virtual
+  FILE *
+  MIKTEXCALL
+  OpenGZipFile (/*[in]*/ const PathName & path);
+
+public:
+  virtual
+  FILE *
+  MIKTEXCALL
+  OpenBZip2File (/*[in]*/ const PathName & path);
+
+public:
+  virtual
   void
   MIKTEXCALL
   CloseFile (/*[in]*/ FILE *	pFile);

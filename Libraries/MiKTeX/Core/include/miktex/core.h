@@ -106,7 +106,7 @@
 
 #if defined(_MSC_VER) && ! defined(MIKTEX_DLL)
 #  pragma comment (lib, "htmlhelp")
-#  pragma comment (lib, "shfolder.lib")
+#  pragma comment (lib, "shfolder")
 #  pragma comment (lib, "shell32")
 #endif
 
@@ -236,11 +236,9 @@ miktex_start_process (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		      /*[out]*/ FILE **			ppFileStandardError,
 		      /*[in]*/ const MIKTEXCHAR *	lpszWorkingDirectory);
 
-#if defined(MIKTEX_DLL)
 MIKTEXAPI(void)
 miktex_uncompress_file (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 			/*[out]*/ MIKTEXCHAR *		lpszPathOut);
-#endif
 
 #if defined(MIKTEX_2_4_COMPAT)
 #  define miktex_find_app_input_file(progname, name, result) \
@@ -1503,7 +1501,6 @@ public:
   MIKTEXCALL
   GetOSVersionString ();
 
-#if defined(MIKTEX_DLL)
 public:
   static
   MIKTEXEXPORT
@@ -1511,7 +1508,6 @@ public:
   MIKTEXCALL
   UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 		  /*[out]*/ PathName &		pathOut);
-#endif
 
 public:
   static
@@ -5723,6 +5719,20 @@ public:
   bool
   MIKTEXCALL
   RunningAsPowerUser ()
+    = 0;
+
+public:
+  virtual
+  FILE *
+  MIKTEXCALL
+  OpenGZipFile (/*[in]*/ const PathName & path)
+    = 0;
+
+public:
+  virtual
+  FILE *
+  MIKTEXCALL
+  OpenBZip2File (/*[in]*/ const PathName & path)
     = 0;
 
 public:

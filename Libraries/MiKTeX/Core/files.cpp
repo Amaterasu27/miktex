@@ -25,6 +25,8 @@
 
 #include "fnamedb.h"
 
+const size_t PIPE_SIZE = 4096;
+
 /* _________________________________________________________________________
 
    DirectoryLister::~DirectoryLister
@@ -201,6 +203,295 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   catch (const exception &)
     {
       fclose (pFile);
+      throw;
+    }
+}
+
+/* _________________________________________________________________________
+
+   Close
+   _________________________________________________________________________ */
+
+int
+Close (/*[in]*/ int fd)
+{
+#if defined(_MSC_VER)
+  return (_close(fd));
+#else
+  return (close(fd));
+#endif
+}
+
+/* _________________________________________________________________________
+
+   Pipe
+   _________________________________________________________________________ */
+
+void
+Pipe (/*[out]*/ int	filedes[2],
+      /*[in]*/ size_t	pipeSize)
+{
+  int p;
+#if defined(_MSC_VER)
+  p = _pipe(filedes, static_cast<unsigned>(pipeSize), _O_BINARY);
+#else
+  UNUSED_ALWAYS (pipeSize);
+  p = pipe(filedes);
+#endif
+  if (p != 0)
+    {
+      FATAL_CRT_ERROR (T_("pipe"), 0);
+    }
+}
+
+/* _________________________________________________________________________
+
+   Pipe
+   _________________________________________________________________________ */
+
+void
+Pipe (/*[out]*/ FILE *	pFiles[2],
+      /*[in]*/ size_t	pipeSize)
+{
+  int handles[2];
+  Pipe (handles, pipeSize);
+  pFiles[0] = 0;
+  pFiles[1] = 0;
+  try
+    {
+      pFiles[0] = FdOpen(handles[0], T_("rb"));
+      pFiles[1] = FdOpen(handles[1], T_("wb"));
+    }
+  catch (const exception &)
+    {
+      if (pFiles[0] != 0)
+	{
+	  fclose (pFiles[0]);
+	}
+      else
+	{
+	  Close (handles[0]);
+	}
+      if (pFiles[1] != 0)
+	{
+	  fclose (pFiles[1]);
+	}
+      else
+	{
+	  Close (handles[1]);
+	}
+      throw;
+    }
+}
+
+/* _________________________________________________________________________
+
+   AutoGZ
+   _________________________________________________________________________ */
+
+class gzclose_
+{
+public:
+  void
+  operator() (/*[in]*/ gzFile gz)
+  {
+    gzclose (gz);
+  }
+};
+
+typedef AutoResource<gzFile, gzclose_> AutoGZ;
+
+/* _________________________________________________________________________
+
+   GZipReaderThread
+   _________________________________________________________________________ */
+
+struct GZipReaderThreadArg
+{
+  gzFile	gzin;
+  FILE *	fileout;
+};
+
+MIKTEXSTATICFUNC(void)
+MIKTEXCALLBACK
+GZipReaderThread (/*[in]*/ void * pv)
+{
+  try
+    {
+      auto_ptr<GZipReaderThreadArg>
+	pArg (reinterpret_cast<GZipReaderThreadArg*>(pv));
+      MIKTEX_ASSERT (pArg->gzin != 0);
+      MIKTEX_ASSERT (pArg->fileout != 0);
+      AutoGZ autoCloseGZip2Stream (pArg->gzin);
+      FileStream autoCloseOutput (pArg->fileout);
+      char buf[PIPE_SIZE];
+      int len = 0;
+      while (! ferror(pArg->fileout)
+	     && (len = gzread(pArg->gzin, buf, ARRAY_SIZE(buf))) > 0)
+	{
+	  fwrite (buf, 1, len, pArg->fileout);
+	}
+      if (len < 0)
+	{
+	  FATAL_MIKTEX_ERROR (T_("GZipReaderThread"),
+			      T_("gzread() failed for some reason."),
+			      0);
+	}
+      if (ferror(pArg->fileout))
+	{
+	  FATAL_CRT_ERROR (T_("fwrite"), 0);
+	}
+    }
+  catch (const exception &)
+    {
+    }
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::OpenGZipFile
+   _________________________________________________________________________ */
+
+FILE *
+MIKTEXCALL
+SessionImpl::OpenGZipFile (/*[in]*/ const PathName & path)
+{
+  AutoGZ autoGz (gzopen(path.Get(), T_("rb")));
+  if (autoGz.Get() == 0)
+    {
+      FATAL_MIKTEX_ERROR (T_("OpenGZipFile"),
+			  T_("gzopen() failed for some."),
+			  path.Get());
+    }
+  FILE * pFiles[2];
+  Pipe (pFiles, PIPE_SIZE);
+  try
+    {
+      auto_ptr<GZipReaderThreadArg> pArg (new GZipReaderThreadArg);
+      pArg->gzin = autoGz.Get();
+      pArg->fileout = pFiles[1];
+      auto_ptr<Thread> pThread (Thread::Start(GZipReaderThread, pArg.get()));
+      pArg.release ();
+      autoGz.Detach ();
+      return (pFiles[0]);
+    }
+  catch (const exception &)
+    {
+      if (pFiles[0] != 0)
+	{
+	  fclose (pFiles[0]);
+	}
+      if (pFiles[1] != 0)
+	{
+	  fclose (pFiles[1]);
+	}
+      throw;
+    }
+}
+
+/* _________________________________________________________________________
+
+   AutoBZ2
+   _________________________________________________________________________ */
+
+class BZ2_bzclose_
+{
+public:
+  void
+  operator() (/*[in]*/ BZFILE * bz2)
+  {
+    BZ2_bzclose (bz2);
+  }
+};
+
+typedef AutoResource<BZFILE *, BZ2_bzclose_> AutoBZ2;
+
+/* _________________________________________________________________________
+
+   BZip2ReaderThread
+   _________________________________________________________________________ */
+
+struct BZip2ReaderThreadArg
+{
+  BZFILE *	bzin;
+  FILE *	fileout;
+};
+
+MIKTEXSTATICFUNC(void)
+MIKTEXCALLBACK
+BZip2ReaderThread (/*[in]*/ void * pv)
+{
+  try
+    {
+      auto_ptr<BZip2ReaderThreadArg>
+	pArg (reinterpret_cast<BZip2ReaderThreadArg*>(pv));
+      MIKTEX_ASSERT (pArg->bzin != 0);
+      MIKTEX_ASSERT (pArg->fileout != 0);
+      AutoBZ2 autoCloseBZip2Stream (pArg->bzin);
+      FileStream autoCloseOutput (pArg->fileout);
+      char buf[PIPE_SIZE];
+      int len;
+      while (! ferror(pArg->fileout)
+	     && (len = BZ2_bzread(pArg->bzin, buf, ARRAY_SIZE(buf))) > 0)
+	{
+	  fwrite (buf, 1, len, pArg->fileout);
+	}
+      int bzerr;
+      BZ2_bzerror (pArg->bzin, &bzerr);
+      if (bzerr != BZ_OK)
+	{
+	  FATAL_MIKTEX_ERROR (T_("BZip2ReaderThread"),
+			      T_("BZ2_bzread() failed for some reason."),
+			      0);
+	}
+      if (ferror(pArg->fileout))
+	{
+	  FATAL_CRT_ERROR (T_("fwrite"), 0);
+	}
+    }
+  catch (const exception &)
+    {
+    }
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::OpenBZip2File
+   _________________________________________________________________________ */
+
+FILE *
+MIKTEXCALL
+SessionImpl::OpenBZip2File (/*[in]*/ const PathName & path)
+{
+  AutoBZ2 autoBz2 (BZ2_bzopen(path.Get(), T_("rb")));
+  if (autoBz2.Get() == 0)
+    {
+      FATAL_MIKTEX_ERROR (T_("OpenBZip2File"),
+			  T_("BZ2_bzopen() failed for some."),
+			  path.Get());
+    }
+  FILE * pFiles[2];
+  Pipe (pFiles, PIPE_SIZE);
+  try
+    {
+      auto_ptr<BZip2ReaderThreadArg> pArg (new BZip2ReaderThreadArg);
+      pArg->bzin = autoBz2.Get();
+      pArg->fileout = pFiles[1];
+      auto_ptr<Thread> pThread (Thread::Start(BZip2ReaderThread, pArg.get()));
+      pArg.release ();
+      autoBz2.Detach ();
+      return (pFiles[0]);
+    }
+  catch (const exception &)
+    {
+      if (pFiles[0] != 0)
+	{
+	  fclose (pFiles[0]);
+	}
+      if (pFiles[1] != 0)
+	{
+	  fclose (pFiles[1]);
+	}
       throw;
     }
 }
