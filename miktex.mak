@@ -52,6 +52,7 @@ prj_3rdparty_libs1 = \
 	$(rel_tifflibdir)		\
 	$(rel_netpbmdir)		\
 	$(rel_zlibdir)			\
+	$(rel_zlibstaticlibdir)		\
 
 projects = $(projects) $(prj_3rdparty_libs1)
 

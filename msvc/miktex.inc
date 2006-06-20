@@ -224,6 +224,7 @@ rel_wsclientdir = Libraries\MiKTeX\WebServiceClients
 rel_xpdfstaticlibdir = Programs\TeXAndFriends\pdftex\xpdf\xpdf
 rel_yapdir = Programs\MiKTeX\Yap\MFC
 rel_zlibdir = Libraries\3rd\zlib
+rel_zlibstaticlibdir = Libraries\3rd\zlib-static
 
 
 
@@ -283,6 +284,7 @@ tifflibdir = $(miktexsrcdir)\$(rel_tifflibdir)
 wsclientdir = $(miktexsrcdir)\$(rel_wsclientdir)
 xpdfstaticlibdir = $(miktexsrcdir)\$(rel_xpdfstaticlibdir)
 zlibdir = $(miktexsrcdir)\$(rel_zlibdir)
+zlibstaticlibdir = $(miktexsrcdir)\$(rel_zlibstaticlibdir)
 
 libdir = $(miktexsrcdir)\$(rel_libdir)
 staticlibdir = $(miktexsrcdir)\$(rel_staticlibdir)
@@ -1054,6 +1056,7 @@ texmf_lib = $(texmflibdir)\$(outdir)\texmf.lib
 tiff_lib = $(tifflibdir)\$(outdir)\libtiff.lib
 xpdf_static_lib = $(xpdfstaticlibdir)\$(outdir)\xpdf.lib
 zlib_lib = $(zlibdir)\$(outdir)\zlib.lib
+zlib_static_lib = $(zlibstaticlibdir)\$(outdir)\zlib-static.lib
 
 !if $(MIKTEX_RELEASE_STATE) == 4
 mfc_lib = mfc71d.lib
