@@ -182,6 +182,11 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <section>
 
+<title>Programs</title>
+
+
+<section>
+
 <title>&Dvips;</title>
 
 <para>&Dvips; has been upgraded to version 5.95b.</para>
@@ -420,6 +425,8 @@ command-line with an editor name (<xref linkend="texeditor"/>).
 </imageobject>
 </mediaobject>
 </figure>
+
+</section>
 
 </section>
 
