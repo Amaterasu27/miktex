@@ -189,7 +189,7 @@ Insert source specials in certain places of the DVI file.")),
 #endif
 
   // obsolete options
-  AddOption (T_("try-gz\0"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (T_("try-gz\0"), OPT_UNSUPPORTED);
 
   // old option names
   AddOption (T_("src"), T_("src-specials"));
@@ -200,11 +200,11 @@ Insert source specials in certain places of the DVI file.")),
   AddOption (T_("shell-escape"), T_("enable-write18"));
 
   // unsupported Web2C options
-  AddOption (T_("enc"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
-  AddOption (T_("ipc"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
-  AddOption (T_("ipc-start"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (T_("enc"), OPT_UNSUPPORTED);
+  AddOption (T_("ipc"), OPT_UNSUPPORTED);
+  AddOption (T_("ipc-start"), OPT_UNSUPPORTED);
   AddOption (T_("output-comment"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     OPT_UNSUPPORTED,
 	     required_argument,
 	     T_("comment"));
 }

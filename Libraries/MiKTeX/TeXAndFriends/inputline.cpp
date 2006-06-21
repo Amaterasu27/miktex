@@ -66,8 +66,8 @@ WebAppInputLine::Finalize ()
    _________________________________________________________________________ */
 
 enum {
-  OPT_ENABLE_PIPES,
   OPT_DISABLE_PIPES,
+  OPT_ENABLE_PIPES,
 };
 
 MIKTEXMFAPI(void)
@@ -77,15 +77,15 @@ WebAppInputLine::AddOptions ()
 
   optBase = static_cast<int>(GetOptions().size());
 
-  AddOption (T_("enable-pipes\0\
-Enable input (output) from (to) processes."),
-	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES,
-	     no_argument,
-	     0);
-
   AddOption (T_("disable-pipes\0\
 Disable input (output) from (to) processes."),
 	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_PIPES,
+	     no_argument,
+	     0);
+
+  AddOption (T_("enable-pipes\0\
+Enable input (output) from (to) processes."),
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES,
 	     no_argument,
 	     0);
 }

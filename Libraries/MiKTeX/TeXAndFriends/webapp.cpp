@@ -64,7 +64,7 @@ WebApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 MIKTEXMFAPI(void)
 WebApp::Finalize ()
 {
-  if (packageListFileName.GetLength() > 0)
+  if (! packageListFileName.Empty())
     {
       FileStream stream
 	(File::Open(packageListFileName,
@@ -213,6 +213,7 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszAliasName,
 	  opt.longName = lpszAliasName;
 	  opt.argInfo |= POPT_ARGFLAG_DOC_HIDDEN;
 	  options.push_back (opt);
+	  return;
 	}
     }
   FATAL_MIKTEX_ERROR (T_("WebApp::AddOption"),
@@ -264,13 +265,13 @@ Show this help screen and exit."),
 	     FIRST_OPTION_VAL + optBase + OPT_HELP);
 
   AddOption (_T("include-directory\0\
-Prepend DIR to the input search path."),
+Pretend DIR to the input search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_INCLUDE_DIRECTORY,
 	     required_argument,
 	     _T("DIR"));
 
   AddOption (_T("kpathsea-debug\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     OPT_UNSUPPORTED,
 	     required_argument);
 
   AddOption (_T("record-package-usages\0\
@@ -286,8 +287,7 @@ Turn tracing on.  OPTIONS must be a comma-separated list of trace options. \
 	     required_argument,
 	     _T("OPTIONS"));
 
-  AddOption (_T("verbose\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (_T("verbose\0"), OPT_UNSUPPORTED);
 
   AddOption (_T("version\0\
 Print version information and exit."),
@@ -453,7 +453,7 @@ WebApp::ShowProgramVersion ()
 	<< T_(' ') << version
 	<< T_(" (") << Utils::GetMiKTeXBannerString() << T_(')') << T_('\n')
 	<< copyright << T_('\n');
-  if (trademarks.length() > 0)
+  if (! trademarks.empty())
     {
       tcout << trademarks << T_('\n');
     }

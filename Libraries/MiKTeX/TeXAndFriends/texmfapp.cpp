@@ -460,22 +460,12 @@ Use the DOS codepage for console output."),
   AddOption (T_("progname"), T_("alias"));
 
   // unsupported Web2C options
-  AddOption (T_("8bit"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
-  AddOption (T_("default-translate-file"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
-	     required_argument);
-  AddOption (T_("maketex\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
-	     required_argument);
-  AddOption (T_("mktex\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
-	     required_argument);
-  AddOption (T_("no-maketex\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
-	     required_argument);
-  AddOption (T_("no-mktex\0"),
-	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
-	     required_argument);
+  AddOption (T_("8bit"), OPT_UNSUPPORTED);
+  AddOption (T_("default-translate-file"), OPT_UNSUPPORTED, required_argument);
+  AddOption (T_("maketex\0"), OPT_UNSUPPORTED, required_argument);
+  AddOption (T_("mktex\0"), OPT_UNSUPPORTED, required_argument);
+  AddOption (T_("no-maketex\0"), OPT_UNSUPPORTED, required_argument);
+  AddOption (T_("no-mktex\0"), OPT_UNSUPPORTED, required_argument);
 }
 
 /* _________________________________________________________________________
