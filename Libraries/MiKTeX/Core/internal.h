@@ -1686,18 +1686,6 @@ public:
 
 public:
   virtual
-  FILE *
-  MIKTEXCALL
-  OpenGZipFile (/*[in]*/ const PathName & path);
-
-public:
-  virtual
-  FILE *
-  MIKTEXCALL
-  OpenBZip2File (/*[in]*/ const PathName & path);
-
-public:
-  virtual
   void
   MIKTEXCALL
   CloseFile (/*[in]*/ FILE *	pFile);
@@ -2420,6 +2408,20 @@ private:
 		    /*[out]*/ MIKTEXMFMODE *	pMode);
 
 private:
+  FILE *
+  InitiateProcessPipe (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+		       /*[in]*/ FileAccess		access,
+		       /*[in,out]*/ FileMode &		mode);
+
+private:
+  FILE *
+  OpenGZipFile (/*[in]*/ const PathName & path);
+
+public:
+  FILE *
+  OpenBZip2File (/*[in]*/ const PathName & path);
+
+private:
   void
   CheckOpenFiles ();
 
@@ -2475,11 +2477,13 @@ private:
   {
     OpenFileInfo ()
       : pFile (0),
+	mode (FileMode::Open),
 	access (FileAccess::None)
     {
     }
     const FILE *	pFile;
     tstring		fileName;
+    FileMode		mode;
     FileAccess		access;
   };
 

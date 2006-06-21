@@ -29,6 +29,160 @@ const size_t PIPE_SIZE = 4096;
 
 /* _________________________________________________________________________
 
+   Close
+   _________________________________________________________________________ */
+
+int
+Close (/*[in]*/ int fd)
+{
+#if defined(_MSC_VER)
+  return (_close(fd));
+#else
+  return (close(fd));
+#endif
+}
+
+/* _________________________________________________________________________
+
+   POpen
+   _________________________________________________________________________ */
+
+FILE *
+POpen (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+       /*[in]*/ const MIKTEXCHAR *	lpszMode)
+{
+  FILE * pFile;
+#if defined(_MSC_VER)
+  pFile = _popen(lpszCommand, (*lpszMode == T_('r') ? T_("rb") : T_("wb")));
+#else
+  pFile = popen(lpszCommand, lpszMode);
+#endif
+  if (pFile == 0)
+    {
+      FATAL_CRT_ERROR (T_("popen"), lpszCommand);
+    }
+  return (pFile);
+}
+
+/* _________________________________________________________________________
+
+   PClose
+   _________________________________________________________________________ */
+
+int
+PClose (/*[in]*/ FILE * pFile)
+{
+  int exitCode;
+#if defined(_MSC_VER)
+  exitCode = _pclose(pFile);
+#else
+  exitCode = pclose(pFile);
+#endif
+  if (exitCode < 0)
+    {
+      FATAL_CRT_ERROR (T_("pclose"), 0);
+    }
+  return (exitCode);
+}
+
+/* _________________________________________________________________________
+
+   Pipe
+   _________________________________________________________________________ */
+
+void
+Pipe (/*[out]*/ int	filedes[2],
+      /*[in]*/ size_t	pipeSize)
+{
+  int p;
+#if defined(_MSC_VER)
+  p = _pipe(filedes, static_cast<unsigned>(pipeSize), _O_BINARY);
+#else
+  UNUSED_ALWAYS (pipeSize);
+  p = pipe(filedes);
+#endif
+  if (p != 0)
+    {
+      FATAL_CRT_ERROR (T_("pipe"), 0);
+    }
+}
+
+/* _________________________________________________________________________
+
+   Pipe
+   _________________________________________________________________________ */
+
+void
+Pipe (/*[out]*/ FILE *	pFiles[2],
+      /*[in]*/ size_t	pipeSize)
+{
+  int handles[2];
+  Pipe (handles, pipeSize);
+  pFiles[0] = 0;
+  pFiles[1] = 0;
+  try
+    {
+      pFiles[0] = FdOpen(handles[0], T_("rb"));
+      pFiles[1] = FdOpen(handles[1], T_("wb"));
+    }
+  catch (const exception &)
+    {
+      if (pFiles[0] != 0)
+	{
+	  fclose (pFiles[0]);
+	}
+      else
+	{
+	  Close (handles[0]);
+	}
+      if (pFiles[1] != 0)
+	{
+	  fclose (pFiles[1]);
+	}
+      else
+	{
+	  Close (handles[1]);
+	}
+      throw;
+    }
+}
+
+/* _________________________________________________________________________
+
+   AutoGZ
+   _________________________________________________________________________ */
+
+class gzclose_
+{
+public:
+  void
+  operator() (/*[in]*/ gzFile gz)
+  {
+    gzclose (gz);
+  }
+};
+
+typedef AutoResource<gzFile, gzclose_> AutoGZ;
+
+/* _________________________________________________________________________
+
+   AutoBZ2
+   _________________________________________________________________________ */
+
+class BZ2_bzclose_
+{
+public:
+  void
+  operator() (/*[in]*/ BZFILE * bz2)
+  {
+    BZ2_bzclose (bz2);
+  }
+};
+
+typedef AutoResource<BZFILE *, BZ2_bzclose_> AutoBZ2;
+
+/* _________________________________________________________________________
+
    DirectoryLister::~DirectoryLister
    _________________________________________________________________________ */
 
@@ -182,14 +336,28 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
      static_cast<int>(access.Get()),
      static_cast<int>(text),
      static_cast<int>(share.Get()));
-  
-  FILE * pFile = File::Open(lpszPath, mode, access, text, share);
+
+  FILE * pFile = 0;
+
+  if (mode.Get() == FileMode::Command)
+    {
+      MIKTEX_ASSERT (access.Get() == FileAccess::Read
+		     || access.Get() == FileAccess::Write);
+      MIKTEX_ASSERT (! text);
+      MIKTEX_ASSERT (share.Get() == FileShare::None);
+      pFile = InitiateProcessPipe(lpszPath, access, mode);
+    }
+  else
+    {
+      pFile = File::Open(lpszPath, mode, access, text, share);
+    }
 
   try
     {
       OpenFileInfo info;
       info.pFile = pFile;
       info.fileName = lpszPath;
+      info.mode = mode;
       info.access = access;
       openFilesMap.insert (pair<FILE *, OpenFileInfo>(pFile, info));
       if (setvbuf(pFile, 0, _IOFBF, 1024 * 4) != 0)
@@ -209,97 +377,44 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
 /* _________________________________________________________________________
 
-   Close
+   SessionImpl::InitiateProcessPipe
    _________________________________________________________________________ */
 
-int
-Close (/*[in]*/ int fd)
+FILE *
+SessionImpl::InitiateProcessPipe (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+				  /*[in]*/ FileAccess		access,
+				  /*[in,out]*/ FileMode &	mode)
 {
-#if defined(_MSC_VER)
-  return (_close(fd));
-#else
-  return (close(fd));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   Pipe
-   _________________________________________________________________________ */
-
-void
-Pipe (/*[out]*/ int	filedes[2],
-      /*[in]*/ size_t	pipeSize)
-{
-  int p;
-#if defined(_MSC_VER)
-  p = _pipe(filedes, static_cast<unsigned>(pipeSize), _O_BINARY);
-#else
-  UNUSED_ALWAYS (pipeSize);
-  p = pipe(filedes);
-#endif
-  if (p != 0)
+  Argv argv;
+  argv.Build (T_(""), lpszCommand);
+  int argc = argv.GetArgc();
+  if (argc == 0)
     {
-      FATAL_CRT_ERROR (T_("pipe"), 0);
+      FATAL_MIKTEX_ERROR (T_("SessionImpl::InitiateProcessPipe"),
+			  T_("Invalid command."),
+			  lpszCommand);
+    }
+  tstring verb = argv[1];
+  if (verb == T_("zcat")
+      && argc == 3
+      && access.Get() == FileAccess::Read)
+    {
+      mode = FileMode::Open;
+      return (OpenGZipFile(argv[2]));
+    }
+  else if (verb == T_("bzcat")
+	   && argc == 3 &&
+	   access.Get() == FileAccess::Read)
+    {
+      mode = FileMode::Open;
+      return (OpenBZip2File(argv[2]));
+    }
+  else
+    {
+      return (POpen(lpszCommand,
+		    access.Get() == FileAccess::Read ? T_("r") : T_("w")));
     }
 }
-
-/* _________________________________________________________________________
-
-   Pipe
-   _________________________________________________________________________ */
-
-void
-Pipe (/*[out]*/ FILE *	pFiles[2],
-      /*[in]*/ size_t	pipeSize)
-{
-  int handles[2];
-  Pipe (handles, pipeSize);
-  pFiles[0] = 0;
-  pFiles[1] = 0;
-  try
-    {
-      pFiles[0] = FdOpen(handles[0], T_("rb"));
-      pFiles[1] = FdOpen(handles[1], T_("wb"));
-    }
-  catch (const exception &)
-    {
-      if (pFiles[0] != 0)
-	{
-	  fclose (pFiles[0]);
-	}
-      else
-	{
-	  Close (handles[0]);
-	}
-      if (pFiles[1] != 0)
-	{
-	  fclose (pFiles[1]);
-	}
-      else
-	{
-	  Close (handles[1]);
-	}
-      throw;
-    }
-}
-
-/* _________________________________________________________________________
-
-   AutoGZ
-   _________________________________________________________________________ */
-
-class gzclose_
-{
-public:
-  void
-  operator() (/*[in]*/ gzFile gz)
-  {
-    gzclose (gz);
-  }
-};
-
-typedef AutoResource<gzFile, gzclose_> AutoGZ;
 
 /* _________________________________________________________________________
 
@@ -353,7 +468,6 @@ GZipReaderThread (/*[in]*/ void * pv)
    _________________________________________________________________________ */
 
 FILE *
-MIKTEXCALL
 SessionImpl::OpenGZipFile (/*[in]*/ const PathName & path)
 {
   AutoGZ autoGz (gzopen(path.Get(), T_("rb")));
@@ -388,23 +502,6 @@ SessionImpl::OpenGZipFile (/*[in]*/ const PathName & path)
       throw;
     }
 }
-
-/* _________________________________________________________________________
-
-   AutoBZ2
-   _________________________________________________________________________ */
-
-class BZ2_bzclose_
-{
-public:
-  void
-  operator() (/*[in]*/ BZFILE * bz2)
-  {
-    BZ2_bzclose (bz2);
-  }
-};
-
-typedef AutoResource<BZFILE *, BZ2_bzclose_> AutoBZ2;
 
 /* _________________________________________________________________________
 
@@ -460,7 +557,6 @@ BZip2ReaderThread (/*[in]*/ void * pv)
    _________________________________________________________________________ */
 
 FILE *
-MIKTEXCALL
 SessionImpl::OpenBZip2File (/*[in]*/ const PathName & path)
 {
   AutoBZ2 autoBz2 (BZ2_bzopen(path.Get(), T_("rb")));
@@ -507,13 +603,19 @@ SessionImpl::CloseFile (/*[in]*/ FILE * pFile)
   MIKTEX_ASSERT_BUFFER (pFile, sizeof(*pFile));
   trace_open->WriteFormattedLine (T_("core"), T_("CloseFile(%p)"), pFile);
   map<const FILE *, OpenFileInfo>::iterator it = openFilesMap.find(pFile);
+  bool isCommand = false;
   if (it != openFilesMap.end())
     {
+      isCommand = (it->second.mode == FileMode::Command);
       openFilesMap.erase (it);
     }
-  if (fclose(pFile) != 0)
+  if (isCommand)
     {
-      CRT_ERROR (T_("fclose"), 0);
+      PClose (pFile);
+    }
+  else if (fclose(pFile) != 0)
+    {
+      FATAL_CRT_ERROR (T_("fclose"), 0);
     }
 }
 
@@ -532,7 +634,8 @@ SessionImpl::IsOutputFile (/*[in]*/ const FILE *	pFile)
     {
       return (false);
     }
-  return (it->second.access == FileAccess::Write);
+  return (it->second.mode != FileMode::Command
+	  && it->second.access == FileAccess::Write);
 }
 
 /* _________________________________________________________________________

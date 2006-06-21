@@ -703,10 +703,12 @@ public:
     /// are unchanged and output to the stream is appended to the end
     /// of the file. Otherwise, a new, empty file is created.
     Append,
-    /// The file will be create, if it doesn't already exist.
+    /// The file will be created, if it doesn't already exist.
     Create,
     /// Open an existing file.
     Open,
+    /// Execute a command and create a pipe.
+    Command,
   };
 };
 
@@ -5719,20 +5721,6 @@ public:
   bool
   MIKTEXCALL
   RunningAsPowerUser ()
-    = 0;
-
-public:
-  virtual
-  FILE *
-  MIKTEXCALL
-  OpenGZipFile (/*[in]*/ const PathName & path)
-    = 0;
-
-public:
-  virtual
-  FILE *
-  MIKTEXCALL
-  OpenBZip2File (/*[in]*/ const PathName & path)
     = 0;
 
 public:

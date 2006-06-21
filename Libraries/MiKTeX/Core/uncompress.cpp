@@ -59,11 +59,23 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 
   if (PathName(lpszPathIn).HasExtension(T_(".gz")))
     {
-      pInputStream = SessionImpl::theSession->OpenGZipFile(lpszPathIn);
+      CommandLineBuilder cmd (T_("zcat"));
+      cmd.AppendArgument (lpszPathIn);
+      pInputStream =
+	SessionImpl::theSession->OpenFile(cmd.Get(),
+					  FileMode::Command,
+					  FileAccess::Read,
+					  false);
     }
   else if (PathName(lpszPathIn).HasExtension(T_(".bz2")))
     {
-      pInputStream = SessionImpl::theSession->OpenBZip2File(lpszPathIn);
+      CommandLineBuilder cmd (T_("bzcat"));
+      cmd.AppendArgument (lpszPathIn);
+      pInputStream =
+	SessionImpl::theSession->OpenFile(cmd.Get(),
+					  FileMode::Command,
+					  FileAccess::Read,
+					  false);
     }
   else
     {
