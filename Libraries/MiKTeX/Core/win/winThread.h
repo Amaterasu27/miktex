@@ -54,5 +54,8 @@ private:
   unsigned id;
 
 private:
+  HANDLE hStarted;
+
+private:
   friend class Thread;
 };

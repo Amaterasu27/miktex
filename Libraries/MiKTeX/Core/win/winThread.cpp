@@ -67,19 +67,52 @@ Thread::IsCurrentThread (/*[in]*/ Thread * pThread)
 
 winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
 		      /*[in]*/ void * argument)
+  : hStarted (0),
+    handle (0)
 {
-  this->function = function;
-  this->argument = argument;
-  handle =
-    reinterpret_cast<HANDLE>(_beginthreadex(0,
-					    0,
-					    ThreadFunc,
-					    this,
-					    0,
-					    &id));
-  if (handle == 0)
+  try
     {
-      FATAL_CRT_ERROR (T_("_beginthreadex"), 0);
+      this->function = function;
+      this->argument = argument;
+      hStarted = CreateEvent(0, TRUE, FALSE, 0);
+      if (hStarted == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("CreateEvent"), 0);
+	}
+      handle =
+	reinterpret_cast<HANDLE>(_beginthreadex(0,
+						0,
+						ThreadFunc,
+						this,
+						0,
+						&id));
+      if (handle == 0)
+	{
+	  FATAL_CRT_ERROR (T_("_beginthreadex"), 0);
+	}
+      DWORD wait = WaitForSingleObject(hStarted, 1000);
+      if (wait == WAIT_FAILED)
+	{
+	  FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+	}
+      if (wait == WAIT_TIMEOUT)
+	{
+	  FATAL_MIKTEX_ERROR (T_("winThread::winThread"),
+			      T_("The thread function could not be started."),
+			      0);
+	}
+    }
+  catch (const exception &)
+    {
+      if (hStarted != 0)
+	{
+	  CloseHandle (hStarted);
+	}
+      if (handle != 0)
+	{
+	  CloseHandle (handle);
+	}
+      throw;
     }
 }
 
@@ -90,6 +123,11 @@ winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
 
 winThread::~winThread ()
 {
+  if (hStarted != 0)
+    {
+      CloseHandle (hStarted);
+      hStarted = 0;
+    }
   if (handle != 0)
     {
       CloseHandle (handle);
@@ -109,7 +147,13 @@ winThread::ThreadFunc (/*[in]*/ void * p)
   try
     {
       winThread * This = reinterpret_cast<winThread*>(p);
-      This->function (This->argument);
+      void (MIKTEXCALLBACK * function) (void *) = This->function;
+      void * argument = This->argument;
+      if (SetEvent(This->hStarted) == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("SetEvent"), 0);
+	}
+      function (argument);
     }
   catch (const MiKTeXException &)
     {
