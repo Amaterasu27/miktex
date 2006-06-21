@@ -80,14 +80,12 @@ WebAppInputLine::AddOptions ()
   AddOption (T_("disable-pipes\0\
 Disable input (output) from (to) processes."),
 	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_PIPES,
-	     no_argument,
-	     0);
+	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
 
   AddOption (T_("enable-pipes\0\
 Enable input (output) from (to) processes."),
 	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES,
-	     no_argument,
-	     0);
+	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
 }
 
 /* _________________________________________________________________________
