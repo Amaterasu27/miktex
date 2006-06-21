@@ -163,6 +163,9 @@ TeXMFApp::OnTeXMFStartJob ()
     pSession->GetConfigValue(0, MIKTEX_REGVAL_PARSE_FIRST_LINE, isTeXProgram);
   showFileLineErrorMessages =
     pSession->GetConfigValue(0, MIKTEX_REGVAL_FILE_LINE_ERRORS, false);
+  EnablePipes (pSession->GetConfigValue(0,
+					MIKTEX_REGVAL_ENABLE_PIPES,
+					false));
   clockStart = clock();
 }
 

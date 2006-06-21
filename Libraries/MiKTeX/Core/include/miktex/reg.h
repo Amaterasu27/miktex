@@ -159,4 +159,7 @@
 #define MIKTEX_DVI_FILE_TYPE_IDENTIFIER \
   MIKTEXTEXT("MiKTeX.Yap.dvi.") MIKTEXTEXT(MIKTEX_SERIES_STR)
 
+#define MIKTEX_REGVAL_ENABLE_PIPES \
+  MIKTEXTEXT("EnablePipes")
+
 #endif	/* miktex/reg.h */
