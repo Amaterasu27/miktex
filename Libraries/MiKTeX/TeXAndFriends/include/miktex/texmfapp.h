@@ -990,6 +990,9 @@ private:
 
 private:
   int m_string_vacancies;
+
+private:
+  int optBase;
 };
 
 /* _________________________________________________________________________

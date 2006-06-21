@@ -213,7 +213,6 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszAliasName,
 	  opt.longName = lpszAliasName;
 	  opt.argInfo |= POPT_ARGFLAG_DOC_HIDDEN;
 	  options.push_back (opt);
-	  return;
 	}
     }
   FATAL_MIKTEX_ERROR (T_("WebApp::AddOption"),
@@ -227,7 +226,7 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszAliasName,
    _________________________________________________________________________ */
 
 enum {
-  OPT_ALIAS = 1,
+  OPT_ALIAS,
   OPT_DISABLE_INSTALLER,
   OPT_ENABLE_INSTALLER,
   OPT_HELP,
@@ -244,53 +243,55 @@ WebApp::AddOptions ()
 {
   options.reserve (50);
 
+  optBase = static_cast<int>(GetOptions().size());
+
   AddOption (_T("alias\0\
 Pretend to be APP.  This affects both the format used and the search path."),
-	     OPT_ALIAS,
+	     FIRST_OPTION_VAL + optBase + OPT_ALIAS,
 	     required_argument,
 	     _T("APP"));
 
   AddOption (_T("disable-installer\0\
 Disable the package installer.  Missing files will not be installed."),
-	     OPT_DISABLE_INSTALLER);
+	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_INSTALLER);
 
   AddOption (_T("enable-installer\0\
 Enable the package installer.  Missing files will be installed."),
-	     OPT_ENABLE_INSTALLER);
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_INSTALLER);
 
   AddOption (_T("help\0\
 Show this help screen and exit."),
-	     OPT_HELP);
+	     FIRST_OPTION_VAL + optBase + OPT_HELP);
 
   AddOption (_T("include-directory\0\
 Prepend DIR to the input search path."),
-	     OPT_INCLUDE_DIRECTORY,
+	     FIRST_OPTION_VAL + optBase + OPT_INCLUDE_DIRECTORY,
 	     required_argument,
 	     _T("DIR"));
 
   AddOption (_T("kpathsea-debug\0"),
-	     OPT_UNSUPPORTED,
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
 	     required_argument);
 
   AddOption (_T("record-package-usages\0\
 Enable the package usage recorder.  Output is written to FILE."),
-	     OPT_RECORD_PACKAGE_USAGES,
+	     FIRST_OPTION_VAL + optBase + OPT_RECORD_PACKAGE_USAGES,
 	     required_argument,
 	     _T("FILE"));
 
   AddOption (_T("trace\0\
 Turn tracing on.  OPTIONS must be a comma-separated list of trace options. \
   See the manual, for more information."),
-	     OPT_TRACE,
+	     FIRST_OPTION_VAL + optBase + OPT_TRACE,
 	     required_argument,
 	     _T("OPTIONS"));
 
   AddOption (_T("verbose\0"),
-	     OPT_UNSUPPORTED);
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
 
   AddOption (_T("version\0\
 Print version information and exit."),
-	     OPT_VERSION);
+	     FIRST_OPTION_VAL + optBase + OPT_VERSION);
 
 #if defined(MIKTEX_WINDOWS)
   if (GetHelpId() > 0)
@@ -298,7 +299,7 @@ Print version information and exit."),
       AddOption (_T("hhelp\0\
 Show the manual page in an HTMLHelp window and exit when the\
  window is closed."),
-		 OPT_HHELP);
+		 FIRST_OPTION_VAL + optBase + OPT_HHELP);
 #endif
     }
 }
@@ -313,7 +314,7 @@ WebApp::ProcessOption (/*[in]*/ int			opt,
 		       /*[in]*/ const MIKTEXCHAR *	lpszArg)
 {
   bool done = true;
-  switch (opt)
+  switch (opt - FIRST_OPTION_VAL - optBase)
     {
     case OPT_ALIAS:
       pSession->PushAppName (lpszArg);

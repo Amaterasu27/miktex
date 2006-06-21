@@ -92,7 +92,6 @@ TeXApp::Finalize ()
    _________________________________________________________________________ */
 
 enum {
-  OPT_AAA = 1000,
   OPT_DISABLE_WRITE18,
   OPT_ENABLE_WRITE18,
   OPT_FONT_MAX,
@@ -112,50 +111,52 @@ TeXApp::AddOptions ()
 {
   TeXMFApp::AddOptions ();
 
+  optBase = static_cast<int>(GetOptions().size());
+
   AddOption (T_("disable-write18\0\
 Disable the \\write18{COMMAND} construct."),
-	     OPT_DISABLE_WRITE18);
+	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_WRITE18);
 
   AddOption (T_("enable-write18\0\
 Enable the \\write18{COMMAND} construct."),
-	     OPT_ENABLE_WRITE18);
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_WRITE18);
 
   AddOption (T_("max-in-open\0\
 Set max_in_open to N."),
-	     OPT_MAX_IN_OPEN,
+	     FIRST_OPTION_VAL + optBase + OPT_MAX_IN_OPEN,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("mem-bot\0\
 Set mem_bot to N."),
-	     OPT_MEM_BOT,
+	     FIRST_OPTION_VAL + optBase + OPT_MEM_BOT,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("mltex\0\
 Enable MLTeX extensions such as \\charsubdef."),
-	     OPT_MLTEX);
+	     FIRST_OPTION_VAL + optBase + OPT_MLTEX);
 
   AddOption (T_("nest-size\0\
 Set nest_size to N."),
-	     OPT_NEST_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_NEST_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("save-size\0\
 Set save_size to N."),
-	     OPT_SAVE_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_SAVE_SIZE,
 	     required_argument, T_("N"));
 
   AddOption (T_("trie-op-size\0\
 Set trie_op_size to N."),
-	     OPT_TRIE_OP_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_TRIE_OP_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("trie-size\0\
 Set trie_size to N."),
-	     OPT_TRIE_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_TRIE_SIZE,
 	     required_argument,
 	     T_("N"));
 
@@ -163,12 +164,12 @@ Set trie_size to N."),
     {
       AddOption (T_("font-max\0\
 Set font_max to N."),
-		 OPT_FONT_MAX,
+		 FIRST_OPTION_VAL + optBase + OPT_FONT_MAX,
 		 required_argument,
 		 T_("N"));
       AddOption (T_("font-mem-size\0\
 Set font_mem_size to N."),
-		 OPT_FONT_MEM_SIZE,
+		 FIRST_OPTION_VAL + optBase + OPT_FONT_MEM_SIZE,
 		 required_argument,
 		 T_("N"));
     }
@@ -178,18 +179,17 @@ Set font_mem_size to N."),
 Insert source specials in certain places of the DVI file.\
   WHERE is a comma-separated value list of:\
  cr display hbox math par parend vbox.")),
-	     OPT_SRC_SPECIALS,
+	     FIRST_OPTION_VAL + optBase + OPT_SRC_SPECIALS,
 	     optional_argument,
 	     T_("WHERE"));
 #else
   AddOption ((T_("src-specials\0\
 Insert source specials in certain places of the DVI file.")),
-	     OPT_SRC_SPECIALS,
-	     no_argument);
+	     FIRST_OPTION_VAL + optBase + OPT_SRC_SPECIALS);
 #endif
 
   // obsolete options
-  AddOption (T_("try-gz\0"), OPT_UNSUPPORTED);
+  AddOption (T_("try-gz\0"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
 
   // old option names
   AddOption (T_("src"), T_("src-specials"));
@@ -200,11 +200,11 @@ Insert source specials in certain places of the DVI file.")),
   AddOption (T_("shell-escape"), T_("enable-write18"));
 
   // unsupported Web2C options
-  AddOption (T_("enc"), OPT_UNSUPPORTED);
-  AddOption (T_("ipc"), OPT_UNSUPPORTED);
-  AddOption (T_("ipc-start"), OPT_UNSUPPORTED);
+  AddOption (T_("enc"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (T_("ipc"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (T_("ipc-start"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
   AddOption (T_("output-comment"),
-	     OPT_UNSUPPORTED,
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
 	     required_argument,
 	     T_("comment"));
 }
@@ -219,7 +219,7 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
 		       /*[in]*/ const MIKTEXCHAR *	lpszArg)
 {
   bool done = true;
-  switch (optchar)
+  switch (optchar - FIRST_OPTION_VAL - optBase)
     {
     case OPT_DISABLE_WRITE18:
       enableWrite18 = false;

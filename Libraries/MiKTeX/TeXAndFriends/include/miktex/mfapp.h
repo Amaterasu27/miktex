@@ -239,6 +239,9 @@ private:
   
 private:
   int m_path_size;
+
+private:
+  int optBase;
 };
 
 MIKTEXMF_END_NAMESPACE;

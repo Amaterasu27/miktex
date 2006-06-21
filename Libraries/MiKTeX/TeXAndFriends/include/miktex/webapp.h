@@ -643,6 +643,9 @@ private:
 
 private:
   MiKTeX::Core::tstring theNameOfTheGame;
+
+private:
+  int optBase;
 };
 
 /* _________________________________________________________________________

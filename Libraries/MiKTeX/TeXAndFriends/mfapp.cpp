@@ -55,7 +55,7 @@ MetafontApp::Finalize ()
    _________________________________________________________________________ */
 
 enum {
-  OPT_BISTACK_SIZE = 1000,
+  OPT_BISTACK_SIZE,
   OPT_LIG_TABLE_SIZE,
   OPT_PATH_SIZE,
 };
@@ -65,21 +65,23 @@ MetafontApp::AddOptions ()
 {
   TeXMFApp::AddOptions ();
 
+  optBase = static_cast<int>(GetOptions().size());
+
   AddOption (T_("bistack-size\0\
 Set bistack_size to N."),
-	     OPT_BISTACK_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_BISTACK_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("lig-table-size\0\
 Set lig_table_size to N."),
-	     OPT_LIG_TABLE_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_LIG_TABLE_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("path-size\0\
 Set path_size to N."),
-	     OPT_PATH_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_PATH_SIZE,
 	     required_argument,
 	     T_("N"));
 }
@@ -94,7 +96,7 @@ MetafontApp::ProcessOption (/*[in]*/ int		opt,
 			    /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
 {
   bool done = true;
-  switch (opt)
+  switch (opt - FIRST_OPTION_VAL - optBase)
     {
     case OPT_BISTACK_SIZE:
       m_bistack_size = atoi(lpszOptArg);

@@ -77,6 +77,29 @@ public:
 
   /* _______________________________________________________________________
      
+     AddOptions
+     _______________________________________________________________________ */
+
+protected:
+  
+  virtual
+  MIKTEXMFAPI(void)
+  AddOptions ();
+
+  /* _______________________________________________________________________
+     
+     ProcessOption
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  MIKTEXMFAPI(bool)
+  ProcessOption (/*[in]*/ int			opt,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+
+  /* _______________________________________________________________________
+     
      GetFormatIdent
      _______________________________________________________________________ */
 
@@ -414,6 +437,12 @@ protected:
 
 protected:
   MiKTeX::Core::FileType inputFileType;
+
+protected:
+  bool enablePipes;
+
+private:
+  int optBase;
 };
 
 MIKTEXMF_END_NAMESPACE;

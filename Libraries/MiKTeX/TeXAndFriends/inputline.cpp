@@ -42,6 +42,7 @@ MIKTEXMFAPI(void)
 WebAppInputLine::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 {
   WebApp::Init (lpszProgramInvocationName);
+  enablePipes = false;
 }
 
 /* _________________________________________________________________________
@@ -57,6 +58,66 @@ WebAppInputLine::Finalize ()
   lastInputFileName = T_("");
   outputDirectory = T_("");
   WebApp::Finalize ();
+}
+
+/* _________________________________________________________________________
+   
+   WebAppInputLine::AddOptions
+   _________________________________________________________________________ */
+
+enum {
+  OPT_ENABLE_PIPES,
+  OPT_DISABLE_PIPES,
+};
+
+MIKTEXMFAPI(void)
+WebAppInputLine::AddOptions ()
+{
+  WebApp::AddOptions ();
+
+  optBase = static_cast<int>(GetOptions().size());
+
+  AddOption (T_("enable-pipes\0\
+Enable input (output) from (to) processes."),
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES,
+	     no_argument,
+	     0);
+
+  AddOption (T_("disable-pipes\0\
+Disable input (output) from (to) processes."),
+	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_PIPES,
+	     no_argument,
+	     0);
+}
+
+/* _________________________________________________________________________
+
+   WebAppInputLine::ProcessOption
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(bool)
+WebAppInputLine::ProcessOption (/*[in]*/ int			opt,
+				/*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+{
+  bool done = true;
+
+  switch (opt - FIRST_OPTION_VAL - optBase)
+    {
+
+    case OPT_DISABLE_PIPES:
+      enablePipes = true;
+      break;
+
+    case OPT_ENABLE_PIPES:
+      enablePipes = false;
+      break;
+
+    default:
+      done = WebApp::ProcessOption(opt, lpszOptArg);
+      break;
+    }
+
+  return (done);
 }
 
 /* _________________________________________________________________________
@@ -147,31 +208,42 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ bool			text)
 {
   C4PASSERTSTRING (lpszPath);
-  PathName unmangled = UnmangleNameOfFile(lpszPath);
-  bool isAuxFile =
-    ! (unmangled.HasExtension(T_(".dvi")) // <fixme/>
-       || unmangled.HasExtension(T_(".pdf")));
-  PathName path;
-  if (isAuxFile && ! auxDirectory.Empty())
+  FILE * pfile = 0;
+  if (enablePipes && lpszPath[0] == T_('|'))
     {
-      path.Set (auxDirectory, unmangled);
-      lpszPath = path.Get();
-    }
-  else if (outputDirectory[0] != 0)
-    {
-      path.Set (outputDirectory, unmangled);
-      lpszPath = path.Get();
+      pfile = pSession->OpenFile(lpszPath + 1,
+				 FileMode::Command,
+				 FileAccess::Write,
+				 false);
     }
   else
     {
-      lpszPath = unmangled.Get();
+      PathName unmangled = UnmangleNameOfFile(lpszPath);
+      bool isAuxFile =
+	! (unmangled.HasExtension(T_(".dvi")) // <fixme/>
+	   || unmangled.HasExtension(T_(".pdf")));
+      PathName path;
+      if (isAuxFile && ! auxDirectory.Empty())
+	{
+	  path.Set (auxDirectory, unmangled);
+	  lpszPath = path.Get();
+	}
+      else if (outputDirectory[0] != 0)
+	{
+	  path.Set (outputDirectory, unmangled);
+	  lpszPath = path.Get();
+	}
+      else
+	{
+	  lpszPath = unmangled.Get();
+	}
+      pfile =
+	pSession->TryOpenFile(lpszPath,
+			      FileMode::Create,
+			      FileAccess::Write,
+			      text,
+			      share);
     }
-  FILE * pfile =
-    pSession->TryOpenFile(lpszPath,
-			  FileMode::Create,
-			  FileAccess::Write,
-			  text,
-			  share);
   if (pfile == 0)
     {
       return (false);
@@ -191,52 +263,74 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
 {
   C4PASSERTSTRING (lpszFileName);
 
-  if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName),
-			   inputFileType,
-			   fqNameOfFile))
-    {
-      return (false);
-    }
-
   FILE * pfile = 0;
 
-  try
+  if (enablePipes && lpszFileName[0] == T_('|'))
     {
-      if (fqNameOfFile.HasExtension(T_(".gz")))
+      pfile =
+	pSession->OpenFile(lpszFileName + 1,
+			   FileMode::Command,
+			   FileAccess::Read,
+			   false);
+    }
+  else
+    {
+      if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName),
+			       inputFileType,
+			       fqNameOfFile))
 	{
-	  pfile = pSession->OpenGZipFile(fqNameOfFile);
+	  return (false);
 	}
-      else if (fqNameOfFile.HasExtension(T_(".bz2")))
+      
+      try
 	{
-	  pfile = pSession->OpenBZip2File(fqNameOfFile);
-	}
-      else
-	{
+	  if (fqNameOfFile.HasExtension(T_(".gz")))
+	    {
+	      CommandLineBuilder cmd (T_("zcat"));
+	      cmd.AppendArgument (fqNameOfFile);
+	      pfile =
+		pSession->OpenFile(cmd.Get(),
+				   FileMode::Command,
+				   FileAccess::Read,
+				   false);
+	    }
+	  else if (fqNameOfFile.HasExtension(T_(".bz2")))
+	    {
+	      CommandLineBuilder cmd (T_("bzcat"));
+	      cmd.AppendArgument (fqNameOfFile);
+	      pfile =
+		pSession->OpenFile(cmd.Get(),
+				   FileMode::Command,
+				   FileAccess::Read,
+				   false);
+	    }
+	  else
+	    {
 #if 0
-	  FileShare share = FileShare::Read;
+	      FileShare share = FileShare::Read;
 #else
-	  FileShare share = FileShare::ReadWrite;
+	      FileShare share = FileShare::ReadWrite;
 #endif
-	  pfile =
-	    pSession->OpenFile(fqNameOfFile.Get(),
-			       FileMode::Open,
-			       FileAccess::Read,
-			       false,
-			       share);
+	      pfile =
+		pSession->OpenFile(fqNameOfFile.Get(),
+				   FileMode::Open,
+				   FileAccess::Read,
+				   false,
+				   share);
+	    }
+	}
+#if defined(MIKTEX_WINDOWS)
+      catch (const SharingViolationException &)
+	{
+	}
+#endif
+      catch (const UnauthorizedAccessException &)
+	{
+	}
+      catch (const FileNotFoundException &)
+	{
 	}
     }
-#if defined(MIKTEX_WINDOWS)
-  catch (const SharingViolationException &)
-    {
-    }
-#endif
-  catch (const UnauthorizedAccessException &)
-    {
-    }
-  catch (const FileNotFoundException &)
-    {
-    }
-
 
   if (pfile == 0)
     {

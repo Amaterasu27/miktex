@@ -44,6 +44,8 @@ using namespace MiKTeX::UI;
 using namespace MiKTeX::Core;
 using namespace std;
 
+#define FIRST_OPTION_VAL 256
+
 /* _________________________________________________________________________
 
    Macros

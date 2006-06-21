@@ -205,7 +205,7 @@ TeXMFApp::OnTeXMFFinishJob ()
    _________________________________________________________________________ */
 
 enum {
-  OPT_AUX_DIRECTORY = 100,
+  OPT_AUX_DIRECTORY,
   OPT_BUF_SIZE,
   OPT_DISABLE_C_STYLE_ERRORS,
   OPT_DONT_PARSE_FIRST_LINE,
@@ -241,7 +241,7 @@ enum {
 MIKTEXMFAPI(void)
 TeXMFApp::AddOptions ()
 {
-  WebApp::AddOptions ();
+  WebAppInputLine::AddOptions ();
 
   bool invokedAsInitProgram = false;
   if (Utils::Contains(GetInitProgramName(),
@@ -251,158 +251,162 @@ TeXMFApp::AddOptions ()
       invokedAsInitProgram = true;
     }
 
+  optBase = static_cast<int>(GetOptions().size());
+
   AddOption (T_("aux-directory\0\
 Use DIR as the directory to write auxiliary files to."),
-	     OPT_AUX_DIRECTORY,
+	     FIRST_OPTION_VAL + optBase + OPT_AUX_DIRECTORY,
 	     required_argument,
 	     T_("DIR"));
 
   AddOption (T_("buf-size\0\
 Set buf_size to N."),
-	     OPT_BUF_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_BUF_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("disable-c-style-errors\0\
 Disable file:line:error style messages."),
-	     OPT_DISABLE_C_STYLE_ERRORS);
+	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_C_STYLE_ERRORS);
 
   AddOption (T_("dont-parse-first-line\0\
 Do not parse the first line of the input line to look for a dump name and/or\
  extra command-line options."),
-	     OPT_DONT_PARSE_FIRST_LINE, no_argument);
+	     FIRST_OPTION_VAL + optBase + OPT_DONT_PARSE_FIRST_LINE);
 
   AddOption (T_("enable-c-style-errors\0\
 Enable file:line:error style messages."),
-	     OPT_ENABLE_C_STYLE_ERRORS);
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_C_STYLE_ERRORS);
 
   AddOption (T_("error-line\0\
 Set error_line to N."),
-	     OPT_ERROR_LINE,
+	     FIRST_OPTION_VAL + optBase + OPT_ERROR_LINE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("half-error-line\0\
 Set half_error_line to N."),
-	     OPT_HALF_ERROR_LINE,
+	     FIRST_OPTION_VAL + optBase + OPT_HALF_ERROR_LINE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("halt-on-error\0\
 Stop after the first error."),
-	     OPT_HALT_ON_ERROR);
+	     FIRST_OPTION_VAL + optBase + OPT_HALT_ON_ERROR);
 
   if (! invokedAsInitProgram)
     {
       AddOption (T_("initialize\0\
 Be the INI variant of the program."),
-		 OPT_INITIALIZE);
+		 FIRST_OPTION_VAL + optBase + OPT_INITIALIZE);
     }
 
   AddOption (T_("interaction\0\
 Set the interaction mode; MODE must be one of:\
  batchmode, nonstopmode, scrollmode, errorstopmode."),
-	     OPT_INTERACTION,
+	     FIRST_OPTION_VAL + optBase + OPT_INTERACTION,
 	     required_argument,
 	     T_("MODE"));
 
   AddOption (T_("job-name\0\
 Set the job name and hence the name(s) of the output file(s)."),
-	     OPT_JOB_NAME,
+	     FIRST_OPTION_VAL + optBase + OPT_JOB_NAME,
 	     required_argument,
 	     T_("NAME"));
 
   AddOption (T_("job-time\0\
 Set the job time.  Take FILE's timestamp as the reference."),
-	     OPT_JOB_TIME,
+	     FIRST_OPTION_VAL + optBase + OPT_JOB_TIME,
 	     required_argument,
 	     T_("FILE"));
 
   AddOption (T_("max-print-line\0\
 Set max_print_line to N."),
-	     OPT_MAX_PRINT_LINE,
+	     FIRST_OPTION_VAL + optBase + OPT_MAX_PRINT_LINE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("max-strings\0\
 Set max_strings to N."),
-	     OPT_MAX_STRINGS, required_argument, T_("N"));
+	     FIRST_OPTION_VAL + optBase + OPT_MAX_STRINGS,
+	     required_argument,
+	     T_("N"));
 
   AddOption (T_("mem-max\0\
 Set mem_max to N."),
-	     OPT_MEM_MAX,
+	     FIRST_OPTION_VAL + optBase + OPT_MEM_MAX,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("mem-min\0\
 Set mem_min to N."),
-	     OPT_MEM_MIN,
+	     FIRST_OPTION_VAL + optBase + OPT_MEM_MIN,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("mem-top\0\
 Set mem_top to N."),
-	     OPT_MEM_TOP,
+	     FIRST_OPTION_VAL + optBase + OPT_MEM_TOP,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("output-directory\0\
 Use DIR as the directory to write output files to."),
-	     OPT_OUTPUT_DIRECTORY,
+	     FIRST_OPTION_VAL + optBase + OPT_OUTPUT_DIRECTORY,
 	     required_argument,
 	     T_("DIR"));
 
   AddOption (T_("param-size\0\
 Set param_size to N."),
-	     OPT_PARAM_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_PARAM_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("parse-first-line\0\
 Parse the first line of the input line to look for a dump name and/or\
  extra command-line options."),
-	     OPT_PARSE_FIRST_LINE,
+	     FIRST_OPTION_VAL + optBase + OPT_PARSE_FIRST_LINE,
 	     no_argument);
 
   AddOption (T_("pool-size\0\
 Set pool_size to N."),
-	     OPT_POOL_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_POOL_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("quiet\0\
 Suppress all output (except errors)."),
-	     OPT_QUIET);
+	     FIRST_OPTION_VAL + optBase + OPT_QUIET);
 
   AddOption (T_("recorder\0\
 Turn on the file name recorder to leave a trace of the files\
  opened for input and output in a file with extension .fls."),
-	     OPT_RECORDER);
+	     FIRST_OPTION_VAL + optBase + OPT_RECORDER);
 
   AddOption (T_("stack-size\0\
 Set stack_size to N."),
-	     OPT_STACK_SIZE,
+	     FIRST_OPTION_VAL + optBase + OPT_STACK_SIZE,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("strict\0\
 Disable MiKTeX extensions."),
-	     OPT_STRICT,
+	     FIRST_OPTION_VAL + optBase + OPT_STRICT,
 	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
 
   AddOption (T_("string-vacancies\0\
 Set string_vacancies to N."),
-	     OPT_STRING_VACANCIES,
+	     FIRST_OPTION_VAL + optBase + OPT_STRING_VACANCIES,
 	     required_argument,
 	     T_("N"));
 
   AddOption (T_("time-statistics\0\
 Show processing time statistics."),
-	     OPT_TIME_STATISTICS);
+	     FIRST_OPTION_VAL + optBase + OPT_TIME_STATISTICS);
 
   AddOption (T_("undump\0\
 Use NAME instead of program name when loading internal tables."),
-	     OPT_UNDUMP,
+	     FIRST_OPTION_VAL + optBase + OPT_UNDUMP,
 	     required_argument,
 	     T_("NAME"));
 
@@ -411,7 +415,7 @@ Use NAME instead of program name when loading internal tables."),
       AddOption (T_("tcx\0\
 Use the TCXNAME translation table to set the mapping of input\
 characters and re-mapping of output characters."),
-		 OPT_TCX,
+		 FIRST_OPTION_VAL + optBase + OPT_TCX,
 		 required_argument,
 		 T_("TCXNAME"));
     }
@@ -420,7 +424,7 @@ characters and re-mapping of output characters."),
     {
       AddOption (T_("terminal\0\
 Use the DOS codepage for console output."),
-		 OPT_TERMINAL,
+		 FIRST_OPTION_VAL + optBase + OPT_TERMINAL,
 		 required_argument,
 		 T_("oem"));
     }
@@ -440,7 +444,7 @@ Use the DOS codepage for console output."),
     {
       AddOption (T_("oem\0\
 Use the DOS codepage for console output."),
-		 OPT_OEM,
+		 FIRST_OPTION_VAL + optBase + OPT_OEM,
 		 no_argument | POPT_ARGFLAG_DOC_HIDDEN);
     }
 
@@ -453,12 +457,22 @@ Use the DOS codepage for console output."),
   AddOption (T_("progname"), T_("alias"));
 
   // unsupported Web2C options
-  AddOption (T_("8bit"), OPT_UNSUPPORTED);
-  AddOption (T_("default-translate-file"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("maketex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("mktex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("no-maketex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("no-mktex\0"), OPT_UNSUPPORTED, required_argument);
+  AddOption (T_("8bit"), FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED);
+  AddOption (T_("default-translate-file"),
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     required_argument);
+  AddOption (T_("maketex\0"),
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     required_argument);
+  AddOption (T_("mktex\0"),
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     required_argument);
+  AddOption (T_("no-maketex\0"),
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     required_argument);
+  AddOption (T_("no-mktex\0"),
+	     FIRST_OPTION_VAL + optBase + OPT_UNSUPPORTED,
+	     required_argument);
 }
 
 /* _________________________________________________________________________
@@ -472,7 +486,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 {
   bool done = true;
 
-  switch (opt)
+  switch (opt - FIRST_OPTION_VAL - optBase)
     {
 
     case OPT_AUX_DIRECTORY:
@@ -671,7 +685,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     default:
-      done = WebApp::ProcessOption(opt, lpszOptArg);
+      done = WebAppInputLine::ProcessOption(opt, lpszOptArg);
       break;
     }
 
