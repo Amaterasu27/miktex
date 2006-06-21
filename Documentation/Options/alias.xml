@@ -1,10 +1,14 @@
 <varlistentry>
 <term><option>-alias=<replaceable>app</replaceable></option></term>
-<listitem><para>Pretend to be <replaceable>app</replaceable>.
+<listitem><para>Pretend to be <replaceable>app</replaceable>, i.e.,
+set program (and memory dump) name to <replaceable>app</replaceable>.
 <indexterm>
 <primary>-alias=app</primary>
 </indexterm>
-This affects both the format used and the search paths.</para></listitem>
+This may affect the search paths and other values used. Using this
+option is equivalent to copying the executable file to
+<filename><replaceable>app</replaceable>.exe</filename> and invoking
+<filename><replaceable>app</replaceable>.exe</filename>.</para></listitem>
 </varlistentry>
 
 <!--

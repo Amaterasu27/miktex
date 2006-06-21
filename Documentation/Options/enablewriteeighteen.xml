@@ -10,8 +10,16 @@
 <indexterm>
 <primary>\write18 (run a program from within TeX)</primary>
 </indexterm>
-<para>Enable the <markup role="tex">\write18</markup>
-construct.</para></listitem>
+<para>Enable the
+<markup role="tex">\write18{<replaceable>command</replaceable>}</markup>
+construct. It is disabled by default to avoid security problems.
+When enabled, the command (which undergoes the usual
+&TeX; expansions) is passed to the command interpreter.
+The output of the command is not diverted anywhere, so it will not appear
+in the log file. The command execution either happens at
+<markup role="tex">\output</markup> time or right away, according to the
+absence or presence of the <markup role="tex">\immediate</markup>
+prefix.</para></listitem>
 </varlistentry>
 
 <!--
