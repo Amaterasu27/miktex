@@ -105,11 +105,18 @@ manual_xml_files = \
 	Manual\localguide.xml \
 	Manual\printing.xml \
 	Manual\tcxtables.xml \
+	Manual\texfeatures.xml \
 	Manual\texifying.xml \
 	Options\alias.xml \
+	Options\mltex.xml \
 	Options\auxdirectory.xml \
 	Options\bufsize.xml \
 	Options\cstyleerrors.xml \
+	Options\disableinstaller.xml \
+	Options\disablepipes.xml \
+	Options\enablepipes.xml \
+	Options\disablewriteeighteen.xml \
+	Options\dontparsefirstline.xml \
 	Options\enablewriteeighteen.xml \
 	Options\errorline.xml \
 	Options\fontmax.xml \
@@ -120,7 +127,9 @@ manual_xml_files = \
 	Options\initialize.xml \
 	Options\interaction.xml \
 	Options\jobname.xml \
+	Options\nocstyleerrors.xml \
 	Options\jobtime.xml \
+	Options\parsefirstline.xml \
 	Options\maxinopen.xml \
 	Options\maxprintline.xml \
 	Options\maxstrings.xml \
@@ -143,7 +152,6 @@ manual_xml_files = \
 	Options\trace.xml \
 	Options\trieopsize.xml \
 	Options\triesize.xml \
-	Options\trygz.xml \
 	Options\undump.xml \
 	Options\version.xml \
 	Ref\bibtex.xml \

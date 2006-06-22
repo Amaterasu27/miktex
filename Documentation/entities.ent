@@ -41,6 +41,7 @@
 <!ENTITY MiKTeXSetupWizard "<application>&MiKTeX; Setup Wizard</application>">
 <!ENTITY MiKTeXTools "<application>&MiKTeX; Tools</application>">
 <!ENTITY MiKTeXUpdateWizard "<application>&MiKTeX; Update Wizard</application>">
+<!ENTITY UpdateWizard "<application>Update Wizard</application>">
 <!ENTITY NTS "<application>NTS</application>">
 <!ENTITY PDF "<acronym>PDF</acronym>">
 <!ENTITY JPG "<acronym>JPG</acronym>">
@@ -107,6 +108,7 @@
 <!ENTITY networkfolder "\\server\miktex">
 <!ENTITY omega "<command>omega</command>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
+<!ENTITY MLTeX "<application>MLTeX</application>">
 <!ENTITY pdfeTeX "<application>pdf-e-TeX</application>">
 <!ENTITY pdfinitex "<command>pdfinitex</command>">
 <!ENTITY pdflatex "<command>pdflatex</command>">

@@ -45,7 +45,10 @@ and outputs corresponding &PostScript; code.</para>
 &optionbufsize;
 &optioncstyleerrors;
 &optiondisableinstaller;
+&optiondisablepipes;
+&optiondontparsefirstline;
 &optionenableinstaller;
+&optionenablepipes;
 &optionerrorline;
 &optionfontmemsize;
 &optionhalferrorline;
@@ -63,8 +66,10 @@ and outputs corresponding &PostScript; code.</para>
 &optionmemmax;
 &optionmemmin;
 &optionmemtop;
+&optionnocstyleerrors;
 &optionoutputdirectory;
 &optionparamsize;
+&optionparsefirstline;
 &optionpathsize;
 &optionpoolsize;
 &optionquiet;

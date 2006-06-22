@@ -38,9 +38,7 @@ the first of which must start with a backslash.</para>
 well as &DVI; files.</para>
 
 <para>In &PDF; mode, &pdfeTeX; can natively handle the &PDF;, &JPG;,
-and &PNG; graphics formats. &pdfeTeX;'s handling of its command-line
-arguments is similar to that of of the other TeX programs in the web2c
-implementation.</para>
+and &PNG; graphics formats.</para>
 
 </refsect1>
 
@@ -54,7 +52,11 @@ implementation.</para>
 &optionbufsize;
 &optioncstyleerrors;
 &optiondisableinstaller;
+&optiondisablepipes;
+&optiondisablewriteeighteen;
+&optiondontparsefirstline;
 &optionenableinstaller;
+&optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
 &optionfontmax;
@@ -62,7 +64,6 @@ implementation.</para>
 &optionhalferrorline;
 &optionhaltonerror;
 &optionhelp;
-&optionhhelp;
 &optionincludedirectory;
 &optioninitialize;
 &optioninteraction;
@@ -75,9 +76,12 @@ implementation.</para>
 &optionmemmax;
 &optionmemmin;
 &optionmemtop;
+&optionmltex;
 &optionnestsize;
+&optionnocstyleerrors;
 &optionoutputdirectory;
 &optionparamsize;
+&optionparsefirstline;
 &optionpoolsize;
 &optionquiet;
 &optionrecordpackageusages;
@@ -94,23 +98,6 @@ implementation.</para>
 &optiontriesize;
 &optionundump;
 &optionversion;
-</variablelist>
-
-</refsect1>
-
-<refsect1>
-
-<title>Aliases</title>
-
-<variablelist>
-<varlistentry>
-<term>&pdfinitex;</term>
-<listitem><para>Equivalent to <userinput>pdfetex -ini</userinput>.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&pdfvirtex;</term>
-<listitem><para>Equivalent to <userinput>pdfetex</userinput>.</para></listitem>
-</varlistentry>
 </variablelist>
 
 </refsect1>

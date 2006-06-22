@@ -184,15 +184,6 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <title>Programs</title>
 
-
-<section>
-
-<title>&Dvips;</title>
-
-<para>&Dvips; has been upgraded to version 5.95b.</para>
-
-</section>
-
 <section>
 
 <title>&Dvipdfmx;</title>
@@ -211,30 +202,9 @@ support side-by-side installations.  This shouldn't be an issue, since
 
 <section>
 
-<title>tex4ht</title>
+<title>&Dvips;</title>
 
-<para>tex4ht has been upgraded to version 1.0.2006_05_06_0156.</para>
-
-</section>
-
-<section>
-
-<title>&pdfeTeX;</title>
-
-<para>&pdfeTeX; has been upgraded to version 1.30.6.</para>
-
-<para>&pdfeTeX; is now the default engine, also for &DVI;
-output.</para>
-
-</section>
-
-<section>
-
-<title>&pdfopen; / &pdfclose;</title>
-
-<para>&pdfopen; and &pdfclose; can be used to control &AdobeReader;.
-The original author is Fabrice Popineau who wrote these utilities a
-long time ago for the &TeXLive; distribution.</para>
+<para>&Dvips; has been upgraded to version 5.95b.</para>
 
 </section>
 
@@ -328,7 +298,80 @@ files. An &HTML; viewer is started to view the page.</para>
 
 <section>
 
-<title>&MiKTeXUpdateWizard;</title>
+<title>&pdfeTeX;</title>
+
+<para>&pdfeTeX; is now the default engine, also for &DVI;
+output.</para>
+
+<para>&pdfeTeX; has been upgraded to version 1.30.6.</para>
+
+<section id="pipedinout">
+
+<title>Piped Input and Output</title>
+
+<para>&TeX;'s input/output primitives can be used for unidirectional
+interprocess communication by prepending a pipe symbol to the file
+name.</para>
+
+<para>If this feature is enabled, then
+<markup role="tex">\input "|<replaceable>command</replaceable>"</markup>
+starts the command interpreter (usually <command>cmd.exe</command>) to
+carry out the command. The output of the command becomes the input of
+&TeX;.
+For example:
+<programlisting>
+\input "|dir/b"
+</programlisting>
+typesets the file names of the current directory.</para>
+
+<para>Likewise, it is possible to let &TeX; write something into
+the input stream of a command. For example:
+<programlisting>
+\immediate\openout1 = "|unix2dos|sort > sorted"
+\immediate\write 1 {b}
+\immediate\write 1 {a}
+\immediate\write 1 {c}
+\immediate\closeout1
+\input sorted
+</programlisting>
+typesets a b c.</para>
+
+<para>Piped input and output is disabled by default to avoid security
+problems.
+<indexterm>
+<primary>security</primary>
+</indexterm>
+<indexterm significance="preferred">
+<primary>-enable-pipes</primary>
+</indexterm>
+You enable the feature by specifying
+<option>-enable-pipes</option> on the &TeX; command-line.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>&pdfopen; / &pdfclose;</title>
+
+<para>&pdfopen; and &pdfclose; can be used to control &AdobeReader;.
+The original author is Fabrice Popineau who wrote these utilities a
+long time ago for the &TeXLive; distribution.</para>
+
+</section>
+
+<section>
+
+<title>tex4ht</title>
+
+<para>tex4ht has been upgraded to version 1.0.2006_05_06_0156.</para>
+
+</section>
+
+<section>
+
+<title>&UpdateWizard;</title>
 
 <para>The user interface has been improved to allow a faster (less
 mouse-clicks) run:</para>

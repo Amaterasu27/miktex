@@ -46,7 +46,9 @@ by passing the documents through &dvicopy; first.</para>
 <variablelist>
 &optionalias;
 &optiondisableinstaller;
+&optiondisablepipes;
 &optionenableinstaller;
+&optionenablepipes;
 &optionhelp;
 &optionhhelp;
 &optionincludedirectory;

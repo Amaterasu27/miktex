@@ -43,7 +43,11 @@
 &optionbufsize;
 &optioncstyleerrors;
 &optiondisableinstaller;
+&optiondisablepipes;
+&optiondisablewriteeighteen;
+&optiondontparsefirstline;
 &optionenableinstaller;
+&optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
 &optionhalferrorline;
@@ -62,9 +66,12 @@
 &optionmemmax;
 &optionmemmin;
 &optionmemtop;
+&optionmltex;
 &optionnestsize;
+&optionnocstyleerrors;
 &optionoutputdirectory;
 &optionparamsize;
+&optionparsefirstline;
 &optionpoolsize;
 &optionquiet;
 &optionrecordpackageusages;
@@ -73,6 +80,8 @@
 &optionsrcspecials;
 &optionstacksize;
 &optionstringvacancies;
+&optiontcx;
+&optionterminal;
 &optiontimestatistics;
 &optiontrace;
 &optiontrieopsize;

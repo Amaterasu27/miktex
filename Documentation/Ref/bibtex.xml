@@ -82,7 +82,9 @@ details of this format, and it gives other useful hints for using
 <variablelist>
 &optionalias;
 &optiondisableinstaller;
+&optiondisablepipes;
 &optionenableinstaller;
+&optionenablepipes;
 &optionhelp;
 &optionhhelp;
 &optionincludedirectory;
