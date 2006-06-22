@@ -23,43 +23,18 @@
 #  pragma once
 #endif
 
-#if defined(_MSC_VER)
-#  pragma warning (disable: 4702)
-#  pragma warning (disable: 4786)
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-#endif
-
 #include <cstdlib>
 #include <ctime>
-
-#include <malloc.h>
 
 #include <iomanip>
 #include <iostream>
 
-#include <direct.h>
-
-#include <miktex/core.h>
 #include <miktex/app.h>
-#include <miktex/reg.h>
-#include <miktex/paths.h>
-#include <miktex/trace.h>
-
+#include <miktex/core.h>
 #include <miktex/mikui.h>
-
-#include <process.h>
-
-#if defined(_MSC_VER)
-#  pragma warning (push, 1)
-#  pragma warning (disable: 4267)
-#  include <hash_set>
-#  include <vector>
-#  pragma warning (pop)
-#endif
+#include <miktex/paths.h>
+#include <miktex/reg.h>
+#include <miktex/trace.h>
 
 extern "C" {
 #include <zlib.h>

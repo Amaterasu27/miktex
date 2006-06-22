@@ -345,18 +345,6 @@ public:
 
   /* _______________________________________________________________________
      
-     FatalError
-     _______________________________________________________________________ */
-
-public:
-
-  MIKTEXNORETURN
-  MIKTEXMFAPI(void)
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	      /*[in]*/				...);
-
-  /* _______________________________________________________________________
-     
      GetHelpId
      _______________________________________________________________________ */
 
@@ -424,6 +412,18 @@ public:
   MIKTEXMFAPI(const MIKTEXCHAR *)
   TheNameOfTheGame ()
     const;
+
+  /* _______________________________________________________________________
+     
+     FatalError
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXNORETURN
+  MIKTEXMFAPI(void)
+  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	      /*[in]*/				...);
 
   /* _______________________________________________________________________
      
@@ -505,7 +505,6 @@ public:
 
 public:
 
-  const
   MiKTeX::Core::PathName
   GetTcxFileName ()
     const
@@ -688,14 +687,14 @@ dllentry (/*[in]*/ int			argc,				\
       app.Finalize ();							\
       return (exitCode);						\
     }									\
-  catch (const MiKTeX::Core::MiKTeXException & e)				\
+  catch (const MiKTeX::Core::MiKTeXException & e)			\
     {									\
-      MiKTeX::Core::Utils::PrintException (e);			\
+      MiKTeX::Core::Utils::PrintException (e);				\
       return (1);							\
     }									\
   catch (const std::exception & e)					\
     {									\
-      MiKTeX::Core::Utils::PrintException (e);			\
+      MiKTeX::Core::Utils::PrintException (e);				\
       return (1);							\
     }									\
 }

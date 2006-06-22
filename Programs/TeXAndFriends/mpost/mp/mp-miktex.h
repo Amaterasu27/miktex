@@ -139,7 +139,7 @@ public:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpExtension ()
+  GetMemoryDumpFileExtension ()
     const
   {
     return (MIKTEXTEXT(".mem"));
@@ -149,7 +149,7 @@ public:
   virtual
   FileType
   MIKTEXMFCALL
-  GetDumpFileType ()
+  GetMemoryDumpFileType ()
     const
   {
     return (FileType::MEM);
@@ -188,7 +188,7 @@ public:
 public:
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpFileName ()
+  GetMemoryDumpFileName ()
     const
   {
     return (MIKTEXTEXT("mpost.mem"));
@@ -298,7 +298,7 @@ bool
 miktexopenmemfile (/*[in]*/ wordfile &		f,
 		   /*[in]*/ bool		renew = false)
 {
-  return (THEAPP.OpenDumpFile(f, renew));
+  return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
 
 inline

@@ -401,21 +401,3 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
   return (true);
   MIKTEX_API_END ("OpenMAPFile");
 }
-
-/* _________________________________________________________________________
-
-   DllMain
-
-   DLL entry/exit routine.
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-int
-APIENTRY 
-DllMain (/*[in]*/ HINSTANCE,
-	 /*[in]*/ DWORD,
-	 /*[in]*/ void *)
-{
-  return (1);
-}
-#endif

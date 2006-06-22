@@ -84,35 +84,15 @@ protected:
   
   /* _______________________________________________________________________
      
-     GetDumpExtension
+     ProcessOption
      _______________________________________________________________________ */
 
-public:
+protected:
 
   virtual
-  const MIKTEXCHAR *
-  MIKTEXMFCALL
-  GetDumpExtension ()
-    const
-  {
-    return (MIKTEXTEXT(".base"));
-  }
-
-  /* _______________________________________________________________________
-     
-     GetDumpFileType
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
-  GetDumpFileType ()
-    const
-  {
-    return (MiKTeX::Core::FileType::BASE);
-  }
+  MIKTEXMFAPI(bool)
+  ProcessOption (/*[in]*/ int			opt,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -128,6 +108,38 @@ public:
     const
   {
     return (MiKTeX::Core::FileType::MF);
+  }
+
+  /* _______________________________________________________________________
+     
+     GetMemoryDumpFileExtension
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  const MIKTEXCHAR *
+  MIKTEXMFCALL
+  GetMemoryDumpFileExtension ()
+    const
+  {
+    return (MIKTEXTEXT(".base"));
+  }
+
+  /* _______________________________________________________________________
+     
+     GetMemoryDumpFileType
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MiKTeX::Core::FileType
+  MIKTEXMFCALL
+  GetMemoryDumpFileType ()
+    const
+  {
+    return (MiKTeX::Core::FileType::BASE);
   }
 
   /* _______________________________________________________________________
@@ -148,18 +160,6 @@ public:
 
   /* _______________________________________________________________________
      
-     ProcessOption
-     _______________________________________________________________________ */
-
-protected:
-
-  virtual
-  MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
-
-  /* _______________________________________________________________________
-     
      AllocateMemory
      _______________________________________________________________________ */
 
@@ -171,9 +171,9 @@ public:
   {
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (m_bistack_size, bistacksize, bistack_size, 1500);
-    GETPARAM (m_lig_table_size, ligtablesize, lig_table_size, 15000);
-    GETPARAM (m_path_size, pathsize, path_size, 10000);
+    GETPARAM (param_bistack_size, bistacksize, bistack_size, 1500);
+    GETPARAM (param_lig_table_size, ligtablesize, lig_table_size, 15000);
+    GETPARAM (param_path_size, pathsize, path_size, 10000);
 
     Allocate (THEDATA(bisectstack), THEDATA(bistacksize) + 1);
     Allocate (THEDATA(delta), THEDATA(pathsize) + 1);
@@ -232,13 +232,13 @@ public:
      _______________________________________________________________________ */
 
 private:
-  int m_bistack_size;
+  int param_bistack_size;
   
 private:
-  int m_lig_table_size;
+  int param_lig_table_size;
   
 private:
-  int m_path_size;
+  int param_path_size;
 
 private:
   int optBase;

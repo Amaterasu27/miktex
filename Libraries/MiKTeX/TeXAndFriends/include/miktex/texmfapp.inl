@@ -65,7 +65,7 @@ inline
 void
 miktexgetdefaultdumpfilename (/*[in]*/ MIKTEXCHAR * lpszPath)
 {
-  THEAPP.GetDefaultDumpFileName (lpszPath);
+  THEAPP.GetDefaultMemoryDumpFileName (lpszPath);
 }
 
 /* _________________________________________________________________________

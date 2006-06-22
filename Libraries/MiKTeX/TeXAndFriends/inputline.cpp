@@ -367,10 +367,10 @@ WebAppInputLine::HandleEof (/*[in]*/ FILE * pfile)
 }
 #endif
 
-  /* _______________________________________________________________________
+/* _________________________________________________________________________
      
-     WebAppInputLine::TouchJobOutputFile
-     _______________________________________________________________________ */
+   WebAppInputLine::TouchJobOutputFile
+   _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
 WebAppInputLine::TouchJobOutputFile (/*[in]*/ FILE *)

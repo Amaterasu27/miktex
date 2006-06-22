@@ -99,17 +99,6 @@ public:
 
   /* _______________________________________________________________________
      
-     OnTeXMFStartJob
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MIKTEXMFAPI(void)
-  OnTeXMFStartJob ();
-
-  /* _______________________________________________________________________
-     
      AddOptions
      _______________________________________________________________________ */
 
@@ -121,35 +110,15 @@ protected:
   
   /* _______________________________________________________________________
      
-     GetDumpExtension
+     ProcessOption
      _______________________________________________________________________ */
 
-public:
+protected:
 
   virtual
-  const MIKTEXCHAR *
-  MIKTEXMFCALL
-  GetDumpExtension ()
-    const
-  {
-    return (MIKTEXTEXT(".fmt"));
-  }
-
-  /* _______________________________________________________________________
-     
-     GetDumpFileType
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
-  GetDumpFileType ()
-    const
-  {
-    return (MiKTeX::Core::FileType::FMT);
-  }
+  MIKTEXMFAPI(bool)
+  ProcessOption (/*[in]*/ int			c,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -190,6 +159,38 @@ public:
 
   /* _______________________________________________________________________
      
+     GetMemoryDumpFileExtension
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  const MIKTEXCHAR *
+  MIKTEXMFCALL
+  GetMemoryDumpFileExtension ()
+    const
+  {
+    return (MIKTEXTEXT(".fmt"));
+  }
+
+  /* _______________________________________________________________________
+     
+     GetMemoryDumpFileType
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MiKTeX::Core::FileType
+  MIKTEXMFCALL
+  GetMemoryDumpFileType ()
+    const
+  {
+    return (MiKTeX::Core::FileType::FMT);
+  }
+
+  /* _______________________________________________________________________
+     
      GetPoolFileType
      _______________________________________________________________________ */
 
@@ -206,15 +207,14 @@ public:
 
   /* _______________________________________________________________________
      
-     ProcessOption
+     OnTeXMFStartJob
      _______________________________________________________________________ */
 
-protected:
+public:
 
   virtual
-  MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			c,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  MIKTEXMFAPI(void)
+  OnTeXMFStartJob ();
 
   /* _______________________________________________________________________
      
@@ -227,15 +227,15 @@ public:
   void
   AllocateMemory ()
   {
-    GETPARAM (m_mem_bot, membot, mem_bot, 0);
+    GETPARAM (param_mem_bot, membot, mem_bot, 0);
 
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (m_max_in_open, maxinopen, max_in_open, 50);
-    GETPARAM (m_nest_size, nestsize, nest_size, 500);
-    GETPARAM (m_save_size, savesize, save_size, 32768);
-    GETPARAM (m_trie_op_size, trieopsize, trie_op_size, 2048);
-    GETPARAM (m_trie_size, triesize, trie_size, 262000);
+    GETPARAM (param_max_in_open, maxinopen, max_in_open, 50);
+    GETPARAM (param_nest_size, nestsize, nest_size, 500);
+    GETPARAM (param_save_size, savesize, save_size, 32768);
+    GETPARAM (param_trie_op_size, trieopsize, trie_op_size, 2048);
+    GETPARAM (param_trie_size, triesize, trie_size, 262000);
    
     Allocate (THEDATA(sourcefilenamestack), THEDATA(maxinopen));
     Allocate (THEDATA(linestack), THEDATA(maxinopen));
@@ -257,8 +257,8 @@ public:
 
 
 #if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
-    GETPARAM (m_font_max, fontmax, font_max, 1000);
-    GETPARAM (m_font_mem_size, fontmemsize, font_mem_size, 500000);
+    GETPARAM (param_font_max, fontmax, font_max, 1000);
+    GETPARAM (param_font_mem_size, fontmemsize, font_mem_size, 500000);
 
     Allocate (THEDATA(bcharlabel), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(charbase), THEDATA(fontmax) + 1 - constfontbase);
@@ -397,10 +397,10 @@ public:
     const
   {
     MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
-    GetTeXString (szFileName, sourceFileName, MiKTeX::Core::BufferSizes::MaxPath);
-    return ((MiKTeX::Core::PathName::Compare(szFileName, lastSourceFilename.Get())
-	     != 0)
-	    || line != lastLineNum);
+    GetTeXString (szFileName,
+		  sourceFileName,
+		  MiKTeX::Core::BufferSizes::MaxPath);
+    return (lastSourceFilename != szFileName || lastLineNum != line);
   }
 #endif
   
@@ -418,7 +418,9 @@ public:
   {
     poolpointer oldpoolptr = THEDATA(poolptr);
     MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
-    GetTeXString (szFileName, sourceFileName, MiKTeX::Core::BufferSizes::MaxPath);
+    GetTeXString (szFileName,
+		  sourceFileName,
+		  MiKTeX::Core::BufferSizes::MaxPath);
     const size_t BUFSIZE = MiKTeX::Core::BufferSizes::MaxPath + 100;
     MIKTEXCHAR szBuf[BUFSIZE];
 #if _MSC_VER >= 1400
@@ -498,28 +500,28 @@ private:
   std::bitset<32> sourceSpecials;
   
 private:
-  int m_font_max;
+  int param_font_max;
   
 private:
-  int m_font_mem_size;
+  int param_font_mem_size;
   
 private:
-  int m_max_in_open;
+  int param_max_in_open;
   
 private:
-  int m_mem_bot;
+  int param_mem_bot;
   
 private:
-  int m_nest_size;
+  int param_nest_size;
   
 private:
-  int m_save_size;
+  int param_save_size;
   
 private:
-  int m_trie_op_size;
+  int param_trie_op_size;
   
 private:
-  int m_trie_size;
+  int param_trie_size;
 
 private:
   int optBase;
@@ -538,9 +540,9 @@ AppendExt (/*[in]*/ strnumber e)
   MIKTEXCHAR szExt[MiKTeX::Core::BufferSizes::MaxPath];
   GetTeXString (szExt, e, MiKTeX::Core::BufferSizes::MaxPath);
   MiKTeX::Core::Utils::AppendString (THEDATA(nameoffile),
-			       (sizeof(THEDATA(nameoffile))
-				/ sizeof(THEDATA(nameoffile)[0])),
-			       szExt);
+				     (sizeof(THEDATA(nameoffile))
+				      / sizeof(THEDATA(nameoffile)[0])),
+				     szExt);
 }
 #endif
 

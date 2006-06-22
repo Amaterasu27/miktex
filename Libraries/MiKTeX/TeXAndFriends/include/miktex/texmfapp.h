@@ -85,9 +85,9 @@ MIKTEXMF_BEGIN_NAMESPACE;
    GETPARAM
    _________________________________________________________________________ */
 
-#define GETPARAM(option, varname, cfgname, defcfgval)		\
+#define GETPARAM(param, varname, cfgname, defcfgval)		\
 {								\
-  if (option < 0)						\
+  if (param < 0)						\
     {								\
       THEDATA(varname) =					\
         pSession->GetConfigValue(MIKTEX_REGKEY_WEB,		\
@@ -96,7 +96,7 @@ MIKTEXMF_BEGIN_NAMESPACE;
     }								\
   else								\
     {								\
-      THEDATA(varname) = option;				\
+      THEDATA(varname) = param;					\
     }								\
 }
 
@@ -191,7 +191,58 @@ protected:
 
   /* _______________________________________________________________________
      
-     GetDumpExtension
+     GetUsage
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  const MIKTEXCHAR *
+  MIKTEXMFCALL
+  GetUsage ()
+    const
+  {
+    return (MIKTEXTEXT("[OPTION...] [COMMAND...]"));
+  }
+
+  /* _______________________________________________________________________
+     
+     ProcessCommandLineOptions
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MIKTEXMFAPI(void)
+  ProcessCommandLineOptions ();
+  
+  /* _______________________________________________________________________
+     
+     ProcessOption
+     _______________________________________________________________________ */
+
+protected:
+
+  virtual
+  MIKTEXMFAPI(bool)
+  ProcessOption (/*[in]*/ int			opt,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+
+  /* _______________________________________________________________________
+     
+     TouchJobOutputFile
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MIKTEXMFAPI(void)
+  TouchJobOutputFile (/*[in]*/ FILE * pFile)
+    const;
+
+  /* _______________________________________________________________________
+     
+     GetMemoryDumpFileExtension
      _______________________________________________________________________ */
 
 public:
@@ -199,7 +250,7 @@ public:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpExtension ()
+  GetMemoryDumpFileExtension ()
     const
   {
     // must be implemented in sub-classes
@@ -209,7 +260,7 @@ public:
 
   /* _______________________________________________________________________
      
-     GetDumpFileType
+     GetMemoryDumpFileType
      _______________________________________________________________________ */
 
 public:
@@ -217,7 +268,7 @@ public:
   virtual
   MiKTeX::Core::FileType
   MIKTEXMFCALL
-  GetDumpFileType ()
+  GetMemoryDumpFileType ()
     const
   {
     // must be implemented in sub-classes
@@ -227,7 +278,7 @@ public:
 
   /* _______________________________________________________________________
      
-     GetDumpFileName
+     GetMemoryDumpFileName
      _______________________________________________________________________ */
 
 protected:
@@ -235,7 +286,7 @@ protected:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpFileName ()
+  GetMemoryDumpFileName ()
     const
   {
     // must be implemented in sub-classes
@@ -299,22 +350,6 @@ public:
 
   /* _______________________________________________________________________
      
-     GetUsage
-     _______________________________________________________________________ */
-
-protected:
-
-  virtual
-  const MIKTEXCHAR *
-  MIKTEXMFCALL
-  GetUsage ()
-    const
-  {
-    return (MIKTEXTEXT("[OPTION...] [COMMAND...]"));
-  }
-
-  /* _______________________________________________________________________
-     
      GetVirginProgramName
      _______________________________________________________________________ */
 
@@ -331,29 +366,6 @@ protected:
     return (0);
   }
 
-  /* _______________________________________________________________________
-     
-     ProcessOption
-     _______________________________________________________________________ */
-
-protected:
-
-  virtual
-  MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
-
-  /* _______________________________________________________________________
-     
-     ProcessCommandLineOptions
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MIKTEXMFAPI(void)
-  ProcessCommandLineOptions ();
-  
   /* _______________________________________________________________________
      
      OnTeXMFInitialize
@@ -453,18 +465,18 @@ public:
   void
   AllocateMemory ()
   {
-    GETPARAM (m_buf_size, bufsize, buf_size, 200000);
-    GETPARAM (m_error_line, errorline, error_line, 79);
-    GETPARAM (m_half_error_line, halferrorline, half_error_line, 50);
-    GETPARAM (m_max_print_line, maxprintline, max_print_line, 79);
-    GETPARAM (m_max_strings, maxstrings, max_strings, 100000);
-    GETPARAM (m_mem_max, memmax, mem_max, 2000000);
-    GETPARAM (m_mem_min, memmin, mem_min, 0);
-    GETPARAM (m_mem_top, memtop, mem_top, 1048576);
-    GETPARAM (m_param_size, paramsize, param_size, 5000);
-    GETPARAM (m_pool_size, poolsize, pool_size, 1250000);
-    GETPARAM (m_stack_size, stacksize, stack_size, 1500);
-    GETPARAM (m_string_vacancies, stringvacancies, string_vacancies, 400000);
+    GETPARAM (param_buf_size, bufsize, buf_size, 200000);
+    GETPARAM (param_error_line, errorline, error_line, 79);
+    GETPARAM (param_half_error_line, halferrorline, half_error_line, 50);
+    GETPARAM (param_max_print_line, maxprintline, max_print_line, 79);
+    GETPARAM (param_max_strings, maxstrings, max_strings, 100000);
+    GETPARAM (param_mem_max, memmax, mem_max, 2000000);
+    GETPARAM (param_mem_min, memmin, mem_min, 0);
+    GETPARAM (param_mem_top, memtop, mem_top, 1048576);
+    GETPARAM (param_param_size, paramsize, param_size, 5000);
+    GETPARAM (param_pool_size, poolsize, pool_size, 1250000);
+    GETPARAM (param_stack_size, stacksize, stack_size, 1500);
+    GETPARAM (param_string_vacancies, stringvacancies, string_vacancies, 400000);
 
 #if ! defined(MIKTEX_OMEGA)
     THEDATA(maxstrings) += 0x100;
@@ -569,13 +581,13 @@ public:
 
   /* _______________________________________________________________________
      
-     GetDefaultDumpFileName
+     GetDefaultMemoryDumpFileName
      _______________________________________________________________________ */
 
 public:
 
   MIKTEXMFAPI(void)
-  GetDefaultDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
+  GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
     const;
 
   /* _______________________________________________________________________
@@ -747,13 +759,13 @@ protected:
   
   /* _______________________________________________________________________
 
-     OpenDumpFile
+     OpenMemoryDumpFile
      _______________________________________________________________________ */
 
 public:
 
   MIKTEXMFAPI(bool)
-  OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		/*[in]*/ FILE **		ppFile,
 		/*[in]*/ void *			pBuf,
 		/*[in]*/ size_t			size,
@@ -762,7 +774,7 @@ public:
 
   /* _______________________________________________________________________
 
-     OpenDumpFile
+     OpenMemoryDumpFile
      _______________________________________________________________________ */
 
 public:
@@ -770,12 +782,12 @@ public:
 #if defined(THEDATA)  
   template<class T>
   bool
-  OpenDumpFile (/*[in]*/ T &	f,
+  OpenMemoryDumpFile (/*[in]*/ T &	f,
 		/*[in]*/ bool	renew = false)
     const
   {
     FILE * pfile;
-    if (! OpenDumpFile(THEDATA(nameoffile),
+    if (! OpenMemoryDumpFile(THEDATA(nameoffile),
 		       &pfile,
 		       &f.bufref(),
 		       sizeof(*f),
@@ -890,17 +902,6 @@ protected:
 
   /* _______________________________________________________________________
      
-     TouchJobOutputFile
-     _______________________________________________________________________ */
-
-public:
-
-  MIKTEXMFAPI(void)
-  TouchJobOutputFile (/*[in]*/ FILE * pFile)
-    const;
-
-  /* _______________________________________________________________________
-     
      Variables
      _______________________________________________________________________ */
 
@@ -908,7 +909,7 @@ private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_time;
 
 private:
-  MiKTeX::Core::tstring dumpName;
+  MiKTeX::Core::tstring memoryDumpFileName;
 
 private:
   MiKTeX::Core::tstring jobName;
@@ -956,40 +957,40 @@ private:
   int interactionMode;
 
 private:
-  int m_buf_size;
+  int param_buf_size;
 
 private:
-  int m_error_line;
+  int param_error_line;
 
 private:
-  int m_half_error_line;
+  int param_half_error_line;
 
 private:
-  int m_max_print_line;
+  int param_max_print_line;
 
 private:
-  int m_max_strings;
+  int param_max_strings;
 
 private:
-  int m_mem_max;
+  int param_mem_max;
 
 private:
-  int m_mem_min;
+  int param_mem_min;
 
 private:
-  int m_mem_top;
+  int param_mem_top;
 
 private:
-  int m_param_size;
+  int param_param_size;
 
 private:
-  int m_pool_size;
+  int param_pool_size;
 
 private:
-  int m_stack_size;
+  int param_stack_size;
 
 private:
-  int m_string_vacancies;
+  int param_string_vacancies;
 
 private:
   int optBase;

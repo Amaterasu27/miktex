@@ -163,7 +163,7 @@ public:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpFileName ()
+  GetMemoryDumpFileName ()
     const
   {
     return (MIKTEXTEXT("mf.base"));
@@ -245,7 +245,7 @@ bool
 miktexopenbasefile (/*[in]*/ wordfile &		f,
 		    /*[in]*/ bool		renew = false)
 {
-  return (THEAPP.OpenDumpFile(f, renew));
+  return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
 
 #include <miktex/mfapp.inl>

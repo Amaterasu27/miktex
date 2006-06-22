@@ -95,30 +95,30 @@ TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 
   trace_time = auto_ptr<TraceStream> (TraceStream::Open(MIKTEX_TRACE_TIME));
 
-  timeStatistics = false;
   clockStart = clock();
-  parseFirstLine = false;
-  showFileLineErrorMessages = false;
-  haltOnError = false;
-  isInitProgram = false;
-  setJobTime = false;
-  recordFileNames = false;
   disableExtensions = false;
-  isTeXProgram = false;
   editLineNum = 0;
+  haltOnError = false;
   interactionMode = -1;
-  m_buf_size = -1;
-  m_error_line = -1;
-  m_half_error_line = -1;
-  m_max_print_line = -1;
-  m_max_strings = -1;
-  m_mem_max = -1;
-  m_mem_min = -1;
-  m_mem_top = -1;
-  m_param_size = -1;
-  m_pool_size = -1;
-  m_stack_size = -1;
-  m_string_vacancies = -1;
+  isInitProgram = false;
+  isTeXProgram = false;
+  param_buf_size = -1;
+  param_error_line = -1;
+  param_half_error_line = -1;
+  param_max_print_line = -1;
+  param_max_strings = -1;
+  param_mem_max = -1;
+  param_mem_min = -1;
+  param_mem_top = -1;
+  param_param_size = -1;
+  param_pool_size = -1;
+  param_stack_size = -1;
+  param_string_vacancies = -1;
+  parseFirstLine = false;
+  recordFileNames = false;
+  setJobTime = false;
+  showFileLineErrorMessages = false;
+  timeStatistics = false;
 }
 
 /* _________________________________________________________________________
@@ -134,7 +134,7 @@ TeXMFApp::Finalize ()
       trace_time->Close ();
       trace_time.reset ();
     }
-  dumpName = T_("");
+  memoryDumpFileName = T_("");
   jobName = T_("");
   editFileName = T_("");
   transcriptFileName = T_("");
@@ -494,7 +494,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_BUF_SIZE:
-      m_buf_size = _ttoi(lpszOptArg);
+      param_buf_size = _ttoi(lpszOptArg);
       break;
 
     case OPT_C_STYLE_ERRORS:
@@ -506,11 +506,11 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_ERROR_LINE:
-      m_error_line = _ttoi(lpszOptArg);
+      param_error_line = _ttoi(lpszOptArg);
       break;
 
     case OPT_HALF_ERROR_LINE:
-      m_half_error_line = _ttoi(lpszOptArg);
+      param_half_error_line = _ttoi(lpszOptArg);
       break;
 
     case OPT_HALT_ON_ERROR:
@@ -574,19 +574,19 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_MAX_PRINT_LINE:
-      m_max_print_line = _ttoi(lpszOptArg);
+      param_max_print_line = _ttoi(lpszOptArg);
       break;
 
     case OPT_MAX_STRINGS:
-      m_max_strings = _ttoi(lpszOptArg);
+      param_max_strings = _ttoi(lpszOptArg);
       break;
 
     case OPT_MEM_MAX:
-      m_mem_max = _ttoi(lpszOptArg);
+      param_mem_max = _ttoi(lpszOptArg);
       break;
 
     case OPT_MEM_MIN:
-      m_mem_min = _ttoi(lpszOptArg);
+      param_mem_min = _ttoi(lpszOptArg);
       break;
 
     case OPT_TIME_STATISTICS:
@@ -594,7 +594,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_MEM_TOP:
-      m_mem_top = _ttoi(lpszOptArg);
+      param_mem_top = _ttoi(lpszOptArg);
       break;
 
     case OPT_NO_C_STYLE_ERRORS:
@@ -622,7 +622,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_PARAM_SIZE:
-      m_param_size = _ttoi(lpszOptArg);
+      param_param_size = _ttoi(lpszOptArg);
       break;
 
     case OPT_PARSE_FIRST_LINE:
@@ -630,7 +630,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_POOL_SIZE:
-      m_pool_size = _ttoi(lpszOptArg);
+      param_pool_size = _ttoi(lpszOptArg);
       break;
 
     case OPT_QUIET:
@@ -643,7 +643,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_STACK_SIZE:
-      m_stack_size = _ttoi(lpszOptArg);
+      param_stack_size = _ttoi(lpszOptArg);
       break;
 
     case OPT_STRICT:
@@ -652,7 +652,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_STRING_VACANCIES:
-      m_string_vacancies = _ttoi(lpszOptArg);
+      param_string_vacancies = _ttoi(lpszOptArg);
       break;
 
     case OPT_TCX:
@@ -673,7 +673,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_UNDUMP:
-      dumpName = lpszOptArg;
+      memoryDumpFileName = lpszOptArg;
       break;
 
     default:
@@ -743,18 +743,18 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
   if (argv.GetArgc() > 1 && argv[1][0] != T_('-'))
     {
       optidx = 2;
-      if (dumpName.empty())
+      if (memoryDumpFileName.empty())
 	{
-	  tstring dumpName = argv[1];
-	  PathName fileName (dumpName);
+	  tstring memoryDumpFileName = argv[1];
+	  PathName fileName (memoryDumpFileName);
 	  if (fileName.GetExtension() == 0)
 	    {
-	      fileName.SetExtension (GetDumpExtension());
+	      fileName.SetExtension (GetMemoryDumpFileExtension());
 	    }
 	  PathName path;
-	  if (pSession->FindFile(fileName, GetDumpFileType(), path))
+	  if (pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
 	    {
-	      this->dumpName = dumpName;
+	      this->memoryDumpFileName = memoryDumpFileName;
 	    }
 	}
     }
@@ -781,11 +781,11 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
 
 /* _________________________________________________________________________
 
-   TeXMFApp::OpenDumpFile
+   TeXMFApp::OpenMemoryDumpFile
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			/*[out]*/ FILE **		ppFile,
 			/*[in]*/ void *			pBuf,
 			/*[in]*/ size_t			size,
@@ -802,7 +802,7 @@ TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   PathName fileName (lpszFileName);
   if (fileName.GetExtension() == 0)
     {
-      fileName.SetExtension (GetDumpExtension());
+      fileName.SetExtension (GetMemoryDumpFileExtension());
     }
 
   MIKTEXCHAR szProgName[BufferSizes::MaxPath];
@@ -821,7 +821,7 @@ TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		     ConvertPathNameFlags::MakeLower);
 #endif
 
-  if (! pSession->FindFile(fileName, GetDumpFileType(), path))
+  if (! pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
     {
       renew = true;
     }
@@ -831,7 +831,7 @@ TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       PathName exe;
       if (! pSession->FindFile(T_("initexmf"), FileType::EXE, exe))
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenDumpFile"),
+	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
 			      (T_("The MiKTeX configuration utility could")
 			       T_(" not be found.")),
 			      0);
@@ -846,9 +846,9 @@ TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }
 
-  if (! pSession->FindFile(fileName, GetDumpFileType(), path))
+  if (! pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
     {
-      FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenDumpFile"),
+      FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
 			  T_("The dump file could not be found."),
 			  fileName.Get());
     }
@@ -862,7 +862,7 @@ TeXMFApp::OpenDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     {
       if (stream.Read(pBuf, size) != size)
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenDumpFile"),
+	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
 			      T_("Premature end of dump file."),
 			      path.Get());
 	}
@@ -908,7 +908,7 @@ TeXMFApp::ProcessCommandLineOptions ()
       && GetArgV()[1][0] != T_('&')
       && GetArgV()[1][0] != T_('*') // <fixme/>
       && GetArgV()[1][0] != T_('\\')
-      && (dumpName.empty() || GetTcxFileName().Empty()))
+      && (memoryDumpFileName.empty() || GetTcxFileName().Empty()))
     {
       ParseFirstLine (GetArgV()[1]);
     }
@@ -931,25 +931,25 @@ TeXMFApp::IsVirgin () const
 
 /* _________________________________________________________________________
 
-   TeXMFApp::GetDefaultDumpFileName
+   TeXMFApp::GetDefaultMemoryDumpFileName
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXMFApp::GetDefaultDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
+TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
   const
 {
   C4PASSERTBUF (lpszPath, _MAX_PATH);
-  if (dumpName.length() > 0)
+  if (memoryDumpFileName.length() > 0)
     {
       Utils::CopyString (lpszPath,
 			 BufferSizes::MaxPath,
-			 dumpName.c_str());
+			 memoryDumpFileName.c_str());
     }
   else if (IsVirgin())
     {
       Utils::CopyString (lpszPath,
 			 BufferSizes::MaxPath,
-			 GetDumpFileName());
+			 GetMemoryDumpFileName());
     }
   else
     {

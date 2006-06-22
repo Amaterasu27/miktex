@@ -33,9 +33,9 @@ MetafontApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 {
   TeXMFApp::Init (lpszProgramInvocationName);
 
-  m_bistack_size = -1;
-  m_lig_table_size = -1;
-  m_path_size = -1;
+  param_bistack_size = -1;
+  param_lig_table_size = -1;
+  param_path_size = -1;
 }
 
 /* _________________________________________________________________________
@@ -99,13 +99,13 @@ MetafontApp::ProcessOption (/*[in]*/ int		opt,
   switch (opt - FIRST_OPTION_VAL - optBase)
     {
     case OPT_BISTACK_SIZE:
-      m_bistack_size = atoi(lpszOptArg);
+      param_bistack_size = atoi(lpszOptArg);
       break;
     case OPT_LIG_TABLE_SIZE:
-      m_lig_table_size = atoi(lpszOptArg);
+      param_lig_table_size = atoi(lpszOptArg);
       break;
     case OPT_PATH_SIZE:
-      m_path_size = atoi(lpszOptArg);
+      param_path_size = atoi(lpszOptArg);
       break;
     default:
       done = TeXMFApp::ProcessOption(opt, lpszOptArg);

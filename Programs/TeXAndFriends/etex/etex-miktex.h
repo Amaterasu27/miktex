@@ -90,7 +90,7 @@ public:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpExtension ()
+  GetMemoryDumpFileExtension ()
     const
   {
     return (MIKTEX_FORMAT_FILE_SUFFIX);
@@ -99,7 +99,7 @@ public:
 public:
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpFileName ()
+  GetMemoryDumpFileName ()
     const
   {
     return (MIKTEXTEXT("etex") MIKTEX_FORMAT_FILE_SUFFIX);

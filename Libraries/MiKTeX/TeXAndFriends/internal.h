@@ -349,9 +349,9 @@ public:
   NUMTOSTRHELPER (unsigned u)
   {
 #if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, ARRAY_SIZE(m_szBuf), _T("%u"), u);
+    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%u"), u);
 #else
-    _stprintf (m_szBuf, _T("%u"), u);
+    _stprintf (szBuf, _T("%u"), u);
 #endif
   }
 
@@ -360,9 +360,9 @@ public:
   {
     unsigned u = dw;
 #if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, ARRAY_SIZE(m_szBuf), _T("%u"), u);
+    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%u"), u);
 #else
-    _stprintf (m_szBuf, _T("%u"), u);
+    _stprintf (szBuf, _T("%u"), u);
 #endif
   }
 
@@ -370,23 +370,23 @@ public:
   NUMTOSTRHELPER (int i)
   {
 #if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, ARRAY_SIZE(m_szBuf), _T("%d"), i);
+    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%d"), i);
 #else
-    _stprintf (m_szBuf, _T("%d"), i);
+    _stprintf (szBuf, _T("%d"), i);
 #endif
   }
 
 public:
   operator const MIKTEXCHAR * () const
   {
-    return (m_szBuf);
+    return (szBuf);
   }
 
 private:
   enum { BUFSIZE = 30 };
 
 private:
-  _TCHAR m_szBuf[BUFSIZE];
+  _TCHAR szBuf[BUFSIZE];
 };
 
 #define NUMTOSTR(num) static_cast<const MIKTEXCHAR *>(NUMTOSTRHELPER(num))

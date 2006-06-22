@@ -146,7 +146,7 @@ class PDFTEXCLASS
 
  public:
   LPCTSTR __stdcall
-  GetDumpFileName () const
+  GetMemoryDumpFileName () const
   {
     return (_T("pdftex.fmt"));
   }

@@ -50,14 +50,14 @@ TeXApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   enableWrite18 = false;
   enableMLTeX = false;
   lastLineNum = -1;
-  m_font_max = -1;
-  m_font_mem_size = -1;
-  m_max_in_open = -1;
-  m_mem_bot = -1;
-  m_nest_size = -1;
-  m_save_size = -1;
-  m_trie_op_size = -1;
-  m_trie_size = -1;
+  param_font_max = -1;
+  param_font_mem_size = -1;
+  param_max_in_open = -1;
+  param_mem_bot = -1;
+  param_nest_size = -1;
+  param_save_size = -1;
+  param_trie_op_size = -1;
+  param_trie_size = -1;
 }
 
 /* _________________________________________________________________________
@@ -228,25 +228,25 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
       enableWrite18 = true;
       break;
     case OPT_FONT_MAX:
-      m_font_max = _ttoi(lpszArg);
+      param_font_max = _ttoi(lpszArg);
       break;
     case OPT_FONT_MEM_SIZE:
-      m_font_mem_size = _ttoi(lpszArg);
+      param_font_mem_size = _ttoi(lpszArg);
       break;
     case OPT_MAX_IN_OPEN:
-      m_max_in_open = _ttoi(lpszArg);
+      param_max_in_open = _ttoi(lpszArg);
       break;
     case OPT_MEM_BOT:
-      m_mem_bot = _ttoi(lpszArg);
+      param_mem_bot = _ttoi(lpszArg);
       break;
     case OPT_MLTEX:
       enableMLTeX = true;
       break;
     case OPT_NEST_SIZE:
-      m_nest_size = _ttoi(lpszArg);
+      param_nest_size = _ttoi(lpszArg);
       break;
     case OPT_SAVE_SIZE:
-      m_save_size = _ttoi(lpszArg);
+      param_save_size = _ttoi(lpszArg);
       break;
     case OPT_SRC_SPECIALS:
 #if EXPERT_SRC_SPECIALS
@@ -311,10 +311,10 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
 #endif // EXPERT_SRC_SPECIALS
       break;
     case OPT_TRIE_SIZE:
-      m_trie_size = _ttoi(lpszArg);
+      param_trie_size = _ttoi(lpszArg);
       break;
     case OPT_TRIE_OP_SIZE:
-      m_trie_op_size = _ttoi(lpszArg);
+      param_trie_op_size = _ttoi(lpszArg);
       break;
     default:
       done = TeXMFApp::ProcessOption(optchar, lpszArg);

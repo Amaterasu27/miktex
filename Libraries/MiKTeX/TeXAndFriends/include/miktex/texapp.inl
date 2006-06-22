@@ -239,7 +239,7 @@ inline bool
 miktexopenformatfile (/*[in]*/ T &	f,
 		      /*[in]*/ bool	renew = false)
 {
-  return (THEAPP.OpenDumpFile(f, renew));
+  return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
 
 /* _________________________________________________________________________

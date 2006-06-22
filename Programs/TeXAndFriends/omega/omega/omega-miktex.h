@@ -126,7 +126,7 @@ public:
   virtual
   const MIKTEXCHAR *
   MIKTEXMFCALL
-  GetDumpFileName ()
+  GetMemoryDumpFileName ()
     const
   {
     return (MIKTEXTEXT("omega.fmt"));
