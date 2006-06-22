@@ -45,7 +45,6 @@ C4P::MakeCommandLine (/*[in]*/ int			argc,
   MIKTEX_API_BEGIN ("C4P::MakeCommandLine");
   argCount = 0;
   argumentVector.clear ();
-  MIKTEXCHAR szExeName[BufferSizes::MaxPath];
   argumentVector.push_back (_tcsdup(Utils::GetExeName().c_str()));
   ++ argCount;
   commandLine = T_("");

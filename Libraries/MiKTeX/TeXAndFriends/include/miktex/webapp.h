@@ -29,20 +29,12 @@
 #include <cassert>
 #include <cstdio>
 
-#if defined(_MSC_VER)
-#  pragma warning (push, 1)
-#endif
-
 #include <algorithm>
 #include <bitset>
 #include <hash_set>
 #include <memory>
 #include <string>
 #include <vector>
-
-#if defined(_MSC_VER)
-#  pragma warning (pop)
-#endif
 
 #include <miktex/c4plib.h>
 #include <popt-miktex.h>
