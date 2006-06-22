@@ -77,15 +77,13 @@ WebAppInputLine::AddOptions ()
 
   optBase = static_cast<int>(GetOptions().size());
 
-  AddOption (T_("disable-pipes\0\
-Disable input (output) from (to) processes."),
-	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_PIPES,
-	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
-
   AddOption (T_("enable-pipes\0\
 Enable input (output) from (to) processes."),
-	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES,
-	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_PIPES);
+
+  AddOption (T_("disable-pipes\0\
+Disable input (output) from (to) processes."),
+	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_PIPES);
 }
 
 /* _________________________________________________________________________
@@ -103,11 +101,11 @@ WebAppInputLine::ProcessOption (/*[in]*/ int			opt,
     {
 
     case OPT_DISABLE_PIPES:
-      enablePipes = true;
+      enablePipes = false;
       break;
 
     case OPT_ENABLE_PIPES:
-      enablePipes = false;
+      enablePipes = true;
       break;
 
     default:
@@ -209,10 +207,11 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
   FILE * pfile = 0;
   if (enablePipes && lpszPath[0] == T_('|'))
     {
-      pfile = pSession->OpenFile(lpszPath + 1,
-				 FileMode::Command,
-				 FileAccess::Write,
-				 false);
+      pfile =
+	pSession->OpenFile(lpszPath + 1,
+			   FileMode::Command,
+			   FileAccess::Write,
+			   false);
     }
   else
     {

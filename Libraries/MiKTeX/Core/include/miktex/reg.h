@@ -136,7 +136,7 @@
   MIKTEXTEXT("ParseFirstLine")
 
 #define MIKTEX_REGVAL_FILE_LINE_ERRORS \
-  MIKTEXTEXT("FileLineErrors")
+  MIKTEXTEXT("CStyleErrors")
 
 #define MIKTEX_REGVAL_WRITE18 \
   MIKTEXTEXT("EnableWrite18")

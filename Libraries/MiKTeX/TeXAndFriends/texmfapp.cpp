@@ -210,9 +210,8 @@ TeXMFApp::OnTeXMFFinishJob ()
 enum {
   OPT_AUX_DIRECTORY,
   OPT_BUF_SIZE,
-  OPT_DISABLE_C_STYLE_ERRORS,
+  OPT_C_STYLE_ERRORS,
   OPT_DONT_PARSE_FIRST_LINE,
-  OPT_ENABLE_C_STYLE_ERRORS,
   OPT_ERROR_LINE,
   OPT_HALF_ERROR_LINE,
   OPT_HALT_ON_ERROR,
@@ -225,6 +224,7 @@ enum {
   OPT_MEM_MAX,
   OPT_MEM_MIN,
   OPT_MEM_TOP,
+  OPT_NO_C_STYLE_ERRORS,
   OPT_OEM,
   OPT_OUTPUT_DIRECTORY,
   OPT_PARAM_SIZE,
@@ -268,18 +268,14 @@ Set buf_size to N."),
 	     required_argument,
 	     T_("N"));
 
-  AddOption (T_("disable-c-style-errors\0\
-Disable file:line:error style messages."),
-	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_C_STYLE_ERRORS);
+  AddOption (T_("c-style-errors\0\
+Enable file:line:error style messages."),
+	     FIRST_OPTION_VAL + optBase + OPT_C_STYLE_ERRORS);
 
   AddOption (T_("dont-parse-first-line\0\
 Do not parse the first line of the input line to look for a dump name and/or\
  extra command-line options."),
 	     FIRST_OPTION_VAL + optBase + OPT_DONT_PARSE_FIRST_LINE);
-
-  AddOption (T_("enable-c-style-errors\0\
-Enable file:line:error style messages."),
-	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_C_STYLE_ERRORS);
 
   AddOption (T_("error-line\0\
 Set error_line to N."),
@@ -352,6 +348,10 @@ Set mem_top to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MEM_TOP,
 	     required_argument,
 	     T_("N"));
+
+  AddOption (T_("no-c-style-errors\0\
+Disable file:line:error style messages."),
+	     FIRST_OPTION_VAL + optBase + OPT_NO_C_STYLE_ERRORS);
 
   AddOption (T_("output-directory\0\
 Use DIR as the directory to write output files to."),
@@ -433,7 +433,6 @@ Use the DOS codepage for console output."),
     }
 
   // old option names
-  AddOption (T_("c-style-errors"), T_("enable-c-style-errors"));
   if (! invokedAsInitProgram)
     {
       AddOption (T_("ini"), T_("initialize"));
@@ -452,10 +451,10 @@ Use the DOS codepage for console output."),
     }
 
   // supported Web2C options
-  AddOption (T_("file-line-error"), T_("enable-c-style-errors"));
-  AddOption (T_("file-line-error-style"), T_("enable-c-style-errors"));
+  AddOption (T_("file-line-error"), T_("c-style-errors"));
+  AddOption (T_("file-line-error-style"), T_("c-style-errors"));
   AddOption (T_("jobname"), T_("job-name"));
-  AddOption (T_("no-file-line-error"), T_("disable-c-style-errors"));
+  AddOption (T_("no-file-line-error"), T_("no-c-style-errors"));
   AddOption (T_("no-parse-first-line"), T_("dont-parse-first-line"));
   AddOption (T_("progname"), T_("alias"));
 
@@ -498,16 +497,12 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       m_buf_size = _ttoi(lpszOptArg);
       break;
 
-    case OPT_DISABLE_C_STYLE_ERRORS:
-      showFileLineErrorMessages = false;
+    case OPT_C_STYLE_ERRORS:
+      showFileLineErrorMessages = true;
       break;
 
     case OPT_DONT_PARSE_FIRST_LINE:
       parseFirstLine = false;
-      break;
-
-    case OPT_ENABLE_C_STYLE_ERRORS:
-      showFileLineErrorMessages = true;
       break;
 
     case OPT_ERROR_LINE:
@@ -600,6 +595,10 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 
     case OPT_MEM_TOP:
       m_mem_top = _ttoi(lpszOptArg);
+      break;
+
+    case OPT_NO_C_STYLE_ERRORS:
+      showFileLineErrorMessages = false;
       break;
 
     case OPT_OEM:
