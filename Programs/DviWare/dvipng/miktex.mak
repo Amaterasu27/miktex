@@ -133,21 +133,118 @@ depend: $(sources)
 
 # DO NOT DELETE
 
-$(outdir)\color.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\draw.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\dvi.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\dvipng.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\font.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\misc.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\papersiz.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\pk.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\ppagelist.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\set.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\special.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\vf.obj: dvipng.h config.h ./inttypes.h commands.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\color.obj: dvipng.h config.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\color.obj: ./inttypes.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\color.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\color.obj: commands.h
+$(outdir)\draw.obj: dvipng.h config.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\draw.obj: ./inttypes.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\draw.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\draw.obj: commands.h
+$(outdir)\dvi.obj: dvipng.h config.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvi.obj: ./inttypes.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\dvi.obj: commands.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\dvipng.obj: dvipng.h config.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvipng.obj: ./inttypes.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\dvipng.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\dvipng.obj: commands.h
+$(outdir)\font.obj: dvipng.h config.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\font.obj: ./inttypes.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\font.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\font.obj: commands.h
+$(outdir)\misc.obj: dvipng.h config.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\misc.obj: ./inttypes.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\misc.obj: commands.h
+$(outdir)\papersiz.obj: dvipng.h config.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\papersiz.obj: ./inttypes.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\papersiz.obj: commands.h
+$(outdir)\pk.obj: dvipng.h config.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pk.obj: ./inttypes.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pk.obj: commands.h
+$(outdir)\ppagelist.obj: dvipng.h config.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ppagelist.obj: ./inttypes.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\ppagelist.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\ppagelist.obj: commands.h
+$(outdir)\set.obj: dvipng.h config.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\set.obj: ./inttypes.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\set.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\set.obj: commands.h
+$(outdir)\special.obj: dvipng.h config.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\special.obj: ./inttypes.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\special.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\special.obj: commands.h
+$(outdir)\vf.obj: dvipng.h config.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\vf.obj: ./inttypes.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\vf.obj: commands.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\wrapper.obj: ./inttypes.h
 $(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

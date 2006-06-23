@@ -113,7 +113,7 @@ depend: hbf2gf.c hbf.c
 
 $(outdir)\hbf2gf.obj: hbf.h
 $(outdir)\hbf.obj: hbf.h
-$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
+$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\hbf.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h

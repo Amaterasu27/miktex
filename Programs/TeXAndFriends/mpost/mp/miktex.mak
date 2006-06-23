@@ -329,7 +329,8 @@ clean: common-clean mostlyclean
 distclean: common-distclean clean
 
 maintainer-clean: common-maintainer-clean distclean
-	-del trap\traptest.log
+	if exists mpost.defaults.h del mpost.defaults.h
+	if exists trap\traptest.log del trap\traptest.log
 
 !include <common-dependencies.inc>
 

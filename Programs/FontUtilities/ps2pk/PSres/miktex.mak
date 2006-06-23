@@ -98,7 +98,7 @@ depend:
 
 # DO NOT DELETE
 
-$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\PSres.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\PSres.obj: PSres.h defs.h

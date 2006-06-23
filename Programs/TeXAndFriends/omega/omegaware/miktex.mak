@@ -525,8 +525,63 @@ depend: odvicopy.cc ofm2opl.cc opl2ofm.cc ovf2ovp.cc ovp2ovf.cc
 
 # DO NOT DELETE
 
-$(outdir)\odvicopy.obj: odvicopy.h mywebapp.h
-$(outdir)\ofm2opl.obj: ofm2opl.h mywebapp.h
-$(outdir)\opl2ofm.obj: opl2ofm.h mywebapp.h
-$(outdir)\ovf2ovp.obj: ovf2ovp.h mywebapp.h
-$(outdir)\ovp2ovf.obj: ovp2ovf.h mywebapp.h
+$(outdir)\odvicopy.obj: odvicopy.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\odvicopy.obj: mywebapp.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\odvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\ofm2opl.obj: ofm2opl.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ofm2opl.obj: mywebapp.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\ofm2opl.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\opl2ofm.obj: opl2ofm.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\opl2ofm.obj: mywebapp.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\opl2ofm.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\ovf2ovp.obj: ovf2ovp.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ovf2ovp.obj: mywebapp.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\ovf2ovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\ovp2ovf.obj: ovp2ovf.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ovp2ovf.obj: mywebapp.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\ovp2ovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

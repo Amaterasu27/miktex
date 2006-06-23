@@ -232,7 +232,9 @@ $(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/mik
 $(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\c4plib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\c4pstart.obj: StdAfx.h
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -255,7 +257,9 @@ $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/m
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\c4pstart.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\inputline.obj: StdAfx.h
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -279,7 +283,9 @@ $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\inputline.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\mfapp.obj: StdAfx.h
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -302,7 +308,9 @@ $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/mikt
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\mfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\mfmpi386asm.obj: StdAfx.h
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -326,7 +334,9 @@ $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/includ
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\mfmpi386asm.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\texapp.obj: StdAfx.h
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -349,7 +359,9 @@ $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/mik
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\texapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\texmfapp.obj: StdAfx.h
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -372,7 +384,9 @@ $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/m
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\texmfapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\texmflib.obj: StdAfx.h
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -395,7 +409,9 @@ $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/m
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\texmflib.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\webapp.obj: StdAfx.h
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
@@ -418,4 +434,6 @@ $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/mik
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
 $(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\webapp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h

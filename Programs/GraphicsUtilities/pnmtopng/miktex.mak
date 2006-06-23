@@ -90,20 +90,20 @@ depend:
 
 # DO NOT DELETE
 
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pnm/pnm.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/ppm/ppm.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pgm/pgm.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
-$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/ppm/ppmcmap.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pnm/pnm.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/ppm/ppm.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pgm/pgm.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pnm/pnm.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/ppm/ppm.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pgm/pgm.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
+$(outdir)\pnmtopng.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/ppm/ppmcmap.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pnm/pnm.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/ppm/ppm.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pgm/pgm.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\pngtopnm.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h

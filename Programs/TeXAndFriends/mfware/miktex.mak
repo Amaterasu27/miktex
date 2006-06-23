@@ -424,10 +424,34 @@ depend: gftopk.cc gftype.cc gftodvi.cc mft.cc
 
 # DO NOT DELETE
 
-$(outdir)\gftopk.obj: gftopk.h mywebapp.h
-$(outdir)\gftype.obj: gftype.h mywebapp.h
-$(outdir)\gftodvi.obj: gftodvi.h gftodvi-miktex.h gftodvi.rc gftodvi-version.h
+$(outdir)\gftopk.obj: gftopk.h
+$(outdir)\gftopk.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\gftopk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\gftopk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\gftopk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\gftype.obj: gftype.h
+$(outdir)\gftype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\gftype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\gftype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\gftype.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\gftodvi.obj: gftodvi.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\gftodvi.obj: gftodvi-miktex.h gftodvi.rc gftodvi-version.h
 $(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
-$(outdir)\mft.obj: mft.h mywebapp.h
+$(outdir)\gftodvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\mft.obj: mft.h
+$(outdir)\mft.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\mft.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mft.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mft.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h

@@ -142,11 +142,11 @@ depend: $(sources)
 # DO NOT DELETE
 
 $(outdir)\gram.obj: common.h
-$(outdir)\main.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h common.h
+$(outdir)\main.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h common.h
 $(outdir)\main.obj: c4p-version.h
 $(outdir)\misc.obj: c4p.rc c4p-version.h
-$(outdir)\misc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\misc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\misc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\misc.obj: common.h
 $(outdir)\output.obj: common.h
 $(outdir)\scan.obj: common.h gram.h

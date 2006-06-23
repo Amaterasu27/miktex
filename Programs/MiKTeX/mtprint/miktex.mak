@@ -109,53 +109,53 @@ depend: StdAfx.cpp mtprint.cpp Printer.cpp BitmapPrinter.cpp
 # DO NOT DELETE
 
 $(outdir)\StdAfx.obj: StdAfx.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Dib/include/miktex/DibChunker.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\App/include/miktex/app.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Dib/include/miktex/DibChunker.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\mtprint.obj: StdAfx.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Dib/include/miktex/DibChunker.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\App/include/miktex/app.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h internal.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Dib/include/miktex/DibChunker.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mtprint.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h internal.h
 $(outdir)\mtprint.obj: mtprint-version.h BitmapPrinter.h Printer.h
 $(outdir)\Printer.obj: StdAfx.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Dib/include/miktex/DibChunker.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\App/include/miktex/app.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h internal.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Dib/include/miktex/DibChunker.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\Printer.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h internal.h
 $(outdir)\Printer.obj: Printer.h
 $(outdir)\BitmapPrinter.obj: StdAfx.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Dib/include/miktex/DibChunker.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\App/include/miktex/app.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Dib/include/miktex/DibChunker.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\BitmapPrinter.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\BitmapPrinter.obj: internal.h BitmapPrinter.h Printer.h

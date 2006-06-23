@@ -1078,6 +1078,7 @@ fixdep = sed -i \
 
 MAKEDEPEND = makedepend -f $(miktex_mak) -p__xx__ -Y \
 		$(miktexvars) \
+		-D__cplusplus \
 		-I$(srcdir:\=/) \
 		-I$(miktexsrcdir:\=/)/$(rel_bzip2dir:\=/) \
 		-I$(miktexsrcdir:\=/)/$(rel_diblibdir:\=/)/include \

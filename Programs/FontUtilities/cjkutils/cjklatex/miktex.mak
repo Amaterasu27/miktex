@@ -182,11 +182,11 @@ depend: cjklatex.cpp
 
 # DO NOT DELETE
 
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\cjklatex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\cjklatex.obj: cjklatex-version.h

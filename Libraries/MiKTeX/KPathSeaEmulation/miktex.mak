@@ -124,13 +124,18 @@ depend:
 # DO NOT DELETE
 
 $(outdir)\StdAfx.obj: StdAfx.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\kpsemu.obj: StdAfx.h
-$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\kpsemu.obj: internal.h
+$(outdir)\kpsemu.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h

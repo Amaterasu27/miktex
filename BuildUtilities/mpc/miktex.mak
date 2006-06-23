@@ -126,16 +126,16 @@ depend: mpc.cpp StdAfx.cpp
 
 # DO NOT DELETE
 
-$(outdir)\mpc.obj: StdAfx.h $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h
-$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
+$(outdir)\mpc.obj: StdAfx.h $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
+$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mpc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\mpc.obj: internal.h
-$(outdir)\StdAfx.obj: StdAfx.h $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
+$(outdir)\StdAfx.obj: StdAfx.h $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h

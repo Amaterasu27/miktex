@@ -186,16 +186,16 @@ depend: $(sources)
 
 # DO NOT DELETE
 
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/config.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-errno.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-ctype.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-fopen.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-pathmx.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/proginit.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/tex-file.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/tex-make.h
-$(outdir)\tex4ht.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/variable.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/config.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-errno.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-ctype.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-fopen.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-pathmx.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/proginit.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-file.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-make.h
+$(outdir)\tex4ht.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/variable.h

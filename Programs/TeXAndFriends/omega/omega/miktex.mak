@@ -226,6 +226,7 @@ clean: common-clean mostlyclean
 distclean: common-distclean clean
 
 maintainer-clean: common-maintainer-clean distclean
+	if exists omega.defaults.h del omega.defaults.h
 
 # _____________________________________________________________________________
 #
@@ -260,7 +261,7 @@ $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/mik
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
-$(outdir)\omega.obj: omega.defaults.h
+$(outdir)\omega.obj: ./omega.defaults.h
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
 $(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
@@ -287,7 +288,7 @@ $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/incl
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
-$(outdir)\omega-miktex.obj: omega.defaults.h
+$(outdir)\omega-miktex.obj: ./omega.defaults.h
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
 $(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
@@ -314,7 +315,7 @@ $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
-$(outdir)\omegabis.obj: omega.defaults.h
+$(outdir)\omegabis.obj: ./omega.defaults.h
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
 $(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl

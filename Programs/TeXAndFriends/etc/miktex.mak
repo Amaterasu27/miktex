@@ -249,5 +249,27 @@ depend: vftovp.cc vptovf.cc
 
 # DO NOT DELETE
 
-$(outdir)\vftovp.obj: vftovp.h mywebapp.h
-$(outdir)\vptovf.obj: vptovf.h mywebapp.h
+$(outdir)\vftovp.obj: vftovp.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\vftovp.obj: mywebapp.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\vftovp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\vptovf.obj: vptovf.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\vptovf.obj: mywebapp.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\vptovf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

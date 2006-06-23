@@ -186,9 +186,9 @@ depend:
 
 # DO NOT DELETE
 
-$(outdir)\t1asm.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h
+$(outdir)\t1asm.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
 $(outdir)\ttf2pfb.obj: ..\..\lib/freetype.h ..\..\lib/fterrid.h
 $(outdir)\ttf2pfb.obj: ..\..\lib/ftnameid.h ..\..\lib/extend/ftxpost.h
-$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ttf2pfb.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h

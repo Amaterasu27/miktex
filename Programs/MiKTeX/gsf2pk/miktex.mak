@@ -88,10 +88,10 @@ depend: gsf2pk.cpp
 # DO NOT DELETE
 
 $(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\gsf2pk.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\gsf2pk.obj: gsf2pk-version.h

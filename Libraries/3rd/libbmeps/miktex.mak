@@ -157,29 +157,29 @@ depend: $(sources)
 # DO NOT DELETE
 
 $(outdir)\bmeps.obj: bmepsco.h pngeps.h jpgeps.h pnmeps.h bmepsoe.h
-$(outdir)\bmeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\bmeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h bmeps.h
+$(outdir)\bmeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\bmeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h bmeps.h
 $(outdir)\bmepsm.obj: bmepsco.h bmeps.h bmepsoe.h
-$(outdir)\bmepsm.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\bmepsm.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h pngeps.h
+$(outdir)\bmepsm.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\bmepsm.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h pngeps.h
 $(outdir)\bmepsoe.obj: bmepsco.h bmeps.h pngeps.h bmepsoe.h
-$(outdir)\bmepsoe.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\bmepsoe.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
+$(outdir)\bmepsoe.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\bmepsoe.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
 $(outdir)\jpgeps.obj: bmeps.h bmepsoe.h
-$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h bmepsco.h
-$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jpeglib.h
-$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jconfig.h
-$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jmorecfg.h
+$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h bmepsco.h
+$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jpeglib.h
+$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jconfig.h
+$(outdir)\jpgeps.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jmorecfg.h
 $(outdir)\pngeps.obj: bmepsco.h pngeps.h bmeps.h bmepsoe.h
-$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\pngeps.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\pnmeps.obj: bmeps.h bmepsoe.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h bmepsco.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pnm/pnm.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/ppm/ppm.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pgm/pgm.h
-$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h bmepsco.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pnm/pnm.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/ppm/ppm.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pgm/pgm.h
+$(outdir)\pnmeps.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h

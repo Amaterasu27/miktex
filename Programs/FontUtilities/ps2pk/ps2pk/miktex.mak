@@ -114,9 +114,12 @@ depend:
 $(outdir)\pkout.obj: ..\common/basics.h pkout.h
 $(outdir)\ps2pk.obj: ..\psres/PSres.h ..\common/basics.h ..\common/filenames.h
 $(outdir)\ps2pk.obj: ..\common/psearch.h pkout.h
-$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\ps2pk.obj: ..\type1/ffilest.h ..\type1/types.h ..\type1/Xstuff.h
 $(outdir)\ps2pk.obj: ..\type1/fontmisc.h ..\type1/fontstruct.h ..\type1/font.h
 $(outdir)\ps2pk.obj: ..\type1/fsmasks.h ..\type1/fontfile.h ..\type1/fontxlfd.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/config.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\ps2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h

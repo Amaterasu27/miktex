@@ -169,15 +169,15 @@ $(outdir)\gd_io_dp.obj: gd.h gd_io.h gdfx.h gdhelpers.h
 $(outdir)\gd_io_file.obj: gd.h gd_io.h gdfx.h gdhelpers.h
 $(outdir)\gd_io_ss.obj: gd.h gd_io.h gdfx.h gdhelpers.h
 $(outdir)\gd_jpeg.obj: gd.h gd_io.h gdfx.h gdhelpers.h
-$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jpeglib.h
-$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jconfig.h
-$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jmorecfg.h
-$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libjpeg/jerror.h
+$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jpeglib.h
+$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jconfig.h
+$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jmorecfg.h
+$(outdir)\gd_jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libjpeg/jerror.h
 $(outdir)\gd_png.obj: gd.h gd_io.h gdfx.h gdhelpers.h
-$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\gd_png.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\gd_ss.obj: gd.h gd_io.h gdfx.h
 $(outdir)\gd_topal.obj: gd.h gd_io.h gdfx.h gdhelpers.h
 $(outdir)\gd_wbmp.obj: gd.h gd_io.h gdfx.h ./gdfonts.h wbmp.h

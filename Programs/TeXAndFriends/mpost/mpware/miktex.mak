@@ -227,15 +227,32 @@ depend: makempx.cpp dvitomp.cc mpto.c
 
 # DO NOT DELETE
 
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h makempx.rc
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h makempx.rc
 $(outdir)\makempx.obj: makempx-version.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\dvitomp.obj: dvitomp.h mywebapp.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makempx.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\dvitomp.obj: dvitomp.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvitomp.obj: mywebapp.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\dvitomp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

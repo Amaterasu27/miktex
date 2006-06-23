@@ -141,19 +141,21 @@ depend:
 # DO NOT DELETE
 
 $(outdir)\StdAfx.obj: StdAfx.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\app.obj: StdAfx.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\app.obj: internal.h
 $(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\app.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
+$(outdir)\app.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

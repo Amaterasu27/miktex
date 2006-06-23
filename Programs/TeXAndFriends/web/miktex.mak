@@ -286,7 +286,30 @@ depend: tangle.cc weave.cc
 
 # DO NOT DELETE
 
-$(outdir)\tangle.obj: tangle.h tangle-miktex.h tangle.rc tangle-version.h
-$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\weave.obj: weave.h mywebapp.h
+$(outdir)\tangle.obj: tangle.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\tangle.obj: tangle-miktex.h tangle.rc tangle-version.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\tangle.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\weave.obj: weave.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\weave.obj: mywebapp.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\weave.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

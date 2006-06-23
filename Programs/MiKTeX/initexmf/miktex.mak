@@ -175,12 +175,13 @@ depend: initexmf.cpp
 
 # DO NOT DELETE
 
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
-$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\initexmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\initexmf.obj: initexmf-version.h

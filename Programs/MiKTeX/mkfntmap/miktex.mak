@@ -117,12 +117,12 @@ depend: mkfntmap.cpp
 
 # DO NOT DELETE
 
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\mkfntmap.obj: internal.h mkfntmap.rc mkfntmap-version.h
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\mkfntmap.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h

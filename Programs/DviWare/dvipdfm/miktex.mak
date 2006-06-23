@@ -266,295 +266,295 @@ depend: $(sources)
 # DO NOT DELETE
 
 $(outdir)\colorsp.obj: system.h
-$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\colorsp.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\colorsp.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\colorsp.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\colorsp.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\colorsp.obj: mem.h pdfdev.h numbers.h pdfobj.h pdfparse.h pdfspecial.h
 $(outdir)\colorsp.obj: dvipdfm.h
 $(outdir)\dvi.obj: system.h
-$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\dvi.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\dvi.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\dvi.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\dvi.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\dvi.obj: mem.h error.h mfileio.h numbers.h dvi.h pdfdev.h pdfobj.h
 $(outdir)\dvi.obj: dvicodes.h pdflimits.h pdfdoc.h tfm.h vf.h
 $(outdir)\dvipdfm.obj: config.h system.h
-$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\dvipdfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\dvipdfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\dvipdfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\dvipdfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\dvipdfm.obj: mem.h mfileio.h numbers.h dvi.h error.h pdfdev.h pdfobj.h
 $(outdir)\dvipdfm.obj: pdfdoc.h encodings.h type1.h ttf.h colorsp.h pdfparse.h
 $(outdir)\dvipdfm.obj: pdfspecial.h vf.h pkfont.h thumbnail.h psimage.h tfm.h
 $(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
+$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvipdft.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\ebb.obj: system.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\ebb.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\ebb.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\ebb.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\ebb.obj: mem.h mfileio.h numbers.h pdfobj.h jpeg.h pdfspecial.h
 $(outdir)\ebb.obj: pdfparse.h config.h pngimage.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\ebb.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\encodings.obj: pdflimits.h pdfobj.h mem.h error.h system.h
-$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\encodings.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\encodings.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\encodings.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\encodings.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\encodings.obj: mfileio.h numbers.h pdfparse.h encodings.h winansi.h
 $(outdir)\epdf.obj: system.h
-$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\epdf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\epdf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\epdf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\epdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\epdf.obj: mem.h mfileio.h numbers.h pdfobj.h pdfdoc.h pdfspecial.h
 $(outdir)\epdf.obj: epdf.h
 $(outdir)\htex.obj: system.h
-$(outdir)\htex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\htex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\htex.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\htex.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\htex.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\htex.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\htex.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\htex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\htex.obj: mem.h mfileio.h numbers.h dvi.h error.h pdfdev.h pdfobj.h
 $(outdir)\htex.obj: htex.h pdfparse.h pdfdoc.h
 $(outdir)\jpeg.obj: system.h
-$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\jpeg.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\jpeg.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\jpeg.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\jpeg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\jpeg.obj: mem.h mfileio.h numbers.h dvi.h error.h pdfdev.h pdfobj.h
 $(outdir)\jpeg.obj: jpeg.h pdfspecial.h
 $(outdir)\mem.obj: mem.h
 $(outdir)\mfileio.obj: system.h
-$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\mfileio.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\mfileio.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\mfileio.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\mfileio.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\mfileio.obj: mfileio.h numbers.h error.h
 $(outdir)\mpost.obj: system.h
-$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\mpost.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\mpost.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\mpost.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\mpost.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\mpost.obj: mem.h error.h mfileio.h numbers.h dvi.h pdfdev.h pdfobj.h
 $(outdir)\mpost.obj: pdfspecial.h pdfparse.h mpost.h pdflimits.h pdfdoc.h
 $(outdir)\numbers.obj: system.h
-$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\numbers.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\numbers.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\numbers.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\numbers.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\numbers.obj: error.h mfileio.h numbers.h
 $(outdir)\pdfdev.obj: config.h system.h
-$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pdfdev.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pdfdev.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pdfdev.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pdfdev.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pdfdev.obj: mem.h error.h mfileio.h numbers.h dvi.h pdfdev.h pdfobj.h
 $(outdir)\pdfdev.obj: tfm.h pdfdoc.h type1.h ttf.h pkfont.h pdfspecial.h
 $(outdir)\pdfdev.obj: pdfparse.h tpic.h htex.h mpost.h psspecial.h colorsp.h
 $(outdir)\pdfdev.obj: pdflimits.h twiddle.h encodings.h colors.h
 $(outdir)\pdfdoc.obj: system.h
-$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pdfdoc.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pdfdoc.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pdfdoc.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pdfdoc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pdfdoc.obj: config.h mem.h error.h mfileio.h numbers.h dvi.h pdfdev.h
 $(outdir)\pdfdoc.obj: pdfobj.h pdflimits.h pdfdoc.h pdfspecial.h thumbnail.h
 $(outdir)\pdfobj.obj: system.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pdfobj.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pdfobj.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pdfobj.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pdfobj.obj: config.h mem.h error.h mfileio.h numbers.h pdflimits.h
 $(outdir)\pdfobj.obj: pdfobj.h pdfspecial.h pdfparse.h twiddle.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pdfobj.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
 $(outdir)\pdfparse.obj: system.h
-$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pdfparse.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pdfparse.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pdfparse.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pdfparse.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pdfparse.obj: mem.h mfileio.h numbers.h dvi.h error.h pdfdev.h pdfobj.h
 $(outdir)\pdfparse.obj: pdfparse.h pdfspecial.h pdfdoc.h
 $(outdir)\pdfspecial.obj: system.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pdfspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pdfspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pdfspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pdfspecial.obj: mem.h mfileio.h numbers.h dvi.h error.h pdfdev.h
 $(outdir)\pdfspecial.obj: pdfobj.h pdflimits.h pdfspecial.h pdfdoc.h pdfparse.h
 $(outdir)\pdfspecial.obj: jpeg.h epdf.h mpost.h psimage.h config.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\pdfspecial.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\pdfspecial.obj: pngimage.h
 $(outdir)\pkfont.obj: system.h
-$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pkfont.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pkfont.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pkfont.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pkfont.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pkfont.obj: mem.h error.h mfileio.h numbers.h pkfont.h pdfobj.h
 $(outdir)\pkfont.obj: pdflimits.h tfm.h
-$(outdir)\pngimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-ctype.h
-$(outdir)\pngimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-ctype.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\pngimage.obj: system.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\pngimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\pngimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\pngimage.obj: config.h mem.h pdfobj.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\pngimage.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\psimage.obj: system.h
-$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\psimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\psimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\psimage.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\psimage.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\psimage.obj: config.h mem.h mfileio.h numbers.h pdfobj.h psimage.h
 $(outdir)\psimage.obj: pdfspecial.h epdf.h
 $(outdir)\psspecial.obj: system.h
-$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\psspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\psspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\psspecial.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\psspecial.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\psspecial.obj: mem.h mfileio.h numbers.h psspecial.h pdfparse.h
 $(outdir)\psspecial.obj: pdfobj.h pdfspecial.h psimage.h mpost.h pdfdoc.h
 $(outdir)\t1crypt.obj: t1crypt.h
 $(outdir)\tfm.obj: system.h
-$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\tfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\tfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\tfm.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\tfm.obj: mem.h error.h mfileio.h numbers.h pdflimits.h tfm.h config.h
 $(outdir)\ttf.obj: config.h ttf.h pdfobj.h system.h
-$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\ttf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\ttf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\ttf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\ttf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\ttf.obj: mem.h error.h mfileio.h numbers.h tfm.h pdflimits.h twiddle.h
 $(outdir)\ttf.obj: encodings.h macglyphs.h
-$(outdir)\thumbnail.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-ctype.h
-$(outdir)\thumbnail.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-ctype.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\thumbnail.obj: system.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\thumbnail.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\thumbnail.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\thumbnail.obj: config.h mfileio.h numbers.h mem.h pdfobj.h thumbnail.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\libpng/png.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zlib.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\zlib/zconf.h
-$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries\3rd\libpng/pngconf.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
+$(outdir)\thumbnail.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\thumbnail.obj: pngimage.h
 $(outdir)\tpic.obj: system.h
-$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\tpic.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\tpic.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\tpic.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\tpic.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\tpic.obj: mem.h mfileio.h numbers.h tpic.h pdfparse.h pdfobj.h pdfdoc.h
 $(outdir)\tpic.obj: pdfdev.h dvi.h error.h
 $(outdir)\type1.obj: system.h
-$(outdir)\type1.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\type1.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\type1.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\type1.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\type1.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\type1.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\type1.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\type1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\type1.obj: mem.h error.h mfileio.h numbers.h pdfobj.h type1.h tfm.h
 $(outdir)\type1.obj: pdfparse.h pdflimits.h t1crypt.h twiddle.h encodings.h
 $(outdir)\type1.obj: standardenc.h
 $(outdir)\vf.obj: system.h
-$(outdir)\vf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\vf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\vf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\vf.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\vf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\vf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/c-auto.h
-$(outdir)\vf.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/kpathsea/kpathsea.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
+$(outdir)\vf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/kpathsea.h
 $(outdir)\vf.obj: mfileio.h numbers.h pdflimits.h mem.h error.h tfm.h pdfdev.h
 $(outdir)\vf.obj: pdfobj.h dvi.h vf.h config.h dvicodes.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
+$(outdir)\wrapper.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

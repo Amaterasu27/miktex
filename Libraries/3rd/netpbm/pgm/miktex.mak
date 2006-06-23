@@ -143,55 +143,55 @@ depend:
 
 # DO NOT DELETE
 
-$(outdir)\asciitopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\asciitopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\asciitopgm.obj: ../pbmplus.h
 $(outdir)\bioradtopgm.obj: pgm.h
-$(outdir)\bioradtopgm.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\bioradtopgm.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\bioradtopgm.obj: ../pbmplus.h
-$(outdir)\fstopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\fstopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\fstopgm.obj: ../pbmplus.h
-$(outdir)\hipstopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\hipstopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\hipstopgm.obj: ../pbmplus.h
-$(outdir)\libpgm1.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\libpgm1.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\libpgm1.obj: ../pbmplus.h libpgm.h
-$(outdir)\libpgm1.obj: $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/libpbm.h
-$(outdir)\libpgm2.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\libpgm1.obj: $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/libpbm.h
+$(outdir)\libpgm2.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\libpgm2.obj: ../pbmplus.h libpgm.h
-$(outdir)\lispmtopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\lispmtopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\lispmtopgm.obj: ../pbmplus.h
-$(outdir)\pbmtopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pbmtopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pbmtopgm.obj: ../pbmplus.h
-$(outdir)\pgmbentley.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmbentley.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmbentley.obj: ../pbmplus.h
-$(outdir)\pgmcrater.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmcrater.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmcrater.obj: ../pbmplus.h
-$(outdir)\pgmedge.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmedge.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmedge.obj: ../pbmplus.h
-$(outdir)\pgmenhance.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmenhance.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmenhance.obj: ../pbmplus.h
-$(outdir)\pgmhist.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmhist.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmhist.obj: ../pbmplus.h
-$(outdir)\pgmkernel.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmkernel.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmkernel.obj: ../pbmplus.h
-$(outdir)\pgmnoise.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmnoise.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmnoise.obj: ../pbmplus.h
-$(outdir)\pgmnorm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmnorm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmnorm.obj: ../pbmplus.h
-$(outdir)\pgmoil.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmoil.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmoil.obj: ../pbmplus.h
-$(outdir)\pgmramp.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmramp.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmramp.obj: ../pbmplus.h
-$(outdir)\pgmtexture.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmtexture.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmtexture.obj: ../pbmplus.h
-$(outdir)\pgmtofs.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmtofs.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmtofs.obj: ../pbmplus.h
-$(outdir)\pgmtolispm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmtolispm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmtolispm.obj: ../pbmplus.h
-$(outdir)\pgmtopbm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\pgmtopbm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\pgmtopbm.obj: ../pbmplus.h dithers.h
-$(outdir)\psidtopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\psidtopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\psidtopgm.obj: ../pbmplus.h
-$(outdir)\rawtopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\rawtopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\rawtopgm.obj: ../pbmplus.h
-$(outdir)\spottopgm.obj: pgm.h $(miktexsrcdir)/Libraries\3rd\netpbm/pbm/pbm.h
+$(outdir)\spottopgm.obj: pgm.h $(miktexsrcdir)/Libraries/3rd/netpbm/pbm/pbm.h
 $(outdir)\spottopgm.obj: ../pbmplus.h

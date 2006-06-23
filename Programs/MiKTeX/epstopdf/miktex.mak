@@ -87,11 +87,11 @@ depend: epstopdf.cpp
 # DO NOT DELETE
 
 $(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\epstopdf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\epstopdf.obj: epstopdf-version.h

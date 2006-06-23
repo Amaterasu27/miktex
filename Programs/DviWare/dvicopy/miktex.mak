@@ -156,8 +156,20 @@ depend: dvicopy.cc
 
 # DO NOT DELETE
 
-$(outdir)\dvicopy.obj: dvicopy.h dvicopy-miktex.h dvicopy.rc dvicopy-version.h
-$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
+$(outdir)\dvicopy.obj: dvicopy.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvicopy.obj: dvicopy-miktex.h dvicopy.rc dvicopy-version.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\dvicopy.obj: dvicopydefs.h
-$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\dvicopy.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl

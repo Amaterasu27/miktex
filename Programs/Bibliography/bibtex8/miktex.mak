@@ -100,6 +100,12 @@ depend: bibtex.c bibtex-1.c bibtex-2.c bibtex-3.c bibtex-4.c utils.c
 
 $(outdir)\bibtex.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.h
 $(outdir)\bibtex.obj: version.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/config.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/progname.h
 $(outdir)\bibtex-1.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.h
 $(outdir)\bibtex-1.obj: version.h
 $(outdir)\bibtex-2.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.h
@@ -108,5 +114,14 @@ $(outdir)\bibtex-3.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.
 $(outdir)\bibtex-3.obj: version.h
 $(outdir)\bibtex-4.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.h
 $(outdir)\bibtex-4.obj: version.h
-$(outdir)\utils.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h sysdep.h
-$(outdir)\utils.obj: bibtex.h datatype.h gblprocs.h gblvars.h utils.h version.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/config.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-fopen.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-file.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/lib.h
+$(outdir)\utils.obj: sysdep.h bibtex.h datatype.h gblprocs.h gblvars.h utils.h
+$(outdir)\utils.obj: version.h

@@ -1,6 +1,6 @@
 ## miktex.mak: mf
 ##
-## Copyright (C) 1991-2005 Christian Schenk
+## Copyright (C) 1991-2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -321,6 +321,7 @@ clean: common-clean mostlyclean traptest-clean
 distclean: common-distclean clean
 
 maintainer-clean: common-maintainer-clean distclean
+	if exists mf.defaults.h del mf.defaults.h
 
 # _____________________________________________________________________________
 #

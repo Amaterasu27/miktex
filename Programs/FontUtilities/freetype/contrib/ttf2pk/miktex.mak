@@ -182,13 +182,13 @@ depend:
 
 $(outdir)\case.obj: case.h
 $(outdir)\errormsg.obj: errormsg.h
-$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\errormsg.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\filesrch.obj: filesrch.h ttf2tfm.h newobj.h
-$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\filesrch.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\ligkern.obj: ttf2tfm.h ligkern.h ttfenc.h texenc.h newobj.h errormsg.h
 $(outdir)\newobj.obj: newobj.h ttf2tfm.h errormsg.h texenc.h
 $(outdir)\parse.obj: ttf2tfm.h errormsg.h newobj.h ligkern.h texenc.h parse.h
@@ -197,14 +197,14 @@ $(outdir)\pklib.obj: newobj.h ttf2tfm.h pklib.h errormsg.h filesrch.h
 $(outdir)\subfont.obj: filesrch.h ttf2tfm.h subfont.h newobj.h errormsg.h
 $(outdir)\texenc.obj: ttf2tfm.h texenc.h
 $(outdir)\tfmaux.obj: ttf2tfm.h newobj.h tfmaux.h errormsg.h
-$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ttf2pk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\ttf2pk.obj: ttf2tfm.h newobj.h pklib.h ttfenc.h ttflib.h errormsg.h
 $(outdir)\ttf2pk.obj: filesrch.h parse.h subfont.h
-$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\ttf2tfm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\ttf2tfm.obj: ttf2tfm.h newobj.h ttfenc.h ligkern.h texenc.h ttfaux.h
 $(outdir)\ttf2tfm.obj: tfmaux.h vplaux.h errormsg.h filesrch.h parse.h subfont.h
 $(outdir)\ttfaux.obj: ..\..\lib/freetype.h ..\..\lib/fterrid.h

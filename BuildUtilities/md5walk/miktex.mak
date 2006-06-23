@@ -95,9 +95,9 @@ depend: md5walk.cpp
 
 # DO NOT DELETE
 
-$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\md5walk.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\md5walk.obj: md5walk-version.h

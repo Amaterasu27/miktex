@@ -137,13 +137,14 @@ depend: mthelp.cpp
 
 # DO NOT DELETE
 
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\App/include/miktex/app.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/paths.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mthelp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\mthelp.obj: mthelp-version.h template.html.h

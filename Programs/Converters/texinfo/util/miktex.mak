@@ -93,6 +93,6 @@ depend: texindex.c
 
 # DO NOT DELETE
 
-$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries\3rd\libmspack/system.h
-$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries\3rd\libmspack/mspack.h
-$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/getopt.h
+$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries/3rd/libmspack/system.h
+$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries/3rd/libmspack/mspack.h
+$(outdir)\texindex.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h

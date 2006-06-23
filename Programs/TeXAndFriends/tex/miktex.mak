@@ -377,8 +377,8 @@ $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
-$(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.ini.h
-$(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.ini.h
+$(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
 $(outdir)\triptex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
@@ -402,8 +402,8 @@ $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
-$(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.ini.h
-$(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.ini.h
+$(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
 $(outdir)\tex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl

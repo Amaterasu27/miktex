@@ -256,6 +256,7 @@ $(outdir)\common.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\common.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\common.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\common.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\common.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\common.obj: makex.h makex-version.h
 $(outdir)\makebase.obj: internal.h
 $(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
@@ -266,6 +267,7 @@ $(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.
 $(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makebase.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makebase.obj: makex.h
 $(outdir)\makefmt.obj: internal.h
 $(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
@@ -276,6 +278,7 @@ $(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makefmt.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makefmt.obj: makex.h
 $(outdir)\makemem.obj: internal.h
 $(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
@@ -286,6 +289,7 @@ $(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makemem.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makemem.obj: makex.h
 $(outdir)\makemf.obj: internal.h $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
 $(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
@@ -295,6 +299,7 @@ $(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makemf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makemf.obj: makex.h
 $(outdir)\makepk.obj: internal.h $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
 $(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
@@ -304,6 +309,7 @@ $(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makepk.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makepk.obj: makex.h
 $(outdir)\maketfm.obj: internal.h
 $(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
@@ -314,4 +320,5 @@ $(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
 $(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\maketfm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\maketfm.obj: makex.h

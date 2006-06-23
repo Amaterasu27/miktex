@@ -122,12 +122,12 @@ depend: mcd.cpp
 # DO NOT DELETE
 
 $(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\MiKTeX\PackageManager/include/miktex/mpm.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/trace.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/env.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt-miktex.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\3rd\libpopt/popt.h
-$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/regex.h mcd-version.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\mcd.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/regex.h mcd-version.h

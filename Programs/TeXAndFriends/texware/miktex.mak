@@ -433,9 +433,54 @@ depend: dvitype.cc pooltype.cc tftopl.cc pltotf.cc
 
 # DO NOT DELETE
 
-$(outdir)\dvitype.obj: dvitype.h dvitype-miktex.h dvitype.rc dvitype-version.h
+$(outdir)\dvitype.obj: dvitype.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\dvitype.obj: dvitype-miktex.h dvitype.rc dvitype-version.h
 $(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
-$(outdir)\pooltype.obj: pooltype.h mywebapp.h
-$(outdir)\tftopl.obj: tftopl.h mywebapp.h
-$(outdir)\pltotf.obj: pltotf.h mywebapp.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\dvitype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\pooltype.obj: pooltype.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pooltype.obj: mywebapp.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\pooltype.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\tftopl.obj: tftopl.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\tftopl.obj: mywebapp.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\tftopl.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\pltotf.obj: pltotf.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pltotf.obj: mywebapp.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\pltotf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

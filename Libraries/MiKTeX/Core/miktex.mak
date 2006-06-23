@@ -244,6 +244,7 @@ $(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/
 $(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\CommandLine.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\CommandLine.obj: MiKTeXEvents.h
 $(outdir)\FileStream.obj: StdAfx.h
@@ -257,6 +258,7 @@ $(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\FileStream.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\FileStream.obj: MiKTeXEvents.h
 $(outdir)\FormatInfo.obj: StdAfx.h
@@ -270,6 +272,7 @@ $(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\FormatInfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\FormatInfo.obj: MiKTeXEvents.h
 $(outdir)\MemoryMappedFile.obj: StdAfx.h
@@ -283,6 +286,7 @@ $(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/mi
 $(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\MemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\MemoryMappedFile.obj: MiKTeXEvents.h
 $(outdir)\Process.obj: StdAfx.h
@@ -295,6 +299,7 @@ $(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core
 $(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\Process.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\Process.obj: MiKTeXEvents.h
 $(outdir)\StdAfx.obj: StdAfx.h
@@ -313,6 +318,7 @@ $(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.
 $(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\Thread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\Thread.obj: MiKTeXEvents.h
 $(outdir)\appnames.obj: StdAfx.h
@@ -325,6 +331,7 @@ $(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\appnames.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\appnames.obj: MiKTeXEvents.h
 $(outdir)\cfg.obj: StdAfx.h
@@ -337,6 +344,7 @@ $(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\cfg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\cfg.obj: MiKTeXEvents.h
 $(outdir)\config.obj: StdAfx.h
@@ -349,10 +357,10 @@ $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.
 $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\config.obj: MiKTeXEvents.h
 $(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
-$(outdir)\config.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\config.obj: win/winRegistry.h
 $(outdir)\error.obj: StdAfx.h
 $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/first.h
@@ -364,6 +372,7 @@ $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\error.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\error.obj: MiKTeXEvents.h
 $(outdir)\files.obj: StdAfx.h
@@ -376,6 +385,7 @@ $(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\files.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\files.obj: MiKTeXEvents.h fnamedb.h fndbmem.h
 $(outdir)\filetypes.obj: StdAfx.h
@@ -388,6 +398,7 @@ $(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/co
 $(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\filetypes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\filetypes.obj: MiKTeXEvents.h
 $(outdir)\findfile.obj: StdAfx.h
@@ -400,6 +411,7 @@ $(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\findfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\findfile.obj: MiKTeXEvents.h fnamedb.h fndbmem.h
 $(outdir)\fnamedb.obj: StdAfx.h
@@ -412,6 +424,7 @@ $(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core
 $(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\fnamedb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\fnamedb.obj: MiKTeXEvents.h fnamedb.h fndbmem.h
 $(outdir)\fontinfo.obj: StdAfx.h
@@ -424,6 +437,7 @@ $(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\fontinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\fontinfo.obj: MiKTeXEvents.h
 $(outdir)\getdelim.obj: StdAfx.h
@@ -436,6 +450,7 @@ $(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\getdelim.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\getdelim.obj: MiKTeXEvents.h
 $(outdir)\graphics.obj: StdAfx.h
@@ -448,6 +463,7 @@ $(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\graphics.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\graphics.obj: MiKTeXEvents.h
 $(outdir)\gsinfo.obj: StdAfx.h
@@ -460,6 +476,7 @@ $(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.
 $(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\gsinfo.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\gsinfo.obj: MiKTeXEvents.h
 $(outdir)\log.obj: StdAfx.h
@@ -472,6 +489,7 @@ $(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\log.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\log.obj: MiKTeXEvents.h
 $(outdir)\makefndb.obj: StdAfx.h
@@ -484,6 +502,7 @@ $(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\makefndb.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\makefndb.obj: MiKTeXEvents.h fndbmem.h
 $(outdir)\mfmodes.obj: StdAfx.h
@@ -496,6 +515,7 @@ $(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core
 $(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\mfmodes.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\mfmodes.obj: MiKTeXEvents.h
 $(outdir)\miktex.obj: StdAfx.h
@@ -508,10 +528,10 @@ $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.
 $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\miktex.obj: MiKTeXEvents.h
 $(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
-$(outdir)\miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\miktex.obj: win/winRegistry.h core-version.h fnamedb.h fndbmem.h
 $(outdir)\obsolete.obj: StdAfx.h
 $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/first.h
@@ -523,6 +543,7 @@ $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\obsolete.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\obsolete.obj: MiKTeXEvents.h
 $(outdir)\papersize.obj: StdAfx.h
@@ -535,6 +556,7 @@ $(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/co
 $(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\papersize.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\papersize.obj: MiKTeXEvents.h
 $(outdir)\path.obj: StdAfx.h
@@ -547,6 +569,7 @@ $(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\path.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\path.obj: MiKTeXEvents.h
 $(outdir)\runbat.obj: StdAfx.h
@@ -559,6 +582,7 @@ $(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.
 $(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\runbat.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\runbat.obj: MiKTeXEvents.h
 $(outdir)\runperl.obj: StdAfx.h
@@ -571,6 +595,7 @@ $(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core
 $(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\runperl.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\runperl.obj: MiKTeXEvents.h
 $(outdir)\scratchdir.obj: StdAfx.h
@@ -584,6 +609,7 @@ $(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\scratchdir.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\scratchdir.obj: MiKTeXEvents.h
 $(outdir)\searchpath.obj: StdAfx.h
@@ -597,6 +623,7 @@ $(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\searchpath.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\searchpath.obj: MiKTeXEvents.h
 $(outdir)\tempfile.obj: StdAfx.h
@@ -609,6 +636,7 @@ $(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/cor
 $(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\tempfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\tempfile.obj: MiKTeXEvents.h
 $(outdir)\texmfroot.obj: StdAfx.h
@@ -621,11 +649,11 @@ $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/co
 $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\texmfroot.obj: MiKTeXEvents.h
 $(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\texmfroot.obj: fnamedb.h fndbmem.h
-$(outdir)\texmfroot.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\uncompress.obj: StdAfx.h
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/first.h
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
@@ -637,6 +665,7 @@ $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\uncompress.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\uncompress.obj: MiKTeXEvents.h
 $(outdir)\util.obj: StdAfx.h
@@ -649,6 +678,7 @@ $(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\util.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\util.obj: MiKTeXEvents.h
 $(outdir)\win.obj: StdAfx.h
@@ -676,6 +706,7 @@ $(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/
 $(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winDirectoryLister.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winDirectoryLister.obj: MiKTeXEvents.h win/winDirectoryLister.h
 $(outdir)\winFile.obj: StdAfx.h
@@ -689,6 +720,7 @@ $(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core
 $(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winFile.obj: MiKTeXEvents.h
 $(outdir)\winMemoryMappedFile.obj: StdAfx.h
@@ -702,6 +734,7 @@ $(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include
 $(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winMemoryMappedFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winMemoryMappedFile.obj: MiKTeXEvents.h win/winMemoryMappedFile.h
 $(outdir)\winProcess.obj: StdAfx.h
@@ -715,6 +748,7 @@ $(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/c
 $(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winProcess.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winProcess.obj: MiKTeXEvents.h win/winProcess.h
 $(outdir)\winRegistry.obj: StdAfx.h
@@ -728,6 +762,7 @@ $(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/
 $(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winRegistry.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winRegistry.obj: MiKTeXEvents.h win/winRegistry.h
 $(outdir)\winThread.obj: StdAfx.h
@@ -741,5 +776,6 @@ $(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/co
 $(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
 $(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\winThread.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winThread.obj: MiKTeXEvents.h win/winThread.h

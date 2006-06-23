@@ -154,8 +154,23 @@ depend: bibtex.cc
 
 # DO NOT DELETE
 
-$(outdir)\bibtex.obj: bibtex.h bibtex-miktex.h bibtex.rc bibtex-version.h
+$(outdir)\bibtex.obj: bibtex.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\bibtex.obj: bibtex-miktex.h bibtex.rc bibtex-version.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
 $(outdir)\bibtex.obj: bibtexdefs.h
-$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/reg.h
-$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\bibtex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl

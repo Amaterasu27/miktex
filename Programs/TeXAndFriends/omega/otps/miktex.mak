@@ -199,32 +199,32 @@ depend: outocp.c otp2ocp.c y_tab.c yy.lex.c routines.c
 
 # DO NOT DELETE
 
-$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\outocp.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
+$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\outocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\outocp.obj: otp.h
-$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries\3rd\libgnu/gnu-miktex.h
-$(outdir)\otp2ocp.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
+$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/gnu-miktex.h
+$(outdir)\otp2ocp.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\otp2ocp.obj: routines.h
 $(outdir)\y_tab.obj: otp.h routines.h
-$(outdir)\y_tab.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\y_tab.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\y_tab.obj: yystype.h
 __xx__yy.lex.obj: routines.h
-__xx__yy.lex.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-__xx__yy.lex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-__xx__yy.lex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-__xx__yy.lex.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+__xx__yy.lex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+__xx__yy.lex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+__xx__yy.lex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+__xx__yy.lex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 __xx__yy.lex.obj: yystype.h y_tab.h
-$(outdir)\routines.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\routines.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\routines.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\routines.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\routines.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\routines.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\routines.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\routines.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
 $(outdir)\routines.obj: routines.h otp.h

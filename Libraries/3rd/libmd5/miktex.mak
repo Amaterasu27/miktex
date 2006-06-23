@@ -96,4 +96,4 @@ depend: $(sources)
 # DO NOT DELETE
 
 $(outdir)\md5c.obj: internal.h global.h
-$(outdir)\md5c.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\md5c.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
