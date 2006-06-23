@@ -2087,7 +2087,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
       else
 	{
-	  FatalError (T_("Unknown config file."));
+	  EditConfigFile (it->c_str());
 	}
     }
 
