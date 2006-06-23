@@ -475,6 +475,10 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 <title>Reference</title>
 
+<chapter>
+
+<title>Programs</title>
+
 &manbibtex;
 &mandvicopy;
 &mandvips;
@@ -488,11 +492,20 @@ pdfetex "&amp;latex" sample2e</programlisting>
 &manmtprint;
 &manomega;
 &manpdfetex;
-&manpdftexcfg;
 &mansetupwiz;
 &mantex;
 &mantexify;
+
+</chapter>
+
+<chapter>
+
+<title>Files</title>
+
+&manpdftexcfg;
 &manupdmapcfg;
+
+</chapter>
 
 </part>
 
