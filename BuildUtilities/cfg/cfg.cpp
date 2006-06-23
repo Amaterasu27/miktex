@@ -26,8 +26,10 @@
 #include <popt-miktex.h>
 #include "cfg-version.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <locale>
 
 using namespace MiKTeX::Core;
 using namespace std;
@@ -47,7 +49,7 @@ using namespace std;
    TASK
    _________________________________________________________________________ */
 
-enum TASK { None, ComputeDigest };
+enum TASK { None, ComputeDigest, PrintClasses };
 
 /* _________________________________________________________________________
 
@@ -58,6 +60,7 @@ enum Option
 {
   OPT_AAA = 1000,
   OPT_COMPUTE_DIGEST,
+  OPT_PRINT_CLASSES,
   OPT_VERSION,
 };
 
@@ -70,6 +73,10 @@ const struct poptOption aoption[] = {
   {
     T_("compute-digest"), 0, POPT_ARG_NONE, 0, OPT_COMPUTE_DIGEST,
     T_("Compute the MD5."), 0,
+  },
+  {
+    T_("print-classes"), 0, POPT_ARG_NONE, 0, OPT_PRINT_CLASSES,
+    T_("Print C++ class definitions."), 0,
   },
   {
     T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
@@ -110,6 +117,118 @@ PrintDigest (/*[in]*/ const MD5 & md5)
 
 /* _________________________________________________________________________
 
+   
+   _________________________________________________________________________ */
+
+MIKTEXCHAR
+DownChar (/*[in]*/ MIKTEXCHAR c) 
+{ 
+  const static locale loc;
+  if (isalnum(c, loc))
+    {
+      return (tolower(c, loc));
+    }
+  else
+    {
+      return (T_('_'));
+    }
+}
+
+/* _________________________________________________________________________
+
+   
+   _________________________________________________________________________ */
+
+tstring
+ToLower (/*[in]*/ const tstring & s)
+{ 
+  tstring result (s);
+  transform (result.begin(),
+	     result.end(),
+	     result.begin(),
+	     DownChar);
+  return (result);
+}
+
+/* _________________________________________________________________________
+
+   
+   _________________________________________________________________________ */
+
+tstring
+ToStr (/*[in]*/ const tstring & s)
+{
+  tstring result;
+  for (tstring::const_iterator it = s.begin(); it != s.end(); ++ it)
+    {
+      switch (*it)
+	{
+	case T_('\\'):
+	  result += T_("\\\\");
+	  break;
+	case T_('"'):
+	  result += T_("\\\"");
+	  break;
+	default:
+	  result += *it;
+	  break;
+	}
+    }
+  return (result);
+}
+
+/* _________________________________________________________________________
+
+   DoPrintClasses
+   _________________________________________________________________________ */
+
+void
+DoPrintClasses (/*[in]*/ Cfg * pCfg)
+{
+  MIKTEXCHAR szKey[BufferSizes::MaxCfgName];
+  for (MIKTEXCHAR * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
+       lpszKey != 0;
+       lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
+    {
+      tcout << T_("class ") << ToLower(lpszKey) << T_(" {") << endl;
+      MIKTEXCHAR szValueName[BufferSizes::MaxCfgName];
+      for (MIKTEXCHAR * lpszValueName =
+	     pCfg->FirstValue(lpszKey, szValueName, BufferSizes::MaxCfgName);
+	   lpszValueName != 0;
+	   lpszValueName =
+	     pCfg->NextValue(szValueName, BufferSizes::MaxCfgName))
+	{
+	  tstring value = pCfg->GetValue(lpszKey, lpszValueName);
+	  MIKTEXCHAR * endptr = 0;
+	  strtol (value.c_str(), &endptr, 0);
+	  bool isString = (endptr != 0 && *endptr != 0);
+	  tcout << T_("  public: static ");
+	  if (isString)
+	    {
+	      tcout << T_("std::string");
+	    }
+	  else
+	    {
+	      tcout << T_("int");
+	    }
+	  tcout << T_(" ") << ToLower(lpszValueName)
+		<< T_(" () { return (");
+	  if (isString)
+	    {
+	      tcout << T_('"') << ToStr(value) << T_('"');
+	    }
+	  else
+	    {
+	      tcout << value;
+	    }
+	  tcout << T_("); }") << endl;
+	}
+      tcout << T_("};") << endl;
+    }
+}
+
+/* _________________________________________________________________________
+
    main
    _________________________________________________________________________ */
 
@@ -133,6 +252,9 @@ Main (/*[in]*/ int			argc,
 	{
 	case OPT_COMPUTE_DIGEST:
 	  task = ComputeDigest;
+	  break;
+	case OPT_PRINT_CLASSES:
+	  task = PrintClasses;
 	  break;
 	case OPT_VERSION:
 	  tcout <<
@@ -169,6 +291,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       if (task == ComputeDigest)
 	{
 	  PrintDigest (pCfg->GetDigest());
+	}
+      else if (task == PrintClasses)
+	{
+	  DoPrintClasses (pCfg.Get());
 	}
     }
 }
