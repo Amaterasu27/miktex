@@ -549,7 +549,7 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 	    }
 	  else
 	    {
-	      Process::Start (szExecutable, fileName.Get());
+	      Process::Start (szExecutable, Q_(fileName));
 	    }
 	  return;
 	}
