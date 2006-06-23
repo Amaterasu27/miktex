@@ -1,6 +1,6 @@
 ## miktex.mak: metapost/mp
 ## 
-## Copyright (C) 1998-2005 Christian Schenk
+## Copyright (C) 1998-2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -76,6 +76,11 @@ $(memdir):
 
 check: common-check
 	$(pushd) test & $(MAKE) -f $(miktex_mak) & $(popd)
+
+mpostini = $(miktexsrcdir)\$(rel_defaultsdir)\mpost.defaults
+
+mpost.defaults.h: $(mpostini)
+	cfg --print-classes $(mpostini) > $@
 
 # _____________________________________________________________________________
 #
@@ -339,11 +344,55 @@ depend: trapmp.cc mp.cc
 
 # DO NOT DELETE
 
-$(outdir)\trapmp.obj: trapmp.h mp-miktex.h mpdefs.h mp.rc mp-version.h
-$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\mp.obj: mp.h mp-miktex.h mpdefs.h mp.rc mp-version.h
-$(outdir)\mp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\mp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\mp.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
+$(outdir)\trapmp.obj: trapmp.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\trapmp.obj: mp-miktex.h mpdefs.h mp.rc mp-version.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
+$(outdir)\trapmp.obj: mpost.defaults.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.inl
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\trapmp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\mp.obj: mp.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mp.obj: mp-miktex.h mpdefs.h mp.rc mp-version.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
+$(outdir)\mp.obj: mpost.defaults.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.inl
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\mp.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl

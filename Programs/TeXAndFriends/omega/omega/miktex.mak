@@ -66,6 +66,11 @@ $(formatdir):
 
 check: common-check
 
+omegaini = $(miktexsrcdir)\$(rel_defaultsdir)\omega.defaults
+
+omega.defaults.h: $(omegaini)
+	cfg --print-classes $(omegaini) > $@
+
 # _____________________________________________________________________________
 #
 # omega
@@ -235,29 +240,84 @@ depend: omega.cc omega-miktex.cc omegabis.c
 
 # DO NOT DELETE
 
-$(outdir)\omega.obj: omega.h omega-miktex.h omegadefs.h omega.rc omega-version.h
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\omega.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\omega.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\omega-miktex.obj: omega-miktex.h omegadefs.h omega.h omega.rc
-$(outdir)\omega-miktex.obj: omega-version.h
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\omega-miktex.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
-$(outdir)\omegabis.obj: omega-miktex.h omegadefs.h omega.h omega.rc
-$(outdir)\omegabis.obj: omega-version.h
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\omegabis.obj: C:\work\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include/miktex/kpsemu.h
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/core.h
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/char.h
-$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries\3rd\libmd5/include/miktex/md5.h
+$(outdir)\omega.obj: omega.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\omega.obj: omega-miktex.h omegadefs.h omega.rc omega-version.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\omega.obj: omega.defaults.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\omega.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\omega-miktex.obj: omega-miktex.h omegadefs.h omega.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\omega-miktex.obj: omega.rc omega-version.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\omega-miktex.obj: omega.defaults.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\omega-miktex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\omegabis.obj: omega-miktex.h omegadefs.h omega.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\omegabis.obj: omega.rc omega-version.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\omegabis.obj: omega.defaults.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\omegabis.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h

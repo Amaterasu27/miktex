@@ -1,0 +1,23 @@
+;; Maximum number of input files and error insertions that can be going
+;; on simultaneously.
+max_in_open=50
+
+;; Maximum number of semantic levels simultaneously active.
+nest_size=500
+
+;; Space for saving values outside of current group; must be
+;; at most 1073741823.
+save_size=32768
+
+;; Space for "opcodes" in the hyphenation patterns.
+trie_op_size=35111
+
+;; Space for hyphenation patterns; should be larger for
+;; INITEX than it is in production versions of TeX.
+trie_size=300000
+
+;; Maximum internal font number; must not exceed 5000.
+font_max=2000
+
+;; Number of words of font_info for all fonts.
+font_mem_size=1000000

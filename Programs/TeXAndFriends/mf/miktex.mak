@@ -70,6 +70,11 @@ install2: mf.pool "$(basedir)" install-binaries
 
 check: common-check
 
+mfini = $(miktexsrcdir)\$(rel_defaultsdir)\mf.defaults
+
+mf.defaults.h: $(mfini)
+	cfg --print-classes $(mfini) > $@
+
 # _____________________________________________________________________________
 #
 # metafont
@@ -330,18 +335,81 @@ depend: trapmf.cc mf.cc screen.cpp
 
 # DO NOT DELETE
 
-$(outdir)\trapmf.obj: trapmf.h mf-miktex.h mfdefs.h mf.rc mf-version.h
-$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\trapmf.obj: screen.h
-$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\mf.obj: mf.h mf-miktex.h mfdefs.h mf.rc mf-version.h
-$(outdir)\mf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\mf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\mf.obj: screen.h
-$(outdir)\mf.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
-$(outdir)\screen.obj: mf.h mf-miktex.h mfdefs.h mf.rc mf-version.h
-$(outdir)\screen.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/miktex.version
-$(outdir)\screen.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/version.h
-$(outdir)\screen.obj: screen.h
-$(outdir)\screen.obj: $(miktexsrcdir)/Libraries\MiKTeX\Core/include/miktex/help.h
+$(outdir)\trapmf.obj: trapmf.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\trapmf.obj: mf-miktex.h mfdefs.h mf.rc mf-version.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
+$(outdir)\trapmf.obj: mf.defaults.h screen.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.inl
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\trapmf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\mf.obj: mf.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mf.obj: mf-miktex.h mfdefs.h mf.rc mf-version.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
+$(outdir)\mf.obj: mf.defaults.h screen.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.inl
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\mf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\screen.obj: mf.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\screen.obj: mf-miktex.h mfdefs.h mf.rc mf-version.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.defaults.h
+$(outdir)\screen.obj: mf.defaults.h screen.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/mfapp.inl
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\screen.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl

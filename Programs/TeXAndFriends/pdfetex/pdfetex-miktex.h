@@ -35,8 +35,8 @@
 
 #include "pdfetex.rc"
 
-#include "../pdftex/pdftex-miktex.h"
-#include "../etex/etex-miktex.h"
+#include <pdftex-miktex.h>
+#include <etex-miktex.h>
 
 #if defined(__cplusplus)
 

@@ -26,6 +26,10 @@
 
 #include <miktex/texmfapp.h>
 
+namespace texapp {
+#include <miktex/texapp.defaults.h>
+}
+
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace TeXAndFriends {
@@ -231,11 +235,26 @@ public:
 
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (param_max_in_open, maxinopen, max_in_open, 50);
-    GETPARAM (param_nest_size, nestsize, nest_size, 500);
-    GETPARAM (param_save_size, savesize, save_size, 32768);
-    GETPARAM (param_trie_op_size, trieopsize, trie_op_size, 2048);
-    GETPARAM (param_trie_size, triesize, trie_size, 262000);
+    GETPARAM (param_max_in_open,
+	      maxinopen,
+	      max_in_open,
+	      texapp::texapp::max_in_open());
+    GETPARAM (param_nest_size,
+	      nestsize,
+	      nest_size,
+	      texapp::texapp::nest_size());
+    GETPARAM (param_save_size,
+	      savesize,
+	      save_size,
+	      texapp::texapp::save_size());
+    GETPARAM (param_trie_op_size,
+	      trieopsize,
+	      trie_op_size,
+	      texapp::texapp::trie_op_size());
+    GETPARAM (param_trie_size,
+	      triesize,
+	      trie_size,
+	      texapp::texapp::trie_size());
    
     Allocate (THEDATA(sourcefilenamestack), THEDATA(maxinopen));
     Allocate (THEDATA(linestack), THEDATA(maxinopen));
@@ -257,8 +276,14 @@ public:
 
 
 #if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
-    GETPARAM (param_font_max, fontmax, font_max, 1000);
-    GETPARAM (param_font_mem_size, fontmemsize, font_mem_size, 500000);
+    GETPARAM (param_font_max,
+	      fontmax,
+	      font_max,
+	      texapp::texapp::font_max());
+    GETPARAM (param_font_mem_size,
+	      fontmemsize,
+	      font_mem_size,
+	      texapp::texapp::font_mem_size());
 
     Allocate (THEDATA(bcharlabel), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(charbase), THEDATA(fontmax) + 1 - constfontbase);

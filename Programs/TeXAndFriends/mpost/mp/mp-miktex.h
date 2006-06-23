@@ -1,6 +1,6 @@
 /* mp-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2005 Christian Schenk
+   Copyright (C) 1998-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -31,6 +31,10 @@
 
 #include "mp.rc"
 #include <miktex/mfapp.h>
+
+namespace mpost {
+#include "mpost.defaults.h"
+}
 
 #if ! defined(MIKTEXHELP_MPOST)
 #  include <miktex/help.h>
@@ -130,7 +134,10 @@ public:
   {
     MetafontApp::AllocateMemory ();
 
-    GETPARAM (m_font_mem_size, fontmemsize, font_mem_size, 200000);
+    GETPARAM (m_font_mem_size,
+	      fontmemsize,
+	      font_mem_size,
+	      mpost::mpost::font_mem_size());
 
     Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
   }

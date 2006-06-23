@@ -438,51 +438,127 @@ depend: $(sources)
 
 $(outdir)\avl.obj: avl.h
 $(outdir)\avlstuff.obj: ptexlib.h pdftexd.h
-$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\avlstuff.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\avlstuff.obj: pdftex.defaults.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\avlstuff.obj: pdftex.h ptexmac.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-vararg.h
 $(outdir)\avlstuff.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-proto.h
 $(outdir)\avlstuff.obj: avl.h
 $(outdir)\mapfile.obj: ptexlib.h pdftexd.h
-$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\mapfile.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\mapfile.obj: pdftex.defaults.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\mapfile.obj: pdftex.h ptexmac.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-memstr.h
 $(outdir)\mapfile.obj: avlstuff.h avl.h epdf.h
 $(outdir)\mapfile.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-proto.h
 $(outdir)\papersiz.obj: ptexlib.h pdftexd.h
-$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\papersiz.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\papersiz.obj: pdftex.defaults.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\papersiz.obj: pdftex.h ptexmac.h
-$(outdir)\pdftex.obj: pdftexd.h pdftex-miktex.h pdftexdefs.h pdftex.rc
-$(outdir)\pdftex.obj: pdftex-version.h
-$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
-$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
-$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
-$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pdftex.obj: pdftexd.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pdftex.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\pdftex.obj: pdftex.defaults.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
+$(outdir)\pdftex.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\pdftex.obj: pdftex.h ptexlib.h ptexmac.h
 $(outdir)\pdftosrc.obj: xpdf/aconf.h xpdf/goo/GString.h xpdf/goo/gmem.h
 $(outdir)\pdftosrc.obj: xpdf/goo/gfile.h xpdf/goo/gtypes.h xpdf/xpdf/Object.h
@@ -503,23 +579,61 @@ $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/incl
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
-$(outdir)\pdftoepdf.obj: pdftex-miktex.h pdftexdefs.h pdftexd.h pdftex.rc
-$(outdir)\pdftoepdf.obj: pdftex-version.h
+$(outdir)\pdftoepdf.obj: pdftex-miktex.h pdftexdefs.h pdftexd.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
+$(outdir)\pdftoepdf.obj: pdftex.rc pdftex-version.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\pdftoepdf.obj: pdftex.defaults.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\pdftoepdf.obj: pdftex.h ptexlib.h ptexmac.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
 $(outdir)\pdftoepdf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-proto.h
 $(outdir)\pkin.obj: ptexlib.h pdftexd.h
-$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\pkin.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\pkin.obj: pdftex.defaults.h
 $(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\pkin.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\pkin.obj: pdftex.h ptexmac.h
 $(outdir)\ttf2afm.obj: ptexmac.h
 $(outdir)\ttf2afm.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
@@ -530,14 +644,33 @@ $(outdir)\ttf2afm.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/getopt.h
 $(outdir)\ttf2afm.obj: ./writettf.h macnames.c
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libgnu/regex.h ptexlib.h
 $(outdir)\utils.obj: pdftexd.h
-$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\utils.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\utils.obj: pdftex.defaults.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\utils.obj: pdftex.h ptexmac.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
@@ -546,44 +679,120 @@ $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-stat.h
 $(outdir)\utils.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-fopen.h
 $(outdir)\vfpacket.obj: ptexlib.h pdftexd.h
-$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\vfpacket.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\vfpacket.obj: pdftex.defaults.h
 $(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\vfpacket.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\vfpacket.obj: pdftex.h ptexmac.h
 $(outdir)\writeenc.obj: ptexlib.h pdftexd.h
-$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writeenc.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writeenc.obj: pdftex.defaults.h
 $(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writeenc.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writeenc.obj: pdftex.h ptexmac.h avlstuff.h avl.h
 $(outdir)\writefont.obj: ptexlib.h pdftexd.h
-$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writefont.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writefont.obj: pdftex.defaults.h
 $(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writefont.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writefont.obj: pdftex.h ptexmac.h xpdf/goo/gmem.h
 $(outdir)\writeimg.obj: ptexlib.h pdftexd.h
-$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writeimg.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writeimg.obj: pdftex.defaults.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writeimg.obj: pdftex.h ptexmac.h image.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
@@ -592,76 +801,190 @@ $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-auto.h
 $(outdir)\writeimg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-memstr.h
 $(outdir)\writejpg.obj: ptexlib.h pdftexd.h
-$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writejpg.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writejpg.obj: pdftex.defaults.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writejpg.obj: pdftex.h ptexmac.h image.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
 $(outdir)\writejpg.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\writepng.obj: ptexlib.h pdftexd.h
-$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writepng.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writepng.obj: pdftex.defaults.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writepng.obj: pdftex.h ptexmac.h image.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/libpng/png.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h
 $(outdir)\writepng.obj: $(miktexsrcdir)/Libraries/3rd/libpng/pngconf.h
 $(outdir)\writet1.obj: ptexlib.h pdftexd.h
-$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writet1.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writet1.obj: pdftex.defaults.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writet1.obj: pdftex.h ptexmac.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-vararg.h
 $(outdir)\writet1.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-proto.h
 $(outdir)\writet3.obj: ptexlib.h pdftexd.h
-$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writet3.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writet3.obj: pdftex.defaults.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writet3.obj: pdftex.h ptexmac.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-glyph.h
 $(outdir)\writet3.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/magstep.h
 $(outdir)\writettf.obj: ptexlib.h pdftexd.h
-$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writettf.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writettf.obj: pdftex.defaults.h
 $(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writettf.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writettf.obj: pdftex.h ptexmac.h ./writettf.h macnames.c
 $(outdir)\writezip.obj: ptexlib.h pdftexd.h
-$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/c4plib.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/miktex/kpsemu.h
 $(outdir)\writezip.obj: pdftex-miktex.h pdftexdefs.h pdftex.rc pdftex-version.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/miktex.version
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/miktex-texmf.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt-miktex.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/3rd/libpopt/popt.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/App/include/miktex/app.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.defaults.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.defaults.h
+$(outdir)\writezip.obj: pdftex.defaults.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/help.h
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texapp.inl
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/texmfapp.inl
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/inputline.inl
+$(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/MiKTeX/TeXAndFriends/include/miktex/webapp.inl
 $(outdir)\writezip.obj: pdftex.h ptexmac.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zlib.h
 $(outdir)\writezip.obj: $(miktexsrcdir)/Libraries/3rd/zlib/zconf.h

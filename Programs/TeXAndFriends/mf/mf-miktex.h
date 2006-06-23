@@ -1,6 +1,6 @@
 /* mf-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1991-2005 Christian Schenk
+   Copyright (C) 1991-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -31,6 +31,10 @@
 
 #include "mf.rc"
 #include <miktex/mfapp.h>
+
+namespace mf {
+#include "mf.defaults.h"
+}
 
 #include "screen.h"
 
@@ -139,8 +143,15 @@ public:
   {
     MetafontApp::AllocateMemory ();
 
-    GETPARAM (m_max_wiggle, maxwiggle, max_wiggle, 1000);
-    GETPARAM (m_move_size, movesize, move_size, 20000);
+    GETPARAM (m_max_wiggle,
+	      maxwiggle,
+	      max_wiggle,
+	      mf::mf::max_wiggle());
+
+    GETPARAM (m_move_size,
+	      movesize,
+	      move_size,
+	      mf::mf::move_size());
 
     Allocate (THEDATA(after), THEDATA(maxwiggle) + 1);
     Allocate (THEDATA(before), THEDATA(maxwiggle) + 1);

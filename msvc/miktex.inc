@@ -123,6 +123,7 @@ MSCVER = 1400
 #  ___________________________________________________________________________
 
 rel_configfilesdir = Admin\ConfigFiles
+rel_defaultsdir = Admin\Defaults
 
 rel_applibdir =	Libraries\MiKTeX\App
 rel_arctrldir =	Programs\MiKTeX\arctrl\win
@@ -1095,7 +1096,7 @@ MAKEDEPEND = makedepend -f $(miktex_mak) -p__xx__ -Y \
 		-I$(miktexsrcdir:\=/)/$(rel_mspacklibdir:\=/) \
 		-I$(miktexsrcdir:\=/)/$(rel_pnglibdir:\=/) \
 		-I$(miktexsrcdir:\=/)/$(rel_poptlibdir:\=/) \
-		-I$(miktexsrcdir:\=/)/$(rel_texmflibdir:\=/) \
+		-I$(miktexsrcdir:\=/)/$(rel_texmflibdir:\=/)/include \
 		-I$(miktexsrcdir:\=/)/$(rel_tifflibdir) \
 		-I$(miktexsrcdir:\=/)/$(rel_netpbmdir:\=/)/pbm \
 		-I$(miktexsrcdir:\=/)/$(rel_netpbmdir:\=/)/pgm \

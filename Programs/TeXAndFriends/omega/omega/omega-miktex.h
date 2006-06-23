@@ -43,6 +43,10 @@
 
 #include <miktex/texapp.h>
 
+namespace omega {
+#include "omega.defaults.h"
+}
+
 #if ! defined(MIKTEX_VIRTUAL_TEXAPP)
 #  define MIKTEX_VIRTUAL_TEXAPP
 #endif
@@ -77,11 +81,30 @@ public:
   {
     TeXApp::AllocateMemory ();
 
-    GETPARAM (-1, ocpbufsize, ocp_buf_size, 500000);
-    GETPARAM (-1, ocplistinfosize, ocp_listinfo_size, 1000);
-    GETPARAM (-1, ocplistlistsize, ocp_list_list_size, 1000);
-    GETPARAM (-1, ocplstacksize, ocp_lstack_size, 1000);
-    GETPARAM (-1, ocpstacksize, ocp_stack_size, 10000);
+    GETPARAM (-1,
+	      ocpbufsize,
+	      ocp_buf_size,
+	      omega::omega::ocp_buf_size());
+
+    GETPARAM (-1,
+	      ocplistinfosize,
+	      ocp_listinfo_size,
+	      omega::omega::ocp_listinfo_size());
+    
+    GETPARAM (-1,
+	      ocplistlistsize,
+	      ocp_list_list_size,
+	      omega::omega::ocp_list_list_size());
+
+    GETPARAM (-1,
+	      ocplstacksize,
+	      ocp_lstack_size,
+	      omega::omega::ocp_lstack_size());
+    
+    GETPARAM (-1,
+	      ocpstacksize,
+	      ocp_stack_size,
+	      omega::omega::ocp_stack_size());
 
     THEDATA(maxstrings) += 0x10000;
 

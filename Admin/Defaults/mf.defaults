@@ -1,0 +1,5 @@
+;; number of autorounded points per cycle
+max_wiggle=1000
+
+;; space for storing moves in a single octant
+move_size=20000

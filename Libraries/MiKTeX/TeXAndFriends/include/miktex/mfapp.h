@@ -26,6 +26,10 @@
 
 #include <miktex/texmfapp.h>
 
+namespace mfapp {
+#include <miktex/mfapp.defaults.h>
+}
+
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace TeXAndFriends {
@@ -171,9 +175,18 @@ public:
   {
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (param_bistack_size, bistacksize, bistack_size, 1500);
-    GETPARAM (param_lig_table_size, ligtablesize, lig_table_size, 15000);
-    GETPARAM (param_path_size, pathsize, path_size, 10000);
+    GETPARAM (param_bistack_size,
+	      bistacksize,
+	      bistack_size,
+	      mfapp::mfapp::bistack_size());
+    GETPARAM (param_lig_table_size,
+	      ligtablesize,
+	      lig_table_size,
+	      mfapp::mfapp::lig_table_size());
+    GETPARAM (param_path_size,
+	      pathsize,
+	      path_size,
+	      mfapp::mfapp::path_size());
 
     Allocate (THEDATA(bisectstack), THEDATA(bistacksize) + 1);
     Allocate (THEDATA(delta), THEDATA(pathsize) + 1);

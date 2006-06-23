@@ -61,6 +61,10 @@
 #include <miktex/inputline.h>
 #include <miktex/reg.h>
 
+namespace texmfapp {
+#include <miktex/texmfapp.defaults.h>
+}
+
 #pragma warning (push, 1)
 #include <string>
 #pragma warning (pop)
@@ -465,18 +469,54 @@ public:
   void
   AllocateMemory ()
   {
-    GETPARAM (param_buf_size, bufsize, buf_size, 200000);
-    GETPARAM (param_error_line, errorline, error_line, 79);
-    GETPARAM (param_half_error_line, halferrorline, half_error_line, 50);
-    GETPARAM (param_max_print_line, maxprintline, max_print_line, 79);
-    GETPARAM (param_max_strings, maxstrings, max_strings, 100000);
-    GETPARAM (param_mem_max, memmax, mem_max, 2000000);
-    GETPARAM (param_mem_min, memmin, mem_min, 0);
-    GETPARAM (param_mem_top, memtop, mem_top, 1048576);
-    GETPARAM (param_param_size, paramsize, param_size, 5000);
-    GETPARAM (param_pool_size, poolsize, pool_size, 1250000);
-    GETPARAM (param_stack_size, stacksize, stack_size, 1500);
-    GETPARAM (param_string_vacancies, stringvacancies, string_vacancies, 400000);
+    GETPARAM (param_buf_size,
+	      bufsize,
+	      buf_size,
+	      texmfapp::texmfapp::buf_size());
+    GETPARAM (param_error_line,
+	      errorline,
+	      error_line,
+	      texmfapp::texmfapp::error_line());
+    GETPARAM (param_half_error_line,
+	      halferrorline,
+	      half_error_line,
+	      texmfapp::texmfapp::half_error_line());
+    GETPARAM (param_max_print_line,
+	      maxprintline,
+	      max_print_line,
+	      texmfapp::texmfapp::max_print_line());
+    GETPARAM (param_max_strings,
+	      maxstrings,
+	      max_strings,
+	      texmfapp::texmfapp::max_strings());
+    GETPARAM (param_mem_max,
+	      memmax,
+	      mem_max,
+	      texmfapp::texmfapp::mem_max());
+    GETPARAM (param_mem_min,
+	      memmin,
+	      mem_min,
+	      texmfapp::texmfapp::mem_min());
+    GETPARAM (param_mem_top,
+	      memtop,
+	      mem_top,
+	      texmfapp::texmfapp::mem_top());
+    GETPARAM (param_param_size,
+	      paramsize,
+	      param_size,
+	      texmfapp::texmfapp::param_size());
+    GETPARAM (param_pool_size,
+	      poolsize,
+	      pool_size,
+	      texmfapp::texmfapp::pool_size());
+    GETPARAM (param_stack_size,
+	      stacksize,
+	      stack_size,
+	      texmfapp::texmfapp::stack_size());
+    GETPARAM (param_string_vacancies,
+	      stringvacancies,
+	      string_vacancies,
+	      texmfapp::texmfapp::string_vacancies());
 
 #if ! defined(MIKTEX_OMEGA)
     THEDATA(maxstrings) += 0x100;

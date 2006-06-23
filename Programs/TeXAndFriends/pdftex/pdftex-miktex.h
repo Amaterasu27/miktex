@@ -44,6 +44,10 @@
 #include <miktex/paths.h>
 #include <miktex/texapp.h>
 
+namespace pdftex {
+#include <pdftex.defaults.h>
+}
+
 #ifndef MIKTEX_VIRTUAL_TEXAPP
 #  define MIKTEX_VIRTUAL_TEXAPP
 #endif
@@ -65,13 +69,16 @@ class PDFTEXCLASS
   {
     TeXApp::AllocateMemory ();
 
-    GETPARAM (-1, pdfmemsize, pdf_mem_size, 65536);
+    GETPARAM (-1, pdfmemsize, pdf_mem_size, pdftex::pdftex::pdf_mem_size());
     Allocate (THEDATA(pdfmem), THEDATA(pdfmemsize));
     
-    GETPARAM (-1, objtabsize, obj_tab_size, 300000);
+    GETPARAM (-1, objtabsize, obj_tab_size, pdftex::pdftex::obj_tab_size());
     Allocate (THEDATA(objtab), THEDATA(objtabsize));
 
-    GETPARAM (-1, destnamessize, dest_names_size, 300000);
+    GETPARAM (-1,
+	      destnamessize,
+	      dest_names_size,
+	      pdftex::pdftex::dest_names_size());
     Allocate (THEDATA(destnames), THEDATA(destnamessize));
     
     Allocate (THEDATA(pdfcharused), THEDATA(fontmax) + 1 - constfontbase);
