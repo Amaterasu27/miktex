@@ -360,6 +360,21 @@ public:
   MIKTEXCALL
   DeleteKey (/*[in]*/ const MIKTEXCHAR * lpszKey);
 
+public:
+  virtual
+  MIKTEXCHAR *
+  MIKTEXCALL
+  FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+	      /*[out]*/ MIKTEXCHAR *		lpszValueName,
+	      /*[in]*/ size_t			valueNameSize);
+
+public:
+  virtual
+  MIKTEXCHAR *
+  MIKTEXCALL
+  NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
+	     /*[in]*/ size_t		valueNameSize);
+
 private:
   void
   Read (/*[in]*/ const PathName &	path,
@@ -385,9 +400,15 @@ private:
   
 private:
   KeyMap keyMap;
-  
+
 private:
   KeyMap::const_iterator iter;
+
+private:
+  ValueMap::const_iterator iter2;
+  
+private:
+  ValueMap::const_iterator iter3;
   
 private:
   bool tracking;
@@ -1297,6 +1318,67 @@ CfgImpl::NextKey (/*[out]*/ MIKTEXCHAR *	lpsz,
   Utils::CopyString (lpsz, bufSize, iter->first.c_str());
 
   return (lpsz);
+}
+
+/* _________________________________________________________________________
+
+   CfgImpl::FirstValue
+   _________________________________________________________________________ */
+
+MIKTEXCHAR *
+CfgImpl::FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+		     /*[out]*/ MIKTEXCHAR *		lpszValueName,
+		     /*[in]*/ size_t			valueNameSize)
+{
+  MIKTEX_ASSERT_STRING (lpszKey);
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszValueName, valueNameSize);
+
+  CfgKey * pCfgKey = FindKey(lpszKey);
+
+  if (pCfgKey == 0)
+    {
+      UNEXPECTED_CONDITION (T_("CfgImpl::FirstValue"));
+    }
+
+  iter2 = pCfgKey->valueMap.begin();
+  iter3 = pCfgKey->valueMap.end();
+
+  if (iter2 == iter3)
+    {
+      return (0);
+    }
+
+  Utils::CopyString (lpszValueName, valueNameSize, iter2->first.c_str());
+
+  return (lpszValueName);
+}
+
+/* _________________________________________________________________________
+
+   CfgImpl::NextValue
+   _________________________________________________________________________ */
+
+MIKTEXCHAR *
+CfgImpl::NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
+		    /*[in]*/ size_t		valueNameSize)
+{
+  MIKTEX_ASSERT_CHAR_BUFFER (lpsz, bufSize);
+
+  if (iter2 == iter3)
+    {
+      INVALID_ARGUMENT (T_("CfgImpl::NextValue"), 0);
+    }
+
+  ++ iter2;
+
+  if (iter2 == iter3)
+    {
+      return (0);
+    }
+
+  Utils::CopyString (lpszValueName, valueNameSize, iter2->first.c_str());
+
+  return (lpszValueName);
 }
 
 /* _________________________________________________________________________

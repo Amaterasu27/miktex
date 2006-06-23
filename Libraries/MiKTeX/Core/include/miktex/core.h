@@ -3407,6 +3407,26 @@ public:
   MIKTEXCALL
   DeleteKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
     = 0;
+
+  /// Starts a value iteration.
+public:
+  virtual
+  MIKTEXCHAR *
+  MIKTEXCALL
+  FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+	      /*[out]*/ MIKTEXCHAR *		lpszValueName,
+	      /*[in]*/ size_t			valueNameSize)
+    = 0;
+
+  /// Continues a value iteration.
+public:
+  virtual
+  MIKTEXCHAR *
+  MIKTEXCALL
+  NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
+	     /*[in]*/ size_t		valueNameSize)
+    = 0;
+
 };				// class Cfg
 
 /* _________________________________________________________________________
