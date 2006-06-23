@@ -44,7 +44,7 @@
 #include <miktex/texapp.h>
 
 namespace omega {
-#include "omega.defaults.h"
+#include <omega.defaults.h>
 }
 
 #if ! defined(MIKTEX_VIRTUAL_TEXAPP)
