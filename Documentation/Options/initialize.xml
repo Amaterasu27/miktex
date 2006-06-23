@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-initialize</option></term>
+<term><option>--initialize</option></term>
 <listitem><para>Become the <emphasis>INI</emphasis> variant
 <indexterm>
-<primary>-initialize</primary>
+<primary>--initialize</primary>
 </indexterm>
 of the compiler.</para></listitem>
 </varlistentry>

@@ -1,10 +1,8 @@
 <varlistentry>
-<term><option>-trie-op-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
-<varname>trie_op_size</varname> to <replaceable>n</replaceable>.</para>
-<para><varname>trie_op_size</varname> is the amount of space
+<term><option>--trie-op-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the amount of space
 <indexterm>
-<primary>-trie-op-size=n</primary>
+<primary>--trie-op-size=n</primary>
 </indexterm>
 for <quote>opcodes</quote> in the hyphenation patterns.</para></listitem>
 </varlistentry>

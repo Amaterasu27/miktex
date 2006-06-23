@@ -1,13 +1,11 @@
 <varlistentry>
-<term><option>-max-print-line=<replaceable>n</replaceable></option></term>
+<term><option>--max-print-line=<replaceable>n</replaceable></option></term>
 <listitem>
-<para>Set the internal compiler variable <varname>max-print-line</varname> to
+<para>Set the
 <indexterm>
-<primary>-max-print-line=n</primary>
+<primary>--max-print-line=n</primary>
 </indexterm>
-<replaceable>n</replaceable>.</para>
-<para><varname>max-print-line</varname> is the width of
-longest text lines output; should be at least
+width of longest text lines output; should be at least
 <literal>60</literal>.</para></listitem>
 </varlistentry>
 

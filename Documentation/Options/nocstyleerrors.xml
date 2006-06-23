@@ -1,14 +1,14 @@
 <varlistentry>
-<term><option>-no-c-style-errors</option></term>
+<term><option>--no-c-style-errors</option></term>
 <listitem><para>Don't change the way, error messages are printed.
 <indexterm>
-<primary>-no-c-style-errors</primary>
+<primary>--no-c-style-errors</primary>
 </indexterm>
 <indexterm>
-<primary>-no-file-line-error</primary>
+<primary>--no-file-line-error</primary>
 </indexterm>
 <indexterm>
-<primary>-no-file-line-error-style</primary>
+<primary>--no-file-line-error-style</primary>
 </indexterm></para></listitem>
 </varlistentry>
 

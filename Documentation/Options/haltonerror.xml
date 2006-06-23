@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-halt-on-error</option></term>
+<term><option>--halt-on-error</option></term>
 <listitem><para>Quit after the
 <indexterm>
-<primary>-halt-on-error</primary>
+<primary>--halt-on-error</primary>
 </indexterm>
 first error.</para></listitem>
 </varlistentry>

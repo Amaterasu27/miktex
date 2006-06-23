@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-mltex</option></term>
+<term><option>--mltex</option></term>
 <listitem>
 <indexterm>
-<primary>-mltex</primary>
+<primary>--ltex</primary>
 </indexterm>
 <para>Enable &MLTeX; extensions such
 as <markup role="tex">\charsubdef</markup>.</para></listitem>

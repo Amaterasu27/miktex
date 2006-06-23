@@ -1,10 +1,10 @@
 <varlistentry>
-<term><option>-output-directory=<replaceable>dir</replaceable></option></term>
+<term><option>--output-directory=<replaceable>dir</replaceable></option></term>
 <listitem><para>Create output files in <replaceable>dir</replaceable>.
 <indexterm>
-<primary>-output-directory=dir</primary>
+<primary>--output-directory=dir</primary>
 </indexterm>
-This implies <option>-include-directory=<replaceable>dir</replaceable></option>.</para></listitem>
+This implies <option>--include-directory=<replaceable>dir</replaceable></option>.</para></listitem>
 </varlistentry>
 
 <!--

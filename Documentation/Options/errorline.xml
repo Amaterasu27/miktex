@@ -1,11 +1,9 @@
 <varlistentry>
-<term><option>-error-line=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
-<varname>error_line</varname> to <replaceable>n</replaceable>.</para>
-
-<para><varname>error_line</varname> is the width of context lines on
+<term><option>--error-line=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
+ width of context lines on
 <indexterm>
-<primary>-error-line=n</primary>
+<primary>--error-line=n</primary>
 </indexterm>
 <indexterm>
 <primary>error messages</primary>

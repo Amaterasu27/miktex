@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-src-specials</option></term>
+<term><option>--src-specials</option></term>
 <listitem><para>Embed source file information (source specials) in the
 <indexterm>
-<primary>-src-specials</primary>
+<primary>--src-specials</primary>
 </indexterm>
 <indexterm>
 <primary>-src</primary>

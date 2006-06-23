@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-undump=<replaceable>name</replaceable></option></term>
+<term><option>--undump=<replaceable>name</replaceable></option></term>
 <listitem><para>Use <replaceable>name</replaceable> as the name of the format to
 <indexterm>
-<primary>-undump=name</primary>
+<primary>--undump=name</primary>
 </indexterm>
 be used, instead of the name by which the program was called or a
 <programlisting>%&amp;</programlisting>

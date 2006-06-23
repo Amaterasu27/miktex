@@ -1,11 +1,11 @@
 <varlistentry>
-<term><option>-disable-write18</option></term>
+<term><option>--disable-write18</option></term>
 <listitem>
 <indexterm>
-<primary>-disable-write18</primary>
+<primary>--disable-write18</primary>
 </indexterm>
 <indexterm>
-<primary>-no-shell-escape</primary>
+<primary>--no-shell-escape</primary>
 </indexterm>
 <indexterm>
 <primary>\write18 (run a program from within TeX)</primary>

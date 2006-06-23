@@ -1,11 +1,10 @@
 <varlistentry>
-<term><option>-pool-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable <varname>pool_size</varname> to
-<replaceable>n</replaceable>.</para>
+<term><option>--pool-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-pool-size=n</primary>
+<primary>--pool-size=n</primary>
 </indexterm>
-<para><varname>pool_size</varname> is the maximum number of
+maximum number of
 characters in strings, including all error messages and
 help texts, and the names of all fonts and control
 sequences; must exceed

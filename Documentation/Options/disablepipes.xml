@@ -1,9 +1,9 @@
 <varlistentry>
-<term><option>-disable-pipes</option></term>
+<term><option>--disable-pipes</option></term>
 <listitem>
 <para>Disable input
 <indexterm>
-<primary>-disable-pipes</primary>
+<primary>--disable-pipes</primary>
 </indexterm>
 (output) from (to) child processes.</para></listitem>
 </varlistentry>

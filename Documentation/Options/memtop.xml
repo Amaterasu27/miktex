@@ -1,10 +1,8 @@
 <varlistentry>
-<term><option>-mem-top=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable <varname>mem_top</varname> to
-<replaceable>n</replaceable>.</para>
-<para><varname>mem_top</varname> is the largest index in the
+<term><option>--mem-top=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the largest index in the
 <indexterm>
-<primary>-mem-top=n</primary>
+<primary>--mem-top=n</primary>
 </indexterm>
 internal memory array dumped by the <emphasis>INI</emphasis> variant
 of the compiler; must be substantially

@@ -1,11 +1,10 @@
 <varlistentry>
-<term><option>-move-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable <varname>move_size</varname>
-to <replaceable>n</replaceable>.</para>
+<term><option>--move-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-move-size=n</primary>
+<primary>--move-size=n</primary>
 </indexterm>
-<para><varname>move_size</varname> is the space for storing moves in a single octant.</para></listitem>
+the space for storing moves in a single octant.</para></listitem>
 </varlistentry>
 
 <!--

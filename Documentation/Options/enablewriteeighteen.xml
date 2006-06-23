@@ -1,11 +1,11 @@
 <varlistentry>
-<term><option>-enable-write18</option></term>
+<term><option>--enable-write18</option></term>
 <listitem>
 <indexterm>
-<primary>-enable-write18</primary>
+<primary>--enable-write18</primary>
 </indexterm>
 <indexterm>
-<primary>-shell-escape</primary>
+<primary>--shell-escape</primary>
 </indexterm>
 <indexterm>
 <primary>\write18 (run a program from within TeX)</primary>

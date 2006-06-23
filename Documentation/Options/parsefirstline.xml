@@ -1,9 +1,9 @@
 <varlistentry>
-<term><option>-parse-first-line</option></term>
+<term><option>--parse-first-line</option></term>
 <listitem><para>Check whether the first line of the main input file
 starts with <markup>%&amp;</markup>, and parse if it does.
 <indexterm>
-<primary>-parse-first-line</primary>
+<primary>--parse-first-line</primary>
 </indexterm>
 This can be used to specify extra command-line options.</para></listitem>
 </varlistentry>

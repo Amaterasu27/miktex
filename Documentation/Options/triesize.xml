@@ -1,11 +1,9 @@
 <varlistentry>
-<term><option>-trie-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
-<varname>trie_size</varname> to <replaceable>n</replaceable>.</para>
-<para><varname>trie_size</varname> is the amount of space for
+<term><option>--trie-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the amount of space for
 hyphenation patterns; should be larger for the <emphasis>INI</emphasis>
 <indexterm>
-<primary>-trie-size=n</primary>
+<primary>--trie-size=n</primary>
 </indexterm>
 variant of the compiler.</para></listitem>
 </varlistentry>

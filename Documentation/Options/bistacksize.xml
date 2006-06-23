@@ -1,13 +1,10 @@
 <varlistentry>
-<term><option>-bistack-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
+<term><option>--bistack-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-bistack-size=n</primary>
+<primary>--bistack-size=n</primary>
 </indexterm>
-<varname>bistack_size</varname> to
-<replaceable>n</replaceable>.</para>
-<para><varname>bistack_size</varname> is the size of the stack for
-bisection algorithms.</para></listitem>
+size of the stack for bisection algorithms.</para></listitem>
 </varlistentry>
 
 <!--

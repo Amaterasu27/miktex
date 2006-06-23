@@ -1,9 +1,9 @@
 <varlistentry>
-<term><option>-interaction=<replaceable>mode</replaceable></option></term>
+<term><option>--interaction=<replaceable>mode</replaceable></option></term>
 <listitem><para>Set the interaction mode.
 Must be one of <option>batchmode</option>,
 <indexterm>
-<primary>-interaction=mode</primary>
+<primary>--interaction=mode</primary>
 </indexterm>
 <option>nonstopmode</option>,
 <option>scrollmode</option> and

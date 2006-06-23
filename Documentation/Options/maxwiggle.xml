@@ -1,11 +1,10 @@
 <varlistentry>
-<term><option>-max-wiggle=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
-<varname>max-wiggle</varname> to <replaceable>n</replaceable>.</para>
+<term><option>--max-wiggle=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-max-wiggle=n</primary>
+<primary>--max-wiggle=n</primary>
 </indexterm>
-<para><varname>max_wiggle</varname> is number of autorounded points per cycle.</para></listitem>
+number of autorounded points per cycle.</para></listitem>
 </varlistentry>
 
 <!--

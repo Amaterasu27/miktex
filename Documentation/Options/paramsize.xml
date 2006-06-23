@@ -1,11 +1,10 @@
 <varlistentry>
-<term><option>-param-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable <varname>param_size</varname> to
-<replaceable>n</replaceable>.</para>
+<term><option>--param-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-param-size=n</primary>
+<primary>--param-size=n</primary>
 </indexterm>
-<para><varname>param_size</varname> is the maximum number of
+the maximum number of
 simultaneous macro parameters.</para></listitem>
 </varlistentry>
 

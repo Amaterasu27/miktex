@@ -1,12 +1,11 @@
 <varlistentry>
-<term><option>-half-error-line=<replaceable>n</replaceable></option></term>
+<term><option>--half-error-line=<replaceable>n</replaceable></option></term>
 <listitem>
-<para>Set the internal compiler variable <varname>half_error_line</varname> to
+<para>Set the
 <indexterm>
-<primary>-half-error=n</primary>
+<primary>--half-error=n</primary>
 </indexterm>
-<replaceable>n</replaceable>.</para>
-<para><varname>half_error_line</varname> is the width of first
+width of first
 lines of contexts in terminal error messages.</para></listitem>
 </varlistentry>
 

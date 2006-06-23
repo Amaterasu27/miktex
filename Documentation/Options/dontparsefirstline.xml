@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-dont-parse-first-line</option></term>
+<term><option>--dont-parse-first-line</option></term>
 <listitem><para>Disable checking whether the first line of the main input file
 <indexterm>
-<primary>-dont-parse-first-line</primary>
+<primary>--dont-parse-first-line</primary>
 </indexterm>
 starts with <markup>%&amp;</markup>.</para></listitem>
 </varlistentry>

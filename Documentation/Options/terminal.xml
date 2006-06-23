@@ -1,8 +1,8 @@
 <varlistentry>
-<term><option>-terminal=oem</option></term>
+<term><option>--terminal=oem</option></term>
 <listitem><para>Use the active code page
 <indexterm>
-<primary>-terminal=oem</primary>
+<primary>--terminal=oem</primary>
 </indexterm>
 (e.g., <literal>437 </literal>) for console output.</para></listitem>
 </varlistentry>

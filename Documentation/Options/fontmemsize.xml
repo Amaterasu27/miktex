@@ -1,11 +1,9 @@
 <varlistentry>
-<term><option>-font-mem-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable <varname>font_mem_size</varname> to
+<term><option>--font-mem-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-font-mem-size=n</primary>
+<primary>--font-mem-size=n</primary>
 </indexterm>
-<replaceable>n</replaceable>.</para>
-<para><varname>font_mem_size</varname> is the
 size, in &TeX; memory words, of the font memory.</para></listitem>
 </varlistentry>
 

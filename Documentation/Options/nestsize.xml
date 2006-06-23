@@ -1,12 +1,10 @@
 <varlistentry>
-<term><option>-nest-size=<replaceable>n</replaceable></option></term>
-<listitem><para>Set the internal compiler variable
-<varname>nest_size</varname> to
+<term><option>--nest-size=<replaceable>n</replaceable></option></term>
+<listitem><para>Set the
 <indexterm>
-<primary>-nest-size=n</primary>
+<primary>--nest-size=n</primary>
 </indexterm>
-<replaceable>n</replaceable>.</para>
-<para><varname>nest_size</varname> is the maximum number of
+maximum number of
 semantic levels simultaneously active.</para></listitem>
 </varlistentry>
 

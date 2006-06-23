@@ -1,9 +1,9 @@
 <varlistentry>
-<term><option>-record-package-usages=<replaceable>file</replaceable></option></term>
+<term><option>--record-package-usages=<replaceable>file</replaceable></option></term>
 <listitem>
 <para>Record all package usages and write
 <indexterm>
-<primary>-record-package-usages=file</primary>
+<primary>--record-package-usages=file</primary>
 </indexterm>
 them into <replaceable>file</replaceable>.</para></listitem>
 </varlistentry>

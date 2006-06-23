@@ -1,9 +1,9 @@
 <varlistentry>
-<term><option>-enable-installer</option></term>
+<term><option>--enable-installer</option></term>
 <listitem>
 <para>Enable automatic installation of missing packages.
 <indexterm>
-<primary>-enable-installer</primary>
+<primary>--enable-installer</primary>
 </indexterm>
 Specifying this option overwrites the global configuration setting in
 &MiKTeXOptions; (see <xref linkend="autoinstall"/>).</para></listitem>
