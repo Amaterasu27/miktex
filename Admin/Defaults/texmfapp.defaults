@@ -25,7 +25,7 @@ mem_bot=0
 mem_max=2000000
 
 ;; Smallest index in TeX's internal mem array; must be 0 or more;
-;; must be equal to mem_bot in INITEX, otherwise <=mem_bot.
+;; must be equal to mem_bot in INITEX, otherwise &lt;=mem_bot.
 mem_min=0
 
 ;; Largest index in the mem array dumped by INITEX; must be substantially

@@ -51,6 +51,7 @@
 <!ENTITY TCX "<acronym>TCX</acronym>">
 <!ENTITY TDS "<acronym>TDS</acronym>">
 <!ENTITY TEXMF "<acronym>TEXMF</acronym>">
+<!ENTITY TeXMF "&TeX;MF">
 <!ENTITY TeX "<application>TeX</application>">
 <!ENTITY TeXify "<application>TeXify</application>">
 <!ENTITY Texinfo "<application>Texinfo</application>">

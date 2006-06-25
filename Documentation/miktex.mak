@@ -174,7 +174,15 @@ manual_xml_files = \
 	miktex.xml \
 
 manual_listings = \
-	filetypes
+	$(miktexsrcdir)\Admin\Defaults\mf.defaults \
+	$(miktexsrcdir)\Admin\Defaults\mfapp.defaults \
+	$(miktexsrcdir)\Admin\Defaults\mpost.defaults \
+	$(miktexsrcdir)\Admin\Defaults\omega.defaults \
+	$(miktexsrcdir)\Admin\Defaults\pdftex.defaults \
+	$(miktexsrcdir)\Admin\Defaults\texapp.defaults \
+	$(miktexsrcdir)\Admin\Defaults\texmfapp.defaults \
+	filetypes \
+
 
 documents = $(html_files) $(chm_files) $(pdf_files)
 

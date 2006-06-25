@@ -9,6 +9,14 @@
 <!ENTITY month "June 2006">
 <!ENTITY date "June 22, 2006">
 
+<!ENTITY mfappdefaults SYSTEM "../Admin/Defaults/mfapp.defaults">
+<!ENTITY mfdefaults SYSTEM "../Admin/Defaults/mf.defaults">
+<!ENTITY mpostdefaults SYSTEM "../Admin/Defaults/mpost.defaults">
+<!ENTITY omegadefaults SYSTEM "../Admin/Defaults/omega.defaults">
+<!ENTITY pdftexdefaults SYSTEM "../Admin/Defaults/pdftex.defaults">
+<!ENTITY texappdefaults SYSTEM "../Admin/Defaults/texapp.defaults">
+<!ENTITY texmfappdefaults SYSTEM "../Admin/Defaults/texmfapp.defaults">
+
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
 <!ENTITY installing SYSTEM "Manual/installing.xml">
@@ -504,6 +512,68 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 &manpdftexcfg;
 &manupdmapcfg;
+
+</chapter>
+
+<chapter>
+
+<title>Compile Time Defaults</title>
+
+<section>
+
+<title>All &TeXMF; Programs</title>
+
+<programlisting>&texmfappdefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>All &TeX; Programs</title>
+
+<programlisting>&texappdefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>&Omega;</title>
+
+<programlisting>&omegadefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>&pdfTeX;</title>
+
+<programlisting>&pdftexdefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>&METAFONT; &amp; &MetaPost;</title>
+
+<programlisting>&mfappdefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>&METAFONT;</title>
+
+<programlisting>&mfdefaults;</programlisting>
+
+</section>
+
+<section>
+
+<title>&MetaPost;</title>
+
+<programlisting>&mpostdefaults;</programlisting>
+
+</section>
 
 </chapter>
 
