@@ -123,10 +123,6 @@ KPSE::FindGlyph (/*[in]*/ MIKTEXCHAR *			lpszFontName,
 	 }
     }
   MIKTEXCHAR * lpsz = KPSE::StrDup(path.Get());
-  if (lpsz == 0)
-    {
-      return (0);
-    }
   if (glyph_file != 0)
     {
       glyph_file->name = lpszFontName;
