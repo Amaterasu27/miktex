@@ -169,6 +169,12 @@ KPSE::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   Session * pSession = Session::Get();
   switch (format)
     {
+    case kpse_bib_format:
+      found = pSession->FindFile(lpszFileName, FileType::BIB, result);
+      break;
+    case kpse_bst_format:
+      found = pSession->FindFile(lpszFileName, FileType::BST, result);
+      break;
     case kpse_dvips_config_format:
       found = pSession->FindFile(lpszFileName, FileType::DVIPSCONFIG, result);
       break;
