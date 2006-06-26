@@ -109,7 +109,7 @@ private:
       }
     else
       {
-	FatalError (T_("Unknown engine."));
+	FatalError (T_("Unknown engine: %s"), lpszEngine);
       }
   }
 
