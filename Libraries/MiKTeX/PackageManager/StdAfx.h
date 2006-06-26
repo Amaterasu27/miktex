@@ -81,6 +81,7 @@ using stdext::hash_set;
 
 #include <bzlib.h>
 #include <miktex/core.h>
+#include <miktex/env.h>
 #include <miktex/md5.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

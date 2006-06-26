@@ -1435,66 +1435,6 @@ PackageInstallerImpl::DownloadPackage (/*[in]*/ const tstring & deploymentName)
 
 /* _________________________________________________________________________
 
-   IsUrl
-   _________________________________________________________________________ */
-
-MPMSTATICFUNC(bool)
-IsUrl (/*[in]*/ const tstring & url)
-{
-  tstring::size_type pos = url.find(T_("://"));
-  if (pos == tstring::npos)
-    {
-      return (false);
-    }
-  tstring scheme = url.substr(0, pos);
-  for (tstring::const_iterator it = scheme.begin(); it != scheme.end(); ++ it)
-    {
-      if (! isalpha(*it, locale()))
-	{
-	  return (false);
-	}
-    }
-  return (true);
-}
-
-
-/* _________________________________________________________________________
-
-   PackageInstallerImpl::DetermineRepositoryType
-   _________________________________________________________________________ */
-
-RepositoryType
-PackageInstallerImpl::DetermineRepositoryType ()
-{
-  if (IsUrl(repository))
-    {
-      return (RepositoryType::Remote);
-    }
-
-  if (! Utils::IsAbsolutePath(repository.c_str()))
-    {
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::DetermineRepositoryType"),
-		       T_("Invalid package repository."),
-		       repository.c_str());
-    }
-
-  if (PackageManager::IsLocalPackageRepository(repository))
-    {
-      return (RepositoryType::Local);
-    }
-
-  if (Utils::IsMiKTeXDirectRoot(repository))
-    {
-      return (RepositoryType::MiKTeXDirect);
-    }
-
-  FATAL_MPM_ERROR (T_("PackageInstallerImpl::DetermineRepositoryType"),
-		   T_("Not a valid installation source."),
-		   repository.c_str());
-}
-
-/* _________________________________________________________________________
-
    PackageInstallerImpl::CalculateExpenditure
    _________________________________________________________________________ */
 

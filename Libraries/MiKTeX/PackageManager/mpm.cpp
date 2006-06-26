@@ -829,6 +829,66 @@ PackageManager::GetRemotePackageRepository ()
 
 /* _________________________________________________________________________
 
+   IsUrl
+   _________________________________________________________________________ */
+
+MPMSTATICFUNC(bool)
+IsUrl (/*[in]*/ const tstring & url)
+{
+  tstring::size_type pos = url.find(T_("://"));
+  if (pos == tstring::npos)
+    {
+      return (false);
+    }
+  tstring scheme = url.substr(0, pos);
+  for (tstring::const_iterator it = scheme.begin(); it != scheme.end(); ++ it)
+    {
+      if (! isalpha(*it, locale()))
+	{
+	  return (false);
+	}
+    }
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::DetermineRepositoryType
+   _________________________________________________________________________ */
+
+RepositoryType
+PackageManagerImpl::DetermineRepositoryType
+(/*[in]*/ const tstring & repository)
+{
+  if (IsUrl(repository))
+    {
+      return (RepositoryType::Remote);
+    }
+
+  if (! Utils::IsAbsolutePath(repository.c_str()))
+    {
+      FATAL_MPM_ERROR (T_("PackageManagerImpl::DetermineRepositoryType"),
+		       T_("Invalid package repository."),
+		       repository.c_str());
+    }
+
+  if (PackageManager::IsLocalPackageRepository(repository))
+    {
+      return (RepositoryType::Local);
+    }
+
+  if (Utils::IsMiKTeXDirectRoot(repository.c_str()))
+    {
+      return (RepositoryType::MiKTeXDirect);
+    }
+
+  FATAL_MPM_ERROR (T_("PackageManagerImpl::DetermineRepositoryType"),
+		   T_("Not a valid installation source."),
+		   repository.c_str());
+}
+
+/* _________________________________________________________________________
+
    PackageManager::SetRemotePackageRepository
    _________________________________________________________________________ */
 
@@ -969,34 +1029,42 @@ PackageManager::TryGetDefaultPackageRepository
 (/*[out]*/ RepositoryType &	repositoryType,
  /*[out]*/ tstring &		urlOrPath)
 {
-  tstring str;
-  if (! (SessionWrapper(true)
-	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			     MIKTEX_REGVAL_PACKAGE_REPOSITORY_TYPE,
-			     str)))
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, urlOrPath))
     {
-      return (false);
-    }
-  if (str == T_("remote"))
-    {
-      urlOrPath = GetRemotePackageRepository();
-      repositoryType = RepositoryType::Remote;
-    }
-  else if (str == (T_("local")))
-    {
-      urlOrPath = GetLocalPackageRepository().Get();
-      repositoryType = RepositoryType::Local;
-    }
-  else if (str == T_("direct"))
-    {
-      urlOrPath = GetMiKTeXDirectRoot().Get();
-      repositoryType = RepositoryType::MiKTeXDirect;
+      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
     }
   else
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::TryGetDefaultPackageRepository"),
-			  T_("Invalid registry settings."),
-			  0);
+      tstring str;
+      if (! (SessionWrapper(true)
+	     ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+				 MIKTEX_REGVAL_PACKAGE_REPOSITORY_TYPE,
+				 str)))
+	{
+	  return (false);
+	}
+      if (str == T_("remote"))
+	{
+	  urlOrPath = GetRemotePackageRepository();
+	  repositoryType = RepositoryType::Remote;
+	}
+      else if (str == (T_("local")))
+	{
+	  urlOrPath = GetLocalPackageRepository().Get();
+	  repositoryType = RepositoryType::Local;
+	}
+      else if (str == T_("direct"))
+	{
+	  urlOrPath = GetMiKTeXDirectRoot().Get();
+	  repositoryType = RepositoryType::MiKTeXDirect;
+	}
+      else
+	{
+	  FATAL_MIKTEX_ERROR
+	    (T_("PackageManager::TryGetDefaultPackageRepository"),
+	     T_("Invalid registry settings."),
+	     0);
+	}
     }
   return (true);
 }
@@ -1032,6 +1100,10 @@ PackageManager::SetDefaultPackageRepository
 (/*[in]*/ RepositoryType	repositoryType,
  /*[in]*/ const tstring &	urlOrPath)
 {
+  if (repositoryType == RepositoryType::Unknown)
+    {
+      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
+    }
   tstring repositoryTypeStr;
   switch (repositoryType.Get())
     {

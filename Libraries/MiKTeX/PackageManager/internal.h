@@ -1048,6 +1048,11 @@ private:
   void
   Dispose ();
 
+public:
+  static
+  RepositoryType
+  DetermineRepositoryType (/*[in]*/ const tstring & repository);
+
 private:
   int refCount;
 
@@ -1357,7 +1362,8 @@ public:
   SetRepository (/*[in]*/ const MiKTeX::Core::tstring & repository)
   {
     this->repository = repository;
-    repositoryType = DetermineRepositoryType();
+    repositoryType =
+      PackageManagerImpl::DetermineRepositoryType(repository);
   }
 
 public:
@@ -1597,10 +1603,6 @@ private:
 	throw OperationCancelledException ();
       }
   }
-
-private:
-  RepositoryType
-  DetermineRepositoryType ();
 
 private:
   bool autoFndbSync;
