@@ -37,6 +37,7 @@
    ConfigMapping
    _________________________________________________________________________ */
 
+#if 0
 struct ConfigMapping
 {
   const MIKTEXCHAR *	lpszConfigSection;
@@ -47,12 +48,14 @@ struct ConfigMapping
   const MIKTEXCHAR *	lpszRegValueName;
 #endif
 };
+#endif
 
 /* _________________________________________________________________________
 
    configMappings
    _________________________________________________________________________ */
 
+#if 0
 namespace {
   const ConfigMapping configMappings[] = {
     {
@@ -62,12 +65,14 @@ namespace {
     },
   };
 }
+#endif
 
 /* _________________________________________________________________________
 
    FindConfigMapping
    _________________________________________________________________________ */
 
+#if 0
 MIKTEXSTATICFUNC(const ConfigMapping *)
 FindConfigMapping (/*[in]*/ const MIKTEXCHAR *	lpszConfigSection,
 		   /*[in]*/ const MIKTEXCHAR *	lpszConfigValueName)
@@ -90,6 +95,7 @@ FindConfigMapping (/*[in]*/ const MIKTEXCHAR *	lpszConfigSection,
     }
   return (0);
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -536,40 +542,36 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 	  lpszSectionName = app.GetCurrent();
 	}
 
+#if 0
       const ConfigMapping * pMapping =
 	FindConfigMapping(lpszSectionName, lpszValueName);
-      
+
+      if (pMapping != 0
+	  && pMapping->lpszEnvVarName != 0
+	  && Utils::GetEnvironmentString(pMapping->lpszEnvVarName, value)
+	{
+	  return (true);
+	}
+#endif
+ 
       // <undocumented>try environment variable
       // MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
       {
 	tstring envVarName;
-	if (pMapping != 0 && pMapping->lpszEnvVarName != 0)
+	envVarName.reserve (100);
+	AppendToEnvVarName (envVarName, MIKTEX_ENV_PREFIX);
+	envVarName += T_('_');
+	if (StringCompare(app.GetCurrent(), MIKTEX_ENV_PREFIX, true) != 0)
 	  {
-	    envVarName = pMapping->lpszEnvVarName;
-	  }
-	else
-	  {
-	    envVarName.reserve (100);
-	    AppendToEnvVarName (envVarName, MIKTEX_REGKEY_CORE);
+	    AppendToEnvVarName (envVarName, app.GetCurrent());
 	    envVarName += T_('_');
-	    if (StringCompare(app.GetCurrent(),
-			      MIKTEX_REGKEY_CORE,
-			      true)
-		!= 0)
-	      {
-		AppendToEnvVarName (envVarName, app.GetCurrent());
-		envVarName += T_('_');
-	      }
-	    if (StringCompare(lpszSectionName,
-			      MIKTEX_REGKEY_CORE,
-			      true)
-		!= 0)
-	      {
-		AppendToEnvVarName (envVarName, lpszSectionName);
-		envVarName += T_('_');
-	      }
-	    AppendToEnvVarName (envVarName, lpszValueName);
 	  }
+	if (StringCompare(lpszSectionName, MIKTEX_ENV_PREFIX, true) != 0)
+	  {
+	    AppendToEnvVarName (envVarName, lpszSectionName);
+	    envVarName += T_('_');
+	  }
+	AppendToEnvVarName (envVarName, lpszValueName);
 	if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	  {
 	    return (true);
@@ -711,8 +713,8 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
     }
 
   if (value == T_("0")
-      || value == T_("enable")
-      || value == T_("on")
+      || value == T_("disable")
+      || value == T_("off")
       || value == T_("f")
       || value == T_("false")
       || value == T_("n")
@@ -721,8 +723,8 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       return (false);
     }
   else if (! (value == T_("1")
-	      || value == T_("disable")
-	      || value == T_("off")
+	      || value == T_("enable")
+	      || value == T_("on")
 	      || value == T_("t")
 	      || value == T_("true")
 	      || value == T_("y")
