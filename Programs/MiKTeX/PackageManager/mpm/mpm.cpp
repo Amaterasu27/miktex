@@ -1256,7 +1256,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (optSetRepository)
     {
-      pPackageManager->SetRemotePackageRepository (repository);
+      pPackageManager->SetDefaultPackageRepository (RepositoryType::Unknown,
+						    repository);
       restartWindowed = false;
     }
 
