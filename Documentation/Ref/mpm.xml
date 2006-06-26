@@ -145,11 +145,11 @@ a list of working package repository URLs.</para></listitem>
 <primary>--set-repository=location</primary>
 </indexterm>
 <para>This option is only available on Windows systems:
-permanently register the location of the default package repository.
+permanently register the location of the default package repository
+in the user area of the Windows Registry.
 The location can be either a fully qualified path name (a local
-package repository) or an URL (a remote package repository).
-Setting the environment variable <envar>MIKTEX_REPOSITORY</envar>
-has the same effect.</para></listitem>
+package repository) or an <acronym>URL</acronym>
+(a remote package repository).</para></listitem>
 </varlistentry>
 &optiontrace;
 <varlistentry>
@@ -302,7 +302,7 @@ root of a &TDS;-compliant directory tree.</para>
 <primary>MIKTEX_REPOSITORY</primary>
 </indexterm>
 <para>Location of the package repository.  This can be either a fully
-qualified path name (a local package repository) or an URL
+qualified path name (a local package repository) or an <acronym>URL</acronym>
 (a remote package repository).</para>
 </listitem>
 </varlistentry>
