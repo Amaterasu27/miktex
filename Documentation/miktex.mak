@@ -107,6 +107,12 @@ manual_xml_files = \
 	Manual\tcxtables.xml \
 	Manual\texfeatures.xml \
 	Manual\texifying.xml \
+	EnvVars\MIKTEX_REPOSITORY.xml \
+	EnvVars\MFINPUTS.xml \
+	EnvVars\TEXINPUTS.xml \
+	EnvVars\MPINPUTS.xml \
+	EnvVars\BIBINPUTS.xml \
+	EnvVars\BSTINPUTS.xml \
 	Options\alias.xml \
 	Options\mltex.xml \
 	Options\auxdirectory.xml \

@@ -39,47 +39,47 @@ for &TeX; source files is used.</para>
 
 <variablelist>
 <varlistentry>
-<term><option>-alias=<replaceable>app</replaceable></option></term>
+<term><option>--alias=<replaceable>app</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-alias=app</primary>
+<primary>--alias=app</primary>
 </indexterm>
 <para>Pretend to be <replaceable>app</replaceable> when finding
 files.</para></listitem>
 </varlistentry>
 &optionhelp;
 <varlistentry>
-<term><option>-file-type=<replaceable>filetype</replaceable></option></term>
+<term><option>--file-type=<replaceable>filetype</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-file-type=filetype</primary>
+<primary>--file-type=filetype</primary>
 </indexterm>
 <para>Use the specified file type
 (see below).</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-must-exist</option></term>
+<term><option>--must-exist</option></term>
 <listitem>
 <indexterm>
-<primary>-must-exist</primary>
+<primary>--must-exist</primary>
 </indexterm>
 <para>Install missing packages,
 if necessary.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-show-path=<replaceable>filetype</replaceable></option></term>
+<term><option>--show-path=<replaceable>filetype</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-show-path=filetype</primary>
+<primary>--show-path=filetype</primary>
 </indexterm>
 <para>Output search path for the specified
 file type (see below).</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-start</option></term>
+<term><option>--start</option></term>
 <listitem>
 <indexterm>
-<primary>-start</primary>
+<primary>--start</primary>
 </indexterm>
 <para>Start the associated program,
 if the file was found.</para></listitem>

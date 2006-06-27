@@ -89,10 +89,10 @@ details of this format, and it gives other useful hints for using
 &optionhhelp;
 &optionincludedirectory;
 <varlistentry>
-<term><option>-min-crossrefs=<replaceable>n</replaceable></option></term>
+<term><option>--min-crossrefs=<replaceable>n</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-min-crossrefs=n</primary>
+<primary>--min-crossrefs=n</primary>
 </indexterm>
 <para>Defines the minimum number of
 <command>crossref</command>s required for automatic inclusion of the
@@ -115,26 +115,8 @@ crossref'd entry on the citation list; the default is two.</para></listitem>
 <title>Environment</title>
 
 <variablelist>
-<varlistentry>
-<term><envar>BIBINPUTS</envar></term>
-<listitem>
-<indexterm>
-<primary>BIBINPUTS</primary>
-</indexterm>
-<para>Extra paths to locate <filename>.bib</filename>
-files.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><envar>BSTINPUTS</envar></term>
-<listitem>
-<indexterm>
-<primary>BSTINPUTS</primary>
-</indexterm>
-<para>Extra paths to locate <filename>.bst</filename>
-files.</para>
-</listitem>
-</varlistentry>
+&BIBINPUTS;
+&BSTINPUTS;
 </variablelist>
 
 </refsect1>

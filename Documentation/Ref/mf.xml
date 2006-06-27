@@ -39,7 +39,7 @@ precompiled macros, and font generation in particular requires the
 support of several macro files.  &METAFONT; looks at its command line
 to see what name it was called under.  Both &inimf; and &virmf; are
 linked to the &mf; executable.  When called as &inimf; (or when the
-<option>-initialize</option> option is given) it can be used to
+<option>--initialize</option> option is given) it can be used to
 precompile macros into a <filename>.base</filename> file.  When called
 as &virmf; it will use the plain base.  When called under any other
 name, &METAFONT; will use that name as the name of the base to use.
@@ -130,7 +130,7 @@ to input anything.</para>
 
 <para>You can see &METAFONT;s output without printing.  Chapter&nbsp;23 of
 <citetitle>The &METAFONT;book</citetitle> describes what you can do.
-You enable screen ouput by giving <option>-screen</option> on the
+You enable screen ouput by giving <option>--screen</option> on the
 command-line.</para>
 
 </refsect1>
@@ -178,10 +178,10 @@ command-line.</para>
 &optionrecordpackageusages;
 &optionrecorder;
 <varlistentry>
-<term><option>-screen</option></term>
+<term><option>--screen</option></term>
 <listitem>
 <indexterm>
-<primary>-screen</primary>
+<primary>--screen</primary>
 </indexterm>
 <para>Enable screen
 output.</para></listitem>
@@ -194,6 +194,16 @@ output.</para></listitem>
 &optiontrace;
 &optionundump;
 &optionversion;
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
+<title>Environment</title>
+
+<variablelist>
+&MFINPUTS;
 </variablelist>
 
 </refsect1>

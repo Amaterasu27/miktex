@@ -53,29 +53,29 @@ by passing the documents through &dvicopy; first.</para>
 &optionhhelp;
 &optionincludedirectory;
 <varlistentry>
-<term><option>-mag=<replaceable>mag</replaceable></option></term>
+<term><option>--mag=<replaceable>mag</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-mag=mag</primary>
+<primary>--mag=mag</primary>
 </indexterm>
 <para>Override existing magnification with
 <replaceable>mag</replaceable>.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-max-pages=<replaceable>n</replaceable></option></term>
+<term><option>--max-pages=<replaceable>n</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-max-pages=n</primary>
+<primary>--max-pages=n</primary>
 </indexterm>
 <para>Process <replaceable>n</replaceable> pages; default
 one million.  This option cannot be used together with
 <option>-select</option>.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-page-start=<replaceable>page-spec</replaceable></option></term>
+<term><option>--page-start=<replaceable>page-spec</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-page-start=page-spec</primary>
+<primary>--page-start=page-spec</primary>
 </indexterm>
 <para>Start at <replaceable>page-spec</replaceable>, for
 example 2 or 5.*.-2.  This option cannot be used together with
@@ -83,10 +83,10 @@ example 2 or 5.*.-2.  This option cannot be used together with
 </varlistentry>
 &optionrecordpackageusages;
 <varlistentry>
-<term><option>-select=<replaceable>sel</replaceable></option></term>
+<term><option>--select=<replaceable>sel</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-select=sel</primary>
+<primary>--select=sel</primary>
 </indexterm>
 <para>Select pages to be copied.</para><para> The syntax for
 <replaceable>sel</replaceable> is:

@@ -94,23 +94,6 @@
 
 <refsect1>
 
-<title>Aliases</title>
-
-<variablelist>
-<varlistentry>
-<term>&iniomega;</term>
-<listitem><para>Equivalent to <userinput>omega --ini</userinput>.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&viromega;</term>
-<listitem><para>Equivalent to <userinput>omega</userinput>.</para></listitem>
-</varlistentry>
-</variablelist>
-
-</refsect1>
-
-<refsect1>
-
 <title>See also</title>
 
 <variablelist>

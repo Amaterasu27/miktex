@@ -118,6 +118,17 @@ and &PNG; graphics formats.</para>
 
 <refsect1>
 
+<title>Environment</title>
+
+<variablelist>
+&TEXINPUTS;
+&TFMFONTS;
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+
 <title>See also</title>
 
 <variablelist>

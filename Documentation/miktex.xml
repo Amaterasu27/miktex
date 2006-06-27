@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2364">
+<!ENTITY rev "2.5.2369">
 <!ENTITY month "June 2006">
-<!ENTITY date "June 22, 2006">
+<!ENTITY date "June 27, 2006">
 
 <!ENTITY mfappdefaults SYSTEM "../Admin/Defaults/mfapp.defaults">
 <!ENTITY mfdefaults SYSTEM "../Admin/Defaults/mf.defaults">
@@ -16,6 +16,15 @@
 <!ENTITY pdftexdefaults SYSTEM "../Admin/Defaults/pdftex.defaults">
 <!ENTITY texappdefaults SYSTEM "../Admin/Defaults/texapp.defaults">
 <!ENTITY texmfappdefaults SYSTEM "../Admin/Defaults/texmfapp.defaults">
+
+<!ENTITY MIKTEX_REPOSITORY SYSTEM "EnvVars/MIKTEX_REPOSITORY.xml">
+
+<!ENTITY TFMFONTS SYSTEM "EnvVars/TFMFONTS.xml">
+<!ENTITY TEXINPUTS SYSTEM "EnvVars/TEXINPUTS.xml">
+<!ENTITY MFINPUTS SYSTEM "EnvVars/MFINPUTS.xml">
+<!ENTITY MPINPUTS SYSTEM "EnvVars/MPINPUTS.xml">
+<!ENTITY BSTINPUTS SYSTEM "EnvVars/BSTINPUTS.xml">
+<!ENTITY BIBINPUTS SYSTEM "EnvVars/BIBINPUTS.xml">
 
 <!ENTITY configuring SYSTEM "Manual/configuring.xml">
 <!ENTITY features SYSTEM "Manual/features.xml">
@@ -230,7 +239,7 @@ formats</ulink>.</para>
 
 <toc/>
 
-<part>
+<part id="userguide">
 
 <title>User Guide</title>
 
@@ -242,7 +251,7 @@ formats</ulink>.</para>
 
 &configuring;
 
-<chapter>
+<chapter id="advanced">
 
 <title>Advanced Topics</title>
 
@@ -479,11 +488,11 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </part>
 
-<part>
+<part id="reference">
 
 <title>Reference</title>
 
-<chapter>
+<chapter id="programs">
 
 <title>Programs</title>
 
@@ -506,7 +515,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </chapter>
 
-<chapter>
+<chapter id="files">
 
 <title>Files</title>
 
@@ -515,11 +524,11 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </chapter>
 
-<chapter>
+<chapter id="defaults">
 
 <title>Compile Time Defaults</title>
 
-<section>
+<section id="texmfdefaults">
 
 <title>All &TeXMF; Programs</title>
 
@@ -527,7 +536,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="texdefaults">
 
 <title>All &TeX; Programs</title>
 
@@ -535,7 +544,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="omegadefaults">
 
 <title>&Omega;</title>
 
@@ -543,7 +552,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="pdftexdefaults">
 
 <title>&pdfTeX;</title>
 
@@ -551,7 +560,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="mpmfdefaults">
 
 <title>&METAFONT; &amp; &MetaPost;</title>
 
@@ -559,7 +568,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="mfdefaults">
 
 <title>&METAFONT;</title>
 
@@ -567,7 +576,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="mpostdefaults">
 
 <title>&MetaPost;</title>
 

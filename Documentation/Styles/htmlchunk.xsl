@@ -9,6 +9,7 @@
   <xsl:param name="navig.graphics.extension" select="'.png'"/>
   <xsl:param name="use.id.as.filename" select="1"/>
 
+<!--
   <xsl:template name="user.footer.navigation">
     <hr/>
     <table width="100%">
@@ -26,5 +27,6 @@
       </tr>
     </table>
   </xsl:template>
+-->
 
 </xsl:stylesheet>

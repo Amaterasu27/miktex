@@ -75,10 +75,10 @@ extension added. For example, the input file
 &optionenableinstaller;
 
 <varlistentry>
-<term><option>-gray-font=<replaceable>font</replaceable></option></term>
+<term><option>--gray-font=<replaceable>font</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-gray-font=font</primary>
+<primary>--gray-font=font</primary>
 </indexterm>
 <para>Sets the <quote>gray</quote> font.
 Default is <filename>gray</filename>.</para></listitem>
@@ -89,30 +89,30 @@ Default is <filename>gray</filename>.</para></listitem>
 &optionincludedirectory;
 
 <varlistentry>
-<term><option>-label-font=<replaceable>font</replaceable></option></term>
+<term><option>--label-font=<replaceable>font</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-label-font=font</primary>
+<primary>--label-font=font</primary>
 </indexterm>
 <para>Sets the <quote>label</quote> font. Default is
 <filename>cmtt10</filename>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>-logo-font=<replaceable>font</replaceable></option></term>
+<term><option>--logo-font=<replaceable>font</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-logo-font=font</primary>
+<primary>--logo-font=font</primary>
 </indexterm>
 <para>Sets the <quote>logo</quote> font. Default is
 <filename>logo8</filename>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>-overflow-label-offset=<replaceable>real</replaceable></option></term>
+<term><option>--overflow-label-offset=<replaceable>real</replaceable></option></term>
 <listitem>
 <indexterm>
-<primary>-overflow-label-offset=real</primary>
+<primary>--overflow-label-offset=real</primary>
 </indexterm>
 <para>Specifies the distance from the right edge of the
 character bounding box at which the overflow equations (if

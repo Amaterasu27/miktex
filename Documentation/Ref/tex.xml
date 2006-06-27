@@ -185,15 +185,18 @@ character (usually <keycombo>
 
 <refsect1>
 
-<title>See Also</title>
+<title>Environment</title>
 
-<para>See <xref linkend="texify"/>, for an alternative way to invoke &TeX;.</para>
+<variablelist>
+&TEXINPUTS;
+&TFMFONTS;
+</variablelist>
 
 </refsect1>
 
 <refsect1>
 
-<title>Documentation</title>
+<title>See Also</title>
 
 <variablelist>
 <varlistentry>
@@ -201,6 +204,8 @@ character (usually <keycombo>
 <listitem><para><acronym>ISBN</acronym> 0-201-13448-9</para></listitem>
 </varlistentry>
 </variablelist>
+
+<para>See <xref linkend="texify"/>, for an alternative way to invoke &TeX;.</para>
 
 </refsect1>
 

@@ -91,7 +91,7 @@
 <!ENTITY findtexmf "<command>findtexmf</command>">
 <!ENTITY gftodvi "<command>gftodvi</command>">
 <!ENTITY inimf "<command>inimf</command>">
-<!ENTITY inimp "<command>inimp</command>">
+<!ENTITY inimpost "<command>inimpost</command>">
 <!ENTITY iniomega "<command>iniomega</command>">
 <!ENTITY initex "<command>initex</command>">
 <!ENTITY initexmf "<command>initexmf</command>">
@@ -126,7 +126,7 @@
 <!ENTITY texify "<command>texify</command>">
 <!ENTITY epstopdf "<command>epstopdf</command>">
 <!ENTITY virmf "<command>virmf</command>">
-<!ENTITY virmp "<command>virmp</command>">
+<!ENTITY virmpost "<command>virmpost</command>">
 <!ENTITY viromega "<command>viromega</command>">
 <!ENTITY virtex "<command>virtex</command>">
 <!ENTITY hellip "<symbol>&#8230;</symbol>">
