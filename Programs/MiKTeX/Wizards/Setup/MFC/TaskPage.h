@@ -79,6 +79,15 @@ protected:
   void
   OnInstallFromRemoteRepository ();
 
+protected:
+  afx_msg
+  void
+  OnConnectionSettings ();
+
+private:
+  void
+  EnableButtons ();
+
 private:
   int task;
   

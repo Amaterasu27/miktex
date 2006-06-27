@@ -27,6 +27,12 @@ cfg = Release
 cfg = Debug
 !endif
 
+extrasources = \
+		ConnectionSettingsDialog.cpp \
+		ConnectionSettingsDialog.h \
+		ProxyAuthenticationDialog.cpp \
+		ProxyAuthenticationDialog.h \
+
 all: all-local
 	vcbuild /nologo Setup2005.vcproj $(cfg)
 
@@ -46,7 +52,7 @@ distclean: clean distclean-local
 
 maintainer-clean: distclean maintainer-clean-local
 
-all-local: LICENSE.TXT
+all-local: LICENSE.TXT $(extrasources)
 
 LICENSE.TXT: \
 			$(miktexsrcdir)\$(rel_docdir)\entities.ent \
@@ -59,6 +65,18 @@ LICENSE.TXT: \
 		$(xsldir)\htmltext.xsl license.xml
 	lynx -dump -hiddenlinks=ignore -nolist tmp.html > $@
 	del tmp.html
+
+ConnectionSettingsDialog.cpp: $(mikuilibdir)\ConnectionSettingsDialog.cpp
+	copy $(mikuilibdir)\ConnectionSettingsDialog.cpp $@
+
+ConnectionSettingsDialog.h: $(mikuilibdir)\ConnectionSettingsDialog.h
+	copy $(mikuilibdir)\ConnectionSettingsDialog.h $@
+
+ProxyAuthenticationDialog.cpp: $(mikuilibdir)\ProxyAuthenticationDialog.cpp
+	copy $(mikuilibdir)\ProxyAuthenticationDialog.cpp $@
+
+ProxyAuthenticationDialog.h: $(mikuilibdir)\ProxyAuthenticationDialog.h
+	copy $(mikuilibdir)\ProxyAuthenticationDialog.h $@
 
 install-local:
 

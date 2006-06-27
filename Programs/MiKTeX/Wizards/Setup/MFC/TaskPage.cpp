@@ -25,6 +25,9 @@
 #include "SetupWizard.h"
 #include "TaskPage.h"
 
+#include "ConnectionSettingsDialog.h"
+#include "ProxyAuthenticationDialog.h"
+
 /* _________________________________________________________________________
 
    TaskPage Message Map
@@ -36,6 +39,8 @@ BEGIN_MESSAGE_MAP(TaskPage, CPropertyPage)
 		OnInstallFromLocalRepository)
   ON_BN_CLICKED(IDC_INSTALL_FROM_REMOTE_REPOSITORY,
 		OnInstallFromRemoteRepository)
+  ON_BN_CLICKED(IDC_CONNECTION_SETTINGS,
+		&TaskPage::OnConnectionSettings)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -61,16 +66,30 @@ BOOL
 TaskPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
-  switch (theApp.setupTask.Get())
+  BOOL ret = CPropertyPage::OnInitDialog();
+  try
     {
-    case SetupTask::Download:
-      task = 0;
-      break;
-    case SetupTask::InstallFromLocalRepository:
-      task = 1;
-      break;
+      pSheet = reinterpret_cast<SetupWizard*>(GetParent());
+      switch (theApp.setupTask.Get())
+	{
+	case SetupTask::Download:
+	  task = 0;
+	  break;
+	case SetupTask::InstallFromLocalRepository:
+	  task = 1;
+	  break;
+	}
+      EnableButtons ();
     }
-  return (CPropertyPage::OnInitDialog());
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
+    }
+  return (ret);
 }
 
 /* _________________________________________________________________________
@@ -115,18 +134,45 @@ TaskPage::OnWizardNext ()
 #else
   const int iLast = IDC_INSTALL_FROM_LOCAL_REPOSITORY;
 #endif
-  switch (GetCheckedRadioButton(IDC_DOWNLOAD_ONLY, iLast))
+  try
     {
-    case IDC_DOWNLOAD_ONLY:
-      next = IDD_PACKAGE_SET_DOWNLOAD;
-      break;
-    case IDC_INSTALL_FROM_LOCAL_REPOSITORY:
-      next = IDD_PACKAGE_SET_INSTALL;
-      break;
-    default:
-      ASSERT (false);
-      __assume (false);
-      break;
+      switch (GetCheckedRadioButton(IDC_DOWNLOAD_ONLY, iLast))
+	{
+	case IDC_DOWNLOAD_ONLY:
+	  {
+	    ProxySettings proxySettings;
+	    if (PackageManager::TryGetProxy(proxySettings)
+		&& proxySettings.authenticationRequired
+		&& proxySettings.user.empty())
+	      {
+		ProxyAuthenticationDialog dlg (this);
+		if (dlg.DoModal() != IDOK)
+		  {
+		    return (-1);
+		  }
+		proxySettings.user = dlg.GetName();
+		proxySettings.password = dlg.GetPassword();
+		PackageManager::SetProxy (proxySettings);
+	      }
+	    next = IDD_PACKAGE_SET_DOWNLOAD;
+	  }
+	  break;
+	case IDC_INSTALL_FROM_LOCAL_REPOSITORY:
+	  next = IDD_PACKAGE_SET_INSTALL;
+	  break;
+	default:
+	  ASSERT (false);
+	  __assume (false);
+	  break;
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
     }
   return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(next)));
 }
@@ -153,11 +199,12 @@ TaskPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.setupTask = (task == 0
-		? SetupTask::Download
-		: (task == 1
-		   ? SetupTask::InstallFromLocalRepository
-		   : SetupTask::InstallFromRemoteRepository));
+      theApp.setupTask =
+	(task == 0
+	 ? SetupTask::Download
+	 : (task == 1
+	    ? SetupTask::InstallFromLocalRepository
+	    : SetupTask::InstallFromRemoteRepository));
     }
   return (ret);
 }
@@ -170,6 +217,8 @@ TaskPage::OnKillActive ()
 void
 TaskPage::OnDownloadOnly ()
 {
+  task = 0;
+  EnableButtons ();
   pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
 }
 
@@ -181,6 +230,8 @@ TaskPage::OnDownloadOnly ()
 void
 TaskPage::OnInstallFromLocalRepository ()
 {
+  task = 1;
+  EnableButtons ();
   pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
 }
 
@@ -193,4 +244,33 @@ void
 TaskPage::OnInstallFromRemoteRepository ()
 {
   pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
+}
+
+/* _________________________________________________________________________
+
+   TaskPage::OnConnectionSettings
+   _________________________________________________________________________ */
+
+void
+TaskPage::OnConnectionSettings ()
+{
+  ConnectionSettingsDialog dlg (this);
+  dlg.DoModal ();
+}
+
+/* _________________________________________________________________________
+
+   TaskPage::EnableButtons
+   _________________________________________________________________________ */
+
+void
+TaskPage::EnableButtons ()
+{
+  CWnd * pWnd = GetDlgItem(IDC_CONNECTION_SETTINGS);
+  if (pWnd == 0)
+    {
+      UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
+    }
+  pWnd->EnableWindow (task == 0);
+  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }

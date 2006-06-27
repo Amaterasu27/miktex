@@ -297,6 +297,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConnectionSettingsDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EditTEXMFPage.cpp"
 				>
 			</File>
@@ -338,6 +342,10 @@
 			</File>
 			<File
 				RelativePath=".\ProgramFolderPage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ProxyAuthenticationDialog.cpp"
 				>
 			</File>
 			<File
@@ -418,6 +426,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConnectionSettingsDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EditTEXMFPage.h"
 				>
 			</File>
@@ -455,6 +467,10 @@
 			</File>
 			<File
 				RelativePath=".\ProgramFolderPage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ProxyAuthenticationDialog.h"
 				>
 			</File>
 			<File
