@@ -214,6 +214,7 @@ SessionImpl::RegisterLibraryTraceStreams ()
   trace_access.reset (TraceStream::Open(MIKTEX_TRACE_ACCESS));
   trace_config.reset (TraceStream::Open(MIKTEX_TRACE_CONFIG));
   trace_core.reset (TraceStream::Open(MIKTEX_TRACE_CORE));
+  trace_env.reset (TraceStream::Open(MIKTEX_TRACE_ENV));
   trace_error.reset (TraceStream::Open(MIKTEX_TRACE_ERROR));
   trace_files.reset (TraceStream::Open(MIKTEX_TRACE_FILES));
   trace_filesearch.reset (TraceStream::Open(MIKTEX_TRACE_FILESEARCH));
@@ -224,6 +225,7 @@ SessionImpl::RegisterLibraryTraceStreams ()
   trace_process.reset (TraceStream::Open(MIKTEX_TRACE_PROCESS));
   trace_tempfile.reset (TraceStream::Open(MIKTEX_TRACE_TEMPFILE));
   trace_time.reset (TraceStream::Open(MIKTEX_TRACE_TIME));
+  trace_values.reset (TraceStream::Open(MIKTEX_TRACE_VALUES));
 };
 
 /* _________________________________________________________________________
@@ -557,6 +559,7 @@ SessionImpl::UnregisterLibraryTraceStreams ()
   trace_config->Close ();
   trace_core->Close ();
   trace_error->Close ();
+  trace_env->Close ();
   trace_files->Close ();
   trace_filesearch->Close ();
   trace_fndb->Close ();
@@ -566,4 +569,5 @@ SessionImpl::UnregisterLibraryTraceStreams ()
   trace_process->Close ();
   trace_tempfile->Close ();
   trace_time->Close ();
+  trace_values->Close ();
 }

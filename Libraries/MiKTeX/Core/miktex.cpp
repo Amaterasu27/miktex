@@ -614,51 +614,59 @@ bool
 Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
 			     /*[out]*/ tstring &		str)
 {
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+  bool haveValue = false;
+#if defined(_MSC_VER)
   size_t bufSize;
-  if (_tgetenv_s(&bufSize,
-		 0,
-		 0,
-		 lpszName)
-      != 0)
+  if ((_tgetenv_s(&bufSize,
+		  0,
+		  0,
+		  lpszName)
+       == 0)
+      && (bufSize > 0))
     {
-      return (false);
+      MIKTEXCHAR * lpszBuf =
+	static_cast<MIKTEXCHAR *>(malloc(bufSize * sizeof(MIKTEXCHAR)));
+      if (lpszBuf == 0)
+	{
+	  OUT_OF_MEMORY (T_("GetEnvironmentString"));
+	}
+      AutoMemoryPointer xxx (lpszBuf);
+      if (_tgetenv_s(&bufSize,
+		     lpszBuf,
+		     bufSize,
+		     lpszName)
+	  != 0)
+	{
+	  FATAL_CRT_ERROR (T_("_tgetenv_s"), lpszName);
+	}
+      str = lpszBuf;
+      haveValue = true;
     }
-  if (bufSize == 0)
-    {
-      return (false);
-    }
-  MIKTEXCHAR * lpszBuf =
-    static_cast<MIKTEXCHAR *>(malloc(bufSize * sizeof(MIKTEXCHAR)));
-  if (lpszBuf == 0)
-    {
-      OUT_OF_MEMORY (T_("GetEnvironmentString"));
-    }
-  AutoMemoryPointer xxx (lpszBuf);
-  if (_tgetenv_s(&bufSize,
-		 lpszBuf,
-		 bufSize,
-		 lpszName)
-      != 0)
-    {
-      FATAL_CRT_ERROR (T_("_tgetenv_s"), lpszName);
-    }
-  str = lpszBuf;
 #else
-#  if defined(_MSC_VER)
-  const MIKTEXCHAR * lpszOut = _tgetenv(lpszName);
-#  elif defined(MIKTEX_UNICODE)
+#  if defined(MIKTEX_UNICODE)
 #    error Unimplemented: GetEnvironmentString()
 #  else
   const MIKTEXCHAR * lpszOut = getenv(lpszName);
 #  endif
-  if (lpszOut == 0)
+  if (lpszOut != 0)
     {
-      return (false);
+      str = lpszOut;
+      haveValue = true;
     }
-  str = lpszOut;
 #endif
-  return (true);
+  if (SessionImpl::theSession != 0
+      && SessionImpl::theSession->trace_env.get() != 0
+      && SessionImpl::theSession->trace_env->IsEnabled())
+    {
+      SessionImpl::theSession->trace_env->WriteFormattedLine
+	(T_("core"),
+	 T_("%s => %s"),
+	 lpszName,
+	 (haveValue
+	  ? str.c_str()
+	  : T_("null")));
+    }
+  return (haveValue);
 }
 
 /* _________________________________________________________________________

@@ -514,8 +514,10 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 			      /*[out]*/ tstring &	  value,
 			      /*[in]*/const MIKTEXCHAR *  lpszDefaultValue)
 {
+  bool haveValue = false;
+
   for (CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
-       app.GetCurrent() != 0;
+       ! haveValue && app.GetCurrent() != 0;
        ++ app)
     {
       // read configuration file
@@ -548,36 +550,31 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 
       if (pMapping != 0
 	  && pMapping->lpszEnvVarName != 0
-	  && Utils::GetEnvironmentString(pMapping->lpszEnvVarName, value)
+	  && Utils::GetEnvironmentString(pMapping->lpszEnvVarName, value))
 	{
-	  return (true);
+	  haveValue = true;
+	  break;
 	}
 #endif
  
-      // <undocumented>try environment variable
-      // MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
       {
 	tstring envVarName;
 	envVarName.reserve (100);
-	AppendToEnvVarName (envVarName, MIKTEX_ENV_PREFIX);
+
+	// try environment variable
+	// MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
+	envVarName = MIKTEX_ENV_PREFIX_;
+	AppendToEnvVarName (envVarName, app.GetCurrent());
 	envVarName += T_('_');
-	if (StringCompare(app.GetCurrent(), MIKTEX_ENV_PREFIX, true) != 0)
-	  {
-	    AppendToEnvVarName (envVarName, app.GetCurrent());
-	    envVarName += T_('_');
-	  }
-	if (StringCompare(lpszSectionName, MIKTEX_ENV_PREFIX, true) != 0)
-	  {
-	    AppendToEnvVarName (envVarName, lpszSectionName);
-	    envVarName += T_('_');
-	  }
+	AppendToEnvVarName (envVarName, lpszSectionName);
+	envVarName += T_('_');
 	AppendToEnvVarName (envVarName, lpszValueName);
 	if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	  {
-	    return (true);
+	    haveValue = true;
+	    break;
 	  }
       }
-      // </undocumented>
       
 #if defined(MIKTEX_WINDOWS)
       // <undocumented>try registry</undocumented>
@@ -587,7 +584,8 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 					   value,
 					   0))
 	{
-	  return (true);
+	  haveValue = true;
+	  break;
 	}
 #endif
       
@@ -595,18 +593,68 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       if (pCfg != 0
 	  && pCfg->TryGetValue(lpszSectionName, lpszValueName, value))
 	{
-	  return (true);
+	  haveValue = true;
+	  break;
+	}
+    }
+
+  // try environment variable
+  // MIKTEX_<SECTIONNAME>_<VALUENAME>
+  if (! haveValue && lpszSectionName != 0)
+    {
+      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      AppendToEnvVarName (envVarName, lpszSectionName);
+      envVarName += T_('_');
+      AppendToEnvVarName (envVarName, lpszValueName);
+      if (Utils::GetEnvironmentString(envVarName.c_str(), value))
+	{
+	  haveValue = true;
+	}
+    }
+    
+  // try environment variable
+  // MIKTEX_<VALUENAME>
+  if (! haveValue)
+    {
+      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      AppendToEnvVarName (envVarName, lpszValueName);
+      if (Utils::GetEnvironmentString(envVarName.c_str(), value))
+	{
+	  haveValue = true;
 	}
     }
 
   // return the default value
-  if (lpszDefaultValue != 0)
+  if (! haveValue && lpszDefaultValue != 0)
     {
       value = lpszDefaultValue;
-      return (true);
+      haveValue = true;
     }
-  
-  return (false);
+
+  if (trace_values->IsEnabled())
+    {
+      if (lpszSectionName != 0)
+	{
+	  trace_values->WriteFormattedLine (T_("core"),
+					    T_("[%s]%s => %s"),
+					    lpszSectionName,
+					    lpszValueName,
+					    (haveValue
+					     ? value.c_str()
+					     : T_("null")));
+	}
+      else
+	{
+	  trace_values->WriteFormattedLine (T_("core"),
+					    T_("%s => %s"),
+					    lpszValueName,
+					    (haveValue
+					     ? value.c_str()
+					     : T_("null")));
+	}
+    }
+      
+  return (haveValue);
 }
 
 /* _________________________________________________________________________

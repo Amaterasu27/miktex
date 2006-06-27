@@ -2060,6 +2060,7 @@ public:
   auto_ptr<TraceStream> trace_access;
   auto_ptr<TraceStream> trace_config;
   auto_ptr<TraceStream> trace_core;
+  auto_ptr<TraceStream> trace_env;
   auto_ptr<TraceStream> trace_error;
   auto_ptr<TraceStream> trace_files;
   auto_ptr<TraceStream> trace_filesearch;
@@ -2070,6 +2071,7 @@ public:
   auto_ptr<TraceStream> trace_process;
   auto_ptr<TraceStream> trace_tempfile;
   auto_ptr<TraceStream> trace_time;
+  auto_ptr<TraceStream> trace_values;
 
 public:
   locale defaultLocale;
