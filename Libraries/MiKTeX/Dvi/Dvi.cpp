@@ -1062,12 +1062,13 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 		{
 		  UNEXPECTED_CONDITION (T_("DviImpl::DoNextCommand"));
 		}
-	      int x = resolution + currentState.hh;
-	      int y = resolution + currentState.vv;
-	      ExpandBoundingBox (x,
-				 y + PixelRound(pCurrentFont->GetScaledAt()),
-				 x + pCurrentChar->GetWidth(),
-				 y);
+	      int x = currentState.hh + resolution;
+	      int y = currentState.vv + resolution;
+	      ExpandBoundingBox
+		(x,
+		 y,
+		 x + pCurrentChar->GetWidth(),
+		 y - PixelRound(pCurrentFont->GetScaledAt()) + 1);
 
 
 	    }
@@ -1175,7 +1176,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	    }
 
 	out_space:
-	  if (pCurrentFont
+	  if (pCurrentFont != 0
 	      && (p >= pCurrentFont->GetInterWordSpacing()
 		  || p <= - pCurrentFont->GetBackSpacing()))
 	    {
@@ -1343,7 +1344,7 @@ DviImpl::SpecialCases (/*[in]*/ InputStream &	inputStream,
 	     * tfmConv);
 	}
     out_vmove:
-      if (pCurrentFont && abs(p) >= pCurrentFont->GetLineSpacing())
+      if (pCurrentFont != 0 && abs(p) >= pCurrentFont->GetLineSpacing())
 	{
 	  currentState.vv = PixelRound(currentState.v + p);
 	}
