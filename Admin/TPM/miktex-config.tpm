@@ -12,7 +12,6 @@
     <TPM:RunFiles>
 texmf\miktex\config\amstex.ini
 texmf\miktex\config\context.ini
-texmf\miktex\config\core.ini
 texmf\miktex\config\cslatex.ini
 texmf\miktex\config\csplain.ini
 texmf\miktex\config\formats.ini
@@ -27,6 +26,7 @@ texmf\miktex\config\pdfplatex.ini
 texmf\miktex\config\pdftexinfo.ini
 texmf\miktex\config\platex.ini
 texmf\miktex\config\texinfo.ini
+texmf\miktex\config\yap.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
