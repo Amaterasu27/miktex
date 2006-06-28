@@ -259,20 +259,6 @@ which must have been properly installed by running &MPM; with the
 
 <refsect1>
 
-<title>Diagnostics</title>
-
-<para>You can use the
-<option>--trace=<replaceable>tracestreams</replaceable></option>
-option to control the amount of trace messages.
-The <replaceable>tracestreams</replaceable> argument is a comma-separated
-list of trace stream names:</para>
-
-&tracestreams;
-
-</refsect1>
-
-<refsect1>
-
 <title>Environment</title>
 
 <variablelist>

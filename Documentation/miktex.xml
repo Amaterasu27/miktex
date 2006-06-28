@@ -524,6 +524,14 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 </chapter>
 
+<chapter id="tracestreams">
+
+<title>Trace Streams</title>
+
+&tracestreams;
+
+</chapter>
+
 <chapter id="defaults">
 
 <title>Compile Time Defaults</title>

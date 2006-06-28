@@ -69,7 +69,7 @@ by passing the documents through &dvicopy; first.</para>
 </indexterm>
 <para>Process <replaceable>n</replaceable> pages; default
 one million.  This option cannot be used together with
-<option>-select</option>.</para></listitem>
+<option>--select</option>.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--page-start=<replaceable>page-spec</replaceable></option></term>
@@ -79,7 +79,7 @@ one million.  This option cannot be used together with
 </indexterm>
 <para>Start at <replaceable>page-spec</replaceable>, for
 example 2 or 5.*.-2.  This option cannot be used together with
-<option>-select</option>.</para></listitem>
+<option>--select</option>.</para></listitem>
 </varlistentry>
 &optionrecordpackageusages;
 <varlistentry>
@@ -96,9 +96,9 @@ example 2 or 5.*.-2.  This option cannot be used together with
 (for example <userinput>2</userinput> or
 <userinput>5.*.-2</userinput>) and <replaceable>n</replaceable>
 (optional) is the maximum number of pages to be copied.</para>
-<para>You can use up to <literal>10</literal> <option>-select</option>
+<para>You can use up to <literal>10</literal> <option>--select</option>
 options.  This option cannot be used together with
-<option>-max-pages</option> or <option>-page-start</option>.</para></listitem>
+<option>--max-pages</option> or <option>--page-start</option>.</para></listitem>
 </varlistentry>
 &optiontrace;
 &optionversion;
