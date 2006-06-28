@@ -25,7 +25,6 @@ includedinifiles = \
 maininifiles = \
 	amstex.ini \
 	context.ini \
-	core.ini \
 	cslatex.ini \
 	csplain.ini \
 	dvipdfm.ini \
@@ -50,6 +49,7 @@ maininifiles = \
 	texinfo.ini \
 	ttf2pk.ini \
 	ttf2tfm.ini \
+	yap.ini \
 
 inifiles = \
 	$(includedinifiles) \
