@@ -496,9 +496,13 @@ AppendToEnvVarName (/*[in,out]*/ tstring &	name,
 {
   for (; *lpszPart != 0; ++ lpszPart)
     {
-      if (IsAlpha(*lpszPart) || IsDigit(*lpszPart))
+      if (IsAlpha(*lpszPart))
 	{
 	  name += ToUpper(*lpszPart);
+	}
+      else if (IsDigit(*lpszPart))
+	{
+	  name += lpszPart;
 	}
     }
 }
@@ -577,7 +581,6 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       }
       
 #if defined(MIKTEX_WINDOWS)
-      // <undocumented>try registry</undocumented>
       if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
 					   lpszSectionName,
 					   lpszValueName,

@@ -2066,7 +2066,6 @@ public:
   auto_ptr<TraceStream> trace_filesearch;
   auto_ptr<TraceStream> trace_fndb;
   auto_ptr<TraceStream> trace_fonts;
-  auto_ptr<TraceStream> trace_open;
   auto_ptr<TraceStream> trace_packages;
   auto_ptr<TraceStream> trace_process;
   auto_ptr<TraceStream> trace_tempfile;

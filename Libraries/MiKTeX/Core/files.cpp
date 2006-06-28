@@ -328,7 +328,7 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
-  trace_open->WriteFormattedLine
+  trace_files->WriteFormattedLine
     (T_("core"),
      T_("OpenFile(\"%s\", %d, 0x%x, %d, %d)"),
      lpszPath,
@@ -365,7 +365,7 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 	  TraceError (T_("setvbuf() failed for some reason"));
 	}
       RecordFileInfo (lpszPath, access);
-      trace_open->WriteFormattedLine (T_("core"), T_("  => %p"), pFile);
+      trace_files->WriteFormattedLine (T_("core"), T_("  => %p"), pFile);
       return (pFile);
     }
   catch (const exception &)
@@ -601,7 +601,7 @@ void
 SessionImpl::CloseFile (/*[in]*/ FILE * pFile)
 {
   MIKTEX_ASSERT_BUFFER (pFile, sizeof(*pFile));
-  trace_open->WriteFormattedLine (T_("core"), T_("CloseFile(%p)"), pFile);
+  trace_files->WriteFormattedLine (T_("core"), T_("CloseFile(%p)"), pFile);
   map<const FILE *, OpenFileInfo>::iterator it = openFilesMap.find(pFile);
   bool isCommand = false;
   if (it != openFilesMap.end())

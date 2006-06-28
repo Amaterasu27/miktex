@@ -220,7 +220,6 @@ SessionImpl::RegisterLibraryTraceStreams ()
   trace_filesearch.reset (TraceStream::Open(MIKTEX_TRACE_FILESEARCH));
   trace_fndb.reset (TraceStream::Open(MIKTEX_TRACE_FNDB));
   trace_fonts.reset (TraceStream::Open(MIKTEX_TRACE_FONTINFO));
-  trace_open.reset (TraceStream::Open(MIKTEX_TRACE_OPEN));
   trace_packages.reset (TraceStream::Open(MIKTEX_TRACE_PACKAGES));
   trace_process.reset (TraceStream::Open(MIKTEX_TRACE_PROCESS));
   trace_tempfile.reset (TraceStream::Open(MIKTEX_TRACE_TEMPFILE));
@@ -564,7 +563,6 @@ SessionImpl::UnregisterLibraryTraceStreams ()
   trace_filesearch->Close ();
   trace_fndb->Close ();
   trace_fonts->Close ();
-  trace_open->Close ();
   trace_packages->Close ();
   trace_process->Close ();
   trace_tempfile->Close ();
