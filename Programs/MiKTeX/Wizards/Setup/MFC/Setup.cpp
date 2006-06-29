@@ -330,8 +330,9 @@ ParseSetupCommandLine2 (/*[in]*/ int				argc,
 	  break;
 
 	case OPT_COMMON_CONFIG:
-	  if (! (SessionWrapper(true)->RunningAsAdministrator()
-		 || SessionWrapper(true)->RunningAsPowerUser()))
+	  if (IsWindowsNT()
+	      && ! (SessionWrapper(true)->RunningAsAdministrator()
+		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -343,8 +344,9 @@ a common configuration directory."),
 	  break;
 
 	case OPT_COMMON_DATA:
-	  if (! (SessionWrapper(true)->RunningAsAdministrator()
-		 || SessionWrapper(true)->RunningAsPowerUser()))
+	  if (IsWindowsNT()
+	      && ! (SessionWrapper(true)->RunningAsAdministrator()
+		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -405,8 +407,9 @@ a common data directory."),
 	  break;
 
 	case OPT_SHARED:
-	  if (! (SessionWrapper(true)->RunningAsAdministrator()
-		 || SessionWrapper(true)->RunningAsPowerUser()))
+	  if (IsWindowsNT()
+	      && ! (SessionWrapper(true)->RunningAsAdministrator()
+		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
 		(T_("ParseSetupCommandLine2"),
@@ -812,7 +815,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 
   // shared setup
   theApp.commonUserSetup =
-    (SessionWrapper(true)->RunningAsAdministrator()
+    ((IsWindowsNT() && SessionWrapper(true)->RunningAsAdministrator())
      || cmdinfo.optShared
      || ! cmdinfo.startupConfig.commonDataRoot.Empty()
      || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
@@ -1517,7 +1520,8 @@ ULogClose (/*[in]*/ bool finalize)
       if (finalize)
 	{
 	  ULogAddFile (GetLogFileName());
-	  if (SessionWrapper(true)->RunningAsAdministrator()
+	  if (! IsWindowsNT()
+	      || SessionWrapper(true)->RunningAsAdministrator()
 	      || SessionWrapper(true)->RunningAsPowerUser())
 	    {
 	      RegisterUninstaller ();
@@ -1741,7 +1745,8 @@ void
 RegisterMiKTeXFileTypes ()
 {
   if (! theApp.dryRun
-      && (SessionWrapper(true)->RunningAsAdministrator()
+      && (! IsWindowsNT()
+	  || SessionWrapper(true)->RunningAsAdministrator()
 	  || SessionWrapper(true)->RunningAsPowerUser()))
     {
       PathName yap (theApp.startupConfig.installRoot);
