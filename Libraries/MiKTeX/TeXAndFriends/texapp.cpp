@@ -70,7 +70,9 @@ TeXApp::OnTeXMFStartJob ()
 {
   TeXMFApp::OnTeXMFStartJob ();
   enableWrite18 =
-    pSession->GetConfigValue(MIKTEX_REGKEY_TEX, MIKTEX_REGVAL_WRITE18, false);
+    pSession->GetConfigValue(0,
+			     MIKTEX_REGVAL_ENABLE_WRITE18,
+			     false);
 }
 
 /* _________________________________________________________________________

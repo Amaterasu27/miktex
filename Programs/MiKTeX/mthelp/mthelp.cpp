@@ -68,10 +68,10 @@ const MIKTEXCHAR PATH_DELIMITER = T_(':');
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR * const DEFAULT_DOC_SUFFIXES =
+const MIKTEXCHAR * const DEFAULT_DOC_EXTENSIONS =
   T_(".chm;.html;.dvi;.pdf;.ps;.txt");
 #else
-const MIKTEXCHAR * const DEFAULT_DOC_SUFFIXES =
+const MIKTEXCHAR * const DEFAULT_DOC_EXTENSIONS =
   T_(".html:.pdf:.dvi:.ps:.txt");
 #endif
 
@@ -430,8 +430,8 @@ MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const tstring &	packageName,
   FindDocFilesByPackage (packageName, filesByExtension);
   tstring extensions =
     pSession->GetConfigValue(0,
-			     MIKTEX_REGVAL_DOC_SUFFIXES,
-			     DEFAULT_DOC_SUFFIXES);
+			     MIKTEX_REGVAL_DOC_EXTENSIONS,
+			     DEFAULT_DOC_EXTENSIONS);
   for (Tokenizer ext (extensions.c_str(), PATH_DELIMITER_STRING);
        ext.GetCurrent() != 0;
        ++ ext)
@@ -476,8 +476,8 @@ MiKTeXHelp::FindDocFilesByName (/*[in]*/ const tstring &	name,
 {
   tstring extensions =
     pSession->GetConfigValue(0,
-			     MIKTEX_REGVAL_DOC_SUFFIXES,
-			     DEFAULT_DOC_SUFFIXES);
+			     MIKTEX_REGVAL_DOC_EXTENSIONS,
+			     DEFAULT_DOC_EXTENSIONS);
   tstring searchSpec = MIKTEX_PATH_TEXMF_PLACEHOLDER_NO_MPM;
   searchSpec += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
   searchSpec += MIKTEX_PATH_DOC_DIR;

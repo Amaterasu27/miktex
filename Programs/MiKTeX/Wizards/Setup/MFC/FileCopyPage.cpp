@@ -687,7 +687,7 @@ FileCopyPage::DoTheDownload ()
   // remember local repository folder
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
 			  theApp.localPackageRepository.Get());
 
   // start downloader in the background

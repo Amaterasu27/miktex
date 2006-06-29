@@ -42,124 +42,64 @@
 #define MIKTEX_GPL_GHOSTSCRIPT \
   MIKTEXTEXT("Software\\MiKTeX GPL Ghostscript")
 
-#define MIKTEX_REGKEY_CORE \
-  MIKTEXTEXT("Core")
+/* _________________________________________________________________________
 
-#define MIKTEX_REGVAL_TRACE_OPTIONS \
-  MIKTEXTEXT("Trace")
+   Registry Keys
+   _________________________________________________________________________ */
 
-#define MIKTEX_REGKEY_PACKAGE_MANAGER \
-  MIKTEXTEXT("MPM")
+#define MIKTEX_REGKEY_BIBTEX MIKTEXTEXT("BibTeX")
+#define MIKTEX_REGKEY_CORE MIKTEXTEXT("Core")
+#define MIKTEX_REGKEY_MAKEBASE MIKTEXTEXT("MakeBase")
+#define MIKTEX_REGKEY_MAKEFMT MIKTEXTEXT("MakeFMT")
+#define MIKTEX_REGKEY_MAKEMEM MIKTEXTEXT("MakeMEM")
+#define MIKTEX_REGKEY_MAKEPK MIKTEXTEXT("MakePk")
+#define MIKTEX_REGKEY_MAKETFM MIKTEXTEXT("MakeTFM")
+#define MIKTEX_REGKEY_METAPOST MIKTEXTEXT("MetaPost")
+#define MIKTEX_REGKEY_MIGRATE MIKTEXTEXT("Migrate")
+#define MIKTEX_REGKEY_PACKAGE_MANAGER MIKTEXTEXT("MPM")
 
-#define MIKTEX_REGKEY_BIBTEX \
-  MIKTEXTEXT("BibTeX")
+/* _________________________________________________________________________
 
-#define MIKTEX_REGKEY_TEX \
-  MIKTEXTEXT("TeX")
+   Registry Values
+   _________________________________________________________________________ */
 
-#define MIKTEX_REGKEY_WEB \
-  MIKTEXTEXT("WEB")
+#define MIKTEX_REGVAL_AUTO_INSTALL MIKTEXTEXT("AutoInstall")
+#define MIKTEX_REGVAL_COMMON_CONFIG MIKTEXTEXT("CommonConfig")
+#define MIKTEX_REGVAL_COMMON_DATA MIKTEXTEXT("CommonData")
+#define MIKTEX_REGVAL_DESTDIR MIKTEXTEXT("DestDir")
+#define MIKTEX_REGVAL_DOC_EXTENSIONS MIKTEXTEXT("DocExtensions")
+#define MIKTEX_REGVAL_EDITOR MIKTEXTEXT("Editor")
+#define MIKTEX_REGVAL_ENABLE_PIPES MIKTEXTEXT("EnablePipes")
+#define MIKTEX_REGVAL_ENABLE_WRITE18 MIKTEXTEXT("EnableWrite18")
+#define MIKTEX_REGVAL_C_STYLE_ERRORS MIKTEXTEXT("CStyleErrors")
+#define MIKTEX_REGVAL_FTP_MODE MIKTEXTEXT("FTPMode")
+#define MIKTEX_REGVAL_INSTALL MIKTEXTEXT("Install")
+#define MIKTEX_REGVAL_LOCAL_REPOSITORY MIKTEXTEXT("LocalRepository")
+#define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT MIKTEXTEXT("MiKTeXDirectRoot")
+#define MIKTEX_REGVAL_REPOSITORY_TYPE MIKTEXTEXT("RepositoryType")
+#define MIKTEX_REGVAL_PARSE_FIRST_LINE MIKTEXTEXT("ParseFirstLine")
+#define MIKTEX_REGVAL_PK_FN_TEMPLATE MIKTEXTEXT("PKFnTemplate")
+#define MIKTEX_REGVAL_PROXY_AUTH_REQ MIKTEXTEXT("ProxyAuthReq")
+#define MIKTEX_REGVAL_PROXY_HOST MIKTEXTEXT("ProxyHost")
+#define MIKTEX_REGVAL_PROXY_PORT MIKTEXTEXT("ProxyPort")
+#define MIKTEX_REGVAL_REMOTE_REPOSITORY MIKTEXTEXT("RemoteRepository")
+#define MIKTEX_REGVAL_ROOTS MIKTEXTEXT("Roots")
+#define MIKTEX_REGVAL_SHARED_SETUP MIKTEXTEXT("SharedSetup")
+#define MIKTEX_REGVAL_STARTUP_FILE MIKTEXTEXT("StartupFile")
+#define MIKTEX_REGVAL_TEMPDIR MIKTEXTEXT("TempDir")
+#define MIKTEX_REGVAL_TIMESTAMP MIKTEXTEXT("TimeStamp")
+#define MIKTEX_REGVAL_TRACE MIKTEXTEXT("Trace")
+#define MIKTEX_REGVAL_USER_CONFIG MIKTEXTEXT("UserConfig")
+#define MIKTEX_REGVAL_USER_DATA MIKTEXTEXT("UserData")
+#define MIKTEX_REGVAL_USE_PROXY MIKTEXTEXT("UseProxy")
+#define MIKTEX_REGVAL_VERSION MIKTEXTEXT("Version")
 
-#define MIKTEX_REGKEY_METAPOST \
-  MIKTEXTEXT("MetaPost")
+/* _________________________________________________________________________
 
-#define MIKTEX_REGKEY_MAKEFMT \
-  MIKTEXTEXT("MakeFMT")
-
-#define MIKTEX_REGKEY_MAKEPK \
-  MIKTEXTEXT("MakePk")
-
-#define MIKTEX_REGKEY_MAKETFM \
-  MIKTEXTEXT("MakeTFM")
-
-#define MIKTEX_REGKEY_MAKEMEM \
-  MIKTEXTEXT("MakeMEM")
-
-#define MIKTEX_REGKEY_MAKEBASE \
-  MIKTEXTEXT("MakeBase")
-
-#define MIKTEX_REGVAL_ROOTS \
-  MIKTEXTEXT("Roots")
-
-#define MIKTEX_REGVAL_INSTALL \
-  MIKTEXTEXT("Install")
-
-#define MIKTEX_REGVAL_USER_DATA \
-  MIKTEXTEXT("UserData")
-
-#define MIKTEX_REGVAL_COMMON_DATA \
-  MIKTEXTEXT("CommonData")
-
-#define MIKTEX_REGVAL_USER_CONFIG	\
-  MIKTEXTEXT("UserConfig")
-
-#define MIKTEX_REGVAL_COMMON_CONFIG	\
-  MIKTEXTEXT("CommonConfig")
-
-#define MIKTEX_REGVAL_STARTUP_FILE \
-  MIKTEXTEXT("StartupFile")
-
-#define MIKTEX_REGVAL_SHARED_SETUP \
-  MIKTEXTEXT("SharedSetup")
-
-#define MIKTEX_REGVAL_AUTO_INSTALL \
-  MIKTEXTEXT("InstallPackagesOnTheFly")
-
-#define MIKTEX_REGVAL_FTP_MODE \
-  MIKTEXTEXT("FTPMode")
-
-#define MIKTEX_REGVAL_REMOTE_PACKAGE_REPOSITORY \
-  MIKTEXTEXT("RemoteRepository")
-
-#define MIKTEX_REGVAL_LOCAL_PACKAGE_REPOSITORY \
-  MIKTEXTEXT("LocalRepository")
-
-#define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT \
-  MIKTEXTEXT("MiKTeXDirectRoot")
-
-#define MIKTEX_REGVAL_PACKAGE_REPOSITORY_TYPE \
-  MIKTEXTEXT("RepositoryType")
-
-#define MIKTEX_REGVAL_USE_PROXY \
-  MIKTEXTEXT("UseProxy")
-
-#define MIKTEX_REGVAL_PROXY_HOST	\
-  MIKTEXTEXT("ProxyHost")
-
-#define MIKTEX_REGVAL_PROXY_PORT	\
-  MIKTEXTEXT("ProxyPort")
-
-#define MIKTEX_REGVAL_PROXY_AUTH_REQ \
-  MIKTEXTEXT("ProxyAuthReq")
-
-#define MIKTEX_REGVAL_PARSE_FIRST_LINE \
-  MIKTEXTEXT("ParseFirstLine")
-
-#define MIKTEX_REGVAL_FILE_LINE_ERRORS \
-  MIKTEXTEXT("CStyleErrors")
-
-#define MIKTEX_REGVAL_WRITE18 \
-  MIKTEXTEXT("EnableWrite18")
-
-#define MIKTEX_REGVAL_EDITOR \
-  MIKTEXTEXT("Editor")
-
-#define MIKTEX_REGVAL_DESTDIR \
-  MIKTEXTEXT("DestDir")
-
-#define MIKTEX_REGVAL_TEMPDIR \
-  MIKTEXTEXT("Temp")
-
-#define MIKTEX_REGVAL_PK_FILE_NAME \
-  MIKTEXTEXT("PKFnTemplate")
-
-#define MIKTEX_REGVAL_DOC_SUFFIXES \
-  MIKTEXTEXT("DocExtensions")
+   File Type Identifiers
+   _________________________________________________________________________ */
 
 #define MIKTEX_DVI_FILE_TYPE_IDENTIFIER \
   MIKTEXTEXT("MiKTeX.Yap.dvi.") MIKTEXTEXT(MIKTEX_SERIES_STR)
-
-#define MIKTEX_REGVAL_ENABLE_PIPES \
-  MIKTEXTEXT("EnablePipes")
 
 #endif	/* miktex/reg.h */

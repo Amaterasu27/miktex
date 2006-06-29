@@ -777,7 +777,7 @@ SessionImpl::SetCWDEnv ()
 	}
       str += *it;
     }
-  Utils::SetEnvironmentString (MIKTEX_ENV_CWD, str.c_str());
+  Utils::SetEnvironmentString (MIKTEX_ENV_CWD_LIST, str.c_str());
 }
 
 /* _________________________________________________________________________
@@ -1020,7 +1020,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     {
       if (! winRegistry::TryGetRegistryValue(TriState::False,
 					     MIKTEX_REGKEY_CORE,
-					     MIKTEX_REGVAL_TRACE_OPTIONS,
+					     MIKTEX_REGVAL_TRACE,
 					     traceOptions,
 					     0))
 	{
@@ -1042,7 +1042,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   PushBackAppName (MIKTEX_REGKEY_CORE);
   
   tstring miktexCwd;
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD, miktexCwd))
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD_LIST, miktexCwd))
     {
       tstring dirList;
       NormalizeSearchSpec (miktexCwd.c_str(), dirList);

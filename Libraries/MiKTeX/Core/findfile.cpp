@@ -504,7 +504,7 @@ SessionImpl::MakePkFileName (/*[out]*/ PathName &		pkFileName,
   tstring nameTemplate;
 
   if (! GetSessionValue(MIKTEX_REGKEY_CORE,
-			MIKTEX_REGVAL_PK_FILE_NAME,
+			MIKTEX_REGVAL_PK_FN_TEMPLATE,
 			nameTemplate,
 			DEFAULT_PK_NAME_TEMPLATE))
     {

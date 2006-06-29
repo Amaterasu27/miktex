@@ -162,7 +162,7 @@ TeXMFApp::OnTeXMFStartJob ()
   parseFirstLine =
     pSession->GetConfigValue(0, MIKTEX_REGVAL_PARSE_FIRST_LINE, isTeXProgram);
   showFileLineErrorMessages =
-    pSession->GetConfigValue(0, MIKTEX_REGVAL_FILE_LINE_ERRORS, false);
+    pSession->GetConfigValue(0, MIKTEX_REGVAL_C_STYLE_ERRORS, false);
   EnablePipes (pSession->GetConfigValue(0,
 					MIKTEX_REGVAL_ENABLE_PIPES,
 					false));
@@ -1096,9 +1096,10 @@ TeXMFApp::InvokeEditorIfNecessary () const
   commandLine.reserve (256);
 
   tstring templ =
-    pSession->GetConfigValue(MIKTEX_REGKEY_TEX,
+    pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_EDITOR,
 			     T_("\"$(windir)\\notepad.exe\" \"%f\""));
+
   const MIKTEXCHAR * lpszCommandLineTemplate = templ.c_str();
 
   while (*lpszCommandLineTemplate != 0)

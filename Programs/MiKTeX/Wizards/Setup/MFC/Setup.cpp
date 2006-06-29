@@ -752,7 +752,7 @@ GetDefaultLocalRepository ()
   tstring val;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
 			  val))
     {
       ret = val;

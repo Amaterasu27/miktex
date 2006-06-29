@@ -60,7 +60,7 @@ namespace {
   const ConfigMapping configMappings[] = {
     {
       MIKTEX_REGKEY_PACKAGE_MANAGER,
-      MIKTEX_REGVAL_REMOTE_PACKAGE_REPOSITORY,
+      MIKTEX_REGVAL_REMOTE_REPOSITORY,
       MIKTEX_ENV_REPOSITORY,
     },
   };

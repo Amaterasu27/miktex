@@ -804,7 +804,7 @@ PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
 {
   return (SessionWrapper(true)
 	  ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			      MIKTEX_REGVAL_REMOTE_PACKAGE_REPOSITORY,
+			      MIKTEX_REGVAL_PACKAGE_REPOSITORY,
 			      url));
 }
 
@@ -898,7 +898,7 @@ PackageManager::SetRemotePackageRepository (/*[in]*/ const tstring & url)
 {
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_REMOTE_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_PACKAGE_REPOSITORY,
 			  url.c_str());
 }
 
@@ -914,7 +914,7 @@ PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
   tstring str;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
 			  str))
     {
       path = str;
@@ -956,7 +956,7 @@ PackageManager::SetLocalPackageRepository (/*[in]*/ const PathName & path)
 {
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
 			  path.Get());
 }
 
@@ -1038,7 +1038,7 @@ PackageManager::TryGetDefaultPackageRepository
       tstring str;
       if (! (SessionWrapper(true)
 	     ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-				 MIKTEX_REGVAL_PACKAGE_REPOSITORY_TYPE,
+				 MIKTEX_REGVAL_REPOSITORY_TYPE,
 				 str)))
 	{
 	  return (false);
@@ -1124,7 +1124,7 @@ PackageManager::SetDefaultPackageRepository
     }
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_PACKAGE_REPOSITORY_TYPE,
+			  MIKTEX_REGVAL_REPOSITORY_TYPE,
 			  repositoryTypeStr.c_str());
 }
 

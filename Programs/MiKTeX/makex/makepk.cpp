@@ -270,7 +270,7 @@ MakePk::MakePKFilename (/*[in]*/ const MIKTEXCHAR *	lpszName,
 {
   tstring templ =
     pSession->GetConfigValue(MIKTEX_REGKEY_CORE,
-			     MIKTEX_REGVAL_PK_FILE_NAME,
+			     MIKTEX_REGVAL_PK_FN_TEMPLATE,
 			     T_("%f.pk"));
   tstring temp;
   for (const MIKTEXCHAR * lpsz = templ.c_str(); *lpsz != 0; ++ lpsz)
