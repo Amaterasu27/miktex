@@ -425,7 +425,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
       mptexpre = T_("mptexpre.tex");
     }
 
-  if (! File::Exists(mptexpre))
+  if (File::Exists(mptexpre))
     {
       PrintOnly (T_("cp %s %s"), Q_(mptexpre), Q_(lpszTeXFileName));
       if (! printOnly)
