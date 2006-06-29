@@ -220,7 +220,7 @@ MigrateRegistry24 ()
       throw T_("the registry key could not be written");
     }
 
-  if (root25.SetQWORDValue(MIKTEX_REGVAL_VERSION,
+  if (root25.SetDWORDValue(MIKTEX_REGVAL_VERSION,
 			   VersionNumber(T_("2.4")).GetHighWord())
     != ERROR_SUCCESS)
     {
