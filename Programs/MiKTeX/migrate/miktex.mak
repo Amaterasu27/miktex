@@ -38,8 +38,10 @@ check: common-check
 
 $(outdir)\migrate.exe: \
 			$(outdir) \
+			$(bz2_static_lib) \
 			$(md5_static_lib) \
 			$(miktex_static_lib) \
+			$(zlib_static_lib) \
 			migrate.cpp \
 
 	$(cc) \
@@ -55,8 +57,10 @@ $(outdir)\migrate.exe: \
 		migrate.cpp \
 		$(ccopt_link) \
 			$(linkopt_output_file)$@ \
+			$(bz2_static_lib) \
 			$(md5_static_lib) \
 			$(miktex_static_lib) \
+			$(zlib_static_lib) \
 			advapi32.lib \
 			delayimp.lib \
 			user32.lib \
@@ -90,3 +94,9 @@ depend: migrate.cpp
 	$(fixdep)
 
 # DO NOT DELETE
+
+$(outdir)\migrate.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\migrate.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\migrate.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\migrate.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\migrate.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h

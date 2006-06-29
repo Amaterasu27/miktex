@@ -207,20 +207,27 @@ MigrateRegistry24 ()
   if (root25.Create((settings24.sharedMiKTeX
 		     ? HKEY_LOCAL_MACHINE
 		     : HKEY_CURRENT_USER),
-		    MIKTEX_REGPATH_SERIES T_("\\migrate"))
+		    MIKTEX_REGPATH_SERIES MIKTEX_REGKEY_MIGRATE)
       != ERROR_SUCCESS)
     {
       throw T_("the registry key could not be created");
     }
 
-  if (root25.SetQWORDValue(T_("time"), static_cast<ULONGLONG>(time(0)))
+  if (root25.SetQWORDValue(MIKTEX_REGVAL_TIMESTAMP,
+			   static_cast<ULONGLONG>(time(0)))
       != ERROR_SUCCESS)
     {
       throw T_("the registry key could not be written");
     }
 
-  root25.Close ();
+  if (root25.SetQWORDValue(MIKTEX_REGVAL_VERSION,
+			   VersionNumber(T_("2.4")).GetHighWord())
+    != ERROR_SUCCESS)
+    {
+      throw T_("the registry key could not be written");
+    }
 
+  root25.Close ();
 }
 
 /* _________________________________________________________________________
