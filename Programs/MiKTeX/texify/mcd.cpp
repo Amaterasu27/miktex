@@ -1186,7 +1186,7 @@ Driver::Set_MIKTEX_CWD ()
       MIKTEX_CWD += T_(';');
       MIKTEX_CWD += *it;
     }
-  Utils::SetEnvironmentString (MIKTEX_ENV_CWD, MIKTEX_CWD.c_str());
+  Utils::SetEnvironmentString (MIKTEX_ENV_CWD_LIST, MIKTEX_CWD.c_str());
 }
 
 /* _________________________________________________________________________

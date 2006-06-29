@@ -804,7 +804,7 @@ PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
 {
   return (SessionWrapper(true)
 	  ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			      MIKTEX_REGVAL_PACKAGE_REPOSITORY,
+			      MIKTEX_REGVAL_REMOTE_REPOSITORY,
 			      url));
 }
 
@@ -898,7 +898,7 @@ PackageManager::SetRemotePackageRepository (/*[in]*/ const tstring & url)
 {
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_PACKAGE_REPOSITORY,
+			  MIKTEX_REGVAL_REMOTE_REPOSITORY,
 			  url.c_str());
 }
 

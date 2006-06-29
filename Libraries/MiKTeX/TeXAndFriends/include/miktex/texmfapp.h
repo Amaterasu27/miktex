@@ -94,7 +94,7 @@ MIKTEXMF_BEGIN_NAMESPACE;
   if (param < 0)						\
     {								\
       THEDATA(varname) =					\
-        pSession->GetConfigValue(,				\
+        pSession->GetConfigValue(0,				\
                                  MIKTEXTEXT(#cfgname),		\
                                  defcfgval);			\
     }								\
