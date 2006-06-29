@@ -2308,7 +2308,7 @@ public:
   unsigned
   GetUserConfigRoot ();
 
-private:
+public:
   unsigned
   GetInstallRoot ();
 

@@ -617,6 +617,7 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
   traceStream->WriteFormattedLine (T_("core"),
 				   T_("creating fndb file %s..."),
 				   Q_(lpszFndbPath));
+  unsigned rootIdx = SessionImpl::theSession->DeriveTEXMFRoot(lpszRootPath);
   this->enableStringPooling = enableStringPooling;
   this->storeFileNameInfo = storeFileNameInfo;
   byteArray.reserve (2 * 1024 * 1024);
@@ -657,19 +658,26 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
       if ((fndb.flags & FileNameDatabaseHeader::FndbFlags::Frozen) == 0)
 	{
 	  const size_t GRAN = (1024 * 1024);
-	  const size_t EXTRA = 1 * GRAN;
-	  size_t n = ((GetMemTop() + EXTRA + 1) / GRAN * GRAN) - GetMemTop();
+	  size_t extra;
+	  if (rootIdx == SessionImpl::theSession->GetInstallRoot())
+	    {
+	      extra = 2 * GRAN;
+	    }
+	  else
+	    {
+	      extra = 1 * GRAN;
+	    }
+	  size_t n = ((GetMemTop() + extra + 1) / GRAN * GRAN) - GetMemTop();
 	  ReserveMem (n);
 	}
       AlignMem (PAGESIZE);
       SetMem (0, &fndb, sizeof(fndb));
       // <fixme>
       bool unloaded = false;
-      unsigned uRoot = SessionImpl::theSession->DeriveTEXMFRoot(lpszRootPath);
       for (size_t i = 0; ! unloaded && i < 100; ++ i)
 	{
 	  unloaded =
-	    SessionImpl::theSession->UnloadFilenameDatabaseInternal(uRoot,
+	    SessionImpl::theSession->UnloadFilenameDatabaseInternal(rootIdx,
 								    true);
 	  if (! unloaded)
 	    {
