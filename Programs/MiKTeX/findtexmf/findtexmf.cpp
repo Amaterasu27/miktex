@@ -247,6 +247,12 @@ when searching for files."),
    FindTeXMF::aoptionKpse
    _________________________________________________________________________ */
 
+enum KpseOption
+{
+  OPT_AAAA = 1024,
+  OPT_ENGINE,
+};
+
 const struct poptOption FindTeXMF::aoptionKpse[] =
 {
   {
@@ -270,6 +276,13 @@ when searching for files."),
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_VAR,
     T_("Deprecated."), T_("VAR"),
+  },
+
+  {
+    T_("engine"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_ENGINE,
+    T_("Unsupported."), T_("ENGINE"),
   },
 
   {
@@ -591,6 +604,10 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	case OPT_START:
 
 	  start = true;
+	  break;
+
+	case OPT_ENGINE:
+
 	  break;
 
 	case OPT_VERSION:
