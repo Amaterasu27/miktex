@@ -907,7 +907,7 @@ File::ReadAllBytes (/*[in]*/ const PathName &		path)
 {
   size_t size = GetSize(path);
   vector<unsigned char> arr;
-  arr.reserve (size);
+  arr.resize (size);
   FileStream stream (Open(path,
 			  FileMode::Open,
 			  FileAccess::Read,
