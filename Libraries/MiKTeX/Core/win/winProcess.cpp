@@ -47,6 +47,8 @@ Process::Start (/*[in]*/ const ProcessStartInfo & startinfo)
 #  define TRACEREDIR 1
 #endif
 
+#define MERGE_STDOUT_STDERR 1
+
 void
 winProcess::Create ()
 {
@@ -96,13 +98,42 @@ winProcess::Create ()
   try
     {
       // redirect stdout (and possibly stderr)
-      if (startinfo.RedirectStandardOutput)
+      if (startinfo.StandardOutput != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-		 T_("redirecting stdout"));
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stdout to a stream"));
 #endif
-	  // create child stdout pipe
+	  int fd = _fileno(startinfo.StandardOutput);
+	  if (fd < 0)
+	    {
+	      FATAL_CRT_ERROR (T_("_fileno"), 0);
+	    }
+	  HANDLE hStdout = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
+	  if (hStdout == INVALID_HANDLE_VALUE)
+	    {
+	      FATAL_CRT_ERROR (T_("_get_osfhandle"), 0);
+	    }
+	  if (! DuplicateHandle(hCurrentProcess,
+				hStdout,
+				hCurrentProcess,
+				&hChildStdout,
+				0,
+				TRUE,
+				DUPLICATE_SAME_ACCESS))
+	    {
+	      FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	    }
+	}
+      else if (startinfo.RedirectStandardOutput)
+	{
+#if TRACEREDIR
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stdout to a pipe"));
+#endif
+	  // create stdout pipe
 	  AutoHANDLE hStdoutRd;
 	  if (! CreatePipe(&hStdoutRd,
 			   &hChildStdout,
@@ -111,26 +142,6 @@ winProcess::Create ()
 	    {
 	      FATAL_WINDOWS_ERROR (T_("CreatePipe"), 0);
 	    }
-#if 1
-	  if (! startinfo.RedirectStandardError)
-	    {
-#if TRACEREDIR
-	      SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-		     T_("make child stderr = child stdout"));
-#endif
-	      // make child stderr = child stdout
-	      if (! DuplicateHandle(hCurrentProcess,
-				    hChildStdout,
-				    hCurrentProcess,
-				    &hChildStderr,
-				    0,
-				    TRUE,
-				    DUPLICATE_SAME_ACCESS))
-		{
-		  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
-		}
-	    }
-#endif
 	  // duplicate the read end of the pipe
 	  if (! DuplicateHandle(hCurrentProcess,
 				hStdoutRd.Get(),
@@ -145,11 +156,40 @@ winProcess::Create ()
 	}
       
       // redirect stderr
-      if (startinfo.RedirectStandardError)
+      if (startinfo.StandardError != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-		 T_("redirecting stderr"));
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stderr to a stream"));
+#endif
+	  int fd = _fileno(startinfo.StandardError);
+	  if (fd < 0)
+	    {
+	      FATAL_CRT_ERROR (T_("_fileno"), 0);
+	    }
+	  HANDLE hStderr = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
+	  if (hStderr == INVALID_HANDLE_VALUE)
+	    {
+	      FATAL_CRT_ERROR (T_("_get_osfhandle"), 0);
+	    }
+	  if (! DuplicateHandle(hCurrentProcess,
+				hStderr,
+				hCurrentProcess,
+				&hChildStderr,
+				0,
+				TRUE,
+				DUPLICATE_SAME_ACCESS))
+	    {
+	      FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	    }
+	}
+      else if (startinfo.RedirectStandardError)
+	{
+#if TRACEREDIR
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stderr to a pipe"));
 #endif
 	  // create child stderr pipe
 	  AutoHANDLE hStderrRd;
@@ -172,12 +212,35 @@ winProcess::Create ()
 	      FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
 	    }
 	}
+#if MERGE_STDOUT_STDERR
+      else if (hChildStdout != INVALID_HANDLE_VALUE)
+	{
+#if TRACEREDIR
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("make child stderr = child stdout"));
+#endif
+	  // make child stderr = child stdout
+	  if (! DuplicateHandle(hCurrentProcess,
+				hChildStdout,
+				hCurrentProcess,
+				&hChildStderr,
+				0,
+				TRUE,
+				DUPLICATE_SAME_ACCESS))
+	    {
+	      FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	    }
+	}
+#endif
 
       // redirect stdin
       if (startinfo.StandardInput != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"), T_("setting stdin"));
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stdin to a stream"));
 #endif
 	  int fd = _fileno(startinfo.StandardInput);
 	  if (fd < 0)
@@ -203,8 +266,9 @@ winProcess::Create ()
       else if (startinfo.RedirectStandardInput)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-		 T_("redirecting stdin"));
+	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	    (T_("core"),
+	     T_("redirecting stdin to a pipe"));
 #endif
 	  // create child stdin pipe
 	  AutoHANDLE hStdinWr;

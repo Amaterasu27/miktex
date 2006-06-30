@@ -4429,16 +4429,28 @@ struct ProcessStartInfo
 {
   /// Arguments to be passed to the process.
   tstring Arguments;
+
   /// Path name to be executed.
   tstring FileName;
+
+  /// Output file stream for stderr redirection.
+  FILE * StandardError;
+
   /// Input file stream for stdin redirection.
   FILE * StandardInput;
-  /// Indicates whether error output shall be redirected.
+
+  /// Output file stream for stdout redirection.
+  FILE * StandardOutput;
+
+  /// Indicates whether error output shall be written to a pipe.
   bool RedirectStandardError;
-  /// Indicates whether input shall be redirected.
+
+  /// Indicates whether input shall be read from a pipe.
   bool RedirectStandardInput;
-  /// Indicates whether output shall be redirected.
+
+  /// Indicates whether output shall be written to a pipe.
   bool RedirectStandardOutput;
+
   /// Working directory for the process.
   tstring WorkingDirectory;
 
@@ -4446,7 +4458,9 @@ struct ProcessStartInfo
     : RedirectStandardError (false),
       RedirectStandardInput (false),
       RedirectStandardOutput (false),
-      StandardInput (0)
+      StandardError (0),
+      StandardInput (0),
+      StandardOutput (0)
   {
   }
 
@@ -4455,7 +4469,9 @@ struct ProcessStartInfo
       RedirectStandardError (false),
       RedirectStandardInput (false),
       RedirectStandardOutput (false),
-      StandardInput (0)
+      StandardError (0),
+      StandardInput (0),
+      StandardOutput (0)
   {
   }
 
