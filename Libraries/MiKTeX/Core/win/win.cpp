@@ -1961,6 +1961,11 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 bool
 SessionImpl::RunningAs (/*[in]*/ DWORD localGroup)
 {
+  if (! IsWindowsNT())
+    {
+      UNEXPECTED_CONDITION (T_("SessionImpl::RunningAs"));
+    }
+
   HANDLE hThread;
 
   if (! OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hThread))
