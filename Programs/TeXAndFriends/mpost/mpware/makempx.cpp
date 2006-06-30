@@ -414,11 +414,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
       Error (T_("The MPTO executable could not be found."));
     }
 
-  CommandLineBuilder commandLineBuilder;
-
-  commandLineBuilder.AppendArgument (mpto.Get());
-
-  tstring mptexpre;
+   tstring mptexpre;
 
   if (! Utils::GetEnvironmentString(T_("MPTEXPRE"), mptexpre))
     {
@@ -434,16 +430,29 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
 	}
     }
 
-  commandLineBuilder.AppendArgument (lpszMpFileName);
-  commandLineBuilder.AppendStdoutRedirection (lpszTeXFileName, true);
+  FileStream pTeXFile (File::Open(lpszTeXFileName,
+				  FileMode::Append,
+				  FileAccess::Write,
+				  false));
 
-  PrintOnly (T_("%s"), commandLineBuilder.Get());
+  CommandLineBuilder commandLineBuilder;
+
+  commandLineBuilder.AppendArgument (lpszMpFileName);
+
+  ProcessStartInfo psi (mpto.Get());
+
+  psi.Arguments = commandLineBuilder.Get();
+  psi.StandardOutput = pTeXFile.Get();
+
+  PrintOnly (T_("%s %s"), Q_(mpto), commandLineBuilder.Get());
 
   if (! printOnly)
     {
-      if (! Process::ExecuteSystemCommand(commandLineBuilder.Get()))
+      auto_ptr<Process> pProcess (Process::Start(psi));
+      pProcess->WaitForExit ();
+      if (pProcess->get_ExitCode() != 0)
 	{
-	  Error (T_("mpto failed on \"%s\"."), lpszMpFileName);
+	  Error (T_("mpto failed on %s."), Q_(lpszMpFileName));
 	}
     }
 }
@@ -518,19 +527,14 @@ MakeMpx::InvokeDVItoMP (/*[in]*/ const MIKTEXCHAR * lpszDviFileName,
 
   CommandLineBuilder commandLineBuilder;
 
-  commandLineBuilder.AppendArgument (dvitomp.Get());
-
   commandLineBuilder.AppendArgument (lpszDviFileName);
   commandLineBuilder.AppendArgument (PathName(lpszDestDir, lpszMpxFileName));
 
-  PrintOnly (T_("%s"), commandLineBuilder.Get());
+  PrintOnly (T_("%s %s"), Q_(dvitomp), commandLineBuilder.Get());
 
   if (! printOnly)
     {
-      if (! Process::ExecuteSystemCommand(commandLineBuilder.Get()))
-	{
-	  Error (T_("DVItoMP failed on %s."), Q_(lpszDviFileName));
-	}
+      Process::Run (dvitomp, commandLineBuilder.Get());
     }
 }
 
