@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: http.c,v 1.282 2006-05-05 22:14:40 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -36,8 +36,6 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-
-#include <errno.h>
 
 #if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
 #include <time.h>
@@ -97,6 +95,7 @@
 #include "select.h"
 #include "parsedate.h" /* for the week day and month names */
 #include "strtoofft.h"
+#include "multiif.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -621,18 +620,23 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
 #endif
 #ifndef CURL_DISABLE_CRYPTO_AUTH
       if(checkprefix("Digest", start)) {
-        CURLdigest dig;
-        *availp |= CURLAUTH_DIGEST;
-        authp->avail |= CURLAUTH_DIGEST;
+        if((authp->avail & CURLAUTH_DIGEST) != 0) {
+          infof(data, "Ignoring duplicate digest auth header.\n");
+        }
+        else {
+          CURLdigest dig;
+          *availp |= CURLAUTH_DIGEST;
+          authp->avail |= CURLAUTH_DIGEST;
 
-        /* We call this function on input Digest headers even if Digest
-         * authentication isn't activated yet, as we need to store the
-         * incoming data from this header in case we are gonna use Digest. */
-        dig = Curl_input_digest(conn, (bool)(httpcode == 407), start);
+          /* We call this function on input Digest headers even if Digest
+           * authentication isn't activated yet, as we need to store the
+           * incoming data from this header in case we are gonna use Digest. */
+          dig = Curl_input_digest(conn, (bool)(httpcode == 407), start);
 
-        if(CURLDIGEST_FINE != dig) {
-          infof(data, "Authentication problem. Ignoring this.\n");
-          data->state.authproblem = TRUE;
+          if(CURLDIGEST_FINE != dig) {
+            infof(data, "Authentication problem. Ignoring this.\n");
+            data->state.authproblem = TRUE;
+          }
         }
       }
       else
@@ -840,8 +844,9 @@ send_buffer *add_buffer_init(void)
 static
 CURLcode add_buffer_send(send_buffer *in,
                          struct connectdata *conn,
-                         long *bytes_written) /* add the number of sent
+                         long *bytes_written, /* add the number of sent
                                                  bytes to this counter */
+                         int socketindex)
 {
   ssize_t amount;
   CURLcode res;
@@ -849,7 +854,11 @@ CURLcode add_buffer_send(send_buffer *in,
   size_t size;
   struct HTTP *http = conn->proto.http;
   size_t sendsize;
-  curl_socket_t sockfd = conn->sock[FIRSTSOCKET];
+  curl_socket_t sockfd;
+
+  curlassert(socketindex <= SECONDARYSOCKET);
+
+  sockfd = conn->sock[socketindex];
 
   /* The looping below is required since we use non-blocking sockets, but due
      to the circumstances we will just loop and try again and again etc */
@@ -1161,7 +1170,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
         if(CURLE_OK == result)
           /* Now send off the request */
           result = add_buffer_send(req_buffer, conn,
-                                   &data->info.request_size);
+                                   &data->info.request_size, sockindex);
       }
       if(result)
         failf(data, "Failed sending CONNECT to proxy");
@@ -1351,20 +1360,13 @@ CURLcode Curl_http_connect(struct connectdata *conn, bool *done)
    * after the connect has occured, can we start talking SSL
    */
 
-  if(conn->bits.tunnel_proxy) {
+  if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
 
     /* either SSL over proxy, or explicitly asked for */
     result = Curl_proxyCONNECT(conn, FIRSTSOCKET,
                                conn->host.name,
                                conn->remote_port);
     if(CURLE_OK != result)
-      return result;
-  }
-
-  if(conn->protocol & PROT_HTTPS) {
-    /* perform SSL initialization for this socket */
-    result = Curl_ssl_connect(conn, FIRSTSOCKET);
-    if(result)
       return result;
   }
 
@@ -1377,10 +1379,80 @@ CURLcode Curl_http_connect(struct connectdata *conn, bool *done)
     data->state.first_host = strdup(conn->host.name);
   }
 
-  *done = TRUE;
+  if(conn->protocol & PROT_HTTPS) {
+    /* perform SSL initialization */
+    if(data->state.used_interface == Curl_if_multi) {
+      result = Curl_https_connecting(conn, done);
+      if(result)
+        return result;
+    }
+    else {
+      /* BLOCKING */
+      result = Curl_ssl_connect(conn, FIRSTSOCKET);
+      if(result)
+        return result;
+      *done = TRUE;
+    }
+  }
+  else {
+    *done = TRUE;
+  }
 
   return CURLE_OK;
 }
+
+CURLcode Curl_https_connecting(struct connectdata *conn, bool *done)
+{
+  CURLcode result;
+  curlassert(conn->protocol & PROT_HTTPS);
+
+  /* perform SSL initialization for this socket */
+  result = Curl_ssl_connect_nonblocking(conn, FIRSTSOCKET, done);
+  if(result)
+    return result;
+
+  return CURLE_OK;
+}
+
+#ifdef USE_SSLEAY
+/* This function is OpenSSL-specific. It should be made to query the generic
+   SSL layer instead. */
+int Curl_https_getsock(struct connectdata *conn,
+                       curl_socket_t *socks,
+                       int numsocks)
+{
+  if (conn->protocol & PROT_HTTPS) {
+    struct ssl_connect_data *connssl = &conn->ssl[FIRSTSOCKET];
+
+    if(!numsocks)
+      return GETSOCK_BLANK;
+
+    if (connssl->connecting_state == ssl_connect_2_writing) {
+      /* write mode */
+      socks[0] = conn->sock[FIRSTSOCKET];
+      return GETSOCK_WRITESOCK(0);
+    }
+    else if (connssl->connecting_state == ssl_connect_2_reading) {
+      /* read mode */
+      socks[0] = conn->sock[FIRSTSOCKET];
+      return GETSOCK_READSOCK(0);
+    }
+  }
+  return CURLE_OK;
+}
+#else
+#ifdef USE_GNUTLS
+int Curl_https_getsock(struct connectdata *conn,
+                       curl_socket_t *socks,
+                       int numsocks)
+{
+  (void)conn;
+  (void)socks;
+  (void)numsocks;
+  return GETSOCK_BLANK;
+}
+#endif
+#endif
 
 /*
  * Curl_http_done() gets called from Curl_done() after a single HTTP request
@@ -2027,7 +2099,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
           return result;
 
         result = add_buffer_send(req_buffer, conn,
-                                 &data->info.request_size);
+                                 &data->info.request_size, FIRSTSOCKET);
         if(result)
           failf(data, "Failed sending POST request");
         else
@@ -2092,7 +2164,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
 
       /* fire away the whole request to the server */
       result = add_buffer_send(req_buffer, conn,
-                               &data->info.request_size);
+                               &data->info.request_size, FIRSTSOCKET);
       if(result)
         failf(data, "Failed sending POST request");
       else
@@ -2136,7 +2208,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
 
       /* this sends the buffer and frees all the buffer resources */
       result = add_buffer_send(req_buffer, conn,
-                               &data->info.request_size);
+                               &data->info.request_size, FIRSTSOCKET);
       if(result)
         failf(data, "Failed sending PUT request");
       else
@@ -2258,7 +2330,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       }
       /* issue the request */
       result = add_buffer_send(req_buffer, conn,
-                               &data->info.request_size);
+                               &data->info.request_size, FIRSTSOCKET);
 
       if(result)
         failf(data, "Failed sending HTTP POST request");
@@ -2275,7 +2347,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
 
       /* issue the request */
       result = add_buffer_send(req_buffer, conn,
-                               &data->info.request_size);
+                               &data->info.request_size, FIRSTSOCKET);
 
       if(result)
         failf(data, "Failed sending HTTP request");

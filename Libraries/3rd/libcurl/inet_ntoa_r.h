@@ -1,5 +1,5 @@
-#ifndef __FTP_H
-#define __FTP_H
+#ifndef __INET_NTOA_R_H
+#define __INET_NTOA_R_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -20,24 +20,25 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ftp.h,v 1.23 2006-04-10 15:00:54 bagder Exp $
+ * $Id: inet_ntoa_r.h,v 1.3 2005/05/26 20:56:25 bagder Exp $
  ***************************************************************************/
 
-#ifndef CURL_DISABLE_FTP
-CURLcode Curl_ftp(struct connectdata *conn, bool *done);
-CURLcode Curl_ftp_done(struct connectdata *conn, CURLcode);
-CURLcode Curl_ftp_connect(struct connectdata *conn, bool *done);
-CURLcode Curl_ftp_disconnect(struct connectdata *conn);
-CURLcode Curl_ftpsendf(struct connectdata *, const char *fmt, ...);
-CURLcode Curl_nbftpsendf(struct connectdata *, const char *fmt, ...);
-CURLcode Curl_GetFTPResponse(ssize_t *nread, struct connectdata *conn,
-                             int *ftpcode);
-CURLcode Curl_ftp_nextconnect(struct connectdata *conn);
-CURLcode Curl_ftp_multi_statemach(struct connectdata *conn, bool *done);
-int Curl_ftp_getsock(struct connectdata *conn,
-                     curl_socket_t *socks,
-                     int numsocks);
-CURLcode Curl_ftp_doing(struct connectdata *conn,
-                        bool *dophase_done);
-#endif /* CURL_DISABLE_FTP */
-#endif /* __FTP_H */
+#include "setup.h"
+
+#ifdef HAVE_INET_NTOA_R_2_ARGS
+/*
+ * uClibc 0.9.26 (at least) doesn't define this prototype. The buffer
+ * must be at least 16 characters long.
+ */
+char *inet_ntoa_r(const struct in_addr in, char buffer[]);
+
+#else
+/*
+ * My solaris 5.6 system running gcc 2.8.1 does *not* have this prototype
+ * in any system include file! Isn't that weird?
+ */
+char *inet_ntoa_r(const struct in_addr in, char *buffer, int buflen);
+
+#endif
+
+#endif

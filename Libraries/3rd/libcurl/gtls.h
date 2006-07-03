@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.h,v 1.1 2005/10/30 22:32:18 csc Exp $
+ * $Id: gtls.h,v 1.1 2005/04/07 15:27:14 bagder Exp $
  ***************************************************************************/
 int Curl_gtls_init(void);
 int Curl_gtls_cleanup(void);

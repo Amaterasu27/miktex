@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: multi.h,v 1.2 2005/10/30 22:32:19 csc Exp $
+ * $Id: multi.h,v 1.33 2006-04-10 13:12:52 bagder Exp $
  ***************************************************************************/
 /*
   This is an "external" header file. Don't give away any internals here!
@@ -55,7 +55,7 @@
 /* HP-UX systems version 9, 10 and 11 lack sys/select.h and so does oldish
    libc5-based Linux systems. Only include it on system that are known to
    require it! */
-#if defined(_AIX) || defined(NETWARE)
+#if defined(_AIX) || defined(NETWARE) || defined(__NetBSD__)
 #include <sys/select.h>
 #endif
 
@@ -66,6 +66,15 @@
 #include <sys/types.h>
 #endif
 
+/*
+ * This header file should not really need to include "curl.h" since curl.h
+ * itself includes this file and we expect user applications to do #include
+ * <curl/curl.h> without the need for especially including multi.h.
+ *
+ * For some reason we added this include here at one point, and rather than to
+ * break existing (wrongly written) libcurl applications, we leave it as-is
+ * but with this warning attached.
+ */
 #include "curl.h"
 
 #ifdef  __cplusplus
@@ -73,8 +82,6 @@ extern "C" {
 #endif
 
 typedef void CURLM;
-
-#ifdef HAVE_CURL_MULTI_SOCKET /* this is not set by anything yet */
 
 #ifndef curl_socket_typedef
 /* Public socket typedef */
@@ -88,15 +95,15 @@ typedef int curl_socket_t;
 #define curl_socket_typedef
 #endif /* curl_socket_typedef */
 
-#endif /* HAVE_CURL_MULTI_SOCKET */
-
 typedef enum {
-  CURLM_CALL_MULTI_PERFORM=-1, /* please call curl_multi_perform() soon */
+  CURLM_CALL_MULTI_PERFORM = -1, /* please call curl_multi_perform() soon */
   CURLM_OK,
   CURLM_BAD_HANDLE,      /* the passed-in handle is not a valid CURLM handle */
   CURLM_BAD_EASY_HANDLE, /* an easy handle was not good/valid */
   CURLM_OUT_OF_MEMORY,   /* if you ever get this, you're in deep sh*t */
   CURLM_INTERNAL_ERROR,  /* this is a libcurl bug */
+  CURLM_BAD_SOCKET,      /* the passed in socket argument did not match */
+  CURLM_UNKNOWN_OPTION,  /* curl_multi_setopt() with unsupported option */
   CURLM_LAST
 } CURLMcode;
 
@@ -234,57 +241,14 @@ CURL_EXTERN CURLMsg *curl_multi_info_read(CURLM *multi_handle,
  */
 CURL_EXTERN const char *curl_multi_strerror(CURLMcode);
 
-#ifdef HAVE_CURL_MULTI_SOCKET
 /*
  * Name:    curl_multi_socket() and
  *          curl_multi_socket_all()
  *
  * Desc:    An alternative version of curl_multi_perform() that allows the
  *          application to pass in one of the file descriptors that have been
- *          detected to have "action" on them and let libcurl perform. This
- *          allows libcurl to not have to scan through all possible file
- *          descriptors to check for this. The app is recommended to pass in
- *          the 'easy' argument (or set it to CURL_EASY_NONE) to make libcurl
- *          figure out the internal structure even faster and easier.  If the
- *          easy argument is set to something else than CURL_EASY_NONE, the
- *          's' (socket) argument will be ignored by libcurl.
- *
- *          It also informs the application about updates in the socket (file
- *          descriptor) status by doing none, one or multiple calls to the
- *          curl_socket_callback. It thus updates the status with changes
- *          since the previous time this function was used. If 'callback' is
- *          NULL, no callback will be called. A status change may also be a
- *          new timeout only, having the same IN/OUT status as before.
- *
- *          If a previous wait for socket action(s) timed out, you should call
- *          this function with the socket argument set to
- *          CURL_SOCKET_TIMEOUT. If you want to force libcurl to (re-)check
- *          all its internal sockets, and call the callback with status for
- *          all sockets no matter what the previous state is, you call
- *          curl_multi_socket_all() instead.
- *
- *          curl_multi_perform() is thus the equivalent of calling
- *          curl_multi_socket_all(handle, NULL, NULL);
- *
- *          IMPLEMENTATION: libcurl will need an internal hash table to map
- *          socket numbers to internal easy handles for the cases when 'easy'
- *          is set to CURL_EASY_NONE.
- *
- *          Regarding the timeout argument in the callback: it is the timeout
- *          (in milliseconds) for waiting on action on this socket (and the
- *          given time period starts when the callback is called) until you
- *          should call curl_multi_socket() with the timeout stuff mentioned
- *          above. If "actions" happens on the socket before the timeout
- *          happens, remember that the timout timer keeps ticking until told
- *          otherwise.
- *
- *          The "what" argument has one of five values:
- *
- *            0 CURL_POLL_NONE (0)   - register, not interested in readiness
- *            1 CURL_POLL_IN         - register, interested in read readiness
- *            2 CURL_POLL_OUT        - register, interested in write readiness
- *            3 CURL_POLL_INOUT      - register, interested in both
- *            4 CURL_POLL_REMOVE     - deregister
+ *          detected to have "action" on them and let libcurl perform.
+ *          See man page for details.
  */
 #define CURL_POLL_NONE   0
 #define CURL_POLL_IN     1
@@ -292,25 +256,16 @@ CURL_EXTERN const char *curl_multi_strerror(CURLMcode);
 #define CURL_POLL_INOUT  3
 #define CURL_POLL_REMOVE 4
 
-#define CURL_EASY_NONE (CURL *)0
-#define CURL_EASY_TIMEOUT (CURL *)0
 #define CURL_SOCKET_TIMEOUT CURL_SOCKET_BAD
 
 typedef int (*curl_socket_callback)(CURL *easy,      /* easy handle */
                                     curl_socket_t s, /* socket */
                                     int what,        /* see above */
-                                    long ms,         /* timeout for wait */
                                     void *userp);    /* "private" pointer */
 
-CURLMcode curl_multi_socket(CURLM *multi_handle,
-                            curl_socket_t s,
-                            CURL *easy,
-                            curl_socket_callback callback,
-                            void *userp); /* passed to callback */
+CURLMcode curl_multi_socket(CURLM *multi_handle, curl_socket_t s);
 
-CURLMcode curl_multi_socket_all(CURLM *multi_handle,
-                                curl_socket_callback callback,
-                                void *userp); /* passed to callback */
+CURLMcode curl_multi_socket_all(CURLM *multi_handle);
 
 /*
  * Name:    curl_multi_timeout()
@@ -323,7 +278,39 @@ CURLMcode curl_multi_socket_all(CURLM *multi_handle,
  */
 CURLMcode curl_multi_timeout(CURLM *multi_handle, long *milliseconds);
 
-#endif /* HAVE_CURL_MULTI_SOCKET */
+#undef CINIT /* re-using the same name as in curl.h */
+
+#ifdef CURL_ISOCPP
+#define CINIT(name,type,number) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + number
+#else
+/* The macro "##" is ISO C, we assume pre-ISO C doesn't support it. */
+#define LONG          CURLOPTTYPE_LONG
+#define OBJECTPOINT   CURLOPTTYPE_OBJECTPOINT
+#define FUNCTIONPOINT CURLOPTTYPE_FUNCTIONPOINT
+#define OFF_T         CURLOPTTYPE_OFF_T
+#define CINIT(name,type,number) CURLMOPT_/**/name = type + number
+#endif
+
+typedef enum {
+  /* This is the socket callback function pointer */
+  CINIT(SOCKETFUNCTION, FUNCTIONPOINT, 1),
+
+  /* This is the argument passed to the socket callback */
+  CINIT(SOCKETDATA, OBJECTPOINT, 2),
+
+  CURLMOPT_LASTENTRY /* the last unused */
+} CURLMoption;
+
+
+/*
+ * Name:    curl_multi_setopt()
+ *
+ * Desc:    Sets options for the multi handle.
+ *
+ * Returns: CURLM error code.
+ */
+CURLMcode curl_multi_setopt(CURLM *multi_handle,
+                            CURLMoption option, ...);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.h,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: sendf.h,v 1.30 2005/02/09 13:06:40 bagder Exp $
  ***************************************************************************/
 
 CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *,

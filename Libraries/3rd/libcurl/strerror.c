@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2004, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2004, 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,6 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * $Id: strerror.c,v 1.33 2006-04-26 17:27:36 giva Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -42,7 +43,7 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
-#ifdef HAVE_NO_STRERROR_R_DECL
+#if defined(HAVE_STRERROR_R) && defined(HAVE_NO_STRERROR_R_DECL)
 #ifdef HAVE_POSIX_STRERROR_R
 /* seen on AIX 5100-02 gcc 2.9 */
 extern int strerror_r(int errnum, char *strerrbuf, size_t buflen);
@@ -82,9 +83,6 @@ curl_easy_strerror(CURLcode error)
 
   case CURLE_FTP_ACCESS_DENIED:
     return "FTP: access denied";
-
-  case CURLE_FTP_USER_PASSWORD_INCORRECT:
-    return "FTP: user and/or password incorrect";
 
   case CURLE_FTP_WEIRD_PASS_REPLY:
     return "FTP: unknown PASS reply";
@@ -132,7 +130,11 @@ curl_easy_strerror(CURLcode error)
     return "failed to open/read local data from file/application";
 
   case CURLE_OUT_OF_MEMORY:
+#ifdef CURL_DOES_CONVERSIONS
+    return "conversion failed -or- out of memory";
+#else
     return "out of memory";
+#endif /* CURL_DOES_CONVERSIONS */
 
   case CURLE_OPERATION_TIMEOUTED:
     return "a timeout was reached";
@@ -266,11 +268,19 @@ curl_easy_strerror(CURLcode error)
   case CURLE_TFTP_NOSUCHUSER:
     return "TFTP: No such user";;
 
-  case CURLE_URL_MALFORMAT_USER: /* not used by current libcurl */
-  case CURLE_MALFORMAT_USER:     /* not used by current libcurl */
-  case CURLE_BAD_CALLING_ORDER:  /* not used by current libcurl */
-  case CURLE_BAD_PASSWORD_ENTERED:/* not used by current libcurl */
-  case CURLE_OBSOLETE:           /* not used by current libcurl */
+  case CURLE_CONV_FAILED:
+    return "conversion failed";
+
+  case CURLE_CONV_REQD:
+    return "caller must register CURLOPT_CONV_ callback options";
+
+    /* error codes not used by current libcurl */
+  case CURLE_URL_MALFORMAT_USER:
+  case CURLE_FTP_USER_PASSWORD_INCORRECT:
+  case CURLE_MALFORMAT_USER:
+  case CURLE_BAD_CALLING_ORDER:
+  case CURLE_BAD_PASSWORD_ENTERED:
+  case CURLE_OBSOLETE:
   case CURL_LAST:
     break;
   }
@@ -319,6 +329,12 @@ curl_multi_strerror(CURLMcode error)
 
   case CURLM_INTERNAL_ERROR:
     return "internal error";
+
+  case CURLM_BAD_SOCKET:
+    return "invalid socket argument";
+
+  case CURLM_UNKNOWN_OPTION:
+    return "unknown option";
 
   case CURLM_LAST:
     break;
@@ -504,10 +520,11 @@ get_winsock_error (int err, char *buf, size_t len)
   case WSAEREMOTE:
     p = "Remote error";
     break;
+#ifdef WSAEDISCON  /* missing in SalfordC! */
   case WSAEDISCON:
     p = "Disconnected";
     break;
-
+#endif
     /* Extended Winsock errors */
   case WSASYSNOTREADY:
     p = "Winsock library is not ready";

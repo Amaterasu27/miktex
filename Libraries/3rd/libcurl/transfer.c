@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: transfer.c,v 1.2 2005/10/30 22:32:19 csc Exp $
+ * $Id: transfer.c,v 1.299 2006-06-09 07:08:34 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -101,6 +101,8 @@
 #include "share.h"
 #include "memory.h"
 #include "select.h"
+#include "multiif.h"
+#include "easyif.h" /* for Curl_convert_to_network prototype */
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -167,6 +169,17 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
 
   *nreadp = nread;
 
+#ifdef CURL_DOES_CONVERSIONS
+  if(data->ftp_in_ascii_mode) {
+    CURLcode res;
+    res = Curl_convert_to_network(data, conn->upload_fromhere, nread);
+    /* Curl_convert_to_network calls failf if unsuccessful */
+    if(res != CURLE_OK) {
+      return(res);
+    }
+  }
+#endif /* CURL_DOES_CONVERSIONS */
+
   return CURLE_OK;
 }
 
@@ -214,7 +227,7 @@ CURLcode Curl_readrewind(struct connectdata *conn)
     if(data->set.ioctl) {
       curlioerr err;
 
-      err = data->set.ioctl(data, CURLIOCMD_RESTARTREAD,
+      err = (data->set.ioctl) (data, CURLIOCMD_RESTARTREAD,
                             data->set.ioctl_client);
       infof(data, "the ioctl callback returned %d\n", (int)err);
 
@@ -1158,12 +1171,14 @@ CURLcode Curl_readwrite(struct connectdata *conn,
 
               case DEFLATE:
                 /* Assume CLIENTWRITE_BODY; headers are not encoded. */
-                result = Curl_unencode_deflate_write(data, k, nread);
+                if(!k->ignorebody)
+                  result = Curl_unencode_deflate_write(data, k, nread);
                 break;
 
               case GZIP:
                 /* Assume CLIENTWRITE_BODY; headers are not encoded. */
-                result = Curl_unencode_gzip_write(data, k, nread);
+                if(!k->ignorebody)
+                  result = Curl_unencode_gzip_write(data, k, nread);
                 break;
 
               case COMPRESS:
@@ -1266,17 +1281,33 @@ CURLcode Curl_readwrite(struct connectdata *conn,
           conn->upload_present = nread;
 
           /* convert LF to CRLF if so asked */
+#ifdef CURL_DO_LINEEND_CONV
+          /* always convert if we're FTPing in ASCII mode */
+          if ((data->set.crlf) || (data->ftp_in_ascii_mode)) {
+#else
           if (data->set.crlf) {
+#endif /* CURL_DO_LINEEND_CONV */
               if(data->state.scratch == NULL)
                 data->state.scratch = malloc(2*BUFSIZE);
               if(data->state.scratch == NULL) {
                 failf (data, "Failed to alloc scratch buffer!");
                 return CURLE_OUT_OF_MEMORY;
               }
+              /*
+               * ASCII/EBCDIC Note: This is presumably a text (not binary)
+               * transfer so the data should already be in ASCII.
+               * That means the hex values for ASCII CR (0x0d) & LF (0x0a)
+               * must be used instead of the escape sequences \r & \n.
+               */
             for(i = 0, si = 0; i < nread; i++, si++) {
               if (conn->upload_fromhere[i] == 0x0a) {
                 data->state.scratch[si++] = 0x0d;
                 data->state.scratch[si] = 0x0a;
+                if (!data->set.crlf) {
+                  /* we're here only because FTP is in ASCII mode...
+                     bump infilesize for the LF we just added */
+                  data->set.infilesize++;
+                }
               }
               else
                 data->state.scratch[si] = conn->upload_fromhere[i];
@@ -1402,6 +1433,13 @@ CURLcode Curl_readwrite(struct connectdata *conn,
 
     if(!(conn->bits.no_body) && (conn->size != -1) &&
        (k->bytecount != conn->size) &&
+#ifdef CURL_DO_LINEEND_CONV
+       /* Most FTP servers don't adjust their file SIZE response for CRLFs,
+          so we'll check to see if the discrepancy can be explained
+          by the number of CRLFs we've changed to LFs.
+        */
+       (k->bytecount != (conn->size + data->state.crlf_conversions)) &&
+#endif /* CURL_DO_LINEEND_CONV */
        !conn->newurl) {
       failf(data, "transfer closed with %" FORMAT_OFF_T
             " bytes remaining to read",
@@ -1508,34 +1546,43 @@ CURLcode Curl_readwrite_init(struct connectdata *conn)
 }
 
 /*
- * Curl_single_fdset() gets called by the multi interface code when the app
- * has requested to get the fd_sets for the current connection. This function
+ * Curl_single_getsock() gets called by the multi interface code when the app
+ * has requested to get the sockets for the current connection. This function
  * will then be called once for every connection that the multi interface
  * keeps track of. This function will only be called for connections that are
  * in the proper state to have this information available.
  */
-void Curl_single_fdset(struct connectdata *conn,
-                       fd_set *read_fd_set,
-                       fd_set *write_fd_set,
-                       fd_set *exc_fd_set,
-                       int *max_fd)
+int Curl_single_getsock(struct connectdata *conn,
+                        curl_socket_t *sock, /* points to numsocks number
+                                                of sockets */
+                        int numsocks)
 {
-  *max_fd = -1; /* init */
+  int bitmap = GETSOCK_BLANK;
+  int index = 0;
+
+  if(numsocks < 2)
+    /* simple check but we might need two slots */
+    return GETSOCK_BLANK;
+
   if(conn->keep.keepon & KEEP_READ) {
-    FD_SET(conn->sockfd, read_fd_set);
-    *max_fd = (int)conn->sockfd;
+    bitmap |= GETSOCK_READSOCK(index);
+    sock[index] = conn->sockfd;
   }
   if(conn->keep.keepon & KEEP_WRITE) {
-    FD_SET(conn->writesockfd, write_fd_set);
 
-    /* since sockets are curl_socket_t nowadays, we typecast it to int here
-       to compare it nicely */
-    if((int)conn->writesockfd > *max_fd)
-      *max_fd = (int)conn->writesockfd;
+    if((conn->sockfd != conn->writesockfd) ||
+       !(conn->keep.keepon & KEEP_READ)) {
+      /* only if they are not the same socket or we didn't have a readable
+         one, we increase index */
+      if(conn->keep.keepon & KEEP_READ)
+        index++; /* increase index if we need two entries */
+      sock[index] = conn->writesockfd;
+    }
+
+    bitmap |= GETSOCK_WRITESOCK(index);
   }
-  /* we don't use exceptions, only touch that one to prevent compiler
-     warnings! */
-  *exc_fd_set = *exc_fd_set;
+
+  return bitmap;
 }
 
 
@@ -1765,17 +1812,18 @@ CURLcode Curl_follow(struct SessionHandle *data,
   size_t newlen;
   char *newest;
 
-  if (data->set.maxredirs &&
-      (data->set.followlocation >= data->set.maxredirs)) {
-    failf(data,"Maximum (%d) redirects followed", data->set.maxredirs);
-    return CURLE_TOO_MANY_REDIRECTS;
-  }
+  if(!retry) {
+    if ((data->set.maxredirs != -1) &&
+        (data->set.followlocation >= data->set.maxredirs)) {
+      failf(data,"Maximum (%d) redirects followed", data->set.maxredirs);
+      return CURLE_TOO_MANY_REDIRECTS;
+    }
 
-  if(!retry)
     /* mark the next request as a followed location: */
     data->state.this_is_a_follow = TRUE;
 
-  data->set.followlocation++; /* count location-followers */
+    data->set.followlocation++; /* count location-followers */
+  }
 
   if(data->set.http_auto_referer) {
     /* We are asked to automatically set the previous URL as the
@@ -1824,7 +1872,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
 
       /* First we need to find out if there's a ?-letter in the URL,
          and cut it and the right-side of that off */
-      pathsep = strrchr(protsep, '?');
+      pathsep = strchr(protsep, '?');
       if(pathsep)
         *pathsep=0;
 
@@ -2099,11 +2147,12 @@ bool Curl_retry_request(struct connectdata *conn,
   bool retry = FALSE;
 
   if((conn->keep.bytecount+conn->headerbytecount == 0) &&
-     conn->bits.reuse) {
-    /* We got no data and we attempted to re-use a connection. This might
-       happen if the connection was left alive when we were done using it
-       before, but that was closed when we wanted to read from it again. Bad
-       luck. Retry the same request on a fresh connect! */
+     conn->bits.reuse &&
+     !conn->bits.no_body) {
+    /* We got no data, we attempted to re-use a connection and yet we want a
+       "body". This might happen if the connection was left alive when we were
+       done using it before, but that was closed when we wanted to read from
+       it again. Bad luck. Retry the same request on a fresh connect! */
     infof(conn->data, "Connection died, retrying a fresh connect\n");
     *url = strdup(conn->data->change.url);
 
@@ -2157,6 +2206,12 @@ CURLcode Curl_perform(struct SessionHandle *data)
 
     if(res == CURLE_OK) {
       bool do_done;
+      if(data->set.connect_only) {
+        /* keep connection open for application to use the socket */
+        conn->bits.close = FALSE;
+        res = Curl_done(&conn, CURLE_OK);
+        break;
+      }
       res = Curl_do(&conn, &do_done);
 
       /* for non 3rd party transfer only */
@@ -2216,6 +2271,19 @@ CURLcode Curl_perform(struct SessionHandle *data)
 
   if(newurl)
     free(newurl);
+
+  if(res && !data->state.errorbuf) {
+    /*
+     * As an extra precaution: if no error string has been set and there was
+     * an error, use the strerror() string or if things are so bad that not
+     * even that is good, set a bad string that mentions the error code.
+     */
+    const char *str = curl_easy_strerror(res);
+    if(!str)
+      failf(data, "unspecified error %d", (int)res);
+    else
+      failf(data, "%s", str);
+  }
 
   /* run post-transfer uncondionally, but don't clobber the return code if
      we already have an error code recorder */

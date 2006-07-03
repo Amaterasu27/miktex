@@ -1,6 +1,6 @@
 ## miktex.mak: libcurl-static
 ##
-## Copyright (C) 2005 Christian Schenk
+## Copyright (C) 2005-2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -64,6 +64,7 @@ objects = \
 	$(outdir)\sendf.obj \
 	$(outdir)\share.obj \
 	$(outdir)\speedcheck.obj \
+	$(outdir)\splay.obj \
 	$(outdir)\ssluse.obj \
 	$(outdir)\sslgen.obj \
 	$(outdir)\strequal.obj \
@@ -207,6 +208,7 @@ $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/if2ip.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
@@ -214,6 +216,9 @@ $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/select.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
+$(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
+$(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sockaddr.h
+$(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/inet_ntop.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memdebug.h
 $(outdir)\content_encoding.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
 $(outdir)\content_encoding.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/config-win32.h
@@ -233,6 +238,7 @@ $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strequal.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strtok.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
@@ -250,6 +256,7 @@ $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
@@ -260,6 +267,7 @@ $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/easy.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
+$(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memdebug.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/config-win32.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strequal.h
@@ -272,6 +280,7 @@ $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
@@ -280,6 +289,7 @@ $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/easyif.h
+$(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -290,6 +300,16 @@ $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/config-win32.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/urldata.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/cookie.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/formdata.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/timeval.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
+$(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/easyif.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -307,6 +327,7 @@ $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/escape.h
@@ -346,7 +367,9 @@ $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
+$(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/easyif.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/if2ip.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
@@ -362,6 +385,8 @@ $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/inet_ntop.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/select.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/parsedate.h
+$(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sockaddr.h
+$(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -383,6 +408,7 @@ $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/getinfo.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
@@ -405,10 +431,12 @@ $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
+$(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -427,6 +455,7 @@ $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
@@ -449,6 +478,7 @@ $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
@@ -472,6 +502,7 @@ $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
@@ -495,11 +526,13 @@ $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/inet_pton.h
+$(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -518,6 +551,7 @@ $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
@@ -540,10 +574,12 @@ $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
+$(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -563,6 +599,7 @@ $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
@@ -579,6 +616,7 @@ $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/select.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/parsedate.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strtoofft.h
+$(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -596,6 +634,7 @@ $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/content_encoding.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http.h
@@ -617,6 +656,7 @@ $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strequal.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/base64.h
@@ -656,6 +696,7 @@ $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/escape.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
@@ -663,6 +704,7 @@ $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strequal.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strtok.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/ldap.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
+$(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/base64.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -699,6 +741,7 @@ $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
@@ -735,6 +778,7 @@ $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
@@ -753,6 +797,7 @@ $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/select.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
@@ -766,6 +811,7 @@ $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
@@ -776,6 +822,7 @@ $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/easy.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
+$(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/easyif.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memdebug.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/config-win32.h
@@ -788,6 +835,7 @@ $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memdebug.h
@@ -802,7 +850,9 @@ $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
+$(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/speedcheck.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/setup.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/config-win32.h
@@ -815,6 +865,7 @@ $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/ssluse.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/gtls.h
@@ -834,6 +885,7 @@ $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/url.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/inet_pton.h
@@ -863,6 +915,7 @@ $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -886,6 +939,7 @@ $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/telnet.h
@@ -909,12 +963,14 @@ $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sendf.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/tftp.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/progress.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/connect.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/strerror.h
+$(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sockaddr.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -939,6 +995,7 @@ $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/netrc.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/content_encoding.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/transfer.h
@@ -955,6 +1012,8 @@ $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_negotiate.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/share.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/memory.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/select.h
+$(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/multiif.h
+$(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/easyif.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -972,6 +1031,7 @@ $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/netrc.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/base64.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
@@ -1018,6 +1078,7 @@ $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/http_chunks.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hostip.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/hash.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/llist.h
+$(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/splay.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/sslgen.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h

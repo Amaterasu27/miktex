@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: parsedate.h,v 1.1 2005/10/30 22:32:18 csc Exp $
+ * $Id: parsedate.h,v 1.4 2005/03/31 07:02:03 bagder Exp $
  ***************************************************************************/
 extern const char * const Curl_wkday[7];
 extern const char * const Curl_month[12];

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sslgen.c,v 1.1 2005/10/30 22:32:18 csc Exp $
+ * $Id: sslgen.c,v 1.9 2006-05-11 05:16:38 bagder Exp $
  ***************************************************************************/
 
 /* This file is for "generic" SSL functions that all libcurl internals should
@@ -213,6 +213,23 @@ Curl_ssl_connect(struct connectdata *conn, int sockindex)
   (void)sockindex;
   return CURLE_OK;
 #endif /* USE_SSL */
+}
+
+CURLcode
+Curl_ssl_connect_nonblocking(struct connectdata *conn, int sockindex,
+                             bool *done)
+{
+#if defined(USE_SSL) && defined(USE_SSLEAY)
+  /* mark this is being ssl enabled from here on. */
+  conn->ssl[sockindex].use = TRUE;
+  return Curl_ossl_connect_nonblocking(conn, sockindex, done);
+
+#else
+  /* not implemented!
+     fallback to BLOCKING call. */
+  *done = TRUE;
+  return Curl_ssl_connect(conn, sockindex);
+#endif
 }
 
 #ifdef USE_SSL
@@ -537,3 +554,22 @@ size_t Curl_ssl_version(char *buffer, size_t size)
 #endif /* USE_SSLEAY */
 }
 
+
+/*
+ * This function tries to determine connection status.
+ *
+ * Return codes:
+ *     1 means the connection is still in place
+ *     0 means the connection has been closed
+ *    -1 means the connection status is unknown
+ */
+int Curl_ssl_check_cxn(struct connectdata *conn)
+{
+#ifdef USE_SSLEAY
+  return Curl_ossl_check_cxn(conn);
+#else
+  (void)conn;
+  /* TODO: we lack implementation of this for GnuTLS */
+  return -1; /* connection status unknown */
+#endif /* USE_SSLEAY */
+}

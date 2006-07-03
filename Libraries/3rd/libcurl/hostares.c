@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,17 +18,16 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostares.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: hostares.c,v 1.18 2006-05-05 22:07:01 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
 #include <string.h>
-#include <errno.h>
 
-#if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
+#ifdef HAVE_MALLOC_H  /* Win32 */
 #include <malloc.h>
-#else
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -55,13 +54,12 @@
 #include <inet.h>
 #include <stdlib.h>
 #endif
-#endif
 
 #ifdef HAVE_SETJMP_H
 #include <setjmp.h>
 #endif
 
-#ifdef WIN32
+#ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
 
@@ -77,6 +75,7 @@
 #include "share.h"
 #include "strerror.h"
 #include "url.h"
+#include "connect.h" /* for the Curl_sockerrno() proto */
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -105,17 +104,15 @@
  * Returns: CURLE_OK always!
  */
 
-CURLcode Curl_resolv_fdset(struct connectdata *conn,
-                           fd_set *read_fd_set,
-                           fd_set *write_fd_set,
-                           int *max_fdp)
+int Curl_resolv_getsock(struct connectdata *conn,
+                        curl_socket_t *socks,
+                        int numsocks)
 
 {
-  int max = ares_fds(conn->data->state.areschannel,
-                     read_fd_set, write_fd_set);
-  *max_fdp = max;
+  int max = ares_getsock(conn->data->state.areschannel,
+                         (int *)socks, numsocks);
 
-  return CURLE_OK;
+  return max;
 }
 
 /*
@@ -211,7 +208,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
       break;
     tvp = ares_timeout(data->state.areschannel, &store, &tv);
     count = select(nfds, &read_fds, &write_fds, NULL, tvp);
-    if (count < 0 && errno != EINVAL)
+    if (count < 0 && Curl_sockerrno() != EINVAL)
       break;
 
     ares_process(data->state.areschannel, &read_fds, &write_fds);

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2004, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: timeval.c,v 1.3 2005/11/01 21:53:13 csc Exp $
+ * $Id: timeval.c,v 1.26 2006/01/09 13:17:14 bagder Exp $
  ***************************************************************************/
 
 #include "timeval.h"
@@ -26,7 +26,6 @@
 #ifndef HAVE_GETTIMEOFDAY
 
 #ifdef WIN32
-#include <windows.h>
 #include <mmsystem.h>
 
 static int gettimeofday(struct timeval *tp, void *nothing)
@@ -57,7 +56,7 @@ static int gettimeofday(struct timeval *tp, void *nothing)
   unsigned long Ticks = 0;
   unsigned long Sec =0;
   unsigned long Usec = 0;
-    Ticks = timeGetTime();
+  Ticks = timeGetTime();
 
   Sec = Ticks/1000;
   Usec = (Ticks - (Sec*1000))*1000;

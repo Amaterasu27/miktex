@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip.h,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: hostip.h,v 1.48 2006-04-11 07:22:55 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -82,6 +82,7 @@
 #define CURL_ASYNC_SUCCESS ARES_SUCCESS
 #else
 #define CURL_ASYNC_SUCCESS CURLE_OK
+#define ares_cancel(x)
 #endif
 
 /*
@@ -159,15 +160,19 @@ CURLcode Curl_is_resolved(struct connectdata *conn,
 CURLcode Curl_wait_for_resolv(struct connectdata *conn,
                               struct Curl_dns_entry **dnsentry);
 
-/* Curl_resolv_fdset() is a generic function that exists in multiple versions
-   depending on what name resolve technology we've built to use. The function
-   is called from the curl_multi_fdset() function */
-CURLcode Curl_resolv_fdset(struct connectdata *conn,
-                           fd_set *read_fd_set,
-                           fd_set *write_fd_set,
-                           int *max_fdp);
+/* Curl_resolv_getsock() is a generic function that exists in multiple
+   versions depending on what name resolve technology we've built to use. The
+   function is called from the multi_getsock() function.  'sock' is a pointer
+   to an array to hold the file descriptors, with 'numsock' being the size of
+   that array (in number of entries). This function is supposed to return
+   bitmask indicating what file descriptors (referring to array indexes in the
+   'sock' array) to wait for, read/write. */
+int Curl_resolv_getsock(struct connectdata *conn, curl_socket_t *sock,
+                        int numsocks);
+
 /* unlock a previously resolved dns entry */
-void Curl_resolv_unlock(struct SessionHandle *data, struct Curl_dns_entry *dns);
+void Curl_resolv_unlock(struct SessionHandle *data,
+                        struct Curl_dns_entry *dns);
 
 /* for debugging purposes only: */
 void Curl_scan_cache_used(void *user, void *ptr);

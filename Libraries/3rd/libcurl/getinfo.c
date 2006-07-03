@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: getinfo.c,v 1.50 2006-05-11 05:17:40 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -75,6 +75,8 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
   double *param_doublep=NULL;
   char **param_charp=NULL;
   struct curl_slist **param_slistp=NULL;
+  char buf;
+
   va_start(arg, info);
 
   switch(info&CURLINFO_TYPEMASK) {
@@ -186,6 +188,36 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     break;
   case CURLINFO_COOKIELIST:
     *param_slistp = Curl_cookie_list(data);
+    break;
+  case CURLINFO_FTP_ENTRY_PATH:
+    /* Return the entrypath string from the most recent connection.
+       This pointer was copied from the connectdata structure by FTP.
+       The actual string may be free()ed by subsequent libcurl calls so
+       it must be copied to a safer area before the next libcurl call.
+       Callers must never free it themselves. */
+    *param_charp = data->state.most_recent_ftp_entrypath;
+    break;
+  case CURLINFO_LASTSOCKET:
+    if((data->state.lastconnect != -1) &&
+       (data->state.connects[data->state.lastconnect] != NULL)) {
+      *param_longp = data->state.connects[data->state.lastconnect]->
+        sock[FIRSTSOCKET];
+      /* we have a socket connected, let's determine if the server shut down */
+      /* determine if ssl */
+      if(data->state.connects[data->state.lastconnect]->ssl[FIRSTSOCKET].use) {
+        /* use the SSL context */
+        if (!Curl_ssl_check_cxn(data->state.connects[data->state.lastconnect]))
+          *param_longp = -1;   /* FIN received */
+      }
+      else {
+        /* use the socket */
+        if(recv((int)data->state.connects[data->state.lastconnect]->
+                sock[FIRSTSOCKET], (void*)&buf, 1, MSG_PEEK) == 0)
+          *param_longp = -1;   /* FIN received */
+      }
+    }
+    else
+      *param_longp = -1;
     break;
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;

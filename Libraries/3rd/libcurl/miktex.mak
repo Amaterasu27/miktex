@@ -59,6 +59,7 @@ objects = \
 	$(outdir)\sendf.obj \
 	$(outdir)\share.obj \
 	$(outdir)\speedcheck.obj \
+	$(outdir)\splay.obj \
 	$(outdir)\sslgen.obj \
 	$(outdir)\ssluse.obj \
 	$(outdir)\strequal.obj \
@@ -114,6 +115,7 @@ sources = \
 	sendf.c \
 	share.c \
 	speedcheck.c \
+	splay.c \
 	sslgen.c \
 	ssluse.c \
 	strequal.c \
@@ -218,8 +220,8 @@ $(outdir)\base64.obj: memdebug.h
 $(outdir)\connect.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\connect.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\connect.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\connect.obj: sendf.h if2ip.h strerror.h connect.h memory.h select.h
-$(outdir)\connect.obj: url.h memdebug.h
+$(outdir)\connect.obj: splay.h sendf.h if2ip.h strerror.h connect.h memory.h
+$(outdir)\connect.obj: select.h url.h multiif.h sockaddr.h inet_ntop.h memdebug.h
 $(outdir)\content_encoding.obj: setup.h config-win32.h
 $(outdir)\cookie.obj: setup.h config-win32.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
@@ -230,21 +232,23 @@ $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
 $(outdir)\cookie.obj: urldata.h cookie.h
 $(outdir)\cookie.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\cookie.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\cookie.obj: strequal.h strtok.h sendf.h memory.h share.h strtoofft.h
+$(outdir)\cookie.obj: splay.h strequal.h strtok.h sendf.h memory.h share.h
+$(outdir)\cookie.obj: strtoofft.h
 $(outdir)\dict.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\dict.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\dict.obj: transfer.h sendf.h progress.h strequal.h dict.h
+$(outdir)\dict.obj: splay.h transfer.h sendf.h progress.h strequal.h dict.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/easy.h
 $(outdir)\dict.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
+$(outdir)\dict.obj: memdebug.h
 $(outdir)\easy.obj: setup.h config-win32.h strequal.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\easy.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\easy.obj: hostip.h hash.h llist.h transfer.h sslgen.h url.h getinfo.h
-$(outdir)\easy.obj: share.h memory.h progress.h easyif.h
+$(outdir)\easy.obj: hostip.h hash.h llist.h splay.h transfer.h sslgen.h url.h
+$(outdir)\easy.obj: getinfo.h share.h memory.h progress.h easyif.h sendf.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -253,7 +257,8 @@ $(outdir)\easy.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
 $(outdir)\easy.obj: memdebug.h
 $(outdir)\escape.obj: setup.h config-win32.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
-$(outdir)\escape.obj: memory.h
+$(outdir)\escape.obj: memory.h urldata.h cookie.h formdata.h timeval.h
+$(outdir)\escape.obj: http_chunks.h hostip.h hash.h llist.h splay.h easyif.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\escape.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -263,8 +268,8 @@ $(outdir)\escape.obj: memdebug.h
 $(outdir)\file.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\file.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\file.obj: progress.h sendf.h escape.h file.h speedcheck.h getinfo.h
-$(outdir)\file.obj: transfer.h url.h memory.h parsedate.h
+$(outdir)\file.obj: splay.h progress.h sendf.h escape.h file.h speedcheck.h
+$(outdir)\file.obj: getinfo.h transfer.h url.h memory.h parsedate.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\file.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -283,9 +288,10 @@ $(outdir)\formdata.obj: memdebug.h
 $(outdir)\ftp.obj: setup.h config-win32.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ftp.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h hostip.h
-$(outdir)\ftp.obj: hash.h llist.h sendf.h if2ip.h progress.h transfer.h escape.h
-$(outdir)\ftp.obj: http.h ftp.h strtoofft.h strequal.h sslgen.h connect.h
-$(outdir)\ftp.obj: strerror.h memory.h inet_ntop.h select.h parsedate.h
+$(outdir)\ftp.obj: hash.h llist.h splay.h sendf.h easyif.h if2ip.h progress.h
+$(outdir)\ftp.obj: transfer.h escape.h http.h ftp.h strtoofft.h strequal.h
+$(outdir)\ftp.obj: sslgen.h connect.h strerror.h memory.h inet_ntop.h select.h
+$(outdir)\ftp.obj: parsedate.h sockaddr.h multiif.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -297,15 +303,16 @@ $(outdir)\getenv.obj: memory.h memdebug.h
 $(outdir)\getinfo.obj: setup.h config-win32.h
 $(outdir)\getinfo.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\getinfo.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\getinfo.obj: hostip.h hash.h llist.h getinfo.h memory.h sslgen.h
-$(outdir)\getinfo.obj: memdebug.h
+$(outdir)\getinfo.obj: hostip.h hash.h llist.h splay.h getinfo.h memory.h
+$(outdir)\getinfo.obj: sslgen.h memdebug.h
 $(outdir)\hash.obj: setup.h config-win32.h hash.h llist.h memory.h
 $(outdir)\hash.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hash.obj: memdebug.h
 $(outdir)\hostares.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostares.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h
-$(outdir)\hostares.obj: llist.h sendf.h share.h strerror.h url.h
+$(outdir)\hostares.obj: llist.h splay.h sendf.h share.h strerror.h url.h
+$(outdir)\hostares.obj: connect.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostares.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -315,7 +322,7 @@ $(outdir)\hostares.obj: memory.h memdebug.h
 $(outdir)\hostasyn.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostasyn.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h
-$(outdir)\hostasyn.obj: llist.h sendf.h share.h strerror.h url.h
+$(outdir)\hostasyn.obj: llist.h splay.h sendf.h share.h strerror.h url.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostasyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -325,7 +332,7 @@ $(outdir)\hostasyn.obj: memory.h memdebug.h
 $(outdir)\hostip.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\hostip.obj: sendf.h share.h strerror.h url.h inet_ntop.h
+$(outdir)\hostip.obj: splay.h sendf.h share.h strerror.h url.h inet_ntop.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -335,7 +342,7 @@ $(outdir)\hostip.obj: memory.h memdebug.h
 $(outdir)\hostip4.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip4.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\hostip4.obj: sendf.h share.h strerror.h url.h inet_pton.h
+$(outdir)\hostip4.obj: splay.h sendf.h share.h strerror.h url.h inet_pton.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip4.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -345,7 +352,8 @@ $(outdir)\hostip4.obj: memory.h memdebug.h
 $(outdir)\hostip6.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip6.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\hostip6.obj: sendf.h share.h strerror.h url.h inet_pton.h
+$(outdir)\hostip6.obj: splay.h sendf.h share.h strerror.h url.h inet_pton.h
+$(outdir)\hostip6.obj: connect.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostip6.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -355,7 +363,7 @@ $(outdir)\hostip6.obj: memory.h memdebug.h
 $(outdir)\hostsyn.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostsyn.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\hostsyn.obj: sendf.h share.h strerror.h url.h
+$(outdir)\hostsyn.obj: splay.h sendf.h share.h strerror.h url.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostsyn.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -365,7 +373,8 @@ $(outdir)\hostsyn.obj: memory.h memdebug.h
 $(outdir)\hostthre.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostthre.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h
-$(outdir)\hostthre.obj: llist.h sendf.h share.h strerror.h url.h
+$(outdir)\hostthre.obj: llist.h splay.h sendf.h share.h strerror.h url.h
+$(outdir)\hostthre.obj: multiif.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\hostthre.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -375,9 +384,10 @@ $(outdir)\hostthre.obj: inet_ntop.h memory.h memdebug.h
 $(outdir)\http.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\http.obj: transfer.h sendf.h progress.h base64.h strequal.h sslgen.h
-$(outdir)\http.obj: http_digest.h http_ntlm.h http_negotiate.h url.h share.h
-$(outdir)\http.obj: http.h memory.h select.h parsedate.h strtoofft.h
+$(outdir)\http.obj: splay.h transfer.h sendf.h progress.h base64.h strequal.h
+$(outdir)\http.obj: sslgen.h http_digest.h http_ntlm.h http_negotiate.h url.h
+$(outdir)\http.obj: share.h http.h memory.h select.h parsedate.h strtoofft.h
+$(outdir)\http.obj: multiif.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -387,7 +397,8 @@ $(outdir)\http.obj: memdebug.h
 $(outdir)\http_chunks.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http_chunks.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h
-$(outdir)\http_chunks.obj: llist.h sendf.h content_encoding.h http.h memory.h
+$(outdir)\http_chunks.obj: llist.h splay.h sendf.h content_encoding.h http.h
+$(outdir)\http_chunks.obj: memory.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http_chunks.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -397,7 +408,7 @@ $(outdir)\http_chunks.obj: memdebug.h
 $(outdir)\http_digest.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\http_digest.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h
-$(outdir)\http_digest.obj: llist.h sendf.h strequal.h base64.h md5.h
+$(outdir)\http_digest.obj: llist.h splay.h sendf.h strequal.h base64.h md5.h
 $(outdir)\http_digest.obj: http_digest.h strtok.h url.h memory.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\http_digest.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
@@ -417,8 +428,8 @@ $(outdir)\inet_pton.obj: setup.h config-win32.h inet_pton.h
 $(outdir)\ldap.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ldap.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\ldap.obj: sendf.h escape.h transfer.h strequal.h strtok.h ldap.h
-$(outdir)\ldap.obj: memory.h
+$(outdir)\ldap.obj: splay.h sendf.h escape.h transfer.h strequal.h strtok.h
+$(outdir)\ldap.obj: ldap.h memory.h base64.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ldap.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -441,7 +452,7 @@ $(outdir)\mprintf.obj: memdebug.h
 $(outdir)\multi.obj: setup.h config-win32.h
 $(outdir)\multi.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\multi.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\multi.obj: hostip.h hash.h llist.h transfer.h url.h connect.h
+$(outdir)\multi.obj: hostip.h hash.h llist.h splay.h transfer.h url.h connect.h
 $(outdir)\multi.obj: progress.h memory.h easyif.h multiif.h sendf.h memdebug.h
 $(outdir)\netrc.obj: setup.h config-win32.h
 $(outdir)\netrc.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
@@ -457,7 +468,7 @@ $(outdir)\parsedate.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl
 $(outdir)\progress.obj: setup.h config-win32.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\progress.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\progress.obj: hostip.h hash.h llist.h sendf.h progress.h
+$(outdir)\progress.obj: hostip.h hash.h llist.h splay.h sendf.h progress.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -466,35 +477,37 @@ $(outdir)\progress.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi
 $(outdir)\select.obj: setup.h config-win32.h
 $(outdir)\select.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\select.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\select.obj: hostip.h hash.h llist.h connect.h select.h
+$(outdir)\select.obj: hostip.h hash.h llist.h splay.h connect.h select.h
 $(outdir)\sendf.obj: setup.h config-win32.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\sendf.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\sendf.obj: hostip.h hash.h llist.h sendf.h connect.h sslgen.h
+$(outdir)\sendf.obj: hostip.h hash.h llist.h splay.h sendf.h connect.h sslgen.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/easy.h
 $(outdir)\sendf.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
-$(outdir)\sendf.obj: memory.h strerror.h memdebug.h
+$(outdir)\sendf.obj: memory.h strerror.h easyif.h memdebug.h
 $(outdir)\share.obj: setup.h config-win32.h
 $(outdir)\share.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\share.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\share.obj: hostip.h hash.h llist.h share.h memory.h memdebug.h
+$(outdir)\share.obj: hostip.h hash.h llist.h splay.h share.h memory.h memdebug.h
 $(outdir)\speedcheck.obj: setup.h config-win32.h
 $(outdir)\speedcheck.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\speedcheck.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\speedcheck.obj: hostip.h hash.h llist.h sendf.h speedcheck.h
+$(outdir)\speedcheck.obj: hostip.h hash.h llist.h splay.h sendf.h multiif.h
+$(outdir)\speedcheck.obj: speedcheck.h
+$(outdir)\splay.obj: splay.h
 $(outdir)\sslgen.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\sslgen.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\sslgen.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\sslgen.obj: sslgen.h ssluse.h gtls.h sendf.h strequal.h url.h memory.h
-$(outdir)\sslgen.obj: memdebug.h
+$(outdir)\sslgen.obj: splay.h sslgen.h ssluse.h gtls.h sendf.h strequal.h url.h
+$(outdir)\sslgen.obj: memory.h memdebug.h
 $(outdir)\ssluse.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ssluse.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\ssluse.obj: sendf.h url.h inet_pton.h ssluse.h connect.h strequal.h
-$(outdir)\ssluse.obj: select.h sslgen.h
+$(outdir)\ssluse.obj: splay.h sendf.h url.h inet_pton.h ssluse.h connect.h
+$(outdir)\ssluse.obj: strequal.h select.h sslgen.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\ssluse.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -505,7 +518,7 @@ $(outdir)\strequal.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.
 $(outdir)\strerror.obj: setup.h config-win32.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\strerror.obj: strerror.h urldata.h cookie.h formdata.h timeval.h
-$(outdir)\strerror.obj: http_chunks.h hostip.h hash.h llist.h
+$(outdir)\strerror.obj: http_chunks.h hostip.h hash.h llist.h splay.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\strerror.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -517,7 +530,7 @@ $(outdir)\strtoofft.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl
 $(outdir)\telnet.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\telnet.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\telnet.obj: transfer.h sendf.h telnet.h
+$(outdir)\telnet.obj: splay.h transfer.h sendf.h telnet.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\telnet.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -527,7 +540,8 @@ $(outdir)\telnet.obj: arpa_telnet.h memory.h select.h memdebug.h
 $(outdir)\tftp.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\tftp.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\tftp.obj: transfer.h sendf.h tftp.h progress.h connect.h strerror.h
+$(outdir)\tftp.obj: splay.h transfer.h sendf.h tftp.h progress.h connect.h
+$(outdir)\tftp.obj: strerror.h sockaddr.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\tftp.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -538,10 +552,11 @@ $(outdir)\timeval.obj: timeval.h setup.h config-win32.h
 $(outdir)\transfer.obj: setup.h config-win32.h strtoofft.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\transfer.obj: strequal.h urldata.h cookie.h formdata.h timeval.h
-$(outdir)\transfer.obj: http_chunks.h hostip.h hash.h llist.h netrc.h
+$(outdir)\transfer.obj: http_chunks.h hostip.h hash.h llist.h splay.h netrc.h
 $(outdir)\transfer.obj: content_encoding.h transfer.h sendf.h speedcheck.h
 $(outdir)\transfer.obj: progress.h http.h url.h getinfo.h sslgen.h http_digest.h
 $(outdir)\transfer.obj: http_ntlm.h http_negotiate.h share.h memory.h select.h
+$(outdir)\transfer.obj: multiif.h easyif.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\transfer.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -551,8 +566,8 @@ $(outdir)\transfer.obj: memdebug.h
 $(outdir)\url.obj: setup.h config-win32.h urldata.h cookie.h
 $(outdir)\url.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\url.obj: formdata.h timeval.h http_chunks.h hostip.h hash.h llist.h
-$(outdir)\url.obj: netrc.h base64.h sslgen.h transfer.h sendf.h progress.h
-$(outdir)\url.obj: strequal.h strerror.h escape.h strtok.h share.h
+$(outdir)\url.obj: splay.h netrc.h base64.h sslgen.h transfer.h sendf.h
+$(outdir)\url.obj: progress.h strequal.h strerror.h escape.h strtok.h share.h
 $(outdir)\url.obj: content_encoding.h http_digest.h http_negotiate.h select.h
 $(outdir)\url.obj: multiif.h ftp.h dict.h telnet.h tftp.h http.h file.h ldap.h
 $(outdir)\url.obj: url.h connect.h inet_ntop.h http_ntlm.h ./ca-bundle.h
@@ -565,7 +580,7 @@ $(outdir)\url.obj: memory.h memdebug.h
 $(outdir)\version.obj: setup.h config-win32.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\version.obj: urldata.h cookie.h formdata.h timeval.h http_chunks.h
-$(outdir)\version.obj: hostip.h hash.h llist.h sslgen.h
+$(outdir)\version.obj: hostip.h hash.h llist.h splay.h sslgen.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/mprintf.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\version.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h

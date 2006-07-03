@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strequal.c,v 1.2 2005/10/30 22:32:19 csc Exp $
+ * $Id: strequal.c,v 1.27 2004/10/06 07:50:18 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

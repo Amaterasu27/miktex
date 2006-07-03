@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sslgen.h,v 1.1 2005/10/30 22:32:18 csc Exp $
+ * $Id: sslgen.h,v 1.3 2006-05-10 22:17:42 bagder Exp $
  ***************************************************************************/
 
 bool Curl_ssl_config_matches(struct ssl_config_data* data,
@@ -32,6 +32,9 @@ void Curl_free_ssl_config(struct ssl_config_data* sslc);
 int Curl_ssl_init(void);
 void Curl_ssl_cleanup(void);
 CURLcode Curl_ssl_connect(struct connectdata *conn, int sockindex);
+CURLcode Curl_ssl_connect_nonblocking(struct connectdata *conn, 
+                                      int sockindex,
+                                      bool *done);
 void Curl_ssl_close(struct connectdata *conn);
 /* tell the SSL stuff to close down all open information regarding
    connections (and thus session ID caching etc) */
@@ -63,6 +66,8 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
 struct curl_slist *Curl_ssl_engines_list(struct SessionHandle *data);
 
 size_t Curl_ssl_version(char *buffer, size_t size);
+
+int Curl_ssl_check_cxn(struct connectdata *conn);
 
 #if !defined(USE_SSL) && !defined(SSLGEN_C)
 /* set up blank macros for none-SSL builds */

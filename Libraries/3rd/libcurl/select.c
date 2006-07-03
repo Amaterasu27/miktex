@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: select.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: select.c,v 1.17 2006-05-05 10:24:27 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -50,8 +50,8 @@
 #include "connect.h"
 #include "select.h"
 
-#ifdef WIN32
-#define VERIFY_SOCK(x)  /* Win-sockets are not in range [0..FD_SETSIZE> */
+#if defined(WIN32) || defined(TPF)
+#define VERIFY_SOCK(x)  /* sockets are not in range [0..FD_SETSIZE] */
 #else
 #define VALID_SOCK(s) (((s) >= 0) && ((s) < FD_SETSIZE))
 #define VERIFY_SOCK(x) do { \
@@ -104,7 +104,7 @@ int Curl_select(curl_socket_t readfd, curl_socket_t writefd, int timeout_ms)
   ret = 0;
   num = 0;
   if (readfd != CURL_SOCKET_BAD) {
-    if (pfd[num].revents & POLLIN)
+    if (pfd[num].revents & (POLLIN|POLLHUP))
       ret |= CSELECT_IN;
     if (pfd[num].revents & POLLERR)
       ret |= CSELECT_ERR;
@@ -131,7 +131,7 @@ int Curl_select(curl_socket_t readfd, curl_socket_t writefd, int timeout_ms)
   timeout.tv_usec = (timeout_ms % 1000) * 1000;
 
   FD_ZERO(&fds_err);
-  maxfd = -1;
+  maxfd = (curl_socket_t)-1;
 
   FD_ZERO(&fds_read);
   if (readfd != CURL_SOCKET_BAD) {
@@ -152,7 +152,7 @@ int Curl_select(curl_socket_t readfd, curl_socket_t writefd, int timeout_ms)
 
   do {
     r = select((int)maxfd + 1, &fds_read, &fds_write, &fds_err, &timeout);
-  } while((r == -1) && (Curl_ourerrno() == EINTR));
+  } while((r == -1) && (Curl_sockerrno() == EINTR));
 
   if (r < 0)
     return -1;
@@ -206,7 +206,7 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
   FD_ZERO(&fds_read);
   FD_ZERO(&fds_write);
   FD_ZERO(&fds_err);
-  maxfd = -1;
+  maxfd = (curl_socket_t)-1;
 
   for (i = 0; i < nfds; i++) {
     if (ufds[i].fd == CURL_SOCKET_BAD)
@@ -237,7 +237,7 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
 
   do {
     r = select((int)maxfd + 1, &fds_read, &fds_write, &fds_err, ptimeout);
-  } while((r == -1) && (Curl_ourerrno() == EINTR));
+  } while((r == -1) && (Curl_sockerrno() == EINTR));
 
   if (r < 0)
     return -1;
@@ -261,3 +261,23 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
 #endif
   return r;
 }
+
+#ifdef TPF
+/*
+ * This is a replacement for select() on the TPF platform.
+ * It is used whenever libcurl calls select().
+ * The call below to tpf_process_signals() is required because
+ * TPF's select calls are not signal interruptible.
+ *
+ * Return values are the same as select's.
+ */
+int tpf_select_libcurl(int maxfds, fd_set* reads, fd_set* writes,
+                       fd_set* excepts, struct timeval* tv)
+{
+   int rc;
+
+   rc = tpf_select_bsd(maxfds, reads, writes, excepts, tv);
+   tpf_process_signals();
+   return(rc);
+}
+#endif /* TPF */

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: dict.c,v 1.41 2006-05-10 11:44:31 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -37,8 +37,6 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-
-#include <errno.h>
 
 #if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
 #include <time.h>
@@ -85,9 +83,46 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
+/* The last #include file should be: */
+#include "memdebug.h"
+
+static char *unescape_word(struct SessionHandle *data, char *inp)
+{
+  char *newp;
+  char *dictp;
+  char *ptr;
+  int len;
+  unsigned char byte;
+  int olen=0;
+
+  newp = curl_easy_unescape(data, inp, 0, &len);
+  if(!newp)
+    return NULL;
+
+  dictp = malloc(len*2 + 1); /* add one for terminating zero */
+  if(dictp) {
+    /* According to RFC2229 section 2.2, these letters need to be escaped with
+       \[letter] */
+    for(ptr = newp;
+        (byte = (unsigned char)*ptr);
+        ptr++) {
+      if ((byte <= 32) || (byte == 127) ||
+          (byte == '\'') || (byte == '\"') || (byte == '\\')) {
+        dictp[olen++] = '\\';
+      }
+      dictp[olen++] = byte;
+    }
+    dictp[olen]=0;
+
+    free(newp);
+  }
+  return dictp;
+}
+
 CURLcode Curl_dict(struct connectdata *conn, bool *done)
 {
   char *word;
+  char *eword;
   char *ppath;
   char *database = NULL;
   char *strategy = NULL;
@@ -137,6 +172,10 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
       strategy = (char *)".";
     }
 
+    eword = unescape_word(data, word);
+    if(!eword)
+      return CURLE_OUT_OF_MEMORY;
+
     result = Curl_sendf(sockfd, conn,
                         "CLIENT " LIBCURL_NAME " " LIBCURL_VERSION "\r\n"
                         "MATCH "
@@ -147,8 +186,11 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
 
                         database,
                         strategy,
-                        word
+                        eword
                         );
+
+    free(eword);
+
     if(result)
       failf(data, "Failed sending DICT request");
     else
@@ -181,6 +223,10 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
       database = (char *)"!";
     }
 
+    eword = unescape_word(data, word);
+    if(!eword)
+      return CURLE_OUT_OF_MEMORY;
+
     result = Curl_sendf(sockfd, conn,
                         "CLIENT " LIBCURL_NAME " " LIBCURL_VERSION "\r\n"
                         "DEFINE "
@@ -188,7 +234,10 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
                         "%s\r\n"  /* word */
                         "QUIT\r\n",
                         database,
-                        word);
+                        eword);
+
+    free(eword);
+
     if(result)
       failf(data, "Failed sending DICT request");
     else

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strtok.h,v 1.2 2005/10/30 22:32:19 csc Exp $
+ * $Id: strtok.h,v 1.9 2004/01/07 09:19:35 bagder Exp $
  ***************************************************************************/
 
 #ifndef _CURL_STRTOK_R_H

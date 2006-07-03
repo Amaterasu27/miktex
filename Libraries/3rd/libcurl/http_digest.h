@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_digest.h,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: http_digest.h,v 1.7 2004/05/13 14:14:03 bagder Exp $
  ***************************************************************************/
 
 typedef enum {

@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.2 2005/10/30 22:32:19 csc Exp $
+ * $Id: urldata.h,v 1.291 2006-05-26 11:26:42 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -30,7 +30,6 @@
 #define PORT_FTP 21
 #define PORT_FTPS 990
 #define PORT_TELNET 23
-#define PORT_GOPHER 70
 #define PORT_HTTP 80
 #define PORT_HTTPS 443
 #define PORT_DICT 2628
@@ -97,6 +96,7 @@
 #include "http_chunks.h" /* for the structs and enum stuff */
 #include "hostip.h"
 #include "hash.h"
+#include "splay.h"
 
 #ifdef HAVE_GSSAPI
 # ifdef HAVE_GSSGNU
@@ -129,12 +129,22 @@ struct krb4buffer {
   int eof_flag;
 };
 enum protection_level {
-    prot_clear,
-    prot_safe,
-    prot_confidential,
-    prot_private
+  prot_clear,
+  prot_safe,
+  prot_confidential,
+  prot_private
 };
 #endif
+
+/* enum for the nonblocking SSL connection state machine */
+typedef enum {
+  ssl_connect_1,
+  ssl_connect_2,
+  ssl_connect_2_reading,
+  ssl_connect_2_writing,
+  ssl_connect_3,
+  ssl_connect_done
+} ssl_connect_state;
 
 /* struct for data related to each SSL connection */
 struct ssl_connect_data {
@@ -144,10 +154,11 @@ struct ssl_connect_data {
   SSL_CTX* ctx;
   SSL*     handle;
   X509*    server_cert;
+  ssl_connect_state connecting_state;
 #endif /* USE_SSLEAY */
 #ifdef USE_GNUTLS
   gnutls_session session;
-  gnutls_anon_client_credentials cred;
+  gnutls_certificate_credentials cred;
 #endif /* USE_GNUTLS */
 };
 
@@ -209,6 +220,10 @@ typedef enum {
 #include <rpc.h>
 #endif
 
+#if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
+#include <iconv.h>
+#endif
+
 /* Struct used for NTLM challenge-response authentication */
 struct ntlmdata {
   curlntlm state;
@@ -221,6 +236,7 @@ struct ntlmdata {
   void *type_2;
   int n_type_2;
 #else
+  unsigned int flags;
   unsigned char nonce[8];
 #endif
 };
@@ -310,6 +326,12 @@ typedef enum {
   FTP_LAST  /* never used */
 } ftpstate;
 
+typedef enum {
+  FTPFILE_MULTICWD  = 1, /* as defined by RFC1738 */
+  FTPFILE_NOCWD     = 2, /* use SIZE / RETR / STOR on the full path */
+  FTPFILE_SINGLECWD = 3  /* make one CWD, then SIZE / RETR / STOR on the file */
+} curl_ftpfile;
+
 struct FTP {
   curl_off_t *bytecountp;
   char *user;    /* user name string */
@@ -337,6 +359,8 @@ struct FTP {
                        should be FALSE when it gets to Curl_ftp_quit() */
   bool cwddone;     /* if it has been determined that the proper CWD combo
                        already has been done */
+  bool cwdfail;     /* set TRUE if a CWD command fails, as then we must prevent
+                       caching the current directory */
   char *prevpath;   /* conn->path from the previous transfer */
 
   size_t nread_resp; /* number of bytes currently read of a server response */
@@ -420,14 +444,15 @@ struct ConnectBits {
   bool ftp_use_eprt;  /* As set with CURLOPT_FTP_USE_EPRT, but if we find out
                          EPRT doesn't work we disable it for the forthcoming
                          requests */
-  bool ftp_use_lprt;  /* As set with CURLOPT_FTP_USE_EPRT, but if we find out
-                         LPRT doesn't work we disable it for the forthcoming
-                         requests */
   bool netrc;         /* name+password provided by netrc */
-  
+
   bool trailerHdrPresent; /* Set when Trailer: header found in HTTP response.
-                             Required to determine whether to look for trailers 
-                             in case of Transfer-Encoding: chunking */ 
+                             Required to determine whether to look for trailers
+                             in case of Transfer-Encoding: chunking */
+  bool done;          /* set to FALSE when Curl_do() is called and set to TRUE
+                         when Curl_done() is called, to prevent Curl_done() to
+                         get invoked twice when the multi interface is
+                         used. */
 };
 
 struct hostname {
@@ -521,6 +546,12 @@ struct Curl_async {
 #define FIRSTSOCKET     0
 #define SECONDARYSOCKET 1
 
+/* These function pointer types are here only to allow easier typecasting
+   within the source when we need to cast between data pointers (such as NULL)
+   and function pointers. */
+typedef CURLcode (*Curl_do_more_func)(struct connectdata *);
+typedef CURLcode (*Curl_done_func)(struct connectdata *, CURLcode);
+
 /*
  * The connectdata struct contains all fields and variables that should be
  * unique for an entire connection.
@@ -533,7 +564,6 @@ struct connectdata {
 
   long protocol; /* PROT_* flags concerning the protocol set */
 #define PROT_MISSING (1<<0)
-#define PROT_GOPHER  (1<<1)
 #define PROT_HTTP    (1<<2)
 #define PROT_HTTPS   (1<<3)
 #define PROT_FTP     (1<<4)
@@ -606,13 +636,13 @@ struct connectdata {
   /* These two functions MUST be set by the curl_connect() function to be
      be protocol dependent */
   CURLcode (*curl_do)(struct connectdata *, bool *done);
-  CURLcode (*curl_done)(struct connectdata *, CURLcode);
+  Curl_done_func curl_done;
 
   /* If the curl_do() function is better made in two halves, this
    * curl_do_more() function will be called afterwards, if set. For example
    * for doing the FTP stuff after the PASV/PORT command.
    */
-  CURLcode (*curl_do_more)(struct connectdata *);
+  Curl_do_more_func curl_do_more;
 
   /* This function *MAY* be set to a protocol-dependent function that is run
    * after the connect() and everything is done, as a step in the connection.
@@ -628,17 +658,15 @@ struct connectdata {
 
   /* Called from the multi interface during the PROTOCONNECT phase, and it
      should then return a proper fd set */
-  CURLcode (*curl_proto_fdset)(struct connectdata *conn,
-                               fd_set *read_fd_set,
-                               fd_set *write_fd_set,
-                               int *max_fdp);
+  int (*curl_proto_getsock)(struct connectdata *conn,
+                            curl_socket_t *socks,
+                            int numsocks);
 
   /* Called from the multi interface during the DOING phase, and it should
      then return a proper fd set */
-  CURLcode (*curl_doing_fdset)(struct connectdata *conn,
-                               fd_set *read_fd_set,
-                               fd_set *write_fd_set,
-                               int *max_fdp);
+  int (*curl_doing_getsock)(struct connectdata *conn,
+                            curl_socket_t *socks,
+                            int numsocks);
 
   /* This function *MAY* be set to a protocol-dependent function that is run
    * by the curl_disconnect(), as a step in the disconnection.
@@ -695,7 +723,6 @@ struct connectdata {
   /* previously this was in the urldata struct */
   union {
     struct HTTP *http;
-    struct HTTP *gopher; /* alias, just for the sake of being more readable */
     struct HTTP *https;  /* alias, just for the sake of being more readable */
     struct FTP *ftp;
     void *tftp;        /* private for tftp.c-eyes only */
@@ -816,7 +843,7 @@ typedef enum {
 
 /*
  * Values that are generated, temporary or calculated internally for a
- * "session handle" must be defined within the 'struct urlstate'.  This struct
+ * "session handle" must be defined within the 'struct UrlState'.  This struct
  * will be used within the SessionHandle struct. When the 'SessionHandle'
  * struct is cloned, this data MUST NOT be copied.
  *
@@ -854,6 +881,7 @@ struct UrlState {
      set, it holds an allocated connection. */
   struct connectdata **connects;
   long numconnects; /* size of the 'connects' array */
+  long lastconnect;  /* index of most recent connect or -1 if undefined */
 
   char *headerbuff; /* allocated buffer to store headers in */
   size_t headersize;   /* size of the allocation */
@@ -903,6 +931,20 @@ struct UrlState {
 #if defined(USE_SSLEAY) && defined(HAVE_OPENSSL_ENGINE_H)
   ENGINE *engine;
 #endif /* USE_SSLEAY */
+  struct timeval expiretime; /* set this with Curl_expire() only */
+  struct Curl_tree timenode; /* for the splay stuff */
+
+  /* a place to store the most recenlty set FTP entrypath */
+  char *most_recent_ftp_entrypath;
+
+#ifndef WIN32
+/* do FTP line-end conversions on most platforms */
+#define CURL_DO_LINEEND_CONV
+  /* for FTP downloads: track CRLF sequences that span blocks */
+  bool prev_block_had_trailing_cr;
+  /* for FTP downloads: how many CRLFs did we converted to LFs? */
+  curl_off_t crlf_conversions;
+#endif
 };
 
 
@@ -932,9 +974,11 @@ struct DynamicStatic {
  * This 'UserDefined' struct must only contain data that is set once to go
  * for many (perhaps) independent connections. Values that are generated or
  * calculated internally for the "session handle" MUST be defined within the
- * 'struct urlstate' instead. The only exceptions MUST note the changes in
+ * 'struct UrlState' instead. The only exceptions MUST note the changes in
  * the 'DynamicStatic' struct.
  */
+struct Curl_one_easy; /* declared and used only in multi.c */
+struct Curl_multi;    /* declared and used only in multi.c */
 
 struct UserDefined {
   FILE *err;         /* the stderr user data goes here */
@@ -946,7 +990,7 @@ struct UserDefined {
                      this. */
   void *out;         /* the fetched file goes here */
   void *in;          /* the uploaded file is read from here */
-  void *writeheader; /* write the header to this is non-NULL */
+  void *writeheader; /* write the header to this if non-NULL */
   char *set_url;     /* what original URL to work on */
   char *set_proxy;   /* proxy to use */
   long use_port;     /* which port to use (when not using default) */
@@ -956,7 +1000,8 @@ struct UserDefined {
   char *set_range;   /* range, if used. See README for detailed specification
                         on this syntax. */
   long followlocation; /* as in HTTP Location: */
-  long maxredirs;    /* maximum no. of http(s) redirects to follow */
+  long maxredirs;    /* maximum no. of http(s) redirects to follow, set to -1
+                        for infinity */
   char *set_referer; /* custom string */
   bool free_referer; /* set TRUE if 'referer' points to a string we
                         allocated */
@@ -967,13 +1012,25 @@ struct UserDefined {
                                of strlen(), and then the data *may* be binary
                                (contain zero bytes) */
   char *ftpport;     /* port to send with the FTP PORT command */
-  char *device;      /* network interface to use */
+  char *device;      /* local network interface/address to use */
+  unsigned short localport; /* local port number to bind to */
+  int localportrange; /* number of additional port numbers to test in case the
+                         'localport' one can't be bind()ed */
   curl_write_callback fwrite;        /* function that stores the output */
   curl_write_callback fwrite_header; /* function that stores headers */
   curl_read_callback fread;          /* function that reads the input */
   curl_progress_callback fprogress;  /* function for progress information */
   curl_debug_callback fdebug;      /* function that write informational data */
   curl_ioctl_callback ioctl;       /* function for I/O control */
+
+  /* the 3 curl_conv_callback functions below are used on non-ASCII hosts */
+  /* function to convert from the network encoding: */
+  curl_conv_callback convfromnetwork;
+  /* function to convert to the network encoding: */
+  curl_conv_callback convtonetwork;
+  /* function to convert from UTF-8 encoding: */
+  curl_conv_callback convfromutf8;
+
   void *progress_client; /* pointer to pass to the progress callback */
   void *ioctl_client;   /* pointer to pass to the ioctl callback */
   long timeout;         /* in seconds, 0 means no timeout */
@@ -1025,6 +1082,12 @@ struct UserDefined {
 
   char *private_data; /* Private data */
 
+  struct Curl_one_easy *one_easy; /* When adding an easy handle to a multi
+                                     handle, an internal 'Curl_one_easy'
+                                     struct is created and this is a pointer
+                                     to the particular struct associated with
+                                     this SessionHandle */
+
   struct curl_slist *http200aliases; /* linked list of aliases for http200 */
 
   long ip_version;
@@ -1033,6 +1096,8 @@ struct UserDefined {
 
   char *source_url;     /* for 3rd party transfer */
   char *source_userpwd;  /* for 3rd party transfer */
+
+  curl_ftpfile ftp_filemethod; /* how to get to a file when FTP is used  */
 
 /* Here follows boolean settings that define how to behave during
    this session. They are STATIC, set by libcurl users or at least initially
@@ -1067,7 +1132,6 @@ struct UserDefined {
   bool expect100header;  /* TRUE if we added Expect: 100-continue */
   bool ftp_use_epsv;     /* if EPSV is to be attempted or not */
   bool ftp_use_eprt;     /* if EPRT is to be attempted or not */
-  bool ftp_use_lprt;     /* if LPRT is to be attempted or not */
   curl_ftpssl ftp_ssl;   /* if AUTH TLS is to be attempted etc */
   curl_ftpauth ftpsslauth; /* what AUTH XXX to be attempted */
   bool no_signal;        /* do not use any signal/alarm handler */
@@ -1076,6 +1140,7 @@ struct UserDefined {
   bool ignorecl;         /* ignore content length */
   bool ftp_skip_ip;      /* skip the IP address the FTP server passes on to
                             us */
+  bool connect_only;     /* make connection, let application use the socket */
 };
 
 /*
@@ -1087,11 +1152,11 @@ struct UserDefined {
  * From now on, the 'SessionHandle' must only contain data that is set once to
  * go for many (perhaps) independent connections. Values that are generated or
  * calculated internally for the "session handle" must be defined within the
- * 'struct urlstate' instead.  */
+ * 'struct UrlState' instead.  */
 
 struct SessionHandle {
   struct curl_hash *hostcache;
-  void *multi;                 /* if non-NULL, points to the multi handle
+  struct Curl_multi *multi;    /* if non-NULL, points to the multi handle
                                   struct of which this "belongs" */
   struct Curl_share *share;    /* Share, handles global variable mutexing */
   struct UserDefined set;      /* values set by the libcurl user */
@@ -1102,6 +1167,13 @@ struct SessionHandle {
   struct UrlState state;       /* struct for fields used for state info and
                                   other dynamic purposes */
   struct PureInfo info;        /* stats, reports and info data */
+  /* set by ftp_transfertype for use by Curl_client_write and others */
+  bool ftp_in_ascii_mode;
+#if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
+  iconv_t outbound_cd;         /* for translating to the network encoding */
+  iconv_t inbound_cd;          /* for translating from the network encoding */
+  iconv_t utf8_cd;             /* for translating to UTF8 */
+#endif /* CURL_DOES_CONVERSIONS && HAVE_ICONV */
 };
 
 #define LIBCURL_NAME "libcurl"

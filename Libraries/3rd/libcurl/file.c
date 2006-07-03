@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: file.c,v 1.2 2005/10/30 22:32:18 csc Exp $
+ * $Id: file.c,v 1.76 2006-05-04 22:39:47 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -36,8 +36,6 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-
-#include <errno.h>
 
 #if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
 #include <time.h>
@@ -102,7 +100,7 @@
  */
 CURLcode Curl_file_connect(struct connectdata *conn)
 {
-  char *real_path = curl_unescape(conn->path, 0);
+  char *real_path = curl_easy_unescape(conn->data, conn->path, 0, NULL);
   struct FILEPROTO *file;
   int fd;
 #if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
@@ -158,12 +156,12 @@ CURLcode Curl_file_connect(struct connectdata *conn)
 #endif
   file->freepath = real_path; /* free this when done */
 
+  file->fd = fd;
   if(!conn->data->set.upload && (fd == -1)) {
     failf(conn->data, "Couldn't open file %s", conn->path);
     Curl_file_done(conn, CURLE_FILE_COULDNT_READ_FILE);
     return CURLE_FILE_COULDNT_READ_FILE;
   }
-  file->fd = fd;
 
   return CURLE_OK;
 }
@@ -230,10 +228,10 @@ static CURLcode file_upload(struct connectdata *conn)
     if(res)
       break;
 
-    nread = (size_t)readcount;
-
-    if (nread <= 0)
+    if (readcount <= 0)  /* fix questionable compare error. curlvms */
       break;
+
+    nread = (size_t)readcount;
 
     /* write the data to the target */
     nwrite = fwrite(buf, 1, nread, fp);
