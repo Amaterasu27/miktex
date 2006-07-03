@@ -3,7 +3,7 @@
 wsa.h
 
 Generated with:
-wsdl2h -cgy -o wsa.h -t WS/WS-typemap.dat WS/WS-Addressing.xsd
+wsdl2h -cgye -o wsa.h -t WS/WS-typemap.dat WS/WS-Addressing.xsd
 
 Modified by Robert van Engelen:
 
@@ -19,9 +19,9 @@ Usage:
 #import "wsa.h"
 struct SOAP_ENV__Header
 {
-  mustUnderstand _wsa__MessageID  wsa__MessageID 0;
-  mustUnderstand _wsa__RelatesTo *wsa__RelatesTo 0;
-  mustUnderstand _wsa__From      *wsa__From      0;
+                 _wsa__MessageID  wsa__MessageID 0;
+                 _wsa__RelatesTo *wsa__RelatesTo 0;
+                 _wsa__From      *wsa__From      0;
   mustUnderstand _wsa__ReplyTo   *wsa__ReplyTo   0;
   mustUnderstand _wsa__FaultTo   *wsa__FaultTo   0;
   mustUnderstand _wsa__To         wsa__To        0;
@@ -122,7 +122,7 @@ typedef struct wsa__Relationship wsa__Relationship;
 /// Note: enum values are prefixed with 'wsa__RelationshipTypeValues' to avoid name clashes, please use wsdl2h option -e to omit this prefix
 enum wsa__RelationshipTypeValues
 {
-	wsa__RelationshipTypeValues__wsa__Reply,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":Reply"
+	wsa__Reply,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":Reply"
 };
 /// Typedef synonym for enum wsa__RelationshipTypeValues.
 typedef enum wsa__RelationshipTypeValues wsa__RelationshipTypeValues;
@@ -131,11 +131,11 @@ typedef enum wsa__RelationshipTypeValues wsa__RelationshipTypeValues;
 /// Note: enum values are prefixed with 'wsa__FaultSubcodeValues' to avoid name clashes, please use wsdl2h option -e to omit this prefix
 enum wsa__FaultSubcodeValues
 {
-	wsa__FaultSubcodeValues__wsa__InvalidMessageInformationHeader,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":InvalidMessageInformationHeader"
-	wsa__FaultSubcodeValues__wsa__MessageInformationHeaderRequired,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":MessageInformationHeaderRequired"
-	wsa__FaultSubcodeValues__wsa__DestinationUnreachable,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":DestinationUnreachable"
-	wsa__FaultSubcodeValues__wsa__ActionNotSupported,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":ActionNotSupported"
-	wsa__FaultSubcodeValues__wsa__EndpointUnavailable,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointUnavailable"
+	wsa__InvalidMessageInformationHeader,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":InvalidMessageInformationHeader"
+	wsa__MessageInformationHeaderRequired,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":MessageInformationHeaderRequired"
+	wsa__DestinationUnreachable,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":DestinationUnreachable"
+	wsa__ActionNotSupported,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":ActionNotSupported"
+	wsa__EndpointUnavailable,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointUnavailable"
 };
 /// Typedef synonym for enum wsa__FaultSubcodeValues.
 typedef enum wsa__FaultSubcodeValues wsa__FaultSubcodeValues;
