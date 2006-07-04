@@ -302,12 +302,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 	    case DviSpecialType::Psdef:
 	    case DviSpecialType::Psfile:
 	    case DviSpecialType::Ps:
-	      if (AfxMessageBox(T_("\
-The DVI document cannot be rendered properly because interpretion of \
- PostScript specials is disabled.\r\n\r\nTemporarily enable interpretation \
-of PostScript specials?"),
-				MB_YESNO)
-		  == IDYES)
+	      if (AfxMessageBox(IDS_PS_DISABLED, MB_YESNO) == IDYES)
 		{
 		  PostMessage (WM_COMMAND, ID_PAGEMODE_DVIPS, 0);
 		  throw DrawingCancelledException ();

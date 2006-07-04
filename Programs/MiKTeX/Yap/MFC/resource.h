@@ -19,6 +19,7 @@
 #define IDD_DOC_PROP_FONTS              119
 #define IDD_ADD_EDITOR                  120
 #define IDP_FILE_ASSOCIATION            131
+#define IDS_PS_DISABLED                 132
 #define IDR_CONTEXT_MENU                138
 #define IDR_DVITYPE                     139
 #define IDR_FULLSCREEN                  140
@@ -139,11 +140,6 @@
 #define ID_DOCUMENT_UP                  44049
 #define ID_PAGEMODE_PK                  44050
 #define ID_PAGEMODE_DVIPS               44051
-#define ID_INCHES_POSTSCRIPTPOINTS      44063
-#define ID__INCHES                      44064
-#define ID__MILLIMETERS                 44065
-#define ID__CENTIMETERS                 44066
-#define ID__PICAS                       44067
 #define ID_VIEW_CENTIMETERS             44068
 #define ID_VIEW_INCHES                  44069
 #define ID_VIEW_MILLIMETERS             44070
