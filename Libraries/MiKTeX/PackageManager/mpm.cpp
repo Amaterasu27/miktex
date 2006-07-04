@@ -284,8 +284,8 @@ PackageManagerImpl::GetTimeInstalled
   LoadVariablePackageTable ();
   tstring str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-				       T_("TimeInstalled"),
-				       str))
+					  T_("TimeInstalled"),
+					  str))
     {
       return (0);
     }
@@ -316,8 +316,8 @@ PackageManagerImpl::IsPackageObsolete
   LoadVariablePackageTable ();
   tstring str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-				       T_("Obsolete"),
-				       str))
+					  T_("Obsolete"),
+					  str))
     {
       return (false);
     }
@@ -802,6 +802,12 @@ bool
 MPMCALL
 PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
 {
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, url)
+      && (PackageManagerImpl::DetermineRepositoryType(url)
+	  == RepositoryType::Remote))
+    {
+      return (true);
+    }
   return (SessionWrapper(true)
 	  ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			      MIKTEX_REGVAL_REMOTE_REPOSITORY,
@@ -912,10 +918,17 @@ MPMCALL
 PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
 {
   tstring str;
-  if (SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			  str))
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+      && (PackageManagerImpl::DetermineRepositoryType(str)
+	  == RepositoryType::Local))
+    {
+      path = str;
+      return (true);
+    }
+  else if (SessionWrapper(true)
+	   ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			       MIKTEX_REGVAL_LOCAL_REPOSITORY,
+			       str))
     {
       path = str;
       return (true);
@@ -970,6 +983,13 @@ MPMCALL
 PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
 {
   tstring str;
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+      && (PackageManagerImpl::DetermineRepositoryType(str)
+	  == RepositoryType::MiKTeXDirect))
+    {
+      path = str;
+      return (true);
+    }
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
@@ -994,7 +1014,7 @@ MPMCALL
 PackageManager::GetMiKTeXDirectRoot ()
 {
   PathName path;
-  if (! TryGetLocalPackageRepository(path))
+  if (! TryGetMiKTeXDirectRoot(path))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetMiKTeXDirectRoot"),
 			  T_("No MiKTeXDirect root configured."),

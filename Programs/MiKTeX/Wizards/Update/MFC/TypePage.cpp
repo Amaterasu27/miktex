@@ -54,22 +54,61 @@ TypePage::TypePage ()
 {
   m_psp.dwFlags &= ~ PSP_HASHELP;
 
+  remoteChoice = -1;
+  localChoice = -1;
+
   sourceChoice =
     SessionWrapper(true)->GetConfigValue(T_("Update"),
 					 T_("lastSource"),
-					 0);
-  
-  remoteChoice =
-    SessionWrapper(true)->GetConfigValue(T_("Update"),
-					 T_("lastRemote"),
-					 0);
-  
-  localChoice =
-    SessionWrapper(true)->GetConfigValue(T_("Update"),
-					 T_("lastLocal"),
-					 0);
+					 -1);
 
-  haveRemoteRepository = g_pManager->TryGetRemotePackageRepository(repository);
+  if (sourceChoice < 0)
+    {
+      RepositoryType repositoryType (RepositoryType::Unknown);
+      tstring urlOrPath;
+      if (PackageManager::TryGetDefaultPackageRepository(repositoryType,
+							 urlOrPath))
+	{
+	  switch (repositoryType.Get())
+	    {
+	    case RepositoryType::Remote:
+	      sourceChoice = 0;
+	      remoteChoice = 1;
+	      break;
+	    case RepositoryType::Local:
+	      sourceChoice = 1;
+	      localChoice = 0;
+	      break;
+	    case RepositoryType::MiKTeXDirect:
+	      sourceChoice = 2;
+	      break;
+	    }
+	}
+    }
+
+  if (sourceChoice < 0)
+    {
+      sourceChoice = 0;
+    }
+  
+  if (remoteChoice < 0)
+    {
+      remoteChoice =
+	SessionWrapper(true)->GetConfigValue(T_("Update"),
+					     T_("lastRemote"),
+					     0);
+    }
+  
+  if (localChoice < 0)
+    {
+      localChoice =
+	SessionWrapper(true)->GetConfigValue(T_("Update"),
+					     T_("lastLocal"),
+					     0);
+    }
+
+  haveRemoteRepository =
+    g_pManager->TryGetRemotePackageRepository(remoteRepository);
 
   if (haveRemoteRepository && remoteChoice == 2)
     {
@@ -82,7 +121,7 @@ TypePage::TypePage ()
     }
 
   haveLocalRepository =
-    g_pManager->TryGetLocalPackageRepository(localDirectory);
+    g_pManager->TryGetLocalPackageRepository(localRepository);
 
   if (haveLocalRepository && localChoice == 1)
     {
@@ -111,7 +150,7 @@ TypePage::OnInitDialog ()
 	{
 	  tstring protocol;
 	  tstring host;
-	  SplitUrl (repository, protocol, host);
+	  SplitUrl (remoteRepository, protocol, host);
 	  CString text;
 	  text.Format (T_("%s://%s (last used)"),
 		       protocol.c_str(),
@@ -122,7 +161,7 @@ TypePage::OnInitDialog ()
       if (haveLocalRepository)
 	{
 	  CString text;
-	  text.Format (T_("%s (last used)"), localDirectory.Get());
+	  text.Format (T_("%s (last used)"), localRepository.Get());
 	  GetControl(IDC_LAST_USED_DIRECTORY)->SetWindowText (text);
 	}
 

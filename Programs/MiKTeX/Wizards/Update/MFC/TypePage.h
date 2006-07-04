@@ -113,13 +113,13 @@ private:
   int localChoice;
 
 private:
-  tstring repository;
+  tstring remoteRepository;
 
 private:
   bool haveRemoteRepository;
 
 private:
-  PathName localDirectory;
+  PathName localRepository;
 
 private:
   bool haveLocalRepository;
