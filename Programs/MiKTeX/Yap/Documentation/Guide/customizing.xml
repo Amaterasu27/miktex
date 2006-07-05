@@ -6,15 +6,26 @@
 <primary>customizing &Yap;</primary>
 </indexterm>
 
-<section>
+<section id="options">
 
 <title>Options Dialog Box</title>
 
-<section>
+<section id="propui">
 
 <?dbhh topicname="HIDD_USER_INTERFACE" topicid="0"?>
 
 <title>User Interface Property Page</title>
+
+<figure id="figpropui">
+<title>User Interface Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propui"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <para>The <guilabel>User Interface</guilabel> property page allows you
 to customize the Look &amp; Feel of
@@ -49,11 +60,22 @@ horizontal scroll position at a change of page.</para></listitem>
 
 </section>
 
-<section id="displaysettings">
+<section id="propdisplay">
 
 <?dbhh topicname="HIDD_DISPLAY" topicid="0"?>
 
 <title>Display Property Page</title>
+
+<figure id="figpropdisplay">
+<title>Display Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propdisplay"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <para>The <guilabel>Display</guilabel> property page allows you to
 change various display settings:</para>
@@ -68,12 +90,14 @@ change various display settings:</para>
 <varlistentry>
 <term><guilabel>Default render method</guilabel></term>
 <listitem>
-<para>Select the standard page render method.</para>
+<para>The default render method (one of <guilabel>Pk fonts</guilabel>,
+<guilabel>Dvips</guilabel>). See <xref linkend="rendermethods"/>,
+for more information.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Default shrink Factor</guilabel></term>
-<listitem><para>Specify the default
+<listitem><para>The default
 <indexterm>
 <primary>shrink factor</primary>
 <secondary>setting the</secondary>
@@ -82,7 +106,7 @@ shrink factor.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>METAFONT Mode</guilabel></term>
-<listitem><para>Specify the <application>METAFONT</application> mode
+<listitem><para>The <application>METAFONT</application> mode
 <indexterm>
 <primary>METAFONT mode</primary>
 <secondary>for display</secondary>
@@ -99,11 +123,22 @@ this reduces the invocations of the font-generator.</para></listitem>
 
 </section>
 
-<section>
+<section id="propprinter">
 
 <?dbhh topicname="HIDD_PRINTER" topicid="0"?>
 
 <title>Printer Property Page</title>
+
+<figure id="figpropprinter">
+<title>Printer Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propprinter"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <indexterm>
 <primary>printer</primary>
@@ -118,7 +153,7 @@ change various printer settings:</para>
 <varlistentry>
 <term><guilabel>Horizontal shift</guilabel></term>
 <term><guilabel>Vertical shift</guilabel></term>
-<listitem><para>Specify the the print offset.</para>
+<listitem><para>The print offset.</para>
 <para>For some old printer models it may be necessary to adjust the
 <indexterm>
 <primary>printer</primary>
@@ -130,7 +165,7 @@ the print offset (i.e. the position, where printing begins).</para>
 
 <varlistentry>
 <term><guilabel>METAFONT mode</guilabel></term>
-<listitem><para>Specify the <application>METAFONT</application> mode
+<listitem><para>The <application>METAFONT</application> mode
 <indexterm>
 <primary>METAFONT mode</primary>
 <secondary>for printer</secondary>
@@ -147,11 +182,22 @@ must select a mode, that matches your printer resolution.</para>
 
 </section>
 
-<section id="magglass">
+<section id="propmagglass">
 
 <?dbhh topicname="HIDD_MAGNIFYING_GLASS" topicid="0"?>
 
 <title>Magnifying Glass Propery Page</title>
+
+<figure id="figpropmagglass">
+<title>Magnifying Glass Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propmagglass"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <para>This property page allows
 <indexterm>
@@ -195,11 +241,22 @@ visible while a magnifying glass is open.</para></listitem>
 
 </section>
 
-<section>
+<section id="propinvsearch">
 
 <?dbhh topicname="HIDD_INVERSE_SEARCH" topicid="0"?>
 
 <title>Inverse &DVI; Search Property Page</title>
+
+<figure id="figpropinvsearch">
+<title>Inverse &DVI; Search Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propinvsearch"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <indexterm>
 <primary>inverse &DVI; search</primary>
@@ -217,11 +274,22 @@ settings of automatically detected programs.</para>
 
 </section>
 
-<section>
+<section id="propsecurity">
 
 <?dbhh topicname="HIDD_SECURITY" topicid="0"?>
 
 <title>Security Property Page</title>
+
+<figure id="figpropsecurity">
+<title>Security Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propsecurity"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <indexterm>
 <primary>security settings</primary>
@@ -257,11 +325,22 @@ unconditionally.</para></listitem>
 
 </section>
 
-<section>
+<section id="propadvanced">
 
 <?dbhh topicname="HIDD_ADVANCED_OPTIONS" topicid="0"?>
 
 <title>Advanced Property Page</title>
+
+<figure id="figpropadvanced">
+<title>Advanced Settings</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/propadvanced"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 <variablelist>
 <varlistentry><term><guilabel>DVI file (*.dvi)</guilabel></term>

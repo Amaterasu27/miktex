@@ -27,7 +27,7 @@ cursor to the correct source line.  This is called <emphasis>inverse
 search</emphasis>.</para></listitem>
 </itemizedlist>
 
-<section id="srcspec">
+<section id="srcspecials">
 
 <title>How to Enrich Your Document With Source Specials</title>
 
@@ -45,7 +45,7 @@ one source special at the beginning of each paragraph.</para>
 
 </section>
 
-<section>
+<section id="forwarddvisearch">
 
 <title>Initiating Forward Search</title>
 
@@ -55,12 +55,12 @@ one source special at the beginning of each paragraph.</para>
 
 </section>
 
-<section>
+<section id="inversedvisearch">
 
 <title>Initiating Inverse Search</title>
 
 <para>Provided that the &DVI; document contains source file
-information (see <xref linkend="srcspec"/>), you can initiate inverse
+information (see <xref linkend="srcspecials"/>), you can initiate inverse
 search by double-clicking inside the &Yap; document window.</para>
 
 </section>

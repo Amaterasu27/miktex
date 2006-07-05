@@ -5,7 +5,7 @@
 <para>&Yap; provides several tools for browsing the
 &DVI; document.</para>
 
-<section>
+<section id="srcspecialsbrowser">
 
 <title>Browsing Source Specials</title>
 
@@ -20,7 +20,7 @@
 </menuchoice>
 opens the the Source Specials window.</para>
 
-<section>
+<section id="srcspecialsdlg">
 
 <title>Source Specials Window</title>
 
@@ -39,7 +39,7 @@ selected source special.</para>
 
 </section>
 
-<section>
+<section id="rulertool">
 
 <title>Ruler</title>
 
@@ -52,10 +52,20 @@ You select the ruler tool with the command
 or by clicking the corresponding button on the toolbar.
 </para>
 
+<figure id="figruler">
+<title>Ruler Tool</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/ruler"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
 
 </section>
 
-<section>
+<section id="handtool">
 
 <title>Hand Tool</title>
 
@@ -79,11 +89,11 @@ ruler. Pressing the left mouse button in combination with the
 ruler.</para>
 
 <para>You can change the measurement unit (see <xref
-linkend="displaysettings"/>).</para>
+linkend="propdisplay"/>).</para>
 
 </section>
 
-<section>
+<section id="magglasstool">
 
 <title>Magnifying Glass</title>
 
@@ -100,6 +110,17 @@ unshrunk page.  You select this tool with the command
 </menuchoice>
 or by clicking the corresponding button in the toolbar.</para>
 
+<figure id="figmagglass">
+<title>Magnifying Glass</title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/magglass"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+</figure>
+
 <para>You can choose between three sizes:</para>
 
 <orderedlist>
@@ -114,7 +135,7 @@ magnifying glass.</para></listitem>
 </orderedlist>
 
 <para>You can customize the appearance of the magnifying
-glass (see <xref linkend="magglass"/>).</para>
+glass (see <xref linkend="propmagglass"/>).</para>
 
 <para>You can specify the power of the magnifying glass
 by entering a numerical prefix argument.  The argument is interpreted

@@ -64,8 +64,7 @@ application window, if one exists.</para></listitem>
 
 <varlistentry>
 <term><option>--trace=<replaceable>traceflags</replaceable></option></term>
-<listitem><para>Turns tracing on. See <xref linkend="tracing"/>, for more
-information.</para></listitem>
+<listitem><para>Turns tracing on.</para></listitem>
 </varlistentry>
 	    
 <varlistentry>

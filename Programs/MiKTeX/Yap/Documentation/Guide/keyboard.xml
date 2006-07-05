@@ -14,7 +14,7 @@ preceded by a number, the so called numerical prefix.  Its
 interpretation will depend on the particular shortcut.  The numerical
 prefix is displayed in the status bar.</para>
 
-<section>
+<section id="numprefix">
 
 <title>Numerical Prefix</title>
 
@@ -49,7 +49,7 @@ prefix is displayed in the status bar.</para>
 
 </section>
 
-<section>
+<section id="zoomkeys">
 
 <title>Zooming</title>
 
@@ -87,7 +87,7 @@ prefix is displayed in the status bar.</para>
 
 </section>
 
-<section>
+<section id="navkeys">
 
 <title>Page Navigation</title>
 
@@ -97,7 +97,7 @@ prefix is displayed in the status bar.</para>
 <keysym><replaceable>prefix</replaceable></keysym>
 <keycap>g</keycap></keycombo></term>
 <listitem><para>Opens the <guilabel>Goto Page</guilabel> dialog box
-(see <xref linkend='"gotopage"'/>) if
+(see <xref linkend="gotopage"/>) if
 the prefix argument is empty.  Otherwise goes to the
 <indexterm>
 <primary>page</primary>
@@ -178,7 +178,7 @@ the top of the current page.</para></listitem>
 
 </section>
 
-<section>
+<section id="scrollkeys">
 
 <title>Scrolling</title>
 
@@ -250,7 +250,7 @@ the bottom of the current page.</para></listitem>
 
 </section>
 
-<section>
+<section id="misckeys">
 
 <title>Misc</title>
 

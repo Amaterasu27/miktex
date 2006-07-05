@@ -2,10 +2,10 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 
-<!ENTITY rev "2.5.2338">
-<!ENTITY yaprev "2.5.2330">
-<!ENTITY date "May 27, 2006">
-<!ENTITY month "May 2006">
+<!ENTITY rev "2.5.2377">
+<!ENTITY yaprev "2.5.2376">
+<!ENTITY date "July 05, 2006">
+<!ENTITY month "July 2006">
 
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY Yap "<application>Yap</application>">
@@ -56,22 +56,22 @@ a translation approved by the Free Software Foundation.</para>
 </legalnotice>
 </bookinfo>
 
-<preface>
+<preface id="preface">
 
-<title>About this document</title>
+<title>About this Document</title>
 
-<para>This is version &rev; of the &Yap;
-manual.  It corresponds to
-&Yap;&nbsp;&yaprev;.</para>
+<para>This is version &rev; of the &Yap; User's Guide.  It corresponds
+to &Yap;&nbsp;&yaprev; as at &date;.</para>
 </preface>
   
-<chapter>
+<chapter id="intro">
 
 <?dbhh topicname="HIDR_MAINFRAME" topicid="0"?>
 
 <title>About &Yap;</title>
 
-<!-- borrowed from XDVI help file-->
+<para><emphasis>This section is <quote>borrowed</quote> from the
+<acronym>XDVI</acronym> help file.</emphasis></para>
 
 <para>You use &Yap; (Yet Another Previewer) to view &DVI; files, such
 as are produced by &TeX;.</para>
@@ -84,7 +84,7 @@ momentarily.</para>
 <para>Before displaying any page or part thereof, &Yap; checks to see
 if the &DVI; file has changed since the last time it was displayed.
 If this is the case, then &Yap; will reinitialize itself for the
-modified &DVI; file</para>
+modified &DVI; file.</para>
 
 </chapter>
 
@@ -93,7 +93,7 @@ modified &DVI; file</para>
 <?dbhh topicname="HID_FILE_MRU_FILE1" topicid=""?>
 <?dbhh topicname="AFX_HIDD_FILEOPEN" topicid=""?>
 
-<title>How to open a file</title>
+<title>How to Open a File</title>
 
 <indexterm>
 <primary>&DVI; file</primary>
@@ -103,7 +103,8 @@ modified &DVI; file</para>
 <para>There are several ways to open a file:</para>
 
 <itemizedlist>
-<listitem><para>by double-clicking a &DVI; file icon</para></listitem>
+<listitem><para>by double-clicking a &DVI; file icon in
+the Windows shell (Explorer)</para></listitem>
 <listitem><para>by dragging a &DVI; file icon to the
 &Yap; application window</para></listitem>
 <listitem><para>by specifying a  file name on the
@@ -123,13 +124,62 @@ item on the <guimenu>File</guimenu> menu.</para></listitem>
 
 </chapter>
 
-<chapter>
+<chapter id="viewing">
 
 <?dbhh topicname="HIDR_DVITYPE" topicid="0"?>
 
 <title>Viewing &DVI; Files</title>
 
-<section>
+<section id="rendermethods">
+
+<title>Render Methods</title>
+
+<para>&Yap; supports two render methods:</para>
+
+<indexterm>
+<primary>render methods</primary>
+</indexterm>
+
+<indexterm>
+<primary>render method</primary>
+<secondary>Dvips</secondary>
+</indexterm>
+
+<indexterm>
+<primary>render method</primary>
+<secondary>Pk fonts</secondary>
+</indexterm>
+
+<variablelist>
+<varlistentry>
+<term>Pk fonts</term>
+<listitem><para>The &DVI; file is rendered using packed raster fonts. This
+is the traditional method to render &DVI; files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Dvips</term>
+<listitem>
+<para>The &DVI; file is rendered using &Dvips;/&Ghostscript;. This
+render method is suitable for &DVI; files which contain &PostScript; specials
+<indexterm>
+<primary>PostScript specials</primary>
+</indexterm>
+(e.g., rotated text and graphics).</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>The render method for the viewed &DVI; file can be chosen in the
+<guimenu>View</guimenu> menu (<xref
+linkend="menurendermethod"/>).</para>
+
+<para>The default render method can be chosen on the
+<guilabel>Display</guilabel> property page (<xref
+linkend="propdisplay"/>).</para>
+
+</section>
+
+<section id="magnifying">
 
 <title>Magnifying and Reducing the View</title>
 
@@ -157,39 +207,7 @@ the numeric keypad.</para>
 
 </section>
 
-<section>
-
-<title>Viewing Through a Magnifying Glass</title>
-
-<indexterm>
-<primary>magnifying glass</primary>
-</indexterm>
-
-<para>&Yap; offers three different magnifying glasses: small, medium
-and large.</para>
-
-<para>To view through a magnifying glass:</para>
-
-<procedure>
-<step><para>Click the <guilabel>Magnifying Glass</guilabel> button on
-the tool bar.</para></step>
-<step><para>Press the left mouse button
-alone to activate the small magnifying glass.  In combination with the
-<keycap>Shift</keycap> key, the medium sized magnifying glass will be
-opened.  In combination with the <keycap>Control</keycap> key, the
-large magnifying glass will be opened.</para></step>
-<step><para>Move the magnifying glass
-over the area you want to inspect.</para></step>
-<step><para>Release the left mouse button
-to close the magnifying glass.</para></step>
-</procedure>
-
-<para>You can change the properties of the three magnifying glasses.
-See <xref linkend="magglass"/>.</para>
-
-</section>
-
-<section>
+<section id="pagelayout">
 
 <title>Setting the Page Layout</title>
 
@@ -218,7 +236,7 @@ the context menu.</para>
 
 </section>
 
-<section>
+<section id="fullscreen">
       
 <title>Presenting Documents in Full Screen View</title>
 
@@ -269,7 +287,7 @@ is scrolled into view when you close the dialog box.</para>
 <secondary>properties</secondary>
 </indexterm>
 
-<section>
+<section id="docfonts">
 
 <?dbhh topicname="HIDD_DOC_PROP_FONTS" topicid="0"?>
 

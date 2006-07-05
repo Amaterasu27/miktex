@@ -1,12 +1,12 @@
-<chapter>
+<chapter id="menus">
 
 <title>Menus</title>
 
-<section>
+<section id="menufile">
 
 <title><guimenu>File</guimenu> Menu</title>
 
-<section>
+<section id="menuitemopen">
 
 <?dbhh topicname="HID_FILE_OPEN" topicid="0"?>
 
@@ -16,7 +16,7 @@
 
 </section>
 
-<section>
+<section id="menuitemclose">
 
 <?dbhh topicname="HID_FILE_CLOSE" topicid="0"?>
 
@@ -26,7 +26,7 @@
 
 </section>
 
-<section>
+<section id="menuitemedit">
 
 <?dbhh topicname="HID_PAGE_EDITOR" topicid="0"?>
 
@@ -36,7 +36,7 @@
 
 </section>
 
-<section>
+<section id="menuitemsaveas">
 
 <?dbhh topicname="HID_SAVE_AS" topicid="0"?>
 
@@ -46,7 +46,7 @@
 
 </section>
 
-<section>
+<section id="menuitemproperties">
 
 <?dbhh topicname="HID_FILE_DOCUMENT_PROPERTIES" topicid="0"?>
 
@@ -57,7 +57,7 @@
 
 </section>
 
-<section>
+<section id="menuitemprintsetup">
 
 <?dbhh topicname="HID_FILE_PRINT_SETUP" topicid="0"?>
 
@@ -67,7 +67,7 @@
 
 </section>
 
-<section>
+<section id="menuitemprint">
 
 <?dbhh topicname="HID_FILE_PRINT" topicid="0"?>
 
@@ -78,7 +78,7 @@ dialog box (see <xref linkend="printstd"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemprintps">
 
 <?dbhh topicname="HID_FILE_DVIPS" topicid="0"?>
 
@@ -89,7 +89,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemexit">
 
 <?dbhh topicname="HID_FILE_EXIT" topicid="0"?>
 
@@ -101,11 +101,11 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuview">
 
 <title><guimenu>View</guimenu> Menu</title>
 
-<section>
+<section id="menuitemtoolbar">
 
 <?dbhh topicname="HID_VIEW_TOOLBAR" topicid="0"?>
 
@@ -115,7 +115,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemstatusbar">
 
 <?dbhh topicname="HID_VIEW_STATUS_BAR" topicid="0"?>
 
@@ -125,11 +125,11 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menupagelayout">
 
 <title><guisubmenu>Page Layout</guisubmenu></title>
 
-<section>
+<section id="menuitemsinglepage">
 
 <?dbhh topicname="HID_SINGLE_PAGE" topicid="0"?>
 
@@ -139,7 +139,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemdoublepage">
 
 <?dbhh topicname="HID_DOUBLE_PAGE" topicid="0"?>
 
@@ -149,7 +149,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemcontsingle">
 
 <?dbhh topicname="HID_CONTINUOUS_SINGLE" topicid="0"?>
 
@@ -159,7 +159,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemcontdouble">
 
 <?dbhh topicname="HID_CONTINUOUS_DOUBLE" topicid="0"?>
 
@@ -171,7 +171,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemrefresh">
 
 <?dbhh topicname="HID_VIEW_REFRESH" topicid="0"?>
 
@@ -181,7 +181,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemfullscreen">
 
 <?dbhh topicname="HID_VIEW_FULLSCREEN" topicid="0"?>
 
@@ -191,7 +191,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemzoomin">
 
 <?dbhh topicname="HID_ZOOM_IN" topicid="0"?>
 
@@ -201,7 +201,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemzoomout">
 
 <?dbhh topicname="HID_ZOOM_OUT" topicid="0"?>
 
@@ -211,11 +211,11 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menugoto">
 
 <title><guisubmenu>Go To</guisubmenu></title>
 
-<section>
+<section id="menuitemgotoback">
 
 <?dbhh topicname="HID_BACK" topicid="0"?>
 
@@ -225,7 +225,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotoforward">
 
 <?dbhh topicname="HID_FORWARD" topicid="0"?>
 
@@ -235,7 +235,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotonext">
 
 <?dbhh topicname="HID_NEXT_PAGE" topicid="0"?>
 
@@ -245,7 +245,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotoprev">
 
 <?dbhh topicname="HID_PREV_PAGE" topicid="0"?>
 
@@ -255,7 +255,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotofirst">
 
 <?dbhh topicname="HID_FIRST_PAGE" topicid="0"?>
 
@@ -265,7 +265,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotolast">
 
 <?dbhh topicname="HID_LAST_PAGE" topicid="0"?>
 
@@ -275,7 +275,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemgotopage">
 
 <?dbhh topicname="HID_GOTO_PAGE" topicid="0"?>
 
@@ -288,11 +288,11 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menurendermethod">
 
 <title><guisubmenu>Render Method</guisubmenu></title>
 
-<section>
+<section id="menuitemdvips">
 
 <?dbhh topicname="HID_PAGEMODE_DVIPS" topicid="0"?>
 
@@ -302,23 +302,23 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitempkfonts">
 
 <?dbhh topicname="HID_PAGEMODE_PK" topicid="0"?>
 
-<title><guimenuitem>Pk</guimenuitem></title>
+<title><guimenuitem>Pk fonts</guimenuitem></title>
 
-<para>Selects the Pk render method.</para>
-
-</section>
+<para>Selects the Pk fonts render method.</para>
 
 </section>
 
-<section>
+</section>
+
+<section id="menutext">
 
 <title><guisubmenu>Text</guisubmenu></title>
 
-<section>
+<section id="menuitemdarker">
 
 <?dbhh topicname="HID_DARKER_TEXT" topicid="0"?>
 
@@ -328,7 +328,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemlighter">
 
 <?dbhh topicname="HID_LIGHTER_TEXT" topicid="0"?>
 
@@ -340,7 +340,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemtrace">
 
 <?dbhh topicname="HID_VIEW_TRACE" topicid="0"?>
 
@@ -350,7 +350,7 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemoptions">
 
 <?dbhh topicname="HID_VIEW_OPTIONS" topicid="0"?>
 
@@ -363,11 +363,11 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menutools">
 
 <title><guimenuitem>Tools</guimenuitem> Menu</title>
 
-<section>
+<section id="menuitemsrcspecials">
 
 <?dbhh topicname="HID_TOOLS_SOURCESPECIALS" topicid="0"?>
 
@@ -378,17 +378,17 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemruler">
 
 <?dbhh topicname="HID_TOOLS_ARROW" topicid="0"?>
 
 <title><guimenuitem>Ruler</guimenuitem></title>
 
-<para>Selects ruler.</para>
+<para>Selects the ruler tool.</para>
 
 </section>
 
-<section>
+<section  id="menuitemhand">
 
 <?dbhh topicname="HID_TOOLS_HAND" topicid="0"?>
 
@@ -398,7 +398,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemmagglass">
 
 <?dbhh topicname="HID_TOOLS_MAGNIFYING_GLASS" topicid="0"?>
 
@@ -410,11 +410,11 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuwindows">
 
 <title><guimenu>Windows</guimenu></title>
 
-<section>
+<section id="menuitemcascade">
 
 <?dbhh topicname="HID_WINDOW_CASCADE" topicid="0"?>
 
@@ -424,7 +424,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemtile">
 
 <?dbhh topicname="HID_WINDOW_TILE_VERT" topicid="0"?>
 
@@ -436,11 +436,11 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuhelp">
 
 <title><guimenu>Help</guimenu></title>
 
-<section>
+<section id="menuitemhelpindex">
 
 <?dbhh topicname="HID_HELP_INDEX" topicid="0"?>
 
@@ -450,7 +450,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemkeyboardmap">
 
 <?dbhh topicname="HID_HELP_KEYBOARD" topicid="0"?>
 
@@ -460,7 +460,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemregistermiktex">
 
 <?dbhh topicname="HID_REGISTER_MIKTEX" topicid="0"?>
 
@@ -470,7 +470,7 @@ sheet (see <xref linkend="customizing"/>).</para>
 
 </section>
 
-<section>
+<section id="menuitemabout">
 
 <?dbhh topicname="HID_APP_ABOUT" topicid="0"?>
 
