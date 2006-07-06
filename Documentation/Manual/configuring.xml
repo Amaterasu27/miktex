@@ -70,7 +70,8 @@ file name database.</para>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> to open the &MiKTeXOptions; window
 (see <xref linkend="mo-general"/>).
-Select your preferred paper format from the drop-down list.</para>
+Select your preferred paper format from the drop-down list
+and click <guibutton>OK</guibutton>.</para>
 
 </section>
 
@@ -253,7 +254,7 @@ missing packages.</para>
 </screenshot>
 </figure>
 
-<para>Click <guibutton>OK</guibutton> to start the installation of the
+<para>Click <guibutton>Install</guibutton> to start the installation of the
 package. Click <guibutton>Cancel</guibutton>, to cancel the
 installation. If you do not want to see this dialog in the future,
 clear the mark from the check box <guilabel>Always show this
@@ -274,21 +275,39 @@ remembered.</para>
 <para>If you have files that you want to integrate into the &MiKTeX;
 setup, you have several options:</para>
 
-<itemizedlist>
-<listitem><para>Use the command-line option
-<option>--include-directory</option>.</para></listitem>
-<listitem><para>Register the root of the directory tree which
-contains the files. The directory tree must conform to the &TDS;
+<bridgehead>Use the command-line option
+<option>--include-directory=<replaceable>dir</replaceable></option></bridgehead>
+
+<para>For example:</para>
+
+<programlisting>latex --include-directory=C:\path\to\my\style\files thesis.tex</programlisting>
+
+<para>See <xref linkend="includedirectory"/>, for more information.</para>
+
+<bridgehead>Set environment variables</bridgehead>
+
+<para>For example:</para>
+
+<programlisting>set TEXINPUTS=C:\path\to\my\style\files
+latex thesis.tex</programlisting>
+
+<para>See <xref linkend="envvars"/>, to learn more about
+&MiKTeX; environment variables.</para>
+
+<bridgehead>Register your own root directory</bridgehead>
+
+<para>Register the root of the directory tree which
+contains your files. The directory tree must conform to the &TDS;
 standard, i.e., you must imitate the directory tree in the &MiKTeX;
 installation directory (usually
-<filename>&installdir;</filename>).</para></listitem>
-<listitem><para>Set environment variables
-like <envar>TEXINPUTS</envar>.</para></listitem>
-</itemizedlist>
+<filename>&installdir;</filename>).</para>
+
+<tip><para>This is the recommended method. The rest of this section
+explains how you can register your own root directory.</para></tip>
 
 <section>
 
-<title>&TeX; Directory Structure (&TDS;)</title>
+<title>A Short Excursion: The &TeX; Directory Structure (&TDS;)</title>
 
 <para>Here is a brief summary of the &TDS; standard:</para>
 
@@ -298,7 +317,7 @@ like <envar>TEXINPUTS</envar>.</para></listitem>
 <para><filename>*.map</filename> go in <filename><replaceable>root</replaceable>\fonts\map\<replaceable>syntax</replaceable>\<replaceable>bundle</replaceable></filename></para>
 <para><filename>*.mf</filename> go in <filename><replaceable>root</replaceable>\fonts\source\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
 <para><filename>*.pfb</filename> go in <filename><replaceable>root</replaceable>\fonts\type1\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
-<para><filename>*.sty</filename>, <filename>*.cls</filename> or <filename>*.fd</filename>) go in <filename><replaceable>root</replaceable>\tex\latex\<replaceable>package</replaceable></filename></para>
+<para><filename>*.sty</filename>, <filename>*.cls</filename> or <filename>*.fd</filename> go in <filename><replaceable>root</replaceable>\tex\latex\<replaceable>package</replaceable></filename></para>
 <para><filename>*.tfm</filename> go in <filename><replaceable>root</replaceable>\fonts\tfm\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
 <para><filename>*.ttf</filename> go in <filename><replaceable>root</replaceable>\fonts\truetype\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
 <para><filename>*.vf</filename> go in <filename><replaceable>root</replaceable>\fonts\vf\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
@@ -309,9 +328,9 @@ like <envar>TEXINPUTS</envar>.</para></listitem>
 
 <section>
 
-<title>Walkthrough: Registering a Local Directory Tree</title>
+<title>Walkthrough: Registering Your Own Root Directory</title>
 
-<para>In this walkthrough, we assume that your local additions are
+<para>In this walkthrough, we assume that your own additions are
 located in the directory tree rooted at <filename>C:\Local TeX
 Files</filename>. This tree might look as follows:</para>
 
@@ -325,6 +344,25 @@ Files</filename>. This tree might look as follows:</para>
 </mediaobject>
 </screenshot>
 </figure>
+
+<para>In our example, the input files are distributed over three directories:</para>
+
+<variablelist>
+<varlistentry>
+<term><filename>C:\Local TeX Files\bibtex\bib\misc</filename></term>
+<listitem><para>Contains <filename>.bib</filename> files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><filename>C:\Local TeX Files\bibtex\bst\misc</filename></term>
+<listitem><para>Contains <filename>.bst</filename> files.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><filename>C:\Local TeX Files\tex\latex\misc</filename></term>
+<listitem><para>Contains &LaTeX; input files
+(<filename>*.sty</filename>, <filename>*.cls</filename>,
+&hellip;).</para></listitem>
+</varlistentry>
+</variablelist>
 
 <para>You use &MiKTeXOptions; to register <filename>C:\Local TeX Files</filename>.
 Click
@@ -383,7 +421,7 @@ linkend="mo-roots2"/>).</para>
 </figure>
 
 <para>You can move <filename>C:\Local TeX Files</filename> before the
-installation directory, if you want to prioritize your local files.
+installation directory, if you want to prioritize your own files.
 Click <guilabel>C:\Local TeX Files</guilabel> to select the list
 entry. Then click <guibutton>Up</guibutton> to move it before the
 installation directory (<xref linkend="mo-roots3"/>).</para>
@@ -400,7 +438,7 @@ installation directory (<xref linkend="mo-roots3"/>).</para>
 </figure>
 
 <para>Click <guibutton>OK</guibutton> to close &MiKTeXOptions; The
-file name database will be refreshed. You files in <filename>C:\Local
+file name database will be refreshed. Your files in <filename>C:\Local
 TeX Files</filename> are now available to &MiKTeX;.</para>
 
 </section>

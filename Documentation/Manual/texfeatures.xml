@@ -21,18 +21,18 @@ with these command line options:</para>
 
 <variablelist>
 <varlistentry>
-<term><option>-disable-installer</option></term>
+<term><option>--disable-installer</option></term>
 <listitem><para>Missing packages
 <indexterm significance="preferred">
-<primary>-disable-installer</primary>
+<primary>--disable-installer</primary>
 </indexterm>
 will not be installed.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-enable-installer</option></term>
+<term><option>--enable-installer</option></term>
 <listitem><para>Missing packages will
 <indexterm significance="preferred">
-<primary>-enable-installer</primary>
+<primary>--enable-installer</primary>
 </indexterm>
 be installed.</para></listitem>
 </varlistentry>
@@ -44,14 +44,14 @@ be installed.</para></listitem>
 
 <title>Finding out Package Usages</title>
 
-<para>The command line option <option>-record-package-usages</option>
+<para>The command line option <option>--record-package-usages</option>
 can be used to
 <indexterm>
 <primary>packages</primary>
 <secondary>finding out usages</secondary>
 </indexterm>
 <indexterm significance="preferred">
-<primary>-record-package-usages=file</primary>
+<primary>--record-package-usages=file</primary>
 </indexterm>
 find out which packages are used in a job.</para>
 
@@ -85,18 +85,18 @@ ltxbase</programlisting>
 <title>Suppressing Screen Output</title>
 
 <indexterm significance="preferred">
-<primary>-quiet</primary>
+<primary>--quiet</primary>
 </indexterm>
 <indexterm>
 <primary>screen output</primary>
 <secondary>suppressing</secondary>
 </indexterm>
 
-<para>The option <option>-quiet</option> suppresses all diagnostic
+<para>The option <option>--quiet</option> suppresses all diagnostic
 messages.  No screen output is produced,
-unless there are errors.  The <option>-quiet</option> option implies
-<option>-c-style-errors</option> and
-<option>-interaction=batchmode</option>, i.e. errors will be shown in a
+unless there are errors.  The <option>--quiet</option> option implies
+<option>--c-style-errors</option> and
+<option>--interaction=batchmode</option>, i.e. errors will be shown in a
 <quote>C style form</quote>
 <indexterm>
 <primary>error messages</primary>
@@ -126,7 +126,7 @@ foo.tex:3: Undefined control sequence
 <title>Setting the Name of the Output File</title>
 
 <indexterm significance="preferred">
-<primary>-job-name=name</primary>
+<primary>--job-name=name</primary>
 </indexterm>
 
 <para>You can change the name of all output files by using the option
@@ -138,7 +138,7 @@ foo.tex:3: Undefined control sequence
 <primary>TeX job name</primary>
 <secondary>changing the</secondary>
 </indexterm>
-<option>-job-name=<replaceable>name</replaceable></option>.  This
+<option>--job-name=<replaceable>name</replaceable></option>.  This
 switch actually sets the name of the &TeX; job and has an effect of
 the output file names, because these names are derived from the job
 name.  Look at the following example:</para>
@@ -213,14 +213,14 @@ corresponds to the view location.</para></listitem>
 
 <title>How to Insert Source Specials</title>
 
-<para>The &TeX; compiler option <option>-src-specials</option> directs
+<para>The &TeX; compiler option <option>--src-specials</option> directs
 &TeX; to insert source specials into the &DVI; file.
 <indexterm>
 <primary>source specials</primary>
 <secondary>inserting</secondary>
 </indexterm>
 <indexterm significance="preferred">
-<primary>-src-specials</primary>
+<primary>--src-specials</primary>
 </indexterm>
 </para>
 
@@ -280,22 +280,20 @@ the following:</para>
 <title>Specifying Additional Input Directories</title>
 
 <indexterm significance="preferred">
-<primary>-include-directory=dir</primary>
+<primary>--include-directory=dir</primary>
 </indexterm>
 
 <para>The option
-<option>-include-directory=<replaceable>dir</replaceable></option>
-allows you to extend the input search path for one invocation of
-&TeX;.</para>
+<option>--include-directory=<replaceable>dir</replaceable></option>
+allows you to extend the input search path for one invocation.</para>
 
 <para>For example:</para>
 
-<programlisting>tex -include-directory="C:\My TeX" foo.tex</programlisting>
+<programlisting>latex --include-directory="C:\My Styles" foo.tex</programlisting>
 
-<para>This prepends <filename>"C:\My TeX"</filename> to the input search
-path, i.e., <filename>"C:\My TeX"</filename> will be searched first,
-when &TeX; looks out any input file (including
-<filename>foo.tex</filename>).</para>
+<para>This prepends <filename>C:\My Styles</filename> to the input search
+path, i.e., <filename>C:\My Styles</filename> will be searched first,
+when &TeX; tries to find an input file.</para>
 
 <para>You can specify either absolute paths (as in the example above)
 or relative paths.</para>
@@ -307,11 +305,11 @@ or relative paths.</para>
 <title>Specifying the Output Directory</title>
 
 <indexterm significance="preferred">
-<primary>-output-directory=dir</primary>
+<primary>--output-directory=dir</primary>
 </indexterm>
     
 <para>The option
-<option>-output-directory=<replaceable>dir</replaceable></option>
+<option>--output-directory=<replaceable>dir</replaceable></option>
 causes &TeX; to create all output files in another directory.</para>
 
 <para>For example:</para>
@@ -334,7 +332,7 @@ will be created in <filename>C:\texoutput\</filename>.</para>
 <title>Specifying the Directory for Auxiliary Files</title>
 
 <indexterm significance="preferred">
-<primary>-aux-directory=dir</primary>
+<primary>--aux-directory=dir</primary>
 </indexterm>
 
 <indexterm>
@@ -342,7 +340,7 @@ will be created in <filename>C:\texoutput\</filename>.</para>
 <secondary>specifying the directory for</secondary>
 </indexterm>
 
-<para>The option <option>-aux-directory=<replaceable>dir</replaceable></option>
+<para>The option <option>--aux-directory=<replaceable>dir</replaceable></option>
 causes &TeX; to create auxiliary files in another directory. For example:</para>
 
 <informalexample><screen><prompt>&prompt;</prompt><userinput>mkdir C:\texoutput</userinput>
@@ -391,10 +389,10 @@ role="tex">\write18</markup> by default to avoid security problems.
 <primary>security</primary>
 </indexterm>
 <indexterm significance="preferred">
-<primary>-enable-write18</primary>
+<primary>--enable-write18</primary>
 </indexterm>
 You enable the feature by specifying
-<option>-enable-write18</option> on the &TeX; command-line.</para>
+<option>--enable-write18</option> on the &TeX; command-line.</para>
 </note>
 
 </section>
@@ -437,10 +435,10 @@ problems.
 <primary>security</primary>
 </indexterm>
 <indexterm significance="preferred">
-<primary>-enable-pipes</primary>
+<primary>--enable-pipes</primary>
 </indexterm>
 You enable the feature by specifying
-<option>-enable-pipes</option> on the &TeX; command-line.</para>
+<option>--enable-pipes</option> on the &TeX; command-line.</para>
 </note>
 
 </section>
