@@ -236,6 +236,8 @@ ErrorDialogImpl::OnCopy ()
 	  FATAL_WINDOWS_ERROR (T_("SetClipboardData"), 0);
 	}
       hGlobal = 0;
+      AfxMessageBox (T_("The error report has been copied to the \
+Clipboard."));
     }
   catch (const exception & e)
     {
