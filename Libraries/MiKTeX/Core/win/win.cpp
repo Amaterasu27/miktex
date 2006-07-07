@@ -2390,7 +2390,7 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       // get the next argument
       tstring arg;
       bool inQuotation = false;
-      for (bool complete = false; ! complete; ++ lpsz)
+      for (; ; ++ lpsz)
 	{
 	  // count backslashes
 	  size_t nBackslashes = 0;
@@ -2434,7 +2434,7 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		  && ! inQuotation))
 	    {
 	      argv.push_back (StrDup(arg.c_str()));
-	      complete = true;
+	      break;
 	    }
 	  else if (! quoteOrUnquote)
 	    {
