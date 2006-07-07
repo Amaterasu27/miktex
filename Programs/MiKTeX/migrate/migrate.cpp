@@ -161,11 +161,11 @@ ReadRegistry24 ()
 
 /* _________________________________________________________________________
 
-   MigrateRegistry24
+   TryMigrateRegistry24
    _________________________________________________________________________ */
 
-void
-MigrateRegistry24 ()
+bool
+TryMigrateRegistry24 ()
 {
   CRegKey root25;
 
@@ -174,11 +174,7 @@ MigrateRegistry24 ()
       || (root25.Open(HKEY_CURRENT_USER, MIKTEX_REGPATH_SERIES, KEY_READ)
 	  == ERROR_SUCCESS))
     {
-#if 1
-      throw 0;
-#else
-      throw T_("registry settings already migrated");
-#endif
+      return (false);
     }
 
   root25.Close ();
@@ -228,6 +224,8 @@ MigrateRegistry24 ()
     }
 
   root25.Close ();
+
+  return (true);
 }
 
 /* _________________________________________________________________________
@@ -244,7 +242,7 @@ main (/*[in]*/ int			argc,
   int successCode = 1;
   try
     {
-      MigrateRegistry24 ();
+      TryMigrateRegistry24 ();
       successCode = 0;
     }
   catch (const MIKTEXCHAR * lpszMessage)
