@@ -108,6 +108,7 @@ manual_xml_files = \
 	Manual\texfeatures.xml \
 	Manual\texifying.xml \
 	EnvVars\MIKTEX_REPOSITORY.xml \
+	EnvVars\MIKTEX_TRACE.xml \
 	EnvVars\MFINPUTS.xml \
 	EnvVars\TEXINPUTS.xml \
 	EnvVars\MPINPUTS.xml \
