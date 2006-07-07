@@ -5,7 +5,7 @@
 <primary>MIKTEX_TRACE</primary>
 </indexterm>
 <para>Comma-separated list of trace
-stream names<ulink url="tracestreams"></ulink>.
+stream names (see <xref linkend="tracestreams"/>).
 If this variable is set, then &MiKTeX; programs will write
 trace messages into the &DebugView; window.</para>
 </listitem>
