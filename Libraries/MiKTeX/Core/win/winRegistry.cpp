@@ -270,7 +270,8 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
       shared = SessionImpl::theSession->IsSharedMiKTeXSetup();
       if (shared == TriState::Undetermined)
 	{
-	  if (SessionImpl::theSession->RunningAsAdministrator())
+	  if (! IsWindowsNT()
+	      || SessionImpl::theSession->RunningAsAdministrator())
 	    {
 	      shared = TriState::True;
 	    }

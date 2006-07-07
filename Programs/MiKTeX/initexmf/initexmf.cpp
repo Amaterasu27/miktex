@@ -1952,8 +1952,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  || triSharedSetup == TriState::True)
 	{
 #if defined(MIKTEX_WINDOWS)
-	  if (! (pSession->RunningAsAdministrator()
-		 || pSession->RunningAsPowerUser()))
+	  if (IsWindowsNT()
+	      && ! (pSession->RunningAsAdministrator()
+		    || pSession->RunningAsPowerUser()))
 	    {
 	      FatalError (T_("Administrator privileges required."));
 	    }
