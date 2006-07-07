@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/omega/">
+    <TPM:Name>Omega bin</TPM:Name>
+    <TPM:Title>Omega binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the Omega executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\MiKTeX-odvicopy-3.dll
+texmf\miktex\bin\MiKTeX-ofm2opl-3.dll
+texmf\miktex\bin\MiKTeX-omega-3.dll
+texmf\miktex\bin\MiKTeX-opl2ofm-3.dll
+texmf\miktex\bin\MiKTeX-ovf2ovp-3.dll
+texmf\miktex\bin\MiKTeX-ovp2ovf-3.dll
+texmf\miktex\bin\iniomega.exe
+texmf\miktex\bin\mkocp.exe
+texmf\miktex\bin\odvicopy.exe
+texmf\miktex\bin\ofm2opl.exe
+texmf\miktex\bin\omega.exe
+texmf\miktex\bin\opl2ofm.exe
+texmf\miktex\bin\otp2ocp.exe
+texmf\miktex\bin\outocp.exe
+texmf\miktex\bin\ovf2ovp.exe
+texmf\miktex\bin\ovp2ovf.exe
+texmf\miktex\bin\viromega.exe
+texmf\miktex\config\omega.ini
+texmf\miktex\fmt\omega.pool
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

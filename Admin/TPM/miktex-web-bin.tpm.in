@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>web bin</TPM:Name>
+    <TPM:Title>web binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes Tangle, Weave and Tie.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\MiKTeX-tangle-3.dll
+texmf\miktex\bin\MiKTeX-weave-3.dll
+texmf\miktex\bin\tangle.exe
+texmf\miktex\bin\tie.exe
+texmf\miktex\bin\weave.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

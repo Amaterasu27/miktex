@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>MiKTeX lib</TPM:Name>
+    <TPM:Title>MiKTeX run-time library</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the MiKTeX run-time library files.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\MiKTeX-app-1.dll
+texmf\miktex\bin\MiKTeX-bzip2-3.dll
+texmf\miktex\bin\MiKTeX-core-3.dll
+texmf\miktex\bin\MiKTeX-curl-1.dll
+texmf\miktex\bin\MiKTeX-dib-3.dll
+texmf\miktex\bin\MiKTeX-expat-3.dll
+texmf\miktex\bin\MiKTeX-gnu-3.dll
+texmf\miktex\bin\MiKTeX-kpseweb2cemu-3.dll
+texmf\miktex\bin\MiKTeX-md5-3.dll
+texmf\miktex\bin\MiKTeX-mspack-1.dll
+texmf\miktex\bin\MiKTeX-packagemanager-3.dll
+texmf\miktex\bin\MiKTeX-popt-3.dll
+texmf\miktex\bin\MiKTeX-texmf-3.dll
+texmf\miktex\bin\MiKTeX-ui-3.dll
+texmf\miktex\bin\MiKTeX-zlib-3.dll
+texmf\miktex\bin\neolecho.com
+texmf\miktex\bin\runbat.exe
+texmf\miktex\bin\runperl2.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

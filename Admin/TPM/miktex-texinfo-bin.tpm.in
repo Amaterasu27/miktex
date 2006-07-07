@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/texinfo/">
+    <TPM:Name>TeXinfo bin</TPM:Name>
+    <TPM:Title>TeXinfo binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes Makeinfo, texi2dvi and texindex.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf\miktex\bin\makeinfo.exe
+texmf\miktex\bin\texi2dvi.exe
+texmf\miktex\bin\texindex.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>
