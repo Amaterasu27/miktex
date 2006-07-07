@@ -68,11 +68,21 @@ echo s/@MIKTEX_RELEASE_STATE@/%state%/ >> tmp\scriptfile
 echo s/@MIKTEX_RELEASE_NUMBER@/%num%/ >> tmp\scriptfile
 echo s/@MIKTEX_VERSION_STR@/%verstr%/ >> tmp\scriptfile
 echo s/@MIKTEX_SERIES_STR@/%major%.%minor%/ >> tmp\scriptfile
+for /F "usebackq delims=" %%d in (`\cygwin\bin\date`) do (
+  echo s!@MIKTEX_DATETIME_STR@!%%d! >> tmp\scriptfile
+)
 
 sed -f tmp\scriptfile < Doxyfile.in > Doxyfile
 sed -f tmp\scriptfile < Libraries\MiKTeX\Core\include\miktex\version.h.in > Libraries\MiKTeX\Core\include\miktex\version.h
 
 sed -f tmp\scriptfile < Documentation\version.ent.in > Documentation\version.ent
+
+setlocal enabledelayedexpansion
+for %%f in (Admin\TPM\*.tpm.in) do (
+ set tpmfile=%%~ff
+ sed -f tmp\scriptfile < %%f > "!tpmfile:.tpm.in=-%major%.%minor%.tpm!"
+)
+endlocal
 
 rmdir /s /q tmp
 
