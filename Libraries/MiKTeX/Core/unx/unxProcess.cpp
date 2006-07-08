@@ -74,11 +74,11 @@ Dup2 (/*[in]*/ int fd,
 
 /* _________________________________________________________________________
 
-   Close
+   Close_
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-Close (/*[in]*/ int fd)
+Close_ (/*[in]*/ int fd)
 {
   if (close(fd) < 0)
     {
@@ -162,7 +162,7 @@ public:
   {
     int fd = twofd[0];
     twofd[0] = -1;
-    Close (fd);
+    Close_ (fd);
   }
 
 public:
@@ -171,7 +171,7 @@ public:
   {
     int fd = twofd[1];
     twofd[1] = -1;
-    Close (fd);
+    Close_ (fd);
   }
 
 public:
@@ -345,7 +345,9 @@ unxProcess::Create ()
     }
 
   // fork
-  SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"), T_("forking..."));
+  SessionImpl::theSession->trace_process->WriteFormattedLine
+    (T_("core"),
+     T_("forking..."));
   if (pipeStdout.GetReadEnd() >=0
       || pipeStderr.GetReadEnd() >= 0
       || pipeStdin.GetReadEnd() >= 0
@@ -379,7 +381,7 @@ unxProcess::Create ()
 	  else if (fdChildStderr >= 0)
 	    {
 	      Dup2 (fdChildStderr, filenoStderr);
-	      ::Close (fdChildStderr);
+	      ::Close_ (fdChildStderr);
 	    }
 	  if (pipeStdin.GetReadEnd() >= 0)
 	    {
@@ -388,12 +390,13 @@ unxProcess::Create ()
 	  else if (fdChildStdin >= 0)
 	    {
 	      Dup2 (fdChildStdin, filenoStdin);
-	      ::Close (fdChildStdin);
+	      ::Close_ (fdChildStdin);
 	    }
 	  pipeStdout.Dispose ();
 	  pipeStderr.Dispose ();
 	  pipeStdin.Dispose ();
-	  execv (startinfo.FileName.c_str(), argv.Get());
+	  execv (startinfo.FileName.c_str(),
+		 const_cast<MIKTEXCHAR * const *>(argv.GetArgv()));
 	  perror ("execv failed");
 	}
       catch (const exception &)
@@ -421,7 +424,7 @@ unxProcess::Create ()
 
   if (fdChildStderr >= 0)
     {
-      ::Close (fdChildStderr);
+      ::Close_ (fdChildStderr);
     }
 
   pipeStdout.Dispose ();

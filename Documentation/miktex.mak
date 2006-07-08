@@ -98,6 +98,7 @@ pdf_files = \
 
 manual_xml_files = \
 	Manual\configuring.xml \
+	Manual\envvars.xml \
 	Manual\features.xml \
 	Manual\installation-instructions.xml \
 	Manual\installing.xml \
@@ -107,48 +108,60 @@ manual_xml_files = \
 	Manual\tcxtables.xml \
 	Manual\texfeatures.xml \
 	Manual\texifying.xml \
-	EnvVars\MIKTEX_REPOSITORY.xml \
-	EnvVars\MIKTEX_TRACE.xml \
-	EnvVars\MFINPUTS.xml \
-	EnvVars\TEXINPUTS.xml \
-	EnvVars\MPINPUTS.xml \
+	Manual\tracestreams.xml \
 	EnvVars\BIBINPUTS.xml \
 	EnvVars\BSTINPUTS.xml \
+	EnvVars\MFINPUTS.xml \
+	EnvVars\MIKTEX_REPOSITORY.xml \
+	EnvVars\MIKTEX_TRACE.xml \
+	EnvVars\MPINPUTS.xml \
+	EnvVars\TEXINPUTS.xml \
+	EnvVars\TFMFONTS.xml \
 	Options\alias.xml \
-	Options\mltex.xml \
 	Options\auxdirectory.xml \
+	Options\bistacksize.xml \
 	Options\bufsize.xml \
 	Options\cstyleerrors.xml \
 	Options\disableinstaller.xml \
 	Options\disablepipes.xml \
-	Options\enablepipes.xml \
 	Options\disablewriteeighteen.xml \
 	Options\dontparsefirstline.xml \
+	Options\enableinstaller.xml \
+	Options\enablepipes.xml \
 	Options\enablewriteeighteen.xml \
 	Options\errorline.xml \
 	Options\fontmax.xml \
+	Options\fontmemsize.xml \
 	Options\halferrorline.xml \
 	Options\haltonerror.xml \
 	Options\help.xml \
+	Options\hhelp.xml \
 	Options\includedirectory.xml \
 	Options\initialize.xml \
 	Options\interaction.xml \
 	Options\jobname.xml \
-	Options\nocstyleerrors.xml \
 	Options\jobtime.xml \
-	Options\parsefirstline.xml \
+	Options\ligtablesize.xml \
 	Options\maxinopen.xml \
 	Options\maxprintline.xml \
 	Options\maxstrings.xml \
+	Options\maxwiggle.xml \
 	Options\membot.xml \
 	Options\memmax.xml \
 	Options\memmin.xml \
 	Options\memtop.xml \
+	Options\mltex.xml \
+	Options\movesize.xml \
 	Options\nestsize.xml \
+	Options\nocstyleerrors.xml \
 	Options\outputdirectory.xml \
 	Options\paramsize.xml \
+	Options\parsefirstline.xml \
+	Options\pathsize.xml \
 	Options\poolsize.xml \
 	Options\quiet.xml \
+	Options\recorder.xml \
+	Options\recordpackageusages.xml \
 	Options\savesize.xml \
 	Options\srcspecials.xml \
 	Options\stacksize.xml \
@@ -168,13 +181,14 @@ manual_xml_files = \
 	Ref\gftodvi.xml \
 	Ref\initexmf.xml \
 	Ref\mf.xml \
+	Ref\mpm.xml \
 	Ref\mpost.xml \
 	Ref\mthelp.xml \
-	Ref\setupwiz.xml \
 	Ref\mtprint.xml \
 	Ref\omega.xml \
 	Ref\pdfetex.xml \
 	Ref\pdftexcfg.xml \
+	Ref\setupwiz.xml \
 	Ref\tex.xml \
 	Ref\texify.xml \
 	Ref\updmapcfg.xml \

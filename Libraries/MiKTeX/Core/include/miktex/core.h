@@ -4441,14 +4441,18 @@ struct ProcessStartInfo
   /// Path name to be executed.
   tstring FileName;
 
+#if defined(MIKTEX_WINDOWS)
   /// Output file stream for stderr redirection.
   FILE * StandardError;
+#endif
 
   /// Input file stream for stdin redirection.
   FILE * StandardInput;
 
+#if defined(MIKTEX_WINDOWS)
   /// Output file stream for stdout redirection.
   FILE * StandardOutput;
+#endif
 
   /// Indicates whether error output shall be written to a pipe.
   bool RedirectStandardError;
@@ -4466,9 +4470,11 @@ struct ProcessStartInfo
     : RedirectStandardError (false),
       RedirectStandardInput (false),
       RedirectStandardOutput (false),
+#if defined(MIKTEX_WINDOWS)
       StandardError (0),
-      StandardInput (0),
-      StandardOutput (0)
+      StandardOutput (0),
+#endif
+      StandardInput (0)
   {
   }
 
@@ -4477,9 +4483,11 @@ struct ProcessStartInfo
       RedirectStandardError (false),
       RedirectStandardInput (false),
       RedirectStandardOutput (false),
+#if defined(MIKTEX_WINDOWS)
       StandardError (0),
-      StandardInput (0),
-      StandardOutput (0)
+      StandardOutput (0),
+#endif
+      StandardInput (0)
   {
   }
 
@@ -5760,12 +5768,14 @@ public:
   TryCreateFromTemplate (/*[in]*/ const PathName & path)
     = 0;
 
+#if defined(MIKTEX_WINDOWS)
 public:
   virtual
   bool
   MIKTEXCALL
   RunningAsPowerUser ()
     = 0;
+#endif
 
 public:
   static

@@ -74,7 +74,6 @@ extra_includes = \
 
 extra_defines = \
 	-DHAVE_LIBCURL=1 \
-	-DUSE_WEB_SERVICE=1 \
 
 compile = \
 	$(cc) $(cppstandard) \

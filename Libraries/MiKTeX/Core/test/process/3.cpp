@@ -61,6 +61,7 @@ BEGIN_TEST_FUNCTION(1);
 }
 END_TEST_FUNCTION();
 
+#if defined(MIKTEX_WINDOWS)
 BEGIN_TEST_FUNCTION(2);
 {
   TEST (Process::ExecuteSystemCommand(T_("echo 0123456789x> a.txt")));
@@ -93,11 +94,14 @@ BEGIN_TEST_FUNCTION(2);
   TESTX (File::Delete(T_("b.txt")));
 }
 END_TEST_FUNCTION();
+#endif
 
 BEGIN_TEST_PROGRAM();
 {
   CALL_TEST_FUNCTION (1);
+#if defined(MIKTEX_WINDOWS)
   CALL_TEST_FUNCTION (2);
+#endif
 }
 END_TEST_PROGRAM();
 

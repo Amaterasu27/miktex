@@ -1956,11 +1956,13 @@ public:
   MIKTEXCALL
   TryCreateFromTemplate (/*[in]*/ const PathName & path);
 
+#if defined(MIKTEX_WINDOWS)
 public:
   virtual
   bool
   MIKTEXCALL
   RunningAsPowerUser ();
+#endif
 
   // -----------------------------------------------------------------------
   // *** public ***

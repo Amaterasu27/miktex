@@ -19,44 +19,70 @@
 
 manual_xml_files = \
 	Manual/configuring.xml \
+	Manual/envvars.xml \
 	Manual/features.xml \
 	Manual/installation-instructions.xml \
 	Manual/installing.xml \
 	Manual/intro.xml \
 	Manual/localguide.xml \
-	Manual/miktexini.xml \
 	Manual/printing.xml \
 	Manual/tcxtables.xml \
 	Manual/texfeatures.xml \
 	Manual/texifying.xml \
-	Manual/updmapcfg.xml \
+	Manual/tracestreams.xml \
+	EnvVars/BIBINPUTS.xml \
+	EnvVars/BSTINPUTS.xml \
+	EnvVars/MFINPUTS.xml \
+	EnvVars/MIKTEX_REPOSITORY.xml \
+	EnvVars/MIKTEX_TRACE.xml \
+	EnvVars/MPINPUTS.xml \
+	EnvVars/TEXINPUTS.xml \
+	EnvVars/TFMFONTS.xml \
 	Options/alias.xml \
 	Options/auxdirectory.xml \
+	Options/bistacksize.xml \
 	Options/bufsize.xml \
 	Options/cstyleerrors.xml \
+	Options/disableinstaller.xml \
+	Options/disablepipes.xml \
+	Options/disablewriteeighteen.xml \
+	Options/dontparsefirstline.xml \
+	Options/enableinstaller.xml \
+	Options/enablepipes.xml \
 	Options/enablewriteeighteen.xml \
 	Options/errorline.xml \
 	Options/fontmax.xml \
+	Options/fontmemsize.xml \
 	Options/halferrorline.xml \
 	Options/haltonerror.xml \
 	Options/help.xml \
+	Options/hhelp.xml \
 	Options/includedirectory.xml \
 	Options/initialize.xml \
 	Options/interaction.xml \
 	Options/jobname.xml \
 	Options/jobtime.xml \
+	Options/ligtablesize.xml \
 	Options/maxinopen.xml \
 	Options/maxprintline.xml \
 	Options/maxstrings.xml \
+	Options/maxwiggle.xml \
 	Options/membot.xml \
 	Options/memmax.xml \
 	Options/memmin.xml \
 	Options/memtop.xml \
+	Options/mltex.xml \
+	Options/movesize.xml \
 	Options/nestsize.xml \
+	Options/nocstyleerrors.xml \
 	Options/outputdirectory.xml \
 	Options/paramsize.xml \
+	Options/parsefirstline.xml \
+	Options/pathsize.xml \
 	Options/poolsize.xml \
 	Options/quiet.xml \
+	Options/recorder.xml \
+	Options/recordpackageusages.xml \
 	Options/savesize.xml \
 	Options/srcspecials.xml \
 	Options/stacksize.xml \
@@ -67,13 +93,11 @@ manual_xml_files = \
 	Options/trace.xml \
 	Options/trieopsize.xml \
 	Options/triesize.xml \
-	Options/trygz.xml \
 	Options/undump.xml \
 	Options/version.xml \
 	Ref/bibtex.xml \
 	Ref/dvicopy.xml \
 	Ref/dvips.xml \
-	Ref/etex.xml \
 	Ref/findtexmf.xml \
 	Ref/gftodvi.xml \
 	Ref/initexmf.xml \
@@ -83,10 +107,23 @@ manual_xml_files = \
 	Ref/mthelp.xml \
 	Ref/mtprint.xml \
 	Ref/omega.xml \
-	Ref/pdftex.xml \
+	Ref/pdfetex.xml \
+	Ref/pdftexcfg.xml \
+	Ref/setupwiz.xml \
 	Ref/tex.xml \
 	Ref/texify.xml \
+	Ref/updmapcfg.xml \
 	miktex.xml
+
+manual_listings = \
+	$(top_srcdir)/Admin/Defaults/mf.defaults \
+	$(top_srcdir)/Admin/Defaults/mfapp.defaults \
+	$(top_srcdir)/Admin/Defaults/mpost.defaults \
+	$(top_srcdir)/Admin/Defaults/omega.defaults \
+	$(top_srcdir)/Admin/Defaults/pdftex.defaults \
+	$(top_srcdir)/Admin/Defaults/texapp.defaults \
+	$(top_srcdir)/Admin/Defaults/texmfapp.defaults \
+	filetypes
 
 man_MANS = 
 man_MANS += initexmf.1
@@ -98,6 +135,7 @@ ver = $(MIKTEX_MAJOR_VERSION).$(MIKTEX_MINOR_VERSION)
 EXTRA_DIST =
 EXTRA_DIST += $(man_MANS)
 EXTRA_DIST += $(manual_xml_files)
+EXTRA_DIST += $(manual_listings)
 EXTRA_DIST += Styles/htmltext.xsl
 EXTRA_DIST += Styles/manpages.xsl
 EXTRA_DIST += entities.ent

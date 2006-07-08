@@ -40,8 +40,10 @@ libmiktex_core_la_CPPFLAGS += -DMIKTEX_DATAROOT=\"$(MIKTEX_DATAROOT)\"
 libmiktex_core_la_CPPFLAGS += -DMIKTEX_ROOTS=\"$(MIKTEX_ROOTS)\"
 
 libmiktex_core_la_LIBADD =
-libmiktex_core_la_LIBADD += $(top_builddir)/Libraries/3rd/libmd5/libmiktex-md5.la
+libmiktex_core_la_LIBADD += $(top_builddir)/Libraries/3rd/bzip2/libmiktex-bz2.la
 libmiktex_core_la_LIBADD += $(top_builddir)/Libraries/3rd/gl/libgl.la
+libmiktex_core_la_LIBADD += $(top_builddir)/Libraries/3rd/libmd5/libmiktex-md5.la
+libmiktex_core_la_LIBADD += $(top_builddir)/Libraries/3rd/zlib/libmiktex-zlib.la
 libmiktex_core_la_LIBADD += $(PTHREAD_LIBS)
 
 libmiktex_core_la_LDFLAGS = -no-undefined -version-info 1:0:0
@@ -75,15 +77,16 @@ libmiktex_core_la_SOURCES += gsinfo.cpp
 libmiktex_core_la_SOURCES += include/miktex/char.h
 libmiktex_core_la_SOURCES += include/miktex/core.h
 libmiktex_core_la_SOURCES += include/miktex/env.h
+libmiktex_core_la_SOURCES += include/miktex/first.h
 libmiktex_core_la_SOURCES += include/miktex/paths.h
 libmiktex_core_la_SOURCES += include/miktex/reg.h
+libmiktex_core_la_SOURCES += include/miktex/test.h
 libmiktex_core_la_SOURCES += include/miktex/trace.h
 libmiktex_core_la_SOURCES += internal.h
 libmiktex_core_la_SOURCES += log.cpp
 libmiktex_core_la_SOURCES += makefndb.cpp
 libmiktex_core_la_SOURCES += mfmodes.cpp
 libmiktex_core_la_SOURCES += miktex.cpp
-libmiktex_core_la_SOURCES += miktextest.h
 libmiktex_core_la_SOURCES += obsolete.cpp
 libmiktex_core_la_SOURCES += papersize.cpp
 libmiktex_core_la_SOURCES += path.cpp

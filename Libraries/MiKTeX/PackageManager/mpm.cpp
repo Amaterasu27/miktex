@@ -26,17 +26,8 @@
 #include "Extractor.h"
 #include "TpmParser.h"
 
-#if USE_WEB_SERVICE
-#  include "../WebServiceClients/Repository/repositoryRepositorySoapProxy.h"
-#  include "../WebServiceClients/Repository/RepositorySoap.nsmap"
-#endif
-
-#if ! USE_WEB_SERVICE
-#  define PACKAGE_REPOSITORIES_CSV \
-  T_("http://miktex.sourceforge.net/download/tm/package-repositories.csv")
-#  define SF_LOGO \
-  T_("http://sourceforge.net/sflogo.php?group_id=10783&type=1")
-#endif
+#include "../WebServiceClients/Repository/repositoryRepositorySoapProxy.h"
+#include "../WebServiceClients/Repository/RepositorySoap.nsmap"
 
 #include "mpm-version.h"
 
@@ -48,7 +39,6 @@ tstring PackageManagerImpl::proxyPassword;
    FatalSoapError
    _________________________________________________________________________ */
 
-#if USE_WEB_SERVICE
 void
 FatalSoapError (/*[in]*/ soap *			pSoap,
 		/*[in]*/ const MIKTEXCHAR *	lpszFile,
@@ -72,7 +62,6 @@ FatalSoapError (/*[in]*/ soap *			pSoap,
       UNEXPECTED_CONDITION (T_("FatalSoapError"));
     }
 }
-#endif
 
 /* _________________________________________________________________________
 
@@ -1147,211 +1136,9 @@ PackageManager::SetDefaultPackageRepository
 
 /* _________________________________________________________________________
 
-   ParseLine
-
-   Parse a package repository definition.
-   _________________________________________________________________________ */
-
-#if ! USE_WEB_SERVICE
-MPMSTATICFUNC(bool)
-ParseLine (/*[in]*/ const tstring &	str,
-	   /*[out]*/ RepositoryInfo &	repositoryInfo)
-{
-  CSVList tok (str.c_str(), T_(';'));
-  if (tok.GetCurrent() == 0)
-    {
-      return (false);
-    }
-  repositoryInfo.packageLevel = PackageLevel::None;
-  repositoryInfo.version = 0;
-  repositoryInfo.timeDate = 0;
-  repositoryInfo.url = tok.GetCurrent();
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.description = tok.GetCurrent();
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.country = tok.GetCurrent();
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.town = tok.GetCurrent();
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.packageLevel = DbLight::CharToPackageLevel(*tok.GetCurrent());
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.timeDate = AToI(tok.GetCurrent());
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.version = AToI(tok.GetCurrent());
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  if (StringCompare(tok.GetCurrent(), T_("online")) == 0)
-    {
-      repositoryInfo.status = RepositoryStatus::Online;
-    }
-  else if (StringCompare(tok.GetCurrent(), T_("offline")) == 0)
-    {
-      repositoryInfo.status = RepositoryStatus::Offline;
-    }
-  else
-    {
-      ;
-    }
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  if (StringCompare(tok.GetCurrent(), T_("unknown")) == 0)
-    {
-      repositoryInfo.integrity = RepositoryIntegrity::Unknown;
-    }
-  else if (StringCompare(tok.GetCurrent(), T_("intact")) == 0)
-    {
-      repositoryInfo.integrity = RepositoryIntegrity::Intact;
-    }
-  else if (StringCompare(tok.GetCurrent(), T_("corrupted")) == 0)
-    {
-      repositoryInfo.integrity = RepositoryIntegrity::Corrupted;
-    }
-  else
-    {
-      ;
-    }
-  ++ tok;
-  if (tok.GetCurrent() == 0)
-    {
-      return (true);
-    }
-  repositoryInfo.delay = AToI(tok.GetCurrent());
-  return (true);
-}
-#endif
-
-/* _________________________________________________________________________
-
-   HiSourceForge
-   _________________________________________________________________________ */
-
-#if ! USE_WEB_SERVICE
-MPMSTATICFUNC(void)
-HiSourceForge (/*[in]*/ WebSession * webSession)
-{
-#if 1
-  UNUSED_ALWAYS (webSession);
-#else
-  try
-    {
-      // open sflogo.php
-      auto_ptr<WebFile> webFile (webSession->OpenUrl(SF_LOGO, this));
-      
-      const size_t BUFSIZE = 4096;
-      char buffer[BUFSIZE];
-      
-      // download the data
-      while (webFile->Read(buffer, BUFSIZE) > 0)
-	{
-	}
-      
-      webFile->Close ();
-    }
-  catch (const MiKTeXException &)
-    {
-    }
-#endif
-}
-#endif
-
-/* _________________________________________________________________________
-
-   PackageManagerImpl::DownloadRepositoryListCSV
-   _________________________________________________________________________ */
-
-#if ! USE_WEB_SERVICE
-void
-PackageManagerImpl::DownloadRepositoryListCSV ()
-{
-  tstring url =
-    (SessionWrapper(true)
-     ->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-		      T_("MIKTEX_PKGREPLIST"),
-		      PACKAGE_REPOSITORIES_CSV));
-
-  auto_ptr<WebFile> webFile (webSession->OpenUrl(url.c_str(), this));
-
-  // enter a scratch directory
-  ScratchDirectory scratchDirectory;
-  scratchDirectory.Enter ();
-
-  // download the package repository list
-  {
-    FileStream stream (File::Open(T_("rep.txt"),
-				  FileMode::Create,
-				  FileAccess::Write,
-				  false));
-    const size_t BUFSIZE = 4096;
-    char buffer[BUFSIZE];
-    size_t n;
-    while ((n = webFile->Read(buffer, BUFSIZE)) > 0)
-      {
-	stream.Write (buffer, n);
-      }
-    stream.Close ();
-  }
-
-  webFile->Close ();
-
-  // read the list
-  {
-    FileStream stream (File::Open(T_("rep.txt"),
-				  FileMode::Open,
-				  FileAccess::Read,
-				  false));
-    tstring line;
-    while (Utils::ReadUntilDelim(line, T_('\n'), stream.Get()))
-      {
-	RepositoryInfo repositoryInfo;
-	ParseLine (line, repositoryInfo);
-	repositories.push_back (repositoryInfo);
-      }
-    stream.Close ();
-  }
-
-  HiSourceForge (webSession.get());
-
-  // clean-up
-  scratchDirectory.Leave ();
-}
-#endif
-
-/* _________________________________________________________________________
-
    MakeRepositoryInfo
    _________________________________________________________________________ */
 
-#if USE_WEB_SERVICE
 MPMSTATICFUNC(RepositoryInfo)
 MakeRepositoryInfo (/*[in]*/ const mtrep__RepositoryInfo * pMwsRepositoryInfo)
 {
@@ -1412,17 +1199,18 @@ MakeRepositoryInfo (/*[in]*/ const mtrep__RepositoryInfo * pMwsRepositoryInfo)
   repositoryInfo.version = pMwsRepositoryInfo->Version;
   return (repositoryInfo);
 }
-#endif
 
 /* _________________________________________________________________________
 
-   PackageManagerImpl::DownloadRepositoryListWS
+   PackageManagerImpl::DownloadRepositoryList
    _________________________________________________________________________ */
 
-#if USE_WEB_SERVICE
 void
-PackageManagerImpl::DownloadRepositoryListWS ()
+MPMCALL
+PackageManagerImpl::DownloadRepositoryList ()
 {
+  repositories.clear ();
+
   RepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
   if (TryGetProxy(proxySettings) && proxySettings.useProxy)
@@ -1452,54 +1240,16 @@ PackageManagerImpl::DownloadRepositoryListWS ()
       repositories.push_back (MakeRepositoryInfo(*it));
     }
 }
-#endif
-
-/* _________________________________________________________________________
-
-   PackageManagerImpl::DownloadRepositoryList
-   _________________________________________________________________________ */
-
-void
-MPMCALL
-PackageManagerImpl::DownloadRepositoryList ()
-{
-  repositories.clear ();
-
-#if USE_WEB_SERVICE
-  DownloadRepositoryListWS ();
-#else
-  DownloadRepositoryListCSV ();
-#endif
-}
 
 /* _________________________________________________________________________
 
    PackageManagerImpl::PickRepositoryUrl
    _________________________________________________________________________ */
 
-#if ! USE_WEB_SERVICE
-class Rand
-{
-public:
-  Rand ()
-  {
-    srand (static_cast<unsigned int>(time(0)));
-  }
-public:
-  size_t
-  operator() (/*[in]*/ size_t n)
-    const
-  {
-    return (static_cast<size_t>(rand()) % n);
-  }
-};
-#endif
-
 tstring
 MPMCALL
 PackageManagerImpl::PickRepositoryUrl ()
 {
-#if USE_WEB_SERVICE
   RepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
   if (TryGetProxy(proxySettings) && proxySettings.useProxy)
@@ -1523,45 +1273,6 @@ PackageManagerImpl::PickRepositoryUrl ()
       UNEXPECTED_CONDITION (T_("PackageManagerImpl::PickRepositoryUrl"));
     }
   return (*resp.PickRepositoryResult->Url);
-#else
-  if (repositories.size() == 0)
-    {
-      DownloadRepositoryList ();
-    }
-  if (repositories.size() == 0)
-    {
-      FATAL_MIKTEX_ERROR (T_("PackageManagerImpl::PickRepositoryUrl"),
-			  T_("There are no package repositories."),
-			  0);
-    }
-  unsigned bestVersion = 0;
-  for (vector<RepositoryInfo>::const_iterator
-	 it = repositories.begin();
-       it != repositories.end();
-       ++ it)
-    {
-      if (it->version > bestVersion)
-	{
-	  bestVersion = it->version;
-	}
-    }
-  vector<RepositoryInfo> bestRepositories;
-  for (vector<RepositoryInfo>::const_iterator
-	 it = repositories.begin();
-       it != repositories.end();
-       ++ it)
-    {
-      if (it->version == bestVersion)
-	{
-	  bestRepositories.push_back (*it);
-	}
-    }
-  Rand rand;
-  random_shuffle (bestRepositories.begin(),
-		  bestRepositories.end(),
-		  rand);
-  return (bestRepositories[0].url);
-#endif
 }
 
 /* _________________________________________________________________________
@@ -2169,6 +1880,7 @@ void
 MPMCALL
 PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
 {
+#if defined(MIKTEX_WINDOWS)
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_USE_PROXY,
@@ -2185,6 +1897,7 @@ PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_PROXY_AUTH_REQ,
 			  proxySettings.authenticationRequired);
+#endif
   PackageManagerImpl::proxyUser = proxySettings.user;
   PackageManagerImpl::proxyPassword = proxySettings.password;
 }

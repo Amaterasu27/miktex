@@ -869,10 +869,12 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 				 lpszValue);
 #else
   UNUSED_ALWAYS (lpszSectionName);
-  UNUSED_ALWAYS (lpszValueName);
-  UNUSED_ALWAYS (lpszValue);
+  trace_error->WriteFormattedLine (T_("core"),
+				   T_("cannot set %s to %s"),
+				   lpszValueName,
+				   lpszValue);
 #  warning Unimplemented: SessionImpl::SetUserConfigValue()
-      UNIMPLEMENTED (T_("SessionImpl::SetUserConfigValue"));
+  UNIMPLEMENTED (T_("SessionImpl::SetUserConfigValue"));
 #endif
 }
 

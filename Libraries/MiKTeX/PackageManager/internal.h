@@ -47,14 +47,6 @@ namespace MiKTeX {					\
 #define BEGIN_ANONYMOUS_NAMESPACE namespace {
 #define END_ANONYMOUS_NAMESPACE }
 
-#if ! defined(USE_WEB_SERVICE)
-#  if defined(MIKTEX_WINDOWS)
-#    define USE_WEB_SERVICE 1
-#  else
-#    define USE_WEB_SERVICE 0
-#  endif
-#endif
-
 /* _________________________________________________________________________
 
    Debug-dependant Macros
@@ -212,12 +204,10 @@ namespace MiKTeX {					\
 #define FATAL_MPM_ERROR(miktexFunction, traceMessage, lpszInfo) \
   FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)
 
-#if USE_WEB_SERVICE
 #  define FATAL_SOAP_ERROR(pSoap)		\
   FatalSoapError (pSoap,			\
                   T_(__FILE__),			\
                   __LINE__)
-#endif
 
 /* _________________________________________________________________________
 
@@ -1000,18 +990,6 @@ public:
   void
   TraceError (/*[in]*/ const MIKTEXCHAR *   lpszFormat,
 	      /*[in]*/			    ...);
-
-#if USE_WEB_SERVICE
-private:
-  void
-  DownloadRepositoryListWS ();
-#endif
-
-#if ! USE_WEB_SERVICE
-private:
-  void
-  DownloadRepositoryListCSV ();
-#endif
 
 private:
   void
