@@ -241,11 +241,7 @@ namespace MiKTeX {					\
 #define DUMP_PACKAGE_TABLE_ON_ERROR 1
 #define DUMP_CURRENT_DIRECTORY_ON_ERROR 1
 
-#if 1
-#  define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
-#else
-#  define DB_ARCHIVE_FILE_TYPE ArchiveFileType::MSCab
-#endif
+#define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
 
 #define ZZDB1_FILE_NAME							\
   PathName(0,								\

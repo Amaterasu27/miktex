@@ -110,7 +110,7 @@ PrefixedPackageDefinitionFile (/*[in]*/ const tstring & deploymentName)
   PathName path (TEXMF_PREFIX_DIRECTORY);
   path += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
   path += deploymentName;
-  path.SetExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+  path.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
   return (path);
 }
 
@@ -459,13 +459,13 @@ PackageInstallerImpl::InstallDbLight ()
 	  PathName curDir;
 	  curDir.SetToCurrentDirectory ();
 	  
-	  pathZzdb1.Set (curDir, ZZDB1_FILE_NAME);
+	  pathZzdb1.Set (curDir, MIKTEX_MPM_DB_LIGHT_FILE_NAME);
 	  
 	  // update progress indicator
 	  MIKTEX_LOCK(ProgressIndicator)
 	    {
 	      progressInfo.deploymentName =
-		pathZzdb1.GetFileNameWithoutExtension().Get();
+		MIKTEX_MPM_DB_LIGHT_FILE_NAME_NO_SUFFIX;
 	      progressInfo.displayName = T_("Lightweight package database");
 	      progressInfo.cbPackageDownloadCompleted = 0;
 	      progressInfo.cbPackageDownloadTotal = MPM_APSIZE_DB_LIGHT;
@@ -473,12 +473,12 @@ PackageInstallerImpl::InstallDbLight ()
 	  MIKTEX_UNLOCK();
 	  
 	  // download the database file
-	  Download (MakeUrl(ZZDB1_FILE_NAME.Get()), pathZzdb1);
+	  Download (MakeUrl(MIKTEX_MPM_DB_LIGHT_FILE_NAME), pathZzdb1);
 	}
       else
 	{
 	  MIKTEX_ASSERT (repositoryType == RepositoryType::Local);
-	  pathZzdb1.Set (repository, ZZDB1_FILE_NAME);
+	  pathZzdb1.Set (repository, MIKTEX_MPM_DB_LIGHT_FILE_NAME);
 	}
 
       // unpack database
@@ -1111,7 +1111,7 @@ PackageInstallerImpl::CopyPackage (/*[in]*/ const tstring & deploymentName)
   pathPackageFile += TEXMF_PREFIX_DIRECTORY;
   pathPackageFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
   pathPackageFile += deploymentName;
-  pathPackageFile.SetExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+  pathPackageFile.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
   TpmParser tpmparser;
   tpmparser.Parse (pathPackageFile);
 
@@ -1849,24 +1849,22 @@ PackageInstallerImpl::Download ()
   ReportLine (T_("downloading package database..."));
   MIKTEX_LOCK(ProgressIndicator)
     {
-      progressInfo.deploymentName = 
-	PathName(ZZDB1_FILE_NAME).GetFileNameWithoutExtension().Get();
+      progressInfo.deploymentName = MIKTEX_MPM_DB_LIGHT_FILE_NAME_NO_SUFFIX;
       progressInfo.displayName = T_("Lightweight package database");
       progressInfo.cbPackageDownloadCompleted = 0;
       progressInfo.cbPackageDownloadTotal = MPM_APSIZE_DB_LIGHT;
     }
   MIKTEX_UNLOCK();
-  Download (ZZDB1_FILE_NAME);
+  Download (MIKTEX_MPM_DB_LIGHT_FILE_NAME);
   MIKTEX_LOCK(ProgressIndicator)
     {
-      progressInfo.deploymentName = 
-	PathName(ZZDB2_FILE_NAME).GetFileNameWithoutExtension().Get();
+      progressInfo.deploymentName = MIKTEX_MPM_DB_FULL_FILE_NAME_NO_SUFFIX;
       progressInfo.displayName = T_("complete package database");
       progressInfo.cbPackageDownloadCompleted = 0;
       progressInfo.cbPackageDownloadTotal = MPM_APSIZE_DB_FULL;
     }
   MIKTEX_UNLOCK();
-  Download (ZZDB2_FILE_NAME);
+  Download (MIKTEX_MPM_DB_FULL_FILE_NAME);
 
   // download archive files
   for (vector<tstring>::const_iterator it = toBeInstalled.begin();
@@ -1933,13 +1931,13 @@ PackageInstallerImpl::SetUpPackageDefinitionFiles
   if (repositoryType == RepositoryType::Remote)
     {
       // download the database file
-      pathDatabase.Set (directory, ZZDB2_FILE_NAME);
-      Download (MakeUrl(ZZDB2_FILE_NAME.Get()), pathDatabase);
+      pathDatabase.Set (directory, MIKTEX_MPM_DB_FULL_FILE_NAME);
+      Download (MakeUrl(MIKTEX_MPM_DB_FULL_FILE_NAME), pathDatabase);
     }
   else
     {
       MIKTEX_ASSERT (repositoryType == RepositoryType::Local);
-      pathDatabase.Set (repository, ZZDB2_FILE_NAME);
+      pathDatabase.Set (repository, MIKTEX_MPM_DB_FULL_FILE_NAME);
     }
   
   // extract package defintion files

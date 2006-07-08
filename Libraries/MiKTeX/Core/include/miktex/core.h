@@ -2526,6 +2526,14 @@ public:
     return (SetExtension(lpszExtension, true));
   }
 
+public:
+  PathName &
+  AppendExtension (/*[in]*/ const MIKTEXCHAR * lpszExtension)
+  {
+    Utils::AppendString (buffer, BufferSizes::MaxPath, lpszExtension);
+    return (*this);
+  }
+
   /// Checks to see whether this path name ends with a directory delimiter.
   /// @return Returns true if the last character is a directory delimiter.
 public:

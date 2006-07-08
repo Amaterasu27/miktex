@@ -639,9 +639,6 @@ PackageManagerImpl::LoadDatabase (/*[in]*/ const PathName & path)
     }
   else
     {
-      absPath.SetExtension
-	(ArchiveFileType::GetFileNameExtension(DB_ARCHIVE_FILE_TYPE));
-
       // enter the scratch directory
       scratchDirectory.Enter ();
 
@@ -1853,8 +1850,8 @@ PackageManager::IsLocalPackageRepository (/*[in]*/ const PathName & path)
     }
 
   // local mirror of remote package repository?
-  if (File::Exists(PathName(path, ZZDB1_FILE_NAME))
-      && File::Exists(PathName(path, ZZDB2_FILE_NAME)))
+  if (File::Exists(PathName(path, MIKTEX_MPM_DB_LIGHT_FILE_NAME))
+      && File::Exists(PathName(path, MIKTEX_MPM_DB_FULL_FILE_NAME)))
     {
       return (true);
     }

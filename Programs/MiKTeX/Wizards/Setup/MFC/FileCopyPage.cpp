@@ -788,8 +788,7 @@ FileCopyPage::DoTheInstallation ()
     }
   else
     {
-      pathDB.Set (theApp.localPackageRepository,
-		  MIKTEX_MPM_DB_FULL_FILE_NAME_NO_SUFFIX);
+      pathDB.Set (theApp.localPackageRepository, MIKTEX_MPM_DB_FULL_FILE_NAME);
     }
   Report (true, T_("Loading package database...\n"));
   theApp.pManager->LoadDatabase (pathDB);
