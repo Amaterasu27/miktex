@@ -243,16 +243,6 @@ namespace MiKTeX {					\
 
 #define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
 
-#define ZZDB1_FILE_NAME							\
-  PathName(0,								\
-           MIKTEX_MPM_DB_LIGHT_FILE_NAME_NO_SUFFIX,			\
-           ArchiveFileType::GetFileNameExtension(DB_ARCHIVE_FILE_TYPE))
-
-#define ZZDB2_FILE_NAME							\
-  PathName(0,								\
-           MIKTEX_MPM_DB_FULL_FILE_NAME_NO_SUFFIX,			\
-           ArchiveFileType::GetFileNameExtension(DB_ARCHIVE_FILE_TYPE))
-
 #include "Extractor.h"
 #include "WebSession.h"
 

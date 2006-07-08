@@ -1990,6 +1990,9 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
       // now we know that the package is obsolete
 
       MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      MIKTEX_ASSERT
+	(PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX)
+	 == (PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX).GetExtension()));
       name.GetFileNameWithoutExtension (szDeploymentName);
 
       // check to see whether the obsolete package is installed
@@ -2081,6 +2084,9 @@ PackageInstallerImpl::UpdateDb ()
 
       // get external package name
       MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      MIKTEX_ASSERT
+	(PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX)
+	 == (PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX).GetExtension()));
       name.GetFileNameWithoutExtension (szDeploymentName);
 
       // build name of current package definition file
