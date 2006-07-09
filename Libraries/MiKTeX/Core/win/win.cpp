@@ -30,6 +30,7 @@
 #include "win/winRegistry.h"
 
 #define SET_SECURITY 1
+#define REPORT_EVENTS 0
 
 /* _________________________________________________________________________
 
@@ -1602,6 +1603,8 @@ Line: %d"),
    AddEventSource
    _________________________________________________________________________ */
 
+#if REPORT_EVENTS
+
 #define SOURCE T_("MiKTeX")
 
 #define EVTLOGAPP \
@@ -1697,10 +1700,14 @@ AddEventSource ()
 } 
 #endif
 
+#endif
+
 /* _________________________________________________________________________
 
    RemoveEventSource
    _________________________________________________________________________ */
+
+#if REPORT_EVENTS
 
 #if defined(MIKTEX_DLL)
 MIKTEXSTATICFUNC(bool)
@@ -1740,6 +1747,8 @@ RemoveEventSource ()
 } 
 #endif
 
+#endif
+
 /* _________________________________________________________________________
 
    ReportMiKTeXEvent
@@ -1750,6 +1759,11 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
 		   /*[in]*/ unsigned long	eventId,
 		   /*[in]*/			...)
 {
+#if ! REPORT_EVENTS
+  UNUSED_ALWAYS (eventType);
+  UNUSED_ALWAYS (eventId);
+  return (false);
+#else
   if (! IsWindowsNT())
     {
       return (false);
@@ -1812,6 +1826,7 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
   DeregisterEventSource (hEventSource);
 
   return (done ? true : false);
+#endif
 }
 
 /* _________________________________________________________________________
@@ -2493,10 +2508,12 @@ HRESULT
 __stdcall
 DllRegisterServer (void)
 {
+#if REPORT_EVENTS
   if (! AddEventSource())
     {
       return (E_FAIL);
     }
+#endif
   return (S_OK);
 }
 #endif
@@ -2513,10 +2530,12 @@ HRESULT
 __stdcall
 DllUnregisterServer (void)
 {
+#if REPORT_EVENTS
   if (RemoveEventSource())
     {
       return (E_FAIL);
     }
+#endif
   return (S_OK);
 }
 #endif
