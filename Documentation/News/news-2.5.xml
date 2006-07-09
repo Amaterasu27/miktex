@@ -1,5 +1,16 @@
 <section>
 
+<title>&MiKTeXTools; Beta 13 (Jul 9, 2006)</title>
+
+<para>The package repository infrastructure experienced some changes
+during the development of &MiKTeX; 2.5 (&Windows;). Therefore it was
+necessary to make available a new source release for &Unixlike;
+operating systems. There are no user visible changes.</para>
+
+</section>
+
+<section>
+
 <title>&MiKTeXTools; Beta 4 (Jan 8, 2006)</title>
 
 <para>Another source release for &Unixlike; operating systems.</para>
