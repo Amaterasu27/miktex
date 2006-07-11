@@ -320,7 +320,12 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 	    }
 	  MIKTEXCHAR szBuf[1024];
 	  size_t sizeBuf = 1024;
-	  Process::Run (migrate, 0, szBuf, &sizeBuf, 0);
+	  if (! Process::Run(migrate, 0, szBuf, &sizeBuf, 0))
+	    {
+	      FATAL_MIKTEX_ERROR (T_("UpdateWizardApplication::Upgrade"),
+				  T_("Migration failed for some reason."),
+				  0);
+	    }
 	  upgrading = true;
 	}
       done = true;
