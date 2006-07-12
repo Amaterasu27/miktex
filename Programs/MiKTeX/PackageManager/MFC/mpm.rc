@@ -71,32 +71,33 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "Properties",                  ID_PROPERTIES
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
     POPUP "&Edit"
     BEGIN
         MENUITEM "Select &All\tCtrl+A",         ID_SELECT_ALL
-        MENUITEM "Select Installable Packages", ID_SELECT_INSTALLABLE_PACKAGES
-        MENUITEM "Select Updateable Packages\tCtrl+U", ID_SELECT_UPDATEABLE_PACKAGES, GRAYED
+        MENUITEM "Select &Installable Packages", ID_SELECT_INSTALLABLE_PACKAGES
+        MENUITEM "Select &Updateable Packages", ID_SELECT_UPDATEABLE_PACKAGES, GRAYED
     END
     POPUP "&View"
     BEGIN
         MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM SEPARATOR
-        MENUITEM "Reset",                       ID_RESET_VIEW
+        MENUITEM "&Reset",                      ID_RESET_VIEW
     END
     POPUP "&Task"
     BEGIN
-        MENUITEM "Install...",                  132
-        MENUITEM "Uninstall...",                133
+        MENUITEM "&Install...\t+",              132
+        MENUITEM "&Uninstall...\t-",            133
         MENUITEM SEPARATOR
-        MENUITEM "Update Wizard...",            ID_UPDATE_WIZARD
+        MENUITEM "Update &Wizard...",           ID_UPDATE_WIZARD
     END
     POPUP "&Repository"
     BEGIN
-        MENUITEM "Change Package Repository...", 143
-        MENUITEM "Synchronize",                 ID_UPDATE_DATABASE
+        MENUITEM "&Change Package Repository...", 143
+        MENUITEM "&Synchronize",                ID_UPDATE_DATABASE
     END
     POPUP "&Help"
     BEGIN
@@ -108,8 +109,8 @@ IDR_CONTEXT_MENU_SEL MENU
 BEGIN
     POPUP ""
     BEGIN
-        MENUITEM "Install",                     ID_INSTALL
-        MENUITEM "Uninstall",                   ID_UNINSTALL
+        MENUITEM "Install\t+",                  ID_INSTALL
+        MENUITEM "Uninstall\t-",                ID_UNINSTALL
         MENUITEM SEPARATOR
         MENUITEM "Properties",                  ID_PROPERTIES
     END
@@ -180,9 +181,12 @@ BEGIN
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    "A",            ID_SELECT_ALL,          VIRTKEY, CONTROL, NOINVERT
-    "U",            ID_SELECT_UPDATEABLE_PACKAGES, VIRTKEY, CONTROL, NOINVERT
     VK_RETURN,      ID_PROPERTIES,          VIRTKEY, ALT, NOINVERT
+    "A",            ID_SELECT_ALL,          VIRTKEY, CONTROL, NOINVERT
+    VK_SUBTRACT,    ID_UNINSTALL,           VIRTKEY, NOINVERT
+    VK_OEM_MINUS,   ID_UNINSTALL,           VIRTKEY, NOINVERT
+    VK_ADD,         ID_INSTALL,             VIRTKEY, NOINVERT
+    VK_OEM_PLUS,    ID_INSTALL,             VIRTKEY, SHIFT, NOINVERT
 END
 
 
