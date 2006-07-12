@@ -6,14 +6,10 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2379">
-<!ENTITY date "July 07, 2006">
+<!ENTITY rev "2.5.2384">
+<!ENTITY date "July 12, 2006">
 <!ENTITY month "July 2006">
 ]>
-
-<!-- todo:
-     "how do I share MiKTeX in a network?"
--->
 
 <article>
 
@@ -87,6 +83,16 @@ section</para></listitem>
 </answer>
 </qandaentry>
 
+<qandaentry id="projectpage">
+<question>
+<para>Is there a home page?</para>
+</question>
+<answer>
+<para>Yes.  The official project page is <ulink
+url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
+</answer>
+</qandaentry>
+
 <qandaentry id="winver">
 <question>
 <para>Which &Windows; version is required for running
@@ -126,6 +132,9 @@ requirements of the <ulink
 url="http://www.debian.org/social_contract#guidelines">Debian Free
 Software Guidelines</ulink>.  This means that &MiKTeX; may be freely
 used, copied, modified, and redistributed.</para>
+<para>Please visit <ulink
+url="http://miktex.org/Copying.aspx">this page</ulink>,
+for more information</para>
 </answer>
 </qandaentry>
 
@@ -144,37 +153,16 @@ used, copied, modified, and redistributed.</para>
 <para>How do I download &MiKTeX;?</para>
 </question>
 <answer>
-<para>You can use the &MiKTeX; <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783">net
-installer</ulink> to download the whole &MiKTeX;
-distribution.</para>
-<para>If you want to set up a basic &MiKTeX; system,
-use the <quote>Basic &MiKTeX;</quote> installer
-(see <xref linkend="basicmiktex"/>).</para>
-<para>Read the <ulink
-url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
-instructions</ulink>, for a detailed description of the download
-process.</para>
-</answer>
-</qandaentry>
-
-<qandaentry id="nowiz">
-<question>
-<para>Is it possible to download &MiKTeX; without the wizard?</para>
-</question>
-<answer>
-<para>You can use the
+<para>It is recommended that you download the
 <ulink
-url="http://www.samba.org/rsync/"><application>rsync</application></ulink>
-utility to create a local package repository on your computer.
-Use <command>rsync</command> as follows:</para>
-<informalexample>
-<screen>
-&prompt;<userinput>mkdir C:\miktexmirror</userinput>
-&prompt;<userinput>rsync -av sunsite.dk::projects/miktex/pub/tm C:\miktexmirror</userinput>
-&prompt;<userinput>rsync -av sunsite.dk::projects/miktex/pub/setup C:\miktexmirror</userinput>
-</screen>
-</informalexample>
+url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003"><quote>&BasicMiKTeXInstaller;</quote></ulink>.
+This allows you set up a basic &MiKTeX; system
+(see <xref linkend="basicmiktex"/>).</para>
+<para>Download the
+<ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532"><quote>&MiKTeXNetInstaller;</quote></ulink>, if you want
+to set up a complete &MiKTeX; system
+(see <xref linkend="netinstaller"/>).</para>
 </answer>
 </qandaentry>
 
@@ -196,15 +184,14 @@ a basic &MiKTeX; system.</para>
 <varlistentry>
 <term>&MiKTeXNetInstaller; (&setupexe;)</term>
 <listitem>
-<para>The net installer can be used to set up a
+<para>The <quote>&MiKTeXNetInstaller;</quote> can be used to set up a
 complete &MiKTeX; system.</para>
 </listitem>
 </varlistentry>
 </variablelist>
-<para>Read the <ulink
-url="http://www.tex.ac.uk/tex-archive/systems/win32/miktex/setup/install.html">installation
-instructions</ulink>, for a detailed description of the installation
-process.</para>
+<para>For more information, read the section <ulink
+ url="http://docs.miktex.org/manual/installing.html"><citetitle>Installing
+&MiKTeX;</citetitle></ulink> in the &MiKTeX; manual.</para>
 </answer>
 </qandaentry>
 
@@ -213,12 +200,23 @@ process.</para>
 <para>What is the <quote>Basic &MiKTeX;</quote> installer?</para>
 </question>
 <answer>
-<para>The <quote>Basic &MiKTeX;</quote> installer sets up a basic
-&MiKTeX; system.  Additional packages can be installed later, if
-necessary. This has the advantage of keeping a minimal &MiKTeX;
-system. On the other hand, you might need a fast connection to a
-&MiKTeX; repository.</para> <para>URL: <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003">http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003</ulink></para>
+<para>The <quote>&BasicMiKTeXInstaller;</quote> sets up a basic
+&MiKTeX; system. Additional packages can be installed on-the-fly.
+This has the advantage of keeping a minimal &MiKTeX; system.</para>
+</answer>
+</qandaentry>
+
+<qandaentry id="netinstaller">
+<question>
+<para>What is the &MiKTeXNetInstaller;?</para>
+</question>
+<answer>
+<para>This installer serves two purposes:</para>
+<orderedlist>
+<listitem><para>It downloads all available package
+archive files to your computer.</para></listitem>
+<listitem><para>It installs &MiKTeX;.</para></listitem>
+</orderedlist>
 </answer>
 </qandaentry>
 
@@ -235,6 +233,18 @@ run &MiKTeX; directly from the CD. Altenatively, you can install
 </answer>
 </qandaentry>
 
+<qandaentry id="nowiz">
+<question>
+<para>Is it possible to download &MiKTeX; without the wizard?</para>
+</question>
+<answer>
+<para>You can use your favorite download tool to get the contents
+of the
+<ulink url="http://ctan.org">&CTAN;</ulink>
+directory <filename>systems/win32/miktex</filename>.</para>
+</answer>
+</qandaentry>
+
 </qandaset>
 
 </section>
@@ -245,13 +255,11 @@ run &MiKTeX; directly from the CD. Altenatively, you can install
 
 <qandaset>
 
-<qandaentry id="projectpage">
-<question>
-<para>Is there a home page?</para>
-</question>
+<qandaentry>
+<question><para>How do I get support?</para></question>
 <answer>
-<para>Yes.  The official project page is <ulink
-url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
+<para>Please visit <ulink url="http://www.miktex.org/Support.aspx"></ulink>,
+for an overview of available support options.</para>
 </answer>
 </qandaentry>
 
@@ -284,12 +292,8 @@ the mailing list.</para>
 <answer>
 <para>To see the collection of prior postings to the MiKTeX-Users
 list, visit the <ulink
-url="http://www.geocrawler.com/redir-sf.php3?list=miktex-users">MiKTeX-Users
+url="http://sourceforge.net/mailarchive/forum.php?forum=miktex-users">MiKTeX-Users
 Archives</ulink>.</para>
-<para>Until July 2002, the mailing list was sponsored by the Danish
-Society for Theoretical Statistics.  Postings to the old list are
-archived by <ulink
-url="http://groups.yahoo.com/group/miktex">Yahoo!</ulink>.</para>
 </answer>
 </qandaentry>
 
@@ -322,8 +326,9 @@ your subscription status.</para>
 <answer>
 <para>If you have never used &TeX; before: we recommend that, first of
 all, you work through a &TeX;/&LaTeX; tutorial. A good starting point
-is this resource: <ulink
-url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials</ulink>.</para>
+is<ulink
+url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">this
+page</ulink>.</para>
 <para>&MiKTeX; doesn't differ very much from any other &TeX; system
 you might have used before.  Typesetting with &MiKTeX; involves these
 steps:</para>
@@ -347,24 +352,8 @@ steps (see <xref linkend="editing"/>).</para>
 <para>Which program should I use to edit &LaTeX; documents?</para>
 </question>
 <answer>
-<variablelist>
-<varlistentry>
-<term><ulink url="http://www.gnu.org/software/auctex/">AUCTeX</ulink></term>
-<listitem>
-<para>AUCTeX is an extensible package that supports writing and formatting
-&TeX; files for most variants of Emacs.
-In recent versions of XEmacs, AUCTeX is usually already
-available as a package, though not necessarily up to date.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><ulink url="http://www.texniccenter.org/front_content.php?idcat=26">TeXnicCenter</ulink></term>
-<listitem>
-<para>TeXnicCenter (freeware) is an integrated development environment
-for developing &LaTeX;-documents.</para>
-</listitem>
-</varlistentry>
-</variablelist>
+<para>Links to recommendable freeware &TeX; shells (editors) can be found
+on <ulink url="http://miktex.org/Links.aspx">this page</ulink>.</para>
 </answer>
 </qandaentry>
 
@@ -535,7 +524,7 @@ Free Software Guidelines</ulink>.</para>
 
 <qandaentry id="texoutputfile">
 <question>
-<para>How do I set the output file name?</para>
+<para>How can I change the output file name?</para>
 </question>
 <answer>
 <para>You can use option <option>--job-name</option>
@@ -556,7 +545,7 @@ to create the &PDF; file
 
 <qandaentry id="texoutputdir">
 <question>
-<para>How do I specify the output directory?</para>
+<para>How can I change the output directory?</para>
 </question>
 <answer>
 <para>You can use the option <option>--output-directory</option>
@@ -701,7 +690,9 @@ will direct <application>Yap</application> to page 220.</para>
 the trace messages?</para>
 </question>
 <answer>
-<para>&MiKTeX; programs log their actions into the DebugView window.</para>
+<para>&MiKTeX; programs log their actions into the DebugView window,
+if you specify trace options (see <xref linkend="traceoptions"/>)
+</para>
 </answer>
 </qandaentry>
 
@@ -710,16 +701,15 @@ the trace messages?</para>
 <para>How do I use the DebugView window?</para>
 </question>
 <answer>
-<para>First of all, you will need the DebugView program.
-To download DebugView, visit the DebugView page at
-<ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">http://www.sysinternals.com/ntw2k/freeware/debugview.shtml</ulink> and follow the
+<para>First of all, you will need the DebugView utility.
+To download DebugView, visit the <ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">DebugView page</ulink> and follow the
 download/installation instructions.</para>
 </answer>
 </qandaentry>
 
-<qandaentry id="tracing">
+<qandaentry id="traceoptions">
 <question>
-<para>How do I set the trace options?</para>
+<para>How do I set trace options?</para>
 </question>
 <answer>
 <para>Set the environment variable <envar>MIKTEX_TRACE</envar>.

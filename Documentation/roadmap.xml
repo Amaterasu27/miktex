@@ -3,9 +3,9 @@
                          "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 %entities.ent;
-<!ENTITY rev "2.5.2253">
-<!ENTITY month "March 2006">
-<!ENTITY date "3 March 2006">
+<!ENTITY rev "2.5.2384">
+<!ENTITY month "July 2006">
+<!ENTITY date "12 July 2006">
 ]>
 
 <article>
@@ -60,45 +60,6 @@ by subscribing to this Weblog:
 
 <section>
 
-<title>&MiKTeX; 2.5</title>
-
-<para>Release date: 2006/H1</para>
-
-<bridgehead renderas="sect3">Highlights:</bridgehead>
-
-<highlights>
-<itemizedlist>
-<listitem><para>&Yap; enhancements</para></listitem>
-<listitem><para>Improved update wizard UI</para></listitem>
-<listitem><para>New: &MiKTeX; Help Utility</para></listitem>
-<listitem><para>epstopdf improvements</para></listitem>
-<listitem><para>Upgrade: dvips 5.95b</para></listitem>
-<listitem><para>Upgrade: pdfTeX 1.30.6</para></listitem>
-</itemizedlist>
-</highlights>
-
-<section>
-
-<title>&Yap; enhancements</title>
-
-<para>&Yap; will be stabilized and developed further. For example, &PostScript;
-specials will be fully supported.</para>
-
-</section>
-
-<section>
-
-<title>New update wizard UI</title>
-
-<para>The user interface will be improved to allow a faster (less
-mouse-clicks) run.</para>
-
-</section>
-
-</section>
-
-<section>
-
 <title>&MiKTeX; 2.6</title>
 
 <para>Release date: 2006/H2</para>
@@ -107,52 +68,27 @@ mouse-clicks) run.</para>
 
 <highlights>
 <itemizedlist>
-<listitem><para>&MiKTeX; for 64-bit &Windows; operating systems</para></listitem>
-<listitem><para>&Yap; enhancements</para></listitem>
+<listitem><para>&XeTeX;</para></listitem>
+<listitem><para>&pdfTeX; 1.40</para></listitem>
 </itemizedlist>
 </highlights>
 
-<section>
-
-<title>&MiKTeX; for 64-bit &Windows; operating systems</title>
-
-<para>&MiKTeX; binaries for 64-bit &Windows; operating systems will be made available.</para>
-
 </section>
 
 <section>
 
-<title>&Yap;</title>
+<title>&MiKTeX; 2.7</title>
 
-<para>&Yap; will be a viewer for &PostScript;/&PDF; documents.</para>
-
-</section>
-
-</section>
-
-<section>
-
-<title>&MiKTeX; 3.0</title>
-
-<para>Release date: 2008</para>
+<para>Release date: 2007/H1</para>
 
 <bridgehead renderas="sect3">Highlights:</bridgehead>
 
 <highlights>
 <itemizedlist>
-<listitem><para>&MiKTeX; for &Unixlike; operating systems, Phase 2</para></listitem>
+<listitem><para>&MiKTeX; for 64-bit &Windows; operating systems</para></listitem>
+<listitem><para>&MiKTeX; for &WindowsVista;</para></listitem>
 </itemizedlist>
 </highlights>
-
-<section>
-
-<title>&MiKTeX; for &Unixlike; operating systems, Phase 2</title>
-
-<para>Most &MiKTeX; utilities will run on &Unixlike; operating systems.
-The &GUI; applications (&Yap;, update wizard, and so on)
-will be reimplemented to use the Qt toolkit.</para>
-
-</section>
 
 </section>
 

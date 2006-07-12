@@ -70,6 +70,7 @@
 <!ENTITY Windows2000 "<application>Windows&nbsp;2000</application>">
 <!ENTITY WindowsServer2003 "<application>Windows Server&nbsp;2003</application>">
 <!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
+<!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">
 <!ENTITY GNU "<application>GNU</application>">
 <!ENTITY GNULinux "&GNU;/Linux">
 <!ENTITY Unix "<application>Unix</application>">
@@ -109,6 +110,7 @@
 <!ENTITY networkfolder "\\server\miktex">
 <!ENTITY omega "<command>omega</command>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
+<!ENTITY XeTeX "<application>XeTeX</application>">
 <!ENTITY MLTeX "<application>MLTeX</application>">
 <!ENTITY pdfeTeX "<application>pdf-e-TeX</application>">
 <!ENTITY pdfinitex "<command>pdfinitex</command>">

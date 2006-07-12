@@ -17,6 +17,7 @@
     </l:l10n>
   </l:i18n>
 
+<!--
   <xsl:template name="user.footer.content">
     <hr/>
     <table width="100%">
@@ -34,5 +35,6 @@
       </tr>
     </table>
   </xsl:template>
+-->
 
 </xsl:stylesheet>
