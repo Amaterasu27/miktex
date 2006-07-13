@@ -1362,7 +1362,7 @@ MIKTEXCHAR *
 CfgImpl::NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
 		    /*[in]*/ size_t		valueNameSize)
 {
-  MIKTEX_ASSERT_CHAR_BUFFER (lpsz, bufSize);
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszValueName, valueNameSize);
 
   if (iter2 == iter3)
     {

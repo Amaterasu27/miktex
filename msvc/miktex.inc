@@ -699,8 +699,6 @@ linkopt_build_dll = /DLL
 linkopt_conapp = /SUBSYSTEM:CONSOLE
 linkopt_delayload = -delayload:
 linkopt_generate_debug_info = /DEBUG
-#linkopt_generate_tuning_info = -debugtype:coff -debug:mapped,partial
-linkopt_generate_tuning_info = 
 linkopt_guiapp = /SUBSYSTEM:WINDOWS
 linkopt_incremental_off = -INCREMENTAL:NO
 linkopt_quiet = /NOLOGO
@@ -736,7 +734,7 @@ guilflags = $(lflags) $(linkopt_guiapp)
 dlllflags = $(lflags) $(linkopt_build_dll)
 
 ## debug flags
-ldebug = $(linkopt_generate_tuning_info)
+ldebug = $(linkopt_generate_debug_info)
 
 ## basic libraries
 baselibs = kernel32.lib advapi32.lib winspool.lib

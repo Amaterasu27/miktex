@@ -161,18 +161,18 @@ TaskPage::OnWizardNext ()
 	  next = IDD_PACKAGE_SET_INSTALL;
 	  break;
 	default:
-	  ASSERT (false);
-	  __assume (false);
-	  break;
+	  UNEXPECTED_CONDITION (T_("TaskPage::OnWizardNext"));
 	}
     }
   catch (const MiKTeXException & e)
     {
       ReportError (e);
+      return (-1);
     }
   catch (const exception & e)
     {
       ReportError (e);
+      return (-1);
     }
   return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(next)));
 }
