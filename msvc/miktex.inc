@@ -37,6 +37,36 @@ srcdir = .
 #  Meta Settings
 #  ___________________________________________________________________________
 
+!ifndef miktex_enable_pgo
+miktex_enable_pgo = 0
+!endif
+
+!if $(MIKTEX_RELEASE_STATE) < 2
+!if $(miktex_enable_pgo) > 0
+!if "$(MIKTEX_PGO_PHASE)" == "instrument"
+miktex_pginstrument = 1
+!else if "$(MIKTEX_PGO_PHASE)" == "optimize"
+miktex_pgoptimize = 1
+!endif
+!endif
+!endif
+
+!ifndef miktex_pginstrument
+miktex_pginstrument = 0
+!endif
+
+!ifndef miktex_pgoptimize
+miktex_pgoptimize = 0
+!endif
+
+!if $(miktex_pginstrument) > 0
+miktex_whole_program_optimization = 0
+!endif
+
+!if $(miktex_pgoptimize) > 0
+miktex_whole_program_optimization = 0
+!endif
+
 !ifndef miktex_whole_program_optimization
 miktex_whole_program_optimization = 1
 !endif
@@ -403,6 +433,8 @@ ccopt_standard_conformance = /Za
 ccopt_use_precompiled_header_file = /Yu
 ccopt_warnings_as_errors = /WX
 ccopt_whole_program_optimization = /GL
+ccopt_pginstrument = /GL
+ccopt_pgoptimize = /GL
 
 # deprecated:
 ccopt_enable_exception_handling = $(ccopt_enable_synchronous_exception_handling)
@@ -461,6 +493,12 @@ coptflags = $(ccopt_minimize_size) $(ccopt_favor_small_code)
 !endif
 !if $(miktex_whole_program_optimization) > 0
 coptflags = $(coptflags) $(ccopt_whole_program_optimization)
+!endif
+!if $(miktex_pginstrument) > 0
+coptflags = $(coptflags) $(ccopt_pginstrument)
+!endif
+!if $(miktex_pgoptimize) > 0
+coptflags = $(coptflags) $(ccopt_pgoptimize)
 !endif
 
 ## Windows version (Windows 95, Internet Explorer 5.0)
@@ -534,14 +572,6 @@ cdebug = $(cdebug) $(ccopt_disable_optimizations)
 !if $(miktex_cc_no_runtime_checks) == 0
 cdebug = $(cdebug) $(ccopt_rtc_all)
 !endif
-!else ifdef PROFILE
-cdebug = $(cdebug) $(ccopt_enable_penter_hook)
-cdebug = $(cdebug) $(ccopt_debug_symbols_and_line_numbers)
-cdebug = $(cdebug) $(coptflags)
-!else ifdef TUNE
-cdebug = $(cdebug) $(ccopt_enable_penter_hook)
-cdebug = $(cdebug) $(ccopt_debug_symbols_and_line_numbers)
-cdebug = $(cdebug) $(coptflags)
 !else
 cdebug = $(cdebug) $(coptflags)
 !endif
@@ -676,6 +706,8 @@ linkopt_incremental_off = -INCREMENTAL:NO
 linkopt_quiet = /NOLOGO
 linkopt_set_checksum = /RELEASE
 linkopt_whole_program_optimization = /LTCG
+linkopt_pginstrument = /LTCG:PGINSTRUMENT
+linkopt_pgoptimize = /LTCG:PGOPTIMIZE
 
 linkopt_output_file = -out:
 
@@ -685,9 +717,13 @@ lflags = $(linkopt_incremental_off) $(linkopt_quiet)
 !if $(miktex_whole_program_optimization) > 0
 lflags = $(lflags) $(linkopt_whole_program_optimization)
 !endif
-!ifndef TUNE
-lflags = $(lflags) $(linkopt_set_checksum)
+!if $(miktex_pginstrument) > 0
+lflags = $(lflags) $(linkopt_pginstrument)
 !endif
+!if $(miktex_pgoptimize) > 0
+lflags = $(lflags) $(linkopt_pgoptimize)
+!endif
+lflags = $(lflags) $(linkopt_set_checksum)
 !endif
 
 ## console app flags
@@ -700,23 +736,10 @@ guilflags = $(lflags) $(linkopt_guiapp)
 dlllflags = $(lflags) $(linkopt_build_dll)
 
 ## debug flags
-!ifdef TUNE
 ldebug = $(linkopt_generate_tuning_info)
-!else
-ldebug = $(linkopt_generate_debug_info)
-!endif
-
-## state dependend libraries
-!ifdef PROFILE
-optlibs = cap.lib
-!else ifdef TUNE
-optlibs = wst.lib
-!else
-optlibs =
-!endif
 
 ## basic libraries
-baselibs = kernel32.lib $(optlibs) advapi32.lib winspool.lib
+baselibs = kernel32.lib advapi32.lib winspool.lib
 
 ## gui app libraries
 winlibs = $(baselibs) user32.lib gdi32.lib comdlg32.lib

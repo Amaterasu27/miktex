@@ -22,6 +22,21 @@
 
 setlocal
 
+:argloop
+if "%1" == "" goto endargloop
+if "%1" == "--rebuild" (
+  set opt_rebuild=1
+) else if "%1" == "--pginstrument" (
+  set opt_pginstrument=1
+  set MIKTEX_PGO_PHASE=instrument
+) else if "%1" == "--pgoptimize" (
+  set opt_pgoptimize=1
+  set MIKTEX_PGO_PHASE=optimize
+) else goto usage
+shift
+goto argloop
+:endargloop
+
 if "%ARCH%" == "" (
   set buildlog=build-x86.log
 ) else (
@@ -32,22 +47,25 @@ set TEMP=\MiKTeXTemp
 set TMP=%TEMP%
 if not exist "%TEMP%" mkdir "%TEMP%"
 
-:build
-if not "%1" == "--rebuild" goto build2
-echo cleaning MiKTeX ...
-nmake /NOLOGO /f miktex.mak clean 1>nul 2>&1
+if "%VCPROFILE_PATH%" == "" set VCPROFILE_PATH=%CD%\msvc\pgo
+if not exist "%VCPROFILE_PATH%" mkdir "%VCPROFILE_PATH%"
 
-:build2
+if "%opt_rebuild%" == "1" (
+  echo cleaning MiKTeX ...
+  nmake /NOLOGO /f miktex.mak clean 1>nul 2>&1
+)
+
 echo building MiKTeX ...
 if exist %buildlog% del %buildlog%
 echo -*- Compilation -*->> %buildlog%
 echo %CD% %DATE% %TIME%>> %buildlog%
 echo.>> %buildlog%
 nmake /NOLOGO /f miktex.mak install 1>>%buildlog% 2>>&1
+
 goto end
 
 :usage
-echo Usage: build [--rebuild]
+echo Usage: build [--rebuild] [--pginstrument] [--pgoptimize]
 goto end
 
 :end
