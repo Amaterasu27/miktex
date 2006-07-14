@@ -42,7 +42,10 @@ namespace { bool tracingFndbSearch = true; }
 MIKTEXSTATICFUNC(MIKTEXCHAR *)
 ChopPath (/*[in,out]*/ PathName & path)
 {
-  MIKTEX_ASSERT (path[0] != 0);
+  if (path.Empty())
+    {
+      return (&path[0]);
+    }
   MIKTEXCHAR * lpsz =  &path[0] + path.GetLength() - 1;
   while (! IsDirectoryDelimiter(*lpsz) && lpsz != &path[0])
     {
