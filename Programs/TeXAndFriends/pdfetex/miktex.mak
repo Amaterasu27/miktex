@@ -19,6 +19,8 @@
 
 miktex_cc_buffer_security_check = 1
 
+miktex_enable_pgo = 1
+
 !include <miktex.inc>
 
 defines = \

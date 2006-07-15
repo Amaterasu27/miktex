@@ -1,6 +1,6 @@
 ## miktex.mak: dvipsk
 ## 
-## Copyright (C) 1996-2005 Christian Schenk
+## Copyright (C) 1996-2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,6 +16,8 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
+
+miktex_enable_pgo = 1
 
 !include <miktex.inc>
 

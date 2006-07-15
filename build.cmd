@@ -37,30 +37,17 @@ shift
 goto argloop
 :endargloop
 
-if "%ARCH%" == "" (
-  set buildlog=build-x86.log
-) else (
-  set buildlog=build-%ARCH%.log
-)
-
 set TEMP=\MiKTeXTemp
 set TMP=%TEMP%
 if not exist "%TEMP%" mkdir "%TEMP%"
 
-if "%VCPROFILE_PATH%" == "" set VCPROFILE_PATH=%CD%\msvc\pgo
-if not exist "%VCPROFILE_PATH%" mkdir "%VCPROFILE_PATH%"
-
 if "%opt_rebuild%" == "1" (
-  echo cleaning MiKTeX ...
+  echo Cleaning MiKTeX ...
   nmake /NOLOGO /f miktex.mak clean 1>nul 2>&1
 )
 
-echo building MiKTeX ...
-if exist %buildlog% del %buildlog%
-echo -*- Compilation -*->> %buildlog%
-echo %CD% %DATE% %TIME%>> %buildlog%
-echo.>> %buildlog%
-nmake /NOLOGO /f miktex.mak install 1>>%buildlog% 2>>&1
+echo Building MiKTeX ...
+nmake /NOLOGO /f miktex.mak install
 
 goto end
 
