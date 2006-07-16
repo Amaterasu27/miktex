@@ -68,11 +68,6 @@ FinishPage::OnInitDialog ()
 	  UNEXPECTED_CONDITION (T_("FinishPage::OnInitDialog"));
 	}
       pWnd->SetFont (&fntWelcome);
-      CString title;
-      title.LoadString (IDS_UPDATEWIZ);
-      title += T_(' ');
-      title += VER_FILEVERSION_STR;
-      pSheet->SetTitle (title);
     }
   catch (const MiKTeXException & e)
     {
