@@ -1767,6 +1767,9 @@ public:
   
 public:
   PackageIteratorImpl (/*[in]*/ PackageManagerImpl * pManager);
+
+private:
+  SmartPointer<PackageManagerImpl> pManager;
   
 private:
   vector<PackageInfo> snapshot;

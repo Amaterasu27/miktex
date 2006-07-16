@@ -262,7 +262,9 @@ public:
     /// Top-level package filter.
     Top = 1,
     /// Dependency package filter.
-    RequiredBy = 2
+    RequiredBy = 2,
+    /// Obsolete packages.
+    Obsolete,
   };
 };
 

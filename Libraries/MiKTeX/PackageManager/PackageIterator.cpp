@@ -28,10 +28,12 @@
    PackageIteratorImpl::PackageIteratorImpl
    _________________________________________________________________________ */
 
-PackageIteratorImpl::PackageIteratorImpl (/*[in]*/ PackageManagerImpl * pMgr)
-  : filter (PackageFilter::None)
+PackageIteratorImpl::PackageIteratorImpl
+(/*[in]*/ PackageManagerImpl * pManager)
+  : filter (PackageFilter::None),
+    pManager (pManager)
 {
-  pMgr->GetAllPackageDefinitions (snapshot);
+  pManager->GetAllPackageDefinitions (snapshot);
   iter = snapshot.begin();
 }
 
@@ -41,7 +43,7 @@ PackageIteratorImpl::PackageIteratorImpl (/*[in]*/ PackageManagerImpl * pMgr)
    _________________________________________________________________________ */
 
 bool
-PackageIteratorImpl::GetNext (PackageInfo & packageInfo)
+PackageIteratorImpl::GetNext (/*[out]*/ PackageInfo & packageInfo)
 {
   bool found = false;
   for ( ; ! found && iter != snapshot.end(); ++ iter)
@@ -56,6 +58,11 @@ PackageIteratorImpl::GetNext (PackageInfo & packageInfo)
 		   iter->requiredBy.end(),
 		   requiredBy)
 	      == iter->requiredBy.end()))
+	{
+	  continue;
+	}
+      if ((filter & PackageFilter::Obsolete) != 0
+	  && ! pManager->IsPackageObsolete(iter->deploymentName.c_str()))
 	{
 	  continue;
 	}
@@ -76,7 +83,7 @@ PackageIteratorImpl::~PackageIteratorImpl ()
     {
       Dispose ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }
