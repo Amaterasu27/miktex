@@ -1193,6 +1193,7 @@ DviPageImpl::StartDvips ()
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
+  dir.MakeAbsolute ();
   dir.RemoveFileSpec ();
 
   ProcessStartInfo processStartInfo;

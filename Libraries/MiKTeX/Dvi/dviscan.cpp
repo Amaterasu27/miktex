@@ -20,11 +20,13 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <miktex/app.h>
 #include <miktex/char.h>
 #include <miktex/core.h>
 #include <miktex/dvi.h>
 #include <popt-miktex.h>
 
+using namespace MiKTeX::App;
 using namespace MiKTeX::Core;
 using namespace MiKTeX::DVI;
 using namespace MiKTeX;
@@ -33,17 +35,150 @@ using namespace std;
 #define T_(x) MIKTEXTEXT(x)
 
 enum {
- OPT_LOGFILTER = 1
+  OPT_AAA = 1234,
+  OPT_TRACE,
+  OPT_PAGE_MODE
 };
 
 static const struct poptOption long_options[] = {
-  { T_("logfilter"), 0, POPT_ARG_STRING, 0, OPT_LOGFILTER,
-    T_("Comma-separated list of filter options."),
-    T_("OPTIONS")
+  {
+    T_("page-mode"), 0, POPT_ARG_STRING, 0, OPT_PAGE_MODE,
+    T_("Sets the DVI page mode."),
+    T_("PAGEMODE")
+  },
+  {
+    T_("trace"), 0, POPT_ARG_STRING, 0, OPT_TRACE,
+    T_("Turn on tracing."),
+    T_("TRACESTREAMS")
   },
   POPT_AUTOHELP
   POPT_TABLEEND
 };
+
+/* _________________________________________________________________________
+
+   DviScanner
+   _________________________________________________________________________ */
+
+class DviScanner
+  : public Application
+{
+public:
+  DviScanner ()
+    : pageMode (DviPageMode::Pk)
+  {
+  }
+
+public:
+  void
+  Run (/*[in]*/ int			argc,
+       /*[in]*/ const MIKTEXCHAR **	argv);
+
+private:
+  DviPageMode pageMode;
+};
+
+/* _________________________________________________________________________
+
+   DviScanner::Run
+   _________________________________________________________________________ */
+
+void
+DviScanner::Run (/*[in]*/ int			argc,
+		 /*[in]*/ const MIKTEXCHAR **	argv)
+{
+  Session::InitInfo initInfo (argv[0]);
+
+  tstring metafontMode (T_("ljfour"));
+  int dpi = 600;
+
+  Cpopt popt (argc, argv, long_options);
+
+  popt.SetOtherOptionHelp (T_("[OPTION...] DVIFILE..."));
+
+  int option;
+
+  while ((option = popt.GetNextOpt()) >= 0)
+    {
+      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      switch (option)
+	{
+	case OPT_PAGE_MODE:
+	  if (StringCompare(lpszOptArg, T_("pk")) == 0)
+	    {
+	      pageMode = DviPageMode::Pk;
+	    }
+	  else if (StringCompare(lpszOptArg, T_("dvips")) == 0)
+	    {
+	      pageMode = DviPageMode::Dvips;
+	    }
+	  else if (StringCompare(lpszOptArg, T_("auto")) == 0)
+	    {
+	      pageMode = DviPageMode::Auto;
+	    }
+	  else
+	    {
+	      throw T_("invalid page mode");
+	    }
+	  break;
+	case OPT_TRACE:
+	  initInfo.SetTraceFlags (lpszOptArg);
+	  break;
+	}
+    }
+
+  if (option < -1)
+    {
+      fprintf (stderr, "%s: %s\n",
+	       popt.BadOption(POPT_BADOPTION_NOALIAS),
+	       popt.Strerror(option));
+      throw (1);
+    }
+
+  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+
+  if (leftovers == 0)
+    {
+      fprintf (stderr, "missing file name argument\n");
+      throw (1);
+    }
+
+  Init (initInfo);
+
+  for (; *leftovers != 0; ++ leftovers)
+    {
+      const MIKTEXCHAR * lpszDviFileName = *leftovers;
+      auto_ptr<Dvi> pDvi
+	(Dvi::Create(lpszDviFileName,
+		     metafontMode.c_str(),
+		     dpi,
+		     5,
+		     DviAccess::Sequential,
+		     pageMode,
+		     pSession->GetPaperSizeInfo(T_("A4size")),
+		     false,
+		     0));
+      pDvi->Scan ();
+      for (int i = 0; i < pDvi->GetNumberOfPages(); ++ i)
+	{
+	  DviPage * pPage = pDvi->GetLoadedPage(i);
+	  if (pPage == 0)
+	    {
+	      break;
+	    }
+	  for (int j = 0; j < pPage->GetNumberOfDviBitmaps(5); ++ j)
+	    {
+	      pPage->GetDviBitmap (5, j);
+	    }
+	  pPage->Unlock ();
+	}
+      pDvi->Dispose ();
+      pDvi.reset ();
+    }
+
+  Finalize ();
+}
+
 
 /* _________________________________________________________________________
 
@@ -55,75 +190,29 @@ main (/*[in]*/ int			argc,
       /*[in]*/ const MIKTEXCHAR **	argv)
 
 {
-  SessionWrapper pSession (true);
-
-  string metafontMode (T_("ljfour"));
-  int dpi = 600;
-
-  Cpopt popt (argc, argv, long_options);
-  popt.SetOtherOptionHelp (T_("[OPTION...] [DIR...]"));
-  int option;
-  while ((option = popt.GetNextOpt()) >= 0)
+  try
     {
-      switch (option)
-	{
-	case OPT_LOGFILTER:
-	  TraceStream::SetTraceFlags (popt.GetOptArg());
-	  break;
-	}
+      DviScanner app;
+      app.Run (argc, argv);
+      return (0);
     }
-
-  if (option < -1)
+  catch (const MiKTeXException & e)
     {
-      fprintf (stderr, "%s: %s\n",
-	       popt.BadOption(POPT_BADOPTION_NOALIAS),
-	       popt.Strerror(option));
+      Utils::PrintException (e);
       return (1);
     }
-
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
-
-  if (leftovers == 0)
+  catch (const exception & e)
     {
-      fprintf (stderr, "missing file name argument\n");
+      Utils::PrintException (e);
       return (1);
     }
-
-  int ret = 0;
-
-  for (; *leftovers != 0; ++ leftovers)
+  catch (const MIKTEXCHAR *	lpszMessage)
     {
-      const MIKTEXCHAR * lpszDviFileName = *leftovers;
-      try
-	{
-	  auto_ptr<Dvi> pDvi (Dvi::Create(lpszDviFileName,
-					  metafontMode.c_str(),
-					  dpi,
-					  5,
-					  DviAccess::Sequential,
-					  0));
-	  pDvi->Scan ();
-	  for (int i = 0; i < pDvi->GetNumberOfPages(); ++ i)
-	    {
-	      DviPage * pPage = pDvi->GetLoadedPage(i);
-	      if (pPage == 0)
-		{
-		  break;
-		}
-	      for (int j = 0; j < pPage->GetNumberOfDviBitmaps(5); ++ j)
-		{
-		  /*const DviBitmap & bitmap =*/ pPage->GetDviBitmap(5, j);
-		}
-	      pPage->Unlock ();
-	    }
-	  pDvi->Dispose ();
-	  pDvi.reset ();
-	}
-      catch (const exception &)
-	{
-	  ret = 1;
-	}
+      fprintf (stderr, "fatal error: %s\n", lpszMessage);
+      return (1);
     }
-
-  return (ret);
+  catch (int retCode)
+    {
+      return (retCode);
+    }
 }

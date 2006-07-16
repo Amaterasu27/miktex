@@ -60,7 +60,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   MIKTEX_ASSERT_BUFFER_OR_NIL (pVersionNumber, sizeof(*pVersionNumber));
 
-  if (pathGsExe.GetLength() == 0)
+  if (pathGsExe.Empty())
     {
       // try MiKTeX Ghostscript
       if (! FindFile(MIKTEX_GS_EXE, FileType::EXE, pathGsExe))

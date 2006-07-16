@@ -21,6 +21,8 @@
 
 miktex_cc_warnings_as_errors = 1
 
+miktex_enable_pgo = 1
+
 !include <miktex.inc>
 
 objects = \

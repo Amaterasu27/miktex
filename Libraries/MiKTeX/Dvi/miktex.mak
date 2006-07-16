@@ -22,6 +22,8 @@
 miktex_cc_warnings_as_errors = 1
 miktex_cc_buffer_security_check = 1
 
+miktex_enable_pgo = 1
+
 !include <miktex.inc>
 
 objects = \
@@ -149,6 +151,7 @@ $(outdir)\dviscan.obj: \
 
 $(outdir)\dviscan.exe: \
 			$(outdir) \
+			$(app_lib) \
 			$(dvi_lib) \
 			$(gnu_lib) \
 			$(miktex_lib) \
@@ -157,6 +160,7 @@ $(outdir)\dviscan.exe: \
 
 	$(link) $(lstandard) \
 		$(linkopt_output_file)$@ \
+		$(app_lib) \
 		$(dvi_lib) \
 		$(gnu_lib) \
 		$(miktex_lib) \

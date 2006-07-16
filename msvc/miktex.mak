@@ -19,10 +19,15 @@
 ## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 ## 02111-1307, USA.
 
+!include <miktex.inc>
+
 # _____________________________________________________________________________
 #
 # dlls.txt
 # _____________________________________________________________________________
 
+
 make-dlls.txt:
 	$(mkdllbases) $(bindir)\*.dll > dlls.txt
+
+!include <common-dependencies.inc>
