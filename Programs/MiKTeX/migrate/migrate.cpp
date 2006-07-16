@@ -169,9 +169,13 @@ TryMigrateRegistry24 ()
 {
   CRegKey root25;
 
-  if ((root25.Open(HKEY_LOCAL_MACHINE, MIKTEX_REGPATH_SERIES, KEY_READ)
+  if ((root25.Open(HKEY_LOCAL_MACHINE,
+		   MIKTEX_REGPATH_SERIES T_("\\") MIKTEX_REGKEY_MIGRATE,
+		   KEY_READ)
        == ERROR_SUCCESS)
-      || (root25.Open(HKEY_CURRENT_USER, MIKTEX_REGPATH_SERIES, KEY_READ)
+      || (root25.Open(HKEY_CURRENT_USER,
+		      MIKTEX_REGPATH_SERIES T_("\\") MIKTEX_REGKEY_MIGRATE,
+		      KEY_READ)
 	  == ERROR_SUCCESS))
     {
       return (false);
@@ -203,7 +207,7 @@ TryMigrateRegistry24 ()
   if (root25.Create((settings24.sharedMiKTeX
 		     ? HKEY_LOCAL_MACHINE
 		     : HKEY_CURRENT_USER),
-		    MIKTEX_REGPATH_SERIES MIKTEX_REGKEY_MIGRATE)
+		    MIKTEX_REGPATH_SERIES T_("\\") MIKTEX_REGKEY_MIGRATE)
       != ERROR_SUCCESS)
     {
       throw T_("the registry key could not be created");
