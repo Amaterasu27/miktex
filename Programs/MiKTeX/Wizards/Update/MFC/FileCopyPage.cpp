@@ -886,7 +886,8 @@ FileCopyPage::RemoveLocalIniFiles ()
 {
   SessionWrapper pSession (true);
   PathName installRoot = pSession->GetSpecialPath(SpecialPath::InstallRoot);
-  for (unsigned r = pSession->GetNumberOfTEXMFRoots(); r > 0; -- r)
+  unsigned n = pSession->GetNumberOfTEXMFRoots();
+  for (unsigned r = 0; r < n; ++ r)
     {
       PathName path = pSession->GetRootDirectory(r);
       if (path != installRoot)
