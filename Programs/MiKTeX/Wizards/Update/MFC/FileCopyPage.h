@@ -157,6 +157,10 @@ private:
   RemoveFormatFiles ();
 
 private:
+  void
+  RemoveLocalIniFiles ();
+
+private:
   CWnd *
   GetControl (/*[in]*/ UINT	controlId);
 
@@ -230,18 +234,4 @@ private:
   
 private:
   CString report;
-  
-#if CHECK_CONFIG_FILES
-private:
-  SmartPointer<Cfg> pMiKTeXIniOld;
-  
-private:
-  SmartPointer<Cfg> pMiKTeXIniNew;
-  
-private:
-  SmartPointer<Cfg> pFormatsIniOld;
-  
-private:
-  SmartPointer<Cfg> pFormatsIniNew;
-#endif
 };

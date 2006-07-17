@@ -25,7 +25,6 @@
 
 class UpdateWizardCommandLineInfo;
 
-#define CHECK_CONFIG_FILES 0
 #define REMOVE_FORMAT_FILES 1
 
 /* _________________________________________________________________________
@@ -279,4 +278,16 @@ GetLocalConfigDir ()
   return (PathName((SessionWrapper(true)
 		    ->GetSpecialPath(SpecialPath::DataRoot)),
 		   MIKTEX_PATH_MIKTEX_CONFIG_DIR));
+}
+
+/* _________________________________________________________________________
+
+   IsMiKTeXPackage
+   _________________________________________________________________________ */
+
+inline
+bool
+IsMiKTeXPackage (/*[in]*/ const tstring & deploymentName)
+{
+  return (deploymentName.compare(0, 7, T_("miktex-")) == 0);
 }

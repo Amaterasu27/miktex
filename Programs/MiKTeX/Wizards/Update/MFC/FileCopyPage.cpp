@@ -51,12 +51,6 @@ END_MESSAGE_MAP();
 FileCopyPage::FileCopyPage ()
   : CPropertyPage (IDD, 0, IDS_HEADER_UPDATE, IDS_SUBHEADER_UPDATE),
     pSheet (0),
-#if CHECK_CONFIG_FILES
-    pMiKTeXIniOld (Cfg::Create()),
-    pMiKTeXIniNew (Cfg::Create()),
-    pFormatsIniOld (Cfg::Create()),
-    pFormatsIniNew (Cfg::Create()),
-#endif
     hWorkerThread (0)
 {
 }
@@ -137,7 +131,7 @@ FileCopyPage::OnSetActive ()
 	  pSheet->SetWizardButtons (0);
 	  
 	  // starting shot
-	  if (! PostMessage (WM_STARTFILECOPY))
+	  if (! PostMessage(WM_STARTFILECOPY))
 	    {
 	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
 	    }
@@ -592,15 +586,9 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 void
 FileCopyPage::DoTheUpdate ()
 {
+  vector<tstring> toBeRemoved;
+
   pInstaller->SetCallback (this);
-
-  pInstaller->SetFileLists (pSheet->GetUpdateList(), vector<tstring>());
-
-#if CHECK_CONFIG_FILES
-  pMiKTeXIniOld->Read (PathName(GetMainConfigDir(), MIKTEX_INI_FILENAME));
-  pFormatsIniOld->Read (PathName(GetMainConfigDir(),
-				 MIKTEX_FORMATS_INI_FILENAME));
-#endif
 
   // open the log file
   OpenLog ();
@@ -609,13 +597,30 @@ FileCopyPage::DoTheUpdate ()
   ULogOpen (true);
   ULogAddFile (g_logFileName);
 
-  // update package database
+  // update the package database
   pInstaller->UpdateDb ();
 
   if (pSheet->GetCancelFlag())
     {
       return;
     }
+
+  // collect obsolete MiKTeX packages
+  if (g_upgrading)
+    {
+      auto_ptr<PackageIterator> pIter (g_pManager->CreateIterator());
+      pIter->AddFilter (PackageFilter::Obsolete);
+      PackageInfo packageInfo;
+      while (pIter->GetNext(packageInfo))
+	{
+	  if (IsMiKTeXPackage(packageInfo.deploymentName))
+	    {
+	      toBeRemoved.push_back (packageInfo.deploymentName);
+	    }
+	}
+    }
+      
+  pInstaller->SetFileLists (pSheet->GetUpdateList(), toBeRemoved);
 
   // run installer
   pInstaller->InstallRemove ();
@@ -637,62 +642,14 @@ FileCopyPage::DoTheUpdate ()
 void
 FileCopyPage::ConfigureMiKTeX ()
 {
-#if CHECK_CONFIG_FILES
-  pMiKTeXIniNew->Read (PathName(GetMainConfigDir(), MIKTEX_INI_FILENAME));
-  pFormatsIniNew->Read (PathName(GetMainConfigDir(),
-				 MIKTEX_FORMATS_INI_FILENAME));
-
-  BYTE digest1[16];
-  BYTE digest2[16];
-
-  PathName pathMiKTeXIniLocal (GetLocalConfigDir(), MIKTEX_INI_FILENAME);
-  if (File::Exists(pathMiKTeXIniLocal)
-      && (memcmp(pMiKTeXIniNew->GetMD5(digest1),
-		 pMiKTeXIniOld->GetMD5(digest2),
-		 16)
-	  != 0))
-    {
-      CString strMessage;
-      AfxFormatString1 (strMessage,
-			IDP_RENAME_LOCAL_INI,
-			MIKTEX_INI_FILENAME);
-      if (AfxMessageBox(strMessage, MB_OKCANCEL | MB_ICONINFORMATION) == IDOK)
-	{
-	  File::PushAside (pathMiKTeXIniLocal, T_(".BAK"), false);
-	}
-      else
-	{
-	  Log (T_("user wants to keep the local %s\n"), MIKTEX_INI_FILENAME);
-	}
-    }
-
-  PathName pathFormatsIniLocal (GetLocalConfigDir(),
-				MIKTEX_FORMATS_INI_FILENAME);
-  if (File::Exists(pathFormatsIniLocal)
-      && (memcmp(pFormatsIniNew->GetMD5(digest1),
-		 pFormatsIniOld->GetMD5(digest2),
-		 16)
-	  != 0))
-    {
-      CString strMessage;
-      AfxFormatString1 (strMessage,
-			IDP_RENAME_LOCAL_INI,
-			MIKTEX_FORMATS_INI_FILENAME);
-      if (AfxMessageBox(strMessage, MB_OKCANCEL | MB_ICONINFORMATION) == IDOK)
-	{
-	  File::PushAside (pathFormatsIniLocal, T_(".BAK"), false);
-	}
-      else
-	{
-	  Log (T_("user wants to keep the local %s\n"),
-	       MIKTEX_FORMATS_INI_FILENAME);
-	}
-    }
-#endif
-
 #if REMOVE_FORMAT_FILES
   RemoveFormatFiles ();
 #endif
+
+  if (g_upgrading)
+    {
+      RemoveLocalIniFiles ();
+    }
 
   CommandLineBuilder cmdLine;
 
@@ -918,6 +875,37 @@ FileCopyPage::RemoveFormatFiles ()
     }
 }
 #endif
+
+/* _________________________________________________________________________
+
+   FileCopyPage::RemoveLocalIniFiles
+   _________________________________________________________________________ */
+
+void
+FileCopyPage::RemoveLocalIniFiles ()
+{
+  SessionWrapper pSession (true);
+  PathName installRoot = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  for (unsigned r = pSession->GetNumberOfTEXMFRoots(); r > 0; -- r)
+    {
+      PathName path = pSession->GetRootDirectory(r);
+      if (path != installRoot)
+	{
+	  path += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+	  if (Directory::Exists(path))
+	    {
+	      vector<tstring> toBeDeleted;
+	      CollectFiles (toBeDeleted, path, T_(".ini"));
+	      for (vector<tstring>::const_iterator it = toBeDeleted.begin();
+		   it != toBeDeleted.end();
+		   ++ it)
+		{
+		  File::Delete (PathName(path, *it));
+		}
+	    }
+	}
+    }
+}
 
 /* _________________________________________________________________________
 

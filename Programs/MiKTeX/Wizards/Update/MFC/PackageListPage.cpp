@@ -28,15 +28,7 @@
 
 IMPLEMENT_DYNCREATE(PackageListPage, CPropertyPage);
 
-#define MYPKG T_("miktex-bin")
-
-inline
-bool
-IsMiKTeXPackage (/*[in]*/ const tstring & deploymentName)
-{
-  return (deploymentName.compare(0, 7, T_("miktex-")) == 0);
-}
-
+#define MYPKG T_("miktex-bin") T_("-") MIKTEX_SERIES_STR
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
 
@@ -379,9 +371,10 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  listControl.SetItemText (idx, 2, strNew);
 
 	  // set the check mark
-	  if (! updateUpdate
+	  if (g_upgrading
+	      || ! updateUpdate
 	      || ! IsMiKTeXPackage(it->deploymentName)
-	      || ContainsUpdateWizard(it->deploymentName.c_str()))
+	      || ContainsUpdateWizard(it->deploymentName))
 	    {
 	      listControl.SetCheck (idx);
 	    }
@@ -444,23 +437,34 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
 				 /*[in]*/ LRESULT *	pResult)
 {
   LPNMLISTVIEW pnmlv = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
   if (fillingTheListView
-      || ! updateUpdate
       || pnmlv == 0
       || pnmlv->iItem < 0
       || pnmlv->iItem >= static_cast<int>(updates.size())
-      || ! IsMiKTeXPackage(updates[pnmlv->iItem].deploymentName)
-      || ContainsUpdateWizard(updates[pnmlv->iItem].deploymentName.c_str()))
+      || ! IsMiKTeXPackage(updates[pnmlv->iItem].deploymentName))
     {
       *pResult = FALSE;
     }
-  else
+  else if (g_upgrading)
+    {
+      AfxMessageBox (T_("The MiKTeX upgrade operation must be executed \
+as a whole."),
+		     MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+  else if (updateUpdate
+	   && ! ContainsUpdateWizard(updates[pnmlv->iItem].deploymentName))
     {
       AfxMessageBox (T_("The package \"") MYPKG T_("\" must be updated \
 separately from the other MiKTeX packages. Let the wizard conclude now. \
 Then run the wizard again to update the remaining packages."),
-		     MB_OK | MB_ICONEXCLAMATION);
+			 MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
+    }
+  else
+    {
+      *pResult = FALSE;
     }
 }
 
@@ -498,10 +502,9 @@ PackageListPage::OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
    _________________________________________________________________________ */
 
 bool
-PackageListPage::ContainsUpdateWizard
-(/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
+PackageListPage::ContainsUpdateWizard (/*[in]*/ const tstring & deploymentName)
 {
-  return (PathName::Compare(lpszDeploymentName, MYPKG) == 0);
+  return (PathName::Compare(deploymentName.c_str(), MYPKG) == 0);
 }
 
 /* _________________________________________________________________________
@@ -598,7 +601,7 @@ PackageListPage::DoFindUpdates ()
        it != updates.end();
        ++ it)
     {
-      if (it->deploymentName == MYPKG)
+      if (ContainsUpdateWizard(it->deploymentName))
 	{
 	  updateUpdate = true;
 	  break;

@@ -108,7 +108,7 @@ protected:
 
 private:
   bool
-  ContainsUpdateWizard (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName);
+  ContainsUpdateWizard (/*[in]*/ const tstring &	deploymentName);
 
 private:
   static
