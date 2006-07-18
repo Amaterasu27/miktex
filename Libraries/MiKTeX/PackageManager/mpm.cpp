@@ -103,7 +103,7 @@ PackageManagerImpl::~PackageManagerImpl ()
     {
       Dispose ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }
@@ -215,15 +215,16 @@ PackageManagerImpl::LoadVariablePackageTable ()
 
   if (! File::Exists(pathPackagesIni))
     {
-      trace_mpm->WriteFormattedLine (T_("libmpm"),
-				     T_("file %s does not (yet) exist"),
-				     Q_(pathPackagesIni));
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("variable package table does not exist (%s)"),
+	 Q_(pathPackagesIni));
       variablePackageTable->SetModified (false);
       return;
     }
 
   trace_mpm->WriteFormattedLine (T_("libmpm"),
-				 T_("reading %s"),
+				 T_("loading variable package table (%s)"),
 				 Q_(pathPackagesIni));
 
   variablePackageTable->Read (pathPackagesIni);
@@ -252,9 +253,9 @@ PackageManagerImpl::FlushVariablePackageTable ()
      0);
 
   trace_mpm->WriteFormattedLine (T_("libmpm"),
-				 T_("writing %s"),
+				 T_("flushing variable package table (%s)"),
 				 Q_(pathPackagesIni));
-
+  
   variablePackageTable->Write (pathPackagesIni);
 }
 
@@ -423,15 +424,17 @@ void
 PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 (/*[in]*/ const PathName &	directory)
 {
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
-			 T_("searching %s for package definition files"),
-				 Q_(directory));
+  trace_mpm->WriteFormattedLine
+    (T_("libmpm"),
+     T_("searching %s for package definition files"),
+     Q_(directory));
 
   if (! Directory::Exists(directory))
     {
-      trace_mpm->WriteFormattedLine (T_("libmpm"),
-				     T_("directory %s does not exist"),
-				     Q_(directory));
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("package definition directory (%s) does not exist"),
+	 Q_(directory));
       return;
     }
 
@@ -449,16 +452,16 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
     {
       PathName name (direntry.name.c_str());
 
-      // get external package name
-      MIKTEXCHAR szExternalName[BufferSizes::MaxPackageName];
-      name.GetFileNameWithoutExtension (szExternalName);
+      // get deployment name
+      MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      name.GetFileNameWithoutExtension (szDeploymentName);
 
       // ignore redefinition
-      if (packageTable.find(szExternalName) != packageTable.end())
+      if (packageTable.find(szDeploymentName) != packageTable.end())
 	{
 	  trace_mpm->WriteFormattedLine (T_("libmpm"),
 					 T_("%s: ignoring redefinition"),
-					 szExternalName);
+					 szDeploymentName);
 	  continue;
 	}
 
@@ -469,14 +472,14 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 #if POLLUTE_THE_DEBUG_STREAM
       trace_mpm->WriteFormattedLine (T_("libmpm"),
 				     T_("  adding %s"),
-				     szExternalName);
+				     szDeploymentName);
 #endif
 
       count += 1;
       
       // insert into database
       PackageInfo * pPi =
-	DefinePackage(szExternalName, tpmParser.GetPackageInfo());
+	DefinePackage(szDeploymentName, tpmParser.GetPackageInfo());
 
       // increment file ref counts, if package is installed
       if (pPi->timeInstalled > 0)
@@ -508,10 +511,11 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 	  PackageDefinitionTable::iterator it3 = packageTable.find(*it2);
 	  if (it3 == packageTable.end())
 	    {
-	      trace_mpm->WriteFormattedLine (T_("libmpm"),
-				T_("dependancy problem: %s is required by %s"),
-					     it2->c_str(),
-					     it->second.deploymentName.c_str());
+	      trace_mpm->WriteFormattedLine
+		(T_("libmpm"),
+		 T_("dependancy problem: %s is required by %s"),
+		 it2->c_str(),
+		 it->second.deploymentName.c_str());
 	    }
 	  else
 	    {
@@ -545,7 +549,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
   piObsolete.displayName = T_("Obsolete");
   piObsolete.title = T_("Obsolete packages");
   piObsolete.description =
-    T_("Packages that were removed from the package repository.");
+    T_("Packages that were removed from the MiKTeX package repository.");
   for (it2 = packageTable.begin(); it2 != packageTable.end(); ++ it2)
     {
       if (! it2->second.IsContained()
@@ -744,7 +748,7 @@ PackageManagerImpl::GetPackageInfo (/*[in]*/ const tstring & deploymentName)
   if (pPackageInfo == 0)
     {
       FATAL_MPM_ERROR (T_("MiKTeX::Packages::GetPackageInfo"),
-		       T_("The package is unknown."),
+		       T_("Unknown package."),
 		       deploymentName.c_str());
     }
   return (*pPackageInfo);
@@ -813,7 +817,7 @@ PackageManager::GetRemotePackageRepository ()
   if (! TryGetRemotePackageRepository(url))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetRemotePackageRepository"),
-			  T_("No remote package repository configured."),
+			  T_("No remote package repository is configured."),
 			  0);
     }
   return (url);
@@ -938,7 +942,7 @@ PackageManager::GetLocalPackageRepository ()
   if (! TryGetLocalPackageRepository(path))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetLocalPackageRepository"),
-			  T_("No local package repository configured."),
+			  T_("No local package repository is configured."),
 			  0);
     }
   return (path);
@@ -1003,7 +1007,7 @@ PackageManager::GetMiKTeXDirectRoot ()
   if (! TryGetMiKTeXDirectRoot(path))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetMiKTeXDirectRoot"),
-			  T_("No MiKTeXDirect root configured."),
+			  T_("No MiKTeXDirect root is configured."),
 			  0);
     }
   return (path);
@@ -1069,7 +1073,7 @@ PackageManager::TryGetDefaultPackageRepository
 	  FATAL_MIKTEX_ERROR
 	    (T_("PackageManager::TryGetDefaultPackageRepository"),
 	     T_("Invalid registry settings."),
-	     0);
+	     str.c_str());
 	}
     }
   return (true);
@@ -1089,7 +1093,7 @@ PackageManager::GetDefaultPackageRepository
   if (! TryGetDefaultPackageRepository(repositoryType, urlOrPath))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetDefaultPackageRepository"),
-			  T_("No package repository configured."),
+			  T_("No package repository is configured."),
 			  0);
     }
   return (repositoryType);
@@ -1961,7 +1965,7 @@ PackageManager::GetProxy ()
   if (! TryGetProxy(proxySettings))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetProxy"),
-			  T_("No proxy configuration settings."),
+			  T_("No proxy host is configured."),
 			  0);
     }
   return (proxySettings);
