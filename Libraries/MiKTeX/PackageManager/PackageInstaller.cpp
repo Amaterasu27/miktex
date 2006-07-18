@@ -839,9 +839,10 @@ PackageInstallerImpl::RemovePackage (/*[in]*/ const tstring &	deploymentName)
     }
 
   // clear the installTime value => package is not installed
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
-				 T_("removing %s from the package table"),
-				 Q_(deploymentName));
+  trace_mpm->WriteFormattedLine
+    (T_("libmpm"),
+     T_("removing %s from the variable package table"),
+     Q_(deploymentName));
   pManager->SetTimeInstalled (deploymentName.c_str(), 0);
   pManager->FlushVariablePackageTable ();
   pPackageInfo->timeInstalled = 0;
@@ -1178,7 +1179,7 @@ PackageInstallerImpl::UpdateMpmFndb
       else
 	{
 	  trace_mpm->WriteFormattedLine (T_("libmpm"),
-					 T_("%s already exists in fndb"),
+					 T_("%s already exists in mpm fndb"),
 					 Q_(path));
 	}
      }
@@ -1192,7 +1193,7 @@ PackageInstallerImpl::UpdateMpmFndb
       else
 	{
 	  trace_mpm->WriteFormattedLine (T_("libmpm"),
-					 T_("%s does not exist in fndb"),
+					 T_("%s does not exist in mpm fndb"),
 					 Q_(path));
 	}
     }
@@ -2317,7 +2318,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
 	  << T_("  ") << size2 << T_(" (actual size)") << LF
 	  << LF
 	  << T_("This can be the result of a failed download operation.")
-	  << T_(" Another reason might be that the localpackage database")
+	  << T_(" Another reason might be that the local package database")
 	  << T_(" is outdated.");
 	break;
       }
