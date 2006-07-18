@@ -648,7 +648,8 @@ FileCopyPage::ConfigureMiKTeX ()
 
   if (g_upgrading)
     {
-      RemoveLocalIniFiles ();
+      RemoveFalseConfigFiles ();
+      RemoveOldRegistrySettings ();
     }
 
   CommandLineBuilder cmdLine;
@@ -878,33 +879,121 @@ FileCopyPage::RemoveFormatFiles ()
 
 /* _________________________________________________________________________
 
-   FileCopyPage::RemoveLocalIniFiles
+   FileCopyPage::RemoveFalseConfigFiles
    _________________________________________________________________________ */
 
+static const MIKTEXCHAR * const configFiles[] = {
+  MIKTEX_PATH_PDFTEXCONFIG_TEX,
+  T_("tex\\generic\\config\\language.dat"),
+  T_("web2c\\updmap.cfg"),
+};
+
+static const MIKTEXCHAR * const configDirs[] = {
+  MIKTEX_PATH_DVIPDFMX_CONFIG_DIR,
+  MIKTEX_PATH_DVIPDFM_CONFIG_DIR,
+  MIKTEX_PATH_DVIPS_CONFIG_DIR,
+  MIKTEX_PATH_MIKTEX_CONFIG_DIR,
+  MIKTEX_PATH_PDFTEX_CONFIG_DIR,
+};
+
 void
-FileCopyPage::RemoveLocalIniFiles ()
+FileCopyPage::RemoveFalseConfigFiles ()
 {
   SessionWrapper pSession (true);
   PathName installRoot = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  PathName configRoot = pSession->GetSpecialPath(SpecialPath::ConfigRoot);
   unsigned n = pSession->GetNumberOfTEXMFRoots();
   for (unsigned r = 0; r < n; ++ r)
     {
       PathName path = pSession->GetRootDirectory(r);
-      if (path != installRoot)
+      if (path != installRoot && path != configRoot)
 	{
-	  path += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
-	  if (Directory::Exists(path))
+	  for (size_t idx = 0;
+	       idx < sizeof(configFiles) / sizeof(configFiles[0]);
+	       ++ idx)
 	    {
-	      vector<tstring> toBeDeleted;
-	      CollectFiles (toBeDeleted, path, T_(".ini"));
-	      for (vector<tstring>::const_iterator it = toBeDeleted.begin();
-		   it != toBeDeleted.end();
-		   ++ it)
+	      PathName file (path, configFiles[idx]);
+	      if (File::Exists(file))
 		{
-		  File::Delete (PathName(path, *it));
+		  File::Delete (file);
+		}
+	    }
+	  for (size_t idx = 0;
+	       idx < sizeof(configDirs) / sizeof(configDirs[0]);
+	       ++ idx)
+	    {
+	      PathName dir (path, configDirs[idx]);
+	      if (Directory::Exists(dir))
+		{
+		  Directory::Delete (dir, true);
 		}
 	    }
 	}
+    }
+}
+
+/* _________________________________________________________________________
+
+   FileCopyPage::RemoveOldRegistrySettings
+   _________________________________________________________________________ */
+
+void
+FileCopyPage::RemoveOldRegistrySettings ()
+{
+  SessionWrapper pSession (true);
+
+  CRegKey root25;
+
+  bool sharedSetup = (pSession->IsSharedMiKTeXSetup() == TriState::True);
+  
+  if ((root25.Open(sharedSetup ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER,
+		   MIKTEX_REGPATH_SERIES T_("\\") MIKTEX_REGKEY_MIGRATE,
+		   KEY_READ))
+      != ERROR_SUCCESS)
+    {
+      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RemoveOldRegistrySettings"),
+			  T_("Missing registry settings."),
+			  MIKTEX_REGKEY_MIGRATE);
+    }
+
+  MIKTEXCHAR szVersion[20];
+  ULONG nChars = 20;
+
+  if (root25.QueryStringValue(MIKTEX_REGVAL_VERSION, szVersion, &nChars)
+      != ERROR_SUCCESS)
+    {
+      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RemoveOldRegistrySettings"),
+			  T_("Missing registry value."),
+			  MIKTEX_REGVAL_VERSION);
+    }
+
+  tstring rootKey;
+  tstring subKey;
+
+  if (StringCompare(T_("2.4"), szVersion) == 0)
+    {
+      rootKey = T_("Software\\MiK\\MiKTeX");
+      subKey = T_("CurrentVersion");
+    }
+  else
+    {
+      rootKey = MIKTEX_REGPATH_PRODUCT;
+      subKey = szVersion;
+    }
+
+  CRegKey regRoot;
+
+  if (regRoot.Open(HKEY_CURRENT_USER, rootKey.c_str()) == ERROR_SUCCESS)
+    {
+      regRoot.DeleteSubKey (subKey.c_str());
+      regRoot.Close ();
+    }
+
+  if (sharedSetup
+      && (regRoot.Open(HKEY_LOCAL_MACHINE, rootKey.c_str()) == ERROR_SUCCESS))
+    {
+      regRoot.DeleteSubKey (subKey.c_str());
+      regRoot.Close ();
     }
 }
 

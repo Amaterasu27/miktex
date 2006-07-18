@@ -158,7 +158,11 @@ private:
 
 private:
   void
-  RemoveLocalIniFiles ();
+  RemoveFalseConfigFiles ();
+
+private:
+  void
+  RemoveOldRegistrySettings ();
 
 private:
   CWnd *

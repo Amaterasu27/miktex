@@ -31,6 +31,8 @@
 #include <afxdtctl.h>
 #include <afxmt.h>
 
+#include <atlbase.h>
+
 #if ! defined(_AFX_NO_AFXCMN_SUPPORT)
 #  include <afxcmn.h>
 #endif
