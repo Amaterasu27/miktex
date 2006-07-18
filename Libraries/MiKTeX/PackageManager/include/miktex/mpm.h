@@ -264,7 +264,7 @@ public:
     /// Dependency package filter.
     RequiredBy = 2,
     /// Obsolete packages.
-    Obsolete,
+    Obsolete = 4,
   };
 };
 
