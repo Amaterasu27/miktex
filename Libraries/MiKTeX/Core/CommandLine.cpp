@@ -215,7 +215,7 @@ CommandLineBuilder::AppendArgument (/*[in]*/ const MIKTEXCHAR * lpszArgument)
 
 void
 CommandLineBuilder::AppendArguments (/*[in]*/ int			argc,
-				     /*[in]*/ const MIKTEXCHAR **	argv)
+				     /*[in]*/ const MIKTEXCHAR * const * argv)
 {
   for (int i = 0; i < argc; ++ i)
     {

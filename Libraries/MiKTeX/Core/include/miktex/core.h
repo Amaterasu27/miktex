@@ -1164,19 +1164,6 @@ StrLen (/*[in]*/ const MIKTEXCHAR * lpsz)
 }
 
 MIKTEXINLINE
-MIKTEXCHAR *
-StrDup (/*[in]*/ const MIKTEXCHAR * lpsz)
-{
-#if defined(_MSC_VER)
-  return (_tcsdup(lpsz));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: StrDup()
-#else
-  return (strdup(lpsz));
-#endif
-}
-
-MIKTEXINLINE
 int
 StringCompare (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 	       /*[in]*/ const MIKTEXCHAR *	lpsz2,
@@ -2749,6 +2736,67 @@ operator!= (/*[in]*/ const PathName & lhs,
 
 /* _________________________________________________________________________
 
+   Argv
+   _________________________________________________________________________ */
+
+class Argv
+{
+public:
+  MIKTEXEXPORT
+  MIKTEXCALL
+  Argv ();
+
+public:
+  MIKTEXEXPORT
+  virtual
+  MIKTEXCALL
+  ~Argv ();
+
+public:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	 /*[in]*/ const MIKTEXCHAR *	lpszArguments);
+
+public:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments);
+
+public:
+  const MIKTEXCHAR * const *
+  GetArgv ()
+    const
+  {
+    return (&argv[0]);
+  }
+
+public:
+  int
+  GetArgc ()
+    const
+  {
+    assert (argv.size() > 0);
+    return (static_cast<int>(argv.size() - 1));
+  }
+
+public:
+  const MIKTEXCHAR *
+  operator[] (/*[in]*/ size_t idx)
+    const
+  {
+    assert (idx < argv.size());
+    return (argv[idx]);
+  }
+
+private:
+  std::vector<MIKTEXCHAR *> argv;
+};
+
+/* _________________________________________________________________________
+
    CommandLineBuilder
    _________________________________________________________________________ */
 
@@ -2849,14 +2897,22 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  AppendArguments (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv);
+  AppendArguments (/*[in]*/ int				argc,
+		   /*[in]*/ const MIKTEXCHAR * const *	argv);
 
 public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
   AppendArguments (/*[in]*/ const std::vector<tstring>	argv);
+
+public:
+  void
+  AppendArguments (/*[in]*/ const Argv & argv)
+  {
+    assert (argv.GetArgc() > 0);
+    AppendArguments (argv.GetArgc() - 1, argv.GetArgv() + 1);
+  }
 
 public:
   MIKTEXEXPORT
@@ -4491,61 +4547,6 @@ struct ProcessStartInfo
   {
   }
 
-};
-
-/* _________________________________________________________________________
-
-   Argv
-   _________________________________________________________________________ */
-
-class Argv
-{
-public:
-  MIKTEXEXPORT
-  MIKTEXCALL
-  Argv ();
-
-public:
-  MIKTEXEXPORT
-  virtual
-  MIKTEXCALL
-  ~Argv ();
-
-public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
-  Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	 /*[in]*/ const MIKTEXCHAR *	lpszArguments);
-
-public:
-  const MIKTEXCHAR * const *
-  GetArgv ()
-    const
-  {
-    return (&argv[0]);
-  }
-
-public:
-  int
-  GetArgc ()
-    const
-  {
-    assert (argv.size() > 0);
-    return (static_cast<int>(argv.size() - 1));
-  }
-
-public:
-  const MIKTEXCHAR *
-  operator[] (/*[in]*/ size_t idx)
-    const
-  {
-    assert (idx < argv.size());
-    return (argv[idx]);
-  }
-
-private:
-  std::vector<MIKTEXCHAR *> argv;
 };
 
 /* _________________________________________________________________________

@@ -739,6 +739,29 @@ struct StringComparerIgnoringCase
   }
 };
 
+#if defined(StrDup)
+#  undef StrDup
+#endif
+
+inline
+MIKTEXCHAR *
+StrDup (/*[in]*/ const MIKTEXCHAR * lpsz)
+{
+  MIKTEXCHAR * ret;
+#if defined(_MSC_VER)
+  ret = _tcsdup(lpsz);
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: StrDup()
+#else
+  ret = strdup(lpsz);
+#endif
+  if (ret == 0)
+    {
+      FATAL_CRT_ERROR (T_("strdup"), 0);
+    }
+  return (ret);
+}
+
 /* _________________________________________________________________________
 
    AToI

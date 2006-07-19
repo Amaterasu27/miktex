@@ -194,18 +194,25 @@ private:
 
 /* _________________________________________________________________________
 
-   Argv::Build
+   Argv::Append
 
    "borrowed" from the popt library
    _________________________________________________________________________ */
 
 void
 MIKTEXCALL
-Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 {
-  argv.clear ();
-  argv.push_back (StrDup(lpszFileName));
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
+  MIKTEX_ASSERT (argv.size() > 0);
+
+  argv.pop_back ();
+
+  if (argv.size() == 0)
+    {
+      argv.push_back (StrDup(T_("foo")));
+    }
+
   tstring arg;
   MIKTEXCHAR quote = 0;
   for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
@@ -264,7 +271,7 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	    }
 	}
     }
-  if (arg.length() > 0)
+  if (! arg.empty())
     {
       argv.push_back (StrDup(arg.c_str()));
     }

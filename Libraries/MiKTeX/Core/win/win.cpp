@@ -2375,19 +2375,24 @@ Utils::RegisterMiKTeXUser ()
 
 /* _________________________________________________________________________
 
-   Argv::Build
+   Argv::Append
 
    Mimic the behaviour of CommandLineToArgvW().
    _________________________________________________________________________ */
 
 void
 MIKTEXCALL
-Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 {
-  argv.clear ();
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
+  MIKTEX_ASSERT (argv.size() > 0);
 
-  argv.push_back (StrDup(lpszFileName));
+  argv.pop_back ();
+
+  if (argv.size() == 0)
+    {
+      argv.push_back (StrDup(T_("foo")));
+    }
 
   for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; )
     {
@@ -2400,7 +2405,6 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	{
 	  break;
 	}
-
 
       // get the next argument
       tstring arg;

@@ -53,10 +53,6 @@ CSVList::CSVList (/*[in]*/ const MIKTEXCHAR *	lpszValueList,
     {
       this->separator = static_cast<MIKTEXCHAR>(separator);
       lpszList = StrDup(lpszValueList);
-      if (lpszList == 0)
-	{
-	  OUT_OF_MEMORY (T_("MiKTeX::Core::CSVList::CSVList"));
-	}
       lpszCurrent = lpszList;
       lpszNext = StrChr(lpszList, separator);
       if (lpszNext != 0)
@@ -176,10 +172,6 @@ Tokenizer::Tokenizer (/*[in]*/ const MIKTEXCHAR *	lpsz,
 {
   MIKTEX_ASSERT_STRING (lpsz);
   lpszOrig = StrDup(lpsz);
-  if (lpszOrig == 0)
-    {
-      OUT_OF_MEMORY (T_("Tokenizer::Tokenizer"));
-    }
   lpszNext = lpszOrig;
   lpszCurrent = 0;
   pDelims = 0;
@@ -804,6 +796,28 @@ Argv::~Argv ()
        ++ it)
     {
       free (*it);
+    }
+}
+
+/* _________________________________________________________________________
+
+   Argv::Build
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+{
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
+  MIKTEX_ASSERT (argv.size() == 1);
+  argv.clear ();
+  argv.push_back (StrDup(lpszFileName));
+  argv.push_back (0);
+  if (lpszArguments != 0)
+    {
+      Append (lpszArguments);
     }
 }
 
