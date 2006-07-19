@@ -654,7 +654,7 @@ cppstandard_aeh = \
 	$(ccopt_all_cpp) \
 	$(ccopt_enable_asynchronous_exception_handling) \
 
-cppstandard = $(cppstandard_seh)
+cppstandard = $(cppstandard_seh) -D_SECURE_SCL_THROWS=1
 
 #  ___________________________________________________________________________
 #
