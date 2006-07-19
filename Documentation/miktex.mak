@@ -92,6 +92,9 @@ html_files = \
 	license.html \
 	relnotes.html \
 
+css_files = \
+	miktexman.css \
+
 pdf_files = \
 	install.pdf \
 	miktex.pdf \
@@ -205,7 +208,7 @@ manual_listings = \
 	filetypes \
 
 
-documents = $(html_files) $(chm_files) $(pdf_files)
+documents = $(html_files) $(chm_files) $(pdf_files) $(css_files)
 
 .SUFFIXES: .png .eps .xml .bb
 
@@ -393,10 +396,13 @@ install.pdf: \
 relnotes.html: \
 			entities.ent \
 			$(xsldir)\html.xsl \
-			$(cssdir)\miktexman.css \
+			miktexman.css \
 			relnotes.xml \
 
 	$(xsltproc) --output $@ $(xsldir)\html.xsl relnotes.xml
+
+miktexman.css: $(cssdir)\miktexman.css
+	copy $(cssdir)\miktexman.css $@
 
 # -----------------------------------------------------------------------------
 # license.html
@@ -405,7 +411,7 @@ relnotes.html: \
 license.html: \
 			entities.ent \
 			$(xsldir)\html.xsl \
-			$(cssdir)\miktexman.css \
+			miktexman.css \
 			license.xml \
 
 	$(xsltproc) --output $@ $(xsldir)\html.xsl license.xml

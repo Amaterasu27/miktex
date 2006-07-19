@@ -1,54 +1,431 @@
-<?xml-stylesheet type="text/xsl" href="html.xsl" ?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
-                         "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
+                      "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
-<!ENTITY % version.ent SYSTEM "version.ent">
 %entities.ent;
-%version.ent;
+<!ENTITY optionquiet SYSTEM "Options/quiet.xml">
+<!ENTITY optiontrace SYSTEM "Options/trace.xml">
 ]>
 
+
+<!-- todo: eomaga gone-->
+
 <article lang="en">
-
-<articleinfo>
-
-<title>&MiKTeX; &miktexrev; Release Notes</title>
-
-<date>April 19, 2006</date>
-
-<copyright>
-<year>2001&ndash;2006</year>
-<holder>Christian Schenk</holder>
-</copyright>
-
-<legalnotice>
-<para>Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.</para>
-<para>Permission is granted to copy and distribute modified versions
-of this manual under the conditions for verbatim copying, provided
-that the entire resulting derived work is distributed under the terms
-of a permission notice identical to this one.</para>
-<para>Permission is granted to copy and distribute translations of
-this manual into another language, under the above conditions for
-modified versions, except that this permission notice may be stated in
-a translation approved by the Free Software Foundation.</para>
-</legalnotice>
-
-</articleinfo>
+  <articleinfo>
+    <title>&MiKTeX25;: Release Notes</title>
+    <author>
+      <firstname>Christian</firstname>
+      <surname>Schenk</surname>
+    </author>
+    <copyright>
+      <year>2006</year>
+      <holder>Christian Schenk</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+	Permission is granted to make and distribute verbatim copies
+	of this manual provided the copyright notice and this
+	permission notice are preserved on all copies.
+      </para>
+      <para>
+	Permission is granted to copy and distribute modified versions
+	of this manual under the conditions for verbatim copying,
+	provided that the entire resulting derived work is distributed
+	under the terms of a permission notice identical to this one.
+      </para>
+      <para>
+	Permission is granted to copy and distribute translations of
+	this manual into another language, under the above conditions
+	for modified versions, except that this permission notice may
+	be stated in a translation approved by the Free Software
+	Foundation.
+      </para>
+    </legalnotice>
+  </articleinfo>
 
 <section>
 
-<title>About this document</title>
+<title>System requirements</title>
 
-<para>This document contains &MiKTeX;&nbsp;&miktexrev; release notes.</para>
+<para>&MiKTeX25; will run on all &Windows; variants with the exception
+of &Windows95;.</para>
 
 </section>
 
 <section>
 
-<title>Known Limitations</title>
+<title>Fixed bugs</title>
 
-<para></para>
+<para>Numerous bugs have been fixed in &MiKTeX25;. In order
+to see the complete list of fixed bugs:</para>
+
+<procedure>
+<step><para>visit the <ulink
+url="http://sourceforge.net/tracker/?atid=110783&amp;group_id=10783&amp;func=browse">bug tracker page</ulink></para></step>
+<step><para>choose status <guimenuitem>Closed</guimenuitem></para></step>
+<step><para>enter the summary keyword <userinput>[2.5]</userinput></para></step>
+</procedure>
+</section>
+
+<section>
+
+<title>Configuration</title>
+
+<section>
+
+<title><filename>miktex.ini</filename> splitted</title>
+
+<para><filename>miktex.ini</filename> has been splitted into several
+application-specific configuration files. For example, &Yap;
+configuration settings are now contained in
+<filename>yap.ini</filename>.</para>
+
+</section>
+
+<section>
+
+<title>Installation directory</title>
+
+<para>The new installation default is <filename>C:\Program
+Files\MiKTeX 2.5</filename>.</para>
+</section>
+
+<section>
+
+<title>Local &TEXMF; directory</title>
+
+<para>The semantics of the local &TEXMF; directory have changed: this
+directory will not be used anymore by &MiKTeX; to store auto-generated
+files. As for &MiKTeX;, the local &TEXMF; directory is now an ordinary
+&TEXMF; directory.</para>
+
+</section>
+
+<section>
+
+<title>Data directory</title>
+
+<para>Auto-generated files (e.g. format files) will now be stored in
+the <firstterm>&MiKTeX; data directory</firstterm>.  The default
+location of this directory depends on the kind of the &MiKTeX;
+installation:</para>
+
+<variablelist>
+<varlistentry>
+<term>Per-user installation</term>
+<listitem><para><filename>C:\Documents and Settings\<replaceable>username</replaceable>\Local Settings\Application Data\MiKTeX\2.5</filename></para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Per-computer installation</term>
+<listitem><para><filename>C:\Documents and Settings\All Users\Application Data\MiKTeX\2.5</filename></para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title>Paper size</title>
+
+<para>In &MiKTeXOptions; it is now possible to set the preferred paper
+size for all applications (&Dvips;, &pdfTeX;, &Dvipdfm;). The setup wizard
+offers to choose between A4 and Letter.</para>
+
+</section>
+
+<section>
+
+<title>Format files</title>
+
+<para>The <quote>plain</quote> format files have been renamed:</para>
+
+<itemizedlist>
+<listitem><para><filename>tex.fmt</filename> (was <filename>plain.fmt</filename>)</para></listitem>
+<listitem><para><filename>mf.base</filename> (was <filename>plain.base</filename>)</para></listitem>
+<listitem>
+<para><filename>mpost.mem</filename> (was <filename>plain.mem</filename>)</para></listitem>
+</itemizedlist>
+
+<para>The &MiKTeXOptions; utility now makes it possible to manage format files
+for &METAFONT; and &MetaPost;.</para>
+
+</section>
+
+<section>
+
+<title>Registry</title>
+
+<para>&MiKTeX; registry settings have been rearranged in order to
+support side-by-side installations.  This shouldn't be an issue, since
+&MiKTeX; registry settings were undocumented in the past.</para>
+
+<section>
+
+<title>&MiKTeX; Registry Root Key</title>
+
+<para>The &MiKTeX; Registry root ket has been changed from
+<filename>SOFTWARE\MiK\MiKTeX\CurrentVersion</filename> to
+<filename>SOFTWARE\MiKTeX.org\MiKTeX\2.5</filename>.</para>
+
+</section>
+
+<section>
+
+<title>&MiKTeX; Registry Values</title>
+
+<para>Various &MiKTeX; registry values have been renamed.</para>
+
+</section>
+
+</section>
+
+</section>
+
+<section>
+
+<title>Programs</title>
+
+<section>
+
+<title>&Dvipdfmx;</title>
+
+<para>&Dvipdfmx; has been upgraded to version 20051229.</para>
+
+</section>
+
+<section>
+
+<title>&Dvipng;</title>
+
+<para>&Dvipng; has been upgraded to version 1.8.</para>
+
+</section>
+
+<section>
+
+<title>&Dvips;</title>
+
+<para>&Dvips; has been upgraded to version 5.95b.</para>
+
+</section>
+
+<section>
+
+<title>&epstopdf;</title>
+
+<para>The following options have been added:</para>
+
+<variablelist>
+<varlistentry><term><option>--antialias</option></term>
+<listitem><para>Enable anti-aliasing of bitmaps.</para></listitem>
+</varlistentry>
+<varlistentry><term><option>--enlarge=<replaceable>n</replaceable></option></term>
+<listitem><para>Enlarge bounding box by <replaceable>n</replaceable>
+&PostScript; points..</para></listitem>
+</varlistentry>
+<varlistentry><term><option>--gsopt=<replaceable>options</replaceable></option></term>
+<listitem><para>Add <replaceable>options</replaceable> the the
+&Ghostscript; command-line.</para></listitem>
+</varlistentry>
+<varlistentry><term><option>--pdf-version=<replaceable>ver</replaceable></option></term>
+<listitem><para>Set the &PDF; version.</para></listitem>
+</varlistentry>
+<varlistentry><term><option>--print-only</option></term>
+<listitem><para>Print what would be done.</para></listitem>
+</varlistentry>
+&optiontrace;
+<varlistentry><term><option>--verbose</option></term>
+<listitem><para>Turn on verbose output mode.</para></listitem>
+</varlistentry>
+</variablelist>
+
+</section>
+
+<section>
+
+<title>&mpm;</title>
+
+<para>The following options have been added to the command-line version
+of the package manager:</para>
+
+<variablelist>
+<varlistentry><term><option>--list-repositories</option></term>
+<listitem><para>Download the list of known package repository URLs from
+the &MiKTeX; project server, then print the list.</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><option>--pick-repository-url</option></term>
+<listitem><para>Pick up a suitable URL from the package repository
+list and print it.</para></listitem>
+</varlistentry>
+&optionquiet;
+<varlistentry>
+<term><option>--repository=<replaceable>location</replaceable></option></term>
+<listitem><para>Use the specified location as the package repository.
+The location can be either a fully qualified path name (a local
+package repository) or an URL (a remote package repository).
+You can use the <option>--list-repositories</option> to retrieve
+a list of working package repository URLs.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--set-repository=<replaceable>location</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--set-repository=location</primary>
+</indexterm>
+<para>This option is only available on Windows systems:
+permanently register the location of the default package repository.
+The location can be either a fully qualified path name (a local
+package repository) or an URL (a remote package repository).
+Setting the environment variable <envar>MIKTEX_REPOSITORY</envar>
+has the same effect.</para></listitem>
+</varlistentry>
+&optiontrace;
+</variablelist>
+
+</section>
+
+<section>
+
+<title>&mthelp;</title>
+
+<para>&mthelp; is a utility to lookup &TeX; package documentation.</para>
+
+<para>&mthelp; creates an &HTML; page which contains a short
+description of the package together with links to all documentation
+files. An &HTML; viewer is started to view the page.</para>
+
+</section>
+
+<section>
+
+<title>&pdfeTeX;</title>
+
+<para>&pdfeTeX; is now the default engine, also for &DVI;
+output.</para>
+
+<para>&pdfeTeX; has been upgraded to version 1.30.6.</para>
+
+<section id="pipedinout">
+
+<title>Piped Input and Output</title>
+
+<para>&TeX;'s input/output primitives can be used for unidirectional
+interprocess communication by prepending a pipe symbol to the file
+name.</para>
+
+<para>If this feature is enabled, then
+<markup role="tex">\input "|<replaceable>command</replaceable>"</markup>
+starts the command interpreter (usually <command>cmd.exe</command>) to
+carry out the command. The output of the command becomes the input of
+&TeX;.
+For example:
+<programlisting>
+\input "|dir/b"
+</programlisting>
+typesets the file names of the current directory.</para>
+
+<para>Likewise, it is possible to let &TeX; write something into
+the input stream of a command. For example:
+<programlisting>
+\immediate\openout1 = "|unix2dos|sort > sorted"
+\immediate\write 1 {b}
+\immediate\write 1 {a}
+\immediate\write 1 {c}
+\immediate\closeout1
+\input sorted
+</programlisting>
+typesets a b c.</para>
+
+<para>Piped input and output is disabled by default to avoid security
+problems.
+<indexterm>
+<primary>security</primary>
+</indexterm>
+<indexterm significance="preferred">
+<primary>-enable-pipes</primary>
+</indexterm>
+You enable the feature by specifying
+<option>-enable-pipes</option> on the &TeX; command-line.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>&pdfopen; / &pdfclose;</title>
+
+<para>&pdfopen; and &pdfclose; can be used to control &AdobeReader;.
+The original author is Fabrice Popineau who wrote these utilities a
+long time ago for the &TeXLive; distribution.</para>
+
+</section>
+
+<section>
+
+<title>tex4ht</title>
+
+<para>tex4ht has been upgraded to version 1.0.2006_05_06_0156.</para>
+
+</section>
+
+<section>
+
+<title>&UpdateWizard;</title>
+
+<para>The user interface has been improved to allow a faster (less
+mouse-clicks) run:</para>
+
+<orderedlist>
+<listitem><para>The welcome page can be skipped.</para>
+</listitem>
+<listitem><para>The last used update source is offered as
+the default.</para></listitem>
+</orderedlist>
+
+</section>
+
+<section>
+
+<title>&Yap;</title>
+
+<section>
+
+<title>&PostScript;</title>
+
+<para>Support for &PostScript; has been improved significantly.  For
+example, in the past &Yap; refused to display rotated text.  This is
+not a problem anymore.</para>
+
+<para>The motto is:</para>
+
+<para><emphasis>Every &DVI; document that can be viewed with a
+&PostScript; viewer (after &DVI;-to-&PostScript; conversion) can be
+viewed with &Yap;.</emphasis></para>
+
+</section>
+
+<section>
+
+<title>Ruler Tool</title>
+
+<para>The new ruler tool can be used to measure distances on
+a document page.</para>
+
+</section>
+
+<section>
+
+<title>Command-Lines for Inverse &DVI; Search</title>
+
+<para>It is now possible to configure more that one command-line for
+inverse search. The Inverse Search property page allows you to associate a
+command-line with an editor name.
+</para>
+
+</section>
+
+</section>
 
 </section>
 
