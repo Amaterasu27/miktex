@@ -985,14 +985,14 @@ FileCopyPage::RemoveOldRegistrySettings ()
 
   if (regRoot.Open(HKEY_CURRENT_USER, rootKey.c_str()) == ERROR_SUCCESS)
     {
-      regRoot.DeleteSubKey (subKey.c_str());
+      regRoot.RecurseDeleteKey (subKey.c_str());
       regRoot.Close ();
     }
 
   if (sharedSetup
       && (regRoot.Open(HKEY_LOCAL_MACHINE, rootKey.c_str()) == ERROR_SUCCESS))
     {
-      regRoot.DeleteSubKey (subKey.c_str());
+      regRoot.RecurseDeleteKey (subKey.c_str());
       regRoot.Close ();
     }
 }
