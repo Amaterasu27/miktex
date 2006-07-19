@@ -487,13 +487,13 @@ public:
   tstring texindexProgram;
 
 public:
-  vector<tstring> makeindexOptions;
+  Argv makeindexOptions;
 
 public:
-  vector<tstring> texOptions;
+  Argv texOptions;
 
 public:
-  vector<tstring> viewerOptions;
+  Argv viewerOptions;
 
 public:
   tstring traceStreams;
@@ -1917,7 +1917,7 @@ Driver::RunViewer ()
 
   PathName pathDest (pOptions->startDirectory, pathFileName);
 
-  if (pOptions->viewerOptions.size() == 0)
+  if (pOptions->viewerOptions.GetArgc() == 0)
     {
       pApplication->Verbose (T_("Opening %s..."), Q_(pathDest));
       if (ShellExecute(0,
@@ -2335,13 +2335,13 @@ McdApp::Run (/*[in]*/ int			argc,
 	  break;
 #endif
 	case OPT_MKIDX_OPTION:
-	  options.makeindexOptions.push_back (lpszOptArg);
+	  options.makeindexOptions.Append (lpszOptArg);
 	  break;
 	case OPT_TEX_OPTION:
-	  options.texOptions.push_back (lpszOptArg);
+	  options.texOptions.Append (lpszOptArg);
 	  break;
 	case OPT_VIEWER_OPTION:
-	  options.viewerOptions.push_back (lpszOptArg);
+	  options.viewerOptions.Append (lpszOptArg);
 	  break;
 	case OPT_RUN_VIEWER:
 	  options.runViewer = true;
