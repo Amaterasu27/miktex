@@ -72,7 +72,8 @@ account.</para>
 
 <title>Installing a basic &MiKTeX; system</title>
 
-<para>Get the <quote>Basic &MiKTeX; Installer</quote> from the <ulink
+<para>Get the <quote>Basic &MiKTeX; Installer</quote>
+(&basicmiktexexefile;) from the <ulink
 url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003">download
 page</ulink> and run it.</para>
 
@@ -82,7 +83,7 @@ page</ulink> and run it.</para>
 
 <title>Installing a complete &MiKTeX; system</title>
 
-<para>Get the &MiKTeXNetInstaller; from the <ulink
+<para>Get the &MiKTeXNetInstaller; (&setupexefile;) from the <ulink
 url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532">download
 page</ulink>. You will use the installer to a) download the complete &MiKTeX;
 distribution and b) install &MiKTeX;.</para>

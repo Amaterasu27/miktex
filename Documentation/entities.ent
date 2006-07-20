@@ -125,7 +125,9 @@
 <!ENTITY progfldr "MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY prompt "&gt; ">
 <!ENTITY basicmiktexexe "<command>basic-miktex-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</command>">
+<!ENTITY basicmiktexexefile "<filename>basic-miktex-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</filename>">
 <!ENTITY setupexe "<command>setup-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</command>">
+<!ENTITY setupexefile "<filename>setup-&MIKTEX_SERIES_STR;.<replaceable>xxxx</replaceable>.exe</filename>">
 <!ENTITY tex "<command>tex</command>">
 <!ENTITY mthelp "<command>mthelp</command>">
 <!ENTITY texi2dvi "<command>tex2dvi</command>">

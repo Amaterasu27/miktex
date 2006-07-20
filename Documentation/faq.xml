@@ -175,14 +175,14 @@ to set up a complete &MiKTeX; system
  a &MiKTeX; system:</para>
 <variablelist>
 <varlistentry>
-<term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
+<term>&BasicMiKTeXInstaller; (&basicmiktexexefile;)</term>
 <listitem>
 <para>The <quote>Basic &MiKTeX;</quote> installer can be used to set up
 a basic &MiKTeX; system.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term>&MiKTeXNetInstaller; (&setupexe;)</term>
+<term>&MiKTeXNetInstaller; (&setupexefile;)</term>
 <listitem>
 <para>The <quote>&MiKTeXNetInstaller;</quote> can be used to set up a
 complete &MiKTeX; system.</para>
