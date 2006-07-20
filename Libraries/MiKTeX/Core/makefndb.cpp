@@ -76,7 +76,7 @@ public:
 	traceStream->Close ();
 	traceStream = 0;
       }
-    catch (const MiKTeXException &)
+    catch (const exception &)
       {
       }
   }

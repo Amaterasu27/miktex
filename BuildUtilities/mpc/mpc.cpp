@@ -1625,6 +1625,12 @@ main (/*[in]*/ int		argc,
       result = 1;
     }
 
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
+      result = 1;
+    }
+
   catch (int i)
     {
       result = i;

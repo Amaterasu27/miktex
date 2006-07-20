@@ -238,7 +238,7 @@ public:
     {
       Delete ();
     }
-    catch (const MiKTeXException &)
+    catch (const exception &)
     {
     }
   }
@@ -302,7 +302,7 @@ public:
     {
       Delete ();
     }
-    catch (const MiKTeXException &)
+    catch (const exception &)
     {
     }
   }

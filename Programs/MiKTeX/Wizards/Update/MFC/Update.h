@@ -144,7 +144,7 @@ public:
 	    Destroyer() (handle);
 	  }
       }
-    catch (const MiKTeXException &)
+    catch (const exception &)
       {
       }
   }

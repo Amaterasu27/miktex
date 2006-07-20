@@ -239,7 +239,7 @@ winWebFile::~winWebFile ()
     {
       Close ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }

@@ -3225,7 +3225,7 @@ public:
 	buffer = 0;
 	n = 0;
       }
-    catch (const MiKTeXException &)
+    catch (const exception &)
       {
       }
   }

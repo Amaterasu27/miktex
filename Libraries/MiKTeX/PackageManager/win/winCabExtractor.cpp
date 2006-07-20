@@ -69,7 +69,7 @@ winCabExtractor::~winCabExtractor ()
     {
       Dispose ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }
@@ -248,7 +248,7 @@ FNALLOC(winCabExtractor::Alloc)
 	}
       return (pv);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (0);
     }
@@ -265,7 +265,7 @@ FNFREE(winCabExtractor::Free)
     {
       free (pv);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }
@@ -332,7 +332,7 @@ FNOPEN(winCabExtractor::Open)
       while (fd < 0);
       return (fd);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (-1);
     }
@@ -379,7 +379,7 @@ FNREAD(winCabExtractor::Read)
       while (ret < 0);
       return (ret);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (static_cast<unsigned int>(-1));
     }
@@ -472,7 +472,7 @@ FNWRITE(winCabExtractor::Write)
       while (ret < 0);
       return (ret);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (static_cast<unsigned int>(-1));
     }
@@ -495,7 +495,7 @@ FNCLOSE(winCabExtractor::Close)
       openFiles.erase (hf);
       return (ret);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (-1);
     }
@@ -542,7 +542,7 @@ FNSEEK(winCabExtractor::Seek)
       while (ret < 0);
       return (ret);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       return (-1);
     }
@@ -619,7 +619,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
 		    Directory::Create (pathDestDir);
 		    haveDirectory = true;
 		  }
-		catch (MiKTeXException & e)
+		catch (exception & e)
 		  {
 		    if (This->pCallback == 0)
 		      {
@@ -777,7 +777,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
       This->cancelled = true;
       return (-1);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       This->error = true;
       return (-1);

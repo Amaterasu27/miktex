@@ -63,7 +63,7 @@ winMemoryMappedFile::~winMemoryMappedFile ()
       DestroyMapping ();
       CloseFile ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }

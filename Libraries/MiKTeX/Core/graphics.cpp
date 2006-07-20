@@ -131,13 +131,7 @@ SessionImpl::ConvertToBitmapFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   
   if (! bDone)
     {
-      try
-	{
-	  File::Delete (lpszBmpFile, true);
-	}
-      catch (MiKTeXException &)
-	{
-	}
+      File::Delete (lpszBmpFile, true);
     }
 
   return (bDone);

@@ -51,7 +51,7 @@ winWebSession::~winWebSession ()
     {
       Dispose ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }

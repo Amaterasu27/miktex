@@ -155,7 +155,7 @@ winThread::ThreadFunc (/*[in]*/ void * p)
 	}
       function (argument);
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
   return (0);

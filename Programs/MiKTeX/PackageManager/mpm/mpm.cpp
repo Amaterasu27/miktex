@@ -1110,7 +1110,9 @@ Application::Main (/*[in]*/ int			argc,
 #if defined (MIKTEX_WINDOWS)
 	case OPT_HHELP:
 	  {
-	    SessionWrapper(true)->ShowManualPageAndWait (0, MIKTEXHELP_MPMCON);
+	    pSession.CreateSession (initInfo);
+	    pSession->ShowManualPageAndWait (0, MIKTEXHELP_MPMCON);
+	    pSession.Reset ();
 	    return;
 	  }
 #endif

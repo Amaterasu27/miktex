@@ -353,7 +353,7 @@ winProcess::Create ()
       processStarted = true;
     }
 
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
       if (hChildStdin != INVALID_HANDLE_VALUE)
 	{
@@ -428,7 +428,7 @@ winProcess::~winProcess ()
     {
       Close ();
     }
-  catch (const MiKTeXException &)
+  catch (const exception &)
     {
     }
 }

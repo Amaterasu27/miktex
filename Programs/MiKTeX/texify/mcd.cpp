@@ -1721,7 +1721,7 @@ Driver::RunTeX ()
 	      File::Copy (logName,
 			  PathName(pOptions->startDirectory, logName));
 	    }
-	  catch (const MiKTeXException &)
+	  catch (const exception &)
 	    {
 	      FatalError (T_("%s failed for some reason."), Q_(lpszExeName));
 	    }

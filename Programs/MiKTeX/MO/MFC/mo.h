@@ -106,7 +106,7 @@ public:
       {
 	Reset ();
       }
-    catch (const MiKTeXException &)
+    catch (const exception &)
       {
       }
   }

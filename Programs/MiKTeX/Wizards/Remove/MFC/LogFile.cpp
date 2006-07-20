@@ -242,21 +242,18 @@ LogFile::RemoveFiles ()
   size_t n = 0;
   for (set<PathName>::const_iterator it = files.begin();
        it != files.end() && ! pDlg->GetCancelFlag();
-       ++it, ++n)
+       ++ it, ++ n)
     {
       PathName pathCurDir = *it;
       pathCurDir.RemoveFileSpec ();
       directories.insert (pathCurDir);
-      try
+      if (File::Exists(*it))
 	{
 	  File::Delete (*it, true);
 	}
-      catch (MiKTeXException &)
-	{
-	}
       pDlg->Progress (*it,
-			static_cast<ULONG>(n),
-			static_cast<ULONG>(files.size()));
+		      static_cast<ULONG>(n),
+		      static_cast<ULONG>(files.size()));
     }
   for (set<PathName>::const_iterator it = directories.begin();
        it != directories.end() && ! pDlg->GetCancelFlag();
