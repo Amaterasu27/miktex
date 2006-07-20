@@ -44,7 +44,7 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.
 
 <section id="miktexcdr">
 
-<title>&MiKTeX; on &CDRDDdashR;</title>
+<title>&MiKTeX; on &CDRDVDdashR;</title>
 
 <para>If you cannot easily download more than 400&nbsp;MB (the
 complete &MiKTeX; distribution), then you may wish to obtain a copy of
@@ -82,7 +82,7 @@ the &MiKTeX; &CDRDVDdashR;.  Visit <ulink url="http://miktex.org/CD/">the
 </indexterm></para>
 
 <para>The &MiKTeX; &CDRDVDdashR; allows you to install &MiKTeX; on the
-hard-disk or to run the programs directly from the &CDRDashR;.</para>
+hard-disk or to run the programs directly from the &CDRDVDdashR;.</para>
 
 </section>
 
