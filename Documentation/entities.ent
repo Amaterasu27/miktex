@@ -5,7 +5,11 @@
 <!ENTITY API "<acronym>API</acronym>">
 <!ENTITY BibTeX "<application>BibTeX</application>">
 <!ENTITY CDR "<abbrev>CD-R</abbrev>">
-<!ENTITY DVDminR "<abbrev>DVD-R</abbrev>">
+<!ENTITY CD "<abbrev>CD</abbrev>">
+<!ENTITY DVD "<abbrev>DVD</abbrev>">
+<!ENTITY CDDVD "&CD;/&DVD;">
+<!ENTITY DVDdashR "<abbrev>DVD-R</abbrev>">
+<!ENTITY CDRDVDdashR "&CDR;/&DVDdashR;">
 <!ENTITY CTAN "<acronym>CTAN</acronym>">
 <!ENTITY ConTeXt "<application>ConTeXt</application>">
 <!ENTITY DANTEeV "DANTE&nbsp;e.V.">

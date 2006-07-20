@@ -6,8 +6,8 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2384">
-<!ENTITY date "July 12, 2006">
+<!ENTITY rev "2.5.2392">
+<!ENTITY date "July 20, 2006">
 <!ENTITY month "July 2006">
 ]>
 
@@ -222,14 +222,15 @@ archive files to your computer.</para></listitem>
 
 <qandaentry id="cd">
 <question>
-<para>Is &MiKTeX; available on CD/DVD?</para>
+<para>Is &MiKTeX; available on &CD; or &DVD;?</para>
 </question>
 <answer>
-<para>Yes, see <ulink
-url="http://miktex.org/cd/">http://miktex.org/cd/</ulink>.</para>
-<para>The CD contains a live &MiKTeX; system, i.e., it allows you to
-run &MiKTeX; directly from the CD. Altenatively, you can install
-&MiKTeX; on your hard-disk.</para>
+<para>Yes, &MiKTeX; is available on &CDRDVDdashR; (see <ulink
+url="http://miktex.org/cd/">this page</ulink>).</para>
+<para>The &CDRDVDdashR; contains a live &MiKTeX; system,
+which makes it possible to run &MiKTeX; directly from the &CDRDVDdashR;.
+Alternatively, the &CDRDVDdashR; allows you to install &MiKTeX;
+on your hard-disk.</para>
 </answer>
 </qandaentry>
 
@@ -268,7 +269,7 @@ for an overview of available support options.</para>
 <para>Is there a mailing list?</para>
 </question>
 <answer>
-<para>Yes (see <xref linkend="joiningml"/>).</para>
+<para>Yes.</para>
 </answer>
 </qandaentry>
 
@@ -326,7 +327,7 @@ your subscription status.</para>
 <answer>
 <para>If you have never used &TeX; before: we recommend that, first of
 all, you work through a &TeX;/&LaTeX; tutorial. A good starting point
-is<ulink
+is <ulink
 url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">this
 page</ulink>.</para>
 <para>&MiKTeX; doesn't differ very much from any other &TeX; system
@@ -461,40 +462,29 @@ in the &MiKTeX; manual.</para>
 
 <qandaentry id="pkginst">
 <question>
-<para>How do I install package <replaceable>X</replaceable>?.</para>
+<para>How do I install package <replaceable>X</replaceable>?</para>
 </question>
 <answer>
 <para>If package <replaceable>X</replaceable> is a part of the
 &MiKTeX; package repository, then you install it with the help of
-&MiKTeXPackageManager;.  This is explained in the manual. For the impatient: try it with
+&MiKTeXPackageManager;. See the section
+<ulink url="http://docs.miktex.org/manual/pkgmgt.html"><citetitle>Working
+With the Package Manager</citetitle></ulink> in the &MiKTeX; manual.</para>
+<para>For the impatient: try it with
 <informalexample>
 <programlisting>mpm --verbose --install <replaceable>X</replaceable></programlisting>
 </informalexample>
 </para>
-<para>If package <replaceable>X</replaceable> is not (yet) in the
-repository, then you must install it manually.
-See also <xref
+<para>If the package turns out to be missing in the &MiKTeX;
+package repository, then you must install it manually. See also <xref
 linkend="styfiles"/>.</para>
-</answer>
-</qandaentry>
-
-<qandaentry id="whichpkg">
-<question>
-<para>How can I find out which package the file
-<filename>x.y</filename> belongs to?</para>
-</question>
-<answer>
-<para>The search facility in &MiKTeXPackageManager; allows you to
-enter all or part of a file name. For example, enter
-<filename>colortbl.*</filename> to find out that
-<filename>colortbl.sty</filename> belongs to the package
-<filename>carlisle</filename>.</para>
 </answer>
 </qandaentry>
 
 <qandaentry id="missingpkg">
 <question>
-<para>Why is package <replaceable>X</replaceable> not in the distribution?</para>
+<para>Why is package <replaceable>X</replaceable> not &MiKTeX; package
+repository?</para>
 </question>
 <answer>
 <para>There are two possible reasons:</para>
@@ -509,6 +499,20 @@ of.</para>
 Free Software Guidelines</ulink>.</para>
 </listitem>
 </orderedlist>
+</answer>
+</qandaentry>
+
+<qandaentry id="whichpkg">
+<question>
+<para>How can I find out which package the file
+<filename>x.y</filename> belongs to?</para>
+</question>
+<answer>
+<para>The search facility in &MiKTeXPackageManager; allows you to
+enter all or part of a file name. For example, enter
+<filename>colortbl.*</filename> to find out that
+<filename>colortbl.sty</filename> belongs to the package
+<filename>carlisle</filename>.</para>
 </answer>
 </qandaentry>
 
@@ -690,19 +694,19 @@ will direct <application>Yap</application> to page 220.</para>
 the trace messages?</para>
 </question>
 <answer>
-<para>&MiKTeX; programs log their actions into the DebugView window,
-if you specify trace options (see <xref linkend="traceoptions"/>)
+<para>&MiKTeX; programs log their actions into the &DebugView; window,
+if you specify suitable trace options.
 </para>
 </answer>
 </qandaentry>
 
 <qandaentry id="debugview">
 <question>
-<para>How do I use the DebugView window?</para>
+<para>How do I use the &DebugView; window?</para>
 </question>
 <answer>
-<para>First of all, you will need the DebugView utility.
-To download DebugView, visit the <ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">DebugView page</ulink> and follow the
+<para>First of all, you will need the &DebugView; utility.
+To download &DebugView;, visit the <ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">&DebugView; page</ulink> and follow the
 download/installation instructions.</para>
 </answer>
 </qandaentry>

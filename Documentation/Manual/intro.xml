@@ -27,7 +27,7 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.
 
 <para>&MiKTeX; is available on the
 &CTAN;<footnote><para>Comprehenisive TeX Archive Network</para>
-</footnote> and on &CDR;/&DVDminR;.</para>
+</footnote> and on &CDR;/&DVDdashR;.</para>
 
 <section>
 
@@ -44,14 +44,18 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.
 
 <section id="miktexcdr">
 
-<title>&MiKTeX; on &CDR;/&DVDminR;</title>
+<title>&MiKTeX; on &CDRDDdashR;</title>
 
 <para>If you cannot easily download more than 400&nbsp;MB (the
 complete &MiKTeX; distribution), then you may wish to obtain a copy of
-the &MiKTeX; &CDR;/&DVDminR;.  Visit <ulink url="http://miktex.org/CD/">the
-CD-R/DVD-R info page</ulink>, for more information.
+the &MiKTeX; &CDRDVDdashR;.  Visit <ulink url="http://miktex.org/CD/">the
+&CDRDVDdashR; info page</ulink>, for more information.
 <indexterm>
 <primary>CD-R</primary>
+<secondary>obtaining</secondary>
+</indexterm>
+<indexterm>
+<primary>DVD-R</primary>
 <secondary>obtaining</secondary>
 </indexterm>
 <indexterm>
@@ -59,80 +63,26 @@ CD-R/DVD-R info page</ulink>, for more information.
 <secondary>running MiKTeX from the</secondary>
 </indexterm>
 <indexterm>
+<primary>DVD-R</primary>
+<secondary>running MiKTeX from the</secondary>
+</indexterm>
+<indexterm>
 <primary>MiKTeX CD-R</primary>
+</indexterm>
+<indexterm>
+<primary>MiKTeX DVD-R</primary>
 </indexterm>
 <indexterm>
 <primary>MiKTeX</primary>
 <secondary>CD-R</secondary>
-</indexterm></para>
-
-<para>The &MiKTeX; &CDR; allows you to install &MiKTeX; on the
-hard-disk or to run the programs directly from the &CDR;.</para>
-
-</section>
-
-<section id="otherapps">
-
-<title>Related Applications</title>
-
-<para>There are other applications you might be interested in
-installing:</para>
-
-<variablelist>
-
-<varlistentry>
-<term><application>ActivePerl</application></term>
-<listitem>
-<para><ulink
-url="http://www.activestate.com"><application>ActivePerl</application></ulink>
-is an implementation of
-<application>Perl</application> for <application>Windows</application>.
-A few utilities (e.g., <application>ConTeXt</application>)
-are <application>Perl</application> scripts.  You should install
-<application>ActivePerl</application>, if you want to use these
-utilities.
-<indexterm>
-<primary>Perl</primary>
-<secondary>getting</secondary>
 </indexterm>
 <indexterm>
-<primary>ActivePerl</primary>
+<primary>MiKTeX</primary>
+<secondary>DVD-R</secondary>
 </indexterm></para>
-</listitem>
-</varlistentry>
 
-<varlistentry>
-<term>&AdobeReader;</term>
-<listitem>
-<para><ulink
- url="http://www.adobe.com/prodindex/acrobat/readstep.html">&AdobeReader;</ulink> is a &PDF; document viewer.
-<indexterm>
-<primary>PDF</primary>
-<secondary>viewing</secondary>
-</indexterm>
-<indexterm>
-<primary>Adobe Reader</primary>
-<secondary>getting</secondary>
-</indexterm></para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><application>DebugView</application></term>
-<listitem>
-<para><application>DebugView</application> is a freeware application
-that lets you monitor diagnostic messages produced by
-&MiKTeX;.  You can download
-<application>DebugView</application> from the
-<ulink url="http://www.sysinternals.com">Sysinternals web site</ulink>.
-<indexterm>
-<primary>DebugView</primary>
-<secondary>getting</secondary>
-</indexterm></para>
-</listitem>
-</varlistentry>
-
-</variablelist>
+<para>The &MiKTeX; &CDRDVDdashR; allows you to install &MiKTeX; on the
+hard-disk or to run the programs directly from the &CDRDashR;.</para>
 
 </section>
 
@@ -140,10 +90,10 @@ that lets you monitor diagnostic messages produced by
 
 <section id="registering">
 
-<title>Registration</title>
+<title>Donations</title>
 
 <para>If you enjoy &MiKTeX; and want to support the project, then
-please consider registering &MiKTeX;.  Visit <ulink
+please consider donating.  Visit <ulink
 url="http://www.miktex.org/Donation.aspx">the &MiKTeX; donations page</ulink>,
 for more information.
 <indexterm>
@@ -158,12 +108,6 @@ for more information.
 </indexterm>
 <indexterm>
 <primary>donations</primary>
-</indexterm>
-<indexterm>
-<primary>email support</primary>
-</indexterm>
-<indexterm>
-<primary>support</primary>
 </indexterm>
 <indexterm>
 <primary>MiKTeX</primary>
