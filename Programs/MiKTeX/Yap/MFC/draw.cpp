@@ -507,7 +507,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	}
       
       // right border
-      if (!pDC->Rectangle(lm + sizePage.cx,
+      if (! pDC->Rectangle(lm + sizePage.cx,
 			  tm,
 			  lm + sizePage.cx + GetPageBorderWidth(),
 			  tm + sizePage.cy + GetPageBorderWidth()))
