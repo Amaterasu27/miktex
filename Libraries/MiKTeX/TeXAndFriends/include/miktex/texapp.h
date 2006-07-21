@@ -446,6 +446,7 @@ public:
     GetTeXString (szFileName,
 		  sourceFileName,
 		  MiKTeX::Core::BufferSizes::MaxPath);
+    MiKTeX::Core::PathName fileName = UnmangleNameOfFile(szFileName);
     const size_t BUFSIZE = MiKTeX::Core::BufferSizes::MaxPath + 100;
     MIKTEXCHAR szBuf[BUFSIZE];
 #if _MSC_VER >= 1400
@@ -453,14 +454,14 @@ public:
 		 BUFSIZE,
 		 MIKTEXTEXT("src:%d%s%s"),
 		 line,
-		 (_istdigit(*szFileName) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
-		 szFileName);
+		 (_istdigit(fileName[0]) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
+		 fileName.Get());
 #else
     _stprintf (szBuf,
 	       MIKTEXTEXT("src:%d%s%s"),
 	       line,
-	       (_istdigit(*szFileName) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
-	       szFileName);
+	       (_istdigit(fileName[0]) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
+	       fileName.Get());
 #endif
     size_t len = MiKTeX::Core::StrLen(szBuf);
     CheckPoolPointer (THEDATA(poolptr), len);
