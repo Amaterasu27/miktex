@@ -65,7 +65,7 @@ some examples:</para>
 <secondary>removing</secondary>
 </indexterm>
 
-<programlisting>texify --tex-opt=--src foo.tex</programlisting>
+<programlisting>texify --tex-option=--src foo.tex</programlisting>
 
 <para>Passes the option <option>--src</option> to the
 &TeX; compiler.</para>
@@ -75,7 +75,7 @@ some examples:</para>
 <para>Opens the output file <filename>foo.dvi</filename> (unless there
 are compile erros).</para>
 
-<programlisting>texify --tex-opt=--src --viewer-opt="-1 -s\"200 foo.tex\"" --run-viewer foo.tex</programlisting>
+<programlisting>texify --tex-option=--src --viewer-option="-1 -s\"200 foo.tex\"" --run-viewer foo.tex</programlisting>
 
 <para>Compiles <filename>foo.tex</filename> with source file
 information (<option>--src</option>) and then initiates forward &DVI;

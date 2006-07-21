@@ -10,7 +10,7 @@
 to give an introduction into the world of &TeX;.  If you are not
 familiar with using &TeX; (and Friends), then please consider reading
 one of the tutorials available on the <ulink
-url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials">Internet</ulink>.</para>
+url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">Internet</ulink>.</para>
 
 </section>
 
@@ -114,17 +114,6 @@ for more information.
 <secondary>registering</secondary>
 </indexterm></para>
 
-<para>Registered &MiKTeX; users are entitled
-to email support.
-<indexterm>
-<primary>email support</primary>
-<secondary>getting</secondary>
-</indexterm>
-<indexterm>
-<primary>support</primary>
-<secondary>email</secondary>
-</indexterm></para>
-
 </section>
 
 <section id="projectpage">
@@ -158,7 +147,7 @@ Info Page</ulink> and filling out the form provided there.</para>
 <secondary>archive</secondary>
 </indexterm>
 list, browse the <ulink
-url="http://www.geocrawler.com/redir-sf.php3?list=miktex-users">MiKTeX-Users
+url="http://sourceforge.net/mailarchive/forum.php?forum=miktex-users">MiKTeX-Users
 Archives</ulink>.</para>
 
 </section>
@@ -167,36 +156,6 @@ Archives</ulink>.</para>
 
 <title>Documentation</title>
 
-<para>Other &MiKTeX; related documentation
-<indexterm>
-<primary>MiKTeX</primary>
-<secondary>documentation</secondary>
-</indexterm>
-includes:</para>
-
-<variablelist>
-
-<varlistentry>
-<term>&FAQ;</term>
-<listitem>
-<para>Answers to frequently asked questions.
-<indexterm>
-<primary>FAQ (frequently asked questions)</primary>
-</indexterm>
-<indexterm>
-<primary>MiKTeX</primary>
-<secondary>FAQ</secondary>
-</indexterm></para>
-</listitem>
-</varlistentry>
-
-</variablelist>
-
-<para>Shortcuts to these documents can be found in the &MiKTeX;
-program folder (see <xref linkend="startmenu"/>) and on the project
-page.</para>
-
-<tip>
 <para>Use the &mthelp; utility to quickly access general &TeX; related
 documentation. For example, run
 <indexterm>
@@ -204,7 +163,6 @@ documentation. For example, run
 </indexterm>
 <userinput>mthelp memoir</userinput> to view documentation of the
 <filename>memoir</filename> package.</para>
-</tip>
 
 </section>
 
