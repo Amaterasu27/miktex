@@ -465,11 +465,6 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
   PathNameArray vec = ConstructSearchVector(fileType);
 
-  if (FindFileAlongVec(lpszFileName, vec, result))
-    {
-      return (true);
-    }
-
   if (GetFileNameExtension(lpszFileName) == 0)
     {
       PathName fileName (lpszFileName);
@@ -484,6 +479,11 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	      return (true);
 	    }
 	}
+    }
+
+  if (FindFileAlongVec(lpszFileName, vec, result))
+    {
+      return (true);
     }
 
   return (false);
