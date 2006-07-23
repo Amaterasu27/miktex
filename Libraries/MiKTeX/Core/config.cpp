@@ -477,6 +477,10 @@ SessionImpl::ReadAllConfigFiles (/*[in]*/ const MIKTEXCHAR *	lpszBaseName,
   // read all configuration files in reverse order
   for (unsigned i = GetNumberOfTEXMFRoots(); i > 0; -- i)
     {
+      if (! IsManagedRoot(i - 1))
+	{
+	  continue;
+	}
       PathName pathConfigFile (GetRootDirectory(i - 1), fileName);
       if (File::Exists(pathConfigFile))
 	{

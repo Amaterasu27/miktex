@@ -182,6 +182,10 @@ SessionImpl::ReadFormatsIni ()
   bool readSomething = false;
   for (unsigned r = GetNumberOfTEXMFRoots(); r > 0; -- r)
     {
+      if (! IsManagedRoot(r - 1))
+	{
+	  continue;
+	}
       PathName formatsIni = GetRootDirectory(r - 1);
       formatsIni += MIKTEX_PATH_FORMATS_INI;
       if (File::Exists(formatsIni))

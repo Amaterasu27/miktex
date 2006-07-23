@@ -2338,6 +2338,10 @@ public:
   GetInstallRoot ();
 
 private:
+  bool
+  IsManagedRoot (/*[in]*/ unsigned root);
+
+private:
   unsigned
   RegisterRootDirectory (/*[in]*/ const PathName & root);
 

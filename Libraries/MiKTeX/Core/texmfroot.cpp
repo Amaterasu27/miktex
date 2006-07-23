@@ -1169,6 +1169,22 @@ SessionImpl::SplitTEXMFPath (/*[in]*/  const PathName &		path,
 
 /* _________________________________________________________________________
 
+   SessionImpl::IsManagedRoot
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::IsManagedRoot (/*[in]*/ unsigned root)
+{
+  return (root == GetInstallRoot()
+	  || root == GetUserConfigRoot()
+	  || root == GetUserDataRoot()
+	  || (IsSharedMiKTeXSetup() == TriState::True
+	      && (root == GetCommonConfigRoot()
+		  || root == GetCommonDataRoot())));
+}
+
+/* _________________________________________________________________________
+
    IsMpmFile
 
    Check to see if a path starts with "\\MiKTeX\[MPM]\"

@@ -195,6 +195,10 @@ SessionImpl::ReadDvipsPaperSizes ()
 {
   for (unsigned r = GetNumberOfTEXMFRoots(); r > 0; -- r)
     {
+      if (! IsManagedRoot(r - 1))
+	{
+	  continue;
+	}
       PathName configPs (GetRootDirectory(r - 1), MIKTEX_PATH_CONFIG_PS);
 #undef BAD_PAPER_SIZE
 #define BAD_PAPER_SIZE()			\
