@@ -984,14 +984,14 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
       */
       PathName path;
       if (c4pargc == 2
-	  && c4pargv[1][0] != T_('*') // <fixme/>
+	  && strpbrk(c4pargv[1], T_("<>\"|*?")) == 0
 	  && SessionWrapper(true)->FindFile(c4pargv[1], inputFileType, path))
 	{
 	  fileNameArgIdx = 1;
 	}
       else if (c4pargc == 3
 	       && c4pargv[1][0] == T_('&')
-	       && c4pargv[2][0] != T_('*') // <fixme/>
+	       && strpbrk(c4pargv[2], T_("<>\"|*?")) == 0
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
 						 path))
@@ -1000,7 +1000,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 	}
       else if (c4pargc == 3
 	       && _tcscmp(c4pargv[2], T_("\\dump")) == 0
-	       && c4pargv[1][0] != T_('*') // <fixme/>
+	       && strpbrk(c4pargv[1], T_("<>\"|*?")) == 0
 	       && SessionWrapper(true)->FindFile(c4pargv[1],
 						 inputFileType,
 						 path))
@@ -1010,7 +1010,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
       else if (c4pargc == 4
 	       && c4pargv[1][0] == T_('&')
 	       && _tcscmp(c4pargv[3], T_("\\dump")) == 0
-	       && c4pargv[2][0] != T_('*') // <fixme/>
+	       && strpbrk(c4pargv[2], T_("<>\"|*?")) == 0
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
 						 path))
