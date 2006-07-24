@@ -35,7 +35,7 @@ AC_PREREQ([2.59])
 #    J2000   days since Jan 1, 2000
 #    RCNUM   release candidate number
 #  BETANUM   beta number
-AC_INIT([MiKTeX Tools],[2.5.2395-rc-1])
+AC_INIT([MiKTeX Tools],[2.5.2396-beta-14])
 
 # write configuration settings into ./config.h
 AC_CONFIG_HEADERS([config.h])
