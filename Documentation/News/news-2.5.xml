@@ -1,5 +1,13 @@
 <section>
 
+<title>&MiKTeXTools; Beta 14 (Jul 24, 2006)</title>
+
+<para>Fixed a build issue.</para>
+
+</section>
+
+<section>
+
 <title>&MiKTeXTools; Beta 13 (Jul 9, 2006)</title>
 
 <para>The package repository infrastructure experienced some changes
