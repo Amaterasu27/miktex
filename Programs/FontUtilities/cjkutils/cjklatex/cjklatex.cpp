@@ -1,6 +1,6 @@
 /* cjklatex.cpp:
 
-   Copyright (C) 2004-2005 Christian Schenk
+   Copyright (C) 2004-2006 Christian Schenk
 
    This file is part of CJKLaTeX.
 
@@ -246,7 +246,7 @@ CJKLaTeXApp::ShowVersion ()
 					   VER_FILEVERSION_STR)
 	<< T_("\n\
 Copyright (C) 2001 Fabrice Popineau\n\
-Copyright (C) 2004-2005 Christian Schenk\n\
+Copyright (C) 2004-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
@@ -398,7 +398,8 @@ CJKLaTeXApp::ParseInvocationName
 (/*[out]*/ tstring &		converterProgram,
  /*[out]*/ tstring &		engine)
 {
-  const MIKTEXCHAR * lpszInvocationName = Utils::GetExeName().c_str();
+  tstring invocationName = Utils::GetExeName();
+  const MIKTEXCHAR * lpszInvocationName = invocationName.c_str();
   size_t j = UINT_MAX;
   size_t len = 0;
   for (size_t i = 0; i < sizeof(Converters) / sizeof(Converters[0]); ++ i)
