@@ -36,8 +36,10 @@ libmiktex_core_la_CPPFLAGS += -DMIKTEX_DATAROOT=\"$(MIKTEX_DATAROOT)\"
 libmiktex_core_la_CPPFLAGS += -DMIKTEX_INSTALLROOT=\"$(MIKTEX_INSTALLROOT)\"
 libmiktex_core_la_CPPFLAGS += -DMIKTEX_ROOTS=\"$(MIKTEX_ROOTS)\"
 libmiktex_core_la_CPPFLAGS += -I$(srcdir)/include
+libmiktex_core_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/bzip2
 libmiktex_core_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/gl
 libmiktex_core_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/libmd5/include
+libmiktex_core_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/zlib
 libmiktex_core_la_CPPFLAGS += -I$(top_srcdir)/Libraries/MiKTeX/PackageManager/include
 
 libmiktex_core_la_LIBADD =
