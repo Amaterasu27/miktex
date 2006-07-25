@@ -1,6 +1,6 @@
 ## miktex.mak: cjkutils/cjklatex
 ##
-## Copyright (C) 2001-2004 Christian Schenk
+## Copyright (C) 2001-2006 Christian Schenk
 ##
 ## This file is part of the CJKLaTeX.
 ## 
@@ -82,6 +82,8 @@ $(outdir)\$(cjklatex_dll_name).dll $(outdir)\cjklatex.lib: \
 		$(linkopt_output_file)$(outdir)\$(cjklatex_dll_name).dll \
 		$(objects) \
 		delayimp.lib
+	mt -nologo -manifest $(outdir)\$(cjklatex_dll_name).dll.manifest \
+		-outputresource:$(outdir)\$(cjklatex_dll_name).dll;2
 
 $(outdir)\cjklatex.res: \
 			$(outdir) \
@@ -111,7 +113,8 @@ $(outdir)\cjklatex.exe: \
 		$(alias_cpp) \
 		$(ccopt_link) \
 			$(linkopt_output_file)$@ \
-			$(outdir)\cjklatex.lib \
+			$(outdir)\cjklatex.lib
+	mt -nologo -manifest $@.manifest -outputresource:$@;1
 
 $(outdir)\bg5+latex.exe: $(outdir)\cjklatex.exe
 	copy $(outdir)\cjklatex.exe "$@"
