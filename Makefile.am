@@ -60,4 +60,4 @@ dist-hook:
 	 -e 's/\@PACKAGE_NAME\@/$(PACKAGE_NAME)/' \
 	 $(distdir)/unx/README.unx > $(distdir)/README
 	cd $(distdir); doxygen
-	find $(distdir) -type f | xargs dos2unix-mingw --keepdate
+	find $(distdir) -type f | xargs --max-args=20 dos2unix-mingw --keepdate
