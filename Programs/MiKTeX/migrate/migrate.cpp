@@ -42,6 +42,17 @@ using namespace MiKTeX::Core;
 
 /* _________________________________________________________________________
 
+   IsWindowsNT
+   _________________________________________________________________________ */
+
+bool
+IsWindowsNT ()
+{
+  return (GetVersion () < 0x80000000);
+}
+
+/* _________________________________________________________________________
+
    RegistrySettings24
    _________________________________________________________________________ */
 
@@ -189,6 +200,14 @@ TryMigrateRegistry24 ()
 			      Session::InitFlags::NoConfigFiles);
   
   SessionWrapper pSession (initInfo);
+
+  if (settings24.sharedMiKTeX
+      && IsWindowsNT()
+      && ! (pSession->RunningAsAdministrator()
+	    || pSession->RunningAsPowerUser()))
+    {
+      throw T_("administrator privileges required");
+    }
   
   StartupConfig startupConfig;
   

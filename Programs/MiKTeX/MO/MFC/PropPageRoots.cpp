@@ -569,9 +569,18 @@ PropPageTeXMFRoots::EnableButtons ()
 
   UINT nSelected = listControl.GetSelectedCount();
 
-  bool canRemove = true;
-  bool canMoveUp = true;
-  bool canMoveDown = true;
+  bool runningAsAdmin =
+    (! IsWindowsNT()
+     || SessionWrapper(true)->RunningAsAdministrator()
+     || SessionWrapper(true)->RunningAsPowerUser());
+
+  bool shared =
+    (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True);
+
+  bool canAdd = (! shared || runningAsAdmin);
+  bool canRemove = (! shared || runningAsAdmin);
+  bool canMoveUp = (! shared || runningAsAdmin);
+  bool canMoveDown = (! shared || runningAsAdmin);
 
   int idx = -1;
 
@@ -621,6 +630,10 @@ PropPageTeXMFRoots::EnableButtons ()
 			   && canMoveDown
 			   && nSelected == 1
 			   && idx + 1 < nItems);
+  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
+
+  addButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
+			  && canAdd);
   CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 
   removeButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
