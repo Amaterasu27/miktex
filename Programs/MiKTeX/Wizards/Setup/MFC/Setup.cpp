@@ -1000,12 +1000,26 @@ CloseLog (/*[in]*/ bool cancel)
 	  || theApp.setupTask == SetupTask::InstallFromLocalRepository
 	  || theApp.setupTask == SetupTask::InstallFromRemoteRepository)
 	{
-	  pathLogDir.Set (theApp.startupConfig.installRoot,
-			  MIKTEX_PATH_MIKTEX_CONFIG_DIR);
+	  if (Directory::Exists(theApp.startupConfig.installRoot))
+	    {
+	      pathLogDir.Set (theApp.startupConfig.installRoot,
+			      MIKTEX_PATH_MIKTEX_CONFIG_DIR);
+	    }
+	  else
+	    {
+	      pathLogDir.SetToTempDirectory ();
+	    }
 	}
       else if (theApp.setupTask == SetupTask::Download)
 	{
-	  pathLogDir = theApp.localPackageRepository;
+	  if (Directory::Exists(theApp.localPackageRepository))
+	    {
+	      pathLogDir = theApp.localPackageRepository;
+	    }
+	  else
+	    {
+	      pathLogDir.SetToTempDirectory ();
+	    }
 	}
       else
 	{
