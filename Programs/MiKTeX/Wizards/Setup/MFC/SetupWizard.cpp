@@ -124,16 +124,45 @@ SetupWizard::OnInitDialog ()
     {
       SetIcon (AfxGetApp()->LoadIcon(IDI_SETUP), TRUE);
       CString title;
-      if (! title.LoadString(IDS_SETUPWIZ))
+      if (theApp.isMiKTeXDirect)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CString::LoadString"), 0);
+	  title.Format (T_("MiKTeX %s Setup"),
+			MIKTEXTEXT(MIKTEX_VERSION_STR));
 	}
-      title += T_(' ');
-      title += MIKTEXTEXT(MIKTEX_VERSION_STR);
+      else if (theApp.prefabricated)
+	{
+	  CString prefix;
+	  CString version;
+	  switch (theApp.packageLevel.Get())
+	    {
+	    case PackageLevel::Essential:
+	      prefix = T_("Essential ");
+	      version = MIKTEXTEXT(VER_FILEVERSION_STR);
+	      break;
+	    case PackageLevel::Basic:
+	      prefix = T_("Basic ");
+	      version = MIKTEXTEXT(VER_FILEVERSION_STR);
+	      break;
+	    case PackageLevel::Complete:
+	      prefix = T_("");
+	      version = MIKTEXTEXT(MIKTEX_VERSION_STR);
+	      break;
+	    default:
+	      MIKTEX_ASSERT (false);
+	      __assume (false);
+	      break;
+	    }
+	  title.Format (T_("%sMiKTeX %s Installer"),
+			static_cast<const MIKTEXCHAR *>(prefix),
+			static_cast<const MIKTEXCHAR *>(version));
+	}
+      else
+	{
+	  title.Format (T_("MiKTeX %s Net Installer"),
+			MIKTEXTEXT(MIKTEX_VERSION_STR));
+	}
       SetTitle (title);
-#if 0
-      SetActivePage (&m_Task);
-#endif
+      SetActivePage (&m_License);
     }
   catch (const MiKTeXException & e)
     {
