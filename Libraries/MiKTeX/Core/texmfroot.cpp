@@ -1229,7 +1229,7 @@ MIKTEXAPI(unsigned)
 miktex_get_number_of_texmf_roots ()
 {
   C_FUNC_BEGIN ();
-  return (SessionImpl::theSession->GetNumberOfTEXMFRoots());
+  return (SessionImpl::GetSession()->GetNumberOfTEXMFRoots());
   C_FUNC_END ();
 }
 
@@ -1246,7 +1246,7 @@ miktex_get_root_directory (/*[in]*/  unsigned		r,
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   Utils::CopyString (lpszPath,
 		     BufferSizes::MaxPath,
-		     SessionImpl::theSession->GetRootDirectory(r).Get());
+		     SessionImpl::GetSession()->GetRootDirectory(r).Get());
   return (lpszPath);
   C_FUNC_END ();
 }

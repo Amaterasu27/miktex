@@ -72,7 +72,7 @@ Directory::Exists (/*[in]*/ const PathName &	path)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
 	{
-	  SessionImpl::theSession->trace_access->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_access->WriteFormattedLine
 	    (T_("core"),
 	     T_("%s is not a directory"),
 	     Q_(path));
@@ -97,7 +97,7 @@ Directory::Exists (/*[in]*/ const PathName &	path)
 void
 Directory::Delete (/*[in]*/ const PathName &	path)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("deleting directory %s"),
      Q_(path));
@@ -121,13 +121,13 @@ File::Exists (/*[in]*/ const PathName &	path)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
 	{
-	  SessionImpl::theSession->trace_access->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_access->WriteFormattedLine
 	    (T_("core"),
 	     T_("%s is a directory"),
 	     Q_(path));
 	  return (false);
 	}
-      SessionImpl::theSession->trace_access->WriteFormattedLine
+      SessionImpl::GetSession()->trace_access->WriteFormattedLine
 	(T_("core"),
 	 T_("accessing file %s: OK"),
 	 Q_(path));
@@ -139,7 +139,7 @@ File::Exists (/*[in]*/ const PathName &	path)
     {
       FATAL_WINDOWS_ERROR (T_("GetFileAttributes"), path.Get());
     }
-  SessionImpl::theSession->trace_access->WriteFormattedLine
+  SessionImpl::GetSession()->trace_access->WriteFormattedLine
     (T_("core"),
      T_("accessing file %s: NOK"),
      Q_(path));
@@ -242,7 +242,7 @@ void
 File::SetNativeAttributes (/*[in]*/ const PathName &	path,
 			   /*[in]*/ unsigned long	nativeAttributes)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("setting new attributes (%x) on %s"),
      static_cast<int>(nativeAttributes),
@@ -509,9 +509,10 @@ File::GetTimes (/*[in]*/ const PathName &	path,
 void
 File::Delete (/*[in]*/ const PathName &	path)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine (T_("core"),
-							    T_("deleting %s"),
-							    Q_(path));
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
+    (T_("core"),
+     T_("deleting %s"),
+     Q_(path));
   if (! DeleteFile(path.Get()))
     {
       FATAL_WINDOWS_ERROR (T_("DeleteFile"), path.Get());
@@ -527,7 +528,7 @@ void
 File::Move (/*[in]*/ const PathName &	source,
 	    /*[in]*/ const PathName &	dest)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("renaming %s to %s"),
      Q_(source),
@@ -551,7 +552,7 @@ File::Copy (/*[in]*/ const PathName &	source,
 {
   UNUSED_ALWAYS (preserveAttributes);
 
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("copying %s to %s"),
      Q_(source),
@@ -587,7 +588,7 @@ File::Open (/*[in]*/ const PathName &	path,
 	    /*[in]*/ bool		isTextFile,
 	    /*[in]*/ FileShare		share)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("opening file %s (%d 0x%x %d %d)"),
      Q_(path),

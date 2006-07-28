@@ -68,7 +68,7 @@ tstring
 Utils::GetExeName ()
 {
   MIKTEXCHAR szName[BufferSizes::MaxPath];
-  SessionImpl::theSession
+  SessionImpl::GetSession()
     ->GetMyProgramFile().GetFileNameWithoutExtension (szName);
   return (szName);
 }
@@ -490,14 +490,14 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
   MIKTEX_ASSERT (File::Exists(lpszPath));
 #endif
 
-  unsigned root = SessionImpl::theSession->DeriveTEXMFRoot(lpszPath);
+  unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(lpszPath);
 
   PathName pathFqFndbFileName;
 
-  if (SessionImpl::theSession->FindFilenameDatabase(root, pathFqFndbFileName))
+  if (SessionImpl::GetSession()->FindFilenameDatabase(root, pathFqFndbFileName))
     {
       FileNameDatabase * pFndb =
-	SessionImpl::theSession->GetFileNameDatabase(root, TriState::False);
+	SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::False);
       if (pFndb == 0)
 	{
 	  UNEXPECTED_CONDITION (T_("Fndb::Add"));
@@ -511,9 +511,9 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
       // <fixme>the file name info hasn't been added, if the file
       // exists</fixme>
       PathName pathFndbFile
-	= SessionImpl::theSession->GetFilenameDatabasePathName(root);
+	= SessionImpl::GetSession()->GetFilenameDatabasePathName(root);
       if (! Fndb::Create(pathFndbFile.Get(),
-		 SessionImpl::theSession->GetRootDirectory(root).Get(),
+		 SessionImpl::GetSession()->GetRootDirectory(root).Get(),
 			 0))
 	{
 	  UNEXPECTED_CONDITION (T_("Fndb::Add"));
@@ -540,7 +540,7 @@ Fndb::Enumerate (/*[in]*/ const MIKTEXCHAR *		lpszPath,
   MIKTEX_ASSERT_STRING (lpszPath);
 
   FileNameDatabase * pFndb =
-    SessionImpl::theSession->GetFileNameDatabase(lpszPath);
+    SessionImpl::GetSession()->GetFileNameDatabase(lpszPath);
   
   if (pFndb == 0)
     {
@@ -566,10 +566,10 @@ Fndb::Remove (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
-  unsigned root = SessionImpl::theSession->DeriveTEXMFRoot(lpszPath);
+  unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(lpszPath);
 
   FileNameDatabase * pFndb =
-    SessionImpl::theSession->GetFileNameDatabase(root, TriState::False);
+    SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::False);
 
   if (pFndb == 0)
     {
@@ -590,10 +590,10 @@ bool
 MIKTEXCALL
 Fndb::FileExists (/*[in]*/ const PathName &	path)
 {
-  unsigned root = SessionImpl::theSession->DeriveTEXMFRoot(path);
+  unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(path);
 
   FileNameDatabase * pFndb =
-    SessionImpl::theSession->GetFileNameDatabase(root, TriState::False);
+    SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::False);
 
   if (pFndb == 0)
     {
@@ -654,11 +654,11 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
       haveValue = true;
     }
 #endif
-  if (SessionImpl::theSession != 0
-      && SessionImpl::theSession->trace_env.get() != 0
-      && SessionImpl::theSession->trace_env->IsEnabled())
+  if (SessionImpl::TryGetSession() != 0
+      && SessionImpl::GetSession()->trace_env.get() != 0
+      && SessionImpl::GetSession()->trace_env->IsEnabled())
     {
-      SessionImpl::theSession->trace_env->WriteFormattedLine
+      SessionImpl::GetSession()->trace_env->WriteFormattedLine
 	(T_("core"),
 	 T_("%s => %s"),
 	 lpszName,
@@ -838,7 +838,7 @@ void
 SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
 {
   // clear the search path cache
-  SessionImpl::theSession->ClearSearchVectors ();
+  ClearSearchVectors ();
 
   deque<tstring>::iterator it =
     find(workingDirectories.begin(),
@@ -1002,6 +1002,11 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     }
 #endif
 
+  if (initInfo.GetSizeOfStruct() != sizeof(initInfo))
+    {
+      INVALID_ARGUMENT (T_("SessionImpl::Initialize"), 0);
+    }
+
   initialized = true;
 
   this->initInfo = initInfo;
@@ -1061,6 +1066,13 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
      T_("initializing MiKTeX core library version %s"),
      VER_FILEVERSION_STR);
 
+#if defined(MIKTEX_DLL)
+  if (dynamicLoad.Get() == TriState::True)
+    {
+      trace_core->WriteFormattedLine (T_("core"), T_("dynamic load"));
+    }
+#endif
+  
   trace_core->WriteFormattedLine (T_("core"),
 				  T_("operating system: %s"),
 				  Utils::GetOSVersionString().c_str());
@@ -1134,14 +1146,8 @@ SessionImpl::Uninitialize ()
 Session *
 Session::Get ()
 {
-  if (SessionImpl::theSession == 0)
-    {
-      FATAL_MIKTEX_ERROR (T_("Session::Get"),
-			  T_("The core library has not been initialized."),
-			  0);
-    }
-  SessionImpl::theSession->refCount += 1;
-  return (SessionImpl::theSession);
+  SessionImpl::GetSession()->refCount += 1;
+  return (SessionImpl::GetSession());
 }
 
 /* _________________________________________________________________________
@@ -1178,8 +1184,17 @@ Session::Get (/*[in]*/ const Session::InitInfo & initInfo)
 			  0);
     }
   SessionImpl::theSession = new SessionImpl;
-  SessionImpl::theSession->Initialize (initInfo);
-  SessionImpl::theSession->refCount += 1;
+  try
+    {
+      SessionImpl::theSession->Initialize (initInfo);
+      SessionImpl::theSession->refCount += 1;
+    }
+  catch (const exception &)
+    {
+      delete SessionImpl::theSession;
+      SessionImpl::theSession = 0;
+      throw;
+    }
   return (SessionImpl::theSession);
 }
 

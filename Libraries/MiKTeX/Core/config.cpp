@@ -993,9 +993,9 @@ miktex_get_config_value (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
 {
   C_FUNC_BEGIN ();
   tstring value;
-  if (! SessionImpl::theSession->TryGetConfigValue(lpszSectionName,
-						   lpszValueName,
-						   value))
+  if (! SessionImpl::GetSession()->TryGetConfigValue(lpszSectionName,
+						     lpszValueName,
+						     value))
     {
       if (lpszDefaultValue == 0)
 	{

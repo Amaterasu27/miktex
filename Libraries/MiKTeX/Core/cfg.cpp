@@ -758,7 +758,7 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
   if (StringCompare(lpszMacroName, CFG_MACRO_NAME_BINDIR, true) == 0)
     {
       expansion =
-	SessionImpl::theSession
+	SessionImpl::GetSession()
 	->GetSpecialPath(SpecialPath::BinDirectory).ToString();
     }
 #if defined(MIKTEX_WINDOWS)
@@ -776,7 +776,7 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_PSFONTDIRS, true) == 0)
     {
       tstring psFontDirs;
-      if (SessionImpl::theSession->GetPsFontDirs(psFontDirs))
+      if (SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
 	{
 	  expansion = psFontDirs;
 	}
@@ -788,7 +788,7 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_TTFDIRS, true) == 0)
     {
       tstring ttfDirs;
-      if (SessionImpl::theSession->GetTTFDirs(ttfDirs))
+      if (SessionImpl::GetSession()->GetTTFDirs(ttfDirs))
 	{
 	  expansion = ttfDirs;
 	}

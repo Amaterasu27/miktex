@@ -617,7 +617,7 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
   traceStream->WriteFormattedLine (T_("core"),
 				   T_("creating fndb file %s..."),
 				   Q_(lpszFndbPath));
-  unsigned rootIdx = SessionImpl::theSession->DeriveTEXMFRoot(lpszRootPath);
+  unsigned rootIdx = SessionImpl::GetSession()->DeriveTEXMFRoot(lpszRootPath);
   this->enableStringPooling = enableStringPooling;
   this->storeFileNameInfo = storeFileNameInfo;
   byteArray.reserve (2 * 1024 * 1024);
@@ -659,7 +659,7 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
 	{
 	  const size_t GRAN = (1024 * 1024);
 	  size_t extra;
-	  if (rootIdx == SessionImpl::theSession->GetInstallRoot())
+	  if (rootIdx == SessionImpl::GetSession()->GetInstallRoot())
 	    {
 	      extra = 2 * GRAN;
 	    }
@@ -677,8 +677,8 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
       for (size_t i = 0; ! unloaded && i < 100; ++ i)
 	{
 	  unloaded =
-	    SessionImpl::theSession->UnloadFilenameDatabaseInternal(rootIdx,
-								    true);
+	    SessionImpl::GetSession()->UnloadFilenameDatabaseInternal(rootIdx,
+								      true);
 	  if (! unloaded)
 	    {
 	      traceStream->WriteFormattedLine (T_("core"), T_("Sleep(1)"));
@@ -777,13 +777,13 @@ bool
 Fndb::Refresh (/*[in]*/ const PathName &	path,
 	       /*[in]*/ ICreateFndbCallback *	pCallback)
 {
-  unsigned root = SessionImpl::theSession->DeriveTEXMFRoot(path);
+  unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(path);
 
   PathName pathFndbPath =
-    SessionImpl::theSession->GetFilenameDatabasePathName(root);
+    SessionImpl::GetSession()->GetFilenameDatabasePathName(root);
 
   return (Fndb::Create(pathFndbPath.Get(),
-		       SessionImpl::theSession->GetRootDirectory(root).Get(),
+		       SessionImpl::GetSession()->GetRootDirectory(root).Get(),
 		       pCallback));
 }
 
@@ -795,13 +795,14 @@ Fndb::Refresh (/*[in]*/ const PathName &	path,
 bool
 Fndb::Refresh (/*[in]*/ ICreateFndbCallback *	pCallback)
 {
-  unsigned n = SessionImpl::theSession->GetNumberOfTEXMFRoots();
+  unsigned n = SessionImpl::GetSession()->GetNumberOfTEXMFRoots();
   for (unsigned idx = 0; idx < n; ++ idx)
     {
       PathName pathFndbPath =
-	SessionImpl::theSession->GetFilenameDatabasePathName(idx);
+	SessionImpl::GetSession()->GetFilenameDatabasePathName(idx);
       if (! Fndb::Create(pathFndbPath.Get(),
-			 SessionImpl::theSession->GetRootDirectory(idx).Get(),
+			 (SessionImpl::GetSession()
+			  ->GetRootDirectory(idx).Get()),
 			 pCallback))
 	{
 	  return (false);

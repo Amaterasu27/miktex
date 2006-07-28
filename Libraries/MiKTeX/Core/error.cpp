@@ -129,7 +129,7 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 			   /*[in]*/ int			sourceLine)
 {
   tstring programInvocationName;
-  if (SessionImpl::theSession != 0)
+  if (SessionImpl::TryGetSession() != 0)
     {
       TraceMiKTeXError (lpszMiktexFunction,
 			lpszMessage,
@@ -137,7 +137,7 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 			lpszSourceFile,
 			sourceLine);
       programInvocationName =
-	SessionImpl::theSession->initInfo.GetProgramInvocationName();
+	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
 #if 1
   tstring env;
@@ -227,14 +227,14 @@ Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
       errorMessage += lpszInfo;
     }
   tstring programInvocationName;
-  if (SessionImpl::theSession != 0)
+  if (SessionImpl::TryGetSession() != 0)
     {
       TraceStream::TraceLastCRTError (lpszCrtFunction,
 				      lpszInfo,
 				      lpszSourceFile,
 				      sourceLine);
       programInvocationName =
-	SessionImpl::theSession->initInfo.GetProgramInvocationName();
+	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
 #if 1
   tstring env;

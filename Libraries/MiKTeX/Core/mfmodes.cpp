@@ -268,7 +268,7 @@ miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszMnemonic, bufSize);
   MIKTEXMFMODE mode;
-  if (! SessionImpl::theSession->DetermineMETAFONTMode(dpi, &mode))
+  if (! SessionImpl::GetSession()->DetermineMETAFONTMode(dpi, &mode))
     {
       return (0);
     }

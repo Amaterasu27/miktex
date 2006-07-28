@@ -673,14 +673,14 @@ Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
 			    /*[in]*/ int		sourceLine)
 {
   tstring programInvocationName;
-  if (SessionImpl::theSession != 0)
+  if (SessionImpl::TryGetSession() != 0)
     {
       TraceStream::TraceLastWin32Error (lpszWindowsFunction,
 					lpszInfo,
 					lpszSourceFile,
 					sourceLine);
       programInvocationName =
-	SessionImpl::theSession->initInfo.GetProgramInvocationName();
+	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
   tstring errorMessage = T_("Windows API error ");
   errorMessage += NUMTOSTR(errorCode);
@@ -1548,7 +1548,7 @@ PathName::SetToTempDirectory ()
 PathName &
 PathName::SetToTempFile ()
 {
-  PathName pathTempDir = SessionImpl::theSession->GetTempDirectory();
+  PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
 
   UINT n = GetTempFileName(pathTempDir.Get(), T_("mik"), 0, buffer);
 
@@ -1557,7 +1557,7 @@ PathName::SetToTempFile ()
       FATAL_WINDOWS_ERROR (T_("GetTempFileName"), pathTempDir.Get());
     }
 
-  SessionImpl::theSession->trace_tempfile->WriteFormattedLine
+  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     (T_("core"),
      T_("created temporary file %s"),
      Q_(buffer));
@@ -1582,20 +1582,21 @@ TraceWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
     {
       return;
     }
-  SessionImpl::theSession->trace_error->WriteFormattedLine (T_("core"),
-	 T_("\
+  SessionImpl::GetSession()->trace_error->WriteFormattedLine
+    (T_("core"),
+     T_("\
 Windows function %s failed for the following reason:\n	\
 %s\n\
 Result: %u\n\
 Info: %s\n\
 Source: %s\n\
 Line: %d"),
-	 lpszWindowsFunction,
-	 errorMessage.c_str(),
-	 static_cast<unsigned>(functionResult),
-	 (lpszInfo == 0 ? T_("") : lpszInfo),
-	 lpszSourceFile,
-	 sourceLine);
+     lpszWindowsFunction,
+     errorMessage.c_str(),
+     static_cast<unsigned>(functionResult),
+     (lpszInfo == 0 ? T_("") : lpszInfo),
+     lpszSourceFile,
+     sourceLine);
 }
 
 /* _________________________________________________________________________
@@ -2327,7 +2328,7 @@ void
 Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
 			     /*[in]*/ const MIKTEXCHAR *	lpszValue)
 {
-  SessionImpl::theSession->trace_config->WriteFormattedLine
+  SessionImpl::GetSession()->trace_config->WriteFormattedLine
     (T_("core"),
      T_("setting env %s=%s"),
      lpszValueName,
@@ -2474,28 +2475,44 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 
 #if defined(MIKTEX_DLL)
 
+#if ! defined(MIKTEX_PREVENT_DYNAMIC_LOADS)
+#  define MIKTEX_PREVENT_DYNAMIC_LOADS 0
+#endif
+
 HINSTANCE SessionImpl::hinstDLL = 0;
+TriState SessionImpl::dynamicLoad = TriState::Undetermined;
 
 int
 WINAPI
 DllMain (/*[in]*/ HINSTANCE		hinstDLL,
 	 /*[in]*/ unsigned long		reason,
-	 /*[in]*/ void *			)
+	 /*[in]*/ void *		lpReserved)
 {
+  BOOL retCode = TRUE;
+
   switch (reason)
     {
       // initialize primary thread
     case DLL_PROCESS_ATTACH:
+      SessionImpl::dynamicLoad =
+	(lpReserved == 0 ? TriState::True : TriState::False);
+#if MIKTEX_PREVENT_DYNAMIC_LOADS
+      if (SessionImpl::dynamicLoad == TriState::True)
+	{
+	  retCode = FALSE;
+	}
+#endif
       SessionImpl::hinstDLL = hinstDLL;
       break;
 
       // finalize primary thread
     case DLL_PROCESS_DETACH:
+      SessionImpl::dynamicLoad = TriState::Undetermined;
       SessionImpl::hinstDLL = 0;
       break;
     }
 
-  return (1);
+  return (retCode);
 }
 
 #endif

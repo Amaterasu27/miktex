@@ -641,7 +641,7 @@ SessionImpl::RegisterFileTypes ()
   // <todo>FileType::PK</todo>
 
   tstring psFontDirs;
-  if (! SessionImpl::theSession->GetPsFontDirs(psFontDirs))
+  if (! SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
     {
       psFontDirs = T_("");
     }
@@ -773,7 +773,7 @@ SessionImpl::RegisterFileTypes ()
 		 ));
 
   tstring ttfFontDirs;
-  if (! SessionImpl::theSession->GetTTFDirs(ttfFontDirs))
+  if (! SessionImpl::GetSession()->GetTTFDirs(ttfFontDirs))
     {
       ttfFontDirs = T_("");
     }

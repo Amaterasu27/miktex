@@ -666,14 +666,14 @@ File::PushAside (/*[in,out]*/ PathName &	path,
     {
       File::Delete (newFile.c_str(), true);
     }
-  SessionImpl::theSession->trace_files->WriteFormattedLine
+  SessionImpl::GetSession()->trace_files->WriteFormattedLine
     (T_("core"),
      T_("renaming \"%s\" to \"%s\""),
      path.Get(),
      newFile.c_str());
   File::Move (path, newFile.c_str());
   if (updateFndb
-      && SessionImpl::theSession->IsTEXMFFile(path.Get(), 0, 0)
+      && SessionImpl::GetSession()->IsTEXMFFile(path.Get(), 0, 0)
       && Fndb::FileExists(path))
     {
       Fndb::Remove (path);
@@ -704,7 +704,7 @@ File::Delete (/*[in]*/ const PathName &		path,
 	      /*[in]*/ bool			updateFndb)
 {
   if (updateFndb
-      && SessionImpl::theSession->IsTEXMFFile(path.Get(), 0, 0)
+      && SessionImpl::GetSession()->IsTEXMFFile(path.Get(), 0, 0)
       && Fndb::FileExists(path))
     {
       Fndb::Remove (path);
@@ -756,7 +756,7 @@ File::Delete (/*[in]*/ const PathName &		path,
 	}
       File::Delete (szTemp);
       File::Move (absPath, szTemp);
-      SessionImpl::theSession->ScheduleFileRemoval (szTemp);
+      SessionImpl::GetSession()->ScheduleFileRemoval (szTemp);
     }
 #endif
 }

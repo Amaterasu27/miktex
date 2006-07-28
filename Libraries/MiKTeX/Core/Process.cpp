@@ -133,7 +133,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 
   if (pCallback != 0)
     {
-      SessionImpl::theSession->trace_process->WriteLine
+      SessionImpl::GetSession()->trace_process->WriteLine
 	(T_("core"),
 	 T_("start reading the pipe"));
       const size_t CHUNK_SIZE = 64;
@@ -153,9 +153,10 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 	  total += n;
 	  cancelled = ! pCallback->OnProcessOutput(buf, n);
 	}
-      SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
-	     T_("read %u bytes from the pipe"),
-	     static_cast<unsigned>(total));
+      SessionImpl::GetSession()->trace_process->WriteFormattedLine
+	(T_("core"),
+	 T_("read %u bytes from the pipe"),
+	 static_cast<unsigned>(total));
     }
   
   // wait for the process to finish

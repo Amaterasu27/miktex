@@ -342,7 +342,7 @@ SessionImpl::GetPaperSizeInfo (/*[in]*/ const MIKTEXCHAR * lpszDvipsName)
 {
   PaperSizeInfo paperSizeInfo;
   for (int idx = 0;
-       SessionImpl::theSession->GetPaperSizeInfo(idx, paperSizeInfo);
+       GetPaperSizeInfo(idx, paperSizeInfo);
        ++ idx)
     {
       if (StringCompare(paperSizeInfo.dvipsName.c_str(), lpszDvipsName, true)
@@ -417,7 +417,7 @@ PaperSizeInfo::Parse (/*[in]*/ const MIKTEXCHAR * lpszSpec)
   PaperSizeInfo paperSizeInfo;
 
   for (int idx = 0;
-       SessionImpl::theSession->GetPaperSizeInfo(idx, paperSizeInfo);
+       SessionImpl::GetSession()->GetPaperSizeInfo(idx, paperSizeInfo);
        ++ idx)
     {
       if (paperSizeInfo.width == width

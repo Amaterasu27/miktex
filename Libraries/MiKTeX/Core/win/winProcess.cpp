@@ -101,7 +101,7 @@ winProcess::Create ()
       if (startinfo.StandardOutput != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stdout to a stream"));
 #endif
@@ -129,7 +129,7 @@ winProcess::Create ()
       else if (startinfo.RedirectStandardOutput)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stdout to a pipe"));
 #endif
@@ -159,7 +159,7 @@ winProcess::Create ()
       if (startinfo.StandardError != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stderr to a stream"));
 #endif
@@ -187,7 +187,7 @@ winProcess::Create ()
       else if (startinfo.RedirectStandardError)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stderr to a pipe"));
 #endif
@@ -216,7 +216,7 @@ winProcess::Create ()
       else if (hChildStdout != INVALID_HANDLE_VALUE)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("make child stderr = child stdout"));
 #endif
@@ -238,7 +238,7 @@ winProcess::Create ()
       if (startinfo.StandardInput != 0)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stdin to a stream"));
 #endif
@@ -266,7 +266,7 @@ winProcess::Create ()
       else if (startinfo.RedirectStandardInput)
 	{
 #if TRACEREDIR
-	  SessionImpl::theSession->trace_process->WriteFormattedLine
+	  SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	    (T_("core"),
 	     T_("redirecting stdin to a pipe"));
 #endif
@@ -330,7 +330,7 @@ winProcess::Create ()
 	}
       
       // start child process
-      SessionImpl::theSession->trace_process->WriteFormattedLine
+      SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	(T_("core"),
 	 T_("starting \"%s\""),
 	 commandLine.c_str());
@@ -667,9 +667,9 @@ Wrap (/*[in,out]*/ tstring &	arguments)
     {
       // start a wrapper, if we are running on W9x
       PathName conspawn;
-      if (! SessionImpl::theSession->FindFile(T_("conspawn"),
-					      FileType::EXE,
-					      conspawn))
+      if (! SessionImpl::GetSession()->FindFile(T_("conspawn"),
+						FileType::EXE,
+						conspawn))
 	{
 	  FATAL_MIKTEX_ERROR (T_("Process::ExecuteSystemCommand"),
 			      T_("cannot find conspawn.exe"),

@@ -57,7 +57,7 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 			       value,
 			       lpszDefaultValue));
 #else
-      shared = SessionImpl::theSession->IsSharedMiKTeXSetup();
+      shared = SessionImpl::GetSession()->IsSharedMiKTeXSetup();
       if (shared == TriState::Undetermined)
 	{
 	  shared = TriState::False;
@@ -267,11 +267,11 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
 
   if (shared == TriState::Undetermined)
     {
-      shared = SessionImpl::theSession->IsSharedMiKTeXSetup();
+      shared = SessionImpl::GetSession()->IsSharedMiKTeXSetup();
       if (shared == TriState::Undetermined)
 	{
 	  if (! IsWindowsNT()
-	      || SessionImpl::theSession->RunningAsAdministrator())
+	      || SessionImpl::GetSession()->RunningAsAdministrator())
 	    {
 	      shared = TriState::True;
 	    }
@@ -299,10 +299,11 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
      ? HKEY_CURRENT_USER
      : HKEY_LOCAL_MACHINE);
 
-  SessionImpl::theSession->trace_config->WriteFormattedLine (T_("core"),
-	 T_("RegCreateKey (%p, \"%s\")"),
-	 reinterpret_cast<void*>(hkeyRoot),
-	 registryPath.c_str());
+  SessionImpl::GetSession()->trace_config->WriteFormattedLine
+    (T_("core"),
+     T_("RegCreateKey (%p, \"%s\")"),
+     reinterpret_cast<void*>(hkeyRoot),
+     registryPath.c_str());
 
   long result =
     RegCreateKeyEx(hkeyRoot,

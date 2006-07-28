@@ -118,6 +118,6 @@ miktex_get_gs_exe (/*[out]*/ MIKTEXCHAR *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  SessionImpl::theSession->GetGhostscript (lpszPath, 0);
+  SessionImpl::GetSession()->GetGhostscript (lpszPath, 0);
   C_FUNC_END ();
 }

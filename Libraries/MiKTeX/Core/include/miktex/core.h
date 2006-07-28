@@ -277,6 +277,30 @@ class PathName;
 typedef std::basic_string<MIKTEXCHAR> tstring;
 
 /* _________________________________________________________________________
+
+   StructChecker
+   _________________________________________________________________________ */
+
+template<class Derived>
+struct StructChecker
+{
+private:
+  size_t sizeOfStruct;
+protected:
+  StructChecker ()
+    : sizeOfStruct (sizeof(Derived))
+  {
+  }
+public:
+  size_t
+  GetSizeOfStruct ()
+    const
+  {
+    return (sizeOfStruct);
+  }
+};
+
+/* _________________________________________________________________________
    
    FormatInfo
    _________________________________________________________________________ */
@@ -5014,6 +5038,7 @@ public:
   /// Init info struct.
 public:
   class InitInfo
+    : public StructChecker<InitInfo>
   {
     /// Initializes a new init info struct.
   public:

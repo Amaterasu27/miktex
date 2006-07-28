@@ -331,9 +331,10 @@ TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 {
   va_list marker;
   va_start (marker, lpszFormat);
-  SessionImpl::theSession->trace_error->VTrace (T_("core"),
-						lpszFormat,
-						marker);
+  SessionImpl::GetSession()->trace_error->VTrace
+    (T_("core"),
+     lpszFormat,
+     marker);
   va_end (marker);
 }
 
@@ -499,22 +500,23 @@ TraceStream::TraceLastCRTError
     {
       return;
     }
-  SessionImpl::theSession->trace_error->WriteFormattedLine (T_("core"),
-					       T_("\
+  SessionImpl::GetSession()->trace_error->WriteFormattedLine
+    (T_("core"),
+     T_("\
 CRT function %s failed for the following reason:\n\
 %s\n\
 Result: %u\n\
 Info: %s\n\
 Source: %s\n\
 Line: %d"),
-					       lpszCrtFunction,
-					       errorMessage.c_str(),
-					       lastError,
-					       (lpszInfo == 0
-						? T_("")
-						: lpszInfo),
-					       lpszSourceFile,
-					       lpszSourceLine);
+     lpszCrtFunction,
+     errorMessage.c_str(),
+     lastError,
+     (lpszInfo == 0
+      ? T_("")
+      : lpszInfo),
+     lpszSourceFile,
+     lpszSourceLine);
 }
 
 /* _________________________________________________________________________
@@ -529,7 +531,7 @@ TraceMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 		  /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
 		  /*[in]*/ int			lpszSourceLine)
 {
-  SessionImpl::theSession->trace_error->WriteFormattedLine
+  SessionImpl::GetSession()->trace_error->WriteFormattedLine
     (T_("core"),
      T_("\
 The MiKTeX function %s fails for the following reason:\n\

@@ -727,9 +727,9 @@ miktex_find_file (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   MIKTEX_ASSERT_STRING (lpszPathList);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFileName,
-					  lpszPathList,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFileName,
+					    lpszPathList,
+					    temp))
     {
       return (0);
     }
@@ -754,10 +754,10 @@ miktex_find_pk_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING_OR_NIL (lpszMode);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindPkFile(lpszFontName,
-					    lpszMode,
-					    dpi,
-					    temp))
+  if (! SessionImpl::GetSession()->FindPkFile(lpszFontName,
+					      lpszMode,
+					      dpi,
+					      temp))
     {
       return (0);
     }
@@ -779,9 +779,9 @@ miktex_find_tfm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::TFM,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::TFM,
+					    temp))
     {
       return (0);
     }
@@ -803,9 +803,9 @@ miktex_find_ttf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::TTF,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::TTF,
+					    temp))
     {
       return (0);
     }
@@ -827,9 +827,9 @@ miktex_find_afm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::AFM,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::AFM,
+					    temp))
     {
       return (0);
     }
@@ -851,9 +851,9 @@ miktex_find_enc_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::ENC,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::ENC,
+					    temp))
 
     {
       return (0);
@@ -876,9 +876,9 @@ miktex_find_psheader_file (/*[in]*/ const MIKTEXCHAR *	lpszHeaderName,
   MIKTEX_ASSERT_STRING (lpszHeaderName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszHeaderName,
-					  FileType::PSHEADER,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszHeaderName,
+					    FileType::PSHEADER,
+					    temp))
     {
       return (0);
     }
@@ -902,9 +902,9 @@ miktex_find_input_file (/*[in]*/ const MIKTEXCHAR *	lpszApplicationName,
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFileName,
-					  FileType::None,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFileName,
+					    FileType::None,
+					    temp))
     {
       if (lpszApplicationName == 0)
 	{
@@ -916,9 +916,9 @@ miktex_find_input_file (/*[in]*/ const MIKTEXCHAR *	lpszApplicationName,
       searchPath += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
       searchPath += lpszApplicationName;
       searchPath += RECURSION_INDICATOR;
-      if (! SessionImpl::theSession->FindFile(lpszFileName,
-					      searchPath.c_str(),
-					      temp))
+      if (! SessionImpl::GetSession()->FindFile(lpszFileName,
+						searchPath.c_str(),
+						temp))
 	{
 	  return (0);
 	}
@@ -941,9 +941,9 @@ miktex_find_hbf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::HBF,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::HBF,
+					    temp))
     {
       return (0);
     }
@@ -965,9 +965,9 @@ miktex_find_type1_font_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszFontName,
-					  FileType::TYPE1,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
+					    FileType::TYPE1,
+					    temp))
     {
       return (0);
     }
@@ -989,9 +989,9 @@ miktex_find_miktex_executable (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
   MIKTEX_ASSERT_STRING (lpszExeName);
   MIKTEX_ASSERT_PATH_BUFFER (lpszExePath);
   PathName temp;
-  if (! SessionImpl::theSession->FindFile(lpszExeName,
-					  FileType::EXE,
-					  temp))
+  if (! SessionImpl::GetSession()->FindFile(lpszExeName,
+					    FileType::EXE,
+					    temp))
     {
       return (0);
     }

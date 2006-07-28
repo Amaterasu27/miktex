@@ -34,7 +34,7 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 {
   MIKTEX_ASSERT_STRING (lpszPathIn);
 
-  SessionImpl::theSession->trace_process->WriteFormattedLine
+  SessionImpl::GetSession()->trace_process->WriteFormattedLine
     (T_("core"),
      T_("uncompressing %s..."),
      Q_(lpszPathIn));
@@ -62,20 +62,20 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
       CommandLineBuilder cmd (T_("zcat"));
       cmd.AppendArgument (lpszPathIn);
       pInputStream =
-	SessionImpl::theSession->OpenFile(cmd.Get(),
-					  FileMode::Command,
-					  FileAccess::Read,
-					  false);
+	SessionImpl::GetSession()->OpenFile(cmd.Get(),
+					    FileMode::Command,
+					    FileAccess::Read,
+					    false);
     }
   else if (PathName(lpszPathIn).HasExtension(T_(".bz2")))
     {
       CommandLineBuilder cmd (T_("bzcat"));
       cmd.AppendArgument (lpszPathIn);
       pInputStream =
-	SessionImpl::theSession->OpenFile(cmd.Get(),
-					  FileMode::Command,
-					  FileAccess::Read,
-					  false);
+	SessionImpl::GetSession()->OpenFile(cmd.Get(),
+					    FileMode::Command,
+					    FileAccess::Read,
+					    false);
     }
   else
     {
@@ -97,11 +97,11 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
     }
   catch (const exception &)
     {
-      SessionImpl::theSession->CloseFile (pInputStream);
+      SessionImpl::GetSession()->CloseFile (pInputStream);
       throw;
     }
 
-  SessionImpl::theSession->CloseFile (pInputStream);
+  SessionImpl::GetSession()->CloseFile (pInputStream);
 
   pathOut = pathTempFileName;
 }

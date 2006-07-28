@@ -176,7 +176,7 @@ PathName &
 ScratchDirectory::Create (/*[out]*/ PathName & path)
 {
   // get temp directory
-  PathName pathTempDir = SessionImpl::theSession->GetTempDirectory();
+  PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
   
   InitializeRand ();
   
@@ -203,7 +203,7 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
 	    }
 	  else
 	    {
-	      SessionImpl::theSession->trace_tempfile->WriteFormattedLine
+	      SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
 		(T_("core"),
 		 T_("\"%s\" already exists"),
 		 pathScratchDirectory.Get());
@@ -265,10 +265,10 @@ ScratchDirectory::Enter (/*[in]*/ const MIKTEXCHAR *	lpszPrefix)
   PathName scratchDirectory;
   scratchDirectoryInfo.scratchDirectory = Create(scratchDirectory).Get();
 
-  SessionImpl::theSession
+  SessionImpl::GetSession()
     ->scratchDirectoryStack.push (scratchDirectoryInfo);
   
-  SessionImpl::theSession->trace_tempfile->WriteFormattedLine
+  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     (T_("core"),
      T_("entering scratch directory \"%s\""),
      scratchDirectoryInfo.scratchDirectory.c_str());
@@ -281,7 +281,7 @@ ScratchDirectory::Enter (/*[in]*/ const MIKTEXCHAR *	lpszPrefix)
   entered = true;
   
   // add the previous directory to the input path
-  SessionImpl::theSession
+  SessionImpl::GetSession()
     ->AddWorkingDirectory (scratchDirectoryInfo.previous.c_str(), false);
 }
 
@@ -298,7 +298,7 @@ ScratchDirectory::Leave ()
       return;
     }
 
-  if (SessionImpl::theSession->scratchDirectoryStack.empty())
+  if (SessionImpl::GetSession()->scratchDirectoryStack.empty())
     {
       FATAL_MIKTEX_ERROR (T_("ScratchDirectory::Leave"),
 			  T_("The scratch directory could not be left."),
@@ -306,14 +306,14 @@ ScratchDirectory::Leave ()
     }
 
   SessionImpl::ScratchDirectoryInfo scratchdir =
-    SessionImpl::theSession->scratchDirectoryStack.top();
-  SessionImpl::theSession->scratchDirectoryStack.pop ();
+    SessionImpl::GetSession()->scratchDirectoryStack.top();
+  SessionImpl::GetSession()->scratchDirectoryStack.pop ();
 
   // remove the previous directory from the input path
-  SessionImpl::theSession
+  SessionImpl::GetSession()
     ->RemoveWorkingDirectory (scratchdir.previous.c_str());
 
-  SessionImpl::theSession->trace_tempfile->WriteFormattedLine
+  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     (T_("core"),
      T_("leaving scratch directory \"%s\""),
      scratchdir.scratchDirectory.c_str());

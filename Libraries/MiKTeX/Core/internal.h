@@ -2118,8 +2118,36 @@ public:
   static HINSTANCE hinstDLL;
 #endif
 
+#if defined(MIKTEX_DLL)
+public:
+  static TriState dynamicLoad;
+#endif
+
 public:
   static SessionImpl * theSession;
+
+public:
+  static
+  SessionImpl *
+  TryGetSession ()
+  {
+    return (theSession);
+  }
+
+public:
+  static
+  SessionImpl *
+  GetSession ()
+  {
+    if (theSession == 0)
+      {
+	FATAL_MIKTEX_ERROR
+	  (T_("SessionImpl::GetSession"),
+	   T_("The MiKTeX Core library has not been initialized."),
+	   0);
+      }
+    return (theSession);
+  }
 
 public:
   static
