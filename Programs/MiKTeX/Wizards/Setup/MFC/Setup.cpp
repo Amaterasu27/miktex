@@ -26,14 +26,6 @@
 #include "SetupWizard.h"
 #include "ShellLinkData.h"
 
-#define LOG_FILE_NOTE T_("\
-****************************************************************************\n\
-*  Note: please attach this log file to the tracker item,                  *\n\
-*        if you intend to submit a bug report at                           *\n\
-*  http://sourceforge.net/tracker/?atid=110783&group_id=10783&func=browse  *\n\
-****************************************************************************\n\
-")
-
 // this runs the wizard
 SetupWizardApplication theApp;
 
@@ -973,20 +965,14 @@ CloseLog (/*[in]*/ bool cancel)
       return;
     }
 
+  // close the intermediate log file
+  theApp.logStream.Close ();
+
   if (cancel)
     {
-      // remove the intermediate log file
-      theApp.logStream.Close ();
       File::Delete (theApp.intermediateLogFile);
       return;
     }
-
-  theApp.logStream.WriteLine ();
-  theApp.logStream.WriteLine ();
-  theApp.logStream.Write (LOG_FILE_NOTE);
-
-  // close the intermediate log file
-  theApp.logStream.Close ();
 
   // determine the final log directory
   PathName pathLogDir;
