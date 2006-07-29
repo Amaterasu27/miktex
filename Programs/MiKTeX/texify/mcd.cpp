@@ -49,8 +49,6 @@ using namespace MiKTeX::App;
 using namespace MiKTeX::Core;
 using namespace std;
 
-tstring progName;
-
 #define ALWAYS_UNUSED(x) (x)
 
 #define SUPPORT_OPT_SRC_SPECIALS
@@ -2250,8 +2248,6 @@ McdApp::Run (/*[in]*/ int			argc,
 	     /*[in]*/ const MIKTEXCHAR **	argv)
 {
   Session::InitInfo initInfo (argv[0]);
-
-  progName = Utils::GetExeName();
 
   Cpopt popt (argc, argv, optionTable);
 
