@@ -46,11 +46,11 @@ cloptions = \
 formatdir = $(prefix)\miktex\fmt
 
 binaries = \
-	$(outdir)\$(pdftex_dll_name).dll \
-	$(outdir)\pdfinitex.exe \
-	$(outdir)\pdftex.exe \
+#	$(outdir)\$(pdftex_dll_name).dll \
+#	$(outdir)\pdfinitex.exe \
+#	$(outdir)\pdftex.exe \
 	$(outdir)\pdftosrc.exe \
-	$(outdir)\pdfvirtex.exe \
+#	$(outdir)\pdfvirtex.exe \
 	$(outdir)\ttf2afm.exe \
 
 pdftexdata = g_pdfTeXData

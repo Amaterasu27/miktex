@@ -202,6 +202,7 @@ projects = $(projects) $(prj_tex)
 # -----------------------------------------------------------------------------
 
 prj_pdfetex = \
+	$(rel_pdftexdir)	\
 	$(rel_pdfetexdir)	\
 
 projects = $(projects) $(prj_pdfetex)
