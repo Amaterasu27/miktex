@@ -69,7 +69,7 @@ END_MESSAGE_MAP();
 
 PropPageTeXMFRoots::PropPageTeXMFRoots ()
   : CPropertyPage (PropPageTeXMFRoots::IDD),
-    mustRefreshFndb (false),
+    isModified (false),
     pProgressDialog (0),
     installRoot (SessionWrapper(true)
 		 ->GetSpecialPath(SpecialPath::InstallRoot)),
@@ -272,7 +272,7 @@ PropPageTeXMFRoots::OnAdd ()
       roots.push_back (szDir);
       SetModified (TRUE);
       EnableButtons ();
-      mustRefreshFndb = true;
+      isModified = true;
     }
   catch (const MiKTeXException & e)
     {
@@ -402,7 +402,7 @@ PropPageTeXMFRoots::OnMovedown ()
 
       SetModified (TRUE);
 
-      mustRefreshFndb = true;
+      isModified = true;
     }
   catch (const MiKTeXException & e)
     {
@@ -465,7 +465,7 @@ PropPageTeXMFRoots::OnMoveup ()
 
       SetModified (TRUE);
 
-      mustRefreshFndb = true;
+      isModified = true;
     }
   catch (const MiKTeXException & e)
     {
@@ -499,7 +499,7 @@ PropPageTeXMFRoots::OnRemove ()
 	}
       EnableButtons ();
       SetModified (TRUE);
-      mustRefreshFndb = true;
+      isModified = true;
     }
   catch (const MiKTeXException & e)
     {
@@ -754,56 +754,64 @@ PropPageTeXMFRoots::Refresh ()
 BOOL
 PropPageTeXMFRoots::OnApply ()
 {
-  try
+  if (isModified)
     {
-      if (SessionWrapper(true)->IsMiKTeXDirect())
+      try
 	{
-	  UNEXPECTED_CONDITION (T_("PropPageTeXMFRoots::OnApply"));
-	}
+	  if (SessionWrapper(true)->IsMiKTeXDirect())
+	    {
+	      UNEXPECTED_CONDITION (T_("PropPageTeXMFRoots::OnApply"));
+	    }
+	  
+	  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
+	  
+	  tstring str;
 
-      PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
-      
-      tstring str;
-      for (vector<PathName>::const_iterator it = roots.begin();
-	   it != roots.end();
-	   ++ it)
-	{
-	  if (((policy & PolicyFlags::DataRootHighestPriority) != 0)
-	      && (*it == userDataRoot || *it == commonDataRoot
-		  || *it == userConfigRoot || *it == commonConfigRoot))
+	  for (vector<PathName>::const_iterator it = roots.begin();
+	       it != roots.end();
+	       ++ it)
 	    {
-	      continue;
+	      if (((policy & PolicyFlags::DataRootHighestPriority) != 0)
+		  && (*it == userDataRoot || *it == commonDataRoot
+		      || *it == userConfigRoot || *it == commonConfigRoot))
+		{
+		  continue;
+		}
+	      if (! str.empty())
+		{
+		  str += T_(';');
+		}
+	      str += it->Get();
 	    }
-	  if (! str.empty())
-	    {
-	      str += T_(';');
-	    }
-	  str += it->Get();
-	}
-      SessionWrapper(true)->RegisterRootDirectories (str);
-      if (mustRefreshFndb)
-	{
+
+	  SessionWrapper(true)->RegisterRootDirectories (str);
+
 	  auto_ptr<ProgressDialog>
 	    pProgressDialog (ProgressDialog::Create());
+
 	  pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
 	  pProgressDialog->SetTitle ("MiKTeX FNDB Maintenance");
 	  pProgressDialog->SetLine (1, "Scanning directories...");
 	  this->pProgressDialog = pProgressDialog.get();
-	  mustRefreshFndb = ! Fndb::Refresh(this);
+
+	  isModified = ! Fndb::Refresh(this);
+
 	  pProgressDialog->StopProgressDialog ();
 	  pProgressDialog.reset ();
 	}
+      catch (const MiKTeXException & e)
+	{
+	  ErrorDialog::DoModal (this, e);
+	}
+      catch (const exception & e)
+	{
+	  ErrorDialog::DoModal (this, e);
+	}
+
+      pProgressDialog = 0;
     }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  pProgressDialog = 0;
-  return (! mustRefreshFndb);
+
+  return (! isModified);
 }
 
 /* _________________________________________________________________________

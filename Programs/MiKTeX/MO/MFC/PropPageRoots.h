@@ -116,7 +116,7 @@ private:
 	      /*[in]*/ const MIKTEXCHAR *	lpszDirectory);
 
 private:
-  bool mustRefreshFndb;
+  bool isModified;
 
 private:
   void
