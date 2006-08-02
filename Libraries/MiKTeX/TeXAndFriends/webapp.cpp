@@ -313,6 +313,12 @@ MIKTEXMFAPI(bool)
 WebApp::ProcessOption (/*[in]*/ int			opt,
 		       /*[in]*/ const MIKTEXCHAR *	lpszArg)
 {
+  if (opt == OPT_UNSUPPORTED)
+    {
+      FATAL_MIKTEX_ERROR (T_("WebApp::ProcessOption"),
+			  T_("Unsupported command-line option."),
+			  0);
+    }
   bool done = true;
   switch (opt - FIRST_OPTION_VAL - optBase)
     {
@@ -350,10 +356,6 @@ WebApp::ProcessOption (/*[in]*/ int			opt,
     case OPT_VERSION:
       ShowProgramVersion ();
       throw (0);
-    case OPT_UNSUPPORTED:
-      FATAL_MIKTEX_ERROR (T_("WebApp::ProcessOption"),
-			  T_("Unsupported command-line option."),
-			  0);
     default:
       done = false;
       break;
