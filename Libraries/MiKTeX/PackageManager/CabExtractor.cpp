@@ -487,7 +487,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	  // remove the existing file
 	  if (File::Exists(path))
 	    {
-	      File::Delete (path);
+	      File::Delete (path, true);
 	    }
 
 	  // extract the file

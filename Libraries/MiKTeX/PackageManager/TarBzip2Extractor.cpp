@@ -411,7 +411,7 @@ TarBzip2Extractor::Extract (/*[in]*/ const PathName &	tarbz2Path,
 	  // remove the existing file
 	  if (File::Exists(path))
 	    {
-	      File::Delete (path);
+	      File::Delete (path, true);
 	    }
 
 	  // extract the file
