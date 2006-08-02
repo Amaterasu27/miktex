@@ -430,7 +430,10 @@ protected:
     optional_argument = POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
   };
 
-  enum { OPT_UNSUPPORTED = INT_MAX };
+  enum {
+    OPT_UNSUPPORTED = INT_MAX - 100,
+    OPT_NOOP,
+  };
 
   MIKTEXMFAPI(void)
   AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,

@@ -174,7 +174,7 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
   opt.longName = lpszNameAndHelp;
   opt.shortName = shortName;
   opt.argInfo = argInfo | POPT_ARGFLAG_ONEDASH;
-  if (val == OPT_UNSUPPORTED)
+  if (val == OPT_UNSUPPORTED || val == OPT_NOOP)
     {
       opt.argInfo |= POPT_ARGFLAG_DOC_HIDDEN;
     }
@@ -182,6 +182,7 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
   opt.val = val;
   if (lpszNameAndHelp != 0
       && val != OPT_UNSUPPORTED
+      && val != OPT_NOOP
       && ! (argInfo & POPT_ARGFLAG_DOC_HIDDEN))
     {
       opt.descrip = lpszNameAndHelp + StrLen(lpszNameAndHelp) + 1;
@@ -318,6 +319,10 @@ WebApp::ProcessOption (/*[in]*/ int			opt,
       FATAL_MIKTEX_ERROR (T_("WebApp::ProcessOption"),
 			  T_("Unsupported command-line option."),
 			  0);
+    }
+  else if (opt == OPT_NOOP)
+    {
+      return (true);
     }
   bool done = true;
   switch (opt - FIRST_OPTION_VAL - optBase)
