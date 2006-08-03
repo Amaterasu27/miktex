@@ -508,11 +508,14 @@ MD5
 MIKTEXCALL
 MD5::FromFile (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 {
-  auto_ptr<MemoryMappedFile> pFile (MemoryMappedFile::Create());
   MD5Builder md5Builder;
   md5Builder.Init ();
-  const void * ptr = pFile->Open(lpszPath, false);
-  md5Builder.Update (ptr, pFile->GetSize());
+  if (File::GetSize(lpszPath) > 0)
+    {
+      auto_ptr<MemoryMappedFile> pFile (MemoryMappedFile::Create());
+      const void * ptr = pFile->Open(lpszPath, false);
+      md5Builder.Update (ptr, pFile->GetSize());
+    }
   md5Builder.Final ();
   return (md5Builder.GetMD5());
 }
