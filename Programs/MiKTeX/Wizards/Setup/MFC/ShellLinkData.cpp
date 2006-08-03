@@ -132,22 +132,6 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Help->LaTeX2e Reference"
-  {
-    false,
-    IDS_HELP,
-    IDS_LATEX2E_REFERENCE,
-    DOCPATH(MIKTEX_LATEX_HELP_FILE),
-    LD_USESHOWCMD,
-    0,
-    0,
-    0,
-    0,
-    0,
-    SW_SHOWNORMAL,
-    0,
-  },
-
   // "MiKTeX on the Web->MiKTeX Project Page"
   {
     true,
