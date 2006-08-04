@@ -25,35 +25,35 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  MiKTeX::Core::PathName pathExe =
-    pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::BinDirectory);
+  PathName pathExe =
+    pSession->GetSpecialPath(SpecialPath::BinDirectory);
   pathExe += T_("1-1") MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
-  TEST (MiKTeX::Core::Process::Run(pathExe.Get(),
-			     T_("a.txt"),
-			     0,
-			     &exitCode,
-			     0));
+  TEST (Process::Run(pathExe.Get(),
+		     T_("a.txt"),
+		     0,
+		     &exitCode,
+		     0));
   TEST (exitCode == 0);
-  TEST (MiKTeX::Core::File::Exists(T_("a.txt")));
-  TESTX (MiKTeX::Core::File::Delete(T_("a.txt"), true));
+  TEST (File::Exists(T_("a.txt")));
+  TESTX (File::Delete(T_("a.txt"), true));
 }
 END_TEST_FUNCTION();
 
-MiKTeX::Core::tstring outputBuffer;
+tstring outputBuffer;
 
 BEGIN_TEST_FUNCTION(2);
 {
-  MiKTeX::Core::PathName pathExe =
-    pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::BinDirectory);
+  PathName pathExe =
+    pSession->GetSpecialPath(SpecialPath::BinDirectory);
   pathExe += T_("1-2") MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
   ProcessOutput processOutput;
-  TEST (MiKTeX::Core::Process::Run(pathExe.Get(),
-			     T_("hello world!"),
-			     &processOutput,
-			     &exitCode,
-			     0));
+  TEST (Process::Run(pathExe.Get(),
+		     T_("hello world!"),
+		     &processOutput,
+		     &exitCode,
+		     0));
   TEST (exitCode == 0);
   TEST (processOutput.GetOutput() == T_("hello\nworld!\n"));
 }
@@ -61,27 +61,27 @@ END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(3);
 {
-  MiKTeX::Core::PathName pathExe = 
-    pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::BinDirectory);
+  PathName pathExe = 
+    pSession->GetSpecialPath(SpecialPath::BinDirectory);
   pathExe += T_("1-2") MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
   char buf[100];
-  unsigned int n = 10;
-  TEST (MiKTeX::Core::Process::Run(pathExe.Get(),
-			     T_("01234567890123456789"),
-			     buf,
-			     &n,
-			     &exitCode));
+  size_t n = 10;
+  TEST (Process::Run(pathExe.Get(),
+		     T_("01234567890123456789"),
+		     buf,
+		     &n,
+		     &exitCode));
   TEST (exitCode == 0);
   TEST (n == 10);
   std::string str (buf, n);
   TEST (str == T_("0123456789"));
   n = 100;
-  TEST (MiKTeX::Core::Process::Run(pathExe.Get(),
-			     T_("01234567890123456789"),
-			     buf,
-			     &n,
-			     &exitCode));
+  TEST (Process::Run(pathExe.Get(),
+		     T_("01234567890123456789"),
+		     buf,
+		     &n,
+		     &exitCode));
   TEST (exitCode == 0);
   TEST (n == 21);
   str.assign (buf, n);
