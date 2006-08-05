@@ -229,7 +229,7 @@ InfoListPage::CreateReport ()
       if (theApp.prefabricated)
 	{
 	  info += (T_("Install to ")
-		   + TAB + theApp.startupConfig.installRoot.Get());
+		   + theApp.startupConfig.installRoot.Get());
 	}
       else
 	{
