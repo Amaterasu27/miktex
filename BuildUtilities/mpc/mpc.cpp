@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 #include "internal.h"
 
+#define SUPPORT_CAB 1
+
 class RestoreCurrentDirectory
 {
 public:
@@ -88,6 +90,9 @@ enum Option
   OPT_ASSEMBLE_NET_DATABASE,
   OPT_ASSEMBLE_NET_PACKAGES,
   OPT_ASSEMBLE_TDS,
+#if SUPPORT_CAB
+  OPT_CREATE_CAB,
+#endif
   OPT_DATABASE_DIR,
   OPT_DEFAULT_LEVEL,
   OPT_DEST_DIR,
@@ -130,6 +135,8 @@ bool optVerbose;
 // value of "TPM:TimePackaged"
 time_t timePackaged;
 
+bool createCab = false;
+
 tstring texmfPrefix = "texmf";
 
 // command-line options
@@ -139,6 +146,9 @@ const struct option options[] =
   "assemble-net-database", no_argument, 0, OPT_ASSEMBLE_NET_DATABASE,
   "assemble-net-packages", no_argument, 0, OPT_ASSEMBLE_NET_PACKAGES,
   "assemble-tds", no_argument, 0, OPT_ASSEMBLE_TDS,
+#if SUPPORT_CAB
+  "create-cab", no_argument, 0, OPT_CREATE_CAB,
+#endif
   "database-dir", required_argument, 0, OPT_DATABASE_DIR,
   "default-level", required_argument, 0, OPT_DEFAULT_LEVEL,
   "dest-dir", required_argument, 0, OPT_DEST_DIR,
@@ -960,25 +970,69 @@ WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
 
 /* _________________________________________________________________________
 
+   CreateCabListFile
+   _________________________________________________________________________ */
+
+
+#if SUPPORT_CAB
+void
+CreateCabListFile (/*[in]*/ const PathName &		listFile,
+		   /*[in]*/ const MpcPackageInfo &	packageInfo)
+{
+  StreamWriter writer (listFile);
+
+  PathName packageDefinitionFile = texmfPrefix;
+  packageDefinitionFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+  packageDefinitionFile += packageInfo.deploymentName.c_str();
+  packageDefinitionFile.AppendExtension
+    (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+
+  bool noPackageDefinitionFile = true;
+
+  for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+       it != packageInfo.runFiles.end();
+       ++ it)
+    {
+      writer.WriteFormattedLine ("RunFiles\\%s", it->c_str());
+      if (packageDefinitionFile == it->c_str())
+	{
+	  noPackageDefinitionFile = false;
+	}
+    }
+
+  if (noPackageDefinitionFile)
+    {
+      writer.WriteFormattedLine ("RunFiles\\%s", packageDefinitionFile.Get());
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+       it != packageInfo.docFiles.end();
+       ++ it)
+    {
+      writer.WriteFormattedLine ("DocFiles\\%s", it->c_str());
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.sourceFiles.begin();
+       it != packageInfo.sourceFiles.end();
+       ++ it)
+    {
+      writer.WriteFormattedLine ("SourceFiles\\%s", it->c_str());
+    }
+  
+  writer.Close ();
+}
+#endif
+
+/* _________________________________________________________________________
+
    CreateArchiveFile
    _________________________________________________________________________ */
 
 void
-CreateArchiveFile (/*[out]*/ MpcPackageInfo &	packageInfo,
-		   /*[in]*/ const PathName &	destDir)
+CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
+		   /*[in]*/ const PathName &		destDir)
 {
-  // path to .tar file
-  PathName tarFile (destDir,
-		    packageInfo.deploymentName.c_str(),
-		    MIKTEX_TAR_FILE_SUFFIX);
-  // path to .tar.bz2 file
-  PathName tarbz2File (destDir,
-		       packageInfo.deploymentName.c_str(),
-		       MIKTEX_TARBZIP2_FILE_SUFFIX);
-#if defined(MIKTEX_WINDOWS)
-  tarFile.ToUnix ();
-  tarbz2File.ToUnix ();
-#endif
+  PathName archiveFile;
 
   // create package directory
   Directory::Create (destDir);
@@ -1010,67 +1064,109 @@ CreateArchiveFile (/*[out]*/ MpcPackageInfo &	packageInfo,
      packageInfo,
      timePackaged);
 
-  tstring command;
+#if SUPPORT_CAB
+  if (createCab)
+    {
+      // path to .cab file
+      archiveFile.Set (destDir,
+		       packageInfo.deploymentName.c_str(),
+		       MIKTEX_CABINET_FILE_SUFFIX);
 
-  // create the .tar.bz2 file
-  command = "tar --force-local -cvf ";
-  command += tarFile.ToString();
-#if defined(MIKTEX_WINDOWS)
-  command += " --files-from=nul";
-#else
-  command += " --files-from=/dev/null";
+      // Create the cabinet list file
+      TempFile listFile;
+      CreateCabListFile (listFile.GetPathName(), packageInfo);
+
+      // Create the cabinet file
+      tstring command =
+	"cabarc -m LZX:21 -p -P RunFiles\\ -P DocFiles\\ -P SourceFiles\\ n ";
+      command += archiveFile.Get();
+      command += " @\"";
+      command += listFile.GetPathName().Get();
+      command += "\" > nul";
+      Verbose ("%s...\n", command.c_str());
+      Process::ExecuteSystemCommand (command.c_str());
+      listFile.Delete ();
+    }
+  else
 #endif
-  Verbose ("%s...\n", command.c_str());
-  Process::ExecuteSystemCommand (command.c_str());
-  if (Directory::Exists("RunFiles"))
     {
-      RestoreCurrentDirectory restoreCurrentDirectory ("RunFiles");
-      command = "tar --force-local -rvf ";
+      tstring command;
+      
+      // path to .tar file
+      PathName tarFile (destDir,
+			packageInfo.deploymentName.c_str(),
+			MIKTEX_TAR_FILE_SUFFIX);
+
+      // path to .tar.bz2 file
+      archiveFile.Set (destDir,
+		       packageInfo.deploymentName.c_str(),
+		       MIKTEX_TARBZIP2_FILE_SUFFIX);
+
+#if defined(MIKTEX_WINDOWS)
+      tarFile.ToUnix ();
+      archiveFile.ToUnix ();
+#endif
+
+      // create the .tar.bz2 file
+      command = "tar --force-local -cvf ";
       command += tarFile.ToString();
-      command += " ";
-      command += texmfPrefix;
+#if defined(MIKTEX_WINDOWS)
+      command += " --files-from=nul";
+#else
+      command += " --files-from=/dev/null";
+#endif
       Verbose ("%s...\n", command.c_str());
       Process::ExecuteSystemCommand (command.c_str());
+      if (Directory::Exists("RunFiles"))
+	{
+	  RestoreCurrentDirectory restoreCurrentDirectory ("RunFiles");
+	  command = "tar --force-local -rvf ";
+	  command += tarFile.ToString();
+	  command += " ";
+	  command += texmfPrefix;
+	  Verbose ("%s...\n", command.c_str());
+	  Process::ExecuteSystemCommand (command.c_str());
+	}
+      if (Directory::Exists("DocFiles"))
+	{
+	  RestoreCurrentDirectory restoreCurrentDirectory ("DocFiles");
+	  command = "tar --force-local -rvf ";
+	  command += tarFile.ToString();
+	  command += " ";
+	  command += texmfPrefix;
+	  Verbose ("%s...\n", command.c_str());
+	  Process::ExecuteSystemCommand (command.c_str());
+	}
+      if (Directory::Exists("SourceFiles"))
+	{
+	  RestoreCurrentDirectory restoreCurrentDirectory ("SourceFiles");
+	  command = "tar --force-local -rvf ";
+	  command += tarFile.ToString();
+	  command += " ";
+	  command += texmfPrefix;
+	  Verbose ("%s...\n", command.c_str());
+	  Process::ExecuteSystemCommand (command.c_str());
+	}
+      {
+	RestoreCurrentDirectory restoreCurrentDirectory (destDir);
+	if (File::Exists(archiveFile))
+	  {
+	    File::Delete (archiveFile);
+	  }
+	command = "bzip2 ";
+	command += tarFile.RemoveDirectorySpec().ToString();
+	Process::ExecuteSystemCommand (command.c_str());
+      }
     }
-  if (Directory::Exists("DocFiles"))
-    {
-      RestoreCurrentDirectory restoreCurrentDirectory ("DocFiles");
-      command = "tar --force-local -rvf ";
-      command += tarFile.ToString();
-      command += " ";
-      command += texmfPrefix;
-      Verbose ("%s...\n", command.c_str());
-      Process::ExecuteSystemCommand (command.c_str());
-    }
-   if (Directory::Exists("SourceFiles"))
-    {
-      RestoreCurrentDirectory restoreCurrentDirectory ("SourceFiles");
-      command = "tar --force-local -rvf ";
-      command += tarFile.ToString();
-      command += " ";
-      command += texmfPrefix;
-      Verbose ("%s...\n", command.c_str());
-      Process::ExecuteSystemCommand (command.c_str());
-    }
-   {
-     RestoreCurrentDirectory restoreCurrentDirectory (destDir);
-     if (File::Exists(tarbz2File))
-       {
-	 File::Delete (tarbz2File);
-       }
-     command = "bzip2 ";
-     command += tarFile.RemoveDirectorySpec().ToString();
-     Process::ExecuteSystemCommand (command.c_str());
-   }
 
   // get size of archive file
-  packageInfo.archiveFileSize = File::GetSize(tarbz2File);
+  packageInfo.archiveFileSize = File::GetSize(archiveFile);
 
   // get MD5 of archive file
-  packageInfo.archiveDigest = MD5::FromFile(tarbz2File.Get());
+  packageInfo.archiveDigest = MD5::FromFile(archiveFile.Get());
 
   // touch the archive file
-  File::SetTimes (tarbz2File, timePackaged, timePackaged, timePackaged);
+  File::SetTimes (archiveFile, timePackaged, timePackaged, timePackaged);
 }
 
 /* _________________________________________________________________________
@@ -1205,7 +1301,7 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 			   it->second.archiveDigest.ToString().c_str());
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "Type",
-			   "TarBzip2");
+			   (createCab ? "MSCab" : "TarBzip2"));
       if (! it->second.version.empty())
 	{
 	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1434,6 +1530,10 @@ Run (/*[in]*/ int		argc,
 
   timePackaged = time(0);
 
+#if SUPPORT_CAB
+  createCab = false;
+#endif
+
   int optionIndex;
   int option;
   optind = 0;
@@ -1454,6 +1554,11 @@ Run (/*[in]*/ int		argc,
 	case OPT_ASSEMBLE_TDS:
 	  optAssembleTDS = true;
 	  break;
+#if CREATE_CAB
+	case OPT_CREATE_CAB:
+	  createCab = true;
+	  break;
+#endif
 	case OPT_DATABASE_DIR:
 	  databaseDir = optarg;
 	  optDatabaseDir = true;
