@@ -21,7 +21,28 @@
 #include "StdAfx.h"
 #include "internal.h"
 
-#define SUPPORT_CAB 1
+/* _________________________________________________________________________
+
+   ArchiveFileType
+   _________________________________________________________________________ */
+
+class ArchiveFileTypeEnum
+{
+public:
+  enum EnumType {
+    None = 0,
+    MSCab = 1,
+    TarBzip2 = 2,
+    Zip = 3
+  };
+};
+
+typedef EnumWrapper<ArchiveFileTypeEnum> ArchiveFileType;
+
+/* _________________________________________________________________________
+
+   RestoreCurrentDirectory
+   _________________________________________________________________________ */
 
 class RestoreCurrentDirectory
 {
@@ -90,9 +111,6 @@ enum Option
   OPT_ASSEMBLE_NET_DATABASE,
   OPT_ASSEMBLE_NET_PACKAGES,
   OPT_ASSEMBLE_TDS,
-#if SUPPORT_CAB
-  OPT_CREATE_CAB,
-#endif
   OPT_DATABASE_DIR,
   OPT_DEFAULT_LEVEL,
   OPT_DEST_DIR,
@@ -135,8 +153,6 @@ bool optVerbose;
 // value of "TPM:TimePackaged"
 time_t timePackaged;
 
-bool createCab = false;
-
 tstring texmfPrefix = "texmf";
 
 // command-line options
@@ -146,9 +162,6 @@ const struct option options[] =
   "assemble-net-database", no_argument, 0, OPT_ASSEMBLE_NET_DATABASE,
   "assemble-net-packages", no_argument, 0, OPT_ASSEMBLE_NET_PACKAGES,
   "assemble-tds", no_argument, 0, OPT_ASSEMBLE_TDS,
-#if SUPPORT_CAB
-  "create-cab", no_argument, 0, OPT_CREATE_CAB,
-#endif
   "database-dir", required_argument, 0, OPT_DATABASE_DIR,
   "default-level", required_argument, 0, OPT_DEFAULT_LEVEL,
   "dest-dir", required_argument, 0, OPT_DEST_DIR,
@@ -970,143 +983,109 @@ WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
 
 /* _________________________________________________________________________
 
-   CreateCabListFile
-   _________________________________________________________________________ */
-
-
-#if SUPPORT_CAB
-void
-CreateCabListFile (/*[in]*/ const PathName &		listFile,
-		   /*[in]*/ const MpcPackageInfo &	packageInfo)
-{
-  StreamWriter writer (listFile);
-
-  PathName packageDefinitionFile = texmfPrefix;
-  packageDefinitionFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
-  packageDefinitionFile += packageInfo.deploymentName.c_str();
-  packageDefinitionFile.AppendExtension
-    (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
-
-  bool noPackageDefinitionFile = true;
-
-  for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
-       it != packageInfo.runFiles.end();
-       ++ it)
-    {
-      writer.WriteFormattedLine ("RunFiles\\%s", it->c_str());
-      if (packageDefinitionFile == it->c_str())
-	{
-	  noPackageDefinitionFile = false;
-	}
-    }
-
-  if (noPackageDefinitionFile)
-    {
-      writer.WriteFormattedLine ("RunFiles\\%s", packageDefinitionFile.Get());
-    }
-
-  for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
-       it != packageInfo.docFiles.end();
-       ++ it)
-    {
-      writer.WriteFormattedLine ("DocFiles\\%s", it->c_str());
-    }
-
-  for (vector<tstring>::const_iterator it = packageInfo.sourceFiles.begin();
-       it != packageInfo.sourceFiles.end();
-       ++ it)
-    {
-      writer.WriteFormattedLine ("SourceFiles\\%s", it->c_str());
-    }
-  
-  writer.Close ();
-}
-#endif
-
-/* _________________________________________________________________________
-
    CreateArchiveFile
    _________________________________________________________________________ */
 
-void
+ArchiveFileType
 CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 		   /*[in]*/ const PathName &		destDir)
 {
   PathName archiveFile;
 
-  // create package directory
-  Directory::Create (destDir);
+  bool reuseExisting = false;
 
-  // change into package directory, e.g.:
-  // /mypackages/a0poster/
-  Directory::SetCurrentDirectory (packageInfo.path);
+  ArchiveFileType archiveFileType (ArchiveFileType::None);
 
-  // path to package definition directory, e.g.:
-  // /mypackages/a0poster/Runfiles/texmf/tpm/packages/
-  PathName packageDefinitionDir (packageInfo.path);
-  packageDefinitionDir += "RunFiles";
-  packageDefinitionDir += texmfPrefix;
-  packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
-
-  // create package definition directory
-  Directory::Create (packageDefinitionDir);
-
-  // path to package definition file, e.g.:
-  // /mypackages/a0poster/Runfiles/texmf/tpm/packages/a0poster.tpm
-  PathName packageDefinitionFile
-    (packageDefinitionDir,
-     packageInfo.deploymentName.c_str(),
-     MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
-
-  // create the package definition file
-  PackageManager::WritePackageDefinitionFile
-    (packageDefinitionFile,
-     packageInfo,
-     timePackaged);
-
-#if SUPPORT_CAB
-  if (createCab)
+#if 1
+  // check to see whether a legacy cabinet file exists
+  archiveFile.Set (destDir,
+		   packageInfo.deploymentName.c_str(),
+		   MIKTEX_CABINET_FILE_SUFFIX);
+  if (File::Exists(archiveFile))
     {
-      // path to .cab file
-      archiveFile.Set (destDir,
-		       packageInfo.deploymentName.c_str(),
-		       MIKTEX_CABINET_FILE_SUFFIX);
-
-      // Create the cabinet list file
-      TempFile listFile;
-      CreateCabListFile (listFile.GetPathName(), packageInfo);
-
-      // Create the cabinet file
-      tstring command =
-	"cabarc -m LZX:21 -p -P RunFiles\\ -P DocFiles\\ -P SourceFiles\\ n ";
-      command += archiveFile.Get();
-      command += " @\"";
-      command += listFile.GetPathName().Get();
-      command += "\" > nul";
-      Verbose ("%s...\n", command.c_str());
-      Process::ExecuteSystemCommand (command.c_str());
-      listFile.Delete ();
-    }
-  else
+      // extract the package definition file
+      TempFile packageDefinitionFile;
+      PathName filter (texmfPrefix);
+      filter += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+      filter += packageInfo.deploymentName.c_str();
+      filter.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+#if defined(MIKTEX_WINDOWS)
+      filter.ToUnix ();
 #endif
+      tstring command ("cabextract --filter \"");
+      command += filter.Get();
+      command += "\" --pipe \"";
+      command += archiveFile.Get();
+      command += "\" > \"";
+      command += packageDefinitionFile.GetPathName().Get();
+      command += "\"";
+      Process::ExecuteSystemCommand (command.c_str());
+
+      // read the package definition file
+      PackageInfo existingPackageInfo =
+	PackageManager::ReadPackageDefinitionFile
+	(packageDefinitionFile.GetPathName(),
+	 texmfPrefix.c_str());
+      
+      // check to see whether we can keep the cabinet file
+      if (packageInfo.digest == existingPackageInfo.digest)
+	{
+	  reuseExisting = true;
+	  archiveFileType = ArchiveFileType::MSCab;
+	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
+	}
+    }
+#endif
+
+  if (! reuseExisting)
     {
+      // create package directory
+      Directory::Create (destDir);
+      
+      // change into package directory, e.g.:
+      // /mypackages/a0poster/
+      Directory::SetCurrentDirectory (packageInfo.path);
+      
+      // path to package definition directory, e.g.:
+      // /mypackages/a0poster/Runfiles/texmf/tpm/packages/
+      PathName packageDefinitionDir (packageInfo.path);
+      packageDefinitionDir += "RunFiles";
+      packageDefinitionDir += texmfPrefix;
+      packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+
+      // create package definition directory
+      Directory::Create (packageDefinitionDir);
+      
+      // path to package definition file, e.g.:
+      // /mypackages/a0poster/Runfiles/texmf/tpm/packages/a0poster.tpm
+      PathName packageDefinitionFile
+	(packageDefinitionDir,
+	 packageInfo.deploymentName.c_str(),
+	 MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+      
+      // create the package definition file
+      PackageManager::WritePackageDefinitionFile
+	(packageDefinitionFile,
+	 packageInfo,
+	 timePackaged);
+      
       tstring command;
       
       // path to .tar file
       PathName tarFile (destDir,
 			packageInfo.deploymentName.c_str(),
 			MIKTEX_TAR_FILE_SUFFIX);
-
+      
       // path to .tar.bz2 file
       archiveFile.Set (destDir,
 		       packageInfo.deploymentName.c_str(),
 		       MIKTEX_TARBZIP2_FILE_SUFFIX);
-
+      
 #if defined(MIKTEX_WINDOWS)
       tarFile.ToUnix ();
       archiveFile.ToUnix ();
 #endif
-
+      
       // create the .tar.bz2 file
       command = "tar --force-local -cvf ";
       command += tarFile.ToString();
@@ -1157,6 +1136,8 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 	command += tarFile.RemoveDirectorySpec().ToString();
 	Process::ExecuteSystemCommand (command.c_str());
       }
+
+      archiveFileType = ArchiveFileType::TarBzip2;
     }
 
   // get size of archive file
@@ -1165,8 +1146,15 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
   // get MD5 of archive file
   packageInfo.archiveDigest = MD5::FromFile(archiveFile.Get());
 
-  // touch the archive file
-  File::SetTimes (archiveFile, timePackaged, timePackaged, timePackaged);
+  if (! reuseExisting)
+    {
+      packageInfo.timePackaged = timePackaged;
+
+      // touch the new archive file
+      File::SetTimes (archiveFile, timePackaged, timePackaged, timePackaged);
+    }
+
+  return (archiveFileType);
 }
 
 /* _________________________________________________________________________
@@ -1284,7 +1272,7 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 	}
 
       // create the archive file
-      CreateArchiveFile (it->second, destDir);
+      ArchiveFileType archiveFileType = CreateArchiveFile(it->second, destDir);
 
       // update database records
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1292,7 +1280,7 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 			   it->second.digest.ToString().c_str());
       cfgDbLight.PutValue (it->second.deploymentName.c_str(), 
 			   "TimePackaged",
-			   NUMTOSTR(time_t, timePackaged));
+			   NUMTOSTR(time_t, it->second.timePackaged));
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "CabSize",
 			   NUMTOSTR(size_t, it->second.archiveFileSize));
@@ -1301,7 +1289,9 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 			   it->second.archiveDigest.ToString().c_str());
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "Type",
-			   (createCab ? "MSCab" : "TarBzip2"));
+			   (archiveFileType == ArchiveFileType::MSCab
+			    ? "MSCab"
+			    : "TarBzip2"));
       if (! it->second.version.empty())
 	{
 	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1554,11 +1544,6 @@ Run (/*[in]*/ int		argc,
 	case OPT_ASSEMBLE_TDS:
 	  optAssembleTDS = true;
 	  break;
-#if CREATE_CAB
-	case OPT_CREATE_CAB:
-	  createCab = true;
-	  break;
-#endif
 	case OPT_DATABASE_DIR:
 	  databaseDir = optarg;
 	  optDatabaseDir = true;
