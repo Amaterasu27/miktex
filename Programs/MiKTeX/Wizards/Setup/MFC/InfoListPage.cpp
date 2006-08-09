@@ -228,8 +228,8 @@ InfoListPage::CreateReport ()
     case SetupTask::InstallFromLocalRepository:
       if (theApp.prefabricated)
 	{
-	  info += T_("Install to ");
-	  info += theApp.startupConfig.installRoot.Get();
+	  info += (T_("Install ") + packageSet + T_(" to ") + CRLF
+		   + TAB + theApp.startupConfig.installRoot.Get());
 	}
       else
 	{
