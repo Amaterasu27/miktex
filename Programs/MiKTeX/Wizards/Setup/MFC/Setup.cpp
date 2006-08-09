@@ -862,13 +862,20 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     }
 
   // package level
-  if (pkglvl.Get() == PackageLevel::Essential)
+  if (theApp.prefabricated)
     {
-      theApp.packageLevel = PackageLevel::Essential;
+      theApp.packageLevel = pkglvl;
     }
   else
     {
-      theApp.packageLevel = PackageLevel::Basic;
+      if (pkglvl.Get() == PackageLevel::Essential)
+	{
+	  theApp.packageLevel = PackageLevel::Essential;
+	}
+      else
+	{
+	  theApp.packageLevel = PackageLevel::Basic;
+	}
     }
 
   // remote package repository
