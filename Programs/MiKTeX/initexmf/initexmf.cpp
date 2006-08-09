@@ -535,7 +535,13 @@ private:
   SessionWrapper pSession;
 
 private:
-  static const struct poptOption aoption[];
+  static const struct poptOption aoption_user[];
+
+private:
+  static const struct poptOption aoption_setup[];
+
+private:
+  static const struct poptOption aoption_update[];
 };
 
 /* _________________________________________________________________________
@@ -580,10 +586,386 @@ enum Option
 
 /* _________________________________________________________________________
 
-   IniTeXMFApp::aoption
+   IniTeXMFApp::aoption_user
    _________________________________________________________________________ */
 
-const struct poptOption IniTeXMFApp::aoption[] = {
+const struct poptOption IniTeXMFApp::aoption_user[] = {
+
+  {
+    T_("add-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ADD_FILE,
+    T_("Add a file to the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("csv"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CSV,
+    T_("Print comma-separated values."),
+    0,
+  },
+
+  {
+    T_("dump"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_DUMP,
+    T_("Create format files."),
+    T_("FORMAT")
+  },
+
+  {
+    T_("edit-config-file"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_EDIT_CONFIG_FILE,
+    T_("Open the specified config file in an editor. FILE must be one of: \
+dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
+    T_("FILE")
+  },
+
+  {
+    T_("list-directory"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LIST_DIRECTORY,
+    T_("List the FNDB contents of a directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-formats"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_FORMATS,
+    T_("List formats."),
+    0
+  },
+
+  {
+    T_("list-modes"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_MODES,
+    T_("List METAFONT modes"),
+    0
+  },
+  
+  {
+    T_("mklinks"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKLINKS,
+    T_("Create executables."),
+    0
+  },
+
+  {
+    T_("mkmaps"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKMAPS,
+    T_("Create font map files."),
+    0
+  },
+
+  {
+    T_("print-only"), T_('n'),
+    POPT_ARG_NONE, 0,
+    OPT_PRINT_ONLY,
+    T_("Print what would be done."),
+    0
+  },
+  
+  {
+    T_("quiet"), T_('q'),
+    POPT_ARG_NONE, 0,
+    OPT_QUIET,
+    T_("Suppress screen output."),
+    0
+  },
+
+  {
+    T_("recursive"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RECURSIVE,
+    T_("Operate recursively."),
+    0
+  },
+
+  {
+    T_("remove-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REMOVE_FILE,
+    T_("Remove a file from the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("report"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_REPORT,
+    T_("Create a configuration report."),
+    0
+  },
+
+  {
+    T_("rmfndb"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RMFNDB,
+    T_("Remove file name database files."),
+    0
+  },
+
+  {
+    T_("update-fndb"), T_('u'),
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_UPDATE_FNDB,
+    T_("Update the file name database."),
+    T_("ROOT")
+  },
+
+  {
+    T_("verbose"), T_('v'),
+    POPT_ARG_NONE, 0,
+    OPT_VERBOSE,
+    T_("Print information on what is being done."),
+    0,
+  },
+
+  {
+    T_("version"), T_('V'),
+    POPT_ARG_NONE, 0,
+    OPT_VERSION,
+    T_("Print version information and exit."),
+    0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::aoption_setup
+   _________________________________________________________________________ */
+
+const struct poptOption IniTeXMFApp::aoption_setup[] = {
+
+  {
+    T_("add-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ADD_FILE,
+    T_("Add a file to the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("common-config"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_CONFIG,
+    T_("Register the common configuration directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("common-data"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_DATA,
+    T_("Register the common data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("csv"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CSV,
+    T_("Print comma-separated values."),
+    0,
+  },
+
+  {
+    T_("dump"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_DUMP,
+    T_("Create format files."),
+    T_("FORMAT")
+  },
+
+  {
+    T_("edit-config-file"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_EDIT_CONFIG_FILE,
+    T_("Open the specified config file in an editor. FILE must be one of: \
+dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
+    T_("FILE")
+  },
+
+  {
+    T_("install-root"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_INSTALL_ROOT,
+    T_("Register the installation TEXMF directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-directory"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LIST_DIRECTORY,
+    T_("List the FNDB contents of a directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-formats"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_FORMATS,
+    T_("List formats."),
+    0
+  },
+
+  {
+    T_("list-modes"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_MODES,
+    T_("List METAFONT modes"),
+    0
+  },
+  
+  {
+    T_("log-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LOG_FILE,
+    T_("Append to log file."),
+    T_("FILE")
+  },
+  
+  {
+    T_("mklinks"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKLINKS,
+    T_("Create executables."),
+    0
+  },
+
+  {
+    T_("mkmaps"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKMAPS,
+    T_("Create font map files."),
+    0
+  },
+
+  {
+    T_("print-only"), T_('n'),
+    POPT_ARG_NONE, 0,
+    OPT_PRINT_ONLY,
+    T_("Print what would be done."),
+    0
+  },
+  
+  {
+    T_("quiet"), T_('q'),
+    POPT_ARG_NONE, 0,
+    OPT_QUIET,
+    T_("Suppress screen output."),
+    0
+  },
+
+  {
+    T_("recursive"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RECURSIVE,
+    T_("Operate recursively."),
+    0
+  },
+
+  {
+    T_("remove-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REMOVE_FILE,
+    T_("Remove a file from the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("report"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_REPORT,
+    T_("Create a configuration report."),
+    0
+  },
+
+  {
+    T_("rmfndb"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RMFNDB,
+    T_("Remove file name database files."),
+    0
+  },
+
+  {
+    T_("roots"), T_('r'),
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ROOTS,
+    T_("Register root directories."),
+    T_("DIRS")
+  },
+    
+  {
+    T_("shared-setup"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SHARED_SETUP,
+    T_("Set up a shared MiKTeX system."),
+    0
+  },
+  
+  {
+    T_("update-fndb"), T_('u'),
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_UPDATE_FNDB,
+    T_("Update the file name database."),
+    T_("ROOT")
+  },
+
+  {
+    T_("user-config"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_CONFIG,
+    T_("Register the user configuration directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("user-data"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_DATA,
+    T_("Register the user data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("verbose"), T_('v'),
+    POPT_ARG_NONE, 0,
+    OPT_VERBOSE,
+    T_("Print information on what is being done."),
+    0,
+  },
+
+  {
+    T_("version"), T_('V'),
+    POPT_ARG_NONE, 0,
+    OPT_VERSION,
+    T_("Print version information and exit."),
+    0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::aoption_update
+   _________________________________________________________________________ */
+
+const struct poptOption IniTeXMFApp::aoption_update[] = {
 
   {
     T_("add-file"), 0,
@@ -865,9 +1247,6 @@ IniTeXMFApp::Finalize ()
 
 #if defined(MIKTEX_WINDOWS)
 
-#define UPDATEWIZ_PREFIX T_("Update MiKTeX")
-#define SETUPWIZ_PREFIX T_("Setup MiKTeX")
-
 BOOL
 CALLBACK
 IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
@@ -879,14 +1258,17 @@ IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
     {
       return (TRUE);
     }
-  if (_tcsncmp(szText, UPDATEWIZ_PREFIX, _tcslen(UPDATEWIZ_PREFIX)) == 0)
+  if (_tcsstr(szText, T_("MiKTeX")) != 0)
     {
-      This->updateWizardRunning = true;
-    }
-  else if (_tcsncmp(szText, SETUPWIZ_PREFIX, _tcslen(SETUPWIZ_PREFIX))
-	   == 0)
-    {
-      This->setupWizardRunning = true;
+      if (_tcsstr(szText, T_("Update")) != 0)
+	{
+	  This->updateWizardRunning = true;
+	}
+      else if (_tcsstr(szText, T_("Setup")) != 0
+	       || _tcsstr(szText, T_("Installer")) != 0)
+	{
+	  This->setupWizardRunning = true;
+	}
     }
   return (TRUE);
 }
@@ -1743,7 +2125,13 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optUpdateFilenameDatabase = false;
   bool optVersion = false;
 
-  Cpopt popt (argc, argv, aoption);
+  Cpopt popt (argc,
+	      argv,
+	      (setupWizardRunning
+	       ? aoption_setup
+	       : (updateWizardRunning
+		  ? aoption_update
+		  : aoption_user)));
 
   int option;
 
