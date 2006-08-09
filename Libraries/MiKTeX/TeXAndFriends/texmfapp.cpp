@@ -726,7 +726,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
 
   PathName path;
 
-  if (! pSession->FindFile(lpszFileName, inputFileType, path))
+  if (! pSession->FindFile(lpszFileName, GetInputFileType(), path))
     {
       return;
     }
@@ -1089,7 +1089,7 @@ TeXMFApp::InitializeBufferA (/*[in,out]*/ unsigned char * pBuffer)
 {
   assert (pBuffer != 0);
   return (InitializeBuffer<unsigned char>(pBuffer,
-					  inputFileType,
+					  GetInputFileType(),
 					  isTeXProgram));
 }
 
@@ -1103,7 +1103,7 @@ TeXMFApp::InitializeBufferW (/*[in,out]*/ unsigned __int16 * pBuffer)
 {
   assert (pBuffer != 0);
   return (InitializeBuffer<unsigned __int16>(pBuffer,
-					     inputFileType,
+					     GetInputFileType(),
 					     isTeXProgram));
 }
 
