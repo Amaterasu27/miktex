@@ -2264,10 +2264,12 @@ DviView::DetermineRowIdx (/*[in]*/ int y)
   const
 {
   MIKTEX_ASSERT (g_pYapConfig->continuousView);
+#if 0
   if (y < 0)
     {
       UNEXPECTED_CONDITION (T_("DviView::DetermineRowIdx"));
     }
+#endif
   const DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
   int n = (g_pYapConfig->doublePage
