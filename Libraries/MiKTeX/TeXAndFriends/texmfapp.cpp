@@ -961,6 +961,34 @@ TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
 
 /* _________________________________________________________________________
 
+   IsFileNameArgument
+   _________________________________________________________________________ */
+
+bool
+IsFileNameArgument (/*[in]*/ const MIKTEXCHAR * lpszArg)
+{
+  for (size_t l = 0; lpszArg[l] != 0; ++ l)
+    {
+      if (l >= BufferSizes::MaxPath)
+	{
+	  return (false);
+	}
+      MIKTEXCHAR ch = lpszArg[l];
+      if (ch == T_('<')
+	  || ch == T_('>')
+	  || ch == T_('"')
+	  || ch == T_('|')
+	  || ch == T_('*')
+	  || ch == T_('?'))
+	{
+	  return (false);
+	}
+    }
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    InitializeBuffer<>
    _________________________________________________________________________ */
 
@@ -984,14 +1012,14 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
       */
       PathName path;
       if (c4pargc == 2
-	  && strpbrk(c4pargv[1], T_("<>\"|*?")) == 0
+	  && IsFileNameArgument(c4pargv[1])
 	  && SessionWrapper(true)->FindFile(c4pargv[1], inputFileType, path))
 	{
 	  fileNameArgIdx = 1;
 	}
       else if (c4pargc == 3
 	       && c4pargv[1][0] == T_('&')
-	       && strpbrk(c4pargv[2], T_("<>\"|*?")) == 0
+	       && IsFileNameArgument(c4pargv[2])
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
 						 path))
@@ -1000,7 +1028,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 	}
       else if (c4pargc == 3
 	       && _tcscmp(c4pargv[2], T_("\\dump")) == 0
-	       && strpbrk(c4pargv[1], T_("<>\"|*?")) == 0
+	       && IsFileNameArgument(c4pargv[1])
 	       && SessionWrapper(true)->FindFile(c4pargv[1],
 						 inputFileType,
 						 path))
@@ -1010,7 +1038,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
       else if (c4pargc == 4
 	       && c4pargv[1][0] == T_('&')
 	       && _tcscmp(c4pargv[3], T_("\\dump")) == 0
-	       && strpbrk(c4pargv[2], T_("<>\"|*?")) == 0
+	       && IsFileNameArgument(c4pargv[2])
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
 						 path))
