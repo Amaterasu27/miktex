@@ -668,6 +668,8 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
    checkenv(0) ;
 #if defined(MIKTEX)
    {
+     int old_miktex_allow_all_paths = miktex_allow_all_paths;
+     miktex_allow_all_paths = 1;
      // read all configuration files in reverse order
      for (unsigned i = SessionWrapper(true)->GetNumberOfTEXMFRoots();
 	  i > 0;
@@ -681,6 +683,7 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
 	     getdefaults (const_cast<char*>(configFile.Get()));
 	   }
        }
+     miktex_allow_all_paths = old_miktex_allow_all_paths;
    }
 #else
    getdefaults(CONFIGFILE) ;
