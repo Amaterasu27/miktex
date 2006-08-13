@@ -995,14 +995,16 @@ FileCopyPage::ConfigureMiKTeX ()
   // set paper size
   if (! theApp.paperSize.empty())
     {
+      cmdLine.Clear ();
       if (StringCompare(theApp.paperSize.c_str(), T_("a4"), true) == 0)
 	{
-	  RunIniTeXMF (T_("--default-paper-size=A4size"));
+	  cmdLine.AppendOption (T_("--default-paper-size="), T_("A4size"));
 	}
       else
 	{
-	  RunIniTeXMF (T_("--default-paper-size=letterSize"));
+	  cmdLine.AppendOption (T_("--default-paper-size="), T_("letterSize"));
 	}
+      RunIniTeXMF (cmdLine);
     }
 
   // refresh file name database again
