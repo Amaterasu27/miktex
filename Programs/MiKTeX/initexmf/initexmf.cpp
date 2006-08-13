@@ -576,6 +576,7 @@ enum Option
   OPT_COMMON_DATA,		// <internal/>
   OPT_INSTALL_ROOT,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
+  OPT_DEFAULT_PAPER_SIZE,	// <internal/>
   OPT_RMFNDB,			// <internal/>
   OPT_ROOTS,			// <internal/>
   OPT_SHARED_SETUP,		// <internal/>
@@ -777,6 +778,14 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
     OPT_CSV,
     T_("Print comma-separated values."),
     0,
+  },
+
+  {
+    T_("default-paper-size"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_DEFAULT_PAPER_SIZE,
+    T_("Set the default paper size."),
+    T_("SIZE"),
   },
 
   {
@@ -997,6 +1006,14 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
     OPT_CSV,
     T_("Print comma-separated values."),
     0,
+  },
+
+  {
+    T_("default-paper-size"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_DEFAULT_PAPER_SIZE,
+    T_("Set the default paper size."),
+    T_("SIZE"),
   },
 
   {
@@ -2111,6 +2128,8 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   vector<tstring> listDirectories;
   vector<tstring> removeFiles;
   vector<tstring> updateRoots;
+
+  tstring defaultPaperSize;
  
   tstring logFile;
 
@@ -2143,11 +2162,16 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
 	case OPT_ADD_FILE:
 
-	  addFiles.push_back(lpszOptArg);
+	  addFiles.push_back (lpszOptArg);
 	  break;
 
 	case OPT_CSV:
 	  csv = true;
+	  break;
+
+	case OPT_DEFAULT_PAPER_SIZE:
+
+	  defaultPaperSize = lpszOptArg;
 	  break;
 
 	case OPT_DUMP:
@@ -2323,16 +2347,6 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  if (updateWizardRunning)
-    {
-      Verbose (T_("MiKTeX Update Wizard is running"));
-    }
-
-  if (setupWizardRunning)
-    {
-      Verbose (T_("MiKTeX Setup Wizard is running"));
-    }
-
   if (triSharedSetup != TriState::Undetermined)
     {
       TriState old = pSession->IsSharedMiKTeXSetup();
@@ -2359,6 +2373,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       || ! startupConfig.installRoot.Empty())
     {
       SetTeXMFRootDirectories ();
+    }
+
+  if (! defaultPaperSize.empty())
+    {
+      pSession->SetDefaultPaperSize (defaultPaperSize.c_str());
     }
 
   if (optDump)
