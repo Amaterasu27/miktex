@@ -997,11 +997,11 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       if (StringCompare(theApp.paperSize.c_str(), T_("a4"), true) == 0)
 	{
-	  SessionWrapper(true)->SetDefaultPaperSize (T_("A4size"));
+	  RunIniTeXMF (T_("--default-paper-size=A4size"));
 	}
       else
 	{
-	  SessionWrapper(true)->SetDefaultPaperSize (T_("letterSize"));
+	  RunIniTeXMF (T_("--default-paper-size=letterSize"));
 	}
     }
 
