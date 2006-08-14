@@ -242,6 +242,22 @@ CommandLineBuilder::AppendArguments (/*[in]*/ const vector<tstring>	argv)
 
 /* _________________________________________________________________________
 
+   CommandLineBuilder::AppendArguments
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+CommandLineBuilder::AppendArguments (/*[in]*/ const Argv & argv)
+{
+  if (argv.GetArgc() == 0)
+    {
+      UNEXPECTED_CONDITION (T_("Argv::AppendArguments"));
+    }
+  AppendArguments (argv.GetArgc() - 1, argv.GetArgv() + 1);
+}
+
+/* _________________________________________________________________________
+
    CommandLineBuilder::AppendOption
    _________________________________________________________________________ */
 

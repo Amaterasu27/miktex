@@ -2931,12 +2931,10 @@ public:
   AppendArguments (/*[in]*/ const std::vector<tstring>	argv);
 
 public:
+  MIKTEXEXPORT
   void
-  AppendArguments (/*[in]*/ const Argv & argv)
-  {
-    assert (argv.GetArgc() > 0);
-    AppendArguments (argv.GetArgc() - 1, argv.GetArgv() + 1);
-  }
+  MIKTEXCALL
+  AppendArguments (/*[in]*/ const Argv & argv);
 
 public:
   MIKTEXEXPORT
