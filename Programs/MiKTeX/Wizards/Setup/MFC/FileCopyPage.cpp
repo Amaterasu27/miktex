@@ -705,8 +705,11 @@ FileCopyPage::DoTheDownload ()
   PathName licenseFile;
   if (FindFile(LICENSE_FILE, licenseFile))
     {
-      File::Copy (licenseFile,
-		  PathName(theApp.localPackageRepository, LICENSE_FILE));
+      PathName licenseFileDest (theApp.localPackageRepository, LICENSE_FILE);
+      if (ComparePaths(licenseFile.Get(), licenseFileDest.Get(), true) != 0)
+	{
+	  File::Copy (licenseFile, licenseFileDest);
+	}
     }
 
   // now copy the setup program
