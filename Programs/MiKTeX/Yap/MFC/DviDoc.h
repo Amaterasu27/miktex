@@ -342,6 +342,9 @@ private:
   DviFileStatus fileStatus;
 
 private:
+  bool makingFonts;
+
+private:
   ProgressDialog * pProgressDialog;
 
 private:
