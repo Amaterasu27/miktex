@@ -1126,13 +1126,14 @@ TeXMFApp::InvokeEditorIfNecessary () const
   tstring templ =
     pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_EDITOR,
-			     T_("\"$(windir)\\notepad.exe\" \"%f\""));
+			     T_("notepad.exe \"%f\""));
 
   const MIKTEXCHAR * lpszCommandLineTemplate = templ.c_str();
 
   while (*lpszCommandLineTemplate != 0)
     {
-      if (*lpszCommandLineTemplate == T_('%'))
+      if (lpszCommandLineTemplate[0] == T_('%')
+	  && lpszCommandLineTemplate[1] != 0)
 	{
 	  switch (lpszCommandLineTemplate[1])
 	    {
@@ -1142,8 +1143,20 @@ TeXMFApp::InvokeEditorIfNecessary () const
 	      commandLine += T_('%');
 	      break;
 	    case T_('f'):
-	      commandLine += editFileName.Get();
-	      break;
+	      {
+		PathName path;
+		if (pSession->FindFile(editFileName,
+				       GetInputFileType(),
+				       path))
+		  {
+		    commandLine += path.Get();		    
+		  }
+		else
+		  {
+		    commandLine += editFileName.Get();
+		  }
+		break;
+	      }
 	    case T_('h'):
 	      /* <todo/> */
 	      break;
