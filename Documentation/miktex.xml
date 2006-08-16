@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2393">
-<!ENTITY month "July 2006">
-<!ENTITY date "July 21, 2006">
+<!ENTITY rev "2.5.2419">
+<!ENTITY month "August 2006">
+<!ENTITY date "August 16, 2006">
 
 <!ENTITY mfappdefaults SYSTEM "../Admin/Defaults/mfapp.defaults">
 <!ENTITY mfdefaults SYSTEM "../Admin/Defaults/mf.defaults">
