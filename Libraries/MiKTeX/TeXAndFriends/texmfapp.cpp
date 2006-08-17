@@ -1123,10 +1123,18 @@ TeXMFApp::InvokeEditorIfNecessary () const
   tstring commandLine;
   commandLine.reserve (256);
 
+  // <fixme>We use a non-standard section name. Instead, we should
+  // read the Registry directly.
+  tstring defaultEditor =
+    pSession->GetConfigValue(MIKTEX_REGKEY_YAP_SETTINGS,
+			     MIKTEX_REGVAL_EDITOR,
+			     T_("notepad.exe \"%f\""));
+  // </fixme>
+
   tstring templ =
     pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_EDITOR,
-			     T_("notepad.exe \"%f\""));
+			     defaultEditor.c_str());
 
   const MIKTEXCHAR * lpszCommandLineTemplate = templ.c_str();
 
