@@ -1083,10 +1083,21 @@ SetupWizardApplication::InitInstance ()
 
   try
     {
-      Session::InitInfo initinfo (T_("setup"),
-				  Session::InitFlags::NoConfigFiles);
+      // create a scratch root directory
+      TempDirectory scratchRoot;
 
-      SessionWrapper pSession (initinfo);
+      StartupConfig startupConfig;
+      startupConfig.userDataRoot = scratchRoot.Get();
+      startupConfig.userConfigRoot = scratchRoot.Get();
+      startupConfig.commonDataRoot = scratchRoot.Get();
+      startupConfig.commonConfigRoot = scratchRoot.Get();
+      startupConfig.installRoot = scratchRoot.Get();
+
+      Session::InitInfo initInfo (T_("setup"),
+				  Session::InitFlags::NoConfigFiles);
+      initInfo.SetStartupConfig (startupConfig);
+
+      SessionWrapper pSession (initInfo);
 
       pManager = PackageManager::Create();
 
@@ -1144,6 +1155,10 @@ SetupWizardApplication::InitInstance ()
       pManager->UnloadDatabase ();
       
       pManager.Release ();
+
+      pSession->UnloadFilenameDatabase ();
+
+      scratchRoot.Delete ();
 
       pSession.Reset ();
     }

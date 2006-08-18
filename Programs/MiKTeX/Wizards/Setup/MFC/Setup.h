@@ -430,6 +430,61 @@ typedef AutoResource<HKEY, RegCloseKey_> AutoHKEY;
 
 /* _________________________________________________________________________
 
+   TempDirectory
+   _________________________________________________________________________ */
+
+class TempDirectory
+{
+public:
+  TempDirectory ()
+  {
+    path.SetToTempDirectory ();
+    path += T_("MiKTeX Setup");
+    if (! Directory::Exists(path))
+      {
+	if (! CreateDirectory(path.Get(), 0))
+	  {
+	    FATAL_WINDOWS_ERROR (T_("CreateDirectory"), path.Get());
+	  }
+      }
+  }
+
+public:
+  ~TempDirectory ()
+  {
+    try
+      {
+	if (Directory::Exists(path))
+	  {
+	    Delete ();
+	  }
+      }
+    catch (const exception &)
+      {
+      }
+  }
+
+public:
+  const PathName &
+  Get ()
+    const
+  {
+    return (path);
+  }
+
+public:
+  void
+  Delete ()
+  {
+    Directory::Delete (path, true);
+  }
+
+private:
+  PathName path;
+};
+
+/* _________________________________________________________________________
+
    SetupTask
    _________________________________________________________________________ */
 
