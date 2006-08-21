@@ -171,12 +171,6 @@ miktex_find_miktex_executable (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
 			       /*[out]*/ MIKTEXCHAR *		lpszExePath);
 
 MIKTEXAPI(int)
-miktex_find_pk_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszMode,
-		     /*[in]*/ int			dpi,
-		     /*[out]*/ MIKTEXCHAR *		lpszPath);
-
-MIKTEXAPI(int)
 miktex_find_psheader_file (/*[in]*/ const MIKTEXCHAR *	lpszHeaderName,
 			   /*[in]*/ MIKTEXCHAR *	lpszPath);
 
@@ -187,10 +181,6 @@ miktex_find_tfm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 MIKTEXAPI(int)
 miktex_find_ttf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 		      /*[out]*/ MIKTEXCHAR *		lpszPath);
-
-MIKTEXAPI(int)
-miktex_find_type1_font_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			     /*[out]*/ MIKTEXCHAR *		lpszPath);
 
 MIKTEXAPI(MIKTEXCHAR *)
 miktex_get_config_value (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,

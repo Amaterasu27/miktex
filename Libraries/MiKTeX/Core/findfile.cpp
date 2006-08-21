@@ -740,34 +740,6 @@ miktex_find_file (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   miktex_find_pk_file
-   _________________________________________________________________________ */
-
-MIKTEXAPI(int)
-miktex_find_pk_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszMode,
-		     /*[in]*/ int			dpi,
-		     /*[out]*/ MIKTEXCHAR *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_STRING_OR_NIL (lpszMode);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindPkFile(lpszFontName,
-					      lpszMode,
-					      dpi,
-					      temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
    miktex_find_tfm_file
    _________________________________________________________________________ */
 
@@ -950,30 +922,6 @@ miktex_find_hbf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
   return (1);
   C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   miktex_find_type1_font_file
-   _________________________________________________________________________ */
-
-MIKTEXAPI(int)
-miktex_find_type1_font_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			     /*[out]*/ MIKTEXCHAR *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
-					    FileType::TYPE1,
-					    temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END();
 }
 
 /* _________________________________________________________________________
