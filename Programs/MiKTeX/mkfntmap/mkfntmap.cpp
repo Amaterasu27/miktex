@@ -1013,7 +1013,7 @@ MakeFontMapApp::WriteDvipdfmMap (/*[in]*/ StreamWriter &		writer,
       writer.Write (field1);
       if (! field2.empty())
 	{
-	  writer.Write (field2);
+	  writer.WriteFormatted (T_(" %s"), field2.c_str());
 	}
       else if (! field3.empty())
 	{
