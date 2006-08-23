@@ -92,7 +92,17 @@ PropPageGeneral::OnInitDialog ()
 	   SessionWrapper(true)->GetPaperSizeInfo(idx, paperSizeInfo);
 	   ++ idx)
 	{
-	  if (paperSizeComboBox.AddString(paperSizeInfo.name.c_str()) < 0)
+	  CString displayName = paperSizeInfo.name.c_str();
+	  if (StringCompare(paperSizeInfo.name.c_str(),
+			    paperSizeInfo.dvipsName.c_str(),
+			    true)
+	      != 0)
+	    {
+	      displayName += T_(" (");
+	      displayName += paperSizeInfo.dvipsName.c_str();
+	      displayName += T_(")");
+	    }
+	  if (paperSizeComboBox.AddString(displayName) < 0)
 	    {
 	      FATAL_WINDOWS_ERROR (T_("CComboBox::AddString"), 0);
 	    }
