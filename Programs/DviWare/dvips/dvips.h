@@ -19,6 +19,8 @@
 #include <direct.h>
 #include <sys/stat.h>
 #include <miktex/kpsemu.h>
+#undef kpse_tex_hush
+#define kpse_tex_hush(what) 1
 #include <cstdlib>
 using namespace MiKTeX::Core;
 #define exit(code) throw (code)
