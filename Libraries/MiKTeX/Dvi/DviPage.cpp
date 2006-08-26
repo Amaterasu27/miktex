@@ -1193,7 +1193,12 @@ DviPageImpl::StartDvips ()
     }
   commandLine.AppendOption (T_("-Ic"));
   commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
-  commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+  if (SessionWrapper(true)->GetConfigValue(T_("Dvips"),
+					   T_("Pedantic"),
+					   false))
+    {
+      commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+    }
   commandLine.AppendOption (T_("-MiKTeX:allowallpaths"));
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
