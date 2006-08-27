@@ -506,7 +506,7 @@ AppendToEnvVarName (/*[in,out]*/ tstring &	name,
 	}
       else if (IsDigit(*lpszPart))
 	{
-	  name += lpszPart;
+	  name += *lpszPart;
 	}
     }
 }
