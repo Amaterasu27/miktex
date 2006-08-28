@@ -452,6 +452,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		       /*[in]*/ FileType		fileType,
 		       /*[out]*/ PathName &		result)
 {
+  // try to derive the file type
   if (fileType == FileType::None)
     {
       fileType = DeriveFileType(lpszFileName);
@@ -461,11 +462,33 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }
 
-  const FileTypeInfo * pFileTypeInfo = GetFileTypeInfo(fileType);
-
+  // construct the search vector
   PathNameArray vec = ConstructSearchVector(fileType);
 
-  if (GetFileNameExtension(lpszFileName) == 0)
+  // get the file type information
+  const FileTypeInfo * pFileTypeInfo = GetFileTypeInfo(fileType);
+  MIKTEX_ASSERT (pFileTypeInfo != 0);
+
+  // check to see whether we have a registered file name extension
+  const MIKTEXCHAR * lpszExtension = GetFileNameExtension(lpszFileName);
+  bool hasRegisteredExtension = false;
+  if (lpszExtension != 0)
+    {
+      for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
+			 PATH_DELIMITER);
+	   ext.GetCurrent() != 0;
+	   ++ ext)
+	{
+	  if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
+	    {
+	      hasRegisteredExtension = true;
+	      break;
+	    }
+	}
+    }      
+
+  // try each registered file name extension, if no one was specified
+  if (! hasRegisteredExtension)
     {
       PathName fileName (lpszFileName);
       for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
@@ -473,7 +496,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{
-	  fileName.SetExtension (ext.GetCurrent());
+	  fileName.AppendExtension (ext.GetCurrent());
 	  if (FindFileAlongVec(fileName.Get(), vec, result))
 	    {
 	      return (true);
@@ -481,6 +504,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }
 
+  // try the given file name
   if (FindFileAlongVec(lpszFileName, vec, result))
     {
       return (true);
