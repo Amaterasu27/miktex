@@ -487,7 +487,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }      
 
-  // try each registered file name extension, if no one was specified
+  // try each registered file name extension, if none was specified
   if (! hasRegisteredExtension)
     {
       PathName fileName (lpszFileName);
