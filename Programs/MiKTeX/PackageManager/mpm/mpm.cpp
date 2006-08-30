@@ -1090,6 +1090,14 @@ Application::Main (/*[in]*/ int			argc,
   vector<tstring> updates;
   vector<tstring> toBeRemoved;
 
+  bool changeProxy = false;
+
+  ProxySettings temp;
+  PackageManager::TryGetProxy (temp);
+    {
+      proxySettings = temp;
+    }
+  
   Cpopt popt (argc, argv, aoption);
 
   //  popt.SetOtherOptionHelp (T_("[OPTION...]"));
@@ -1139,12 +1147,24 @@ Application::Main (/*[in]*/ int			argc,
 	  deploymentName = lpszOptArg;
 	  break;
 	case OPT_PROXY:
-	  proxySettings.proxy = lpszOptArg;
+	  {
+	    Tokenizer tok (lpszOptArg, T_(":"));
+	    changeProxy = true;
+	    proxySettings.proxy = tok.GetCurrent();
+	    ++ tok;
+	    if (tok.GetCurrent() != 0)
+	      {
+		proxySettings.port = atoi(tok.GetCurrent());
+	      }
+	  }
 	  break;
 	case OPT_PROXY_USER:
+	  changeProxy = true;
+	  proxySettings.authenticationRequired = true;
 	  proxySettings.user = lpszOptArg;
 	  break;
 	case OPT_PROXY_PASSWORD:
+	  changeProxy = true;
 	  proxySettings.password = lpszOptArg;
 	  break;
 	case OPT_QUIET:
@@ -1252,7 +1272,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   pSession.CreateSession (initInfo);
 
   pPackageManager.Create ();
-  pPackageManager->SetProxy (proxySettings);
+
+  if (changeProxy)
+    {
+      pPackageManager->SetProxy (proxySettings);
+    }
 
   bool restartWindowed = true;
 

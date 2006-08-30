@@ -64,6 +64,15 @@ protected:
   void
   OnInstallFromLocalRepository ();
 
+protected:
+  afx_msg
+  void
+  OnConnectionSettings ();
+
+protected:
+  void
+  EnableButtons ();
+
 private:
   int repositoryType;
 };

@@ -24,6 +24,10 @@
 
 #include "ConnectionSettingsDialog.h"
 
+using namespace std;
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+
 IMPLEMENT_DYNCREATE(ConnectionSettingsDialog, CDialog);
 
 /* _________________________________________________________________________
