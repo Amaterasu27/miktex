@@ -490,12 +490,12 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   // try each registered file name extension, if none was specified
   if (! hasRegisteredExtension)
     {
-      PathName fileName (lpszFileName);
       for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
 			 PATH_DELIMITER);
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{
+	  PathName fileName (lpszFileName);
 	  fileName.AppendExtension (ext.GetCurrent());
 	  if (FindFileAlongVec(fileName.Get(), vec, result))
 	    {
