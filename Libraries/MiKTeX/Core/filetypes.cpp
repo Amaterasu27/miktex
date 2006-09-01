@@ -294,6 +294,7 @@ SessionImpl::RegisterFileTypes ()
 		 T_(".dvi")
 		 ),
      ListBuilder(
+		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_DOC_DIR)
 		 ),
      ListBuilder());
