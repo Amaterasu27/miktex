@@ -252,9 +252,6 @@ private:
 
 private:
   tstring repository;
-
-private:
-  ProxySettings proxySettings;
 };
 
 /* _________________________________________________________________________
@@ -1083,21 +1080,19 @@ Application::Main (/*[in]*/ int			argc,
   bool optUpdateDb = false;
   bool optUpdateFndb = false;
   bool optVersion = false;
+  int optProxyPort = -1;
   tstring deploymentName;
+  tstring optProxy;
+  tstring optProxyPassword;
+  tstring optProxyUser;
   vector<tstring> installSome;
-  vector<tstring> updateSome;
   vector<tstring> toBeInstalled;
-  vector<tstring> updates;
   vector<tstring> toBeRemoved;
+  vector<tstring> updateSome;
+  vector<tstring> updates;
 
   bool changeProxy = false;
 
-  ProxySettings temp;
-  PackageManager::TryGetProxy (temp);
-    {
-      proxySettings = temp;
-    }
-  
   Cpopt popt (argc, argv, aoption);
 
   //  popt.SetOtherOptionHelp (T_("[OPTION...]"));
@@ -1148,24 +1143,23 @@ Application::Main (/*[in]*/ int			argc,
 	  break;
 	case OPT_PROXY:
 	  {
-	    Tokenizer tok (lpszOptArg, T_(":"));
 	    changeProxy = true;
-	    proxySettings.proxy = tok.GetCurrent();
+	    Tokenizer tok (lpszOptArg, T_(":"));
+	    optProxy = tok.GetCurrent();
 	    ++ tok;
 	    if (tok.GetCurrent() != 0)
 	      {
-		proxySettings.port = atoi(tok.GetCurrent());
+		optProxyPort = atoi(tok.GetCurrent());
 	      }
 	  }
 	  break;
 	case OPT_PROXY_USER:
 	  changeProxy = true;
-	  proxySettings.authenticationRequired = true;
-	  proxySettings.user = lpszOptArg;
+	  optProxyUser = lpszOptArg;
 	  break;
 	case OPT_PROXY_PASSWORD:
 	  changeProxy = true;
-	  proxySettings.password = lpszOptArg;
+	  optProxyPassword = lpszOptArg;
 	  break;
 	case OPT_QUIET:
 	  if (verbose)
@@ -1275,6 +1269,30 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (changeProxy)
     {
+      ProxySettings proxySettings;
+      ProxySettings temp;
+      if (PackageManager::TryGetProxy(temp))
+	{
+	  proxySettings = temp;
+	}
+      proxySettings.useProxy = true;
+      if (! optProxy.empty())
+	{
+	  proxySettings.proxy = optProxy;
+	}
+      if (optProxyPort >= 0)
+	{
+	  proxySettings.port = optProxyPort;
+	}
+      if (! optProxyUser.empty())
+	{
+	  proxySettings.authenticationRequired = true;
+	  proxySettings.user = optProxyUser;
+	}
+      if (! optProxyPassword.empty())
+	{
+	  proxySettings.password = optProxyPassword;
+	}
       pPackageManager->SetProxy (proxySettings);
     }
 

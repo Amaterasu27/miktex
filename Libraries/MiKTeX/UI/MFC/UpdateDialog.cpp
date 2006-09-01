@@ -539,6 +539,17 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		       /*[in]*/ const vector<tstring> &	toBeInstalled,
 		       /*[in]*/ const vector<tstring> &	toBeRemoved)
 {
+  tstring url;
+  RepositoryType repositoryType (RepositoryType::Unknown);
+  if (toBeInstalled.size() > 0
+      && PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
+      && repositoryType == RepositoryType::Remote
+      && ! MiKTeX::UI::ProxyAuthenticationDialog((pParent == 0
+						  ? 0
+						  : pParent->GetSafeHwnd())))
+    {
+      return (IDCANCEL);
+    }
   UpdateDialogImpl dlg (pParent, pManager);
   dlg.SetFileLists (toBeInstalled, toBeRemoved);
   return (dlg.DoModal());

@@ -141,6 +141,7 @@ MiKTeX::UI::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
   bool done = true;
 
   if (PackageManager::TryGetProxy(proxySettings)
+      && proxySettings.useProxy
       && proxySettings.authenticationRequired
       && proxySettings.user.empty())
     {
