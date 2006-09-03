@@ -681,6 +681,7 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 
       // try SETUPDIR\..\tm\packages
       localRepository = theApp.setupPath;
+      localRepository.RemoveFileSpec ();
       localRepository += T_("..");
       localRepository += T_("tm\\packages");
       localRepository.MakeAbsolute ();
