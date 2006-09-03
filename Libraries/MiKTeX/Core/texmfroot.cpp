@@ -157,8 +157,12 @@ SessionImpl::InitializeRootDirectories ()
   // check for MiKTeX CD/DVD
   if (IsMiKTeXDirect())
     {
-      startupConfig.installRoot = GetSpecialPath(SpecialPath::BinDirectory);
+      startupConfig.installRoot = GetMyLocation();
+#if defined(MIKTEX_WINDOWS_32)
       startupConfig.installRoot += PARENT_PARENT_DIRECTORY;
+#else
+      startupConfig.installRoot += PARENT_PARENT_PARENT_DIRECTORY;
+#endif
       startupConfig.installRoot.MakeAbsolute ();
     }
   else
