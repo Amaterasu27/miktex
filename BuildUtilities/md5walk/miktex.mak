@@ -1,6 +1,6 @@
 ## miktex.mak: md5walk
 ## 
-## Copyright (C) 2001-2005 Christian Schenk
+## Copyright (C) 2001-2006 Christian Schenk
 ## 
 ## This file is part of MD5Walk.
 ## 
