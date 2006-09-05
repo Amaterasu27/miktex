@@ -6,9 +6,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2392">
-<!ENTITY date "July 20, 2006">
-<!ENTITY month "July 2006">
+<!ENTITY rev "2.5.2438">
+<!ENTITY date "September 04, 2006">
+<!ENTITY month "September 2006">
 ]>
 
 <article>
@@ -706,7 +706,7 @@ if you specify suitable trace options.
 </question>
 <answer>
 <para>First of all, you will need the &DebugView; utility.
-To download &DebugView;, visit the <ulink url="http://www.sysinternals.com/ntw2k/freeware/debugview.shtml">&DebugView; page</ulink> and follow the
+To download &DebugView;, visit the <ulink url="http://www.sysinternals.com/Utilities/DebugView.html">&DebugView; page</ulink> and follow the
 download/installation instructions.</para>
 </answer>
 </qandaentry>
