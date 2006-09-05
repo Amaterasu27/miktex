@@ -1592,6 +1592,15 @@ public:
 		  /*[in]*/ MIKTEXCHARINT	delim,
 		  /*[in]*/ FILE *		stream);
 
+public:
+  static
+  MIKTEXEXPORT
+  bool
+  MIKTEXCALL
+  ReadLine (/*[out]*/ tstring &		str,
+	    /*[in]*/ FILE *		stream,
+	    /*[in]*/ bool		keepLineEnding);
+
   /// Creates a formatted string object.
   /// @param lpszFormat The format of the string (printf() syntax).
   /// @param arglist Argument list.

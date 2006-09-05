@@ -1310,23 +1310,11 @@ void
 ReadList (/*[in]*/ const PathName &		path,
 	  /*[out]*/ map<tstring, PackageSpec> &	mapPackageList)
 {
-  FileStream stream (File::Open(path,
-				FileMode::Open,
-				FileAccess::Read));
+  StreamReader reader (path);
   tstring line;
-  while (Utils::ReadUntilDelim(line, '\n', stream.Get()))
+  while (reader.ReadLine(line))
     {
-      size_t l = line.length();
-      if (l == 0)
-	{
-	  continue;
-	}
-      if (line[l - 1] == '\n')
-	{
-	  -- l;
-	  line.erase (l);
-	}
-      if (l == 0)
+      if (line.empty())
 	{
 	  continue;
 	}
@@ -1354,7 +1342,7 @@ ReadList (/*[in]*/ const PathName &		path,
       pkgspec.level = ch;
       mapPackageList[pkgspec.deploymentName] = pkgspec;
     }
-  stream.Close ();
+  reader.Close ();
 }
 
 /* _________________________________________________________________________

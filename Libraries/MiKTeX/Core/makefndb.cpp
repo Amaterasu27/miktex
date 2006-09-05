@@ -380,16 +380,11 @@ FndbManager::GetIgnorableFiles
     {
       return;
     }
-  FileStream stream (File::Open(ignoreFile, FileMode::Open, FileAccess::Read));
+  StreamReader reader (ignoreFile);
   filesToBeIgnored.reserve (10);
   tstring line;
-  while (Utils::ReadUntilDelim(line, T_('\n'), stream.Get()))
+  while (reader.ReadLine(line))
     {
-      size_t l = line.length();
-      if (l > 0 && line[l - 1] == T_('\n'))
-	{
-	  line.erase (l - 1, 1);
-	}
       filesToBeIgnored.push_back (line);
     }
   sort (filesToBeIgnored.begin(),

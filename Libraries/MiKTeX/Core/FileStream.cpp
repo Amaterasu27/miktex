@@ -227,23 +227,7 @@ StreamReader::Close ()
 bool
 StreamReader::ReadLine (/*[out]*/ tstring & line)
 {
-  bool done = Utils::ReadUntilDelim(line, T_('\n'), stream.Get());
-  if (done)
-    {
-      tstring::size_type l = line.length();
-      for (tstring::reverse_iterator it = line.rbegin();
-	   it != line.rend();
-	   ++ it)
-	{
-	  if (*it != T_('\n') && *it != T_('\r'))
-	    {
-	      break;
-	    }
-	  -- l;
-	}
-      line.erase (l);
-    }
-  return (done);
+  return (Utils::ReadLine(line, stream.Get(), false));
 }
 
 /* _________________________________________________________________________

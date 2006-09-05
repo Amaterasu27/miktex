@@ -75,12 +75,10 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 			  0);
     }
 
-  FileStream stream (File::Open(pathFileName,
-				FileMode::Open,
-				FileAccess::Read));
+  StreamReader reader (pathFileName);
 
   tstring line;
-  while (Utils::ReadUntilDelim(line, T_('\n'), stream.Get()) != 0)
+  while (reader.ReadLine(line))
     {
       Tokenizer tok (line.c_str(), WHITESPACE);
       if (tok.GetCurrent() == 0
@@ -136,13 +134,11 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 			  0);
     }
 
-  FileStream stream (File::Open(pathFileName,
-				FileMode::Open,
-				FileAccess::Read));
+  StreamReader reader (pathFileName);
 
   tstring line;
   bool bFound = false;
-  while (! bFound && Utils::ReadUntilDelim(line, T_('\n'), stream.Get()) != 0)
+  while (! bFound && reader.ReadLine(line))
     {
       Tokenizer tok (line.c_str(), WHITESPACE);
       if (tok.GetCurrent() == 0 || StringCompare(tok.GetCurrent(), szSupplierAbbrev) != 0)
@@ -182,13 +178,11 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 			  0);
     }
 
-  FileStream stream (File::Open(pathFileName,
-				FileMode::Open,
-				FileAccess::Read));
+  StreamReader reader (pathFileName);
 
   tstring line;
   bool bFound = false;
-  while (! bFound && Utils::ReadUntilDelim(line, T_('\n'), stream.Get()) != 0)
+  while (! bFound && reader.ReadLine(line))
     {
       Tokenizer tok (line.c_str(), WHITESPACE);
       if (tok.GetCurrent() == 0

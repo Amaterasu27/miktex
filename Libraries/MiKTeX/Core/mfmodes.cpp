@@ -56,7 +56,7 @@ SessionImpl::ReadMetafontModes ()
 			  0);
     }
 
-  FileStream stream (File::Open(path, FileMode::Open, FileAccess::Read));
+  StreamReader reader (path);
 
   bool readingModeDef = false;
 
@@ -68,7 +68,7 @@ SessionImpl::ReadMetafontModes ()
   
   memset (&mfmode, 0, sizeof(mfmode));
 
-  while (Utils::ReadUntilDelim(line, T_('\n'), stream.Get()))
+  while (reader.ReadLine(line))
     {
       if (readingModeDef)
 	{
@@ -126,8 +126,6 @@ SessionImpl::ReadMetafontModes ()
 	      continue;
 	    }
 	  const MIKTEXCHAR * printer_name = lpsz;
-	  SkipLine (lpsz);
-	  *const_cast<MIKTEXCHAR *>(lpsz) = 0;
 	  readingModeDef = true;
 	  Utils::CopyString (mfmode.szMnemonic,
 			     ARRAY_SIZE(mfmode.szMnemonic),
