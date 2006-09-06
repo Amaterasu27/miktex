@@ -75,6 +75,16 @@ PackageManager::~PackageManager ()
 
 /* _________________________________________________________________________
 
+   PackageManager2::~PackageManager2
+   _________________________________________________________________________ */
+
+MPMCALL
+PackageManager2::~PackageManager2 ()
+{
+}
+
+/* _________________________________________________________________________
+
    PackageManagerImpl::PackageManagerImpl
    _________________________________________________________________________ */
 
@@ -117,7 +127,19 @@ PackageManager *
 MPMCALL
 PackageManager::Create ()
 {
-  PackageManager * pManager = new PackageManagerImpl ();
+  return (PackageManager2::Create());
+}
+
+/* _________________________________________________________________________
+
+   PackageManager2::Create
+   _________________________________________________________________________ */
+
+PackageManager2 *
+MPMCALL
+PackageManager2::Create ()
+{
+  PackageManager2 * pManager = new PackageManagerImpl ();
   return (pManager);
 }
 
@@ -1979,4 +2001,42 @@ PackageManager::GetProxy ()
 void
 PackageManagerImpl::OnProgress ()
 {
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryGetRepositoryInfo
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageManagerImpl::TryGetRepositoryInfo
+(/*[in]*/ const tstring &	url,
+ /*[out]*/ RepositoryInfo &	repositoryInfo)
+{
+  RepositorySoapProxy repositorySoapProxy;
+  ProxySettings proxySettings;
+  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+    {
+      repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
+      repositorySoapProxy.proxy_port = proxySettings.port;
+      if (proxySettings.authenticationRequired)
+	{
+	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+	}
+    }
+  _mtrep__TryGetRepositoryInfo arg;
+  tstring url2 = url;
+  arg.url = &url2;
+  _mtrep__TryGetRepositoryInfoResponse resp;
+  if (repositorySoapProxy.TryGetRepositoryInfo(&arg, &resp) != SOAP_OK)
+    {
+      FATAL_SOAP_ERROR (&repositorySoapProxy);
+    }
+  if (resp.TryGetRepositoryInfoResult)
+    {
+      repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
+    }
+  return (resp.TryGetRepositoryInfoResult);
 }

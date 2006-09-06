@@ -816,7 +816,7 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
 
 class
 PackageManagerImpl
-  : public PackageManager,
+  : public PackageManager2,
     public ICreateFndbCallback,
     public IProgressNotify_
 {
@@ -928,6 +928,13 @@ public:
   void
   OnProgress ();
   
+public:
+  virtual
+  bool
+  MPMCALL
+  TryGetRepositoryInfo (/*[in]*/ const tstring &	url,
+			/*[out]*/ RepositoryInfo &	repositoryInfo);
+
 public:
   PackageManagerImpl ();
 

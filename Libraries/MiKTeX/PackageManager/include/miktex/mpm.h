@@ -687,6 +687,41 @@ typedef MiKTeX::Core::SmartPointer<PackageManager> PackageManagerPtr;
 
 /* _________________________________________________________________________
 
+   PackageManager2
+   _________________________________________________________________________ */
+
+/// The package manager v2 interface.
+class
+MIKTEXNOVTABLE
+PackageManager2 : public PackageManager
+{
+protected:
+  virtual
+  MPMCALL
+  ~PackageManager2 ()
+    = 0;
+
+public:
+  virtual
+  bool
+  MPMCALL
+  TryGetRepositoryInfo (/*[in]*/ const MiKTeX::Core::tstring &	url,
+			/*[out]*/ RepositoryInfo &		repositoryInfo)
+    = 0;
+
+public:
+  static
+  MPMEXPORT
+  PackageManager2 *
+  MPMCALL
+  Create ();
+};
+
+/// Smart pointer to a package manager v2 interface.
+typedef MiKTeX::Core::SmartPointer<PackageManager2> PackageManager2Ptr;
+
+/* _________________________________________________________________________
+
    PackageIterator
    _________________________________________________________________________ */
 
