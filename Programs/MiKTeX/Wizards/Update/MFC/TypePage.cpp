@@ -220,62 +220,95 @@ TypePage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 LRESULT
 TypePage::OnWizardNext ()
 {
-  ASSERT (IDC_INSTALL_FROM_INTERNET < IDC_INSTALL_FROM_CD);
-  int controlId =
-    GetCheckedRadioButton(IDC_INSTALL_FROM_INTERNET, IDC_INSTALL_FROM_CD);
-  int nextPage = -1;
-  if (controlId == IDC_INSTALL_FROM_INTERNET)
+  try
     {
-      ASSERT (IDC_RANDOM < IDC_CHOOSE_REPOSITORY);
-      ProxySettings proxySettings;
-      if (PackageManager::TryGetProxy(proxySettings)
-	  && proxySettings.authenticationRequired
-	  && proxySettings.user.empty())
+      ASSERT (IDC_INSTALL_FROM_INTERNET < IDC_INSTALL_FROM_CD);
+      int controlId =
+	GetCheckedRadioButton(IDC_INSTALL_FROM_INTERNET, IDC_INSTALL_FROM_CD);
+      int nextPage = -1;
+      if (controlId == IDC_INSTALL_FROM_INTERNET)
 	{
-	  ProxyAuthenticationDialog dlg (this);
-	  if (dlg.DoModal() != IDOK)
+	  ASSERT (IDC_RANDOM < IDC_CHOOSE_REPOSITORY);
+	  ProxySettings proxySettings;
+	  if (PackageManager::TryGetProxy(proxySettings)
+	      && proxySettings.authenticationRequired
+	      && proxySettings.user.empty())
 	    {
-	      return (-1);
+	      ProxyAuthenticationDialog dlg (this);
+	      if (dlg.DoModal() != IDOK)
+		{
+		  return (-1);
+		}
+	      proxySettings.user = dlg.GetName();
+	      proxySettings.password = dlg.GetPassword();
+	      PackageManager::SetProxy (proxySettings);
 	    }
-	  proxySettings.user = dlg.GetName();
-	  proxySettings.password = dlg.GetPassword();
-	  PackageManager::SetProxy (proxySettings);
+	  int controlId2 =
+	    GetCheckedRadioButton(IDC_RANDOM, IDC_CHOOSE_REPOSITORY);
+	  if (controlId2 == IDC_RANDOM)
+	    {
+	      nextPage = IDD_PACKAGE_LIST;
+	    }
+	  else if (controlId2 == IDC_LAST_USED_REPOSITORY)
+	    {
+	      RepositoryInfo repositoryInfo;
+	      if (! g_pManager->TryGetRepositoryInfo(remoteRepository,
+						     repositoryInfo))
+		{
+		  AfxMessageBox (T_("\
+The last used package repository is currently not available."),
+				 MB_OK | MB_ICONSTOP);
+		  return (-1);
+		}
+	      if (repositoryInfo.delay > 0
+		  && (AfxMessageBox(T_("\
+The last used pacakage repository does not contain \
+the latest packages.\r\n\r\n\
+Continue anyway?"),
+				    MB_YESNO)
+		      != IDYES))
+		{
+		  return (-1);
+		}
+	      nextPage = IDD_PACKAGE_LIST;
+	    }
+	  else if (controlId2 == IDC_CHOOSE_REPOSITORY)
+	    {
+	      nextPage = IDD_REMOTE_REPOSITORY;
+	    }
 	}
-      int controlId2 =
-	GetCheckedRadioButton(IDC_RANDOM, IDC_CHOOSE_REPOSITORY);
-      if (controlId2 == IDC_RANDOM)
+      else if (controlId == IDC_INSTALL_FROM_LOCAL_REPOSITORY)
 	{
-	  nextPage = IDD_PACKAGE_LIST;
+	  ASSERT (IDC_LAST_USED_DIRECTORY < IDC_SPECIFY_DIRECTORY);
+	  int controlId2 =
+	    GetCheckedRadioButton(IDC_LAST_USED_DIRECTORY,
+				  IDC_SPECIFY_DIRECTORY);
+	  if (controlId2 == IDC_LAST_USED_DIRECTORY)
+	    {
+	      nextPage = IDD_PACKAGE_LIST;
+	    }
+	  else if (controlId2 == IDC_SPECIFY_DIRECTORY)
+	    {
+	      nextPage = IDD_LOCAL_REPOSITORY;
+	    }
 	}
-      else if (controlId2 == IDC_LAST_USED_REPOSITORY)
+      else if (controlId == IDC_INSTALL_FROM_CD)
 	{
-	  nextPage = IDD_PACKAGE_LIST;
+	  nextPage = IDD_CD;
 	}
-      else if (controlId2 == IDC_CHOOSE_REPOSITORY)
-	{
-	  nextPage = IDD_REMOTE_REPOSITORY;
-	}
+      pSheet->SetCameFrom (IDD);
+      return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(nextPage)));
     }
-  else if (controlId == IDC_INSTALL_FROM_LOCAL_REPOSITORY)
+  catch (const MiKTeXException & e)
     {
-      ASSERT (IDC_LAST_USED_DIRECTORY < IDC_SPECIFY_DIRECTORY);
-      int controlId2 =
-	GetCheckedRadioButton(IDC_LAST_USED_DIRECTORY, IDC_SPECIFY_DIRECTORY);
-      if (controlId2 == IDC_LAST_USED_DIRECTORY)
-	{
-	  nextPage = IDD_PACKAGE_LIST;
-	}
-      else if (controlId2 == IDC_SPECIFY_DIRECTORY)
-	{
-	  nextPage = IDD_LOCAL_REPOSITORY;
-	}
+      pSheet->ReportError (e);
+      return (-1);
     }
-  else if (controlId == IDC_INSTALL_FROM_CD)
+  catch (const exception & e)
     {
-      nextPage = IDD_CD;
+      pSheet->ReportError (e);
+      return (-1);
     }
-  pSheet->SetCameFrom (IDD);
-  return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(nextPage)));
 }
 
 /* _________________________________________________________________________
