@@ -138,9 +138,21 @@ search P3C(kpse_file_format_type, format, char *, file, char *, mode)
         && ((len > 2 && FILESTRCASEEQ (found_name + len - 2, ".Z"))
             || (len > 3 && FILESTRCASEEQ (found_name + len - 3, ".gz")))) {
 /* FIXME : use zlib instead of gzip ! */
+#if defined(MIKTEX)
+      char * lpszCommand = concat3("zcat \"", found_name, "\"");
+      ret =
+	MiKTeX::Core::SessionWrapper(true)->TryOpenFile
+	(lpszCommand,
+	 MiKTeX::Core::FileMode::Command,
+	 MiKTeX::Core::FileAccess::Read,
+	 false);
+      free (lpszCommand);
+      to_close = USE_MIKTEX_CLOSE_FILE ;
+#else
       char *cmd = concat3 (GUNZIP, " -c ", found_name);
       ret = popen (cmd, "r");
       to_close = USE_PCLOSE ;
+#endif
     } else {
 #endif /* not AMIGA */
       ret = fopen (found_name, mode);
@@ -656,6 +668,11 @@ int close_file P1C(FILE *, f)
    switch(to_close) {
 case USE_PCLOSE:  return pclose(f) ;
 case USE_FCLOSE:  return fclose(f) ;
+#if defined(MIKTEX)
+   case USE_MIKTEX_CLOSE_FILE:
+     MiKTeX::Core::SessionWrapper(true)->CloseFile (f);
+     return (0);
+#endif
 default:          return -1 ;
    }
 }

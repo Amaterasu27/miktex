@@ -308,6 +308,9 @@ struct papsiz {
 
 #define USE_PCLOSE (801)
 #define USE_FCLOSE (802)
+#if defined(MIKTEX)
+#define USE_MIKTEX_CLOSE_FILE (803)
+#endif
 
 /* Things that KPATHSEA knows, and are useful even without it. */
 #if !defined(KPATHSEA)
