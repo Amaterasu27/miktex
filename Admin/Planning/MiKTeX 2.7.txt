@@ -1,0 +1,2 @@
+* MiKTeX for 64-bit Windows operating systems
+* MiKTeX for Windows Vista
