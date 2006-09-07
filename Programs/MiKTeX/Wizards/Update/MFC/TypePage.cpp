@@ -251,15 +251,8 @@ TypePage::OnWizardNext ()
 	    }
 	  else if (controlId2 == IDC_LAST_USED_REPOSITORY)
 	    {
-	      RepositoryInfo repositoryInfo;
-	      if (! g_pManager->TryGetRepositoryInfo(remoteRepository,
-						     repositoryInfo))
-		{
-		  AfxMessageBox (T_("\
-The last used package repository is currently not available."),
-				 MB_OK | MB_ICONSTOP);
-		  return (-1);
-		}
+	      RepositoryInfo repositoryInfo =
+		g_pManager->VerifyPackageRepository(remoteRepository);
 	      if (repositoryInfo.delay > 0
 		  && (AfxMessageBox(T_("\
 The last used pacakage repository does not contain \
