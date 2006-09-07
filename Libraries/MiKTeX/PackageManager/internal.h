@@ -936,6 +936,12 @@ public:
 			/*[out]*/ RepositoryInfo &	repositoryInfo);
 
 public:
+  virtual
+  RepositoryInfo
+  MPMCALL
+  VerifyPackageRepository (/*[in]*/ const tstring & url);
+
+public:
   PackageManagerImpl ();
 
 public:

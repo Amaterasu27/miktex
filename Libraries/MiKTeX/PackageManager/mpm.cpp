@@ -2040,3 +2040,54 @@ PackageManagerImpl::TryGetRepositoryInfo
     }
   return (resp.TryGetRepositoryInfoResult);
 }
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::VerifyPackageRepository
+   _________________________________________________________________________ */
+
+RepositoryInfo
+MPMCALL
+PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
+{
+  for (vector<RepositoryInfo>::const_iterator it = repositories.begin();
+       it != repositories.end();
+       ++ it)
+    {
+      if (it->url == url)
+	{
+	  return (*it);
+	}
+    }
+  RepositoryInfo repositoryInfo;
+  if (! TryGetRepositoryInfo(url, repositoryInfo))
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("Not a valid remote package repository."),
+	 url.c_str());
+    }
+  if (repositoryInfo.status == RepositoryStatus::Offline)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is offline."),
+	 url.c_str());
+    }
+  if (repositoryInfo.integrity == RepositoryIntegrity::Corrupted)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is corrupted."),
+	 url.c_str());
+    }
+  if (repositoryInfo.delay >= 10)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is not synchronized."),
+	 url.c_str());
+    }
+  repositories.push_back (repositoryInfo);
+  return (repositoryInfo);
+}

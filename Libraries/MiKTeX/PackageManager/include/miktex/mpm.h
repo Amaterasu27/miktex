@@ -710,6 +710,13 @@ public:
     = 0;
 
 public:
+  virtual
+  RepositoryInfo
+  MPMCALL
+  VerifyPackageRepository (/*[in]*/ const MiKTeX::Core::tstring & url)
+    = 0;
+
+public:
   static
   MPMEXPORT
   PackageManager2 *
