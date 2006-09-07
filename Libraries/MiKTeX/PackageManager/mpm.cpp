@@ -814,16 +814,16 @@ bool
 MPMCALL
 PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
 {
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, url)
-      && (PackageManagerImpl::DetermineRepositoryType(url)
-	  == RepositoryType::Remote))
+  if (SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_REMOTE_REPOSITORY,
+			  url))
     {
       return (true);
     }
-  return (SessionWrapper(true)
-	  ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			      MIKTEX_REGVAL_REMOTE_REPOSITORY,
-			      url));
+  return (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, url)
+	  && (PackageManagerImpl::DetermineRepositoryType(url)
+	      == RepositoryType::Remote));
 }
 
 /* _________________________________________________________________________
@@ -930,17 +930,17 @@ MPMCALL
 PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
 {
   tstring str;
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
-      && (PackageManagerImpl::DetermineRepositoryType(str)
-	  == RepositoryType::Local))
+  if (SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
+			  str))
     {
       path = str;
       return (true);
     }
-  else if (SessionWrapper(true)
-	   ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			       MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			       str))
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+	   && (PackageManagerImpl::DetermineRepositoryType(str)
+	       == RepositoryType::Local))
     {
       path = str;
       return (true);
@@ -995,17 +995,17 @@ MPMCALL
 PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
 {
   tstring str;
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
-      && (PackageManagerImpl::DetermineRepositoryType(str)
-	  == RepositoryType::MiKTeXDirect))
-    {
-      path = str;
-      return (true);
-    }
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
 			  str))
+    {
+      path = str;
+      return (true);
+    }
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+	   && (PackageManagerImpl::DetermineRepositoryType(str)
+	       == RepositoryType::MiKTeXDirect))
     {
       path = str;
       return (true);
@@ -1061,20 +1061,11 @@ PackageManager::TryGetDefaultPackageRepository
 (/*[out]*/ RepositoryType &	repositoryType,
  /*[out]*/ tstring &		urlOrPath)
 {
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, urlOrPath))
+  tstring str;
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+					      MIKTEX_REGVAL_REPOSITORY_TYPE,
+					      str))
     {
-      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
-    }
-  else
-    {
-      tstring str;
-      if (! (SessionWrapper(true)
-	     ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-				 MIKTEX_REGVAL_REPOSITORY_TYPE,
-				 str)))
-	{
-	  return (false);
-	}
       if (str == T_("remote"))
 	{
 	  urlOrPath = GetRemotePackageRepository();
@@ -1097,8 +1088,17 @@ PackageManager::TryGetDefaultPackageRepository
 	     T_("Invalid registry settings."),
 	     str.c_str());
 	}
+      return (true);
     }
-  return (true);
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, urlOrPath))
+    {
+      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
+      return (true);
+    }
+  else
+    {
+      return (false);
+    }
 }
 
 /* _________________________________________________________________________
