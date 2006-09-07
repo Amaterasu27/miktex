@@ -4,6 +4,7 @@
 //
 #define IDS_SITEWIZ                     3
 #define IDS_NO_DISK                     4
+#define IDS_CANCEL_UPDATE               5
 #define IDS_BROWSE_LOCAL                56
 #define IDP_NOT_A_FOLDER                65
 #define IDP_NOT_LOCAL_REPOSITORY        66
@@ -49,7 +50,6 @@
 #define IDC_STATIC_PORT                 1017
 #define IDC_CHECK_ALWAYS_ASK            1018
 #define IDC_STATIC_REPOSITORY_LOCATION  1019
-#define IDC_PACKAGE_TITLE2              1020
 #define IDC_PACKAGE_FILE                1020
 #define IDC_PROXY_NAME                  1020
 #define IDC_BROWSE                      1021
@@ -59,17 +59,18 @@
 #define IDC_COPY                        1025
 #define IDC_TITLE                       1026
 #define IDC_DESCRIPTION                 1027
+#define IDC_PROGRESS1_TITLE             1027
 #define IDC_REMOVED_FILES               1028
 #define IDC_NEW_FILES                   1029
-#define IDC_NUM_ERRORS                  1032
-#define IDC_PROGRESS_PACKAGE            1033
-#define IDC_PROGRESS_TOTAL              1034
+#define IDC_PROGRESS2_TITLE             1030
+#define IDC_PROGRESS1                   1033
+#define IDC_PROGRESS2                   1034
 #define IDC_DOWNLOADED_BYTES            1035
 #define IDC_PACKAGE                     1036
 #define IDC_KB_SEC                      1037
 #define IDC_EDIT                        1043
 #define IDC_REPORT                      1043
-#define IDC_ANI_DOWNLOAD                1046
+#define IDC_ANI                         1046
 #define IDC_INSTALL_FROM_INTERNET       1046
 #define IDC_INSTALL_FROM_LOCAL_REPOSITORY 1047
 #define IDC_INSTALL_FROM_CD             1048
@@ -82,7 +83,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        1006
 #define _APS_NEXT_COMMAND_VALUE         40006
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1031
 #define _APS_NEXT_SYMED_VALUE           1000
 #endif
 #endif
