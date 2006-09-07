@@ -1152,8 +1152,9 @@ TeXMFApp::InvokeEditorIfNecessary () const
 	      break;
 	    case T_('f'):
 	      {
+		PathName unmangled = UnmangleNameOfFile(editFileName.Get());
 		PathName path;
-		if (pSession->FindFile(editFileName,
+		if (pSession->FindFile(unmangled,
 				       GetInputFileType(),
 				       path))
 		  {
@@ -1161,7 +1162,7 @@ TeXMFApp::InvokeEditorIfNecessary () const
 		  }
 		else
 		  {
-		    commandLine += editFileName.Get();
+		    commandLine += unmangled.Get();
 		  }
 		break;
 	      }
