@@ -130,6 +130,7 @@ RemotePage::OnSetActive ()
     {
       try
 	{
+	  pSheet->ClearErrorFlag ();
 	  if (firstSetActive)
 	    {
 	      firstSetActive = false;

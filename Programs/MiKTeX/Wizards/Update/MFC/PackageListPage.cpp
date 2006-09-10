@@ -136,6 +136,8 @@ PackageListPage::OnSetActive ()
     {
       try
 	{
+	  pSheet->ClearErrorFlag ();
+
 	  EnableSelectButtons ();
 	  
 	  tstring repository = pSheet->GetRepository();
