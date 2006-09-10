@@ -521,6 +521,7 @@ END_MESSAGE_MAP();
 
 SetupWizardApplication::SetupWizardApplication ()
   : packageLevel (PackageLevel::None),
+    installOnTheFly (TriState::Undetermined),
     setupTask (SetupTask::None)
 {
 }

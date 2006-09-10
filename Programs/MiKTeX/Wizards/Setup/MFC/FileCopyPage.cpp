@@ -845,6 +845,12 @@ FileCopyPage::DoTheInstallation ()
   // run IniTeXMF
   ConfigureMiKTeX ();
 
+  // configure autoInstall
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_AUTO_INSTALL,
+			  theApp.installOnTheFly.Get());
+
   if (pSheet->GetCancelFlag())
     {
       return;

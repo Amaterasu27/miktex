@@ -62,4 +62,5 @@ private:
   
 private:
   class SetupWizard * pSheet;
+  int installOnTheFly;
 };

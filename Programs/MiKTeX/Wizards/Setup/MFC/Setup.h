@@ -549,6 +549,9 @@ public:
   tstring paperSize;
 
 public:
+  TriState installOnTheFly;
+
+public:
   StartupConfig startupConfig;
 
 public:

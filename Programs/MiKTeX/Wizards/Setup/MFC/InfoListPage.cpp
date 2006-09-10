@@ -281,6 +281,26 @@ InfoListPage::CreateReport ()
       info += T_("Preferred paper size is ");
       info += theApp.paperSize.c_str();
       info += CRLF;
+      info += CRLF;
+      if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect
+	  && theApp.setupTask != SetupTask::Download)
+	{
+	  switch (theApp.installOnTheFly.Get())
+	    {
+	    case TriState::True:
+	      info += T_("Packages will be installed on-the-fly");
+	      break;
+	    case TriState::False:
+	      info += T_("Packages will not be installed on-the-fly");
+	      break;
+	    case TriState::Undetermined:
+	      info +=
+		T_("Packages will be installed after confirmation by user");
+	      break;
+	    }
+	  info += CRLF;
+	  info += CRLF;
+	}
     }
 
   CWnd * pWnd = GetDlgItem(IDC_INFO);
