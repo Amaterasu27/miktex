@@ -189,6 +189,24 @@ the package repository.</para></listitem>
 file.</para></listitem>
 </varlistentry>
 <varlistentry>
+<term>--verify</term>
+<listitem>
+<indexterm>
+<primary>--verify</primary>
+</indexterm>
+<para>Verify the integrity of all installed packages.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>--verify=<replaceable>package</replaceable></term>
+<listitem>
+<indexterm>
+<primary>--verify=package</primary>
+</indexterm>
+<para>Verify the integrity of the specified package.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--verbose</option></term>
 <indexterm>
 <primary>--verbose</primary>
