@@ -612,6 +612,16 @@ PackageInstallerImpl::FindUpdates ()
 	}
       else
 	{
+	  // check the integrity of installed MiKTeX packages
+	  if (IsMiKTeXPackage(lpszPackage)
+	      && ! pManager->TryVerifyInstalledPackage(lpszPackage))
+	    {
+	      // the package has been tampered with
+	      updateInfo.timePackaged = time(0);
+	      updates.push_back (updateInfo);
+	      continue;
+	    }
+
 	  // compare digests, version numbers and time stamps
 	  MD5 md5 = dbLight.GetPackageDigest(lpszPackage);
 	  if (md5 == pPackageInfo->digest)

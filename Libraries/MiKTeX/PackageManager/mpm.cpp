@@ -2091,3 +2091,127 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
   repositories.push_back (repositoryInfo);
   return (repositoryInfo);
 }
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryVerifyInstalledPackageHelper
+   _________________________________________________________________________ */
+
+bool
+PackageManagerImpl::TryVerifyInstalledPackageHelper
+(/*[in]*/ const tstring &	fileName,
+ /*[out]*/ bool &		haveDigest,
+ /*[out]*/ MD5 &		digest)
+{
+  tstring unprefixed;
+  if (! StripTeXMFPrefix(fileName, unprefixed))
+    {
+      return (true);
+    }
+  PathName path = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  path += unprefixed;
+  if (! File::Exists(path))
+    {
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("package verification failed: file %s does not exist"),
+	 Q_(path));
+      return (false);
+    }
+  if (path.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
+    {
+      haveDigest = false;
+      return (true);
+    }
+  digest = MD5::FromFile(path.Get());
+  haveDigest = true;
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryVerifyInstalledPackage
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageManagerImpl::TryVerifyInstalledPackage
+(/*[in]*/ const tstring & deploymentName)
+{
+  PackageInfo packageInfo = GetPackageInfo(deploymentName);
+
+  FileDigestTable fileDigests;
+
+  for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+       it != packageInfo.runFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+       it != packageInfo.docFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.sourceFiles.begin();
+       it != packageInfo.sourceFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  MD5Builder md5Builder;
+
+  for (FileDigestTable::const_iterator it = fileDigests.begin();
+       it != fileDigests.end();
+       ++ it)
+    {
+      PathName path (it->first);
+      // we must dosify the path name for backward compatibility
+      path.ToDos ();
+      md5Builder.Update (path.Get(), path.GetLength());
+      md5Builder.Update (it->second.GetBits(), sizeof(MD5));
+    }
+
+  bool ok = (md5Builder.Final() == packageInfo.digest);
+
+  if (! ok)
+    {
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("package %s verification failed: some files have been modified"),
+	 Q_(deploymentName));
+    }
+
+  return (ok);
+}

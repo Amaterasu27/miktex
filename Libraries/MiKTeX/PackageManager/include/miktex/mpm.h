@@ -717,6 +717,14 @@ public:
     = 0;
 
 public:
+  virtual
+  bool
+  MPMCALL
+  TryVerifyInstalledPackage
+  (/*[in]*/ const MiKTeX::Core::tstring & deploymentName)
+    = 0;
+
+public:
   static
   MPMEXPORT
   PackageManager2 *
