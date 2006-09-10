@@ -180,6 +180,10 @@ private:
 
 private:
   void
+  Verify (/*[in]*/ const vector<tstring> &	toBeVerified);
+
+private:
+  void
   FindUpdates ();
 
 private:
@@ -233,7 +237,7 @@ private:
   SignalHandler (/*[in]*/ int sig);
 
 private:
-  PackageManagerPtr pPackageManager;
+  PackageManager2Ptr pPackageManager;
 
 private:
   SessionWrapper pSession;
@@ -286,6 +290,7 @@ enum Option
   OPT_UPDATE_FNDB,
   OPT_UPDATE_SOME,
   OPT_VERBOSE,
+  OPT_VERIFY,
   OPT_VERSION,
 };
 
@@ -458,6 +463,13 @@ Turn on tracing.\
   {
     T_("verbose"), 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
     T_("Turn on verbose output mode."), 0
+  },
+
+  {
+    T_("verify"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
+    0, OPT_VERIFY,
+    T_("Verifies the integrity of the installed packages."),
+    T_("PACKAGE")
   },
 
   {
@@ -681,6 +693,68 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
     }
   RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
 }
+
+/* _________________________________________________________________________
+
+   Application::verify
+   _________________________________________________________________________ */
+
+void
+Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
+{
+  vector<tstring> toBeVerified = toBeVerifiedArg;
+  bool verifyAll = (toBeVerified.size() == 0);
+  if (verifyAll)
+    {
+      auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+      PackageInfo packageInfo;
+      for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+	{
+	  if (! packageInfo.IsPureContainer()
+	      && packageInfo.IsInstalled())
+	    {
+	      toBeVerified.push_back (packageInfo.deploymentName);
+	    }
+	}
+      pIter->Dispose ();
+    }
+  bool ok = true;
+  for (vector<tstring>::const_iterator it = toBeVerified.begin();
+       it != toBeVerified.end();
+       ++ it)
+    {
+      if (! pPackageManager->TryVerifyInstalledPackage(*it))
+	{
+	  Message (T_("%s: this package has been tampered with.\n"),
+		   it->c_str());
+	  ok = false;
+	}
+    }
+  if (ok)
+    {
+      if (verifyAll)
+	{
+	  Message (T_("All packages are correctly installed.\n"));
+	}
+      else
+	{
+	  if (toBeVerified.size() == 1)
+	    {
+	      Message (T_("Package %s is correctly installed.\n"),
+		       toBeVerified[0].c_str());
+	    }
+	  else
+	    {
+	      Message (T_("The packages are correctly installed.\n"));
+	    }
+	}
+    }
+  else
+    {
+      Error (T_("Some installed packages have been tampered with."));
+    }
+}
+
 
 /* _________________________________________________________________________
 
@@ -1079,6 +1153,7 @@ Application::Main (/*[in]*/ int			argc,
   bool optUpdateAll = false;
   bool optUpdateDb = false;
   bool optUpdateFndb = false;
+  bool optVerify = false;
   bool optVersion = false;
   int optProxyPort = -1;
   tstring deploymentName;
@@ -1088,6 +1163,7 @@ Application::Main (/*[in]*/ int			argc,
   vector<tstring> installSome;
   vector<tstring> toBeInstalled;
   vector<tstring> toBeRemoved;
+  vector<tstring> toBeVerified;
   vector<tstring> updateSome;
   vector<tstring> updates;
 
@@ -1230,6 +1306,13 @@ Application::Main (/*[in]*/ int			argc,
 	    }
 	  verbose = true;
 	  break;
+	case OPT_VERIFY:
+	  if (lpszOptArg != 0)
+	    {
+	      toBeVerified.push_back (lpszOptArg);
+	    }
+	  optVerify = true;
+	  break;
 	case OPT_VERSION:
 	  optVersion = true;
 	  break;
@@ -1344,6 +1427,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optUpdateAll || updates.size() > 0)
     {
       Update (updates);
+      restartWindowed = false;
+    }
+
+  if (optVerify)
+    {
+      Verify (toBeVerified);
       restartWindowed = false;
     }
 
