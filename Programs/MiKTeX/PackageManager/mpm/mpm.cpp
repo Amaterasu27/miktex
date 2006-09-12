@@ -184,6 +184,10 @@ private:
 
 private:
   void
+  FindConflicts ();
+
+private:
+  void
   FindUpdates ();
 
 private:
@@ -266,7 +270,8 @@ private:
 enum Option
 {
   OPT_AAA = 1,
-  OPT_CSV,
+  OPT_CSV,			// experimental
+  OPT_FIND_CONFLICTS,		// internal
   OPT_FIND_UPDATES,
   OPT_HHELP,
   OPT_INSTALL,
@@ -285,9 +290,9 @@ enum Option
   OPT_TRACE,
   OPT_UNINSTALL,
   OPT_UPDATE,
-  OPT_UPDATE_ALL,
+  OPT_UPDATE_ALL,		// experimental
   OPT_UPDATE_DB,
-  OPT_UPDATE_FNDB,
+  OPT_UPDATE_FNDB,		// experimental
   OPT_UPDATE_SOME,
   OPT_VERBOSE,
   OPT_VERIFY,
@@ -304,6 +309,12 @@ const struct poptOption Application::aoption[] = {
   {				// experimental
     T_("csv"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
     T_("Output comma-separated value lists."), 0,
+  },
+
+  {				// internal
+    T_("find-conflicts"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_FIND_CONFLICTS,
+    T_("Find file conflicts."), 0,
   },
 
   {
@@ -367,20 +378,20 @@ Pick a suitable package repository URL and print it."), 0
     T_("PACKAGE")
   },
 
-  {
+  {				// experimental
     T_("proxy"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
     T_("Use the specified proxy host[:port]."),
     T_("HOST[:PORT]")
   },
 
-  {
+  {				// experimental
     T_("proxy-password"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_PASSWORD,
     T_("Use the specified password for proxy authentication."),
     T_("PASSWORD")
   },
 
-  {
+  {				// experimental
     T_("proxy-user"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_USER,
     T_("Use the specified user for proxy authentication."),
@@ -434,7 +445,7 @@ Turn on tracing.\
     T_("PACKAGE")
   },
 
-  {
+  {				// experimental
     T_("update-all"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_UPDATE_ALL,
     T_("Test the package repository for updates, then install\
@@ -692,6 +703,64 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
 	       toBeRemoved.size());
     }
   RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
+}
+
+/* _________________________________________________________________________
+
+   Application::FindConflicts
+   _________________________________________________________________________ */
+
+void
+Application::FindConflicts ()
+{
+  map<tstring, vector<tstring> > filesAndPackages;
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+	   it != packageInfo.runFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+      for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+	   it != packageInfo.docFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+      for (vector<tstring>::const_iterator it =
+	     packageInfo.sourceFiles.begin();
+	   it != packageInfo.sourceFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+    }
+  for (map<tstring, vector<tstring> >::const_iterator it =
+	 filesAndPackages.begin();
+       it != filesAndPackages.end();
+       ++ it)
+    {
+      if (it->second.size() > 1)
+	{
+	  tcout << it->first << T_(":") << endl;
+	  for (vector<tstring>::const_iterator it2 = it->second.begin();
+	       it2 != it->second.end();
+	       ++ it2)
+	    {
+	      tcout << T_("  ") << *it2 << endl;
+	    }
+	}
+    }
+  pIter->Dispose ();
 }
 
 /* _________________________________________________________________________
@@ -1143,6 +1212,7 @@ Application::Main (/*[in]*/ int			argc,
   initInfo.SetProgramInvocationName (argv[0]);
 
   bool optCsv = false;
+  bool optFindConflicts = false;
   bool optFindUpdates = false;
   bool optList = false;
   bool optListRepositories = false;
@@ -1182,6 +1252,9 @@ Application::Main (/*[in]*/ int			argc,
 	{
 	case OPT_CSV:
 	  optCsv = true;
+	  break;
+	case OPT_FIND_CONFLICTS:
+	  optFindConflicts = true;
 	  break;
 	case OPT_FIND_UPDATES:
 	  optFindUpdates = true;
@@ -1427,6 +1500,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optUpdateAll || updates.size() > 0)
     {
       Update (updates);
+      restartWindowed = false;
+    }
+
+  if (optFindConflicts)
+    {
+      FindConflicts ();
       restartWindowed = false;
     }
 
