@@ -179,14 +179,12 @@ BEGIN
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+    VK_ADD,         ID_INSTALL,             VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     VK_RETURN,      ID_PROPERTIES,          VIRTKEY, ALT, NOINVERT
     "A",            ID_SELECT_ALL,          VIRTKEY, CONTROL, NOINVERT
     VK_SUBTRACT,    ID_UNINSTALL,           VIRTKEY, NOINVERT
-    VK_OEM_MINUS,   ID_UNINSTALL,           VIRTKEY, NOINVERT
-    VK_ADD,         ID_INSTALL,             VIRTKEY, NOINVERT
-    VK_OEM_PLUS,    ID_INSTALL,             VIRTKEY, SHIFT, NOINVERT
 END
 
 
