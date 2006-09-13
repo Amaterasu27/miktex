@@ -948,6 +948,13 @@ public:
     MiKTeX::Core::tstring deploymentName;
     /// Date/Time the package was created.
     time_t timePackaged;
+
+    bool
+    IsBroken ()
+      const
+    {
+      return (timePackaged == static_cast<time_t>(-1));
+    }
   };
 
 public:

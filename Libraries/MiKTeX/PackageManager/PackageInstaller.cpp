@@ -617,7 +617,7 @@ PackageInstallerImpl::FindUpdates ()
 	      && ! pManager->TryVerifyInstalledPackage(lpszPackage))
 	    {
 	      // the package has been tampered with
-	      updateInfo.timePackaged = time(0);
+	      updateInfo.timePackaged = static_cast<time_t>(-1);
 	      updates.push_back (updateInfo);
 	      continue;
 	    }

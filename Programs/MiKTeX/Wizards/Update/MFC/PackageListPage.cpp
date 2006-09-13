@@ -367,10 +367,14 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	      listControl.SetItemText (idx, 1, strOld);
 	    }
 
-	  // display the 'new' package time-stamp
-	  CTime timeNew (it->timePackaged);
-	  CString strNew = timeNew.Format (T_("%d-%b-%y"));
-	  listControl.SetItemText (idx, 2, strNew);
+	  // display the 'new' package time-stamp, if the package is
+	  // correctly installed
+	  if (! it->IsBroken())
+	    {
+	      CTime timeNew (it->timePackaged);
+	      CString strNew = timeNew.Format (T_("%d-%b-%y"));
+	      listControl.SetItemText (idx, 2, strNew);
+	    }
 
 	  // set the check mark
 	  if (g_upgrading
@@ -443,12 +447,16 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
   if (fillingTheListView
       || pnmlv == 0
       || pnmlv->iItem < 0
-      || pnmlv->iItem >= static_cast<int>(updates.size())
-      || ! IsMiKTeXPackage(updates[pnmlv->iItem].deploymentName))
+      || pnmlv->iItem >= static_cast<int>(updates.size()))
     {
       *pResult = FALSE;
+      return;
     }
-  else if (g_upgrading)
+
+  const PackageInstaller::UpdateInfo & updateInfo = updates[pnmlv->iItem];
+
+  if (g_upgrading
+      && IsMiKTeXPackage(updateInfo.deploymentName))
     {
       AfxMessageBox (T_("The MiKTeX upgrade operation must be executed \
 as a whole."),
@@ -456,12 +464,20 @@ as a whole."),
       *pResult = TRUE;
     }
   else if (updateUpdate
-	   && ! ContainsUpdateWizard(updates[pnmlv->iItem].deploymentName))
+	   && IsMiKTeXPackage(updateInfo.deploymentName)
+	   && ! ContainsUpdateWizard(updateInfo.deploymentName))
     {
       AfxMessageBox (T_("The package \"") MYPKG T_("\" must be updated \
 separately from the other MiKTeX packages. Let the wizard conclude now. \
 Then run the wizard again to update the remaining packages."),
 			 MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+  else if (! (updateUpdate && IsMiKTeXPackage(updateInfo.deploymentName))
+	   && updateInfo.IsBroken())
+    {
+      AfxMessageBox (T_("This package must be repaired."),
+		     MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
     }
   else
@@ -596,8 +612,11 @@ PackageListPage::DoFindUpdates ()
   // sort by package name
   sort (updates.begin(), updates.end(), UpdateInfoComparer());
   
-  // check to see whether the update wizard needs an update
+  // check to see whether
+  //   a) the update wizard needs an update
+  //   b) some packages have to be repaired
   updateUpdate = false;
+  repairing = false;
   for (vector<PackageInstaller::UpdateInfo>::const_iterator
 	 it = updates.begin();
        it != updates.end();
@@ -606,7 +625,10 @@ PackageListPage::DoFindUpdates ()
       if (ContainsUpdateWizard(it->deploymentName))
 	{
 	  updateUpdate = true;
-	  break;
+	}
+      if (it->IsBroken())
+	{
+	  repairing = true;
 	}
     }
   
@@ -683,7 +705,7 @@ PackageListPage::EnableSelectButtons ()
     {
       UNEXPECTED_CONDITION (T_("PackageListPage::EnableSelectButtons"));
     }
-  pWnd->EnableWindow (enable);
+  pWnd->EnableWindow (enable && ! repairing);
   CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
