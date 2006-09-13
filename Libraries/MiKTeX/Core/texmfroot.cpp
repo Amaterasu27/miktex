@@ -737,15 +737,15 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
   if (r == MPM_ROOT)
     {
       path = GetMpmDatabasePathName();
-      return (File::Exists(path));
     }
-
-  if (r != MPM_ROOT && r >= GetNumberOfTEXMFRoots())
+  else if (r >= GetNumberOfTEXMFRoots())
     {
       INVALID_ARGUMENT (T_("SessionImpl::FindFilenameDatabase"), NUMTOSTR(r));
     }
-
-  path = GetFilenameDatabasePathName(r);
+  else
+    {
+      path = GetFilenameDatabasePathName(r);
+    }
 
   if (File::Exists(path))
     {
@@ -767,6 +767,7 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
       // try ROOT\miktex\conig\texmf.fndb
       path.Set (rootDirectories[r].get_Path(), MIKTEX_PATH_TEXMF_FNDB);
     }
+
   return (File::Exists(path));
 }
 
