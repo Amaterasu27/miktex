@@ -330,7 +330,7 @@ private:
   MIKTEXCHAR buffer[BUFSIZE];
 };
 
-#define NUMTOSTR(num) static_cast<const MIKTEXCHAR *>(NUMTOSTRHELPER(num))
+#define NUMTOSTR(num) NumberToStringConverter_(num).GetBuffer()
 
 /* _________________________________________________________________________
 
@@ -566,6 +566,14 @@ private:
 
 private:
   void
+  ReportEnvironmentVariables ();
+
+private:
+  void
+  ReportBrokenPackages ();
+
+private:
+  void
   WriteReport ();
 
 public:
@@ -651,7 +659,7 @@ private:
   bool setupWizardRunning;
   
 private:
-  PackageManagerPtr pManager;
+  PackageManager2Ptr pManager;
 
 private:
   SessionWrapper pSession;
@@ -2082,29 +2090,69 @@ void
 IniTeXMFApp::ReportMiKTeXVersion ()
 {
   TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
-  tcout << T_("MiKTeX: ") << Utils::GetMiKTeXVersionString() << endl;
-#if defined(MIKTEX_WINDOWS)
-  if (IsWindowsNT())
+  if (xml)
     {
-      tcout << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+      xmlWriter.StartElement (T_("setup"));
+      xmlWriter.StartElement (T_("version"));
+      xmlWriter.Text (Utils::GetMiKTeXVersionString());
+      xmlWriter.EndElement ();
+#if defined(MIKTEX_WINDOWS)
+      if (IsWindowsNT())
+	{
+	  xmlWriter.StartElement (T_("systemadmin"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (pSession->RunningAsAdministrator()
+				   ? T_("true")
+				   : T_("false")));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("poweruser"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (pSession->RunningAsPowerUser()
+				   ? T_("true")
+				   : T_("false")));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("sharedsetup"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (sharedSetup == TriState::True
+				   ? T_("true")
+				   : (sharedSetup == TriState::False
+				      ? T_("false")
+				      : T_("indeterminate"))));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("bindir"));
+	  xmlWriter.Text (pSession->GetSpecialPath(SpecialPath::BinDirectory)
+			  .Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+#endif
+    }
+  else
+    {
+      tcout << T_("MiKTeX: ") << Utils::GetMiKTeXVersionString() << endl;
+#if defined(MIKTEX_WINDOWS)
+      if (IsWindowsNT())
+	{
+	  tcout << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+					   ? T_("yes")
+					   : T_("no"))
+		<< endl;
+	  tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
+					 ? T_("yes")
+					 : T_("no"))
+		<< endl;
+	}
+#endif
+      tcout << T_("SharedSetup: ") << (sharedSetup == TriState::True
 				       ? T_("yes")
-				       : T_("no"))
-	    << endl;
-      tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
-				     ? T_("yes")
-				     : T_("no"))
+				       : (sharedSetup == TriState::False
+					  ? T_("no")
+					  : T_("unknown")))
+	    << endl
+	    << T_("BinDir: ")
+	    << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
 	    << endl;
     }
-#endif
-  tcout << T_("SharedSetup: ") << (sharedSetup == TriState::True
-				   ? T_("yes")
-				   : (sharedSetup == TriState::False
-				      ? T_("no")
-				      : T_("unknown")))
-	<< endl
-	<< T_("BinDir: ")
-	<< pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
-	<< endl;
 }
 
 /* _________________________________________________________________________
@@ -2115,7 +2163,18 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 void
 IniTeXMFApp::ReportOSVersion ()
 {
-  tcout << T_("OS: ") << Utils::GetOSVersionString() << endl;
+  if (xml)
+    {
+      xmlWriter.StartElement (T_("os"));
+      xmlWriter.StartElement (T_("version"));
+      xmlWriter.Text (Utils::GetOSVersionString());
+      xmlWriter.EndElement ();
+      xmlWriter.EndElement ();
+    }
+  else
+    {
+      tcout << T_("OS: ") << Utils::GetOSVersionString() << endl;
+    }
 }
 
 /* _________________________________________________________________________
@@ -2126,29 +2185,70 @@ IniTeXMFApp::ReportOSVersion ()
 void
 IniTeXMFApp::ReportRoots ()
 {
-  for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+  if (xml)
     {
-      PathName absFileName;
-      PathName root = pSession->GetRootDirectory(idx);
-      tcout << T_("Root") << idx << T_(": ") << root.Get() << endl;
+      xmlWriter.StartElement (T_("roots"));
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  xmlWriter.StartElement (T_("path"));
+	  PathName root = pSession->GetRootDirectory(idx);
+	  xmlWriter.AddAttribute (T_("index"), NUMTOSTR(idx));
+	  if (root == pSession->GetSpecialPath(SpecialPath::InstallRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("install"), T_("true"));
+	    }
+	  if (root == pSession->GetSpecialPath(SpecialPath::UserDataRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("userdata"), T_("true"));
+	    }
+	  if (root == pSession->GetSpecialPath(SpecialPath::UserConfigRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("userconfig"), T_("true"));
+	    }
+	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	    {
+	      if (root
+		  == pSession->GetSpecialPath(SpecialPath::CommonDataRoot))
+		{
+		  xmlWriter.AddAttribute (T_("commondata"), T_("true"));
+		}
+	      if (root
+		  == pSession->GetSpecialPath(SpecialPath::CommonConfigRoot))
+		{
+		  xmlWriter.AddAttribute (T_("commonconfig"), T_("true"));
+		}
+	    }
+	  xmlWriter.Text (root.Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
     }
-  tcout << T_("Install: ")
-	<< pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
-	<< endl;
-  tcout << T_("UserData: ")
-	<< pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
-	<< endl;
-  tcout << T_("UserConfig: ")
-	<< pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
-	<< endl;
-  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+  else
     {
-      tcout << T_("CommonData: ")
-	    << pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  PathName root = pSession->GetRootDirectory(idx);
+	  tcout << T_("Root") << idx << T_(": ") << root.Get() << endl;
+	}
+      tcout << T_("Install: ")
+	    << pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
+	<< endl;
+      tcout << T_("UserData: ")
+	    << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
 	    << endl;
-      tcout << T_("CommonConfig: ")
-	    << pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get()
+      tcout << T_("UserConfig: ")
+	    << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
 	    << endl;
+      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	{
+	  tcout << T_("CommonData: ")
+		<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+		<< endl;
+	  tcout << T_("CommonConfig: ")
+		<< (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot)
+		    .Get())
+		<< endl;
+	}
     }
 }
 
@@ -2160,29 +2260,148 @@ IniTeXMFApp::ReportRoots ()
 void
 IniTeXMFApp::ReportFndbFiles ()
 {
-  for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+  if (xml)
     {
-      PathName absFileName;
-      tcout << T_("fndb") << idx << T_(": ");
-      if (pSession->FindFilenameDatabase(idx, absFileName))
+      xmlWriter.StartElement (T_("fndb"));
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
 	{
-	  tcout << absFileName.Get() << endl;
+	  PathName absFileName;
+	  if (pSession->FindFilenameDatabase(idx, absFileName))
+	    {
+	      xmlWriter.StartElement (T_("path"));
+	      xmlWriter.AddAttribute (T_("index"), NUMTOSTR(idx));
+	      xmlWriter.Text (absFileName.Get());
+	      xmlWriter.EndElement ();
+	    }
+	}
+      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      PathName path;
+      if (pSession->FindFilenameDatabase(r, path))
+	{
+	  xmlWriter.StartElement (T_("mpmpath"));
+	  xmlWriter.Text (path.Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+    }
+  else
+    {
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  PathName absFileName;
+	  tcout << T_("fndb") << idx << T_(": ");
+	  if (pSession->FindFilenameDatabase(idx, absFileName))
+	    {
+	      tcout << absFileName.Get() << endl;
+	    }
+	  else
+	    {
+	      tcout << T_("<does not exist>") << endl;
+	    }
+	}
+      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      PathName path;
+      tcout << T_("fndbmpm: ");
+      if (pSession->FindFilenameDatabase(r, path))
+	{
+	  tcout << path.Get() << endl;
 	}
       else
 	{
 	  tcout << T_("<does not exist>") << endl;
 	}
     }
-  unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
-  PathName path;
-  tcout << T_("fndbmpm: ");
-  if (pSession->FindFilenameDatabase(r, path))
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::ReportEnvironmentVariables
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ReportEnvironmentVariables ()
+{
+#if defined(MIKTEX_WINDOWS)
+  if (xml)
     {
-      tcout << path.Get() << endl;
+      LPTSTR lpszEnv = reinterpret_cast<LPTSTR>(GetEnvironmentStrings ());
+      if (lpszEnv == 0)
+	{
+	  return;
+	}
+      xmlWriter.StartElement (T_("environment"));
+      for (LPTSTR p = lpszEnv; *p != 0; p += _tcslen(p) + 1)
+	{
+	  Tokenizer tok (p, T_("="));
+	  if (tok.GetCurrent() == 0)
+	    {
+	      continue;
+	    }
+	  xmlWriter.StartElement (T_("env"));
+	  xmlWriter.AddAttribute (T_("name"), tok.GetCurrent());
+	  ++ tok;
+	  if (tok.GetCurrent() != 0)
+	    {
+	      xmlWriter.Text (tok.GetCurrent());
+	    }
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+      FreeEnvironmentStrings (lpszEnv);
     }
-  else
+#endif
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::ReportBrokenPackages
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ReportBrokenPackages ()
+{
+  vector<tstring> broken;
+  auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
     {
-      tcout << T_("<does not exist>") << endl;
+      if (! packageInfo.IsPureContainer()
+	  && packageInfo.IsInstalled()
+	  && packageInfo.deploymentName.compare (0, 7, T_("miktex-")) == 0)
+	{
+	  if (! (pManager
+		 ->TryVerifyInstalledPackage(packageInfo.deploymentName)))
+	    {
+	      broken.push_back (packageInfo.deploymentName);
+	    }
+	}
+    }
+  pIter->Dispose ();
+  if (broken.size() > 0)
+    {
+      if (xml)
+	{
+	  xmlWriter.StartElement (T_("packages"));
+	  for (vector<tstring>::const_iterator it = broken.begin();
+	       it != broken.end();
+	       ++ it)
+	    {
+	      xmlWriter.StartElement (T_("package"));
+	      xmlWriter.AddAttribute (T_("name"), it->c_str());
+	      xmlWriter.AddAttribute (T_("integrity"), T_("damaged"));
+	      xmlWriter.EndElement ();
+	    }
+	  xmlWriter.EndElement ();
+	}
+      else
+	{
+	  for (vector<tstring>::const_iterator it = broken.begin();
+	       it != broken.end();
+	       ++ it)
+	    {
+	      tcout << *it << T_(": needs to be reinstalled") << endl;
+	    }
+	}
     }
 }
 
@@ -2199,11 +2418,18 @@ IniTeXMFApp::WriteReport ()
   if (xml)
     {
       xmlWriter.StartDocument ();
+      xmlWriter.StartElement (T_("miktexreport"));
     }
   ReportMiKTeXVersion ();
   ReportOSVersion ();
   ReportRoots ();
   ReportFndbFiles ();
+  ReportEnvironmentVariables ();
+  ReportBrokenPackages ();
+  if (xml)
+    {
+      xmlWriter.EndElement ();
+    }  
 }
 
 /* _________________________________________________________________________
