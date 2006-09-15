@@ -184,6 +184,10 @@ private:
 
 private:
   void
+  VerifyMiKTeX ();
+
+private:
+  void
   FindConflicts ();
 
 private:
@@ -296,6 +300,7 @@ enum Option
   OPT_UPDATE_SOME,
   OPT_VERBOSE,
   OPT_VERIFY,
+  OPT_VERIFY_MIKTEX,
   OPT_VERSION,
 };
 
@@ -479,8 +484,15 @@ Turn on tracing.\
   {
     T_("verify"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
     0, OPT_VERIFY,
-    T_("Verifies the integrity of the installed packages."),
+    T_("Verify the integrity of the installed packages."),
     T_("PACKAGE")
+  },
+
+  {				// experimental
+    T_("verify-miktex"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_VERIFY_MIKTEX,
+    T_("Verify the integrity of the installed MiKTeX packages."),
+    0
   },
 
   {
@@ -765,6 +777,30 @@ Application::FindConflicts ()
 
 /* _________________________________________________________________________
 
+   Application::verifyMiKTeX
+   _________________________________________________________________________ */
+
+void
+Application::VerifyMiKTeX ()
+{
+  vector<tstring> toBeVerified;
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      if (! packageInfo.IsPureContainer()
+	  && packageInfo.IsInstalled()
+	  && packageInfo.deploymentName.compare (0, 7, T_("miktex-")) == 0)
+	{
+	  toBeVerified.push_back (packageInfo.deploymentName);
+	}
+    }
+  pIter->Dispose ();
+  Verify (toBeVerified);
+}
+
+/* _________________________________________________________________________
+
    Application::verify
    _________________________________________________________________________ */
 
@@ -794,7 +830,7 @@ Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
     {
       if (! pPackageManager->TryVerifyInstalledPackage(*it))
 	{
-	  Message (T_("%s: this package has been tampered with.\n"),
+	  Message (T_("%s: this package needs to be reinstalled.\n"),
 		   it->c_str());
 	  ok = false;
 	}
@@ -820,7 +856,7 @@ Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
     }
   else
     {
-      Error (T_("Some installed packages have been tampered with."));
+      Error (T_("Some packages need to be reinstalled."));
     }
 }
 
@@ -1224,6 +1260,7 @@ Application::Main (/*[in]*/ int			argc,
   bool optUpdateDb = false;
   bool optUpdateFndb = false;
   bool optVerify = false;
+  bool optVerifyMiKTeX = false;
   bool optVersion = false;
   int optProxyPort = -1;
   tstring deploymentName;
@@ -1386,6 +1423,9 @@ Application::Main (/*[in]*/ int			argc,
 	    }
 	  optVerify = true;
 	  break;
+	case OPT_VERIFY_MIKTEX:
+	  optVerifyMiKTeX = true;
+	  break;
 	case OPT_VERSION:
 	  optVersion = true;
 	  break;
@@ -1506,6 +1546,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optFindConflicts)
     {
       FindConflicts ();
+      restartWindowed = false;
+    }
+
+  if (optVerifyMiKTeX)
+    {
+      VerifyMiKTeX ();
       restartWindowed = false;
     }
 
