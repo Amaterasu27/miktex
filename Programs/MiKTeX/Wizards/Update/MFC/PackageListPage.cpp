@@ -476,7 +476,7 @@ Then run the wizard again to update the remaining packages."),
   else if (! (updateUpdate && IsMiKTeXPackage(updateInfo.deploymentName))
 	   && updateInfo.IsBroken())
     {
-      AfxMessageBox (T_("This package must be repaired."),
+      AfxMessageBox (T_("This package needs to be reinstalled."),
 		     MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
     }
