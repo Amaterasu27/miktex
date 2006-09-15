@@ -46,8 +46,9 @@ END_MESSAGE_MAP();
    PropPageGeneral::PropPageGeneral
    _________________________________________________________________________ */
 
-PropPageGeneral::PropPageGeneral ()
+PropPageGeneral::PropPageGeneral (/*[in]*/ PackageManager * pManager)
   : CPropertyPage(PropPageGeneral::IDD),
+    pManager (pManager),
     pProgressDialog (0),
     installOnTheFly (-1),
     previousInstallOnTheFly (-1),
@@ -216,10 +217,20 @@ PropPageGeneral::OnRefreshFndb ()
     {
       auto_ptr<ProgressDialog> pProgressDialog (ProgressDialog::Create());
       pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
-      pProgressDialog->SetTitle ("Refresh File Name Database");
-      pProgressDialog->SetLine (1, "Scanning directories...");
+      pProgressDialog->SetTitle (T_("Refresh File Name Database"));
+      pProgressDialog->SetLine (1, T_("Scanning directories..."));
       this->pProgressDialog = pProgressDialog.get();
       Fndb::Refresh (this);
+      if (! pProgressDialog->HasUserCancelled())
+	{
+	  pProgressDialog->SetLine
+	    (1,
+	     T_("Scanning package definitions"));
+	  pProgressDialog->SetLine
+	    (2,
+	     T_("create the MPM file name database..."));
+	  pManager->CreateMpmFndb ();
+	}
       pProgressDialog->StopProgressDialog ();
       pProgressDialog.reset ();
     }

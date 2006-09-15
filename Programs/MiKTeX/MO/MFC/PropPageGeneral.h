@@ -34,7 +34,7 @@ protected:
   DECLARE_MESSAGE_MAP();
   
 public:
-  PropPageGeneral ();
+  PropPageGeneral (/*[in]*/ PackageManager * pManager);
 
 public:
   virtual
@@ -115,4 +115,7 @@ private:
 
 private:
   CComboBox paperSizeComboBox;
+  
+private:
+  PackageManagerPtr pManager;
 };

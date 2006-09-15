@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -333,6 +334,124 @@ private:
 
 /* _________________________________________________________________________
 
+   XmlWriter
+   _________________________________________________________________________ */
+
+class XmlWriter
+{
+public:
+  XmlWriter ()
+    : freshElement (false)
+  {
+  }
+
+public:
+  void
+  StartDocument ()
+  {
+    tcout << T_("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+  }
+
+public:
+  void
+  StartElement (/*[in]*/ const MIKTEXCHAR *	lpszName)
+  {
+    if (freshElement)
+      {
+	tcout << T_('>');
+      }
+    tcout << T_('<');
+    tcout << lpszName;
+    freshElement = true;
+    elements.push (lpszName);
+  }
+
+public:
+  void
+  AddAttribute (/*[in]*/ const MIKTEXCHAR *	lpszAttributeName,
+		/*[in]*/ const MIKTEXCHAR *	lpszAttributeValue)
+  {
+    tcout << T_(' ');
+    tcout << lpszAttributeName;
+    tcout << T_("=\"");
+    tcout << lpszAttributeValue;
+    tcout << T_('"');
+  }
+
+public:
+  void
+  EndElement ()
+  {
+    if (elements.empty())
+      {
+	FATAL_MIKTEX_ERROR (T_("XmlWriter::EndElement"),
+			    T_("No elements on the stack."),
+			    0);
+      }
+    if (freshElement)
+      {
+	tcout << T_("/>");
+	freshElement = false;
+      }
+    else
+      {
+	tcout << T_("</");
+	tcout << elements.top();
+	tcout << T_('>');
+      }
+    elements.pop ();
+  }
+
+public:
+  void
+  EndAllElements ()
+  {
+    while (! elements.empty())
+      {
+	EndElement ();
+      }
+  }
+
+public:
+  void
+  Text (/*[in]*/ const tstring & text )
+  {
+    if (freshElement)
+      {
+	tcout << T_('>');
+	freshElement = false;
+      }
+    for (const MIKTEXCHAR * lpszText = text.c_str();
+	 *lpszText != 0;
+	 ++ lpszText)
+      {
+	switch (*lpszText)
+	  {
+	  case T_('&'):
+	    tcout << T_("&amp;");
+	    break;
+	  case T_('<'):
+	    tcout << T_("&lt;");
+	    break;
+	  case T_('>'):
+	    tcout << T_("&gt;");
+	    break;
+	  default:
+	    tcout << *lpszText;
+	    break;
+	  }
+      }
+  }
+
+private:
+  stack<tstring> elements;
+
+private:
+  bool freshElement;
+};
+
+/* _________________________________________________________________________
+
    IniTeXMFApp
    _________________________________________________________________________ */
 
@@ -497,6 +616,9 @@ private:
 
 private:
   bool csv;
+
+private:
+  bool xml;
   
 private:
   bool recursive;
@@ -535,6 +657,9 @@ private:
   SessionWrapper pSession;
 
 private:
+  XmlWriter xmlWriter;
+
+private:
   static const struct poptOption aoption_user[];
 
 private:
@@ -571,6 +696,7 @@ enum Option
   OPT_LIST_FORMATS,		// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
+  OPT_XML,			// <experimental/>
 
   OPT_COMMON_CONFIG,		// <internal/>
   OPT_COMMON_DATA,		// <internal/>
@@ -734,6 +860,14 @@ dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
+    0
+  },
+
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
     0
   },
 
@@ -965,6 +1099,14 @@ dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     0
   },
 
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
+    0
+  },
+
   POPT_AUTOHELP
   POPT_TABLEEND
 };
@@ -1193,6 +1335,14 @@ dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     0
   },
 
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
+    0
+  },
+
   POPT_AUTOHELP
   POPT_TABLEEND
 };
@@ -1206,6 +1356,7 @@ IniTeXMFApp::IniTeXMFApp ()
   : printOnly (false),
     quiet (false),
     csv (false),
+    xml (false),
     recursive (false),
     removeFndb (false),
     verbose (false)
@@ -2045,6 +2196,10 @@ IniTeXMFApp::ReportFndbFiles ()
 void
 IniTeXMFApp::WriteReport ()
 {
+  if (xml)
+    {
+      xmlWriter.StartDocument ();
+    }
   ReportMiKTeXVersion ();
   ReportOSVersion ();
   ReportRoots ();
@@ -2305,6 +2460,10 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optVersion = true;
 	  break;
 
+	case OPT_XML:
+	  xml = true;
+	  break;
+
 	}
     }
 
@@ -2449,6 +2608,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    {
 	      UpdateFilenameDatabase (r);
 	    }
+	  pManager->CreateMpmFndb ();
 	}
       else
 	{
