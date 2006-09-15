@@ -2081,6 +2081,13 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	 T_("The remote package repository is corrupted."),
 	 url.c_str());
     }
+  if (repositoryInfo.integrity != RepositoryIntegrity::Intact)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository may be corrupted."),
+	 url.c_str());
+    }
   if (repositoryInfo.delay >= 10)
     {
       FATAL_MPM_ERROR
