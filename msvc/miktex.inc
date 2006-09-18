@@ -264,9 +264,9 @@ rel_zlibstaticlibdir = Libraries\3rd\zlib-static
 
 
 
-
-
-
+dbdir = $(miktexsrcdir)\BuildUtilities\docbook
+dbcatalog = $(dbdir)\catalog
+dbxsldir = $(dbdir)\docbook-xsl
 
 xsldir = $(miktexsrcdir)\$(rel_docdir)\Styles
 cssdir = $(miktexsrcdir)\$(rel_docdir)\Styles

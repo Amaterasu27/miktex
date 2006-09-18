@@ -420,11 +420,14 @@ check-local:
 
 depend-local:
 
-setenv.cmd:
-	echo set MIKTEX_BINDIR=$(prefix)\miktex\bin> $@
-	echo set MIKTEX_STARTUPFILE=$(prefix)\miktex\config\miktexstartup.ini>> $@
-	echo set PATH=^%MIKTEX_BINDIR^%;^%PATH^%>> $@
-	echo set INCLUDE=$(miktexsrcdir)\msvc;^%INCLUDE^%>> $@
+make-setenv-cmd:
+	type << > setenv.cmd
+set INCLUDE=$(miktexsrcdir)\msvc;%INCLUDE%
+set MIKTEX_BINDIR=$(prefix)\miktex\bin
+set MIKTEX_STARTUPFILE=$(prefix)\miktex\config\miktexstartup.ini
+set PATH=%MIKTEX_BINDIR%;%PATH%
+set XML_CATALOG_FILES=$(dbcatalog)
+<<
 
 miktexstartupini = $(prefix)\miktex\config\miktexstartup.ini
 
@@ -435,6 +438,14 @@ make-miktexstartup-ini:
 	  )
 	type << > $(miktexstartupini)
 [paths]
-Roots=$(texmfroots)
+Roots=$(tmdir)
 Install=$(prefix)
+UserData=$(prefix)
+UserConfig=$(prefix)
 <<
+
+init-texmf:
+	if not exist "$(prefix)\dvips\config" \
+	  $(mkpath) "$(prefix)\dvips\config"
+	copy /Y "$(tmdir)\dvips\config\config.ps" \
+	  "$(prefix)\dvips\config"

@@ -68,7 +68,7 @@ echo s/@MIKTEX_RELEASE_STATE@/%state%/ >> tmp\scriptfile
 echo s/@MIKTEX_RELEASE_NUMBER@/%num%/ >> tmp\scriptfile
 echo s/@MIKTEX_VERSION_STR@/%verstr%/ >> tmp\scriptfile
 echo s/@MIKTEX_SERIES_STR@/%major%.%minor%/ >> tmp\scriptfile
-echo s;@SRCDIR@;%CD:\=/%; >> tmp\scriptfile
+echo s;@TOP_SRCDIR@;%CD:\=/%; >> tmp\scriptfile
 for /F "usebackq delims=" %%d in (`bash -c date`) do (
   echo s!@MIKTEX_DATETIME_STR@!%%d! >> tmp\scriptfile
 )
@@ -77,6 +77,9 @@ sed -f tmp\scriptfile < Doxyfile.in > Doxyfile
 sed -f tmp\scriptfile < Libraries\MiKTeX\Core\include\miktex\version.h.in > Libraries\MiKTeX\Core\include\miktex\version.h
 
 sed -f tmp\scriptfile < Documentation\version.ent.in > Documentation\version.ent
+sed -f tmp\scriptfile < Documentation\Styles\db2latex-common.xsl.in > Documentation\Styles\db2latex-common.xsl
+
+sed -f tmp\scriptfile < BuildUtilities\docbook\catalog.in > BuildUtilities\docbook\catalog
 
 setlocal enabledelayedexpansion
 for %%f in (Admin\TPM\*.tpm.in) do (
@@ -88,6 +91,7 @@ endlocal
 rmdir /s /q tmp
 
 nmake -nologo -f miktex.mak make-miktexstartup-ini 1>nul
-nmake -nologo -f miktex.mak setenv.cmd 1>nul
+nmake -nologo -f miktex.mak make-setenv-cmd 1>nul
+nmake -nologo -f miktex.mak init-texmf 1>nul
 
 endlocal
