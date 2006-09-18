@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<book id="book" lang="en">
+  <bookinfo>
+    <title>Theorems</title>
+    <authorgroup>
+      <author>
+        <surname>Doe</surname>
+        <firstname>John</firstname>
+      </author>
+      <author>
+        <surname>Casellas</surname>
+        <firstname>Ramon</firstname>
+      </author>
+      <corpauthor>Some Corporation</corpauthor>
+    </authorgroup>
+  </bookinfo>
+  <chapter>
+    <?latex \pagenumbering{roman}?>
+    <title>Chapter1</title>
+    <sect1>
+      <itemizedlist>
+        <listitem>
+          <simpara>
+            Primary with secondary
+          </simpara>
+          <indexterm>
+            <primary>HTML</primary>
+            <secondary>XML vs.</secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            <quote>See</quote>
+          </simpara>
+          <indexterm>
+            <primary>Hypertext Markup Language</primary>
+            <see>HTML</see>
+          </indexterm>
+          <indexterm>
+            <primary>quote characters</primary>
+			<secondary>"|</secondary>
+			<tertiary>+|</tertiary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            Primary with secondary
+          </simpara>
+          <indexterm>
+            <primary>sorting</primary>
+            <secondary>a<?BLAH , but this extra text should not be here?></secondary>
+          </indexterm>
+          <indexterm>
+            <primary>sorting</primary>
+            <secondary>c</secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            Primary with secondary and <sgmltag class="attribute">sortas</sgmltag>.
+          </simpara>
+          <indexterm>
+            <primary>sorting</primary>
+            <secondary sortas="b">d (sorts like b)</secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            <sgmltag class="starttag">emphasis</sgmltag> (should be ignored).
+          </simpara>
+          <indexterm>
+            <primary>samples</primary>
+            <secondary>no bold and no <emphasis>emphasis</emphasis></secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            <sgmltag class="xmlpi">latex-index-style</sgmltag> with <sgmltag class="starttag">emphasis</sgmltag> (should be ignored).
+          </simpara>
+          <indexterm>
+            <primary>samples</primary>
+            <secondary><?latex-index-style \textbf?>bold and no <emphasis>emphasis</emphasis></secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            <sgmltag class="xmlpi">latex-index-style</sgmltag> with <sgmltag class="starttag">emphasis</sgmltag> (should be honoured).
+          </simpara>
+          <indexterm>
+            <primary>samples</primary>
+            <secondary sortas="bold and emphasis"><?latex-index-style \textbf?>bold and <emphasis>emphasis</emphasis></secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            sortas on primary with <sgmltag class="xmlpi">latex-index-style</sgmltag> on secondary and <sgmltag class="starttag">emphasis</sgmltag> on secondary (should be ignored).
+          </simpara>
+          <indexterm>
+            <primary sortas="samples2"><emphasis>more</emphasis> samples</primary>
+            <secondary><?latex-index-style \textbf?>bold and no <emphasis>emphasis</emphasis></secondary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            triple sortas
+          </simpara>
+          <indexterm>
+            <primary sortas="a">a</primary>
+            <secondary sortas="b"><?latex-index-style \textbf?>b</secondary>
+            <tertiary sortas="c">c</tertiary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            another triple sortas
+          </simpara>
+          <indexterm>
+            <primary sortas="a">a</primary>
+            <secondary sortas="b">b</secondary>
+            <tertiary sortas="d">d</tertiary>
+          </indexterm>
+        </listitem>
+        <listitem>
+          <simpara>
+            weird characters
+          </simpara>
+          <indexterm>
+            <primary>&lt;\~^&amp;"|!@{}\#\ #_$}^%{&gt;\</primary>
+            <secondary sortas="&lt;\~^&amp;'|!@{}\#\ #_$}^%{&gt;\">&lt;\~^&amp;'|!@{}\#\ #_$}^%{&gt;\</secondary>
+          </indexterm>
+          <indexterm>
+            <primary>&lt;</primary>
+            <secondary>&gt;</secondary>
+            <tertiary><?latex-index-style \textbf?>&lt;\~^&amp;"|!@{}\#\ #_$}^%{&gt;\</tertiary>
+          </indexterm>
+        </listitem>
+      </itemizedlist>
+    </sect1>
+  </chapter>
+  <chapter>
+    <?latex \pagenumbering{arabic}?>
+    <title>Chapter2</title>
+    <sect1>
+      <para>
+        <?latex ~?>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter3</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter4</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter5</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter6</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter7</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <chapter>
+    <title>Chapter8</title>
+    <sect1>
+      <para>
+        <indexterm>
+          <primary>HTML</primary>
+          <secondary>XML vs.</secondary>
+        </indexterm>
+        <indexterm>
+          <primary>Hypertext Markup Language</primary>
+          <see>HTML</see>
+        </indexterm>
+        <indexterm>
+          <primary>SGML</primary>
+          <secondary>HTML vs.</secondary>
+        </indexterm>
+      </para>
+    </sect1>
+  </chapter>
+  <index id="index" />
+</book>

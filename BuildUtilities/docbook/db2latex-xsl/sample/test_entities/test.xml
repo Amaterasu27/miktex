@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article lang="en">
+<articleinfo>
+<!--  ************************************************************** -->
+<!--  Title and Author                                               -->
+<!--  ************************************************************** -->
+<title>Title \backslash <literal>~&gt;&lt;\literal</literal> </title>
+<subtitle>Subtitle</subtitle>
+<date>Date: <latex>\today</latex></date>
+<legalnotice><para>Test a legal notice in articleinfo.</para></legalnotice>
+<authorgroup>
+  <author>
+  <firstname>Ramon</firstname> <surname>Casellas</surname>
+  </author>
+  <author>
+  <firstname>James</firstname> <surname>Devenish</surname>
+  </author>
+</authorgroup>
+</articleinfo>
+<!-- ************************************************************** -->
+<!-- CONTENT                                                        -->
+<!-- ************************************************************** -->
+<latex><![CDATA[
+\section{Correct: \textbackslash\ \{\} \textbackslash\{\} \textbackslash textbackslash\{\}}
+
+	So let's see: this is one --- another \& and \&\#9999; and \textless{} because \textgreater{}
+	We need more cases!
+	
+]]></latex>
+<sect1>
+<title>Test: \ {} \{} \textbackslash{}</title>
+	<para>
+	So let's see: this is one &mdash; another &amp; and &#9999; and &lt; because &gt;
+	We need more cases!
+	</para>
+  <informaltable id="itable">
+    <tgroup cols="2">
+      <thead>
+        <row>
+          <entry>1</entry>
+          <entry>1</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>2</entry>
+          <entry>8</entry>
+        </row>
+        <row>
+          <entry>3</entry>
+          <entry>27</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+</sect1>
+<sect1>
+  <title>Active Character Escaping</title>
+  <sect2>
+    <title>Regular<?latex ~\LaTeX{}?></title>
+    <para>
+    <phrase>\~^&amp;{}\#\ #_$}^%{\</phrase>
+    <latex><![CDATA[\par a\texttt{<bcd>} efg \texttt{</hij>} klm{\em nop {\bfseries qrs} tuv}wxyz.]]></latex>
+    </para>
+  </sect2>
+  <sect2>
+    <title>Verbatim</title>
+    <para>
+    <literal>\~^&amp;{}\#\ #_$}^%{\</literal>
+    </para>
+    a<sgmltag class="starttag">bcd</sgmltag> efg <sgmltag class="endtag">
+    hij
+    </sgmltag> klm<emphasis> nop <phrase>
+    <emphasis role="bold">qrs</emphasis> tuv </phrase> </emphasis>wxyz.
+  </sect2>
+</sect1>
+</article>

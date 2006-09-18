@@ -1,0 +1,135 @@
+<biblioentry>
+<abbrev>Abbrev</abbrev>
+<title>A Really Full BiblioEntry</title>
+<subtitle>Subtitle</subtitle>
+<abstract>
+<para>Abstract, abstract, abstract. Abstract, abstract, abstract. 
+Abstract, abstract, abstract. Abstract, abstract, abstract. 
+Abstract, abstract, abstract. Abstract, abstract, abstract. 
+Abstract, abstract, abstract. Abstract, abstract, abstract. 
+Abstract, abstract, abstract. Abstract, abstract, abstract. 
+Abstract, abstract, abstract. Abstract, abstract, abstract. </para>
+</abstract>
+<address>Any Street
+Anywhere, XX 99999
+USA</address>
+<affiliation>
+<shortaffil>shortaffil</shortaffil>
+<jobtitle>jobtitle</jobtitle>
+<orgname>orgname</orgname>
+<orgdiv>orgdiv</orgdiv>
+<address>Any Street
+Anywhere, XX 99999
+USA</address>
+</affiliation>
+<artpagenums>ArtPageNums</artpagenums>
+<author>
+<firstname>AuthorFirstname</firstname>
+<surname>AuthorSurname</surname>
+</author>
+<authorblurb>
+<para>AuthorBlurb, authorblurb, authorblurb. AuthorBlurb, authorblurb, authorblurb. 
+AuthorBlurb, authorblurb, authorblurb. AuthorBlurb, authorblurb, authorblurb. 
+AuthorBlurb, authorblurb, authorblurb. AuthorBlurb, authorblurb, authorblurb. 
+AuthorBlurb, authorblurb, authorblurb. AuthorBlurb, authorblurb, authorblurb. 
+AuthorBlurb, authorblurb, authorblurb. AuthorBlurb, authorblurb, authorblurb. </para>
+</authorblurb>
+<authorinitials>AuthorInitials</authorinitials>
+<collab>
+<collabname>The names of some collaborators</collabname>
+<affiliation>
+<shortaffil>shortaffil</shortaffil>
+<jobtitle>jobtitle</jobtitle>
+<orgname>orgname</orgname>
+<orgdiv>orgdiv</orgdiv>
+<address>Any Street
+Anywhere, XX 99999
+USA</address>
+</affiliation>
+</collab>
+<confgroup>
+<confdates>confdates</confdates>
+<conftitle>conftitle</conftitle>
+<confnum>confnum</confnum>
+<address>Any Street
+Anywhere, XX 99999
+USA</address>
+<confsponsor>confsponsor</confsponsor>
+</confgroup>
+<contractnum>ContractNum</contractnum>
+<contractsponsor>ContractSponsor</contractsponsor>
+<contrib>Contrib</contrib>
+<copyright>
+<year>1998</year>
+<holder>Copyright holder</holder>
+</copyright>
+<corpname>CorpName</corpname>
+<date>Date</date>
+<edition>Edition</edition>
+<editor>
+<firstname>EditorFirstName</firstname>
+<surname>EditorSurname</surname>
+</editor>
+<firstname>FirstName</firstname>
+<honorific>Honorific</honorific>
+<isbn>ISBN</isbn>
+<issn>ISSN</issn>
+<invpartnumber>InvPartNumber</invpartnumber>
+<issuenum>IssueNum</issuenum>
+<lineage>Lineage</lineage>
+<orgname>OrgName</orgname>
+<othercredit>
+<firstname>OCFirstName</firstname>
+<surname>OCSurname</surname>
+</othercredit>
+<othername>OtherName</othername>
+<pagenums>PageNums</pagenums>
+<printhistory>
+<para>PrintHistory, printhistory, printhistory. PrintHistory, printhistory.
+PrintHistory, printhistory, printhistory. PrintHistory, printhistory.
+PrintHistory, printhistory, printhistory. PrintHistory, printhistory.
+PrintHistory, printhistory, printhistory. PrintHistory, printhistory.</para>
+</printhistory>
+<productname>ProductName</productname>
+<productnumber>ProductNumber</productnumber>
+<pubdate>PubDate</pubdate>
+<publisher>
+<publishername>PubPublisherName</publishername>
+<address><street>Any Street</street><city>Anywhere</city>, <state>XX</state><postcode>99999</postcode><country>USA</country></address>
+</publisher>
+<publishername>PublisherName</publishername>
+<pubsnumber>PubsNumber</pubsnumber>
+<releaseinfo>ReleaseInfo</releaseinfo>
+<revhistory>
+<revision>
+<revnumber>1.0</revnumber>
+<date>20 Nov 1998</date>
+<authorinitials>ndw</authorinitials>
+<revremark>Some remark about the revision</revremark>
+</revision>
+<revision>
+<revnumber>0.9</revnumber>
+<date>19 Nov 1998</date>
+<authorinitials>ndw</authorinitials>
+<revremark>Some remark about the revision</revremark>
+</revision>
+<revision>
+<revnumber>0.4</revnumber>
+<date>18 Nov 1998</date>
+<authorinitials>ndw</authorinitials>
+<revremark>Some remark about the revision</revremark>
+</revision>
+</revhistory>
+<seriesinfo>
+<title>SeriesInfo Title</title>
+<editor>
+<firstname>SeriesInfo Editor Firstname</firstname>
+<surname>SeriesInfo Editor Surname</surname>
+</editor>
+</seriesinfo>
+<seriesvolnums>SeriesVolNums</seriesvolnums>
+<surname>Surname</surname>
+<titleabbrev>TitleAbbrev</titleabbrev>
+<volumenum>VolumeNum</volumenum>
+</biblioentry>
+

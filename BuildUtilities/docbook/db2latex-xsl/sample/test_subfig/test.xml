@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<book id="book" lang="en">
+<bookinfo>
+<title>The Subfigure option</title>
+<authorgroup>
+<author> <surname>Casellas</surname> <firstname>Ramon</firstname> </author>
+<corpauthor>Some Corporation</corpauthor>
+</authorgroup>
+</bookinfo>
+
+
+
+
+
+<bridgehead renderas="sect4">A simple figure </bridgehead>
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+
+<figure float="0" id="fig1">
+        <title>A pdf/eps fig scaled to 67% and centred</title>
+        <mediaobject>
+          <imageobject role="The first">
+            <imagedata fileref="figures/sample" align= "center" scale="67">
+            </imagedata>
+          </imageobject>
+          <caption><para>This is the caption (next to the title).</para></caption>
+          <textobject>
+            <para>
+              figure Description
+            </para>
+          </textobject>
+       </mediaobject>
+</figure>
+
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+
+<bridgehead renderas="sect4">The subfig package !!!!!!</bridgehead>
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+<figure  id="fig2">
+        <title> LOOK WHAT HAPPENS WHEN YOU PUT SEVERAL IMAGEOBJECT IN ONE MEDIAOBJECT !!! </title>
+        <mediaobject>
+          <imageobject role="the first"><imagedata fileref="figures/sample" align= "center" scale="40"></imagedata></imageobject>
+          <imageobject role="the second"><imagedata fileref="figures/bogus" align= "center" scale="40"></imagedata></imageobject>
+          <caption><para>This is a worst-case scenario and the first imageobject should be picked by default. It should not have a subcaption label.</para></caption>
+       </mediaobject>
+</figure>
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+<figure  id="fig3">
+        <title> Look what happens when you put several mediaobject in one figure. </title>
+        <mediaobject>
+          <imageobject role="the first">
+		<imagedata fileref="figures/sample" align= "center" scale="40"></imagedata></imageobject>
+          <caption><para>Caption one.</para></caption>
+       </mediaobject>
+        <mediaobject>
+          <imageobject role="the second">
+		<imagedata fileref="figures/sample" align= "center" scale="40"></imagedata></imageobject>
+          <caption><para>Caption two.</para></caption>
+       </mediaobject>
+</figure>
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+<figure  id="fig4">
+        <title> This should have chosen the correct imageobject in each case </title>
+        <mediaobject>
+          <imageobject role="the first">
+		<imagedata fileref="figures/sample" scale="40"></imagedata></imageobject>
+          <caption><para>This should show imagedata.</para></caption>
+       </mediaobject>
+        <mediaobject>
+          <imageobject><imagedata format="PDF" fileref="figures/sample.pdf" scale="40"></imagedata></imageobject>
+          <imageobject><imagedata format="EPS" fileref="figures/sample.eps" scale="40"></imagedata></imageobject>
+          <imageobject><imagedata fileref="figures/bogus" scale="40"></imagedata></imageobject>
+          <caption><para>The correct imagedata format should have been chosen.</para></caption>
+       </mediaobject>
+        <mediaobject>
+          <imageobject><imagedata format="GIF" fileref="figures/bogus.gif" scale="40"></imagedata></imageobject>
+          <imageobject><imagedata fileref="figures/sample" scale="40"></imagedata></imageobject>
+          <caption><para>This should be graphical.</para></caption>
+       </mediaobject>
+        <mediaobject>
+          <imageobject><imagedata format="GIF" fileref="figures/bogus.gif" scale="40"></imagedata></imageobject>
+          <textobject><phrase>A textobject.</phrase></textobject>
+          <caption><para>This should be textual.</para></caption>
+       </mediaobject>
+</figure>
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+<figure  id="fig5">
+        <title> Another test </title>
+        <mediaobject>
+          <imageobject><imagedata format="GIF" fileref="figures/sample.gif" scale="40"></imagedata></imageobject>
+          <imageobject><imagedata fileref="figures/sample" scale="40"></imagedata></imageobject>
+          <caption><para>This should be graphical. It should not have a subcaption label.</para></caption>
+       </mediaobject>
+</figure>
+<figure  id="fig6">
+        <title> Another test </title>
+        <mediaobject>
+          <imageobject role="html"><imagedata format="GIF" fileref="figures/sample.gif"></imagedata></imageobject>
+          <imageobject role="latex"><imagedata fileref="figures/sample" scale="9"></imagedata></imageobject>
+          <caption><para>This should be graphical, 9% of original size. It should not have a subcaption label.</para></caption>
+       </mediaobject>
+</figure>
+<para>This:
+        <inlinemediaobject>
+          <imageobject><imagedata fileref="figures/sample" scale="9"></imagedata></imageobject>
+       </inlinemediaobject>
+is an <sgmltag class="element">inlinemediaobject</sgmltag>.</para>
+  <para>An <sgmltag>informalfigure</sgmltag>:</para>
+  <informalfigure>
+    <mediaobject>
+      <imageobject><imagedata fileref="figures/sample" scale="9"></imagedata></imageobject>
+      <caption><para>Caption!</para></caption>
+    </mediaobject>
+  </informalfigure>
+</book>

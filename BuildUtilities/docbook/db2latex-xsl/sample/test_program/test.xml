@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article id="article">
+<articleinfo>
+<title>ProgramListing</title>
+<authorgroup>
+<author> <surname>Devenish</surname> <firstname>James</firstname> </author>
+<author> <surname>Casellas</surname> <firstname>Ramon</firstname> </author>
+<corpauthor>Some Corporation</corpauthor>
+</authorgroup>
+</articleinfo>
+<section>
+<programlisting>
+<![CDATA[<!-- Tabs should not have been lost!!! -->
+<xsl:template match="note|important|warning|caution|tip">
+	<xsl:choose>
+		<xsl:when test="$admon.graphics != 0">
+			<xsl:call-template name="graphical.admonition"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:call-template name="nongraphical.admonition"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<!-- User substitutes tabs with spaces -->
+<xsl:template match="note|important|warning|caution|tip">
+    <xsl:choose>
+        <xsl:when test="$admon.graphics != 0">
+            <xsl:call-template name="graphical.admonition"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="nongraphical.admonition"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>]]></programlisting>
+
+<figure><title>A program listing within a figure</title>
+<programlisting><![CDATA[
+<!-- TABS SHOULD NOT BE LOST!!!-->
+<xsl:template match="note|important|warning|caution|tip">
+	<xsl:choose>
+		<xsl:when test="$admon.graphics != 0">
+			<xsl:call-template name="graphical.admonition"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:call-template name="nongraphical.admonition"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>]]></programlisting>
+</figure>
+
+<figure><title>A program listing within a figure, with line numbering</title>
+<programlisting linenumbering="numbered">&#9;for (int i=0; i &lt; 1; i++)&#10;&#9;&#9;cout &lt;&lt; "<emphasis>DB2LaTeX needs better documentation</emphasis>" &lt;&lt; endl;</programlisting>
+</figure>
+
+<example><title>A program listing within an example, with inline templates</title>
+<programlisting>&#9;for (int i=0; i &lt; 1; i++)&#10;&#9;&#9;cout &lt;&lt; "<emphasis>DB2LaTeX needs better documentation</emphasis>" &lt;&lt; endl;</programlisting>
+</example>
+</section>
+<section>
+<para><?latex \noindent ?>Some of the results in this section are incorrect---anyone know a workaround?</para>
+<para><?latex \noindent ?>A literal layout:</para>
+<literallayout>
+Line 1
+  `Line 2'
+  &lt;Line 3&gt;
+</literallayout>
+
+<para><?latex \noindent ?>A monospaced literal layout:</para>
+<literallayout format="monospaced">
+Line 1
+  `Line 2'
+  &lt;Line 3&gt;
+</literallayout>
+
+</section>
+
+</article>

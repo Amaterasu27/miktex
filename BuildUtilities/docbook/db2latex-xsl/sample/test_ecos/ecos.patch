@@ -1,0 +1,25 @@
+Index: user-guide/config-tool.sgml
+===================================================================
+RCS file: /cvs/ecos/ecos/doc/sgml/user-guide/config-tool.sgml,v
+retrieving revision 1.3
+diff -u -r1.3 config-tool.sgml
+--- user-guide/config-tool.sgml	12 Feb 2003 18:36:12 -0000	1.3
++++ user-guide/config-tool.sgml	19 May 2003 01:26:47 -0000
+@@ -714,7 +714,7 @@
+ <PARA>This window exists to display any configuration item
+ 	    conflicts. Conflicts are the result of failures to meet
+ 	    the requirements between configuration items expressed in
+-	    the CDL. See <xref linkend="cdl-conflicts"> <!--in &ldquo;CDL
++	    the CDL. See <xref linkend="cdl-conflicts"><!-- in &ldquo;CDL
+ 	    Concepts&rdquo; on&nbsp;page&nbsp;45 -->.<GRAPHIC ENTITYREF="graphic8"></GRAPHIC></PARA>
+ <PARA>The window comprises three columns:</PARA>
+ <ITEMIZEDLIST>
+@@ -1383,7 +1383,7 @@
+ that can be used with the <application>Configuration Tool</application>. </PARA>
+ 
+ <table id="keyboard-accelerators"><title>Keyboard accelerators</title>
+-<tgroup cols="2">
++<tgroup cols="3">
+ 	  <thead>
+ 	    <row>
+ 	      <entry>Accelerator</entry>

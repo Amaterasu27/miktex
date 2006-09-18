@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY a SYSTEM "./asu96.ent">
+  <!ENTITY b SYSTEM "./walsh97.ent">
+  <!ENTITY c SYSTEM "./walsh96.ent">
+  <!ENTITY d SYSTEM "./abbrev.ent">
+]>
+<article id="article" lang="en" status="draft">
+<articleinfo>
+<title>DB2<phrase role="latex">\</phrase>LaTeX: <sgmltag class="starttag">bibliography</sgmltag></title>
+<authorgroup>
+<author> <surname>Devenish</surname> <firstname>James</firstname> </author>
+</authorgroup>
+</articleinfo>
+
+  <para>No custom title. No bibliographic content.</para>
+
+  <bibliography>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+  </bibliography>
+
+  <para>Custom title. No bibliographic content.</para>
+
+  <bibliography>
+    <title>Introduction</title>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+  </bibliography>
+
+  <para>No custom title. <sgmltag>bibliodiv</sgmltag> content.</para>
+
+  <bibliography>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+    <bibliodiv>
+      <title>Books</title>
+      &a;
+    </bibliodiv>
+    <bibliodiv>
+      <title>Periodicals</title>
+      &b;
+      &c;
+      &d;
+    </bibliodiv>
+  </bibliography>
+
+  <para>Custom title. <sgmltag>bibliodiv</sgmltag> content.</para>
+
+  <bibliography>
+    <title>A Test Bibliography #1</title>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+    <bibliodiv>
+      <title>Books</title>
+      &a;
+    </bibliodiv>
+    <bibliodiv>
+      <title>Periodicals</title>
+      &b;
+      &c;
+      &d;
+    </bibliodiv>
+  </bibliography>
+
+  <para>No custom title. <sgmltag>bibliodiv</sgmltag> content.</para>
+
+  <bibliography>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+    <bibliodiv>
+      &a;
+    </bibliodiv>
+    <bibliodiv>
+      <title>Periodicals</title>
+      &b;
+      &c;
+      &d;
+    </bibliodiv>
+  </bibliography>
+
+  <para>Custom title. <sgmltag>bibliodiv</sgmltag> content.</para>
+
+  <bibliography>
+    <title>A Test Bibliography #2</title>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+    <bibliodiv>
+      &a;
+    </bibliodiv>
+    <bibliodiv>
+      <title>Periodicals</title>
+      &b;
+      &c;
+      &d;
+    </bibliodiv>
+  </bibliography>
+
+  <para>No custom title. <sgmltag>biblioentry</sgmltag> content.</para>
+
+  <bibliography>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+      &a;
+      &b;
+      &c;
+      &d;
+  </bibliography>
+
+  <para>Custom title. <sgmltag>biblioentry</sgmltag> content.</para>
+
+  <bibliography>
+    <title>A Test Bibliography #3</title>
+    <para>The stock stylesheet attempts to do a Bibliography.  It probably needs
+a lot of tweaking.  It probably doesn't conform to any specific style.</para>
+      &a;
+      &b;
+      &c;
+      &d;
+  </bibliography>
+
+</article>

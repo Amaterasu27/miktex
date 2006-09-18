@@ -1,0 +1,24 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!-- Build the expanded version by default -->
+<!ENTITY % unexpanded "IGNORE">
+
+<!-- source in the book content and other entities -->
+<!ENTITY % content SYSTEM "defguide/en/entities/content.ent">
+%content;
+<!ENTITY % iso-lat1 SYSTEM "defguide/en/build/lib/isoents/iso-lat1.ent">
+%iso-lat1;
+<!ENTITY % iso-num SYSTEM "defguide/en/build/lib/isoents/iso-num.ent">
+%iso-num;
+<!ENTITY % iso-pub SYSTEM "defguide/en/build/lib/isoents/iso-pub.ent">
+%iso-pub;
+<!ENTITY % iso-tech SYSTEM "defguide/en/build/lib/isoents/iso-tech.ent">
+%iso-tech;
+<!ENTITY % iso-grk3 SYSTEM "defguide/en/build/lib/isoents/iso-grk3.ent">
+%iso-grk3;
+]>
+
+<book id="docbook" xml:lang="en">
+&bookinfo;
+&bookbody;
+</book>

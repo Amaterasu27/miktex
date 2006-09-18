@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<chapter id="chapter:introduction">
+<title>Introduction</title>
+
+<sect1><title>Introduction and framework</title>
+<para>
+This is a para.
+</para>
+
+<alt role="tex">
+<![CDATA[
+\begin{equation}
+\int e^x dx = e^x
+\end{equation}
+]]>
+</alt>
+
+</sect1>
+</chapter>
+

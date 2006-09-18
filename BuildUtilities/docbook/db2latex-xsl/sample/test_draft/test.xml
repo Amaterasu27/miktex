@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article id="article" lang="en" status="draft">
+<articleinfo>
+<title>DB2<phrase role="latex">\</phrase>LaTeX: ``draft'' preamble</title>
+<authorgroup>
+<author> <surname>Devenish</surname> <firstname>James</firstname> </author>
+</authorgroup>
+</articleinfo>
+
+<section id="first">
+  <title>A</title>
+  <para>
+  <xref linkend="first"/>
+  </para>
+  <para><citation>book</citation></para>
+  <para>Text that is <indexterm><primary>indexterm</primary></indexterm>indexed.</para>
+  <para>
+  <xref linkend="second"/>
+  </para>
+  <?newpage?>
+</section>
+
+<section id="second">
+  <title>B</title>
+  <para>
+  <xref linkend="first"/>
+  </para>
+  <para>
+  <xref linkend="second"/>
+  </para>
+</section>
+
+<bibliography>
+  <biblioentry xreflabel="1">
+    <abbrev>book</abbrev>
+    <title>Example</title>
+  </biblioentry>
+</bibliography>
+
+<index/>
+
+</article>

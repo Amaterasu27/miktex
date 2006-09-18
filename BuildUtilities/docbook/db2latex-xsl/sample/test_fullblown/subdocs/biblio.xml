@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+ **************************************************************************	
+ BIBLIOGRAPHY 
+
+  $Author: rcasellas $                                         
+  $Id: biblio.xml,v 1.2 2003/03/14 15:33:39 rcasellas Exp $
+
+ **************************************************************************	
+--> 
+
+<bibliography><title>Bibliography</title>
+<biblioentry id="BerGal" xreflabel="BerGal">
+<abbrev>BerGal</abbrev>
+	<title>"Data Networks"</title>
+	<authorgroup>
+		<author><firstname>Dimitri</firstname><surname>Bertsekas</surname></author>
+		<author><firstname>Robert</firstname><surname>Gallager</surname></author>
+	</authorgroup>
+	<publisher>
+		<publishername>Prentice Hall International Editions. ISBN 0-13-196981-1</publishername>
+	</publisher>
+	<pubdate>1987</pubdate>
+</biblioentry>
+
+<biblioentry id="ForFul" xreflabel="ForFul">
+<abbrev>ForFul</abbrev>
+    <title>"Flows in Networks"</title>
+    <authorgroup>
+	<author><firstname>L.R.</firstname><surname>Ford</surname></author>
+	<author><firstname>D.R.</firstname><surname>Fulkerson</surname></author>
+    </authorgroup>
+    <publisher>
+    	<publishername>Princeton University Press, Princeton, New Jersey</publishername>
+    </publisher>
+    <pubdate>1962</pubdate>
+</biblioentry>
+
+</bibliography>

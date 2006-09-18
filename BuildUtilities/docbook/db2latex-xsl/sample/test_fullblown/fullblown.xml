@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?> 
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY % ag PUBLIC "-//RCAS//ENTITIES Autogen V4.2//EN" "subdocs/autogen.ent"> %ag;
+<!ENTITY bi 	 SYSTEM      "subdocs/bookinfo.xml">
+<!ENTITY ct 	 SYSTEM      "subdocs/content.xml">
+<!ENTITY thanks  SYSTEM      "subdocs/thanks.xml">
+<!ENTITY res     SYSTEM      "subdocs/resume.xml">
+<!ENTITY intro   SYSTEM      "subdocs/introduction.xml">
+<!ENTITY mpls 	 SYSTEM	     "subdocs/mpls.xml">
+<!ENTITY tables  SYSTEM	     "subdocs/tables.xml">
+<!ENTITY conc    SYSTEM      "subdocs/conclusions.xml">
+<!ENTITY ldp 	 SYSTEM	     "subdocs/app1.xml">
+<!ENTITY soft    SYSTEM	     "subdocs/app2.xml">
+<!ENTITY gloss 	 SYSTEM	     "subdocs/gloss.xml">
+<!ENTITY bib 	 SYSTEM	     "subdocs/biblio.xml">
+]>
+
+<book id="book:book">
+&bi;
+&ct;
+&thanks;
+&res;
+&intro;
+&mpls;
+&tables;
+&conc;
+&ldp;
+&soft;
+&bib;
+&gloss;
+</book>

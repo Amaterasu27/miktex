@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--  ************************************************************** -->
+<!--  BOOKINFO                                                       -->
+<!--  ************************************************************** -->
+<bookinfo>
+
+<!--  ************************************************************** -->
+<!--  Title and Author                                               -->
+<!--  ************************************************************** -->
+	<title>Sample Book</title>
+	<subtitle>This is a sample Subtitle</subtitle>
+	<abbrev>SPL</abbrev>
+	<date>2002/06/02</date>
+    	<authorgroup>
+      	<author>
+		<firstname>Ramon</firstname>
+		<surname>Casellas</surname> 
+      		</author>
+    	</authorgroup>
+
+
+<!--  ************************************************************** -->
+<!--  Legal Stuff                                                    -->
+<!--  ************************************************************** -->
+    	<copyright>
+      	<year>2000</year>
+      	<year>2001</year>
+      	<year>2002</year>
+		<holder>Ramon Casellas, Rcas</holder>
+    	</copyright>
+  	<date></date>
+  	<pubdate>2000/11/14</pubdate>
+  	<publisher><publishername>RCAS</publishername></publisher>
+
+
+<!--  ************************************************************** -->
+<!-- REVISION HISTORY                                                -->
+<!--  ************************************************************** -->
+    	<revhistory>
+      	<revision><revnumber>-  0.1 - </revnumber>
+		<date>2002/06/01  - </date>
+		<authorinitials>- RC casellas@infres.enst.fr</authorinitials>
+		<revremark>Structure Initiale</revremark>
+      	</revision>
+      	<revision><revnumber>-  0.2 - </revnumber>
+		<date>2002/06/01  - </date>
+		<authorinitials>- RC casellas@infres.enst.fr</authorinitials>
+		<revremark>Structure Initiale</revremark>
+      	</revision>
+      	<revision><revnumber>-  0.3 - </revnumber>
+		<date>2002/06/01  - </date>
+		<authorinitials>- RC casellas@infres.enst.fr</authorinitials>
+		<revremark>Structure Initiale</revremark>
+      	</revision>
+      	<revision><revnumber>-  0.4 - </revnumber>
+		<date>2002/06/01  - </date>
+		<authorinitials>- RC casellas@infres.enst.fr</authorinitials>
+		<revremark>Structure Initiale</revremark>
+      	</revision>
+    	</revhistory>
+</bookinfo>
+
+
+
+<!--  ************************************************************** -->
+<!--  Dedication and Preface                                         -->
+<!--  
+	<dedication>
+	<para>This test book is dedicated to all the testers.  This is the first para
+	of the dedication.</para>
+	<para>This is the second para of the dedication.</para>
+	<para>This is the third para of the dedication.</para>
+	</dedication>
+
+	<preface>
+	<title>Preface Title</title>
+	<para>Preface content.</para>
+	<para>This is the second para of the preface.</para>
+	<para>This is the third para of the preface.</para>
+	</preface>
+************************************************************** -->

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article lang="en">
+<articleinfo>
+<!--  ************************************************************** -->
+<!--  Title and Author                                               -->
+<!--  ************************************************************** -->
+<title>Title</title>
+<subtitle>Subtitle</subtitle>
+<date>2003/03/10</date>
+<authorgroup>
+<author>
+<firstname>Ramon</firstname>
+<surname>Casellas</surname>
+</author>
+</authorgroup>
+</articleinfo>
+<!-- ************************************************************** -->
+<!-- CONTENT                                                        -->
+<!-- ************************************************************** -->
+<sect1>
+<title>Introduction</title>
+<qandaset>
+<title>First QandASet</title>
+<qandaentry>
+<question>
+<para>May I add a qandaentry without a qandadiv?</para>
+</question>
+<answer><para>Well, I did...</para>
+</answer>
+</qandaentry>
+<qandadiv>
+<title>General Information</title>
+<qandaentry>
+<question>
+<para>Adobe Systems, Inc.</para>
+</question>
+<answer>
+<para>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.  Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.  Ut wisi enim ad minim veniam, quis nostru exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat sectetuer adipiscing.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question>
+<para>Agfa, Inc.</para>
+</question>
+<answer>
+<para>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.  Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.  Ut wisi enim ad minim veniam, quis nostru exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat sectetuer adipiscing.</para>
+</answer>
+</qandaentry>
+</qandadiv>
+<qandadiv>
+<title>General Information</title>
+<qandaentry>
+<question>
+<para>Adobe Systems, Inc.</para>
+</question>
+<answer>
+<para>...</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question>
+<para>Agfa, Inc.</para>
+</question>
+<answer>
+<para>...</para>
+</answer>
+</qandaentry>
+</qandadiv>
+</qandaset>
+
+<qandaset>
+<qandadiv>
+<title>DB2LaTeX Meta-FAQ</title>
+
+<qandaentry>
+<question>
+<para>What is DB2LaTeX?</para>
+</question>
+<answer>
+<para>DB2LaTeX are a set of XSLT stylesheets which generate high level LaTeX2e from your docbook document. They do not perform any FO transformation, the only thing they do is to map DocBook tags into more or less standard LaTeX (a recent installation of LaTeX 2e is required, with most common packages. However, in more stable releases, package dependencies will be completely managed with xsl variables, making it virtually compatible with basic LaTeX 2e installations). All the <quote>styling</quote> has to be done by modifying available xsl:variables, overriding and customizing templates, and in the last, by adding your <quote>sty</quote> files.</para>
+
+<para>As an example of use, they translate a <![CDATA[<command> </command>]]> into <literal>\begin{command}</literal>. Of course, there are a lot of other things to do, like tables, bibliography and so on...but this is the main idea.</para>
+
+<para>They are heavily based (that is, I started from a local copy and then start changing things here and there) on Norman Walsh XSL docbook stylesheets. These stylesheets are published here with Norman Walsh permission. Copyright and due credit is for Norman Walsh. Bugs are mine. However, bear in mind the fact that these stylesheets are NOT the XSL Docbook stylesheets. Thank you.</para>
+
+<para>They are <quote>alpha</quote>. That means: it may work, it may not work. Your favourite feature may / may not be implemented. I will be glad to accept patches in form of XSL code or anything :). Many thanks to those who have already sent me patches and pointed out some bugs.</para>
+<para>
+At least this escaping now works: \textbackslash And with some extra space: \ textbackslash.
+</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question>
+<para>Where can I find DB2LaTeX?</para>
+</question>
+<answer>
+<para>You can find it </para>
+</answer>
+</qandaentry>
+</qandadiv>
+</qandaset>
+</sect1>
+</article>

@@ -1,0 +1,4 @@
+* \maketitle needs to be improved (maybe include option for page-spanning abstract).
+* The simplelist exceeds the column width.
+* The literallayout has problems with characters like &lt;, &gt;.
+* The bibliography is flawed.
