@@ -408,6 +408,7 @@ clean-local: mostlyclean-local
 distclean-local: clean-local
 
 maintainer-clean-local: distclean-local
+	del setenv.cmd
 	del $(rel_docdir)\version.ent
 	del $(rel_libdir)\include\miktex\version.h
 	del Doxyfile
@@ -419,16 +420,21 @@ check-local:
 
 depend-local:
 
-pathsini = $(prefix)\miktex\config\paths.ini
+setenv.cmd:
+	echo set MIKTEX_BINDIR=$(prefix)\miktex\bin> $@
+	echo set MIKTEX_STARTUPFILE=$(prefix)\miktex\config\miktexstartup.ini>> $@
+	echo set PATH=^%MIKTEX_BINDIR^%;^%PATH^%>> $@
+	echo set INCLUDE=$(miktexsrcdir)\msvc;^%INCLUDE^%>> $@
 
-$(pathsini):
+miktexstartupini = $(prefix)\miktex\config\miktexstartup.ini
+
+make-miktexstartup-ini:
 	if not exist "$(prefix)\miktex\config"	\
 	  (					\
 	    $(mkpath) "$(prefix)\miktex\config"	\
 	  )
-	type << >> $(pathsini)
+	type << > $(miktexstartupini)
 [paths]
-TeXMF Root Directories=$(texmfroots)
-Install Root=$(prefix)
-Local Root=$(prefix)
+Roots=$(texmfroots)
+Install=$(prefix)
 <<

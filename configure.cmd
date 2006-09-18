@@ -15,7 +15,7 @@ echo s/AC_INIT(\[.*\],\[\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)\(.*\)\])/\2/ > tmp
 echo s/AC_INIT(\[.*\],\[\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)\(.*\)\])/\3/ > tmp\getj2000
 echo s/AC_INIT(\[.*\],\[\([0-9]\+\)\.\([0-9]\+\)\.\([0-9]\+\)-\([a-z]\+\)-\([0-9]\+\)\])/\5/ > tmp\getnum
 
-for /F "usebackq delims=!" %%x in (`find "AC_INIT" ^< configure.ac`) do (
+for /F "usebackq delims=!" %%x in (`%%windir%%\system32\find "AC_INIT" ^< configure.ac`) do (
    for /F "usebackq" %%y in (`echo %%x ^| sed -f tmp\getmaj`) do (
      set major=%%y
    )
@@ -25,19 +25,19 @@ for /F "usebackq delims=!" %%x in (`find "AC_INIT" ^< configure.ac`) do (
    for /F "usebackq" %%y in (`echo %%x ^| sed -f tmp\getj2000`) do (
      set j2000=%%y
    )
-   for /F "usebackq" %%y in (`echo %%x ^| find "-rc"`) do (
+   for /F "usebackq" %%y in (`echo %%x ^| %%windir%%\system32\find "-rc"`) do (
      set state=1
      for /F "usebackq" %%z in (`echo %%x ^| sed -f tmp\getnum`) do (
        set num=%%z
      )
    )
-   for /F "usebackq" %%y in (`echo %%x ^| find "-beta-"`) do (
+   for /F "usebackq" %%y in (`echo %%x ^| %%windir%%\system32\find "-beta-"`) do (
      set state=2
      for /F "usebackq" %%z in (`echo %%x ^| sed -f tmp\getnum`) do (
        set num=%%z
      )
    )
-   for /F "usebackq" %%y in (`echo %%x ^| find "-snapshot"`) do (
+   for /F "usebackq" %%y in (`echo %%x ^| %%windir%%\system32\find "-snapshot"`) do (
      set state=4
    )
 )
@@ -68,7 +68,8 @@ echo s/@MIKTEX_RELEASE_STATE@/%state%/ >> tmp\scriptfile
 echo s/@MIKTEX_RELEASE_NUMBER@/%num%/ >> tmp\scriptfile
 echo s/@MIKTEX_VERSION_STR@/%verstr%/ >> tmp\scriptfile
 echo s/@MIKTEX_SERIES_STR@/%major%.%minor%/ >> tmp\scriptfile
-for /F "usebackq delims=" %%d in (`\cygwin\bin\date`) do (
+echo s;@SRCDIR@;%CD:\=/%; >> tmp\scriptfile
+for /F "usebackq delims=" %%d in (`bash -c date`) do (
   echo s!@MIKTEX_DATETIME_STR@!%%d! >> tmp\scriptfile
 )
 
@@ -79,11 +80,14 @@ sed -f tmp\scriptfile < Documentation\version.ent.in > Documentation\version.ent
 
 setlocal enabledelayedexpansion
 for %%f in (Admin\TPM\*.tpm.in) do (
- set tpmfile=%%~ff
- sed -f tmp\scriptfile < %%f > "!tpmfile:.tpm.in=-%major%.%minor%.tpm!"
+  set tpmfile=%%~ff
+  sed -f tmp\scriptfile < %%f > "!tpmfile:.tpm.in=-%major%.%minor%.tpm!"
 )
 endlocal
 
 rmdir /s /q tmp
+
+nmake -nologo -f miktex.mak make-miktexstartup-ini 1>nul
+nmake -nologo -f miktex.mak setenv.cmd 1>nul
 
 endlocal

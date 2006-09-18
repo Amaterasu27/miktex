@@ -36,16 +36,13 @@ Build Tools
 		http://www.cygwin.com
 
 	* junction.exe
-		http://www.sysinternals.com/ntw2k/source/misc.shtml#junction
+		http://www.sysinternals.com/Utilities/Junction.html
 
 	* ActivePerl
 		http://www.activestate.com/Products/ActivePerl/
 
 	* xsltproc
 		http://xmlsoft.org/XSLT/
-
-Documentation System
---------------------
 
 	* ImageMagick
 		http://www.imagemagick.org
@@ -59,9 +56,8 @@ Documentation System
 Configuring
 -----------
 
-	Open 'miktex.inc' with Notepad; check the following variables:
+	Open 'msvc\miktex.inc' with Notepad; check the following variables:
 
-	convert
 	prefix
 	tmdir
 
@@ -71,5 +67,3 @@ Build
 -----
 
 	Use the 'build.cmd' script to build MiKTeX.
-
-	All output is written to 'build-x86.log'.

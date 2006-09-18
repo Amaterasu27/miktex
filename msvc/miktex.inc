@@ -340,7 +340,7 @@ localtexmf = $(prefix)
 
 ## where the production version of MiKTeX is installed
 !ifndef tmdir
-tmdir = C:\texmf
+tmdir = C:\Program Files\MiKTeX $(miktexseries)
 !endif
 
 ## texmf root directories
