@@ -29,7 +29,6 @@ sunsite_ftp_user = miktex
 sunsite_ftp_server = upload.sunsite.dk
 sunsite_ftp_dir = /pub
 
-dbxsldir = C:\sgml\docbook\docbook-xsl-1.69.0
 
 html_docbook_images = \
 	$(dbxsldir)\images\blank.png \
