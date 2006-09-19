@@ -372,7 +372,7 @@ install.tex: \
 			install.xml \
 			Manual\installation-instructions.xml \
 
-	$(xsltproc) --output $@ $(xsldir)\db2latex-install.xsl install.xml
+	$(xsltproc) --output $@ $(xsldir:\=/)/db2latex-install.xsl install.xml
 
 install.pdf: \
 			install.tex \

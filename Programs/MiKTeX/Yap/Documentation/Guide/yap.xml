@@ -25,6 +25,8 @@
 <!ENTITY prompt "C:\> ">
 <!ENTITY tools SYSTEM "tools.xml">
 <!ENTITY tracestreams SYSTEM "tracestreams.xml">
+<!ENTITY % entities.ent SYSTEM "entities.ent">
+%entities.ent;
 ]>
 
 <book>

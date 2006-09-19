@@ -365,19 +365,11 @@ miktexdocdir = $(docdir)\miktex
 
 ## sub-directory for compiler generated files
 !if ($(MIKTEX_RELEASE_STATE) == 4)
-!if ($(MSCVER) < 1400)
-outdir = WinDebug
-!else
 outdir = Debug
-!endif
 !endif
 
 !if ($(MIKTEX_RELEASE_STATE) < 3)
-!if ($(MSCVER) < 1400)
-outdir = WinRel
-!else
 outdir = Release
-!endif
 !endif
 
 !if "$(ARCH)" != "x86"

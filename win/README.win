@@ -32,7 +32,7 @@ Build Tools
 	* ActivePerl
 		http://www.activestate.com/Products/ActivePerl/
 
-	* Cygwin
+	* Cygwin (full install)
 		http://www.cygwin.com
 
 	* ImageMagick
@@ -47,11 +47,8 @@ Build Tools
 	* Microsoft Visual C++ 8.0 Professional
 		http://msdn.microsoft.com/vstudio/
 
-	* MiKTeX
+	* MiKTeX (full install)
 		http://www.miktex.org
-
-	* xsltproc
-		http://xmlsoft.org/XSLT/
 
 Configuring
 -----------
