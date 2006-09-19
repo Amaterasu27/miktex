@@ -766,24 +766,6 @@
 		<xsl:apply-templates mode="bibliography.mode"/>
     </xsl:template>
 
-	<!--
-	<doc:template basename="abstract" match="abstract" mode="bibliography.mode" xmlns="">
-		<refpurpose>Process <doc:db>abstract</doc:db> elements</refpurpose>
-		<doc:description>
-			<para>
-				Currently, <doc:db basename="abstract">abstracts</doc:db> are deleted
-				in <literal>bibliography.mode</literal>.
-			</para>
-		</doc:description>
-		<doc:variables>
-			&no_var;
-		</doc:variables>
-		<doc:notes>
-			<para>Abstracts are suppressed in &DB2LaTeX; bibliographies.</para>
-		</doc:notes>
-	</doc:template>
-	<xsl:template match="abstract" mode="bibliography.mode"/>
-	-->
 
 	<xsl:template match="address" mode="bibliography.mode">
 	<xsl:apply-templates mode="bibliography.mode"/>
