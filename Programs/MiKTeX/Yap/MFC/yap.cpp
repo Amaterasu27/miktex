@@ -964,8 +964,29 @@ YapApplication::GotoHyperLabel (/*[in]*/ const MIKTEXCHAR * lpszLabel)
 
 void
 StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	     /*[in]*/ const MIKTEXCHAR *	lpszDocDir,
 	     /*[in]*/ int			line)
 {
+  // find the source file
+  PathName path;
+  if (Utils::IsAbsolutePath(lpszFileName) || lpszDocDir == 0)
+    {
+      path = lpszFileName;
+    }
+  else
+    {
+      path.Set (lpszDocDir, lpszFileName);
+    }
+  PathName path2;
+  if (! SessionWrapper(true)->FindFile(path.Get(),
+				       FileType::TEX,
+				       path2))
+    {
+      FATAL_MIKTEX_ERROR (T_("DviView::OnPageEditor"),
+			  T_("The source file could not be found."),
+			  lpszFileName);
+    }
+
   // make command line
   tstring commandLine;
   const MIKTEXCHAR * lpsz = g_pYapConfig->inverseSearchCommandLine;
@@ -981,7 +1002,7 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	      commandLine += T_('%');
 	      break;
 	    case T_('f'):
-	      commandLine += lpszFileName;
+	      commandLine += path2.Get();
 	      haveName = true;
 	      break;
 	    case T_('l'):
@@ -1016,7 +1037,7 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       if (dlg.DoModal () == IDOK)
 	{
 	  // <recursivecall>
-	  StartEditor (lpszFileName, line);
+	  StartEditor (lpszFileName, lpszDocDir, line);
 	  // </recursivecall>
 	}
       return;
