@@ -63,6 +63,14 @@ or by clicking the corresponding button on the toolbar.
 </screenshot>
 </figure>
 
+<para>Pressing the left mouse button activates the horizontal
+ruler. Pressing the left mouse button in combination with the
+<keycap>Shift</keycap> key activates the vertical
+ruler.</para>
+
+<para>You can change the measurement unit (see <xref
+linkend="propdisplay"/>).</para>
+
 </section>
 
 <section id="handtool">
@@ -82,14 +90,6 @@ the command
 <guimenuitem>Hand Tool</guimenuitem>
 </menuchoice>
 or by clicking the corresponding button in the toolbar.</para>
-
-<para>Pressing the left mouse button activates the horizontal
-ruler. Pressing the left mouse button in combination with the
-<keycap>Shift</keycap> key activates the vertical
-ruler.</para>
-
-<para>You can change the measurement unit (see <xref
-linkend="propdisplay"/>).</para>
 
 </section>
 
