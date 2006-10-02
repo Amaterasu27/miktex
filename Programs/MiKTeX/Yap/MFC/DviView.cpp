@@ -1312,6 +1312,7 @@ DviView::Zoom (/*[in]*/ bool zoomIn)
   YapLog (T_("Yap zoom: %d/%d=%f"), oldShrink, newShrink, f);
   CPoint oldScrollPosition = GetScrollPosition();
   pDoc->Shrink (d);
+  g_pYapConfig->displayShrinkFactor = newShrink;
   pDoc->ForgetGraphicsInclusions ();
   tempFiles.clear ();
   pDoc->UpdateAllViews (0);
