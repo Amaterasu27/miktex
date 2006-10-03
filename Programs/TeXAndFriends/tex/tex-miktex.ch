@@ -674,6 +674,31 @@ if font_max>font_base+font_max_limit then bad:=16;
 
 % _____________________________________________________________________________
 %
+% [8.112]
+% _____________________________________________________________________________
+
+@x
+@d qi(#)==#+min_quarterword
+  {to put an |eight_bits| item into a quarterword}
+@d qo(#)==#-min_quarterword
+  {to take an |eight_bits| item out of a quarterword}
+@d hi(#)==#+min_halfword
+  {to put a sixteen-bit item into a halfword}
+@d ho(#)==#-min_halfword
+  {to take a sixteen-bit item from a halfword}
+@y
+@d qi(#)==#
+  {to put an |eight_bits| item into a quarterword}
+@d qo(#)==#
+  {to take an |eight_bits| item out of a quarterword}
+@d hi(#)==#
+  {to put a sixteen-bit item into a halfword}
+@d ho(#)==#
+  {to take a sixteen-bit item from a halfword}
+@z
+
+% _____________________________________________________________________________
+%
 % [9.116]
 % _____________________________________________________________________________
 
