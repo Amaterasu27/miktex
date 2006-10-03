@@ -315,6 +315,8 @@ struct FormatInfo
   /// Custom flag. Set, if this format was defined by the user.
   bool custom;
 
+  tstring arguments;
+
   FormatInfo ()
     : exclude (false),
       custom (true)

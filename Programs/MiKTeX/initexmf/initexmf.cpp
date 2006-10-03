@@ -1838,6 +1838,11 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
     }
 
   arguments.AppendArgument (formatInfo.inputFile);
+
+  if (! formatInfo.arguments.empty())
+    {
+      arguments.AppendOption (T_("--engine-option="), formatInfo.arguments);
+    }
     
   RunMakeTeX (maker.c_str(), arguments);
 
