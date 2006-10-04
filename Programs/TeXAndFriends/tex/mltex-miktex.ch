@@ -278,12 +278,16 @@
 %
 %============================================================
 
-@x limbo l.64 - bug fix (print only changed modules)
-\def\pct!{{\char`\%}} % percent sign in ordinary text
+@x [1] m.2 l.187 - MLTeX: change banner line
+November 1984].
 @y
-\def\pct!{{\char`\%}} % percent sign in ordinary text
-\def\grp{\.{\char'173...\char'175}}
-\let\maybe=\iffalse % print only changed modules
+November 1984].
+
+ML\TeX{} will add new primitives changing the behaviour of \TeX.  The
+|banner| string has to be changed.  We do not change the |banner|
+string, but will output an additional line to make clear that this is
+a modified \TeX{} version.
+
 @z
 
 
@@ -329,11 +333,11 @@ substitution definitions.
 @d int_pars=55 {total number of integer parameters}
 @y
 @d tex_int_pars=55 {total number of \TeX's integer parameters}
-@d miktex_int_base=tex_int_pars {base for MiK\TeX's integer parameters}
+@d miktex_int_base=tex_int_pars {base for \MiKTeX's integer parameters}
 @d char_sub_def_min_code=miktex_int_base {smallest value in the charsubdef list}
 @d char_sub_def_max_code=miktex_int_base+1 {largest value in the charsubdef list}
 @d tracing_char_sub_def_code=miktex_int_base+2 {traces changes to a charsubdef def}
-@d miktex_int_pars=miktex_int_base+3 {total number of MiK\TeX's integer parameters}
+@d miktex_int_pars=miktex_int_base+3 {total number of \MiKTeX's integer parameters}
 @#
 @d int_pars=miktex_int_pars {total number of integer parameters}
 @z
@@ -794,7 +798,7 @@ in Ini\TeX.
 @!mltex_enabled_p:boolean;  {enable character substitution}
 
 
-@ @<Declare MiK\TeX\ functions@>=
+@ @<Declare \MiKTeX\ functions@>=
 function miktex_mltex_p : boolean; forward;
 
 @ @<Set init...@>=

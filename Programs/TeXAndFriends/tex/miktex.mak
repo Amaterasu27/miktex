@@ -308,6 +308,17 @@ triptest: $(outdir)\triptex.exe
 
 # _____________________________________________________________________________
 #
+# tex.dvi
+# _____________________________________________________________________________
+
+tex.dvi: tex.tex
+	$(tex) tex
+
+tex.tex: $(change_file)
+	$(weave) tex.web $(change_file) tex.tex
+
+# _____________________________________________________________________________
+#
 # cleanup
 # _____________________________________________________________________________
 
@@ -341,6 +352,8 @@ clean: common-clean mostlyclean
 
 distclean: common-distclean clean
 	-del /f tex-n.web
+	-del /f tex.tex
+	-del /f tex.dvi
 
 maintainer-clean: common-maintainer-clean distclean
 	-del /f trip\triptest.log

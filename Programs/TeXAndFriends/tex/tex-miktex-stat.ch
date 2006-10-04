@@ -27,6 +27,8 @@
 @d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
   usage statistics}
 @y
-@d stat==
-@d tats==
+@d stat== {change this to `$\\{stat}\equiv\.{@@\{}$' when not gathering
+  usage statistics}
+@d tats== {change this to `$\\{stat}\equiv\.{@@\{}$' when not gathering
+  usage statistics}
 @z

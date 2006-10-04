@@ -202,11 +202,13 @@ tini
 % _____________________________________________________________________________
 
 @x
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 @y
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 
-@ @<Global variables@>=
+@ Define \MiKTeX\ variables.
+
+@<Global variables@>=
 @!trie_size : integer;
 @!trie_op_size : integer;
 @z
