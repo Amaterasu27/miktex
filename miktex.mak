@@ -427,6 +427,8 @@ set MIKTEX_BINDIR=$(prefix)\miktex\bin
 set MIKTEX_STARTUPFILE=$(prefix)\miktex\config\miktexstartup.ini
 set PATH=%MIKTEX_BINDIR%;%PATH%
 set XML_CATALOG_FILES=$(dbcatalog)
+set MIKTEX_SERIES=$(miktexseries)
+set MIKTEX_J2000=$(MIKTEX_J2000_VERSION)
 <<
 
 miktexstartupini = $(prefix)\miktex\config\miktexstartup.ini
