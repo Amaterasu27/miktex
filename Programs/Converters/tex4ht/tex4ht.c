@@ -1,6 +1,6 @@
 
 /**********************************************************/
-/* tex4ht.c                              2006-01-23-01:23 */
+/* tex4ht.c                              2006-09-13-14:27 */
 /* Copyright (C) 1996--2006    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
@@ -523,8 +523,9 @@ struct ch_map_rec{
 struct stack_entry{
   long  int x_val, y_val;
   INTEGER dx_1, dx_2, dy_1, dy_2;
-  BOOL text_on
-, accented
+  BOOL text_on;
+  BOOL 
+accented
 
 ;
   
@@ -730,9 +731,6 @@ static long int x_val = 0, max_x_val = -10000,
      max_y_val = 0, prev_y_val = 0;
 
 
-static BOOL text_on = FALSE;
-
-
 static INTEGER dx_1 = 0, dx_2 = 0;
 
 
@@ -747,6 +745,9 @@ static U_CHAR *space_str = (char *)0;
 
 
 static int ignore_chs=0, ignore_spaces=0, recover_spaces=0;
+
+
+static BOOL text_on = FALSE;
 
 
 static U_CHAR rule_ch = '_';
@@ -1095,9 +1096,6 @@ static U_CHAR *warn_err_mssg[]={
 "\\special{t4ht%s}?\n",                               
 
  "" };
-
-
-static U_CHAR warning[] = "--- warning --- ";
 
 
 static BOOL err_context = FALSE;
@@ -1683,8 +1681,16 @@ static INTEGER move_x
 i =  (INTEGER) (  (double) (dx = x_val - max_x_val)
             /         (text_on? word_sp : margin_sp)
             +         0.5 );
+
+if( i==0 ){
+   i =  (INTEGER) (  (double) dx
+            /         word_sp
+            +         0.5 );
+}
+
+
 if( i<0 ) i=0;
-if( !i ){ 
+if( i==0 ){ 
          long  curr_pos;
          BOOL  done;
          int ch, cr_fnt;
@@ -1739,6 +1745,14 @@ word_sp = design_size_to_pt( font_tbl[cr_fnt].word_sp )
 i =  (INTEGER) (  (double) dx
             /         (text_on? word_sp : margin_sp)
             +         0.5 );
+
+if( i==0 ){
+   i =  (INTEGER) (  (double) dx
+            /         word_sp
+            +         0.5 );
+}
+
+
 if( i>0 ){ i =1; }
 
 
@@ -1787,10 +1801,12 @@ max_x_val = x_val;
 
    } else    if( d && text_on  && (x_val != max_x_val) ){
       
-i =  (INTEGER) ( (double) (dx = d) / word_sp + 0.5 );
-if( i<0 ) i=0;
-if( !i ) i = dx>99999L;
-if( i ){ put_char(' '); }
+if( !ignore_spaces ){
+   i =  (INTEGER) ( (double) (dx = d) / word_sp + 0.5 );
+   if( i<0 ) i=0;
+   if( !i ) i = dx>99999L;
+   if( i ){ put_char(' '); }
+}
 
 
    }
@@ -1927,6 +1943,14 @@ if( (x_val + right)  &&
    i =  (INTEGER) (  (double) (x_val + right - max_x_val)
                    /         (text_on? word_sp : margin_sp)
                    +         0.5 );
+   
+if( i==0 ){
+   i =  (INTEGER) (  (double) (x_val + right - max_x_val)
+                   /         word_sp
+                   +         0.5 );
+}
+
+
    if( i && !text_on )  try_new_line();
    
 if( trace_dvi_R && !ch_map_flag ){
@@ -2897,7 +2921,7 @@ if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
          i = i * 10 + ch - '0';  ch = get_html_ch(file);  }
       if( i != bound ){
          
-(IGNORED) fprintf(stderr,warning);
+(IGNORED) fprintf(stderr,"--- warning --- ");
 (IGNORED) fprintf(stderr,warn_err_mssg[22]
 
 , new_font_name, i, bound); show_err_context();
@@ -3074,9 +3098,11 @@ if( gif_file ){
 }  }
 
 
-(IGNORED) printf("\nRenaming `%s____.png' to `%c%c%c%c____.png'\n",
-            str, xeh[(int)(ch[0])], xeh[(int)(ch[1])],
-                 xeh[(int)(ch[2])], xeh[(int)(ch[3])]);
+(IGNORED) printf("\nRenaming `%s____%s' to `%c%c%c%c____%s'\n",
+            str, gif,
+                 xeh[(int)(ch[0])], xeh[(int)(ch[1])],
+                 xeh[(int)(ch[2])], xeh[(int)(ch[3])]
+               , gif);
 p->name = m_alloc(char,m+1);
 (IGNORED) strcpy( p->name, str );
 if( gif_file ){  p->next = gif_file->next;   gif_file->next = p;  }
@@ -3346,7 +3372,7 @@ char *get_env_dir
       U_CHAR *p;
   if(! progname || ! *progname)  return NULL;               
   i = (int) strlen(progname);
-  while( (progname[--i] != dir_path_slash(progname) )
+  while( (progname[--i] != (int) dir_path_slash(progname) )
           && (i > 0) ) ;                              
   if(i == 0)  return NULL;                        
   p = (char *) malloc(i+12);
@@ -5575,7 +5601,7 @@ static  void warn_i
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n]);
    show_err_context();
 }
@@ -5596,7 +5622,7 @@ static void warn_i_int
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr, warn_err_mssg[n], i);
    show_err_context();
 }
@@ -5617,7 +5643,7 @@ static void warn_i_int_2
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr, warn_err_mssg[n], i, j);
    show_err_context();
 }
@@ -5642,7 +5668,8 @@ static void warn_i_str
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{
+   (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str);
    show_err_context();
 }
@@ -5669,7 +5696,7 @@ static void warn_i_str2
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str1,str2);
    show_err_context();
 }
@@ -5849,19 +5876,19 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2006-01-23-01:23 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2006-01-23-01:23)\n");
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27)\n");
 #endif
 #else
 #ifdef PLATFORM
 #  if defined(MIKTEX)
-   (IGNORED) printf("tex4ht.c (2006-01-23-01:23 %s MiKTeX)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s MiKTeX)\n",PLATFORM);
 #  else
-   (IGNORED) printf("tex4ht.c (2006-01-23-01:23 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 %s kpathsea)\n",PLATFORM);
 #  endif
 #else
-   (IGNORED) printf("tex4ht.c (2006-01-23-01:23 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2006-09-13-14:27 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -6301,7 +6328,7 @@ if( !dot_file && dos_env_file){
    
 
 #ifdef KPATHSEA
-if( !dot_file ) {                    U_CHAR * envname;
+if( !dot_file ) {                    U_CHAR * envfile;
                              char *arch, *p, str[256];
   
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
@@ -6313,28 +6340,53 @@ while( *p != '\0' ){
 }
 
 
-  envname = (char *) 0;
+  envfile = (char *) 0;
   
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
   if( dump_env_search ){
     (IGNORED) printf("kpse_open_file (\"%s\", ...)?\n", str );
   }
-  envname= kpse_find_file (str, kpse_program_text_format, 0);
+  envfile= kpse_find_file (str, kpse_program_text_format, 0);
 }
 
 
-  if ( !envname ){ 
+  if ( !envfile ){ 
 if( dump_env_search ){
   (IGNORED) printf("kpse_open_file (\"tex4ht.env\", ...)?\n");
 }
-envname= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
-  if ( envname ){
-    dot_file = kpse_open_file (envname,
+  if ( !envfile ){ 
+if( dump_env_search ){
+  (IGNORED) printf("system(\"kpsewhich --progname=tex4ht tex4ht.env\")?\n");
+}
+if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   envfile= kpse_find_file (fileaddr, kpse_program_text_format, 0);
+   if( envfile ){
+      warn_i_str( 50,
+          "search support for kpse_find_file--unsing system kpsewhich calls instead");
+}  }
+
+ }
+  if ( envfile ){
+    dot_file = kpse_open_file (envfile,
                               kpse_program_text_format);
-    (IGNORED) printf("(%s)\n",  envname);
+    (IGNORED) printf("(%s)\n",  envfile);
   } else if( dump_env_search ){
     p = (char *) kpse_var_value( "TEX4HTINPUTS" );
     if( p ){
@@ -7112,11 +7164,34 @@ switch( ch ){
    
 #ifdef KPATHSEA
 {
-     U_CHAR * tfmname;
-  tfmname = kpse_find_file (file_name, kpse_tfm_format, 0);
-  if ( tfmname ){
-       (IGNORED) printf("(%s)\n",  tfmname);
-       font_file = kpse_open_file (tfmname, kpse_tfm_format);
+     U_CHAR * tfmfile;
+  tfmfile = kpse_find_file (file_name, kpse_tfm_format, 0);
+  if( !tfmfile ){ 
+char s [256];
+(IGNORED) strcpy(s, "kpsewhich ");
+(IGNORED) strcat(s,file_name);
+(IGNORED) strcat(s, " > tex4ht.tmp ");
+if( system(s) == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   tfmfile = kpse_find_file (fileaddr, kpse_program_text_format, 0);
+}
+
+ }
+  if ( tfmfile ){
+       (IGNORED) printf("(%s)\n",  tfmfile);
+       font_file = kpse_open_file (tfmfile, kpse_tfm_format);
   }
 }
 #else
