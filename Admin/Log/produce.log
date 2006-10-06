@@ -1,5 +1,5 @@
 -*- Compilation -*-
-C:\work3\miktex-2.5 Tue 10/03/2006 22:17:29.31
+C:\work3\miktex-2.5 Fri 10/06/2006 20:58:56.58
 
 Cleaning MiKTeX ...
 Building MiKTeX ...
@@ -6648,7 +6648,7 @@ Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunTANGLE  --include-filename=tangle-miktex.h  --one=tangle  --var-name-prefix=m_  --var-struct=g_TANGLEData  -C  tangle.p
-	type \MiKTeXTemp\nmA0F.tmp >> tangle.cc
+	type \MiKTeXTemp\nm999.tmp >> tangle.cc
 	cl /c /W4 /WX /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /FoRelease\  -DTANGLEAPP=g_TANGLEApp  -DTANGLECLASS=TANGLE  -DTANGLEDATA=g_TANGLEData  tangle.cc
 tangle.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\tangle.res tangle.rc
@@ -6657,7 +6657,7 @@ tangle.cc
 Generating code
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-tangle-3.dll.manifest -outputresource:Release\MiKTeX-tangle-3.dll;2
-	type \MiKTeXTemp\nmA13.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm99D.tmp >> mywebapp.h
 	cl  /O1  /FoRelease\alias.obj   /nologo  /MD  -DDLLAPI=__stdcall  -DDLLMAIN=MiKTeX_TANGLE  C:\work3\miktex-2.5\Libraries\MiKTeX\etc\alias.cpp  /link  -out:Release\tangle.exe  Release\tangle.lib
 alias.cpp
 	mt -nologo -manifest Release\tangle.exe.manifest -outputresource:Release\tangle.exe;1
@@ -6668,7 +6668,7 @@ Writing the output file.....500.....1000.....1500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunWEAVE  --include-filename=mywebapp.h  --one=weave  --var-struct=g_WEAVEData  -C  weave.p
-	type \MiKTeXTemp\nmA16.tmp >> weave.cc
+	type \MiKTeXTemp\nm9A0.tmp >> weave.cc
 	cl  /c /W4 /WX /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\  weave.cc
 weave.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\weave.res weave.rc
@@ -7172,7 +7172,7 @@ Microsoft (R) Program Maintenance Utility Version 8.00.50727.42
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
-	type \MiKTeXTemp\nmA64.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm9EE.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe vftovp.web vftovp-miktex.ch vftovp.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*6*10*22*30*48*66*110*118*131*135*136
@@ -7180,7 +7180,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunVFtoVP  --include-filename=mywebapp.h  --one=vftovp  --var-struct=g_VFtoVPData  -C  vftovp.p
-	type \MiKTeXTemp\nmA65.tmp >> vftovp.cc
+	type \MiKTeXTemp\nm9EF.tmp >> vftovp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ -Tp vftovp.cc
 vftovp.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\vftovp.res vftovp.rc
@@ -7196,7 +7196,7 @@ Writing the output file.....500.....1000.
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunVPtoVF  --include-filename=mywebapp.h  --one=vptovf  --var-struct=g_VPtoVFData  -C  vptovf.p
-	type \MiKTeXTemp\nmA69.tmp >> vptovf.cc
+	type \MiKTeXTemp\nm9F3.tmp >> vptovf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ -Tp vptovf.cc
 vptovf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -7259,7 +7259,7 @@ Writing the output file.....500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunDVItype  --include-filename=dvitype-miktex.h  --one=dvitype  --var-name-prefix=m_  --var-struct=g_DVItypeData  -C  dvitype.p
-	type \MiKTeXTemp\nmA71.tmp >> dvitype.cc
+	type \MiKTeXTemp\nm9FB.tmp >> dvitype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  -DDVITYPECLASS=CDVItypeApp  -DDVITYPEAPP=g_DVItypeApp  -DDVITYPEDATA=g_DVItypeData  /FoRelease\  dvitype.cc
 dvitype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\dvitype.res dvitype.rc
@@ -7268,7 +7268,7 @@ dvitype.cc
 Generating code
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-dvitype-3.dll.manifest -outputresource:Release\MiKTeX-dvitype-3.dll;2
-	type \MiKTeXTemp\nmA75.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm9FF.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe pltotf.web pltotf-miktex.ch pltotf.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*5*17*30*36*50*67*81*109*127*146*148*149
@@ -7276,7 +7276,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunPLtoTF  --include-filename=mywebapp.h  --one=pltotf  --var-struct=g_PLtoTFData  -C  pltotf.p
-	type \MiKTeXTemp\nmA76.tmp >> pltotf.cc
+	type \MiKTeXTemp\nmA00.tmp >> pltotf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ pltotf.cc
 pltotf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -7316,7 +7316,7 @@ Writing the output file
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunPOOLtype  --include-filename=mywebapp.h  --one=pooltype  --var-struct=g_POOLtypeData  -C  pooltype.p
-	type \MiKTeXTemp\nmA7A.tmp >> pooltype.cc
+	type \MiKTeXTemp\nmA04.tmp >> pooltype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ pooltype.cc
 pooltype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\pooltype.res pooltype.rc
@@ -7332,7 +7332,7 @@ Writing the output file.....500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunTFtoPL  --include-filename=mywebapp.h  --one=tftopl  --var-struct=g_TFtoPLData  -C  tftopl.p
-	type \MiKTeXTemp\nmA7E.tmp >> tftopl.cc
+	type \MiKTeXTemp\nmA08.tmp >> tftopl.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ tftopl.cc
 tftopl.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\tftopl.res tftopl.rc
@@ -7399,23 +7399,21 @@ Copyright (c) 1989,1992 by THD/ITI. All rights reserved.
 (No errors were found.)
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe tex.web tex-miktex-all.ch nul tex.pool
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511
-! Identifier conflict with miktex_print_filename*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1398
+*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1399
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500
 Done.
-1054 strings written to string pool file.
-(Did you see the warning message above?)
+1053 strings written to string pool file.
+(No errors were found.)
 	if not exist "Release" (  cmd /c mkdir Release  )
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe tex.web tex-miktex-all.ch tex.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511
-! Identifier conflict with miktex_print_filename*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1398
+*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1399
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500
 Done.
-1054 strings written to string pool file.
-(Did you see the warning message above?)
+1053 strings written to string pool file.
+(No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --chars-are-unsigned  --def-filename=texdefs.h  --dll  --entry-name=RunTeX  --include-filename=tex-miktex.h  --one=tex  --var-name-prefix=m_  --var-struct=g_TeXData  -C  tex.p
-	type \MiKTeXTemp\nmA8A.tmp >> tex.cc
+	type \MiKTeXTemp\nmA14.tmp >> tex.cc
 	sed -f dyn.sed tex.h > tex.h.new
 	del tex.h
 	move tex.h.new tex.h
@@ -7464,14 +7462,13 @@ Copyright (c) 1989,1992 by THD/ITI. All rights reserved.
 (No errors were found.)
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe tex.web triptex-miktex.ch triptex.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511
-! Identifier conflict with miktex_print_filename*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1398
+*1*17*25*38*54*72*99*110*115*133*162*173*199*203*207*211*220*256*268*289*297*300*321*332*366*402*464*487*511*539*583*592*644*680*699*719*768*813*862*891*900*919*942*967*980*1029*1055*1136*1208*1299*1330*1338*1340*1379*1390*1399
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500
 Done.
-1054 strings written to string pool file.
-(Did you see the warning message above?)
+1053 strings written to string pool file.
+(No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --chars-are-unsigned  --def-filename=triptexdefs.h  --dll  --entry-name=RunTeX  --include-filename=tex-miktex.h  --one=triptex  --var-name-prefix=m_  --var-struct=g_TeXData  -C  triptex.p
-	type \MiKTeXTemp\nmA90.tmp >> triptex.cc
+	type \MiKTeXTemp\nmA1A.tmp >> triptex.cc
 	sed -f dyn.sed triptex.h > triptex.h.new
 	del triptex.h
 	move triptex.h.new triptex.h
@@ -7505,13 +7502,13 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  3 OCT 2006 22:27
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  6 OCT 2006 21:08
 450,451c450,451
 <  (preloaded format=trip 2002.12.20)
 < 1320 strings of total length 23539
 ---
->  (preloaded format=trip 2006.10.3)
-> 1337 strings of total length 23763
+>  (preloaded format=trip 2006.10.6)
+> 1336 strings of total length 23760
 	Release\triptex  -initialize  -buf-size=500  -error-line=64  -font-max=75  -font-mem-size=20000  -half-error-line=32  -max-in-open=6  -max-print-line=72  -max-strings=3000  -mem-bot=1  -mem-max=3000  -mem-min=1  -mem-top=3000  -nest-size=40  -param-size=60  -pool-size=32000  -save-size=600  -stack-size=200  -strict  -string-vacancies=8000  -trie-op-size=500  -trie-size=8000  <trip\triptest.s4  > trip.fot
 	diff trip\trip.fot trip.fot
 1,3c1,2
@@ -7529,7 +7526,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2006.10.3)  3 OCT 2006 22:27
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2006.10.6)  6 OCT 2006 21:08
 1511c1511
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
@@ -7579,8 +7576,8 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 <  251 string characters out of 8353
 <  2825 words of memory out of 3000
 ---
->  53 strings out of 1919
->  293 string characters out of 8237
+>  53 strings out of 1920
+>  293 string characters out of 8240
 >  2886 words of memory out of 3000
 7292,7293c7292,7293
 <  2 hyphenation exceptions out of 307
@@ -7601,7 +7598,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 9c9
 < ' TeX output 2002.12.20:2128'
 ---
-> ' TeX output 2006.10.03:2227'
+> ' TeX output 2006.10.06:2108'
 1215d1214
 <  
 
@@ -7641,12 +7638,11 @@ Copyright (c) 1989,1992 by THD/ITI. All rights reserved.
 (No errors were found.)
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe pdftex.web pdftex-miktex.ch nul pdftex.pool
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529
-! Identifier conflict with miktex_print_filename*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1607*1616
+*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1607*1616
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500.....7000.....7500.....8000.....8500.....9000.....9500
 Done.
-1507 strings written to string pool file.
-(Did you see the warning message above?)
+1506 strings written to string pool file.
+(No errors were found.)
 	if not exist "Release" (  cmd /c mkdir Release  )
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL /GS -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /J  /Gy  /Gr  -DKPS_DLL  -DMIKTEX_PDFTEX  -DNOGDI  -DUSE_MIKTEX_EXIT  -DZLIB_DLL  -D__WIN32DLL__  -DpdfTeX  -Ixpdf  -Ixpdf/goo  -Ixpdf/xpdf  /FoRelease\  -DPDFTEXDATA=g_pdfTeXData  pdftosrc.cc
 pdftosrc.cc
@@ -7799,26 +7795,24 @@ Copyright (c) 1989,1992 by THD/ITI. All rights reserved.
 (No errors were found.)
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe pdfetex.web nul nul pdfetex.pool
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529
-! Identifier conflict with miktex_print_filename*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1817*1828*1837
+*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1817*1828*1837
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500.....7000.....7500.....8000.....8500.....9000.....9500.....10000.....10500..
 Done.
-1621 strings written to string pool file.
-(Did you see the warning message above?)
+1620 strings written to string pool file.
+(No errors were found.)
 	if not exist "Release" (  cmd /c mkdir Release  )
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\pdfetex.res pdfetex.rc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL /GS -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /J  /Gy  /Gr  -DMIKTEX_PDFETEX  -DNOGDI  -DUSE_MIKTEX_EXIT  -DZLIB_DLL  -D__WIN32DLL__  -DpdfTeX  -DpdfeTeX  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\etex  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/fofi  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/goo  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/xpdf  /FoRelease\  -DC4PEXTERN=extern  -DETEXCLASS=CeTeXApp  -DPDFETEXDATA=g_pdfeTeXData  -DPDFTEXCLASS=CpdfTeXApp  C:\work3\miktex-2.5\Programs\TeXAndFriends\pdftex\avl.c
 avl.c
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe pdfetex.web nul pdfetex.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
-*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529
-! Identifier conflict with miktex_print_filename*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1817*1828*1837
+*1*17*25*38*54*72*99*110*128*133*151*180*191*217*221*225*229*238*274*286*307*315*318*339*350*384*420*482*505*529*557*601*610*662*669*681*683*690*713*794*834*853*873*922*967*1016*1045*1054*1073*1096*1121*1134*1183*1209*1290*1362*1453*1484*1492*1494*1596*1817*1828*1837
 Writing the output file.....500.....1000.....1500.....2000.....2500.....3000.....3500.....4000.....4500.....5000.....5500.....6000.....6500.....7000.....7500.....8000.....8500.....9000.....9500.....10000.....10500..
 Done.
-1621 strings written to string pool file.
-(Did you see the warning message above?)
+1620 strings written to string pool file.
+(No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --auto-exit=10  --chars-are-unsigned  --def-filename=pdfetexdefs.h  --dll  --entry-name=RunepdfTeX  --header-file=pdfetexd.h  --include-filename=pdfetex-miktex.h  --one=pdfetex  --var-name-prefix=m_  --var-struct=g_pdfeTeXData  -C  pdfetex.p
-	type \MiKTeXTemp\nmA9B.tmp >> pdfetex.cc
+	type \MiKTeXTemp\nmA25.tmp >> pdfetex.cc
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed pdfetexd.h > pdfetexd.h.tmp
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\pdftex\dyn.sed pdfetexd.h.tmp > pdfetexd.h
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\etex\dyn.sed pdfetexd.h > pdfetexd.h.tmp
@@ -7885,13 +7879,13 @@ C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/inputline.h(35
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/inputline.h(359) : warning C4018: '>' : signed/unsigned mismatch
 pdfetex.cc(5628) : warning C4804: '>' : unsafe use of type 'bool' in operation
 pdfetex.cc(5642) : warning C4804: '>' : unsafe use of type 'bool' in operation
-pdfetex.cc(23828) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(27699) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(27722) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(28026) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(28245) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(29850) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
-pdfetex.cc(52896) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(23825) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(27696) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(27719) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(28023) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(28242) : warning C4800: 'quarterword' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(29847) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
+pdfetex.cc(52893) : warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL /GS -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /J  /Gy  /Gr  -DMIKTEX_PDFETEX  -DNOGDI  -DUSE_MIKTEX_EXIT  -DZLIB_DLL  -D__WIN32DLL__  -DpdfTeX  -DpdfeTeX  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\etex  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/fofi  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/goo  -IC:/work3/miktex-2.5/Programs\TeXAndFriends\pdftex/xpdf/xpdf  /FoRelease\  -DC4PEXTERN=extern  -DETEXCLASS=CeTeXApp  -DPDFETEXDATA=g_pdfeTeXData  -DPDFTEXCLASS=CpdfTeXApp  C:\work3\miktex-2.5\Programs\TeXAndFriends\pdftex\pdftoepdf.cc
 pdftoepdf.cc
 c:\work3\miktex-2.5\programs\texandfriends\pdfetex\pdfetexd.h(1167) : warning C4005: 'pdfeTeX' : macro redefinition
@@ -8275,7 +8269,7 @@ Microsoft (R) Program Maintenance Utility Version 8.00.50727.42
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
-	type \MiKTeXTemp\nmAA2.tmp >> mywebapp.h
+	type \MiKTeXTemp\nmA2C.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe odvicopy.web odvicopy-miktex.ch odvicopy.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*7*14*20*26*61*68*91*109*134*152*176*183*219*230*240*245*260*294*295
@@ -8283,7 +8277,7 @@ Writing the output file.....500.....1000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunODVIcopy  --include-filename=mywebapp.h  --one=odvicopy  --var-struct=g_ODVIcopyData  -C  odvicopy.p
-	type \MiKTeXTemp\nmAA3.tmp >> odvicopy.cc
+	type \MiKTeXTemp\nmA2D.tmp >> odvicopy.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ odvicopy.cc
 odvicopy.cc
 odvicopy.cc(964) : warning C4305: 'argument' : truncation from 'long' to 'int16u'
@@ -8376,7 +8370,7 @@ Writing the output file.....500....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOFM2OPL  --include-filename=mywebapp.h  --one=ofm2opl  --var-struct=g_OFM2OPLData  -C  ofm2opl.p
-	type \MiKTeXTemp\nmAA7.tmp >> ofm2opl.cc
+	type \MiKTeXTemp\nmA31.tmp >> ofm2opl.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ofm2opl.cc
 ofm2opl.cc
 ofm2opl.cc(293) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
@@ -8393,7 +8387,7 @@ Writing the output file.....500.....1000.....1500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOPL2OFM  --include-filename=mywebapp.h  --one=opl2ofm  --var-struct=g_OPL2OFMData  -C  opl2ofm.p
-	type \MiKTeXTemp\nmAAB.tmp >> opl2ofm.cc
+	type \MiKTeXTemp\nmA35.tmp >> opl2ofm.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ opl2ofm.cc
 opl2ofm.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -8425,7 +8419,7 @@ Writing the output file.....500.....1000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOVF2OVP  --include-filename=mywebapp.h  --one=ovf2ovp  --var-struct=g_OVF2OVPData  -C  ovf2ovp.p
-	type \MiKTeXTemp\nmAAF.tmp >> ovf2ovp.cc
+	type \MiKTeXTemp\nmA39.tmp >> ovf2ovp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ovf2ovp.cc
 ovf2ovp.cc
 ovf2ovp.cc(308) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
@@ -8442,7 +8436,7 @@ Writing the output file.....500.....1000.....1500.....2000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOVP2OVF  --include-filename=mywebapp.h  --one=ovp2ovf  --var-struct=g_OVP2OVFData  -C  ovp2ovf.p
-	type \MiKTeXTemp\nmAB3.tmp >> ovp2ovf.cc
+	type \MiKTeXTemp\nmA3D.tmp >> ovp2ovf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ovp2ovf.cc
 ovp2ovf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'c4p_byte' to 'unsigned char', possible loss of data
@@ -8633,7 +8627,7 @@ Done.
 (No errors were found.)
 	if not exist "Release" (  cmd /c mkdir Release  )
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=omegadefs.h  --dll  --entry-name=RunOmega  --include-filename=omega-miktex.h  --one=omega  --var-name-prefix=m_  --var-struct=g_OmegaData  -C  omega.p
-	type \MiKTeXTemp\nmACA.tmp >> omega.cc
+	type \MiKTeXTemp\nmA54.tmp >> omega.cc
 	copy /b C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed + omega_dyn.sed dyn.sed
 C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed
 omega_dyn.sed
@@ -8741,7 +8735,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGFtoDVI  --include-filename=gftodvi-miktex.h  --one=gftodvi  --var-name-prefix=m_  --var-struct=g_GFtoDVIData  -C  gftodvi.p
-	type \MiKTeXTemp\nmAD0.tmp >> gftodvi.cc
+	type \MiKTeXTemp\nmA5A.tmp >> gftodvi.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /FoRelease\  -DGFTODVIAPP=g_GFtoDVIApp  -DGFTODVICLASS=CGFtoDVIApp  -DGFTODVIDATA=g_GFtoDVIData  gftodvi.cc
 gftodvi.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftodvi.res gftodvi.rc
@@ -8753,7 +8747,7 @@ Finished generating code
 	cl  /O1  /FoRelease\alias.obj   /nologo  /MD  -DDLLAPI=__stdcall  -DDLLMAIN=MiKTeX_Gftodvi  C:\work3\miktex-2.5\Libraries\MiKTeX\etc\alias.cpp  /link  -out:Release\gftodvi.exe  Release\gftodvi.lib
 alias.cpp
 	mt -nologo -manifest Release\gftodvi.exe.manifest -outputresource:Release\gftodvi.exe;1
-	type \MiKTeXTemp\nmAD6.tmp >> mywebapp.h
+	type \MiKTeXTemp\nmA60.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe gftopk.web gftopk-miktex.ch gftopk.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*9*14*21*37*48*51*62*88*89
@@ -8761,7 +8755,7 @@ Writing the output file...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGFtoPK  --include-filename=mywebapp.h  --one=gftopk  --var-struct=g_GFtoPKData  -C  gftopk.p
-	type \MiKTeXTemp\nmAD7.tmp >> gftopk.cc
+	type \MiKTeXTemp\nmA61.tmp >> gftopk.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ gftopk.cc
 gftopk.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftopk.res gftopk.rc
@@ -8780,7 +8774,7 @@ Writing the output file..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGftype  --include-filename=mywebapp.h  --one=gftype  --var-struct=g_GftypeData  -C  gftype.p
-	type \MiKTeXTemp\nmADD.tmp >> gftype.cc
+	type \MiKTeXTemp\nmA67.tmp >> gftype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ gftype.cc
 gftype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftype.res gftype.rc
@@ -8799,7 +8793,7 @@ Writing the output file.....500....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunMFT  --include-filename=mywebapp.h  --one=mft  --var-struct=g_MFTData  -C  mft.p
-	type \MiKTeXTemp\nmAE3.tmp >> mft.cc
+	type \MiKTeXTemp\nmA6D.tmp >> mft.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ mft.cc
 mft.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\mft.res mft.rc
@@ -8858,7 +8852,7 @@ Done.
 823 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=mfdefs.h  --dll  --entry-name=RunMETAFONT  --include-filename=mf-miktex.h  --one=mf  --var-name-prefix=m_  --var-struct=g_METAFONTData  -C  mf.p
-	type \MiKTeXTemp\nmAE9.tmp >> mf.cc
+	type \MiKTeXTemp\nmA73.tmp >> mf.cc
 	sed -f dyn.sed mf.h > mf.h.new
 	del mf.h
 	move mf.h.new mf.h
@@ -8932,7 +8926,7 @@ Done.
 823 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=trapmfdefs.h  --dll --one=trapmf  --entry-name=RunMETAFONT  --include-filename=mf-miktex.h  --var-name-prefix=m_  --var-struct=g_METAFONTData  -C  trapmf.p
-	type \MiKTeXTemp\nmAEF.tmp >> trapmf.cc
+	type \MiKTeXTemp\nmA79.tmp >> trapmf.cc
 	sed -f dyn.sed trapmf.h > trapmf.h.new
 	del trapmf.h
 	move trapmf.h.new trapmf.h
@@ -8974,7 +8968,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (INIMF)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  3 OCT 2006 22:29
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  6 OCT 2006 21:11
 150c150
 < String usage 26&83 (1895&21534 still untouched)
 ---
@@ -8983,7 +8977,7 @@ alias.cpp
 <  (preloaded base=trap 98.8.8)
 < 1113 strings of total length 20515
 ---
->  (preloaded base=trap 2006.10.3)
+>  (preloaded base=trap 2006.10.6)
 > 1115 strings of total length 20529
 	Release\trapmf  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=3000  -mem-top=3000  -initialize  < trap\traptest.s3  > trap.fot
 	diff --strip-trailing-cr trap\trap.fot trap.fot
@@ -9002,7 +8996,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2006.10.3)  3 OCT 2006 22:29
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2006.10.6)  6 OCT 2006 21:11
 1825c1825
 < String usage 24&92 (1863&21408 still untouched)
 ---
@@ -9036,7 +9030,7 @@ alias.cpp
 ---
 > This is GFtype, Version 3.1 (MiKTeX 2.5)
 > Mnemonic output? (default=no, ? for help): Pixel output? (default=yes, ? for help): Options selected: Mnemonic output = true; pixel output = true.
-> ' METAFONT output 2006.10.03:2229'
+> ' METAFONT output 2006.10.06:2111'
 191c191
 < Character 0: dx -950272 (-14.5), dy 393216 (6), width 2097152 (-256), loc 324
 ---
@@ -9067,7 +9061,7 @@ Writing the output file....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --dll  --entry-name=RunDVItoMP  --include-filename=mywebapp.h  --one=dvitomp  --var-struct=g_DVItoMPData  -C  dvitomp.p
-	type \MiKTeXTemp\nmAF4.tmp >> dvitomp.cc
+	type \MiKTeXTemp\nmA7E.tmp >> dvitomp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ dvitomp.cc
 dvitomp.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\dvitomp.res dvitomp.rc
@@ -9131,7 +9125,7 @@ Done.
 937 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   -C  --def-filename=mpdefs.h  --dll  --entry-name=RunMetaPost  --include-filename=mp-miktex.h  --one=mp  --var-name-prefix=m_  --var-struct=g_MetaPostData  mp.p
-	type \MiKTeXTemp\nmB00.tmp >> mp.cc
+	type \MiKTeXTemp\nmA8A.tmp >> mp.cc
 	sed -f dyn.sed mp.h > mp.h.new
 	del mp.h
 	move mp.h.new mp.h
@@ -9215,7 +9209,7 @@ Done.
 937 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --def-filename=trapmpdefs.h  --dll  --entry-name=RunMetaPost  --include-filename=mp-miktex.h  --one=trapmp  --var-name-prefix=m_  --var-struct=g_MetaPostData  -C  trapmp.p
-	type \MiKTeXTemp\nmB06.tmp >> trapmp.cc
+	type \MiKTeXTemp\nmA90.tmp >> trapmp.cc
 	sed -f dyn.sed trapmp.h > trapmp.h.new
 	del trapmp.h
 	move trapmp.h.new trapmp.h
@@ -9262,7 +9256,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:33
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  3 OCT 2006 22:29
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  6 OCT 2006 21:11
 4,5c4,5
 < Memory usage 28&13 (248962 still untouched)
 < String usage 5&29 (13797&77816 now untouched)
@@ -9544,7 +9538,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1010c1006
 < >> "%%CreationDate: 2005.05.08:1133"
 ---
-> >> "%%CreationDate: 2006.10.03:2229"
+> >> "%%CreationDate: 2006.10.06:2111"
 1015,1018c1011,1012
 < Memory usage 356&13 (247857 still untouched)
 < String usage 26&134 (13631&75135 now untouched)
@@ -9593,12 +9587,12 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\mtrap.1 mtrap.1
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\writeo writeo
 	diff --strip-trailing-cr trapdir\writeo.2 writeo.2
 	copy trapdir\trap.mp .
@@ -9611,7 +9605,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:51
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  3 OCT 2006 22:29
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  6 OCT 2006 21:11
 161,162c161,162
 < Memory usage 292&42 (248917 still untouched)
 < String usage 29&97 (13772&77743 now untouched)
@@ -9622,14 +9616,14 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 <  (mem=trap 2005.5.8)
 < at most 1236 strings of total length 22276
 ---
->  (preloaded mem=trap 2006.10.3)
+>  (preloaded mem=trap 2006.10.6)
 > at most 1233 strings of total length 22287
 	Release\trapmp  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=4500  -mem-top=4500  -initialize  -strict  <trapdir\trap2.in  >trap.fot
 	diff --strip-trailing-cr trapdir\trap.log trap.log
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (mem=trap 2005.5.8)  8 MAY 2005 14:48
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2006.10.3)  3 OCT 2006 22:29
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2006.10.6)  6 OCT 2006 21:11
 1621,1622c1621,1622
 < Memory usage 1244&115 (247843 still untouched)
 < String usage 23&88 (13736&77569 now untouched)
@@ -9707,42 +9701,42 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.6 trap.6
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.148 trap.148
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.149 trap.149
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.150 trap.150
 5c5
 < %%CreationDate: 2005.05.08:1448
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.151 trap.151
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.197 trap.197
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	diff --strip-trailing-cr trapdir\trap.200 trap.200
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2229
+> %%CreationDate: 2006.10.06:2111
 	C:\MiKTeX-Builds\2.5\texmf\miktex\bin\tftopl trap.tfm trap.pl
 This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 '000 '005 '006 '137 '140 '141 '142 '143 
@@ -10012,7 +10006,7 @@ Writing the output file.....500.....1000.....1500.....2000.....2500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --def-filename=bibtexdefs.h  --dll  --entry-name=RunBibTeX  --include-filename=bibtex-miktex.h  --one=bibtex  --var-name-prefix=m_  --var-struct=g_BibTeXData  -C  bibtex.p
-	type \MiKTeXTemp\nmB0E.tmp >> bibtex.cc
+	type \MiKTeXTemp\nmA98.tmp >> bibtex.cc
 	sed -f dyn.sed bibtex.h > bibtex.h.new
 	del bibtex.h
 	move bibtex.h.new bibtex.h
@@ -10995,136 +10989,136 @@ Finished generating code
 t4ht.c
 t4ht.c(88) : warning C4005: 'DOS' : macro redefinition
         command-line arguments : see previous definition of 'DOS'
-t4ht.c(906) : warning C4996: 'strncpy' was declared deprecated
+t4ht.c(903) : warning C4996: 'strncpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(156) : see declaration of 'strncpy'
         Message: 'This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(907) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(904) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(933) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(930) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(962) : warning C4996: 'sprintf' was declared deprecated
+t4ht.c(959) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+t4ht.c(986) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
 t4ht.c(989) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(992) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(993) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(996) : warning C4996: 'strcpy' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
-        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1000) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(997) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1181) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1178) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1457) : warning C4996: 'getenv' was declared deprecated
+t4ht.c(1454) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1547) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1544) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1554) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(1551) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1568) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1565) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1593) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1590) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1605) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1602) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1627) : warning C4996: 'getenv' was declared deprecated
+t4ht.c(1624) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1646) : warning C4996: 'sprintf' was declared deprecated
+t4ht.c(1643) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1651) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1648) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1676) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1673) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1703) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1700) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1727) : warning C4996: 'sprintf' was declared deprecated
+t4ht.c(1724) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1759) : warning C4996: 'getenv' was declared deprecated
+t4ht.c(1775) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1890) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1906) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1983) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(1999) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1993) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2009) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1995) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2011) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(1996) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2012) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2006) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2022) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2058) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2074) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2079) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2095) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2287) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2303) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2289) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2305) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2291) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2307) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2342) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2358) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2344) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2360) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2433) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2449) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2436) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2452) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2544) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2560) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2546) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2562) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2551) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2567) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2564) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2580) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2865) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2881) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2880) : warning C4996: 'strcpy' was declared deprecated
+t4ht.c(2896) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-t4ht.c(2943) : warning C4996: 'fopen' was declared deprecated
+t4ht.c(2959) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\t4ht.res t4ht.rc
@@ -11138,376 +11132,385 @@ tex4ht.c(127) : warning C4005: 'DOS' : macro redefinition
         command-line arguments : see previous definition of 'DOS'
 tex4ht.c(131) : warning C4005: 'HAVE_STRING_H' : macro redefinition
         command-line arguments : see previous definition of 'HAVE_STRING_H'
-tex4ht.c(1504) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(1502) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(1543) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(1541) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(1546) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(1544) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(2758) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(2782) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3081) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3107) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3354) : warning C4996: 'strncpy' was declared deprecated
+tex4ht.c(3380) : warning C4996: 'strncpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(156) : see declaration of 'strncpy'
         Message: 'This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3355) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3381) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3404) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3430) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3406) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3432) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3462) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3488) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3513) : warning C4996: 'getenv' was declared deprecated
+tex4ht.c(3539) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3529) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(3555) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3530) : warning C4996: 'access' was declared deprecated
+tex4ht.c(3556) : warning C4996: 'access' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\io.h(315) : see declaration of 'access'
         Message: 'The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _access. See online help for details.'
-tex4ht.c(3534) : warning C4996: 'access' was declared deprecated
+tex4ht.c(3560) : warning C4996: 'access' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\io.h(315) : see declaration of 'access'
         Message: 'The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _access. See online help for details.'
-tex4ht.c(3538) : warning C4996: 'access' was declared deprecated
+tex4ht.c(3564) : warning C4996: 'access' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\io.h(315) : see declaration of 'access'
         Message: 'The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _access. See online help for details.'
-tex4ht.c(3575) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3601) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3626) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(3652) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3628) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(3654) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3881) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3907) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3946) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(3972) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(3986) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(4012) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4040) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4066) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4065) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(4091) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4076) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(4102) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4177) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4203) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4349) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4358) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4362) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4363) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4367) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4368) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4369) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4373) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4374) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4375) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4376) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4380) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4381) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4382) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4383) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4384) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4388) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4389) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4390) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4391) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4392) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4393) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4394) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4395) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
 tex4ht.c(4399) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
-tex4ht.c(4696) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4400) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4401) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4402) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4406) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4407) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4408) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4409) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4410) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4414) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4415) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4416) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4417) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4418) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4419) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4425) : warning C4244: '=' : conversion from 'long' to 'char', possible loss of data
+tex4ht.c(4722) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4709) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(4735) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4734) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(4760) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4740) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4766) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4741) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4767) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4749) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(4775) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(4993) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(5019) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5006) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(5032) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5031) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(5057) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5037) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(5063) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5038) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(5064) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5046) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(5072) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5916) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(5943) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(5945) : warning C4996: 'getenv' was declared deprecated
+tex4ht.c(5972) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6027) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6054) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6031) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6058) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6035) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6062) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6039) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6066) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6138) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6165) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6142) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(6169) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6152) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(6179) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6161) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(6188) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6170) : warning C4996: 'isatty' was declared deprecated
+tex4ht.c(6197) : warning C4996: 'isatty' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\io.h(324) : see declaration of 'isatty'
         Message: 'The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _isatty. See online help for details.'
-tex4ht.c(6170) : warning C4996: 'fileno' was declared deprecated
+tex4ht.c(6197) : warning C4996: 'fileno' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(688) : see declaration of 'fileno'
         Message: 'The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _fileno. See online help for details.'
-tex4ht.c(6185) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6212) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6198) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6225) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6239) : warning C4996: 'getenv' was declared deprecated
+tex4ht.c(6266) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6261) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(6288) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6319) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(6346) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6376) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6428) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6421) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6473) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6425) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(6477) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6440) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6492) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6470) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(6522) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6472) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(6524) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6479) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6531) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6502) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(6554) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6514) : warning C4996: 'getenv' was declared deprecated
+tex4ht.c(6566) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6543) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6595) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6560) : warning C4996: 'getenv' was declared deprecated
+tex4ht.c(6612) : warning C4996: 'getenv' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdlib.h(483) : see declaration of 'getenv'
         Message: 'This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6759) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(6811) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6798) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6850) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6823) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6875) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6824) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(6876) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6825) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(6877) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6841) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(6893) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6928) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(6980) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(6962) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7014) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7111) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(7163) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7351) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7171) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7447) : warning C4996: 'strcpy' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
-        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7452) : warning C4996: 'sprintf' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
-        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7455) : warning C4996: 'strcpy' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
-        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7460) : warning C4996: 'sprintf' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
-        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7471) : warning C4996: 'sprintf' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
-        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7510) : warning C4996: 'strcpy' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
-        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7535) : warning C4996: 'strcpy' was declared deprecated
-        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
-        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7536) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(7172) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7537) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(7173) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7553) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(7426) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7522) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7527) : warning C4996: 'sprintf' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
+        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7530) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7535) : warning C4996: 'sprintf' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
+        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7546) : warning C4996: 'sprintf' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
+        Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7585) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7610) : warning C4996: 'strcpy' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
+        Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7611) : warning C4996: 'strcat' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
+        Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7612) : warning C4996: 'strcat' was declared deprecated
+        C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
+        Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
+tex4ht.c(7628) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7567) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(7642) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7601) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7676) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7602) : warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-tex4ht.c(7690) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7677) : warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+tex4ht.c(7765) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7830) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7905) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7847) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7922) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7854) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(7929) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7893) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7968) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7918) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(7993) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7919) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(7994) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7920) : warning C4996: 'strcat' was declared deprecated
+tex4ht.c(7995) : warning C4996: 'strcat' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(78) : see declaration of 'strcat'
         Message: 'This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7936) : warning C4996: 'fopen' was declared deprecated
+tex4ht.c(8011) : warning C4996: 'fopen' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(234) : see declaration of 'fopen'
         Message: 'This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(7962) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(8037) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(9008) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(9083) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(9010) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(9085) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(9681) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(9756) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(9774) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(9849) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(9981) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10056) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10567) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10642) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10648) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10723) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10810) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10885) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10841) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10916) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10895) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10970) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(10901) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(10976) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11025) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(11100) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11035) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(11110) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11063) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(11138) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11073) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(11148) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11415) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(11490) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11681) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(11756) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11683) : warning C4996: 'sprintf' was declared deprecated
+tex4ht.c(11758) : warning C4996: 'sprintf' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\stdio.h(345) : see declaration of 'sprintf'
         Message: 'This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
-tex4ht.c(11689) : warning C4996: 'strcpy' was declared deprecated
+tex4ht.c(11764) : warning C4996: 'strcpy' was declared deprecated
         C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\string.h(73) : see declaration of 'strcpy'
         Message: 'This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_DEPRECATE. See online help for details.'
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\tex4ht.res tex4ht.rc
@@ -13694,7 +13697,7 @@ Writing the output file.....500.....1000.
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=dvicopydefs.h  --dll  --entry-name=RunDVIcopy  --include-filename=dvicopy-miktex.h  --one=dvicopy  --var-name-prefix=m_  --var-struct=g_DVIcopyData  -C  dvicopy.p
-	type \MiKTeXTemp\nmB76.tmp >> dvicopy.cc
+	type \MiKTeXTemp\nmB00.tmp >> dvicopy.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0400 -D_WIN32_WINDOWS=0x0400 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  -DDVICOPYAPP=g_DVIcopyApp  -DDVICOPYCLASS=CDVIcopyApp  -DDVICOPYDATA=g_DVIcopyData  -DMIKTEX_DVICOPY  /FoRelease\  dvicopy.cc
 dvicopy.cc
 dvicopy.cc(965) : warning C4305: 'argument' : truncation from 'long' to 'int16u'
@@ -17640,8 +17643,8 @@ Compile time: 0 minutes, 0 seconds
 9	Graphics
 
 
-Created c:\work3\miktex-2.5\Programs\MiKTeX\Yap\MFC\scratch\htmlhelp.chm, 206,000 bytes
-Compression decreased file by 133,993 bytes.
+Created c:\work3\miktex-2.5\Programs\MiKTeX\Yap\MFC\scratch\htmlhelp.chm, 206,004 bytes
+Compression decreased file by 133,989 bytes.
 	copy htmlhelp.chm ..\yap.chm
         1 file(s) copied.
 	cd ..
@@ -18028,8 +18031,8 @@ Compile time: 0 minutes, 0 seconds
 0	Graphics
 
 
-Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 25,237 bytes
-Compression decreased file by 22,016 bytes.
+Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 25,211 bytes
+Compression decreased file by 22,042 bytes.
 	copy htmlhelp.chm ..\faq.chm
         1 file(s) copied.
 	cd ..
@@ -18272,7 +18275,7 @@ Microsoft HTML Help Compiler 4.74.8702
 
 Compiling c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm
 
-HHC4014: Warning: The following map definition has an invalid context ID: #define D1CA06364EBEA84ABFAADFFE2DB60271 entatio#define D1CA06364EBEA84ABFAADFFE2DB60271 e.
+HHC4014: Warning: The following map definition has an invalid context ID: #define D1CA06364EBEA84ABFAADFFE2DB60271 entatio#define D1CA0636.
 index.html
 pr01.html
 pt01.html
@@ -18386,15 +18389,15 @@ images\caution.png
 images\mpm.png
 miktexhelp.css
 
-Compile time: 0 minutes, 2 seconds
+Compile time: 0 minutes, 0 seconds
 95	Topics
 1,430	Local links
 13	Internet links
 16	Graphics
 
 
-Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 429,459 bytes
-Compression decreased file by 385,035 bytes.
+Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 429,463 bytes
+Compression decreased file by 385,031 bytes.
 	copy htmlhelp.chm ..\miktex.chm
         1 file(s) copied.
 	cd ..
@@ -18668,7 +18671,7 @@ m Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/MiKTeX-Builds/2.5/texm
 f/fonts/type1/public/lm/lmss10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/publ
 ic/lm/lmss9.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmss12.pfb><C
 :/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on install.pdf (2 pages, 153965 bytes).
+Output written on install.pdf (2 pages, 153964 bytes).
 Transcript written on install.log.
 This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5)
 entering extended mode
@@ -18782,7 +18785,7 @@ m Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/MiKTeX-Builds/2.5/texm
 f/fonts/type1/public/lm/lmss10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/publ
 ic/lm/lmss9.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmss12.pfb><C
 :/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on install.pdf (2 pages, 155989 bytes).
+Output written on install.pdf (2 pages, 155988 bytes).
 Transcript written on install.log.
 	copy install.pdf ..\install.pdf
         1 file(s) copied.
@@ -19294,7 +19297,7 @@ lds/2.5/texmf/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTeX 2.5/font
 s/type1/bluesky/cm/cmsy10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm
 /lmss10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmss12.pfb><C:/Mi
 KTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (79 pages, 1108090 bytes).
+Output written on miktex.pdf (79 pages, 1107970 bytes).
 Transcript written on miktex.log.
 This is C:\MiKTeX-Builds\2.5\texmf\miktex\bin\makeindex.EXE, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
 Scanning input file miktex.idx....done (548 entries accepted, 0 rejected).
@@ -19561,7 +19564,7 @@ lds/2.5/texmf/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTeX 2.5/font
 s/type1/bluesky/cm/cmsy10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm
 /lmss10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmss12.pfb><C:/Mi
 KTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (82 pages, 1267009 bytes).
+Output written on miktex.pdf (82 pages, 1266889 bytes).
 Transcript written on miktex.log.
 This is C:\MiKTeX-Builds\2.5\texmf\miktex\bin\makeindex.EXE, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
 Scanning input file miktex.idx....done (548 entries accepted, 0 rejected).
@@ -19825,7 +19828,7 @@ lds/2.5/texmf/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTeX 2.5/font
 s/type1/bluesky/cm/cmsy10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm
 /lmss10.pfb><C:/MiKTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmss12.pfb><C:/Mi
 KTeX-Builds/2.5/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (82 pages, 1267031 bytes).
+Output written on miktex.pdf (82 pages, 1266907 bytes).
 Transcript written on miktex.log.
 	copy miktex.pdf ..\miktex.pdf
         1 file(s) copied.
@@ -20179,7 +20182,7 @@ nts/type1/bluesky/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/bluesky/
 cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmr10.pfb><C:
 /Program Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmr12.pfb><C:/Program Files/Mi
 KTeX 2.5/fonts/type1/bluesky/cm/cmr17.pfb>
-Output written on sample2e.pdf (3 pages, 71296 bytes).
+Output written on sample2e.pdf (3 pages, 71295 bytes).
 Transcript written on sample2e.log.
 Building MiKTeX ...
 	for %p in ( BuildUtilities\etc Libraries\3rd\bzip2			 Libraries\3rd\bzip2-static		 Libraries\3rd\libcurl		 Libraries\3rd\libcurl-static		 Libraries\3rd\libexpat		 Libraries\3rd\libexpat-static	 Libraries\3rd\libgnu		 Libraries\3rd\libgnu-static		 Libraries\3rd\libjpeg		 Libraries\3rd\libmspack		 Libraries\3rd\libmspack-static	 Libraries\3rd\libpopt		 Libraries\3rd\libpopt-static		 Libraries\3rd\libtiff		 Libraries\3rd\netpbm		 Libraries\3rd\zlib			 Libraries\3rd\zlib-static Libraries\3rd\libpng Libraries\3rd\libbmeps		 Libraries\3rd\libgd Programs\TeXAndFriends\pdftex\xpdf\goo		 Programs\TeXAndFriends\pdftex\xpdf\fofi		 Programs\TeXAndFriends\pdftex\xpdf\xpdf BuildUtilities\c4p		 BuildUtilities\cweb		 BuildUtilities\tie Libraries\3rd\libmd5		 Libraries\3rd\libmd5-static Libraries\MiKTeX\Core		 Libraries\MiKTeX\Core-static Libraries\MiKTeX\PackageManager		 Libraries\MiKTeX\PackageManager-static Libraries\MiKTeX\UI\MFC Libraries\MiKTeX\App		 Libraries\MiKTeX\TeXAndFriends Libraries\MiKTeX\Dib		 Libraries\MiKTeX\Dvi Libraries\MiKTeX\KPathSeaEmulation Programs\TeXAndFriends\web BuildUtilities\cfg Programs\MiKTeX\PackageManager\MFC		 Programs\MiKTeX\PackageManager\mpm Programs\MiKTeX\makex Programs\MiKTeX\initexmf	 Admin\ConfigFiles	 Programs\MiKTeX\findtexmf	 Programs\MiKTeX\mkfntmap	 Programs\MiKTeX\MO\MFC Programs\MiKTeX\etc Programs\TeXAndFriends\etc	 Programs\TeXAndFriends\texware	 Programs\TeXAndFriends\tex Programs\TeXAndFriends\pdftex	 Programs\TeXAndFriends\pdfetex Programs\TeXAndFriends\omega\omegaware	 Programs\TeXAndFriends\omega\otps		 Programs\TeXAndFriends\omega\omega Programs\TeXAndFriends\mfware	 Programs\TeXAndFriends\mf Programs\TeXAndFriends\mpost\mpware	 Programs\TeXAndFriends\mpost\mp Programs\Indexing\makeindex Programs\Bibliography\bibtex Programs\Bibliography\bibtex8 Programs\MiKTeX\texify Programs\Converters\texinfo Programs\Converters\tex4ht Programs\MiKTeX\mtprint Programs\MiKTeX\epstopdf	 Programs\GraphicsUtilities\pnmtopng	 Programs\GraphicsUtilities\psutils Programs\FontUtilities\cjkutils	 Programs\FontUtilities\freetype	 Programs\MiKTeX\gsf2pk	 Programs\FontUtilities\ps2pk Programs\DviWare\dvicopy	 Programs\DviWare\dvipdfm	 Programs\DviWare\dvipdfmx	 Programs\DviWare\dvipng	 Programs\DviWare\dvips Programs\MiKTeX\arctrl\win Programs\MiKTeX\Yap\MFC BuildUtilities\md5walk Programs\MiKTeX\mthelp BuildUtilities\mpc  Programs\MiKTeX\Wizards\Setup\MFC Programs\MiKTeX\Wizards\Update\MFC Programs\MiKTeX\Wizards\Remove\MFC Documentation) do			 (						 pushd "%p"				 & "C:\Program Files\Microsoft Visual Studio 8\VC\BIN\nmake.exe" -f miktex.mak install		 & popd					 & if errorlevel 1 exit /B 1			 )
@@ -21520,13 +21523,13 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  3 OCT 2006 22:45
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  6 OCT 2006 21:25
 450,451c450,451
 <  (preloaded format=trip 2002.12.20)
 < 1320 strings of total length 23539
 ---
->  (preloaded format=trip 2006.10.3)
-> 1337 strings of total length 23763
+>  (preloaded format=trip 2006.10.6)
+> 1336 strings of total length 23760
 	Release\triptex  -initialize  -buf-size=500  -error-line=64  -font-max=75  -font-mem-size=20000  -half-error-line=32  -max-in-open=6  -max-print-line=72  -max-strings=3000  -mem-bot=1  -mem-max=3000  -mem-min=1  -mem-top=3000  -nest-size=40  -param-size=60  -pool-size=32000  -save-size=600  -stack-size=200  -strict  -string-vacancies=8000  -trie-op-size=500  -trie-size=8000  <trip\triptest.s4  > trip.fot
 	diff trip\trip.fot trip.fot
 1,3c1,2
@@ -21544,7 +21547,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2006.10.3)  3 OCT 2006 22:45
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2006.10.6)  6 OCT 2006 21:25
 1511c1511
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
@@ -21594,8 +21597,8 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 <  251 string characters out of 8353
 <  2825 words of memory out of 3000
 ---
->  53 strings out of 1919
->  293 string characters out of 8237
+>  53 strings out of 1920
+>  293 string characters out of 8240
 >  2886 words of memory out of 3000
 7292,7293c7292,7293
 <  2 hyphenation exceptions out of 307
@@ -21616,7 +21619,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 9c9
 < ' TeX output 2002.12.20:2128'
 ---
-> ' TeX output 2006.10.03:2245'
+> ' TeX output 2006.10.06:2125'
 1215d1214
 <  
 
@@ -21817,7 +21820,7 @@ initexmf: warning: C:\MiKTeX-Builds\2.5\texmf\miktex\base\mf.pool is already rec
 1c1
 < This is METAFONT, Version 2.71828 (INIMF)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  3 OCT 2006 22:46
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  6 OCT 2006 21:25
 150c150
 < String usage 26&83 (1895&21534 still untouched)
 ---
@@ -21826,7 +21829,7 @@ initexmf: warning: C:\MiKTeX-Builds\2.5\texmf\miktex\base\mf.pool is already rec
 <  (preloaded base=trap 98.8.8)
 < 1113 strings of total length 20515
 ---
->  (preloaded base=trap 2006.10.3)
+>  (preloaded base=trap 2006.10.6)
 > 1115 strings of total length 20529
 	Release\trapmf  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=3000  -mem-top=3000  -initialize  < trap\traptest.s3  > trap.fot
 	diff --strip-trailing-cr trap\trap.fot trap.fot
@@ -21845,7 +21848,7 @@ initexmf: warning: C:\MiKTeX-Builds\2.5\texmf\miktex\base\mf.pool is already rec
 1c1
 < This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2006.10.3)  3 OCT 2006 22:46
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2006.10.6)  6 OCT 2006 21:25
 1825c1825
 < String usage 24&92 (1863&21408 still untouched)
 ---
@@ -21879,7 +21882,7 @@ initexmf: warning: C:\MiKTeX-Builds\2.5\texmf\miktex\base\mf.pool is already rec
 ---
 > This is GFtype, Version 3.1 (MiKTeX 2.5)
 > Mnemonic output? (default=no, ? for help): Pixel output? (default=yes, ? for help): Options selected: Mnemonic output = true; pixel output = true.
-> ' METAFONT output 2006.10.03:2246'
+> ' METAFONT output 2006.10.06:2125'
 191c191
 < Character 0: dx -950272 (-14.5), dy 393216 (6), width 2097152 (-256), loc 324
 ---
@@ -21963,7 +21966,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:33
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  3 OCT 2006 22:46
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  6 OCT 2006 21:25
 4,5c4,5
 < Memory usage 28&13 (248962 still untouched)
 < String usage 5&29 (13797&77816 now untouched)
@@ -22245,7 +22248,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1010c1006
 < >> "%%CreationDate: 2005.05.08:1133"
 ---
-> >> "%%CreationDate: 2006.10.03:2246"
+> >> "%%CreationDate: 2006.10.06:2125"
 1015,1018c1011,1012
 < Memory usage 356&13 (247857 still untouched)
 < String usage 26&134 (13631&75135 now untouched)
@@ -22294,12 +22297,12 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\mtrap.1 mtrap.1
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\writeo writeo
 	diff --strip-trailing-cr trapdir\writeo.2 writeo.2
 	copy trapdir\trap.mp .
@@ -22312,7 +22315,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:51
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  3 OCT 2006 22:46
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  6 OCT 2006 21:25
 161,162c161,162
 < Memory usage 292&42 (248917 still untouched)
 < String usage 29&97 (13772&77743 now untouched)
@@ -22323,14 +22326,14 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 <  (mem=trap 2005.5.8)
 < at most 1236 strings of total length 22276
 ---
->  (preloaded mem=trap 2006.10.3)
+>  (preloaded mem=trap 2006.10.6)
 > at most 1233 strings of total length 22287
 	Release\trapmp  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=4500  -mem-top=4500  -initialize  -strict  <trapdir\trap2.in  >trap.fot
 	diff --strip-trailing-cr trapdir\trap.log trap.log
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (mem=trap 2005.5.8)  8 MAY 2005 14:48
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2006.10.3)  3 OCT 2006 22:46
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2006.10.6)  6 OCT 2006 21:25
 1621,1622c1621,1622
 < Memory usage 1244&115 (247843 still untouched)
 < String usage 23&88 (13736&77569 now untouched)
@@ -22408,42 +22411,42 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.6 trap.6
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.148 trap.148
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.149 trap.149
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.150 trap.150
 5c5
 < %%CreationDate: 2005.05.08:1448
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.151 trap.151
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.197 trap.197
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	diff --strip-trailing-cr trapdir\trap.200 trap.200
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2006.10.03:2246
+> %%CreationDate: 2006.10.06:2125
 	C:\MiKTeX-Builds\2.5\texmf\miktex\bin\tftopl trap.tfm trap.pl
 This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 '000 '005 '006 '137 '140 '141 '142 '143 
