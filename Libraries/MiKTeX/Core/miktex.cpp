@@ -1044,7 +1044,6 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 			       packageHistoryFile);
 
   PushAppName (Utils::GetExeName().c_str());
-  PushBackAppName (MIKTEX_REGKEY_CORE);
   
   tstring miktexCwd;
   if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD_LIST, miktexCwd))
