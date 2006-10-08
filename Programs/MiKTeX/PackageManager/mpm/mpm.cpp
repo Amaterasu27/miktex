@@ -180,6 +180,18 @@ private:
 
 private:
   void
+  Verify (/*[in]*/ const vector<tstring> &	toBeVerified);
+
+private:
+  void
+  VerifyMiKTeX ();
+
+private:
+  void
+  FindConflicts ();
+
+private:
+  void
   FindUpdates ();
 
 private:
@@ -233,7 +245,7 @@ private:
   SignalHandler (/*[in]*/ int sig);
 
 private:
-  PackageManagerPtr pPackageManager;
+  PackageManager2Ptr pPackageManager;
 
 private:
   SessionWrapper pSession;
@@ -252,9 +264,6 @@ private:
 
 private:
   tstring repository;
-
-private:
-  ProxySettings proxySettings;
 };
 
 /* _________________________________________________________________________
@@ -265,7 +274,8 @@ private:
 enum Option
 {
   OPT_AAA = 1,
-  OPT_CSV,
+  OPT_CSV,			// experimental
+  OPT_FIND_CONFLICTS,		// internal
   OPT_FIND_UPDATES,
   OPT_HHELP,
   OPT_INSTALL,
@@ -284,11 +294,13 @@ enum Option
   OPT_TRACE,
   OPT_UNINSTALL,
   OPT_UPDATE,
-  OPT_UPDATE_ALL,
+  OPT_UPDATE_ALL,		// experimental
   OPT_UPDATE_DB,
-  OPT_UPDATE_FNDB,
+  OPT_UPDATE_FNDB,		// experimental
   OPT_UPDATE_SOME,
   OPT_VERBOSE,
+  OPT_VERIFY,
+  OPT_VERIFY_MIKTEX,
   OPT_VERSION,
 };
 
@@ -302,6 +314,12 @@ const struct poptOption Application::aoption[] = {
   {				// experimental
     T_("csv"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
     T_("Output comma-separated value lists."), 0,
+  },
+
+  {				// internal
+    T_("find-conflicts"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_FIND_CONFLICTS,
+    T_("Find file conflicts."), 0,
   },
 
   {
@@ -365,20 +383,20 @@ Pick a suitable package repository URL and print it."), 0
     T_("PACKAGE")
   },
 
-  {
+  {				// experimental
     T_("proxy"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
     T_("Use the specified proxy host[:port]."),
     T_("HOST[:PORT]")
   },
 
-  {
+  {				// experimental
     T_("proxy-password"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_PASSWORD,
     T_("Use the specified password for proxy authentication."),
     T_("PASSWORD")
   },
 
-  {
+  {				// experimental
     T_("proxy-user"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_USER,
     T_("Use the specified user for proxy authentication."),
@@ -432,7 +450,7 @@ Turn on tracing.\
     T_("PACKAGE")
   },
 
-  {
+  {				// experimental
     T_("update-all"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_UPDATE_ALL,
     T_("Test the package repository for updates, then install\
@@ -461,6 +479,20 @@ Turn on tracing.\
   {
     T_("verbose"), 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
     T_("Turn on verbose output mode."), 0
+  },
+
+  {
+    T_("verify"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
+    0, OPT_VERIFY,
+    T_("Verify the integrity of the installed packages."),
+    T_("PACKAGE")
+  },
+
+  {				// experimental
+    T_("verify-miktex"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    0, OPT_VERIFY_MIKTEX,
+    T_("Verify the integrity of the installed MiKTeX packages."),
+    0
   },
 
   {
@@ -684,6 +716,150 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
     }
   RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
 }
+
+/* _________________________________________________________________________
+
+   Application::FindConflicts
+   _________________________________________________________________________ */
+
+void
+Application::FindConflicts ()
+{
+  map<tstring, vector<tstring> > filesAndPackages;
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+	   it != packageInfo.runFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+      for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+	   it != packageInfo.docFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+      for (vector<tstring>::const_iterator it =
+	     packageInfo.sourceFiles.begin();
+	   it != packageInfo.sourceFiles.end();
+	   ++ it)
+	{
+	  PathName file (*it);
+	  file.Normalize ();
+	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
+	}
+    }
+  for (map<tstring, vector<tstring> >::const_iterator it =
+	 filesAndPackages.begin();
+       it != filesAndPackages.end();
+       ++ it)
+    {
+      if (it->second.size() > 1)
+	{
+	  tcout << it->first << T_(":") << endl;
+	  for (vector<tstring>::const_iterator it2 = it->second.begin();
+	       it2 != it->second.end();
+	       ++ it2)
+	    {
+	      tcout << T_("  ") << *it2 << endl;
+	    }
+	}
+    }
+  pIter->Dispose ();
+}
+
+/* _________________________________________________________________________
+
+   Application::verifyMiKTeX
+   _________________________________________________________________________ */
+
+void
+Application::VerifyMiKTeX ()
+{
+  vector<tstring> toBeVerified;
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      if (! packageInfo.IsPureContainer()
+	  && packageInfo.IsInstalled()
+	  && packageInfo.deploymentName.compare (0, 7, T_("miktex-")) == 0)
+	{
+	  toBeVerified.push_back (packageInfo.deploymentName);
+	}
+    }
+  pIter->Dispose ();
+  Verify (toBeVerified);
+}
+
+/* _________________________________________________________________________
+
+   Application::verify
+   _________________________________________________________________________ */
+
+void
+Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
+{
+  vector<tstring> toBeVerified = toBeVerifiedArg;
+  bool verifyAll = (toBeVerified.size() == 0);
+  if (verifyAll)
+    {
+      auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+      PackageInfo packageInfo;
+      for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+	{
+	  if (! packageInfo.IsPureContainer()
+	      && packageInfo.IsInstalled())
+	    {
+	      toBeVerified.push_back (packageInfo.deploymentName);
+	    }
+	}
+      pIter->Dispose ();
+    }
+  bool ok = true;
+  for (vector<tstring>::const_iterator it = toBeVerified.begin();
+       it != toBeVerified.end();
+       ++ it)
+    {
+      if (! pPackageManager->TryVerifyInstalledPackage(*it))
+	{
+	  Message (T_("%s: this package needs to be reinstalled.\n"),
+		   it->c_str());
+	  ok = false;
+	}
+    }
+  if (ok)
+    {
+      if (verifyAll)
+	{
+	  Message (T_("All packages are correctly installed.\n"));
+	}
+      else
+	{
+	  if (toBeVerified.size() == 1)
+	    {
+	      Message (T_("Package %s is correctly installed.\n"),
+		       toBeVerified[0].c_str());
+	    }
+	  else
+	    {
+	      Message (T_("The packages are correctly installed.\n"));
+	    }
+	}
+    }
+  else
+    {
+      Error (T_("Some packages need to be reinstalled."));
+    }
+}
+
 
 /* _________________________________________________________________________
 
@@ -1072,6 +1248,7 @@ Application::Main (/*[in]*/ int			argc,
   initInfo.SetProgramInvocationName (argv[0]);
 
   bool optCsv = false;
+  bool optFindConflicts = false;
   bool optFindUpdates = false;
   bool optList = false;
   bool optListRepositories = false;
@@ -1082,13 +1259,22 @@ Application::Main (/*[in]*/ int			argc,
   bool optUpdateAll = false;
   bool optUpdateDb = false;
   bool optUpdateFndb = false;
+  bool optVerify = false;
+  bool optVerifyMiKTeX = false;
   bool optVersion = false;
+  int optProxyPort = -1;
   tstring deploymentName;
+  tstring optProxy;
+  tstring optProxyPassword;
+  tstring optProxyUser;
   vector<tstring> installSome;
-  vector<tstring> updateSome;
   vector<tstring> toBeInstalled;
-  vector<tstring> updates;
   vector<tstring> toBeRemoved;
+  vector<tstring> toBeVerified;
+  vector<tstring> updateSome;
+  vector<tstring> updates;
+
+  bool changeProxy = false;
 
   Cpopt popt (argc, argv, aoption);
 
@@ -1103,6 +1289,9 @@ Application::Main (/*[in]*/ int			argc,
 	{
 	case OPT_CSV:
 	  optCsv = true;
+	  break;
+	case OPT_FIND_CONFLICTS:
+	  optFindConflicts = true;
 	  break;
 	case OPT_FIND_UPDATES:
 	  optFindUpdates = true;
@@ -1139,13 +1328,24 @@ Application::Main (/*[in]*/ int			argc,
 	  deploymentName = lpszOptArg;
 	  break;
 	case OPT_PROXY:
-	  proxySettings.proxy = lpszOptArg;
+	  {
+	    changeProxy = true;
+	    Tokenizer tok (lpszOptArg, T_(":"));
+	    optProxy = tok.GetCurrent();
+	    ++ tok;
+	    if (tok.GetCurrent() != 0)
+	      {
+		optProxyPort = atoi(tok.GetCurrent());
+	      }
+	  }
 	  break;
 	case OPT_PROXY_USER:
-	  proxySettings.user = lpszOptArg;
+	  changeProxy = true;
+	  optProxyUser = lpszOptArg;
 	  break;
 	case OPT_PROXY_PASSWORD:
-	  proxySettings.password = lpszOptArg;
+	  changeProxy = true;
+	  optProxyPassword = lpszOptArg;
 	  break;
 	case OPT_QUIET:
 	  if (verbose)
@@ -1216,6 +1416,16 @@ Application::Main (/*[in]*/ int			argc,
 	    }
 	  verbose = true;
 	  break;
+	case OPT_VERIFY:
+	  if (lpszOptArg != 0)
+	    {
+	      toBeVerified.push_back (lpszOptArg);
+	    }
+	  optVerify = true;
+	  break;
+	case OPT_VERIFY_MIKTEX:
+	  optVerifyMiKTeX = true;
+	  break;
 	case OPT_VERSION:
 	  optVersion = true;
 	  break;
@@ -1252,7 +1462,35 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   pSession.CreateSession (initInfo);
 
   pPackageManager.Create ();
-  pPackageManager->SetProxy (proxySettings);
+
+  if (changeProxy)
+    {
+      ProxySettings proxySettings;
+      ProxySettings temp;
+      if (PackageManager::TryGetProxy(temp))
+	{
+	  proxySettings = temp;
+	}
+      proxySettings.useProxy = true;
+      if (! optProxy.empty())
+	{
+	  proxySettings.proxy = optProxy;
+	}
+      if (optProxyPort >= 0)
+	{
+	  proxySettings.port = optProxyPort;
+	}
+      if (! optProxyUser.empty())
+	{
+	  proxySettings.authenticationRequired = true;
+	  proxySettings.user = optProxyUser;
+	}
+      if (! optProxyPassword.empty())
+	{
+	  proxySettings.password = optProxyPassword;
+	}
+      pPackageManager->SetProxy (proxySettings);
+    }
 
   bool restartWindowed = true;
 
@@ -1302,6 +1540,24 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optUpdateAll || updates.size() > 0)
     {
       Update (updates);
+      restartWindowed = false;
+    }
+
+  if (optFindConflicts)
+    {
+      FindConflicts ();
+      restartWindowed = false;
+    }
+
+  if (optVerifyMiKTeX)
+    {
+      VerifyMiKTeX ();
+      restartWindowed = false;
+    }
+
+  if (optVerify)
+    {
+      Verify (toBeVerified);
       restartWindowed = false;
     }
 

@@ -48,6 +48,9 @@ MIKUI_BEGIN_NAMESPACE;
    Protos
    _________________________________________________________________________ */
 
+MIKTEXUIAPI(void)
+InitializeFramework ();
+
 const unsigned int YES = 1;
 const unsigned int NO = 2;
 const unsigned int DONTASKAGAIN = 4;
@@ -59,8 +62,7 @@ InstallPackageMessageBox
  /*[in]*/ const MIKTEXCHAR *				lpszPackageName,
  /*[in]*/ const MIKTEXCHAR *				lpszTrigger);
 
-MIKTEXUIAPI(void)
-InitializeFramework ();
-
+MIKTEXUIAPI(bool)
+ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent);
 
 MIKUI_END_NAMESPACE;

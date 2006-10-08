@@ -1,0 +1,564 @@
+--- bind-9.2.2/doc/arm/Bv9ARM-book.xml	Mon Feb 17 09:29:29 2003
++++ Bv9ARM-book.xml	Mon May 19 19:12:54 2003
+@@ -219,7 +219,7 @@
+ gain a complete understanding of this difficult and subtle
+ topic.</para>
+ 
+-<para>Though <acronym>BIND</acronym> is called a "domain name server",
++<para>Though <acronym>BIND</acronym> is called a <quote>domain name server</quote>,
+ it deals primarily in terms of zones. The master and slave
+ declarations in the <filename>named.conf</filename> file specify
+ zones, not domains. When you ask some other site if it is willing to
+@@ -278,11 +278,11 @@
+ authoritative for a zone but is not listed in that zone's NS
+ records.  Stealth servers can be used for keeping a local copy of a
+ zone to speed up access to the zone's records or to make sure that the
+-zone is available even if all the "official" servers for the zone are
++zone is available even if all the <quote>official</quote> servers for the zone are
+ inaccessible.</para>
+ 
+ <para>A configuration where the primary master server itself is a
+-stealth server is often referred to as a "hidden primary"
++stealth server is often referred to as a <quote>hidden primary</quote> 
+ configuration.  One use for this configuration is when the primary master
+ is behind a firewall and therefore unable to communicate directly
+ with the outside world.</para>
+@@ -474,8 +474,8 @@
+     <sect2>
+       <title>An Authoritative-only Nameserver</title>
+       <para>This sample configuration is for an authoritative-only server
+-that is the master server for "<filename>example.com</filename>"
+-and a slave for the subdomain "<filename>eng.example.com</filename>".</para>
++that is the master server for <filename>example.com</filename>
++and a slave for the subdomain <filename>eng.example.com</filename>.</para>
+       <programlisting>
+ options {
+      directory "/etc/namedb";           // Working directory
+@@ -713,9 +713,10 @@
+               </cmdsynopsis>
+             </listitem>
+           </varlistentry>
+-          <varlistentry id="rndc" xreflabel="Remote Name Daemon Control application">
++          <varlistentry>
+             <term><command>rndc</command></term>
+             <listitem>
++              <anchor id="rndc" xreflabel="Remote Name Daemon Control application"/>
+               <para>The remote name daemon control
+               (<command>rndc</command>) program allows the system
+               administrator to control the operation of a nameserver.
+@@ -855,11 +856,11 @@
+ <para>The <command>key</command> statement names a key with its
+ string argument. The string is required by the server to be a valid
+ domain name, though it need not actually be hierarchical; thus,
+-a string like "<userinput>rndc_key</userinput>" is a valid name.
++a string like <userinput>rndc_key</userinput> is a valid name.
+ The <command>key</command> statement has two clauses:
+ <command>algorithm</command> and <command>secret</command>.
+ While the configuration parser will accept any string as the argument
+-to algorithm, currently only the string "<userinput>hmac-md5</userinput>"
++to algorithm, currently only the string <userinput>hmac-md5</userinput>
+ has any meaning.  The secret is a base-64 encoded string.</para>
+ 
+ <para>The <command>server</command> statement uses the key clause
+@@ -980,7 +981,7 @@
+     name of the corresponding zone file.  The journal file is in a
+     binary format and should not be edited manually.</para>
+ 
+-    <para>The server will also occasionally write ("dump")
++    <para>The server will also occasionally write (<quote>dump</quote>)
+     the complete contents of the updated zone to its zone file.
+     This is not done immediately after
+     each dynamic update, because that would be too slow when a large
+@@ -1041,10 +1042,10 @@
+ DNS</emphasis> setup. There are several reasons an organization
+ would want to set up its DNS this way.</para>
+ <para>One common reason for setting up a DNS system this way is
+-to hide "internal" DNS information from "external" clients on the
++to hide <quote>internal</quote> DNS information from <quote>external</quote> clients on the
+ Internet. There is some debate as to whether or not this is actually useful.
+ Internal DNS information leaks out in many ways (via email headers,
+-for example) and most savvy "attackers" can find the information
++for example) and most savvy <quote>attackers</quote> can find the information
+ they need using other means.</para>
+ <para>Another common reason for setting up a Split DNS system is
+ to allow internal networks that are behind filters or in RFC 1918
+@@ -1055,7 +1056,7 @@
+ <para>Let's say a company named <emphasis>Example, Inc.</emphasis> (example.com)
+ has several corporate sites that have an internal network with reserved
+ Internet Protocol (IP) space and an external demilitarized zone (DMZ),
+-or "outside" section of a network, that is available to the public.</para>
++or <quote>outside</quote> section of a network, that is available to the public.</para>
+ <para><emphasis>Example, Inc.</emphasis> wants its internal clients
+ to be able to resolve external hostnames and to exchange mail with
+ people on the outside. The company also wants its internal resolvers
+@@ -1063,7 +1064,7 @@
+ at all outside of the internal network.</para>
+ <para>In order to accomplish this, the company will set up two sets
+ of nameservers. One set will be on the inside network (in the reserved
+-IP space) and the other set will be on bastion hosts, which are "proxy"
++IP space) and the other set will be on bastion hosts, which are <quote>proxy</quote> 
+ hosts that can talk to both sides of its network, in the DMZ.</para>
+ <para>The internal servers will be configured to forward all queries,
+ except queries for <filename>site1.internal</filename>, <filename>site2.internal</filename>, <filename>site1.example.com</filename>,
+@@ -1076,7 +1077,7 @@
+ to these domains from any external hosts, including the bastion
+ hosts.</para>
+ <para>The external servers, which are on the bastion hosts, will
+-be configured to serve the "public" version of the <filename>site1</filename> and <filename>site2.example.com</filename> zones.
++be configured to serve the <quote>public</quote> version of the <filename>site1</filename> and <filename>site2.example.com</filename> zones.
+ This could include things such as the host records for public servers
+ (<filename>www.example.com</filename> and <filename>ftp.example.com</filename>),
+ and mail exchange (MX)  records (<filename>a.mx.example.com</filename> and <filename>b.mx.example.com</filename>).</para>
+@@ -1128,7 +1129,6 @@
+ 
+ <para>Internal DNS server config:</para>
+ <programlisting>
+-
+ acl internals { 172.16.72.0/24; 192.168.1.0/24; };
+ 
+ acl externals { <varname>bastion-ips-go-here</varname>; };
+@@ -1243,7 +1243,7 @@
+ 
+ <sect2><title>Generate Shared Keys for Each Pair of Hosts</title>
+ <para>A shared secret is generated to be shared between <emphasis>host1</emphasis> and <emphasis>host2</emphasis>.
+-An arbitrary key name is chosen: "host1-host2.". The key name must
++An arbitrary key name is chosen: <quote>host1-host2.</quote>. The key name must
+ be the same on both hosts.</para>
+ <sect3><title>Automatic Generation</title>
+ <para>The following command will generate a 128 bit (16 byte) HMAC-MD5
+@@ -1254,10 +1254,10 @@
+         <para><userinput>dnssec-keygen -a hmac-md5 -b 128 -n HOST host1-host2.</userinput></para>
+ <para>The key is in the file <filename>Khost1-host2.+157+00000.private</filename>.
+ Nothing directly uses this file, but the base-64 encoded string
+-following "<literal>Key:</literal>"
++following <quote><literal>Key:</literal></quote> 
+ can be extracted from the file and used as a shared secret:</para>
+ <programlisting>Key: La/E5CjG9O+os1jq0a2jdA==</programlisting>
+-<para>The string "<literal>La/E5CjG9O+os1jq0a2jdA==</literal>" can
++<para>The string <quote><literal>La/E5CjG9O+os1jq0a2jdA==</literal></quote> can
+ be used as the shared secret.</para></sect3>
+ <sect3><title>Manual Generation</title>
+ <para>The shared secret is simply a random sequence of bits, encoded
+@@ -1409,7 +1409,7 @@
+     of steps which must be followed.  <acronym>BIND</acronym> 9 ships
+     with several tools
+     that are used in this process, which are explained in more detail
+-    below.  In all cases, the "<option>-h</option>" option prints a
++    below.  In all cases, the <quote><option>-h</option></quote> option prints a
+     full list of parameters.  Note that the DNSSEC tools require the
+     keyset and signedkey files to be in the working directory, and
+     that the tools shipped with BIND 9.0.x are not fully compatible
+@@ -1436,7 +1436,7 @@
+       have the same name as the zone, a name type of
+       <command>ZONE</command>, and must be usable for authentication.
+       It is recommended that zone keys use a cryptographic algorithm
+-      designated as "mandatory to implement" by the IETF; currently
++      designated as <quote>mandatory to implement</quote> by the IETF; currently
+       these are RSASHA1 (which is not yet supported in BIND 9.2)
+       and DSA.</para>
+ 
+@@ -1491,7 +1491,7 @@
+ <para><userinput>dnssec-makekeyset -t 3600 -e +864000 Kchild.example.+003+12345 Kchild.example.+003+23456</userinput></para>
+ 
+       <para>One output file is produced:
+-      <filename>keyset-child.example.</filename>.  This file should be
++      <quote><filename>keyset-child.example.</filename></quote>.  This file should be
+       transmitted to the parent to be signed.  It includes the keys,
+       as well as signatures over the key set generated by the zone
+       keys themselves, which are used to prove ownership of the
+@@ -1517,7 +1517,7 @@
+ <para><userinput>dnssec-signkey keyset-grand.child.example. Kchild.example.+003+12345 Kchild.example.+003+23456</userinput></para>
+ 
+       <para>One output file is produced:
+-      <filename>signedkey-grand.child.example.</filename>.  This file
++      <quote><filename>signedkey-grand.child.example.</filename></quote>.  This file
+       should be both transmitted back to the child and retained.  It
+       includes all keys (the child's keys) from the keyset file and
+       signatures generated by this zone's zone keys.</para>
+@@ -1584,7 +1584,7 @@
+ 
+     <para>For IPv6 reverse lookups, <acronym>BIND</acronym> 9 supports the new
+     "bitstring" format used in the <emphasis>ip6.arpa</emphasis>
+-    domain, as well as the older, deprecated "nibble" format used in
++    domain, as well as the older, deprecated <quote>nibble</quote> format used in
+     the <emphasis>ip6.int</emphasis> domain.</para>
+ 
+     <para><acronym>BIND</acronym> 9 includes a new lightweight resolver library and
+@@ -1632,7 +1632,7 @@
+         <para>A6 records are designed to allow network
+         renumbering. This works when an A6 record only specifies the
+         part of the address space the domain owner controls.  For
+-        example, a host may be at a company named "company."  It has
++        example, a host may be at a company named <quote>company.</quote>  It has
+         two ISPs which provide IPv6 address space for it.  These two
+         ISPs fully specify the IPv6 prefix they supply.</para>
+ 
+@@ -1790,7 +1790,7 @@
+ <para>Instead, <acronym>BIND</acronym> 9 provides resolution services to local clients
+ using a combination of a lightweight resolver library and a resolver
+ daemon process running on the local host.  These communicate using
+-a simple UDP-based protocol, the "lightweight resolver protocol"
++a simple UDP-based protocol, the <quote>lightweight resolver protocol</quote> 
+ that is distinct from and simpler than the full DNS protocol.</para></sect1>
+ <sect1 id="lwresd"><title>Running a Resolver Daemon</title>
+ <para>To use the lightweight resolver interface, the system must
+@@ -1799,10 +1799,10 @@
+ UDP requests to the IPv4 loopback address (127.0.0.1) on port 921.  The
+ address can be overridden by <command>lwserver</command> lines in
+ <filename>/etc/resolv.conf</filename>.
+-The daemon will try to find the answer to the questions "what are the
++The daemon will try to find the answer to the questions <quote>what are the
+ addresses for host
+-<literal>foo.example.com</literal>?" and "what are
+-the names for IPv4 address 10.1.2.3?"</para>
++<literal>foo.example.com</literal>?</quote> and <quote>what are
++the names for IPv4 address 10.1.2.3?</quote></para>
+ <para>The daemon currently only looks in the DNS, but in the future
+ it may use other sources such as <filename>/etc/hosts</filename>,
+ NIS, etc.</para>
+@@ -1853,7 +1853,7 @@
+ <row rowsep = "0">
+ <entry colname = "1"><para><varname>domain_name</varname></para></entry>
+ <entry colname = "2"><para>A quoted string which will be used as
+-a DNS name, for example "<literal>my.test.domain</literal>".</para></entry>
++a DNS name, for example <quote><literal>my.test.domain</literal></quote>.</para></entry>
+ </row>
+ <row rowsep = "0">
+ <entry colname = "1"><para><varname>dotted_decimal</varname></para></entry>
+@@ -1972,13 +1972,13 @@
+ <listitem>
+             <simpara>a nested address match list enclosed in braces</simpara></listitem></itemizedlist>
+ <para>Elements can be negated with a leading exclamation mark (`!')
+-and the match list names "any," "none," "localhost" and "localnets"
++and the match list names <quote>any,</quote> <quote>none,</quote> <quote>localhost</quote> and <quote>localnets</quote>
+ are predefined. More information on those names can be found in
+ the description of the acl statement.</para>
+ <para>The addition of the key clause made the name of this syntactic
+ element something of a misnomer, since security keys can be used
+ to validate access without regard to a host or network address. Nonetheless,
+-the term "address match list" is still used throughout the documentation.</para>
++the term <quote>address match list</quote> is still used throughout the documentation.</para>
+ <para>When a given IP address or prefix is compared to an address
+ match list, the list is traversed in order until an element matches.
+ The interpretation of a match depends on whether the list is being used
+@@ -2295,7 +2295,7 @@
+ 
+ <para>
+ To disable the command channel, use an empty <command>controls</command>
+-statement: <command>controls { };</command>.
++statement: <command>controls { };</command>.
+ </para>
+ 
+     </sect2>
+@@ -2342,7 +2342,7 @@
+ 
+ <para>The <replaceable>key_id</replaceable>, also known as the
+ key name, is a domain name uniquely identifying the key. It can
+-be used in a "server" statement to cause requests sent to that
++be used in a <quote>server</quote> statement to cause requests sent to that
+ server to be signed with this key, or in address match lists to
+ verify that incoming requests have been signed with a key
+ matching this name, algorithm, and secret.</para>
+@@ -2403,7 +2403,7 @@
+ established as soon as the <command>logging</command> statement
+ was parsed. When the server is starting up, all logging messages
+ regarding syntax errors in the configuration file go to the default
+-channels, or to standard error if the "<option>-g</option>" option
++channels, or to standard error if the <quote><option>-g</option></quote> option
+ was specified.</para>
+ 
+ <sect3>
+@@ -2580,7 +2580,7 @@
+ is created only after <command>named</command> has changed to the
+ new UID, and any debug output generated while <command>named</command> is
+ starting up and still running as root is discarded.  If you need
+-to capture this output, you must run the server with the "<option>-g</option>"
++to capture this output, you must run the server with the <quote><option>-g</option></quote> 
+ option and redirect standard error to a file.</para>
+ 
+ <para>Once a channel is defined, it cannot be redefined. Thus you
+@@ -2897,10 +2897,10 @@
+ shared keys generated with <command>TKEY</command>. When a client
+ requests a <command>TKEY</command> exchange, it may or may not specify
+ the desired name for the key. If present, the name of the shared
+-key will be "<varname>client specified part</varname>" + 
+-"<varname>tkey-domain</varname>".
+-Otherwise, the name of the shared key will be "<varname>random hex
+-digits</varname>" + "<varname>tkey-domain</varname>". In most cases,
++key will be <quote><varname>client specified part</varname></quote> + 
++<quote><varname>tkey-domain</varname></quote>.
++Otherwise, the name of the shared key will be <quote><varname>random hex
++digits</varname></quote> + <quote><varname>tkey-domain</varname></quote>. In most cases,
+ the <command>domainname</command> should be the server's domain
+ name.</para>
+ </listitem></varlistentry>
+@@ -3144,11 +3144,11 @@
+ 
+ <varlistentry><term><command>treat-cr-as-space</command></term>
+ <listitem><para>This option was used in <acronym>BIND</acronym> 8 to make
+-the server treat carriage return ("<command>\r</command>") characters the same way
++the server treat carriage return (<command>\r</command>) characters the same way
+ as a space or tab character,
+ to facilitate loading of zone files on a UNIX system that were generated
+-on an NT or DOS machine. In <acronym>BIND</acronym> 9, both UNIX "<command>\n</command>"
+-and NT/DOS "<command>\r\n</command>" newlines are always accepted,
++on an NT or DOS machine. In <acronym>BIND</acronym> 9, both UNIX <command>\n</command>
++and NT/DOS <command>\r\n</command> newlines are always accepted,
+ and the option is ignored.</para></listitem></varlistentry>
+ 
+ <varlistentry>
+@@ -3179,7 +3179,7 @@
+ 
+ <para>
+ For example, if a query asks for an MX record for host <literal>foo.example.com</literal>,
+-and the record found is "<literal>MX 10 mail.example.net</literal>", normally the address
++and the record found is <quote><literal>MX 10 mail.example.net</literal></quote>, normally the address
+ records (A, A6, and AAAA) for <literal>mail.example.net</literal> will be provided as well,
+ if known.  Setting these options to <command>no</command> disables this behavior.
+ </para>
+@@ -3503,7 +3503,7 @@
+ the source IPv4 address, and optionally the UDP port, used for the
+ refresh queries and forwarded dynamic updates.  If not set, it defaults
+ to a system controlled value which will usually be the address of
+-the interface "closest to" the remote end. This address must appear
++the interface <quote>closest to</quote> the remote end. This address must appear
+ in the remote end's <command>allow-transfer</command> option for
+ the zone being transferred, if one is specified. This statement
+ sets the <command>transfer-source</command> for all zones, but can
+@@ -3834,7 +3834,7 @@
+ };
+ </programlisting>
+ <para>will cause any responses for type A records in class IN that
+-have "<literal>host.example.com</literal>" as a suffix, to always be returned
++have <quote><literal>host.example.com</literal></quote> as a suffix, to always be returned
+ in random order. All other records are returned in cyclic order.</para>
+ <para>If multiple <command>rrset-order</command> statements appear,
+ they are not combined &mdash; the last one applies.</para>
+@@ -3842,7 +3842,7 @@
+ <note>
+ <simpara>The <command>rrset-order</command> statement
+ is not yet implemented in <acronym>BIND</acronym> 9.
+-BIND 9 currently supports only a "random-cyclic" ordering,
++BIND 9 currently supports only a <quote>random-cyclic</quote> ordering,
+ where the server randomly chooses a starting point within
+ the RRset and returns the records in order starting at
+ that point, wrapping around the end of the RRset if 
+@@ -3852,7 +3852,7 @@
+ <sect3 id="synthesis"><title>Synthetic IPv6 responses</title>
+ 
+ <para>Many existing stub resolvers support IPv6 DNS lookups as defined in
+-RFC1886, using AAAA records for forward lookups and "nibble labels" in
++RFC1886, using AAAA records for forward lookups and <quote>nibble labels</quote> in
+ the <literal>ip6.int</literal> domain for reverse lookups, but do not support
+ RFC2874-style lookups (using A6 records and binary labels in the
+ <literal>ip6.arpa</literal> domain).</para>
+@@ -3860,7 +3860,7 @@
+ <para>For those who wish to continue to use such stub resolvers rather than
+ switching to the BIND 9 lightweight resolver, BIND 9 provides a way
+ to automatically convert RFC1886-style lookups into
+-RFC2874-style lookups and return the results as "synthetic" AAAA and
++RFC2874-style lookups and return the results as <quote>synthetic</quote> AAAA and
+ PTR records.</para>
+ 
+ <para>This feature is disabled by default and can be enabled on a per-client
+@@ -4164,8 +4164,8 @@
+ <para>Zones defined within a <command>view</command> statement will
+ be only be accessible to clients that match the <command>view</command>.
+  By defining a zone of the same name in multiple views, different
+-zone data can be given to different clients, for example, "internal"
+-and "external" clients in a split DNS setup.</para>
++zone data can be given to different clients, for example,<quote>internal</quote> 
++and <quote>external</quote> clients in a split DNS setup.</para>
+ 
+ <para>Many of the options given in the <command>options</command> statement
+ can also be used within a <command>view</command> statement, and then
+@@ -4326,7 +4326,7 @@
+ </row>
+ <row rowsep = "0">
+ <entry colname = "1"><para><varname>forward</varname></para></entry>
+-<entry colname = "2"><para>A "forward zone" is a way to configure
++<entry colname = "2"><para>A <quote>forward zone</quote> is a way to configure
+ forwarding on a per-domain basis.  A <command>zone</command> statement
+ of type <command>forward</command> can contain a <command>forward</command> and/or <command>forwarders</command> statement,
+ which will apply to queries within the domain given by the zone
+@@ -4343,7 +4343,7 @@
+ <row rowsep = "0">
+ <entry colname = "1"><para><varname>hint</varname></para></entry>
+ <entry colname = "2"><para>The initial set of root nameservers is
+-specified using a "hint zone". When the server starts up, it uses
++specified using a <quote>hint zone</quote>. When the server starts up, it uses
+ the root hints to find a root nameserver and get the most recent
+ list of root nameservers. If no hint zone is specified for class
+ IN, the server uses a compiled-in default set of root servers hints.
+@@ -4392,7 +4392,7 @@
+ </listitem></varlistentry>
+ 
+ <varlistentry><term><command>update-policy</command></term>
+-<listitem><para>Specifies a "Simple Secure Update" policy. See
++<listitem><para>Specifies a <quote>Simple Secure Update</quote> policy. See
+ <xref linkend="dynamic_update_policies"/>.</para>
+ </listitem></varlistentry>
+ 
+@@ -4471,7 +4471,7 @@
+ <listitem><para>Was used in <acronym>BIND</acronym> 8 to specify the name
+ of the transaction log (journal) file for dynamic update and IXFR.
+ <acronym>BIND</acronym> 9 ignores the option and constructs the name of the journal
+-file by appending "<filename>.jnl</filename>" to the name of the
++file by appending <quote><filename>.jnl</filename></quote> to the name of the
+ zone file.</para>
+ </listitem></varlistentry>
+ 
+@@ -4800,7 +4800,7 @@
+ </row>
+ <row rowsep = "0">
+ <entry colname = "1"><para>SIG</para></entry>
+-<entry colname = "2"><para>("signature") contains data authenticated
++<entry colname = "2"><para>(<quote>signature</quote>) contains data authenticated
+ in the secure DNS. See RFC 2535 for details.</para></entry>
+ </row>
+ <row rowsep = "0">
+@@ -4859,7 +4859,7 @@
+ <row rowsep = "0">
+ <entry colname = "1"><para>A6</para></entry>
+ <entry colname = "2"><para>maps a domain name to an IPv6 address,
+-with a provision for indirection for leading "prefix" bits.</para></entry>
++with a provision for indirection for leading <quote>prefix</quote> bits.</para></entry>
+ </row>
+ <row rowsep = "0">
+ <entry colname = "1"><para>CNAME</para></entry>
+@@ -4911,7 +4911,7 @@
+ the change.</para>
+ <para>The data in the RDATA section of RRs is carried as a combination
+ of binary strings and domain names.  The domain names are frequently
+-used as "pointers" to other data in the DNS.</para></sect3>
++used as <quote>pointers</quote> to other data in the DNS.</para></sect3>
+ <sect3><title>Textual expression of RRs</title>
+ <para>RRs are represented in binary form in the packets of the DNS
+ protocol, and are usually represented in highly encoded form when
+@@ -5295,9 +5295,9 @@
+ <sect1><title><command>chroot</command> and <command>setuid</command> (for
+ UNIX servers)</title>
+ <para>On UNIX servers, it is possible to run <acronym>BIND</acronym> in a <emphasis>chrooted</emphasis> environment
+-(<command>chroot()</command>) by specifying the "<option>-t</option>"
++(<command>chroot()</command>) by specifying the <quote><option>-t</option></quote> 
+ option. This can help improve system security by placing <acronym>BIND</acronym> in
+-a "sandbox," which will limit the damage done if a server is compromised.</para>
++a <quote>sandbox,</quote> which will limit the damage done if a server is compromised.</para>
+ <para>Another useful feature in the UNIX version of <acronym>BIND</acronym> is the
+ ability to run the daemon as a nonprivileged user ( <option>-u</option> <replaceable>user</replaceable> ).
+ We suggest running as a nonprivileged user when using the <command>chroot</command> feature.</para>
+@@ -5440,7 +5440,7 @@
+     <sect2>
+       <title>A Brief History of the <acronym>DNS</acronym> and <acronym>BIND</acronym></title>
+ 
+-      <para>Although the "official" beginning of the Domain Name
++      <para>Although the <quote>official</quote> beginning of the Domain Name
+       System occurred in 1984 with the publication of RFC 920, the
+       core of the new system was described in 1983 in RFCs 882 and
+       883. From 1984 to 1987, the ARPAnet (the precursor to today's
+@@ -5449,13 +5449,13 @@
+       operational network environment.  New RFCs were written and
+       published in 1987 that modified the original documents to
+       incorporate improvements based on the working model. RFC 1034,
+-      "Domain Names-Concepts and Facilities," and RFC 1035, "Domain
+-      Names-Implementation and Specification" were published and
++      <citetitle>Domain Names-Concepts and Facilities</citetitle>, and RFC 1035, <citetitle>Domain
++      Names-Implementation and Specification</citetitle> were published and
+       became the standards upon which all <acronym>DNS</acronym> implementations are
+       built.
+ </para>
+ 
+-      <para>The first working domain name server, called "Jeeves," was
++      <para>The first working domain name server, called <quote>Jeeves,</quote> was
+ written in 1983-84 by Paul Mockapetris for operation on DEC Tops-20
+ machines located at the University of Southern California's Information
+ Sciences Institute (USC-ISI) and SRI International's Network Information
+@@ -5526,12 +5526,12 @@
+ <para>The aggregatable global Unicast address format is as follows:</para>
+ <informaltable colsep = "0" rowsep = "0"><tgroup cols = "6"
+     colsep = "0" rowsep = "0" tgroupstyle = "1Level-table">
+-<colspec colname = "1" colnum = "1" colsep = "0" colwidth = "0.477in"/>
+-<colspec colname = "2" colnum = "2" colsep = "0" colwidth = "0.501in"/>
+-<colspec colname = "3" colnum = "3" colsep = "0" colwidth = "0.523in"/>
+-<colspec colname = "4" colnum = "4" colsep = "0" colwidth = "0.731in"/>
+-<colspec colname = "5" colnum = "5" colsep = "0" colwidth = "1.339in"/>
+-<colspec colname = "6" colnum = "6" colsep = "0" colwidth = "2.529in"/>
++<colspec colname = "1" colnum = "1" colsep = "0" colwidth = "0.5in"/>
++<colspec colname = "2" colnum = "2" colsep = "0" colwidth = "0.5in"/>
++<colspec colname = "3" colnum = "3" colsep = "0" colwidth = "0.5in"/>
++<colspec colname = "4" colnum = "4" colsep = "0" colwidth = "0.5in"/>
++<colspec colname = "5" colnum = "5" colsep = "0" colwidth = "1.1in"/>
++<colspec colname = "6" colnum = "6" colsep = "0" colwidth = "1.9in"/>
+ <tbody>
+ <row rowsep = "0">
+ <entry colname = "1" colsep = "1" rowsep = "1"><para>3</para></entry>
+@@ -5659,7 +5659,7 @@
+ Organizations can allocate these bits in any way they desire.</para>
+ <para>The Interface Identifier must be unique on that network. On
+ ethernet networks, one way to ensure this is to set the address
+-to the first three bytes of the hardware address, "FFFE", then the
++to the first three bytes of the hardware address, <quote>FFFE,</quote> then the
+ last three bytes of the hardware address. The lowest significant
+ bit of the first byte should then be complemented. Addresses are
+ written as 32-bit blocks separated with a colon, and leading zeros
+@@ -5680,7 +5680,7 @@
+ series of technical notes. The standards themselves are defined
+ by the Internet Engineering Task Force (IETF) and the Internet Engineering
+ Steering Group (IESG). RFCs can be obtained online via FTP at 
+-<ulink url="ftp://www.isi.edu/in-notes/">ftp://www.isi.edu/in-notes/RFC<replaceable>xxx</replaceable>.txt</ulink> (where <replaceable>xxx</replaceable> is
++<ulink url="ftp://www.isi.edu/in-notes/"><literal>ftp://www.isi.edu/in-notes/RFC<replaceable>xxx</replaceable>.txt</literal></ulink> (where <replaceable>xxx</replaceable> is
+ the number of the RFC). RFCs are also available via the Web at
+ <ulink url="http://www.ietf.org/rfc/">http://www.ietf.org/rfc/</ulink>.
+ </para>
+@@ -5703,7 +5703,7 @@
+               <surname>Mockapetris</surname>
+               <firstname>P.V.</firstname>
+             </author> 
+-            <title>Domain Names &mdash; Concepts and Facilities</title>
++            <title>Domain Names --- Concepts and Facilities</title>
+             <pubdate>November 1987</pubdate>
+           </biblioentry>
+           <biblioentry>
+@@ -5711,14 +5711,13 @@
+             <author>
+               <surname>Mockapetris</surname>
+               <firstname>P. V.</firstname>
+-            </author> <title>Domain Names &mdash; Implementation and
++            </author> <title>Domain Names --- Implementation and
+ Specification</title>
+             <pubdate>November 1987</pubdate>
+           </biblioentry>
+         </bibliodiv>
+-        <bibliodiv id="proposed_standards" xreflabel="Proposed Standards">
+-
+-          <title>Proposed Standards</title>
++        <bibliodiv>
++          <title><anchor id="proposed_standards" xreflabel="Proposed Standards"/>Proposed Standards</title>
+           <!-- one of (BIBLIOENTRY BIBLIOMIXED) -->
+           <biblioentry>
+             <abbrev>RFC2181</abbrev>
+@@ -6087,15 +6086,6 @@
+             <pubdate>February 1996</pubdate>
+           </biblioentry>
+           <biblioentry>
+-            <abbrev>RFC1912</abbrev>
+-            <author>
+-              <surname>Barr</surname>
+-              <firstname>D.</firstname>
+-            </author>
+-            <title>Common <acronym>DNS</acronym> Operational and Configuration Errors</title>
+-            <pubdate>February 1996</pubdate>
+-          </biblioentry>
+-          <biblioentry>
+             <abbrev>RFC2010</abbrev>
+             <authorgroup>
+               <author>
+@@ -6231,7 +6221,7 @@
+ in the preliminary stages of development. Implementors are cautioned not
+ to regard IDs as archival, and they should not be quoted or cited
+ in any formal documents unless accompanied by the disclaimer that
+-they are "works in progress." IDs have a lifespan of six months
++they are <quote>works in progress.</quote> IDs have a lifespan of six months
+ after which they are deleted unless updated by their authors.
+ </para>
+     </sect2>

@@ -1,0 +1,27 @@
+--- user-guide.xml.orig	Mon May 19 09:19:19 2003
++++ user-guide.xml	Mon May 19 09:19:38 2003
+@@ -1,5 +1,5 @@
+ <?xml version="1.0"?>
+-<?Fm: Validation Off?><!DOCTYPE BOOK [
++<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+ <!ENTITY graphic19 SYSTEM "ecos/user-guide/pix/ToolsOptions.png" NDATA png>
+ <!ENTITY graphic10 SYSTEM "ecos/user-guide/pix/memorywin.png" NDATA png>
+ <!ENTITY graphic11 SYSTEM "ecos/user-guide/pix/regprops.png" NDATA png>
+@@ -1120,7 +1120,7 @@
+ with the name of a Configuration File as command-line argument,
+ or by creating a shortcut to the <productname class="trade">eCos</productname> <application moreinfo="none">Configuration Tool</application> with such an argument
+ (under Windows or a suitable Linux desktop environment).</para></listitem></itemizedlist></sect3><sect3><title>Create a new blank document based on the Component
+-	      Registry</title><para>Select <emphasis>File</emphasis>-&gt;<emphasis>New</emphasis>,
++	      Registry</title><para>Select <menuchoice><guimenu>File</guimenu><guimenuitem>New</guimenuitem></menuchoice>,
+ or click the <emphasis>New Document</emphasis> icon on the toolbar.</para></sect3><sect3><title>Save to a different file name</title><para>Select <emphasis>File</emphasis>-&gt;<emphasis>Save
+ 		As</emphasis>. You will be prompted to supply a new
+ 	      name for the configuration save file.</para></sect3></sect2><sect2><title>Build and Install Trees</title><para>The location of the build and install trees are
+@@ -1246,7 +1246,7 @@
+ 		  the possibility of changing the source
+ 		  repository.</para></listitem><listitem><para><emphasis>Unload Package</emphasis> -
+ 		  this is equivalent to using the
+-		  <emphasis>Build-&gt;Packages</emphasis> menu item to
++		  <menuchoice><guimenu>Build</guimenu><guimenuitem>Packages</guimenuitem></menuchoice> menu item to
+ 		  select and unload the package in
+ 		  question.</para></listitem></itemizedlist></sect3></sect2><sect2><title>Conflicts Window</title><para>This window exists to display any configuration item
+ 	    conflicts. Conflicts are the result of failures to meet

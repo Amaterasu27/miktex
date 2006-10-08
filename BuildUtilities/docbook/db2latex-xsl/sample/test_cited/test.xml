@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE book SYSTEM
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<book id="book">
+  <bookinfo>
+    <title>Biblio</title>
+    <authorgroup>
+      <author>
+        <surname>Doe</surname>
+        <firstname>John</firstname>
+      </author>
+      <author>
+        <surname>Casellas</surname>
+        <firstname>Ramon</firstname>
+      </author>
+      <corpauthor>Some Corporation</corpauthor>
+    </authorgroup>
+  </bookinfo>
+  <chapter>
+    <title>Sample</title>
+    <sect1>
+      <title>Sample Section</title>
+      <warning>
+        <title>Bibliography and references</title>
+        <para>Now it is possible to have lots of unsorted
+        biblioentries, and use DB2LaTeX to process them, sort them
+        and filter them. The descending sorting is done according
+        to the tupple (xreflabel,id,abbrev).</para>
+        <para>In some documents, only the references that are
+        explicitly cited should appear in the print output. With
+        DB2LaTeX, you may use the variable latex.biblio.output
+        :</para>
+        <itemizedlist>
+          <listitem>
+            <para>If latex.biblio.output = 'all', all entries are
+            output.</para>
+          </listitem>
+          <listitem>
+            <para>If latex.biblio.output = 'cited', only the
+            cited/xreffed biblioentries.</para>
+          </listitem>
+        </itemizedlist>
+        <para>For example, only 
+        <citation>Ref1A</citation>
+        <citation>RefE</citation>, 
+        <citation>RefC</citation> (repeated: <citation>idC</citation>), 
+        <citation>RefA</citation> should appear in the bibliography.
+        The basic idea is, if somewhere there is a xref 
+        <xref linkend="idD" endterm="phrase"/> or a citation, output the <xref linkend="idD" /> (can also use <link linkend="idD">links</link>).
+        Please note that there exists in the docbook source an
+        entry (idB, RefB) which has neither been cited or xrefed,
+        so in "cite" mode, no latex 'bibitem' is generated. Test text: <phrase id="phrase">[Make <replaceable>$$$</replaceable> fast]</phrase>.</para>
+      </warning>
+    </sect1>
+  </chapter>
+  <bibliography id="bib1">
+    <biblioentry id="idB" xreflabel="RefB">
+      <abbrev>RefB</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>This one should not appear in CITED mode</title>
+    </biblioentry>
+    <biblioentry id="RefInv" xreflabel="RefInv">
+      <abbrev>RefInv</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>This one should not appear in CITED mode</title>
+    </biblioentry>
+    <biblioentry>
+      <author>
+        <firstname>unlabeled</firstname>
+      </author>
+      <title>This one should not appear in CITED mode</title>
+    </biblioentry>
+    <biblioentry id="idD" xreflabel="entry">
+      <abbrev>RefD</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>Title</title>
+    </biblioentry>
+    <biblioentry id="idC" xreflabel="RefC*">
+      <abbrev>RefC</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>Title</title>
+    </biblioentry>
+    <biblioentry id="idE" xreflabel="RefE">
+      <abbrev>RefE</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>Title</title>
+    </biblioentry>
+    <biblioentry id="idA" xreflabel="RefA">
+      <abbrev>RefA</abbrev>
+      <author>
+        <firstname>author</firstname>
+      </author>
+      <title>Title</title>
+    </biblioentry>
+    <bibliodiv id="div1">
+      <title>Div1</title>
+      <biblioentry id="id1A" xreflabel="Ref1A">
+        <abbrev>Ref1A</abbrev>
+        <author>
+          <firstname>author</firstname>
+        </author>
+        <title>Title</title>
+      </biblioentry>
+    </bibliodiv>
+  </bibliography>
+</book>

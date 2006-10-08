@@ -1,6 +1,6 @@
 /* md5walk.cpp: calculate the MD5 of a file tree
 
-   Copyright (C) 2001-2005 Christian Schenk
+   Copyright (C) 2001-2006 Christian Schenk
 
    This file is part of MD5Walk.
 
@@ -230,7 +230,7 @@ const struct poptOption aoption[] = {
   {
     T_("exclude"), 0, POPT_ARG_STRING, 0, OPT_EXCLUDE,
     T_("Files (*.EXT) to be excluded."),
-    T_("EXT")
+    T_(".EXT")
   },
   {
     T_("find-duplicates"), 0, POPT_ARG_NONE, 0, OPT_FIND_DUPLICATES,
@@ -456,7 +456,7 @@ Main (/*[in]*/ int			argc,
 	    Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
 					    VersionNumber(VER_FILEVERSION))
 		<< T_("\n\
-Copyright (C) 2005 Christian Schenk\n\
+Copyright (C) 2005-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 		<< endl;
@@ -511,7 +511,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 		     it->c_str(),
 		     mapFnToMD5,
 		     mapSizeToFn);
-      if (it == directories.begin())
+      if (task == Check && it == directories.begin())
 	{
 	  PathName md5File (*it, MD5WALK_FILE, 0);
 	  if (File::Exists(md5File))
@@ -596,6 +596,11 @@ main (/*[in]*/ int			argc,
       exitCode = 0;
     }
   catch (const MiKTeXException & e)
+    {
+      Utils::PrintException (e);
+      exitCode = FATAL_ERROR;
+    }
+  catch (const exception & e)
     {
       Utils::PrintException (e);
       exitCode = FATAL_ERROR;

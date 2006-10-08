@@ -100,21 +100,12 @@ DviView::OnPageEditor ()
       int line;
       if (GetSource(fileName, line))
 	{
-	  PathName path;
-	  if (Utils::IsAbsolutePath(fileName.Get()))
-	    {
-	      path = fileName;
-	    }
-	  else
-	    {
-	      path.Set (pDoc->GetDocDir(), fileName.Get());
-	    }
-	  StartEditor (path.Get(), line);
+	  StartEditor (fileName.Get(), pDoc->GetDocDir(), line);
 	}
       else
 	{
 	  FATAL_MIKTEX_ERROR (T_("DviView::OnPageEditor"),
-			      T_("The source file could not be opend because \
+			      T_("The source file could not be opened because \
 the page contains no source links."),
 			      0);
 	}

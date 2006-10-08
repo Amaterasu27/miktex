@@ -119,6 +119,7 @@ linkfiles = \
 	$(bz2_lib) \
 	$(curl_lib) \
 	$(expat_lib) \
+	$(md5_lib) \
 	$(miktex_lib) \
 	$(mspack_lib) \
 	$(objects) \

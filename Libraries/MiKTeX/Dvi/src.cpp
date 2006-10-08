@@ -25,6 +25,46 @@
 
 /* _________________________________________________________________________
 
+   MyPathNameCompare
+   _________________________________________________________________________ */
+
+STATICFUNC(int)
+MyPathNameCompare (/*[in]*/ const PathName & path1,
+		   /*[in]*/ const PathName & path2)
+{
+  int ret = PathName::Compare(path1, path2);
+
+  if (ret == 0)
+    {
+      return (0);
+    }
+
+  const MIKTEXCHAR * lpszExtension1 = path1.GetExtension();
+  const MIKTEXCHAR * lpszExtension2 = path2.GetExtension();
+
+  if ((lpszExtension1 == 0 && lpszExtension2 == 0)
+      || (lpszExtension1 != 0 && lpszExtension2 != 0))
+    {
+      return (ret);
+    }
+
+  PathName path11 (path1);
+  PathName path22 (path2);
+
+  if (lpszExtension1 == 0)
+    {
+      path11.AppendExtension (lpszExtension2);
+    }
+  else
+    {
+      path22.AppendExtension (lpszExtension1);
+    }
+
+  return (PathName::Compare(path11, path22));
+}
+
+/* _________________________________________________________________________
+
    DviImpl::FindSource
    _________________________________________________________________________ */
 
@@ -118,7 +158,7 @@ DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 	      // try exact match
 	      bool nameMatch =
-		(PathName::Compare(lpszName, lpszFileName) == 0);
+		(MyPathNameCompare(lpszName, lpszFileName) == 0);
 
 	      // try fully qualified file names
 	      if (! nameMatch)
@@ -135,7 +175,7 @@ DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		      fqName += lpszName;
 		      fqName.MakeAbsolute ();
 		    }
-		  nameMatch = (PathName::Compare(fqName, fqFileName) == 0);
+		  nameMatch = (MyPathNameCompare(fqName, fqFileName) == 0);
 		}
 
 	      // try relative file names
@@ -154,7 +194,7 @@ DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		    }
 		  nameMatch =
 		    (lpszRelName != 0
-		     && PathName::Compare(lpszRelName, lpszRelFileName) == 0);
+		     && MyPathNameCompare(lpszRelName, lpszRelFileName) == 0);
 		}
 
 	      if (! nameMatch)
@@ -387,7 +427,7 @@ DviImpl::GetSource (/*[in]*/ const DviPosition &	pos,
 	{
 	  pSourceSpecial = pSourceSpecial1;
 	}
-      else if (PathName::Compare(pSourceSpecial1->GetFileName(),
+      else if (MyPathNameCompare(pSourceSpecial1->GetFileName(),
 				 pSourceSpecial2->GetFileName())
 	       != 0)
 	{

@@ -389,7 +389,7 @@ $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/
 $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-pathch.h
 $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-file.h
 $(outdir)\dvips.obj: ./c-auto.h debug.h paths.h
-$(outdir)\dvips.obj: C:\work\miktex-2.5\Libraries\3rd\libbmeps/bmeps.h
+$(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/3rd/libbmeps/bmeps.h
 $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/proginit.h
 $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/progname.h
 $(outdir)\dvips.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-hush.h
@@ -495,7 +495,7 @@ $(outdir)\output.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include
 $(outdir)\output.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/c-pathch.h
 $(outdir)\output.obj: $(miktexsrcdir)/Libraries/MiKTeX/KPathSeaEmulation/include/kpathsea/tex-file.h
 $(outdir)\output.obj: ./c-auto.h debug.h paths.h
-$(outdir)\output.obj: C:\work\miktex-2.5\Libraries\3rd\libbmeps/bmeps.h
+$(outdir)\output.obj: $(miktexsrcdir)/Libraries/3rd/libbmeps/bmeps.h
 $(outdir)\output.obj: protos.h
 $(outdir)\papersiz.obj: dvips.h
 $(outdir)\papersiz.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h

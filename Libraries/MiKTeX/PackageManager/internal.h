@@ -811,12 +811,36 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
 
 /* _________________________________________________________________________
 
+   PathNameComparer
+   _________________________________________________________________________ */
+
+struct PathNameComparer
+  : public binary_function<tstring, tstring, bool>
+{
+  bool
+  operator() (/*[in]*/ const tstring & str1,
+	      /*[in]*/ const tstring & str2)
+    const
+  {
+    return (PathName::Compare(str1.c_str(), str2.c_str()) < 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   FileDigestTable
+   _________________________________________________________________________ */
+
+typedef map<tstring, MD5, PathNameComparer> FileDigestTable;
+  
+/* _________________________________________________________________________
+
    PackageManagerImpl
    _________________________________________________________________________ */
 
 class
 PackageManagerImpl
-  : public PackageManager,
+  : public PackageManager2,
     public ICreateFndbCallback,
     public IProgressNotify_
 {
@@ -929,6 +953,25 @@ public:
   OnProgress ();
   
 public:
+  virtual
+  bool
+  MPMCALL
+  TryGetRepositoryInfo (/*[in]*/ const tstring &	url,
+			/*[out]*/ RepositoryInfo &	repositoryInfo);
+
+public:
+  virtual
+  RepositoryInfo
+  MPMCALL
+  VerifyPackageRepository (/*[in]*/ const tstring & url);
+
+public:
+  virtual
+  bool
+  MPMCALL
+  TryVerifyInstalledPackage (/*[in]*/ const tstring & deploymentName);
+
+public:
   PackageManagerImpl ();
 
 public:
@@ -1007,6 +1050,12 @@ private:
 private:
   void
   ParseAllPackageDefinitionFiles ();
+
+private:
+  bool
+  TryVerifyInstalledPackageHelper (/*[in]*/ const tstring &	fileName,
+				   /*[out]*/ bool &		haveDigest,
+				   /*[out]*/ MD5 &		digest);
 
 private:
   void

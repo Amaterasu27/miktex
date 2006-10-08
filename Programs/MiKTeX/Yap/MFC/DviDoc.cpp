@@ -55,7 +55,8 @@ DviDoc::DviDoc ()
     pProgressDialog (0),
     dviPageMode (g_pYapConfig->dviPageMode),
     pSession (true),
-    landscape (false)
+    landscape (false),
+    makingFonts (false)
 {
   pLastDoc = this;
   modificationTime = 0;
@@ -556,7 +557,7 @@ void
 MIKTEXDVICALL
 DviDoc::OnProgress (/*[in]*/ DviNotification	nf)
 {
-  if (nf == DviNotification::BeginLoadFont)
+  if (nf == DviNotification::BeginLoadFont && makingFonts)
     {
       MIKTEX_ASSERT (pDvi != 0);
       tstring statusText = pDvi->GetStatusText();
@@ -569,7 +570,7 @@ DviDoc::OnProgress (/*[in]*/ DviNotification	nf)
 	  pProgressDialog = ProgressDialog::Create();
 	  pProgressDialog->StartProgressDialog
 	    (AfxGetMainWnd()->GetSafeHwnd());
-	  pProgressDialog->SetTitle ("Yap (Making Fonts)");
+	  pProgressDialog->SetTitle ("Yap");
 	  pProgressDialog->SetLine (1, "Yap is creating PK fonts:");
 	}
       pProgressDialog->SetLine (2, statusText.c_str());
@@ -585,7 +586,23 @@ void
 DviDoc::MakeFonts ()
 {
   MIKTEX_ASSERT (pDvi != 0);
-  bool done = pDvi->MakeFonts();
+  bool done = true;
+  try
+    {
+      AutoRestore<bool> autoRestore (makingFonts);
+      makingFonts = true;
+      done = pDvi->MakeFonts();
+    }
+  catch (const exception &)
+    {
+      if (pProgressDialog != 0)
+	{
+	  pProgressDialog->StopProgressDialog ();
+	  delete pProgressDialog;
+	  pProgressDialog = 0;
+	}
+      throw;
+    }
   if (pProgressDialog != 0)
     {
       pProgressDialog->StopProgressDialog ();

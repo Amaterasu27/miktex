@@ -273,7 +273,7 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
   else
     {
       if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName),
-			       inputFileType,
+			       GetInputFileType(),
 			       fqNameOfFile))
 	{
 	  return (false);

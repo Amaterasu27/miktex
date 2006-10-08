@@ -65,11 +65,10 @@ TaskPage::TaskPage ()
 BOOL
 TaskPage::OnInitDialog ()
 {
+  BOOL ret = TRUE;
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
-  BOOL ret = CPropertyPage::OnInitDialog();
   try
     {
-      pSheet = reinterpret_cast<SetupWizard*>(GetParent());
       switch (theApp.setupTask.Get())
 	{
 	case SetupTask::Download:
@@ -79,6 +78,7 @@ TaskPage::OnInitDialog ()
 	  task = 1;
 	  break;
 	}
+      ret = CPropertyPage::OnInitDialog();
       EnableButtons ();
     }
   catch (const MiKTeXException & e)

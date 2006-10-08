@@ -126,6 +126,8 @@
 #define IDC_ACCEPT_LICENSE              1063
 #define IDC_TEXMF_ROOT                  1064
 #define IDC_COMBO1                      1065
+#define IDC_COMBO2                      1066
+#define IDC_INSTALL_ON_THE_FLY          1075
 #define IDS_SUPPORT                     57345
 
 // Next default values for new objects
@@ -134,7 +136,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        158
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1075
+#define _APS_NEXT_CONTROL_VALUE         1076
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

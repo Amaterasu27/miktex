@@ -705,8 +705,11 @@ FileCopyPage::DoTheDownload ()
   PathName licenseFile;
   if (FindFile(LICENSE_FILE, licenseFile))
     {
-      File::Copy (licenseFile,
-		  PathName(theApp.localPackageRepository, LICENSE_FILE));
+      PathName licenseFileDest (theApp.localPackageRepository, LICENSE_FILE);
+      if (ComparePaths(licenseFile.Get(), licenseFileDest.Get(), true) != 0)
+	{
+	  File::Copy (licenseFile, licenseFileDest);
+	}
     }
 
   // now copy the setup program
@@ -841,6 +844,12 @@ FileCopyPage::DoTheInstallation ()
 
   // run IniTeXMF
   ConfigureMiKTeX ();
+
+  // configure autoInstall
+  SessionWrapper(true)
+    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_AUTO_INSTALL,
+			  theApp.installOnTheFly.Get());
 
   if (pSheet->GetCancelFlag())
     {
@@ -995,14 +1004,16 @@ FileCopyPage::ConfigureMiKTeX ()
   // set paper size
   if (! theApp.paperSize.empty())
     {
+      cmdLine.Clear ();
       if (StringCompare(theApp.paperSize.c_str(), T_("a4"), true) == 0)
 	{
-	  SessionWrapper(true)->SetDefaultPaperSize (T_("A4size"));
+	  cmdLine.AppendOption (T_("--default-paper-size="), T_("A4size"));
 	}
       else
 	{
-	  SessionWrapper(true)->SetDefaultPaperSize (T_("letterSize"));
+	  cmdLine.AppendOption (T_("--default-paper-size="), T_("letterSize"));
 	}
+      RunIniTeXMF (cmdLine);
     }
 
   // refresh file name database again

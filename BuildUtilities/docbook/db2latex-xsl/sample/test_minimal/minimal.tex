@@ -1,0 +1,117 @@
+\documentclass[a4paper,12pt]{article}
+\pdfcompresslevel=9
+% --------------------------------------------
+\newcommand{\href}[1]{{}}
+\newcommand{\hyperlink}[1]{{}}
+\newcommand{\hypertarget}[2]{#2}
+\makeatletter
+\def\docbooktolatexgobble{\expandafter\@gobble}
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{\protect}
+\newcommand{\docbooktolatexalignll}{\protect\ifvmode\raggedright\else\fi}
+\newcommand{\docbooktolatexalignlr}{\protect\ifvmode\else\hspace*\fill\fi}
+\newcommand{\docbooktolatexaligncl}{\protect\ifvmode\centering\else\hfill\fi}
+\newcommand{\docbooktolatexaligncr}{\protect\ifvmode\else\hspace*\fill\fi}
+\ifx\captionswapskip\@undefined\newcommand{\captionswapskip}{}\fi
+\makeatother
+\title{\textbf{Title}}
+\date{2003/03/10}
+\author{Ramon Casellas}
+\begin{document}
+{\maketitle\pagestyle{empty}\thispagestyle{empty}}
+
+% ------------------------   
+% Section 
+\section{Introduction}
+\label{id174609}\hypertarget{id174609}{}%
+\subsection{blah}
+\label{id174615}\hypertarget{id174615}{}%
+
+% ------------------------   
+% Section 
+\section{Section}
+\label{id174624}\hypertarget{id174624}{}%
+% ------------------------------------------- 
+%	
+%  Bibliography
+%	
+% -------------------------------------------	
+\bibliography{}
+\begin{thebibliography}{WIDELABEL}
+
+% -------------- biblioentry 
+\bibitem[BerGal]{BerGal}\docbooktolatexbibaux{BerGal}{BerGal}
+\hypertarget{BerGal}{\emph{Data Networks}}, D. Bertsekas and R. Gallager, Prentice Hall International Editions. ISBN 0-13-196981-1, 1987.
+
+
+\end{thebibliography}
+\newcommand{\dbglossary}[1]{\section*{#1}}%
+\newcommand{\dbglossdiv}[1]{\subsection*{#1}}%
+% ------------------------------------------------------------- 
+% 
+% GLOSSARY Glossaire
+% 
+% ------------------------------------------------------------- 
+\dbglossary{Glossaire}
+\label{gloss@glossary}\hypertarget{gloss@glossary}{}%
+% 
+% ------------------------------------------------------------- 
+\dbglossdiv{A}
+\label{id174870}\hypertarget{id174870}{}%
+\noindent%
+\begin{description}%
+\item[\hypertarget{gloss@arp}{Address Resolution Protocol}]  ( \texttt {ARP} ) 
+
+Def.
+
+
+\end{description}%
+
+% --------------------------------------------
+% End of document
+% --------------------------------------------
+\end{document}

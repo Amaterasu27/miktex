@@ -35,6 +35,8 @@ maininifiles = \
 	lambda.ini \
 	latex.ini \
 	mex.ini \
+	mllatex.ini \
+	mltex.ini \
 	omega.ini \
 	pdfetex.ini \
 	pdfjadetex.ini \

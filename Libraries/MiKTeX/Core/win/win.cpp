@@ -145,22 +145,23 @@ StartupConfig
 SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
 {
   StartupConfig ret;
+  tstring product = (IsMiKTeXDirect() ? T_("MiKTeXDirect") : T_("MiKTeX"));
   ret.installRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
   ret.installRoot += T_("MiKTeX") T_(" ") T_(MIKTEX_SERIES_STR);
   if (sharedSetup)
     {
       ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
-      ret.commonDataRoot += T_("MiKTeX");
+      ret.commonDataRoot += product;
       ret.commonDataRoot += T_(MIKTEX_SERIES_STR);
       ret.commonConfigRoot = ret.commonDataRoot;
     }
   ret.userDataRoot =
     Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-  ret.userDataRoot += T_("MiKTeX");
+  ret.userDataRoot += product;
   ret.userDataRoot += T_(MIKTEX_SERIES_STR);
   ret.userConfigRoot =
     Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
-  ret.userConfigRoot += T_("MiKTeX");
+  ret.userConfigRoot += product;
   ret.userConfigRoot += T_(MIKTEX_SERIES_STR);
   return (ret);
 }

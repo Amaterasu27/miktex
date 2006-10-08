@@ -805,6 +805,29 @@ GetC (/*[in]*/ FILE *	stream)
 
 /* _________________________________________________________________________
 
+   UnGetC
+   _________________________________________________________________________ */
+
+inline
+void
+UnGetC (/*[in]*/ MIKTEXCHARINT	ch,
+	/*[in]*/ FILE *		stream)
+{
+#if defined(_MSC_VER)
+  MIKTEXCHARINT ch2 = _ungettc(ch, stream);
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: GetC()
+#else
+  MIKTEXCHARINT ch2 = ungetc(ch, stream);
+#endif
+  if (ch2 == MIKTEXEOF)
+    {
+      FATAL_CRT_ERROR (T_("ungetc"), 0);
+    }
+}
+
+/* _________________________________________________________________________
+
    StrPBrk
    _________________________________________________________________________ */
 
@@ -2821,21 +2844,6 @@ void
 SkipAlpha (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
 {
   while (*lpsz != 0 && IsAlpha(*lpsz))
-    {
-      ++ lpsz;
-    }
-}
-
-/* _________________________________________________________________________
-
-   SkipLine
-   _________________________________________________________________________ */
-
-inline
-void
-SkipLine (/*[in]*/ const MIKTEXCHAR * &	lpsz)
-{
-  while (*lpsz != 0 && *lpsz != 0 && *lpsz != T_('\n'))
     {
       ++ lpsz;
     }

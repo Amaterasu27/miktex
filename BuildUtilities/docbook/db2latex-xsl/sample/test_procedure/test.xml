@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article lang="en">
+  <articleinfo>
+<!--  ************************************************************** -->
+<!--  Title and Author                                               -->
+<!--  ************************************************************** -->
+    <title>Title</title>
+    <subtitle>Subtitle</subtitle>
+    <date>2003/03/10</date>
+    <authorgroup>
+      <author>
+        <firstname>Ramon</firstname>
+        <surname>Casellas</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
+<!-- ************************************************************** -->
+<!-- CONTENT                                                        -->
+<!-- ************************************************************** -->
+  <sect1>
+    <title>Introduction</title>
+    <procedure>
+      <title>An <quote>Example</quote> Procedure</title>
+      <step>
+        <para> A Step </para>
+      </step>
+      <step>
+        <para> Another Step </para>
+        <substeps>
+          <step>
+            <para> Substeps can be nested indefinitely deep.  </para>
+            <substeps>
+              <step>
+                <para> Substeps can be nested indefinitely deep.  </para>
+                <substeps>
+                  <step>
+                    <para> Substeps can be nested indefinitely deep.  </para>
+                  </step>
+                </substeps>
+              </step>
+            </substeps>
+          </step>
+        </substeps>
+      </step>
+      <step>
+        <title>Conclusion</title>
+        <para>
+    A Final Step
+  </para>
+      </step>
+    </procedure>
+  </sect1>
+</article>

@@ -1,0 +1,84 @@
+Index: en/appg.xml
+===================================================================
+RCS file: /cvsroot/docbook/defguide/en/appg.xml,v
+retrieving revision 1.2
+diff -u -r1.2 appg.xml
+--- en/appg.xml	3 Aug 2001 11:54:53 -0000	1.2
++++ en/appg.xml	19 May 2003 12:20:17 -0000
+@@ -382,8 +382,8 @@
+ 
+ <informaltable>
+ <tgroup cols="2">
+-<colspec colnum="1" colwidth="1.25in"/>
+-<colspec colnum="2" colwidth="3.75in"/>
++<colspec colnum="1" colwidth="1.5in"/>
++<colspec colnum="2" colwidth="3.75in" align="left"/>
+ <thead>
+ <row><entry>Element</entry><entry>Brief Description</entry></row>
+ </thead>
+Index: en/ch00.xml
+===================================================================
+RCS file: /cvsroot/docbook/defguide/en/ch00.xml,v
+retrieving revision 1.2
+diff -u -r1.2 ch00.xml
+--- en/ch00.xml	29 Dec 2002 19:37:30 -0000	1.2
++++ en/ch00.xml	19 May 2003 12:20:17 -0000
+@@ -279,8 +279,7 @@
+ plain old typos that you find. An online errata list is maintained at
+ <ulink
+ url="http://docbook.org/tdg/errata.html">http://docbook.org/tdg/errata.html</ulink>.
+-Email your bug reports and comments to us at <ulink role="online"
+-url="mailto:bookcomments@docbook.org">bookcomments@docbook.org</ulink>.</para>
++Email your bug reports and comments to us at <email role="online">bookcomments@docbook.org</email>.</para>
+ </sect1>
+ <sect1 id="pref-acknorm">
+ <title>Acknowledgements from Norm</title>
+Index: en/ch04.xml
+===================================================================
+RCS file: /cvsroot/docbook/defguide/en/ch04.xml,v
+retrieving revision 1.7
+diff -u -r1.7 ch04.xml
+--- en/ch04.xml	29 Dec 2002 20:24:04 -0000	1.7
++++ en/ch04.xml	19 May 2003 12:20:19 -0000
+@@ -315,7 +315,11 @@
+ </para>
+ <figure id="simple.document.formatted">
+ <title>The formatted simple document</title>
+-<graphic fileref="figures/simple-page.png"></graphic>
++<mediaobject>
++  <imageobject>
++    <imagedata width="100%" scalefit="1" fileref="figures/simple-page.png"/>
++  </imageobject>
++</mediaobject>
+ </figure>
+ <para>
+ We'll take a closer look at this stylesheet after you've learned a
+@@ -1633,9 +1637,7 @@
+ </para>
+ <example id="ex-twostyles">
+ <title><filename>both.dsl</filename>: A Stylesheet with Two Style Specifications</title>
+-<screen>
+-<inlinegraphic format="linespecific" fileref="examples/dsssl.twostyles"/>
+-</screen>
++<screen><![CDATA[<inlinegraphic format="linespecific" fileref="examples/dsssl.twostyles"/>]]></screen>
+ </example>
+ <para>
+ <indexterm><primary>Jade</primary>
+Index: en/glossary.xml
+===================================================================
+RCS file: /cvsroot/docbook/defguide/en/glossary.xml,v
+retrieving revision 1.1
+diff -u -r1.1 glossary.xml
+--- en/glossary.xml	2 Aug 2001 10:22:22 -0000	1.1
++++ en/glossary.xml	19 May 2003 12:20:20 -0000
+@@ -346,9 +346,7 @@
+ <indexterm><primary>PI</primary><see>processing instructions</see></indexterm>
+ 
+ In &XML; documents, processing instructions should have the form:
+-<screen>
+-&lt;?<replaceable>pitarget</replaceable> param1="value1" param2="value2"?&gt;
+-</screen>
++<screen>&lt;?<replaceable>pitarget</replaceable> param1="value1" param2="value2"?&gt;</screen>
+ </para>
+ <para>
+ The <replaceable>pitarget</replaceable> should be a name that the processing application

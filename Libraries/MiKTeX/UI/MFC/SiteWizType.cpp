@@ -25,6 +25,8 @@
 
 #include "SiteWizType.h"
 
+#include "ConnectionSettingsDialog.h"
+
 /* _________________________________________________________________________
 
    SiteWizType::SiteWizType
@@ -65,6 +67,8 @@ BEGIN_MESSAGE_MAP(SiteWizType, CPropertyPage)
   ON_BN_CLICKED (IDC_INSTALL_FROM_INTERNET, OnInstallFromInternet)
   ON_BN_CLICKED (IDC_INSTALL_FROM_LOCAL_REPOSITORY,
 		 OnInstallFromLocalRepository)
+  ON_BN_CLICKED (IDC_CONNECTION_SETTINGS,
+		 &SiteWizType::OnConnectionSettings)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -88,9 +92,21 @@ BOOL
 SiteWizType::OnSetActive ()
 {
   BOOL ret = CPropertyPage::OnSetActive();
-  CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
-  ASSERT_KINDOF (CPropertySheet, pSheet);
-  pSheet->SetWizardButtons (repositoryType >= 0 ? PSWIZB_NEXT : 0);
+  try
+    {
+      CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
+      ASSERT_KINDOF (CPropertySheet, pSheet);
+      pSheet->SetWizardButtons (repositoryType >= 0 ? PSWIZB_NEXT : 0);
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
   return (ret);
 }
 
@@ -102,9 +118,21 @@ SiteWizType::OnSetActive ()
 void
 SiteWizType::OnInstallFromLocalRepository ()
 {
-  CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
-  ASSERT_KINDOF (CPropertySheet, pSheet);
-  pSheet->SetWizardButtons (PSWIZB_NEXT);
+  try
+    {
+      CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
+      ASSERT_KINDOF (CPropertySheet, pSheet);
+      pSheet->SetWizardButtons (PSWIZB_NEXT);
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
 }
 
 /* _________________________________________________________________________
@@ -115,9 +143,21 @@ SiteWizType::OnInstallFromLocalRepository ()
 void
 SiteWizType::OnInstallFromInternet ()
 {
-  CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
-  ASSERT_KINDOF (CPropertySheet, pSheet);
-  pSheet->SetWizardButtons (PSWIZB_NEXT);
+  try
+    {
+      CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
+      ASSERT_KINDOF (CPropertySheet, pSheet);
+      pSheet->SetWizardButtons (PSWIZB_NEXT);
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
 }
 
 /* _________________________________________________________________________
@@ -128,9 +168,21 @@ SiteWizType::OnInstallFromInternet ()
 void
 SiteWizType::OnInstallFromCD ()
 {
-  CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
-  ASSERT_KINDOF (CPropertySheet, pSheet);
-  pSheet->SetWizardButtons (PSWIZB_NEXT);
+  try
+    {
+      CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
+      ASSERT_KINDOF (CPropertySheet, pSheet);
+      pSheet->SetWizardButtons (PSWIZB_NEXT);
+      EnableButtons ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
 }
 
 /* _________________________________________________________________________
@@ -141,21 +193,69 @@ SiteWizType::OnInstallFromCD ()
 LRESULT
 SiteWizType::OnWizardNext ()
 {
-  ASSERT (IDC_INSTALL_FROM_INTERNET < IDC_INSTALL_FROM_CD);
-  int iId =
+  try
+    {
+      ASSERT (IDC_INSTALL_FROM_INTERNET < IDC_INSTALL_FROM_CD);
+      int checked =
+	GetCheckedRadioButton(IDC_INSTALL_FROM_INTERNET, IDC_INSTALL_FROM_CD);
+      DWORD nextPage;
+      if (checked == IDC_INSTALL_FROM_INTERNET)
+	{
+	  if (! MiKTeX::UI::ProxyAuthenticationDialog(GetSafeHwnd()))
+	    {
+	      return (-1);
+	    }
+	  nextPage = IDD_SITEWIZ_REMOTE_REPOSITORY;
+	}
+      else if (checked == IDC_INSTALL_FROM_LOCAL_REPOSITORY)
+	{
+      nextPage = IDD_SITEWIZ_LOCAL_REPOSITORY;
+	}
+      else
+	{
+	  nextPage = IDD_SITEWIZ_DRIVE;
+	}
+      return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(nextPage)));
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (-1);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (-1);
+    }
+}
+
+/* _________________________________________________________________________
+
+   SiteWizType::OnConnectionSettings
+   _________________________________________________________________________ */
+
+void
+SiteWizType::OnConnectionSettings ()
+{
+  ConnectionSettingsDialog dlg (this);
+  dlg.DoModal ();
+}
+
+/* _________________________________________________________________________
+
+   SiteWizType::EnableButtons
+   _________________________________________________________________________ */
+
+void
+SiteWizType::EnableButtons ()
+{
+  int checked =
     GetCheckedRadioButton(IDC_INSTALL_FROM_INTERNET, IDC_INSTALL_FROM_CD);
-  DWORD uNext;
-  if (iId == IDC_INSTALL_FROM_INTERNET)
+  CWnd * pWnd = GetDlgItem(IDC_CONNECTION_SETTINGS);
+  if (pWnd == 0)
     {
-      uNext = IDD_SITEWIZ_REMOTE_REPOSITORY;
+      UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
     }
-  else if (iId == IDC_INSTALL_FROM_LOCAL_REPOSITORY)
-    {
-      uNext = IDD_SITEWIZ_LOCAL_REPOSITORY;
-    }
-  else
-    {
-      uNext = IDD_SITEWIZ_DRIVE;
-    }
-  return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(uNext)));
+  pWnd->EnableWindow (checked == IDC_INSTALL_FROM_INTERNET);
+  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }

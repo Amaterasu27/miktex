@@ -273,11 +273,11 @@ public:
       }
     
     PathName mpFile (lpszMpFile);
-    mpFile.SetExtension (MIKTEXTEXT(".mp"));
+    mpFile.SetExtension (MIKTEXTEXT(".mp"), false);
     
     CommandLineBuilder arguments;
     
-    if (texProgram.length() > 0)
+    if (! texProgram.empty())
       {
 	arguments.AppendOption (MIKTEXTEXT("--tex="), texProgram);
       }

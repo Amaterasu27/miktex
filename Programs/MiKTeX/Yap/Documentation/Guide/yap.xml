@@ -2,10 +2,10 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 
-<!ENTITY rev "2.5.2377">
-<!ENTITY yaprev "2.5.2376">
-<!ENTITY date "July 05, 2006">
-<!ENTITY month "July 2006">
+<!ENTITY rev "2.5.2466">
+<!ENTITY yaprev "2.5.2465">
+<!ENTITY date "October 02, 2006">
+<!ENTITY month "October 2006">
 
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY Yap "<application>Yap</application>">
@@ -25,6 +25,8 @@
 <!ENTITY prompt "C:\> ">
 <!ENTITY tools SYSTEM "tools.xml">
 <!ENTITY tracestreams SYSTEM "tracestreams.xml">
+<!ENTITY % entities.ent SYSTEM "entities.ent">
+%entities.ent;
 ]>
 
 <book>

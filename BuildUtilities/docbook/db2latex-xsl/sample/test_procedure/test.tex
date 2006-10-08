@@ -1,0 +1,99 @@
+\documentclass[pdftex,english,a4paper,10pt]{article}
+\usepackage[pdftex,bookmarksnumbered,colorlinks,backref, bookmarks, breaklinks, linktocpage]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage{isolatin1}
+\pdfcompresslevel=9
+% --------------------------------------------
+\makeatletter
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+\makeatother
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{\protect}
+\newcommand{\docbooktolatexalignll}{\protect\ifvmode\raggedright\else\fi}
+\newcommand{\docbooktolatexalignlr}{\protect\ifvmode\else\hspace*\fill\fi}
+\newcommand{\docbooktolatexaligncl}{\protect\ifvmode\centering\else\hfill\fi}
+\newcommand{\docbooktolatexaligncr}{\protect\ifvmode\else\hspace*\fill\fi}
+\title{\textbf{Title}}
+\date{2003/03/10}
+\author{Ramon Casellas}
+\begin{document}
+{\maketitle\pagestyle{empty}\thispagestyle{empty}}
+
+% ------------------------   
+% Section 
+\section{Introduction}
+\label{id174657}\hypertarget{id174657}{}%
+
+
+{\sc{An `Example' Procedure}}
+\begin{enumerate}
+
+\item{ A Step }
+
+\item{ Another Step \begin{enumerate}
+
+\item{ Substeps can be nested indefinitely deep.  \begin{enumerate}
+
+\item{ Substeps can be nested indefinitely deep.  \begin{enumerate}
+
+\item{ Substeps can be nested indefinitely deep.  }
+\end{enumerate}
+}
+\end{enumerate}
+}
+\end{enumerate}
+}
+
+\item{{\bf{Conclusion}}
+
+    A Final Step
+  }
+\end{enumerate}
+
+% --------------------------------------------
+% End of document
+% --------------------------------------------
+\end{document}

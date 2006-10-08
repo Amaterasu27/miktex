@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article id="article" lang="en">
+<articleinfo>
+<title>Sundry Blocks</title>
+<authorgroup>
+<author> <surname>Devenish</surname> <firstname>James</firstname> </author>
+</authorgroup>
+</articleinfo>
+<ackno>
+  This is an acknowledgement(!)
+</ackno>
+
+
+<section>
+
+<epigraph>
+  <attribution>Epigraph</attribution>
+  <simpara>Sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj
+  dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj.</simpara> 
+</epigraph>
+
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+
+<blockquote>
+  <title>A blockquote:</title>
+  <attribution>Ramon Casellas</attribution>
+  <para>
+  Sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj
+  dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj. jsdlfj lksj flj.
+  </para> 
+</blockquote>
+
+<para> jsdlkfj lsjd jsdkfjlksdfj lkjdsf lj sdlfj lksdj fljdslk jlksdjf lkjdsf ljsdlk fj
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+dsfkjsd lkfjklsdjf lkjs dfj lkjsd flkj sdlkj lkmjs dflkj sdlfj lmksjd flkj lksdjf 
+sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj 
+</para>
+
+<sidebar>
+  <title>A sidebar:</title>
+  <para>Sdflj lkjsdf mklj sdkfklj jdsfklj dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj
+  dsflj sdfjklsjd lkj sdklj lkjlk jsdlfj lksj flj. jsdlfj lksj flj.</para> 
+</sidebar>
+</section>
+
+</article>

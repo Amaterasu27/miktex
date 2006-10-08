@@ -29,39 +29,33 @@ OS Requirements
 Build Tools
 -----------
 
-	* Microsoft Visual C++ 8.0 Professional
-		http://msdn.microsoft.com/vstudio/
-
-	* Cygwin
-		http://www.cygwin.com
-
-	* junction.exe
-		http://www.sysinternals.com/ntw2k/source/misc.shtml#junction
-
 	* ActivePerl
 		http://www.activestate.com/Products/ActivePerl/
 
-	* xsltproc
-		http://xmlsoft.org/XSLT/
-
-Documentation System
---------------------
+	* Cygwin (full install)
+		http://www.cygwin.com
 
 	* ImageMagick
 		http://www.imagemagick.org
 
+	* junction.exe
+		http://www.sysinternals.com/Utilities/Junction.html
+
         * Microsoft HTML Help SDK
 		http://msdn.microsoft.com
 
-	* MiKTeX
+	* Microsoft Visual C++ 8.0 Professional
+		http://msdn.microsoft.com/vstudio/
+
+	* MiKTeX (full install)
 		http://www.miktex.org
 
 Configuring
 -----------
 
-	Open 'miktex.inc' with Notepad; check the following variables:
+	Open 'msvc\miktex.inc' with Notepad; check the following
+	definitions:
 
-	convert
 	prefix
 	tmdir
 
@@ -70,6 +64,4 @@ Configuring
 Build
 -----
 
-	Use the 'build.cmd' script to build MiKTeX.
-
-	All output is written to 'build-x86.log'.
+	Run 'build.cmd' to build MiKTeX.

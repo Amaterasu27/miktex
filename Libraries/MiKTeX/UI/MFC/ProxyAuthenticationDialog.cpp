@@ -19,18 +19,12 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-// ProxyAuthenticationDialog.cpp : implementation file
-//
-
 #include "StdAfx.h"
 #include "resource.h"
 
 #include "ProxyAuthenticationDialog.h"
 
-
-// ProxyAuthenticationDialog dialog
-
-IMPLEMENT_DYNAMIC(ProxyAuthenticationDialog, CDialog)
+IMPLEMENT_DYNAMIC(ProxyAuthenticationDialog, CDialog);
 
 /* _________________________________________________________________________
 
@@ -40,7 +34,6 @@ IMPLEMENT_DYNAMIC(ProxyAuthenticationDialog, CDialog)
 BEGIN_MESSAGE_MAP(ProxyAuthenticationDialog, CDialog)
   ON_EN_CHANGE(IDC_PROXY_NAME, &ProxyAuthenticationDialog::OnChangeName)
 END_MESSAGE_MAP();
-
 
 /* _________________________________________________________________________
 

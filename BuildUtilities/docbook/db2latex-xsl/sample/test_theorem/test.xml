@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<book id="book">
+  <bookinfo>
+    <title>Theorems</title>
+    <authorgroup>
+      <author>
+        <surname>Doe</surname>
+        <firstname>John</firstname>
+      </author>
+      <author>
+        <surname>Casellas</surname>
+        <firstname>Ramon</firstname>
+      </author>
+      <corpauthor>Some Corporation</corpauthor>
+    </authorgroup>
+  </bookinfo>
+  <chapter>
+    <title>This is NOT DOCBOOK</title>
+    <para> I have extended (for my own purposes) the DTD, 
+using <sgmltag>mathelement</sgmltag>, and its content model that I saw on a
+mailing list (credit is due, contact me).
+</para>
+    <mathelement>
+      <mathdefinition id="definition.">
+        <title>Task</title>
+        <mathphrase>
+          <para> A task is something that has to be done, usually given by 
+	your boss, under the hypothesis that you do not want to. (Otherwise
+	it is a pleasure, like working on DB2LaTeX).</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <maththeorem id="theorem.">
+        <title>Lazy man theorem</title>
+        <mathcondition>
+          <para>Given a task to do, T</para>
+        </mathcondition>
+        <mathassertion>
+          <para>Do not perform task T today, if it can be done tomorrow.</para>
+        </mathassertion>
+        <mathproof>
+          <para> A proof will be given tomorrow.</para>
+        </mathproof>
+      </maththeorem>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@stationary">
+        <title>Processus stationnaire</title>
+        <mathphrase>
+          <para>Un processus stochastique <latex>$x(t)$</latex> est dit <emphasis role="bold">stationnaire</emphasis> si <latex><![CDATA[ $ \forall n \in \mathbb{N}, \forall \tau, \forall t_0 < t_1 < t_2 < \ldots < t_n $]]></latex> on a :</para>
+        </mathphrase>
+        <latex>
+<![CDATA[
+\begin{equation*}
+( x(t_0), \ldots, x(t_n) ) \quad  =_{\mathbb{L}} \quad (x(t_0 + \tau), \ldots, x(t_n + \tau))
+\end{equation*}
+]]>
+        </latex>
+        <latex>
+<![CDATA[
+\begin{equation*}
+\rho(\tau) = \frac{\textrm{cov}[x(t),x(t+\tau)]} {\sqrt{\textrm{var}[x(t+\tau)] \textrm{var}[x(t)]}}
+\end{equation*}
+]]>
+        </latex>
+        <latex>
+<![CDATA[
+\begin{itemize}
+\item $\mathbb{E}[x(t)] = \lambda < \infty$ 
+\item $\mathbb{E}[(x(t) - \lambda)^2] = \sigma^2 < \infty$
+\item $\mathbb{E}[(x(t) - \lambda)(x(t+\tau) - \lambda)] = \textrm{cov}(\tau) < \infty$
+\end{itemize}
+]]>
+        </latex>
+        <latex>
+<![CDATA[
+\begin{equation*}
+\rho(\tau) = \frac{\textrm{cov}(\tau)} {\sigma^2}
+\end{equation*}
+]]>
+        </latex>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@cumulant">
+        <title>Processus Cumulatif (ang. Cumulant Process)</title>
+        <mathphrase>
+          <para>Soit <latex>$x(t)$</latex> un processus stochastique discret (resp. continu), et <latex>$t_0,t_1 \in \mathbb{N}$</latex> (resp. <latex>$t_0,t_1 \in \mathbb{R}$</latex>). Le processus <latex>$X[t_0,t_1) \triangleq \sum_{t_0}^{t_1} x(t)$</latex> (resp. <latex>$X[t_0,t_1) \triangleq \int_{t_0}^{t_1}{ x(t) dt}$</latex>) est dit processus cumulatif (ou <emphasis role="bold"> processus d'accroissements</emphasis>) de <latex>$x(t)$</latex><!-- (cf. <xref linkend="effbw@fig@cumulative"/>)-->.</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@indep">
+        <title>Processus à accroissements indépendants</title>
+        <mathphrase>
+          <para>Un processus <latex>$x(t)$</latex> est dit <emphasis role="bold">à accroissements indépendants </emphasis> si pour n'importe quelle suite d'instants de temps <latex><![CDATA[ $0 = t_0 < t_1 < t_2 < \ldots < t_n $]]>,</latex> les accroissements du processus <latex>$x(t_n) - x(t_{n-1}) , x(t_{n-1}), \ldots, x(t_1) - x(t_0)$</latex> sont indépendants.</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@stat bound">
+        <title>Processus à borne stationnaire</title>
+        <mathphrase>
+          <para> Un processus d'accroissements <latex>$x(t)$</latex> est borné stationnairement  si <alt role="tex">$\forall h$</alt>
+<alt role="tex"><![CDATA[
+\begin{equation}
+\lim_{a \to \infty} \sup_{t} \mathbb{P} \left\{ x(t+h) - x(t) \ge a \right\} = 0
+\end{equation}
+]]></alt>
+</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@longrange">
+        <title>Processus à  mémoire longue (ang. Long Range Dependent)</title>
+        <mathphrase>
+          <para> Un processus <latex>$x(t)$</latex> stationnaire est dit «à mémoire longue» <emphasis>(ang. Long Range Dependent)</emphasis> si
+<alt role="tex"><![CDATA[
+\begin{equation}
+\sum\limits_{k=-\infty}^{\infty} \left| \rho_x(k) \right| = \infty
+\end{equation}
+]]></alt>
+</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@heavytail">
+        <title>Modèles de Trafic à Queue Lourde</title>
+        <mathphrase>
+          <para> Une variable aléatoire <latex>$X$</latex> est dit «à queue lourde»  si <latex><![CDATA[$\exists \alpha,  0 < \alpha < 2$]]></latex> et <latex>$\exists C$</latex> tel que <latex><![CDATA[$x^\alpha \mathbb{P}(|X| > x) \to C$]]>,</latex> quand <latex>$x \to \infty$,</latex> où <latex>$C$</latex> est une constante et <latex><![CDATA[$\alpha$]]></latex> est l'index de la distribution. Un processus avec des distributions marginales à queue lourde est dit un processus à queue lourde.</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+    <mathelement>
+      <mathdefinition id="effbw@def@selfsimilar">
+        <title>Auto-similarité</title>
+        <mathphrase>
+          <para>Un processus <latex><![CDATA[ $x(t)$]]></latex> est dit «auto similaire»  <emphasis>(self-similar)</emphasis> de paramètre H, si le processus <latex>$c^{-H} x(ct)$</latex> et le processus <latex>$x(t)$</latex> sont équivalents en distribution. L'exemple classique de processus auto similaire est le processus mouvement fractionnaire Brownien (fBm) de paramètre H (paramètre de Hurst). Voir par exemple <citation>RabEBE</citation> (pp. 34) ou <citation>Norros</citation>.</para>
+        </mathphrase>
+      </mathdefinition>
+    </mathelement>
+  </chapter>
+	<bibliography />
+</book>

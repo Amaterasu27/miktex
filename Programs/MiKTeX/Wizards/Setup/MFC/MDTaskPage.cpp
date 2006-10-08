@@ -103,6 +103,7 @@ MDTaskPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
   DDX_Radio (pDX, IDC_PREPARE_MIKTEXDIRECT, task);
+  DDX_Text (pDX, IDC_TEXMF_ROOT, root);
 }
 
 /* _________________________________________________________________________

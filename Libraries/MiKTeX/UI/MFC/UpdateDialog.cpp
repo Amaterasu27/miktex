@@ -25,6 +25,8 @@
 
 #include <miktex/UpdateDialog.h>
 
+const SHORT PROGRESS_MAX = 1000;
+
 /* _________________________________________________________________________
 
    UpdateDialogImpl
@@ -35,65 +37,117 @@ class UpdateDialogImpl
     public IRunProcessCallback,
     public IPackageInstallerCallback
 {
+protected:
+  DECLARE_MESSAGE_MAP();
+
 public:
   UpdateDialogImpl (/*[in]*/ CWnd *		pParent,
 		    /*[in]*/ PackageManager *	pManager);
 
-private:
+public:
   virtual
-  BOOL
-  OnInitDialog ();
-
-private:
-  virtual
-  void
-  OnCancel ();
-
-private:
-  virtual
-  void
-  DoDataExchange (/*[in]*/ CDataExchange * pDX);
-
-private:
-  afx_msg
-  LRESULT
-  OnProgress (/*[in]*/ WPARAM wParam,
-	      /*[in]*/ LPARAM lParam);
+  ~UpdateDialogImpl ();
 
 public:
   void
   SetFileLists (/*[in]*/ const vector<tstring> & toBeInstalled,
 		/*[in]*/ const vector<tstring> & toBeRemoved);
 
-private:
+protected:
+  virtual
+  BOOL
+  OnInitDialog ();
+
+protected:
+  virtual
   void
-  RunIniTeXMF ();
+  DoDataExchange (/*[in]*/ CDataExchange * pDX);
 
+protected:
+  virtual
+  void
+  OnCancel ();
+ 
+protected:
+  afx_msg
+  LRESULT
+  OnStartFileCopy (/*[in]*/ WPARAM wParam,
+		   /*[in]*/ LPARAM lParam);
 
-private:
+protected:
+  afx_msg
+  LRESULT
+  OnProgress (/*[in]*/ WPARAM wParam,
+	      /*[in]*/ LPARAM lParam);
+
+protected:
   virtual
   bool
   MIKTEXCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n);
-    
+  
 public:
   virtual
   void
-  MIKTEXUICALL
+  MPMCALL
   ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
 
 public:
   virtual
   bool
-  MIKTEXUICALL
+  MPMCALL
   OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
 
 public:
   virtual
   bool
-  MIKTEXUICALL
+  MPMCALL
   OnProgress (/*[in]*/ Notification	nf);
+
+private:
+  static
+  UINT
+  WorkerThread (/*[in]*/ void * pParam);
+
+private:
+  void
+  DoTheUpdate ();
+
+private:
+  void
+  RunIniTeXMF ();
+
+private:
+  void
+  Report (/*[in]*/ bool			immediate,
+	  /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+	  /*[in]*/			...);
+
+private:
+  void
+  ReportError (/*[in]*/ const MiKTeXException & e)
+  {
+    errorOccured = true;
+    ErrorDialog::DoModal (this, e);
+  }
+
+private:
+  void
+  ReportError (/*[in]*/ const exception & e)
+  {
+    errorOccured = true;
+    ErrorDialog::DoModal (this, e);
+  }
+
+private:
+  CWnd *
+  GetControl (/*[in]*/ UINT	controlId);
+
+private:
+  void
+  EnableControl (/*[in]*/ UINT	controlId,
+		 /*[in]*/ bool	enable);
 
 private:
   void
@@ -102,47 +156,103 @@ private:
 		     /*[in]*/				...);
 
 private:
-  CAnimateCtrl downloadAnimationControl;
+  void
+  SetCancelFlag ()
+  {
+    EnableControl (IDCANCEL, false);
+    cancelled = true;
+  }
+
+public:
+  bool
+  GetCancelFlag ()
+    const
+  {
+    return (cancelled);
+  }
+
+public:
+  bool
+  GetErrorFlag ()
+    const
+  {
+    return (errorOccured);
+  }
 
 private:
-  CEdit reportBox;
+  CCriticalSection criticalSectionMonitor;
 
 private:
-  CProgressCtrl packageProgressControl;
+  struct SharedData
+  {
+    SharedData ()
+      : ready (false),
+	progress1Pos (0),
+	progress2Pos (0),
+	newPackage (false),
+	reportUpdate (false),
+	secondsRemaining (0),
+	waitingForClickOnClose (false)
+    {
+    }
+    PackageInstaller::ProgressInfo progressInfo;
+    CString report;
+    DWORD secondsRemaining;
+    bool newPackage;
+    bool ready;
+    bool reportUpdate;
+    bool waitingForClickOnClose;
+    int progress1Pos;
+    int progress2Pos;
+    tstring packageName;
+  };
 
 private:
-  CProgressCtrl totalProgressControl;
-
-private:
-  CString report;
-
-private:
-  enum { WM_ONPROGRESS = WM_APP + 1 };
-
-private:
-  DECLARE_MESSAGE_MAP();
-
-private:
-  bool doContinue;
-
-private:
-  PackageManagerPtr pManager;
+  SharedData sharedData;
 
 private:
   auto_ptr<PackageInstaller> pInstaller;
 
 private:
-  MIKTEX_DEFINE_LOCK(this);
+  HANDLE hWorkerThread;
+  
+private:
+  CAnimateCtrl animationControl;
 
 private:
-  bool cancelButtonIsCloseButton;
+  CEdit reportEditBox;
+
+private:
+  CProgressCtrl progressControl1;
+
+private:
+  CProgressCtrl progressControl2;
+
+private:
+  CString report;
+
+private:
+  enum { WM_STARTFILECOPY = WM_APP + 1, WM_PROGRESS };
+
+private:
+  PackageManagerPtr pManager;
 
 private:
   bool errorOccured;
 
 private:
-  bool reportUpdated;
+  bool cancelled;
 };
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl Message Map
+   _________________________________________________________________________ */
+
+BEGIN_MESSAGE_MAP(UpdateDialogImpl, CDialog)
+  ON_MESSAGE(WM_PROGRESS, OnProgress)
+  ON_MESSAGE(WM_STARTFILECOPY, OnStartFileCopy)
+END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
 
@@ -154,40 +264,38 @@ enum { IDD = IDD_MIKTEX_UPDATE };
 UpdateDialogImpl::UpdateDialogImpl (/*[in]*/ CWnd *		pParent,
 				    /*[in]*/ PackageManager *	pManager)
   : CDialog (IDD, pParent),
-    cancelButtonIsCloseButton (false),
-    doContinue (true),
+    cancelled (false),
     errorOccured (false),
+    hWorkerThread (0),
     pInstaller (pManager->CreateInstaller()),
-    pManager (pManager),
-    reportUpdated (false)
+    pManager (pManager)
 {
-  pInstaller->SetCallback (this);
 }
 
 /* _________________________________________________________________________
 
-   UpdateDialogImpl::DoDataExchange
+   UpdateDialogImpl::~UpdateDialogImpl
    _________________________________________________________________________ */
 
-void
-UpdateDialogImpl::DoDataExchange (/*[in]*/ CDataExchange * pDX)
+UpdateDialogImpl::~UpdateDialogImpl ()
 {
-  CDialog::DoDataExchange (pDX);
-  DDX_Control (pDX, IDC_ANI_DOWNLOAD, downloadAnimationControl);
-  DDX_Control (pDX, IDC_PROGRESS_PACKAGE, packageProgressControl);
-  DDX_Control (pDX, IDC_PROGRESS_TOTAL, totalProgressControl);
-  DDX_Control (pDX, IDC_REPORT, reportBox);
-  DDX_Text (pDX, IDC_REPORT, report);
+  try
+    {
+      if (hWorkerThread != 0)
+	{
+	  CloseHandle (hWorkerThread);
+	  hWorkerThread = 0;
+	}
+      if (pInstaller.get() != 0)
+	{
+	  pInstaller->Dispose ();
+	  pInstaller.reset ();
+	}
+    }
+  catch (const exception &)
+    {
+    }
 }
-
-/* _________________________________________________________________________
-
-   UpdateDialogImpl Message Map
-   _________________________________________________________________________ */
-
-BEGIN_MESSAGE_MAP(UpdateDialogImpl, CDialog)
-  ON_MESSAGE(WM_ONPROGRESS, OnProgress)
-END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
 
@@ -200,117 +308,38 @@ UpdateDialogImpl::OnInitDialog ()
   BOOL ret = CDialog::OnInitDialog();
   try
     {
-      if (! downloadAnimationControl.Open(IDA_DOWNLOAD))
+      reportEditBox.LimitText (100000);
+      if (! PostMessage(WM_STARTFILECOPY))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Open"), 0);
+	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
 	}
-      if (! downloadAnimationControl.Play(0,
-					  static_cast<unsigned int>(-1),
-					  static_cast<unsigned int>(-1)))
-	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Play"), 0);
-	}
-      packageProgressControl.SetRange (0, 1000);
-      packageProgressControl.SetPos (0);
-      totalProgressControl.SetRange (0, 1000);
-      totalProgressControl.SetPos (0);
-      pInstaller->InstallRemoveAsync ();
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ReportError (e);
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ReportError (e);
     }
   return (ret);
 }
 
+
 /* _________________________________________________________________________
 
-   UpdateDialogImpl::ReportLine
+   UpdateDialogImpl::DoDataExchange
    _________________________________________________________________________ */
 
 void
-MIKTEXUICALL
-UpdateDialogImpl::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+UpdateDialogImpl::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
-  MIKTEX_LOCK(this)
-    {
-      report += lpszLine;
-      report += T_("\r\n");
-      reportUpdated = true;
-      if (doContinue)
-	{
-	  if (! PostMessage(WM_ONPROGRESS))
-	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
-	    }
-	}
-    }
-  MIKTEX_UNLOCK();
-}
-
-/* _________________________________________________________________________
-
-   UpdateDialogImpl::OnRetryableError
-   _________________________________________________________________________ */
-
-bool
-MIKTEXUICALL
-UpdateDialogImpl::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
-{
-  UNUSED_ALWAYS (lpszMessage);
-  return (false);
-}
-
-/* _________________________________________________________________________
-
-   UpdateDialogImpl::FormatControlText
-   _________________________________________________________________________ */
-
-void
-UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
-				     /*[in]*/ const MIKTEXCHAR * lpszFormat,
-				     /*[in]*/			...)
-{
-  CWnd * pWnd = GetDlgItem(ctrlId);
-  if (pWnd == 0)
-    {
-      UNEXPECTED_CONDITION (T_("UpdateDialogImpl::FormatControlText"));
-    }
-  va_list marker;
-  va_start (marker, lpszFormat);
-  tstring str = Utils::FormatString(lpszFormat, marker);
-  va_end (marker);
-  pWnd->SetWindowText (str.c_str());
-}
-
-/* _________________________________________________________________________
-
-   UpdateDialogImpl::OnProgress
-   _________________________________________________________________________ */
-
-bool
-MIKTEXUICALL
-UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
-{
-  UNUSED_ALWAYS (nf);
-  bool doContinue;
-  MIKTEX_LOCK(this)
-    {
-      if (this->doContinue)
-	{
-	  if (! PostMessage(WM_ONPROGRESS))
-	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
-	    }
-	}
-      doContinue = this->doContinue;
-    }
-  MIKTEX_UNLOCK();
-  return (doContinue);
+  CDialog::DoDataExchange (pDX);
+  DDX_Control (pDX, IDC_ANI, animationControl);
+  DDX_Control (pDX, IDC_PROGRESS1, progressControl1);
+  DDX_Control (pDX, IDC_PROGRESS2, progressControl2);
+  DDX_Control (pDX, IDC_REPORT, reportEditBox);
+  DDX_Text (pDX, IDC_REPORT, report);
 }
 
 /* _________________________________________________________________________
@@ -321,42 +350,214 @@ UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
 void
 UpdateDialogImpl::OnCancel ()
 {
-  if (cancelButtonIsCloseButton)
+  if (hWorkerThread == 0 || sharedData.waitingForClickOnClose)
     {
-      if (errorOccured)
-	{
-	  CDialog::OnCancel ();
-	}
-      else
-	{
-	  CDialog::OnOK ();
-	}
+      CDialog::OnCancel ();
       return;
     }
-
-  CWaitCursor wait;
-
-  // set cancel flag
-  doContinue = false;
-
   try
     {
-      // wait for installer to finish
-      pInstaller->WaitForCompletion ();      
-      pInstaller->Dispose ();
-      pInstaller.reset ();
-      pManager.Release ();
+      if (AfxMessageBox(IDS_CANCEL_UPDATE,
+			MB_OKCANCEL | MB_ICONEXCLAMATION)
+	  == IDOK)
+	{
+	  SetCancelFlag ();
+	  if (! PostMessage(WM_PROGRESS))
+	    {
+	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	    }
+	}
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ReportError (e);
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ReportError (e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::OnStartFileCopy
+   _________________________________________________________________________ */
+
+LRESULT
+UpdateDialogImpl::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
+			       /*[in]*/ LPARAM	lParam)
+{
+  UNUSED_ALWAYS (wParam);
+  UNUSED_ALWAYS (lParam);
+
+  try
+    {
+      if (! animationControl.Open(IDA_DOWNLOAD))
+	{
+	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Open"), 0);
+	}
+
+      if (! animationControl.Play(0,
+				  static_cast<unsigned int>(-1),
+				  static_cast<unsigned int>(-1)))
+	{
+	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Play"), 0);
+	}
+
+      // initialize progress bar controls
+      progressControl1.SetRange (0, 1000);
+      progressControl1.SetPos (0);
+      progressControl2.SetRange (0, 1000);
+      progressControl2.SetPos (0);
+
+      // create the worker thread
+      CWinThread * pThread =
+	AfxBeginThread(WorkerThread,
+		       this,
+		       THREAD_PRIORITY_NORMAL,
+		       0,
+		       CREATE_SUSPENDED);
+      MIKTEX_ASSERT (pThread != 0);
+      MIKTEX_ASSERT (pThread->m_hThread != 0);
+      if (! DuplicateHandle(GetCurrentProcess(),
+			    pThread->m_hThread,
+			    GetCurrentProcess(),
+			    &hWorkerThread,
+			    0,
+			    FALSE,
+			    DUPLICATE_SAME_ACCESS))
+	{
+	  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	}
+      pThread->ResumeThread ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
     }
 
-  CDialog::OnCancel ();
+  return (0);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::OnProgress
+   _________________________________________________________________________ */
+
+LRESULT
+UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
+			      /*[in]*/ LPARAM	lParam)
+{
+  UNUSED_ALWAYS (wParam);
+  UNUSED_ALWAYS (lParam);
+
+  try
+    {
+      CSingleLock singleLock (&criticalSectionMonitor, TRUE);
+
+      // update the report
+      if (sharedData.reportUpdate)
+	{
+	  reportEditBox.SetWindowText (sharedData.report);
+	  reportEditBox.SetSel (100000, 100000);
+	  sharedData.reportUpdate = false;
+	}
+
+      // do we have to finish?
+      if (sharedData.ready
+	  || GetCancelFlag()
+	  || GetErrorFlag())
+	{
+	  // check to see if we are already ready
+	  if (sharedData.waitingForClickOnClose)
+	    {
+	      return (0);
+	    }
+
+	  sharedData.waitingForClickOnClose = true;
+
+	  // stop the video
+	  if (! animationControl.Stop())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Stop"), 0);
+	    }
+	  animationControl.Close (); // always returns FALSE
+	  animationControl.ShowWindow (SW_HIDE);
+
+	  // disable controls
+	  EnableControl (IDC_PROGRESS1_TITLE, false);
+	  FormatControlText (IDC_PACKAGE, T_(""));
+	  EnableControl (IDC_PACKAGE, false);
+	  progressControl1.SetPos (0);
+	  progressControl1.EnableWindow (FALSE);
+	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
+	  EnableControl (IDC_PROGRESS2_TITLE, false);
+	  progressControl2.SetPos (0);
+	  progressControl2.EnableWindow (FALSE);
+	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
+	  FormatControlText (IDCANCEL, T_("%s"), T_("Close"));
+	  EnableControl (IDCANCEL, true);
+	}
+      else
+	{
+	  // show the package name
+	  if (sharedData.newPackage)
+	    {
+	      FormatControlText (IDC_PACKAGE,
+				 T_("%s"),
+				 sharedData.packageName.c_str());
+	      sharedData.newPackage = false;
+	    }
+
+	  // update progress bars
+	  progressControl1.SetPos (sharedData.progress1Pos);
+	  progressControl2.SetPos (sharedData.progress2Pos);
+
+	  // update "Removed files (packages)"
+	  FormatControlText (IDC_REMOVED_FILES,
+			     T_("%u (%u)"),
+			     sharedData.progressInfo.cFilesRemoveCompleted,
+			     sharedData.progressInfo.cPackagesRemoveCompleted);
+	  
+	  // update "New files (packages)"
+	  FormatControlText
+	    (IDC_NEW_FILES,
+	     T_("%u (%u)"),
+	     sharedData.progressInfo.cFilesInstallCompleted,
+	     sharedData.progressInfo.cPackagesInstallCompleted);
+	  
+	  // update "Downloaded bytes"
+	  FormatControlText (IDC_DOWNLOADED_BYTES,
+			     T_("%u"),
+			     sharedData.progressInfo.cbDownloadCompleted);
+	  
+	  // update "Package"
+	  FormatControlText (IDC_PACKAGE,
+			     T_("%s"),
+			     sharedData.progressInfo.displayName.c_str());
+	  
+	  // update "KB/s"
+	  FormatControlText
+	    (IDC_KB_SEC,
+	     T_("%.2f"),
+	     (static_cast<double>(sharedData.progressInfo.bytesPerSecond)
+	      / 1024.0));
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      ReportError (e);
+    }
+
+  return (0);
 }
 
 /* _________________________________________________________________________
@@ -369,9 +570,140 @@ MIKTEXCALL
 UpdateDialogImpl::OnProcessOutput (/*[in]*/ const void *	pOutput,
 				   /*[in]*/ size_t		n)
 {
-  UNUSED_ALWAYS (pOutput);
-  UNUSED_ALWAYS (n);
-  return (true);
+  Report (true,
+	  T_("%.*s"),
+	  static_cast<int>(n),
+	  reinterpret_cast<const char *>(pOutput));
+  return (! (GetErrorFlag() || GetCancelFlag()));
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::ReportLine
+   _________________________________________________________________________ */
+
+void
+MPMCALL
+UpdateDialogImpl::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+{
+  Report (true, T_("%s\n"), lpszLine);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::OnRetryableError
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+UpdateDialogImpl::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+{
+  UNUSED_ALWAYS (lpszMessage);
+  return (false);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::OnProgress
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
+{
+  CSingleLock (&criticalSectionMonitor, TRUE);
+  PackageInstaller::ProgressInfo progressInfo = pInstaller->GetProgressInfo();
+  sharedData.progressInfo = progressInfo;
+  if (nf == Notification::InstallPackageStart
+      || nf == Notification::DownloadPackageStart)
+    {
+      sharedData.newPackage = true;
+      sharedData.packageName = progressInfo.displayName;
+    }
+  if (progressInfo.cbPackageDownloadTotal > 0)
+    {
+      sharedData.progress1Pos
+	= static_cast<int>
+	(((static_cast<double>(progressInfo.cbPackageDownloadCompleted)
+	   / progressInfo.cbPackageDownloadTotal)
+	  * PROGRESS_MAX));
+    }
+  if (progressInfo.cbDownloadTotal > 0)
+    {
+      sharedData.progress2Pos
+	= static_cast<int>
+	(((static_cast<double>(progressInfo.cbDownloadCompleted)
+	   / progressInfo.cbDownloadTotal)
+	  * PROGRESS_MAX));
+    }
+  sharedData.secondsRemaining
+    = static_cast<DWORD>(progressInfo.timeRemaining / 1000);
+  if (! PostMessage(WM_PROGRESS))
+    {
+      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+    }
+  return (! (GetErrorFlag() || GetCancelFlag()));
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::WorkerThread
+   _________________________________________________________________________ */
+
+UINT
+UpdateDialogImpl::WorkerThread (/*[in]*/ void * pParam)
+{
+  UpdateDialogImpl * This = reinterpret_cast<UpdateDialogImpl*>(pParam);
+
+  try
+    {
+      This->DoTheUpdate ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      This->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      This->ReportError (e);
+    }
+
+  This->sharedData.ready = true;
+
+  try
+    {
+      if (! This->PostMessage(WM_PROGRESS))
+	{
+	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      This->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      This->ReportError (e);
+    }
+
+  return (0);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::DoTheUpdate
+   _________________________________________________________________________ */
+
+void
+UpdateDialogImpl::DoTheUpdate ()
+{
+  pInstaller->SetCallback (this);
+  pInstaller->InstallRemove ();
+  if (GetCancelFlag())
+    {
+      return;
+    }
+  RunIniTeXMF ();
 }
 
 /* _________________________________________________________________________
@@ -382,137 +714,106 @@ UpdateDialogImpl::OnProcessOutput (/*[in]*/ const void *	pOutput,
 void
 UpdateDialogImpl::RunIniTeXMF ()
 {
-  PathName exe;
+  PathName exePath;
 
-  if (! SessionWrapper(true)->FindFile(T_("initexmf"), FileType::EXE, exe))
+  if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE,
+				       FileType::EXE,
+				       exePath))
     {
       FATAL_MIKTEX_ERROR (T_("UpdateDialogImpl::RunIniTeXMF"),
-			  (T_("The MiKTeX configuration utility ")
-			   T_("could not be found.")),
+			  T_("\
+The MiKTeX configuration utility could not be found."),
 			  0);
     }
 
   CommandLineBuilder commandLine;
   commandLine.AppendOption (T_("--mkmaps"));
 
-  Process::Run (exe, commandLine.Get(), this);
+  SessionWrapper(true)->UnloadFilenameDatabase ();
+
+  Process::Run (exePath, commandLine.Get(), this);
 }
 
 /* _________________________________________________________________________
 
-   UpdateDialogImpl::OnProgress
+   UpdateDialogImpl::Report
    _________________________________________________________________________ */
 
-LRESULT
-UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	,
-			      /*[in]*/ LPARAM	)
+void
+UpdateDialogImpl::Report (/*[in]*/ bool			immediate,
+			  /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+			  /*[in]*/			...)
 {
-  try
+  MIKTEX_ASSERT (lpszFmt != 0);
+  CString str;
+  va_list args;
+  va_start (args, lpszFmt);
+  str.FormatV (lpszFmt, args);
+  va_end (args);
+  int len = str.GetLength();
+  CSingleLock (&criticalSectionMonitor, TRUE);
+  for (int i = 0; i < len; ++ i)
     {
-      if (pInstaller.get() == 0)
+      if (str[i] == T_('\n') && i > 0 && sharedData.report[i - 1] != T_('\r'))
 	{
-	  return (0);
+	  sharedData.report += T_('\r');
 	}
-
-      // get progress information
-      PackageInstaller::ProgressInfo progressInfo =
-	pInstaller->GetProgressInfo();
-
-      // update report
-      MIKTEX_LOCK(this)
+      sharedData.report += str[i];
+    }
+  sharedData.reportUpdate = true;
+  if (immediate)
+    {
+      if (! PostMessage(WM_PROGRESS))
 	{
-	  if (reportUpdated)
-	    {
-	      reportBox.SetWindowText (report);
-	      reportBox.SetSel (100000, 100000);
-	      reportUpdated = false;
-	    }
-	}
-      MIKTEX_UNLOCK();
-
-      // update "Removed files (packages)"
-      FormatControlText (IDC_REMOVED_FILES,
-			 T_("%u (%u)"),
-			 progressInfo.cFilesRemoveCompleted,
-			 progressInfo.cPackagesRemoveCompleted);
-      
-      // upate "Errors"
-      FormatControlText (IDC_NUM_ERRORS,
-			 T_("%u"),
-			 progressInfo.numErrors);
-      
-      // update "New files (packages)"
-      FormatControlText (IDC_NEW_FILES,
-			 T_("%u (%u)"),
-			 progressInfo.cFilesInstallCompleted,
-			 progressInfo.cPackagesInstallCompleted);
-
-      // update "Downloaded bytes"
-      FormatControlText (IDC_DOWNLOADED_BYTES,
-			 T_("%u"),
-			 progressInfo.cbDownloadCompleted);
-      
-      // update "Package"
-      FormatControlText (IDC_PACKAGE,
-			 T_("%s"),
-			 progressInfo.displayName.c_str());
-      
-      // update package progress bar
-      if (progressInfo.cbPackageDownloadTotal > 0)
-	{
-	  packageProgressControl.SetPos
-	    (static_cast<int>
-	     ((static_cast<double>(progressInfo.cbPackageDownloadCompleted)
-	       * 1000)
-	      / progressInfo.cbPackageDownloadTotal));
-	}
-
-      // update total progress bar
-      if (progressInfo.cbDownloadTotal > 0)
-	{
-	  totalProgressControl.SetPos
-	    (static_cast<int>
-	     ((static_cast<double>(progressInfo.cbDownloadCompleted)
-	       * 1000)
-	      / progressInfo.cbDownloadTotal));
-	}
-      
-      // update "KB/s"
-      FormatControlText (IDC_KB_SEC,
-			 T_("%.2f"),
-			 (static_cast<double>(progressInfo.bytesPerSecond)
-			  / 1024.0));
-      
-      if (progressInfo.ready)
-	{
-	  RunIniTeXMF ();
-	  if (! downloadAnimationControl.Stop())
-	    {
-	      FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Stop"), 0);
-	    }
-	  downloadAnimationControl.Close (); // always returns FALSE
-	  downloadAnimationControl.ShowWindow (SW_HIDE);
-	  FormatControlText (IDCANCEL, T_("%s"), T_("Close"));
-	  if (progressInfo.numErrors > 0)
-	    {
-	      errorOccured = true;
-	    }
-	  pInstaller->Dispose ();
-	  pInstaller.reset ();
-	  pManager.Release ();
-	  cancelButtonIsCloseButton = true;
+	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
 	}
     }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+}
 
-  return (0);
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::GetControl
+   _________________________________________________________________________ */
+
+CWnd *
+UpdateDialogImpl::GetControl (/*[in]*/ UINT	controlId)
+{
+  CWnd * pWnd = GetDlgItem(controlId);
+  if (pWnd == 0)
+    {
+      UNEXPECTED_CONDITION (T_("UpdateDialogImpl::GetControl"));
+    }
+  return (pWnd);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::EnableControl
+   _________________________________________________________________________ */
+
+void
+UpdateDialogImpl::EnableControl (/*[in]*/ UINT	controlId,
+				 /*[in]*/ bool	enable)
+{
+  GetControl(controlId)->EnableWindow (enable ? TRUE : FALSE);
+  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
+}
+
+/* _________________________________________________________________________
+
+   UpdateDialogImpl::FormatControlText
+   _________________________________________________________________________ */
+
+void
+UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
+				     /*[in]*/ const MIKTEXCHAR * lpszFormat,
+				     /*[in]*/			...)
+{
+  va_list marker;
+  va_start (marker, lpszFormat);
+  tstring str = Utils::FormatString(lpszFormat, marker);
+  va_end (marker);
+  GetControl(ctrlId)->SetWindowText (str.c_str());
 }
 
 /* _________________________________________________________________________
@@ -539,6 +840,17 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		       /*[in]*/ const vector<tstring> &	toBeInstalled,
 		       /*[in]*/ const vector<tstring> &	toBeRemoved)
 {
+  tstring url;
+  RepositoryType repositoryType (RepositoryType::Unknown);
+  if (toBeInstalled.size() > 0
+      && PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
+      && repositoryType == RepositoryType::Remote
+      && ! MiKTeX::UI::ProxyAuthenticationDialog((pParent == 0
+						  ? 0
+						  : pParent->GetSafeHwnd())))
+    {
+      return (IDCANCEL);
+    }
   UpdateDialogImpl dlg (pParent, pManager);
   dlg.SetFileLists (toBeInstalled, toBeRemoved);
   return (dlg.DoModal());

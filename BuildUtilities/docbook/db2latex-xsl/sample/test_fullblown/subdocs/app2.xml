@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+ **************************************************************************	
+
+  $Author: rcasellas $                                         
+  $Id: app2.xml,v 1.2 2003/03/14 15:33:39 rcasellas Exp $
+
+ **************************************************************************	
+--> 
+
+
+<appendix id="app:largedev">
+<title>Techniques des Grandes Déviations </title>
+
+<!-- ==================================================== -->    
+<sect1><title> Motivation</title>
+<!-- ==================================================== -->
+
+
+<!-- ******************************************* -->
+<sect2><title>Notation </title>
+<!-- ******************************************* -->
+
+<mathelement><mathdefinition id="definition.">
+        <title>Task</title>
+        <mathphrase>
+        <para> A task is something that has to be done, usually given by
+        your boss, under the hypothesis that you do not want to. (Otherwise
+        it is a pleasure, like working on DB2LaTeX).</para>
+        </mathphrase>
+</mathdefinition></mathelement>
+
+
+<mathelement><maththeorem id="theorem.">
+        <title>Lazy man theorem</title>
+        <mathcondition>
+                <para>Given a task to do, T</para>
+        </mathcondition>
+        <mathassertion>
+                <para>Do not perform task T today, if it can be done tomorrow.</para>
+        </mathassertion>
+        <mathproof>
+                <para> A proof will be given tomorrow.</para>
+        </mathproof>
+</maththeorem></mathelement>
+
+</sect2>
+</sect1>
+
+
+
+
+
+
+
+<!-- ==================================================== -->
+<sect1><title>La Loi des Grandes Nombres</title>
+<!-- ==================================================== -->
+
+
+<para>La loi des Grandes Nombres établi que la moyenne empirique d'une suite de variables aléatoires i.i.d. tend presque sûrement à sa moyenne.  </para>
+
+
+<alt role="tex"><![CDATA[
+\begin{equation}
+\frac{1}{n} \sum\limits_{i=1}^{n}{X_i} \to E[X_i] a.s. 
+\end{equation}
+\begin{equation}
+\lim\limits_{n \to \infty} { 
+	\mathbb{P} \left(
+\frac{\sum\limits_{i=1}^{n}{X_i} - {n \mathbb{E}{[X]}}}{\sqrt{n\operatorname{Var}(X)}} \le x 	\right)
+	}		 = 
+\frac{1}{\sqrt{2\pi}} \int\limits_{-\infty}^{x} { e^{-t^2/2} dt}
+\end{equation}
+]]></alt> 
+<para> Par rapport à la Loi des Grandes Nombres, les Grandes Déviations estiment la probabilité de s'éloigner de la moyenne.</para>
+
+</sect1>
+
+</appendix>	
+
+
+

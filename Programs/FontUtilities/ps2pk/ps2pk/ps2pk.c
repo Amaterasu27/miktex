@@ -467,6 +467,13 @@ int argc; char *argv[];
       if (afmname == NULL)
          afmname = newname(psname, ".afm");
       afmfile = kpse_find_file(afmname,kpse_afm_format,0);
+#if defined(MIKTEX)
+      if (afmfile == 0)
+	{
+	  afmname = newname(afmname, ".afm.gz");
+	  afmfile = kpse_find_file(afmname, kpse_afm_format, 0);
+	 }
+#endif
       if (!afmfile)
          fatal("%s: AFM file %s not found!\n", program_invocation_name,
                 afmname); 

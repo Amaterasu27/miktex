@@ -1,0 +1,189 @@
+\documentclass[pdftex,english,a4paper,10pt]{article}
+\usepackage[pdftex,breaklinks,pdfstartview=FitH,pdfpagemode=UseNone]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage{isolatin1}
+\usepackage{float}    %Required for QandADiv
+\usepackage{fancyvrb} %Required for ProgramListing
+\pdfcompresslevel=9
+% --------------------------------------------
+\makeatletter
+\newcommand{\dbz}{\hspace\z@}
+\newcommand{\docbooktolatexpipe}{\ensuremath{|}\dbz}
+\usepackage[latin1]{inputenc}
+
+\def\docbooktolatexgobble{\expandafter\@gobble}
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatex@align}[2]{\protect\ifvmode#1\else\ifx\LT@@tabarray\@undefined#2\else#1\fi\fi}
+\newcommand{\docbooktolatexalignll}{\docbooktolatex@align{\raggedright}{}}
+\newcommand{\docbooktolatexalignlr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexaligncl}{\docbooktolatex@align{\centering}{\hfill}}
+\newcommand{\docbooktolatexaligncr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{}
+\ifx\captionswapskip\@undefined\newcommand{\captionswapskip}{}\fi
+\makeatother
+\title{\textbf{Title}}
+\date{2003/03/10}
+\author{Ramon Casellas}
+\begin{document}
+{\maketitle\pagestyle{empty}\thispagestyle{empty}}
+
+% ------------------------   
+% Section 
+\section{Introduction}
+\label{id2735069}\hypertarget{id2735069}{}%
+% -------------------------------------------------------------
+% QandASet                                                     
+% -------------------------------------------------------------
+\subsection*{First QandASet}
+\label{id2735076}
+\vspace{1em}
+\noindent{}1.~\textbf{Q:}~\textit{May I add a qandaentry without a qandadiv?}
+\newline
+\noindent\textbf{A:}~
+Well, I did...
+
+
+\vspace{1em}
+% -----------
+% QandADiv   
+% -----------
+\noindent\begin{minipage}{\linewidth}
+\vspace{0.25em}\hrule\vspace{0.25em}
+\subsubsection*{General Information}\label{id2735102}
+\hrule\vspace{0.25em}
+\end{minipage}
+\noindent{}1.~\textbf{Q:}~\textit{Adobe Systems, Inc.}
+\newline
+\noindent{}2.~\textbf{Q:}~\textit{Agfa, Inc.}
+\vspace{0.25em}\hrule
+\vspace{1em}
+\noindent{}1.~\textbf{Q:}~\textit{Adobe Systems, Inc.}
+\newline
+\noindent\textbf{A:}~
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Ut wisi enim ad minim veniam, quis nostru exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat sectetuer adipiscing.
+
+
+\vspace{1em}
+\noindent{}2.~\textbf{Q:}~\textit{Agfa, Inc.}
+\newline
+\noindent\textbf{A:}~
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Ut wisi enim ad minim veniam, quis nostru exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat sectetuer adipiscing.
+
+
+\vspace{1em}
+% -----------
+% QandADiv   
+% -----------
+\noindent\begin{minipage}{\linewidth}
+\vspace{0.25em}\hrule\vspace{0.25em}
+\subsubsection*{General Information}\label{id2735174}
+\hrule\vspace{0.25em}
+\end{minipage}
+\noindent{}1.~\textbf{Q:}~\textit{Adobe Systems, Inc.}
+\newline
+\noindent{}2.~\textbf{Q:}~\textit{Agfa, Inc.}
+\vspace{0.25em}\hrule
+\vspace{1em}
+\noindent{}1.~\textbf{Q:}~\textit{Adobe Systems, Inc.}
+\newline
+\noindent\textbf{A:}~
+...
+
+
+\vspace{1em}
+\noindent{}2.~\textbf{Q:}~\textit{Agfa, Inc.}
+\newline
+\noindent\textbf{A:}~
+...
+
+
+\vspace{1em}
+% -------------------------------------------------------------
+% QandASet                                                     
+% -------------------------------------------------------------
+\subsection*{F.A.Q.}
+\label{id2733268}
+% -----------
+% QandADiv   
+% -----------
+\noindent\begin{minipage}{\linewidth}
+\vspace{0.25em}\hrule\vspace{0.25em}
+\subsubsection*{DB2LaTeX Meta-FAQ}\label{id2733271}
+\hrule\vspace{0.25em}
+\end{minipage}
+\noindent{}1.~\textbf{Q:}~\textit{What is DB2LaTeX?}
+\newline
+\noindent{}2.~\textbf{Q:}~\textit{Where can I find DB2LaTeX?}
+\vspace{0.25em}\hrule
+\vspace{1em}
+\noindent{}1.~\textbf{Q:}~\textit{What is DB2LaTeX?}
+\newline
+\noindent\textbf{A:}~
+DB2LaTeX are a set of XSLT stylesheets which generate high level LaTeX2e from your docbook document. They do not perform any FO transformation, the only thing they do is to map DocBook tags into more or less standard LaTeX (a recent installation of LaTeX 2e is required, with most common packages. However, in more stable releases, package dependencies will be completely managed with xsl variables, making it virtually compatible with basic LaTeX 2e installations). All the {``}styling{''} has to be done by modifying available xsl:variables, overriding and customizing templates, and in the last, by adding your {``}sty{''} files.
+
+As an example of use, they translate a \textless{}command\textgreater{} \textless{}/command\textgreater{} into {\texttt{{\docbooktolatexgobble\string\\begin\docbooktolatexgobble\string\{command\docbooktolatexgobble\string\}}}}. Of course, there are a lot of other things to do, like tables, bibliography and so on...but this is the main idea.
+
+They are heavily based (that is, I started from a local copy and then start changing things here and there) on Norman Walsh XSL docbook stylesheets. These stylesheets are published here with Norman Walsh permission. Copyright and due credit is for Norman Walsh. Bugs are mine. However, bear in mind the fact that these stylesheets are NOT the XSL Docbook stylesheets. Thank you.
+
+They are {``}alpha{''}. That means: it may work, it may not work. Your favourite feature may / may not be implemented. I will be glad to accept patches in form of XSL code or anything :). Many thanks to those who have already sent me patches and pointed out some bugs.
+
+At least this escaping now works: \textbackslash textbackslash And with some extra space: \textbackslash \ textbackslash.
+
+
+\vspace{1em}
+\noindent{}2.~\textbf{Q:}~\textit{Where can I find DB2LaTeX?}
+\newline
+\noindent\textbf{A:}~
+You can find it
+
+
+\vspace{1em}
+
+% --------------------------------------------
+% End of document
+% --------------------------------------------
+\end{document}

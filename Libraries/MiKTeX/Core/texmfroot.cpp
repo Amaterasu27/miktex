@@ -157,8 +157,12 @@ SessionImpl::InitializeRootDirectories ()
   // check for MiKTeX CD/DVD
   if (IsMiKTeXDirect())
     {
-      startupConfig.installRoot = GetSpecialPath(SpecialPath::BinDirectory);
+      startupConfig.installRoot = GetMyLocation();
+#if defined(MIKTEX_WINDOWS_32)
       startupConfig.installRoot += PARENT_PARENT_DIRECTORY;
+#else
+      startupConfig.installRoot += PARENT_PARENT_PARENT_DIRECTORY;
+#endif
       startupConfig.installRoot.MakeAbsolute ();
     }
   else
@@ -733,15 +737,15 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
   if (r == MPM_ROOT)
     {
       path = GetMpmDatabasePathName();
-      return (File::Exists(path));
     }
-
-  if (r != MPM_ROOT && r >= GetNumberOfTEXMFRoots())
+  else if (r >= GetNumberOfTEXMFRoots())
     {
       INVALID_ARGUMENT (T_("SessionImpl::FindFilenameDatabase"), NUMTOSTR(r));
     }
-
-  path = GetFilenameDatabasePathName(r);
+  else
+    {
+      path = GetFilenameDatabasePathName(r);
+    }
 
   if (File::Exists(path))
     {
@@ -763,6 +767,7 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
       // try ROOT\miktex\conig\texmf.fndb
       path.Set (rootDirectories[r].get_Path(), MIKTEX_PATH_TEXMF_FNDB);
     }
+
   return (File::Exists(path));
 }
 

@@ -1,6 +1,6 @@
 
 /**********************************************************/
-/* t4ht.c                                2006-01-04-02:35 */
+/* t4ht.c                                2006-09-13-14:28 */
 /* Copyright (C) 1998--2006    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
@@ -433,9 +433,6 @@ ext_script
 
 static FILE* lg_file;
 static long  begin_lg_file;
-
-
-static C_CHAR warning[] = "--- warning --- ";
 
 
 static C_CHAR *warn_err_mssg[]={ 
@@ -1067,7 +1064,7 @@ static void warn_i_str
 ;
 #undef SEP
 #endif
-{  (IGNORED) fprintf(stderr,warning);
+{  (IGNORED) fprintf(stderr,"--- warning --- ");
    (IGNORED) fprintf(stderr,warn_err_mssg[n], str);
 }
 
@@ -1430,19 +1427,19 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2006-01-04-02:35)\n");
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28)\n");
 #endif
 #else
 #ifdef PLATFORM
 #  if defined(MIKTEX)
-   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s MiKTeX)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s MiKTeX)\n",PLATFORM);
 #  else
-   (IGNORED) printf("t4ht.c (2006-01-04-02:35 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 %s kpathsea)\n",PLATFORM);
 #  endif
 #else
-   (IGNORED) printf("t4ht.c (2006-01-04-02:35 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2006-09-13-14:28 kpathsea)\n");
 #endif
 #endif
 
@@ -1709,7 +1706,7 @@ if( dos_env_file ){
    
 
 #ifdef KPATHSEA
-if( !file )  {               U_CHAR * envname;
+if( !file )  {               U_CHAR * envfile;
                              char *arch, *p, str[256];
    
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
@@ -1721,7 +1718,7 @@ while( *p != '\0' ){
 }
 
 
-   envname = (char *) 0;
+   envfile = (char *) 0;
    
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
@@ -1729,24 +1726,43 @@ if( arch ){
     (IGNORED) printf(
       "kpse_open_file (\"%s\", kpse_program_text_format)?\n", str );
   }
-  envname= kpse_find_file (str, kpse_program_text_format, 0);
+  envfile= kpse_find_file (str, kpse_program_text_format, 0);
 }
 
 
-   if ( !envname ){ 
+   if ( !envfile ){ 
 if( debug ){
   (IGNORED) printf(
     "kpse_open_file (\"tex4ht.env\", kpse_program_text_format)?\n");
 }
-envname= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
-   if ( envname ){
-      file = kpse_open_file (envname, kpse_program_text_format);
-      (IGNORED) printf("(%s)\n",  envname);
+   if ( !envfile ){ 
+if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
+   
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}
+
+
+   envfile= kpse_find_file (fileaddr, kpse_program_text_format, 0);
+}
+
+ }
+   if ( envfile ){
+      file = kpse_open_file (envfile, kpse_program_text_format);
+      (IGNORED) printf("(%s)\n",  envfile);
    }
    if( debug && file ){
-      (IGNORED) printf(".......Open kpathsea %s\n", envname);
+      (IGNORED) printf(".......Open kpathsea %s\n", envfile);
    }
 }
 if( debug ){
@@ -1973,7 +1989,7 @@ if( rec_op != No_op ){
 
  }
          if( rec_op == No_op ){
-            (IGNORED) fprintf(stderr,warning);
+            (IGNORED) fprintf(stderr,"--- warning --- ");
             (IGNORED) fprintf(stderr,"CopyTo: %s%s%s%s%s?\n",
                       match[1], match[2], match[3], match[4], match[5]);
          } else {
@@ -2104,7 +2120,7 @@ if( rec_op == Until_op ){
   }
   if( p == (struct files_rec*) 0 ){
     
-(IGNORED) fprintf(stderr,"%sMissing `CopyTo From':\n", warning);
+(IGNORED) fprintf(stderr,"%sMissing `CopyTo From':\n", "--- warning --- ");
 for( p = to_rec->down; p != (struct files_rec*) 0;  p = p->down ){
   (IGNORED) fprintf(stderr,"   %s %s%d %s\n", to_rec->name,
           p->op == From_op ?  "From  " :

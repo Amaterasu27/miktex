@@ -277,7 +277,14 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 		      SRCCOPY);
       if (n != dvibm.height)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  if (IsWindowsNT() && n == GDI_ERROR)
+	    {
+	      FATAL_WINDOWS_ERROR (T_("StretchDIBits"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	    }
       	}
 #endif
       

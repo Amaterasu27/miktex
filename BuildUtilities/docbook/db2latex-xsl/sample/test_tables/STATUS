@@ -1,0 +1,7 @@
+The 'Complex' example doesn't look right because spans/morerows are not supported.
+
+The ltxtable test is a big project, regarding allowing tables to be split across pages while still honouring tabularx-like features.
+Also, cell alignment doesn't always work.
+See also USENET Message <x565ssk6nl.fsf@lola.goethe.zz>
+
+'char' column-alignment support has problems.

@@ -30,6 +30,7 @@ enum {
   OPT_AAA = 1,
   OPT_DESTNAME,
   OPT_ENGINE,
+  OPT_ENGINE_OPTION,
   OPT_JOB_TIME,
   OPT_NO_DUMP,
   OPT_PRELOAD
@@ -85,6 +86,7 @@ private:
 private:
   BEGIN_OPTION_MAP(MakeFmt)
     OPTION_ENTRY (OPT_ENGINE, SetEngine(lpszOptArg))
+    OPTION_ENTRY (OPT_ENGINE_OPTION, AppendEngineOption(lpszOptArg))
     OPTION_ENTRY_SET (OPT_DESTNAME, destinationName)
     OPTION_ENTRY_SET (OPT_JOB_TIME, jobTime)
     OPTION_ENTRY_SET (OPT_PRELOAD, preloadedFormat)
@@ -111,6 +113,13 @@ private:
       {
 	FatalError (T_("Unknown engine: %s"), lpszEngine);
       }
+  }
+
+private:
+  void
+  AppendEngineOption (/*[in]*/ const MIKTEXCHAR * lpszOption)
+  {
+    engineOptions.Append (lpszOption);
   }
 
 private:
@@ -180,6 +189,9 @@ private:
 
 private:
   bool noDumpPrimitive;
+
+private:
+  Argv engineOptions;
 };
 
 /* _________________________________________________________________________
@@ -200,6 +212,7 @@ Options:\n\
 --debug, -d                         Print debugging information.\n\
 --dest-name NAME                    Destination file name.\n\
 --engine=ENGINE                     Set the engine.\n\
+--engine-option=OPTION              Add an engine option.\n\
 --help, -h                          Print this help screen and exit.\n\
 --job-time=FILE                     Job time is file's modification time.\n\
 --no-dump                           Don't issue the \\dump command.\n\
@@ -221,6 +234,7 @@ namespace {
     COMMON_OPTIONS,
     T_("dest-name"),	required_argument,	0,	OPT_DESTNAME,
     T_("engine"),	required_argument,	0,	OPT_ENGINE,
+    T_("engine-option"), required_argument,	0,	OPT_ENGINE_OPTION,
     T_("job-time"),		required_argument, 0,	OPT_JOB_TIME,
     T_("no-dump"),		no_argument,	0,	OPT_NO_DUMP,
     T_("preload"),		required_argument, 0,	OPT_PRELOAD,
@@ -502,6 +516,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
     {
       arguments.AppendOption (T_("--job-time="), jobTime);
     }
+  arguments.AppendArguments (engineOptions);
   if (preloadedFormat.length() > 0)
     {
       arguments.AppendArgument (tstring(T_("&")) + preloadedFormat);

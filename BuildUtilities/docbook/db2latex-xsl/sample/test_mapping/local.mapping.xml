@@ -1,0 +1,19 @@
+<?xml version='1.0'?>
+<!DOCTYPE latexbindings SYSTEM "http://db2latex.sourceforge.net/xsl/latex.mapping.dtd">
+
+<latexbindings>
+
+    <!-- LaTeX mapping, role, BEGIN -->
+    <latexmapping role="begin">
+	<mapping key="glossary"	text="">
+	    <line>% LOCAL------------------------------------------------------------- &#10;</line>
+	    <line>% LOCAL&#10;</line>
+	    <line>% LOCALGLOSSARY %title&#10;</line>
+	    <line>% LOCAL&#10;</line>
+	    <line>% LOCAL------------------------------------------------------------- &#10;</line>
+	    <line>\dbglossary{%title}&#10;</line>
+	    <line>\label{%id}\hypertarget{%id}{}%&#10;</line>
+	</mapping>
+	</latexmapping>
+
+</latexbindings>

@@ -43,7 +43,8 @@ SettingsPage::SettingsPage ()
 		   0,
 		   IDS_HEADER_SETTINGS,
 		   IDS_SUBHEADER_SETTINGS),
-    pSheet (0)
+    pSheet (0),
+    installOnTheFly (2)
 {
 }
 
@@ -71,6 +72,7 @@ SettingsPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
   DDX_CBString (pDX, IDC_COMBO1, paperSize);
+  DDX_CBIndex (pDX, IDC_INSTALL_ON_THE_FLY, installOnTheFly);
 }
 
 /* _________________________________________________________________________
@@ -81,27 +83,27 @@ SettingsPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 LRESULT
 SettingsPage::OnWizardNext ()
 {
-  UINT uNext;
+  UINT next;
   switch (theApp.setupTask.Get())
     {
     case SetupTask::InstallFromCD:
     case SetupTask::InstallFromLocalRepository:
     case SetupTask::InstallFromRemoteRepository:
 #if ENABLE_ADDTEXMF
-      uNext = IDD_ADD_TEXMFROOTS;
+      next = IDD_ADD_TEXMFROOTS;
 #else
-      uNext = IDD_INFOLIST;
+      next = IDD_INFOLIST;
 #endif
       break;
     case SetupTask::PrepareMiKTeXDirect:
-      uNext = IDD_INFOLIST;
+      next = IDD_INFOLIST;
       break;
     default:
       ASSERT (false);
       __assume (false);
       break;
     }
-  return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(uNext)));
+  return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(next)));
 }
 
 /* _________________________________________________________________________
@@ -145,5 +147,21 @@ SettingsPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
   theApp.paperSize = paperSize;
+  switch (installOnTheFly)
+    {
+    case 0:
+      theApp.installOnTheFly = TriState::True;
+      break;
+    case 1:
+      theApp.installOnTheFly = TriState::False;
+      break;
+    case 2:
+      theApp.installOnTheFly = TriState::Undetermined;
+      break;
+    default:
+      ASSERT (false);
+      __assume (false);
+      break;
+    }
   return (ret);
 }

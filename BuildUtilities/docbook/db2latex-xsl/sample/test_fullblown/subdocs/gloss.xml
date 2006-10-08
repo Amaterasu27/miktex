@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<glossary id="glossary">
+<?dbhtml filename="dbgloss.html"??>
+<glossaryinfo>
+	<pubdate>$Date: 2003/03/20 11:53:49 $</pubdate>
+	<releaseinfo>$Revision: 1.2 $</releaseinfo>
+</glossaryinfo>
+
+
+<title>Glossaire</title>
+
+
+<glossdiv><title>A</title>
+<glossentry id="gloss-attribute">
+<glossterm>attribute</glossterm>
+<glossdef>
+	<para>
+	<indexterm><primary>attributes</primary></indexterm>
+	<indexterm><primary>elements</primary>
+	  <secondary>attributes</secondary></indexterm>
+
+	Attributes augment the element on which they appear; they also
+	provide additional information about the element.
+	</para>
+<para>
+	<indexterm><primary>start tags</primary>
+  	<secondary>attribute ID, containing</secondary></indexterm>
+	Attributes appear as name-value pairs in the element's start-tag.
+	For example, to assign the value <literal>hostname</literal> to the
+	<sgmltag class="attribute">Role</sgmltag> attribute of 	<sgmltag>SystemItem</sgmltag>,
+	you would use the mark up:
+	<sgmltag class="starttag">systemitem role="hostname"</sgmltag>.
+</para>
+</glossdef>
+</glossentry>
+</glossdiv>
+
+
+
+
+
+
+
+
+<glossdiv><title>S</title>
+<glossentry>
+<glossterm>SGML</glossterm>
+<glosssee otherterm="sgml"/>
+</glossentry>
+<glossentry id="sgml">
+<glossterm>Standard Generalized
+  Markup Language</glossterm>
+<acronym>SGML</acronym>
+<abbrev>ISO 8879:1986</abbrev>
+<glossdef>
+<para>Some reasonable definition here.</para>
+<glossseealso otherterm="gloss-attribute"/>
+</glossdef>
+</glossentry>
+</glossdiv>
+
+
+</glossary>
+
+
+

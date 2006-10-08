@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article id="article" lang="en">
+<articleinfo>
+<title id="title:article">Links</title>
+<authorgroup>
+<author> <surname>Casellas</surname> <firstname>Ramon</firstname> </author>
+<author> <surname>Devenish</surname> <firstname>James</firstname> </author>
+<corpauthor>Some Corporation</corpauthor>
+</authorgroup>
+</articleinfo>
+
+
+<sect1><title>Plain Tests</title>
+<quote>Links</quote>:
+<link linkend="article"/>,
+<quote>Links</quote>:
+<link linkend="article" endterm="title:article"/>,
+<quote>Links</quote>:
+<link linkend="title:article"/>,
+buf_init:
+<link linkend="buf-init">buf_init</link>,
+Third Section:
+<link linkend="sec:ulinks" endterm="title:ulinks">Third Section</link>,
+Ulinks_:
+<link linkend="sec:ulinks" endterm="title:ulinks"/>,
+Section 3:
+<link linkend="sec:ulinks"/>.
+Title:
+<link linkend="title:ulinks">Title</link>.
+</sect1>
+
+<sect1><title>Cross-reference Tests</title>
+Ulinks_<phrase role="pageref"><latex>\ on page 1</latex></phrase>:
+<xref linkend="sec:ulinks" endterm="title:ulinks"/>,
+Section 3<phrase role="pageref"><latex>\ on page 1</latex></phrase>:
+<xref linkend="sec:ulinks"/>,
+XrefId[???]:
+<xref linkend="bogus"/>.
+</sect1>
+
+<sect1 id="sec:ulinks"><title id="title:ulinks">Ulinks_</title>
+<anchor id="buf-init"/>
+<para>This is an amount of text that may make this sentence long
+  <ulink url="http://www.enst.fr/#top"/> </para>
+<para>This is might also make this sentence a bit long
+  <ulink url="http://www.enst.fr/&amp;_~#top"></ulink> </para>
+<sect2><title><literal>More/more/ more/more/ more/more/ aaaa/aaaa/b/b/b/b/cccc/cccc/ more/more/ more/more</literal></title></sect2>
+<para><ulink url="http://www.enst.fr/&amp;x">http://www.enst.fr</ulink></para>
+<para>This is might also make this sentence long enough for the regular text
+  <ulink url="http://www.enst.fr/#top">blah http://www.enst.fr/_~#top <literal>http://www.enst.fr/_~#top</literal></ulink></para>
+<para><ulink url="http://www.enst.fr">ENST</ulink></para>
+<para><email>email</email></para>
+<para>Regular text _~#1 with footnote<footnote>
+<para><ulink url="http://www.enst.fr/#top"/> </para>
+<para><ulink url="http://www.enst.fr/&amp;_~#top"></ulink> </para>
+<para><ulink url="http://www.enst.fr/&amp;x">http://www.enst.fr</ulink></para>
+<para><ulink url="http://www.enst.fr/#top">blah http://www.enst.fr/_~#top <literal>http://www.enst.fr/_~#top</literal></ulink></para>
+<para><ulink url="http://www.enst.fr/_~#top">ENST</ulink></para>
+<para><email>email</email></para>
+<para>Regular text _~#2.</para>
+</footnote>.</para>
+</sect1>
+
+</article>

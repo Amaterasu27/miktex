@@ -36,6 +36,7 @@ PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
   : mustBuildFormats (false),
     pProgressDialog (0),
     pManager (pManager),
+    generalPage (pManager),
     packagesPage (pManager)
 {
   m_psh.dwFlags &= ~(PSH_HASHELP);

@@ -521,6 +521,7 @@ END_MESSAGE_MAP();
 
 SetupWizardApplication::SetupWizardApplication ()
   : packageLevel (PackageLevel::None),
+    installOnTheFly (TriState::Undetermined),
     setupTask (SetupTask::None)
 {
 }
@@ -681,6 +682,7 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 
       // try SETUPDIR\..\tm\packages
       localRepository = theApp.setupPath;
+      localRepository.RemoveFileSpec ();
       localRepository += T_("..");
       localRepository += T_("tm\\packages");
       localRepository.MakeAbsolute ();
@@ -862,13 +864,20 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     }
 
   // package level
-  if (pkglvl.Get() == PackageLevel::Essential)
+  if (theApp.prefabricated)
     {
-      theApp.packageLevel = PackageLevel::Essential;
+      theApp.packageLevel = pkglvl;
     }
   else
     {
-      theApp.packageLevel = PackageLevel::Basic;
+      if (pkglvl.Get() == PackageLevel::Essential)
+	{
+	  theApp.packageLevel = PackageLevel::Essential;
+	}
+      else
+	{
+	  theApp.packageLevel = PackageLevel::Basic;
+	}
     }
 
   // remote package repository
@@ -1076,10 +1085,21 @@ SetupWizardApplication::InitInstance ()
 
   try
     {
-      Session::InitInfo initinfo (T_("setup"),
-				  Session::InitFlags::NoConfigFiles);
+      // create a scratch root directory
+      TempDirectory scratchRoot;
 
-      SessionWrapper pSession (initinfo);
+      StartupConfig startupConfig;
+      startupConfig.userDataRoot = scratchRoot.Get();
+      startupConfig.userConfigRoot = scratchRoot.Get();
+      startupConfig.commonDataRoot = scratchRoot.Get();
+      startupConfig.commonConfigRoot = scratchRoot.Get();
+      startupConfig.installRoot = scratchRoot.Get();
+
+      Session::InitInfo initInfo (T_("setup"),
+				  Session::InitFlags::NoConfigFiles);
+      initInfo.SetStartupConfig (startupConfig);
+
+      SessionWrapper pSession (initInfo);
 
       pManager = PackageManager::Create();
 
@@ -1137,6 +1157,10 @@ SetupWizardApplication::InitInstance ()
       pManager->UnloadDatabase ();
       
       pManager.Release ();
+
+      pSession->UnloadFilenameDatabase ();
+
+      scratchRoot.Delete ();
 
       pSession.Reset ();
     }
@@ -1342,7 +1366,7 @@ PathName
 GetLogFileName ()
 {
   PathName ret;
-  if (theApp.dryRun)
+  if (theApp.dryRun || theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
     {
       ret.SetToTempDirectory ();
     }
@@ -1384,7 +1408,11 @@ ULogOpen ()
 
 #define UNINST_DISPLAY_NAME \
   MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
+#define UNINST_DISPLAY_NAME_MIKTEXDIRECT \
+  "MiKTeXDirect" " " MIKTEX_VERSION_STR
 #define UNINST_REG_PATH REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME
+#define UNINST_REG_PATH_MIKTEXDIRECT \
+  REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME_MIKTEXDIRECT
 #define UNINST_HELP_LINK T_("http://miktex.org/Support.aspx")
 #define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
 #define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
@@ -1394,10 +1422,15 @@ RegisterUninstaller ()
 {
   HKEY hkey;
   DWORD disp;
+
+  const MIKTEXCHAR * lpszUninstRegPath =
+    (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
+     ? UNINST_REG_PATH_MIKTEXDIRECT
+     : UNINST_REG_PATH);
   
   LONG result =
     RegCreateKeyEx(HKEY_LOCAL_MACHINE,
-		   UNINST_REG_PATH,
+		   lpszUninstRegPath,
 		   0,
 		   T_(""),
 		   REG_OPTION_NON_VOLATILE,
@@ -1414,27 +1447,34 @@ RegisterUninstaller ()
   AutoHKEY autoHKEY (hkey);
   
   result =
-    RegSetValueEx(hkey,
-		  T_("DisplayName"),
-		  0,
-		  REG_SZ,
-		  reinterpret_cast<const BYTE *>(UNINST_DISPLAY_NAME),
-		  static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_NAME)));
+    RegSetValueEx
+    (hkey,
+     T_("DisplayName"),
+     0,
+     REG_SZ,
+     (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
+      ? reinterpret_cast<const BYTE *>(UNINST_DISPLAY_NAME_MIKTEXDIRECT)
+      : reinterpret_cast<const BYTE *>(UNINST_DISPLAY_NAME)),
+     (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
+      ? static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_NAME_MIKTEXDIRECT))
+      : static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_NAME))));
   
   if (result != ERROR_SUCCESS)
     {
       FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
     }
   
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, UNINST_REG_PATH, T_("DisplayName"));
+  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("DisplayName"));
   
   // make uninstall command line
-  PathName pathCopyStart (theApp.startupConfig.installRoot, MIKTEX_PATH_COPYSTART_EXE);
+  PathName pathCopyStart (theApp.startupConfig.installRoot,
+			  MIKTEX_PATH_COPYSTART_EXE);
   tstring commandLine;
   commandLine += T_('"');
   commandLine += pathCopyStart.Get();
   commandLine += T_("\" \"");
-  PathName pathUninstallDat (theApp.startupConfig.installRoot, MIKTEX_PATH_UNINSTALL_DAT);
+  PathName pathUninstallDat (theApp.startupConfig.installRoot,
+			     MIKTEX_PATH_UNINSTALL_DAT);
   commandLine += pathUninstallDat.Get();
   commandLine += T_('"');
   
@@ -1451,7 +1491,8 @@ RegisterUninstaller ()
       FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
     }
   
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, UNINST_REG_PATH,
+  ULogAddRegValue (HKEY_LOCAL_MACHINE,
+		   lpszUninstRegPath,
 		   T_("UninstallString"));
   
   result =
@@ -1467,7 +1508,7 @@ RegisterUninstaller ()
       FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
     }
   
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, UNINST_REG_PATH, T_("HelpLink"));
+  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("HelpLink"));
   
   result =
     RegSetValueEx(hkey,
@@ -1482,7 +1523,7 @@ RegisterUninstaller ()
       FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
     }
 
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, UNINST_REG_PATH, T_("Publisher"));
+  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("Publisher"));
       
   result =
     RegSetValueEx(hkey,
@@ -1498,7 +1539,7 @@ RegisterUninstaller ()
     }
 
   ULogAddRegValue (HKEY_LOCAL_MACHINE,
-		   UNINST_REG_PATH,
+		   lpszUninstRegPath,
 		   T_("DisplayVersion"));
 }
 

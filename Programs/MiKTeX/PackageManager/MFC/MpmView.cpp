@@ -1172,10 +1172,9 @@ MpmView::OnUpdateWizard ()
 {
   try
     {
-      PathName updateDat;
-      if (! pSession->FindFile(T_("update.dat"),
-			       T_("%R\\miktex\\config"),
-			       updateDat))
+      PathName updateDat = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+      updateDat += MIKTEX_PATH_UPDATE_DAT;
+      if (! File::Exists(updateDat))
 	{
 	  FATAL_MIKTEX_ERROR (T_("MpmView::OnUpdateWizard"),
 			      T_("The update wizard could not be found."),
@@ -1192,6 +1191,13 @@ MpmView::OnUpdateWizard ()
 	}
       CommandLineBuilder arguments;
       arguments.AppendArgument (updateDat);
+      if (! pSession->UnloadFilenameDatabase())
+	{
+	  FATAL_MIKTEX_ERROR
+	    (T_("MpmView::OnUpdateWizard"),
+	     T_("The file name database could not be closed."),
+	     0);
+	}
       Process::Start (copystart, arguments.Get());
       // <todo>close app</todo>
     }

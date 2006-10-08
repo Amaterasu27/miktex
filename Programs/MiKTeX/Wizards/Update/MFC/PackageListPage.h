@@ -164,6 +164,9 @@ private:
   bool updateUpdate;
 
 private:
+  bool repairing;
+
+private:
   tstring repository;
   
 private:

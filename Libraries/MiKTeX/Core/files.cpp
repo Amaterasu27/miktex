@@ -344,7 +344,6 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
       MIKTEX_ASSERT (access.Get() == FileAccess::Read
 		     || access.Get() == FileAccess::Write);
       MIKTEX_ASSERT (! text);
-      MIKTEX_ASSERT (share.Get() == FileShare::None);
       pFile = InitiateProcessPipe(lpszPath, access, mode);
     }
   else

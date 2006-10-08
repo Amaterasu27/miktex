@@ -70,6 +70,13 @@ public:
   }
 
 public:
+  void
+  ClearErrorFlag ()
+  {
+    error = false;
+  }
+
+public:
   bool
   GetErrorFlag ()
     const

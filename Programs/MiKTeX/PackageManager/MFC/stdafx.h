@@ -56,6 +56,7 @@
 
 #include <miktex/core.h>
 #include <miktex/mpm.h>
+#include <miktex/paths.h>
 #include <miktex/version.h>
 
 #pragma warning (push, 1)

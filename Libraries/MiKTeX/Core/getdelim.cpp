@@ -37,6 +37,46 @@ Utils::ReadUntilDelim (/*[out]*/ tstring &	str,
 		       /*[in]*/ MIKTEXCHARINT	delim,
 		       /*[in]*/ FILE *		stream)
 {
+  if (delim == T_('\n'))
+    {
+      // special case
+      return (ReadLine(str, stream, true));
+    }
+  else
+    {
+      str = T_("");
+      if (feof(stream) != 0)
+	{
+	  return (false);
+	}
+      MIKTEXCHARINT ch;
+      while ((ch = GetC(stream)) != MIKTEXEOF)
+	{
+	  str += static_cast<MIKTEXCHAR>(ch);
+	  if (ch == delim)
+	    {
+	      return (true);
+	    }
+	}
+      return (ch == MIKTEXEOF ? ! str.empty() : true);
+    }
+}
+
+/* _________________________________________________________________________
+
+   Utils::ReadLine
+
+   stuff\r      (Mac)
+   stuff\r\n    (DOS)
+   stuff\n      (Unx)
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+Utils::ReadLine (/*[out]*/ tstring &	str,
+		 /*[in]*/ FILE *	stream,
+		 /*[in]*/ bool		keepLineEnding)
+{
   str = T_("");
   if (feof(stream) != 0)
     {
@@ -45,11 +85,38 @@ Utils::ReadUntilDelim (/*[out]*/ tstring &	str,
   MIKTEXCHARINT ch;
   while ((ch = GetC(stream)) != MIKTEXEOF)
     {
-      str += static_cast<MIKTEXCHAR>(ch);
-      if (ch == delim)
+      if (ch == T_('\r'))
 	{
+	  if (keepLineEnding)
+	    {
+	      str += T_('\r');
+	    }
+	  ch = GetC(stream);
+	  if (ch == T_('\n'))
+	    {
+	      if (keepLineEnding)
+		{
+		  str += T_('\n');
+		}
+	    }
+	  else if (ch != MIKTEXEOF)
+	    {
+	      UnGetC (ch, stream);
+	    }
 	  return (true);
 	}
+      else if (ch == T_('\n'))
+	{
+	  if (keepLineEnding)
+	    {
+	      str += T_('\n');
+	    }
+	  return (true);
+	}
+      else
+	{
+	  str += static_cast<MIKTEXCHAR>(ch);
+	}
     }
-  return (ch == MIKTEXEOF ? (str.length() > 0) : true);
+  return (ch == MIKTEXEOF ? ! str.empty() : true);
 }

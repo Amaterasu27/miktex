@@ -192,11 +192,12 @@ CommandLineBuilder::AppendUnquoted (/*[in]*/ const MIKTEXCHAR * lpszText)
 void
 CommandLineBuilder::AppendArgument (/*[in]*/ const MIKTEXCHAR * lpszArgument)
 {
-  if (pData->str.length() > 0)
+  if (! pData->str.empty())
     {
       pData->str += T_(' ');
     }
-  bool needsQuoting = (StrChr(lpszArgument, T_(' ')) != 0);
+  bool needsQuoting =
+    (*lpszArgument == 0 || StrChr(lpszArgument, T_(' ')) != 0);
   if (needsQuoting)
     {
       pData->str += T_('"');
@@ -241,6 +242,21 @@ CommandLineBuilder::AppendArguments (/*[in]*/ const vector<tstring>	argv)
 
 /* _________________________________________________________________________
 
+   CommandLineBuilder::AppendArguments
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+CommandLineBuilder::AppendArguments (/*[in]*/ const Argv & argv)
+{
+  if (argv.GetArgc() > 0)
+    {
+      AppendArguments (argv.GetArgc() - 1, argv.GetArgv() + 1);
+    }
+}
+
+/* _________________________________________________________________________
+
    CommandLineBuilder::AppendOption
    _________________________________________________________________________ */
 
@@ -248,7 +264,7 @@ void
 CommandLineBuilder::AppendOption (/*[in]*/ const MIKTEXCHAR * lpszOption,
 				  /*[in]*/ const MIKTEXCHAR * lpszValue)
 {
-  if (pData->str.length() > 0)
+  if (! pData->str.empty())
     {
       pData->str += T_(' ');
     }
@@ -257,7 +273,8 @@ CommandLineBuilder::AppendOption (/*[in]*/ const MIKTEXCHAR * lpszOption,
   if (lpszValue != 0)
     {
       pData->str += pData->valueIndicator;
-      bool needsQuoting = (StrChr(lpszValue, T_(' ')) != 0);
+      bool needsQuoting =
+	(*lpszValue == 0 || StrChr(lpszValue, T_(' ')) != 0);
       if (needsQuoting)
 	{
 	  pData->str += T_('"');

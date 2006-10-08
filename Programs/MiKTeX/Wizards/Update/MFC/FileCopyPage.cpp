@@ -125,6 +125,8 @@ FileCopyPage::OnSetActive ()
     {
       try
 	{
+	  pSheet->ClearErrorFlag ();
+
 	  pInstaller->SetRepository (pSheet->GetRepository());
 	  
 	  // disable buttons

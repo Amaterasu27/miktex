@@ -506,7 +506,7 @@ AppendToEnvVarName (/*[in,out]*/ tstring &	name,
 	}
       else if (IsDigit(*lpszPart))
 	{
-	  name += lpszPart;
+	  name += *lpszPart;
 	}
     }
 }
@@ -871,6 +871,18 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 				 lpszSectionName,
 				 lpszValueName,
 				 lpszValue);
+  tstring newValue;
+  if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
+    {
+      if (newValue != lpszValue)
+	{
+	  FATAL_MIKTEX_ERROR
+	    (T_("SessionImpl::SetUserConfigValue"),
+	     T_("The configuration value could not be changed. Possibly an \
+environment variable definition is in the way."),
+	     lpszValueName);
+	}
+    }
 #else
   UNUSED_ALWAYS (lpszSectionName);
   trace_error->WriteFormattedLine (T_("core"),

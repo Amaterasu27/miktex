@@ -55,8 +55,6 @@ distclean: common-distclean clean
 
 maintainer-clean: common-maintainer-clean distclean
 
-dbxsldir = C:\sgml\docbook\docbook-xsl-1.69.0
-
 html_docbook_images = \
 	$(dbxsldir)\images\blank.png \
 	$(dbxsldir)\images\caution.png \
@@ -98,8 +96,10 @@ yap_guide_xml_files = \
 	..\Documentation\Guide\tools.xml \
 	..\Documentation\Guide\yap.xml \
 
-xslt_path = file://$(xsldir:\=/)
-xslt_path = $(xslt_path) file://$(miktexsrcdir:\=/)\$(rel_docdir:\=/)/Manual
+xslt_path = $(xsldir:\=/)
+xslt_path = $(xslt_path) $(miktexsrcdir:\=/)/$(rel_docdir:\=/)/Manual
+xslt_path = $(xslt_path) $(miktexsrcdir:\=/)/$(rel_docdir:\=/)
+xslt_path = $(xslt_path) ../Documentation/Guide
 
 yap.chm: \
 		$(cssdir)\miktexhelp.css \
@@ -119,7 +119,7 @@ yap.chm: \
 		--stringparam base.dir scratch/ \
 		--stringparam chunk.fast 1 \
 		--stringparam manifest.in.base.dir 1 \
-		htmlhelp.xsl \
+		$(xsldir)\htmlhelp.xsl \
 		..\Documentation\Guide\yap.xml
 	copy yaphelp.h scratch\context.h
 	cd scratch

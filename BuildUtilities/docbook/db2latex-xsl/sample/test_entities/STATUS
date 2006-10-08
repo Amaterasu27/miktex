@@ -1,0 +1,2 @@
+These tests should really be called test_characters.
+Do not use xmllint on test.xml (since it tests whitespace handling!).

@@ -88,11 +88,12 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
-  if (PathName::Compare(formatInfo.name, originalFormatInfo.name) != 0)
+  if (PathName::Compare(static_cast<const MIKTEXCHAR *>(formatName),
+			originalFormatInfo.name)
+      != 0)
     {
       FormatInfo unused;
-      if (SessionWrapper(true)->TryGetFormatInfo(formatInfo.name.c_str(),
-						 unused))
+      if (SessionWrapper(true)->TryGetFormatInfo(formatName, unused))
 	{
 	  AfxMessageBox
 	    (T_("A format with the given name already exists."),
@@ -116,6 +117,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
       pDX->Fail ();
     }
 
+  formatInfo.name = formatName;
   formatInfo.description = description;
   formatInfo.exclude = (exclude ? true : false);
   formatInfo.inputFile = inputName;

@@ -147,22 +147,27 @@ if every_display<>null then begin_token_list(every_display,every_display_text);
 % _____________________________________________________________________________
 
 @x
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 @y
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 
-@ @<Declare action procedures for use by |main_control|@>=
+@ This routine inserts a source special.
+
+@<Declare action procedures for use by |main_control|@>=
 
 procedure insert_src_special;
 var toklist, p, q : pointer;
 begin
-  if (source_filename_stack[in_open] > 0 and miktex_is_new_source (source_filename_stack[in_open], line)) then begin
+  if (source_filename_stack[in_open] > 0
+      and miktex_is_new_source(source_filename_stack[in_open], line)) then
+  begin
     toklist := get_avail;
     p := toklist;
     info(p) := special_token;
     link(p) := get_avail; p := link(p);
     info(p) := left_brace_token+"{";
-    q := str_toks (miktex_make_src_special (source_filename_stack[in_open], line));
+    q :=
+      str_toks(miktex_make_src_special(source_filename_stack[in_open], line));
     link(p) := link(temp_head);
     p := q;
     link(p) := get_avail; p := link(p);
@@ -172,29 +177,37 @@ begin
   end;
 end;
 
+@ This routine appends a source special.
+
+@<Declare action procedures for use by |main_control|@>=
+
 procedure append_src_special;
 var p : pointer;
 begin
-  if (source_filename_stack[in_open] > 0 and miktex_is_new_source (source_filename_stack[in_open], line)) then begin
+  if (source_filename_stack[in_open] > 0
+      and miktex_is_new_source(source_filename_stack[in_open], line)) then
+  begin
     new_whatsit (special_node, write_node_size);
     write_stream(tail) := null;
     def_ref := get_avail;
     token_ref_count(def_ref) := null;
-    str_toks (miktex_make_src_special (source_filename_stack[in_open], line));
+    str_toks (miktex_make_src_special(source_filename_stack[in_open], line));
     link(def_ref) := link(temp_head);
     write_tokens(tail) := def_ref;
     miktex_remember_source_info (source_filename_stack[in_open], line);
   end;
 end;
 
-@ @<Declare MiK\TeX\ functions@>=
+@ Forward declaratiopns of \MiKTeX\ functions.
 
-function miktex_insert_src_special_auto : boolean; forward;
-function miktex_insert_src_special_every_par : boolean; forward;
-function miktex_insert_src_special_every_parend : boolean; forward;
-function miktex_insert_src_special_every_cr : boolean; forward;
-function miktex_insert_src_special_every_math : boolean; forward;
-function miktex_insert_src_special_every_hbox : boolean; forward;
-function miktex_insert_src_special_every_vbox : boolean; forward;
-function miktex_insert_src_special_every_display : boolean; forward;
+@<Declare \MiKTeX\ functions@>=
+
+function miktex_insert_src_special_auto : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_par : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_parend : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_cr : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_math : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_hbox : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_vbox : boolean; forward;@t\2@>@/
+function miktex_insert_src_special_every_display : boolean; forward;@t\2@>@/
 @z

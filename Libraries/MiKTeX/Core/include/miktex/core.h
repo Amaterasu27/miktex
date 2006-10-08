@@ -171,12 +171,6 @@ miktex_find_miktex_executable (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
 			       /*[out]*/ MIKTEXCHAR *		lpszExePath);
 
 MIKTEXAPI(int)
-miktex_find_pk_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszMode,
-		     /*[in]*/ int			dpi,
-		     /*[out]*/ MIKTEXCHAR *		lpszPath);
-
-MIKTEXAPI(int)
 miktex_find_psheader_file (/*[in]*/ const MIKTEXCHAR *	lpszHeaderName,
 			   /*[in]*/ MIKTEXCHAR *	lpszPath);
 
@@ -187,10 +181,6 @@ miktex_find_tfm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 MIKTEXAPI(int)
 miktex_find_ttf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 		      /*[out]*/ MIKTEXCHAR *		lpszPath);
-
-MIKTEXAPI(int)
-miktex_find_type1_font_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			     /*[out]*/ MIKTEXCHAR *		lpszPath);
 
 MIKTEXAPI(MIKTEXCHAR *)
 miktex_get_config_value (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
@@ -324,6 +314,8 @@ struct FormatInfo
   bool exclude;
   /// Custom flag. Set, if this format was defined by the user.
   bool custom;
+
+  tstring arguments;
 
   FormatInfo ()
     : exclude (false),
@@ -1601,6 +1593,15 @@ public:
   ReadUntilDelim (/*[out]*/ tstring &		str,
 		  /*[in]*/ MIKTEXCHARINT	delim,
 		  /*[in]*/ FILE *		stream);
+
+public:
+  static
+  MIKTEXEXPORT
+  bool
+  MIKTEXCALL
+  ReadLine (/*[out]*/ tstring &		str,
+	    /*[in]*/ FILE *		stream,
+	    /*[in]*/ bool		keepLineEnding);
 
   /// Creates a formatted string object.
   /// @param lpszFormat The format of the string (printf() syntax).
@@ -2931,12 +2932,10 @@ public:
   AppendArguments (/*[in]*/ const std::vector<tstring>	argv);
 
 public:
+  MIKTEXEXPORT
   void
-  AppendArguments (/*[in]*/ const Argv & argv)
-  {
-    assert (argv.GetArgc() > 0);
-    AppendArguments (argv.GetArgc() - 1, argv.GetArgv() + 1);
-  }
+  MIKTEXCALL
+  AppendArguments (/*[in]*/ const Argv & argv);
 
 public:
   MIKTEXEXPORT

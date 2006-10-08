@@ -301,6 +301,14 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 	  return (false);
 	}
     }
+  tstring url;
+  RepositoryType repositoryType (RepositoryType::Unknown);
+  if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
+      && repositoryType == RepositoryType::Remote
+      && ! ProxyAuthenticationDialog(0))
+    {
+      return (false);
+    }
   if (pInstaller.get() == 0)
     {
       pInstaller.reset (pPackageManager->CreateInstaller());

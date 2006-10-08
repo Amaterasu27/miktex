@@ -44,18 +44,18 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
     {
 #if 1
       if (TryGetRegistryValue(TriState::False,
-			   lpszKeyName,
-			   lpszValueName,
-			   value,
-			   lpszDefaultValue))
+			      lpszKeyName,
+			      lpszValueName,
+			      value,
+			      lpszDefaultValue))
 	{
 	  return (true);
 	}
       return (TryGetRegistryValue(TriState::True,
-			       lpszKeyName,
-			       lpszValueName,
-			       value,
-			       lpszDefaultValue));
+				  lpszKeyName,
+				  lpszValueName,
+				  value,
+				  lpszDefaultValue));
 #else
       shared = SessionImpl::GetSession()->IsSharedMiKTeXSetup();
       if (shared == TriState::Undetermined)
@@ -64,15 +64,18 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 	}
       // <recursivecall>
       return (TryGetRegistryValue(shared,
-			       lpszKeyName,
-			       lpszValueName,
-			       value,
-			       lpszDefaultValue));
+				  lpszKeyName,
+				  lpszValueName,
+				  value,
+				  lpszDefaultValue));
       // </recursivecall>
 #endif
     }
 
-  tstring registryPath = MIKTEX_REGPATH_SERIES;
+  tstring registryPath =
+    (SessionImpl::GetSession()->IsMiKTeXDirect()
+     ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
+     : MIKTEX_REGPATH_SERIES);
   registryPath += T_('\\');
   registryPath += lpszKeyName;
 
@@ -206,7 +209,10 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
       // </recursivecall>
     }
 
-  tstring registryPath = MIKTEX_REGPATH_SERIES;
+  tstring registryPath =
+    (SessionImpl::GetSession()->IsMiKTeXDirect()
+     ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
+     : MIKTEX_REGPATH_SERIES);
   registryPath += T_('\\');
   registryPath += lpszKeyName;
 
@@ -286,7 +292,10 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
       return;
     }
  
-  tstring registryPath = MIKTEX_REGPATH_SERIES;
+  tstring registryPath =
+    (SessionImpl::GetSession()->IsMiKTeXDirect()
+     ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
+     : MIKTEX_REGPATH_SERIES);
   registryPath += T_('\\');
   registryPath += lpszKeyName;
 

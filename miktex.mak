@@ -408,6 +408,7 @@ clean-local: mostlyclean-local
 distclean-local: clean-local
 
 maintainer-clean-local: distclean-local
+	del setenv.cmd
 	del $(rel_docdir)\version.ent
 	del $(rel_libdir)\include\miktex\version.h
 	del Doxyfile
@@ -419,16 +420,34 @@ check-local:
 
 depend-local:
 
-pathsini = $(prefix)\miktex\config\paths.ini
+make-setenv-cmd:
+	type << > setenv.cmd
+set INCLUDE=$(miktexsrcdir)\msvc;%INCLUDE%
+set MIKTEX_BINDIR=$(prefix)\miktex\bin
+set MIKTEX_STARTUPFILE=$(prefix)\miktex\config\miktexstartup.ini
+set PATH=%MIKTEX_BINDIR%;%PATH%
+set XML_CATALOG_FILES=$(dbcatalog)
+set MIKTEX_SERIES=$(miktexseries)
+set MIKTEX_J2000=$(MIKTEX_J2000_VERSION)
+<<
 
-$(pathsini):
+miktexstartupini = $(prefix)\miktex\config\miktexstartup.ini
+
+make-miktexstartup-ini:
 	if not exist "$(prefix)\miktex\config"	\
 	  (					\
 	    $(mkpath) "$(prefix)\miktex\config"	\
 	  )
-	type << >> $(pathsini)
+	type << > $(miktexstartupini)
 [paths]
-TeXMF Root Directories=$(texmfroots)
-Install Root=$(prefix)
-Local Root=$(prefix)
+Roots=$(tmdir)
+Install=$(prefix)
+UserData=$(prefix)
+UserConfig=$(prefix)
 <<
+
+init-texmf:
+	if not exist "$(prefix)\dvips\config" \
+	  $(mkpath) "$(prefix)\dvips\config"
+	copy /Y "$(tmdir)\dvips\config\config.ps" \
+	  "$(prefix)\dvips\config"

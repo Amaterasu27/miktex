@@ -701,23 +701,23 @@ PropPageLanguages::OnMoveUp ()
       lvitem.iSubItem = 0;
       
       lvitem.iItem = idx - 1;
-      if (listControl.GetItem(&lvitem))
+      if (! listControl.GetItem(&lvitem))
 	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
 	}
       lvitem.lParam = idx;
-      if (listControl.SetItem(&lvitem))
+      if (! listControl.SetItem(&lvitem))
   	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
 	}
     
       lvitem.iItem = idx;
-      if (listControl.GetItem(&lvitem))
+      if (! listControl.GetItem(&lvitem))
 	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
 	}
       lvitem.lParam = idx - 1;
-      if (listControl.SetItem(&lvitem))
+      if (! listControl.SetItem(&lvitem))
   	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
 	}

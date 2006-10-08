@@ -1,0 +1,143 @@
+\documentclass[pdftex,english,a4paper,10pt]{article}
+\usepackage[pdftex,bookmarksnumbered,colorlinks,backref, bookmarks, breaklinks, linktocpage,pdfstartview=FitH,pdfpagemode=UseNone]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{times,courier}
+\usepackage{float}    %Required for QandADiv
+\usepackage{fancyvrb} %Required for ProgramListing
+\pdfcompresslevel=9
+% --------------------------------------------
+\makeatletter
+\catcode`\&=\active\def&{\@ifnextchar##{\@docbooktolatexunicode\@gobble}{\&}}
+
+% A few example Unicode characters.
+% For full support, use the unicode pacakge from Dominique Unruh/CTAN.
+\newcommand{\unichar}[1]{%
+	\ifnum#1=8212---%
+	\else\&\##1;\fi%
+}
+\def\@docbooktolatexunicode#1;{\edef\@dbtemp{#1}\unichar{\@dbtemp}}
+
+\def\docbooktolatexgobble{\expandafter\@gobble}
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{\protect}
+\newcommand{\docbooktolatexalignll}{\protect\ifvmode\raggedright\else\fi}
+\newcommand{\docbooktolatexalignlr}{\protect\ifvmode\else\hspace*\fill\fi}
+\newcommand{\docbooktolatexaligncl}{\protect\ifvmode\centering\else\hfill\fi}
+\newcommand{\docbooktolatexaligncr}{\protect\ifvmode\else\hspace*\fill\fi}
+\ifx\captionswapskip\@undefined\newcommand{\captionswapskip}{}\fi
+\makeatother
+\title{\textbf{Title \textbackslash backslash {\texttt{{\textasciitilde{}><\docbooktolatexgobble\string\\literal}}} }}
+\date{Date: \today}
+\author{Ramon Casellas \and James Devenish}
+\begin{document}
+{\maketitle\pagestyle{empty}\thispagestyle{empty}}
+\vspace{-.3em}
+\if@twocolumn
+\noindent\small{\itshape 
+Legal Notice}\/\bfseries---$\!$%
+\else
+\noindent\begin{center}\small\bfseries 
+Legal Notice\end{center}\quotation\small
+\fi
+
+Test a legal notice in articleinfo.
+\vspace{0.6em}\par\if@twocolumn\else\endquotation\fi
+\normalsize\rmfamily
+
+\section{Correct: \textbackslash\ \{\} \textbackslash\{\} \textbackslash textbackslash\{\}}
+
+	So let's see: this is one --- another \& and \&\#9999; and \textless{} because \textgreater{}
+	We need more cases!
+	
+
+% ------------------------   
+% Section 
+\section{Test: \textbackslash \ \{\} \textbackslash \{\} \textbackslash textbackslash\{\}}
+\label{id176177}\hypertarget{id176177}{}%
+
+
+	So let's see: this is one &#8212; another \& and &#9999; and \textless{} because \textgreater{}
+	We need more cases!
+	
+
+% tabular ------------------------------------------------------
+\begin{center}
+\label{itable}\hypertarget{itable}{}%
+\begin{tabular}{|c|c|}
+\hline 
+1 \catcode`\&=4 &\catcode`\&=\active 1 \tabularnewline
+ \hline 
+2 \catcode`\&=4 &\catcode`\&=\active 8 \tabularnewline
+ \hline 
+3 \catcode`\&=4 &\catcode`\&=\active 27 \tabularnewline
+\hline 
+\end{tabular}
+\end{center}
+
+
+% ------------------------   
+% Section 
+\section{Active Character Escaping}
+\label{id176402}\hypertarget{id176402}{}%
+\subsection{Regular}
+\label{id176408}\hypertarget{id176408}{}%
+
+
+    \textbackslash \textasciitilde{}\^{}\&\{\}\textbackslash \#\textbackslash \ \#\_\$\}\^{}\%\{\textbackslash 
+    
+\subsection{Verbatim}
+\label{id176423}\hypertarget{id176423}{}%
+
+
+    {\texttt{{\docbooktolatexgobble\string\\\textasciitilde{}\^{}\&\docbooktolatexgobble\string\{\docbooktolatexgobble\string\}\docbooktolatexgobble\string\\\#\docbooktolatexgobble\string\\ \#\_\$\docbooktolatexgobble\string\}\^{}\%\docbooktolatexgobble\string\{\docbooktolatexgobble\string\\}}}
+    
+
+% --------------------------------------------
+% End of document
+% --------------------------------------------
+\end{document}

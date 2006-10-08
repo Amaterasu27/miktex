@@ -17,5 +17,5 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#define VER_FILEVERSION 2,5,2384,0
-#define VER_FILEVERSION_STR "2.5.2384"
+#define VER_FILEVERSION 2,5,2471,0
+#define VER_FILEVERSION_STR "2.5.2471"

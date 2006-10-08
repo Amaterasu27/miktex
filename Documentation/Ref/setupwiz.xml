@@ -83,9 +83,16 @@ syntax:</para>
 <arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
 </cmdsynopsis>
 
+<note>
 <para>Note that the placement of quotation marks is important, and
 that <option>#e</option> is surrounded with two pairs of
 double quotation marks.</para>
+</note>
+
+<note>
+<para>The argument to the option <option>/C:</option> cannot be
+longer then 260 characters.</para>
+</note>
       
 <para>For example, this command starts the Basic &MiKTeX; installer
 <indexterm>

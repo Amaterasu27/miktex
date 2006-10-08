@@ -166,6 +166,18 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 
 /* _________________________________________________________________________
 
+   IsWindowsNT
+   _________________________________________________________________________ */
+
+inline
+bool
+IsWindowsNT ()
+{
+  return (GetVersion () < 0x80000000);
+}
+
+/* _________________________________________________________________________
+
    Quoted
    _________________________________________________________________________ */
 
@@ -1547,8 +1559,9 @@ RGBtoHLS (/*[in]*/ DWORD,
 	  /*[out]*/ WORD &);
 
 void
-StartEditor (/*[in]*/ const MIKTEXCHAR *,
-	     /*[in]*/ int);
+StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	     /*[in]*/ const MIKTEXCHAR *	lpszDocDir,
+	     /*[in]*/ int			line);
 
 void
 VYapLog (/*[in]*/ const MIKTEXCHAR *,

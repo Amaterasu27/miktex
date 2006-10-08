@@ -16,6 +16,21 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+@x
+\def\PASCAL{Pascal}
+@y
+\def\PASCAL{Pascal}
+\def\MiKTeX{MiK\TeX}
+@z
+
+@x limbo l.64 - bug fix (print only changed modules)
+\def\pct!{{\char`\%}} % percent sign in ordinary text
+@y
+\def\pct!{{\char`\%}} % percent sign in ordinary text
+\def\grp{\.{\char'173...\char'175}}
+\let\maybe=\iffalse % print only changed modules
+@z
+
 % _____________________________________________________________________________
 %
 % [1.4]
@@ -24,7 +39,7 @@
 @x
 procedure initialize; {this procedure gets things started properly}
 @y
-@t\4@>@<Declare MiK\TeX\ functions@>@/
+@t\4@>@<Declare \MiKTeX\ functions@>@/
 @#
 procedure initialize; {this procedure gets things started properly}
 @z
@@ -35,13 +50,11 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
-@d end_of_TEX=9998 {go here to close files and terminate gracefully}
 @d final_end=9999 {this label marks the ending of the program}
 @y
-@d end_of_TEX=9998 {go here to close files and terminate gracefully}
 @d final_end=9999 {this label marks the ending of the program}
-@d goto_eof_TEX==c4p_throw(end_of_TEX)
-@d goto_final_end==c4p_throw(final_end)
+@d goto_end_of_TEX==c4p_throw(end_of_TEX) {throw exception}
+@d goto_final_end==c4p_throw(final_end) {throw exception}
 @z
 
 % _____________________________________________________________________________
@@ -50,17 +63,38 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
+the codewords `$|init|\ldots|tini|$'.
+
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
 @d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
 @y
-@d init== if miktex_is_init_program then begin
-@d tini== end;
+the codewords `$|init|\ldots|tini|$'.
+
+\MiKTeX: we use the function |miktex_is_init_program| to distinguish
+between the two variants.
+
+@d init== @+if miktex_is_init_program then@+begin
+@d tini== @+end;
 @z
 
 % _____________________________________________________________________________
 %
 % [1.11]
 % _____________________________________________________________________________
+
+@x
+in production versions of \TeX.
+@.INITEX@>
+@^system dependencies@>
+@y
+in production versions of \TeX.
+@.INITEX@>
+@^system dependencies@>
+
+\MiKTeX: some parameters are global variables. For example, |mem_max| is
+an integer variable. We define default values (e.g., |mem_max_def|) for
+these variables.
+@z
 
 @x
 @!mem_max=30000; {greatest index in \TeX's internal |mem| array;
@@ -239,6 +273,20 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
+To get the most ``permissive'' character set, change |' '| on the
+right of these assignment statements to |chr(i)|.
+@^character set dependencies@>
+@^system dependencies@>
+@y
+To get the most ``permissive'' character set, change |' '| on the
+right of these assignment statements to |chr(i)|.
+@^character set dependencies@>
+@^system dependencies@>
+
+\MiKTeX: we use the most ``permissive'' character set.
+@z
+
+@x
 @<Set init...@>=
 for i:=0 to @'37 do xchr[i]:=' ';
 for i:=@'177 to @'377 do xchr[i]:=' ';
@@ -251,6 +299,15 @@ do_nothing;
 %
 % [2.24]
 % _____________________________________________________________________________
+
+@x
+codes below @'40 in case there is a coincidence.
+@y
+codes below @'40 in case there is a coincidence.
+
+\MiKTeX: we use the routine |miktex_initialize_char_tables| to initialize
+|xord|.
+@z
 
 @x
 @<Set init...@>=
@@ -268,6 +325,16 @@ miktex_initialize_char_tables;
 % _____________________________________________________________________________
 
 @x
+|name_of_file|.
+@^system dependencies@>
+@y
+|name_of_file|.
+@^system dependencies@>
+
+\MiKTeX: reserve an extra byte for the terminating null character.
+@z
+
+@x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
 @y
 @!name_of_file:packed array[1..file_name_size_plus_one] of char;@;@/
@@ -277,6 +344,14 @@ miktex_initialize_char_tables;
 %
 % [3.27]
 % _____________________________________________________________________________
+
+@x
+|name_of_file| could be opened.
+@y
+|name_of_file| could be opened.
+
+\MiKTeX: we use our own functions to open files.
+@z
 
 @x
 begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
@@ -293,7 +368,7 @@ begin a_open_out:=miktex_open_output_file(f, true);
 @x
 begin reset(f,name_of_file,'/O'); b_open_in:=reset_OK(f);
 @y
-begin b_open_in:=false
+begin b_open_in:=false {\MiKTeX\ does not need this function}
 @z
 
 @x
@@ -305,7 +380,7 @@ begin b_open_out:=miktex_open_output_file(f, false);
 @x
 begin reset(f,name_of_file,'/O'); w_open_in:=reset_OK(f);
 @y
-begin w_open_in:=false
+begin w_open_in:=false {\MiKTeX\ does not need this function}
 @z
 
 @x
@@ -313,6 +388,11 @@ begin rewrite(f,name_of_file,'/O'); w_open_out:=rewrite_OK(f);
 @y
 begin w_open_out:=miktex_open_output_file(f, false);
 @z
+
+% _____________________________________________________________________________
+%
+% [3.28]
+% _____________________________________________________________________________
 
 @x
 begin close(f);
@@ -355,6 +435,16 @@ begin miktex_close_file(f);
 % _____________________________________________________________________________
 
 @x
+finer tuning is often possible at well-developed \PASCAL\ sites.
+@^inner loop@>
+@y
+finer tuning is often possible at well-developed \PASCAL\ sites.
+@^inner loop@>
+
+\MiKTeX: we use our own line-reader.
+@z
+
+@x
 @p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
   {inputs the next line or returns |false|}
 var last_nonblank:0..buf_size; {|last| with trailing blanks removed}
@@ -376,13 +466,24 @@ else  begin last_nonblank:=first;
   end;
 end;
 @y
-@p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;forward;
+@p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
+  forward;@t\2@>@/
 @z
 
 % _____________________________________________________________________________
 %
 % [3.33]
 % _____________________________________________________________________________
+
+@x
+in \ph. The `\.{/I}' switch suppresses the first |get|.
+@^system dependencies@>
+@y
+in \ph. The `\.{/I}' switch suppresses the first |get|.
+@^system dependencies@>
+
+\MiKTeX: input and output streams were opened by the runtime library.
+@z
 
 @x
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -396,6 +497,15 @@ end;
 %
 % [3.34]
 % _____________________________________________________________________________
+
+@x
+some instruction to the operating system.  The following macros show how
+these operations can be specified in \ph:
+@^system dependencies@>
+@y
+some instruction to the operating system.
+@^system dependencies@>
+@z
 
 @x
 @d clear_terminal == break_in(term_in,true) {clear the terminal input buffer}
@@ -418,6 +528,17 @@ end;
 %
 % [3.37]
 % _____________________________________________________________________________
+
+@x
+if the system permits them.
+@^system dependencies@>
+@y
+if the system permits them.
+@^system dependencies@>
+
+\MiKTeX: we possibly use the routine |miktex_initialize_buffer| to get the
+first input line.
+@z
 
 @x
 loop@+begin wake_up_terminal; write(term_out,'**'); update_terminal;
@@ -469,6 +590,16 @@ tini
 %
 % [4.49]
 % _____________________________________________________________________________
+
+@x
+@^character set dependencies@>
+@^system dependencies@>
+@y
+@^character set dependencies@>
+@^system dependencies@>
+
+\MiKTeX: we use the function |miktex_is_printable| to test a character.
+@z
 
 @x
 @<Character |k| cannot be printed@>=
@@ -598,9 +729,17 @@ else
 % _____________________________________________________________________________
 
 @x
+procedure that quietly terminates the program.
+@y
+procedure that quietly terminates the program.
+
+\MiKTeX: we throw an exception here.
+@z
+
+@x
 begin goto end_of_TEX;
 @y
-begin goto_eof_TEX;
+begin goto_end_of_TEX;
 @z
 
 % _____________________________________________________________________________
@@ -641,7 +780,8 @@ end;
 @x
 @!glue_ratio=real; {one-word representation of a glue expansion factor}
 @y
-@!glue_ratio=longreal; {one-word representation of a glue expansion factor}
+@!glue_ratio=longreal; {one-word representation of a glue expansion factor;
+\MiKTeX: we use |longreal| instead of |real|}
 @z
 
 % _____________________________________________________________________________
@@ -670,6 +810,34 @@ end;
 if font_max>font_base+256 then bad:=16;
 @y
 if font_max>font_base+font_max_limit then bad:=16;
+@z
+
+% _____________________________________________________________________________
+%
+% [8.112]
+% _____________________________________________________________________________
+
+% The original definitions of qi and qo do not work well with the MLTeX
+% extensions.
+
+@x
+@d qi(#)==#+min_quarterword
+  {to put an |eight_bits| item into a quarterword}
+@d qo(#)==#-min_quarterword
+  {to take an |eight_bits| item out of a quarterword}
+@d hi(#)==#+min_halfword
+  {to put a sixteen-bit item into a halfword}
+@d ho(#)==#-min_halfword
+  {to take a sixteen-bit item from a halfword}
+@y
+@d qi(#)==#
+  {to put an |eight_bits| item into a quarterword}
+@d qo(#)==#
+  {to take an |eight_bits| item out of a quarterword}
+@d hi(#)==#
+  {to put a sixteen-bit item into a halfword}
+@d ho(#)==#
+  {to take a sixteen-bit item from a halfword}
 @z
 
 % _____________________________________________________________________________
@@ -719,8 +887,12 @@ tini
   if abs(mem[p+glue_offset].int)<@'4000000 then print("?.?")
   else if abs(g)>float_constant(20000) then
 @y
-  if false and abs(mem[p+glue_offset].int)<@'4000000 then print("?.?")
-  else if abs(g)>float_constant(20000) then
+  { The Unix |pc| folks removed this restriction with a remark that
+    invalid bit patterns were vanishingly improbable, so we follow
+    their example without really understanding it.
+  |if abs(mem[p+glue_offset].int)<@'4000000 then print('?.?')|
+  |else| }
+  if fabs(g)>float_constant(20000) then
 @z
 
 % _____________________________________________________________________________
@@ -1035,7 +1207,7 @@ name_of_file[ name_length + 1 ]:= chr(0);
 
 % _____________________________________________________________________________
 %
-% [29.520]
+% [29.521]
 % _____________________________________________________________________________
 
 @x
@@ -1046,7 +1218,7 @@ miktex_get_default_dump_file_name (TEX_format_default);
 
 % _____________________________________________________________________________
 %
-% [29.521]
+% [29.522]
 % _____________________________________________________________________________
 
 @x
@@ -1059,6 +1231,18 @@ do_nothing;
 %
 % [29.523]
 % _____________________________________________________________________________
+
+@x
+since the error will be detected in another way when a strange file name
+isn't found.
+@^system dependencies@>
+@y
+since the error will be detected in another way when a strange file name
+isn't found.
+@^system dependencies@>
+
+\MiKTeX: we do not need this routine.
+@z
 
 @x
 @p procedure pack_buffered_name(@!n:small_number;@!a,@!b:integer);
@@ -1222,7 +1406,7 @@ print_char("("); incr(open_parens); slow_print(name); update_terminal;
 @y
 if term_offset+length(full_source_filename_stack[in_open])>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
-print_char("("); incr(open_parens); miktex_print_file_name(full_source_filename_stack[in_open]); update_terminal;
+print_char("("); incr(open_parens); miktex_print_filename(full_source_filename_stack[in_open]); update_terminal;
 @z
 
 @x
@@ -1397,7 +1581,7 @@ start_loading:
   @<Undump constants for consistency check@>;
 @z
 
-% We assert that |name_of_file| wasn't overridden.
+% We assert that |name_of_file| wasn't overidden.
 @x
 bad_fmt: wake_up_terminal;
 @y
@@ -1447,7 +1631,7 @@ dump_int(par_loc); dump_int(write_loc); dump_int(special_loc);@/
 undump(hash_base)(frozen_control_sequence)(write_loc);@/
 @y
 undump(hash_base)(frozen_control_sequence)(write_loc);@/
-undump(hash_base)(frozen_control_sequence)(special_loc);
+undump(hash_base)(frozen_control_sequence)(special_loc);@/
 special_token:=cs_token_flag+special_loc;@/
 @z
 
@@ -1546,7 +1730,10 @@ print_ln;
 miktex_invoke_editor_if_necessary;
 @z
 
-%% **  1336  ******************************************************************
+% _____________________________________________________________________________
+%
+% [51.1336]
+% _____________________________________________________________________________
 
 @x
 @!init procedure init_prim; {initialize all the primitives}
@@ -1601,9 +1788,11 @@ which introduce new sections, can be inserted here; then only the index
 itself will get a new section number.
 @^system dependencies@>
 @y
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 
-@ @<Error handling procedures@>=
+@ Print an error message like a C compiler would do.
+
+@<Error handling procedures@>=
 
 procedure print_c_style_error_message (@!s:str_number);
   var k : integer;
@@ -1624,42 +1813,46 @@ begin
   if log_opened then selector:=selector+2;
 end;
 
-@ @<Declare MiK\TeX\ functions@>=
+@ Forward declaratiopns of \MiKTeX\ functions.
 
-function miktex_is_init_program : boolean; forward;
-function miktex_c_style_error_messages_p : boolean; forward;
-function miktex_halt_on_error_p : boolean; forward;
-function miktex_make_full_name_string : str_number; forward;
-function miktex_get_job_name : str_number; forward;
-function miktex_get_interaction : integer; forward;
-function miktex_get_quiet_flag : boolean; forward;
+@<Declare \MiKTeX\ functions@>=
 
-@ @<Constants in the outer block@>=
+function miktex_is_init_program : boolean; forward;@t\2@>@/
+function miktex_c_style_error_messages_p : boolean; forward;@t\2@>@/
+function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
+function miktex_make_full_name_string : str_number; forward;@t\2@>@/
+function miktex_get_job_name : str_number; forward;@t\2@>@/
+function miktex_get_interaction : integer; forward;@t\2@>@/
+function miktex_get_quiet_flag : boolean; forward;@t\2@>@/
+
+@ Define \MiKTeX\ constants.
+
+@<Constants in the outer block@>=
 
 @!const_font_base=font_base;
 
-@ @<Global variables@>=
-@!mem_min : integer;
-@!mem_max : integer;
-@!mem_bot : integer;
-@!mem_top : integer;
+@ Define \MiKTeX\ variables.
+
+@<Global variables@>=
 @!buf_size : integer;
 @!error_line : integer;
-@!half_error_line : integer;
-@!max_print_line : integer;
-@!stack_size : integer;
-@!max_in_open : integer;
 @!font_max : integer;
 @!font_mem_size : integer;
-@!param_size : integer;
-@!nest_size : integer;
+@!half_error_line : integer;
+@!max_in_open : integer;
+@!max_print_line : integer;
 @!max_strings : integer;
-@!string_vacancies : integer;
+@!mem_bot : integer;
+@!mem_max : integer;
+@!mem_min : integer;
+@!mem_top : integer;
+@!nest_size : integer;
+@!param_size : integer;
 @!pool_size : integer;
+@!quoted_filename : boolean;
 @!save_size : integer;
-
 @!special_loc:pointer;
 @!special_token:halfword;
-
-@!quoted_filename : boolean;
+@!stack_size : integer;
+@!string_vacancies : integer;
 @z

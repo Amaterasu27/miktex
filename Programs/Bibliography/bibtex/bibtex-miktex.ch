@@ -1,6 +1,6 @@
 %% bibtex-miktex.ch: WEB change file for BibTeX
 %% 
-%% Copyright (C) 1996-2005 Christian Schenk
+%% Copyright (C) 1996-2006 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -453,7 +453,19 @@ miktex_bibtex_realloc ('str_pool', str_pool, pool_size);
 @x
 check_cmnd_line := false;                       {many systems will change this}
 @y
-if (c4p_argc > 1) then check_cmnd_line := true else check_cmnd_line := false;
+check_cmnd_line := true;
+if (c4p_argc <> 2) then begin
+  write_ln (term_out, 'Need exactly one file argument');
+  goto_exit_program;
+end;
+@z
+
+@x
+aux_not_found:
+    check_cmnd_line := false;
+@y
+aux_not_found:
+  goto_exit_program;
 @z
 
 % _____________________________________________________________________________

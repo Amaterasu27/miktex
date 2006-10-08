@@ -75,6 +75,16 @@ PackageManager::~PackageManager ()
 
 /* _________________________________________________________________________
 
+   PackageManager2::~PackageManager2
+   _________________________________________________________________________ */
+
+MPMCALL
+PackageManager2::~PackageManager2 ()
+{
+}
+
+/* _________________________________________________________________________
+
    PackageManagerImpl::PackageManagerImpl
    _________________________________________________________________________ */
 
@@ -117,7 +127,19 @@ PackageManager *
 MPMCALL
 PackageManager::Create ()
 {
-  PackageManager * pManager = new PackageManagerImpl ();
+  return (PackageManager2::Create());
+}
+
+/* _________________________________________________________________________
+
+   PackageManager2::Create
+   _________________________________________________________________________ */
+
+PackageManager2 *
+MPMCALL
+PackageManager2::Create ()
+{
+  PackageManager2 * pManager = new PackageManagerImpl ();
   return (pManager);
 }
 
@@ -792,16 +814,16 @@ bool
 MPMCALL
 PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
 {
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, url)
-      && (PackageManagerImpl::DetermineRepositoryType(url)
-	  == RepositoryType::Remote))
+  if (SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_REMOTE_REPOSITORY,
+			  url))
     {
       return (true);
     }
-  return (SessionWrapper(true)
-	  ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			      MIKTEX_REGVAL_REMOTE_REPOSITORY,
-			      url));
+  return (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, url)
+	  && (PackageManagerImpl::DetermineRepositoryType(url)
+	      == RepositoryType::Remote));
 }
 
 /* _________________________________________________________________________
@@ -908,17 +930,17 @@ MPMCALL
 PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
 {
   tstring str;
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
-      && (PackageManagerImpl::DetermineRepositoryType(str)
-	  == RepositoryType::Local))
+  if (SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
+			  str))
     {
       path = str;
       return (true);
     }
-  else if (SessionWrapper(true)
-	   ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			       MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			       str))
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+	   && (PackageManagerImpl::DetermineRepositoryType(str)
+	       == RepositoryType::Local))
     {
       path = str;
       return (true);
@@ -973,17 +995,17 @@ MPMCALL
 PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
 {
   tstring str;
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
-      && (PackageManagerImpl::DetermineRepositoryType(str)
-	  == RepositoryType::MiKTeXDirect))
-    {
-      path = str;
-      return (true);
-    }
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
 			  str))
+    {
+      path = str;
+      return (true);
+    }
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, str)
+	   && (PackageManagerImpl::DetermineRepositoryType(str)
+	       == RepositoryType::MiKTeXDirect))
     {
       path = str;
       return (true);
@@ -1039,20 +1061,11 @@ PackageManager::TryGetDefaultPackageRepository
 (/*[out]*/ RepositoryType &	repositoryType,
  /*[out]*/ tstring &		urlOrPath)
 {
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, urlOrPath))
+  tstring str;
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+					      MIKTEX_REGVAL_REPOSITORY_TYPE,
+					      str))
     {
-      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
-    }
-  else
-    {
-      tstring str;
-      if (! (SessionWrapper(true)
-	     ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-				 MIKTEX_REGVAL_REPOSITORY_TYPE,
-				 str)))
-	{
-	  return (false);
-	}
       if (str == T_("remote"))
 	{
 	  urlOrPath = GetRemotePackageRepository();
@@ -1075,8 +1088,17 @@ PackageManager::TryGetDefaultPackageRepository
 	     T_("Invalid registry settings."),
 	     str.c_str());
 	}
+      return (true);
     }
-  return (true);
+  else if (Utils::GetEnvironmentString(MIKTEX_ENV_REPOSITORY, urlOrPath))
+    {
+      repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
+      return (true);
+    }
+  else
+    {
+      return (false);
+    }
 }
 
 /* _________________________________________________________________________
@@ -1979,4 +2001,224 @@ PackageManager::GetProxy ()
 void
 PackageManagerImpl::OnProgress ()
 {
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryGetRepositoryInfo
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageManagerImpl::TryGetRepositoryInfo
+(/*[in]*/ const tstring &	url,
+ /*[out]*/ RepositoryInfo &	repositoryInfo)
+{
+  RepositorySoapProxy repositorySoapProxy;
+  ProxySettings proxySettings;
+  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+    {
+      repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
+      repositorySoapProxy.proxy_port = proxySettings.port;
+      if (proxySettings.authenticationRequired)
+	{
+	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+	}
+    }
+  _mtrep__TryGetRepositoryInfo arg;
+  tstring url2 = url;
+  arg.url = &url2;
+  _mtrep__TryGetRepositoryInfoResponse resp;
+  if (repositorySoapProxy.TryGetRepositoryInfo(&arg, &resp) != SOAP_OK)
+    {
+      FATAL_SOAP_ERROR (&repositorySoapProxy);
+    }
+  if (resp.TryGetRepositoryInfoResult)
+    {
+      repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
+    }
+  return (resp.TryGetRepositoryInfoResult);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::VerifyPackageRepository
+   _________________________________________________________________________ */
+
+RepositoryInfo
+MPMCALL
+PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
+{
+  for (vector<RepositoryInfo>::const_iterator it = repositories.begin();
+       it != repositories.end();
+       ++ it)
+    {
+      if (it->url == url)
+	{
+	  return (*it);
+	}
+    }
+  RepositoryInfo repositoryInfo;
+  if (! TryGetRepositoryInfo(url, repositoryInfo))
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("Not a valid remote package repository."),
+	 url.c_str());
+    }
+  if (repositoryInfo.status == RepositoryStatus::Offline)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is offline."),
+	 url.c_str());
+    }
+  if (repositoryInfo.integrity == RepositoryIntegrity::Corrupted)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is corrupted."),
+	 url.c_str());
+    }
+  if (repositoryInfo.integrity != RepositoryIntegrity::Intact)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository may be corrupted."),
+	 url.c_str());
+    }
+  if (repositoryInfo.delay >= 10)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("The remote package repository is not synchronized."),
+	 url.c_str());
+    }
+  repositories.push_back (repositoryInfo);
+  return (repositoryInfo);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryVerifyInstalledPackageHelper
+   _________________________________________________________________________ */
+
+bool
+PackageManagerImpl::TryVerifyInstalledPackageHelper
+(/*[in]*/ const tstring &	fileName,
+ /*[out]*/ bool &		haveDigest,
+ /*[out]*/ MD5 &		digest)
+{
+  tstring unprefixed;
+  if (! StripTeXMFPrefix(fileName, unprefixed))
+    {
+      return (true);
+    }
+  PathName path = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  path += unprefixed;
+  if (! File::Exists(path))
+    {
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("package verification failed: file %s does not exist"),
+	 Q_(path));
+      return (false);
+    }
+  if (path.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
+    {
+      haveDigest = false;
+      return (true);
+    }
+  digest = MD5::FromFile(path.Get());
+  haveDigest = true;
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::TryVerifyInstalledPackage
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageManagerImpl::TryVerifyInstalledPackage
+(/*[in]*/ const tstring & deploymentName)
+{
+  PackageInfo packageInfo = GetPackageInfo(deploymentName);
+
+  FileDigestTable fileDigests;
+
+  for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+       it != packageInfo.runFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+       it != packageInfo.docFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  for (vector<tstring>::const_iterator it = packageInfo.sourceFiles.begin();
+       it != packageInfo.sourceFiles.end();
+       ++ it)
+    {
+      bool haveDigest;
+      MD5 digest;
+      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+	{
+	  return (false);
+	}
+      if (haveDigest)
+	{
+	  fileDigests[*it] = digest;
+	}
+    }
+
+  MD5Builder md5Builder;
+
+  for (FileDigestTable::const_iterator it = fileDigests.begin();
+       it != fileDigests.end();
+       ++ it)
+    {
+      PathName path (it->first);
+      // we must dosify the path name for backward compatibility
+      path.ToDos ();
+      md5Builder.Update (path.Get(), path.GetLength());
+      md5Builder.Update (it->second.GetBits(), sizeof(MD5));
+    }
+
+  bool ok = (md5Builder.Final() == packageInfo.digest);
+
+  if (! ok)
+    {
+      trace_mpm->WriteFormattedLine
+	(T_("libmpm"),
+	 T_("package %s verification failed: some files have been modified"),
+	 Q_(deploymentName));
+    }
+
+  return (ok);
 }

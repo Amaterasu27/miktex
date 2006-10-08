@@ -154,6 +154,12 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 	{
 	  formatInfo.exclude = (val == T_("exclude"));
 	}
+      if (pFormats->TryGetValue(lpszFormatName,
+				T_("arguments"),
+				val))
+	{
+	  formatInfo.arguments = val;
+	}
       if (it == formats.end())
 	{
 	  formatInfo.custom = custom;
@@ -249,6 +255,12 @@ SessionImpl::WriteFormatsIni ()
 	      pFormats->PutValue (it->name.c_str(),
 				  T_("preloaded"),
 				  it->preloaded.c_str());
+	    }
+	  if (! it->arguments.empty())
+	    {
+	      pFormats->PutValue (it->name.c_str(),
+				  T_("arguments"),
+				  it->arguments.c_str());
 	    }
 	}
       if (it->exclude)
@@ -352,6 +364,10 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
 		  cannotChange = true;
 		}
 	      if (formatInfo.preloaded != it->preloaded)
+		{
+		  cannotChange = true;
+		}
+	      if (formatInfo.arguments != it->arguments)
 		{
 		  cannotChange = true;
 		}

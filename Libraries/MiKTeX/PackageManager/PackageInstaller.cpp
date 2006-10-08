@@ -612,6 +612,16 @@ PackageInstallerImpl::FindUpdates ()
 	}
       else
 	{
+	  // check the integrity of installed MiKTeX packages
+	  if (IsMiKTeXPackage(lpszPackage)
+	      && ! pManager->TryVerifyInstalledPackage(lpszPackage))
+	    {
+	      // the package has been tampered with
+	      updateInfo.timePackaged = static_cast<time_t>(-1);
+	      updates.push_back (updateInfo);
+	      continue;
+	    }
+
 	  // compare digests, version numbers and time stamps
 	  MD5 md5 = dbLight.GetPackageDigest(lpszPackage);
 	  if (md5 == pPackageInfo->digest)
@@ -1601,9 +1611,17 @@ void
 MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
-  // we must have a package repository
-  if (repositoryType == RepositoryType::Unknown)
+  bool upgrade = (toBeInstalled.size() == 0 && toBeRemoved.size() == 0);
+  bool installing = (upgrade || toBeInstalled.size() > 0);
+
+  if (repositoryType == RepositoryType::Remote && installing)
     {
+      pManager->VerifyPackageRepository (repository);
+    }
+
+  if (repositoryType == RepositoryType::Unknown && installing)
+    {
+      // we must have a package repository
       repository = pManager->PickRepositoryUrl();
       repositoryType = RepositoryType::Remote;
     }
@@ -1627,7 +1645,7 @@ PackageInstallerImpl::InstallRemove ()
     }
 
   // collect all packages, if no packages were specified by the caller
-  if (toBeInstalled.size() == 0 && toBeRemoved.size() == 0)
+  if (upgrade)
     {
       LoadDbLight (true);
       

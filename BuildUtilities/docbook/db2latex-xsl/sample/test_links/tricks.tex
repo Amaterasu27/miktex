@@ -1,0 +1,181 @@
+\documentclass[pdftex,a4paper,10pt]{article}
+\usepackage[pdftex,bookmarksnumbered,colorlinks,backref, bookmarks, breaklinks, linktocpage,pdfstartview=FitH,pdfpagemode=UseNone]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage{varioref}
+\setlength{\textwidth}{11cm}
+\pdfcompresslevel=9
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbookhyphenateurl}[1]{{\hyphenchar\font=`\/\relax #1\hyphenchar\font=`\-}}
+\newcommand{\docbookhyphenatedot}[1]{{\hyphenchar\font=`.\relax #1\hyphenchar\font=`\-}}
+% --------------------------------------------
+\makeatletter
+\newcommand{\dbz}{\penalty \z@}
+\newcommand{\docbooktolatexpipe}{\ensuremath{|}\dbz}
+\usepackage[latin1]{inputenc}
+
+\def\docbooktolatexgobble{\expandafter\@gobble}
+% Facilitate use of \cite with \label
+\newcommand{\docbooktolatexbibaux}[2]{%
+  \protected@write\@auxout{}{\string\global\string\@namedef{docbooktolatexcite@#1}{#2}}
+}
+\newcommand{\docbooktolatexcite}[2]{%
+  \@ifundefined{docbooktolatexcite@#1}%
+  {\cite{#1}}%
+  {\def\@docbooktolatextemp{#2}\ifx\@docbooktolatextemp\@empty%
+   \cite{\@nameuse{docbooktolatexcite@#1}}%
+   \else\cite[#2]{\@nameuse{docbooktolatexcite@#1}}%
+   \fi%
+  }%
+}
+\newcommand{\docbooktolatexbackcite}[1]{%
+  \ifx\Hy@backout\@undefined\else%
+    \@ifundefined{docbooktolatexcite@#1}{%
+      % emit warning?
+    }{%
+      \ifBR@verbose%
+        \PackageInfo{backref}{back cite \string`#1\string' as \string`\@nameuse{docbooktolatexcite@#1}\string'}%
+      \fi%
+      \Hy@backout{\@nameuse{docbooktolatexcite@#1}}%
+    }%
+  \fi%
+}
+% Provide support for bibliography `subsection' environments with titles
+\newenvironment{docbooktolatexbibliography}[3]{
+   \begingroup
+   \let\save@@chapter\chapter
+   \let\save@@@mkboth\@mkboth
+   \let\save@@bibname\bibname
+   \let\@mkboth\@gobbletwo
+   \def\@tempa{#3}
+   \def\@tempb{}
+   \ifx\@tempa\@tempb
+      \let\chapter\@gobbletwo
+      \let\bibname\relax
+   \else
+      \def\chapter{\subsection}
+      \def\bibname{\@tempa}
+   \fi
+   \begin{thebibliography}{#1}
+}{
+   \end{thebibliography}
+   \let\chapter\save@@chapter
+   \let\@mkboth\save@@@mkboth
+   \let\bibname\save@@bibname
+   \endgroup
+}
+% Prevent multiple openings of the same aux file
+% (happens when backref is used with multiple bibliography environments)
+\ifx\AfterBeginDocument\undefined\let\AfterBeginDocument\AtBeginDocument\fi
+\AfterBeginDocument{
+   \let\latex@@starttoc\@starttoc
+   \def\@starttoc#1{%
+      \@ifundefined{docbooktolatex@aux#1}{%
+         \global\@namedef{docbooktolatex@aux#1}{}%
+         \latex@@starttoc{#1}%
+      }{}
+   }
+}
+% --------------------------------------------
+% A way to honour <footnoteref>s
+% Blame j-devenish (at) users.sourceforge.net
+% In any other LaTeX context, this would probably go into a style file.
+\newcommand{\docbooktolatexusefootnoteref}[1]{\@ifundefined{@fn@label@#1}%
+  {\hbox{\@textsuperscript{\normalfont ?}}%
+    \@latex@warning{Footnote label `#1' was not defined}}%
+  {\@nameuse{@fn@label@#1}}}
+\newcommand{\docbooktolatexmakefootnoteref}[1]{%
+  \protected@write\@auxout{}%
+    {\global\string\@namedef{@fn@label@#1}{\@makefnmark}}%
+  \@namedef{@fn@label@#1}{\hbox{\@textsuperscript{\normalfont ?}}}%
+  }
+% --------------------------------------------
+% Hacks for honouring row/entry/@align
+% (\hspace not effective when in paragraph mode)
+% Naming convention for these macros is:
+% 'docbooktolatex' 'align' {alignment-type} {position-within-entry}
+% where r = right, l = left, c = centre
+\newcommand{\docbooktolatex@align}[2]{\protect\ifvmode#1\else\ifx\LT@@tabarray\@undefined#2\else#1\fi\fi}
+\newcommand{\docbooktolatexalignll}{\docbooktolatex@align{\raggedright}{}}
+\newcommand{\docbooktolatexalignlr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexaligncl}{\docbooktolatex@align{\centering}{\hfill}}
+\newcommand{\docbooktolatexaligncr}{\docbooktolatex@align{}{\hspace*\fill}}
+\newcommand{\docbooktolatexalignrl}{\protect\ifvmode\raggedleft\else\hfill\fi}
+\newcommand{\docbooktolatexalignrr}{}
+\ifx\captionswapskip\@undefined\newcommand{\captionswapskip}{}\fi
+% index labelling helper
+\def\docbooktolatexprintindex#1{%
+   \let\docbooktolatexindexname\indexname%
+   \def\indexname{\label{#1}\let\indexname\docbooktolatexindexname\indexname}%
+   \printindex}
+\makeatother
+\title{\textbf{Links}}
+\author{Ramon Casellas \and James Devenish}
+\begin{document}
+{\maketitle\pagestyle{empty}\thispagestyle{empty}}
+
+% ------------------------   
+% Section 
+\section{Plain Tests}
+\label{id184750}\hypertarget{id184750}{}%
+
+buf\_init: \hyperlink{buf-init}{buf\_init},
+Third Section:
+\hyperlink{sec:ulinks}{Third Section},
+Ulinks\_:
+\hyperlink{sec:ulinks}{Ulinks\_},
+Section 3:
+\hyperlink{sec:ulinks}{Section {\ref{sec:ulinks}}}.
+Title:
+\hyperlink{title:ulinks}{Title}.
+% ------------------------   
+% Section 
+\section{Cross-reference Tests}
+\label{id184790}\hypertarget{id184790}{}%
+
+Ulinks\_:
+\hyperlink{sec:ulinks}{Ulinks\_},
+Section 3:
+\hyperlink{sec:ulinks}{Section {\ref{sec:ulinks}}},
+XrefId[???]:
+XrefId[??].
+% ------------------------   
+% Section 
+\section{Ulinks\_}
+\label{sec:ulinks}\hypertarget{sec:ulinks}{}%
+\hypertarget{buf-init}{}
+This is an amount of text that may make this sentence long \href{http://www.enst.fr/#top}{\texttt{\docbookhyphenateurl{http://www.enst.fr/\#top}}}
+
+This is might also make this sentence a bit long \href{http://www.enst.fr/\&_~#top}{\texttt{\docbookhyphenateurl{http://www.enst.fr/\&\_\textasciitilde{}\#top}}}
+\subsection{{\texttt{\docbookhyphenatedot{More/\dbz{}more/\dbz{} more/\dbz{}more/\dbz{} more/\dbz{}more/\dbz{} aaaa/\dbz{}aaaa/\dbz{}b/\dbz{}b/\dbz{}b/\dbz{}b/\dbz{}cccc/\dbz{}cccc/\dbz{} more/\dbz{}more/\dbz{} more/\dbz{}more}}}}
+\label{id185411}\hypertarget{id185411}{}%
+
+\href{http://www.enst.fr/\&x}{http://www.enst.fr}
+
+This is might also make this sentence long enough for the regular text \href{http://www.enst.fr/#top}{blah http://www.enst.fr/\_\textasciitilde{}\#top {\texttt{\docbookhyphenatedot{http:/\dbz{}/\dbz{}www.\dbz{}enst.\dbz{}fr/\dbz{}\_\dbz{}\textasciitilde{}\#top}}}}
+
+\href{http://www.enst.fr}{ENST}
+
+\texttt{<\href{mailto:email}{email}>}
+
+Regular text \_\textasciitilde{}\#1 with footnote\label{id185537}\begingroup\catcode`\#=12\footnote{
+\href{http://www.enst.fr/#top}{\texttt{\docbookhyphenateurl{http://www.enst.fr/\#top}}}
+
+\href{http://www.enst.fr/\&_~#top}{\texttt{\docbookhyphenateurl{http://www.enst.fr/\&\_\textasciitilde{}\#top}}}
+
+\href{http://www.enst.fr/\&x}{http://www.enst.fr}
+
+\href{http://www.enst.fr/#top}{blah http://www.enst.fr/\_\textasciitilde{}\#top {\texttt{\docbookhyphenatedot{http:/\dbz{}/\dbz{}www.\dbz{}enst.\dbz{}fr/\dbz{}\_\dbz{}\textasciitilde{}\#top}}}}
+
+\href{http://www.enst.fr/_~#top}{ENST}
+
+\texttt{<\href{mailto:email}{email}>}
+
+Regular text \_\textasciitilde{}\#2.
+}\endgroup\docbooktolatexmakefootnoteref{id185537}.
+
+% --------------------------------------------
+% End of document
+% --------------------------------------------
+\end{document}

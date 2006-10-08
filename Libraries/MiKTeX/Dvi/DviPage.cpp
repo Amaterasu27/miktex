@@ -453,10 +453,14 @@ DviPageImpl::ProcessBand (/*[in]*/ int			shrinkFactor,
 	  || item.rgbBackground != currentBitmap.backgroundColor)
 	{
 	  // add the current bitmap
-	  MakeDviBitmap (shrinkFactor,
-			 currentBitmap,
-			 itItemPtrMark,
-			 itItemPtr);
+	  if (currentBitmap.width > 0 && currentBitmap.height > 0)
+	    {
+	      MakeDviBitmap (shrinkFactor,
+			     currentBitmap,
+			     itItemPtrMark,
+			     itItemPtr);
+	    }
+
 	  itItemPtrMark = itItemPtr;
 
 	  x1 = item_left;
@@ -525,6 +529,7 @@ DviPageImpl::MakeDviBitmap
      bitmap.height);
 
   int bytesPerLine = pDviImpl->GetBytesPerLine(shrinkFactor, bitmap.width);
+  MIKTEX_ASSERT (bytesPerLine > 0);
   bitmap.bytesPerLine = bytesPerLine;
 
   int rasterSize = (bytesPerLine * bitmap.height);
@@ -1188,7 +1193,12 @@ DviPageImpl::StartDvips ()
     }
   commandLine.AppendOption (T_("-Ic"));
   commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
-  commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+  if (SessionWrapper(true)->GetConfigValue(T_("Dvips"),
+					   T_("Pedantic"),
+					   false))
+    {
+      commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+    }
   commandLine.AppendOption (T_("-MiKTeX:allowallpaths"));
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 

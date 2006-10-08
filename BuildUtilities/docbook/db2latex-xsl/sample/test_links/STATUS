@@ -1,0 +1,7 @@
+Works fine in RH 8.0 & tetex.
+Works fine with Solaris 8 & tetex.
+TODO: test links inside tabular/tabularx.
+NOTE: the test PDFs might look wrong, but this is actually
+because of the number of test variations that are present.
+Just make sure that when you run `make`, the results are
+no worse than what's in the CVS repository :-)

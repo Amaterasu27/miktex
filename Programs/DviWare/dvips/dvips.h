@@ -19,6 +19,8 @@
 #include <direct.h>
 #include <sys/stat.h>
 #include <miktex/kpsemu.h>
+#undef kpse_tex_hush
+#define kpse_tex_hush(what) 1
 #include <cstdlib>
 using namespace MiKTeX::Core;
 #define exit(code) throw (code)
@@ -306,6 +308,9 @@ struct papsiz {
 
 #define USE_PCLOSE (801)
 #define USE_FCLOSE (802)
+#if defined(MIKTEX)
+#define USE_MIKTEX_CLOSE_FILE (803)
+#endif
 
 /* Things that KPATHSEA knows, and are useful even without it. */
 #if !defined(KPATHSEA)

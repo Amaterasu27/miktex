@@ -26,6 +26,7 @@
 #include "internal.h"
 
 #include "InstallPackageDialog.h"
+#include "ProxyAuthenticationDialog.h"
 
 static AFX_EXTENSION_MODULE MikuiDLL = { 0, 0 };
 
@@ -78,7 +79,7 @@ MiKTeX::UI::InitializeFramework ()
 
 /* _________________________________________________________________________
    
-   InstallPackageMessageBox
+   MiKTeX::UI::InstallPackageMessageBox
    _________________________________________________________________________ */
 
 MIKTEXUIAPI(unsigned int)
@@ -127,3 +128,37 @@ MiKTeX::UI::InstallPackageMessageBox
   return (ret);
 }
 
+/* _________________________________________________________________________
+   
+   MiKTeX::UI::ProxyAuthenticationDialog
+   _________________________________________________________________________ */
+
+MIKTEXUIAPI(bool)
+MiKTeX::UI::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
+{
+  ProxySettings proxySettings;
+
+  bool done = true;
+
+  if (PackageManager::TryGetProxy(proxySettings)
+      && proxySettings.useProxy
+      && proxySettings.authenticationRequired
+      && proxySettings.user.empty())
+    {
+      ::ProxyAuthenticationDialog dlg ((hwndParent == 0
+					? 0
+					: CWnd::FromHandle(hwndParent)));
+      if (dlg.DoModal() == IDOK)
+	{
+	  proxySettings.user = dlg.GetName();
+	  proxySettings.password = dlg.GetPassword();
+	  PackageManager::SetProxy (proxySettings);
+	}
+      else
+	{
+	  done = false;
+	}
+    }
+
+  return (done);
+}

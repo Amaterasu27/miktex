@@ -452,6 +452,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		       /*[in]*/ FileType		fileType,
 		       /*[out]*/ PathName &		result)
 {
+  // try to derive the file type
   if (fileType == FileType::None)
     {
       fileType = DeriveFileType(lpszFileName);
@@ -461,19 +462,41 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }
 
-  const FileTypeInfo * pFileTypeInfo = GetFileTypeInfo(fileType);
-
+  // construct the search vector
   PathNameArray vec = ConstructSearchVector(fileType);
 
-  if (GetFileNameExtension(lpszFileName) == 0)
+  // get the file type information
+  const FileTypeInfo * pFileTypeInfo = GetFileTypeInfo(fileType);
+  MIKTEX_ASSERT (pFileTypeInfo != 0);
+
+  // check to see whether we have a registered file name extension
+  const MIKTEXCHAR * lpszExtension = GetFileNameExtension(lpszFileName);
+  bool hasRegisteredExtension = false;
+  if (lpszExtension != 0)
     {
-      PathName fileName (lpszFileName);
       for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
 			 PATH_DELIMITER);
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{
-	  fileName.SetExtension (ext.GetCurrent());
+	  if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
+	    {
+	      hasRegisteredExtension = true;
+	      break;
+	    }
+	}
+    }      
+
+  // try each registered file name extension, if none was specified
+  if (! hasRegisteredExtension)
+    {
+      for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
+			 PATH_DELIMITER);
+	   ext.GetCurrent() != 0;
+	   ++ ext)
+	{
+	  PathName fileName (lpszFileName);
+	  fileName.AppendExtension (ext.GetCurrent());
 	  if (FindFileAlongVec(fileName.Get(), vec, result))
 	    {
 	      return (true);
@@ -481,6 +504,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
     }
 
+  // try the given file name
   if (FindFileAlongVec(lpszFileName, vec, result))
     {
       return (true);
@@ -740,34 +764,6 @@ miktex_find_file (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   miktex_find_pk_file
-   _________________________________________________________________________ */
-
-MIKTEXAPI(int)
-miktex_find_pk_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszMode,
-		     /*[in]*/ int			dpi,
-		     /*[out]*/ MIKTEXCHAR *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_STRING_OR_NIL (lpszMode);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindPkFile(lpszFontName,
-					      lpszMode,
-					      dpi,
-					      temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
    miktex_find_tfm_file
    _________________________________________________________________________ */
 
@@ -950,30 +946,6 @@ miktex_find_hbf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
   return (1);
   C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   miktex_find_type1_font_file
-   _________________________________________________________________________ */
-
-MIKTEXAPI(int)
-miktex_find_type1_font_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			     /*[out]*/ MIKTEXCHAR *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
-					    FileType::TYPE1,
-					    temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END();
 }
 
 /* _________________________________________________________________________

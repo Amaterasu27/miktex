@@ -22,6 +22,8 @@
 
 setlocal
 
+call .\setenv.cmd
+
 :argloop
 if "%1" == "" goto endargloop
 if "%1" == "--rebuild" (

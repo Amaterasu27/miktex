@@ -14,7 +14,7 @@
 
 <title>&MiKTeX; &MIKTEX_VERSION_STR; Installation Instructions</title>
 
-<date>April 21, 2006</date>
+<date>August 03, 2006</date>
 
 <author>
 <firstname>Christian</firstname>
@@ -23,7 +23,7 @@
 
 <copyright>
 <year>2001&ndash;2006</year>
-<holder>MiKTeX.org</holder>
+<holder>Christian Schenk</holder>
 </copyright>
 
 <legalnotice>
@@ -48,10 +48,10 @@ Software Foundation.</para>
 
 <para>This document describes the &MiKTeX; &MIKTEX_SERIES_STR;
 installation procedure. It is mainly intended as a guide for desktop
-&PC; users. See the document <citetitle>&MiKTeX; &MIKTEX_SERIES_STR;
+&PC; users.<!-- See the document <citetitle>&MiKTeX; &MIKTEX_SERIES_STR;
 in a Network Environment (tbd)</citetitle>, if you are are planning to
 deploy &MiKTeX; in a network environment, or if you want to install
-&MiKTeX; by hand.</para>
+&MiKTeX; by hand.--></para>
 
 </section>
 

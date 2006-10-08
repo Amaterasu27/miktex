@@ -335,6 +335,7 @@ CJKLaTeXApp::RunConverter (/*[in]*/ const PathName &	inputFile,
     {
       Error (T_("Converter %s not found."), converterProgram.c_str());
     }
+  Utils::RemoveBlanksFromPathName (converter);
   CommandLineBuilder cmdLine;
   cmdLine.AppendArgument (converter);
   cmdLine.AppendStdinRedirection (inputFile);

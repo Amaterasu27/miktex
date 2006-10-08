@@ -224,7 +224,7 @@ public:
    _________________________________________________________________________ */
 
 extern PathName g_logFileName;
-extern PackageManagerPtr g_pManager;
+extern PackageManager2Ptr g_pManager;
 extern bool g_upgrading;
 
 /* _________________________________________________________________________

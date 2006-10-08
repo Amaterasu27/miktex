@@ -264,9 +264,9 @@ rel_zlibstaticlibdir = Libraries\3rd\zlib-static
 
 
 
-
-
-
+dbdir = $(miktexsrcdir)\BuildUtilities\docbook
+dbcatalog = $(dbdir)\catalog
+dbxsldir = $(dbdir)\docbook-xsl
 
 xsldir = $(miktexsrcdir)\$(rel_docdir)\Styles
 cssdir = $(miktexsrcdir)\$(rel_docdir)\Styles
@@ -340,7 +340,7 @@ localtexmf = $(prefix)
 
 ## where the production version of MiKTeX is installed
 !ifndef tmdir
-tmdir = C:\texmf
+tmdir = C:\Program Files\MiKTeX $(miktexseries)
 !endif
 
 ## texmf root directories
@@ -365,19 +365,11 @@ miktexdocdir = $(docdir)\miktex
 
 ## sub-directory for compiler generated files
 !if ($(MIKTEX_RELEASE_STATE) == 4)
-!if ($(MSCVER) < 1400)
-outdir = WinDebug
-!else
 outdir = Debug
-!endif
 !endif
 
 !if ($(MIKTEX_RELEASE_STATE) < 3)
-!if ($(MSCVER) < 1400)
-outdir = WinRel
-!else
 outdir = Release
-!endif
 !endif
 
 !if "$(ARCH)" != "x86"
@@ -1101,8 +1093,8 @@ MAKEDEPEND = makedepend -f $(miktex_mak) -p__xx__ -Y \
 		$(miktexvars) \
 		-D__cplusplus \
 		-I$(srcdir:\=/) \
+		-I$(miktexsrcdir:\=/)/$(rel_bmepslibdir:\=/) \
 		-I$(miktexsrcdir:\=/)/$(rel_bzip2dir:\=/) \
-		-I$(miktexsrcdir:\=/)/$(rel_diblibdir:\=/)/include \
 		-I$(miktexsrcdir:\=/)/$(rel_dvilibdir:\=/)/include \
 		-I$(miktexsrcdir:\=/)/$(rel_libdir:\=/)/include \
 		-I$(miktexsrcdir:\=/)/$(rel_applibdir:\=/)/include \

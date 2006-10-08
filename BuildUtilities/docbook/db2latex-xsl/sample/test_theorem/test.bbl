@@ -1,0 +1,11 @@
+\begin{thebibliography}{1}
+
+\bibitem{RabEBE}
+F.~Surname, {\em Title of Book {ABC}}.
+\newblock Publisher, 2003.
+
+\bibitem{Norros}
+F.~Surname, {\em Title of Book {DEF}}.
+\newblock Publisher, 2003.
+
+\end{thebibliography}

@@ -1,0 +1,80 @@
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{PPRrcas}[2001/03/15]
+\typeout{`RCAS' style for prosper ---}
+\typeout{(c) 2001 Ramon Casellas, France}
+\typeout{CVSId: $Id: PPRrcas.sty,v 1.1 2003/04/06 18:31:50 rcasellas Exp $}
+\typeout{ }
+
+\RequirePackage{amssymb}
+
+\ifinColor
+	\newrgbcolor{myblue}{.2 .36 .77}
+	\newrgbcolor{darkblue}{0.28 0.24 0.55}
+\else
+	\newrgbcolor{myblue}{1 1 1}
+	\newrgbcolor{darkblue}{0.28 0.24 0.55}
+\fi
+
+%\ifinColor
+%	\ifcolorBG
+%	\let\colC=\white
+%\else
+%	\let\colC=\black
+%\fi
+
+\let\colC=\black
+
+
+% RCAS 
+% Font for Color Titles. / BW
+% bch, pvh
+\FontTitle{%
+	%\usefont{T1}{ppl}{b}{n}
+	\fontsize{15pt}{15pt}
+	\selectfont\darkblue
+}{%
+	%\usefont{T1}{ppl}{b}{n}
+	\fontsize{15pt}{15pt}
+	\selectfont\black
+}
+
+\FontText{%
+	%\colC\usefont{T1}{ppl}{m}{n}
+	\fontsize{9pt}{9pt}
+	\selectfont\black
+}{%
+	%\colC\usefont{T1}{ppl}{m}{n}
+	\fontsize{9pt}{9pt}
+	\selectfont\black
+}
+\ColorFoot{\black}
+
+\newcommand{\slidetitle}[1]{%
+	%\rput[lt](-.2,4){\fontTitle{#1}}
+	\rput[lt](-.2,4){\em {{\darkblue #1}}}
+}
+
+\def\labelitemi{{\small\colC\ensuremath{\blacksquare}}}
+\def\labelitemii{{\small\colC\ensuremath{\blacklozenge}}}
+
+\LogoPosition{-.4,-.7}
+
+\newcommand{\RCASFrame}[1]{%
+	\ifcolorBG
+		% \psframe[linestyle=none,fillstyle=solid,fillcolor=myblue](-2,-1.4)(10.5,9)
+		% \psframe[linestyle=dotted,fillstyle=solid,fillcolor=myblue](-2,-1.4)(12.5,9)
+	\fi
+  		\psframe[linestyle=dotted,fillstyle=none, fillcolor=white](-.4,6.7)(12.5,7.8)
+	\psset{linecolor=black}
+	% \psframe[linestyle=dotted,fillstyle=none,fillcolor=white](0,0)(10,15)
+	\multirput(5,-.8)(.8,0){10}{\qdisk(0,0){1.2pt}}
+	\multirput(-.3,8)(0,.3){3}{\qdisk(0,0){1.2pt}}
+	\PutLogo {#1}}
+
+%\NewSlideStyle{t}{5.5,2.4}{RCASFrame}
+\NewSlideStyle[11cm]{t}{5.5,2.5}{RCASFrame}
+\RequirePackage{semhelv}
+
+\PDFCroppingBox{10 40 594 820}
+
+\endinput

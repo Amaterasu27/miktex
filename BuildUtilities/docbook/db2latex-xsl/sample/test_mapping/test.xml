@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<article lang="en">
+  <articleinfo>
+<!--  ************************************************************** -->
+<!--  Title and Author                                               -->
+<!--  ************************************************************** -->
+    <title>Title</title>
+    <subtitle>Subtitle</subtitle>
+    <date>2003/03/10</date>
+    <authorgroup>
+      <author>
+        <firstname>Ramon</firstname>
+        <surname>Casellas</surname>
+      </author>
+    </authorgroup>
+<!--  ************************************************************** -->
+<!--  Legal Stuff                                                    -->
+<!--  ************************************************************** -->
+    <copyright>
+      <year>2003</year>
+      <holder>Ramon Casellas casellas@infres.enst.fr</holder>
+    </copyright>
+    <date/>
+    <pubdate>2003/03/10</pubdate>
+    <publisher>
+      <publishername>ENST</publishername>
+    </publisher>
+<!--  ************************************************************** -->
+<!-- REVISION HISTORY                                                -->
+<!--  ************************************************************** -->
+    <revhistory>
+      <revision>
+        <revnumber>-  0.1 - </revnumber>
+        <date>2003/03/10  - </date>
+        <authorinitials>- RC casellas@infres.enst.fr</authorinitials>
+        <revremark>Start</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+<!-- ************************************************************** -->
+<!-- CONTENT                                                        -->
+<!-- ************************************************************** -->
+  <sect1>
+    <title>Introduction</title>
+    <sect2>
+      <title>blah</title>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title/>
+  </sect1>
+<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		Books
+      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+  <bibliography>
+    <title>Bibliography Of this Article</title>
+    <biblioentry id="BerGal" xreflabel="BerGal">
+      <abbrev>BerGal</abbrev>
+      <title>Data Networks</title>
+      <authorgroup>
+        <author>
+          <firstname>D.</firstname>
+          <surname>Bertsekas</surname>
+        </author>
+        <author>
+          <firstname>R.</firstname>
+          <surname>Gallager</surname>
+        </author>
+      </authorgroup>
+      <publisher>
+        <publishername>Prentice Hall International Editions. ISBN 0-13-196981-1</publishername>
+      </publisher>
+      <pubdate>1987</pubdate>
+    </biblioentry>
+  </bibliography>
+  <glossary id="gloss@glossary">
+    <glossaryinfo>
+      <pubdate>$Date: 2003/04/28 12:20:29 $</pubdate>
+      <releaseinfo>$Revision: 1.1 $</releaseinfo>
+    </glossaryinfo>
+    <title>Glossaire</title>
+    <glossdiv>
+      <title>A</title>
+      <glossentry id="gloss@arp">
+        <glossterm>Address Resolution Protocol</glossterm>
+        <acronym>ARP</acronym>
+        <glossdef>
+          <para>Def.</para>
+        </glossdef>
+      </glossentry>
+    </glossdiv>
+  </glossary>
+</article>

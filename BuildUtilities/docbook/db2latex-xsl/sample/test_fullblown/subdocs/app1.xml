@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<appendix><title>Software</title>
+
+    <sect1><title>Generic Programming in C++</title>
+	<sect2><title>C++ Templates</title>
+
+	    
+	    <sect3><title>Containers</title>
+		<para></para>
+	    </sect3>
+
+	    <sect3><title>Traits</title>
+		<para>
+		<programlisting>
+            <![CDATA[
+            
+            // traits par défaut
+            template <typename real_t = double>
+            class num_traits_std
+            {
+               public:
+               static real_t sqrt (const real_t x)
+               {
+                   return std::sqrt((double)x);
+               }
+            };
+
+            // Traits pour un calcul optimisé                
+            template <typename real_t = double>
+            class num_traits_opt
+            {
+                public:
+                static real_t sqrt (const real_t x)
+                {
+                    // Implementation d'un algorithme optimisé
+                    ...
+                }
+            };
+     
+       
+            template <typename real_t = double, class num_traits = num_traits_std<real_t> >
+            real_t f(real_t& x)
+            {
+                real_t result = 0.0;
+                result = x + num_traits::sqrt(x);
+                return result;
+            };
+                
+            ]]>
+		</programlisting>
+		</para>
+	    </sect3>
+	    
+        </sect2>
+	
+	<sect2><title>Binding Statique en temps de compilation</title>
+	</sect2>
+    </sect1>
+
+    <sect1><title>Librairies utilisés</title>
+	<sect2><title>Standard Template Library (STL)</title>
+	</sect2>
+
+	<sect2><title>ActiveX/Windows Template Library (ATL/WTL)</title>
+	    <para></para>
+	</sect2>
+
+	<sect2><title>Boost Library et Boost Graph Library (BGL)</title>
+	    <para></para>
+	</sect2>
+	
+    </sect1>
+</appendix>
+

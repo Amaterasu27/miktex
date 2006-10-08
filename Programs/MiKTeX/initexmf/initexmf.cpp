@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -329,7 +330,125 @@ private:
   MIKTEXCHAR buffer[BUFSIZE];
 };
 
-#define NUMTOSTR(num) static_cast<const MIKTEXCHAR *>(NUMTOSTRHELPER(num))
+#define NUMTOSTR(num) NumberToStringConverter_(num).GetBuffer()
+
+/* _________________________________________________________________________
+
+   XmlWriter
+   _________________________________________________________________________ */
+
+class XmlWriter
+{
+public:
+  XmlWriter ()
+    : freshElement (false)
+  {
+  }
+
+public:
+  void
+  StartDocument ()
+  {
+    tcout << T_("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+  }
+
+public:
+  void
+  StartElement (/*[in]*/ const MIKTEXCHAR *	lpszName)
+  {
+    if (freshElement)
+      {
+	tcout << T_('>');
+      }
+    tcout << T_('<');
+    tcout << lpszName;
+    freshElement = true;
+    elements.push (lpszName);
+  }
+
+public:
+  void
+  AddAttribute (/*[in]*/ const MIKTEXCHAR *	lpszAttributeName,
+		/*[in]*/ const MIKTEXCHAR *	lpszAttributeValue)
+  {
+    tcout << T_(' ');
+    tcout << lpszAttributeName;
+    tcout << T_("=\"");
+    tcout << lpszAttributeValue;
+    tcout << T_('"');
+  }
+
+public:
+  void
+  EndElement ()
+  {
+    if (elements.empty())
+      {
+	FATAL_MIKTEX_ERROR (T_("XmlWriter::EndElement"),
+			    T_("No elements on the stack."),
+			    0);
+      }
+    if (freshElement)
+      {
+	tcout << T_("/>");
+	freshElement = false;
+      }
+    else
+      {
+	tcout << T_("</");
+	tcout << elements.top();
+	tcout << T_('>');
+      }
+    elements.pop ();
+  }
+
+public:
+  void
+  EndAllElements ()
+  {
+    while (! elements.empty())
+      {
+	EndElement ();
+      }
+  }
+
+public:
+  void
+  Text (/*[in]*/ const tstring & text )
+  {
+    if (freshElement)
+      {
+	tcout << T_('>');
+	freshElement = false;
+      }
+    for (const MIKTEXCHAR * lpszText = text.c_str();
+	 *lpszText != 0;
+	 ++ lpszText)
+      {
+	switch (*lpszText)
+	  {
+	  case T_('&'):
+	    tcout << T_("&amp;");
+	    break;
+	  case T_('<'):
+	    tcout << T_("&lt;");
+	    break;
+	  case T_('>'):
+	    tcout << T_("&gt;");
+	    break;
+	  default:
+	    tcout << *lpszText;
+	    break;
+	  }
+      }
+  }
+
+private:
+  stack<tstring> elements;
+
+private:
+  bool freshElement;
+};
 
 /* _________________________________________________________________________
 
@@ -447,6 +566,14 @@ private:
 
 private:
   void
+  ReportEnvironmentVariables ();
+
+private:
+  void
+  ReportBrokenPackages ();
+
+private:
+  void
   WriteReport ();
 
 public:
@@ -497,6 +624,9 @@ private:
 
 private:
   bool csv;
+
+private:
+  bool xml;
   
 private:
   bool recursive;
@@ -529,13 +659,22 @@ private:
   bool setupWizardRunning;
   
 private:
-  PackageManagerPtr pManager;
+  PackageManager2Ptr pManager;
 
 private:
   SessionWrapper pSession;
 
 private:
-  static const struct poptOption aoption[];
+  XmlWriter xmlWriter;
+
+private:
+  static const struct poptOption aoption_user[];
+
+private:
+  static const struct poptOption aoption_setup[];
+
+private:
+  static const struct poptOption aoption_update[];
 };
 
 /* _________________________________________________________________________
@@ -565,11 +704,13 @@ enum Option
   OPT_LIST_FORMATS,		// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
+  OPT_XML,			// <experimental/>
 
   OPT_COMMON_CONFIG,		// <internal/>
   OPT_COMMON_DATA,		// <internal/>
   OPT_INSTALL_ROOT,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
+  OPT_DEFAULT_PAPER_SIZE,	// <internal/>
   OPT_RMFNDB,			// <internal/>
   OPT_ROOTS,			// <internal/>
   OPT_SHARED_SETUP,		// <internal/>
@@ -580,10 +721,174 @@ enum Option
 
 /* _________________________________________________________________________
 
-   IniTeXMFApp::aoption
+   IniTeXMFApp::aoption_user
    _________________________________________________________________________ */
 
-const struct poptOption IniTeXMFApp::aoption[] = {
+const struct poptOption IniTeXMFApp::aoption_user[] = {
+
+  {
+    T_("add-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ADD_FILE,
+    T_("Add a file to the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("csv"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CSV,
+    T_("Print comma-separated values."),
+    0,
+  },
+
+  {
+    T_("dump"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_DUMP,
+    T_("Create format files."),
+    T_("FORMAT")
+  },
+
+  {
+    T_("edit-config-file"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_EDIT_CONFIG_FILE,
+    T_("Open the specified config file in an editor. FILE must be one of: \
+dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
+    T_("FILE")
+  },
+
+  {
+    T_("list-directory"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LIST_DIRECTORY,
+    T_("List the FNDB contents of a directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-formats"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_FORMATS,
+    T_("List formats."),
+    0
+  },
+
+  {
+    T_("list-modes"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_MODES,
+    T_("List METAFONT modes"),
+    0
+  },
+  
+  {
+    T_("mklinks"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKLINKS,
+    T_("Create executables."),
+    0
+  },
+
+  {
+    T_("mkmaps"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKMAPS,
+    T_("Create font map files."),
+    0
+  },
+
+  {
+    T_("print-only"), T_('n'),
+    POPT_ARG_NONE, 0,
+    OPT_PRINT_ONLY,
+    T_("Print what would be done."),
+    0
+  },
+  
+  {
+    T_("quiet"), T_('q'),
+    POPT_ARG_NONE, 0,
+    OPT_QUIET,
+    T_("Suppress screen output."),
+    0
+  },
+
+  {
+    T_("recursive"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RECURSIVE,
+    T_("Operate recursively."),
+    0
+  },
+
+  {
+    T_("remove-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REMOVE_FILE,
+    T_("Remove a file from the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("report"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_REPORT,
+    T_("Create a configuration report."),
+    0
+  },
+
+  {
+    T_("rmfndb"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RMFNDB,
+    T_("Remove file name database files."),
+    0
+  },
+
+  {
+    T_("update-fndb"), T_('u'),
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_UPDATE_FNDB,
+    T_("Update the file name database."),
+    T_("ROOT")
+  },
+
+  {
+    T_("verbose"), T_('v'),
+    POPT_ARG_NONE, 0,
+    OPT_VERBOSE,
+    T_("Print information on what is being done."),
+    0,
+  },
+
+  {
+    T_("version"), T_('V'),
+    POPT_ARG_NONE, 0,
+    OPT_VERSION,
+    T_("Print version information and exit."),
+    0
+  },
+
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
+    0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::aoption_setup
+   _________________________________________________________________________ */
+
+const struct poptOption IniTeXMFApp::aoption_setup[] = {
 
   {
     T_("add-file"), 0,
@@ -615,6 +920,14 @@ const struct poptOption IniTeXMFApp::aoption[] = {
     OPT_CSV,
     T_("Print comma-separated values."),
     0,
+  },
+
+  {
+    T_("default-paper-size"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_DEFAULT_PAPER_SIZE,
+    T_("Set the default paper size."),
+    T_("SIZE"),
   },
 
   {
@@ -794,6 +1107,250 @@ dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     0
   },
 
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
+    0
+  },
+
+  POPT_AUTOHELP
+  POPT_TABLEEND
+};
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::aoption_update
+   _________________________________________________________________________ */
+
+const struct poptOption IniTeXMFApp::aoption_update[] = {
+
+  {
+    T_("add-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ADD_FILE,
+    T_("Add a file to the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("common-config"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_CONFIG,
+    T_("Register the common configuration directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("common-data"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_DATA,
+    T_("Register the common data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("csv"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CSV,
+    T_("Print comma-separated values."),
+    0,
+  },
+
+  {
+    T_("default-paper-size"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_DEFAULT_PAPER_SIZE,
+    T_("Set the default paper size."),
+    T_("SIZE"),
+  },
+
+  {
+    T_("dump"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_DUMP,
+    T_("Create format files."),
+    T_("FORMAT")
+  },
+
+  {
+    T_("edit-config-file"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_EDIT_CONFIG_FILE,
+    T_("Open the specified config file in an editor. FILE must be one of: \
+dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
+    T_("FILE")
+  },
+
+  {
+    T_("install-root"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_INSTALL_ROOT,
+    T_("Register the installation TEXMF directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-directory"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LIST_DIRECTORY,
+    T_("List the FNDB contents of a directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("list-formats"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_FORMATS,
+    T_("List formats."),
+    0
+  },
+
+  {
+    T_("list-modes"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_LIST_MODES,
+    T_("List METAFONT modes"),
+    0
+  },
+  
+  {
+    T_("log-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_LOG_FILE,
+    T_("Append to log file."),
+    T_("FILE")
+  },
+  
+  {
+    T_("mklinks"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKLINKS,
+    T_("Create executables."),
+    0
+  },
+
+  {
+    T_("mkmaps"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_MKMAPS,
+    T_("Create font map files."),
+    0
+  },
+
+  {
+    T_("print-only"), T_('n'),
+    POPT_ARG_NONE, 0,
+    OPT_PRINT_ONLY,
+    T_("Print what would be done."),
+    0
+  },
+  
+  {
+    T_("quiet"), T_('q'),
+    POPT_ARG_NONE, 0,
+    OPT_QUIET,
+    T_("Suppress screen output."),
+    0
+  },
+
+  {
+    T_("recursive"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RECURSIVE,
+    T_("Operate recursively."),
+    0
+  },
+
+  {
+    T_("remove-file"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REMOVE_FILE,
+    T_("Remove a file from the file name database."),
+    T_("FILE")
+  },
+
+  {
+    T_("report"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_REPORT,
+    T_("Create a configuration report."),
+    0
+  },
+
+  {
+    T_("rmfndb"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_RMFNDB,
+    T_("Remove file name database files."),
+    0
+  },
+
+  {
+    T_("roots"), T_('r'),
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_ROOTS,
+    T_("Register root directories."),
+    T_("DIRS")
+  },
+    
+  {
+    T_("shared-setup"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SHARED_SETUP,
+    T_("Set up a shared MiKTeX system."),
+    0
+  },
+  
+  {
+    T_("update-fndb"), T_('u'),
+    POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
+    OPT_UPDATE_FNDB,
+    T_("Update the file name database."),
+    T_("ROOT")
+  },
+
+  {
+    T_("user-config"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_CONFIG,
+    T_("Register the user configuration directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("user-data"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_DATA,
+    T_("Register the user data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("verbose"), T_('v'),
+    POPT_ARG_NONE, 0,
+    OPT_VERBOSE,
+    T_("Print information on what is being done."),
+    0,
+  },
+
+  {
+    T_("version"), T_('V'),
+    POPT_ARG_NONE, 0,
+    OPT_VERSION,
+    T_("Print version information and exit."),
+    0
+  },
+
+  {
+    T_("xml"), 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_XML,
+    T_("Print XML."),
+    0
+  },
+
   POPT_AUTOHELP
   POPT_TABLEEND
 };
@@ -807,6 +1364,7 @@ IniTeXMFApp::IniTeXMFApp ()
   : printOnly (false),
     quiet (false),
     csv (false),
+    xml (false),
     recursive (false),
     removeFndb (false),
     verbose (false)
@@ -865,9 +1423,6 @@ IniTeXMFApp::Finalize ()
 
 #if defined(MIKTEX_WINDOWS)
 
-#define UPDATEWIZ_PREFIX T_("Update MiKTeX")
-#define SETUPWIZ_PREFIX T_("Setup MiKTeX")
-
 BOOL
 CALLBACK
 IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
@@ -879,14 +1434,17 @@ IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
     {
       return (TRUE);
     }
-  if (_tcsncmp(szText, UPDATEWIZ_PREFIX, _tcslen(UPDATEWIZ_PREFIX)) == 0)
+  if (_tcsstr(szText, T_("MiKTeX")) != 0)
     {
-      This->updateWizardRunning = true;
-    }
-  else if (_tcsncmp(szText, SETUPWIZ_PREFIX, _tcslen(SETUPWIZ_PREFIX))
-	   == 0)
-    {
-      This->setupWizardRunning = true;
+      if (_tcsstr(szText, T_("Update")) != 0)
+	{
+	  This->updateWizardRunning = true;
+	}
+      else if (_tcsstr(szText, T_("Setup")) != 0
+	       || _tcsstr(szText, T_("Installer")) != 0)
+	{
+	  This->setupWizardRunning = true;
+	}
     }
   return (TRUE);
 }
@@ -1280,6 +1838,11 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
     }
 
   arguments.AppendArgument (formatInfo.inputFile);
+
+  if (! formatInfo.arguments.empty())
+    {
+      arguments.AppendOption (T_("--engine-option="), formatInfo.arguments);
+    }
     
   RunMakeTeX (maker.c_str(), arguments);
 
@@ -1532,29 +2095,69 @@ void
 IniTeXMFApp::ReportMiKTeXVersion ()
 {
   TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
-  tcout << T_("MiKTeX: ") << Utils::GetMiKTeXVersionString() << endl;
-#if defined(MIKTEX_WINDOWS)
-  if (IsWindowsNT())
+  if (xml)
     {
-      tcout << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+      xmlWriter.StartElement (T_("setup"));
+      xmlWriter.StartElement (T_("version"));
+      xmlWriter.Text (Utils::GetMiKTeXVersionString());
+      xmlWriter.EndElement ();
+#if defined(MIKTEX_WINDOWS)
+      if (IsWindowsNT())
+	{
+	  xmlWriter.StartElement (T_("systemadmin"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (pSession->RunningAsAdministrator()
+				   ? T_("true")
+				   : T_("false")));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("poweruser"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (pSession->RunningAsPowerUser()
+				   ? T_("true")
+				   : T_("false")));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("sharedsetup"));
+	  xmlWriter.AddAttribute (T_("value"),
+				  (sharedSetup == TriState::True
+				   ? T_("true")
+				   : (sharedSetup == TriState::False
+				      ? T_("false")
+				      : T_("indeterminate"))));
+	  xmlWriter.EndElement ();
+	  xmlWriter.StartElement (T_("bindir"));
+	  xmlWriter.Text (pSession->GetSpecialPath(SpecialPath::BinDirectory)
+			  .Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+#endif
+    }
+  else
+    {
+      tcout << T_("MiKTeX: ") << Utils::GetMiKTeXVersionString() << endl;
+#if defined(MIKTEX_WINDOWS)
+      if (IsWindowsNT())
+	{
+	  tcout << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+					   ? T_("yes")
+					   : T_("no"))
+		<< endl;
+	  tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
+					 ? T_("yes")
+					 : T_("no"))
+		<< endl;
+	}
+#endif
+      tcout << T_("SharedSetup: ") << (sharedSetup == TriState::True
 				       ? T_("yes")
-				       : T_("no"))
-	    << endl;
-      tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
-				     ? T_("yes")
-				     : T_("no"))
+				       : (sharedSetup == TriState::False
+					  ? T_("no")
+					  : T_("unknown")))
+	    << endl
+	    << T_("BinDir: ")
+	    << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
 	    << endl;
     }
-#endif
-  tcout << T_("SharedSetup: ") << (sharedSetup == TriState::True
-				   ? T_("yes")
-				   : (sharedSetup == TriState::False
-				      ? T_("no")
-				      : T_("unknown")))
-	<< endl
-	<< T_("BinDir: ")
-	<< pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
-	<< endl;
 }
 
 /* _________________________________________________________________________
@@ -1565,7 +2168,18 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 void
 IniTeXMFApp::ReportOSVersion ()
 {
-  tcout << T_("OS: ") << Utils::GetOSVersionString() << endl;
+  if (xml)
+    {
+      xmlWriter.StartElement (T_("os"));
+      xmlWriter.StartElement (T_("version"));
+      xmlWriter.Text (Utils::GetOSVersionString());
+      xmlWriter.EndElement ();
+      xmlWriter.EndElement ();
+    }
+  else
+    {
+      tcout << T_("OS: ") << Utils::GetOSVersionString() << endl;
+    }
 }
 
 /* _________________________________________________________________________
@@ -1576,29 +2190,70 @@ IniTeXMFApp::ReportOSVersion ()
 void
 IniTeXMFApp::ReportRoots ()
 {
-  for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+  if (xml)
     {
-      PathName absFileName;
-      PathName root = pSession->GetRootDirectory(idx);
-      tcout << T_("Root") << idx << T_(": ") << root.Get() << endl;
+      xmlWriter.StartElement (T_("roots"));
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  xmlWriter.StartElement (T_("path"));
+	  PathName root = pSession->GetRootDirectory(idx);
+	  xmlWriter.AddAttribute (T_("index"), NUMTOSTR(idx));
+	  if (root == pSession->GetSpecialPath(SpecialPath::InstallRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("install"), T_("true"));
+	    }
+	  if (root == pSession->GetSpecialPath(SpecialPath::UserDataRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("userdata"), T_("true"));
+	    }
+	  if (root == pSession->GetSpecialPath(SpecialPath::UserConfigRoot))
+	    {
+	      xmlWriter.AddAttribute (T_("userconfig"), T_("true"));
+	    }
+	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	    {
+	      if (root
+		  == pSession->GetSpecialPath(SpecialPath::CommonDataRoot))
+		{
+		  xmlWriter.AddAttribute (T_("commondata"), T_("true"));
+		}
+	      if (root
+		  == pSession->GetSpecialPath(SpecialPath::CommonConfigRoot))
+		{
+		  xmlWriter.AddAttribute (T_("commonconfig"), T_("true"));
+		}
+	    }
+	  xmlWriter.Text (root.Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
     }
-  tcout << T_("Install: ")
-	<< pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
-	<< endl;
-  tcout << T_("UserData: ")
-	<< pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
-	<< endl;
-  tcout << T_("UserConfig: ")
-	<< pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
-	<< endl;
-  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+  else
     {
-      tcout << T_("CommonData: ")
-	    << pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  PathName root = pSession->GetRootDirectory(idx);
+	  tcout << T_("Root") << idx << T_(": ") << root.Get() << endl;
+	}
+      tcout << T_("Install: ")
+	    << pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
+	<< endl;
+      tcout << T_("UserData: ")
+	    << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
 	    << endl;
-      tcout << T_("CommonConfig: ")
-	    << pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get()
+      tcout << T_("UserConfig: ")
+	    << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
 	    << endl;
+      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	{
+	  tcout << T_("CommonData: ")
+		<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+		<< endl;
+	  tcout << T_("CommonConfig: ")
+		<< (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot)
+		    .Get())
+		<< endl;
+	}
     }
 }
 
@@ -1610,29 +2265,148 @@ IniTeXMFApp::ReportRoots ()
 void
 IniTeXMFApp::ReportFndbFiles ()
 {
-  for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+  if (xml)
     {
-      PathName absFileName;
-      tcout << T_("fndb") << idx << T_(": ");
-      if (pSession->FindFilenameDatabase(idx, absFileName))
+      xmlWriter.StartElement (T_("fndb"));
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
 	{
-	  tcout << absFileName.Get() << endl;
+	  PathName absFileName;
+	  if (pSession->FindFilenameDatabase(idx, absFileName))
+	    {
+	      xmlWriter.StartElement (T_("path"));
+	      xmlWriter.AddAttribute (T_("index"), NUMTOSTR(idx));
+	      xmlWriter.Text (absFileName.Get());
+	      xmlWriter.EndElement ();
+	    }
+	}
+      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      PathName path;
+      if (pSession->FindFilenameDatabase(r, path))
+	{
+	  xmlWriter.StartElement (T_("mpmpath"));
+	  xmlWriter.Text (path.Get());
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+    }
+  else
+    {
+      for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+	{
+	  PathName absFileName;
+	  tcout << T_("fndb") << idx << T_(": ");
+	  if (pSession->FindFilenameDatabase(idx, absFileName))
+	    {
+	      tcout << absFileName.Get() << endl;
+	    }
+	  else
+	    {
+	      tcout << T_("<does not exist>") << endl;
+	    }
+	}
+      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      PathName path;
+      tcout << T_("fndbmpm: ");
+      if (pSession->FindFilenameDatabase(r, path))
+	{
+	  tcout << path.Get() << endl;
 	}
       else
 	{
 	  tcout << T_("<does not exist>") << endl;
 	}
     }
-  unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
-  PathName path;
-  tcout << T_("fndbmpm: ");
-  if (pSession->FindFilenameDatabase(r, path))
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::ReportEnvironmentVariables
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ReportEnvironmentVariables ()
+{
+#if defined(MIKTEX_WINDOWS)
+  if (xml)
     {
-      tcout << path.Get() << endl;
+      LPTSTR lpszEnv = reinterpret_cast<LPTSTR>(GetEnvironmentStrings ());
+      if (lpszEnv == 0)
+	{
+	  return;
+	}
+      xmlWriter.StartElement (T_("environment"));
+      for (LPTSTR p = lpszEnv; *p != 0; p += _tcslen(p) + 1)
+	{
+	  Tokenizer tok (p, T_("="));
+	  if (tok.GetCurrent() == 0)
+	    {
+	      continue;
+	    }
+	  xmlWriter.StartElement (T_("env"));
+	  xmlWriter.AddAttribute (T_("name"), tok.GetCurrent());
+	  ++ tok;
+	  if (tok.GetCurrent() != 0)
+	    {
+	      xmlWriter.Text (tok.GetCurrent());
+	    }
+	  xmlWriter.EndElement ();
+	}
+      xmlWriter.EndElement ();
+      FreeEnvironmentStrings (lpszEnv);
     }
-  else
+#endif
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::ReportBrokenPackages
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ReportBrokenPackages ()
+{
+  vector<tstring> broken;
+  auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
+  PackageInfo packageInfo;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
     {
-      tcout << T_("<does not exist>") << endl;
+      if (! packageInfo.IsPureContainer()
+	  && packageInfo.IsInstalled()
+	  && packageInfo.deploymentName.compare (0, 7, T_("miktex-")) == 0)
+	{
+	  if (! (pManager
+		 ->TryVerifyInstalledPackage(packageInfo.deploymentName)))
+	    {
+	      broken.push_back (packageInfo.deploymentName);
+	    }
+	}
+    }
+  pIter->Dispose ();
+  if (broken.size() > 0)
+    {
+      if (xml)
+	{
+	  xmlWriter.StartElement (T_("packages"));
+	  for (vector<tstring>::const_iterator it = broken.begin();
+	       it != broken.end();
+	       ++ it)
+	    {
+	      xmlWriter.StartElement (T_("package"));
+	      xmlWriter.AddAttribute (T_("name"), it->c_str());
+	      xmlWriter.AddAttribute (T_("integrity"), T_("damaged"));
+	      xmlWriter.EndElement ();
+	    }
+	  xmlWriter.EndElement ();
+	}
+      else
+	{
+	  for (vector<tstring>::const_iterator it = broken.begin();
+	       it != broken.end();
+	       ++ it)
+	    {
+	      tcout << *it << T_(": needs to be reinstalled") << endl;
+	    }
+	}
     }
 }
 
@@ -1646,10 +2420,21 @@ IniTeXMFApp::ReportFndbFiles ()
 void
 IniTeXMFApp::WriteReport ()
 {
+  if (xml)
+    {
+      xmlWriter.StartDocument ();
+      xmlWriter.StartElement (T_("miktexreport"));
+    }
   ReportMiKTeXVersion ();
   ReportOSVersion ();
   ReportRoots ();
   ReportFndbFiles ();
+  ReportEnvironmentVariables ();
+  ReportBrokenPackages ();
+  if (xml)
+    {
+      xmlWriter.EndElement ();
+    }  
 }
 
 /* _________________________________________________________________________
@@ -1729,6 +2514,8 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   vector<tstring> listDirectories;
   vector<tstring> removeFiles;
   vector<tstring> updateRoots;
+
+  tstring defaultPaperSize;
  
   tstring logFile;
 
@@ -1743,7 +2530,13 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optUpdateFilenameDatabase = false;
   bool optVersion = false;
 
-  Cpopt popt (argc, argv, aoption);
+  Cpopt popt (argc,
+	      argv,
+	      (setupWizardRunning
+	       ? aoption_setup
+	       : (updateWizardRunning
+		  ? aoption_update
+		  : aoption_user)));
 
   int option;
 
@@ -1755,11 +2548,16 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
 	case OPT_ADD_FILE:
 
-	  addFiles.push_back(lpszOptArg);
+	  addFiles.push_back (lpszOptArg);
 	  break;
 
 	case OPT_CSV:
 	  csv = true;
+	  break;
+
+	case OPT_DEFAULT_PAPER_SIZE:
+
+	  defaultPaperSize = lpszOptArg;
 	  break;
 
 	case OPT_DUMP:
@@ -1893,6 +2691,10 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optVersion = true;
 	  break;
 
+	case OPT_XML:
+	  xml = true;
+	  break;
+
 	}
     }
 
@@ -1935,16 +2737,6 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  if (updateWizardRunning)
-    {
-      Verbose (T_("MiKTeX Update Wizard is running"));
-    }
-
-  if (setupWizardRunning)
-    {
-      Verbose (T_("MiKTeX Setup Wizard is running"));
-    }
-
   if (triSharedSetup != TriState::Undetermined)
     {
       TriState old = pSession->IsSharedMiKTeXSetup();
@@ -1971,6 +2763,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       || ! startupConfig.installRoot.Empty())
     {
       SetTeXMFRootDirectories ();
+    }
+
+  if (! defaultPaperSize.empty())
+    {
+      pSession->SetDefaultPaperSize (defaultPaperSize.c_str());
     }
 
   if (optDump)
@@ -2042,6 +2839,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    {
 	      UpdateFilenameDatabase (r);
 	    }
+	  pManager->CreateMpmFndb ();
 	}
       else
 	{

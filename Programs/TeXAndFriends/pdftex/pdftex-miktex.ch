@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2005 Christian Schenk
+%% Copyright (C) 1998-2006 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -48,7 +48,7 @@ program PDFTEX; {all file names are defined dynamically}
     if shell_enabled_p then cur_val := 1
     else cur_val := 0;
 @y
-    cur_val := 0; {<todo/>}
+    cur_val := 0; {todo}
 @z
 
 % _____________________________________________________________________________
@@ -172,7 +172,9 @@ program PDFTEX; {all file names are defined dynamically}
 % [39.775]
 % _____________________________________________________________________________
 
-@x <todo/>
+% todo
+
+@x
 if pdf_pk_mode <> null then begin
     kpse_init_prog('PDFTEX', fixed_pk_resolution,
                    make_cstring(tokens_to_string(pdf_pk_mode)), nil);
@@ -315,9 +317,9 @@ pdf_init_map_file('psfonts.map');
 % _____________________________________________________________________________
 
 @x
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 @y
-@* \[54] MiK\TeX-dependent changes.
+@* \[54] \MiKTeX-dependent changes.
 
 @<Set init...@>=
 
@@ -351,21 +353,17 @@ end;
 % _____________________________________________________________________________
 
 @x
-@ @<Declare MiK\TeX\ functions@>=
+@<Declare \MiKTeX\ functions@>=
 @y
-@ @<Declare MiK\TeX\ functions@>=
+@<Declare \MiKTeX\ functions@>=
 
 function get_nullstr: str_number;
 begin
     get_nullstr := "";
 end;
 
-function miktex_halt_on_error_p : boolean; forward;
-
-@ @<Declare MiK\TeX\ functions@>=
-
-function is_quote_bad: boolean; forward;
-function packet_byte : eight_bits; forward;
-function get_resname_prefix : str_number; forward;
-
+function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
+function is_quote_bad: boolean; forward;@t\2@>@/
+function packet_byte : eight_bits; forward;@t\2@>@/
+function get_resname_prefix : str_number; forward;@t\2@>@/
 @z
