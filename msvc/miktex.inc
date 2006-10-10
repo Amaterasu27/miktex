@@ -332,15 +332,15 @@ webdir = $(miktexsrcdir)\$(rel_webdir)
 
 ## the staging directory
 !ifndef prefix
-#prefix = C:\MiKTeX-Builds\$(miktexseries)\texmf
-prefix = C:\MiKTeX-Builds\2.5\texmf
+prefix = C:\MiKTeX-Builds\$(miktexseries)\texmf
 !endif
 destdir = $(prefix)
 localtexmf = $(prefix)
 
 ## where the production version of MiKTeX is installed
 !ifndef tmdir
-tmdir = C:\Program Files\MiKTeX $(miktexseries)
+#tmdir = C:\Program Files\MiKTeX $(miktexseries)
+tmdir = C:\Program Files\MiKTeX 2.5
 !endif
 
 ## texmf root directories
