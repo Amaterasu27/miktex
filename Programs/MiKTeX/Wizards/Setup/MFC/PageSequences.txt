@@ -1,6 +1,6 @@
 Prepare MiKTeXDirect:
 
-	Welcome
+	[ Welcome ]
 	License
 	MDTask
 	Shared
@@ -12,7 +12,7 @@ Prepare MiKTeXDirect:
 
 Install From CD:
 
-	Welcome
+	[ Welcome ]
 	License
 	MDTask
 	PackageSet
@@ -28,7 +28,7 @@ Install From CD:
 
 Install From Local Repository:
 
-	Welcome
+	[ Welcome ]
 	License
 	Task
 	PackageSet
@@ -44,7 +44,7 @@ Install From Local Repository:
 	Finish
 
 Download Only:
-	Welcome
+	[ Welcome ]
 	License
 	Task
 	PackageSet
@@ -55,7 +55,7 @@ Download Only:
 	Finish
 
 Prefabricated Setup:
-	Welcome
+	[ Welcome ]
 	License
 	if CompleteDist PackageSet
 	Shared
