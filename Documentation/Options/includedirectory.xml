@@ -1,6 +1,6 @@
 <varlistentry>
 <term><option>--include-directory=<replaceable>dir</replaceable></option></term>
-<listitem><para>Prepend <replaceable>dir</replaceable> to the
+<listitem><para>Prefix <replaceable>dir</replaceable> to the
 <indexterm>
 <primary>--include-directory=dir</primary>
 </indexterm>
