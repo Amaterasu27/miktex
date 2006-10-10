@@ -266,7 +266,7 @@ Show this help screen and exit."),
 	     FIRST_OPTION_VAL + optBase + OPT_HELP);
 
   AddOption (_T("include-directory\0\
-Pretend DIR to the input search path."),
+Prefix DIR to the input search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_INCLUDE_DIRECTORY,
 	     required_argument,
 	     _T("DIR"));
