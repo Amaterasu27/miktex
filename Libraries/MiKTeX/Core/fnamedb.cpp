@@ -1194,22 +1194,26 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			  /*[in]*/ size_t		sizeFileNameInfo)
 
 {
-  tstring strSearchSpec;
-  strSearchSpec.reserve (256);
-  strSearchSpec = lpszDirPath;
-  
-  AppendDirectoryDelimiter (strSearchSpec);
-  strSearchSpec += lpszFileName;
+  tstring searchSpec;
+  searchSpec.reserve (BufferSizes::MaxPath);
+  searchSpec = lpszDirPath;
+  AppendDirectoryDelimiter (searchSpec);
+  searchSpec += lpszFileName;
 
   traceStream->WriteFormattedLine
     (T_("core"),
      T_("searching %s via fndb %p"),
-     Q_(strSearchSpec),
+     Q_(searchSpec),
      reinterpret_cast<void *>(this));
+
+  if (searchSpec.length() > BufferSizes::MaxPath)
+    {
+      return (false);
+    }
 
 #if FNDB_USE_CACHE
   bool exists;
-  if (CheckCandidate(strSearchSpec.c_str(), exists, result))
+  if (CheckCandidate(searchSpec.c_str(), exists, result))
     {
       if (exists)
 	{
@@ -1229,35 +1233,35 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     }
 #endif
 
-  if (Utils::IsAbsolutePath(strSearchSpec.c_str()))
+  if (Utils::IsAbsolutePath(searchSpec.c_str()))
     {
       const MIKTEXCHAR * lpsz =
-	Utils::GetRelativizedPath(strSearchSpec.c_str(),
+	Utils::GetRelativizedPath(searchSpec.c_str(),
 				  rootDirectory.c_str());
       if (lpsz == 0)
 	{
 	  FATAL_MIKTEX_ERROR (T_("fndb_search"),
 			      (T_("File name is not covered by file name")
 			       T_(" database.")),
-			      strSearchSpec.c_str());
+			      searchSpec.c_str());
 	}
-      strSearchSpec = lpsz;
+      searchSpec = lpsz;
     }
 
   bool found = false;
-  tstring::size_type idx = strSearchSpec.find(RECURSION_INDICATOR);
+  tstring::size_type idx = searchSpec.find(RECURSION_INDICATOR);
   if (idx == tstring::npos)
     {
       found =
 	Search(GetTopDirectory2(),
-	       strSearchSpec.c_str(),
+	       searchSpec.c_str(),
 	       result,
 	       lpszFileNameInfo,
 	       sizeFileNameInfo);
     }
   else
     {
-      STRDUP subdir (strSearchSpec.c_str(), idx);
+      STRDUP subdir (searchSpec.c_str(), idx);
       FileNameDatabaseHeader::FndbOffset foSubDir =
 	FindSubDirectory2(GetDirectoryAt(GetTopDirectory2()), subdir.Get());
       if (foSubDir != 0)
@@ -1265,7 +1269,7 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	  found =
 	    RecursiveSearch(foSubDir,
 			    0,
-			    (strSearchSpec.c_str()
+			    (searchSpec.c_str()
 			     + idx
 			     + RECURSION_INDICATOR_LENGTH),
 			    result,
@@ -1294,13 +1298,13 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	     reinterpret_cast<void *>(this));
 	}
 #if FNDB_REMEMBER_RESULTS
-      Remember (strSearchSpec.c_str(), result.Get());
+      Remember (searchSpec.c_str(), result.Get());
 #endif
     }
   else
     {
 #if FNDB_USE_CACHE
-      Remember (strSearchSpec.c_str(), 0);
+      Remember (searchSpec.c_str(), 0);
 #endif
     }
 
