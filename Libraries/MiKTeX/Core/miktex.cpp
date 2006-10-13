@@ -904,22 +904,19 @@ SessionImpl::SetEnvironmentVariables ()
   Utils::SetEnvironmentString (T_("TEXMFMAIN"),
 			       GetSpecialPath(SpecialPath::InstallRoot).Get());
 
-  if (! HaveEnvironmentString(T_("MIKTEX_GS_LIB")))
-    {
-      tstring str;
-      str = T_("%r");
-      str += PathName::DirectoryDelimiter;
-      str += T_("ghostscript");
-      str += PathName::DirectoryDelimiter;
-      str += T_("base");
-      tstring searchPath;
-      AppendToSearchPath (searchPath, str);
-      str = T_("%r");
-      str += PathName::DirectoryDelimiter;
-      str +=  T_("fonts");
-      AppendToSearchPath (searchPath, str);
-      Utils::SetEnvironmentString (T_("MIKTEX_GS_LIB"), searchPath.c_str());
-    }
+  tstring str;
+  str = T_("%r");
+  str += PathName::DirectoryDelimiter;
+  str += T_("ghostscript");
+  str += PathName::DirectoryDelimiter;
+  str += T_("base");
+  tstring searchPath;
+  AppendToSearchPath (searchPath, str);
+  str = T_("%r");
+  str += PathName::DirectoryDelimiter;
+  str +=  T_("fonts");
+  AppendToSearchPath (searchPath, str);
+  Utils::SetEnvironmentString (T_("MIKTEX_GS_LIB"), searchPath.c_str());
 
   PathName path = GetTempDirectory();
 
