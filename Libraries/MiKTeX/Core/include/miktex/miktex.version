@@ -1,4 +1,4 @@
-/* miktex.version: generic version resource			-*- C++ -*-
+/* miktex.version: generic MiKTeX version resource		-*- C++ -*-
 
    Copyright (C) 1996-2006 Christian Schenk
 
@@ -21,7 +21,7 @@
 
 #include <windows.h>
 
-#ifndef VS_FF_DEBUG
+#if ! defined(VS_FF_DEBUG)
 #  include <winver.h>
 #endif
 
@@ -33,37 +33,37 @@
 
 #define VER_PRODUCTVERSION MIKTEX_VERSION
 
-#if ! defined (VER_LEGALCOPYRIGHT_STR)
+#if ! defined(VER_LEGALCOPYRIGHT_STR)
 #  define VER_LEGALCOPYRIGHT_STR MIKTEX_LEGALCOPYRIGHT_STR
 #endif
 
-#if ! defined (VER_COMPANYNAME_STR)
+#if ! defined(VER_COMPANYNAME_STR)
 #  define VER_COMPANYNAME_STR MIKTEX_COMPANYNAME_STR
 #endif
 
-#if ! defined (VER_COMMENT_STR)
+#if ! defined(VER_COMMENT_STR)
 #  define VER_COMMENT_STR MIKTEX_BUILD_COMMENT_STR
 #endif
 
-#ifndef VER_FILETYPE
+#if ! defined(VER_FILETYPE)
 #  define VER_FILETYPE VFT_APP
 #endif
 
 #define VER_FILESUBTYPE VFT2_UNKNOWN
 
-#ifndef DEBUG
+#if MIKTEX_RELEASE_STATE == 4
 #  define VER_DEBUG 0
 #else
 #  define VER_DEBUG VS_FF_DEBUG
 #endif
 
-#ifndef OFFICIAL
+#if MIKTEX_RELEASE_STATE == 4
 #  define VER_PRIVATEBUILD VS_FF_PRIVATEBUILD
 #else
 #  define VER_PRIVATEBUILD 0
 #endif
 
-#ifndef FINAL
+#if MIKTEX_RELEASE_STATE > 0
 #  define VER_PRERELEASE VS_FF_PRERELEASE
 #else
 #  define VER_PRERELEASE 0
@@ -74,7 +74,7 @@
 
 #define VER_FILEOS VOS__WINDOWS32
 
-#ifdef RC_INVOKED
+#if defined(RC_INVOKED)
 
 VS_VERSION_INFO         VERSIONINFO
 FILEVERSION     	VER_FILEVERSION
@@ -102,8 +102,8 @@ BEGIN
 	VALUE "LegalTrademarks",	VER_LEGALTRADEMARKS_STR
 #endif
 	VALUE "OriginalFilename",	VER_ORIGINALFILENAME_STR
-#ifndef OFFICIAL
-	VALUE "PrivateBuild",		"Private build; do not distribute."
+#if MIKTEX_RELEASE_STATE == 4
+	VALUE "PrivateBuild",		"Private build; do not distribute!"
 #endif
 	VALUE "ProductName",		VER_PRODUCTNAME_STR
 	VALUE "ProductVersion",		VER_PRODUCTVERSION_STR

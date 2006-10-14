@@ -101,7 +101,7 @@
    they can distinguish the relative order of options and other arguments.  */
 
 #if defined(MIKTEX)
-#  if defined(GNU_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define GNUDLLAPI(type) __declspec(dllexport) type __stdcall
 #  elif defined(_MSC_VER)
 #    define GNUDLLAPI(type) type __stdcall

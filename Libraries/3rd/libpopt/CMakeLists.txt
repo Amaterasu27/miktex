@@ -1,4 +1,4 @@
-## SourcePaths.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,15 +17,26 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_build_tools_etc_dir	"BuildUtilities/etc")
-set(rel_bzip2_dir		"Libraries/3rd/bzip2")
-set(rel_core_dir		"Libraries/MiKTeX/Core")
-set(rel_core_inc_dir		"${rel_core_dir}/include/miktex")
-set(rel_expat_dir		"Libraries/3rd/libexpat")
-set(rel_libcurl_dir		"Libraries/3rd/libcurl")
-set(rel_tpm_dir			"Admin/TPM")
-set(rel_gnu_dir			"Libraries/3rd/libgnu")
-set(rel_jpeg_dir		"Libraries/3rd/libjpeg")
-set(rel_mspack_dir		"Libraries/3rd/libmspack")
-set(rel_popt_dir		"Libraries/3rd/libpopt")
-set(rel_tiff_dir		"Libraries/3rd/libtiff")
+set(${popt_dll_name}_sources
+  findme.c
+  findme.h
+  popt-miktex.h
+  popt-version.h
+  popt.c
+  popt.h
+  poptconfig.c
+  popthelp.c
+  poptint.h
+  poptparse.c
+  system.h
+)
+
+if(WIN32)
+  set(${popt_dll_name}_sources ${${popt_dll_name}_sources}
+    popt.rc
+  )
+endif(WIN32)
+
+add_library(${popt_dll_name} SHARED ${${popt_dll_name}_sources})
+
+install(TARGETS ${popt_dll_name} DESTINATION "${bindir}")

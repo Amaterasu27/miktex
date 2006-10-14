@@ -22,6 +22,7 @@ if(WIN32)
 endif(WIN32)
 
 use_static_crt()
+use_static_libraries()
 
 set(${expat_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/ascii.h

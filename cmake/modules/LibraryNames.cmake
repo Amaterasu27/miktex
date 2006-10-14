@@ -25,8 +25,18 @@
 set(bzip2_dll_name	"MiKTeX-bzip2-3")
 set(curl_dll_name	"MiKTeX-curl-1")
 set(expat_dll_name	"MiKTeX-expat-3")
+set(gnu_dll_name	"MiKTeX-gnu-3")
+set(regex_dll_name	"MiKTeX-regex-3")
+set(jpeg_dll_name	"MiKTeX-jpeg-3")
+set(mspack_dll_name	"MiKTeX-mspack-1")
+set(popt_dll_name	"MiKTeX-popt-3")
+set(tiff_dll_name	"MiKTeX-tiff-3")
 
 ## static library names
 set(bzip2_lib_name	"bzip2-static")
 set(curl_lib_name	"curl-static")
 set(expat_lib_name	"expat-static")
+set(gnu_lib_name	"gnu-static")
+set(regex_lib_name	"regex-static")
+set(mspack_lib_name	"mspack-static")
+set(popt_lib_name	"popt-static")

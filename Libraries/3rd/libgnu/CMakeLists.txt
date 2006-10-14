@@ -17,20 +17,42 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-use_static_crt()
-use_static_libraries()
-
-set(${bzip2_lib_name}_sources
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/blocksort.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib.h
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib_private.h
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/compress.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/crctable.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/decompress.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/huffman.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/libbz2-version.h
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/randtable.c
+set(${gnu_dll_name}_sources
+  basename.c
+  getopt.c
+  getopt.h
+  getopt1.c
+  getopt_int.h
+  gnu-miktex.h
+  gnu-version.h
+  internal.h
+  substring.c
 )
 
-add_library(${bzip2_lib_name} STATIC ${${bzip2_lib_name}_sources})
+set(${regex_dll_name}_sources
+  regcomp.c
+  regex-version.h
+  regex.c
+  regex.h
+  regex_internal.c
+  regex_internal.h
+  regexec.c
+)
+
+set_source_files_properties(
+  regcomp.c regex_internal.c regexec.c
+  PROPERTIES HEADER_FILE_ONLY TRUE)
+
+if(WIN32)
+  set(${gnu_dll_name}_sources ${${gnu_dll_name}_sources}
+    gnu.rc
+  )
+  set(${regex_dll_name}_sources ${${regex_dll_name}_sources}
+    regex.rc
+  )
+endif(WIN32)
+
+add_library(${gnu_dll_name} SHARED ${${gnu_dll_name}_sources})
+add_library(${regex_dll_name} SHARED ${${gnu_dll_name}_sources})
+
+install(TARGETS ${gnu_dll_name} ${regex_dll_name} DESTINATION "${bindir}")

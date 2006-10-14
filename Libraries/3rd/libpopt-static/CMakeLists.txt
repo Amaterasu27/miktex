@@ -1,4 +1,4 @@
-## SourcePaths.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,15 +17,21 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_build_tools_etc_dir	"BuildUtilities/etc")
-set(rel_bzip2_dir		"Libraries/3rd/bzip2")
-set(rel_core_dir		"Libraries/MiKTeX/Core")
-set(rel_core_inc_dir		"${rel_core_dir}/include/miktex")
-set(rel_expat_dir		"Libraries/3rd/libexpat")
-set(rel_libcurl_dir		"Libraries/3rd/libcurl")
-set(rel_tpm_dir			"Admin/TPM")
-set(rel_gnu_dir			"Libraries/3rd/libgnu")
-set(rel_jpeg_dir		"Libraries/3rd/libjpeg")
-set(rel_mspack_dir		"Libraries/3rd/libmspack")
-set(rel_popt_dir		"Libraries/3rd/libpopt")
-set(rel_tiff_dir		"Libraries/3rd/libtiff")
+use_static_crt()
+use_static_libraries()
+
+set(${popt_lib_name}_sources
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/findme.c
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/findme.h
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/popt-miktex.h
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/popt-version.h
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/popt.c
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/popt.h
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/poptconfig.c
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/popthelp.c
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/poptint.h
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/poptparse.c
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}/system.h
+)
+
+add_library(${popt_lib_name} STATIC ${${popt_lib_name}_sources})

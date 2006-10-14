@@ -1,4 +1,4 @@
-## SourcePaths.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,15 +17,52 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_build_tools_etc_dir	"BuildUtilities/etc")
-set(rel_bzip2_dir		"Libraries/3rd/bzip2")
-set(rel_core_dir		"Libraries/MiKTeX/Core")
-set(rel_core_inc_dir		"${rel_core_dir}/include/miktex")
-set(rel_expat_dir		"Libraries/3rd/libexpat")
-set(rel_libcurl_dir		"Libraries/3rd/libcurl")
-set(rel_tpm_dir			"Admin/TPM")
-set(rel_gnu_dir			"Libraries/3rd/libgnu")
-set(rel_jpeg_dir		"Libraries/3rd/libjpeg")
-set(rel_mspack_dir		"Libraries/3rd/libmspack")
-set(rel_popt_dir		"Libraries/3rd/libpopt")
-set(rel_tiff_dir		"Libraries/3rd/libtiff")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(${mspack_dll_name}_sources
+  cab.h
+  cabc.c
+  cabd.c
+  chm.h
+  chmc.c
+  chmd.c
+  des.h
+  hlp.h
+  hlpc.c
+  hlpd.c
+  kwaj.h
+  kwajc.c
+  kwajd.c
+  lit.h
+  litc.c
+  litd.c
+  lzss.h
+  lzx.h
+  lzxc.c
+  lzxd.c
+  mspack-version.h
+  mspack.h
+  mszip.h
+  mszipc.c
+  mszipd.c
+  qtm.h
+  qtmc.c
+  qtmd.c
+  sha.h
+  system.c
+  system.h
+  szdd.h
+  szddc.c
+  szddd.c
+)
+
+if(WIN32)
+  set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
+    mspack.def
+    mspack.rc
+  )
+endif(WIN32)
+
+add_library(${mspack_dll_name} SHARED ${${mspack_dll_name}_sources})
+
+install(TARGETS ${mspack_dll_name} DESTINATION "${bindir}")

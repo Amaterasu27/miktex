@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 #if ! defined(MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__)
-#  if defined(GNU_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define GNUDLLAPI(type) __declspec(dllimport) type __stdcall
 #  elif defined(_MSC_VER)
 #    define GNUDLLAPI(type) type __stdcall

@@ -47,7 +47,7 @@
 #endif
 
 #if defined(MIKTEX) && ! defined(GNUDLLAPI)
-#  if defined(GNU_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define GNUDLLAPI(type) __declspec(dllimport) type __stdcall
 #  elif defined(_MSC_VER)
 #    define GNUDLLAPI(type) type __stdcall

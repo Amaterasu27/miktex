@@ -1,6 +1,6 @@
 /* internal.h: internal stuff					-*- C++ -*-
 
-   Copyright (C) 2000-2004 Christian Schenk
+   Copyright (C) 2000-2006 Christian Schenk
 
    This file is part of the MiKTeX GNU Library (gnu.dll).
 
@@ -28,7 +28,7 @@
 #include <malloc.h>
 
 #if defined(_MSC_VER)
-#  if defined(GNU_DLL)
+#  if ! defined(MIKTEX_STATIC)
 #    define GNUDLLAPI(type) __declspec(dllexport) type __stdcall
 #  else
 #    define GNUDLLAPI(type) type __stdcall

@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.5 FATAL_ERROR)
 
 project(miktex)
 
-# autotools compability names
+## autotools compability names
 set(PACKAGE_NAME "MiKTeX")
 set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
 
@@ -29,13 +29,15 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
 
+include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
 include(SourcePaths)
 include(UseStaticCRT)
+include(UseStaticLibraries)
 
 ###############################################################################
-# set MiKTeX version info
+## set MiKTeX version info
 
 set(MIKTEX_SERIES_STR
     "${MIKTEX_MAJOR_VERSION}.${MIKTEX_MINOR_VERSION}")
@@ -67,14 +69,14 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 4)
 endif(MIKTEX_RELEASE_STATE EQUAL 0)
 
 ###############################################################################
-# set date/time info
+## set date/time info
 
 # fixme: use perl
 execute_process(COMMAND "bash" "-c" "date" OUTPUT_VARIABLE d)
 string(REGEX REPLACE ".$" "" MIKTEX_DATETIME_STR ${d})
 
 ###############################################################################
-# set the build type
+## set the build type
 
 if(MIKTEX_RELEASE_STATE EQUAL 0)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
@@ -89,26 +91,34 @@ endif(MIKTEX_RELEASE_STATE EQUAL 0)
 mark_as_advanced(CMAKE_BUILD_TYPE)
 
 ###############################################################################
-# add global definitions
+## add global definitions
 
-add_definitions("-DMIKTEX")
+add_definitions(-DMIKTEX)
 
 if(WIN32)
-  add_definitions("-DMIKTEX_WINDOWS")
+  add_definitions(-DMIKTEX_WINDOWS)
 else(WIN32)
-  add_definitions("-DMIKTEX_UNIX")
+  add_definitions(-DMIKTEX_UNIX)
 endif(WIN32)
 
 ###############################################################################
-# add global includes
+## add global include directories
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
 )
 
 ###############################################################################
-# configure files
+## add global link direcories
+
+link_directories(
+  ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
+)
+
+###############################################################################
+## configure files
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
@@ -133,12 +143,14 @@ foreach(tpm ${tpms})
 endforeach(tpm)
 
 ###############################################################################
-# add subdirectories
+## add sub-directories
 
 add_subdirectory(${rel_build_tools_etc_dir})
 
 add_subdirectory(${rel_bzip2_dir})
-add_subdirectory(${rel_bzip2_dir}-static)
+if(WIN32)
+  add_subdirectory(${rel_bzip2_dir}-static)
+endif(WIN32)
 
 if(WIN32)
   add_subdirectory(${rel_libcurl_dir})
@@ -146,4 +158,29 @@ if(WIN32)
 endif(WIN32)
 
 add_subdirectory(${rel_expat_dir})
-add_subdirectory(${rel_expat_dir}-static)
+if(WIN32)
+  add_subdirectory(${rel_expat_dir}-static)
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_gnu_dir})
+  add_subdirectory(${rel_gnu_dir}-static)
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_jpeg_dir})
+endif(WIN32)
+
+add_subdirectory(${rel_mspack_dir})
+if(WIN32)
+  add_subdirectory(${rel_mspack_dir}-static)
+endif(WIN32)
+
+add_subdirectory(${rel_popt_dir})
+if(WIN32)
+  add_subdirectory(${rel_popt_dir}-static)
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_tiff_dir})
+endif(WIN32)
