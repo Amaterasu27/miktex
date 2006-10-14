@@ -21,12 +21,11 @@ add_definitions(-DBUILDING_LIBCURL)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(${curl_dll_name} SHARED
+set(${curl_dll_name}_sources
   arpa_telnet.h
   base64.c
   base64.h
   ca-bundle.h
-  config-win32.h
   connect.c
   connect.h
   content_encoding.c
@@ -133,6 +132,15 @@ add_library(${curl_dll_name} SHARED
   urldata.h
   version.c
 )
+
+if(WIN32)
+  set(${curl_dll_name}_sources ${${curl_dll_name}_sources}
+    config-win32.h
+    curl.rc
+  )
+endif(WIN32)
+
+add_library(${curl_dll_name} SHARED ${${curl_dll_name}_sources})
 
 if(WIN32)
   target_link_libraries(${curl_dll_name} winmm wsock32)

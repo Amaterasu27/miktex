@@ -17,12 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_library(${bzip2_dll_name} SHARED
+set(${bzip2_dll_name}_sources
   blocksort.c
   bzlib.c
   bzlib.h
-  bzlib.h
-  bzlib_private.h
   bzlib_private.h
   compress.c
   crctable.c
@@ -31,5 +29,14 @@ add_library(${bzip2_dll_name} SHARED
   libbz2-version.h
   randtable.c
 )
+
+if(WIN32)
+  set(${bzip2_dll_name}_sources ${${bzip2_dll_name}_sources}
+    libbz2.def
+    libbz2.rc
+  )
+endif(WIN32)
+
+add_library(${bzip2_dll_name} SHARED ${${bzip2_dll_name}_sources})
 
 install(TARGETS ${bzip2_dll_name} DESTINATION "${bindir}")

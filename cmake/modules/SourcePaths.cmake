@@ -17,8 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_build_tools_etc_dir "BuildUtilities/etc")
-set(rel_bzip2_dir "Libraries/3rd/bzip2")
-set(rel_core_inc_dir "Libraries/MiKTeX/Core/include/miktex")
-set(rel_tpm_dir "Admin/TPM")
-set(rel_libcurl_dir "Libraries/3rd/libcurl")
+set(rel_build_tools_etc_dir	"BuildUtilities/etc")
+set(rel_bzip2_dir		"Libraries/3rd/bzip2")
+set(rel_core_dir		"Libraries/MiKTeX/Core")
+set(rel_core_inc_dir		"${rel_core_dir}/include/miktex")
+set(rel_expat_dir		"Libraries/3rd/libexpat")
+set(rel_libcurl_dir		"Libraries/3rd/libcurl")
+set(rel_tpm_dir			"Admin/TPM")

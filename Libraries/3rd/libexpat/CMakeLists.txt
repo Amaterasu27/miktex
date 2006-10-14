@@ -1,4 +1,4 @@
-## SourcePaths.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,16 +17,36 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-## shared library names; follow this naming convention:
-##    MiKTeX-NAME-REV
-## where:
-##    NAME is the component name
-##    REV  is the API revision
-set(bzip2_dll_name	"MiKTeX-bzip2-3")
-set(curl_dll_name	"MiKTeX-curl-1")
-set(expat_dll_name	"MiKTeX-expat-3")
+if(WIN32)
+  add_definitions(-DCOMPILED_FROM_DSP)
+endif(WIN32)
 
-## static library names
-set(bzip2_lib_name	"bzip2-static")
-set(curl_lib_name	"curl-static")
-set(expat_lib_name	"expat-static")
+set(${expat_dll_name}_sources
+  ascii.h
+  asciitab.h
+  expat-version.h
+  expat.h
+  expat_config.h
+  expat_external.h
+  iasciitab.h
+  internal.h
+  latin1tab.h
+  nametab.h
+  utf8tab.h
+  xmlparse.c
+  xmlrole.c
+  xmlrole.h
+  xmltok.c
+  xmltok.h
+  xmltok_impl.h
+)
+
+if(WIN32)
+  set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
+    expat.rc
+  )
+endif(WIN32)
+
+add_library(${expat_dll_name} SHARED ${${expat_dll_name}_sources})
+
+install(TARGETS ${expat_dll_name} DESTINATION "${bindir}")

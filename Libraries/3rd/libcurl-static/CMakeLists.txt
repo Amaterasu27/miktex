@@ -19,16 +19,15 @@
 
 add_definitions(-DBUILDING_LIBCURL -DCURL_STATICLIB)
 
-include_directories(${CMAKE_SOURCE_DIR}/${rel_libcurl_dir})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir})
 
 use_static_crt()
 
-add_library(${curl_lib_name} STATIC
+set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/arpa_telnet.h
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/base64.c
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/base64.h
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/ca-bundle.h
-  ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/config-win32.h
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/connect.c
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/connect.h
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/content_encoding.c
@@ -135,3 +134,11 @@ add_library(${curl_lib_name} STATIC
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/urldata.h
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/version.c
 )
+
+if(WIN32)
+  set(${curl_lib_name}_sources ${${curl_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/config-win32.h
+  )
+endif(WIN32)
+
+add_library(${curl_lib_name} STATIC ${${curl_lib_name}_sources})

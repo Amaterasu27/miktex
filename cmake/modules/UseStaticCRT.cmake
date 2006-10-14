@@ -17,6 +17,12 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+###############################################################################
+# remove_cxx_flag
+# 
+# Remove the specified C++ compiler flag (a regular expression).
+###############################################################################
+
 macro(remove_cxx_flag _flag_regex)
   foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
     string(REGEX REPLACE
@@ -26,6 +32,12 @@ macro(remove_cxx_flag _flag_regex)
   endforeach(c)
 endmacro(remove_cxx_flag)
 
+###############################################################################
+# remove_c_flag
+# 
+# Remove the specified C compiler flag (a regular expression).
+###############################################################################
+
 macro(remove_c_flag _flag_regex)
   foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
     string(REGEX REPLACE
@@ -34,6 +46,12 @@ macro(remove_c_flag _flag_regex)
            "${CMAKE_C_FLAGS${c}}")
   endforeach(c)
 endmacro(remove_c_flag)
+
+###############################################################################
+# use_static_crt
+# 
+# Prepare to link against the static C runtime library.
+###############################################################################
 
 macro(use_static_crt)
   if(MSVC)

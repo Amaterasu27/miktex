@@ -21,9 +21,11 @@ cmake_minimum_required(VERSION 2.5 FATAL_ERROR)
 
 project(miktex)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+# autotools compability names
 set(PACKAGE_NAME "MiKTeX")
 set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
 
@@ -33,7 +35,7 @@ include(SourcePaths)
 include(UseStaticCRT)
 
 ###############################################################################
-# MiKTeX version info
+# set MiKTeX version info
 
 set(MIKTEX_SERIES_STR
     "${MIKTEX_MAJOR_VERSION}.${MIKTEX_MINOR_VERSION}")
@@ -65,10 +67,11 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 4)
 endif(MIKTEX_RELEASE_STATE EQUAL 0)
 
 ###############################################################################
-# date/time info
+# set date/time info
 
-execute_process(COMMAND "bash" "-c" "date" OUTPUT_VARIABLE date)
-string(REGEX REPLACE "([ A-Za-z0-9:]+).*" "\\1" MIKTEX_DATETIME_STR ${date})
+# fixme: use perl
+execute_process(COMMAND "bash" "-c" "date" OUTPUT_VARIABLE d)
+string(REGEX REPLACE ".$" "" MIKTEX_DATETIME_STR ${d})
 
 ###############################################################################
 # set the build type
@@ -100,6 +103,7 @@ endif(WIN32)
 # add global includes
 
 include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/include
 )
 
@@ -140,3 +144,6 @@ if(WIN32)
   add_subdirectory(${rel_libcurl_dir})
   add_subdirectory(${rel_libcurl_dir}-static)
 endif(WIN32)
+
+add_subdirectory(${rel_expat_dir})
+add_subdirectory(${rel_expat_dir}-static)

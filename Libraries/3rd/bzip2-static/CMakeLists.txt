@@ -19,12 +19,10 @@
 
 use_static_crt()
 
-add_library(${bzip2_lib_name} STATIC
+set(${bzip2_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/blocksort.c
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib.c
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib.h
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib.h
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib_private.h
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/bzlib_private.h
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/compress.c
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/crctable.c
@@ -33,3 +31,5 @@ add_library(${bzip2_lib_name} STATIC
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/libbz2-version.h
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/randtable.c
 )
+
+add_library(${bzip2_lib_name} STATIC ${${bzip2_lib_name}_sources})
