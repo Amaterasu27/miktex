@@ -1,4 +1,4 @@
-## SourcePaths.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,17 +17,41 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_build_tools_etc_dir	"BuildUtilities/etc")
-set(rel_bzip2_dir		"Libraries/3rd/bzip2")
-set(rel_core_dir		"Libraries/MiKTeX/Core")
-set(rel_core_inc_dir		"${rel_core_dir}/include/miktex")
-set(rel_expat_dir		"Libraries/3rd/libexpat")
-set(rel_libcurl_dir		"Libraries/3rd/libcurl")
-set(rel_tpm_dir			"Admin/TPM")
-set(rel_gnu_dir			"Libraries/3rd/libgnu")
-set(rel_jpeg_dir		"Libraries/3rd/libjpeg")
-set(rel_mspack_dir		"Libraries/3rd/libmspack")
-set(rel_popt_dir		"Libraries/3rd/libpopt")
-set(rel_tiff_dir		"Libraries/3rd/libtiff")
-set(rel_netpbm_dir		"Libraries/3rd/netpbm")
-set(rel_zlib_dir		"Libraries/3rd/zlib")
+disable_runtime_checks()
+
+set(${zlib_dll_name}_sources
+  adler32.c
+  compress.c
+  crc32.c
+  crc32.h
+  deflate.c
+  deflate.h
+  gzio.c
+  infback.c
+  inffast.c
+  inffast.h
+  inffixed.h
+  inflate.c
+  inflate.h
+  inftrees.c
+  inftrees.h
+  trees.c
+  trees.h
+  uncompr.c
+  zconf.h
+  zlib-version.h
+  zlib.h
+  zutil.c
+  zutil.h
+)
+
+if(WIN32)
+  set(${zlib_dll_name}_sources ${${zlib_dll_name}_sources}
+    zlib.def
+    zlib.rc
+  )
+endif(WIN32)
+
+add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
+
+install(TARGETS ${zlib_dll_name} DESTINATION "${bindir}")

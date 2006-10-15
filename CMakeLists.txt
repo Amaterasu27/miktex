@@ -96,7 +96,10 @@ mark_as_advanced(CMAKE_BUILD_TYPE)
 add_definitions(-DMIKTEX)
 
 if(WIN32)
-  add_definitions(-DMIKTEX_WINDOWS)
+  add_definitions(
+    -DZLIB_DLL
+    -DMIKTEX_WINDOWS
+  )
 else(WIN32)
   add_definitions(-DMIKTEX_UNIX)
 endif(WIN32)
@@ -183,4 +186,13 @@ endif(WIN32)
 
 if(WIN32)
   add_subdirectory(${rel_tiff_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_netpbm_dir})
+endif(WIN32)
+
+add_subdirectory(${rel_zlib_dir})
+if(WIN32)
+  add_subdirectory(${rel_zlib_dir}-static)
 endif(WIN32)

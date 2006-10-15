@@ -27,4 +27,7 @@ macro(use_static_libraries)
     -DXML_STATIC
     -DMIKTEX_STATIC
   )
+  remove_definitions(
+    -DZLIB_DLL
+  )
 endmacro(use_static_libraries)
