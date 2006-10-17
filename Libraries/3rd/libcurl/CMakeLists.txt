@@ -17,9 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DBUILDING_LIBCURL)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_definitions(-DBUILDING_LIBCURL)
 
 set(${curl_dll_name}_sources
   arpa_telnet.h

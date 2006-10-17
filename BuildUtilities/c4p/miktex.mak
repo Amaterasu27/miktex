@@ -33,27 +33,27 @@ objects = \
 	$(outdir)\type.obj \
 
 sources = \
-	gram.c \
-	main.c \
-	misc.c \
-	output.c \
-	scan.c \
-	subrange.c \
-	symtab.c \
-	type.c \
+	gram.cpp \
+	main.cpp \
+	misc.cpp \
+	output.cpp \
+	scan.cpp \
+	subrange.cpp \
+	symtab.cpp \
+	type.cpp \
 
 binaries = $(outdir)\c4p.exe
 
-.c{$(outdir)\}.obj:
+.cpp{$(outdir)\}.obj:
 	$(cc) $(cppstandard) \
 		$(ccopt_all_cpp) \
 		$(ccopt_output_directory)$(outdir)\ \
 		-Dalloca=_alloca \
 		$<
 
-all: .bootstrap common-all $(binaries)
+all: common-all $(binaries)
 
-install: .bootstrap common-install install-binaries
+install: common-install install-binaries
 
 check: common-check
 
@@ -85,33 +85,15 @@ $(outdir)\c4p.res: \
 
 	$(rc) $(rcstandard) $(rcopt_output_file)$@ c4p.rc
 
-scan.c: scan.l
+scan.cpp: scan.l
 	$(flex) -t $(LEXFLAGS) scan.l > $@
 
-gram.c gram.h: gram.y
+gram.cpp gram.h: gram.y
 	$(yacc) -d gram.y
-	-del /f gram.c
+	-del /f gram.cpp
 	-del /f gram.h
-	move y.tab.c gram.c
+	move y.tab.c gram.cpp
 	move y.tab.h gram.h
-
-# -----------------------------------------------------------------------------
-# bootstrapping
-# -----------------------------------------------------------------------------
-
-make-init: gram.c gram.h scan.c
-	copy gram.c initgram.c
-	copy gram.h initgram.h
-	copy scan.c initscan.c
-
-.bootstrap: initgram.c initgram.h initscan.c
-	@del /f gram.c
-	@del /f gram.h
-	@del /f scan.c
-	type initgram.c > gram.c
-	type initgram.h > gram.h
-	type initscan.c > scan.c
-	echo x > .bootstrap
 
 # -----------------------------------------------------------------------------
 # clean-up
@@ -120,14 +102,13 @@ make-init: gram.c gram.h scan.c
 mostlyclean: common-mostlyclean
 
 clean: common-clean mostlyclean
+	-del /f gram.cpp
+	-del /f gram.h
+	-del /f scan.cpp
 
 distclean: common-distclean clean
-	-del /f .bootstrap
 
 maintainer-clean: common-maintainer-clean distclean
-	-del /f gram.c
-	-del /f gram.h
-	-del /f scan.c
 
 # -----------------------------------------------------------------------------
 # dependencies

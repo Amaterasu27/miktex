@@ -19,8 +19,6 @@
 
 disable_runtime_checks()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 set(${tiff_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
   ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h

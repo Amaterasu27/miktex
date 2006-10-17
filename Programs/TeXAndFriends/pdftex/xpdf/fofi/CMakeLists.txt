@@ -17,16 +17,25 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
+include_directories(
+  ..
+  ../goo
 )
 
-add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
+use_static_crt()
+use_static_libraries()
+
+set(${fofi_lib_name}_sources
+  FoFiBase.cc
+  FoFiBase.h
+  FoFiEncodings.cc
+  FoFiEncodings.h
+  FoFiTrueType.cc
+  FoFiTrueType.h
+  FoFiType1.cc
+  FoFiType1.h
+  FoFiType1C.cc
+  FoFiType1C.h
 )
 
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)
+add_library(${fofi_lib_name} STATIC ${${fofi_lib_name}_sources})

@@ -17,16 +17,42 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
-)
-
 add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
+  -DPNG_BUILD_DLL
+  -D_WINDLL
 )
 
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)
+set(${png_dll_name}_sources
+  libpng-version.h
+  png.c
+  png.h
+  pngconf.h
+  pngerror.c
+  pngget.c
+  pngmem.c
+  pngpread.c
+  pngread.c
+  pngrio.c
+  pngrtran.c
+  pngrutil.c
+  pngset.c
+  pngtrans.c
+  pngvcrd.c
+  pngwio.c
+  pngwrite.c
+  pngwtran.c
+  pngwutil.c
+)
+
+if(WIN32)
+  set(${png_dll_name}_sources ${${png_dll_name}_sources}
+    libpng.def
+    libpng.rc
+  )
+endif(WIN32)
+
+add_library(${png_dll_name} SHARED ${${png_dll_name}_sources})
+
+target_link_libraries(${png_dll_name} ${zlib_dll_name})
+
+install(TARGETS ${png_dll_name} DESTINATION "${bindir}")

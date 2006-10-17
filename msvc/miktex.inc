@@ -340,7 +340,7 @@ localtexmf = $(prefix)
 ## where the production version of MiKTeX is installed
 !ifndef tmdir
 #tmdir = C:\Program Files\MiKTeX $(miktexseries)
-tmdir = C:\Program Files\MiKTeX 2.5
+tmdir = H:\texmf
 !endif
 
 ## texmf root directories
@@ -605,6 +605,7 @@ dlldefs = $(dlldefs) $(ccdef_regex_dll)
 dlldefs = $(dlldefs) $(ccdef_gsoap_dll)
 dlldefs = $(dlldefs) $(ccdef_mpm_dll)
 dlldefs = $(dlldefs) $(ccdef_expat_dll) $(ccdef_popt_dll)
+dlldefs = $(dlldefs) -DSTATIC_MIKTEX
 !endif
 
 ## MiKTeX specific defines

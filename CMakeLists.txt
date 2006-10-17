@@ -97,8 +97,11 @@ add_definitions(-DMIKTEX)
 
 if(WIN32)
   add_definitions(
-    -DZLIB_DLL
     -DMIKTEX_WINDOWS
+  )
+  # DLL export enablers
+  add_definitions(
+    -DZLIB_DLL
   )
 else(WIN32)
   add_definitions(-DMIKTEX_UNIX)
@@ -108,16 +111,44 @@ endif(WIN32)
 ## add global include directories
 
 include_directories(
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_libcurl_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pbm
+  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
+  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
+  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
+  ${CMAKE_SOURCE_DIR}/${rel_png_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
 ###############################################################################
 ## add global link direcories
 
 link_directories(
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
+  ${CMAKE_BINARY_DIR}/${rel_curl_dir}
+  ${CMAKE_BINARY_DIR}/${rel_curl_dir}-static
   ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
+  ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
+  ${CMAKE_BINARY_DIR}/${rel_jpeg_dir}
+  ${CMAKE_BINARY_DIR}/${rel_mspack_dir}
+  ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
+  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pbm
+  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pgm
+  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pnm
+  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/ppm
+  ${CMAKE_BINARY_DIR}/${rel_png_dir}
+  ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
+  ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
+  ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
 )
 
 ###############################################################################
@@ -156,8 +187,8 @@ if(WIN32)
 endif(WIN32)
 
 if(WIN32)
-  add_subdirectory(${rel_libcurl_dir})
-  add_subdirectory(${rel_libcurl_dir}-static)
+  add_subdirectory(${rel_curl_dir})
+  add_subdirectory(${rel_curl_dir}-static)
 endif(WIN32)
 
 add_subdirectory(${rel_expat_dir})
@@ -195,4 +226,34 @@ endif(WIN32)
 add_subdirectory(${rel_zlib_dir})
 if(WIN32)
   add_subdirectory(${rel_zlib_dir}-static)
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_png_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_bmeps_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_gd_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_goo_dir})
+  add_subdirectory(${rel_fofi_dir})
+  add_subdirectory(${rel_xpdf_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_c4p_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_cweb_dir})
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_tie_dir})
 endif(WIN32)

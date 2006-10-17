@@ -17,16 +17,38 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
+set(${bmeps_dll_name}_sources
+  bmeps-version.h
+  bmeps.c
+  bmeps.h
+  bmepsco.h
+  bmepsm.c
+  bmepsoe.c
+  bmepsoe.h
+  jpgeps.c
+  jpgeps.h
+  libbmeps-version.h
+  pngeps.c
+  pngeps.h
+  pnmeps.c
+  pnmeps.h
 )
 
-add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
+if(WIN32)
+  set(${bmeps_dll_name}_sources ${${bmeps_dll_name}_sources}
+    libbmeps.def
+    libbmeps.rc
+  )
+endif(WIN32)
+
+add_library(${bmeps_dll_name} SHARED ${${bmeps_dll_name}_sources})
+
+target_link_libraries(${bmeps_dll_name}
+  ${jpeg_dll_name}
+  ${pbm_dll_name}
+  ${png_dll_name}
+  ${pnm_dll_name}
+  ${zlib_dll_name}
 )
 
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)
+install(TARGETS ${bmeps_dll_name} DESTINATION "${bindir}")

@@ -17,16 +17,29 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
+include_directories(..)
+
+use_static_crt()
+use_static_libraries()
+
+set(${goo_lib_name}_sources
+  FixedPoint.cc
+  FixedPoint.h
+  GHash.cc
+  GHash.h
+  GList.cc
+  GList.h
+  GMutex.h
+  GString.cc
+  GString.h
+  gfile.cc
+  gfile.h
+  gmem.c
+  gmem.h
+  gmempp.cc
+  gtypes.h
+  parseargs.c
+  parseargs.h
 )
 
-add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
-)
-
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)
+add_library(${goo_lib_name} STATIC ${${goo_lib_name}_sources})

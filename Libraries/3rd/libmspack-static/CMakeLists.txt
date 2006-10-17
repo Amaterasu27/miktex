@@ -17,8 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(${CMAKE_SOURCE_DIR}/${rel_mspack_dir})
-
 use_static_crt()
 use_static_libraries()
 
