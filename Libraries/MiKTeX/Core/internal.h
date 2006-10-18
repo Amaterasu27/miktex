@@ -19,7 +19,7 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#if defined(_MSC_VER) && defined(MIKTEX_DLL)
+#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
 #  define MIKTEXEXPORT __declspec(dllexport)
 #else
 #  define MIKTEXEXPORT
@@ -2136,12 +2136,12 @@ public:
 public:
   std::stack<ScratchDirectoryInfo> scratchDirectoryStack;
 
-#if defined(MIKTEX_DLL)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
 public:
   static HINSTANCE hinstDLL;
 #endif
 
-#if defined(MIKTEX_DLL)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
 public:
   static TriState dynamicLoad;
 #endif

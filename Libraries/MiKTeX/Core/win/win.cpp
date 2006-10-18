@@ -1612,7 +1612,7 @@ Line: %d"),
 #define EVTLOGAPP \
   T_("SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application")
 
-#if defined(MIKTEX_DLL)
+#if ! defined(MIKTEX_STATIC)
 MIKTEXSTATICFUNC(bool)
 AddEventSource ()
 {
@@ -1711,7 +1711,7 @@ AddEventSource ()
 
 #if REPORT_EVENTS
 
-#if defined(MIKTEX_DLL)
+#if ! defined(MIKTEX_STATIC)
 MIKTEXSTATICFUNC(bool)
 RemoveEventSource ()
 {
@@ -2474,7 +2474,7 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
    DLL entry/exit routine.
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_DLL)
+#if ! defined(MIKTEX_STATIC)
 
 #if ! defined(MIKTEX_PREVENT_DYNAMIC_LOADS)
 #  define MIKTEX_PREVENT_DYNAMIC_LOADS 0
@@ -2523,7 +2523,7 @@ DllMain (/*[in]*/ HINSTANCE		hinstDLL,
    DllRegisterServer
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_DLL)
+#if ! defined(MIKTEX_STATIC)
 extern "C"
 __declspec(dllexport)
 HRESULT
@@ -2545,7 +2545,7 @@ DllRegisterServer (void)
    DllUnregisterServer
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_DLL)
+#if ! defined(MIKTEX_STATIC)
 extern "C"
 __declspec(dllexport)
 HRESULT

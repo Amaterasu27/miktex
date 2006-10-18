@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_definitions(-DBUILDING_LIBCURL)
 

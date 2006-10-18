@@ -1,6 +1,6 @@
 /* internal.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2004 Christian Schenk
+   Copyright (C) 2001-2006 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,7 +22,7 @@
 
 #include "global.h"
 
-#if defined(MD5_DLL) && defined(_MSC_VER)
+#if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #  define MIKTEXMD5API(type) __declspec(dllexport) type __stdcall
 #elif defined(_MSC_VER)
 #  define MIKTEXMD5API(type) type __stdcall

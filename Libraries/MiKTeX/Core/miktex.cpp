@@ -1062,7 +1062,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
      T_("initializing MiKTeX core library version %s"),
      VER_FILEVERSION_STR);
 
-#if defined(MIKTEX_DLL)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
   if (dynamicLoad.Get() == TriState::True)
     {
       trace_core->WriteFormattedLine (T_("core"), T_("dynamic load"));

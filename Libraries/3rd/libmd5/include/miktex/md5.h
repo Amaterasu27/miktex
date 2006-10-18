@@ -48,7 +48,7 @@ extern "C" {
 #endif
 
 #if ! defined(MIKTEXMD5API)
-#  if defined(MD5_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXMD5API(type) __declspec(dllimport) type __stdcall
 #  elif defined(_MSC_VER)
 #    define MIKTEXMD5API(type) type __stdcall

@@ -103,6 +103,13 @@ if(WIN32)
   add_definitions(
     -DZLIB_DLL
   )
+  # Windows version macros
+  add_definitions(
+    -DWINVER=0x0400
+    -D_WIN32_WINDOWS=0x0400
+    -D_WIN32_WINNT=0x0400
+    -D_WIN32_IE=0x0500
+  )
 else(WIN32)
   add_definitions(-DMIKTEX_UNIX)
 endif(WIN32)
@@ -112,11 +119,14 @@ endif(WIN32)
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pbm
@@ -132,15 +142,13 @@ include_directories(
 ## add global link direcories
 
 link_directories(
+  ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
   ${CMAKE_BINARY_DIR}/${rel_curl_dir}
-  ${CMAKE_BINARY_DIR}/${rel_curl_dir}-static
   ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
-  ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
   ${CMAKE_BINARY_DIR}/${rel_jpeg_dir}
+  ${CMAKE_BINARY_DIR}/${rel_md5_dir}
   ${CMAKE_BINARY_DIR}/${rel_mspack_dir}
-  ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pbm
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pgm
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pnm
@@ -148,17 +156,25 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_png_dir}
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
-  ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
 )
+
+if(WIN32)
+  link_directories(
+    ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_curl_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_md5_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
+  )
+endif(WIN32)
 
 ###############################################################################
 ## configure files
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
-
-configure_file(${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/version.h.in
-               ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/version.h)
 
 configure_file(${CMAKE_SOURCE_DIR}/Documentation/version.ent.in
                ${CMAKE_BINARY_DIR}/Documentation/version.ent)
@@ -256,4 +272,14 @@ endif(WIN32)
 
 if(WIN32)
   add_subdirectory(${rel_tie_dir})
+endif(WIN32)
+
+add_subdirectory(${rel_md5_dir})
+if(WIN32)
+  add_subdirectory(${rel_md5_dir}-static)
+endif(WIN32)
+
+add_subdirectory(${rel_core_dir})
+if(WIN32)
+  add_subdirectory(${rel_core_dir}-static)
 endif(WIN32)

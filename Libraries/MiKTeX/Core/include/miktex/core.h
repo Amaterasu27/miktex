@@ -54,7 +54,7 @@
 #endif
 
 #if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
-#  if defined(MIKTEX_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXEXPORT
@@ -104,7 +104,7 @@
 #  include <pthread.h>
 #endif
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_DLL)
+#if defined(_MSC_VER) && defined(MIKTEX_STATIC)
 #  pragma comment (lib, "htmlhelp")
 #  pragma comment (lib, "shfolder")
 #  pragma comment (lib, "shell32")
