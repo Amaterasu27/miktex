@@ -41,6 +41,7 @@ set(popt_dll_name	"MiKTeX-popt-3")
 set(ppm_dll_name	"MiKTeX-ppm-3")
 set(regex_dll_name	"MiKTeX-regex-3")
 set(tiff_dll_name	"MiKTeX-tiff-3")
+set(ui_dll_name		"MiKTeX-ui-3")
 set(zlib_dll_name	"MiKTeX-zlib-3")
 
 ## static library names

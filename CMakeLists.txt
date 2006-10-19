@@ -136,6 +136,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
@@ -157,6 +158,7 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_BINARY_DIR}/${rel_png_dir}
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
+  ${CMAKE_BINARY_DIR}/${rel_ui_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
 )
 
@@ -290,4 +292,8 @@ endif(WIN32)
 add_subdirectory(${rel_mpmlib_dir})
 if(WIN32)
   add_subdirectory(${rel_mpmlib_dir}-static)
+endif(WIN32)
+
+if(WIN32)
+  add_subdirectory(${rel_ui_mfc_dir})
 endif(WIN32)

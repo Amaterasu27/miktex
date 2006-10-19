@@ -43,6 +43,7 @@ set(rel_popt_dir	"Libraries/3rd/libpopt")
 set(rel_tie_dir		"BuildUtilities/tie")
 set(rel_tiff_dir	"Libraries/3rd/libtiff")
 set(rel_tpm_dir		"Admin/TPM")
+set(rel_ui_mfc_dir	"Libraries/MiKTeX/UI/MFC")
 set(rel_xpdf_dir	"Programs/TeXAndFriends/pdftex/xpdf/xpdf")
 set(rel_zlib_dir	"Libraries/3rd/zlib")
 
