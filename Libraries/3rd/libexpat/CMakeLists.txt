@@ -43,6 +43,7 @@ set(${expat_dll_name}_sources
 
 if(WIN32)
   set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
+    expat.def
     expat.rc
   )
 endif(WIN32)

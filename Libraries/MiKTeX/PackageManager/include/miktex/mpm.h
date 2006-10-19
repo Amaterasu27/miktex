@@ -30,7 +30,7 @@
 #define D5760AC70396FF41BBDD7DD560BDBBBC_
 
 #if ! defined(F927BA187CB94546AB9CA9099D989E81)
-#  if defined(MPM_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MPMEXPORT __declspec(dllimport)
 #  else
 #    define MPMEXPORT

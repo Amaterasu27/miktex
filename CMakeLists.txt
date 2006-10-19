@@ -122,6 +122,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
@@ -145,6 +146,7 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}
   ${CMAKE_BINARY_DIR}/${rel_curl_dir}
+  ${CMAKE_BINARY_DIR}/${rel_expat_dir}
   ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
   ${CMAKE_BINARY_DIR}/${rel_jpeg_dir}
   ${CMAKE_BINARY_DIR}/${rel_md5_dir}
@@ -163,6 +165,7 @@ if(WIN32)
     ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_curl_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_expat_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_md5_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
@@ -282,4 +285,9 @@ endif(WIN32)
 add_subdirectory(${rel_core_dir})
 if(WIN32)
   add_subdirectory(${rel_core_dir}-static)
+endif(WIN32)
+
+add_subdirectory(${rel_mpmlib_dir})
+if(WIN32)
+  add_subdirectory(${rel_mpmlib_dir}-static)
 endif(WIN32)
