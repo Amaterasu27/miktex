@@ -136,9 +136,14 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
+
+if(WIN32)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
+  )
+endif(WIN32)
 
 ###############################################################################
 ## add global link direcories
