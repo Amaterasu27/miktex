@@ -24,11 +24,13 @@ include_directories(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/initctangle.c
   ${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
+  COPYONLY
 )
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/initcommon.c
   ${CMAKE_CURRENT_BINARY_DIR}/common.c
+  COPYONLY
 )
 
 set(ctangle_sources
@@ -38,9 +40,9 @@ set(ctangle_sources
   ctangle-version.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(ctangle_sources ${ctangle_sources} ctangle.rc)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_executable(ctangle ${ctangle_sources})
 
@@ -52,16 +54,13 @@ set(cweave_sources
 )
 
 set_source_files_properties(
-  ${CMAKE_CURRENT_BINARY_DIR}/common.c
   ${CMAKE_CURRENT_BINARY_DIR}/cweave.c
   PROPERTIES GENERATED TRUE
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(cweave ${cweave_sources} cwaeave.rc)
-endif(WIN32)
-
-get_target_property(ctangle_exe ctangle LOCATION)
+endif(MIKTEX_WINDOWS)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/cweave.c
@@ -71,7 +70,7 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/cweave.c
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   MAIN_DEPENDENCY cweave.w
-  DEPENDENCIES common.w prod.w
+  DEPENDENCIES cweave.w prod.w common.h
   VERBATIM
 )
 

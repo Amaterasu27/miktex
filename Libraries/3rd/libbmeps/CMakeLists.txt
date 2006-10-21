@@ -34,12 +34,12 @@ set(${bmeps_dll_name}_sources
   pnmeps.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${bmeps_dll_name}_sources ${${bmeps_dll_name}_sources}
     libbmeps.def
     libbmeps.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${bmeps_dll_name} SHARED ${${bmeps_dll_name}_sources})
 

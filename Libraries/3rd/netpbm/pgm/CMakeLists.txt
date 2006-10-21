@@ -51,11 +51,11 @@ set(${pgm_dll_name}_sources
   pgm.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${pgm_dll_name}_sources ${${pgm_dll_name}_sources}
     libpgm.def
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${pgm_dll_name} SHARED ${${pgm_dll_name}_sources})
 

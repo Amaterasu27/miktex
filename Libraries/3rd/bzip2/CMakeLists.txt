@@ -30,12 +30,12 @@ set(${bzip2_dll_name}_sources
   randtable.c
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${bzip2_dll_name}_sources ${${bzip2_dll_name}_sources}
     libbz2.def
     libbz2.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${bzip2_dll_name} SHARED ${${bzip2_dll_name}_sources})
 

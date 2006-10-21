@@ -17,13 +17,13 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(bindir "${CMAKE_INSTALL_PREFIX}/miktex/bin")
   if(CMAKE_CL_64)
     set(bindir "${bindir}/x64")
   else(CMAKE_CL_64)
 #   set(bindir "${bindir}/x86")
   endif(CMAKE_CL_64)
-else(WIN32)
+else(MIKTEX_WINDOWS)
   set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
-endif(WIN32)
+endif(MIKTEX_WINDOWS)

@@ -321,9 +321,7 @@ ScratchDirectory::Leave ()
   // sanity check
   PathName pathCwd;
   pathCwd.SetToCurrentDirectory ();
-  pathCwd.ResolveSymbolicLinks ();
   PathName pathScratchDir (scratchdir.scratchDirectory.c_str());
-  pathScratchDir.ResolveSymbolicLinks ();
   if (PathName::Compare(pathCwd, pathScratchDir) != 0)
     {
       FATAL_MIKTEX_ERROR (T_("ScratchDirectory::Leave"),

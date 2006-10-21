@@ -29,12 +29,80 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
 
+include(CheckFunctionExists)
 include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
+
+if(WIN32 AND NOT CYGWIN)
+  set(MIKTEX_WINDOWS)
+else(WIN32 AND NOT CYGWIN)
+  set(MIKTEX_UNIX)
+endif(WIN32 AND NOT CYGWIN)
+
+###############################################################################
+## find stuff
+
+if(MIKTEX_WINDOWS)
+  find_program(BISON_EXE NAMES bison)
+  find_program(FLEX_EXE NAMES flex)
+endif(MIKTEX_WINDOWS)
+
+find_package(MFC)
+find_package(THREADS REQUIRED)
+
+if(MIKTEX_WINDOWS)
+  find_package(CURL QUIET)
+else(MIKTEX_WINDOWS)
+  find_package(CURL REQUIRED)
+endif(MIKTEX_WINDOWS)
+
+check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
+check_function_exists(chown HAVE_CHOWN)
+check_function_exists(confstr HAVE_CONFSTR)
+check_function_exists(fork HAVE_FORK)
+check_function_exists(geteuid HAVE_GETEUID)
+check_function_exists(getuid HAVE_GETUID)
+check_function_exists(memcmp HAVE_MEMCMP)
+check_function_exists(memmove HAVE_MEMMOVE)
+check_function_exists(resolvepath HAVE_RESOLVEPATH)
+check_function_exists(setenv HAVE_SETENV)
+check_function_exists(setreuid HAVE_SETREUID)
+check_function_exists(setuid HAVE_SETUID)
+check_function_exists(statvfs HAVE_STATVFS)
+check_function_exists(strerror HAVE_STRERROR)
+check_function_exists(utime HAVE_UTIME)
+check_function_exists(vfork HAVE_VFORK)
+
+check_include_files(alloca.h HAVE_ALLOCA_H)
+check_include_files(dirent.h HAVE_DIRENT_H)
+check_include_files(float.h HAVE_FLOAT_H)
+check_include_files(limits.h HAVE_LIMITS_H)
+check_include_files(mcheck.h HAVE_MCHECK_H)
+check_include_files(sys/mman.h HAVE_SYS_MMAN_H)
+check_include_files(sys/param.h HAVE_SYS_PARAM_H)
+check_include_files(sys/statvfs.h HAVE_SYS_STATVFS_H)
+check_include_files(sys/utime.h HAVE_SYS_UTIME_H)
+check_include_files(sys/utsname.h HAVE_SYS_UTSNAME_H)
+check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(utime.h HAVE_UTIME_H)
+check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_include_files(stdint.h HAVE_STDINT_H)
+
+if(HAVE_LIMITS_H)
+  set(STDC_HEADERS)
+endif(HAVE_LIMITS_H)
+
+try_compile(HAVE_STRUCT_DIRENT_D_TYPE
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
+)
+  
 
 ###############################################################################
 ## set MiKTeX version info
@@ -69,11 +137,21 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 4)
 endif(MIKTEX_RELEASE_STATE EQUAL 0)
 
 ###############################################################################
+## change default install prefix
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MIKTEX_WINDOWS)
+  SET(CMAKE_INSTALL_PREFIX
+    "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}"
+    CACHE PATH "MiKTeX install prefix." FORCE
+  )
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MIKTEX_WINDOWS)
+
+###############################################################################
 ## set date/time info
 
 # fixme: use perl
 execute_process(COMMAND "bash" "-c" "date" OUTPUT_VARIABLE d)
-string(REGEX REPLACE ".$" "" MIKTEX_DATETIME_STR ${d})
+string(REGEX REPLACE ".$" "" MIKTEX_DATETIME_STR "${d}")
 
 ###############################################################################
 ## set the build type
@@ -95,7 +173,7 @@ mark_as_advanced(CMAKE_BUILD_TYPE)
 
 add_definitions(-DMIKTEX)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
@@ -112,7 +190,7 @@ if(WIN32)
   )
 else(WIN32)
   add_definitions(-DMIKTEX_UNIX)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 ###############################################################################
 ## add global include directories
@@ -121,7 +199,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
@@ -139,11 +216,17 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+  )
+endif(MIKTEX_WINDOWS)
+
+if(MFC_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
   )
-endif(WIN32)
+endif(MFC_FOUND)
 
 ###############################################################################
 ## add global link direcories
@@ -167,7 +250,7 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   link_directories(
     ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
@@ -178,7 +261,7 @@ if(WIN32)
     ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 ###############################################################################
 ## configure files
@@ -208,97 +291,97 @@ endforeach(tpm)
 add_subdirectory(${rel_build_tools_etc_dir})
 
 add_subdirectory(${rel_bzip2_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_bzip2_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_curl_dir})
   add_subdirectory(${rel_curl_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_expat_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_expat_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_gnu_dir})
   add_subdirectory(${rel_gnu_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_jpeg_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_mspack_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_mspack_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_popt_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_popt_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_tiff_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_netpbm_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_zlib_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_zlib_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_png_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_bmeps_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_gd_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_goo_dir})
   add_subdirectory(${rel_fofi_dir})
   add_subdirectory(${rel_xpdf_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_c4p_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_cweb_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_tie_dir})
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_md5_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_md5_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_core_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_core_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_subdirectory(${rel_mpmlib_dir})
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
-if(WIN32)
+if(MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})
-endif(WIN32)
+endif(MFC_FOUND)

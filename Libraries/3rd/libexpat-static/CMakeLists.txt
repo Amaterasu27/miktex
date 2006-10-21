@@ -17,9 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_definitions(-DCOMPILED_FROM_DSP)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 use_static_crt()
 use_static_libraries()

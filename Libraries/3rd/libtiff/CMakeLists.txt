@@ -69,13 +69,13 @@ set(${tiff_dll_name}_sources
   uvcode.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${tiff_dll_name}_sources ${${tiff_dll_name}_sources}
     libtiff.def
     libtiff.rc
-    tif_win32.c
+    tif_MIKTEX_WINDOWS.c
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
@@ -96,7 +96,7 @@ add_custom_command(
 	-v ${CMAKE_CURRENT_SOURCE_DIR}/version
 	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
   MAIN_DEPENDENCY version
-  DEPENDS mkversion RELEASE-DATE
+  DEPENDS mkversion RELEASE-DATE version
   VERBATIM
 )
 

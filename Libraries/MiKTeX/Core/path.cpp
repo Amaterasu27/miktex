@@ -265,12 +265,6 @@ PathName::Convert (/*[in]*/ ConvertPathNameFlags	flags)
       *this = temp;
     }
 
-  if ((flags & ConvertPathNameFlags::ResolveSymbolicLinks) != 0)
-    {
-      PathName temp = ::ResolveSymbolicLinks(Get());
-      *this = temp;
-    }
-
 #if defined(MIKTEX_WINDOWS)
   if ((flags & ConvertPathNameFlags::RemoveBlanks) != 0)
     {

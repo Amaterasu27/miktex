@@ -29,13 +29,13 @@ const int filenoStdin = 0;
 const int filenoStdout = 1;
 const int filenoStderr = 2;
 
-#if defined(HAVE_WORKING_FORK)
+#if defined(HAVE_FORK)
 #  define FORK fork
 #else
 #  error this system does not have a working fork() function
 #endif
 
-#if defined(HAVE_WORKING_VFORK)
+#if defined(HAVE_VFORK)
 #  define VFORK vfork
 #else
 #  define VFORK fork

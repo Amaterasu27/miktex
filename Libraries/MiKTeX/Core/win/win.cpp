@@ -2310,18 +2310,6 @@ PathName::AppendAltDirectoryDelimiter ()
 
 /* _________________________________________________________________________
 
-   ResolveSymbolicLinks
-   _________________________________________________________________________ */
-
-MIKTEXINTERNALFUNC(PathName)
-ResolveSymbolicLinks (/*[in]*/ const MIKTEXCHAR * lpszPath)
-{
-  // <todo>follow junction points</todo>
-  return (lpszPath);
-}
-
-/* _________________________________________________________________________
-
    Utils::SetEnvironmentString
    _________________________________________________________________________ */
 

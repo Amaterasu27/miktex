@@ -43,14 +43,14 @@ set_source_files_properties(
   regcomp.c regex_internal.c regexec.c
   PROPERTIES HEADER_FILE_ONLY TRUE)
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${gnu_dll_name}_sources ${${gnu_dll_name}_sources}
     gnu.rc
   )
   set(${regex_dll_name}_sources ${${regex_dll_name}_sources}
     regex.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${gnu_dll_name} SHARED ${${gnu_dll_name}_sources})
 add_library(${regex_dll_name} SHARED ${${gnu_dll_name}_sources})

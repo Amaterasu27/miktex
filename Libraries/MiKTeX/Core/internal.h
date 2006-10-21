@@ -407,9 +407,6 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
 		   /*[in]*/			...);
 #endif
   
-PathName
-ResolveSymbolicLinks (/*[in]*/ const MIKTEXCHAR * lpszPath);
-
 void
 TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 	    /*[in]*/			...);

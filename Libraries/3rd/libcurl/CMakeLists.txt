@@ -133,17 +133,17 @@ set(${curl_dll_name}_sources
   version.c
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${curl_dll_name}_sources ${${curl_dll_name}_sources}
-    config-win32.h
+    config-MIKTEX_WINDOWS.h
     curl.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${curl_dll_name} SHARED ${${curl_dll_name}_sources})
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   target_link_libraries(${curl_dll_name} winmm wsock32)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 install(TARGETS ${curl_dll_name} DESTINATION "${bindir}")

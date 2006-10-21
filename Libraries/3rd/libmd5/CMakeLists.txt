@@ -25,11 +25,11 @@ set(${md5_dll_name}_sources
   include/miktex/md5.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${md5_dll_name}_sources ${${md5_dll_name}_sources}
     md5.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${md5_dll_name} SHARED ${${md5_dll_name}_sources})
 

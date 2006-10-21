@@ -826,8 +826,6 @@ public:
     MakeRelative = 32,
     /// Makes the path name absolute.
     MakeAbsolute = 64,
-    /// Resolves symbolic links in the path name.
-    ResolveSymbolicLinks = 128,
   };
 };
 
@@ -2456,15 +2454,6 @@ public:
     // already normalized
     return (*this);
 #endif
-  }
-
-  /// Resolves symbolic links in this path name.
-  /// @return Returns a reference to this object.
-public:
-  PathName &
-  ResolveSymbolicLinks ()
-  {
-    return (Convert(ConvertPathNameFlags::ResolveSymbolicLinks));
   }
 
   /// Converts this path name into an absolute path name.

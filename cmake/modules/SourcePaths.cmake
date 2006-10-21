@@ -48,4 +48,6 @@ set(rel_xpdf_dir	"Programs/TeXAndFriends/pdftex/xpdf/xpdf")
 set(rel_zlib_dir	"Libraries/3rd/zlib")
 
 # built executables
-set(ctangle_exe		"${CMAKE_BINARY_DIR}/${rel_cweb_dir}/ctangle")
+set(c4p_exe "${CMAKE_BINARY_DIR}/${rel_c4p_dir}/${CMAKE_CFG_INTDIR}/c4p")
+set(ctangle_exe "${CMAKE_BINARY_DIR}/${rel_cweb_dir}/${CMAKE_CFG_INTDIR}/ctangle")
+set(tie_exe "${CMAKE_BINARY_DIR}/${rel_tie_dir}/${CMAKE_CFG_INTDIR}/tie")

@@ -17,6 +17,17 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(NOT BISON_EXE)
+  message(FATAL_ERROR "bison not found")
+endif(NOT BISON_EXE)
+
+if(NOT FLEX_EXE)
+  message(FATAL_ERROR "flex not found")
+endif(NOT FLEX_EXE)
+
+use_static_crt()
+use_static_libraries()
+
 add_definitions(
   -Dalloca=_alloca
 )
@@ -25,9 +36,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
-
-FIND_PROGRAM(BISON_EXE NAMES bison)
-FIND_PROGRAM(FLEX_EXE NAMES flex)
 
 set(c4p_sources
   ${CMAKE_CURRENT_BINARY_DIR}/gram.cpp
@@ -59,7 +67,7 @@ add_custom_command(
 	--output=${CMAKE_CURRENT_BINARY_DIR}/gram.cpp
 	--defines=${CMAKE_CURRENT_BINARY_DIR}/gram.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gram.y
-  MAIN_DEPENDENCY gram.y
+  DEPENDENCIES gram.y
   VERBATIM
 )
 
@@ -69,14 +77,14 @@ add_custom_command(
   COMMAND ${FLEX_EXE}
 	-o${CMAKE_CURRENT_BINARY_DIR}/scan.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scan.l
-  MAIN_DEPENDENCY scan.l
+  DEPENDENCIES scan.l
   VERBATIM
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(c4p_sources ${c4p_sources} c4p.rc)
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_executable(c4p ${c4p_sources})
 
-target_link_libraries(c4p ${gnu_dll_name})
+target_link_libraries(c4p ${gnu_lib_name})

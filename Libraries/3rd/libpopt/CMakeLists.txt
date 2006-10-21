@@ -17,6 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(NOT MIKTEX_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  )
+  add_definitions(-DHAVE_CONFIG_H)
+  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+endif(NOT MIKTEX_WINDOWS)
+
 set(${popt_dll_name}_sources
   findme.c
   findme.h
@@ -31,11 +40,15 @@ set(${popt_dll_name}_sources
   system.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${popt_dll_name}_sources ${${popt_dll_name}_sources}
     popt.rc
   )
-endif(WIN32)
+else(MIKTEX_WINDOWS)
+  set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  )
+endif(MIKTEX_WINDOWS)
 
 add_library(${popt_dll_name} SHARED ${${popt_dll_name}_sources})
 

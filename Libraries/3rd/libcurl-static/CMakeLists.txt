@@ -136,10 +136,10 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/version.c
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${curl_lib_name}_sources ${${curl_lib_name}_sources}
-    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/config-win32.h
+    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/config-MIKTEX_WINDOWS.h
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${curl_lib_name} STATIC ${${curl_lib_name}_sources})

@@ -29,15 +29,17 @@ install(TARGETS bintoc DESTINATION "${bindir}")
 ###############################################################################
 # headerguard
 
-add_executable(headerguard
-  headerguard.cpp
-)
+if(MIKTEX_WINDOWS)
 
-if(WIN32)
+  add_executable(headerguard
+    headerguard.cpp
+  )
+
   target_link_libraries(headerguard Rpcrt4)
-endif(WIN32)
 
-install(TARGETS headerguard DESTINATION "${bindir}")
+  install(TARGETS headerguard DESTINATION "${bindir}")
+
+endif(MIKTEX_WINDOWS)
 
 ###############################################################################
 # j2000
@@ -51,7 +53,7 @@ install(TARGETS j2000 DESTINATION "${bindir}")
 ###############################################################################
 # mkdllbases
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
 
   add_executable(mkdllbases
     mkdllbases.cpp
@@ -61,4 +63,4 @@ if(WIN32)
 
   install(TARGETS mkdllbases DESTINATION "${bindir}")
 
-endif(WIN32)
+endif(MIKTEX_WINDOWS)

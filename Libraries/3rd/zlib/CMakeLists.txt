@@ -45,12 +45,12 @@ set(${zlib_dll_name}_sources
   zutil.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${zlib_dll_name}_sources ${${zlib_dll_name}_sources}
     zlib.def
     zlib.rc
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
 

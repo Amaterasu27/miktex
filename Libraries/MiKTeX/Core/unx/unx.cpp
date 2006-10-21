@@ -25,21 +25,6 @@
 
 /* _________________________________________________________________________
 
-   gnulib Features
-   _________________________________________________________________________ */
-
-#include "setenv.h"
-
-extern "C" {
-
-#include "canonicalize.h"
-
-  // this sucks
-  MIKTEXCHAR * program_name = T_("foo");
-}
-
-/* _________________________________________________________________________
-
    SessionImpl::GetMyProgramFile
 
    Get the fully qualified file name of the running executable (e.g.,
@@ -371,19 +356,6 @@ CreateDirectoryPathForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 			 S_IRWXU | S_IRWXG | S_IRWXO);
 }
 #endif
-
-/* _________________________________________________________________________
-
-   ResolveSymbolicLinks
-   _________________________________________________________________________ */
-
-MIKTEXINTERNALFUNC(PathName)
-ResolveSymbolicLinks (/*[in]*/ const MIKTEXCHAR * lpszPath)
-{
-  MIKTEXCHAR * lpszResolved= canonicalize_file_name(lpszPath);
-  AutoMemoryPointer autoFree (lpszResolved);
-  return (lpszResolved);
-}
 
 /* _________________________________________________________________________
 

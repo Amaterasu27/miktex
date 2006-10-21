@@ -17,8 +17,17 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-configure_file(${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/version.h.in
-               ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/version.h)
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/version.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/version.h
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
+add_definitions(-DHAVE_CONFIG_H)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -72,7 +81,7 @@ set(${core_dll_name}_sources
   util.cpp
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
     core.rc
@@ -95,13 +104,15 @@ if(WIN32)
   )
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
-	${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.rc
-	${CMAKE_CURRENT_BINARY_DIR}/MSG00001.bin
+		${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
+		${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.rc
+		${CMAKE_CURRENT_BINARY_DIR}/MSG00001.bin
     COMMAND mc ${CMAKE_CURRENT_SOURCE_DIR}/MiKTeXEvents.mc
     MAIN_DEPENDENCY MiKTeXEvents.mc
+    DEPENDENCIES MiKTeXEvents.mc
+    VERBATIM
   )
-else(WIN32)
+else(MIKTEX_WINDOWS)
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     unx/unx.cpp
     unx/unxDirectoryLister.cpp
@@ -114,16 +125,22 @@ else(WIN32)
     unx/unxThread.cpp
     unx/unxThread.h
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
 target_link_libraries(${core_dll_name}
+  ${CMAKE_THREAD_LIBS_INIT}
   ${bzip2_dll_name}
   ${md5_dll_name}
   ${zlib_dll_name}
-  SHFolder.lib
-  htmlhelp.lib
 )
+
+if(MIKTEX_WINDOWS)
+  target_link_libraries(${core_dll_name}
+    SHFolder.lib
+    htmlhelp.lib
+  )
+endif(MIKTEX_WINDOWS)
 
 install(TARGETS ${core_dll_name} DESTINATION "${bindir}")

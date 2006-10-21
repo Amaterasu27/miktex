@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2001-2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,16 +17,22 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   add_definitions(-DCOMPILED_FROM_DSP)
-endif(WIN32)
+else(MIKTEX_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/expat_config.h.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
+  )
+  add_definitions(-DHAVE_EXPAT_CONFIG_H)
+  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+endif(MIKTEX_WINDOWS)
 
 set(${expat_dll_name}_sources
   ascii.h
   asciitab.h
   expat-version.h
   expat.h
-  expat_config.h
   expat_external.h
   iasciitab.h
   internal.h
@@ -41,12 +47,16 @@ set(${expat_dll_name}_sources
   xmltok_impl.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
     expat.def
     expat.rc
   )
-endif(WIN32)
+else(MIKTEX_WINDOWS)
+  set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
+  )
+endif(MIKTEX_WINDOWS)
 
 add_library(${expat_dll_name} SHARED ${${expat_dll_name}_sources})
 

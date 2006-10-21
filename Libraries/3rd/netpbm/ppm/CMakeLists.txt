@@ -104,11 +104,11 @@ set(${ppm_dll_name}_sources
   xim.h
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${ppm_dll_name}_sources ${${ppm_dll_name}_sources}
     libppm.def
   )
-endif(WIN32)
+endif(MIKTEX_WINDOWS)
 
 add_library(${ppm_dll_name} SHARED ${${ppm_dll_name}_sources})
 

@@ -17,6 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(NOT MIKTEX_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  )
+  add_definitions(-DHAVE_CONFIG_H)
+  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+endif(NOT MIKTEX_WINDOWS)
+
 set(${mspack_dll_name}_sources
   cab.h
   cabc.c
@@ -54,12 +63,16 @@ set(${mspack_dll_name}_sources
   szddd.c
 )
 
-if(WIN32)
+if(MIKTEX_WINDOWS)
   set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
     mspack.def
     mspack.rc
   )
-endif(WIN32)
+else(MIKTEX_WINDOWS)
+  set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  )
+endif(MIKTEX_WINDOWS)
 
 add_library(${mspack_dll_name} SHARED ${${mspack_dll_name}_sources})
 
