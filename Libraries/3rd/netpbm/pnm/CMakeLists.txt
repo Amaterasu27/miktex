@@ -72,11 +72,11 @@ set(${pnm_dll_name}_sources
   x11wd.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${pnm_dll_name}_sources ${${pnm_dll_name}_sources}
     libpnm.def
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${pnm_dll_name} SHARED ${${pnm_dll_name}_sources})
 

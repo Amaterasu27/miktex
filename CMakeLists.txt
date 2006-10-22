@@ -38,27 +38,27 @@ include(UseStaticCRT)
 include(UseStaticLibraries)
 
 if(WIN32 AND NOT CYGWIN)
-  set(MIKTEX_WINDOWS)
+  set(NATIVE_WINDOWS 1)
 else(WIN32 AND NOT CYGWIN)
-  set(MIKTEX_UNIX)
+  set(UNIX_ALIKE 1)
 endif(WIN32 AND NOT CYGWIN)
 
 ###############################################################################
 ## find stuff
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   find_program(BISON_EXE NAMES bison)
   find_program(FLEX_EXE NAMES flex)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 find_package(MFC)
 find_package(THREADS REQUIRED)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   find_package(CURL QUIET)
-else(MIKTEX_WINDOWS)
+else(NATIVE_WINDOWS)
   find_package(CURL REQUIRED)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)
@@ -139,12 +139,12 @@ endif(MIKTEX_RELEASE_STATE EQUAL 0)
 ###############################################################################
 ## change default install prefix
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MIKTEX_WINDOWS)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
   SET(CMAKE_INSTALL_PREFIX
     "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}"
     CACHE PATH "MiKTeX install prefix." FORCE
   )
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MIKTEX_WINDOWS)
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
 
 ###############################################################################
 ## set date/time info
@@ -173,7 +173,7 @@ mark_as_advanced(CMAKE_BUILD_TYPE)
 
 add_definitions(-DMIKTEX)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
@@ -188,15 +188,16 @@ if(MIKTEX_WINDOWS)
     -D_WIN32_WINNT=0x0400
     -D_WIN32_IE=0x0500
   )
-else(WIN32)
+else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 ###############################################################################
 ## add global include directories
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
@@ -216,11 +217,11 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 if(MFC_FOUND)
   include_directories(
@@ -250,7 +251,7 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   link_directories(
     ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
@@ -261,7 +262,7 @@ if(MIKTEX_WINDOWS)
     ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 ###############################################################################
 ## configure files
@@ -291,96 +292,96 @@ endforeach(tpm)
 add_subdirectory(${rel_build_tools_etc_dir})
 
 add_subdirectory(${rel_bzip2_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_bzip2_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_curl_dir})
   add_subdirectory(${rel_curl_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_expat_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_expat_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_gnu_dir})
   add_subdirectory(${rel_gnu_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_jpeg_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_mspack_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mspack_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_popt_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_popt_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_tiff_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_netpbm_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_zlib_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_zlib_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_png_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_bmeps_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_gd_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_goo_dir})
   add_subdirectory(${rel_fofi_dir})
   add_subdirectory(${rel_xpdf_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_c4p_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_cweb_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_tie_dir})
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_md5_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_md5_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_core_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_core_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_mpmlib_dir})
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 if(MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})

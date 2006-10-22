@@ -29,7 +29,7 @@ install(TARGETS bintoc DESTINATION "${bindir}")
 ###############################################################################
 # headerguard
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
 
   add_executable(headerguard
     headerguard.cpp
@@ -39,7 +39,7 @@ if(MIKTEX_WINDOWS)
 
   install(TARGETS headerguard DESTINATION "${bindir}")
 
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 ###############################################################################
 # j2000
@@ -53,7 +53,7 @@ install(TARGETS j2000 DESTINATION "${bindir}")
 ###############################################################################
 # mkdllbases
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
 
   add_executable(mkdllbases
     mkdllbases.cpp
@@ -63,4 +63,4 @@ if(MIKTEX_WINDOWS)
 
   install(TARGETS mkdllbases DESTINATION "${bindir}")
 
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)

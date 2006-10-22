@@ -17,19 +17,19 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_definitions(-DCOMPILED_FROM_DSP)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 use_static_crt()
 use_static_libraries()
 
 set(${expat_lib_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_expat_dir}/expat_config.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/ascii.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/asciitab.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat-version.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat.h
-  ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat_config.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat_external.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/iasciitab.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/internal.h
@@ -42,6 +42,11 @@ set(${expat_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/xmltok.c
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/xmltok.h
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/xmltok_impl.h
+)
+
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_expat_dir}/expat_config.h
+  PROPERTIES GENERATED TRUE
 )
 
 add_library(${expat_lib_name} STATIC ${${expat_lib_name}_sources})

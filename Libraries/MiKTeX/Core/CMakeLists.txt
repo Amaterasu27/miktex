@@ -81,7 +81,7 @@ set(${core_dll_name}_sources
   util.cpp
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
     core.rc
@@ -109,10 +109,10 @@ if(MIKTEX_WINDOWS)
 		${CMAKE_CURRENT_BINARY_DIR}/MSG00001.bin
     COMMAND mc ${CMAKE_CURRENT_SOURCE_DIR}/MiKTeXEvents.mc
     MAIN_DEPENDENCY MiKTeXEvents.mc
-    DEPENDENCIES MiKTeXEvents.mc
+    DEPENDS MiKTeXEvents.mc
     VERBATIM
   )
-else(MIKTEX_WINDOWS)
+else(NATIVE_WINDOWS)
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     unx/unx.cpp
     unx/unxDirectoryLister.cpp
@@ -125,7 +125,7 @@ else(MIKTEX_WINDOWS)
     unx/unxThread.cpp
     unx/unxThread.h
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
@@ -136,11 +136,11 @@ target_link_libraries(${core_dll_name}
   ${zlib_dll_name}
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   target_link_libraries(${core_dll_name}
     SHFolder.lib
     htmlhelp.lib
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 install(TARGETS ${core_dll_name} DESTINATION "${bindir}")

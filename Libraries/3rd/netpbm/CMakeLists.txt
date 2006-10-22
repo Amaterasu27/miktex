@@ -26,6 +26,8 @@ add_definitions(
   -DA_STRERROR
 )
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 add_subdirectory(pbm)
 add_subdirectory(pgm)
 add_subdirectory(ppm)

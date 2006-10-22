@@ -21,7 +21,7 @@ add_definitions(
   -DHAVE_POPEN
   -DPDF_PARSER_ONLY
   -DUSE_GZIP
-  -DMIKTEX_WINDOWS_LEAN_AND_MEAN
+  -DNATIVE_WINDOWS_LEAN_AND_MEAN
 )
 
 include_directories(

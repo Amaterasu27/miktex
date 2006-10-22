@@ -18,7 +18,7 @@
 ## USA.
 
 add_definitions(
-  -DBGDMIKTEX_WINDOWS
+  -DBGDWIN32
   -DHAVE_LIBJPEG
   -DHAVE_LIBPNG
   -DPATHSEPARATOR=\";\"
@@ -69,11 +69,11 @@ set(${gd_dll_name}_sources
   wbmp.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${gd_dll_name}_sources ${${gd_dll_name}_sources}
     gd.rc
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${gd_dll_name} SHARED ${${gd_dll_name}_sources})
 

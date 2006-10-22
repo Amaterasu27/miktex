@@ -57,7 +57,7 @@ set(${mpm_dll_name}_sources
   mpm.cpp
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
     mpm.rc
     win/winCabExtractor.cpp
@@ -67,7 +67,7 @@ if(MIKTEX_WINDOWS)
     win/winWebSession.cpp
     win/winWebSession.h
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
 
@@ -79,17 +79,17 @@ target_link_libraries(${mpm_dll_name}
   ${mspack_dll_name}
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   target_link_libraries(${mpm_dll_name}
     ${curl_dll_name}
     Ws2_32
     fdi
     wininet
   )
-else(MIKTEX_WINDOWS)
+else(NATIVE_WINDOWS)
   target_link_libraries(${mpm_dll_name}
     ${CURL_LIBRARIES}
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 install(TARGETS ${mpm_dll_name} DESTINATION "${bindir}")

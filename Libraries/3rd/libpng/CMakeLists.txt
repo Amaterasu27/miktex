@@ -44,12 +44,12 @@ set(${png_dll_name}_sources
   pngwutil.c
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${png_dll_name}_sources ${${png_dll_name}_sources}
     libpng.def
     libpng.rc
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${png_dll_name} SHARED ${${png_dll_name}_sources})
 

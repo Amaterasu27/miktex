@@ -60,7 +60,7 @@ set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/mpm.cpp
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${mpm_lib_name}_sources ${${mpm_lib_name}_sources}
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winCabExtractor.cpp
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winCabExtractor.h
@@ -69,6 +69,6 @@ if(MIKTEX_WINDOWS)
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winWebSession.cpp
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winWebSession.h
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${mpm_lib_name} STATIC ${${mpm_lib_name}_sources})

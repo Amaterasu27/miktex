@@ -38,7 +38,7 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/tie.c
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   MAIN_DEPENDENCY tie.w
-  DEPENDENCIES tie.w tie-miktex.ch
+  DEPENDS tie.w tie-miktex.ch
   VERBATIM
 )
 

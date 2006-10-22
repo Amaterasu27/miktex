@@ -19,6 +19,8 @@
 
 disable_runtime_checks()
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 set(${tiff_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
   ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
@@ -69,13 +71,13 @@ set(${tiff_dll_name}_sources
   uvcode.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${tiff_dll_name}_sources ${${tiff_dll_name}_sources}
     libtiff.def
     libtiff.rc
-    tif_MIKTEX_WINDOWS.c
+    tif_win32.c
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c

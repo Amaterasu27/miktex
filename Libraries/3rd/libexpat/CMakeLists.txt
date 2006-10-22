@@ -17,16 +17,18 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(MIKTEX_WINDOWS)
-  add_definitions(-DCOMPILED_FROM_DSP)
-else(MIKTEX_WINDOWS)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/expat_config.h.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/expat_config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
   )
-  add_definitions(-DHAVE_EXPAT_CONFIG_H)
-  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-endif(MIKTEX_WINDOWS)
+
+add_definitions(-DHAVE_EXPAT_CONFIG_H)
+
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+
+if(NATIVE_WINDOWS)
+  add_definitions(-DCOMPILED_FROM_DSP)
+endif(NATIVE_WINDOWS)
 
 set(${expat_dll_name}_sources
   ascii.h
@@ -47,16 +49,16 @@ set(${expat_dll_name}_sources
   xmltok_impl.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
     expat.def
     expat.rc
   )
-else(MIKTEX_WINDOWS)
+else(NATIVE_WINDOWS)
   set(${expat_dll_name}_sources ${${expat_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${expat_dll_name} SHARED ${${expat_dll_name}_sources})
 

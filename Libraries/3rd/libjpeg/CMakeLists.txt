@@ -17,9 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   add_definitions(-DIN_JPEG_DLL)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 set(${jpeg_dll_name}_sources
   jcapimin.c
@@ -82,11 +82,11 @@ set(${jpeg_dll_name}_sources
   libjpeg-version.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${jpeg_dll_name}_sources ${${jpeg_dll_name}_sources}
     libjpeg.rc
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${jpeg_dll_name} SHARED ${${jpeg_dll_name}_sources})
 

@@ -82,11 +82,11 @@ set(${pbm_dll_name}_sources
   pbmfont.h
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(${pbm_dll_name}_sources ${${pbm_dll_name}_sources}
     libpbm.def
   )
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_library(${pbm_dll_name} SHARED ${${pbm_dll_name}_sources})
 

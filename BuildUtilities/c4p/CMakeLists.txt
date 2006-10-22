@@ -67,7 +67,7 @@ add_custom_command(
 	--output=${CMAKE_CURRENT_BINARY_DIR}/gram.cpp
 	--defines=${CMAKE_CURRENT_BINARY_DIR}/gram.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gram.y
-  DEPENDENCIES gram.y
+  DEPENDS gram.y
   VERBATIM
 )
 
@@ -77,13 +77,13 @@ add_custom_command(
   COMMAND ${FLEX_EXE}
 	-o${CMAKE_CURRENT_BINARY_DIR}/scan.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scan.l
-  DEPENDENCIES scan.l
+  DEPENDS scan.l
   VERBATIM
 )
 
-if(MIKTEX_WINDOWS)
+if(NATIVE_WINDOWS)
   set(c4p_sources ${c4p_sources} c4p.rc)
-endif(MIKTEX_WINDOWS)
+endif(NATIVE_WINDOWS)
 
 add_executable(c4p ${c4p_sources})
 
