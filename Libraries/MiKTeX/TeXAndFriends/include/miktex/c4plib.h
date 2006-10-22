@@ -36,7 +36,7 @@
 #include <miktex/core.h>
 
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)
-#  if defined(TEXMF_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define C4PEXPORT __declspec(dllimport)
 #  else
 #    define C4PEXPORT

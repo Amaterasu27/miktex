@@ -38,7 +38,7 @@
 #endif
 
 #if ! defined(BDF6E2537F116547846406B5B2B65949)
-#  if defined(APP_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXAPPEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXAPPEXPORT

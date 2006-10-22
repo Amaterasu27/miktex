@@ -29,7 +29,7 @@
 #define GUARD_EA5A87F23904AC44BC85743B1568911C_
 
 #if ! defined(B8C7815676699B4EA2DE96F0BD727276)
-#  if defined(MIKTEXMF_DLL) && defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXMFEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXMFEXPORT

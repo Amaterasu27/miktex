@@ -197,13 +197,17 @@ endif(NATIVE_WINDOWS)
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
@@ -213,6 +217,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
@@ -233,12 +239,15 @@ endif(MFC_FOUND)
 ## add global link direcories
 
 link_directories(
+  ${CMAKE_BINARY_DIR}/${rel_app_dir}
   ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}
   ${CMAKE_BINARY_DIR}/${rel_curl_dir}
+  ${CMAKE_BINARY_DIR}/${rel_dvi_dir}
   ${CMAKE_BINARY_DIR}/${rel_expat_dir}
   ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
   ${CMAKE_BINARY_DIR}/${rel_jpeg_dir}
+  ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}
   ${CMAKE_BINARY_DIR}/${rel_md5_dir}
   ${CMAKE_BINARY_DIR}/${rel_mspack_dir}
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pbm
@@ -246,6 +255,8 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pnm
   ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_BINARY_DIR}/${rel_png_dir}
+  ${CMAKE_BINARY_DIR}/${rel_popt_dir}
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_BINARY_DIR}/${rel_ui_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
@@ -260,6 +271,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_md5_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
+    ${CMAKE_BINARY_DIR}/${rel_popt_dir}-static
     ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
   )
 endif(NATIVE_WINDOWS)
@@ -378,6 +390,10 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_core_dir}-static)
 endif(NATIVE_WINDOWS)
 
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_cfg_dir})
+endif(NATIVE_WINDOWS)
+
 add_subdirectory(${rel_mpmlib_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
@@ -386,3 +402,7 @@ endif(NATIVE_WINDOWS)
 if(MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})
 endif(MFC_FOUND)
+
+add_subdirectory(${rel_app_dir})
+
+add_subdirectory(${rel_texmf_dir})

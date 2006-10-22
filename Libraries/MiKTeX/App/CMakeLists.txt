@@ -17,19 +17,31 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-file(WRITE
-  ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
+set(${app_dll_name}_sources
+  StdAfx.cpp
+  StdAfx.h
+  app-version.h
+  app.cpp
+  internal.h
 )
 
-add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
+if(NATIVE_WINDOWS)
+  set(${app_dll_name}_sources ${${app_dll_name}_sources}
+    app.rc
+  )
+endif(NATIVE_WINDOWS)
+
+add_library(${app_dll_name} SHARED ${${app_dll_name}_sources})
+
+target_link_libraries(${app_dll_name}
+  ${core_dll_name}
+  ${mpm_dll_name}
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+if(NATIVE_WINDOWS AND MFC_FOUND)
+  target_link_libraries(${app_dll_name}
+    ${ui_dll_name}
+  )
+endif(NATIVE_WINDOWS AND MFC_FOUND)
 
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)
+install(TARGETS ${app_dll_name} DESTINATION "${bindir}")

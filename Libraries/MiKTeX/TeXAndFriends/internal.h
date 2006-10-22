@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#if defined(_MSC_VER) && defined(TEXMF_DLL)
+#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
 #  define MIKTEXMFEXPORT __declspec(dllexport)
 #  define C4PEXPORT __declspec(dllexport)
 #else

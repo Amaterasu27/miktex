@@ -17,19 +17,24 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-file(WRITE
-  ${CMAKE_CURRENT_BINARY_DIR}/compile.h
-  "#define COMPILE_TIME __TIMESTAMP__\n#define COMPILED_BY \"MiKTeX.org\"\n"
+use_static_crt()
+use_static_libraries()
+
+set(cfg_sources
+  cfg-version.h
+  cfg.cpp
 )
 
-add_definitions(
-  -DLIBTIFF
-  -DA_STRERROR
+if(NATIVE_WINDOWS)
+  set(cfg_sources ${cfg_sources} cfg.rc)
+endif(NATIVE_WINDOWS)
+
+add_executable(cfg ${cfg_sources})
+
+target_link_libraries(cfg
+  ${bzip2_lib_name}
+  ${core_lib_name}
+  ${md5_lib_name}
+  ${popt_lib_name}
+  ${zlib_lib_name}
 )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-add_subdirectory(pbm)
-add_subdirectory(pgm)
-add_subdirectory(ppm)
-add_subdirectory(pnm)

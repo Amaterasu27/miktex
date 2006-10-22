@@ -107,6 +107,13 @@ projects = $(projects) $(prj_miktex_libs2)
 
 # -----------------------------------------------------------------------------
 
+prj_build_utilities3 = \
+	$(rel_cfgdir)		\
+
+projects = $(projects) $(prj_build_utilities3)
+
+# -----------------------------------------------------------------------------
+
 prj_miktex_libs3 = \
 	$(rel_mpmlibdir)		\
 	$(rel_mpmstaticlibdir)		\
@@ -145,15 +152,8 @@ projects = $(projects) $(prj_miktex_libs7)
 
 # -----------------------------------------------------------------------------
 
-prj_build_utilities3 = \
-	$(rel_webdir)			 \
-
-projects = $(projects) $(prj_build_utilities3)
-
-# -----------------------------------------------------------------------------
-
 prj_build_utilities4 = \
-	$(rel_cfgdir)		\
+	$(rel_webdir)			 \
 
 projects = $(projects) $(prj_build_utilities4)
 
