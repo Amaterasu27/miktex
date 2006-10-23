@@ -144,3 +144,5 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 install(TARGETS ${core_dll_name} DESTINATION "${bindir}")
+
+add_subdirectory(test)

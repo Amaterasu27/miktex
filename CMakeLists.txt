@@ -21,6 +21,8 @@ cmake_minimum_required(VERSION 2.5 FATAL_ERROR)
 
 project(miktex)
 
+enable_testing()
+
 ## autotools compability names
 set(PACKAGE_NAME "MiKTeX")
 set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
@@ -202,6 +204,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
@@ -243,6 +246,7 @@ link_directories(
   ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}
   ${CMAKE_BINARY_DIR}/${rel_curl_dir}
+  ${CMAKE_BINARY_DIR}/${rel_dib_dir}
   ${CMAKE_BINARY_DIR}/${rel_dvi_dir}
   ${CMAKE_BINARY_DIR}/${rel_expat_dir}
   ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
@@ -405,4 +409,22 @@ endif(MFC_FOUND)
 
 add_subdirectory(${rel_app_dir})
 
-add_subdirectory(${rel_texmf_dir})
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_texmf_dir})
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_dib_dir})
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_dvi_dir})
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_kpsemu_dir})
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_web_dir})
+endif(NATIVE_WINDOWS)
