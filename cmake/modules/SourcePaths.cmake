@@ -58,7 +58,7 @@ set(rel_zlib_dir	"Libraries/3rd/zlib")
 set(alias_cpp "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/MiKTeX/etc/alias.cpp")
 
 # build utilities
-set(c4p_exe "${CMAKE_BINARY_DIR}/${rel_c4p_dir}/${CMAKE_CFG_INTDIR}/c4p")
-set(cfg_exe "${CMAKE_BINARY_DIR}/${rel_cfg_dir}/${CMAKE_CFG_INTDIR}/cfg")
-set(ctangle_exe "${CMAKE_BINARY_DIR}/${rel_cweb_dir}/${CMAKE_CFG_INTDIR}/ctangle")
-set(tie_exe "${CMAKE_BINARY_DIR}/${rel_tie_dir}/${CMAKE_CFG_INTDIR}/tie")
+set(c4p_exe "${outdir}/${CMAKE_CFG_INTDIR}/c4p")
+set(cfg_exe "${outdir}/${CMAKE_CFG_INTDIR}/cfg")
+set(ctangle_exe "${outdir}/${CMAKE_CFG_INTDIR}/ctangle")
+set(tie_exe "${outdir}/${CMAKE_CFG_INTDIR}/tie")

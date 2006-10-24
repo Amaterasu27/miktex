@@ -668,6 +668,7 @@ private:
 #define MIKTEX_DEFINE_WEBAPP(dllentry, appclass, app, program, data)	\
 appclass app;								\
 extern "C"								\
+__declspec(dllexport)							\
 int									\
 MIKTEXMFCALL								\
 dllentry (/*[in]*/ int			argc,				\

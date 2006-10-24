@@ -23,6 +23,10 @@ project(miktex)
 
 enable_testing()
 
+set(outdir "${CMAKE_BINARY_DIR}/binlib")
+set(EXECUTABLE_OUTPUT_PATH "${outdir}")
+set(LIBRARY_OUTPUT_PATH "${outdir}")
+
 ## autotools compability names
 set(PACKAGE_NAME "MiKTeX")
 set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
@@ -38,6 +42,7 @@ include(LibraryNames)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
+include(CreateWebApp)
 
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
@@ -241,44 +246,7 @@ endif(MFC_FOUND)
 ###############################################################################
 ## add global link direcories
 
-link_directories(
-  ${CMAKE_BINARY_DIR}/${rel_app_dir}
-  ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}
-  ${CMAKE_BINARY_DIR}/${rel_curl_dir}
-  ${CMAKE_BINARY_DIR}/${rel_dib_dir}
-  ${CMAKE_BINARY_DIR}/${rel_dvi_dir}
-  ${CMAKE_BINARY_DIR}/${rel_expat_dir}
-  ${CMAKE_BINARY_DIR}/${rel_gnu_dir}
-  ${CMAKE_BINARY_DIR}/${rel_jpeg_dir}
-  ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}
-  ${CMAKE_BINARY_DIR}/${rel_md5_dir}
-  ${CMAKE_BINARY_DIR}/${rel_mspack_dir}
-  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pbm
-  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pgm
-  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/pnm
-  ${CMAKE_BINARY_DIR}/${rel_netpbm_dir}/ppm
-  ${CMAKE_BINARY_DIR}/${rel_png_dir}
-  ${CMAKE_BINARY_DIR}/${rel_popt_dir}
-  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}
-  ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
-  ${CMAKE_BINARY_DIR}/${rel_ui_dir}/include
-  ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
-)
-
-if(NATIVE_WINDOWS)
-  link_directories(
-    ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_core_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_curl_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_expat_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_gnu_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_md5_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_mspack_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_popt_dir}-static
-    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}-static
-  )
-endif(NATIVE_WINDOWS)
+link_directories(${LIBRARY_OUTPUT_PATH})
 
 ###############################################################################
 ## configure files
