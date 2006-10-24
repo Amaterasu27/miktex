@@ -26,3 +26,4 @@ configure_file(
 )
 
 create_web_app(Tangle)
+create_web_app(Weave)

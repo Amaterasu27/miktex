@@ -61,6 +61,14 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     PROPERTIES GENERATED TRUE
   )
 
+  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.h
+    "#include <miktex/webapp.h>
+using namespace MiKTeX::TeXAndFriends;
+class ${_name_u} : public WebApp {};"
+    )
+  endif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
+
   add_custom_command(
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
@@ -79,6 +87,24 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     VERBATIM
   )
 
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+    add_custom_command(
+      OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
+	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+      COMMAND
+	${tangle_exe}
+		${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web
+		${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch
+		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
+		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+      DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web
+	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch
+      VERBATIM
+    )
+  endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+
   add_library(${${_name_l}_dll_name} SHARED ${${${_name_l}_dll_name}_sources})
 
   target_link_libraries(${${_name_l}_dll_name}
@@ -96,4 +122,10 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ${core_dll_name}
     ${${_name_l}_dll_name}
   )
+
+  install(
+    TARGETS ${${_name_l}_dll_name} ${_name_l}
+    DESTINATION ${bindir}
+  )
+    
 endmacro(create_web_app _name)
