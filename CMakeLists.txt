@@ -396,3 +396,9 @@ endif(NATIVE_WINDOWS)
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_web_dir})
 endif(NATIVE_WINDOWS)
+
+if(MFC_FOUND)
+  add_subdirectory(${rel_mpm_mfc_dir})
+endif(MFC_FOUND)
+
+add_subdirectory(${rel_mpm_dir})
