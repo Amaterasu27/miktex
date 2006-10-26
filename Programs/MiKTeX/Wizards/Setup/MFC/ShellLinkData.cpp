@@ -88,7 +88,7 @@ const ShellLinkData shellLinks[] = {
     false,
     0,
     IDS_MPM,
-    EXEPATH(MIKTEX_MPM_EXE),
+    EXEPATH(MIKTEX_MPM_MFC_EXE),
     LD_USESHOWCMD,
     0,
     0,

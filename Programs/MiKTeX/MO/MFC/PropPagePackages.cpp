@@ -414,7 +414,9 @@ PropPagePackages::OnBnClickedPackageManager ()
   try
     {
       PathName path;
-      if (! SessionWrapper(true)->FindFile(_T("mpm.exe"), FileType::EXE, path))
+      if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_MFC_EXE,
+					   FileType::EXE,
+					   path))
 	{
 	  FATAL_MIKTEX_ERROR
 	    (T_("PropPagePackages::OnBnClickedPackageManager"),
