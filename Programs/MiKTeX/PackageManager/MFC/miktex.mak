@@ -29,7 +29,7 @@ cfg = Release
 cfg = Debug
 !endif
 
-binaries = $(outdir)\mpm.exe
+binaries = $(outdir)\mpm_mfc.exe
 
 documents = #help\409\mpm409.chm
 

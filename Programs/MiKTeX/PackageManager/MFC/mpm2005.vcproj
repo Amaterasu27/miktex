@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="mpm"
+	Name="mpm_mfc"
 	ProjectGUID="{F4B247C2-05D3-4024-8D64-912A6782536B}"
 	RootNamespace="mpm2005"
 	Keyword="MFCProj"
@@ -71,7 +71,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="..\..\..\..\Libraries\MiKTeX\Core\Debug\core.lib ..\..\..\..\Libraries\MiKTeX\PackageManager\Debug\mpm.lib ..\..\..\..\Libraries\MiKTeX\UI\MFC\Debug\MiKTeX-ui-3.lib"
-				OutputFile="$(OutDir)\mpm.exe"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -157,7 +156,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="..\..\..\..\Libraries\MiKTeX\Core\Release\core.lib ..\..\..\..\Libraries\MiKTeX\PackageManager\Release\mpm.lib ..\..\..\..\Libraries\MiKTeX\UI\MFC\Release\MiKTeX-ui-3.lib"
-				OutputFile="$(OutDir)\mpm.exe"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"

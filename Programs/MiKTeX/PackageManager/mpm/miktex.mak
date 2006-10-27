@@ -27,7 +27,7 @@ miktex_cc_64bit_portability = 1
 
 !include <miktex.inc>
 
-binaries = $(outdir)\mpm.com
+binaries = $(outdir)\mpm.exe
 
 cc_options = \
 	$(ccopt_create_pdb) \
@@ -74,7 +74,7 @@ mpm_objects = \
 	$(popt_static_lib) \
 	$(zlib_static_lib) \
 
-$(outdir)\mpm.com: $(outdir) $(mpm_objects)
+$(outdir)\mpm.exe: $(outdir) $(mpm_objects)
 	$(link) $(conlflags) $(ldebug) \
 		-delayload:advapi32.dll \
 		-delayload:winspool.drv \
