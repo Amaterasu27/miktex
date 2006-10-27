@@ -43,6 +43,8 @@ include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
 include(CreateWebApp)
+include(CreateDllWrapper)
+include(CreateExeAlias)
 
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
@@ -402,3 +404,9 @@ if(MFC_FOUND)
 endif(MFC_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_makex_dir})
+endif(NATIVE_WINDOWS)
+
+add_subdirectory(${rel_initexmf_dir})

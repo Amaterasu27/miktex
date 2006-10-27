@@ -50,6 +50,7 @@ set(tiff_dll_name	"MiKTeX-tiff-3")
 set(ui_dll_name		"MiKTeX-ui-3")
 set(weave_dll_name	"MiKTeX-weave-3")
 set(zlib_dll_name	"MiKTeX-zlib-3")
+set(makex_dll_name	"MiKTeX-make-3")
 
 ## static library names
 set(bzip2_lib_name	"bzip2-static")
