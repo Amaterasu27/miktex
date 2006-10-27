@@ -27,3 +27,5 @@ if(NATIVE_WINDOWS)
 else(NATIVE_WINDOWS)
   set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
 endif(NATIVE_WINDOWS)
+
+set(configdir "${CMAKE_INSTALL_PREFIX}/miktex/config")

@@ -58,6 +58,7 @@ set(rel_xpdf_dir	"Programs/TeXAndFriends/pdftex/xpdf/xpdf")
 set(rel_zlib_dir	"Libraries/3rd/zlib")
 set(rel_makex_dir	"Programs/MiKTeX/makex")
 set(rel_initexmf_dir	"Programs/MiKTeX/initexmf")
+set(rel_config_dir	"Admin/ConfigFiles")
 
 set(alias_cpp "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/MiKTeX/etc/alias.cpp")
 

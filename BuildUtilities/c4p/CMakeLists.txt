@@ -17,14 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(NOT BISON_EXE)
-  message(FATAL_ERROR "bison not found")
-endif(NOT BISON_EXE)
-
-if(NOT FLEX_EXE)
-  message(FATAL_ERROR "flex not found")
-endif(NOT FLEX_EXE)
-
 use_static_crt()
 use_static_libraries()
 

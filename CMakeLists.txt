@@ -56,8 +56,13 @@ endif(WIN32 AND NOT CYGWIN)
 ## find stuff
 
 if(NATIVE_WINDOWS)
-  find_program(BISON_EXE NAMES bison)
-  find_program(FLEX_EXE NAMES flex)
+  foreach(p bison cat cp dos2unix flex)
+    string(TOUPPER "${p}" p_u)
+    find_program(${p_u}_EXE NAMES ${p})
+    if(NOT ${p_u}_EXE)
+      message(FATAL_ERROR "The program ${p} could not be found.")
+    endif(NOT ${p_u}_EXE)
+  endforeach(p)
 endif(NATIVE_WINDOWS)
 
 find_package(MFC)
@@ -410,3 +415,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_initexmf_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_config_dir})
+endif(NATIVE_WINDOWS)
