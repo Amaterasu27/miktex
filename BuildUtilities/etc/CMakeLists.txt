@@ -17,50 +17,22 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-###############################################################################
-# bintoc
-
-add_executable(bintoc
-  bintoc.cpp
-)
+add_executable(bintoc bintoc.cpp)
 
 install(TARGETS bintoc DESTINATION "${bindir}")
 
-###############################################################################
-# headerguard
-
 if(NATIVE_WINDOWS)
-
-  add_executable(headerguard
-    headerguard.cpp
-  )
-
+  add_executable(headerguard headerguard.cpp)
   target_link_libraries(headerguard Rpcrt4)
-
   install(TARGETS headerguard DESTINATION "${bindir}")
-
 endif(NATIVE_WINDOWS)
 
-###############################################################################
-# j2000
-
-add_executable(j2000
-  j2000.cpp
-)
+add_executable(j2000 j2000.cpp)
 
 install(TARGETS j2000 DESTINATION "${bindir}")
 
-###############################################################################
-# mkdllbases
-
 if(NATIVE_WINDOWS)
-
-  add_executable(mkdllbases
-    mkdllbases.cpp
-  )
-
+  add_executable(mkdllbases mkdllbases.cpp)
   target_link_libraries(mkdllbases imagehlp)
-
   install(TARGETS mkdllbases DESTINATION "${bindir}")
-
 endif(NATIVE_WINDOWS)

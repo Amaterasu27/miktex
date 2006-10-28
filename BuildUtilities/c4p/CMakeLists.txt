@@ -59,7 +59,7 @@ add_custom_command(
 	--output=${CMAKE_CURRENT_BINARY_DIR}/gram.cpp
 	--defines=${CMAKE_CURRENT_BINARY_DIR}/gram.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gram.y
-  DEPENDS gram.y
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/gram.y
   VERBATIM
 )
 
@@ -69,7 +69,7 @@ add_custom_command(
   COMMAND ${FLEX_EXE}
 	-o${CMAKE_CURRENT_BINARY_DIR}/scan.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scan.l
-  DEPENDS scan.l
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scan.l
   VERBATIM
 )
 

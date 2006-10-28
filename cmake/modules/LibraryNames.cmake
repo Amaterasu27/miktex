@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-## shared library names; follow this naming convention:
+## shared library names; naming convention:
 ##    MiKTeX-NAME-REV
 ## where:
 ##    NAME is the component name
@@ -29,30 +29,37 @@ set(core_dll_name	"MiKTeX-core-3")
 set(curl_dll_name	"MiKTeX-curl-1")
 set(dib_dll_name	"MiKTeX-dib-3")
 set(dvi_dll_name	"MiKTeX-dvi-3")
+set(dvitype_dll_name	"MiKTeX-dvitype-3")
 set(expat_dll_name	"MiKTeX-expat-3")
+set(findtexmf_dll_name	"MiKTeX-findtexmf-3")
 set(gd_dll_name		"MiKTeX-gd-2")
 set(gnu_dll_name	"MiKTeX-gnu-3")
 set(jpeg_dll_name	"MiKTeX-jpeg-3")
 set(kpsemu_dll_name	"MiKTeX-kpseweb2cemu-3")
+set(makex_dll_name	"MiKTeX-make-3")
 set(md5_dll_name	"MiKTeX-md5-3")
+set(mkfntmap_dll_name	"MiKTeX-mkfntmap-3")
 set(mpm_dll_name	"MiKTeX-packagemanager-3")
 set(mspack_dll_name	"MiKTeX-mspack-1")
 set(pbm_dll_name	"MiKTeX-pbm-3")
 set(pgm_dll_name	"MiKTeX-pgm-3")
+set(pltotf_dll_name	"MiKTeX-pltotf-3")
 set(png_dll_name	"MiKTeX-png-3")
 set(pnm_dll_name	"MiKTeX-pnm-3")
+set(pooltype_dll_name	"MiKTeX-pooltype-3")
 set(popt_dll_name	"MiKTeX-popt-3")
 set(ppm_dll_name	"MiKTeX-ppm-3")
 set(regex_dll_name	"MiKTeX-regex-3")
 set(tangle_dll_name	"MiKTeX-tangle-3")
+set(tex_dll_name	"MiKTeX-tex-3")
 set(texmf_dll_name	"MiKTeX-texmf-3")
+set(tftopl_dll_name	"MiKTeX-tftopl-3")
 set(tiff_dll_name	"MiKTeX-tiff-3")
 set(ui_dll_name		"MiKTeX-ui-3")
+set(vftovp_dll_name	"MiKTeX-vftovp-3")
+set(vptovf_dll_name	"MiKTeX-vptovf-3")
 set(weave_dll_name	"MiKTeX-weave-3")
 set(zlib_dll_name	"MiKTeX-zlib-3")
-set(makex_dll_name	"MiKTeX-make-3")
-set(findtexmf_dll_name	"MiKTeX-findtexmf-3")
-set(mkfntmap_dll_name	"MiKTeX-mkfntmap-3")
 
 ## static library names
 set(bzip2_lib_name	"bzip2-static")

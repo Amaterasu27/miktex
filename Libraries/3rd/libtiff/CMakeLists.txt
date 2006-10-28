@@ -98,7 +98,10 @@ add_custom_command(
 	-v ${CMAKE_CURRENT_SOURCE_DIR}/version
 	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
   MAIN_DEPENDENCY version
-  DEPENDS mkversion RELEASE-DATE version
+  DEPENDS
+	mkversion
+	${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
+	${CMAKE_CURRENT_SOURCE_DIR}/version
   VERBATIM
 )
 

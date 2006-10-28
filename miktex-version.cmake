@@ -17,28 +17,23 @@
 ## 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 ## major version number
-set(MIKTEX_MAJOR_VERSION
-    2)
+set(MIKTEX_MAJOR_VERSION	2)
 
 ## minor version number
-set(MIKTEX_MINOR_VERSION
-    6)
+set(MIKTEX_MINOR_VERSION	6)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION
-    2478)
+set(MIKTEX_J2000_VERSION	2492)
 
 ## the release number; only meaningful for rc/beta builds
-set(MIKTEX_RELEASE_NUM
-    1)
+set(MIKTEX_RELEASE_NUM		1)
 
 ## the release state; one of:
 ##   0 (general availability release)
 ##   1 (release candidate)
 ##   2 (beta release)
 ##   4 (snapshot release)
-set(MIKTEX_RELEASE_STATE
-    4)
+set(MIKTEX_RELEASE_STATE 4)
 
 if(MIKTEX_RELEASE_STATE EQUAL 0)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)

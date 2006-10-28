@@ -22,14 +22,14 @@ include_directories(
 )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/initctangle.c
-  ${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/initcommon.c
+  ${CMAKE_CURRENT_BINARY_DIR}/common.c
   COPYONLY
 )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/initcommon.c
-  ${CMAKE_CURRENT_BINARY_DIR}/common.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/initctangle.c
+  ${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
   COPYONLY
 )
 
@@ -69,8 +69,12 @@ add_custom_command(
 	-
 	${CMAKE_CURRENT_BINARY_DIR}/cweave.c
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  MAIN_DEPENDENCY cweave.w
-  DEPENDS ctangle cweave.w prod.w common.h
+  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/cweave.w
+  DEPENDS
+	ctangle
+	${CMAKE_CURRENT_SOURCE_DIR}/cweave.w
+	${CMAKE_CURRENT_SOURCE_DIR}/prod.w
+	${CMAKE_CURRENT_SOURCE_DIR}/common.h
   VERBATIM
 )
 

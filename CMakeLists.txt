@@ -19,6 +19,20 @@
 
 cmake_minimum_required(VERSION 2.5 FATAL_ERROR)
 
+if(WIN32 AND NOT CYGWIN)
+  set(NATIVE_WINDOWS 1)
+else(WIN32 AND NOT CYGWIN)
+  set(UNIX_ALIKE 1)
+endif(WIN32 AND NOT CYGWIN)
+
+if(NATIVE_WINDOWS)
+  set(PRODUCT_NAME "MiKTeX")
+  set(BUILDING_MIKTEX TRUE)
+else(NATIVE_WINDOWS)
+  set(PRODUCT_NAME "MiKTeX Tools")
+  set(BUILDING_MIKTEX_TOOLS TRUE)
+endif(NATIVE_WINDOWS)
+
 project(miktex)
 
 enable_testing()
@@ -28,7 +42,7 @@ set(EXECUTABLE_OUTPUT_PATH "${outdir}")
 set(LIBRARY_OUTPUT_PATH "${outdir}")
 
 ## autotools compability names
-set(PACKAGE_NAME "MiKTeX")
+set(PACKAGE_NAME ${PRODUCT_NAME})
 set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -36,34 +50,32 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 include(miktex-version.cmake)
 
 include(CheckFunctionExists)
+include(CreateDllWrapper)
+include(CreateExeAlias)
+include(CreateWebApp)
 include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
-include(CreateWebApp)
-include(CreateDllWrapper)
-include(CreateExeAlias)
-
-if(WIN32 AND NOT CYGWIN)
-  set(NATIVE_WINDOWS 1)
-else(WIN32 AND NOT CYGWIN)
-  set(UNIX_ALIKE 1)
-endif(WIN32 AND NOT CYGWIN)
 
 ###############################################################################
 ## find stuff
 
-if(NATIVE_WINDOWS)
-  foreach(p bison cat cp dos2unix flex)
-    string(TOUPPER "${p}" p_u)
-    find_program(${p_u}_EXE NAMES ${p})
-    if(NOT ${p_u}_EXE)
-      message(FATAL_ERROR "The program ${p} could not be found.")
-    endif(NOT ${p_u}_EXE)
-  endforeach(p)
-endif(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
+  set(required_programs bison cat cp dos2unix flex)
+else(BUILDING_MIKTEX)
+  set(required_programs)
+endif(BUILDING_MIKTEX)
+
+foreach(p ${required_programs})
+  string(TOUPPER "${p}" p_u)
+  find_program(${p_u}_EXE NAMES ${p})
+  if(NOT ${p_u}_EXE)
+    message(FATAL_ERROR "The program ${p} could not be found.")
+  endif(NOT ${p_u}_EXE)
+endforeach(p)
 
 find_package(MFC)
 find_package(THREADS REQUIRED)
@@ -244,11 +256,11 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-if(MFC_FOUND)
+if(BUILDING_MIKTEX AND MFC_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
   )
-endif(MFC_FOUND)
+endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 ###############################################################################
 ## add global link direcories
@@ -302,9 +314,9 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_gnu_dir}-static)
 endif(NATIVE_WINDOWS)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_jpeg_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mspack_dir})
 if(NATIVE_WINDOWS)
@@ -316,48 +328,48 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_popt_dir}-static)
 endif(NATIVE_WINDOWS)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tiff_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_netpbm_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_zlib_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_zlib_dir}-static)
 endif(NATIVE_WINDOWS)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_png_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bmeps_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_gd_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_goo_dir})
   add_subdirectory(${rel_fofi_dir})
   add_subdirectory(${rel_xpdf_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_c4p_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cweb_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tie_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_md5_dir})
 if(NATIVE_WINDOWS)
@@ -369,67 +381,67 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_core_dir}-static)
 endif(NATIVE_WINDOWS)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cfg_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mpmlib_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
 endif(NATIVE_WINDOWS)
 
-if(MFC_FOUND)
+if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})
-endif(MFC_FOUND)
+endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_app_dir})
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_texmf_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dib_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvi_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_kpsemu_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_web_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(MFC_FOUND)
+if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})
-endif(MFC_FOUND)
+endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_makex_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_initexmf_dir})
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_config_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_findtexmf_dir})
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mkfntmap_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)
 
-if(MFC_FOUND)
+if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mo_mfc_dir})
-endif(MFC_FOUND)
+endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_programs_etc_dir})
-endif(NATIVE_WINDOWS)
+endif(BUILDING_MIKTEX)

@@ -17,13 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-set(tie_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/tie.c
-)
+set(tie_sources ${CMAKE_CURRENT_BINARY_DIR}/tie.c)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/tie.c
@@ -38,7 +34,9 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/tie.c
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   MAIN_DEPENDENCY tie.w
-  DEPENDS tie.w tie-miktex.ch
+  DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/tie.w
+	${CMAKE_CURRENT_SOURCE_DIR}/tie-miktex.ch
   VERBATIM
 )
 
