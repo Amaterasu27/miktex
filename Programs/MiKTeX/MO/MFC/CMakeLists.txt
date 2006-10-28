@@ -18,8 +18,8 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/res/mpm.manifest.in
-  ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
+  ${CMAKE_CURRENT_SOURCE_DIR}/res/mo.manifest.in
+  ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -30,44 +30,55 @@ add_definitions(
   -D_AFXDLL
 )
 
-set(mpm_mfc_sources
-  MainFrame.cpp
-  MainFrame.h
-  MpmDoc.cpp
-  MpmDoc.h
-  MpmView.cpp
-  MpmView.h
-  mpm-version.h
-  mpm.cpp
-  mpm.h
+set(mo_mfc_sources
+  FormatDefinitionDialog.cpp
+  FormatDefinitionDialog.h
+  LanguageDefinitionDialog.cpp
+  LanguageDefinitionDialog.h
+  PropPageFormats.cpp
+  PropPageFormats.h
+  PropPageGeneral.cpp
+  PropPageGeneral.h
+  PropPageLanguages.cpp
+  PropPageLanguages.h
+  PropPagePackages.cpp
+  PropPagePackages.h
+  PropPageRoots.cpp
+  PropPageRoots.h
+  PropSheet.cpp
+  PropSheet.h
+  StdAfx.cpp
+  StdAfx.h
+  mo-version.h
+  mo.cpp
+  mo.h
   resource.h
-  stdafx.cpp
-  stdafx.h
+  resource.hm
 )
 
 if(NATIVE_WINDOWS)
-  set(mpm_mfc_sources ${mpm_mfc_sources} mpm.rc)
+  set(mo_mfc_sources ${mo_mfc_sources} mo.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
+add_executable(mo WIN32 ${mo_mfc_sources})
 
-target_link_libraries(mpm_mfc
+target_link_libraries(mo
   ${core_dll_name}
-  ${mpm_dll_name}
+  ${mo_dll_name}
   ${ui_dll_name}
 )
 
-get_target_property(mpm_mfc_exe mpm_mfc LOCATION)
+get_target_property(mo_mfc_exe mo LOCATION)
 
 if(NATIVE_WINDOWS)
   add_custom_command(
-    TARGET mpm_mfc
+    TARGET mo
     POST_BUILD
     COMMAND mt -nologo
-	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
-	-updateresource:${mpm_mfc_exe}\;1
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
+	-updateresource:${mo_mfc_exe}\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS mpm_mfc DESTINATION ${bindir})
+install(TARGETS mo DESTINATION ${bindir})

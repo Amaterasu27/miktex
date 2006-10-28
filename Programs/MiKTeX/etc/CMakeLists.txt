@@ -1,4 +1,4 @@
-## CreateDllWrapper.cmake
+## CMakeLists.txt						-*- CMake -*-
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,21 +17,19 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-macro(create_dll_wrapper _name _dll)
-  if(${ARGC} GREATER 2)
-    set(_dllmain ${ARGV2})
-  else(${ARGC} GREATER 2)
-    string(TOLOWER "${_name}" _dllmain)
-  endif(${ARGC} GREATER 2)
-  configure_file(
-    ${alias_cpp}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
-    COPYONLY
+foreach(t conspawn findexe runbat runperl)
+  add_executable(${t} ${t}.cpp)
+  target_link_libraries(${t}
+    ${app_dll_name}
+    ${core_dll_name}
   )
-  add_executable (${_name} ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp)
-  set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
-    COMPILE_FLAGS "-DDLLMAIN=${_dllmain}"
-  )
-  target_link_libraries(${_name} ${_dll})
-endmacro(create_dll_wrapper)
+  install(TARGETS ${t} DESTINATION "${bindir}")
+endforeach(t)
+
+add_executable(copystart WIN32 copystart.cpp)
+
+target_link_libraries(copystart
+  ${core_dll_name}
+)
+
+install(TARGETS copystart DESTINATION "${bindir}")

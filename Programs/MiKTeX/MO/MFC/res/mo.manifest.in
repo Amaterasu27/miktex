@@ -2,11 +2,11 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"> 
 <assemblyIdentity 
     version="@MIKTEX_MAJOR_VERSION@.@MIKTEX_MINOR_VERSION@.@MIKTEX_J2000_VERSION@.0" 
-    processorArchitecture="x86" 
-    name="mpm_mfc.exe"
+    processorArchitecture="X86" 
+    name="mo.exe"
     type="win32" 
 /> 
-<description>MiKTeX Package Manager (MFC)</description> 
+<description>MiKTeX Options</description> 
 <dependency> 
     <dependentAssembly> 
         <assemblyIdentity 

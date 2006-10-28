@@ -684,14 +684,15 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 
 /* _________________________________________________________________________
 
-   findtexmfmain
+   findtexmf
    _________________________________________________________________________ */
 
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
-findtexmfmain (/*[in]*/ int			argc,
-	       /*[in]*/ const MIKTEXCHAR **	argv)
+findtexmf (/*[in]*/ int			argc,
+	   /*[in]*/ const MIKTEXCHAR **	argv)
 {
   try
     {

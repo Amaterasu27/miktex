@@ -419,3 +419,17 @@ add_subdirectory(${rel_initexmf_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_config_dir})
 endif(NATIVE_WINDOWS)
+
+add_subdirectory(${rel_findtexmf_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_mkfntmap_dir})
+endif(NATIVE_WINDOWS)
+
+if(MFC_FOUND)
+  add_subdirectory(${rel_mo_mfc_dir})
+endif(MFC_FOUND)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_programs_etc_dir})
+endif(NATIVE_WINDOWS)

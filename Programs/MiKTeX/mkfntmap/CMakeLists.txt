@@ -17,57 +17,32 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/res/mpm.manifest.in
-  ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
-)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-set(CMAKE_MFC_FLAG 2)
-
-add_definitions(
-  -D_AFXDLL
-)
-
-set(mpm_mfc_sources
-  MainFrame.cpp
-  MainFrame.h
-  MpmDoc.cpp
-  MpmDoc.h
-  MpmView.cpp
-  MpmView.h
-  mpm-version.h
-  mpm.cpp
-  mpm.h
-  resource.h
-  stdafx.cpp
-  stdafx.h
-)
-
-if(NATIVE_WINDOWS)
-  set(mpm_mfc_sources ${mpm_mfc_sources} mpm.rc)
-endif(NATIVE_WINDOWS)
-
-add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
-
-target_link_libraries(mpm_mfc
-  ${core_dll_name}
-  ${mpm_dll_name}
-  ${ui_dll_name}
-)
-
-get_target_property(mpm_mfc_exe mpm_mfc LOCATION)
-
-if(NATIVE_WINDOWS)
-  add_custom_command(
-    TARGET mpm_mfc
-    POST_BUILD
-    COMMAND mt -nologo
-	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
-	-updateresource:${mpm_mfc_exe}\;1
-    VERBATIM
+set(${mkfntmap_dll_name}_sources
+  internal.h
+  mkfntmap-version.h
+  mkfntmap.cpp
   )
+
+if(NATIVE_WINDOWS)
+  set(${mkfntmap_dll_name}_sources ${${mkfntmap_dll_name}_sources}
+    mkfntmap.rc)
 endif(NATIVE_WINDOWS)
 
-install(TARGETS mpm_mfc DESTINATION ${bindir})
+add_library(${mkfntmap_dll_name} SHARED ${${mkfntmap_dll_name}_sources})
+
+target_link_libraries(${mkfntmap_dll_name}
+  ${core_dll_name}
+  ${popt_dll_name}
+)
+  
+set(exes mkfntmap updmap)
+
+if(NATIVE_WINDOWS)
+  set (exes ${exes} kpsewhich)
+endif(NATIVE_WINDOWS)
+
+foreach(t ${exes})
+  create_dll_wrapper(${t} ${mkfntmap_dll_name} mkfntmap)
+endforeach(t)
+
+install(TARGETS ${mkfntmap_dll_name} ${exes} DESTINATION ${bindir})

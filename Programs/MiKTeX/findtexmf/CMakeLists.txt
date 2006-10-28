@@ -17,57 +17,33 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/res/mpm.manifest.in
-  ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
-)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-set(CMAKE_MFC_FLAG 2)
-
-add_definitions(
-  -D_AFXDLL
-)
-
-set(mpm_mfc_sources
-  MainFrame.cpp
-  MainFrame.h
-  MpmDoc.cpp
-  MpmDoc.h
-  MpmView.cpp
-  MpmView.h
-  mpm-version.h
-  mpm.cpp
-  mpm.h
-  resource.h
-  stdafx.cpp
-  stdafx.h
+set(${findtexmf_dll_name}_sources
+  findtexmf-version.h
+  findtexmf.cpp
 )
 
 if(NATIVE_WINDOWS)
-  set(mpm_mfc_sources ${mpm_mfc_sources} mpm.rc)
+  set(${findtexmf_dll_name}_sources ${${findtexmf_dll_name}_sources}
+    findtexmf.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
+add_library(${findtexmf_dll_name} SHARED ${${findtexmf_dll_name}_sources})
 
-target_link_libraries(mpm_mfc
+target_link_libraries(${findtexmf_dll_name}
+  ${app_dll_name}
   ${core_dll_name}
   ${mpm_dll_name}
-  ${ui_dll_name}
+  ${popt_dll_name}
 )
-
-get_target_property(mpm_mfc_exe mpm_mfc LOCATION)
+  
+set(exes findtexmf)
 
 if(NATIVE_WINDOWS)
-  add_custom_command(
-    TARGET mpm_mfc
-    POST_BUILD
-    COMMAND mt -nologo
-	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
-	-updateresource:${mpm_mfc_exe}\;1
-    VERBATIM
-  )
+  set (exes ${exes} kpsewhich)
 endif(NATIVE_WINDOWS)
 
-install(TARGETS mpm_mfc DESTINATION ${bindir})
+foreach(t ${exes})
+  create_dll_wrapper(${t} ${findtexmf_dll_name} findtexmf)
+endforeach(t)
+
+install(TARGETS ${findtexmf_dll_name} ${exes} DESTINATION ${bindir})

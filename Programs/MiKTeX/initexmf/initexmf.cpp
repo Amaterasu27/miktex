@@ -1944,7 +1944,7 @@ IniTeXMFApp::MakeLinks ()
 
   PathName runperl;
 
-  if (pSession->FindFile(T_("runperl2"), FileType::EXE, runperl))
+  if (pSession->FindFile(T_("runperl"), FileType::EXE, runperl))
     {
       PackageInfo pi;
       auto_ptr<PackageIterator> pIter (pManager->CreateIterator());

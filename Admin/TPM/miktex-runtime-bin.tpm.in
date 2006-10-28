@@ -27,7 +27,7 @@ texmf\miktex\bin\MiKTeX-ui-3.dll
 texmf\miktex\bin\MiKTeX-zlib-3.dll
 texmf\miktex\bin\neolecho.com
 texmf\miktex\bin\runbat.exe
-texmf\miktex\bin\runperl2.exe
+texmf\miktex\bin\runperl.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

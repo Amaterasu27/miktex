@@ -25,7 +25,7 @@ binaries = \
 	$(outdir)\findexe.exe \
 	$(outdir)\neolecho.com \
 	$(outdir)\runbat.exe \
-	$(outdir)\runperl2.exe \
+	$(outdir)\runperl.exe \
 
 .cpp{$(outdir)\}.obj:
 	$(cc) $(cppstandard) $(ccopt_output_directory)$(outdir)\ $<
@@ -146,10 +146,10 @@ $(outdir)\runbat.exe: \
 
 # _____________________________________________________________________________
 #
-# runperl2
+# runperl
 # _____________________________________________________________________________
 
-$(outdir)\runperl2.exe: \
+$(outdir)\runperl.exe: \
 		$(outdir) \
 		$(app_lib) \
 		$(miktex_lib) \

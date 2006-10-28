@@ -1492,14 +1492,15 @@ MakeFontMapApp::Run (/*[in]*/ int			argc,
 
 /* _________________________________________________________________________
 
-   mkfntmapmain
+   mkfntmap
    _________________________________________________________________________ */
 
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
-mkfntmapmain (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv)
+mkfntmap (/*[in]*/ int			argc,
+	  /*[in]*/ const MIKTEXCHAR **	argv)
 {
   try
     {
