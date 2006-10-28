@@ -116,8 +116,12 @@ KPSE::FindGlyph (/*[in]*/ MIKTEXCHAR *			lpszFontName,
 						    pathMakePk,
 						    szArguments,
 						    1024);
-       Process::Run (pathMakePk.Get(), szArguments);
-       if (! SessionWrapper(true)->FindPkFile(lpszFontName, 0, dpi, path))
+       if (! (Process::Run(pathMakePk.Get(),
+			   szArguments,
+			   reinterpret_cast<IRunProcessCallback*>(0),
+			   0,
+			   0)
+	      && SessionWrapper(true)->FindPkFile(lpszFontName, 0, dpi, path)))
 	 {
 	   return (0);
 	 }
