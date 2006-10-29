@@ -1,4 +1,4 @@
-## InstallPaths.cmake
+## CreateCppFromC.cmake
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,16 +17,21 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(NATIVE_WINDOWS)
-  set(bindir "${CMAKE_INSTALL_PREFIX}/miktex/bin")
-  if(CMAKE_CL_64)
-    set(bindir "${bindir}/x64")
-  else(CMAKE_CL_64)
-#   set(bindir "${bindir}/x86")
-  endif(CMAKE_CL_64)
-else(NATIVE_WINDOWS)
-  set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
-endif(NATIVE_WINDOWS)
-
-set(configdir "${CMAKE_INSTALL_PREFIX}/miktex/config")
-set(formatdir "${CMAKE_INSTALL_PREFIX}/miktex/fmt")
+macro(create_cpp_from_c)
+  foreach(_c ${ARGN})
+    get_filename_component(_n ${_c} NAME_WE)
+    set(_cpp ${_n}.cpp)
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
+      COMMAND ${CP_EXE}
+	${CMAKE_CURRENT_SOURCE_DIR}/${_c}
+	${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_c}
+      VERBATIM
+    )
+    set_source_files_properties(
+      ${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
+      PROPERTIES GENERATED TRUE
+    )
+  endforeach(_c)
+endmacro(create_cpp_from_c)

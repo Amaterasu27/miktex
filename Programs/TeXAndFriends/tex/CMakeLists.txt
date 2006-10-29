@@ -46,6 +46,9 @@ add_custom_command(
 
 create_web_app(TeX)
 
+create_exe_alias(initex tex --initialize)
+create_exe_alias(virtex tex)
+
 set(triptex_dll_name "triptex_")
 
 add_custom_command(

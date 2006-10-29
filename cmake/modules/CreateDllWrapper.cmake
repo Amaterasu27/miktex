@@ -34,4 +34,5 @@ macro(create_dll_wrapper _name _dll)
     COMPILE_FLAGS "-DDLLMAIN=${_dllmain}"
   )
   target_link_libraries(${_name} ${_dll})
+  install(TARGETS ${_name} DESTINATION ${bindir})
 endmacro(create_dll_wrapper)

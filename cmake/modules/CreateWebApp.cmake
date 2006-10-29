@@ -60,13 +60,13 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
-    COMPILE_FLAGS
+    PROPERTIES COMPILE_FLAGS
       "-DMIKTEX_${_name_u} -D${_name_u}APP=g_${_name_u}App -D${_name_u}CLASS=${_name_u} -D${_name_u}DATA=g_${_name_u}Data"
   )
 
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}wrapper.cpp
-    COMPILE_FLAGS
+    PROPERTIES COMPILE_FLAGS
       "-DDLLMAIN=MiKTeX_${_name_u} -DDLLAPI=__stdcall -DMIKTEX_${_name_u}"
   )
 
@@ -160,9 +160,14 @@ class ${_name_u} : public WebApp {};"
     ${${_name_l}_dll_name}
   )
 
-  install(
-    TARGETS ${${_name_l}_dll_name} ${_name_l}
+  install(TARGETS
+    ${${_name_l}_dll_name} ${_name_l}
     DESTINATION ${bindir}
+  )
+
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+    DESTINATION ${formatdir}
   )
     
 endmacro(create_web_app _name)
