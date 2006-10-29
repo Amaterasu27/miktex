@@ -1,6 +1,6 @@
-/* type.c: type table					-*- C++ -*-
+/* type.c: type table						-*- C++ -*-
 
-   Copyright (C) 1991-2001 Christian Schenk
+   Copyright (C) 1991-2006 Christian Schenk
 
    This file is part of C4P.
 
@@ -616,6 +616,10 @@ search_field_name (const char *	name,
 	  next_prefix = strcpye(prefix, ".");
 	  next_prefix = strcpye(next_prefix, V->pseudo_name->s_repr);
 	}
+      else
+	{
+	  next_prefix = 0;
+	}
       ret = search_field_name(name, VARIANT_FIELD_LIST_NODE,
 			      V->variant_field_list, next_prefix);
       if (ret != 0)
@@ -631,6 +635,10 @@ search_field_name (const char *	name,
 	    {
 	      next_prefix = strcpye(prefix, ".");
 	      next_prefix = strcpye(next_prefix, VFL->pseudo_name->s_repr);
+	    }
+	  else
+	    {
+	      next_prefix = 0;
 	    }
 	  ret = search_field_name(name, RECORD_SECTION_NODE,
 				  VFL->fixed_part, next_prefix);

@@ -109,6 +109,10 @@ open_header_file ()
   out_s ("#include <miktex/c4plib.h>\n");
   out_s ("#ifdef __cplusplus\nusing namespace C4P;\n#endif\n");
   out_s ("#ifndef C4PEXTERN\n#define C4PEXTERN\n#endif\n");
+  if (! def_filename.empty())
+    {
+      out_form ("#include <%s>\n", def_filename.c_str());
+    }
   if (class_name.length() == 0)
     {
       out_form ("#ifdef __cplusplus\n");
