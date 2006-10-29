@@ -1,0 +1,12 @@
+system "${pltotf_exe} ${trip_dir}/trip.pl trip.tfm";
+system "${tftopl_exe} trip.tfm tmp.pl";
+system "${DIFF_EXE} ${trip_dir}/trip.pl tmp.pl";
+system "${CP_EXE} ${trip_dir}/trip.tex .";
+system "${CP_EXE} ${trip_dir}/triptest.s3 .";
+system "${triptex_exe} -initialize ${triptex_options} <triptest.s3 >${dev_null}";
+system "${DIFF_EXE} ${trip_dir}/tripin.log trip.log";
+system "${triptex_exe} -initialize ${triptex_options} <${trip_dir}/triptest.s4 >trip.fot";
+system "${DIFF_EXE} ${trip_dir}/trip.fot trip.fot";
+system "${DIFF_EXE} ${trip_dir}/trip.log trip.log";
+system "${dvitype_exe} -out-mode=2 -start-there=*.*.*.*.*.*.*.*.*.* -resolution=7227/100 trip.dvi >trip.typ";
+system "${DIFF_EXE} ${trip_dir}/trip.typ trip.typ";

@@ -21,12 +21,13 @@
 #  pragma once
 #endif
 
-#define THEDATA(x) TEXDATA.m_##x
 
-#if defined(TRIPTEX)
+#if defined(MIKTEX_TRIPTEX)
 #  include "triptexdefs.h"
+#define THEDATA(x) TRIPTEXDATA.m_##x
 #else
 #  include "texdefs.h"
+#define THEDATA(x) TEXDATA.m_##x
 #endif
 
 #include "tex.rc"
@@ -38,7 +39,11 @@
 
 using namespace MiKTeX::TeXAndFriends;
 
+#if defined(MIKTEX_TRIPTEX)
+class TRIPTEXCLASS
+#else
 class TEXCLASS
+#endif
 
   : public TeXApp
 
@@ -125,7 +130,12 @@ public:
   }
 };
 
+#if defined(MIKTEX_TRIPTEX)
+extern TRIPTEXCLASS TRIPTEXAPP;
+#define THEAPP TRIPTEXAPP
+#else
 extern TEXCLASS TEXAPP;
 #define THEAPP TEXAPP
+#endif
 
 #include <miktex/texapp.inl>

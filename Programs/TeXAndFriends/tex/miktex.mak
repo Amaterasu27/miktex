@@ -71,11 +71,11 @@ texclass = T_e_X
 texdata = g_TeXData
 texmain = RunTeX
 
-change_file = tex-miktex-all.ch
+change_file = tex-miktex.ch
 
 miktex_change_files = \
 	mltex-miktex.ch \
-	tex-miktex.ch \
+	tex-miktex-misc.ch \
 	tex-miktex-hyph.ch \
 	tex-miktex-quiet.ch \
 	tex-miktex-src.ch \
@@ -335,7 +335,7 @@ triptest-clean:
 	-del /f tripos.tex
 
 mostlyclean: common-mostlyclean triptest-clean
-	-del /f tex-miktex-all.ch
+	-del /f tex-miktex.ch
 	-del /f triptex-miktex.ch
 	-del /f triptex.cc
 	-del /f triptex.h

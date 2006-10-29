@@ -60,11 +60,17 @@ include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
 
+if(NATIVE_WINDOWS)
+  set(dev_null nul)
+else(NATIVE_WINDOWS)
+  set(dev_null /dev/null)
+endif(NATIVE_WINDOWS)
+
 ###############################################################################
 ## find stuff
 
 if(BUILDING_MIKTEX)
-  set(required_programs bison cat cp dos2unix flex)
+  set(required_programs bison cat cp diff dos2unix flex perl sed)
 else(BUILDING_MIKTEX)
   set(required_programs)
 endif(BUILDING_MIKTEX)
@@ -444,4 +450,16 @@ endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_programs_etc_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_tex_etc_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_texware_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_tex_dir})
 endif(BUILDING_MIKTEX)

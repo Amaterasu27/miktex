@@ -18,6 +18,12 @@
 ## USA.
 
 macro(create_web_app _name)
+  if(${ARGC} GREATER 1)
+    set(_web_file ${ARGV1})
+  else(${ARGC} GREATER 1)
+    set(_web_file)
+  endif(${ARGC} GREATER 1)
+
   string(TOLOWER "${_name}" _name_l)
   string(TOUPPER "${_name}" _name_u)
 
@@ -38,17 +44,6 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     COPYONLY
   )
 
-  set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}wrapper.cpp
-    COMPILE_FLAGS "-DDLLMAIN=MiKTeX_${_name_u} -DDLLAPI=__stdcall"
-  )
-
-  add_definitions(
-    -D${_name_u}APP=g_${_name_u}App
-    -D${_name_u}CLASS=${_name_u}
-    -D${_name_u}DATA=g_${_name_u}Data
-  )
-
   set(${${_name_l}_dll_name}_sources
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
@@ -61,6 +56,20 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     PROPERTIES GENERATED TRUE
   )
 
+  set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
+    COMPILE_FLAGS
+      "-DMIKTEX_${_name_u} -D${_name_u}APP=g_${_name_u}App -D${_name_u}CLASS=${_name_u} -D${_name_u}DATA=g_${_name_u}Data"
+  )
+
+  set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}wrapper.cpp
+    COMPILE_FLAGS
+      "-DDLLMAIN=MiKTeX_${_name_u} -DDLLAPI=__stdcall -DMIKTEX_${_name_u}"
+  )
+
   if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.h
     "#include <miktex/webapp.h>
@@ -69,11 +78,21 @@ class ${_name_u} : public WebApp {};"
     )
   endif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
 
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)
+    set(_sed_script ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)
+  elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/dyn.sed)
+    set(_sed_script ${CMAKE_CURRENT_SOURCE_DIR}/dyn.sed)
+  else(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)
+    set(_sed_script /dev/null)
+  endif(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)
+
   add_custom_command(
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}defs.h
     COMMAND ${c4p_exe}
+	--def-filename=${_name_l}defs.h
 	--dll
 	--entry-name=Run${_name_u}
 	--include-filename=${_name_l}-miktex.h
@@ -81,29 +100,47 @@ class ${_name_u} : public WebApp {};"
 	--var-name-prefix=m_
 	--var-struct=g_${_name_u}Data
 	-C
+	${C4P_FLAGS}
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
+    COMMAND ${SED_EXE}
+		-f ${_sed_script}
+		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+		> tmp
+    COMMAND ${CP_EXE} tmp ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
     VERBATIM
   )
 
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
+    set(_changefile ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
+  else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
+    set(_changefile ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.ch)
+  endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
+
+  if(NOT _web_file)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+      set(_web_file ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+  endif(NOT _web_file)
+      
+  if(_web_file)
     add_custom_command(
       OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
       COMMAND
 	${tangle_exe}
-		${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web
-		${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch
+		${_web_file}
+		${_changefile}
 		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
 		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
       DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web
-	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch
+	${_web_file}
+	${_changefile}
       VERBATIM
     )
-  endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+  endif(_web_file)
 
   add_library(${${_name_l}_dll_name} SHARED ${${${_name_l}_dll_name}_sources})
 

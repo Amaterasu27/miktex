@@ -75,7 +75,7 @@ etex.web: $(tex_web) etex.ch
 # Build the MiKTeX-specific web file.
 # _____________________________________________________________________________
 
-tex_miktex_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex.ch
+tex_miktex_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-misc.ch
 tex_miktex_hyph_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-hyph.ch
 tex_miktex_quiet_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-quiet.ch
 tex_miktex_src_ch = $(miktexsrcdir)\$(rel_texdir)\tex-miktex-src.ch
