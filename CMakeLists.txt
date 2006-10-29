@@ -61,16 +61,26 @@ include(UseStaticCRT)
 include(UseStaticLibraries)
 
 if(NATIVE_WINDOWS)
-  set(dev_null nul)
+  set(dev_null "nul")
 else(NATIVE_WINDOWS)
-  set(dev_null /dev/null)
+  set(dev_null "/dev/null")
 endif(NATIVE_WINDOWS)
 
 ###############################################################################
 ## find stuff
 
 if(BUILDING_MIKTEX)
-  set(required_programs bison cat cp diff dos2unix flex perl sed)
+  set(required_programs
+    bison
+    cat
+    cp
+    date
+    diff
+    dos2unix
+    flex
+    perl
+    sed
+  )
 else(BUILDING_MIKTEX)
   set(required_programs)
 endif(BUILDING_MIKTEX)
@@ -134,7 +144,6 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
 )
-  
 
 ###############################################################################
 ## set MiKTeX version info
@@ -181,9 +190,11 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
 ###############################################################################
 ## set date/time info
 
-# fixme: use perl
-execute_process(COMMAND "bash" "-c" "date" OUTPUT_VARIABLE d)
-string(REGEX REPLACE ".$" "" MIKTEX_DATETIME_STR "${d}")
+execute_process(
+  COMMAND ${DATE_EXE}
+  OUTPUT_VARIABLE MIKTEX_DATETIME_STR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 ###############################################################################
 ## set the build type
@@ -291,8 +302,10 @@ configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/*.tpm.in")
 foreach(tpm ${tpms})
   get_filename_component(fn ${tpm} NAME_WE)
-  configure_file(${tpm}
-	"${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${fn}-${MIKTEX_SERIES_STR}.tpm")
+  configure_file(
+    ${tpm}
+    "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${fn}-${MIKTEX_SERIES_STR}.tpm"
+  )
 endforeach(tpm)
 
 ###############################################################################
