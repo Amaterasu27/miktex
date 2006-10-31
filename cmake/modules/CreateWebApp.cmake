@@ -18,18 +18,24 @@
 ## USA.
 
 macro(create_web_app _name)
+  string(TOLOWER "${_name}" _name_l)
+  string(TOUPPER "${_name}" _name_u)
+
   if(${ARGC} GREATER 1)
     set(_web_file ${ARGV1})
   else(${ARGC} GREATER 1)
     set(_web_file)
   endif(${ARGC} GREATER 1)
 
-  string(TOLOWER "${_name}" _name_l)
-  string(TOUPPER "${_name}" _name_u)
+  if(${ARGC} GREATER 2)
+    set(_h_file ${ARGV2})
+  else(${ARGC} GREATER 2)
+    set(_h_file ${_name_l}.h)
+  endif(${ARGC} GREATER 2)
 
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
     "#define C4PEXTERN extern
-#include \"${_name_l}.h\"
+#include \"${_h_file}\"
 #include \"${_name_l}-miktex.h\"
 MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		     ${_name_u},
@@ -45,20 +51,21 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   )
 
   set(${${_name_l}_dll_name}_sources
+    ${${${_name_l}_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
   )
 
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
     PROPERTIES GENERATED TRUE
   )
 
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
     PROPERTIES COMPILE_FLAGS
       "-DMIKTEX_${_name_u} -D${_name_u}APP=g_${_name_u}App -D${_name_u}CLASS=${_name_u} -D${_name_u}DATA=g_${_name_u}Data"
@@ -89,13 +96,14 @@ class ${_name_u} : public WebApp {};"
   add_custom_command(
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+	${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}defs.h
     COMMAND ${c4p_exe}
 	--def-filename=${_name_l}defs.h
 	--dll
 	--entry-name=Run${_name_u}
 	--include-filename=${_name_l}-miktex.h
+	--header-file=${_h_file}
 	--one=${_name_l}
 	--var-name-prefix=m_
 	--var-struct=g_${_name_u}Data
@@ -104,9 +112,9 @@ class ${_name_u} : public WebApp {};"
 	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
     COMMAND ${SED_EXE}
 		-f ${_sed_script}
-		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+		${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
 		> tmp
-    COMMAND ${CP_EXE} tmp ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h
+    COMMAND ${CP_EXE} tmp ${CMAKE_CURRENT_BINARY_DIR}/${_h_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
     VERBATIM
@@ -114,13 +122,17 @@ class ${_name_u} : public WebApp {};"
 
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
     set(_changefile ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
-  else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
+  elseif(${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.ch)
     set(_changefile ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.ch)
+  else(${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.ch)
+    set(_changefile ${dev_null})
   endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
 
   if(NOT _web_file)
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
       set(_web_file ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+    elseif(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.web)
+      set(_web_file ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.web)
     endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
   endif(NOT _web_file)
       

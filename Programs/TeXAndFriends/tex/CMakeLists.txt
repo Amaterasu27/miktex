@@ -20,6 +20,8 @@
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
+default_char_type_is_unsigned()
+
 set(C4P_FLAGS --chars-are-unsigned)
 
 set(tex_changefiles

@@ -1,4 +1,4 @@
-## CreateCppFromC.cmake
+## DefaultCharTypeIsUnsigned.cmake
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,22 +17,17 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-macro(create_cpp_from_c)
-  foreach(_c ${ARGN})
-    get_filename_component(_n ${_c} NAME_WE)
-    set(_cpp ${_n}.cpp)
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
-      COMMAND ${CP_EXE}
-	${_c}
-	${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${_c}
-      VERBATIM
-    )
-    set_source_files_properties(
-      ${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
-      PROPERTIES GENERATED TRUE
-    )
-  endforeach(_c)
-endmacro(create_cpp_from_c)
+###############################################################################
+# default_char_type_is_unsigned
+###############################################################################
+
+macro(default_char_type_is_unsigned)
+  if(MSVC)
+    foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
+      set(CMAKE_C_FLAGS${c} "${CMAKE_C_FLAGS${c}} /J")
+      set(CMAKE_CXX_FLAGS${c} "${CMAKE_CXX_FLAGS${c}} /J")
+    endforeach(c)
+  else(MSVC)
+    message(FATAL_ERROR "Unimplemented macro: default_char_type_is_unsigned")
+  endif(MSVC)
+endmacro(default_char_type_is_unsigned)
