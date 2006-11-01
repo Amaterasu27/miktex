@@ -19,9 +19,6 @@
 
 include_directories(..)
 
-use_static_crt()
-use_static_libraries()
-
 set(${goo_lib_name}_sources
   FixedPoint.cc
   FixedPoint.h

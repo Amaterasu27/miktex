@@ -153,6 +153,11 @@ set(${pdfetex_dll_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftoepdf.cc
 )
 
+set_source_files_properties(
+  ${${pdfetex_dll_name}_sources}
+  PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
+)
+
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
 file(READ ${pdftex_dyn_sed} pdftex_dyn_sed_contents)
 file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
@@ -165,4 +170,13 @@ create_web_app(
   pdfeTeX
   ${CMAKE_CURRENT_BINARY_DIR}/pdfetex.web
   pdfetexd.h
+)
+
+target_link_libraries(${pdfetex_dll_name}
+  ${fofi_lib_name}
+  ${goo_lib_name}
+  ${kpsemu_dll_name}
+  ${png_dll_name}
+  ${regex_dll_name}
+  ${xpdf_lib_name}
 )

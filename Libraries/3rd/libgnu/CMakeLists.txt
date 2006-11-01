@@ -53,6 +53,6 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${gnu_dll_name} SHARED ${${gnu_dll_name}_sources})
-add_library(${regex_dll_name} SHARED ${${gnu_dll_name}_sources})
+add_library(${regex_dll_name} SHARED ${${regex_dll_name}_sources})
 
 install(TARGETS ${gnu_dll_name} ${regex_dll_name} DESTINATION "${bindir}")

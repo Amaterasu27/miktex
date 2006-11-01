@@ -22,9 +22,6 @@ include_directories(
   ../goo
 )
 
-use_static_crt()
-use_static_libraries()
-
 set(${fofi_lib_name}_sources
   FoFiBase.cc
   FoFiBase.h

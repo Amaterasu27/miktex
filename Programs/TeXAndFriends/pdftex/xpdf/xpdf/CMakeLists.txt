@@ -30,9 +30,6 @@ include_directories(
   ../fofi
 )
 
-use_static_crt()
-use_static_libraries()
-
 set(${xpdf_lib_name}_sources
   Array.cc
   Array.h

@@ -25,7 +25,7 @@
 #include <sys/types.h>
 
 #if defined(MIKTEX) && ! defined(REGEXDLLAPI)
-#  if defined(_MSC_VER) 
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER) 
 #    define REGEXDLLAPI(type) __declspec(dllimport) type __stdcall
 #  else
 #    define REGEXDLLAPI(type) type

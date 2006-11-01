@@ -45,8 +45,8 @@ using namespace MiKTeX::Core;
 
 class PDFETEXCLASS
 
-  : public CpdfTeXApp,
-    public CeTeXApp
+  : public PDFTEXCLASS,
+    public ETEXCLASS
 
 {
 public:
@@ -55,23 +55,23 @@ public:
   MIKTEXMFCALL
   Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   {
-    CeTeXApp::Init (lpszProgramInvocationName);
+    ETEXCLASS::Init (lpszProgramInvocationName);
   }
 
 public:
   void
   AllocateMemory ()
   {
-    CpdfTeXApp::AllocateMemory ();
-    CeTeXApp::AllocateMemory ();
+    PDFTEXCLASS::AllocateMemory ();
+    ETEXCLASS::AllocateMemory ();
   }
 
 public:
   void
   FreeMemory ()
   {
-    CpdfTeXApp::FreeMemory ();
-    CeTeXApp::FreeMemory ();
+    PDFTEXCLASS::FreeMemory ();
+    ETEXCLASS::FreeMemory ();
   }
 
 public:
