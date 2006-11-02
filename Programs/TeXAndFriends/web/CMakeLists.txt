@@ -17,7 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/inittangle.p
@@ -25,5 +28,13 @@ configure_file(
   COPYONLY
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
+  ${CMAKE_CURRENT_BINARY_DIR}/tangle.pool
+  COPYONLY
+)
+
 create_web_app(Tangle)
 create_web_app(Weave)
+
+add_dependencies(${weave_dll_name} tangle)

@@ -46,6 +46,8 @@ add_custom_command(
   VERBATIM
 )
 
+set(tex_change_file ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.ch)
+
 create_web_app(TeX)
 
 create_exe_alias(initex tex --initialize)
@@ -65,7 +67,10 @@ add_custom_command(
   VERBATIM
 )
 
-create_web_app(TripTeX ${CMAKE_CURRENT_SOURCE_DIR}/tex.web)
+set(triptex_web_file ${CMAKE_CURRENT_SOURCE_DIR}/tex.web)
+set(triptex_change_file ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.ch)
+
+create_web_app(TripTeX)
 
 set(triptex_options)
 set(triptex_options "${triptex_options} -buf-size=500")

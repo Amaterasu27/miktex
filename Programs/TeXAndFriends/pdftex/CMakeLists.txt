@@ -48,7 +48,9 @@ target_link_libraries(pdftosrc
 
 install(TARGETS pdftosrc DESTINATION ${bindir})
 
-create_cpp_from_c(ttf2afm.c)
+create_cpp_from_c(
+  ${CMAKE_CURRENT_SOURCE_DIR}/ttf2afm.c
+)
 
 set(ttf2afm_sources
   ${wrapper_cpp}

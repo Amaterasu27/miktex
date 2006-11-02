@@ -24,7 +24,7 @@ set(C4P_FLAGS
   --chars-are-unsigned
 )
 
-include_directories(
+include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_etex_dir}
@@ -166,11 +166,10 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${pdftex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
-create_web_app(
-  pdfeTeX
-  ${CMAKE_CURRENT_BINARY_DIR}/pdfetex.web
-  pdfetexd.h
-)
+set(pdfetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/pdfetex.web)
+set(pdfetex_header_file ${CMAKE_CURRENT_BINARY_DIR}/pdfetexd.h)
+
+create_web_app(pdfeTeX)
 
 target_link_libraries(${pdfetex_dll_name}
   ${fofi_lib_name}
