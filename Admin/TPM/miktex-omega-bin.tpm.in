@@ -16,7 +16,6 @@ texmf\miktex\bin\MiKTeX-omega-3.dll
 texmf\miktex\bin\MiKTeX-opl2ofm-3.dll
 texmf\miktex\bin\MiKTeX-ovf2ovp-3.dll
 texmf\miktex\bin\MiKTeX-ovp2ovf-3.dll
-texmf\miktex\bin\iniomega.exe
 texmf\miktex\bin\mkocp.exe
 texmf\miktex\bin\odvicopy.exe
 texmf\miktex\bin\ofm2opl.exe
@@ -26,7 +25,6 @@ texmf\miktex\bin\otp2ocp.exe
 texmf\miktex\bin\outocp.exe
 texmf\miktex\bin\ovf2ovp.exe
 texmf\miktex\bin\ovp2ovf.exe
-texmf\miktex\bin\viromega.exe
 texmf\miktex\config\omega.ini
 texmf\miktex\fmt\omega.pool
     </TPM:RunFiles>

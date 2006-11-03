@@ -23,8 +23,13 @@ macro(create_web_app _name)
   string(TOUPPER "${_name}" _name_u)
 
   if(NOT ${_name_l}_web_file)
-    set(${_name_l}_web_file
-      ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+      set(${_name_l}_web_file
+	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
+      set(${_name_l}_web_file
+	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.web)
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
   endif(NOT ${_name_l}_web_file)
 
   if(NOT ${_name_l}_change_file)

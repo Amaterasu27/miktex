@@ -486,3 +486,15 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_pdfetex_dir})
 endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_omegaware_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_otps_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_omega_dir})
+endif(BUILDING_MIKTEX)
