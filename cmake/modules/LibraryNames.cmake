@@ -22,6 +22,7 @@
 ## where:
 ##    NAME is the component name
 ##    REV  is the API revision
+set(arctrl_dll_name	"MiKTeX-arctrl-1")
 set(app_dll_name	"MiKTeX-app-1")
 set(bmeps_dll_name	"MiKTeX-bmeps-3")
 set(bzip2_dll_name	"MiKTeX-bzip2-3")
@@ -42,6 +43,7 @@ set(mkfntmap_dll_name	"MiKTeX-mkfntmap-3")
 set(mpm_dll_name	"MiKTeX-packagemanager-3")
 set(mspack_dll_name	"MiKTeX-mspack-1")
 set(odvicopy_dll_name	"MiKTeX-odvicopy-3")
+set(dvicopy_dll_name	"MiKTeX-dvicopy-3")
 set(ofm2opl_dll_name	"MiKTeX-ofm2opl-3")
 set(omega_dll_name	"MiKTeX-omega-3")
 set(ovf2ovp_dll_name	"MiKTeX-ovf2ovp-3")

@@ -571,3 +571,27 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_ps2pk_dir})
 endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_dvicopy_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_dvipdfm_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_dvipdfmx_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_dvipng_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_dvips_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+  add_subdirectory(${rel_arctrl_win_dir})
+endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)

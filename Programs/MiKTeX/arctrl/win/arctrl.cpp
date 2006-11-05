@@ -1320,6 +1320,7 @@ ArCtrl::Run (/*[in]*/ int				argc,
    _________________________________________________________________________ */
 
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
 arctrlmain (/*[in]*/ int			argc,
