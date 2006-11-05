@@ -46,7 +46,7 @@
 
 #define max_include_depth 10 \
 
-#define max_file_name_length 60
+#define max_file_name_length 260
 #define cur_file file[include_depth]
 #define cur_file_name file_name[include_depth]
 #define cur_line line[include_depth]
@@ -1103,7 +1103,7 @@ else{
 s= name_pos= *argv;dot_pos= NULL;
 while(*s){
 if(*s=='.')dot_pos= s++;
-#line 24 "common-miktex.ch"
+#line 38 "common-miktex.ch"
 else if(*s=='/'||*s=='\\'||*s==':')dot_pos= NULL,name_pos= ++s;
 #line 1266 "common.w"
 else s++;
@@ -1232,7 +1232,7 @@ else fatal(
 /*:75*/
 #line 1275 "common.w"
 ;
-#line 30 "common-miktex.ch"
+#line 44 "common-miktex.ch"
 if(found_change<=0)strcpy(change_file_name,"nul");
 #line 1277 "common.w"
 }

@@ -75,6 +75,9 @@ set(mp_dll_name		"MiKTeX-mp-3")
 set(dvitomp_dll_name	"MiKTeX-dvitomp-3")
 set(bibtex_dll_name	"MiKTeX-bibtex-3")
 set(mcd_dll_name	"MiKTeX-compilerdriver-3")
+set(cjklatex_dll_name	"MiKTeX-cjklatex-2")
+set(freetype_dll_name	"MiKTeX-freetype-4")
+set(psres_dll_name	"MiKTeX-psres-3")
 
 ## static library names
 set(bzip2_lib_name	"bzip2-static")

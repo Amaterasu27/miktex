@@ -532,6 +532,7 @@ CJKLaTeXApp::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
 cjklatexmain (/*[in]*/ int		argc,

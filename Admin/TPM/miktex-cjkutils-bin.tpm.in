@@ -12,8 +12,8 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\MiKTeX-cjklatex-2.dll
-texmf\miktex\bin\bg5+latex.exe
-texmf\miktex\bin\bg5+pdflatex.exe
+texmf\miktex\bin\bg5pluslatex.exe
+texmf\miktex\bin\bg5pluspdflatex.exe
 texmf\miktex\bin\bg5conv.exe
 texmf\miktex\bin\bg5latex.exe
 texmf\miktex\bin\bg5pdflatex.exe

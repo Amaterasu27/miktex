@@ -250,6 +250,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_freetype_dir}/lib
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
@@ -537,4 +538,36 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex4ht_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mtprint_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_epstopdf_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_pnmtopng_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_psutils_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_cjkutils_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_freetype_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_gsf2pk_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_ps2pk_dir})
 endif(BUILDING_MIKTEX)
