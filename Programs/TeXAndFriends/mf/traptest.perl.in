@@ -1,0 +1,10 @@
+system "${CP_EXE} ${trap_dir}/trap.mf .";
+system "${trapmf_exe} -initialize ${trapmf_options} <${trap_dir}/traptest.s2 >${dev_null}";
+system "${DIFF_EXE} --strip-trailing-cr ${trap_dir}/trapin.log trap.log";
+system "${trapmf_exe} -initialize ${trapmf_options} <${trap_dir}/traptest.s3 >trap.fot";
+system "${DIFF_EXE} --strip-trailing-cr ${trap_dir}/trap.fot trap.fot";
+system "${DIFF_EXE} --strip-trailing-cr ${trap_dir}/trap.log trap.log";
+system "${gftype_exe} trap.72270gf <${trap_dir}/traptest.s5 >trap.typ";
+system "${DIFF_EXE} --strip-trailing-cr ${trap_dir}/trap.typ trap.typ";
+system "${tftopl_exe} trap.tfm trap.pl";
+system "${DIFF_EXE} --strip-trailing-cr ${trap_dir}/trap.pl trap.pl";

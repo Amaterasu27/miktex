@@ -11,16 +11,12 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\dvitomp.exe
-texmf\miktex\bin\inimp.exe
-texmf\miktex\bin\inimpost.exe
 texmf\miktex\bin\makempx.exe
 texmf\miktex\bin\mp.exe
 texmf\miktex\bin\mpost.exe
 texmf\miktex\bin\mpto.exe
 texmf\miktex\bin\MiKTeX-dvitomp-3.dll
 texmf\miktex\bin\MiKTeX-mp-3.dll
-texmf\miktex\bin\virmp.exe
-texmf\miktex\bin\virmpost.exe
 texmf\miktex\mem\mp.pool
     </TPM:RunFiles>
   </rdf:Description>

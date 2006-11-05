@@ -22,88 +22,107 @@ macro(create_web_app _name)
   string(TOLOWER "${_name}" _name_l)
   string(TOUPPER "${_name}" _name_u)
 
-  if(NOT ${_name_l}_web_file)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
-      set(${_name_l}_web_file
-	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
-    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
-      set(${_name_l}_web_file
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.web)
-    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}.web)
-  endif(NOT ${_name_l}_web_file)
+  if(${ARGC} GREATER 1)
+    set(_short_name ${ARGV1})
+  else(${ARGC} GREATER 1)
+    set(_short_name ${_name_l})
+  endif(${ARGC} GREATER 1)
 
-  if(NOT ${_name_l}_change_file)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
-      set(${_name_l}_change_file
-	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
-    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
-      set(${_name_l}_change_file ${dev_null})
-    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.ch)
-  endif(NOT ${_name_l}_change_file)
+  string(TOUPPER "${_short_name}" _short_name_u)
 
-  if(NOT ${_name_l}_header_file)
-    set(${_name_l}_header_file
-      ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.h)
-  endif(NOT ${_name_l}_header_file)
+  if(${ARGC} GREATER 2)
+    set(_invocation_name ${ARGV2})
+  else(${ARGC} GREATER 2)
+    set(_invocation_name ${_name_l})
+  endif(${ARGC} GREATER 2)
 
-  if(NOT ${_name_l}_include_file)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
-      set(${_name_l}_include_file
-	${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
-    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
-      set(${_name_l}_include_file
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}-miktex.h)
-      if(EXISTS ${${_name_l}_include_file})
-      else(EXISTS ${${_name_l}_include_file})
-	file(WRITE ${${_name_l}_include_file}
+  set(${_short_name}_data g_${_name_u}Data)
+  set(${_short_name}_app g_${_name_u}App)
+  set(${_short_name}_class ${_name_u})
+  set(${_short_name}_entry Run${_name_u})
+
+  if(NOT ${_short_name}_web_file)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}.web)
+      set(${_short_name}_web_file
+	${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}.web)
+    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}.web)
+      set(${_short_name}_web_file
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.web)
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}.web)
+  endif(NOT ${_short_name}_web_file)
+
+  if(NOT ${_short_name}_change_file)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.ch)
+      set(${_short_name}_change_file
+	${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.ch)
+    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.ch)
+      set(${_short_name}_change_file ${dev_null})
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.ch)
+  endif(NOT ${_short_name}_change_file)
+
+  if(NOT ${_short_name}_header_file)
+    set(${_short_name}_header_file
+      ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.h)
+  endif(NOT ${_short_name}_header_file)
+
+  if(NOT ${_short_name}_include_file)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.h)
+      set(${_short_name}_include_file
+	${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.h)
+    else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.h)
+      set(${_short_name}_include_file
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}-miktex.h)
+      if(EXISTS ${${_short_name}_include_file})
+      else(EXISTS ${${_short_name}_include_file})
+	file(WRITE ${${_short_name}_include_file}
 	  "#include <miktex/webapp.h>
 using namespace MiKTeX::TeXAndFriends;
-class ${_name_u} : public WebApp {};"
+class ${${_short_name}_class} : public WebApp {};"
         )
-      endif(EXISTS ${${_name_l}_include_file})
-    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_name_l}-miktex.h)
-  endif(NOT ${_name_l}_include_file)
+      endif(EXISTS ${${_short_name}_include_file})
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name}-miktex.h)
+  endif(NOT ${_short_name}_include_file)
 
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}main.cpp
     "#define C4PEXTERN extern
-#include \"${${_name_l}_header_file}\"
-#include \"${${_name_l}_include_file}\"
+#include \"${${_short_name}_header_file}\"
+#include \"${${_short_name}_include_file}\"
 MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
-		     ${_name_u},
-		     g_${_name_u}App,
-                     Run${_name_u},
-                     g_${_name_u}Data)"
+		     ${${_short_name}_class},
+		     ${${_short_name}_app},
+                     ${${_short_name}_entry},
+                     ${${_short_name}_data})"
   )
 
   configure_file(
     ${alias_cpp}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}wrapper.cpp
     COPYONLY
   )
 
-  set(${${_name_l}_dll_name}_sources
-    ${${${_name_l}_dll_name}_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${${_name_l}_header_file}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
+  set(${${_short_name}_dll_name}_sources
+    ${${${_short_name}_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.cc
+    ${${_short_name}_header_file}
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}main.cpp
   )
 
   set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${${_name_l}_header_file}
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.cc
+    ${${_short_name}_header_file}
     PROPERTIES GENERATED TRUE
   )
 
   set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-    ${${_name_l}_header_file}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}main.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.cc
+    ${${_short_name}_header_file}
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}main.cpp
     PROPERTIES COMPILE_FLAGS
-      "-DMIKTEX_${_name_u} -D${_name_u}APP=g_${_name_u}App -D${_name_u}CLASS=${_name_u} -D${_name_u}DATA=g_${_name_u}Data"
+      "-DMIKTEX_${_name_u} -DMIKTEX_${_short_name_u} -D${_short_name_u}APP=${${_short_name}_app} -D${_short_name_u}CLASS=${${_short_name}_class} -D${_short_name_u}DATA=${${_short_name}_data}"
   )
 
   set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}wrapper.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}wrapper.cpp
     PROPERTIES COMPILE_FLAGS
       "-DDLLMAIN=MiKTeX_${_name_u} -DDLLAPI=__stdcall -DMIKTEX_${_name_u}"
   )
@@ -118,80 +137,81 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.cc
-	${${_name_l}_header_file}
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}defs.h
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.cc
+	${${_short_name}_header_file}
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}defs.h
     COMMAND ${c4p_exe}
-	--def-filename=${_name_l}defs.h
+	--def-filename=${_short_name}defs.h
 	--dll
-	--entry-name=Run${_name_u}
-	--include-filename=${${_name_l}_include_file}
-	--header-file=${${_name_l}_header_file}
-	--one=${_name_l}
+	--entry-name=${${_short_name}_entry}
+	--include-filename=${${_short_name}_include_file}
+	--header-file=${${_short_name}_header_file}
+	--one=${_short_name}
 	--var-name-prefix=m_
-	--var-struct=g_${_name_u}Data
+	--var-struct=${${_short_name}_data}
 	-C
 	${C4P_FLAGS}
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.p
     COMMAND ${SED_EXE}
 		-f ${_sed_script}
-		${${_name_l}_header_file}
+		${${_short_name}_header_file}
 		> tmp
-    COMMAND ${CP_EXE} tmp ${${_name_l}_header_file}
+    COMMAND ${CP_EXE} tmp ${${_short_name}_header_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.p
     VERBATIM
   )
 
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
-	${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.p
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.pool
     COMMAND
 	${tangle_exe}
-		${${_name_l}_web_file}
-		${${_name_l}_change_file}
-		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.p
-		${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+		${${_short_name}_web_file}
+		${${_short_name}_change_file}
+		${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.p
+		${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.pool
     DEPENDS
-	${${_name_l}_web_file}
-	${${_name_l}_change_file}
+	${${_short_name}_web_file}
+	${${_short_name}_change_file}
     VERBATIM
   )
 
   if(NATIVE_WINDOWS)
-    if(EXISTS ${_name_l}.rc)
-      set(${${_name_l}_dll_name}_sources
-	${${${_name_l}_dll_name}_sources}
-	${_name_l}.rc)
-    endif(EXISTS ${_name_l}.rc)
+    if(EXISTS ${_short_name}.rc)
+      set(${${_short_name}_dll_name}_sources
+	${${${_short_name}_dll_name}_sources}
+	${_short_name}.rc)
+    endif(EXISTS ${_short_name}.rc)
   endif(NATIVE_WINDOWS)
 
-  add_library(${${_name_l}_dll_name} SHARED ${${${_name_l}_dll_name}_sources})
+  add_library(${${_short_name}_dll_name}
+    SHARED ${${${_short_name}_dll_name}_sources})
 
-  target_link_libraries(${${_name_l}_dll_name}
+  target_link_libraries(${${_short_name}_dll_name}
     ${app_dll_name}
     ${core_dll_name}
     ${popt_dll_name}
     ${texmf_dll_name}
   )
 
-  add_executable(${_name_l} ${_name_l}wrapper.cpp)
+  add_executable(${_invocation_name} ${_short_name}wrapper.cpp)
 
-  add_dependencies(${_name_l} ${${_name_l}_dll_name})
+  add_dependencies(${_invocation_name} ${${_short_name}_dll_name})
 
-  target_link_libraries(${_name_l}
+  target_link_libraries(${_invocation_name}
     ${core_dll_name}
-    ${${_name_l}_dll_name}
+    ${${_short_name}_dll_name}
   )
 
   install(TARGETS
-    ${${_name_l}_dll_name} ${_name_l}
+    ${${_short_name}_dll_name} ${_invocation_name}
     DESTINATION ${bindir}
   )
 
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name_l}.pool
+    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name}.pool
     DESTINATION ${formatdir}
   )
     

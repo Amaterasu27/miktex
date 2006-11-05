@@ -2409,6 +2409,7 @@ McdApp::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
 mcdmain (/*[in]*/ int			argc,

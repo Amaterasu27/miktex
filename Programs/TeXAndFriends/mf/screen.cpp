@@ -23,7 +23,7 @@
 #endif
 
 #define C4PEXTERN extern
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
 #include "trapmf.h"
 #else
 #include "mf.h"
@@ -186,7 +186,7 @@ C4P_boolean
 miktexinitscreen (/*[in]*/ int	w,
 		  /*[in]*/ int	h)
 {
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
   return (true);
 #endif
 
@@ -247,7 +247,7 @@ miktexblankrectangle (/*[in]*/ screencol	left_col,
 		      /*[in]*/ screenrow	top_row,
 		      /*[in]*/ screenrow	bot_row)
 {
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
   return;
 #endif
   MIKTEX_BEGIN_CRITICAL_SECTION(&g_cs)
@@ -269,7 +269,7 @@ miktexblankrectangle (/*[in]*/ screencol	left_col,
 void
 miktexupdatescreen ()
 {
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
   return;
 #endif
   MIKTEX_BEGIN_CRITICAL_SECTION(&g_cs)
@@ -291,7 +291,7 @@ miktexpaintrow (/*[in]*/ screenrow	r,
 		/*[in]*/ transspec 	a,
 		/*[in]*/ screencol	n)
 {
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
   return;
 #endif
   MIKTEX_BEGIN_CRITICAL_SECTION(&g_cs)

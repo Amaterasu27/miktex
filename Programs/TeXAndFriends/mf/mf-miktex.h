@@ -21,12 +21,12 @@
 #  pragma once
 #endif
 
-#define THEDATA(x) METAFONTDATA.m_##x
-
-#if defined(TRAPMF)
+#if defined(MIKTEX_TRAPMF)
 #  include "trapmfdefs.h"
+#define THEDATA(x) TRAPMFDATA.m_##x
 #else
 #  include "mfdefs.h"
+#define THEDATA(x) MFDATA.m_##x
 #endif
 
 #include "mf.rc"
@@ -46,13 +46,21 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::TeXAndFriends;
 using namespace std;
 
-class METAFONTCLASS
+#if defined(MIKTEX_TRAPMF)
+class TRAPMFCLASS
+#else
+class MFCLASS
+#endif
 
   : public MetafontApp
 
 {
 public:
-  METAFONTCLASS ()
+#if defined(MIKTEX_TRAPMF)
+  TRAPMFCLASS ()
+#else
+  MFCLASS ()
+#endif
   {
     inputFileType = FileType::MF;
   }
@@ -248,8 +256,13 @@ public:
   }
 };
 
-extern METAFONTCLASS METAFONTAPP;
-#define THEAPP METAFONTAPP
+#if defined(MIKTEX_TRAPMF)
+extern TRAPMFCLASS TRAPMFAPP;
+#define THEAPP TRAPMFAPP
+#else
+extern MFCLASS MFAPP;
+#define THEAPP MFAPP
+#endif
 
 inline
 bool

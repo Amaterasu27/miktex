@@ -498,3 +498,43 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_omega_dir})
 endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mfware_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mf_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mpware_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mp_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_makeindex_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_bibtex_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_bibtex8_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_texify_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_texinfo_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_tex4ht_dir})
+endif(BUILDING_MIKTEX)

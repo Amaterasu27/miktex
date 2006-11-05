@@ -1,0 +1,70 @@
+## CMakeLists.txt						-*- CMake -*-
+##
+## Copyright (C) 2006 Christian Schenk
+## 
+## This file is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published
+## by the Free Software Foundation; either version 2, or (at your
+## option) any later version.
+## 
+## This file is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+## 
+## You should have received a copy of the GNU General Public License
+## along with this file; if not, write to the Free Software
+## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+## USA.
+
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_definitions(
+  -DCPLUSPLUSMAIN
+  -DKPATHSEA
+  -DSUPPORT_8BIT
+)
+
+create_cpp_from_c(
+  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-1.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-2.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-3.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-4.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
+)
+
+set(bibtex8_sources
+  ${wrapper_cpp}
+  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-1.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-2.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-3.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-4.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/bibtex.cpp
+  bibtex.h
+  bibtex8-version.h
+  datatype.h
+  gblprocs.h
+  gblvars.h
+  sysdep.h
+  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
+  utils.h
+  version.h
+)
+
+if(NATIVE_WINDOWS)
+  set(bibtex8_sources ${bibtex8_sources} bibtex8.rc)
+endif(NATIVE_WINDOWS)
+
+add_executable(bibtex8 ${bibtex8_sources})
+
+target_link_libraries(bibtex8
+  ${app_dll_name}
+  ${core_dll_name}
+  ${gnu_dll_name}
+  ${kpsemu_dll_name}
+)
+
+install(TARGETS bibtex8 DESTINATION ${bindir})

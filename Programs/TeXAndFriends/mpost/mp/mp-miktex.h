@@ -21,12 +21,12 @@
 #  pragma once
 #endif
 
-#define THEDATA(x) METAPOSTDATA.m_##x
-
-#if defined(TRAPMP)
+#if defined(MIKTEX_TRAPMP)
 #  include "trapmpdefs.h"
+#define THEDATA(x) TRAPMPDATA.m_##x
 #else
 #  include "mpdefs.h"
+#define THEDATA(x) MPDATA.m_##x
 #endif
 
 #include "mp.rc"
@@ -44,13 +44,21 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::TeXAndFriends;
 using namespace std;
 
-class METAPOSTCLASS
+#if defined(MIKTEX_TRAPMP)
+class TRAPMPCLASS
+#else
+class MPCLASS
+#endif
 
   : public MetafontApp
 
 {
 public:
-  METAPOSTCLASS ()
+#if defined(MIKTEX_TRAPMP)
+  TRAPMPCLASS ()
+#else
+  MPCLASS ()
+#endif
   {
     inputFileType = FileType::MP;
   }
@@ -289,8 +297,13 @@ public:
   }
 };
 
-extern METAPOSTCLASS METAPOSTAPP;
-#define THEAPP METAPOSTAPP
+#if defined(MIKTEX_TRAPMP)
+extern TRAPMPCLASS TRAPMPAPP;
+#define THEAPP TRAPMPAPP
+#else
+extern MPCLASS MPAPP;
+#define THEAPP MPAPP
+#endif
 
 inline
 void
