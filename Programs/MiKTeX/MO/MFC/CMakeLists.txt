@@ -22,7 +22,9 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set(CMAKE_MFC_FLAG 2)
 
@@ -64,7 +66,6 @@ add_executable(mo WIN32 ${mo_mfc_sources})
 
 target_link_libraries(mo
   ${core_dll_name}
-  ${mo_dll_name}
   ${ui_dll_name}
 )
 

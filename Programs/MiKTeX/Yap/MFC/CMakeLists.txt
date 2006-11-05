@@ -1,0 +1,168 @@
+## CMakeLists.txt						-*- CMake -*-
+##
+## Copyright (C) 2006 Christian Schenk
+## 
+## This file is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published
+## by the Free Software Foundation; either version 2, or (at your
+## option) any later version.
+## 
+## This file is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+## 
+## You should have received a copy of the GNU General Public License
+## along with this file; if not, write to the Free Software
+## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+## USA.
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/res/yap.manifest.in
+  ${CMAKE_CURRENT_BINARY_DIR}/res/yap.manifest
+)
+
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_bmeps_dir}
+)
+
+set(CMAKE_MFC_FLAG 2)
+
+add_definitions(
+  -D_AFXDLL
+)
+
+set(yap_mfc_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  AddChangeEditorDialog.cpp
+  AdvancedOptionsPage.cpp
+  ChildFrame.cpp
+  Dib.cpp
+  DisplayOptionsPage.cpp
+  DocumentFontsPage.cpp
+  DviDoc.cpp
+  DviDraw.cpp
+  DviMagnifyingGlass.cpp
+  DviStatusBar.cpp
+  DviView.cpp
+  DvipsDialog.cpp
+  GotoPageDialog.cpp
+  InverseSearchOptionsPage.cpp
+  MagnifyingGlassOptionsPage.cpp
+  MainFrame.cpp
+  MyScrollView.cpp
+  PrintOptionsPage.cpp
+  ProgressIndicatorDialog.cpp
+  Ruler.cpp
+  SecurityOptionsPage.cpp
+  SourceSpecialsDialog.cpp
+  StdAfx.cpp
+  UIOptionsPage.cpp
+  YapConfig.cpp
+  draw.cpp
+  graphics.cpp
+  hypertex.cpp
+  msdnutil.cpp
+  print.cpp
+  source.cpp
+  tpic.cpp
+  winplace.cpp
+  yap.cpp
+)
+
+if(NATIVE_WINDOWS)
+  set(yap_mfc_sources ${yap_mfc_sources} yap.rc)
+endif(NATIVE_WINDOWS)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	echo \#define KEYBOARD_SHORTCUTS 101
+		> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	makehm /h IDP_,HIDP_,0x30000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	makehm /h IDR_,HIDR_,0x20000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	makehm /h IDD_,HIDD_,0x20000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  COMMAND
+	makehm /h IDW_,HIDW_,0x50000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+  VERBATIM
+)
+
+add_executable(yap WIN32 ${yap_mfc_sources})
+
+target_link_libraries(yap
+  ${core_dll_name}
+  ${dvi_dll_name}
+  ${popt_dll_name}
+  ${ui_dll_name}
+)
+
+get_target_property(yap_mfc_exe yap LOCATION)
+
+if(NATIVE_WINDOWS)
+  add_custom_command(
+    TARGET yap
+    POST_BUILD
+    COMMAND mt -nologo
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/yap.manifest
+	-updateresource:${yap_mfc_exe}\;1
+    VERBATIM
+  )
+endif(NATIVE_WINDOWS)
+
+install(TARGETS yap DESTINATION ${bindir})
+
+
+
+
+
+
+
+
+
+
+
+set(screenshots_png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propui.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propdisplay.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propprinter.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propmagglass.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propinvsearch.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propsecurity.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propadvanced.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/ruler.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/magglass.png
+)
+
+set(yap_guide_xml_files
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/commandline.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/customizing.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/dvisearch.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/keyboard.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/menus.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/printing.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/tools.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/yap.xml
+)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scratch)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scratch/images)
+
+#add_custom_command(
+#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yap.chm

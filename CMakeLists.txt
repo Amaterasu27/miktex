@@ -595,3 +595,7 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_arctrl_win_dir})
 endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+
+if(BUILDING_MIKTEX AND MFC_FOUND)
+  add_subdirectory(${rel_yap_mfc_dir})
+endif(BUILDING_MIKTEX AND MFC_FOUND)
