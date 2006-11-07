@@ -1,0 +1,5 @@
+use File::Path;
+
+$ENV{"XML_CATALOG_FILES"} = "@xml_catalog_file@";
+
+system("@XSLTPROC_EXE@ --path \"@xslt_path@\" --stringparam base.dir scratch/ --stringparam chunk.fast 1 --stringparam manifest.in.base.dir 1 \"@htmlhelp_xsl@\" \"@CMAKE_CURRENT_SOURCE_DIR@/../Documentation/Guide/yap.xml\"");

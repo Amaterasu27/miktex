@@ -36,3 +36,9 @@ if(NATIVE_WINDOWS)
   target_link_libraries(mkdllbases imagehlp)
   install(TARGETS mkdllbases DESTINATION "${bindir}")
 endif(NATIVE_WINDOWS)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/runhhc.perl.in
+  ${CMAKE_CURRENT_BINARY_DIR}/runhhc.perl
+  @ONLY
+)

@@ -80,8 +80,11 @@ if(BUILDING_MIKTEX)
     diff
     dos2unix
     flex
+    hhc
+    makehm
     perl
     sed
+    xsltproc
   )
 else(BUILDING_MIKTEX)
   set(required_programs)

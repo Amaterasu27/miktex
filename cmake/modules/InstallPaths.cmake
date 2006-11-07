@@ -30,3 +30,4 @@ endif(NATIVE_WINDOWS)
 
 set(configdir "${CMAKE_INSTALL_PREFIX}/miktex/config")
 set(formatdir "${CMAKE_INSTALL_PREFIX}/miktex/fmt")
+set(docdir "${CMAKE_INSTALL_PREFIX}/doc/miktex")

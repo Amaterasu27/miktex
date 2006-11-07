@@ -81,23 +81,23 @@ add_custom_command(
 	echo \#define KEYBOARD_SHORTCUTS 101
 		> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000
+	${MAKEHM_EXE} /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	makehm /h IDP_,HIDP_,0x30000
+	${MAKEHM_EXE} /h IDP_,HIDP_,0x30000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	makehm /h IDR_,HIDR_,0x20000
+	${MAKEHM_EXE} /h IDR_,HIDR_,0x20000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	makehm /h IDD_,HIDD_,0x20000
+	${MAKEHM_EXE} /h IDD_,HIDD_,0x20000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	makehm /h IDW_,HIDW_,0x50000
+	${MAKEHM_EXE} /h IDW_,HIDW_,0x50000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resource.h
@@ -128,16 +128,6 @@ endif(NATIVE_WINDOWS)
 
 install(TARGETS yap DESTINATION ${bindir})
 
-
-
-
-
-
-
-
-
-
-
 set(screenshots_png
   ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propui.png
   ${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots/propdisplay.png
@@ -161,8 +151,64 @@ set(yap_guide_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/yap.xml
 )
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scratch)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scratch/images)
+set(xslt_path ".")
+set(xslt_path
+  "${xslt_path} ${CMAKE_SOURCE_DIR}/${rel_doc_dir}/Manual")
+set(xslt_path
+  "${xslt_path} ${CMAKE_SOURCE_DIR}/${rel_doc_dir}")
+set(xslt_path
+  "${xslt_path} ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide")
 
-#add_custom_command(
-#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/makehelp.perl.in
+  ${CMAKE_CURRENT_BINARY_DIR}/makehelp.perl
+  @ONLY
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
+  COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
+  COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/../Screenshots
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
+  COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexhelp_css}
+		${CMAKE_CURRENT_BINARY_DIR}/scratch
+  COMMAND
+	${PERL_EXE} ${CMAKE_CURRENT_BINARY_DIR}/makehelp.perl
+  COMMAND
+	${CMAKE_COMMAND} -E copy
+		${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/context.h
+  COMMAND
+	${MAKEHM_EXE}
+		/h /a afxhh.h IDW_,HIDW_,0x50000
+		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+		>> ${CMAKE_CURRENT_BINARY_DIR}/scratch/context.h
+  COMMAND
+  	${CMAKE_COMMAND} -E
+		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
+		${PERL_EXE} ${runhhc_perl} htmlhelp
+  COMMAND
+  	${CMAKE_COMMAND} -E copy
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/htmlhelp.chm
+		${CMAKE_CURRENT_BINARY_DIR}/yap.chm
+  DEPENDS
+	${yap_guide_xml_files}
+	${screenshots_png}
+	${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
+	${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  VERBATIM
+)
+
+add_custom_target(helpfile ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
+)
+
+install(FILES yap.chm DESTINATION ${docdir})
