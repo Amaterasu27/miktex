@@ -815,10 +815,11 @@ MiKTeXHelp::Run (/*[in]*/ int		argc,
 
 #if defined(MIKTEX_WINDOWS)
 extern "C"
+__declspec(dllexport)
 int
 __cdecl
-mthelpmain (/*[in]*/ int			argc,
-	    /*[in]*/ const MIKTEXCHAR **	argv)
+mthelp (/*[in]*/ int			argc,
+	/*[in]*/ const MIKTEXCHAR **	argv)
 #else
 int
 main (/*[in]*/ int			argc,

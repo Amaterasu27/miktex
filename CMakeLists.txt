@@ -602,3 +602,9 @@ endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_md5walk_dir})
+endif(BUILDING_MIKTEX)
+
+add_subdirectory(${rel_mthelp_dir})
