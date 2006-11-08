@@ -39,4 +39,14 @@ target_link_libraries(mpc
   ${zlib_lib_name}
 )
 
+if(NATIVE_WINDOWS)
+  target_link_libraries(mpc
+    fdi
+    version
+    wininet
+    winmm
+    ws2_32
+  )
+endif(NATIVE_WINDOWS)
+
 install(TARGETS mpc DESTINATION ${bindir})
