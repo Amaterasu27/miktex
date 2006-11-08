@@ -63,7 +63,7 @@ if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET mpm_mfc
     POST_BUILD
-    COMMAND mt -nologo
+    COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
 	-updateresource:${mpm_mfc_exe}\;1
     VERBATIM

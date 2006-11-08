@@ -17,69 +17,71 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+use_static_crt()
+use_static_libraries()
+
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/res/mo.manifest.in
-  ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
+  ${CMAKE_CURRENT_SOURCE_DIR}/res/Remove.manifest.in
+  ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
 )
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set(CMAKE_MFC_FLAG 2)
+set(CMAKE_MFC_FLAG 1)
 
-add_definitions(
-  -D_AFXDLL
-)
-
-set(mo_mfc_sources
-  FormatDefinitionDialog.cpp
-  FormatDefinitionDialog.h
-  LanguageDefinitionDialog.cpp
-  LanguageDefinitionDialog.h
-  PropPageFormats.cpp
-  PropPageFormats.h
-  PropPageGeneral.cpp
-  PropPageGeneral.h
-  PropPageLanguages.cpp
-  PropPageLanguages.h
-  PropPagePackages.cpp
-  PropPagePackages.h
-  PropPageRoots.cpp
-  PropPageRoots.h
-  PropSheet.cpp
-  PropSheet.h
+set(remove_mfc_sources
+  FinishPage.cpp
+  LogFile.cpp
+  Remove.cpp
+  RemoveFilesPage.cpp
+  RemoveWizard.cpp
   StdAfx.cpp
-  StdAfx.h
-  mo-version.h
-  mo.cpp
-  mo.h
-  resource.h
-  resource.hm
+  WelcomePage.cpp
 )
 
 if(NATIVE_WINDOWS)
-  set(mo_mfc_sources ${mo_mfc_sources} mo.rc)
+  set(remove_mfc_sources ${remove_mfc_sources} Remove.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(mo WIN32 ${mo_mfc_sources})
+add_executable(remove WIN32 ${remove_mfc_sources})
 
-target_link_libraries(mo
-  ${core_dll_name}
-  ${ui_dll_name}
+target_link_libraries(remove
+  ${bzip2_lib_name}
+  ${core_lib_name}
+  ${curl_lib_name}
+  ${expat_lib_name}
+  ${gnu_lib_name}
+  ${md5_lib_name}
+  ${mpm_lib_name}
+  ${mspack_lib_name}
+  ${ui_lib_name}
+  ${zlib_lib_name}
 )
 
-get_target_property(mo_mfc_exe mo LOCATION)
+if(NATIVE_WINDOWS)
+  target_link_libraries(remove
+    fdi
+    version
+    wininet
+    winmm
+    ws2_32
+  )
+endif(NATIVE_WINDOWS)
+
+get_target_property(remove_mfc_exe remove LOCATION)
 
 if(NATIVE_WINDOWS)
   add_custom_command(
-    TARGET mo
+    TARGET remove
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
-	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
-	-updateresource:${mo_mfc_exe}\;1
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
+	-updateresource:${remove_mfc_exe}\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS mo DESTINATION ${bindir})
+install(TARGETS remove DESTINATION ${bindir})

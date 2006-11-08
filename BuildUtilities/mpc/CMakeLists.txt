@@ -17,34 +17,26 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_executable(bintoc bintoc.cpp)
+use_static_crt()
+use_static_libraries()
 
-install(TARGETS bintoc DESTINATION "${bindir}")
-
-if(NATIVE_WINDOWS)
-  add_executable(headerguard headerguard.cpp)
-  target_link_libraries(headerguard Rpcrt4)
-  install(TARGETS headerguard DESTINATION "${bindir}")
-endif(NATIVE_WINDOWS)
-
-add_executable(j2000 j2000.cpp)
-
-install(TARGETS j2000 DESTINATION "${bindir}")
-
-if(NATIVE_WINDOWS)
-  add_executable(mkdllbases mkdllbases.cpp)
-  target_link_libraries(mkdllbases imagehlp)
-  install(TARGETS mkdllbases DESTINATION "${bindir}")
-endif(NATIVE_WINDOWS)
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/runhhc.perl.in
-  ${CMAKE_CURRENT_BINARY_DIR}/runhhc.perl
-  @ONLY
+set(mpc_sources
+  StdAfx.cpp
+  mpc.cpp
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/runxsltproc.perl.in
-  ${CMAKE_CURRENT_BINARY_DIR}/runxsltproc.perl
-  @ONLY
+add_executable(mpc ${mpc_sources})
+
+target_link_libraries(mpc
+  ${bzip2_lib_name}
+  ${core_lib_name}
+  ${curl_lib_name}
+  ${expat_lib_name}
+  ${gnu_lib_name}
+  ${md5_lib_name}
+  ${mpm_lib_name}
+  ${mspack_lib_name}
+  ${zlib_lib_name}
 )
+
+install(TARGETS mpc DESTINATION ${bindir})

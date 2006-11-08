@@ -119,7 +119,7 @@ if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET yap
     POST_BUILD
-    COMMAND mt -nologo
+    COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/yap.manifest
 	-updateresource:${yap_mfc_exe}\;1
     VERBATIM
@@ -159,12 +159,6 @@ set(xslt_path
 set(xslt_path
   "${xslt_path} ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide")
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/makehelp.perl.in
-  ${CMAKE_CURRENT_BINARY_DIR}/makehelp.perl
-  @ONLY
-)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
   COMMAND
@@ -180,7 +174,13 @@ add_custom_command(
 		${miktexhelp_css}
 		${CMAKE_CURRENT_BINARY_DIR}/scratch
   COMMAND
-	${PERL_EXE} ${CMAKE_CURRENT_BINARY_DIR}/makehelp.perl
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir scratch/
+		--stringparam chunk.fast 1
+		--stringparam manifest.in.base.dir 1
+		\"${htmlhelp_xsl}\"
+		\"${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/yap.xml\"
   COMMAND
 	${CMAKE_COMMAND} -E copy
 		${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h

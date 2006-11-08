@@ -71,23 +71,26 @@ endif(NATIVE_WINDOWS)
 ###############################################################################
 ## find stuff
 
+set(required_programs
+  cat
+  cp
+  date
+  lynx
+  perl
+  sed
+  xsltproc
+)
+
 if(BUILDING_MIKTEX)
-  set(required_programs
+  set(required_programs ${required_programs}
     bison
-    cat
-    cp
-    date
     diff
     dos2unix
     flex
     hhc
     makehm
-    perl
-    sed
-    xsltproc
+    mt
   )
-else(BUILDING_MIKTEX)
-  set(required_programs)
 endif(BUILDING_MIKTEX)
 
 foreach(p ${required_programs})
@@ -608,3 +611,23 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mthelp_dir})
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_mpc_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_migrate_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX AND MFC_FOUND)
+  add_subdirectory(${rel_setup_mfc_dir})
+endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+if(BUILDING_MIKTEX AND MFC_FOUND)
+  add_subdirectory(${rel_update_mfc_dir})
+endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+if(BUILDING_MIKTEX AND MFC_FOUND)
+  add_subdirectory(${rel_remove_mfc_dir})
+endif(BUILDING_MIKTEX AND MFC_FOUND)
