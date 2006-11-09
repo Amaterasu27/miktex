@@ -90,6 +90,7 @@ if(BUILDING_MIKTEX)
     hhc
     makehm
     mt
+    texify
   )
 endif(BUILDING_MIKTEX)
 
@@ -101,6 +102,7 @@ foreach(p ${required_programs})
   endif(NOT ${p_u}_EXE)
 endforeach(p)
 
+find_package(ImageMagick REQUIRED)
 find_package(MFC)
 find_package(THREADS REQUIRED)
 
@@ -298,9 +300,6 @@ link_directories(${LIBRARY_OUTPUT_PATH})
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
-
-configure_file(${CMAKE_SOURCE_DIR}/Documentation/version.ent.in
-               ${CMAKE_BINARY_DIR}/Documentation/version.ent)
 
 configure_file(${CMAKE_SOURCE_DIR}/Documentation/Styles/db2latex-common.xsl.in
                ${CMAKE_BINARY_DIR}/Documentation/Styles/db2latex-common.xsl)
@@ -631,3 +630,7 @@ endif(BUILDING_MIKTEX AND MFC_FOUND)
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_remove_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_doc_dir})
+endif(BUILDING_MIKTEX)

@@ -151,7 +151,7 @@ set(yap_guide_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/Guide/yap.xml
 )
 
-set(xslt_path ".")
+set(xslt_path "${CMAKE_CURRENT_BINARY_DIR}")
 set(xslt_path
   "${xslt_path} ${CMAKE_SOURCE_DIR}/${rel_doc_dir}/Manual")
 set(xslt_path
@@ -199,10 +199,10 @@ add_custom_command(
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/htmlhelp.chm
 		${CMAKE_CURRENT_BINARY_DIR}/yap.chm
   DEPENDS
-	${yap_guide_xml_files}
-	${screenshots_png}
 	${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
 	${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+	${screenshots_png}
+	${yap_guide_xml_files}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
 )
