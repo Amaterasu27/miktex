@@ -22,24 +22,22 @@ briefly describes the build process on Windows systems.
 OS Requirements
 ---------------
 
-	* Microsoft Windows XP
+	* Microsoft Windows XP SP 2
 
-	* Command extensions must be enabled (cmd /E:ON)
-
-Build Tools
------------
+What you need
+-------------
 
 	* ActivePerl
 		http://www.activestate.com/Products/ActivePerl/
+
+	* CMake
+		http://www.cmake.org
 
 	* Cygwin (full install)
 		http://www.cygwin.com
 
 	* ImageMagick
 		http://www.imagemagick.org
-
-	* junction.exe
-		http://www.sysinternals.com/Utilities/Junction.html
 
         * Microsoft HTML Help SDK
 		http://msdn.microsoft.com
@@ -50,18 +48,17 @@ Build Tools
 	* MiKTeX (full install)
 		http://www.miktex.org
 
-Configuring
------------
+Building MiKTeX
+---------------
 
-	Open 'msvc\miktex.inc' with Notepad; check the following
-	definitions:
+You use CMake to set up the MiKTeX build system.  Make sure that the
+Visual C/C++ environment variables are set correctly.
 
-	prefix
-	tmdir
+Here is a short example:
 
-        Run 'configure.cmd' to set up the build environment.
+  mkdir C:\miktex-build-dir
+  cd C:\miktex-build-dir
+  cmake -G "NMake Makefiles" C:\path\to\miktex\sources
+  nmake
+  nmake install
 
-Build
------
-
-	Run 'build.cmd' to build MiKTeX.

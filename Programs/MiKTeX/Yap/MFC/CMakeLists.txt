@@ -211,4 +211,7 @@ add_custom_target(helpfile ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
 )
 
-install(FILES yap.chm DESTINATION ${docdir})
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/yap.chm
+  DESTINATION ${docdir}
+)

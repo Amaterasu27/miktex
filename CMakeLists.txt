@@ -49,6 +49,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
 
+include(CPack)
+
 include(CheckFunctionExists)
 include(CreateCppFromC)
 include(CreateDllWrapper)
@@ -192,7 +194,7 @@ endif(MIKTEX_RELEASE_STATE EQUAL 0)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
   SET(CMAKE_INSTALL_PREFIX
-    "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}"
+    "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}/texmf"
     CACHE PATH "MiKTeX install prefix." FORCE
   )
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
@@ -631,6 +633,4 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_remove_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_doc_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_doc_dir})

@@ -35,10 +35,10 @@ target_link_libraries(${mkfntmap_dll_name}
   ${popt_dll_name}
 )
   
-set(exes mkfntmap updmap)
+set(exes mkfntmap)
 
 if(NATIVE_WINDOWS)
-  set (exes ${exes} kpsewhich)
+  set (exes ${exes} updmap)
 endif(NATIVE_WINDOWS)
 
 foreach(t ${exes})
