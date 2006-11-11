@@ -11,14 +11,14 @@
       PLtoTF, POOLtype, TFtoPL.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\dvitype.exe
-texmf\miktex\bin\${dvitype_dll_name}.dll
-texmf\miktex\bin\${pltotf_dll_name}.dll
-texmf\miktex\bin\${pooltype_dll_name}.dll
-texmf\miktex\bin\${tftopl_dll_name}.dll
-texmf\miktex\bin\pltotf.exe
-texmf\miktex\bin\pooltype.exe
-texmf\miktex\bin\tftopl.exe
+texmf/miktex/bin/dvitype.exe
+texmf/miktex/bin/${dvitype_dll_name}.dll
+texmf/miktex/bin/${pltotf_dll_name}.dll
+texmf/miktex/bin/${pooltype_dll_name}.dll
+texmf/miktex/bin/${tftopl_dll_name}.dll
+texmf/miktex/bin/pltotf.exe
+texmf/miktex/bin/pooltype.exe
+texmf/miktex/bin/tftopl.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

@@ -104,6 +104,24 @@ foreach(p ${required_programs})
   endif(NOT ${p_u}_EXE)
 endforeach(p)
 
+if(BUILDING_MIKTEX_TOOLS)
+  find_program(KPSEWHICH_EXE NAMES kpsewhich)
+  if(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
+    execute_process(
+      COMMAND kpsewhich --expand-path \$TEXMF
+      OUTPUT_VARIABLE MIKTEX_ROOTS
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  endif(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
+  if(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
+    execute_process(
+      COMMAND kpsewhich --expand-path \$TEXMFLOCAL
+      OUTPUT_VARIABLE MIKTEX_INSTALLROOT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  endif(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
+endif(BUILDING_MIKTEX_TOOLS)
+
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
 find_package(THREADS REQUIRED)
@@ -128,6 +146,7 @@ check_function_exists(setreuid HAVE_SETREUID)
 check_function_exists(setuid HAVE_SETUID)
 check_function_exists(statvfs HAVE_STATVFS)
 check_function_exists(strerror HAVE_STRERROR)
+check_function_exists(uname HAVE_UNAME_SYSCALL)
 check_function_exists(utime HAVE_UTIME)
 check_function_exists(vfork HAVE_VFORK)
 
@@ -246,6 +265,14 @@ if(NATIVE_WINDOWS)
 else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
+
+if(MIKTEX_ROOTS)
+  add_definitions(-DMIKTEX_ROOTS=\\\"${MIKTEX_ROOTS}\\\")
+endif(MIKTEX_ROOTS)
+
+if(MIKTEX_INSTALLROOT)
+  add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
+endif(MIKTEX_INSTALLROOT)
 
 ###############################################################################
 ## add global include directories
@@ -469,7 +496,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_config_dir})
 endif(BUILDING_MIKTEX)
 
-add_subdirectory(${rel_findtexmf_dir})
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_findtexmf_dir})
+endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mkfntmap_dir})

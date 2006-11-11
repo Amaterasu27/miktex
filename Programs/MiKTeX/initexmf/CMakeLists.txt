@@ -32,8 +32,13 @@ target_link_libraries(initexmf
   ${core_dll_name}
   ${mpm_dll_name}
   ${popt_dll_name}
-  ${texmf_dll_name}
 )
+
+if(BUILDING_MIKTEX)
+  target_link_libraries(initexmf
+    ${texmf_dll_name}
+  )
+endif(BUILDING_MIKTEX)
 
 install(TARGETS initexmf DESTINATION ${bindir})
 

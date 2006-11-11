@@ -10,7 +10,7 @@
       This package contains the MiKTeX print utility.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\mtprint.exe
+texmf/miktex/bin/mtprint.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

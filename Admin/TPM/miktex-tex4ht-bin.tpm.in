@@ -10,11 +10,11 @@
       This package includes the TeX4HT binaries.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\htcmd.exe
-texmf\miktex\bin\t4ht.exe
-texmf\miktex\bin\tex4ht.exe
-texmf\miktex\config\t4ht.ini
-texmf\miktex\config\tex4ht.ini
+texmf/miktex/bin/htcmd.exe
+texmf/miktex/bin/t4ht.exe
+texmf/miktex/bin/tex4ht.exe
+texmf/miktex/config/t4ht.ini
+texmf/miktex/config/tex4ht.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

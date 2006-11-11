@@ -10,7 +10,7 @@
        This package includes the MakeIndex executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\makeindex.exe
+texmf/miktex/bin/makeindex.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

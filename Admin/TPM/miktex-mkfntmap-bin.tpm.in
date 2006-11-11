@@ -10,9 +10,9 @@
       This package includes the MkFntMap executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\mkfntmap.exe
-texmf\miktex\bin\${mkfntmap_dll_name}.dll
-texmf\miktex\bin\updmap.exe
+texmf/miktex/bin/mkfntmap.exe
+texmf/miktex/bin/${mkfntmap_dll_name}.dll
+texmf/miktex/bin/updmap.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

@@ -34,17 +34,25 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mpm ${mpm_sources})
 
-target_link_libraries(mpm
-  ${bzip2_lib_name}
-  ${core_lib_name}
-  ${curl_lib_name}
-  ${expat_lib_name}
-  ${md5_lib_name}
-  ${mpm_lib_name}
-  ${mspack_lib_name}
-  ${popt_lib_name}
-  ${zlib_lib_name}
-)
+if(NATIVE_WINDOWS)
+  target_link_libraries(mpm
+    ${bzip2_lib_name}
+    ${core_lib_name}
+    ${curl_lib_name}
+    ${expat_lib_name}
+    ${md5_lib_name}
+    ${mpm_lib_name}
+    ${mspack_lib_name}
+    ${popt_lib_name}
+    ${zlib_lib_name}
+  )
+else(NATIVE_WINDOWS)
+  target_link_libraries(mpm
+    ${core_dll_name}
+    ${mpm_dll_name}
+    ${popt_dll_name}
+  )
+endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpm

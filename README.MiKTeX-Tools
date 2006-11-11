@@ -67,14 +67,14 @@ Run CMake to produce the makefiles customized for your system:
 
     cmake
 
-The CMAke script uses kpsewhich(1) (if available) to find existing
+The CMake script uses kpsewhich(1) (if available) to find existing
 TEXMF trees.  The package manager will install packages in the local
 TEXMF tree ($TEXMFLOCAL).  You can explicitly specify your prefered
 installation directory by setting the variable MIKTEX_INSTALLROOT.
 For example, to make your home TEXMF the installation directory, run
 CMake like this:
 
-    cmake MIKTEX_INSTALLROOT=/home/users/me/texmf
+    cmake -DMIKTEX_INSTALLROOT=/home/users/me/texmf
 
 Run the make utility to compile MiKTeX Tools:
 

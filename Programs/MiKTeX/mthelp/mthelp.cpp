@@ -821,9 +821,10 @@ __cdecl
 mthelp (/*[in]*/ int			argc,
 	/*[in]*/ const MIKTEXCHAR **	argv)
 #else
+extern "C"
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+mthelp (/*[in]*/ int			argc,
+	/*[in]*/ const MIKTEXCHAR **	argv)
 #endif
 {
   try

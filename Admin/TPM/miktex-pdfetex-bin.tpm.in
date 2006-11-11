@@ -10,10 +10,10 @@
       This package includes the e-pdf-TeX executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\${pdfetex_dll_name}.dll
-texmf\miktex\bin\pdfetex.exe
-texmf\miktex\config\pdfetex.ini
-texmf\miktex\fmt\pdfetex.pool
+texmf/miktex/bin/${pdfetex_dll_name}.dll
+texmf/miktex/bin/pdfetex.exe
+texmf/miktex/config/pdfetex.ini
+texmf/miktex/fmt/pdfetex.pool
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

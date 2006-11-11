@@ -10,15 +10,15 @@
       This package contains MiKTeX documentation.
     </TPM:Description>
     <TPM:DocFiles>
-texmf\doc\latex\00LocalGuide\local.txt
-texmf\doc\miktex\faq.chm
-texmf\doc\miktex\license.html
-texmf\doc\miktex\miktex.chm
-texmf\doc\miktex\miktexman.css
-texmf\doc\miktex\miktex.pdf
-texmf\doc\miktex\relnotes.html
-texmf\doc\miktex\manual\*.*
-texmf\doc\miktex\manual\images\*.*
+texmf/doc/latex/00LocalGuide/local.txt
+texmf/doc/miktex/faq.chm
+texmf/doc/miktex/license.html
+texmf/doc/miktex/miktex.chm
+texmf/doc/miktex/miktexman.css
+texmf/doc/miktex/miktex.pdf
+texmf/doc/miktex/relnotes.html
+texmf/doc/miktex/manual/*.*
+texmf/doc/miktex/manual/images/*.*
     </TPM:DocFiles>
   </rdf:Description>
 </rdf:RDF>

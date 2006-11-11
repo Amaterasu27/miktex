@@ -10,8 +10,8 @@
        This package includes the dvips executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\dvips.exe
-texmf\miktex\config\dvips.ini
+texmf/miktex/bin/dvips.exe
+texmf/miktex/config/dvips.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

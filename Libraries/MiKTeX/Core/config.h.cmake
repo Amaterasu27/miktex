@@ -30,6 +30,7 @@
 #cmakedefine HAVE_SYS_UTIME_H 1
 #cmakedefine HAVE_SYS_UTSNAME_H 1
 #cmakedefine HAVE_SYS_WAIT_H 1
+#cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_UTIME_H 1
 #cmakedefine HAVE_VFORK 1

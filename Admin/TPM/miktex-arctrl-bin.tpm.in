@@ -10,11 +10,11 @@
       This package includes the arctrl executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\${arctrl_dll_name}.dll
-texmf\miktex\bin\arctrl.exe
-texmf\miktex\bin\pdfclose.exe
-texmf\miktex\bin\pdfdde.exe
-texmf\miktex\bin\pdfopen.exe
+texmf/miktex/bin/${arctrl_dll_name}.dll
+texmf/miktex/bin/arctrl.exe
+texmf/miktex/bin/pdfclose.exe
+texmf/miktex/bin/pdfdde.exe
+texmf/miktex/bin/pdfopen.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

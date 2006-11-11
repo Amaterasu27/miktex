@@ -10,9 +10,9 @@
       This package includes the TeXify executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\${mcd_dll_name}.dll
-texmf\miktex\bin\${regex_dll_name}.dll
-texmf\miktex\bin\texify.exe
+texmf/miktex/bin/${mcd_dll_name}.dll
+texmf/miktex/bin/${regex_dll_name}.dll
+texmf/miktex/bin/texify.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

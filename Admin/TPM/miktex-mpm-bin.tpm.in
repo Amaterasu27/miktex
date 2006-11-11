@@ -10,7 +10,7 @@
       This package includes the MiKTeX Package Manager executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\mpm_mfc.exe
+texmf/miktex/bin/mpm_mfc.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

@@ -10,7 +10,7 @@
       This package includes the BibTeX (8-bit) executables.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\bibtex8.exe
+texmf/miktex/bin/bibtex8.exe
     </TPM:RunFiles>
  </rdf:Description>
 </rdf:RDF>

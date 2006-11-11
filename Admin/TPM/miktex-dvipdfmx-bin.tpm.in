@@ -10,8 +10,8 @@
       This packages includes the dvipdfmx executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\dvipdfmx.exe
-texmf\miktex\config\dvipdfmx.ini
+texmf/miktex/bin/dvipdfmx.exe
+texmf/miktex/config/dvipdfmx.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

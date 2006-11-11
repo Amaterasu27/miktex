@@ -20,10 +20,12 @@
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.ent.in
                ${CMAKE_CURRENT_BINARY_DIR}/version.ent)
 
-install(
-  FILES local.txt
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/latex/00LocalGuide
-)
+if(BUILDING_MIKTEX)
+  install(
+    FILES local.txt
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/latex/00LocalGuide
+  )
+endif(BUILDING_MIKTEX)
 
 set(screenshots_png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/autoinstall.png
@@ -58,24 +60,28 @@ foreach(f ${screenshots_png})
   )
 endforeach(f)
 
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
+if(BUILDING_MIKTEX)
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
+endif(BUILDING_MIKTEX)
 
-foreach(f ${screenshots_png})
-  get_filename_component(name "${f}" NAME)
-  add_custom_command(
-    OUTPUT
+if(BUILDING_MIKTEX)
+  foreach(f ${screenshots_png})
+    get_filename_component(name "${f}" NAME)
+    add_custom_command(
+      OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/png75/${name}
-    COMMAND
+      COMMAND
 	${IMAGEMAGICK_CONVERT_EXECUTABLE}
 		 -scale 75%
 		 ${f}
 		 ${CMAKE_CURRENT_BINARY_DIR}/png75/${name}
-    DEPENDS
+      DEPENDS
 	${f}
-    VERBATIM
-  )
-endforeach(f)
+      VERBATIM
+    )
+  endforeach(f)
+endif(BUILDING_MIKTEX)
 
 set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/BIBINPUTS.xml
@@ -187,52 +193,61 @@ set(manual_listings
   ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults
 )
 
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/filetypes
-  COMMAND ${findtexmf_exe}
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/filetypes
+    COMMAND ${findtexmf_exe}
 	--list-file-types
 	>${CMAKE_CURRENT_BINARY_DIR}/filetypes
-  VERBATIM
-)
+    VERBATIM
+  )
+else(BUILDING_MIKTEX)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/filetypes "")
+endif(BUILDING_MIKTEX)
 
 set(xslt_path "${CMAKE_CURRENT_BINARY_DIR}")
 set(xslt_path "${xslt_path} ${CMAKE_CURRENT_BINARY_DIR}/Styles")
 set(xslt_path "${xslt_path} ${CMAKE_CURRENT_SOURCE_DIR}")
 set(xslt_path "${xslt_path} ${CMAKE_CURRENT_SOURCE_DIR}/Styles")
 
-install(
-  FILES		Styles/miktexman.css
-  DESTINATION	${docdir}
-)
+if(BUILDING_MIKTEX)
+  install(
+    FILES	Styles/miktexman.css
+    DESTINATION	${docdir}
+  )
+endif(BUILDING_MIKTEX)
 
-install(
-  DIRECTORY	Images/ ${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
-  DESTINATION	${docdir}/Images
-  PATTERN	".svn" EXCLUDE
-  PATTERN	"callouts" EXCLUDE
-)
+if(BUILDING_MIKTEX)
+  install(
+    DIRECTORY	Images/ ${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+    DESTINATION	${docdir}/Images
+    PATTERN	".svn" EXCLUDE
+    PATTERN	"callouts" EXCLUDE
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## manual
 
-add_custom_command(
-  OUTPUT
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy
 		${miktexhelp_css}
 		${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--stringparam base.dir scratch/
@@ -240,19 +255,19 @@ add_custom_command(
 		--stringparam manifest.in.base.dir 1
 		htmlhelp.xsl
 		miktex.xml
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy
 		${help_h}
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/context.h
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E
 		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
 		${PERL_EXE} ${runhhc_perl} htmlhelp
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E copy
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/htmlhelp.chm
 		${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${entities_ent}
 	${help_h}
@@ -261,77 +276,77 @@ add_custom_command(
 	${manual_xml_files}
 	${miktexhelp_css}
 	${screenshots_png}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
 
-add_custom_command(
-  OUTPUT
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.tex
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--output ${CMAKE_CURRENT_BINARY_DIR}/miktex.tex
 		db2latex-manual.xsl
 		miktex.xml
-  DEPENDS
+    DEPENDS
 	${manual_listings}
 	${manual_xml_files}
 	${entities_ent}
 	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-manual.xsl
 	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
-  VERBATIM
-)
+    VERBATIM
+  )
 
-add_custom_command(
-  OUTPUT
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_BINARY_DIR}/png75
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E
 		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
 		${TEXIFY_EXE} --pdf ${CMAKE_CURRENT_BINARY_DIR}/miktex.tex
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E copy
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/miktex.pdf
 		${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.tex
 	${screenshots75_png}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
 
-add_custom_command(
-  OUTPUT
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
-  COMMAND
+    COMMAND
   	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/manual
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
 		${CMAKE_CURRENT_BINARY_DIR}/www/manual/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_BINARY_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/www/manual/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy
 		${miktexman_css}
 		${CMAKE_CURRENT_BINARY_DIR}/www/manual
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--stringparam base.dir www/manual/
 		--stringparam chunk.fast 1
 		htmlchunk.xsl
 		miktex.xml
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${entities_ent}
 	${htmlchunk_xsl}
@@ -339,164 +354,175 @@ add_custom_command(
 	${manual_xml_files}
 	${miktexhelp_css}
 	${screenshots_png}
-  WORKING_DIRECTORY
+    WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-) 
+    VERBATIM
+  ) 
 
-install(
-  FILES
+  install(
+    FILES
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
-  DESTINATION ${docdir}
-)
+    DESTINATION
+	${docdir}
+  )
 
-install(
-  DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/manual/
-  DESTINATION	${docdir}/manual
-  PATTERN	".svn" EXCLUDE
-)
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/manual/
+    DESTINATION	${docdir}/manual
+    PATTERN	".svn" EXCLUDE
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## installation instructions
 
-add_custom_command(
-  OUTPUT
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/install.html
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--output ${CMAKE_CURRENT_BINARY_DIR}/install.html
 		html.xsl
 		install.xml
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${entities_ent}
 	${html_xsl}
-  VERBATIM
-)
+    VERBATIM
+  )
 
-add_custom_command(
-  OUTPUT
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/install.tex
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--output ${CMAKE_CURRENT_BINARY_DIR}/install.tex
 		db2latex-install.xsl
 		install.xml
-  DEPENDS
+    DEPENDS
 	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-install.xsl
 	${entities_ent}
-  VERBATIM
-)
+    VERBATIM
+  )
 
-add_custom_command(
-  OUTPUT
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_BINARY_DIR}/png75
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E
 		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
 		${TEXIFY_EXE} --pdf ${CMAKE_CURRENT_BINARY_DIR}/install.tex
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E copy
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/install.pdf
 		${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/install.tex
 	${screenshots75_png}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
 
-install(
-  FILES
+  install(
+    FILES
 	${CMAKE_CURRENT_BINARY_DIR}/install.html
 	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-  DESTINATION ${docdir}
-)
+    DESTINATION
+	${docdir}
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## release notes
 
-add_custom_command(
-  OUTPUT
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--output ${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
 		html.xsl
 		relnotes.xml
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
 	${html_xsl}
-  VERBATIM
-)
+    VERBATIM
+  )
 
-install(
-  FILES
+  install(
+    FILES
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
-  DESTINATION ${docdir}
-)
+    DESTINATION
+	${docdir}
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## license
 
-add_custom_command(
-  OUTPUT
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/license.html
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--output ${CMAKE_CURRENT_BINARY_DIR}/license.html
 		html.xsl
 		license.xml
-  DEPENDS
+    DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/license.xml
 	${entities_ent}
 	${html_xsl}
-  VERBATIM
-)
+    VERBATIM
+  )
 
-install(
-  FILES
+  install(
+    FILES
 	${CMAKE_CURRENT_BINARY_DIR}/license.html
-  DESTINATION ${docdir}
-)
+    DESTINATION ${docdir}
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## faq
 
-add_custom_command(
-  OUTPUT
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/faq.chm
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy
 		${miktexhelp_css}
 		${CMAKE_CURRENT_BINARY_DIR}/scratch
-  COMMAND
+    COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
 		--stringparam base.dir scratch/
@@ -504,26 +530,27 @@ add_custom_command(
 		--stringparam manifest.in.base.dir 1
 		htmlhelp.xsl
 		faq.xml
-  COMMAND
+    COMMAND
 	${CMAKE_COMMAND} -E copy
 		${help_h}
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/context.h
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E
 		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
 		${PERL_EXE} ${runhhc_perl} htmlhelp
-  COMMAND
+    COMMAND
   	${CMAKE_COMMAND} -E copy
 		${CMAKE_CURRENT_BINARY_DIR}/scratch/htmlhelp.chm
 		${CMAKE_CURRENT_BINARY_DIR}/faq.chm
-  DEPENDS
+    DEPENDS
 	${entities_ent}
 	${htmlhelp_xsl}
 	${manual_xml_files}
 	${miktexhelp_css}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  VERBATIM
-)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
+endif(BUILDING_MIKTEX)
 
 ###############################################################################
 ## man pages
@@ -536,15 +563,17 @@ if(NOT NATIVE_WINDOWS)
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
     COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
 		manpages.xsl
 		miktex.xml
     DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex.xml
+	${CMAKE_CURRENT_BINARY_DIR}/filetypes
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/initexmf.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mpm.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mthelp.xml
-	${entities_ent}
 	${CMAKE_CURRENT_SOURCE_DIR}/Styles/manpages.xsl
+	${CMAKE_CURRENT_SOURCE_DIR}/miktex.xml
+	${entities_ent}
     WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
@@ -560,10 +589,11 @@ if(NOT NATIVE_WINDOWS)
 endif(NOT NATIVE_WINDOWS)
 
 ###############################################################################
-## convenience target
+## convenience targets
 
-add_custom_target(all-doc ALL
-  DEPENDS
+if(BUILDING_MIKTEX)
+  add_custom_target(all-doc ALL
+    DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/faq.chm
 	${CMAKE_CURRENT_BINARY_DIR}/install.html
 	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
@@ -572,4 +602,14 @@ add_custom_target(all-doc ALL
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
-)
+  )
+endif(BUILDING_MIKTEX)
+
+if(NOT NATIVE_WINDOWS)
+  add_custom_target(all-man ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
+	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
+	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
+  )
+endif(NOT NATIVE_WINDOWS)

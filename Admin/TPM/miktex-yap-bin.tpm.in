@@ -10,11 +10,11 @@
       This package includes the Yap executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\${dvi_dll_name}.dll
-texmf\miktex\bin\yap.exe
+texmf/miktex/bin/${dvi_dll_name}.dll
+texmf/miktex/bin/yap.exe
     </TPM:RunFiles>
     <TPM:DocFiles>
-texmf\doc\miktex\yap.chm
+texmf/doc/miktex/yap.chm
     </TPM:DocFiles>
   </rdf:Description>
 </rdf:RDF>

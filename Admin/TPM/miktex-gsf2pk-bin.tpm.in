@@ -10,7 +10,7 @@
       This package includes the GSF2PK executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\gsf2pk.exe
+texmf/miktex/bin/gsf2pk.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

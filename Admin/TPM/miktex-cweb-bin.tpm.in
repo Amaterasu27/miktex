@@ -10,8 +10,8 @@
       This package includes the ctangle &amp; cweave executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\ctangle.exe
-texmf\miktex\bin\cweave.exe
+texmf/miktex/bin/ctangle.exe
+texmf/miktex/bin/cweave.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

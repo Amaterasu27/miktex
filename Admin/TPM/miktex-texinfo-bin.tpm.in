@@ -10,9 +10,9 @@
       This package includes Makeinfo, texi2dvi and texindex.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\makeinfo.exe
-texmf\miktex\bin\texi2dvi.exe
-texmf\miktex\bin\texindex.exe
+texmf/miktex/bin/makeinfo.exe
+texmf/miktex/bin/texi2dvi.exe
+texmf/miktex/bin/texindex.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

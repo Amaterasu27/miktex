@@ -10,12 +10,12 @@
       This package contains essential MiKTeX executables.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\conspawn.exe
-texmf\miktex\bin\copystart.exe
-texmf\miktex\bin\findexe.exe
-texmf\miktex\bin\mpm.exe
-texmf\miktex\config\uninstall.dat
-texmf\miktex\config\update.dat
+texmf/miktex/bin/conspawn.exe
+texmf/miktex/bin/copystart.exe
+texmf/miktex/bin/findexe.exe
+texmf/miktex/bin/mpm.exe
+texmf/miktex/config/uninstall.dat
+texmf/miktex/config/update.dat
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
