@@ -324,6 +324,7 @@ endforeach(tpm)
 add_subdirectory(${rel_build_tools_etc_dir})
 
 add_subdirectory(${rel_bzip2_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_bzip2_dir}-static)
 endif(NATIVE_WINDOWS)
@@ -334,6 +335,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_expat_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_expat_dir}-static)
 endif(NATIVE_WINDOWS)
@@ -348,11 +350,13 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mspack_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mspack_dir}-static)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_popt_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_popt_dir}-static)
 endif(NATIVE_WINDOWS)
@@ -366,6 +370,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_zlib_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_zlib_dir}-static)
 endif(NATIVE_WINDOWS)
@@ -401,11 +406,13 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_md5_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_md5_dir}-static)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_core_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_core_dir}-static)
 endif(NATIVE_WINDOWS)
@@ -415,6 +422,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mpmlib_dir})
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
 endif(NATIVE_WINDOWS)
