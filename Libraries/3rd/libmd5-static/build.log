@@ -1,9 +1,0 @@
--*- Compilation -*-
-C:\work\miktex\libmd5-static 05.08.2004 14:53:08,81
-
-	mkdir WinRel
-	cl /c /W4 /WX /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MT /DMIKTEX  /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5 /GX -FoWinRel\ ..\libmd5\md5c.cpp
-md5c.cpp
-	cl /c /W4 /WX /Wp64 /nologo /GF  /Zi /O2 /GL /DWIN32 /DWINVER=0x0400 /D_WIN32_WINDOWS=0x0400 /D_WIN32_WINNT=0x0400 /D_WIN32_IE=0x0500 /MT /DMIKTEX  /DMIKTEX_RELEASE_STATE=0 /DOFFICIAL /DFINAL /DNDEBUG /I. /IC:\work\miktex\libgnu /IC:\work\miktex\lib /IC:\work\miktex\libtexmf /IC:\work\miktex\libpopt /IC:\work\miktex\libmpm /IC:\work\miktex\libmd5 /GX -FoWinRel\ ..\libmd5\miktex-md5.cpp
-miktex-md5.cpp
-	lib /MACHINE:X86 /NOLOGO /LTCG /OUT:C:\work\miktex\libmd5-static\WinRel\md5-static.lib WinRel\md5c.obj  WinRel\miktex-md5.obj
