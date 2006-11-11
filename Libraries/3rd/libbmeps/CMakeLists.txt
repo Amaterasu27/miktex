@@ -51,4 +51,20 @@ target_link_libraries(${bmeps_dll_name}
   ${zlib_dll_name}
 )
 
-install(TARGETS ${bmeps_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${bmeps_dll_name} DESTINATION ${bindir})
+
+set(bmeps_sources bmepsm.c)
+
+if(NATIVE_WINDOWS)
+  set(bmeps_sources ${bmeps_sources}
+    bmeps.rc
+  )
+endif(NATIVE_WINDOWS)
+
+add_executable(bmeps ${bmeps_sources})
+
+target_link_libraries(bmeps
+  ${bmeps_dll_name}
+)
+
+install(TARGETS bmeps DESTINATION ${bindir})
