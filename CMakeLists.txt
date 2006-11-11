@@ -634,3 +634,5 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
 endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_doc_dir})
+
+add_subdirectory(${rel_mtrep_dir} EXCLUDE_FROM_ALL)

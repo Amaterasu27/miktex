@@ -10,7 +10,7 @@
       This package includes the arctrl executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-arctrl-1.dll
+texmf\miktex\bin\${arctrl_dll_name}.dll
 texmf\miktex\bin\arctrl.exe
 texmf\miktex\bin\pdfclose.exe
 texmf\miktex\bin\pdfdde.exe
