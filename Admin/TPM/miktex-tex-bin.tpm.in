@@ -11,7 +11,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\initex.exe
-texmf\miktex\bin\MiKTeX-tex-3.dll
+texmf\miktex\bin\${tex_dll_name}.dll
 texmf\miktex\bin\tex.exe
 texmf\miktex\bin\virtex.exe
 texmf\miktex\config\tex.ini

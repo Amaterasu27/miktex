@@ -15,8 +15,8 @@ texmf\miktex\bin\makempx.exe
 texmf\miktex\bin\mp.exe
 texmf\miktex\bin\mpost.exe
 texmf\miktex\bin\mpto.exe
-texmf\miktex\bin\MiKTeX-dvitomp-3.dll
-texmf\miktex\bin\MiKTeX-mp-3.dll
+texmf\miktex\bin\${dvitomp_dll_name}.dll
+texmf\miktex\bin\${mp_dll_name}.dll
 texmf\miktex\mem\mp.pool
     </TPM:RunFiles>
   </rdf:Description>

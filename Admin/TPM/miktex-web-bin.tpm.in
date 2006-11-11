@@ -10,8 +10,8 @@
       This package includes Tangle, Weave and Tie.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-tangle-3.dll
-texmf\miktex\bin\MiKTeX-weave-3.dll
+texmf\miktex\bin\${tangle_dll_name}.dll
+texmf\miktex\bin\${weave_dll_name}.dll
 texmf\miktex\bin\tangle.exe
 texmf\miktex\bin\tie.exe
 texmf\miktex\bin\weave.exe

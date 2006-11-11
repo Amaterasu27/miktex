@@ -11,7 +11,7 @@
       ttf2tfm.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-freetype-4.dll
+texmf\miktex\bin\${freetype_dll_name}.dll
 texmf\miktex\bin\ttf2pfb.exe
 texmf\miktex\bin\ttf2pk.exe
 texmf\miktex\bin\ttf2tfm.exe

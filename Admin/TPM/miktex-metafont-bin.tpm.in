@@ -13,7 +13,7 @@
 texmf\miktex\base\mf.pool
 texmf\miktex\bin\inimf.exe
 texmf\miktex\bin\mf.exe
-texmf\miktex\bin\MiKTeX-mf-3.dll
+texmf\miktex\bin\${mf_dll_name}.dll
 texmf\miktex\bin\virmf.exe
     </TPM:RunFiles>
   </rdf:Description>

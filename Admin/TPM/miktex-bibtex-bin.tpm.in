@@ -11,7 +11,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\bibtex.exe
-texmf\miktex\bin\MiKTeX-bibtex-3.dll
+texmf\miktex\bin\${bibtex_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

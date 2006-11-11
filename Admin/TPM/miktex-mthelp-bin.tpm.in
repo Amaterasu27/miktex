@@ -10,7 +10,7 @@
       This package includes the mthelp executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-mthelp-1.dll
+texmf\miktex\bin\${mthelp_dll_name}.dll
 texmf\miktex\bin\mthelp.exe
 texmf\miktex\bin\texdoc.exe
     </TPM:RunFiles>

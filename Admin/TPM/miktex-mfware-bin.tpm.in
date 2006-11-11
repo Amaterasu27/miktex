@@ -15,10 +15,10 @@ texmf\miktex\bin\gftodvi.exe
 texmf\miktex\bin\gftopk.exe
 texmf\miktex\bin\gftype.exe
 texmf\miktex\bin\mft.exe
-texmf\miktex\bin\MiKTeX-gftodvi-3.dll
-texmf\miktex\bin\MiKTeX-gftopk-3.dll
-texmf\miktex\bin\MiKTeX-gftype-3.dll
-texmf\miktex\bin\MiKTeX-mft-3.dll
+texmf\miktex\bin\${gftodvi_dll_name}.dll
+texmf\miktex\bin\${gftopk_dll_name}.dll
+texmf\miktex\bin\${gftype_dll_name}.dll
+texmf\miktex\bin\${mft_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

@@ -10,7 +10,7 @@
       This package includes the Yap executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-dvi-3.dll
+texmf\miktex\bin\${dvi_dll_name}.dll
 texmf\miktex\bin\yap.exe
     </TPM:RunFiles>
     <TPM:DocFiles>

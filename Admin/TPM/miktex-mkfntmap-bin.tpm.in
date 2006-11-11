@@ -11,7 +11,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\mkfntmap.exe
-texmf\miktex\bin\MiKTeX-mkfntmap-3.dll
+texmf\miktex\bin\${mkfntmap_dll_name}.dll
 texmf\miktex\bin\updmap.exe
     </TPM:RunFiles>
   </rdf:Description>

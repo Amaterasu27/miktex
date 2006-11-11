@@ -10,8 +10,8 @@
       This package includes the TeXify executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-compilerdriver-3.dll
-texmf\miktex\bin\MiKTeX-regex-3.dll
+texmf\miktex\bin\${mcd_dll_name}.dll
+texmf\miktex\bin\${regex_dll_name}.dll
 texmf\miktex\bin\texify.exe
     </TPM:RunFiles>
   </rdf:Description>

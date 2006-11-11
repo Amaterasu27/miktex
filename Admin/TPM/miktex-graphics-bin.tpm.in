@@ -11,15 +11,15 @@
       epstopdf, pcxtoppm, pngtopnm, ppmtobmp, tgatoppm, tifftopnm.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-bmeps-3.dll
-texmf\miktex\bin\MiKTeX-gd-2.dll
-texmf\miktex\bin\MiKTeX-jpeg-3.dll
-texmf\miktex\bin\MiKTeX-pbm-3.dll
-texmf\miktex\bin\MiKTeX-pgm-3.dll
-texmf\miktex\bin\MiKTeX-png-3.dll
-texmf\miktex\bin\MiKTeX-pnm-3.dll
-texmf\miktex\bin\MiKTeX-ppm-3.dll
-texmf\miktex\bin\MiKTeX-tiff-3.dll
+texmf\miktex\bin\${bmeps_dll_name}.dll
+texmf\miktex\bin\${gd_dll_name}.dll
+texmf\miktex\bin\${jpeg_dll_name}.dll
+texmf\miktex\bin\${pbm_dll_name}.dll
+texmf\miktex\bin\${pgm_dll_name}.dll
+texmf\miktex\bin\${png_dll_name}.dll
+texmf\miktex\bin\${pnm_dll_name}.dll
+texmf\miktex\bin\${ppm_dll_name}.dll
+texmf\miktex\bin\${tiff_dll_name}.dll
 texmf\miktex\bin\bmeps.exe
 texmf\miktex\bin\epstopdf.exe
 texmf\miktex\bin\pcxtoppm.exe

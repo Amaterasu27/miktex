@@ -17,7 +17,7 @@ texmf\miktex\bin\makemem.exe
 texmf\miktex\bin\makemf.exe
 texmf\miktex\bin\makepk.exe
 texmf\miktex\bin\maketfm.exe
-texmf\miktex\bin\MiKTeX-make-3.dll
+texmf\miktex\bin\${makex_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

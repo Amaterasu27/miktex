@@ -10,7 +10,7 @@
       This package includes the PS2PK executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf\miktex\bin\MiKTeX-psres-3.dll
+texmf\miktex\bin\${psres_dll_name}.dll
 texmf\miktex\bin\ps2pk.exe
     </TPM:RunFiles>
   </rdf:Description>

@@ -12,7 +12,7 @@
     <TPM:RunFiles>
 texmf\miktex\bin\findtexmf.exe
 texmf\miktex\bin\kpsewhich.exe
-texmf\miktex\bin\MiKTeX-findtexmf-3.dll
+texmf\miktex\bin\${findtexmf_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

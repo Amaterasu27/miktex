@@ -11,7 +11,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf\miktex\bin\dvicopy.exe
-texmf\miktex\bin\MiKTeX-dvicopy-3.dll
+texmf\miktex\bin\${dvicopy_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
