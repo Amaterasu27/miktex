@@ -747,6 +747,9 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
   ULogAddFile (g_strLogFile);
 #endif
 
+  // run IniTeXMF
+  ConfigureMiKTeX ();
+
   // create shell links
   CreateProgramIcons ();
 
@@ -932,44 +935,53 @@ FileCopyPage::ConfigureMiKTeX ()
 	FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
       }
   }
-
+  
   CommandLineBuilder cmdLine;
+  
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+    {
+      // define root directories
+      // remove old fndb files
+      // set shared setup option
+      cmdLine.Clear ();
+      cmdLine.AppendOption (T_("--install-root="),
+			    theApp.startupConfig.installRoot);
+      if (! theApp.startupConfig.userDataRoot.Empty())
+	{
+	  cmdLine.AppendOption (T_("--user-data="),
+				theApp.startupConfig.userDataRoot);
+	}
+      if (! theApp.startupConfig.userConfigRoot.Empty())
+	{
+	  cmdLine.AppendOption (T_("--user-config="),
+				theApp.startupConfig.userConfigRoot);
+	}
+      if (! theApp.startupConfig.commonDataRoot.Empty())
+	{
+	  cmdLine.AppendOption (T_("--common-data="),
+				theApp.startupConfig.commonDataRoot);
+	}
+      if (! theApp.startupConfig.commonConfigRoot.Empty())
+	{
+	  cmdLine.AppendOption (T_("--common-config="),
+				theApp.startupConfig.commonConfigRoot);
+	}
+      tstring rootDirectories;
+      rootDirectories += theApp.startupConfig.installRoot.Get();
+      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
+	{
+	  rootDirectories += T_(";");
+	  rootDirectories += theApp.startupConfig.roots.c_str();
+	}
+      cmdLine.AppendOption (T_("--roots="), rootDirectories);
+      cmdLine.AppendOption (T_("--rmfndb"));
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
+    }
 
-  // define root directories
-  // remove old fndb files
-  // set shared setup option
   cmdLine.Clear ();
-  cmdLine.AppendOption (T_("--install-root="),
-			theApp.startupConfig.installRoot);
-  if (! theApp.startupConfig.userDataRoot.Empty())
-    {
-      cmdLine.AppendOption (T_("--user-data="),
-			    theApp.startupConfig.userDataRoot);
-    }
-  if (! theApp.startupConfig.userConfigRoot.Empty())
-    {
-      cmdLine.AppendOption (T_("--user-config="),
-			    theApp.startupConfig.userConfigRoot);
-    }
-  if (! theApp.startupConfig.commonDataRoot.Empty())
-    {
-      cmdLine.AppendOption (T_("--common-data="),
-			    theApp.startupConfig.commonDataRoot);
-    }
-  if (! theApp.startupConfig.commonConfigRoot.Empty())
-    {
-      cmdLine.AppendOption (T_("--common-config="),
-			    theApp.startupConfig.commonConfigRoot);
-    }
-  tstring rootDirectories;
-  rootDirectories += theApp.startupConfig.installRoot.Get();
-  if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
-    {
-      rootDirectories += T_(";");
-      rootDirectories += theApp.startupConfig.roots.c_str();
-    }
-  cmdLine.AppendOption (T_("--roots="), rootDirectories);
-  cmdLine.AppendOption (T_("--rmfndb"));
   cmdLine.AppendOption (T_("--shared-setup="),
 			(theApp.commonUserSetup ? T_("1") : T_("0")));
   RunIniTeXMF (cmdLine);
@@ -977,30 +989,39 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       return;
     }
-
-  // create filename database files
-  cmdLine.Clear ();
-  cmdLine.AppendOption (T_("--update-fndb"));
-  RunIniTeXMF (cmdLine);
-  if (pSheet->GetCancelFlag())
+  
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      return;
+      // create filename database files
+      cmdLine.Clear ();
+      cmdLine.AppendOption (T_("--update-fndb"));
+      RunIniTeXMF (cmdLine);
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
     }
 
-  // create latex.exe, context.exe, ...
-  RunIniTeXMF (T_("--mklinks"));
-  if (pSheet->GetCancelFlag())
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      return;
+      // create latex.exe, context.exe, ...
+      RunIniTeXMF (T_("--mklinks"));
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
     }
-
-  // create font map files
-  RunIniTeXMF (T_("--mkmaps"));
-  if (pSheet->GetCancelFlag())
+      
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      return;
+      // create font map files
+      RunIniTeXMF (T_("--mkmaps"));
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
     }
-
+      
   // set paper size
   if (! theApp.paperSize.empty())
     {
@@ -1015,14 +1036,17 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
       RunIniTeXMF (cmdLine);
     }
-
-  // refresh file name database again
-  RunIniTeXMF (T_("--update-fndb"));
-  if (pSheet->GetCancelFlag())
+      
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      return;
+      // refresh file name database again
+      RunIniTeXMF (T_("--update-fndb"));
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
     }
-
+      
   // create report
   RunIniTeXMF (T_("--report"));
   if (pSheet->GetCancelFlag())
