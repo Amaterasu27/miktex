@@ -336,8 +336,12 @@ MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
   auto_ptr<DirectoryLister>
     pLister (DirectoryLister::Open(sourceDir, pattern.Get()));
 
+  bool haveSomething = false;
+
   while (pLister->GetNext(direntry))
     {
+      haveSomething = true;
+
       // don't recurse
       if (direntry.isDirectory)
 	{
@@ -369,6 +373,11 @@ MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
 
   pLister->Close ();
   pLister.reset ();
+
+  if (! haveSomething)
+    {
+      FatalError ("no match for %s", sourceTemplate.Get());
+    }
 }
 
 /* _________________________________________________________________________
