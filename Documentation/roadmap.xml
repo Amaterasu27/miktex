@@ -3,9 +3,9 @@
                          "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 %entities.ent;
-<!ENTITY rev "2.5.2384">
-<!ENTITY month "July 2006">
-<!ENTITY date "12 July 2006">
+<!ENTITY rev "2.6.2510">
+<!ENTITY month "November 2006">
+<!ENTITY date "15 November 2006">
 ]>
 
 <article>
@@ -62,14 +62,15 @@ by subscribing to this Weblog:
 
 <title>&MiKTeX; 2.6</title>
 
-<para>Release date: 2006/H2</para>
+<para>Release date: January 2006</para>
 
 <bridgehead renderas="sect3">Highlights:</bridgehead>
 
 <highlights>
 <itemizedlist>
-<listitem><para>&XeTeX;</para></listitem>
+<listitem><para>&MetaPost; 0.970</para></listitem>
 <listitem><para>&pdfTeX; 1.40</para></listitem>
+<listitem><para>&WindowsVista; compatible</para></listitem>
 </itemizedlist>
 </highlights>
 
@@ -85,8 +86,7 @@ by subscribing to this Weblog:
 
 <highlights>
 <itemizedlist>
-<listitem><para>&MiKTeX; for 64-bit &Windows; operating systems</para></listitem>
-<listitem><para>&MiKTeX; for &WindowsVista;</para></listitem>
+<listitem><para>&XeTeX;</para></listitem>
 </itemizedlist>
 </highlights>
 
