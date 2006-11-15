@@ -13,7 +13,7 @@
 texmf/miktex/bin/${odvicopy_dll_name}.dll
 texmf/miktex/bin/${ofm2opl_dll_name}.dll
 texmf/miktex/bin/${omega_dll_name}.dll
-texmf/miktex/bin/MiKTeX-opl2ofm-3.dll
+texmf/miktex/bin/${opl2ofm_dll_name}.dll
 texmf/miktex/bin/${ovf2ovp_dll_name}.dll
 texmf/miktex/bin/${ovp2ovf_dll_name}.dll
 texmf/miktex/bin/mkocp.exe

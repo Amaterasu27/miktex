@@ -38,5 +38,6 @@ target_link_libraries(${mcd_dll_name}
 )
   
 create_dll_wrapper(texify ${mcd_dll_name} mcdmain)
+create_dll_wrapper(texi2dvi ${mcd_dll_name} mcdmain)
 
-install(TARGETS ${mcd_dll_name} texify DESTINATION ${bindir})
+install(TARGETS ${mcd_dll_name} texify texi2dvi DESTINATION ${bindir})

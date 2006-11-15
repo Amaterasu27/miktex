@@ -84,4 +84,10 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS remove DESTINATION ${bindir})
+get_target_property(remove_exe remove LOCATION)
+
+install(
+  FILES ${remove_exe}
+  DESTINATION ${configdir}
+  RENAME uninstall.dat
+)

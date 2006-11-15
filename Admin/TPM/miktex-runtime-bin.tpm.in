@@ -25,7 +25,6 @@ texmf/miktex/bin/${popt_dll_name}.dll
 texmf/miktex/bin/${texmf_dll_name}.dll
 texmf/miktex/bin/${ui_dll_name}.dll
 texmf/miktex/bin/${zlib_dll_name}.dll
-texmf/miktex/bin/neolecho.com
 texmf/miktex/bin/runbat.exe
 texmf/miktex/bin/runperl.exe
     </TPM:RunFiles>

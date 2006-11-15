@@ -49,6 +49,41 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
 
+set(MIKTEX_SERIES_STR
+    "${MIKTEX_MAJOR_VERSION}.${MIKTEX_MINOR_VERSION}")
+
+math(
+  EXPR
+  MIKTEX_SERIES_INT
+  "(100 * ${MIKTEX_MAJOR_VERSION}) + ${MIKTEX_MINOR_VERSION}"
+)
+
+if(MIKTEX_RELEASE_STATE EQUAL 0)
+  set(MIKTEX_VERSION_STR
+      "${MIKTEX_SERIES_STR}"
+      CACHE STRING
+      "The MikTeX version string."
+      FORCE)
+elseif(MIKTEX_RELEASE_STATE EQUAL 1)
+  set(MIKTEX_VERSION_STR
+      "${MIKTEX_SERIES_STR} RC ${MIKTEX_RELEASE_NUM}"
+      CACHE STRING
+      "The MikTeX version string."
+      FORCE)
+elseif(MIKTEX_RELEASE_STATE EQUAL 2)
+  set(MIKTEX_VERSION_STR
+      "${MIKTEX_SERIES_STR} Beta ${MIKTEX_RELEASE_NUM}"
+      CACHE STRING
+      "The MikTeX version string."
+      FORCE)
+elseif(MIKTEX_RELEASE_STATE EQUAL 4)
+  SET(MIKTEX_VERSION_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} snapshot"
+      CACHE STRING
+      "The MikTeX version string."
+      FORCE)
+endif(MIKTEX_RELEASE_STATE EQUAL 0)
+
 include(CPack)
 
 include(CheckFunctionExists)
@@ -175,38 +210,6 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
 )
-
-###############################################################################
-## set MiKTeX version info
-
-set(MIKTEX_SERIES_STR
-    "${MIKTEX_MAJOR_VERSION}.${MIKTEX_MINOR_VERSION}")
-
-if(MIKTEX_RELEASE_STATE EQUAL 0)
-  set(MIKTEX_VERSION_STR
-      "${MIKTEX_SERIES_STR}"
-      CACHE STRING
-      "The MikTeX version string."
-      FORCE)
-elseif(MIKTEX_RELEASE_STATE EQUAL 1)
-  set(MIKTEX_VERSION_STR
-      "${MIKTEX_SERIES_STR} RC ${MIKTEX_RELEASE_NUM}"
-      CACHE STRING
-      "The MikTeX version string."
-      FORCE)
-elseif(MIKTEX_RELEASE_STATE EQUAL 2)
-  set(MIKTEX_VERSION_STR
-      "${MIKTEX_SERIES_STR} Beta ${MIKTEX_RELEASE_NUM}"
-      CACHE STRING
-      "The MikTeX version string."
-      FORCE)
-elseif(MIKTEX_RELEASE_STATE EQUAL 4)
-  SET(MIKTEX_VERSION_STR
-      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} snapshot"
-      CACHE STRING
-      "The MikTeX version string."
-      FORCE)
-endif(MIKTEX_RELEASE_STATE EQUAL 0)
 
 ###############################################################################
 ## change default install prefix

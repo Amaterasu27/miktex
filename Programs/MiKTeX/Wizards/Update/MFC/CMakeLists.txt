@@ -110,4 +110,11 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS update DESTINATION ${bindir})
+
+get_target_property(update_exe update LOCATION)
+
+install(
+  FILES ${update_exe}
+  DESTINATION ${configdir}
+  RENAME update.dat
+)

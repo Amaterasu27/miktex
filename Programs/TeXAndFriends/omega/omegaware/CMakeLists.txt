@@ -22,5 +22,6 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 create_web_app(odvicopy)
 create_web_app(ofm2opl)
+create_web_app(opl2ofm)
 create_web_app(ovf2ovp)
 create_web_app(ovp2ovf)

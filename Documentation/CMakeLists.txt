@@ -62,7 +62,9 @@ endforeach(f)
 
 if(BUILDING_MIKTEX)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/faq")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/roadmap")
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
@@ -550,6 +552,57 @@ if(BUILDING_MIKTEX)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
   )
+
+  install(
+    FILES
+	${CMAKE_CURRENT_BINARY_DIR}/faq.chm
+    DESTINATION
+	${docdir}
+  )
+
+endif(BUILDING_MIKTEX)
+
+###############################################################################
+## roadmap
+
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/roadmap
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_BINARY_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--output ${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
+		html.xsl
+		roadmap.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${CMAKE_CURRENT_SOURCE_DIR}/roadmap.xml
+	${entities_ent}
+	${html_xsl}
+	${miktexman_css}
+    VERBATIM
+  ) 
+
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/
+    DESTINATION	${docdir}/roadmap
+    PATTERN	".svn" EXCLUDE
+  )
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
@@ -602,6 +655,7 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
   )
 endif(BUILDING_MIKTEX)
 

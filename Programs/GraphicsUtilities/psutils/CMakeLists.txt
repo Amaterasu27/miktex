@@ -74,7 +74,7 @@ add_executable(pstops
   psutil.c
 )
 
-install(TARGETS ${t} DESTINATION ${bindir})
+install(TARGETS ${exes} DESTINATION ${bindir})
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cooked)
 

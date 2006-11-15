@@ -81,5 +81,4 @@ target_link_libraries(ttf2tfm
   ${texmf_dll_name}
 )
 
-install(TARGETS ttf2pk DESTINATION ${bindir})
-
+install(TARGETS ttf2tfm DESTINATION ${bindir})
