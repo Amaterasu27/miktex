@@ -325,11 +325,8 @@ PropPageFormats::EnableButtons ()
 {
   UINT n = listControl.GetSelectedCount();
   makeButton.EnableWindow (n > 0 && ! modified);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
   removeButton.EnableWindow (n > 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
   editButton.EnableWindow (n == 1);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

@@ -458,10 +458,8 @@ RemoveFilesPage::OnTimer (/*[in]*/ UINT nIDEvent)
 	    }
 	  pWnd ->SetWindowText (T_(""));
 	  pWnd->EnableWindow (FALSE);
-	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 	  progressControl.SetPos (0);
 	  progressControl.EnableWindow (FALSE);
-	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
       
 	  // enable Next button
 	  pSheet->SetWizardButtons (PSWIZB_NEXT);

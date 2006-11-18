@@ -477,7 +477,6 @@ ProgressDialogImpl::StartProgressDialog (/*[in]*/ HWND hwndParent)
   if (hParentWindow != 0)
     {
       EnableWindow (hParentWindow, FALSE);
-      CHECK_WINDOWS_ERROR (T_("EnableWindow"), 0);
     }
 
   // create the user interface thread
@@ -524,7 +523,6 @@ ProgressDialogImpl::StopProgressDialog ()
   if (hParentWindow != 0)
     {
       EnableWindow (hParentWindow, TRUE);
-      CHECK_WINDOWS_ERROR (T_("EnableWindow"), 0);
     }
 
   // destroy the dialog window

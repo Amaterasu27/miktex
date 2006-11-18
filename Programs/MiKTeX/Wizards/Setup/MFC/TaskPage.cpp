@@ -272,5 +272,4 @@ TaskPage::EnableButtons ()
       UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
     }
   pWnd->EnableWindow (task == 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }

@@ -370,11 +370,8 @@ EditTEXMFPage::OnSelChange ()
 	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCount"), 0);
 	}
       deleteButton.EnableWindow (TRUE);
-      CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
       upButton.EnableWindow (idx > 0);
-      CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
       downButton.EnableWindow (idx + 1 < count);
-      CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
     }
   catch (const MiKTeXException & e)
     {

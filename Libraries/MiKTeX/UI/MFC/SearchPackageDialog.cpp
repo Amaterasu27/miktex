@@ -246,7 +246,6 @@ SearchPackageDialog::EnableButtons ()
       FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
     }
   pOk->EnableWindow (l > 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
   CButton * pbn;
   if (l > 0)
     {

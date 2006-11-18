@@ -374,11 +374,9 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
-	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 	  EnableControl (IDC_PROGRESS2_TITLE, false);
 	  progressControl2.SetPos (0);
 	  progressControl2.EnableWindow (FALSE);
-	  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 #if 0
 	  GetControl(IDC_ETA_TITLE)->ShowWindow (SW_HIDE);
 	  GetControl(IDC_ETA)->SetWindowText (T_(""));
@@ -829,7 +827,6 @@ FileCopyPage::EnableControl (/*[in]*/ UINT	controlId,
 			     /*[in]*/ bool	enable)
 {
   GetControl(controlId)->EnableWindow (enable ? TRUE : FALSE);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

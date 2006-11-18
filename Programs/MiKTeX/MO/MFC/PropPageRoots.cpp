@@ -618,28 +618,23 @@ PropPageTeXMFRoots::EnableButtons ()
     }
 
   scanButton.EnableWindow (nSelected > 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 
   upButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
 			 && canMoveUp
 			 && nSelected == 1
 			 && idx > 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 
   downButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
 			   && canMoveDown
 			   && nSelected == 1
 			   && idx + 1 < nItems);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 
   addButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
 			  && canAdd);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 
   removeButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
 			     && canRemove
 			     && nSelected > 0);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

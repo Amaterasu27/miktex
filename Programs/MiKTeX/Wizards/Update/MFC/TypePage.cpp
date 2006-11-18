@@ -457,7 +457,6 @@ TypePage::EnableControl (/*[in]*/ UINT	controlId,
 			 /*[in]*/ bool	enable)
 {
   GetControl(controlId)->EnableWindow (enable ? TRUE : FALSE);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

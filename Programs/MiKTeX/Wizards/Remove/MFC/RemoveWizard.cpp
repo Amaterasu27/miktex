@@ -128,7 +128,6 @@ RemoveWizard::EnableCancelButton (/*[in]*/ bool enable)
       UNEXPECTED_CONDITION (T_("RemoveWizard::EnableCancel"));
     }
   pWnd->EnableWindow (enable ? TRUE : FALSE);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

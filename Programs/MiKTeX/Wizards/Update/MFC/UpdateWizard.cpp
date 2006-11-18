@@ -145,7 +145,6 @@ UpdateWizard::EnableCancelButton (/*[in]*/ bool enable)
       UNEXPECTED_CONDITION (T_("UpdateWizard::EnableCancel"));
     }
   pWnd->EnableWindow (enable ? TRUE : FALSE);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________
