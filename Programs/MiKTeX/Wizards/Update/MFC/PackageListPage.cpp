@@ -700,13 +700,11 @@ PackageListPage::EnableSelectButtons ()
       UNEXPECTED_CONDITION (T_("PackageListPage::EnableSelectButtons"));
     }
   pWnd->EnableWindow (enable);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
   if ((pWnd = GetDlgItem(IDC_DESELECT_ALL)) == 0)
     {
       UNEXPECTED_CONDITION (T_("PackageListPage::EnableSelectButtons"));
     }
   pWnd->EnableWindow (enable && ! repairing);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }
 
 /* _________________________________________________________________________

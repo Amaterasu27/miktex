@@ -71,12 +71,6 @@ class UpdateWizardCommandLineInfo;
 			      T_(__FILE__),		\
 			      __LINE__)
 
-#define CHECK_WINDOWS_ERROR(windowsFunction, lpszInfo)	\
-  if (::GetLastError() != ERROR_SUCCESS)		\
-    {							\
-      FATAL_WINDOWS_ERROR (windowsFunction, lpszInfo);	\
-    }
-
 /* _________________________________________________________________________
 
    Helper Macros

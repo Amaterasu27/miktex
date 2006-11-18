@@ -257,5 +257,4 @@ SiteWizType::EnableButtons ()
       UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
     }
   pWnd->EnableWindow (checked == IDC_INSTALL_FROM_INTERNET);
-  CHECK_WINDOWS_ERROR (T_("CWnd::EnableWindow"), 0);
 }

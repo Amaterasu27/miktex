@@ -89,7 +89,14 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 			  foregroundPalettes[fb],
 			  FALSE))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("SelectPalette"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	    }
 	}
       pDC->RealizePalette ();
 
@@ -104,7 +111,14 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 
       if (savedDC == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	    }
 	}
 
       AutoRestoreDC autoRestoreDC (pDC, savedDC);
@@ -340,7 +354,15 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 					  1,
 					  GetSysColor(COLOR_WINDOWFRAME)))
 			{
-			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			  if (IsWindowsNT())
+			    {
+			      FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+			    }
+			  else
+			    {
+			      UNEXPECTED_CONDITION
+				(T_("DviView::DrawSpecials"));
+			    }
 			}
 		      AutoDeleteObject autoDeletePen (&pen);
 		      CPen * pOldPen = pDC->SelectObject(&pen);
@@ -355,7 +377,15 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		      if (! pDC->LineTo(PixelShrink(urx) + 1,
 					PixelShrink(lly) + 2))
 			{
-			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			  if (IsWindowsNT())
+			    {
+			      FATAL_WINDOWS_ERROR (T_("LineTo"), 0);
+			    }
+			  else
+			    {
+			      UNEXPECTED_CONDITION
+				(T_("DviView::DrawSpecials"));
+			    }
 			}
 		    }
 		}
@@ -369,7 +399,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 				      1,
 				      GetSysColor(COLOR_BTNSHADOW)))
 		    {
-		      UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		      if (IsWindowsNT())
+			{
+			  FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+			}
+		      else
+			{
+			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			}
 		    }
 		  AutoDeleteObject autoDeletePen (&pen);
 		  CPen * pOldPen = pDC->SelectObject (&pen);
@@ -383,7 +420,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 				     PixelShrink(pSpecial->GetX()) + 5,
 				     PixelShrink(pSpecial->GetY()) + 5))
 		    {
-		      UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		      if (IsWindowsNT())
+			{
+			  FATAL_WINDOWS_ERROR (T_("Ellipse"), 0);
+			}
+		      else
+			{
+			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			}
 		    }
 		}
 	      break;
@@ -405,7 +449,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 				    w,
 				    pSolidLineSpecial->GetColor()))
 		  {
-		    UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		    if (IsWindowsNT())
+		      {
+			FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+		      }
+		    else
+		      {
+			UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		      }
 		  }
 		AutoDeleteObject autoDeletePen (&pen);
 		CPen * pOldPen = pDC->SelectObject(&pen);
@@ -421,7 +472,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 				  (PixelShrink(pSolidLineSpecial->GetEndY())
 				   + 1)))
 		  {
-		    UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		    if (IsWindowsNT())
+		      {
+			FATAL_WINDOWS_ERROR (T_("LineTo"), 0);
+		      }
+		    else
+		      {
+			UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		      }
 		  }
 	      }
 	    break;
@@ -447,7 +505,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 
   if (savedDC == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+      if (IsWindowsNT())
+	{
+	  FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	}
+      else
+	{
+	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	}
     }
 
   AutoRestoreDC autoRestoreDC (pDC, savedDC);
@@ -471,7 +536,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 		      rectPage.Height(),
 		      PATCOPY))
       {
-	UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	if (IsWindowsNT())
+	  {
+	    FATAL_WINDOWS_ERROR (T_("PatBlt"), 0);
+	  }
+	else
+	  {
+	    UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  }
       }
   }
   
@@ -503,16 +575,30 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 			   lm + sizePage.cx + GetPageBorderWidth(),
 			   tm))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
       
       // right border
       if (! pDC->Rectangle(lm + sizePage.cx,
-			  tm,
-			  lm + sizePage.cx + GetPageBorderWidth(),
-			  tm + sizePage.cy + GetPageBorderWidth()))
+			   tm,
+			   lm + sizePage.cx + GetPageBorderWidth(),
+			   tm + sizePage.cy + GetPageBorderWidth()))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
       
       // bottom border
@@ -521,7 +607,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 			   lm + sizePage.cx,
 			   tm + sizePage.cy + GetPageBorderWidth()))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
 
       // left border
@@ -530,7 +623,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 			   lm,
 			   tm + sizePage.cy + GetPageBorderWidth()))
       	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
 
       // right shadow
@@ -541,7 +641,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 			   (tm + sizePage.cy + GetPageBorderWidth()
 			    + GetPageBorderShadow())))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
 
       // bottom shadow
@@ -551,7 +658,14 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 			   (tm + sizePage.cy + GetPageBorderWidth()
 			    + GetPageBorderShadow())))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    }
 	}
     }
 }
@@ -582,25 +696,46 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
   int savedDC = pDC->SaveDC();
   if (savedDC == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+      if (IsWindowsNT())
+	{
+	  FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	}
+      else
+	{
+	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	}
     }
   AutoRestoreDC autoRestoreDC (pDC, savedDC);
   CPen pen;
   if (! pen.CreatePen(PS_SOLID, 3, GetSysColor(COLOR_BTNSHADOW)))
     {
-      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+      if (IsWindowsNT())
+	{
+	  FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+	}
+      else
+	{
+	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	}
     }
   AutoDeleteObject autoDeletePen (&pen);
   if (pDC->SelectObject(&pen) == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+      UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
     }
   if (! pDC->Ellipse(PixelShrink(searchPosition.x) - 4,
 		     PixelShrink(searchPosition.y) - 4,
 		     PixelShrink(searchPosition.x) + 5,
 		     PixelShrink(searchPosition.y) + 5))
     {
-      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+      if (IsWindowsNT())
+	{
+	  FATAL_WINDOWS_ERROR (T_("Ellipse"), 0);
+	}
+      else
+	{
+	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	}
     }
 }
 
@@ -632,7 +767,14 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
       CRect rect;
       if (pDC->GetClipBox(&rect) == ERROR)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("GetClipBox"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	    }
 	}
       if (! pDC->PatBlt(rect.left,
 			rect.top,
@@ -640,7 +782,14 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 			rect.Height(),
 			PATCOPY))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	  if (IsWindowsNT())
+	    {
+	      FATAL_WINDOWS_ERROR (T_("PatBlt"), 0);
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	    }
 	}
       return (TRUE);
     }
