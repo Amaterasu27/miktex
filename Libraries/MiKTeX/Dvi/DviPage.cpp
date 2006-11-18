@@ -1006,13 +1006,19 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
   catch (const exception &)
     {
       dvipsErr.Close ();
-      dvipsOut.Close ();
+      if (dvipsOut.Get() != 0)
+	{
+	  dvipsOut.Close ();
+	}
       gsOut.Close ();
       gsErr.Close ();
       throw;
     }
   dvipsErr.Close ();
-  dvipsOut.Close ();
+  if (dvipsOut.Get() != 0)
+    {
+      dvipsOut.Close ();
+    }
   gsOut.Close ();
   gsErr.Close ();
   tracePage->WriteLine (T_("libdvi"), T_("Dvips transcript:"));
@@ -1031,7 +1037,7 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
     {
       FATAL_DVI_ERROR (T_("DviPageImpl::MakeDibChunks"),
 		       T_("The page could not be rendered."),
-		       dvipsTranscript.c_str());
+		       gsTranscript.c_str());
     }
 }
 
@@ -1277,6 +1283,9 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   processStartInfo.RedirectStandardOutput = true;
 
   auto_ptr<Process> pGhostscript (Process::Start(processStartInfo));
+
+  // close unused file stream (this prevents a hang situation)
+  dvipsOut.Close ();
 
   gsOut.Attach (pGhostscript->get_StandardOutput());
   gsErr.Attach (pGhostscript->get_StandardError());
