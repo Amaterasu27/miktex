@@ -47,7 +47,11 @@
 <title>System requirements</title>
 
 <para>&MiKTeX25; will run on all &Windows; variants with the exception
-of &Windows95;.</para>
+of &Windows95; and &WindowsNT;.</para>
+
+<para>&MiKTeX25; is not designed to be run on &WindowsVista;.
+(It may be possible to use &MiKTeX25; on &WindowsVista; systems.
+But such use is not supported.)</para>
 
 </section>
 
@@ -72,9 +76,9 @@ url="http://sourceforge.net/tracker/?atid=110783&amp;group_id=10783&amp;func=bro
 
 <section>
 
-<title><filename>miktex.ini</filename> splitted</title>
+<title><filename>miktex.ini</filename> split</title>
 
-<para><filename>miktex.ini</filename> has been splitted into several
+<para><filename>miktex.ini</filename> has been split into several
 application-specific configuration files. For example, &Yap;
 configuration settings are now contained in
 <filename>yap.ini</filename>.</para>
