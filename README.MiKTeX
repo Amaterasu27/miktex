@@ -19,19 +19,29 @@ along with This file; if not, write to the Free Software Foundation,
 This 'README' file belongs to the MiKTeX source distribution.  It
 briefly describes the build process on Windows systems.
 
-OS Requirements
+OS REQUIREMENTS
 ---------------
 
 	* Microsoft Windows XP SP 2
 
-What you need
--------------
+C++ COMPILER
+------------
+
+	* Microsoft Visual C++ 8.0 Professional
+		http://www.microsoft.com
+
+BUILD SYSTEM
+------------
+
+	* CMake (minimum required version: 2.4.4)
+		http://www.cmake.org
+
+
+FREE TOOLS YOU WILL NEED
+------------------------
 
 	* ActivePerl
-		http://www.activestate.com/Products/ActivePerl/
-
-	* CMake
-		http://www.cmake.org
+		http://www.activestate.com
 
 	* Cygwin (full install)
 		http://www.cygwin.com
@@ -40,25 +50,25 @@ What you need
 		http://www.imagemagick.org
 
         * Microsoft HTML Help SDK
-		http://msdn.microsoft.com
-
-	* Microsoft Visual C++ 8.0 Professional
-		http://msdn.microsoft.com/vstudio/
+		http://www.microsoft.com
 
 	* MiKTeX (full install)
-		http://www.miktex.org
+		http://miktex.org
 
-Building MiKTeX
+	* xsltproc
+		http://xmlsoft.org
+
+BUILDING MIKTEX
 ---------------
 
-You use CMake to set up the MiKTeX build system.  Make sure that the
-Visual C/C++ environment variables are set correctly.
+Run CMake to produce the NMake makefiles customized for your system:
 
-Here is a short example:
+    cmake -G "NMake Makefiles"
 
-  mkdir C:\miktex-build-dir
-  cd C:\miktex-build-dir
-  cmake -G "NMake Makefiles" C:\path\to\miktex\sources
-  nmake
-  nmake install
+Run the nmake utility to compile MiKTeX:
 
+    nmake
+
+Specify the 'install' target to install the binaries:
+
+    nmake install

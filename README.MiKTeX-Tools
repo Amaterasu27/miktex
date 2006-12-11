@@ -45,7 +45,7 @@ PREREQUISITES
 The MiKTeX Tools package is mostly written in C++.  It should work
 with any ANSI-compliant C++ compiler.
 
-CMake is required for building and installing MiKTeX.
+CMake 2.4.4 (or newer) is required for building and installing MiKTeX.
 
 The package depends on the availability of pthreads libraries and
 header files.
