@@ -103,24 +103,32 @@ public:
 class Application
   : public IPackageInstallerCallback
 {
-public:
-  Application ()
-    : verbose (false),
-      quiet (false)
+private:
+  void
+  InstallSignalHandler (/*[in]*/ int sig)
   {
     void (* oldHandlerFunc) (int);
-    oldHandlerFunc = signal(SIGINT, Application::SignalHandler);
+    oldHandlerFunc = signal(sig, Application::SignalHandler);
     if (oldHandlerFunc == SIG_ERR)
       {
 	Error (T_("signal() failed for some reason."));
       }
     if (oldHandlerFunc != SIG_DFL)
       {
-	if (signal(SIGINT, oldHandlerFunc) == SIG_ERR)
+	if (signal(sig, oldHandlerFunc) == SIG_ERR)
 	  {
 	    Error (T_("signal() failed for some reason."));
 	  }
       }
+  }
+
+public:
+  Application ()
+    : verbose (false),
+      quiet (false)
+  {
+    InstallSignalHandler (SIGINT);
+    InstallSignalHandler (SIGTERM);
   }
 
   // IPackageInstallerCallback impl
@@ -254,7 +262,7 @@ private:
   static const struct poptOption aoption[];
 
 private:
-  static volatile bool interrupted;
+  static volatile sig_atomic_t interrupted;
 
 private:
   bool verbose;
@@ -509,7 +517,7 @@ Turn on tracing.\
    Application::interrupted
    _________________________________________________________________________ */
 
-volatile bool Application::interrupted = false;
+volatile sig_atomic_t Application::interrupted = false;
 
 /* _________________________________________________________________________
 
@@ -602,7 +610,7 @@ MPMCALL
 Application::OnProgress (/*[in]*/ Notification		nf)
 {
   nf;
-  return (! interrupted);
+  return (interrupted == 0);
 }
 
 /* _________________________________________________________________________
@@ -1603,11 +1611,15 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 extern "C"
 void
-Application::SignalHandler (/*[in]*/ int sig)
+Application::SignalHandler (/*[in]*/ int signalToBeHandled)
 {
-  sig;
-  interrupted = true;
-  signal (SIGINT, SignalHandler);
+  switch (signalToBeHandled)
+    {
+    case SIGINT:
+    case SIGTERM:
+      signal (SIGINT, SIG_IGN);
+      interrupted = true;
+    }
 }
 
 /* _________________________________________________________________________

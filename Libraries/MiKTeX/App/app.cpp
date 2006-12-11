@@ -28,7 +28,7 @@
    cancelled
    _________________________________________________________________________ */
 
-static bool volatile cancelled;
+static volatile sig_atomic_t cancelled;
 
 /* _________________________________________________________________________
      
@@ -40,12 +40,16 @@ void
 #if defined(MIKTEX_WINDOWS)
 CDECL
 #endif
-OnKeyboardInterrupt (/*[in]*/ int signalToBeHandled)
+SignalHandler (/*[in]*/ int signalToBeHandled)
 {
-  UNUSED_ALWAYS (signalToBeHandled);
-  signal (SIGINT, SIG_IGN);
-  cancelled = true;
-  signal (SIGINT, OnKeyboardInterrupt);
+  switch (signalToBeHandled)
+    {
+    case SIGINT:
+    case SIGTERM:
+      signal (SIGINT, SIG_IGN);
+      cancelled = true;
+      break;
+    }
 }
 
 /* _________________________________________________________________________
@@ -57,7 +61,7 @@ bool
 MIKTEXCALL
 Application::Cancelled ()
 {
-  return (cancelled);
+  return (cancelled == 0 ? false : true);
 }
 
 /* _________________________________________________________________________
@@ -115,6 +119,29 @@ Application::~Application ()
 
 /* _________________________________________________________________________
      
+   InstallSignalHandler
+   _________________________________________________________________________ */
+
+void
+InstallSignalHandler (/*[in]*/ int sig)
+{
+  void (* oldHandlerFunc) (int);
+  oldHandlerFunc = signal(sig, SignalHandler);
+  if (oldHandlerFunc == SIG_ERR)
+    {
+      FATAL_CRT_ERROR (T_("signal"), 0);
+    }
+  if (oldHandlerFunc != SIG_DFL)
+    {
+      if (signal(sig, oldHandlerFunc) == SIG_ERR)
+	{
+	  FATAL_CRT_ERROR (T_("signal"), 0);
+	}
+    }
+}
+
+/* _________________________________________________________________________
+     
    Application::Init
    _________________________________________________________________________ */
 
@@ -131,20 +158,8 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
     (pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			      MIKTEX_REGVAL_AUTO_INSTALL,
 			      TriState(TriState::Undetermined)));
-  
-  void (* oldHandlerFunc) (int);
-  oldHandlerFunc = signal(SIGINT, OnKeyboardInterrupt);
-  if (oldHandlerFunc == SIG_ERR)
-    {
-      FATAL_CRT_ERROR (T_("signal"), 0);
-    }
-  if (oldHandlerFunc != SIG_DFL)
-    {
-      if (signal(SIGINT, oldHandlerFunc) == SIG_ERR)
-	{
-	  FATAL_CRT_ERROR (T_("signal"), 0);
-	}
-    }
+  InstallSignalHandler (SIGINT);
+  InstallSignalHandler (SIGTERM);
 }
 
 /* _________________________________________________________________________
