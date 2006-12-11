@@ -22,12 +22,14 @@
 ###############################################################################
 
 macro(use_static_libraries)
-  add_definitions(
-    -DCURL_STATICLIB
-    -DXML_STATIC
-    -DMIKTEX_STATIC
-  )
-  remove_definitions(
-    -DZLIB_DLL
-  )
+  if(NATIVE_WINDOWS)
+    add_definitions(
+      -DCURL_STATICLIB
+      -DXML_STATIC
+      -DMIKTEX_STATIC
+    )
+    remove_definitions(
+      -DZLIB_DLL
+    )
+  endif(NATIVE_WINDOWS)
 endmacro(use_static_libraries)
