@@ -3,9 +3,9 @@
                          "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 %entities.ent;
-<!ENTITY rev "2.6.2510">
-<!ENTITY month "November 2006">
-<!ENTITY date "15 November 2006">
+<!ENTITY rev "2.6.2535">
+<!ENTITY month "December 2006">
+<!ENTITY date "10 December 2006">
 ]>
 
 <article>
@@ -68,9 +68,9 @@ by subscribing to this Weblog:
 
 <highlights>
 <itemizedlist>
-<listitem><para>&MetaPost; 0.970</para></listitem>
-<listitem><para>&pdfTeX; 1.40</para></listitem>
-<listitem><para>&WindowsVista; compatible</para></listitem>
+<listitem><para>most recent &MetaPost;</para></listitem>
+<listitem><para>most recent &pdfTeX;</para></listitem>
+<listitem><para>compatible with &WindowsVista;</para></listitem>
 </itemizedlist>
 </highlights>
 
