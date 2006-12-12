@@ -259,12 +259,12 @@ if(NATIVE_WINDOWS)
     -DZLIB_DLL
   )
   # Windows version macros
-  add_definitions(
-    -DWINVER=0x0400
-    -D_WIN32_WINDOWS=0x0400
-    -D_WIN32_WINNT=0x0400
-    -D_WIN32_IE=0x0500
-  )
+#  add_definitions(
+#    -DWINVER=0x0400
+#    -D_WIN32_WINDOWS=0x0400
+#    -D_WIN32_WINNT=0x0400
+#    -D_WIN32_IE=0x0500
+#  )
 else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)

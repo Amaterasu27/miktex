@@ -21,6 +21,10 @@ include_directories(BEFORE ${CMAKE_SOURCE_DIR}/${rel_curl_dir})
 
 add_definitions(-DBUILDING_LIBCURL)
 
+if(NATIVE_WINDOWS)
+  add_definitions(-D_WIN32_WINNT=0x0501)
+endif(NATIVE_WINDOWS)
+
 use_static_crt()
 use_static_libraries()
 

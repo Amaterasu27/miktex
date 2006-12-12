@@ -27,6 +27,10 @@ add_definitions(
   -DUSE_MIKTEX_EXIT
 )
 
+if(NATIVE_WINDOWS)
+  add_definitions(-D_WIN32_WINNT=0x0500)
+endif(NATIVE_WINDOWS)
+
 set(hbf2gf_sources
   ${CMAKE_CURRENT_BINARY_DIR}/hbf2gf.c
   hbf2gf-version.h

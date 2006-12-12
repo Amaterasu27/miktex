@@ -20,6 +20,10 @@
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
+if(NATIVE_WINDOWS)
+  add_definitions(-D_WIN32_WINNT=0x0400)
+endif(NATIVE_WINDOWS)
+
 set(mkocp_sources
   mkocp.cpp
   mkocp-version.h

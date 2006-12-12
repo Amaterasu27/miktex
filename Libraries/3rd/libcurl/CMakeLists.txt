@@ -21,6 +21,10 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_definitions(-DBUILDING_LIBCURL)
 
+if(NATIVE_WINDOWS)
+  add_definitions(-D_WIN32_WINNT=0x0501)
+endif(NATIVE_WINDOWS)
+
 set(${curl_dll_name}_sources
   arpa_telnet.h
   base64.c

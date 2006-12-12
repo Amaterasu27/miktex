@@ -1625,6 +1625,16 @@ Utils::GetOSVersionString ()
    See Q246772.
    _________________________________________________________________________ */
 
+#if defined(UNICODE)
+#  define GETDEFAULTPRINTER "GetDefaultPrinterW"
+typedef BOOL (__stdcall * PGETDEFAULTPRINTER) (LPCWSTR pszBuffer,
+					       LPDWORD pcchBuffer);
+#else
+#  define GETDEFAULTPRINTER "GetDefaultPrinterA"
+typedef BOOL (__stdcall * PGETDEFAULTPRINTER) (LPCSTR pszBuffer,
+					       LPDWORD pcchBuffer);
+#endif
+
 MIKTEXAPI(bool)
 Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
@@ -1673,32 +1683,80 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
       *pBufferSize = l + 1;
       return (true);
     }
-#if defined(WINVER) && (WINVER >= 0x0500)
-  if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT && osv.dwMajorVersion >= 5)
+  else
     {
-      return (GetDefaultPrinter(pPrinterName, pBufferSize) ? true : false);
+      if (osv.dwPlatformId != VER_PLATFORM_WIN32_NT)
+	{
+	  UNEXPECTED_CONDITION (T_("Utils::GetDefPrinter"));
+	}
+      if (osv.dwMajorVersion >= 5)
+	{
+	  HMODULE hWinSpool = LoadLibrary(T_("winspool.drv"));
+	  if (hWinSpool == 0)
+	    {
+	      FATAL_MIKTEX_ERROR (T_("Utils::GetDefPrinter"),
+				  T_("winspool.drv cannot be loaded."),
+				  0);
+	    }
+	  PGETDEFAULTPRINTER pGetDefaultPrinter =
+	    reinterpret_cast<PGETDEFAULTPRINTER>
+	    (GetProcAddress(hWinSpool, GETDEFAULTPRINTER));
+	  if (pGetDefaultPrinter == 0)
+	    {
+	      FreeLibrary (hWinSpool);
+	      FATAL_MIKTEX_ERROR (T_("Utils::GetDefPrinter"),
+				  T_("GetDefaultPrinter cannot be executed."),
+				  0);
+	    }
+	  DWORD dwBufferSize = static_cast<DWORD>(*pBufferSize);
+	  BOOL bDone = pGetDefaultPrinter(pPrinterName, &dwBufferSize);
+	  FreeLibrary (hWinSpool);
+	  if (! bDone)
+	    {
+	      if (::GetLastError() == ERROR_FILE_NOT_FOUND)
+		{
+		  return (false);
+		}
+	      else
+		{
+		  FATAL_WINDOWS_ERROR (T_("GetDefaultPrinter"), 0);
+		}
+	    }
+	  else
+	    {
+	      *pBufferSize = dwBufferSize;
+	      return (true);
+	    }
+	}
+      else
+	{
+	  TCHAR cBuffer[4096];
+	  if (GetProfileString(T_("windows"),
+			       T_("device"),
+			       T_(",,,"),
+			       cBuffer,
+			       4096)
+	      <= 0)
+	    {
+	      return (false);
+	    }
+	  Tokenizer tok (cBuffer, T_(","));
+	  if (tok.GetCurrent() == 0)
+	    {
+	      return (false);
+	    }
+	  unsigned long l =
+	    static_cast<unsigned long>(StrLen(tok.GetCurrent()));
+	  if (l >= *pBufferSize)
+	    {
+	      *pBufferSize = l + 1;
+	      return (false);
+	    }
+	  Utils::CopyString (pPrinterName, *pBufferSize, tok.GetCurrent());
+	  *pBufferSize = l + 1;
+	  return (true);
+	}
     }
-#endif
-  TCHAR cBuffer[4096];
-  if (GetProfileString(T_("windows"), T_("device"), T_(",,,"), cBuffer, 4096)
-      <= 0)
-    {
-      return (false);
-    }
-  Tokenizer tok (cBuffer, T_(","));
-  if (tok.GetCurrent() == 0)
-    {
-      return (false);
-    }
-  unsigned long l = static_cast<unsigned long>(StrLen(tok.GetCurrent()));
-  if (l >= *pBufferSize)
-    {
-      *pBufferSize = l + 1;
-      return (false);
-    }
-  Utils::CopyString (pPrinterName, *pBufferSize, tok.GetCurrent());
-  *pBufferSize = l + 1;
-  return (true);
 }
 
 /* _________________________________________________________________________
