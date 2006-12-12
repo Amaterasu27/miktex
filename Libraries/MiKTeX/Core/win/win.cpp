@@ -2288,6 +2288,12 @@ bool
 MIKTEXCALL
 SessionImpl::RunningAsAdministrator ()
 {
+  // <todo>
+  if (IsWindowsVista())
+    {
+      return (false);
+    }
+  // </todo>
   if (runningAsAdministrator == TriState::Undetermined)
     {
       runningAsAdministrator =

@@ -992,7 +992,21 @@ inline
 bool
 IsWindowsNT ()
 {
-  return (GetVersion () < 0x80000000);
+  return (GetVersion() < 0x80000000);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   IsWindowsVista
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsVista ()
+{
+  return ((GetVersion() & 0xff) >= 6);
 }
 #endif
 

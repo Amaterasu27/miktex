@@ -19,5 +19,5 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#define VER_FILEVERSION 2,6,2471,0
-#define VER_FILEVERSION_STR "2.6.2471"
+#define VER_FILEVERSION 2,6,2537,0
+#define VER_FILEVERSION_STR "2.6.2537"
