@@ -203,6 +203,33 @@ public:
   {
     return (MIKTEXHELP_BIBTEX);
   }
+
+public:
+  template<class T>
+  bool
+  OpenBstFile (/*[in]*/ T & f)
+    const
+  {
+    const MIKTEXCHAR * lpszFileName = THEDATA(nameoffile);
+    C4PASSERTSTRING (lpszFileName);
+    PathName bstFileName (lpszFileName);
+    if (bstFileName.GetExtension() == 0)
+      {
+	bstFileName.SetExtension (MIKTEXTEXT(".bst"));
+      }
+    PathName path;
+    if (! pSession->FindFile(bstFileName, FileType::BST, path))
+      {
+	return (false);
+      }
+    FILE * pfile =
+      pSession->OpenFile(path.Get(), FileMode::Open, FileAccess::Read, true);
+    f.Attach (pfile, true);
+#ifdef PASCAL_TEXT_IO
+    get (f);
+#endif
+    return (true);
+  }
 };
 
 extern BIBTEXCLASS BIBTEXAPP;
@@ -216,6 +243,14 @@ miktexbibtexrealloc (/*[in]*/ const MIKTEXCHAR *	lpszVar,
 		     /*[in]*/ size_t			n)
 {
   p = THEAPP.Reallocate (p, n + 1);
+}
+
+template<class T>
+inline
+bool
+miktexopenbstfile (/*[in]*/ T & f)
+{
+  return (THEAPP.OpenBstFile(f));
 }
 
 #include <miktex/inputline.inl>
