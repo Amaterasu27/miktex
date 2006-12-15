@@ -603,6 +603,12 @@ end;
 % _____________________________________________________________________________
 
 @x
+if (not a_open_in(bst_file)) then
+@y
+if (not miktex_open_bst_file(bst_file)) then
+@z
+
+@x
 print ('The style file: ');
 print_bst_name;
 @y
