@@ -58,7 +58,3 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX;
 using namespace std;
-
-#if ! defined(ENABLE_MIKTEXDIRECT)
-#  define ENABLE_MIKTEXDIRECT 1
-#endif

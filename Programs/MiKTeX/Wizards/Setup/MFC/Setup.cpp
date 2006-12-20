@@ -712,10 +712,6 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 bool
 IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 {
-#if ! ENABLE_MIKTEXDIRECT
-  UNUSED_ALWAYS (MiKTeXDirectRoot);
-  return (false);
-#else
   if (theApp.setupPath.Empty())
     {
       return (false);
@@ -734,7 +730,6 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
     }
   Log (T_("started from MiKTeXDirect location\n"));
   return (true);
-#endif
 }
 
 /* _________________________________________________________________________
