@@ -2021,6 +2021,21 @@ public:
   RunningAsPowerUser ();
 #endif
 
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  IsUserAnAdministrator ();
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  IsUserAPowerUser ();
+#endif
+
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -2112,7 +2127,13 @@ private:
 #if defined(MIKTEX_WINDOWS)
 private:
   bool
-  RunningAs (/*[in]*/ DWORD localGroup);
+  IsUserMemberOfGroup (/*[in]*/ DWORD localGroup);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  bool
+  RunningElevated ();
 #endif
 
 public:
@@ -2627,9 +2648,17 @@ private:
 private:
   TriState runningAsAdministrator;
 
+private:
+  TriState isUserAnAdministrator;
+
 #if defined(MIKTEX_WINDOWS)
 private:
   TriState runningAsPowerUser;
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  TriState isUserAPowerUser;
 #endif
 
 private:

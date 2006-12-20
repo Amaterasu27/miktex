@@ -40,6 +40,8 @@ if(BUILDING_MIKTEX)
   )
 endif(BUILDING_MIKTEX)
 
+merge_trustinfo_manifest(initexmf asInvoker)
+
 install(TARGETS initexmf DESTINATION ${bindir})
 
 if(NATIVE_WINDOWS)

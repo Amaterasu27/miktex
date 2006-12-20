@@ -120,6 +120,8 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
+merge_trustinfo_manifest(setup highestAvailable)
+
 install(TARGETS setup DESTINATION ${bindir})
 
 add_custom_command(

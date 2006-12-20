@@ -386,5 +386,17 @@ bool
 MIKTEXCALL
 SessionImpl::RunningAsAdministrator ()
 {
+  return (geteuid() == 0);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::IsUserAnAdministrator
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+SessionImpl::IsUserAnAdministrator ()
+{
   return (getuid() == 0 || geteuid() == 0);
 }

@@ -211,6 +211,8 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ${${_short_name_l}_dll_name}
   )
 
+  merge_trustinfo_manifest(${_invocation_name} asInvoker)
+
   install(
     TARGETS ${_invocation_name}
     DESTINATION ${bindir}
@@ -219,6 +221,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   if(${_invocation_name} STREQUAL "${_short_name_l}")
   else(${_invocation_name} STREQUAL "${_short_name_l}")
     add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
+    merge_trustinfo_manifest(${_short_name} asInvoker)
     install(
       TARGETS ${_short_name_l}
       DESTINATION ${bindir}

@@ -2249,17 +2249,17 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 
 /* _________________________________________________________________________
 
-   SessionImpl::RunningAs
+   SessionImpl::IsUserMemberOfGroup
 
    See MSDN article "Windows NT Security" by Christopher Nefcy.
    _________________________________________________________________________ */
 
 bool
-SessionImpl::RunningAs (/*[in]*/ DWORD localGroup)
+SessionImpl::IsUserMemberOfGroup (/*[in]*/ DWORD localGroup)
 {
   if (! IsWindowsNT())
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::RunningAs"));
+      UNEXPECTED_CONDITION (T_("SessionImpl::IsUserMemberOfGroup"));
     }
 
   HANDLE hThread;
@@ -2339,6 +2339,97 @@ SessionImpl::RunningAs (/*[in]*/ DWORD localGroup)
 
 /* _________________________________________________________________________
 
+   SessionImpl::IsUserAnAdministrator
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+SessionImpl::IsUserAnAdministrator ()
+{
+  if (isUserAnAdministrator == TriState::Undetermined)
+    {
+      if (IsUserMemberOfGroup(DOMAIN_ALIAS_RID_ADMINS))
+	{
+	  isUserAnAdministrator = TriState::True;
+	}
+      else
+	{
+	  isUserAnAdministrator = TriState::False;
+	}
+    }
+  return (isUserAnAdministrator == TriState::True ? true : false);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::IsUserAPowerUser
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL
+SessionImpl::IsUserAPowerUser ()
+{
+  if (isUserAPowerUser == TriState::Undetermined)
+    {
+      if (IsUserMemberOfGroup(DOMAIN_ALIAS_RID_POWER_USERS))
+	{
+	  isUserAPowerUser = TriState::True;
+	}
+      else
+	{
+	  isUserAPowerUser = TriState::False;
+	}
+    }
+  return (isUserAPowerUser == TriState::True ? true : false);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::RunningElevated
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::RunningElevated ()
+{
+  HANDLE hToken;
+  if (! OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &hToken))
+    {
+      FATAL_WINDOWS_ERROR (T_("OpenProcessToken"), 0);
+    }
+  DWORD infoLen;
+  TOKEN_ELEVATION_TYPE elevationType;
+  if (! GetTokenInformation(hToken,
+			    TokenElevationType,
+			    &elevationType,
+			    sizeof(elevationType),
+			    &infoLen))
+    {
+      FATAL_WINDOWS_ERROR (T_("GetTokenInformation"), 0);
+    }
+  TOKEN_ELEVATION elevation;
+  if (! GetTokenInformation(hToken,
+			    TokenElevation,
+			    &elevation,
+			    sizeof(elevation),
+			    &infoLen))
+    {
+      FATAL_WINDOWS_ERROR (T_("GetTokenInformation"), 0);
+    }
+  switch (elevationType)
+    {
+    case TokenElevationTypeDefault:
+      return (elevation.TokenIsElevated == 0 ? false : true);
+    case TokenElevationTypeFull:
+      return (true);
+    case TokenElevationTypeLimited:
+      return (false);
+    default:
+      UNEXPECTED_CONDITION (T_("SessionImpl::RunningElevated"));
+    }
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::RunningAsAdministrator
    _________________________________________________________________________ */
 
@@ -2346,18 +2437,23 @@ bool
 MIKTEXCALL
 SessionImpl::RunningAsAdministrator ()
 {
-  // <todo>
-  if (IsWindowsVista())
-    {
-      return (false);
-    }
-  // </todo>
   if (runningAsAdministrator == TriState::Undetermined)
     {
-      runningAsAdministrator =
-	(RunningAs(DOMAIN_ALIAS_RID_ADMINS)
-	 ? TriState::True
-	 : TriState::False);
+      if (IsUserAnAdministrator())
+	{
+	  if (IsWindowsVista() && ! RunningElevated())
+	    {
+	      runningAsAdministrator = TriState::False;
+	    }
+	  else
+	    {
+	      runningAsAdministrator = TriState::True;
+	    }
+	}
+      else
+	{
+	  runningAsAdministrator = TriState::False;
+	}
     }
   return (runningAsAdministrator == TriState::True ? true : false);
 }
@@ -2367,21 +2463,30 @@ SessionImpl::RunningAsAdministrator ()
    SessionImpl::RunningAsPowerUser
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_WINDOWS)
 bool
 MIKTEXCALL
 SessionImpl::RunningAsPowerUser ()
 {
   if (runningAsPowerUser == TriState::Undetermined)
     {
-      runningAsPowerUser =
-	(RunningAs(DOMAIN_ALIAS_RID_POWER_USERS)
-	 ? TriState::True
-	 : TriState::False);
+      if (IsUserAPowerUser())
+	{
+	  if (IsWindowsVista() && ! RunningElevated())
+	    {
+	      runningAsPowerUser = TriState::False;
+	    }
+	  else
+	    {
+	      runningAsPowerUser = TriState::True;
+	    }
+	}
+      else
+	{
+	  runningAsPowerUser = TriState::False;
+	}
     }
   return (runningAsPowerUser == TriState::True ? true : false);
 }
-#endif
 
 /* _________________________________________________________________________
 

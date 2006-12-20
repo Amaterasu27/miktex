@@ -5792,6 +5792,22 @@ public:
 #endif
 
 public:
+  virtual
+  bool
+  MIKTEXCALL
+  IsUserAnAdministrator ()
+    = 0;
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  bool
+  MIKTEXCALL
+  IsUserAPowerUser ()
+    = 0;
+#endif
+
+public:
   static
   MIKTEXEXPORT
   void

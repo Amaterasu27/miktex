@@ -973,6 +973,8 @@ SessionImpl::SessionImpl ()
     makeFonts (true),
     pInstallPackageCallback (0),
     haveStartupConfigFile (false),
+    isUserAnAdministrator (TriState::Undetermined),
+    isUserAPowerUser (TriState::Undetermined),
 
     // passing an empty string to the locale constructor is ok; it
     // means: "the user's preferred locale" (cf. "The C++ Programming

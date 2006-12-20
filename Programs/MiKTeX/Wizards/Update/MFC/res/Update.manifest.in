@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"> 
-<assemblyIdentity 
-    version="@MIKTEX_MAJOR_VERSION@.@MIKTEX_MINOR_VERSION@.@MIKTEX_J2000_VERSION@.0" 
-    processorArchitecture="X86" 
-    name="updatewiz.exe"
-    type="win32" 
-/> 
-<description>MiKTeX Update Wizard</description> 
-<dependency> 
-    <dependentAssembly> 
-        <assemblyIdentity 
-            type="win32" 
-            name="Microsoft.Windows.Common-Controls" 
-            version="6.0.0.0" 
-            processorArchitecture="X86" 
-            publicKeyToken="6595b64144ccf1df" 
-            language="*" 
-        /> 
-    </dependentAssembly> 
-</dependency> 
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity
+    name="MiKTeXOrg.MiKTeX.UpdateMFC"
+    processorArchitecture="x86"
+    type="win32"
+    version="@MIKTEX_MAJOR_VERSION@.@MIKTEX_MINOR_VERSION@.@MIKTEX_J2000_VERSION@.0"
+    />
+  <description>MiKTeX Update Wizard (MFC)</description>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+	language="*"
+	name="Microsoft.Windows.Common-Controls"
+	processorArchitecture="x86"
+	publicKeyToken="6595b64144ccf1df"
+	type="win32"
+	version="6.0.0.0"
+        />
+    </dependentAssembly>
+  </dependency>
 </assembly>

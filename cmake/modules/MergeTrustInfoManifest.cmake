@@ -1,4 +1,4 @@
-## CreateDllWrapper.cmake
+## MergeTrustInfoManifest.cmake
 ##
 ## Copyright (C) 2006 Christian Schenk
 ## 
@@ -17,23 +17,16 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-macro(create_dll_wrapper _name _dll)
-  if(${ARGC} GREATER 2)
-    set(_dllmain ${ARGV2})
-  else(${ARGC} GREATER 2)
-    string(TOLOWER "${_name}" _dllmain)
-  endif(${ARGC} GREATER 2)
-  configure_file(
-    ${alias_cpp}
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
-    COPYONLY
-  )
-  add_executable (${_name} ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp)
-  set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
-    COMPILE_FLAGS "-DDLLMAIN=${_dllmain}"
-  )
-  target_link_libraries(${_name} ${_dll})
-  merge_trustinfo_manifest(${_name} asInvoker)
-  install(TARGETS ${_name} DESTINATION ${bindir})
-endmacro(create_dll_wrapper)
+macro(merge_trustinfo_manifest _target _level)
+  if(NATIVE_WINDOWS)
+    get_target_property(_target_exe ${_target} LOCATION)
+    add_custom_command(
+      TARGET ${_target}
+      POST_BUILD
+        COMMAND ${MT_EXE} -nologo
+	  -manifest ${CMAKE_SOURCE_DIR}/Resources/Manifests/${_level}.manifest
+	  -updateresource:${_target_exe}\;1
+      VERBATIM
+    )
+  endif(NATIVE_WINDOWS)
+endmacro(merge_trustinfo_manifest)
