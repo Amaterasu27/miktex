@@ -973,6 +973,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
       cmdLine.AppendOption (T_("--roots="), rootDirectories);
       cmdLine.AppendOption (T_("--rmfndb"));
+      RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
 	{
 	  return;
