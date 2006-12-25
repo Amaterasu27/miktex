@@ -772,6 +772,7 @@ YapConfig::YapConfig ()
 
 YapConfig::~YapConfig ()
 {
+#if 0
   try
     {
       Save ();
@@ -779,4 +780,5 @@ YapConfig::~YapConfig ()
   catch (const exception &)
     {
     }
+#endif
 }
