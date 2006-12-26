@@ -1,6 +1,6 @@
 %% mp-miktex.ch: MiKTeX change file for METAPOST
 %% 
-%% Copyright (C) 1998-2005 Christian Schenk
+%% Copyright (C) 1998-2006 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -537,6 +537,19 @@ if a_open_in(pool_file) then
 @y
 miktex_get_pool_file_name(name_of_file);
 if miktex_open_pool_file(pool_file) then
+@z
+
+@x
+else  bad_pool('! I can''t read MP.POOL.')
+@.I can't read MP.POOL@>
+@y
+else begin
+  wake_up_terminal;
+  write_ln(term_out, '! I can''t read MF.POOL.');
+@.I can't read MP.POOL@>
+  get_strings_started:=false;
+  return;
+end
 @z
 
 % _____________________________________________________________________________
