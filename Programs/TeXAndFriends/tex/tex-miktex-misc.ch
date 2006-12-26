@@ -634,6 +634,19 @@ miktex_get_pool_file_name(name_of_file);
 if miktex_open_pool_file(pool_file) then
 @z
 
+@x
+else  bad_pool('! I can''t read TEX.POOL.')
+@.I can't read TEX.POOL@>
+@y
+else begin
+  wake_up_terminal;
+  write_ln(term_out, '! I can''t read TEX.POOL.');
+@.I can't read TEX.POOL@>
+  get_strings_started:=false;
+  return;
+end
+@z
+
 % _____________________________________________________________________________
 %
 % [5.54]
