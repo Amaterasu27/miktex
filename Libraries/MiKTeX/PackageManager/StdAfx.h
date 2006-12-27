@@ -58,9 +58,6 @@ using stdext::hash_set;
 #  include <curl/curl.h>
 #endif
 
-#if defined(interface)
-#  undef interface
-#endif
 #include <mspack.h>
 
 #include <expat.h>

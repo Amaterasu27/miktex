@@ -191,7 +191,11 @@ extern int mspack_sys_selftest_internal(int);
  * @param interface the interface to request current version of
  * @return the version of the requested interface
  */
+#if defined(MIKTEX)
+extern int mspack_version(int interface_);
+#else
 extern int mspack_version(int interface);
+#endif
 
 /** Pass to mspack_version() to get the overall library version */
 #define MSPACK_VER_LIBRARY   (0)
