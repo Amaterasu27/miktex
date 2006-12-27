@@ -37,6 +37,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(makempx ${makempx_sources})
 
+merge_trustinfo_manifest(makempx asInvoker)
+
 target_link_libraries(makempx
   ${app_dll_name}
   ${core_dll_name}
@@ -58,6 +60,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(mpto ${mpto_sources})
+
+merge_trustinfo_manifest(mpto asInvoker)
 
 target_link_libraries(mpto
   ${core_dll_name}

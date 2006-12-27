@@ -106,6 +106,8 @@ add_custom_command(
 
 add_executable(yap WIN32 ${yap_mfc_sources})
 
+merge_trustinfo_manifest(yap asInvoker)
+
 target_link_libraries(yap
   ${core_dll_name}
   ${dvi_dll_name}

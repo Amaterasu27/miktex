@@ -44,5 +44,7 @@ foreach(t cef5conv cefconv cefsconv)
 
   add_executable(${t} ${CMAKE_CURRENT_BINARY_DIR}/${t}.c)
 
+  merge_trustinfo_manifest(${t} asInvoker)
+
   install(TARGETS ${t} DESTINATION ${bindir})
 endforeach(t)

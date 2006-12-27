@@ -124,6 +124,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(dvips ${dvips_sources})
 
+merge_trustinfo_manifest(dvips asInvoker)
+
 target_link_libraries(dvips
   ${app_dll_name}
   ${bmeps_dll_name}
@@ -150,6 +152,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(afm2tfm ${afm2tfm_sources})
+
+merge_trustinfo_manifest(afm2tfm asInvoker)
 
 target_link_libraries(afm2tfm
   ${app_dll_name}

@@ -46,6 +46,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(texindex ${texindex_sources})
 
+merge_trustinfo_manifest(texindex asInvoker)
+
 target_link_libraries(texindex
   ${app_dll_name}
   ${core_dll_name}

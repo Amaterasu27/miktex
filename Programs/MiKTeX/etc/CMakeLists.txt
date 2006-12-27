@@ -19,6 +19,7 @@
 
 foreach(t conspawn findexe runbat runperl)
   add_executable(${t} ${t}.cpp)
+  merge_trustinfo_manifest(${t} asInvoker)
   target_link_libraries(${t}
     ${app_dll_name}
     ${core_dll_name}
@@ -27,6 +28,8 @@ foreach(t conspawn findexe runbat runperl)
 endforeach(t)
 
 add_executable(copystart WIN32 copystart.cpp)
+
+merge_trustinfo_manifest(copystart asInvoker)
 
 target_link_libraries(copystart
   ${core_dll_name}

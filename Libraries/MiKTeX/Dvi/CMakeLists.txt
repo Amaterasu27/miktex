@@ -21,6 +21,8 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(makebitcounts EXCLUDE_FROM_ALL makebitcounts.cpp)
 
+merge_trustinfo_manifest(makebitcounts asInvoker)
+
 get_target_property(makebitcounts_exe makebitcounts LOCATION)
 
 set(${dvi_dll_name}_sources
@@ -83,6 +85,8 @@ target_link_libraries(${dvi_dll_name}
 )
 
 add_executable(dviscan dviscan.cpp)
+
+merge_trustinfo_manifest(dviscan asInvoker)
 
 add_dependencies(dviscan ${dvi_dll_name})
 

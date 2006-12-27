@@ -51,6 +51,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
 
+merge_trustinfo_manifest(mpm_mfc asInvoker)
+
 target_link_libraries(mpm_mfc
   ${core_dll_name}
   ${mpm_dll_name}

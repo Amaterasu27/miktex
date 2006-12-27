@@ -27,6 +27,8 @@ set(pnmtopng_sources
 
 add_executable(pnmtopng ${pnmtopng_sources})
 
+merge_trustinfo_manifest(pnmtopng asInvoker)
+
 target_link_libraries(pnmtopng
   ${pbm_dll_name}
   ${pgm_dll_name}
@@ -43,6 +45,8 @@ set(pngtopnm_sources
 )
 
 add_executable(pngtopnm ${pngtopnm_sources})
+
+merge_trustinfo_manifest(pngtopnm asInvoker)
 
 target_link_libraries(pngtopnm
   ${pbm_dll_name}

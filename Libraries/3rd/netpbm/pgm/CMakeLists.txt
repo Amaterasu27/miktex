@@ -65,6 +65,7 @@ target_link_libraries(${pgm_dll_name}
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pgm.h)
+  merge_trustinfo_manifest(${e} asInvoker)
   add_dependencies(${e} ${pgm_dll_name})
   target_link_libraries(${e}
     ${pbm_dll_name}

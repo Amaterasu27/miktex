@@ -74,6 +74,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(update WIN32 ${update_mfc_sources})
 
+merge_trustinfo_manifest(update highestAvailable)
+
 target_link_libraries(update
   ${bzip2_lib_name}
   ${core_lib_name}
@@ -109,7 +111,6 @@ if(NATIVE_WINDOWS)
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
-
 
 get_target_property(update_exe update LOCATION)
 

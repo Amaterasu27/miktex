@@ -63,6 +63,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(bmeps ${bmeps_sources})
 
+merge_trustinfo_manifest(bmeps asInvoker)
+
 target_link_libraries(bmeps
   ${bmeps_dll_name}
 )

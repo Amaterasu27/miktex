@@ -42,4 +42,6 @@ add_custom_command(
 
 add_executable(tie ${tie_sources})
 
+merge_trustinfo_manifest(tie asInvoker)
+
 install(TARGETS tie DESTINATION "${bindir}")

@@ -37,6 +37,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mkocp ${mkocp_sources})
 
+merge_trustinfo_manifest(mkocp asInvoker)
+
 target_link_libraries(mkocp
   ${app_dll_name}
   ${core_dll_name}
@@ -57,6 +59,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(outocp ${outocp_sources})
+
+merge_trustinfo_manifest(outocp asInvoker)
 
 target_link_libraries(outocp
   ${app_dll_namen}
@@ -116,6 +120,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(otp2ocp ${otp2ocp_sources})
+
+merge_trustinfo_manifest(otp2ocp asInvoker)
 
 target_link_libraries(otp2ocp
   ${app_dll_namen}

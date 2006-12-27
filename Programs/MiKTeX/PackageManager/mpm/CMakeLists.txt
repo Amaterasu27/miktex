@@ -34,6 +34,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mpm ${mpm_sources})
 
+merge_trustinfo_manifest(mpm asInvoker)
+
 if(NATIVE_WINDOWS)
   target_link_libraries(mpm
     ${bzip2_lib_name}

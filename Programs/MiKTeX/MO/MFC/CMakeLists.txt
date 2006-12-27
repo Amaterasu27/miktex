@@ -64,6 +64,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mo WIN32 ${mo_mfc_sources})
 
+merge_trustinfo_manifest(mo asInvoker)
+
 target_link_libraries(mo
   ${core_dll_name}
   ${ui_dll_name}

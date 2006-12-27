@@ -41,11 +41,15 @@ add_executable(epsffit
   pserror.c
 )
 
+merge_trustinfo_manifest(epsffit asInvoker)
+
 add_executable(psbook
   psbook.c
   pserror.c
   psutil.c
 )
+
+merge_trustinfo_manifest(psbook asInvoker)
 
 add_executable(psnup
   pserror.c
@@ -54,6 +58,8 @@ add_executable(psnup
   psutil.c
 )
 
+merge_trustinfo_manifest(psnup asInvoker)
+
 add_executable(psresize
   pserror.c
   psresize.c
@@ -61,11 +67,15 @@ add_executable(psresize
   psutil.c
 )
 
+merge_trustinfo_manifest(psselect asInvoker)
+
 add_executable(psselect
   pserror.c
   psselect.c
   psutil.c
 )
+
+merge_trustinfo_manifest(pstops asInvoker)
 
 add_executable(pstops
   pserror.c

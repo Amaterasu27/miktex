@@ -27,6 +27,8 @@ set(mpc_sources
 
 add_executable(mpc ${mpc_sources})
 
+merge_trustinfo_manifest(mpc asInvoker)
+
 target_link_libraries(mpc
   ${bzip2_lib_name}
   ${core_lib_name}

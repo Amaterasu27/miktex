@@ -34,7 +34,7 @@ add_custom_command(
   VERBATIM
 )
 
-create_web_app(METAFONT mf)
+create_web_app(METAFONT mf mf ${basedir})
 
 set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
@@ -76,7 +76,7 @@ set(${trapmf_dll_name}_sources
   screen.h
 )
 
-create_web_app(METAFONT trapmf)
+create_web_app(METAFONT trapmf trapmf ${basedir})
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp

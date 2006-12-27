@@ -89,6 +89,7 @@ target_link_libraries(${pnm_dll_name}
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pnm.h)
+  merge_trustinfo_manifest(${e} asInvoker)
   add_dependencies(${e} ${pnm_dll_name})
   target_link_libraries(${e}
     ${pbm_dll_name}

@@ -83,6 +83,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(makeinfo ${makeinfo_sources})
 
+merge_trustinfo_manifest(makeinfo asInvoker)
+
 target_link_libraries(makeinfo
   ${app_dll_name}
   ${core_dll_name}

@@ -43,4 +43,6 @@ add_custom_command(
 
 add_executable(sjisconv ${CMAKE_CURRENT_BINARY_DIR}/sjisconv.c)
 
+merge_trustinfo_manifest(sjiconv asInvoker)
+
 install(TARGETS sjisconv DESTINATION ${bindir})

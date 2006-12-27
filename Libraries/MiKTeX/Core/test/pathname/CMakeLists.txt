@@ -19,6 +19,8 @@
 
 add_executable(test1 1.cpp)
 
+merge_trustinfo_manifest(test1 asInvoker)
+
 target_link_libraries(test1
   ${CMAKE_THREAD_LIBS_INIT}
   ${core_dll_name}

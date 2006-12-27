@@ -43,4 +43,6 @@ add_custom_command(
 
 add_executable(bg5conv ${CMAKE_CURRENT_BINARY_DIR}/bg5conv.c)
 
+merge_trustinfo_manifest(bg5conv asInvoker)
+
 install(TARGETS bg5conv DESTINATION ${bindir})

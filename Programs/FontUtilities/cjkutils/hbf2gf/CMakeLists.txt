@@ -68,6 +68,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(hbf2gf ${hbf2gf_sources})
 
+merge_trustinfo_manifest(hbf2gf asInvoker)
+
 target_link_libraries(hbf2gf
   ${app_dll_name}
   ${core_dll_name}

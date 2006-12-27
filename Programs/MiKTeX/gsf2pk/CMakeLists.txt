@@ -28,6 +28,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(gsf2pk ${gsf2pk_sources})
 
+merge_trustinfo_manifest(gsf2pk asInvoker)
+
 target_link_libraries(gsf2pk
   ${app_dll_name}
   ${core_dll_name}

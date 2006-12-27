@@ -50,6 +50,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(dvipng ${dvipng_sources})
 
+merge_trustinfo_manifest(dvipng asInvoker)
+
 target_link_libraries(dvipng
   ${app_dll_name}
   ${core_dll_name}

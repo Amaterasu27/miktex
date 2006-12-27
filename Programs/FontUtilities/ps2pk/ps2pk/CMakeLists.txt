@@ -42,6 +42,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(ps2pk ${ps2pk_sources})
 
+merge_trustinfo_manifest(ps2pk asInvoker)
+
 target_link_libraries(ps2pk
   ${app_dll_name}
   ${core_dll_name}

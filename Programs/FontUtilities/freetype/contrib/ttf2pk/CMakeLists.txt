@@ -40,6 +40,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(ttf2pk ${ttf2pk_sources})
 
+merge_trustinfo_manifest(ttf2pk asInvoker)
+
 target_link_libraries(ttf2pk
   ${app_dll_name}
   ${core_dll_name}
@@ -73,6 +75,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(ttf2tfm ${ttf2pk_sources})
+
+merge_trustinfo_manifest(ttf2tfm asInvoker)
 
 target_link_libraries(ttf2tfm
   ${app_dll_name}

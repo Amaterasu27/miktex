@@ -43,4 +43,6 @@ add_custom_command(
 
 add_executable(extconv ${CMAKE_CURRENT_BINARY_DIR}/extconv.c)
 
+merge_trustinfo_manifest(extconv asInvoker)
+
 install(TARGETS extconv DESTINATION ${bindir})

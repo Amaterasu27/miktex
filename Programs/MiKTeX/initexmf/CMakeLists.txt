@@ -28,6 +28,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(initexmf ${initexmf_sources})
 
+install(TARGETS initexmf DESTINATION ${bindir})
+
 target_link_libraries(initexmf
   ${core_dll_name}
   ${mpm_dll_name}
@@ -41,8 +43,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 merge_trustinfo_manifest(initexmf asInvoker)
-
-install(TARGETS initexmf DESTINATION ${bindir})
 
 if(NATIVE_WINDOWS)
   set(aliases mktexlsr texhash texlinks)

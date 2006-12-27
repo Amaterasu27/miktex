@@ -89,6 +89,8 @@ add_executable(mkversion EXCLUDE_FROM_ALL
   mkversion.c
 )
 
+merge_trustinfo_manifest(mkversion asInvoker)
+
 get_target_property(mkversion_exe mkversion LOCATION)
 
 add_custom_command(
@@ -108,6 +110,8 @@ add_custom_command(
 add_executable(mkg3states EXCLUDE_FROM_ALL
   mkg3states.c
 )
+
+merge_trustinfo_manifest(mkg3states asInvoker)
 
 target_link_libraries(mkg3states ${gnu_dll_name})
 

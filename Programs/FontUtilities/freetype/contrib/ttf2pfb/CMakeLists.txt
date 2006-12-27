@@ -48,6 +48,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(ttf2pfb ${ttf2pfb_sources})
 
+merge_trustinfo_manifest(getafm asInvoker)
+
 target_link_libraries(ttf2pfb
   ${app_dll_name}
   ${core_dll_name}
@@ -68,6 +70,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(t1asm ${t1asm_sources})
+
+merge_trustinfo_manifest(t1asm asInvoker)
 
 target_link_libraries(t1asm
   ${app_dll_name}

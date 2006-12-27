@@ -41,6 +41,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(ebb ${ebb_sources})
 
+merge_trustinfo_manifest(ebb asInvoker)
+
 target_link_libraries(ebb
   ${app_dll_name}
   ${core_dll_name}
@@ -92,6 +94,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(dvipdfm ${dvipdfm_sources})
 
+merge_trustinfo_manifest(dvipdfm asInvoker)
+
 target_link_libraries(dvipdfm
   ${app_dll_name}
   ${core_dll_name}
@@ -115,6 +119,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(dvipdft ${dvipdft_sources})
+
+merge_trustinfo_manifest(dvipdft asInvoker)
 
 target_link_libraries(dvipdft
   ${app_dll_name}

@@ -37,6 +37,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(pdftosrc ${pdftosrc_sources})
 
+merge_trustinfo_manifest(pdftosrc asInvoker)
+
 target_link_libraries(pdftosrc
   ${app_dll_name}
   ${core_dll_name}
@@ -70,6 +72,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(ttf2afm ${ttf2afm_sources})
+
+merge_trustinfo_manifest(ttf2afm asInvoker)
 
 target_link_libraries(ttf2afm
   ${app_dll_name}

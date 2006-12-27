@@ -106,6 +106,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(dvipdfmx ${dvipdfmx_sources})
 
+merge_trustinfo_manifest(dvipdfmx asInvoker)
+
 target_link_libraries(dvipdfmx
   ${app_dll_name}
   ${core_dll_name}

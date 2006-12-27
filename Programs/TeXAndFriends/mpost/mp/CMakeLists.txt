@@ -32,7 +32,7 @@ add_custom_command(
   VERBATIM
 )
 
-create_web_app(MetaPost mp mpost)
+create_web_app(MetaPost mp mpost ${memdir})
 
 set(trapmp_dll_name "trapmp_")
 
@@ -52,7 +52,7 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex-trap.ch
 )
 
-create_web_app(MetaPost trapmp)
+create_web_app(MetaPost trapmp trapmp ${memdir})
 
 set(trapmp_options)
 set(trapmp_options "${trapmp_options} -error-line=64")

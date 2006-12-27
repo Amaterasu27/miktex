@@ -57,6 +57,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(makeindex ${makeindex_sources})
 
+merge_trustinfo_manifest(makeindex asInvoker)
+
 target_link_libraries(makeindex
   ${app_dll_name}
   ${core_dll_name}

@@ -31,6 +31,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(md5walk ${md5walk_sources})
 
+merge_trustinfo_manifest(md5walk asInvoker)
+
 target_link_libraries(md5walk
   ${bzip2_lib_name}
   ${core_lib_name}

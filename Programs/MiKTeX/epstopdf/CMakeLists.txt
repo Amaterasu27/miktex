@@ -28,6 +28,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(epstopdf ${epstopdf_sources})
 
+merge_trustinfo_manifest(epstopdf asInvoker)
+
 target_link_libraries(epstopdf
   ${app_dll_name}
   ${core_dll_name}

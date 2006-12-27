@@ -63,6 +63,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(htcmd ${htcmd_sources})
 
+merge_trustinfo_manifest(htcmd asInvoker)
+
 target_link_libraries(htcmd
   ${app_dll_name}
   ${core_dll_name}
@@ -86,6 +88,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(t4ht ${t4ht_sources})
 
+merge_trustinfo_manifest(t4ht asInvoker)
+
 target_link_libraries(t4ht
   ${app_dll_name}
   ${core_dll_name}
@@ -108,6 +112,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_executable(tex4ht ${tex4ht_sources})
+
+merge_trustinfo_manifest(tex4ht asInvoker)
 
 target_link_libraries(tex4ht
   ${app_dll_name}

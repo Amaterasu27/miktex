@@ -19,20 +19,26 @@
 
 add_executable(bintoc bintoc.cpp)
 
+merge_trustinfo_manifest(bintoc asInvoker)
+
 install(TARGETS bintoc DESTINATION "${bindir}")
 
 if(NATIVE_WINDOWS)
   add_executable(headerguard headerguard.cpp)
+  merge_trustinfo_manifest(headerguard asInvoker)
   target_link_libraries(headerguard Rpcrt4)
   install(TARGETS headerguard DESTINATION "${bindir}")
 endif(NATIVE_WINDOWS)
 
 add_executable(j2000 j2000.cpp)
 
+merge_trustinfo_manifest(j2000 asInvoker)
+
 install(TARGETS j2000 DESTINATION "${bindir}")
 
 if(NATIVE_WINDOWS)
   add_executable(mkdllbases mkdllbases.cpp)
+  merge_trustinfo_manifest(mkdllbases asInvoker)
   target_link_libraries(mkdllbases imagehlp)
   install(TARGETS mkdllbases DESTINATION "${bindir}")
 endif(NATIVE_WINDOWS)

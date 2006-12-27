@@ -119,6 +119,7 @@ target_link_libraries(${ppm_dll_name}
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c ppm.h)
+  merge_trustinfo_manifest(${e} asInvoker)
   add_dependencies(${e} ${ppm_dll_name})
   target_link_libraries(${e}
     ${pbm_dll_name}

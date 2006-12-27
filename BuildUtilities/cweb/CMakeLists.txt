@@ -46,6 +46,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(ctangle ${ctangle_sources})
 
+merge_trustinfo_manifest(ctangle asInvoker)
+
 set(cweave_sources
   ${CMAKE_CURRENT_BINARY_DIR}/common.c
   ${CMAKE_CURRENT_BINARY_DIR}/cweave.c
@@ -79,5 +81,7 @@ add_custom_command(
 )
 
 add_executable(cweave ${cweave_sources})
+
+merge_trustinfo_manifest(cweave asInvoker)
 
 install(TARGETS ctangle cweave DESTINATION "${bindir}")

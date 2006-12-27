@@ -35,6 +35,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(mtprint ${mtprint_sources})
 
+merge_trustinfo_manifest(mtprint asInvoker)
+
 target_link_libraries(mtprint
   ${app_dll_name}
   ${core_dll_name}

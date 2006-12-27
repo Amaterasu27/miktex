@@ -92,6 +92,7 @@ add_library(${pbm_dll_name} SHARED ${${pbm_dll_name}_sources})
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pbm.h)
+  merge_trustinfo_manifest(${e} asInvoker)
   add_dependencies(${e} ${pbm_dll_name})
   target_link_libraries(${e} ${pbm_dll_name})
 endforeach(e ${exes})

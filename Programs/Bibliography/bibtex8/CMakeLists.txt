@@ -60,6 +60,8 @@ endif(NATIVE_WINDOWS)
 
 add_executable(bibtex8 ${bibtex8_sources})
 
+merge_trustinfo_manifest(bibtex8 asInvoker)
+
 target_link_libraries(bibtex8
   ${app_dll_name}
   ${core_dll_name}

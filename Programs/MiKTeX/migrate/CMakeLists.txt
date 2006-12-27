@@ -26,6 +26,8 @@ set(migrate_sources
 
 add_executable(migrate ${migrate_sources})
 
+merge_trustinfo_manifest(migrate highestAvailable)
+
 target_link_libraries(migrate
   ${bzip2_lib_name}
   ${core_lib_name}
