@@ -37,6 +37,12 @@ macro(create_web_app _name)
     set(_invocation_name ${_short_name_l})
   endif(${ARGC} GREATER 2)
 
+  if(${ARGC} GREATER 3)
+    set(_pool_dir ${ARGV3})
+  else(${ARGC} GREATER 3)
+    set(_pool_dir ${formatdir})
+  endif(${ARGC} GREATER 3)
+
   set(${_short_name_l}_data g_${_name_u}Data)
   set(${_short_name_l}_app g_${_name_u}App)
   set(${_short_name_l}_class ${_name_u})
@@ -235,7 +241,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
-    DESTINATION ${formatdir}
+    DESTINATION ${_pool_dir}
   )
     
 endmacro(create_web_app _name)
