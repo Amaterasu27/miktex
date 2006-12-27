@@ -125,11 +125,17 @@ if(BUILDING_MIKTEX)
     diff
     dos2unix
     flex
-    hhc
-    makehm
-    mt
     texify
   )
+  if(NATIVE_WINDOWS)
+    set(required_programs ${required_programs}
+      hhc
+      makehm
+      mc
+      midl
+      mt
+    )
+  endif(NATIVE_WINDOWS)
 endif(BUILDING_MIKTEX)
 
 foreach(p ${required_programs})

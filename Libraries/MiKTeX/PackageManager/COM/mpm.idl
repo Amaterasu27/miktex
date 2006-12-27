@@ -1,0 +1,51 @@
+/* mpm.idl: MiKTeX package manager
+
+   Copyright (C) 2006 Christian Schenk
+
+   This file is part of MiKTeX Package Manager.
+
+   MiKTeX Package Manager is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   MiKTeX Package Manager is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with MiKTeX Package Manager; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(C6A0E0A9-532D-46DF-8969-0E0A17539FC9),
+	dual,
+	nonextensible,
+	helpstring("IPackageManager Interface"),
+	pointer_default(unique)
+]
+interface IPackageManager : IDispatch{
+};
+[
+	uuid(42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB),
+	version(1.0),
+	helpstring("MiKTeXPackageManager 1.0 Type Library")
+]
+library MiKTeXPackageManagerLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(E4EC6D80-9E3A-47B7-ADA7-C0621C298527),
+		helpstring("PackageManager Class")
+	]
+	coclass PackageManager
+	{
+		[default] interface IPackageManager;
+	};
+};

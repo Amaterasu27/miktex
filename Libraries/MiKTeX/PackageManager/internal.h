@@ -341,6 +341,15 @@ StripPrefix (/*[in]*/ const tstring &		str,
   return (true);
 }
 
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsVista ()
+{
+  return ((GetVersion() & 0xff) >= 6);
+}
+#endif
+
 /* _________________________________________________________________________
 
    InstalledFileInfo
@@ -1759,6 +1768,10 @@ private:
   CheckArchiveFile (/*[in]*/ const MIKTEXCHAR *	lpszPackage,
 		    /*[in]*/ const PathName &	archiveFileName,
 		    /*[in]*/ bool		mustBeOk);
+
+private:
+  bool
+  DelegationRequired ();
   
 private:
   auto_ptr<TraceStream> trace_error;

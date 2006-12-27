@@ -21,6 +21,10 @@
 
 #include "StdAfx.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  import "mpm.tlb"
+#endif
+
 #include "internal.h"
 
 #include "Extractor.h"
@@ -1611,6 +1615,19 @@ void
 MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
+  if (DelegationRequired())
+    {
+#if 0
+      IPackageInstaller pInstaller = CreateInstaller();
+      pInstaller->SetLists (...);
+      pInstaller->InstallRemove (this);
+#else
+      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+		       T_("Unimplemented: delegation required"),
+		       0);
+#endif
+    }
+
   bool upgrade = (toBeInstalled.size() == 0 && toBeRemoved.size() == 0);
   bool installing = (upgrade || toBeInstalled.size() > 0);
 
@@ -2049,6 +2066,18 @@ void
 MPMCALL
 PackageInstallerImpl::UpdateDb ()
 {
+  if (DelegationRequired())
+    {
+#if 0
+      IPackageInstaller pInstaller = CreateInstaller();
+      pInstaller->UpdateDb (this);
+#else
+      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
+		       T_("Unimplemented: delegation required"),
+		       0);
+#endif
+    }
+
   if (repositoryType == RepositoryType::Unknown)
     {
       repository = pManager->PickRepositoryUrl();
@@ -2399,4 +2428,21 @@ PackageInstallerImpl::Dispose ()
       trace_error->Close ();
       trace_error.reset ();
     }
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::DelegationRequired
+   _________________________________________________________________________ */
+
+bool
+PackageInstallerImpl::DelegationRequired ()
+{
+#if defined(MIKTEX_WINDOWS)
+  return (IsWindowsVista()
+	  && SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	  && ! SessionWrapper(true)->RunningAsAdministrator());
+#else
+  return (false);
+#endif
 }

@@ -20,6 +20,7 @@
 add_definitions(-DHAVE_LIBCURL)
 
 include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}
 )
@@ -66,6 +67,29 @@ if(NATIVE_WINDOWS)
     win/winWebFile.h
     win/winWebSession.cpp
     win/winWebSession.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+  )
+  add_custom_command(
+    OUTPUT
+		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+		${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+		${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
+		${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
+		${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+    COMMAND ${MIDL_EXE}
+	/nologo
+	/char signed
+	/env win32
+	/Oicf
+	/tlb ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+	/h ${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+	/iid ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
+	/proxy ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
+	/no_robust
+	${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
+    DEPENDS
+		${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
+    VERBATIM
   )
 endif(NATIVE_WINDOWS)
 
