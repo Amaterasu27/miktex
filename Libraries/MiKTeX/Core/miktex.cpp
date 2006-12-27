@@ -1020,7 +1020,8 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
       Utils::GetEnvironmentString (MIKTEX_ENV_TRACE, traceOptions);
     }
 #if defined(MIKTEX_WINDOWS)
-  if (traceOptions.empty())
+  if (traceOptions.empty()
+      && (initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
     {
       if (! winRegistry::TryGetRegistryValue(TriState::False,
 					     MIKTEX_REGKEY_CORE,
