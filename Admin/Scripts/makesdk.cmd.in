@@ -1,0 +1,42 @@
+@echo off
+
+setlocal
+
+set sdkname=miktex-sdk-@MIKTEX_SERIES_STR@.@MIKTEX_J2000_VERSION@
+set sdkdir=C:\MiKTeX-SDKs\%sdkname%
+
+set excl=@CMAKE_BINARY_DIR_NATIVE@\excl
+
+if exist "%sdkdir%" rmdir /s /q "%sdkdir%"
+mkdir "%sdkdir%"
+mkdir "%sdkdir%\include"
+mkdir "%sdkdir%\lib"
+echo .svn>%excl%
+echo version.h.in>>%excl%
+
+pushd "@CMAKE_SOURCE_DIR_NATIVE@"
+xcopy /EXCLUDE:%excl% /S SDK "%sdkdir%"
+xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\App\include "%sdkdir%\include"
+xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\Core\include "%sdkdir%\include"
+xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\PackageManager\include "%sdkdir%\include"
+xcopy /EXCLUDE:%excl% /S Libraries\3rd\libmd5 "%sdkdir%\include"
+popd
+
+pushd "@CMAKE_BINARY_DIR_NATIVE@"
+xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\Core\include "%sdkdir%\include"
+pushd binlib
+copy @app_dll_name@.lib "%sdkdir%\lib"
+copy @core_dll_name@.lib "%sdkdir%\lib"
+copy @mpm_dll_name@.lib "%sdkdir%\lib"
+copy @md5_dll_name@.lib "%sdkdir%\lib"
+popd
+popd
+
+del "%excl%"
+
+pushd "%sdkdir%"
+cd ..
+zip -9r %sdkname%.zip %sdkname%
+popd
+
+endlocal
