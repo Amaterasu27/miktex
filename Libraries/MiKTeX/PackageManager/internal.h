@@ -375,6 +375,27 @@ private:
   enum { BUFSIZE = 30 };
 
 public:
+  NumberToStringConverter_ (/*[in]*/ HRESULT hr)
+  {
+    int n;
+#if defined(_MSC_VER)
+#  if _MSC_VER >= 1400
+    n = _stprintf_s (buffer, BUFSIZE, T_("%lx"), hr);
+#  else
+    n = _stprintf (buffer, T_("%lx"), hr);
+#  endif
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: NumberToStringConverter_::NumberToStringConverter_()
+#else
+    n = sprintf (buffer, T_("%lx"), hr);
+#endif
+    if (n < 0)
+      {
+	FATAL_CRT_ERROR (T_("sprintf"), 0);
+      }
+  }
+
+public:
   NumberToStringConverter_ (/*[in]*/ unsigned u)
   {
     int n;
@@ -1769,10 +1790,12 @@ private:
 		    /*[in]*/ const PathName &	archiveFileName,
 		    /*[in]*/ bool		mustBeOk);
 
+#if USE_LOCAL_SERVER
 private:
   bool
   DelegationRequired ();
-  
+#endif
+
 private:
   auto_ptr<TraceStream> trace_error;
 

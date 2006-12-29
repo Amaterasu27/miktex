@@ -1,0 +1,32 @@
+HKCR
+{
+	MiKTeXPackageManager.PackageManager.1 = s 'PackageManager Class'
+	{
+		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
+	}
+	MiKTeXPackageManager.PackageManager = s 'PackageManager Class'
+	{
+		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
+		CurVer = s 'MiKTeXPackageManager.PackageManager.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {E4EC6D80-9E3A-47B7-ADA7-C0621C298527} = s 'PackageManager Class'
+		{
+			ProgID = s 'MiKTeXPackageManager.PackageManager.1'
+			VersionIndependentProgID = s 'MiKTeXPackageManager.PackageManager'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB}'
+			Elevation
+			{
+				val Enabled = d1
+			}
+			val LocalizedString = s '@%MODULE%,-100'
+		}
+	}
+}

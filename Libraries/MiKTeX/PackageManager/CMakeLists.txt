@@ -67,16 +67,31 @@ if(NATIVE_WINDOWS)
     win/winWebFile.h
     win/winWebSession.cpp
     win/winWebSession.h
-    ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
   )
-  add_custom_command(
-    OUTPUT
+  if(MFC_FOUND)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.rgs.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/mpm.rgs
+    )
+    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
+    set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
+      COM/PackageInstaller.cpp
+      COM/PackageInstaller.h
+      COM/PackageManager.cpp
+      COM/PackageManager.h
+      COM/mpm.cpp
+      COM/mpm.def
+    )
+    add_custom_command(
+      OUTPUT
 		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
 		${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
 		${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
-    COMMAND ${MIDL_EXE}
+      COMMAND ${MIDL_EXE}
 	/nologo
 	/char signed
 	/env win32
@@ -87,10 +102,34 @@ if(NATIVE_WINDOWS)
 	/proxy ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
 	/no_robust
 	${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
-    DEPENDS
+      DEPENDS
 		${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
-    VERBATIM
-  )
+      VERBATIM
+    )
+    add_library(
+      ${mpm_ps_dll_name}
+      SHARED
+      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
+      ${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
+    )
+    set_source_files_properties(
+      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
+      ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
+      PROPERTIES COMPILE_FLAGS "-DREGISTER_PROXY_DLL"
+    )
+    target_link_libraries(${mpm_ps_dll_name}
+      oleaut32
+      rpcndr
+      rpcns4
+      rpcrt4
+      uuid
+    )
+    install(TARGETS ${mpm_ps_dll_name} DESTINATION "${bindir}")
+  endif(MFC_FOUND)
 endif(NATIVE_WINDOWS)
 
 add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})

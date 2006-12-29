@@ -20,6 +20,7 @@
    USA. */
 
 #include "mpm-version.h"
+#include "Resource.h"
 
 #define VER_INTERNALNAME_STR "MiKTeX-packagemanager-3"
 #define VER_ORIGINALFILENAME_STR "MiKTeX-packagemanager-3.dll"
@@ -27,5 +28,16 @@
 #define VER_FILEDESCRIPTION_STR "MiKTeX Package Manager DLL"
 
 #define VER_FILETYPE VFT_DLL
+
+IDR_MIKTEXPACKAGEMANAGER REGISTRY "COM/mpm.rgs"
+IDR_PACKAGEMANAGER       REGISTRY "COM/PackageManager.rgs"
+IDR_PACKAGEINSTALLER     REGISTRY "COM/PackageInstaller.rgs"
+
+STRINGTABLE 
+BEGIN
+    IDS_PROJNAME            "MiKTeX Package Manager"
+END
+
+1 TYPELIB "mpm.tlb"
 
 #include <miktex/miktex.version>

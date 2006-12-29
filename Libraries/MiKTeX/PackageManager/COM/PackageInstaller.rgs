@@ -1,0 +1,27 @@
+HKCR
+{
+	MiKTeXPackageManager.PackageInstaller.1 = s 'PackageInstaller Class'
+	{
+		CLSID = s '{5DCA5648-EAA3-43FD-A397-C72A9C17EA9C}'
+	}
+	MiKTeXPackageManager.PackageInstaller = s 'PackageInstaller Class'
+	{
+		CLSID = s '{5DCA5648-EAA3-43FD-A397-C72A9C17EA9C}'
+		CurVer = s 'MiKTeXPackageManager.PackageInstaller.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {5DCA5648-EAA3-43FD-A397-C72A9C17EA9C} = s 'PackageInstaller Class'
+		{
+			ProgID = s 'MiKTeXPackageManager.PackageInstaller.1'
+			VersionIndependentProgID = s 'MiKTeXPackageManager.PackageInstaller'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB}'
+		}
+	}
+}

@@ -21,6 +21,7 @@ texmf/miktex/bin/${kpsemu_dll_name}.dll
 texmf/miktex/bin/${md5_dll_name}.dll
 texmf/miktex/bin/${mspack_dll_name}.dll
 texmf/miktex/bin/${mpm_dll_name}.dll
+texmf/miktex/bin/${mpm_ps_dll_name}.dll
 texmf/miktex/bin/${popt_dll_name}.dll
 texmf/miktex/bin/${texmf_dll_name}.dll
 texmf/miktex/bin/${ui_dll_name}.dll

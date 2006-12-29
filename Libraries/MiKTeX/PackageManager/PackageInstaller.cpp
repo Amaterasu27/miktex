@@ -21,8 +21,8 @@
 
 #include "StdAfx.h"
 
-#if defined(MIKTEX_WINDOWS)
-#  import "mpm.tlb"
+#if defined(MIKTEX_WINDOWS) && defined(USE_LOCAL_SERVER)
+#  import "mpm.tlb" raw_interfaces_only
 #endif
 
 #include "internal.h"
@@ -1605,6 +1605,47 @@ PackageInstallerImpl::CheckArchiveFile
     }
   return (ok);
 }
+
+/* _________________________________________________________________________
+
+   ConnectToServer
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+CComQIPtr<MiKTeXPackageManagerLib::IPackageManager> pManagerSvr;
+CComPtr<MiKTeXPackageManagerLib::IPackageInstaller> pInstallerSvr;
+
+void
+ConnectToServer ()
+{
+  if (pInstallerSvr == 0)
+    {
+      if (pManagerSvr == 0)
+	{
+	  HRESULT hr =
+	    pManagerSvr.CoCreateInstance
+	    (__uuidof(MiKTeXPackageManagerLib::PackageManager),
+	     0,
+	     CLSCTX_LOCAL_SERVER);
+	  if (FAILED(hr))
+	    {
+	      FATAL_MPM_ERROR (T_("ConnectToServer"),
+			       T_("Cannot start service."),
+			       NUMTOSTR(hr));
+	    }
+	}
+      HRESULT hr = pManagerSvr->CreateInstaller(&pInstallerSvr);
+      if (FAILED(hr))
+	{
+	  FATAL_MPM_ERROR (T_("ConnectToServer"),
+			   T_("Cannot start service."),
+			   NUMTOSTR(hr));
+	}
+    }
+}
+
+#endif
       
 /* _________________________________________________________________________
 
@@ -1615,18 +1656,15 @@ void
 MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
+#if USE_LOCAL_SERVER
   if (DelegationRequired())
     {
-#if 0
-      IPackageInstaller pInstaller = CreateInstaller();
-      pInstaller->SetLists (...);
-      pInstaller->InstallRemove (this);
-#else
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
-		       T_("Unimplemented: delegation required"),
+      ConnectToServer ();
+      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
+		       T_("Unimplemented: local server"),
 		       0);
-#endif
     }
+#endif
 
   bool upgrade = (toBeInstalled.size() == 0 && toBeRemoved.size() == 0);
   bool installing = (upgrade || toBeInstalled.size() > 0);
@@ -2066,17 +2104,15 @@ void
 MPMCALL
 PackageInstallerImpl::UpdateDb ()
 {
+#if USE_LOCAL_SERVER
   if (DelegationRequired())
     {
-#if 0
-      IPackageInstaller pInstaller = CreateInstaller();
-      pInstaller->UpdateDb (this);
-#else
+      ConnectToServer ();
       FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
-		       T_("Unimplemented: delegation required"),
+		       T_("Unimplemented: local server"),
 		       0);
-#endif
     }
+#endif
 
   if (repositoryType == RepositoryType::Unknown)
     {
@@ -2435,6 +2471,8 @@ PackageInstallerImpl::Dispose ()
    PackageInstallerImpl::DelegationRequired
    _________________________________________________________________________ */
 
+#if USE_LOCAL_SERVER
+
 bool
 PackageInstallerImpl::DelegationRequired ()
 {
@@ -2446,3 +2484,5 @@ PackageInstallerImpl::DelegationRequired ()
   return (false);
 #endif
 }
+
+#endif

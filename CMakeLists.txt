@@ -337,6 +337,9 @@ link_directories(${LIBRARY_OUTPUT_PATH})
 ###############################################################################
 ## configure files
 
+file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR_NATIVE)
+file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
+
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
 
@@ -345,6 +348,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Documentation/Styles/db2latex-common.xsl.in
 
 configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
                ${CMAKE_BINARY_DIR}/BuildUtilities/docbook/catalog)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesdk.cmd)
 
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/*.tpm.in")
 foreach(tpm ${tpms})

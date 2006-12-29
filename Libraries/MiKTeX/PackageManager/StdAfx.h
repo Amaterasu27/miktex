@@ -27,6 +27,8 @@
 #  include <config.h>
 #endif
 
+#include "resource.h"
+
 // must be included before Fdi.h (because of HUGE)
 #include <cmath>
 
@@ -34,6 +36,15 @@
 #  include <windows.h>
 #  include <wininet.h>
 #  include <Fdi.h>
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#  define _ATL_APARTMENT_THREADED
+#  define _ATL_NO_AUTOMATIC_NAMESPACE
+#  define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
+#  include <atlbase.h>
+#  include <atlcom.h>
+using namespace ATL;
 #endif
 
 #include <algorithm>

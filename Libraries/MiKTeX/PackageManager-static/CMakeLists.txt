@@ -19,6 +19,11 @@
 
 add_definitions(-DHAVE_LIBCURL)
 
+if(MFC_FOUND)
+  add_definitions(-DUSE_LOCAL_SERVER)
+  include_directories(${CMAKE_BINARY_DIR}/${rel_mpmlib_dir})
+endif(MFC_FOUND)
+
 use_static_crt()
 use_static_libraries()
 
