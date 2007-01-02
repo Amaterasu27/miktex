@@ -20,7 +20,11 @@
    USA. */
 
 #include "StdAfx.h"
+
+#include "internal.h"
+
 #include "COM/PackageManager.h"
+#include "COM/PackageInstaller.h"
 
 /* _________________________________________________________________________
 
@@ -54,6 +58,16 @@ STDMETHODIMP
 PackageManagerCOM::CreateInstaller (/*[out,retval]*/
 				    IPackageInstaller ** ppInstaller)
 {
-  ppInstaller;
-  return (E_NOTIMPL);
+  CComObject<PackageInstallerCOM> * pInstaller = 0;
+  HRESULT hr = CComObject<PackageInstallerCOM>::CreateInstance(&pInstaller);
+  if (FAILED(hr))
+    {
+      return (hr);
+    }
+
+  // increment the reference count; decrement it at the end of the
+  // block
+  CComPtr<IUnknown> pUnk (pInstaller->GetUnknown());
+
+  return (pInstaller->QueryInterface(ppInstaller));
 }

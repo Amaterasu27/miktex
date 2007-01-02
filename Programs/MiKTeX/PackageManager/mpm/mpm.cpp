@@ -101,7 +101,7 @@ public:
    _________________________________________________________________________ */
 
 class Application
-  : public IPackageInstallerCallback
+  : public PackageInstallerCallback
 {
 private:
   void
@@ -131,21 +131,21 @@ public:
     InstallSignalHandler (SIGTERM);
   }
 
-  // IPackageInstallerCallback impl
+  // PackageInstallerCallback impl
 public:
   virtual
   void
   MPMCALL
   ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
 
-  // IPackageInstallerCallback impl
+  // PackageInstallerCallback impl
 public:
   virtual
   bool
   MPMCALL
   OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
 
-  // IPackageInstallerCallback impl
+  // PackageInstallerCallback impl
 public:
   virtual
   bool

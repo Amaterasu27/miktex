@@ -30,10 +30,6 @@
 
 #include "mpm-version.h"
 
-using namespace MiKTeX::Core;
-using namespace MiKTeX::Packages;
-using namespace std;
-
 #define BEGIN_INTERNAL_NAMESPACE			\
 namespace MiKTeX {					\
   namespace Packages {					\
@@ -144,33 +140,33 @@ namespace MiKTeX {					\
   FATAL_MIKTEX_ERROR (function, T_("Function not implemented."), 0)
 
 #define MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  TraceMiKTeXError (miktexFunction,				\
+  MiKTeX::Core::TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
                     T_(__FILE__),				\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  Session::FatalMiKTeXError (miktexFunction,				\
-			     traceMessage,				\
-			     lpszInfo,					\
-			     T_(__FILE__),				\
-			     __LINE__)
+  MiKTeX::Core::Session::FatalMiKTeXError (miktexFunction,		\
+					traceMessage,			\
+					 lpszInfo,			\
+					 T_(__FILE__),			\
+					 __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
-  TraceStream::TraceLastCRTError (lpszCrtFunction,	\
+  MiKTeX::Core::TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
 				  T_(__FILE__),		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
-  Session::FatalCrtError (lpszCrtFunction,		\
+  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  lpszInfo,			\
 			  T_(__FILE__),			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
-  Session::FatalCrtError (lpszCrtFunction,			\
+  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
 			  T_(__FILE__),				\
@@ -178,7 +174,7 @@ namespace MiKTeX {					\
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
-  TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
+  MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
 				    T_(__FILE__),		\
 				    __LINE__)
@@ -186,7 +182,7 @@ namespace MiKTeX {					\
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,			\
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
 			      T_(__FILE__),			\
 			      __LINE__)
@@ -194,7 +190,7 @@ namespace MiKTeX {					\
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR_2(windowsfunction, errorCode, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,				\
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
 			      T_(__FILE__),				\
@@ -240,7 +236,7 @@ BEGIN_INTERNAL_NAMESPACE;
 
 const time_t Y2000 = 946681200;
 
-typedef basic_ostringstream<MIKTEXCHAR> otstringstream;
+typedef std::basic_ostringstream<MIKTEXCHAR> otstringstream;
 
 const MIKTEXCHAR * const MPM_AGENT = T_("MPM/") VER_FILEVERSION_STR;
 
@@ -267,11 +263,11 @@ const size_t MAXURL = 1024;
    _________________________________________________________________________ */
 
 inline
-tstring
+MiKTeX::Core::tstring
 Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
 {
   bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  tstring result;
+  MiKTeX::Core::tstring result;
   if (needQuotes)
     {
       result += T_('"');
@@ -290,8 +286,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+MiKTeX::Core::tstring
+Quoted (/*[in]*/ const MiKTeX::Core::tstring & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -302,8 +298,8 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const PathName & path)
+MiKTeX::Core::tstring
+Quoted (/*[in]*/ const MiKTeX::Core::PathName & path)
 {
   return (Quoted(path.Get()));
 }
@@ -314,11 +310,11 @@ Quoted (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 inline
-PathName
+MiKTeX::Core::PathName
 PrefixedPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
 {
   MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszPath));
-  return (PathName(TEXMF_PREFIX_DIRECTORY, lpszPath, 0));
+  return (MiKTeX::Core::PathName(TEXMF_PREFIX_DIRECTORY, lpszPath, 0));
 }
 
 /* _________________________________________________________________________
@@ -328,12 +324,12 @@ PrefixedPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
 
 inline
 bool
-StripPrefix (/*[in]*/ const tstring &		str,
+StripPrefix (/*[in]*/ const MiKTeX::Core::tstring &		str,
 	     /*[in]*/ const MIKTEXCHAR *	lpszPrefix,
-	     /*[out]*/ tstring &		result)
+	     /*[out]*/ MiKTeX::Core::tstring &		result)
 {
-  size_t n = StrLen(lpszPrefix);
-  if (PathName::Compare(str.c_str(), lpszPrefix, n) != 0)
+  size_t n = MiKTeX::Core::StrLen(lpszPrefix);
+  if (MiKTeX::Core::PathName::Compare(str.c_str(), lpszPrefix, n) != 0)
     {
       return (false);
     }
@@ -601,14 +597,14 @@ public:
   }
 
 public:
-  TempFile (/*[in]*/ const PathName & path)
+  TempFile (/*[in]*/ const MiKTeX::Core::PathName & path)
     : path (path)
   {
   }
 
 public:
   TempFile &
-  operator= (/*[in]*/ const PathName & path)
+  operator= (/*[in]*/ const MiKTeX::Core::PathName & path)
   {
     this->path = path;
     return (*this);
@@ -632,9 +628,9 @@ public:
   {
     if (path[0] != 0)
       {
-	PathName tmp (path);
+	MiKTeX::Core::PathName tmp (path);
 	path = T_("");
-	File::Delete (tmp);
+	MiKTeX::Core::File::Delete (tmp);
       }
   }
 
@@ -645,13 +641,13 @@ public:
       {
 	Delete ();
       }
-    catch (const exception &)
+    catch (const std::exception &)
       {
       }
   }
 
 private:
-  PathName path;
+  MiKTeX::Core::PathName path;
 };
 
 /* _________________________________________________________________________
@@ -697,9 +693,9 @@ AssertValidString (/*[in]*/ const MIKTEXCHAR *	lp,
 
 static
 inline
-tstring &
+MiKTeX::Core::tstring &
 GetErrnoMessage (/*[in]*/ int		err,
-		 /*[out]*/ tstring &	message)
+		 /*[out]*/ MiKTeX::Core::tstring &	message)
 {
 #if _MSC_VER >= 1400
   _TCHAR szBuf[256];
@@ -845,14 +841,16 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
    _________________________________________________________________________ */
 
 struct PathNameComparer
-  : public binary_function<tstring, tstring, bool>
+  : public std::binary_function<MiKTeX::Core::tstring,
+				MiKTeX::Core::tstring,
+				bool>
 {
   bool
-  operator() (/*[in]*/ const tstring & str1,
-	      /*[in]*/ const tstring & str2)
+  operator() (/*[in]*/ const MiKTeX::Core::tstring & str1,
+	      /*[in]*/ const MiKTeX::Core::tstring & str2)
     const
   {
-    return (PathName::Compare(str1.c_str(), str2.c_str()) < 0);
+    return (MiKTeX::Core::PathName::Compare(str1.c_str(), str2.c_str()) < 0);
   }
 };
 
@@ -861,7 +859,10 @@ struct PathNameComparer
    FileDigestTable
    _________________________________________________________________________ */
 
-typedef map<tstring, MD5, PathNameComparer> FileDigestTable;
+typedef std::map<MiKTeX::Core::tstring,
+		 MiKTeX::Core::MD5,
+		 PathNameComparer>
+FileDigestTable;
   
 /* _________________________________________________________________________
 
@@ -871,7 +872,7 @@ typedef map<tstring, MD5, PathNameComparer> FileDigestTable;
 class
 PackageManagerImpl
   : public PackageManager2,
-    public ICreateFndbCallback,
+    public MiKTeX::Core::ICreateFndbCallback,
     public IProgressNotify_
 {
 public:
@@ -913,19 +914,19 @@ public:
   virtual
   unsigned long
   MPMCALL
-  GetFileRefCount (/*[in]*/ const PathName &	path);
+  GetFileRefCount (/*[in]*/ const MiKTeX::Core::PathName &	path);
 
 public:
   virtual
   PackageInfo
   MPMCALL
-  GetPackageInfo (/*[in]*/ const tstring &	deploymentName);
+  GetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName);
 
 public:
   virtual
   void
   MPMCALL
-  LoadDatabase (/*[in]*/ const PathName & path);
+  LoadDatabase (/*[in]*/ const MiKTeX::Core::PathName & path);
 
 public:
   virtual
@@ -941,7 +942,7 @@ public:
 
 public:
   virtual
-  vector<RepositoryInfo>
+  std::vector<RepositoryInfo>
   MPMCALL
   GetRepositories ()
   {
@@ -950,7 +951,7 @@ public:
 
 public:
   virtual
-  tstring
+  MiKTeX::Core::tstring
   MPMCALL
   PickRepositoryUrl ();
 
@@ -958,7 +959,7 @@ public:
   virtual
   bool
   MPMCALL
-  TryGetPackageInfo (/*[in]*/ const tstring &	deploymentName,
+  TryGetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName,
 		     /*[out]*/ PackageInfo &	packageInfo);
 
 private:
@@ -986,20 +987,20 @@ public:
   virtual
   bool
   MPMCALL
-  TryGetRepositoryInfo (/*[in]*/ const tstring &	url,
+  TryGetRepositoryInfo (/*[in]*/ const MiKTeX::Core::tstring &	url,
 			/*[out]*/ RepositoryInfo &	repositoryInfo);
 
 public:
   virtual
   RepositoryInfo
   MPMCALL
-  VerifyPackageRepository (/*[in]*/ const tstring & url);
+  VerifyPackageRepository (/*[in]*/ const MiKTeX::Core::tstring & url);
 
 public:
   virtual
   bool
   MPMCALL
-  TryVerifyInstalledPackage (/*[in]*/ const tstring & deploymentName);
+  TryVerifyInstalledPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   PackageManagerImpl ();
@@ -1010,7 +1011,7 @@ public:
 
 public:
   void
-  IncrementFileRefCounts (/*[in]*/ const tstring & deploymentName);
+  IncrementFileRefCounts (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   void
@@ -1022,11 +1023,11 @@ public:
 
 public:
   void
-  GetAllPackageDefinitions (/*[out]*/ vector<PackageInfo> & packages);
+  GetAllPackageDefinitions (/*[out]*/ std::vector<PackageInfo> & packages);
 
 public:
   PackageInfo *
-  TryGetPackageInfo (/*[in]*/ const tstring & deploymentName);
+  TryGetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   InstalledFileInfo *
@@ -1056,7 +1057,7 @@ public:
 
 public:
   PackageInfo *
-  DefinePackage (/*[in]*/ const tstring &	deploymentName,
+  DefinePackage (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName,
 		 /*[in]*/ const PackageInfo &	packageinfo);
 
 public:
@@ -1070,12 +1071,12 @@ private:
 
 private:
   void
-  IncrementFileRefCounts (/*[in]*/ const vector<tstring> & files);
+  IncrementFileRefCounts (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & files);
 
 private:
   void
   ParseAllPackageDefinitionFilesInDirectory
-  (/*[in]*/ const PathName & directory);
+  (/*[in]*/ const MiKTeX::Core::PathName & directory);
 
 private:
   void
@@ -1083,9 +1084,9 @@ private:
 
 private:
   bool
-  TryVerifyInstalledPackageHelper (/*[in]*/ const tstring &	fileName,
+  TryVerifyInstalledPackageHelper (/*[in]*/ const MiKTeX::Core::tstring &	fileName,
 				   /*[out]*/ bool &		haveDigest,
-				   /*[out]*/ MD5 &		digest);
+				   /*[out]*/ MiKTeX::Core::MD5 &		digest);
 
 private:
   void
@@ -1094,26 +1095,28 @@ private:
 public:
   static
   RepositoryType
-  DetermineRepositoryType (/*[in]*/ const tstring & repository);
+  DetermineRepositoryType (/*[in]*/ const MiKTeX::Core::tstring & repository);
 
 private:
   int refCount;
 
 private:
-  auto_ptr<TraceStream> trace_error;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> trace_mpm;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
 #if defined(USE_HASH_MAP)
-  typedef hash_map<tstring,
-		   PackageInfo,
-		   hash_compare_icase> PackageDefinitionTable;
+  typedef stdext::hash_map<MiKTeX::Core::tstring,
+			   PackageInfo,
+			   MiKTeX::Core::hash_compare_icase>
+  PackageDefinitionTable;
 #else
-  typedef map<tstring,
-	      PackageInfo,
-	      hash_compare_icase> PackageDefinitionTable;
+  typedef std::map<MiKTeX::Core::tstring,
+		   PackageInfo,
+		   MiKTeX::Core::hash_compare_icase>
+  PackageDefinitionTable;
 #endif
 
 private:
@@ -1121,13 +1124,15 @@ private:
 
 private:
 #if defined(USE_HASH_MAP)
-  typedef hash_map<tstring,
-		   InstalledFileInfo,
-		   hash_compare_path> InstalledFileInfoTable;
+  typedef stdext::hash_map<MiKTeX::Core::tstring,
+			   InstalledFileInfo,
+			   MiKTeX::Core::hash_compare_path>
+  InstalledFileInfoTable;
 #else
-  typedef map<tstring,
-	       InstalledFileInfo,
-	       hash_compare_path> InstalledFileInfoTable;
+  typedef std::map<MiKTeX::Core::tstring,
+		   InstalledFileInfo,
+		   MiKTeX::Core::hash_compare_path>
+  InstalledFileInfoTable;
 #endif
 
 private:
@@ -1137,13 +1142,13 @@ private:
   bool parsedAllPackageDefinitionFiles;
 
 private:
-  SmartPointer<Cfg> variablePackageTable;
+  MiKTeX::Core::SmartPointer<MiKTeX::Core::Cfg> variablePackageTable;
 
 private:
-  SessionWrapper pSession;
+  MiKTeX::Core::SessionWrapper pSession;
 
 private:
-  auto_ptr<WebSession> webSession;
+  std::auto_ptr<WebSession> webSession;
 
 public:
   WebSession *
@@ -1154,13 +1159,13 @@ public:
   }
 
 private:
-  vector<RepositoryInfo> repositories;
+  std::vector<RepositoryInfo> repositories;
 
 public:
-  static tstring proxyUser;
+  static MiKTeX::Core::tstring proxyUser;
 
 public:
-  static tstring proxyPassword;
+  static MiKTeX::Core::tstring proxyPassword;
 };
 
 /* _________________________________________________________________________
@@ -1171,11 +1176,11 @@ public:
 class DbLight
 {
 private:
-  SmartPointer<Cfg> pcfg;
+  MiKTeX::Core::SmartPointer<MiKTeX::Core::Cfg> pcfg;
 
 public:
   DbLight ()
-    : pcfg(Cfg::Create())
+    : pcfg(MiKTeX::Core::Cfg::Create())
   {
   }
 
@@ -1186,7 +1191,7 @@ public:
   }
 
 public:
-  MD5
+  MiKTeX::Core::MD5
   GetDigest ()
   {
     return (pcfg->GetDigest());
@@ -1196,14 +1201,14 @@ private:
   bool
   TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName,
 	    /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	    /*[out]*/ tstring &		value)
+	    /*[out]*/ MiKTeX::Core::tstring &		value)
   {
     return (pcfg->TryGetValue(lpszDeploymentName, lpszValueName, value));
   }
 
 public:
   void
-  Read (/*[in]*/ const PathName & path)
+  Read (/*[in]*/ const MiKTeX::Core::PathName & path)
   {
     pcfg->Read (path);
   }
@@ -1212,14 +1217,16 @@ public:
   MIKTEXCHAR *
   FirstPackage (/*[out]*/ MIKTEXCHAR *	lpszDeploymentName)
   {
-    return (pcfg->FirstKey(lpszDeploymentName, BufferSizes::MaxPath));
+    return (pcfg->FirstKey(lpszDeploymentName,
+			   MiKTeX::Core::BufferSizes::MaxPath));
   }
 
 public:
   MIKTEXCHAR *
   NextPackage (/*[out]*/ MIKTEXCHAR *	lpszDeploymentName)
   {
-    return (pcfg->NextKey(lpszDeploymentName, BufferSizes::MaxPath));
+    return (pcfg->NextKey(lpszDeploymentName,
+			  MiKTeX::Core::BufferSizes::MaxPath));
   }
 
 public:
@@ -1227,14 +1234,14 @@ public:
   Clear ()
   {
     pcfg.Release ();
-    pcfg = Cfg::Create();
+    pcfg = MiKTeX::Core::Cfg::Create();
   }
 
 public:
   int
   GetArchiveFileSize (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! TryGetValue(lpszDeploymentName, T_("CabSize"), str))
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileSize"),
@@ -1245,38 +1252,38 @@ public:
   }
 
 public:
-  MD5
+  MiKTeX::Core::MD5
   GetArchiveFileDigest (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! pcfg->TryGetValue(lpszDeploymentName, T_("CabMD5"), str))
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileDigest"),
 			 T_("Unknown archive file digest."),
 			 lpszDeploymentName);
       }
-    return (MD5::Parse(str.c_str()));
+    return (MiKTeX::Core::MD5::Parse(str.c_str()));
   }
 
 public:
-  MD5
+  MiKTeX::Core::MD5
   GetPackageDigest (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! pcfg->TryGetValue(lpszDeploymentName, T_("MD5"), str))
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetPackageDigest"),
 			 T_("Unknown package digest."),
 			 lpszDeploymentName);
       }
-    return (MD5::Parse(str.c_str()));
+    return (MiKTeX::Core::MD5::Parse(str.c_str()));
   }
 
 public:
   time_t
   GetTimePackaged (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! TryGetValue(lpszDeploymentName, T_("TimePackaged"), str))
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetTimePackaged"),
@@ -1297,7 +1304,7 @@ public:
   PackageLevel
   GetPackageLevel (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! TryGetValue(lpszDeploymentName, T_("Level"), str))
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetPackageLevel"),
@@ -1308,10 +1315,10 @@ public:
   }
 
 public:
-  tstring
+  MiKTeX::Core::tstring
   GetPackageVersion (/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring version;
+    MiKTeX::Core::tstring version;
     if (! TryGetValue(lpszDeploymentName, T_("Version"), version))
       {
 	version = T_("");
@@ -1323,7 +1330,7 @@ public:
   ArchiveFileType
   GetArchiveFileType (/*[in]*/  const MIKTEXCHAR *	lpszDeploymentName)
   {
-    tstring str;
+    MiKTeX::Core::tstring str;
     if (! TryGetValue(lpszDeploymentName, T_("Type"), str))
       {
 	return (ArchiveFileType::MSCab);
@@ -1371,7 +1378,7 @@ public:
 class PackageInstallerImpl
   : public PackageInstaller,
     public IProgressNotify_,
-    public ICreateFndbCallback,
+    public MiKTeX::Core::ICreateFndbCallback,
     public IExtractCallback
 {
 private:
@@ -1413,7 +1420,7 @@ public:
   virtual
   void
   MPMCALL
-  SetDestination (/*[in]*/ const PathName & destinationDirectory)
+  SetDestination (/*[in]*/ const MiKTeX::Core::PathName & destinationDirectory)
   {
     this->destinationDirectory = destinationDirectory;
   }
@@ -1444,7 +1451,7 @@ public:
 
 public:
   virtual
-  vector<UpdateInfo>
+  std::vector<UpdateInfo>
   MPMCALL
   GetUpdates ()
   {
@@ -1506,14 +1513,14 @@ public:
   virtual
   void
   MPMCALL
-  SetCallback (/*[in]*/ IPackageInstallerCallback *	pCallback);
+  SetCallback (/*[in]*/ PackageInstallerCallback *	pCallback);
   
 public:
   virtual
   void
   MPMCALL
-  SetFileLists (/*[in]*/ const vector<tstring> & toBeInstalled,
-		/*[in]*/ const vector<tstring> & toBeRemoved)
+  SetFileLists (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled,
+		/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeRemoved)
   {
     this->toBeInstalled = toBeInstalled;
     this->toBeRemoved = toBeRemoved;
@@ -1532,7 +1539,7 @@ public:
   virtual
   void
   MPMCALL
-  SetFileList (/*[in]*/ const vector<tstring> & toBeInstalled)
+  SetFileList (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled)
   {
     this->toBeInstalled = toBeInstalled;
     toBeRemoved.clear ();
@@ -1562,8 +1569,8 @@ public:
 
 private:
   void
-  UpdateMpmFndb (/*[in]*/ const vector<tstring> &	installedFiles,
-		 /*[in]*/ const vector<tstring> &	removedFiles,
+  UpdateMpmFndb (/*[in]*/ const std::vector<MiKTeX::Core::tstring> &	installedFiles,
+		 /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	removedFiles,
 		 /*[in]*/ const MIKTEXCHAR *		lpszPackageName);
   
 private:
@@ -1577,7 +1584,7 @@ private:
 	      /*[in]*/			...);
   
 private:
-  Thread * pThread;
+  MiKTeX::Core::Thread * pThread;
   
 public:
   virtual
@@ -1594,10 +1601,10 @@ public:
   }
 
 private:
-  tstring repository;
+  MiKTeX::Core::tstring repository;
   
 private:
-  PathName destinationDirectory;
+  MiKTeX::Core::PathName destinationDirectory;
   
 private:
   DbLight dbLight;
@@ -1619,12 +1626,12 @@ private:
 	      /*[in]*/			    ...);
 
 private:
-  tstring
+  MiKTeX::Core::tstring
   MakeUrl (/*[in]*/ const MIKTEXCHAR * lpszBase,
 	   /*[in]*/ const MIKTEXCHAR * lpszRel);
 
 private:
-  tstring
+  MiKTeX::Core::tstring
   MakeUrl (/*[in]*/ const MIKTEXCHAR * lpszRel);
 
 private:
@@ -1643,7 +1650,7 @@ private:
 	trace_mpm->WriteLine (T_("libmpm"), T_("client wants to cancel"));
 	trace_mpm->WriteLine (T_("libmpm"),
 			      T_("throwing OperationCancelledException"));
-	throw OperationCancelledException ();
+	throw MiKTeX::Core::OperationCancelledException ();
       }
   }
 
@@ -1654,16 +1661,16 @@ private:
   ProgressInfo progressInfo;
 
 private:
-  MiKTeXException threadMiKTeXException;
+  MiKTeX::Core::MiKTeXException threadMiKTeXException;
   
 private:
   clock_t timeStarted;
   
 private:
-  vector<tstring> toBeInstalled;
+  std::vector<MiKTeX::Core::tstring> toBeInstalled;
   
 private:
-  vector<tstring> toBeRemoved;
+  std::vector<MiKTeX::Core::tstring> toBeRemoved;
   
 private:
   MIKTEX_DEFINE_LOCK(ProgressIndicator);
@@ -1702,53 +1709,53 @@ private:
 
 private:
   void
-  SetUpPackageDefinitionFiles (/*[in]*/ const PathName & directory);
+  SetUpPackageDefinitionFiles (/*[in]*/ const MiKTeX::Core::PathName & directory);
 
 private:
   void
   HandleObsoletePackageDefinitionFiles
-  (/*[in]*/ const PathName & temporaryDirectory);
+  (/*[in]*/ const MiKTeX::Core::PathName & temporaryDirectory);
   
 private:
   void
-  Download (/*[in]*/ const tstring &	url,
-	    /*[in]*/ const PathName &	dest,
+  Download (/*[in]*/ const MiKTeX::Core::tstring &	url,
+	    /*[in]*/ const MiKTeX::Core::PathName &	dest,
 	    /*[in]*/ size_t		expectedSize = 0);
   
 private:
   void
-  Download (/*[in]*/ const PathName &	fileName,
+  Download (/*[in]*/ const MiKTeX::Core::PathName &	fileName,
 	    /*[in]*/ size_t		expectedSize = 0);
   
 private:
   void
-  RemoveFiles (/*[in]*/ const vector<tstring> & toBeRemoved,
+  RemoveFiles (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeRemoved,
 	       /*[in]*/ bool			silently = false);
   
 private:
   void
-  ExtractFiles (/*[in]*/ const PathName &	archiveFileName,
+  ExtractFiles (/*[in]*/ const MiKTeX::Core::PathName &	archiveFileName,
 		/*[in]*/ ArchiveFileType	archiveFileType);
 
 private:
   void
-  CopyFiles (/*[in]*/ const vector<tstring> & fileList);
+  CopyFiles (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & fileList);
 
 private:
   void
-  AddToFileList (/*[in,out]*/ vector<tstring> &	fileList,
-		 /*[in]*/ const PathName &	fileName)
+  AddToFileList (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> &	fileList,
+		 /*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
 
 private:
   void
-  RemoveFromFileList (/*[in,out]*/ vector<tstring> &	fileList,
-		      /*[in]*/ const PathName &		fileName)
+  RemoveFromFileList (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> &	fileList,
+		      /*[in]*/ const MiKTeX::Core::PathName &		fileName)
     const;
 
 private:
   void
-  CopyPackage (/*[in]*/ const tstring & deploymentName);
+  CopyPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
   
 private:
   virtual
@@ -1768,26 +1775,26 @@ private:
 
 private:
   void
-  RemovePackage (/*[in]*/ const tstring &	deploymentName);
+  RemovePackage (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName);
 
 private:
   void
-  InstallPackage (/*[in]*/ const tstring & deploymentName);
+  InstallPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 private:
   void
-  MyCopyFile (/*[in]*/ const PathName &		source,
-	      /*[in]*/ const PathName &		dest,
+  MyCopyFile (/*[in]*/ const MiKTeX::Core::PathName &		source,
+	      /*[in]*/ const MiKTeX::Core::PathName &		dest,
 	      /*[out]*/ size_t &		size);
   
 private:
   void
-  DownloadPackage (/*[in]*/ const tstring & deploymentName);
+  DownloadPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
   
 private:
   bool
   CheckArchiveFile (/*[in]*/ const MIKTEXCHAR *	lpszPackage,
-		    /*[in]*/ const PathName &	archiveFileName,
+		    /*[in]*/ const MiKTeX::Core::PathName &	archiveFileName,
 		    /*[in]*/ bool		mustBeOk);
 
 #if USE_LOCAL_SERVER
@@ -1796,20 +1803,33 @@ private:
   DelegationRequired ();
 #endif
 
+#if USE_LOCAL_SERVER
 private:
-  auto_ptr<TraceStream> trace_error;
+  void
+  ConnectToServer ();
+#endif
 
 private:
-  auto_ptr<TraceStream> trace_mpm;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
 
 private:
-  SmartPointer<PackageManagerImpl> pManager;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
-  IPackageInstallerCallback * pCallback;
+  MiKTeX::Core::SmartPointer<PackageManagerImpl> pManager;
 
 private:
-  vector<UpdateInfo> updates;
+  PackageInstallerCallback * pCallback;
+
+private:
+  std::vector<UpdateInfo> updates;
+
+private:
+  struct
+  {
+    CComQIPtr<MiKTeXPackageManagerLib::IPackageManager> pManager;
+    CComPtr<MiKTeXPackageManagerLib::IPackageInstaller> pInstaller;
+  } localServer;
 };
 
 /* _________________________________________________________________________
@@ -1854,16 +1874,16 @@ public:
   PackageIteratorImpl (/*[in]*/ PackageManagerImpl * pManager);
 
 private:
-  SmartPointer<PackageManagerImpl> pManager;
+  MiKTeX::Core::SmartPointer<PackageManagerImpl> pManager;
   
 private:
-  vector<PackageInfo> snapshot;
+  std::vector<PackageInfo> snapshot;
   
 private:
-  vector<PackageInfo>::const_iterator iter;
+  std::vector<PackageInfo>::const_iterator iter;
   
 private:
-  tstring requiredBy;
+  MiKTeX::Core::tstring requiredBy;
   
 private:
   unsigned long filter;

@@ -24,7 +24,7 @@
 class FileCopyPage
   : public CPropertyPage,
     public IRunProcessCallback,
-    public IPackageInstallerCallback
+    public PackageInstallerCallback
 {
 private:
   enum { IDD = IDD_FILECOPY };

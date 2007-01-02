@@ -822,13 +822,13 @@ typedef MiKTeX::Core::EnumWrapper<NotificationEnum> Notification;
 
 /* _________________________________________________________________________
 
-   IPackageInstallerCallback
+   PackageInstallerCallback
    _________________________________________________________________________ */
 
 /// Callback interface.
 class
 MIKTEXNOVTABLE
-IPackageInstallerCallback
+PackageInstallerCallback
 {
   /// Reporting. This method is called by the installer if a new message
   /// is available.
@@ -1125,7 +1125,7 @@ public:
   virtual
   void
   MPMCALL
-  SetCallback (/*[in]*/ IPackageInstallerCallback *	pCallback)
+  SetCallback (/*[in]*/ PackageInstallerCallback *	pCallback)
     = 0;
 
   /// Sets the package lists.

@@ -53,6 +53,17 @@ interface IPackageInstallerCallback : IUnknown
 ]
 interface IPackageInstaller : IDispatch
 {
+  [
+    id(1),
+    helpstring("method Add")
+  ]
+  HRESULT Add([in] BSTR packageName, [in] BOOL toBeInstalled);
+
+  [
+    id(2),
+    helpstring("method InstallRemove")
+  ]
+  HRESULT InstallRemove([in] IPackageInstallerCallback * pCallback);
 };
 
 /* _________________________________________________________________________

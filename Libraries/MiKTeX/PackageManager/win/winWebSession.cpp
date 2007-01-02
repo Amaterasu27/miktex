@@ -28,6 +28,10 @@
 #include "win/winWebFile.h"
 #include "win/winWebSession.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 BEGIN_INTERNAL_NAMESPACE;
 
 /* _________________________________________________________________________

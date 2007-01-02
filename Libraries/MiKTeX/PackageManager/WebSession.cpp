@@ -32,6 +32,10 @@ static bool USE_WININET = false;
 #  include "CurlWebSession.h"
 #endif
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 /* _________________________________________________________________________
 
    WebSession::~WebSession

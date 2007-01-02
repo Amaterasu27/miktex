@@ -25,7 +25,7 @@
 
 class PackageListPage
   : public CPropertyPage,
-    public IPackageInstallerCallback
+    public PackageInstallerCallback
 {
 private:
   DECLARE_DYNCREATE(PackageListPage);

@@ -25,6 +25,10 @@
 
 #include "win/winCabExtractor.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 #define ERROR_TITLE T_("Cabinet Extraction Problem")
 #define CRLF T_("\r\n")
 

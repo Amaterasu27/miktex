@@ -62,14 +62,14 @@ public:
   }
 
 public:
-  tstring
+  MiKTeX::Core::tstring
   GetCurlErrorString (/*[in]*/ CURLcode code)
     const
   {
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_easy_strerror(code));
 #else
-    tstring str = T_("The cURL easy interface returned error code ");
+    MiKTeX::Core::tstring str = T_("The cURL easy interface returned error code ");
     str += NUMTOSTR(code);
     return (str);
 #endif
@@ -105,13 +105,13 @@ private:
 		 /*[in]*/ void *		pv);
 
 private:
-  tstring proxyPort;
+  MiKTeX::Core::tstring proxyPort;
 
 private:
-  tstring userPassword;
+  MiKTeX::Core::tstring userPassword;
 
 private:
-  auto_ptr<TraceStream> trace_curl;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_curl;
 };
 
 END_INTERNAL_NAMESPACE;

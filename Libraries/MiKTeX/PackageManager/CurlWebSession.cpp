@@ -28,6 +28,10 @@
 #include "CurlWebSession.h"
 #include "CurlWebFile.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 const long DEFAULT_CONNECTION_TIMEOUT_SECONDS = 30;
 const long DEFAULT_FTP_RESPONSE_TIMEOUT_SECONDS = 30;
 const long DEFAULT_TIMEOUT_SECONDS = 60 * 60;

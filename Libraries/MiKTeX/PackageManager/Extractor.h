@@ -63,7 +63,7 @@ public:
   }
 };
 
-typedef EnumWrapper<ArchiveFileTypeEnum> ArchiveFileType;
+typedef MiKTeX::Core::EnumWrapper<ArchiveFileTypeEnum> ArchiveFileType;
 
 /* _________________________________________________________________________
 
@@ -110,8 +110,8 @@ public:
 public:
   virtual
   void
-  Extract (/*[in]*/ const PathName &		path,
-	   /*[in]*/ const PathName &		destDir,
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &		path,
+	   /*[in]*/ const MiKTeX::Core::PathName &		destDir,
 	   /*[in]*/ bool			makeDirectories,
 	   /*[in]*/ IExtractCallback *		pCallback,
 	   /*[in]*/ const MIKTEXCHAR *		lpszPrefix)

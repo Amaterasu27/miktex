@@ -21,14 +21,14 @@
 
 #include "StdAfx.h"
 
-#if defined(MIKTEX_WINDOWS) && defined(USE_LOCAL_SERVER)
-#  import "mpm.tlb" raw_interfaces_only
-#endif
-
 #include "internal.h"
 
 #include "Extractor.h"
 #include "TpmParser.h"
+
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
 
 #define LF T_("\n")
 
@@ -163,7 +163,7 @@ PackageInstallerImpl::PackageInstallerImpl
 
 void
 PackageInstallerImpl::SetCallback
-(/*[in]*/ IPackageInstallerCallback * pCallback)
+(/*[in]*/ PackageInstallerCallback * pCallback)
 {
   this->pCallback = pCallback;
 }
@@ -703,8 +703,20 @@ MIKTEXCALLBACK
 PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  HRESULT hr = E_FAIL;
+#endif
   try
     {
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+      hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (FAILED(hr))
+	{
+	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::FindUpdatesThread"),
+			   T_("Cannot start updater thread."),
+			   NUMTOSTR(hr));
+	}
+#endif
       This->FindUpdates ();
       This->progressInfo.ready = true;
       This->Notify ();
@@ -721,6 +733,12 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
       This->progressInfo.numErrors += 1;
       This->threadMiKTeXException = e;
     }
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  if (SUCCEEDED(hr))
+    {
+      CoUninitialize ();
+    }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -1608,23 +1626,20 @@ PackageInstallerImpl::CheckArchiveFile
 
 /* _________________________________________________________________________
 
-   ConnectToServer
+   PackageInstallerImpl::ConnectToServer
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
-
-CComQIPtr<MiKTeXPackageManagerLib::IPackageManager> pManagerSvr;
-CComPtr<MiKTeXPackageManagerLib::IPackageInstaller> pInstallerSvr;
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 void
-ConnectToServer ()
+PackageInstallerImpl::ConnectToServer ()
 {
-  if (pInstallerSvr == 0)
+  if (localServer.pInstaller == 0)
     {
-      if (pManagerSvr == 0)
+      if (localServer.pManager == 0)
 	{
 	  HRESULT hr =
-	    pManagerSvr.CoCreateInstance
+	    localServer.pManager.CoCreateInstance
 	    (__uuidof(MiKTeXPackageManagerLib::PackageManager),
 	     0,
 	     CLSCTX_LOCAL_SERVER);
@@ -1635,7 +1650,8 @@ ConnectToServer ()
 			       NUMTOSTR(hr));
 	    }
 	}
-      HRESULT hr = pManagerSvr->CreateInstaller(&pInstallerSvr);
+      HRESULT hr =
+	localServer.pManager->CreateInstaller(&localServer.pInstaller);
       if (FAILED(hr))
 	{
 	  FATAL_MPM_ERROR (T_("ConnectToServer"),
@@ -1660,6 +1676,30 @@ PackageInstallerImpl::InstallRemove ()
   if (DelegationRequired())
     {
       ConnectToServer ();
+      for (vector<tstring>::const_iterator it = toBeInstalled.begin();
+	   it != toBeInstalled.end();
+	   ++ it)
+	{
+	  HRESULT hr = localServer.pInstaller->Add(CT2CW(it->c_str()), TRUE);
+	  if (FAILED(hr))
+	    {
+	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+			       T_("Cannot start service."),
+			       NUMTOSTR(hr));
+	    }
+	}
+      for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+	   it != toBeInstalled.end();
+	   ++ it)
+	{
+	  HRESULT hr = localServer.pInstaller->Add(CT2CW(it->c_str()), FALSE);
+	  if (FAILED(hr))
+	    {
+	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+			       T_("Cannot start service."),
+			       NUMTOSTR(hr));
+	    }
+	}
       FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
 		       T_("Unimplemented: local server"),
 		       0);
@@ -1808,8 +1848,20 @@ MIKTEXCALLBACK
 PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  HRESULT hr = E_FAIL;
+#endif
   try
     {
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+      hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (FAILED(hr))
+	{
+	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemoveThread"),
+			   T_("Cannot start installer thread."),
+			   NUMTOSTR(hr));
+	}
+#endif
       This->InstallRemove ();
       This->progressInfo.ready = true;
       This->Notify ();
@@ -1826,6 +1878,12 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
       This->progressInfo.numErrors += 1;
       This->threadMiKTeXException = e;
     }
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  if (SUCCEEDED(hr))
+    {
+      CoUninitialize ();
+    }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -1970,8 +2028,20 @@ MIKTEXCALLBACK
 PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  HRESULT hr = E_FAIL;
+#endif
   try
     {
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+      hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (FAILED(hr))
+	{
+	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::DownloadThread"),
+			   T_("Cannot start downloader thread."),
+			   NUMTOSTR(hr));
+	}
+#endif
       This->Download ();
       This->progressInfo.ready = true;
       This->Notify ();
@@ -1988,6 +2058,12 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
       This->progressInfo.numErrors += 1;
       This->threadMiKTeXException = e;
     }
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  if (SUCCEEDED(hr))
+    {
+      CoUninitialize ();
+    }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -2477,9 +2553,13 @@ bool
 PackageInstallerImpl::DelegationRequired ()
 {
 #if defined(MIKTEX_WINDOWS)
+#  if ! defined(MIKTEX_STATIC)
+  return (true);		// test
+#  else
   return (IsWindowsVista()
 	  && SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
 	  && ! SessionWrapper(true)->RunningAsAdministrator());
+#  endif
 #else
   return (false);
 #endif

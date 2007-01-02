@@ -38,11 +38,11 @@ public:
   
 public:
   void
-  Parse (/*[in]*/ const PathName &	path);
+  Parse (/*[in]*/ const MiKTeX::Core::PathName &	path);
 
 public:
   void
-  Parse (/*[in]*/ const PathName &	path,
+  Parse (/*[in]*/ const MiKTeX::Core::PathName &	path,
 	 /*[in]*/ const MIKTEXCHAR *	lpszTeXMFPrefix);
   
   // get the result
@@ -76,8 +76,8 @@ private:
   
 private:
   void
-  GetFiles (/*[in]*/ const tstring &	str,
-	    /*[in]*/ vector<tstring> &	files);
+  GetFiles (/*[in]*/ const MiKTeX::Core::tstring &	str,
+	    /*[in]*/ std::vector<MiKTeX::Core::tstring> &	files);
   
   // the result
 private:
@@ -85,24 +85,24 @@ private:
   
   // contents of current element
 private:
-  tstring * pCurrent;
+  MiKTeX::Core::tstring * pCurrent;
   
   // general purpose buffer
 private:
-  tstring tempString;
+  MiKTeX::Core::tstring tempString;
   
   // element stack
 private:
-  stack<tstring> elementStack;
+  std::stack<MiKTeX::Core::tstring> elementStack;
   
 private:
   void * pParser;
 
 private:
-  tstring texMFPrefix;
+  MiKTeX::Core::tstring texMFPrefix;
 
 private:
-  auto_ptr<TraceStream> traceError;
+  std::auto_ptr<MiKTeX::Core::TraceStream> traceError;
 };
 
 END_INTERNAL_NAMESPACE;

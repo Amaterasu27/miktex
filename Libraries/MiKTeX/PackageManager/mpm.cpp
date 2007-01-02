@@ -31,6 +31,10 @@
 
 #include "mpm-version.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 tstring PackageManagerImpl::proxyUser;
 tstring PackageManagerImpl::proxyPassword;
 

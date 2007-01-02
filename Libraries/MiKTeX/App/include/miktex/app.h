@@ -72,7 +72,7 @@ MIKTEXAPP_BEGIN_NAMESPACE;
 class
 Application
   : public MiKTeX::Core::IFindFileCallback,
-    public MiKTeX::Packages::IPackageInstallerCallback
+    public MiKTeX::Packages::PackageInstallerCallback
 {
 
   /* _______________________________________________________________________

@@ -35,7 +35,7 @@ const SHORT PROGRESS_MAX = 1000;
 class UpdateDialogImpl
   : public CDialog,
     public IRunProcessCallback,
-    public IPackageInstallerCallback
+    public PackageInstallerCallback
 {
 protected:
   DECLARE_MESSAGE_MAP();
@@ -653,8 +653,17 @@ UpdateDialogImpl::WorkerThread (/*[in]*/ void * pParam)
 {
   UpdateDialogImpl * This = reinterpret_cast<UpdateDialogImpl*>(pParam);
 
+  HRESULT hr = E_FAIL;
+
   try
     {
+      hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (FAILED(hr))
+	{
+	  FATAL_MIKTEX_ERROR (T_("UpdateDialogImpl::WorkerThread"),
+			      T_("Cannot start worker thread."),
+			      0);
+	}
       This->DoTheUpdate ();
     }
   catch (const MiKTeXException & e)
@@ -667,6 +676,11 @@ UpdateDialogImpl::WorkerThread (/*[in]*/ void * pParam)
     }
 
   This->sharedData.ready = true;
+
+  if (SUCCEEDED(hr))
+    {
+      CoUninitialize ();
+    }
 
   try
     {

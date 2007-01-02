@@ -28,7 +28,7 @@
 class FileCopyPage
   : public CPropertyPage,
     public IRunProcessCallback,
-    public IPackageInstallerCallback
+    public PackageInstallerCallback
 {
 private:
   DECLARE_DYNCREATE(FileCopyPage);

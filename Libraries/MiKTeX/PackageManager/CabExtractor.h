@@ -42,8 +42,8 @@ public:
 public:
   virtual
   void
-  Extract (/*[in]*/ const PathName &	cabinetPath,
-	   /*[in]*/ const PathName &	destDir,
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool		makeDirectories,
 	   /*[in]*/ IExtractCallback *	pCallback,
 	   /*[in]*/ const MIKTEXCHAR *	lpszPrefix);
@@ -132,15 +132,15 @@ private:
       : pFile (0)
     {
     }
-    tstring		fileName;
-    FILE *		pFile;
+    MiKTeX::Core::tstring	fileName;
+    FILE *			pFile;
   };
 
 private:
   mspack_system mspackSystem;
 
 private:
-  auto_ptr<TraceStream> traceStream;
+  std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
 };
 
 END_INTERNAL_NAMESPACE;

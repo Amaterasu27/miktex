@@ -57,7 +57,7 @@ public:
 public:
   static
   void
-  GetLastErrorMessage (/*[out]*/ tstring &	message);
+  GetLastErrorMessage (/*[out]*/ MiKTeX::Core::tstring &	message);
 
 public:
   static

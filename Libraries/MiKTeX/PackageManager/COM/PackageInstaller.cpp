@@ -20,7 +20,13 @@
    USA. */
 
 #include "StdAfx.h"
+
+#include "internal.h"
+
 #include "COM/PackageInstaller.h"
+
+using namespace MiKTeX::Core;
+using namespace std;
 
 /* _________________________________________________________________________
 
@@ -43,4 +49,37 @@ PackageInstallerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 	}
     }
   return (S_FALSE);
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::Add
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+PackageInstallerCOM::Add (/*[in]*/ BSTR packageName,
+			  /*[in]*/ BOOL toBeInstalled)
+{
+  if (toBeInstalled)
+    {
+      packagesToBeInstalled.push_back (tstring(CW2CT(packageName)));
+    }
+  else
+    {
+      packagesToBeRemoved.push_back (tstring(CW2CT(packageName)));
+    }
+  return (S_OK);
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::InstallRemove
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+PackageInstallerCOM::InstallRemove
+(/*[in]*/ IPackageInstallerCallback * pCallback)
+{
+  this->pCallback = pCallback;
+  return (E_NOTIMPL);
 }

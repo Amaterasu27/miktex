@@ -94,3 +94,7 @@ using stdext::hash_set;
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+#  import "mpm.tlb" raw_interfaces_only
+#endif

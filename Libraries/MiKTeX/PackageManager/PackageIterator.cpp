@@ -23,6 +23,10 @@
 
 #include "internal.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 /* _________________________________________________________________________
 
    PackageIteratorImpl::PackageIteratorImpl

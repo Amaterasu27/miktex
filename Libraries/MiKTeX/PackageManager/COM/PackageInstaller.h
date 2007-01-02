@@ -68,4 +68,19 @@ public:
   FinalRelease ()
   {
   }
+
+public:
+  STDMETHOD(Add) (/*[in]*/ BSTR packageName, /*[in]*/ BOOL toBeInstalled);
+
+public:
+  STDMETHOD(InstallRemove) (/*[in]*/ IPackageInstallerCallback * pCallback);
+
+private:
+  std::vector<MiKTeX::Core::tstring> packagesToBeInstalled;
+
+private:
+  std::vector<MiKTeX::Core::tstring> packagesToBeRemoved;
+
+private:
+  CComPtr<IPackageInstallerCallback> pCallback;
 };

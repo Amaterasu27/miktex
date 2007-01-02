@@ -25,6 +25,10 @@
 
 #include "CabExtractor.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 /* _________________________________________________________________________
 
    CabExtractor::Open

@@ -97,14 +97,14 @@ private:
   ReadInformationals ();
 
 private:
-  tstring
+  MiKTeX::Core::tstring
   GetCurlErrorString (/*[in]*/ CURLMcode code)
     const
   {
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_multi_strerror(code));
 #else
-    tstring str = T_("The CURL multi interface returned error code ");
+    MiKTeX::Core::tstring str = T_("The CURL multi interface returned error code ");
     str += NUMTOSTR(code);
     return (str);
 #endif
@@ -120,10 +120,10 @@ private:
   CurlWebSession * pSession;
 
 private:
-  tstring url;
+  MiKTeX::Core::tstring url;
 
 private:
-  vector<char> buffer;
+  std::vector<char> buffer;
 
 private:
   int runningHandles;
@@ -132,7 +132,7 @@ private:
   IProgressNotify_ * pIProgressNotify;
 
 private:
-  auto_ptr<TraceStream> trace_mpm;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 };
 
 END_INTERNAL_NAMESPACE;

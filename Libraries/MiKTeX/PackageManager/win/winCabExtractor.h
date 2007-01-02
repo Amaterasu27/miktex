@@ -37,8 +37,8 @@ public:
 public:
   virtual
   void
-  Extract (/*[in]*/ const PathName &	cabinetPath,
-	   /*[in]*/ const PathName &	destDir,
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool		makeDirectories,
 	   /*[in]*/ IExtractCallback *	pCallback,
 	   /*[in]*/ const MIKTEXCHAR *	lpszPrefix);
@@ -85,7 +85,7 @@ private:
   ERF erf;
 
 private:
-  PathName destinationDirectory;
+  MiKTeX::Core::PathName destinationDirectory;
 
 private:
   MiKTeX::Core::tstring prefixToBeStripped;
@@ -94,13 +94,13 @@ private:
   size_t fileCount;
 
 private:
-  auto_ptr<TraceStream> trace_error;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> trace_mpm;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
-  static map<int, PathName> openFiles;
+  static std::map<int, MiKTeX::Core::PathName> openFiles;
 };
 
 END_INTERNAL_NAMESPACE;

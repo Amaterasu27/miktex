@@ -26,6 +26,10 @@
 #include "CabExtractor.h"
 #include "TarBzip2Extractor.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 #if defined (MIKTEX_WINDOWS)
 #  include "win/winCabExtractor.h"
 static bool USE_WINDOWS_CABEXTRACTOR = false;

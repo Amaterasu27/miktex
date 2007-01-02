@@ -52,13 +52,13 @@ private:
   HINTERNET hUrl;
 
 private:
-  auto_ptr<TraceStream> trace_error;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> trace_mpm;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
-  tstring url; 
+  MiKTeX::Core::tstring url; 
 };
 
 END_INTERNAL_NAMESPACE;

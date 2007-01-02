@@ -25,6 +25,10 @@
 
 #include "TarBzip2Extractor.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
+using namespace std;
+
 /* _________________________________________________________________________
 
    TarBzip2Extractor::TarBzip2Extractor
