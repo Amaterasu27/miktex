@@ -26,6 +26,59 @@
 #include "COM/PackageManager.h"
 #include "COM/PackageInstaller.h"
 
+using namespace MiKTeX::Core;
+using namespace std;
+
+/* _________________________________________________________________________
+
+   PackageManagerCOM::PackageManagerCOM
+   _________________________________________________________________________ */
+
+PackageManagerCOM::PackageManagerCOM ()
+  : initialized (false)
+{
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerCOM::~PackageManagerCOM
+   _________________________________________________________________________ */
+
+PackageManagerCOM::~PackageManagerCOM ()
+{
+  try
+    {
+      if (initialized)
+	{
+	  pSession.Reset ();
+	}
+    }
+  catch (const exception &)
+    {
+    }
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerCOM::FinalRelease
+   _________________________________________________________________________ */
+
+void
+PackageManagerCOM::FinalRelease ()
+{
+  try
+    {
+      if (initialized)
+	{
+	  pSession.Reset ();
+	}
+    }
+  catch (const exception &)
+    {
+    }
+  initialized = false;
+}
+
 /* _________________________________________________________________________
 
    PackageManagerCOM::InterfaceSupportsErrorInfo
@@ -58,16 +111,30 @@ STDMETHODIMP
 PackageManagerCOM::CreateInstaller (/*[out,retval]*/
 				    IPackageInstaller ** ppInstaller)
 {
-  CComObject<PackageInstallerCOM> * pInstaller = 0;
-  HRESULT hr = CComObject<PackageInstallerCOM>::CreateInstance(&pInstaller);
-  if (FAILED(hr))
+  try
     {
-      return (hr);
+      CComObject<PackageInstallerCOM> * pInstaller = 0;
+      HRESULT hr
+	= CComObject<PackageInstallerCOM>::CreateInstance(&pInstaller);
+      if (FAILED(hr))
+	{
+	  return (hr);
+	}
+      
+      // increment the reference count; decrement it at the end of the
+      // block
+      CComPtr<IUnknown> pUnk (pInstaller->GetUnknown());
+
+      if (! initialized)
+	{
+	  pSession.CreateSession (Session::InitInfo(T_("mpmsvc")));
+	  initialized = true;
+	}
+
+      return (pInstaller->QueryInterface(ppInstaller));
     }
-
-  // increment the reference count; decrement it at the end of the
-  // block
-  CComPtr<IUnknown> pUnk (pInstaller->GetUnknown());
-
-  return (pInstaller->QueryInterface(ppInstaller));
+  catch (const exception &)
+    {
+      return (E_FAIL);
+    }
 }

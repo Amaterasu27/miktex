@@ -36,12 +36,17 @@ class ATL_NO_VTABLE PackageManagerCOM
 			 /*wMinor =*/ 0>
 {
 public:
-  PackageManagerCOM ()
-  {
-  }
+  PackageManagerCOM ();
+
+public:
+  virtual
+  ~PackageManagerCOM ();
 
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEMANAGER);
+
+public:
+  DECLARE_CLASSFACTORY_SINGLETON(PackageManagerCOM);
 
 public:
   BEGIN_COM_MAP(PackageManagerCOM)
@@ -65,13 +70,17 @@ public:
 
 public:
   void
-  FinalRelease ()
-  {
-  }
+  FinalRelease ();
 
 public:
   STDMETHOD(CreateInstaller) (/*[out,retval]*/
 			      IPackageInstaller ** ppInstaller);
+
+private:
+  bool initialized;
+
+private:
+  MiKTeX::Core::SessionWrapper pSession;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(PackageManager), PackageManagerCOM);
