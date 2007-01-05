@@ -26,7 +26,37 @@
 #include "COM/PackageInstaller.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Packages;
 using namespace std;
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::PackageInstallerCOM
+   _________________________________________________________________________ */
+
+PackageInstallerCOM::PackageInstallerCOM ()
+{
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::~PackageInstallerCOM
+   _________________________________________________________________________ */
+
+
+PackageInstallerCOM::~PackageInstallerCOM ()
+{
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::FinalRelease
+   _________________________________________________________________________ */
+
+void
+PackageInstallerCOM::FinalRelease ()
+{
+}
 
 /* _________________________________________________________________________
 
@@ -49,6 +79,70 @@ PackageInstallerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 	}
     }
   return (S_FALSE);
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::ReportLine
+   _________________________________________________________________________ */
+
+void
+MPMCALL
+PackageInstallerCOM::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+{
+  if (pCallback == 0)
+    {
+      return;
+    }
+  HRESULT hr = pCallback->ReportLine(CT2CW(lpszLine));
+  if (FAILED(hr))
+    {
+      // todo
+    }
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::OnRetryableError
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageInstallerCOM::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+{
+  if (pCallback == 0)
+    {
+      return (true);
+    }
+  BOOL doContinue;
+  HRESULT hr = pCallback->OnRetryableError(CT2CW(lpszMessage), &doContinue);
+  if (FAILED(hr))
+    {
+      return (false);
+    }
+  return (doContinue ? true : false);
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerCOM::OnProgress
+   _________________________________________________________________________ */
+
+bool
+MPMCALL
+PackageInstallerCOM::OnProgress (/*[in]*/ Notification	nf)
+{
+  if (pCallback == 0)
+    {
+      return (true);
+    }
+  BOOL doContinue;
+  HRESULT hr = pCallback->OnProgress(nf.Get(), &doContinue);
+  if (FAILED(hr))
+    {
+      return (false);
+    }
+  return (doContinue ? true : false);
 }
 
 /* _________________________________________________________________________
@@ -80,6 +174,32 @@ STDMETHODIMP
 PackageInstallerCOM::InstallRemove
 (/*[in]*/ IPackageInstallerCallback * pCallback)
 {
+  HRESULT hr;
   this->pCallback = pCallback;
-  return (E_NOTIMPL);
+  try
+    {
+      if (pInstaller.get() == 0)
+	{
+	  if (pManager.Get() == 0)
+	    {
+	      pManager.Create ();
+	    }
+	  pInstaller = pManager->CreateInstaller();
+	}
+      pInstaller->SetFileLists (packagesToBeInstalled,
+				packagesToBeRemoved);
+      pInstaller->SetCallback (this);
+      pInstaller->InstallRemove ();
+#if 0
+      // todo
+      RunIniTeXMF
+#endif
+      hr = S_OK;
+    }
+  catch (const exception &)
+    {
+      hr = E_FAIL;
+    }
+  this->pCallback = 0;
+  return (hr);
 }

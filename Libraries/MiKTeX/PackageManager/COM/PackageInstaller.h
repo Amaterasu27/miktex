@@ -28,6 +28,7 @@
 class ATL_NO_VTABLE PackageInstallerCOM
   : public CComObjectRootEx<CComSingleThreadModel>,
     public CComCoClass<PackageInstallerCOM, &CLSID_PackageInstaller>,
+    public MiKTeX::Packages::PackageInstallerCallback,
     public ISupportErrorInfo,
     public IDispatchImpl<IPackageInstaller,
 			 &IID_IPackageInstaller,
@@ -36,9 +37,11 @@ class ATL_NO_VTABLE PackageInstallerCOM
 			 /*wMinor =*/ 0>
 {
 public:
-  PackageInstallerCOM ()
-  {
-  }
+  PackageInstallerCOM ();
+
+public:
+  virtual
+  ~PackageInstallerCOM ();
 
 public:  
   DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEINSTALLER);
@@ -65,9 +68,25 @@ public:
   
 public:
   void
-  FinalRelease ()
-  {
-  }
+  FinalRelease ();
+
+public:
+  virtual
+  void
+  MPMCALL
+  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+
+public:
+  virtual
+  bool
+  MPMCALL
+  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+
+public:
+  virtual
+  bool
+  MPMCALL
+  OnProgress (/*[in]*/ MiKTeX::Packages::Notification	nf);
 
 public:
   STDMETHOD(Add) (/*[in]*/ BSTR packageName, /*[in]*/ BOOL toBeInstalled);
@@ -83,4 +102,10 @@ private:
 
 private:
   CComPtr<IPackageInstallerCallback> pCallback;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
+
+private:
+  std::auto_ptr<MiKTeX::Packages::PackageInstaller> pInstaller;
 };

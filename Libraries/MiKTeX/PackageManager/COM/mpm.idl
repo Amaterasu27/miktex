@@ -36,6 +36,22 @@ import "ocidl.idl";
 ]
 interface IPackageInstallerCallback : IUnknown
 {
+  [
+    helpstring("method ReportLine")
+  ]
+  HRESULT ReportLine ([in] BSTR line);
+
+  [
+    helpstring("method OnRetryableError")
+  ]
+  HRESULT
+  OnRetryableError ([in] BSTR message, [out,retval] BOOL * pDoContinue);
+
+  [
+    helpstring("method OnProgress")
+  ]
+  HRESULT
+  OnProgress ([in] LONG nf, [out,retval] BOOL * pDoContinue);
 };
 
 /* _________________________________________________________________________
@@ -57,13 +73,15 @@ interface IPackageInstaller : IDispatch
     id(1),
     helpstring("method Add")
   ]
-  HRESULT Add([in] BSTR packageName, [in] BOOL toBeInstalled);
+  HRESULT
+  Add ([in] BSTR packageName, [in] BOOL toBeInstalled);
 
   [
     id(2),
     helpstring("method InstallRemove")
   ]
-  HRESULT InstallRemove([in] IPackageInstallerCallback * pCallback);
+  HRESULT
+  InstallRemove ([in] IPackageInstallerCallback * pCallback);
 };
 
 /* _________________________________________________________________________
@@ -85,7 +103,8 @@ interface IPackageManager : IDispatch
     id(1),
     helpstring("method CreateInstaller")
   ]
-  HRESULT CreateInstaller([out,retval] IPackageInstaller ** ppInstaller);
+  HRESULT
+  CreateInstaller ([out,retval] IPackageInstaller ** ppInstaller);
 };
 
 /* _________________________________________________________________________
