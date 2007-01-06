@@ -23,28 +23,28 @@
 
 #include "internal.h"
 
-#include "COM/PackageManager.h"
-#include "COM/PackageInstaller.h"
+#include "COM/comPackageManager.h"
+#include "COM/comPackageInstaller.h"
 
 using namespace MiKTeX::Core;
 using namespace std;
 
 /* _________________________________________________________________________
 
-   PackageManagerCOM::PackageManagerCOM
+   comPackageManager::comPackageManager
    _________________________________________________________________________ */
 
-PackageManagerCOM::PackageManagerCOM ()
+comPackageManager::comPackageManager ()
   : initialized (false)
 {
 }
 
 /* _________________________________________________________________________
 
-   PackageManagerCOM::~PackageManagerCOM
+   comPackageManager::~comPackageManager
    _________________________________________________________________________ */
 
-PackageManagerCOM::~PackageManagerCOM ()
+comPackageManager::~comPackageManager ()
 {
   try
     {
@@ -60,11 +60,11 @@ PackageManagerCOM::~PackageManagerCOM ()
 
 /* _________________________________________________________________________
 
-   PackageManagerCOM::FinalRelease
+   comPackageManager::FinalRelease
    _________________________________________________________________________ */
 
 void
-PackageManagerCOM::FinalRelease ()
+comPackageManager::FinalRelease ()
 {
   try
     {
@@ -81,11 +81,11 @@ PackageManagerCOM::FinalRelease ()
 
 /* _________________________________________________________________________
 
-   PackageManagerCOM::InterfaceSupportsErrorInfo
+   comPackageManager::InterfaceSupportsErrorInfo
    _________________________________________________________________________ */
 
 STDMETHODIMP
-PackageManagerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
+comPackageManager::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
@@ -104,18 +104,18 @@ PackageManagerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 
 /* _________________________________________________________________________
 
-   PackageManagerCOM::CreateInstaller
+   comPackageManager::CreateInstaller
    _________________________________________________________________________ */
 
 STDMETHODIMP
-PackageManagerCOM::CreateInstaller (/*[out,retval]*/
+comPackageManager::CreateInstaller (/*[out,retval]*/
 				    IPackageInstaller ** ppInstaller)
 {
   try
     {
-      CComObject<PackageInstallerCOM> * pInstaller = 0;
+      CComObject<comPackageInstaller> * pInstaller = 0;
       HRESULT hr
-	= CComObject<PackageInstallerCOM>::CreateInstance(&pInstaller);
+	= CComObject<comPackageInstaller>::CreateInstance(&pInstaller);
       if (FAILED(hr))
 	{
 	  return (hr);

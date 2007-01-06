@@ -586,6 +586,40 @@ private:
 
 /* _________________________________________________________________________
 
+   AutoCoTaskMem
+   _________________________________________________________________________ */
+
+class CoTaskMemFree_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    CoTaskMemFree (p);
+  }
+};
+
+typedef AutoResource<void *, CoTaskMemFree_> AutoCoTaskMem;
+
+/* _________________________________________________________________________
+
+   AutoSysString
+   _________________________________________________________________________ */
+
+class SysFreeString_
+{
+public:
+  void
+  operator() (/*[in]*/ BSTR bstr)
+  {
+    SysFreeString (bstr);
+  }
+};
+
+typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
+
+/* _________________________________________________________________________
+
    TempFile
    _________________________________________________________________________ */
 
@@ -1166,6 +1200,11 @@ public:
 
 public:
   static MiKTeX::Core::tstring proxyPassword;
+
+#if USE_LOCAL_SERVER
+public:
+  static bool localServer;
+#endif
 };
 
 /* _________________________________________________________________________
@@ -1800,7 +1839,7 @@ private:
 #if USE_LOCAL_SERVER
 private:
   bool
-  DelegationRequired ();
+  UseLocalServer ();
 #endif
 
 #if USE_LOCAL_SERVER

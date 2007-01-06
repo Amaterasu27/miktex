@@ -25,9 +25,9 @@
 
 #include "mpmidl.h"
 
-class ATL_NO_VTABLE PackageManagerCOM
+class ATL_NO_VTABLE comPackageManager
   : public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<PackageManagerCOM, &CLSID_PackageManager>,
+    public CComCoClass<comPackageManager, &CLSID_PackageManager>,
     public ISupportErrorInfo,
     public IDispatchImpl<IPackageManager,
 			 &IID_IPackageManager,
@@ -36,20 +36,20 @@ class ATL_NO_VTABLE PackageManagerCOM
 			 /*wMinor =*/ 0>
 {
 public:
-  PackageManagerCOM ();
+  comPackageManager ();
 
 public:
   virtual
-  ~PackageManagerCOM ();
+  ~comPackageManager ();
 
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEMANAGER);
 
 public:
-  DECLARE_CLASSFACTORY_SINGLETON(PackageManagerCOM);
+  DECLARE_CLASSFACTORY_SINGLETON(comPackageManager);
 
 public:
-  BEGIN_COM_MAP(PackageManagerCOM)
+  BEGIN_COM_MAP(comPackageManager)
     COM_INTERFACE_ENTRY(IPackageManager)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
@@ -83,4 +83,4 @@ private:
   MiKTeX::Core::SessionWrapper pSession;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(PackageManager), PackageManagerCOM);
+OBJECT_ENTRY_AUTO(__uuidof(PackageManager), comPackageManager);

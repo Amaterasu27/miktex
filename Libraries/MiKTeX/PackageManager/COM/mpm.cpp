@@ -20,6 +20,7 @@
    USA. */
 
 #include "StdAfx.h"
+#include "internal.h"
 #include "Resource.h"
 #include "mpmidl.h"
 
@@ -56,6 +57,7 @@ DllMain (/*[in]*/ HINSTANCE	hInstance,
 	 /*[in]*/ LPVOID	lpReserved)
 {
   hInstance;
+  PackageManagerImpl::localServer = true;
   return (_AtlModule.DllMain(dwReason, lpReserved));
 }
 

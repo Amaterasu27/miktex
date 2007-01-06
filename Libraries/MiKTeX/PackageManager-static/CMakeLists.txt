@@ -35,12 +35,6 @@ include_directories(BEFORE
 set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.cpp
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.h
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/RepositorySoap.nsmap
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryC.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryH.h
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.h
-  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryStub.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CabExtractor.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CabExtractor.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebFile.cpp
@@ -51,6 +45,7 @@ set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/Extractor.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageInstaller.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageIterator.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageManager.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TarBzip2Extractor.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TarBzip2Extractor.h
@@ -62,7 +57,12 @@ set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include/miktex/mpm.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/mpm-version.h
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/mpm.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/RepositorySoap.nsmap
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryC.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryH.h
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.h
+  ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryStub.h
 )
 
 if(NATIVE_WINDOWS)

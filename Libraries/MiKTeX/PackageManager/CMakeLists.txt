@@ -44,6 +44,7 @@ set(${mpm_dll_name}_sources
   Extractor.h
   PackageInstaller.cpp
   PackageIterator.cpp
+  PackageManager.cpp
   StdAfx.h
   TarBzip2Extractor.cpp
   TarBzip2Extractor.h
@@ -55,7 +56,6 @@ set(${mpm_dll_name}_sources
   include/miktex/mpm.h
   internal.h
   mpm-version.h
-  mpm.cpp
 )
 
 if(NATIVE_WINDOWS)
@@ -77,10 +77,10 @@ if(NATIVE_WINDOWS)
     set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
       ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-      COM/PackageInstaller.cpp
-      COM/PackageInstaller.h
-      COM/PackageManager.cpp
-      COM/PackageManager.h
+      COM/comPackageInstaller.cpp
+      COM/comPackageInstaller.h
+      COM/comPackageManager.cpp
+      COM/comPackageManager.h
       COM/mpm.cpp
       COM/mpm.def
     )

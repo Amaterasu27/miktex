@@ -25,9 +25,9 @@
 
 #include "mpmidl.h"
 
-class ATL_NO_VTABLE PackageInstallerCOM
+class ATL_NO_VTABLE comPackageInstaller
   : public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<PackageInstallerCOM, &CLSID_PackageInstaller>,
+    public CComCoClass<comPackageInstaller, &CLSID_PackageInstaller>,
     public MiKTeX::Packages::PackageInstallerCallback,
     public ISupportErrorInfo,
     public IDispatchImpl<IPackageInstaller,
@@ -37,17 +37,17 @@ class ATL_NO_VTABLE PackageInstallerCOM
 			 /*wMinor =*/ 0>
 {
 public:
-  PackageInstallerCOM ();
+  comPackageInstaller ();
 
 public:
   virtual
-  ~PackageInstallerCOM ();
+  ~comPackageInstaller ();
 
 public:  
   DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEINSTALLER);
 
 public:
-  BEGIN_COM_MAP(PackageInstallerCOM)
+  BEGIN_COM_MAP(comPackageInstaller)
     COM_INTERFACE_ENTRY(IPackageInstaller)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
@@ -94,6 +94,12 @@ public:
 public:
   STDMETHOD(InstallRemove) (/*[in]*/ IPackageInstallerCallback * pCallback);
 
+public:
+  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo ** pErrorInfo);
+
+public:
+  STDMETHOD(UpdateDb) ();
+
 private:
   std::vector<MiKTeX::Core::tstring> packagesToBeInstalled;
 
@@ -108,4 +114,7 @@ private:
 
 private:
   std::auto_ptr<MiKTeX::Packages::PackageInstaller> pInstaller;
+
+private:
+  MiKTeX::Core::MiKTeXException lastMiKTeXException;
 };

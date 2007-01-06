@@ -1,4 +1,4 @@
-/* mpm.cpp: MiKTeX Package Manager
+/* PackageManager.cpp: MiKTeX Package Manager
 
    Copyright (C) 2001-2006 Christian Schenk
 
@@ -37,6 +37,10 @@ using namespace std;
 
 tstring PackageManagerImpl::proxyUser;
 tstring PackageManagerImpl::proxyPassword;
+
+#if USE_LOCAL_SERVER
+bool PackageManagerImpl::localServer = false;
+#endif
 
 /* _________________________________________________________________________
 

@@ -24,6 +24,19 @@ import "ocidl.idl";
 
 /* _________________________________________________________________________
    
+   ErrorInfo
+   _________________________________________________________________________ */
+
+typedef struct
+{
+  BSTR message;
+  BSTR info;
+  BSTR sourceFile;
+  int sourceLine;
+} ErrorInfo;
+
+/* _________________________________________________________________________
+   
    IPackageInstallerCallback
    _________________________________________________________________________ */
 
@@ -82,6 +95,20 @@ interface IPackageInstaller : IDispatch
   ]
   HRESULT
   InstallRemove ([in] IPackageInstallerCallback * pCallback);
+
+  [
+    id(3),
+    helpstring("method GetLastError")
+  ]
+  HRESULT
+  GetErrorInfo ([out,retval] ErrorInfo ** pErrorInfo);
+
+  [
+    id(4),
+    helpstring("method UpdateDb")
+  ]
+  HRESULT
+  UpdateDb ();
 };
 
 /* _________________________________________________________________________

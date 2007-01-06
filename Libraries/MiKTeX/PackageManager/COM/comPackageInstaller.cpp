@@ -23,7 +23,7 @@
 
 #include "internal.h"
 
-#include "COM/PackageInstaller.h"
+#include "COM/comPackageInstaller.h"
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
@@ -31,40 +31,40 @@ using namespace std;
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::PackageInstallerCOM
+   comPackageInstaller::comPackageInstaller
    _________________________________________________________________________ */
 
-PackageInstallerCOM::PackageInstallerCOM ()
+comPackageInstaller::comPackageInstaller ()
 {
 }
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::~PackageInstallerCOM
+   comPackageInstaller::~comPackageInstaller
    _________________________________________________________________________ */
 
 
-PackageInstallerCOM::~PackageInstallerCOM ()
+comPackageInstaller::~comPackageInstaller ()
 {
 }
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::FinalRelease
+   comPackageInstaller::FinalRelease
    _________________________________________________________________________ */
 
 void
-PackageInstallerCOM::FinalRelease ()
+comPackageInstaller::FinalRelease ()
 {
 }
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::InterfaceSupportsErrorInfo
+   comPackageInstaller::InterfaceSupportsErrorInfo
    _________________________________________________________________________ */
 
 STDMETHODIMP
-PackageInstallerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
+comPackageInstaller::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
@@ -83,12 +83,12 @@ PackageInstallerCOM::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::ReportLine
+   comPackageInstaller::ReportLine
    _________________________________________________________________________ */
 
 void
 MPMCALL
-PackageInstallerCOM::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+comPackageInstaller::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 {
   if (pCallback == 0)
     {
@@ -103,12 +103,12 @@ PackageInstallerCOM::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::OnRetryableError
+   comPackageInstaller::OnRetryableError
    _________________________________________________________________________ */
 
 bool
 MPMCALL
-PackageInstallerCOM::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+comPackageInstaller::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
 {
   if (pCallback == 0)
     {
@@ -125,12 +125,12 @@ PackageInstallerCOM::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::OnProgress
+   comPackageInstaller::OnProgress
    _________________________________________________________________________ */
 
 bool
 MPMCALL
-PackageInstallerCOM::OnProgress (/*[in]*/ Notification	nf)
+comPackageInstaller::OnProgress (/*[in]*/ Notification	nf)
 {
   if (pCallback == 0)
     {
@@ -147,11 +147,11 @@ PackageInstallerCOM::OnProgress (/*[in]*/ Notification	nf)
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::Add
+   comPackageInstaller::Add
    _________________________________________________________________________ */
 
 STDMETHODIMP
-PackageInstallerCOM::Add (/*[in]*/ BSTR packageName,
+comPackageInstaller::Add (/*[in]*/ BSTR packageName,
 			  /*[in]*/ BOOL toBeInstalled)
 {
   if (toBeInstalled)
@@ -167,11 +167,11 @@ PackageInstallerCOM::Add (/*[in]*/ BSTR packageName,
 
 /* _________________________________________________________________________
 
-   PackageInstallerCOM::InstallRemove
+   comPackageInstaller::InstallRemove
    _________________________________________________________________________ */
 
 STDMETHODIMP
-PackageInstallerCOM::InstallRemove
+comPackageInstaller::InstallRemove
 (/*[in]*/ IPackageInstallerCallback * pCallback)
 {
   HRESULT hr;
@@ -186,8 +186,7 @@ PackageInstallerCOM::InstallRemove
 	    }
 	  pInstaller = pManager->CreateInstaller();
 	}
-      pInstaller->SetFileLists (packagesToBeInstalled,
-				packagesToBeRemoved);
+      pInstaller->SetFileLists (packagesToBeInstalled, packagesToBeRemoved);
       pInstaller->SetCallback (this);
       pInstaller->InstallRemove ();
 #if 0
@@ -196,8 +195,105 @@ PackageInstallerCOM::InstallRemove
 #endif
       hr = S_OK;
     }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("msvsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  this->pCallback = 0;
+  return (hr);
+}
+
+/* _________________________________________________________________________
+
+   comPackageInstaller::GetErrorInfo
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo ** pErrorInfo)
+{
+  if (lastMiKTeXException.what() == 0)
+    {
+      return (E_FAIL);
+    }
+  if (*pErrorInfo == 0)
+    {
+      return (E_INVALIDARG);
+    }
+  *pErrorInfo =
+    reinterpret_cast<ErrorInfo*>(CoTaskMemAlloc(sizeof(**pErrorInfo)));
+  if (*pErrorInfo == 0)
+    {
+      return (E_OUTOFMEMORY);
+    }
+  try
+    {
+      _bstr_t message = lastMiKTeXException.what();
+      _bstr_t info = lastMiKTeXException.GetInfo().c_str();
+      _bstr_t sourceFile = lastMiKTeXException.GetSourceFile().c_str();
+      (*pErrorInfo)->message = message.Detach();
+      (*pErrorInfo)->info = info.Detach();
+      (*pErrorInfo)->sourceFile = sourceFile.Detach();
+      (*pErrorInfo)->sourceLine = lastMiKTeXException.GetSourceLine();
+      return (S_OK);
+    }
+  catch (const _com_error & e)
+    {
+      CoTaskMemFree (*pErrorInfo);
+      return (e.Error());
+    }
   catch (const exception &)
     {
+      CoTaskMemFree (*pErrorInfo);
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageInstaller::UpdateDb
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageInstaller::UpdateDb ()
+{
+  HRESULT hr;
+  try
+    {
+      if (pInstaller.get() == 0)
+	{
+	  if (pManager.Get() == 0)
+	    {
+	      pManager.Create ();
+	    }
+	  pInstaller = pManager->CreateInstaller();
+	}
+      pInstaller->UpdateDb ();
+      hr = S_OK;
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("msvsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
       hr = E_FAIL;
     }
   this->pCallback = 0;

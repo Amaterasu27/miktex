@@ -27,7 +27,7 @@
 #  include <config.h>
 #endif
 
-#include "resource.h"
+#include "Resource.h"
 
 // must be included before Fdi.h (because of HUGE)
 #include <cmath>

@@ -1634,29 +1634,68 @@ PackageInstallerImpl::CheckArchiveFile
 void
 PackageInstallerImpl::ConnectToServer ()
 {
+  const MIKTEXCHAR * MSG_CANNOT_START_SERVER =
+    T_("Cannot start MiKTeX package manager.");
   if (localServer.pInstaller == 0)
     {
       if (localServer.pManager == 0)
 	{
+	  if (IsWindowsVista())
+	    {
+	      WCHAR wszCLSID[50];
+	      if (StringFromGUID2
+		  (__uuidof(MiKTeXPackageManagerLib::PackageManager),
+			    wszCLSID, 
+			    sizeof(wszCLSID) / sizeof(wszCLSID[0]))
+		  < 0)
+		{
+		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+				   MSG_CANNOT_START_SERVER,
+				   0);
+		}
+	      wstring monikerName;
+	      monikerName = L"Elevation:Administrator!new:";
+	      monikerName += wszCLSID;
+	      BIND_OPTS3 bo;
+	      memset (&bo, 0, sizeof(bo));
+	      bo.cbStruct = sizeof(bo);
+	      bo.hwnd = 0;
+	      bo.dwClassContext	= CLSCTX_LOCAL_SERVER;
+	      HRESULT hr =
+		CoGetObject(monikerName.c_str(),
+			    &bo,
+			    __uuidof(MiKTeXPackageManagerLib::IPackageManager),
+			    reinterpret_cast<void**>(&localServer.pManager));
+	      if (FAILED(hr))
+		{
+		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+				   MSG_CANNOT_START_SERVER,
+				   NUMTOSTR(hr));
+		}
+	    }
+	  else
+	    {
+	      HRESULT hr =
+		localServer.pManager.CoCreateInstance
+		(__uuidof(MiKTeXPackageManagerLib::PackageManager),
+		 0,
+		 CLSCTX_LOCAL_SERVER);
+	      if (FAILED(hr))
+		{
+		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+				   MSG_CANNOT_START_SERVER,
+				   NUMTOSTR(hr));
+		}
+	    }
 	  HRESULT hr =
-	    localServer.pManager.CoCreateInstance
-	    (__uuidof(MiKTeXPackageManagerLib::PackageManager),
-	     0,
-	     CLSCTX_LOCAL_SERVER);
+	    localServer.pManager->CreateInstaller(&localServer.pInstaller);
 	  if (FAILED(hr))
 	    {
+	      localServer.pManager.Release ();
 	      FATAL_MPM_ERROR (T_("ConnectToServer"),
-			       T_("Cannot start service."),
+			       MSG_CANNOT_START_SERVER,
 			       NUMTOSTR(hr));
 	    }
-	}
-      HRESULT hr =
-	localServer.pManager->CreateInstaller(&localServer.pInstaller);
-      if (FAILED(hr))
-	{
-	  FATAL_MPM_ERROR (T_("ConnectToServer"),
-			   T_("Cannot start service."),
-			   NUMTOSTR(hr));
 	}
     }
 }
@@ -1673,7 +1712,7 @@ MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
 #if USE_LOCAL_SERVER
-  if (DelegationRequired())
+  if (UseLocalServer())
     {
       ConnectToServer ();
       for (vector<tstring>::const_iterator it = toBeInstalled.begin();
@@ -1683,9 +1722,12 @@ PackageInstallerImpl::InstallRemove ()
 	  HRESULT hr = localServer.pInstaller->Add(CT2CW(it->c_str()), TRUE);
 	  if (FAILED(hr))
 	    {
-	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
-			       T_("Cannot start service."),
-			       NUMTOSTR(hr));
+	      if (FAILED(hr))
+		{
+		  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+				   T_("Cannot start service."),
+				   NUMTOSTR(hr));
+		}
 	    }
 	}
       for (vector<tstring>::const_iterator it = toBeRemoved.begin();
@@ -1700,9 +1742,31 @@ PackageInstallerImpl::InstallRemove ()
 			       NUMTOSTR(hr));
 	    }
 	}
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
-		       T_("Unimplemented: local server"),
-		       0);
+      HRESULT hr = localServer.pInstaller->InstallRemove(0);
+      if (FAILED(hr))
+	{
+	  MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo = 0;
+	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&pErrorInfo);
+	  if (FAILED(hr2))
+	    {
+	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+			       T_("The service failed for some reason."),
+			       NUMTOSTR(hr));
+	    }
+	  AutoCoTaskMem a (pErrorInfo);
+	  {
+	    AutoSysString a (pErrorInfo->message);
+	    AutoSysString b (pErrorInfo->info);
+	    AutoSysString c (pErrorInfo->sourceFile);
+	    Session::FatalMiKTeXError
+	      (T_("PackageInstallerImpl::InstallRemove"),
+	       CW2CT(pErrorInfo->message),
+	       CW2CT(pErrorInfo->info),
+	       CW2CT(pErrorInfo->sourceFile),
+	       pErrorInfo->sourceLine);
+	  }
+	}
+      return;
     }
 #endif
 
@@ -2181,12 +2245,33 @@ MPMCALL
 PackageInstallerImpl::UpdateDb ()
 {
 #if USE_LOCAL_SERVER
-  if (DelegationRequired())
+  if (UseLocalServer())
     {
       ConnectToServer ();
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
-		       T_("Unimplemented: local server"),
-		       0);
+      HRESULT hr = localServer.pInstaller->UpdateDb();
+      if (FAILED(hr))
+	{
+	  MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo = 0;
+	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&pErrorInfo);
+	  if (FAILED(hr2))
+	    {
+	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
+			       T_("The service failed for some reason."),
+			       NUMTOSTR(hr));
+	    }
+	  AutoCoTaskMem a (pErrorInfo);
+	  {
+	    AutoSysString a (pErrorInfo->message);
+	    AutoSysString b (pErrorInfo->info);
+	    AutoSysString c (pErrorInfo->sourceFile);
+	    Session::FatalMiKTeXError (T_("PackageInstallerImpl::UpdateDb"),
+				       CW2CT(pErrorInfo->message),
+				       CW2CT(pErrorInfo->info),
+				       CW2CT(pErrorInfo->sourceFile),
+				       pErrorInfo->sourceLine);
+	  }
+	}
+      return;
     }
 #endif
 
@@ -2544,21 +2629,25 @@ PackageInstallerImpl::Dispose ()
 
 /* _________________________________________________________________________
 
-   PackageInstallerImpl::DelegationRequired
+   PackageInstallerImpl::UseLocalServer
    _________________________________________________________________________ */
 
 #if USE_LOCAL_SERVER
 
 bool
-PackageInstallerImpl::DelegationRequired ()
+PackageInstallerImpl::UseLocalServer ()
 {
+  if (PackageManagerImpl::localServer)
+    {
+      return (false);
+    }
 #if defined(MIKTEX_WINDOWS)
 #  if ! defined(MIKTEX_STATIC)
   return (true);		// test
 #  else
   return (IsWindowsVista()
 	  && SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	  && ! SessionWrapper(true)->RunningAsAdministrator());
+ 	  && ! SessionWrapper(true)->RunningAsAdministrator());
 #  endif
 #else
   return (false);
