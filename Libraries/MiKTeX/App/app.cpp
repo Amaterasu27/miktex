@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2006 Christian Schenk
+   Copyright (C) 2005-2007 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -323,15 +323,21 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 ======================================================================\n"),
 	     stdout);
     }
+  bool done = false;
   try
     {
       pInstaller->InstallRemove ();
-      RunIniTeXMF (T_("--mkmaps"));
+      done = true;
     }
-  catch (const MiKTeXException &)
+  catch (const MiKTeXException & e)
     {
+      enableInstaller = TriState::False;
       ignoredPackages.insert (lpszPackageName);
-      throw;
+      Utils::PrintException (e);
+    }
+  if (done)
+    {
+      RunIniTeXMF (T_("--mkmaps"));
     }
   if (! GetQuietFlag())
     {
@@ -339,7 +345,7 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 ======================================================================\n"),
 	     stdout);
     }
-  return (true);
+  return (done);
 }
 
 /* _________________________________________________________________________
