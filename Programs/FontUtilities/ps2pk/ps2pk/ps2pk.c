@@ -478,7 +478,11 @@ int argc; char *argv[];
          fatal("%s: AFM file %s not found!\n", program_invocation_name,
                 afmname); 
       if (encname) {
+#if defined(MIKTEX)
+         encfile = kpse_find_file(encname,kpse_enc_format,0);
+#else
          encfile = kpse_find_file(encname,kpse_tex_ps_header_format,0);
+#endif
          if (!encfile)
 	    fatal("%s: enc file %s not found!\n", program_invocation_name,
 	           encname);

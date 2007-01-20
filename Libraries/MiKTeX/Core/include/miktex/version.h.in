@@ -1,6 +1,6 @@
 /* version.h.in: MiKTeX version information			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -47,7 +47,7 @@
 #define MIKTEX_BANNER_STR MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
 
 #ifndef MIKTEX_LEGALCOPYRIGHT_STR
-#define MIKTEX_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2006 Christian Schenk"
+#define MIKTEX_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2007 Christian Schenk"
 #endif
 
 #ifndef MIKTEX_BUILD_COMMENT_STR
