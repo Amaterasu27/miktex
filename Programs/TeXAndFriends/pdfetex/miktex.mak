@@ -1,6 +1,6 @@
 ## miktex.mak: pdfetex
 ## 
-## Copyright (C) 2001-2006 Christian Schenk
+## Copyright (C) 2001-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -99,6 +99,7 @@ tex_web = $(miktexsrcdir)\$(rel_texdir)\tex.web
 etex_ch = $(miktexsrcdir)\$(rel_etexdir)\etex.ch
 
 pdftex_ch = $(miktexsrcdir)\$(rel_pdftexdir)\pdftex.ch
+pdftex2_ch = $(miktexsrcdir)\$(rel_pdftexdir)\pdftex2.ch
 hz_ch = $(miktexsrcdir)\$(rel_pdftexdir)\hz.ch
 misc_ch =  $(miktexsrcdir)\$(rel_pdftexdir)\misc.ch
 vadjust_ch = $(miktexsrcdir)\$(rel_pdftexdir)\vadjust.ch
@@ -110,6 +111,7 @@ tex_change_files = \
 	$(pdftex_ch) \
 	$(hz_ch) \
 	$(misc_ch) \
+	$(pdftex2_ch) \
 	$(vadjust_ch) \
 	pdfetex.ch2 \
 
