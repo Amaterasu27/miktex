@@ -1,6 +1,6 @@
 /* Setup-version.h: version information				-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,5 +17,5 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#define VER_FILEVERSION 2,5,2545,0
-#define VER_FILEVERSION_STR "2.5.2545"
+#define VER_FILEVERSION 2,5,2580,0
+#define VER_FILEVERSION_STR "2.5.2580"

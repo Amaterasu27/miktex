@@ -1,6 +1,6 @@
 ## miktex.mak:
 ##
-## Copyright (C) 2002-2006 Christian Schenk
+## Copyright (C) 2002-2007 Christian Schenk
 ## 
 ## This file is part of the MiKTeX DibChunker Library.
 ## 
@@ -37,7 +37,9 @@ dib_dll = $(dib_dll_name).dll
 
 binaries = \
 	$(outdir)\$(dib_dll) \
+!if $(miktex_pgoptimize) == 0
 	$(outdir)\chunkdib.exe \
+!endif
 
 compile = \
 	$(cc) $(cppstandard) \
@@ -126,6 +128,7 @@ $(outdir)\chunkdib.obj: $(outdir) chunkdib.cpp
 		-DNO_C4P \
 		chunkdib.cpp
 
+!if $(miktex_pgoptimize) == 0
 $(outdir)\chunkdib.exe: \
 			$(outdir) \
 			$(app_lib) \
@@ -144,6 +147,7 @@ $(outdir)\chunkdib.exe: \
 		$(miktex_lib) \
 		$(popt_lib)
 	mt -nologo -manifest $@.manifest -outputresource:$@;1
+!endif
 
 # _____________________________________________________________________________
 #

@@ -1,6 +1,6 @@
 ## miktex.inc: MiKTeX -*- Makefile -*- variables for Microsoft C++ 8.0
 ## 
-## Copyright (C) 1996-2006 Christian Schenk
+## Copyright (C) 1996-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -698,6 +698,7 @@ linkopt_set_checksum = /RELEASE
 linkopt_whole_program_optimization = /LTCG
 linkopt_pginstrument = /LTCG:PGINSTRUMENT
 linkopt_pgoptimize = /LTCG:PGOPTIMIZE
+linkopt_pgupdate = /LTCG:PGUPDATE
 
 linkopt_output_file = -out:
 
@@ -711,7 +712,8 @@ lflags = $(lflags) $(linkopt_whole_program_optimization)
 lflags = $(lflags) $(linkopt_pginstrument)
 !endif
 !if $(miktex_pgoptimize) > 0
-lflags = $(lflags) $(linkopt_pgoptimize)
+#lflags = $(lflags) $(linkopt_pgoptimize)
+lflags = $(lflags) $(linkopt_pgupdate)
 !endif
 lflags = $(lflags) $(linkopt_set_checksum)
 !endif

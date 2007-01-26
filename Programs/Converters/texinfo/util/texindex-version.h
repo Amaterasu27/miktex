@@ -1,6 +1,6 @@
 /* texindex-version.h: version number			-*- C++ -*-
 
-   Copyright (C) 1996-2004 Christian Schenk <cs.org>
+   Copyright (C) 1996-2007 Christian Schenk <cs.org>
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,5 +17,5 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define VER_FILEVERSION 2,5,1737,0
-#define VER_FILEVERSION_STR "2.5.1737 (4.7)"
+#define VER_FILEVERSION 2,5,2574,0
+#define VER_FILEVERSION_STR "2.5.2574 (4.7)"
