@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager (console version)
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1189,11 +1189,11 @@ Application::RestartWindowed ()
 
   // locate mpm.exe
   PathName mpm;
-  if (! SessionWrapper(true)->FindFile(T_("mpm.exe"),
+  if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_MFC_EXE,
 				       FileType::EXE,
 				       mpm))
     {
-      Error (T_("Could not restart in windowed mode: mpm.exe not found."));
+      Error (T_("Could not restart in windowed mode."));
     }
 
   // start mpm.exe
