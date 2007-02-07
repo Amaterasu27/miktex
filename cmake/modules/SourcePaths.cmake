@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -146,6 +146,7 @@ set(noligatures_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/noligatures.ch")
 set(pdf_mem_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdf_mem.ch")
 set(pdfstrcmp_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdfstrcmp.ch")
 set(pdftex_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftex.ch")
+set(pdftex2_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftex2.ch")
 set(pdftex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftex-miktex.ch")
 set(pdftex_post_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftex-post.ch")
 set(pdftex_pre_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/pdftex-pre.ch")

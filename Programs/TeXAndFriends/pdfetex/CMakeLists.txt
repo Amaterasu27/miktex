@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -59,6 +59,7 @@ set(tex_change_files
   ${hz_ch}
   ${misc_ch}
   ${vadjust_ch}
+  ${pdftex2_ch}
   ${CMAKE_CURRENT_SOURCE_DIR}/pdfetex.ch2
 )
 
