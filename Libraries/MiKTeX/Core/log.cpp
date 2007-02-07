@@ -1,6 +1,6 @@
 /* log.cpp: tracing
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -241,11 +241,22 @@ TraceStreamImpl::Logger (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
   MIKTEX_ASSERT_STRING (lpszMessage);
   tstring str;
   str.reserve (256);
+  str += T_('[');
+#if defined(MIKTEX_WINDOWS)
+  PathName path;
+  if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) != 0)
+    {
+      MIKTEXCHAR szName[BufferSizes::MaxPath];
+      path.GetFileNameWithoutExtension (szName);
+      str += szName;
+    }
+#endif
+  str += T_('.');
   if (lpszFacility != 0)
     {
-      str = lpszFacility;
-      str += T_(": ");
+      str += lpszFacility;
     }
+  str += T_("]: ");
   str += lpszMessage;
   if (appendNewline)
     {
