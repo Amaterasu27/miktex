@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1442,7 +1442,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   subDirectoryNames += T_('\0');
   assert (ppSubDirectoryNames != 0);
   *ppSubDirectoryNames =
-    reinterpret_cast<MIKTEXCHAR *>(malloc(subDirectoryNames.length()));
+    static_cast<MIKTEXCHAR *>(malloc(subDirectoryNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   subDirectoryNames._Copy_s (*ppSubDirectoryNames,
 			     subDirectoryNames.length(),
@@ -1453,7 +1453,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   assert (ppFileNames != 0);
   directoryInfo.fileNames += T_('\0');
   *ppFileNames =
-    reinterpret_cast<MIKTEXCHAR *>(malloc(directoryInfo.fileNames.length()));
+    static_cast<MIKTEXCHAR *>(malloc(directoryInfo.fileNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   directoryInfo.fileNames._Copy_s (*ppFileNames,
 				   directoryInfo.fileNames.length(),
@@ -1465,7 +1465,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   assert (ppFileNameInfos != 0);
   directoryInfo.packageNames += T_('\0');
   *ppFileNameInfos =
-    reinterpret_cast<MIKTEXCHAR*>(malloc(directoryInfo.packageNames.length()));
+    static_cast<MIKTEXCHAR *>(malloc(directoryInfo.packageNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   directoryInfo.packageNames._Copy_s (*ppFileNameInfos,
 				      directoryInfo.packageNames.length(),

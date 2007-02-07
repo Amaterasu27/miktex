@@ -1,6 +1,6 @@
-/* PackageManager.cpp:
+/* comPackageManager.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -111,30 +111,38 @@ STDMETHODIMP
 comPackageManager::CreateInstaller (/*[out,retval]*/
 				    IPackageInstaller ** ppInstaller)
 {
+  PackageManagerImpl::localServer = true;
   try
     {
+      // create the IPackageInstaller object
       CComObject<comPackageInstaller> * pInstaller = 0;
       HRESULT hr
 	= CComObject<comPackageInstaller>::CreateInstance(&pInstaller);
       if (FAILED(hr))
 	{
+	  *ppInstaller = 0;
 	  return (hr);
 	}
       
-      // increment the reference count; decrement it at the end of the
-      // block
+      // increment the reference count of the new object; decrement it
+      // at the end of the block
       CComPtr<IUnknown> pUnk (pInstaller->GetUnknown());
 
+      // create a MiKTeX session
       if (! initialized)
 	{
-	  pSession.CreateSession (Session::InitInfo(T_("mpmsvc")));
+	  pSession.CreateSession (Session::InitInfo(MPMSVC));
 	  initialized = true;
 	}
 
-      return (pInstaller->QueryInterface(ppInstaller));
+      pInstaller->Initialize ();
+
+      // return the IPackageInstaller interface
+      return (pUnk->QueryInterface(ppInstaller));
     }
   catch (const exception &)
     {
+      *ppInstaller = 0;
       return (E_FAIL);
     }
 }

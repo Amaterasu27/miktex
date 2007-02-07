@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -702,7 +702,7 @@ void
 MIKTEXCALLBACK
 PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 {
-  PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+  PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   HRESULT hr = E_FAIL;
 #endif
@@ -1659,7 +1659,7 @@ PackageInstallerImpl::ConnectToServer ()
 	      BIND_OPTS3 bo;
 	      memset (&bo, 0, sizeof(bo));
 	      bo.cbStruct = sizeof(bo);
-	      bo.hwnd = 0;
+	      bo.hwnd = GetForegroundWindow();
 	      bo.dwClassContext	= CLSCTX_LOCAL_SERVER;
 	      HRESULT hr =
 		CoGetObject(monikerName.c_str(),
@@ -1687,15 +1687,15 @@ PackageInstallerImpl::ConnectToServer ()
 				   NUMTOSTR(hr));
 		}
 	    }
-	  HRESULT hr =
-	    localServer.pManager->CreateInstaller(&localServer.pInstaller);
-	  if (FAILED(hr))
-	    {
-	      localServer.pManager.Release ();
-	      FATAL_MPM_ERROR (T_("ConnectToServer"),
-			       MSG_CANNOT_START_SERVER,
-			       NUMTOSTR(hr));
-	    }
+	}
+      HRESULT hr =
+	localServer.pManager->CreateInstaller(&localServer.pInstaller);
+      if (FAILED(hr))
+	{
+	  localServer.pManager.Release ();
+	  FATAL_MPM_ERROR (T_("ConnectToServer"),
+			   MSG_CANNOT_START_SERVER,
+			   NUMTOSTR(hr));
 	}
     }
 }
@@ -1719,30 +1719,29 @@ PackageInstallerImpl::InstallRemove ()
 	   it != toBeInstalled.end();
 	   ++ it)
 	{
-	  HRESULT hr = localServer.pInstaller->Add(CT2CW(it->c_str()), TRUE);
-	  if (FAILED(hr))
-	    {
-	      if (FAILED(hr))
-		{
-		  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
-				   T_("Cannot start service."),
-				   NUMTOSTR(hr));
-		}
-	    }
-	}
-      for (vector<tstring>::const_iterator it = toBeRemoved.begin();
-	   it != toBeInstalled.end();
-	   ++ it)
-	{
-	  HRESULT hr = localServer.pInstaller->Add(CT2CW(it->c_str()), FALSE);
+	  HRESULT hr =
+	    localServer.pInstaller->Add(_bstr_t(it->c_str()), TRUE);
 	  if (FAILED(hr))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
-			       T_("Cannot start service."),
+			       T_("Cannot communicate with mpmsvc."),
 			       NUMTOSTR(hr));
 	    }
 	}
-      HRESULT hr = localServer.pInstaller->InstallRemove(0);
+      for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+	   it != toBeRemoved.end();
+	   ++ it)
+	{
+	  HRESULT hr =
+	    localServer.pInstaller->Add(_bstr_t(it->c_str()), FALSE);
+	  if (FAILED(hr))
+	    {
+	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+			       T_("Cannot communicate with mpmsvc."),
+			       NUMTOSTR(hr));
+	    }
+	}
+      HRESULT hr = localServer.pInstaller->InstallRemove(this);
       if (FAILED(hr))
 	{
 	  MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo = 0;
@@ -1750,7 +1749,7 @@ PackageInstallerImpl::InstallRemove ()
 	  if (FAILED(hr2))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
-			       T_("The service failed for some reason."),
+			       T_("mpmsvc failed for some reason."),
 			       NUMTOSTR(hr));
 	    }
 	  AutoCoTaskMem a (pErrorInfo);
@@ -1911,7 +1910,7 @@ void
 MIKTEXCALLBACK
 PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 {
-  PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+  PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   HRESULT hr = E_FAIL;
 #endif
@@ -2091,7 +2090,7 @@ void
 MIKTEXCALLBACK
 PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 {
-  PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+  PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   HRESULT hr = E_FAIL;
 #endif
@@ -2408,7 +2407,7 @@ void
 MIKTEXCALLBACK
 PackageInstallerImpl::UpdateDbThread (/*[in]*/ void * pv)
 {
-  PackageInstallerImpl * This = reinterpret_cast<PackageInstallerImpl*>(pv);
+  PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
   try
     {
       This->UpdateDb ();
@@ -2639,19 +2638,185 @@ PackageInstallerImpl::UseLocalServer ()
 {
   if (PackageManagerImpl::localServer)
     {
+      // already running as local server
       return (false);
     }
 #if defined(MIKTEX_WINDOWS)
-#  if ! defined(MIKTEX_STATIC)
-  return (true);		// test
-#  else
-  return (IsWindowsVista()
-	  && SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
- 	  && ! SessionWrapper(true)->RunningAsAdministrator());
-#  endif
+  bool elevationRequired =
+    (IsWindowsVista()
+     && ! SessionWrapper(true)->RunningAsAdministrator());
+  bool forceLocalServer =
+    SessionWrapper(true)->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+					 MIKTEX_REGVAL_FORCE_LOCAL_SERVER,
+					 false);
+  return (elevationRequired || forceLocalServer);
 #else
   return (false);
 #endif
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::QueryInterface
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+HRESULT
+PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
+				      /*[out]*/ LPVOID *	ppvObj)
+{
+  using namespace MiKTeXPackageManagerLib;
+  if (trace_mpm->IsEnabled())
+    {    
+      WCHAR szRiid[100];
+      if (StringFromGUID2(riid, szRiid, 100) > 0)
+	{
+	  trace_mpm->WriteFormattedLine (T_("libmpm"), T_("QI %S"), szRiid);
+	}
+    }
+  if (riid == __uuidof(IUnknown))
+    {
+      *ppvObj = static_cast<IUnknown*>(this);
+    }
+  else if (riid == __uuidof(IPackageInstallerCallback))
+
+    {
+      *ppvObj = static_cast<IPackageInstallerCallback*>(this);
+    }
+  else
+    {
+      *ppvObj = 0;
+      return (E_NOINTERFACE);
+    }
+  AddRef ();
+  return (S_OK);
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::AddRef
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+ULONG
+PackageInstallerImpl::AddRef ()
+{
+  return (1);
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::Release
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+ULONG
+PackageInstallerImpl::Release ()
+{
+  return (1);
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::ReportLine
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+HRESULT
+PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
+{
+  try
+    {
+      if (pCallback != 0)
+	{
+	  _bstr_t bstr (line, false);
+	  pCallback->ReportLine (static_cast<const MIKTEXCHAR *>(bstr));
+	}
+      return (S_OK);
+    }
+  catch (const exception &)
+    {
+      return (E_FAIL);
+    }
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::OnRetryableError
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+HRESULT
+PackageInstallerImpl::OnRetryableError (/*[in]*/ BSTR		message,
+					/*[out,retval]*/ long *	pDoContinue)
+{
+  try
+    {
+      if (pCallback != 0)
+	{
+	  _bstr_t bstr (message, false);
+	  *pDoContinue =
+	    (pCallback->OnRetryableError(static_cast<const MIKTEXCHAR *>(bstr))
+	     ? TRUE
+	     : FALSE);
+	}
+      else
+	{
+	  *pDoContinue = FALSE;
+	}
+      return (S_OK);
+    }
+  catch (const exception &)
+    {
+      return (E_FAIL);
+    }
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::OnProgress
+   _________________________________________________________________________ */
+
+#if USE_LOCAL_SERVER
+
+HRESULT
+PackageInstallerImpl::OnProgress (/*[in]*/ long			nf,
+				  /*[out,retval]*/ long *	pDoContinue)
+{
+  try
+    {
+      if (pCallback != 0)
+	{
+	  Notification notification (static_cast<Notification::EnumType>(nf));
+	  *pDoContinue = (pCallback->OnProgress(notification) ? TRUE : FALSE);
+	}
+      else
+	{
+	  *pDoContinue = TRUE;
+	}
+      return (S_OK);
+    }
+  catch (const exception &)
+    {
+      return (E_FAIL);
+    }
 }
 
 #endif

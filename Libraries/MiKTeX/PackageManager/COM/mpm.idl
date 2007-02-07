@@ -1,6 +1,6 @@
 /* mpm.idl: MiKTeX package manager
 
-   Copyright (C) 2006 Christian Schenk
+   Copyright (C) 2006-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -75,36 +75,31 @@ interface IPackageInstallerCallback : IUnknown
 [
   object,
   uuid(74C7EE83-4851-4766-B471-9CF29E7C2DA3),
-  dual,
   nonextensible,
   helpstring("IPackageInstaller Interface"),
   pointer_default(unique)
 ]
-interface IPackageInstaller : IDispatch
+interface IPackageInstaller : IUnknown
 {
   [
-    id(1),
     helpstring("method Add")
   ]
   HRESULT
   Add ([in] BSTR packageName, [in] BOOL toBeInstalled);
 
   [
-    id(2),
     helpstring("method InstallRemove")
   ]
   HRESULT
-  InstallRemove ([in] IPackageInstallerCallback * pCallback);
+  InstallRemove ([in] IUnknown * pCallback);
 
   [
-    id(3),
     helpstring("method GetLastError")
   ]
   HRESULT
   GetErrorInfo ([out,retval] ErrorInfo ** pErrorInfo);
 
   [
-    id(4),
     helpstring("method UpdateDb")
   ]
   HRESULT
@@ -119,15 +114,13 @@ interface IPackageInstaller : IDispatch
 [
   object,
   uuid(C6A0E0A9-532D-46DF-8969-0E0A17539FC9),
-  dual,
   nonextensible,
   helpstring("IPackageManager Interface"),
   pointer_default(unique)
 ]
-interface IPackageManager : IDispatch
+interface IPackageManager : IUnknown
 {
   [
-    id(1),
     helpstring("method CreateInstaller")
   ]
   HRESULT
@@ -166,12 +159,5 @@ library MiKTeXPackageManagerLib
     [default] interface IPackageInstaller;
   };
 
-  [
-    uuid(214575DF-D8C4-4FF5-8BA0-E48E0A74F6F8),
-    helpstring("PackageInstallerCallback Class")
-  ]
-  coclass PackageInstallerCallback
-  {
-    [default] interface IPackageInstallerCallback;
-  };
+  interface IPackageInstallerCallback;
 };

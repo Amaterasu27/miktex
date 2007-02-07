@@ -1,6 +1,6 @@
 /* PackageManager.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -26,14 +26,10 @@
 #include "mpmidl.h"
 
 class ATL_NO_VTABLE comPackageManager
-  : public CComObjectRootEx<CComSingleThreadModel>,
+  : public CComObjectRootEx<CComMultiThreadModel>,
     public CComCoClass<comPackageManager, &CLSID_PackageManager>,
     public ISupportErrorInfo,
-    public IDispatchImpl<IPackageManager,
-			 &IID_IPackageManager,
-			 &LIBID_MiKTeXPackageManagerLib,
-			 /*wMajor =*/ 1,
-			 /*wMinor =*/ 0>
+    public IPackageManager
 {
 public:
   comPackageManager ();
@@ -51,7 +47,6 @@ public:
 public:
   BEGIN_COM_MAP(comPackageManager)
     COM_INTERFACE_ENTRY(IPackageManager)
-    COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
 

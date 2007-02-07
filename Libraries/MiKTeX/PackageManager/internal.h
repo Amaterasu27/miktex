@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -42,6 +42,10 @@ namespace MiKTeX {					\
 
 #define BEGIN_ANONYMOUS_NAMESPACE namespace {
 #define END_ANONYMOUS_NAMESPACE }
+
+#if defined(_MSC_VER) && defined(MIKTEX_WINDOWS)
+#  pragma comment(lib, "comsuppw.lib")
+#endif
 
 /* _________________________________________________________________________
 
@@ -239,6 +243,8 @@ const time_t Y2000 = 946681200;
 typedef std::basic_ostringstream<MIKTEXCHAR> otstringstream;
 
 const MIKTEXCHAR * const MPM_AGENT = T_("MPM/") VER_FILEVERSION_STR;
+
+const MIKTEXCHAR * const MPMSVC = T_("mpmsvc");
 
 const size_t MAXURL = 1024;
 
@@ -1418,7 +1424,10 @@ class PackageInstallerImpl
   : public PackageInstaller,
     public IProgressNotify_,
     public MiKTeX::Core::ICreateFndbCallback,
-    public IExtractCallback
+    public IExtractCallback,
+#if USE_LOCAL_SERVER
+    public MiKTeXPackageManagerLib::IPackageInstallerCallback
+#endif
 {
 private:
   enum ErrorCode {
@@ -1558,11 +1567,11 @@ public:
   virtual
   void
   MPMCALL
-  SetFileLists (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled,
-		/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeRemoved)
+  SetFileLists (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & tbi,
+		/*[in]*/ const std::vector<MiKTeX::Core::tstring> & tbr)
   {
-    this->toBeInstalled = toBeInstalled;
-    this->toBeRemoved = toBeRemoved;
+    this->toBeInstalled = tbi;
+    this->toBeRemoved = tbr;
   }
 
 public:
@@ -1578,9 +1587,9 @@ public:
   virtual
   void
   MPMCALL
-  SetFileList (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled)
+  SetFileList (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & tbi)
   {
-    this->toBeInstalled = toBeInstalled;
+    this->toBeInstalled = tbi;
     toBeRemoved.clear ();
   }
 
@@ -1638,6 +1647,38 @@ public:
       }
     return (! progressInfo.ready);
   }
+
+#if USE_LOCAL_SERVER
+public:
+  STDMETHOD(QueryInterface) (/*[in]*/ REFIID	riid,
+			     /*[out]*/ LPVOID *	ppvObj);
+
+public:
+  STDMETHOD_(ULONG, AddRef) ();
+
+public:
+  STDMETHOD_(ULONG, Release) ();
+
+public:
+  virtual
+  HRESULT
+  __stdcall
+  ReportLine (/*[in]*/ BSTR line);
+
+public:
+  virtual
+  HRESULT
+  __stdcall
+  OnRetryableError (/*[in]*/ BSTR		message,
+		    /*[out,retval]*/ long *	pDoContinue);
+
+public:
+  virtual
+  HRESULT
+  __stdcall
+  OnProgress (/*[in]*/			long nf,
+	      /*[out,retval]*/ long *	pDoContinue);
+#endif
 
 private:
   MiKTeX::Core::tstring repository;

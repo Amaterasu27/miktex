@@ -1,6 +1,6 @@
-/* PackageInstaller.cpp:
+/* comPackageInstaller.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -46,6 +46,22 @@ comPackageInstaller::comPackageInstaller ()
 
 comPackageInstaller::~comPackageInstaller ()
 {
+  try
+    {
+      if (trace_mpm.get() != 0)
+	{
+	  trace_mpm->Close ();
+	  trace_mpm.reset ();
+	}
+      if (trace_error.get() != 0)
+	{
+	  trace_error->Close ();
+	  trace_error.reset ();
+	}
+    }
+  catch (const exception &)
+    {
+    }
 }
 
 /* _________________________________________________________________________
@@ -56,6 +72,24 @@ comPackageInstaller::~comPackageInstaller ()
 void
 comPackageInstaller::FinalRelease ()
 {
+}
+
+/* _________________________________________________________________________
+
+   comPackageInstaller::Initialize
+   _________________________________________________________________________ */
+
+void
+comPackageInstaller::Initialize ()
+{
+  if (trace_error.get() == 0)
+    {
+      trace_error.reset (TraceStream::Open(MIKTEX_TRACE_ERROR));
+    }
+  if (trace_mpm.get() == 0)
+    {
+      trace_mpm.reset (TraceStream::Open(MIKTEX_TRACE_MPM));
+    }
 }
 
 /* _________________________________________________________________________
@@ -94,10 +128,10 @@ comPackageInstaller::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
     {
       return;
     }
-  HRESULT hr = pCallback->ReportLine(CT2CW(lpszLine));
+  HRESULT hr = pCallback->ReportLine(_bstr_t(lpszLine));
   if (FAILED(hr))
     {
-      // todo
+      // what todo?
     }
 }
 
@@ -112,13 +146,13 @@ comPackageInstaller::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
 {
   if (pCallback == 0)
     {
-      return (true);
+      return (false);
     }
   BOOL doContinue;
-  HRESULT hr = pCallback->OnRetryableError(CT2CW(lpszMessage), &doContinue);
+  HRESULT hr = pCallback->OnRetryableError(_bstr_t(lpszMessage), &doContinue);
   if (FAILED(hr))
     {
-      return (false);
+      doContinue = FALSE;
     }
   return (doContinue ? true : false);
 }
@@ -140,7 +174,7 @@ comPackageInstaller::OnProgress (/*[in]*/ Notification	nf)
   HRESULT hr = pCallback->OnProgress(nf.Get(), &doContinue);
   if (FAILED(hr))
     {
-      return (false);
+      doContinue = FALSE;
     }
   return (doContinue ? true : false);
 }
@@ -154,46 +188,23 @@ STDMETHODIMP
 comPackageInstaller::Add (/*[in]*/ BSTR packageName,
 			  /*[in]*/ BOOL toBeInstalled)
 {
-  if (toBeInstalled)
-    {
-      packagesToBeInstalled.push_back (tstring(CW2CT(packageName)));
-    }
-  else
-    {
-      packagesToBeRemoved.push_back (tstring(CW2CT(packageName)));
-    }
-  return (S_OK);
-}
-
-/* _________________________________________________________________________
-
-   comPackageInstaller::InstallRemove
-   _________________________________________________________________________ */
-
-STDMETHODIMP
-comPackageInstaller::InstallRemove
-(/*[in]*/ IPackageInstallerCallback * pCallback)
-{
-  HRESULT hr;
-  this->pCallback = pCallback;
+  HRESULT hr = S_OK;
   try
     {
-      if (pInstaller.get() == 0)
+      if (toBeInstalled)
 	{
-	  if (pManager.Get() == 0)
-	    {
-	      pManager.Create ();
-	    }
-	  pInstaller = pManager->CreateInstaller();
+	  packagesToBeInstalled.push_back (tstring(CW2CT(packageName)));
+	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
+					 T_("to be installed: %s"),
+					 packagesToBeInstalled.back().c_str());
 	}
-      pInstaller->SetFileLists (packagesToBeInstalled, packagesToBeRemoved);
-      pInstaller->SetCallback (this);
-      pInstaller->InstallRemove ();
-#if 0
-      // todo
-      RunIniTeXMF
-#endif
-      hr = S_OK;
+      else
+	{
+	  packagesToBeRemoved.push_back (tstring(CW2CT(packageName)));
+	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
+					 T_("to be removed: %s"),
+					 packagesToBeRemoved.back().c_str());
+	}
     }
   catch (const MiKTeXException & e)
     {
@@ -203,14 +214,61 @@ comPackageInstaller::InstallRemove
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("msvsvc"),
+	MiKTeXException(T_("mpmsvc"),
 			e.what(),
 			0,
 			T_(__FILE__),
 			__LINE__);
       hr = E_FAIL;
     }
-  this->pCallback = 0;
+  return (hr);
+}
+
+/* _________________________________________________________________________
+
+   comPackageInstaller::InstallRemove
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageInstaller::InstallRemove (/*[in]*/ IUnknown * pCallback)
+{
+  HRESULT hr = S_OK;
+  this->pCallback = pCallback;
+  try
+    {
+      trace_mpm->WriteLine (T_("mpmsvc"), T_("install/remove"));
+      if (pInstaller.get() == 0)
+	{
+	  if (pManager.Get() == 0)
+	    {
+	      pManager.Create ();
+	    }
+	  pInstaller.reset (pManager->CreateInstaller());
+	}
+      pInstaller->SetCallback (this);
+      pInstaller->SetFileLists (packagesToBeInstalled, packagesToBeRemoved);
+      pInstaller->InstallRemove ();
+#if 0
+      // todo
+      RunIniTeXMF
+#endif
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("mpmsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  this->pCallback.Release ();
   return (hr);
 }
 
@@ -230,8 +288,7 @@ comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo ** pErrorInfo)
     {
       return (E_INVALIDARG);
     }
-  *pErrorInfo =
-    reinterpret_cast<ErrorInfo*>(CoTaskMemAlloc(sizeof(**pErrorInfo)));
+  *pErrorInfo = static_cast<ErrorInfo*>(CoTaskMemAlloc(sizeof(**pErrorInfo)));
   if (*pErrorInfo == 0)
     {
       return (E_OUTOFMEMORY);
@@ -267,19 +324,19 @@ comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo ** pErrorInfo)
 STDMETHODIMP
 comPackageInstaller::UpdateDb ()
 {
-  HRESULT hr;
+  HRESULT hr = S_OK;
   try
     {
+      trace_mpm->WriteLine (T_("mpmsvc"), T_("update db"));
       if (pInstaller.get() == 0)
 	{
 	  if (pManager.Get() == 0)
 	    {
 	      pManager.Create ();
 	    }
-	  pInstaller = pManager->CreateInstaller();
+	  pInstaller.reset (pManager->CreateInstaller());
 	}
       pInstaller->UpdateDb ();
-      hr = S_OK;
     }
   catch (const MiKTeXException & e)
     {
@@ -289,13 +346,12 @@ comPackageInstaller::UpdateDb ()
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("msvsvc"),
+	MiKTeXException(T_("mpmsvc"),
 			e.what(),
 			0,
 			T_(__FILE__),
 			__LINE__);
       hr = E_FAIL;
     }
-  this->pCallback = 0;
   return (hr);
 }

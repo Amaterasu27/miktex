@@ -1,6 +1,6 @@
 /* PackageInstaller.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -26,15 +26,11 @@
 #include "mpmidl.h"
 
 class ATL_NO_VTABLE comPackageInstaller
-  : public CComObjectRootEx<CComSingleThreadModel>,
+  : public CComObjectRootEx<CComMultiThreadModel>,
     public CComCoClass<comPackageInstaller, &CLSID_PackageInstaller>,
-    public MiKTeX::Packages::PackageInstallerCallback,
     public ISupportErrorInfo,
-    public IDispatchImpl<IPackageInstaller,
-			 &IID_IPackageInstaller,
-			 &LIBID_MiKTeXPackageManagerLib,
-			 /*wMajor =*/ 1,
-			 /*wMinor =*/ 0>
+    public IPackageInstaller,
+    public MiKTeX::Packages::PackageInstallerCallback
 {
 public:
   comPackageInstaller ();
@@ -49,7 +45,6 @@ public:
 public:
   BEGIN_COM_MAP(comPackageInstaller)
     COM_INTERFACE_ENTRY(IPackageInstaller)
-    COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
 
@@ -69,6 +64,10 @@ public:
 public:
   void
   FinalRelease ();
+
+public:
+  void
+  Initialize ();
 
 public:
   virtual
@@ -92,7 +91,7 @@ public:
   STDMETHOD(Add) (/*[in]*/ BSTR packageName, /*[in]*/ BOOL toBeInstalled);
 
 public:
-  STDMETHOD(InstallRemove) (/*[in]*/ IPackageInstallerCallback * pCallback);
+  STDMETHOD(InstallRemove) (/*[in]*/ IUnknown * pCallback);
 
 public:
   STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo ** pErrorInfo);
@@ -107,7 +106,7 @@ private:
   std::vector<MiKTeX::Core::tstring> packagesToBeRemoved;
 
 private:
-  CComPtr<IPackageInstallerCallback> pCallback;
+  CComQIPtr<IPackageInstallerCallback> pCallback;
 
 private:
   MiKTeX::Packages::PackageManagerPtr pManager;
@@ -117,4 +116,10 @@ private:
 
 private:
   MiKTeX::Core::MiKTeXException lastMiKTeXException;
+
+private:
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
+
+private:
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 };

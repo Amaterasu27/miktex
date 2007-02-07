@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,7 +42,8 @@ if(BUILDING_MIKTEX)
   )
 endif(BUILDING_MIKTEX)
 
-merge_trustinfo_manifest(initexmf asInvoker)
+#merge_trustinfo_manifest(initexmf asInvoker)
+merge_trustinfo_manifest(initexmf highestAvailable)
 
 if(NATIVE_WINDOWS)
   set(aliases mktexlsr texhash texlinks)
