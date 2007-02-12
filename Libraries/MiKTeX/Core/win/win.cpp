@@ -29,6 +29,8 @@
 #include "miktex/reg.h"
 #include "win/winRegistry.h"
 
+#include <miktex/win/DllProc.h>
+
 #define SET_SECURITY 1
 #define REPORT_EVENTS 0
 
@@ -43,37 +45,13 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 		      /*[in]*/ int	nFallbackFolder,
 		      /*[in]*/ bool	getCurrentPath)
 {
-  typedef HRESULT (__stdcall * PFUNC) (HWND hwndOwner,
-				       int nFolder,
-				       HANDLE hToken,
-				       DWORD dwFlags,
-				       LPTSTR lpszPath);
-  MIKTEXPERMANENTVAR(PFUNC) pFunc = 0;
-  if (pFunc == 0)
-    {
-      HMODULE hModSHFolder = LoadLibrary(T_("shfolder.dll"));
-      if (hModSHFolder == 0)
-	{
-	  FATAL_MIKTEX_ERROR (T_("Utils::GetFolderPath"),
-			      T_("SHFolder.dll is not installed."),
-			      0);
-	}
 #if defined(MIKTEX_UNICODE)
-      pFunc =
-	reinterpret_cast<PFUNC>(GetProcAddress(hModSHFolder,
-					       "SHGetFolderPathW"));
+  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, LPTSTR>
+    pFunc (T_("shfolder.dll"), T_("SHGetFolderPathW"));
 #else
-      pFunc =
-	reinterpret_cast<PFUNC>(GetProcAddress(hModSHFolder,
-					       "SHGetFolderPathA"));
+  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, LPTSTR>
+    pFunc (T_("shfolder.dll"), T_("SHGetFolderPathA"));
 #endif
-      if (pFunc == 0)
-	{
-	  FATAL_MIKTEX_ERROR (T_("Utils::GetFolderPath"),
-			      T_("SHFolder.dll is outdated."),
-			      0);
-	}
-    }
   PathName ret;
   DWORD flags =
     ( 0
@@ -1627,12 +1605,8 @@ Utils::GetOSVersionString ()
 
 #if defined(UNICODE)
 #  define GETDEFAULTPRINTER "GetDefaultPrinterW"
-typedef BOOL (__stdcall * PGETDEFAULTPRINTER) (LPCWSTR pszBuffer,
-					       LPDWORD pcchBuffer);
 #else
 #  define GETDEFAULTPRINTER "GetDefaultPrinterA"
-typedef BOOL (__stdcall * PGETDEFAULTPRINTER) (LPCSTR pszBuffer,
-					       LPDWORD pcchBuffer);
 #endif
 
 MIKTEXAPI(bool)
@@ -1691,26 +1665,10 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
 	}
       if (osv.dwMajorVersion >= 5)
 	{
-	  HMODULE hWinSpool = LoadLibrary(T_("winspool.drv"));
-	  if (hWinSpool == 0)
-	    {
-	      FATAL_MIKTEX_ERROR (T_("Utils::GetDefPrinter"),
-				  T_("winspool.drv cannot be loaded."),
-				  0);
-	    }
-	  PGETDEFAULTPRINTER pGetDefaultPrinter =
-	    reinterpret_cast<PGETDEFAULTPRINTER>
-	    (GetProcAddress(hWinSpool, GETDEFAULTPRINTER));
-	  if (pGetDefaultPrinter == 0)
-	    {
-	      FreeLibrary (hWinSpool);
-	      FATAL_MIKTEX_ERROR (T_("Utils::GetDefPrinter"),
-				  T_("GetDefaultPrinter cannot be executed."),
-				  0);
-	    }
+	  DllProc2<BOOL, LPTSTR, LPDWORD>
+	    pGetDefaultPrinter (T_("winspool.drv"), GETDEFAULTPRINTER);
 	  DWORD dwBufferSize = static_cast<DWORD>(*pBufferSize);
 	  BOOL bDone = pGetDefaultPrinter(pPrinterName, &dwBufferSize);
-	  FreeLibrary (hWinSpool);
 	  if (! bDone)
 	    {
 	      if (::GetLastError() == ERROR_FILE_NOT_FOUND)

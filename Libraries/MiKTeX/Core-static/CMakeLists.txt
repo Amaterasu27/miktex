@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,6 +73,7 @@ set(${core_lib_name}_sources
 )
 
 set(${core_lib_name}_sources ${${core_lib_name}_sources}
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/DllProc.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/win.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.h

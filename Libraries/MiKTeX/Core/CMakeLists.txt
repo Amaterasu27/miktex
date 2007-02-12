@@ -88,6 +88,7 @@ if(NATIVE_WINDOWS)
     win/win.cpp
     win/winDirectoryLister.cpp
     win/winDirectoryLister.h
+    win/DllProc.cpp
     win/winFile.cpp
     win/winMemoryMappedFile.cpp
     win/winMemoryMappedFile.h

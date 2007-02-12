@@ -1,6 +1,6 @@
 /* Ruler.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of Yap.
 
@@ -41,30 +41,17 @@ MakeTransparent (/*[in]*/ HWND		hwnd,
 		 /*[in]*/ COLORREF	transparencyColor,
 		 /*[in]*/ unsigned char	opacity)
 {
+  if (! IsWindowsNT())
+    {
+      return;
+    }
   //const long my_LWA_COLORKEY = 0x00000001;
   const long my_LWA_ALPHA = 0x00000002;
   const LONG_PTR my_WS_EX_LAYERED = 0x00080000;
 
   typedef DWORD (WINAPI * FuncPtr) (HWND, DWORD, BYTE, DWORD);
-  static FuncPtr pFunc = 0;
-  static bool firstCall = true;
-  if (firstCall)
-    {
-      firstCall = false;
-      HMODULE hDLL = LoadLibrary(T_("user32"));
-      if (hDLL == 0)
-	{
-	  UNEXPECTED_CONDITION (T_("MakeTransparent"));
-	}
-      pFunc =
-	reinterpret_cast<FuncPtr>
-	(GetProcAddress(hDLL,
-			T_("SetLayeredWindowAttributes")));
-    }
-  if (pFunc == 0)
-    {
-      return;
-    }
+  static DllProc4<DWORD, HWND, DWORD, BYTE, DWORD>
+    pFunc (T_("user32"), T_("MakeTransparent"));
 #if defined(_WIN64)
   LONG_PTR newStyles;
 #else
@@ -73,10 +60,13 @@ MakeTransparent (/*[in]*/ HWND		hwnd,
   newStyles = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
   newStyles |= my_WS_EX_LAYERED;
   SetWindowLongPtr (hwnd, GWL_EXSTYLE, newStyles);
-  pFunc (hwnd,
-	 transparencyColor,
-	 opacity,
-	 my_LWA_ALPHA);
+  if (! pFunc(hwnd,
+	      transparencyColor,
+	      opacity,
+	      my_LWA_ALPHA))
+    {
+      FATAL_WINDOWS_ERROR (T_("SetLayeredWindowAttributes"), 0);
+    }
 }
 
 /* _________________________________________________________________________
