@@ -39,7 +39,14 @@ public:
   ~comPackageManager ();
 
 public:
+#if 0
   DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEMANAGER);
+#else
+  static
+  HRESULT
+  WINAPI
+  UpdateRegistry (/*[in]*/ BOOL doRegister);
+#endif
 
 public:
   DECLARE_CLASSFACTORY_SINGLETON(comPackageManager);

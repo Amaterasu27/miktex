@@ -1,5 +1,12 @@
 HKCR
 {
+	NoRemove AppID
+	{
+		'%APPID%' = s 'MiKTeX Package Manager'
+		{
+			val AccessPermission = b '%ACCESS_SD%'
+		}
+	}
 	MiKTeX.PackageManager.1 = s 'PackageManager Class'
 	{
 		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'

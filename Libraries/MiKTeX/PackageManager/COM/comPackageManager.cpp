@@ -25,6 +25,7 @@
 
 #include "COM/comPackageManager.h"
 #include "COM/comPackageInstaller.h"
+#include "COM/mpm.h"
 
 using namespace MiKTeX::Core;
 using namespace std;
@@ -145,4 +146,82 @@ comPackageManager::CreateInstaller (/*[out,retval]*/
       *ppInstaller = 0;
       return (E_FAIL);
     }
+}
+
+/* _________________________________________________________________________
+
+   GetAccessPermissionsForLUAServer
+
+   See MSDN "The COM Elevation Moniker"
+   _________________________________________________________________________ */
+
+static
+ULONG
+GetAccessPermissionsForLUAServer (/*[out]*/ SECURITY_DESCRIPTOR **	ppSD)
+{
+  DllProc4<BOOL, LPCWSTR, DWORD, PSECURITY_DESCRIPTOR, PULONG>
+    pConvert (T_("Advapi32.dll"),
+	      T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"));
+  LPWSTR lpszSDDL = L"O:BAG:BAD:(A;;0x3;;;IU)(A;;0x3;;;SY)";
+  SECURITY_DESCRIPTOR * pSD = 0;
+  ULONG size = 0;
+  if (! pConvert(lpszSDDL,
+		 SDDL_REVISION_1,
+		 reinterpret_cast<PSECURITY_DESCRIPTOR *>(&pSD),
+		 &size))
+    {
+      FATAL_WINDOWS_ERROR
+	(T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"),
+	 0);
+    }
+  *ppSD = pSD;
+  return (size);
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::UpdateRegistry
+   _________________________________________________________________________ */
+
+HRESULT
+WINAPI
+comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
+{
+  HRESULT hr;
+  try
+    {
+      vector<_ATL_REGMAP_ENTRY> regMapEntries;
+      _ATL_REGMAP_ENTRY rme;
+      tstring str;
+      if (IsWindowsNT())
+	{
+	  SECURITY_DESCRIPTOR * pSd;
+	  ULONG sizeSd = GetAccessPermissionsForLUAServer(&pSd);
+	  AutoLocalMem toBeFreed (pSd);
+	  str = Utils::Hexify(pSd, sizeSd, true).c_str();
+	}
+      else
+	{
+	  str = T_("00");
+	}
+      rme.szKey = L"ACCESS_SD";
+      rme.szData = CT2W(str.c_str());
+      regMapEntries.push_back (rme);
+      rme.szKey = 0;
+      rme.szData = 0;
+      regMapEntries.push_back (rme);
+      hr =
+	_AtlModule.UpdateRegistryFromResourceD(IDR_PACKAGEMANAGER,
+					       doRegister,
+					       &regMapEntries[0]);
+      if (FAILED(hr))
+	{
+	  //
+	}
+    }
+  catch (const exception &)
+    {
+      hr = E_FAIL;
+    }
+  return (hr);
 }

@@ -36,6 +36,7 @@
 #  include <windows.h>
 #  include <wininet.h>
 #  include <Fdi.h>
+#  include <Sddl.h>
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -94,6 +95,10 @@ using stdext::hash_set;
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
+
+#if defined(MIKTEX_WINDOWS)
+# include <miktex/win/DllProc.h>
+#endif
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 #  import "mpm.tlb" raw_interfaces_only

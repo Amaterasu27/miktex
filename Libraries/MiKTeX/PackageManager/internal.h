@@ -47,6 +47,24 @@ namespace MiKTeX {					\
 #  pragma comment(lib, "comsuppw.lib")
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsVista ()
+{
+  return ((GetVersion() & 0xff) >= 6);
+}
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsNT ()
+{
+  return (GetVersion() < 0x80000000);
+}
+#endif
+
 /* _________________________________________________________________________
 
    Debug-dependant Macros
@@ -343,15 +361,6 @@ StripPrefix (/*[in]*/ const MiKTeX::Core::tstring &		str,
   return (true);
 }
 
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
-#endif
-
 /* _________________________________________________________________________
 
    InstalledFileInfo
@@ -606,6 +615,23 @@ public:
 };
 
 typedef AutoResource<void *, CoTaskMemFree_> AutoCoTaskMem;
+
+/* _________________________________________________________________________
+
+   AutoLocalMem
+   _________________________________________________________________________ */
+
+class LocalFree_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    LocalFree (p);
+  }
+};
+
+typedef AutoResource<void *, LocalFree_> AutoLocalMem;
 
 /* _________________________________________________________________________
 

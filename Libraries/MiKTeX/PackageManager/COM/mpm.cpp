@@ -23,20 +23,7 @@
 #include "internal.h"
 #include "Resource.h"
 #include "mpmidl.h"
-
-/* _________________________________________________________________________
-
-   MiKTeXPackageManagerModule
-   _________________________________________________________________________ */
-
-class MiKTeXPackageManagerModule
-  : public CAtlDllModuleT< MiKTeXPackageManagerModule >
-{
-public:
-  DECLARE_LIBID(LIBID_MiKTeXPackageManagerLib);
-  DECLARE_REGISTRY_APPID_RESOURCEID(IDR_MIKTEXPACKAGEMANAGER,
-				    "{43A56D8A-873D-4B5E-A067-64AF545699FB}");
-};
+#include "COM/mpm.h"
 
 MiKTeXPackageManagerModule _AtlModule;
 

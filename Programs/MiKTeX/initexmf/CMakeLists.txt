@@ -42,8 +42,7 @@ if(BUILDING_MIKTEX)
   )
 endif(BUILDING_MIKTEX)
 
-#merge_trustinfo_manifest(initexmf asInvoker)
-merge_trustinfo_manifest(initexmf highestAvailable)
+merge_trustinfo_manifest(initexmf asInvoker)
 
 if(NATIVE_WINDOWS)
   set(aliases mktexlsr texhash texlinks)
