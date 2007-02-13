@@ -48,6 +48,12 @@
 #  define MIKTEX_EXE_FILE_SUFFIX MIKTEXTEXT("")
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define MIKTEX_SHARED_LIB_FILE_SUFFIX MIKTEXTEXT(".dll")
+#else
+#  define MIKTEX_SHARED_LIB_FILE_SUFFIX MIKTEXTEXT(".so")
+#endif
+
 /* suffix for file name database files */
 #define MIKTEX_FNDB_FILE_SUFFIX MIKTEXTEXT(".fndb")
 
