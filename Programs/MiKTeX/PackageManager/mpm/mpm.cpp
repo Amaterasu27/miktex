@@ -186,6 +186,12 @@ private:
   Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
 	   /*[in]*/ const vector<tstring> &	toBeRemoved);
 
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  RegisterComponents (/*[in]*/ bool doRegister);
+#endif
+
 private:
   void
   Verify (/*[in]*/ const vector<tstring> &	toBeVerified);
@@ -297,10 +303,12 @@ enum Option
   OPT_PROXY_PASSWORD,		// experimental
   OPT_PROXY_USER,		// experimental
   OPT_QUIET,
+  OPT_REGISTER_COMPONENTS,	// experimental
   OPT_REPOSITORY,
   OPT_SET_REPOSITORY,
   OPT_TRACE,
   OPT_UNINSTALL,
+  OPT_UNREGISTER_COMPONENTS,	// experimental
   OPT_UPDATE,
   OPT_UPDATE_ALL,		// experimental
   OPT_UPDATE_DB,
@@ -416,6 +424,13 @@ Pick a suitable package repository URL and print it."), 0
     T_("Suppress all output (except errors)."), 0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    T_("register-components"), 0, POPT_ARG_NONE, 0, OPT_REGISTER_COMPONENTS,
+    T_("Register COMponents."), 0
+  },
+#endif
+
   {
     T_("repository"), 0, POPT_ARG_STRING, 0, OPT_REPOSITORY,
     T_("\
@@ -449,6 +464,14 @@ Turn on tracing.\
     T_("Uninstall the specified package."),
     T_("PACKAGE")
   },
+
+#if defined(MIKTEX_WINDOWS)
+  {
+    T_("unregister-components"), 0, POPT_ARG_NONE, 0,
+    OPT_UNREGISTER_COMPONENTS,
+    T_("Unregister COMponents."), 0
+  },
+#endif
 
   {
     T_("update"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_UPDATE,
@@ -724,6 +747,24 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
     }
   RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
 }
+
+/* _________________________________________________________________________
+
+   Application::RegisterComponents
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+
+void
+Application::RegisterComponents (/*[in]*/ bool doRegister)
+{
+  auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
+  pInstaller->SetCallback (this);
+  pInstaller->RegisterComponents (doRegister);
+  pInstaller->Dispose ();
+}
+
+#endif
 
 /* _________________________________________________________________________
 
@@ -1262,7 +1303,9 @@ Application::Main (/*[in]*/ int			argc,
   bool optListRepositories = false;
   bool optPickRepositoryUrl = false;
   bool optPrintPackageInfo = false;
+  bool optRegisterComponents = false;
   bool optSetRepository = false;
+  bool optUnregisterComponents = false;
   bool optUpdate = false;
   bool optUpdateAll = false;
   bool optUpdateDb = false;
@@ -1362,6 +1405,11 @@ Application::Main (/*[in]*/ int			argc,
 	    }
 	  quiet = true;
 	  break;
+#if defined (MIKTEX_WINDOWS)
+	case OPT_REGISTER_COMPONENTS:
+	  optRegisterComponents = true;
+	  break;
+#endif
 	case OPT_REPOSITORY:
 	  repository = lpszOptArg;
 	  break;
@@ -1382,6 +1430,11 @@ Application::Main (/*[in]*/ int			argc,
 	case OPT_UNINSTALL:
 	  toBeRemoved.push_back (lpszOptArg);
 	  break;
+#if defined (MIKTEX_WINDOWS)
+	case OPT_UNREGISTER_COMPONENTS:
+	  optUnregisterComponents = true;
+	  break;
+#endif
 	case OPT_UPDATE:
 	  if (lpszOptArg != 0)
 	    {
@@ -1458,7 +1511,7 @@ Application::Main (/*[in]*/ int			argc,
       tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					       VersionNumber(VER_FILEVERSION))
 	    << T_("\n\
-Copyright (C) 2005-2006 Christian Schenk\n\
+Copyright (C) 2005-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    << endl;
@@ -1539,6 +1592,19 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       Install (toBeInstalled, toBeRemoved);
       restartWindowed = false;
     }
+
+#if defined(MIKTEX_WINDOWS)
+  if (optRegisterComponents || optUnregisterComponents)
+    {
+      if (optRegisterComponents && optUnregisterComponents)
+	{
+	  Error (T_("--register-components conflicts ")
+		 T_("with --unregister-components."));
+	}
+      RegisterComponents (optRegisterComponents);
+      restartWindowed = false;
+    }
+#endif
 
   for (it = updateSome.begin(); it != updateSome.end(); ++ it)
     {
