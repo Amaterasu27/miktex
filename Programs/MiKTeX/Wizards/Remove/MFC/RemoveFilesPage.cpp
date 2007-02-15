@@ -1,6 +1,6 @@
 /* RemoveFilesPage.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -244,6 +244,19 @@ RemoveFilesPage::RemoveMiKTeX ()
 	{
 	  UnregisterPath95 ();
 	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
+
+  try
+    {
+      UnregisterComponents ();
     }
   catch (const MiKTeXException & e)
     {
@@ -557,6 +570,24 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ tstring &	path)
       path = newPath;
     }
   return (removed);
+}
+
+/* _________________________________________________________________________
+
+   RemoveFilesPage::UnregisterComponents
+   _________________________________________________________________________ */
+
+void
+RemoveFilesPage::UnregisterComponents ()
+{
+ if (SessionWrapper(true)->RunningAsAdministrator()
+      || SessionWrapper(true)->RunningAsPowerUser())
+   {
+     PackageManagerPtr pManager (PackageManager::Create());
+     auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
+     pInstaller->RegisterComponents (false);
+     pInstaller->Dispose ();
+   }
 }
 
 /* _________________________________________________________________________

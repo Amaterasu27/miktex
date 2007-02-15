@@ -1,6 +1,6 @@
 /* RemoveFilesPage.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -114,6 +114,10 @@ private:
 private:
   bool
   RemoveBinDirFromPath (/*[in,out]*/ tstring &	path);
+
+private:
+  void
+  UnregisterComponents ();
 
 private:
   void
