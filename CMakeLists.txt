@@ -352,6 +352,9 @@ configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesdk.cmd)
 
+configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findpk/findpk.vcproj.in
+	       ${CMAKE_BINARY_DIR}/SDK/samples/c++/findpk/findpk.vcproj)
+
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/*.tpm.in")
 foreach(tpm ${tpms})
   get_filename_component(fn ${tpm} NAME_WE)

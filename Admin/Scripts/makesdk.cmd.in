@@ -11,19 +11,23 @@ if exist "%sdkdir%" rmdir /s /q "%sdkdir%"
 mkdir "%sdkdir%"
 mkdir "%sdkdir%\include"
 mkdir "%sdkdir%\lib"
-echo .svn>%excl%
-echo version.h.in>>%excl%
+echo ~>%excl%
+echo .svn>>%excl%
+echo .h.in>>%excl%
+echo .vcproj.in>>%excl%
+echo CMakeLists>>%excl%
 
 pushd "@CMAKE_SOURCE_DIR_NATIVE@"
 xcopy /EXCLUDE:%excl% /S SDK "%sdkdir%"
 xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\App\include "%sdkdir%\include"
 xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\Core\include "%sdkdir%\include"
 xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\PackageManager\include "%sdkdir%\include"
-xcopy /EXCLUDE:%excl% /S Libraries\3rd\libmd5 "%sdkdir%\include"
+xcopy /EXCLUDE:%excl% /S Libraries\3rd\libmd5\include "%sdkdir%\include"
 popd
 
 pushd "@CMAKE_BINARY_DIR_NATIVE@"
 xcopy /EXCLUDE:%excl% /S Libraries\MiKTeX\Core\include "%sdkdir%\include"
+xcopy /EXCLUDE:%excl% /S SDK "%sdkdir%"
 pushd binlib
 copy @app_dll_name@.lib "%sdkdir%\lib"
 copy @core_dll_name@.lib "%sdkdir%\lib"
