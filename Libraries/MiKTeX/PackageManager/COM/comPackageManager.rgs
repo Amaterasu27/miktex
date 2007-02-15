@@ -7,18 +7,18 @@ HKCR
 			val AccessPermission = b '%ACCESS_SD%'
 		}
 	}
-	MiKTeX.PackageManager.1 = s 'PackageManager Class'
+	MiKTeX.PackageManager.1 = s 'MiKTeX Package Manager'
 	{
 		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
 	}
-	MiKTeX.PackageManager = s 'PackageManager Class'
+	MiKTeX.PackageManager = s 'MiKTeX Package Manager'
 	{
 		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
 		CurVer = s 'MiKTeX.PackageManager.1'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {E4EC6D80-9E3A-47B7-ADA7-C0621C298527} = s 'PackageManager Class'
+		ForceRemove {E4EC6D80-9E3A-47B7-ADA7-C0621C298527} = s 'MiKTeX Package Manager'
 		{
 			ProgID = s 'MiKTeX.PackageManager.1'
 			VersionIndependentProgID = s 'MiKTeX.PackageManager'

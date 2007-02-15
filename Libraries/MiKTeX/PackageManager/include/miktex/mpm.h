@@ -1,6 +1,6 @@
 /* mpm.h: MiKTeX package manager API				-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1165,6 +1165,13 @@ public:
   MPMCALL
   IsRunning ()
     const
+    = 0;
+
+public:
+  virtual
+  void
+  MPMCALL
+  RegisterComponents (/*[in]*/ bool doRegister)
     = 0;
 };
 

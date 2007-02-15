@@ -27,9 +27,12 @@
 
 class ATL_NO_VTABLE comPackageInstaller
   : public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<comPackageInstaller, &CLSID_PackageInstaller>,
     public ISupportErrorInfo,
-    public IPackageInstaller,
+    public IDispatchImpl<IPackageInstaller,
+			 &IID_IPackageInstaller,
+			 &LIBID_MiKTeXPackageManagerLib,
+			 /*wMajor =*/ 1,
+			 /*wMinor =*/ 0>,
     public MiKTeX::Packages::PackageInstallerCallback
 {
 public:
@@ -39,12 +42,10 @@ public:
   virtual
   ~comPackageInstaller ();
 
-public:  
-  DECLARE_REGISTRY_RESOURCEID(IDR_PACKAGEINSTALLER);
-
 public:
   BEGIN_COM_MAP(comPackageInstaller)
     COM_INTERFACE_ENTRY(IPackageInstaller)
+    COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
 
@@ -88,13 +89,17 @@ public:
   OnProgress (/*[in]*/ MiKTeX::Packages::Notification	nf);
 
 public:
-  STDMETHOD(Add) (/*[in]*/ BSTR packageName, /*[in]*/ BOOL toBeInstalled);
+  STDMETHOD(Add) (/*[in]*/ BSTR packageName,
+		  /*[in]*/ VARIANT_BOOL toBeInstalled);
 
 public:
-  STDMETHOD(InstallRemove) (/*[in]*/ IUnknown * pCallback);
+  STDMETHOD(SetCallback) (/*[in]*/ IUnknown * pCallback);
 
 public:
-  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo ** pErrorInfo);
+  STDMETHOD(InstallRemove) ();
+
+public:
+  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo * pErrorInfo);
 
 public:
   STDMETHOD(UpdateDb) ();

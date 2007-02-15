@@ -1674,6 +1674,12 @@ public:
     return (! progressInfo.ready);
   }
 
+public:
+  virtual
+  void
+  MPMCALL
+  RegisterComponents (/*[in]*/ bool doRegister);
+
 #if USE_LOCAL_SERVER
 public:
   STDMETHOD(QueryInterface) (/*[in]*/ REFIID	riid,
@@ -1695,15 +1701,15 @@ public:
   virtual
   HRESULT
   __stdcall
-  OnRetryableError (/*[in]*/ BSTR		message,
-		    /*[out,retval]*/ long *	pDoContinue);
+  OnRetryableError (/*[in]*/ BSTR			message,
+		    /*[out,retval]*/ VARIANT_BOOL *	pDoContinue);
 
 public:
   virtual
   HRESULT
   __stdcall
-  OnProgress (/*[in]*/			long nf,
-	      /*[out,retval]*/ long *	pDoContinue);
+  OnProgress (/*[in]*/ LONG			nf,
+	      /*[out,retval]*/ VARIANT_BOOL *	pDoContinue);
 #endif
 
 private:
@@ -1759,6 +1765,31 @@ private:
 	throw MiKTeX::Core::OperationCancelledException ();
       }
   }
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  RegisterComponent
+  (/*[in]*/ bool				doRegister,
+   /*[in]*/ const MiKTeX::Core::PathName &	path);
+
+private:
+  void
+  RegisterComponents
+  (/*[in]*/ bool doRegister,
+   /*[in]*/ const std::vector<MiKTeX::Core::tstring> & packages);
+
+private:
+  void
+  RegisterComponents
+  (/*[in]*/ bool doRegister,
+   /*[in]*/ const std::vector<MiKTeX::Core::tstring> & packages,
+   /*[in]*/ const std::vector<MiKTeX::Core::tstring> & packages2)
+  {
+    RegisterComponents (doRegister, packages);
+    RegisterComponents (doRegister, packages2);
+  }
+#endif
 
 private:
   bool autoFndbSync;

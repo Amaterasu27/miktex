@@ -27,13 +27,49 @@ import "ocidl.idl";
    ErrorInfo
    _________________________________________________________________________ */
 
-typedef struct
+typedef [uuid(6D5C1C92-6E34-4493-9D24-71BD02E41B33)] struct ErrorInfo
 {
   BSTR message;
   BSTR info;
   BSTR sourceFile;
-  int sourceLine;
+  LONG sourceLine;
 } ErrorInfo;
+
+/* _________________________________________________________________________
+   
+   MD5
+   _________________________________________________________________________ */
+
+typedef [uuid(F92D6E8F-22CC-4585-8309-58440C5A0DFB)] struct MD5
+{
+  BYTE bits[16];
+} MD5;
+
+
+/* _________________________________________________________________________
+   
+   PackageInfo
+   _________________________________________________________________________ */
+
+typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
+{
+  BSTR deploymentName;
+  BSTR displayName;
+  BSTR title;
+  BSTR version;
+  BSTR description;
+  BSTR creator;
+  DOUBLE sizeRunFiles;
+  DOUBLE sizeDocFiles;
+  DOUBLE sizeSourceFiles;
+  LONG numRunFiles;
+  LONG numDocFiles;
+  LONG numSourceFiles;
+  DATE timePackaged;
+  DATE timeInstalled;
+  LONG archiveFileSize;
+  MD5 digest;
+} PackageInfo;
 
 /* _________________________________________________________________________
    
@@ -58,13 +94,14 @@ interface IPackageInstallerCallback : IUnknown
     helpstring("method OnRetryableError")
   ]
   HRESULT
-  OnRetryableError ([in] BSTR message, [out,retval] BOOL * pDoContinue);
+  OnRetryableError ([in] BSTR			message,
+		    [out,retval] VARIANT_BOOL * doContinue);
 
   [
     helpstring("method OnProgress")
   ]
   HRESULT
-  OnProgress ([in] LONG nf, [out,retval] BOOL * pDoContinue);
+  OnProgress ([in] LONG nf, [out,retval] VARIANT_BOOL * doContinue);
 };
 
 /* _________________________________________________________________________
@@ -75,31 +112,43 @@ interface IPackageInstallerCallback : IUnknown
 [
   object,
   uuid(74C7EE83-4851-4766-B471-9CF29E7C2DA3),
+  dual,
   nonextensible,
   helpstring("IPackageInstaller Interface"),
   pointer_default(unique)
 ]
-interface IPackageInstaller : IUnknown
+interface IPackageInstaller : IDispatch
 {
   [
+    id(1),
     helpstring("method Add")
   ]
   HRESULT
-  Add ([in] BSTR packageName, [in] BOOL toBeInstalled);
+  Add ([in] BSTR packageName, [in] VARIANT_BOOL toBeInstalled);
 
   [
+    id(2),
+    helpstring("method SetCallback")
+  ]
+  HRESULT
+  SetCallback ([in] IUnknown * callback);
+
+  [
+    id(3),
     helpstring("method InstallRemove")
   ]
   HRESULT
-  InstallRemove ([in] IUnknown * pCallback);
+  InstallRemove ();
 
   [
+    id(4),
     helpstring("method GetLastError")
   ]
   HRESULT
-  GetErrorInfo ([out,retval] ErrorInfo ** pErrorInfo);
+  GetErrorInfo ([out,retval] ErrorInfo * errorInfo);
 
   [
+    id(5),
     helpstring("method UpdateDb")
   ]
   HRESULT
@@ -114,17 +163,27 @@ interface IPackageInstaller : IUnknown
 [
   object,
   uuid(C6A0E0A9-532D-46DF-8969-0E0A17539FC9),
+  dual,
   nonextensible,
   helpstring("IPackageManager Interface"),
   pointer_default(unique)
 ]
-interface IPackageManager : IUnknown
+interface IPackageManager : IDispatch
 {
   [
+    id(1),
     helpstring("method CreateInstaller")
   ]
   HRESULT
-  CreateInstaller ([out,retval] IPackageInstaller ** ppInstaller);
+  CreateInstaller ([out,retval] IPackageInstaller ** iInstaller);
+
+  [
+    id(2),
+    helpstring("method GetPackageInfo")
+  ]
+  HRESULT
+  GetPackageInfo ([in] BSTR			deploymentName,
+		  [out,retval] PackageInfo *	packageInfo);
 };
 
 /* _________________________________________________________________________
@@ -135,7 +194,7 @@ interface IPackageManager : IUnknown
 [
   uuid(42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB),
   version(1.0),
-  helpstring("MiKTeXPackageManager 1.0 Type Library")
+  helpstring("MiKTeX Package Manager 1.0 Type Library")
 ]
 library MiKTeXPackageManagerLib
 {
@@ -143,21 +202,13 @@ library MiKTeXPackageManagerLib
 
   [
     uuid(E4EC6D80-9E3A-47B7-ADA7-C0621C298527),
-    helpstring("PackageManager Class")
+    helpstring("MiKTeX Package Manager")
   ]
   coclass PackageManager
   {
     [default] interface IPackageManager;
   };
 
-  [
-    uuid(5DCA5648-EAA3-43FD-A397-C72A9C17EA9C),
-    helpstring("PackageInstaller Class")
-  ]
-  coclass PackageInstaller
-  {
-    [default] interface IPackageInstaller;
-  };
-
+  interface IPackageInstaller;
   interface IPackageInstallerCallback;
 };

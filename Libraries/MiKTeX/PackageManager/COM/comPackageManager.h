@@ -29,7 +29,11 @@ class ATL_NO_VTABLE comPackageManager
   : public CComObjectRootEx<CComMultiThreadModel>,
     public CComCoClass<comPackageManager, &CLSID_PackageManager>,
     public ISupportErrorInfo,
-    public IPackageManager
+    public IDispatchImpl<IPackageManager,
+			 &IID_IPackageManager,
+			 &LIBID_MiKTeXPackageManagerLib,
+			 /*wMajor =*/ 1,
+			 /*wMinor =*/ 0>
 {
 public:
   comPackageManager ();
@@ -54,6 +58,7 @@ public:
 public:
   BEGIN_COM_MAP(comPackageManager)
     COM_INTERFACE_ENTRY(IPackageManager)
+    COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
 
@@ -78,11 +83,20 @@ public:
   STDMETHOD(CreateInstaller) (/*[out,retval]*/
 			      IPackageInstaller ** ppInstaller);
 
-private:
-  bool initialized;
+public:
+  STDMETHOD(GetPackageInfo) (/*[in]*/ BSTR			deploymentName,
+			     /*[out,retval]*/ PackageInfo *	pPackageInfo);
+
 
 private:
-  MiKTeX::Core::SessionWrapper pSession;
+  void
+  CreateSession ();
+
+private:
+  MiKTeX::Core::Session * pSession;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(PackageManager), comPackageManager);

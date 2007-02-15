@@ -148,11 +148,11 @@ comPackageInstaller::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
     {
       return (false);
     }
-  BOOL doContinue;
+  VARIANT_BOOL doContinue;
   HRESULT hr = pCallback->OnRetryableError(_bstr_t(lpszMessage), &doContinue);
   if (FAILED(hr))
     {
-      doContinue = FALSE;
+      doContinue = VARIANT_FALSE;
     }
   return (doContinue ? true : false);
 }
@@ -170,11 +170,11 @@ comPackageInstaller::OnProgress (/*[in]*/ Notification	nf)
     {
       return (true);
     }
-  BOOL doContinue;
+  VARIANT_BOOL doContinue;
   HRESULT hr = pCallback->OnProgress(nf.Get(), &doContinue);
   if (FAILED(hr))
     {
-      doContinue = FALSE;
+      doContinue = VARIANT_FALSE;
     }
   return (doContinue ? true : false);
 }
@@ -185,8 +185,8 @@ comPackageInstaller::OnProgress (/*[in]*/ Notification	nf)
    _________________________________________________________________________ */
 
 STDMETHODIMP
-comPackageInstaller::Add (/*[in]*/ BSTR packageName,
-			  /*[in]*/ BOOL toBeInstalled)
+comPackageInstaller::Add (/*[in]*/ BSTR		packageName,
+			  /*[in]*/ VARIANT_BOOL	toBeInstalled)
 {
   HRESULT hr = S_OK;
   try
@@ -226,14 +226,25 @@ comPackageInstaller::Add (/*[in]*/ BSTR packageName,
 
 /* _________________________________________________________________________
 
+   comPackageInstaller::SetCallback
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageInstaller::SetCallback (/*[in]*/ IUnknown * pCallback)
+{
+  this->pCallback = pCallback;
+  return (S_OK);
+}
+
+/* _________________________________________________________________________
+
    comPackageInstaller::InstallRemove
    _________________________________________________________________________ */
 
 STDMETHODIMP
-comPackageInstaller::InstallRemove (/*[in]*/ IUnknown * pCallback)
+comPackageInstaller::InstallRemove ()
 {
   HRESULT hr = S_OK;
-  this->pCallback = pCallback;
   try
     {
       trace_mpm->WriteLine (T_("mpmsvc"), T_("install/remove"));
@@ -268,7 +279,6 @@ comPackageInstaller::InstallRemove (/*[in]*/ IUnknown * pCallback)
 			__LINE__);
       hr = E_FAIL;
     }
-  this->pCallback.Release ();
   return (hr);
 }
 
@@ -278,40 +288,29 @@ comPackageInstaller::InstallRemove (/*[in]*/ IUnknown * pCallback)
    _________________________________________________________________________ */
 
 STDMETHODIMP
-comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo ** pErrorInfo)
+comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo * pErrorInfo)
 {
   if (lastMiKTeXException.what() == 0)
     {
       return (E_FAIL);
-    }
-  if (*pErrorInfo == 0)
-    {
-      return (E_INVALIDARG);
-    }
-  *pErrorInfo = static_cast<ErrorInfo*>(CoTaskMemAlloc(sizeof(**pErrorInfo)));
-  if (*pErrorInfo == 0)
-    {
-      return (E_OUTOFMEMORY);
     }
   try
     {
       _bstr_t message = lastMiKTeXException.what();
       _bstr_t info = lastMiKTeXException.GetInfo().c_str();
       _bstr_t sourceFile = lastMiKTeXException.GetSourceFile().c_str();
-      (*pErrorInfo)->message = message.Detach();
-      (*pErrorInfo)->info = info.Detach();
-      (*pErrorInfo)->sourceFile = sourceFile.Detach();
-      (*pErrorInfo)->sourceLine = lastMiKTeXException.GetSourceLine();
+      pErrorInfo->message = message.Detach();
+      pErrorInfo->info = info.Detach();
+      pErrorInfo->sourceFile = sourceFile.Detach();
+      pErrorInfo->sourceLine = lastMiKTeXException.GetSourceLine();
       return (S_OK);
     }
   catch (const _com_error & e)
     {
-      CoTaskMemFree (*pErrorInfo);
       return (e.Error());
     }
   catch (const exception &)
     {
-      CoTaskMemFree (*pErrorInfo);
       return (E_FAIL);
     }
 }

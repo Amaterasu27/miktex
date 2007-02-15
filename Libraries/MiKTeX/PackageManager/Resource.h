@@ -1,6 +1,6 @@
 /* Resource.h:							-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -22,4 +22,3 @@
 #define IDS_PROJNAME                    100
 #define IDR_MIKTEXPACKAGEMANAGER        101
 #define IDR_PACKAGEMANAGER              102
-#define IDR_PACKAGEINSTALLER            103

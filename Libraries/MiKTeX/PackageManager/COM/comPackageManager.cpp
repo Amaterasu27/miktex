@@ -36,7 +36,7 @@ using namespace std;
    _________________________________________________________________________ */
 
 comPackageManager::comPackageManager ()
-  : initialized (false)
+  : pSession (0)
 {
 }
 
@@ -49,9 +49,9 @@ comPackageManager::~comPackageManager ()
 {
   try
     {
-      if (initialized)
+      if (pSession != 0)
 	{
-	  pSession.Reset ();
+	  Session::Release (pSession);
 	}
     }
   catch (const exception &)
@@ -69,15 +69,15 @@ comPackageManager::FinalRelease ()
 {
   try
     {
-      if (initialized)
+      if (pSession != 0)
 	{
-	  pSession.Reset ();
+	  Session::Release (pSession);
 	}
     }
   catch (const exception &)
     {
     }
-  initialized = false;
+  pSession = 0;
 }
 
 /* _________________________________________________________________________
@@ -129,12 +129,7 @@ comPackageManager::CreateInstaller (/*[out,retval]*/
       // at the end of the block
       CComPtr<IUnknown> pUnk (pInstaller->GetUnknown());
 
-      // create a MiKTeX session
-      if (! initialized)
-	{
-	  pSession.CreateSession (Session::InitInfo(MPMSVC));
-	  initialized = true;
-	}
+      CreateSession ();
 
       pInstaller->Initialize ();
 
@@ -145,6 +140,115 @@ comPackageManager::CreateInstaller (/*[out,retval]*/
     {
       *ppInstaller = 0;
       return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::GetPackageInfo
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
+				   /*[out,retval]*/ PackageInfo * pPackageInfo)
+{
+  PackageManagerImpl::localServer = true;
+  try
+    {
+      CreateSession ();
+
+      if (pManager.Get() == 0)
+	{
+	  pManager.Create ();
+	}
+      
+      MiKTeX::Packages::PackageInfo packageInfo =
+	pManager->GetPackageInfo(static_cast<const MIKTEXCHAR *>
+				 (CW2CT(deploymentName)));
+
+
+      _bstr_t deploymentName = packageInfo.deploymentName.c_str();
+      _bstr_t displayName = packageInfo.displayName.c_str();
+      _bstr_t title = packageInfo.title.c_str();
+      _bstr_t version = packageInfo.version.c_str();
+      _bstr_t description = packageInfo.description.c_str();
+      _bstr_t creator = packageInfo.creator.c_str();
+
+      pPackageInfo->deploymentName = deploymentName;
+      pPackageInfo->displayName = displayName;
+      pPackageInfo->title = title;
+      pPackageInfo->version = version;
+      pPackageInfo->description = description;
+      pPackageInfo->creator = creator;
+	  
+      pPackageInfo->sizeRunFiles = packageInfo.sizeRunFiles;
+      pPackageInfo->sizeDocFiles = packageInfo.sizeDocFiles;
+      pPackageInfo->sizeSourceFiles = packageInfo.sizeSourceFiles;
+
+      pPackageInfo->numRunFiles = packageInfo.runFiles.size();
+      pPackageInfo->numDocFiles = packageInfo.docFiles.size();
+      pPackageInfo->numSourceFiles = packageInfo.sourceFiles.size();
+      
+      if (packageInfo.timePackaged == static_cast<time_t>(-1))
+	{
+	  pPackageInfo->timePackaged = COleDateTime();
+	}
+      else
+	{
+	  pPackageInfo->timePackaged = COleDateTime(packageInfo.timePackaged);
+	}
+
+      if (packageInfo.timeInstalled == static_cast<time_t>(-1))
+	{
+	  pPackageInfo->timeInstalled = COleDateTime();
+	}
+      else
+	{
+	  pPackageInfo->timeInstalled =
+	    COleDateTime(packageInfo.timeInstalled);
+	}
+
+      pPackageInfo->archiveFileSize = packageInfo.archiveFileSize;
+
+      memcpy (&pPackageInfo->digest,
+	      &packageInfo.digest,
+	      sizeof(packageInfo.digest));
+
+      deploymentName.Detach ();
+      displayName.Detach ();
+      title.Detach ();
+      version.Detach ();
+      description.Detach ();
+      creator.Detach ();
+
+      return (S_OK);
+    }
+  catch (const _com_error & e)
+    {
+      return (e.Error());
+    }
+  catch (const exception &)
+    {
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::CreateSession
+   _________________________________________________________________________ */
+
+void
+comPackageManager::CreateSession ()
+{
+  if (pSession == 0)
+    {
+      pSession = Session::TryGet();
+      if (pSession == 0)
+	{
+	  // we are running standalone; create a new session
+	  pSession = Session::Get(Session::InitInfo(MPMSVC));
+	}
     }
 }
 
@@ -198,14 +302,15 @@ comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
 	  SECURITY_DESCRIPTOR * pSd;
 	  ULONG sizeSd = GetAccessPermissionsForLUAServer(&pSd);
 	  AutoLocalMem toBeFreed (pSd);
-	  str = Utils::Hexify(pSd, sizeSd, true).c_str();
+	  str = Utils::Hexify(pSd, sizeSd, true);
 	}
       else
 	{
 	  str = T_("00");
 	}
       rme.szKey = L"ACCESS_SD";
-      rme.szData = CT2W(str.c_str());
+      CT2W wstr (str.c_str());
+      rme.szData = wstr;
       regMapEntries.push_back (rme);
       rme.szKey = 0;
       rme.szData = 0;

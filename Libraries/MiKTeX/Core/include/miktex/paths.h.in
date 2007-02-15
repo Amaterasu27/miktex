@@ -1,6 +1,6 @@
-/* miktex/paths.h: hard-coded path names
+/* miktex/paths.h: hard-coded path names			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -383,6 +383,20 @@
   MIKTEX_UPDATE_DAT
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define MIKTEX_PATH_MPM_DLL \
+  MIKTEX_PATH_BIN_DIR				\
+  MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
+  MIKTEX_MPM_DLL
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#  define MIKTEX_PATH_MPM_PS_DLL \
+  MIKTEX_PATH_BIN_DIR				\
+  MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
+  MIKTEX_MPM_PS_DLL
+#endif
+
 #define MIKTEX_PATH_NTS_DIR			\
   MIKTEXTEXT("nts")
 
@@ -485,5 +499,11 @@
 #define MIKTEX_FAQ_HELP_FILE MIKTEXTEXT("faq.chm")
 #define MIKTEX_LATEX_HELP_FILE MIKTEXTEXT("latex2e.chm")
 #define MIKTEX_YAP_HELP_FILE MIKTEXTEXT("yap.chm")
+
+#define MIKTEX_MPM_DLL \
+	MIKTEXTEXT("@mpm_dll_name@") MIKTEX_SHARED_LIB_FILE_SUFFIX
+
+#define MIKTEX_MPM_PS_DLL \
+	MIKTEXTEXT("@mpm_ps_dll_name@") MIKTEX_SHARED_LIB_FILE_SUFFIX
 
 #endif

@@ -1704,6 +1704,129 @@ PackageInstallerImpl::ConnectToServer ()
       
 /* _________________________________________________________________________
 
+   PackageInstallerImpl::RegisterComponent
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+
+void
+PackageInstallerImpl::RegisterComponent
+(/*[in]*/ bool				doRegister,
+ /*[in]*/ const PathName &		path)
+{
+  ReportLine (T_("%s %s"),
+	      (doRegister
+	       ? T_("registering")
+	       : T_("unregistering")),
+	      path.Get());
+  PathName regExe;
+  CommandLineBuilder cmdLine;
+  if (path.HasExtension(MIKTEX_SHARED_LIB_FILE_SUFFIX))
+    {
+      regExe = T_("regsvr32.exe");
+      cmdLine.AppendOption (T_("/s"));
+      if (! doRegister)
+	{
+	  cmdLine.AppendOption (T_("/u"));
+	}
+      cmdLine.AppendArgument (path);
+    }
+  else
+    {
+      regExe = path;
+      cmdLine.AppendOption (doRegister
+			    ? T_("/RegServer")
+			    : T_("/UnregServer"));
+    }
+  Process::Run (regExe, cmdLine.Get());
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::RegisterComponents
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+
+static const MIKTEXCHAR * const components[] = {
+  MIKTEX_PATH_MPM_DLL,
+  MIKTEX_PATH_MPM_PS_DLL,
+};
+
+void
+PackageInstallerImpl::RegisterComponents
+(/*[in]*/ bool				doRegister,
+ /*[in]*/ const vector<tstring> &	packages)
+{
+  for (vector<tstring>::const_iterator it = packages.begin();
+       it != packages.end();
+       ++ it)
+    {
+      PackageInfo * pPackageInfo =
+	pManager->TryGetPackageInfo(it->c_str());
+      if (pPackageInfo == 0)
+	{
+	  FatalError (ERROR_UNKNOWN_PACKAGE, it->c_str());
+	}
+      for (vector<tstring>::const_iterator it2 =
+	     pPackageInfo->runFiles.begin();
+	   it2 != pPackageInfo->runFiles.end();
+	   ++ it2)
+	{
+	  tstring fileName;
+	  if (! PackageManager::StripTeXMFPrefix(*it2, fileName))
+	    {
+	      continue;
+	    }
+	  for (size_t idx = 0;
+	       idx < sizeof(components) / sizeof(components[0]);
+	       ++ idx)
+	    {
+	      if (PathName(fileName) != components[idx])
+		{
+		  continue;
+		}
+	      PathName path (destinationDirectory);
+	      path += components[idx];
+	      if (File::Exists(path))
+		{
+		  RegisterComponent (doRegister, path);
+		}
+	    }
+	}
+    }
+}
+
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::RegisterComponents
+   _________________________________________________________________________ */
+
+void
+MPMCALL
+PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
+{
+#if defined(MIKTEX_WINDOWS)
+  for (size_t idx = 0;
+       idx < sizeof(components) / sizeof(components[0]);
+       ++ idx)
+    {
+      PathName path (destinationDirectory);
+      path += components[idx];
+      if (File::Exists(path))
+	{
+	  RegisterComponent (doRegister, path);
+	}
+    }
+#endif
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::InstallRemove
    _________________________________________________________________________ */
 
@@ -1714,12 +1837,13 @@ PackageInstallerImpl::InstallRemove ()
 #if USE_LOCAL_SERVER
   if (UseLocalServer())
     {
+      HRESULT hr;
       ConnectToServer ();
       for (vector<tstring>::const_iterator it = toBeInstalled.begin();
 	   it != toBeInstalled.end();
 	   ++ it)
 	{
-	  HRESULT hr =
+	  hr =
 	    localServer.pInstaller->Add(_bstr_t(it->c_str()), TRUE);
 	  if (FAILED(hr))
 	    {
@@ -1741,29 +1865,28 @@ PackageInstallerImpl::InstallRemove ()
 			       NUMTOSTR(hr));
 	    }
 	}
-      HRESULT hr = localServer.pInstaller->InstallRemove(this);
+      localServer.pInstaller->SetCallback(this);
+      hr = localServer.pInstaller->InstallRemove();
+      localServer.pInstaller->SetCallback(0);
       if (FAILED(hr))
 	{
-	  MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo = 0;
-	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&pErrorInfo);
+	  MiKTeXPackageManagerLib::ErrorInfo errorInfo;
+	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
 	  if (FAILED(hr2))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
 			       T_("mpmsvc failed for some reason."),
 			       NUMTOSTR(hr));
 	    }
-	  AutoCoTaskMem a (pErrorInfo);
-	  {
-	    AutoSysString a (pErrorInfo->message);
-	    AutoSysString b (pErrorInfo->info);
-	    AutoSysString c (pErrorInfo->sourceFile);
-	    Session::FatalMiKTeXError
-	      (T_("PackageInstallerImpl::InstallRemove"),
-	       CW2CT(pErrorInfo->message),
-	       CW2CT(pErrorInfo->info),
-	       CW2CT(pErrorInfo->sourceFile),
-	       pErrorInfo->sourceLine);
-	  }
+	  AutoSysString a (errorInfo.message);
+	  AutoSysString b (errorInfo.info);
+	  AutoSysString c (errorInfo.sourceFile);
+	  Session::FatalMiKTeXError
+	    (T_("PackageInstallerImpl::InstallRemove"),
+	     CW2CT(errorInfo.message),
+	     CW2CT(errorInfo.info),
+	     CW2CT(errorInfo.sourceFile),
+	     errorInfo.sourceLine);
 	}
       return;
     }
@@ -1866,6 +1989,13 @@ PackageInstallerImpl::InstallRemove ()
   
   vector<tstring>::const_iterator it;
 
+#if defined(MIKTEX_WINDOWS)
+  if (SessionWrapper(true)->RunningAsAdministrator())
+    {
+      RegisterComponents (false, toBeInstalled, toBeRemoved);
+    }
+#endif
+
   // install packages
   for (it = toBeInstalled.begin(); it != toBeInstalled.end(); ++ it)
     {
@@ -1877,6 +2007,13 @@ PackageInstallerImpl::InstallRemove ()
     {
       RemovePackage (*it);
     }
+
+#if defined(MIKTEX_WINDOWS)
+  if (SessionWrapper(true)->RunningAsAdministrator())
+    {
+      RegisterComponents (true, toBeInstalled);
+    }
+#endif
 
   if (! autoFndbSync)
     {
@@ -2250,25 +2387,22 @@ PackageInstallerImpl::UpdateDb ()
       HRESULT hr = localServer.pInstaller->UpdateDb();
       if (FAILED(hr))
 	{
-	  MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo = 0;
-	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&pErrorInfo);
+	  MiKTeXPackageManagerLib::ErrorInfo errorInfo;
+	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
 	  if (FAILED(hr2))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
 			       T_("The service failed for some reason."),
 			       NUMTOSTR(hr));
 	    }
-	  AutoCoTaskMem a (pErrorInfo);
-	  {
-	    AutoSysString a (pErrorInfo->message);
-	    AutoSysString b (pErrorInfo->info);
-	    AutoSysString c (pErrorInfo->sourceFile);
-	    Session::FatalMiKTeXError (T_("PackageInstallerImpl::UpdateDb"),
-				       CW2CT(pErrorInfo->message),
-				       CW2CT(pErrorInfo->info),
-				       CW2CT(pErrorInfo->sourceFile),
-				       pErrorInfo->sourceLine);
-	  }
+	  AutoSysString a (errorInfo.message);
+	  AutoSysString b (errorInfo.info);
+	  AutoSysString c (errorInfo.sourceFile);
+	  Session::FatalMiKTeXError (T_("PackageInstallerImpl::UpdateDb"),
+				     CW2CT(errorInfo.message),
+				     CW2CT(errorInfo.info),
+				     CW2CT(errorInfo.sourceFile),
+				     errorInfo.sourceLine);
 	}
       return;
     }
@@ -2665,6 +2799,7 @@ PackageInstallerImpl::UseLocalServer ()
 #if USE_LOCAL_SERVER
 
 HRESULT
+__stdcall
 PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
 				      /*[out]*/ LPVOID *	ppvObj)
 {
@@ -2705,6 +2840,7 @@ PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
 #if USE_LOCAL_SERVER
 
 ULONG
+__stdcall
 PackageInstallerImpl::AddRef ()
 {
   return (1);
@@ -2720,6 +2856,7 @@ PackageInstallerImpl::AddRef ()
 #if USE_LOCAL_SERVER
 
 ULONG
+__stdcall
 PackageInstallerImpl::Release ()
 {
   return (1);
@@ -2735,6 +2872,7 @@ PackageInstallerImpl::Release ()
 #if USE_LOCAL_SERVER
 
 HRESULT
+__stdcall
 PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
 {
   try
@@ -2762,8 +2900,10 @@ PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
 #if USE_LOCAL_SERVER
 
 HRESULT
-PackageInstallerImpl::OnRetryableError (/*[in]*/ BSTR		message,
-					/*[out,retval]*/ long *	pDoContinue)
+__stdcall
+PackageInstallerImpl::OnRetryableError
+(/*[in]*/ BSTR				message,
+ /*[out,retval]*/ VARIANT_BOOL *	pDoContinue)
 {
   try
     {
@@ -2772,12 +2912,12 @@ PackageInstallerImpl::OnRetryableError (/*[in]*/ BSTR		message,
 	  _bstr_t bstr (message, false);
 	  *pDoContinue =
 	    (pCallback->OnRetryableError(static_cast<const MIKTEXCHAR *>(bstr))
-	     ? TRUE
-	     : FALSE);
+	     ? VARIANT_TRUE
+	     : VARIANT_FALSE);
 	}
       else
 	{
-	  *pDoContinue = FALSE;
+	  *pDoContinue = VARIANT_FALSE;
 	}
       return (S_OK);
     }
@@ -2797,19 +2937,24 @@ PackageInstallerImpl::OnRetryableError (/*[in]*/ BSTR		message,
 #if USE_LOCAL_SERVER
 
 HRESULT
-PackageInstallerImpl::OnProgress (/*[in]*/ long			nf,
-				  /*[out,retval]*/ long *	pDoContinue)
+__stdcall
+PackageInstallerImpl::OnProgress
+(/*[in]*/ LONG				nf,
+ /*[out,retval]*/ VARIANT_BOOL *	pDoContinue)
 {
   try
     {
       if (pCallback != 0)
 	{
 	  Notification notification (static_cast<Notification::EnumType>(nf));
-	  *pDoContinue = (pCallback->OnProgress(notification) ? TRUE : FALSE);
+	  *pDoContinue =
+	    (pCallback->OnProgress(notification)
+	     ? VARIANT_TRUE
+	     : VARIANT_FALSE);
 	}
       else
 	{
-	  *pDoContinue = TRUE;
+	  *pDoContinue = VARIANT_TRUE;
 	}
       return (S_OK);
     }

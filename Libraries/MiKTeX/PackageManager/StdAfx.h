@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -44,6 +44,7 @@
 #  define _ATL_NO_AUTOMATIC_NAMESPACE
 #  define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
 #  include <atlbase.h>
+#  include <ATLComTime.h>
 #  include <atlcom.h>
 using namespace ATL;
 #endif

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,11 @@
 configure_file(
   ${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/version.h.in
   ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/version.h
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/paths.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/paths.h
 )
 
 configure_file(
@@ -59,7 +64,6 @@ set(${core_dll_name}_sources
   include/miktex/core.h
   include/miktex/env.h
   include/miktex/first.h
-  include/miktex/paths.h
   include/miktex/reg.h
   include/miktex/test.h
   include/miktex/trace.h
