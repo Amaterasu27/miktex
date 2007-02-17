@@ -1,6 +1,6 @@
 /* PropPageRoots.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -569,18 +569,18 @@ PropPageTeXMFRoots::EnableButtons ()
 
   UINT nSelected = listControl.GetSelectedCount();
 
-  bool runningAsAdmin =
+  bool isAdmin =
     (! IsWindowsNT()
-     || SessionWrapper(true)->RunningAsAdministrator()
-     || SessionWrapper(true)->RunningAsPowerUser());
+     || SessionWrapper(true)->IsUserAnAdministrator()
+     || SessionWrapper(true)->IsUserAPowerUser());
 
   bool shared =
     (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True);
 
-  bool canAdd = (! shared || runningAsAdmin);
-  bool canRemove = (! shared || runningAsAdmin);
-  bool canMoveUp = (! shared || runningAsAdmin);
-  bool canMoveDown = (! shared || runningAsAdmin);
+  bool canAdd = (! shared || isAdmin);
+  bool canRemove = (! shared || isAdmin);
+  bool canMoveUp = (! shared || isAdmin);
+  bool canMoveDown = (! shared || isAdmin);
 
   int idx = -1;
 
