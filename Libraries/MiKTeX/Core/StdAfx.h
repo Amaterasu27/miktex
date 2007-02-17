@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -42,6 +42,17 @@
 #  include <htmlhelp.h>
 #  include <shlwapi.h>
 #  include <shlobj.h>
+#  include <Sddl.h>
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#  define _ATL_FREE_THREADED
+#  define _ATL_NO_AUTOMATIC_NAMESPACE
+#  define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
+#  include <atlbase.h>
+#  include <ATLComTime.h>
+#  include <atlcom.h>
+using namespace ATL;
 #endif
 
 #if defined(_MSC_VER)
@@ -177,7 +188,11 @@ using namespace std;
 
 #include <errno.h>
 
-#include "miktex/md5.h"
+#include <miktex/md5.h>
 
-#  include "bzlib.h"
-#  include "zlib.h"
+#include <bzlib.h>
+#include <zlib.h>
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+#  import "session.tlb" raw_interfaces_only
+#endif

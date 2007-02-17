@@ -23,8 +23,6 @@
 
 #include "internal.h"
 
-#include <miktex/win/DllProc.h>
-
 /* _________________________________________________________________________
 
    DllProcBase::DllProcBase

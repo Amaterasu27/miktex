@@ -1,6 +1,6 @@
-/* core.rc: MiKTeX Core resource file				-*- C++ -*-
+/* session.h: MiKTeX session					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 2006-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -19,28 +19,18 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#ifdef RC_INVOKED
-#include "MiKTeXEvents.rc"
-#endif
+/* _________________________________________________________________________
 
-#include "core-version.h"
-#include "Resource.h"
+   MiKTeXSessionModule
+   _________________________________________________________________________ */
 
-#define VER_INTERNALNAME_STR "MiKTeX-core-3"
-#define VER_ORIGINALFILENAME_STR "MiKTeX-core-3.dll"
+class MiKTeXSessionModule
+  : public CAtlDllModuleT< MiKTeXSessionModule >
+{
+public:
+  DECLARE_LIBID(LIBID_MiKTeXSessionLib);
+  DECLARE_REGISTRY_APPID_RESOURCEID(IDR_MIKTEXSESSIONMODULE,
+				    "{C3CAB8AD-25D8-4EB0-912A-084D08B956CE}");
+};
 
-#define VER_FILEDESCRIPTION_STR "MiKTeX Core DLL"
-
-#define VER_FILETYPE VFT_DLL
-
-IDR_MIKTEXSESSIONMODULE REGISTRY "COM/session.rgs"
-IDR_MIKTEXSESSIONOBJECT REGISTRY "COM/comSession.rgs"
-
-STRINGTABLE 
-BEGIN
-    IDS_PROJNAME            "MiKTeX Session"
-END
-
-1 TYPELIB "session.tlb"
-
-#include <miktex/miktex.version>
+extern MiKTeXSessionModule _AtlModule;

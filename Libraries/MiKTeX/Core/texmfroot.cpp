@@ -544,6 +544,36 @@ SessionImpl::SaveRootDirectories ()
 void
 SessionImpl::RegisterRootDirectories (/*[in]*/ const tstring &	roots)
 {
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+  if (UseLocalServer())
+    {
+      ConnectToServer ();
+      HRESULT hr =
+	localServer.pSession->RegisterRootDirectories(_bstr_t(roots.c_str()));
+      if (FAILED(hr))
+	{
+	  MiKTeXSessionLib::ErrorInfo errorInfo;
+	  HRESULT hr2 = localServer.pSession->GetErrorInfo(&errorInfo);
+	  if (FAILED(hr2))
+	    {
+	      FATAL_MIKTEX_ERROR (T_("SessionImpl::RegisterRootDirectories"),
+				  T_("sessionsvc failed for some reason."),
+				  NUMTOSTR(hr));
+	    }
+	  AutoSysString a (errorInfo.message);
+	  AutoSysString b (errorInfo.info);
+	  AutoSysString c (errorInfo.sourceFile);
+	  Session::FatalMiKTeXError
+	    (T_("SessionImpl::RegisterRootDirectories"),
+	     CW2CT(errorInfo.message),
+	     CW2CT(errorInfo.info),
+	     CW2CT(errorInfo.sourceFile),
+	     errorInfo.sourceLine);
+	}
+      return;
+    }
+#endif
+
   StartupConfig startupConfig;
   startupConfig.roots = roots;
   RegisterRootDirectories (startupConfig, false);

@@ -1,6 +1,6 @@
 /* core.h: MiKTeX core API					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -5017,6 +5017,10 @@ public:
       None,
       /// No config files will be loaded.
       NoConfigFiles = 1,
+#if defined(MIKTEX_WINDOWS)
+      /// Initialize the COM library.
+      InitializeCOM = 2,
+#endif
     };
   };
 

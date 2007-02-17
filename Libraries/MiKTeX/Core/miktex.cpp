@@ -43,6 +43,15 @@ SessionImpl * SessionImpl::theSession = 0;
 
 /* _________________________________________________________________________
 
+   SessionImpl::runningAsLocalServer
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+bool SessionImpl::runningAsLocalServer = false;
+#endif
+
+/* _________________________________________________________________________
+
    SessionImpl::GetPolicyFlags
    _________________________________________________________________________ */
 
@@ -1006,6 +1015,19 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
       INVALID_ARGUMENT (T_("SessionImpl::Initialize"), 0);
     }
 
+#if defined(MIKTEX_WINDOWS)
+  if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
+    {
+      HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (FAILED(hr))
+	{
+	  FATAL_MIKTEX_ERROR (T_(""),
+			      T_("The COM library could not be initialized."),
+			      NUMTOSTR(hr));
+	}
+    }
+#endif
+
   initialized = true;
 
   this->initInfo = initInfo;
@@ -1114,26 +1136,129 @@ SessionImpl::Uninitialize ()
     {
       return;
     }
-  initialized = false;
-  trace_core->WriteFormattedLine (T_("core"),
-				  T_("uninitializing core library"));
-  CheckOpenFiles ();
-  WritePackageHistory ();
-  size_t n = scratchDirectoryStack.size();
-  if (n > 0)
+  try
     {
-      trace_error->WriteFormattedLine
-	(T_("core"),
-	 T_("there are %u scratch directories in use"),
-	 static_cast<unsigned>(n));
-      while (! scratchDirectoryStack.empty())
+      initialized = false;
+      trace_core->WriteFormattedLine (T_("core"),
+				      T_("uninitializing core library"));
+      CheckOpenFiles ();
+      WritePackageHistory ();
+      size_t n = scratchDirectoryStack.size();
+      if (n > 0)
 	{
-	  scratchDirectoryStack.pop ();
+	  trace_error->WriteFormattedLine
+	    (T_("core"),
+	     T_("there are %u scratch directories in use"),
+	     static_cast<unsigned>(n));
+	  while (! scratchDirectoryStack.empty())
+	    {
+	      scratchDirectoryStack.pop ();
+	    }
+	}
+      workingDirectories.clear ();
+      UnregisterLibraryTraceStreams ();
+    }
+  catch (const exception &)
+    {
+      CoUninitialize ();
+      throw;
+    }
+  CoUninitialize ();
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ConnectToServer
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+
+void
+SessionImpl::ConnectToServer ()
+{
+  const MIKTEXCHAR * MSG_CANNOT_START_SERVER =
+    T_("Cannot start MiKTeX session.");
+  if (localServer.pSession == 0)
+    {
+      if (IsWindowsVista())
+	{
+	  WCHAR wszCLSID[50];
+	  if (StringFromGUID2
+	      (__uuidof(MiKTeXSessionLib::MiKTeXSession),
+	       wszCLSID, 
+	       sizeof(wszCLSID) / sizeof(wszCLSID[0]))
+	      < 0)
+	    {
+	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+				  MSG_CANNOT_START_SERVER,
+				  0);
+	    }
+	  wstring monikerName;
+	  monikerName = L"Elevation:Administrator!new:";
+	  monikerName += wszCLSID;
+	  BIND_OPTS3 bo;
+	  memset (&bo, 0, sizeof(bo));
+	  bo.cbStruct = sizeof(bo);
+	  bo.hwnd = GetForegroundWindow();
+	  bo.dwClassContext	= CLSCTX_LOCAL_SERVER;
+	  HRESULT hr =
+	    CoGetObject(monikerName.c_str(),
+			&bo,
+			__uuidof(MiKTeXSessionLib::ISession),
+			reinterpret_cast<void**>(&localServer.pSession));
+	  if (FAILED(hr))
+	    {
+	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+				  MSG_CANNOT_START_SERVER,
+				  NUMTOSTR(hr));
+	    }
+	}
+      else
+	{
+	  HRESULT hr =
+	    localServer.pSession.CoCreateInstance
+	    (__uuidof(MiKTeXSessionLib::MiKTeXSession),
+	     0,
+	     CLSCTX_LOCAL_SERVER);
+	  if (FAILED(hr))
+	    {
+	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+				  MSG_CANNOT_START_SERVER,
+				  NUMTOSTR(hr));
+	    }
 	}
     }
-  workingDirectories.clear ();
-  UnregisterLibraryTraceStreams ();
 }
+
+#endif
+      
+/* _________________________________________________________________________
+
+   SessionImpl::UseLocalServer
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+
+bool
+SessionImpl::UseLocalServer ()
+{
+  if (SessionImpl::runningAsLocalServer)
+    {
+      // already running as local server
+      return (false);
+    }
+#if defined(MIKTEX_WINDOWS)
+  bool elevationRequired =
+    (IsWindowsVista()
+     && IsSharedMiKTeXSetup() == TriState::True
+     && ! SessionWrapper(true)->RunningAsAdministrator());
+  return (elevationRequired);
+#else
+  return (false);
+#endif
+}
+
+#endif
 
 /* _________________________________________________________________________
 

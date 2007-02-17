@@ -32,7 +32,6 @@
 #include <miktex/win/DllProc.h>
 
 #define SET_SECURITY 1
-#define REPORT_EVENTS 0
 
 /* _________________________________________________________________________
 
@@ -2802,98 +2801,3 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 
   argv.push_back (0);
 }
-
-/* _________________________________________________________________________
-
-   DllMain
-
-   DLL entry/exit routine.
-   _________________________________________________________________________ */
-
-#if ! defined(MIKTEX_STATIC)
-
-#if ! defined(MIKTEX_PREVENT_DYNAMIC_LOADS)
-#  define MIKTEX_PREVENT_DYNAMIC_LOADS 0
-#endif
-
-HINSTANCE SessionImpl::hinstDLL = 0;
-TriState SessionImpl::dynamicLoad = TriState::Undetermined;
-
-int
-WINAPI
-DllMain (/*[in]*/ HINSTANCE		hinstDLL,
-	 /*[in]*/ unsigned long		reason,
-	 /*[in]*/ void *		lpReserved)
-{
-  BOOL retCode = TRUE;
-
-  switch (reason)
-    {
-      // initialize primary thread
-    case DLL_PROCESS_ATTACH:
-      SessionImpl::dynamicLoad =
-	(lpReserved == 0 ? TriState::True : TriState::False);
-#if MIKTEX_PREVENT_DYNAMIC_LOADS
-      if (SessionImpl::dynamicLoad == TriState::True)
-	{
-	  retCode = FALSE;
-	}
-#endif
-      SessionImpl::hinstDLL = hinstDLL;
-      break;
-
-      // finalize primary thread
-    case DLL_PROCESS_DETACH:
-      SessionImpl::dynamicLoad = TriState::Undetermined;
-      SessionImpl::hinstDLL = 0;
-      break;
-    }
-
-  return (retCode);
-}
-
-#endif
-
-/* _________________________________________________________________________
-
-   DllRegisterServer
-   _________________________________________________________________________ */
-
-#if ! defined(MIKTEX_STATIC)
-extern "C"
-__declspec(dllexport)
-HRESULT
-__stdcall
-DllRegisterServer (void)
-{
-#if REPORT_EVENTS
-  if (! AddEventSource())
-    {
-      return (E_FAIL);
-    }
-#endif
-  return (S_OK);
-}
-#endif
-
-/* _________________________________________________________________________
-
-   DllUnregisterServer
-   _________________________________________________________________________ */
-
-#if ! defined(MIKTEX_STATIC)
-extern "C"
-__declspec(dllexport)
-HRESULT
-__stdcall
-DllUnregisterServer (void)
-{
-#if REPORT_EVENTS
-  if (RemoveEventSource())
-    {
-      return (E_FAIL);
-    }
-#endif
-  return (S_OK);
-}
-#endif

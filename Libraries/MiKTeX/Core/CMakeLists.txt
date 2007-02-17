@@ -103,6 +103,87 @@ if(NATIVE_WINDOWS)
     win/winThread.cpp
     win/winThread.h
   )
+  if(MFC_FOUND)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/session.rgs.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/session.rgs
+    )
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
+    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
+    set(${core_dll_name}_sources ${${core_dll_name}_sources}
+      ${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
+      ${CMAKE_CURRENT_BINARY_DIR}/session.tlb
+      ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
+      COM/comSession.cpp
+      COM/comSession.h
+      COM/session.cpp
+      COM/session.def
+    )
+    add_custom_command(
+      OUTPUT
+		${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
+      COMMAND ${MIDL_EXE}
+	/nologo
+	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+	/char signed
+	/env win32
+	/Oicf
+	/h ${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
+	/no_robust
+	${CMAKE_CURRENT_SOURCE_DIR}/include/miktexidl.idl
+      DEPENDS
+		${CMAKE_CURRENT_SOURCE_DIR}/include/miktexidl.idl
+      VERBATIM
+    )
+    add_custom_command(
+      OUTPUT
+		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+		${CMAKE_CURRENT_BINARY_DIR}/session.tlb
+		${CMAKE_CURRENT_BINARY_DIR}/session_i.c
+		${CMAKE_CURRENT_BINARY_DIR}/session_p.c
+		${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+      COMMAND ${MIDL_EXE}
+	/nologo
+	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+	/char signed
+	/env win32
+	/Oicf
+	/tlb ${CMAKE_CURRENT_BINARY_DIR}/session.tlb
+	/h ${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+	/iid ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
+	/proxy ${CMAKE_CURRENT_BINARY_DIR}/session_p.c
+	/no_robust
+	${CMAKE_CURRENT_SOURCE_DIR}/COM/session.idl
+      DEPENDS
+		${CMAKE_CURRENT_SOURCE_DIR}/COM/session.idl
+		${CMAKE_CURRENT_SOURCE_DIR}/include/miktexidl.idl
+      VERBATIM
+    )
+    add_library(
+      ${core_ps_dll_name}
+      SHARED
+      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+      ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
+      ${CMAKE_CURRENT_BINARY_DIR}/session_p.c
+      ${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
+    )
+    set_source_files_properties(
+      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
+      ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
+      ${CMAKE_CURRENT_BINARY_DIR}/session_p.c
+      PROPERTIES COMPILE_FLAGS
+      "-DREGISTER_PROXY_DLL"
+    )
+    target_link_libraries(${core_ps_dll_name}
+      oleaut32
+      rpcndr
+      rpcns4
+      rpcrt4
+      uuid
+    )
+    install(TARGETS ${core_ps_dll_name} DESTINATION "${bindir}")
+  endif(MFC_FOUND)
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
     PROPERTIES GENERATED TRUE

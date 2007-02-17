@@ -1,0 +1,90 @@
+/* session.idl: MiKTeX session
+
+   Copyright (C) 2006-2007 Christian Schenk
+
+   This file is part of the MiKTeX Core Library.
+
+   The MiKTeX Core Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   The MiKTeX Core Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with the MiKTeX Core Library; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+import "miktexidl.idl";
+
+/* _________________________________________________________________________
+   
+   ISession
+   _________________________________________________________________________ */
+
+[
+  object,
+  uuid(8BE9F539-B949-4C7B-991C-DB6C6F737EC7),
+  dual,
+  nonextensible,
+  helpstring("ISession Interface"),
+  pointer_default(unique)
+]
+interface ISession : IDispatch
+{
+  [
+    id(1),
+    helpstring("method RegisterRootDirectories")
+  ]
+  HRESULT
+  RegisterRootDirectories ([in] BSTR rootDirectories);
+
+  [
+    id(2),
+    helpstring("method FindPkFile")
+  ]
+  HRESULT
+  FindPkFile ([in] BSTR fontName,
+	      [in] BSTR mode,
+	      [in] LONG dpi,
+	      [out] BSTR * path,
+	      [out,retval] VARIANT_BOOL * found);
+
+  [
+    id(3),
+    helpstring("method GetErrorInfo")
+  ]
+  HRESULT
+  GetErrorInfo ([out,retval] ErrorInfo * errorInfo);
+};
+
+/* _________________________________________________________________________
+   
+   MiKTeXSession
+   _________________________________________________________________________ */
+
+[
+  uuid(4C28CF19-0EC8-42AF-B901-CDCCCCE420FB),
+  version(1.0),
+  helpstring("MiKTeX Session 1.0 Type Library")
+]
+library MiKTeXSessionLib
+{
+  importlib("stdole2.tlb");
+
+  [
+    uuid(DE6D4D25-4E98-488D-91B2-E97CC319764B),
+    helpstring("MiKTeX Session")
+  ]
+  coclass MiKTeXSession
+  {
+    [default] interface ISession;
+  };
+};

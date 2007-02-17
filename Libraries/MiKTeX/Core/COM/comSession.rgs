@@ -1,0 +1,39 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'MiKTeX Session'
+		{
+			val AccessPermission = b '%ACCESS_SD%'
+		}
+	}
+	MiKTeX.Session.1 = s 'MiKTeX Session'
+	{
+		CLSID = s '{DE6D4D25-4E98-488D-91B2-E97CC319764B}'
+	}
+	MiKTeX.Session = s 'MiKTeX Session'
+	{
+		CLSID = s '{DE6D4D25-4E98-488D-91B2-E97CC319764B}'
+		CurVer = s 'MiKTeX.Session.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {DE6D4D25-4E98-488D-91B2-E97CC319764B} = s 'MiKTeX Session'
+		{
+			ProgID = s 'MiKTeX.Session.1'
+			VersionIndependentProgID = s 'MiKTeX.Session'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{4C28CF19-0EC8-42AF-B901-CDCCCCE420FB}'
+			Elevation
+			{
+				val Enabled = d 1
+			}
+			val LocalizedString = s '@%MODULE%,-100'
+		}
+	}
+}

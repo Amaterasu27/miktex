@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -28,6 +28,10 @@
 #define EAD86981C92C904D808A5E6CEC64B90E
 #include "miktex/core.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  include "miktex/win/DllProc.h"
+#endif
+
 #include "miktex/paths.h"
 #include "miktex/reg.h"
 #include "miktex/trace.h"
@@ -47,8 +51,14 @@ namespace MiKTeX {				\
 
 BEGIN_INTERNAL_NAMESPACE;
 
+#define REPORT_EVENTS 0
+
 #if defined(MIKTEX_WINDOWS)
 #  include "MiKTeXEvents.h"
+#endif
+
+#if defined(_MSC_VER) && defined(MIKTEX_WINDOWS)
+#  pragma comment(lib, "comsuppw.lib")
 #endif
 
 /* _________________________________________________________________________
@@ -315,6 +325,7 @@ const MIKTEXCHAR PATH_DELIMITER = T_(':');
 
 const MIKTEXCHAR * const RECURSION_INDICATOR = T_("//");
 const size_t RECURSION_INDICATOR_LENGTH = 2;
+const MIKTEXCHAR * const SESSIONSVC = T_("sessionsvc");
 
 /* _________________________________________________________________________
 
@@ -700,7 +711,25 @@ public:
 };
 
 typedef AutoResource<void *, LocalFree_> AutoLocalMemory;
+typedef AutoResource<void *, LocalFree_> AutoLocalMem;
 #endif
+
+/* _________________________________________________________________________
+
+   AutoSysString
+   _________________________________________________________________________ */
+
+class SysFreeString_
+{
+public:
+  void
+  operator() (/*[in]*/ BSTR bstr)
+  {
+    SysFreeString (bstr);
+  }
+};
+
+typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
 
 /* _________________________________________________________________________
 
@@ -2181,6 +2210,11 @@ public:
 public:
   static SessionImpl * theSession;
 
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+public:
+  static bool runningAsLocalServer;
+#endif
+
 public:
   static
   SessionImpl *
@@ -2683,6 +2717,18 @@ private:
     return (rootDirectories);
   }
 
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+private:
+  bool
+  UseLocalServer ();
+#endif
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+private:
+  void
+  ConnectToServer ();
+#endif
+
   // index of common data root
 private:
   unsigned commonDataRootIndex;
@@ -2729,6 +2775,14 @@ private:
 
 private:
   bool initialized;
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+private:
+  struct
+  {
+    CComQIPtr<MiKTeXSessionLib::ISession> pSession;
+  } localServer;
+#endif
 
 private:
   friend class Session;

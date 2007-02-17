@@ -397,6 +397,20 @@
   MIKTEX_MPM_PS_DLL
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define MIKTEX_PATH_CORE_DLL			\
+  MIKTEX_PATH_BIN_DIR				\
+  MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
+  MIKTEX_CORE_DLL
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#  define MIKTEX_PATH_CORE_PS_DLL		\
+  MIKTEX_PATH_BIN_DIR				\
+  MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
+  MIKTEX_CORE_PS_DLL
+#endif
+
 #define MIKTEX_PATH_NTS_DIR			\
   MIKTEXTEXT("nts")
 
@@ -505,5 +519,11 @@
 
 #define MIKTEX_MPM_PS_DLL \
 	MIKTEXTEXT("@mpm_ps_dll_name@") MIKTEX_SHARED_LIB_FILE_SUFFIX
+
+#define MIKTEX_CORE_DLL \
+	MIKTEXTEXT("@core_dll_name@") MIKTEX_SHARED_LIB_FILE_SUFFIX
+
+#define MIKTEX_CORE_PS_DLL \
+	MIKTEXTEXT("@core_ps_dll_name@") MIKTEX_SHARED_LIB_FILE_SUFFIX
 
 #endif
