@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,6 +28,7 @@ set(app_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-app")
 set(bmeps_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-bmeps")
 set(bzip2_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-bzip2")
 set(core_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-core")
+set(core_ps_dll_name	"${core_dll_name}-PS")
 set(curl_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-curl")
 set(dib_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-dib")
 set(dvi_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-dvi")

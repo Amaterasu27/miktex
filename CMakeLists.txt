@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -289,6 +289,7 @@ endif(MIKTEX_INSTALLROOT)
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
@@ -351,9 +352,6 @@ configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesdk.cmd)
-
-configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findpk/findpk.vcproj.in
-	       ${CMAKE_BINARY_DIR}/SDK/samples/c++/findpk/findpk.vcproj)
 
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/*.tpm.in")
 foreach(tpm ${tpms})
