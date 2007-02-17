@@ -1,5 +1,6 @@
 /* findpk.cpp: find a PK file
-   Copyright (C) 2006 Christian Schenk
+
+   Copyright (C) 2006-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,14 +18,14 @@
    USA.  */
 
 #include <cstdio>
-#include <miktex/app.h>
 
-using namespace MiKTeX::App;
-using namespace MiKTeX::Core;
+#import <session.tlb>
+
+using namespace MiKTeXSessionLib;
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   if (argc != 4)
     {
@@ -33,42 +34,38 @@ main (/*[in]*/ int			argc,
       return (1);
     }
 
+  if (FAILED(CoInitialize(0)))
+  {
+    puts ("COM library could not be initialized.");
+    return (1);
+  }
+
+  int retCode = 0;
+
   try
     {
-      // initialize MiKTeX
-      Application app;
-      app.Init (argv[0]);
-
-      PathName result;
-      int exitCode;
-
-      // find the PK file
-      if (app.GetSession()->FindPkFile(argv[1],
-				       argv[2],
-				       atoi(argv[3]),
-				       result))
-	{
-	  puts (result.Get());
-	  exitCode = 0;
-	}
-      else
-	{
-	  exitCode = 1;
-	}
-
-      // uninitialize MiKTeX
-      app.Finalize ();
-
-      return (exitCode);
+      ISessionPtr pSession;
+      HRESULT hr = pSession.CreateInstance(__uuidof(MiKTeXSession));
+      if (FAILED(hr))
+      {
+	_com_raise_error (hr);
+      }
+      _bstr_t fontName (argv[1]);
+      _bstr_t mode (argv[2]);
+      long dpi = atoi(argv[3]);
+      _bstr_t path;
+      if (pSession->FindPkFile(fontName, mode, dpi, path.GetAddress()))
+      {
+	puts (path);
+      }
     }
-  catch (const MiKTeXException & e)
+  catch (const _com_error & e)
     {
-      Utils::PrintException (e);
-      return (1);
+      puts (e.Description());
+      retCode = 1;
     }
-  catch (const std::exception & e)
-    {
-      Utils::PrintException (e);
-      return (1);
-    }
+
+  CoUninitialize ();
+
+  return (retCode);
 }
