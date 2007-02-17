@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 

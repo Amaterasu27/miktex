@@ -73,6 +73,7 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.rgs.in
       ${CMAKE_CURRENT_BINARY_DIR}/COM/mpm.rgs
     )
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
     add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
     set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
       ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
@@ -90,14 +91,15 @@ if(NATIVE_WINDOWS)
 		${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-		${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+		${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
       COMMAND ${MIDL_EXE}
 	/nologo
+	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 	/char signed
 	/env win32
 	/Oicf
 	/tlb ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
-	/h ${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+	/h ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
 	/iid ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
 	/proxy ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
 	/no_robust
@@ -112,14 +114,15 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-      ${CMAKE_CURRENT_BINARY_DIR}/mpmidl.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
     )
     set_source_files_properties(
       ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-      PROPERTIES COMPILE_FLAGS "-DREGISTER_PROXY_DLL"
+      PROPERTIES COMPILE_FLAGS
+      "-DREGISTER_PROXY_DLL"
     )
     target_link_libraries(${mpm_ps_dll_name}
       oleaut32

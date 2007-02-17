@@ -22,18 +22,7 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
-/* _________________________________________________________________________
-   
-   ErrorInfo
-   _________________________________________________________________________ */
-
-typedef [uuid(6D5C1C92-6E34-4493-9D24-71BD02E41B33)] struct ErrorInfo
-{
-  BSTR message;
-  BSTR info;
-  BSTR sourceFile;
-  LONG sourceLine;
-} ErrorInfo;
+import "miktexidl.idl";
 
 /* _________________________________________________________________________
    

@@ -162,7 +162,7 @@ IsWindowsNT ()
   FATAL_MIKTEX_ERROR (function, T_("Function not implemented."), 0)
 
 #define MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  MiKTeX::Core::TraceMiKTeXError (miktexFunction,				\
+  MiKTeX::Core::TraceMiKTeXError (miktexFunction,		\
                     traceMessage,				\
                     lpszInfo,					\
                     T_(__FILE__),				\
@@ -175,36 +175,36 @@ IsWindowsNT ()
 					 T_(__FILE__),			\
 					 __LINE__)
 
-#define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
+#define CRT_ERROR(lpszCrtFunction, lpszInfo)				\
   MiKTeX::Core::TraceStream::TraceLastCRTError (lpszCrtFunction,	\
-				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  lpszInfo,				\
+				  T_(__FILE__),				\
 				  __LINE__)
 
-#define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
+#define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
-			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  lpszInfo,				\
+			  T_(__FILE__),				\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
-  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,			\
+  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  errorCode,				\
 			  lpszInfo,				\
 			  T_(__FILE__),				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
-#  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
+#  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)			\
   MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
-				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    lpszInfo,				\
+				    T_(__FILE__),			\
 				    __LINE__)
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
-  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,			\
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,	\
 			      lpszInfo,				\
 			      T_(__FILE__),			\
 			      __LINE__)
@@ -212,7 +212,7 @@ IsWindowsNT ()
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR_2(windowsfunction, errorCode, lpszInfo)	\
-  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,				\
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,		\
 			      errorCode,				\
 			      lpszInfo,					\
 			      T_(__FILE__),				\
@@ -986,7 +986,7 @@ public:
   virtual
   PackageInfo
   MPMCALL
-  GetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName);
+  GetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   virtual
@@ -1026,7 +1026,7 @@ public:
   bool
   MPMCALL
   TryGetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName,
-		     /*[out]*/ PackageInfo &	packageInfo);
+		     /*[out]*/ PackageInfo &			packageInfo);
 
 private:
   virtual
@@ -1066,7 +1066,8 @@ public:
   virtual
   bool
   MPMCALL
-  TryVerifyInstalledPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
+  TryVerifyInstalledPackage
+  (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   PackageManagerImpl ();
@@ -1077,7 +1078,8 @@ public:
 
 public:
   void
-  IncrementFileRefCounts (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
+  IncrementFileRefCounts
+  (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
 
 public:
   void
@@ -1137,7 +1139,8 @@ private:
 
 private:
   void
-  IncrementFileRefCounts (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & files);
+  IncrementFileRefCounts
+  (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & files);
 
 private:
   void
@@ -1150,9 +1153,10 @@ private:
 
 private:
   bool
-  TryVerifyInstalledPackageHelper (/*[in]*/ const MiKTeX::Core::tstring &	fileName,
-				   /*[out]*/ bool &		haveDigest,
-				   /*[out]*/ MiKTeX::Core::MD5 &		digest);
+  TryVerifyInstalledPackageHelper
+  (/*[in]*/ const MiKTeX::Core::tstring &	fileName,
+   /*[out]*/ bool &				haveDigest,
+   /*[out]*/ MiKTeX::Core::MD5 &		digest);
 
 private:
   void
@@ -1233,7 +1237,7 @@ public:
 public:
   static MiKTeX::Core::tstring proxyPassword;
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 public:
   static bool localServer;
 #endif
@@ -1451,7 +1455,7 @@ class PackageInstallerImpl
     public IProgressNotify_,
     public MiKTeX::Core::ICreateFndbCallback,
     public IExtractCallback,
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
     public MiKTeXPackageManagerLib::IPackageInstallerCallback
 #endif
 {
@@ -1643,9 +1647,10 @@ public:
 
 private:
   void
-  UpdateMpmFndb (/*[in]*/ const std::vector<MiKTeX::Core::tstring> &	installedFiles,
-		 /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	removedFiles,
-		 /*[in]*/ const MIKTEXCHAR *		lpszPackageName);
+  UpdateMpmFndb
+    (/*[in]*/ const std::vector<MiKTeX::Core::tstring> &	installedFiles,
+     /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	removedFiles,
+     /*[in]*/ const MIKTEXCHAR *			lpszPackageName);
   
 private:
   void
@@ -1680,7 +1685,7 @@ public:
   MPMCALL
   RegisterComponents (/*[in]*/ bool doRegister);
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 public:
   STDMETHOD(QueryInterface) (/*[in]*/ REFIID	riid,
 			     /*[out]*/ LPVOID *	ppvObj);
@@ -1846,7 +1851,8 @@ private:
 
 private:
   void
-  SetUpPackageDefinitionFiles (/*[in]*/ const MiKTeX::Core::PathName & directory);
+  SetUpPackageDefinitionFiles
+    (/*[in]*/ const MiKTeX::Core::PathName & directory);
 
 private:
   void
@@ -1880,14 +1886,15 @@ private:
 
 private:
   void
-  AddToFileList (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> &	fileList,
+  AddToFileList (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> & fileList,
 		 /*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
 
 private:
   void
-  RemoveFromFileList (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> &	fileList,
-		      /*[in]*/ const MiKTeX::Core::PathName &		fileName)
+  RemoveFromFileList
+    (/*[in,out]*/ std::vector<MiKTeX::Core::tstring> &	fileList,
+     /*[in]*/ const MiKTeX::Core::PathName &		fileName)
     const;
 
 private:
@@ -1931,16 +1938,16 @@ private:
 private:
   bool
   CheckArchiveFile (/*[in]*/ const MIKTEXCHAR *	lpszPackage,
-		    /*[in]*/ const MiKTeX::Core::PathName &	archiveFileName,
+		    /*[in]*/ const MiKTeX::Core::PathName & archiveFileName,
 		    /*[in]*/ bool		mustBeOk);
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
   bool
   UseLocalServer ();
 #endif
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
   void
   ConnectToServer ();
@@ -1961,12 +1968,14 @@ private:
 private:
   std::vector<UpdateInfo> updates;
 
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
   struct
   {
     CComQIPtr<MiKTeXPackageManagerLib::IPackageManager> pManager;
     CComPtr<MiKTeXPackageManagerLib::IPackageInstaller> pInstaller;
   } localServer;
+#endif
 };
 
 /* _________________________________________________________________________

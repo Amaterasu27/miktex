@@ -38,7 +38,7 @@ using namespace std;
 tstring PackageManagerImpl::proxyUser;
 tstring PackageManagerImpl::proxyPassword;
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 bool PackageManagerImpl::localServer = false;
 #endif
 

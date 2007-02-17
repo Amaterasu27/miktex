@@ -1751,6 +1751,8 @@ PackageInstallerImpl::RegisterComponent
 #if defined(MIKTEX_WINDOWS)
 
 static const MIKTEXCHAR * const components[] = {
+  MIKTEX_PATH_CORE_DLL,
+  MIKTEX_PATH_CORE_PS_DLL,
   MIKTEX_PATH_MPM_DLL,
   MIKTEX_PATH_MPM_PS_DLL,
 };
@@ -1834,7 +1836,7 @@ void
 MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
     {
       HRESULT hr;
@@ -2380,7 +2382,7 @@ void
 MPMCALL
 PackageInstallerImpl::UpdateDb ()
 {
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
     {
       ConnectToServer ();
@@ -2765,7 +2767,7 @@ PackageInstallerImpl::Dispose ()
    PackageInstallerImpl::UseLocalServer
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 bool
 PackageInstallerImpl::UseLocalServer ()
@@ -2796,7 +2798,7 @@ PackageInstallerImpl::UseLocalServer ()
    PackageInstallerImpl::QueryInterface
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
 __stdcall
@@ -2837,7 +2839,7 @@ PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
    PackageInstallerImpl::AddRef
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 ULONG
 __stdcall
@@ -2853,7 +2855,7 @@ PackageInstallerImpl::AddRef ()
    PackageInstallerImpl::Release
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 ULONG
 __stdcall
@@ -2869,7 +2871,7 @@ PackageInstallerImpl::Release ()
    PackageInstallerImpl::ReportLine
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
 __stdcall
@@ -2897,7 +2899,7 @@ PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
    PackageInstallerImpl::OnRetryableError
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
 __stdcall
@@ -2934,7 +2936,7 @@ PackageInstallerImpl::OnRetryableError
    PackageInstallerImpl::OnProgress
    _________________________________________________________________________ */
 
-#if USE_LOCAL_SERVER
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
 __stdcall
