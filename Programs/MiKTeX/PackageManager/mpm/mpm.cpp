@@ -1697,24 +1697,38 @@ int
 main (/*[in]*/ MIKTEXCHARINT		argc,
       /*[in]*/ const MIKTEXCHAR **	argv)
 {
+#if defined(MIKTEX_WINDOWS)
+  HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+  if (FAILED(hr))
+    {
+      tcerr << T_("mpm") << T_(": ")
+	    << T_("The COM library could not be initialized.")
+	    << endl;
+      return (1);
+    }
+#endif
+  int retCode = 0;
   try
     {
       Application app;
       app.Main (argc, argv);
-      return (0);
     }
   catch (const MiKTeXException & e)
     {
       Utils::PrintException (e);
-      return (1);
+      retCode = 1;
     }
   catch (const exception & e)
     {
       Utils::PrintException (e);
-      return (1);
+      retCode = 1;
     }
   catch (int rc)
     {
-      return (rc);
+      retCode = rc;
     }
+#if defined(MIKTEX_WINDOWS)
+  CoUninitialize ();
+#endif
+  return (retCode);
 }

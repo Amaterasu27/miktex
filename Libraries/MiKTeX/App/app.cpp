@@ -170,7 +170,11 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 MIKTEXAPPAPI(void)
 Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName)
 {
-  Init (Session::InitInfo(lpszProgramInvocationName));
+  Session::InitInfo initInfo (lpszProgramInvocationName);
+#if defined(MIKTEX_WINDOWS)
+  initInfo.SetFlags (Session::InitFlags::InitializeCOM);
+#endif
+  Init (initInfo);
 }
 
 /* _________________________________________________________________________

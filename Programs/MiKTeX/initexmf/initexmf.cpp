@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -1395,7 +1395,11 @@ IniTeXMFApp::~IniTeXMFApp ()
 void
 IniTeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * argv0)
 {
-  pSession.CreateSession (Session::InitInfo(argv0));
+  Session::InitInfo initInfo (argv0);
+#if defined(MIKTEX_WINDOWS)
+  initInfo.SetFlags (Session::InitFlags::InitializeCOM);
+#endif
+  pSession.CreateSession (initInfo);
   pManager.Create ();
   FindWizards ();
 }
@@ -2106,13 +2110,13 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 	{
 	  xmlWriter.StartElement (T_("systemadmin"));
 	  xmlWriter.AddAttribute (T_("value"),
-				  (pSession->RunningAsAdministrator()
+				  (pSession->IsUserAnAdministrator()
 				   ? T_("true")
 				   : T_("false")));
 	  xmlWriter.EndElement ();
 	  xmlWriter.StartElement (T_("poweruser"));
 	  xmlWriter.AddAttribute (T_("value"),
-				  (pSession->RunningAsPowerUser()
+				  (pSession->IsUserAPowerUser()
 				   ? T_("true")
 				   : T_("false")));
 	  xmlWriter.EndElement ();
@@ -2138,11 +2142,11 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 #if defined(MIKTEX_WINDOWS)
       if (IsWindowsNT())
 	{
-	  tcout << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
+	  tcout << T_("SystemAdmin: ") << (pSession->IsUserAnAdministrator()
 					   ? T_("yes")
 					   : T_("no"))
 		<< endl;
-	  tcout << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
+	  tcout << T_("PowerUser: ") << (pSession->IsUserAPowerUser()
 					 ? T_("yes")
 					 : T_("no"))
 		<< endl;
