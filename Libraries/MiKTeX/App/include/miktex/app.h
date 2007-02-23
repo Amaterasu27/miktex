@@ -1,6 +1,6 @@
 /* app.h:							-*- C++ -*-
 
-   Copyright (C) 2005-2006 Christian Schenk
+   Copyright (C) 2005-2007 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -192,16 +192,6 @@ public:
 
   MIKTEXAPPAPI(void)
   EnableInstaller (/*[in]*/ MiKTeX::Core::TriState tri);
-
-  /* _______________________________________________________________________
-     
-     RunIniTeXMF
-     _______________________________________________________________________ */
-
-private:
-
-  void
-  RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *	lpszArguments);
 
   /* _______________________________________________________________________
   

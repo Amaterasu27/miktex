@@ -1,6 +1,6 @@
 /* UpdateDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -34,7 +34,6 @@ const SHORT PROGRESS_MAX = 1000;
 
 class UpdateDialogImpl
   : public CDialog,
-    public IRunProcessCallback,
     public PackageInstallerCallback
 {
 protected:
@@ -80,13 +79,6 @@ protected:
   OnProgress (/*[in]*/ WPARAM wParam,
 	      /*[in]*/ LPARAM lParam);
 
-protected:
-  virtual
-  bool
-  MIKTEXCALL
-  OnProcessOutput (/*[in]*/ const void *	pOutput,
-		   /*[in]*/ size_t		n);
-  
 public:
   virtual
   void
@@ -113,10 +105,6 @@ private:
 private:
   void
   DoTheUpdate ();
-
-private:
-  void
-  RunIniTeXMF ();
 
 private:
   void
@@ -560,23 +548,6 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
 
 /* _________________________________________________________________________
 
-   UpdateDialogImpl::OnProcessOutput
-   _________________________________________________________________________ */
-
-bool
-MIKTEXCALL
-UpdateDialogImpl::OnProcessOutput (/*[in]*/ const void *	pOutput,
-				   /*[in]*/ size_t		n)
-{
-  Report (true,
-	  T_("%.*s"),
-	  static_cast<int>(n),
-	  reinterpret_cast<const char *>(pOutput));
-  return (! (GetErrorFlag() || GetCancelFlag()));
-}
-
-/* _________________________________________________________________________
-
    UpdateDialogImpl::ReportLine
    _________________________________________________________________________ */
 
@@ -715,35 +686,6 @@ UpdateDialogImpl::DoTheUpdate ()
     {
       return;
     }
-  RunIniTeXMF ();
-}
-
-/* _________________________________________________________________________
-
-   UpdateDialogImpl::RunIniTeXMF
-   _________________________________________________________________________ */
-
-void
-UpdateDialogImpl::RunIniTeXMF ()
-{
-  PathName exePath;
-
-  if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE,
-				       FileType::EXE,
-				       exePath))
-    {
-      FATAL_MIKTEX_ERROR (T_("UpdateDialogImpl::RunIniTeXMF"),
-			  T_("\
-The MiKTeX configuration utility could not be found."),
-			  0);
-    }
-
-  CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("--mkmaps"));
-
-  SessionWrapper(true)->UnloadFilenameDatabase ();
-
-  Process::Run (exePath, commandLine.Get(), this);
 }
 
 /* _________________________________________________________________________

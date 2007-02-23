@@ -1685,6 +1685,15 @@ public:
   MPMCALL
   RegisterComponents (/*[in]*/ bool doRegister);
 
+public:
+  virtual
+  void
+  MPMCALL
+  SetNoPostProcessing (/*[in]*/ bool noPostProcessing)
+  {
+    this->noPostProcessing = noPostProcessing;
+  }
+
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 public:
   STDMETHOD(QueryInterface) (/*[in]*/ REFIID	riid,
@@ -1797,7 +1806,14 @@ private:
 #endif
 
 private:
+  void
+  RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *	lpszArguments);
+
+private:
   bool autoFndbSync;
+
+private:
+  bool noPostProcessing;
   
 private:
   ProgressInfo progressInfo;

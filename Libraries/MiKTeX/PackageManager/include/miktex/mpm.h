@@ -1173,6 +1173,13 @@ public:
   MPMCALL
   RegisterComponents (/*[in]*/ bool doRegister)
     = 0;
+
+public:
+  virtual
+  void
+  MPMCALL
+  SetNoPostProcessing (/*[in]*/ bool noPostProcessing)
+    = 0;
 };
 
 MPM_END_NAMESPACE;

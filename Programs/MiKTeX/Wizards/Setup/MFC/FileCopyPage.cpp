@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -97,6 +97,7 @@ FileCopyPage::OnInitDialog ()
     {
       pInstaller =
 	auto_ptr<PackageInstaller>(theApp.pManager->CreateInstaller());
+      pInstaller->SetNoPostProcessing (true);
     }
   catch (const MiKTeXException & e)
     {

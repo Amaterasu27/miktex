@@ -243,40 +243,6 @@ Application::OnProgress (/*[in]*/ Notification		nf)
 
 /* _________________________________________________________________________
 
-   Application::RunIniTeXMF
-   _________________________________________________________________________ */
-
-void
-Application::RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
-{
-#if defined(MIKTEX_WINDOWS)
-  // find initexmf
-  PathName exe;
-  if (! pSession->FindFile(MIKTEX_INITEXMF_EXE,
-			   FileType::EXE,
-			   exe))
-    {
-      FATAL_MIKTEX_ERROR (T_("Application::RunIniTeXMF"),
-			  (T_("\
-The MiKTeX configuration utility could not be found.")),
-			  0);
-    }
-
-  // run initexmf.exe
-  tstring arguments = lpszArguments;
-  if (GetQuietFlag())
-    {
-      arguments += T_(" --quiet");
-    }
-  return (Process::Run(exe, arguments.c_str()));
-#else
-  UNUSED_ALWAYS (lpszArguments);
-#  warning Unimplemented::Application::RunIniTeXMF
-#endif
-}
-
-/* _________________________________________________________________________
-
    Application::InstallPackage
    _________________________________________________________________________ */
 
@@ -355,10 +321,6 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
       enableInstaller = TriState::False;
       ignoredPackages.insert (lpszPackageName);
       Utils::PrintException (e);
-    }
-  if (done)
-    {
-      RunIniTeXMF (T_("--mkmaps"));
     }
   if (! GetQuietFlag())
     {

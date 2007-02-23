@@ -259,10 +259,6 @@ comPackageInstaller::InstallRemove ()
       pInstaller->SetCallback (this);
       pInstaller->SetFileLists (packagesToBeInstalled, packagesToBeRemoved);
       pInstaller->InstallRemove ();
-#if 0
-      // todo
-      RunIniTeXMF
-#endif
     }
   catch (const MiKTeXException & e)
     {

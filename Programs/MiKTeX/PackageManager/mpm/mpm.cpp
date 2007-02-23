@@ -179,10 +179,6 @@ private:
 
 private:
   void
-  RunIniTeXMF (/*[in*/ const MIKTEXCHAR *	lpszCommandLine);
-
-private:
-  void
   Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
 	   /*[in]*/ const vector<tstring> &	toBeRemoved);
 
@@ -656,35 +652,6 @@ Application::UpdateDb ()
 
 /* _________________________________________________________________________
 
-   Application::RunIniTeXMF
-   _________________________________________________________________________ */
-
-void
-Application::RunIniTeXMF (/*[in*/ const MIKTEXCHAR *	lpszArguments)
-{
-#if STANDALONE
-  lpszArguments;
-  return;
-#else
-  PathName exePath;
-  if (! pSession->FindFile(T_("initexmf"), FileType::EXE, exePath))
-    {
-      Error (T_("The MiKTeX configuration utility could not be found."));
-    }
-  tstring arguments (lpszArguments);
-#if 0
-  if (verbose)
-    {
-      arguments += T_(" --verbose");
-    }
-#endif
-  pSession->UnloadFilenameDatabase ();
-  Process::Run (exePath, arguments.c_str());
-#endif
-}
-
-/* _________________________________________________________________________
-
    Application::Install
    _________________________________________________________________________ */
 
@@ -745,7 +712,6 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
       Message (T_("%u packages have been successfully removed.\n"),
 	       toBeRemoved.size());
     }
-  RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
 }
 
 /* _________________________________________________________________________
@@ -1022,7 +988,6 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
       Message (T_("%u packages have been successfully updated.\n"),
 	       toBeInstalled.size());
     }
-  RunIniTeXMF (T_("--update-fndb --mklinks --mkmaps"));
 }
 
 /* _________________________________________________________________________

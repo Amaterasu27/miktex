@@ -128,6 +128,7 @@ PackageInstallerImpl::PackageInstallerImpl
 
   : pThread (0),
     pCallback (0),
+    noPostProcessing (false),
     taskPackageLevel (PackageLevel::None),
     repositoryType (RepositoryType::Unknown),
     pManager (pManager),
@@ -1829,6 +1830,36 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 
 /* _________________________________________________________________________
 
+   PackageInstallerImpl::RunIniTeXMF
+   _________________________________________________________________________ */
+
+void
+PackageInstallerImpl::RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
+{
+#if defined(MIKTEX_WINDOWS)
+  // find initexmf
+  PathName exe;
+  if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE,
+				       FileType::EXE,
+				       exe))
+    {
+      FATAL_MPM_ERROR (T_("PackageInstallerImpl::RunIniTeXMF"),
+			  (T_("\
+The MiKTeX configuration utility could not be found.")),
+			  0);
+    }
+
+  // run initexmf.exe
+  tstring arguments = lpszArguments;
+  Process::Run (exe, arguments.c_str());
+#else
+  UNUSED_ALWAYS (lpszArguments);
+#  warning Unimplemented: PackageInstallerImpl::RunIniTeXMF
+#endif
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::InstallRemove
    _________________________________________________________________________ */
 
@@ -1846,7 +1877,7 @@ PackageInstallerImpl::InstallRemove ()
 	   ++ it)
 	{
 	  hr =
-	    localServer.pInstaller->Add(_bstr_t(it->c_str()), TRUE);
+	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_TRUE);
 	  if (FAILED(hr))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
@@ -1859,7 +1890,7 @@ PackageInstallerImpl::InstallRemove ()
 	   ++ it)
 	{
 	  HRESULT hr =
-	    localServer.pInstaller->Add(_bstr_t(it->c_str()), FALSE);
+	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_FALSE);
 	  if (FAILED(hr))
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
@@ -2026,6 +2057,11 @@ PackageInstallerImpl::InstallRemove ()
 	  throw OperationCancelledException ();
 	}
       pManager->CreateMpmFndb ();
+    }
+
+  if (! noPostProcessing)
+    {
+      RunIniTeXMF (T_("--mklinks --mkmaps"));
     }
 }
 

@@ -1,6 +1,6 @@
 /* ProgressDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -377,7 +377,7 @@ ProgressDialogImpl::HasUserCancelled ()
 			   &res))
     {
       CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
-      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::StopProgressDialog"),
+      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::HasUserCancelled"),
 			  T_("The progress window does not respond."),
 			  0);
     }
@@ -519,6 +519,9 @@ ProgressDialogImpl::StopProgressDialog ()
       return (false);
     }
 
+  HWND hwnd = hWindow;
+  hWindow = 0;
+  
   // enable mouse and keyboard input in the parent window
   if (hParentWindow != 0)
     {
@@ -528,7 +531,7 @@ ProgressDialogImpl::StopProgressDialog ()
   // destroy the dialog window
   haveProgressDialog = false;
   DWORD res;
-  if (! SendMessageTimeout(hWindow,
+  if (! SendMessageTimeout(hwnd,
 			   DESTROY,
 			   0,
 			   0,
@@ -543,7 +546,6 @@ ProgressDialogImpl::StopProgressDialog ()
     }
 		       
   return (res ? true : false);
-
 }
 
 /* _________________________________________________________________________

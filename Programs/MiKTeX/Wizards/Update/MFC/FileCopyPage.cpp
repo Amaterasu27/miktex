@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual update process
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -98,6 +98,7 @@ FileCopyPage::OnInitDialog ()
   try
     {
       pInstaller = auto_ptr<PackageInstaller>(g_pManager->CreateInstaller());
+      pInstaller->SetNoPostProcessing (true);
       reportEditBox.LimitText (100000);
     }
   catch (const MiKTeXException & e)
