@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -217,7 +217,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ${${_short_name_l}_dll_name}
   )
 
-  merge_trustinfo_manifest(${_invocation_name} asInvoker)
+  merge_manifests(${_invocation_name} asInvoker)
 
   install(
     TARGETS ${_invocation_name}
@@ -228,6 +228,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   else(${_invocation_name} STREQUAL "${_short_name_l}")
     add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
     merge_trustinfo_manifest(${_short_name} asInvoker)
+    merge_common_controls_manifest(${_short_name})
     install(
       TARGETS ${_short_name_l}
       DESTINATION ${bindir}
