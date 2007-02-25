@@ -19,20 +19,27 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
+/// @file miktexidl.idl
+/// @brief Common data types.
+
 import "oaidl.idl";
 import "ocidl.idl";
-
 
 /* _________________________________________________________________________
    
    ErrorInfo
    _________________________________________________________________________ */
 
+/// @brief Information about a MiKTeX error.
 typedef [uuid(6AEC83E4-BF9A-4C21-8CC4-151D3E5A7C38)] struct ErrorInfo
 {
+  /// @brief The error message.
   BSTR message;
+  /// Additional information.
   BSTR info;
+  /// @brief The name of the source file.
   BSTR sourceFile;
+  /// @brief The line number in the source file.
   LONG sourceLine;
 } ErrorInfo;
 

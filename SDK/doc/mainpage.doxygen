@@ -1,0 +1,31 @@
+/**
+ * @mainpage MiKTeX SDK
+ *
+ * @section intro Introduction
+ *
+ * MiKTeX exports two COM objects that make it possible to automate
+ * MiKTeX-specific tasks:
+ * @li The @link MiKTeXSessionLib::MiKTeXSession MiKTeX session
+ *  object @endlink provides an interface to MiKTeX core functionality.
+ *  The interface can be used to search for files,
+ *  gather information about the MiKTeX installation and to run MiKTeX
+ *  applications.
+ * @li The @link MiKTeXPackageManagerLib::PackageManager MiKTeX package
+ *  manager object @endlink provides an interface to the MiKTeX package
+ *  manager. The interface can be used to install/remove packages and
+ *  to query the package database.
+ *
+ * @section prerequisites What you need
+ *
+ * You need
+ * @li a working MiKTeX system
+ * @li a COM-enabled script interpreter (Perl, Ruby, Python) and/or a
+ *   COM-enabled high language compiler
+ *
+ * @section Samples
+ *
+ * @li samples/c++/findpk/findpk.cpp - finds a Pk font
+ * @li samples/perl/findpk.pl - finds a Pk font
+ * @li samples/perl/installpackage.pl - installs a package
+ */
+

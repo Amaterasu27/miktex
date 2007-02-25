@@ -96,6 +96,8 @@ include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
 include(MergeTrustInfoManifest)
+include(MergeManifests)
+include(MergeCommonControlsManifest)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
@@ -343,6 +345,9 @@ file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/Doxyfile.sdk.in
+               ${CMAKE_BINARY_DIR}/Admin/Scripts/DoxyFile.sdk)
 
 configure_file(${CMAKE_SOURCE_DIR}/Documentation/Styles/db2latex-common.xsl.in
                ${CMAKE_BINARY_DIR}/Documentation/Styles/db2latex-common.xsl)

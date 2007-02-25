@@ -30,7 +30,7 @@ PROJECT_NUMBER         = "@MIKTEX_VERSION_STR@"
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = "@rel_doc_api_dir@"
+OUTPUT_DIRECTORY       = "@CMAKE_BINARY_DIR@/SDK/doc"
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -116,8 +116,8 @@ FULL_PATH_NAMES        = YES
 # path to strip.
 
 STRIP_FROM_PATH        = \
-	@CMAKE_BINARY_DIR@ \
-	@CMAKE_SOURCE_DIR@ \
+	@CMAKE_BINARY_DIR@/SDK \
+	@CMAKE_SOURCE_DIR@/SDK \
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -126,11 +126,7 @@ STRIP_FROM_PATH        = \
 # definition is used. Otherwise one should specify the include paths that 
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = \
-	@CMAKE_SOURCE_DIR@/@rel_core_dir@/COM \
-	@CMAKE_SOURCE_DIR@/@rel_core_inc_dir@ \
-	@CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/COM \
-	@CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@ \
+STRIP_FROM_INC_PATH    = 
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter 
 # (but less readable) file names. This can be useful is your file systems 
@@ -465,16 +461,10 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT += @CMAKE_BINARY_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_mpmlib_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_mpmlib_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_core_dir@/COM
-INPUT += @CMAKE_SOURCE_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/COM
-INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@
+INPUT += @CMAKE_SOURCE_DIR@/SDK/doc/mainpage.doxygen
+INPUT += @CMAKE_BINARY_DIR@/SDK/include/session.idl
+INPUT += @CMAKE_BINARY_DIR@/SDK/include/miktexidl.idl
+INPUT += @CMAKE_BINARY_DIR@/SDK/include/mpm.idl
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -759,7 +749,7 @@ TREEVIEW_WIDTH         = 250
 # If the GENERATE_LATEX tag is set to YES (the default) Doxygen will 
 # generate Latex output.
 
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 

@@ -1,4 +1,4 @@
-/* session.idl: MiKTeX session
+/* session.idl:
 
    Copyright (C) 2006-2007 Christian Schenk
 
@@ -19,6 +19,9 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
+/// @file session.idl
+/// @brief The MiKTeX core COM objetcs.
+
 import "oaidl.idl";
 import "ocidl.idl";
 
@@ -29,6 +32,9 @@ import "miktexidl.idl";
    ISession
    _________________________________________________________________________ */
 
+/// @brief The MiKTeX session interface.
+///
+/// This interface provides MiKTeX core functionality.
 [
   object,
   uuid(8BE9F539-B949-4C7B-991C-DB6C6F737EC7),
@@ -39,6 +45,8 @@ import "miktexidl.idl";
 ]
 interface ISession : IDispatch
 {
+  /// @brief Register MiKTeX root directories.
+  /// @param[in] rootDirectories A semicolon-separated list of path names.
   [
     id(1),
     helpstring("method RegisterRootDirectories")
@@ -46,6 +54,12 @@ interface ISession : IDispatch
   HRESULT
   RegisterRootDirectories ([in] BSTR rootDirectories);
 
+  /// @brief Find a Pk file.
+  /// @param[in] fontName The name of the font (e.g. "cmr10").
+  /// @param[in] mode The METAFONT mode to be used (e.g. "ljfour").
+  /// @param[in] dpi The resolution to be used (e.g. 600).
+  /// @param[out] path The fully qualified path to the Pk file.
+  /// @return Returns VARIANT_TRUE, if the Pk file exists.
   [
     id(2),
     helpstring("method FindPkFile")
@@ -57,6 +71,8 @@ interface ISession : IDispatch
 	      [out] BSTR * path,
 	      [out,retval] VARIANT_BOOL * found);
 
+  /// @brief Get information about the last error.
+  /// @return Returns an error information record.
   [
     id(3),
     helpstring("method GetErrorInfo")
@@ -70,6 +86,7 @@ interface ISession : IDispatch
    MiKTeXSession
    _________________________________________________________________________ */
 
+/// @brief The MiKTeX Session type library.
 [
   uuid(4C28CF19-0EC8-42AF-B901-CDCCCCE420FB),
   version(1.0),
@@ -79,6 +96,9 @@ library MiKTeXSessionLib
 {
   importlib("stdole2.tlb");
 
+  /// @brief The MiKTeX session COM object.
+  ///
+  /// This COM object implements the @link ISession @endlink interface.
   [
     uuid(DE6D4D25-4E98-488D-91B2-E97CC319764B),
     helpstring("MiKTeX Session")

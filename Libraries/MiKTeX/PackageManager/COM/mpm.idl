@@ -1,4 +1,4 @@
-/* mpm.idl: MiKTeX package manager
+/* mpm.idl:
 
    Copyright (C) 2006-2007 Christian Schenk
 
@@ -29,8 +29,12 @@ import "miktexidl.idl";
    MD5
    _________________________________________________________________________ */
 
+/// @brief MD5 sum.
+///
+/// This structure holds an MD5 hash code.
 typedef [uuid(F92D6E8F-22CC-4585-8309-58440C5A0DFB)] struct MD5
 {
+  /// @brief 128 bits.
   BYTE bits[16];
 } MD5;
 
@@ -40,23 +44,40 @@ typedef [uuid(F92D6E8F-22CC-4585-8309-58440C5A0DFB)] struct MD5
    PackageInfo
    _________________________________________________________________________ */
 
+/// @brief Package information.
 typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
 {
+  /// @brief Name of the package.
   BSTR deploymentName;
+  /// @brief User-friendly name of the package.
   BSTR displayName;
+  /// @brief One-line package description.
   BSTR title;
+  /// @brief Package version number.
   BSTR version;
+  /// @brief Package description.
   BSTR description;
+  /// @brief Name of package creator.
   BSTR creator;
+  /// @brief Total size (in bytes) of all run-time files.
   DOUBLE sizeRunFiles;
+  /// @brief Total size (in bytes) of all documentation files.
   DOUBLE sizeDocFiles;
+  /// @brief Total size (in bytes) of all source files.
   DOUBLE sizeSourceFiles;
+  /// @brief Number of run-time files.
   LONG numRunFiles;
+  /// @brief Number of documentation files.
   LONG numDocFiles;
+  /// @brief Number of source files.
   LONG numSourceFiles;
+  /// @brief Date/time the package was created.
   DATE timePackaged;
+  /// @brief Date/time the package was installed.
   DATE timeInstalled;
+  /// @brief Size of the package archive file.
   LONG archiveFileSize;
+  /// @brief Package digest.
   MD5 digest;
 } PackageInfo;
 
@@ -65,6 +86,10 @@ typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
    IPackageInstallerCallback
    _________________________________________________________________________ */
 
+/// @brief Package installer callback.
+///
+/// This interface can be implemented by clients in order to get notified
+/// of certain events.
 [
   object,
   uuid(4B081787-2C08-4AFD-80E1-B4B3E23324B4),
@@ -74,11 +99,16 @@ typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
 ]
 interface IPackageInstallerCallback : IUnknown
 {
+  /// @brief Reports progress of the package installer.
+  /// @param[in] line The message to be reported.
   [
     helpstring("method ReportLine")
   ]
   HRESULT ReportLine ([in] BSTR line);
 
+  /// @brief Reports an error.
+  /// @param[in] message The error message to be reported.
+  /// @return Returns VARIANT_FALSE, if the installation can continue.
   [
     helpstring("method OnRetryableError")
   ]
@@ -86,6 +116,9 @@ interface IPackageInstallerCallback : IUnknown
   OnRetryableError ([in] BSTR			message,
 		    [out,retval] VARIANT_BOOL * doContinue);
 
+  /// @brief Notifies the client.
+  /// @param[in] nf The notification code.
+  /// @return Returns VARIANT_TRUE, if the installation can continue.
   [
     helpstring("method OnProgress")
   ]
@@ -98,6 +131,7 @@ interface IPackageInstallerCallback : IUnknown
    IPackageInstaller
    _________________________________________________________________________ */
 
+/// @brief Package installer interface.
 [
   object,
   uuid(74C7EE83-4851-4766-B471-9CF29E7C2DA3),
@@ -108,6 +142,10 @@ interface IPackageInstallerCallback : IUnknown
 ]
 interface IPackageInstaller : IDispatch
 {
+  /// @brief Adds a package to the installer queue.
+  /// @param[in] packageName Name of the package to be installed/uninstalled.
+  /// @param[in] toBeInstalled Boolean value that determines whether
+  ///   the package shall be installed or uninstalled.
   [
     id(1),
     helpstring("method Add")
@@ -115,6 +153,9 @@ interface IPackageInstaller : IDispatch
   HRESULT
   Add ([in] BSTR packageName, [in] VARIANT_BOOL toBeInstalled);
 
+  /// @brief Sets the client callback interface.
+  /// @param[in] callback Pointer to an interface. This interface will
+  ///   be queried for IPackageInstallerCallback.
   [
     id(2),
     helpstring("method SetCallback")
@@ -122,6 +163,7 @@ interface IPackageInstaller : IDispatch
   HRESULT
   SetCallback ([in] IUnknown * callback);
 
+  /// @brief Installs/Uninstalls packages.
   [
     id(3),
     helpstring("method InstallRemove")
@@ -129,6 +171,8 @@ interface IPackageInstaller : IDispatch
   HRESULT
   InstallRemove ();
 
+  /// @brief Gets information about the last error
+  /// @return Returns the error information.
   [
     id(4),
     helpstring("method GetLastError")
@@ -136,6 +180,7 @@ interface IPackageInstaller : IDispatch
   HRESULT
   GetErrorInfo ([out,retval] ErrorInfo * errorInfo);
 
+  /// @brief Updates the package database.
   [
     id(5),
     helpstring("method UpdateDb")
@@ -149,6 +194,7 @@ interface IPackageInstaller : IDispatch
    IPackageManager
    _________________________________________________________________________ */
 
+/// @brief Package manager interface.
 [
   object,
   uuid(C6A0E0A9-532D-46DF-8969-0E0A17539FC9),
@@ -159,19 +205,24 @@ interface IPackageInstaller : IDispatch
 ]
 interface IPackageManager : IDispatch
 {
+  /// @brief Get a package installer interface.
+  /// @return Returns a pointer to the package installer interface.
   [
     id(1),
     helpstring("method CreateInstaller")
   ]
   HRESULT
-  CreateInstaller ([out,retval] IPackageInstaller ** iInstaller);
+  CreateInstaller ([out,retval] IPackageInstaller ** installer);
 
+  /// @brief Get information about a package.
+  /// @param[in] packageName Name of the package.
+  /// @return Returns the package information.
   [
     id(2),
     helpstring("method GetPackageInfo")
   ]
   HRESULT
-  GetPackageInfo ([in] BSTR			deploymentName,
+  GetPackageInfo ([in] BSTR			packageName,
 		  [out,retval] PackageInfo *	packageInfo);
 };
 
@@ -180,6 +231,7 @@ interface IPackageManager : IDispatch
    MiKTeXPackageManager
    _________________________________________________________________________ */
 
+/// @brief Package manager type library.
 [
   uuid(42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB),
   version(1.0),
@@ -189,6 +241,7 @@ library MiKTeXPackageManagerLib
 {
   importlib("stdole2.tlb");
 
+  /// @brief PackageManager object
   [
     uuid(E4EC6D80-9E3A-47B7-ADA7-C0621C298527),
     helpstring("MiKTeX Package Manager")
