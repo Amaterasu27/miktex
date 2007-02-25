@@ -1,6 +1,6 @@
 /* InstallPackageDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -94,6 +94,15 @@ InstallPackageDialog::OnInitDialog ()
 	  FormatControlText (IDC_EDIT_REPOSITORY_LOCATION,
 			     T_("%s"),
 			     T_("<Random package repository>"));
+	}
+      if (IsWindowsVista())
+	{
+	  HWND hwnd = ::GetDlgItem(m_hWnd, IDOK);
+	  if (hwnd == 0)
+	    {
+	      UNEXPECTED_CONDITION (T_("InstallPackageDialog::OnInitDialog"));
+	    }
+	  Button_SetElevationRequiredState (hwnd, TRUE);
 	}
     }
   catch (const MiKTeXException & e)

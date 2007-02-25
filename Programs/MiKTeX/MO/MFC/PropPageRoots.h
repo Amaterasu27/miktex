@@ -1,6 +1,6 @@
 /* PropPageRoots.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -148,6 +148,14 @@ private:
 		      /*[in]*/ UINT uMsg,
 		      /*[in]*/ LPARAM lParam, 
 		      /*[in]*/ LPARAM pData);
+
+private:
+  void
+  SetElevationRequired (/*[in]*/ bool f);
+
+private:
+  void
+  SetChanged (/*[in]*/ bool f);
 
 private:
   CButton scanButton;

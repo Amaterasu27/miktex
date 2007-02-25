@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -48,7 +48,7 @@ endif(NATIVE_WINDOWS)
 
 add_executable(remove WIN32 ${remove_mfc_sources})
 
-merge_trustinfo_manifest(remove highestAvailable)
+merge_trustinfo_manifest(remove requireAdministrator)
 
 target_link_libraries(remove
   ${bzip2_lib_name}

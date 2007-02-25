@@ -270,7 +270,7 @@ PropPageTeXMFRoots::OnAdd ()
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
 	}
       roots.push_back (szDir);
-      SetModified (TRUE);
+      SetChanged (true);
       EnableButtons ();
       isModified = true;
     }
@@ -314,8 +314,10 @@ PropPageTeXMFRoots::CheckRoot (/*[in]*/ const PathName & root)
 {
   auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(root));
   DirectoryEntry entry;
+  bool isEmpty = true;
   while (pLister->GetNext(entry))
     {
+      isEmpty = false;
       if (entry.isDirectory)
 	{
 	  PathName name (entry.name);
@@ -330,9 +332,12 @@ PropPageTeXMFRoots::CheckRoot (/*[in]*/ const PathName & root)
 	    }
 	}
     }
-  FATAL_MIKTEX_ERROR (T_("PropPageTeXMFRoots::CheckRoot"),
-		      T_("Not a valid root directory."),
-		      root.Get());
+  if (! isEmpty)
+    {
+      FATAL_MIKTEX_ERROR (T_("PropPageTeXMFRoots::CheckRoot"),
+			  T_("Not a TDS-compliant root directory."),
+			  root.Get());
+    }
 }
 
 /* _________________________________________________________________________
@@ -400,7 +405,7 @@ PropPageTeXMFRoots::OnMovedown ()
 
       EnableButtons ();
 
-      SetModified (TRUE);
+      SetChanged (true);
 
       isModified = true;
     }
@@ -463,7 +468,7 @@ PropPageTeXMFRoots::OnMoveup ()
       
       EnableButtons ();
 
-      SetModified (TRUE);
+      SetChanged (true);
 
       isModified = true;
     }
@@ -498,7 +503,7 @@ PropPageTeXMFRoots::OnRemove ()
 	  roots.erase (roots.begin() + idx);
 	}
       EnableButtons ();
-      SetModified (TRUE);
+      SetChanged (true);
       isModified = true;
     }
   catch (const MiKTeXException & e)
@@ -571,6 +576,7 @@ PropPageTeXMFRoots::EnableButtons ()
 
   bool isAdmin =
     (! IsWindowsNT()
+     || IsWindowsVista()
      || SessionWrapper(true)->IsUserAnAdministrator()
      || SessionWrapper(true)->IsUserAPowerUser());
 
@@ -793,6 +799,8 @@ PropPageTeXMFRoots::OnApply ()
 
 	  pProgressDialog->StopProgressDialog ();
 	  pProgressDialog.reset ();
+
+	  SetElevationRequired (isModified);
 	}
       catch (const MiKTeXException & e)
 	{
@@ -805,7 +813,6 @@ PropPageTeXMFRoots::OnApply ()
 
       pProgressDialog = 0;
     }
-
   return (! isModified);
 }
 
@@ -933,4 +940,43 @@ PropPageTeXMFRoots::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   PropPageTeXMFRoots::SetElevationRequired
+   _________________________________________________________________________ */
+
+void
+PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
+{
+  if (IsWindowsVista())
+    {
+      HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
+      if (hwnd == 0)
+	{
+	  UNEXPECTED_CONDITION
+	    (T_("PropPageTeXMFRoots::SetElevationRequired"));
+	}
+      Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+      hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
+      if (hwnd == 0)
+	{
+	  UNEXPECTED_CONDITION
+	    (T_("PropPageTeXMFRoots::SetElevationRequired"));
+	}
+      Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+    }
+}
+
+/* _________________________________________________________________________
+
+   PropPageTeXMFRoots::SetChanged
+   _________________________________________________________________________ */
+
+void
+PropPageTeXMFRoots::SetChanged (/*[in]*/ bool f)
+{
+  SetElevationRequired (f);
+  SetModified (f ? TRUE : FALSE);
 }

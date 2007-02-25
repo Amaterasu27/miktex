@@ -1,6 +1,6 @@
 /* stdafx.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -24,19 +24,19 @@
 #endif
 
 #if ! defined(WINVER)
-#  define WINVER 0x0400
+#  define WINVER 0x0600
 #endif
 
 #if ! defined(_WIN32_WINNT)
-#  define _WIN32_WINNT 0x0400
+#  define _WIN32_WINNT 0x0600
 #endif						
 
 #if ! defined(_WIN32_WINDOWS)
-#  define _WIN32_WINDOWS 0x0410
+#  define _WIN32_WINDOWS 0x0600
 #endif
 
 #if ! defined(_WIN32_IE)
-#  define _WIN32_IE 0x0400
+#  define _WIN32_IE 0x0700
 #endif
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
@@ -58,6 +58,7 @@
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
 #include <miktex/version.h>
+#include <miktex/win/DllProc.h>
 
 #pragma warning (push, 1)
 #pragma warning (disable: 4702)

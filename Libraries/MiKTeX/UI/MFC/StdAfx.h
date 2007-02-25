@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -22,6 +22,13 @@
 #pragma once
 
 #define VC_EXTRALEAN
+
+#if ! defined(WINVER)
+#  define WINVER 0x0600
+#  define WIN32_WINDOWS 0x0600
+#  define _WIN32_WINNT 0x0600
+#  define _WIN32_IE 0x0700
+#endif
 
 #include <afxcmn.h>
 #include <afxdlgs.h>

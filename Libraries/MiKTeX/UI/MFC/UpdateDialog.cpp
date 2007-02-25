@@ -806,5 +806,8 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
     }
   UpdateDialogImpl dlg (pParent, pManager);
   dlg.SetFileLists (toBeInstalled, toBeRemoved);
-  return (dlg.DoModal());
+  dlg.DoModal ();
+  return (! (dlg.GetErrorFlag() || dlg.GetCancelFlag())
+	  ? IDOK
+	  : IDCANCEL);
 }

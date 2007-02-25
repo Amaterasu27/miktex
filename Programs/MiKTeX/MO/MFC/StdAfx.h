@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -30,6 +30,22 @@
 //        of class 'type2'
 #pragma warning ( disable : 4786 4251 )
 
+#if ! defined(WINVER)
+#  define WINVER 0x0600
+#endif
+
+#if ! defined(_WIN32_WINNT)
+#  define _WIN32_WINNT 0x0600
+#endif						
+
+#if ! defined(_WIN32_WINDOWS)
+#  define _WIN32_WINDOWS 0x0600
+#endif
+
+#if ! defined(_WIN32_IE)
+#  define _WIN32_IE 0x0700
+#endif
+
 #include <afxwin.h>
 #include <afxext.h>
 #include <afxdtctl.h>
@@ -47,6 +63,7 @@
 #include <miktex/core.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
+#include <miktex/win/DllProc.h>
 
 #include <memory>
 #include <set>

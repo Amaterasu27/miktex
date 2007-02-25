@@ -1,6 +1,6 @@
 /* PropPagePackages.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -142,15 +142,63 @@ PropPagePackages::OnApply ()
       str2.Format (_T("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
-      if (AfxMessageBox(str, MB_OKCANCEL | MB_ICONINFORMATION) == IDCANCEL)
+      if (IsWindowsVista())
 	{
+	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
+	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
+	  TASKDIALOGCONFIG taskDialogConfig;
+	  memset (&taskDialogConfig, 0, sizeof(taskDialogConfig));
+	  taskDialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
+	  taskDialogConfig.hwndParent = 0;
+	  taskDialogConfig.hInstance = 0;
+	  taskDialogConfig.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
+	  taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
+	  taskDialogConfig.pszWindowTitle =
+	    MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
+	  taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+	  CStringW strContent (str);
+	  taskDialogConfig.pszContent = strContent;
+	  taskDialogConfig.cButtons = 2;
+	  TASKDIALOG_BUTTON const buttons[] = {
+	    {IDOK, L"Proceed"},
+	    {IDCANCEL, L"Cancel"}
+	  };
+	  taskDialogConfig.pButtons = buttons;
+	  taskDialogConfig.nDefaultButton = IDOK;
+	  int result = 0;
+	  if(SUCCEEDED(taskDialogIndirect(&taskDialogConfig, &result, 0, 0)))
+	    {
+	      if (IDOK != result)
+		{
+		  return (FALSE);
+		}
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("PropPagePackages::OnApply"));
+	    }
+	}
+      else
+	{
+	  if (AfxMessageBox(str, MB_OKCANCEL | MB_ICONINFORMATION) == IDCANCEL)
+	    {
+	      return (FALSE);
+	    }
+	}
+      if (UpdateDialog::DoModal(this,
+				pManager.Get(),
+				toBeInstalled,
+				toBeRemoved)
+	  == IDOK)
+	{
+	  SetElevationRequired (false);
+	  return (TRUE);
+	}
+      else
+	{
+	  SetElevationRequired (true);
 	  return (FALSE);
 	}
-      return (UpdateDialog::DoModal(this,
-				    pManager.Get(),
-				    toBeInstalled,
-				    toBeRemoved)
-	      == IDOK);
     }
   catch (const MiKTeXException & e)
     {
@@ -334,7 +382,7 @@ PropPagePackages::OnToggle (/*[in]*/ WPARAM	wParam,
 {
   UNUSED_ALWAYS (wParam);
   UNUSED_ALWAYS (lParam);
-  SetModified (TRUE);
+  SetChanged (true);
   return (0);
 }
 
@@ -519,4 +567,42 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+
+/* _________________________________________________________________________
+
+   PropPagePackages::SetElevationRequired
+   _________________________________________________________________________ */
+
+void
+PropPagePackages::SetElevationRequired (/*[in]*/ bool f)
+{
+  if (IsWindowsVista())
+    {
+      HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
+      if (hwnd == 0)
+	{
+	  UNEXPECTED_CONDITION (T_("PropPagePackages::SetElevationRequired"));
+	}
+      Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+      hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
+      if (hwnd == 0)
+	{
+	  UNEXPECTED_CONDITION (T_("PropPagePackages::SetElevationRequired"));
+	}
+      Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+    }
+}
+
+/* _________________________________________________________________________
+
+   PropPagePackages::SetChanged
+   _________________________________________________________________________ */
+
+void
+PropPagePackages::SetChanged (/*[in]*/ bool f)
+{
+  SetElevationRequired (f);
+  SetModified (f ? TRUE : FALSE);
 }

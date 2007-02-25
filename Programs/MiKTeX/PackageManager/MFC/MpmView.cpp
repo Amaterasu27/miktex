@@ -1,6 +1,6 @@
 /* MpmView.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -835,9 +835,48 @@ void MpmView::OnInstall ()
       str2.Format (T_("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
-      if (AfxMessageBox(str, MB_OKCANCEL | MB_ICONINFORMATION) == IDCANCEL)
+      if (IsWindowsVista())
 	{
-	  return;
+	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
+	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
+	  TASKDIALOGCONFIG taskDialogConfig;
+	  memset (&taskDialogConfig, 0, sizeof(taskDialogConfig));
+	  taskDialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
+	  taskDialogConfig.hwndParent = 0;
+	  taskDialogConfig.hInstance = 0;
+	  taskDialogConfig.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
+	  taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
+	  taskDialogConfig.pszWindowTitle =
+	    MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
+	  taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+	  CStringW strContent (str);
+	  taskDialogConfig.pszContent = strContent;
+	  taskDialogConfig.cButtons = 2;
+	  TASKDIALOG_BUTTON const buttons[] = {
+	    {IDOK, L"Proceed"},
+	    {IDCANCEL, L"Cancel"}
+	  };
+	  taskDialogConfig.pButtons = buttons;
+	  taskDialogConfig.nDefaultButton = IDOK;
+	  int result = 0;
+	  if(SUCCEEDED(taskDialogIndirect(&taskDialogConfig, &result, 0, 0)))
+	    {
+	      if (IDOK != result)
+		{
+		  return;
+		}
+	    }
+	  else
+	    {
+	      UNEXPECTED_CONDITION (T_("MpmView::OnInstall"));
+	    }
+	}
+      else
+	{
+	  if (AfxMessageBox(str, MB_OKCANCEL | MB_ICONINFORMATION) == IDCANCEL)
+	    {
+	      return;
+	    }
 	}
       UpdateDialog::DoModal (this,
 			     pManager.Get(),

@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -92,6 +92,20 @@ typedef basic_ostringstream<MIKTEXCHAR> otstringstream;
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
+
+/* _________________________________________________________________________
+
+   IsWindowsVista
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsVista ()
+{
+  return ((GetVersion() & 0xff) >= 6);
+}
+#endif
 
 /* _________________________________________________________________________
 

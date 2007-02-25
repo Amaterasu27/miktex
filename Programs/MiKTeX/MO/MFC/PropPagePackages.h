@@ -1,6 +1,6 @@
 /* PropPagePackages.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -104,6 +104,14 @@ private:
   void
   SetWindowText (/*[in]*/ UINT			controlId,
 		 /*[in]*/ const MIKTEXCHAR *	lpszText);
+
+private:
+  void
+  SetElevationRequired (/*[in]*/ bool f);
+
+private:
+  void
+  SetChanged (/*[in]*/ bool f);
 
 private:  
   CString url;
