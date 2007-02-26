@@ -1899,6 +1899,7 @@ PackageInstallerImpl::InstallRemove ()
 	    }
 	}
       localServer.pInstaller->SetCallback(this);
+      localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
       hr = localServer.pInstaller->InstallRemove();
       localServer.pInstaller->SetCallback(0);
       if (FAILED(hr))
@@ -2422,6 +2423,7 @@ PackageInstallerImpl::UpdateDb ()
   if (UseLocalServer())
     {
       ConnectToServer ();
+      localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
       HRESULT hr = localServer.pInstaller->UpdateDb();
       if (FAILED(hr))
 	{

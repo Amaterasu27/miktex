@@ -350,3 +350,43 @@ comPackageInstaller::UpdateDb ()
     }
   return (hr);
 }
+
+/* _________________________________________________________________________
+
+   comPackageInstaller::SetRepository
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageInstaller::SetRepository (/*[in]*/ BSTR repository)
+{
+  HRESULT hr = S_OK;
+  try
+    {
+      trace_mpm->WriteLine (T_("mpmsvc"), T_("set repository"));
+      if (pInstaller.get() == 0)
+	{
+	  if (pManager.Get() == 0)
+	    {
+	      pManager.Create ();
+	    }
+	  pInstaller.reset (pManager->CreateInstaller());
+	}
+      pInstaller->SetRepository (tstring(_bstr_t(repository)));
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("mpmsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  return (hr);
+}

@@ -187,6 +187,15 @@ interface IPackageInstaller : IDispatch
   ]
   HRESULT
   UpdateDb ();
+
+  /// @brief Set the package repository.
+  /// @param[in] repository The repository to be used.
+  [
+    id(6),
+    helpstring("method SetRepository")
+  ]
+  HRESULT
+  SetRepository ([in] BSTR repository);
 };
 
 /* _________________________________________________________________________

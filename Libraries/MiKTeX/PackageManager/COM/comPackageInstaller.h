@@ -104,6 +104,9 @@ public:
 public:
   STDMETHOD(UpdateDb) ();
 
+public:
+  STDMETHOD(SetRepository) (/*[in]*/ BSTR repository);
+
 private:
   std::vector<MiKTeX::Core::tstring> packagesToBeInstalled;
 
