@@ -135,6 +135,37 @@ template<
   typename RetType_,
   typename Param1Type_,
   typename Param2Type_,
+  typename Param3Type_>
+class DllProc3 : public DllProcBase
+{
+public:
+  DllProc3 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
+	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+    : DllProcBase (lpszDllName, lpszProcName)
+  {
+  }
+
+protected:
+  typedef RetType_ (WINAPI * ProcType) (Param1Type_,
+					Param2Type_,
+					Param3Type_);
+
+public:
+  RetType_ operator() (Param1Type_ param1,
+		       Param2Type_ param2,
+		       Param3Type_ param3)
+  {
+    return (reinterpret_cast<ProcType>(GetProc())(param1,
+						  param2,
+						  param3));
+						  
+  }
+};
+
+template<
+  typename RetType_,
+  typename Param1Type_,
+  typename Param2Type_,
   typename Param3Type_,
   typename Param4Type_>
 class DllProc4 : public DllProcBase

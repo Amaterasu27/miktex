@@ -4033,15 +4033,6 @@ public:
 	/*[in]*/ bool			isTextFile,
 	/*[in]*/ FileShare		share);
 
-public:
-  static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
-  PushAside (/*[in,out]*/ PathName &		path,
-	     /*[in]*/ const MIKTEXCHAR *	lpszExt,
-	     /*[in]*/ bool			updateFndb);
-
   /// Sets file attributes.
 public:
   static

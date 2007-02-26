@@ -1,6 +1,6 @@
 /* files.cpp: file system operations
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -650,38 +650,6 @@ Directory::Create (/*[in]*/ const PathName & path)
 
 /* _________________________________________________________________________
 
-   File::PushAside
-   _________________________________________________________________________ */
-
-void
-File::PushAside (/*[in,out]*/ PathName &	path,
-		 /*[in]*/ const MIKTEXCHAR *	lpszExt,
-		 /*[in]*/ bool			updateFndb)
-{
-  MIKTEX_ASSERT_STRING (lpszExt);
-  tstring newFile = path.ToString();
-  newFile += lpszExt;
-  if (File::Exists(newFile.c_str()))
-    {
-      File::Delete (newFile.c_str(), true);
-    }
-  SessionImpl::GetSession()->trace_files->WriteFormattedLine
-    (T_("core"),
-     T_("renaming \"%s\" to \"%s\""),
-     path.Get(),
-     newFile.c_str());
-  File::Move (path, newFile.c_str());
-  if (updateFndb
-      && SessionImpl::GetSession()->IsTEXMFFile(path.Get(), 0, 0)
-      && Fndb::FileExists(path))
-    {
-      Fndb::Remove (path);
-    }
-  path = newFile.c_str();
-}
-
-/* _________________________________________________________________________
-
    File::Delete
    _________________________________________________________________________ */
 
@@ -746,8 +714,28 @@ File::Delete (/*[in]*/ const PathName &		path,
 	{
 	  absPath.MakeAbsolute ();
 	}
-      PathName dir (absPath);
-      dir.RemoveFileSpec ();
+      PathName dir;
+      if (IsWindowsNT())
+	{
+#if defined(MIKTEX_UNICODE)
+	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
+	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameW"));
+#else
+	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
+	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameA"));
+#endif
+	  if (! getVolumePathName(absPath.Get(),
+				  dir.GetBuffer(),
+				  dir.GetSize()))
+	    {
+	      FATAL_WINDOWS_ERROR (T_("GetVolumePathName"), absPath.Get());
+	    }
+	}
+      else
+	{
+	  dir = absPath;
+	  dir.RemoveFileSpec ();
+	}
       MIKTEXCHAR szTemp[BufferSizes::MaxPath];
       if (GetTempFileName(dir.Get(), T_("mik"), 0, szTemp) == 0)
 	{
