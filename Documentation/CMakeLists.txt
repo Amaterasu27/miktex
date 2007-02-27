@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -449,6 +449,59 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
+## preview
+
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/preview.tex
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--output ${CMAKE_CURRENT_BINARY_DIR}/preview.tex
+		db2latex-preview.xsl
+		preview.xml
+    DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/preview.xml
+	${entities_ent}
+	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-preview.xsl
+	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
+    VERBATIM
+  )
+
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
+    COMMAND
+	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_BINARY_DIR}/png75
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
+    COMMAND
+  	${CMAKE_COMMAND} -E
+		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
+		${TEXIFY_EXE} --pdf ${CMAKE_CURRENT_BINARY_DIR}/preview.tex
+    COMMAND
+  	${CMAKE_COMMAND} -E copy
+		${CMAKE_CURRENT_BINARY_DIR}/scratch/preview.pdf
+		${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/preview.tex
+	${screenshots75_png}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
+
+  install(
+    FILES
+	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
+    DESTINATION
+	${docdir}
+  )
+endif(BUILDING_MIKTEX)
+
+###############################################################################
 ## release notes
 
 if(BUILDING_MIKTEX)
@@ -653,6 +706,7 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/license.html
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
+	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html

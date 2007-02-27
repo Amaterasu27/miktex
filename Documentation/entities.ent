@@ -39,6 +39,11 @@
 <!ENTITY BasicMiKTeXInstaller "<application>Basic MiKTeX Installer</application>">
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY MiKTeX25 "<application>MiKTeX&nbsp;2.5</application>">
+<!ENTITY MiKTeX26 "<application>MiKTeX&nbsp;2.6</application>">
+<!ENTITY MiKTeXCurrentSeries "<application>MiKTeX&nbsp;&MIKTEX_SERIES_STR;</application>">
+<!ENTITY MiKTeXSoftwareDevelopmentKit "&MiKTeX;&nbsp;Software Development Kit">
+<!ENTITY SDK "<acronym>SDK</acronym>">
+<!ENTITY MiKTeXSoftwareDevelopmentKit "&MiKTeX;&nbsp;&SDK;">
 <!ENTITY MiKTeXOptions "<application>&MiKTeX; Options</application>">
 <!ENTITY MiKTeXPackageManager "<application>&MiKTeX; Package Manager</application>">
 <!ENTITY MiKTeXPrintUtility "<application>&MiKTeX; Print Utility</application>">
