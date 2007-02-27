@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -35,6 +35,8 @@
 #endif
 
 #include <intshcut.h>
+#define SECURITY_WIN32
+#include <Security.h>
 
 #include <regstr.h>
 #include <shlobj.h>
@@ -53,6 +55,7 @@
 #include <miktex/urls.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
+#include <miktex/win/DllProc.h>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

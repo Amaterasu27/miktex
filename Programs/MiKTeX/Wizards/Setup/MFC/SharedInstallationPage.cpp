@@ -1,6 +1,6 @@
 /* SharedInstallationPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -78,6 +78,41 @@ SharedInstallationPage::OnInitDialog ()
 	    }
 	  pWnd->EnableWindow (FALSE);
 	}
+      CWnd * pWnd = GetDlgItem(IDC_JUST_FOR_ME);
+      if (pWnd == 0)
+	{
+	  UNEXPECTED_CONDITION (T_("SharedInstallationPage::OnInitDialog"));
+	}
+      MIKTEXCHAR szLogonName[30];
+      DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
+      if (! GetUserName(szLogonName, &sizeLogonName))
+	{
+	  FATAL_WINDOWS_ERROR (T_("GetUserName"), 0);
+	}
+      CString str;
+      pWnd->GetWindowText(str);
+      str += T_(" ");
+      str += szLogonName;
+      if (IsWindowsNT())
+	{
+	  MIKTEXCHAR szDisplayName[30];
+#if defined(MIKTEX_UNICODE)
+	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
+	    getUserNameEx (T_("Secur32.dll"), T_("GetUserNameExW"));
+#else
+	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
+	    getUserNameEx (T_("Secur32.dll"), T_("GetUserNameExA"));
+#endif
+	  ULONG sizeDisplayName =
+	    sizeof(szDisplayName) / sizeof(szDisplayName[0]);
+	  if (getUserNameEx(NameDisplay, szDisplayName, &sizeDisplayName))
+	    {
+	      str += T_(" (");
+	      str += szDisplayName;
+	      str += T_(')');
+	    }
+	}
+      pWnd->SetWindowText(str);
     }
   catch (const MiKTeXException & e)
     {

@@ -166,7 +166,7 @@ BEGIN
     LTEXT           "Install MiKTeX for:",IDC_STATIC,21,1,58,8
     CONTROL         "&Anyone who uses this computer (all users)",IDC_SHARED,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,46,13,250,10
-    CONTROL         "Only for &me",IDC_JUST_FOR_ME,"Button",BS_AUTORADIOBUTTON,46,27,250,10
+    CONTROL         "&Only for:",IDC_JUST_FOR_ME,"Button",BS_AUTORADIOBUTTON,46,27,250,10
 END
 
 IDD_EDIT_TEXMFROOTS DIALOGEX 0, 0, 317, 143
