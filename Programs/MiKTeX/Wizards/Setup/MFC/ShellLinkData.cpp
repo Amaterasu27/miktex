@@ -1,6 +1,6 @@
 /* ShellLinkData.cpp: shell link data
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -72,7 +72,7 @@ const ShellLinkData shellLinks[] = {
     false,
     0,
     IDS_UPDATEWIZ,
-    EXEPATH(MIKTEX_COPYSTART_EXE),
+    EXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
     LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
     T_("\"") CONFIGPATH(MIKTEX_UPDATE_DAT) T_("\""),

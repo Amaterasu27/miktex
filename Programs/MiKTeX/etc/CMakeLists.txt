@@ -36,3 +36,13 @@ target_link_libraries(copystart
 )
 
 install(TARGETS copystart DESTINATION "${bindir}")
+
+add_executable(copystart_admin WIN32 copystart.cpp)
+
+merge_trustinfo_manifest(copystart_admin requireAdministrator)
+
+target_link_libraries(copystart_admin
+  ${core_dll_name}
+)
+
+install(TARGETS copystart_admin DESTINATION "${bindir}")

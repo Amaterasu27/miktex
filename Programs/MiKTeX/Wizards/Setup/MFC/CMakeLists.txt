@@ -84,7 +84,7 @@ endif(NATIVE_WINDOWS)
 
 add_executable(setup WIN32 ${setup_mfc_sources})
 
-merge_trustinfo_manifest(setup requireAdministrator)
+merge_trustinfo_manifest(setup asInvoker)
 
 target_link_libraries(setup
   ${bzip2_lib_name}
