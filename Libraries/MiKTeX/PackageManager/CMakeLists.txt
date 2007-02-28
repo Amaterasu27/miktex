@@ -34,20 +34,14 @@ set(${mpm_dll_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryRepositorySoapProxy.h
   ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/repositoryStub.h
-  CabExtractor.cpp
-  CabExtractor.h
   CurlWebFile.cpp
   CurlWebFile.h
   CurlWebSession.cpp
   CurlWebSession.h
-  Extractor.cpp
-  Extractor.h
   PackageInstaller.cpp
   PackageIterator.cpp
   PackageManager.cpp
   StdAfx.h
-  TarBzip2Extractor.cpp
-  TarBzip2Extractor.h
   TpmParser.cpp
   TpmParser.h
   WebFile.h
@@ -61,8 +55,6 @@ set(${mpm_dll_name}_sources
 if(NATIVE_WINDOWS)
   set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
     mpm.rc
-    win/winCabExtractor.cpp
-    win/winCabExtractor.h
     win/winWebFile.cpp
     win/winWebFile.h
     win/winWebSession.cpp
@@ -141,6 +133,7 @@ target_link_libraries(${mpm_dll_name}
   ${bzip2_dll_name}
   ${core_dll_name}
   ${expat_dll_name}
+  ${extractor_dll_name}
   ${md5_dll_name}
   ${mspack_dll_name}
 )
