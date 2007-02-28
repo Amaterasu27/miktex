@@ -1,23 +1,23 @@
 /* CabExtractor.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
-   This file is part of MiKTeX Package Manager.
+   This file is part of MiKTeX Extractor.
 
-   MiKTeX Package Manager is free software; you can redistribute it
-   and/or modify it under the terms of the GNU General Public License
-   as published by the Free Software Foundation; either version 2, or
-   (at your option) any later version.
+   MiKTeX Extractor is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2, or (at
+   your option) any later version.
    
-   MiKTeX Package Manager is distributed in the hope that it will be
-   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   MiKTeX Extractor is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with MiKTeX Package Manager; if not, write to the Free
-   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA. */
+   along with MiKTeX Extractor; if not, write to the Free Software
+   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA. */
 
 #include "StdAfx.h"
 
@@ -26,7 +26,6 @@
 #include "CabExtractor.h"
 
 using namespace MiKTeX::Core;
-using namespace MiKTeX::Packages;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -66,9 +65,9 @@ CabExtractor::Open (/*[in]*/ struct mspack_system *	self,
 	  break;
 	default:
 	  delete pMyFile;
-	  FATAL_MPM_ERROR (T_("CabExtractor::Open"),
-			   T_("Problem with mspack interface."),
-			   NUMTOSTR(mode));
+	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Open"),
+				 T_("Problem with mspack interface."),
+				 NUMTOSTR(mode));
 	}
       try
 	{
@@ -189,9 +188,9 @@ CabExtractor::Seek (/*[in]*/ struct mspack_file *	pFile,
 	  origin = SEEK_END;
 	  break;
 	default:
-	  FATAL_MPM_ERROR (T_("CabExtractor::Seek"),
-			   T_("Problem with mspack interface."),
-			   NUMTOSTR(mode));
+	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Seek"),
+				 T_("Problem with mspack interface."),
+				 NUMTOSTR(mode));
 	}
       if (fseek(pMyFile->pFile, offset, origin) != 0)
 	{
@@ -299,7 +298,7 @@ CabExtractor::Copy (/*[in]*/ void *	pSource,
    _________________________________________________________________________ */
 
 CabExtractor::CabExtractor ()
-  : traceStream (TraceStream::Open(MIKTEX_TRACE_MPM))
+  : traceStream (TraceStream::Open(MIKTEX_TRACE_EXTRACTOR))
 {
   mspackSystem.open = Open;
   mspackSystem.close = Close;
@@ -315,9 +314,9 @@ CabExtractor::CabExtractor ()
   pDecompressor = mspack_create_cab_decompressor(&mspackSystem);
   if (pDecompressor == 0)
     {
-      FATAL_MPM_ERROR (T_("CabExtractor::CabExtractor"),
-		       T_("Could not create cabinet decompressor."),
-		       0);
+      FATAL_EXTRACTOR_ERROR (T_("CabExtractor::CabExtractor"),
+			     T_("Could not create cabinet decompressor."),
+			     0);
     }
 }
 
@@ -425,7 +424,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 		       /*[in]*/ IExtractCallback *	pCallback,
 		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
 {
-  traceStream->WriteFormattedLine (T_("libmpm"),
+  traceStream->WriteFormattedLine (T_("libextractor"),
 				   T_("extracting %s to %s (%s directories)"),
 				   Q_(cabinetPath),
 				   Q_(destDir),
@@ -443,7 +442,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 
       if (pCabinet == 0)
 	{
-	  FATAL_MPM_ERROR (T_("CabExtractor::Extract"),
+	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Extract"),
 			   T_("The cabinet could not be opened."),
 			   cabinetPath.Get());
 	}
@@ -501,7 +500,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 				   path.GetBuffer());
 	  if (r != MSPACK_ERR_OK)
 	    {
-	      FATAL_MPM_ERROR (T_("CabExtractor::Extract"),
+	      FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Extract"),
 			       T_("The file could not be extracted."),
 			       pCabFile->filename);
 	    }
@@ -534,7 +533,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	    }
 	}
       
-      traceStream->WriteFormattedLine (T_("libmpm"),
+      traceStream->WriteFormattedLine (T_("libextractor"),
 				       T_("extracted %u file(s)"),
 				       fileCount);
       

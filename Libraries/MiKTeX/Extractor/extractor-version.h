@@ -1,4 +1,4 @@
-/* mpm-version.h: version number				-*- C++ -*-
+/* extractor-version.h: version number				-*- C++ -*-
 
    Copyright (C) 2001-2007 Christian Schenk
 
@@ -17,5 +17,5 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define VER_FILEVERSION 2,6,2612,0
-#define VER_FILEVERSION_STR "2.6.2612"
+#define VER_FILEVERSION 2,6,2615,0
+#define VER_FILEVERSION_STR "2.6.2615"

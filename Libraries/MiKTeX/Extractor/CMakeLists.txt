@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -25,14 +25,13 @@ set(${mpm_dll_name}_sources
   StdAfx.h
   TarBzip2Extractor.cpp
   TarBzip2Extractor.h
+  extractor-version.h
   include/miktex/Extractor.h
   internal.h
-  extractor-version.h
 )
 
 if(NATIVE_WINDOWS)
-  set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
-    mpm.rc
+  set(${extractor_dll_name}_sources ${${extractor_dll_name}_sources}
     win/winCabExtractor.cpp
     win/winCabExtractor.h
     win/winWebFile.cpp
@@ -40,94 +39,20 @@ if(NATIVE_WINDOWS)
     win/winWebSession.cpp
     win/winWebSession.h
   )
-  if(MFC_FOUND)
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.rgs.in
-      ${CMAKE_CURRENT_BINARY_DIR}/COM/mpm.rgs
-    )
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
-    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
-    set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-      COM/comPackageInstaller.cpp
-      COM/comPackageInstaller.h
-      COM/comPackageManager.cpp
-      COM/comPackageManager.h
-      COM/mpm.cpp
-      COM/mpm.def
-    )
-    add_custom_command(
-      OUTPUT
-		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
-		${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
-		${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-		${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-		${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
-      COMMAND ${MIDL_EXE}
-	/nologo
-	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
-	/char signed
-	/env win32
-	/Oicf
-	/tlb ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
-	/h ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
-	/iid ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-	/proxy ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-	/no_robust
-	${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
-      DEPENDS
-		${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
-      VERBATIM
-    )
-    add_library(
-      ${mpm_ps_dll_name}
-      SHARED
-      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-      ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
-    )
-    set_source_files_properties(
-      ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-      PROPERTIES COMPILE_FLAGS
-      "-DREGISTER_PROXY_DLL"
-    )
-    target_link_libraries(${mpm_ps_dll_name}
-      oleaut32
-      rpcndr
-      rpcns4
-      rpcrt4
-      uuid
-    )
-    install(TARGETS ${mpm_ps_dll_name} DESTINATION "${bindir}")
-  endif(MFC_FOUND)
 endif(NATIVE_WINDOWS)
 
-add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
+add_library(${extractor_dll_name} SHARED ${${extractor_dll_name}_sources})
 
-target_link_libraries(${mpm_dll_name}
-  ${bzip2_dll_name}
+target_link_libraries(${extractor_dll_name}
   ${core_dll_name}
-  ${expat_dll_name}
-  ${md5_dll_name}
+  ${bzip2_dll_name}
   ${mspack_dll_name}
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(${mpm_dll_name}
-    ${curl_dll_name}
-    Ws2_32
+  target_link_libraries(${extractor_dll_name}
     fdi
-    wininet
-  )
-else(NATIVE_WINDOWS)
-  target_link_libraries(${mpm_dll_name}
-    ${CURL_LIBRARIES}
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS ${mpm_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${extractor_dll_name} DESTINATION "${bindir}")

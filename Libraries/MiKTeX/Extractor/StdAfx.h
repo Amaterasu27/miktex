@@ -2,22 +2,22 @@
 
    Copyright (C) 2001-2007 Christian Schenk
 
-   This file is part of MiKTeX Package Manager.
+   This file is part of MiKTeX Extractor.
 
-   MiKTeX Package Manager is free software; you can redistribute it
-   and/or modify it under the terms of the GNU General Public License
-   as published by the Free Software Foundation; either version 2, or
-   (at your option) any later version.
+   MiKTeX Extractor is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2, or (at
+   your option) any later version.
    
-   MiKTeX Package Manager is distributed in the hope that it will be
-   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   MiKTeX Extractor is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with MiKTeX Package Manager; if not, write to the Free
-   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA. */
+   along with MiKTeX Extractor; if not, write to the Free Software
+   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA. */
 
 #if defined(_MSC_VER)
 #  pragma once
@@ -27,26 +27,9 @@
 #  include <config.h>
 #endif
 
-#include "Resource.h"
-
-// must be included before Fdi.h (because of HUGE)
-#include <cmath>
-
 #if defined(_WIN32) || defined(_WIN64)
 #  include <windows.h>
-#  include <wininet.h>
 #  include <Fdi.h>
-#  include <Sddl.h>
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-#  define _ATL_FREE_THREADED
-#  define _ATL_NO_AUTOMATIC_NAMESPACE
-#  define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
-#  include <atlbase.h>
-#  include <ATLComTime.h>
-#  include <atlcom.h>
-using namespace ATL;
 #endif
 
 #include <algorithm>
@@ -67,13 +50,7 @@ using stdext::hash_set;
 #  define USE_HASH_SET
 #endif
 
-#if defined(HAVE_LIBCURL)
-#  include <curl/curl.h>
-#endif
-
 #include <mspack.h>
-
-#include <expat.h>
 
 #if defined(_MSC_VER)
 #  include <malloc.h>
@@ -96,11 +73,3 @@ using stdext::hash_set;
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
-
-#if defined(MIKTEX_WINDOWS)
-# include <miktex/win/DllProc.h>
-#endif
-
-#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-#  import "mpm.tlb" raw_interfaces_only
-#endif

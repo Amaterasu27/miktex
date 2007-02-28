@@ -1,21 +1,21 @@
 /* winCabExtractor.cpp: using the Fdi lib to extract cab files
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
-   This file is part of MiKTeX Package Manager.
+   This file is part of MiKTeX Extractor.
 
-   MiKTeX Package Manager is free software; you can redistribute it
+   MiKTeX Extractor is free software; you can redistribute it
    and/or modify it under the terms of the GNU General Public License
    as published by the Free Software Foundation; either version 2, or
    (at your option) any later version.
    
-   MiKTeX Package Manager is distributed in the hope that it will be
+   MiKTeX Extractor is distributed in the hope that it will be
    useful, but WITHOUT ANY WARRANTY; without even the implied warranty
    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with MiKTeX Package Manager; if not, write to the Free
+   along with MiKTeX Extractor; if not, write to the Free
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
@@ -26,7 +26,6 @@
 #include "win/winCabExtractor.h"
 
 using namespace MiKTeX::Core;
-using namespace MiKTeX::Packages;
 using namespace std;
 
 #define ERROR_TITLE T_("Cabinet Extraction Problem")
@@ -57,7 +56,7 @@ winCabExtractor::winCabExtractor ()
     fileCount (0),
     pCallback (0),
     trace_error (TraceStream::Open(T_("error"))),
-    trace_mpm (TraceStream::Open(T_("mpm")))
+    trace_extractor (TraceStream::Open(T_("extractor")))
 {
   memset (&erf, 0, sizeof(erf));
 }
@@ -92,7 +91,7 @@ winCabExtractor::Dispose ()
       this->hfdi = 0;
       if (! FDIDestroy(hfdi))
 	{
-	  FATAL_MPM_ERROR (T_("winCabExtractor::Dispose"),
+	  FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Dispose"),
 			   T_("The cabinet extractor could not be destroyed."),
 			   0);
 	}
@@ -102,10 +101,10 @@ winCabExtractor::Dispose ()
       trace_error->Close ();
       trace_error.reset ();
     }
-  if (trace_mpm.get() != 0)
+  if (trace_extractor.get() != 0)
     {
-      trace_mpm->Close ();
-      trace_mpm.reset ();
+      trace_extractor->Close ();
+      trace_extractor.reset ();
     }
 }
 
@@ -120,9 +119,9 @@ winCabExtractor::FatalFdiError (/*[in]*/ const MIKTEXCHAR * lpszCabinetPath)
 {
   if (! erf.fError)
     {
-      FATAL_MPM_ERROR (T_("winCabExtractor::FatalFdiError"),
-		       T_("Cabinet extraction problem."),
-		       lpszCabinetPath);
+      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::FatalFdiError"),
+			     T_("Cabinet extraction problem."),
+			     lpszCabinetPath);
     }
   tstring message;
   switch (erf.erfOper)
@@ -165,7 +164,7 @@ winCabExtractor::FatalFdiError (/*[in]*/ const MIKTEXCHAR * lpszCabinetPath)
       message = T_("Cabinet extraction problem.");
       break;
     }
-  FATAL_MPM_ERROR (T_("winCabExtractor::FatalFdiError"),
+  FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::FatalFdiError"),
 		   message.c_str(),
 		   lpszCabinetPath);
 }
@@ -182,19 +181,20 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 			  /*[in]*/ IExtractCallback *	pCallback,
 			  /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
 {
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
-				 T_("extracting %s to %s (%s directories)"),
-				 Q_(cabinetPath),
-				 Q_(destDir),
-				 (makeDirectories
-				  ? T_("make")
-				  : T_("don't make")));
+  trace_extractor->WriteFormattedLine
+    (T_("libextractor"),
+     T_("extracting %s to %s (%s directories)"),
+     Q_(cabinetPath),
+     Q_(destDir),
+     (makeDirectories
+      ? T_("make")
+      : T_("don't make")));
   hfdi = FDICreate(Alloc, Free, Open, Read, Write, Close, Seek, 0, &erf);
   if (hfdi == 0)
     {
-      FATAL_MPM_ERROR (T_("winCabExtractor::Extract"),
-		       T_("The cabinet extractor could not be created."),
-		       0);
+      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Extract"),
+			     T_("The cabinet extractor could not be created."),
+			     0);
     }
   destinationDirectory = destDir;
   this->makeDirectories = makeDirectories;
@@ -219,7 +219,7 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	    this);
   if (error)
     {
-      FATAL_MPM_ERROR (T_("winCabExtractor::Extract"),
+      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Extract"),
 		       T_("Cabinet extraction problem."),
 		       pathCabName.Get());
     }
@@ -231,7 +231,7 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
     {
       FatalFdiError (cabinetPath.Get());
     }
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_extractor->WriteFormattedLine (T_("libextractor"),
 				 T_("%u file(s)"),
 				 static_cast<unsigned>(fileCount));
 }
@@ -776,7 +776,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
     }
   catch (const OperationCancelledException &)
     {
-      This->trace_mpm->WriteFormattedLine (T_("libmpm"),
+      This->trace_extractor->WriteFormattedLine (T_("libextractor"),
 			      T_("operation cancelled by client"));
       This->cancelled = true;
       return (-1);
