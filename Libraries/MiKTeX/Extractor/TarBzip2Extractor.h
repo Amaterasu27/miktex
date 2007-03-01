@@ -26,22 +26,24 @@
 #if ! defined(GUARD_E03089A1127031428EBAC6B157F22548_)
 #define GUARD_E03089A1127031428EBAC6B157F22548_
 
-#include "Extractor.h"
+#include "miktex/Extractor.h"
 
 BEGIN_INTERNAL_NAMESPACE;
 
-class TarBzip2Extractor : public Extractor
+class TarBzip2Extractor : public MiKTeX::Extractor::Extractor
 {
 public:
   TarBzip2Extractor ();
 
 public:
   virtual
+  EXTRACTORCALL
   ~TarBzip2Extractor ();
 
 public:
   virtual
   void
+  EXTRACTORCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool		makeDirectories,
@@ -51,6 +53,7 @@ public:
 public:
   virtual
   void
+  EXTRACTORCALL
   Dispose ();
 
 private:

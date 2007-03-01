@@ -300,6 +300,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_freetype_dir}/lib
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
@@ -469,6 +470,12 @@ endif(NATIVE_WINDOWS)
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cfg_dir})
 endif(BUILDING_MIKTEX)
+
+add_subdirectory(${rel_extractor_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_extractor_dir}-static)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_mpmlib_dir})
 

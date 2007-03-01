@@ -26,6 +26,7 @@
 #include "TarBzip2Extractor.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -43,6 +44,7 @@ TarBzip2Extractor::TarBzip2Extractor ()
    TarBzip2Extractor::~TarBzip2Extractor
    _________________________________________________________________________ */
 
+EXTRACTORCALL
 TarBzip2Extractor::~TarBzip2Extractor ()
 {
   try
@@ -60,6 +62,7 @@ TarBzip2Extractor::~TarBzip2Extractor ()
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 TarBzip2Extractor::Dispose ()
 {
 }
@@ -306,6 +309,7 @@ Skip (/*[in]*/ BZFILE *		bzfileIn,
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 TarBzip2Extractor::Extract (/*[in]*/ const PathName &	tarbz2Path,
 			    /*[in]*/ const PathName &	destDir,
 			    /*[in]*/ bool		makeDirectories,

@@ -23,7 +23,6 @@
 
 #include "internal.h"
 
-#include "Extractor.h"
 #include "TpmParser.h"
 
 #include "../WebServiceClients/Repository/repositoryRepositorySoapProxy.h"
@@ -32,6 +31,7 @@
 #include "mpm-version.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
 
@@ -668,8 +668,9 @@ PackageManagerImpl::LoadDatabase (/*[in]*/ const PathName & path)
       pathPackageInfoDir.SetToCurrentDirectory ();
       
       // unpack the package definition files
-      auto_ptr<Extractor>
-	pExtractor (Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
+      auto_ptr<MiKTeX::Extractor::Extractor>
+	pExtractor
+	(MiKTeX::Extractor::Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
       pExtractor->Extract (absPath,
 			   pathPackageInfoDir,
 			   false,

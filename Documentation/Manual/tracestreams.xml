@@ -97,6 +97,11 @@
 </varlistentry>
 
 <varlistentry>
+<term>extractor</term>
+<listitem><para>package archive file extractor</para></listitem>
+</varlistentry>
+
+<varlistentry>
 <term>files</term>
 <listitem><para>file operations</para></listitem>
 </varlistentry>

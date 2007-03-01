@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,20 +35,14 @@ include_directories(BEFORE
 set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.cpp
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.h
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CabExtractor.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CabExtractor.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebFile.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebFile.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebSession.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebSession.h
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/Extractor.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/Extractor.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageInstaller.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageIterator.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageManager.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/StdAfx.h
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TarBzip2Extractor.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TarBzip2Extractor.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TpmParser.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TpmParser.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/WebFile.h
@@ -67,8 +61,6 @@ set(${mpm_lib_name}_sources
 
 if(NATIVE_WINDOWS)
   set(${mpm_lib_name}_sources ${${mpm_lib_name}_sources}
-    ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winCabExtractor.cpp
-    ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winCabExtractor.h
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winWebFile.cpp
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winWebFile.h
     ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/win/winWebSession.cpp

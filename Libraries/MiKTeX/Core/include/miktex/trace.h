@@ -1,6 +1,6 @@
 /* trace.h:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -48,6 +48,7 @@
 #define MIKTEX_TRACE_DVIVFONT MIKTEXTEXT("dvivfont")
 #define MIKTEX_TRACE_ENV MIKTEXTEXT("env")
 #define MIKTEX_TRACE_ERROR MIKTEXTEXT("error")
+#define MIKTEX_TRACE_EXTRACTOR MIKTEXTEXT("extractor")
 #define MIKTEX_TRACE_FILES MIKTEXTEXT("files")
 #define MIKTEX_TRACE_FILESEARCH MIKTEXTEXT("filesearch")
 #define MIKTEX_TRACE_FNDB MIKTEXTEXT("fndb")

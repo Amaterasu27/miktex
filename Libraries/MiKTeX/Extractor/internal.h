@@ -25,7 +25,7 @@
 #  define EXTRACTOREXPORT
 #endif
 
-#define F927BA187CB94546AB9CA9099D989E81
+#define DAA6476494C144C8BED9A9E8810BAABA
 #include "miktex/Extractor.h"
 
 #include "extractor-version.h"
@@ -296,19 +296,6 @@ MiKTeX::Core::tstring
 Quoted (/*[in]*/ const MiKTeX::Core::PathName & path)
 {
   return (Quoted(path.Get()));
-}
-
-/* _________________________________________________________________________
-
-   PrefixedPath
-   _________________________________________________________________________ */
-
-inline
-MiKTeX::Core::PathName
-PrefixedPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
-{
-  MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszPath));
-  return (MiKTeX::Core::PathName(TEXMF_PREFIX_DIRECTORY, lpszPath, 0));
 }
 
 /* _________________________________________________________________________

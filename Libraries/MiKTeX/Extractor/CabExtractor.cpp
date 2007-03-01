@@ -26,6 +26,7 @@
 #include "CabExtractor.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -325,6 +326,7 @@ CabExtractor::CabExtractor ()
    CabExtractor::~CabExtractor
    _________________________________________________________________________ */
 
+EXTRACTORCALL
 CabExtractor::~CabExtractor ()
 {
   try
@@ -342,6 +344,7 @@ CabExtractor::~CabExtractor ()
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 CabExtractor::Dispose ()
 {
   if (pDecompressor != 0)
@@ -418,6 +421,7 @@ SetAttributes (/*[in]*/ const PathName &	path,
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,

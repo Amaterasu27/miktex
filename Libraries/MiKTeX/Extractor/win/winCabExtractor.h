@@ -32,11 +32,13 @@ public:
 
 public:
   virtual
+  EXTRACTORCALL
   ~winCabExtractor ();
 
 public:
   virtual
   void
+  EXTRACTORCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool		makeDirectories,
@@ -46,6 +48,7 @@ public:
 public:
   virtual
   void
+  EXTRACTORCALL
   Dispose ();
 
 private:

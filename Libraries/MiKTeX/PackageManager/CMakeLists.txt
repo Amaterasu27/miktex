@@ -130,19 +130,16 @@ endif(NATIVE_WINDOWS)
 add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
 
 target_link_libraries(${mpm_dll_name}
-  ${bzip2_dll_name}
   ${core_dll_name}
   ${expat_dll_name}
   ${extractor_dll_name}
   ${md5_dll_name}
-  ${mspack_dll_name}
 )
 
 if(NATIVE_WINDOWS)
   target_link_libraries(${mpm_dll_name}
     ${curl_dll_name}
     Ws2_32
-    fdi
     wininet
   )
 else(NATIVE_WINDOWS)

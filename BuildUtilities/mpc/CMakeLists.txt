@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,6 +34,7 @@ target_link_libraries(mpc
   ${core_lib_name}
   ${curl_lib_name}
   ${expat_lib_name}
+  ${extractor_lib_name}
   ${gnu_lib_name}
   ${md5_lib_name}
   ${mpm_lib_name}

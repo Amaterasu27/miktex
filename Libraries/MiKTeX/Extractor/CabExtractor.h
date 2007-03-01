@@ -1,6 +1,6 @@
 /* CabExtractor.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -26,22 +26,24 @@
 #if ! defined(GUARD_73FFE7F857E7814191871F96B92C5228_)
 #define GUARD_73FFE7F857E7814191871F96B92C5228_
 
-#include "Extractor.h"
+#include "miktex/Extractor.h"
 
 BEGIN_INTERNAL_NAMESPACE;
 
-class CabExtractor : public Extractor
+class CabExtractor : public MiKTeX::Extractor::Extractor
 {
 public:
   CabExtractor ();
 
 public:
   virtual
+  EXTRACTORCALL
   ~CabExtractor ();
 
 public:
   virtual
   void
+  EXTRACTORCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool		makeDirectories,
@@ -51,6 +53,7 @@ public:
 public:
   virtual
   void
+  EXTRACTORCALL
   Dispose ();
 
 private:

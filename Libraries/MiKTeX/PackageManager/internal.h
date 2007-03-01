@@ -251,7 +251,6 @@ IsWindowsNT ()
 
 #define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
 
-#include "Extractor.h"
 #include "WebSession.h"
 
 BEGIN_INTERNAL_NAMESPACE;
@@ -1402,21 +1401,21 @@ public:
   }
 
 public:
-  ArchiveFileType
+  MiKTeX::Extractor::ArchiveFileType
   GetArchiveFileType (/*[in]*/  const MIKTEXCHAR *	lpszDeploymentName)
   {
     MiKTeX::Core::tstring str;
     if (! TryGetValue(lpszDeploymentName, T_("Type"), str))
       {
-	return (ArchiveFileType::MSCab);
+	return (MiKTeX::Extractor::ArchiveFileType::MSCab);
       }
     if (str == T_("MSCab"))
       {
-	return (ArchiveFileType::MSCab);
+	return (MiKTeX::Extractor::ArchiveFileType::MSCab);
       }
     else if (str == T_("TarBzip2"))
       {
-	return (ArchiveFileType::TarBzip2);
+	return (MiKTeX::Extractor::ArchiveFileType::TarBzip2);
       }
     else
       {
@@ -1454,7 +1453,7 @@ class PackageInstallerImpl
   : public PackageInstaller,
     public IProgressNotify_,
     public MiKTeX::Core::ICreateFndbCallback,
-    public IExtractCallback,
+    public MiKTeX::Extractor::IExtractCallback,
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
     public MiKTeXPackageManagerLib::IPackageInstallerCallback
 #endif
@@ -1631,18 +1630,21 @@ public:
 public:
   virtual
   void
+  EXTRACTORCALL
   OnBeginFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			 /*[in]*/ size_t		uncompressedSize);
 
 public:
   virtual
   void
+  EXTRACTORCALL
   OnEndFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		       /*[in]*/ size_t			uncompressedSize);
 
 public:
   virtual
   bool
+  EXTRACTORCALL
   OnError (/*[in]*/ const MIKTEXCHAR *	lpszMessage);
 
 private:
@@ -1894,7 +1896,7 @@ private:
 private:
   void
   ExtractFiles (/*[in]*/ const MiKTeX::Core::PathName &	archiveFileName,
-		/*[in]*/ ArchiveFileType	archiveFileType);
+		/*[in]*/ MiKTeX::Extractor::ArchiveFileType archiveFileType);
 
 private:
   void

@@ -23,10 +23,37 @@
 #  pragma once
 #endif
 
-#if ! defined(GUARD_84BF935BF7F2B24790D070733E790F54_)
-#define GUARD_84BF935BF7F2B24790D070733E790F54_
+#if ! defined(CE2192A940434CEB82EFF92FA64AC9D4_)
+#define CE2192A940434CEB82EFF92FA64AC9D4_
 
-BEGIN_INTERNAL_NAMESPACE;
+#if ! defined(DAA6476494C144C8BED9A9E8810BAABA)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#    define EXTRACTOREXPORT __declspec(dllimport)
+#  else
+#    define EXTRACTOREXPORT
+#  endif
+#endif
+
+#if defined(_MSC_VER)
+#  define EXTRACTORCALL __stdcall
+#else
+#  define EXTRACTORCALL
+#endif
+
+#define EXTRACTORAPI(type) EXTRACTOREXPORT type EXTRACTORCALL
+
+#include <miktex/core.h>
+#include <miktex/paths.h>
+
+#define EXTRACTOR_BEGIN_NAMESPACE		\
+  namespace MiKTeX {				\
+    namespace Extractor {
+
+#define EXTRACTOR_END_NAMESPACE			\
+    }						\
+  }
+
+EXTRACTOR_BEGIN_NAMESPACE;
 
 /* _________________________________________________________________________
 
@@ -42,6 +69,7 @@ public:
     TarBzip2 = 2,
     Zip = 3
   };
+
 public:
   static
   const MIKTEXCHAR *
@@ -56,9 +84,12 @@ public:
       case Zip:
 	return (MIKTEX_ZIP_FILE_SUFFIX);
       default:
-	FATAL_MPM_ERROR (T_("ArchiveFileTypeEnum::GetFileNameExtension"),
-			 T_("Unknown archive file type."),
-			 0);
+	MiKTeX::Core::Session::FatalMiKTeXError
+	  (MIKTEXTEXT("ArchiveFileTypeEnum::GetFileNameExtension"),
+	   MIKTEXTEXT("Unknown archive file type."),
+	   0,
+	   MIKTEXTEXT(__FILE__),
+	   __LINE__);
       }
   }
 };
@@ -77,6 +108,7 @@ IExtractCallback
 public:
   virtual
   void
+  EXTRACTORCALL
   OnBeginFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			 /*[in]*/ size_t		uncompressedSize)
     = 0;
@@ -84,6 +116,7 @@ public:
 public:
   virtual
   void
+  EXTRACTORCALL
   OnEndFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		       /*[in]*/ size_t			uncompressedSize)
     = 0;
@@ -91,6 +124,7 @@ public:
 public:
   virtual
   bool
+  EXTRACTORCALL
   OnError (/*[in]*/ const MIKTEXCHAR *	lpszMessage)
     = 0;
 };
@@ -101,34 +135,45 @@ public:
    _________________________________________________________________________ */
 
 
-class Extractor
+class
+MIKTEXNOVTABLE
+Extractor
 {
 public:
   virtual
-  ~Extractor ();
-
-public:
-  virtual
-  void
-  Extract (/*[in]*/ const MiKTeX::Core::PathName &		path,
-	   /*[in]*/ const MiKTeX::Core::PathName &		destDir,
-	   /*[in]*/ bool			makeDirectories,
-	   /*[in]*/ IExtractCallback *		pCallback,
-	   /*[in]*/ const MIKTEXCHAR *		lpszPrefix)
+  EXTRACTORCALL
+  ~Extractor ()
     = 0;
 
 public:
   virtual
   void
+  EXTRACTORCALL
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &	path,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix)
+    = 0;
+
+public:
+  virtual
+  void
+  EXTRACTORCALL
   Dispose ()
     = 0;
 
 public:
   static
+  EXTRACTOREXPORT
   Extractor *
+  EXTRACTORCALL
   CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType);
 };
 
-END_INTERNAL_NAMESPACE;
+EXTRACTOR_END_NAMESPACE;
+
+#undef EXTRACTOR_BEGIN_NAMESPACE
+#undef EXTRACTOR_END_NAMESPACE
 
 #endif

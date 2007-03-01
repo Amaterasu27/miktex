@@ -23,10 +23,10 @@
 
 #include "internal.h"
 
-#include "Extractor.h"
 #include "TpmParser.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
 
@@ -322,6 +322,7 @@ PackageInstallerImpl::Download (/*[in]*/ const tstring &	url,
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 PackageInstallerImpl::OnBeginFileExtraction
 (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
@@ -354,6 +355,7 @@ PackageInstallerImpl::OnBeginFileExtraction
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 PackageInstallerImpl::OnEndFileExtraction
 (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
@@ -388,6 +390,7 @@ PackageInstallerImpl::OnEndFileExtraction
    _________________________________________________________________________ */
 
 bool
+EXTRACTORCALL
 PackageInstallerImpl::OnError (/*[in]*/ const MIKTEXCHAR *	lpszMessage)
 {
   // we have a problem: let the client decide how to proceed
@@ -404,8 +407,9 @@ PackageInstallerImpl::ExtractFiles
 (/*[in]*/ const PathName &	archiveFileName,
  /*[in]*/ ArchiveFileType	archiveFileType)
 {
-  auto_ptr<Extractor>
-    pExtractor (Extractor::CreateExtractor(archiveFileType));
+  auto_ptr<MiKTeX::Extractor::Extractor>
+    pExtractor
+    (MiKTeX::Extractor::Extractor::CreateExtractor(archiveFileType));
   pExtractor->Extract (archiveFileName,
 		       destinationDirectory,
 		       true,
@@ -487,8 +491,9 @@ PackageInstallerImpl::InstallDbLight ()
 	}
 
       // unpack database
-      auto_ptr<Extractor>
-	pExtractor (Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
+      auto_ptr<MiKTeX::Extractor::Extractor>
+	pExtractor
+	(MiKTeX::Extractor::Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
       pExtractor->Extract (pathZzdb1,
 			   pathConfigDir,
 			   false,
@@ -2330,8 +2335,9 @@ PackageInstallerImpl::SetUpPackageDefinitionFiles
     }
   
   // extract package defintion files
-  auto_ptr<Extractor>
-    pExtractor (Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
+  auto_ptr<MiKTeX::Extractor::Extractor>
+    pExtractor
+    (MiKTeX::Extractor::Extractor::CreateExtractor(DB_ARCHIVE_FILE_TYPE));
   pExtractor->Extract (pathDatabase,
 		       directory,
 		       false,

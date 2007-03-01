@@ -27,6 +27,7 @@
 #include "TarBzip2Extractor.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace std;
 
 #if defined (MIKTEX_WINDOWS)
@@ -39,6 +40,7 @@ static bool USE_WINDOWS_CABEXTRACTOR = false;
    Extractor::~Extractor
    _________________________________________________________________________ */
 
+EXTRACTORCALL
 Extractor::~Extractor ()
 {
 }
@@ -49,6 +51,7 @@ Extractor::~Extractor ()
    _________________________________________________________________________ */
 
 Extractor *
+EXTRACTORCALL
 Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
 {
   switch (archiveFileType.Get())

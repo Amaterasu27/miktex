@@ -17,11 +17,14 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(${mpm_dll_name}_sources
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set(${extractor_dll_name}_sources
   CabExtractor.cpp
   CabExtractor.h
   Extractor.cpp
-  Extractor.h
   StdAfx.h
   TarBzip2Extractor.cpp
   TarBzip2Extractor.h
@@ -34,10 +37,6 @@ if(NATIVE_WINDOWS)
   set(${extractor_dll_name}_sources ${${extractor_dll_name}_sources}
     win/winCabExtractor.cpp
     win/winCabExtractor.h
-    win/winWebFile.cpp
-    win/winWebFile.h
-    win/winWebSession.cpp
-    win/winWebSession.h
   )
 endif(NATIVE_WINDOWS)
 

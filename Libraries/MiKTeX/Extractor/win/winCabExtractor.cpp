@@ -26,12 +26,11 @@
 #include "win/winCabExtractor.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace std;
 
 #define ERROR_TITLE T_("Cabinet Extraction Problem")
 #define CRLF T_("\r\n")
-
-using namespace std;
 
 BEGIN_INTERNAL_NAMESPACE;
 
@@ -66,6 +65,7 @@ winCabExtractor::winCabExtractor ()
    winCabExtractor::~winCabExtractor
    _________________________________________________________________________ */
 
+EXTRACTORCALL
 winCabExtractor::~winCabExtractor ()
 {
   try
@@ -83,6 +83,7 @@ winCabExtractor::~winCabExtractor ()
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 winCabExtractor::Dispose ()
 {
   if (hfdi != 0)
@@ -175,6 +176,7 @@ winCabExtractor::FatalFdiError (/*[in]*/ const MIKTEXCHAR * lpszCabinetPath)
    _________________________________________________________________________ */
 
 void
+EXTRACTORCALL
 winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 			  /*[in]*/ const PathName &	destDir,
 			  /*[in]*/ bool			makeDirectories,
