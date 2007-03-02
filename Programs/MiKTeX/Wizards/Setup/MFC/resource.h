@@ -3,6 +3,7 @@
 // Used by Setup.rc
 //
 #define IDR_MANIFEST                    1
+#define IDR_LICENSE                     1
 #define IDI_SETUP                       1
 #define IDS_HEADER_SETTINGS             1
 #define IDS_SUBHEADER_SETTINGS          2

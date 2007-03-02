@@ -53,7 +53,9 @@ LicensePage::LicensePage ()
    StreamInCallback
    _________________________________________________________________________ */
 
-FILE * pFile;
+static void * pLicense;
+static long offset;
+static long sizeLicense;
 
 static
 DWORD
@@ -64,7 +66,16 @@ StreamInCallback (/*[in]*/ DWORD		cookie,
 		  /*[out]*/ long *		pRead)
 {
   UNUSED_ALWAYS (cookie);
-  *pRead = static_cast<long>(fread(pBuf, 1, sizeBuf, pFile));
+  if (sizeBuf < sizeLicense - offset)
+    {
+      *pRead = sizeBuf;
+    }
+  else
+    {
+      *pRead = sizeLicense - offset;
+    }
+  memcpy (pBuf, static_cast<char *>(pLicense) + offset, *pRead);
+  offset += *pRead;
   return (0);
 }
 
@@ -78,12 +89,7 @@ LicensePage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
   BOOL ret = CPropertyPage::OnInitDialog();
-  PathName licenseFile;
-  if (! FindFile(LICENSE_FILE, licenseFile))
-    {
-      acceptLicenseButton.EnableWindow (FALSE);
-    }
-  else
+  try
     {
       CHARFORMAT cf; 
       cf.cbSize = sizeof(cf); 
@@ -95,15 +101,41 @@ LicensePage::OnInitDialog ()
 			 T_("Courier New"));
       cf.yHeight = 160;
       licenseControl.SetDefaultCharFormat (cf); 
-      pFile = File::Open(licenseFile,
-			 FileMode::Open,
-			 FileAccess::Read,
-			 false);
+      HRSRC hrsrc = FindResource(0,
+				 MAKEINTRESOURCE(IDR_LICENSE),
+				 T_("LICENSE"));
+      if (hrsrc == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("FindResource"), 0);
+	}
+      HGLOBAL hglobal = LoadResource(0, hrsrc);
+      if (hglobal == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("LoadResource"), 0);
+	}
+      pLicense = LockResource(hglobal);
+      if (pLicense == 0)
+	{
+	  UNEXPECTED_CONDITION (T_("LicensePage::OnInitDialog"));
+	}
+      sizeLicense = SizeofResource(0, hrsrc);
+      if (sizeLicense == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("SizeofResource"), 0);
+	}
+      offset = 0;
       EDITSTREAM editStream;
       editStream.dwCookie = 0;
       editStream.pfnCallback = StreamInCallback;
       licenseControl.StreamIn (SF_TEXT, editStream);
-      fclose (pFile);
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
     }
   return (ret);
 }
