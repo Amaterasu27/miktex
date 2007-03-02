@@ -684,6 +684,10 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_padout_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_migrate_dir})
 endif(BUILDING_MIKTEX)
 
