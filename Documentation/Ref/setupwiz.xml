@@ -18,12 +18,12 @@
 
 <cmdsynopsis>
 &basicmiktexexe;
-<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+<arg choice="opt"><option><replaceable>options</replaceable></option></arg>
 </cmdsynopsis>
 
 <cmdsynopsis>
 &setupexe;
-<arg choice="opt"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
+<arg choice="opt"><option><replaceable>options</replaceable></option></arg>
 </cmdsynopsis>
 
 </refsynopsisdiv>
@@ -34,23 +34,22 @@
 
 <para>&MiKTeXSetupWizard; is used to install &MiKTeX;.</para>
 
-<para>The wizard and the package files are packaged as a
-self-extracting installer.  There a two instances of the
-installer:</para>
+<para>There a two instances of the installer:</para>
 
 <variablelist>
 <varlistentry>
 <term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
 <listitem>
 <para>The <quote>Basic &MiKTeX;</quote> installer can be used to set up
-a basic &MiKTeX; system.</para>
+a basic &MiKTeX; system. The packages are embedded in the installer, i.e., the installer
+is quite large.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term>&MiKTeXNetInstaller; (&setupexe;)</term>
 <listitem>
 <para>The net installer can be used to set up a
-complete &MiKTeX; system.</para>
+complete &MiKTeX; system. Packages will be installed from a local package repository.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -65,36 +64,8 @@ complete &MiKTeX; system.</para>
 </indexterm>
 <filename>setupwiz.opt</filename>, if it exists.</para>
 
-<para>It is also possible to specify options on the command-line,
-though this is a bit intricated.  You have to stick to the following
-<indexterm>
-<primary>setup wizard</primary>
-<secondary>command-line options</secondary>
-</indexterm>
-syntax:</para>
-
-<cmdsynopsis>
-&basicmiktexexe;
-<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
-</cmdsynopsis>
-
-<cmdsynopsis>
-&setupexe;
-<arg choice="plain"><option>/C:"setupwiz --setup-path=""#e"" <replaceable>options</replaceable></option>"</arg>
-</cmdsynopsis>
-
-<note>
-<para>Note that the placement of quotation marks is important, and
-that <option>#e</option> is surrounded with two pairs of
-double quotation marks.</para>
-</note>
-
-<note>
-<para>The argument to the option <option>/C:</option> cannot be
-longer then 260 characters.</para>
-</note>
-      
-<para>For example, this command starts the Basic &MiKTeX; installer
+<para>It is also possible to specify options on the command-line.
+For example, this command starts the Basic &MiKTeX; installer
 <indexterm>
 <primary>unattended setup</primary>
 </indexterm>
@@ -105,7 +76,7 @@ longer then 260 characters.</para>
 in unattended mode:</para>
       
 <informalexample>
-<screen><prompt>&prompt;</prompt><userinput>&basicmiktexexe; /C:"setupwiz --setup-path=""#e"" --unattended"</userinput>
+<screen><prompt>&prompt;</prompt><userinput>&basicmiktexexe; --unattended</userinput>
 <prompt>&prompt;</prompt></screen>
 </informalexample>
 
