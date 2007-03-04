@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -39,7 +39,7 @@ install(TARGETS copystart DESTINATION "${bindir}")
 
 add_executable(copystart_admin WIN32 copystart.cpp)
 
-merge_trustinfo_manifest(copystart_admin requireAdministrator)
+merge_trustinfo_manifest(copystart_admin highestAvailable)
 
 target_link_libraries(copystart_admin
   ${core_dll_name}

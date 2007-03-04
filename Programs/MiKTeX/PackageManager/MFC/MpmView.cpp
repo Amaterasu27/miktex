@@ -835,7 +835,10 @@ void MpmView::OnInstall ()
       str2.Format (T_("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
-      if (IsWindowsVista())
+      bool restrictedUserSetup =
+	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	    || SessionWrapper(true)->IsUserAnAdministrator()));
+      if (IsWindowsVista() && ! restrictedUserSetup)
 	{
 	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
 	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));

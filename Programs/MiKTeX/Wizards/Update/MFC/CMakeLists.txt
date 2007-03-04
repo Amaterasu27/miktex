@@ -74,7 +74,7 @@ endif(NATIVE_WINDOWS)
 
 add_executable(update WIN32 ${update_mfc_sources})
 
-merge_trustinfo_manifest(update asInvoker)
+merge_trustinfo_manifest(update highestAvailable)
 
 target_link_libraries(update
   ${bzip2_lib_name}

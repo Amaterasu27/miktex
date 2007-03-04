@@ -48,7 +48,7 @@ endif(NATIVE_WINDOWS)
 
 add_executable(remove WIN32 ${remove_mfc_sources})
 
-merge_trustinfo_manifest(remove asInvoker)
+merge_trustinfo_manifest(remove highestAvailable)
 
 target_link_libraries(remove
   ${bzip2_lib_name}

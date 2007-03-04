@@ -142,7 +142,10 @@ PropPagePackages::OnApply ()
       str2.Format (_T("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
-      if (IsWindowsVista())
+      bool restrictedUserSetup =
+	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	    || SessionWrapper(true)->IsUserAnAdministrator()));
+      if (IsWindowsVista() && ! restrictedUserSetup)
 	{
 	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
 	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
@@ -578,7 +581,10 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 void
 PropPagePackages::SetElevationRequired (/*[in]*/ bool f)
 {
-  if (IsWindowsVista())
+  bool restrictedUserSetup =
+    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	|| SessionWrapper(true)->IsUserAnAdministrator()));
+  if (IsWindowsVista() && ! restrictedUserSetup)
     {
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)

@@ -950,7 +950,10 @@ PropPageTeXMFRoots::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 void
 PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
 {
-  if (IsWindowsVista())
+  bool restrictedUserSetup =
+    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	|| SessionWrapper(true)->IsUserAnAdministrator()));
+  if (IsWindowsVista() && ! restrictedUserSetup)
     {
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)

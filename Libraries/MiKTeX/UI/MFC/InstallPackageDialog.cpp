@@ -95,7 +95,10 @@ InstallPackageDialog::OnInitDialog ()
 			     T_("%s"),
 			     T_("<Random package repository>"));
 	}
-      if (IsWindowsVista())
+      bool restrictedUserSetup =
+	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	    || SessionWrapper(true)->IsUserAnAdministrator()));
+      if (IsWindowsVista() && ! restrictedUserSetup)
 	{
 	  HWND hwnd = ::GetDlgItem(m_hWnd, IDOK);
 	  if (hwnd == 0)
