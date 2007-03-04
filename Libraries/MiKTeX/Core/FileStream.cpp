@@ -1,6 +1,6 @@
 /* FileStream.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -25,9 +25,20 @@
 
 /* _________________________________________________________________________
 
+   Stream::~Stream
+   _________________________________________________________________________ */
+
+MIKTEXCALL
+Stream::~Stream ()
+{
+}
+
+/* _________________________________________________________________________
+
    FileStream::~FileStream
    _________________________________________________________________________ */
 
+MIKTEXCALL
 FileStream::~FileStream ()
 {
   try
@@ -45,6 +56,7 @@ FileStream::~FileStream ()
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 FileStream::Attach (/*[in]*/ FILE *	pFile)
 {
   if (this->pFile != 0)
@@ -60,6 +72,7 @@ FileStream::Attach (/*[in]*/ FILE *	pFile)
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 FileStream::Close ()
 {
   if (pFile != 0)
@@ -78,9 +91,9 @@ FileStream::Close ()
    _________________________________________________________________________ */
 
 size_t
+MIKTEXCALL
 FileStream::Read (/*[out]*/ void *	pBytes,
 		  /*[in]*/ size_t	count)
-  const
 {
   size_t n = fread(pBytes, 1, count, pFile);
   if (ferror(pFile) != 0)
@@ -96,9 +109,9 @@ FileStream::Read (/*[out]*/ void *	pBytes,
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 FileStream::Write (/*[in]*/ const void *	pBytes,
 		   /*[in]*/ size_t		count)
-  const
 {
   if (fwrite(pBytes, 1, count, pFile) != count)
     {
@@ -112,9 +125,9 @@ FileStream::Write (/*[in]*/ const void *	pBytes,
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 FileStream::Seek (/*[in]*/ long		offset,
 		  /*[in]*/ SeekOrigin	seekOrigin)
-  const
 {
   int origin;
   switch (seekOrigin.Get())
@@ -144,8 +157,8 @@ FileStream::Seek (/*[in]*/ long		offset,
    _________________________________________________________________________ */
 
 long
+MIKTEXCALL
 FileStream::GetPosition ()
-  const
 {
   long pos = ftell(pFile);
   if (pos < 0)
@@ -161,8 +174,8 @@ FileStream::GetPosition ()
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 FileStream::SetBinary ()
-  const
 {
 #if defined(MIKTEX_WINDOWS)
   if (_setmode(_fileno(pFile), _O_BINARY) < 0)
@@ -174,9 +187,149 @@ FileStream::SetBinary ()
 
 /* _________________________________________________________________________
 
+   BZip2Stream::BZip2Stream
+   _________________________________________________________________________ */
+
+MIKTEXCALL
+BZip2Stream::BZip2Stream (/*[in]*/ const FileStream &	fileStream,
+			  /*[in]*/ bool			reading)
+  : reading (reading)
+{
+  if (reading)
+    {
+      int bzError;
+      pBzFile =
+	BZ2_bzReadOpen(&bzError,
+		       fileStream.Get(),
+		       0,
+		       0,
+		       0,
+		       0);
+      if (bzError != BZ_OK)
+	{
+	  UNEXPECTED_CONDITION (T_("BZip2Stream::BZip2Stream"));
+	}
+    }
+  else
+    {
+      UNIMPLEMENTED (T_("BZip2Stream::BZip2Stream"));
+    }
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::~BZip2Stream
+   _________________________________________________________________________ */
+
+MIKTEXCALL
+BZip2Stream::~BZip2Stream ()
+{
+  try
+    {
+      Close ();
+    }
+  catch (const exception &)
+    {
+    }
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::Close
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+BZip2Stream::Close ()
+{
+  BZFILE * pBzFile = static_cast<BZFILE*>(this->pBzFile);
+  if (pBzFile != 0)
+    {
+      int bzError;
+      if (reading)
+	{
+	  BZ2_bzReadClose (&bzError, pBzFile);
+	  if (bzError != BZ_OK)
+	    {
+	      UNEXPECTED_CONDITION (T_("BZip2Stream::Close"));
+	    }
+	}
+      else
+	{
+	  UNIMPLEMENTED (T_("BZip2Stream::Close"));
+	}
+      pBzFile = 0;
+    }
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::Read
+   _________________________________________________________________________ */
+
+size_t
+MIKTEXCALL
+BZip2Stream::Read (/*[out]*/ void *	pBytes,
+		  /*[in]*/ size_t	count)
+{
+  BZFILE * pBzFile = static_cast<BZFILE*>(this->pBzFile);
+  int bzError;
+  int n = BZ2_bzRead(&bzError, pBzFile, pBytes, static_cast<int>(count));
+  if (bzError != BZ_OK && bzError != BZ_STREAM_END)
+    {
+      UNEXPECTED_CONDITION (T_("BZip2Stream::Read"));
+    }
+  return (n);
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::Write
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+BZip2Stream::Write (/*[in]*/ const void *	pBytes,
+		   /*[in]*/ size_t		count)
+{
+  UNUSED_ALWAYS (pBytes);
+  UNUSED_ALWAYS (count);
+  UNIMPLEMENTED (T_("BZip2Stream::Write"));
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::Seek
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+BZip2Stream::Seek (/*[in]*/ long	offset,
+		  /*[in]*/ SeekOrigin	seekOrigin)
+{
+  UNUSED_ALWAYS (offset);
+  UNUSED_ALWAYS (seekOrigin);
+  UNIMPLEMENTED (T_("BZip2Stream::Seek"));
+}
+
+/* _________________________________________________________________________
+
+   BZip2Stream::GetPosition
+   _________________________________________________________________________ */
+
+long
+MIKTEXCALL
+BZip2Stream::GetPosition ()
+{
+  UNIMPLEMENTED (T_("BZip2Stream::GetPosition"));
+}
+
+/* _________________________________________________________________________
+
    StreamReader::StreamReader
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StreamReader::StreamReader (/*[in]*/ const PathName & path)
   : stream (File::Open(path, FileMode::Open, FileAccess::Read))
 {
@@ -187,6 +340,7 @@ StreamReader::StreamReader (/*[in]*/ const PathName & path)
    StreamReader::StreamReader
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StreamReader::StreamReader (/*[in]*/ const MIKTEXCHAR * lpszPath)
   : stream (File::Open(lpszPath, FileMode::Open, FileAccess::Read))
 {
@@ -197,6 +351,7 @@ StreamReader::StreamReader (/*[in]*/ const MIKTEXCHAR * lpszPath)
    StreamReader::~StreamReader
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StreamReader::~StreamReader ()
 {
   try
@@ -214,6 +369,7 @@ StreamReader::~StreamReader ()
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamReader::Close ()
 {
   stream.Close ();
@@ -225,6 +381,7 @@ StreamReader::Close ()
    _________________________________________________________________________ */
 
 bool
+MIKTEXCALL
 StreamReader::ReadLine (/*[out]*/ tstring & line)
 {
   return (Utils::ReadLine(line, stream.Get(), false));
@@ -235,6 +392,7 @@ StreamReader::ReadLine (/*[out]*/ tstring & line)
    StreamWriter::StreamWriter
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StreamWriter::StreamWriter (/*[in]*/ const PathName & path)
   : stream (File::Open(path, FileMode::Create, FileAccess::Write))
 {
@@ -245,6 +403,7 @@ StreamWriter::StreamWriter (/*[in]*/ const PathName & path)
    StreamWriter::~StreamWriter
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StreamWriter::~StreamWriter ()
 {
   try
@@ -262,6 +421,7 @@ StreamWriter::~StreamWriter ()
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::Close ()
 {
   stream.Close ();
@@ -320,6 +480,7 @@ FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::Write (/*[in]*/ MIKTEXCHAR	ch)
 {
   FPutC (ch, stream.Get());
@@ -342,6 +503,7 @@ StreamWriter::Write (/*[in]*/ const tstring & line)
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::WriteLine (/*[in]*/ const tstring & line)
 {
   Write (line);
@@ -354,6 +516,7 @@ StreamWriter::WriteLine (/*[in]*/ const tstring & line)
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::WriteLine ()
 {
   FPutC (T_('\n'), stream.Get());
@@ -365,6 +528,7 @@ StreamWriter::WriteLine ()
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::WriteFormatted (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 			      /*[in]*/			...)
 {
@@ -380,6 +544,7 @@ StreamWriter::WriteFormatted (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
+MIKTEXCALL
 StreamWriter::WriteFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 				  /*[in]*/			...)
 {
@@ -395,6 +560,7 @@ StreamWriter::WriteFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    StdioFile::~StdioFile
    _________________________________________________________________________ */
 
+MIKTEXCALL
 StdioFile::~StdioFile ()
 {
   if (pFile != 0)

@@ -3662,12 +3662,59 @@ private:
 
 /* _________________________________________________________________________
 
+   Stream
+   _________________________________________________________________________ */
+
+class
+MIKTEXNOVTABLE
+Stream
+{
+public:
+  virtual
+  MIKTEXCALL
+  ~Stream ()
+    = 0;
+
+public:
+  virtual
+  size_t
+  MIKTEXCALL
+  Read (/*[out]*/ void *	pBytes,
+	/*[in]*/ size_t		count)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  Write (/*[in]*/ const void *		pBytes,
+	 /*[in]*/ size_t		count)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  Seek (/*[in]*/ long		offset,
+	/*[in]*/ SeekOrigin	origin)
+    = 0;
+
+public:
+  virtual
+  long
+  MIKTEXCALL
+  GetPosition ()
+    = 0;
+};
+
+/* _________________________________________________________________________
+
    FileStream
    _________________________________________________________________________ */
 
 /// FileStream class. Encapsulates a stdio file stream pointer (FILE*).
 class
-FileStream
+FileStream : public Stream
 {
 public:
   FileStream ()
@@ -3682,6 +3729,7 @@ public:
   }
 
 public:
+  virtual
   MIKTEXEXPORT
   MIKTEXCALL
   ~FileStream ();
@@ -3692,7 +3740,7 @@ public:
   MIKTEXCALL
   Attach (/*[in]*/ FILE * pFile);
 
-  /// Closes the encapsulated stream (excetp for stdin/stdout/stderr).
+  /// Closes the encapsulated stream (except for stdin/stdout/stderr).
 public:
   MIKTEXEXPORT
   void
@@ -3700,42 +3748,41 @@ public:
   Close ();
 
 public:
+  virtual
   MIKTEXEXPORT
   size_t
   MIKTEXCALL
   Read (/*[out]*/ void *	pBytes,
-	/*[in]*/ size_t		count)
-    const;
+	/*[in]*/ size_t		count);
 
 public:
+  virtual
   MIKTEXEXPORT
   void
   MIKTEXCALL
   Write (/*[in]*/ const void *		pBytes,
-	 /*[in]*/ size_t		count)
-    const;
+	 /*[in]*/ size_t		count);
 
 public:
+  virtual
   MIKTEXEXPORT
   void
   MIKTEXCALL
   Seek (/*[in]*/ long		offset,
-	/*[in]*/ SeekOrigin	origin)
-    const;
+	/*[in]*/ SeekOrigin	origin);
 
 public:
+  virtual
   MIKTEXEXPORT
   long
   MIKTEXCALL
-  GetPosition ()
-    const;
+  GetPosition ();
 
 public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  SetBinary ()
-    const;
+  SetBinary ();
 
 public:
   FILE *
@@ -3756,6 +3803,69 @@ public:
   
 private:
   FILE * pFile;
+};
+
+/* _________________________________________________________________________
+
+   BZip2Stream
+   _________________________________________________________________________ */
+
+class
+BZip2Stream : public Stream
+{
+public:
+  MIKTEXEXPORT
+  MIKTEXCALL
+  BZip2Stream (/*[in]*/ const FileStream &	fileStream,
+	       /*[in]*/ bool			reading);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  MIKTEXCALL
+  ~BZip2Stream ();
+
+public:
+  virtual
+  MIKTEXEXPORT
+  size_t
+  MIKTEXCALL
+  Read (/*[out]*/ void *	pBytes,
+	/*[in]*/ size_t		count);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Write (/*[in]*/ const void *		pBytes,
+	 /*[in]*/ size_t		count);
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  Seek (/*[in]*/ long		offset,
+	/*[in]*/ SeekOrigin	origin);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  long
+  MIKTEXCALL
+  GetPosition ();
+
+public:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Close ();
+
+private:
+  bool reading;
+
+private:
+  void * pBzFile;
 };
 
 /* _________________________________________________________________________
