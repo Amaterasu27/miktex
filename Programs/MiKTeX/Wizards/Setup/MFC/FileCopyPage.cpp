@@ -98,6 +98,7 @@ FileCopyPage::OnInitDialog ()
       pInstaller =
 	auto_ptr<PackageInstaller>(theApp.pManager->CreateInstaller());
       pInstaller->SetNoPostProcessing (true);
+      pInstaller->SetNoLocalServer (true);
     }
   catch (const MiKTeXException & e)
     {

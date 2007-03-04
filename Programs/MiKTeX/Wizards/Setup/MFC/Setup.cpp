@@ -1,6 +1,6 @@
 /* Setup.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -59,9 +59,6 @@ public:
 
 public:
   tstring remotePackageRepository;
-
-public:
-  PathName setupPath;
 
 public:
   SetupTask task;
@@ -200,7 +197,6 @@ enum {
   OPT_PROGRAM_FOLDER,
   OPT_REMOTE_PACKAGE_REPOSITORY,
   OPT_ROOTS,
-  OPT_SETUP_PATH,
   OPT_SHARED,
   OPT_UNATTENDED,
   OPT_USER_CONFIG,
@@ -227,7 +223,6 @@ const struct option long_options[] =
   { T_("remote-package-repository"), required_argument, 0,
     OPT_REMOTE_PACKAGE_REPOSITORY },
   { T_("roots"), required_argument, 0, OPT_ROOTS },
-  { T_("setup-path"), required_argument, 0, OPT_SETUP_PATH },
   { T_("shared"), no_argument, 0, OPT_SHARED },
   { T_("unattended"), no_argument, 0, OPT_UNATTENDED },
   { T_("user-config"), required_argument, 0, OPT_USER_CONFIG },
@@ -250,6 +245,7 @@ Options:\r\n\r\n\
   --common-data=DIR\r\n\
   --download-only\r\n\
   --dry-run\r\n\
+  --help\r\n\
   --install-from-local-repository\r\n\
   --install-root=DIR\r\n\
   --local-package-repository=DIR\r\n\
@@ -258,7 +254,6 @@ Options:\r\n\r\n\
   --program-folder=NAME\r\n\
   --remote-package-repository=URL\r\n\
   --roots=DIRS\r\n\
-  --setup-path=DIR\r\n\
   --shared\r\n\
   --unattended\r\n\
   --user-config=DIR\r\n\
@@ -271,38 +266,13 @@ See the MiKTeX Manual for more information."));
 
 /* _________________________________________________________________________
 
-   ParseSetupCommandLine1
+   ParseSetupCommandLine
    _________________________________________________________________________ */
 
 void
-ParseSetupCommandLine1 (/*[in]*/ int				argc,
-			/*[in]*/ MIKTEXCHAR **			argv,
-			/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
-{
-  int iOptIdx = 0;
-  int c;
-  optind = 0;
-  while ((c = getopt_long_only(argc, argv, T_(""), long_options, &iOptIdx))
-	 != EOF)
-    {
-      switch (c)
-	{
-	case OPT_SETUP_PATH:
-	  cmdinfo.setupPath = optarg;
-	  break;
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
-   ParseSetupCommandLine2
-   _________________________________________________________________________ */
-
-void
-ParseSetupCommandLine2 (/*[in]*/ int				argc,
-			/*[in]*/ MIKTEXCHAR **			argv,
-			/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
+ParseSetupCommandLine (/*[in]*/ int				argc,
+		       /*[in]*/ MIKTEXCHAR **			argv,
+		       /*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
 {
   int iOptIdx = 0;
   int c;
@@ -327,7 +297,7 @@ ParseSetupCommandLine2 (/*[in]*/ int				argc,
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine2"),
+		(T_("ParseSetupCommandLine"),
 		 T_("You must have administrator privileges to set up \
 a common configuration directory."),
 		 0);
@@ -341,7 +311,7 @@ a common configuration directory."),
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine2"),
+		(T_("ParseSetupCommandLine"),
 		 T_("You must have administrator privileges to set up \
 a common data directory."),
 		 0);
@@ -394,17 +364,13 @@ a common data directory."),
 	  cmdinfo.startupConfig.roots = optarg;
 	  break;
 
-	case OPT_SETUP_PATH:
-	  cmdinfo.setupPath = optarg;
-	  break;
-
 	case OPT_SHARED:
 	  if (IsWindowsNT()
 	      && ! (SessionWrapper(true)->RunningAsAdministrator()
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine2"),
+		(T_("ParseSetupCommandLine"),
 		 T_("You must have administrator privileges to set up \
 a shared MiKTeX system."),
 		 0);
@@ -441,21 +407,8 @@ bool
 FindFile (/*[in]*/ const PathName &	fileName,
 	  /*[out]*/ PathName &		result)
 {
-  // first try the setup directory (--setup-path)
-  if (! theApp.setupPath.Empty())
-    {
-      result = theApp.setupPath;
-      result.RemoveFileSpec ();
-      result += fileName;
-      if (File::Exists(result))
-	{
-	  return (true);
-	}
-    }
-  
-  // try the exe directory
+  // try my directory
   result = SessionWrapper(true)->GetMyLocation();
-  result.RemoveFileSpec ();
   result += fileName;
   if (File::Exists(result))
     {
@@ -498,7 +451,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
   int argc;
   MIKTEXCHAR ** argv;
   GetArguments (commandLine, AfxGetAppName(), argc, argv);
-  ParseSetupCommandLine2 (argc, argv, cmdinfo);
+  ParseSetupCommandLine (argc, argv, cmdinfo);
   FreeArguments (argc, argv);
   return (true);
 }
@@ -546,10 +499,22 @@ FindInstallDir ()
   else
     {
       // return the default location (usually "C:\Program Files\MiKTeX X.Y")
-      PathName path =
-	Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
-			     CSIDL_PROGRAM_FILES,
-			     true);
+      PathName path;
+      if (SessionWrapper(true)->RunningAsAdministrator()
+	  || SessionWrapper(true)->RunningAsPowerUser())
+	{
+	  path =
+	    Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
+				 CSIDL_PROGRAM_FILES,
+				 true);
+	}
+      else
+	{
+	  path =
+	    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA,
+				 CSIDL_APPDATA,
+				 true);
+	}
       path += T_(MIKTEX_PRODUCTNAME_STR) T_(" ") T_(MIKTEX_SERIES_STR);
       return (path);
     }
@@ -661,7 +626,15 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 		       /*[out]*/ PackageLevel &	pkglvl,
 		       /*[out]*/ bool &		prefabricated)
 {
-  // try the exe directory
+  // try current directory
+  localRepository.SetToCurrentDirectory ();
+  if (TestLocalRepository(localRepository, pkglvl))
+    {
+      prefabricated = true;
+      return (true);
+    }
+
+  // try my directory
   localRepository = SessionWrapper(true)->GetMyLocation();
   if (TestLocalRepository(localRepository, pkglvl))
     {
@@ -669,28 +642,16 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
       return (true);
     }
 
-  if (! theApp.setupPath.Empty())
+  // try ..\tm\packages
+  localRepository = SessionWrapper(true)->GetMyLocation();
+  localRepository += T_("..");
+  localRepository += T_("tm");
+  localRepository += T_("packages");
+  localRepository.MakeAbsolute ();
+  if (TestLocalRepository(localRepository, pkglvl))
     {
-      // try SETUPDIR
-      localRepository = theApp.setupPath;
-      localRepository.RemoveFileSpec ();
-      if (TestLocalRepository(localRepository, pkglvl))
-	{
-	  prefabricated = true;
-	  return (true);
-	}
-
-      // try SETUPDIR\..\tm\packages
-      localRepository = theApp.setupPath;
-      localRepository.RemoveFileSpec ();
-      localRepository += T_("..");
-      localRepository += T_("tm\\packages");
-      localRepository.MakeAbsolute ();
-      if (TestLocalRepository(localRepository, pkglvl))
-	{
-	  prefabricated = true;
-	  return (true);
-	}
+      prefabricated = true;
+      return (true);
     }
 
   // try last directory
@@ -712,13 +673,8 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 bool
 IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 {
-  if (theApp.setupPath.Empty())
-    {
-      return (false);
-    }
-  // check SETUDIR\..\texmf\miktex\config\md.ini
-  MiKTeXDirectRoot = theApp.setupPath;
-  MiKTeXDirectRoot.RemoveFileSpec ();
+  // check ..\texmf\miktex\config\md.ini
+  MiKTeXDirectRoot = SessionWrapper(true)->GetMyLocation();
   MiKTeXDirectRoot += T_("..");
   MiKTeXDirectRoot.MakeAbsolute ();
   PathName pathMdIni = MiKTeXDirectRoot;
@@ -1060,6 +1016,49 @@ CloseLog (/*[in]*/ bool cancel)
 
 /* _________________________________________________________________________
 
+   ExtractFiles
+   _________________________________________________________________________ */
+
+bool
+ExtractFiles (/*[in,out]*/ ScratchDirectory &	sfxDir)
+{
+  PathName path;
+  if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+    }
+  FileStream myImage (File::Open(path,
+				 FileMode::Open,
+				 FileAccess::Read,
+				 false));
+  char magic[16];
+  while (myImage.Read(magic, 16) == 16)
+    {
+      if (memcmp(magic, "TARTARTARTARTART", 16) == 0)
+	{
+	  sfxDir.Enter ();
+	  auto_ptr<MiKTeX::Extractor::Extractor>
+	    pExtractor
+	    (MiKTeX::Extractor::Extractor::CreateExtractor
+	     (MiKTeX::Extractor::ArchiveFileType::Tar));
+	  pExtractor->Extract (&myImage,
+			       Directory::GetCurrentDirectory(),
+			       true,
+			       0,
+			       0);
+	  pExtractor->Dispose ();
+	  return (true);
+	}
+      else
+	{
+	  myImage.Seek (512 - 16, SeekOrigin::Current);
+	}
+    }
+  return (false);
+}
+
+/* _________________________________________________________________________
+
    SetupWizardApplication::InitInstance
    _________________________________________________________________________ */
 
@@ -1083,34 +1082,42 @@ SetupWizardApplication::InitInstance ()
       // create a scratch root directory
       TempDirectory scratchRoot;
 
+      // create a MiKTeX session
       StartupConfig startupConfig;
       startupConfig.userDataRoot = scratchRoot.Get();
       startupConfig.userConfigRoot = scratchRoot.Get();
       startupConfig.commonDataRoot = scratchRoot.Get();
       startupConfig.commonConfigRoot = scratchRoot.Get();
       startupConfig.installRoot = scratchRoot.Get();
-
       Session::InitInfo initInfo (T_("setup"),
 				  Session::InitFlags::NoConfigFiles);
       initInfo.SetStartupConfig (startupConfig);
-
       SessionWrapper pSession (initInfo);
 
+      // extract package archive files
+      ScratchDirectory sfxDir;
+      bool selfExtractor = ExtractFiles(sfxDir);
+
+      // create package manager
       pManager = PackageManager::Create();
 
       // set trace options
       traceStream = auto_ptr<TraceStream>(TraceStream::Open(T_("setup")));
-      TraceStream::SetTraceFlags (T_("error,mpm,process,config,setup"));
+      TraceStream::SetTraceFlags
+	(T_("error,extractor,mpm,process,config,setup"));
       
       // get command-line arguments
       int argc;
       MIKTEXCHAR ** argv;
       GetArguments (m_lpCmdLine, AfxGetAppName(), argc, argv);
       SetupCommandLineInfo cmdinfo;
-      ParseSetupCommandLine1 (argc, argv, cmdinfo);
-      setupPath = cmdinfo.setupPath;
+      if (GetModuleFileName(0, setupPath.GetBuffer(), BufferSizes::MaxPath)
+	  == 0)
+	{
+	  FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+	}
       ReadSetupWizIni (cmdinfo);
-      ParseSetupCommandLine2 (argc, argv, cmdinfo);
+      ParseSetupCommandLine (argc, argv, cmdinfo);
       FreeArguments (argc, argv);
       if (cmdinfo.optPrivate && cmdinfo.optShared)
 	{
@@ -1143,20 +1150,17 @@ SetupWizardApplication::InitInstance ()
 	dlgRet = dlg.DoModal ();
       }
       
-      // close the log file
+      // clean up
       CloseLog (dlgRet == IDCANCEL);
-
       traceStream.reset ();
-
-      // uninitialize the MiKTeX library
       pManager->UnloadDatabase ();
-      
       pManager.Release ();
-
       pSession->UnloadFilenameDatabase ();
-
+      if (selfExtractor)
+	{
+	  sfxDir.Leave ();
+	}
       scratchRoot.Delete ();
-
       pSession.Reset ();
     }
 
@@ -1424,7 +1428,9 @@ RegisterUninstaller ()
      : UNINST_REG_PATH);
   
   LONG result =
-    RegCreateKeyEx(HKEY_LOCAL_MACHINE,
+    RegCreateKeyEx((theApp.commonUserSetup
+		    ? HKEY_LOCAL_MACHINE
+		    : HKEY_CURRENT_USER),
 		   lpszUninstRegPath,
 		   0,
 		   T_(""),
@@ -1463,7 +1469,7 @@ RegisterUninstaller ()
   
   // make uninstall command line
   PathName pathCopyStart (theApp.startupConfig.installRoot,
-			  MIKTEX_PATH_COPYSTART_EXE);
+			  MIKTEX_PATH_COPYSTART_ADMIN_EXE);
   tstring commandLine;
   commandLine += T_('"');
   commandLine += pathCopyStart.Get();
@@ -1556,12 +1562,7 @@ ULogClose (/*[in]*/ bool finalize)
       if (finalize)
 	{
 	  ULogAddFile (GetLogFileName());
-	  if (! IsWindowsNT()
-	      || SessionWrapper(true)->RunningAsAdministrator()
-	      || SessionWrapper(true)->RunningAsPowerUser())
-	    {
-	      RegisterUninstaller ();
-	    }
+	  RegisterUninstaller ();
 	}
     }
   catch (const exception &)
@@ -1703,7 +1704,7 @@ RegisterPathNT ()
     RegSetValueEx(hkey,
 		  T_("Path"),
 		  0,
-		  type,
+		  (havePath ? type : REG_SZ),
 		  reinterpret_cast<const BYTE *>(newPath.c_str()),
 		  static_cast<DWORD>(STR_BYT_SIZ(newPath.c_str())));
 
@@ -2184,10 +2185,7 @@ LogHeader ()
       Log (T_("SharedSetup: %s\n"),
 	   (theApp.commonUserSetup ? T_("yes") : T_("false")));
     }
-  if (! theApp.setupPath.Empty())
-    {
-      Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
-    }
+  Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
   if (theApp.setupTask != SetupTask::Download)
     {
       Log (T_("Roots: %s\n"),

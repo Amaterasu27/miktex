@@ -50,6 +50,7 @@
 #include <getopt.h>
 
 #include <miktex/core.h>
+#include <miktex/Extractor.h>
 #include <miktex/mpm.h>
 #include <miktex/version.h>
 #include <miktex/urls.h>
