@@ -1180,6 +1180,13 @@ public:
   MPMCALL
   SetNoPostProcessing (/*[in]*/ bool noPostProcessing)
     = 0;
+
+public:
+  virtual
+  void
+  MPMCALL
+  SetNoLocalServer (/*[in]*/ bool noLocalServer)
+    = 0;
 };
 
 MPM_END_NAMESPACE;

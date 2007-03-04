@@ -129,6 +129,7 @@ PackageInstallerImpl::PackageInstallerImpl
   : pThread (0),
     pCallback (0),
     noPostProcessing (false),
+    noLocalServer (false),
     taskPackageLevel (PackageLevel::None),
     repositoryType (RepositoryType::Unknown),
     pManager (pManager),
@@ -2029,7 +2030,8 @@ PackageInstallerImpl::InstallRemove ()
   vector<tstring>::const_iterator it;
 
 #if defined(MIKTEX_WINDOWS)
-  if (SessionWrapper(true)->RunningAsAdministrator())
+  if (SessionWrapper(true)->RunningAsAdministrator()
+      || SessionWrapper(true)->RunningAsPowerUser())
     {
       RegisterComponents (false, toBeInstalled, toBeRemoved);
     }
@@ -2048,7 +2050,8 @@ PackageInstallerImpl::InstallRemove ()
     }
 
 #if defined(MIKTEX_WINDOWS)
-  if (SessionWrapper(true)->RunningAsAdministrator())
+  if (SessionWrapper(true)->RunningAsAdministrator()
+      || SessionWrapper(true)->RunningAsPowerUser())
     {
       RegisterComponents (true, toBeInstalled);
     }
@@ -2819,6 +2822,17 @@ PackageInstallerImpl::UseLocalServer ()
   if (PackageManagerImpl::localServer)
     {
       // already running as local server
+      return (false);
+    }
+  if (noLocalServer)
+    {
+      return (false);
+    }
+  bool restrictedUserSetup =
+    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	|| SessionWrapper(true)->IsUserAnAdministrator()));
+  if (restrictedUserSetup)
+    {
       return (false);
     }
 #if defined(MIKTEX_WINDOWS)

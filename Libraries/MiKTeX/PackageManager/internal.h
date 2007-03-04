@@ -1696,6 +1696,15 @@ public:
     this->noPostProcessing = noPostProcessing;
   }
 
+public:
+  virtual
+  void
+  MPMCALL
+  SetNoLocalServer (/*[in]*/ bool noLocalServer)
+  {
+    this->noLocalServer = noLocalServer;
+  }
+
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 public:
   STDMETHOD(QueryInterface) (/*[in]*/ REFIID	riid,
@@ -1816,6 +1825,9 @@ private:
 
 private:
   bool noPostProcessing;
+  
+private:
+  bool noLocalServer;
   
 private:
   ProgressInfo progressInfo;
