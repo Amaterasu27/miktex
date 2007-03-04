@@ -1708,7 +1708,7 @@ RegisterPathNT ()
     RegSetValueEx(hkey,
 		  T_("Path"),
 		  0,
-		  type,
+		  (havePath ? type : REG_SZ),
 		  reinterpret_cast<const BYTE *>(newPath.c_str()),
 		  static_cast<DWORD>(STR_BYT_SIZ(newPath.c_str())));
 
