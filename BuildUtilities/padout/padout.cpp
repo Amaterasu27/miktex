@@ -60,7 +60,7 @@ main (/*[in]*/ int		argc,
   
   srand (static_cast<unsigned>(time(0)));
 
-  do
+  for (; (size % 512) != 0; ++ size)
     {
       int byte = rand() & 0xff;
       if (fputc(byte, pFile) == EOF)
@@ -70,7 +70,6 @@ main (/*[in]*/ int		argc,
 	}
       ++ size;
     }
-  while ((size % 512) != 0);
 
   fclose (pFile);
 
