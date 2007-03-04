@@ -46,9 +46,19 @@ public:
   EXTRACTORCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
-	   /*[in]*/ bool		makeDirectories,
-	   /*[in]*/ IExtractCallback *	pCallback,
-	   /*[in]*/ const MIKTEXCHAR *	lpszPrefix);
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+  
+public:
+  virtual
+  void
+  EXTRACTORCALL
+  Extract (/*[in]*/ /*[in]*/ MiKTeX::Core::Stream *	pStream,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
   
 public:
   virtual

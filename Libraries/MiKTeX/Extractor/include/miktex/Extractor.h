@@ -67,7 +67,8 @@ public:
     None = 0,
     MSCab = 1,
     TarBzip2 = 2,
-    Zip = 3
+    Zip = 3,
+    Tar = 4,
   };
 
 public:
@@ -83,6 +84,8 @@ public:
 	return (MIKTEX_TARBZIP2_FILE_SUFFIX);
       case Zip:
 	return (MIKTEX_ZIP_FILE_SUFFIX);
+      case Tar:
+	return (MIKTEX_TAR_FILE_SUFFIX);
       default:
 	MiKTeX::Core::Session::FatalMiKTeXError
 	  (MIKTEXTEXT("ArchiveFileTypeEnum::GetFileNameExtension"),
@@ -150,6 +153,17 @@ public:
   void
   EXTRACTORCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	path,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix)
+    = 0;
+
+public:
+  virtual
+  void
+  EXTRACTORCALL
+  Extract (/*[in]*/ MiKTeX::Core::Stream *		pStream,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,

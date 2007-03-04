@@ -240,6 +240,27 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 
 /* _________________________________________________________________________
 
+   winCabExtractor::Extract
+   _________________________________________________________________________ */
+
+void
+EXTRACTORCALL
+winCabExtractor::Extract (/*[in]*/ Stream *		pStream,
+			  /*[in]*/ const PathName &	destDir,
+			  /*[in]*/ bool			makeDirectories,
+			  /*[in]*/ IExtractCallback *	pCallback,
+			  /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+{
+  UNUSED_ALWAYS (pStream);
+  UNUSED_ALWAYS (destDir);
+  UNUSED_ALWAYS (makeDirectories);
+  UNUSED_ALWAYS (pCallback);
+  UNUSED_ALWAYS (lpszPrefix);
+  UNIMPLEMENTED (T_("winCabExtractor::Extract"));
+}
+
+/* _________________________________________________________________________
+
    winCabExtractor::Alloc
    _________________________________________________________________________ */
 

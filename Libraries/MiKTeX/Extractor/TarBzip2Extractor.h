@@ -30,25 +30,35 @@
 
 BEGIN_INTERNAL_NAMESPACE;
 
-class TarBzip2Extractor : public MiKTeX::Extractor::Extractor
+class TarExtractor : public MiKTeX::Extractor::Extractor
 {
 public:
-  TarBzip2Extractor ();
+  TarExtractor ();
 
 public:
   virtual
   EXTRACTORCALL
-  ~TarBzip2Extractor ();
+  ~TarExtractor ();
 
 public:
   virtual
   void
   EXTRACTORCALL
-  Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &	tarPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
-	   /*[in]*/ bool		makeDirectories,
-	   /*[in]*/ IExtractCallback *	pCallback,
-	   /*[in]*/ const MIKTEXCHAR *	lpszPrefix);
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+  
+public:
+  virtual
+  void
+  EXTRACTORCALL
+  Extract (/*[in]*/ MiKTeX::Core::Stream *		pStream,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
   
 public:
   virtual
@@ -56,8 +66,22 @@ public:
   EXTRACTORCALL
   Dispose ();
 
-private:
+protected:
   std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
+};
+
+
+class TarBzip2Extractor : public TarExtractor
+{
+public:
+  virtual
+  void
+  EXTRACTORCALL
+  Extract (/*[in]*/ const MiKTeX::Core::PathName &	tarbz2Path,
+	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
+	   /*[in]*/ bool				makeDirectories,
+	   /*[in]*/ IExtractCallback *			pCallback,
+	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
 };
 
 END_INTERNAL_NAMESPACE;

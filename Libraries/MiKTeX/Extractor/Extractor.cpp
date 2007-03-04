@@ -66,6 +66,8 @@ Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
       return (new CabExtractor);
     case ArchiveFileType::TarBzip2:
       return (new TarBzip2Extractor);
+    case ArchiveFileType::Tar:
+      return (new TarExtractor);
     default:
       UNIMPLEMENTED (T_("Extractor::CreateExtractor"));
     }

@@ -554,3 +554,24 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
       throw;
     }
 }
+
+/* _________________________________________________________________________
+
+   CabExtractor::Extract
+   _________________________________________________________________________ */
+
+void
+EXTRACTORCALL
+CabExtractor::Extract (/*[in]*/ Stream *		pStream,
+		       /*[in]*/ const PathName &	destDir,
+		       /*[in]*/ bool			makeDirectories,
+		       /*[in]*/ IExtractCallback *	pCallback,
+		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+{
+  UNUSED_ALWAYS (pStream);
+  UNUSED_ALWAYS (destDir);
+  UNUSED_ALWAYS (makeDirectories);
+  UNUSED_ALWAYS (pCallback);
+  UNUSED_ALWAYS (lpszPrefix);
+  UNIMPLEMENTED (T_("CabExtractor::Extract"));
+}

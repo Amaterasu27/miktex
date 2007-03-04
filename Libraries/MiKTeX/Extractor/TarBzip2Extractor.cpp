@@ -31,44 +31,6 @@ using namespace std;
 
 /* _________________________________________________________________________
 
-   TarBzip2Extractor::TarBzip2Extractor
-   _________________________________________________________________________ */
-
-TarBzip2Extractor::TarBzip2Extractor ()
-  : traceStream (TraceStream::Open(MIKTEX_TRACE_EXTRACTOR))
-{
-}
-
-/* _________________________________________________________________________
-
-   TarBzip2Extractor::~TarBzip2Extractor
-   _________________________________________________________________________ */
-
-EXTRACTORCALL
-TarBzip2Extractor::~TarBzip2Extractor ()
-{
-  try
-    {
-      Dispose ();
-    }
-  catch (const exception &)
-    {
-    }
-}
-
-/* _________________________________________________________________________
-
-   TarBzip2Extractor::Dispose
-   _________________________________________________________________________ */
-
-void
-EXTRACTORCALL
-TarBzip2Extractor::Dispose ()
-{
-}
-
-/* _________________________________________________________________________
-
    GetOctal
    _________________________________________________________________________ */
 
@@ -286,7 +248,7 @@ private:
    _________________________________________________________________________ */
 
 void
-Skip (/*[in]*/ BZFILE *		bzfileIn,
+Skip (/*[in]*/ Stream *		pStream,
       /*[in]*/ size_t		bytes)
 {
   char buffer[sizeof(Header)];
@@ -294,13 +256,239 @@ Skip (/*[in]*/ BZFILE *		bzfileIn,
     {
       UNEXPECTED_CONDITION (T_("Skip"));
     }
-  if (BZ2_bzread(bzfileIn, buffer, static_cast<int>(bytes))
-      != static_cast<int>(bytes))
+  if (pStream->Read(buffer, bytes) != bytes)
     {
-      FATAL_EXTRACTOR_ERROR (T_("TarBzip2Extractor::Extract"),
+      FATAL_EXTRACTOR_ERROR (T_("Skip"),
 			     T_("Invalid package archive file."),
 			     0);
     }
+}
+
+/* _________________________________________________________________________
+
+   TarExtractor::TarExtractor
+   _________________________________________________________________________ */
+
+TarExtractor::TarExtractor ()
+  : traceStream (TraceStream::Open(MIKTEX_TRACE_EXTRACTOR))
+{
+}
+
+/* _________________________________________________________________________
+
+   TarExtractor::~TarExtractor
+   _________________________________________________________________________ */
+
+EXTRACTORCALL
+TarExtractor::~TarExtractor ()
+{
+  try
+    {
+      Dispose ();
+    }
+  catch (const exception &)
+    {
+    }
+}
+
+/* _________________________________________________________________________
+
+   TarExtractor::Dispose
+   _________________________________________________________________________ */
+
+void
+EXTRACTORCALL
+TarExtractor::Dispose ()
+{
+}
+
+/* _________________________________________________________________________
+
+   TarExtractor::Extract
+   _________________________________________________________________________ */
+
+void
+EXTRACTORCALL
+TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
+		       /*[in]*/ const PathName &	destDir,
+		       /*[in]*/ bool			makeDirectories,
+		       /*[in]*/ IExtractCallback *	pCallback,
+		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+{
+  traceStream->WriteFormattedLine (T_("libextractor"),
+				   T_("extracting to %s (%s directories)"),
+				   Q_(destDir),
+				   (makeDirectories
+				    ? T_("make")
+				    : T_("don't make")));
+
+  size_t len;
+  Header header;
+  size_t prefixLen = (lpszPrefix == 0 ? 0 : StrLen(lpszPrefix));
+  unsigned fileCount = 0;
+  
+  bool checkHeader = true;
+  
+  while ((len = pStreamIn->Read(&header, sizeof(header))) > 0)
+    {
+      // read next header
+      if (len != sizeof(header))
+	{
+	  FATAL_EXTRACTOR_ERROR
+	    (T_("TarExtractor::Extract"),
+	     T_("Invalid package archive file."),
+	     0);
+	}
+      
+      if (header.IsEndOfArchive())
+	{
+	  break;
+	}
+      
+      if (checkHeader)
+	{
+	  if (! header.Check())
+	    {
+	      FATAL_EXTRACTOR_ERROR
+		(T_("TarExtractor::Extract"),
+		 T_("Invalid package archive file."),
+		 0);
+	    }
+#if defined(NDEBUG)
+	  checkHeader = false;
+#endif
+	}
+      
+      PathName dest = header.GetFileName();
+      size_t size = header.GetFileSize();
+      
+      if (! header.IsNormalFile())
+	{
+	  if (! (header.GetType() == Header::Link
+		 || header.GetType() == Header::SymbolicLink
+		 || header.GetType() == Header::Directory
+		 || header.GetType() == Header::CharacterSpecial
+		 || header.GetType() == Header::BlockSpecial
+		 || header.GetType() == Header::FIFOSpecial))
+	    {
+	      Skip (pStreamIn,
+		    (size + sizeof(Header) - 1) / sizeof(Header));
+	    }
+	  continue;
+	}
+      
+      // skip directory prefix
+      if (lpszPrefix != 0
+	  && PathName::Compare(lpszPrefix, dest, prefixLen) == 0)
+	{
+	  PathName tmp (dest);
+	  dest = tmp.Get() + prefixLen;
+	}
+      
+      // make the destination path name
+      PathName path (destDir);
+      if (! makeDirectories)
+	{
+	  dest.RemoveDirectorySpec ();
+	}
+      path += dest;
+      
+      // notify the client
+      if (pCallback != 0)
+	{
+	  pCallback->OnBeginFileExtraction (path.Get(), size);
+	}
+      
+      // create the destination directory
+      Directory::Create (PathName(path).RemoveFileSpec());
+      
+      // remove the existing file
+      if (File::Exists(path))
+	{
+	  File::Delete (path, true);
+	}
+      
+      // extract the file
+      FileStream streamOut (File::Open(path,
+				       FileMode::Create,
+				       FileAccess::Write,
+				       false));
+      const size_t BUFSIZE = 4096;
+      char buffer[BUFSIZE];
+      size_t bytesRead = 0;
+      while (bytesRead < size)
+	{
+	  size_t remaining = size - bytesRead;
+	  size_t n = (remaining > BUFSIZE ? BUFSIZE : remaining);
+	  if (pStreamIn->Read(buffer, n) != n)
+	    {
+	      FATAL_EXTRACTOR_ERROR (T_("TarExtractor::Extract"),
+				     T_("Invalid package archive file."),
+				     0);
+	    }
+	  streamOut.Write (buffer, n);
+	  bytesRead += n;
+	}
+      streamOut.Close ();
+
+      // skip extra bytes
+      if (bytesRead % sizeof(Header) > 0)
+	{
+	  Skip (pStreamIn, sizeof(Header) - bytesRead % sizeof(Header));
+	}
+      
+      fileCount += 1;
+      
+      // set time when the file was created
+      time_t time = header.GetLastModificationTime();
+      File::SetTimes (path, time, time, time);
+      
+#if 0
+      // set file attributes
+      File::SetAttributes (path, todo);
+#endif
+      
+      // notify the client
+      if (pCallback != 0)
+	{
+	  pCallback->OnEndFileExtraction (0, size);
+	}
+    }
+  
+  traceStream->WriteFormattedLine (T_("libextractor"),
+				   T_("extracted %u file(s)"),
+				   fileCount);
+}
+
+/* _________________________________________________________________________
+
+   TarExtractor::Extract
+   _________________________________________________________________________ */
+
+void
+EXTRACTORCALL
+TarExtractor::Extract (/*[in]*/ const PathName &	tarPath,
+		       /*[in]*/ const PathName &	destDir,
+		       /*[in]*/ bool			makeDirectories,
+		       /*[in]*/ IExtractCallback *	pCallback,
+		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+{
+  traceStream->WriteFormattedLine (T_("libextractor"),
+				   T_("extracting %s"),
+				   Q_(tarPath));
+
+  FileStream stream (File::Open(tarPath,
+				FileMode::Open,
+				FileAccess::Read,
+				false));
+
+  Extract (&stream,
+	   destDir,
+	   makeDirectories,
+	   pCallback,
+	   lpszPrefix);
+
+  stream.Close ();
 }
 
 /* _________________________________________________________________________
@@ -317,168 +505,22 @@ TarBzip2Extractor::Extract (/*[in]*/ const PathName &	tarbz2Path,
 			    /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
 {
   traceStream->WriteFormattedLine (T_("libextractor"),
-				   T_("extracting %s to %s (%s directories)"),
-				   Q_(tarbz2Path),
-				   Q_(destDir),
-				   (makeDirectories
-				    ? T_("make")
-				    : T_("don't make")));
+				   T_("extracting %s"),
+				   Q_(tarbz2Path));
 
-  BZFILE * bzfileIn = BZ2_bzopen(tarbz2Path.Get(), T_("rb"));
+  FileStream stream (File::Open(tarbz2Path,
+				FileMode::Open,
+				FileAccess::Read,
+				false));
 
-  if (bzfileIn == 0)
-    {
-      FATAL_EXTRACTOR_ERROR
-	(T_("TarBzip2Extractor::Extract"),
-	 T_("The package archive file could not be opened."),
-	 tarbz2Path.Get());
-    }
+  BZip2Stream bz2Stream (stream, true);
 
-  try
-    {
-      size_t len;
-      Header header;
-      size_t prefixLen = (lpszPrefix == 0 ? 0 : StrLen(lpszPrefix));
-      unsigned fileCount = 0;
+  TarExtractor::Extract (&bz2Stream,
+			 destDir,
+			 makeDirectories,
+			 pCallback,
+			 lpszPrefix);
+  bz2Stream.Close ();
 
-      bool checkHeader = true;
-
-      while ((len = BZ2_bzread(bzfileIn, &header, sizeof(header))) > 0)
-	{
-	  // read next header
-	  if (len != sizeof(header))
-	    {
-	      FATAL_EXTRACTOR_ERROR
-		(T_("TarBzip2Extractor::Extract"),
-		 T_("Invalid package archive file."),
-		 tarbz2Path.Get());
-	    }
-
-	  if (header.IsEndOfArchive())
-	    {
-	      break;
-	    }
-
-	  if (checkHeader)
-	    {
-	      if (! header.Check())
-		{
-		  FATAL_EXTRACTOR_ERROR
-		    (T_("TarBzip2Extractor::Extract"),
-		     T_("Invalid package archive file."),
-		     tarbz2Path.Get());
-		}
-#if defined(NDEBUG)
-	      checkHeader = false;
-#endif
-	    }
-
-	  PathName dest = header.GetFileName();
-	  size_t size = header.GetFileSize();
-
-	  if (! header.IsNormalFile())
-	    {
-	      if (! (header.GetType() == Header::Link
-		     || header.GetType() == Header::SymbolicLink
-		     || header.GetType() == Header::Directory
-		     || header.GetType() == Header::CharacterSpecial
-		     || header.GetType() == Header::BlockSpecial
-		     || header.GetType() == Header::FIFOSpecial))
-		{
-		  Skip (bzfileIn,
-			(size + sizeof(Header) - 1) / sizeof(Header));
-		}
-	      continue;
-	    }
-
-	  // skip directory prefix
-	  if (lpszPrefix != 0
-	      && PathName::Compare(lpszPrefix, dest, prefixLen) == 0)
-	    {
-	      PathName tmp (dest);
-	      dest = tmp.Get() + prefixLen;
-	    }
-
-	  // make the destination path name
-	  PathName path (destDir);
-	  if (! makeDirectories)
-	    {
-	      dest.RemoveDirectorySpec ();
-	    }
-	  path += dest;
-
-	  // notify the client
-	  if (pCallback != 0)
-	    {
-	      pCallback->OnBeginFileExtraction (path.Get(), size);
-	    }
-
-	  // create the destination directory
-	  Directory::Create (PathName(path).RemoveFileSpec());
-
-	  // remove the existing file
-	  if (File::Exists(path))
-	    {
-	      File::Delete (path, true);
-	    }
-
-	  // extract the file
-	  FileStream stream (File::Open(path,
-					FileMode::Create,
-					FileAccess::Write,
-					false));
-	  const size_t BUFSIZE = 4096;
-	  char buffer[BUFSIZE];
-	  size_t bytesRead = 0;
-	  while (bytesRead < size)
-	    {
-	      size_t remaining = size - bytesRead;
-	      size_t n = (remaining > BUFSIZE ? BUFSIZE : remaining);
-	      if (BZ2_bzread(bzfileIn, buffer, static_cast<int>(n))
-		  != static_cast<int>(n))
-		{
-		  FATAL_EXTRACTOR_ERROR (T_("TarBzip2Extractor::Extract"),
-					 T_("Invalid package archive file."),
-					 0);
-		}
-	      stream.Write (buffer, n);
-	      bytesRead += n;
-	    }
-	  stream.Close ();
-
-	  // skip extra bytes
-	  if (bytesRead % sizeof(Header) > 0)
-	    {
-	      Skip (bzfileIn, sizeof(Header) - bytesRead % sizeof(Header));
-	    }
-
-	  fileCount += 1;
-	  
-	  // set time when the file was created
-	  time_t time = header.GetLastModificationTime();
-	  File::SetTimes (path, time, time, time);
-
-#if 0
-	  // set file attributes
-	  File::SetAttributes (path, todo);
-#endif
-
-	  // notify the client
-	  if (pCallback != 0)
-	    {
-	      pCallback->OnEndFileExtraction (0, size);
-	    }
-	}
-      
-      traceStream->WriteFormattedLine (T_("libextractor"),
-				       T_("extracted %u file(s)"),
-				       fileCount);
-    }
-  catch (const exception &)
-    {
-      BZ2_bzclose (bzfileIn);
-      throw;
-    }
-
-  BZ2_bzclose (bzfileIn);
+  stream.Close ();
 }
