@@ -41,7 +41,6 @@
 #if defined(__cplusplus)
 
 using namespace MiKTeX::TeXAndFriends;
-using namespace MiKTeX::Core;
 
 class PDFETEXCLASS
 
