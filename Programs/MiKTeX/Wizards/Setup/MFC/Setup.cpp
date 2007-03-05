@@ -500,8 +500,8 @@ FindInstallDir ()
     {
       // return the default location (usually "C:\Program Files\MiKTeX X.Y")
       PathName path;
-      if (SessionWrapper(true)->RunningAsAdministrator()
-	  || SessionWrapper(true)->RunningAsPowerUser())
+      if (SessionWrapper(true)->IsUserAnAdministrator()
+	  || SessionWrapper(true)->IsUserAPowerUser())
 	{
 	  path =
 	    Utils::GetFolderPath(CSIDL_PROGRAM_FILES,

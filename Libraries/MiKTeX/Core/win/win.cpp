@@ -123,7 +123,9 @@ SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
 {
   StartupConfig ret;
   tstring product = (IsMiKTeXDirect() ? T_("MiKTeXDirect") : T_("MiKTeX"));
-  if (RunningAsAdministrator() || RunningAsPowerUser())
+  if (sharedSetup
+      || IsUserAnAdministrator()
+      || IsUserAPowerUser())
     {
       ret.installRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
       ret.installRoot += T_("MiKTeX") T_(" ") T_(MIKTEX_SERIES_STR);
