@@ -68,6 +68,7 @@
 <!ENTITY TrueType "TrueType">
 <!ENTITY Type1 "Type&nbsp;1">
 <!ENTITY URW "<acronym>URW</acronym>">
+<!ENTITY UAC "<acronym>UAC</acronym>">
 <!ENTITY WinEdt "<application>WinEdt</application>">
 <!ENTITY Windows "<application>Windows</application>">
 <!ENTITY WindowsMe "<application>Windows&nbsp;Millennium Edition</application>">

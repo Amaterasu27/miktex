@@ -69,9 +69,20 @@ url="http://sourceforge.net/tracker/?atid=110783&amp;group_id=10783&amp;func=bro
 
 <title>&WindowsVista; Adaption</title>
 
-<para>&MiKTeX; is npw &WindowsVista; compliant, more or
-less. For the user, this means that the following tasks require
-approval by an administrator:</para>
+<para>&MiKTeX25; was not designed to be run on &WindowsVista;. But
+&Microsoft; added some shims to &WindowsVista; specifically for the
+&MiKTeX25; executables, i.e., &WindowsVista; includes built-in
+application-compatibility shims for &MiKTeX25;.</para>
+
+<para>The shims do not work for &MiKTeX26;. For &MiKTeX26; it was
+necessary to implement code that copes with User Account Control
+(&UAC;). For example, &TeX; and Friends must be given permission to
+install files in the &MiKTeX; installation directory. Otherwise the
+auto-install feature will not work.</para>
+
+<para>&MiKTeX; is now &WindowsVista; compliant, more or less. For the
+user, this means that the following tasks entail the &WindowsVista;
+consent prompt:</para>
 
 <itemizedlist>
 <listitem><para>installing packages</para></listitem>
@@ -80,7 +91,7 @@ approval by an administrator:</para>
 </itemizedlist>
 
 <para>Where possible, these administrative tasks are marked with
-the &WindowsVisa; shield icon. For example, the auto-install
+the &WindowsVista; shield icon. For example, the auto-install
 confirmation window now shows as follows:</para>
 
 <screenshot>
