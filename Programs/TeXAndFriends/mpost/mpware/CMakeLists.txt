@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -71,3 +71,9 @@ target_link_libraries(mpto
 
 install(TARGETS mpto DESTINATION ${bindir})
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/test1.cmd.in
+  ${CMAKE_CURRENT_BINARY_DIR}/test1.cmd)
+
+#todo
+#add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/test1.cmd)
