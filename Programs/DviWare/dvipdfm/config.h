@@ -12,7 +12,7 @@
 /* Define if your <sys/time.h> declares struct tm.  */
 #undef TM_IN_SYS_TIME
 
-#define VERSION "0.13.2c"
+#define VERSION "0.13.2d"
 
 #define PACKAGE "dvipdfm"
 
