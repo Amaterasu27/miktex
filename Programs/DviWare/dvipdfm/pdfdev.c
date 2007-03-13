@@ -1,4 +1,4 @@
-/*  $Header: /cvsroot/miktex/miktex/dvipdfm/pdfdev.c,v 1.5 2005/09/03 20:03:10 csc Exp $
+/*  $Header$
  
     This is dvipdfm, a DVI to PDF translator.
     Copyright (C) 1998, 1999 by Mark A. Wicks
@@ -257,12 +257,8 @@ void dev_read_mapfile (char *filename)
   char *full_map_filename, *start = NULL, *end, *tex_name;
   if (verbose > 0)
     fprintf (stderr, "<%s", filename);
-#if defined(MIKTEX)
-  full_map_filename = kpse_find_file(filename, kpse_fontmap_format, 0);
-#else
-  full_map_filename = kpse_find_file (filename, kpse_program_text_format,
+  full_map_filename = kpse_find_file (filename, kpse_fontmap_format,
 				      0);
-#endif
   if (full_map_filename == NULL || 
       (mapfile = MFOPEN (full_map_filename, FOPEN_R_MODE)) == NULL) {
     fprintf (stderr, "Warning:  Couldn't open font map file %s\n", filename);
