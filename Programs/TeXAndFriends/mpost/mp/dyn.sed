@@ -1,6 +1,6 @@
 ## dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1991-2005 Christian Schenk
+## Copyright (C) 1991-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -26,6 +26,7 @@ s/^\([_A-Za-z0-9]*\) \(m_fontinfo\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_inputstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_ligkern\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_mem\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_nextstr\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_paramstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_psi\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_strpool\)\[ [A-Za-z0-9]* \];$/\1 *\2;/

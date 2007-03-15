@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,25 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
-set(${mp_dll_name}_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
+add_definitions(
+  -DMPCLASS=METAPOSTApp
+  -DMPDATA=g_METAPOSTData
+  -DMIKTEX_METAPOST
+)
+
+create_cpp_from_c(
+  ${CMAKE_CURRENT_SOURCE_DIR}/avlstuff.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mapfile.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/turningnumber.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writeenc.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writefont.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writet1.c
 )
 
 add_custom_command(
@@ -32,27 +46,109 @@ add_custom_command(
   VERBATIM
 )
 
+set(mp_change_files
+  ${CMAKE_CURRENT_SOURCE_DIR}/fntemplate.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/color.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/gstate.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/antepost.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/psout.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/loadpool.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/mpbugs.ch
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web
+  COMMAND ${tie_exe}
+	-m ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web
+	${CMAKE_CURRENT_SOURCE_DIR}/mp.web
+	${mp_change_files}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/mp.web
+	${mp_change_files}
+  VERBATIM
+)
+
+add_executable(makecpool EXCLUDE_FROM_ALL
+  makecpool.c
+)
+
+get_target_property(makecpool_exe makecpool LOCATION)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+  COMMAND ${makecpool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/mp.pool mplib.h
+    > ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+  DEPENDS
+    makecpool
+    ${CMAKE_CURRENT_BINARY_DIR}/mp.pool
+)
+
+set(${mp_dll_name}_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
+  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
+  ${CMAKE_CURRENT_BINARY_DIR}/turningnumber.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+)
+
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+  PROPERTIES GENERATED TRUE
+)
+
+set(mp_web_file ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web)
+set(mp_header_file ${CMAKE_CURRENT_BINARY_DIR}/mpd.h)
+
 create_web_app(MetaPost mp mpost ${memdir})
+
+target_link_libraries(${mp_dll_name}
+  ${kpsemu_dll_name}
+)
 
 set(trapmp_dll_name "trapmp_")
 
-set(trapmp_web_file ${CMAKE_CURRENT_SOURCE_DIR}/mp.web)
+set(trapmp_web_file ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web)
+set(trapmp_header_file ${CMAKE_CURRENT_BINARY_DIR}/trapmpd.h)
 set(trapmp_change_file ${CMAKE_CURRENT_BINARY_DIR}/trapmp-miktex.ch)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/trapmp-miktex.ch
   COMMAND
-	${tie_exe} -c ${CMAKE_CURRENT_BINARY_DIR}/trapmp-miktex.ch
-		${CMAKE_CURRENT_SOURCE_DIR}/mp.web
+	${tie_exe} -c ${trapmp_change_file}
+		${trapmp_web_file}
 		${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex-trap.ch
   DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/mp.web
+	${trapmp_web_file}
 	${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex-trap.ch
 )
 
+set(${trapmp_dll_name}_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
+  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
+  ${CMAKE_CURRENT_BINARY_DIR}/turningnumber.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+)
+
 create_web_app(MetaPost trapmp trapmp ${memdir})
+
+target_link_libraries(${trapmp_dll_name}
+  ${kpsemu_dll_name}
+)
 
 set(trapmp_options)
 set(trapmp_options "${trapmp_options} -error-line=64")

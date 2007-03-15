@@ -1,6 +1,6 @@
 /* mp-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -29,6 +29,10 @@
 #define THEDATA(x) MPDATA.m_##x
 #endif
 
+#if ! defined(C4PEXTERN)
+#  define C4PEXTERN extern
+#endif
+
 #include "mp.rc"
 #include <miktex/mfapp.h>
 
@@ -40,17 +44,13 @@ namespace mpost {
 #  include <miktex/help.h>
 #endif
 
-using namespace MiKTeX::Core;
-using namespace MiKTeX::TeXAndFriends;
-using namespace std;
-
 #if defined(MIKTEX_TRAPMP)
 class TRAPMPCLASS
 #else
 class MPCLASS
 #endif
 
-  : public MetafontApp
+  : public MiKTeX::TeXAndFriends::MetafontApp
 
 {
 public:
@@ -60,7 +60,7 @@ public:
   MPCLASS ()
 #endif
   {
-    inputFileType = FileType::MP;
+    inputFileType = MiKTeX::Core::FileType::MP;
   }
 
 public:
@@ -72,7 +72,7 @@ public:
     MetafontApp::Init (lpszProgramInvocationName);
     SetProgramInfo (MIKTEXTEXT("mp;mpost"), 0, 0, 0);
 #if defined(IMPLEMENT_TCX)
-    EnableFeature (Feature::TCX);
+    EnableFeature (MiKTeX::TeXAndFriends::Feature::TCX);
 #endif
     m_font_mem_size = -1;
   }
@@ -134,6 +134,7 @@ public:
   {
     MetafontApp::FreeMemory ();
     Free (THEDATA(fontinfo));
+    Free (THEDATA(nextstr));
   }
 
 public:
@@ -148,6 +149,7 @@ public:
 	      mpost::mpost::font_mem_size());
 
     Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
+    Allocate (THEDATA(nextstr), THEDATA(maxstrings) + 1);
   }
 
 public:
@@ -162,32 +164,32 @@ public:
 
 public:
   virtual
-  FileType
+  MiKTeX::Core::FileType
   MIKTEXMFCALL
   GetMemoryDumpFileType ()
     const
   {
-    return (FileType::MEM);
+    return (MiKTeX::Core::FileType::MEM);
   }
 
 public:
   virtual
-  FileType
+  MiKTeX::Core::FileType
   MIKTEXMFCALL
   GetInputFileType ()
     const
   {
-    return (FileType::MP);
+    return (MiKTeX::Core::FileType::MP);
   }
 
 public:
   virtual
-  FileType
+  MiKTeX::Core::FileType
   MIKTEXMFCALL
   GetPoolFileType ()
     const
   {
-    return (FileType::MPPOOL);
+    return (MiKTeX::Core::FileType::MPPOOL);
   }
 
 public:
@@ -247,7 +249,7 @@ public:
 
 public:
   const
-  tstring &
+  MiKTeX::Core::tstring &
   GetTeXProgram ()
     const
   {
@@ -255,7 +257,7 @@ public:
   }
 
 private:
-  tstring texProgram;
+  MiKTeX::Core::tstring texProgram;
   
 private:
   int m_font_mem_size;
@@ -274,16 +276,18 @@ public:
   RunMakeMPX (/*[in]*/ const MIKTEXCHAR *	lpszMpFile,
 	      /*[in]*/ const MIKTEXCHAR *	lpszMpxFile)
   {
-    PathName makempx;
-    if (! pSession->FindFile(MIKTEXTEXT("makempx"), FileType::EXE, makempx))
+    MiKTeX::Core::PathName makempx;
+    if (! pSession->FindFile(MIKTEXTEXT("makempx"),
+			     MiKTeX::Core::FileType::EXE,
+			     makempx))
       {
 	FatalError (MIKTEXTEXT("The makempx utility could not be found."));
       }
     
-    PathName mpFile (lpszMpFile);
+    MiKTeX::Core::PathName mpFile (lpszMpFile);
     mpFile.SetExtension (MIKTEXTEXT(".mp"), false);
     
-    CommandLineBuilder arguments;
+    MiKTeX::Core::CommandLineBuilder arguments;
     
     if (! texProgram.empty())
       {
@@ -293,7 +297,7 @@ public:
     arguments.AppendArgument (mpFile);
     arguments.AppendArgument (lpszMpxFile);
     
-    Process::Run (makempx, arguments.Get());
+    MiKTeX::Core::Process::Run (makempx, arguments.Get());
   }
 };
 
@@ -326,7 +330,27 @@ bool
 miktexopenpstabfile (/*[in]*/ alphafile &		f,
 		     /*[in]*/ const MIKTEXCHAR *	lpszFileName)
 {
-  return (OpenMAPFile(&f, lpszFileName));
+  return (MiKTeX::TeXAndFriends::OpenMAPFile(&f, lpszFileName));
 }
 
 #include <miktex/mfapp.inl>
+
+#include <miktex/kpsemu.h>
+
+#define fontname THEDATA(fontname)
+#define fontpsnamefixed THEDATA(fontpsnamefixed)
+#define fontsizes THEDATA(fontsizes)
+#define jobname THEDATA(jobname)
+#define memident THEDATA(memident)
+#define mpfontmap THEDATA(mpfontmap)
+#define nameoffile THEDATA(nameoffile)
+#define nextstr THEDATA(nextstr)
+#define poolptr THEDATA(poolptr)
+#define poolsize THEDATA(poolsize)
+#define psfile THEDATA(psfile)
+#define selector THEDATA(selector)
+#define strpool THEDATA(strpool)
+#define strref THEDATA(strref)
+#define strstart THEDATA(strstart)
+
+#include "mplib.h"
