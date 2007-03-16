@@ -613,6 +613,69 @@ if(BUILDING_MIKTEX)
 	${docdir}
   )
 
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/faq
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/www/faq/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_BINARY_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/www/faq/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/www/faq
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir www/faq/
+		--stringparam chunk.fast 1
+		htmlchunk.xsl
+		faq.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${entities_ent}
+	${htmlchunk_xsl}
+	faq.xml
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  ) 
+
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--output ${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
+		--path \"${xslt_path}\"
+		--stringparam base.dir www/faq/
+		html.xsl
+		faq.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${entities_ent}
+	${htmlchunk_xsl}
+	faq.xml
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  ) 
+
+  install(
+    FILES	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
+    DESTINATION	${docdir}/faq
+  )
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
@@ -708,6 +771,8 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
   )
