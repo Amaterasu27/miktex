@@ -291,6 +291,7 @@ endif(MIKTEX_INSTALLROOT)
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}

@@ -17,7 +17,6 @@ texmf/miktex/bin/mpost.exe
 texmf/miktex/bin/mpto.exe
 texmf/miktex/bin/${dvitomp_dll_name}.dll
 texmf/miktex/bin/${mp_dll_name}.dll
-texmf/miktex/mem/mp.pool
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

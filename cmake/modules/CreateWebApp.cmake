@@ -154,6 +154,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	--include-filename=${${_short_name_l}_include_file}
 	--header-file=${${_short_name_l}_header_file}
 	--one=${_short_name_l}
+	--using-namespace=MiKTeX::TeXAndFriends
 	--var-name-prefix=m_
 	--var-struct=${${_short_name_l}_data}
 	-C
