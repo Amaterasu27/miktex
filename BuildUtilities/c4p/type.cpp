@@ -553,6 +553,12 @@ define_type (symbol_t *		type_symbol,
 {
   translate_type (type, type_ptr);
   out_s (" ");
+#if 1				// experimental
+  if (type == POINTER_NODE)
+    {
+      out_s ("*");
+    }
+#endif
   out_s (type_symbol->s_repr);
   if (type == ARRAY_NODE)
     {
