@@ -15,17 +15,31 @@
  *  manager. The interface can be used to install/remove packages and
  *  to query the package database.
  *
+ * @section getting Getting the MiKTeX SDK
+ *
+ * The MiKTeX SDK will be made available when MiKTeX 2.6 comes out.
+ *
  * @section prerequisites What you need
  *
  * You need
- * @li a working MiKTeX system
- * @li a COM-enabled script interpreter (Perl, Ruby, Python) and/or a
- *   COM-enabled high language compiler
+ * @li a working MiKTeX 2.6 system
+ * @li a COM-capable script interpreter (Perl, Ruby, Python, ...) and/or a
+ *   COM-capable high language compiler (e.g., Microsoft Visual C++)
  *
- * @section Samples
+ * @section samples Samples
  *
- * @li samples/c++/findpk/findpk.cpp - finds a Pk font
- * @li samples/perl/findpk.pl - finds a Pk font
- * @li samples/perl/installpackage.pl - installs a package
+ * The SDK contains several samples. Click the Examples tag above to
+ * browse the samples online.
+ *
+ * @example findpk.cpp
+ * Find a Pk font.
+ * A short C++ program which locates Pk font files.
+ *
+ * @example findpk.pl
+ * Find a Pk font.
+ * A short Perl script which locates Pk font files.
+ *
+ * @example installpackage.pl
+ * Install a package.
+ * A short Perl script which installs a package.
  */
-

@@ -20,6 +20,7 @@
 <!ENTITY Dvips "<application>Dvips</application>">
 <!ENTITY Dvipng "<application>Dvipng</application>">
 <!ENTITY EPS "<acronym>EPS</acronym>">
+<!ENTITY COM "<acronym>COM</acronym>">
 <!ENTITY PC "<acronym>PC</acronym>">
 <!ENTITY FAQ "<acronym>FAQ</acronym>">
 <!ENTITY FSF "<acronym>FSF</acronym>">
@@ -43,6 +44,7 @@
 <!ENTITY MiKTeXCurrentSeries "<application>MiKTeX&nbsp;&MIKTEX_SERIES_STR;</application>">
 <!ENTITY MiKTeXSoftwareDevelopmentKit "&MiKTeX;&nbsp;Software Development Kit">
 <!ENTITY SDK "<acronym>SDK</acronym>">
+<!ENTITY MiKTeXSDK "&MiKTeX;&nbsp;&SDK;">
 <!ENTITY MiKTeXSoftwareDevelopmentKit "&MiKTeX;&nbsp;&SDK;">
 <!ENTITY MiKTeXOptions "<application>&MiKTeX; Options</application>">
 <!ENTITY MiKTeXPackageManager "<application>&MiKTeX; Package Manager</application>">

@@ -2,12 +2,11 @@
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 %entities.ent;
-<!ENTITY optionquiet SYSTEM "Options/quiet.xml">
-<!ENTITY optiontrace SYSTEM "Options/trace.xml">
 ]>
 
 
 <article lang="en">
+
   <articleinfo>
     <title>&MiKTeX26; Preview</title>
     <author>
@@ -46,22 +45,6 @@
 
 <para>&MiKTeX26; will run on all &Windows; variants with the exception
 of &Windows95; and &WindowsNT;.</para>
-
-</section>
-
-<section>
-
-<title>Fixed bugs</title>
-
-<para>Numerous bugs have been fixed in &MiKTeX26;. In order
-to see the complete list of fixed bugs:</para>
-
-<procedure>
-<step><para>visit the <ulink
-url="http://sourceforge.net/tracker/?atid=110783&amp;group_id=10783&amp;func=browse">bug tracker page</ulink></para></step>
-<step><para>choose status <guimenuitem>Closed</guimenuitem></para></step>
-<step><para>enter the summary keyword <userinput>[2.6]</userinput></para></step>
-</procedure>
 
 </section>
 
@@ -111,8 +94,10 @@ button entails the &WindowsVista; consent prompt.</para>
 
 <title>Setup Wizard</title>
 
-<para>The command-line syntax for the installer has changed. See
-the manual, for more information.</para>
+<para>The command-line syntax for the installer has changed. Please
+read the <ulink
+url="http://docs.miktex.org/2.6/manual/setupwiz.html">man
+page</ulink>, for more information.</para>
 
 </section>
 
@@ -122,11 +107,32 @@ the manual, for more information.</para>
 
 <section>
 
-<title>XXX</title>
+<title>&MetaPost;</title>
 
-<para>XXX has been upgraded to version X.Y.</para>
+<para>&MetaPost; has been upgraded to version 0.994.</para>
 
 </section>
+
+</section>
+
+<section>
+
+<title>&MiKTeXSDK;</title>
+
+<para>&MiKTeX; now offers a few experimental &COM; objects which make
+it possible to script &MiKTeX;. For example, this Perl fragment
+installs a package:</para>
+
+<informalexample>
+<programlisting>my $packageManager = Win32::OLE->new('MiKTeX.PackageManager');
+$installer = $packageManager->CreateInstaller();
+$installer->Add ("a0poster", 1);
+$installer->InstallRemove;</programlisting>
+</informalexample>
+
+<para>See the
+<ulink url="http://docs.miktex.org/2.6/SDK">&MiKTeXSDK; page</ulink>,
+for more information.</para>
 
 </section>
 
