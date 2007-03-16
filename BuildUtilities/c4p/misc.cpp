@@ -225,7 +225,27 @@ begin_new_c_file (const char *file_name, int is_main)
 	   it != using_namespace.end();
 	   ++ it)
 	{
-	  out_form ("namespace %s {}\n", it->c_str());
+	  int count = 0;
+	  string s = *it;
+	  do
+	    {
+	      string::size_type end = s.find("::");
+	      out_form ("namespace %s { ", s.substr(0, end).c_str());
+	      ++ count;
+	      if (end == string::npos)
+		{
+		  s = "";
+		}
+	      else
+		{
+		  s = s.substr(end + 2);
+		}
+	    }
+	  while (! s.empty());
+	  for (; count != 0; -- count)
+	    {
+	      out_s (" }");
+	    }
 	  out_form ("using namespace %s;\n", it->c_str());
 	}
       out_form ("#endif\n");
