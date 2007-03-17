@@ -1,0 +1,46 @@
+/**
+ * @mainpage MiKTeX @MIKTEX_SERIES_STR@ SDK
+ *
+ * @section intro Introduction
+ *
+ * MiKTeX @MIKTEX_SERIES_STR@ exports two experimental COM objects
+ * that make it possible to script MiKTeX:
+ * @li The @link MiKTeXSessionLib::MiKTeXSession MiKTeX session
+ *  object @endlink provides an interface to MiKTeX core functionality.
+ *  The interface can be used to search for files,
+ *  gather information about the MiKTeX @MIKTEX_SERIES_STR@
+ *  installation and to run MiKTeX @MIKTEX_SERIES_STR@ applications.
+ * @li The @link MiKTeXPackageManagerLib::PackageManager MiKTeX package
+ *  manager object @endlink provides an interface to the MiKTeX package
+ *  manager. The interface can be used to install/remove packages and
+ *  to query the package database.
+ *
+ * @section getting Getting the MiKTeX @MIKTEX_SERIES_STR@ SDK
+ *
+ * The MiKTeX @MIKTEX_SERIES_STR@ SDK will be made available when
+ * MiKTeX @MIKTEX_SERIES_STR@ comes out.
+ *
+ * @section prerequisites What you need
+ *
+ * You need
+ * @li a working MiKTeX @MIKTEX_SERIES_STR@ system
+ * @li a COM-capable script interpreter (Perl, Ruby, Python, ...) and/or a
+ *   COM-capable high language compiler (e.g., Microsoft Visual C++)
+ *
+ * @section samples Samples
+ *
+ * The SDK contains several samples. Click the Examples tag above to
+ * browse the samples online.
+ *
+ * @example findpk.cpp
+ * Find a Pk font.
+ * A short C++ program which locates Pk font files.
+ *
+ * @example findpk.pl
+ * Find a Pk font.
+ * A short Perl script which locates Pk font files.
+ *
+ * @example installpackage.pl
+ * Install a package.
+ * A short Perl script which installs a package.
+ */
