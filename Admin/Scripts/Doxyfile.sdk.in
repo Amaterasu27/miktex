@@ -461,7 +461,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT += @CMAKE_SOURCE_DIR@/SDK/doc/mainpage.doxygen
+INPUT += @CMAKE_BINARY_DIR@/SDK/doc/mainpage.doxygen
 INPUT += @CMAKE_BINARY_DIR@/SDK/include/session.idl
 INPUT += @CMAKE_BINARY_DIR@/SDK/include/miktexidl.idl
 INPUT += @CMAKE_BINARY_DIR@/SDK/include/mpm.idl
