@@ -3,8 +3,8 @@
  *
  * @section intro Introduction
  *
- * MiKTeX exports two COM objects that make it possible to automate
- * MiKTeX-specific tasks:
+ * MiKTeX exports two experimental COM objects that make it possible
+ * to script MiKTeX:
  * @li The @link MiKTeXSessionLib::MiKTeXSession MiKTeX session
  *  object @endlink provides an interface to MiKTeX core functionality.
  *  The interface can be used to search for files,
