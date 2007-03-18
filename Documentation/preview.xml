@@ -113,6 +113,14 @@ page</ulink>, for more information.</para>
 
 </section>
 
+<section>
+
+<title>&pdfTeX;</title>
+
+<para>&pdfTeX; has been upgraded to version 1.40.3.</para>
+
+</section>
+
 </section>
 
 <section>
@@ -120,15 +128,14 @@ page</ulink>, for more information.</para>
 <title>&MiKTeXSDK;</title>
 
 <para>&MiKTeX; now offers a few experimental &COM; objects which make
-it possible to script &MiKTeX;. For example, this Perl fragment
-installs a package:</para>
+it possible to automate &MiKTeX; specific tasks and to retrieve information
+about the &MiKTeX; installation:</para>
 
-<informalexample>
-<programlisting>my $packageManager = Win32::OLE->new('MiKTeX.PackageManager');
-$installer = $packageManager->CreateInstaller();
-$installer->Add ("a0poster", 1);
-$installer->InstallRemove;</programlisting>
-</informalexample>
+<itemizedlist>
+<listitem><para>install/remove packages</para></listitem>
+<listitem><para>locate files</para></listitem>
+<listitem><para>enumerate root directories</para></listitem>
+</itemizedlist>
 
 <para>See the
 <ulink url="http://docs.miktex.org/2.6/SDK">&MiKTeXSDK; page</ulink>,
