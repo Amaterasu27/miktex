@@ -1,69 +1,69 @@
 [amstex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=AMS-TeX
 input=amstex.ini
 
 [bplain]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=Babel plain TeX
 input=bplain.ini
 
 [cont-en]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=ConTeXt en
 input=cont-en.ini
 
 [cont-de]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=ConTeXt de
 input=cont-de.ini
 
 [cont-nl]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=ConTeXt nl
 input=cont-nl.ini
 
 [cont-uk]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=ConTeXt uk
 input=cont-uk.ini
 
 [cslatex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=CSLaTeX
 input=cslatex.ini
 
 [csplain]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=CSPlain
 input=csplain.ini
 
 [etex]
 
-compiler=pdfetex
+compiler=pdftex
 description=plain e-TeX
 input=etex.ini
 
 [jadetex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=jadeTeX
 input=jadetex.ini
 preloaded=latex
@@ -77,7 +77,7 @@ input=lambda.ini
 
 [latex]
 
-compiler=pdfetex
+compiler=pdftex
 description=LaTeX2e
 input=latex.ini
 
@@ -91,7 +91,7 @@ input=metafun.mp
 [mex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=MeX
 input=mex.ini
 
@@ -112,7 +112,7 @@ input=mfmp.ini
 
 arguments=-mltex
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=MLTeX extensions (LaTeX)
 input=mllatex.ini
 
@@ -120,7 +120,7 @@ input=mllatex.ini
 
 arguments=-mltex
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=MLTeX extensions (plain)
 input=mltex.ini
 
@@ -133,7 +133,7 @@ input=mpost.ini
 [mptopdf]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=MPtoPDF
 input=mptopdf.tex
 
@@ -146,48 +146,48 @@ input=omega.ini
 
 [pdfetex]
 
-compiler=pdfetex
+compiler=pdftex
 description=plain PDF-e-TeX
 input=pdfetex.ini
 
 [pdfjadetex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=pdfjadeTeX
 input=pdfjadetex.ini
 preloaded=pdflatex
 
 [pdflatex]
 
-compiler=pdfetex
+compiler=pdftex
 description=pdfLaTeX
 input=pdflatex.ini
 
 [pdfmex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=pdfMeX
 input=pdfmex.ini
 
 [pdfplatex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=pdfPLaTeX
 input=pdfplatex.ini
 
 [pdftex]
 
-compiler=pdfetex
+compiler=pdftex
 description=plain pdfTeX
 input=pdftex.ini
 
 [platex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=PLaTeX
 input=platex.ini
 
@@ -200,7 +200,7 @@ input=tex.ini
 [xmltex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=xmltex
 input=xmltex.ini
 preloaded=latex
@@ -208,7 +208,7 @@ preloaded=latex
 [pdfxmltex]
 
 attributes=exclude
-compiler=pdfetex
+compiler=pdftex
 description=pdfxmltex
 input=pdfxmltex.ini
 preloaded=pdflatex

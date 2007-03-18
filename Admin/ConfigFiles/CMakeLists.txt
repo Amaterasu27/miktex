@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,7 +37,7 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/mllatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mltex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/omega.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/pdfetex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfjadetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdflatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfmex.ini
