@@ -82,11 +82,7 @@ void *GList::del(int i) {
   return p;
 }
 
-#if defined(MIKTEX_WINDOWS)
-void GList::sort(int (__cdecl *cmp)(const void *obj1, const void *obj2)) {
-#else
 void GList::sort(int (*cmp)(const void *obj1, const void *obj2)) {
-#endif
   qsort(data, length, sizeof(void *), cmp);
 }
 

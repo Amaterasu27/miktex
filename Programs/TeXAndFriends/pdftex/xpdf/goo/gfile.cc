@@ -10,9 +10,7 @@
 
 #include <aconf.h>
 
-#ifdef WIN32
-#  include <time.h>
-#else
+#ifndef WIN32
 #  if defined(MACOS)
 #    include <sys/stat.h>
 #  elif !defined(ACORN)
@@ -439,48 +437,25 @@ time_t getModTime(char *fileName) {
 #endif
 }
 
+#ifndef PDF_PARSER_ONLY
 GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
 #if defined(WIN32)
   //---------- Win32 ----------
-  char *tempDir;
-  GString *s, *s2;
-  char buf[32];
-  FILE *f2;
-  int t, i;
+  char *s;
 
-  // this has the standard race condition problem, but I haven't found
-  // a better way to generate temp file names with extensions on
-  // Windows
-  if ((tempDir = getenv("TEMP"))) {
-    s = new GString(tempDir);
-    s->append('\\');
-  } else {
-    s = new GString();
+  if (!(s = _tempnam(getenv("TEMP"), NULL))) {
+    return gFalse;
   }
-  s->append("x");
-  t = (int)time(NULL);
-  for (i = 0; i < 1000; ++i) {
-    sprintf(buf, "%d", t + i);
-    s2 = s->copy()->append(buf);
-    if (ext) {
-      s2->append(ext);
-    }
-    if (!(f2 = fopen(s2->getCString(), "r"))) {
-      if (!(f2 = fopen(s2->getCString(), mode))) {
-	delete s2;
-	delete s;
-	return gFalse;
-      }
-      *name = s2;
-      *f = f2;
-      delete s;
-      return gTrue;
-    }
-    fclose(f2);
-    delete s2;
+  *name = new GString(s);
+  free(s);
+  if (ext) {
+    (*name)->append(ext);
   }
-  delete s;
-  return gFalse;
+  if (!(*f = fopen((*name)->getCString(), mode))) {
+    delete (*name);
+    return gFalse;
+  }
+  return gTrue;
 #elif defined(VMS) || defined(__EMX__) || defined(ACORN) || defined(MACOS)
   //---------- non-Unix ----------
   char *s;
@@ -547,6 +522,7 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
   return gTrue;
 #endif
 }
+#endif
 
 GBool executeCommand(char *cmd) {
 #ifdef VMS
@@ -696,9 +672,9 @@ GDirEntry *GDir::getNextEntry() {
   struct dirent *ent;
   e = NULL;
   if (dir) {
-    ent = (struct dirent *)readdir(dir);
+    ent = readdir(dir);
     if (ent && !strcmp(ent->d_name, ".")) {
-      ent = (struct dirent *)readdir(dir);
+      ent = readdir(dir);
     }
     if (ent) {
       e = new GDirEntry(path->getCString(), ent->d_name, doStat);

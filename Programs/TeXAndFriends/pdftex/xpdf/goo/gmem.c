@@ -17,16 +17,13 @@
 #ifdef DEBUG_MEM
 
 typedef struct _GMemHdr {
-  unsigned int magic;
   int size;
   int index;
-  struct _GMemHdr *next, *prev;
+  struct _GMemHdr *next;
 } GMemHdr;
 
 #define gMemHdrSize ((sizeof(GMemHdr) + 7) & ~7)
 #define gMemTrlSize (sizeof(long))
-
-#define gMemMagic 0xabcd9999
 
 #if gmemTrlSize==8
 #define gMemDeadVal 0xdeadbeefdeadbeefUL
@@ -38,8 +35,19 @@ typedef struct _GMemHdr {
 #define gMemDataSize(size) \
   ((((size) + gMemTrlSize - 1) / gMemTrlSize) * gMemTrlSize)
 
-static GMemHdr *gMemHead = NULL;
-static GMemHdr *gMemTail = NULL;
+#define gMemNLists    64
+#define gMemListShift  4
+#define gMemListMask  (gMemNLists - 1)
+static GMemHdr *gMemList[gMemNLists] = {
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+};
 
 static int gMemIndex = 0;
 static int gMemAlloc = 0;
@@ -47,75 +55,57 @@ static int gMemInUse = 0;
 
 #endif /* DEBUG_MEM */
 
-void *gmalloc(int size) GMEM_EXCEP {
+void *gmalloc(int size) {
 #ifdef DEBUG_MEM
   int size1;
   char *mem;
   GMemHdr *hdr;
   void *data;
+  int lst;
   unsigned long *trl, *p;
 
-  if (size <= 0) {
+  if (size <= 0)
     return NULL;
-  }
   size1 = gMemDataSize(size);
   if (!(mem = (char *)malloc(size1 + gMemHdrSize + gMemTrlSize))) {
-#if USE_EXCEPTIONS
-    throw GMemException();
-#else
     fprintf(stderr, "Out of memory\n");
     exit(1);
-#endif
   }
   hdr = (GMemHdr *)mem;
   data = (void *)(mem + gMemHdrSize);
   trl = (unsigned long *)(mem + gMemHdrSize + size1);
-  hdr->magic = gMemMagic;
   hdr->size = size;
   hdr->index = gMemIndex++;
-  if (gMemTail) {
-    gMemTail->next = hdr;
-    hdr->prev = gMemTail;
-    gMemTail = hdr;
-  } else {
-    hdr->prev = NULL;
-    gMemHead = gMemTail = hdr;
-  }
-  hdr->next = NULL;
+  lst = ((int)hdr >> gMemListShift) & gMemListMask;
+  hdr->next = gMemList[lst];
+  gMemList[lst] = hdr;
   ++gMemAlloc;
   gMemInUse += size;
-  for (p = (unsigned long *)data; p <= trl; ++p) {
+  for (p = (unsigned long *)data; p <= trl; ++p)
     *p = gMemDeadVal;
-  }
   return data;
 #else
   void *p;
 
-  if (size <= 0) {
+  if (size <= 0)
     return NULL;
-  }
   if (!(p = malloc(size))) {
-#if USE_EXCEPTIONS
-    throw GMemException();
-#else
     fprintf(stderr, "Out of memory\n");
     exit(1);
-#endif
   }
   return p;
 #endif
 }
 
-void *grealloc(void *p, int size) GMEM_EXCEP {
+void *grealloc(void *p, int size) {
 #ifdef DEBUG_MEM
   GMemHdr *hdr;
   void *q;
   int oldSize;
 
   if (size <= 0) {
-    if (p) {
+    if (p)
       gfree(p);
-    }
     return NULL;
   }
   if (p) {
@@ -132,29 +122,23 @@ void *grealloc(void *p, int size) GMEM_EXCEP {
   void *q;
 
   if (size <= 0) {
-    if (p) {
+    if (p)
       free(p);
-    }
     return NULL;
   }
-  if (p) {
+  if (p)
     q = realloc(p, size);
-  } else {
+  else
     q = malloc(size);
-  }
   if (!q) {
-#if USE_EXCEPTIONS
-    throw GMemException();
-#else
     fprintf(stderr, "Out of memory\n");
     exit(1);
-#endif
   }
   return q;
 #endif
 }
 
-void *gmallocn(int nObjs, int objSize) GMEM_EXCEP {
+void *gmallocn(int nObjs, int objSize) {
   int n;
 
   if (nObjs == 0) {
@@ -162,17 +146,13 @@ void *gmallocn(int nObjs, int objSize) GMEM_EXCEP {
   }
   n = nObjs * objSize;
   if (objSize <= 0 || nObjs < 0 || nObjs >= INT_MAX / objSize) {
-#if USE_EXCEPTIONS
-    throw GMemException();
-#else
     fprintf(stderr, "Bogus memory allocation size\n");
     exit(1);
-#endif
   }
   return gmalloc(n);
 }
 
-void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP {
+void *greallocn(void *p, int nObjs, int objSize) {
   int n;
 
   if (nObjs == 0) {
@@ -183,12 +163,8 @@ void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP {
   }
   n = nObjs * objSize;
   if (objSize <= 0 || nObjs < 0 || nObjs >= INT_MAX / objSize) {
-#if USE_EXCEPTIONS
-    throw GMemException();
-#else
     fprintf(stderr, "Bogus memory allocation size\n");
     exit(1);
-#endif
   }
   return grealloc(p, n);
 }
@@ -197,23 +173,22 @@ void gfree(void *p) {
 #ifdef DEBUG_MEM
   int size;
   GMemHdr *hdr;
+  GMemHdr *prevHdr, *q;
+  int lst;
   unsigned long *trl, *clr;
 
   if (p) {
     hdr = (GMemHdr *)((char *)p - gMemHdrSize);
-    if (hdr->magic == gMemMagic &&
-	((hdr->prev == NULL) == (hdr == gMemHead)) &&
-	((hdr->next == NULL) == (hdr == gMemTail))) {
-      if (hdr->prev) {
-	hdr->prev->next = hdr->next;
-      } else {
-	gMemHead = hdr->next;
-      }
-      if (hdr->next) {
-	hdr->next->prev = hdr->prev;
-      } else {
-	gMemTail = hdr->prev;
-      }
+    lst = ((int)hdr >> gMemListShift) & gMemListMask;
+    for (prevHdr = NULL, q = gMemList[lst]; q; prevHdr = q, q = q->next) {
+      if (q == hdr)
+	break;
+    }
+    if (q) {
+      if (prevHdr)
+	prevHdr->next = hdr->next;
+      else
+	gMemList[lst] = hdr->next;
       --gMemAlloc;
       gMemInUse -= hdr->size;
       size = gMemDataSize(hdr->size);
@@ -222,32 +197,32 @@ void gfree(void *p) {
 	fprintf(stderr, "Overwrite past end of block %d at address %p\n",
 		hdr->index, p);
       }
-      for (clr = (unsigned long *)hdr; clr <= trl; ++clr) {
+      for (clr = (unsigned long *)hdr; clr <= trl; ++clr)
 	*clr = gMemDeadVal;
-      }
       free(hdr);
     } else {
       fprintf(stderr, "Attempted to free bad address %p\n", p);
     }
   }
 #else
-  if (p) {
+  if (p)
     free(p);
-  }
 #endif
 }
 
 #ifdef DEBUG_MEM
 void gMemReport(FILE *f) {
   GMemHdr *p;
+  int lst;
 
   fprintf(f, "%d memory allocations in all\n", gMemIndex);
   if (gMemAlloc > 0) {
     fprintf(f, "%d memory blocks left allocated:\n", gMemAlloc);
     fprintf(f, " index     size\n");
     fprintf(f, "-------- --------\n");
-    for (p = gMemHead; p; p = p->next) {
-      fprintf(f, "%8d %8d\n", p->index, p->size);
+    for (lst = 0; lst < gMemNLists; ++lst) {
+      for (p = gMemList[lst]; p; p = p->next)
+	fprintf(f, "%8d %8d\n", p->index, p->size);
     }
   } else {
     fprintf(f, "No memory blocks left allocated\n");

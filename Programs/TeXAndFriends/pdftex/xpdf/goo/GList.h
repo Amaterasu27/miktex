@@ -61,11 +61,7 @@ public:
   // Sort the list accoring to the given comparison function.
   // NB: this sorts an array of pointers, so the pointer args need to
   // be double-dereferenced.
-#if defined(MIKTEX_WINDOWS)
-  void sort(int (__cdecl*cmp)(const void *ptr1, const void *ptr2));
-#else
   void sort(int (*cmp)(const void *ptr1, const void *ptr2));
-#endif
 
   //----- control
 
