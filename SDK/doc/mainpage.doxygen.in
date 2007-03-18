@@ -13,7 +13,7 @@
  * @li The @link MiKTeXPackageManagerLib::PackageManager MiKTeX package
  *  manager object @endlink provides an interface to the MiKTeX package
  *  manager. The interface can be used to install/remove packages and
- *  to query the package database.
+ *  to retrieve informataion about the MiKTeX installation.
  *
  * @section getting Getting the MiKTeX @MIKTEX_SERIES_STR@ SDK
  *
