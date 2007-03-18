@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,7 +31,7 @@ set(${goo_lib_name}_sources
   GString.h
   gfile.cc
   gfile.h
-  gmem.c
+  gmem.cc
   gmem.h
   gmempp.cc
   gtypes.h
