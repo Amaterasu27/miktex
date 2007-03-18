@@ -86,23 +86,23 @@ public:
   Object *getStructTreeRoot() { return catalog->getStructTreeRoot(); }
 
   // Display a page.
-  void displayPage(OutputDev *out, int page,
-		   double hDPI, double vDPI, int rotate,
-		   GBool useMediaBox, GBool crop, GBool printing,
+  void displayPage(OutputDev *out, int page, double hDPI, double vDPI,
+		   int rotate, GBool useMediaBox, GBool crop,
+		   GBool doLinks,
 		   GBool (*abortCheckCbk)(void *data) = NULL,
 		   void *abortCheckCbkData = NULL);
 
   // Display a range of pages.
   void displayPages(OutputDev *out, int firstPage, int lastPage,
 		    double hDPI, double vDPI, int rotate,
-		    GBool useMediaBox, GBool crop, GBool printing,
+		    GBool useMediaBox, GBool crop, GBool doLinks,
 		    GBool (*abortCheckCbk)(void *data) = NULL,
 		    void *abortCheckCbkData = NULL);
 
   // Display part of a page.
   void displayPageSlice(OutputDev *out, int page,
 			double hDPI, double vDPI, int rotate,
-			GBool useMediaBox, GBool crop, GBool printing,
+			GBool useMediaBox, GBool crop, GBool doLinks,
 			int sliceX, int sliceY, int sliceW, int sliceH,
 			GBool (*abortCheckCbk)(void *data) = NULL,
 			void *abortCheckCbkData = NULL);
@@ -113,15 +113,12 @@ public:
 
   // Returns the links for the current page, transferring ownership to
   // the caller.
-  Links *getLinks(int page);
+  Links *takeLinks();
 
   // Find a named destination.  Returns the link destination, or
   // NULL if <name> is not a destination.
   LinkDest *findDest(GString *name)
     { return catalog->findDest(name); }
-
-  // Process the links for a page.
-  void processLinks(OutputDev *out, int page);
 
 #ifndef DISABLE_OUTLINE
   // Return the outline object.
@@ -163,6 +160,7 @@ private:
   GBool setup(GString *ownerPassword, GString *userPassword);
   void checkHeader();
   GBool checkEncryption(GString *ownerPassword, GString *userPassword);
+  void getLinks(Page *page);
 
   GString *fileName;
   FILE *file;
@@ -171,6 +169,7 @@ private:
   double pdfVersion;
   XRef *xref;
   Catalog *catalog;
+  Links *links;
 #ifndef DISABLE_OUTLINE
   Outline *outline;
 #endif

@@ -45,34 +45,9 @@
 // ObjectStream
 //------------------------------------------------------------------------
 
-class ObjectStream {
-public:
-
-  // Create an object stream, using object number <objStrNum>,
-  // generation 0.
-  ObjectStream(XRef *xref, int objStrNumA);
-
-  ~ObjectStream();
-
-  // Return the object number of this object stream.
-  int getObjStrNum() { return objStrNum; }
-
-  // Get the <objIdx>th object from this stream, which should be
-  // object number <objNum>, generation 0.
-  Object *getObject(int objIdx, int objNum, Object *obj);
-
-private:
-
-  int objStrNum;		// object number of the object stream
-  int nObjects;			// number of objects in the stream
-  Object *objs;			// the objects (length = nObjects)
-  int *objNums;			// the object numbers (length = nObjects)
-};
-
 ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   Stream *str;
   Parser *parser;
-  int *offsets;
   Object objStr, obj1, obj2;
   int first, i;
 
@@ -80,6 +55,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   nObjects = 0;
   objs = NULL;
   objNums = NULL;
+  offsets = NULL;
 
   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
     goto err1;
@@ -100,6 +76,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     goto err1;
   }
   first = obj1.getInt();
+  firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
   obj1.free();
   if (first < 0) {
     goto err1;
@@ -113,7 +90,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objStr.streamReset();
   obj1.initNull();
   str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
-  parser = new Parser(xref, new Lexer(xref, str), gFalse);
+  parser = new Parser(xref, new Lexer(xref, str));
   for (i = 0; i < nObjects; ++i) {
     parser->getObj(&obj1);
     parser->getObj(&obj2);
@@ -121,7 +98,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       obj1.free();
       obj2.free();
       delete parser;
-      gfree(offsets);
+//       gfree(offsets);
       goto err1;
     }
     objNums[i] = obj1.getInt();
@@ -131,7 +108,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     if (objNums[i] < 0 || offsets[i] < 0 ||
 	(i > 0 && offsets[i] < offsets[i-1])) {
       delete parser;
-      gfree(offsets);
+//       gfree(offsets);
       goto err1;
     }
   }
@@ -154,13 +131,13 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       str = new EmbedStream(objStr.getStream(), &obj1, gTrue,
 			    offsets[i+1] - offsets[i]);
     }
-    parser = new Parser(xref, new Lexer(xref, str), gFalse);
+    parser = new Parser(xref, new Lexer(xref, str));
     parser->getObj(&objs[i]);
     while (str->getChar() != EOF) ;
     delete parser;
   }
 
-  gfree(offsets);
+//   gfree(offsets);
 
  err1:
   objStr.free();
@@ -177,6 +154,7 @@ ObjectStream::~ObjectStream() {
     delete[] objs;
   }
   gfree(objNums);
+  gfree(offsets);
 }
 
 Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
@@ -305,8 +283,7 @@ GBool XRef::readXRef(Guint *pos) {
   obj.initNull();
   parser = new Parser(NULL,
 	     new Lexer(NULL,
-	       str->makeSubStream(start + *pos, gFalse, 0, &obj)),
-	     gTrue);
+	       str->makeSubStream(start + *pos, gFalse, 0, &obj)));
   parser->getObj(&obj);
 
   // parse an old-style xref table
@@ -647,7 +624,7 @@ GBool XRef::constructXRef() {
   size = 0;
   entries = NULL;
 
-  error(-1, "PDF file is damaged - attempting to reconstruct xref table...");
+  error(0, "PDF file is damaged - attempting to reconstruct xref table...");
   gotRoot = gFalse;
   streamEndsLen = streamEndsSize = 0;
 
@@ -659,16 +636,12 @@ GBool XRef::constructXRef() {
     }
     p = buf;
 
-    // skip whitespace
-    while (*p && Lexer::isSpace(*p & 0xff)) ++p;
-
     // got trailer dictionary
     if (!strncmp(p, "trailer", 7)) {
       obj.initNull();
       parser = new Parser(NULL,
 		 new Lexer(NULL,
-		   str->makeSubStream(pos + 7, gFalse, 0, &obj)),
-		 gFalse);
+		   str->makeSubStream(pos + 7, gFalse, 0, &obj)));
       parser->getObj(&newTrailerDict);
       if (newTrailerDict.isDict()) {
 	newTrailerDict.dictLookupNF("Root", &obj);
@@ -751,8 +724,7 @@ GBool XRef::constructXRef() {
 }
 
 void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-			 Guchar *fileKeyA, int keyLengthA, int encVersionA,
-			 CryptAlgorithm encAlgorithmA) {
+			 Guchar *fileKeyA, int keyLengthA, int encVersionA) {
   int i;
 
   encrypted = gTrue;
@@ -767,7 +739,6 @@ void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
     fileKey[i] = fileKeyA[i];
   }
   encVersion = encVersionA;
-  encAlgorithm = encAlgorithmA;
 }
 
 GBool XRef::okToPrint(GBool ignoreOwnerPW) {
@@ -806,8 +777,7 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
     obj1.initNull();
     parser = new Parser(this,
 	       new Lexer(this,
-		 str->makeSubStream(start + e->offset, gFalse, 0, &obj1)),
-	       gTrue);
+		 str->makeSubStream(start + e->offset, gFalse, 0, &obj1)));
     parser->getObj(&obj1);
     parser->getObj(&obj2);
     parser->getObj(&obj3);
@@ -820,8 +790,8 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
       delete parser;
       goto err;
     }
-    parser->getObj(obj, encrypted ? fileKey : (Guchar *)NULL,
-		   encAlgorithm, keyLength, num, gen);
+    parser->getObj(obj, encrypted ? fileKey : (Guchar *)NULL, keyLength,
+		   num, gen);
     obj1.free();
     obj2.free();
     obj3.free();

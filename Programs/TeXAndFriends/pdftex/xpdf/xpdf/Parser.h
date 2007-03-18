@@ -25,14 +25,14 @@ class Parser {
 public:
 
   // Constructor.
-  Parser(XRef *xrefA, Lexer *lexerA, GBool allowStreamsA);
+  Parser(XRef *xrefA, Lexer *lexerA);
 
   // Destructor.
   ~Parser();
 
   // Get the next object from the input stream.
-  Object *getObj(Object *obj, Guchar *fileKey = NULL,
-		 CryptAlgorithm encAlgorithm = cryptRC4, int keyLength = 0,
+  Object *getObj(Object *obj,
+		 Guchar *fileKey = NULL, int keyLength = 0,
 		 int objNum = 0, int objGen = 0);
 
   // Get stream.
@@ -45,13 +45,10 @@ private:
 
   XRef *xref;			// the xref table for this PDF file
   Lexer *lexer;			// input stream
-  GBool allowStreams;		// parse stream objects?
   Object buf1, buf2;		// next two tokens
   int inlineImg;		// set when inline image data is encountered
 
-  Stream *makeStream(Object *dict, Guchar *fileKey,
-		     CryptAlgorithm encAlgorithm, int keyLength,
-		     int objNum, int objGen);
+  Stream *makeStream(Object *dict);
   void shift();
 };
 

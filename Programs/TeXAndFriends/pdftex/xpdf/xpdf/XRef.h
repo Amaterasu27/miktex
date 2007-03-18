@@ -21,7 +21,36 @@
 class Dict;
 class Stream;
 class Parser;
-class ObjectStream;
+
+class ObjectStream {
+public:
+
+  // Create an object stream, using object number <objStrNum>,
+  // generation 0.
+  ObjectStream(XRef *xref, int objStrNumA);
+
+  ~ObjectStream();
+
+  // Return the object number of this object stream.
+  int getObjStrNum() { return objStrNum; }
+
+  // Get the <objIdx>th object from this stream, which should be
+  // object number <objNum>, generation 0.
+  Object *getObject(int objIdx, int objNum, Object *obj);
+
+  int *getOffsets() { return offsets; }
+  Guint getFirstOffset() { return firstOffset; }
+
+private:
+
+  int objStrNum;		// object number of the object stream
+  int nObjects;			// number of objects in the stream
+  Object *objs;			// the objects (length = nObjects)
+  int *objNums;			// the object numbers (length = nObjects)
+  int *offsets;			// the object offsets (length = nObjects)
+  Guint firstOffset;
+};
+
 
 //------------------------------------------------------------------------
 // XRef
@@ -56,8 +85,7 @@ public:
 
   // Set the encryption parameters.
   void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-		     Guchar *fileKeyA, int keyLengthA, int encVersionA,
-		     CryptAlgorithm encAlgorithmA);
+		     Guchar *fileKeyA, int keyLengthA, int encVersionA);
 
   // Is the file encrypted?
   GBool isEncrypted() { return encrypted; }
@@ -96,6 +124,7 @@ public:
   int getSize() { return size; }
   XRefEntry *getEntry(int i) { return &entries[i]; }
   Object *getTrailerDict() { return &trailerDict; }
+  ObjectStream *getObjStr() { return objStr; }
 
 private:
 
@@ -118,8 +147,7 @@ private:
   GBool ownerPasswordOk;	// true if owner password is correct
   Guchar fileKey[16];		// file decryption key
   int keyLength;		// length of key, in bytes
-  int encVersion;		// encryption version
-  CryptAlgorithm encAlgorithm;	// encryption algorithm
+  int encVersion;		// encryption algorithm
 
   Guint getStartXref();
   GBool readXRef(Guint *pos);

@@ -153,7 +153,6 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
       permObj.isInt()) {
     encVersion = versionObj.getInt();
     encRevision = revisionObj.getInt();
-    encAlgorithm = cryptRC4;
     // revision 2 forces a 40-bit key - some buggy PDF generators
     // set the Length value incorrectly
     if (encRevision == 2 || !lengthObj.isInt()) {
@@ -173,19 +172,9 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
 	  !strcmp(streamFilterObj.getName(), stringFilterObj.getName())) {
 	if (cryptFiltersObj.dictLookup(streamFilterObj.getName(),
 				       &cryptFilterObj)->isDict()) {
-	  cryptFilterObj.dictLookup("CFM", &cfmObj);
-	  if (cfmObj.isName("V2")) {
+	  if (cryptFilterObj.dictLookup("CFM", &cfmObj)->isName("V2")) {
 	    encVersion = 2;
 	    encRevision = 3;
-	    if (cryptFilterObj.dictLookup("Length", &cfLengthObj)->isInt()) {
-	      //~ according to the spec, this should be cfLengthObj / 8
-	      fileKeyLength = cfLengthObj.getInt();
-	    }
-	    cfLengthObj.free();
-	  } else if (cfmObj.isName("AESV2")) {
-	    encVersion = 2;
-	    encRevision = 3;
-	    encAlgorithm = cryptAES;
 	    if (cryptFilterObj.dictLookup("Length", &cfLengthObj)->isInt()) {
 	      //~ according to the spec, this should be cfLengthObj / 8
 	      fileKeyLength = cfLengthObj.getInt();
@@ -323,7 +312,6 @@ ExternalSecurityHandler::ExternalSecurityHandler(PDFDoc *docA,
 {
   encryptDictA->copy(&encryptDict);
   xsh = xshA;
-  encAlgorithm = cryptRC4; //~ this should be obtained via getKey
   ok = gFalse;
 
   if (!(*xsh->newDoc)(xsh->handlerData, (XpdfDoc)docA,

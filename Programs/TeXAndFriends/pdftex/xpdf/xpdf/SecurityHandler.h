@@ -74,7 +74,6 @@ public:
   virtual Guchar *getFileKey() = 0;
   virtual int getFileKeyLength() = 0;
   virtual int getEncVersion() = 0;
-  virtual CryptAlgorithm getEncAlgorithm() = 0;
 
 protected:
 
@@ -101,7 +100,6 @@ public:
   virtual Guchar *getFileKey() { return fileKey; }
   virtual int getFileKeyLength() { return fileKeyLength; }
   virtual int getEncVersion() { return encVersion; }
-  virtual CryptAlgorithm getEncAlgorithm() { return encAlgorithm; }
 
 private:
 
@@ -111,7 +109,6 @@ private:
   int fileKeyLength;
   int encVersion;
   int encRevision;
-  CryptAlgorithm encAlgorithm;
   GBool encryptMetadata;
 
   GString *ownerKey, *userKey;
@@ -141,7 +138,6 @@ public:
   virtual Guchar *getFileKey() { return fileKey; }
   virtual int getFileKeyLength() { return fileKeyLength; }
   virtual int getEncVersion() { return encVersion; }
-  virtual CryptAlgorithm getEncAlgorithm() { return encAlgorithm; }
 
 private:
 
@@ -152,7 +148,6 @@ private:
   Guchar fileKey[16];
   int fileKeyLength;
   int encVersion;
-  CryptAlgorithm encAlgorithm;
   GBool ok;
 };
 #endif // ENABLE_PLUGINS
