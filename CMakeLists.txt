@@ -562,10 +562,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_pdfetex_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
   add_subdirectory(${rel_omegaware_dir})
 endif(BUILDING_MIKTEX)
 
