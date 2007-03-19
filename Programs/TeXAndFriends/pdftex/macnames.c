@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with pdfTeX; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: macnames.c,v 1.5 2004/05/22 20:59:52 csc Exp $
+$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/macnames.c#5 $
 */
 
 const char notdef[] = ".notdef";
@@ -301,12 +301,12 @@ const char *mac_glyph_names[] = {
 };
 
 const char *ambiguous_names[] = {
-    "Delta",            /*   increment   */
-    "Omega",            /*   Ohm         */
-    "Pi",               /*   product     */
-    "Sigma",            /*   summation   */
-    "dmacron",          /*   dslash      */
-    "macron",           /*   overscore   */
-    "periodcentered",   /*   middot      */
+    "Delta",                    /*   increment   */
+    "Omega",                    /*   Ohm         */
+    "Pi",                       /*   product     */
+    "Sigma",                    /*   summation   */
+    "dmacron",                  /*   dslash      */
+    "macron",                   /*   overscore   */
+    "periodcentered",           /*   middot      */
     NULL
 };

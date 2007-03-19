@@ -31,7 +31,7 @@ set(${goo_lib_name}_sources
   GString.h
   gfile.cc
   gfile.h
-  gmem.cc
+  gmem.c
   gmem.h
   gmempp.cc
   gtypes.h
