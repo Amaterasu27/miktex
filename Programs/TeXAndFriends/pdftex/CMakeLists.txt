@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,10 +18,18 @@
 ## USA.
 
 include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
+)
+
+add_definitions(
+  -DpdfTeX
+  -DPDFTEXCLASS=pdfTeXApp
+  -DPDFTEXDATA=g_PDFTEXData
+  -DMIKTEX_PDFTEX
 )
 
 set(pdftosrc_sources
@@ -84,3 +92,11 @@ target_link_libraries(ttf2afm
 )
 
 install(TARGETS ttf2afm DESTINATION ${bindir})
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
+  COMMAND ${cfg_exe} --print-classes ${pdftex_defaults} > pdftex.defaults.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${pdftex_defaults}
+  VERBATIM
+)
