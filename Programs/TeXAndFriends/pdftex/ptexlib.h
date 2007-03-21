@@ -38,7 +38,9 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ptexlib.h#26 $
 /* avl */
 #  include "avlstuff.h"
 
+#  if ! defined(MIKTEX)
 #  include "openbsd-compat.h"
+#  endif
 
 /* pdftexlib type declarations */
 typedef struct {
@@ -212,15 +214,23 @@ extern void fb_seek(integer);
 extern void libpdffinish(void);
 extern char *makecfilename(strnumber s);
 extern void make_subset_tag(fd_entry *);
+#if ! defined(MIKTEX)
 __attribute__ ((format(printf, 1, 2)))
+#endif
 extern void pdf_printf(const char *, ...);
 extern void pdf_puts(const char *);
+#if ! defined(MIKTEX)
 __attribute__ ((noreturn, format(printf, 1, 2)))
+#endif
 extern void pdftex_fail(const char *, ...);
+#if ! defined(MIKTEX)
 __attribute__ ((format(printf, 1, 2)))
+#endif
 extern void pdftex_warn(const char *, ...);
 extern void setjobid(int, int, int, int);
+#if ! defined(MIKTEX)
 __attribute__ ((format(printf, 1, 2)))
+#endif
 extern void tex_printf(const char *, ...);
 extern void writestreamlength(integer, integer);
 extern char *convertStringToPDFString(const char *in, int len);

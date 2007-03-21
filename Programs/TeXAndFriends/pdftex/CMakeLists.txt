@@ -17,6 +17,13 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+default_char_type_is_unsigned()
+
+set(C4P_FLAGS
+  --auto-exit=10
+  --chars-are-unsigned
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -99,4 +106,82 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS ${pdftex_defaults}
   VERBATIM
+)
+
+set(miktex_tex_change_files
+  ${tex_mltex_miktex_ch}
+  ${tex_miktex_ch}
+  ${tex_miktex_hyph_ch}
+  ${tex_miktex_quiet_ch}
+  ${tex_miktex_src_ch}
+  ${tex_miktex_stat_ch}
+  ${tex_miktex_write18_ch}
+)
+
+set(pdftex_web_file ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.web)
+set(pdftex_change_file ${CMAKE_CURRENT_BINARY_DIR}/pdftex-miktex-tied.ch)
+set(pdftex_header_file ${CMAKE_CURRENT_BINARY_DIR}/pdftexd.h)
+
+add_custom_command(
+  OUTPUT ${pdftex_change_file}
+  COMMAND ${tie_exe} -c ${pdftex_change_file}
+		${pdftex_web_file}
+		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+		${miktex_tex_change_files}
+		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
+		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${pdftex_web_file}
+	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+	${miktex_tex_change_files}
+	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
+	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
+)
+
+set(${pdftex_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
+)
+
+set_source_files_properties(
+  ${${pdfetex_dll_name}_sources}
+  PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
+)
+
+file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
+file(READ ${pdftex_dyn_sed} pdftex_dyn_sed_contents)
+file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
+
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${pdftex_dyn_sed_contents}")
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
+
+create_web_app(pdftex)
+
+
+## test
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
+  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
+		${pdftex_web_file}
+		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+		${miktex_tex_change_files}
+		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
+  COMMAND ${webn_exe}
+	< ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${pdftex_web_file}
+	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+	${miktex_tex_change_files}
+	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
+  VERBATIM
+)
+
+add_custom_target(allx ALL
+    DEPENDS
+	${pdftex_change_file}
+	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
 )

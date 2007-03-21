@@ -82,7 +82,6 @@ class PDFTEXCLASS
     Allocate (THEDATA(destnames), THEDATA(destnamessize));
     
     Allocate (THEDATA(pdfcharused), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(pdfcharmap), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(pdffontsize), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(pdffontnum), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(pdffontmap), THEDATA(fontmax) + 1 - constfontbase);
@@ -119,7 +118,6 @@ class PDFTEXCLASS
     Free (THEDATA(objtab));
     Free (THEDATA(destnames));
     Free (THEDATA(pdfcharused));
-    Free (THEDATA(pdfcharmap));
     Free (THEDATA(pdffontsize));
     Free (THEDATA(pdffontnum));
     Free (THEDATA(pdffontmap));
@@ -215,6 +213,16 @@ getbyte (/*[in]*/ bytefile & f)
 
 #include "miktex/kpsemu.h"
 
+// fix web2c
+#define printid printID
+
+inline
+bool
+miktexptrequal(void * ptr1, void * ptr2)
+{
+  return (ptr1 == ptr2);
+}
+
 //#ifdef __cplusplus
 //extern "C" {
 //#endif
@@ -230,7 +238,7 @@ getbyte (/*[in]*/ bytefile & f)
 #define fontbc THEDATA(fontbc)
 #define fontdsize THEDATA(fontdsize)
 #define fontec THEDATA(fontec)
-#define fontname THEDATA(fontname)
+//#define fontname THEDATA(fontname)
 #define fontptr THEDATA(fontptr)
 #define fontsize THEDATA(fontsize)
 #define fontused THEDATA(fontused)
@@ -277,6 +285,11 @@ getbyte (/*[in]*/ bytefile & f)
 #define strstart THEDATA(strstart)
 #define tmpf THEDATA(tmpf)
 #define vfpacketbase THEDATA(vfpacketbase)
+#define pdffontknbsbase THEDATA(pdffontknbsbase)
+#define pdffontknacbase THEDATA(pdffontknacbase)
+#define pdffontknbcbase THEDATA(pdffontknbcbase)
+#define pdffontstbsbase THEDATA(pdffontstbsbase)
+#define pdffontshbsbase THEDATA(pdffontshbsbase)
 #define vfpacketlength THEDATA(vfpacketlength)
 #define fixedpdfminorversion THEDATA(fixedpdfminorversion)
 #define fixedimagehicolor THEDATA(fixedimagehicolor)

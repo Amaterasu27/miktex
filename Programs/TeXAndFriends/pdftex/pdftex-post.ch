@@ -1,6 +1,6 @@
 %% pdftex-post.ch:
 %% 
-%% Copyright (C) 2003-2005 Christian Schenk
+%% Copyright (C) 2003-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -15,6 +15,11 @@
 %% You should have received a copy of the GNU General Public License
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+% _____________________________________________________________________________
+%
+% [18.254]
+% _____________________________________________________________________________
 
 @x
 @d int_pars=miktex_int_pars {total number of integer parameters}
