@@ -34,7 +34,8 @@ include_directories(BEFORE
 
 add_definitions(
   -DpdfTeX
-  -DPDFTEXCLASS=pdfTeXApp
+  -DPDFTEXAPP=g_PDFTEXApp
+  -DPDFTEXCLASS=PDFTEX
   -DPDFTEXDATA=g_PDFTEXData
   -DMIKTEX_PDFTEX
 )
@@ -139,30 +140,102 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
 )
 
-set(${pdftex_dll_name}_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
-)
-
-set_source_files_properties(
-  ${${pdfetex_dll_name}_sources}
-  PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
-)
-
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
-file(READ ${pdftex_dyn_sed} pdftex_dyn_sed_contents)
 file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
-file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${pdftex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
+
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
+#include <direct.h>
+#include <sys/stat.h>
+#define stat _stat
+#define getcwd _getcwd
+#define snprintf _snprintf
+#define __attribute__(x)
+")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sysexits.h "")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/md5.h "#include <miktex/md5.h>
+typedef unsigned char md5_byte_t;
+typedef MiKTeX::Core::MD5_CTX md5_state_t;
+#define md5_init(pstate) MiKTeX::Core::MD5Init(pstate)
+#define md5_append(pstate, pv, size) MiKTeX::Core::MD5Update(pstate, pv, size)
+#define md5_finish(pstate, pdigest) MiKTeX::Core::MD5Final(pdigest, pstate)
+")
+
+create_cpp_from_c(
+  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/avlstuff.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/epdf.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mapfile.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/pkin.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/subfont.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/tounicode.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/vfpacket.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writeenc.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writefont.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writeimg.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writejbig2.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writejpg.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writepng.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writet1.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writet3.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writettf.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/writezip.c
+)
+
+set(${pdftex_dll_name}_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/pdftoepdf.cc
+  ${CMAKE_CURRENT_BINARY_DIR}/avl.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/epdf.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
+  ${CMAKE_CURRENT_BINARY_DIR}/pkin.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/subfont.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/tounicode.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/vfpacket.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writeimg.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writejbig2.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writejpg.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writepng.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writet3.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writettf.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/writezip.cpp
+)
+
+set_source_files_properties(
+  ${${pdftex_dll_name}_sources}
+  PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
+)
 
 create_web_app(pdftex)
 
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.cc
+  PROPERTIES COMPILE_FLAGS "-DCOMPILING_PDFTEX_CC"
+)
 
-## test
+target_link_libraries(${pdftex_dll_name}
+  ${fofi_lib_name}
+  ${goo_lib_name}
+  ${kpsemu_dll_name}
+  ${png_dll_name}
+  ${regex_dll_name}
+  ${xpdf_lib_name}
+)
+
+## dev targets
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
+	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
 		${pdftex_web_file}
 		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
@@ -180,7 +253,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(allx ALL
+add_custom_target(dev ALL
     DEPENDS
 	${pdftex_change_file}
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web

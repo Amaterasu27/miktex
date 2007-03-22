@@ -784,8 +784,13 @@ void process_map_item(char *s, int type)
     if (mitem->line != NULL)    /* read default map file first */
         fm_read_info();
     if (*s != '\0') {           /* only if real item to process */
+#if defined(MIKTEX)
+        mitem->mode = (updatemode)mode;
+        mitem->type = (maptype)type;
+#else
         mitem->mode = mode;
         mitem->type = type;
+#endif
         mitem->line = s;
         fm_read_info();
     }

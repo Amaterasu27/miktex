@@ -20,11 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 $Id: epdf.h,v 1.6 2005/11/28 23:29:32 hahe Exp $
 */
 
+#if ! defined(MIKTEX)
 extern "C" {
+#endif
 
 #include <kpathsea/c-auto.h>
 
+#if ! defined(MIKTEX)
     extern char *xstrdup(const char *);
+#endif
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
 
@@ -39,10 +43,14 @@ extern "C" {
 #  undef CONFIG_H               /* header file */
 #endif
 
+#if ! defined(MIKTEX)
 #include <web2c/c-auto.h>       /* define SIZEOF_LONG */
 #include <web2c/config.h>       /* define type integer */
 
 #include <web2c/pdftexdir/ptexmac.h>
+#else
+#include "ptexlib.h"
+#endif
 
 #include "openbsd-compat.h"
 
@@ -58,6 +66,7 @@ extern "C" {
     extern void *epdf_doc;
     extern void *epdf_xref;
 
+#if ! defined(MIKTEX)
     extern integer pdfboxspecmedia;
     extern integer pdfboxspeccrop;
     extern integer pdfboxspecbleed;
@@ -105,18 +114,30 @@ extern "C" {
     extern void zpdfcreateobj(integer, integer);
     extern void zpdfnewdict(integer, integer, bool);
     extern void zpdfosgetosbuf(integer);
+#endif
 
 /* epdf.c */
+#if defined(MIKTEX)
+    extern void embed_whole_font(fd_entry *);
+    extern int is_subsetable(fm_entry *);
+    extern void epdf_mark_glyphs(fd_entry *, char *);
+    extern fd_entry *epdf_create_fontdescriptor(fm_entry *);
+    extern int get_fd_objnum(fd_entry *);
+    extern int get_fn_objnum(fd_entry *);
+#else
     extern void epdf_mark_glyphs(struct fd_entry *, char *);
     extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *);
     extern int get_fd_objnum(struct fd_entry *);
     extern int get_fn_objnum(struct fd_entry *);
+#endif
 
 /* write_enc.c */
     extern void epdf_write_enc(char **, integer);
 
 /* utils.c */
+#if ! defined(MIKTEX)
     extern char *convertStringToPDFString(char *in, int len);
+#endif
     extern char *stripzeros(char *a);
 
 /* config.c */
@@ -125,4 +146,6 @@ extern "C" {
 /* avlstuff.c */
     extern void avl_put_obj(integer, integer);
     extern integer avl_find_obj(integer, integer, integer);
+#if ! defined(MIKTEX)
 }
+#endif

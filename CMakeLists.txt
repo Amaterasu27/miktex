@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-cmake_minimum_required(VERSION 2.4.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.4.6 FATAL_ERROR)
 
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)

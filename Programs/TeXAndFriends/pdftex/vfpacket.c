@@ -67,33 +67,21 @@ void storepacket(integer f, integer c, integer s)
 
 void pushpacketstate()
 {
-#if defined(MIKTEX)
-#  define f THEDATA(f)
-#endif
     alloc_array(packet, 1, SMALL_ARRAY_SIZE);
     packet_ptr->font = f;
     packet_ptr->dataptr = packet_data_ptr;
     packet_ptr->len = vfpacketlength;
     packet_ptr++;
-#if defined(MIKTEX)
-#  undef f
-#endif
 }
 
 void poppacketstate()
 {
-#if defined(MIKTEX)
-#  define f THEDATA(f)
-#endif
     if (packet_ptr == packet_array)
         pdftex_fail("packet stack empty, impossible to pop");
     packet_ptr--;
     f = packet_ptr->font;
     packet_data_ptr = packet_ptr->dataptr;
     vfpacketlength = packet_ptr->len;
-#if defined(MIKTEX)
-#  undef f
-#endif
 }
 
 void startpacket(internalfontnumber f, integer c)

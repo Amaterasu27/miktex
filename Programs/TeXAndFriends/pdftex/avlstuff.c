@@ -105,9 +105,6 @@ int compare_info(const void *pa, const void *pb, void *param)
     return 0;
 }
 
-#if defined(MIKTEX)
-#  undef objptr
-#endif
 void avlputobj(integer objptr, integer t)
 {
     static void **pp;

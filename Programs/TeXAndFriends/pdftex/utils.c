@@ -48,9 +48,14 @@ strnumber last_tex_string;
 static char print_buf[PRINTF_BUF_SIZE];
 static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
+#if defined(MIKTEX)
+#include "pdftex-version.h"
+const char * ptexbanner = "This is MiKTeX-pdfTeX " VER_FILEVERSION_STR;
+#else
 extern string ptexbanner;       /* from web2c/lib/texmfmp.c */
 extern string versionstring;    /* from web2c/lib/version.c */
 extern KPSEDLL string kpathsea_version_string;  /* from kpathsea/version.c */
+#endif
 
 size_t last_ptr_index;          /* for use with alloc_array */
 
@@ -1260,6 +1265,7 @@ char *stripzeros(char *a)
     return a;
 }
 
+#if ! defined(MIKTEX)
 void initversionstring(char **versions)
 {
     (void) asprintf(versions,
@@ -1269,6 +1275,7 @@ void initversionstring(char **versions)
                     PNG_LIBPNG_VER_STRING, png_libpng_ver,
                     ZLIB_VERSION, zlib_version, xpdfVersion);
 }
+#endif
 
 
 /*************************************************/

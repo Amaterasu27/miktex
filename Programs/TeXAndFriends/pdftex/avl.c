@@ -29,8 +29,10 @@
 #include <string.h>
 #include "avl.h"
 
-#if defined(MIKTEX) && defined(__cplusplus)
-#define new neW
+#if defined(MIKTEX)
+#  if defined(__cplusplus)
+#    define new neW
+#  endif
 #endif
 
 /* Creates and returns a new table
@@ -48,7 +50,7 @@ avl_create (avl_comparison_func *compare, void *param,
   if (allocator == NULL)
     allocator = &avl_allocator_default;
 
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
   tree = (avl_table *)allocator->libavl_malloc (allocator, sizeof *tree);
 #else
   tree = allocator->libavl_malloc (allocator, sizeof *tree);
@@ -121,7 +123,7 @@ avl_probe (struct avl_table *tree, void *item)
       da[k++] = dir = cmp > 0;
     }
 
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
   n = q->avl_link[dir] = (avl_node *)
     tree->avl_alloc->libavl_malloc (tree->avl_alloc, sizeof *n);
 #else
@@ -767,7 +769,7 @@ avl_copy (const struct avl_table *org, avl_copy_func *copy,
         {
           assert (height < 2 * (AVL_MAX_HEIGHT + 1));
 
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
           y->avl_link[0] = (avl_node *)
             new->avl_alloc->libavl_malloc (new->avl_alloc,
                                            sizeof *y->avl_link[0]);
@@ -813,7 +815,7 @@ avl_copy (const struct avl_table *org, avl_copy_func *copy,
 
           if (x->avl_link[1] != NULL)
             {
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
               y->avl_link[1] = (avl_node *)
                 new->avl_alloc->libavl_malloc (new->avl_alloc,
                                                sizeof *y->avl_link[1]);

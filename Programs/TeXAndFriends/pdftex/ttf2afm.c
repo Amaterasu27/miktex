@@ -33,9 +33,15 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ttf2afm.c#21 $
 */
 #include <kpathsea/kpathsea.h>
 #include <time.h>
+#if defined(MIKTEX)
+#include <ptexmac.h>
+#include <getopt.h>
+#include <writettf.h>
+#else
 #include <libgen.h>
 #include <pdftexdir/ptexmac.h>
 #include <pdftexdir/writettf.h>
+#endif
 #include <string.h>
 
 /* constants used for print_glyph */
@@ -494,7 +500,7 @@ void read_font()
     switch (post_format) {
     case 0x00010000:
         for (pm = mtx_tab; pm - mtx_tab < NMACGLYPHS; pm++)
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
 	    pm->name = (char*)mac_glyph_names[pm - mtx_tab];
 #else
             pm->name = mac_glyph_names[pm - mtx_tab];
@@ -516,7 +522,7 @@ void read_font()
         }
         for (pm = mtx_tab; pm - mtx_tab < l; pm++) {
             if (pm->index < NMACGLYPHS)
-#if defined(MIKTEX) && defined(__cplusplus)
+#if defined(MIKTEX)
                 pm->name = (char*)mac_glyph_names[pm->index];
 #else
                 pm->name = mac_glyph_names[pm->index];

@@ -267,7 +267,11 @@ unsigned long getstreamlen(LITEM * slip, boolean refer)
     SEGINFO *sip;
     unsigned long len = 0;
     for (; slip != NULL; slip = slip->next) {
+#if defined(MIKTEX)
+        sip = (SEGINFO*)slip->d;
+#else
         sip = slip->d;
+#endif
         if (refer || sip->isrefered)
             len += sip->hdrend - sip->hdrstart + sip->dataend - sip->datastart;
     }
@@ -511,7 +515,11 @@ void markpage0seg(FILEINFO * fip, unsigned long referedseg)
 {
     PAGEINFO *pip;
     SEGINFO *sip;
+#if defined(MIKTEX)
+    pip = (PAGEINFO*)fip->page0.first->d;
+#else
     pip = fip->page0.first->d;
+#endif
     sip = find_seginfo(&(pip->segments), referedseg);
     if (sip != NULL) {
         if (!sip->refers && sip->countofrefered > 0)
@@ -563,13 +571,21 @@ void rd_jbig2_info(FILEINFO * fip)
                 plp->last->d = new_pageinfo();
                 currentpage = sip->segpage;
             }
+#if defined(MIKTEX)
+            pip = (PAGEINFO*)fip->pages.last->d;
+#else
             pip = fip->pages.last->d;
+#endif
         } else {
             if (fip->page0.last == NULL) {
                 plp = litem_append(&(fip->page0));
                 plp->last->d = new_pageinfo();
             }
+#if defined(MIKTEX)
+            pip = (PAGEINFO*)fip->page0.last->d;
+#else
             pip = fip->page0.last->d;
+#endif
         }
         if (!sip->endofpageflag) {
             slp = litem_append(&(pip->segments));
@@ -654,7 +670,11 @@ void wr_jbig2(FILEINFO * fip, unsigned long page)
     pdf_puts("stream\n");
     fip->file = xfopen(fip->filename, FOPEN_RBIN_MODE);
     for (slip = pip->segments.first; slip != NULL; slip = slip->next) { /* loop over page segments */
+#if defined(MIKTEX)
+        sip = (SEGINFO*)slip->d;
+#else
         sip = slip->d;
+#endif
         if (sip->isrefered || page > 0) {
             xfseek(fip->file, sip->hdrstart, SEEK_SET, fip->filename);
             /* mark refered-to page 0 segments, change segpages > 1 to 1 */
@@ -696,7 +716,11 @@ void read_jbig2_info(integer img)
         pages_maketree(&(fip->pages));
         if (fip->page0.last != NULL) {
             pages_maketree(&(fip->page0));
+#if defined(MIKTEX)
+            pip = (PAGEINFO*)fip->page0.first->d;
+#else
             pip = fip->page0.first->d;
+#endif
             segments_maketree(&(pip->segments));
         }
     }
@@ -734,8 +758,13 @@ void flushjbig2page0objects()
     struct avl_traverser t;
     if (file_tree != NULL) {
         avl_t_init(&t, file_tree);
+#if defined(MIKTEX)
+        for (fip = (FILEINFO*)avl_t_first(&t, file_tree); fip != NULL;
+             fip = (FILEINFO*)avl_t_next(&t)) {
+#else
         for (fip = avl_t_first(&t, file_tree); fip != NULL;
              fip = avl_t_next(&t)) {
+#endif
             if (fip->page0.last != NULL)
                 wr_jbig2(fip, 0);
         }

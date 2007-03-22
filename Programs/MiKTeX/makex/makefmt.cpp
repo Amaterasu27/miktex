@@ -1,6 +1,6 @@
 /* makefmt.cpp: make TeX format files
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -46,7 +46,7 @@ class EngineEnum
 public:
   enum EnumType {
     TeX,
-    pdfETeX,
+    pdfTeX,
     Omega,
   };
 };
@@ -101,9 +101,9 @@ private:
       {
 	engine = Engine::TeX;
       }
-    else if (StringCompare(lpszEngine, T_("pdfetex"), true) == 0)
+    else if (StringCompare(lpszEngine, T_("pdftex"), true) == 0)
       {
-	engine = Engine::pdfETeX;
+	engine = Engine::pdfTeX;
       }
     else if (StringCompare(lpszEngine, T_("omega"), true) == 0)
       {
@@ -130,8 +130,8 @@ private:
       {
       case Engine::TeX:
 	return (T_("tex"));
-      case Engine::pdfETeX:
-	return (T_("pdfetex"));
+      case Engine::pdfTeX:
+	return (T_("pdftex"));
       case Engine::Omega:
 	return (T_("omega"));
       }
@@ -148,7 +148,7 @@ private:
   IsPdf ()
     const
   {
-    return (engine == Engine::pdfETeX);
+    return (engine == Engine::pdfTeX);
   }
 
 private:
@@ -156,7 +156,7 @@ private:
   IsExtended ()
     const
   {
-    return (engine == Engine::pdfETeX);
+    return (engine == Engine::pdfTeX);
   }
 
 private:
@@ -427,7 +427,7 @@ MakeFmt::InstallPdftexConfigTex ()
   writer.WriteLine (T_("\
 %%% Run 'initexmf --edit-config-file pdftex' to edit configuration settings"));
   writer.WriteLine (T_("\
-%%% for pdfTeX (pdfeTeX)."));
+%%% for pdfTeX."));
   for (vector<tstring>::iterator it = primitives.begin();
        it != primitives.end();
        ++ it)

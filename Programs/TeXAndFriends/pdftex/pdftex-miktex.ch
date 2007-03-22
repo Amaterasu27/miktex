@@ -18,6 +18,17 @@
 
 % _____________________________________________________________________________
 %
+% [1.2]
+% _____________________________________________________________________________
+
+@x
+@d banner==pdfeTeX_banner
+@y
+@d banner==pdfTeX_banner
+@z
+
+% _____________________________________________________________________________
+%
 % [1.4]
 % _____________________________________________________________________________
 
@@ -66,10 +77,92 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
-% [34.676]
+% [31.602]
 % _____________________________________________________________________________
 
-% todo
+@x
+      begin i := char_tag(char_info(f)(c));
+@y
+      begin i := char_tag(orig_char_info(f)(c));
+@z
+
+% _____________________________________________________________________________
+%
+% [34.671]
+% _____________________________________________________________________________
+
+@x
+@d is_valid_char(#)==((font_bc[f] <= #) and (# <= font_ec[f]) and
+                      char_exists(char_info(f)(#)))
+@y
+@d is_valid_char(#)==((font_bc[f] <= #) and (# <= font_ec[f]) and
+                      char_exists(orig_char_info(f)(#)))
+@z
+
+@x
+function get_charwidth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charwidth := char_width(f)(char_info(f)(c))
+    else
+        get_charwidth := 0;
+end;
+
+function get_charheight(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charheight := char_height(f)(height_depth(char_info(f)(c)))
+    else
+        get_charheight := 0;
+end;
+
+function get_chardepth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_chardepth := char_depth(f)(height_depth(char_info(f)(c)))
+    else
+        get_chardepth := 0;
+end;
+@y
+function get_charwidth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charwidth := char_width(f)(orig_char_info(f)(c))
+    else
+        get_charwidth := 0;
+end;
+
+function get_charheight(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_charheight := char_height(f)(height_depth(orig_char_info(f)(c)))
+    else
+        get_charheight := 0;
+end;
+
+function get_chardepth(f: internal_font_number; c: eight_bits): scaled;
+begin
+    if is_valid_char(c) then
+        get_chardepth := char_depth(f)(height_depth(orig_char_info(f)(c)))
+    else
+        get_chardepth := 0;
+end;
+@z
+
+% _____________________________________________________________________________
+%
+% [34.675]
+% _____________________________________________________________________________
+
+@x
+pdf_mem_size := inf_pdf_mem_size; {allocated size of |pdf_mem| array}
+@y
+@z
+
+% _____________________________________________________________________________
+%
+% [34.676]
+% _____________________________________________________________________________
 
 @x
         pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
@@ -79,10 +172,18 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
-% [35.684]
+% [35.679]
 % _____________________________________________________________________________
 
-% todo
+@x
+pdf_os_buf_size := inf_pdf_os_buf_size;
+@y
+@z
+
+% _____________________________________________________________________________
+%
+% [35.684]
+% _____________________________________________________________________________
 
 @x
         pdf_os_buf := xrealloc_array(pdf_os_buf, eight_bits, pdf_os_buf_size);
@@ -105,13 +206,13 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
-% [37.695]
+% [37.696]
 % _____________________________________________________________________________
 
 @x
-@!obj_tab:^obj_entry;
+obj_tab_size := inf_obj_tab_size; {allocated size of |obj_tab| array}
+dest_names_size := inf_dest_names_size; {allocated size of |dest_names| array}
 @y
-@!obj_tab:array [0..0] of obj_entry;
 @z
 
 % _____________________________________________________________________________
@@ -135,30 +236,6 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
-% [38.703]
-% _____________________________________________________________________________
-
-@x
-@!pdf_font_type: ^eight_bits; {the type of font}
-@!pdf_font_attr: ^str_number; {pointer to additional attributes}
-@y
-@!pdf_font_type: array[0..0] of eight_bits; {the type of font}
-@!pdf_font_attr: array[0..0] of str_number; {pointer to additional attributes}
-@z
-
-% _____________________________________________________________________________
-%
-% [38.706]
-% _____________________________________________________________________________
-
- @x
-@!pdf_font_map: ^fm_entry_ptr; {pointer into AVL tree of font mappings}
- @y
-@!pdf_font_map: array[0..0] of fm_entry_ptr; {pointer into AVL tree of font mappings}
- @z
-  
-% _____________________________________________________________________________
-%
 % [38.708]
 % _____________________________________________________________________________
 
@@ -166,28 +243,6 @@ program PDFTEX; {all file names are defined dynamically}
 @d vf_byte == getc(vf_file) {get a byte from\.{VF} file}
 @y
 @d vf_byte == get_byte(vf_file) {get a byte from\.{VF} file}
-@z
-
-@x
-@!vf_packet_base: ^integer; {base addresses of character packets from virtual fonts}
-@y
-@!vf_packet_base: array[0..0] of integer; {base addresses of character packets from virtual fonts}
-@z
-
-@x
-@!vf_default_font: ^internal_font_number; {default font in a \.{VF} file}
-@!vf_local_font_num: ^internal_font_number; {number of local fonts in a \.{VF} file}
-@y
-@!vf_default_font: array[0..0] of internal_font_number;
-@!vf_local_font_num: array[0..0] of internal_font_number;
-@z
-
-@x
-@!vf_e_fnts: ^integer; {external font numbers}
-@!vf_i_fnts: ^internal_font_number; {corresponding internal font numbers}
-@y
-@!vf_e_fnts: array[0..0] of integer; {external font numbers}
-@!vf_i_fnts: array[0..0] of internal_font_number; {corresponding internal font numbers}
 @z
 
 % _____________________________________________________________________________
@@ -201,6 +256,86 @@ program PDFTEX; {all file names are defined dynamically}
 @ Some functions for processing character packets.
 
 @d char_done = 72
+@z
+
+% _____________________________________________________________________________
+%
+% [39.726]
+% _____________________________________________________________________________
+
+@x
+label reswitch, move_past, fin_rule, next_p;
+@y
+label reswitch, move_past, fin_rule, next_p, found, continue;
+@z
+
+@x (MLTeX) l. 17462
+  if is_valid_char(c) then
+      output_one_char(c)
+  else
+      char_warning(f, c);
+  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+@y
+  if is_valid_char(c) then begin
+      output_one_char(c);
+      cur_h:=cur_h+char_width(f)(char_info(f)(c));
+      goto continue;
+  end;
+  if mltex_enabled_p then
+    @<(\pdfTeX) Output a substitution, |goto continue| if not possible@>;
+continue:
+@z
+
+% _____________________________________________________________________________
+%
+% [39.735]
+% _____________________________________________________________________________
+
+@x
+@ The |pdf_vlist_out| routine is similar to |pdf_hlist_out|, but a bit simpler.
+@y
+@ @<(\pdfTeX) Output a substitution, |goto continue| if not possible@>=
+  begin
+  @<Get substitution information, check it, goto |found|
+  if all is ok, otherwise goto |continue|@>;
+found: @<Print character substition tracing log@>;
+  @<(\pdfTeX) Rebuild character using substitution information@>;
+  end
+
+@ @<(\pdfTeX) Rebuild character using substitution information@>=
+  base_x_height:=x_height(f);
+  base_slant:=slant(f)/float_constant(65536);
+@^real division@>
+  accent_slant:=base_slant; {slant of accent character font}
+  base_width:=char_width(f)(ib_c);
+  base_height:=char_height(f)(height_depth(ib_c));
+  accent_width:=char_width(f)(ia_c);
+  accent_height:=char_height(f)(height_depth(ia_c));
+  @/{compute necessary horizontal shift (don't forget slant)}@/
+  delta:=round((base_width-accent_width)/float_constant(2)+
+            base_height*base_slant-base_x_height*accent_slant);
+@^real multiplication@>
+@^real addition@>
+  @/{1. For centering/horizontal shifting insert a kern node.}@/
+  cur_h:=cur_h+delta;
+  @/{2. Then insert the accent character possibly shifted up or down.}@/
+  if ((base_height<>base_x_height) and (accent_height>0)) then
+    begin {the accent must be shifted up or down}
+    cur_v:=base_line+(base_x_height-base_height);
+    output_one_char(accent_c);
+    cur_v:=base_line;
+    end
+  else begin
+    output_one_char(accent_c);
+    end;
+  cur_h:=cur_h+accent_width;
+  @/{3. For centering/horizontal shifting insert another kern node.}@/
+  cur_h:=cur_h+(-accent_width-delta);
+  @/{4. Output the base character.}@/
+  output_one_char(base_c);
+  cur_h:=cur_h+base_width;
+
+@ The |pdf_vlist_out| routine is similar to |pdf_hlist_out|, but a bit simpler.
 @z
 
 % _____________________________________________________________________________
@@ -235,81 +370,23 @@ pdf_print("/Producer (MiKTeX pdfTeX-");
 
 % _____________________________________________________________________________
 %
-% [40.813]
+% [56.1429]
 % _____________________________________________________________________________
 
 @x
-@!pdf_font_blink: ^internal_font_number; {link to base font (used for expanded fonts only)}
-@!pdf_font_elink: ^internal_font_number; {link to expanded fonts (used for base fonts only)}
-@!pdf_font_stretch: ^integer; {limit of stretching}
-@!pdf_font_shrink: ^integer; {limit of shrinking}
-@!pdf_font_step: ^integer;  {amount of one step of expansion}
-@!pdf_font_expand_ratio: ^integer; {expansion ratio of a particular font}
-@!pdf_font_auto_expand: ^boolean; {this font is auto-expanded?}
-@!pdf_font_lp_base: ^integer; {base of left-protruding factor}
-@!pdf_font_rp_base: ^integer; {base of right-protruding factor}
-@!pdf_font_ef_base: ^integer; {base of font expansion factor}
+    if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
 @y
-@!pdf_font_blink: array[0..0] of internal_font_number; {link to base font (used for expanded fonts only)}
-@!pdf_font_elink: array[0..0] of internal_font_number; {link to expanded fonts (used for base fonts only)}
-@!pdf_font_stretch: array[0..0] of integer; {limit of stretching}
-@!pdf_font_shrink: array[0..0] of integer; {limit of shrinking}
-@!pdf_font_step: array[0..0] of integer;  {amount of one step of expansion}
-@!pdf_font_expand_ratio: array[0..0] of integer; {expansion ratio of a particular font}
-@!pdf_font_auto_expand: array[0..0] of boolean; {this font is auto-expanded?}
-@!pdf_font_lp_base: array[0..0] of integer; {base of left-protruding factor}
-@!pdf_font_rp_base: array[0..0] of integer; {base of right-protruding factor}
-@!pdf_font_ef_base: array[0..0] of integer; {base of font expansion factor}
-@z
-
-% _____________________________________________________________________________
-%
-% [57.1471]
-% _____________________________________________________________________________
-
-@x
-@<Dump the string pool@>;
-@y
-dump_int(pdf_output);
-dump_int(pdf_compress_level);
-dump_int(pdf_decimal_digits);
-dump_int(pdf_move_chars);
-dump_int(pdf_image_resolution);
-dump_int(pdf_pk_resolution);
-dump_int(pdf_unique_resname);
-{dump_int(pdf_option_pdf_minor_version);}
-dump_int(pdf_option_always_use_pdfpagebox);
-dump_int(pdf_option_pdf_inclusion_errorlevel);
-dump_int(pdf_h_origin);
-dump_int(pdf_v_origin);
-dump_int(pdf_page_width);
-dump_int(pdf_page_height);
-@<Dump the string pool@>;
-@z
-
-% _____________________________________________________________________________
-%
-% [57.1472]
-% _____________________________________________________________________________
-
-@x
-@<Undump the string pool@>;
-@y
-undump_int(pdf_output);   {undump |pdf_output| mode flag}
-undump_int(pdf_compress_level);
-undump_int(pdf_decimal_digits);
-undump_int(pdf_move_chars);
-undump_int(pdf_image_resolution);
-undump_int(pdf_pk_resolution);
-undump_int(pdf_unique_resname);
-{undump_int(pdf_option_pdf_minor_version);}
-undump_int(pdf_option_always_use_pdfpagebox);
-undump_int(pdf_option_pdf_inclusion_errorlevel);
-undump_int(pdf_h_origin);
-undump_int(pdf_v_origin);
-undump_int(pdf_page_width);
-undump_int(pdf_page_height);
-@<Undump the string pool@>;
+    if pdf_font_step[f] = 0 then begin
+       if s>0 then
+         begin if s=font_size[f] then goto common_ending;
+         end
+       else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+         goto common_ending;
+    end
 @z
 
 % _____________________________________________________________________________
@@ -333,17 +410,6 @@ main_control; {come to life}
 pdf_init_map_file('pdftex.map');
 @y
 pdf_init_map_file('psfonts.map');
-@z
-
-% _____________________________________________________________________________
-%
-% [60.1609]
-% _____________________________________________________________________________
-
-@x
-@!dest_names: ^dest_name_entry;
-@y
-@!dest_names: array [0..0] of dest_name_entry;
 @z
 
 % _____________________________________________________________________________
@@ -468,6 +534,11 @@ for font_k := font_base to font_max do begin
     pdf_font_lp_base[font_k] := 0;
     pdf_font_rp_base[font_k] := 0;
     pdf_font_ef_base[font_k] := 0;
+    pdf_font_kn_bs_base[font_k] := 0;
+    pdf_font_st_bs_base[font_k] := 0;
+    pdf_font_sh_bs_base[font_k] := 0;
+    pdf_font_kn_bc_base[font_k] := 0;
+    pdf_font_kn_ac_base[font_k] := 0;
 end;
 @z
 

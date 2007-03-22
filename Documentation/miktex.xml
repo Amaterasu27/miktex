@@ -5,9 +5,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2469">
-<!ENTITY month "October 2006">
-<!ENTITY date "October 05, 2006">
+<!ENTITY rev "2.6.2637">
+<!ENTITY month "March 2007">
+<!ENTITY date "March 22, 2007">
 
 <!ENTITY mfappdefaults SYSTEM "../Admin/Defaults/mfapp.defaults">
 <!ENTITY mfdefaults SYSTEM "../Admin/Defaults/mf.defaults">
@@ -45,7 +45,7 @@
 <!ENTITY manmthelp SYSTEM "Ref/mthelp.xml">
 <!ENTITY manmtprint SYSTEM "Ref/mtprint.xml">
 <!ENTITY manomega SYSTEM "Ref/omega.xml">
-<!ENTITY manpdfetex SYSTEM "Ref/pdfetex.xml">
+<!ENTITY manpdftex SYSTEM "Ref/pdftex.xml">
 <!ENTITY manpdftexcfg SYSTEM "Ref/pdftexcfg.xml">
 <!ENTITY mansetupwiz SYSTEM "Ref/setupwiz.xml">
 <!ENTITY mantex SYSTEM "Ref/tex.xml">
@@ -501,7 +501,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 &manmthelp;
 &manmtprint;
 &manomega;
-&manpdfetex;
+&manpdftex;
 &mansetupwiz;
 &mantex;
 &mantexify;

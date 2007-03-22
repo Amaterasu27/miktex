@@ -1,6 +1,6 @@
 /* miktex/texmfapp.h: TeX/MF common implementation		-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -32,15 +32,7 @@
 #  define MIKTEX_TEX_COMPILER 1
 #endif
 
-#if defined(MIKTEX_PDFETEX)
-#  define MIKTEX_TEX_COMPILER 1
-#endif
-
 #if defined(MIKTEX_OMEGA)
-#  define MIKTEX_TEX_COMPILER 1
-#endif
-
-#if defined(MIKTEX_ETEX)
 #  define MIKTEX_TEX_COMPILER 1
 #endif
 
