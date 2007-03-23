@@ -1,6 +1,6 @@
 /* path.cpp: path name utilities
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -93,7 +93,7 @@ Utils::IsAbsolutePath (/*[in]*/ const MIKTEXCHAR * lpszPath)
       return (true);
     }
 #if defined(MIKTEX_WINDOWS)
-  else if (IsAlpha(static_cast<MIKTEXUCHAR>(lpszPath[0])) // "C:\xyz\foo.txt"
+  else if (IsDriveLetter(lpszPath[0]) // "C:\xyz\foo.txt"
 	   && lpszPath[1] == T_(':')
 	   && IsDirectoryDelimiter(lpszPath[2]))
     {
