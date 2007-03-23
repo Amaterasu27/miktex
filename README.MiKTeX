@@ -1,4 +1,4 @@
-Copyright (C) 2000-2006 Christian Schenk
+Copyright (C) 2000-2007 Christian Schenk
   
 This file is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -28,40 +28,49 @@ C++ COMPILER
 ------------
 
 	* Microsoft Visual C++ 8.0 Professional
-		http://www.microsoft.com
+	  The professional edition is needed. The free express edition
+	  does not include ATL/MFC.
+
+WINDOWS SDK
+-----------
+
+	* Microsoft Windows SDK
+	  Don't install the C++ compiler included in the SDK.
 
 BUILD SYSTEM
 ------------
 
-	* CMake (minimum required version: 2.4.4)
-		http://www.cmake.org
+	* CMake
+	  The minimum required version is 2.4.6.
+	  http://www.cmake.org
 
-
-FREE TOOLS YOU WILL NEED
-------------------------
+BUILD UTILITIES
+---------------
 
 	* ActivePerl
-		http://www.activestate.com
+	  http://www.activestate.com
 
-	* Cygwin (full install)
-		http://www.cygwin.com
+	* Cygwin
+	  Install all packages.
+	  http://www.cygwin.com
 
 	* ImageMagick
-		http://www.imagemagick.org
+	  http://www.imagemagick.org
 
         * Microsoft HTML Help SDK
-		http://www.microsoft.com
 
-	* MiKTeX (full install)
-		http://miktex.org
+	* MiKTeX 2.6
+	  Install all packages.
+	  http://miktex.org
 
 	* xsltproc
-		http://xmlsoft.org
+	  http://xmlsoft.org
 
 BUILDING MIKTEX
 ---------------
 
-Run CMake to produce the NMake makefiles customized for your system:
+Change into the MiKTeX source directory and run CMake to produce the
+NMake makefiles customized for your system:
 
     cmake -G "NMake Makefiles"
 
