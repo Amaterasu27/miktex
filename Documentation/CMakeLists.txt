@@ -175,7 +175,7 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mthelp.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mtprint.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/omega.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Ref/pdfetex.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Ref/pdftex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/pdftexcfg.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/setupwiz.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/tex.xml

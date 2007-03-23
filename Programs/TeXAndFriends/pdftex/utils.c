@@ -242,7 +242,10 @@ void pdftex_fail(const char *fmt, ...)
     removepdffile();
     safe_print(" ==> Fatal error occurred, no output PDF file produced!");
     println();
-#if defined(MIKTEX)
+#if defined(MIKTEX) && defined(__cplusplus)
+    // calling exit() is not the recommended way to terminate a C++
+    // program; we do better by throwing an exeption (which will be
+    // caught in main()
     throw (1);
 #else
     if (kpathsea_debug) {
@@ -323,12 +326,19 @@ void setjobid(int year, int month, int day, int time)
         strlen(ptexbanner) +
         strlen(versionstring) + strlen(kpathsea_version_string);
     s = xtalloc(slen, char);
+#if defined(MIKTEX)
+    i = snprintf(s, slen,
+                 "%.4d/%.2d/%.2d %.2d:%.2d %s %s %s",
+                 year, month, day, time / 60, time % 60,
+                 name_string, format_string, ptexbanner);
+#else
     /* The Web2c version string starts with a space.  */
     i = snprintf(s, slen,
                  "%.4d/%.2d/%.2d %.2d:%.2d %s %s %s%s %s",
                  year, month, day, time / 60, time % 60,
                  name_string, format_string, ptexbanner,
                  versionstring, kpathsea_version_string);
+#endif
     check_nprintf(i, slen);
     job_id_string = xstrdup(s);
     xfree(s);
@@ -350,9 +360,14 @@ void makepdftexbanner(void)
         strlen(ptexbanner) +
         strlen(versionstring) + strlen(kpathsea_version_string);
     s = xtalloc(slen, char);
+#if defined(MIKTEX)
+    i = snprintf(s, slen,
+                 "%s", ptexbanner);
+#else
     /* The Web2c version string starts with a space.  */
     i = snprintf(s, slen,
                  "%s%s %s", ptexbanner, versionstring, kpathsea_version_string);
+#endif
     check_nprintf(i, slen);
     pdftexbanner = maketexstring(s);
     xfree(s);

@@ -420,7 +420,7 @@ pdf_init_map_file('psfonts.map');
 @x
 @!eof_seen : array[1..max_in_open] of boolean; {has eof been seen?}
 @y
-@!eof_seen : array[1..max_in_open_def] of boolean; {has eof been seen?}
+@!eof_seen : ^boolean; {has eof been seen?}
 @z
 
 % _____________________________________________________________________________
@@ -454,8 +454,8 @@ var p:0..nest_size_def; {index into |nest|}
 @!grp_stack : array[0..max_in_open] of save_pointer; {initial |cur_boundary|}
 @!if_stack : array[0..max_in_open] of pointer; {initial |cond_ptr|}
 @y
-@!grp_stack : array[0..max_in_open_def] of save_pointer; {initial |cur_boundary|}
-@!if_stack : array[0..max_in_open_def] of pointer; {initial |cond_ptr|}
+@!grp_stack : ^save_pointer; {initial |cur_boundary|}
+@!if_stack : ^pointer; {initial |cond_ptr|}
 @z
 
 % _____________________________________________________________________________

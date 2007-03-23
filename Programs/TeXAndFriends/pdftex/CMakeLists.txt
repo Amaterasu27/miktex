@@ -141,10 +141,8 @@ add_custom_command(
 )
 
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
-file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
-file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #include <direct.h>
