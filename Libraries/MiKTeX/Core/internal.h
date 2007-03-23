@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -2177,8 +2177,7 @@ public:
   locale &
   GetDefaultLocale ()
   {
-    MIKTEX_ASSERT (theSession != 0);
-    return (theSession->defaultLocale);
+    return (GetSession()->defaultLocale);
   }
 
 public:
@@ -2725,6 +2724,21 @@ ToUpper (/*[in]*/ MIKTEXCHAR ch)
 {
   return (CTYPE_FACET.toupper(ch));
 }
+
+/* _________________________________________________________________________
+
+   IsDriveLetter
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsDriveLetter (/*[in]*/ MIKTEXCHAR ch)
+{
+  return (ch >= T_('A') && ch <= T_('Z')
+	  || ch >= T_('a') && ch <= T_('z'));
+}
+#endif
 
 /* _________________________________________________________________________
 
