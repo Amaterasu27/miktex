@@ -1,6 +1,6 @@
 /* SetupWizard.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -127,7 +127,7 @@ SetupWizard::OnInitDialog ()
       if (theApp.isMiKTeXDirect)
 	{
 	  title.Format (T_("MiKTeX %s Setup"),
-			MIKTEXTEXT(MIKTEX_VERSION_STR));
+			MIKTEXTEXT(MIKTEX_FULL_VERSION_STR));
 	}
       else if (theApp.prefabricated)
 	{
@@ -137,15 +137,15 @@ SetupWizard::OnInitDialog ()
 	    {
 	    case PackageLevel::Essential:
 	      prefix = T_("Essential ");
-	      version = MIKTEXTEXT(VER_FILEVERSION_STR);
+	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    case PackageLevel::Basic:
 	      prefix = T_("Basic ");
-	      version = MIKTEXTEXT(VER_FILEVERSION_STR);
+	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    case PackageLevel::Complete:
 	      prefix = T_("");
-	      version = MIKTEXTEXT(MIKTEX_VERSION_STR);
+	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    default:
 	      MIKTEX_ASSERT (false);

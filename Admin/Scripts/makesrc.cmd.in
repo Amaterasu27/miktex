@@ -1,0 +1,20 @@
+@echo off
+
+setlocal
+
+set series=@MIKTEX_SERIES_STR@
+set tag=@MIKTEX_VERSION_TAG_STR@
+set srcname=miktex-%tag%-src
+set destdir=C:\MiKTeX-SRCs\%series%
+
+svn export https://miktex.svn.sourceforge.net/svnroot/miktex/miktex/tags/%tag% "%destdir%"
+
+pushd "%destdir%"
+cd ..
+move %series% %srcname%
+if exist %srcname%.zip del %srcname%.zip
+zip -9r %srcname%.zip %srcname%
+move %srcname% %series%
+popd
+
+endlocal

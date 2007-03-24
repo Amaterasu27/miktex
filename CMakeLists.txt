@@ -64,11 +64,26 @@ if(MIKTEX_RELEASE_STATE EQUAL 0)
       CACHE STRING
       "The MikTeX version string."
       FORCE)
+  set(MIKTEX_FULL_VERSION_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      CACHE STRING
+      "The full MikTeX version tag string."
+      FORCE)
+  set(MIKTEX_VERSION_TAG_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      CACHE STRING
+      "The MikTeX version tag string."
+      FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
   set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR} RC ${MIKTEX_RELEASE_NUM}"
       CACHE STRING
       "The MikTeX version string."
+      FORCE)
+  set(MIKTEX_VERSION_TAG_STR
+      "${MIKTEX_SERIES_STR}-rc-${MIKTEX_RELEASE_NUM}"
+      CACHE STRING
+      "The MikTeX version tag string."
       FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
   set(MIKTEX_VERSION_STR
@@ -76,13 +91,31 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 2)
       CACHE STRING
       "The MikTeX version string."
       FORCE)
+  set(MIKTEX_VERSION_TAG_STR
+      "${MIKTEX_SERIES_STR}-beta-${MIKTEX_RELEASE_NUM}"
+      CACHE STRING
+      "The MikTeX version tag string."
+      FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
   SET(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} snapshot"
       CACHE STRING
       "The MikTeX version string."
       FORCE)
+  SET(MIKTEX_VERSION_TAG_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}-snapshot"
+      CACHE STRING
+      "The MikTeX version tag string."
+      FORCE)
 endif(MIKTEX_RELEASE_STATE EQUAL 0)
+
+if(NOT MIKTEX_FULL_VERSION_STR)
+  set(MIKTEX_FULL_VERSION_STR
+      "${MIKTEX_VERSION_STR}"
+      CACHE STRING
+      "The full MikTeX version string."
+      FORCE)
+endif(NOT MIKTEX_FULL_VERSION_STR)
 
 include(CPack)
 
@@ -359,6 +392,9 @@ configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesdk.cmd)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesrc.cmd)
 
 configure_file(${CMAKE_SOURCE_DIR}/SDK/doc/mainpage.doxygen.in
 	       ${CMAKE_BINARY_DIR}/SDK/doc/mainpage.doxygen)
