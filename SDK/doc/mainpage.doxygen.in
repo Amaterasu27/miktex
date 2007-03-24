@@ -1,5 +1,5 @@
 /**
- * @mainpage MiKTeX @MIKTEX_SERIES_STR@ SDK
+ * @mainpage MiKTeX @MIKTEX_VERSION_STR@ SDK
  *
  * @section intro Introduction
  *
@@ -15,10 +15,12 @@
  *  manager. The interface can be used to install/remove packages and
  *  to retrieve informataion about the MiKTeX installation.
  *
- * @section getting Getting the MiKTeX @MIKTEX_SERIES_STR@ SDK
+ * @section getting Getting the MiKTeX @MIKTEX_VERSION_STR@ SDK
  *
- * The MiKTeX @MIKTEX_SERIES_STR@ SDK will be made available when
- * MiKTeX @MIKTEX_SERIES_STR@ comes out.
+ * The MiKTeX @MIKTEX_VERSION_STR@ SDK can be downloaded from the SDK
+ * home page:
+ * <a href="http://miktex.org/@MIKTEX_SERIES_STR@/sdk.aspx">
+ * http://miktex.org/@MIKTEX_SERIES_STR@/sdk.aspx</a>
  *
  * @section prerequisites What you need
  *
