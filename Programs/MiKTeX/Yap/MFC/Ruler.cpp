@@ -49,9 +49,9 @@ MakeTransparent (/*[in]*/ HWND		hwnd,
   const long my_LWA_ALPHA = 0x00000002;
   const LONG_PTR my_WS_EX_LAYERED = 0x00080000;
 
-  typedef DWORD (WINAPI * FuncPtr) (HWND, DWORD, BYTE, DWORD);
-  static DllProc4<DWORD, HWND, DWORD, BYTE, DWORD>
-    pFunc (T_("user32"), T_("MakeTransparent"));
+  static DllProc4<BOOL, HWND, COLORREF, BYTE, DWORD>
+    SetLayeredWindowAttributes_
+    (T_("user32"), T_("SetLayeredWindowAttributes"));
 #if defined(_WIN64)
   LONG_PTR newStyles;
 #else
@@ -60,10 +60,10 @@ MakeTransparent (/*[in]*/ HWND		hwnd,
   newStyles = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
   newStyles |= my_WS_EX_LAYERED;
   SetWindowLongPtr (hwnd, GWL_EXSTYLE, newStyles);
-  if (! pFunc(hwnd,
-	      transparencyColor,
-	      opacity,
-	      my_LWA_ALPHA))
+  if (! SetLayeredWindowAttributes_(hwnd,
+				    transparencyColor,
+				    opacity,
+				    my_LWA_ALPHA))
     {
       FATAL_WINDOWS_ERROR (T_("SetLayeredWindowAttributes"), 0);
     }
