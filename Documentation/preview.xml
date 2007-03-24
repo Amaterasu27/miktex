@@ -50,12 +50,34 @@ of &Windows95; and &WindowsNT;.</para>
 
 <section>
 
+<title>Programs</title>
+
+<section>
+
+<title>&MetaPost;</title>
+
+<para>&MetaPost; has been upgraded to version 0.994.</para>
+
+</section>
+
+<section>
+
+<title>&pdfTeX;</title>
+
+<para>&pdfTeX; has been upgraded to version 1.40.3.</para>
+
+</section>
+
+</section>
+
+<section>
+
 <title>&WindowsVista; Adaption</title>
 
 <para>&MiKTeX25; was not designed to be run on &WindowsVista;. But
 &Microsoft; added some shims to &WindowsVista; specifically for the
 &MiKTeX25; executables, i.e., &WindowsVista; includes built-in
-application-compatibility shims for &MiKTeX25;.</para>
+application-compatibility adaptions for &MiKTeX25;.</para>
 
 <para>The shims do not work for &MiKTeX26;. For &MiKTeX26; it was
 necessary to implement code that copes with User Account Control
@@ -98,28 +120,6 @@ button entails the &WindowsVista; consent prompt.</para>
 read the <ulink
 url="http://docs.miktex.org/2.6/manual/setupwiz.html">man
 page</ulink>, for more information.</para>
-
-</section>
-
-<section>
-
-<title>Programs</title>
-
-<section>
-
-<title>&MetaPost;</title>
-
-<para>&MetaPost; has been upgraded to version 0.994.</para>
-
-</section>
-
-<section>
-
-<title>&pdfTeX;</title>
-
-<para>&pdfTeX; has been upgraded to version 1.40.3.</para>
-
-</section>
 
 </section>
 
