@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2005 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MPC.
 
@@ -996,7 +996,6 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 
   ArchiveFileType archiveFileType (ArchiveFileType::None);
 
-#if 1
   // check to see whether a legacy cabinet file exists
   archiveFile.Set (destDir,
 		   packageInfo.deploymentName.c_str(),
@@ -1035,7 +1034,45 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
 	}
     }
+
+  // check to see whether a .tar.bz2 file exists
+  archiveFile.Set (destDir,
+		   packageInfo.deploymentName.c_str(),
+		   MIKTEX_TARBZIP2_FILE_SUFFIX);
+  if (File::Exists(archiveFile))
+    {
+      // extract the package definition file
+      TempFile packageDefinitionFile;
+      PathName filter (texmfPrefix);
+      filter += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+      filter += packageInfo.deploymentName.c_str();
+      filter.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+#if defined(MIKTEX_WINDOWS)
+      filter.ToUnix ();
 #endif
+      tstring command ("tar --force-local --to-stdout -xvjf \"");
+      command += archiveFile.Get();
+      command += "\" \"";
+      command += filter.Get();
+      command += "\" > \"";
+      command += packageDefinitionFile.GetPathName().Get();
+      command += "\"";
+      Process::ExecuteSystemCommand (command.c_str());
+
+      // read the package definition file
+      PackageInfo existingPackageInfo =
+	PackageManager::ReadPackageDefinitionFile
+	(packageDefinitionFile.GetPathName(),
+	 texmfPrefix.c_str());
+      
+      // check to see whether we can keep the .tar.bz2 file
+      if (packageInfo.digest == existingPackageInfo.digest)
+	{
+	  reuseExisting = true;
+	  archiveFileType = ArchiveFileType::TarBzip2;
+	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
+	}
+    }
 
   if (! reuseExisting)
     {
