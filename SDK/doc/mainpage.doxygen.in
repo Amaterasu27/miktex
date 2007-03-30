@@ -36,13 +36,19 @@
  *
  * @example findpk.cpp
  * Find a Pk font.
+ * Uses the FindPkFont() method to locate a Pk font file. Written in C++.
  * A short C++ program which locates Pk font files.
  *
  * @example findpk.pl
  * Find a Pk font.
- * A short Perl script which locates Pk font files.
+ * Uses the FindPkFont() method to locate a Pk font file. Written in Perl.
  *
  * @example installpackage.pl
  * Install a package.
- * A short Perl script which installs a package.
+ * Uses the package manager interface to install a package. Written in Perl.
+ *
+ * @example setupinfo.pl
+ * Print setup info.
+ * Uses the session interface to retrieve information about the MiKTeX
+ * setup. Written in Perl.
  */
