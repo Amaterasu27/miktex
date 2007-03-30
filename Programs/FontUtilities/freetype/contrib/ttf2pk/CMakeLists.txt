@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -69,12 +69,12 @@ set(ttf2tfm_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(ttf2tfm_sources ${ttf2pk_sources}
-    ttf2pk.rc
+  set(ttf2tfm_sources ${ttf2tfm_sources}
+    ttf2tfm.rc
   )
 endif(NATIVE_WINDOWS)
 
-add_executable(ttf2tfm ${ttf2pk_sources})
+add_executable(ttf2tfm ${ttf2tfm_sources})
 
 merge_trustinfo_manifest(ttf2tfm asInvoker)
 
