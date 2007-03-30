@@ -54,7 +54,7 @@ extern char *newstring P1H(char *) ;
  */
 
 #ifndef SECURE
-extern Boolean secure;
+extern int secure ;
 #endif
 #ifdef DEBUG
 extern integer debug_flag;
@@ -95,9 +95,9 @@ search P3C(kpse_file_format_type, format, char *, file, char *, mode)
      arbitrary files.  Further modified by Y. Oiwa. */
 #ifndef SECURE
 #  if defined(MIKTEX)
-  if (secure && ! miktex_allow_all_paths) {
+  if (secure == 2 && ! miktex_allow_all_paths) {
 #  else
-  if (secure) {
+  if (secure == 2) {
 #  endif
 #endif
     /* an absolute path is denied */

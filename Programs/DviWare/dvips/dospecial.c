@@ -88,6 +88,16 @@ void specerror P1C(char *, s)
    }
 }
 
+static void outputstring P1C(register char *, p)
+{
+   (void)putc('\n', bitfile) ;
+   while(*p) {
+      (void)putc(*p, bitfile) ;
+      p++ ;
+   }
+   (void)putc('\n', bitfile) ;
+}
+
 static void trytobreakout P1C(register char *, p)
 {
    register int i ;
@@ -96,6 +106,16 @@ static void trytobreakout P1C(register char *, p)
 
    i = 0 ;
    (void)putc('\n', bitfile) ;
+
+   if(*p == '%') {
+      while(*p) {
+         (void)putc(*p, bitfile) ;
+         p++ ;
+      }
+      (void)putc('\n', bitfile) ;
+      return ;
+   }
+
    while (*p) {
       if (i > 65 && *p == ' ' && instring == 0) {
          (void)putc('\n', bitfile) ;
@@ -593,10 +613,10 @@ case 'p':
         if (p[3]==':') {
            if (strncmp(p+4, "[begin]", 7) == 0) {
               hvpos() ;
-              trytobreakout(&p[11]);
+              outputstring(&p[11]) ;
            } else if (strncmp(p+4, "[end]", 5) == 0)
-              trytobreakout(&p[9]);
-           else trytobreakout(&p[4]);
+              outputstring(&p[9]);
+           else outputstring(&p[4]);
         } else if (strncmp(p+3, " plotfile ", 10) == 0) {
              char *sfp ;
              hvpos() ;
@@ -620,7 +640,7 @@ case 'p':
            /* End TJD changes */
         } else {
            hvpos() ;
-           trytobreakout(&p[3]);
+           outputstring(&p[3]);
            psflush() ;
            hvpos() ;
         }
@@ -756,8 +776,8 @@ case '"':
    hvpos() ;
    cmdout("@beginspecial") ;
    cmdout("@setspecial") ;
-   trytobreakout(p+1) ;
-   cmdout("\n@endspecial") ;
+   outputstring(p+1) ;
+   cmdout("@endspecial") ;
    return ;
    break ;
 default:

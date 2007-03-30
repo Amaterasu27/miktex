@@ -5,12 +5,9 @@
  *
  * (minor mods by don on 5 Jan 90 to accommodate highres PostScript)
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * $Log: drawPS.c,v $
- * Revision 1.3  2005/01/16 22:41:03  csc
- * *** empty log message ***
- *
+ * $Log:	drawPS.c,v $
  * Revision 1.1  90/03/10  20:32:48  grunwald
  * Initial revision
  *
@@ -39,7 +36,7 @@
  */
 #ifndef lint
 char RCSid[] =
-  "@(#)$Header: /cvsroot/miktex/miktex/dvipsk/drawPS.c,v 1.3 2005/01/16 22:41:03 csc Exp $ (UCLA)";
+  "@(#)$Header: /usr/local/src/TeX/Dvips-5.0.2/RCS/drawPS.c,v 1.1 90/03/10 20:32:48 grunwald Exp $ (UCLA)";
 #endif
 
 /*

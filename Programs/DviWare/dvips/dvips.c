@@ -67,7 +67,7 @@ Boolean nosmallchars ;        /* disable small char optimization for X4045? */
 Boolean cropmarks ;           /* add cropmarks? */
 Boolean abspage = 0 ;         /* are page numbers absolute? */
 Boolean tryepsf = 0 ;         /* should we try to make it espf? */
-Boolean secure = 0 ;          /* make safe for suid */
+int secure = 1 ;              /* make safe for suid */
 int secure_option = 0;        /* set by -R */
 int collatedcopies = 1 ;      /* how many collated copies? */
 int sectioncopies = 1 ;       /* how many times to repeat each section? */
@@ -162,6 +162,7 @@ integer swmem ;               /* font memory in the PostScript printer */
 int quiet ;                   /* should we only print errors to stderr? */
 int filter ;                  /* act as filter default output to stdout,
                                                default input to stdin? */
+int dvips_debug_flag ;        /* output config and map files to stderr if 1 */
 int prettycolumn ;            /* the column we are at when running pretty */
 int gargc ;                   /* global argument count */
 char **gargv ;                /* global argument vector */
@@ -638,9 +639,9 @@ main P2C(int, argc, char **, argv)
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
         extern KPSEDLL char *kpathsea_version_string;
-        puts ("dvips(k) 5.95b");
+        puts ("dvips(k) 5.96");
         puts (kpathsea_version_string);
-        puts ("Copyright (C) 2005 Radical Eye Software.\n\
+        puts ("Copyright (C) 2007 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -664,6 +665,20 @@ Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
    }
 #endif
 #endif
+   dvips_debug_flag = 0 ;
+   { /* for compilers incompatible with c99 */
+      char *s = (char *)getenv ("DVIPSDEBUG") ;
+      if (s) {
+         dvips_debug_flag = 1 ;
+         free (s) ;
+      } else {
+         s = (char *) getenv ("KPATHSEA_DEBUG") ;
+         if (s) {
+           dvips_debug_flag = 1 ;
+           free (s) ;
+         }
+      }
+   }
    initialize() ;
    checkenv(0) ;
 #if defined(MIKTEX)
@@ -809,8 +824,15 @@ case 'k':
                cropmarks = (*p != '0') ;
                break ;
 case 'R':
-               secure = (*p != '0') ;
-               secure_option = 1 ;
+               if (*p == '0') {
+                  secure = 0 ;
+               } else if (*p == '2') {
+                  secure = 2 ;
+               } else {
+                  secure = 1 ;
+               }
+               if (secure)
+                  secure_option = 1 ; /* Never used */
                break ;
 case 'S':
                if (*p == 0 && argv[i+1])
@@ -1202,8 +1224,14 @@ default:
    revpslists() ;
    getpsinfo((char *)NULL) ;
    revpslists() ;
-   if (!quiet)
-      (void)fprintf(stderr, "%s %s\n", banner, banner2) ;
+   if (dvips_debug_flag) {
+      if (!quiet)
+         (void)fprintf(stderr, "\n%s %s\n", banner, banner2) ;
+      prettycolumn = 0 ;
+   } else {
+      if (!quiet)
+         (void)fprintf(stderr, "%s %s\n", banner, banner2) ;
+   }
    if (*iname) {
       dvifile = fopen(iname, READBIN) ;
 /*

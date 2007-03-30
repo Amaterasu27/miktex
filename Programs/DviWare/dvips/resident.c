@@ -32,6 +32,8 @@ struct resfont *reshash[RESHASHPRIME] ;
  *   These are the external variables we use.
  */
 extern char *realnameoffile ;
+extern int prettycolumn ;
+extern int dvips_debug_flag ;
 #ifdef DEBUG
 extern integer debug_flag;
 #endif  /* DEBUG */
@@ -96,7 +98,7 @@ extern unsigned lastresortsizes[] ;
 #endif
 extern integer hoff, voff ;
 extern struct papsiz *papsizes ;
-extern Boolean secure ;
+extern int secure ;
 extern integer hpapersize, vpapersize ;
 extern int landscape ;
 #if defined(MIKTEX)
@@ -456,6 +458,14 @@ getdefaults P1C(char *, s)
 #else
    if ((deffile=search(d,PSname,READ))!=NULL) {
 #endif
+   if (dvips_debug_flag && !quiet) {
+      if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+         fprintf(stderr, "\n") ;
+         prettycolumn = 0 ;
+      }
+      (void)fprintf(stderr, "{%s}", realnameoffile);
+      prettycolumn += strlen(realnameoffile) + 2 ;
+   }
 #ifdef DEBUG
      if (dd (D_CONFIG)) {
        fprintf (stderr, "Reading dvips config file `%s':\n", realnameoffile);
@@ -732,7 +742,7 @@ case 'E' :
          error("dvips was compiled with SECURE, which disables E in config") ;
 #else
          if (secure) {
-            error("dvips -R option used, which disables E in config") ;
+            error("E in config is disabled. To enable E, set z0 before E") ;
             break ;
          }
          (void)system(was_inline+1) ;
@@ -778,10 +788,16 @@ case 'z' :
 	 if (secure_option && secure && was_inline[1] == '0') {
 	   fprintf (stderr,
 	            "warning: %s: z0 directive ignored since -R1 given\n",
-	            realnameoffile);
-	 } else {
-           secure = (was_inline[1] != '0') ;
-	 }
+	            realnameoffile); /* Never happen */
+         } else {
+            if (was_inline[1] == '0') {
+               secure = 0 ;
+            } else if (was_inline[1] == '2') {
+               secure = 2 ;
+            } else {
+               secure = 1 ;
+            }
+         }
          break ;
 case 'q' : case 'Q' :
          quiet = (was_inline[1] != '0') ;
@@ -864,9 +880,9 @@ default:
 */
 void getpsinfo P1C(char *, name)
 {
-    FILE *deffile ;
-    register char *p ;
-    char *specinfo, *downloadinfo ;
+   FILE *deffile ;
+   register char *p ;
+   char *specinfo, *downloadinfo ;
    char downbuf[500] ;
    char specbuf[500] ;
    int slen ;
@@ -874,6 +890,14 @@ void getpsinfo P1C(char *, name)
    if (name == 0)
       name = psmapfile ;
    if ((deffile=search(mappath, name, READ))!=NULL) {
+      if (dvips_debug_flag && !quiet) {
+         if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
+            fprintf(stderr, "\n") ;
+            prettycolumn = 0 ;
+         }
+         (void)fprintf(stderr, "{%s}", realnameoffile);
+         prettycolumn += strlen(realnameoffile) + 2 ;
+      }
       while (fgets(was_inline, INLINE_SIZE, deffile)!=NULL) {
          p = was_inline ;
          if (*p > ' ' && *p != '*' && *p != '#' && *p != ';' && *p != '%') {
