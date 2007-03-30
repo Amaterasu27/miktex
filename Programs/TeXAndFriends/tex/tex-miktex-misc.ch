@@ -1,6 +1,6 @@
 %% tex-miktex.ch: WEB Change File for TeX
 %% 
-%% Copyright (C) 1991-2006 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -1089,6 +1089,32 @@ tini
 @!l:0..half_error_line_def; {length of descriptive information on line 1}
 @!m:integer; {context information gathered for line 2}
 @!n:0..error_line_def; {length of line 1}
+@z
+
+% _____________________________________________________________________________
+%
+% [23.328]
+% _____________________________________________________________________________
+
+@x
+line_stack[index]:=line; start:=first; state:=mid_line;
+@y
+source_filename_stack[index]:=0;
+full_source_filename_stack[index]:=0;
+line_stack[index]:=line; start:=first; state:=mid_line;
+@z
+
+% _____________________________________________________________________________
+%
+% [23.331]
+% _____________________________________________________________________________
+
+@x
+state:=new_line; start:=1; index:=0; line:=0; name:=0;
+@y
+state:=new_line; start:=1; index:=0; line:=0; name:=0;
+source_filename_stack[1]:=0;
+full_source_filename_stack[1]:=0;
 @z
 
 % _____________________________________________________________________________
