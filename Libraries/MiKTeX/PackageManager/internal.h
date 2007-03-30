@@ -336,7 +336,7 @@ inline
 MiKTeX::Core::PathName
 PrefixedPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
 {
-  MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszPath));
+  MIKTEX_ASSERT (! MiKTeX::Core::Utils::IsAbsolutePath(lpszPath));
   return (MiKTeX::Core::PathName(TEXMF_PREFIX_DIRECTORY, lpszPath, 0));
 }
 
