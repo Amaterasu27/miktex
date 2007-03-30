@@ -45,7 +45,7 @@ $Id$
 #  include <miktex/kpsemu.h>
 #  include "mp-miktex.h"
 #  define snprintf _snprintf
-#endif /* MiKTeX */
+#endif
 
 
 /* pdftexlib type declarations */
@@ -160,6 +160,7 @@ extern fm_entry *new_fm_entry (void);
 extern void delete_fm_entry (fm_entry *);
 extern int avl_do_entry (fm_entry *, int);
 #if defined(MIKTEX)
+// prototypes are necessary when using a C++ compiler
 extern void mpmapfile (strnumber t);
 extern void mpmapline (strnumber t);
 extern void mpinitmapfile (int is_troff);
@@ -268,6 +269,7 @@ extern void write_enc (char **, enc_entry *, integer);
 /* writefont.c */
 extern boolean dopsfont (fontnumber);
 #if defined(MIKTEX)
+// prototypes are necessary when using a C++ compiler
 extern strnumber fmfontname (int f);
 extern void mploadencodings (int lastfnum);
 extern strnumber fmencodingname (int f);
@@ -309,6 +311,7 @@ extern void load_enc (char *, char **, char **);
 extern void writet1 (int, fm_entry *);
 extern void t1_free (void);
 #if defined(MIKTEX)
+// prototypes are necessary when using a C++ compiler
 extern int t1_updatefm (int f, fm_entry *fm);
 #endif
 
@@ -335,6 +338,7 @@ extern integer avlfindobj (integer, integer, integer);
 extern angle bezierslope(integer,integer,integer,integer,integer,integer,integer,integer,int);
 
 #if defined(MIKTEX)
+// prototypes are necessary when using a C++ compiler
 extern int loadpoolstrings (integer spare_size);
 #endif
 

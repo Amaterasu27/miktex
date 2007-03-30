@@ -299,6 +299,7 @@ void load_enc (char *enc_name, char **enc_encname, char **glyph_names)
     }
 	while (*(r-1)==' ') r--; /* strip trailing spaces from encoding name */
 #if defined(MIKTEX)
+    // cast is necessary when using a C++ compiler
     myname = (char*)xmalloc(r-enc_line);
 #else
     myname = xmalloc(r-enc_line);

@@ -182,7 +182,8 @@ char *makecstring (integer s)
         else
             allocsize = MAX_CSTRING_LEN;
 #if defined(MIKTEX)
-        cstrbuf = (char*)xrealloc (cstrbuf, sizeof (char) * allocsize);
+	// cast is necessary when using a C++ compiler
+        cstrbuf = (char*) xrealloc (cstrbuf, sizeof (char) * allocsize);
 #else
         cstrbuf = xrealloc (cstrbuf, sizeof (char) * allocsize);
 #endif

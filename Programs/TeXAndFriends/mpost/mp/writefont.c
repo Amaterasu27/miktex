@@ -114,6 +114,7 @@ strnumber fmfontsubsetname (int f) {
     if (fm != NULL && (fm->ps_name != NULL)) {
       if (is_subsetted(fm)) {
 #if defined(MIKTEX)
+		// cast is necessary when using a C++ compiler
 		s = (char*)xmalloc(strlen(fm->ps_name)+8);
 #else
 		s = xmalloc(strlen(fm->ps_name)+8);

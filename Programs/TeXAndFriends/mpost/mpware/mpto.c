@@ -33,6 +33,7 @@
 /* MetaPost itself has a configurable max line length, but we can afford to
    use smaller values than that */
 #if defined(MIKTEX)
+// allow really long lines
 #define bufsize  100000
 #else
 #define bufsize  1000
