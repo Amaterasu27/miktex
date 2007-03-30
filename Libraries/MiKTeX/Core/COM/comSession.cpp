@@ -228,6 +228,118 @@ comSession::GetErrorInfo (/*[out,retval]*/ ErrorInfo * pErrorInfo)
 
 /* _________________________________________________________________________
 
+   comSession::GetMiKTeXSetupInfo
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comSession::GetMiKTeXSetupInfo (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo)
+{
+  SessionImpl::runningAsLocalServer = true;
+  HRESULT hr = S_OK;
+  try
+    {
+      CreateSession ();
+      _bstr_t version = Utils::GetMiKTeXVersionString().c_str();
+      _bstr_t binDirectory =
+	pSession->GetSpecialPath(SpecialPath::BinDirectory).Get();
+      _bstr_t installRoot =
+	pSession->GetSpecialPath(SpecialPath::InstallRoot).Get();
+      _bstr_t commonConfigRoot;
+      _bstr_t commonDataRoot;
+      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	{
+	  commonConfigRoot =
+	    pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get();
+	  commonDataRoot =
+	    pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get();
+	}
+      else
+	{
+	  commonConfigRoot = L"";
+	  commonDataRoot = L"";
+	}
+      _bstr_t userConfigRoot =
+	pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get();
+      _bstr_t userDataRoot =
+	pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get();
+      setupInfo->sharedSetup =
+	(pSession->IsSharedMiKTeXSetup() == TriState::True);
+      setupInfo->series = MIKTEX_SERIES_INT;
+      setupInfo->numRoots = pSession->GetNumberOfTEXMFRoots();
+      setupInfo->version = version.Detach();
+      setupInfo->binDirectory = binDirectory.Detach();
+      setupInfo->installRoot = installRoot.Detach();
+      setupInfo->commonConfigRoot = commonConfigRoot.Detach();
+      setupInfo->commonDataRoot = commonDataRoot.Detach();
+      setupInfo->userConfigRoot = userConfigRoot.Detach();
+      setupInfo->userDataRoot = userDataRoot.Detach();
+      return (S_OK);
+
+    }
+  catch (const _com_error & e)
+    {
+      hr = e.Error();
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("sessionsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  return (hr);
+}
+
+/* _________________________________________________________________________
+
+   comSession::GetRootDirectory
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comSession::GetRootDirectory (/*[in]*/ LONG		rootIdx,
+			      /*[out,retval]*/ BSTR *	rootDirectory)
+{
+  SessionImpl::runningAsLocalServer = true;
+  HRESULT hr = S_OK;
+  try
+    {
+      CreateSession ();
+      *rootDirectory =
+	_bstr_t(pSession->GetRootDirectory(rootIdx).Get()).Detach();
+      return (S_OK);
+    }
+  catch (const _com_error & e)
+    {
+      hr = e.Error();
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("sessionsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  return (hr);
+}
+
+/* _________________________________________________________________________
+
    comSession::CreateSession
    _________________________________________________________________________ */
 

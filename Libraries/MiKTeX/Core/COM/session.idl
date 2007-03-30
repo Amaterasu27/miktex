@@ -29,6 +29,27 @@ import "miktexidl.idl";
 
 /* _________________________________________________________________________
    
+   MiKTeXSetupInfo
+   _________________________________________________________________________ */
+
+/// @brief Information about the MiKTeX setup.
+typedef [uuid(A889D812-7E98-4E73-A453-30C9B69A32B1)] struct MiKTeXSetupInfo
+{
+  VARIANT_BOOL sharedSetup;
+  BSTR version;
+  LONG series;
+  BSTR binDirectory;
+  LONG numRoots;
+  BSTR installRoot;
+  BSTR commonConfigRoot;
+  BSTR commonDataRoot;
+  BSTR userConfigRoot;
+  BSTR userDataRoot;
+} MiKTeXSetupInfo;
+
+
+/* _________________________________________________________________________
+   
    ISession
    _________________________________________________________________________ */
 
@@ -79,6 +100,21 @@ interface ISession : IDispatch
   ]
   HRESULT
   GetErrorInfo ([out,retval] ErrorInfo * errorInfo);
+
+  [
+    id(4),
+    helpstring("method GetMiKTeXSetupInfo")
+  ]
+  HRESULT
+  GetMiKTeXSetupInfo ([out,retval] MiKTeXSetupInfo * setupInfo);
+
+  [
+    id(5),
+    helpstring("method GetMiKTeXSetupInfo")
+  ]
+  HRESULT
+  GetRootDirectory ([in] LONG rootIdx,
+		    [out,retval] BSTR * rootDirectory);
 };
 
 /* _________________________________________________________________________

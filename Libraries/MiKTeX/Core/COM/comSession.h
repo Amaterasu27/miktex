@@ -88,6 +88,13 @@ public:
 public:
   STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo * pErrorInfo);
 
+public:
+  STDMETHOD(GetMiKTeXSetupInfo) (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo);
+
+public:
+  STDMETHOD(GetRootDirectory) (/*[in]*/ LONG		rootIdx,
+			       /*[out,retval]*/ BSTR *	rootDirectory);
+
 private:
   void
   CreateSession ();
