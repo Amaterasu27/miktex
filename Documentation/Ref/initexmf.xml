@@ -64,6 +64,16 @@
 </listitem>
 </varlistentry>
 <varlistentry>
+<term><option>--force</option></term>
+<listitem>
+<indexterm>
+<primary>--force</primary>
+</indexterm>
+<para>Force <option>--mklinks</option> to overwrite existing
+executables.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--list-modes</option></term>
 <listitem>
 <indexterm>

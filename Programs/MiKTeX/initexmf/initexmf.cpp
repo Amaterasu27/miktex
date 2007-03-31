@@ -546,7 +546,7 @@ private:
 
 private:
   void
-  MakeLinks ();
+  MakeLinks (/*[in]*/ bool force);
 
 private:
   void
@@ -688,6 +688,7 @@ enum Option
 
   OPT_DUMP,
   OPT_EDIT_CONFIG_FILE,
+  OPT_FORCE,
   OPT_LIST_MODES,
   OPT_MKLINKS,
   OPT_MKMAPS,
@@ -757,6 +758,14 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("force"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_FORCE,
+    T_("Force --mklinks to overwrite existing files."),
+    0,
   },
 
   {
@@ -945,6 +954,14 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("force"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_FORCE,
+    T_("Force --mklinks to overwrite existing files."),
+    0,
   },
 
   {
@@ -1181,6 +1198,14 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("force"), 0,
+    POPT_ARG_NONE, 0,
+    OPT_FORCE,
+    T_("Force --mklinks to overwrite existing files."),
+    0,
   },
 
   {
@@ -1889,7 +1914,7 @@ IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::MakeLinks ()
+IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 {
   PathName pathBinDir = pSession->GetSpecialPath(SpecialPath::BinDirectory);
 
@@ -1898,7 +1923,7 @@ IniTeXMFApp::MakeLinks ()
       Directory::Create (pathBinDir);
     }
 
-  bool overwrite = true;
+  bool overwrite = force;
 
   if (logStream.IsOpen())
     {
@@ -2526,6 +2551,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   TriState triSharedSetup (TriState::Undetermined);
 
   bool optDump = false;
+  bool optForce = false;
   bool optMakeMaps = false;
   bool optListFormats = false;
   bool optListModes = false;
@@ -2571,6 +2597,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	      formats.push_back (lpszOptArg);
 	    }
 	  optDump = true;
+	  break;
+
+	case OPT_FORCE:
+
+	  optForce = true;
 	  break;
 
 	case OPT_EDIT_CONFIG_FILE:
@@ -2781,7 +2812,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (optMakeLinks)
     {
-      MakeLinks ();
+      MakeLinks (optForce);
     }
 
   if (optMakeMaps)
