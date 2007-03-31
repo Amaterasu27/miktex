@@ -64,6 +64,7 @@ if(BUILDING_MIKTEX)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/faq")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/relnotes")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/roadmap")
 endif(BUILDING_MIKTEX)
 
@@ -335,7 +336,7 @@ if(BUILDING_MIKTEX)
 		${CMAKE_CURRENT_BINARY_DIR}/www/manual/images
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_BINARY_DIR}/Images
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/www/manual/images
     COMMAND
 	${CMAKE_COMMAND} -E copy
@@ -463,6 +464,7 @@ if(BUILDING_MIKTEX)
 		preview.xml
     DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/preview.xml
+        ${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${entities_ent}
 	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-preview.xsl
 	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
@@ -507,25 +509,44 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/relnotes
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/www/relnotes
     COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
+		--stringparam base.dir www/relnotes/
+		--output ${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
 		html.xsl
 		relnotes.xml
     DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
 	${html_xsl}
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
   )
 
   install(
-    FILES
-	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
-    DESTINATION
-	${docdir}
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/
+    DESTINATION	${docdir}/relnotes/
+    PATTERN	".svn" EXCLUDE
   )
 endif(BUILDING_MIKTEX)
 
@@ -624,7 +645,7 @@ if(BUILDING_MIKTEX)
 		${CMAKE_CURRENT_BINARY_DIR}/www/faq/images
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_BINARY_DIR}/Images
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/www/faq/images
     COMMAND
 	${CMAKE_COMMAND} -E copy
@@ -693,7 +714,7 @@ if(BUILDING_MIKTEX)
 		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_BINARY_DIR}/Images
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
 		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
     COMMAND
 	${CMAKE_COMMAND} -E copy
@@ -770,10 +791,10 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
-	${CMAKE_CURRENT_BINARY_DIR}/relnotes.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
   )
 endif(BUILDING_MIKTEX)

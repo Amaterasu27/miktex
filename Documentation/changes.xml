@@ -1,0 +1,111 @@
+<section>
+
+<title>System requirements</title>
+
+<para>&MiKTeX26; will run on all &Windows; variants with the exception
+of &Windows95; and &WindowsNT;.</para>
+
+</section>
+
+<section>
+
+<title>Programs</title>
+
+<section>
+
+<title>&Dvips;</title>
+
+<para>&Dvips; has been upgraded to version 5.96.</para>
+
+</section>
+
+<section>
+
+<title>&MetaPost;</title>
+
+<para>&MetaPost; has been upgraded to version 0.994.</para>
+
+</section>
+
+<section>
+
+<title>&pdfTeX;</title>
+
+<para>&pdfTeX; has been upgraded to version 1.40.3.</para>
+
+</section>
+
+</section>
+
+<section>
+
+<title>&WindowsVista; Adaption</title>
+
+<para>&MiKTeX25; was not designed to be run on &WindowsVista;. But
+&Microsoft; added some shims to &WindowsVista; specifically for the
+&MiKTeX25; executables, i.e., &WindowsVista; includes built-in
+application-compatibility adaptions for &MiKTeX25;.</para>
+
+<para>The shims do not work for &MiKTeX26;. For &MiKTeX26; it was
+necessary to implement code that copes with User Account Control
+(&UAC;). For example, &TeX; and Friends must be given permission to
+install files in the &MiKTeX; installation directory. Otherwise the
+auto-install feature will not work.</para>
+
+<para>&MiKTeX; is now &WindowsVista; compliant, more or less. For the
+user, this means that the following tasks entail the &WindowsVista;
+consent prompt:</para>
+
+<itemizedlist>
+<listitem><para>installing packages</para></listitem>
+<listitem><para>registering root directories in a shared
+&MiKTeX; environment</para></listitem>
+</itemizedlist>
+
+<para>Where possible, these administrative tasks are marked with
+the &WindowsVista; shield icon. For example, the auto-install
+confirmation window now shows as follows:</para>
+
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="images/autoinstall"/>
+</imageobject>
+</mediaobject>
+</screenshot>
+
+<para>Clicking the <guibutton>Install</guibutton>
+button entails the &WindowsVista; consent prompt.</para>
+
+</section>
+
+<section>
+
+<title>Setup Wizard</title>
+
+<para>The command-line syntax for the installer has changed. Please
+read the <ulink
+url="http://docs.miktex.org/2.6/manual/setupwiz.html">man
+page</ulink>, for more information.</para>
+
+</section>
+
+<section>
+
+<title>&MiKTeXSDK;</title>
+
+<para>&MiKTeX; now offers a few experimental &COM; objects which make
+it possible to automate &MiKTeX; specific tasks and to retrieve information
+about the &MiKTeX; installation:</para>
+
+<itemizedlist>
+<listitem><para>install/remove packages</para></listitem>
+<listitem><para>locate files</para></listitem>
+<listitem><para>enumerate root directories</para></listitem>
+</itemizedlist>
+
+<para>See the
+<ulink url="http://docs.miktex.org/2.6/SDK">&MiKTeXSDK; page</ulink>,
+for more information.</para>
+
+</section>
