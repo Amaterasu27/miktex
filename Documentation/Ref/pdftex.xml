@@ -9,7 +9,7 @@
 
 <refnamediv>
 <refname>pdftex</refname>
-<refpurpose>&PDF; output from &eTeX;</refpurpose>
+<refpurpose>&PDF; output from &TeX;</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -34,7 +34,7 @@ has no extension, <filename>.tex</filename> will be appended to
 it. Instead of a file name, a set of &pdfTeX; commands can be given,
 the first of which must start with a backslash.</para>
 
-<para>&pdfTeX; is a version of &eTeX; that can create &PDF; files as
+<para>&pdfTeX; is a version of &TeX; that can create &PDF; files as
 well as &DVI; files.</para>
 
 <para>In &PDF; mode, &pdfTeX; can natively handle the &PDF;, &JPG;,

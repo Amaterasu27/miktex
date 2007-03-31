@@ -72,7 +72,7 @@ numbers in &PDF; page descriptions. It gives the maximal number of decimal
 digits after the decimal point of real numbers. Valid values are in range
 0..5. A higher value means more precise output, but also results in a much
 larger file size and more time to display or print. In most cases the optimal
-value is&nbsp;2. This parameter does {\em not} influence the precision
+value is&nbsp;2. This parameter does <emphasis>not</emphasis> influence the precision
 of numbers used in raw &PDF; code,
 like that used in <markup role="tex">\pdfliteral</markup>
 and annotation action specifications.</para></listitem>

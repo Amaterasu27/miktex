@@ -312,7 +312,7 @@ explains how you can register your own root directory.</para></tip>
 <para>Here is a brief summary of the &TDS; standard:</para>
 
 <para><filename>*.afm</filename> go in <filename><replaceable>root</replaceable>\fonts\afm\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
-<para><filename>*.dvi</filename>, <filename>*.ps</filename> or <filename>*.pdf</filename> go in <filename><replaceable>root</replaceable>\doc\latex<replaceable>package</replaceable></filename></para>
+<para><filename>*.dvi</filename>, <filename>*.ps</filename> or <filename>*.pdf</filename> go in <filename><replaceable>root</replaceable>\doc\latex\<replaceable>package</replaceable></filename></para>
 <para><filename>*.enc</filename> go in <filename><replaceable>root</replaceable>\fonts\enc\<replaceable>syntax</replaceable>\<replaceable>bundle</replaceable></filename></para>
 <para><filename>*.map</filename> go in <filename><replaceable>root</replaceable>\fonts\map\<replaceable>syntax</replaceable>\<replaceable>bundle</replaceable></filename></para>
 <para><filename>*.mf</filename> go in <filename><replaceable>root</replaceable>\fonts\source\<replaceable>supplier</replaceable>\<replaceable>font</replaceable></filename></para>
