@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl.h,v 1.297 2006-04-26 17:04:47 giva Exp $
+ * $Id: curl.h,v 1.313 2007-01-08 11:24:11 linus Exp $
  ***************************************************************************/
 
 /* If you have problems, all libcurl docs and details are found here:
@@ -58,7 +58,18 @@ extern "C" {
 #define CURL_EXTERN  __declspec(dllimport)
 #endif
 #else
+
+#ifdef CURL_HIDDEN_SYMBOLS
+/*
+ * This definition is used to make external definitions visibile in the
+ * shared library when symbols are hidden by default.  It makes no
+ * difference when compiling applications whether this is set or not,
+ * only when compiling the library.
+ */
+#define CURL_EXTERN CURL_EXTERN_SYMBOL
+#else
 #define CURL_EXTERN
+#endif
 #endif
 
 /*
@@ -122,6 +133,49 @@ extern "C" {
 #undef FILESIZEBITS
 #endif
 
+#if defined(_WIN32) && !defined(WIN32)
+/* Chris Lewis mentioned that he doesn't get WIN32 defined, only _WIN32 so we
+   make this adjustment to catch this. */
+#define WIN32 1
+#endif
+
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__GNUC__) && \
+  !defined(__CYGWIN__) || defined(__MINGW32__)
+#if !(defined(_WINSOCKAPI_) || defined(_WINSOCK_H))
+/* The check above prevents the winsock2 inclusion if winsock.h already was
+   included, since they can't co-exist without problems */
+#include <winsock2.h>
+#endif
+#else
+
+/* HP-UX systems version 9, 10 and 11 lack sys/select.h and so does oldish
+   libc5-based Linux systems. Only include it on system that are known to
+   require it! */
+#if defined(_AIX) || defined(NETWARE) || defined(__NetBSD__) || defined(__minix)
+#include <sys/select.h>
+#endif
+
+#ifndef _WIN32_WCE
+#include <sys/socket.h>
+#endif
+#ifndef __WATCOMC__
+#include <sys/time.h>
+#endif
+#include <sys/types.h>
+#endif
+
+#ifndef curl_socket_typedef
+/* socket typedef */
+#ifdef WIN32
+typedef SOCKET curl_socket_t;
+#define CURL_SOCKET_BAD INVALID_SOCKET
+#else
+typedef int curl_socket_t;
+#define CURL_SOCKET_BAD -1
+#endif
+#define curl_socket_typedef
+#endif /* curl_socket_typedef */
+
 struct curl_httppost {
   struct curl_httppost *next;       /* next entry in the list */
   char *name;                       /* pointer to allocated name */
@@ -173,6 +227,14 @@ typedef size_t (*curl_read_callback)(char *buffer,
                                       size_t nitems,
                                       void *instream);
 
+typedef enum  {
+  CURLSOCKTYPE_IPCXN, /* socket created for a specific IP connection */
+  CURLSOCKTYPE_LAST   /* never use */
+} curlsocktype;
+
+typedef int (*curl_sockopt_callback)(void *clientp,
+                                     curl_socket_t curlfd,
+                                     curlsocktype purpose);
 
 #ifndef CURL_NO_OLDIES
   /* not used since 7.10.8, will be removed in a future release */
@@ -328,6 +390,15 @@ typedef enum {
                                     CURLOPT_CONV_FROM_NETWORK_FUNCTION,
                                     CURLOPT_CONV_TO_NETWORK_FUNCTION, and
                                     CURLOPT_CONV_FROM_UTF8_FUNCTION */
+  CURLE_SSL_CACERT_BADFILE,      /* 77 - could not load CACERT file, missing
+                                    or wrong format */
+  CURLE_REMOTE_FILE_NOT_FOUND,   /* 78 - remote file not found */
+  CURLE_SSH,                     /* 79 - error from the SSH layer, somewhat
+                                    generic so the error message will be of
+                                    interest when this has happened */
+
+  CURLE_SSL_SHUTDOWN_FAILED,     /* 80 - Failed to shut down the SSL
+                                    connection */
   CURL_LAST /* never use! */
 } CURLcode;
 
@@ -362,6 +433,14 @@ typedef enum {
 #define CURLAUTH_NTLM         (1<<3)  /* NTLM */
 #define CURLAUTH_ANY ~0               /* all types set */
 #define CURLAUTH_ANYSAFE (~CURLAUTH_BASIC)
+
+#define CURLSSH_AUTH_ANY       ~0     /* all types supported by the server */
+#define CURLSSH_AUTH_NONE      0      /* none allowed, silly but complete */
+#define CURLSSH_AUTH_PUBLICKEY (1<<0) /* public/private key files */
+#define CURLSSH_AUTH_PASSWORD  (1<<1) /* password */
+#define CURLSSH_AUTH_HOST      (1<<2) /* host key files */
+#define CURLSSH_AUTH_KEYBOARD  (1<<3) /* keyboard interactive */
+#define CURLSSH_AUTH_DEFAULT CURLSSH_AUTH_ANY
 
 #ifndef CURL_NO_OLDIES /* define this to test if your app builds with all
                           the obsolete stuff removed! */
@@ -425,7 +504,7 @@ typedef enum {
  */
 #if defined(__STDC__) || defined(_MSC_VER) || defined(__cplusplus) || \
   defined(__HP_aCC) || defined(__BORLANDC__) || defined(__LCC__) || \
-  defined(__POCC__) || defined(__SALFORDC__)
+  defined(__POCC__) || defined(__SALFORDC__) || defined(__HIGHC__)
   /* This compiler is believed to have an ISO compatible preprocessor */
 #define CURL_ISOCPP
 #else
@@ -879,22 +958,12 @@ typedef enum {
   CINIT(TCP_NODELAY, LONG, 121),
 
   /* 122 OBSOLETE, used in 7.12.3. Gone in 7.13.0 */
-
-  /* When doing 3rd party transfer, set the source user and password with
-     this */
-  CINIT(SOURCE_USERPWD, OBJECTPOINT, 123),
-
+  /* 123 OBSOLETE. Gone in 7.16.0 */
   /* 124 OBSOLETE, used in 7.12.3. Gone in 7.13.0 */
   /* 125 OBSOLETE, used in 7.12.3. Gone in 7.13.0 */
   /* 126 OBSOLETE, used in 7.12.3. Gone in 7.13.0 */
-
-  /* When doing 3rd party transfer, set the source pre-quote linked list
-     of commands with this */
-  CINIT(SOURCE_PREQUOTE, OBJECTPOINT, 127),
-
-  /* When doing 3rd party transfer, set the source post-quote linked list
-     of commands with this */
-  CINIT(SOURCE_POSTQUOTE, OBJECTPOINT, 128),
+  /* 127 OBSOLETE. Gone in 7.16.0 */
+  /* 128 OBSOLETE. Gone in 7.16.0 */
 
   /* When FTP over SSL/TLS is selected (with CURLOPT_FTP_SSL), this option
      can be used to change libcurl's default action which is to first try
@@ -911,12 +980,8 @@ typedef enum {
   CINIT(IOCTLFUNCTION, FUNCTIONPOINT, 130),
   CINIT(IOCTLDATA, OBJECTPOINT, 131),
 
-  /* To make a 3rd party transfer, set the source URL with this */
-  CINIT(SOURCE_URL, OBJECTPOINT, 132),
-
-  /* When doing 3rd party transfer, set the source quote linked list of
-     commands with this */
-  CINIT(SOURCE_QUOTE, OBJECTPOINT, 133),
+  /* 132 OBSOLETE. Gone in 7.16.0 */
+  /* 133 OBSOLETE. Gone in 7.16.0 */
 
   /* zero terminated string for pass on to the FTP server when asked for
      "account" info */
@@ -963,6 +1028,32 @@ typedef enum {
      Note that this is used only for SSL certificate processing */
   CINIT(CONV_FROM_UTF8_FUNCTION, FUNCTIONPOINT, 144),
 
+  /* if the connection proceeds too quickly then need to slow it down */
+  /* limit-rate: maximum number of bytes per second to send or receive */
+  CINIT(MAX_SEND_SPEED_LARGE, OFF_T, 145),
+  CINIT(MAX_RECV_SPEED_LARGE, OFF_T, 146),
+
+  /* Pointer to command string to send if USER/PASS fails. */
+  CINIT(FTP_ALTERNATIVE_TO_USER, OBJECTPOINT, 147),
+
+  /* callback function for setting socket options */
+  CINIT(SOCKOPTFUNCTION, FUNCTIONPOINT, 148),
+  CINIT(SOCKOPTDATA, OBJECTPOINT, 149),
+
+  /* set to 0 to disable session ID re-use for this transfer, default is
+     enabled (== 1) */
+  CINIT(SSL_SESSIONID_CACHE, LONG, 150),
+
+  /* allowed SSH authentication methods */
+  CINIT(SSH_AUTH_TYPES, LONG, 151),
+
+  /* Used by scp/sftp to do public/private key authentication */
+  CINIT(SSH_PUBLIC_KEYFILE, OBJECTPOINT, 152),
+  CINIT(SSH_PRIVATE_KEYFILE, OBJECTPOINT, 153),
+
+  /* Send CCC (Clear Command Channel) after authentication */
+  CINIT(FTP_SSL_CCC, LONG, 154),
+
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
 
@@ -981,18 +1072,6 @@ typedef enum {
 
 #ifndef CURL_NO_OLDIES /* define this to test if your app builds with all
                           the obsolete stuff removed! */
-#define CURLOPT_HTTPREQUEST    -1
-#define CURLOPT_FTPASCII       CURLOPT_TRANSFERTEXT
-#define CURLOPT_MUTE           -2
-#define CURLOPT_PASSWDFUNCTION -3
-#define CURLOPT_PASSWDDATA     -4
-#define CURLOPT_CLOSEFUNCTION  -5
-
-#define CURLOPT_SOURCE_HOST    -6
-#define CURLOPT_SOURCE_PATH    -7
-#define CURLOPT_SOURCE_PORT    -8
-#define CURLOPT_PASV_HOST      -9
-
 #else
 /* This is set if CURL_NO_OLDIES is defined at compile-time */
 #undef CURLOPT_DNS_USE_GLOBAL_CACHE /* soon obsolete */
@@ -1143,6 +1222,26 @@ CURL_EXTERN CURLFORMcode curl_formadd(struct curl_httppost **httppost,
                                       struct curl_httppost **last_post,
                                       ...);
 
+/*
+ * callback function for curl_formget()
+ * The void *arg pointer will be the one passed as second argument to curl_formget().
+ * The character buffer passed to it must not be freed.
+ * Should return the buffer length passed to it as the argument "len" on success.
+ */
+typedef size_t (*curl_formget_callback)(void *arg, const char *buf, size_t len);
+
+/*
+ * NAME curl_formget()
+ *
+ * DESCRIPTION
+ *
+ * Serialize a curl_httppost struct built with curl_formadd().
+ * Accepts a void pointer as second argument which will be passed to
+ * the curl_formget_callback function.
+ * Returns 0 on success.
+ */
+CURL_EXTERN int curl_formget(struct curl_httppost *form, void *arg,
+                             curl_formget_callback append);
 /*
  * NAME curl_formfree()
  *
@@ -1432,6 +1531,7 @@ typedef enum {
   CURLVERSION_FIRST,
   CURLVERSION_SECOND,
   CURLVERSION_THIRD,
+  CURLVERSION_FOURTH,
   CURLVERSION_LAST /* never actually use this */
 } CURLversion;
 
@@ -1440,7 +1540,7 @@ typedef enum {
    meant to be a built-in version number for what kind of struct the caller
    expects. If the struct ever changes, we redefine the NOW to another enum
    from above. */
-#define CURLVERSION_NOW CURLVERSION_THIRD
+#define CURLVERSION_NOW CURLVERSION_FOURTH
 
 typedef struct {
   CURLversion age;          /* age of the returned struct */
@@ -1458,8 +1558,16 @@ typedef struct {
   const char *ares;
   int ares_num;
 
-  /* This field was aded in CURLVERSION_THIRD */
+  /* This field was added in CURLVERSION_THIRD */
   const char *libidn;
+
+  /* These field were added in CURLVERSION_FOURTH */
+
+  /* Same as '_libiconv_version' if built with HAVE_ICONV */
+  int iconv_ver_num;
+
+  const char *libssh_version; /* human readable string */
+
 } curl_version_info_data;
 
 #define CURL_VERSION_IPV6      (1<<0)  /* IPv6-enabled */

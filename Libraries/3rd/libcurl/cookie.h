@@ -20,14 +20,16 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.h,v 1.21 2006-05-24 22:46:39 bagder Exp $
+ * $Id: cookie.h,v 1.24 2006-08-30 16:17:06 giva Exp $
  ***************************************************************************/
 
 #include <stdio.h>
-#ifdef WIN32
+#if defined(WIN32)
 #include <time.h>
 #else
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #endif
 
 #include <curl/curl.h>
@@ -96,7 +98,7 @@ int Curl_cookie_output(struct CookieInfo *, char *);
 
 #if defined(CURL_DISABLE_HTTP) || defined(CURL_DISABLE_COOKIES)
 #define Curl_cookie_list(x) NULL
-#define Curl_cookie_loadfiles(x)
+#define Curl_cookie_loadfiles(x) do { } while (0)
 #else
 struct curl_slist *Curl_cookie_list(struct SessionHandle *data);
 void Curl_cookie_loadfiles(struct SessionHandle *data);

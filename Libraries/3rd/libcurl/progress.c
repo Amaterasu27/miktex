@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2004, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: progress.c,v 1.77 2004/11/26 14:33:14 bagder Exp $
+ * $Id: progress.c,v 1.79 2006-10-27 03:47:58 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -252,11 +252,11 @@ int Curl_pgrsUpdate(struct connectdata *conn)
          even when not displayed! */
   else if(!(data->progress.flags & PGRS_HEADERS_OUT)) {
     if (!data->progress.callback) {
-      if(conn->resume_from)
+      if(data->reqdata.resume_from)
         fprintf(data->set.err,
                 "** Resuming transfer from byte position %" FORMAT_OFF_T
                 "\n",
-                conn->resume_from);
+                data->reqdata.resume_from);
       fprintf(data->set.err,
               "  %% Total    %% Received %% Xferd  Average Speed   Time    Time     Time  Current\n"
               "                                 Dload  Upload   Total   Spent    Left  Speed\n");

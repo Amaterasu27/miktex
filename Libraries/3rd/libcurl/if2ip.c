@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: if2ip.c,v 1.45 2006-06-08 06:12:31 bagder Exp $
+ * $Id: if2ip.c,v 1.49 2006-10-25 07:19:45 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -33,9 +33,13 @@
 
 #include "if2ip.h"
 
+/*
+ * This test can probably be simplified to #if defined(SIOCGIFADDR) and
+ * moved after the following includes.
+ */
 #if !defined(WIN32) && !defined(__BEOS__) && !defined(__CYGWIN__) && \
     !defined(__riscos__) && !defined(__INTERIX) && !defined(NETWARE) && \
-    !defined(_AMIGASF)
+    !defined(_AMIGASF) && !defined(__minix)
 
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -110,7 +114,7 @@ char *Curl_if2ip(const char *interface, char *buf, int buf_size)
       struct in_addr in;
 
       struct sockaddr_in *s = (struct sockaddr_in *)&req.ifr_dstaddr;
-      memcpy(&in, &(s->sin_addr.s_addr), sizeof(in));
+      memcpy(&in, &s->sin_addr, sizeof(in));
       ip = (char *) Curl_inet_ntop(s->sin_family, &in, buf, buf_size);
     }
     sclose(dummy);

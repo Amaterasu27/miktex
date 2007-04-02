@@ -18,14 +18,16 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.149 2006-05-04 22:39:47 bagder Exp $
+ * $Id: connect.c,v 1.158 2006-12-22 13:30:54 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
 #ifndef WIN32
 /* headers for non-win32 */
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -82,7 +84,7 @@
 #define FALSE 0
 #endif
 
-#ifdef WIN32
+#ifdef USE_WINSOCK
 #define EINPROGRESS WSAEINPROGRESS
 #define EWOULDBLOCK WSAEWOULDBLOCK
 #define EISCONN     WSAEISCONN
@@ -109,7 +111,7 @@ static bool verifyconnect(curl_socket_t sockfd, int *error);
 
 static curl_socket_t
 singleipconnect(struct connectdata *conn,
-                Curl_addrinfo *ai, /* start connecting to this */
+                const Curl_addrinfo *ai, /* start connecting to this */
                 long timeout_ms,
                 bool *connected);
 
@@ -119,7 +121,7 @@ singleipconnect(struct connectdata *conn,
  */
 int Curl_sockerrno(void)
 {
-#ifdef WIN32
+#ifdef USE_WINSOCK
   return (int)WSAGetLastError();
 #else
   return errno;
@@ -382,11 +384,10 @@ static CURLcode bindlocal(struct connectdata *conn,
     if( bind(sockfd, sock, socksize) >= 0) {
       /* we succeeded to bind */
       struct Curl_sockaddr_storage add;
-      size_t size;
+      socklen_t size;
 
       size = sizeof(add);
-      if(getsockname(sockfd, (struct sockaddr *) &add,
-                     (socklen_t *)&size)<0) {
+      if(getsockname(sockfd, (struct sockaddr *) &add, &size) < 0) {
         failf(data, "getsockname() failed");
         return CURLE_HTTP_PORT_FAILED;
       }
@@ -504,11 +505,13 @@ static bool trynextip(struct connectdata *conn,
   curl_socket_t sockfd;
   Curl_addrinfo *ai;
 
-  if(sockindex != FIRSTSOCKET)
-    return TRUE; /* no next */
-
   /* first close the failed socket */
   sclose(conn->sock[sockindex]);
+  conn->sock[sockindex] = CURL_SOCKET_BAD;
+  *connected = FALSE;
+
+  if(sockindex != FIRSTSOCKET)
+    return TRUE; /* no next */
 
   /* try the next address */
   ai = conn->ip_addr->ai_next;
@@ -674,7 +677,7 @@ static void nosigpipe(struct connectdata *conn,
    having connected if used from the multi interface. */
 static curl_socket_t
 singleipconnect(struct connectdata *conn,
-                Curl_addrinfo *ai,
+                const Curl_addrinfo *ai,
                 long timeout_ms,
                 bool *connected)
 {
@@ -700,6 +703,17 @@ singleipconnect(struct connectdata *conn,
 
   nosigpipe(conn, sockfd);
 
+  if(data->set.fsockopt) {
+    /* activate callback for setting socket options */
+    error = data->set.fsockopt(data->set.sockopt_client,
+                               sockfd,
+                               CURLSOCKTYPE_IPCXN);
+    if (error) {
+      sclose(sockfd); /* close the socket and bail out */
+      return CURL_SOCKET_BAD;
+    }
+  }
+
   /* possibly bind the local end to an IP, interface or port */
   res = bindlocal(conn, sockfd);
   if(res) {
@@ -712,7 +726,7 @@ singleipconnect(struct connectdata *conn,
 
   /* Connect TCP sockets, bind UDP */
   if(conn->socktype == SOCK_STREAM)
-    rc = connect(sockfd, ai->ai_addr, (socklen_t)ai->ai_addrlen);
+    rc = connect(sockfd, ai->ai_addr, ai->ai_addrlen);
   else
     rc = 0;
 
@@ -776,7 +790,7 @@ singleipconnect(struct connectdata *conn,
  */
 
 CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
-                          struct Curl_dns_entry *remotehost, /* use this one */
+                          const struct Curl_dns_entry *remotehost, /* use this one */
                           curl_socket_t *sockconn,   /* the connected socket */
                           Curl_addrinfo **addr,      /* the one we used */
                           bool *connected)           /* really connected? */

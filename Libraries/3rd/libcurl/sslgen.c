@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,12 +18,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sslgen.c,v 1.9 2006-05-11 05:16:38 bagder Exp $
+ * $Id: sslgen.c,v 1.18 2007-01-25 21:00:03 bagder Exp $
  ***************************************************************************/
 
 /* This file is for "generic" SSL functions that all libcurl internals should
    use. It is responsible for calling the proper 'ossl' function in ssluse.c
-   (OpenSSL based) or the 'gtsl' function in gtsl.c (GnuTLS based).
+   (OpenSSL based) or the 'gtls' function in gtls.c (GnuTLS based).
 
    SSL-functions in libcurl should call functions in this source file, and not
    to any specific SSL-layer.
@@ -68,10 +68,10 @@ static bool safe_strequal(char* str1, char* str2)
 {
   if(str1 && str2)
     /* both pointers point to something then compare them */
-    return strequal(str1, str2);
+    return (bool)(0 != strequal(str1, str2));
   else
     /* if both pointers are NULL then treat them as equal */
-    return (!str1 && !str2);
+    return (bool)(!str1 && !str2);
 }
 
 bool
@@ -246,6 +246,10 @@ int Curl_ssl_getsessionid(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   long i;
 
+  if(!conn->ssl_config.sessionid)
+    /* session ID re-use is disabled */
+    return TRUE;
+
   for(i=0; i< data->set.ssl.numsessions; i++) {
     check = &data->state.session[i];
     if(!check->sessionid)
@@ -310,6 +314,10 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   struct curl_ssl_session *store = &data->state.session[0];
   long oldest_age=data->state.session[0].age; /* zero if unused */
   char *clone_host;
+
+  /* Even though session ID re-use might be disabled, that only disables USING
+     IT. We still store it here in case the re-using is again enabled for an
+     upcoming transfer */
 
   clone_host = strdup(conn->host.name);
   if(!clone_host)
@@ -389,6 +397,25 @@ void Curl_ssl_close(struct connectdata *conn)
   }
 }
 
+CURLcode Curl_ssl_shutdown(struct connectdata *conn, int sockindex)
+{
+  if(conn->ssl[sockindex].use) {
+#ifdef USE_SSLEAY
+    if(Curl_ossl_shutdown(conn, sockindex))
+      return CURLE_SSL_SHUTDOWN_FAILED;
+#else
+#ifdef USE_GNUTLS
+    if(Curl_gtls_shutdown(conn, sockindex))
+      return CURLE_SSL_SHUTDOWN_FAILED;
+#else
+    (void)conn;
+    (void)sockindex;
+#endif /* USE_GNUTLS */
+#endif /* USE_SSLEAY */
+  }
+  return CURLE_OK;
+}
+
 /* Selects an (Open)SSL crypto engine
  */
 CURLcode Curl_ssl_set_engine(struct SessionHandle *data, const char *engine)
@@ -447,10 +474,10 @@ struct curl_slist *Curl_ssl_engines_list(struct SessionHandle *data)
 }
 
 /* return number of sent (non-SSL) bytes */
-int Curl_ssl_send(struct connectdata *conn,
-                  int sockindex,
-                  void *mem,
-                  size_t len)
+ssize_t Curl_ssl_send(struct connectdata *conn,
+                      int sockindex,
+                      void *mem,
+                      size_t len)
 {
 #ifdef USE_SSLEAY
   return Curl_ossl_send(conn, sockindex, mem, len);
@@ -473,10 +500,10 @@ int Curl_ssl_send(struct connectdata *conn,
  * If the read would block (EWOULDBLOCK) we return -1. Otherwise we return
  * a regular CURLcode value.
  */
-int Curl_ssl_recv(struct connectdata *conn, /* connection data */
-                  int sockindex,            /* socketindex */
-                  char *mem,                /* store read data here */
-                  size_t len)               /* max amount to read */
+ssize_t Curl_ssl_recv(struct connectdata *conn, /* connection data */
+                      int sockindex,            /* socketindex */
+                      char *mem,                /* store read data here */
+                      size_t len)               /* max amount to read */
 {
 #ifdef USE_SSL
   ssize_t nread;
@@ -572,4 +599,20 @@ int Curl_ssl_check_cxn(struct connectdata *conn)
   /* TODO: we lack implementation of this for GnuTLS */
   return -1; /* connection status unknown */
 #endif /* USE_SSLEAY */
+}
+
+bool Curl_ssl_data_pending(struct connectdata *conn,
+                           int connindex)
+{
+#ifdef USE_SSLEAY
+  /* OpenSSL-specific */
+  if(conn->ssl[connindex].handle)
+    /* SSL is in use */
+    return SSL_pending(conn->ssl[connindex].handle);
+#else
+  (void)conn;
+  (void)connindex;
+#endif
+  return FALSE; /* nothing pending */
+
 }

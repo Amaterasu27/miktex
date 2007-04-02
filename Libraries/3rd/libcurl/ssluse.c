@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.c,v 1.152 2006-06-09 12:07:34 bagder Exp $
+ * $Id: ssluse.c,v 1.164 2007-01-10 21:21:53 danf Exp $
  ***************************************************************************/
 
 /*
@@ -158,14 +158,14 @@ static int passwd_callback(char *buf, int num, int verify
 #define seed_enough(x) rand_enough()
 static bool rand_enough(void)
 {
-  return RAND_status()?TRUE:FALSE;
+  return (bool)(0 != RAND_status());
 }
 #else
 #define seed_enough(x) rand_enough(x)
 static bool rand_enough(int nread)
 {
   /* this is a very silly decision to make */
-  return (nread > 500)?TRUE:FALSE;
+  return (bool)(nread > 500);
 }
 #endif
 
@@ -634,8 +634,8 @@ CURLcode Curl_ossl_set_engine(struct SessionHandle *data, const char *engine)
   if (data->state.engine) {
     ENGINE_finish(data->state.engine);
     ENGINE_free(data->state.engine);
+    data->state.engine = NULL;
   }
-  data->state.engine = NULL;
   if (!ENGINE_init(e)) {
     char buf[256];
 
@@ -661,10 +661,10 @@ CURLcode Curl_ossl_set_engine_default(struct SessionHandle *data)
 #ifdef HAVE_OPENSSL_ENGINE_H
   if (data->state.engine) {
     if (ENGINE_set_default(data->state.engine, ENGINE_METHOD_ALL) > 0) {
-      infof(data,"set default crypto engine %s\n", data->state.engine);
+      infof(data,"set default crypto engine '%s'\n", ENGINE_get_id(data->state.engine));
     }
     else {
-      failf(data, "set default crypto engine %s failed", data->state.engine);
+      failf(data, "set default crypto engine '%s' failed", ENGINE_get_id(data->state.engine));
       return CURLE_SSL_ENGINE_SETFAILED;
     }
   }
@@ -726,6 +726,101 @@ void Curl_ossl_close(struct connectdata *conn)
     }
     connssl->use = FALSE; /* get back to ordinary socket usage */
   }
+}
+
+/*
+ * This function is called to shut down the SSL layer but keep the
+ * socket open (CCC - Clear Command Channel)
+ */
+int Curl_ossl_shutdown(struct connectdata *conn, int sockindex)
+{
+  int retval = 0;
+  struct ssl_connect_data *connssl = &conn->ssl[sockindex];
+  struct SessionHandle *data = conn->data;
+  char buf[120]; /* We will use this for the OpenSSL error buffer, so it has
+                    to be at least 120 bytes long. */
+  unsigned long sslerror;
+  ssize_t nread;
+  int err;
+  int done = 0;
+
+  /* This has only been tested on the proftpd server, and the mod_tls code
+     sends a close notify alert without waiting for a close notify alert in
+     response. Thus we wait for a close notify alert from the server, but
+     we do not send one. Let's hope other servers do the same... */
+
+  if(connssl->handle) {
+    while(!done) {
+      int what = Curl_select(conn->sock[sockindex],
+                             CURL_SOCKET_BAD, SSL_SHUTDOWN_TIMEOUT);
+      if(what > 0) {
+        /* Something to read, let's do it and hope that it is the close
+           notify alert from the server */
+        nread = (ssize_t)SSL_read(conn->ssl[sockindex].handle, buf,
+                                  sizeof(buf));
+        err = SSL_get_error(conn->ssl[sockindex].handle, (int)nread);
+
+        switch(err) {
+        case SSL_ERROR_NONE: /* this is not an error */
+        case SSL_ERROR_ZERO_RETURN: /* no more data */
+          /* This is the expected response. There was no data but only
+             the close notify alert */
+          done = 1;
+          break;
+        case SSL_ERROR_WANT_READ:
+          /* there's data pending, re-invoke SSL_read() */
+          infof(data, "SSL_ERROR_WANT_READ\n");
+          break;
+        case SSL_ERROR_WANT_WRITE:
+          /* SSL wants a write. Really odd. Let's bail out. */
+          infof(data, "SSL_ERROR_WANT_WRITE\n");
+          done = 1;
+          break;
+        default:
+          /* openssl/ssl.h says "look at error stack/return value/errno" */
+          sslerror = ERR_get_error();
+          failf(conn->data, "SSL read: %s, errno %d",
+                ERR_error_string(sslerror, buf),
+                Curl_sockerrno() );
+          done = 1;
+          break;
+        }
+      }
+      else if(0 == what) {
+        /* timeout */
+        failf(data, "SSL shutdown timeout");
+        done = 1;
+        break;
+      }
+      else {
+        /* anything that gets here is fatally bad */
+        failf(data, "select on SSL socket, errno: %d", Curl_sockerrno());
+        retval = -1;
+        done = 1;
+      }
+    } /* while()-loop for the select() */
+
+    if(data->set.verbose) {
+      switch(SSL_get_shutdown(connssl->handle)) {
+      case SSL_SENT_SHUTDOWN:
+        infof(data, "SSL_get_shutdown() returned SSL_SENT_SHUTDOWN\n");
+        break;
+      case SSL_RECEIVED_SHUTDOWN:
+        infof(data, "SSL_get_shutdown() returned SSL_RECEIVED_SHUTDOWN\n");
+        break;
+      case SSL_SENT_SHUTDOWN|SSL_RECEIVED_SHUTDOWN:
+        infof(data, "SSL_get_shutdown() returned SSL_SENT_SHUTDOWN|"
+              "SSL_RECEIVED__SHUTDOWN\n");
+        break;
+      }
+    }
+
+    connssl->use = FALSE; /* get back to ordinary socket usage */
+
+    SSL_free (connssl->handle);
+    connssl->handle = NULL;
+  }
+  return retval;
 }
 
 void Curl_ossl_session_free(void *ptr)
@@ -1151,7 +1246,7 @@ static void ssl_tls_trace(int direction, int ssl_ver, int content_type,
 
   txt_len = snprintf(ssl_buf, sizeof(ssl_buf), "SSLv%c, %s%s (%d):\n",
                      ver, tls_rt_name, msg_name, msg_type);
-  Curl_debug(data, CURLINFO_TEXT, ssl_buf, txt_len, NULL);
+  Curl_debug(data, CURLINFO_TEXT, ssl_buf, (size_t)txt_len, NULL);
 
   Curl_debug(data, (direction == 1) ? CURLINFO_SSL_DATA_OUT :
              CURLINFO_SSL_DATA_IN, (char *)buf, len, NULL);
@@ -1207,7 +1302,7 @@ Curl_ossl_connect_step1(struct connectdata *conn,
   }
 
 #ifdef SSL_CTRL_SET_MSG_CALLBACK
-  if (data->set.fdebug) {
+  if (data->set.fdebug && data->set.verbose) {
     /* the SSL trace callback is only used for verbose logging so we only
        inform about failures of setting it */
     if (!SSL_CTX_callback_ctrl(connssl->ctx, SSL_CTRL_SET_MSG_CALLBACK,
@@ -1272,7 +1367,7 @@ Curl_ossl_connect_step1(struct connectdata *conn,
               "  CAfile: %s\n  CApath: %s\n",
               data->set.ssl.CAfile ? data->set.ssl.CAfile : "none",
               data->set.ssl.CApath ? data->set.ssl.CApath : "none");
-        return CURLE_SSL_CACERT;
+        return CURLE_SSL_CACERT_BADFILE;
       }
       else {
         /* Just continue with a warning if no strict  certificate verification
@@ -1407,8 +1502,8 @@ Curl_ossl_connect_step2(struct connectdata *conn,
     else {
       /* untreated error */
       unsigned long errdetail;
-      char error_buffer[120]; /* OpenSSL documents that this must be at least
-                                 120 bytes long. */
+      char error_buffer[256]; /* OpenSSL documents that this must be at least
+                                 256 bytes long. */
       CURLcode rc;
       const char *cert_problem = NULL;
 
@@ -1488,16 +1583,16 @@ Curl_ossl_connect_step3(struct connectdata *conn,
   if(Curl_ssl_getsessionid(conn, &ssl_sessionid, NULL)) {
     /* Since this is not a cached session ID, then we want to stach this one
        in the cache! */
-    SSL_SESSION *ssl_sessionid;
+    SSL_SESSION *our_ssl_sessionid;
 #ifdef HAVE_SSL_GET1_SESSION
-    ssl_sessionid = SSL_get1_session(connssl->handle);
+    our_ssl_sessionid = SSL_get1_session(connssl->handle);
 
     /* SSL_get1_session() will increment the reference
        count and the session will stay in memory until explicitly freed with
        SSL_SESSION_free(3), regardless of its state.
        This function was introduced in openssl 0.9.5a. */
 #else
-    ssl_sessionid = SSL_get_session(connssl->handle);
+    our_ssl_sessionid = SSL_get_session(connssl->handle);
 
     /* if SSL_get1_session() is unavailable, use SSL_get_session().
        This is an inferior option because the session can be flushed
@@ -1508,7 +1603,7 @@ Curl_ossl_connect_step3(struct connectdata *conn,
        untested.
     */
 #endif
-    retcode = Curl_ssl_addsessionid(conn, ssl_sessionid,
+    retcode = Curl_ssl_addsessionid(conn, our_ssl_sessionid,
                                     0 /* unknown size */);
     if(retcode) {
       failf(data, "failed to store ssl session");
@@ -1629,7 +1724,7 @@ Curl_ossl_connect_common(struct connectdata *conn,
       while(1) {
         int what = Curl_select(readfd, writefd, nonblocking?0:(int)timeout_ms);
         if(what > 0)
-          /* reabable or writable, go loop in the outer loop */
+          /* readable or writable, go loop in the outer loop */
           break;
         else if(0 == what) {
           if (nonblocking) {
@@ -1702,10 +1797,10 @@ Curl_ossl_connect(struct connectdata *conn,
 }
 
 /* return number of sent (non-SSL) bytes */
-int Curl_ossl_send(struct connectdata *conn,
-                   int sockindex,
-                   void *mem,
-                   size_t len)
+ssize_t Curl_ossl_send(struct connectdata *conn,
+                       int sockindex,
+                       void *mem,
+                       size_t len)
 {
   /* SSL_write() is said to return 'int' while write() and send() returns
      'size_t' */
@@ -1741,7 +1836,7 @@ int Curl_ossl_send(struct connectdata *conn,
     failf(conn->data, "SSL_write() return error %d\n", err);
     return -1;
   }
-  return rc; /* number of bytes */
+  return (ssize_t)rc; /* number of bytes */
 }
 
 /*
@@ -1788,6 +1883,12 @@ ssize_t Curl_ossl_recv(struct connectdata *conn, /* connection data */
 
 size_t Curl_ossl_version(char *buffer, size_t size)
 {
+#ifdef YASSL_VERSION
+  /* yassl provides an OpenSSL API compatiblity layer so it looks identical
+     to OpenSSL in all other aspects */
+  return snprintf(buffer, size, " yassl/%s", YASSL_VERSION);
+#else /* YASSL_VERSION */
+
 #if (SSLEAY_VERSION_NUMBER >= 0x905000)
   {
     char sub[2];
@@ -1800,7 +1901,7 @@ size_t Curl_ossl_version(char *buffer, size_t size)
     }
     else {
       if(ssleay_value&0xff0) {
-        sub[0]=(char)((ssleay_value>>4)&0xff) + 'a' -1;
+        sub[0]=(char)(((ssleay_value>>4)&0xff) + 'a' -1);
       }
       else
         sub[0]='\0';
@@ -1838,5 +1939,7 @@ size_t Curl_ossl_version(char *buffer, size_t size)
   }
 #endif /* (SSLEAY_VERSION_NUMBER >= 0x900000) */
 #endif /* SSLEAY_VERSION_NUMBER is less than 0.9.5 */
+
+#endif /* YASSL_VERSION */
 }
 #endif /* USE_SSLEAY */

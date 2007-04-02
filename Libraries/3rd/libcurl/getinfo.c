@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.50 2006-05-11 05:17:40 bagder Exp $
+ * $Id: getinfo.c,v 1.54 2006-12-22 13:44:10 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -76,6 +76,9 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
   char **param_charp=NULL;
   struct curl_slist **param_slistp=NULL;
   char buf;
+
+  if(!data)
+    return CURLE_BAD_FUNCTION_ARGUMENT;
 
   va_start(arg, info);
 
@@ -199,22 +202,27 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     break;
   case CURLINFO_LASTSOCKET:
     if((data->state.lastconnect != -1) &&
-       (data->state.connects[data->state.lastconnect] != NULL)) {
-      *param_longp = data->state.connects[data->state.lastconnect]->
-        sock[FIRSTSOCKET];
+       (data->state.connc->connects[data->state.lastconnect] != NULL)) {
+      struct connectdata *c = data->state.connc->connects
+        [data->state.lastconnect];
+      *param_longp = c->sock[FIRSTSOCKET];
       /* we have a socket connected, let's determine if the server shut down */
       /* determine if ssl */
-      if(data->state.connects[data->state.lastconnect]->ssl[FIRSTSOCKET].use) {
+      if(c->ssl[FIRSTSOCKET].use) {
         /* use the SSL context */
-        if (!Curl_ssl_check_cxn(data->state.connects[data->state.lastconnect]))
+        if (!Curl_ssl_check_cxn(c))
           *param_longp = -1;   /* FIN received */
       }
+/* Minix 3.1 doesn't support any flags on recv; just assume socket is OK */
+#ifdef MSG_PEEK
       else {
         /* use the socket */
-        if(recv((int)data->state.connects[data->state.lastconnect]->
-                sock[FIRSTSOCKET], (void*)&buf, 1, MSG_PEEK) == 0)
+        if(recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf,
+                (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK) == 0) {
           *param_longp = -1;   /* FIN received */
+        }
       }
+#endif
     }
     else
       *param_longp = -1;

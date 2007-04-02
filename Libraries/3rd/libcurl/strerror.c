@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2004, 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2004 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strerror.c,v 1.33 2006-04-26 17:27:36 giva Exp $
+ * $Id: strerror.c,v 1.41 2007-01-08 11:24:12 linus Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -227,6 +227,9 @@ curl_easy_strerror(CURLcode error)
     return "couldn't use specified SSL cipher";
 
   case CURLE_SSL_CACERT:
+    return "peer certificate cannot be authenticated with known CA certificates";
+
+  case CURLE_SSL_CACERT_BADFILE:
     return "problem with the SSL CA cert (path? access rights?)";
 
   case CURLE_BAD_CONTENT_ENCODING:
@@ -241,38 +244,47 @@ curl_easy_strerror(CURLcode error)
   case CURLE_FTP_SSL_FAILED:
     return "Requested FTP SSL level failed";
 
+  case CURLE_SSL_SHUTDOWN_FAILED:
+    return "Failed to shut down the SSL connection";
+
   case CURLE_SEND_FAIL_REWIND:
     return "Send failed since rewinding of the data stream failed";
 
   case CURLE_LOGIN_DENIED:
-    return "FTP: login denied";;
+    return "FTP: login denied";
 
   case CURLE_TFTP_NOTFOUND:
-    return "TFTP: File Not Found";;
+    return "TFTP: File Not Found";
 
   case CURLE_TFTP_PERM:
-    return "TFTP: Access Violation";;
+    return "TFTP: Access Violation";
 
   case CURLE_TFTP_DISKFULL:
-    return "TFTP: Disk full or allocation exceeded";;
+    return "TFTP: Disk full or allocation exceeded";
 
   case CURLE_TFTP_ILLEGAL:
-    return "TFTP: Illegal operation";;
+    return "TFTP: Illegal operation";
 
   case CURLE_TFTP_UNKNOWNID:
-    return "TFTP: Unknown transfer ID";;
+    return "TFTP: Unknown transfer ID";
 
   case CURLE_TFTP_EXISTS:
-    return "TFTP: File already exists";;
+    return "TFTP: File already exists";
 
   case CURLE_TFTP_NOSUCHUSER:
-    return "TFTP: No such user";;
+    return "TFTP: No such user";
 
   case CURLE_CONV_FAILED:
     return "conversion failed";
 
   case CURLE_CONV_REQD:
     return "caller must register CURLOPT_CONV_ callback options";
+
+  case CURLE_REMOTE_FILE_NOT_FOUND:
+    return "Remote file not found";
+
+  case CURLE_SSH:
+    return "Error in the SSH layer";
 
     /* error codes not used by current libcurl */
   case CURLE_URL_MALFORMAT_USER:
@@ -382,7 +394,7 @@ curl_share_strerror(CURLSHcode error)
 #endif
 }
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#ifdef USE_WINSOCK
 
 /* This function handles most / all (?) Winsock errors cURL is able to produce.
  */
@@ -570,7 +582,7 @@ get_winsock_error (int err, char *buf, size_t len)
   buf [len-1] = '\0';
   return buf;
 }
-#endif   /* WIN32 && !__CYGWIN__ */
+#endif   /* USE_WINSOCK */
 
 /*
  * Our thread-safe and smart strerror() replacement.
@@ -595,7 +607,7 @@ const char *Curl_strerror(struct connectdata *conn, int err)
   max = sizeof(conn->syserr_buf)-1;
   *buf = '\0';
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#ifdef USE_WINSOCK
 
 #ifdef _WIN32_WCE
   buf[0]=0;
@@ -619,7 +631,7 @@ const char *Curl_strerror(struct connectdata *conn, int err)
       snprintf(buf, max, "Unknown error %d (%#x)", err, err);
   }
 #endif
-#else /* not native Windows coming up */
+#else /* not USE_WINSOCK coming up */
 
   /* These should be atomic and hopefully thread-safe */
 #ifdef HAVE_STRERROR_R
@@ -637,14 +649,17 @@ const char *Curl_strerror(struct connectdata *conn, int err)
     char *msg = strerror_r(err, buffer, sizeof(buffer));
     /* this version of strerror_r() only *might* use the buffer we pass to
        the function, but it always returns the error message as a pointer,
-       so we must copy that string unconditionally */
-    strncpy(buf, msg, max);
+       so we must copy that string unconditionally (if non-NULL) */
+    if(msg)
+      strncpy(buf, msg, max);
+    else
+      snprintf(buf, max, "Unknown error %d", err);
   }
 #endif /* end of HAVE_GLIBC_STRERROR_R */
 #else /* HAVE_STRERROR_R */
   strncpy(buf, strerror(err), max);
 #endif /* end of HAVE_STRERROR_R */
-#endif /* end of ! Windows */
+#endif /* end of ! USE_WINSOCK */
 
   buf[max] = '\0'; /* make sure the string is zero terminated */
 

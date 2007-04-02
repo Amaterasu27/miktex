@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_ntlm.c,v 1.52 2006-06-07 14:14:05 bagder Exp $
+ * $Id: http_ntlm.c,v 1.58 2007-01-23 22:57:42 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -44,7 +44,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include "urldata.h"
+#include "easyif.h"  /* for Curl_convert_... prototypes */
 #include "sendf.h"
 #include "strequal.h"
 #include "base64.h"
@@ -55,6 +60,9 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
+
+/* "NTLMSSP" signature is always in ASCII regardless of the platform */
+#define NTLMSSP_SIGNATURE "\x4e\x54\x4c\x4d\x53\x53\x50"
 
 #ifndef USE_WINDOWS_SSPI
 
@@ -218,13 +226,13 @@ CURLntlm Curl_input_ntlm(struct connectdata *conn,
   ntlm = proxy?&conn->proxyntlm:&conn->ntlm;
 
   /* skip initial whitespaces */
-  while(*header && isspace((int)*header))
+  while(*header && ISSPACE(*header))
     header++;
 
   if(checkprefix("NTLM", header)) {
     header += strlen("NTLM");
 
-    while(*header && isspace((int)*header))
+    while(*header && ISSPACE(*header))
       header++;
 
     if(*header) {
@@ -261,7 +269,7 @@ CURLntlm Curl_input_ntlm(struct connectdata *conn,
       ntlm->flags = 0;
 
       if((size < 32) ||
-         (memcmp(buffer, "NTLMSSP", 8) != 0) ||
+         (memcmp(buffer, NTLMSSP_SIGNATURE, 8) != 0) ||
          (memcmp(buffer+8, type2_marker, sizeof(type2_marker)) != 0)) {
         /* This was not a good enough type-2 message */
         free(buffer);
@@ -275,8 +283,9 @@ CURLntlm Curl_input_ntlm(struct connectdata *conn,
         fprintf(stderr, "**** TYPE2 header flags=0x%08.8lx ", ntlm->flags);
         print_flags(stderr, ntlm->flags);
         fprintf(stderr, "\n                  nonce=");
-        print_hex(stderr, ntlm->nonce, 8);
+        print_hex(stderr, (char *)ntlm->nonce, 8);
         fprintf(stderr, "\n****\n");
+        fprintf(stderr, "**** Header %s\n ", header);
       });
 
       free(buffer);
@@ -304,13 +313,13 @@ static void setup_des_key(unsigned char *key_56,
   DES_cblock key;
 
   key[0] = key_56[0];
-  key[1] = ((key_56[0] << 7) & 0xFF) | (key_56[1] >> 1);
-  key[2] = ((key_56[1] << 6) & 0xFF) | (key_56[2] >> 2);
-  key[3] = ((key_56[2] << 5) & 0xFF) | (key_56[3] >> 3);
-  key[4] = ((key_56[3] << 4) & 0xFF) | (key_56[4] >> 4);
-  key[5] = ((key_56[4] << 3) & 0xFF) | (key_56[5] >> 5);
-  key[6] = ((key_56[5] << 2) & 0xFF) | (key_56[6] >> 6);
-  key[7] =  (key_56[6] << 1) & 0xFF;
+  key[1] = (unsigned char)(((key_56[0] << 7) & 0xFF) | (key_56[1] >> 1));
+  key[2] = (unsigned char)(((key_56[1] << 6) & 0xFF) | (key_56[2] >> 2));
+  key[3] = (unsigned char)(((key_56[2] << 5) & 0xFF) | (key_56[3] >> 3));
+  key[4] = (unsigned char)(((key_56[3] << 4) & 0xFF) | (key_56[4] >> 4));
+  key[5] = (unsigned char)(((key_56[4] << 3) & 0xFF) | (key_56[5] >> 5));
+  key[6] = (unsigned char)(((key_56[5] << 2) & 0xFF) | (key_56[6] >> 6));
+  key[7] = (unsigned char) ((key_56[6] << 1) & 0xFF);
 
   DES_set_odd_parity(&key);
   DES_set_key(&key, ks);
@@ -344,7 +353,9 @@ static void lm_resp(unsigned char *keys,
 /*
  * Set up lanmanager hashed password
  */
-static void mk_lm_hash(char *password, unsigned char *lmbuffer /* 21 bytes */)
+static void mk_lm_hash(struct SessionHandle *data,
+                       char *password, 
+                       unsigned char *lmbuffer /* 21 bytes */)
 {
   unsigned char pw[14];
   static const unsigned char magic[] = {
@@ -357,10 +368,21 @@ static void mk_lm_hash(char *password, unsigned char *lmbuffer /* 21 bytes */)
     len = 14;
 
   for (i=0; i<len; i++)
-    pw[i] = toupper(password[i]);
+    pw[i] = (unsigned char)toupper(password[i]);
 
   for (; i<14; i++)
     pw[i] = 0;
+
+#ifdef CURL_DOES_CONVERSIONS
+  /*
+   * The LanManager hashed password needs to be created using the
+   * password in the network encoding not the host encoding.
+   */
+  if(data)
+    Curl_convert_to_network(data, (char *)pw, 14);
+#else
+  (void)data;
+#endif
 
   {
     /* Create LanManager hashed password. */
@@ -393,12 +415,25 @@ static void utf8_to_unicode_le(unsigned char *dest, const char *src,
 /*
  * Set up nt hashed passwords
  */
-static void mk_nt_hash(char *password, unsigned char *ntbuffer /* 21 bytes */)
+static void mk_nt_hash(struct SessionHandle *data,
+                       char *password,
+                       unsigned char *ntbuffer /* 21 bytes */)
 {
   size_t len = strlen(password);
   unsigned char *pw = malloc(len*2);
 
   utf8_to_unicode_le(pw, password, len);
+
+#ifdef CURL_DOES_CONVERSIONS
+  /*
+   * The NT hashed password needs to be created using the
+   * password in the network encoding not the host encoding.
+   */
+  if(data)
+    Curl_convert_to_network(data, (char *)pw, len*2);
+#else
+  (void)data;
+#endif
 
   {
     /* Create NT hashed password. */
@@ -642,7 +677,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 #else
 #define NTLM2FLAG 0
 #endif
-    snprintf((char *)ntlmbuf, sizeof(ntlmbuf), "NTLMSSP%c"
+    snprintf((char *)ntlmbuf, sizeof(ntlmbuf), NTLMSSP_SIGNATURE "%c"
              "\x01%c%c%c" /* 32-bit type = 1 */
              "%c%c%c%c"   /* 32-bit NTLM flag field */
              "%c%c"  /* domain length */
@@ -701,13 +736,14 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
     });
 
     /* now size is the size of the base64 encoded package size */
-    size = Curl_base64_encode((char *)ntlmbuf, size, &base64);
+    size = Curl_base64_encode(NULL, (char *)ntlmbuf, size, &base64);
 
     if(size >0 ) {
       Curl_safefree(*allocuserpwd);
       *allocuserpwd = aprintf("%sAuthorization: NTLM %s\r\n",
                               proxy?"Proxy-":"",
                               base64);
+      DEBUG_OUT(fprintf(stderr, "**** Header %s\n ", *allocuserpwd));
       free(base64);
     }
     else
@@ -798,6 +834,13 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       hostlen = 0;
     }
     else {
+      /* If the workstation if configured with a full DNS name (i.e.
+       * workstation.somewhere.net) gethostname() returns the fully qualified
+       * name, which NTLM doesn't like.
+       */
+      char *dot = strchr(host, '.');
+      if (dot)
+        *dot = '\0';
       hostlen = strlen(host);
     }
 
@@ -828,7 +871,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       MD5_Final(md5sum, &MD5);
       /* We shall only use the first 8 bytes of md5sum,
          but the des code in lm_resp only encrypt the first 8 bytes */
-      mk_nt_hash(passwdp, ntbuffer);
+      mk_nt_hash(conn->data, passwdp, ntbuffer);
       lm_resp(ntbuffer, md5sum, ntresp);
 
       /* End of NTLM2 Session code */
@@ -842,16 +885,18 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       unsigned char lmbuffer[0x18];
 
 #if USE_NTRESPONSES
-      mk_nt_hash(passwdp, ntbuffer);
+      mk_nt_hash(conn->data, passwdp, ntbuffer);
       lm_resp(ntbuffer, &ntlm->nonce[0], ntresp);
 #endif
 
-      mk_lm_hash(passwdp, lmbuffer);
+      mk_lm_hash(conn->data, passwdp, lmbuffer);
       lm_resp(lmbuffer, &ntlm->nonce[0], lmresp);
       /* A safer but less compatible alternative is:
        *   lm_resp(ntbuffer, &ntlm->nonce[0], lmresp);
        * See http://davenport.sourceforge.net/ntlm.html#ntlmVersion2 */
+#if USE_NTLM2SESSION
     }
+#endif
 
     lmrespoff = 64; /* size of the message header */
 #if USE_NTRESPONSES
@@ -865,7 +910,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
     /* Create the big type-3 message binary blob */
     size = snprintf((char *)ntlmbuf, sizeof(ntlmbuf),
-                    "NTLMSSP%c"
+                    NTLMSSP_SIGNATURE "%c"
                     "\x03%c%c%c" /* type-3, 32 bits */
 
                     "%c%c" /* LanManager length */
@@ -957,7 +1002,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
     DEBUG_OUT({
         fprintf(stderr, "**** TYPE3 header lmresp=");
-        print_hex(stderr, &ntlmbuf[lmrespoff], 0x18);
+        print_hex(stderr, (char *)&ntlmbuf[lmrespoff], 0x18);
     });
 
 #if USE_NTRESPONSES
@@ -969,7 +1014,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
     DEBUG_OUT({
         fprintf(stderr, "\n                  ntresp=");
-        print_hex(stderr, &ntlmbuf[ntrespoff], 0x18);
+        print_hex(stderr, (char *)&ntlmbuf[ntrespoff], 0x18);
     });
 
 #endif
@@ -1001,16 +1046,26 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
     memcpy(&ntlmbuf[size], host, hostlen);
     size += hostlen;
 
+#ifdef CURL_DOES_CONVERSIONS
+    /* convert domain, user, and host to ASCII but leave the rest as-is */
+    if(CURLE_OK != Curl_convert_to_network(conn->data, 
+                                           (char *)&ntlmbuf[domoff],
+                                           size-domoff)) {
+      return CURLE_CONV_FAILED;
+    }
+#endif /* CURL_DOES_CONVERSIONS */
+
 #endif
 
     /* convert the binary blob into base64 */
-    size = Curl_base64_encode((char *)ntlmbuf, size, &base64);
+    size = Curl_base64_encode(NULL, (char *)ntlmbuf, size, &base64);
 
     if(size >0 ) {
       Curl_safefree(*allocuserpwd);
       *allocuserpwd = aprintf("%sAuthorization: NTLM %s\r\n",
                               proxy?"Proxy-":"",
                               base64);
+      DEBUG_OUT(fprintf(stderr, "**** %s\n ", *allocuserpwd));
       free(base64);
     }
     else

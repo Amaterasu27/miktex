@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: mprintf.c,v 1.52 2005/07/13 18:06:40 bagder Exp $
+ * $Id: mprintf.c,v 1.55 2006-10-17 21:32:56 bagder Exp $
  *
  *************************************************************************
  *
@@ -37,6 +37,10 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
+
+#if defined(DJGPP) && (DJGPP_MINOR < 4)
+#undef _MPRINTF_REPLACE /* don't use x_was_used() here */
+#endif
 
 #include <curl/mprintf.h>
 
@@ -167,7 +171,7 @@ int curl_msprintf(char *buffer, const char *format, ...);
 static long dprintf_DollarString(char *input, char **end)
 {
   int number=0;
-  while(isdigit((int)*input)) {
+  while(ISDIGIT(*input)) {
     number *= 10;
     number += *input-'0';
     input++;

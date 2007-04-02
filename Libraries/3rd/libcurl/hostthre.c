@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostthre.c,v 1.36 2006-04-26 17:23:28 giva Exp $
+ * $Id: hostthre.c,v 1.43 2006-10-17 20:34:11 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -26,7 +26,7 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef HAVE_MALLOC_H
+#ifdef NEED_MALLOC_H
 #include <malloc.h>
 #endif
 #ifdef HAVE_SYS_TYPES_H
@@ -157,7 +157,6 @@ struct thread_data {
   unsigned thread_id;
   DWORD  thread_status;
   curl_socket_t dummy_sock;   /* dummy for Curl_resolv_fdset() */
-  FILE *stderr_file;
   HANDLE mutex_waiting;  /* marks that we are still waiting for a resolve */
   HANDLE event_resolved; /* marks that the thread obtained the information */
   HANDLE event_thread_started; /* marks that the thread has initialized and
@@ -209,7 +208,7 @@ BOOL init_thread_sync_data(struct thread_data * td,
 {
   HANDLE curr_proc = GetCurrentProcess();
 
-  memset(tsd, 0, sizeof(tsd));
+  memset(tsd, 0, sizeof(*tsd));
   if (!DuplicateHandle(curr_proc, td->mutex_waiting,
                        curr_proc, &tsd->mutex_waiting, 0, FALSE,
                        DUPLICATE_SAME_ACCESS)) {
@@ -302,14 +301,6 @@ static unsigned __stdcall gethostbyname_thread (void *arg)
     return (unsigned)-1;
   }
 
-  /* Sharing the same _iob[] element with our parent thread should
-   * hopefully make printouts synchronised. I'm not sure it works
-   * with a static runtime lib (MSVC's libc.lib).
-   */
-#ifndef _WIN32_WCE
-  *stderr = *td->stderr_file;
-#endif
-
   WSASetLastError (conn->async.status = NO_DATA); /* pending status */
 
   /* Signaling that we have initialized all copies of data and handles we
@@ -368,10 +359,6 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
     /* thread synchronization data initialization failed */
     return -1;
   }
-
-#ifndef _WIN32_WCE
-  *stderr = *td->stderr_file;
-#endif
 
   itoa(conn->async.port, service, 10);
 
@@ -538,8 +525,6 @@ static bool init_resolve_thread (struct connectdata *conn,
     return FALSE;
   }
 
-  td->stderr_file = stderr;
-
 #ifdef _WIN32_WCE
   td->thread_hnd = (HANDLE) CreateThread(NULL, 0,
                                          (LPTHREAD_START_ROUTINE) THREAD_FUNC,
@@ -557,8 +542,12 @@ static bool init_resolve_thread (struct connectdata *conn,
 #endif
 
   if (!td->thread_hnd) {
+#ifdef _WIN32_WCE
+     TRACE(("CreateThread() failed; %s\n", Curl_strerror(conn,GetLastError())));
+#else
      SetLastError(errno);
      TRACE(("_beginthreadex() failed; %s\n", Curl_strerror(conn,errno)));
+#endif
      Curl_destroy_thread_data(&conn->async);
      return FALSE;
   }
@@ -737,7 +726,7 @@ int Curl_resolv_getsock(struct connectdata *conn,
  * Curl_getaddrinfo() - for Windows threading without ENABLE_IPV6.
  */
 Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
-                                char *hostname,
+                                const char *hostname,
                                 int port,
                                 int *waitp)
 {
@@ -777,7 +766,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
  * Curl_getaddrinfo() - for Windows threading IPv6 enabled
  */
 Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
-                                char *hostname,
+                                const char *hostname,
                                 int port,
                                 int *waitp)
 {

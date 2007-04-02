@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.110 2006-06-08 06:12:31 bagder Exp $
+ * $Id: setup.h,v 1.124 2007-01-29 00:51:02 gknauf Exp $
  ***************************************************************************/
 
 #ifdef HTTP_ONLY
@@ -81,10 +81,12 @@
  * winsock2.h, ws2tcpip.h or winsock.h. Any other windows thing belongs
  * to any other further and independant block.  Under Cygwin things work
  * just as under linux (e.g. <sys/socket.h>) and the winsock headers should
- * never be included.
+ * never be included when __CYGWIN__ is defined.  configure script takes
+ * care of this, not defining HAVE_WINDOWS_H, HAVE_WINSOCK_H, HAVE_WINSOCK2_H,
+ * neither HAVE_WS2TCPIP_H when __CYGWIN__ is defined.
  */
 
-#if defined(HAVE_WINDOWS_H) && !defined(__CYGWIN__)
+#ifdef HAVE_WINDOWS_H
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
@@ -101,6 +103,22 @@
 #  endif
 #endif
 
+/*
+ * Define USE_WINSOCK to 2 if we have and use WINSOCK2 API, else
+ * define USE_WINSOCK to 1 if we have and use WINSOCK  API, else
+ * undefine USE_WINSOCK.
+ */
+
+#undef USE_WINSOCK
+
+#ifdef HAVE_WINSOCK2_H
+#  define USE_WINSOCK 2
+#else
+#  ifdef HAVE_WINSOCK_H
+#    define USE_WINSOCK 1
+#  endif
+#endif
+
 
 #ifndef TRUE
 #define TRUE 1
@@ -109,7 +127,7 @@
 #define FALSE 0
 #endif
 
-#if !defined(__cplusplus) && !defined(__BEOS__) && !defined(typedef_bool)
+#if !defined(__cplusplus) && !defined(__BEOS__) && !defined(__ECOS) && !defined(typedef_bool)
 typedef unsigned char bool;
 #define typedef_bool
 #endif
@@ -193,14 +211,6 @@ typedef unsigned char bool;
 #define curlassert(x)
 #endif
 
-#ifdef MSG_NOSIGNAL
-/* If we have the MSG_NOSIGNAL define, we make sure to use that in the forth
-   argument to send() and recv() */
-#define SEND_4TH_ARG MSG_NOSIGNAL
-#define HAVE_MSG_NOSIGNAL 1 /* we have MSG_NOSIGNAL */
-#else
-#define SEND_4TH_ARG 0
-#endif /* MSG_NOSIGNAL */
 
 /* To make large file support transparent even on Windows */
 #if defined(WIN32) && (SIZEOF_CURL_OFF_T > 4)
@@ -215,10 +225,8 @@ typedef unsigned char bool;
 #endif /* Win32 with large file support */
 
 
-/* Below we define four functions. They should
+/* Below we define some functions. They should
    1. close a socket
-   2. read from a socket
-   3. write to a socket
 
    4. set the SIGALRM signal timeout
    5. set dir/file naming defines
@@ -226,19 +234,13 @@ typedef unsigned char bool;
 
 #ifdef WIN32
 
-#if !defined(__GNUC__) || defined(__MINGW32__)
+#if !defined(__CYGWIN__)
 #define sclose(x) closesocket(x)
 
-/* Since Windows doesn't have/use the POSIX prototype for send() and recv(),
-   we typecast the third argument in the macros to avoid compiler warnings. */
-#define sread(x,y,z) recv(x,y,(int)(z), SEND_4TH_ARG)
-#define swrite(x,y,z) (size_t)send(x,y, (int)(z), SEND_4TH_ARG)
 #undef HAVE_ALARM
 #else
      /* gcc-for-win is still good :) */
 #define sclose(x) close(x)
-#define sread(x,y,z) recv(x,y,z, SEND_4TH_ARG)
-#define swrite(x,y,z) send(x,y,z, SEND_4TH_ARG)
 #define HAVE_ALARM
 #endif /* !GNU or mingw */
 
@@ -247,11 +249,9 @@ typedef unsigned char bool;
 
 #else /* WIN32 */
 
-#ifdef DJGPP
+#ifdef MSDOS  /* Watt-32 */
 #include <sys/ioctl.h>
 #define sclose(x)         close_s(x)
-#define sread(x,y,z)      read_s(x,y,z)
-#define swrite(x,y,z)     write_s(x,y,z)
 #define select(n,r,w,x,t) select_s(n,r,w,x,t)
 #define ioctl(x,y,z) ioctlsocket(x,y,(char *)(z))
 #define IOCTL_3_ARGS
@@ -260,21 +260,17 @@ typedef unsigned char bool;
 #undef word
 #endif
 
-#else /* DJGPP */
+#else /* MSDOS */
 
 #ifdef __BEOS__
 #define sclose(x) closesocket(x)
-#define sread(x,y,z) (ssize_t)recv(x,y,z, SEND_4TH_ARG)
-#define swrite(x,y,z) (ssize_t)send(x,y,z, SEND_4TH_ARG)
 #else /* __BEOS__ */
 #define sclose(x) close(x)
-#define sread(x,y,z) recv(x,y,z, SEND_4TH_ARG)
-#define swrite(x,y,z) send(x,y,z, SEND_4TH_ARG)
 #endif /* __BEOS__ */
 
 #define HAVE_ALARM
 
-#endif /* DJGPP */
+#endif /* MSDOS */
 
 #ifdef _AMIGASF
 #undef HAVE_ALARM
@@ -287,7 +283,7 @@ typedef unsigned char bool;
 #define DOT_CHAR      "."
 #endif
 
-#ifdef DJGPP
+#ifdef MSDOS
 #undef DOT_CHAR
 #define DOT_CHAR      "_"
 #endif
@@ -297,23 +293,6 @@ int fileno( FILE *stream);
 #endif
 
 #endif /* WIN32 */
-
-#ifndef curl_socket_typedef
-/* now typedef our socket type */
-#ifdef WIN32
-typedef SOCKET curl_socket_t;
-#define CURL_SOCKET_BAD INVALID_SOCKET
-#else
-typedef int curl_socket_t;
-#define CURL_SOCKET_BAD -1
-#endif
-#define curl_socket_typedef
-#endif /* curl_socket_typedef */
-
-
-#if defined(ENABLE_IPV6) && defined(USE_ARES)
-#error "ares does not yet support IPv6. Disable IPv6 or ares and rebuild"
-#endif
 
 #if defined(WIN32) && !defined(__CYGWIN__) && !defined(USE_ARES) && \
     !defined(__LCC__)  /* lcc-win32 doesn't have _beginthreadex() */
@@ -383,6 +362,19 @@ typedef int curl_socket_t;
 #define DEBUGF(x) x
 #else
 #define DEBUGF(x)
+#endif
+
+/* non-configure builds may define CURL_WANTS_CA_BUNDLE_ENV */
+#if defined(CURL_WANTS_CA_BUNDLE_ENV) && !defined(CURL_CA_BUNDLE)
+#define CURL_CA_BUNDLE getenv("CURL_CA_BUNDLE")
+#endif
+
+/*
+ * Include macros and defines that should only be processed once.
+ */
+
+#ifndef __SETUP_ONCE_H
+#include "setup_once.h"
 #endif
 
 #endif /* __LIB_CURL_SETUP_H */

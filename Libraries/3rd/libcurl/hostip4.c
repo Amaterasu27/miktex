@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip4.c,v 1.20 2006-04-26 17:23:28 giva Exp $
+ * $Id: hostip4.c,v 1.30 2006-10-27 03:47:58 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -26,7 +26,7 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef HAVE_MALLOC_H  /* Win32 */
+#ifdef NEED_MALLOC_H
 #include <malloc.h>
 #endif
 #ifdef HAVE_SYS_TYPES_H
@@ -64,11 +64,6 @@
 #include <process.h>
 #endif
 
-#if (defined(NETWARE) && defined(__NOVELL_LIBC__))
-#undef in_addr_t
-#define in_addr_t unsigned long
-#endif
-
 #include "urldata.h"
 #include "sendf.h"
 #include "hostip.h"
@@ -93,23 +88,6 @@
  * Only for plain-ipv4 builds
  **********************************************************************/
 #ifdef CURLRES_IPV4 /* plain ipv4 code coming up */
-
-/*
- * This is a function for freeing name information in a protocol independent
- * way.
- */
-void Curl_freeaddrinfo(Curl_addrinfo *ai)
-{
-  Curl_addrinfo *next;
-
-  /* walk over the list and free all entries */
-  while(ai) {
-    next = ai->ai_next;
-    free(ai);
-    ai = next;
-  }
-}
-
 /*
  * Curl_ipvalid() checks what CURL_IPRESOLVE_* requirements that might've
  * been set and returns TRUE if they are OK.
@@ -121,49 +99,6 @@ bool Curl_ipvalid(struct SessionHandle *data)
     return FALSE;
 
   return TRUE; /* OK, proceed */
-}
-
-struct namebuf {
-  struct hostent hostentry;
-  char *h_addr_list[2];
-  struct in_addr addrentry;
-  char h_name[16]; /* 123.123.123.123 = 15 letters is maximum */
-};
-
-/*
- * Curl_ip2addr() takes a 32bit ipv4 internet address as input parameter
- * together with a pointer to the string version of the address, and it
- * returns a Curl_addrinfo chain filled in correctly with information for this
- * address/host.
- *
- * The input parameters ARE NOT checked for validity but they are expected
- * to have been checked already when this is called.
- */
-Curl_addrinfo *Curl_ip2addr(in_addr_t num, char *hostname, int port)
-{
-  Curl_addrinfo *ai;
-  struct hostent *h;
-  struct in_addr *addrentry;
-  struct namebuf buffer;
-  struct namebuf *buf = &buffer;
-
-  h = &buf->hostentry;
-  h->h_addr_list = &buf->h_addr_list[0];
-  addrentry = &buf->addrentry;
-  addrentry->s_addr = num;
-  h->h_addr_list[0] = (char*)addrentry;
-  h->h_addr_list[1] = NULL;
-  h->h_addrtype = AF_INET;
-  h->h_length = sizeof(*addrentry);
-  h->h_name = &buf->h_name[0];
-  h->h_aliases = NULL;
-
-  /* Now store the dotted version of the address */
-  snprintf((char *)h->h_name, 16, "%s", hostname);
-
-  ai = Curl_he2ai(h, port);
-
-  return ai;
 }
 
 #ifdef CURLRES_SYNCH /* the functions below are for synchronous resolves */
@@ -185,7 +120,7 @@ Curl_addrinfo *Curl_ip2addr(in_addr_t num, char *hostname, int port)
  *
  */
 Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
-                                char *hostname,
+                                const char *hostname,
                                 int port,
                                 int *waitp)
 {
@@ -365,35 +300,42 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 }
 
 #endif /* CURLRES_SYNCH */
+#endif /* CURLRES_IPV4 */
 
 /*
  * Curl_he2ai() translates from a hostent struct to a Curl_addrinfo struct.
  * The Curl_addrinfo is meant to work like the addrinfo struct does for IPv6
  * stacks, but for all hosts and environments.
+ *
+ *   Curl_addrinfo defined in "lib/hostip.h"
+ *
+ *     struct Curl_addrinfo {
+ *       int                   ai_flags;
+ *       int                   ai_family;
+ *       int                   ai_socktype;
+ *       int                   ai_protocol;
+ *       socklen_t             ai_addrlen;   * Follow rfc3493 struct addrinfo *
+ *       char                 *ai_canonname;
+ *       struct sockaddr      *ai_addr;
+ *       struct Curl_addrinfo *ai_next;
+ *     };
+ *
+ *   hostent defined in <netdb.h>
+ *
+ *     struct hostent {
+ *       char    *h_name;
+ *       char    **h_aliases;
+ *       int     h_addrtype;
+ *       int     h_length;
+ *       char    **h_addr_list;
+ *     };
+ *
+ *   for backward compatibility:
+ *
+ *     #define h_addr  h_addr_list[0]
+ */
 
-struct Curl_addrinfo {
-  int     ai_flags;
-  int     ai_family;
-  int     ai_socktype;
-  int     ai_protocol;
-  size_t  ai_addrlen;
-  struct sockaddr *ai_addr;
-  char   *ai_canonname;
-  struct addrinfo *ai_next;
-};
-
-struct hostent {
-  char    *h_name;        * official name of host *
-  char    **h_aliases;    * alias list *
-  int     h_addrtype;     * host address type *
-  int     h_length;       * length of address *
-  char    **h_addr_list;  * list of addresses *
-}
-#define h_addr  h_addr_list[0]  * for backward compatibility *
-
-*/
-
-Curl_addrinfo *Curl_he2ai(struct hostent *he, int port)
+Curl_addrinfo *Curl_he2ai(const struct hostent *he, int port)
 {
   Curl_addrinfo *ai;
   Curl_addrinfo *prevai = NULL;
@@ -406,7 +348,7 @@ Curl_addrinfo *Curl_he2ai(struct hostent *he, int port)
     /* no input == no output! */
     return NULL;
 
-  for(i=0; (curr = (struct in_addr *)he->h_addr_list[i]); i++) {
+  for(i=0; (curr = (struct in_addr *)he->h_addr_list[i]) != NULL; i++) {
 
     ai = calloc(1, sizeof(Curl_addrinfo) + sizeof(struct sockaddr_in));
 
@@ -445,4 +387,3 @@ Curl_addrinfo *Curl_he2ai(struct hostent *he, int port)
   return firstai;
 }
 
-#endif /* CURLRES_IPV4 */

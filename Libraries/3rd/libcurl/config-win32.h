@@ -41,6 +41,11 @@
 #define HAVE_MALLOC_H 1
 #endif
 
+/* Define if you need the malloc.h header file even with stdlib.h  */
+#ifndef __SALFORDC__
+#define NEED_MALLOC_H 1
+#endif
+
 /* Define if you have the <netdb.h> header file.  */
 /* #define HAVE_NETDB_H 1 */
 
@@ -51,6 +56,9 @@
 #ifndef __SALFORDC__
 #define HAVE_PROCESS_H 1
 #endif
+
+/* Define if you have the <signal.h> header file. */
+#define HAVE_SIGNAL_H 1
 
 /* Define if you have the <sgtty.h> header file.  */
 /* #define HAVE_SGTTY_H 1 */
@@ -75,6 +83,9 @@
 
 /* Define if you have the <sys/stat.h> header file.  */
 #define HAVE_SYS_STAT_H 1
+
+/* Define if you have the <sys/time.h> header file */
+/* #define HAVE_SYS_TIME_H 1 */
 
 /* Define if you have the <sys/types.h> header file.  */
 #define HAVE_SYS_TYPES_H 1
@@ -116,6 +127,9 @@
 /* ---------------------------------------------------------------- */
 /*                        OTHER HEADER INFO                         */
 /* ---------------------------------------------------------------- */
+
+/* Define if sig_atomic_t is an available typedef. */
+#define HAVE_SIG_ATOMIC_T 1
 
 /* Define if you have the ANSI C header files.  */
 #define STDC_HEADERS 1
@@ -215,6 +229,63 @@
 /* Define if you have the vprintf function.  */
 #define HAVE_VPRINTF 1
 
+/* Define if you have the getnameinfo function. */
+#define HAVE_GETNAMEINFO 1
+
+/* Define to the type qualifier of arg 1 for getnameinfo. */
+#define GETNAMEINFO_QUAL_ARG1 const
+
+/* Define to the type of arg 1 for getnameinfo. */
+#define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
+
+/* Define to the type of arg 2 for getnameinfo. */
+#define GETNAMEINFO_TYPE_ARG2 socklen_t
+
+/* Define to the type of args 4 and 6 for getnameinfo. */
+#define GETNAMEINFO_TYPE_ARG46 DWORD
+
+/* Define to the type of arg 7 for getnameinfo. */
+#define GETNAMEINFO_TYPE_ARG7 int
+
+/* Define if you have the recv function. */
+#define HAVE_RECV 1
+
+/* Define to the type of arg 1 for recv. */
+#define RECV_TYPE_ARG1 SOCKET
+
+/* Define to the type of arg 2 for recv. */
+#define RECV_TYPE_ARG2 char *
+
+/* Define to the type of arg 3 for recv. */
+#define RECV_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recv. */
+#define RECV_TYPE_ARG4 int
+
+/* Define to the function return type for recv. */
+#define RECV_TYPE_RETV int
+
+/* Define if you have the send function. */
+#define HAVE_SEND 1
+
+/* Define to the type of arg 1 for send. */
+#define SEND_TYPE_ARG1 SOCKET
+
+/* Define to the type qualifier of arg 2 for send. */
+#define SEND_QUAL_ARG2 const
+
+/* Define to the type of arg 2 for send. */
+#define SEND_TYPE_ARG2 char *
+
+/* Define to the type of arg 3 for send. */
+#define SEND_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for send. */
+#define SEND_TYPE_ARG4 int
+
+/* Define to the function return type for send. */
+#define SEND_TYPE_RETV int
+
 /* ---------------------------------------------------------------- */
 /*                       TYPEDEF REPLACEMENTS                       */
 /* ---------------------------------------------------------------- */
@@ -223,13 +294,11 @@
 #define in_addr_t unsigned long
 
 /* Define as the return type of signal handlers (int or void).  */
-/* #define RETSIGTYPE void */
+#define RETSIGTYPE void
 
-/* Define to `unsigned' if size_t is not an available 'typedefed' type */
-/* #define size_t unsigned */
-
-/* Define to 'int' if ssize_t is not an available 'typedefed' type */
 #if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__)
+#elif defined(_WIN64)
+#define ssize_t __int64
 #else
 #define ssize_t int
 #endif
@@ -273,12 +342,22 @@
 #define HAVE_STRUCT_SOCKADDR_STORAGE 1
 #endif
 
+/* Define this if you have struct timeval */
+#define HAVE_STRUCT_TIMEVAL 1
+
 /* ---------------------------------------------------------------- */
 /*                        COMPILER SPECIFIC                         */
 /* ---------------------------------------------------------------- */
 
 /* Undef keyword 'const' if it does not work.  */
 /* #undef const */
+
+#if defined(_MSC_VER) && (_MSC_VER > 1310)
+/* MSVC 2003 has gmtime_r */
+#if ! defined(MIKTEX)
+#define HAVE_GMTIME_R
+#endif
+#endif
 
 /* ---------------------------------------------------------------- */
 /*                        LDAP LIBRARY FILES                        */

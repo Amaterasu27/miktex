@@ -18,14 +18,14 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostasyn.c,v 1.13 2006-05-04 22:39:47 bagder Exp $
+ * $Id: hostasyn.c,v 1.16 2006-07-25 13:49:50 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
 #include <string.h>
 
-#ifdef HAVE_MALLOC_H  /* Win32 */
+#ifdef NEED_MALLOC_H
 #include <malloc.h>
 #endif
 #ifdef HAVE_SYS_TYPES_H
@@ -112,8 +112,8 @@ static CURLcode addrinfo_callback(void *arg, /* "struct connectdata *" */
   if(CURL_ASYNC_SUCCESS == status) {
 
     /*
-     * IPv4: Curl_addrinfo_copy() copies the address and returns an allocated
-     * version.
+     * IPv4/ares: Curl_addrinfo_copy() copies the address and returns an
+     * allocated version.
      *
      * IPv6: Curl_addrinfo_copy() returns the input pointer!
      */
@@ -164,6 +164,9 @@ CURLcode Curl_addrinfo6_callback(void *arg, /* "struct connectdata *" */
                                  int status,
                                  struct addrinfo *ai)
 {
+ /* NOTE: for CURLRES_ARES, the 'ai' argument is really a
+  * 'struct hostent' pointer.
+  */
   return addrinfo_callback(arg, status, ai);
 }
 #endif

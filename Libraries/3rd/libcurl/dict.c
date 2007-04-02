@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.41 2006-05-10 11:44:31 bagder Exp $
+ * $Id: dict.c,v 1.47 2006-10-11 16:01:17 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -38,7 +38,7 @@
 #include <sys/stat.h>
 #endif
 
-#if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
+#ifdef WIN32
 #include <time.h>
 #include <io.h>
 #else
@@ -46,7 +46,9 @@
 #include <sys/socket.h>
 #endif
 #include <netinet/in.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -104,7 +106,7 @@ static char *unescape_word(struct SessionHandle *data, char *inp)
     /* According to RFC2229 section 2.2, these letters need to be escaped with
        \[letter] */
     for(ptr = newp;
-        (byte = (unsigned char)*ptr);
+        (byte = (unsigned char)*ptr) != 0;
         ptr++) {
       if ((byte <= 32) || (byte == 127) ||
           (byte == '\'') || (byte == '\"') || (byte == '\\')) {
@@ -132,8 +134,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
   struct SessionHandle *data=conn->data;
   curl_socket_t sockfd = conn->sock[FIRSTSOCKET];
 
-  char *path = conn->path;
-  curl_off_t *bytecount = &conn->bytecount;
+  char *path = data->reqdata.path;
+  curl_off_t *bytecount = &data->reqdata.keep.bytecount;
 
   *done = TRUE; /* unconditionally */
 
@@ -194,8 +196,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
     if(result)
       failf(data, "Failed sending DICT request");
     else
-      result = Curl_Transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
-                             -1, NULL); /* no upload */
+      result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
+                                   -1, NULL); /* no upload */
     if(result)
       return result;
   }
@@ -241,8 +243,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
     if(result)
       failf(data, "Failed sending DICT request");
     else
-      result = Curl_Transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
-                             -1, NULL); /* no upload */
+      result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
+                                   -1, NULL); /* no upload */
 
     if(result)
       return result;
@@ -266,8 +268,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
       if(result)
         failf(data, "Failed sending DICT request");
       else
-        result = Curl_Transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
-                               -1, NULL);
+        result = Curl_setup_transfer(conn, FIRSTSOCKET, -1, FALSE, bytecount,
+                                     -1, NULL);
       if(result)
         return result;
     }

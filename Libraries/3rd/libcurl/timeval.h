@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: timeval.h,v 1.22 2006/01/09 13:17:14 bagder Exp $
+ * $Id: timeval.h,v 1.31 2006-10-27 03:47:58 yangtse Exp $
  ***************************************************************************/
 
 /*
@@ -30,20 +30,22 @@
 
 #include "setup.h"
 
-#if defined(WIN32) && !defined(__GNUC__) || defined(__MINGW32__)
-#include <time.h>
-#else
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#ifdef TIME_WITH_SYS_TIME
+#include <time.h>
+#endif
+#else
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 #endif
 
-#ifndef HAVE_GETTIMEOFDAY
-#if !defined(_WINSOCKAPI_) && !defined(__MINGW32__) && !defined(_AMIGASF) && \
-    !defined(__LCC__) && !defined(__WATCOMC__) && !defined(__POCC__)
+#ifndef HAVE_STRUCT_TIMEVAL
 struct timeval {
  long tv_sec;
  long tv_usec;
 };
-#endif
 #endif
 
 struct timeval curlx_tvnow(void);

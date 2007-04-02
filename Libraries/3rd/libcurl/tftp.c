@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.26 2006-05-09 13:02:53 bagder Exp $
+ * $Id: tftp.c,v 1.35 2007-01-16 22:22:24 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -45,7 +45,9 @@
 #include <sys/socket.h>
 #endif
 #include <netinet/in.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -75,6 +77,7 @@
 #include "connect.h"
 #include "strerror.h"
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
+#include "url.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -228,40 +231,37 @@ void tftp_set_timeouts(tftp_state_data_t *state)
 
 static void setpacketevent(tftp_packet_t *packet, unsigned short num)
 {
-  packet->data[0] = (num >> 8);
-  packet->data[1] = (num & 0xff);
+  packet->data[0] = (unsigned char)(num >> 8);
+  packet->data[1] = (unsigned char)(num & 0xff);
 }
 
 
 static void setpacketblock(tftp_packet_t *packet, unsigned short num)
 {
-  packet->data[2] = (num >> 8);
-  packet->data[3] = (num & 0xff);
+  packet->data[2] = (unsigned char)(num >> 8);
+  packet->data[3] = (unsigned char)(num & 0xff);
 }
 
 static unsigned short getrpacketevent(tftp_packet_t *packet)
 {
-  return (packet->data[0] << 8) | packet->data[1];
+  return (unsigned short)((packet->data[0] << 8) | packet->data[1]);
 }
 
 static unsigned short getrpacketblock(tftp_packet_t *packet)
 {
-  return (packet->data[2] << 8) | packet->data[3];
+  return (unsigned short)((packet->data[2] << 8) | packet->data[3]);
 }
 
 static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
 {
   int sbytes;
   const char *mode = "octet";
-
-  /* As RFC3617 describes the separator slash is not actually part of the file
-     name so we skip the always-present first letter of the path string. */
-  char *filename = &state->conn->path[1];
+  char *filename;
   struct SessionHandle *data = state->conn->data;
   CURLcode res = CURLE_OK;
 
   /* Set ascii mode if -B flag was used */
-  if(data->set.ftp_ascii)
+  if(data->set.prefer_ascii)
     mode = "netascii";
 
   switch(event) {
@@ -279,8 +279,7 @@ static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
     if(data->set.upload) {
       /* If we are uploading, send an WRQ */
       setpacketevent(&state->spacket, TFTP_EVENT_WRQ);
-      filename = curl_easy_unescape(data, filename, 0, NULL);
-      state->conn->upload_fromhere = (char *)&state->spacket.data[4];
+      state->conn->data->reqdata.upload_fromhere = (char *)&state->spacket.data[4];
       if(data->set.infilesize != -1)
         Curl_pgrsSetUploadSize(data, data->set.infilesize);
     }
@@ -288,6 +287,10 @@ static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
       /* If we are downloading, send an RRQ */
       setpacketevent(&state->spacket, TFTP_EVENT_RRQ);
     }
+    /* As RFC3617 describes the separator slash is not actually part of the
+    file name so we skip the always-present first letter of the path string. */
+    filename = curl_easy_unescape(data, &state->conn->data->reqdata.path[1], 0,
+                                  NULL);
     snprintf((char *)&state->spacket.data[2],
              TFTP_BLOCKSIZE,
              "%s%c%s%c", filename, '\0',  mode, '\0');
@@ -299,6 +302,7 @@ static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
     if(sbytes < 0) {
       failf(data, "%s\n", Curl_strerror(state->conn, Curl_sockerrno()));
     }
+    Curl_safefree(filename);
     break;
 
   case TFTP_EVENT_ACK: /* Connected for transmit */
@@ -355,7 +359,7 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
       }
     }
     /* This is the expected block.  Reset counters and ACK it. */
-    state->block = rblock;
+    state->block = (unsigned short)rblock;
     state->retries = 0;
     setpacketevent(&state->spacket, TFTP_EVENT_ACK);
     setpacketblock(&state->spacket, state->block);
@@ -567,42 +571,43 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
   tftp_state_data_t     *state;
   int rc;
 
-  state = conn->proto.tftp = calloc(sizeof(tftp_state_data_t), 1);
+  state = conn->data->reqdata.proto.tftp = calloc(sizeof(tftp_state_data_t),
+                                                  1);
   if(!state)
     return CURLE_OUT_OF_MEMORY;
+
+  conn->bits.close = FALSE; /* keep it open if possible */
 
   state->conn = conn;
   state->sockfd = state->conn->sock[FIRSTSOCKET];
   state->state = TFTP_STATE_START;
 
-#ifdef WIN32
-  /* AF_UNSPEC == 0 (from above calloc) doesn't work on Winsock */
-
-  /* NOTE: this blatantly assumes IPv4. This should be fixed! */
-  ((struct sockaddr_in*)&state->local_addr)->sin_family =
+  ((struct sockaddr *)&state->local_addr)->sa_family =
     conn->ip_addr->ai_family;
-#endif
 
   tftp_set_timeouts(state);
 
-  /* Bind to any interface, random UDP port.
-   *
-   * We once used the size of the local_addr struct as the third argument for
-   * bind() to better work with IPv6 or whatever size the struct could have,
-   * but we learned that at least Tru64, AIX and IRIX *requires* the size of
-   * that argument to match the exact size of a 'sockaddr_in' struct when
-   * running IPv4-only.
-   *
-   * Therefore we use the size from the address we connected to, which we
-   * assume uses the same IP version and thus hopefully this works for both
-   * IPv4 and IPv6...
-   */
-  rc = bind(state->sockfd, (struct sockaddr *)&state->local_addr,
-            conn->ip_addr->ai_addrlen);
-  if(rc) {
-    failf(conn->data, "bind() failed; %s\n",
-          Curl_strerror(conn, Curl_sockerrno()));
-    return CURLE_COULDNT_CONNECT;
+  if(!conn->bits.reuse) {
+    /* If not reused, bind to any interface, random UDP port. If it is reused,
+     * this has already been done!
+     *
+     * We once used the size of the local_addr struct as the third argument for
+     * bind() to better work with IPv6 or whatever size the struct could have,
+     * but we learned that at least Tru64, AIX and IRIX *requires* the size of
+     * that argument to match the exact size of a 'sockaddr_in' struct when
+     * running IPv4-only.
+     *
+     * Therefore we use the size from the address we connected to, which we
+     * assume uses the same IP version and thus hopefully this works for both
+     * IPv4 and IPv6...
+     */
+    rc = bind(state->sockfd, (struct sockaddr *)&state->local_addr,
+              conn->ip_addr->ai_addrlen);
+    if(rc) {
+      failf(conn->data, "bind() failed; %s\n",
+            Curl_strerror(conn, Curl_sockerrno()));
+      return CURLE_COULDNT_CONNECT;
+    }
   }
 
   Curl_pgrsStartNow(conn->data);
@@ -619,12 +624,16 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
  * The done callback
  *
  **********************************************************/
-CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status)
+CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status,
+                        bool premature)
 {
   (void)status; /* unused */
+  (void)premature; /* not used */
 
-  free(conn->proto.tftp);
-  conn->proto.tftp = NULL;
+#if 0
+  free(conn->data->reqdata.proto.tftp);
+  conn->data->reqdata.proto.tftp = NULL;
+#endif
   Curl_pgrsDone(conn);
 
   return CURLE_OK;
@@ -644,7 +653,8 @@ CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status)
 CURLcode Curl_tftp(struct connectdata *conn, bool *done)
 {
   struct SessionHandle  *data = conn->data;
-  tftp_state_data_t     *state = (tftp_state_data_t *)(conn->proto.tftp);
+  tftp_state_data_t     *state =
+    (tftp_state_data_t *) conn->data->reqdata.proto.tftp;
   tftp_event_t          event;
   CURLcode              code;
   int                   rc;
@@ -652,7 +662,20 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
   socklen_t             fromlen;
   int                   check_time = 0;
 
-  (void)done; /* prevent compiler warning */
+  *done = TRUE;
+
+  /*
+    Since connections can be re-used between SessionHandles, this might be a
+    connection already existing but on a fresh SessionHandle struct so we must
+    make sure we have a good 'struct TFTP' to play with. For new connections,
+    the struct TFTP is allocated and setup in the Curl_tftp_connect() function.
+  */
+  if(!state) {
+    code = Curl_tftp_connect(conn, done);
+    if(code)
+      return code;
+    state = (tftp_state_data_t *)conn->data->reqdata.proto.tftp;
+  }
 
   /* Run the TFTP State Machine */
   for(tftp_state_machine(state, TFTP_EVENT_INIT);
@@ -704,7 +727,7 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
           /* Don't pass to the client empty or retransmitted packets */
           if (state->rbytes > 4 &&
               ((state->block+1) == getrpacketblock(&state->rpacket))) {
-            code = Curl_client_write(data, CLIENTWRITE_BODY,
+            code = Curl_client_write(conn, CLIENTWRITE_BODY,
                                      (char *)&state->rpacket.data[4],
                                      state->rbytes-4);
             if(code)
@@ -745,7 +768,7 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
   }
 
   /* Tell curl we're done */
-  code = Curl_Transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
+  code = Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
   if(code)
     return code;
 
