@@ -245,6 +245,7 @@ BZip2Stream::Close ()
   BZFILE * pBzFile = static_cast<BZFILE*>(this->pBzFile);
   if (pBzFile != 0)
     {
+      this->pBzFile = 0;
       int bzError;
       if (reading)
 	{
@@ -258,7 +259,6 @@ BZip2Stream::Close ()
 	{
 	  UNIMPLEMENTED (T_("BZip2Stream::Close"));
 	}
-      pBzFile = 0;
     }
 }
 
