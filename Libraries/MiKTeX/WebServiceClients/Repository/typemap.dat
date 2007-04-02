@@ -101,11 +101,14 @@ xmlmime	= <http://www.w3.org/2004/11/xmlmime>
 _xmime__contentType	= | char* | char*
 _xmlmime__contentType	= | char* | char*
 
-#	WS-Addressing (2003 and 2004 schemas)
-#	See import/wsa.h and import/wsa3.h for definitions and code examples
+#	WS-Addressing (2003, 2004, and 2005 schemas)
+#	See import/wsa.h, import/wsa3.h etc for definitions and code examples
+#	The API is defined in plugin/wsaapi.c, plugin/wsaapi3.c, etc.
 
 wsa	= <http://schemas.xmlsoap.org/ws/2004/08/addressing>
 wsa3	= <http://schemas.xmlsoap.org/ws/2003/03/addressing>
+wsa4	= <http://schemas.xmlsoap.org/ws/2004/03/addressing>
+wsa5	= <http://www.w3.org/2005/08/addressing>
 
 #	WS-Policy
 
