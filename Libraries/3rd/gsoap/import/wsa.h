@@ -2,6 +2,8 @@
 
 wsa.h
 
+Usage: See plugin/wsaapi.c
+
 Generated with:
 wsdl2h -cgye -o wsa.h -t WS/WS-typemap.dat WS/WS-Addressing.xsd
 
@@ -110,16 +112,15 @@ typedef struct wsa__ServiceNameType wsa__ServiceNameType;
 typedef struct wsa__Relationship wsa__Relationship;
 
 /// Imported complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyAfterType from typemap WS/WS-typemap.dat.
-/// complexType definition intentionally left blank.
+// complexType definition intentionally left blank.
 
 /// Imported complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedQName from typemap WS/WS-typemap.dat.
-/// complexType definition intentionally left blank.
+// complexType definition intentionally left blank.
 
 /// Imported complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI from typemap WS/WS-typemap.dat.
-/// complexType definition intentionally left blank.
+// complexType definition intentionally left blank.
 
 /// "http://schemas.xmlsoap.org/ws/2004/08/addressing":RelationshipTypeValues is a simpleType restriction of xs:QName.
-/// Note: enum values are prefixed with 'wsa__RelationshipTypeValues' to avoid name clashes, please use wsdl2h option -e to omit this prefix
 enum wsa__RelationshipTypeValues
 {
 	wsa__Reply,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":Reply"
@@ -128,7 +129,6 @@ enum wsa__RelationshipTypeValues
 typedef enum wsa__RelationshipTypeValues wsa__RelationshipTypeValues;
 
 /// "http://schemas.xmlsoap.org/ws/2004/08/addressing":FaultSubcodeValues is a simpleType restriction of xs:QName.
-/// Note: enum values are prefixed with 'wsa__FaultSubcodeValues' to avoid name clashes, please use wsdl2h option -e to omit this prefix
 enum wsa__FaultSubcodeValues
 {
 	wsa__InvalidMessageInformationHeader,	///< xs:QName value=""http://schemas.xmlsoap.org/ws/2004/08/addressing":InvalidMessageInformationHeader"
@@ -155,12 +155,15 @@ struct wsa__EndpointReferenceType
     struct wsa__ServiceNameType*         ServiceName                    0;	///< Optional element.
 /// TODO: <any namespace="##other" minOccurs="0" maxOccurs="unbounded">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-    _XML                                 __any                         ;	///< Catch any element content in XML string.
+///       Use wsdl2h option -d to use xsd__anyType DOM.
+/// Size of the dynamic array of XML is 0..unbounded
+    int                                  __size                        ;
+    _XML                                *__any                         ;	///< Catch any element content in XML string.
 /// TODO: <anyAttribute namespace="##other">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
    @_XML                                 __anyAttribute                ;	///< Catch any attribute content in XML string.
 };
@@ -170,9 +173,12 @@ struct wsa__ReferencePropertiesType
 {
 /// TODO: <any minOccurs="0" maxOccurs="unbounded">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-    _XML                                 __any                         ;	///< Catch any element content in XML string.
+///       Use wsdl2h option -d to use xsd__anyType DOM.
+/// Size of the dynamic array of XML is 0..unbounded
+    int                                  __size                        ;
+    _XML                                *__any                         ;	///< Catch any element content in XML string.
 };
 
 /// "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReferenceParametersType is a complexType.
@@ -180,9 +186,12 @@ struct wsa__ReferenceParametersType
 {
 /// TODO: <any minOccurs="0" maxOccurs="unbounded">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this element.
-    _XML                                 __any                         ;	///< Catch any element content in XML string.
+///       Use wsdl2h option -d to use xsd__anyType DOM.
+/// Size of the dynamic array of XML is 0..unbounded
+    int                                  __size                        ;
+    _XML                                *__any                         ;	///< Catch any element content in XML string.
 };
 
 /// "http://schemas.xmlsoap.org/ws/2004/08/addressing":ServiceNameType is a complexType with simpleContent.
@@ -191,10 +200,10 @@ struct wsa__ServiceNameType
 /// __item wraps 'xs:QName' simpleContent.
     _QName                               __item                        ;
 /// Attribute PortName of type xs:NCName.
-   @char*                                PortName                       0;	///< Optional attribute.
+   @char* /*NCName*/                     PortName                       0;	///< Optional attribute.
 /// TODO: <anyAttribute namespace="##other">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
    @_XML                                 __anyAttribute                ;	///< Catch any attribute content in XML string.
 };
@@ -203,44 +212,44 @@ struct wsa__ServiceNameType
 struct wsa__Relationship
 {
 /// __item wraps 'xs:anyURI' simpleContent.
-    char*                                __item                        ;
+    char* /*URI*/                        __item                        ;
 /// Attribute RelationshipType of type xs:QName.
    @_QName                               RelationshipType               0;	///< Optional attribute.
 /// TODO: <anyAttribute namespace="##other">
 ///       Schema extensibility is user-definable.
-///       Consult the protocol documentation to change and/or insert declarations.
+///       Consult the protocol documentation to change or insert declarations.
 ///       Use wsdl2h option -x to remove this attribute.
    @_XML                                 __anyAttribute                ;	///< Catch any attribute content in XML string.
 };
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReference of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReference of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
 typedef struct wsa__EndpointReferenceType _wsa__EndpointReference;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":MessageID of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":MessageID of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
 typedef char* _wsa__MessageID;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":RelatesTo of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":Relationship.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":RelatesTo of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":Relationship.
 typedef struct wsa__Relationship _wsa__RelatesTo;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":To of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":To of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
 typedef char* _wsa__To;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":Action of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":Action of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":AttributedURI.
 typedef char* _wsa__Action;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":From of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":From of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
 typedef struct wsa__EndpointReferenceType _wsa__From;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyTo of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyTo of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
 typedef struct wsa__EndpointReferenceType _wsa__ReplyTo;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":FaultTo of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":FaultTo of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":EndpointReferenceType.
 typedef struct wsa__EndpointReferenceType _wsa__FaultTo;
 
-/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyAfter of complexType "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyAfterType.
+/// Element "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyAfter of type "http://schemas.xmlsoap.org/ws/2004/08/addressing":ReplyAfterType.
 typedef unsigned int _wsa__ReplyAfter;
 
 /// Attribute "http://schemas.xmlsoap.org/ws/2004/08/addressing":Action of simpleType xs:anyURI.
-/// '_wsa__Action' attribute definition intentionally left blank.
+// '_wsa__Action' attribute definition intentionally left blank.
 
 /* End of wsa.h */

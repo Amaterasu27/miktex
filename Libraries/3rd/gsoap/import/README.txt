@@ -1,5 +1,8 @@
 This directory contains common #import-ed items.
 
+The .h files are intended to be imported using the gSOAP #import directive in
+gSOAP header files and should not be used with #include.
+
 dom.h		DOM support (requires dom.c/pp)
 stldeque.h	std::deque serializer
 stllist.h	std::list serializer
@@ -7,6 +10,14 @@ stlset.h	std::set serializer
 stlvector.h	std::vector serializer
 stl.h		std::deque, std::list, std::set, and std::vector serializer
 soap12.h	SOAP 1.2 namespaces
+wsa.h		WS-Addressing 2004/08 (see plugin/wsaapi.c)
+wsa3.h		WS-Addressing 2003/03 (see plugin/wsaapi.c)
+wsa4.h		WS-Addressing 2004/03 (see plugin/wsaapi.c)
+wsa5.h		WS-Addressing 2005/03 (see plugin/wsaapi.c)
+wsse.h		WS-Security (see plugin/wsseapi.c)
+wsu.h		Utility
+xmlmime.h	XML MIME bindings
+xop.h		XOP MTOM attachments
 
 This directory further contains files to support a growing number of WS-*
 specifications.
