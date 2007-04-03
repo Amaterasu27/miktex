@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,22 +21,22 @@ add_definitions(
   -DBGDWIN32
   -DHAVE_LIBJPEG
   -DHAVE_LIBPNG
-  -DPATHSEPARATOR=\";\"
+  -DPATHSEPARATOR=\\\"\;\\\"
   -Dinline=__inline
 )
 
 set(${gd_dll_name}_sources
-  entities.h
   gd-version.h
+
   gd.c
-  gd.h
+  gdfx.c
+  gd_security.c
   gd_gd.c
   gd_gd2.c
+  gd_io.c
+  gd_io_dp.c
   gd_gif_in.c
   gd_gif_out.c
-  gd_io.c
-  gd_io.h
-  gd_io_dp.c
   gd_io_file.c
   gd_io_ss.c
   gd_jpeg.c
@@ -45,20 +45,12 @@ set(${gd_dll_name}_sources
   gd_topal.c
   gd_wbmp.c
   gdcache.c
-  gdcache.h
   gdfontg.c
-  gdfontg.h
   gdfontl.c
-  gdfontl.h
   gdfontmb.c
-  gdfontmb.h
   gdfonts.c
-  gdfonts.h
   gdfontt.c
-  gdfontt.h
   gdft.c
-  gdfx.c
-  gdfx.h
   gdhelpers.c
   gdhelpers.h
   gdkanji.c

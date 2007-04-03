@@ -1,5 +1,16 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef GD_H
 #define GD_H 1
+
+#define GD_MAJOR_VERSION 2
+#define GD_MINOR_VERSION 0
+#define GD_RELEASE_VERSION 34
+#define GD_EXTRA_VERSION ""
+#define GD_VERSION_STRING "2.0.34"
+
 
 /* Do the DLL dance: dllexport when building the DLL,
 	dllimport when importing from it, nothing when
@@ -11,32 +22,39 @@
 	and other languages. This breaks ABI compatibility
 	with previous DLL revs, but it's necessary. */
 
+/* 2.0.29: WIN32 programmers can declare the NONDLL macro if they
+	wish to build gd as a static library or by directly including
+	the gd sources in a project. */
+
+#ifndef WIN32
+#define NONDLL 1
+#endif /* WIN32 */
+
+#ifdef NONDLL
+#define BGD_DECLARE(rt) extern rt
+#else
 #ifdef BGDWIN32
 #define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
 #else
-#ifdef WIN32
 #define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
-#else
-/* 2.0.19: should be 'extern', especially for font data pointers */
-#define BGD_DECLARE(rt) extern rt
-#endif /* WIN32 */
 #endif /* BGDWIN32 */
+#endif /* NONDLL */
 
 /* 2.0.20: for actual storage of exported data, functions don't need this,
   currently needed only for font pointers */
+#ifdef NONDLL
+/* 2.0.25: bring back extern */
+#define BGD_EXPORT_DATA_PROT extern
+#define BGD_EXPORT_DATA_IMPL
+#else
 #ifdef BGDWIN32
 #define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
 #define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
 #else
-#ifdef WIN32
 #define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
 #define BGD_EXPORT_DATA_IMPL __declspec(dllimport) 
-#else
-/* 2.0.25: bring back extern */
-#define BGD_EXPORT_DATA_PROT extern
-#define BGD_EXPORT_DATA_IMPL
-#endif /* WIN32 */
 #endif /* BGDWIN32 */
+#endif /* NONDLL */
 
 #ifdef __cplusplus
 extern "C"
@@ -253,6 +271,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
+
+/* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx (gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data);
@@ -308,10 +328,11 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im);
 	allowing for many useful effects. */
 
 BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color);
+/* FreeType 2 text output with hook to extra flags */
 
 BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y);
+BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
-/* Now a No-Op, but kept for binary compatibility. */
 BGD_DECLARE(void) gdImageAABlend (gdImagePtr im);
 
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
@@ -376,11 +397,29 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
     int flags;			/* Logical OR of gdFTEX_ values */
     double linespacing;		/* fine tune line spacing for '\n' */
     int charmap;		/* TBB: 2.0.12: may be gdFTEX_Unicode,
-				   gdFTEX_Shift_JIS, or gdFTEX_Big5;
+				   gdFTEX_Shift_JIS, gdFTEX_Big5,
+				   or gdFTEX_Adobe_Custom;
 				   when not specified, maps are searched
 				   for in the above order. */
     int hdpi;                   /* if (flags & gdFTEX_RESOLUTION) */
     int vdpi;			/* if (flags & gdFTEX_RESOLUTION) */
+    char *xshow;	/* if (flags & gdFTEX_XSHOW)
+			   then, on return, xshow is a malloc'ed
+			   string contining xshow position data for
+			   the last string.
+
+			   NB. The caller is responsible for gdFree'ing
+			   the xshow string. 
+			 */
+    char *fontpath;	/* if (flags & gdFTEX_RETURNFONTPATHNAME)
+                           then, on return, fontpath is a malloc'ed
+                           string containing the actual font file path name
+                           used, which can be interesting when fontconfig
+                           is in use. 
+
+                           The caller is responsible for gdFree'ing the
+                           fontpath string.
+			*/
 
   }
   gdFTStringExtra, *gdFTStringExtraPtr;
@@ -388,12 +427,34 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
 #define gdFTEX_LINESPACE 1
 #define gdFTEX_CHARMAP 2
 #define gdFTEX_RESOLUTION 4
+#define gdFTEX_DISABLE_KERNING 8
+#define gdFTEX_XSHOW 16
+/* The default unless gdFTUseFontConfig(1); has been called:
+  fontlist is a full or partial font file pathname or list thereof 
+  (i.e. just like before 2.0.29) */
+#define gdFTEX_FONTPATHNAME 32
+/* Necessary to use fontconfig patterns instead of font pathnames
+  as the fontlist argument, unless gdFTUseFontConfig(1); has 
+  been called. New in 2.0.29 */
+#define gdFTEX_FONTCONFIG 64
+/* Sometimes interesting when fontconfig is used: the fontpath
+  element of the structure above will contain a gdMalloc'd string
+  copy of the actual font file pathname used, if this flag is set 
+   when the call is made */
+#define gdFTEX_RETURNFONTPATHNAME 128
+
+/* If flag is nonzero, the fontlist parameter to gdImageStringFT 
+  and gdImageStringFTEx shall be assumed to be a fontconfig font pattern
+  if fontconfig was compiled into gd. This function returns zero
+  if fontconfig is not available, nonzero otherwise. */
+BGD_DECLARE(int) gdFTUseFontConfig(int flag);
 
 /* These are NOT flags; set one in 'charmap' if you set the
 	gdFTEX_CHARMAP bit in 'flags'. */
 #define gdFTEX_Unicode 0
 #define gdFTEX_Shift_JIS 1
 #define gdFTEX_Big5 2
+#define gdFTEX_Adobe_Custom 3
 
 BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 			   double ptsize, double angle, int x, int y,
@@ -407,6 +468,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
   gdPoint, *gdPointPtr;
 
 BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c);
+BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
 BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
 
 /* These functions still work with truecolor images, 
@@ -492,10 +554,11 @@ BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
 BGD_DECLARE(void) gdImageGifCtx (gdImagePtr im, gdIOCtx * out);
-  /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
-     1 is FASTEST but produces larger files, 9 provides the best
-     compression (smallest files) but takes a long time to compress, and
-     -1 selects the default compiled into the zlib library. */
+
+/* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
+  1 is FASTEST but produces larger files, 9 provides the best
+  compression (smallest files) but takes a long time to compress, and
+  -1 selects the default compiled into the zlib library. */
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * out, int level);
 BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * out, int level);
 
@@ -507,7 +570,7 @@ BGD_DECLARE(void) gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
 BGD_DECLARE(void) gdFree (void *m);
 
 /* Best to free this memory with gdFree(), not free() */
-  void *gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
+BGD_DECLARE(void *) gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
 
 /* 100 is highest quality (there is always a little loss with JPEG).
 	0 is lowest. 10 is about the lowest useful setting. */
@@ -516,6 +579,26 @@ BGD_DECLARE(void) gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality);
+
+/* Legal values for Disposal. gdDisposalNone is always used by
+	the built-in optimizer if previm is passed. */
+
+enum {
+	gdDisposalUnknown,
+	gdDisposalNone,
+	gdDisposalRestoreBackground,
+	gdDisposalRestorePrevious
+};
+
+BGD_DECLARE(void) gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops);
+BGD_DECLARE(void) gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile);
+BGD_DECLARE(void) gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtx *out, int GlobalCM, int Loops);
+BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtx *out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtx *out);
+BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
+BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
 
 /* A custom data sink. For backwards compatibility. Use
 	gdIOCtx instead. */
@@ -571,6 +654,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 			 int e, int color, int style);
 BGD_DECLARE(void) gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
 		   int color);
+BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h,
 			     int color);
 BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border,
@@ -707,11 +791,15 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2);
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96	/* pixels per inch */
 
-/* newfangled special effects */
-#include "gdfx.h"
-
 #ifdef __cplusplus
 }
 #endif
 
+/* newfangled special effects */
+#include "gdfx.h"
+
 #endif				/* GD_H */
+
+#ifdef __cplusplus
+}
+#endif

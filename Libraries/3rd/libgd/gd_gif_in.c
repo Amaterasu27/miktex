@@ -42,7 +42,7 @@ static int set_verbose(void)
 #define LOCALCOLORMAP  0x80
 #define BitSet(byte, bit)      (((byte) & (bit)) == (bit))
 
-#define        ReadOK(file,buffer,len) (gdGetBuf(buffer, len, file) != 0)
+#define        ReadOK(file,buffer,len) (gdGetBuf(buffer, len, file) > 0)
 
 #define LM_to_uint(a,b)                        (((b)<<8)|(a))
 
@@ -59,12 +59,14 @@ static struct {
 } GifScreen;
 #endif
 
+#if 0
 static struct {
        int     transparent;
        int     delayTime;
        int     inputFlag;
        int     disposal;
 } Gif89 = { -1, -1, -1, 0 };
+#endif
 
 static int ReadColorMap (gdIOCtx *fd, int number, unsigned char (*buffer)[256]);
 static int DoExtension (gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP);
@@ -98,9 +100,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data)
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 {
        int BitPixel;
+#if 0
        int ColorResolution;
        int Background;
        int AspectRatio;
+#endif
        int Transparent = (-1);
        unsigned char   buf[16];
        unsigned char   c;
@@ -132,9 +136,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 		return 0;
 	}
        BitPixel        = 2<<(buf[4]&0x07);
+#if 0
        ColorResolution = (int) (((buf[4]&0x70)>>3)+1);
        Background      = buf[5];
        AspectRatio     = buf[6];
+#endif
+	   imw = LM_to_uint(buf[0],buf[1]);
+	   imh = LM_to_uint(buf[2],buf[3]);
 
        if (BitSet(buf[4], LOCALCOLORMAP)) {    /* Global Colormap */
                if (ReadColorMap(fd, BitPixel, ColorMap)) {
@@ -171,12 +179,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 
                bitPixel = 1<<((buf[8]&0x07)+1);
 
-               imw = LM_to_uint(buf[4],buf[5]);
-               imh = LM_to_uint(buf[6],buf[7]);
-	       if (!(im = gdImageCreate(imw, imh))) {
-			 return 0;
-	       }
-               im->interlace = BitSet(buf[8], INTERLACE);
+
+			   if (!useGlobalColormap) {
+				   if (ReadColorMap(fd, bitPixel, localColorMap)) {
+					   return 0;
+				   }
+			   }
+
+			   if (!(im = gdImageCreate(imw, imh))) {
+				   return 0;
+			   }
+			   im->interlace = BitSet(buf[8], INTERLACE);
                if (! useGlobalColormap) {
                        if (ReadColorMap(fd, bitPixel, localColorMap)) { 
                                  return 0;
@@ -199,6 +212,10 @@ terminated:
        if (!im) {
 		return 0;
        }
+	   if (!im->colorsTotal) {
+		   gdImageDestroy(im);
+		   return 0;
+	   }
        /* Check for open colors at the end, so
           we can reduce colorsTotal and ultimately
           BitsPerPixel */
@@ -240,19 +257,21 @@ DoExtension(gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP)
        switch (label) {
        case 0xf9:              /* Graphic Control Extension */
                (void) GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP);
+#if 0
                Gif89.disposal    = (buf[0] >> 2) & 0x7;
                Gif89.inputFlag   = (buf[0] >> 1) & 0x1;
                Gif89.delayTime   = LM_to_uint(buf[1],buf[2]);
+#endif
                if ((buf[0] & 0x1) != 0)
                        *Transparent = buf[3];
 
-               while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) != 0)
+               while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) > 0)
                        ;
                return FALSE;
        default:
                break;
        }
-       while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) != 0)
+       while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) > 0)
                ;
 
        return FALSE;
@@ -319,7 +338,7 @@ GetCode_(gdIOCtx *fd, int code_size, int flag, int *ZeroDataBlockP)
                buf[0] = buf[last_byte-2];
                buf[1] = buf[last_byte-1];
 
-               if ((count = GetDataBlock(fd, &buf[2], ZeroDataBlockP)) == 0)
+               if ((count = GetDataBlock(fd, &buf[2], ZeroDataBlockP)) <= 0)
                        done = TRUE;
 
                last_byte = 2 + count;
@@ -484,6 +503,18 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
        int             v;
        int             xpos = 0, ypos = 0, pass = 0;
        int i;
+
+       /*
+       **  Initialize the Compression routines
+       */
+       if (! ReadOK(fd,&c,1)) {
+               return; 
+       }
+
+		if (c > MAX_LWZ_BITS) {
+			return;	
+		}
+
        /* Stash the color map into the image */
        for (i=0; (i<gdMaxColors); i++) {
                im->red[i] = cmap[CM_RED][i];	
@@ -493,12 +524,6 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
        }
        /* Many (perhaps most) of these colors will remain marked open. */
        im->colorsTotal = gdMaxColors;
-       /*
-       **  Initialize the Compression routines
-       */
-       if (! ReadOK(fd,&c,1)) {
-               return; 
-       }
        if (LWZReadByte(fd, TRUE, c, ZeroDataBlockP) < 0) {
                return;
        }
