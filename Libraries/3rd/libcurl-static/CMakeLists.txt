@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -110,6 +110,8 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/share.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/share.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sockaddr.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/speedcheck.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/speedcheck.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/splay.c
