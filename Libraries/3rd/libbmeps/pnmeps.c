@@ -1,24 +1,39 @@
-/* 
- * libbmeps - Bitmap to EPS conversion library
- * Copyright (C) 2000 - Dirk Krause
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * In this package the copy of the GNU Library General Public License
- * is placed in file COPYING.
- */
+/*
+Copyright (c) 2000-2005, Dirk Krause
+All rights reserved.
+
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+* Redistributions in binary form must reproduce the above 
+  opyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+* Neither the name of the Dirk Krause nor the names of
+  its contributors may be used to endorse or promote
+  products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*/
 
 #include "bmeps.h"
 #include "bmepsoe.h"
@@ -27,6 +42,10 @@
 #if HAVE_PNM_H
 #include <pnm.h>
 #endif
+
+
+#line 46 "pnmeps.ctr"
+
 
 static int is_configured = 0;
 
@@ -61,13 +80,22 @@ static void do_configure(void)
   }
 }
 
+static char error_in_pnm[] =
+{ "ERROR: Failed to read PNM file!" };
+
+static char *error_not_a_pnm_file[] = {
+  error_in_pnm,
+  "The file is possibly corrupted or not a NetPBM file.",
+  NULL
+};
+
 int bmeps_pnm_wh(FILE *in, unsigned long *w, unsigned long *h)
 {
   int back = 0;
 #if HAVE_PNM_H
-  int cols, rows, format;
+  int cols = 0, rows = 0, format = 0;
   xelval maxval;
-
+  
   bmeps_configure();
   if(in && w && h) {
     do_configure();
@@ -78,6 +106,7 @@ int bmeps_pnm_wh(FILE *in, unsigned long *w, unsigned long *h)
       back = 1;
     }
   }
+  
 #endif
   return back;
 }
@@ -86,13 +115,21 @@ int bmeps_pnm_bb(FILE *out, FILE *in, char *name)
 {
   int back = 0;
 #if HAVE_PNM_H
-  unsigned long w, h;
+  unsigned long w = 0UL, h = 0UL;
+  
   if(out && in) {
     if(bmeps_pnm_wh(in, &w, &h)) {
-      back = 1;
-      bmeps_bb(out, w, h);
+      if(w && h) {
+        back = 1;
+        bmeps_bb(out, w, h);
+      } else {
+        bmeps_show_error_text(out, error_not_a_pnm_file);
+      }
+    } else {
+      bmeps_show_error_text(out, error_not_a_pnm_file);
     }
   }
+  
 #endif
   return back;
 }
@@ -106,21 +143,29 @@ int bmeps_pnm(FILE *out, FILE *in, char *name)
   unsigned long w, h;
   xelval maxxelval, xval;
   xel    xe, *xelptr, **array, **rowptr;
-
+  
   if(out && in && name) {
     bmeps_configure();
     do_configure();
     if(bmeps_get_draft()) { /* draft placeholder only */
       if(bmeps_pnm_wh(in, &w, &h)) {
-	back = 1;
-	bmeps_header(out, (name ? name : default_name), w, h);
-	bmeps_draft(out, w, h);
-	bmeps_footer(out);
+        if(w && h) {
+	  back = 1;
+	  bmeps_header(out, (name ? name : default_name), w, h);
+	  bmeps_draft(out, w, h);
+	  bmeps_footer(out);
+	} else {
+	  bmeps_show_error_text(out, error_not_a_pnm_file);
+	}
+      } else {
+        bmeps_show_error_text(out, error_not_a_pnm_file);
       }
     } else {		    /* real picture */
+      
       array = pnm_readpnm(in,&cols,&rows,&maxxelval,&format);
+      
       w = cols; h = rows;
-      if(array) {
+      if((array) && (w) && (h)) {
 	maxval = (int)maxxelval;
 	switch( PNM_FORMAT_TYPE(format) ) {
 	  case PPM_TYPE : {	/* possibly colored */
@@ -175,9 +220,15 @@ int bmeps_pnm(FILE *out, FILE *in, char *name)
 	  } break;
 	}
 	pnm_freearray(array, rows);
+	/* + 2005/03/21, set exit code on success */
+	back = 1;
+	/* - 2005/03/21 */
+      } else {
+        bmeps_show_error_text(out, error_not_a_pnm_file);
+	
       }
     }
-  }
+  } 
 #endif
   return back;
 }
@@ -185,6 +236,6 @@ int bmeps_pnm(FILE *out, FILE *in, char *name)
 
 #ifndef LINT
 static char sccsId[] = 
-{ "@(#)pnmeps.ctr 1.10 08/17/04 (krause)\tPNM to EPS conversion" };
+{ "@(#)pnmeps.ctr 1.15 07/18/06 (krause)\tPNM to EPS conversion" };
 #endif
 

@@ -1,24 +1,39 @@
-/* 
- * libbmeps - Bitmap to EPS conversion library
- * Copyright (C) 2000 - Dirk Krause
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * In this package the copy of the GNU Library General Public License
- * is placed in file COPYING.
- */
+/*
+Copyright (c) 2000-2005, Dirk Krause
+All rights reserved.
+
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+* Redistributions in binary form must reproduce the above 
+  opyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+* Neither the name of the Dirk Krause nor the names of
+  its contributors may be used to endorse or promote
+  products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*/
 
 #include "bmepsco.h"
 #include "bmeps.h"
@@ -26,12 +41,12 @@
 #include "pngeps.h"
 
 #ifndef VERSNUMB
-#define VERSNUMB "1.1.0"
+#define VERSNUMB "1.2.7"
 #endif
 static char the_version_number[] = { VERSNUMB };
 
 
-#line 33 "bmepsm.ctr"
+#line 48 "bmepsm.ctr"
 
 
 static char progname[] = { "bmeps" };
@@ -45,41 +60,53 @@ static char dummy_tif[] = { "file.tif" };
 static char *dummy_filename = NULL;
 
 static char *gpl_header[] = {
-"This is free software; you can redistribute it and/or modify it under the",
-"terms of the GNU Library General Public License as published by the",
-"Free Software Foundation; either version 2 of the License, or (at your",
-"option) any later version.   This software is distributed in the hope that",
-"it will be useful, but WITHOUT ANY WARRANTY; without even the implied",
-"warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the",
-"GNU Library General Public License for more details.   You should have",
-"received a copy of the GNU Library General Public License along with this",
-"software; if not, write to the",
-"Free Software Foundation, Inc., 59 Temple Place - Suite 330,",
-"Boston, MA 02111-1307, USA.",
+"Redistribution and use in source and binary forms, with or without",
+"modification, are permitted provided that the following conditions are met:",
+"* Redistributions of source code must retain the above copyright notice, this",
+"  list of conditions and the following disclaimer.",
+"* Redistributions in binary form must reproduce the above copyright notice,",
+"  this list of conditions and the following disclaimer in the documentation",
+"  and/or other materials provided with the distribution.",
+"* Neither the name of the Dirk Krause nor the names of other contributors may",
+"  be used to endorse or promote products derived from this software without",
+"  specific prior written permission.",
+"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"",
+"AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE",
+"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE",
+"ARE DISCLAIMED.",
+"IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY",
+"DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES",
+"(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;",
+"LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND",
+"ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT",
+"(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS",
+"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
 NULL
 };
+
+
+
 static void print_version(void)
 {
   char **ptr;
-  /* printf("%s", "% bmeps\t\t(SCCS 1.55)\n"); */
+  /* printf("%s", "% bmeps\t\t(SCCS 1.63)\n"); */
   printf(
     "%s bmeps %s (SCCS=%s)   %s\n",
     "%",
     the_version_number,
-    "1.55",
+    "1.63",
     "Dipl.-Ing. D. Krause"
   );
   printf("%s", "% http://bmeps.sourceforge.net\n");
+  ptr = gpl_header;
+  while(*ptr) {
+    printf("%% %s\n", *(ptr++));
+  }
   /* printf("%s", "% Support for PNG alpha channels is turned on.\n"); */
   printf("%s\n", "%");
   printf("%s", "% Libraries used:\n");
   printf("%s", "% ---------------\n");
   bmeps_version(stdout);
-  printf("%s\n", "%");
-  ptr = gpl_header;
-  while(*ptr) {
-    printf("%% %s\n", *(ptr++));
-  }
 }
 
 static char *usage_text[] = {
@@ -201,11 +228,13 @@ int main(int argc, char *argv[])
   int dic;
   int vmr;
   int usr;
+  int doapp;
+  int doverb;
   char *inname;
   char *outname;
   char *ptr, **lfdptr;
   
-#line 205 "bmepsm.ctr"
+#line 234 "bmepsm.ctr"
 
   /*
 	Configure from environment
@@ -233,6 +262,8 @@ int main(int argc, char *argv[])
   shp     = bmeps_get_showpage();
   vmr     = bmeps_get_vmreclaim();
   usr     = bmeps_get_usr();
+  doapp	  = bmeps_get_app();
+  doverb  = bmeps_get_verb();
   bbonly = 0;
   show_version = show_usage = 0;
   inname = outname = NULL;
@@ -396,6 +427,9 @@ int main(int argc, char *argv[])
 	  case 'v': {
 	    show_version = 1;
 	  } break;
+	  case 'V': {
+	    doverb = 1;
+	  } break;
 	  case 'h': {
 	    show_usage = 1;
 	  } break;
@@ -466,6 +500,7 @@ int main(int argc, char *argv[])
 	    char str_ft[] = { "filetype=" };
 	    char str_alpho[] = { "alpha=" };
 	    char str_alpha[] = { "alpha" };
+	    char str_verbose[] = { "verbose" };
 
 	    ptr++; done = 0;
 	    lgt = strlen(ptr);
@@ -474,6 +509,15 @@ int main(int argc, char *argv[])
 	      if(strncmp(ptr, str_version, lgt1) == 0) {
 		done = 1;
 		show_version = 1;
+	      }
+	    }
+	    if(!done) {
+	      lgt1 = strlen(str_verbose);
+	      if(lgt >= lgt1) {
+	        if(strncmp(ptr, str_verbose, lgt1) == 0) {
+		  done = 1;
+		  doverb = 1;
+		}
 	      }
 	    }
 	    if(!done) {
@@ -621,6 +665,8 @@ int main(int argc, char *argv[])
     mix, specbg, bg_red, bg_green, bg_blue, show_dsc,
     shp, dic, vmr, usr
   );
+  bmeps_set_verb(doverb);
+  bmeps_set_app(1);
   bmeps_set_draft(is_draft);
   /*
 	Start work
@@ -663,6 +709,8 @@ int main(int argc, char *argv[])
       }
     } else {
       if(dummy_filename) {
+#if HAVE_DOSWIN_SETMODE
+
 #if HAVE_SETMODE || HAVE__SETMODE
         int m, f, r;
 	m = f = 0;
@@ -727,6 +775,8 @@ int main(int argc, char *argv[])
 #endif
 /* HAVE_SETMODE || HAVE__SETMODE */
 
+#endif
+/* HAVE_DOSWIN_SETMODE */
 
 	/*
 	  Now the descriptor is set up if necessary.
@@ -745,7 +795,7 @@ int main(int argc, char *argv[])
 	Exit program
   */
   
-#line 743 "bmepsm.ctr"
+#line 793 "bmepsm.ctr"
 
   exval = (exval ? 0 : 1);
   exit(exval); return exval;
@@ -753,6 +803,6 @@ int main(int argc, char *argv[])
 
 #ifndef LINT
 static char sccs_id[] =
-{ "@(#) 09/08/04 1.55 bmepsm.ctr\t(krause) Conversion xxx -> EPS" };
+{ "@(#) 07/18/06 1.63 bmepsm.ctr\t(krause) Conversion xxx -> EPS" };
 #endif
 

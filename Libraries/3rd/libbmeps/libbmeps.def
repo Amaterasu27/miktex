@@ -1,46 +1,50 @@
-EXPORTS bmeps_setup
-bmeps_cfg
-bmeps_set_draft
-bmeps_get_pslevel
-bmeps_get_colored
-bmeps_get_enc_a85
-bmeps_get_enc_rl
-bmeps_get_enc_fl
-bmeps_get_draft
-bmeps_get_alpha
-bmeps_get_trans
-bmeps_get_altrig
-bmeps_configure
-bmeps_version
-bmeps_get_mix
-bmeps_get_specbg
-bmeps_get_bg_red
-bmeps_get_bg_green
-bmeps_get_bg_blue
-bmeps_bb
-bmeps_header
-bmeps_begin_image
-bmeps_add_rgb
-bmeps_add_gray
-bmeps_add_trans
-bmeps_end_image
-bmeps_draft
-bmeps_footer
-bmeps_set_trans
-bmeps_get_cfg
-bmeps_set_cfg
-bmeps_copy_cfg
-bmeps_tmpname
-bmeps_delete
-bmeps_run
-bmeps_run_bb
-bmeps_wh
-bmeps_can_handle
-bmeps_png
-bmeps_png_bb
-bmeps_png_wh
-bmeps_get_dsc_comm
-bmeps_get_usr
-bmeps_get_vmreclaim
-bmeps_get_showpage
-bmeps_get_dictionary
+EXPORTS
+	bmeps_setup
+	bmeps_cfg
+	bmeps_set_draft
+	bmeps_get_pslevel
+	bmeps_get_colored
+	bmeps_get_enc_a85
+	bmeps_get_enc_rl
+	bmeps_get_enc_fl
+	bmeps_get_draft
+	bmeps_get_alpha
+	bmeps_get_trans
+	bmeps_get_altrig
+	bmeps_get_dsc_comm
+	bmeps_configure
+	bmeps_version
+	bmeps_get_mix
+	bmeps_get_specbg
+	bmeps_get_bg_red
+	bmeps_get_bg_green
+	bmeps_get_bg_blue
+	bmeps_get_usr
+	bmeps_set_usr
+	bmeps_bb
+	bmeps_header
+	bmeps_begin_image
+	bmeps_add_rgb
+	bmeps_add_gray
+	bmeps_add_trans
+	bmeps_end_image
+	bmeps_draft
+	bmeps_footer
+	bmeps_set_trans
+	bmeps_get_cfg
+	bmeps_set_cfg
+	bmeps_copy_cfg
+	bmeps_tmpname
+	bmeps_delete
+	bmeps_run
+	bmeps_run_bb
+	bmeps_can_handle
+	bmeps_get_vmreclaim
+	bmeps_get_showpage
+	bmeps_get_dictionary
+	bmeps_set_verb
+	bmeps_get_verb
+	bmeps_set_app
+	bmeps_get_app
+	bmeps_show_error_text
+

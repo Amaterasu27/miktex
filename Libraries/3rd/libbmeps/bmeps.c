@@ -1,24 +1,39 @@
-/* 
- * libbmeps - Bitmap to EPS conversion library
- * Copyright (C) 2000 - Dirk Krause
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * In this package the copy of the GNU Library General Public License
- * is placed in file COPYING.
- */
+/*
+Copyright (c) 2000-2005, Dirk Krause
+All rights reserved.
+
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+* Redistributions in binary form must reproduce the above 
+  opyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+* Neither the name of the Dirk Krause nor the names of
+  its contributors may be used to endorse or promote
+  products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*/
 
 #include "bmepsco.h"
 
@@ -45,12 +60,12 @@
 #include "bmeps.h"
 
 #ifndef VERSNUMB
-#define VERSNUMB "1.1.0"
+#define VERSNUMB "1.2.7"
 #endif
 static char the_version_number[] = { VERSNUMB };
 
 
-#line 52 "bmeps.ctr"
+#line 67 "bmeps.ctr"
 
 
 /* Postscript level */
@@ -85,6 +100,12 @@ static int bmeps_vmr = 0;
 
 /* use resolution information */
 static int bmeps_usr = 0;
+
+/* verbose mode (error messages) */
+static int bmeps_verb = 0;
+
+/* run from bmeps application (not from dvips) */
+static int bmeps_app = 0;
 
 static Output_Encoder bmepsoe;
 
@@ -274,6 +295,7 @@ void bmeps_configure(void)
       int vmr;
       int dic;
       int usr;
+      int vrb;
 
       digstate = 0; usr = 0;
       dsc_show = show_dsc_comments;
@@ -295,6 +317,7 @@ void bmeps_configure(void)
       vmr = bmeps_vmr;
       dic = bmeps_dic;
       usr = bmeps_usr;
+      vrb = bmeps_verb;
       f   = 1;
       while(*ptr) {
 	switch(*ptr) {
@@ -317,6 +340,7 @@ void bmeps_configure(void)
 	  case 's' : specbg = 1; break;
 	  case 'h' : shp = 1; break;
 	  case 'v' : vmr = 1; break;
+	  case 'V' : vrb = 1; break;
 	  case 'u' : dic = 1; break;
 	  case '0':
 	  case '1':
@@ -359,6 +383,7 @@ void bmeps_configure(void)
 	alpha,trans,altrig,mix,specbg,bg_red,bg_green,bg_blue,dsc_show,
 	shp, dic, vmr, usr
       );
+      bmeps_set_verb(vrb);
       bmeps_set_draft(dr);
     }
   }
@@ -547,7 +572,7 @@ void bmeps_begin_image(FILE *out, unsigned long w, unsigned long h)
       fprintf(out,
 	"%%\n%% created by bmeps %s %s\n%%\n",
 	the_version_number,
-	"(SCCS=1.73)"
+	"(SCCS=1.78)"
       );
     }
     if(bmeps_dic && (bmeps_pslevel > 1)) {
@@ -736,7 +761,9 @@ typedef struct {
 HANDLERENTRY;
 
 HANDLERENTRY handlers[] = {
+#if HAVE_LIBPNG
   { "png", bmeps_png, bmeps_png_bb, bmeps_png_wh , "PNG" },
+#endif
 #if HAVE_JPEGLIB_H
   { "jpg", bmeps_jpg, bmeps_jpg_bb, bmeps_jpg_wh , "JPEG" },
   { "jpeg", bmeps_jpg, bmeps_jpg_bb, bmeps_jpg_wh , NULL},
@@ -893,6 +920,13 @@ FCTWH *get_wh_handler(char *name)
 }
 
 
+static char *error_no_handler[] = {
+  "ERROR: Can not handle this file type!",
+  "This file type is either not supported by bmeps or bmeps was",
+  "not configured to use the libraries needed for that file type.",
+  NULL
+};
+
 int bmeps_run(FILE *out, FILE *in, char *name)
 {
   int back = 0;
@@ -901,6 +935,8 @@ int bmeps_run(FILE *out, FILE *in, char *name)
   fct = get_run_handler(name);
   if(fct) {
     back = (*fct)(out, in, name);
+  } else {
+    bmeps_show_error_text(out, error_no_handler);
   }
   return back;
 }
@@ -923,6 +959,8 @@ int bmeps_run_bb(FILE *out, FILE *in, char *name)
   fct = get_bb_handler(name);
   if(fct) {
     back = (*fct)(out, in, name);
+  } else {
+    bmeps_show_error_text(out, error_no_handler);
   }
   return back;
 }
@@ -948,7 +986,7 @@ void bmeps_version(FILE *out)
     fprintf(out,
       "%% libbmeps\tEPS output and bitmap conversion library %s %s\n",
       the_version_number,
-      "(SCCS=1.73)"
+      "(SCCS=1.78)"
     );
     fprintf(out, "%%\t\t(");
     he = handlers; issecond = 0;
@@ -1111,10 +1149,64 @@ bmeps_set_gsave_done(void)
   gsave_done = 1;
 }
 
+
+
+void
+bmeps_set_app(int i)
+{
+  bmeps_app = i;
+}
+
+int
+bmeps_get_app(void)
+{ return bmeps_app; }
+
+
+void
+bmeps_set_verb(int i)
+{
+  bmeps_verb = i;
+}
+
+
+int
+bmeps_get_verb(void)
+{ return bmeps_verb; }
+
+
+
+static char ps_error_line_start[] = { "% " };
+
+void
+bmeps_show_error_text(FILE *of, char **t)
+{
+  char **ptr;
+  ptr = t;
+  while(*ptr) {
+    fputs(ps_error_line_start, of);
+    fputs(*ptr, of);
+    fputc('\n', of);
+    ptr++;
+  }
+  if(bmeps_verb) {
+    ptr = t;
+    if(!bmeps_app) {
+      fputc('\n', stderr);
+    }
+    while(*ptr) {
+      fputs(*ptr, stderr);
+      fputc('\n', stderr);
+      ptr++;
+    }
+    fflush(stderr);
+  }
+}
+
+
 #ifndef LINT
 static char sccs_id[] =
 {
-  "@(#)bmeps.ctr 1.73 09/08/04\t(krause) - bitmap to EPS conversion"
+  "@(#)bmeps.ctr 1.78 07/18/06\t(krause) - bitmap to EPS conversion"
 };
 #endif
 

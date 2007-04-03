@@ -1,24 +1,39 @@
-/* 
- * libbmeps - Bitmap to EPS conversion library
- * Copyright (C) 2000 - Dirk Krause
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * In this package the copy of the GNU Library General Public License
- * is placed in file COPYING.
- */
+/*
+Copyright (c) 2000-2005, Dirk Krause
+All rights reserved.
+
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+* Redistributions in binary form must reproduce the above 
+  opyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+* Neither the name of the Dirk Krause nor the names of
+  its contributors may be used to endorse or promote
+  products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*/
 
 #include "bmepsco.h"
 #include "pngeps.h"
@@ -26,7 +41,7 @@
 #include "bmepsoe.h"
 
 
-#line 28 "pngeps.ctr"
+#line 43 "pngeps.ctr"
 
 
 #if HAVE_ZLIB
@@ -34,6 +49,11 @@
 
 #include <png.h>
 #include <math.h>
+
+#if HAVE_SETJMP_H
+#include <setjmp.h>
+#endif
+
 
 #if SIZEOF_LONG == 8
 /* MSB for unsigned long in hex notation */
@@ -196,6 +216,39 @@ static int mix_colors(int fg, int bg, int alpha, int tr)
   return back;
 }
 
+
+static char error_while_reading_png[] =
+{ "ERROR: Failed to read PNG file!" };
+
+static char error_file_possibly_damaged[] =
+{ "The input file is possibly damaged or not a PNG file." };
+
+static char *error_failed_to_create_read_struct[] = {
+  error_while_reading_png,
+  "The PNG library failed to create a PNG read structure.",
+  error_file_possibly_damaged,
+  NULL
+};
+
+static char *error_failed_to_create_info_struct[] = {
+  error_while_reading_png,
+  "The PNG library failed to create a PNG info structure.",
+  error_file_possibly_damaged,
+  NULL
+};
+
+static char *error_not_enough_memory[] = {
+  error_while_reading_png,
+  "The PNG library failed to allocate memory for the bitmap data.",
+  NULL
+};
+
+static char *error_not_a_png_file[] = {
+  error_while_reading_png,
+  error_file_possibly_damaged,
+  NULL
+};
+
 static int
 png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int cmd)
 {
@@ -221,7 +274,7 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
   int		specbg;	/* specified background from command line */
   int		bg_red, bg_green, bg_blue;
   int           usr;
-  png_bytep	row, *rows, *rowp;
+  png_bytep	row, *rows = NULL, *rowp;
   png_color_16	bg;
   png_color_16p	bgp;
   png_uint_32	ppm, xppm, yppm;
@@ -245,324 +298,348 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
     if(pp) { 
       pi = png_create_info_struct(pp);
       if(pi) { 
-	png_init_io(pp, in); 
-	png_read_info(pp, pi); 
-	png_get_IHDR(pp, pi, &wi, &he, &bd, &ct, &it, &zt, &ft);
-	bbwi = wi; bbhe = he;
-	
-	
-	
-	
-	
-	
-	
-	cu = ct;
-	ch = png_get_channels(pp, pi);
-	
-	switch(cmd) {
-	  case 0: {
-	    if(out) {
-	      ppm  = png_get_pixels_per_meter(pp, pi);
-	      xppm = png_get_x_pixels_per_meter(pp, pi);
-	      yppm = png_get_y_pixels_per_meter(pp, pi);
-	      if(usr) {
-	        if(!((xppm) && (yppm))) {
-		  if(xppm) {
-		    yppm = xppm;
-		  } else {
-		    if(yppm) {
-		      xppm = yppm;
+#if HAVE_SETJMP_H
+        if(setjmp(pp->jmpbuf) == 0) {
+#endif
+	  png_init_io(pp, in); 
+	  png_read_info(pp, pi); 
+	  png_get_IHDR(pp, pi, &wi, &he, &bd, &ct, &it, &zt, &ft);
+	  bbwi = wi; bbhe = he;
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  cu = ct;
+	  ch = png_get_channels(pp, pi);
+	  
+	  switch(cmd) {
+	    case 0: {
+	      if(out) {
+	        ppm  = png_get_pixels_per_meter(pp, pi);
+	        xppm = png_get_x_pixels_per_meter(pp, pi);
+	        yppm = png_get_y_pixels_per_meter(pp, pi);
+	        if(usr) {
+	          if(!((xppm) && (yppm))) {
+		    if(xppm) {
+		      yppm = xppm;
 		    } else {
-		      if(ppm) {
-		        xppm = yppm = ppm;
+		      if(yppm) {
+		        xppm = yppm;
 		      } else {
-		        usr = 0;
+		        if(ppm) {
+		          xppm = yppm = ppm;
+		        } else {
+		          usr = 0;
+		        }
 		      }
 		    }
 		  }
-		}
-	      }
-	      if(usr) {
-	        double xwidth, yheight;
-		xscale  = (st_ul_to_double(xppm)*0.0127)/36.0;
-		yscale  = (st_ul_to_double(yppm)*0.0127)/36.0;
-		xwidth  = xscale * st_ul_to_double(wi);
-		yheight = yscale * st_ul_to_double(he);
-		xwidth  = ceil(xwidth);
-		yheight = ceil(yheight);
-		bbwi    = st_double_to_ul(xwidth);
-		bbhe    = st_double_to_ul(yheight);
-		xscale  = xwidth / st_ul_to_double(wi);
-		yscale  = yheight / st_ul_to_double(he);
-	      }
-	      bmeps_header(
-		out, (name ? name : default_name),
-		bbwi, bbhe
-	      );
-	      if(usr) {
-	        fprintf(out, "gsave\n");
-	        fprintf(out, "%% scaling (resolution chunk in PNG)\n");
-	        fprintf(out, "%lg %lg scale\n", xscale, yscale);
-		bmeps_set_gsave_done();
-	      }
-	      if(bmeps_get_draft()) {
-		back = 1;
-		bmeps_draft(out, wi, he);
-	      } else {
-		int need_expansion;
-		int need_strip;
-		int need_pack;
-		need_expansion = 0;
-		need_strip = 0;
-		need_pack  = 0;
-		if((ct == PNG_COLOR_TYPE_PALETTE) && (bd <= 8)) {
-		  need_expansion = 1;
-		}
-		if((ct == PNG_COLOR_TYPE_GRAY) && (bd < 8)) {
-		  need_expansion = 1;
-		}
-		if(png_get_valid(pp, pi, PNG_INFO_tRNS)) {
-		  need_expansion = 1;
-		}
-		if(bd > 8) {
-		  need_strip = 1;
-		} else {
-		  if(bd < 8) {
-		    need_pack = 1;
+	        }
+	        if(usr) {
+	          double xwidth, yheight;
+		  xscale  = (st_ul_to_double(xppm)*0.0127)/36.0;
+		  yscale  = (st_ul_to_double(yppm)*0.0127)/36.0;
+		  xwidth  = xscale * st_ul_to_double(wi);
+		  yheight = yscale * st_ul_to_double(he);
+		  xwidth  = ceil(xwidth);
+		  yheight = ceil(yheight);
+		  bbwi    = st_double_to_ul(xwidth);
+		  bbhe    = st_double_to_ul(yheight);
+		  xscale  = xwidth / st_ul_to_double(wi);
+		  yscale  = yheight / st_ul_to_double(he);
+	        }
+	        bmeps_header(
+		  out, (name ? name : default_name),
+		  bbwi, bbhe
+	        );
+	        if(usr) {
+	          fprintf(out, "gsave\n");
+	          fprintf(out, "%% scaling (resolution chunk in PNG)\n");
+	          fprintf(out, "%lg %lg scale\n", xscale, yscale);
+		  bmeps_set_gsave_done();
+	        }
+	        if(bmeps_get_draft()) {
+		  back = 1;
+		  bmeps_draft(out, wi, he);
+	        } else {
+		  int need_expansion;
+		  int need_strip;
+		  int need_pack;
+		  need_expansion = 0;
+		  need_strip = 0;
+		  need_pack  = 0;
+		  if((ct == PNG_COLOR_TYPE_PALETTE) && (bd <= 8)) {
+		    need_expansion = 1;
 		  }
-		}
-		if(need_expansion) {
-		  png_set_expand(pp);
-		}
-		if(need_strip) {
-		  png_set_strip_16(pp);
-		}
-		if(need_pack) {
-		  png_set_packing(pp);
-		}
-		bgp = &bg;
-		bg.red = bg_red;
-		bg.green = bg_green;
-		bg.blue = bg_blue;
-		bg.gray = ntsc(bg.red, bg.green, bg.blue);
-		bg.index = 0;
-		
-		if(!(alpha)) {
-		  
-		  if(png_get_bKGD(pp, pi, &bgp)) {
-		    png_set_background(pp,bgp,PNG_BACKGROUND_GAMMA_FILE,1,1.0);
+		  if((ct == PNG_COLOR_TYPE_GRAY) && (bd < 8)) {
+		    need_expansion = 1;
+		  }
+		  if(png_get_valid(pp, pi, PNG_INFO_tRNS)) {
+		    need_expansion = 1;
+		  }
+		  if(bd > 8) {
+		    need_strip = 1;
 		  } else {
-		    png_set_background(pp,&bg,PNG_BACKGROUND_GAMMA_SCREEN,0,1.0);
+		    if(bd < 8) {
+		      need_pack = 1;
+		    }
 		  }
-		} else { 
-		  if(png_get_bKGD(pp, pi, &bgp) && (!specbg)) {
+		  if(need_expansion) {
+		    png_set_expand(pp);
+		  }
+		  if(need_strip) {
+		    png_set_strip_16(pp);
+		  }
+		  if(need_pack) {
+		    png_set_packing(pp);
+		  }
+		  bgp = &bg;
+		  bg.red = bg_red;
+		  bg.green = bg_green;
+		  bg.blue = bg_blue;
+		  bg.gray = ntsc(bg.red, bg.green, bg.blue);
+		  bg.index = 0;
+		  
+		  if(!(alpha)) {
 		    
-		    if(ct & PNG_COLOR_MASK_PALETTE) {
-		      png_colorp ptr; int num; 
-		      if(png_get_PLTE(pp, pi, &ptr, &num)) {
-			
-		        if(bgp->index < num) { 
-			  if(bd != 8) { 
-			    bg.red = new_bit_depth(ptr[bgp->index].red, 8, bd);
-			    bg.green = new_bit_depth(
-			      ptr[bgp->index].green, 8, bd
-			    );
-			    bg.blue = new_bit_depth(
-			      ptr[bgp->index].blue, 8, bd
-			    );
-			    bg.gray = ntsc(
-			      bg.red, bg.green, bg.blue
-			    );
-			  } else { 
-			    bg.red = ptr[bgp->index].red;
-			    bg.green = ptr[bgp->index].green;
-			    bg.blue = ptr[bgp->index].blue;
-			    bg.gray = ntsc(bg.red, bg.green, bg.blue);
-			  }
+		    if(png_get_bKGD(pp, pi, &bgp)) {
+		      png_set_background(pp,bgp,PNG_BACKGROUND_GAMMA_FILE,1,1.0);
+		    } else {
+		      png_set_background(pp,&bg,PNG_BACKGROUND_GAMMA_SCREEN,0,1.0);
+		    }
+		  } else { 
+		    if(png_get_bKGD(pp, pi, &bgp) && (!specbg)) {
+		      
+		      if(ct & PNG_COLOR_MASK_PALETTE) {
+		        png_colorp ptr; int num; 
+		        if(png_get_PLTE(pp, pi, &ptr, &num)) {
+			  
+		          if(bgp->index < num) { 
+			    if(bd != 8) { 
+			      bg.red = new_bit_depth(ptr[bgp->index].red, 8, bd);
+			      bg.green = new_bit_depth(
+			        ptr[bgp->index].green, 8, bd
+			      );
+			      bg.blue = new_bit_depth(
+			        ptr[bgp->index].blue, 8, bd
+			      );
+			      bg.gray = ntsc(
+			        bg.red, bg.green, bg.blue
+			      );
+			    } else { 
+			      bg.red = ptr[bgp->index].red;
+			      bg.green = ptr[bgp->index].green;
+			      bg.blue = ptr[bgp->index].blue;
+			      bg.gray = ntsc(bg.red, bg.green, bg.blue);
+			    }
+		          } else { 
+		            bg.red = bg_red;
+		            bg.green = bg_green;
+		            bg.blue = bg_blue;
+		            bg.gray = ntsc(bg.red, bg.green, bg.blue);
+			    bg.index = 0;
+		          }
 		        } else { 
 		          bg.red = bg_red;
 		          bg.green = bg_green;
 		          bg.blue = bg_blue;
 		          bg.gray = ntsc(bg.red, bg.green, bg.blue);
-			  bg.index = 0;
+		          bg.index = 0;
 		        }
 		      } else { 
-		        bg.red = bg_red;
-		        bg.green = bg_green;
-		        bg.blue = bg_blue;
-		        bg.gray = ntsc(bg.red, bg.green, bg.blue);
+		        if(bd != 8) { 
+		          bg.red = new_bit_depth( bgp->red, 8, bd);
+		          bg.blue = new_bit_depth( bgp->blue, 8, bd);
+		          bg.green = new_bit_depth( bgp->green, 8, bd);
+		          bg.gray = new_bit_depth( bgp->gray, 8, bd);
+		        } else { 
+		          bg.red = bgp->red;
+		          bg.blue = bgp->blue;
+		          bg.green = bgp->green;
+		          bg.gray = bgp->gray;
+		        }
 		        bg.index = 0;
 		      }
 		    } else { 
-		      if(bd != 8) { 
-		        bg.red = new_bit_depth( bgp->red, 8, bd);
-		        bg.blue = new_bit_depth( bgp->blue, 8, bd);
-		        bg.green = new_bit_depth( bgp->green, 8, bd);
-		        bg.gray = new_bit_depth( bgp->gray, 8, bd);
-		      } else { 
-		        bg.red = bgp->red;
-		        bg.blue = bgp->blue;
-		        bg.green = bgp->green;
-		        bg.gray = bgp->gray;
-		      }
+		      bg.red = bg_red;
+		      bg.green = bg_green;
+		      bg.blue = bg_blue;
+		      bg.gray = ntsc(bg.red, bg.green, bg.blue);
 		      bg.index = 0;
 		    }
-		  } else { 
-		    bg.red = bg_red;
-		    bg.green = bg_green;
-		    bg.blue = bg_blue;
-		    bg.gray = ntsc(bg.red, bg.green, bg.blue);
-		    bg.index = 0;
 		  }
-		}
-		/* place gamma correction here */
-		/* place interlace handling here */
-		png_read_update_info(pp, pi);
-		ch = png_get_channels(pp, pi);
-		ct = png_get_color_type(pp, pi);
-		
-		
-		rowbytes = png_get_rowbytes(pp, pi);
-		rows = (png_bytep *)malloc(he*sizeof(png_bytep));
-		if(rows) {
-		  back = 1; rowp = rows;
-		  for(y = 0; y < he; y++) {
-		    *rowp = NULL;
-		    row = (png_bytep)malloc(rowbytes*sizeof(png_byte));
-		    if(row) {
-		      *rowp = row;
-		    } else {
-		      back = 0;
+		  /* place gamma correction here */
+		  /* place interlace handling here */
+		  png_read_update_info(pp, pi);
+		  ch = png_get_channels(pp, pi);
+		  ct = png_get_color_type(pp, pi);
+		  
+		  
+		  rowbytes = png_get_rowbytes(pp, pi);
+		  rows = (png_bytep *)malloc(he*sizeof(png_bytep));
+		  if(rows) {
+		    back = 1; rowp = rows;
+		    for(y = 0; y < he; y++) {
+		      *rowp = NULL;
+		      row = (png_bytep)malloc(rowbytes*sizeof(png_byte));
+		      if(row) {
+		        *rowp = row;
+		      } else {
+		        back = 0;
+		      }
+		      rowp++;
 		    }
-		    rowp++;
-		  }
-		  if(back) {
-		    png_read_image(pp, rows);
-		    if((ct & PNG_COLOR_MASK_ALPHA) && alpha) {
+		    if(back) {
+		      png_read_image(pp, rows);
+		      if((ct & PNG_COLOR_MASK_ALPHA) && alpha) {
+		        
+		        bmeps_set_trans(1);
+		      } else { 
+		      }
+		      bmeps_begin_image(
+		        out, wi, he
+		      );
+		      rowp = rows;
+		      for(y = 0; y < he; y++) {
+		        row = *(rowp++);
+		        for(x = 0; x < wi; x++) {
+			  if((ct & PNG_COLOR_MASK_ALPHA) && alpha) {
+			    
+			    bmeps_add_trans(
+			      255-row[(x+1UL)*((unsigned long)ch)-1UL]
+			    );
+			  }
+			  if(ct & PNG_COLOR_MASK_COLOR) {
+			    
+			    if((ct & PNG_COLOR_MASK_ALPHA) && alpha && mix) {
+			      /* 4 lines for debugging only */
+			      static int firstrun = 1;
+			      if(firstrun) { 
+			      }
+			      firstrun = 0;
+			      bmeps_add_rgb(
+			        mix_colors(
+				  row[x*((unsigned long)ch)],
+				  bg.red,
+				  row[(x+1UL)*((unsigned long)ch)-1UL],
+				  trans
+			        ),
+			        mix_colors(
+				  row[x*((unsigned long)ch)+1UL],
+				  bg.green,
+				  row[(x+1UL)*((unsigned long)ch)-1UL],
+				  trans
+  
+			        ),
+			        mix_colors(
+				  row[x*((unsigned long)ch)+2UL],
+				  bg.blue,
+				  row[(x+1UL)*((unsigned long)ch)-1UL],
+				  trans
+			        )
+			      );
+			    } else {
+			      /* 4 lines for debugging only */
+			      static int firstrun = 1;
+			      if(firstrun) { 
+			      }
+			      firstrun = 0;
+			      bmeps_add_rgb(
+			        row[x*((unsigned long)ch)],
+			        row[x*((unsigned long)ch)+1UL],
+			        row[x*((unsigned long)ch)+2UL]
+			      );
+			    }
+			  } else {
+			    if((ct & PNG_COLOR_MASK_ALPHA) && alpha && mix) {
+			      /* 4 lines for debugging only */
+			      static int firstrun = 1;
+			      if(firstrun) { 
+			      }
+			      firstrun = 0;
+			      bmeps_add_gray(
+			        mix_colors(
+				  row[x*((unsigned long)ch)],
+				  bg.gray,
+				  row[(x+1UL)*((unsigned long)ch)-1UL],
+				  trans
+			        )
+			      );
+			    } else {
+			      /* 4 lines for debugging only */
+			      static int firstrun = 1;
+			      if(firstrun) { 
+			      }
+			      firstrun = 0;
+			      
+			      bmeps_add_gray(
+			        row[x*((unsigned long)ch)]
+			      );
+			    }
+			  }
+		        }
+		      }
+		      bmeps_end_image(out);
 		      
-		      bmeps_set_trans(1);
-		    } else { 
+		    } else {
+		      bmeps_show_error_text(out, error_not_enough_memory);
 		    }
-		    bmeps_begin_image(
-		      out, wi, he
-		    );
+		    /* done with rows */
 		    rowp = rows;
 		    for(y = 0; y < he; y++) {
-		      row = *(rowp++);
-		      for(x = 0; x < wi; x++) {
-			if((ct & PNG_COLOR_MASK_ALPHA) && alpha) {
-			  
-			  bmeps_add_trans(
-			    255-row[(x+1UL)*((unsigned long)ch)-1UL]
-			  );
-			}
-			if(ct & PNG_COLOR_MASK_COLOR) {
-			  
-			  if((ct & PNG_COLOR_MASK_ALPHA) && alpha && mix) {
-			    /* 4 lines for debugging only */
-			    static int firstrun = 1;
-			    if(firstrun) { 
-			    }
-			    firstrun = 0;
-			    bmeps_add_rgb(
-			      mix_colors(
-				row[x*((unsigned long)ch)],
-				bg.red,
-				row[(x+1UL)*((unsigned long)ch)-1UL],
-				trans
-			      ),
-			      mix_colors(
-				row[x*((unsigned long)ch)+1UL],
-				bg.green,
-				row[(x+1UL)*((unsigned long)ch)-1UL],
-				trans
-
-			      ),
-			      mix_colors(
-				row[x*((unsigned long)ch)+2UL],
-				bg.blue,
-				row[(x+1UL)*((unsigned long)ch)-1UL],
-				trans
-			      )
-			    );
-			  } else {
-			    /* 4 lines for debugging only */
-			    static int firstrun = 1;
-			    if(firstrun) { 
-			    }
-			    firstrun = 0;
-			    bmeps_add_rgb(
-			      row[x*((unsigned long)ch)],
-			      row[x*((unsigned long)ch)+1UL],
-			      row[x*((unsigned long)ch)+2UL]
-			    );
-			  }
-			} else {
-			  if((ct & PNG_COLOR_MASK_ALPHA) && alpha && mix) {
-			    /* 4 lines for debugging only */
-			    static int firstrun = 1;
-			    if(firstrun) { 
-			    }
-			    firstrun = 0;
-			    bmeps_add_gray(
-			      mix_colors(
-				row[x*((unsigned long)ch)],
-				bg.gray,
-				row[(x+1UL)*((unsigned long)ch)-1UL],
-				trans
-			      )
-			    );
-			  } else {
-			    /* 4 lines for debugging only */
-			    static int firstrun = 1;
-			    if(firstrun) { 
-			    }
-			    firstrun = 0;
-			    
-			    bmeps_add_gray(
-			      row[x*((unsigned long)ch)]
-			    );
-			  }
-			}
-		      }
+		      row = *rowp;
+		      if(row) { free(row); }
+		      *(rowp++) = NULL;
 		    }
-		    bmeps_end_image(out);
-		    
+		    free(rows);
+		  } else { 
+		    bmeps_show_error_text(out, error_not_enough_memory);
 		  }
-		  /* done with rows */
-		  rowp = rows;
-		  for(y = 0; y < he; y++) {
-		    row = *rowp;
-		    if(row) { free(row); }
-		    *(rowp++) = NULL;
-		  }
-		  free(rows);
-		} else { 
-		}
+	        }
+	        bmeps_footer(out);
 	      }
-	      bmeps_footer(out);
+	    } break;
+	    case 1: {
+	      if(out) {
+	        back = 1;
+	        bmeps_bb(out, wi, he);
+	      }
+	    } break;
+	    case 2: {
+	      if(w && h) {
+	        back = 1;
+	        *w = wi;
+	        *h = he;
+	      }
+	    } break;
+	  }
+	  /* done with it */
+#if HAVE_SETJMP_H
+        } else {
+	  /* failed to read PNG */
+	  bmeps_show_error_text(out, error_not_a_png_file);
+          if(rows) {
+	    /* done with rows */
+	    rowp = rows;
+	    for(y = 0; y < he; y++) {
+	      row = *rowp;
+	      if(row) { free(row); }
+	      *(rowp++) = NULL;
 	    }
-	  } break;
-	  case 1: {
-	    if(out) {
-	      back = 1;
-	      bmeps_bb(out, wi, he);
-	    }
-	  } break;
-	  case 2: {
-	    if(w && h) {
-	      back = 1;
-	      *w = wi;
-	      *h = he;
-	    }
-	  } break;
+	    free(rows);
+	  }
 	}
-	/* done with it */
+#endif
 	png_destroy_info_struct(pp, &pi);
       } else { 
+        bmeps_show_error_text(out, error_failed_to_create_info_struct);
       }
       png_destroy_read_struct(&pp, NULL, NULL);
     } else { 
+      bmeps_show_error_text(out, error_failed_to_create_read_struct);
     }
   }
   return back;
@@ -570,6 +647,12 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
 
 #else
 /* HAVE_LIBPNG */
+
+static char *error_no_pnglib[] = {
+  "ERROR: bmeps was compiled without libpng support!",
+  "This library is needed to read PNG images.",
+  NULL
+};
 
 static int
 png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int cmd)
@@ -583,9 +666,16 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
 #else
 /* HAVE_ZLIB */
 
+static char *error_no_zlib[] = {
+  "ERROR: bmeps was compiled without zlib support!",
+  "This library is needed as the PNG file format uses flate compression.",
+  NULL
+};
+
 static int
 png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int cmd)
 {
+  bmeps_show_error_text(out, error_no_zlib);
   return 0;
 }
 
@@ -596,8 +686,8 @@ int bmeps_png(FILE *out, FILE *in, char *name)
 {
   int back;
   if(out && in) {
-  bmeps_configure();
-  back = png_run(out, in, name, NULL, NULL, 0);
+    bmeps_configure();
+    back = png_run(out, in, name, NULL, NULL, 0);
   }
   return back;
 }
@@ -606,8 +696,8 @@ int bmeps_png_bb(FILE *out, FILE *in, char *name)
 {
   int back;
   if(out && in) {
-  bmeps_configure();
-  back = png_run(out, in, name, NULL, NULL, 1);
+    bmeps_configure();
+    back = png_run(out, in, name, NULL, NULL, 1);
   }
   return back;
 }
@@ -625,7 +715,7 @@ int bmeps_png_wh(FILE *in, unsigned long *w, unsigned long *h)
 
 #ifndef LINT
 static char sccs_id[] = {
-  "@(#)09/08/04\t1.18\tpngeps.ctr\t(krause) PNG to EPS conversion module"
+  "@(#)07/18/06\t1.22\tpngeps.ctr\t(krause) PNG to EPS conversion module"
 };
 #endif
 

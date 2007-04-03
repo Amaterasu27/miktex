@@ -1,21 +1,102 @@
 
+CONTENTS
+========
+
+1. Overview
+2. Installation
+3. Further information, recent sources and docu
+4. Contact
+
+
+1. Overview
+===========
 This package (bmeps) contains a library and a command line
 tool to convert bitmap images to EPS.
 
-Bmeps is free software covered by the GNU Lesser General Public License
-(see the file COPYING for details), _except_ the files in the
-dvips-mods subdirectory.
-The files in the dvips-mods subdirectory are derived from the dvips
-sources found in the teTeX distribution. They remain under the original
-copyright and license conditions. The current stable version of dvips
-can be found in the tetex-src.tar.gz archive in the
-ftp://ftp.dante.de/tex-archive/systems/unix/teTeX/current/distrib directory.
-After unpacking the archive you will find a tetex-src-2.0.2/texk/dvipsk
-directory (the version name may vary). See the sources and docu in this
-directory for copyright and license details.
+Bmeps is free software covered by a BSD-style license.
+(bsdlic.txt), _except_ the following files
+and directories:
+- dvips-mods subdirectory
+  The files in the dvips-mods subdirectory are derived from the dvips
+  sources found in the teTeX distribution. They remain under the original
+  copyright and license conditions. The current stable version of dvips
+  can be found in the tetex-src.tar.gz archive in the
+  ftp://ftp.dante.de/tex-archive/systems/unix/teTeX/current/distrib directory.
+  After unpacking the archive you will find a tetex-src-2.0.2/texk/dvipsk
+  directory (the version name may vary). See the sources and docu in this
+  directory for copyright and license details.
+- contrib/kant_krishna subdirectory and DOCU/kant_krishna/excel_to_vbs.txt file
+  The file excel_to_eps.vb was provided by Krishna Kant. No copyright
+  and/or license terms were specified for this file.
 
+
+
+2. Installation
+===============
+
+2.1 Installation on Unix/Linux
+------------------------------
+
+2.1.1 Required libraries
+The following libraries are needed to build bmeps
+- zlib    (required)
+  http://www.gzip.org/zlib
+- libpng  (required)
+  http://www.libpng.org/pub/png/libpng.html
+- jpeglib (recommended)
+  ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
+- NetPBM  (recommended)
+  ftp://ftp.metalab.unc.edu/pub/Linux/apps/graphics/convert/netpbm-10.11.10.tgz
+Note 1: If you use package management software to install these libraries
+make sure the developer support (C header files...) is installed too.
+Some package managers use separated packages (xxx-dev) to provide
+developer support for libraries.
+Note 2: On some systems compiler and linker are not properly configured
+to use the directories for additional software (i.e. "/usr/local" on
+*x systems or "/sw" on Mac OS). In this case you need to set the environment
+variables CFLAGS and LDFLAGS, i.e.
+
+on *x systems:                    on Mac OS:
+CFLAGS="-I/usr/local/include"     CFLAGS="-I/sw/include"
+export CFLAGS                     export CFLAGS
+LDFLAGS="-L/usr/local/lib"        LDFLAGS="-L/sw/lib"
+export LDFLAGS                    export LDFLAGS
+
+
+2.1.2 Installation procedure
+The typical
+  ./configure
+  make
+  make install
+procedure should do.
+
+2.2 Installation on Windows
+---------------------------
+
+Windows users are encouraged to use the binary in the
+WIN32BIN/static directory. Copy bmeps.exe into a directory
+mentioned in the PATH environment variable.
+
+2.3 Further installation docu
+-----------------------------
 For installation and usage instructions see the files in the
 DOCU subdirectory.
+
+
+
+3. Further information, recent sources and docu
+===============================================
+
+The project is hosted on SourceForge, consult
+  http://bmeps.sourceforge.net
+and
+  http://sourceforge.net/projects/bmeps
+for the most recent version of sources and documentation.
+
+
+
+4. Contact
+==========
 
 You can contact me using the contact form
 http://www.fh-schmalkalden.de/url.php?/page/1026/select_wert/3023 on
@@ -27,5 +108,5 @@ web site http://sourceforge.net/projects/bmeps can also be used,
 I check them approximately once per month.
 
 Dirk Krause
-2004-09-15
+2005-02-15
 

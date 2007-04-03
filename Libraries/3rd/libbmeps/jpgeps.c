@@ -1,31 +1,46 @@
-/* 
- * libbmeps - Bitmap to EPS conversion library
- * Copyright (C) 2000 - Dirk Krause
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * In this package the copy of the GNU Library General Public License
- * is placed in file COPYING.
- */
+/*
+Copyright (c) 2000-2005, Dirk Krause
+All rights reserved.
+
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+* Redistributions in binary form must reproduce the above 
+  opyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+* Neither the name of the Dirk Krause nor the names of
+  its contributors may be used to endorse or promote
+  products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*/
 
 #include "bmeps.h"
 #include "bmepsoe.h"
 #include "bmepsco.h"
 
 
-#line 27 "jpgeps.ctr"
+#line 42 "jpgeps.ctr"
 
 
 #if HAVE_JPEGLIB_H
@@ -84,6 +99,46 @@ static void error_exit_replacement(j_common_ptr cinfo)
 
 #endif
 /* if HAVE_JPEGLIB_H */
+
+static char error_failed_to_read_jpg[] =
+{ "ERROR: Failed to read JPEG file!" };
+
+static char *error_failed_to_use_input_file[] = {
+  error_failed_to_read_jpg,
+  "The input file can not be used as data source for JPEG decompression.",
+  NULL
+};
+
+static char *error_failed_read_jpeg_header[] = {
+  error_failed_to_read_jpg,
+  "Failed to read JPEG header from file.",
+  NULL
+};
+
+static char *error_failed_to_start_decompression[] = {
+  error_failed_to_read_jpg,
+  "Failed to start JPEG decompression.",
+  NULL
+};
+
+static char *error_not_enough_memory[] = {
+  error_failed_to_read_jpg,
+  "Failed to allocate memory for image data.",
+  NULL
+};
+
+static char *error_while_reading_jpeg[] = {
+  error_failed_to_read_jpg,
+  "Error while reading JPEG data.",
+  NULL
+};
+
+static char *error_failed_to_read_jpeg[] = {
+  error_failed_to_read_jpg,
+  "The JPEG library routines failed to read the data from file.",
+  "The file is possibly corrupted or not a JPEG file.",
+  NULL
+};
 
 static int
 jpg_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int cmd)
@@ -167,40 +222,53 @@ jpg_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
 	      color_map1 = (cinfo.colormap)[1];
 	      color_map2 = (cinfo.colormap)[2];
 	    }
+	  } else {
+	    if(cinfo.out_color_space == JCS_GRAYSCALE) {
+	      what_to_do = 3;
+	    }
 	  }
 	  for(y = 0UL; y < h; y++) { 
 	    if(had_error == 0) {
 	      jpeg_read_scanlines(&cinfo, &row, 1);
-	    } 
-            for(x = 0UL; x < cinfo.output_width; x++) {
-	      switch(what_to_do) {
-		case 1: {	/* color mapped */
-		  index = row[x] & 0xFF;
-		  bmeps_add_rgb(
-		    get_value(color_map0[index]),
-		    get_value(color_map1[index]),
-		    get_value(color_map2[index])
-		  );
-		} break;
-		case 2: {	/* gray mapped */
-		  index = row[x] & 0xFF;
-		  bmeps_add_gray(
-		    get_value(color_map0[index])
-		  );
-		} break;
-		default : {	/* normal */
-		  bmeps_add_rgb(
-		    get_value(row[3UL*x]),
-		    get_value(row[3UL*x+1UL]),
-		    get_value(row[3UL*x+2UL])
-		  );
-		} break;
+	    }
+	    
+	    if(had_error == 0) {
+              for(x = 0UL; x < cinfo.output_width; x++) {
+	        switch(what_to_do) {
+		  case 1: {	/* color mapped */
+		    index = row[x] & 0xFF;
+		    bmeps_add_rgb(
+		      get_value(color_map0[index]),
+		      get_value(color_map1[index]),
+		      get_value(color_map2[index])
+		    );
+		  } break;
+		  case 2: {	/* gray mapped */
+		    index = row[x] & 0xFF;
+		    bmeps_add_gray(
+		      get_value(color_map0[index])
+		    );
+		  } break;
+		  case 3: {	/* pure gray */
+		    bmeps_add_gray(get_value(row[x]));
+		  } break;
+		  default : {	/* normal */
+		    bmeps_add_rgb(
+		      get_value(row[3UL*x]),
+		      get_value(row[3UL*x+1UL]),
+		      get_value(row[3UL*x+2UL])
+		    );
+		  } break;
+	        }
 	      }
+	    } else {
+	      bmeps_show_error_text(out, error_while_reading_jpeg);
 	    }
 	  }
 	  back = 1;
 #if HAVE_SETJMP_H
 	  } /* if(setjmp(errjump[3]) == 0) */ else { 
+	    bmeps_show_error_text(out, error_failed_to_read_jpeg);
 	  }
 #endif
 	  state = 3;
@@ -208,11 +276,13 @@ jpg_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
 	  free(row); 
 	  jpeg_finish_decompress(&cinfo);
 	} else { 
+	  bmeps_show_error_text(out, error_not_enough_memory);
 	  jpeg_abort((struct jpeg_common_struct *)(&cinfo));
 	}
       }
 #if HAVE_SETJMP_H
       } /* if(setjmp(errjump[2]) == 0) */ else { 
+        bmeps_show_error_text(out, error_failed_to_read_jpeg);
       }
 #endif
       state = 2;
@@ -222,15 +292,23 @@ jpg_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
   }
 #if HAVE_SETJMP_H
   } /* if(setjmp(errjump[1]) == 0) */ else { 
+    bmeps_show_error_text(out, error_failed_to_read_jpeg);
     jpeg_abort((struct jpeg_common_struct *)(&cinfo));
   }
 #endif
   state = 1;
-  } /* if(had_error == 0) */
-  } /* if(had_error == 0) */
-  } /* if(had_error == 0) */
+  } /* if(had_error == 0) */ else {
+    bmeps_show_error_text(out, error_failed_to_start_decompression);
+  }
+  } /* if(had_error == 0) */ else {
+    bmeps_show_error_text(out, error_failed_read_jpeg_header);
+  }
+  } /* if(had_error == 0) */ else {
+    bmeps_show_error_text(out, error_failed_to_use_input_file);
+  }
 #if HAVE_SETJMP_H
   } else { 
+    bmeps_show_error_text(out, error_failed_to_read_jpeg);
   }
 #endif
   state = 0;
@@ -278,7 +356,7 @@ int bmeps_jpg(FILE *out, FILE *in, char *name)
 
 #ifndef LINT
 static char sccs_id[] = {
-  "@(#)08/17/04\t1.11\tjpgeps.ctr\t(krause) JPEG to EPS conversion module"
+  "@(#)08/25/06\t1.15\tjpgeps.ctr\t(krause) JPEG to EPS conversion module"
 };
 #endif
 
