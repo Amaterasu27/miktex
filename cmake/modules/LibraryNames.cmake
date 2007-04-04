@@ -85,6 +85,7 @@ set(bibtex_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-bibtex")
 set(mcd_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-compilerdriver")
 set(cjklatex_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-cjklatex")
 set(freetype_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-freetype")
+set(freetype2_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-freetype2")
 set(psres_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-psres")
 
 ## static library names

@@ -17,6 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_freetype_dir}/lib
+)
+
 set(ttf2pk_sources
   ${wrapper_cpp}
   errormsg.c

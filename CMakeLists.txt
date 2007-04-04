@@ -335,7 +335,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_freetype_dir}/lib
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
@@ -671,6 +670,10 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_freetype2_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
