@@ -43,7 +43,7 @@
 #undef HAVE_FORK
 
 /* Define to 1 if you have freetype2 */
-#undef HAVE_FT2
+#define HAVE_FT2 1
 
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME

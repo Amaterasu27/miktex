@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,6 +21,10 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
+)
+
 add_definitions(
   -Dalloca=_alloca
   -DUSE_MIKTEX_EXIT
@@ -32,13 +36,17 @@ set(dvipng_sources
   draw.c
   dvi.c
   dvipng.c
+  enc.c
   font.c
+  fontmap.c
+  ft.c
   misc.c
   papersiz.c
   pk.c
   ppagelist.c
   set.c
   special.c
+  tfm.c
   vf.c
 )
 
@@ -55,6 +63,7 @@ merge_trustinfo_manifest(dvipng asInvoker)
 target_link_libraries(dvipng
   ${app_dll_name}
   ${core_dll_name}
+  ${freetype2_dll_name}
   ${gd_dll_name}
   ${gnu_dll_name}
   ${kpsemu_dll_name}
