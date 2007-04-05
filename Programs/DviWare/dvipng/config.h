@@ -60,9 +60,6 @@
 /* Define to 1 if you have the `gdImagePngEx' function. */
 #define HAVE_GDIMAGEPNGEX 1
 
-/* Define to 1 if you have the `gdImageTrueColorToPalette' function. */
-#define HAVE_GDIMAGETRUECOLORTOPALETTE 1
-
 /* Define to 1 if you have the <gd.h> header file. */
 #define HAVE_GD_H 1
 
@@ -197,13 +194,13 @@
 #define PACKAGE_NAME "dvipng"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "dvipng 1.8"
+#define PACKAGE_STRING "dvipng 1.9"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "dvipng"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.8"
+#define PACKAGE_VERSION "1.9"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be

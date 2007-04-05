@@ -45,6 +45,7 @@ set(dvipng_sources
   pk.c
   ppagelist.c
   set.c
+  sfd.c
   special.c
   tfm.c
   vf.c
