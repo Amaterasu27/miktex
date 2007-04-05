@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/05 13:28:46 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/06 04:17:15 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -492,20 +492,17 @@ asn_date (char *date_string)
 {
   time_t      current_time;
   struct tm  *bd_time;
-#ifndef HAVE_TIMEZONE
-  #ifdef TM_GM_TOFF
-     #define timezone (bd_time->tm_gmtoff)
-  #else
-     #define timezone 0l
-  #endif /* TM_GM_TOFF */
-#endif /* HAVE_TIMEZONE */
 
   time(&current_time);
   bd_time = localtime(&current_time);
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-	  -timezone/3600, (timezone%3600)/60);
+#if defined(MIKTEX) && defined(MIKTEX_WINDOWS)
+	  -(_timezone / 3600), (_timezone % 3600) / 60);
+#else
+	  -(bd_time->tm_gmtoff / 3600), (bd_time->tm_gmtoff % 3600) / 60);
+#endif
 
   return strlen(date_string);
 }

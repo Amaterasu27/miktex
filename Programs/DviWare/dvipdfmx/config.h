@@ -1,44 +1,34 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
-/* Local variables defined by Mark A. Wicks, the author of dvipdfm. */
 
-/* HAVE_TIMEZONE - Define if <time.h> has timezone as an external variable */
-#define HAVE_TIMEZONE 1
+/* Define to 1 if you have the `basename' function. */
+#undef HAVE_BASENAME
 
-/* HAVE_XBASENAME - Define if you have xbasename() in your libkpathsea instead of basename() */
-#define HAVE_XBASENAME 1
+/* Define to 1 if you have the `close' function. */
+#define HAVE_CLOSE 1
 
-/* HAVE_ZLIB - Define if you have zlib and its headers */
-#define HAVE_ZLIB 1
-
-/* HAVE_ZLIB_COMPRESS2 - Define if your zlib has the compress2 function */
-#define HAVE_ZLIB_COMPRESS2 1
-
-/* HAVE_LIBPNG - Define if you have libpng */
-#define HAVE_LIBPNG 1
-
-/* HAVE_LIBPAPER - Define if you have libpaper */
-#undef HAVE_LIBPAPER
-
-/* HAVE_SYSTEM - Define if you have the system() command */
-#define HAVE_SYSTEM 1
-
-/* HAVE_KPSE_ENC_FORMATS - Define if you have kpse_enc_format in kpathsea/tex-file.h */
-#define HAVE_KPSE_ENC_FORMATS 1
-
-/* HAVE_KPSE_OPENTYPE_FORMAT - Define if you have kpse_opentype_format in kpathsea/tex-file.h */
-#define HAVE_KPSE_OPENTYPE_FORMAT 1
-
-/* Define if you have getenv(). */
+/* Define to 1 if you have the `getenv' function. */
 #define HAVE_GETENV 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
+#undef HAVE_LIBKPATHSEA
+
+/* Define if you have libpaper */
+#undef HAVE_LIBPAPER
+
+/* Define if you have libpng */
+#define HAVE_LIBPNG 1
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if you have mkstemp(). */
+/* Define to 1 if you have the `mkstemp' function. */
 #undef HAVE_MKSTEMP
+
+/* Define to 1 if you have the `open' function. */
+#define HAVE_OPEN 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -52,8 +42,11 @@
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 
-/* Define to 1 if you have the `strspn' function. */
-#define HAVE_STRSPN 1
+/* Define to 1 if `tm_zone' is member of `struct tm'. */
+#undef HAVE_STRUCT_TM_TM_ZONE
+
+/* Define to 1 if you have the `system' function. */
+#define HAVE_SYSTEM 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -61,8 +54,28 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
+/* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
+   `HAVE_STRUCT_TM_TM_ZONE' instead. */
+#undef HAVE_TM_ZONE
+
+/* Define to 1 if you don't have `tm_zone' but do have the external array
+   `tzname'. */
+#undef HAVE_TZNAME
+
+/* Define to 1 if you have the global `timezone` variable. */
+#define HAVE_TIMEZONE 1
+
+/* Define to 1 if your `struct tm' has `tm_gmtoff'. */
+#undef HAVE_TM_GMTOFF
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define if you have zlib and its headers */
+#define HAVE_ZLIB 1
+
+/* Define if your zlib has the compress2 function */
+#undef HAVE_ZLIB_COMPRESS2
 
 /* Name of package */
 #define PACKAGE "dvipdfmx"
@@ -82,6 +95,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* The size of a `char', as computed by sizeof. */
+#undef SIZEOF_CHAR
+
 /* The size of a `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
@@ -98,14 +114,23 @@
 #undef TM_IN_SYS_TIME
 
 /* Version number of package */
-#define VERSION "20051229"
+#define VERSION "20061211"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
 #undef WORDS_BIGENDIAN
 
+/* Define if your libkpathsea supports enc formats */
+#undef __TDS_VERSION__
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
