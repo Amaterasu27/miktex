@@ -1,6 +1,6 @@
-/* mf.rc: version number				-*- C++ -*-
+/* mf.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1991-2006 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -20,7 +20,7 @@
 #define IDR_MFSCREEN 101
 
 #ifdef RC_INVOKED
-IDR_MFSCREEN ICON DISCARDABLE "mfwin.ico"
+IDR_MFSCREEN ICON DISCARDABLE "miktex.ico"
 #endif
 
 #include "mf-version.h"

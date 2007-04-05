@@ -28,8 +28,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // AVI
 //
 
-IDA_FILECOPY            AVI                     "..\\..\\..\\..\\..\\Resources\\Videos\\filecopy.avi"
-IDA_DOWNLOAD            AVI                     "..\\..\\..\\..\\..\\Resources\\Videos\\download.avi"
+IDA_FILECOPY            AVI                     "filecopy.avi"
+IDA_DOWNLOAD            AVI                     "download.avi"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -485,15 +485,15 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_SETUP               ICON                    "res\\setup.ico"
+IDI_SETUP               ICON                    "miktex.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDB_HEADER              BITMAP                  "res\\Header.bmp"
-IDB_WATERMARK           BITMAP                  "res\\Watermark.bmp"
+IDB_HEADER              BITMAP                  "wiz97-header.bmp"
+IDB_WATERMARK           BITMAP                  "wiz97-watermark.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

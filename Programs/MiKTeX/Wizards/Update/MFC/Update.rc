@@ -27,8 +27,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Bitmap
 //
 
-IDB_WATERMARK           BITMAP                  "res\\Watermark.bmp"
-IDB_HEADER              BITMAP                  "res\\Header.bmp"
+IDB_WATERMARK           BITMAP                  "wiz97-watermark.bmp"
+IDB_HEADER              BITMAP                  "wiz97-header.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -37,14 +37,14 @@ IDB_HEADER              BITMAP                  "res\\Header.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_UPDATE              ICON                    "res\\update.ico"
+IDI_UPDATE              ICON                    "miktex.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // AVI
 //
 
-IDA_UPDATE              AVI                     "..\\..\\..\\..\\..\\Resources\\Videos\\filecopy.avi"
+IDA_UPDATE              AVI                     "filecopy.avi"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

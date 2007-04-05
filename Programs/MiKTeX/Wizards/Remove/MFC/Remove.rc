@@ -70,7 +70,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_REMOVE              ICON                    "res\\Remove.ico"
+IDI_REMOVE              ICON                    "miktex.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -146,8 +146,8 @@ END
 // Bitmap
 //
 
-IDB_HEADER              BITMAP                  "res\\Header.bmp"
-IDB_WATERMARK           BITMAP                  "res\\Watermark.bmp"
+IDB_HEADER              BITMAP                  "wiz97-header.bmp"
+IDB_WATERMARK           BITMAP                  "wiz97-watermark.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

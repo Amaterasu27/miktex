@@ -134,7 +134,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\mpm.ico"
+IDR_MAINFRAME           ICON                    "miktex.ico"
 IDR_mpmTYPE             ICON                    "res\\mpmDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////

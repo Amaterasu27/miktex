@@ -319,6 +319,9 @@ if(MIKTEX_INSTALLROOT)
   add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
 endif(MIKTEX_INSTALLROOT)
 
+set(CMAKE_RC_FLAGS
+  "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
+
 ###############################################################################
 ## add global include directories
 
