@@ -23,7 +23,7 @@
 
 #define VER_FILEDESCRIPTION_STR "Option Parser DLL"
 
-define VER_LEGALCOPYRIGHT_STR "(C) 1998-2000 Red Hat, Inc."
+#define VER_LEGALCOPYRIGHT_STR "(C) 1998-2000 Red Hat, Inc."
 
 #define VER_FILETYPE VFT_DLL
 

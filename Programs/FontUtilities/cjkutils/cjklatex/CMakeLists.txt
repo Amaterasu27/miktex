@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(${cjklatex_dll_name}_sources
   cjklatex-version.h
   cjklatex.cpp
@@ -24,8 +29,8 @@ set(${cjklatex_dll_name}_sources
 
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cjklatex.rc).in
-    ${CMAKE_CURRENT_BINARY_DIR}/cjklatex.rc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/cjklatex.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cjklatex.rc
   )
   set(${cjklatex_dll_name}_sources ${${cjklatex_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/cjklatex.rc)

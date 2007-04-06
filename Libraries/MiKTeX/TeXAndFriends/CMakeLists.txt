@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(${texmf_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/mfapp.defaults.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/texapp.defaults.h

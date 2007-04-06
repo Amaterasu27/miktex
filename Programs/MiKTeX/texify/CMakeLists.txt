@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(${mcd_dll_name}_sources
   mcd-version.h
   mcd.cpp
@@ -24,8 +29,8 @@ set(${mcd_dll_name}_sources
 
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/mcd.rc).in
-    ${CMAKE_CURRENT_BINARY_DIR}/mcd.rc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/mcd.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/mcd.rc
   )
   set(${mcd_dll_name}_sources ${${mcd_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/mcd.rc)

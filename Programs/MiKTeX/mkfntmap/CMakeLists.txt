@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,16 +17,21 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(${mkfntmap_dll_name}_sources
   internal.h
   mkfntmap-version.h
   mkfntmap.cpp
-  )
+)
 
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/mkfntmap.rc).in
-    ${CMAKE_CURRENT_BINARY_DIR}/mkfntmap.rc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/mkfntmap.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/mkfntmap.rc
   )
   set(${mkfntmap_dll_name}_sources ${${mkfntmap_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/mkfntmap.rc)

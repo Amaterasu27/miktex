@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(${makex_dll_name}_sources
   common.cpp
   internal.h
@@ -32,8 +37,8 @@ set(${makex_dll_name}_sources
 
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/makex.rc).in
-    ${CMAKE_CURRENT_BINARY_DIR}/makex.rc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/makex.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/makex.rc
   )
   set(${makex_dll_name}_sources ${${makex_dll_name}_sources} ${CMAKE_CURRENT_BINARY_DIR}/makex.rc)
 endif(NATIVE_WINDOWS)
