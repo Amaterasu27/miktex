@@ -1,0 +1,46 @@
+/* core.rc: MiKTeX Core resource file				-*- C++ -*-
+
+   Copyright (C) 1996-2007 Christian Schenk
+
+   This file is part of the MiKTeX Core Library.
+
+   The MiKTeX Core Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
+   
+   The MiKTeX Core Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with the MiKTeX Core Library; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
+
+#ifdef RC_INVOKED
+#include "MiKTeXEvents.rc"
+#endif
+
+#include "core-version.h"
+#include "Resource.h"
+
+#define VER_INTERNALNAME_STR "${core_dll_name}"
+#define VER_ORIGINALFILENAME_STR "${core_dll_name}.dll"
+
+#define VER_FILEDESCRIPTION_STR "MiKTeX Core DLL"
+
+#define VER_FILETYPE VFT_DLL
+
+IDR_MIKTEXSESSIONMODULE REGISTRY "COM/session.rgs"
+IDR_MIKTEXSESSIONOBJECT REGISTRY "COM/comSession.rgs"
+
+STRINGTABLE 
+BEGIN
+    IDS_PROJNAME "MiKTeX Session"
+END
+
+1 TYPELIB "session.tlb"
+
+#include <miktex/miktex.version>

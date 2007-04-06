@@ -53,8 +53,12 @@ set(${mpm_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mpm.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/mpm.rc
+  )
   set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
-    mpm.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/mpm.rc
     win/winWebFile.cpp
     win/winWebFile.h
     win/winWebSession.cpp

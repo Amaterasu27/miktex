@@ -22,11 +22,9 @@
 #define VER_INTERNALNAME_STR "${bzip2_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${bzip2_dll_name}.dll"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2006 Julian R Seward.  All rights reserved."
-
 #define VER_FILEDESCRIPTION_STR "BZip2 DLL"
 
-#define VER_COMPANYNAME_STR ""
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2006 Julian R Seward.  All rights reserved."
 
 #define VER_FILETYPE VFT_DLL
 

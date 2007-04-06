@@ -22,8 +22,8 @@
 #define VER_INTERNALNAME_STR "cweave"
 #define VER_ORIGINALFILENAME_STR "cweave.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth"
-
 #define VER_FILEDESCRIPTION_STR "CWeave"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth"
 
 #include <miktex/miktex.version>

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -64,9 +64,13 @@ set(${mspack_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mspack.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/mspack.rc
+  )
   set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
     mspack.def
-    mspack.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/mspack.rc
   )
 else(NATIVE_WINDOWS)
   set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}

@@ -1,6 +1,6 @@
 /* cefsconv.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2004-2005 Christian Schenk
+   Copyright (C) 2004-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,8 +22,8 @@
 #define VER_INTERNALNAME_STR "cefsconv"
 #define VER_ORIGINALFILENAME_STR "cefsconv.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1996-1998 Werner Lemberg"
-
 #define VER_FILEDESCRIPTION_STR "Convert CJK encoded characters"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright 1996-1998 Werner Lemberg"
 
 #include "miktex/miktex.version"

@@ -78,8 +78,12 @@ set(${freetype2_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/freetype2.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/freetype2.rc
+  )
   set(${freetype2_dll_name}_sources ${${freetype2_dll_name}_sources}
-    freetype2.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/freetype2.rc
   )
 endif(NATIVE_WINDOWS)
 

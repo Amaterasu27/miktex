@@ -1,6 +1,6 @@
 /* getafm.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2002 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,8 +22,8 @@
 #define VER_INTERNALNAME_STR "getafm"
 #define VER_ORIGINALFILENAME_STR "getafm.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1993 Robert Joop <rj@rainbow.in-berlin.de>; Copyright (C) 2000-2002 Christian Schenk"
-
 #define VER_FILEDESCRIPTION_STR "Get AFM Utility"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1993 Robert Joop; Copyright (C) 2000-2007 Christian Schenk"
 
 #include "miktex/miktex.version"

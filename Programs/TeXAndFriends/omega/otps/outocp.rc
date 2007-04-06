@@ -1,6 +1,6 @@
 /* outocp.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1998-2005 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,9 +22,9 @@
 #define VER_INTERNALNAME_STR "outocp"
 #define VER_ORIGINALFILENAME_STR "outocp.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1994--1997 John Plaice and Yannis Haralambous"
-
 #define VER_FILEDESCRIPTION_STR "outocp"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1994-1997 John Plaice and Yannis Haralambous"
 
 #define VER_LEGALTRADEMARKS_STR "TeX is a trademark of the American \
 Mathematical Society."

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,8 +23,12 @@ set(${cjklatex_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cjklatex.rc).in
+    ${CMAKE_CURRENT_BINARY_DIR}/cjklatex.rc)
+  )
   set(${cjklatex_dll_name}_sources ${${cjklatex_dll_name}_sources}
-    cjklatex.rc)
+    ${CMAKE_CURRENT_BINARY_DIR}/cjklatex.rc)
 endif(NATIVE_WINDOWS)
 
 add_library(${cjklatex_dll_name} SHARED ${${cjklatex_dll_name}_sources})

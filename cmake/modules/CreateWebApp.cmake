@@ -192,6 +192,15 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	${${${_short_name_l}_dll_name}_sources}
 	${_short_name_l}.rc)
     endif(EXISTS ${_short_name_l}.rc)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in)
+      configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.rc
+      )
+      set(${${_short_name_l}_dll_name}_sources
+	${${${_short_name_l}_dll_name}_sources}
+	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.rc)
+    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in)
   endif(NATIVE_WINDOWS)
 
   add_library(${${_short_name_l}_dll_name}

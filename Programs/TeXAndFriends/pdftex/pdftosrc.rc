@@ -1,6 +1,6 @@
 /* pdftosrc.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2000-2005 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,11 @@
 
 #include "pdftosrc-version.h"
 
-#define VER_FILEDESCRIPTION_STR "PDF Source Extractor"
 #define VER_INTERNALNAME_STR "pdftosrc"
 #define VER_ORIGINALFILENAME_STR "pdftosrc.exe"
 
-#define VER_COMPANYNAME_STR ""
-#define VER_LEGALCOPYRIGHT_STR ""
+#define VER_FILEDESCRIPTION_STR "PDF Source Extractor"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright 1996-2006 Han The Thanh"
 
 #include "miktex/miktex.version"

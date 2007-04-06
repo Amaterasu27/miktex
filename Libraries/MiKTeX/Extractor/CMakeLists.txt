@@ -34,9 +34,14 @@ set(${extractor_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/extractor.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/extractor.rc
+  )
   set(${extractor_dll_name}_sources ${${extractor_dll_name}_sources}
     win/winCabExtractor.cpp
     win/winCabExtractor.h
+    ${CMAKE_CURRENT_BINARY_DIR}/extractor.rc
   )
 endif(NATIVE_WINDOWS)
 

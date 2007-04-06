@@ -24,8 +24,12 @@ set(${mkfntmap_dll_name}_sources
   )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mkfntmap.rc).in
+    ${CMAKE_CURRENT_BINARY_DIR}/mkfntmap.rc)
+  )
   set(${mkfntmap_dll_name}_sources ${${mkfntmap_dll_name}_sources}
-    mkfntmap.rc)
+    ${CMAKE_CURRENT_BINARY_DIR}/mkfntmap.rc)
 endif(NATIVE_WINDOWS)
 
 add_library(${mkfntmap_dll_name} SHARED ${${mkfntmap_dll_name}_sources})

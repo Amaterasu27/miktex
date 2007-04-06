@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,7 +31,11 @@ set(${makex_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(${makex_dll_name}_sources ${${makex_dll_name}_sources} makex.rc)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/makex.rc).in
+    ${CMAKE_CURRENT_BINARY_DIR}/makex.rc)
+  )
+  set(${makex_dll_name}_sources ${${makex_dll_name}_sources} ${CMAKE_CURRENT_BINARY_DIR}/makex.rc)
 endif(NATIVE_WINDOWS)
 
 add_library(${makex_dll_name} SHARED ${${makex_dll_name}_sources})

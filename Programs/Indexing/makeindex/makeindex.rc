@@ -1,6 +1,6 @@
 /* makeindex.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1996-2003 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,8 +22,8 @@
 #define VER_INTERNALNAME_STR "makeindex"
 #define VER_ORIGINALFILENAME_STR "makeindex.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1989 Chen & Harrison International Systems, Inc. (C) 1988 Olivetti Research Center (C) 1987 Regents of the University of California"
-
 #define VER_FILEDESCRIPTION_STR "General Purpose Index Processor"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1989 Chen & Harrison International Systems, Inc. (C) 1988 Olivetti Research Center (C) 1987 Regents of the University of California"
 
 #include "miktex/miktex.version"

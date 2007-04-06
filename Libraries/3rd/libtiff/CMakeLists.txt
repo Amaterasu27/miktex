@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -72,9 +72,13 @@ set(${tiff_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/libtiff.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/libtiff.rc
+  )
   set(${tiff_dll_name}_sources ${${tiff_dll_name}_sources}
     libtiff.def
-    libtiff.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/libtiff.rc
     tif_win32.c
   )
 endif(NATIVE_WINDOWS)

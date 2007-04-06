@@ -62,8 +62,12 @@ set(${gd_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gd.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gd.rc
+  )
   set(${gd_dll_name}_sources ${${gd_dll_name}_sources}
-    gd.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/gd.rc
   )
 endif(NATIVE_WINDOWS)
 

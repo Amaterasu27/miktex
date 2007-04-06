@@ -1,6 +1,6 @@
 /* cfg.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2006 Christian Schenk
+   Copyright (C) 2006-2007 Christian Schenk
 
    This file is part of cfg.
 
@@ -23,6 +23,6 @@
 #define VER_INTERNALNAME_STR "cfg"
 #define VER_ORIGINALFILENAME_STR "cfg.exe"
 
-#define VER_FILEDESCRIPTION_STR "Cfg utility"
+#define VER_FILEDESCRIPTION_STR "Cfg Utility"
 
 #include "miktex/miktex.version"

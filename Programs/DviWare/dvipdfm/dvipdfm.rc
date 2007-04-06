@@ -1,6 +1,6 @@
 /* dvipdfm.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2003 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of dvipdfm.
 
@@ -24,8 +24,8 @@
 #define VER_INTERNALNAME_STR "dvipdfm"
 #define VER_ORIGINALFILENAME_STR "dvipdfm.exe"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1998, 99 Mark Wicks"
-
 #define VER_FILEDESCRIPTION_STR "DVI-to-PDF Converter"
+
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1998, 99 Mark Wicks"
 
 #include "miktex/miktex.version"

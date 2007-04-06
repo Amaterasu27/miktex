@@ -1,6 +1,6 @@
 /* dvipdft.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2002 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of dvipdfm.
 
@@ -23,8 +23,6 @@
 
 #define VER_INTERNALNAME_STR "dvipdft"
 #define VER_ORIGINALFILENAME_STR "dvipdft.exe"
-
-#define VER_LEGALCOPYRIGHT_STRMark "Copyright (C) 2000-2002 Christian Schenk"
 
 #define VER_FILEDESCRIPTION_STR "DVI-to-PDF Thumbnail Converter"
 

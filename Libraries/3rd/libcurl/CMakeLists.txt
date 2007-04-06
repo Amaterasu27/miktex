@@ -140,9 +140,13 @@ set(${curl_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/curl.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/curl.rc
+  )
   set(${curl_dll_name}_sources ${${curl_dll_name}_sources}
     config-win32.h
-    curl.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/curl.rc
   )
 endif(NATIVE_WINDOWS)
 

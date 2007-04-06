@@ -86,9 +86,13 @@ set(${core_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/core.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/core.rc
+  )
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
-    core.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/core.rc
     win/win.cpp
     win/winDirectoryLister.cpp
     win/winDirectoryLister.h

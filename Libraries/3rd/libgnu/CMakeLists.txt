@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -44,11 +44,19 @@ set_source_files_properties(
   PROPERTIES HEADER_FILE_ONLY TRUE)
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gnu.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gnu.rc
+  )
   set(${gnu_dll_name}_sources ${${gnu_dll_name}_sources}
-    gnu.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/gnu.rc
+  )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/regex.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/regex.rc
   )
   set(${regex_dll_name}_sources ${${regex_dll_name}_sources}
-    regex.rc
+    ${CMAKE_CURRENT_BINARY_DIR}/regex.rc
   )
 endif(NATIVE_WINDOWS)
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,6 +18,11 @@
 ## USA.
 
 set(CMAKE_MFC_FLAG 2)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/res/mikui.rc2.in
+  ${CMAKE_CURRENT_BINARY_DIR}/res/mikui.rc2
+)
 
 add_definitions(
   -D_AFXDLL

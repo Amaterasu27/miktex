@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,8 +23,12 @@ set(${mcd_dll_name}_sources
 )
 
 if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mcd.rc).in
+    ${CMAKE_CURRENT_BINARY_DIR}/mcd.rc)
+  )
   set(${mcd_dll_name}_sources ${${mcd_dll_name}_sources}
-    mcd.rc)
+    ${CMAKE_CURRENT_BINARY_DIR}/mcd.rc)
 endif(NATIVE_WINDOWS)
 
 add_library(${mcd_dll_name} SHARED ${${mcd_dll_name}_sources})
