@@ -21,10 +21,6 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
-)
-
 add_definitions(
   -Dalloca=_alloca
   -DUSE_MIKTEX_EXIT
