@@ -331,6 +331,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
+  ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
@@ -338,6 +339,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/fontconfig
+  ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
@@ -354,12 +357,14 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+    ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   )
 endif(NATIVE_WINDOWS)
 
@@ -431,6 +436,14 @@ add_subdirectory(${rel_expat_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_expat_dir}-static)
 endif(NATIVE_WINDOWS)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_fontconfig_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_freetype_dir})
+endif(BUILDING_MIKTEX)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_gnu_dir})
@@ -546,6 +559,10 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_kpsemu_dir})
 endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+  add_subdirectory(${rel_unxemu_dir})
+endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_web_dir})
@@ -669,10 +686,6 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cjkutils_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_freetype_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
