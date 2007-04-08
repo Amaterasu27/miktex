@@ -438,11 +438,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_fontconfig_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_freetype_dir})
+  add_subdirectory(${rel_freetype2_dir})
 endif(BUILDING_MIKTEX)
 
 if(NATIVE_WINDOWS)
@@ -563,6 +559,10 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})
 endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_fontconfig_dir})
+endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_web_dir})
@@ -689,7 +689,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_freetype2_dir})
+  add_subdirectory(${rel_freetype_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)

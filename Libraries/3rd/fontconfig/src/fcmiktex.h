@@ -1,4 +1,4 @@
-/* fontconfig-version.h: version number				-*- C++ -*-
+/* fcmiktex.h:							-*- C++ -*-
 
    Copyright (C) 2007 Christian Schenk
 
@@ -17,5 +17,22 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define VER_FILEVERSION 2,6,2654,0
-#define VER_FILEVERSION_STR "2.6.2654 (2.4.2)"
+const char *
+miktex_fontconfig_path ();
+
+const char *
+miktex_fc_cachedir ();
+
+const char *
+miktex_fc_default_fonts ();
+
+const char *
+miktex_fontconfig_file ();
+
+#define FONTCONFIG_PATH miktex_fontconfig_path()
+
+#define FC_CACHEDIR miktex_fc_cachedir()
+
+#define FC_DEFAULT_FONTS miktex_fc_default_fonts()
+
+#define FONTCONFIG_FILE miktex_fontconfig_file()

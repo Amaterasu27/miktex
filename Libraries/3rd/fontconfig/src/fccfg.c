@@ -1512,6 +1512,10 @@ FcConfigSubstitute (FcConfig	*config,
     return FcConfigSubstituteWithPat (config, p, 0, kind);
 }
 
+#if defined(MIKTEX)
+
+#else /* !MIKTEX */
+
 #if defined (_WIN32) && (defined (PIC) || defined (DLL_EXPORT))
 
 static FcChar8 fontconfig_path[1000] = "";
@@ -1559,6 +1563,8 @@ DllMain (HINSTANCE hinstDLL,
 #else /* !(_WIN32 && PIC) */
 
 #endif /* !(_WIN32 && PIC) */
+
+#endif /* !MIKTEX */
 
 #ifndef FONTCONFIG_FILE
 #define FONTCONFIG_FILE	"fonts.conf"

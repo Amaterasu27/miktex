@@ -10,7 +10,7 @@
 #undef FC_ADD_FONTS
 
 /* System font directory */
-#define FC_DEFAULT_FONTS "C:/WINDOWS/Fonts"
+#undef FC_DEFAULT_FONTS
 
 /* Define to 1 if you have the `chsize' function. */
 #undef HAVE_CHSIZE
@@ -26,10 +26,10 @@
 #undef HAVE_DOPRNT
 
 /* Found a useable expat library */
-#define HAVE_EXPAT
+#define HAVE_EXPAT 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
-#define HAVE_FCNTL_H
+#define HAVE_FCNTL_H 1
 
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE

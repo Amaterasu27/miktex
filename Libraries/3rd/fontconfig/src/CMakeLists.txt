@@ -30,7 +30,6 @@ file(WRITE
 add_definitions(
   -DDLL_EXPORT
   -DHAVE_CONFIG_H
-  -DFC_CACHEDIR=\\\"C:/cache\\\"
 )
 
 set(${fontconfig_dll_name}_sources
@@ -56,6 +55,7 @@ set(${fontconfig_dll_name}_sources
   fcxml.c
   ftglue.h
   ftglue.c
+  fcmiktex.cpp
 )
 
 if(NATIVE_WINDOWS)

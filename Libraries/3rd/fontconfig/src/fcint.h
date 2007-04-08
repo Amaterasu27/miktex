@@ -50,6 +50,7 @@
 #include <fontconfig/fcfreetype.h>
 
 #if defined(MIKTEX) && defined(MIKTEX_WINDOWS)
+#  include "fcmiktex.h"
 #  include <direct.h>
 #  include <io.h>
 #endif
