@@ -1764,6 +1764,12 @@ static const MIKTEXCHAR * const components[] = {
   MIKTEX_PATH_MPM_PS_DLL,
 };
 
+#endif
+
+static const MIKTEXCHAR * const toBeConfigured[] = {
+  MIKTEX_PATH_FONTCONFIG_CONFIG_FILE,
+};
+
 void
 PackageInstallerImpl::RegisterComponents
 (/*[in]*/ bool				doRegister,
@@ -1789,6 +1795,27 @@ PackageInstallerImpl::RegisterComponents
 	    {
 	      continue;
 	    }
+	  if (doRegister)
+	    {
+	      for (size_t idx = 0;
+		   idx < sizeof(toBeConfigured) / sizeof(toBeConfigured[0]);
+		   ++ idx)
+		{
+		  PathName relPath (toBeConfigured[idx]);
+		  if (PathName(fileName) != toBeConfigured[idx])
+		    {
+		      continue;
+		    }
+		  PathName pathIn (destinationDirectory);
+		  pathIn += relPath;
+		  pathIn.AppendExtension (T_(".in"));
+		  if (File::Exists(pathIn))
+		    {
+		      SessionWrapper(true)->ConfigureFile (relPath);
+		    }
+		}
+	    }
+#if defined(MIKTEX_WINDOWS)
 	  for (size_t idx = 0;
 	       idx < sizeof(components) / sizeof(components[0]);
 	       ++ idx)
@@ -1804,11 +1831,10 @@ PackageInstallerImpl::RegisterComponents
 		  RegisterComponent (doRegister, path);
 		}
 	    }
+#endif
 	}
     }
 }
-
-#endif
 
 /* _________________________________________________________________________
 
@@ -1819,6 +1845,22 @@ void
 MPMCALL
 PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 {
+  if (doRegister)
+    {
+      for (size_t idx = 0;
+	   idx < sizeof(toBeConfigured) / sizeof(toBeConfigured[0]);
+	   ++ idx)
+	{
+	  PathName relPath (toBeConfigured[idx]);
+	  PathName pathIn (destinationDirectory);
+	  pathIn += relPath;
+	  pathIn.AppendExtension (T_(".in"));
+	  if (File::Exists(pathIn))
+	    {
+	      SessionWrapper(true)->ConfigureFile (relPath);
+	    }
+	}
+    }
 #if defined(MIKTEX_WINDOWS)
   for (size_t idx = 0;
        idx < sizeof(components) / sizeof(components[0]);
