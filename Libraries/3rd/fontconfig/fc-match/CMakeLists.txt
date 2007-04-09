@@ -17,12 +17,30 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE
-  ${CMAKE_CURRENT_SOURCE_DIR}
+add_definitions(
+  -DHAVE_CONFIG_H
 )
 
-add_subdirectory(src)
-add_subdirectory(fc-cache)
-add_subdirectory(fc-cat)
-add_subdirectory(fc-list)
-add_subdirectory(fc-match)
+set(fc-match_sources
+  ${wrapper_cpp}
+  fc-match.c
+)
+
+if(NATIVE_WINDOWS)
+  set(fc-match_sources ${fc-match_sources}
+    fc-match.rc
+  )
+endif(NATIVE_WINDOWS)
+
+add_executable(fc-match ${fc-match_sources})
+
+merge_trustinfo_manifest(fc-match asInvoker)
+
+target_link_libraries(fc-match
+  ${app_dll_name}
+  ${core_dll_name}
+  ${fontconfig_dll_name}
+  ${gnu_dll_name}
+)
+
+install(TARGETS fc-match DESTINATION ${bindir})

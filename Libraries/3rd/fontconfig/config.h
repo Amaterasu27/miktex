@@ -56,10 +56,10 @@
 #undef HAVE_GETEUID
 
 /* Define to 1 if you have the `getopt' function. */
-#undef HAVE_GETOPT
+#define HAVE_GETOPT 1
 
 /* Define to 1 if you have the `getopt_long' function. */
-#undef HAVE_GETOPT_LONG
+#define HAVE_GETOPT_LONG 1
 
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
