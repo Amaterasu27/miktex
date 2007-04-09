@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1000,6 +1000,99 @@ SessionImpl::IsSharedMiKTeXSetup ()
   return (sharedSetup);
 }
 
+/* _________________________________________________________________________
+
+   SessionImpl::ConfigureFile
+   _________________________________________________________________________ */
+
+void
+SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathRel)
+{
+  PathName pathIn (GetSpecialPath(SpecialPath::InstallRoot));
+  pathIn += pathRel;
+  pathIn.AppendExtension (T_(".in"));
+  PathName pathOut (GetSpecialPath(SpecialPath::ConfigRoot));
+  pathOut += pathRel;
+  ConfigureFile (pathIn, pathOut);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ConfigureFile
+   _________________________________________________________________________ */
+
+void
+SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
+			    /*[in]*/ const PathName & pathOut)
+{
+  Directory::Create (PathName(pathOut).RemoveFileSpec());
+  if (File::Exists(pathOut))
+    {
+      FileAttributes attr = File::GetAttributes(pathOut);
+      attr &= ~ FileAttributes(FileAttributes::ReadOnly);
+      File::SetAttributes (pathOut, attr);
+    }
+  FileStream streamIn
+    (OpenFile(pathIn.Get(), FileMode::Open, FileAccess::Read, false));
+  FileStream streamOut
+    (OpenFile(pathOut.Get(), FileMode::Create, FileAccess::Write, false));
+  char chr;
+  bool readingName = false;
+  tstring name;
+  while (streamIn.Read(&chr, 1) == 1)
+    {
+      if (chr == '@')
+	{
+	  if (readingName)
+	    {
+	      tstring value;
+	      readingName = false;
+	      if (name == MIKTEX_ENV_INSTALL)
+		{
+		  value = GetSpecialPath(SpecialPath::InstallRoot).Get();
+		}
+	      else if (name == T_("MIKTEX_CONFIG"))
+		{
+		  value = GetSpecialPath(SpecialPath::ConfigRoot).Get();
+		}
+	      else if (name == T_("MIKTEX_DATA"))
+		{
+		  value = GetSpecialPath(SpecialPath::DataRoot).Get();
+		}
+	      else
+		{
+		  FATAL_MIKTEX_ERROR (T_("SessionImpl::ConfigureFile"),
+				      T_("Unknown variable."),
+				      name.c_str());
+		}
+	      streamOut.Write (value.c_str(), value.length());
+	    }
+	  else
+	    {
+	      readingName = true;
+	      name = T_("");
+	    }
+	}
+      else if (readingName)
+	{
+	  name += chr;
+	}
+      else
+	{
+	  streamOut.Write (&chr, 1);
+	}
+    }
+  streamIn.Close ();
+  streamOut.Close ();
+  FileAttributes attr = File::GetAttributes(pathOut);
+  attr |= FileAttributes::ReadOnly;
+  File::SetAttributes (pathOut, attr);
+  if (! Fndb::FileExists(pathOut))
+    {
+      Fndb::Add (pathOut);
+    }
+}
+  
 /* _________________________________________________________________________
 
    miktex_get_config_value

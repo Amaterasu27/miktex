@@ -5913,6 +5913,21 @@ public:
 #endif
 
 public:
+  virtual
+  void
+  MIKTEXCALL
+  ConfigureFile (/*[in]*/ const PathName & pathIn,
+		 /*[in]*/ const PathName & pathOut)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  ConfigureFile (/*[in]*/ const PathName & pathRel)
+    = 0;
+
+public:
   static
   MIKTEXEXPORT
   void

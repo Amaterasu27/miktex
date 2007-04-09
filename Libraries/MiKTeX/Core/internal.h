@@ -2064,6 +2064,18 @@ public:
   IsUserAPowerUser ();
 #endif
 
+public:
+  virtual
+  void
+  MIKTEXCALL
+  ConfigureFile (/*[in]*/ const PathName & pathIn,
+		 /*[in]*/ const PathName & pathOut);
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  ConfigureFile (/*[in]*/ const PathName & path);
 
   // -----------------------------------------------------------------------
   // *** public ***
