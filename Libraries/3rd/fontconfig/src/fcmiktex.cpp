@@ -34,7 +34,7 @@ miktex_fontconfig_path ()
       static PathName path;
       if (path[0] == 0)
 	{
-	  SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
+	  path = SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
 	  path += MIKTEX_PATH_FONTCONFIG_CONFIG_DIR;
 	}
       return (path.Get());
@@ -54,7 +54,7 @@ miktex_fc_cachedir()
       static PathName path;
       if (path[0] == 0)
 	{
-	  SessionWrapper(true)->GetSpecialPath(SpecialPath::DataRoot);
+	  path = SessionWrapper(true)->GetSpecialPath(SpecialPath::DataRoot);
 	  path += MIKTEX_PATH_FONTCONFIG_CACHE_DIR;
 	}
       return (path.Get());
@@ -99,7 +99,7 @@ miktex_fontconfig_file ()
       static PathName path;
       if (path[0] == 0)
 	{
-	  SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
+	  path = SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
 	  path += MIKTEX_PATH_FONTCONFIG_CONFIG_FILE;
 	}
       return (path.Get());
