@@ -267,6 +267,10 @@ private:
 
 private:
   void
+  BuildFontconfigCache ();
+
+private:
+  void
   MakeMaps ();
 
 private:
@@ -1368,6 +1372,72 @@ MakeFontMapApp::CopyFiles ()
 
 /* _________________________________________________________________________
 
+   MakeFontMapApp::BuildFontconfigCache
+   _________________________________________________________________________ */
+
+static const MIKTEXCHAR * const topDirs[] = {
+  T_("fonts/type1"),
+  T_("fonts/opentype"),
+  T_("fonts/truetype"),
+};
+
+void
+MakeFontMapApp::BuildFontconfigCache ()
+{
+  PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
+  configFile += MIKTEX_PATH_FONTCONFIG_LOCALFONTS_FILE;
+  StreamWriter writer (configFile);
+  writer.WriteLine (T_("<?xml version=\"1.0\"?>"));
+  writer.WriteLine (T_("<fontconfig>"));
+  vector<tstring> paths;
+#if defined(MIKTEX_WINDOWS)
+  PathName path;
+  UINT l =
+    GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetSize()));
+  if (l == 0 || l >= path.GetSize())
+    {
+      Abort (T_("GetWindowsDirectory() failed for some reason."));
+    }
+  path += T_("Fonts");
+  paths.push_back (path.Get());
+#endif
+  for (unsigned r = 0; r < pSession->GetNumberOfTEXMFRoots(); ++ r)
+    {
+      PathName root = pSession->GetRootDirectory(r);
+      for (size_t idx = 0; idx < sizeof(topDirs) / sizeof(topDirs[0]); ++ idx)
+	{
+	  PathName path = root;
+	  path += topDirs[idx];
+	  if (Directory::Exists(path))
+	    {
+	      paths.push_back (path.Get());
+	    }
+	}
+    }
+  for (vector<tstring>::const_iterator it = paths.begin();
+       it != paths.end();
+       ++ it)
+    {
+      writer.WriteFormattedLine (T_("<dir>%s</dir>"), it->c_str());
+    }
+  writer.WriteLine (T_("</fontconfig>"));
+  writer.Close ();
+  PathName pathFcCache;
+  if (! pSession->FindFile (T_("fc-cache"), FileType::EXE, pathFcCache))
+    {
+      Abort (T_("The fc-cache executable could not be found."));
+    }
+  CommandLineBuilder arguments;
+  arguments.AppendOption (T_("--force"));
+  if (verbose)
+    {
+      arguments.AppendOption (T_("--verbose"));
+    }
+  Process::Run (pathFcCache, arguments.Get());
+}
+
+/* _________________________________________________________________________
+
    MakeFontMapApp::MakeMaps
    _________________________________________________________________________ */
 
@@ -1472,6 +1542,8 @@ MakeFontMapApp::MakeMaps ()
   WriteDvipdfmMapFile (T_("dvipdfm_ndl14.map"), tmp6, empty, empty);
 
   CopyFiles ();
+
+  BuildFontconfigCache ();
 }
 
 /* _________________________________________________________________________
