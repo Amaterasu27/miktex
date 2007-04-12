@@ -1,6 +1,6 @@
 /* unx.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -285,7 +285,9 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
-      INVALID_ARGUMENT (T_("CreateDirectoryPath"), lpszPath);
+      PathName path (lpszPath);
+      path.MakeAbsolute ();
+      CreateDirectoryPath (path.Get(), mode);
     }
 
   // do nothing, if the directory already exists

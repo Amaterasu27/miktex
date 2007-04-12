@@ -680,6 +680,16 @@ File::Open (/*[in]*/ const PathName &	path,
     {
       shflags |= SH_DENYNO;
     }
+  if (mode == FileMode::Create)
+    {
+      PathName dir (path);
+      dir.MakeAbsolute ();
+      dir.RemoveFileSpec();
+      if (! Directory::Exists(dir))
+	{
+	  Directory::Create (dir);
+	}
+    }
 #  if (_MSC_VER >= 1400)
   if (_tsopen_s(&fd,
 		path.Get(),

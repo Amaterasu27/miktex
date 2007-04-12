@@ -2591,7 +2591,9 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
-      INVALID_ARGUMENT (T_("CreateDirectoryPath"), lpszPath);
+      PathName path (lpszPath);
+      path.MakeAbsolute ();
+      CreateDirectoryPath (path.Get());
     }
 
   // do nothing, if the directory already exists

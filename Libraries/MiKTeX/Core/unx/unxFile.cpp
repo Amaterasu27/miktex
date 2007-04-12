@@ -1,6 +1,6 @@
 /* unxFile.cpp: file operations
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -513,6 +513,17 @@ File::Open (/*[in]*/ const PathName &	path,
 	{
 	  flags |= O_TRUNC;
 	  strFlags += T_("w");
+	}
+    }
+
+  if (mode == FileMode::Create)
+    {
+      PathName dir (path);
+      dir.MakeAbsolute ();
+      dir.RemoveFileSpec();
+      if (! Directory::Exists(dir))
+	{
+	  Directory::Create (dir);
 	}
     }
 
