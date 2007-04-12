@@ -1802,33 +1802,49 @@ PackageInstallerImpl::RegisterComponents
 		   ++ idx)
 		{
 		  PathName relPath (toBeConfigured[idx]);
-		  if (PathName(fileName) != toBeConfigured[idx])
+		  PathName relPathIn (relPath);
+		  relPathIn.AppendExtension (T_(".in"));
+		  if (PathName(fileName) != relPathIn)
 		    {
 		      continue;
 		    }
 		  PathName pathIn (destinationDirectory);
-		  pathIn += relPath;
-		  pathIn.AppendExtension (T_(".in"));
+		  pathIn += relPathIn;
 		  if (File::Exists(pathIn))
 		    {
+		      ReportLine (T_("configuring %s"), relPath.Get());
 		      SessionWrapper(true)->ConfigureFile (relPath);
+		    }
+		  else
+		    {
+		      ReportLine (T_("problem: %s does not exist"),
+				  pathIn.Get());
 		    }
 		}
 	    }
 #if defined(MIKTEX_WINDOWS)
-	  for (size_t idx = 0;
-	       idx < sizeof(components) / sizeof(components[0]);
-	       ++ idx)
+	  if (SessionWrapper(true)->RunningAsAdministrator()
+	      || SessionWrapper(true)->RunningAsPowerUser())
 	    {
-	      if (PathName(fileName) != components[idx])
+	      for (size_t idx = 0;
+		   idx < sizeof(components) / sizeof(components[0]);
+		   ++ idx)
 		{
-		  continue;
-		}
-	      PathName path (destinationDirectory);
-	      path += components[idx];
-	      if (File::Exists(path))
-		{
-		  RegisterComponent (doRegister, path);
+		  if (PathName(fileName) != components[idx])
+		    {
+		      continue;
+		    }
+		  PathName path (destinationDirectory);
+		  path += components[idx];
+		  if (File::Exists(path))
+		    {
+		      RegisterComponent (doRegister, path);
+		    }
+		  else
+		    {
+		      ReportLine (T_("problem: %s does not exist"),
+				  path.Get());
+		    }
 		}
 	    }
 #endif
@@ -1857,20 +1873,33 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 	  pathIn.AppendExtension (T_(".in"));
 	  if (File::Exists(pathIn))
 	    {
+	      ReportLine (T_("configuring %s"), relPath.Get());
 	      SessionWrapper(true)->ConfigureFile (relPath);
+	    }
+	  else
+	    {
+	      ReportLine (T_("problem: %s does not exist"), pathIn.Get());
 	    }
 	}
     }
 #if defined(MIKTEX_WINDOWS)
-  for (size_t idx = 0;
-       idx < sizeof(components) / sizeof(components[0]);
-       ++ idx)
+  if (SessionWrapper(true)->RunningAsAdministrator()
+      || SessionWrapper(true)->RunningAsPowerUser())
     {
-      PathName path (destinationDirectory);
-      path += components[idx];
-      if (File::Exists(path))
+      for (size_t idx = 0;
+	   idx < sizeof(components) / sizeof(components[0]);
+	   ++ idx)
 	{
-	  RegisterComponent (doRegister, path);
+	  PathName path (destinationDirectory);
+	  path += components[idx];
+	  if (File::Exists(path))
+	    {
+	      RegisterComponent (doRegister, path);
+	    }
+	  else
+	    {
+	      ReportLine (T_("problem: %s does not exist"), path.Get());
+	    }
 	}
     }
 #endif
@@ -2071,13 +2100,7 @@ PackageInstallerImpl::InstallRemove ()
   
   vector<tstring>::const_iterator it;
 
-#if defined(MIKTEX_WINDOWS)
-  if (SessionWrapper(true)->RunningAsAdministrator()
-      || SessionWrapper(true)->RunningAsPowerUser())
-    {
-      RegisterComponents (false, toBeInstalled, toBeRemoved);
-    }
-#endif
+  RegisterComponents (false, toBeInstalled, toBeRemoved);
 
   // install packages
   for (it = toBeInstalled.begin(); it != toBeInstalled.end(); ++ it)
@@ -2091,13 +2114,10 @@ PackageInstallerImpl::InstallRemove ()
       RemovePackage (*it);
     }
 
-#if defined(MIKTEX_WINDOWS)
-  if (SessionWrapper(true)->RunningAsAdministrator()
-      || SessionWrapper(true)->RunningAsPowerUser())
+  if (! noPostProcessing)
     {
       RegisterComponents (true, toBeInstalled);
     }
-#endif
 
   if (! autoFndbSync)
     {
