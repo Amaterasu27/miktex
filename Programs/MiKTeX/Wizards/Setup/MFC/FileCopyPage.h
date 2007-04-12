@@ -1,6 +1,6 @@
 /* FileCopyPage.h:						-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -136,6 +136,10 @@ private:
 private:
   void
   RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1);
+
+private:
+  void
+  RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1);
 
 private:
   void

@@ -990,6 +990,12 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       return;
     }
+
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+    {
+      // register components, configure files
+      RunMpm (T_("--register-components"));
+    }
   
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
@@ -1006,7 +1012,7 @@ FileCopyPage::ConfigureMiKTeX ()
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
       // create latex.exe, context.exe, ...
-      RunIniTeXMF (T_("--mklinks"));
+      RunIniTeXMF (CommandLineBuilder(T_("--force"), T_("--mklinks")));
       if (pSheet->GetCancelFlag())
 	{
 	  return;
@@ -1103,6 +1109,35 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 	    / overallExpenditure)
 	   * PROGRESS_MAX));
       PostMessage (WM_PROGRESS);
+    }
+}
+
+/* _________________________________________________________________________
+
+   FileCopyPage::RunMpm
+   _________________________________________________________________________ */
+
+void
+FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
+{
+  // make absolute exe path name
+  PathName exePath;
+  exePath = theApp.startupConfig.installRoot;
+  exePath += MIKTEX_PATH_BIN_DIR;
+  exePath += MIKTEX_MPM_EXE;
+
+  // make command line
+  CommandLineBuilder cmdLine (cmdLine1);
+  cmdLine.AppendOption (T_("--verbose"));
+
+  // run mpm.exe
+  if (! theApp.dryRun)
+    {
+      Log (T_("%s %s:\n"), Q_(exePath.Get()), cmdLine.Get());
+      ULogClose ();
+      SessionWrapper(true)->UnloadFilenameDatabase ();
+      Process::Run (exePath.Get(), cmdLine.Get(), this);
+      ULogOpen ();
     }
 }
 

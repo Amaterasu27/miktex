@@ -653,13 +653,47 @@ FileCopyPage::ConfigureMiKTeX ()
       RemoveOldRegistrySettings ();
     }
 
+  // register components, configure files
+  RunMpm (T_("--register-components"));
+
   CommandLineBuilder cmdLine;
 
   cmdLine.AppendOption (T_("--update-fndb"));
+  cmdLine.AppendOption (T_("--force"));
   cmdLine.AppendOption (T_("--mklinks"));
   cmdLine.AppendOption (T_("--mkmaps"));
 
   RunIniTeXMF (cmdLine);
+}
+
+/* _________________________________________________________________________
+
+   FileCopyPage::RunMpm
+   _________________________________________________________________________ */
+
+void
+FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
+{
+  PathName exePath;
+
+  if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_EXE,
+				       FileType::EXE,
+				       exePath))
+    {
+      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RunMpm"),
+			  T_("\
+The MiKTeX package management utility could not be found."),
+			  0);
+    }
+
+  // make command line
+  CommandLineBuilder cmdLine (cmdLine1);
+  cmdLine.AppendOption (T_(" --verbose"));
+
+  // run mpm.exe
+  Log (T_("initexmf %s:\n"), cmdLine.Get());
+
+  Process::Run (exePath, cmdLine.Get(), this);
 }
 
 /* _________________________________________________________________________
