@@ -74,7 +74,7 @@ public:
     size_t nFonts = THEDATA(fontmax) + 1 - constfontbase;
 
     // etex
-    Allocate (THEDATA(eofseen), THEDATA(maxinopen));
+    Allocate (THEDATA(eofseen), THEDATA(maxinopen) + 1);
     Allocate (THEDATA(grpstack), THEDATA(maxinopen) + 1);
     Allocate (THEDATA(ifstack), THEDATA(maxinopen) + 1);
 
