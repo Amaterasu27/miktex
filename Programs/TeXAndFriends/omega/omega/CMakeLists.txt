@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -96,6 +96,8 @@ file(READ ${omega_dyn_sed} omega_dyn_sed_contents)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${omega_dyn_sed_contents}")
+
+set(TANGLE_FLAGS -omega)
 
 create_web_app(Omega)
 

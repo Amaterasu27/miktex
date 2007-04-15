@@ -176,6 +176,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
     COMMAND
 	${tangle_exe}
+		${TANGLE_FLAGS}
 		${${_short_name_l}_web_file}
 		${${_short_name_l}_change_file}
 		${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
