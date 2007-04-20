@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -124,8 +124,9 @@ SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
   StartupConfig ret;
   tstring product = (IsMiKTeXDirect() ? T_("MiKTeXDirect") : T_("MiKTeX"));
   if (sharedSetup
-      || IsUserAnAdministrator()
-      || IsUserAPowerUser())
+      && (! IsWindowsNT()
+	  || IsUserAnAdministrator()
+	  || IsUserAPowerUser()))
     {
       ret.installRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
       ret.installRoot += T_("MiKTeX") T_(" ") T_(MIKTEX_SERIES_STR);

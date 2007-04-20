@@ -1823,7 +1823,8 @@ PackageInstallerImpl::RegisterComponents
 		}
 	    }
 #if defined(MIKTEX_WINDOWS)
-	  if (SessionWrapper(true)->RunningAsAdministrator()
+	  if (! IsWindowsNT()
+	      || SessionWrapper(true)->RunningAsAdministrator()
 	      || SessionWrapper(true)->RunningAsPowerUser())
 	    {
 	      for (size_t idx = 0;
@@ -1883,7 +1884,8 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 	}
     }
 #if defined(MIKTEX_WINDOWS)
-  if (SessionWrapper(true)->RunningAsAdministrator()
+  if (! IsWindowsNT()
+      || SessionWrapper(true)->RunningAsAdministrator()
       || SessionWrapper(true)->RunningAsPowerUser())
     {
       for (size_t idx = 0;

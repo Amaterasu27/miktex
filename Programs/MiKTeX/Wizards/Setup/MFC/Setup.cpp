@@ -500,7 +500,8 @@ FindInstallDir ()
     {
       // return the default location (usually "C:\Program Files\MiKTeX X.Y")
       PathName path;
-      if (SessionWrapper(true)->IsUserAnAdministrator()
+      if (! IsWindowsNT()
+	  || SessionWrapper(true)->IsUserAnAdministrator()
 	  || SessionWrapper(true)->IsUserAPowerUser())
 	{
 	  path =
