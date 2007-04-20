@@ -8,18 +8,18 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="122.25"
-   height="123.07813"
+   width="339.23361"
+   height="339.23001"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.45pre1"
-   version="1.0"
    sodipodi:docbase="C:\work3\miktex-2.6\Resources\Graphics"
    sodipodi:docname="miktex-icon.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\work3\miktex-2.6\Resources\Graphics\miktex-icon2.png"
-   inkscape:export-xdpi="11.78"
-   inkscape:export-ydpi="11.78"
+   version="1.0"
+   inkscape:export-filename="C:\work3\miktex-2.6\Resources\Graphics\miktex-icon.png"
+   inkscape:export-xdpi="4.2399998"
+   inkscape:export-ydpi="4.2399998"
    sodipodi:modified="TRUE">
   <defs
      id="defs4" />
@@ -33,17 +33,17 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="31.99302"
-     inkscape:cy="61.77595"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="400.19302"
+     inkscape:cy="249.25794"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
-     showborder="false"
-     inkscape:window-width="884"
-     inkscape:window-height="691"
-     inkscape:window-x="48"
-     inkscape:window-y="58" />
+     inkscape:window-width="1280"
+     inkscape:window-height="998"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     height="339.23px"
+     width="339.23361px" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -59,72 +59,26 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-145,-150.82312)">
+     transform="translate(-168.33382,-48.125108)">
     <text
        xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="139.65625"
-       y="202.36218"
+       style="font-size:187.14971924px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:1.20000005;stroke-dasharray:none;stroke-opacity:1;font-family:Times New Roman"
+       x="165.83717"
+       y="176.21291"
        id="text2160"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
          id="tspan2162"
-         x="139.65625"
-         y="202.36218">M</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="201.4668"
-       y="202.36218"
-       id="text2164"
-       sodipodi:linespacing="125%"><tspan
+         x="165.83717"
+         y="176.21291"
+         style="fill:#000000;fill-opacity:1;stroke-width:2.5;stroke-linejoin:miter;stroke-miterlimit:1.20000005;stroke-dasharray:none"
+         dx="0 -19.030098 -17.422956">MiK</tspan><tspan
          sodipodi:role="line"
-         id="tspan2166"
-         x="201.4668"
-         y="202.36218">i</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="219.36719"
-       y="202.36218"
-       id="text2168"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan2170"
-         x="219.36719"
-         y="202.36218">K</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="143.3125"
-       y="262.36218"
-       id="text2172"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan2174"
-         x="143.3125"
-         y="262.36218">T</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="175.84375"
-       y="273.90125"
-       id="text2176"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan2178"
-         x="175.84375"
-         y="273.90125">E</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-       x="219.68359"
-       y="262.36218"
-       id="text2180"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan2182"
-         x="219.68359"
-         y="262.36218">X</tspan></text>
+         x="165.83717"
+         y="363.36263"
+         id="tspan2164"
+         style="fill:#000000;fill-opacity:1;stroke-width:2.5;stroke-linejoin:miter;stroke-miterlimit:1.20000005;stroke-dasharray:none"
+         dy="-45.000004 35.8158 -35.8158"
+         dx="0 -24.993841 -18.420418">TEX</tspan></text>
   </g>
 </svg>
