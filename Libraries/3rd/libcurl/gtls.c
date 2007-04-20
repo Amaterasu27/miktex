@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.c,v 1.18 2007-01-05 23:11:16 bagder Exp $
+ * $Id: gtls.c,v 1.25 2007-03-27 18:16:35 yangtse Exp $
  ***************************************************************************/
 
 /*
@@ -37,9 +37,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -144,12 +141,12 @@ static CURLcode handshake(struct connectdata *conn,
       long has_passed;
 
       if(duringconnect && data->set.connecttimeout)
-        timeout_ms = data->set.connecttimeout*1000;
+        timeout_ms = data->set.connecttimeout;
 
       if(data->set.timeout) {
         /* get the strictest timeout of the ones converted to milliseconds */
-        if((data->set.timeout*1000) < timeout_ms)
-          timeout_ms = data->set.timeout*1000;
+        if(data->set.timeout < timeout_ms)
+          timeout_ms = data->set.timeout;
       }
 
       /* Evaluate in milliseconds how much time that has passed */
@@ -164,7 +161,7 @@ static CURLcode handshake(struct connectdata *conn,
         return CURLE_OPERATION_TIMEOUTED;
       }
 
-      rc = Curl_select(conn->sock[sockindex],
+      rc = Curl_socket_ready(conn->sock[sockindex],
                        conn->sock[sockindex], (int)timeout_ms);
       if(rc > 0)
         /* reabable or writable, go loop*/
@@ -176,7 +173,7 @@ static CURLcode handshake(struct connectdata *conn,
       }
       else {
         /* anything that gets here is fatally bad */
-        failf(data, "select on SSL socket, errno: %d", Curl_sockerrno());
+        failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);
         return CURLE_SSL_CONNECT_ERROR;
       }
     }
@@ -526,7 +523,6 @@ int Curl_gtls_shutdown(struct connectdata *conn, int sockindex)
   int retval = 0;
   struct SessionHandle *data = conn->data;
   int done = 0;
-  ssize_t nread;
   char buf[120];
 
   /* This has only been tested on the proftpd server, and the mod_tls code
@@ -534,9 +530,12 @@ int Curl_gtls_shutdown(struct connectdata *conn, int sockindex)
      response. Thus we wait for a close notify alert from the server, but
      we do not send one. Let's hope other servers do the same... */
 
+  if(data->set.ftp_ccc == CURLFTPSSL_CCC_ACTIVE)
+      gnutls_bye(conn->ssl[sockindex].session, GNUTLS_SHUT_WR);
+
   if(conn->ssl[sockindex].session) {
     while(!done) {
-      int what = Curl_select(conn->sock[sockindex],
+      int what = Curl_socket_ready(conn->sock[sockindex],
                              CURL_SOCKET_BAD, SSL_SHUTDOWN_TIMEOUT);
       if(what > 0) {
         /* Something to read, let's do it and hope that it is the close
@@ -567,7 +566,7 @@ int Curl_gtls_shutdown(struct connectdata *conn, int sockindex)
       }
       else {
         /* anything that gets here is fatally bad */
-        failf(data, "select on SSL socket, errno: %d", Curl_sockerrno());
+        failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);
         retval = -1;
         done = 1;
       }

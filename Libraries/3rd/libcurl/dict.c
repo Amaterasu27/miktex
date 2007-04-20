@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.47 2006-10-11 16:01:17 yangtse Exp $
+ * $Id: dict.c,v 1.49 2007-03-31 21:06:40 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -31,12 +31,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
 
 #ifdef WIN32
 #include <time.h>
@@ -165,7 +159,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
     }
 
     if ((word == NULL) || (*word == (char)0)) {
-      failf(data, "lookup word is missing");
+      infof(data, "lookup word is missing");
+      word=(char *)"default";
     }
     if ((database == NULL) || (*database == (char)0)) {
       database = (char *)"!";
@@ -219,7 +214,8 @@ CURLcode Curl_dict(struct connectdata *conn, bool *done)
     }
 
     if ((word == NULL) || (*word == (char)0)) {
-      failf(data, "lookup word is missing");
+      infof(data, "lookup word is missing");
+      word=(char *)"default";
     }
     if ((database == NULL) || (*database == (char)0)) {
       database = (char *)"!";

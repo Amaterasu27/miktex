@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.158 2006-12-22 13:30:54 bagder Exp $
+ * $Id: connect.c,v 1.168 2007-03-26 23:23:46 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,9 +27,6 @@
 /* headers for non-win32 */
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -59,9 +56,9 @@
 #include <arpa/inet.h>
 #endif
 #ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* required for free() prototype, without it, this crashes
-                       on macos 68K */
-#endif
+#include <stdlib.h> /* required for free() prototype, without it, this crashes */
+#endif              /* on macos 68K */
+
 #if (defined(HAVE_FIONBIO) && defined(__NOVELL_LIBC__))
 #include <sys/filio.h>
 #endif
@@ -74,23 +71,11 @@
 #include <inet.h>
 #endif
 
-#endif
+#endif  /* !WIN32 */
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-
-#ifndef TRUE
-#define TRUE 1
-#define FALSE 0
-#endif
-
-#ifdef USE_WINSOCK
-#define EINPROGRESS WSAEINPROGRESS
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#define EISCONN     WSAEISCONN
-#define ENOTSOCK    WSAENOTSOCK
-#define ECONNREFUSED WSAECONNREFUSED
-#endif
 
 #include "urldata.h"
 #include "sendf.h"
@@ -103,6 +88,7 @@
 #include "multiif.h"
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
 #include "inet_ntop.h"
+#include "inet_pton.h"
 
 /* The last #include file should be: */
 #include "memdebug.h"
@@ -114,19 +100,6 @@ singleipconnect(struct connectdata *conn,
                 const Curl_addrinfo *ai, /* start connecting to this */
                 long timeout_ms,
                 bool *connected);
-
-/*
- * Curl_sockerrno() returns the *socket-related* errno (or equivalent) on this
- * platform to hide platform specific for the function that calls this.
- */
-int Curl_sockerrno(void)
-{
-#ifdef USE_WINSOCK
-  return (int)WSAGetLastError();
-#else
-  return errno;
-#endif
-}
 
 /*
  * Curl_nonblock() set the given socket to either blocking or non-blocking
@@ -143,7 +116,7 @@ int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
   int flags;
 
   flags = fcntl(sockfd, F_GETFL, 0);
-  if (TRUE == nonblock)
+  if (FALSE != nonblock)
     return fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
   else
     return fcntl(sockfd, F_SETFL, flags & (~O_NONBLOCK));
@@ -224,7 +197,7 @@ int waitconnect(curl_socket_t sockfd, /* socket */
 #endif
 
   /* now select() until we get connect or timeout */
-  rc = Curl_select(CURL_SOCKET_BAD, sockfd, (int)timeout_msec);
+  rc = Curl_socket_ready(CURL_SOCKET_BAD, sockfd, (int)timeout_msec);
   if(-1 == rc)
     /* error, no connect here, try next */
     return WAITCONN_SELECT_ERROR;
@@ -244,6 +217,9 @@ int waitconnect(curl_socket_t sockfd, /* socket */
 static CURLcode bindlocal(struct connectdata *conn,
                           curl_socket_t sockfd)
 {
+#ifdef ENABLE_IPV6
+  char ipv6_addr[16];
+#endif
   struct SessionHandle *data = conn->data;
   struct sockaddr_in me;
   struct sockaddr *sock = NULL;  /* bind to this address */
@@ -262,6 +238,7 @@ static CURLcode bindlocal(struct connectdata *conn,
     in_addr_t in;
     int rc;
     bool was_iface = FALSE;
+    int in6 = -1;
 
     /* First check if the given name is an IP address */
     in=inet_addr(data->set.device);
@@ -332,7 +309,7 @@ static CURLcode bindlocal(struct connectdata *conn,
       if (setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE,
                      data->set.device, strlen(data->set.device)+1) != 0) {
         /* printf("Failed to BINDTODEVICE, socket: %d  device: %s error: %s\n",
-           sockfd, data->set.device, Curl_strerror(Curl_sockerrno())); */
+           sockfd, data->set.device, Curl_strerror(SOCKERRNO)); */
         infof(data, "SO_BINDTODEVICE %s failed\n",
               data->set.device);
         /* This is typically "errno 1, error: Operation not permitted" if
@@ -342,7 +319,11 @@ static CURLcode bindlocal(struct connectdata *conn,
 #endif
 
     in=inet_addr(myhost);
-    if (CURL_INADDR_NONE == in) {
+
+#ifdef ENABLE_IPV6
+    in6 = Curl_inet_pton (AF_INET6, myhost, (void *)&ipv6_addr);
+#endif
+    if (CURL_INADDR_NONE == in && -1 == in6) {
       failf(data,"couldn't find my own IP address (%s)", myhost);
       return CURLE_HTTP_PORT_FAILED;
     } /* end of inet_addr */
@@ -409,7 +390,7 @@ static CURLcode bindlocal(struct connectdata *conn,
       break;
   } while(1);
 
-  data->state.os_errno = Curl_sockerrno();
+  data->state.os_errno = SOCKERRNO;
   failf(data, "bind failure: %s",
         Curl_strerror(conn, data->state.os_errno));
   return CURLE_HTTP_PORT_FAILED;
@@ -453,7 +434,7 @@ static bool verifyconnect(curl_socket_t sockfd, int *error)
 
   if( -1 == getsockopt(sockfd, SOL_SOCKET, SO_ERROR,
                        (void *)&err, &errSize))
-    err = Curl_sockerrno();
+    err = SOCKERRNO;
 
 #ifdef _WIN32_WCE
   /* Always returns this error, bug in CE? */
@@ -472,7 +453,7 @@ static bool verifyconnect(curl_socket_t sockfd, int *error)
 #else
   (void)sockfd;
   if (error)
-    *error = Curl_sockerrno();
+    *error = SOCKERRNO;
 #endif
   return rc;
 }
@@ -548,7 +529,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   long allow_total = 0;
   long has_passed;
 
-  curlassert(sockindex >= FIRSTSOCKET && sockindex <= SECONDARYSOCKET);
+  DEBUGASSERT(sockindex >= FIRSTSOCKET && sockindex <= SECONDARYSOCKET);
 
   *connected = FALSE; /* a very negative world view is best */
 
@@ -558,15 +539,15 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   /* subtract the most strict timeout of the ones */
   if(data->set.timeout && data->set.connecttimeout) {
     if (data->set.timeout < data->set.connecttimeout)
-      allow_total = allow = data->set.timeout*1000;
+      allow_total = allow = data->set.timeout;
     else
-      allow = data->set.connecttimeout*1000;
+      allow = data->set.connecttimeout;
   }
   else if(data->set.timeout) {
-    allow_total = allow = data->set.timeout*1000;
+    allow_total = allow = data->set.timeout;
   }
   else if(data->set.connecttimeout) {
-    allow = data->set.connecttimeout*1000;
+    allow = data->set.connecttimeout;
   }
 
   if(has_passed > allow ) {
@@ -613,7 +594,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
       infof(data, "Connection failed\n");
 
     if(trynextip(conn, sockindex, connected)) {
-      error = Curl_sockerrno();
+      error = SOCKERRNO;
       data->state.os_errno = error;
       failf(data, "Failed connect to %s:%d; %s",
             conn->host.name, conn->port, Curl_strerror(conn,error));
@@ -645,7 +626,7 @@ static void tcpnodelay(struct connectdata *conn,
   if(setsockopt(sockfd, proto, TCP_NODELAY, (void *)&onoff,
                 sizeof(onoff)) < 0)
     infof(data, "Could not set TCP_NODELAY: %s\n",
-          Curl_strerror(conn, Curl_sockerrno()));
+          Curl_strerror(conn, SOCKERRNO));
   else
     infof(data,"TCP_NODELAY set\n");
 #else
@@ -667,7 +648,7 @@ static void nosigpipe(struct connectdata *conn,
   if(setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, (void *)&onoff,
                 sizeof(onoff)) < 0)
     infof(data, "Could not set SO_NOSIGPIPE: %s\n",
-          Curl_strerror(conn, Curl_sockerrno()));
+          Curl_strerror(conn, SOCKERRNO));
 }
 #else
 #define nosigpipe(x,y)
@@ -731,7 +712,7 @@ singleipconnect(struct connectdata *conn,
     rc = 0;
 
   if(-1 == rc) {
-    error = Curl_sockerrno();
+    error = SOCKERRNO;
 
     switch (error) {
     case EINPROGRESS:
@@ -826,14 +807,14 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
     /* get the most strict timeout of the ones converted to milliseconds */
     if(data->set.timeout && data->set.connecttimeout) {
       if (data->set.timeout < data->set.connecttimeout)
-        timeout_ms = data->set.timeout*1000;
+        timeout_ms = data->set.timeout;
       else
-        timeout_ms = data->set.connecttimeout*1000;
+        timeout_ms = data->set.connecttimeout;
     }
     else if(data->set.timeout)
-      timeout_ms = data->set.timeout*1000;
+      timeout_ms = data->set.timeout;
     else
-      timeout_ms = data->set.connecttimeout*1000;
+      timeout_ms = data->set.connecttimeout;
 
     /* subtract the passed time */
     timeout_ms -= has_passed;

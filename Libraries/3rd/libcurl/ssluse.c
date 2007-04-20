@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.c,v 1.164 2007-01-10 21:21:53 danf Exp $
+ * $Id: ssluse.c,v 1.175 2007-04-07 04:51:35 yangtse Exp $
  ***************************************************************************/
 
 /*
@@ -36,9 +36,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -49,7 +46,7 @@
 #include "url.h" /* for the ssl config check function */
 #include "inet_pton.h"
 #include "ssluse.h"
-#include "connect.h" /* Curl_sockerrno() proto */
+#include "connect.h"
 #include "strequal.h"
 #include "select.h"
 #include "sslgen.h"
@@ -434,7 +431,7 @@ int cert_stuff(struct connectdata *conn,
 #ifdef HAVE_OPENSSL_ENGINE_H
       {                         /* XXXX still needs some work */
         EVP_PKEY *priv_key = NULL;
-        if(conn && conn->data && conn->data->state.engine) {
+        if(data->state.engine) {
 #ifdef HAVE_ENGINE_LOAD_FOUR_ARGS
           UI_METHOD *ui_method = UI_OpenSSL();
 #endif
@@ -444,7 +441,7 @@ int cert_stuff(struct connectdata *conn,
           }
           /* the typecast below was added to please mingw32 */
           priv_key = (EVP_PKEY *)
-            ENGINE_load_private_key(conn->data->state.engine,key_file,
+            ENGINE_load_private_key(data->state.engine,key_file,
 #ifdef HAVE_ENGINE_LOAD_FOUR_ARGS
                                     ui_method,
 #endif
@@ -681,10 +678,19 @@ struct curl_slist *Curl_ossl_engines_list(struct SessionHandle *data)
 {
   struct curl_slist *list = NULL;
 #if defined(USE_SSLEAY) && defined(HAVE_OPENSSL_ENGINE_H)
+  struct curl_slist *beg = NULL;
   ENGINE *e;
 
-  for (e = ENGINE_get_first(); e; e = ENGINE_get_next(e))
+  for (e = ENGINE_get_first(); e; e = ENGINE_get_next(e)) {
     list = curl_slist_append(list, ENGINE_get_id(e));
+    if (list == NULL) {
+      curl_slist_free_all(beg);
+      return NULL;
+    }
+    else if (beg == NULL) {
+      beg = list;
+    }
+  }
 #endif
   (void) data;
   return (list);
@@ -749,9 +755,12 @@ int Curl_ossl_shutdown(struct connectdata *conn, int sockindex)
      response. Thus we wait for a close notify alert from the server, but
      we do not send one. Let's hope other servers do the same... */
 
+  if(data->set.ftp_ccc == CURLFTPSSL_CCC_ACTIVE)
+      (void)SSL_shutdown(connssl->handle);
+
   if(connssl->handle) {
     while(!done) {
-      int what = Curl_select(conn->sock[sockindex],
+      int what = Curl_socket_ready(conn->sock[sockindex],
                              CURL_SOCKET_BAD, SSL_SHUTDOWN_TIMEOUT);
       if(what > 0) {
         /* Something to read, let's do it and hope that it is the close
@@ -781,7 +790,7 @@ int Curl_ossl_shutdown(struct connectdata *conn, int sockindex)
           sslerror = ERR_get_error();
           failf(conn->data, "SSL read: %s, errno %d",
                 ERR_error_string(sslerror, buf),
-                Curl_sockerrno() );
+                SOCKERRNO);
           done = 1;
           break;
         }
@@ -794,13 +803,14 @@ int Curl_ossl_shutdown(struct connectdata *conn, int sockindex)
       }
       else {
         /* anything that gets here is fatally bad */
-        failf(data, "select on SSL socket, errno: %d", Curl_sockerrno());
+        failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);
         retval = -1;
         done = 1;
       }
     } /* while()-loop for the select() */
 
     if(data->set.verbose) {
+#ifdef HAVE_SSL_GET_SHUTDOWN
       switch(SSL_get_shutdown(connssl->handle)) {
       case SSL_SENT_SHUTDOWN:
         infof(data, "SSL_get_shutdown() returned SSL_SENT_SHUTDOWN\n");
@@ -813,6 +823,7 @@ int Curl_ossl_shutdown(struct connectdata *conn, int sockindex)
               "SSL_RECEIVED__SHUTDOWN\n");
         break;
       }
+#endif
     }
 
     connssl->use = FALSE; /* get back to ordinary socket usage */
@@ -856,6 +867,10 @@ static int Curl_ASN1_UTCTIME_output(struct connectdata *conn,
   int i;
   int year=0,month=0,day=0,hour=0,minute=0,second=0;
   struct SessionHandle *data = conn->data;
+
+#ifdef CURL_DISABLE_VERBOSE_STRINGS
+  (void)prefix;
+#endif
 
   if(!data->set.verbose)
     return 0;
@@ -1269,7 +1284,7 @@ Curl_ossl_connect_step1(struct connectdata *conn,
   curl_socket_t sockfd = conn->sock[sockindex];
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
 
-  curlassert(ssl_connect_1 == connssl->connecting_state);
+  DEBUGASSERT(ssl_connect_1 == connssl->connecting_state);
 
   /* Make funny stuff to get random input */
   Curl_ossl_seed(data);
@@ -1448,7 +1463,7 @@ Curl_ossl_connect_step2(struct connectdata *conn,
   long has_passed;
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
 
-  curlassert(ssl_connect_2 == connssl->connecting_state
+  DEBUGASSERT(ssl_connect_2 == connssl->connecting_state
              || ssl_connect_2_reading == connssl->connecting_state
              || ssl_connect_2_writing == connssl->connecting_state);
 
@@ -1459,17 +1474,17 @@ Curl_ossl_connect_step2(struct connectdata *conn,
   if(data->set.timeout && data->set.connecttimeout) {
     /* get the most strict timeout of the ones converted to milliseconds */
     if(data->set.timeout<data->set.connecttimeout)
-      *timeout_ms = data->set.timeout*1000;
+      *timeout_ms = data->set.timeout;
     else
-      *timeout_ms = data->set.connecttimeout*1000;
+      *timeout_ms = data->set.connecttimeout;
   }
   else if(data->set.timeout)
-    *timeout_ms = data->set.timeout*1000;
+    *timeout_ms = data->set.timeout;
   else if(data->set.connecttimeout)
-    *timeout_ms = data->set.connecttimeout*1000;
+    *timeout_ms = data->set.connecttimeout;
   else
     /* no particular time-out has been set */
-    *timeout_ms= DEFAULT_CONNECT_TIMEOUT;
+    *timeout_ms = DEFAULT_CONNECT_TIMEOUT;
 
   /* Evaluate in milliseconds how much time that has passed */
   has_passed = Curl_tvdiff(Curl_tvnow(), data->progress.t_startsingle);
@@ -1578,7 +1593,7 @@ Curl_ossl_connect_step3(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
 
-  curlassert(ssl_connect_3 == connssl->connecting_state);
+  DEBUGASSERT(ssl_connect_3 == connssl->connecting_state);
 
   if(Curl_ssl_getsessionid(conn, &ssl_sessionid, NULL)) {
     /* Since this is not a cached session ID, then we want to stach this one
@@ -1722,7 +1737,7 @@ Curl_ossl_connect_common(struct connectdata *conn,
         connssl->connecting_state?sockfd:CURL_SOCKET_BAD;
 
       while(1) {
-        int what = Curl_select(readfd, writefd, nonblocking?0:(int)timeout_ms);
+        int what = Curl_socket_ready(readfd, writefd, nonblocking?0:(int)timeout_ms);
         if(what > 0)
           /* readable or writable, go loop in the outer loop */
           break;
@@ -1739,7 +1754,7 @@ Curl_ossl_connect_common(struct connectdata *conn,
         }
         else {
           /* anything that gets here is fatally bad */
-          failf(data, "select on SSL socket, errno: %d", Curl_sockerrno());
+          failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);
           return CURLE_SSL_CONNECT_ERROR;
         }
       } /* while()-loop for the select() */
@@ -1791,7 +1806,7 @@ Curl_ossl_connect(struct connectdata *conn,
   if (retcode)
     return retcode;
 
-  curlassert(done);
+  DEBUGASSERT(done);
 
   return CURLE_OK;
 }
@@ -1822,7 +1837,7 @@ ssize_t Curl_ossl_send(struct connectdata *conn,
       return 0;
     case SSL_ERROR_SYSCALL:
       failf(conn->data, "SSL_write() returned SYSCALL, errno = %d\n",
-            Curl_sockerrno());
+            SOCKERRNO);
       return -1;
     case SSL_ERROR_SSL:
       /*  A failure in the SSL library occurred, usually a protocol error.
@@ -1874,7 +1889,7 @@ ssize_t Curl_ossl_recv(struct connectdata *conn, /* connection data */
       sslerror = ERR_get_error();
       failf(conn->data, "SSL read: %s, errno %d",
             ERR_error_string(sslerror, error_buffer),
-            Curl_sockerrno() );
+            SOCKERRNO);
       return -1;
     }
   }

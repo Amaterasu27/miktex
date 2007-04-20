@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip6.c,v 1.37 2006-07-27 22:28:53 bagder Exp $
+ * $Id: hostip6.c,v 1.39 2007-02-26 04:24:26 giva Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,9 +27,6 @@
 
 #ifdef NEED_MALLOC_H
 #include <malloc.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -210,7 +207,7 @@ static void dump_addrinfo(struct connectdata *conn, const struct addrinfo *ai)
     if (Curl_printable_address(ai, buf, sizeof(buf)))
       printf("%s\n", buf);
     else
-      printf("failed; %s\n", Curl_strerror(conn, Curl_sockerrno()));
+      printf("failed; %s\n", Curl_strerror(conn, SOCKERRNO));
   }
 }
 #else

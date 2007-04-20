@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.316 2007-01-16 22:22:25 bagder Exp $
+ * $Id: urldata.h,v 1.328 2007-04-10 20:46:40 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -45,7 +45,7 @@
 #define DICT_DEFINE3 "/LOOKUP:"
 
 #define CURL_DEFAULT_USER "anonymous"
-#define CURL_DEFAULT_PASSWORD "curl_by_daniel@haxx.se"
+#define CURL_DEFAULT_PASSWORD "ftp@example.com"
 
 #include "cookie.h"
 #include "formdata.h"
@@ -76,6 +76,10 @@
 
 #ifdef USE_GNUTLS
 #include <gnutls/gnutls.h>
+#endif
+
+#ifdef USE_NSS
+#include <nspr.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
@@ -169,6 +173,9 @@ struct ssl_connect_data {
   gnutls_session session;
   gnutls_certificate_credentials cred;
 #endif /* USE_GNUTLS */
+#ifdef USE_NSS
+  PRFileDesc *handle;
+#endif /* USE_NSS */
 };
 
 struct ssl_config_data {
@@ -432,6 +439,7 @@ struct ConnectBits {
   bool close; /* if set, we close the connection after this request */
   bool reuse; /* if set, this is a re-used connection */
   bool chunk; /* if set, this is a chunked transfer-encoding */
+  bool proxy; /* if set, this transfer is done through a proxy - any type */
   bool httpproxy;    /* if set, this transfer is done through a http proxy */
   bool user_passwd;    /* do we use user+password for this connection? */
   bool proxy_user_passwd; /* user+password for the proxy? */
@@ -462,6 +470,8 @@ struct ConnectBits {
                          This is implicit when SSL-protocols are used through
                          proxies, but can also be enabled explicitly by
                          apps */
+  bool tunnel_connecting; /* TRUE while we're still waiting for a proxy CONNECT
+			   */
   bool authneg;       /* TRUE when the auth phase has started, which means
                          that we are creating a request with an auth header,
                          but it is not the final request in the auth
@@ -513,6 +523,16 @@ struct hostname {
 #define KEEP_WRITE_HOLD 8 /* when set, no writing should be done but there
                              might still be data to write */
 
+#ifdef HAVE_LIBZ
+typedef enum {
+  ZLIB_UNINIT,          /* uninitialized */
+  ZLIB_INIT,            /* initialized */
+  ZLIB_GZIP_HEADER,     /* reading gzip header */
+  ZLIB_GZIP_INFLATING,  /* inflating gzip stream */
+  ZLIB_INIT_GZIP        /* initialized in transparent gzip mode */
+} zlibInitState;
+#endif
+
 /*
  * This struct is all the previously local variables from Curl_perform() moved
  * to struct to allow the function to return and get re-invoked better without
@@ -526,14 +546,21 @@ struct Curl_transfer_keeper {
   curl_off_t size;        /* -1 if unknown at this point */
   curl_off_t *bytecountp; /* return number of bytes read or NULL */
 
-  curl_off_t maxdownload; /* in bytes, the maximum amount of data to fetch, 0
-                             means unlimited */
+  curl_off_t maxdownload; /* in bytes, the maximum amount of data to fetch,
+                             -1 means unlimited */
   curl_off_t *writebytecountp; /* return number of bytes written or NULL */
 
   /** End of HandleData struct copies **/
 
   curl_off_t bytecount;         /* total number of bytes read */
   curl_off_t writebytecount;    /* number of bytes written */
+
+  long headerbytecount;  /* only count received headers */
+  long deductheadercount; /* this amount of bytes doesn't count when we check
+                          if anything has been transfered at the end of
+                          a connection. We use this counter to make only
+                          a 100 reply (without a following second response
+                          code) result in a CURLE_GOT_NOTHING error code */
 
   struct timeval start;         /* transfer started at this time */
   struct timeval now;           /* current time */
@@ -573,7 +600,7 @@ struct Curl_transfer_keeper {
 #define COMPRESS 3              /* Not handled, added for completeness */
 
 #ifdef HAVE_LIBZ
-  bool zlib_init;               /* True if zlib already initialized;
+  zlibInitState zlib_init;      /* possible zlib init state;
                                    undefined if Content-Encoding header. */
   z_stream z;                   /* State structure for zlib. */
 #endif
@@ -648,7 +675,7 @@ struct HandleData {
   curl_off_t size;        /* -1 if unknown at this point */
   curl_off_t *bytecountp; /* return number of bytes read or NULL */
 
-  curl_off_t maxdownload; /* in bytes, the maximum amount of data to fetch, 0
+  curl_off_t maxdownload; /* in bytes, the maximum amount of data to fetch, -1
                              means unlimited */
   curl_off_t *writebytecountp; /* return number of bytes written or NULL */
 
@@ -736,18 +763,12 @@ struct connectdata {
   unsigned short remote_port; /* what remote port to connect to,
                                  not the proxy port! */
 
-  long headerbytecount;  /* only count received headers */
-  long deductheadercount; /* this amount of bytes doesn't count when we check
-                             if anything has been transfered at the end of
-                             a connection. We use this counter to make only
-                             a 100 reply (without a following second response
-                             code) result in a CURLE_GOT_NOTHING error code */
-
   char *user;    /* user name string, allocated */
   char *passwd;  /* password string, allocated */
 
   char *proxyuser;    /* proxy user name string, allocated */
   char *proxypasswd;  /* proxy password string, allocated */
+  curl_proxytype proxytype; /* what kind of proxy that is in use */
 
   struct timeval now;     /* "current" time */
   struct timeval created; /* creation time */
@@ -1174,9 +1195,9 @@ struct UserDefined {
 
   void *progress_client; /* pointer to pass to the progress callback */
   void *ioctl_client;   /* pointer to pass to the ioctl callback */
-  long timeout;         /* in seconds, 0 means no timeout */
-  long connecttimeout;  /* in seconds, 0 means no timeout */
-  long ftp_response_timeout; /* in seconds, 0 means no timeout */
+  long timeout;         /* in milliseconds, 0 means no timeout */
+  long connecttimeout;  /* in milliseconds, 0 means no timeout */
+  long ftp_response_timeout; /* in milliseconds, 0 means no timeout */
   curl_off_t infilesize;      /* size of file to upload, -1 means unknown */
   long low_speed_limit; /* bytes/second */
   long low_speed_time;  /* number of seconds */
@@ -1274,10 +1295,10 @@ struct UserDefined {
   bool reuse_fresh;      /* do not re-use an existing connection  */
   bool ftp_use_epsv;     /* if EPSV is to be attempted or not */
   bool ftp_use_eprt;     /* if EPRT is to be attempted or not */
-  bool ftp_use_ccc;      /* if CCC is to be attempted or not */
 
   curl_ftpssl ftp_ssl;   /* if AUTH TLS is to be attempted etc */
   curl_ftpauth ftpsslauth; /* what AUTH XXX to be attempted */
+  curl_ftpccc ftp_ccc;   /* FTP CCC options */
   bool no_signal;        /* do not use any signal/alarm handler */
   bool global_dns_cache; /* subject for future removal */
   bool tcp_nodelay;      /* whether to enable TCP_NODELAY or not */
@@ -1290,6 +1311,10 @@ struct UserDefined {
                              authentication */
   char *ssh_private_key;  /* the path to the private key file for
                              authentication */
+  bool http_te_skip;     /* pass the raw body data to the user, even when
+                            transfer-encoded (chunked, compressed) */
+  bool http_ce_skip;     /* pass the raw body data to the user, even when
+                            content-encoded (chunked, compressed) */
 };
 
 struct Names {
@@ -1317,6 +1342,9 @@ struct SessionHandle {
   struct Names dns;
   struct Curl_multi *multi;    /* if non-NULL, points to the multi handle
                                   struct to which this "belongs" */
+  struct Curl_one_easy *multi_pos; /* if non-NULL, points to the its position
+                                      in multi controlling structure to assist
+                                      in removal. */
   struct Curl_share *share;    /* Share, handles global variable mutexing */
   struct HandleData reqdata;   /* Request-specific data */
   struct UserDefined set;      /* values set by the libcurl user */

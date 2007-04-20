@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.c,v 1.77 2007-01-13 23:32:14 bagder Exp $
+ * $Id: cookie.c,v 1.83 2007-04-07 04:51:35 yangtse Exp $
  ***************************************************************************/
 
 /***
@@ -102,7 +102,6 @@ Example set of cookies:
 #include "memdebug.h"
 #endif
 
-#define my_isspace(x) ((x == ' ') || (x == '\t'))
 
 static void freecookie(struct Cookie *co)
 {
@@ -189,6 +188,10 @@ Curl_cookie_add(struct SessionHandle *data,
   bool replace_old = FALSE;
   bool badcookie = FALSE; /* cookies are good by default. mmmmm yummy */
 
+#ifdef CURL_DISABLE_VERBOSE_STRINGS
+  (void)data;
+#endif
+
   /* First, alloc and init a new struct for it */
   co = (struct Cookie *)calloc(sizeof(struct Cookie), 1);
   if(!co)
@@ -206,7 +209,7 @@ Curl_cookie_add(struct SessionHandle *data,
 
     semiptr=strchr(lineptr, ';'); /* first, find a semicolon */
 
-    while(*lineptr && my_isspace(*lineptr))
+    while(*lineptr && ISBLANK(*lineptr))
       lineptr++;
 
     ptr = lineptr;
@@ -229,14 +232,14 @@ Curl_cookie_add(struct SessionHandle *data,
 
           /* Strip off trailing whitespace from the 'what' */
           size_t len=strlen(what);
-          while(len && my_isspace(what[len-1])) {
+          while(len && ISBLANK(what[len-1])) {
             what[len-1]=0;
             len--;
           }
 
           /* Skip leading whitespace from the 'what' */
           whatptr=what;
-          while(my_isspace(*whatptr)) {
+          while(*whatptr && ISBLANK(*whatptr)) {
             whatptr++;
           }
 
@@ -378,7 +381,7 @@ Curl_cookie_add(struct SessionHandle *data,
       }
 
       ptr=semiptr+1;
-      while(ptr && *ptr && my_isspace(*ptr))
+      while(ptr && *ptr && ISBLANK(*ptr))
         ptr++;
       semiptr=strchr(ptr, ';'); /* now, find the next semicolon */
 
@@ -702,7 +705,7 @@ struct CookieInfo *Curl_cookie_init(struct SessionHandle *data,
           lineptr=line;
           headerline=FALSE;
         }
-        while(*lineptr && my_isspace(*lineptr))
+        while(*lineptr && ISBLANK(*lineptr))
           lineptr++;
 
         Curl_cookie_add(data, c, headerline, lineptr, NULL, NULL);
@@ -969,6 +972,7 @@ int Curl_cookie_output(struct CookieInfo *c, char *dumphere)
       format_ptr = get_netscape_format(co);
       if (format_ptr == NULL) {
         fprintf(out, "#\n# Fatal libcurl error\n");
+        fclose(out);
         return 1;
       }
       fprintf(out, "%s\n", format_ptr);
@@ -1001,13 +1005,18 @@ struct curl_slist *Curl_cookie_list(struct SessionHandle *data)
     /* fill the list with _all_ the cookies we know */
     line = get_netscape_format(c);
     if (line == NULL) {
-      /* get_netscape_format returns null only if we run out of memory */
-
-      curl_slist_free_all(beg); /* free some memory */
+      curl_slist_free_all(beg);
       return NULL;
     }
     list = curl_slist_append(list, line);
     free(line);
+    if (list == NULL) {
+      curl_slist_free_all(beg);
+      return NULL;
+    }
+    else if (beg == NULL) {
+      beg = list;
+    }
     c = c->next;
   }
 

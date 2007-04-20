@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostares.c,v 1.25 2006-10-17 08:06:27 bagder Exp $
+ * $Id: hostares.c,v 1.29 2007-03-27 18:15:26 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,9 +27,6 @@
 
 #ifdef NEED_MALLOC_H
 #include <malloc.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -76,7 +73,8 @@
 #include "strerror.h"
 #include "url.h"
 #include "multiif.h"
-#include "connect.h" /* for the Curl_sockerrno() proto */
+#include "connect.h"
+#include "select.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -147,8 +145,8 @@ CURLcode Curl_is_resolved(struct connectdata *conn,
 
   nfds = ares_fds(data->state.areschannel, &read_fds, &write_fds);
 
-  (void)select(nfds, &read_fds, &write_fds, NULL,
-               (struct timeval *)&tv);
+  (void)Curl_select(nfds, &read_fds, &write_fds, NULL,
+                    (struct timeval *)&tv);
 
   /* Call ares_process() unconditonally here, even if we simply timed out
      above, as otherwise the ares name resolve won't timeout! */
@@ -183,7 +181,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
 {
   CURLcode rc=CURLE_OK;
   struct SessionHandle *data = conn->data;
-  long timeout = CURL_TIMEOUT_RESOLVE; /* default name resolve timeout */
+  long timeout;
 
   /* now, see if there's a connect timeout or a regular timeout to
      use instead of the default one */
@@ -191,14 +189,8 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
     timeout = conn->data->set.connecttimeout;
   else if(conn->data->set.timeout)
     timeout = conn->data->set.timeout;
-
-  /* We convert the number of seconds into number of milliseconds here: */
-  if(timeout < 2147483)
-    /* maximum amount of seconds that can be multiplied with 1000 and
-       still fit within 31 bits */
-    timeout *= 1000;
   else
-    timeout = 0x7fffffff; /* ridiculous amount of time anyway */
+    timeout = CURL_TIMEOUT_RESOLVE * 1000; /* default name resolve timeout */
 
   /* Wait for the name resolve query to complete. */
   while (1) {
@@ -219,8 +211,8 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
       /* no file descriptors means we're done waiting */
       break;
     tvp = ares_timeout(data->state.areschannel, &store, &tv);
-    count = select(nfds, &read_fds, &write_fds, NULL, tvp);
-    if (count < 0 && Curl_sockerrno() != EINVAL)
+    count = Curl_select(nfds, &read_fds, &write_fds, NULL, tvp);
+    if ((count < 0) && (SOCKERRNO != EINVAL))
       break;
 
     ares_process(data->state.areschannel, &read_fds, &write_fds);

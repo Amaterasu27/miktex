@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.121 2007-01-27 03:14:26 yangtse Exp $
+ * $Id: sendf.c,v 1.127 2007-03-21 13:09:39 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,10 +27,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <errno.h>
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h> /* required for send() & recv() prototypes */
@@ -43,7 +39,7 @@
 #include <curl/curl.h>
 #include "urldata.h"
 #include "sendf.h"
-#include "connect.h" /* for the Curl_sockerrno() proto */
+#include "connect.h"
 #include "sslgen.h"
 #include "ssh.h"
 #include "multiif.h"
@@ -323,7 +319,7 @@ static ssize_t Curl_plain_send(struct connectdata *conn,
   ssize_t bytes_written = swrite(sockfd, mem, len);
 
   if(-1 == bytes_written) {
-    int err = Curl_sockerrno();
+    int err = SOCKERRNO;
 
     if(
 #ifdef WSAEWOULDBLOCK
@@ -471,7 +467,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
               size_t sizerequested,     /* max amount to read */
               ssize_t *n)               /* amount bytes read */
 {
-  ssize_t nread;
+  ssize_t nread = 0;
   size_t bytesfromsocket = 0;
   char *buffertofill = NULL;
   bool pipelining = (bool)(conn->data->multi &&
@@ -516,13 +512,19 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
   }
 #ifdef USE_LIBSSH2
-  else if (conn->protocol & PROT_SCP) {
-    nread = Curl_scp_recv(conn, num, buffertofill, bytesfromsocket);
-    /* TODO: return CURLE_OK also for nread <= 0
-             read failures and timeouts ? */
-  }
-  else if (conn->protocol & PROT_SFTP) {
-    nread = Curl_sftp_recv(conn, num, buffertofill, bytesfromsocket);
+  else if (conn->protocol & (PROT_SCP|PROT_SFTP)) {
+    if(conn->protocol & PROT_SCP)
+      nread = Curl_scp_recv(conn, num, buffertofill, bytesfromsocket);
+    else if (conn->protocol & PROT_SFTP)
+      nread = Curl_sftp_recv(conn, num, buffertofill, bytesfromsocket);
+#ifdef LIBSSH2CHANNEL_EAGAIN
+    if((nread == LIBSSH2CHANNEL_EAGAIN) || (nread == 0))
+      /* EWOULDBLOCK */
+      return -1;
+#endif
+    if(nread < 0)
+      /* since it is negative and not EGAIN, it was a protocol-layer error */
+      return CURLE_RECV_ERROR;
   }
 #endif /* !USE_LIBSSH2 */
   else {
@@ -533,7 +535,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
       nread = sread(sockfd, buffertofill, bytesfromsocket);
 
     if(-1 == nread) {
-      int err = Curl_sockerrno();
+      int err = SOCKERRNO;
 #ifdef USE_WINSOCK
       if(WSAEWOULDBLOCK == err)
 #else

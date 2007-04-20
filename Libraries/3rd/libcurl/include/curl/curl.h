@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curl.h,v 1.313 2007-01-08 11:24:11 linus Exp $
+ * $Id: curl.h,v 1.316 2007-02-20 22:02:11 linus Exp $
  ***************************************************************************/
 
 /* If you have problems, all libcurl docs and details are found here:
@@ -464,6 +464,14 @@ typedef enum {
   CURLFTPSSL_ALL,     /* SSL for all communication or fail */
   CURLFTPSSL_LAST     /* not an option, never use */
 } curl_ftpssl;
+
+/* parameter for the CURLOPT_FTP_SSL_CCC option */
+typedef enum {
+  CURLFTPSSL_CCC_NONE,    /* do not send CCC */
+  CURLFTPSSL_CCC_PASSIVE, /* Let the server initiate the shutdown */
+  CURLFTPSSL_CCC_ACTIVE,  /* Initiate the shutdown */
+  CURLFTPSSL_CCC_LAST     /* not an option, never use */
+} curl_ftpccc;
 
 /* parameter for the CURLOPT_FTPSSLAUTH option */
 typedef enum {
@@ -1053,6 +1061,15 @@ typedef enum {
 
   /* Send CCC (Clear Command Channel) after authentication */
   CINIT(FTP_SSL_CCC, LONG, 154),
+
+  /* Same as TIMEOUT and CONNECTTIMEOUT, but with ms resolution */
+  CINIT(TIMEOUT_MS, LONG, 155),
+  CINIT(CONNECTTIMEOUT_MS, LONG, 156),
+
+  /* set to zero to disable the libcurl's decoding and thus pass the raw body
+     data to the appliction even when it is encoded/compressed */
+  CINIT(HTTP_TRANSFER_DECODING, LONG, 157),
+  CINIT(HTTP_CONTENT_DECODING, LONG, 158),
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.93 2007-01-28 12:58:13 bagder Exp $
+ * $Id: easy.c,v 1.101 2007-04-08 22:49:38 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -29,13 +29,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-
 #include <errno.h>
 
 #include "strequal.h"
@@ -47,29 +40,31 @@
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
 #include <signal.h>
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
-#endif
-
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
 #endif
 
 #endif  /* WIN32 ... */
@@ -86,6 +81,7 @@
 #include "memory.h"
 #include "progress.h"
 #include "easyif.h"
+#include "select.h"
 #include "sendf.h" /* for failf function prototype */
 #include <ca-bundle.h>
 
@@ -227,16 +223,22 @@ CURLcode curl_global_init(long flags)
   Curl_ccalloc = (curl_calloc_callback)calloc;
 
   if (flags & CURL_GLOBAL_SSL)
-    if (!Curl_ssl_init())
+    if (!Curl_ssl_init()) {
+      DEBUGF(fprintf(stderr, "Error: Curl_ssl_init failed\n"));
       return CURLE_FAILED_INIT;
+    }
 
   if (flags & CURL_GLOBAL_WIN32)
-    if (win32_init() != CURLE_OK)
+    if (win32_init() != CURLE_OK) {
+      DEBUGF(fprintf(stderr, "Error: win32_init failed\n"));
       return CURLE_FAILED_INIT;
+    }
 
-#ifdef _AMIGASF
-  if(!amiga_init())
+#ifdef __AMIGA__
+  if(!amiga_init()) {
+    DEBUGF(fprintf(stderr, "Error: amiga_init failed\n"));
     return CURLE_FAILED_INIT;
+  }
 #endif
 
 #ifdef USE_LIBIDN
@@ -299,7 +301,7 @@ void curl_global_cleanup(void)
   if (init_flags & CURL_GLOBAL_WIN32)
     win32_cleanup();
 
-#ifdef _AMIGASF
+#ifdef __AMIGA__
   amiga_cleanup();
 #endif
 
@@ -318,15 +320,19 @@ CURL *curl_easy_init(void)
   /* Make sure we inited the global SSL stuff */
   if (!initialized) {
     res = curl_global_init(CURL_GLOBAL_DEFAULT);
-    if(res)
+    if(res) {
       /* something in the global init failed, return nothing */
+      DEBUGF(fprintf(stderr, "Error: curl_global_init failed\n"));
       return NULL;
+    }
   }
 
   /* We use curl_open() with undefined URL so far */
   res = Curl_open(&data);
-  if(res != CURLE_OK)
+  if(res != CURLE_OK) {
+    DEBUGF(fprintf(stderr, "Error: Curl_open failed\n"));
     return NULL;
+  }
 
   return data;
 }
@@ -391,7 +397,10 @@ CURLcode curl_easy_perform(CURL *easy)
   mcode = curl_multi_add_handle(multi, easy);
   if(mcode) {
     curl_multi_cleanup(multi);
-    return CURLE_FAILED_INIT;
+    if(mcode == CURLM_OUT_OF_MEMORY)
+      return CURLE_OUT_OF_MEMORY;
+    else
+      return CURLE_FAILED_INIT;
   }
 
   /* we start some action by calling perform right away */
@@ -414,7 +423,7 @@ CURLcode curl_easy_perform(CURL *easy)
     /* get file descriptors from the transfers */
     curl_multi_fdset(multi, &fdread, &fdwrite, &fdexcep, &maxfd);
 
-    rc = select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
+    rc = Curl_select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
 
     if(rc == -1)
       /* select error */
@@ -627,7 +636,8 @@ CURL *curl_easy_duphandle(CURL *incurl)
 
   if(fail) {
     if(outcurl) {
-      if(outcurl->state.connc->type == CONNCACHE_PRIVATE)
+      if((outcurl->state.connc->type == CONNCACHE_PRIVATE) &&
+         outcurl->state.connc)
         Curl_rm_connc(outcurl->state.connc);
       if(outcurl->state.headerbuff)
         free(outcurl->state.headerbuff);
@@ -740,17 +750,19 @@ CURLcode Curl_convert_to_network(struct SessionHandle *data,
     /* do the translation ourselves */
     char *input_ptr, *output_ptr;
     size_t in_bytes, out_bytes, rc;
+    int error;
 
     /* open an iconv conversion descriptor if necessary */
     if(data->outbound_cd == (iconv_t)-1) {
       data->outbound_cd = iconv_open(CURL_ICONV_CODESET_OF_NETWORK,
                                      CURL_ICONV_CODESET_OF_HOST);
       if(data->outbound_cd == (iconv_t)-1) {
+        error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
                CURL_ICONV_CODESET_OF_NETWORK,
                CURL_ICONV_CODESET_OF_HOST,
-               errno, strerror(errno));
+               error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -760,9 +772,10 @@ CURLcode Curl_convert_to_network(struct SessionHandle *data,
     rc = iconv(data->outbound_cd, (const char**)&input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
     if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+      error = ERRNO;
       failf(data,
         "The Curl_convert_to_network iconv call failed with errno %i: %s",
-             errno, strerror(errno));
+             error, strerror(error));
       return CURLE_CONV_FAILED;
     }
 #else
@@ -797,17 +810,19 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
     /* do the translation ourselves */
     char *input_ptr, *output_ptr;
     size_t in_bytes, out_bytes, rc;
+    int error;
 
     /* open an iconv conversion descriptor if necessary */
     if(data->inbound_cd == (iconv_t)-1) {
       data->inbound_cd = iconv_open(CURL_ICONV_CODESET_OF_HOST,
                                     CURL_ICONV_CODESET_OF_NETWORK);
       if(data->inbound_cd == (iconv_t)-1) {
+        error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
                CURL_ICONV_CODESET_OF_HOST,
                CURL_ICONV_CODESET_OF_NETWORK,
-               errno, strerror(errno));
+               error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -817,9 +832,10 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
     rc = iconv(data->inbound_cd, (const char **)&input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
     if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+      error = ERRNO;
       failf(data,
         "The Curl_convert_from_network iconv call failed with errno %i: %s",
-             errno, strerror(errno));
+             error, strerror(error));
       return CURLE_CONV_FAILED;
     }
 #else
@@ -854,17 +870,19 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     /* do the translation ourselves */
     char *input_ptr, *output_ptr;
     size_t in_bytes, out_bytes, rc;
+    int error;
 
     /* open an iconv conversion descriptor if necessary */
     if(data->utf8_cd == (iconv_t)-1) {
       data->utf8_cd = iconv_open(CURL_ICONV_CODESET_OF_HOST,
                                  CURL_ICONV_CODESET_FOR_UTF8);
       if(data->utf8_cd == (iconv_t)-1) {
+        error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
                CURL_ICONV_CODESET_OF_HOST,
                CURL_ICONV_CODESET_FOR_UTF8,
-               errno, strerror(errno));
+               error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -874,9 +892,10 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     rc = iconv(data->utf8_cd, (const char**)&input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
     if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
+      error = ERRNO;
       failf(data,
         "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
-             errno, strerror(errno));
+             error, strerror(error));
       return CURLE_CONV_FAILED;
     }
     if (output_ptr < input_ptr) {
