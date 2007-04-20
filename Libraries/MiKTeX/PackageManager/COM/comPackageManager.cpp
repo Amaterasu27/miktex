@@ -201,11 +201,13 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
       if (packageInfo.timeInstalled == static_cast<time_t>(-1))
 	{
 	  pPackageInfo->timeInstalled = COleDateTime();
+	  pPackageInfo->isInstalled = VARIANT_FALSE;
 	}
       else
 	{
 	  pPackageInfo->timeInstalled =
 	    COleDateTime(packageInfo.timeInstalled);
+	  pPackageInfo->isInstalled = VARIANT_TRUE;
 	}
 
       pPackageInfo->archiveFileSize = packageInfo.archiveFileSize;

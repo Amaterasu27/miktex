@@ -79,6 +79,8 @@ typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
   LONG archiveFileSize;
   /// @brief Package digest.
   MD5 digest;
+  /// @brief Install flag.
+  VARIANT_BOOL isInstalled;
 } PackageInfo;
 
 /* _________________________________________________________________________
