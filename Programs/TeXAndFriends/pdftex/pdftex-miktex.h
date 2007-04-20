@@ -318,7 +318,7 @@ MAKE_GLOBAL(C4P_integer, pdfbufsize);
 MAKE_GLOBAL(C4P_integer, pdflastbyte);
 MAKE_GLOBAL(eightbits*, pdfbuf);
 MAKE_GLOBAL(internalfontnumber*, vfifnts);
-MAKE_GLOBAL(quarterword, f);
+MAKE_GLOBAL(internalfontnumber, f);
 MAKE_GLOBAL(strnumber*, fontname);
 MAKE_GLOBAL(strnumber, outputfilename);
 

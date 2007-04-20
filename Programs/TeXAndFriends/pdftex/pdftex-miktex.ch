@@ -58,7 +58,7 @@ program PDFTEX; {all file names are defined dynamically}
 @x
 @!j:0..buf_size; {index into |buffer|}
 @y
-@!j:0..buf_size_def; {index into |buffer|}
+@!j:0..sup_buf_size; {index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -431,7 +431,7 @@ pdf_init_map_file('psfonts.map');
 @x
 @!save_pointer=0..save_size; {index into |save_stack|}
 @y
-@!save_pointer=0..save_size_def; {index into |save_stack|}
+@!save_pointer=0..sup_save_size; {index into |save_stack|}
 @z
 
 % _____________________________________________________________________________
@@ -442,7 +442,7 @@ pdf_init_map_file('psfonts.map');
 @x
 var p:0..nest_size; {index into |nest|}
 @y
-var p:0..nest_size_def; {index into |nest|}
+var p:0..sup_nest_size; {index into |nest|}
 @z
 
 % _____________________________________________________________________________
@@ -466,7 +466,7 @@ var p:0..nest_size_def; {index into |nest|}
 @x
 var i:0..max_in_open; {index into |grp_stack|}
 @y
-var i:0..max_in_open_def; {index into |grp_stack|}
+var i:0..sup_max_in_open; {index into |grp_stack|}
 @z
 
 % _____________________________________________________________________________
@@ -477,7 +477,7 @@ var i:0..max_in_open_def; {index into |grp_stack|}
 @x
 var i:0..max_in_open; {index into |if_stack|}
 @y
-var i:0..max_in_open_def; {index into |if_stack|}
+var i:0..sup_max_in_open; {index into |if_stack|}
 @z
 
 % _____________________________________________________________________________

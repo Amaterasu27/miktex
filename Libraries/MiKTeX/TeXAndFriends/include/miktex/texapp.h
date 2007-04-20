@@ -1,6 +1,6 @@
 /* texapp.h: TeX, pdfTeX, e-TeX, Omega				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -392,6 +392,20 @@ public:
     const
   {
     return (enableMLTeX);
+  }
+
+  /* _______________________________________________________________________
+     
+     Write18P
+     _______________________________________________________________________ */
+
+public:
+
+  bool
+  Write18P ()
+    const
+  {
+    return (enableWrite18);
   }
 
   /* _______________________________________________________________________

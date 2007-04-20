@@ -1,6 +1,6 @@
 /* texapp.inl: inliners for TeX, pdfTeX, e-TeX, Omega		-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -266,6 +266,18 @@ miktexwrite18 (/*[in]*/ const MIKTEXCHAR * lpszCommand)
   int exitCode;
   bool done = THEAPP.Write18(lpszCommand, exitCode);
   return (done);
+}
+
+/* _________________________________________________________________________
+
+   miktexwrite18p
+   _________________________________________________________________________ */
+
+inline
+bool
+miktexwrite18p ()
+{
+  return (THEAPP.Write18P());
 }
 
 /* _________________________________________________________________________

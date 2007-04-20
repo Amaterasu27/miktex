@@ -1,6 +1,6 @@
 %% tex-miktex-quiet.ch: implement quiet mode
 %% 
-%% Copyright (C) 1991-2006 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -23,16 +23,33 @@
 
 @x
 wterm(banner);
-miktex_print_miktex_banner(term_out);
-if format_ident=0 then print_ln
+miktex_print_miktex_banner(term_out); {\MiKTeX: append the \MiKTeX\ version information}
+if format_ident=0 then print_ln {\MiKTeX: eliminate misleading `(no format preloaded)'.}
 else  begin slow_print(format_ident); print_ln;
   end;
 @y
 if (not miktex_get_quiet_flag) then begin
   wterm(banner);
-  miktex_print_miktex_banner(term_out);
-  if format_ident=0 then print_ln
+  miktex_print_miktex_banner(term_out); {\MiKTeX: append the \MiKTeX\ version information}
+  if format_ident=0 then print_ln {\MiKTeX: eliminate misleading `(no format preloaded)'.}
   else  begin slow_print(format_ident); print_ln;
     end;
 end;
+@z
+
+% _____________________________________________________________________________
+%
+% [54.1379]
+% _____________________________________________________________________________
+
+@x
+@* \[54] \MiKTeX-dependent changes.
+@y
+@* \[54] \MiKTeX-dependent changes.
+
+@ Forward declaration of \MiKTeX\ functions.
+
+@<Declare \MiKTeX\ functions@>=
+
+function miktex_get_quiet_flag : boolean; forward;@t\2@>@/
 @z

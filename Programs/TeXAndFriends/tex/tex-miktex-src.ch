@@ -1,6 +1,6 @@
 %% tex-miktex-src.ch:
 %% 
-%% Copyright (C) 1991-2006 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -15,6 +15,21 @@
 %% You should have received a copy of the GNU General Public License
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+% _____________________________________________________________________________
+%
+% [17.222]
+% _____________________________________________________________________________
+
+@x
+@d frozen_null_font=frozen_control_sequence+10
+  {permanent `\.{\\nullfont}'}
+@y
+@d frozen_special=frozen_control_sequence+10
+  {permanent `\.{\\special}'}
+@d frozen_null_font=frozen_control_sequence+11
+  {permanent `\.{\\nullfont}'}
+@z
 
 % _____________________________________________________________________________
 %
@@ -56,25 +71,6 @@ end;
 
 % _____________________________________________________________________________
 %
-% [47.1083]
-% _____________________________________________________________________________
-
- @x
-  if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
- @y
-  if (miktex_insert_src_special_every_vbox) then insert_src_special;
-  if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
- @z
-
- @x
-  if every_hbox<>null then begin_token_list(every_hbox,every_hbox_text);
- @y
-  if (miktex_insert_src_special_every_hbox) then insert_src_special;
-  if every_hbox<>null then begin_token_list(every_hbox,every_hbox_text);
- @z
-
-% _____________________________________________________________________________
-%
 % [47.1091]
 % _____________________________________________________________________________
 
@@ -91,22 +87,6 @@ if indented then
 
 % _____________________________________________________________________________
 %
-% [47.1096]
-% _____________________________________________________________________________
-
-% e-TeX conflict:
-
- @x
-  else line_break(widow_penalty);
- @y
-  else begin
-    if (miktex_insert_src_special_every_parend) then insert_src_special;
-    line_break(widow_penalty);
-  end;
- @z
-
-% _____________________________________________________________________________
-%
 % [48.1139]
 % _____________________________________________________________________________
 
@@ -119,18 +99,6 @@ if every_math<>null then begin_token_list(every_math,every_math_text);
 
 % _____________________________________________________________________________
 %
-% [48.1145]
-% _____________________________________________________________________________
-
- @x
-if every_display<>null then begin_token_list(every_display,every_display_text);
- @y
-if (miktex_insert_src_special_every_display) then append_src_special;
-if every_display<>null then begin_token_list(every_display,every_display_text);
- @z
-
-% _____________________________________________________________________________
-%
 % [48.1167]
 % _____________________________________________________________________________
 
@@ -139,6 +107,18 @@ if every_display<>null then begin_token_list(every_display,every_display_text);
 @y
   if (miktex_insert_src_special_every_vbox) then insert_src_special;
   if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
+@z
+
+% _____________________________________________________________________________
+%
+% [53.1344]
+% _____________________________________________________________________________
+
+@x
+primitive("special",extension,special_node);@/
+@y
+primitive("special",extension,special_node);@/
+text(frozen_special):="special"; eqtb[frozen_special]:=eqtb[cur_val];@/
 @z
 
 % _____________________________________________________________________________
@@ -163,7 +143,7 @@ begin
   begin
     toklist := get_avail;
     p := toklist;
-    info(p) := special_token;
+    info(p) := cs_token_flag+frozen_special;
     link(p) := get_avail; p := link(p);
     info(p) := left_brace_token+"{";
     q :=
@@ -198,7 +178,7 @@ begin
   end;
 end;
 
-@ Forward declaratiopns of \MiKTeX\ functions.
+@ Forward declaration of \MiKTeX\ functions.
 
 @<Declare \MiKTeX\ functions@>=
 
