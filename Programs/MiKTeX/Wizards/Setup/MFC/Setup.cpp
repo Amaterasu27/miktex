@@ -1403,71 +1403,89 @@ ULogOpen ()
 
 /* _________________________________________________________________________
 
-   RegisterUninstaller
+   AddUninstallerRegValue
    _________________________________________________________________________ */
 
 #define UNINST_DISPLAY_NAME \
-  MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
+  MIKTEX_PRODUCTNAME_STR T_(" ") MIKTEX_VERSION_STR
+
 #define UNINST_DISPLAY_NAME_MIKTEXDIRECT \
-  "MiKTeXDirect" " " MIKTEX_VERSION_STR
-#define UNINST_REG_PATH REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME
-#define UNINST_REG_PATH_MIKTEXDIRECT \
-  REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME_MIKTEXDIRECT
-#define UNINST_HELP_LINK T_("http://miktex.org/Support.aspx")
-#define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
-#define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
+  "MiKTeXDirect" T_(" ") MIKTEX_VERSION_STR
+
+#define UNINST_REG_PATH							\
+    (theApp.setupTask == SetupTask::PrepareMiKTeXDirect			\
+     ? REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME_MIKTEXDIRECT	\
+     : REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME)
+
+#define UNINST_HKEY_ROOT			\
+  (theApp.commonUserSetup			\
+   ? HKEY_LOCAL_MACHINE				\
+   : HKEY_CURRENT_USER)
 
 void
-RegisterUninstaller ()
+AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
+			/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+			/*[in]*/ const MIKTEXCHAR *	lpszValue)
 {
-  HKEY hkey;
-  DWORD disp;
-
-  const MIKTEXCHAR * lpszUninstRegPath =
-    (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
-     ? UNINST_REG_PATH_MIKTEXDIRECT
-     : UNINST_REG_PATH);
-  
   LONG result =
-    RegCreateKeyEx((theApp.commonUserSetup
-		    ? HKEY_LOCAL_MACHINE
-		    : HKEY_CURRENT_USER),
-		   lpszUninstRegPath,
-		   0,
-		   T_(""),
-		   REG_OPTION_NON_VOLATILE,
-		   KEY_ALL_ACCESS,
-		   0,
-		   &hkey,
-		   &disp);
-  
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 (T_("RegCreateKeyEx"), result, 0);
-    }
-  
-  AutoHKEY autoHKEY (hkey);
-  
-  result =
     RegSetValueEx
     (hkey,
-     T_("DisplayName"),
+     lpszValueName,
      0,
      REG_SZ,
-     (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
-      ? reinterpret_cast<const BYTE *>(UNINST_DISPLAY_NAME_MIKTEXDIRECT)
-      : reinterpret_cast<const BYTE *>(UNINST_DISPLAY_NAME)),
-     (theApp.setupTask == SetupTask::PrepareMiKTeXDirect
-      ? static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_NAME_MIKTEXDIRECT))
-      : static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_NAME))));
+     reinterpret_cast<const BYTE *>(lpszValue),
+     static_cast<DWORD>(STR_BYT_SIZ(lpszValue)));
   
   if (result != ERROR_SUCCESS)
     {
       FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
     }
   
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("DisplayName"));
+  ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
+}
+
+void
+AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
+			/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+			/*[in]*/ DWORD			value)
+{
+  LONG result =
+    RegSetValueEx
+    (hkey,
+     lpszValueName,
+     0,
+     REG_DWORD,
+     reinterpret_cast<const BYTE *>(&value),
+     static_cast<DWORD>(sizeof(value)));
   
+  if (result != ERROR_SUCCESS)
+    {
+      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+    }
+  
+  ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
+}
+
+/* _________________________________________________________________________
+
+   RegisterUninstaller
+   _________________________________________________________________________ */
+
+#define UNINST_HELP_LINK T_("http://miktex.org/Support.aspx")
+#define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
+#define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
+#define UNINST_DISPLAY_STRING				\
+  (theApp.setupTask == SetupTask::PrepareMiKTeXDirect	\
+   ? UNINST_DISPLAY_NAME_MIKTEXDIRECT			\
+   : UNINST_DISPLAY_NAME)
+#define UNINST_ABOUT_URL T_("http://miktex.org/About.aspx")
+#define UNINST_UPDATE_URL T_("http://miktex.org")
+#define UNINST_COMMENT T_("Uninstall MiKTeX")
+#define UNINST_README MIKTEX_URL_WWW_KNOWN_ISSUES
+
+void
+RegisterUninstaller ()
+{
   // make uninstall command line
   PathName pathCopyStart (theApp.startupConfig.installRoot,
 			  MIKTEX_PATH_COPYSTART_ADMIN_EXE);
@@ -1479,70 +1497,47 @@ RegisterUninstaller ()
 			     MIKTEX_PATH_UNINSTALL_DAT);
   commandLine += pathUninstallDat.Get();
   commandLine += T_('"');
-  
-  result =
-    RegSetValueEx(hkey,
-		  T_("UninstallString"),
-		  0,
-		  REG_SZ,
-		  reinterpret_cast<const BYTE *>(commandLine.c_str()),
-		  static_cast<DWORD>(STR_BYT_SIZ(commandLine.c_str())));
-  
+
+  // make icon path
+  PathName iconPath (theApp.startupConfig.installRoot);
+  iconPath += MIKTEX_PATH_BIN_DIR;
+  iconPath += MIKTEX_MO_EXE;
+  iconPath.Append (T_(",0"), false);
+
+  // create registry key
+  HKEY hkey;
+  DWORD disp;
+  LONG result =
+    RegCreateKeyEx(UNINST_HKEY_ROOT,
+		   UNINST_REG_PATH,
+		   0,
+		   0,
+		   REG_OPTION_NON_VOLATILE,
+		   KEY_ALL_ACCESS,
+		   0,
+		   &hkey,
+		   &disp);
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegCreateKeyEx"), result, 0);
     }
+  AutoHKEY autoHKEY (hkey);
   
-  ULogAddRegValue (HKEY_LOCAL_MACHINE,
-		   lpszUninstRegPath,
-		   T_("UninstallString"));
-  
-  result =
-    RegSetValueEx(hkey,
-		  T_("HelpLink"),
-		  0,
-		  REG_SZ,
-		  reinterpret_cast<const BYTE *>(UNINST_HELP_LINK),
-		  static_cast<DWORD>(STR_BYT_SIZ(UNINST_HELP_LINK)));
-  
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
-    }
-  
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("HelpLink"));
-  
-  result =
-    RegSetValueEx(hkey,
-		  T_("Publisher"),
-		  0,
-		  REG_SZ,
-		  reinterpret_cast<const BYTE *>(UNINST_PUBLISHER),
-		  static_cast<DWORD>(STR_BYT_SIZ(UNINST_PUBLISHER)));
-
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
-    }
-
-  ULogAddRegValue (HKEY_LOCAL_MACHINE, lpszUninstRegPath, T_("Publisher"));
-      
-  result =
-    RegSetValueEx(hkey,
-		  T_("DisplayVersion"),
-		  0,
-		  REG_SZ,
-		  reinterpret_cast<const BYTE *>(UNINST_DISPLAY_VERSION),
-		  static_cast<DWORD>(STR_BYT_SIZ(UNINST_DISPLAY_VERSION)));
-
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
-    }
-
-  ULogAddRegValue (HKEY_LOCAL_MACHINE,
-		   lpszUninstRegPath,
-		   T_("DisplayVersion"));
+  // set values
+  PathName installRoot (theApp.startupConfig.installRoot);
+  AddUninstallerRegValue (hkey, T_("Comment"), UNINST_COMMENT);
+  AddUninstallerRegValue (hkey, T_("DisplayIcon"), iconPath.Get());
+  AddUninstallerRegValue (hkey, T_("DisplayName"), UNINST_DISPLAY_STRING); 
+  AddUninstallerRegValue (hkey, T_("DisplayVersion"), UNINST_DISPLAY_VERSION);
+  AddUninstallerRegValue (hkey, T_("HelpLink"), UNINST_HELP_LINK);
+  AddUninstallerRegValue (hkey, T_("InstallLocation"), installRoot.Get());
+  AddUninstallerRegValue (hkey, T_("NoModify"), 1);
+  AddUninstallerRegValue (hkey, T_("NoRepair"), 1);
+  AddUninstallerRegValue (hkey, T_("Publisher"), UNINST_PUBLISHER);
+  AddUninstallerRegValue (hkey, T_("Readme"), UNINST_README);
+  AddUninstallerRegValue (hkey, T_("UninstallString"), commandLine.c_str());
+  AddUninstallerRegValue (hkey, T_("UrlInfoAbout"), UNINST_ABOUT_URL);
+  AddUninstallerRegValue (hkey, T_("UrlUpdateInfo"), UNINST_UPDATE_URL);
 }
 
 /* _________________________________________________________________________
