@@ -70,7 +70,7 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_BINARY_DIR}/COM/mpm.rgs
     )
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
-    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
+    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL)
     set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
       ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c

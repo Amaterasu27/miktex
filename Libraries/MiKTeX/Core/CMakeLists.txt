@@ -113,7 +113,7 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_BINARY_DIR}/COM/session.rgs
     )
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
-    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL -D_ATL_DLL)
+    add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL)
     set(${core_dll_name}_sources ${${core_dll_name}_sources}
       ${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
       ${CMAKE_CURRENT_BINARY_DIR}/session.tlb
