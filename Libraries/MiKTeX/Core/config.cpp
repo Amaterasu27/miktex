@@ -529,14 +529,16 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 {
   bool haveValue = false;
 
-  if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
+
+  for (CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
+       ! haveValue && app.GetCurrent() != 0;
+       ++ app)
     {
-      for (CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
-	   ! haveValue && app.GetCurrent() != 0;
-	   ++ app)
+      Cfg * pCfg = 0;
+
+      // read configuration file
+      if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
 	{
-	  // read configuration file
-	  Cfg * pCfg = 0;
 	  ConfigurationSettings::iterator it =
 	    configurationSettings.find(app.GetCurrent());
 	  if (it != configurationSettings.end())
@@ -552,93 +554,93 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 	      pCfg = p.first->second.Get();
 	      ReadAllConfigFiles (app.GetCurrent(), pCfg);
 	    }
+	}
 	  
-	  // section name defaults to application name
-	  if (lpszSectionName == 0)
-	    {
-	      lpszSectionName = app.GetCurrent();
-	    }
-	  
+      // section name defaults to application name
+      if (lpszSectionName == 0)
+	{
+	  lpszSectionName = app.GetCurrent();
+	}
+      
 #if 0
-	  const ConfigMapping * pMapping =
-	    FindConfigMapping(lpszSectionName, lpszValueName);
-	  
-	  if (pMapping != 0
-	      && pMapping->lpszEnvVarName != 0
-	      && Utils::GetEnvironmentString(pMapping->lpszEnvVarName, value))
-	    {
-	      haveValue = true;
-	      break;
-	    }
+      const ConfigMapping * pMapping =
+	FindConfigMapping(lpszSectionName, lpszValueName);
+      
+      if (pMapping != 0
+	  && pMapping->lpszEnvVarName != 0
+	  && Utils::GetEnvironmentString(pMapping->lpszEnvVarName, value))
+	{
+	  haveValue = true;
+	  break;
+	}
 #endif
-	  
+      
+      {
+	tstring envVarName;
+	envVarName.reserve (100);
+	
+	// try environment variable
+	// MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
+	envVarName = MIKTEX_ENV_PREFIX_;
+	AppendToEnvVarName (envVarName, app.GetCurrent());
+	envVarName += T_('_');
+	AppendToEnvVarName (envVarName, lpszSectionName);
+	envVarName += T_('_');
+	AppendToEnvVarName (envVarName, lpszValueName);
+	if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	  {
-	    tstring envVarName;
-	    envVarName.reserve (100);
-	    
-	    // try environment variable
-	    // MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
-	    envVarName = MIKTEX_ENV_PREFIX_;
-	    AppendToEnvVarName (envVarName, app.GetCurrent());
-	    envVarName += T_('_');
-	    AppendToEnvVarName (envVarName, lpszSectionName);
-	    envVarName += T_('_');
-	    AppendToEnvVarName (envVarName, lpszValueName);
-	    if (Utils::GetEnvironmentString(envVarName.c_str(), value))
-	      {
-		haveValue = true;
-		break;
-	      }
+	    haveValue = true;
+	    break;
 	  }
-	  
+      }
+      
 #if defined(MIKTEX_WINDOWS)
-	  if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
-					       lpszSectionName,
-					       lpszValueName,
-					       value,
-					       0))
-	    {
-	      haveValue = true;
-	      break;
-	    }
+      if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
+					   lpszSectionName,
+					   lpszValueName,
+					   value,
+					   0))
+	{
+	  haveValue = true;
+	  break;
+	}
 #endif
-	  
-	  // try configuration file
-	  if (pCfg != 0
-	      && pCfg->TryGetValue(lpszSectionName, lpszValueName, value))
-	    {
-	      haveValue = true;
-	      break;
-	    }
-	}
       
-      // try environment variable
-      // MIKTEX_<SECTIONNAME>_<VALUENAME>
-      if (! haveValue && lpszSectionName != 0)
+      // try configuration file
+      if (pCfg != 0
+	  && pCfg->TryGetValue(lpszSectionName, lpszValueName, value))
 	{
-	  tstring envVarName (MIKTEX_ENV_PREFIX_);
-	  AppendToEnvVarName (envVarName, lpszSectionName);
-	  envVarName += T_('_');
-	  AppendToEnvVarName (envVarName, lpszValueName);
-	  if (Utils::GetEnvironmentString(envVarName.c_str(), value))
-	    {
-	      haveValue = true;
-	    }
-	}
-      
-      // try environment variable
-      // MIKTEX_<VALUENAME>
-      if (! haveValue)
-	{
-	  tstring envVarName (MIKTEX_ENV_PREFIX_);
-	  AppendToEnvVarName (envVarName, lpszValueName);
-	  if (Utils::GetEnvironmentString(envVarName.c_str(), value))
-	    {
-	      haveValue = true;
-	    }
+	  haveValue = true;
+	  break;
 	}
     }
-
+  
+  // try environment variable
+  // MIKTEX_<SECTIONNAME>_<VALUENAME>
+  if (! haveValue && lpszSectionName != 0)
+    {
+      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      AppendToEnvVarName (envVarName, lpszSectionName);
+      envVarName += T_('_');
+      AppendToEnvVarName (envVarName, lpszValueName);
+      if (Utils::GetEnvironmentString(envVarName.c_str(), value))
+	{
+	  haveValue = true;
+	}
+    }
+  
+  // try environment variable
+  // MIKTEX_<VALUENAME>
+  if (! haveValue)
+    {
+      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      AppendToEnvVarName (envVarName, lpszValueName);
+      if (Utils::GetEnvironmentString(envVarName.c_str(), value))
+	{
+	  haveValue = true;
+	}
+    }
+  
   // return the default value
   if (! haveValue && lpszDefaultValue != 0)
     {
