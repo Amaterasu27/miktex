@@ -580,8 +580,9 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ tstring &	path)
 void
 RemoveFilesPage::UnregisterComponents ()
 {
- if (SessionWrapper(true)->RunningAsAdministrator()
-      || SessionWrapper(true)->RunningAsPowerUser())
+ if (! IsWindowsNT()
+     || SessionWrapper(true)->RunningAsAdministrator()
+     || SessionWrapper(true)->RunningAsPowerUser())
    {
      PackageManagerPtr pManager (PackageManager::Create());
      auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
