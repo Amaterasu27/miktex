@@ -56,19 +56,6 @@ set(mp_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/mpbugs.ch
 )
 
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web
-  COMMAND ${tie_exe}
-	-m ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web
-	${CMAKE_CURRENT_SOURCE_DIR}/mp.web
-	${mp_change_files}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/mp.web
-	${mp_change_files}
-  VERBATIM
-)
-
 add_executable(makecpool EXCLUDE_FROM_ALL
   makecpool.c
 )
@@ -103,7 +90,7 @@ set_source_files_properties(
   PROPERTIES GENERATED TRUE
 )
 
-set(mp_web_file ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web)
+set(mp_web_file ${CMAKE_CURRENT_SOURCE_DIR}/mp.web)
 set(mp_header_file ${CMAKE_CURRENT_BINARY_DIR}/mpd.h)
 
 create_web_app(MetaPost mp mpost ${memdir})
@@ -114,7 +101,7 @@ target_link_libraries(${mp_dll_name}
 
 set(trapmp_dll_name "trapmp_")
 
-set(trapmp_web_file ${CMAKE_CURRENT_BINARY_DIR}/mp-tied.web)
+set(trapmp_web_file ${CMAKE_CURRENT_SOURCE_DIR}/mp.web)
 set(trapmp_header_file ${CMAKE_CURRENT_BINARY_DIR}/trapmpd.h)
 set(trapmp_change_file ${CMAKE_CURRENT_BINARY_DIR}/trapmp-miktex.ch)
 
