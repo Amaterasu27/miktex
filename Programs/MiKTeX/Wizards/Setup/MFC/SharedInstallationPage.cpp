@@ -87,7 +87,14 @@ SharedInstallationPage::OnInitDialog ()
       DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
       if (! GetUserName(szLogonName, &sizeLogonName))
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetUserName"), 0);
+	  if (GetLastError() == ERROR_NOT_LOGGED_ON)
+	    {
+	      Utils::CopyString (szLogonName, 30, T_("unknown user"));
+	    }
+	  else
+	    {
+	      FATAL_WINDOWS_ERROR (T_("GetUserName"), 0);
+	    }
 	}
       CString str;
       pWnd->GetWindowText(str);
