@@ -1,3 +1,0 @@
-* pdftex 1.40
-* reconsider registry settings
-* xetex
