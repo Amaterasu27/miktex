@@ -2,15 +2,14 @@
 
 setlocal
 
-set prodlog=%CD%\Admin\Log\produce.log
-
-mkdir %CD%\Admin\Log
+set prodlog=${CMAKE_SOURCE_DIR}\Admin\Log\produce.log
 
 if exist "%prodlog%" del "%prodlog%"
 echo -*- Compilation -*->> "%prodlog%"
 echo %CD% %DATE% %TIME%>> "%prodlog%"
 echo.>> "%prodlog%"
 
-nmake instal 1>>"%prodlog%" 2>>&1
+nmake install 1>>"%prodlog%" 2>>&1
+bzip2 --force "%prodlog%"
 
 endlocal

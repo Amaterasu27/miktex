@@ -17,6 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+set(CMAKE_COLOR_MAKEFILE FALSE)
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
+
 cmake_minimum_required(VERSION 2.4.6 FATAL_ERROR)
 
 if(WIN32 AND NOT CYGWIN)
@@ -402,6 +405,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesrc.cmd)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/produce.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/produce.cmd)
 
 configure_file(${CMAKE_SOURCE_DIR}/SDK/doc/mainpage.doxygen.in
 	       ${CMAKE_BINARY_DIR}/SDK/doc/mainpage.doxygen)
