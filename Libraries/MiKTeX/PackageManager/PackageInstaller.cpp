@@ -2222,6 +2222,11 @@ void
 MPMCALL
 PackageInstallerImpl::Download ()
 {
+  if (repositoryType == RepositoryType::Remote)
+    {
+      pManager->VerifyPackageRepository (repository);
+    }
+
   if (repositoryType == RepositoryType::Unknown)
     {
       repository = pManager->PickRepositoryUrl();
