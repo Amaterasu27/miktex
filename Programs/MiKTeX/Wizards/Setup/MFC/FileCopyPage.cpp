@@ -360,6 +360,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  // close the wizard, if it is running unattended
 	  if (theApp.unattended)
 	    {
+	      ULogClose (! pSheet->GetErrorFlag());
 	      EndDialog (IDOK);
 	    }
 
