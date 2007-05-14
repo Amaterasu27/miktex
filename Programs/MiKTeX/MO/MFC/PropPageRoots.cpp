@@ -952,6 +952,7 @@ PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
 {
   bool restrictedUserSetup =
     (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
+	|| ! IsWindowsNT()
 	|| SessionWrapper(true)->IsUserAnAdministrator()));
   if (IsWindowsVista() && ! restrictedUserSetup)
     {
