@@ -189,7 +189,8 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
       pPackageInfo->numDocFiles = packageInfo.docFiles.size();
       pPackageInfo->numSourceFiles = packageInfo.sourceFiles.size();
       
-      if (packageInfo.timePackaged == static_cast<time_t>(-1))
+      if (packageInfo.timePackaged == static_cast<time_t>(-1)
+	  || packageInfo.timePackaged == static_cast<time_t>(0))
 	{
 	  pPackageInfo->timePackaged = COleDateTime();
 	}
@@ -198,7 +199,8 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	  pPackageInfo->timePackaged = COleDateTime(packageInfo.timePackaged);
 	}
 
-      if (packageInfo.timeInstalled == static_cast<time_t>(-1))
+      if (packageInfo.timeInstalled == static_cast<time_t>(-1)
+	  || packageInfo.timeInstalled == static_cast<time_t>(0))
 	{
 	  pPackageInfo->timeInstalled = COleDateTime();
 	  pPackageInfo->isInstalled = VARIANT_FALSE;
