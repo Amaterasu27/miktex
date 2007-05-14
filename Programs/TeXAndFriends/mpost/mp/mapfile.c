@@ -584,6 +584,9 @@ void fm_read_info ()
             pdftex_warn ("cannot open font map file");
         } else {
             cur_file_name = (char *) nameoffile + 1;
+#if defined(MIKTEX)
+	    cur_file_name -= 1;
+#endif
             mp_printf ("{%s", cur_file_name);
             while (!fm_eof ()) {
                 fm_scan_line ();
