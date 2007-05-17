@@ -275,6 +275,8 @@ const size_t MAXURL = 1024;
 /* _________________________________________________________________________
 
    TEXMF_PREFIX_DIRECTORY
+
+   The trailing slash should not be removed.
    _________________________________________________________________________ */
 
 #define TEXMF_PREFIX_DIRECTORY \
@@ -1912,7 +1914,8 @@ private:
 
 private:
   void
-  CopyFiles (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & fileList);
+  CopyFiles (/*[in]*/ const MiKTeX::Core::PathName & pathSourceRoot,
+	     /*[in]*/ const std::vector<MiKTeX::Core::tstring> & fileList);
 
 private:
   void
@@ -1929,7 +1932,8 @@ private:
 
 private:
   void
-  CopyPackage (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
+  CopyPackage (/*[in]*/ const MiKTeX::Core::PathName & pathSourceRoot,
+	       /*[in]*/ const MiKTeX::Core::tstring & deploymentName);
   
 private:
   virtual

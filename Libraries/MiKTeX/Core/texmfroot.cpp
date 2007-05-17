@@ -1245,7 +1245,7 @@ MIKTEXAPI(bool)
 Utils::IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root)
 {
   PathName path (root);
-  path += T_("texmf");
+  path += MIKTEXDIRECT_PREFIX_DIR;
   path += MIKTEX_PATH_MD_INI;
   if (! File::Exists(path))
     {
