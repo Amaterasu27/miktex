@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	6)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	2675)
+set(MIKTEX_J2000_VERSION	2693)
 
 ## the release number; only meaningful for rc/beta builds
 set(MIKTEX_RELEASE_NUM		0)
