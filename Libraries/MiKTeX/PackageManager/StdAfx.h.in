@@ -97,11 +97,12 @@ using stdext::hash_set;
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
+#include <miktex/version.h>
 
 #if defined(MIKTEX_WINDOWS)
 # include <miktex/win/DllProc.h>
 #endif
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-#  import "mpm.tlb" raw_interfaces_only
+#  import "@mpm_tlb_name@.tlb" raw_interfaces_only
 #endif

@@ -27,6 +27,7 @@
 #include "COM/session.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeXSessionLib;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -89,7 +90,7 @@ comSession::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &IID_ISession
+      &__uuidof(ISession)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)

@@ -24,12 +24,12 @@ use_static_crt()
 use_static_libraries()
 
 set(${core_lib_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/CommandLine.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FileStream.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FormatInfo.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/MemoryMappedFile.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Process.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Thread.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/appnames.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/cfg.cpp

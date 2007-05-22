@@ -462,9 +462,9 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT += @CMAKE_BINARY_DIR@/SDK/doc/mainpage.doxygen
-INPUT += @CMAKE_BINARY_DIR@/SDK/include/session.idl
+INPUT += @CMAKE_BINARY_DIR@/SDK/include/MiKTeX@MIKTEX_SERIES_INT@-session.idl
 INPUT += @CMAKE_BINARY_DIR@/SDK/include/miktexidl.idl
-INPUT += @CMAKE_BINARY_DIR@/SDK/include/mpm.idl
+INPUT += @CMAKE_BINARY_DIR@/SDK/include/MiKTeX@MIKTEX_SERIES_INT@-packagemanager.idl
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -505,7 +505,9 @@ EXCLUDE_PATTERNS       =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/SDK/samples
+EXAMPLE_PATH           = \
+	@CMAKE_BINARY_DIR@/SDK/samples \
+	@CMAKE_SOURCE_DIR@/SDK/samples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

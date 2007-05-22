@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
+)  
+
 add_definitions(-DHAVE_LIBCURL)
 
 include_directories(BEFORE
@@ -26,6 +31,7 @@ include_directories(BEFORE
 )
 
 set(${mpm_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.cpp
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.h
   ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/RepositorySoap.nsmap
@@ -41,7 +47,6 @@ set(${mpm_dll_name}_sources
   PackageInstaller.cpp
   PackageIterator.cpp
   PackageManager.cpp
-  StdAfx.h
   TpmParser.cpp
   TpmParser.h
   WebFile.h
@@ -65,14 +70,24 @@ if(NATIVE_WINDOWS)
     win/winWebSession.h
   )
   if(MFC_FOUND)
+    set(mpmidl_h MiKTeX${MIKTEX_SERIES_INT}-packagemanageridl.h)
+    set(mpm_idl MiKTeX${MIKTEX_SERIES_INT}-packagemanager.idl)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/${mpm_idl}
+    )
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.rgs.in
       ${CMAKE_CURRENT_BINARY_DIR}/COM/mpm.rgs
     )
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/comPackageManager.rgs.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/comPackageManager.rgs
+    )
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
     add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL)
     set(${mpm_dll_name}_sources ${${mpm_dll_name}_sources}
-      ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+      ${CMAKE_CURRENT_BINARY_DIR}/${mpm_tlb_name}.tlb
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
       COM/comPackageInstaller.cpp
       COM/comPackageInstaller.h
@@ -84,24 +99,24 @@ if(NATIVE_WINDOWS)
     add_custom_command(
       OUTPUT
 		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
-		${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
+		${CMAKE_CURRENT_BINARY_DIR}/${mpm_tlb_name}.tlb
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
 		${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-		${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
+		${CMAKE_CURRENT_BINARY_DIR}/include/${mpmidl_h}
       COMMAND ${MIDL_EXE}
 	/nologo
 	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 	/char signed
 	/env win32
 	/Oicf
-	/tlb ${CMAKE_CURRENT_BINARY_DIR}/mpm.tlb
-	/h ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
+	/tlb ${CMAKE_CURRENT_BINARY_DIR}/${mpm_tlb_name}.tlb
+	/h ${CMAKE_CURRENT_BINARY_DIR}/include/${mpmidl_h}
 	/iid ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
 	/proxy ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
 	/no_robust
-	${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
+	${CMAKE_CURRENT_BINARY_DIR}/COM/${mpm_idl}
       DEPENDS
-		${CMAKE_CURRENT_SOURCE_DIR}/COM/mpm.idl
+		${CMAKE_CURRENT_BINARY_DIR}/COM/${mpm_idl}
       VERBATIM
     )
     add_library(
@@ -110,7 +125,7 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_i.c
       ${CMAKE_CURRENT_BINARY_DIR}/mpm_p.c
-      ${CMAKE_CURRENT_BINARY_DIR}/include/mpmidl.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/${mpmidl_h}
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
     )
     set_source_files_properties(

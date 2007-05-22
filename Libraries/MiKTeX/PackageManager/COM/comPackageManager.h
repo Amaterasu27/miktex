@@ -23,15 +23,16 @@
 
 #include "Resource.h"
 
-#include "mpmidl.h"
-
 class ATL_NO_VTABLE comPackageManager
   : public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<comPackageManager, &CLSID_PackageManager>,
+    public CComCoClass<comPackageManager,
+		       &__uuidof(MiKTeXPackageManagerLib
+				 ::MAKE_CURVER_ID(PackageManager))>,
     public ISupportErrorInfo,
-    public IDispatchImpl<IPackageManager,
-			 &IID_IPackageManager,
-			 &LIBID_MiKTeXPackageManagerLib,
+    public IDispatchImpl<MiKTeXPackageManagerLib::IPackageManager,
+			 &__uuidof(MiKTeXPackageManagerLib::IPackageManager),
+			 &__uuidof(MiKTeXPackageManagerLib
+				   ::MAKE_CURVER_ID(__MiKTeXPackageManager)),
 			 /*wMajor =*/ 1,
 			 /*wMinor =*/ 0>
 {
@@ -80,12 +81,13 @@ public:
   FinalRelease ();
 
 public:
-  STDMETHOD(CreateInstaller) (/*[out,retval]*/
-			      IPackageInstaller ** ppInstaller);
+  STDMETHOD(CreateInstaller)
+    (/*[out,retval]*/ MiKTeXPackageManagerLib::IPackageInstaller ** ppInstaller);
 
 public:
-  STDMETHOD(GetPackageInfo) (/*[in]*/ BSTR			deploymentName,
-			     /*[out,retval]*/ PackageInfo *	pPackageInfo);
+  STDMETHOD(GetPackageInfo)
+    (/*[in]*/ BSTR						deploymentName,
+     /*[out,retval]*/ MiKTeXPackageManagerLib::PackageInfo *	pPackageInfo);
 
 
 private:
@@ -99,4 +101,5 @@ private:
   MiKTeX::Packages::PackageManagerPtr pManager;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(PackageManager), comPackageManager);
+OBJECT_ENTRY_AUTO(__uuidof(MiKTeXPackageManagerLib::MAKE_CURVER_ID(PackageManager)),
+		  comPackageManager);

@@ -28,6 +28,7 @@
 #include "COM/mpm.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeXPackageManagerLib;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -90,7 +91,7 @@ comPackageManager::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &IID_IPackageManager
+      &__uuidof(IPackageManager)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)

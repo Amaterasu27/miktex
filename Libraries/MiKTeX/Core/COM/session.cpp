@@ -22,7 +22,6 @@
 #include "StdAfx.h"
 #include "internal.h"
 #include "Resource.h"
-#include "sessionidl.h"
 #include "COM/session.h"
 
 MiKTeXSessionModule _AtlModule;

@@ -18,16 +18,22 @@ if not exist "@CMAKE_BINARY_DIR_NATIVE@\SDK\include" (
 )
 
 pushd "@CMAKE_BINARY_DIR_NATIVE@\Libraries\MiKTeX"
+copy Core\COM\MiKTeX${MIKTEX_SERIES_INT}-session.idl ^
+     "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
 copy Core\include\miktexidl.h "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
-copy Core\include\sessionidl.h "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
-copy Core\session.tlb "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
-copy PackageManager\include\mpmidl.h "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
+copy Core\include\MiKTeX${MIKTEX_SERIES_INT}-sessionidl.h ^
+     "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
+pushd Core
+copy ${session_tlb_name}.tlb "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
+popd
+copy PackageManager\COM\MiKTeX${MIKTEX_SERIES_INT}-packagemanager.idl ^
+     "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
+copy PackageManager\include\MiKTeX${MIKTEX_SERIES_INT}-packagemanageridl.h ^
+     "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
 popd
 
 pushd "@CMAKE_SOURCE_DIR_NATIVE@\Libraries\MiKTeX"
 copy Core\include\miktexidl.idl "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
-copy Core\COM\session.idl "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
-copy PackageManager\COM\mpm.idl "@CMAKE_BINARY_DIR_NATIVE@\SDK\include"
 popd
 
 pushd "@CMAKE_BINARY_DIR_NATIVE@
@@ -40,6 +46,7 @@ mkdir "%destdir%"
 
 echo ~>%excl%
 echo .svn>>%excl%
+echo .cpp.in>>%excl%
 echo .h.in>>%excl%
 echo .vcproj.in>>%excl%
 echo mainpage.doxygen>>%excl%

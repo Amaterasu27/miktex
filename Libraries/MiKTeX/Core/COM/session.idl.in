@@ -1,4 +1,4 @@
-/* session.idl:
+/* session.idl:							-*- IDL -*-
 
    Copyright (C) 2006-2007 Christian Schenk
 
@@ -46,7 +46,6 @@ typedef [uuid(A889D812-7E98-4E73-A453-30C9B69A32B1)] struct MiKTeXSetupInfo
   BSTR userConfigRoot;
   BSTR userDataRoot;
 } MiKTeXSetupInfo;
-
 
 /* _________________________________________________________________________
    
@@ -119,16 +118,16 @@ interface ISession : IDispatch
 
 /* _________________________________________________________________________
    
-   MiKTeXSession
+   MiKTeXSession@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
 /// @brief The MiKTeX Session type library.
 [
-  uuid(4C28CF19-0EC8-42AF-B901-CDCCCCE420FB),
+  uuid(@guid_MiKTeX_Session_TLB_CURVER@),
   version(1.0),
-  helpstring("MiKTeX Session 1.0 Type Library")
+  helpstring("MiKTeX @MIKTEX_SERIES_STR@ Session")
 ]
-library MiKTeXSessionLib
+library MiKTeXSession@MIKTEX_SERIES_ID_STR@
 {
   importlib("stdole2.tlb");
 
@@ -136,10 +135,10 @@ library MiKTeXSessionLib
   ///
   /// This COM object implements the @link ISession @endlink interface.
   [
-    uuid(DE6D4D25-4E98-488D-91B2-E97CC319764B),
-    helpstring("MiKTeX Session")
+    uuid(@guid_MiKTeX_Session_CURVER@),
+    helpstring("MiKTeX @MIKTEX_SERIES_STR@ Session")
   ]
-  coclass MiKTeXSession
+  coclass MiKTeXSession@MIKTEX_SERIES_ID_STR@
   {
     [default] interface ISession;
   };

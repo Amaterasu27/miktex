@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1184,7 +1184,7 @@ SessionImpl::ConnectToServer ()
 	{
 	  WCHAR wszCLSID[50];
 	  if (StringFromGUID2
-	      (__uuidof(MiKTeXSessionLib::MiKTeXSession),
+	      (__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
 	       wszCLSID, 
 	       sizeof(wszCLSID) / sizeof(wszCLSID[0]))
 	      < 0)
@@ -1217,7 +1217,7 @@ SessionImpl::ConnectToServer ()
 	{
 	  HRESULT hr =
 	    localServer.pSession.CoCreateInstance
-	    (__uuidof(MiKTeXSessionLib::MiKTeXSession),
+	    (__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
 	     0,
 	     CLSCTX_LOCAL_SERVER);
 	  if (FAILED(hr))

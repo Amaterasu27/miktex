@@ -7,20 +7,20 @@ HKCR
 			val AccessPermission = b '%ACCESS_SD%'
 		}
 	}
-	MiKTeX.PackageManager.1 = s 'MiKTeX Package Manager'
+	MiKTeX.PackageManager.@MIKTEX_SERIES_STR@ = s 'MiKTeX @MIKTEX_SERIES_STR@ Package Manager'
 	{
-		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
+		CLSID = s '{@guid_MiKTeX_Package_Manager_CURVER@}'
 	}
 	MiKTeX.PackageManager = s 'MiKTeX Package Manager'
 	{
-		CLSID = s '{E4EC6D80-9E3A-47B7-ADA7-C0621C298527}'
-		CurVer = s 'MiKTeX.PackageManager.1'
+		CLSID = s '{@guid_MiKTeX_Package_Manager_CURVER@}'
+		CurVer = s 'MiKTeX.PackageManager.@MIKTEX_SERIES_STR@'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {E4EC6D80-9E3A-47B7-ADA7-C0621C298527} = s 'MiKTeX Package Manager'
+		ForceRemove {@guid_MiKTeX_Package_Manager_CURVER@} = s 'MiKTeX @MIKTEX_SERIES_STR@ Package Manager'
 		{
-			ProgID = s 'MiKTeX.PackageManager.1'
+			ProgID = s 'MiKTeX.PackageManager.@MIKTEX_SERIES_STR@'
 			VersionIndependentProgID = s 'MiKTeX.PackageManager'
 			ForceRemove 'Programmable'
 			InprocServer32 = s '%MODULE%'
@@ -28,7 +28,7 @@ HKCR
 				val ThreadingModel = s 'Free'
 			}
 			val AppID = s '%APPID%'
-			'TypeLib' = s '{42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB}'
+			'TypeLib' = s '{@guid_MiKTeX_Package_Manager_TLB_CURVER@}'
 			Elevation
 			{
 				val Enabled = d 1

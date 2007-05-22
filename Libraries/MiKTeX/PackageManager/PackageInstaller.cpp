@@ -1666,7 +1666,8 @@ PackageInstallerImpl::ConnectToServer ()
 	    {
 	      WCHAR wszCLSID[50];
 	      if (StringFromGUID2
-		  (__uuidof(MiKTeXPackageManagerLib::PackageManager),
+		  (__uuidof(MiKTeXPackageManagerLib
+			    ::MAKE_CURVER_ID(PackageManager)),
 			    wszCLSID, 
 			    sizeof(wszCLSID) / sizeof(wszCLSID[0]))
 		  < 0)
@@ -1686,7 +1687,8 @@ PackageInstallerImpl::ConnectToServer ()
 	      HRESULT hr =
 		CoGetObject(monikerName.c_str(),
 			    &bo,
-			    __uuidof(MiKTeXPackageManagerLib::IPackageManager),
+			    __uuidof(MiKTeXPackageManagerLib
+				     ::IPackageManager),
 			    reinterpret_cast<void**>(&localServer.pManager));
 	      if (FAILED(hr))
 		{
@@ -1699,7 +1701,8 @@ PackageInstallerImpl::ConnectToServer ()
 	    {
 	      HRESULT hr =
 		localServer.pManager.CoCreateInstance
-		(__uuidof(MiKTeXPackageManagerLib::PackageManager),
+		(__uuidof(MiKTeXPackageManagerLib::
+			  MAKE_CURVER_ID(PackageManager)),
 		 0,
 		 CLSCTX_LOCAL_SERVER);
 	      if (FAILED(hr))

@@ -47,6 +47,10 @@ namespace MiKTeX {					\
 #  pragma comment(lib, "comsuppw.lib")
 #endif
 
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
+#endif
+
 #if defined(MIKTEX_WINDOWS)
 inline
 bool

@@ -35,6 +35,7 @@
 #include "miktex/paths.h"
 #include "miktex/reg.h"
 #include "miktex/trace.h"
+#include "miktex/version.h"
 
 using namespace MiKTeX::Core;
 
@@ -59,6 +60,10 @@ BEGIN_INTERNAL_NAMESPACE;
 
 #if defined(_MSC_VER) && defined(MIKTEX_WINDOWS)
 #  pragma comment(lib, "comsuppw.lib")
+#endif
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 #endif
 
 /* _________________________________________________________________________

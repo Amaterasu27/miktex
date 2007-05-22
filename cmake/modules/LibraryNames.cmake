@@ -90,6 +90,9 @@ set(vptovf_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-vptovf")
 set(weave_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-weave")
 set(zlib_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-zlib")
 
+set(session_tlb_name    "MiKTeX${MIKTEX_SERIES_INT}-session")
+set(mpm_tlb_name        "MiKTeX${MIKTEX_SERIES_INT}-packageManager")
+
 ## static library names
 set(bzip2_lib_name	"bzip2-static")
 set(core_lib_name	"core-static")

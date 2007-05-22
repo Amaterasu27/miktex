@@ -27,6 +27,7 @@
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
+using namespace MiKTeXPackageManagerLib;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -102,7 +103,7 @@ comPackageInstaller::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &IID_IPackageInstaller
+      &__uuidof(IPackageInstaller)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)

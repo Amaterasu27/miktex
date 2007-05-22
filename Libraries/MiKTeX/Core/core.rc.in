@@ -41,6 +41,6 @@ BEGIN
     IDS_PROJNAME "MiKTeX Session"
 END
 
-1 TYPELIB "session.tlb"
+1 TYPELIB "${session_tlb_name}.tlb"
 
 #include <miktex/miktex.version>

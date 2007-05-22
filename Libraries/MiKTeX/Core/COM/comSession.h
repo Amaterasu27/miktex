@@ -23,15 +23,14 @@
 
 #include "Resource.h"
 
-#include "sessionidl.h"
-
 class ATL_NO_VTABLE comSession
   : public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<comSession, &CLSID_MiKTeXSession>,
+    public CComCoClass<comSession,
+		       &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession))>,
     public ISupportErrorInfo,
-    public IDispatchImpl<ISession,
-			 &IID_ISession,
-			 &LIBID_MiKTeXSessionLib,
+    public IDispatchImpl<MiKTeXSessionLib::ISession,
+			 &__uuidof(MiKTeXSessionLib::ISession),
+			 &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(__MiKTeXSession)),
 			 /*wMajor =*/ 1,
 			 /*wMinor =*/ 0>
 {
@@ -86,10 +85,12 @@ public:
 			 /*[out,retval]*/ VARIANT_BOOL * found);
 
 public:
-  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo * pErrorInfo);
+  STDMETHOD(GetErrorInfo)
+    (/*[out,retval]*/ MiKTeXSessionLib::ErrorInfo * pErrorInfo);
 
 public:
-  STDMETHOD(GetMiKTeXSetupInfo) (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo);
+  STDMETHOD(GetMiKTeXSetupInfo)
+    (/*[out,retval]*/ MiKTeXSessionLib::MiKTeXSetupInfo * setupInfo);
 
 public:
   STDMETHOD(GetRootDirectory) (/*[in]*/ LONG		rootIdx,
@@ -106,4 +107,5 @@ private:
   MiKTeX::Core::Session * pSession;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(MiKTeXSession), comSession);
+OBJECT_ENTRY_AUTO(__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
+		  comSession);

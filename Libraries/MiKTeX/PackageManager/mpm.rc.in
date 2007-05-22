@@ -37,6 +37,6 @@ BEGIN
     IDS_PROJNAME "MiKTeX Package Manager"
 END
 
-1 TYPELIB "mpm.tlb"
+1 TYPELIB "${mpm_tlb_name}.tlb"
 
 #include <miktex/miktex.version>
