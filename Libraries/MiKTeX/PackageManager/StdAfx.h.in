@@ -27,6 +27,8 @@
 #  include <config.h>
 #endif
 
+#include "mpm-version.h"
+
 #include "Resource.h"
 
 // must be included before Fdi.h (because of HUGE)
@@ -97,7 +99,6 @@ using stdext::hash_set;
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
-#include <miktex/version.h>
 
 #if defined(MIKTEX_WINDOWS)
 # include <miktex/win/DllProc.h>

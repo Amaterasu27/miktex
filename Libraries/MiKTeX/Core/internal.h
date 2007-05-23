@@ -28,6 +28,8 @@
 #define EAD86981C92C904D808A5E6CEC64B90E
 #include "miktex/core.h"
 
+#include "core-version.h"
+
 #if defined(MIKTEX_WINDOWS)
 #  include "miktex/win/DllProc.h"
 #endif
@@ -35,7 +37,6 @@
 #include "miktex/paths.h"
 #include "miktex/reg.h"
 #include "miktex/trace.h"
-#include "miktex/version.h"
 
 using namespace MiKTeX::Core;
 

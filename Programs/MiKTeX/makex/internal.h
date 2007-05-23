@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -26,6 +26,8 @@
 #if defined(_MSC_VER)
 #  pragma warning (disable: 4786)
 #endif
+
+#include "makex-version.h"
 
 #include <iomanip>
 #include <iostream>

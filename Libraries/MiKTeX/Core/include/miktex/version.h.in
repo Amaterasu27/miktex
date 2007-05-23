@@ -67,4 +67,29 @@
 
 #define MAKE_CURVER_ID(prefix) prefix ## @MIKTEX_SERIES_ID_STR@
 
+#if ! defined(stringify_)
+#  define stringify__(x) #x
+#  define stringify_(x) stringify__(x)
+#endif
+
+#if defined(MIKTEX_COMPONENT_VERSION)
+#  if ! defined(MIKTEX_COMPONENT_VERSION_STR)
+#    define MIKTEX_COMPONENT_VERSION_STR stringify_(MIKTEX_COMPONENT_VERSION)
+#  endif
+#  if ! defined(VER_FILEVERSION)
+#    define VER_FILEVERSION \
+	MIKTEX_MAJOR_VERSION,MIKTEX_MINOR_VERSION,MIKTEX_COMPONENT_VERSION,0
+#  endif
+#  ifndef VER_FILEVERSION_STR
+#    ifdef MIKTEX_COMPONENT_ORIGINAL_VERSION_STR
+#      define VER_FILEVERSION_STR				\
+	MIKTEX_SERIES_STR "." MIKTEX_COMPONENT_VERSION_STR	\
+        " (" MIKTEX_COMPONENT_ORIGINAL_VERSION_STR ")"
+#    else
+#      define VER_FILEVERSION_STR \
+	MIKTEX_SERIES_STR "." MIKTEX_COMPONENT_VERSION_STR
+#    endif
+#  endif
+#endif
+
 #endif

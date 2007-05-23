@@ -1,6 +1,6 @@
 /* mtprint.cpp: MiKTeX Print Utility
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MiKTeX Print Utility.
 
@@ -22,8 +22,6 @@
 #include "StdAfx.h"
 
 #include "internal.h"
-
-#include "mtprint-version.h"
 
 #include "BitmapPrinter.h"
 

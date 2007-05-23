@@ -1,6 +1,6 @@
 /* RemoveWizard.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -23,7 +23,6 @@
 #include "Remove.h"
 
 #include "FinishPage.h"
-#include "Remove-version.h"
 #include "RemoveFilesPage.h"
 #include "RemoveWizard.h"
 #include "WelcomePage.h"

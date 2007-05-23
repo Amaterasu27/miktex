@@ -1,6 +1,6 @@
 /* cjklatex.cpp:
 
-   Copyright (C) 2004-2006 Christian Schenk
+   Copyright (C) 2004-2007 Christian Schenk
 
    This file is part of CJKLaTeX.
 
@@ -31,11 +31,11 @@
 
 #include <getopt.h>
 
+#include "cjklatex-version.h"
+
 #include <miktex/core.h>
 #include <miktex/app.h>
 #include <miktex/paths.h>
-
-#include "cjklatex-version.h"
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

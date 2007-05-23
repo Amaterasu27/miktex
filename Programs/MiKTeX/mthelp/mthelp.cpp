@@ -1,6 +1,6 @@
 /* mthelp.cpp:
 
-   Copyright (C) 2004-2006 Christian Schenk
+   Copyright (C) 2004-2007 Christian Schenk
 
    This file is a part of MTHelp.
 
@@ -22,6 +22,8 @@
 #  include <config.h>
 #endif
 
+#include "mthelp-version.h"
+
 #include <miktex/app.h>
 #include <miktex/core.h>
 #include <miktex/mpm.h>
@@ -40,8 +42,6 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX;
 using namespace std;
-
-#include "mthelp-version.h"
 
 #include "template.html.h"
 

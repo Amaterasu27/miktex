@@ -1,6 +1,6 @@
 /* MainFrame.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -23,7 +23,6 @@
 #include "mpm.h"
 
 #include "MainFrame.h"
-#include "mpm-version.h"
 
 IMPLEMENT_DYNCREATE(MainFrame, CFrameWnd);
 

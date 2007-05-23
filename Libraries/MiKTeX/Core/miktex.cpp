@@ -25,7 +25,6 @@
 
 #include "miktex/env.h"
 #include "miktex/paths.h"
-#include "miktex/version.h"
 
 #if defined(MIKTEX_WINDOWS)
 #  include "win/winRegistry.h"

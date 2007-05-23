@@ -60,6 +60,8 @@
 #  include <afxcmn.h>
 #endif
 
+#include "mo-version.h"
+
 #include <miktex/core.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

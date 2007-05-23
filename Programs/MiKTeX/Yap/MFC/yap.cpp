@@ -1,6 +1,6 @@
 /* yap.cpp: Yet Another Previewer
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of Yap.
 
@@ -21,8 +21,6 @@
 #include "StdAfx.h"
 
 #include "yap.h"
-
-#include "yap-version.h"
 
 #include "ChildFrame.h"
 #include "DviDoc.h"

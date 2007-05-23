@@ -20,10 +20,11 @@
 
 /* This program is based on the updmap shell script written by Thomas
    Esser. */
+
+#include "mkfntmap-version.h"
    
 #include <miktex/core.h>
 #include <miktex/paths.h>
-#include <miktex/version.h>
 #include <popt-miktex.h>
 
 #include <cstdarg>
@@ -39,8 +40,6 @@
 #pragma warning (pop)
 
 #include "internal.h"
-
-#include "mkfntmap.rc"
 
 using namespace MiKTeX::Core;
 using namespace std;

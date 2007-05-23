@@ -1,6 +1,6 @@
 /* arctrl.cpp: control Acrobat Reader
 
-   Copyright (C) 2006 Christian Schenk
+   Copyright (C) 2006-2007 Christian Schenk
 */
 
 /* This program (arctrl) is based on public domain work by Fabrice
@@ -15,12 +15,12 @@
 #include <cstdarg>
 #include <cstdio>
 
+#include "arctrl-version.h"
+
 #include <miktex/core.h>
 #include <miktex/app.h>
 #include <miktex/paths.h>
 #include <popt-miktex.h>
-
-#include "arctrl-version.h"
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

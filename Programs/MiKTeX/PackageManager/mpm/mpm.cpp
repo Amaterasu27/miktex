@@ -23,8 +23,6 @@
 
 #include "internal.h"
 
-#include "mpm-version.h"
-
 #if ! defined(THE_NAME_OF_THE_GAME)
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Package Manager")
 #endif

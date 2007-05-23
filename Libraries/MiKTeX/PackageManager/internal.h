@@ -28,8 +28,6 @@
 #define F927BA187CB94546AB9CA9099D989E81
 #include "miktex/mpm.h"
 
-#include "mpm-version.h"
-
 #define BEGIN_INTERNAL_NAMESPACE			\
 namespace MiKTeX {					\
   namespace Packages {					\
