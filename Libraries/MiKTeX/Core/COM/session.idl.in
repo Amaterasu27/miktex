@@ -118,6 +118,39 @@ interface ISession : IDispatch
 
 /* _________________________________________________________________________
    
+   ISession2
+   _________________________________________________________________________ */
+
+/// @brief The MiKTeX session interface (version 2).
+///
+/// This interface provides MiKTeX core functionality.
+[
+  object,
+  uuid(49C9F0B8-3DF6-4BBA-9DCD-3FE289DF95D8),
+  dual,
+  nonextensible,
+  helpstring("ISession2 Interface"),
+  pointer_default(unique)
+]
+interface ISession2 : ISession
+{
+
+  /// @brief Find a file.
+  /// @param[in] fileName The name of the file (e.g. "ptmr.vf").
+  /// @param[out] path The fully qualified path to the file.
+  /// @return Returns VARIANT_TRUE, if the file exists.
+  [
+    id(6),
+    helpstring("method FindFile")
+  ]
+  HRESULT
+  FindFile ([in] BSTR fileName,
+	    [out] BSTR * path,
+	    [out,retval] VARIANT_BOOL * found);
+};
+
+/* _________________________________________________________________________
+   
    MiKTeXSession@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
@@ -140,6 +173,7 @@ library MiKTeXSession@MIKTEX_SERIES_ID_STR@
   ]
   coclass MiKTeXSession@MIKTEX_SERIES_ID_STR@
   {
-    [default] interface ISession;
+    interface ISession;
+    [default] interface ISession2;
   };
 };

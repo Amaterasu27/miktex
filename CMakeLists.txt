@@ -417,6 +417,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/produce.cmd.in
 configure_file(${CMAKE_SOURCE_DIR}/SDK/doc/mainpage.doxygen.in
 	       ${CMAKE_BINARY_DIR}/SDK/doc/mainpage.doxygen)
 
+configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findfile/findfile.cpp.in
+	       ${CMAKE_BINARY_DIR}/SDK/samples/c++/findfile/findfile.cpp)
+
 configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findpk/findpk.cpp.in
 	       ${CMAKE_BINARY_DIR}/SDK/samples/c++/findpk/findpk.cpp)
 

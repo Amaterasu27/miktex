@@ -28,8 +28,8 @@ class ATL_NO_VTABLE comSession
     public CComCoClass<comSession,
 		       &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession))>,
     public ISupportErrorInfo,
-    public IDispatchImpl<MiKTeXSessionLib::ISession,
-			 &__uuidof(MiKTeXSessionLib::ISession),
+    public IDispatchImpl<MiKTeXSessionLib::ISession2,
+			 &__uuidof(MiKTeXSessionLib::ISession2),
 			 &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(__MiKTeXSession)),
 			 /*wMajor =*/ 1,
 			 /*wMinor =*/ 0>
@@ -53,6 +53,7 @@ public:
 public:
   BEGIN_COM_MAP(comSession)
     COM_INTERFACE_ENTRY(ISession)
+    COM_INTERFACE_ENTRY(ISession2)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
@@ -95,6 +96,11 @@ public:
 public:
   STDMETHOD(GetRootDirectory) (/*[in]*/ LONG		rootIdx,
 			       /*[out,retval]*/ BSTR *	rootDirectory);
+
+public:
+  STDMETHOD(FindFile) (/*[in]*/ BSTR			fileName,
+		       /*[out]*/ BSTR *			path,
+		       /*[out,retval]*/ VARIANT_BOOL *	found);
 
 private:
   void

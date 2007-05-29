@@ -90,7 +90,8 @@ comSession::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &__uuidof(ISession)
+      &__uuidof(ISession),
+      &__uuidof(ISession2),
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)
@@ -316,6 +317,60 @@ comSession::GetRootDirectory (/*[in]*/ LONG		rootIdx,
       *rootDirectory =
 	_bstr_t(pSession->GetRootDirectory(rootIdx).Get()).Detach();
       return (S_OK);
+    }
+  catch (const _com_error & e)
+    {
+      hr = e.Error();
+    }
+  catch (const MiKTeXException & e)
+    {
+      lastMiKTeXException = e;
+      hr = E_FAIL;
+    }
+  catch (const exception & e)
+    {
+      lastMiKTeXException =
+	MiKTeXException(T_("sessionsvc"),
+			e.what(),
+			0,
+			T_(__FILE__),
+			__LINE__);
+      hr = E_FAIL;
+    }
+  return (hr);
+}
+
+/* _________________________________________________________________________
+
+   comSession::FindFile
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comSession::FindFile (/*[in]*/ BSTR			fileName,
+		      /*[out]*/ BSTR *			path,
+		      /*[out,retval]*/ VARIANT_BOOL *	found)
+{
+  SessionImpl::runningAsLocalServer = true;
+  HRESULT hr = S_OK;
+  try
+    {
+      CreateSession ();
+      FileType fileType = pSession->DeriveFileType(CW2CT(fileName));
+      if (fileType == FileType::None)
+	{
+	  fileType = FileType::TEX;
+	}
+      PathName path_;
+      if (pSession->FindFile(CW2CT(fileName), fileType, path_))
+	{
+	  *path = _bstr_t(path_.Get()).Detach();
+	  *found = VARIANT_TRUE;
+	}
+      else
+	{
+	  *path = _bstr_t(L"").Detach();
+	  *found = VARIANT_FALSE;
+	}
     }
   catch (const _com_error & e)
     {
