@@ -5,9 +5,12 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.6.2693">
+
+<!ENTITY revj2000 "2704">
 <!ENTITY month "May 2007">
-<!ENTITY date "March 17, 2007">
+<!ENTITY date "May 28, 2007">
+
+<!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
 <!ENTITY mfappdefaults SYSTEM "../Admin/Defaults/mfapp.defaults">
 <!ENTITY mfdefaults SYSTEM "../Admin/Defaults/mf.defaults">
