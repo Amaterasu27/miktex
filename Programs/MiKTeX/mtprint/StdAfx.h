@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -19,6 +19,9 @@
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 #include <malloc.h>
+
+#include "mtprint-version.h"
+
 #include <miktex/DibChunker.h>
 #include <miktex/app.h>
 #include <miktex/core.h>

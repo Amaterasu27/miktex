@@ -25,7 +25,6 @@
 #include "MainFrame.h"
 #include "MpmDoc.h"
 #include "MpmView.h"
-#include "mpm-version.h"
 
 /* _________________________________________________________________________
 

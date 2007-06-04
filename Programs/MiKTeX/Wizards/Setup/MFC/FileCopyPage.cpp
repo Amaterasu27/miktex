@@ -938,12 +938,20 @@ FileCopyPage::ConfigureMiKTeX ()
   }
   
   CommandLineBuilder cmdLine;
-  
+
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      // define root directories
-      // remove old fndb files
-      // set shared setup option
+      // [1] set shared flag
+      cmdLine.Clear ();
+      cmdLine.AppendOption (T_("--shared-setup="),
+			    (theApp.commonUserSetup ? T_("1") : T_("0")));
+      RunIniTeXMF (cmdLine);
+      if (pSheet->GetCancelFlag())
+	{
+	  return;
+	}
+
+      // [2] define roots & remove old fndbs
       cmdLine.Clear ();
       cmdLine.AppendOption (T_("--install-root="),
 			    theApp.startupConfig.installRoot);
@@ -981,26 +989,11 @@ FileCopyPage::ConfigureMiKTeX ()
 	{
 	  return;
 	}
-    }
-
-  cmdLine.Clear ();
-  cmdLine.AppendOption (T_("--shared-setup="),
-			(theApp.commonUserSetup ? T_("1") : T_("0")));
-  RunIniTeXMF (cmdLine);
-  if (pSheet->GetCancelFlag())
-    {
-      return;
-    }
-
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
-    {
-      // register components, configure files
+      
+      // [3] register components, configure files
       RunMpm (T_("--register-components"));
-    }
-  
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
-    {
-      // create filename database files
+
+      // [4] create filename database files
       cmdLine.Clear ();
       cmdLine.AppendOption (T_("--update-fndb"));
       RunIniTeXMF (cmdLine);
@@ -1008,21 +1001,16 @@ FileCopyPage::ConfigureMiKTeX ()
 	{
 	  return;
 	}
-    }
 
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
-    {
-      // create latex.exe, context.exe, ...
+
+      // [5] create latex.exe, context.exe, ...
       RunIniTeXMF (CommandLineBuilder(T_("--force"), T_("--mklinks")));
       if (pSheet->GetCancelFlag())
 	{
 	  return;
 	}
-    }
       
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
-    {
-      // create font map files
+      // [6] create font map files
       RunIniTeXMF (T_("--mkmaps"));
       if (pSheet->GetCancelFlag())
 	{
@@ -1030,7 +1018,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
     }
       
-  // set paper size
+  // [7] set paper size
   if (! theApp.paperSize.empty())
     {
       cmdLine.Clear ();
@@ -1044,10 +1032,14 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
       RunIniTeXMF (cmdLine);
     }
+  else
+    {
+      completedIniTeXMFRuns += 1;
+    }
       
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      // refresh file name database again
+      // [8] refresh file name database again
       RunIniTeXMF (T_("--update-fndb"));
       if (pSheet->GetCancelFlag())
 	{
@@ -1055,7 +1047,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
     }
       
-  // create report
+  // [9] create report
   RunIniTeXMF (T_("--report"));
   if (pSheet->GetCancelFlag())
     {
@@ -1140,6 +1132,26 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
       Process::Run (exePath.Get(), cmdLine.Get(), this);
       ULogOpen ();
     }
+
+  // refresh progress bars
+  if (! pSheet->GetCancelFlag())
+    {
+      completedIniTeXMFRuns += 1;
+      CSingleLock (&criticalSectionMonitor, TRUE);
+      sharedData.progress1Pos
+	= static_cast<int>(
+	  ((static_cast<double>(completedIniTeXMFRuns)
+	    / totalIniTeXMFRuns)
+	   * PROGRESS_MAX));
+      sharedData.progress2Pos
+	= static_cast<int>(
+	  ((static_cast<double>(totalSize
+				+ (GetIniTeXMFRunSize()
+				   * completedIniTeXMFRuns))
+	    / overallExpenditure)
+	   * PROGRESS_MAX));
+      PostMessage (WM_PROGRESS);
+    }
 }
 
 /* _________________________________________________________________________
@@ -1153,19 +1165,11 @@ FileCopyPage::CalculateExpenditure ()
   if (theApp.setupTask == SetupTask::InstallFromLocalRepository
       || theApp.setupTask == SetupTask::InstallFromCD)
     {
-      // calculate number of initexmf runs
-      totalIniTeXMFRuns = 0;
-      totalIniTeXMFRuns += 1;		// set root directories
-      totalIniTeXMFRuns += 1;		// fndb install dir
-      totalIniTeXMFRuns += 1;		// fndb data dir
-      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
-	{
-	   // fndb additional dirs
-	  totalIniTeXMFRuns +=
-	    static_cast<int>(theApp.addTEXMFDirs.size());
-	}
-      totalIniTeXMFRuns += 1;		// fndb data dir (defrag)
-      totalIniTeXMFRuns += 1;		// report
+      totalIniTeXMFRuns = 9;
+    }
+  else
+    {
+      totalIniTeXMFRuns = 2;
     }
 }
 

@@ -1,6 +1,6 @@
 /* UpdateWizard.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -22,7 +22,6 @@
 #include "StdAfx.h"
 #include "Update.h"
 
-#include "Update-version.h"
 #include "UpdateWizard.h"
 
 IMPLEMENT_DYNAMIC(UpdateWizard, CPropertySheet);

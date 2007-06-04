@@ -308,7 +308,8 @@ public:
     Unknown,
     MiKTeXDirect,
     Local,
-    Remote
+    Remote,
+    MiKTeXInstallation
   };
 };
 

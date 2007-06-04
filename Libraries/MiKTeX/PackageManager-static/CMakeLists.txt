@@ -33,6 +33,7 @@ include_directories(BEFORE
 )
 
 set(${mpm_lib_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.cpp
   ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}/stdsoap2.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/CurlWebFile.cpp
@@ -42,7 +43,6 @@ set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageInstaller.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageIterator.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/PackageManager.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TpmParser.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/TpmParser.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/WebFile.h

@@ -32,18 +32,23 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
+)  
+
 add_definitions(-DHAVE_CONFIG_H)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(${core_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
   CommandLine.cpp
   FileStream.cpp
   FormatInfo.cpp
   MemoryMappedFile.cpp
   Process.cpp
-  StdAfx.h
   Thread.cpp
   appnames.cpp
   cfg.cpp
@@ -108,15 +113,25 @@ if(NATIVE_WINDOWS)
     win/winThread.h
   )
   if(MFC_FOUND)
+    set(sessionidl_h MiKTeX${MIKTEX_SERIES_INT}-sessionidl.h)
+    set(session_idl MiKTeX${MIKTEX_SERIES_INT}-session.idl)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/session.idl.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/${session_idl}
+    )
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/session.rgs.in
       ${CMAKE_CURRENT_BINARY_DIR}/COM/session.rgs
+    )
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/COM/comSession.rgs.in
+      ${CMAKE_CURRENT_BINARY_DIR}/COM/comSession.rgs
     )
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/miktex)
     add_definitions(-DUSE_LOCAL_SERVER -D_USRDLL -D_WINDLL)
     set(${core_dll_name}_sources ${${core_dll_name}_sources}
       ${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
-      ${CMAKE_CURRENT_BINARY_DIR}/session.tlb
+      ${CMAKE_CURRENT_BINARY_DIR}/${session_tlb_name}.tlb
       ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
       COM/comSession.cpp
       COM/comSession.h
@@ -142,24 +157,24 @@ if(NATIVE_WINDOWS)
     add_custom_command(
       OUTPUT
 		${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
-		${CMAKE_CURRENT_BINARY_DIR}/session.tlb
+		${CMAKE_CURRENT_BINARY_DIR}/${session_tlb_name}.tlb
 		${CMAKE_CURRENT_BINARY_DIR}/session_i.c
 		${CMAKE_CURRENT_BINARY_DIR}/session_p.c
-		${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+		${CMAKE_CURRENT_BINARY_DIR}/include/${sessionidl_h}
       COMMAND ${MIDL_EXE}
 	/nologo
 	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 	/char signed
 	/env win32
 	/Oicf
-	/tlb ${CMAKE_CURRENT_BINARY_DIR}/session.tlb
-	/h ${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+	/tlb ${CMAKE_CURRENT_BINARY_DIR}/${session_tlb_name}.tlb
+	/h ${CMAKE_CURRENT_BINARY_DIR}/include/${sessionidl_h}
 	/iid ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
 	/proxy ${CMAKE_CURRENT_BINARY_DIR}/session_p.c
 	/no_robust
-	${CMAKE_CURRENT_SOURCE_DIR}/COM/session.idl
+	${CMAKE_CURRENT_BINARY_DIR}/COM/${session_idl}
       DEPENDS
-		${CMAKE_CURRENT_SOURCE_DIR}/COM/session.idl
+		${CMAKE_CURRENT_BINARY_DIR}/COM/${session_idl}
 		${CMAKE_CURRENT_SOURCE_DIR}/include/miktexidl.idl
       VERBATIM
     )
@@ -169,7 +184,7 @@ if(NATIVE_WINDOWS)
       ${CMAKE_CURRENT_BINARY_DIR}/dlldata.c
       ${CMAKE_CURRENT_BINARY_DIR}/session_i.c
       ${CMAKE_CURRENT_BINARY_DIR}/session_p.c
-      ${CMAKE_CURRENT_BINARY_DIR}/include/sessionidl.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/${sessionidl_h}
       ${CMAKE_CURRENT_SOURCE_DIR}/COM/ProxyStub.def
     )
     set_source_files_properties(

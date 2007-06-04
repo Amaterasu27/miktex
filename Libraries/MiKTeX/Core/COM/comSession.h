@@ -23,15 +23,14 @@
 
 #include "Resource.h"
 
-#include "sessionidl.h"
-
 class ATL_NO_VTABLE comSession
   : public CComObjectRootEx<CComMultiThreadModel>,
-    public CComCoClass<comSession, &CLSID_MiKTeXSession>,
+    public CComCoClass<comSession,
+		       &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession))>,
     public ISupportErrorInfo,
-    public IDispatchImpl<ISession,
-			 &IID_ISession,
-			 &LIBID_MiKTeXSessionLib,
+    public IDispatchImpl<MiKTeXSessionLib::ISession2,
+			 &__uuidof(MiKTeXSessionLib::ISession2),
+			 &__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(__MiKTeXSession)),
 			 /*wMajor =*/ 1,
 			 /*wMinor =*/ 0>
 {
@@ -54,6 +53,7 @@ public:
 public:
   BEGIN_COM_MAP(comSession)
     COM_INTERFACE_ENTRY(ISession)
+    COM_INTERFACE_ENTRY(ISession2)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
@@ -86,14 +86,21 @@ public:
 			 /*[out,retval]*/ VARIANT_BOOL * found);
 
 public:
-  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo * pErrorInfo);
+  STDMETHOD(GetErrorInfo)
+    (/*[out,retval]*/ MiKTeXSessionLib::ErrorInfo * pErrorInfo);
 
 public:
-  STDMETHOD(GetMiKTeXSetupInfo) (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo);
+  STDMETHOD(GetMiKTeXSetupInfo)
+    (/*[out,retval]*/ MiKTeXSessionLib::MiKTeXSetupInfo * setupInfo);
 
 public:
   STDMETHOD(GetRootDirectory) (/*[in]*/ LONG		rootIdx,
 			       /*[out,retval]*/ BSTR *	rootDirectory);
+
+public:
+  STDMETHOD(FindFile) (/*[in]*/ BSTR			fileName,
+		       /*[out]*/ BSTR *			path,
+		       /*[out,retval]*/ VARIANT_BOOL *	found);
 
 private:
   void
@@ -106,4 +113,5 @@ private:
   MiKTeX::Core::Session * pSession;
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(MiKTeXSession), comSession);
+OBJECT_ENTRY_AUTO(__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
+		  comSession);

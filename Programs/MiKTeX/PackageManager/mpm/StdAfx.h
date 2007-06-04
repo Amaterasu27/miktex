@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -42,6 +42,8 @@
 #if defined(_MSC_VER)
 #  pragma warning (pop)
 #endif
+
+#include "mpm-version.h"
 
 #include <miktex/core.h>
 #include <miktex/mpm.h>

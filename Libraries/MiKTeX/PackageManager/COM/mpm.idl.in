@@ -1,4 +1,4 @@
-/* mpm.idl:
+/* mpm.idl:							-*- IDL -*-
 
    Copyright (C) 2006-2007 Christian Schenk
 
@@ -239,25 +239,25 @@ interface IPackageManager : IDispatch
 
 /* _________________________________________________________________________
    
-   MiKTeXPackageManager
+   MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
 /// @brief Package manager type library.
 [
-  uuid(42542DAE-9AAF-41A0-A2FC-7F3CEEA9A5CB),
+  uuid(@guid_MiKTeX_Package_Manager_TLB_CURVER@),
   version(1.0),
-  helpstring("MiKTeX Package Manager 1.0 Type Library")
+  helpstring("MiKTeX @MIKTEX_SERIES_STR@ Package Manager")
 ]
-library MiKTeXPackageManagerLib
+library MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
 {
   importlib("stdole2.tlb");
 
   /// @brief PackageManager object
   [
-    uuid(E4EC6D80-9E3A-47B7-ADA7-C0621C298527),
-    helpstring("MiKTeX Package Manager")
+    uuid(@guid_MiKTeX_Package_Manager_CURVER@),
+    helpstring("MiKTeX @MIKTEX_SERIES_STR@ Package Manager")
   ]
-  coclass PackageManager
+  coclass PackageManager@MIKTEX_SERIES_ID_STR@
   {
     [default] interface IPackageManager;
   };

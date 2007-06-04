@@ -40,11 +40,12 @@
 #include <algorithm>
 #include <vector>
 
+#include "Update-version.h"
+
 #include <cfg.h>
 #include <getopt.h>
 #include <miktex/core.h>
 #include <miktex/mpm.h>
-#include <miktex/version.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 

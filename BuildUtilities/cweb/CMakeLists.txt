@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -61,7 +61,7 @@ set_source_files_properties(
 )
 
 if(NATIVE_WINDOWS)
-  set(cweave ${cweave_sources} cwaeave.rc)
+  set(cweave_sources ${cweave_sources} cweave.rc)
 endif(NATIVE_WINDOWS)
 
 add_custom_command(

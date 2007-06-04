@@ -34,13 +34,13 @@
 #include <string>
 #include <vector>
 
+#include "initexmf-version.h"
+
 #include <miktex/core.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <popt-miktex.h>
 #include <miktex/mpm.h>
-
-#include "initexmf-version.h"
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

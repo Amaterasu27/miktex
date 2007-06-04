@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -23,7 +23,6 @@
 #include "Update.h"
 
 #include "FinishPage.h"
-#include "Update-version.h"
 #include "UpdateWizard.h"
 
 IMPLEMENT_DYNCREATE(FinishPage, CPropertyPage);

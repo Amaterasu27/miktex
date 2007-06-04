@@ -54,10 +54,11 @@
 #  include <afxcmn.h>
 #endif
 
+#include "mpm-version.h"
+
 #include <miktex/core.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
-#include <miktex/version.h>
 #include <miktex/win/DllProc.h>
 
 #pragma warning (push, 1)

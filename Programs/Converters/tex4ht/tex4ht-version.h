@@ -13,9 +13,11 @@
    General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with This file; if not, write to the Free Software
+   along with this file; if not, write to the Free Software
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define VER_FILEVERSION 2,6,2469,0
-#define VER_FILEVERSION_STR "2.6.2469 (2006-09-13-14:27)"
+#define MIKTEX_COMPONENT_VERSION 2469
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2006-09-13-14:27"
+
+#include <miktex/version.h>

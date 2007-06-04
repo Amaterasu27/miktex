@@ -28,6 +28,7 @@
 #include "COM/mpm.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeXPackageManagerLib;
 using namespace std;
 
 /* _________________________________________________________________________
@@ -90,7 +91,7 @@ comPackageManager::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &IID_IPackageManager
+      &__uuidof(IPackageManager)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)
@@ -189,7 +190,8 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
       pPackageInfo->numDocFiles = packageInfo.docFiles.size();
       pPackageInfo->numSourceFiles = packageInfo.sourceFiles.size();
       
-      if (packageInfo.timePackaged == static_cast<time_t>(-1))
+      if (packageInfo.timePackaged == static_cast<time_t>(-1)
+	  || packageInfo.timePackaged == static_cast<time_t>(0))
 	{
 	  pPackageInfo->timePackaged = COleDateTime();
 	}
@@ -198,7 +200,8 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	  pPackageInfo->timePackaged = COleDateTime(packageInfo.timePackaged);
 	}
 
-      if (packageInfo.timeInstalled == static_cast<time_t>(-1))
+      if (packageInfo.timeInstalled == static_cast<time_t>(-1)
+	  || packageInfo.timeInstalled == static_cast<time_t>(0))
 	{
 	  pPackageInfo->timeInstalled = COleDateTime();
 	  pPackageInfo->isInstalled = VARIANT_FALSE;

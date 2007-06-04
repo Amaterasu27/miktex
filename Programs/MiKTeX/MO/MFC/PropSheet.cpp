@@ -23,7 +23,6 @@
 #include "mo.h"
 
 #include "PropSheet.h"
-#include "mo-version.h"
 
 IMPLEMENT_DYNAMIC(PropSheet, CPropertySheet);
 

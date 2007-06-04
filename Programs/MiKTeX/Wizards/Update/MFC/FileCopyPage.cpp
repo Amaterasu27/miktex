@@ -23,7 +23,6 @@
 #include "Update.h"
 
 #include "FileCopyPage.h"
-#include "Update-version.h"
 #include "UpdateWizard.h"
 
 IMPLEMENT_DYNCREATE(FileCopyPage, CPropertyPage);

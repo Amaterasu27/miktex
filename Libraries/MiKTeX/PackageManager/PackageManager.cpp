@@ -909,6 +909,13 @@ PackageManagerImpl::DetermineRepositoryType
       return (RepositoryType::MiKTeXDirect);
     }
 
+  PathName path (repository);
+  path += MIKTEX_PATH_PACKAGES_INI;
+  if (File::Exists(path))
+    {
+      return (RepositoryType::MiKTeXInstallation);
+    }
+
   FATAL_MPM_ERROR (T_("PackageManagerImpl::DetermineRepositoryType"),
 		   T_("Not a valid installation source."),
 		   repository.c_str());

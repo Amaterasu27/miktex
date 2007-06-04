@@ -22,7 +22,6 @@
 #include "StdAfx.h"
 #include "internal.h"
 #include "Resource.h"
-#include "mpmidl.h"
 #include "COM/mpm.h"
 
 MiKTeXPackageManagerModule _AtlModule;

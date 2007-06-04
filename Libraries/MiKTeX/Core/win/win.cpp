@@ -21,8 +21,6 @@
 
 #include "StdAfx.h"
 
-#include "miktex/version.h"
-
 #include "internal.h"
 #include "core-version.h"
 

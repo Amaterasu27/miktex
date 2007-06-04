@@ -49,10 +49,11 @@
 
 #include <getopt.h>
 
+#include "Setup-version.h"
+
 #include <miktex/core.h>
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>
-#include <miktex/version.h>
 #include <miktex/urls.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

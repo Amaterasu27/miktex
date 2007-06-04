@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -39,6 +39,8 @@
 #include <set>
 #include <algorithm>
 #include <string>
+
+#include "Remove-version.h"
 
 #include <miktex/core.h>
 #include <miktex/mpm.h>

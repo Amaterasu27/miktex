@@ -23,8 +23,6 @@
 
 #include "internal.h"
 
-#include "mpm-version.h"
-
 #if ! defined(THE_NAME_OF_THE_GAME)
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Package Manager")
 #endif
@@ -60,6 +58,28 @@ const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_FNDB T_(",")
   MIKTEX_TRACE_MPM
   ;
+
+/* _________________________________________________________________________
+
+   StrNCmp
+   _________________________________________________________________________ */
+
+#if defined(StrNCmp)
+#  undef StrNCmp
+#endif
+
+inline
+int
+StrNCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
+	 /*[in]*/ const MIKTEXCHAR *	lpsz2,
+	 /*[in]*/ size_t		n)
+{
+#if defined(MIKTEX_UNICODE)
+  return (wcsncmp(lpsz1, lpsz2, n));
+#else
+  return (strncmp(lpsz1, lpsz2, n));
+#endif
+}
 
 /* _________________________________________________________________________
 
@@ -202,6 +222,15 @@ private:
 
 private:
   void
+  ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
+		 /*[in,out]*/ vector<tstring> &	toBeinstalled);
+
+private:
+  void
+  ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled);
+
+private:
+  void
   FindUpdates ();
 
 private:
@@ -288,6 +317,8 @@ enum Option
   OPT_FIND_CONFLICTS,		// internal
   OPT_FIND_UPDATES,
   OPT_HHELP,
+  OPT_IMPORT,
+  OPT_IMPORT_ALL,
   OPT_INSTALL,
   OPT_INSTALL_ROOT,
   OPT_INSTALL_SOME,
@@ -347,6 +378,18 @@ const struct poptOption Application::aoption[] = {
     T_(" exit when the window is closed."), 0
   },
 #endif
+
+  {
+    T_("import"), 0, POPT_ARG_STRING, 0, OPT_IMPORT,
+    T_("Import the specified package from another MiKTeX installation."),
+    T_("PACKAGE")
+  },
+
+  {
+    T_("import-all"), 0, POPT_ARG_NONE, 0, OPT_IMPORT_ALL,
+    T_("Import all installed packages from another MiKTeX installation."),
+    0
+  },
 
   {
     T_("install"), 0, POPT_ARG_STRING, 0, OPT_INSTALL,
@@ -875,6 +918,108 @@ Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
     }
 }
 
+/* _________________________________________________________________________
+
+   Application::ImportPackage
+   _________________________________________________________________________ */
+
+void
+Application::ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
+			    /*[in,out]*/ vector<tstring> & toBeinstalled)
+{
+  if (repository.length() == 0)
+    {
+      Error (T_("You have to use --repository=/PATH/TO/MIKTEX."));
+    }
+  PathName packagesIni (repository);
+  packagesIni += MIKTEX_PATH_PACKAGES_INI;
+  if (! File::Exists(packagesIni))
+    {
+      Error (T_("Not a MiKTeX installation directory: %s"),
+	     repository.c_str());
+    }
+  SmartPointer<Cfg> pCfg = Cfg::Create();
+  pCfg->Read (packagesIni);
+  if (StrNCmp(deploymentName.c_str(), T_("miktex-"), 7) == 0)
+    {
+      Error (T_("Cannot import package %s."), deploymentName.c_str());
+    }
+  tstring str;
+  if (! pCfg->TryGetValue(deploymentName.c_str(), T_("TimeInstalled"), str)
+      || str == T_("")
+      || str == T_("0"))
+    {
+      Error (T_("Package %s is not installed."), deploymentName.c_str());
+    }
+  if (pCfg->TryGetValue(deploymentName.c_str(), T_("Obsolete"), str)
+      && str == T_("1"))
+    {
+      Error (T_("Package %s is obsolete."), deploymentName.c_str());
+    }
+  PackageInfo packageInfo;
+  if (! pPackageManager->TryGetPackageInfo(deploymentName.c_str(),
+					   packageInfo))
+    {
+      Error (T_("Unknown package: %s."), deploymentName.c_str());
+    }
+  if (packageInfo.IsInstalled())
+    {
+      Error (T_("Package %s is already installed."), deploymentName.c_str());
+    }
+  toBeinstalled.push_back (deploymentName);
+}
+
+/* _________________________________________________________________________
+
+   Application::ImportPackages
+   _________________________________________________________________________ */
+
+void
+Application::ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled)
+{
+  if (repository.length() == 0)
+    {
+      Error (T_("You have to use --repository=/PATH/TO/MIKTEX."));
+    }
+  PathName packagesIni (repository);
+  packagesIni += MIKTEX_PATH_PACKAGES_INI;
+  if (! File::Exists(packagesIni))
+    {
+      Error (T_("Not a MiKTeX installation directory: %s"),
+	     repository.c_str());
+    }
+  SmartPointer<Cfg> pCfg = Cfg::Create();
+  pCfg->Read (packagesIni);
+  MIKTEXCHAR szKey[BufferSizes::MaxCfgName];
+  for (MIKTEXCHAR * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
+       lpszKey != 0;
+       lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
+    {
+      if (StrNCmp(lpszKey, T_("miktex-"), 7) == 0)
+	{
+	  continue;
+	}
+      tstring str;
+      if (! pCfg->TryGetValue(lpszKey, T_("TimeInstalled"), str)
+	  || str == T_("")
+	  || str == T_("0"))
+	{
+	  continue;
+	}
+      if (pCfg->TryGetValue(lpszKey, T_("Obsolete"), str)
+	  && str == T_("1"))
+	{
+	  continue;
+	}
+      PackageInfo packageInfo;
+      if (! pPackageManager->TryGetPackageInfo(lpszKey, packageInfo)
+	  || packageInfo.IsInstalled())
+	{
+	  continue;
+	}
+      toBeinstalled.push_back (lpszKey);
+    } 
+}
 
 /* _________________________________________________________________________
 
@@ -1264,6 +1409,8 @@ Application::Main (/*[in]*/ int			argc,
   bool optCsv = false;
   bool optFindConflicts = false;
   bool optFindUpdates = false;
+  bool optImport = false;
+  bool optImportAll = false;
   bool optList = false;
   bool optListRepositories = false;
   bool optPickRepositoryUrl = false;
@@ -1283,6 +1430,7 @@ Application::Main (/*[in]*/ int			argc,
   tstring optProxy;
   tstring optProxyPassword;
   tstring optProxyUser;
+  tstring toBeImported;
   vector<tstring> installSome;
   vector<tstring> toBeInstalled;
   vector<tstring> toBeRemoved;
@@ -1321,6 +1469,13 @@ Application::Main (/*[in]*/ int			argc,
 	    return;
 	  }
 #endif
+	case OPT_IMPORT:
+	  toBeImported = lpszOptArg;
+	  optImport = true;
+	  break;
+	case OPT_IMPORT_ALL:
+	  optImportAll = true;
+	  break;
 	case OPT_INSTALL:
 	  toBeInstalled.push_back (lpszOptArg);
 	  break;
@@ -1536,6 +1691,18 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optUpdateDb)
     {
       UpdateDb ();
+      restartWindowed = false;
+    }
+
+  if (optImport)
+    {
+      ImportPackage (toBeImported, toBeInstalled);
+      restartWindowed = false;
+    }
+
+  if (optImportAll)
+    {
+      ImportPackages (toBeInstalled);
       restartWindowed = false;
     }
 

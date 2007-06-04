@@ -7,20 +7,20 @@ HKCR
 			val AccessPermission = b '%ACCESS_SD%'
 		}
 	}
-	MiKTeX.Session.1 = s 'MiKTeX Session'
+	MiKTeX.Session.@MIKTEX_SERIES_STR@ = s 'MiKTeX @MIKTEX_SERIES_STR@ Session'
 	{
-		CLSID = s '{DE6D4D25-4E98-488D-91B2-E97CC319764B}'
+		CLSID = s '{@guid_MiKTeX_Session_CURVER@}'
 	}
 	MiKTeX.Session = s 'MiKTeX Session'
 	{
-		CLSID = s '{DE6D4D25-4E98-488D-91B2-E97CC319764B}'
-		CurVer = s 'MiKTeX.Session.1'
+		CLSID = s '{@guid_MiKTeX_Session_CURVER@}'
+		CurVer = s 'MiKTeX.Session.@MIKTEX_SERIES_STR@'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {DE6D4D25-4E98-488D-91B2-E97CC319764B} = s 'MiKTeX Session'
+		ForceRemove {@guid_MiKTeX_Session_CURVER@} = s 'MiKTeX @MIKTEX_SERIES_STR@ Session'
 		{
-			ProgID = s 'MiKTeX.Session.1'
+			ProgID = s 'MiKTeX.Session.@MIKTEX_SERIES_STR@'
 			VersionIndependentProgID = s 'MiKTeX.Session'
 			ForceRemove 'Programmable'
 			InprocServer32 = s '%MODULE%'
@@ -28,7 +28,7 @@ HKCR
 				val ThreadingModel = s 'Free'
 			}
 			val AppID = s '%APPID%'
-			'TypeLib' = s '{4C28CF19-0EC8-42AF-B901-CDCCCCE420FB}'
+			'TypeLib' = s '{@guid_MiKTeX_Session_TLB_CURVER@}'
 			Elevation
 			{
 				val Enabled = d 1

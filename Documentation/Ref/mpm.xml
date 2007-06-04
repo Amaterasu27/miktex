@@ -74,6 +74,28 @@ the list of updateable packages.</para></listitem>
 &optionhelp;
 &optionhhelp;
 <varlistentry>
+<term><option>--import=<replaceable>PACKAGE</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--import=package</primary>
+</indexterm>
+<para>Import the specified package from another &MiKTeX; installation.
+The root directory must be specified via
+<option>--repository=<replaceable>DIR</replaceable></option>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--import-all</option></term>
+<listitem>
+<indexterm>
+<primary>--import-all</primary>
+</indexterm>
+<para>Import all packages from another &MiKTeX; installation.
+The root directory must be specified via
+<option>--repository=<replaceable>DIR</replaceable></option>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--install=<replaceable>package</replaceable></option></term>
 <listitem>
 <indexterm>

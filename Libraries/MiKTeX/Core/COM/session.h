@@ -28,7 +28,7 @@ class MiKTeXSessionModule
   : public CAtlDllModuleT< MiKTeXSessionModule >
 {
 public:
-  DECLARE_LIBID(LIBID_MiKTeXSessionLib);
+  DECLARE_LIBID(__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(__MiKTeXSession)));
   DECLARE_REGISTRY_APPID_RESOURCEID(IDR_MIKTEXSESSIONMODULE,
 				    "{C3CAB8AD-25D8-4EB0-912A-084D08B956CE}");
 };

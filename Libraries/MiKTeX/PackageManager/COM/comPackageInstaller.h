@@ -23,14 +23,13 @@
 
 #include "Resource.h"
 
-#include "mpmidl.h"
-
 class ATL_NO_VTABLE comPackageInstaller
   : public CComObjectRootEx<CComMultiThreadModel>,
     public ISupportErrorInfo,
-    public IDispatchImpl<IPackageInstaller,
-			 &IID_IPackageInstaller,
-			 &LIBID_MiKTeXPackageManagerLib,
+    public IDispatchImpl<MiKTeXPackageManagerLib::IPackageInstaller,
+			 &__uuidof(MiKTeXPackageManagerLib::IPackageInstaller),
+			 &__uuidof(MiKTeXPackageManagerLib
+				   ::MAKE_CURVER_ID(__MiKTeXPackageManager)),
 			 /*wMajor =*/ 1,
 			 /*wMinor =*/ 0>,
     public MiKTeX::Packages::PackageInstallerCallback
@@ -99,7 +98,8 @@ public:
   STDMETHOD(InstallRemove) ();
 
 public:
-  STDMETHOD(GetErrorInfo) (/*[out,retval]*/ ErrorInfo * pErrorInfo);
+  STDMETHOD(GetErrorInfo)
+    (/*[out,retval]*/ MiKTeXPackageManagerLib::ErrorInfo * pErrorInfo);
 
 public:
   STDMETHOD(UpdateDb) ();
@@ -114,7 +114,7 @@ private:
   std::vector<MiKTeX::Core::tstring> packagesToBeRemoved;
 
 private:
-  CComQIPtr<IPackageInstallerCallback> pCallback;
+  CComQIPtr<MiKTeXPackageManagerLib::IPackageInstallerCallback> pCallback;
 
 private:
   MiKTeX::Packages::PackageManagerPtr pManager;

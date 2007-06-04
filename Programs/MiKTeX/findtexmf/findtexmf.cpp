@@ -1,6 +1,6 @@
 /* findtexmf.cpp: finding TeXMF related files
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of FindTeXMF.
 
@@ -28,12 +28,12 @@
 #include <cstdarg>
 #include <cstdio>
 
+#include "findtexmf-version.h"
+
 #include <miktex/core.h>
 #include <miktex/app.h>
 #include <miktex/paths.h>
 #include <popt-miktex.h>
-
-#include "findtexmf-version.h"
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

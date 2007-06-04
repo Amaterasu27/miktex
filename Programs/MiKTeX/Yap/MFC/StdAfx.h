@@ -59,6 +59,8 @@
 
 #include <bmeps.h>
 
+#include "yap-version.h"
+
 #include <miktex/DibChunker.h>
 #include <miktex/ErrorDialog.h>
 #include <miktex/ProgressDialog.h>
@@ -68,7 +70,6 @@
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
-#include <miktex/version.h>
 #include <miktex/win/DllProc.h>
 
 #include <popt-miktex.h>

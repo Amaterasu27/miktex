@@ -28,6 +28,8 @@
 #define EAD86981C92C904D808A5E6CEC64B90E
 #include "miktex/core.h"
 
+#include "core-version.h"
+
 #if defined(MIKTEX_WINDOWS)
 #  include "miktex/win/DllProc.h"
 #endif
@@ -59,6 +61,10 @@ BEGIN_INTERNAL_NAMESPACE;
 
 #if defined(_MSC_VER) && defined(MIKTEX_WINDOWS)
 #  pragma comment(lib, "comsuppw.lib")
+#endif
+
+#if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
+namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 #endif
 
 /* _________________________________________________________________________

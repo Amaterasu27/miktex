@@ -194,5 +194,5 @@ using namespace std;
 #include <zlib.h>
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-#  import "session.tlb" raw_interfaces_only
+#  import "@session_tlb_name@.tlb" raw_interfaces_only
 #endif

@@ -1,4 +1,4 @@
-/* findpk.cpp: find a PK file
+/* findpk.cpp: find a PK file					-*- C++ -*-
 
    Copyright (C) 2006-2007 Christian Schenk
 
@@ -13,15 +13,15 @@
    General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with This file; if not, write to the Free Software
+   along with this file; if not, write to the Free Software
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
 #include <cstdio>
 
-#import <session.tlb>
+#import <@session_tlb_name@.tlb>
 
-using namespace MiKTeXSessionLib;
+using namespace MiKTeXSession@MIKTEX_SERIES_ID_STR@;
 
 int
 main (/*[in]*/ int		argc,
@@ -45,7 +45,7 @@ main (/*[in]*/ int		argc,
   try
     {
       ISessionPtr pSession;
-      HRESULT hr = pSession.CreateInstance(__uuidof(MiKTeXSession));
+      HRESULT hr = pSession.CreateInstance(L"MiKTeX.Session");
       if (FAILED(hr))
       {
 	_com_raise_error (hr);

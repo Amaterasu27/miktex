@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1245,7 +1245,7 @@ MIKTEXAPI(bool)
 Utils::IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root)
 {
   PathName path (root);
-  path += T_("texmf");
+  path += MIKTEXDIRECT_PREFIX_DIR;
   path += MIKTEX_PATH_MD_INI;
   if (! File::Exists(path))
     {

@@ -23,7 +23,6 @@
 
 #include "Setup.h"
 
-#include "Setup-version.h"
 #include "SetupWizard.h"
 
 /* _________________________________________________________________________

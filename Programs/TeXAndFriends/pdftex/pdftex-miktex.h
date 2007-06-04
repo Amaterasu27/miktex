@@ -55,6 +55,68 @@ class PDFTEXCLASS
 
 {
 public:
+  enum {
+    OPT_DRAFTMODE = 10000,
+    OPT_OUTPUT_FORMAT,
+  };
+
+
+public:
+  virtual
+  void
+  MIKTEXMFCALL
+  AddOptions ()
+  {
+    TeXApp::AddOptions ();
+
+    AddOption (MIKTEXTEXT("draftmode\0\
+Switch on draft mode (generates no output)."),
+	       OPT_DRAFTMODE);
+
+    AddOption (MIKTEXTEXT("output-format\0Set the output format."),
+	       OPT_OUTPUT_FORMAT,
+	       required_argument,
+	       MIKTEXTEXT("FORMAT"));
+  }
+
+public:
+  virtual
+  bool
+  MIKTEXMFCALL
+  ProcessOption (/*[in]*/ int			opt,
+		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+  {
+    bool done = true;
+    switch (opt)
+      {
+      case OPT_DRAFTMODE:
+	THEDATA(pdfdraftmodeoption) = 1;
+	THEDATA(pdfdraftmodevalue) = 1;
+	break;
+      case OPT_OUTPUT_FORMAT:
+	THEDATA(pdfoutputoption) = 1;
+	if (MiKTeX::Core::StringCompare(lpszOptArg, MIKTEXTEXT("dvi")) == 0)
+	  {
+	    THEDATA(pdfoutputvalue) = 0;
+	  }
+	else if (MiKTeX::Core::StringCompare(lpszOptArg, MIKTEXTEXT("pdf"))
+		 == 0)
+	  {
+	    THEDATA(pdfoutputvalue) = 2;
+	  }
+	else
+	  {
+	    FatalError (MIKTEXTEXT("Unkown output option value."));
+	  }
+	break;
+      default:
+	done = TeXApp::ProcessOption(opt, lpszOptArg);
+	break;
+      }
+    return (done);
+  }
+
+public:
   void
   AllocateMemory ()
   {

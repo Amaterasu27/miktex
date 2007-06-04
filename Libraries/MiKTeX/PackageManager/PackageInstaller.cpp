@@ -502,15 +502,19 @@ PackageInstallerImpl::InstallDbLight ()
 			   0);
       pExtractor->Dispose ();
     }
-  else
+  else if (repositoryType == RepositoryType::MiKTeXDirect)
     {
-      MIKTEX_ASSERT (repositoryType == RepositoryType::MiKTeXDirect);
       PathName pathMpmIniSrc (repository);
-      pathMpmIniSrc += PrefixedPath(MIKTEX_PATH_MPM_INI);
+      pathMpmIniSrc += MIKTEXDIRECT_PREFIX_DIR;
+      pathMpmIniSrc += MIKTEX_PATH_MPM_INI;
       PathName pathMpmIniDst (destinationDirectory);
       pathMpmIniDst += MIKTEX_PATH_MPM_INI;
       size_t size;
       MyCopyFile (pathMpmIniSrc, pathMpmIniDst, size);
+    }
+  else
+    {
+      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::InstallDbLight"));
     }
 }
 
@@ -1029,10 +1033,9 @@ PackageInstallerImpl::MyCopyFile (/*[in]*/ const PathName &	source,
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::CopyFiles (/*[in]*/ const vector<tstring> & fileList)
+PackageInstallerImpl::CopyFiles (/*[in]*/ const PathName & pathSourceRoot,
+				 /*[in]*/ const vector<tstring> & fileList)
 {
-  PathName pathSourceRoot (repository, TEXMF_PREFIX_DIRECTORY);
-
   for (vector<tstring>::const_iterator it = fileList.begin();
        it != fileList.end();
        ++ it)
@@ -1144,11 +1147,11 @@ PackageInstallerImpl::RemoveFromFileList
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::CopyPackage (/*[in]*/ const tstring & deploymentName)
+PackageInstallerImpl::CopyPackage (/*[in]*/ const PathName & pathSourceRoot,
+				   /*[in]*/ const tstring & deploymentName)
 {
   // parse the package definition file
-  PathName pathPackageFile = repository;
-  pathPackageFile += TEXMF_PREFIX_DIRECTORY;
+  PathName pathPackageFile = pathSourceRoot;
   pathPackageFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
   pathPackageFile += deploymentName;
   pathPackageFile.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
@@ -1165,9 +1168,9 @@ PackageInstallerImpl::CopyPackage (/*[in]*/ const tstring & deploymentName)
 		 PrefixedPackageDefinitionFile(deploymentName));
 
   // copy the files
-  CopyFiles (packageInfo.runFiles);
-  CopyFiles (packageInfo.docFiles);
-  CopyFiles (packageInfo.sourceFiles);
+  CopyFiles (pathSourceRoot, packageInfo.runFiles);
+  CopyFiles (pathSourceRoot, packageInfo.docFiles);
+  CopyFiles (pathSourceRoot, packageInfo.sourceFiles);
 }
 
 /* _________________________________________________________________________
@@ -1350,11 +1353,23 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const tstring &	deploymentName)
       ExtractFiles (pathArchiveFile, aft);
       downloadedFile.Delete ();
     }
-  else
+  else if (repositoryType == RepositoryType::MiKTeXDirect)
     {
       // copy from CD
-      MIKTEX_ASSERT (repositoryType == RepositoryType::MiKTeXDirect);
-      CopyPackage (deploymentName);
+      PathName pathSourceRoot (repository);
+      pathSourceRoot += MIKTEXDIRECT_PREFIX_DIR;
+      CopyPackage (pathSourceRoot, deploymentName);
+    }
+  else if (repositoryType == RepositoryType::MiKTeXInstallation)
+    {
+      // import from another MiKTeX installation
+      ReportLine (T_("importing package %s..."), deploymentName.c_str());
+      PathName pathSourceRoot (repository);
+      CopyPackage (pathSourceRoot, deploymentName);
+    }
+  else
+    {
+      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::InstallPackage"));
     }
 
   // parse the new package definition file
@@ -1651,7 +1666,8 @@ PackageInstallerImpl::ConnectToServer ()
 	    {
 	      WCHAR wszCLSID[50];
 	      if (StringFromGUID2
-		  (__uuidof(MiKTeXPackageManagerLib::PackageManager),
+		  (__uuidof(MiKTeXPackageManagerLib
+			    ::MAKE_CURVER_ID(PackageManager)),
 			    wszCLSID, 
 			    sizeof(wszCLSID) / sizeof(wszCLSID[0]))
 		  < 0)
@@ -1671,7 +1687,8 @@ PackageInstallerImpl::ConnectToServer ()
 	      HRESULT hr =
 		CoGetObject(monikerName.c_str(),
 			    &bo,
-			    __uuidof(MiKTeXPackageManagerLib::IPackageManager),
+			    __uuidof(MiKTeXPackageManagerLib
+				     ::IPackageManager),
 			    reinterpret_cast<void**>(&localServer.pManager));
 	      if (FAILED(hr))
 		{
@@ -1684,7 +1701,8 @@ PackageInstallerImpl::ConnectToServer ()
 	    {
 	      HRESULT hr =
 		localServer.pManager.CoCreateInstance
-		(__uuidof(MiKTeXPackageManagerLib::PackageManager),
+		(__uuidof(MiKTeXPackageManagerLib::
+			  MAKE_CURVER_ID(PackageManager)),
 		 0,
 		 CLSCTX_LOCAL_SERVER);
 	      if (FAILED(hr))
@@ -2546,12 +2564,16 @@ PackageInstallerImpl::UpdateDb ()
       tempDir.SetToCurrentDirectory ();
       SetUpPackageDefinitionFiles (tempDir);
     }
-  else
+  else if (repositoryType == RepositoryType::MiKTeXDirect)
     {
       // installing from the CD
-      MIKTEX_ASSERT (repositoryType == RepositoryType::MiKTeXDirect);
-      tempDir.Set (repository,
-		   PrefixedPath(MIKTEX_PATH_PACKAGE_DEFINITION_DIR));
+      tempDir = repository;
+      tempDir += MIKTEXDIRECT_PREFIX_DIR;
+      tempDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+    }
+  else
+    {
+      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::UpdateDb"));
     }
 
   // handle obsolete package definition files

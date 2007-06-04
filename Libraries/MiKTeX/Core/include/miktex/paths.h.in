@@ -500,6 +500,8 @@
     MIKTEX_PATH_DIRECTORY_DELIMITER_STRING MIKTEXTEXT("MiKTeXTemp")
 #endif
 
+#define MIKTEXDIRECT_PREFIX_DIR MIKTEXTEXT("texmf")
+
 /* _________________________________________________________________________
 
    MIKTEX_PATH_MPM_INI

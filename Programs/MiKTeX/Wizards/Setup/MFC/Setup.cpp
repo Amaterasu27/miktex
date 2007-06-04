@@ -22,7 +22,6 @@
 #include "StdAfx.h"
 #include "Setup.h"
 
-#include "Setup-version.h"
 #include "SetupWizard.h"
 #include "ShellLinkData.h"
 

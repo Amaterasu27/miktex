@@ -1,6 +1,6 @@
 /* mkfntmap.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -20,6 +20,8 @@
 
 /* This program is based on the updmap shell script written by Thomas
    Esser. */
+
+#include "mkfntmap-version.h"
    
 #include <miktex/core.h>
 #include <miktex/paths.h>
@@ -39,8 +41,6 @@
 
 #include "internal.h"
 
-#include "mkfntmap.rc"
-
 using namespace MiKTeX::Core;
 using namespace std;
 
@@ -56,6 +56,12 @@ using namespace std;
 #else
 #  define tcout cout
 #  define tcerr cerr
+#endif
+
+#if MIKTEX_SERIES_INT < 207
+#  define CREATE_DEPRECATED_MAP_FILES 1
+#else
+#  define CREATE_DEPRECATED_MAP_FILES 0
 #endif
 
 /* _________________________________________________________________________
@@ -263,6 +269,11 @@ private:
 
 private:
   void
+  CopyFile (/*[in]*/ const PathName & pathSrc,
+	    /*[in]*/ const PathName & pathDest);
+
+private:
+  void
   CopyFiles ();
 
 private:
@@ -386,7 +397,7 @@ MakeFontMapApp::ShowVersion ()
   tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					   VersionNumber(VER_FILEVERSION))
 	<< T_("\n\
-Copyright (C) 2002-2006 Christian Schenk\n\
+Copyright (C) 2002-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
@@ -1316,6 +1327,24 @@ MakeFontMapApp::TranslateLW35 (/*[in]*/ const set<FontMapEntry> &	set1)
 
 /* _________________________________________________________________________
 
+   MakeFontMapApp::CopyFile
+   _________________________________________________________________________ */
+
+void
+MakeFontMapApp::CopyFile (/*[in]*/ const PathName & pathSrc,
+			  /*[in]*/ const PathName & pathDest)
+{
+  Verbose (T_("Copying %s"), Q_(pathSrc));
+  Verbose (T_("     to %s..."), Q_(pathDest));
+  File::Copy (pathSrc, pathDest);
+  if (! Fndb::FileExists(pathDest))
+    {
+      Fndb::Add (pathDest);
+    }
+}
+
+/* _________________________________________________________________________
+
    MakeFontMapApp::CopyFiles
    _________________________________________________________________________ */
 
@@ -1327,47 +1356,31 @@ MakeFontMapApp::CopyFiles ()
   PathName pdftexOutputDir (GetPdfTeXOutputDir());
 
   PathName pathSrc;
-  PathName pathDest;
 
   pathSrc.Set (dvipsOutputDir,
 	       (dvipsPreferOutline ? T_("psfonts_t1") : T_("psfonts_pk")),
 	       T_(".map"));
-  pathDest.Set (dvipsOutputDir, T_("psfonts"), T_(".map"));
-  Verbose (T_("Copying %s"), Q_(pathSrc));
-  Verbose (T_("     to %s..."), Q_(pathDest));
-  File::Copy (pathSrc, pathDest);
-  if (! Fndb::FileExists(pathDest))
-    {
-      Fndb::Add (pathDest);
-    }
+  CopyFile (pathSrc, PathName(dvipsOutputDir, T_("psfonts.map")));
 
   pathSrc.Set (dvipdfmOutputDir,
 	       (dvipdfmDownloadBase14
 		? T_("dvipdfm_dl14")
 		: T_("dvipdfm_ndl14")),
 	       T_(".map"));
-  pathDest.Set (dvipdfmOutputDir, T_("psfonts"), T_(".map"));
-  Verbose (T_("Copying %s"), Q_(pathSrc));
-  Verbose (T_("     to %s..."), Q_(pathDest));
-  File::Copy (pathSrc, pathDest);
-  if (! Fndb::FileExists(pathDest))
-    {
-      Fndb::Add (pathDest);
-    }
+  CopyFile (pathSrc, PathName(dvipdfmOutputDir, T_("dvipdfm.map")));
+#if CREATE_DEPRECATED_MAP_FILES
+  CopyFile (pathSrc, PathName(dvipdfmOutputDir, T_("psfonts.map")));
+#endif
 
   pathSrc.Set (pdftexOutputDir,
 	       (pdftexDownloadBase14
 		? T_("pdftex_dl14")
 		: T_("pdftex_ndl14")),
 	       T_(".map"));
-  pathDest.Set (pdftexOutputDir, T_("psfonts"), T_(".map"));
-  Verbose (T_("Copying %s"), Q_(pathSrc));
-  Verbose (T_("     to %s..."), Q_(pathDest));
-  File::Copy (pathSrc, pathDest);
-  if (! Fndb::FileExists(pathDest))
-    {
-      Fndb::Add (pathDest);
-    }
+  CopyFile (pathSrc, PathName(pdftexOutputDir, T_("pdftex.map")));
+#if CREATE_DEPRECATED_MAP_FILES
+  CopyFile (pathSrc, PathName(pdftexOutputDir, T_("psfonts.map")));
+#endif
 }
 
 /* _________________________________________________________________________
