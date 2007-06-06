@@ -302,6 +302,7 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 	}
     }
   tstring url;
+#if defined(MIKTEX_WINDOWS)
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
       && repositoryType == RepositoryType::Remote
@@ -309,6 +310,7 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
     {
       return (false);
     }
+#endif
   if (pInstaller.get() == 0)
     {
       pInstaller.reset (pPackageManager->CreateInstaller());
