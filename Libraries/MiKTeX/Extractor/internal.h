@@ -308,6 +308,7 @@ class NumberToStringConverter_
 private:
   enum { BUFSIZE = 30 };
 
+#if defined(MIKTEX_WINDOWS)
 public:
   NumberToStringConverter_ (/*[in]*/ HRESULT hr)
   {
@@ -328,6 +329,7 @@ public:
 	FATAL_CRT_ERROR (T_("sprintf"), 0);
       }
   }
+#endif
 
 public:
   NumberToStringConverter_ (/*[in]*/ unsigned u)
@@ -479,7 +481,7 @@ public:
       {
 	Reset ();
       }
-    catch (const exception &)
+    catch (const std::exception &)
       {
       }
   }
@@ -527,6 +529,7 @@ private:
    AutoCoTaskMem
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class CoTaskMemFree_
 {
 public:
@@ -538,12 +541,14 @@ public:
 };
 
 typedef AutoResource<void *, CoTaskMemFree_> AutoCoTaskMem;
+#endif
 
 /* _________________________________________________________________________
 
    AutoLocalMem
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class LocalFree_
 {
 public:
@@ -555,12 +560,14 @@ public:
 };
 
 typedef AutoResource<void *, LocalFree_> AutoLocalMem;
+#endif
 
 /* _________________________________________________________________________
 
    AutoSysString
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class SysFreeString_
 {
 public:
@@ -572,6 +579,7 @@ public:
 };
 
 typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
+#endif
 
 /* _________________________________________________________________________
 
