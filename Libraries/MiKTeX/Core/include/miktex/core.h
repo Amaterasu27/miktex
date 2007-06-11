@@ -3870,6 +3870,69 @@ private:
 
 /* _________________________________________________________________________
 
+   LzmaStream
+   _________________________________________________________________________ */
+
+class
+LzmaStream : public Stream
+{
+public:
+  MIKTEXEXPORT
+  MIKTEXCALL
+  LzmaStream (/*[in]*/ const FileStream &	fileStream,
+	      /*[in]*/ bool			reading);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  MIKTEXCALL
+  ~LzmaStream ();
+
+public:
+  virtual
+  MIKTEXEXPORT
+  size_t
+  MIKTEXCALL
+  Read (/*[out]*/ void *	pBytes,
+	/*[in]*/ size_t		count);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Write (/*[in]*/ const void *		pBytes,
+	 /*[in]*/ size_t		count);
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  Seek (/*[in]*/ long		offset,
+	/*[in]*/ SeekOrigin	origin);
+
+public:
+  virtual
+  MIKTEXEXPORT
+  long
+  MIKTEXCALL
+  GetPosition ();
+
+public:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Close ();
+
+private:
+  bool reading;
+
+private:
+  void * p;
+};
+
+/* _________________________________________________________________________
+
    StreamReader
    _________________________________________________________________________ */
 

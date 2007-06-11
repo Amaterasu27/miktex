@@ -47,6 +47,7 @@ set(${core_dll_name}_sources
   CommandLine.cpp
   FileStream.cpp
   FormatInfo.cpp
+  LzmaStream.cpp
   MemoryMappedFile.cpp
   Process.cpp
   Thread.cpp
@@ -237,6 +238,7 @@ add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 target_link_libraries(${core_dll_name}
   ${CMAKE_THREAD_LIBS_INIT}
   ${bzip2_dll_name}
+  ${lzma_dll_name}
   ${md5_dll_name}
   ${zlib_dll_name}
 )

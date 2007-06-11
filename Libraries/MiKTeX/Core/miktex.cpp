@@ -976,13 +976,13 @@ SessionImpl::SessionImpl ()
     runningAsAdministrator (TriState::Undetermined),
 #if defined(MIKTEX_WINDOWS)
     runningAsPowerUser (TriState::Undetermined),
+    isUserAPowerUser (TriState::Undetermined),
 #endif
     sharedSetup (TriState::Undetermined),
     makeFonts (true),
     pInstallPackageCallback (0),
     haveStartupConfigFile (false),
     isUserAnAdministrator (TriState::Undetermined),
-    isUserAPowerUser (TriState::Undetermined),
 
     // passing an empty string to the locale constructor is ok; it
     // means: "the user's preferred locale" (cf. "The C++ Programming
@@ -1159,10 +1159,14 @@ SessionImpl::Uninitialize ()
     }
   catch (const exception &)
     {
+#if defined(MIKTEX_WINDOWS)
       CoUninitialize ();
+#endif
       throw;
     }
+#if defined(MIKTEX_WINDOWS)
   CoUninitialize ();
+#endif
 }
 
 /* _________________________________________________________________________

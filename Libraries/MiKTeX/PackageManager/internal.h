@@ -388,6 +388,7 @@ class NumberToStringConverter_
 private:
   enum { BUFSIZE = 30 };
 
+#if defined(MIKTEX_WINDOWS)
 public:
   NumberToStringConverter_ (/*[in]*/ HRESULT hr)
   {
@@ -408,6 +409,7 @@ public:
 	FATAL_CRT_ERROR (T_("sprintf"), 0);
       }
   }
+#endif
 
 public:
   NumberToStringConverter_ (/*[in]*/ unsigned u)
@@ -559,7 +561,7 @@ public:
       {
 	Reset ();
       }
-    catch (const exception &)
+    catch (const std::exception &)
       {
       }
   }
@@ -607,6 +609,7 @@ private:
    AutoCoTaskMem
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class CoTaskMemFree_
 {
 public:
@@ -618,12 +621,14 @@ public:
 };
 
 typedef AutoResource<void *, CoTaskMemFree_> AutoCoTaskMem;
+#endif
 
 /* _________________________________________________________________________
 
    AutoLocalMem
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class LocalFree_
 {
 public:
@@ -635,12 +640,14 @@ public:
 };
 
 typedef AutoResource<void *, LocalFree_> AutoLocalMem;
+#endif
 
 /* _________________________________________________________________________
 
    AutoSysString
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class SysFreeString_
 {
 public:
@@ -652,6 +659,7 @@ public:
 };
 
 typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
+#endif
 
 /* _________________________________________________________________________
 
@@ -1421,6 +1429,10 @@ public:
       {
 	return (MiKTeX::Extractor::ArchiveFileType::TarBzip2);
       }
+    else if (str == T_("TarLzma"))
+      {
+	return (MiKTeX::Extractor::ArchiveFileType::TarLzma);
+      }
     else
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileType"),
@@ -1457,10 +1469,10 @@ class PackageInstallerImpl
   : public PackageInstaller,
     public IProgressNotify_,
     public MiKTeX::Core::ICreateFndbCallback,
-    public MiKTeX::Extractor::IExtractCallback,
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-    public MiKTeXPackageManagerLib::IPackageInstallerCallback
+    public MiKTeXPackageManagerLib::IPackageInstallerCallback,
 #endif
+    public MiKTeX::Extractor::IExtractCallback
 {
 private:
   enum ErrorCode {
@@ -1801,6 +1813,7 @@ private:
   RegisterComponent
   (/*[in]*/ bool				doRegister,
    /*[in]*/ const MiKTeX::Core::PathName &	path);
+#endif
 
 private:
   void
@@ -1818,7 +1831,6 @@ private:
     RegisterComponents (doRegister, packages);
     RegisterComponents (doRegister, packages2);
   }
-#endif
 
 private:
   void

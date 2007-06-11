@@ -725,6 +725,7 @@ typedef AutoResource<void *, LocalFree_> AutoLocalMem;
    AutoSysString
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 class SysFreeString_
 {
 public:
@@ -736,6 +737,7 @@ public:
 };
 
 typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
+#endif
 
 /* _________________________________________________________________________
 

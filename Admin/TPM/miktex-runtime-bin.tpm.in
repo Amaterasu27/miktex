@@ -20,6 +20,7 @@ texmf/miktex/bin/${expat_dll_name}.dll
 texmf/miktex/bin/${extractor_dll_name}.dll
 texmf/miktex/bin/${gnu_dll_name}.dll
 texmf/miktex/bin/${kpsemu_dll_name}.dll
+texmf/miktex/bin/${lzma_dll_name}.dll
 texmf/miktex/bin/${md5_dll_name}.dll
 texmf/miktex/bin/${mpm_dll_name}.dll
 texmf/miktex/bin/${mpm_ps_dll_name}.dll

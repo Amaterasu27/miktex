@@ -69,6 +69,7 @@ public:
     TarBzip2 = 2,
     Zip = 3,
     Tar = 4,
+    TarLzma = 5,
   };
 
 public:
@@ -82,6 +83,8 @@ public:
 	return (MIKTEX_CABINET_FILE_SUFFIX);
       case TarBzip2:
 	return (MIKTEX_TARBZIP2_FILE_SUFFIX);
+      case TarLzma:
+	return (MIKTEX_TARLZMA_FILE_SUFFIX);
       case Zip:
 	return (MIKTEX_ZIP_FILE_SUFFIX);
       case Tar:

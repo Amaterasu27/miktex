@@ -33,8 +33,37 @@ public:
     None = 0,
     MSCab = 1,
     TarBzip2 = 2,
-    Zip = 3
+    Zip = 3,
+    Tar = 4,
+    TarLzma = 5,
   };
+
+public:
+  static
+  const MIKTEXCHAR *
+  GetFileNameExtension (/*[in]*/ EnumType archiveFileType)
+  {
+    switch (archiveFileType)
+      {
+      case MSCab:
+	return (MIKTEX_CABINET_FILE_SUFFIX);
+      case TarBzip2:
+	return (MIKTEX_TARBZIP2_FILE_SUFFIX);
+      case TarLzma:
+	return (MIKTEX_TARLZMA_FILE_SUFFIX);
+      case Zip:
+	return (MIKTEX_ZIP_FILE_SUFFIX);
+      case Tar:
+	return (MIKTEX_TAR_FILE_SUFFIX);
+      default:
+	MiKTeX::Core::Session::FatalMiKTeXError
+	  (MIKTEXTEXT("ArchiveFileTypeEnum::GetFileNameExtension"),
+	   MIKTEXTEXT("Unknown archive file type."),
+	   0,
+	   MIKTEXTEXT(__FILE__),
+	   __LINE__);
+      }
+  }
 };
 
 typedef EnumWrapper<ArchiveFileTypeEnum> ArchiveFileType;
@@ -74,8 +103,14 @@ private:
 
 struct PackageSpec
 {
+  PackageSpec ()
+    : level (0),
+      archiveFileType (ArchiveFileType::None)
+  {
+  }
   tstring	deploymentName;	// external package name
   MIKTEXCHAR	level;		// one of: '-', 'S', 'M', 'L', 'T'
+  ArchiveFileType archiveFileType;
 };
 
 /* _________________________________________________________________________
@@ -185,6 +220,15 @@ set<tstring> toBeIncluded;
 
 // default package level
 MIKTEXCHAR defaultLevel = 'T';
+
+// default archive file type
+ArchiveFileType defaultArchiveFileType = ArchiveFileType::TarLzma;
+
+#if MIKTEX_SERIES_INT < 207
+#  define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
+#else
+#  define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarLzma
+#endif
 
 /* _________________________________________________________________________
 
@@ -453,7 +497,8 @@ InitializePackageDirectory (/*[in]*/ const PackageInfo &	packageInfo,
 				FileAccess::Write));
 
   // write values
-  fprintf (stream.Get(), "externalname=%s\n", packageInfo.deploymentName.c_str());
+  fprintf (stream.Get(), "externalname=%s\n",
+	   packageInfo.deploymentName.c_str());
   fprintf (stream.Get(), "name=%s\n", packageInfo.displayName.c_str());
   fprintf (stream.Get(), "creator=%s\n", packageInfo.creator.c_str());
   fprintf (stream.Get(), "title=%s\n", packageInfo.title.c_str());
@@ -637,6 +682,24 @@ GetPackageLevel (/*[in]*/ const MpcPackageInfo &	packageInfo)
       return (defaultLevel);
     }
   return (it->second.level);
+}
+
+/* _________________________________________________________________________
+
+   GetPackageArchiveFileType
+   _________________________________________________________________________ */
+
+ArchiveFileType
+GetPackageArchiveFileType (/*[in]*/ const MpcPackageInfo &	packageInfo)
+{
+  map<string, PackageSpec>::const_iterator
+    it = packageList.find(packageInfo.deploymentName);
+  if (it == packageList.end())
+    {
+      // assume ".tar.lzma", if the package is not listed
+      return (defaultArchiveFileType);
+    }
+  return (it->second.archiveFileType);
 }
 
 /* _________________________________________________________________________
@@ -915,6 +978,38 @@ WritePackageDefinitionFiles
 
 /* _________________________________________________________________________
 
+   RunArchiver
+   _________________________________________________________________________ */
+
+void
+RunArchiver (/*[in]*/ ArchiveFileType		archiveFileType,
+	     /*[in]*/ const PathName &		archiveFile,
+	     /*[in]*/ const MIKTEXCHAR *	lpszFilter)
+{
+  tstring command;
+  switch (archiveFileType.Get())
+    {
+    case ArchiveFileType::TarBzip2:
+      command = "tar -cvjf \"";
+      command += archiveFile.Get();
+      command += "\" ";
+      command += lpszFilter;
+      break;
+    case ArchiveFileType::TarLzma:
+      command = "tar -cvf - ";
+      command += lpszFilter;
+      command += " | lzma e -si ";
+      command += "\"";
+      command += archiveFile.Get();
+      command += "\"";
+      break;
+    }
+  Verbose ("%s...\n", command.c_str());
+  Process::ExecuteSystemCommand (command.c_str());
+}
+
+/* _________________________________________________________________________
+
    WriteNetDatabase
    _________________________________________________________________________ */
 
@@ -957,13 +1052,10 @@ WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
   cfgDbLight.Write (tempIni.GetPathName());
 
   // create miktex-zzdb1.tar.bz2:
-  tstring command = "tar -cvjf ";
-  command += MIKTEX_MPM_DB_LIGHT_FILE_NAME_NO_SUFFIX;
-  command += MIKTEX_TARBZIP2_FILE_SUFFIX;
-  command += " ";
-  command += MIKTEX_MPM_INI_FILENAME;
-  Verbose ("%s...\n", command.c_str());
-  Process::ExecuteSystemCommand (command.c_str());
+  PathName dbPath1 (MIKTEX_MPM_DB_LIGHT_FILE_NAME_NO_SUFFIX);
+  dbPath1.AppendExtension (ArchiveFileType::GetFileNameExtension
+			   (DB_ARCHIVE_FILE_TYPE));
+  RunArchiver (DB_ARCHIVE_FILE_TYPE, dbPath1, MIKTEX_MPM_INI_FILENAME);
 
   // delete temporary mpm.ini
   tempIni.Delete ();
@@ -977,17 +1069,93 @@ WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
   // write all package definition files
   WritePackageDefinitionFiles (packageTable, packageDefinitionDir, cfgDbLight);
 
-  // create miktex-zzdb1.tar.bz2:
-  command = "tar -cvjf ";
-  command += MIKTEX_MPM_DB_FULL_FILE_NAME_NO_SUFFIX;
-  command += MIKTEX_TARBZIP2_FILE_SUFFIX;
-  command += " ";
-  command += texmfPrefix;
-  Verbose ("%s...\n", command.c_str());
-  Process::ExecuteSystemCommand (command.c_str());
+  // create miktex-zzdb2.tar.bz2:
+  PathName dbPath2 (MIKTEX_MPM_DB_FULL_FILE_NAME_NO_SUFFIX);
+  dbPath2.AppendExtension (ArchiveFileType::GetFileNameExtension
+			   (DB_ARCHIVE_FILE_TYPE));
+  RunArchiver (DB_ARCHIVE_FILE_TYPE, dbPath2, texmfPrefix.c_str());
 
   // delete package definition files
   tempDir.Delete ();
+}
+
+/* _________________________________________________________________________
+
+   ExtractFile
+   _________________________________________________________________________ */
+
+void
+ExtractFile (/*[in]*/ const PathName &	archiveFile,
+	     /*[in]*/ ArchiveFileType	archiveFileType,
+	     /*[in]*/ const PathName &	toBeExtracted,
+	     /*[in]*/ const PathName &	outFile)
+{
+  tstring command;
+  switch (archiveFileType.Get())
+    {
+    case ArchiveFileType::MSCab:
+      command = "cabextract --filter \"";
+      command += toBeExtracted.Get();
+      command += "\" --pipe \"";
+      command += archiveFile.Get();
+      command += "\" > \"";
+      command += outFile.Get();
+      command += "\"";
+      break;
+    case ArchiveFileType::TarBzip2:
+      command = "tar --force-local --to-stdout -xvjf \"";
+      command += archiveFile.Get();
+      command += "\" \"";
+      command += toBeExtracted.Get();
+      command += "\" > \"";
+      command += outFile.Get();
+      command += "\"";
+      break;
+    case ArchiveFileType::TarLzma:
+      command = "lzma d \"";
+      command += archiveFile.Get();
+      command += "\" -so | tar --force-local --to-stdout -xvf - \"";
+      command += toBeExtracted.Get();
+      command += "\" > \"";
+      command += outFile.Get();
+      command += "\"";
+      break;
+    }
+  Verbose ("%s...\n", command.c_str());
+  Process::ExecuteSystemCommand (command.c_str());
+}
+
+/* _________________________________________________________________________
+
+   CompressArchive
+   _________________________________________________________________________ */
+
+void
+CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
+		 /*[in]*/ ArchiveFileType	archiveFileType,
+		 /*[in]*/ const PathName &	outFile)
+{
+  tstring command;
+  switch (archiveFileType.Get())
+    {
+    case ArchiveFileType::TarBzip2:
+      command = "bzip2 --keep --compress --stdout \"";
+      command += toBeCompressed.Get();
+      command += "\" > \"";
+      command += outFile.Get();
+      command += "\"";
+      break;
+    case ArchiveFileType::TarLzma:
+      command = "lzma e \"";
+      command += toBeCompressed.Get();
+      command += "\" \"";
+      command += outFile.Get();
+      command += "\"";
+      break;
+    }
+  Verbose ("%s...\n", command.c_str());
+  Process::ExecuteSystemCommand (command.c_str());
+  File::Delete (toBeCompressed);
 }
 
 /* _________________________________________________________________________
@@ -1005,53 +1173,40 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 
   ArchiveFileType archiveFileType (ArchiveFileType::None);
 
-  // check to see whether a legacy cabinet file exists
-  archiveFile.Set (destDir,
-		   packageInfo.deploymentName.c_str(),
-		   MIKTEX_CABINET_FILE_SUFFIX);
-  if (File::Exists(archiveFile))
+  // check to see whether a cabinet file exists
+  PathName archiveFile2;
+  archiveFile2.Set (destDir,
+		    packageInfo.deploymentName.c_str(),
+		    MIKTEX_CABINET_FILE_SUFFIX);
+  if (File::Exists(archiveFile2))
     {
-      // extract the package definition file
-      TempFile packageDefinitionFile;
-      PathName filter (texmfPrefix);
-      filter += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
-      filter += packageInfo.deploymentName.c_str();
-      filter.AppendExtension (MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
-#if defined(MIKTEX_WINDOWS)
-      filter.ToUnix ();
-#endif
-      tstring command ("cabextract --filter \"");
-      command += filter.Get();
-      command += "\" --pipe \"";
-      command += archiveFile.Get();
-      command += "\" > \"";
-      command += packageDefinitionFile.GetPathName().Get();
-      command += "\"";
-      Process::ExecuteSystemCommand (command.c_str());
-
-      // read the package definition file
-      PackageInfo existingPackageInfo =
-	PackageManager::ReadPackageDefinitionFile
-	(packageDefinitionFile.GetPathName(),
-	 texmfPrefix.c_str());
-      
-      // check to see whether we can keep the cabinet file
-      if (packageInfo.digest == existingPackageInfo.digest)
-	{
-	  reuseExisting = true;
-	  archiveFileType = ArchiveFileType::MSCab;
-	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
-	}
+      archiveFile = archiveFile2;
+      archiveFileType = ArchiveFileType::MSCab;
     }
 
   // check to see whether a .tar.bz2 file exists
-  archiveFile.Set (destDir,
-		   packageInfo.deploymentName.c_str(),
-		   MIKTEX_TARBZIP2_FILE_SUFFIX);
-  if (File::Exists(archiveFile))
+  archiveFile2.Set (destDir,
+		    packageInfo.deploymentName.c_str(),
+		    MIKTEX_TARBZIP2_FILE_SUFFIX);
+  if (File::Exists(archiveFile2))
+    {
+      archiveFile = archiveFile2;
+      archiveFileType = ArchiveFileType::TarBzip2;
+    }
+
+  // check to see whether a .tar.lzma file exists
+  archiveFile2.Set (destDir,
+		    packageInfo.deploymentName.c_str(),
+		    MIKTEX_TARLZMA_FILE_SUFFIX);
+  if (File::Exists(archiveFile2))
+    {
+      archiveFile = archiveFile2;
+      archiveFileType = ArchiveFileType::TarLzma;
+    }
+
+  if (archiveFileType != ArchiveFileType::None)
     {
       // extract the package definition file
-      TempFile packageDefinitionFile;
       PathName filter (texmfPrefix);
       filter += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
       filter += packageInfo.deploymentName.c_str();
@@ -1059,14 +1214,11 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 #if defined(MIKTEX_WINDOWS)
       filter.ToUnix ();
 #endif
-      tstring command ("tar --force-local --to-stdout -xvjf \"");
-      command += archiveFile.Get();
-      command += "\" \"";
-      command += filter.Get();
-      command += "\" > \"";
-      command += packageDefinitionFile.GetPathName().Get();
-      command += "\"";
-      Process::ExecuteSystemCommand (command.c_str());
+      TempFile packageDefinitionFile;
+      ExtractFile (archiveFile,
+		   archiveFileType,
+		   filter, 
+		   packageDefinitionFile.GetPathName());
 
       // read the package definition file
       PackageInfo existingPackageInfo =
@@ -1074,17 +1226,23 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 	(packageDefinitionFile.GetPathName(),
 	 texmfPrefix.c_str());
       
-      // check to see whether we can keep the .tar.bz2 file
+      // check to see whether we can keep the existing file
       if (packageInfo.digest == existingPackageInfo.digest)
 	{
 	  reuseExisting = true;
-	  archiveFileType = ArchiveFileType::TarBzip2;
 	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
+	}
+      else
+	{
+	  archiveFileType = ArchiveFileType::None;
 	}
     }
 
+
   if (! reuseExisting)
     {
+      archiveFileType = GetPackageArchiveFileType(packageInfo);
+
       // create package directory
       Directory::Create (destDir);
       
@@ -1122,17 +1280,18 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 			packageInfo.deploymentName.c_str(),
 			MIKTEX_TAR_FILE_SUFFIX);
       
-      // path to .tar.bz2 file
-      archiveFile.Set (destDir,
-		       packageInfo.deploymentName.c_str(),
-		       MIKTEX_TARBZIP2_FILE_SUFFIX);
+      // path to compressed .tar file
+      archiveFile.Set
+	(destDir,
+	 packageInfo.deploymentName.c_str(),
+	 ArchiveFileType::GetFileNameExtension(archiveFileType.Get()));
       
 #if defined(MIKTEX_WINDOWS)
       tarFile.ToUnix ();
       archiveFile.ToUnix ();
 #endif
       
-      // create the .tar.bz2 file
+      // create the .tar file
       command = "tar --force-local -cvf ";
       command += tarFile.ToString();
 #if defined(MIKTEX_WINDOWS)
@@ -1172,18 +1331,16 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 	  Verbose ("%s...\n", command.c_str());
 	  Process::ExecuteSystemCommand (command.c_str());
 	}
+
+      // compress the tar file
       {
 	RestoreCurrentDirectory restoreCurrentDirectory (destDir);
 	if (File::Exists(archiveFile))
 	  {
 	    File::Delete (archiveFile);
 	  }
-	command = "bzip2 ";
-	command += tarFile.RemoveDirectorySpec().ToString();
-	Process::ExecuteSystemCommand (command.c_str());
+	CompressArchive (tarFile, archiveFileType, archiveFile);
       }
-
-      archiveFileType = ArchiveFileType::TarBzip2;
     }
 
   // get size of archive file
@@ -1233,11 +1390,10 @@ LoadDbLight (/*[in]*/ const PathName &	directory,
   scratchDirectory.Enter ();
 
   // extract mpm.ini:
-  string command = "tar --force-local -xvjf ";
-  command += pathDbLight.ToString();
-  command += " ";
-  command += MIKTEX_MPM_INI_FILENAME;
-  Process::ExecuteSystemCommand (command.c_str());
+  ExtractFile (pathDbLight,
+	       DB_ARCHIVE_FILE_TYPE,
+	       MIKTEX_MPM_INI_FILENAME,
+	       MIKTEX_MPM_INI_FILENAME);
 
   // parse mpm.ini
   cfg.Read (MIKTEX_MPM_INI_FILENAME);
@@ -1337,7 +1493,12 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 			   "Type",
 			   (archiveFileType == ArchiveFileType::MSCab
 			    ? "MSCab"
-			    : "TarBzip2"));
+			    : (archiveFileType == ArchiveFileType::TarBzip2
+			       ? "TarBzip2"
+			       : (archiveFileType == ArchiveFileType::TarLzma
+				  ? "TarLzma"
+				  : "unknown"))));
+			   
       if (! it->second.version.empty())
 	{
 	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1383,9 +1544,32 @@ ReadList (/*[in]*/ const PathName &		path,
 	{
 	  continue;
 	}
+      Tokenizer tok (lpsz, ";");
       PackageSpec pkgspec;
-      pkgspec.deploymentName = lpsz;
+      pkgspec.deploymentName = tok.GetCurrent();
       pkgspec.level = ch;
+      ArchiveFileType archiveFileType = defaultArchiveFileType;
+      ++ tok;
+      if (tok.GetCurrent() != 0)
+	{
+	  if (strcmp(tok.GetCurrent(), "MSCab") == 0)
+	    {
+	      archiveFileType = ArchiveFileType::MSCab;
+	    }
+	  else if (strcmp(tok.GetCurrent(), "TarBzip2") == 0)
+	    {
+	      archiveFileType = ArchiveFileType::TarBzip2;
+	    }
+	  else if (strcmp(tok.GetCurrent(), "TarLzma") == 0)
+	    {
+	      archiveFileType = ArchiveFileType::TarLzma;
+	    }
+	  else
+	    {
+	      FatalError ("Invalid package list file");
+	    }
+	}
+      pkgspec.archiveFileType = archiveFileType;
       mapPackageList[pkgspec.deploymentName] = pkgspec;
     }
   reader.Close ();
@@ -1553,10 +1737,6 @@ Run (/*[in]*/ int		argc,
   optVerbose = false;
 
   timePackaged = time(0);
-
-#if SUPPORT_CAB
-  createCab = false;
-#endif
 
   int optionIndex;
   int option;

@@ -342,6 +342,8 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_lzmalib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
@@ -436,6 +438,12 @@ endforeach(tpm)
 ## add sub-directories
 
 add_subdirectory(${rel_build_tools_etc_dir})
+
+add_subdirectory(${rel_lzmalib_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_lzmalib_dir}-static)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_bzip2_dir})
 
