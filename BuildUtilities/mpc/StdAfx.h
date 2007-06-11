@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2001-2005 Christian Schenk
+   Copyright (C) 2001-2006 Christian Schenk
 
    This file is part of MPC.
 
@@ -41,3 +41,4 @@
 #include <miktex/md5.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
+#include <miktex/version.h>

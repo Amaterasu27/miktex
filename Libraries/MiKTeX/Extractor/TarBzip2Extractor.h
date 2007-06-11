@@ -26,50 +26,9 @@
 #if ! defined(GUARD_E03089A1127031428EBAC6B157F22548_)
 #define GUARD_E03089A1127031428EBAC6B157F22548_
 
-#include "miktex/Extractor.h"
+#include "TarExtractor.h"
 
 BEGIN_INTERNAL_NAMESPACE;
-
-class TarExtractor : public MiKTeX::Extractor::Extractor
-{
-public:
-  TarExtractor ();
-
-public:
-  virtual
-  EXTRACTORCALL
-  ~TarExtractor ();
-
-public:
-  virtual
-  void
-  EXTRACTORCALL
-  Extract (/*[in]*/ const MiKTeX::Core::PathName &	tarPath,
-	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
-	   /*[in]*/ bool				makeDirectories,
-	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
-  
-public:
-  virtual
-  void
-  EXTRACTORCALL
-  Extract (/*[in]*/ MiKTeX::Core::Stream *		pStream,
-	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
-	   /*[in]*/ bool				makeDirectories,
-	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
-  
-public:
-  virtual
-  void
-  EXTRACTORCALL
-  Dispose ();
-
-protected:
-  std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
-};
-
 
 class TarBzip2Extractor : public TarExtractor
 {

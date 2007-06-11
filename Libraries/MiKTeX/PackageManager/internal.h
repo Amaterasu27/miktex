@@ -1429,6 +1429,10 @@ public:
       {
 	return (MiKTeX::Extractor::ArchiveFileType::TarBzip2);
       }
+    else if (str == T_("TarLzma"))
+      {
+	return (MiKTeX::Extractor::ArchiveFileType::TarLzma);
+      }
     else
       {
 	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileType"),

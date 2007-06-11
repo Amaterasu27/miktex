@@ -25,6 +25,7 @@
 
 #include "CabExtractor.h"
 #include "TarBzip2Extractor.h"
+#include "TarLzmaExtractor.h"
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Extractor;
@@ -66,6 +67,8 @@ Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
       return (new CabExtractor);
     case ArchiveFileType::TarBzip2:
       return (new TarBzip2Extractor);
+    case ArchiveFileType::TarLzma:
+      return (new TarLzmaExtractor);
     case ArchiveFileType::Tar:
       return (new TarExtractor);
     default:

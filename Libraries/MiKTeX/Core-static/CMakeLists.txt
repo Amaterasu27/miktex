@@ -28,6 +28,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/CommandLine.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FileStream.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FormatInfo.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/LzmaStream.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/MemoryMappedFile.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Process.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Thread.cpp

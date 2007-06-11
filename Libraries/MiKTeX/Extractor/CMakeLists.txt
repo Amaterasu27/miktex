@@ -28,6 +28,10 @@ set(${extractor_dll_name}_sources
   StdAfx.h
   TarBzip2Extractor.cpp
   TarBzip2Extractor.h
+  TarExtractor.cpp
+  TarExtractor.h
+  TarLzmaExtractor.cpp
+  TarLzmaExtractor.h
   extractor-version.h
   include/miktex/Extractor.h
   internal.h

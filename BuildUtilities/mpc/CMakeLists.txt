@@ -36,6 +36,7 @@ target_link_libraries(mpc
   ${expat_lib_name}
   ${extractor_lib_name}
   ${gnu_lib_name}
+  ${lzma_lib_name}
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}

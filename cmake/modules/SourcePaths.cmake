@@ -17,6 +17,8 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+set(rel_7zip_dir	"Libraries/3rd/7-Zip")
+
 # directories
 set(rel_app_dir		"Libraries/MiKTeX/App")
 set(rel_arctrl_win_dir	"Programs/MiKTeX/arctrl/win")
@@ -57,6 +59,7 @@ set(rel_gsoap_dir	"Libraries/3rd/gsoap")
 set(rel_initexmf_dir	"Programs/MiKTeX/initexmf")
 set(rel_jpeg_dir	"Libraries/3rd/libjpeg")
 set(rel_kpsemu_dir	"Libraries/MiKTeX/KPathSeaEmulation")
+set(rel_lzmalib_dir	"${rel_7zip_dir}/CPP/7zip/Compress/LZMA")
 set(rel_makeindex_dir	"Programs/Indexing/makeindex")
 set(rel_makex_dir	"Programs/MiKTeX/makex")
 set(rel_md5_dir		"Libraries/3rd/libmd5")

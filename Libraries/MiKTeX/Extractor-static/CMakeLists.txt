@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,9 +31,13 @@ set(${extractor_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/StdAfx.h
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarBzip2Extractor.cpp
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarBzip2Extractor.h
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarExtractor.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarExtractor.h
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarLzmaExtractor.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarLzmaExtractor.h
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/extractor-version.h
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include/miktex/Extractor.h
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/internal.h
-  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/extractor-version.h
 )
 
 if(NATIVE_WINDOWS)
