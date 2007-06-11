@@ -1,6 +1,6 @@
 ## Makefile.am: libmpm
 ##
-## Copyright (C) 2005-2006 Christian Schenk
+## Copyright (C) 2005-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,6 +35,8 @@ libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/MiKTeX/Core/in
 libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/libexpat
 libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/libmd5/include
 libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/libmspack
+libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/7-Zip
+libmiktex_packagemanager_la_CPPFLAGS += -I$(top_srcdir)/Libraries/3rd/7-Zip/CPP/7zip/Compress/LZMA/include
 
 libmiktex_packagemanager_la_LIBADD =
 libmiktex_packagemanager_la_LIBADD += $(LIBCURL)
@@ -44,6 +46,7 @@ libmiktex_packagemanager_la_LIBADD += $(top_builddir)/Libraries/3rd/bzip2/libmik
 libmiktex_packagemanager_la_LIBADD += $(top_builddir)/Libraries/3rd/libexpat/libmiktex-expat.la
 libmiktex_packagemanager_la_LIBADD += $(top_builddir)/Libraries/3rd/libmd5/libmiktex-md5.la
 libmiktex_packagemanager_la_LIBADD += $(top_builddir)/Libraries/3rd/libmspack/libmiktex-mspack.la
+libmiktex_packagemanager_la_LIBADD += $(top_builddir)/Libraries/3rd/7-Zip/CPP/7zip/Compress/LZMA/libmiktex-lzma.la
 
 libmiktex_packagemanager_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
@@ -69,6 +72,8 @@ libmiktex_packagemanager_la_SOURCES += PackageIterator.cpp
 libmiktex_packagemanager_la_SOURCES += StdAfx.h
 libmiktex_packagemanager_la_SOURCES += TarBzip2Extractor.cpp
 libmiktex_packagemanager_la_SOURCES += TarBzip2Extractor.h
+libmiktex_packagemanager_la_SOURCES += TarLzmaExtractor.cpp
+libmiktex_packagemanager_la_SOURCES += TarLzmaExtractor.h
 libmiktex_packagemanager_la_SOURCES += TpmParser.cpp
 libmiktex_packagemanager_la_SOURCES += TpmParser.h
 libmiktex_packagemanager_la_SOURCES += WebFile.h

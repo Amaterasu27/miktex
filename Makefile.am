@@ -1,6 +1,6 @@
 ## Makefile.am:
 ##
-## Copyright (C) 2005-2006 Christian Schenk
+## Copyright (C) 2005-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -27,6 +27,7 @@ SUBDIRS += BuildUtilities/etc
 
 SUBDIRS += Libraries/3rd/gl
 
+SUBDIRS += Libraries/3rd/7-Zip/CPP/7zip/Compress/LZMA
 SUBDIRS += Libraries/3rd/bzip2
 SUBDIRS += Libraries/3rd/libexpat
 SUBDIRS += Libraries/3rd/libmspack
