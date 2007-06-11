@@ -37,6 +37,7 @@ objects = \
 	$(outdir)\PackageInstaller.obj \
 	$(outdir)\PackageIterator.obj \
 	$(outdir)\TarBzip2Extractor.obj \
+	$(outdir)\TarLzmaExtractor.obj \
 	$(outdir)\TpmParser.obj \
 	$(outdir)\WebSession.obj \
 	$(outdir)\mpm.obj \
@@ -59,6 +60,7 @@ sources = \
 	$(mpmlibdir)\PackageIterator.cpp \
 	$(mpmlibdir)\StdAfx.cpp \
 	$(mpmlibdir)\TarBzip2Extractor.cpp \
+	$(mpmlibdir)\TarLzmaExtractor.cpp \
 	$(mpmlibdir)\TpmParser.cpp \
 	$(mpmlibdir)\WebSession.cpp \
 	$(mpmlibdir)\mpm.cpp \
@@ -71,6 +73,8 @@ extra_includes = \
 	$(ccinc_libcurl) \
 	$(ccinc_libexpat) \
 	$(ccinc_libmspack) \
+	$(ccinc_7zip) \
+	$(ccinc_liblzma) \
 
 extra_defines = \
 	-DHAVE_LIBCURL=1 \
@@ -180,9 +184,10 @@ $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\CabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -204,9 +209,10 @@ $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\CurlWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -229,9 +235,10 @@ $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\CurlWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -254,9 +261,10 @@ $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -266,6 +274,7 @@ $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebSess
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebFile.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/CabExtractor.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/TarBzip2Extractor.h
+$(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/TarLzmaExtractor.h
 $(outdir)\Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/win/winCabExtractor.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/StdAfx.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
@@ -280,9 +289,10 @@ $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\PackageInstaller.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -304,9 +314,10 @@ $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\PackageIterator.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -327,9 +338,10 @@ $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\StdAfx.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/StdAfx.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
@@ -344,9 +356,10 @@ $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -355,6 +368,31 @@ $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebSession.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebFile.h
 $(outdir)\TarBzip2Extractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/TarBzip2Extractor.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/StdAfx.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/easy.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/multi.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libmspack/mspack.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libexpat/expat.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libexpat/expat_external.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/mpm-version.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/Extractor.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebSession.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/WebFile.h
+$(outdir)\TarLzmaExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/TarLzmaExtractor.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/StdAfx.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curl.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/3rd/libcurl/include/curl/curlver.h
@@ -368,9 +406,10 @@ $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\TpmParser.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -392,9 +431,10 @@ $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\WebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -417,9 +457,10 @@ $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\mpm.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -446,9 +487,10 @@ $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\winCabExtractor.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -470,9 +512,10 @@ $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\winWebFile.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h
@@ -495,9 +538,10 @@ $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/3rd/bzip2/bzlib.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/core.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/char.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/3rd/libmd5/include/miktex/md5.h
+$(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/env.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/paths.h
-$(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/version.h
+$(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/reg.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/Core/include/miktex/trace.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/internal.h
 $(outdir)\winWebSession.obj: $(miktexsrcdir)/Libraries/MiKTeX/PackageManager/include/miktex/mpm.h

@@ -36,6 +36,8 @@ projects = $(projects) $(prj_build_utilities1)
 # -----------------------------------------------------------------------------
 
 prj_3rdparty_libs1 = \
+	$(rel_lzmalibdir)		\
+	$(rel_lzmastaticlibdir)		\
 	$(rel_bzip2dir)			\
 	$(rel_bzip2staticdir)		\
 	$(rel_curllibdir)		\

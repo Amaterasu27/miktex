@@ -64,6 +64,7 @@ mpc_objects = \
 	$(curl_static_lib) \
 	$(expat_static_lib) \
 	$(gnu_static_lib) \
+	$(lzma_static_lib) \
 	$(md5_static_lib) \
 	$(miktex_static_lib) \
 	$(mpm_static_lib) \

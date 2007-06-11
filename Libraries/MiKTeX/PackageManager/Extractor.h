@@ -1,6 +1,6 @@
 /* Extractor.h:							-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -40,7 +40,9 @@ public:
     None = 0,
     MSCab = 1,
     TarBzip2 = 2,
-    Zip = 3
+    Zip = 3,
+    // Tar = 4,
+    TarLzma = 5,
   };
 public:
   static
@@ -53,6 +55,8 @@ public:
 	return (MIKTEX_CABINET_FILE_SUFFIX);
       case TarBzip2:
 	return (MIKTEX_TARBZIP2_FILE_SUFFIX);
+      case TarLzma:
+	return (MIKTEX_TARLZMA_FILE_SUFFIX);
       case Zip:
 	return (MIKTEX_ZIP_FILE_SUFFIX);
       default:

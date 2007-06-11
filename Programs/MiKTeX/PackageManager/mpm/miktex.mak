@@ -65,6 +65,7 @@ mpm_objects = \
 	$(bz2_static_lib) \
 	$(curl_static_lib) \
 	$(expat_static_lib) \
+	$(lzma_static_lib) \
 	$(md5_static_lib) \
 	$(miktex_static_lib) \
 	$(mpm_static_lib) \

@@ -155,6 +155,8 @@ MSCVER = 1400
 rel_configfilesdir = Admin\ConfigFiles
 rel_defaultsdir = Admin\Defaults
 
+rel_7zipdir = Libraries\3rd\7-Zip
+
 rel_applibdir =	Libraries\MiKTeX\App
 rel_arctrldir =	Programs\MiKTeX\arctrl\win
 rel_bibtex8dir = Programs\Bibliography\bibtex8
@@ -199,6 +201,8 @@ rel_initexmfdir = Programs\MiKTeX\initexmf
 rel_jpeglibdir = Libraries\3rd\libjpeg
 rel_kpslibdir = Libraries\MiKTeX\KPathSeaEmulation
 rel_libdir = Libraries\MiKTeX\Core
+rel_lzmalibdir = Libraries\3rd\7-Zip\CPP\7zip\Compress\LZMA
+rel_lzmastaticlibdir = Libraries\3rd\7-Zip\CPP\7zip\Compress\LZMA-static
 rel_makeindexdir = Programs\Indexing\makeindex
 rel_makexlibdir = Programs\MiKTeX\makex
 rel_mcdlibdir = Programs\MiKTeX\texify
@@ -292,6 +296,8 @@ gsoapdir = $(miktexsrcdir)\$(rel_gsoapdir)
 gsoapstaticdir = $(miktexsrcdir)\$(rel_gsoapstaticdir)
 jpeglibdir = $(miktexsrcdir)\$(rel_jpeglibdir)
 kpslibdir = $(miktexsrcdir)\$(rel_kpslibdir)
+lzmalibdir = $(miktexsrcdir)\$(rel_lzmalibdir)
+lzmastaticlibdir = $(miktexsrcdir)\$(rel_lzmastaticlibdir)
 makexlibdir = $(miktexsrcdir)\$(rel_makexlibdir)
 mcdlibdir = $(miktexsrcdir)\$(rel_mcdlibdir)
 md5libdir = $(miktexsrcdir)\$(rel_md5libdir)
@@ -310,6 +316,7 @@ pnmlibdir = $(miktexsrcdir)\$(rel_pnmlibdir)
 poptlibdir = $(miktexsrcdir)\$(rel_poptlibdir)
 poptstaticlibdir = $(miktexsrcdir)\$(rel_poptstaticlibdir)
 ppmlibdir = $(miktexsrcdir)\$(rel_ppmlibdir)
+sevenzipdir = $(miktexsrcdir)\$(rel_7zipdir)
 texmflibdir = $(miktexsrcdir)\$(rel_texmflibdir)
 tifflibdir = $(miktexsrcdir)\$(rel_tifflibdir)
 wsclientdir = $(miktexsrcdir)\$(rel_wsclientdir)
@@ -450,30 +457,32 @@ ccdef_win32 = -DWIN32
 
 ## Includes
 ccinc_current_dir = -I$(srcdir)
+ccinc_7zip = -I$(sevenzipdir)
+ccinc_gsoap = -I$(gsoapdir)
 ccinc_lib = -I$(libdir)\include
-ccinc_libdib = -I$(diblibdir)\include
-ccinc_libdvi = -I$(dvilibdir)\include
 ccinc_libapp = -I$(applibdir)\include
 ccinc_libbz2 = -I$(bzip2dir)
 ccinc_libcurl = -I$(curllibdir)\include
+ccinc_libdib = -I$(diblibdir)\include
+ccinc_libdvi = -I$(dvilibdir)\include
 ccinc_libexpat = -I$(expatlibdir)
 ccinc_libgd = -I$(gdlibdir)
 ccinc_libgnu = -I$(gnulibdir)
 ccinc_libkps = -I$(kpslibdir)\include
+ccinc_liblzma = -I$(lzmalibdir)\include
 ccinc_libmd5 = -I$(md5libdir)\include
 ccinc_libmikui = -I$(mikuilibdir)\include
 ccinc_libmpm = -I$(mpmlibdir)\include
 ccinc_libmspack = -I$(mspacklibdir)
-ccinc_libpng = -I$(pnglibdir)
-ccinc_libpopt = -I$(poptlibdir)
-ccinc_libtexmf = -I$(texmflibdir)\include
 ccinc_libpbm = -I$(miktexsrcdir:\=/)/$(rel_netpbmdir)/pbm
 ccinc_libpgm = -I$(miktexsrcdir:\=/)/$(rel_netpbmdir)/pgm
+ccinc_libpng = -I$(pnglibdir)
 ccinc_libpnm = -I$(miktexsrcdir:\=/)/$(rel_netpbmdir)/pnm
+ccinc_libpopt = -I$(poptlibdir)
 ccinc_libppm = -I$(miktexsrcdir:\=/)/$(rel_netpbmdir)/ppm
+ccinc_libtexmf = -I$(texmflibdir)\include
 ccinc_netpbm = -I$(miktexsrcdir:\=/)/$(rel_netpbmdir)
 ccinc_zlib = -I$(zlibdir)
-ccinc_gsoap = -I$(gsoapdir)
 
 ## optimization flags
 !if $(miktex_cc_disable_optimization) > 0
@@ -605,6 +614,10 @@ dlldefs = $(dlldefs) $(ccdef_regex_dll)
 dlldefs = $(dlldefs) $(ccdef_gsoap_dll)
 dlldefs = $(dlldefs) $(ccdef_mpm_dll)
 dlldefs = $(dlldefs) $(ccdef_expat_dll) $(ccdef_popt_dll)
+!endif
+
+!ifdef no_miktex_dlls
+dlldefs = -DMIKTEX_STATIC
 !endif
 
 ## MiKTeX specific defines
@@ -967,13 +980,13 @@ arctrl_dll_name =	MiKTeX-arctrl-1
 bibtex_dll_name =	MiKTeX-bibtex-3
 bmeps_dll_name =	MiKTeX-bmeps-3
 bzip2_dll_name =	MiKTeX-bzip2-3
+cjklatex_dll_name =	MiKTeX-cjklatex-2
 curl_dll_name =		MiKTeX-curl-1
 dib_dll_name =		MiKTeX-dib-3
 dvi_dll_name =		MiKTeX-dvi-3
 dvicopy_dll_name =	MiKTeX-dvicopy-3
 dvitomp_dll_name =	MiKTeX-dvitomp-3
 dvitype_dll_name =	MiKTeX-dvitype-3
-cjklatex_dll_name =	MiKTeX-cjklatex-2
 expat_dll_name =	MiKTeX-expat-3
 findtexmf_dll_name =	MiKTeX-findtexmf-3
 freetype_dll_name =	MiKTeX-freetype-4
@@ -985,6 +998,7 @@ gnu_dll_name =		MiKTeX-gnu-3
 gsoap_dll_name =	MiKTeX-gsoap-1
 jpeg_dll_name =		MiKTeX-jpeg-3
 kps_dll_name =		MiKTeX-kpseweb2cemu-3
+lzma_dll_name =		MiKTeX-lzma-1
 makex_dll_name =	MiKTeX-make-3
 mcd_dll_name =		MiKTeX-compilerdriver-3
 md5_dll_name =		MiKTeX-md5-3
@@ -1047,6 +1061,8 @@ gsoap_lib = $(gsoapdir)\$(outdir)\gsoap.lib
 gsoap_static_lib = $(gsoapstaticdir)\$(outdir)\gsoap-static.lib
 jpeg_lib = $(jpeglibdir)\$(outdir)\libjpeg.lib
 kps_lib = $(kpslibdir)\$(outdir)\kps.lib
+lzma_lib = $(lzmalibdir)\$(outdir)\lzma.lib
+lzma_static_lib = $(lzmastaticlibdir)\$(outdir)\lzma-static.lib
 makex_lib = $(makexlibdir)\$(outdir)\makex.lib
 mcd_lib = $(mcdlibdir)\$(outdir)\mcd.lib
 md5_lib = $(md5libdir)\$(outdir)\md5.lib

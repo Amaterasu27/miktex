@@ -1,6 +1,6 @@
 /* Extractor.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -25,6 +25,7 @@
 
 #include "CabExtractor.h"
 #include "TarBzip2Extractor.h"
+#include "TarLzmaExtractor.h"
 
 #if defined (MIKTEX_WINDOWS)
 #  include "win/winCabExtractor.h"
@@ -60,6 +61,8 @@ Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
       return (new CabExtractor);
     case ArchiveFileType::TarBzip2:
       return (new TarBzip2Extractor);
+    case ArchiveFileType::TarLzma:
+      return (new TarLzmaExtractor);
     default:
       UNIMPLEMENTED (T_("Extractor::CreateExtractor"));
     }

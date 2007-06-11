@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1305,6 +1305,10 @@ public:
     else if (str == T_("TarBzip2"))
       {
 	return (ArchiveFileType::TarBzip2);
+      }
+    else if (str == T_("TarLzma"))
+      {
+	return (ArchiveFileType::TarLzma);
       }
     else
       {
