@@ -46,7 +46,7 @@ set(LIBRARY_OUTPUT_PATH "${outdir}")
 
 ## autotools compability names
 set(PACKAGE_NAME ${PRODUCT_NAME})
-set(TOP_SRCDIR "${CMAKE_SOURCE_DIR}")
+set(top_srcdir "${CMAKE_SOURCE_DIR}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
