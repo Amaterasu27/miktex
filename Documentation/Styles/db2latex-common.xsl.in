@@ -3,7 +3,7 @@
   <xsl:import href="http://db2latex.sourceforge.net/xsl/docbook.xsl"/>
   <xsl:variable name="graphic.default.extension">png</xsl:variable>
   <xsl:param name="latex.use.parskip">1</xsl:param>
-  <xsl:param name="latex.admonition.path">@TOP_SRCDIR@/BuildUtilities/docbook/db2latex-xsl/figures</xsl:param>
+  <xsl:param name="latex.admonition.path">@top_srcdir@/BuildUtilities/docbook/db2latex-xsl/figures</xsl:param>
 
   <xsl:template match="code">
     <xsl:call-template name="inline.monoseq"/>

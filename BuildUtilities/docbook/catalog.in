@@ -6,7 +6,7 @@
 
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
 
-  <group  xml:base="@TOP_SRCDIR@/BuildUtilities/docbook/" >
+  <group  xml:base="@top_srcdir@/BuildUtilities/docbook/" >
 
     <rewriteSystem
         systemIdStartString="http://www.oasis-open.org/docbook/xml/4.5CR1/"
