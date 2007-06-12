@@ -1,5 +1,13 @@
 <section>
 
+<title>&MiKTeXTools; Beta 15 (Jun 12, 2007)</title>
+
+<para>Added support for LZMA compressed tar files.</para>
+
+</section>
+
+<section>
+
 <title>&MiKTeXTools; Beta 14 (Jul 25, 2006)</title>
 
 <para>Fixed a build issue.</para>

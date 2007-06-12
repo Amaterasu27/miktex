@@ -35,7 +35,7 @@ AC_PREREQ([2.59])
 #    J2000   days since Jan 1, 2000
 #    RCNUM   release candidate number
 #  BETANUM   beta number
-AC_INIT([MiKTeX Tools],[2.5.2718])
+AC_INIT([MiKTeX Tools],[2.5.2719-beta-15])
 
 # write configuration settings into ./config.h
 AC_CONFIG_HEADERS([config.h])
@@ -158,6 +158,7 @@ AC_CONFIG_FILES([miktex-config])
 # specify other config files to be written
 AC_CONFIG_FILES([Documentation/version.ent])
 AC_CONFIG_FILES([Libraries/MiKTeX/Core/include/miktex/version.h])
+AC_CONFIG_FILES([BuildUtilities/docbook/catalog])
 
 # check availability of header files
 AC_CHECK_HEADERS([dirent.h])

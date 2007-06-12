@@ -145,15 +145,20 @@ EXTRA_DIST += news/news-$(ver).xml
 MAINTAINERCLEANFILES = *.1
 
 initexmf.1: miktex.xml Ref/initexmf.xml Styles/manpages.xsl entities.ent
-	xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
+	XML_CATALOG_FILES=$(top_srcdir)/BuildUtilities/docbook/catalog \
+		xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
 
 mpm.1: miktex.xml Ref/mpm.xml Styles/manpages.xsl entities.ent
-	xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
+	XML_CATALOG_FILES=$(top_srcdir)/BuildUtilities/docbook/catalog \
+		xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
 
 mthelp.1: miktex.xml Ref/mthelp.xml Styles/manpages.xsl entities.ent
-	xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
+	XML_CATALOG_FILES=$(top_srcdir)/BuildUtilities/docbook/catalog \
+		xsltproc --path $(srcdir) Styles/manpages.xsl miktex.xml
 
 dist-hook:
-	xsltproc --path $(srcdir) --output tmp.html Styles/htmltext.xsl news.xml
+	XML_CATALOG_FILES=$(top_srcdir)/BuildUtilities/docbook/catalog \
+		xsltproc --path $(srcdir) \
+			--output tmp.html Styles/htmltext.xsl news.xml
 	lynx -dump -hiddenlinks=ignore -nolist tmp.html > $(top_distdir)/NEWS
 	rm tmp.html
