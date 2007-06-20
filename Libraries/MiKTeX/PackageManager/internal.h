@@ -251,7 +251,7 @@ IsWindowsNT ()
 #define DUMP_PACKAGE_TABLE_ON_ERROR 1
 #define DUMP_CURRENT_DIRECTORY_ON_ERROR 1
 
-#define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarBzip2
+#define DB_ARCHIVE_FILE_TYPE ArchiveFileType::TarLzma
 
 #include "WebSession.h"
 
