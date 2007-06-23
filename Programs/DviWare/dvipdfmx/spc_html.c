@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.5 2005/08/14 15:50:36 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.6 2007/01/19 11:00:48 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -288,6 +288,7 @@ fqurl (const char *baseurl, const char *name)
     len += strlen(baseurl) + 1; /* we may want to add '/' */
 
   q = NEW(len + 1, char);
+  *q = '\0';
   if (baseurl && baseurl[0]) {
     char  *p;
     strcpy(q, baseurl);

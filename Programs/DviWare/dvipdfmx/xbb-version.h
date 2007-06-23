@@ -1,4 +1,4 @@
-/* dvipdfmx-version.h: version number				-*- C++ -*-
+/* xbb-version.h: version number				-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 

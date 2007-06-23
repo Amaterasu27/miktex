@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/specials.h,v 1.3 2005/07/31 16:44:42 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.h,v 1.4 2007/01/20 23:53:20 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -44,7 +44,7 @@ typedef int  (*spc_handler_fn_ptr) (struct spc_env *, struct spc_arg *);
 struct spc_handler {
   const char         *key;
   spc_handler_fn_ptr  exec;
-} spc_handler;
+};
 
 /* This should not use pdf_. */
 extern void    spc_set_verbose (void);

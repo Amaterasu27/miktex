@@ -119,3 +119,37 @@ target_link_libraries(dvipdfmx
 )
 
 install(TARGETS dvipdfmx DESTINATION ${bindir})
+
+set(xbb_sources
+  ${wrapper_cpp}
+  dpxfile.c
+  error.c
+  mem.c
+  mfileio.c
+  numbers.c
+  pdfobj.c
+  pdfparse.c
+  xbb.c
+)
+
+if(NATIVE_WINDOWS)
+  set(xbb_sources ${xbb_sources}
+    xbb.rc
+  )
+endif(NATIVE_WINDOWS)
+
+add_executable(xbb ${xbb_sources})
+
+merge_trustinfo_manifest(xbb asInvoker)
+
+target_link_libraries(xbb
+  ${app_dll_name}
+  ${core_dll_name}
+  ${gnu_dll_name}
+  ${kpsemu_dll_name}
+  ${png_dll_name}
+  ${texmf_dll_name}
+  ${zlib_dll_name}
+)
+
+install(TARGETS xbb DESTINATION ${bindir})

@@ -114,7 +114,12 @@
 #undef TM_IN_SYS_TIME
 
 /* Version number of package */
-#define VERSION "20061211"
+#if defined(MIKTEX)
+#include "dvipdfmx-version.h"
+#define VERSION  MIKTEX_COMPONENT_ORIGINAL_VERSION_STR
+#else
+#undef VERSION
+#endif
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
