@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.43 2005/09/06 04:17:15 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.46 2007/04/03 05:25:50 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -484,12 +484,36 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
   return;
 }
 
+/* auxiliary function to compute timezone offset on
+   systems that do not support the tm_gmtoff in struct tm,
+   or have a timezone variable.  Such as i386-solaris.  */
+
+static long
+compute_timezone_offset()
+{
+  const time_t now = time(NULL);
+  struct tm tm;
+  struct tm local;
+  time_t gmtoff;
+
+  localtime_r(&now, &local);
+  gmtime_r(&now, &tm);
+  return (mktime(&local) - mktime(&tm));
+}
+
 /*
  * Docinfo
  */
 static long
 asn_date (char *date_string)
 {
+#ifndef HAVE_TIMEZONE
+# ifdef HAVE_TM_GMTOFF
+#  define timezone (-bd_time->tm_gmtoff)
+# else
+#  define timezone (-compute_timezone_offset())
+# endif /* not HAVE_TM_GMTOFF */
+#endif  /* not HAVE_TIMEZONE */
   time_t      current_time;
   struct tm  *bd_time;
 
@@ -498,11 +522,7 @@ asn_date (char *date_string)
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%+03ld'%02ld'",
 	  bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
 	  bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-#if defined(MIKTEX) && defined(MIKTEX_WINDOWS)
-	  -(_timezone / 3600), (_timezone % 3600) / 60);
-#else
-	  -(bd_time->tm_gmtoff / 3600), (bd_time->tm_gmtoff % 3600) / 60);
-#endif
+	  (-timezone / 3600), (timezone % 3600) / 60);
 
   return strlen(date_string);
 }
@@ -2002,13 +2022,13 @@ pdf_doc_add_page_content (const char *buffer, unsigned length)
 static char *doccreator = NULL; /* Ugh */
 
 void
-pdf_open_document (const char *filename,
+pdf_open_document (const char *filename, int do_encryption,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth)
 {
   pdf_doc *p = &pdoc;
 
-  pdf_out_init(filename);
+  pdf_out_init(filename, do_encryption);
 
   pdf_doc_init_catalog(p);
 
@@ -2034,7 +2054,11 @@ pdf_open_document (const char *filename,
   pdf_doc_init_names    (p);
   pdf_doc_init_page_tree(p, media_width, media_height);
 
-  create_encrypt();
+  if (do_encryption) {
+    pdf_obj *encrypt = pdf_encrypt_obj();
+    pdf_set_encrypt(encrypt, pdf_enc_id_array());
+    pdf_release_obj(encrypt);
+  }
 
 #ifndef NO_THUMBNAIL
   /* Create a default name for thumbnail image files */

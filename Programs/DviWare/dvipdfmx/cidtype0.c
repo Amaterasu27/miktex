@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.34 2005/07/17 09:53:37 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.35 2007/02/14 05:56:43 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -182,7 +182,7 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     vhea = tt_read_vhea_table(sfont);
   if (vhea && sfnt_find_table_pos(sfont, "vmtx") > 0) {
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
   }
   /*
    * OpenType font must have OS/2 table.
@@ -312,7 +312,7 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
   hhea = tt_read_hhea_table(sfont);
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 
   add_CIDHMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
   if (need_vmetrics)
