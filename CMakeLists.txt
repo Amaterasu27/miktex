@@ -349,6 +349,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/fontconfig
+  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}
   ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
@@ -740,6 +741,10 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvipdfmx_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_xdvipdfmx_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
