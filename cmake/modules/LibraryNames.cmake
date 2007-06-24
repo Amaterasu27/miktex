@@ -94,6 +94,11 @@ set(zlib_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-zlib")
 set(session_tlb_name    "MiKTeX${MIKTEX_SERIES_INT}-session")
 set(mpm_tlb_name        "MiKTeX${MIKTEX_SERIES_INT}-packageManager")
 
+## prebuilt libraries
+set(icudt_dll_name	"icudt")
+set(icule_dll_name	"icule")
+set(icuuc_dll_name	"icuuc")
+
 ## static library names
 set(bzip2_lib_name	"bzip2-static")
 set(core_lib_name	"core-static")
