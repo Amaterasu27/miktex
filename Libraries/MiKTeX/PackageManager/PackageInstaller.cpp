@@ -574,6 +574,36 @@ CompareVersions (/*[in]*/ const tstring &	ver1,
 
 /* _________________________________________________________________________
 
+   CompareSerieses
+   _________________________________________________________________________ */
+
+int
+CompareSerieses (/*[in]*/ const tstring &	ver1,
+		 /*[in]*/ const tstring &	ver2)
+{
+  if (ver1.empty() || ver2.empty())
+    {
+      return (0);
+    }
+  VersionNumber verNum1;
+  VersionNumber verNum2;
+  if (VersionNumber::TryParse(ver1.c_str(), verNum1)
+      && VersionNumber::TryParse(ver2.c_str(), verNum2))
+    {
+      verNum1.n3 = 0;
+      verNum1.n4 = 0;
+      verNum2.n3 = 0;
+      verNum2.n4 = 0;
+      return (verNum1.CompareTo(verNum2));
+    }
+  else
+    {
+      return (-1);
+    }
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::FindUpdates
    _________________________________________________________________________ */
 
@@ -614,7 +644,7 @@ PackageInstallerImpl::FindUpdates ()
 	      && IsMiKTeXPackage(lpszPackage))
 	    {
 	      tstring version = dbLight.GetPackageVersion(lpszPackage);
-	      int verCmp = CompareVersions(version, MIKTEX_SERIES_STR);
+	      int verCmp = CompareSerieses(version, MIKTEX_SERIES_STR);
 	      if (verCmp == 0)
 		{
 		  trace_mpm->WriteFormattedLine (T_("libmpm"),
