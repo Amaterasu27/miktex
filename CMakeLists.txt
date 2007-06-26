@@ -367,6 +367,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}
   ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
@@ -505,6 +506,10 @@ add_subdirectory(${rel_zlib_dir})
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_zlib_dir}-static)
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
 if(BUILDING_MIKTEX)
