@@ -379,7 +379,6 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  // set the check mark
 	  if (g_upgrading
 	      || ! updateUpdate
-	      || ! IsMiKTeXPackage(it->deploymentName)
 	      || ContainsUpdateWizard(it->deploymentName))
 	    {
 	      listControl.SetCheck (idx);
@@ -463,12 +462,10 @@ as a whole."),
 		     MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
     }
-  else if (updateUpdate
-	   && IsMiKTeXPackage(updateInfo.deploymentName)
-	   && ! ContainsUpdateWizard(updateInfo.deploymentName))
+  else if (updateUpdate && ! ContainsUpdateWizard(updateInfo.deploymentName))
     {
       AfxMessageBox (T_("The package \"") MYPKG T_("\" must be updated \
-separately from the other MiKTeX packages. Let the wizard conclude now. \
+separately. Let the wizard conclude now. \
 Then run the wizard again to update the remaining packages."),
 			 MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
