@@ -11,7 +11,6 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/conspawn.exe
-texmf/miktex/bin/copystart.exe
 texmf/miktex/bin/copystart_admin.exe
 texmf/miktex/bin/findexe.exe
 texmf/miktex/bin/mpm.exe

@@ -1223,7 +1223,7 @@ MpmView::OnUpdateWizard ()
 			      0);
 	}
       PathName copystart;
-      if (! pSession->FindFile(T_("copystart"),
+      if (! pSession->FindFile(MIKTEX_COPYSTART_ADMIN_EXE,
 			       FileType::EXE,
 			       copystart))
 	{

@@ -27,16 +27,6 @@ foreach(t conspawn findexe runbat runperl)
   install(TARGETS ${t} DESTINATION "${bindir}")
 endforeach(t)
 
-add_executable(copystart WIN32 copystart.cpp)
-
-merge_trustinfo_manifest(copystart asInvoker)
-
-target_link_libraries(copystart
-  ${core_dll_name}
-)
-
-install(TARGETS copystart DESTINATION "${bindir}")
-
 add_executable(copystart_admin WIN32 copystart.cpp)
 
 merge_trustinfo_manifest(copystart_admin highestAvailable)
