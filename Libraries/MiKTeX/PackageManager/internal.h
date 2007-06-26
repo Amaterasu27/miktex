@@ -1812,7 +1812,8 @@ private:
   void
   RegisterComponent
   (/*[in]*/ bool				doRegister,
-   /*[in]*/ const MiKTeX::Core::PathName &	path);
+   /*[in]*/ const MiKTeX::Core::PathName &	path,
+   /*[in]*/ bool				mustSucceed);
 #endif
 
 private:

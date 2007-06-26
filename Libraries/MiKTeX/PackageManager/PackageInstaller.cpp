@@ -1736,8 +1736,9 @@ PackageInstallerImpl::ConnectToServer ()
 
 void
 PackageInstallerImpl::RegisterComponent
-(/*[in]*/ bool				doRegister,
- /*[in]*/ const PathName &		path)
+(/*[in]*/ bool			doRegister,
+ /*[in]*/ const PathName &	path,
+ /*[in]*/ bool			mustSucceed)
 {
   ReportLine (T_("%s %s"),
 	      (doRegister
@@ -1763,7 +1764,17 @@ PackageInstallerImpl::RegisterComponent
 			    ? T_("/RegServer")
 			    : T_("/UnregServer"));
     }
-  Process::Run (regExe, cmdLine.Get());
+  int exitCode;
+  if (! Process::Run(regExe, cmdLine.Get(), 0, &exitCode, 0))
+    {
+      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::RegisterComponent"));
+    }
+  if (exitCode != 0 && mustSucceed)
+    {
+      FATAL_MPM_ERROR (T_("PackageInstallerImpl::RegisterComponent"),
+		       T_("regsvr failed for some reason."),
+		       path.Get());
+    }
 }
 
 #endif
@@ -1857,7 +1868,7 @@ PackageInstallerImpl::RegisterComponents
 		  path += components[idx];
 		  if (File::Exists(path))
 		    {
-		      RegisterComponent (doRegister, path);
+		      RegisterComponent (doRegister, path, doRegister);
 		    }
 		  else
 		    {
@@ -1914,7 +1925,7 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 	  path += components[idx];
 	  if (File::Exists(path))
 	    {
-	      RegisterComponent (doRegister, path);
+	      RegisterComponent (doRegister, path, doRegister);
 	    }
 	  else
 	    {
