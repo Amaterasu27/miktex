@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	7)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	2727)
+set(MIKTEX_J2000_VERSION	2734)
 
 ## the release number; only meaningful for rc/beta builds
 set(MIKTEX_RELEASE_NUM		0)
@@ -32,20 +32,22 @@ set(MIKTEX_RELEASE_NUM		0)
 ##   0 (general availability release)
 ##   1 (release candidate)
 ##   2 (beta release)
-##   4 (snapshot release)
+##   3 (snapshot release)
+##   4 (debug)
 set(MIKTEX_RELEASE_STATE 4)
 
 ## sanity check
 if(MIKTEX_RELEASE_STATE EQUAL 0)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
+elseif(MIKTEX_RELEASE_STATE EQUAL 3)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
 else(MIKTEX_RELEASE_STATE EQUAL 4)
   message("${MIKTEX_RELEASE_STATE} is an unknown release state.")
-  message("Falling back to release state 4 (snapshot).")
+  message("Falling back to release state 4 (debug).")
   set(MIKTEX_RELEASE_STATE
       4
       CACHE STRING
-      "MiKTeX release state; one of 0 (general availability release), 1 (release candidate), 2 (beta release) and 4 (snapshot release)."
+      "MiKTeX release state; one of 0 (general availability release), 1 (release candidate), 2 (beta release), 3 (snapshot), 4 (debug)."
       FORCE)
 endif(MIKTEX_RELEASE_STATE EQUAL 0)

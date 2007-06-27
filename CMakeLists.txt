@@ -102,7 +102,7 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 2)
       CACHE STRING
       "The MikTeX version tag string."
       FORCE)
-elseif(MIKTEX_RELEASE_STATE EQUAL 4)
+elseif(MIKTEX_RELEASE_STATE EQUAL 3)
   SET(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} snapshot"
       CACHE STRING
@@ -110,6 +110,17 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 4)
       FORCE)
   SET(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}-snapshot"
+      CACHE STRING
+      "The MikTeX version tag string."
+      FORCE)
+elseif(MIKTEX_RELEASE_STATE EQUAL 4)
+  SET(MIKTEX_VERSION_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} debug"
+      CACHE STRING
+      "The MikTeX version string."
+      FORCE)
+  SET(MIKTEX_VERSION_TAG_STR
+      "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}-debug"
       CACHE STRING
       "The MikTeX version tag string."
       FORCE)
@@ -288,6 +299,8 @@ if(MIKTEX_RELEASE_STATE EQUAL 0)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+elseif(MIKTEX_RELEASE_STATE EQUAL 3)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "The build type." FORCE)

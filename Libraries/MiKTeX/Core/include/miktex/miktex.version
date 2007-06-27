@@ -1,6 +1,6 @@
 /* miktex.version: generic MiKTeX version resource		-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -103,7 +103,7 @@ BEGIN
 #endif
 	VALUE "OriginalFilename",	VER_ORIGINALFILENAME_STR
 #if MIKTEX_RELEASE_STATE == 4
-	VALUE "PrivateBuild",		"Private build; do not distribute!"
+	VALUE "PrivateBuild",		"Debug build; do not distribute!"
 #endif
 	VALUE "ProductName",		VER_PRODUCTNAME_STR
 	VALUE "ProductVersion",		VER_PRODUCTVERSION_STR
