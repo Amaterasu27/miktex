@@ -1,6 +1,6 @@
 /* common.h: internal DVI definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -50,20 +50,12 @@ class DviImpl;
 
 #if ! defined(NDEBUG)
 
-#if 0
 #  define MIKTEX_ASSERT(expr)					\
   static_cast<void>						\
    ((expr)							\
     ? 0								\
     : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
        0))
-#else
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : DebugBreak())
-#endif
 
 #  define MIKTEX_ASSERT_BUFFER(buf, n) AssertValidBuf (buf, n)
 
