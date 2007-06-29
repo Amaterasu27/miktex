@@ -17,7 +17,11 @@ struct header_list *header_head ;
  *   The external routines we use.
  */
 #include "protos.h"
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern integer fontmem, swmem ;
 #ifndef KPATHSEA
 extern char *headerpath ;

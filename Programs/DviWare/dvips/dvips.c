@@ -222,7 +222,11 @@ int miktex_allow_all_paths = 0;
 Boolean HPS_FLAG = 0 ;
 #endif
 extern int lastresortsizes[];
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE];
+#else
 extern char errbuf[];
+#endif
 
 /* Declare the routine to get the current working directory.  */
 
@@ -1359,7 +1363,9 @@ default:
    }
    initcolor() ;
    if (dvifile==NULL) {
+#if ! defined(MIKTEX)
       extern char errbuf[];
+#endif
       (void)sprintf(errbuf,"! DVI file <%s> can't be opened.", iname) ;
       error("! DVI file can't be opened.") ;
    }

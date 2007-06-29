@@ -18,7 +18,11 @@ extern real alpha ;
 #ifndef KPATHSEA
 extern char *tfmpath ;
 #endif
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern integer fsizetol ;
 extern Boolean noomega ;
 /*

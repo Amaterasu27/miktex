@@ -10,7 +10,11 @@
 #include <math.h>
 #include "protos.h"
 
+#if defined(MIKTEX)
+extern char *nextstring, errbuf[ERRBUFSIZE] ;
+#else
 extern char *nextstring, errbuf[] ;
+#endif
 extern FILE *tfmfile, *dvifile ;
 extern fontmaptype *ffont ;
 extern integer firstboploc, num, den ;

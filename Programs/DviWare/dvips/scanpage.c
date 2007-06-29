@@ -27,7 +27,11 @@ extern integer pagecount ;
 extern integer pagenum ;
 extern Boolean compressed ;
 extern FILE *dvifile ;
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern frametype frames[] ;
 extern integer pagecost ;
 extern Boolean noomega ;

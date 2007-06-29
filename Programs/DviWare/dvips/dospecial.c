@@ -28,7 +28,11 @@ extern integer HREF_COUNT ;
 extern Boolean NEED_NEW_BOX ;
 extern Boolean HPS_FLAG ;
 #endif
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern shalfword linepos;
 extern Boolean usesspecial ;
 extern Boolean usescolor ;   /* IBM: color */

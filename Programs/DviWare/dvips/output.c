@@ -64,7 +64,11 @@ extern char *paperfmt ;
 extern char *headerpath ;
 extern char *figpath ;
 #endif
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern shalfword linepos ;
 extern struct header_list *ps_fonts_used ;
 extern char banner[], banner2[] ;

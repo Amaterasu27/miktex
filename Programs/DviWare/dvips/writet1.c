@@ -95,7 +95,11 @@ extern char *fb_array;
 #define embed_all_glyphs(tex_font)  false
 #undef pdfmovechars
 #ifdef SHIFTLOWCHARS
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[];
+#endif
 extern Boolean shiftlowchars;
 #define pdfmovechars shiftlowchars
 #define t1_char(c)          T1Char(c)

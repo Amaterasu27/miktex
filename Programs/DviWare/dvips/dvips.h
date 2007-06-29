@@ -20,6 +20,8 @@
 #include <cstdlib>
 using namespace MiKTeX::Core;
 #define exit(code) throw (code)
+#define ERRBUFSIZE 512
+#define MAXPATHLEN 260
 #endif
 #ifdef KPATHSEA
 #include "config.h"

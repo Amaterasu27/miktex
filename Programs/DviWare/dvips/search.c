@@ -14,7 +14,11 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/c-pathch.h>
+#if defined(MIKTEX)
+extern char name[MAXPATHLEN];
+#else
 extern char name[];
+#endif
 #else
 #include <ctype.h>
 #if !defined(WIN32)

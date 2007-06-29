@@ -17,7 +17,11 @@
 extern integer debug_flag;
 #endif  /* DEBUG */
 extern integer pagenum ;
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern FILE *dvifile ;
 extern Boolean noomega ;
 /*

@@ -321,6 +321,10 @@ if(NATIVE_WINDOWS)
   add_definitions(
     -DZLIB_DLL
   )
+  # use overloads for unsecure functions
+  add_definitions(
+    -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1
+  )
   # Windows version macros
 #  add_definitions(
 #    -DWINVER=0x0400

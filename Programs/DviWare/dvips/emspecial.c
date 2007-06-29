@@ -11,7 +11,11 @@
  */
 #include "protos.h"
 
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE];
+#else
 extern char errbuf[] ;
+#endif
 extern shalfword linepos;
 extern FILE *bitfile;
 extern int actualdpi ;

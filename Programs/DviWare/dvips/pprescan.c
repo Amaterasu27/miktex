@@ -26,7 +26,11 @@ extern fontdesctype *curfnt ;
 extern fontmaptype *ffont ;
 extern quarterword *curpos, *curlim ;
 extern integer pagenum ;
+#if defined(MIKTEX)
+extern char errbuf[ERRBUFSIZE] ;
+#else
 extern char errbuf[] ;
+#endif
 extern frametype frames[] ;
 extern Boolean noomega ;
 /*
