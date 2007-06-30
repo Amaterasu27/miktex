@@ -52,7 +52,7 @@ C4P::MakeCommandLine (/*[in]*/ int			argc,
     {
       argumentVector.push_back (_tcsdup(argv[i]));
       commandLine += T_(' ');
-      C4PASSERTSTRING (argv[i]);
+      MIKTEX_ASSERT_STRING (argv[i]);
       commandLine += argv[i];
     }
   return (0);
@@ -110,7 +110,7 @@ C4P::Program::Program (/*[in]*/ const MIKTEXCHAR *	lpszProgramName,
 		       /*[in]*/ const MIKTEXCHAR **	argv)
 {
   MIKTEX_API_BEGIN ("C4P::StartUp");
-  C4PASSERTSTRING (lpszProgramName);
+  MIKTEX_ASSERT_STRING (lpszProgramName);
   programName = lpszProgramName;
   if (startUpTime == static_cast<time_t>(-1))
     {
@@ -232,7 +232,8 @@ MIKTEXMFAPI(C4P::C4P_text *)
 C4P::GetStdFilePtr (/*[in]*/ unsigned idx)
 {
   MIKTEX_API_BEGIN ("C4P::GetStdFilePtr");
-  assert (idx < sizeof(standardTextFiles) / sizeof(standardTextFiles[0]));
+  MIKTEX_ASSERT
+    (idx < sizeof(standardTextFiles) / sizeof(standardTextFiles[0]));
   return (&standardTextFiles[idx]);
   MIKTEX_API_END ("C4P::GetStdFilePtr");
 }

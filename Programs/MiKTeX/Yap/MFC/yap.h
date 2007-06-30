@@ -50,26 +50,6 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 
 /* _________________________________________________________________________
 
-   Release-dependant Macros
-   _________________________________________________________________________ */
-
-#if MIKTEX_RELEASE_STATE >= 2
-
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
-       0))
-
-#else
-
-#  define MIKTEX_ASSERT(expr)
-
-#endif
-
-/* _________________________________________________________________________
-
    Error Macros
    _________________________________________________________________________ */
 
@@ -380,7 +360,7 @@ public:
   bool checkFileTypeAssociations;
 
 public:
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
   bool showBoundingBoxes;
 #endif
 

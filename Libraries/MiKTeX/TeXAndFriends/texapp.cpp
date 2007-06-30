@@ -334,7 +334,7 @@ TeXApp::Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
 		 /*[out]*/ int &		exitCode)
   const
 {
-  C4PASSERTSTRING (lpszCommand);
+  MIKTEX_ASSERT_STRING (lpszCommand);
   if (! enableWrite18)
     {
       return (false);

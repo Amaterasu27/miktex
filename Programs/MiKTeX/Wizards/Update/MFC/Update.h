@@ -1,6 +1,6 @@
 /* Update.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -26,26 +26,6 @@
 class UpdateWizardCommandLineInfo;
 
 #define REMOVE_FORMAT_FILES 1
-
-/* _________________________________________________________________________
-
-   Debug-dependant Macros
-   _________________________________________________________________________ */
-
-#if ! defined(NDEBUG)
-
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
-       0))
-
-#else
-
-#  define MIKTEX_ASSERT(expr)
-
-#endif
 
 /* _________________________________________________________________________
 

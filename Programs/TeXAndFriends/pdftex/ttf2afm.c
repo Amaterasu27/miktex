@@ -37,6 +37,7 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ttf2afm.c#21 $
 #include <ptexmac.h>
 #include <getopt.h>
 #include <writettf.h>
+#define assert MIKTEX_ASSERT
 #else
 #include <libgen.h>
 #include <pdftexdir/ptexmac.h>

@@ -153,7 +153,7 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
 		   /*[in]*/ void *		pArg,
 		   /*[in]*/ MIKTEXCHAR		shortName)
 {
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
   if (lpszNameAndHelp != 0)
     {
       for (vector<poptOption>::const_iterator it = options.begin();
@@ -348,7 +348,7 @@ WebApp::ProcessOption (/*[in]*/ int			opt,
       ShowHelp ();
       throw (0);
     case OPT_HHELP:
-      assert (GetHelpId() > 0);
+      MIKTEX_ASSERT (GetHelpId() > 0);
       pSession->ShowManualPageAndWait (0, GetHelpId());
       throw (0);
     case OPT_RECORD_PACKAGE_USAGES:
@@ -378,8 +378,8 @@ bool
 operator< (/*[in]*/ const poptOption &	opt1,
 	   /*[in]*/ const poptOption &	opt2)
 {
-  assert (opt1.longName != 0);
-  assert (opt2.longName != 0);
+  MIKTEX_ASSERT (opt1.longName != 0);
+  MIKTEX_ASSERT (opt2.longName != 0);
   return (StringCompare(opt1.longName, opt2.longName, false) < 0);
 }
 

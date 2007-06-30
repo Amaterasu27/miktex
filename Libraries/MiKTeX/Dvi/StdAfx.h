@@ -41,5 +41,6 @@
 
 #include <miktex/DibChunker.h>
 #include <miktex/core.h>
+#include <miktex/debug.h>
 #include <miktex/paths.h>
 #include <miktex/trace.h>

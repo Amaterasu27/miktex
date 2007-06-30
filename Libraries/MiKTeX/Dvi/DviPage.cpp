@@ -762,7 +762,7 @@ DviPageImpl::Freeze (/*[in]*/ bool force)
   if (! frozen || force)
     {
       sort (dviItems.begin(), dviItems.end(), ItemTopDown());
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
       for (size_t idx = 1; idx < dviItems.size(); ++ idx)
 	{
 	  MIKTEX_ASSERT (dviItems[idx] >= dviItems[idx - 1]);

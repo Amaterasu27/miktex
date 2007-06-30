@@ -112,7 +112,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -189,7 +189,7 @@ private:
   GetCharacter (/*[in]*/ FILE * pFile)
     const
   {
-    assert (pFile != 0);
+    MIKTEX_ASSERT (pFile != 0);
     MIKTEXCHARINT ch = _gettc(pFile);
     if (ch == MIKTEXEOF)
       {
@@ -256,7 +256,7 @@ public:
 #if defined(PASCAL_TEXT_IO)
     if (bypassEndOfLine && feof(f) == 0)
       {
-	assert ((*f)() == MIKTEXTEXT('\n'));
+	MIKTEX_ASSERT ((*f)() == MIKTEXTEXT('\n'));
 	c4pgetc (f);
       }
 #endif

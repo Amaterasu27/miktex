@@ -181,7 +181,7 @@ RemoteRepositoryPage::OnWizardNext ()
       next = IDD_LOCAL_REPOSITORY;
       break;
     default:
-      assert (false);
+      MIKTEX_ASSERT (false);
       __assume (false);
       break;
     }
@@ -206,7 +206,7 @@ RemoteRepositoryPage::OnWizardBack ()
       prev = IDD_SHARED;
       break;
     default:
-      assert (false);
+      MIKTEX_ASSERT (false);
       __assume (false);
       break;
     }

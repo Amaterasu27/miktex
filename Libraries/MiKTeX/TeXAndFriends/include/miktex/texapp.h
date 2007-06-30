@@ -156,7 +156,7 @@ public:
 #if defined(THEDATA)
     return (THEDATA(formatident));
 #else
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
 #endif
   }

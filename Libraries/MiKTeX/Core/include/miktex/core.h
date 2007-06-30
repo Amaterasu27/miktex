@@ -250,7 +250,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 #if defined(__cplusplus)
 
-#include <cassert>
+#include <miktex/debug.h>
 
 /// @namespace MiKTeX::Core
 /// @brief The MiKTeX core namespace.
@@ -1919,7 +1919,7 @@ public:
   operator[] (/*[in]*/ size_t idx)
     const
   {
-    assert (idx < SIZE);
+    MIKTEX_ASSERT (idx < SIZE);
     return (buffer[idx]);
   }
 
@@ -1930,7 +1930,7 @@ public:
   MIKTEXCHAR &
   operator[] (/*[in]*/ size_t idx)
   {
-    assert (idx < SIZE);
+    MIKTEX_ASSERT (idx < SIZE);
     return (buffer[idx]);
   }
 
@@ -2792,7 +2792,7 @@ public:
   GetArgc ()
     const
   {
-    assert (argv.size() > 0);
+    MIKTEX_ASSERT (argv.size() > 0);
     return (static_cast<int>(argv.size() - 1));
   }
 
@@ -2801,7 +2801,7 @@ public:
   operator[] (/*[in]*/ size_t idx)
     const
   {
-    assert (idx < argv.size());
+    MIKTEX_ASSERT (idx < argv.size());
     return (argv[idx]);
   }
 
@@ -3099,14 +3099,14 @@ const MIKTEXCHAR * const MPM_ROOT_PATH = MIKTEXTEXT("//MiKTeX/[MPM]");
 const size_t MPM_ROOT_PATH_LEN_ = 14;
 #endif
 
-#if ! defined(NDEBUG)
-#define MPM_ROOT_PATH_LEN					\
-  static_cast<size_t>(assert(MiKTeX::Core::StrLen(MPM_ROOT_PATH)	\
-		             == MPM_ROOT_PATH_LEN_),		\
+#if defined(MIKTEX_DEBUG)
+#define MPM_ROOT_PATH_LEN						\
+  static_cast<size_t>(MIKTEX_ASSERT(MiKTeX::Core::StrLen(MPM_ROOT_PATH)	\
+		             == MPM_ROOT_PATH_LEN_),			\
                       MPM_ROOT_PATH_LEN_)
-#else  // not debug
+#else
 const size_t MPM_ROOT_PATH_LEN = MPM_ROOT_PATH_LEN_;
-#endif // not debug
+#endif
 
 /* _________________________________________________________________________
 
@@ -6072,7 +6072,7 @@ public:
     : pSession (Session::Get())
   {
     useExisting;
-    assert (useExisting);
+    MIKTEX_ASSERT (useExisting);
   }
 
 public:
@@ -6242,7 +6242,7 @@ public:
   void
   Initialize ()
   {
-    assert (! autoInit);
+    MIKTEX_ASSERT (! autoInit);
     Initialize_ ();
   }
 
@@ -6256,7 +6256,7 @@ public:
   void
   Delete ()
   {
-    assert (! autoInit);
+    MIKTEX_ASSERT (! autoInit);
     Delete_ ();
   }
   
@@ -6524,7 +6524,7 @@ public:
     for (const MIKTEXCHAR * lpsz = str.c_str(); *lpsz != 0; ++ lpsz)
       {
 	MIKTEXCHAR ch = *lpsz;
-	assert (static_cast<unsigned>(ch) < 0x80);
+	MIKTEX_ASSERT (static_cast<unsigned>(ch) < 0x80);
 	if (ch >= MIKTEXTEXT('a') && ch <= MIKTEXTEXT('z'))
 	  {
 	    ch = MIKTEXTEXT('A') + (ch - MIKTEXTEXT('a'));

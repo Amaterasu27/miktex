@@ -1,6 +1,6 @@
 /* DibChunker.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX DibChunker Library.
 
@@ -598,9 +598,9 @@ DibChunkerImpl::EndChunk ()
       bytesPerLine = BytesPerLine(biWidth, 8);
       break;
     case 24:
-      assert (leftPos % 3 == 0);
+      MIKTEX_ASSERT (leftPos % 3 == 0);
       x = leftPos / 3;
-      assert (bytesInChunk % 3 == 0);
+      MIKTEX_ASSERT (bytesInChunk % 3 == 0);
       biWidth = bytesInChunk / 3;
 #if 1
       if (isBlackAndWhite)

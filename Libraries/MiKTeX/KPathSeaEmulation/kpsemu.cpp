@@ -163,7 +163,7 @@ KPSE::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		/*[in]*/ kpse_file_format_type	format,
 		/*[in]*/ int			mustExist)
 {
-  assert (lpszFileName != 0);
+  MIKTEX_ASSERT (lpszFileName != 0);
   bool found = false;
   PathName result;
   Session * pSession = Session::Get();
@@ -304,7 +304,7 @@ MIKTEXKPSAPI(FILE *)
 KPSE::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		/*[in]*/ kpse_file_format_type	format)
 {
-  assert (lpszFileName != 0);
+  MIKTEX_ASSERT (lpszFileName != 0);
   MIKTEXCHAR * lpszPath = KPSE::FindFile(lpszFileName, format, 1);
   if (lpszPath == 0)
     {

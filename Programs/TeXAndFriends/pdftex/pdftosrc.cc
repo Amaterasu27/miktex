@@ -26,7 +26,12 @@ $Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/pdftosrc.cc#10 $
 #include <string.h>
 #include <ctype.h>
 #include <aconf.h>
+#if defined(MIKTEX)
+#include <miktex/core.h>
+#define assert MIKTEX_ASSERT
+#else
 #include <assert.h>
+#endif
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>

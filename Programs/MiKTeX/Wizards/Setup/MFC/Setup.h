@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -50,26 +50,6 @@
 #else
 #  define tcout cout
 #  define tcerr cerr
-#endif
-
-/* _________________________________________________________________________
-
-   Debug-dependant Macros
-   _________________________________________________________________________ */
-
-#if ! defined(NDEBUG)
-
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
-       0))
-
-#else
-
-#  define MIKTEX_ASSERT(expr)
-
 #endif
 
 /* _________________________________________________________________________

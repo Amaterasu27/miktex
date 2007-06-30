@@ -1448,7 +1448,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
       subDirectoryNames += T_('\0');
     }
   subDirectoryNames += T_('\0');
-  assert (ppSubDirectoryNames != 0);
+  MIKTEX_ASSERT (ppSubDirectoryNames != 0);
   *ppSubDirectoryNames =
     static_cast<MIKTEXCHAR *>(malloc(subDirectoryNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -1458,7 +1458,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 #else
   subDirectoryNames.copy (*ppSubDirectoryNames, subDirectoryNames.length());
 #endif
-  assert (ppFileNames != 0);
+  MIKTEX_ASSERT (ppFileNames != 0);
   directoryInfo.fileNames += T_('\0');
   *ppFileNames =
     static_cast<MIKTEXCHAR *>(malloc(directoryInfo.fileNames.length()));
@@ -1470,7 +1470,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   directoryInfo.fileNames.copy (*ppFileNames,
 				directoryInfo.fileNames.length());
 #endif
-  assert (ppFileNameInfos != 0);
+  MIKTEX_ASSERT (ppFileNameInfos != 0);
   directoryInfo.packageNames += T_('\0');
   *ppFileNameInfos =
     static_cast<MIKTEXCHAR *>(malloc(directoryInfo.packageNames.length()));

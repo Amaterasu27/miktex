@@ -773,8 +773,10 @@ struct libavl_allocator avl_allocator_default = {
     avl_free
 };
 
+#if ! defined(MIKTEX)
 #undef NDEBUG
 #include <assert.h>
+#endif
 
 /* Asserts that |avl_insert()| succeeds at inserting |item| into |table|. */
 void

@@ -225,7 +225,7 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 	    }
 	}
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
       if (! pDoc->IsPrintContext() && g_pYapConfig->showBoundingBoxes)
 	{
 	  pDC->Rectangle (rectBitmap);
@@ -399,7 +399,7 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
 	  continue;
 	}
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
       if (! pDoc->IsPrintContext() && g_pYapConfig->showBoundingBoxes)
 	{
 	  pDC->Rectangle (rectBitmap);

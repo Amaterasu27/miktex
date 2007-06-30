@@ -354,7 +354,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 		 T_("Invalid package archive file."),
 		 0);
 	    }
-#if defined(NDEBUG)
+#if ! defined(MIKTEX_DEBUG)
 	  checkHeader = false;
 #endif
 	}

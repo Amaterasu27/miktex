@@ -1,6 +1,6 @@
 /* pkfont.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -323,7 +323,7 @@ PkFont::Read ()
 		k = inputstream.ReadSignedQuad ();
 		break;
 	      default:
-		assert (false);
+		MIKTEX_ASSERT (false);
 		__assume (false);
 	      }
 	    inputstream.SkipBytes (k);

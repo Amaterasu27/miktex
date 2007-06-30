@@ -52,6 +52,7 @@
 #include "Setup-version.h"
 
 #include <miktex/core.h>
+#include <miktex/Debug.h>
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>
 #include <miktex/urls.h>

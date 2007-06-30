@@ -374,7 +374,7 @@ YapConfig::Load ()
 		   T_("Maintain Vertical Position"),
 		   false);
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
   showBoundingBoxes =
     GetProfileBool(T_("Settings"),
 		   T_("Show Bounding Boxes"),
@@ -596,7 +596,7 @@ YapConfig::Save ()
 		  T_("Maintain Vertical Position"),
 		  maintainVerticalPosition,
 		  false);
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
   UpdateRegValue (T_("Settings"),
 		  T_("Show Bounding Boxes"),
 		  showBoundingBoxes,

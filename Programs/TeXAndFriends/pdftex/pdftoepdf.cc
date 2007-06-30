@@ -31,7 +31,11 @@ $Id: pdftoepdf.cc,v 1.9 2006/09/01 18:06:52 hahe Exp hahe $
 #include <gmem.h>
 #include <gfile.h>
 #include <config.h>
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#else
 #include <assert.h>
+#endif
 #include "Object.h"
 #include "Stream.h"
 #include "Array.h"

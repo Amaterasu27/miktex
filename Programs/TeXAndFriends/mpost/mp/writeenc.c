@@ -21,6 +21,10 @@ $Id $
 
 #include "mplib.h"
 
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#endif
+
 /*@unused@*/
 static const char perforce_id[] =
     "$Id: writeenc.c,v 1.3 2005/12/26 14:20:13 hahe Exp hahe $";

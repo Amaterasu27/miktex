@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -25,7 +25,7 @@
    Debug-dependant Macros
    _________________________________________________________________________ */
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
 
 #  define MIKTEX_ASSERT(expr)					\
   static_cast<void>						\

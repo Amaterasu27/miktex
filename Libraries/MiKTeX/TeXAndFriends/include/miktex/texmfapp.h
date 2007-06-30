@@ -108,7 +108,7 @@ GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
 	      /*[in]*/ int		stringNumber,
 	      /*[in]*/ size_t		size = 0xffff)
 {
-  assert (sizeof(THEDATA(strpool)[0]) == sizeof(lpsz[0]));
+  MIKTEX_ASSERT (sizeof(THEDATA(strpool)[0]) == sizeof(lpsz[0]));
 #if defined(MIKTEX_OMEGA)
   int len =
     (THEDATA(strstartar)[stringNumber + 1]
@@ -250,7 +250,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -268,7 +268,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (MiKTeX::Core::FileType::None);
   }
 
@@ -286,7 +286,7 @@ protected:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -304,7 +304,7 @@ protected:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -322,7 +322,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (MiKTeX::Core::FileType::None);
   }
 
@@ -340,7 +340,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -358,7 +358,7 @@ protected:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 
@@ -778,7 +778,7 @@ protected:
   int
   MakeTeXString (/*[in]*/ const MIKTEXCHAR * lpsz)
   {
-    assert (lpsz != 0);
+    MIKTEX_ASSERT (lpsz != 0);
     size_t len = _tcslen(lpsz);
     CheckPoolPointer (THEDATA(poolptr), len);
     while (len-- > 0)

@@ -126,7 +126,7 @@ WebAppInputLine::MangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
 {
   PathName ret;
   MIKTEXCHAR * lpszTo = ret.GetBuffer();
-  C4PASSERTSTRING (lpszFrom);
+  MIKTEX_ASSERT_STRING (lpszFrom);
   size_t len = StrLen(lpszFrom);
   if (len >= ret.GetSize())
     {
@@ -166,7 +166,7 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
 {
   PathName ret;
   MIKTEXCHAR * lpszTo = ret.GetBuffer();
-  C4PASSERTSTRING (lpszFrom);
+  MIKTEX_ASSERT_STRING (lpszFrom);
   size_t len = StrLen(lpszFrom);
   if (len >= ret.GetSize())
     {
@@ -203,7 +203,7 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ FileShare		share,
 				 /*[in]*/ bool			text)
 {
-  C4PASSERTSTRING (lpszPath);
+  MIKTEX_ASSERT_STRING (lpszPath);
   FILE * pfile = 0;
   if (enablePipes && lpszPath[0] == T_('|'))
     {
@@ -258,7 +258,7 @@ MIKTEXMFAPI(bool)
 WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
 				/*[in]*/ const MIKTEXCHAR *	lpszFileName)
 {
-  C4PASSERTSTRING (lpszFileName);
+  MIKTEX_ASSERT_STRING (lpszFileName);
 
   FILE * pfile = 0;
 
@@ -355,7 +355,7 @@ MIKTEXMFAPI(void)
 WebAppInputLine::HandleEof (/*[in]*/ FILE * pfile)
   const
 {
-  assert (pfile != 0);
+  MIKTEX_ASSERT (pfile != 0);
 #if 1
   while (GetC(pfile) != MIKTEXEOF)
     {

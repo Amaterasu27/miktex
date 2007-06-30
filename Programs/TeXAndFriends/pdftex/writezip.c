@@ -22,7 +22,11 @@ $Id: writezip.c,v 1.2 2006/01/14 20:35:43 hahe Exp $
 
 #include "ptexlib.h"
 #include "zlib.h"
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#else
 #include <assert.h>
+#endif
 
 #define ZIP_BUF_SIZE  32768
 

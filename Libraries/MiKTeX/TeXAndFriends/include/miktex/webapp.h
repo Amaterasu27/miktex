@@ -26,7 +26,6 @@
 
 #include <miktex/miktex-texmf.h>
 
-#include <cassert>
 #include <cstdio>
 
 #include <algorithm>
@@ -331,7 +330,7 @@ public:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (MiKTeX::Core::FileType::None);
   }
 
@@ -365,7 +364,7 @@ protected:
     const
   {
     // must be implemented in sub-classes
-    assert (false);
+    MIKTEX_ASSERT (false);
     return (0);
   }
 

@@ -26,6 +26,10 @@ $Id: mapfile.c,v 1.20 2005/10/16 17:41:51 hahe Exp hahe $
 #include <kpathsea/c-memstr.h>
 #include <string.h>
 
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#endif
+
 static const char perforce_id[] =
     "$Id: mapfile.c,v 1.20 2005/10/16 17:41:51 hahe Exp hahe $";
 

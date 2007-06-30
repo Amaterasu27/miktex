@@ -24,6 +24,10 @@ $Id: avlstuff.c,v 1.12 2005/07/11 20:27:39 hahe Exp hahe $
 #include <kpathsea/c-proto.h>
 #include "avl.h"
 
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#endif
+
 static const char perforce_id[] =
     "$Id: avlstuff.c,v 1.12 2005/07/11 20:27:39 hahe Exp hahe $";
 

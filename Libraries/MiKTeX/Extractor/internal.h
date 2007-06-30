@@ -66,63 +66,6 @@ IsWindowsNT ()
    Debug-dependant Macros
    _________________________________________________________________________ */
 
-#if ! defined(NDEBUG)
-
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
-       0))
-
-#  define MIKTEX_ASSERT_BUFFER(buf, n) AssertValidBuf (buf, n)
-
-#  define MIKTEX_ASSERT_BUFFER_OR_NIL(buf, n)	\
-  if (buf != 0)					\
-    {						\
-      AssertValidBuf (buf, n);			\
-    }
-
-#  define MIKTEX_ASSERT_CHAR_BUFFER(buf, n)	\
-  AssertValidBuf (buf, sizeof(MIKTEXCHAR) * n)
-
-#  define MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL(buf, n)	\
-  if (buf != 0)						\
-    {							\
-      AssertValidBuf (buf, sizeof(MIKTEXCHAR) * n);	\
-    }
-
-#  define MIKTEX_ASSERT_STRING(str) AssertValidString (str)
-
-#  define MIKTEX_ASSERT_STRING_OR_NIL(str)	\
-  if (str != 0)					\
-    {						\
-      AssertValidString (str);			\
-    }
-
-#  define MIKTEX_ASSERT_PATH_BUFFER(buf)		\
-  MIKTEX_ASSERT_CHAR_BUFFER (buf, BufferSizes::MaxPath)
-
-#  define MIKTEX_ASSERT_PATH_BUFFER_OR_NIL(buf)			\
-  MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (buf, BufferSizes::MaxPath)
-
-#  define MIKTEX_ASSERT_FNAME_BUFFER(buf)		\
-  MIKTEX_ASSERT_CHAR_BUFFER (buf, BufferSizes::MaxPath)
-
-#else
-
-#  define MIKTEX_ASSERT(expr)
-#  define MIKTEX_ASSERT_BUFFER(buf, n)
-#  define MIKTEX_ASSERT_BUFFER_OR_NIL(buf, n)
-#  define MIKTEX_ASSERT_CHAR_BUFFER(buf, n)
-#  define MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL(buf, n)
-#  define MIKTEX_ASSERT_FNAME_BUFFER(buf)
-#  define MIKTEX_ASSERT_PATH_BUFFER(buf)
-#  define MIKTEX_ASSERT_PATH_BUFFER_OR_NIL(buf)
-#  define MIKTEX_ASSERT_STRING(str)
-#  define MIKTEX_ASSERT_STRING_OR_NIL(str)
-#endif
-
 #if ! defined(UNUSED)
 #  if ! defined(NDEBUG)
 #    define UNUSED(x)
@@ -656,7 +599,7 @@ inline void
 AssertValidBuf (/*[in]*/ void *	lp,
 		/*[in]*/ size_t	n)
 {
-#if defined(_MSC_VER) && ! defined(NDEBUG)
+#if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
   MIKTEX_ASSERT (lp != 0);
   MIKTEX_ASSERT (! IsBadWritePtr(lp, n));
 #else
@@ -674,7 +617,7 @@ inline void
 AssertValidString (/*[in]*/ const MIKTEXCHAR *	lp,
 		   /*[in]*/ size_t	n = 4096)
 {
-#if defined(_MSC_VER) && ! defined(NDEBUG)
+#if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
   MIKTEX_ASSERT (lp != 0);
   MIKTEX_ASSERT (! IsBadStringPtr(lp, n));
 #else

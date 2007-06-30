@@ -211,7 +211,7 @@ public:
     const
   {
     const MIKTEXCHAR * lpszFileName = THEDATA(nameoffile);
-    C4PASSERTSTRING (lpszFileName);
+    MIKTEX_ASSERT_STRING (lpszFileName);
     PathName bstFileName (lpszFileName);
     if (bstFileName.GetExtension() == 0)
       {

@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -45,6 +45,7 @@
 #include <cfg.h>
 #include <getopt.h>
 #include <miktex/core.h>
+#include <miktex/debug.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

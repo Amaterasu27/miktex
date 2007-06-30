@@ -25,7 +25,11 @@ $Id: writejbig2.h,v 1.40 2006/05/31 19:18:51 hahe Exp hahe $
 
 #include <stdlib.h>
 #include <stdio.h>
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#else
 #include <assert.h>
+#endif
 #include "ptexlib.h"
 #include "ptexmac.h"
 #include "image.h"

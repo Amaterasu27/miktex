@@ -32,6 +32,10 @@ $Id $
 #include <float.h>              /* for DBL_EPSILON */
 #include "mplib.h"
 
+#if defined(MIKTEX)
+#define assert MIKTEX_ASSERT
+#endif
+
 /* define char_ptr, char_array & char_limit */
 typedef char char_entry;
 define_array (char);

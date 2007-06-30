@@ -1,6 +1,6 @@
 /* mpm.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -28,7 +28,7 @@
    Debug-dependant Macros
    _________________________________________________________________________ */
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
 
 #  define MIKTEX_ASSERT(expr)					\
   static_cast<void>						\

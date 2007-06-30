@@ -149,7 +149,7 @@ TeXMFApp::Finalize ()
 MIKTEXMFAPI(void)
 TeXMFApp::OnTeXMFStartJob ()
 {
-  C4PASSERTSTRING (TheNameOfTheGame());
+  MIKTEX_ASSERT_STRING (TheNameOfTheGame());
   tstring appName;
   for (const MIKTEXCHAR * lpsz = TheNameOfTheGame(); *lpsz != 0; ++ lpsz)
     {
@@ -722,7 +722,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
 MIKTEXMFAPI(void)
 TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
 {
-  C4PASSERTSTRING (lpszFileName);
+  MIKTEX_ASSERT_STRING (lpszFileName);
 
   PathName path;
 
@@ -792,11 +792,11 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			/*[in]*/ bool			renew)
   const
 {
-  C4PASSERTSTRING (lpszFileName);
-  assert (ppFile);
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT (ppFile);
   if (pBuf != 0)
     {
-      C4PASSERTBUF (pBuf, size);
+      MIKTEX_ASSERT_BUFFER (pBuf, size);
     }
 
   PathName fileName (lpszFileName);
@@ -938,7 +938,7 @@ MIKTEXMFAPI(void)
 TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
   const
 {
-  C4PASSERTBUF (lpszPath, _MAX_PATH);
+  MIKTEX_ASSERT_BUFFER (lpszPath, _MAX_PATH);
   if (memoryDumpFileName.length() > 0)
     {
       Utils::CopyString (lpszPath,
@@ -1087,7 +1087,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 MIKTEXMFAPI(unsigned long)
 TeXMFApp::InitializeBufferA (/*[in,out]*/ unsigned char * pBuffer)
 {
-  assert (pBuffer != 0);
+  MIKTEX_ASSERT (pBuffer != 0);
   return (InitializeBuffer<unsigned char>(pBuffer,
 					  GetInputFileType(),
 					  isTeXProgram));
@@ -1101,7 +1101,7 @@ TeXMFApp::InitializeBufferA (/*[in,out]*/ unsigned char * pBuffer)
 MIKTEXMFAPI(unsigned long)
 TeXMFApp::InitializeBufferW (/*[in,out]*/ unsigned __int16 * pBuffer)
 {
-  assert (pBuffer != 0);
+  MIKTEX_ASSERT (pBuffer != 0);
   return (InitializeBuffer<unsigned __int16>(pBuffer,
 					     GetInputFileType(),
 					     isTeXProgram));
@@ -1219,7 +1219,7 @@ TeXMFApp::InvokeEditorIfNecessary () const
 MIKTEXMFAPI(void)
 TeXMFApp::TouchJobOutputFile (/*[in]*/ FILE * pfile) const
 {
-  assert (pfile != 0);
+  MIKTEX_ASSERT (pfile != 0);
   if (setJobTime && pSession->IsOutputFile(pfile))
     {
       time_t time = GetStartUpTime();
@@ -1237,9 +1237,9 @@ TeXMFApp::OpenPoolFile (/*[in]*/ void *			p,
 			/*[in]*/ const MIKTEXCHAR *	lpszFileName)
   const
 {
-  assert (p != 0);
-  C4PASSERTBUF (p, sizeof(C4P_text));
-  C4PASSERTSTRING (lpszFileName);
+  MIKTEX_ASSERT (p != 0);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(C4P_text));
+  MIKTEX_ASSERT_STRING (lpszFileName);
   PathName poolFileName (lpszFileName);
   if (poolFileName.GetExtension() == 0)
     {

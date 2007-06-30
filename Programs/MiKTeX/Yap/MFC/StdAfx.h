@@ -66,6 +66,7 @@
 #include <miktex/ProgressDialog.h>
 #include <miktex/TextViewerDialog.h>
 #include <miktex/core.h>
+#include <miktex/debug.h>
 #include <miktex/dvi.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

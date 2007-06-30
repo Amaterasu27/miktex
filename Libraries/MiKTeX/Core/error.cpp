@@ -1,6 +1,6 @@
 /* error.cpp: error handling
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -30,11 +30,7 @@
 
 #if defined(_MSC_VER)
 BEGIN_INTERNAL_NAMESPACE;
-#if defined(NDEBUG)
 int debugOnStdException = 0;
-#else
-int debugOnStdException = 1;
-#endif
 END_INTERNAL_NAMESPACE;
 
 void
@@ -152,6 +148,28 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 			 lpszInfo,
 			 lpszSourceFile,
 			 sourceLine);
+}
+
+/* _________________________________________________________________________
+
+   MiKTeX::Debug::FatalMiKTeXError
+   _________________________________________________________________________ */
+
+void
+MIKTEXNORETURN
+MIKTEXCALL
+MiKTeX::Debug::FatalMiKTeXError
+(/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
+ /*[in]*/ const MIKTEXCHAR *	lpszMessage,
+ /*[in]*/ const MIKTEXCHAR *	lpszInfo,
+ /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+ /*[in]*/ int			sourceLine)
+{
+  Session::FatalMiKTeXError (lpszMiktexFunction,
+			     lpszMessage,
+			     lpszInfo,
+			     lpszSourceFile,
+			     sourceLine);
 }
 
 /* _________________________________________________________________________

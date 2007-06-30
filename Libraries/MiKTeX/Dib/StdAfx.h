@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX DibChunker Library.
 
@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <miktex/core.h>
+#include <miktex/debug.h>
 #include <miktex/trace.h>
 
 using namespace MiKTeX::Core;

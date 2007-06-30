@@ -27,7 +27,6 @@
 #define D8041ED6B5CDA942BA2AEEA8E29FD1D9
 
 #include <cstdio>
-#include <cassert>
 
 #if defined(_WIN32) || defined(_WIN64)
 #  include <windows.h>
@@ -51,14 +50,6 @@
 
 #define C4PAPI(type) C4PEXPORT type C4PCALL
 #define C4PDATA(type) C4PEXPORT type
-
-#if ! defined(NDEBUG)
-#  define C4PASSERTBUF(buf, n) AssertValidBuf(buf, n)
-#  define C4PASSERTSTRING(str) AssertValidString(str)
-#else
-#  define C4PASSERTBUF(buf, n)
-#  define C4PASSERTSTRING(str)
-#endif
 
 #define C4P_BEGIN_NAMESPACE namespace C4P {
 #define C4P_END_NAMESPACE }
@@ -108,7 +99,7 @@ public:
   AssertValid ()
     const
   {
-    assert (pFile != 0);
+    MIKTEX_ASSERT (pFile != 0);
   }
 
 public:
@@ -185,7 +176,7 @@ public:
   bufref ()
     const
   {
-    assert ((flags & Buffered) != 0)
+    MIKTEX_ASSERT ((flags & Buffered) != 0)
     return (currentElement);
   }
   
@@ -253,7 +244,7 @@ public:
 	/*[in]*/ size_t		n)
   {
     AssertValid ();
-    C4PASSERTBUF (pBuf, n);
+    MIKTEX_ASSERT_BUFFER (pBuf, n);
     if (feof(*this) != 0)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
@@ -325,7 +316,7 @@ public:
   Write ()
   {
     AssertValid ();
-    assert ((flags & Buffered) != 0);
+    MIKTEX_ASSERT ((flags & Buffered) != 0);
     if (fwrite(&currentElement, sizeof(ElementType), 1, *this) != 1
 	|| ferror(*this) != 0)
       {
@@ -840,82 +831,13 @@ c4pbufwrite (/*[in]*/ Ft &		f,
 	     /*[in]*/ size_t		buf_size)
 {
   f.AssertValid ();
-  C4PASSERTBUF (buf, buf_size);
+  //MIKTEX_ASSERT_BUFFER (buf, buf_size);
   if (fwrite(buf, buf_size, 1, f) != 1)
     {
       MiKTeX::Core::Session::FatalCrtError
 	(MIKTEXTEXT("fwrite"), 0, MIKTEXTEXT(__FILE__), __LINE__);
     }
 }
-
-/* _________________________________________________________________________
-
-   AssertValidBuf
-   _________________________________________________________________________ */
-
-#if ! defined(NDEBUG)
-inline
-void
-AssertValidBuf (/*[in]*/ void *	lp,
-		/*[in]*/ size_t	n)
-{
-  assert (lp != 0);
-  assert (! IsBadWritePtr(lp, n));
-}
-#else
-inline
-void
-AssertValidBuf (/*[in]*/ void *,
-		/*[in]*/ size_t)
-{
-}
-#endif
-
-/* _________________________________________________________________________
-
-   AssertValidBuf
-   _________________________________________________________________________ */
-
-#if ! defined(NDEBUG)
-inline
-void
-AssertValidBuf (/*[in]*/ const void *	lp,
-		/*[in]*/ size_t		n)
-{
-  assert (lp != 0);
-  assert (! IsBadReadPtr(lp, n));
-}
-#else
-inline
-void
-AssertValidBuf (/*[in]*/ const void *,
-		/*[in]*/ size_t)
-{
-}
-#endif
-
-/* _________________________________________________________________________
-
-   AssertValidString
-   _________________________________________________________________________ */
-
-#if ! defined(NDEBUG)
-inline
-void
-AssertValidString (/*[in]*/ const MIKTEXCHAR *	lp,
-		   /*[in]*/ size_t		n = 4096)
-{
-  assert (lp != 0);
-  assert (! IsBadStringPtr(lp, n));
-}
-#else
-inline
-void
-AssertValidString (/*[in]*/ const MIKTEXCHAR *	,
-		   /*[in]*/ size_t		= 4096)
-{
-}
-#endif
 
 /* _________________________________________________________________________
 
@@ -931,9 +853,9 @@ c4pmemcpy (/*[out]*/ void *		pdst,
 	   /*[in]*/ const void *	psrc,
 	   /*[in]*/ size_t		count)
 {
-  assert (size >= count);
-  C4PASSERTBUF (pdst, size);
-  C4PASSERTBUF (psrc, count);
+  MIKTEX_ASSERT (size >= count);
+  MIKTEX_ASSERT_BUFFER (pdst, size);
+  //MIKTEX_ASSERT_BUFFER (psrc, count);
 #if defined(_MSC_VER) && (_MSC_VER > 1400)
   memcpy_s (pdst, size, psrc, count);
 #else
@@ -955,7 +877,7 @@ inline
 size_t
 c4pstrlen (/*[in]*/ const MIKTEXCHAR * lpsz)
 {
-  C4PASSERTSTRING (lpsz);
+  MIKTEX_ASSERT_STRING (lpsz);
   return (MiKTeX::Core::StrLen(lpsz));
 }
 
@@ -972,12 +894,13 @@ c4pfopen (/*[in]*/ T &			f,
 	  /*[in]*/ const MIKTEXCHAR *	lpszMode,
 	  /*[in]*/ bool			mustExist)
 {
-  C4PASSERTSTRING (lpszName);
-  C4PASSERTSTRING (lpszMode);
-  assert (MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("r")) == 0
-	  || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("rb")) == 0
-	  || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("w")) == 0
-	  || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("wb")) == 0);
+  MIKTEX_ASSERT_STRING (lpszName);
+  MIKTEX_ASSERT_STRING (lpszMode);
+  MIKTEX_ASSERT
+    (MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("r")) == 0
+     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("rb")) == 0
+     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("w")) == 0
+     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("wb")) == 0);
   bool reading = (lpszMode[0] == MIKTEXTEXT('r'));
   bool text = (lpszMode[1] == 0);
   return (f.Open(lpszName,

@@ -47,6 +47,8 @@
 #include <string>
 #include <vector>
 
+#include <miktex/core.h>
+#include <miktex/debug.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

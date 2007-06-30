@@ -106,7 +106,7 @@ namespace {
    DebugCheckColorNames
    _________________________________________________________________________ */
 
-#if ! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
 STATICFUNC(void)
 DebugCheckColorNames ()
 {
@@ -135,7 +135,7 @@ STATICFUNC(bool)
 LookupColorName (/*[in]*/ const char *	lpszName,
 		 /*[in]*/ CmykColor &	color)
 {
-#if! defined(NDEBUG)
+#if defined(MIKTEX_DEBUG)
   DebugCheckColorNames ();
 #endif
   // <fixme>use binary search for efficiency</fixme>

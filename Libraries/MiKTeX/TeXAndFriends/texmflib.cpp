@@ -100,8 +100,8 @@ MiKTeX::TeXAndFriends::OpenTFMFile (/*[in]*/ void  *		p,
 				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenTFMFile");
-  C4PASSERTBUF (p, sizeof(bytefile));
-  C4PASSERTSTRING (lpszFontName);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
+  MIKTEX_ASSERT_STRING (lpszFontName);
   return (OpenFontFile(reinterpret_cast<bytefile*>(p),
 		       lpszFontName,
 		       FileType::TFM,
@@ -119,8 +119,8 @@ MiKTeX::TeXAndFriends::OpenXFMFile (/*[in]*/ void *		p,
 				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenXFMFile");
-  C4PASSERTBUF (p, sizeof(bytefile));
-  C4PASSERTSTRING (lpszFontName);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
+  MIKTEX_ASSERT_STRING (lpszFontName);
   return (OpenFontFile(reinterpret_cast<bytefile*>(p),
 		       lpszFontName,
 		       FileType::OFM,
@@ -138,8 +138,8 @@ MiKTeX::TeXAndFriends::OpenVFFile (/*[in]*/ void *		p,
 				   /*[in]*/ const MIKTEXCHAR *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenVFFile");
-  C4PASSERTBUF (p, sizeof(bytefile));
-  C4PASSERTSTRING (lpszFontName);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
+  MIKTEX_ASSERT_STRING (lpszFontName);
   return (OpenFontFile(reinterpret_cast<bytefile*>(p),
 		       lpszFontName,
 		       FileType::VF,
@@ -157,8 +157,8 @@ MiKTeX::TeXAndFriends::OpenXVFFile (/*[in]*/ void *		p,
 				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenXVFFile");
-  C4PASSERTBUF (p, sizeof(bytefile));
-  C4PASSERTSTRING (lpszFontName);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
+  MIKTEX_ASSERT_STRING (lpszFontName);
   return (OpenFontFile(reinterpret_cast<bytefile*>(p),
 		       lpszFontName,
 		       FileType::VF,
@@ -221,7 +221,7 @@ MiKTeX::TeXAndFriends::ConsolePrint (/*[in]*/ const MIKTEXCHAR * lpszFormat,
 				     /*[in]*/			...)
 {
   MIKTEX_API_BEGIN ("ConsolePrint");
-  C4PASSERTSTRING (lpszFormat);
+  MIKTEX_ASSERT_STRING (lpszFormat);
   va_list marker;
   va_start (marker, lpszFormat);
   if (bOem)
@@ -344,11 +344,11 @@ MiKTeX::TeXAndFriends::InitializeCharTables
  /*[in]*/ void *		pReserved1)
 {
   MIKTEX_API_BEGIN ("InitializeCharTables");
-  C4PASSERTSTRING (lpszFileName);
-  C4PASSERTBUF (pChar, 256);
-  C4PASSERTBUF (pOrd, 256);
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT_BUFFER (pChar, 256);
+  MIKTEX_ASSERT_BUFFER (pOrd, 256);
   UNUSED (pReserved1);
-  assert (pReserved1 == 0);
+  MIKTEX_ASSERT (pReserved1 == 0);
   unsigned char * pxchr = reinterpret_cast<unsigned char*>(pChar);
   unsigned char * pxord = reinterpret_cast<unsigned char*>(pOrd);
   for (unsigned i = 0; i < 256; ++ i)
@@ -374,9 +374,9 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
 				    /*[in]*/ const MIKTEXCHAR *	lpszFileName)
 {
   MIKTEX_API_BEGIN ("OpenMAPFile");
-  assert (p != 0);
-  C4PASSERTBUF (p, sizeof(alphafile));
-  C4PASSERTSTRING (lpszFileName);
+  MIKTEX_ASSERT (p != 0);
+  MIKTEX_ASSERT_BUFFER (p, sizeof(alphafile));
+  MIKTEX_ASSERT_STRING (lpszFileName);
   PathName mapFileName (lpszFileName);
   if (mapFileName.GetExtension() == 0)
     {

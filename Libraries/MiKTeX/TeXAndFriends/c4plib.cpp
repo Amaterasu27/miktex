@@ -120,7 +120,7 @@ FileRoot::Open (/*[in]*/ LPCTSTR	lpszPath,
 		/*[in]*/ bool		mustExist)
 {
   MIKTEX_API_BEGIN ("FileRoot::open");
-  C4PASSERTSTRING (lpszPath);
+  MIKTEX_ASSERT_STRING (lpszPath);
   FILE * pFile;
   if (mustExist)
     {
