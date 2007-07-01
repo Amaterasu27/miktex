@@ -63,7 +63,7 @@ PackageManagerApplication theApp;
 BOOL
 PackageManagerApplication::InitInstance ()
 {
-  CoInitialize (0);
+  CoInitializeEx (0, COINIT_MULTITHREADED);
 
   InitCommonControls ();
 
