@@ -72,7 +72,7 @@ MiKTeXOptionsApplication::InitInstance ()
       return (FALSE);
     }
 
-  if (FAILED(CoInitialize(0)))
+  if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED)))
     {
       AfxMessageBox (T_("The application could not be initialized (3)."),
 		     MB_ICONSTOP | MB_OK);
