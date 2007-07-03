@@ -140,6 +140,18 @@ the &MiKTeX; setup.</para></listitem>
 </varlistentry>
 
 <varlistentry>
+<term><option>--package-set=<replaceable>set</replaceable></option></term>
+<listitem><para>Download/Install the specified package set.
+<indexterm>
+<primary>package set</primary>
+</indexterm>
+This must be one of
+<option>basic</option>,
+<option>complete</option>.
+</para></listitem>
+</varlistentry>
+	
+<varlistentry>
 <term><option>--private</option></term>
 <listitem><para>Install &MiKTeX; for the
 <indexterm>
