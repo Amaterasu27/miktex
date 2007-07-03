@@ -43,6 +43,7 @@ public:
       optPrivate (false),
       optShared (false),
       optUnattended (false),
+      packageLevel (PackageLevel::None),
       task (SetupTask::None)
   {
   }
@@ -79,6 +80,9 @@ public:
 
 public:
   bool optUnattended;
+
+public:
+  PackageLevel packageLevel;
 };
 
 /* _________________________________________________________________________
@@ -192,6 +196,7 @@ enum {
   OPT_INSTALL_ROOT,
   OPT_LOCAL_PACKAGE_REPOSITORY,
   OPT_NO_ADDITIONAL_ROOTS,
+  OPT_PACKAGE_SET,
   OPT_PRIVATE,
   OPT_PROGRAM_FOLDER,
   OPT_REMOTE_PACKAGE_REPOSITORY,
@@ -217,6 +222,7 @@ const struct option long_options[] =
   { T_("local-package-repository"), required_argument, 0,
     OPT_LOCAL_PACKAGE_REPOSITORY },
   { T_("no-additional-roots"), no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
+  { T_("package-set"), required_argument, 0, OPT_PACKAGE_SET },
   { T_("private"), no_argument, 0, OPT_PRIVATE },
   { T_("program-folder"), required_argument, 0, OPT_PROGRAM_FOLDER },
   { T_("remote-package-repository"), required_argument, 0,
@@ -249,6 +255,7 @@ Options:\r\n\r\n\
   --install-root=DIR\r\n\
   --local-package-repository=DIR\r\n\
   --no-additional-roots\r\n\
+  --package-set=SET\r\n\
   --private\r\n\
   --program-folder=NAME\r\n\
   --remote-package-repository=URL\r\n\
@@ -345,6 +352,32 @@ a common data directory."),
 
 	case OPT_NO_ADDITIONAL_ROOTS:
 	  cmdinfo.optNoAddTEXMFDirs = true;
+	  break;
+
+	case OPT_PACKAGE_SET:
+	  if (StringCompare(optarg, T_("essential")) == 0)
+	    {
+	      cmdinfo.packageLevel = PackageLevel::Essential;
+	    }
+	  else if (StringCompare(optarg, T_("basic")) == 0)
+	    {
+	      cmdinfo.packageLevel = PackageLevel::Basic;
+	    }
+	  else if (StringCompare(optarg, T_("advanced")) == 0)
+	    {
+	      cmdinfo.packageLevel = PackageLevel::Advanced;
+	    }
+	  else if (StringCompare(optarg, T_("complete")) == 0)
+	    {
+	      cmdinfo.packageLevel = PackageLevel::Complete;
+	    }
+	  else
+	    {
+	      FATAL_MIKTEX_ERROR
+		(T_("ParseSetupCommandLine"),
+		 T_("Invalid package set."),
+		 0);
+	    }
 	  break;
 
 	case OPT_PRIVATE:
@@ -579,8 +612,8 @@ CheckAddTEXMFDirs (/*[in,out]*/ tstring &	directories,
    _________________________________________________________________________ */
 
 bool
-TestLocalRepository (/*[in]*/ const PathName &	pathRepository,
-		     /*[out]*/ PackageLevel &	packageLevel)
+TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
+		     /*[in,out]*/ PackageLevel &	packageLevel)
 {
   PathName pathInfoFile (pathRepository, DOWNLOAD_INFO_FILE);
   if (! File::Exists(pathInfoFile))
@@ -595,23 +628,33 @@ TestLocalRepository (/*[in]*/ const PathName &	pathRepository,
     {
       return (false);
     }
+  PackageLevel packageLevel_ = PackageLevel::None;
   if (firstLine.find(ESSENTIAL_MIKTEX) != tstring::npos)
     {
-      packageLevel = PackageLevel::Essential;
+      packageLevel_ = PackageLevel::Essential;
     }
   else if (firstLine.find(BASIC_MIKTEX) != tstring::npos)
     {
-      packageLevel = PackageLevel::Basic;
+      packageLevel_ = PackageLevel::Basic;
     }
   else if (firstLine.find(COMPLETE_MIKTEX) != tstring::npos
 	   || firstLine.find(COMPLETE_MIKTEX_LEGACY) != tstring::npos)
     {
-      packageLevel = PackageLevel::Complete;
+      packageLevel_ = PackageLevel::Complete;
     }
   else
     {
       // README.TXT doesn't look right
       return (false);
+    }
+  if (packageLevel > packageLevel_)
+    {
+      // doesn't have the requested package set
+      return (false);
+    }
+  if (packageLevel == PackageLevel::None)
+    {
+      packageLevel = packageLevel_;
     }
   return (true);
 }
@@ -622,13 +665,13 @@ TestLocalRepository (/*[in]*/ const PathName &	pathRepository,
    _________________________________________________________________________ */
 
 bool
-SearchLocalRepository (/*[out]*/ PathName &	localRepository,
-		       /*[out]*/ PackageLevel &	pkglvl,
-		       /*[out]*/ bool &		prefabricated)
+SearchLocalRepository (/*[out]*/ PathName &		localRepository,
+		       /*[in,out]*/ PackageLevel &	packageLevel,
+		       /*[out]*/ bool &			prefabricated)
 {
   // try current directory
   localRepository.SetToCurrentDirectory ();
-  if (TestLocalRepository(localRepository, pkglvl))
+  if (TestLocalRepository(localRepository, packageLevel))
     {
       prefabricated = true;
       return (true);
@@ -636,7 +679,7 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 
   // try my directory
   localRepository = SessionWrapper(true)->GetMyLocation();
-  if (TestLocalRepository(localRepository, pkglvl))
+  if (TestLocalRepository(localRepository, packageLevel))
     {
       prefabricated = true;
       return (true);
@@ -648,7 +691,7 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
   localRepository += T_("tm");
   localRepository += T_("packages");
   localRepository.MakeAbsolute ();
-  if (TestLocalRepository(localRepository, pkglvl))
+  if (TestLocalRepository(localRepository, packageLevel))
     {
       prefabricated = true;
       return (true);
@@ -656,7 +699,7 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 
   // try last directory
   if (PackageManager::TryGetLocalPackageRepository(localRepository)
-      && TestLocalRepository(localRepository, pkglvl))
+      && TestLocalRepository(localRepository, packageLevel))
     {
       prefabricated = false;
       return (true);
@@ -732,6 +775,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.registerPath = true;
   theApp.showLogFileOnExit = false;
   theApp.unattended = cmdinfo.optUnattended;
+  theApp.packageLevel = cmdinfo.packageLevel;
 
   // check to see whether setup is started from a MiKTeXDirect location
   theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(theApp.MiKTeXDirectRoot);
@@ -773,15 +817,13 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	T_(MIKTEX_PRODUCTNAME_STR) T_(" ") T_(MIKTEX_SERIES_STR);
     }
 
-  PackageLevel pkglvl = PackageLevel::None;
-  PathName localRepository;
-
   // local package repository
   if (! cmdinfo.localPackageRepository.Empty())
     {
-      localRepository = cmdinfo.localPackageRepository;
+      theApp.localPackageRepository = cmdinfo.localPackageRepository;
       if (cmdinfo.task != SetupTask::Download
-	  && ! TestLocalRepository(localRepository, pkglvl))
+	  && ! TestLocalRepository(theApp.localPackageRepository,
+				   theApp.packageLevel))
 	{
 	  FATAL_MIKTEX_ERROR
 	    (T_("SetupGlobalVars"),
@@ -789,15 +831,14 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	     0);
 	}
     }
-  else if (! SearchLocalRepository(localRepository,
-				   pkglvl,
+  else if (! SearchLocalRepository(theApp.localPackageRepository,
+				   theApp.packageLevel,
 				   theApp.prefabricated))
     {
       // check the default location
-      localRepository = GetDefaultLocalRepository();
-      TestLocalRepository (localRepository, pkglvl);
+      theApp.localPackageRepository = GetDefaultLocalRepository();
+      TestLocalRepository (theApp.localPackageRepository, theApp.packageLevel);
     }
-  theApp.localPackageRepository = localRepository;
 
   // setup task
   theApp.setupTask = cmdinfo.task;
@@ -808,26 +849,9 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	  theApp.setupTask = SetupTask::PrepareMiKTeXDirect;
 	}
       else if (! theApp.localPackageRepository.Empty()
-	       && pkglvl != PackageLevel::None)
+	       && theApp.packageLevel != PackageLevel::None)
 	{
 	  theApp.setupTask = SetupTask::InstallFromLocalRepository;
-	}
-    }
-
-  // package level
-  if (theApp.prefabricated)
-    {
-      theApp.packageLevel = pkglvl;
-    }
-  else
-    {
-      if (pkglvl.Get() == PackageLevel::Essential)
-	{
-	  theApp.packageLevel = PackageLevel::Essential;
-	}
-      else
-	{
-	  theApp.packageLevel = PackageLevel::Basic;
 	}
     }
 
@@ -856,7 +880,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	{
 	  FATAL_MIKTEX_ERROR
 	    (T_("SetupGlobalVars"),
-	     T_("No package level has been specified."),
+	     T_("No package set has been specified."),
 	     0);
 	}
       if (theApp.setupTask == SetupTask::InstallFromLocalRepository

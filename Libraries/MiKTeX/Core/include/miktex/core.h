@@ -442,6 +442,17 @@ public:
     return (this->value < other.value);
   }
 
+  /// Compares the ancapsulated enum value to another value.
+  /// @param value The other enum value.
+  /// @return Returns true, if this values is greater than the other.
+public:
+  bool
+  operator> (/*[in]*/ const EnumWrapper & other)
+    const
+  {
+    return (this->value > other.value);
+  }
+
   /// Compares the encapsulated enum value to another value.
   /// @param value The other enum value.
   /// @return Returns true, if both values compare unequal.
