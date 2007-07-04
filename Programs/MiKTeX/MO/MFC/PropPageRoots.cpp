@@ -235,7 +235,13 @@ PropPageTeXMFRoots::OnAdd ()
       BROWSEINFO browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
       browseInfo.hwndOwner = GetSafeHwnd();
-      browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
+      browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
+      // We cannot use BIF_USENEWUI because we are running in a
+      // multithreaded apartment.  See MSDN "INFO: Calling Shell
+      // Functions and Interfaces from a Multithreaded Apartment".
+#if 0
+      browseInfo.ulFlags |= BIF_USENEWUI;
+#endif
       browseInfo.lpfn = BrowseCallbackProc;
       browseInfo.lParam = reinterpret_cast<LPARAM>(this);
       browseInfo.lpszTitle = T_("Select the root directory to be added:");
