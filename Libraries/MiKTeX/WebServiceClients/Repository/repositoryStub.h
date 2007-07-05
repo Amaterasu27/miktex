@@ -18,21 +18,39 @@
 
 
 #ifndef SOAP_TYPE_mtrep__Integrities
-#define SOAP_TYPE_mtrep__Integrities (19)
+#define SOAP_TYPE_mtrep__Integrities (28)
 /* mtrep:Integrities */
 enum mtrep__Integrities {mtrep__Integrities__Intact = 0, mtrep__Integrities__Corrupted = 1, mtrep__Integrities__Unknown = 2};
 #endif
 
 #ifndef SOAP_TYPE_mtrep__Levels
-#define SOAP_TYPE_mtrep__Levels (20)
+#define SOAP_TYPE_mtrep__Levels (29)
 /* mtrep:Levels */
 enum mtrep__Levels {mtrep__Levels__Essential = 0, mtrep__Levels__Basic = 1, mtrep__Levels__Advanced = 2, mtrep__Levels__Complete = 3};
 #endif
 
 #ifndef SOAP_TYPE_mtrep__RepositoryStatus
-#define SOAP_TYPE_mtrep__RepositoryStatus (21)
+#define SOAP_TYPE_mtrep__RepositoryStatus (30)
 /* mtrep:RepositoryStatus */
 enum mtrep__RepositoryStatus {mtrep__RepositoryStatus__Online = 0, mtrep__RepositoryStatus__Offline = 1, mtrep__RepositoryStatus__Unknown = 2};
+#endif
+
+#ifndef SOAP_TYPE_mtrep3__Integrities
+#define SOAP_TYPE_mtrep3__Integrities (31)
+/* mtrep3:Integrities */
+enum mtrep3__Integrities {mtrep3__Integrities__Intact = 0, mtrep3__Integrities__Corrupted = 1, mtrep3__Integrities__Unknown = 2};
+#endif
+
+#ifndef SOAP_TYPE_mtrep3__Levels
+#define SOAP_TYPE_mtrep3__Levels (32)
+/* mtrep3:Levels */
+enum mtrep3__Levels {mtrep3__Levels__Essential = 0, mtrep3__Levels__Basic = 1, mtrep3__Levels__Advanced = 2, mtrep3__Levels__Complete = 3};
+#endif
+
+#ifndef SOAP_TYPE_mtrep3__RepositoryStatus
+#define SOAP_TYPE_mtrep3__RepositoryStatus (33)
+/* mtrep3:RepositoryStatus */
+enum mtrep3__RepositoryStatus {mtrep3__RepositoryStatus__Online = 0, mtrep3__RepositoryStatus__Offline = 1, mtrep3__RepositoryStatus__Unknown = 2};
 #endif
 
 /******************************************************************************\
@@ -267,149 +285,412 @@ public:
 };
 #endif
 
-#ifndef SOAP_TYPE__ns1__GetListCreationTime
-#define SOAP_TYPE__ns1__GetListCreationTime (17)
-/* ns1:GetListCreationTime */
-class SOAP_CMAC _ns1__GetListCreationTime
+#ifndef SOAP_TYPE__mtrep2__GetListCreationTime
+#define SOAP_TYPE__mtrep2__GetListCreationTime (17)
+/* mtrep2:GetListCreationTime */
+class SOAP_CMAC _mtrep2__GetListCreationTime
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 17; } /* = unique id SOAP_TYPE__ns1__GetListCreationTime */
+	virtual int soap_type() const { return 17; } /* = unique id SOAP_TYPE__mtrep2__GetListCreationTime */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _ns1__GetListCreationTime() : soap(NULL) { }
-	virtual ~_ns1__GetListCreationTime() { }
+	         _mtrep2__GetListCreationTime() : soap(NULL) { }
+	virtual ~_mtrep2__GetListCreationTime() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__ns1__GetListCreationTimeResponse
-#define SOAP_TYPE__ns1__GetListCreationTimeResponse (18)
-/* ns1:GetListCreationTimeResponse */
-class SOAP_CMAC _ns1__GetListCreationTimeResponse
+#ifndef SOAP_TYPE__mtrep2__GetListCreationTimeResponse
+#define SOAP_TYPE__mtrep2__GetListCreationTimeResponse (18)
+/* mtrep2:GetListCreationTimeResponse */
+class SOAP_CMAC _mtrep2__GetListCreationTimeResponse
 {
 public:
 	int GetListCreationTimeResult;	/* RPC return element */	/* required element of type xsd:int */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 18; } /* = unique id SOAP_TYPE__ns1__GetListCreationTimeResponse */
+	virtual int soap_type() const { return 18; } /* = unique id SOAP_TYPE__mtrep2__GetListCreationTimeResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _ns1__GetListCreationTimeResponse() : soap(NULL) { }
-	virtual ~_ns1__GetListCreationTimeResponse() { }
+	         _mtrep2__GetListCreationTimeResponse() : soap(NULL) { }
+	virtual ~_mtrep2__GetListCreationTimeResponse() { }
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__TryGetRepositoryInfo
-#define SOAP_TYPE___ns1__TryGetRepositoryInfo (33)
+#ifndef SOAP_TYPE_mtrep3__ClientInfo
+#define SOAP_TYPE_mtrep3__ClientInfo (19)
+/* mtrep3:ClientInfo */
+class SOAP_CMAC mtrep3__ClientInfo
+{
+public:
+	std::string *Name;	/* optional element of type xsd:string */
+	std::string *Version;	/* optional element of type xsd:string */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 19; } /* = unique id SOAP_TYPE_mtrep3__ClientInfo */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         mtrep3__ClientInfo() : Name(NULL), Version(NULL), soap(NULL) { }
+	virtual ~mtrep3__ClientInfo() { }
+};
+#endif
+
+#ifndef SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo
+#define SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo (20)
+/* mtrep3:ArrayOfRepositoryInfo */
+class SOAP_CMAC mtrep3__ArrayOfRepositoryInfo
+{
+public:
+	std::vector<class mtrep3__RepositoryInfo * >RepositoryInfo;	/* optional element of type mtrep3:RepositoryInfo */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 20; } /* = unique id SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         mtrep3__ArrayOfRepositoryInfo() : soap(NULL) { }
+	virtual ~mtrep3__ArrayOfRepositoryInfo() { }
+};
+#endif
+
+#ifndef SOAP_TYPE_mtrep3__RepositoryInfo
+#define SOAP_TYPE_mtrep3__RepositoryInfo (21)
+/* mtrep3:RepositoryInfo */
+class SOAP_CMAC mtrep3__RepositoryInfo
+{
+public:
+	std::string *Country;	/* optional element of type xsd:string */
+	int Date;	/* required element of type xsd:int */
+	int Delay;	/* required element of type xsd:int */
+	std::string *Description;	/* optional element of type xsd:string */
+	enum mtrep3__Integrities Integrity;	/* required element of type mtrep3:Integrities */
+	enum mtrep3__Levels Level;	/* required element of type mtrep3:Levels */
+	enum mtrep3__RepositoryStatus Status;	/* required element of type mtrep3:RepositoryStatus */
+	std::string *Url;	/* optional element of type xsd:string */
+	int Version;	/* required element of type xsd:int */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 21; } /* = unique id SOAP_TYPE_mtrep3__RepositoryInfo */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         mtrep3__RepositoryInfo() : Country(NULL), Description(NULL), Url(NULL), soap(NULL) { }
+	virtual ~mtrep3__RepositoryInfo() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__GetRepositories2
+#define SOAP_TYPE__mtrep3__GetRepositories2 (22)
+/* mtrep3:GetRepositories2 */
+class SOAP_CMAC _mtrep3__GetRepositories2
+{
+public:
+	mtrep3__ClientInfo *clientInfo;	/* optional element of type mtrep3:ClientInfo */
+	bool onlyOnline;	/* required element of type xsd:boolean */
+	bool noCorrupted;	/* required element of type xsd:boolean */
+	int maxDelay;	/* required element of type xsd:int */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 22; } /* = unique id SOAP_TYPE__mtrep3__GetRepositories2 */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__GetRepositories2() : clientInfo(NULL), soap(NULL) { }
+	virtual ~_mtrep3__GetRepositories2() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__GetRepositories2Response
+#define SOAP_TYPE__mtrep3__GetRepositories2Response (23)
+/* mtrep3:GetRepositories2Response */
+class SOAP_CMAC _mtrep3__GetRepositories2Response
+{
+public:
+	mtrep3__ArrayOfRepositoryInfo *GetRepositories2Result;	/* RPC return element */	/* optional element of type mtrep3:ArrayOfRepositoryInfo */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 23; } /* = unique id SOAP_TYPE__mtrep3__GetRepositories2Response */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__GetRepositories2Response() : GetRepositories2Result(NULL), soap(NULL) { }
+	virtual ~_mtrep3__GetRepositories2Response() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__PickRepository2
+#define SOAP_TYPE__mtrep3__PickRepository2 (24)
+/* mtrep3:PickRepository2 */
+class SOAP_CMAC _mtrep3__PickRepository2
+{
+public:
+	mtrep3__ClientInfo *clientInfo;	/* optional element of type mtrep3:ClientInfo */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 24; } /* = unique id SOAP_TYPE__mtrep3__PickRepository2 */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__PickRepository2() : clientInfo(NULL), soap(NULL) { }
+	virtual ~_mtrep3__PickRepository2() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__PickRepository2Response
+#define SOAP_TYPE__mtrep3__PickRepository2Response (25)
+/* mtrep3:PickRepository2Response */
+class SOAP_CMAC _mtrep3__PickRepository2Response
+{
+public:
+	mtrep3__RepositoryInfo *PickRepository2Result;	/* RPC return element */	/* optional element of type mtrep3:RepositoryInfo */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 25; } /* = unique id SOAP_TYPE__mtrep3__PickRepository2Response */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__PickRepository2Response() : PickRepository2Result(NULL), soap(NULL) { }
+	virtual ~_mtrep3__PickRepository2Response() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__TryGetRepositoryInfo2
+#define SOAP_TYPE__mtrep3__TryGetRepositoryInfo2 (26)
+/* mtrep3:TryGetRepositoryInfo2 */
+class SOAP_CMAC _mtrep3__TryGetRepositoryInfo2
+{
+public:
+	mtrep3__ClientInfo *clientInfo;	/* optional element of type mtrep3:ClientInfo */
+	std::string *url;	/* optional element of type xsd:string */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 26; } /* = unique id SOAP_TYPE__mtrep3__TryGetRepositoryInfo2 */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__TryGetRepositoryInfo2() : clientInfo(NULL), url(NULL), soap(NULL) { }
+	virtual ~_mtrep3__TryGetRepositoryInfo2() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response
+#define SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response (27)
+/* mtrep3:TryGetRepositoryInfo2Response */
+class SOAP_CMAC _mtrep3__TryGetRepositoryInfo2Response
+{
+public:
+	bool TryGetRepositoryInfo2Result;	/* RPC return element */	/* required element of type xsd:boolean */
+	mtrep3__RepositoryInfo *repositoryInfo;	/* optional element of type mtrep3:RepositoryInfo */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 27; } /* = unique id SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _mtrep3__TryGetRepositoryInfo2Response() : repositoryInfo(NULL), soap(NULL) { }
+	virtual ~_mtrep3__TryGetRepositoryInfo2Response() { }
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__TryGetRepositoryInfo
+#define SOAP_TYPE___mtrep3__TryGetRepositoryInfo (49)
 /* Operation wrapper: */
-struct __ns1__TryGetRepositoryInfo
+struct __mtrep3__TryGetRepositoryInfo
 {
 public:
 	_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo;	/* optional element of type mtrep:TryGetRepositoryInfo */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__PickRepository
-#define SOAP_TYPE___ns1__PickRepository (37)
+#ifndef SOAP_TYPE___mtrep3__PickRepository
+#define SOAP_TYPE___mtrep3__PickRepository (53)
 /* Operation wrapper: */
-struct __ns1__PickRepository
+struct __mtrep3__PickRepository
 {
 public:
 	_mtrep__PickRepository *mtrep__PickRepository;	/* optional element of type mtrep:PickRepository */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetAllRepositories
-#define SOAP_TYPE___ns1__GetAllRepositories (41)
+#ifndef SOAP_TYPE___mtrep3__GetAllRepositories
+#define SOAP_TYPE___mtrep3__GetAllRepositories (57)
 /* Operation wrapper: */
-struct __ns1__GetAllRepositories
+struct __mtrep3__GetAllRepositories
 {
 public:
 	_mtrep__GetAllRepositories *mtrep__GetAllRepositories;	/* optional element of type mtrep:GetAllRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetRepositories
-#define SOAP_TYPE___ns1__GetRepositories (45)
+#ifndef SOAP_TYPE___mtrep3__GetRepositories
+#define SOAP_TYPE___mtrep3__GetRepositories (61)
 /* Operation wrapper: */
-struct __ns1__GetRepositories
+struct __mtrep3__GetRepositories
 {
 public:
 	_mtrep__GetRepositories *mtrep__GetRepositories;	/* optional element of type mtrep:GetRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetListCreationTime
-#define SOAP_TYPE___ns1__GetListCreationTime (49)
+#ifndef SOAP_TYPE___mtrep3__GetListCreationTime
+#define SOAP_TYPE___mtrep3__GetListCreationTime (65)
 /* Operation wrapper: */
-struct __ns1__GetListCreationTime
+struct __mtrep3__GetListCreationTime
 {
 public:
-	_ns1__GetListCreationTime *ns1__GetListCreationTime;	/* optional element of type ns1:GetListCreationTime */
+	_mtrep2__GetListCreationTime *mtrep2__GetListCreationTime;	/* optional element of type mtrep2:GetListCreationTime */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__TryGetRepositoryInfo_
-#define SOAP_TYPE___ns1__TryGetRepositoryInfo_ (51)
+#ifndef SOAP_TYPE___mtrep3__GetRepositories2
+#define SOAP_TYPE___mtrep3__GetRepositories2 (69)
 /* Operation wrapper: */
-struct __ns1__TryGetRepositoryInfo_
+struct __mtrep3__GetRepositories2
+{
+public:
+	_mtrep3__GetRepositories2 *mtrep3__GetRepositories2;	/* optional element of type mtrep3:GetRepositories2 */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__PickRepository2
+#define SOAP_TYPE___mtrep3__PickRepository2 (73)
+/* Operation wrapper: */
+struct __mtrep3__PickRepository2
+{
+public:
+	_mtrep3__PickRepository2 *mtrep3__PickRepository2;	/* optional element of type mtrep3:PickRepository2 */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__TryGetRepositoryInfo2
+#define SOAP_TYPE___mtrep3__TryGetRepositoryInfo2 (77)
+/* Operation wrapper: */
+struct __mtrep3__TryGetRepositoryInfo2
+{
+public:
+	_mtrep3__TryGetRepositoryInfo2 *mtrep3__TryGetRepositoryInfo2;	/* optional element of type mtrep3:TryGetRepositoryInfo2 */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__TryGetRepositoryInfo_
+#define SOAP_TYPE___mtrep3__TryGetRepositoryInfo_ (79)
+/* Operation wrapper: */
+struct __mtrep3__TryGetRepositoryInfo_
 {
 public:
 	_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo;	/* optional element of type mtrep:TryGetRepositoryInfo */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__PickRepository_
-#define SOAP_TYPE___ns1__PickRepository_ (53)
+#ifndef SOAP_TYPE___mtrep3__PickRepository_
+#define SOAP_TYPE___mtrep3__PickRepository_ (81)
 /* Operation wrapper: */
-struct __ns1__PickRepository_
+struct __mtrep3__PickRepository_
 {
 public:
 	_mtrep__PickRepository *mtrep__PickRepository;	/* optional element of type mtrep:PickRepository */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetAllRepositories_
-#define SOAP_TYPE___ns1__GetAllRepositories_ (55)
+#ifndef SOAP_TYPE___mtrep3__GetAllRepositories_
+#define SOAP_TYPE___mtrep3__GetAllRepositories_ (83)
 /* Operation wrapper: */
-struct __ns1__GetAllRepositories_
+struct __mtrep3__GetAllRepositories_
 {
 public:
 	_mtrep__GetAllRepositories *mtrep__GetAllRepositories;	/* optional element of type mtrep:GetAllRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetRepositories_
-#define SOAP_TYPE___ns1__GetRepositories_ (57)
+#ifndef SOAP_TYPE___mtrep3__GetRepositories_
+#define SOAP_TYPE___mtrep3__GetRepositories_ (85)
 /* Operation wrapper: */
-struct __ns1__GetRepositories_
+struct __mtrep3__GetRepositories_
 {
 public:
 	_mtrep__GetRepositories *mtrep__GetRepositories;	/* optional element of type mtrep:GetRepositories */
 };
 #endif
 
-#ifndef SOAP_TYPE___ns1__GetListCreationTime_
-#define SOAP_TYPE___ns1__GetListCreationTime_ (59)
+#ifndef SOAP_TYPE___mtrep3__GetListCreationTime_
+#define SOAP_TYPE___mtrep3__GetListCreationTime_ (87)
 /* Operation wrapper: */
-struct __ns1__GetListCreationTime_
+struct __mtrep3__GetListCreationTime_
 {
 public:
-	_ns1__GetListCreationTime *ns1__GetListCreationTime;	/* optional element of type ns1:GetListCreationTime */
+	_mtrep2__GetListCreationTime *mtrep2__GetListCreationTime;	/* optional element of type mtrep2:GetListCreationTime */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__GetRepositories2_
+#define SOAP_TYPE___mtrep3__GetRepositories2_ (89)
+/* Operation wrapper: */
+struct __mtrep3__GetRepositories2_
+{
+public:
+	_mtrep3__GetRepositories2 *mtrep3__GetRepositories2;	/* optional element of type mtrep3:GetRepositories2 */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__PickRepository2_
+#define SOAP_TYPE___mtrep3__PickRepository2_ (91)
+/* Operation wrapper: */
+struct __mtrep3__PickRepository2_
+{
+public:
+	_mtrep3__PickRepository2 *mtrep3__PickRepository2;	/* optional element of type mtrep3:PickRepository2 */
+};
+#endif
+
+#ifndef SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_
+#define SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_ (93)
+/* Operation wrapper: */
+struct __mtrep3__TryGetRepositoryInfo2_
+{
+public:
+	_mtrep3__TryGetRepositoryInfo2 *mtrep3__TryGetRepositoryInfo2;	/* optional element of type mtrep3:TryGetRepositoryInfo2 */
 };
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (62)
+#define SOAP_TYPE_SOAP_ENV__Header (96)
 /* SOAP Header: */
 struct SOAP_ENV__Header
 {
@@ -419,7 +700,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (63)
+#define SOAP_TYPE_SOAP_ENV__Code (97)
 /* SOAP Fault Code: */
 struct SOAP_ENV__Code
 {
@@ -430,7 +711,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (65)
+#define SOAP_TYPE_SOAP_ENV__Detail (99)
 /* SOAP-ENV:Detail */
 struct SOAP_ENV__Detail
 {
@@ -442,7 +723,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (66)
+#define SOAP_TYPE_SOAP_ENV__Reason (100)
 /* SOAP-ENV:Reason */
 struct SOAP_ENV__Reason
 {
@@ -452,7 +733,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (67)
+#define SOAP_TYPE_SOAP_ENV__Fault (101)
 /* SOAP Fault: */
 struct SOAP_ENV__Fault
 {

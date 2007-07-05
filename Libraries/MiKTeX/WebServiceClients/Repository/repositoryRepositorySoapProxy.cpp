@@ -29,7 +29,8 @@ void RepositorySoapProxy::RepositorySoapProxy_init(soap_mode imode, soap_mode om
 	{"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
 	{"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
 	{"mtrep", "http://miktex.org/2006/06/repository", NULL, NULL},
-	{"ns1", "http://miktex.org/2007/03/repository", NULL, NULL},
+	{"mtrep2", "http://miktex.org/2007/03/repository", NULL, NULL},
+	{"mtrep3", "http://miktex.org/2007/07/repository", NULL, NULL},
 	{NULL, NULL, NULL, NULL}
 };
 	if (!this->namespaces)
@@ -44,23 +45,23 @@ RepositorySoapProxy::~RepositorySoapProxy()
 
 int RepositorySoapProxy::TryGetRepositoryInfo(_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo, _mtrep__TryGetRepositoryInfoResponse *mtrep__TryGetRepositoryInfoResponse)
 {	struct soap *soap = this;
-	struct __ns1__TryGetRepositoryInfo soap_tmp___ns1__TryGetRepositoryInfo;
+	struct __mtrep3__TryGetRepositoryInfo soap_tmp___mtrep3__TryGetRepositoryInfo;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/TryGetRepositoryInfo";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__TryGetRepositoryInfo.mtrep__TryGetRepositoryInfo = mtrep__TryGetRepositoryInfo;
+	soap_tmp___mtrep3__TryGetRepositoryInfo.mtrep__TryGetRepositoryInfo = mtrep__TryGetRepositoryInfo;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__TryGetRepositoryInfo(soap, &soap_tmp___ns1__TryGetRepositoryInfo);
+	soap_serialize___mtrep3__TryGetRepositoryInfo(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__TryGetRepositoryInfo(soap, &soap_tmp___ns1__TryGetRepositoryInfo, "-ns1:TryGetRepositoryInfo", "")
+		 || soap_put___mtrep3__TryGetRepositoryInfo(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo, "-mtrep3:TryGetRepositoryInfo", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -71,7 +72,7 @@ int RepositorySoapProxy::TryGetRepositoryInfo(_mtrep__TryGetRepositoryInfo *mtre
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__TryGetRepositoryInfo(soap, &soap_tmp___ns1__TryGetRepositoryInfo, "-ns1:TryGetRepositoryInfo", "")
+	 || soap_put___mtrep3__TryGetRepositoryInfo(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo, "-mtrep3:TryGetRepositoryInfo", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -99,23 +100,23 @@ int RepositorySoapProxy::TryGetRepositoryInfo(_mtrep__TryGetRepositoryInfo *mtre
 
 int RepositorySoapProxy::PickRepository(_mtrep__PickRepository *mtrep__PickRepository, _mtrep__PickRepositoryResponse *mtrep__PickRepositoryResponse)
 {	struct soap *soap = this;
-	struct __ns1__PickRepository soap_tmp___ns1__PickRepository;
+	struct __mtrep3__PickRepository soap_tmp___mtrep3__PickRepository;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/PickRepository";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__PickRepository.mtrep__PickRepository = mtrep__PickRepository;
+	soap_tmp___mtrep3__PickRepository.mtrep__PickRepository = mtrep__PickRepository;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__PickRepository(soap, &soap_tmp___ns1__PickRepository);
+	soap_serialize___mtrep3__PickRepository(soap, &soap_tmp___mtrep3__PickRepository);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__PickRepository(soap, &soap_tmp___ns1__PickRepository, "-ns1:PickRepository", "")
+		 || soap_put___mtrep3__PickRepository(soap, &soap_tmp___mtrep3__PickRepository, "-mtrep3:PickRepository", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -126,7 +127,7 @@ int RepositorySoapProxy::PickRepository(_mtrep__PickRepository *mtrep__PickRepos
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__PickRepository(soap, &soap_tmp___ns1__PickRepository, "-ns1:PickRepository", "")
+	 || soap_put___mtrep3__PickRepository(soap, &soap_tmp___mtrep3__PickRepository, "-mtrep3:PickRepository", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -154,23 +155,23 @@ int RepositorySoapProxy::PickRepository(_mtrep__PickRepository *mtrep__PickRepos
 
 int RepositorySoapProxy::GetAllRepositories(_mtrep__GetAllRepositories *mtrep__GetAllRepositories, _mtrep__GetAllRepositoriesResponse *mtrep__GetAllRepositoriesResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetAllRepositories soap_tmp___ns1__GetAllRepositories;
+	struct __mtrep3__GetAllRepositories soap_tmp___mtrep3__GetAllRepositories;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/GetAllRepositories";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetAllRepositories.mtrep__GetAllRepositories = mtrep__GetAllRepositories;
+	soap_tmp___mtrep3__GetAllRepositories.mtrep__GetAllRepositories = mtrep__GetAllRepositories;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetAllRepositories(soap, &soap_tmp___ns1__GetAllRepositories);
+	soap_serialize___mtrep3__GetAllRepositories(soap, &soap_tmp___mtrep3__GetAllRepositories);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetAllRepositories(soap, &soap_tmp___ns1__GetAllRepositories, "-ns1:GetAllRepositories", "")
+		 || soap_put___mtrep3__GetAllRepositories(soap, &soap_tmp___mtrep3__GetAllRepositories, "-mtrep3:GetAllRepositories", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -181,7 +182,7 @@ int RepositorySoapProxy::GetAllRepositories(_mtrep__GetAllRepositories *mtrep__G
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetAllRepositories(soap, &soap_tmp___ns1__GetAllRepositories, "-ns1:GetAllRepositories", "")
+	 || soap_put___mtrep3__GetAllRepositories(soap, &soap_tmp___mtrep3__GetAllRepositories, "-mtrep3:GetAllRepositories", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -209,23 +210,23 @@ int RepositorySoapProxy::GetAllRepositories(_mtrep__GetAllRepositories *mtrep__G
 
 int RepositorySoapProxy::GetRepositories(_mtrep__GetRepositories *mtrep__GetRepositories, _mtrep__GetRepositoriesResponse *mtrep__GetRepositoriesResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetRepositories soap_tmp___ns1__GetRepositories;
+	struct __mtrep3__GetRepositories soap_tmp___mtrep3__GetRepositories;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/GetRepositories";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetRepositories.mtrep__GetRepositories = mtrep__GetRepositories;
+	soap_tmp___mtrep3__GetRepositories.mtrep__GetRepositories = mtrep__GetRepositories;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetRepositories(soap, &soap_tmp___ns1__GetRepositories);
+	soap_serialize___mtrep3__GetRepositories(soap, &soap_tmp___mtrep3__GetRepositories);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetRepositories(soap, &soap_tmp___ns1__GetRepositories, "-ns1:GetRepositories", "")
+		 || soap_put___mtrep3__GetRepositories(soap, &soap_tmp___mtrep3__GetRepositories, "-mtrep3:GetRepositories", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -236,7 +237,7 @@ int RepositorySoapProxy::GetRepositories(_mtrep__GetRepositories *mtrep__GetRepo
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetRepositories(soap, &soap_tmp___ns1__GetRepositories, "-ns1:GetRepositories", "")
+	 || soap_put___mtrep3__GetRepositories(soap, &soap_tmp___mtrep3__GetRepositories, "-mtrep3:GetRepositories", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -262,25 +263,25 @@ int RepositorySoapProxy::GetRepositories(_mtrep__GetRepositories *mtrep__GetRepo
 	return soap_closesock(soap);
 }
 
-int RepositorySoapProxy::GetListCreationTime(_ns1__GetListCreationTime *ns1__GetListCreationTime, _ns1__GetListCreationTimeResponse *ns1__GetListCreationTimeResponse)
+int RepositorySoapProxy::GetListCreationTime(_mtrep2__GetListCreationTime *mtrep2__GetListCreationTime, _mtrep2__GetListCreationTimeResponse *mtrep2__GetListCreationTimeResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetListCreationTime soap_tmp___ns1__GetListCreationTime;
+	struct __mtrep3__GetListCreationTime soap_tmp___mtrep3__GetListCreationTime;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2007/03/repository/GetListCreationTime";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetListCreationTime.ns1__GetListCreationTime = ns1__GetListCreationTime;
+	soap_tmp___mtrep3__GetListCreationTime.mtrep2__GetListCreationTime = mtrep2__GetListCreationTime;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetListCreationTime(soap, &soap_tmp___ns1__GetListCreationTime);
+	soap_serialize___mtrep3__GetListCreationTime(soap, &soap_tmp___mtrep3__GetListCreationTime);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetListCreationTime(soap, &soap_tmp___ns1__GetListCreationTime, "-ns1:GetListCreationTime", "")
+		 || soap_put___mtrep3__GetListCreationTime(soap, &soap_tmp___mtrep3__GetListCreationTime, "-mtrep3:GetListCreationTime", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -291,20 +292,185 @@ int RepositorySoapProxy::GetListCreationTime(_ns1__GetListCreationTime *ns1__Get
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetListCreationTime(soap, &soap_tmp___ns1__GetListCreationTime, "-ns1:GetListCreationTime", "")
+	 || soap_put___mtrep3__GetListCreationTime(soap, &soap_tmp___mtrep3__GetListCreationTime, "-mtrep3:GetListCreationTime", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!ns1__GetListCreationTimeResponse)
+	if (!mtrep2__GetListCreationTimeResponse)
 		return soap_closesock(soap);
-	ns1__GetListCreationTimeResponse->soap_default(soap);
+	mtrep2__GetListCreationTimeResponse->soap_default(soap);
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
 	 || soap_body_begin_in(soap))
 		return soap_closesock(soap);
-	ns1__GetListCreationTimeResponse->soap_get(soap, "ns1:GetListCreationTimeResponse", "");
+	mtrep2__GetListCreationTimeResponse->soap_get(soap, "mtrep2:GetListCreationTimeResponse", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::GetRepositories2(_mtrep3__GetRepositories2 *mtrep3__GetRepositories2, _mtrep3__GetRepositories2Response *mtrep3__GetRepositories2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__GetRepositories2 soap_tmp___mtrep3__GetRepositories2;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/GetRepositories2";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__GetRepositories2.mtrep3__GetRepositories2 = mtrep3__GetRepositories2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__GetRepositories2(soap, &soap_tmp___mtrep3__GetRepositories2);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__GetRepositories2(soap, &soap_tmp___mtrep3__GetRepositories2, "-mtrep3:GetRepositories2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__GetRepositories2(soap, &soap_tmp___mtrep3__GetRepositories2, "-mtrep3:GetRepositories2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__GetRepositories2Response)
+		return soap_closesock(soap);
+	mtrep3__GetRepositories2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__GetRepositories2Response->soap_get(soap, "mtrep3:GetRepositories2Response", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::PickRepository2(_mtrep3__PickRepository2 *mtrep3__PickRepository2, _mtrep3__PickRepository2Response *mtrep3__PickRepository2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__PickRepository2 soap_tmp___mtrep3__PickRepository2;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/PickRepository";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__PickRepository2.mtrep3__PickRepository2 = mtrep3__PickRepository2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__PickRepository2(soap, &soap_tmp___mtrep3__PickRepository2);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__PickRepository2(soap, &soap_tmp___mtrep3__PickRepository2, "-mtrep3:PickRepository2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__PickRepository2(soap, &soap_tmp___mtrep3__PickRepository2, "-mtrep3:PickRepository2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__PickRepository2Response)
+		return soap_closesock(soap);
+	mtrep3__PickRepository2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__PickRepository2Response->soap_get(soap, "mtrep3:PickRepository2Response", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::TryGetRepositoryInfo2(_mtrep3__TryGetRepositoryInfo2 *mtrep3__TryGetRepositoryInfo2, _mtrep3__TryGetRepositoryInfo2Response *mtrep3__TryGetRepositoryInfo2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__TryGetRepositoryInfo2 soap_tmp___mtrep3__TryGetRepositoryInfo2;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/TryGetRepositoryInfo";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__TryGetRepositoryInfo2.mtrep3__TryGetRepositoryInfo2 = mtrep3__TryGetRepositoryInfo2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__TryGetRepositoryInfo2(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__TryGetRepositoryInfo2(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2, "-mtrep3:TryGetRepositoryInfo2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__TryGetRepositoryInfo2(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2, "-mtrep3:TryGetRepositoryInfo2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__TryGetRepositoryInfo2Response)
+		return soap_closesock(soap);
+	mtrep3__TryGetRepositoryInfo2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__TryGetRepositoryInfo2Response->soap_get(soap, "mtrep3:TryGetRepositoryInfo2Response", "");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
 			return soap_recv_fault(soap);
@@ -319,23 +485,23 @@ int RepositorySoapProxy::GetListCreationTime(_ns1__GetListCreationTime *ns1__Get
 
 int RepositorySoapProxy::TryGetRepositoryInfo_(_mtrep__TryGetRepositoryInfo *mtrep__TryGetRepositoryInfo, _mtrep__TryGetRepositoryInfoResponse *mtrep__TryGetRepositoryInfoResponse)
 {	struct soap *soap = this;
-	struct __ns1__TryGetRepositoryInfo_ soap_tmp___ns1__TryGetRepositoryInfo_;
+	struct __mtrep3__TryGetRepositoryInfo_ soap_tmp___mtrep3__TryGetRepositoryInfo_;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/TryGetRepositoryInfo";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__TryGetRepositoryInfo_.mtrep__TryGetRepositoryInfo = mtrep__TryGetRepositoryInfo;
+	soap_tmp___mtrep3__TryGetRepositoryInfo_.mtrep__TryGetRepositoryInfo = mtrep__TryGetRepositoryInfo;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__TryGetRepositoryInfo_(soap, &soap_tmp___ns1__TryGetRepositoryInfo_);
+	soap_serialize___mtrep3__TryGetRepositoryInfo_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo_);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__TryGetRepositoryInfo_(soap, &soap_tmp___ns1__TryGetRepositoryInfo_, "-ns1:TryGetRepositoryInfo", "")
+		 || soap_put___mtrep3__TryGetRepositoryInfo_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo_, "-mtrep3:TryGetRepositoryInfo", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -346,7 +512,7 @@ int RepositorySoapProxy::TryGetRepositoryInfo_(_mtrep__TryGetRepositoryInfo *mtr
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__TryGetRepositoryInfo_(soap, &soap_tmp___ns1__TryGetRepositoryInfo_, "-ns1:TryGetRepositoryInfo", "")
+	 || soap_put___mtrep3__TryGetRepositoryInfo_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo_, "-mtrep3:TryGetRepositoryInfo", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -374,23 +540,23 @@ int RepositorySoapProxy::TryGetRepositoryInfo_(_mtrep__TryGetRepositoryInfo *mtr
 
 int RepositorySoapProxy::PickRepository_(_mtrep__PickRepository *mtrep__PickRepository, _mtrep__PickRepositoryResponse *mtrep__PickRepositoryResponse)
 {	struct soap *soap = this;
-	struct __ns1__PickRepository_ soap_tmp___ns1__PickRepository_;
+	struct __mtrep3__PickRepository_ soap_tmp___mtrep3__PickRepository_;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/PickRepository";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__PickRepository_.mtrep__PickRepository = mtrep__PickRepository;
+	soap_tmp___mtrep3__PickRepository_.mtrep__PickRepository = mtrep__PickRepository;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__PickRepository_(soap, &soap_tmp___ns1__PickRepository_);
+	soap_serialize___mtrep3__PickRepository_(soap, &soap_tmp___mtrep3__PickRepository_);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__PickRepository_(soap, &soap_tmp___ns1__PickRepository_, "-ns1:PickRepository", "")
+		 || soap_put___mtrep3__PickRepository_(soap, &soap_tmp___mtrep3__PickRepository_, "-mtrep3:PickRepository", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -401,7 +567,7 @@ int RepositorySoapProxy::PickRepository_(_mtrep__PickRepository *mtrep__PickRepo
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__PickRepository_(soap, &soap_tmp___ns1__PickRepository_, "-ns1:PickRepository", "")
+	 || soap_put___mtrep3__PickRepository_(soap, &soap_tmp___mtrep3__PickRepository_, "-mtrep3:PickRepository", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -429,23 +595,23 @@ int RepositorySoapProxy::PickRepository_(_mtrep__PickRepository *mtrep__PickRepo
 
 int RepositorySoapProxy::GetAllRepositories_(_mtrep__GetAllRepositories *mtrep__GetAllRepositories, _mtrep__GetAllRepositoriesResponse *mtrep__GetAllRepositoriesResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetAllRepositories_ soap_tmp___ns1__GetAllRepositories_;
+	struct __mtrep3__GetAllRepositories_ soap_tmp___mtrep3__GetAllRepositories_;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/GetAllRepositories";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetAllRepositories_.mtrep__GetAllRepositories = mtrep__GetAllRepositories;
+	soap_tmp___mtrep3__GetAllRepositories_.mtrep__GetAllRepositories = mtrep__GetAllRepositories;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetAllRepositories_(soap, &soap_tmp___ns1__GetAllRepositories_);
+	soap_serialize___mtrep3__GetAllRepositories_(soap, &soap_tmp___mtrep3__GetAllRepositories_);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetAllRepositories_(soap, &soap_tmp___ns1__GetAllRepositories_, "-ns1:GetAllRepositories", "")
+		 || soap_put___mtrep3__GetAllRepositories_(soap, &soap_tmp___mtrep3__GetAllRepositories_, "-mtrep3:GetAllRepositories", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -456,7 +622,7 @@ int RepositorySoapProxy::GetAllRepositories_(_mtrep__GetAllRepositories *mtrep__
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetAllRepositories_(soap, &soap_tmp___ns1__GetAllRepositories_, "-ns1:GetAllRepositories", "")
+	 || soap_put___mtrep3__GetAllRepositories_(soap, &soap_tmp___mtrep3__GetAllRepositories_, "-mtrep3:GetAllRepositories", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -484,23 +650,23 @@ int RepositorySoapProxy::GetAllRepositories_(_mtrep__GetAllRepositories *mtrep__
 
 int RepositorySoapProxy::GetRepositories_(_mtrep__GetRepositories *mtrep__GetRepositories, _mtrep__GetRepositoriesResponse *mtrep__GetRepositoriesResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetRepositories_ soap_tmp___ns1__GetRepositories_;
+	struct __mtrep3__GetRepositories_ soap_tmp___mtrep3__GetRepositories_;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2006/06/repository/GetRepositories";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetRepositories_.mtrep__GetRepositories = mtrep__GetRepositories;
+	soap_tmp___mtrep3__GetRepositories_.mtrep__GetRepositories = mtrep__GetRepositories;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetRepositories_(soap, &soap_tmp___ns1__GetRepositories_);
+	soap_serialize___mtrep3__GetRepositories_(soap, &soap_tmp___mtrep3__GetRepositories_);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetRepositories_(soap, &soap_tmp___ns1__GetRepositories_, "-ns1:GetRepositories", "")
+		 || soap_put___mtrep3__GetRepositories_(soap, &soap_tmp___mtrep3__GetRepositories_, "-mtrep3:GetRepositories", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -511,7 +677,7 @@ int RepositorySoapProxy::GetRepositories_(_mtrep__GetRepositories *mtrep__GetRep
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetRepositories_(soap, &soap_tmp___ns1__GetRepositories_, "-ns1:GetRepositories", "")
+	 || soap_put___mtrep3__GetRepositories_(soap, &soap_tmp___mtrep3__GetRepositories_, "-mtrep3:GetRepositories", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -537,25 +703,25 @@ int RepositorySoapProxy::GetRepositories_(_mtrep__GetRepositories *mtrep__GetRep
 	return soap_closesock(soap);
 }
 
-int RepositorySoapProxy::GetListCreationTime_(_ns1__GetListCreationTime *ns1__GetListCreationTime, _ns1__GetListCreationTimeResponse *ns1__GetListCreationTimeResponse)
+int RepositorySoapProxy::GetListCreationTime_(_mtrep2__GetListCreationTime *mtrep2__GetListCreationTime, _mtrep2__GetListCreationTimeResponse *mtrep2__GetListCreationTimeResponse)
 {	struct soap *soap = this;
-	struct __ns1__GetListCreationTime_ soap_tmp___ns1__GetListCreationTime_;
+	struct __mtrep3__GetListCreationTime_ soap_tmp___mtrep3__GetListCreationTime_;
 	const char *soap_action = NULL;
 	if (!soap_endpoint)
 		soap_endpoint = "http://api.miktex.org/Repository.asmx";
 	soap_action = "http://miktex.org/2007/03/repository/GetListCreationTime";
 	soap->encodingStyle = NULL;
-	soap_tmp___ns1__GetListCreationTime_.ns1__GetListCreationTime = ns1__GetListCreationTime;
+	soap_tmp___mtrep3__GetListCreationTime_.mtrep2__GetListCreationTime = mtrep2__GetListCreationTime;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___ns1__GetListCreationTime_(soap, &soap_tmp___ns1__GetListCreationTime_);
+	soap_serialize___mtrep3__GetListCreationTime_(soap, &soap_tmp___mtrep3__GetListCreationTime_);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___ns1__GetListCreationTime_(soap, &soap_tmp___ns1__GetListCreationTime_, "-ns1:GetListCreationTime", "")
+		 || soap_put___mtrep3__GetListCreationTime_(soap, &soap_tmp___mtrep3__GetListCreationTime_, "-mtrep3:GetListCreationTime", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -566,20 +732,185 @@ int RepositorySoapProxy::GetListCreationTime_(_ns1__GetListCreationTime *ns1__Ge
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___ns1__GetListCreationTime_(soap, &soap_tmp___ns1__GetListCreationTime_, "-ns1:GetListCreationTime", "")
+	 || soap_put___mtrep3__GetListCreationTime_(soap, &soap_tmp___mtrep3__GetListCreationTime_, "-mtrep3:GetListCreationTime", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!ns1__GetListCreationTimeResponse)
+	if (!mtrep2__GetListCreationTimeResponse)
 		return soap_closesock(soap);
-	ns1__GetListCreationTimeResponse->soap_default(soap);
+	mtrep2__GetListCreationTimeResponse->soap_default(soap);
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
 	 || soap_body_begin_in(soap))
 		return soap_closesock(soap);
-	ns1__GetListCreationTimeResponse->soap_get(soap, "ns1:GetListCreationTimeResponse", "");
+	mtrep2__GetListCreationTimeResponse->soap_get(soap, "mtrep2:GetListCreationTimeResponse", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::GetRepositories2_(_mtrep3__GetRepositories2 *mtrep3__GetRepositories2, _mtrep3__GetRepositories2Response *mtrep3__GetRepositories2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__GetRepositories2_ soap_tmp___mtrep3__GetRepositories2_;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/GetRepositories2";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__GetRepositories2_.mtrep3__GetRepositories2 = mtrep3__GetRepositories2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__GetRepositories2_(soap, &soap_tmp___mtrep3__GetRepositories2_);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__GetRepositories2_(soap, &soap_tmp___mtrep3__GetRepositories2_, "-mtrep3:GetRepositories2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__GetRepositories2_(soap, &soap_tmp___mtrep3__GetRepositories2_, "-mtrep3:GetRepositories2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__GetRepositories2Response)
+		return soap_closesock(soap);
+	mtrep3__GetRepositories2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__GetRepositories2Response->soap_get(soap, "mtrep3:GetRepositories2Response", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::PickRepository2_(_mtrep3__PickRepository2 *mtrep3__PickRepository2, _mtrep3__PickRepository2Response *mtrep3__PickRepository2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__PickRepository2_ soap_tmp___mtrep3__PickRepository2_;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/PickRepository";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__PickRepository2_.mtrep3__PickRepository2 = mtrep3__PickRepository2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__PickRepository2_(soap, &soap_tmp___mtrep3__PickRepository2_);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__PickRepository2_(soap, &soap_tmp___mtrep3__PickRepository2_, "-mtrep3:PickRepository2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__PickRepository2_(soap, &soap_tmp___mtrep3__PickRepository2_, "-mtrep3:PickRepository2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__PickRepository2Response)
+		return soap_closesock(soap);
+	mtrep3__PickRepository2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__PickRepository2Response->soap_get(soap, "mtrep3:PickRepository2Response", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int RepositorySoapProxy::TryGetRepositoryInfo2_(_mtrep3__TryGetRepositoryInfo2 *mtrep3__TryGetRepositoryInfo2, _mtrep3__TryGetRepositoryInfo2Response *mtrep3__TryGetRepositoryInfo2Response)
+{	struct soap *soap = this;
+	struct __mtrep3__TryGetRepositoryInfo2_ soap_tmp___mtrep3__TryGetRepositoryInfo2_;
+	const char *soap_action = NULL;
+	if (!soap_endpoint)
+		soap_endpoint = "http://api.miktex.org/Repository.asmx";
+	soap_action = "http://miktex.org/2007/07/repository/TryGetRepositoryInfo";
+	soap->encodingStyle = NULL;
+	soap_tmp___mtrep3__TryGetRepositoryInfo2_.mtrep3__TryGetRepositoryInfo2 = mtrep3__TryGetRepositoryInfo2;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___mtrep3__TryGetRepositoryInfo2_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2_);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___mtrep3__TryGetRepositoryInfo2_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2_, "-mtrep3:TryGetRepositoryInfo2", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___mtrep3__TryGetRepositoryInfo2_(soap, &soap_tmp___mtrep3__TryGetRepositoryInfo2_, "-mtrep3:TryGetRepositoryInfo2", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!mtrep3__TryGetRepositoryInfo2Response)
+		return soap_closesock(soap);
+	mtrep3__TryGetRepositoryInfo2Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	mtrep3__TryGetRepositoryInfo2Response->soap_get(soap, "mtrep3:TryGetRepositoryInfo2Response", "");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
 			return soap_recv_fault(soap);

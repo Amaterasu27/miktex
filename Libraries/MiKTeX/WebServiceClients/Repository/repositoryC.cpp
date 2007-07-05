@@ -7,7 +7,7 @@
 
 #include "repositoryH.h"
 
-SOAP_SOURCE_STAMP("@(#) repositoryC.cpp ver 2.7.9d 2007-04-01 17:57:26 GMT")
+SOAP_SOURCE_STAMP("@(#) repositoryC.cpp ver 2.7.9d 2007-07-05 08:23:57 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -152,6 +152,12 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
 	case SOAP_TYPE_bool:
 		return soap_in_bool(soap, NULL, NULL, "xsd:boolean");
+	case SOAP_TYPE_mtrep3__RepositoryStatus:
+		return soap_in_mtrep3__RepositoryStatus(soap, NULL, NULL, "mtrep3:RepositoryStatus");
+	case SOAP_TYPE_mtrep3__Levels:
+		return soap_in_mtrep3__Levels(soap, NULL, NULL, "mtrep3:Levels");
+	case SOAP_TYPE_mtrep3__Integrities:
+		return soap_in_mtrep3__Integrities(soap, NULL, NULL, "mtrep3:Integrities");
 	case SOAP_TYPE_mtrep__RepositoryStatus:
 		return soap_in_mtrep__RepositoryStatus(soap, NULL, NULL, "mtrep:RepositoryStatus");
 	case SOAP_TYPE_mtrep__Levels:
@@ -160,14 +166,32 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_mtrep__Integrities(soap, NULL, NULL, "mtrep:Integrities");
 	case SOAP_TYPE_std__string:
 		return soap_in_std__string(soap, NULL, NULL, "xsd:string");
+	case SOAP_TYPE_mtrep3__RepositoryInfo:
+		return soap_in_mtrep3__RepositoryInfo(soap, NULL, NULL, "mtrep3:RepositoryInfo");
+	case SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo:
+		return soap_in_mtrep3__ArrayOfRepositoryInfo(soap, NULL, NULL, "mtrep3:ArrayOfRepositoryInfo");
+	case SOAP_TYPE_mtrep3__ClientInfo:
+		return soap_in_mtrep3__ClientInfo(soap, NULL, NULL, "mtrep3:ClientInfo");
 	case SOAP_TYPE_mtrep__ArrayOfRepositoryInfo:
 		return soap_in_mtrep__ArrayOfRepositoryInfo(soap, NULL, NULL, "mtrep:ArrayOfRepositoryInfo");
 	case SOAP_TYPE_mtrep__RepositoryInfo:
 		return soap_in_mtrep__RepositoryInfo(soap, NULL, NULL, "mtrep:RepositoryInfo");
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTimeResponse:
-		return soap_in_PointerTo_ns1__GetListCreationTimeResponse(soap, NULL, NULL, "ns1:GetListCreationTimeResponse");
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTime:
-		return soap_in_PointerTo_ns1__GetListCreationTime(soap, NULL, NULL, "ns1:GetListCreationTime");
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2Response:
+		return soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2Response(soap, NULL, NULL, "mtrep3:TryGetRepositoryInfo2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2:
+		return soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, NULL, NULL, "mtrep3:TryGetRepositoryInfo2");
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2Response:
+		return soap_in_PointerTo_mtrep3__PickRepository2Response(soap, NULL, NULL, "mtrep3:PickRepository2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2:
+		return soap_in_PointerTo_mtrep3__PickRepository2(soap, NULL, NULL, "mtrep3:PickRepository2");
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2Response:
+		return soap_in_PointerTo_mtrep3__GetRepositories2Response(soap, NULL, NULL, "mtrep3:GetRepositories2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2:
+		return soap_in_PointerTo_mtrep3__GetRepositories2(soap, NULL, NULL, "mtrep3:GetRepositories2");
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTimeResponse:
+		return soap_in_PointerTo_mtrep2__GetListCreationTimeResponse(soap, NULL, NULL, "mtrep2:GetListCreationTimeResponse");
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTime:
+		return soap_in_PointerTo_mtrep2__GetListCreationTime(soap, NULL, NULL, "mtrep2:GetListCreationTime");
 	case SOAP_TYPE_PointerTo_mtrep__GetRepositoriesResponse:
 		return soap_in_PointerTo_mtrep__GetRepositoriesResponse(soap, NULL, NULL, "mtrep:GetRepositoriesResponse");
 	case SOAP_TYPE_PointerTo_mtrep__GetRepositories:
@@ -184,6 +208,12 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_PointerTo_mtrep__TryGetRepositoryInfoResponse(soap, NULL, NULL, "mtrep:TryGetRepositoryInfoResponse");
 	case SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfo:
 		return soap_in_PointerTo_mtrep__TryGetRepositoryInfo(soap, NULL, NULL, "mtrep:TryGetRepositoryInfo");
+	case SOAP_TYPE_PointerTomtrep3__ArrayOfRepositoryInfo:
+		return soap_in_PointerTomtrep3__ArrayOfRepositoryInfo(soap, NULL, NULL, "mtrep3:ArrayOfRepositoryInfo");
+	case SOAP_TYPE_PointerTomtrep3__ClientInfo:
+		return soap_in_PointerTomtrep3__ClientInfo(soap, NULL, NULL, "mtrep3:ClientInfo");
+	case SOAP_TYPE_PointerTomtrep3__RepositoryInfo:
+		return soap_in_PointerTomtrep3__RepositoryInfo(soap, NULL, NULL, "mtrep3:RepositoryInfo");
 	case SOAP_TYPE_PointerTomtrep__ArrayOfRepositoryInfo:
 		return soap_in_PointerTomtrep__ArrayOfRepositoryInfo(soap, NULL, NULL, "mtrep:ArrayOfRepositoryInfo");
 	case SOAP_TYPE_PointerTomtrep__RepositoryInfo:
@@ -211,6 +241,18 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		{	*type = SOAP_TYPE_bool;
 			return soap_in_bool(soap, NULL, NULL, NULL);
 		}
+		if (!soap_match_tag(soap, t, "mtrep3:RepositoryStatus"))
+		{	*type = SOAP_TYPE_mtrep3__RepositoryStatus;
+			return soap_in_mtrep3__RepositoryStatus(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:Levels"))
+		{	*type = SOAP_TYPE_mtrep3__Levels;
+			return soap_in_mtrep3__Levels(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:Integrities"))
+		{	*type = SOAP_TYPE_mtrep3__Integrities;
+			return soap_in_mtrep3__Integrities(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "mtrep:RepositoryStatus"))
 		{	*type = SOAP_TYPE_mtrep__RepositoryStatus;
 			return soap_in_mtrep__RepositoryStatus(soap, NULL, NULL, NULL);
@@ -227,6 +269,18 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		{	*type = SOAP_TYPE_std__string;
 			return soap_in_std__string(soap, NULL, NULL, NULL);
 		}
+		if (!soap_match_tag(soap, t, "mtrep3:RepositoryInfo"))
+		{	*type = SOAP_TYPE_mtrep3__RepositoryInfo;
+			return soap_in_mtrep3__RepositoryInfo(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:ArrayOfRepositoryInfo"))
+		{	*type = SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo;
+			return soap_in_mtrep3__ArrayOfRepositoryInfo(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:ClientInfo"))
+		{	*type = SOAP_TYPE_mtrep3__ClientInfo;
+			return soap_in_mtrep3__ClientInfo(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "mtrep:ArrayOfRepositoryInfo"))
 		{	*type = SOAP_TYPE_mtrep__ArrayOfRepositoryInfo;
 			return soap_in_mtrep__ArrayOfRepositoryInfo(soap, NULL, NULL, NULL);
@@ -242,13 +296,37 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 			return s ? *s : NULL;
 		}
 		t = soap->tag;
-		if (!soap_match_tag(soap, t, "ns1:GetListCreationTimeResponse"))
-		{	*type = SOAP_TYPE__ns1__GetListCreationTimeResponse;
-			return soap_in__ns1__GetListCreationTimeResponse(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "mtrep3:TryGetRepositoryInfo2Response"))
+		{	*type = SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response;
+			return soap_in__mtrep3__TryGetRepositoryInfo2Response(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "ns1:GetListCreationTime"))
-		{	*type = SOAP_TYPE__ns1__GetListCreationTime;
-			return soap_in__ns1__GetListCreationTime(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "mtrep3:TryGetRepositoryInfo2"))
+		{	*type = SOAP_TYPE__mtrep3__TryGetRepositoryInfo2;
+			return soap_in__mtrep3__TryGetRepositoryInfo2(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:PickRepository2Response"))
+		{	*type = SOAP_TYPE__mtrep3__PickRepository2Response;
+			return soap_in__mtrep3__PickRepository2Response(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:PickRepository2"))
+		{	*type = SOAP_TYPE__mtrep3__PickRepository2;
+			return soap_in__mtrep3__PickRepository2(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:GetRepositories2Response"))
+		{	*type = SOAP_TYPE__mtrep3__GetRepositories2Response;
+			return soap_in__mtrep3__GetRepositories2Response(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep3:GetRepositories2"))
+		{	*type = SOAP_TYPE__mtrep3__GetRepositories2;
+			return soap_in__mtrep3__GetRepositories2(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep2:GetListCreationTimeResponse"))
+		{	*type = SOAP_TYPE__mtrep2__GetListCreationTimeResponse;
+			return soap_in__mtrep2__GetListCreationTimeResponse(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "mtrep2:GetListCreationTime"))
+		{	*type = SOAP_TYPE__mtrep2__GetListCreationTime;
+			return soap_in__mtrep2__GetListCreationTime(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "mtrep:GetRepositoriesResponse"))
 		{	*type = SOAP_TYPE__mtrep__GetRepositoriesResponse;
@@ -359,6 +437,12 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
 	case SOAP_TYPE_bool:
 		return soap_out_bool(soap, tag, id, (const bool *)ptr, "xsd:boolean");
+	case SOAP_TYPE_mtrep3__RepositoryStatus:
+		return soap_out_mtrep3__RepositoryStatus(soap, tag, id, (const enum mtrep3__RepositoryStatus *)ptr, "mtrep3:RepositoryStatus");
+	case SOAP_TYPE_mtrep3__Levels:
+		return soap_out_mtrep3__Levels(soap, tag, id, (const enum mtrep3__Levels *)ptr, "mtrep3:Levels");
+	case SOAP_TYPE_mtrep3__Integrities:
+		return soap_out_mtrep3__Integrities(soap, tag, id, (const enum mtrep3__Integrities *)ptr, "mtrep3:Integrities");
 	case SOAP_TYPE_mtrep__RepositoryStatus:
 		return soap_out_mtrep__RepositoryStatus(soap, tag, id, (const enum mtrep__RepositoryStatus *)ptr, "mtrep:RepositoryStatus");
 	case SOAP_TYPE_mtrep__Levels:
@@ -367,10 +451,28 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_mtrep__Integrities(soap, tag, id, (const enum mtrep__Integrities *)ptr, "mtrep:Integrities");
 	case SOAP_TYPE_std__string:
 		return soap_out_std__string(soap, tag, id, (const std::string *)ptr, "xsd:string");
-	case SOAP_TYPE__ns1__GetListCreationTimeResponse:
-		return ((_ns1__GetListCreationTimeResponse *)ptr)->soap_out(soap, "ns1:GetListCreationTimeResponse", id, NULL);
-	case SOAP_TYPE__ns1__GetListCreationTime:
-		return ((_ns1__GetListCreationTime *)ptr)->soap_out(soap, "ns1:GetListCreationTime", id, NULL);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response:
+		return ((_mtrep3__TryGetRepositoryInfo2Response *)ptr)->soap_out(soap, "mtrep3:TryGetRepositoryInfo2Response", id, NULL);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2:
+		return ((_mtrep3__TryGetRepositoryInfo2 *)ptr)->soap_out(soap, "mtrep3:TryGetRepositoryInfo2", id, NULL);
+	case SOAP_TYPE__mtrep3__PickRepository2Response:
+		return ((_mtrep3__PickRepository2Response *)ptr)->soap_out(soap, "mtrep3:PickRepository2Response", id, NULL);
+	case SOAP_TYPE__mtrep3__PickRepository2:
+		return ((_mtrep3__PickRepository2 *)ptr)->soap_out(soap, "mtrep3:PickRepository2", id, NULL);
+	case SOAP_TYPE__mtrep3__GetRepositories2Response:
+		return ((_mtrep3__GetRepositories2Response *)ptr)->soap_out(soap, "mtrep3:GetRepositories2Response", id, NULL);
+	case SOAP_TYPE__mtrep3__GetRepositories2:
+		return ((_mtrep3__GetRepositories2 *)ptr)->soap_out(soap, "mtrep3:GetRepositories2", id, NULL);
+	case SOAP_TYPE_mtrep3__RepositoryInfo:
+		return ((mtrep3__RepositoryInfo *)ptr)->soap_out(soap, tag, id, "mtrep3:RepositoryInfo");
+	case SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo:
+		return ((mtrep3__ArrayOfRepositoryInfo *)ptr)->soap_out(soap, tag, id, "mtrep3:ArrayOfRepositoryInfo");
+	case SOAP_TYPE_mtrep3__ClientInfo:
+		return ((mtrep3__ClientInfo *)ptr)->soap_out(soap, tag, id, "mtrep3:ClientInfo");
+	case SOAP_TYPE__mtrep2__GetListCreationTimeResponse:
+		return ((_mtrep2__GetListCreationTimeResponse *)ptr)->soap_out(soap, "mtrep2:GetListCreationTimeResponse", id, NULL);
+	case SOAP_TYPE__mtrep2__GetListCreationTime:
+		return ((_mtrep2__GetListCreationTime *)ptr)->soap_out(soap, "mtrep2:GetListCreationTime", id, NULL);
 	case SOAP_TYPE__mtrep__GetRepositoriesResponse:
 		return ((_mtrep__GetRepositoriesResponse *)ptr)->soap_out(soap, "mtrep:GetRepositoriesResponse", id, NULL);
 	case SOAP_TYPE__mtrep__GetRepositories:
@@ -391,10 +493,22 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return ((mtrep__ArrayOfRepositoryInfo *)ptr)->soap_out(soap, tag, id, "mtrep:ArrayOfRepositoryInfo");
 	case SOAP_TYPE_mtrep__RepositoryInfo:
 		return ((mtrep__RepositoryInfo *)ptr)->soap_out(soap, tag, id, "mtrep:RepositoryInfo");
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTimeResponse:
-		return soap_out_PointerTo_ns1__GetListCreationTimeResponse(soap, tag, id, (_ns1__GetListCreationTimeResponse *const*)ptr, "ns1:GetListCreationTimeResponse");
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTime:
-		return soap_out_PointerTo_ns1__GetListCreationTime(soap, tag, id, (_ns1__GetListCreationTime *const*)ptr, "ns1:GetListCreationTime");
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2Response:
+		return soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2Response(soap, tag, id, (_mtrep3__TryGetRepositoryInfo2Response *const*)ptr, "mtrep3:TryGetRepositoryInfo2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2:
+		return soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, tag, id, (_mtrep3__TryGetRepositoryInfo2 *const*)ptr, "mtrep3:TryGetRepositoryInfo2");
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2Response:
+		return soap_out_PointerTo_mtrep3__PickRepository2Response(soap, tag, id, (_mtrep3__PickRepository2Response *const*)ptr, "mtrep3:PickRepository2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2:
+		return soap_out_PointerTo_mtrep3__PickRepository2(soap, tag, id, (_mtrep3__PickRepository2 *const*)ptr, "mtrep3:PickRepository2");
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2Response:
+		return soap_out_PointerTo_mtrep3__GetRepositories2Response(soap, tag, id, (_mtrep3__GetRepositories2Response *const*)ptr, "mtrep3:GetRepositories2Response");
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2:
+		return soap_out_PointerTo_mtrep3__GetRepositories2(soap, tag, id, (_mtrep3__GetRepositories2 *const*)ptr, "mtrep3:GetRepositories2");
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTimeResponse:
+		return soap_out_PointerTo_mtrep2__GetListCreationTimeResponse(soap, tag, id, (_mtrep2__GetListCreationTimeResponse *const*)ptr, "mtrep2:GetListCreationTimeResponse");
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTime:
+		return soap_out_PointerTo_mtrep2__GetListCreationTime(soap, tag, id, (_mtrep2__GetListCreationTime *const*)ptr, "mtrep2:GetListCreationTime");
 	case SOAP_TYPE_PointerTo_mtrep__GetRepositoriesResponse:
 		return soap_out_PointerTo_mtrep__GetRepositoriesResponse(soap, tag, id, (_mtrep__GetRepositoriesResponse *const*)ptr, "mtrep:GetRepositoriesResponse");
 	case SOAP_TYPE_PointerTo_mtrep__GetRepositories:
@@ -411,6 +525,12 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_PointerTo_mtrep__TryGetRepositoryInfoResponse(soap, tag, id, (_mtrep__TryGetRepositoryInfoResponse *const*)ptr, "mtrep:TryGetRepositoryInfoResponse");
 	case SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfo:
 		return soap_out_PointerTo_mtrep__TryGetRepositoryInfo(soap, tag, id, (_mtrep__TryGetRepositoryInfo *const*)ptr, "mtrep:TryGetRepositoryInfo");
+	case SOAP_TYPE_PointerTomtrep3__ArrayOfRepositoryInfo:
+		return soap_out_PointerTomtrep3__ArrayOfRepositoryInfo(soap, tag, id, (mtrep3__ArrayOfRepositoryInfo *const*)ptr, "mtrep3:ArrayOfRepositoryInfo");
+	case SOAP_TYPE_PointerTomtrep3__ClientInfo:
+		return soap_out_PointerTomtrep3__ClientInfo(soap, tag, id, (mtrep3__ClientInfo *const*)ptr, "mtrep3:ClientInfo");
+	case SOAP_TYPE_PointerTomtrep3__RepositoryInfo:
+		return soap_out_PointerTomtrep3__RepositoryInfo(soap, tag, id, (mtrep3__RepositoryInfo *const*)ptr, "mtrep3:RepositoryInfo");
 	case SOAP_TYPE_PointerTomtrep__ArrayOfRepositoryInfo:
 		return soap_out_PointerTomtrep__ArrayOfRepositoryInfo(soap, tag, id, (mtrep__ArrayOfRepositoryInfo *const*)ptr, "mtrep:ArrayOfRepositoryInfo");
 	case SOAP_TYPE_PointerTomtrep__RepositoryInfo:
@@ -443,11 +563,38 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_std__string:
 		soap_serialize_std__string(soap, (const std::string *)ptr);
 		break;
-	case SOAP_TYPE__ns1__GetListCreationTimeResponse:
-		((_ns1__GetListCreationTimeResponse *)ptr)->soap_serialize(soap);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response:
+		((_mtrep3__TryGetRepositoryInfo2Response *)ptr)->soap_serialize(soap);
 		break;
-	case SOAP_TYPE__ns1__GetListCreationTime:
-		((_ns1__GetListCreationTime *)ptr)->soap_serialize(soap);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2:
+		((_mtrep3__TryGetRepositoryInfo2 *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep3__PickRepository2Response:
+		((_mtrep3__PickRepository2Response *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep3__PickRepository2:
+		((_mtrep3__PickRepository2 *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep3__GetRepositories2Response:
+		((_mtrep3__GetRepositories2Response *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep3__GetRepositories2:
+		((_mtrep3__GetRepositories2 *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE_mtrep3__RepositoryInfo:
+		((mtrep3__RepositoryInfo *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo:
+		((mtrep3__ArrayOfRepositoryInfo *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE_mtrep3__ClientInfo:
+		((mtrep3__ClientInfo *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep2__GetListCreationTimeResponse:
+		((_mtrep2__GetListCreationTimeResponse *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__mtrep2__GetListCreationTime:
+		((_mtrep2__GetListCreationTime *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__mtrep__GetRepositoriesResponse:
 		((_mtrep__GetRepositoriesResponse *)ptr)->soap_serialize(soap);
@@ -479,41 +626,77 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_mtrep__RepositoryInfo:
 		((mtrep__RepositoryInfo *)ptr)->soap_serialize(soap);
 		break;
-	case SOAP_TYPE___ns1__GetListCreationTime_:
-		soap_serialize___ns1__GetListCreationTime_(soap, (const struct __ns1__GetListCreationTime_ *)ptr);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_:
+		soap_serialize___mtrep3__TryGetRepositoryInfo2_(soap, (const struct __mtrep3__TryGetRepositoryInfo2_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__GetRepositories_:
-		soap_serialize___ns1__GetRepositories_(soap, (const struct __ns1__GetRepositories_ *)ptr);
+	case SOAP_TYPE___mtrep3__PickRepository2_:
+		soap_serialize___mtrep3__PickRepository2_(soap, (const struct __mtrep3__PickRepository2_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__GetAllRepositories_:
-		soap_serialize___ns1__GetAllRepositories_(soap, (const struct __ns1__GetAllRepositories_ *)ptr);
+	case SOAP_TYPE___mtrep3__GetRepositories2_:
+		soap_serialize___mtrep3__GetRepositories2_(soap, (const struct __mtrep3__GetRepositories2_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__PickRepository_:
-		soap_serialize___ns1__PickRepository_(soap, (const struct __ns1__PickRepository_ *)ptr);
+	case SOAP_TYPE___mtrep3__GetListCreationTime_:
+		soap_serialize___mtrep3__GetListCreationTime_(soap, (const struct __mtrep3__GetListCreationTime_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo_:
-		soap_serialize___ns1__TryGetRepositoryInfo_(soap, (const struct __ns1__TryGetRepositoryInfo_ *)ptr);
+	case SOAP_TYPE___mtrep3__GetRepositories_:
+		soap_serialize___mtrep3__GetRepositories_(soap, (const struct __mtrep3__GetRepositories_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__GetListCreationTime:
-		soap_serialize___ns1__GetListCreationTime(soap, (const struct __ns1__GetListCreationTime *)ptr);
+	case SOAP_TYPE___mtrep3__GetAllRepositories_:
+		soap_serialize___mtrep3__GetAllRepositories_(soap, (const struct __mtrep3__GetAllRepositories_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__GetRepositories:
-		soap_serialize___ns1__GetRepositories(soap, (const struct __ns1__GetRepositories *)ptr);
+	case SOAP_TYPE___mtrep3__PickRepository_:
+		soap_serialize___mtrep3__PickRepository_(soap, (const struct __mtrep3__PickRepository_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__GetAllRepositories:
-		soap_serialize___ns1__GetAllRepositories(soap, (const struct __ns1__GetAllRepositories *)ptr);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo_:
+		soap_serialize___mtrep3__TryGetRepositoryInfo_(soap, (const struct __mtrep3__TryGetRepositoryInfo_ *)ptr);
 		break;
-	case SOAP_TYPE___ns1__PickRepository:
-		soap_serialize___ns1__PickRepository(soap, (const struct __ns1__PickRepository *)ptr);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2:
+		soap_serialize___mtrep3__TryGetRepositoryInfo2(soap, (const struct __mtrep3__TryGetRepositoryInfo2 *)ptr);
 		break;
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo:
-		soap_serialize___ns1__TryGetRepositoryInfo(soap, (const struct __ns1__TryGetRepositoryInfo *)ptr);
+	case SOAP_TYPE___mtrep3__PickRepository2:
+		soap_serialize___mtrep3__PickRepository2(soap, (const struct __mtrep3__PickRepository2 *)ptr);
 		break;
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTimeResponse:
-		soap_serialize_PointerTo_ns1__GetListCreationTimeResponse(soap, (_ns1__GetListCreationTimeResponse *const*)ptr);
+	case SOAP_TYPE___mtrep3__GetRepositories2:
+		soap_serialize___mtrep3__GetRepositories2(soap, (const struct __mtrep3__GetRepositories2 *)ptr);
 		break;
-	case SOAP_TYPE_PointerTo_ns1__GetListCreationTime:
-		soap_serialize_PointerTo_ns1__GetListCreationTime(soap, (_ns1__GetListCreationTime *const*)ptr);
+	case SOAP_TYPE___mtrep3__GetListCreationTime:
+		soap_serialize___mtrep3__GetListCreationTime(soap, (const struct __mtrep3__GetListCreationTime *)ptr);
+		break;
+	case SOAP_TYPE___mtrep3__GetRepositories:
+		soap_serialize___mtrep3__GetRepositories(soap, (const struct __mtrep3__GetRepositories *)ptr);
+		break;
+	case SOAP_TYPE___mtrep3__GetAllRepositories:
+		soap_serialize___mtrep3__GetAllRepositories(soap, (const struct __mtrep3__GetAllRepositories *)ptr);
+		break;
+	case SOAP_TYPE___mtrep3__PickRepository:
+		soap_serialize___mtrep3__PickRepository(soap, (const struct __mtrep3__PickRepository *)ptr);
+		break;
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo:
+		soap_serialize___mtrep3__TryGetRepositoryInfo(soap, (const struct __mtrep3__TryGetRepositoryInfo *)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2Response:
+		soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2Response(soap, (_mtrep3__TryGetRepositoryInfo2Response *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2:
+		soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, (_mtrep3__TryGetRepositoryInfo2 *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2Response:
+		soap_serialize_PointerTo_mtrep3__PickRepository2Response(soap, (_mtrep3__PickRepository2Response *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__PickRepository2:
+		soap_serialize_PointerTo_mtrep3__PickRepository2(soap, (_mtrep3__PickRepository2 *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2Response:
+		soap_serialize_PointerTo_mtrep3__GetRepositories2Response(soap, (_mtrep3__GetRepositories2Response *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep3__GetRepositories2:
+		soap_serialize_PointerTo_mtrep3__GetRepositories2(soap, (_mtrep3__GetRepositories2 *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTimeResponse:
+		soap_serialize_PointerTo_mtrep2__GetListCreationTimeResponse(soap, (_mtrep2__GetListCreationTimeResponse *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_mtrep2__GetListCreationTime:
+		soap_serialize_PointerTo_mtrep2__GetListCreationTime(soap, (_mtrep2__GetListCreationTime *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_mtrep__GetRepositoriesResponse:
 		soap_serialize_PointerTo_mtrep__GetRepositoriesResponse(soap, (_mtrep__GetRepositoriesResponse *const*)ptr);
@@ -538,6 +721,15 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 		break;
 	case SOAP_TYPE_PointerTo_mtrep__TryGetRepositoryInfo:
 		soap_serialize_PointerTo_mtrep__TryGetRepositoryInfo(soap, (_mtrep__TryGetRepositoryInfo *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTomtrep3__ArrayOfRepositoryInfo:
+		soap_serialize_PointerTomtrep3__ArrayOfRepositoryInfo(soap, (mtrep3__ArrayOfRepositoryInfo *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTomtrep3__ClientInfo:
+		soap_serialize_PointerTomtrep3__ClientInfo(soap, (mtrep3__ClientInfo *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTomtrep3__RepositoryInfo:
+		soap_serialize_PointerTomtrep3__RepositoryInfo(soap, (mtrep3__RepositoryInfo *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTomtrep__ArrayOfRepositoryInfo:
 		soap_serialize_PointerTomtrep__ArrayOfRepositoryInfo(soap, (mtrep__ArrayOfRepositoryInfo *const*)ptr);
@@ -588,30 +780,60 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_instantiate(struct soap *soap, int t, const ch
 		return (void*)soap_instantiate__mtrep__GetRepositories(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__mtrep__GetRepositoriesResponse:
 		return (void*)soap_instantiate__mtrep__GetRepositoriesResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__ns1__GetListCreationTime:
-		return (void*)soap_instantiate__ns1__GetListCreationTime(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__ns1__GetListCreationTimeResponse:
-		return (void*)soap_instantiate__ns1__GetListCreationTimeResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo:
-		return (void*)soap_instantiate___ns1__TryGetRepositoryInfo(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__PickRepository:
-		return (void*)soap_instantiate___ns1__PickRepository(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetAllRepositories:
-		return (void*)soap_instantiate___ns1__GetAllRepositories(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetRepositories:
-		return (void*)soap_instantiate___ns1__GetRepositories(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetListCreationTime:
-		return (void*)soap_instantiate___ns1__GetListCreationTime(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo_:
-		return (void*)soap_instantiate___ns1__TryGetRepositoryInfo_(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__PickRepository_:
-		return (void*)soap_instantiate___ns1__PickRepository_(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetAllRepositories_:
-		return (void*)soap_instantiate___ns1__GetAllRepositories_(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetRepositories_:
-		return (void*)soap_instantiate___ns1__GetRepositories_(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___ns1__GetListCreationTime_:
-		return (void*)soap_instantiate___ns1__GetListCreationTime_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep2__GetListCreationTime:
+		return (void*)soap_instantiate__mtrep2__GetListCreationTime(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep2__GetListCreationTimeResponse:
+		return (void*)soap_instantiate__mtrep2__GetListCreationTimeResponse(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_mtrep3__ClientInfo:
+		return (void*)soap_instantiate_mtrep3__ClientInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo:
+		return (void*)soap_instantiate_mtrep3__ArrayOfRepositoryInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_mtrep3__RepositoryInfo:
+		return (void*)soap_instantiate_mtrep3__RepositoryInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__GetRepositories2:
+		return (void*)soap_instantiate__mtrep3__GetRepositories2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__GetRepositories2Response:
+		return (void*)soap_instantiate__mtrep3__GetRepositories2Response(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__PickRepository2:
+		return (void*)soap_instantiate__mtrep3__PickRepository2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__PickRepository2Response:
+		return (void*)soap_instantiate__mtrep3__PickRepository2Response(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2:
+		return (void*)soap_instantiate__mtrep3__TryGetRepositoryInfo2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response:
+		return (void*)soap_instantiate__mtrep3__TryGetRepositoryInfo2Response(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo:
+		return (void*)soap_instantiate___mtrep3__TryGetRepositoryInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__PickRepository:
+		return (void*)soap_instantiate___mtrep3__PickRepository(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetAllRepositories:
+		return (void*)soap_instantiate___mtrep3__GetAllRepositories(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetRepositories:
+		return (void*)soap_instantiate___mtrep3__GetRepositories(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetListCreationTime:
+		return (void*)soap_instantiate___mtrep3__GetListCreationTime(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetRepositories2:
+		return (void*)soap_instantiate___mtrep3__GetRepositories2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__PickRepository2:
+		return (void*)soap_instantiate___mtrep3__PickRepository2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2:
+		return (void*)soap_instantiate___mtrep3__TryGetRepositoryInfo2(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo_:
+		return (void*)soap_instantiate___mtrep3__TryGetRepositoryInfo_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__PickRepository_:
+		return (void*)soap_instantiate___mtrep3__PickRepository_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetAllRepositories_:
+		return (void*)soap_instantiate___mtrep3__GetAllRepositories_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetRepositories_:
+		return (void*)soap_instantiate___mtrep3__GetRepositories_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetListCreationTime_:
+		return (void*)soap_instantiate___mtrep3__GetListCreationTime_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__GetRepositories2_:
+		return (void*)soap_instantiate___mtrep3__GetRepositories2_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__PickRepository2_:
+		return (void*)soap_instantiate___mtrep3__PickRepository2_(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_:
+		return (void*)soap_instantiate___mtrep3__TryGetRepositoryInfo2_(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -632,6 +854,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_instantiate(struct soap *soap, int t, const ch
 	case SOAP_TYPE_SOAP_ENV__Fault:
 		return (void*)soap_instantiate_SOAP_ENV__Fault(soap, -1, type, arrayType, n);
 #endif
+	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo:
+		return (void*)soap_instantiate_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep__RepositoryInfo:
 		return (void*)soap_instantiate_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(soap, -1, type, arrayType, n);
 	}
@@ -707,77 +931,167 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_fdelete(struct soap_clist *p)
 		else
 			delete[] (_mtrep__GetRepositoriesResponse*)p->ptr;
 		break;
-	case SOAP_TYPE__ns1__GetListCreationTime:
+	case SOAP_TYPE__mtrep2__GetListCreationTime:
 		if (p->size < 0)
-			delete (_ns1__GetListCreationTime*)p->ptr;
+			delete (_mtrep2__GetListCreationTime*)p->ptr;
 		else
-			delete[] (_ns1__GetListCreationTime*)p->ptr;
+			delete[] (_mtrep2__GetListCreationTime*)p->ptr;
 		break;
-	case SOAP_TYPE__ns1__GetListCreationTimeResponse:
+	case SOAP_TYPE__mtrep2__GetListCreationTimeResponse:
 		if (p->size < 0)
-			delete (_ns1__GetListCreationTimeResponse*)p->ptr;
+			delete (_mtrep2__GetListCreationTimeResponse*)p->ptr;
 		else
-			delete[] (_ns1__GetListCreationTimeResponse*)p->ptr;
+			delete[] (_mtrep2__GetListCreationTimeResponse*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo:
+	case SOAP_TYPE_mtrep3__ClientInfo:
 		if (p->size < 0)
-			delete (struct __ns1__TryGetRepositoryInfo*)p->ptr;
+			delete (mtrep3__ClientInfo*)p->ptr;
 		else
-			delete[] (struct __ns1__TryGetRepositoryInfo*)p->ptr;
+			delete[] (mtrep3__ClientInfo*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__PickRepository:
+	case SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo:
 		if (p->size < 0)
-			delete (struct __ns1__PickRepository*)p->ptr;
+			delete (mtrep3__ArrayOfRepositoryInfo*)p->ptr;
 		else
-			delete[] (struct __ns1__PickRepository*)p->ptr;
+			delete[] (mtrep3__ArrayOfRepositoryInfo*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetAllRepositories:
+	case SOAP_TYPE_mtrep3__RepositoryInfo:
 		if (p->size < 0)
-			delete (struct __ns1__GetAllRepositories*)p->ptr;
+			delete (mtrep3__RepositoryInfo*)p->ptr;
 		else
-			delete[] (struct __ns1__GetAllRepositories*)p->ptr;
+			delete[] (mtrep3__RepositoryInfo*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetRepositories:
+	case SOAP_TYPE__mtrep3__GetRepositories2:
 		if (p->size < 0)
-			delete (struct __ns1__GetRepositories*)p->ptr;
+			delete (_mtrep3__GetRepositories2*)p->ptr;
 		else
-			delete[] (struct __ns1__GetRepositories*)p->ptr;
+			delete[] (_mtrep3__GetRepositories2*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetListCreationTime:
+	case SOAP_TYPE__mtrep3__GetRepositories2Response:
 		if (p->size < 0)
-			delete (struct __ns1__GetListCreationTime*)p->ptr;
+			delete (_mtrep3__GetRepositories2Response*)p->ptr;
 		else
-			delete[] (struct __ns1__GetListCreationTime*)p->ptr;
+			delete[] (_mtrep3__GetRepositories2Response*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__TryGetRepositoryInfo_:
+	case SOAP_TYPE__mtrep3__PickRepository2:
 		if (p->size < 0)
-			delete (struct __ns1__TryGetRepositoryInfo_*)p->ptr;
+			delete (_mtrep3__PickRepository2*)p->ptr;
 		else
-			delete[] (struct __ns1__TryGetRepositoryInfo_*)p->ptr;
+			delete[] (_mtrep3__PickRepository2*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__PickRepository_:
+	case SOAP_TYPE__mtrep3__PickRepository2Response:
 		if (p->size < 0)
-			delete (struct __ns1__PickRepository_*)p->ptr;
+			delete (_mtrep3__PickRepository2Response*)p->ptr;
 		else
-			delete[] (struct __ns1__PickRepository_*)p->ptr;
+			delete[] (_mtrep3__PickRepository2Response*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetAllRepositories_:
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2:
 		if (p->size < 0)
-			delete (struct __ns1__GetAllRepositories_*)p->ptr;
+			delete (_mtrep3__TryGetRepositoryInfo2*)p->ptr;
 		else
-			delete[] (struct __ns1__GetAllRepositories_*)p->ptr;
+			delete[] (_mtrep3__TryGetRepositoryInfo2*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetRepositories_:
+	case SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response:
 		if (p->size < 0)
-			delete (struct __ns1__GetRepositories_*)p->ptr;
+			delete (_mtrep3__TryGetRepositoryInfo2Response*)p->ptr;
 		else
-			delete[] (struct __ns1__GetRepositories_*)p->ptr;
+			delete[] (_mtrep3__TryGetRepositoryInfo2Response*)p->ptr;
 		break;
-	case SOAP_TYPE___ns1__GetListCreationTime_:
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo:
 		if (p->size < 0)
-			delete (struct __ns1__GetListCreationTime_*)p->ptr;
+			delete (struct __mtrep3__TryGetRepositoryInfo*)p->ptr;
 		else
-			delete[] (struct __ns1__GetListCreationTime_*)p->ptr;
+			delete[] (struct __mtrep3__TryGetRepositoryInfo*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__PickRepository:
+		if (p->size < 0)
+			delete (struct __mtrep3__PickRepository*)p->ptr;
+		else
+			delete[] (struct __mtrep3__PickRepository*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetAllRepositories:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetAllRepositories*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetAllRepositories*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetRepositories:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetRepositories*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetRepositories*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetListCreationTime:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetListCreationTime*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetListCreationTime*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetRepositories2:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetRepositories2*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetRepositories2*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__PickRepository2:
+		if (p->size < 0)
+			delete (struct __mtrep3__PickRepository2*)p->ptr;
+		else
+			delete[] (struct __mtrep3__PickRepository2*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2:
+		if (p->size < 0)
+			delete (struct __mtrep3__TryGetRepositoryInfo2*)p->ptr;
+		else
+			delete[] (struct __mtrep3__TryGetRepositoryInfo2*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo_:
+		if (p->size < 0)
+			delete (struct __mtrep3__TryGetRepositoryInfo_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__TryGetRepositoryInfo_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__PickRepository_:
+		if (p->size < 0)
+			delete (struct __mtrep3__PickRepository_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__PickRepository_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetAllRepositories_:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetAllRepositories_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetAllRepositories_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetRepositories_:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetRepositories_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetRepositories_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetListCreationTime_:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetListCreationTime_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetListCreationTime_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__GetRepositories2_:
+		if (p->size < 0)
+			delete (struct __mtrep3__GetRepositories2_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__GetRepositories2_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__PickRepository2_:
+		if (p->size < 0)
+			delete (struct __mtrep3__PickRepository2_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__PickRepository2_*)p->ptr;
+		break;
+	case SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_:
+		if (p->size < 0)
+			delete (struct __mtrep3__TryGetRepositoryInfo2_*)p->ptr;
+		else
+			delete[] (struct __mtrep3__TryGetRepositoryInfo2_*)p->ptr;
 		break;
 	case SOAP_TYPE_SOAP_ENV__Header:
 		if (p->size < 0)
@@ -809,6 +1123,12 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_fdelete(struct soap_clist *p)
 		else
 			delete[] (struct SOAP_ENV__Fault*)p->ptr;
 		break;
+	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo:
+		if (p->size < 0)
+			delete (std::vector<mtrep3__RepositoryInfo * >*)p->ptr;
+		else
+			delete[] (std::vector<mtrep3__RepositoryInfo * >*)p->ptr;
+		break;
 	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep__RepositoryInfo:
 		if (p->size < 0)
 			delete (std::vector<mtrep__RepositoryInfo * >*)p->ptr;
@@ -831,6 +1151,10 @@ SOAP_FMAC3 void* SOAP_FMAC4 soap_container_id_forward(struct soap *soap, const c
 SOAP_FMAC3 void SOAP_FMAC4 soap_container_insert(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {	switch (tt)
 	{
+	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo:
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Container insert type=%d in %d location=%p object=%p len=%lu\n", st, tt, p, q, (unsigned long)len));
+		(*(std::vector<mtrep3__RepositoryInfo * >*)p)[len] = *(mtrep3__RepositoryInfo **)q;
+		break;
 	case SOAP_TYPE_std__vectorTemplateOfPointerTomtrep__RepositoryInfo:
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Container insert type=%d in %d location=%p object=%p len=%lu\n", st, tt, p, q, (unsigned long)len));
 		(*(std::vector<mtrep__RepositoryInfo * >*)p)[len] = *(mtrep__RepositoryInfo **)q;
@@ -982,6 +1306,247 @@ SOAP_FMAC3 bool * SOAP_FMAC4 soap_in_bool(struct soap *soap, const char *tag, bo
 	}
 	else
 	{	a = (bool *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_bool, 0, sizeof(bool), 0, NULL);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep3__RepositoryStatus(struct soap *soap, enum mtrep3__RepositoryStatus *a)
+{	(void)soap; /* appease -Wall -Werror */
+#ifdef SOAP_DEFAULT_mtrep3__RepositoryStatus
+	*a = SOAP_DEFAULT_mtrep3__RepositoryStatus;
+#else
+	*a = (enum mtrep3__RepositoryStatus)0;
+#endif
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep3__RepositoryStatus(struct soap *soap, const enum mtrep3__RepositoryStatus *a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_mtrep3__RepositoryStatus);
+	if (soap_out_mtrep3__RepositoryStatus(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+static const struct soap_code_map soap_codes_mtrep3__RepositoryStatus[] =
+{	{ (long)mtrep3__RepositoryStatus__Online, "Online" },
+	{ (long)mtrep3__RepositoryStatus__Offline, "Offline" },
+	{ (long)mtrep3__RepositoryStatus__Unknown, "Unknown" },
+	{ 0, NULL }
+};
+
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep3__RepositoryStatus2s(struct soap *soap, enum mtrep3__RepositoryStatus n)
+{	const char *s = soap_code_str(soap_codes_mtrep3__RepositoryStatus, (long)n);
+	if (s)
+		return s;
+	return soap_long2s(soap, (long)n);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__RepositoryStatus(struct soap *soap, const char *tag, int id, const enum mtrep3__RepositoryStatus *a, const char *type)
+{	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__RepositoryStatus), type);
+	soap_send(soap, soap_mtrep3__RepositoryStatus2s(soap, *a));
+	return soap_element_end_out(soap, tag);
+}
+
+SOAP_FMAC3 enum mtrep3__RepositoryStatus * SOAP_FMAC4 soap_get_mtrep3__RepositoryStatus(struct soap *soap, enum mtrep3__RepositoryStatus *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__RepositoryStatus(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep3__RepositoryStatus(struct soap *soap, const char *s, enum mtrep3__RepositoryStatus *a)
+{
+	const struct soap_code_map *map;
+	if (!s)
+		return SOAP_OK;
+	map = soap_code(soap_codes_mtrep3__RepositoryStatus, s);
+	if (map)
+		*a = (enum mtrep3__RepositoryStatus)map->code;
+	else
+	{	long n;
+		if (soap_s2long(soap, s, &n) || ((soap->mode & SOAP_XML_STRICT) && (n < 0 || n > 2)))
+			return soap->error = SOAP_TYPE;
+		*a = (enum mtrep3__RepositoryStatus)n;
+	}
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 enum mtrep3__RepositoryStatus * SOAP_FMAC4 soap_in_mtrep3__RepositoryStatus(struct soap *soap, const char *tag, enum mtrep3__RepositoryStatus *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, type))
+		return NULL;
+	a = (enum mtrep3__RepositoryStatus *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__RepositoryStatus, sizeof(enum mtrep3__RepositoryStatus), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	if (soap->body && !*soap->href)
+	{	if (!a || soap_s2mtrep3__RepositoryStatus(soap, soap_value(soap), a) || soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (enum mtrep3__RepositoryStatus *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__RepositoryStatus, 0, sizeof(enum mtrep3__RepositoryStatus), 0, NULL);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep3__Levels(struct soap *soap, enum mtrep3__Levels *a)
+{	(void)soap; /* appease -Wall -Werror */
+#ifdef SOAP_DEFAULT_mtrep3__Levels
+	*a = SOAP_DEFAULT_mtrep3__Levels;
+#else
+	*a = (enum mtrep3__Levels)0;
+#endif
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep3__Levels(struct soap *soap, const enum mtrep3__Levels *a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_mtrep3__Levels);
+	if (soap_out_mtrep3__Levels(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+static const struct soap_code_map soap_codes_mtrep3__Levels[] =
+{	{ (long)mtrep3__Levels__Essential, "Essential" },
+	{ (long)mtrep3__Levels__Basic, "Basic" },
+	{ (long)mtrep3__Levels__Advanced, "Advanced" },
+	{ (long)mtrep3__Levels__Complete, "Complete" },
+	{ 0, NULL }
+};
+
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep3__Levels2s(struct soap *soap, enum mtrep3__Levels n)
+{	const char *s = soap_code_str(soap_codes_mtrep3__Levels, (long)n);
+	if (s)
+		return s;
+	return soap_long2s(soap, (long)n);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__Levels(struct soap *soap, const char *tag, int id, const enum mtrep3__Levels *a, const char *type)
+{	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__Levels), type);
+	soap_send(soap, soap_mtrep3__Levels2s(soap, *a));
+	return soap_element_end_out(soap, tag);
+}
+
+SOAP_FMAC3 enum mtrep3__Levels * SOAP_FMAC4 soap_get_mtrep3__Levels(struct soap *soap, enum mtrep3__Levels *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__Levels(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep3__Levels(struct soap *soap, const char *s, enum mtrep3__Levels *a)
+{
+	const struct soap_code_map *map;
+	if (!s)
+		return SOAP_OK;
+	map = soap_code(soap_codes_mtrep3__Levels, s);
+	if (map)
+		*a = (enum mtrep3__Levels)map->code;
+	else
+	{	long n;
+		if (soap_s2long(soap, s, &n) || ((soap->mode & SOAP_XML_STRICT) && (n < 0 || n > 3)))
+			return soap->error = SOAP_TYPE;
+		*a = (enum mtrep3__Levels)n;
+	}
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 enum mtrep3__Levels * SOAP_FMAC4 soap_in_mtrep3__Levels(struct soap *soap, const char *tag, enum mtrep3__Levels *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, type))
+		return NULL;
+	a = (enum mtrep3__Levels *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__Levels, sizeof(enum mtrep3__Levels), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	if (soap->body && !*soap->href)
+	{	if (!a || soap_s2mtrep3__Levels(soap, soap_value(soap), a) || soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (enum mtrep3__Levels *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__Levels, 0, sizeof(enum mtrep3__Levels), 0, NULL);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_mtrep3__Integrities(struct soap *soap, enum mtrep3__Integrities *a)
+{	(void)soap; /* appease -Wall -Werror */
+#ifdef SOAP_DEFAULT_mtrep3__Integrities
+	*a = SOAP_DEFAULT_mtrep3__Integrities;
+#else
+	*a = (enum mtrep3__Integrities)0;
+#endif
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_mtrep3__Integrities(struct soap *soap, const enum mtrep3__Integrities *a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_mtrep3__Integrities);
+	if (soap_out_mtrep3__Integrities(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+static const struct soap_code_map soap_codes_mtrep3__Integrities[] =
+{	{ (long)mtrep3__Integrities__Intact, "Intact" },
+	{ (long)mtrep3__Integrities__Corrupted, "Corrupted" },
+	{ (long)mtrep3__Integrities__Unknown, "Unknown" },
+	{ 0, NULL }
+};
+
+SOAP_FMAC3S const char* SOAP_FMAC4S soap_mtrep3__Integrities2s(struct soap *soap, enum mtrep3__Integrities n)
+{	const char *s = soap_code_str(soap_codes_mtrep3__Integrities, (long)n);
+	if (s)
+		return s;
+	return soap_long2s(soap, (long)n);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__Integrities(struct soap *soap, const char *tag, int id, const enum mtrep3__Integrities *a, const char *type)
+{	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__Integrities), type);
+	soap_send(soap, soap_mtrep3__Integrities2s(soap, *a));
+	return soap_element_end_out(soap, tag);
+}
+
+SOAP_FMAC3 enum mtrep3__Integrities * SOAP_FMAC4 soap_get_mtrep3__Integrities(struct soap *soap, enum mtrep3__Integrities *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__Integrities(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3S int SOAP_FMAC4S soap_s2mtrep3__Integrities(struct soap *soap, const char *s, enum mtrep3__Integrities *a)
+{
+	const struct soap_code_map *map;
+	if (!s)
+		return SOAP_OK;
+	map = soap_code(soap_codes_mtrep3__Integrities, s);
+	if (map)
+		*a = (enum mtrep3__Integrities)map->code;
+	else
+	{	long n;
+		if (soap_s2long(soap, s, &n) || ((soap->mode & SOAP_XML_STRICT) && (n < 0 || n > 2)))
+			return soap->error = SOAP_TYPE;
+		*a = (enum mtrep3__Integrities)n;
+	}
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 enum mtrep3__Integrities * SOAP_FMAC4 soap_in_mtrep3__Integrities(struct soap *soap, const char *tag, enum mtrep3__Integrities *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, type))
+		return NULL;
+	a = (enum mtrep3__Integrities *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__Integrities, sizeof(enum mtrep3__Integrities), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	if (soap->body && !*soap->href)
+	{	if (!a || soap_s2mtrep3__Integrities(soap, soap_value(soap), a) || soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (enum mtrep3__Integrities *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__Integrities, 0, sizeof(enum mtrep3__Integrities), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1330,71 +1895,1477 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__string(struct soap *soap, int st, int 
 }
 #endif
 
-void _ns1__GetListCreationTimeResponse::soap_default(struct soap *soap)
+void _mtrep3__TryGetRepositoryInfo2Response::soap_default(struct soap *soap)
 {
 	this->soap = soap;
-	soap_default_int(soap, &((_ns1__GetListCreationTimeResponse*)this)->GetListCreationTimeResult);
+	soap_default_bool(soap, &((_mtrep3__TryGetRepositoryInfo2Response*)this)->TryGetRepositoryInfo2Result);
+	((_mtrep3__TryGetRepositoryInfo2Response*)this)->repositoryInfo = NULL;
 	/* transient soap skipped */
 }
 
-void _ns1__GetListCreationTimeResponse::soap_serialize(struct soap *soap) const
+void _mtrep3__TryGetRepositoryInfo2Response::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__RepositoryInfo(soap, &((_mtrep3__TryGetRepositoryInfo2Response*)this)->repositoryInfo);
 	/* transient soap skipped */
 }
 
-int _ns1__GetListCreationTimeResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
+int _mtrep3__TryGetRepositoryInfo2Response::soap_put(struct soap *soap, const char *tag, const  char *type) const
 {
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__ns1__GetListCreationTimeResponse);
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response);
 	if (this->soap_out(soap, tag, id, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-int _ns1__GetListCreationTimeResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+int _mtrep3__TryGetRepositoryInfo2Response::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
 {
-	return soap_out__ns1__GetListCreationTimeResponse(soap, tag, id, this, type);
+	return soap_out__mtrep3__TryGetRepositoryInfo2Response(soap, tag, id, this, type);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__ns1__GetListCreationTimeResponse(struct soap *soap, const char *tag, int id, const _ns1__GetListCreationTimeResponse *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, const char *tag, int id, const _mtrep3__TryGetRepositoryInfo2Response *a, const char *type)
 {
-	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__ns1__GetListCreationTimeResponse), type);
-	soap_element_result(soap, "ns1:GetListCreationTimeResult");
-	soap_out_int(soap, "ns1:GetListCreationTimeResult", -1, &(((_ns1__GetListCreationTimeResponse*)a)->GetListCreationTimeResult), "");
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response), type);
+	soap_element_result(soap, "mtrep3:TryGetRepositoryInfo2Result");
+	soap_out_bool(soap, "mtrep3:TryGetRepositoryInfo2Result", -1, &(((_mtrep3__TryGetRepositoryInfo2Response*)a)->TryGetRepositoryInfo2Result), "");
+	soap_out_PointerTomtrep3__RepositoryInfo(soap, "mtrep3:repositoryInfo", -1, &(((_mtrep3__TryGetRepositoryInfo2Response*)a)->repositoryInfo), "");
 	/* transient soap skipped */
 	soap_element_end_out(soap, tag);
 	return SOAP_OK;
 }
 
-void *_ns1__GetListCreationTimeResponse::soap_get(struct soap *soap, const char *tag, const char *type)
+void *_mtrep3__TryGetRepositoryInfo2Response::soap_get(struct soap *soap, const char *tag, const char *type)
 {
-	return soap_get__ns1__GetListCreationTimeResponse(soap, this, tag, type);
+	return soap_get__mtrep3__TryGetRepositoryInfo2Response(soap, this, tag, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTimeResponse * SOAP_FMAC4 soap_get__ns1__GetListCreationTimeResponse(struct soap *soap, _ns1__GetListCreationTimeResponse *p, const char *tag, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2Response * SOAP_FMAC4 soap_get__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, _mtrep3__TryGetRepositoryInfo2Response *p, const char *tag, const char *type)
 {
-	if ((p = soap_in__ns1__GetListCreationTimeResponse(soap, tag, p, type)))
+	if ((p = soap_in__mtrep3__TryGetRepositoryInfo2Response(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-void *_ns1__GetListCreationTimeResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__ns1__GetListCreationTimeResponse(soap, tag, this, type);
+void *_mtrep3__TryGetRepositoryInfo2Response::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__TryGetRepositoryInfo2Response(soap, tag, this, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTimeResponse * SOAP_FMAC4 soap_in__ns1__GetListCreationTimeResponse(struct soap *soap, const char *tag, _ns1__GetListCreationTimeResponse *a, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2Response * SOAP_FMAC4 soap_in__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, const char *tag, _mtrep3__TryGetRepositoryInfo2Response *a, const char *type)
 {
 	if (soap_element_begin_in(soap, tag, 0, NULL))
 		return NULL;
-	a = (_ns1__GetListCreationTimeResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__ns1__GetListCreationTimeResponse, sizeof(_ns1__GetListCreationTimeResponse), soap->type, soap->arrayType);
+	a = (_mtrep3__TryGetRepositoryInfo2Response *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response, sizeof(_mtrep3__TryGetRepositoryInfo2Response), soap->type, soap->arrayType);
 	if (!a)
 		return NULL;
 	if (soap->alloced)
 	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__ns1__GetListCreationTimeResponse)
+		if (soap->clist->type != SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response)
 		{	soap_revert(soap);
 			*soap->id = '\0';
-			return (_ns1__GetListCreationTimeResponse *)a->soap_in(soap, tag, type);
+			return (_mtrep3__TryGetRepositoryInfo2Response *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_TryGetRepositoryInfo2Result1 = 1, soap_flag_repositoryInfo1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_TryGetRepositoryInfo2Result1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_bool(soap, "mtrep3:TryGetRepositoryInfo2Result", &(((_mtrep3__TryGetRepositoryInfo2Response*)a)->TryGetRepositoryInfo2Result), "xsd:boolean"))
+				{	soap_flag_TryGetRepositoryInfo2Result1--;
+					continue;
+				}
+			if (soap_flag_repositoryInfo1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__RepositoryInfo(soap, "mtrep3:repositoryInfo", &(((_mtrep3__TryGetRepositoryInfo2Response*)a)->repositoryInfo), "mtrep3:RepositoryInfo"))
+				{	soap_flag_repositoryInfo1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "mtrep3:TryGetRepositoryInfo2Result");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_TryGetRepositoryInfo2Result1 > 0))
+		{	soap->error = SOAP_OCCURS;
+			return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__TryGetRepositoryInfo2Response *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response, 0, sizeof(_mtrep3__TryGetRepositoryInfo2Response), 0, soap_copy__mtrep3__TryGetRepositoryInfo2Response);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__TryGetRepositoryInfo2Response * SOAP_FMAC6 soap_new__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__TryGetRepositoryInfo2Response(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, _mtrep3__TryGetRepositoryInfo2Response *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2Response * SOAP_FMAC4 soap_instantiate__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__TryGetRepositoryInfo2Response(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__TryGetRepositoryInfo2Response;
+		if (size)
+			*size = sizeof(_mtrep3__TryGetRepositoryInfo2Response);
+		((_mtrep3__TryGetRepositoryInfo2Response*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__TryGetRepositoryInfo2Response[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__TryGetRepositoryInfo2Response);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__TryGetRepositoryInfo2Response*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__TryGetRepositoryInfo2Response*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__TryGetRepositoryInfo2Response %p -> %p\n", q, p));
+	*(_mtrep3__TryGetRepositoryInfo2Response*)p = *(_mtrep3__TryGetRepositoryInfo2Response*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep3__TryGetRepositoryInfo2::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((_mtrep3__TryGetRepositoryInfo2*)this)->clientInfo = NULL;
+	((_mtrep3__TryGetRepositoryInfo2*)this)->url = NULL;
+	/* transient soap skipped */
+}
+
+void _mtrep3__TryGetRepositoryInfo2::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__ClientInfo(soap, &((_mtrep3__TryGetRepositoryInfo2*)this)->clientInfo);
+	soap_serialize_PointerTostd__string(soap, &((_mtrep3__TryGetRepositoryInfo2*)this)->url);
+	/* transient soap skipped */
+}
+
+int _mtrep3__TryGetRepositoryInfo2::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep3__TryGetRepositoryInfo2::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep3__TryGetRepositoryInfo2(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, int id, const _mtrep3__TryGetRepositoryInfo2 *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2), type);
+	soap_out_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", -1, &(((_mtrep3__TryGetRepositoryInfo2*)a)->clientInfo), "");
+	soap_out_PointerTostd__string(soap, "mtrep3:url", -1, &(((_mtrep3__TryGetRepositoryInfo2*)a)->url), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep3__TryGetRepositoryInfo2::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep3__TryGetRepositoryInfo2(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_get__mtrep3__TryGetRepositoryInfo2(struct soap *soap, _mtrep3__TryGetRepositoryInfo2 *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep3__TryGetRepositoryInfo2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep3__TryGetRepositoryInfo2::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__TryGetRepositoryInfo2(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_in__mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, _mtrep3__TryGetRepositoryInfo2 *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep3__TryGetRepositoryInfo2 *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2, sizeof(_mtrep3__TryGetRepositoryInfo2), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep3__TryGetRepositoryInfo2)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep3__TryGetRepositoryInfo2 *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_clientInfo1 = 1, soap_flag_url1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_clientInfo1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", &(((_mtrep3__TryGetRepositoryInfo2*)a)->clientInfo), "mtrep3:ClientInfo"))
+				{	soap_flag_clientInfo1--;
+					continue;
+				}
+			if (soap_flag_url1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:url", &(((_mtrep3__TryGetRepositoryInfo2*)a)->url), "xsd:string"))
+				{	soap_flag_url1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__TryGetRepositoryInfo2 *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2, 0, sizeof(_mtrep3__TryGetRepositoryInfo2), 0, soap_copy__mtrep3__TryGetRepositoryInfo2);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC6 soap_new__mtrep3__TryGetRepositoryInfo2(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__TryGetRepositoryInfo2(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__TryGetRepositoryInfo2(struct soap *soap, _mtrep3__TryGetRepositoryInfo2 *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_instantiate__mtrep3__TryGetRepositoryInfo2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__TryGetRepositoryInfo2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__TryGetRepositoryInfo2;
+		if (size)
+			*size = sizeof(_mtrep3__TryGetRepositoryInfo2);
+		((_mtrep3__TryGetRepositoryInfo2*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__TryGetRepositoryInfo2[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__TryGetRepositoryInfo2);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__TryGetRepositoryInfo2*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__TryGetRepositoryInfo2*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__TryGetRepositoryInfo2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__TryGetRepositoryInfo2 %p -> %p\n", q, p));
+	*(_mtrep3__TryGetRepositoryInfo2*)p = *(_mtrep3__TryGetRepositoryInfo2*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep3__PickRepository2Response::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((_mtrep3__PickRepository2Response*)this)->PickRepository2Result = NULL;
+	/* transient soap skipped */
+}
+
+void _mtrep3__PickRepository2Response::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__RepositoryInfo(soap, &((_mtrep3__PickRepository2Response*)this)->PickRepository2Result);
+	/* transient soap skipped */
+}
+
+int _mtrep3__PickRepository2Response::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__PickRepository2Response);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep3__PickRepository2Response::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep3__PickRepository2Response(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__PickRepository2Response(struct soap *soap, const char *tag, int id, const _mtrep3__PickRepository2Response *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__PickRepository2Response), type);
+	if (a->PickRepository2Result)
+		soap_element_result(soap, "mtrep3:PickRepository2Result");
+	soap_out_PointerTomtrep3__RepositoryInfo(soap, "mtrep3:PickRepository2Result", -1, &(((_mtrep3__PickRepository2Response*)a)->PickRepository2Result), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep3__PickRepository2Response::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep3__PickRepository2Response(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2Response * SOAP_FMAC4 soap_get__mtrep3__PickRepository2Response(struct soap *soap, _mtrep3__PickRepository2Response *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep3__PickRepository2Response(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep3__PickRepository2Response::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__PickRepository2Response(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2Response * SOAP_FMAC4 soap_in__mtrep3__PickRepository2Response(struct soap *soap, const char *tag, _mtrep3__PickRepository2Response *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep3__PickRepository2Response *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__PickRepository2Response, sizeof(_mtrep3__PickRepository2Response), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep3__PickRepository2Response)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep3__PickRepository2Response *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_PickRepository2Result1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_PickRepository2Result1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__RepositoryInfo(soap, "mtrep3:PickRepository2Result", &(((_mtrep3__PickRepository2Response*)a)->PickRepository2Result), "mtrep3:RepositoryInfo"))
+				{	soap_flag_PickRepository2Result1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "mtrep3:PickRepository2Result");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__PickRepository2Response *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__PickRepository2Response, 0, sizeof(_mtrep3__PickRepository2Response), 0, soap_copy__mtrep3__PickRepository2Response);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__PickRepository2Response * SOAP_FMAC6 soap_new__mtrep3__PickRepository2Response(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__PickRepository2Response(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__PickRepository2Response(struct soap *soap, _mtrep3__PickRepository2Response *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2Response * SOAP_FMAC4 soap_instantiate__mtrep3__PickRepository2Response(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__PickRepository2Response(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__PickRepository2Response, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__PickRepository2Response;
+		if (size)
+			*size = sizeof(_mtrep3__PickRepository2Response);
+		((_mtrep3__PickRepository2Response*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__PickRepository2Response[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__PickRepository2Response);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__PickRepository2Response*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__PickRepository2Response*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__PickRepository2Response(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__PickRepository2Response %p -> %p\n", q, p));
+	*(_mtrep3__PickRepository2Response*)p = *(_mtrep3__PickRepository2Response*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep3__PickRepository2::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((_mtrep3__PickRepository2*)this)->clientInfo = NULL;
+	/* transient soap skipped */
+}
+
+void _mtrep3__PickRepository2::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__ClientInfo(soap, &((_mtrep3__PickRepository2*)this)->clientInfo);
+	/* transient soap skipped */
+}
+
+int _mtrep3__PickRepository2::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__PickRepository2);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep3__PickRepository2::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep3__PickRepository2(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__PickRepository2(struct soap *soap, const char *tag, int id, const _mtrep3__PickRepository2 *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__PickRepository2), type);
+	soap_out_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", -1, &(((_mtrep3__PickRepository2*)a)->clientInfo), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep3__PickRepository2::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep3__PickRepository2(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2 * SOAP_FMAC4 soap_get__mtrep3__PickRepository2(struct soap *soap, _mtrep3__PickRepository2 *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep3__PickRepository2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep3__PickRepository2::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__PickRepository2(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2 * SOAP_FMAC4 soap_in__mtrep3__PickRepository2(struct soap *soap, const char *tag, _mtrep3__PickRepository2 *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep3__PickRepository2 *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__PickRepository2, sizeof(_mtrep3__PickRepository2), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep3__PickRepository2)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep3__PickRepository2 *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_clientInfo1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_clientInfo1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", &(((_mtrep3__PickRepository2*)a)->clientInfo), "mtrep3:ClientInfo"))
+				{	soap_flag_clientInfo1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__PickRepository2 *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__PickRepository2, 0, sizeof(_mtrep3__PickRepository2), 0, soap_copy__mtrep3__PickRepository2);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__PickRepository2 * SOAP_FMAC6 soap_new__mtrep3__PickRepository2(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__PickRepository2(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__PickRepository2(struct soap *soap, _mtrep3__PickRepository2 *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2 * SOAP_FMAC4 soap_instantiate__mtrep3__PickRepository2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__PickRepository2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__PickRepository2, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__PickRepository2;
+		if (size)
+			*size = sizeof(_mtrep3__PickRepository2);
+		((_mtrep3__PickRepository2*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__PickRepository2[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__PickRepository2);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__PickRepository2*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__PickRepository2*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__PickRepository2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__PickRepository2 %p -> %p\n", q, p));
+	*(_mtrep3__PickRepository2*)p = *(_mtrep3__PickRepository2*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep3__GetRepositories2Response::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((_mtrep3__GetRepositories2Response*)this)->GetRepositories2Result = NULL;
+	/* transient soap skipped */
+}
+
+void _mtrep3__GetRepositories2Response::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__ArrayOfRepositoryInfo(soap, &((_mtrep3__GetRepositories2Response*)this)->GetRepositories2Result);
+	/* transient soap skipped */
+}
+
+int _mtrep3__GetRepositories2Response::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__GetRepositories2Response);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep3__GetRepositories2Response::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep3__GetRepositories2Response(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__GetRepositories2Response(struct soap *soap, const char *tag, int id, const _mtrep3__GetRepositories2Response *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__GetRepositories2Response), type);
+	if (a->GetRepositories2Result)
+		soap_element_result(soap, "mtrep3:GetRepositories2Result");
+	soap_out_PointerTomtrep3__ArrayOfRepositoryInfo(soap, "mtrep3:GetRepositories2Result", -1, &(((_mtrep3__GetRepositories2Response*)a)->GetRepositories2Result), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep3__GetRepositories2Response::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep3__GetRepositories2Response(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2Response * SOAP_FMAC4 soap_get__mtrep3__GetRepositories2Response(struct soap *soap, _mtrep3__GetRepositories2Response *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep3__GetRepositories2Response(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep3__GetRepositories2Response::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__GetRepositories2Response(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2Response * SOAP_FMAC4 soap_in__mtrep3__GetRepositories2Response(struct soap *soap, const char *tag, _mtrep3__GetRepositories2Response *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep3__GetRepositories2Response *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__GetRepositories2Response, sizeof(_mtrep3__GetRepositories2Response), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep3__GetRepositories2Response)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep3__GetRepositories2Response *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_GetRepositories2Result1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_GetRepositories2Result1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__ArrayOfRepositoryInfo(soap, "mtrep3:GetRepositories2Result", &(((_mtrep3__GetRepositories2Response*)a)->GetRepositories2Result), "mtrep3:ArrayOfRepositoryInfo"))
+				{	soap_flag_GetRepositories2Result1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "mtrep3:GetRepositories2Result");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__GetRepositories2Response *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__GetRepositories2Response, 0, sizeof(_mtrep3__GetRepositories2Response), 0, soap_copy__mtrep3__GetRepositories2Response);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__GetRepositories2Response * SOAP_FMAC6 soap_new__mtrep3__GetRepositories2Response(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__GetRepositories2Response(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__GetRepositories2Response(struct soap *soap, _mtrep3__GetRepositories2Response *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2Response * SOAP_FMAC4 soap_instantiate__mtrep3__GetRepositories2Response(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__GetRepositories2Response(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__GetRepositories2Response, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__GetRepositories2Response;
+		if (size)
+			*size = sizeof(_mtrep3__GetRepositories2Response);
+		((_mtrep3__GetRepositories2Response*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__GetRepositories2Response[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__GetRepositories2Response);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__GetRepositories2Response*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__GetRepositories2Response*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__GetRepositories2Response(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__GetRepositories2Response %p -> %p\n", q, p));
+	*(_mtrep3__GetRepositories2Response*)p = *(_mtrep3__GetRepositories2Response*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep3__GetRepositories2::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((_mtrep3__GetRepositories2*)this)->clientInfo = NULL;
+	soap_default_bool(soap, &((_mtrep3__GetRepositories2*)this)->onlyOnline);
+	soap_default_bool(soap, &((_mtrep3__GetRepositories2*)this)->noCorrupted);
+	soap_default_int(soap, &((_mtrep3__GetRepositories2*)this)->maxDelay);
+	/* transient soap skipped */
+}
+
+void _mtrep3__GetRepositories2::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTomtrep3__ClientInfo(soap, &((_mtrep3__GetRepositories2*)this)->clientInfo);
+	/* transient soap skipped */
+}
+
+int _mtrep3__GetRepositories2::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep3__GetRepositories2);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep3__GetRepositories2::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep3__GetRepositories2(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep3__GetRepositories2(struct soap *soap, const char *tag, int id, const _mtrep3__GetRepositories2 *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep3__GetRepositories2), type);
+	soap_out_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", -1, &(((_mtrep3__GetRepositories2*)a)->clientInfo), "");
+	soap_out_bool(soap, "mtrep3:onlyOnline", -1, &(((_mtrep3__GetRepositories2*)a)->onlyOnline), "");
+	soap_out_bool(soap, "mtrep3:noCorrupted", -1, &(((_mtrep3__GetRepositories2*)a)->noCorrupted), "");
+	soap_out_int(soap, "mtrep3:maxDelay", -1, &(((_mtrep3__GetRepositories2*)a)->maxDelay), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep3__GetRepositories2::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep3__GetRepositories2(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2 * SOAP_FMAC4 soap_get__mtrep3__GetRepositories2(struct soap *soap, _mtrep3__GetRepositories2 *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep3__GetRepositories2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep3__GetRepositories2::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep3__GetRepositories2(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2 * SOAP_FMAC4 soap_in__mtrep3__GetRepositories2(struct soap *soap, const char *tag, _mtrep3__GetRepositories2 *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep3__GetRepositories2 *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep3__GetRepositories2, sizeof(_mtrep3__GetRepositories2), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep3__GetRepositories2)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep3__GetRepositories2 *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_clientInfo1 = 1, soap_flag_onlyOnline1 = 1, soap_flag_noCorrupted1 = 1, soap_flag_maxDelay1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_clientInfo1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTomtrep3__ClientInfo(soap, "mtrep3:clientInfo", &(((_mtrep3__GetRepositories2*)a)->clientInfo), "mtrep3:ClientInfo"))
+				{	soap_flag_clientInfo1--;
+					continue;
+				}
+			if (soap_flag_onlyOnline1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_bool(soap, "mtrep3:onlyOnline", &(((_mtrep3__GetRepositories2*)a)->onlyOnline), "xsd:boolean"))
+				{	soap_flag_onlyOnline1--;
+					continue;
+				}
+			if (soap_flag_noCorrupted1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_bool(soap, "mtrep3:noCorrupted", &(((_mtrep3__GetRepositories2*)a)->noCorrupted), "xsd:boolean"))
+				{	soap_flag_noCorrupted1--;
+					continue;
+				}
+			if (soap_flag_maxDelay1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "mtrep3:maxDelay", &(((_mtrep3__GetRepositories2*)a)->maxDelay), "xsd:int"))
+				{	soap_flag_maxDelay1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_onlyOnline1 > 0 || soap_flag_noCorrupted1 > 0 || soap_flag_maxDelay1 > 0))
+		{	soap->error = SOAP_OCCURS;
+			return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__GetRepositories2 *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep3__GetRepositories2, 0, sizeof(_mtrep3__GetRepositories2), 0, soap_copy__mtrep3__GetRepositories2);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 _mtrep3__GetRepositories2 * SOAP_FMAC6 soap_new__mtrep3__GetRepositories2(struct soap *soap, int n)
+{	return soap_instantiate__mtrep3__GetRepositories2(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep3__GetRepositories2(struct soap *soap, _mtrep3__GetRepositories2 *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2 * SOAP_FMAC4 soap_instantiate__mtrep3__GetRepositories2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep3__GetRepositories2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep3__GetRepositories2, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new _mtrep3__GetRepositories2;
+		if (size)
+			*size = sizeof(_mtrep3__GetRepositories2);
+		((_mtrep3__GetRepositories2*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new _mtrep3__GetRepositories2[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_mtrep3__GetRepositories2);
+		for (int i = 0; i < n; i++)
+			((_mtrep3__GetRepositories2*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_mtrep3__GetRepositories2*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep3__GetRepositories2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep3__GetRepositories2 %p -> %p\n", q, p));
+	*(_mtrep3__GetRepositories2*)p = *(_mtrep3__GetRepositories2*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void mtrep3__RepositoryInfo::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((mtrep3__RepositoryInfo*)this)->Country = NULL;
+	soap_default_int(soap, &((mtrep3__RepositoryInfo*)this)->Date);
+	soap_default_int(soap, &((mtrep3__RepositoryInfo*)this)->Delay);
+	((mtrep3__RepositoryInfo*)this)->Description = NULL;
+	soap_default_mtrep3__Integrities(soap, &((mtrep3__RepositoryInfo*)this)->Integrity);
+	soap_default_mtrep3__Levels(soap, &((mtrep3__RepositoryInfo*)this)->Level);
+	soap_default_mtrep3__RepositoryStatus(soap, &((mtrep3__RepositoryInfo*)this)->Status);
+	((mtrep3__RepositoryInfo*)this)->Url = NULL;
+	soap_default_int(soap, &((mtrep3__RepositoryInfo*)this)->Version);
+	/* transient soap skipped */
+}
+
+void mtrep3__RepositoryInfo::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &((mtrep3__RepositoryInfo*)this)->Country);
+	soap_serialize_PointerTostd__string(soap, &((mtrep3__RepositoryInfo*)this)->Description);
+	soap_serialize_PointerTostd__string(soap, &((mtrep3__RepositoryInfo*)this)->Url);
+	/* transient soap skipped */
+}
+
+int mtrep3__RepositoryInfo::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_mtrep3__RepositoryInfo);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int mtrep3__RepositoryInfo::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_mtrep3__RepositoryInfo(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__RepositoryInfo(struct soap *soap, const char *tag, int id, const mtrep3__RepositoryInfo *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__RepositoryInfo), type);
+	soap_out_PointerTostd__string(soap, "mtrep3:Country", -1, &(((mtrep3__RepositoryInfo*)a)->Country), "");
+	soap_out_int(soap, "mtrep3:Date", -1, &(((mtrep3__RepositoryInfo*)a)->Date), "");
+	soap_out_int(soap, "mtrep3:Delay", -1, &(((mtrep3__RepositoryInfo*)a)->Delay), "");
+	soap_out_PointerTostd__string(soap, "mtrep3:Description", -1, &(((mtrep3__RepositoryInfo*)a)->Description), "");
+	soap_out_mtrep3__Integrities(soap, "mtrep3:Integrity", -1, &(((mtrep3__RepositoryInfo*)a)->Integrity), "");
+	soap_out_mtrep3__Levels(soap, "mtrep3:Level", -1, &(((mtrep3__RepositoryInfo*)a)->Level), "");
+	soap_out_mtrep3__RepositoryStatus(soap, "mtrep3:Status", -1, &(((mtrep3__RepositoryInfo*)a)->Status), "");
+	soap_out_PointerTostd__string(soap, "mtrep3:Url", -1, &(((mtrep3__RepositoryInfo*)a)->Url), "");
+	soap_out_int(soap, "mtrep3:Version", -1, &(((mtrep3__RepositoryInfo*)a)->Version), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *mtrep3__RepositoryInfo::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_mtrep3__RepositoryInfo(soap, this, tag, type);
+}
+
+SOAP_FMAC3 mtrep3__RepositoryInfo * SOAP_FMAC4 soap_get_mtrep3__RepositoryInfo(struct soap *soap, mtrep3__RepositoryInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__RepositoryInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *mtrep3__RepositoryInfo::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_mtrep3__RepositoryInfo(soap, tag, this, type);
+}
+
+SOAP_FMAC3 mtrep3__RepositoryInfo * SOAP_FMAC4 soap_in_mtrep3__RepositoryInfo(struct soap *soap, const char *tag, mtrep3__RepositoryInfo *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (mtrep3__RepositoryInfo *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__RepositoryInfo, sizeof(mtrep3__RepositoryInfo), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_mtrep3__RepositoryInfo)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (mtrep3__RepositoryInfo *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_Country1 = 1, soap_flag_Date1 = 1, soap_flag_Delay1 = 1, soap_flag_Description1 = 1, soap_flag_Integrity1 = 1, soap_flag_Level1 = 1, soap_flag_Status1 = 1, soap_flag_Url1 = 1, soap_flag_Version1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_Country1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:Country", &(((mtrep3__RepositoryInfo*)a)->Country), "xsd:string"))
+				{	soap_flag_Country1--;
+					continue;
+				}
+			if (soap_flag_Date1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "mtrep3:Date", &(((mtrep3__RepositoryInfo*)a)->Date), "xsd:int"))
+				{	soap_flag_Date1--;
+					continue;
+				}
+			if (soap_flag_Delay1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "mtrep3:Delay", &(((mtrep3__RepositoryInfo*)a)->Delay), "xsd:int"))
+				{	soap_flag_Delay1--;
+					continue;
+				}
+			if (soap_flag_Description1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:Description", &(((mtrep3__RepositoryInfo*)a)->Description), "xsd:string"))
+				{	soap_flag_Description1--;
+					continue;
+				}
+			if (soap_flag_Integrity1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_mtrep3__Integrities(soap, "mtrep3:Integrity", &(((mtrep3__RepositoryInfo*)a)->Integrity), "mtrep3:Integrities"))
+				{	soap_flag_Integrity1--;
+					continue;
+				}
+			if (soap_flag_Level1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_mtrep3__Levels(soap, "mtrep3:Level", &(((mtrep3__RepositoryInfo*)a)->Level), "mtrep3:Levels"))
+				{	soap_flag_Level1--;
+					continue;
+				}
+			if (soap_flag_Status1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_mtrep3__RepositoryStatus(soap, "mtrep3:Status", &(((mtrep3__RepositoryInfo*)a)->Status), "mtrep3:RepositoryStatus"))
+				{	soap_flag_Status1--;
+					continue;
+				}
+			if (soap_flag_Url1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:Url", &(((mtrep3__RepositoryInfo*)a)->Url), "xsd:string"))
+				{	soap_flag_Url1--;
+					continue;
+				}
+			if (soap_flag_Version1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "mtrep3:Version", &(((mtrep3__RepositoryInfo*)a)->Version), "xsd:int"))
+				{	soap_flag_Version1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_Date1 > 0 || soap_flag_Delay1 > 0 || soap_flag_Integrity1 > 0 || soap_flag_Level1 > 0 || soap_flag_Status1 > 0 || soap_flag_Version1 > 0))
+		{	soap->error = SOAP_OCCURS;
+			return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__RepositoryInfo *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__RepositoryInfo, 0, sizeof(mtrep3__RepositoryInfo), 0, soap_copy_mtrep3__RepositoryInfo);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 mtrep3__RepositoryInfo * SOAP_FMAC6 soap_new_mtrep3__RepositoryInfo(struct soap *soap, int n)
+{	return soap_instantiate_mtrep3__RepositoryInfo(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mtrep3__RepositoryInfo(struct soap *soap, mtrep3__RepositoryInfo *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 mtrep3__RepositoryInfo * SOAP_FMAC4 soap_instantiate_mtrep3__RepositoryInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mtrep3__RepositoryInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_mtrep3__RepositoryInfo, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new mtrep3__RepositoryInfo;
+		if (size)
+			*size = sizeof(mtrep3__RepositoryInfo);
+		((mtrep3__RepositoryInfo*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new mtrep3__RepositoryInfo[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(mtrep3__RepositoryInfo);
+		for (int i = 0; i < n; i++)
+			((mtrep3__RepositoryInfo*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (mtrep3__RepositoryInfo*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mtrep3__RepositoryInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying mtrep3__RepositoryInfo %p -> %p\n", q, p));
+	*(mtrep3__RepositoryInfo*)p = *(mtrep3__RepositoryInfo*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void mtrep3__ArrayOfRepositoryInfo::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, &((mtrep3__ArrayOfRepositoryInfo*)this)->RepositoryInfo);
+	/* transient soap skipped */
+}
+
+void mtrep3__ArrayOfRepositoryInfo::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, &((mtrep3__ArrayOfRepositoryInfo*)this)->RepositoryInfo);
+	/* transient soap skipped */
+}
+
+int mtrep3__ArrayOfRepositoryInfo::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int mtrep3__ArrayOfRepositoryInfo::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_mtrep3__ArrayOfRepositoryInfo(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, const char *tag, int id, const mtrep3__ArrayOfRepositoryInfo *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo), type);
+	soap_out_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, "mtrep3:RepositoryInfo", -1, &(((mtrep3__ArrayOfRepositoryInfo*)a)->RepositoryInfo), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *mtrep3__ArrayOfRepositoryInfo::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_mtrep3__ArrayOfRepositoryInfo(soap, this, tag, type);
+}
+
+SOAP_FMAC3 mtrep3__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_get_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, mtrep3__ArrayOfRepositoryInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__ArrayOfRepositoryInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *mtrep3__ArrayOfRepositoryInfo::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_mtrep3__ArrayOfRepositoryInfo(soap, tag, this, type);
+}
+
+SOAP_FMAC3 mtrep3__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_in_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, const char *tag, mtrep3__ArrayOfRepositoryInfo *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (mtrep3__ArrayOfRepositoryInfo *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo, sizeof(mtrep3__ArrayOfRepositoryInfo), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (mtrep3__ArrayOfRepositoryInfo *)a->soap_in(soap, tag, type);
+		}
+	};
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, "mtrep3:RepositoryInfo", &(((mtrep3__ArrayOfRepositoryInfo*)a)->RepositoryInfo), "mtrep3:RepositoryInfo"))
+					continue;
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__ArrayOfRepositoryInfo *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo, 0, sizeof(mtrep3__ArrayOfRepositoryInfo), 0, soap_copy_mtrep3__ArrayOfRepositoryInfo);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 mtrep3__ArrayOfRepositoryInfo * SOAP_FMAC6 soap_new_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, int n)
+{	return soap_instantiate_mtrep3__ArrayOfRepositoryInfo(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, mtrep3__ArrayOfRepositoryInfo *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 mtrep3__ArrayOfRepositoryInfo * SOAP_FMAC4 soap_instantiate_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mtrep3__ArrayOfRepositoryInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new mtrep3__ArrayOfRepositoryInfo;
+		if (size)
+			*size = sizeof(mtrep3__ArrayOfRepositoryInfo);
+		((mtrep3__ArrayOfRepositoryInfo*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new mtrep3__ArrayOfRepositoryInfo[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(mtrep3__ArrayOfRepositoryInfo);
+		for (int i = 0; i < n; i++)
+			((mtrep3__ArrayOfRepositoryInfo*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (mtrep3__ArrayOfRepositoryInfo*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mtrep3__ArrayOfRepositoryInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying mtrep3__ArrayOfRepositoryInfo %p -> %p\n", q, p));
+	*(mtrep3__ArrayOfRepositoryInfo*)p = *(mtrep3__ArrayOfRepositoryInfo*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void mtrep3__ClientInfo::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	((mtrep3__ClientInfo*)this)->Name = NULL;
+	((mtrep3__ClientInfo*)this)->Version = NULL;
+	/* transient soap skipped */
+}
+
+void mtrep3__ClientInfo::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &((mtrep3__ClientInfo*)this)->Name);
+	soap_serialize_PointerTostd__string(soap, &((mtrep3__ClientInfo*)this)->Version);
+	/* transient soap skipped */
+}
+
+int mtrep3__ClientInfo::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_mtrep3__ClientInfo);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int mtrep3__ClientInfo::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_mtrep3__ClientInfo(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_mtrep3__ClientInfo(struct soap *soap, const char *tag, int id, const mtrep3__ClientInfo *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_mtrep3__ClientInfo), type);
+	soap_out_PointerTostd__string(soap, "mtrep3:Name", -1, &(((mtrep3__ClientInfo*)a)->Name), "");
+	soap_out_PointerTostd__string(soap, "mtrep3:Version", -1, &(((mtrep3__ClientInfo*)a)->Version), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *mtrep3__ClientInfo::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_mtrep3__ClientInfo(soap, this, tag, type);
+}
+
+SOAP_FMAC3 mtrep3__ClientInfo * SOAP_FMAC4 soap_get_mtrep3__ClientInfo(struct soap *soap, mtrep3__ClientInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_mtrep3__ClientInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *mtrep3__ClientInfo::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_mtrep3__ClientInfo(soap, tag, this, type);
+}
+
+SOAP_FMAC3 mtrep3__ClientInfo * SOAP_FMAC4 soap_in_mtrep3__ClientInfo(struct soap *soap, const char *tag, mtrep3__ClientInfo *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (mtrep3__ClientInfo *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_mtrep3__ClientInfo, sizeof(mtrep3__ClientInfo), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_mtrep3__ClientInfo)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (mtrep3__ClientInfo *)a->soap_in(soap, tag, type);
+		}
+	}
+	short soap_flag_Name1 = 1, soap_flag_Version1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_Name1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:Name", &(((mtrep3__ClientInfo*)a)->Name), "xsd:string"))
+				{	soap_flag_Name1--;
+					continue;
+				}
+			if (soap_flag_Version1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "mtrep3:Version", &(((mtrep3__ClientInfo*)a)->Version), "xsd:string"))
+				{	soap_flag_Version1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__ClientInfo *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_mtrep3__ClientInfo, 0, sizeof(mtrep3__ClientInfo), 0, soap_copy_mtrep3__ClientInfo);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC5 mtrep3__ClientInfo * SOAP_FMAC6 soap_new_mtrep3__ClientInfo(struct soap *soap, int n)
+{	return soap_instantiate_mtrep3__ClientInfo(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_mtrep3__ClientInfo(struct soap *soap, mtrep3__ClientInfo *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 mtrep3__ClientInfo * SOAP_FMAC4 soap_instantiate_mtrep3__ClientInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_mtrep3__ClientInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_mtrep3__ClientInfo, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new mtrep3__ClientInfo;
+		if (size)
+			*size = sizeof(mtrep3__ClientInfo);
+		((mtrep3__ClientInfo*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)new mtrep3__ClientInfo[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(mtrep3__ClientInfo);
+		for (int i = 0; i < n; i++)
+			((mtrep3__ClientInfo*)cp->ptr)[i].soap = soap;
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (mtrep3__ClientInfo*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_mtrep3__ClientInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying mtrep3__ClientInfo %p -> %p\n", q, p));
+	*(mtrep3__ClientInfo*)p = *(mtrep3__ClientInfo*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+void _mtrep2__GetListCreationTimeResponse::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_int(soap, &((_mtrep2__GetListCreationTimeResponse*)this)->GetListCreationTimeResult);
+	/* transient soap skipped */
+}
+
+void _mtrep2__GetListCreationTimeResponse::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	/* transient soap skipped */
+}
+
+int _mtrep2__GetListCreationTimeResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep2__GetListCreationTimeResponse);
+	if (this->soap_out(soap, tag, id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+int _mtrep2__GetListCreationTimeResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__mtrep2__GetListCreationTimeResponse(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep2__GetListCreationTimeResponse(struct soap *soap, const char *tag, int id, const _mtrep2__GetListCreationTimeResponse *a, const char *type)
+{
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep2__GetListCreationTimeResponse), type);
+	soap_element_result(soap, "mtrep2:GetListCreationTimeResult");
+	soap_out_int(soap, "mtrep2:GetListCreationTimeResult", -1, &(((_mtrep2__GetListCreationTimeResponse*)a)->GetListCreationTimeResult), "");
+	/* transient soap skipped */
+	soap_element_end_out(soap, tag);
+	return SOAP_OK;
+}
+
+void *_mtrep2__GetListCreationTimeResponse::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__mtrep2__GetListCreationTimeResponse(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTimeResponse * SOAP_FMAC4 soap_get__mtrep2__GetListCreationTimeResponse(struct soap *soap, _mtrep2__GetListCreationTimeResponse *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__mtrep2__GetListCreationTimeResponse(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+void *_mtrep2__GetListCreationTimeResponse::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep2__GetListCreationTimeResponse(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTimeResponse * SOAP_FMAC4 soap_in__mtrep2__GetListCreationTimeResponse(struct soap *soap, const char *tag, _mtrep2__GetListCreationTimeResponse *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_mtrep2__GetListCreationTimeResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep2__GetListCreationTimeResponse, sizeof(_mtrep2__GetListCreationTimeResponse), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__mtrep2__GetListCreationTimeResponse)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_mtrep2__GetListCreationTimeResponse *)a->soap_in(soap, tag, type);
 		}
 	}
 	short soap_flag_GetListCreationTimeResult1 = 1;
@@ -1403,12 +3374,12 @@ SOAP_FMAC3 _ns1__GetListCreationTimeResponse * SOAP_FMAC4 soap_in__ns1__GetListC
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_GetListCreationTimeResult1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "ns1:GetListCreationTimeResult", &(((_ns1__GetListCreationTimeResponse*)a)->GetListCreationTimeResult), "xsd:int"))
+				if (soap_in_int(soap, "mtrep2:GetListCreationTimeResult", &(((_mtrep2__GetListCreationTimeResponse*)a)->GetListCreationTimeResult), "xsd:int"))
 				{	soap_flag_GetListCreationTimeResult1--;
 					continue;
 				}
 			/* transient soap skipped */
-			soap_check_result(soap, "ns1:GetListCreationTimeResult");
+			soap_check_result(soap, "mtrep2:GetListCreationTimeResult");
 			if (soap->error == SOAP_TAG_MISMATCH)
 				soap->error = soap_ignore_element(soap);
 			if (soap->error == SOAP_NO_TAG)
@@ -1424,122 +3395,122 @@ SOAP_FMAC3 _ns1__GetListCreationTimeResponse * SOAP_FMAC4 soap_in__ns1__GetListC
 			return NULL;
 	}
 	else
-	{	a = (_ns1__GetListCreationTimeResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__ns1__GetListCreationTimeResponse, 0, sizeof(_ns1__GetListCreationTimeResponse), 0, soap_copy__ns1__GetListCreationTimeResponse);
+	{	a = (_mtrep2__GetListCreationTimeResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep2__GetListCreationTimeResponse, 0, sizeof(_mtrep2__GetListCreationTimeResponse), 0, soap_copy__mtrep2__GetListCreationTimeResponse);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 _ns1__GetListCreationTimeResponse * SOAP_FMAC6 soap_new__ns1__GetListCreationTimeResponse(struct soap *soap, int n)
-{	return soap_instantiate__ns1__GetListCreationTimeResponse(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 _mtrep2__GetListCreationTimeResponse * SOAP_FMAC6 soap_new__mtrep2__GetListCreationTimeResponse(struct soap *soap, int n)
+{	return soap_instantiate__mtrep2__GetListCreationTimeResponse(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__ns1__GetListCreationTimeResponse(struct soap *soap, _ns1__GetListCreationTimeResponse *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep2__GetListCreationTimeResponse(struct soap *soap, _mtrep2__GetListCreationTimeResponse *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTimeResponse * SOAP_FMAC4 soap_instantiate__ns1__GetListCreationTimeResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 _mtrep2__GetListCreationTimeResponse * SOAP_FMAC4 soap_instantiate__mtrep2__GetListCreationTimeResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__ns1__GetListCreationTimeResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__ns1__GetListCreationTimeResponse, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep2__GetListCreationTimeResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep2__GetListCreationTimeResponse, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new _ns1__GetListCreationTimeResponse;
+	{	cp->ptr = (void*)new _mtrep2__GetListCreationTimeResponse;
 		if (size)
-			*size = sizeof(_ns1__GetListCreationTimeResponse);
-		((_ns1__GetListCreationTimeResponse*)cp->ptr)->soap = soap;
+			*size = sizeof(_mtrep2__GetListCreationTimeResponse);
+		((_mtrep2__GetListCreationTimeResponse*)cp->ptr)->soap = soap;
 	}
 	else
-	{	cp->ptr = (void*)new _ns1__GetListCreationTimeResponse[n];
+	{	cp->ptr = (void*)new _mtrep2__GetListCreationTimeResponse[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(_ns1__GetListCreationTimeResponse);
+			*size = n * sizeof(_mtrep2__GetListCreationTimeResponse);
 		for (int i = 0; i < n; i++)
-			((_ns1__GetListCreationTimeResponse*)cp->ptr)[i].soap = soap;
+			((_mtrep2__GetListCreationTimeResponse*)cp->ptr)[i].soap = soap;
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_ns1__GetListCreationTimeResponse*)cp->ptr;
+	return (_mtrep2__GetListCreationTimeResponse*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__ns1__GetListCreationTimeResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep2__GetListCreationTimeResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _ns1__GetListCreationTimeResponse %p -> %p\n", q, p));
-	*(_ns1__GetListCreationTimeResponse*)p = *(_ns1__GetListCreationTimeResponse*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep2__GetListCreationTimeResponse %p -> %p\n", q, p));
+	*(_mtrep2__GetListCreationTimeResponse*)p = *(_mtrep2__GetListCreationTimeResponse*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-void _ns1__GetListCreationTime::soap_default(struct soap *soap)
+void _mtrep2__GetListCreationTime::soap_default(struct soap *soap)
 {
 	this->soap = soap;
 	/* transient soap skipped */
 }
 
-void _ns1__GetListCreationTime::soap_serialize(struct soap *soap) const
+void _mtrep2__GetListCreationTime::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
 	/* transient soap skipped */
 }
 
-int _ns1__GetListCreationTime::soap_put(struct soap *soap, const char *tag, const  char *type) const
+int _mtrep2__GetListCreationTime::soap_put(struct soap *soap, const char *tag, const  char *type) const
 {
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__ns1__GetListCreationTime);
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__mtrep2__GetListCreationTime);
 	if (this->soap_out(soap, tag, id, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-int _ns1__GetListCreationTime::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+int _mtrep2__GetListCreationTime::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
 {
-	return soap_out__ns1__GetListCreationTime(soap, tag, id, this, type);
+	return soap_out__mtrep2__GetListCreationTime(soap, tag, id, this, type);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__ns1__GetListCreationTime(struct soap *soap, const char *tag, int id, const _ns1__GetListCreationTime *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__mtrep2__GetListCreationTime(struct soap *soap, const char *tag, int id, const _mtrep2__GetListCreationTime *a, const char *type)
 {
-	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__ns1__GetListCreationTime), type);
+	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__mtrep2__GetListCreationTime), type);
 	/* transient soap skipped */
 	soap_element_end_out(soap, tag);
 	return SOAP_OK;
 }
 
-void *_ns1__GetListCreationTime::soap_get(struct soap *soap, const char *tag, const char *type)
+void *_mtrep2__GetListCreationTime::soap_get(struct soap *soap, const char *tag, const char *type)
 {
-	return soap_get__ns1__GetListCreationTime(soap, this, tag, type);
+	return soap_get__mtrep2__GetListCreationTime(soap, this, tag, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTime * SOAP_FMAC4 soap_get__ns1__GetListCreationTime(struct soap *soap, _ns1__GetListCreationTime *p, const char *tag, const char *type)
+SOAP_FMAC3 _mtrep2__GetListCreationTime * SOAP_FMAC4 soap_get__mtrep2__GetListCreationTime(struct soap *soap, _mtrep2__GetListCreationTime *p, const char *tag, const char *type)
 {
-	if ((p = soap_in__ns1__GetListCreationTime(soap, tag, p, type)))
+	if ((p = soap_in__mtrep2__GetListCreationTime(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-void *_ns1__GetListCreationTime::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__ns1__GetListCreationTime(soap, tag, this, type);
+void *_mtrep2__GetListCreationTime::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__mtrep2__GetListCreationTime(soap, tag, this, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTime * SOAP_FMAC4 soap_in__ns1__GetListCreationTime(struct soap *soap, const char *tag, _ns1__GetListCreationTime *a, const char *type)
+SOAP_FMAC3 _mtrep2__GetListCreationTime * SOAP_FMAC4 soap_in__mtrep2__GetListCreationTime(struct soap *soap, const char *tag, _mtrep2__GetListCreationTime *a, const char *type)
 {
 	if (soap_element_begin_in(soap, tag, 0, NULL))
 		return NULL;
-	a = (_ns1__GetListCreationTime *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__ns1__GetListCreationTime, sizeof(_ns1__GetListCreationTime), soap->type, soap->arrayType);
+	a = (_mtrep2__GetListCreationTime *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__mtrep2__GetListCreationTime, sizeof(_mtrep2__GetListCreationTime), soap->type, soap->arrayType);
 	if (!a)
 		return NULL;
 	if (soap->alloced)
 	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__ns1__GetListCreationTime)
+		if (soap->clist->type != SOAP_TYPE__mtrep2__GetListCreationTime)
 		{	soap_revert(soap);
 			*soap->id = '\0';
-			return (_ns1__GetListCreationTime *)a->soap_in(soap, tag, type);
+			return (_mtrep2__GetListCreationTime *)a->soap_in(soap, tag, type);
 		}
 	};
 	if (soap->body && !*soap->href)
@@ -1558,55 +3529,55 @@ SOAP_FMAC3 _ns1__GetListCreationTime * SOAP_FMAC4 soap_in__ns1__GetListCreationT
 			return NULL;
 	}
 	else
-	{	a = (_ns1__GetListCreationTime *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__ns1__GetListCreationTime, 0, sizeof(_ns1__GetListCreationTime), 0, soap_copy__ns1__GetListCreationTime);
+	{	a = (_mtrep2__GetListCreationTime *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__mtrep2__GetListCreationTime, 0, sizeof(_mtrep2__GetListCreationTime), 0, soap_copy__mtrep2__GetListCreationTime);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 _ns1__GetListCreationTime * SOAP_FMAC6 soap_new__ns1__GetListCreationTime(struct soap *soap, int n)
-{	return soap_instantiate__ns1__GetListCreationTime(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 _mtrep2__GetListCreationTime * SOAP_FMAC6 soap_new__mtrep2__GetListCreationTime(struct soap *soap, int n)
+{	return soap_instantiate__mtrep2__GetListCreationTime(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete__ns1__GetListCreationTime(struct soap *soap, _ns1__GetListCreationTime *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete__mtrep2__GetListCreationTime(struct soap *soap, _mtrep2__GetListCreationTime *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTime * SOAP_FMAC4 soap_instantiate__ns1__GetListCreationTime(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 _mtrep2__GetListCreationTime * SOAP_FMAC4 soap_instantiate__mtrep2__GetListCreationTime(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__ns1__GetListCreationTime(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__ns1__GetListCreationTime, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__mtrep2__GetListCreationTime(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__mtrep2__GetListCreationTime, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new _ns1__GetListCreationTime;
+	{	cp->ptr = (void*)new _mtrep2__GetListCreationTime;
 		if (size)
-			*size = sizeof(_ns1__GetListCreationTime);
-		((_ns1__GetListCreationTime*)cp->ptr)->soap = soap;
+			*size = sizeof(_mtrep2__GetListCreationTime);
+		((_mtrep2__GetListCreationTime*)cp->ptr)->soap = soap;
 	}
 	else
-	{	cp->ptr = (void*)new _ns1__GetListCreationTime[n];
+	{	cp->ptr = (void*)new _mtrep2__GetListCreationTime[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(_ns1__GetListCreationTime);
+			*size = n * sizeof(_mtrep2__GetListCreationTime);
 		for (int i = 0; i < n; i++)
-			((_ns1__GetListCreationTime*)cp->ptr)[i].soap = soap;
+			((_mtrep2__GetListCreationTime*)cp->ptr)[i].soap = soap;
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_ns1__GetListCreationTime*)cp->ptr;
+	return (_mtrep2__GetListCreationTime*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__ns1__GetListCreationTime(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__mtrep2__GetListCreationTime(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _ns1__GetListCreationTime %p -> %p\n", q, p));
-	*(_ns1__GetListCreationTime*)p = *(_ns1__GetListCreationTime*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _mtrep2__GetListCreationTime %p -> %p\n", q, p));
+	*(_mtrep2__GetListCreationTime*)p = *(_mtrep2__GetListCreationTime*)q;
 }
 #ifdef __cplusplus
 }
@@ -3794,52 +5765,52 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetListCreationTime_(struct soap *soap, struct __ns1__GetListCreationTime_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->ns1__GetListCreationTime = NULL;
+	a->mtrep3__TryGetRepositoryInfo2 = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetListCreationTime_(struct soap *soap, const struct __ns1__GetListCreationTime_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo2_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_ns1__GetListCreationTime(soap, &a->ns1__GetListCreationTime);
+	soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, &a->mtrep3__TryGetRepositoryInfo2);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetListCreationTime_(struct soap *soap, const struct __ns1__GetListCreationTime_ *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo2_ *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetListCreationTime_(soap, tag, id, a, type))
+	if (soap_out___mtrep3__TryGetRepositoryInfo2_(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetListCreationTime_(struct soap *soap, const char *tag, int id, const struct __ns1__GetListCreationTime_ *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, const char *tag, int id, const struct __mtrep3__TryGetRepositoryInfo2_ *a, const char *type)
 {
-	soap_out_PointerTo_ns1__GetListCreationTime(soap, "ns1:GetListCreationTime", -1, &a->ns1__GetListCreationTime, "");
+	soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, "mtrep3:TryGetRepositoryInfo2", -1, &a->mtrep3__TryGetRepositoryInfo2, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime_ * SOAP_FMAC4 soap_get___ns1__GetListCreationTime_(struct soap *soap, struct __ns1__GetListCreationTime_ *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2_ * SOAP_FMAC4 soap_get___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2_ *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetListCreationTime_(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__TryGetRepositoryInfo2_(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime_ * SOAP_FMAC4 soap_in___ns1__GetListCreationTime_(struct soap *soap, const char *tag, struct __ns1__GetListCreationTime_ *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2_ * SOAP_FMAC4 soap_in___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, const char *tag, struct __mtrep3__TryGetRepositoryInfo2_ *a, const char *type)
 {
-	short soap_flag_ns1__GetListCreationTime = 1;
+	short soap_flag_mtrep3__TryGetRepositoryInfo2 = 1;
 	int soap_flag;
-	a = (struct __ns1__GetListCreationTime_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetListCreationTime_, sizeof(struct __ns1__GetListCreationTime_), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__TryGetRepositoryInfo2_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_, sizeof(struct __mtrep3__TryGetRepositoryInfo2_), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetListCreationTime_(soap, a);
+	soap_default___mtrep3__TryGetRepositoryInfo2_(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_ns1__GetListCreationTime && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_ns1__GetListCreationTime(soap, "ns1:GetListCreationTime", &a->ns1__GetListCreationTime, ""))
-				{	soap_flag_ns1__GetListCreationTime--;
+			if (soap_flag_mtrep3__TryGetRepositoryInfo2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, "mtrep3:TryGetRepositoryInfo2", &a->mtrep3__TryGetRepositoryInfo2, ""))
+				{	soap_flag_mtrep3__TryGetRepositoryInfo2--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -3856,91 +5827,409 @@ SOAP_FMAC3 struct __ns1__GetListCreationTime_ * SOAP_FMAC4 soap_in___ns1__GetLis
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetListCreationTime_ * SOAP_FMAC6 soap_new___ns1__GetListCreationTime_(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetListCreationTime_(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__TryGetRepositoryInfo2_ * SOAP_FMAC6 soap_new___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__TryGetRepositoryInfo2_(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetListCreationTime_(struct soap *soap, struct __ns1__GetListCreationTime_ *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2_ *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime_ * SOAP_FMAC4 soap_instantiate___ns1__GetListCreationTime_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2_ * SOAP_FMAC4 soap_instantiate___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetListCreationTime_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetListCreationTime_, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__TryGetRepositoryInfo2_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__TryGetRepositoryInfo2_, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetListCreationTime_;
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo2_;
 		if (size)
-			*size = sizeof(struct __ns1__GetListCreationTime_);
+			*size = sizeof(struct __mtrep3__TryGetRepositoryInfo2_);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetListCreationTime_[n];
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo2_[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetListCreationTime_);
+			*size = n * sizeof(struct __mtrep3__TryGetRepositoryInfo2_);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetListCreationTime_*)cp->ptr;
+	return (struct __mtrep3__TryGetRepositoryInfo2_*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetListCreationTime_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__TryGetRepositoryInfo2_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetListCreationTime_ %p -> %p\n", q, p));
-	*(struct __ns1__GetListCreationTime_*)p = *(struct __ns1__GetListCreationTime_*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__TryGetRepositoryInfo2_ %p -> %p\n", q, p));
+	*(struct __mtrep3__TryGetRepositoryInfo2_*)p = *(struct __mtrep3__TryGetRepositoryInfo2_*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetRepositories_(struct soap *soap, struct __ns1__GetRepositories_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__PickRepository2_(struct soap *soap, struct __mtrep3__PickRepository2_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep3__PickRepository2 = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__PickRepository2_(struct soap *soap, const struct __mtrep3__PickRepository2_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep3__PickRepository2(soap, &a->mtrep3__PickRepository2);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__PickRepository2_(struct soap *soap, const struct __mtrep3__PickRepository2_ *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__PickRepository2_(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__PickRepository2_(struct soap *soap, const char *tag, int id, const struct __mtrep3__PickRepository2_ *a, const char *type)
+{
+	soap_out_PointerTo_mtrep3__PickRepository2(soap, "mtrep3:PickRepository2", -1, &a->mtrep3__PickRepository2, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2_ * SOAP_FMAC4 soap_get___mtrep3__PickRepository2_(struct soap *soap, struct __mtrep3__PickRepository2_ *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__PickRepository2_(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2_ * SOAP_FMAC4 soap_in___mtrep3__PickRepository2_(struct soap *soap, const char *tag, struct __mtrep3__PickRepository2_ *a, const char *type)
+{
+	short soap_flag_mtrep3__PickRepository2 = 1;
+	int soap_flag;
+	a = (struct __mtrep3__PickRepository2_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__PickRepository2_, sizeof(struct __mtrep3__PickRepository2_), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__PickRepository2_(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep3__PickRepository2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__PickRepository2(soap, "mtrep3:PickRepository2", &a->mtrep3__PickRepository2, ""))
+				{	soap_flag_mtrep3__PickRepository2--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__PickRepository2_ * SOAP_FMAC6 soap_new___mtrep3__PickRepository2_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__PickRepository2_(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__PickRepository2_(struct soap *soap, struct __mtrep3__PickRepository2_ *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2_ * SOAP_FMAC4 soap_instantiate___mtrep3__PickRepository2_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__PickRepository2_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__PickRepository2_, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository2_;
+		if (size)
+			*size = sizeof(struct __mtrep3__PickRepository2_);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository2_[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__PickRepository2_);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__PickRepository2_*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__PickRepository2_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__PickRepository2_ %p -> %p\n", q, p));
+	*(struct __mtrep3__PickRepository2_*)p = *(struct __mtrep3__PickRepository2_*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetRepositories2_(struct soap *soap, struct __mtrep3__GetRepositories2_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep3__GetRepositories2 = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetRepositories2_(struct soap *soap, const struct __mtrep3__GetRepositories2_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep3__GetRepositories2(soap, &a->mtrep3__GetRepositories2);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetRepositories2_(struct soap *soap, const struct __mtrep3__GetRepositories2_ *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__GetRepositories2_(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetRepositories2_(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetRepositories2_ *a, const char *type)
+{
+	soap_out_PointerTo_mtrep3__GetRepositories2(soap, "mtrep3:GetRepositories2", -1, &a->mtrep3__GetRepositories2, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2_ * SOAP_FMAC4 soap_get___mtrep3__GetRepositories2_(struct soap *soap, struct __mtrep3__GetRepositories2_ *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__GetRepositories2_(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2_ * SOAP_FMAC4 soap_in___mtrep3__GetRepositories2_(struct soap *soap, const char *tag, struct __mtrep3__GetRepositories2_ *a, const char *type)
+{
+	short soap_flag_mtrep3__GetRepositories2 = 1;
+	int soap_flag;
+	a = (struct __mtrep3__GetRepositories2_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetRepositories2_, sizeof(struct __mtrep3__GetRepositories2_), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__GetRepositories2_(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep3__GetRepositories2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__GetRepositories2(soap, "mtrep3:GetRepositories2", &a->mtrep3__GetRepositories2, ""))
+				{	soap_flag_mtrep3__GetRepositories2--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__GetRepositories2_ * SOAP_FMAC6 soap_new___mtrep3__GetRepositories2_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetRepositories2_(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetRepositories2_(struct soap *soap, struct __mtrep3__GetRepositories2_ *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2_ * SOAP_FMAC4 soap_instantiate___mtrep3__GetRepositories2_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetRepositories2_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetRepositories2_, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories2_;
+		if (size)
+			*size = sizeof(struct __mtrep3__GetRepositories2_);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories2_[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__GetRepositories2_);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__GetRepositories2_*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetRepositories2_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetRepositories2_ %p -> %p\n", q, p));
+	*(struct __mtrep3__GetRepositories2_*)p = *(struct __mtrep3__GetRepositories2_*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetListCreationTime_(struct soap *soap, struct __mtrep3__GetListCreationTime_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep2__GetListCreationTime = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetListCreationTime_(struct soap *soap, const struct __mtrep3__GetListCreationTime_ *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep2__GetListCreationTime(soap, &a->mtrep2__GetListCreationTime);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetListCreationTime_(struct soap *soap, const struct __mtrep3__GetListCreationTime_ *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__GetListCreationTime_(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetListCreationTime_(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetListCreationTime_ *a, const char *type)
+{
+	soap_out_PointerTo_mtrep2__GetListCreationTime(soap, "mtrep2:GetListCreationTime", -1, &a->mtrep2__GetListCreationTime, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime_ * SOAP_FMAC4 soap_get___mtrep3__GetListCreationTime_(struct soap *soap, struct __mtrep3__GetListCreationTime_ *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__GetListCreationTime_(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime_ * SOAP_FMAC4 soap_in___mtrep3__GetListCreationTime_(struct soap *soap, const char *tag, struct __mtrep3__GetListCreationTime_ *a, const char *type)
+{
+	short soap_flag_mtrep2__GetListCreationTime = 1;
+	int soap_flag;
+	a = (struct __mtrep3__GetListCreationTime_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetListCreationTime_, sizeof(struct __mtrep3__GetListCreationTime_), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__GetListCreationTime_(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep2__GetListCreationTime && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep2__GetListCreationTime(soap, "mtrep2:GetListCreationTime", &a->mtrep2__GetListCreationTime, ""))
+				{	soap_flag_mtrep2__GetListCreationTime--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__GetListCreationTime_ * SOAP_FMAC6 soap_new___mtrep3__GetListCreationTime_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetListCreationTime_(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetListCreationTime_(struct soap *soap, struct __mtrep3__GetListCreationTime_ *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime_ * SOAP_FMAC4 soap_instantiate___mtrep3__GetListCreationTime_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetListCreationTime_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetListCreationTime_, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__GetListCreationTime_;
+		if (size)
+			*size = sizeof(struct __mtrep3__GetListCreationTime_);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__GetListCreationTime_[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__GetListCreationTime_);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__GetListCreationTime_*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetListCreationTime_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetListCreationTime_ %p -> %p\n", q, p));
+	*(struct __mtrep3__GetListCreationTime_*)p = *(struct __mtrep3__GetListCreationTime_*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetRepositories_(struct soap *soap, struct __mtrep3__GetRepositories_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__GetRepositories = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetRepositories_(struct soap *soap, const struct __ns1__GetRepositories_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetRepositories_(struct soap *soap, const struct __mtrep3__GetRepositories_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__GetRepositories(soap, &a->mtrep__GetRepositories);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetRepositories_(struct soap *soap, const struct __ns1__GetRepositories_ *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetRepositories_(struct soap *soap, const struct __mtrep3__GetRepositories_ *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetRepositories_(soap, tag, id, a, type))
+	if (soap_out___mtrep3__GetRepositories_(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetRepositories_(struct soap *soap, const char *tag, int id, const struct __ns1__GetRepositories_ *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetRepositories_(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetRepositories_ *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__GetRepositories(soap, "mtrep:GetRepositories", -1, &a->mtrep__GetRepositories, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories_ * SOAP_FMAC4 soap_get___ns1__GetRepositories_(struct soap *soap, struct __ns1__GetRepositories_ *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetRepositories_ * SOAP_FMAC4 soap_get___mtrep3__GetRepositories_(struct soap *soap, struct __mtrep3__GetRepositories_ *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetRepositories_(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__GetRepositories_(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories_ * SOAP_FMAC4 soap_in___ns1__GetRepositories_(struct soap *soap, const char *tag, struct __ns1__GetRepositories_ *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetRepositories_ * SOAP_FMAC4 soap_in___mtrep3__GetRepositories_(struct soap *soap, const char *tag, struct __mtrep3__GetRepositories_ *a, const char *type)
 {
 	short soap_flag_mtrep__GetRepositories = 1;
 	int soap_flag;
-	a = (struct __ns1__GetRepositories_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetRepositories_, sizeof(struct __ns1__GetRepositories_), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__GetRepositories_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetRepositories_, sizeof(struct __mtrep3__GetRepositories_), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetRepositories_(soap, a);
+	soap_default___mtrep3__GetRepositories_(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__GetRepositories && soap->error == SOAP_TAG_MISMATCH)
@@ -3962,91 +6251,91 @@ SOAP_FMAC3 struct __ns1__GetRepositories_ * SOAP_FMAC4 soap_in___ns1__GetReposit
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetRepositories_ * SOAP_FMAC6 soap_new___ns1__GetRepositories_(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetRepositories_(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__GetRepositories_ * SOAP_FMAC6 soap_new___mtrep3__GetRepositories_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetRepositories_(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetRepositories_(struct soap *soap, struct __ns1__GetRepositories_ *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetRepositories_(struct soap *soap, struct __mtrep3__GetRepositories_ *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories_ * SOAP_FMAC4 soap_instantiate___ns1__GetRepositories_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__GetRepositories_ * SOAP_FMAC4 soap_instantiate___mtrep3__GetRepositories_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetRepositories_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetRepositories_, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetRepositories_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetRepositories_, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetRepositories_;
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories_;
 		if (size)
-			*size = sizeof(struct __ns1__GetRepositories_);
+			*size = sizeof(struct __mtrep3__GetRepositories_);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetRepositories_[n];
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories_[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetRepositories_);
+			*size = n * sizeof(struct __mtrep3__GetRepositories_);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetRepositories_*)cp->ptr;
+	return (struct __mtrep3__GetRepositories_*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetRepositories_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetRepositories_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetRepositories_ %p -> %p\n", q, p));
-	*(struct __ns1__GetRepositories_*)p = *(struct __ns1__GetRepositories_*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetRepositories_ %p -> %p\n", q, p));
+	*(struct __mtrep3__GetRepositories_*)p = *(struct __mtrep3__GetRepositories_*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetAllRepositories_(struct soap *soap, struct __ns1__GetAllRepositories_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetAllRepositories_(struct soap *soap, struct __mtrep3__GetAllRepositories_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__GetAllRepositories = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetAllRepositories_(struct soap *soap, const struct __ns1__GetAllRepositories_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetAllRepositories_(struct soap *soap, const struct __mtrep3__GetAllRepositories_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__GetAllRepositories(soap, &a->mtrep__GetAllRepositories);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetAllRepositories_(struct soap *soap, const struct __ns1__GetAllRepositories_ *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetAllRepositories_(struct soap *soap, const struct __mtrep3__GetAllRepositories_ *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetAllRepositories_(soap, tag, id, a, type))
+	if (soap_out___mtrep3__GetAllRepositories_(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetAllRepositories_(struct soap *soap, const char *tag, int id, const struct __ns1__GetAllRepositories_ *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetAllRepositories_(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetAllRepositories_ *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__GetAllRepositories(soap, "mtrep:GetAllRepositories", -1, &a->mtrep__GetAllRepositories, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories_ * SOAP_FMAC4 soap_get___ns1__GetAllRepositories_(struct soap *soap, struct __ns1__GetAllRepositories_ *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories_ * SOAP_FMAC4 soap_get___mtrep3__GetAllRepositories_(struct soap *soap, struct __mtrep3__GetAllRepositories_ *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetAllRepositories_(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__GetAllRepositories_(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories_ * SOAP_FMAC4 soap_in___ns1__GetAllRepositories_(struct soap *soap, const char *tag, struct __ns1__GetAllRepositories_ *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories_ * SOAP_FMAC4 soap_in___mtrep3__GetAllRepositories_(struct soap *soap, const char *tag, struct __mtrep3__GetAllRepositories_ *a, const char *type)
 {
 	short soap_flag_mtrep__GetAllRepositories = 1;
 	int soap_flag;
-	a = (struct __ns1__GetAllRepositories_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetAllRepositories_, sizeof(struct __ns1__GetAllRepositories_), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__GetAllRepositories_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetAllRepositories_, sizeof(struct __mtrep3__GetAllRepositories_), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetAllRepositories_(soap, a);
+	soap_default___mtrep3__GetAllRepositories_(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__GetAllRepositories && soap->error == SOAP_TAG_MISMATCH)
@@ -4068,91 +6357,91 @@ SOAP_FMAC3 struct __ns1__GetAllRepositories_ * SOAP_FMAC4 soap_in___ns1__GetAllR
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetAllRepositories_ * SOAP_FMAC6 soap_new___ns1__GetAllRepositories_(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetAllRepositories_(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__GetAllRepositories_ * SOAP_FMAC6 soap_new___mtrep3__GetAllRepositories_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetAllRepositories_(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetAllRepositories_(struct soap *soap, struct __ns1__GetAllRepositories_ *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetAllRepositories_(struct soap *soap, struct __mtrep3__GetAllRepositories_ *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories_ * SOAP_FMAC4 soap_instantiate___ns1__GetAllRepositories_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories_ * SOAP_FMAC4 soap_instantiate___mtrep3__GetAllRepositories_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetAllRepositories_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetAllRepositories_, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetAllRepositories_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetAllRepositories_, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetAllRepositories_;
+	{	cp->ptr = (void*)new struct __mtrep3__GetAllRepositories_;
 		if (size)
-			*size = sizeof(struct __ns1__GetAllRepositories_);
+			*size = sizeof(struct __mtrep3__GetAllRepositories_);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetAllRepositories_[n];
+	{	cp->ptr = (void*)new struct __mtrep3__GetAllRepositories_[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetAllRepositories_);
+			*size = n * sizeof(struct __mtrep3__GetAllRepositories_);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetAllRepositories_*)cp->ptr;
+	return (struct __mtrep3__GetAllRepositories_*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetAllRepositories_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetAllRepositories_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetAllRepositories_ %p -> %p\n", q, p));
-	*(struct __ns1__GetAllRepositories_*)p = *(struct __ns1__GetAllRepositories_*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetAllRepositories_ %p -> %p\n", q, p));
+	*(struct __mtrep3__GetAllRepositories_*)p = *(struct __mtrep3__GetAllRepositories_*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__PickRepository_(struct soap *soap, struct __ns1__PickRepository_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__PickRepository_(struct soap *soap, struct __mtrep3__PickRepository_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__PickRepository = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__PickRepository_(struct soap *soap, const struct __ns1__PickRepository_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__PickRepository_(struct soap *soap, const struct __mtrep3__PickRepository_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__PickRepository(soap, &a->mtrep__PickRepository);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__PickRepository_(struct soap *soap, const struct __ns1__PickRepository_ *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__PickRepository_(struct soap *soap, const struct __mtrep3__PickRepository_ *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__PickRepository_(soap, tag, id, a, type))
+	if (soap_out___mtrep3__PickRepository_(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__PickRepository_(struct soap *soap, const char *tag, int id, const struct __ns1__PickRepository_ *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__PickRepository_(struct soap *soap, const char *tag, int id, const struct __mtrep3__PickRepository_ *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__PickRepository(soap, "mtrep:PickRepository", -1, &a->mtrep__PickRepository, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository_ * SOAP_FMAC4 soap_get___ns1__PickRepository_(struct soap *soap, struct __ns1__PickRepository_ *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__PickRepository_ * SOAP_FMAC4 soap_get___mtrep3__PickRepository_(struct soap *soap, struct __mtrep3__PickRepository_ *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__PickRepository_(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__PickRepository_(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository_ * SOAP_FMAC4 soap_in___ns1__PickRepository_(struct soap *soap, const char *tag, struct __ns1__PickRepository_ *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__PickRepository_ * SOAP_FMAC4 soap_in___mtrep3__PickRepository_(struct soap *soap, const char *tag, struct __mtrep3__PickRepository_ *a, const char *type)
 {
 	short soap_flag_mtrep__PickRepository = 1;
 	int soap_flag;
-	a = (struct __ns1__PickRepository_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__PickRepository_, sizeof(struct __ns1__PickRepository_), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__PickRepository_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__PickRepository_, sizeof(struct __mtrep3__PickRepository_), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__PickRepository_(soap, a);
+	soap_default___mtrep3__PickRepository_(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__PickRepository && soap->error == SOAP_TAG_MISMATCH)
@@ -4174,91 +6463,91 @@ SOAP_FMAC3 struct __ns1__PickRepository_ * SOAP_FMAC4 soap_in___ns1__PickReposit
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__PickRepository_ * SOAP_FMAC6 soap_new___ns1__PickRepository_(struct soap *soap, int n)
-{	return soap_instantiate___ns1__PickRepository_(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__PickRepository_ * SOAP_FMAC6 soap_new___mtrep3__PickRepository_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__PickRepository_(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__PickRepository_(struct soap *soap, struct __ns1__PickRepository_ *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__PickRepository_(struct soap *soap, struct __mtrep3__PickRepository_ *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository_ * SOAP_FMAC4 soap_instantiate___ns1__PickRepository_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__PickRepository_ * SOAP_FMAC4 soap_instantiate___mtrep3__PickRepository_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__PickRepository_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__PickRepository_, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__PickRepository_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__PickRepository_, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__PickRepository_;
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository_;
 		if (size)
-			*size = sizeof(struct __ns1__PickRepository_);
+			*size = sizeof(struct __mtrep3__PickRepository_);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__PickRepository_[n];
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository_[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__PickRepository_);
+			*size = n * sizeof(struct __mtrep3__PickRepository_);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__PickRepository_*)cp->ptr;
+	return (struct __mtrep3__PickRepository_*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__PickRepository_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__PickRepository_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__PickRepository_ %p -> %p\n", q, p));
-	*(struct __ns1__PickRepository_*)p = *(struct __ns1__PickRepository_*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__PickRepository_ %p -> %p\n", q, p));
+	*(struct __mtrep3__PickRepository_*)p = *(struct __mtrep3__PickRepository_*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__TryGetRepositoryInfo_(struct soap *soap, struct __ns1__TryGetRepositoryInfo_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__TryGetRepositoryInfo_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__TryGetRepositoryInfo = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__TryGetRepositoryInfo_(struct soap *soap, const struct __ns1__TryGetRepositoryInfo_ *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__TryGetRepositoryInfo_(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo_ *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__TryGetRepositoryInfo(soap, &a->mtrep__TryGetRepositoryInfo);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__TryGetRepositoryInfo_(struct soap *soap, const struct __ns1__TryGetRepositoryInfo_ *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__TryGetRepositoryInfo_(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo_ *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__TryGetRepositoryInfo_(soap, tag, id, a, type))
+	if (soap_out___mtrep3__TryGetRepositoryInfo_(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__TryGetRepositoryInfo_(struct soap *soap, const char *tag, int id, const struct __ns1__TryGetRepositoryInfo_ *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__TryGetRepositoryInfo_(struct soap *soap, const char *tag, int id, const struct __mtrep3__TryGetRepositoryInfo_ *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__TryGetRepositoryInfo(soap, "mtrep:TryGetRepositoryInfo", -1, &a->mtrep__TryGetRepositoryInfo, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_get___ns1__TryGetRepositoryInfo_(struct soap *soap, struct __ns1__TryGetRepositoryInfo_ *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_get___mtrep3__TryGetRepositoryInfo_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo_ *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__TryGetRepositoryInfo_(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__TryGetRepositoryInfo_(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_in___ns1__TryGetRepositoryInfo_(struct soap *soap, const char *tag, struct __ns1__TryGetRepositoryInfo_ *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_in___mtrep3__TryGetRepositoryInfo_(struct soap *soap, const char *tag, struct __mtrep3__TryGetRepositoryInfo_ *a, const char *type)
 {
 	short soap_flag_mtrep__TryGetRepositoryInfo = 1;
 	int soap_flag;
-	a = (struct __ns1__TryGetRepositoryInfo_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__TryGetRepositoryInfo_, sizeof(struct __ns1__TryGetRepositoryInfo_), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__TryGetRepositoryInfo_ *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__TryGetRepositoryInfo_, sizeof(struct __mtrep3__TryGetRepositoryInfo_), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__TryGetRepositoryInfo_(soap, a);
+	soap_default___mtrep3__TryGetRepositoryInfo_(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__TryGetRepositoryInfo && soap->error == SOAP_TAG_MISMATCH)
@@ -4280,96 +6569,96 @@ SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_in___ns1__TryGe
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__TryGetRepositoryInfo_ * SOAP_FMAC6 soap_new___ns1__TryGetRepositoryInfo_(struct soap *soap, int n)
-{	return soap_instantiate___ns1__TryGetRepositoryInfo_(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__TryGetRepositoryInfo_ * SOAP_FMAC6 soap_new___mtrep3__TryGetRepositoryInfo_(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__TryGetRepositoryInfo_(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__TryGetRepositoryInfo_(struct soap *soap, struct __ns1__TryGetRepositoryInfo_ *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__TryGetRepositoryInfo_(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo_ *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_instantiate___ns1__TryGetRepositoryInfo_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo_ * SOAP_FMAC4 soap_instantiate___mtrep3__TryGetRepositoryInfo_(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__TryGetRepositoryInfo_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__TryGetRepositoryInfo_, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__TryGetRepositoryInfo_(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__TryGetRepositoryInfo_, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__TryGetRepositoryInfo_;
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo_;
 		if (size)
-			*size = sizeof(struct __ns1__TryGetRepositoryInfo_);
+			*size = sizeof(struct __mtrep3__TryGetRepositoryInfo_);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__TryGetRepositoryInfo_[n];
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo_[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__TryGetRepositoryInfo_);
+			*size = n * sizeof(struct __mtrep3__TryGetRepositoryInfo_);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__TryGetRepositoryInfo_*)cp->ptr;
+	return (struct __mtrep3__TryGetRepositoryInfo_*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__TryGetRepositoryInfo_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__TryGetRepositoryInfo_(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__TryGetRepositoryInfo_ %p -> %p\n", q, p));
-	*(struct __ns1__TryGetRepositoryInfo_*)p = *(struct __ns1__TryGetRepositoryInfo_*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__TryGetRepositoryInfo_ %p -> %p\n", q, p));
+	*(struct __mtrep3__TryGetRepositoryInfo_*)p = *(struct __mtrep3__TryGetRepositoryInfo_*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetListCreationTime(struct soap *soap, struct __ns1__GetListCreationTime *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__TryGetRepositoryInfo2(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2 *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->ns1__GetListCreationTime = NULL;
+	a->mtrep3__TryGetRepositoryInfo2 = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetListCreationTime(struct soap *soap, const struct __ns1__GetListCreationTime *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__TryGetRepositoryInfo2(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo2 *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_ns1__GetListCreationTime(soap, &a->ns1__GetListCreationTime);
+	soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, &a->mtrep3__TryGetRepositoryInfo2);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetListCreationTime(struct soap *soap, const struct __ns1__GetListCreationTime *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__TryGetRepositoryInfo2(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo2 *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetListCreationTime(soap, tag, id, a, type))
+	if (soap_out___mtrep3__TryGetRepositoryInfo2(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetListCreationTime(struct soap *soap, const char *tag, int id, const struct __ns1__GetListCreationTime *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, int id, const struct __mtrep3__TryGetRepositoryInfo2 *a, const char *type)
 {
-	soap_out_PointerTo_ns1__GetListCreationTime(soap, "ns1:GetListCreationTime", -1, &a->ns1__GetListCreationTime, "");
+	soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, "mtrep3:TryGetRepositoryInfo2", -1, &a->mtrep3__TryGetRepositoryInfo2, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime * SOAP_FMAC4 soap_get___ns1__GetListCreationTime(struct soap *soap, struct __ns1__GetListCreationTime *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_get___mtrep3__TryGetRepositoryInfo2(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2 *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetListCreationTime(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__TryGetRepositoryInfo2(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime * SOAP_FMAC4 soap_in___ns1__GetListCreationTime(struct soap *soap, const char *tag, struct __ns1__GetListCreationTime *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_in___mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, struct __mtrep3__TryGetRepositoryInfo2 *a, const char *type)
 {
-	short soap_flag_ns1__GetListCreationTime = 1;
+	short soap_flag_mtrep3__TryGetRepositoryInfo2 = 1;
 	int soap_flag;
-	a = (struct __ns1__GetListCreationTime *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetListCreationTime, sizeof(struct __ns1__GetListCreationTime), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__TryGetRepositoryInfo2 *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__TryGetRepositoryInfo2, sizeof(struct __mtrep3__TryGetRepositoryInfo2), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetListCreationTime(soap, a);
+	soap_default___mtrep3__TryGetRepositoryInfo2(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_ns1__GetListCreationTime && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_ns1__GetListCreationTime(soap, "ns1:GetListCreationTime", &a->ns1__GetListCreationTime, ""))
-				{	soap_flag_ns1__GetListCreationTime--;
+			if (soap_flag_mtrep3__TryGetRepositoryInfo2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, "mtrep3:TryGetRepositoryInfo2", &a->mtrep3__TryGetRepositoryInfo2, ""))
+				{	soap_flag_mtrep3__TryGetRepositoryInfo2--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -4386,91 +6675,409 @@ SOAP_FMAC3 struct __ns1__GetListCreationTime * SOAP_FMAC4 soap_in___ns1__GetList
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetListCreationTime * SOAP_FMAC6 soap_new___ns1__GetListCreationTime(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetListCreationTime(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC6 soap_new___mtrep3__TryGetRepositoryInfo2(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__TryGetRepositoryInfo2(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetListCreationTime(struct soap *soap, struct __ns1__GetListCreationTime *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__TryGetRepositoryInfo2(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo2 *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetListCreationTime * SOAP_FMAC4 soap_instantiate___ns1__GetListCreationTime(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo2 * SOAP_FMAC4 soap_instantiate___mtrep3__TryGetRepositoryInfo2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetListCreationTime(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetListCreationTime, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__TryGetRepositoryInfo2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__TryGetRepositoryInfo2, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetListCreationTime;
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo2;
 		if (size)
-			*size = sizeof(struct __ns1__GetListCreationTime);
+			*size = sizeof(struct __mtrep3__TryGetRepositoryInfo2);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetListCreationTime[n];
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo2[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetListCreationTime);
+			*size = n * sizeof(struct __mtrep3__TryGetRepositoryInfo2);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetListCreationTime*)cp->ptr;
+	return (struct __mtrep3__TryGetRepositoryInfo2*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetListCreationTime(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__TryGetRepositoryInfo2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetListCreationTime %p -> %p\n", q, p));
-	*(struct __ns1__GetListCreationTime*)p = *(struct __ns1__GetListCreationTime*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__TryGetRepositoryInfo2 %p -> %p\n", q, p));
+	*(struct __mtrep3__TryGetRepositoryInfo2*)p = *(struct __mtrep3__TryGetRepositoryInfo2*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetRepositories(struct soap *soap, struct __ns1__GetRepositories *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__PickRepository2(struct soap *soap, struct __mtrep3__PickRepository2 *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep3__PickRepository2 = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__PickRepository2(struct soap *soap, const struct __mtrep3__PickRepository2 *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep3__PickRepository2(soap, &a->mtrep3__PickRepository2);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__PickRepository2(struct soap *soap, const struct __mtrep3__PickRepository2 *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__PickRepository2(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__PickRepository2(struct soap *soap, const char *tag, int id, const struct __mtrep3__PickRepository2 *a, const char *type)
+{
+	soap_out_PointerTo_mtrep3__PickRepository2(soap, "mtrep3:PickRepository2", -1, &a->mtrep3__PickRepository2, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2 * SOAP_FMAC4 soap_get___mtrep3__PickRepository2(struct soap *soap, struct __mtrep3__PickRepository2 *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__PickRepository2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2 * SOAP_FMAC4 soap_in___mtrep3__PickRepository2(struct soap *soap, const char *tag, struct __mtrep3__PickRepository2 *a, const char *type)
+{
+	short soap_flag_mtrep3__PickRepository2 = 1;
+	int soap_flag;
+	a = (struct __mtrep3__PickRepository2 *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__PickRepository2, sizeof(struct __mtrep3__PickRepository2), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__PickRepository2(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep3__PickRepository2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__PickRepository2(soap, "mtrep3:PickRepository2", &a->mtrep3__PickRepository2, ""))
+				{	soap_flag_mtrep3__PickRepository2--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__PickRepository2 * SOAP_FMAC6 soap_new___mtrep3__PickRepository2(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__PickRepository2(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__PickRepository2(struct soap *soap, struct __mtrep3__PickRepository2 *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__PickRepository2 * SOAP_FMAC4 soap_instantiate___mtrep3__PickRepository2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__PickRepository2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__PickRepository2, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository2;
+		if (size)
+			*size = sizeof(struct __mtrep3__PickRepository2);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository2[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__PickRepository2);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__PickRepository2*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__PickRepository2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__PickRepository2 %p -> %p\n", q, p));
+	*(struct __mtrep3__PickRepository2*)p = *(struct __mtrep3__PickRepository2*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetRepositories2(struct soap *soap, struct __mtrep3__GetRepositories2 *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep3__GetRepositories2 = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetRepositories2(struct soap *soap, const struct __mtrep3__GetRepositories2 *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep3__GetRepositories2(soap, &a->mtrep3__GetRepositories2);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetRepositories2(struct soap *soap, const struct __mtrep3__GetRepositories2 *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__GetRepositories2(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetRepositories2(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetRepositories2 *a, const char *type)
+{
+	soap_out_PointerTo_mtrep3__GetRepositories2(soap, "mtrep3:GetRepositories2", -1, &a->mtrep3__GetRepositories2, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2 * SOAP_FMAC4 soap_get___mtrep3__GetRepositories2(struct soap *soap, struct __mtrep3__GetRepositories2 *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__GetRepositories2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2 * SOAP_FMAC4 soap_in___mtrep3__GetRepositories2(struct soap *soap, const char *tag, struct __mtrep3__GetRepositories2 *a, const char *type)
+{
+	short soap_flag_mtrep3__GetRepositories2 = 1;
+	int soap_flag;
+	a = (struct __mtrep3__GetRepositories2 *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetRepositories2, sizeof(struct __mtrep3__GetRepositories2), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__GetRepositories2(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep3__GetRepositories2 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep3__GetRepositories2(soap, "mtrep3:GetRepositories2", &a->mtrep3__GetRepositories2, ""))
+				{	soap_flag_mtrep3__GetRepositories2--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__GetRepositories2 * SOAP_FMAC6 soap_new___mtrep3__GetRepositories2(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetRepositories2(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetRepositories2(struct soap *soap, struct __mtrep3__GetRepositories2 *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__GetRepositories2 * SOAP_FMAC4 soap_instantiate___mtrep3__GetRepositories2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetRepositories2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetRepositories2, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories2;
+		if (size)
+			*size = sizeof(struct __mtrep3__GetRepositories2);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories2[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__GetRepositories2);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__GetRepositories2*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetRepositories2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetRepositories2 %p -> %p\n", q, p));
+	*(struct __mtrep3__GetRepositories2*)p = *(struct __mtrep3__GetRepositories2*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetListCreationTime(struct soap *soap, struct __mtrep3__GetListCreationTime *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->mtrep2__GetListCreationTime = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetListCreationTime(struct soap *soap, const struct __mtrep3__GetListCreationTime *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_mtrep2__GetListCreationTime(soap, &a->mtrep2__GetListCreationTime);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetListCreationTime(struct soap *soap, const struct __mtrep3__GetListCreationTime *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___mtrep3__GetListCreationTime(soap, tag, id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetListCreationTime(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetListCreationTime *a, const char *type)
+{
+	soap_out_PointerTo_mtrep2__GetListCreationTime(soap, "mtrep2:GetListCreationTime", -1, &a->mtrep2__GetListCreationTime, "");
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime * SOAP_FMAC4 soap_get___mtrep3__GetListCreationTime(struct soap *soap, struct __mtrep3__GetListCreationTime *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___mtrep3__GetListCreationTime(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime * SOAP_FMAC4 soap_in___mtrep3__GetListCreationTime(struct soap *soap, const char *tag, struct __mtrep3__GetListCreationTime *a, const char *type)
+{
+	short soap_flag_mtrep2__GetListCreationTime = 1;
+	int soap_flag;
+	a = (struct __mtrep3__GetListCreationTime *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetListCreationTime, sizeof(struct __mtrep3__GetListCreationTime), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___mtrep3__GetListCreationTime(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_mtrep2__GetListCreationTime && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_mtrep2__GetListCreationTime(soap, "mtrep2:GetListCreationTime", &a->mtrep2__GetListCreationTime, ""))
+				{	soap_flag_mtrep2__GetListCreationTime--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+			if (soap_flag)
+				{
+					soap->error = SOAP_OK;
+					break;
+				}
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC5 struct __mtrep3__GetListCreationTime * SOAP_FMAC6 soap_new___mtrep3__GetListCreationTime(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetListCreationTime(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetListCreationTime(struct soap *soap, struct __mtrep3__GetListCreationTime *p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 struct __mtrep3__GetListCreationTime * SOAP_FMAC4 soap_instantiate___mtrep3__GetListCreationTime(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetListCreationTime(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetListCreationTime, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new struct __mtrep3__GetListCreationTime;
+		if (size)
+			*size = sizeof(struct __mtrep3__GetListCreationTime);
+	}
+	else
+	{	cp->ptr = (void*)new struct __mtrep3__GetListCreationTime[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __mtrep3__GetListCreationTime);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __mtrep3__GetListCreationTime*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetListCreationTime(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetListCreationTime %p -> %p\n", q, p));
+	*(struct __mtrep3__GetListCreationTime*)p = *(struct __mtrep3__GetListCreationTime*)q;
+}
+#ifdef __cplusplus
+}
+#endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetRepositories(struct soap *soap, struct __mtrep3__GetRepositories *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__GetRepositories = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetRepositories(struct soap *soap, const struct __ns1__GetRepositories *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetRepositories(struct soap *soap, const struct __mtrep3__GetRepositories *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__GetRepositories(soap, &a->mtrep__GetRepositories);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetRepositories(struct soap *soap, const struct __ns1__GetRepositories *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetRepositories(struct soap *soap, const struct __mtrep3__GetRepositories *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetRepositories(soap, tag, id, a, type))
+	if (soap_out___mtrep3__GetRepositories(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetRepositories(struct soap *soap, const char *tag, int id, const struct __ns1__GetRepositories *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetRepositories(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetRepositories *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__GetRepositories(soap, "mtrep:GetRepositories", -1, &a->mtrep__GetRepositories, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories * SOAP_FMAC4 soap_get___ns1__GetRepositories(struct soap *soap, struct __ns1__GetRepositories *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetRepositories * SOAP_FMAC4 soap_get___mtrep3__GetRepositories(struct soap *soap, struct __mtrep3__GetRepositories *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetRepositories(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__GetRepositories(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories * SOAP_FMAC4 soap_in___ns1__GetRepositories(struct soap *soap, const char *tag, struct __ns1__GetRepositories *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetRepositories * SOAP_FMAC4 soap_in___mtrep3__GetRepositories(struct soap *soap, const char *tag, struct __mtrep3__GetRepositories *a, const char *type)
 {
 	short soap_flag_mtrep__GetRepositories = 1;
 	int soap_flag;
-	a = (struct __ns1__GetRepositories *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetRepositories, sizeof(struct __ns1__GetRepositories), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__GetRepositories *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetRepositories, sizeof(struct __mtrep3__GetRepositories), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetRepositories(soap, a);
+	soap_default___mtrep3__GetRepositories(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__GetRepositories && soap->error == SOAP_TAG_MISMATCH)
@@ -4492,91 +7099,91 @@ SOAP_FMAC3 struct __ns1__GetRepositories * SOAP_FMAC4 soap_in___ns1__GetReposito
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetRepositories * SOAP_FMAC6 soap_new___ns1__GetRepositories(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetRepositories(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__GetRepositories * SOAP_FMAC6 soap_new___mtrep3__GetRepositories(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetRepositories(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetRepositories(struct soap *soap, struct __ns1__GetRepositories *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetRepositories(struct soap *soap, struct __mtrep3__GetRepositories *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetRepositories * SOAP_FMAC4 soap_instantiate___ns1__GetRepositories(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__GetRepositories * SOAP_FMAC4 soap_instantiate___mtrep3__GetRepositories(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetRepositories(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetRepositories, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetRepositories(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetRepositories, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetRepositories;
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories;
 		if (size)
-			*size = sizeof(struct __ns1__GetRepositories);
+			*size = sizeof(struct __mtrep3__GetRepositories);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetRepositories[n];
+	{	cp->ptr = (void*)new struct __mtrep3__GetRepositories[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetRepositories);
+			*size = n * sizeof(struct __mtrep3__GetRepositories);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetRepositories*)cp->ptr;
+	return (struct __mtrep3__GetRepositories*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetRepositories(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetRepositories(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetRepositories %p -> %p\n", q, p));
-	*(struct __ns1__GetRepositories*)p = *(struct __ns1__GetRepositories*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetRepositories %p -> %p\n", q, p));
+	*(struct __mtrep3__GetRepositories*)p = *(struct __mtrep3__GetRepositories*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__GetAllRepositories(struct soap *soap, struct __ns1__GetAllRepositories *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__GetAllRepositories(struct soap *soap, struct __mtrep3__GetAllRepositories *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__GetAllRepositories = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__GetAllRepositories(struct soap *soap, const struct __ns1__GetAllRepositories *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__GetAllRepositories(struct soap *soap, const struct __mtrep3__GetAllRepositories *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__GetAllRepositories(soap, &a->mtrep__GetAllRepositories);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__GetAllRepositories(struct soap *soap, const struct __ns1__GetAllRepositories *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__GetAllRepositories(struct soap *soap, const struct __mtrep3__GetAllRepositories *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__GetAllRepositories(soap, tag, id, a, type))
+	if (soap_out___mtrep3__GetAllRepositories(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__GetAllRepositories(struct soap *soap, const char *tag, int id, const struct __ns1__GetAllRepositories *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__GetAllRepositories(struct soap *soap, const char *tag, int id, const struct __mtrep3__GetAllRepositories *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__GetAllRepositories(soap, "mtrep:GetAllRepositories", -1, &a->mtrep__GetAllRepositories, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories * SOAP_FMAC4 soap_get___ns1__GetAllRepositories(struct soap *soap, struct __ns1__GetAllRepositories *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories * SOAP_FMAC4 soap_get___mtrep3__GetAllRepositories(struct soap *soap, struct __mtrep3__GetAllRepositories *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__GetAllRepositories(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__GetAllRepositories(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories * SOAP_FMAC4 soap_in___ns1__GetAllRepositories(struct soap *soap, const char *tag, struct __ns1__GetAllRepositories *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories * SOAP_FMAC4 soap_in___mtrep3__GetAllRepositories(struct soap *soap, const char *tag, struct __mtrep3__GetAllRepositories *a, const char *type)
 {
 	short soap_flag_mtrep__GetAllRepositories = 1;
 	int soap_flag;
-	a = (struct __ns1__GetAllRepositories *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__GetAllRepositories, sizeof(struct __ns1__GetAllRepositories), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__GetAllRepositories *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__GetAllRepositories, sizeof(struct __mtrep3__GetAllRepositories), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__GetAllRepositories(soap, a);
+	soap_default___mtrep3__GetAllRepositories(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__GetAllRepositories && soap->error == SOAP_TAG_MISMATCH)
@@ -4598,91 +7205,91 @@ SOAP_FMAC3 struct __ns1__GetAllRepositories * SOAP_FMAC4 soap_in___ns1__GetAllRe
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__GetAllRepositories * SOAP_FMAC6 soap_new___ns1__GetAllRepositories(struct soap *soap, int n)
-{	return soap_instantiate___ns1__GetAllRepositories(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__GetAllRepositories * SOAP_FMAC6 soap_new___mtrep3__GetAllRepositories(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__GetAllRepositories(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__GetAllRepositories(struct soap *soap, struct __ns1__GetAllRepositories *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__GetAllRepositories(struct soap *soap, struct __mtrep3__GetAllRepositories *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__GetAllRepositories * SOAP_FMAC4 soap_instantiate___ns1__GetAllRepositories(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__GetAllRepositories * SOAP_FMAC4 soap_instantiate___mtrep3__GetAllRepositories(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__GetAllRepositories(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__GetAllRepositories, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__GetAllRepositories(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__GetAllRepositories, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__GetAllRepositories;
+	{	cp->ptr = (void*)new struct __mtrep3__GetAllRepositories;
 		if (size)
-			*size = sizeof(struct __ns1__GetAllRepositories);
+			*size = sizeof(struct __mtrep3__GetAllRepositories);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__GetAllRepositories[n];
+	{	cp->ptr = (void*)new struct __mtrep3__GetAllRepositories[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__GetAllRepositories);
+			*size = n * sizeof(struct __mtrep3__GetAllRepositories);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__GetAllRepositories*)cp->ptr;
+	return (struct __mtrep3__GetAllRepositories*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__GetAllRepositories(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__GetAllRepositories(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__GetAllRepositories %p -> %p\n", q, p));
-	*(struct __ns1__GetAllRepositories*)p = *(struct __ns1__GetAllRepositories*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__GetAllRepositories %p -> %p\n", q, p));
+	*(struct __mtrep3__GetAllRepositories*)p = *(struct __mtrep3__GetAllRepositories*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__PickRepository(struct soap *soap, struct __ns1__PickRepository *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__PickRepository(struct soap *soap, struct __mtrep3__PickRepository *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__PickRepository = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__PickRepository(struct soap *soap, const struct __ns1__PickRepository *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__PickRepository(struct soap *soap, const struct __mtrep3__PickRepository *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__PickRepository(soap, &a->mtrep__PickRepository);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__PickRepository(struct soap *soap, const struct __ns1__PickRepository *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__PickRepository(struct soap *soap, const struct __mtrep3__PickRepository *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__PickRepository(soap, tag, id, a, type))
+	if (soap_out___mtrep3__PickRepository(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__PickRepository(struct soap *soap, const char *tag, int id, const struct __ns1__PickRepository *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__PickRepository(struct soap *soap, const char *tag, int id, const struct __mtrep3__PickRepository *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__PickRepository(soap, "mtrep:PickRepository", -1, &a->mtrep__PickRepository, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository * SOAP_FMAC4 soap_get___ns1__PickRepository(struct soap *soap, struct __ns1__PickRepository *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__PickRepository * SOAP_FMAC4 soap_get___mtrep3__PickRepository(struct soap *soap, struct __mtrep3__PickRepository *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__PickRepository(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__PickRepository(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository * SOAP_FMAC4 soap_in___ns1__PickRepository(struct soap *soap, const char *tag, struct __ns1__PickRepository *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__PickRepository * SOAP_FMAC4 soap_in___mtrep3__PickRepository(struct soap *soap, const char *tag, struct __mtrep3__PickRepository *a, const char *type)
 {
 	short soap_flag_mtrep__PickRepository = 1;
 	int soap_flag;
-	a = (struct __ns1__PickRepository *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__PickRepository, sizeof(struct __ns1__PickRepository), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__PickRepository *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__PickRepository, sizeof(struct __mtrep3__PickRepository), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__PickRepository(soap, a);
+	soap_default___mtrep3__PickRepository(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__PickRepository && soap->error == SOAP_TAG_MISMATCH)
@@ -4704,91 +7311,91 @@ SOAP_FMAC3 struct __ns1__PickRepository * SOAP_FMAC4 soap_in___ns1__PickReposito
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__PickRepository * SOAP_FMAC6 soap_new___ns1__PickRepository(struct soap *soap, int n)
-{	return soap_instantiate___ns1__PickRepository(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__PickRepository * SOAP_FMAC6 soap_new___mtrep3__PickRepository(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__PickRepository(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__PickRepository(struct soap *soap, struct __ns1__PickRepository *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__PickRepository(struct soap *soap, struct __mtrep3__PickRepository *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__PickRepository * SOAP_FMAC4 soap_instantiate___ns1__PickRepository(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__PickRepository * SOAP_FMAC4 soap_instantiate___mtrep3__PickRepository(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__PickRepository(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__PickRepository, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__PickRepository(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__PickRepository, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__PickRepository;
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository;
 		if (size)
-			*size = sizeof(struct __ns1__PickRepository);
+			*size = sizeof(struct __mtrep3__PickRepository);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__PickRepository[n];
+	{	cp->ptr = (void*)new struct __mtrep3__PickRepository[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__PickRepository);
+			*size = n * sizeof(struct __mtrep3__PickRepository);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__PickRepository*)cp->ptr;
+	return (struct __mtrep3__PickRepository*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__PickRepository(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__PickRepository(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__PickRepository %p -> %p\n", q, p));
-	*(struct __ns1__PickRepository*)p = *(struct __ns1__PickRepository*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__PickRepository %p -> %p\n", q, p));
+	*(struct __mtrep3__PickRepository*)p = *(struct __mtrep3__PickRepository*)q;
 }
 #ifdef __cplusplus
 }
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___ns1__TryGetRepositoryInfo(struct soap *soap, struct __ns1__TryGetRepositoryInfo *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___mtrep3__TryGetRepositoryInfo(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	a->mtrep__TryGetRepositoryInfo = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___ns1__TryGetRepositoryInfo(struct soap *soap, const struct __ns1__TryGetRepositoryInfo *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___mtrep3__TryGetRepositoryInfo(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 	soap_serialize_PointerTo_mtrep__TryGetRepositoryInfo(soap, &a->mtrep__TryGetRepositoryInfo);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___ns1__TryGetRepositoryInfo(struct soap *soap, const struct __ns1__TryGetRepositoryInfo *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___mtrep3__TryGetRepositoryInfo(struct soap *soap, const struct __mtrep3__TryGetRepositoryInfo *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___ns1__TryGetRepositoryInfo(soap, tag, id, a, type))
+	if (soap_out___mtrep3__TryGetRepositoryInfo(soap, tag, id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___ns1__TryGetRepositoryInfo(struct soap *soap, const char *tag, int id, const struct __ns1__TryGetRepositoryInfo *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___mtrep3__TryGetRepositoryInfo(struct soap *soap, const char *tag, int id, const struct __mtrep3__TryGetRepositoryInfo *a, const char *type)
 {
 	soap_out_PointerTo_mtrep__TryGetRepositoryInfo(soap, "mtrep:TryGetRepositoryInfo", -1, &a->mtrep__TryGetRepositoryInfo, "");
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo * SOAP_FMAC4 soap_get___ns1__TryGetRepositoryInfo(struct soap *soap, struct __ns1__TryGetRepositoryInfo *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo * SOAP_FMAC4 soap_get___mtrep3__TryGetRepositoryInfo(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___ns1__TryGetRepositoryInfo(soap, tag, p, type)))
+	if ((p = soap_in___mtrep3__TryGetRepositoryInfo(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo * SOAP_FMAC4 soap_in___ns1__TryGetRepositoryInfo(struct soap *soap, const char *tag, struct __ns1__TryGetRepositoryInfo *a, const char *type)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo * SOAP_FMAC4 soap_in___mtrep3__TryGetRepositoryInfo(struct soap *soap, const char *tag, struct __mtrep3__TryGetRepositoryInfo *a, const char *type)
 {
 	short soap_flag_mtrep__TryGetRepositoryInfo = 1;
 	int soap_flag;
-	a = (struct __ns1__TryGetRepositoryInfo *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___ns1__TryGetRepositoryInfo, sizeof(struct __ns1__TryGetRepositoryInfo), 0, NULL, NULL, NULL);
+	a = (struct __mtrep3__TryGetRepositoryInfo *)soap_id_enter(soap, soap->id, a, SOAP_TYPE___mtrep3__TryGetRepositoryInfo, sizeof(struct __mtrep3__TryGetRepositoryInfo), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___ns1__TryGetRepositoryInfo(soap, a);
+	soap_default___mtrep3__TryGetRepositoryInfo(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_mtrep__TryGetRepositoryInfo && soap->error == SOAP_TAG_MISMATCH)
@@ -4810,45 +7417,45 @@ SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo * SOAP_FMAC4 soap_in___ns1__TryGet
 	return a;
 }
 
-SOAP_FMAC5 struct __ns1__TryGetRepositoryInfo * SOAP_FMAC6 soap_new___ns1__TryGetRepositoryInfo(struct soap *soap, int n)
-{	return soap_instantiate___ns1__TryGetRepositoryInfo(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct __mtrep3__TryGetRepositoryInfo * SOAP_FMAC6 soap_new___mtrep3__TryGetRepositoryInfo(struct soap *soap, int n)
+{	return soap_instantiate___mtrep3__TryGetRepositoryInfo(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete___ns1__TryGetRepositoryInfo(struct soap *soap, struct __ns1__TryGetRepositoryInfo *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete___mtrep3__TryGetRepositoryInfo(struct soap *soap, struct __mtrep3__TryGetRepositoryInfo *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct __ns1__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate___ns1__TryGetRepositoryInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct __mtrep3__TryGetRepositoryInfo * SOAP_FMAC4 soap_instantiate___mtrep3__TryGetRepositoryInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___ns1__TryGetRepositoryInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___ns1__TryGetRepositoryInfo, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___mtrep3__TryGetRepositoryInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___mtrep3__TryGetRepositoryInfo, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct __ns1__TryGetRepositoryInfo;
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo;
 		if (size)
-			*size = sizeof(struct __ns1__TryGetRepositoryInfo);
+			*size = sizeof(struct __mtrep3__TryGetRepositoryInfo);
 	}
 	else
-	{	cp->ptr = (void*)new struct __ns1__TryGetRepositoryInfo[n];
+	{	cp->ptr = (void*)new struct __mtrep3__TryGetRepositoryInfo[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __ns1__TryGetRepositoryInfo);
+			*size = n * sizeof(struct __mtrep3__TryGetRepositoryInfo);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __ns1__TryGetRepositoryInfo*)cp->ptr;
+	return (struct __mtrep3__TryGetRepositoryInfo*)cp->ptr;
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___ns1__TryGetRepositoryInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___mtrep3__TryGetRepositoryInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __ns1__TryGetRepositoryInfo %p -> %p\n", q, p));
-	*(struct __ns1__TryGetRepositoryInfo*)p = *(struct __ns1__TryGetRepositoryInfo*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __mtrep3__TryGetRepositoryInfo %p -> %p\n", q, p));
+	*(struct __mtrep3__TryGetRepositoryInfo*)p = *(struct __mtrep3__TryGetRepositoryInfo*)q;
 }
 #ifdef __cplusplus
 }
@@ -5016,106 +7623,424 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_in_PointerToSOAP_ENV__Code(s
 
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_ns1__GetListCreationTimeResponse(struct soap *soap, _ns1__GetListCreationTimeResponse *const*a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, _mtrep3__TryGetRepositoryInfo2Response *const*a)
 {
-	if (!soap_reference(soap, *a, SOAP_TYPE__ns1__GetListCreationTimeResponse))
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response))
 		(*a)->soap_serialize(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_ns1__GetListCreationTimeResponse(struct soap *soap, _ns1__GetListCreationTimeResponse *const*a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, _mtrep3__TryGetRepositoryInfo2Response *const*a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_ns1__GetListCreationTimeResponse);
-	if (soap_out_PointerTo_ns1__GetListCreationTimeResponse(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2Response);
+	if (soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2Response(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_ns1__GetListCreationTimeResponse(struct soap *soap, const char *tag, int id, _ns1__GetListCreationTimeResponse *const*a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, const char *tag, int id, _mtrep3__TryGetRepositoryInfo2Response *const*a, const char *type)
 {
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__ns1__GetListCreationTimeResponse);
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response);
 	if (id < 0)
 		return soap->error;
 	return (*a)->soap_out(soap, tag, id, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTimeResponse ** SOAP_FMAC4 soap_get_PointerTo_ns1__GetListCreationTimeResponse(struct soap *soap, _ns1__GetListCreationTimeResponse **p, const char *tag, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2Response ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, _mtrep3__TryGetRepositoryInfo2Response **p, const char *tag, const char *type)
 {
-	if ((p = soap_in_PointerTo_ns1__GetListCreationTimeResponse(soap, tag, p, type)))
+	if ((p = soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2Response(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTimeResponse ** SOAP_FMAC4 soap_in_PointerTo_ns1__GetListCreationTimeResponse(struct soap *soap, const char *tag, _ns1__GetListCreationTimeResponse **a, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2Response ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2Response(struct soap *soap, const char *tag, _mtrep3__TryGetRepositoryInfo2Response **a, const char *type)
 {
 	if (soap_element_begin_in(soap, tag, 1, NULL))
 		return NULL;
 	if (!a)
-		if (!(a = (_ns1__GetListCreationTimeResponse **)soap_malloc(soap, sizeof(_ns1__GetListCreationTimeResponse *))))
+		if (!(a = (_mtrep3__TryGetRepositoryInfo2Response **)soap_malloc(soap, sizeof(_mtrep3__TryGetRepositoryInfo2Response *))))
 			return NULL;
 	*a = NULL;
 	if (!soap->null && *soap->href != '#')
 	{	soap_revert(soap);
-		if (!(*a = (_ns1__GetListCreationTimeResponse *)soap_instantiate__ns1__GetListCreationTimeResponse(soap, -1, soap->type, soap->arrayType, NULL)))
+		if (!(*a = (_mtrep3__TryGetRepositoryInfo2Response *)soap_instantiate__mtrep3__TryGetRepositoryInfo2Response(soap, -1, soap->type, soap->arrayType, NULL)))
 			return NULL;
 		(*a)->soap_default(soap);
 		if (!(*a)->soap_in(soap, tag, NULL))
 			return NULL;
 	}
 	else
-	{	a = (_ns1__GetListCreationTimeResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__ns1__GetListCreationTimeResponse, sizeof(_ns1__GetListCreationTimeResponse), 0);
+	{	a = (_mtrep3__TryGetRepositoryInfo2Response **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2Response, sizeof(_mtrep3__TryGetRepositoryInfo2Response), 0);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_ns1__GetListCreationTime(struct soap *soap, _ns1__GetListCreationTime *const*a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__TryGetRepositoryInfo2(struct soap *soap, _mtrep3__TryGetRepositoryInfo2 *const*a)
 {
-	if (!soap_reference(soap, *a, SOAP_TYPE__ns1__GetListCreationTime))
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2))
 		(*a)->soap_serialize(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_ns1__GetListCreationTime(struct soap *soap, _ns1__GetListCreationTime *const*a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__TryGetRepositoryInfo2(struct soap *soap, _mtrep3__TryGetRepositoryInfo2 *const*a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_ns1__GetListCreationTime);
-	if (soap_out_PointerTo_ns1__GetListCreationTime(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__TryGetRepositoryInfo2);
+	if (soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_ns1__GetListCreationTime(struct soap *soap, const char *tag, int id, _ns1__GetListCreationTime *const*a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, int id, _mtrep3__TryGetRepositoryInfo2 *const*a, const char *type)
 {
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__ns1__GetListCreationTime);
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2);
 	if (id < 0)
 		return soap->error;
 	return (*a)->soap_out(soap, tag, id, type);
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTime ** SOAP_FMAC4 soap_get_PointerTo_ns1__GetListCreationTime(struct soap *soap, _ns1__GetListCreationTime **p, const char *tag, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2 ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__TryGetRepositoryInfo2(struct soap *soap, _mtrep3__TryGetRepositoryInfo2 **p, const char *tag, const char *type)
 {
-	if ((p = soap_in_PointerTo_ns1__GetListCreationTime(soap, tag, p, type)))
+	if ((p = soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2(soap, tag, p, type)))
 		soap_getindependent(soap);
 	return p;
 }
 
-SOAP_FMAC3 _ns1__GetListCreationTime ** SOAP_FMAC4 soap_in_PointerTo_ns1__GetListCreationTime(struct soap *soap, const char *tag, _ns1__GetListCreationTime **a, const char *type)
+SOAP_FMAC3 _mtrep3__TryGetRepositoryInfo2 ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__TryGetRepositoryInfo2(struct soap *soap, const char *tag, _mtrep3__TryGetRepositoryInfo2 **a, const char *type)
 {
 	if (soap_element_begin_in(soap, tag, 1, NULL))
 		return NULL;
 	if (!a)
-		if (!(a = (_ns1__GetListCreationTime **)soap_malloc(soap, sizeof(_ns1__GetListCreationTime *))))
+		if (!(a = (_mtrep3__TryGetRepositoryInfo2 **)soap_malloc(soap, sizeof(_mtrep3__TryGetRepositoryInfo2 *))))
 			return NULL;
 	*a = NULL;
 	if (!soap->null && *soap->href != '#')
 	{	soap_revert(soap);
-		if (!(*a = (_ns1__GetListCreationTime *)soap_instantiate__ns1__GetListCreationTime(soap, -1, soap->type, soap->arrayType, NULL)))
+		if (!(*a = (_mtrep3__TryGetRepositoryInfo2 *)soap_instantiate__mtrep3__TryGetRepositoryInfo2(soap, -1, soap->type, soap->arrayType, NULL)))
 			return NULL;
 		(*a)->soap_default(soap);
 		if (!(*a)->soap_in(soap, tag, NULL))
 			return NULL;
 	}
 	else
-	{	a = (_ns1__GetListCreationTime **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__ns1__GetListCreationTime, sizeof(_ns1__GetListCreationTime), 0);
+	{	a = (_mtrep3__TryGetRepositoryInfo2 **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__TryGetRepositoryInfo2, sizeof(_mtrep3__TryGetRepositoryInfo2), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__PickRepository2Response(struct soap *soap, _mtrep3__PickRepository2Response *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__PickRepository2Response))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__PickRepository2Response(struct soap *soap, _mtrep3__PickRepository2Response *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__PickRepository2Response);
+	if (soap_out_PointerTo_mtrep3__PickRepository2Response(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__PickRepository2Response(struct soap *soap, const char *tag, int id, _mtrep3__PickRepository2Response *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__PickRepository2Response);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2Response ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__PickRepository2Response(struct soap *soap, _mtrep3__PickRepository2Response **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep3__PickRepository2Response(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2Response ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__PickRepository2Response(struct soap *soap, const char *tag, _mtrep3__PickRepository2Response **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep3__PickRepository2Response **)soap_malloc(soap, sizeof(_mtrep3__PickRepository2Response *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep3__PickRepository2Response *)soap_instantiate__mtrep3__PickRepository2Response(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__PickRepository2Response **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__PickRepository2Response, sizeof(_mtrep3__PickRepository2Response), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__PickRepository2(struct soap *soap, _mtrep3__PickRepository2 *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__PickRepository2))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__PickRepository2(struct soap *soap, _mtrep3__PickRepository2 *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__PickRepository2);
+	if (soap_out_PointerTo_mtrep3__PickRepository2(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__PickRepository2(struct soap *soap, const char *tag, int id, _mtrep3__PickRepository2 *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__PickRepository2);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2 ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__PickRepository2(struct soap *soap, _mtrep3__PickRepository2 **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep3__PickRepository2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep3__PickRepository2 ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__PickRepository2(struct soap *soap, const char *tag, _mtrep3__PickRepository2 **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep3__PickRepository2 **)soap_malloc(soap, sizeof(_mtrep3__PickRepository2 *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep3__PickRepository2 *)soap_instantiate__mtrep3__PickRepository2(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__PickRepository2 **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__PickRepository2, sizeof(_mtrep3__PickRepository2), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__GetRepositories2Response(struct soap *soap, _mtrep3__GetRepositories2Response *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__GetRepositories2Response))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__GetRepositories2Response(struct soap *soap, _mtrep3__GetRepositories2Response *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__GetRepositories2Response);
+	if (soap_out_PointerTo_mtrep3__GetRepositories2Response(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__GetRepositories2Response(struct soap *soap, const char *tag, int id, _mtrep3__GetRepositories2Response *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__GetRepositories2Response);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2Response ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__GetRepositories2Response(struct soap *soap, _mtrep3__GetRepositories2Response **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep3__GetRepositories2Response(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2Response ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__GetRepositories2Response(struct soap *soap, const char *tag, _mtrep3__GetRepositories2Response **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep3__GetRepositories2Response **)soap_malloc(soap, sizeof(_mtrep3__GetRepositories2Response *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep3__GetRepositories2Response *)soap_instantiate__mtrep3__GetRepositories2Response(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__GetRepositories2Response **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__GetRepositories2Response, sizeof(_mtrep3__GetRepositories2Response), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep3__GetRepositories2(struct soap *soap, _mtrep3__GetRepositories2 *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep3__GetRepositories2))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep3__GetRepositories2(struct soap *soap, _mtrep3__GetRepositories2 *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep3__GetRepositories2);
+	if (soap_out_PointerTo_mtrep3__GetRepositories2(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep3__GetRepositories2(struct soap *soap, const char *tag, int id, _mtrep3__GetRepositories2 *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep3__GetRepositories2);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2 ** SOAP_FMAC4 soap_get_PointerTo_mtrep3__GetRepositories2(struct soap *soap, _mtrep3__GetRepositories2 **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep3__GetRepositories2(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep3__GetRepositories2 ** SOAP_FMAC4 soap_in_PointerTo_mtrep3__GetRepositories2(struct soap *soap, const char *tag, _mtrep3__GetRepositories2 **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep3__GetRepositories2 **)soap_malloc(soap, sizeof(_mtrep3__GetRepositories2 *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep3__GetRepositories2 *)soap_instantiate__mtrep3__GetRepositories2(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep3__GetRepositories2 **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep3__GetRepositories2, sizeof(_mtrep3__GetRepositories2), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep2__GetListCreationTimeResponse(struct soap *soap, _mtrep2__GetListCreationTimeResponse *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep2__GetListCreationTimeResponse))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep2__GetListCreationTimeResponse(struct soap *soap, _mtrep2__GetListCreationTimeResponse *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep2__GetListCreationTimeResponse);
+	if (soap_out_PointerTo_mtrep2__GetListCreationTimeResponse(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep2__GetListCreationTimeResponse(struct soap *soap, const char *tag, int id, _mtrep2__GetListCreationTimeResponse *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep2__GetListCreationTimeResponse);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTimeResponse ** SOAP_FMAC4 soap_get_PointerTo_mtrep2__GetListCreationTimeResponse(struct soap *soap, _mtrep2__GetListCreationTimeResponse **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep2__GetListCreationTimeResponse(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTimeResponse ** SOAP_FMAC4 soap_in_PointerTo_mtrep2__GetListCreationTimeResponse(struct soap *soap, const char *tag, _mtrep2__GetListCreationTimeResponse **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep2__GetListCreationTimeResponse **)soap_malloc(soap, sizeof(_mtrep2__GetListCreationTimeResponse *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep2__GetListCreationTimeResponse *)soap_instantiate__mtrep2__GetListCreationTimeResponse(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep2__GetListCreationTimeResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep2__GetListCreationTimeResponse, sizeof(_mtrep2__GetListCreationTimeResponse), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_mtrep2__GetListCreationTime(struct soap *soap, _mtrep2__GetListCreationTime *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__mtrep2__GetListCreationTime))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_mtrep2__GetListCreationTime(struct soap *soap, _mtrep2__GetListCreationTime *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_mtrep2__GetListCreationTime);
+	if (soap_out_PointerTo_mtrep2__GetListCreationTime(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_mtrep2__GetListCreationTime(struct soap *soap, const char *tag, int id, _mtrep2__GetListCreationTime *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__mtrep2__GetListCreationTime);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTime ** SOAP_FMAC4 soap_get_PointerTo_mtrep2__GetListCreationTime(struct soap *soap, _mtrep2__GetListCreationTime **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_mtrep2__GetListCreationTime(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 _mtrep2__GetListCreationTime ** SOAP_FMAC4 soap_in_PointerTo_mtrep2__GetListCreationTime(struct soap *soap, const char *tag, _mtrep2__GetListCreationTime **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_mtrep2__GetListCreationTime **)soap_malloc(soap, sizeof(_mtrep2__GetListCreationTime *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_mtrep2__GetListCreationTime *)soap_instantiate__mtrep2__GetListCreationTime(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (_mtrep2__GetListCreationTime **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__mtrep2__GetListCreationTime, sizeof(_mtrep2__GetListCreationTime), 0);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -5546,6 +8471,165 @@ SOAP_FMAC3 _mtrep__TryGetRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTo_mtrep__T
 	return a;
 }
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep3__ArrayOfRepositoryInfo(struct soap *soap, mtrep3__ArrayOfRepositoryInfo *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomtrep3__ArrayOfRepositoryInfo(struct soap *soap, mtrep3__ArrayOfRepositoryInfo *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTomtrep3__ArrayOfRepositoryInfo);
+	if (soap_out_PointerTomtrep3__ArrayOfRepositoryInfo(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomtrep3__ArrayOfRepositoryInfo(struct soap *soap, const char *tag, int id, mtrep3__ArrayOfRepositoryInfo *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 mtrep3__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomtrep3__ArrayOfRepositoryInfo(struct soap *soap, mtrep3__ArrayOfRepositoryInfo **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTomtrep3__ArrayOfRepositoryInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 mtrep3__ArrayOfRepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomtrep3__ArrayOfRepositoryInfo(struct soap *soap, const char *tag, mtrep3__ArrayOfRepositoryInfo **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (mtrep3__ArrayOfRepositoryInfo **)soap_malloc(soap, sizeof(mtrep3__ArrayOfRepositoryInfo *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (mtrep3__ArrayOfRepositoryInfo *)soap_instantiate_mtrep3__ArrayOfRepositoryInfo(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__ArrayOfRepositoryInfo **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE_mtrep3__ArrayOfRepositoryInfo, sizeof(mtrep3__ArrayOfRepositoryInfo), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep3__ClientInfo(struct soap *soap, mtrep3__ClientInfo *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE_mtrep3__ClientInfo))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomtrep3__ClientInfo(struct soap *soap, mtrep3__ClientInfo *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTomtrep3__ClientInfo);
+	if (soap_out_PointerTomtrep3__ClientInfo(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomtrep3__ClientInfo(struct soap *soap, const char *tag, int id, mtrep3__ClientInfo *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE_mtrep3__ClientInfo);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 mtrep3__ClientInfo ** SOAP_FMAC4 soap_get_PointerTomtrep3__ClientInfo(struct soap *soap, mtrep3__ClientInfo **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTomtrep3__ClientInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 mtrep3__ClientInfo ** SOAP_FMAC4 soap_in_PointerTomtrep3__ClientInfo(struct soap *soap, const char *tag, mtrep3__ClientInfo **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (mtrep3__ClientInfo **)soap_malloc(soap, sizeof(mtrep3__ClientInfo *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (mtrep3__ClientInfo *)soap_instantiate_mtrep3__ClientInfo(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__ClientInfo **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE_mtrep3__ClientInfo, sizeof(mtrep3__ClientInfo), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep3__RepositoryInfo(struct soap *soap, mtrep3__RepositoryInfo *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE_mtrep3__RepositoryInfo))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTomtrep3__RepositoryInfo(struct soap *soap, mtrep3__RepositoryInfo *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTomtrep3__RepositoryInfo);
+	if (soap_out_PointerTomtrep3__RepositoryInfo(soap, tag, id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTomtrep3__RepositoryInfo(struct soap *soap, const char *tag, int id, mtrep3__RepositoryInfo *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE_mtrep3__RepositoryInfo);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 mtrep3__RepositoryInfo ** SOAP_FMAC4 soap_get_PointerTomtrep3__RepositoryInfo(struct soap *soap, mtrep3__RepositoryInfo **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTomtrep3__RepositoryInfo(soap, tag, p, type)))
+		soap_getindependent(soap);
+	return p;
+}
+
+SOAP_FMAC3 mtrep3__RepositoryInfo ** SOAP_FMAC4 soap_in_PointerTomtrep3__RepositoryInfo(struct soap *soap, const char *tag, mtrep3__RepositoryInfo **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (mtrep3__RepositoryInfo **)soap_malloc(soap, sizeof(mtrep3__RepositoryInfo *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (mtrep3__RepositoryInfo *)soap_instantiate_mtrep3__RepositoryInfo(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	a = (mtrep3__RepositoryInfo **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE_mtrep3__RepositoryInfo, sizeof(mtrep3__RepositoryInfo), 0);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTomtrep__ArrayOfRepositoryInfo(struct soap *soap, mtrep__ArrayOfRepositoryInfo *const*a)
 {
 	if (!soap_reference(soap, *a, SOAP_TYPE_mtrep__ArrayOfRepositoryInfo))
@@ -5773,6 +8857,102 @@ SOAP_FMAC3 char * * SOAP_FMAC4 soap_in_string(struct soap *soap, const char *tag
 {
 	return soap_instring(soap, tag, a, type, SOAP_TYPE_string, 1, -1, -1);
 }
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, std::vector<mtrep3__RepositoryInfo * >*p)
+{
+	p->clear();
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, const std::vector<mtrep3__RepositoryInfo * >*a)
+{
+	for (std::vector<mtrep3__RepositoryInfo * >::const_iterator i = a->begin(); i != a->end(); ++i)
+		soap_serialize_PointerTomtrep3__RepositoryInfo(soap, &(*i));
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, const char *tag, int id, const std::vector<mtrep3__RepositoryInfo * >*a, const char *type)
+{
+	for (std::vector<mtrep3__RepositoryInfo * >::const_iterator i = a->begin(); i != a->end(); ++i)
+	{
+		if (soap_out_PointerTomtrep3__RepositoryInfo(soap, tag, id, &(*i), ""))
+			return soap->error;
+	}
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 std::vector<mtrep3__RepositoryInfo * >* SOAP_FMAC4 soap_in_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, const char *tag, std::vector<mtrep3__RepositoryInfo * >*a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a && !(a = soap_new_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, -1)))
+		return NULL;
+	mtrep3__RepositoryInfo *n;
+	mtrep3__RepositoryInfo **p;
+	do
+	{	soap_revert(soap);
+		if (*soap->id || *soap->href)
+		{	if (!soap_container_id_forward(soap, *soap->id?soap->id:soap->href, a, (size_t)a->size(), SOAP_TYPE_mtrep3__RepositoryInfo, SOAP_TYPE_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo, sizeof(mtrep3__RepositoryInfo), 1))
+				break;
+			if (!(p = soap_in_PointerTomtrep3__RepositoryInfo(soap, tag, NULL, "mtrep3:RepositoryInfo")))
+				break;
+		}
+		else
+		{	n = NULL;
+			if (!soap_in_PointerTomtrep3__RepositoryInfo(soap, tag, &n, "mtrep3:RepositoryInfo"))
+				break;
+		}
+		a->push_back(n);
+	}
+	while (!soap_element_begin_in(soap, tag, 1, NULL));
+	if (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG)
+	{	soap->error = SOAP_OK;
+		return a;
+	}
+	return NULL;
+}
+
+SOAP_FMAC5 std::vector<mtrep3__RepositoryInfo * > * SOAP_FMAC6 soap_new_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, int n)
+{	return soap_instantiate_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(soap, n, NULL, NULL, NULL);
+}
+
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, std::vector<mtrep3__RepositoryInfo * >*p)
+{	soap_delete(soap, p);
+}
+
+SOAP_FMAC3 std::vector<mtrep3__RepositoryInfo * > * SOAP_FMAC4 soap_instantiate_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)new std::vector<mtrep3__RepositoryInfo * >;
+		if (size)
+			*size = sizeof(std::vector<mtrep3__RepositoryInfo * >);
+	}
+	else
+	{	cp->ptr = (void*)new std::vector<mtrep3__RepositoryInfo * >[n];
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(std::vector<mtrep3__RepositoryInfo * >);
+	}
+		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (std::vector<mtrep3__RepositoryInfo * >*)cp->ptr;
+}
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__vectorTemplateOfPointerTomtrep3__RepositoryInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying std::vector<mtrep3__RepositoryInfo * > %p -> %p\n", q, p));
+	*(std::vector<mtrep3__RepositoryInfo * >*)p = *(std::vector<mtrep3__RepositoryInfo * >*)q;
+}
+#ifdef __cplusplus
+}
+#endif
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_std__vectorTemplateOfPointerTomtrep__RepositoryInfo(struct soap *soap, std::vector<mtrep__RepositoryInfo * >*p)
 {
