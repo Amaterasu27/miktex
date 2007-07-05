@@ -76,6 +76,8 @@
 #	MiKTeX Web Services
 
 mtrep	= "http://miktex.org/2006/06/repository"
+mtrep2	= "http://miktex.org/2007/03/repository"
+mtrep3	= "http://miktex.org/2007/07/repository"
 
 #	For WhiteMesa interoperability testing round 2:
 

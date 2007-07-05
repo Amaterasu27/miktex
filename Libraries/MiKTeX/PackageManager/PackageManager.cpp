@@ -44,6 +44,26 @@ bool PackageManagerImpl::localServer = false;
 
 /* _________________________________________________________________________
 
+   ClientInfo
+   _________________________________________________________________________ */
+
+template<class Base>
+struct ClientInfo : public Base
+{
+  ClientInfo ()
+    : name_ (T_("MPM")),
+      version_ (VER_FILEVERSION_STR)
+  {
+    Name = &name_;
+    Version = &version_;
+  };
+private:
+  tstring name_;
+  tstring version_;
+};
+
+/* _________________________________________________________________________
+
    FatalSoapError
    _________________________________________________________________________ */
 
@@ -1181,8 +1201,9 @@ PackageManager::SetDefaultPackageRepository
    MakeRepositoryInfo
    _________________________________________________________________________ */
 
+template<class RepositoryInfo_>
 MPMSTATICFUNC(RepositoryInfo)
-MakeRepositoryInfo (/*[in]*/ const mtrep__RepositoryInfo * pMwsRepositoryInfo)
+MakeRepositoryInfo (/*[in]*/ const RepositoryInfo_ * pMwsRepositoryInfo)
 {
   RepositoryInfo repositoryInfo;
   if (pMwsRepositoryInfo->Country != 0)
@@ -1265,18 +1286,20 @@ PackageManagerImpl::DownloadRepositoryList ()
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  _mtrep__GetRepositories arg;
+  ClientInfo<mtrep3__ClientInfo> clientInfo;
+  _mtrep3__GetRepositories2 arg;
+  arg.clientInfo = &clientInfo;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
   arg.maxDelay = 10;
-  _mtrep__GetRepositoriesResponse resp;
-  if (repositorySoapProxy.GetRepositories(&arg, &resp) != SOAP_OK)
+  _mtrep3__GetRepositories2Response resp;
+  if (repositorySoapProxy.GetRepositories2(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
     }
-  for (vector<mtrep__RepositoryInfo*>::const_iterator it = 
-	 resp.GetRepositoriesResult->RepositoryInfo.begin();
-       it != resp.GetRepositoriesResult->RepositoryInfo.end();
+  for (vector<mtrep3__RepositoryInfo*>::const_iterator it = 
+	 resp.GetRepositories2Result->RepositoryInfo.begin();
+       it != resp.GetRepositories2Result->RepositoryInfo.end();
        ++ it)
     {
       repositories.push_back (MakeRepositoryInfo(*it));
@@ -1304,17 +1327,19 @@ PackageManagerImpl::PickRepositoryUrl ()
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  _mtrep__PickRepository arg;
-  _mtrep__PickRepositoryResponse resp;
-  if (repositorySoapProxy.PickRepository(&arg, &resp) != SOAP_OK)
+  ClientInfo<mtrep3__ClientInfo> clientInfo;
+  _mtrep3__PickRepository2 arg;
+  arg.clientInfo = &clientInfo;
+  _mtrep3__PickRepository2Response resp;
+  if (repositorySoapProxy.PickRepository2(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
     }
-  if (resp.PickRepositoryResult->Url == 0)
+  if (resp.PickRepository2Result->Url == 0)
     {
       UNEXPECTED_CONDITION (T_("PackageManagerImpl::PickRepositoryUrl"));
     }
-  return (*resp.PickRepositoryResult->Url);
+  return (*resp.PickRepository2Result->Url);
 }
 
 /* _________________________________________________________________________
@@ -2042,19 +2067,21 @@ PackageManagerImpl::TryGetRepositoryInfo
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  _mtrep__TryGetRepositoryInfo arg;
+  ClientInfo<mtrep3__ClientInfo> clientInfo;
   tstring url2 = url;
+  _mtrep3__TryGetRepositoryInfo2 arg;
+  arg.clientInfo = &clientInfo;
   arg.url = &url2;
-  _mtrep__TryGetRepositoryInfoResponse resp;
-  if (repositorySoapProxy.TryGetRepositoryInfo(&arg, &resp) != SOAP_OK)
+  _mtrep3__TryGetRepositoryInfo2Response resp;
+  if (repositorySoapProxy.TryGetRepositoryInfo2(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
     }
-  if (resp.TryGetRepositoryInfoResult)
+  if (resp.TryGetRepositoryInfo2Result)
     {
       repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
     }
-  return (resp.TryGetRepositoryInfoResult);
+  return (resp.TryGetRepositoryInfo2Result);
 }
 
 /* _________________________________________________________________________
