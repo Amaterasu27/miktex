@@ -224,59 +224,6 @@ Quoted (/*[in]*/ const PathName & path)
 
 /* _________________________________________________________________________
 
-   NUMTOSTR
-   _________________________________________________________________________ */
-
-class NUMTOSTRHELPER
-{
-public:
-  NUMTOSTRHELPER (unsigned u)
-  {
-#if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, BUFSIZE, T_("%u"), u);
-#else
-    _stprintf (m_szBuf, T_("%u"), u);
-#endif
-  }
-
-public:
-  NUMTOSTRHELPER (DWORD dw)
-  {
-    unsigned u = dw;
-#if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, BUFSIZE, T_("%u"), u);
-#else
-    _stprintf (m_szBuf, T_("%u"), u);
-#endif
-  }
-
-public:
-  NUMTOSTRHELPER (int i)
-  {
-#if _MSC_VER >= 1400
-    _stprintf_s (m_szBuf, BUFSIZE, T_("%d"), i);
-#else
-    _stprintf (m_szBuf, T_("%d"), i);
-#endif
-  }
-
-public:
-  operator const MIKTEXCHAR * () const
-  {
-    return (m_szBuf);
-  }
-
-private:
-  enum { BUFSIZE = 30 };
-
-private:
-  MIKTEXCHAR m_szBuf[BUFSIZE];
-};
-
-#define NUMTOSTR(num) static_cast<const MIKTEXCHAR *>(NUMTOSTRHELPER(num))
-
-/* _________________________________________________________________________
-
    AutoResource
    _________________________________________________________________________ */
 

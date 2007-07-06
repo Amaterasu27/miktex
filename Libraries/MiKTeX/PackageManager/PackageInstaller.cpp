@@ -755,7 +755,7 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::FindUpdatesThread"),
 			   T_("Cannot start updater thread."),
-			   NUMTOSTR(hr));
+			   NUMTOHEXSTR(hr));
 	}
 #endif
       This->FindUpdates ();
@@ -1724,7 +1724,7 @@ PackageInstallerImpl::ConnectToServer ()
 		{
 		  FATAL_MPM_ERROR (T_("ConnectToServer"),
 				   MSG_CANNOT_START_SERVER,
-				   NUMTOSTR(hr));
+				   NUMTOHEXSTR(hr));
 		}
 	    }
 	  else
@@ -1739,7 +1739,7 @@ PackageInstallerImpl::ConnectToServer ()
 		{
 		  FATAL_MPM_ERROR (T_("ConnectToServer"),
 				   MSG_CANNOT_START_SERVER,
-				   NUMTOSTR(hr));
+				   NUMTOHEXSTR(hr));
 		}
 	    }
 	}
@@ -1750,7 +1750,7 @@ PackageInstallerImpl::ConnectToServer ()
 	  localServer.pManager.Release ();
 	  FATAL_MPM_ERROR (T_("ConnectToServer"),
 			   MSG_CANNOT_START_SERVER,
-			   NUMTOSTR(hr));
+			   NUMTOHEXSTR(hr));
 	}
     }
 }
@@ -2020,7 +2020,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
 			       T_("Cannot communicate with mpmsvc."),
-			       NUMTOSTR(hr));
+			       NUMTOHEXSTR(hr));
 	    }
 	}
       for (vector<tstring>::const_iterator it = toBeRemoved.begin();
@@ -2033,7 +2033,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
 			       T_("Cannot communicate with mpmsvc."),
-			       NUMTOSTR(hr));
+			       NUMTOHEXSTR(hr));
 	    }
 	}
       localServer.pInstaller->SetCallback(this);
@@ -2048,7 +2048,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
 			       T_("mpmsvc failed for some reason."),
-			       NUMTOSTR(hr));
+			       NUMTOHEXSTR(hr));
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
@@ -2229,7 +2229,7 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemoveThread"),
 			   T_("Cannot start installer thread."),
-			   NUMTOSTR(hr));
+			   NUMTOHEXSTR(hr));
 	}
 #endif
       This->InstallRemove ();
@@ -2414,7 +2414,7 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::DownloadThread"),
 			   T_("Cannot start downloader thread."),
-			   NUMTOSTR(hr));
+			   NUMTOHEXSTR(hr));
 	}
 #endif
       This->Download ();
@@ -2570,7 +2570,7 @@ PackageInstallerImpl::UpdateDb ()
 	    {
 	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
 			       T_("The service failed for some reason."),
-			       NUMTOSTR(hr));
+			       NUMTOHEXSTR(hr));
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);

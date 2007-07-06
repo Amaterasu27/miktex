@@ -824,6 +824,61 @@ Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     }
 }
 
+
+/* _________________________________________________________________________
+
+   NumberString::Init
+   _________________________________________________________________________ */
+
+void
+NumberString::Init (/*[in]*/ long long	num,
+		    /*[in]*/ bool	hex)
+{
+  int n;
+  const MIKTEXCHAR * lpszFormat = (hex ? T_("%llx") : T_("%lld"));
+#if defined(_MSC_VER)
+#  if _MSC_VER >= 1400
+  n = _stprintf_s (buffer, BUFSIZE, lpszFormat, num);
+#  else
+  n = _stprintf (buffer, lpszFormat, num);
+#  endif
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: NumberString::NumberString()
+#else
+  n = sprintf (buffer, lpszFormat, num);
+#endif
+  if (n < 0)
+    {
+      FATAL_CRT_ERROR (T_("sprintf"), 0);
+    }
+}
+
+/* _________________________________________________________________________
+
+   NumberString::Init
+   _________________________________________________________________________ */
+
+void
+NumberString::Init (/*[in]*/ double	num)
+{
+  int n;
+#if defined(_MSC_VER)
+#  if _MSC_VER >= 1400
+  n = _stprintf_s (buffer, BUFSIZE, T_("%f"), num);
+#  else
+  n = _stprintf (buffer, T_("%f"), num);
+#  endif
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: NumberToStringConverter_::NumberToStringConverter_()
+#else
+  n = sprintf (buffer, T_("%f"), num);
+#endif
+  if (n < 0)
+    {
+      FATAL_CRT_ERROR (T_("sprintf"), 0);
+    }
+}
+
 /* _________________________________________________________________________
 
    miktex_replace_string

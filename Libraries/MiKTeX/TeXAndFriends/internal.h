@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -337,59 +337,6 @@ SkipSpace (/*[in]*/ LPTSTR &	lpsz)
       ++ lpsz;
     }
 }
-
-/* _________________________________________________________________________
-
-   NUMTOSTR
-   _________________________________________________________________________ */
-
-class NUMTOSTRHELPER
-{
-public:
-  NUMTOSTRHELPER (unsigned u)
-  {
-#if _MSC_VER >= 1400
-    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%u"), u);
-#else
-    _stprintf (szBuf, _T("%u"), u);
-#endif
-  }
-
-public:
-  NUMTOSTRHELPER (DWORD dw)
-  {
-    unsigned u = dw;
-#if _MSC_VER >= 1400
-    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%u"), u);
-#else
-    _stprintf (szBuf, _T("%u"), u);
-#endif
-  }
-
-public:
-  NUMTOSTRHELPER (int i)
-  {
-#if _MSC_VER >= 1400
-    _stprintf_s (szBuf, ARRAY_SIZE(szBuf), _T("%d"), i);
-#else
-    _stprintf (szBuf, _T("%d"), i);
-#endif
-  }
-
-public:
-  operator const MIKTEXCHAR * () const
-  {
-    return (szBuf);
-  }
-
-private:
-  enum { BUFSIZE = 30 };
-
-private:
-  _TCHAR szBuf[BUFSIZE];
-};
-
-#define NUMTOSTR(num) static_cast<const MIKTEXCHAR *>(NUMTOSTRHELPER(num))
 
 /* _________________________________________________________________________
 

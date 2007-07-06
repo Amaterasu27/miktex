@@ -911,7 +911,7 @@ AssembleTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 			   it->second.digest.ToString().c_str());
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "TimePackaged",
-			   NUMTOSTR(time_t,timePackaged));
+			   NUMTOSTR(timePackaged));
       if (! it->second.version.empty())
 	{
 	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1482,10 +1482,10 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 			   it->second.digest.ToString().c_str());
       cfgDbLight.PutValue (it->second.deploymentName.c_str(), 
 			   "TimePackaged",
-			   NUMTOSTR(time_t, it->second.timePackaged));
+			   NUMTOSTR(it->second.timePackaged));
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "CabSize",
-			   NUMTOSTR(size_t, it->second.archiveFileSize));
+			   NUMTOSTR(it->second.archiveFileSize));
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "CabMD5",
 			   it->second.archiveDigest.ToString().c_str());

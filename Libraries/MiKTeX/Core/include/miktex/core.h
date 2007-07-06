@@ -6589,6 +6589,80 @@ public:
   }
 };
 
+/* _________________________________________________________________________
+
+   NUMTOSTR
+   _________________________________________________________________________ */
+
+class NumberString
+{
+private:
+  enum { BUFSIZE = 30 };
+
+private:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Init (/*[in]*/ long long	num,
+	/*[in]*/ bool		hex);
+
+private:
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  Init (/*[in]*/ double		num);
+
+public:
+  NumberString (/*[in]*/ long long	num,
+		/*[in]*/ bool		hex)
+  {
+    Init (num, hex);
+  }
+
+public:
+  NumberString (/*[in]*/ double		num,
+		/*[in]*/ bool		hex)
+  {
+    MIKTEX_ASSERT (! hex);
+    Init (num);
+  }
+
+public:
+  NumberString (/*[in]*/ int		num,
+		/*[in]*/ bool		hex)
+  {
+    Init (num, hex);
+  }
+
+public:
+  NumberString (/*[in]*/ unsigned	num,
+		/*[in]*/ bool		hex)
+  {
+    Init (num, hex);
+  }
+
+public:
+  NumberString (/*[in]*/ unsigned long	num,
+		/*[in]*/ bool		hex)
+  {
+    Init (num, hex);
+  }
+
+public:
+  const MIKTEXCHAR *
+  GetBuffer ()
+    const
+  {
+    return (buffer);
+  }
+
+private:
+  MIKTEXCHAR buffer[BUFSIZE];
+};
+
+#define NUMTOSTR(num) MiKTeX::Core::NumberString(num, false).GetBuffer()
+#define NUMTOHEXSTR(num) MiKTeX::Core::NumberString(num, true).GetBuffer()
+
 /* _________________________________________________________________________ */
 
 MIKTEX_CORE_END_NAMESPACE;
