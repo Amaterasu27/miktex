@@ -653,12 +653,14 @@ DviImpl::Scan ()
   reverse (pages.begin(), pages.end());
   lastChecked = clock();
 
+#if 0
   // load the first DVI page
   if (pages.size() > 0)
     {
       DviPage * pPage = GetLoadedPage(0);
       pPage->Unlock ();
     }
+#endif
 
   // wake up page loader thread
   SetEvent (hScannedEvent);
