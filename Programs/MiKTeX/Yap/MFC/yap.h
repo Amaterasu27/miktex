@@ -421,6 +421,86 @@ private:
 
 /* _________________________________________________________________________
 
+   AutoDeleteObject
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+template<class OBJTYPE>
+class DeleteObject_
+{
+public:
+  void
+  operator() (/*[in]*/ OBJTYPE * pObj)
+  {
+    pObj->DeleteObject ();
+  }
+};
+
+typedef AutoResource<CGdiObject*, DeleteObject_<CGdiObject> > AutoDeleteObject;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDetachMenu
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+template<class OBJTYPE>
+class Detach_
+{
+public:
+  void
+  operator() (/*[in]*/ OBJTYPE * pObj)
+  {
+    pObj->Detach ();
+  }
+};
+
+typedef AutoResource<CMenu*, Detach_<CMenu> > AutoDetachMenu;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoRestoreDC
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class RestoreDC_
+{
+public:
+  void
+  operator() (/*[in]*/ CDC *	pDC,
+	      /*[in]*/ int	savedDC)
+  {
+    pDC->RestoreDC (savedDC);
+  }
+};
+
+typedef AutoResource2<CDC *, int, RestoreDC_> AutoRestoreDC;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoSelectObject
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class SelectObject_
+{
+public:
+  void
+  operator() (/*[in]*/ CDC *		pDC,
+	      /*[in]*/ CGdiObject *	pObj)
+  {
+    pDC->SelectObject (pObj);
+  }
+};
+
+typedef AutoResource2<CDC *, CGdiObject *, SelectObject_> AutoSelectObject;
+#endif
+
+/* _________________________________________________________________________
+
    YapCommandLineInfo
    _________________________________________________________________________ */
 
@@ -533,442 +613,6 @@ public:
 public:
   auto_ptr<TraceStream> trace_error;
 };
-
-/* _________________________________________________________________________
-
-   AutoResource
-   _________________________________________________________________________ */
-
-template<class HandleType>
-HandleType
-InvalidHandleValue ()
-{
-  return (0);
-}
-
-template<class HandleType,
-	 class Destroyer>
-class AutoResource
-{
-public:
-  AutoResource (/*[in]*/ HandleType handle = InvalidHandleValue<HandleType>())
-    : handle (handle)
-  {
-  }
-
-public:
-  ~AutoResource ()
-  {
-    try
-      {
-	Reset ();
-      }
-    catch (const exception &)
-      {
-      }
-  }
-
-public:
-  HandleType
-  Get ()
-  {
-    return (handle);
-  }
-
-public:
-  void
-  Detach ()
-  {
-    handle = InvalidHandleValue<HandleType>();
-  }
-
-public:
-  void
-  Reset ()
-  {
-    if (handle != InvalidHandleValue<HandleType>())
-      {
-	HandleType tmp = handle;
-	handle = InvalidHandleValue<HandleType>();
-	Destroyer() (tmp);
-      }
-  }
-
-public:
-  HandleType *
-  operator & ()
-  {
-    return (&handle);
-  }
-
-private:
-  HandleType handle;
-};
-
-/* _________________________________________________________________________
-
-   AutoResource2
-   _________________________________________________________________________ */
-
-template<class HandleType1,
-	 class HandleType2,
-	 class Destroyer>
-class AutoResource2
-{
-public:
-  AutoResource2 (/*[in]*/ HandleType1 handle1 =
-		 InvalidHandleValue<HandleType1>(),
-		 /*[in]*/ HandleType2 handle2 =
-		 InvalidHandleValue<HandleType2>())
-    : handle1 (handle1),
-      handle2 (handle2)
-  {
-  }
-
-public:
-  ~AutoResource2 ()
-  {
-    try
-      {
-	Reset ();
-      }
-    catch (const exception &)
-      {
-      }
-  }
-
-public:
-  HandleType2
-  Get ()
-  {
-    return (handle2);
-  }
-
-public:
-  void
-  Detach ()
-  {
-    handle1 = InvalidHandleValue<HandleType1>();
-    handle2 = InvalidHandleValue<HandleType2>();
-  }
-
-public:
-  void
-  Reset ()
-  {
-    if (handle2 != InvalidHandleValue<HandleType2>())
-      {
-	HandleType1 tmp1 = handle1;
-	HandleType2 tmp2 = handle2;
-	handle1 = InvalidHandleValue<HandleType1>();
-	handle2 = InvalidHandleValue<HandleType2>();
-	Destroyer() (tmp1, tmp2);
-      }
-  }
-
-public:
-  HandleType2 *
-  operator & ()
-  {
-    return (&handle2);
-  }
-
-private:
-  HandleType1 handle1;
-
-private:
-  HandleType2 handle2;
-};
-
-/* _________________________________________________________________________
-
-   AutoHKEY
-   _________________________________________________________________________ */
-
-class RegCloseKey_
-{
-public:
-  void
-  operator() (/*[in]*/ HKEY hkey)
-  {
-    long result = RegCloseKey(hkey);
-    if (result != ERROR_SUCCESS)
-      {
-#if 0
-	TraceWindowsError (T_("RegCloseKey"),
-			   result,
-			   0,
-			   T_(__FILE__),
-			   __LINE__);
-#endif
-      }
-  }
-};
-
-typedef AutoResource<HKEY, RegCloseKey_> AutoHKEY;
-
-/* _________________________________________________________________________
-
-   AutoClosePrinter
-   _________________________________________________________________________ */
-
-class ClosePrinter_
-{
-public:
-  void
-  operator() (/*[in]*/ HANDLE hPrinter)
-  {
-    ClosePrinter (hPrinter);
-  }
-};
-
-typedef AutoResource<HANDLE, ClosePrinter_> AutoClosePrinter;
-
-/* _________________________________________________________________________
-
-   AutoCloseHandle
-   _________________________________________________________________________ */
-
-class CloseHandle_
-{
-public:
-  void
-  operator() (/*[in]*/ HANDLE handle)
-  {
-    CloseHandle (handle);
-  }
-};
-
-typedef AutoResource<HANDLE, CloseHandle_> AutoCloseHandle;
-
-/* _________________________________________________________________________
-
-   AutoUnmapViewOfFile
-   _________________________________________________________________________ */
-
-class UnmapViewOfFile_
-{
-public:
-  void
-  operator() (/*[in]*/ void * p)
-  {
-    UnmapViewOfFile (p);
-  }
-};
-
-typedef AutoResource<void *, UnmapViewOfFile_> AutoUnmapViewOfFile;
-
-/* _________________________________________________________________________
-
-   AutoDeleteMetaFile
-   _________________________________________________________________________ */
-
-class DeleteMetaFile_
-{
-public:
-  void
-  operator() (/*[in]*/ HMETAFILE hMetaFile)
-  {
-    DeleteMetaFile (hMetaFile);
-  }
-};
-
-typedef AutoResource<HMETAFILE, DeleteMetaFile_> AutoDeleteMetaFile;
-
-/* _________________________________________________________________________
-
-   AutoMemoryPointer
-   _________________________________________________________________________ */
-
-class free_
-{
-public:
-  void
-  operator() (/*[in]*/ void * p)
-  {
-    free (p);
-  }
-};
-
-typedef AutoResource<void *, free_> AutoMemoryPointer;
-
-/* _________________________________________________________________________
-
-   AutoGlobalFree
-   _________________________________________________________________________ */
-
-class GlobalFree_
-{
-public:
-  void
-  operator() (/*[in]*/ HGLOBAL hMem)
-  {
-    GlobalFree (hMem);
-  }
-};
-
-typedef AutoResource<void *, GlobalFree_> AutoGlobalFree;
-
-/* _________________________________________________________________________
-
-   AutoDeleteObject
-   _________________________________________________________________________ */
-
-template<class OBJTYPE>
-class DeleteObject_
-{
-public:
-  void
-  operator() (/*[in]*/ OBJTYPE * pObj)
-  {
-    pObj->DeleteObject ();
-  }
-};
-
-typedef AutoResource<CGdiObject*, DeleteObject_<CGdiObject> > AutoDeleteObject;
-
-/* _________________________________________________________________________
-
-   AutoDetachMenu
-   _________________________________________________________________________ */
-
-template<class OBJTYPE>
-class Detach_
-{
-public:
-  void
-  operator() (/*[in]*/ OBJTYPE * pObj)
-  {
-    pObj->Detach ();
-  }
-};
-
-typedef AutoResource<CMenu*, Detach_<CMenu> > AutoDetachMenu;
-
-/* _________________________________________________________________________
-
-   AutoUnlockPage
-   _________________________________________________________________________ */
-
-template<class OBJTYPE>
-class UnlockObject
-{
-public:
-  void
-  operator() (/*[in]*/ OBJTYPE * pObj)
-  {
-    pObj->Unlock ();
-  }
-};
-
-typedef AutoResource<DviPage*, UnlockObject<DviPage> > AutoUnlockPage;
-
-/* _________________________________________________________________________
-
-   AutoDdeUninitialize
-   _________________________________________________________________________ */
-
-class DdeUninitialize_
-{
-public:
-  void
-  operator() (/*[in]*/ unsigned long inst)
-  {
-    DdeUninitialize (inst);
-  }
-};
-
-typedef AutoResource<unsigned long, DdeUninitialize_> AutoDdeUninitialize;
-
-/* _________________________________________________________________________
-
-   AutoDdeFreeDataHandle
-   _________________________________________________________________________ */
-
-class DdeFreeDataHandle_
-{
-public:
-  void
-  operator() (/*[in]*/ HDDEDATA hData)
-  {
-    DdeFreeDataHandle (hData);
-  }
-};
-
-typedef AutoResource<HDDEDATA, DdeFreeDataHandle_> AutoDdeFreeDataHandle;
-
-/* _________________________________________________________________________
-
-   AutoDdeDisconnect
-   _________________________________________________________________________ */
-
-class DdeDisconnect_
-{
-public:
-  void
-  operator() (/*[in]*/ HCONV hConv)
-  {
-    DdeDisconnect (hConv);
-  }
-};
-
-typedef AutoResource<HCONV, DdeDisconnect_> AutoDdeDisconnect;
-
-/* _________________________________________________________________________
-
-   AutoDdeFreeStringHandle
-   _________________________________________________________________________ */
-
-class DdeFreeStringHandle_
-{
-public:
-  void
-  operator() (/*[in]*/ unsigned long	inst,
-	      /*[in]*/ HSZ		hsz)
-  {
-    DdeFreeStringHandle (inst, hsz);
-  }
-};
-
-typedef
-AutoResource2<unsigned long, HSZ, DdeFreeStringHandle_>
-AutoDdeFreeStringHandle;
-
-/* _________________________________________________________________________
-
-   AutoRestoreDC
-   _________________________________________________________________________ */
-
-class RestoreDC_
-{
-public:
-  void
-  operator() (/*[in]*/ CDC *	pDC,
-	      /*[in]*/ int	savedDC)
-  {
-    pDC->RestoreDC (savedDC);
-  }
-};
-
-typedef AutoResource2<CDC *, int, RestoreDC_> AutoRestoreDC;
-
-/* _________________________________________________________________________
-
-   AutoSelectObject
-   _________________________________________________________________________ */
-
-class SelectObject_
-{
-public:
-  void
-  operator() (/*[in]*/ CDC *		pDC,
-	      /*[in]*/ CGdiObject *	pObj)
-  {
-    pDC->SelectObject (pObj);
-  }
-};
-
-typedef AutoResource2<CDC *, CGdiObject *, SelectObject_> AutoSelectObject;
 
 /* _________________________________________________________________________
 

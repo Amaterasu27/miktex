@@ -121,7 +121,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
       FATAL_WINDOWS_ERROR (T_("CreateFile"), lpszFileName);
     }
 
-  AutoCloseHandle autoCloseFile (hFile);
+  AutoHANDLE autoCloseFile (hFile);
 
   HANDLE hMapFile =
     CreateFileMapping(hFile,
@@ -136,7 +136,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
       FATAL_WINDOWS_ERROR (T_("CreateFileMapping"), lpszFileName);
     }
 
-  AutoCloseHandle autoCloseFileMapping (hMapFile);
+  AutoHANDLE autoCloseFileMapping (hMapFile);
 
   void * pMapFile = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 0);
 

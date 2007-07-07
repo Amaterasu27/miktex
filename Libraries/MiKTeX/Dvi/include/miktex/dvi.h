@@ -1319,6 +1319,23 @@ public:
     = 0;
 };
 
+/* _________________________________________________________________________
+
+   AutoUnlockPage
+   _________________________________________________________________________ */
+
+class UnlockDviPage_
+{
+public:
+  void
+  operator() (/*[in]*/ DviPage * p)
+  {
+    p->Unlock ();
+  }
+};
+
+typedef MiKTeX::Core::AutoResource<DviPage *, UnlockDviPage_> AutoUnlockPage;
+
 /* _________________________________________________________________________ */
 
 MIKTEX_DVI_END_NAMESPACE;

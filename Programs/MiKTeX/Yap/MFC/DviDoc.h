@@ -648,7 +648,17 @@ DviDoc::GetMagnification ()
    AutoUnlockDviDoc
    _________________________________________________________________________ */
 
-typedef AutoResource<DviDoc*, UnlockObject<DviDoc> > AutoUnlockDviDoc;
+class UnlockDviDoc_
+{
+public:
+  void
+  operator() (/*[in]*/ DviDoc * p)
+  {
+    p->Unlock ();
+  }
+};
+
+typedef MiKTeX::Core::AutoResource<DviDoc *, UnlockDviDoc_> AutoUnlockDviDoc;
 
 /* _________________________________________________________________________
 

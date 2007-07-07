@@ -121,7 +121,7 @@ DvipsDialog::OnInitDialog ()
 		}
 	      PRINTER_INFO_2 * lppi2 =
 		reinterpret_cast<LPPRINTER_INFO_2>(GlobalAlloc(GPTR, needed2));
-	      AutoGlobalFree autoGlobalFree (lppi2);
+	      AutoGlobalMemory autoGlobalFree (lppi2);
 	      DWORD returned;
 	      if (! GetPrinter(hPrinter,
 			       2,

@@ -6663,10 +6663,601 @@ private:
 #define NUMTOSTR(num) MiKTeX::Core::NumberString(num, false).GetBuffer()
 #define NUMTOHEXSTR(num) MiKTeX::Core::NumberString(num, true).GetBuffer()
 
+/* _________________________________________________________________________
+
+   AutoResource
+   _________________________________________________________________________ */
+
+template<class HandleType>
+HandleType
+InvalidHandleValue ()
+{
+  return (0);
+}
+
+template<class HandleType,
+	 class Destroyer>
+class AutoResource
+{
+public:
+  AutoResource (/*[in]*/ HandleType handle = InvalidHandleValue<HandleType>())
+    : handle (handle)
+  {
+  }
+
+public:
+  ~AutoResource ()
+  {
+    try
+      {
+	Reset ();
+      }
+    catch (const std::exception &)
+      {
+      }
+  }
+
+public:
+  HandleType
+  Get ()
+    const
+  {
+    return (handle);
+  }
+
+public:
+  void
+  Attach (/*[in]*/ HandleType handle)
+  {
+    this->handle = handle;
+  }
+
+public:
+  HandleType
+  Detach ()
+  {
+    HandleType handle = Get();
+    Attach (InvalidHandleValue<HandleType>());
+    return (handle);
+  }
+
+public:
+  void
+  Reset (/*[in]*/ HandleType handle)
+  {
+    if (Get() != InvalidHandleValue<HandleType>())
+      {
+	Destroyer() (Detach());
+      }
+    Attach (handle);
+  }
+
+public:
+  void
+  Reset ()
+  {
+    Reset (InvalidHandleValue<HandleType>());
+  }
+
+public:
+  HandleType *
+  operator & ()
+  {
+    return (&handle);
+  }
+
+private:
+  HandleType handle;
+};
+
+/* _________________________________________________________________________
+
+   AutoResource2
+   _________________________________________________________________________ */
+
+template<class HandleType1,
+	 class HandleType2,
+	 class Destroyer>
+class AutoResource2
+{
+public:
+  AutoResource2
+  (/*[in]*/ HandleType1 handle1 = InvalidHandleValue<HandleType1>(),
+   /*[in]*/ HandleType2 handle2 = InvalidHandleValue<HandleType2>())
+    : handle1 (handle1),
+      handle2 (handle2)
+  {
+  }
+
+public:
+  ~AutoResource2 ()
+  {
+    try
+      {
+	Reset ();
+      }
+    catch (const std::exception &)
+      {
+      }
+  }
+
+public:
+  HandleType2
+  Get ()
+  {
+    return (handle2);
+  }
+
+public:
+  void
+  Attach (/*[in]*/ HandleType1 handle1,
+	  /*[in]*/ HandleType2 handle2)
+  {
+    this->handle1 = handle1;
+    this->handle2 = handle2;
+  }
+
+public:
+  HandleType2
+  Detach ()
+  {
+    HandleType2 handle2 = Get();
+    Attach (InvalidHandleValue<HandleType1>(),
+	    InvalidHandleValue<HandleType2>());
+    return (handle2);
+  }
+
+public:
+  void
+  Reset ()
+  {
+    if (Get() != InvalidHandleValue<HandleType2>())
+      {
+	HandleType1 handle1 = this->handle1;
+	HandleType2 handle2 = this->handle2;
+	this->handle1 = InvalidHandleValue<HandleType1>();
+	this->handle2 = InvalidHandleValue<HandleType2>();
+	Destroyer() (handle1, handle2);
+      }
+  }
+
+public:
+  HandleType2 *
+  operator & ()
+  {
+    return (&handle2);
+  }
+
+private:
+  HandleType1 handle1;
+
+private:
+  HandleType2 handle2;
+};
+
+/* _________________________________________________________________________
+
+   AutoFILE
+   _________________________________________________________________________ */
+
+class fclose_
+{
+public:
+  void
+  operator() (/*[in]*/ FILE * pFile)
+  {
+    if (fclose(pFile) != 0)
+      {
+	Session::FatalCrtError (MIKTEXTEXT("fclose"),
+				0,
+				MIKTEXTEXT(__FILE__),
+				__LINE__);
+      }
+  }
+};
+
+typedef AutoResource<FILE *, fclose_> AutoFILE;
+
+/* _________________________________________________________________________
+
+   AutoErrorMode
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class SetErrorMode_
+{
+public:
+  void
+  operator() (/*[in]*/ unsigned int mode)
+  {
+    SetErrorMode (mode);
+  }
+};
+
+typedef AutoResource<unsigned int, SetErrorMode_> AutoErrorMode;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoHANDLE
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+template<>
+inline
+HANDLE
+InvalidHandleValue<HANDLE> ()
+{
+  return (INVALID_HANDLE_VALUE);
+}
+
+class CloseHandle_
+{
+public:
+  void
+  operator() (/*[in]*/ HANDLE h)
+  {
+    if (! CloseHandle(h))
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("CloseHandle"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<HANDLE, CloseHandle_> AutoHANDLE;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoHKEY
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class RegCloseKey_
+{
+public:
+  void
+  operator() (/*[in]*/ HKEY hkey)
+  {
+    long result = RegCloseKey(hkey);
+    if (result != ERROR_SUCCESS)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("RegCloseKey"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<HKEY, RegCloseKey_> AutoHKEY;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoSid
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class FreeSid_
+{
+public:
+  void
+  operator() (/*[in]*/ PSID psid)
+  {
+    if (FreeSid(psid) != 0)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("FreeSid"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<PSID, FreeSid_> AutoSid;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoGlobal
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class GlobalUnlock_
+{
+public:
+  void
+  operator() (/*[in]*/ HGLOBAL hMem)
+  {
+    if (GlobalUnlock(hMem) == 0 && GetLastError() != NO_ERROR)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("GlobalUnlock"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<void *, GlobalUnlock_> AutoGlobal;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoGlobalMemory
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class GlobalFree_
+{
+public:
+  void
+  operator() (/*[in]*/ HGLOBAL hMem)
+  {
+    if (GlobalFree(hMem) != 0)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("GlobalFree"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<void *, GlobalFree_> AutoGlobalMemory;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoLocalMemory
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class LocalFree_
+{
+public:
+  void
+  operator() (/*[in]*/ void * ptr)
+  {
+    if (LocalFree(ptr) != 0)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("LocalFree"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<void *, LocalFree_> AutoLocalMemory;
+typedef AutoResource<void *, LocalFree_> AutoLocalMem;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoCoTaskMem
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(WINOLEAPI)
+class CoTaskMemFree_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    CoTaskMemFree (p);
+  }
+};
+
+typedef AutoResource<void *, CoTaskMemFree_> AutoCoTaskMem;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoSysString
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(WINOLEAUTAPI)
+class SysFreeString_
+{
+public:
+  void
+  operator() (/*[in]*/ BSTR bstr)
+  {
+    SysFreeString (bstr);
+  }
+};
+
+typedef AutoResource<BSTR, SysFreeString_> AutoSysString;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoClosePrinter
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(PRINTER_ENUM_DEFAULT)
+class ClosePrinter_
+{
+public:
+  void
+  operator() (/*[in]*/ HANDLE hPrinter)
+  {
+    if (! ClosePrinter(hPrinter))
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("Closeprinter"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<HANDLE, ClosePrinter_> AutoClosePrinter;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoUnmapViewOfFile
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class UnmapViewOfFile_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    if (! UnmapViewOfFile(p))
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("UnmapViewOfFile"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<void *, UnmapViewOfFile_> AutoUnmapViewOfFile;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDeleteMetaFile
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class DeleteMetaFile_
+{
+public:
+  void
+  operator() (/*[in]*/ HMETAFILE hMetaFile)
+  {
+    if (! DeleteMetaFile(hMetaFile) && GetVersion() < 0x80000000)
+      {
+	Session::FatalWindowsError (MIKTEXTEXT("DeleteMetaFile"),
+				    0,
+				    MIKTEXTEXT(__FILE__),
+				    __LINE__);
+      }
+  }
+};
+
+typedef AutoResource<HMETAFILE, DeleteMetaFile_> AutoDeleteMetaFile;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDdeUninitialize
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(DDE_FACK)
+class DdeUninitialize_
+{
+public:
+  void
+  operator() (/*[in]*/ unsigned long inst)
+  {
+    if (! DdeUninitialize(inst))
+      {
+      }
+  }
+};
+
+typedef AutoResource<unsigned long, DdeUninitialize_> AutoDdeUninitialize;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDdeFreeDataHandle
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(DDE_FACK)
+class DdeFreeDataHandle_
+{
+public:
+  void
+  operator() (/*[in]*/ HDDEDATA hData)
+  {
+    if (! DdeFreeDataHandle (hData))
+      {
+      }
+  }
+};
+
+typedef AutoResource<HDDEDATA, DdeFreeDataHandle_> AutoDdeFreeDataHandle;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDdeDisconnect
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(DDE_FACK)
+class DdeDisconnect_
+{
+public:
+  void
+  operator() (/*[in]*/ HCONV hConv)
+  {
+    if (! DdeDisconnect(hConv))
+      {
+      }
+  }
+};
+
+typedef AutoResource<HCONV, DdeDisconnect_> AutoDdeDisconnect;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoDdeFreeStringHandle
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS) && defined(DDE_FACK)
+class DdeFreeStringHandle_
+{
+public:
+  void
+  operator() (/*[in]*/ unsigned long	inst,
+	      /*[in]*/ HSZ		hsz)
+  {
+    if (! DdeFreeStringHandle(inst, hsz))
+      {
+      }
+  }
+};
+
+typedef
+AutoResource2<unsigned long, HSZ, DdeFreeStringHandle_>
+AutoDdeFreeStringHandle;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoMemoryPointer
+   _________________________________________________________________________ */
+
+class free_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    free (p);
+  }
+};
+
+typedef AutoResource<void *, free_> AutoMemoryPointer;
+
 /* _________________________________________________________________________ */
 
 MIKTEX_CORE_END_NAMESPACE;
 
 #endif	// C++
 
-#endif	// miktex.h
+#endif	// core.h
