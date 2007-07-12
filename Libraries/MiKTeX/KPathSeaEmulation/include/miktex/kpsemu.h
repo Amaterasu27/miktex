@@ -1,6 +1,6 @@
 /* miktex/kpsemu.h: Web2C/KPSE emulation			-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -385,6 +385,9 @@
 
 #define xmallocarray(type,size) ((type*)xmalloc((size+1)*sizeof(type)))
 #define xreallocarray(ptr,type,size) ((type*)xrealloc(ptr,(size+1)*sizeof(type)))
+
+#define recorder_record_input(fname)
+#define recorder_record_output(fname)
 
 /* _________________________________________________________________________
 

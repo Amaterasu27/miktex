@@ -236,13 +236,13 @@ dest_names_size := inf_dest_names_size; {allocated size of |dest_names| array}
 
 % _____________________________________________________________________________
 %
-% [38.708]
+% [38.711]
 % _____________________________________________________________________________
 
 @x
-@d vf_byte == getc(vf_file) {get a byte from\.{VF} file}
+    i := getc(vf_file);
 @y
-@d vf_byte == get_byte(vf_file) {get a byte from\.{VF} file}
+    i := get_byte(vf_file);
 @z
 
 % _____________________________________________________________________________
@@ -387,6 +387,17 @@ pdf_print("/Producer (MiKTeX pdfTeX-");
        else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
          goto common_ending;
     end
+@z
+
+% _____________________________________________________________________________
+%
+% [57.1499]
+% _____________________________________________________________________________
+
+@x
+pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
+@y
+miktex_reallocate(pdf_mem, pdf_mem_size);
 @z
 
 % _____________________________________________________________________________

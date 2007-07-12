@@ -798,10 +798,10 @@ public:
 
   MIKTEXMFAPI(bool)
   OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		/*[in]*/ FILE **		ppFile,
-		/*[in]*/ void *			pBuf,
-		/*[in]*/ size_t			size,
-		/*[in]*/ bool			renew)
+		      /*[in]*/ FILE **			ppFile,
+		      /*[in]*/ void *			pBuf,
+		      /*[in]*/ size_t			size,
+		      /*[in]*/ bool			renew)
     const;
 
   /* _______________________________________________________________________
@@ -815,20 +815,108 @@ public:
   template<class T>
   bool
   OpenMemoryDumpFile (/*[in]*/ T &	f,
-		/*[in]*/ bool	renew = false)
+		      /*[in]*/ bool	renew = false)
     const
   {
     FILE * pfile;
     if (! OpenMemoryDumpFile(THEDATA(nameoffile),
-		       &pfile,
-		       &f.bufref(),
-		       sizeof(*f),
-		       renew))
+			     &pfile,
+			     &f.bufref(),
+			     sizeof(*f),
+			     renew))
       {
 	return (false);
       }
     f.Attach (pfile, true);
     return (true);
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+
+     Dump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Dump (/*[in]*/ FILE_ &		f,
+	/*[in]*/ const ELETYPE_ &	e,
+	/*[in]*/ size_t			n)
+  {
+    if (fwrite(&e, sizeof(e), n, static_cast<FILE*>(f)) != n)
+      {
+	MiKTeX::Core::Session::FatalCrtError
+	  (MIKTEXTEXT("fwrite"),
+	   0,
+	   MIKTEXTEXT(__FILE__),
+	   __LINE__);
+      }
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+
+     Dump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Dump (/*[in]*/ FILE_ &		f,
+	/*[in]*/ const ELETYPE_ &	e)
+  {
+    Dump (f, e, 1);
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+
+     Undump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Undump (/*[in]*/ FILE_ &		f,
+	  /*[out]*/ ELETYPE_ &		e,
+	  /*[in]*/ size_t		n)
+  {
+    if (fread(&e, sizeof(e), n, static_cast<FILE*>(f)) != n)
+      {
+	MiKTeX::Core::Session::FatalCrtError
+	  (MIKTEXTEXT("fread"),
+	   0,
+	   MIKTEXTEXT(__FILE__),
+	   __LINE__);
+      }
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+
+     Undump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Undump (/*[in]*/ FILE_ &		f,
+	  /*[in]*/ ELETYPE_ &		e)
+  {
+    Undump (f, e, 1);
   }
 #endif // THEDATA
 
