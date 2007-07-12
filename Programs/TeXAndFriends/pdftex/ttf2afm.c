@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -13,11 +13,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/ttf2afm.c#21 $
+$Id: ttf2afm.c 114 2007-05-23 18:23:49Z ms $
 */
 
 /*
@@ -500,11 +500,7 @@ void read_font()
     switch (post_format) {
     case 0x00010000:
         for (pm = mtx_tab; pm - mtx_tab < NMACGLYPHS; pm++)
-#if defined(MIKTEX)
-	    pm->name = (char*)mac_glyph_names[pm - mtx_tab];
-#else
-            pm->name = mac_glyph_names[pm - mtx_tab];
-#endif
+            pm->name = (char *) mac_glyph_names[pm - mtx_tab];
         break;
     case 0x00020000:
         l = get_ushort();       /* some fonts have this value different from nglyphs */
@@ -522,11 +518,7 @@ void read_font()
         }
         for (pm = mtx_tab; pm - mtx_tab < l; pm++) {
             if (pm->index < NMACGLYPHS)
-#if defined(MIKTEX)
-                pm->name = (char*)mac_glyph_names[pm->index];
-#else
-                pm->name = mac_glyph_names[pm->index];
-#endif
+                pm->name = (char *) mac_glyph_names[pm->index];
             else {
                 k = pm->index - NMACGLYPHS;
                 if (k < m) {
