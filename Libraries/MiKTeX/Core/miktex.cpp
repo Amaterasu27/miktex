@@ -1160,12 +1160,18 @@ SessionImpl::Uninitialize ()
   catch (const exception &)
     {
 #if defined(MIKTEX_WINDOWS)
-      CoUninitialize ();
+      if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
+	{
+	  CoUninitialize ();
+	}
 #endif
       throw;
     }
 #if defined(MIKTEX_WINDOWS)
-  CoUninitialize ();
+  if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
+    {
+      CoUninitialize ();
+    }
 #endif
 }
 
