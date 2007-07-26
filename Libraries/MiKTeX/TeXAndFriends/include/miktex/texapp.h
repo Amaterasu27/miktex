@@ -247,10 +247,6 @@ public:
 	      savesize,
 	      save_size,
 	      texapp::texapp::save_size());
-    GETPARAM (param_trie_op_size,
-	      trieopsize,
-	      trie_op_size,
-	      texapp::texapp::trie_op_size());
     GETPARAM (param_trie_size,
 	      triesize,
 	      trie_size,
@@ -260,22 +256,19 @@ public:
     Allocate (THEDATA(linestack), THEDATA(maxinopen));
     Allocate (THEDATA(fullsourcefilenamestack), THEDATA(maxinopen));
     Allocate (THEDATA(inputfile), THEDATA(maxinopen));
-    Allocate (THEDATA(hyfdistance), THEDATA(trieopsize));
-    Allocate (THEDATA(hyfnext), THEDATA(trieopsize));
-    Allocate (THEDATA(hyfnum), THEDATA(trieopsize));
     Allocate (THEDATA(nest), THEDATA(nestsize) + 1);
     Allocate (THEDATA(savestack), THEDATA(savesize) + 1);
-    Allocate (THEDATA(trie), THEDATA(triesize) + 1);
     Allocate (THEDATA(triehash), THEDATA(triesize) + 1);
     Allocate (THEDATA(triel), THEDATA(triesize) + 1);
     Allocate (THEDATA(trieo), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trieophash), 2 * THEDATA(trieopsize) + 1);
-    Allocate (THEDATA(trieopval), THEDATA(trieopsize));
     Allocate (THEDATA(trier), THEDATA(triesize) + 1);
     Allocate (THEDATA(trietaken), THEDATA(triesize));
 
-
 #if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
+    GETPARAM (param_hyph_size,
+	      hyphsize,
+	      hyph_size,
+	      texapp::texapp::hyph_size());
     GETPARAM (param_font_max,
 	      fontmax,
 	      font_max,
@@ -284,6 +277,14 @@ public:
 	      fontmemsize,
 	      font_mem_size,
 	      texapp::texapp::font_mem_size());
+
+    Allocate (THEDATA(trietrl), THEDATA(triesize));
+    Allocate (THEDATA(trietro), THEDATA(triesize));
+    Allocate (THEDATA(trietrc), THEDATA(triesize));
+
+    Allocate (THEDATA(hyphword), THEDATA(hyphsize) + 1);
+    Allocate (THEDATA(hyphlist), THEDATA(hyphsize) + 1);
+    Allocate (THEDATA(hyphlink), THEDATA(hyphsize) + 1);
 
     Allocate (THEDATA(bcharlabel), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(charbase), THEDATA(fontmax) + 1 - constfontbase);
@@ -310,9 +311,24 @@ public:
     Allocate (THEDATA(parambase), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(skewchar), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(triec), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trieoplang), THEDATA(trieopsize));
     Allocate (THEDATA(widthbase), THEDATA(fontmax) + 1 - constfontbase);
-#endif // MIKTEX_OMEGA
+#endif // not Omega
+
+#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+    GETPARAM (param_trie_op_size,
+	      trieopsize,
+	      trie_op_size,
+	      texapp::texapp::trie_op_size());
+
+    Allocate (THEDATA(hyfdistance), THEDATA(trieopsize));
+    Allocate (THEDATA(hyfnext), THEDATA(trieopsize));
+    Allocate (THEDATA(hyfnum), THEDATA(trieopsize));
+    Allocate (THEDATA(trie), THEDATA(triesize) + 1);
+    Allocate (THEDATA(trieophash), 2 * THEDATA(trieopsize) + 1);
+    Allocate (THEDATA(trieoplang), THEDATA(trieopsize));
+    Allocate (THEDATA(trieopval), THEDATA(trieopsize));
+#endif // Omega
+
   }
 #endif // THEDATA
 
@@ -334,23 +350,24 @@ public:
     Free (THEDATA(inputfile));
     Free (THEDATA(fullsourcefilenamestack));
     Free (THEDATA(sourcefilenamestack));
-    Free (THEDATA(hyfdistance));
-    Free (THEDATA(hyfnext));
-    Free (THEDATA(hyfnum));
     Free (THEDATA(nest));
     Free (THEDATA(savestack));
-    Free (THEDATA(trie));
     Free (THEDATA(triec));
     Free (THEDATA(triehash));
     Free (THEDATA(triel));
     Free (THEDATA(trieo));
-    Free (THEDATA(trieophash));
-    Free (THEDATA(trieoplang));
-    Free (THEDATA(trieopval));
     Free (THEDATA(trier));
     Free (THEDATA(trietaken));
 
 #if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
+    Free (THEDATA(hyphword));
+    Free (THEDATA(hyphlist));
+    Free (THEDATA(hyphlink));
+
+    Free (THEDATA(trietrl));
+    Free (THEDATA(trietro));
+    Free (THEDATA(trietrc));
+
     Free (THEDATA(bcharlabel));
     Free (THEDATA(charbase));
     Free (THEDATA(depthbase));
@@ -376,7 +393,18 @@ public:
     Free (THEDATA(parambase));
     Free (THEDATA(skewchar));
     Free (THEDATA(widthbase));
-#endif // MIKTEX_OMEGA
+#endif // not Omega
+
+#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+    Free (THEDATA(hyfdistance));
+    Free (THEDATA(hyfnext));
+    Free (THEDATA(hyfnum));
+    Free (THEDATA(trie));
+
+    Free (THEDATA(trieophash));
+    Free (THEDATA(trieoplang));
+    Free (THEDATA(trieopval));
+#endif
   }
 #endif // THEDATA
 
@@ -538,6 +566,9 @@ private:
 
 private:
   std::bitset<32> sourceSpecials;
+
+private:
+  int param_hyph_size;
   
 private:
   int param_font_max;
@@ -556,7 +587,7 @@ private:
   
 private:
   int param_save_size;
-  
+
 private:
   int param_trie_op_size;
   

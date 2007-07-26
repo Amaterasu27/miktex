@@ -1,6 +1,6 @@
 ## omega_dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1998-2006 Christian Schenk
+## Copyright (C) 1998-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,3 +23,10 @@ s/^\([_a-zA-Z0-9]*\) \(m_ocplistinfo\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
 s/^\([_a-zA-Z0-9]*\) \(m_ocplstackinfo\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
 s/^\([_a-zA-Z0-9]*\) \(m_ocplistlist\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
 s/^\([_a-zA-Z0-9]*\) \(m_fontsorttables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/\1 **\2;/
+s/^\([_A-Za-z0-9]*\) \(m_trieophash\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_trieoplang\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_trieopval\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_hyfdistance\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_hyfnum\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_hyfnext\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_trie\)\[ [A-Za-z0-9]* \];$/\1 *\2;/

@@ -276,6 +276,38 @@ miktexreallocate (/*[in,out]*/ T * &	p,
   return (THEAPP.Reallocate(p, n));
 }
 
+/* _________________________________________________________________________
+     
+   miktexdump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexdump (/*[in]*/ FILE_ &		f,
+	    /*[in]*/ const ELETYPE_ &	e,
+	    /*[in]*/ size_t		n)
+{
+  THEAPP.Dump (f, e, n);
+}
+
+/* _________________________________________________________________________
+     
+   miktexundump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexundump (/*[in]*/ FILE_ &		f,
+	      /*[out]*/ ELETYPE_ &	e,
+	      /*[in]*/ size_t		n)
+{
+  THEAPP.Undump (f, e, n);
+}
+
 MIKTEXMF_END_NAMESPACE;
 
 #undef MIKTEXMF_BEGIN_NAMESPACE

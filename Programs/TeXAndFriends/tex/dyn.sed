@@ -1,6 +1,6 @@
 ## dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1991-2006 Christian Schenk
+## Copyright (C) 1991-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -55,17 +55,10 @@ s/^\([_A-Za-z0-9]*\) \(m_strstart\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_strpool\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_savestack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_trietaken\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trie\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_triec\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_trieo\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_triel\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_trier\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_triehash\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfdistance\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfnum\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfnext\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieophash\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieoplang\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieopval\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_sourcefilenamestack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
 s/^\([_A-Za-z0-9]*\) \(m_fullsourcefilenamestack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/

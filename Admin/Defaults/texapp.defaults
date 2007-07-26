@@ -21,3 +21,6 @@ font_max=2000
 
 ;; Number of words of font_info for all fonts.
 font_mem_size=1000000
+
+;; Maximun number of hyphen exceptions.
+hyph_size=65535

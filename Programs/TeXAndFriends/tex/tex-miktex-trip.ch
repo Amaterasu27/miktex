@@ -1,6 +1,6 @@
 %% tex-miktex-trip.ch: triptest changes
 %% 
-%% Copyright (C) 1991-2006 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -25,6 +25,12 @@
 @!dvi_buf_size=8192; {size of the output buffer; must be a multiple of 8}
 @y
 @!dvi_buf_size=800; {size of the output buffer; must be a multiple of 8}
+@z
+
+@x
+@!trie_op_size=35111; {space for ``opcodes'' in the hyphenation patterns}
+@y
+@!trie_op_size=500; {space for ``opcodes'' in the hyphenation patterns}
 @z
 
 % _____________________________________________________________________________

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -92,7 +92,6 @@ set(triptex_options "${triptex_options} -save-size=600")
 set(triptex_options "${triptex_options} -stack-size=200")
 set(triptex_options "${triptex_options} -strict")
 set(triptex_options "${triptex_options} -string-vacancies=8000")
-set(triptex_options "${triptex_options} -trie-op-size=500")
 set(triptex_options "${triptex_options} -trie-size=8000")
 
 set(trip_dir ${CMAKE_CURRENT_SOURCE_DIR}/trip)
@@ -107,4 +106,23 @@ add_custom_target(triptest
   DEPENDS triptex
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
+)
+
+## dev targets
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
+  COMMAND ${webn_exe}
+	< ${tex_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${tex_web_file}
+  VERBATIM
+)
+
+add_custom_target(dev ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
 )

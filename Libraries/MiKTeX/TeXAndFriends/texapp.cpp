@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -51,6 +51,7 @@ TeXApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   lastLineNum = -1;
   param_font_max = -1;
   param_font_mem_size = -1;
+  param_hyph_size = -1;
   param_max_in_open = -1;
   param_mem_bot = -1;
   param_nest_size = -1;
@@ -149,12 +150,6 @@ Set save_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_SAVE_SIZE,
 	     required_argument, T_("N"));
 
-  AddOption (T_("trie-op-size\0\
-Set trie_op_size to N."),
-	     FIRST_OPTION_VAL + optBase + OPT_TRIE_OP_SIZE,
-	     required_argument,
-	     T_("N"));
-
   AddOption (T_("trie-size\0\
 Set trie_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_TRIE_SIZE,
@@ -171,6 +166,14 @@ Set font_max to N."),
       AddOption (T_("font-mem-size\0\
 Set font_mem_size to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_FONT_MEM_SIZE,
+		 required_argument,
+		 T_("N"));
+    }
+  else
+    {
+      AddOption (T_("trie-op-size\0\
+Set trie_op_size to N."),
+		 FIRST_OPTION_VAL + optBase + OPT_TRIE_OP_SIZE,
 		 required_argument,
 		 T_("N"));
     }
