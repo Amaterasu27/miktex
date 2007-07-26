@@ -3,9 +3,9 @@
                          "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 %entities.ent;
-<!ENTITY rev "2.7.2677">
-<!ENTITY month "May 2007">
-<!ENTITY date "01 May 2007">
+<!ENTITY rev "2.7.2763">
+<!ENTITY month "July 2007">
+<!ENTITY date "26 July 2007">
 ]>
 
 <article>
@@ -62,15 +62,7 @@ by subscribing to this Weblog:
 
 <title>&MiKTeX; 2.7</title>
 
-<para>Release date: 2007/H2</para>
-
-<bridgehead renderas="sect3">Highlights:</bridgehead>
-
-<highlights>
-<itemizedlist>
-<listitem><para>&XeTeX;</para></listitem>
-</itemizedlist>
-</highlights>
+<para>Release date: not fixed yet</para>
 
 </section>
 
