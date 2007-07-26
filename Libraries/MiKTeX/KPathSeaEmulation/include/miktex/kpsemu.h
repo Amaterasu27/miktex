@@ -324,8 +324,13 @@
 #  define kpse_var_value miktex_kpse_var_value
 #endif
 
+#if NAMEOFFILE_STARTS_WITH_SPACE
+#define open_input(f_ptr, filefmt, fopen_mode) \
+  MiKTeX::Web2C::OpenInput(nameoffile+1, f_ptr, filefmt, fopen_mode)
+#else
 #define open_input(f_ptr, filefmt, fopen_mode) \
   MiKTeX::Web2C::OpenInput(nameoffile, f_ptr, filefmt, fopen_mode)
+#endif
 
 #define program_invocation_name miktex_program_invocation_name
 

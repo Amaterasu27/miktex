@@ -347,7 +347,7 @@ getbyte (/*[in]*/ bytefile & f)
 #if defined(vfbopenin)
 #  undef vfbopenin
 #  define vfbopenin(f) \
-    miktexopenvffile(f, THEDATA(nameoffile))
+    miktexopenvffile(f, THEDATA(nameoffile)+1)
 #endif
 
 #define __attribute__(x)

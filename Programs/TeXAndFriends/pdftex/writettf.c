@@ -1343,9 +1343,6 @@ void writettf(fd_entry * fd)
         pdftex_fail("cannot open TrueType font file for reading");
     }
     cur_file_name = (char *) nameoffile + 1;
-#if defined(MIKTEX)
-    cur_file_name -= 1;
-#endif
     if (is_subsetted(fd_cur->fm))
         tex_printf("<%s", cur_file_name);
     else
@@ -1401,9 +1398,6 @@ void writeotf(fd_entry * fd)
         pdftex_fail("cannot open OpenType font file for reading");
     }
     cur_file_name = (char *) nameoffile + 1;
-#if defined(MIKTEX)
-    cur_file_name -= 1;
-#endif
     tex_printf("<<%s", cur_file_name);
     fd_cur->ff_found = true;
     dir_tab = NULL;

@@ -1,6 +1,6 @@
 /* miktex/inputline.h: inputln() implementation for TeX & Friends -*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -225,6 +225,26 @@ protected:
   {
     return (fqNameOfFile.Get());
   }
+
+  /* _______________________________________________________________________
+     
+     GetNameOfFile
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  const char *
+  GetNameOfFile ()
+    const
+  {
+    char * lpszNameOfFile = THEDATA(nameoffile);
+#if NAMEOFFILE_STARTS_WITH_SPACE
+    lpszNameOfFile += 1;
+#endif
+    return (lpszNameOfFile);
+  }
+#endif
 
   /* _______________________________________________________________________
      

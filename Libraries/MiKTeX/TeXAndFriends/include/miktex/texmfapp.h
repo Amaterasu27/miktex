@@ -43,6 +43,7 @@
 #if defined(MIKTEX_TEX_COMPILER)
 #  if ! defined(MIKTEX_OMEGA)
 #    define IMPLEMENT_TCX 1
+#    define NAMEOFFILE_STARTS_WITH_SPACE 1
 #  endif
 #endif
 
@@ -819,7 +820,7 @@ public:
     const
   {
     FILE * pfile;
-    if (! OpenMemoryDumpFile(THEDATA(nameoffile),
+    if (! OpenMemoryDumpFile(GetNameOfFile(),
 			     &pfile,
 			     &f.bufref(),
 			     sizeof(*f),
@@ -943,7 +944,7 @@ public:
   OpenPoolFile (/*[in]*/ T & f)
     const
   {
-    return (OpenPoolFile(&f, THEDATA(nameoffile)));
+    return (OpenPoolFile(&f, GetNameOfFile()));
   }
 #endif // THEDATA
 

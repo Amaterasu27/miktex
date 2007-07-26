@@ -253,11 +253,7 @@ char **load_enc_file(char *enc_name)
     for (i = 0; i < 256; i++)
         glyph_names[i] = (char *) notdef;
     t1_log("{");
-#if defined(MIKTEX)
-    t1_log(cur_file_name = (char *) nameoffile);
-#else
     t1_log(cur_file_name = (char *) nameoffile + 1);
-#endif
     enc_getline();
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == NULL) {
         remove_eol(r, enc_line);

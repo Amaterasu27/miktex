@@ -205,8 +205,8 @@ an integer variable.
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=259; {file names shouldn't be longer than this}
-@!file_name_size_plus_one=260; {one more for the string terminator}
+@!file_name_size=258; {file names shouldn't be longer than this}
+@!file_name_size_plus_two=260; {two more for start and end}
 @z
 
 % _____________________________________________________________________________
@@ -338,13 +338,14 @@ miktex_initialize_char_tables;
 |name_of_file|.
 @^system dependencies@>
 
-\MiKTeX: reserve an extra byte for the terminating null character.
+\MiKTeX: reserve two extra bytes: |name_of_file| starts with a dummy
+character (Web2C compatibility/idiocy) end ends with the null character.
 @z
 
 @x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
 @y
-@!name_of_file:packed array[1..file_name_size_plus_one] of char;@;@/
+@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
 @z
 
 % _____________________________________________________________________________
@@ -639,7 +640,7 @@ tini
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
-miktex_get_pool_file_name(name_of_file);
+miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
 if miktex_open_pool_file(pool_file) then
 @z
 
@@ -1264,6 +1265,13 @@ begin miktex_print_filename (a, n, e);
 % _____________________________________________________________________________
 
 @x
+begin k:=0;
+@y
+begin k:=1;
+name_of_file[1]:=xchr[' '];
+@z
+
+@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1344,8 +1352,11 @@ var j:0..sup_buf_size; {the first space after the format file name}
     {now try the system format file area}
   if w_open_in(fmt_file) then goto found;
 @y
-  c4p_memcpy(name_of_file,file_name_size,c4p_ptr(buffer[loc]),j-loc);
-  name_of_file[j-loc+1]:=chr(0);
+  c4p_memcpy(c4p_ptr(name_of_file[2]),
+             file_name_size_plus_two-1,
+             c4p_ptr(buffer[loc]),
+             j-loc);
+  name_of_file[j-loc+2]:=chr(0);
   if miktex_open_format_file(fmt_file) then goto found;
 @z
 
@@ -1359,7 +1370,9 @@ var j:0..sup_buf_size; {the first space after the format file name}
 pack_buffered_name(format_default_length-format_ext_length,1,0);
 if not w_open_in(fmt_file) then
 @y
-c4p_strcpy(name_of_file,file_name_size_plus_one,TEX_format_default);
+c4p_strcpy(c4p_ptr(name_of_file[2]),
+           file_name_size_plus_two-1,
+           TEX_format_default);
 if not miktex_open_format_file(fmt_file) then
 @z
 
@@ -1367,6 +1380,17 @@ if not miktex_open_format_file(fmt_file) then
   wterm_ln('I can''t find the PLAIN format file!');
 @y
   wterm_ln('I can''t find the default format file!');
+@z
+
+% _____________________________________________________________________________
+%
+% [29.525]
+% _____________________________________________________________________________
+
+@x
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+@y
+else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
 @z
 
 % _____________________________________________________________________________
@@ -1522,7 +1546,7 @@ if name=str_ptr-1 then {we can conserve string pool space now}
 @x
 if not b_open_in(tfm_file) then abort;
 @y
-if not miktex_open_tfm_file(tfm_file,name_of_file) then abort;
+if not miktex_open_tfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
 @z
 
 % _____________________________________________________________________________
