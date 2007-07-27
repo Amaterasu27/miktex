@@ -1,6 +1,6 @@
-/* main.c: Pascal-to-C Translator			-*- C++ -*-
+/* main.c: Pascal-to-C Translator				-*- C++ -*-
 
-   Copyright (C) 1991-2004 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is part of C4P.
 
@@ -170,6 +170,7 @@ Options:\n\
   --class=CLASS\n\
   --class-include=FILENAME\n\
   --entry-name=NAME\n\
+  --declare-c-type=NAME\n\
   --var-name-prefix=PREFIX\n\
   --var-struct=NAME\n\
   --var-struct-base-class=NAME\n\
@@ -199,6 +200,7 @@ Options:\n\
 #define OPT_USING_NAMESPACE 12
 #define OPT_VAR_NAME_PREFIX 13
 #define OPT_CHARS_ARE_UNSIGNED 14
+#define OPT_DECLARE_C_TYPE 15
 
 /* _________________________________________________________________________
 
@@ -214,6 +216,7 @@ namespace {
     _T("class"), required_argument, 0, OPT_CLASS,
     _T("class-include"), required_argument, 0, OPT_CLASS_INCLUDE,
     _T("c-plus-plus"), no_argument, 0, _T('C'),
+    _T("declare-c-type"), required_argument, 0, OPT_DECLARE_C_TYPE,
     _T("def-filename"), required_argument, 0, OPT_DEF_FILENAME,
     _T("dll"), no_argument, 0, OPT_DLL,
     _T("entry-name"), required_argument, 0, OPT_ENTRY_NAME,
@@ -282,6 +285,9 @@ option_handler (/*[in]*/ int		argc,
 	  break;
 	case OPT_CLASS_INCLUDE:
 	  class_include = optarg;
+	  break;
+	case OPT_DECLARE_C_TYPE:
+	  new_type (optarg, UNKNOWN_TYPE, 0, 0);
 	  break;
 	case OPT_DLL:
 	  dll_flag = true;

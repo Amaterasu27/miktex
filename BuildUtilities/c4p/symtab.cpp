@@ -1,6 +1,6 @@
 /* symtab.c: symbol table					-*- C++ -*-
 
-   Copyright (C) 1991-2001 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is part of C4P.
 
@@ -30,7 +30,6 @@
 using namespace std;
 
 void new_keyword (const char *, unsigned);
-void new_type (const char *, pascal_type, void *, const char *);
 void new_variable (const char *, const char *);
 void new_constant (const char *, const char *, long);
 void new_function (const char *, const char *);

@@ -1,6 +1,6 @@
 /* common.h: common definitions for C4P			-*- C++ -*-
 
-   Copyright (C) 1991-2004 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is part of C4P.
 
@@ -236,6 +236,7 @@ unsigned get_buf_mark ();
 void out_buf_over (unsigned, const char *, unsigned);
 void forget_fast_vars ();
 void remember_fast_var (const char *);
+void new_type (const char *, pascal_type, void *, const char *);
 
 extern symbol_t * prog_symbol;
 extern unsigned curly_brace_level;
