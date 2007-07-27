@@ -90,6 +90,7 @@ set(unxemu_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-unxemu")
 set(vftovp_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-vftovp")
 set(vptovf_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-vptovf")
 set(weave_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-weave")
+set(xetex_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-xetex")
 set(zlib_dll_name	"MiKTeX${MIKTEX_SERIES_INT}-zlib")
 
 set(session_tlb_name    "MiKTeX${MIKTEX_SERIES_INT}-session")
