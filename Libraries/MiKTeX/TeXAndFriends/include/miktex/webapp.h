@@ -1,6 +1,6 @@
 /* miktex/webapp.h:					       	-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -67,6 +67,7 @@ class FeatureEnum
 {
 public:
   enum EnumType {
+    EightBitChars,
     TCX
   };
 };
@@ -494,6 +495,20 @@ public:
 
   /* _______________________________________________________________________
      
+     Enable8BitCharsP
+     _______________________________________________________________________ */
+
+public:
+
+  bool
+  Enable8BitCharsP ()
+    const
+  {
+    return (enable8BitChars);
+  }
+
+  /* _______________________________________________________________________
+     
      GetTcxFileName
      _______________________________________________________________________ */
 
@@ -517,13 +532,28 @@ public:
   void
   InitializeCharTables ()
   {
-    MiKTeX::TeXAndFriends::InitializeCharTables ((tcxFileName.GetLength() > 0
-						  ? ICT_TCX
-						  : ICT_TEX82),
+    unsigned long flags = 0;
+    if (tcxFileName.GetLength() > 0)
+      {
+	flags |= ICT_TCX;
+      }
+    if (Enable8BitCharsP())
+      {
+	flags |= ICT_8BIT;
+      }
+#if defined(MIKTEX_TEX_COMPILER)
+    MiKTeX::TeXAndFriends::InitializeCharTables (flags,
+						 tcxFileName.Get(),
+						 THEDATA(xchr),
+						 THEDATA(xord),
+						 THEDATA(xprn));
+#else
+    MiKTeX::TeXAndFriends::InitializeCharTables (flags,
 						 tcxFileName.Get(),
 						 THEDATA(xchr),
 						 THEDATA(xord),
 						 0);
+#endif
   }
 #endif
 
@@ -552,6 +582,19 @@ public:
 		  /*[in]*/ const MIKTEXCHAR * lpszVersion,
 		  /*[in]*/ const MIKTEXCHAR * lpszCopyright,
 		  /*[in]*/ const MIKTEXCHAR * lpszTrademarks);
+
+  /* _______________________________________________________________________
+     
+     Enable8BitChars
+     _______________________________________________________________________ */
+
+protected:
+
+  void
+  Enable8BitChars (/*[in]*/ bool enable8BitChars)
+  {
+    this->enable8BitChars = enable8BitChars;
+  }
 
   /* _______________________________________________________________________
      
@@ -624,6 +667,9 @@ private:
   
 private:
   MiKTeX::Core::PathName tcxFileName;
+
+private:
+  bool enable8BitChars;
   
 private:
   MiKTeX::Core::tstring trademarks;

@@ -231,6 +231,7 @@ public:
   {
     TeXApp::Init (lpszProgramInvocationName);
 #if defined(IMPLEMENT_TCX)
+    EnableFeature (MiKTeX::TeXAndFriends::Feature::EightBitChars);
     EnableFeature (MiKTeX::TeXAndFriends::Feature::TCX);
 #endif
   }

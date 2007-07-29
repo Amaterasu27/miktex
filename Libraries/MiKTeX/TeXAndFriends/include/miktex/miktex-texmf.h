@@ -1,6 +1,6 @@
 /* miktex-texmf.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -65,15 +65,15 @@ MIKTEXMFAPI(void)
 ConsolePrint (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 	      /*[in]*/				...);
 
-const unsigned long ICT_TEX82 = 0;
 const unsigned long ICT_TCX = 1;
+const unsigned long ICT_8BIT = 2;
 
 MIKTEXMFAPI(bool)
 InitializeCharTables (/*[in]*/ unsigned long		flags,
 		      /*[in]*/ const MIKTEXCHAR *	lpszFileName,
 		      /*[out]*/ void *			pChar,
 		      /*[out]*/ void *			pOrd,
-		      /*[out]*/ void *		pReserved1 /* pPrintable */);
+		      /*[out]*/ void *			pPrintable );
 
 MIKTEXMFAPI(bool)
 OpenMAPFile (/*[in]*/ void *			p,

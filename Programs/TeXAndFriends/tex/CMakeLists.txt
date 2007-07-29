@@ -26,6 +26,7 @@ set(C4P_FLAGS --chars-are-unsigned)
 
 set(tex_changefiles
   ${CMAKE_CURRENT_SOURCE_DIR}/mltex-miktex.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/enctex-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-misc.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hyph.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-quiet.ch

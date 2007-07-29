@@ -1,6 +1,6 @@
 /* texmflib.cpp: TeX'n'Friends helpers
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -254,8 +254,9 @@ MiKTeX::TeXAndFriends::ConsolePrint (/*[in]*/ const MIKTEXCHAR * lpszFormat,
 
 STATICFUNC(bool)
 ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		/*[in,out]*/ unsigned char *	rgChar,
-		/*[in,out]*/ unsigned char *	rgOrd)
+		/*[in,out]*/ unsigned char *	pChr,
+		/*[in,out]*/ unsigned char *	pOrd,
+		/*[in,out]*/ unsigned char *	pPrn)
 {
   PathName tcxPath;
 
@@ -305,7 +306,10 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			      tcxPath.Get());
 	}
 
-      // get xchr index (dest)
+      // make the char printable by default
+      long printable = 1;
+
+      // get optional xchr index (dest)
       start = end;
       long xchridx = _tcstol(start, &end, 0);
       if (start == end)
@@ -319,10 +323,36 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			      T_("Invalid tcx file."),
 			      tcxPath.Get());
 	}
+      else
+	{
+	  // get optional printable flag
+	  printable = _tcstol(start, &end, 0);
+	  if (start == end)
+	    {
+	      // not specified; by default printable
+	      printable = 1;
+	    }
+	  else if (printable < 0 || printable > 1)
+	    {
+	      FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+				  T_("Invalid tcx file."),
+				  tcxPath.Get());
+	    }
+	}
+
+      // don't allow the 7bit ASCII set to become unprintable.
+      if (printable == 0 && xordidx >= ' ' && xordidx <= '~')
+	{
+	  printable = 1;
+	}
 
       // update the char tables
-      rgChar[xchridx] = static_cast<unsigned char>(xordidx);
-      rgOrd[xordidx] = static_cast<unsigned char>(xchridx);
+      pOrd[xordidx] = static_cast<unsigned char>(xchridx);
+      pChr[xchridx] = static_cast<unsigned char>(xordidx);
+      if (pPrn != 0)
+	{
+	  pPrn[xchridx] = static_cast<unsigned char>(printable);
+	}
     }
 
   reader.Close ();
@@ -339,26 +369,44 @@ MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::InitializeCharTables
 (/*[in]*/ unsigned long		flags,
  /*[in]*/ const MIKTEXCHAR *	lpszFileName,
- /*[in]*/ void *		pChar,
+ /*[in]*/ void *		pChr,
  /*[in]*/ void *		pOrd,
- /*[in]*/ void *		pReserved1)
+ /*[in]*/ void *		pPrn)
 {
   MIKTEX_API_BEGIN ("InitializeCharTables");
   MIKTEX_ASSERT_STRING (lpszFileName);
-  MIKTEX_ASSERT_BUFFER (pChar, 256);
+  MIKTEX_ASSERT_BUFFER (pChr, 256);
   MIKTEX_ASSERT_BUFFER (pOrd, 256);
-  UNUSED (pReserved1);
-  MIKTEX_ASSERT (pReserved1 == 0);
-  unsigned char * pxchr = reinterpret_cast<unsigned char*>(pChar);
+  MIKTEX_ASSERT_BUFFER_OR_NIL (pPrn, 256);
+  unsigned char * pxchr = reinterpret_cast<unsigned char*>(pChr);
   unsigned char * pxord = reinterpret_cast<unsigned char*>(pOrd);
-  for (unsigned i = 0; i < 256; ++ i)
+  unsigned char * pxprn = reinterpret_cast<unsigned char*>(pPrn);
+  for (unsigned idx = 0; idx < 256; ++ idx)
     {
-      pxchr[i] = static_cast<char>(i);
-      pxord[i] = static_cast<unsigned char>(i);
+      pxchr[idx] = static_cast<unsigned char>(idx);
+      pxord[idx] = static_cast<unsigned char>(idx);
+      if (pxprn != 0)
+	{
+	  if ((flags & ICT_TCX) != 0)
+	    {
+	      pxprn[idx] = 1;
+	    }
+	  else
+	    {
+	      if (idx >= ' ' && idx <= '~')
+		{
+		  pxprn[idx] = 1;
+		}
+	      else
+		{
+		  pxprn[idx] = 0;
+		}
+	    }
+	}
     }
   if ((flags & ICT_TCX) != 0)
     {
-      ProcessTCXFile (lpszFileName, pxchr, pxord);
+      ProcessTCXFile (lpszFileName, pxchr, pxord, pxprn);
     }
   return (true);
   MIKTEX_API_END ("InitializeCharTables");

@@ -279,28 +279,28 @@ an integer variable.
 % [2.23]
 % _____________________________________________________________________________
 
-@x
+ @x
 To get the most ``permissive'' character set, change |' '| on the
 right of these assignment statements to |chr(i)|.
 @^character set dependencies@>
 @^system dependencies@>
-@y
+ @y
 To get the most ``permissive'' character set, change |' '| on the
 right of these assignment statements to |chr(i)|.
 @^character set dependencies@>
 @^system dependencies@>
 
 \MiKTeX: we use the most ``permissive'' character set.
-@z
+ @z
 
-@x
+ @x
 @<Set init...@>=
 for i:=0 to @'37 do xchr[i]:=' ';
 for i:=@'177 to @'377 do xchr[i]:=' ';
-@y
+ @y
 @<Set init...@>=
 do_nothing;
-@z
+ @z
 
 % _____________________________________________________________________________
 %
@@ -344,6 +344,7 @@ character (Web2C compatibility/idiocy) end ends with the null character.
 
 @x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
+  {on some systems this may be a \&{record} variable}
 @y
 @!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
 @z
@@ -1147,6 +1148,12 @@ full_source_filename_stack[1]:=0;
 var k:0..buf_size; {an index into |buffer|}
 @y
 var k:0..sup_buf_size; {an index into |buffer|}
+@z
+
+@x
+@!i,@!j: 0..buf_size; {more indexes for encTeX}
+@y
+@!i,@!j: 0..sup_buf_size; {more indexes for encTeX}
 @z
 
 % _____________________________________________________________________________

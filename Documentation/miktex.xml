@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2762">
+<!ENTITY revj2000 "2765">
 <!ENTITY month "July 2007">
-<!ENTITY date "July 25, 2007">
+<!ENTITY date "July 28, 2007">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -55,16 +55,17 @@
 <!ENTITY mantexify SYSTEM "Ref/texify.xml">
 <!ENTITY manupdmapcfg SYSTEM "Ref/updmapcfg.xml">
 <!ENTITY optionalias SYSTEM "Options/alias.xml">
-<!ENTITY optionmltex SYSTEM "Options/mltex.xml">
 <!ENTITY optionauxdirectory SYSTEM "Options/auxdirectory.xml">
 <!ENTITY optionbistacksize SYSTEM "Options/bistacksize.xml">
 <!ENTITY optionbufsize SYSTEM "Options/bufsize.xml">
 <!ENTITY optioncstyleerrors SYSTEM "Options/cstyleerrors.xml">
 <!ENTITY optiondisableinstaller SYSTEM "Options/disableinstaller.xml">
+<!ENTITY optiondisablepipes SYSTEM "Options/disablepipes.xml">
 <!ENTITY optiondisablewriteeighteen SYSTEM "Options/disablewriteeighteen.xml">
 <!ENTITY optiondontparsefirstline SYSTEM "Options/dontparsefirstline.xml">
+<!ENTITY optionenableenctex SYSTEM "Options/enableenctex.xml">
 <!ENTITY optionenableinstaller SYSTEM "Options/enableinstaller.xml">
-<!ENTITY optiondisablepipes SYSTEM "Options/disablepipes.xml">
+<!ENTITY optionenablemltex SYSTEM "Options/enablemltex.xml">
 <!ENTITY optionenablepipes SYSTEM "Options/enablepipes.xml">
 <!ENTITY optionenablewriteeighteen SYSTEM "Options/enablewriteeighteen.xml">
 <!ENTITY optionerrorline SYSTEM "Options/errorline.xml">

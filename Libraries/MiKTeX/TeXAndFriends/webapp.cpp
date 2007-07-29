@@ -54,6 +54,7 @@ WebApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 {
   Application::Init (lpszProgramInvocationName);
   theNameOfTheGame = Utils::GetExeName();
+  enable8BitChars = false;
 }
 
 /* _________________________________________________________________________

@@ -149,7 +149,9 @@ set(pdftex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/dyn.sed")
 set(tex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/dyn.sed")
 
 # change files
+set(enctex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/enctex-miktex.ch")
 set(etex_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex.ch")
+set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(tex_fallback_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-fallback.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")
 set(tex_miktex_hyph_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hyph.ch")
@@ -157,7 +159,6 @@ set(tex_miktex_quiet_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-quiet.ch"
 set(tex_miktex_src_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-src.ch")
 set(tex_miktex_stat_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-stat.ch")
 set(tex_miktex_write18_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-write18.ch")
-set(tex_mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(vadjust_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/vadjust.ch")
 
 # build utilities

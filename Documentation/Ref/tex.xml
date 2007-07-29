@@ -117,7 +117,9 @@ character (usually <keycombo>
 &optiondisablepipes;
 &optiondisablewriteeighteen;
 &optiondontparsefirstline;
+&optionenableenctex;
 &optionenableinstaller;
+&optionenablemltex;
 &optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
@@ -138,7 +140,6 @@ character (usually <keycombo>
 &optionmemmax;
 &optionmemmin;
 &optionmemtop;
-&optionmltex;
 &optionnestsize;
 &optionnocstyleerrors;
 &optionoutputdirectory;

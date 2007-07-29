@@ -643,8 +643,8 @@ l:=k; v:=min_trie_op;
 
 @x
 dump_int(hyph_size)
-@y  23784
-dump_int(hyph_prime)
+@y
+dump_int(hyph_prime);
 @z
 
 % _____________________________________________________________________________
@@ -654,8 +654,8 @@ dump_int(hyph_prime)
 
 @x
 if x<>hyph_size then goto bad_fmt
-@y  23804
-if x<>hyph_prime then goto bad_fmt
+@y
+if x<>hyph_prime then goto bad_fmt;
 @z
 
 % _____________________________________________________________________________

@@ -42,6 +42,7 @@
 
 #if defined(MIKTEX_TEX_COMPILER)
 #  if ! defined(MIKTEX_OMEGA)
+#    define ENABLE_8BIT_CHARS 1
 #    define IMPLEMENT_TCX 1
 #    define NAMEOFFILE_STARTS_WITH_SPACE 1
 #  endif

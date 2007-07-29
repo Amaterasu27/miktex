@@ -35,11 +35,13 @@
 % _____________________________________________________________________________
 
 @x
-begin @<Expand macros in the token list
+procedure write_out(@!p:pointer);
+var old_setting:0..max_selector; {holds print |selector|}
 @y
+procedure write_out(@!p:pointer);
+var old_setting:0..max_selector; {holds print |selector|}
 @!d:integer;
 @!clobbered:boolean;
-begin @<Expand macros in the token list
 @z
 
 @x

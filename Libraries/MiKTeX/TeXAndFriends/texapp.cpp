@@ -46,8 +46,9 @@ TeXApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 
   SetTeX ();
 
-  enableWrite18 = false;
+  enableEncTeX = false;
   enableMLTeX = false;
+  enableWrite18 = false;
   lastLineNum = -1;
   param_font_max = -1;
   param_font_mem_size = -1;
@@ -95,12 +96,13 @@ TeXApp::Finalize ()
 
 enum {
   OPT_DISABLE_WRITE18,
+  OPT_ENABLE_ENCTEX,
+  OPT_ENABLE_MLTEX,
   OPT_ENABLE_WRITE18,
   OPT_FONT_MAX,
   OPT_FONT_MEM_SIZE,
   OPT_MAX_IN_OPEN,
   OPT_MEM_BOT,
-  OPT_MLTEX,
   OPT_NEST_SIZE,
   OPT_SAVE_SIZE,
   OPT_SRC_SPECIALS,
@@ -119,6 +121,14 @@ TeXApp::AddOptions ()
 Disable the \\write18{COMMAND} construct."),
 	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_WRITE18);
 
+  AddOption (T_("enable-enctex\0\
+Enable EncTeX extensions such as \\mubyte."),
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_ENCTEX);
+
+  AddOption (T_("enable-mltex\0\
+Enable MLTeX extensions such as \\charsubdef."),
+	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_MLTEX);
+
   AddOption (T_("enable-write18\0\
 Enable the \\write18{COMMAND} construct."),
 	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_WRITE18);
@@ -134,10 +144,6 @@ Set mem_bot to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MEM_BOT,
 	     required_argument,
 	     T_("N"));
-
-  AddOption (T_("mltex\0\
-Enable MLTeX extensions such as \\charsubdef."),
-	     FIRST_OPTION_VAL + optBase + OPT_MLTEX);
 
   AddOption (T_("nest-size\0\
 Set nest_size to N."),
@@ -199,12 +205,13 @@ Insert source specials in certain places of the DVI file.")),
   AddOption (T_("src"), T_("src-specials"));
 
   // supported Web2C options
+  AddOption (T_("enc"), T_("enable-enctex"));
+  AddOption (T_("mltex"), T_("enable-mltex"));
   AddOption (T_("fmt"), T_("undump"));
   AddOption (T_("no-shell-escape"), T_("disable-write18"));
   AddOption (T_("shell-escape"), T_("enable-write18"));
 
   // unsupported Web2C options
-  AddOption (T_("enc"), OPT_UNSUPPORTED);
   AddOption (T_("ipc"), OPT_UNSUPPORTED);
   AddOption (T_("ipc-start"), OPT_UNSUPPORTED);
   AddOption (T_("output-comment"),
@@ -243,7 +250,10 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
     case OPT_MEM_BOT:
       param_mem_bot = _ttoi(lpszArg);
       break;
-    case OPT_MLTEX:
+    case OPT_ENABLE_ENCTEX:
+      enableEncTeX = true;
+      break;
+    case OPT_ENABLE_MLTEX:
       enableMLTeX = true;
       break;
     case OPT_NEST_SIZE:

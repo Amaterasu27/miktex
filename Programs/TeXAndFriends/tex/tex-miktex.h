@@ -65,6 +65,7 @@ public:
   {
     TeXApp::Init (lpszProgramInvocationName);
 #if defined(IMPLEMENT_TCX)
+    EnableFeature (Feature::EightBitChars);
     EnableFeature (Feature::TCX);
 #endif
   }

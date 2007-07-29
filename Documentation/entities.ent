@@ -123,6 +123,7 @@
 <!ENTITY omega "<command>omega</command>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
 <!ENTITY XeTeX "<application>XeTeX</application>">
+<!ENTITY encTeX "<application>encTeX</application>">
 <!ENTITY MLTeX "<application>MLTeX</application>">
 <!ENTITY pdfeTeX "<application>pdf-e-TeX</application>">
 <!ENTITY pdfinitex "<command>pdfinitex</command>">

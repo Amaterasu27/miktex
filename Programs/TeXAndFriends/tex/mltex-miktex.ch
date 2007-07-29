@@ -785,6 +785,10 @@ fix_date_and_time;@/
 @y
 @* \[54/ML\TeX] System-dependent changes for ML\TeX.
 
+The boolean variable |mltex_p| is set by \MiKTeX\ according to the given
+command line option (or an entry in the configuration file) before any
+\TeX{} function is called.
+
 @<Global...@> =
 @!mltex_p: boolean;
 

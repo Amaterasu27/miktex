@@ -64,6 +64,20 @@ miktexinitializechartables ()
 
 /* _________________________________________________________________________
 
+   miktexinitializechartables
+   _________________________________________________________________________ */
+
+#if defined(THEAPP) && defined(IMPLEMENT_TCX)
+inline
+bool
+miktexhavetcxfilename ()
+{
+  return (THEAPP.GetTcxFileName().GetLength() > 0);
+}
+#endif
+
+/* _________________________________________________________________________
+
    miktexprocesscommandlineoptions
    _________________________________________________________________________ */
 

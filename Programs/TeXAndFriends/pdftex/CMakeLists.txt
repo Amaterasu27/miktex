@@ -110,7 +110,8 @@ add_custom_command(
 )
 
 set(miktex_tex_change_files
-  ${tex_mltex_miktex_ch}
+  ${mltex_miktex_ch}
+  ${enctex_miktex_ch}
   ${tex_miktex_ch}
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}

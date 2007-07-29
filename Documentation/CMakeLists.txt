@@ -116,7 +116,9 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/disablepipes.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/disablewriteeighteen.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/dontparsefirstline.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Options/enableenctex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/enableinstaller.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Options/enablemltex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/enablepipes.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/enablewriteeighteen.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/errorline.xml
@@ -140,7 +142,6 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/memmax.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/memmin.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/memtop.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/mltex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/movesize.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/nestsize.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/nocstyleerrors.xml

@@ -211,7 +211,9 @@ enum {
   OPT_AUX_DIRECTORY,
   OPT_BUF_SIZE,
   OPT_C_STYLE_ERRORS,
+  OPT_DISABLE_8BIT_CHARS,
   OPT_DONT_PARSE_FIRST_LINE,
+  OPT_ENABLE_8BIT_CHARS,
   OPT_ERROR_LINE,
   OPT_HALF_ERROR_LINE,
   OPT_HALT_ON_ERROR,
@@ -255,6 +257,16 @@ TeXMFApp::AddOptions ()
     }
 
   optBase = static_cast<int>(GetOptions().size());
+
+  if (IsFeatureEnabled(Feature::EightBitChars))
+    {
+      AddOption (T_("enable-8bit-chars\0\
+Make all characters printable by default."),
+		 FIRST_OPTION_VAL + optBase + OPT_ENABLE_8BIT_CHARS);
+      AddOption (T_("disable-8bit-chars\0\
+Make only 7-bit characters printable by."),
+		 FIRST_OPTION_VAL + optBase + OPT_DISABLE_8BIT_CHARS);
+    }
 
   AddOption (T_("aux-directory\0\
 Use DIR as the directory to write auxiliary files to."),
@@ -451,6 +463,10 @@ Use the DOS codepage for console output."),
     }
 
   // supported Web2C options
+  if (IsFeatureEnabled(Feature::EightBitChars))
+    {
+      AddOption (T_("8bit"), T_("enable-8bit-chars"));
+    }
   AddOption (T_("file-line-error"), T_("c-style-errors"));
   AddOption (T_("file-line-error-style"), T_("c-style-errors"));
   AddOption (T_("jobname"), T_("job-name"));
@@ -459,7 +475,6 @@ Use the DOS codepage for console output."),
   AddOption (T_("progname"), T_("alias"));
 
   // unsupported Web2C options
-  AddOption (T_("8bit"), OPT_NOOP);
   AddOption (T_("default-translate-file"), OPT_UNSUPPORTED, required_argument);
   AddOption (T_("maketex\0"), OPT_UNSUPPORTED, required_argument);
   AddOption (T_("mktex\0"), OPT_UNSUPPORTED, required_argument);
@@ -480,6 +495,14 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 
   switch (opt - FIRST_OPTION_VAL - optBase)
     {
+
+    case OPT_ENABLE_8BIT_CHARS:
+      Enable8BitChars (true);
+      break;
+
+    case OPT_DISABLE_8BIT_CHARS:
+      Enable8BitChars (false);
+      break;
 
     case OPT_AUX_DIRECTORY:
       auxDirectory = lpszOptArg;
