@@ -1,6 +1,6 @@
 /* alias.cpp: MiKTeX .exe alias
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -75,8 +75,8 @@ main (/*[in]*/ int		argc,
 #if ! IN_PROCESS
   MiKTeX::Core::PathName prog;
   if (! MiKTeX::Core::SessionWrapper(true)->FindFile(REAL_NAME,
-					       MiKTeX::Core::FileType::EXE,
-					       prog))
+						     MiKTeX::Core::FileType::EXE,
+						     prog))
     {
       fprintf (stderr,
 	       MIKTEXTEXT("The %s executable could not be found.\n"),
@@ -86,18 +86,18 @@ main (/*[in]*/ int		argc,
 #endif // ! IN_PROCESS
 
 #if defined(PRE_ARGV)
-  int newargc = argc + pre_argc;
+  int newargc = (argc + 1/*NULL*/) + pre_argc;
   char ** newargv =
     reinterpret_cast<char**>(_alloca(sizeof(char *) * newargc));
   newargv[0] = const_cast<char*>(argv[0]);
-  size_t i;
-  for (i = 0; i < pre_argc; i++)
+  size_t idx;
+  for (idx = 0; idx < pre_argc; ++ idx)
     {
-      newargv[i + 1] = const_cast<char*>(pre_argv[i]);
+      newargv[idx + 1] = const_cast<char*>(pre_argv[idx]);
     }
-  for (i = 1; i <= argc; i++)
+  for (idx = 1; idx <= argc; ++ idx)
     {
-      newargv[i + pre_argc] = const_cast<char*>(argv[i]);
+      newargv[idx + pre_argc] = const_cast<char*>(argv[idx]);
     }
 #else // ! PRE_ARGV
 #  define newargc argc
