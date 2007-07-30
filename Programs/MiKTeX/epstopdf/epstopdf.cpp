@@ -1,7 +1,7 @@
 /* epstopdf.cpp: epstopdf
 
    Copyright (C) 1998-2001 by Sebastian Rahtz et al.
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of EPStoPDF.
 
@@ -202,8 +202,12 @@ private:
   ScanHeader ();
 
 private:
+  int
+  ReadDosBinary4 ();
+
+private:
   void
-  ScanFirstLine (/*[out]*/ tstring & line);
+  GetFirstLine (/*[out]*/ tstring & line);
 
 private:
   void
@@ -238,6 +242,9 @@ private:
   
 private:
   FileStream inStream;
+
+private:
+  long stopReadingAt;
   
 private:
   FileStream outStream;
@@ -599,6 +606,14 @@ EpsToPdfApp::Fatal (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 bool
 EpsToPdfApp::GetLine (/*[out]*/ tstring & line)
 {
+  if (stopReadingAt > 0)
+    {
+      long pos = inStream.GetPosition();
+      if (pos >= stopReadingAt)
+	{
+	  return (false);
+	}
+    }
   bool done = Utils::ReadUntilDelim(line, T_('\n'), inStream.Get());
   if (done)
     {
@@ -800,29 +815,63 @@ Cannot look for BoundingBox in the trailer with option --filter."));
 
 /* _________________________________________________________________________
 
-   EpsToPdfApp::ScanFirstLine
+   EpsToPdfApp::ReadDosBinary4
    _________________________________________________________________________ */
 
-struct DosEpsBinaryFileHeader
+int
+EpsToPdfApp::ReadDosBinary4 ()
 {
-  size_t startPS;
-  size_t lengthPS;
-  size_t startMF;
-  size_t lengthMF;
-  size_t startTIFF;
-  size_t lengthTIFF;
-};
-
-void
-EpsToPdfApp::ScanFirstLine (/*[out]*/ tstring & line)
-{
-  const MIKTEXCHAR * lpsz = strstr(line.c_str(), T_("%!"));
-  if (lpsz == 0)
+  unsigned char buf[4];
+  if (inStream.Read(buf, 4) != 4)
     {
       Fatal (T_("Not a valid EPS file."));
     }
-  tstring line1 = lpsz;
-  line = line1;
+  return (((static_cast<int>(buf[3]) & 0xff) << 24)
+	  | ((static_cast<int>(buf[2]) & 0xff) << 16)
+	  | ((static_cast<int>(buf[1]) & 0xff) << 8)
+	  | ((static_cast<int>(buf[0]) & 0xff)));
+}
+
+/* _________________________________________________________________________
+
+   EpsToPdfApp::GetFirstLine
+   _________________________________________________________________________ */
+
+void
+EpsToPdfApp::GetFirstLine (/*[out]*/ tstring & line)
+{
+  unsigned char buf[4];
+  if (inStream.Read(buf, 4) != 4)
+    {
+      Fatal (T_("Not a valid EPS file."));
+    }
+  if (buf[0] == '%' && buf[1] == '!' && buf[2] == 'P' && buf[3] == 'S')
+    {
+      line = _T("%!PS");
+      tstring line1;
+      stopReadingAt = 0;
+      if (GetLine(line1))
+	{
+	  line += line1;
+	}
+    }
+  else if (buf[0] != 0xc5 || buf[1] != 0xd0
+	   || buf[2] != 0xd3 || buf[3] != 0xc6)
+    
+    {
+      Fatal (T_("Invalid binary DOS header."));
+    }
+  else
+    {
+      int startPS = ReadDosBinary4();
+      int lengthPS = ReadDosBinary4();
+      stopReadingAt = startPS + lengthPS;
+      inStream.Seek (startPS, SeekOrigin::Begin);
+      if (! GetLine(line))
+	{
+	  Fatal (T_("Not a valid EPS file."));
+	}
+    }
 }
 
 /* _________________________________________________________________________
@@ -1144,9 +1193,7 @@ Input file cannot be specified together with --filter option."));
 
   tstring line;
 
-  GetLine (line);
-
-  ScanFirstLine (line);
+  GetFirstLine (line);
 
   PutLine (line);
   
