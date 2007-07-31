@@ -780,12 +780,45 @@ end;
 % _____________________________________________________________________________
 
 @x
+line ready to be edited. But such an extension requires some system
+wizardry, so the present implementation simply types out the name of the
+file that should be
+edited and the relevant line number.
+@^system dependencies@>
+
+There is a secret `\.D' option available when the debugging routines haven't
+been commented~out.
+@^debugging@>
+@y
+line ready to be edited.
+We do this by calling the external procedure |miktex_invoke_editor|
+with a pointer to
+the filename, its length, and the line number.
+However, here we just set up the variables that will be used as arguments,
+since we don't want to do the switch-to-editor until after \TeX\ has closed
+its files.
+@^system dependencies@>
+
+There is a secret `\.D' option available when the debugging routines haven't
+been commented~out.
+@^debugging@>
+@d edit_file==input_stack[base_ptr]
+@z
+
+@x
+"E": if base_ptr>0 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
   slow_print(input_stack[base_ptr].name_field);
   print(" at line "); print_int(line);
+  interaction:=scroll_mode; jump_out;
 @y
-  begin miktex_remember_edit_info (input_stack[base_ptr].name_field, line);
+"E": if base_ptr>0 then
+    begin edit_name_start:=str_start[edit_file.name_field];
+    edit_name_length:=str_start[edit_file.name_field+1] -
+                      str_start[edit_file.name_field];
+    edit_line:=line;
+    jump_out;
 @z
 
 % _____________________________________________________________________________
@@ -1852,7 +1885,13 @@ end;
     end;
   end;
 print_ln;
-miktex_invoke_editor_if_necessary;
+if (edit_name_start<>0) and (interaction>batch_mode) then begin
+  if log_opened then
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line,
+                         str_start[log_name], length(log_name))
+  else
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line)
+end;
 @z
 
 % _____________________________________________________________________________
@@ -1891,17 +1930,9 @@ if miktex_get_interaction >= 0 then
 
 @x
 @* \[54] System-dependent changes.
-This section should be replaced, if necessary, by any special
-modifications of the program
-that are necessary to make \TeX\ work at a particular installation.
-It is usually best to design your change file so that all changes to
-previous sections preserve the section numbering; then everybody's version
-will be consistent with the published program. More extensive changes,
-which introduce new sections, can be inserted here; then only the index
-itself will get a new section number.
-@^system dependencies@>
 @y
-@* \[54] \MiKTeX-dependent changes.
+@* \[54/MiKTeX] System-dependent changes for MiKTeX.
+@^<system dependencies@>
 
 @ Print an error message like a C compiler would do.
 
@@ -1946,6 +1977,8 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 @ Define \MiKTeX\ variables.
 
 @<Global variables@>=
+@!edit_name_start: pool_pointer; {where the filename to switch to starts}
+@!edit_name_length,@!edit_line: integer; {what line to start editing at}
 @!buf_size: integer;
 @!error_line: integer;
 @!font_max: integer;
@@ -1965,4 +1998,11 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 @!save_size: integer;
 @!stack_size: integer;
 @!string_vacancies: integer;
+
+@ Initialize \MiKTeX\ variables.
+
+@<Set init...@>=
+edit_name_start:=0;
+
+@* \[54] System-dependent changes.
 @z

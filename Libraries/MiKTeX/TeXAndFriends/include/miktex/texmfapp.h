@@ -107,25 +107,12 @@ MIKTEXMF_BEGIN_NAMESPACE;
 inline
 MIKTEXCHAR *
 GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
-	      /*[in]*/ int		stringNumber,
-	      /*[in]*/ size_t		size = 0xffff)
+	      /*[out]*/ size_t		size,
+	      /*[in]*/ int		stringStart,
+	      /*[in]*/ int		stringLength)
 {
   MIKTEX_ASSERT (sizeof(THEDATA(strpool)[0]) == sizeof(lpsz[0]));
-#if defined(MIKTEX_OMEGA)
-  int len =
-    (THEDATA(strstartar)[stringNumber + 1]
-     - THEDATA(strstartar)[stringNumber]);
-  const MIKTEXCHAR * lpszStart =
-    reinterpret_cast<const MIKTEXCHAR *>
-    (&THEDATA(strpool)[THEDATA(strstartar)[stringNumber]]);
-#else
-  int len =
-    (THEDATA(strstart)[stringNumber + 1] - THEDATA(strstart)[stringNumber]);
-  const MIKTEXCHAR * lpszStart =
-    reinterpret_cast<const MIKTEXCHAR *>
-    (&THEDATA(strpool)[THEDATA(strstart)[stringNumber]]);
-#endif
-  if (len < 0 || static_cast<size_t>(len) >= size)
+  if (stringLength < 0 || stringLength >= size)
     {
       MiKTeX::Core::Session::FatalMiKTeXError
 	(MIKTEXTEXT("GetTeXString"),
@@ -134,13 +121,37 @@ GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
 	 MIKTEXTEXT(__FILE__),
 	 __LINE__);
     }
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  _tcsncpy_s (lpsz, size, lpszStart, static_cast<size_t>(len));
+  for (int idx = 0; idx < stringLength; ++ idx)
+    {
+      lpsz[idx] = THEDATA(xchr)[THEDATA(strpool)[stringStart + idx]];
+    }
+  lpsz[stringLength] = 0;
+}
+#endif // THEDATA
+
+/* _________________________________________________________________________
+   
+   GetTeXString
+   _________________________________________________________________________ */
+
+#if defined(THEDATA)
+inline
+MIKTEXCHAR *
+GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
+	      /*[in]*/ int		stringNumber,
+	      /*[in]*/ size_t		size = 0xffff)
+{
+#if defined(MIKTEX_OMEGA)
+  int stringStart = THEDATA(strstartar)[stringNumber];
+  int stringLength =
+    (THEDATA(strstartar)[stringNumber + 1]
+     - THEDATA(strstartar)[stringNumber]);
 #else
-  _tcsncpy (lpsz, lpszStart, static_cast<size_t>(len));
-  lpsz[len] = 0;
+  int stringStart = THEDATA(strstart)[stringNumber];
+  int stringLength =
+    (THEDATA(strstart)[stringNumber + 1] - THEDATA(strstart)[stringNumber]);
 #endif
-  return (lpsz);
+  return (GetTeXString(lpsz, size, stringStart, stringLength));
 }
 #endif // THEDATA
 
@@ -700,14 +711,49 @@ public:
 
   /* _______________________________________________________________________
      
-     InvokeEditorIfNecessary
+     InvokeEditor
      _______________________________________________________________________ */
 
 public:
 
   MIKTEXMFAPI(void)
-  InvokeEditorIfNecessary ()
+  InvokeEditor (/*[in]*/ const MiKTeX::Core::PathName &	editFileName,
+		/*[in]*/ int				editLineNumber,
+		/*[in]*/ const MiKTeX::Core::PathName &	transcriptFileName)
     const;
+
+  /* _______________________________________________________________________
+     
+     InvokeEditor
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  void
+  InvokeEditor (/*[in]*/ int		editFileName_,
+		/*[in]*/ int		editFileNameLength,
+		/*[in]*/ int		editLineNumber,
+		/*[in]*/ int		transcriptFileName_,
+		/*[in]*/ int		transcriptFileNameLength)
+    const
+  {
+    MiKTeX::Core::PathName editFileName;
+    GetTeXString (editFileName.GetBuffer(),
+		  editFileName.GetSize(),
+		  editFileName_,
+		  editFileNameLength);
+    MiKTeX::Core::PathName transcriptFileName;
+    if (transcriptFileName_ != 0)
+      {
+	GetTeXString (transcriptFileName.GetBuffer(),
+		      transcriptFileName.GetSize(),
+		      transcriptFileName_,
+		      transcriptFileNameLength);
+      }
+    InvokeEditor (editFileName, editLineNumber, transcriptFileName);
+  }
+#endif
 
   /* _______________________________________________________________________
      
@@ -972,26 +1018,6 @@ private:
 
   /* _______________________________________________________________________
      
-     RememberEditInfo
-     _______________________________________________________________________ */
-
-public:
-
-#if defined(THEDATA)
-  void
-  RememberEditInfo (/*[in]*/ int	fileName,
-		    /*[in]*/ int	lineNum)
-  {
-    GetTeXString (editFileName.GetBuffer(), fileName, editFileName.GetSize());
-    GetTeXString (transcriptFileName.GetBuffer(),
-		  THEDATA(logname),
-		  transcriptFileName.GetSize());
-    editLineNum = lineNum;
-  }
-#endif // THEDATA
-
-  /* _______________________________________________________________________
-     
      OnKeyboardInterrupt
      _______________________________________________________________________ */
 
@@ -1037,12 +1063,6 @@ private:
   MiKTeX::Core::tstring jobName;
 
 private:
-  MiKTeX::Core::PathName editFileName;
-
-private:
-  MiKTeX::Core::PathName transcriptFileName;
-
-private:
   clock_t clockStart;
 
 private:
@@ -1071,9 +1091,6 @@ private:
 
 private:
   bool isTeXProgram;
-
-private:
-  int editLineNum;
 
 private:
   int interactionMode;

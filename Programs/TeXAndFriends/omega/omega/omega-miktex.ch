@@ -1,6 +1,6 @@
 %% omega-miktex.ch:
 %% 
-%% Copyright (C) 1998-2006 Christian Schenk
+%% Copyright (C) 1998-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -625,8 +625,13 @@ end;
 @.You want to edit file x@>
   slow_print(input_stack[base_ptr].name_field);
   print(" at line "); print_int(line);
+  interaction:=scroll_mode; jump_out;
 @y
-  begin miktex_remember_edit_info (input_stack[base_ptr].name_field, line);
+    begin edit_name_start:=str_start_ar[input_stack[base_ptr].name_field];
+    edit_name_length:=str_start_ar[input_stack[base_ptr].name_field+1] -
+                      str_start_ar[input_stack[base_ptr].name_field];
+    edit_line:=line;
+    jump_out;
 @z
 
 % _____________________________________________________________________________
@@ -1702,7 +1707,13 @@ end;
     end;
   end;
 print_ln;
-miktex_invoke_editor_if_necessary;
+if (edit_name_start<>0) and (interaction>batch_mode) then begin
+  if log_opened then
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line,
+                         str_start_ar[log_name], length(log_name))
+  else
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line)
+end;
 @z
 
 % _____________________________________________________________________________
@@ -1819,6 +1830,8 @@ function miktex_get_job_name : str_number; forward;
 @!const_font_base=font_base;
 
 @ @<Global variables@>=
+@!edit_name_start: pool_pointer; {where the filename to switch to starts}
+@!edit_name_length,@!edit_line: integer; {what line to start editing at}
 @!mem_min : integer;
 @!mem_max : integer;
 @!mem_bot : integer;
@@ -1862,6 +1875,11 @@ function miktex_get_job_name : str_number; forward;
 @!ocp_tables: array[0..0, 0..0] of integer;
 
 @!k,l: 0..65535;
+
+@ Initialize \MiKTeX\ variables.
+
+@<Set init...@>=
+edit_name_start:=0;
 
 @* \[55] Index.
 @z

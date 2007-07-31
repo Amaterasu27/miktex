@@ -154,14 +154,40 @@ miktexinitializebuffer ()
 
 /* _________________________________________________________________________
      
-   miktexinvokeeditorifnecessary
+   miktexinvokeeditor
    _________________________________________________________________________ */
 
 inline
 void
-miktexinvokeeditorifnecessary ()
+miktexinvokeeditor (/*[in]*/ int		editFileName,
+		    /*[in]*/ int		editFileNameLength,
+		    /*[in]*/ int		editLineNumber,
+		    /*[in]*/ int		transcriptFileName,
+		    /*[in]*/ int		transcriptFileNameLength)
 {
-  THEAPP.InvokeEditorIfNecessary ();
+  THEAPP.InvokeEditor (editFileName,
+		       editFileNameLength,
+		       editLineNumber,
+		       transcriptFileName,
+		       transcriptFileNameLength);
+}
+
+/* _________________________________________________________________________
+     
+   miktexinvokeeditor
+   _________________________________________________________________________ */
+
+inline
+void
+miktexinvokeeditor (/*[in]*/ int		editFileName,
+		    /*[in]*/ int		editFileNameLength,
+		    /*[in]*/ int		editLineNumber)
+{
+  THEAPP.InvokeEditor (editFileName,
+		       editFileNameLength,
+		       editLineNumber,
+		       0,
+		       0);
 }
 
 /* _________________________________________________________________________
@@ -247,19 +273,6 @@ bool
 miktexopenpoolfile (/*[in]*/ T & f)
 {
   return (THEAPP.OpenPoolFile(f));
-}
-
-/* _________________________________________________________________________
-     
-   miktexremembereditinfo
-   _________________________________________________________________________ */
-
-inline
-void
-miktexremembereditinfo (/*[in]*/ int f,
-			/*[in]*/ int l)
-{
-  THEAPP.RememberEditInfo (f, l);
 }
 
 /* _________________________________________________________________________

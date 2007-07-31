@@ -127,9 +127,9 @@ text(frozen_special):="special"; eqtb[frozen_special]:=eqtb[cur_val];@/
 % _____________________________________________________________________________
 
 @x
-@* \[54] \MiKTeX-dependent changes.
+@* \[54/MiKTeX] System-dependent changes for MiKTeX.
 @y
-@* \[54] \MiKTeX-dependent changes.
+@* \[54/MiKTeX] System-dependent changes for MiKTeX.
 
 @ This routine inserts a source special.
 

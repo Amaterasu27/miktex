@@ -1,6 +1,6 @@
 %% mf-miktex.ch: WEB change file for METAFONT
 %% 
-%% Copyright (C) 1991-2006 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -669,8 +669,13 @@ end;
 @.You want to edit file x@>
   slow_print(input_stack[file_ptr].name_field);
   print(" at line "); print_int(line);@/
+  interaction:=scroll_mode; jump_out;
 @y
-  begin miktex_remember_edit_info (input_stack[file_ptr].name_field, line);
+  begin edit_name_start:=str_start[input_stack[file_ptr].name_field];
+    edit_name_length:=str_start[input_stack[file_ptr].name_field+1] -
+                      str_start[input_stack[file_ptr].name_field];
+    edit_line:=line;
+    jump_out;
 @z
 
 % _____________________________________________________________________________
@@ -1651,7 +1656,13 @@ end;
     end;
   end;
 print_ln;
-miktex_invoke_editor_if_necessary;
+if (edit_name_start<>0) and (interaction>batch_mode) then begin
+  if log_opened then
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line,
+                         str_start[log_name], length(log_name))
+  else
+    miktex_invoke_editor(edit_name_start,edit_name_length,edit_line)
+end;
 @z
 
 % _____________________________________________________________________________
@@ -1728,6 +1739,8 @@ begin
 end;
 
 @ @<Global variables@>=
+@!edit_name_start: pool_pointer; {where the filename to switch to starts}
+@!edit_name_length,@!edit_line: integer; {what line to start editing at}
 @!bistack_size : integer;
 @!buf_size : integer;
 @!error_line : integer;
@@ -1745,6 +1758,9 @@ end;
 @!pool_size : integer;
 @!stack_size : integer;
 @!string_vacancies : integer;
+
+@ @<Set init...@>=
+edit_name_start:=0;
 
 @* \[52] Index.
 @z

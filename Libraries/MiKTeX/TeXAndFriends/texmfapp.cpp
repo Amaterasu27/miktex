@@ -97,7 +97,6 @@ TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 
   clockStart = clock();
   disableExtensions = false;
-  editLineNum = 0;
   haltOnError = false;
   interactionMode = -1;
   isInitProgram = false;
@@ -136,8 +135,6 @@ TeXMFApp::Finalize ()
     }
   memoryDumpFileName = T_("");
   jobName = T_("");
-  editFileName = T_("");
-  transcriptFileName = T_("");
   WebAppInputLine::Finalize ();
 }
 
@@ -1132,17 +1129,15 @@ TeXMFApp::InitializeBufferW (/*[in,out]*/ unsigned __int16 * pBuffer)
 
 /* _________________________________________________________________________
 
-   TeXMFApp::InvokeEditorIfNecessary
+   TeXMFApp::InvokeEditor
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXMFApp::InvokeEditorIfNecessary () const
+TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
+			/*[in]*/ int			editLineNumber,
+			/*[in]*/ const PathName &	transcriptFileName)
+  const
 {
-  if (editFileName[0] == 0)
-    {
-      return;
-    }
-
   tstring commandLine;
   commandLine.reserve (256);
 
@@ -1196,7 +1191,7 @@ TeXMFApp::InvokeEditorIfNecessary () const
 	      commandLine += transcriptFileName.Get();
 	      break;
 	    case T_('l'):
-	      commandLine += NUMTOSTR(editLineNum);
+	      commandLine += NUMTOSTR(editLineNumber);
 	      break;
 	    case T_('m'):
 	      /* <todo/> */

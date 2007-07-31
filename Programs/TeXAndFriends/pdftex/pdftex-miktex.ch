@@ -520,9 +520,9 @@ tini
 % _____________________________________________________________________________
 
 @x
-@* \[54] \MiKTeX-dependent changes.
+@* \[54/MiKTeX] System-dependent changes for MiKTeX.
 @y
-@* \[54] \MiKTeX-dependent changes.
+@* \[54/MiKTeX] System-dependent changes for MiKTeX.
 
 @<Set init...@>=
 
