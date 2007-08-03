@@ -307,6 +307,21 @@ miktexdump (/*[in]*/ FILE_ &		f,
 
 /* _________________________________________________________________________
      
+   miktexdump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexdump (/*[in]*/ FILE_ &		f,
+	    /*[in]*/ const ELETYPE_ &	e)
+{
+  THEAPP.Dump (f, e);
+}
+
+/* _________________________________________________________________________
+     
    miktexundump
    _________________________________________________________________________ */
 
@@ -319,6 +334,56 @@ miktexundump (/*[in]*/ FILE_ &		f,
 	      /*[in]*/ size_t		n)
 {
   THEAPP.Undump (f, e, n);
+}
+
+/* _________________________________________________________________________
+     
+   miktexundump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexundump (/*[in]*/ FILE_ &		f,
+	      /*[out]*/ ELETYPE_ &	e)
+{
+  THEAPP.Undump (f, e);
+}
+
+/* _________________________________________________________________________
+     
+   miktexundump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexundump (/*[in]*/ FILE_ &		f,
+	      /*[in]*/ ELETYPE_ 	low,
+	      /*[in]*/ ELETYPE_ 	high,
+	      /*[out]*/ ELETYPE_ &	e,
+	      /*[in]*/ size_t		n)
+{
+  THEAPP.Undump (f, e, n, low, high);
+}
+
+/* _________________________________________________________________________
+     
+   miktexundump
+   _________________________________________________________________________ */
+
+template<typename FILE_,
+	 typename ELETYPE_>
+inline
+void
+miktexundump (/*[in]*/ FILE_ &		f,
+	      /*[in]*/ ELETYPE_ 	high,
+	      /*[out]*/ ELETYPE_ &	e,
+	      /*[in]*/ size_t		n)
+{
+  THEAPP.Undump (f, e, n, high);
 }
 
 MIKTEXMF_END_NAMESPACE;

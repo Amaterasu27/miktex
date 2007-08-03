@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -959,24 +959,23 @@ TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
   const
 {
   MIKTEX_ASSERT_BUFFER (lpszPath, _MAX_PATH);
+  PathName name;
   if (memoryDumpFileName.length() > 0)
     {
-      Utils::CopyString (lpszPath,
-			 BufferSizes::MaxPath,
-			 memoryDumpFileName.c_str());
+      name = memoryDumpFileName;
     }
   else if (IsVirgin())
     {
-      Utils::CopyString (lpszPath,
-			 BufferSizes::MaxPath,
-			 GetMemoryDumpFileName());
+      name = GetMemoryDumpFileName();
     }
   else
     {
-      Utils::CopyString (lpszPath,
-			 BufferSizes::MaxPath,
-			 Utils::GetExeName().c_str());
+      name = Utils::GetExeName();
     }
+  name.SetExtension (GetMemoryDumpFileExtension());
+  Utils::CopyString (lpszPath,
+		     BufferSizes::MaxPath,
+		     name.Get());
 }
 
 /* _________________________________________________________________________

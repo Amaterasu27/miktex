@@ -969,6 +969,71 @@ public:
 #endif // THEDATA
 
   /* _______________________________________________________________________
+
+     Undump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Undump (/*[in]*/ FILE_ &		f,
+	  /*[in]*/ ELETYPE_		low,
+	  /*[in]*/ ELETYPE_		high,
+	  /*[out]*/ ELETYPE_ &		e,
+	  /*[in]*/ size_t		n)
+  {
+    Undump (f, e, n);
+    for (size_t idx = 0; idx < n; ++ idx)
+      {
+	if ((&e)[idx] < low || (&e)[idx] > high)
+	  {
+	    MiKTeX::Core::Session::FatalMiKTeXError
+	      (MIKTEXTEXT("GetTeXString"),
+	       MIKTEXTEXT("Bad format file."),
+	       0,
+	       MIKTEXTEXT(__FILE__),
+	       __LINE__);
+	  }
+      }
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
+
+     Undump
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)  
+  template<typename FILE_,
+	   typename ELETYPE_>
+  void
+  Undump (/*[in]*/ FILE_ &		f,
+	  /*[in]*/ ELETYPE_		high,
+	  /*[out]*/ ELETYPE_ &		e,
+	  /*[in]*/ size_t		n)
+  {
+    Undump (f, e, n);
+    for (size_t idx = 0; idx < n; ++ idx)
+      {
+	if ((&e)[idx] > high)
+	  {
+	    MiKTeX::Core::Session::FatalMiKTeXError
+	      (MIKTEXTEXT("GetTeXString"),
+	       MIKTEXTEXT("Bad format file."),
+	       0,
+	       MIKTEXTEXT(__FILE__),
+	       __LINE__);
+	  }
+      }
+  }
+#endif // THEDATA
+
+  /* _______________________________________________________________________
      
      OpenPoolFile
      _______________________________________________________________________ */

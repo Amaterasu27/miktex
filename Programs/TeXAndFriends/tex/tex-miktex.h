@@ -1,6 +1,6 @@
-/* tex-miktex.h:					-*- C++ -*-
+/* tex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2006 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -24,10 +24,10 @@
 
 #if defined(MIKTEX_TRIPTEX)
 #  include "triptexdefs.h"
-#define THEDATA(x) TRIPTEXDATA.m_##x
+#  define THEDATA(x) TRIPTEXDATA.m_##x
 #else
 #  include "texdefs.h"
-#define THEDATA(x) TEXDATA.m_##x
+#  define THEDATA(x) TEXDATA.m_##x
 #endif
 
 #include "tex.rc"
@@ -48,15 +48,6 @@ class TEXCLASS
   : public TeXApp
 
 {
-protected:
-  virtual
-  void
-  MIKTEXMFCALL
-  AddOptions ()
-  {
-    TeXApp::AddOptions ();
-  }
-
 public:
   virtual
   void

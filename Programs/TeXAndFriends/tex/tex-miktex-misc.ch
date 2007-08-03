@@ -589,7 +589,9 @@ loop@+begin
 @x
 @p @!init function get_strings_started:boolean; {initializes the string pool,
 @y
-@p function get_strings_started:boolean; {initializes the string pool,
+@p @t\4@>@<Declare additional routines for string recycling@>@/
+
+function get_strings_started:boolean; {initializes the string pool,
 @z
 
 @x
@@ -1002,17 +1004,6 @@ var p:0..sup_nest_size; {index into |nest|}
 
 % _____________________________________________________________________________
 %
-% [17.230]
-% _____________________________________________________________________________
-
-@x
-@d cur_font_loc=box_base+256 {internal font number outside math mode}
-@y
-@d cur_font_loc=box_base+max_font_max {internal font number outside math mode}
-@z
-
-% _____________________________________________________________________________
-%
 % [17.241]
 % _____________________________________________________________________________
 
@@ -1239,6 +1230,36 @@ if_eof_code: begin scan_four_bit_int_or_18;
 
 % _____________________________________________________________________________
 %
+% [29.513]
+% _____________________________________________________________________________
+
+@x [29.513]
+@ The file names we shall deal with for illustrative purposes have the
+following structure:  If the name contains `\.>' or `\.:', the file area
+consists of all characters up to and including the final such character;
+otherwise the file area is null.  If the remaining file name contains
+`\..', the file extension consists of all such characters from the first
+remaining `\..' to the end, otherwise the file extension is null.
+@y
+@ The file names we shall deal with have the
+following structure:  If the name contains `\./' or `\.:'
+(for Amiga only), the file area
+consists of all characters up to and including the final such character;
+otherwise the file area is null.  If the remaining file name contains
+`\..', the file extension consists of all such characters from the last
+`\..' to the end, otherwise the file extension is null.
+@z
+
+@x
+@!area_delimiter:pool_pointer; {the most recent `\.>' or `\.:', if any}
+@!ext_delimiter:pool_pointer; {the relevant `\..', if any}
+@y
+@!area_delimiter:pool_pointer; {the most recent `\./', if any}
+@!ext_delimiter:pool_pointer; {the most recent `\..', if any}
+@z
+
+% _____________________________________________________________________________
+%
 % [29.514]
 % _____________________________________________________________________________
 
@@ -1248,10 +1269,7 @@ if_eof_code: begin scan_four_bit_int_or_18;
 @d TEX_font_area=="TeXfonts:"
 @.TeXfonts@>
 @y
-@d TEX_area==""
-@.TeXinputs@>
-@d TEX_font_area==""
-@.TeXfonts@>
+In C, the default paths are specified separately.
 @z
 
 % _____________________________________________________________________________
@@ -1262,8 +1280,7 @@ if_eof_code: begin scan_four_bit_int_or_18;
 @x
 begin area_delimiter:=0; ext_delimiter:=0;
 @y
-begin area_delimiter:=0; ext_delimiter:=0;
-quoted_filename:=false;
+begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 @z
 
 % _____________________________________________________________________________
@@ -1273,19 +1290,151 @@ quoted_filename:=false;
 
 @x
 begin if c=" " then more_name:=false
-else  begin str_room(1); append_char(c); {contribute |c| to the current string}
-  if (c=">")or(c=":") then
 @y
-begin
-if c="""" then begin {\MiKTeX: allow quoted file names}
+begin if (c=" ") and stop_at_space and (not quoted_filename) then
+  more_name:=false
+else  if c="""" then begin
   quoted_filename:=not quoted_filename;
   more_name:=true;
-  c4p_return;
-end;
-if (c=" " or c=tabulator) and (not quoted_filename) then more_name:=false
-else  begin
-  str_room(1); append_char(c); {contribute |c| to the current string}
+  end
+@z
+
+@x
+  if (c=">")or(c=":") then
+@y
   if (c="/") then
+@z
+
+@x
+  else if (c=".")and(ext_delimiter=0) then ext_delimiter:=cur_length;
+@y
+  else if c="." then ext_delimiter:=cur_length;
+@z
+
+% _____________________________________________________________________________
+%
+% [29.517]
+% _____________________________________________________________________________
+
+@x [29.517]
+@ The third.
+@^system dependencies@>
+
+@p procedure end_name;
+@y
+@ The third.
+@^system dependencies@>
+If a string is already in the string pool, the function
+|slow_make_string| does not create a new string but returns this string
+number, thus saving string space.  Because of this new property of the
+returned string number it is not possible to apply |flush_string| to
+these strings.
+
+@p procedure end_name;
+var temp_str: str_number; {result of file name cache lookups}
+@!j,@!s,@!t: pool_pointer; {running indices}
+@!must_quote:boolean; {whether we need to quote a string}
+@z
+
+@x
+@:TeX capacity exceeded number of strings}{\quad number of strings@>
+@y
+@:TeX capacity exceeded number of strings}{\quad number of strings@>
+str_room(6); {Room for quotes, if needed.}
+{add quotes if needed}
+if area_delimiter<>0 then begin
+  {maybe quote |cur_area|}
+  must_quote:=false;
+  s:=str_start[str_ptr];
+  t:=str_start[str_ptr]+area_delimiter;
+  j:=s;
+  while (not must_quote) and (j<t) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+    end;
+  if must_quote then begin
+    for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
+    str_pool[t+1]:="""";
+    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+    str_pool[s]:="""";
+    if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
+    area_delimiter:=area_delimiter+2;
+    pool_ptr:=pool_ptr+2;
+    end;
+  end;
+{maybe quote |cur_name|}
+s:=str_start[str_ptr]+area_delimiter;
+if ext_delimiter=0 then t:=pool_ptr else t:=str_start[str_ptr]+ext_delimiter-1;
+must_quote:=false;
+j:=s;
+while (not must_quote) and (j<t) do begin
+  must_quote:=str_pool[j]=" "; incr(j);
+  end;
+if must_quote then begin
+  for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
+  str_pool[t+1]:="""";
+  for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+  str_pool[s]:="""";
+  if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
+  pool_ptr:=pool_ptr+2;
+  end;
+if ext_delimiter<>0 then begin
+  {maybe quote |cur_ext|}
+  s:=str_start[str_ptr]+ext_delimiter-1;
+  t:=pool_ptr;
+  must_quote:=false;
+  j:=s;
+  while (not must_quote) and (j<t) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+    end;
+  if must_quote then begin
+    str_pool[t+1]:="""";
+    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+    str_pool[s]:="""";
+    pool_ptr:=pool_ptr+2;
+    end;
+  end;
+@z
+
+@x
+  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
+  end;
+if ext_delimiter=0 then
+  begin cur_ext:=""; cur_name:=make_string;
+@y
+  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
+  temp_str:=search_string(cur_area);
+  if temp_str>0 then
+    begin cur_area:=temp_str;
+    decr(str_ptr);  {no |flush_string|, |pool_ptr| will be wrong!}
+    for j:=str_start[str_ptr+1] to pool_ptr-1 do
+      begin str_pool[j-area_delimiter]:=str_pool[j];
+      end;
+    pool_ptr:=pool_ptr-area_delimiter; {update |pool_ptr|}
+    end;
+  end;
+if ext_delimiter=0 then
+  begin cur_ext:=""; cur_name:=slow_make_string;
+@z
+
+@x
+else  begin cur_name:=str_ptr;
+  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
+  incr(str_ptr); cur_ext:=make_string;
+@y
+else  begin cur_name:=str_ptr;
+  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
+  incr(str_ptr); cur_ext:=make_string;
+  decr(str_ptr); {undo extension string to look at name part}
+  temp_str:=search_string(cur_name);
+  if temp_str>0 then
+    begin cur_name:=temp_str;
+    decr(str_ptr);  {no |flush_string|, |pool_ptr| will be wrong!}
+    for j:=str_start[str_ptr+1] to pool_ptr-1 do
+      begin str_pool[j-ext_delimiter+area_delimiter+1]:=str_pool[j];
+      end;
+    pool_ptr:=pool_ptr-ext_delimiter+area_delimiter+1;  {update |pool_ptr|}
+    end;
+  cur_ext:=slow_make_string;  {remake extension string}
 @z
 
 % _____________________________________________________________________________
@@ -1296,13 +1445,65 @@ else  begin
 @x
 begin slow_print(a); slow_print(n); slow_print(e);
 @y
-begin miktex_print_filename (a, n, e);
+var must_quote: boolean; {whether to quote the filename}
+@!j:pool_pointer; {index into |str_pool|}
+begin
+must_quote:=false;
+if a<>0 then begin
+  j:=str_start[a];
+  while (not must_quote) and (j<str_start[a+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+if n<>0 then begin
+  j:=str_start[n];
+  while (not must_quote) and (j<str_start[n+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+if e<>0 then begin
+  j:=str_start[e];
+  while (not must_quote) and (j<str_start[e+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+{FIXME: Alternative is to assume that any filename that has to be quoted has
+ at least one quoted component...if we pick this, a number of insertions
+ of |print_file_name| should go away.
+|must_quote|:=((|a|<>0)and(|str_pool|[|str_start|[|a|]]=""""))or
+              ((|n|<>0)and(|str_pool|[|str_start|[|n|]]=""""))or
+              ((|e|<>0)and(|str_pool|[|str_start|[|e|]]=""""));}
+if must_quote then print_char("""");
+if a<>0 then
+  for j:=str_start[a] to str_start[a+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if n<>0 then
+  for j:=str_start[n] to str_start[n+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if e<>0 then
+  for j:=str_start[e] to str_start[e+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if must_quote then print_char("""");
 @z
 
 % _____________________________________________________________________________
 %
 % [29.519]
 % _____________________________________________________________________________
+
+@x
+@d append_to_name(#)==begin c:=#; incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end
+@y
+@d append_to_name(#)==begin c:=#; if not (c="""") then begin incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end end
+@z
+
 
 @x
 begin k:=0;
@@ -1319,13 +1520,39 @@ name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 
 % _____________________________________________________________________________
 %
+% [29.520]
+% _____________________________________________________________________________
+
+@x
+@d format_default_length=20 {length of the |TEX_format_default| string}
+@d format_area_length=11 {length of its area part}
+@d format_ext_length=4 {length of its `\.{.fmt}' part}
+@y
+Under {\mc UNIX} we don't give the area part, instead depending
+on the path searching that will happen during file opening.  Also, the
+length will be set in the main program.
+
+@d format_area_length=0 {length of its area part}
+@d format_ext_length=4 {length of its `\.{.fmt}' part}
+@z
+
+% _____________________________________________________________________________
+%
 % [29.521]
 % _____________________________________________________________________________
 
 @x
+@!TEX_format_default:packed array[1..format_default_length] of char;
+
+@ @<Set init...@>=
 TEX_format_default:='TeXformats:plain.fmt';
 @y
+@!format_default_length: integer;
+@!TEX_format_default:packed array[1..file_name_size_plus_two] of char;
+
+@ @<Set init...@>=
 miktex_get_default_dump_file_name (TEX_format_default);
+format_default_length:=c4pstrlen(TEX_format_default);
 @z
 
 % _____________________________________________________________________________
@@ -1345,33 +1572,16 @@ do_nothing;
 % _____________________________________________________________________________
 
 @x
-since the error will be detected in another way when a strange file name
-isn't found.
-@^system dependencies@>
+k:=0;
 @y
-since the error will be detected in another way when a strange file name
-isn't found.
-@^system dependencies@>
-
-\MiKTeX: we do not need this routine.
+k:=1;
+name_of_file[1]:=xchr[' '];
 @z
 
 @x
-@p procedure pack_buffered_name(@!n:small_number;@!a,@!b:integer);
-var k:integer; {number of positions filled in |name_of_file|}
-@!c: ASCII_code; {character being packed}
-@!j:integer; {index into |buffer| or |TEX_format_default|}
-begin if n+b-a+1+format_ext_length>file_name_size then
-  b:=a+file_name_size-n-1-format_ext_length;
-k:=0;
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=format_default_length-format_ext_length+1 to format_default_length do
-  append_to_name(xord[TEX_format_default[j]]);
-if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
-end;
 @y
+name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 @z
 
 % _____________________________________________________________________________
@@ -1392,11 +1602,7 @@ var j:0..sup_buf_size; {the first space after the format file name}
     {now try the system format file area}
   if w_open_in(fmt_file) then goto found;
 @y
-  c4p_memcpy(c4p_ptr(name_of_file[2]),
-             file_name_size_plus_two-1,
-             c4p_ptr(buffer[loc]),
-             j-loc);
-  name_of_file[j-loc+2]:=chr(0);
+  pack_buffered_name(0,loc,j-1);
   if miktex_open_format_file(fmt_file) then goto found;
 @z
 
@@ -1410,9 +1616,7 @@ var j:0..sup_buf_size; {the first space after the format file name}
 pack_buffered_name(format_default_length-format_ext_length,1,0);
 if not w_open_in(fmt_file) then
 @y
-c4p_strcpy(c4p_ptr(name_of_file[2]),
-           file_name_size_plus_two-1,
-           TEX_format_default);
+pack_buffered_name(format_default_length-format_ext_length,1,0);
 if not miktex_open_format_file(fmt_file) then
 @z
 
@@ -1429,8 +1633,23 @@ if not miktex_open_format_file(fmt_file) then
 
 @x
 else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+  make_name_string:=make_string;
+  end;
 @y
 else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
+  make_name_string:=make_string;
+  end;
+  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
+   match the contents of |name_of_file|.}
+  k:=1;
+  name_in_progress:=true;
+  begin_name;
+  stop_at_space:=false;
+  while (k<=name_length)and(more_name(name_of_file[k])) do
+    incr(k);
+  stop_at_space:=true;
+  end_name;
+  name_in_progress:=false;
 @z
 
 % _____________________________________________________________________________
@@ -1511,8 +1730,11 @@ c4p_arrcpy(months,'JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC');
 % _____________________________________________________________________________
 
 @x
+begin scan_file_name; {set |cur_name| to desired file name}
 if cur_ext="" then cur_ext:=".tex";
 @y
+var temp_str: str_number;
+begin scan_file_name; {set |cur_name| to desired file name}
 @z
 
 @x
@@ -1521,7 +1743,6 @@ if cur_ext="" then cur_ext:=".tex";
     if a_open_in(cur_file) then goto done;
     end;
 @y
-  if a_open_in(cur_file) then goto done;
 @z
 
 @x
@@ -1536,6 +1757,12 @@ done: name:=a_make_name_string(cur_file);
 done: name:=a_make_name_string(cur_file);
 source_filename_stack[in_open]:=name;
 full_source_filename_stack[in_open]:=miktex_make_full_name_string;
+if name=str_ptr-1 then {we can try to conserve string pool space now}
+  begin temp_str:=search_string(name);
+  if temp_str>0 then
+    begin name:=temp_str; flush_string;
+    end;
+  end;
 @z
 
 @x
@@ -1576,6 +1803,32 @@ if name=str_ptr-1 then {we can conserve string pool space now}
 @y
 @!internal_font_number=font_base..max_font_max; {|font| in a |char_node|}
 @!font_index=0..sup_font_mem_size; {index into |font_info|}
+@!nine_bits=min_quarterword..non_char;
+@z
+
+% _____________________________________________________________________________
+%
+% [30.549]
+% _____________________________________________________________________________
+
+@x
+@!font_bc:array[internal_font_number] of eight_bits;
+  {beginning (smallest) character code}
+@!font_ec:array[internal_font_number] of eight_bits;
+  {ending (largest) character code}
+@y
+@!font_bc: ^eight_bits;
+  {beginning (smallest) character code}
+@!font_ec: ^eight_bits;
+  {ending (largest) character code}
+@z
+
+@x
+@!font_false_bchar:array[internal_font_number] of min_quarterword..non_char;
+  {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
+@y
+@!font_false_bchar: ^nine_bits;
+  {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @z
 
 % _____________________________________________________________________________
@@ -1584,8 +1837,11 @@ if name=str_ptr-1 then {we can conserve string pool space now}
 % _____________________________________________________________________________
 
 @x
+if aire="" then pack_file_name(nom,TEX_font_area,".tfm")
+else pack_file_name(nom,aire,".tfm");
 if not b_open_in(tfm_file) then abort;
 @y
+pack_file_name(nom,aire,"");
 if not miktex_open_tfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
 @z
 
@@ -1622,7 +1878,7 @@ begin c4p_buf_write(dvi_file,c4p_ptr(dvi_buf[a]),b-a+1);
 begin dvi_out(fnt_def1);
 dvi_out(f-font_base-1);@/
 @y
-begin if (f<=256+font_base) then
+begin if f<=256+font_base then
   begin dvi_out(fnt_def1);
   dvi_out(f-font_base-1);
   end
@@ -1676,6 +1932,35 @@ else begin dvi_out(fnt1+1);
 var p:0..nest_size; {index into |nest|}
 @y
 var p:0..sup_nest_size; {index into |nest|}
+@z
+
+% _____________________________________________________________________________
+%
+% [49.1257]
+% _____________________________________________________________________________
+
+@x
+@!flushable_string:str_number; {string not yet referenced}
+@y
+@z
+
+% _____________________________________________________________________________
+%
+% [49.1260]
+% _____________________________________________________________________________
+
+@x
+flushable_string:=str_ptr-1;
+@y
+@z
+
+@x
+    begin if cur_name=flushable_string then
+      begin flush_string; cur_name:=font_name[f];
+      end;
+    if s>0 then
+@y
+    begin if s>0 then
 @z
 
 % _____________________________________________________________________________
@@ -1767,7 +2052,32 @@ bad_fmt:
 @d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
 @y
 @d undump_things(#)==miktex_undump(fmt_file, #)
+@d undump_checked_things(#)==miktex_undump(fmt_file, #)
+@d undump_upper_checked_things(#)==miktex_undump(fmt_file, #)
 @d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1311]
+% _____________________________________________________________________________
+
+@x
+repeat for k:=p to q+1 do dump_wd(mem[k]);
+@y
+repeat dump_things(mem[p], q+2-p);
+@z
+
+@x
+for k:=p to lo_mem_max do dump_wd(mem[k]);
+@y
+dump_things(mem[p], lo_mem_max+1-p);
+@z
+
+@x
+for k:=hi_mem_min to mem_end do dump_wd(mem[k]);
+@y
+dump_things(mem[hi_mem_min], mem_end+1-hi_mem_min);
 @z
 
 % _____________________________________________________________________________
@@ -1778,20 +2088,47 @@ bad_fmt:
 @x
 repeat for k:=p to q+1 do undump_wd(mem[k]);
 @y
-repeat c4p_mget(fmt_file, c4p_ptr(mem[p]), (q+1)-(p)+1);
+repeat undump_things(mem[p], q+2-p);
 @z
 
 @x
 for k:=p to lo_mem_max do undump_wd(mem[k]);
 @y
-c4p_mget(fmt_file, c4p_ptr(mem[p]), (lo_mem_max)-(p)+1);
+undump_things(mem[p], lo_mem_max+1-p);
 @z
 
 @x
 for k:=hi_mem_min to mem_end do undump_wd(mem[k]);
 @y
-c4p_mget(fmt_file, c4p_ptr(mem[hi_mem_min]), (mem_end)-(hi_mem_min)+1);
+undump_things (mem[hi_mem_min], mem_end+1-hi_mem_min);
 @z
+
+% _____________________________________________________________________________
+%
+% [50.1315]
+% _____________________________________________________________________________
+
+@x
+while k<l do
+  begin dump_wd(eqtb[k]); incr(k);
+  end;
+@y
+dump_things(eqtb[k], l-k);
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1316]
+% _____________________________________________________________________________
+
+@x [50.1316]
+while k<l do
+  begin dump_wd(eqtb[k]); incr(k);
+  end;
+@y
+dump_things(eqtb[k], l-k);
+@z
+
 
 % _____________________________________________________________________________
 %
@@ -1801,7 +2138,7 @@ c4p_mget(fmt_file, c4p_ptr(mem[hi_mem_min]), (mem_end)-(hi_mem_min)+1);
 @x
 for j:=k to k+x-1 do undump_wd(eqtb[j]);
 @y
-c4p_mget(fmt_file, c4p_ptr(eqtb[k]), (k+x-1)-(k)+1);
+undump_things(eqtb[k], x);
 @z
 
 % _____________________________________________________________________________
@@ -1979,6 +2316,7 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 @<Global variables@>=
 @!edit_name_start: pool_pointer; {where the filename to switch to starts}
 @!edit_name_length,@!edit_line: integer; {what line to start editing at}
+@!stop_at_space: boolean; {whether |more_name| returns false for space}
 @!buf_size: integer;
 @!error_line: integer;
 @!font_max: integer;
@@ -2003,6 +2341,54 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 
 @<Set init...@>=
 edit_name_start:=0;
+stop_at_space:=true;
+
+@* \[54/MiKTeX-string] The string recycling routines.  \TeX{} uses 2
+upto 4 {\it new\/} strings when scanning a filename in an \.{\\input},
+\.{\\openin}, or \.{\\openout} operation.  These strings are normally
+lost because the reference to them are not saved after finishing the
+operation.  |search_string| searches through the string pool for the
+given string and returns either 0 or the found string number.
+
+@<Declare additional routines for string recycling@>=
+function search_string(@!search:str_number):str_number;
+label found;
+var result: str_number;
+@!s: str_number; {running index}
+@!len: integer; {length of searched string}
+begin result:=0; len:=length(search);
+if len=0 then  {trivial case}
+  begin result:=""; goto found;
+  end
+else  begin s:=search-1;  {start search with newest string below |s|; |search>1|!}
+  while s>255 do  {first 256 strings depend on implementation!!}
+    begin if length(s)=len then
+      if str_eq_str(s,search) then
+        begin result:=s; goto found;
+        end;
+    decr(s);
+    end;
+  end;
+found:search_string:=result;
+end;
+
+@ The following routine is a variant of |make_string|.  It searches
+the whole string pool for a string equal to the string currently built
+and returns a found string.  Otherwise a new string is created and
+returned.  Be cautious, you can not apply |flush_string| to a replaced
+string!
+
+@<Declare additional routines for string recycling@>=
+function slow_make_string : str_number;
+label exit;
+var s: str_number; {result of |search_string|}
+@!t: str_number; {new string}
+begin t:=make_string; s:=search_string(t);
+if s>0 then
+  begin flush_string; slow_make_string:=s; return;
+  end;
+slow_make_string:=t;
+exit:end;
 
 @* \[54] System-dependent changes.
 @z

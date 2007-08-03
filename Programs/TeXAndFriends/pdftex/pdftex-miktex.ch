@@ -374,13 +374,13 @@ pdf_print("/Producer (MiKTeX pdfTeX-");
 % _____________________________________________________________________________
 
 @x
-    if s>0 then
+    begin if s>0 then
       begin if s=font_size[f] then goto common_ending;
       end
     else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
       goto common_ending;
 @y
-    if pdf_font_step[f] = 0 then begin
+    begin if pdf_font_step[f] = 0 then begin
        if s>0 then
          begin if s=font_size[f] then goto common_ending;
          end
