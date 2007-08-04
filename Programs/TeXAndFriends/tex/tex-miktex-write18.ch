@@ -55,33 +55,39 @@ else if write_open[j] then selector:=j
 flush_list(def_ref); selector:=old_setting;
 @y
 flush_list(def_ref);
-if j=18 then begin
-  if (tracing_online<=0) then
-    selector:=log_only
-  else selector:=term_and_log;
+if j=18 then
+  begin if (tracing_online<=0) then
+    selector:=log_only  {Show what we're doing in the log file.}
+  else selector:=term_and_log;  {Show what we're doing.}
+  {If the log file isn't open yet, we can only send output to the terminal.
+   Calling |open_log_file| from here seems to result in bad data in the log.}
+  if not log_opened then selector:=term_only;
   print_nl("system(");
-  for d:=0 to cur_length-1 do begin
-    {|print| gives up if passed |str_ptr|, so do it by hand.}
+  for d:=0 to cur_length-1 do
+    begin {|print| gives up if passed |str_ptr|, so do it by hand.}
     print(so(str_pool[str_start[str_ptr]+d])); {N.B.: not |print_char|}
-  end;
+    end;
   print(")...");
-  str_room(1); append_char(0);
-  clobbered:=false;
-  for d:=0 to cur_length-1 do begin
-    {Convert to external character set.}
-    str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
-    if (str_pool[str_start[str_ptr]+d]=null_code) and (d<cur_length-1) then
-      clobbered:=true;
+  if miktex_write18_p then
+    begin str_room(1); append_char(0); {Append a null byte to the expansion.}
+    clobbered:=false;
+    for d:=0 to cur_length-1 do {Convert to external character set.}
+      begin str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
+      if (str_pool[str_start[str_ptr]+d]=null_code)
+         and (d<cur_length-1) then clobbered:=true;
+        {minimal checking: NUL not allowed in argument string of |system|()}
+      end;
+    if clobbered then print("clobbered")
+    else begin {We have the string; run system(3). We don't have anything
+            reasonable to do with the return status, unfortunately discard it.}
+      miktex_write18(miktex_get_string_at(str_start[str_ptr]));
+      print("executed");
+      end;
+    end
+  else begin print("disabled");
   end;
-  if clobbered then print("clobbered")
-  else begin
-    if miktex_write18(miktex_get_string_at(str_start[str_ptr])) then
-      print("executed")
-    else
-      print("disabled")
-  end;
-  pool_ptr:=str_start[str_ptr];
   print_char("."); print_nl(""); print_ln;
+  pool_ptr:=str_start[str_ptr];  {erase the string}
 end;
 selector:=old_setting;
 @z

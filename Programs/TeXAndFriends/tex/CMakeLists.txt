@@ -123,7 +123,25 @@ add_custom_command(
   VERBATIM
 )
 
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.web
+	${CMAKE_CURRENT_BINARY_DIR}/tex-miktex-n.web
+  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.web
+		${tex_web}
+		${tex_change_file}
+  COMMAND ${webn_exe}
+	< ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${tex_web_file}
+	${tex_change_file}
+  VERBATIM
+)
+
 add_custom_target(dev ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/tex-miktex-n.web
 )

@@ -40,6 +40,8 @@ param_size=10000
 ;; control sequences; must exceed string_vacancies by the total
 ;; length of TeX's own strings, which is currently about 23000.
 pool_size=1250000
+pool_free=5000
+strings_free=100
 
 ;; Maximum number of simultaneous input sources.
 stack_size=5000

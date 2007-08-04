@@ -106,7 +106,7 @@ k:=first; while k < last do begin print_buffer(k) end;
 @d tracing_char_sub_def_code=miktex_int_base+2 {traces changes to a charsubdef def}
 @d mubyte_in_code=miktex_int_base+3 {if positive then reading mubytes is active}
 @d mubyte_out_code=miktex_int_base+4 {if positive then printing mubytes is active}
-@d mubyte_log_code=miktex_int_base+5 {if positive then printing mubytes is active}
+@d mubyte_log_code=miktex_int_base+5 {if positive then print mubytes to log and terminal}
 @d spec_out_code=miktex_int_base+6 {if positive then print specials by mubytes}
 @d miktex_int_pars=miktex_int_base+7 {total number of \MiKTeX's integer parameters}
 @#
@@ -426,6 +426,24 @@ if enctex_enabled_p then
   end;
 @z
 
+@x
+begin print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+help1("I'm ignoring this, since I wasn't doing a \csname.");
+@y
+begin
+if cur_chr = 10 then 
+begin
+  print_err("Extra "); print_esc("endmubyte");
+@.Extra \\endmubyte@>
+  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
+end else begin
+  print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+  help1("I'm ignoring this, since I wasn't doing a \csname.");
+end;  
+@z
+
 @x [49.1211] - encTeX: extra variables for \mubyte primitive
 @!p,@!q:pointer; {for temporary short-term use}
 @y
@@ -542,14 +560,14 @@ let:  if cur_chr = normal+11 then do_nothing  { noconvert primitive }
                   p := link (p); 
                   if mubyte_relax then begin
                     info (p) := 0; pool_ptr := str_start [str_ptr];
-                  end else info (p) := make_string; {FIXME: use slow_make_string}
+                  end else info (p) := slow_make_string;
                   link (p) := r;
                 end;
               end else begin                       { single character  }
                 if str_start [str_ptr] = pool_ptr then
                   mubyte_write [mubyte_stoken] := 0
                 else 
-                  mubyte_write [mubyte_stoken] := make_string; {FIXME: use slow_make_string}
+                  mubyte_write [mubyte_stoken] := slow_make_string;
               end;
             end else pool_ptr := str_start [str_ptr];
           end;
@@ -814,7 +832,7 @@ mubyte_out := mubyte_sout; mubyte_log := mubyte_slog;
 @y
 @* \[54/enc\TeX] System-dependent changes for enc\TeX.
 
-@d encTeX_banner == 'encTeX v. Jun. 2004'
+@d encTeX_banner == ' encTeX v. Jun. 2004'
 
 @ The boolean variable |enctex_p| is set by \MiKTeX\ according to the given
 command line option (or an entry in the configuration file) before any
@@ -832,13 +850,16 @@ Additionally it is set to the value of |enctex_p| in Ini\TeX.
 @<Glob...@>=
 @!enctex_enabled_p:boolean;  {enable encTeX}
 
-@ @<Declare \MiKTeX\ functions@>=
+
+@ Declare system-dependent enctex functions.
+@<Declare \MiKTeX\ functions@>=
 function miktex_enctex_p : boolean; forward;
 function miktex_have_tcx_file_name : boolean; forward;
 
 @ @<Set init...@>=
 enctex_p:=miktex_enctex_p;
 enctex_enabled_p:=false;
+
 
 @ Auxiliary functions/procedures for enc\TeX{} (by Petr Olsak) follow.
 These functions implement the \.{\\mubyte} code to convert

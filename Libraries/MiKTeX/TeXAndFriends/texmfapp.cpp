@@ -110,8 +110,10 @@ TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   param_mem_min = -1;
   param_mem_top = -1;
   param_param_size = -1;
+  param_pool_free = -1;
   param_pool_size = -1;
   param_stack_size = -1;
+  param_strings_free = -1;
   param_string_vacancies = -1;
   parseFirstLine = false;
   recordFileNames = false;
@@ -228,11 +230,13 @@ enum {
   OPT_OUTPUT_DIRECTORY,
   OPT_PARAM_SIZE,
   OPT_PARSE_FIRST_LINE,
+  OPT_POOL_FREE,
   OPT_POOL_SIZE,
   OPT_QUIET,
   OPT_RECORDER,
   OPT_STACK_SIZE,
   OPT_STRICT,
+  OPT_STRINGS_FREE,
   OPT_STRING_VACANCIES,
   OPT_TCX,
   OPT_TERMINAL,
@@ -380,6 +384,15 @@ Parse the first line of the input line to look for a dump name and/or\
 	     FIRST_OPTION_VAL + optBase + OPT_PARSE_FIRST_LINE,
 	     no_argument);
 
+  if (isTeXProgram && ! AmI(T_("omega")))
+    {
+      AddOption (T_("pool-free\0\
+Set pool_free to N."),
+		 FIRST_OPTION_VAL + optBase + OPT_POOL_FREE,
+		 required_argument,
+		 T_("N"));
+    }
+
   AddOption (T_("pool-size\0\
 Set pool_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_POOL_SIZE,
@@ -405,6 +418,15 @@ Set stack_size to N."),
 Disable MiKTeX extensions."),
 	     FIRST_OPTION_VAL + optBase + OPT_STRICT,
 	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
+
+  if (isTeXProgram && ! AmI(T_("omega")))
+    {
+      AddOption (T_("strings-free\0\
+Set strings_free to N."),
+		 FIRST_OPTION_VAL + optBase + OPT_STRINGS_FREE,
+		 required_argument,
+		 T_("N"));
+    }
 
   AddOption (T_("string-vacancies\0\
 Set string_vacancies to N."),
@@ -432,7 +454,7 @@ characters and re-mapping of output characters."),
 		 T_("TCXNAME"));
     }
 
-  if (StringCompare(GetProgramName(), T_("omega"), true) != 0)
+  if (! AmI(T_("omega")))
     {
       AddOption (T_("terminal\0\
 Use the DOS codepage for console output."),
@@ -451,7 +473,7 @@ Use the DOS codepage for console output."),
     {
       AddOption (T_("translate-file"), T_("tcx"));
     }
-  if (StringCompare(GetProgramName(), T_("omega"), true) != 0)
+  if (! AmI(T_("omega")))
     {
       AddOption (T_("oem\0\
 Use the DOS codepage for console output."),
@@ -647,6 +669,10 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 
     case OPT_PARSE_FIRST_LINE:
       parseFirstLine = true;
+      break;
+
+    case OPT_POOL_FREE:
+      param_pool_free = _ttoi(lpszOptArg);
       break;
 
     case OPT_POOL_SIZE:

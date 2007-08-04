@@ -73,13 +73,23 @@ the codewords `$|init|\ldots|tini|$'.
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
 @d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
 @y
-the codewords `$|init|\ldots|tini|$'.
+the codewords `$|init|\ldots|tini|$' for declarations and by the codewords
+`$|Init|\ldots|Tini|$' for executable code.  This distinction is helpful for
+implementations where a run-time switch differentiates between the two
+versions of the program.
 
-\MiKTeX: we use the function |miktex_is_init_program| to distinguish
-between the two variants.
+@d init=={ifdef('INITEX')}
+@d tini=={endif('INITEX')}
+@d Init==init if miktex_is_init_program then begin
+@d Tini==end;@+tini
+@f Init==begin
+@f Tini==end
+@z
 
-@d init== @+if miktex_is_init_program then@+begin
-@d tini== @+end;
+@x
+@!init @<Initialize table entries (done by \.{INITEX} only)@>@;@+tini
+@y
+@!Init @<Initialize table entries (done by \.{INITEX} only)@>@;@+Tini
 @z
 
 % _____________________________________________________________________________
@@ -591,12 +601,7 @@ loop@+begin
 @y
 @p @t\4@>@<Declare additional routines for string recycling@>@/
 
-function get_strings_started:boolean; {initializes the string pool,
-@z
-
-@x
-tini
-@y
+@!init function get_strings_started:boolean; {initializes the string pool,
 @z
 
 % _____________________________________________________________________________
@@ -620,18 +625,6 @@ tini
 @y
 @<Character |k| cannot be printed@>=
   not miktex_is_printable (k)
-@z
-
-% _____________________________________________________________________________
-%
-% [4.50]
-% _____________________________________________________________________________
-
-@x
-@!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
-tini
-@y
-@!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
 @z
 
 % _____________________________________________________________________________
@@ -918,22 +911,6 @@ begin if hi_mem_min-lo_mem_max>=1022 then t:=lo_mem_max+512
 
 % _____________________________________________________________________________
 %
-% [9.131]
-% _____________________________________________________________________________
-
-@x
-@p @!init procedure sort_avail; {sorts the available variable-size nodes
-@y
-@p procedure sort_avail; {sorts the available variable-size nodes
-@z
-
-@x
-tini
-@y
-@z
-
-% _____________________________________________________________________________
-%
 % [10.144]
 % _____________________________________________________________________________
 
@@ -1017,22 +994,6 @@ begin time:=c4p_hour*60+c4p_minute; {minutes since midnight}
 day:=c4p_day; {day of month}
 month:=c4p_month; {month of year}
 year:=c4p_year; {Anno Domini}
-@z
-
-% _____________________________________________________________________________
-%
-% [18.264]
-% _____________________________________________________________________________
-
-@x
-@p @!init procedure primitive(@!s:str_number;@!c:quarterword;@!o:halfword);
-@y
-@p procedure primitive(@!s:str_number;@!c:quarterword;@!o:halfword);
-@z
-
-@x
-tini
-@y
 @z
 
 % _____________________________________________________________________________
@@ -1975,22 +1936,6 @@ flushable_string:=str_ptr-1;
 
 % _____________________________________________________________________________
 %
-% [50.1302]
-% _____________________________________________________________________________
-
-@x
-@!init procedure store_fmt_file;
-@y
-procedure store_fmt_file;
-@z
-
-@x
-tini
-@y
-@z
-
-% _____________________________________________________________________________
-%
 % [50.1303]
 % _____________________________________________________________________________
 
@@ -2053,8 +1998,85 @@ bad_fmt:
 @y
 @d undump_things(#)==miktex_undump(fmt_file, #)
 @d undump_checked_things(#)==miktex_undump(fmt_file, #)
-@d undump_upper_checked_things(#)==miktex_undump(fmt_file, #)
+@d undump_upper_check_things(#)==miktex_undump(fmt_file, #)
 @d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1307]
+% _____________________________________________________________________________
+
+@x
+dump_int(@$);@/
+@y
+dump_int(@"4D694B54); {"MiKT"}
+dump_int(@$);@/
+@<Dump |xord|, |xchr|, and |xprn|@>;
+dump_int(max_halfword);@/
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1308]
+% _____________________________________________________________________________
+
+
+@x
+x:=fmt_file^.int;
+if x<>@$ then goto bad_fmt; {check that strings are the same}
+@y
+x:=fmt_file^.int;
+if x<>@"4D694B54 then goto bad_fmt; {not a format file}
+undump_int(x);
+if x<>@$ then goto bad_fmt; {check that strings are the same}
+@<Undump |xord|, |xchr|, and |xprn|@>;
+undump_int(x);
+if x<>max_halfword then goto bad_fmt; {check |max_halfword|}
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1309]
+% _____________________________________________________________________________
+
+@x
+for k:=0 to str_ptr do dump_int(str_start[k]);
+k:=0;
+while k+4<pool_ptr do
+  begin dump_four_ASCII; k:=k+4;
+  end;
+k:=pool_ptr-4; dump_four_ASCII;
+@y
+dump_things(str_start[0], str_ptr+1);
+dump_things(str_pool[0], pool_ptr);
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1310]
+% _____________________________________________________________________________
+
+@x
+undump_size(0)(pool_size)('string pool size')(pool_ptr);
+undump_size(0)(max_strings)('max strings')(str_ptr);
+for k:=0 to str_ptr do undump(0)(pool_ptr)(str_start[k]);
+k:=0;
+while k+4<pool_ptr do
+  begin undump_four_ASCII; k:=k+4;
+  end;
+k:=pool_ptr-4; undump_four_ASCII;
+@y
+undump_size(0)(sup_pool_size-pool_free)('string pool size')(pool_ptr);
+if pool_size<pool_ptr+pool_free then
+  pool_size:=pool_ptr+pool_free;
+undump_size(0)(sup_max_strings-strings_free)('sup strings')(str_ptr);@/
+if max_strings<str_ptr+strings_free then
+  max_strings:=str_ptr+strings_free;
+str_start:=miktex_reallocate(str_start, max_strings);
+undump_checked_things(0, pool_ptr, str_start[0], str_ptr+1);@/
+str_pool:=miktex_reallocate(str_pool, pool_size);
+undump_things(str_pool[0], pool_ptr);
 @z
 
 % _____________________________________________________________________________
@@ -2154,6 +2176,185 @@ c4p_mget(fmt_file, c4p_ptr(hash[hash_used+1]), (undefined_control_sequence-1)-(h
 
 % _____________________________________________________________________________
 %
+% [50.1320]
+% _____________________________________________________________________________
+
+@x
+for k:=0 to fmem_ptr-1 do dump_wd(font_info[k]);
+dump_int(font_ptr);
+for k:=null_font to font_ptr do
+  @<Dump the array info for internal font number |k|@>;
+@y
+dump_things(font_info[0], fmem_ptr);
+dump_int(font_ptr);
+@<Dump the array info for internal font number |k|@>;
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1321]
+% _____________________________________________________________________________
+
+@x
+undump_size(7)(font_mem_size)('font mem size')(fmem_ptr);
+for k:=0 to fmem_ptr-1 do undump_wd(font_info[k]);
+undump_size(font_base)(font_max)('font max')(font_ptr);
+for k:=null_font to font_ptr do
+  @<Undump the array info for internal font number |k|@>
+@y
+undump_size(7)(sup_font_mem_size)('font mem size')(fmem_ptr);
+if fmem_ptr>font_mem_size then font_mem_size:=fmem_ptr;
+font_info:=miktex_reallocate(font_info, font_mem_size);
+undump_things(font_info[0], fmem_ptr);@/
+undump_size(font_base)(font_base+max_font_max)('font max')(font_ptr);
+{This undumps all of the font info, despite the name.}
+@<Undump the array info for internal font number |k|@>;
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1322]
+% _____________________________________________________________________________
+
+@x
+@ @<Dump the array info for internal font number |k|@>=
+begin dump_qqqq(font_check[k]);
+dump_int(font_size[k]);
+dump_int(font_dsize[k]);
+dump_int(font_params[k]);@/
+dump_int(hyphen_char[k]);
+dump_int(skew_char[k]);@/
+dump_int(font_name[k]);
+dump_int(font_area[k]);@/
+dump_int(font_bc[k]);
+dump_int(font_ec[k]);@/
+dump_int(char_base[k]);
+dump_int(width_base[k]);
+dump_int(height_base[k]);@/
+dump_int(depth_base[k]);
+dump_int(italic_base[k]);
+dump_int(lig_kern_base[k]);@/
+dump_int(kern_base[k]);
+dump_int(exten_base[k]);
+dump_int(param_base[k]);@/
+dump_int(font_glue[k]);@/
+dump_int(bchar_label[k]);
+dump_int(font_bchar[k]);
+dump_int(font_false_bchar[k]);@/
+print_nl("\font"); print_esc(font_id_text(k)); print_char("=");
+print_file_name(font_name[k],font_area[k],"");
+if font_size[k]<>font_dsize[k] then
+  begin print(" at "); print_scaled(font_size[k]); print("pt");
+  end;
+end
+@y
+@ @<Dump the array info for internal font number |k|@>=
+begin
+dump_things(font_check[null_font], font_ptr+1-null_font);
+dump_things(font_size[null_font], font_ptr+1-null_font);
+dump_things(font_dsize[null_font], font_ptr+1-null_font);
+dump_things(font_params[null_font], font_ptr+1-null_font);
+dump_things(hyphen_char[null_font], font_ptr+1-null_font);
+dump_things(skew_char[null_font], font_ptr+1-null_font);
+dump_things(font_name[null_font], font_ptr+1-null_font);
+dump_things(font_area[null_font], font_ptr+1-null_font);
+dump_things(font_bc[null_font], font_ptr+1-null_font);
+dump_things(font_ec[null_font], font_ptr+1-null_font);
+dump_things(char_base[null_font], font_ptr+1-null_font);
+dump_things(width_base[null_font], font_ptr+1-null_font);
+dump_things(height_base[null_font], font_ptr+1-null_font);
+dump_things(depth_base[null_font], font_ptr+1-null_font);
+dump_things(italic_base[null_font], font_ptr+1-null_font);
+dump_things(lig_kern_base[null_font], font_ptr+1-null_font);
+dump_things(kern_base[null_font], font_ptr+1-null_font);
+dump_things(exten_base[null_font], font_ptr+1-null_font);
+dump_things(param_base[null_font], font_ptr+1-null_font);
+dump_things(font_glue[null_font], font_ptr+1-null_font);
+dump_things(bchar_label[null_font], font_ptr+1-null_font);
+dump_things(font_bchar[null_font], font_ptr+1-null_font);
+dump_things(font_false_bchar[null_font], font_ptr+1-null_font);
+for k:=null_font to font_ptr do
+  begin print_nl("\font"); print_esc(font_id_text(k)); print_char("=");
+  print_file_name(font_name[k],font_area[k],"");
+  if font_size[k]<>font_dsize[k] then
+    begin print(" at "); print_scaled(font_size[k]); print("pt");
+    end;
+  end;
+end
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1323]
+% _____________________________________________________________________________
+
+@x
+@ @<Undump the array info for internal font number |k|@>=
+begin undump_qqqq(font_check[k]);@/
+undump_int(font_size[k]);
+undump_int(font_dsize[k]);
+undump(min_halfword)(max_halfword)(font_params[k]);@/
+undump_int(hyphen_char[k]);
+undump_int(skew_char[k]);@/
+undump(0)(str_ptr)(font_name[k]);
+undump(0)(str_ptr)(font_area[k]);@/
+undump(0)(255)(font_bc[k]);
+undump(0)(255)(font_ec[k]);@/
+undump_int(char_base[k]);
+undump_int(width_base[k]);
+undump_int(height_base[k]);@/
+undump_int(depth_base[k]);
+undump_int(italic_base[k]);
+undump_int(lig_kern_base[k]);@/
+undump_int(kern_base[k]);
+undump_int(exten_base[k]);
+undump_int(param_base[k]);@/
+undump(min_halfword)(lo_mem_max)(font_glue[k]);@/
+undump(0)(fmem_ptr-1)(bchar_label[k]);
+undump(min_quarterword)(non_char)(font_bchar[k]);
+undump(min_quarterword)(non_char)(font_false_bchar[k]);
+end
+@y
+@ This module should now be named `Undump all the font arrays'.
+
+@<Undump the array info for internal font number |k|@>=
+begin {Allocate the font arrays}
+undump_things(font_check[null_font], font_ptr+1-null_font);
+undump_things(font_size[null_font], font_ptr+1-null_font);
+undump_things(font_dsize[null_font], font_ptr+1-null_font);
+undump_checked_things(min_halfword, max_halfword,
+                      font_params[null_font], font_ptr+1-null_font);
+undump_things(hyphen_char[null_font], font_ptr+1-null_font);
+undump_things(skew_char[null_font], font_ptr+1-null_font);
+undump_upper_check_things(str_ptr, font_name[null_font], font_ptr+1-null_font);
+undump_upper_check_things(str_ptr, font_area[null_font], font_ptr+1-null_font);
+{There's no point in checking these values against the range $[0,255]$,
+ since the data type is |unsigned char|, and all values of that type are
+ in that range by definition.}
+undump_things(font_bc[null_font], font_ptr+1-null_font);
+undump_things(font_ec[null_font], font_ptr+1-null_font);
+undump_things(char_base[null_font], font_ptr+1-null_font);
+undump_things(width_base[null_font], font_ptr+1-null_font);
+undump_things(height_base[null_font], font_ptr+1-null_font);
+undump_things(depth_base[null_font], font_ptr+1-null_font);
+undump_things(italic_base[null_font], font_ptr+1-null_font);
+undump_things(lig_kern_base[null_font], font_ptr+1-null_font);
+undump_things(kern_base[null_font], font_ptr+1-null_font);
+undump_things(exten_base[null_font], font_ptr+1-null_font);
+undump_things(param_base[null_font], font_ptr+1-null_font);
+undump_checked_things(min_halfword, lo_mem_max,
+                     font_glue[null_font], font_ptr+1-null_font);
+undump_checked_things(0, fmem_ptr-1,
+                     bchar_label[null_font], font_ptr+1-null_font);
+undump_checked_things(min_quarterword, non_char,
+                     font_bchar[null_font], font_ptr+1-null_font);
+undump_checked_things(min_quarterword, non_char,
+                     font_false_bchar[null_font], font_ptr+1-null_font);
+end
+@z
+
+% _____________________________________________________________________________
+%
 % [50.1326]
 % _____________________________________________________________________________
 
@@ -2233,22 +2434,6 @@ end;
 
 % _____________________________________________________________________________
 %
-% [51.1336]
-% _____________________________________________________________________________
-
-@x
-@!init procedure init_prim; {initialize all the primitives}
-@y
-procedure init_prim; {initialize all the primitives}
-@z
-
-@x
-tini
-@y
-@z
-
-% _____________________________________________________________________________
-%
 % [51.1337]
 % _____________________________________________________________________________
 
@@ -2266,10 +2451,37 @@ if miktex_get_interaction >= 0 then
 % _____________________________________________________________________________
 
 @x
-@* \[54] System-dependent changes.
+@* \[54/ML\TeX] System-dependent changes for ML\TeX.
 @y
 @* \[54/MiKTeX] System-dependent changes for MiKTeX.
 @^<system dependencies@>
+
+@ When debugging a macro package, it can be useful to see the exact
+control sequence names in the format file.  For example, if ten new
+csnames appear, it's nice to know what they are, to help pinpoint where
+they came from.  (This isn't a truly ``basic'' printing procedure, but
+that's a convenient module in which to put it.)
+
+@<Basic printing procedures@> =
+procedure print_csnames (hstart:integer; hfinish:integer);
+var c,h:integer;
+begin
+  write_ln(c4p_error_output, 'fmtdebug:csnames from ', hstart, ' to ', hfinish, ':');
+  for h := hstart to hfinish do begin
+    if text(h) > 0 then begin {if have anything at this position}
+      for c := str_start[text(h)] to str_start[text(h) + 1] - 1
+      do begin
+        write(str_pool[c], c4p_error_output); {print the characters}
+      end;
+      write_ln(c4p_error_output, '|');
+    end;
+  end;
+end;
+
+@ Are we printing extra info as we read the format file?
+
+@<Glob...@> =
+@!debug_format_file: boolean;
 
 @ Print an error message like a C compiler would do.
 
@@ -2298,6 +2510,7 @@ end;
 
 @<Declare \MiKTeX\ functions@>=
 
+function miktex_enable_eightbit_chars_p : boolean; forward;@t\2@>@/
 function miktex_is_init_program : boolean; forward;@t\2@>@/
 function miktex_c_style_error_messages_p : boolean; forward;@t\2@>@/
 function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
@@ -2331,7 +2544,9 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 @!mem_top: integer;
 @!nest_size: integer;
 @!param_size: integer;
+@!pool_free:integer;{pool space free after format loaded}
 @!pool_size: integer;
+@!strings_free:integer; {strings available after format loaded}
 @!quoted_filename: boolean;
 @!save_size: integer;
 @!stack_size: integer;
@@ -2390,5 +2605,37 @@ if s>0 then
 slow_make_string:=t;
 exit:end;
 
-@* \[54] System-dependent changes.
+@ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
+in the format, so a TCX file loaded during format creation can set a
+default for users of the format.
+
+@<Dump |xord|, |xchr|, and |xprn|@>=
+dump_things(xord[0], 256);
+dump_things(xchr[0], 256);
+dump_things(xprn[0], 256);
+
+@ Undumping the |xord|, |xchr|, and |xprn| arrays.  This code is more
+complicated, because we want to ensure that a TCX file specified on
+the command line will override whatever is in the format.  Since the
+tcx file has already been loaded, that implies throwing away the data
+in the format.  Also, if no |translate_filename| is given, but
+|eight_bit_p| is set we have to make all characters printable.
+
+@<Undump |xord|, |xchr|, and |xprn|@>=
+if miktex_have_tcx_file_name then begin
+  for k:=0 to 255 do undump_things(dummy_xord, 1);
+  for k:=0 to 255 do undump_things(dummy_xchr, 1);
+  for k:=0 to 255 do undump_things(dummy_xprn, 1);
+  end
+else begin
+  undump_things(xord[0], 256);
+  undump_things(xchr[0], 256);
+  undump_things(xprn[0], 256);
+  if miktex_enable_eightbit_chars_p then
+    for k:=0 to 255 do
+      xprn[k]:=1;
+end;
+
+
+@* \[54/ML\TeX] System-dependent changes for ML\TeX.
 @z

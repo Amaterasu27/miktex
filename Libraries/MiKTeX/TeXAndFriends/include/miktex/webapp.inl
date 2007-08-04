@@ -78,6 +78,20 @@ miktexhavetcxfilename ()
 
 /* _________________________________________________________________________
 
+   miktexenableeightbitcharsp
+   _________________________________________________________________________ */
+
+#if defined(THEAPP) && defined(IMPLEMENT_TCX)
+inline
+bool
+miktexenableeightbitcharsp ()
+{
+  return (THEAPP.Enable8BitCharsP());
+}
+#endif
+
+/* _________________________________________________________________________
+
    miktexprocesscommandlineoptions
    _________________________________________________________________________ */
 

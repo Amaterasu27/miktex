@@ -373,18 +373,6 @@ not_found:
 
 % _____________________________________________________________________________
 %
-% [43.942]
-% _____________________________________________________________________________
-
-@x
-@!init @<Declare procedures for preprocessing hyphenation patterns@>@;
-tini
-@y
-@<Declare procedures for preprocessing hyphenation patterns@>@;
-@z
-
-% _____________________________________________________________________________
-%
 % [43.943]
 % _____________________________________________________________________________
 
@@ -398,12 +386,6 @@ tini
 $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_quarterword)|,\qquad
 @y
 $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_trie_op)|,\qquad
-@z
-
-@x
-@!init@! trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
-@y
-@! trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
 @z
 
 @x
@@ -421,6 +403,7 @@ $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_trie_op)|,\qquad
 @x
 tini
 @y
+tini@;
 @!max_op_used:trie_opcode; {largest opcode used for any language}
 @!small_op:boolean; {flag used while dumping or undumping}
 @z
@@ -510,7 +493,7 @@ trie_op_ptr:=0;
   {used to identify equivalent subtries}
 tini
 @y
-@!trie_c:^packed_ASCII_code;
+@!init @!trie_c:^packed_ASCII_code;
   {characters to match}
 @t\hskip10pt@>@!trie_o:^trie_opcode;
   {operations to perform}
@@ -521,6 +504,7 @@ tini
 @t\hskip10pt@>@!trie_ptr:trie_pointer; {the number of nodes in the trie}
 @t\hskip10pt@>@!trie_hash:^trie_pointer;
   {used to identify equivalent subtries}
+tini
 @z
 
 % _____________________________________________________________________________
@@ -537,12 +521,7 @@ tini
 @x
 @!init@!trie_taken:packed array[1..trie_size] of boolean;
 @y
-@!trie_taken: ^boolean;
-@z
-
-@x
-tini
-@y
+@!init@!trie_taken: ^boolean;
 @z
 
 % _____________________________________________________________________________

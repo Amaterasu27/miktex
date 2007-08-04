@@ -493,29 +493,6 @@ var i:0..sup_max_in_open; {index into |if_stack|}
 
 % _____________________________________________________________________________
 %
-% [61.1814]
-% _____________________________________________________________________________
-
-@x
-@!init destroy_marks: for i:=top_mark_code to split_bot_mark_code do
-  begin get_sa_ptr;
-  if cur_ptr<>null then
-    begin delete_token_ref(cur_ptr); put_sa_ptr(null);
-    end;
-  end;
-tini
-@y
-@!destroy_marks: init for i:=top_mark_code to split_bot_mark_code do
-  begin get_sa_ptr;
-  if cur_ptr<>null then
-    begin delete_token_ref(cur_ptr); put_sa_ptr(null);
-    end;
-  end;
-tini
-@z
-
-% _____________________________________________________________________________
-%
 % [63.1861]
 % _____________________________________________________________________________
 

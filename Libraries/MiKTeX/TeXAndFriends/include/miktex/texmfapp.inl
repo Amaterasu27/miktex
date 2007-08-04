@@ -357,16 +357,22 @@ miktexundump (/*[in]*/ FILE_ &		f,
    _________________________________________________________________________ */
 
 template<typename FILE_,
+	 typename LOWTYPE_,
+	 typename HIGHTYPE_,
 	 typename ELETYPE_>
 inline
 void
 miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[in]*/ ELETYPE_ 	low,
-	      /*[in]*/ ELETYPE_ 	high,
+	      /*[in]*/ LOWTYPE_ 	low,
+	      /*[in]*/ HIGHTYPE_ 	high,
 	      /*[out]*/ ELETYPE_ &	e,
 	      /*[in]*/ size_t		n)
 {
-  THEAPP.Undump (f, e, n, low, high);
+  THEAPP.Undump (f,
+		 static_cast<ELETYPE_>(low),
+		 static_cast<ELETYPE_>(high),
+		 e,
+		 n);
 }
 
 /* _________________________________________________________________________
@@ -375,15 +381,16 @@ miktexundump (/*[in]*/ FILE_ &		f,
    _________________________________________________________________________ */
 
 template<typename FILE_,
+	 typename HIGHTYPE_,
 	 typename ELETYPE_>
 inline
 void
 miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[in]*/ ELETYPE_ 	high,
+	      /*[in]*/ HIGHTYPE_ 	high,
 	      /*[out]*/ ELETYPE_ &	e,
 	      /*[in]*/ size_t		n)
 {
-  THEAPP.Undump (f, e, n, high);
+  THEAPP.Undump (f, static_cast<ELETYPE_>(high), e, n);
 }
 
 MIKTEXMF_END_NAMESPACE;

@@ -298,7 +298,6 @@ public:
     Allocate (THEDATA(fontec), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(fontfalsebchar), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(fontglue), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
     Allocate (THEDATA(fontname), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(fontparams), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(fontsize), THEDATA(fontmax) + 1 - constfontbase);
@@ -312,6 +311,11 @@ public:
     Allocate (THEDATA(skewchar), THEDATA(fontmax) + 1 - constfontbase);
     Allocate (THEDATA(triec), THEDATA(triesize) + 1);
     Allocate (THEDATA(widthbase), THEDATA(fontmax) + 1 - constfontbase);
+
+    if (IsInitProgram() || ! AmITeXCompiler() || AmI(MIKTEXTEXT("omega")))
+      {
+	Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
+      }
 #endif // not Omega
 
 #if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)

@@ -510,6 +510,10 @@ public:
 	      paramsize,
 	      param_size,
 	      texmfapp::texmfapp::param_size());
+    GETPARAM (param_pool_free,
+	      poolfree,
+	      pool_free,
+	      texmfapp::texmfapp::pool_free());
     GETPARAM (param_pool_size,
 	      poolsize,
 	      pool_size,
@@ -518,6 +522,10 @@ public:
 	      stacksize,
 	      stack_size,
 	      texmfapp::texmfapp::stack_size());
+    GETPARAM (param_strings_free,
+	      stringsfree,
+	      strings_free,
+	      texmfapp::texmfapp::strings_free());
     GETPARAM (param_string_vacancies,
 	      stringvacancies,
 	      string_vacancies,
@@ -540,12 +548,12 @@ public:
     Allocate (THEDATA(buffer), THEDATA(bufsize) + 1);
     Allocate (THEDATA(inputstack), THEDATA(stacksize) + 1);
     Allocate (THEDATA(paramstack), THEDATA(paramsize) + 1);
-#if defined(MIKTEX_METAPOST)
-    Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
-#else
-    Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
-#endif
     Allocate (THEDATA(trickbuf), THEDATA(errorline) + 1);
+
+    if (IsInitProgram() || ! isTeXProgram || AmI(MIKTEXTEXT("omega")))
+      {
+	Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
+      }
 
 #if 0
     // <fixme/>
@@ -979,11 +987,11 @@ public:
   template<typename FILE_,
 	   typename ELETYPE_>
   void
-  Undump (/*[in]*/ FILE_ &		f,
-	  /*[in]*/ ELETYPE_		low,
-	  /*[in]*/ ELETYPE_		high,
-	  /*[out]*/ ELETYPE_ &		e,
-	  /*[in]*/ size_t		n)
+  Undump (/*[in]*/ FILE_ &	f,
+	  /*[in]*/ ELETYPE_	low,
+	  /*[in]*/ ELETYPE_	high,
+	  /*[out]*/ ELETYPE_ &	e,
+	  /*[in]*/ size_t	n)
   {
     Undump (f, e, n);
     for (size_t idx = 0; idx < n; ++ idx)
@@ -1012,10 +1020,10 @@ public:
   template<typename FILE_,
 	   typename ELETYPE_>
   void
-  Undump (/*[in]*/ FILE_ &		f,
-	  /*[in]*/ ELETYPE_		high,
-	  /*[out]*/ ELETYPE_ &		e,
-	  /*[in]*/ size_t		n)
+  Undump (/*[in]*/ FILE_ &	f,
+	  /*[in]*/ ELETYPE_	high,
+	  /*[out]*/ ELETYPE_ &	e,
+	  /*[in]*/ size_t	n)
   {
     Undump (f, e, n);
     for (size_t idx = 0; idx < n; ++ idx)
@@ -1115,6 +1123,20 @@ protected:
 
   /* _______________________________________________________________________
      
+     AmITeXCompiler
+     _______________________________________________________________________ */
+
+protected:
+
+  bool
+  AmITeXCompiler()
+    const
+  {
+    return (isTeXProgram);
+  }
+
+  /* _______________________________________________________________________
+     
      Variables
      _______________________________________________________________________ */
 
@@ -1188,10 +1210,16 @@ private:
   int param_param_size;
 
 private:
+  int param_pool_free;
+
+private:
   int param_pool_size;
 
 private:
   int param_stack_size;
+
+private:
+  int param_strings_free;
 
 private:
   int param_string_vacancies;
