@@ -374,6 +374,7 @@ symtab_init ()
 
   new_variable ("input", "text");
   new_variable ("output", "text");
+  new_variable ("c4perroroutput", "text");
 
   new_variable ("c4pargc", "integer");
   new_variable ("c4pargv", "c4pstrarr");
