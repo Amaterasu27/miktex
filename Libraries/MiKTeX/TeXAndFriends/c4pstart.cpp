@@ -1,6 +1,6 @@
 /* c4pstart.cpp: C4P statup code
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -122,6 +122,7 @@ C4P::Program::Program (/*[in]*/ const MIKTEXCHAR *	lpszProgramName,
   standardTextFiles[2].Attach (stderr, false);
   *input = T_('\n');
   *output = T_('\0');
+  *c4perroroutput = T_('\0');
   running = true;
   MIKTEX_API_END ("C4P::StartUp");
 }

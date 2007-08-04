@@ -1,6 +1,6 @@
 /* miktex/c4plib.h: Pascalish run-time support			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -399,6 +399,7 @@ GetStdFilePtr (/*[in]*/ unsigned idx);
 
 #define input (*(C4P::GetStdFilePtr(0)))
 #define output (*(C4P::GetStdFilePtr(1)))
+#define c4perroroutput (*(C4P::GetStdFilePtr(2)))
 
 /* _________________________________________________________________________
 
