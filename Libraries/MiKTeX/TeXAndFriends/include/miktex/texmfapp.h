@@ -510,10 +510,12 @@ public:
 	      paramsize,
 	      param_size,
 	      texmfapp::texmfapp::param_size());
+#if defined(MIKTEX_TEX_COMPILER) && ! defined(MIKTEX_OMEGA)
     GETPARAM (param_pool_free,
 	      poolfree,
 	      pool_free,
 	      texmfapp::texmfapp::pool_free());
+#endif
     GETPARAM (param_pool_size,
 	      poolsize,
 	      pool_size,
@@ -522,10 +524,12 @@ public:
 	      stacksize,
 	      stack_size,
 	      texmfapp::texmfapp::stack_size());
+#if defined(MIKTEX_TEX_COMPILER) && ! defined(MIKTEX_OMEGA)
     GETPARAM (param_strings_free,
 	      stringsfree,
 	      strings_free,
 	      texmfapp::texmfapp::strings_free());
+#endif
     GETPARAM (param_string_vacancies,
 	      stringvacancies,
 	      string_vacancies,
