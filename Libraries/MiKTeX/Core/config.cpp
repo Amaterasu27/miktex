@@ -529,7 +529,6 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 {
   bool haveValue = false;
 
-
   for (CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
        ++ app)
@@ -555,16 +554,18 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 	      ReadAllConfigFiles (app.GetCurrent(), pCfg);
 	    }
 	}
+
+      const MIKTEXCHAR * lpszSectionName2 = lpszSectionName;
 	  
       // section name defaults to application name
-      if (lpszSectionName == 0)
+      if (lpszSectionName2 == 0)
 	{
-	  lpszSectionName = app.GetCurrent();
+	  lpszSectionName2 = app.GetCurrent();
 	}
       
 #if 0
       const ConfigMapping * pMapping =
-	FindConfigMapping(lpszSectionName, lpszValueName);
+	FindConfigMapping(lpszSectionName2, lpszValueName);
       
       if (pMapping != 0
 	  && pMapping->lpszEnvVarName != 0
@@ -584,7 +585,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 	envVarName = MIKTEX_ENV_PREFIX_;
 	AppendToEnvVarName (envVarName, app.GetCurrent());
 	envVarName += T_('_');
-	AppendToEnvVarName (envVarName, lpszSectionName);
+	AppendToEnvVarName (envVarName, lpszSectionName2);
 	envVarName += T_('_');
 	AppendToEnvVarName (envVarName, lpszValueName);
 	if (Utils::GetEnvironmentString(envVarName.c_str(), value))
@@ -596,7 +597,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       
 #if defined(MIKTEX_WINDOWS)
       if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
-					   lpszSectionName,
+					   lpszSectionName2,
 					   lpszValueName,
 					   value,
 					   0))
@@ -608,7 +609,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       
       // try configuration file
       if (pCfg != 0
-	  && pCfg->TryGetValue(lpszSectionName, lpszValueName, value))
+	  && pCfg->TryGetValue(lpszSectionName2, lpszValueName, value))
 	{
 	  haveValue = true;
 	  break;
