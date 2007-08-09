@@ -105,3 +105,22 @@ target_link_libraries(${omega_dll_name}
   ${kpsemu_dll_name}
   ${gnu_dll_name}
 )
+
+## dev targets
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/omega-n.web
+  COMMAND ${webn_exe}
+	< ${omega_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/omega-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${omega_web_file}
+  VERBATIM
+)
+
+add_custom_target(dev ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/omega-n.web
+)

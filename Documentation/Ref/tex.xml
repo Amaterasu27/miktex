@@ -136,10 +136,6 @@ character (usually <keycombo>
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;
-&optionmembot;
-&optionmemmax;
-&optionmemmin;
-&optionmemtop;
 &optionnestsize;
 &optionnocstyleerrors;
 &optionoutputdirectory;

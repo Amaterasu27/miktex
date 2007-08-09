@@ -122,17 +122,23 @@ public:
   {
     TeXApp::AllocateMemory ();
 
-    GETPARAM (-1, pdfmemsize, pdf_mem_size, pdftex::pdftex::pdf_mem_size());
-    GETPARAM (-1, objtabsize, obj_tab_size, pdftex::pdftex::obj_tab_size());
-    GETPARAM (-1,
-	      destnamessize,
-	      dest_names_size,
-	      pdftex::pdftex::dest_names_size());
-    GETPARAM (-1,
-	      pdfosbufsize,
-	      pdf_os_buf_size,
-	      pdftex::pdftex::pdf_os_buf_size());
-
+    GETPARAMCHECK (-1,
+		   pdfmemsize,
+		   pdf_mem_size,
+		   pdftex::pdftex::pdf_mem_size());
+    GETPARAMCHECK (-1,
+		   objtabsize,
+		   obj_tab_size,
+		   pdftex::pdftex::obj_tab_size());
+    GETPARAMCHECK (-1,
+		   destnamessize,
+		   dest_names_size,
+		   pdftex::pdftex::dest_names_size());
+    GETPARAMCHECK (-1,
+		   pdfosbufsize,
+		   pdf_os_buf_size,
+		   pdftex::pdftex::pdf_os_buf_size());
+    
     size_t nFonts = THEDATA(fontmax) + 1 - constfontbase;
 
     // etex

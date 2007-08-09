@@ -16,6 +16,12 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                      INSPIRED BY WEB2C'S TEX.CH                        //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
+
 @x
 \def\PASCAL{Pascal}
 @y
@@ -98,112 +104,128 @@ versions of the program.
 % _____________________________________________________________________________
 
 @x
-in production versions of \TeX.
-@.INITEX@>
-@^system dependencies@>
-@y
-in production versions of \TeX.
-@.INITEX@>
-@^system dependencies@>
-
-\MiKTeX: some parameters are global variables. For example, |mem_max| is
-an integer variable.
-@z
-
-@x
 @!mem_max=30000; {greatest index in \TeX's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INITEX}, otherwise |>=mem_top|}
 @y
-@!sup_mem_max=1048576; {greatest index in \TeX's internal |mem| array;
 @z
 
 @x
 @!mem_min=0; {smallest index in \TeX's internal |mem| array;
+  must be |min_halfword| or more;
+  must be equal to |mem_bot| in \.{INITEX}, otherwise |<=mem_bot|}
 @y
-@!inf_mem_min=0; {smallest index in \TeX's internal |mem| array;
 @z
 
 @x
 @!buf_size=500; {maximum number of characters simultaneously present in
+  current lines of open files and in control sequences between
+  \.{\\csname} and \.{\\endcsname}; must not exceed |max_halfword|}
 @y
-@!sup_buf_size=66000; {maximum number of characters simultaneously present in
+@!inf_buf_size = 500;
+@!sup_buf_size = 30000000;
 @z
 
 @x
 @!error_line=72; {width of context lines on terminal error messages}
 @y
-@!sup_error_line=72; {width of context lines on terminal error messages}
+@!inf_error_line=40;
+@!sup_error_line=65535;
 @z
 
 @x
 @!half_error_line=42; {width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}
 @y
-@!sup_half_error_line=42; {width of first lines of contexts in terminal
+@!inf_half_error_line=30;
+@!sup_half_error_line=65535;
 @z
 
 @x
 @!max_print_line=79; {width of longest text lines output; should be at least 60}
 @y
-@!sup_print_line=79; {width of longest text lines output; should be at least 60}
+@!inf_max_print_line=40;
+@!sup_max_print_line=65535;
 @z
 
 @x
 @!stack_size=200; {maximum number of simultaneous input sources}
 @y
-@!sup_stack_size=300; {maximum number of simultaneous input sources}
+@!inf_stack_size=30;
+@!sup_stack_size=65535;
 @z
 
 @x
 @!max_in_open=6; {maximum number of input files and error insertions that
+  can be going on simultaneously}
 @y
-@!sup_max_in_open=20; {maximum number of input files and error insertions that
+@!inf_max_in_open=6;
+@!sup_max_in_open=255;
 @z
 
 @x
 @!font_max=75; {maximum internal font number; must not exceed |max_quarterword|
+  and must be at most |font_base+256|}
 @y
-@!sup_font_max=1000; {maximum internal font number; must not exceed |max_quarterword|
 @z
 
 @x
 @!font_mem_size=20000; {number of words of |font_info| for all fonts}
 @y
-@!sup_font_mem_size=131068; {number of words of |font_info| for all fonts}
+@!inf_font_mem_size=20000;
+@!sup_font_mem_size=4000000;
 @z
 
 @x
 @!param_size=60; {maximum number of simultaneous macro parameters}
 @y
-@!sup_param_size=500; {maximum number of simultaneous macro parameters}
+@!inf_param_size=60;
+@!sup_param_size=600000;
 @z
 
 @x
 @!nest_size=40; {maximum number of semantic levels simultaneously active}
 @y
-@!sup_nest_size=200; {maximum number of semantic levels simultaneously active}
+@!inf_nest_size=40;
+@!sup_nest_size=4000;
 @z
 
 @x
 @!max_strings=3000; {maximum number of strings; must not exceed |max_halfword|}
 @y
-@!sup_max_strings=70000; {maximum number of strings; must not exceed |max_halfword|}
+@!inf_max_strings=3000;
+@!sup_max_strings=262143;
+@!inf_strings_free=100;
+@!sup_strings_free=262143;
 @z
 
 @x
 @!string_vacancies=8000; {the minimum number of characters that should be
+  available for the user's control sequences and font names,
+  after \TeX's own error messages are stored}
 @y
-@!sup_string_vacancies=170000; {the minimum number of characters that should be
+@!inf_string_vacancies=8000;
+@!sup_string_vacancies=40000000;
 @z
 
 @x
 @!pool_size=32000; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all fonts and
+  control sequences; must exceed |string_vacancies| by the total
+  length of \TeX's own strings, which is currently about 23000}
 @y
-@!sup_pool_size=200000; {maximum number of characters in strings, including all
+@!inf_pool_size=32000;
+@!sup_pool_size=40000000;
+@!inf_pool_free=1000;
+@!sup_pool_free=40000000;
 @z
 
 @x
 @!save_size=600; {space for saving values outside of current group; must be
+  at most |max_halfword|}
 @y
-@!sup_save_size=70000; {space for saving values outside of current group; must be
+@!inf_save_size=600;
+@!sup_save_size=80000;
 @z
 
 @x
@@ -226,29 +248,30 @@ an integer variable.
 
 @x
 @d mem_bot=0 {smallest index in the |mem| array dumped by \.{INITEX};
-@y
-@d mem_bot_def=0 {smallest index in the |mem| array dumped by \.{INITEX};
-@z
-
-@x
+  must not be less than |mem_min|}
 @d mem_top==30000 {largest index in the |mem| array dumped by \.{INITEX};
+  must be substantially larger than |mem_bot|
+  and not greater than |mem_max|}
 @y
-@d mem_top_def==1048576 {largest index in the |mem| array dumped by \.{INITEX};
 @z
 
 @x
 @d font_base=0 {smallest internal font number; must not be less
+  than |min_quarterword|}
 @y
 @d max_font_max=5000 {maximum number of internal fonts; this can be
                       increased, but |hash_size+max_font_max|
                       should not exceed 29000.}
 @d font_base=0 {smallest internal font number; must not be less
+  than |min_quarterword|}
 @z
 
 @x
 @d hash_size=2100 {maximum number of control sequences; it should be at most
+  about |(mem_max-mem_min)/10|}
 @y
 @d hash_size=60000 {maximum number of control sequences; it should be at most
+  about |(mem_max-mem_min)/10|}
 @z
 
 @x
@@ -261,7 +284,7 @@ an integer variable.
 %
 % [2.20]
 %
-% Our chars are unsigned (VC++ option /J), i.e., the followin isn't necessary.
+% Our chars are unsigned (VC++ option /J), i.e., the following isn't necessary.
 %
 % _____________________________________________________________________________
 
@@ -269,47 +292,6 @@ an integer variable.
 @!xord: array [text_char] of ASCII_code;
  @y
 @!xord: array [eight_bits] of ASCII_code;
- @z
-
-% _____________________________________________________________________________
-%
-% [2.22]
-% _____________________________________________________________________________
-
-@x
-@d carriage_return=@'15 {ASCII code used at end of line}
-@y
-@d carriage_return=@'15 {ASCII code used at end of line}
-@d tabulator=9 {\MiKTeX: ASCII code used as tabulator}
-@d form_feed=12 {\MiKTeX: ASCII code used between pages}
-@z
-
-% _____________________________________________________________________________
-%
-% [2.23]
-% _____________________________________________________________________________
-
- @x
-To get the most ``permissive'' character set, change |' '| on the
-right of these assignment statements to |chr(i)|.
-@^character set dependencies@>
-@^system dependencies@>
- @y
-To get the most ``permissive'' character set, change |' '| on the
-right of these assignment statements to |chr(i)|.
-@^character set dependencies@>
-@^system dependencies@>
-
-\MiKTeX: we use the most ``permissive'' character set.
- @z
-
- @x
-@<Set init...@>=
-for i:=0 to @'37 do xchr[i]:=' ';
-for i:=@'177 to @'377 do xchr[i]:=' ';
- @y
-@<Set init...@>=
-do_nothing;
  @z
 
 % _____________________________________________________________________________
@@ -582,7 +564,6 @@ loop@+begin
 % [4.38]
 % _____________________________________________________________________________
 
-
 @x
 @!pool_pointer = 0..pool_size; {for variables that point into |str_pool|}
 @!str_number = 0..max_strings; {for variables that point into |str_start|}
@@ -665,9 +646,9 @@ end
   {the number of characters on the current file line}
 @!trick_buf:array[0..error_line] of ASCII_code; {circular buffer for
 @y
-@!term_offset : 0..sup_print_line;
+@!term_offset : 0..sup_max_print_line;
   {the number of characters on the current terminal line}
-@!file_offset : 0..sup_print_line;
+@!file_offset : 0..sup_max_print_line;
   {the number of characters on the current file line}
 @!trick_buf:array[0..sup_error_line] of ASCII_code; {circular buffer for
 @z
@@ -840,9 +821,11 @@ been commented~out.
 @d max_halfword==65535 {largest allowable value in a |halfword|}
 @y
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword==65535 {largest allowable value in a |quarterword|}
-@d min_halfword==0 {smallest allowable value in a |halfword|}
-@d max_halfword==@"3FFFFFFF {largest allowable value in a |halfword|}
+@d max_quarterword==255 {largest allowable value in a |quarterword|}
+@d min_halfhalfword==-@"8000
+@d max_halfhalfword==@"7FFF
+@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
+@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
 % _____________________________________________________________________________
@@ -854,7 +837,7 @@ been commented~out.
 if (font_base<min_quarterword)or(font_max>max_quarterword) then bad:=15;
 if font_max>font_base+256 then bad:=16;
 @y
-if (max_font_max<min_halfword)or(max_font_max>max_halfword) then bad:=15;
+if (max_font_max<min_halfhalfword)or(max_font_max>max_halfhalfword) then bad:=15;
 if font_max>font_base+max_font_max then bad:=16;
 @z
 
@@ -868,6 +851,9 @@ if font_max>font_base+max_font_max then bad:=16;
 % _____________________________________________________________________________
 
 @x
+macros are simplified in the obvious way when |min_quarterword=0|.
+@^inner loop@>@^system dependencies@>
+
 @d qi(#)==#+min_quarterword
   {to put an |eight_bits| item into a quarterword}
 @d qo(#)==#-min_quarterword
@@ -877,14 +863,32 @@ if font_max>font_base+max_font_max then bad:=16;
 @d ho(#)==#-min_halfword
   {to take a sixteen-bit item from a halfword}
 @y
-@d qi(#)==#
-  {to put an |eight_bits| item into a quarterword}
-@d qo(#)==#
-  {to take an |eight_bits| item out of a quarterword}
-@d hi(#)==#
-  {to put a sixteen-bit item into a halfword}
-@d ho(#)==#
-  {to take a sixteen-bit item from a halfword}
+macros are simplified in the obvious way when |min_quarterword=0|.
+So they have been simplified here in the obvious way.
+@^inner loop@>@^system dependencies@>
+
+@d qi(#)==# {to put an |eight_bits| item into a quarterword}
+@d qo(#)==# {to take an |eight_bits| item from a quarterword}
+@d hi(#)==# {to put a sixteen-bit item into a halfword}
+@d ho(#)==# {to take a sixteen-bit item from a halfword}
+@z
+
+% _____________________________________________________________________________
+%
+% [8.113]
+% _____________________________________________________________________________
+
+@x
+@!quarterword = min_quarterword..max_quarterword; {1/4 of a word}
+@y
+@!quarterword = min_quarterword..max_quarterword; {1/4 of a word}
+@!halfhalfword  = min_halfhalfword..max_halfhalfword; {1/2 of a halfword}
+@z
+
+@x
+  2: (@!b0:quarterword; @!b1:quarterword);
+@y
+  2: (@!b0:halfhalfword; @!b1:halfhalfword);
 @z
 
 % _____________________________________________________________________________
@@ -895,18 +899,9 @@ if font_max>font_base+max_font_max then bad:=16;
 @x
 @!mem : array[mem_min..mem_max] of memory_word; {the big dynamic storage area}
 @y
-@!mem : array[inf_mem_min..sup_mem_max] of memory_word; {the big dynamic storage area}
-@z
-
-% _____________________________________________________________________________
-%
-% [9.126]
-% _____________________________________________________________________________
-
-@x
-begin if hi_mem_min-lo_mem_max>=1998 then t:=lo_mem_max+1000
-@y
-begin if hi_mem_min-lo_mem_max>=1022 then t:=lo_mem_max+512
+@!yzmem : ^memory_word; {the big dynamic storage area}
+@!zmem : ^memory_word; {the big dynamic storage area}
+@!mem : ^memory_word;
 @z
 
 % _____________________________________________________________________________
@@ -955,6 +950,22 @@ begin if hi_mem_min-lo_mem_max>=1022 then t:=lo_mem_max+512
 @!nest:array[0..sup_nest_size] of list_state_record;
 @!nest_ptr:0..sup_nest_size; {first unused location of |nest|}
 @!max_nest_stack:0..sup_nest_size; {maximum of |nest_ptr| when pushing}
+@z
+
+% _____________________________________________________________________________
+%
+% [16.215]
+% _____________________________________________________________________________
+
+@x
+prev_graf:=0; shown_mode:=0;
+@<Start a new current page@>;
+@y
+prev_graf:=0; shown_mode:=0;
+@/{The following piece of code is a copy of module 991:}
+page_contents:=empty; page_tail:=page_head; {|link(page_head):=null;|}@/
+last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
+page_depth:=0; page_max_depth:=0;
 @z
 
 % _____________________________________________________________________________
@@ -1194,7 +1205,7 @@ if_eof_code: begin scan_four_bit_int_or_18;
 % [29.513]
 % _____________________________________________________________________________
 
-@x [29.513]
+@x
 @ The file names we shall deal with for illustrative purposes have the
 following structure:  If the name contains `\.>' or `\.:', the file area
 consists of all characters up to and including the final such character;
@@ -1277,7 +1288,7 @@ else  if c="""" then begin
 % [29.517]
 % _____________________________________________________________________________
 
-@x [29.517]
+@x
 @ The third.
 @^system dependencies@>
 
@@ -1464,7 +1475,6 @@ if must_quote then print_char("""");
   if k<=file_name_size then name_of_file[k]:=xchr[c];
   end end
 @z
-
 
 @x
 begin k:=0;
@@ -1743,7 +1753,7 @@ if term_offset+length(full_source_filename_stack[in_open])>max_print_line-2
 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
 print_char("("); incr(open_parens);
-miktex_print_filename(full_source_filename_stack[in_open]); update_terminal;
+print_file_name(0, full_source_filename_stack[in_open], 0); update_terminal;
 @z
 
 @x
@@ -1808,7 +1818,7 @@ if not miktex_open_tfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
 
 % _____________________________________________________________________________
 %
-% [32.592] \[32] Shipping pages out
+% [32.592]
 % _____________________________________________________________________________
 
 @x
@@ -1875,13 +1885,24 @@ else begin dvi_out(fnt1+1);
 @x
   print_nl("Output written on "); slow_print(output_file_name);
 @y
-  print_nl("Output written on "); miktex_print_filename(output_file_name);
+  print_nl("Output written on "); print_file_name(0, output_file_name, 0);
 @z
 
 @x
   b_close(dvi_file);
 @y
   miktex_close_dvi_file(dvi_file);
+@z
+
+% _____________________________________________________________________________
+%
+% [40.891]
+% _____________________________________________________________________________
+
+@x
+begin @!init if trie_not_ready then init_trie;@+tini@;@/
+@y
+begin @!Init if trie_not_ready then init_trie;@+Tini@;@/
 @z
 
 % _____________________________________________________________________________
@@ -1893,6 +1914,17 @@ else begin dvi_out(fnt1+1);
 var p:0..nest_size; {index into |nest|}
 @y
 var p:0..sup_nest_size; {index into |nest|}
+@z
+
+% _____________________________________________________________________________
+%
+% [49.1252]
+% _____________________________________________________________________________
+
+@x
+    begin @!init new_patterns; goto done;@;@+tini@/
+@y
+    begin @!Init new_patterns; goto done;@;@+Tini@/
 @z
 
 % _____________________________________________________________________________
@@ -1926,12 +1958,13 @@ flushable_string:=str_ptr-1;
 
 % _____________________________________________________________________________
 %
-% [49.1275]
+% [50.1301]
 % _____________________________________________________________________________
 
 @x
-  if cur_ext="" then cur_ext:=".tex";
+format_ident:=" (INITEX)";
 @y
+if miktex_is_init_program then format_ident:=" (INITEX)";
 @z
 
 % _____________________________________________________________________________
@@ -2010,7 +2043,7 @@ bad_fmt:
 @x
 dump_int(@$);@/
 @y
-dump_int(@"4D694B54); {"MiKT"}
+dump_int(@"4D694B54); {"TKiM"}
 dump_int(@$);@/
 @<Dump |xord|, |xchr|, and |xprn|@>;
 dump_int(max_halfword);@/
@@ -2033,6 +2066,29 @@ if x<>@$ then goto bad_fmt; {check that strings are the same}
 @<Undump |xord|, |xchr|, and |xprn|@>;
 undump_int(x);
 if x<>max_halfword then goto bad_fmt; {check |max_halfword|}
+@z
+
+@x
+undump_int(x);
+if x<>mem_bot then goto bad_fmt;
+undump_int(x);
+if x<>mem_top then goto bad_fmt;
+@y
+undump_int(x);
+if x<>mem_bot then goto bad_fmt;
+undump_int(mem_top);
+if mem_bot+1100>mem_top then goto bad_fmt;
+
+
+head:=contrib_head; tail:=contrib_head;
+     page_tail:=page_head;  {page initialization}
+
+mem_min := mem_bot - extra_mem_bot;
+mem_max := mem_top + extra_mem_top;
+
+yzmem:=miktex_reallocate(yzmem, mem_max - mem_min + 2);
+zmem := yzmem;
+mem := zmem;
 @z
 
 % _____________________________________________________________________________
@@ -2355,6 +2411,17 @@ end
 
 % _____________________________________________________________________________
 %
+% [50.1325]
+% _____________________________________________________________________________
+
+@x
+@!init trie_not_ready:=false @+tini
+@y
+@!Init trie_not_ready:=false @+Tini
+@z
+
+% _____________________________________________________________________________
+%
 % [50.1326]
 % _____________________________________________________________________________
 
@@ -2389,6 +2456,18 @@ miktex_allocate_memory;
 @z
 
 @x
+@!init if not get_strings_started then goto final_end;
+init_prim; {call |primitive| for each primitive}
+init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr; fix_date_and_time;
+tini@/
+@y
+@!Init if not get_strings_started then goto final_end;
+init_prim; {call |primitive| for each primitive}
+init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr; fix_date_and_time;
+Tini@/
+@z
+
+@x
 ready_already:=314159;
 @y
 ready_already:=314159;
@@ -2419,7 +2498,7 @@ end;
     end;
   end;
 @y
-    miktex_print_filename(log_name); print_char(".");
+    print_file_name(0, log_name, 0); print_char(".");
     end;
   end;
 print_ln;
@@ -2430,6 +2509,24 @@ if (edit_name_start<>0) and (interaction>batch_mode) then begin
   else
     miktex_invoke_editor(edit_name_start,edit_name_length,edit_line)
 end;
+@z
+
+% _____________________________________________________________________________
+%
+% [51.1335]
+% _____________________________________________________________________________
+
+@x
+  begin @!init for c:=top_mark_code to split_bot_mark_code do
+@y
+  begin @!Init for c:=top_mark_code to split_bot_mark_code do
+@z
+
+    if cur_mark[c]<>null then delete_token_ref(cur_mark[c]);
+@x
+  store_fmt_file; return;@+tini@/
+@y
+  store_fmt_file; return;@+Tini@/
 @z
 
 % _____________________________________________________________________________
@@ -2510,13 +2607,13 @@ end;
 
 @<Declare \MiKTeX\ functions@>=
 
-function miktex_enable_eightbit_chars_p : boolean; forward;@t\2@>@/
-function miktex_is_init_program : boolean; forward;@t\2@>@/
 function miktex_c_style_error_messages_p : boolean; forward;@t\2@>@/
-function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
-function miktex_make_full_name_string : str_number; forward;@t\2@>@/
-function miktex_get_job_name : str_number; forward;@t\2@>@/
+function miktex_enable_eightbit_chars_p : boolean; forward;@t\2@>@/
 function miktex_get_interaction : integer; forward;@t\2@>@/
+function miktex_get_job_name : str_number; forward;@t\2@>@/
+function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
+function miktex_is_init_program : boolean; forward;@t\2@>@/
+function miktex_make_full_name_string : str_number; forward;@t\2@>@/
 
 @ Define \MiKTeX\ constants.
 
@@ -2527,30 +2624,53 @@ function miktex_get_interaction : integer; forward;@t\2@>@/
 @ Define \MiKTeX\ variables.
 
 @<Global variables@>=
-@!edit_name_start: pool_pointer; {where the filename to switch to starts}
-@!edit_name_length,@!edit_line: integer; {what line to start editing at}
-@!stop_at_space: boolean; {whether |more_name| returns false for space}
-@!buf_size: integer;
-@!error_line: integer;
-@!font_max: integer;
-@!font_mem_size: integer;
-@!half_error_line: integer;
-@!max_in_open: integer;
-@!max_print_line: integer;
-@!max_strings: integer;
-@!mem_bot: integer;
-@!mem_max: integer;
-@!mem_min: integer;
-@!mem_top: integer;
-@!nest_size: integer;
-@!param_size: integer;
+
+@!buf_size:integer; {maximum number of characters simultaneously present in
+  current lines of open files and in control sequences between
+  \.{\\csname} and \.{\\endcsname}; must not exceed |max_halfword|}
+@!edit_line:integer; {what line to start editing at}
+@!edit_name_length:integer;
+@!edit_name_start:pool_pointer; {where the filename to switch to starts}
+@!error_line:integer; {width of context lines on terminal error messages}
+@!extra_mem_bot:integer; {|mem_min:=mem_bot-extra_mem_bot| except in \.{INITEX}}
+@!extra_mem_top:integer; {|mem_max:=mem_top+extra_mem_top| except in \.{INITEX}}
+@!font_max:integer; {maximum internal font number; must not exceed |max_quarterword|
+  and must be at most |font_base+256|}
+@!font_mem_size:integer; {number of words of |font_info| for all fonts}
+@!half_error_line:integer; {width of first lines of contexts in te
+  error messages; should be between 30 and |error_line-15|}
+@!max_in_open:integer; {maximum number of input files and error insertions that
+  can be going on simultaneously}
+@!main_memory:integer; {total memory words allocated in initex}
+@!max_print_line:integer; {width of longest text lines output; should be at least 60}
+@!max_strings:integer; {maximum number of strings; must not exceed |max_halfword|}
+@!mem_bot:integer;{smallest index in the |mem| array dumped by \.{INITEX};
+  must not be less than |mem_min|}
+@!mem_max:integer; {greatest index in \TeX's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INITEX}, otherwise |>=mem_top|}
+@!mem_min:integer; {smallest index in \TeX's internal |mem| array;
+  must be |min_halfword| or more;
+  must be equal to |mem_bot| in \.{INITEX}, otherwise |<=mem_bot|}
+@!mem_top:integer; {largest index in the |mem| array dumped by \.{INITEX};
+  must be substantially larger than |mem_bot|,
+  equal to |mem_max| in \.{INITEX}, else not greater than |mem_max|}
+@!nest_size:integer; {maximum number of semantic levels simultaneously active}
+@!param_size:integer; {maximum number of simultaneous macro parameters}
 @!pool_free:integer;{pool space free after format loaded}
-@!pool_size: integer;
+@!pool_size:integer; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all fonts and
+  control sequences; must exceed |string_vacancies| by the total
+  length of \TeX's own strings, which is currently about 23000}
+@!quoted_filename:boolean;
+@!save_size:integer; {space for saving values outside of current group; must be
+  at most |max_halfword|}
+@!stack_size:integer; {maximum number of simultaneous input sources}
+@!stop_at_space:boolean; {whether |more_name| returns false for space}
 @!strings_free:integer; {strings available after format loaded}
-@!quoted_filename: boolean;
-@!save_size: integer;
-@!stack_size: integer;
-@!string_vacancies: integer;
+@!string_vacancies:integer; {the minimum number of characters that should be
+  available for the user's control sequences and font names,
+  after \TeX's own error messages are stored}
 
 @ Initialize \MiKTeX\ variables.
 
@@ -2635,7 +2755,6 @@ else begin
     for k:=0 to 255 do
       xprn[k]:=1;
 end;
-
 
 @* \[54/ML\TeX] System-dependent changes for ML\TeX.
 @z

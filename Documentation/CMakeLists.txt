@@ -138,10 +138,6 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/maxprintline.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/maxstrings.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/maxwiggle.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/membot.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/memmax.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/memmin.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/memtop.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/movesize.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/nestsize.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/nocstyleerrors.xml

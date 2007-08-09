@@ -555,7 +555,7 @@ public:
       {
 	flags |= ICT_8BIT;
       }
-#if defined(MIKTEX_TEX_COMPILER)
+#if defined(MIKTEX_TEX_COMPILER) || defined(MIKTEX_META_COMPILER)
     MiKTeX::TeXAndFriends::InitializeCharTables (flags,
 						 tcxFileName.Get(),
 						 THEDATA(xchr),

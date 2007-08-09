@@ -175,18 +175,18 @@ public:
   {
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (param_bistack_size,
-	      bistacksize,
-	      bistack_size,
-	      mfapp::mfapp::bistack_size());
-    GETPARAM (param_lig_table_size,
-	      ligtablesize,
-	      lig_table_size,
-	      mfapp::mfapp::lig_table_size());
-    GETPARAM (param_path_size,
-	      pathsize,
-	      path_size,
-	      mfapp::mfapp::path_size());
+    GETPARAMCHECK (param_bistack_size,
+		   bistacksize,
+		   bistack_size,
+		   mfapp::mfapp::bistack_size());
+    GETPARAMCHECK (param_lig_table_size,
+		   ligtablesize,
+		   lig_table_size,
+		   mfapp::mfapp::lig_table_size());
+    GETPARAMCHECK (param_path_size,
+		   pathsize,
+		   path_size,
+		   mfapp::mfapp::path_size());
 
     Allocate (THEDATA(bisectstack), THEDATA(bistacksize) + 1);
     Allocate (THEDATA(delta), THEDATA(pathsize) + 1);
@@ -194,7 +194,10 @@ public:
     Allocate (THEDATA(deltay), THEDATA(pathsize) + 1);
     Allocate (THEDATA(ligkern), THEDATA(ligtablesize) + 1);
     Allocate (THEDATA(psi), THEDATA(pathsize));
-    Allocate (THEDATA(strref), THEDATA(maxstrings) + 1);
+    if (IsInitProgram()	|| AmI(MIKTEXTEXT("metafont")))
+      {
+	Allocate (THEDATA(strref), THEDATA(maxstrings) + 1);
+      }
     Allocate (THEDATA(theta), THEDATA(pathsize) + 1);
     Allocate (THEDATA(uu), THEDATA(pathsize) + 1);
     Allocate (THEDATA(vv), THEDATA(pathsize) + 1);

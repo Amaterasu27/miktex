@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -88,8 +88,7 @@ set(trapmf_options)
 set(trapmf_options "${trapmf_options} -error-line=64")
 set(trapmf_options "${trapmf_options} -half-error-line=32")
 set(trapmf_options "${trapmf_options} -max-print-line=72")
-set(trapmf_options "${trapmf_options} -mem-max=3000")
-set(trapmf_options "${trapmf_options} -mem-top=3000")
+set(trapmf_options "${trapmf_options} -main-memory=3000")
 
 set(trap_dir ${CMAKE_CURRENT_SOURCE_DIR}/trap)
 
@@ -103,4 +102,41 @@ add_custom_target(traptest
   DEPENDS trapmf
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
+)
+
+## dev targets
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/mf-n.web
+  COMMAND ${webn_exe}
+	< ${mf_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/mf-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${mf_web_file}
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/mf-miktex.web
+	${CMAKE_CURRENT_BINARY_DIR}/mf-miktex-n.web
+  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex.web
+		${mf_web_file}
+		${mf_change_file}
+  COMMAND ${webn_exe}
+	< ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${mf_web_file}
+	${mf_change_file}
+  VERBATIM
+)
+
+add_custom_target(dev ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/mf-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/mf-miktex-n.web
 )

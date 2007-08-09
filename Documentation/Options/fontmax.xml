@@ -5,7 +5,7 @@
 <primary>--font-max=n</primary>
 </indexterm>
 maximum internal
-font number; must not exceed <literal>5000</literal>.</para></listitem>
+font number.</para></listitem>
 </varlistentry>
 
 <!--

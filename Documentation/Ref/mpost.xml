@@ -92,9 +92,6 @@ explicitly.</para>
 &optionligtablesize;
 &optionmaxprintline;
 &optionmaxstrings;
-&optionmemmax;
-&optionmemmin;
-&optionmemtop;
 &optionnocstyleerrors;
 &optionoutputdirectory;
 &optionparamsize;

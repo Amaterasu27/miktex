@@ -16,6 +16,32 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                       INSPIRED BY WEB2C'S MF.CH                        //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
+
+@x
+\def\PASCAL{Pascal}
+@y
+\def\PASCAL{Pascal}
+\def\C4P{C4P}
+\def\Cplusplus{C++}
+\def\MiKTeX{MiK\TeX}
+@z
+
+% WEAVE: print changes only.
+
+@x
+  \def\?##1]{\hbox to 1in{\hfil##1.\ }}
+  }
+@y 83
+  \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
+  }
+\let\maybe=\iffalse
+@z
+
 % _____________________________________________________________________________
 %
 % [1.4]
@@ -52,11 +78,22 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
+the codewords `$|init|\ldots|tini|$'.
+
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
 @d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
 @y
-@d init== if miktex_is_init_program then begin
-@d tini== end;
+the codewords `$|init|\ldots|tini|$' for declarations and by the codewords
+`$|Init|\ldots|Tini|$' for executable code.  This distinction is helpful for
+implementations where a run-time switch differentiates between the two
+versions of the program.
+
+@d init=={ifdef('INIMF')}
+@d tini=={endif('INIMF')}
+@d Init==init if miktex_is_init_program then begin
+@d Tini==end;@+tini
+@f Init==begin
+@f Tini==end
 @z
 
 % _____________________________________________________________________________
@@ -66,8 +103,9 @@ procedure initialize; {this procedure gets things started properly}
 
 @x
 @!mem_max=30000; {greatest index in \MF's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}
 @y
-@!mem_max_def=1048576; {greatest index in \MF's internal |mem| array;
 @z
 
 @x
@@ -78,26 +116,32 @@ procedure initialize; {this procedure gets things started properly}
 
 @x
 @!buf_size=500; {maximum number of characters simultaneously present in
+  current lines of open files; must not exceed |max_halfword|}
 @y
-@!buf_size_def=66000; {maximum number of characters simultaneously present in
+@!inf_buf_size=500;
+@!sup_buf_size=30000000;
 @z
 
 @x
 @!error_line=72; {width of context lines on terminal error messages}
 @y
-@!error_line_def=72; {width of context lines on terminal error messages}
+@!inf_error_line=40;
+@!sup_error_line=65535;
 @z
 
 @x
 @!half_error_line=42; {width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}
 @y
-@!half_error_line_def=42; {width of first lines of contexts in terminal
+@!inf_half_error_line=30;
+@!sup_half_error_line=65535;
 @z
 
 @x
 @!max_print_line=79; {width of longest text lines output; should be at least 60}
 @y
-@!max_print_line_def=72; {width of longest text lines output; should be at least 60}
+@!inf_max_print_line=40;
+@!sup_max_print_line=65535;
 @z
 
 @x
@@ -115,37 +159,48 @@ procedure initialize; {this procedure gets things started properly}
 @x
 @!stack_size=30; {maximum number of simultaneous input sources}
 @y
-@!stack_size_def=300; {maximum number of simultaneous input sources}
+@!inf_stack_size=30;
+@!sup_stack_size=65535;
 @z
 
 @x
 @!max_strings=2000; {maximum number of strings; must not exceed |max_halfword|}
 @y
-@!max_strings_def=70000; {maximum number of strings; must not exceed |max_halfword|}
+@!inf_max_strings=2000;
+@!sup_max_strings=300000;
 @z
 
 @x
 @!string_vacancies=8000; {the minimum number of characters that should be
+  available for the user's identifier names and strings,
+  after \MF's own error messages are stored}
 @y
-@!string_vacancies_def=74000; {the minimum number of characters that should be
+@!inf_string_vacancies=8000;
+@!sup_string_vacancies=40000000;
 @z
 
 @x
 @!pool_size=32000; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all identifiers;
+  must exceed |string_vacancies| by the total
+  length of \MF's own strings, which is currently about 22000}
 @y
-@!pool_size_def=100000; {maximum number of characters in strings, including all
+@!inf_pool_size=32000;
+@!sup_pool_size=40000000;
 @z
 
 @x
 @!move_size=5000; {space for storing moves in a single octant}
 @y
-@!move_size_def=70000; {space for storing moves in a single octant}
+@!inf_move_size=5000;
+@!sup_move_size=200000;
 @z
 
 @x
 @!max_wiggle=300; {number of autorounded points per cycle}
 @y
-@!max_wiggle_def=70000; {number of autorounded points per cycle}
+@!inf_max_wiggle=300;
+@!sup_max_wiggle=200000;
 @z
 
 @x
@@ -157,20 +212,23 @@ procedure initialize; {this procedure gets things started properly}
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=259; {file names shouldn't be longer than this}
-@!file_name_size_plus_one=260; {one more for the string terminator}
+@!file_name_size=258; {file names shouldn't be longer than this}
+@!file_name_size_plus_two=260; {two more for start and end}
 @z
 
 @x
 @!path_size=300; {maximum number of knots between breakpoints of a path}
 @y
-@!path_size_def=70000; {maximum number of knots between breakpoints of a path}
+@!inf_path_size=300;
+@!sup_path_size=300000;
 @z
 
 @x
 @!bistack_size=785; {size of stack for bisection algorithms;
+  should probably be left at this value}
 @y
-@!bistack_size_def=70000; {size of stack for bisection algorithms;
+@!inf_bistack_size=785;
+@!sup_bistack_size=300000;
 @z
 
 @x
@@ -181,8 +239,10 @@ procedure initialize; {this procedure gets things started properly}
 
 @x
 @!lig_table_size=5000; {maximum number of ligature/kern steps, must be
+  at least 255 and at most 32510}
 @y
-@!lig_table_size_def=15000; {maximum number of ligature/kern steps, must be
+@!inf_lig_table_size=5000;
+@!sup_lig_table_size=32510;
 @z
 
 @x
@@ -203,21 +263,18 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
-@d mem_min=0 {smallest index in the |mem| array, must not be less
-@y
-@d mem_min_def=0 {smallest index in the |mem| array, must not be less
-@z
-
-@x
 @d mem_top==30000 {largest index in the |mem| array dumped by \.{INIMF};
+  must be substantially larger than |mem_min|
+  and not greater than |mem_max|}
 @y
-@d mem_top_def==1048576 {largest index in the |mem| array dumped by \.{INIMF};
 @z
 
 @x
 @d hash_size=2100 {maximum number of symbolic tokens,
+  must be less than |max_halfword-3*param_size|}
 @y
 @d hash_size=9500 {maximum number of symbolic tokens,
+  must be less than |max_halfword-3*param_size|}
 @z
 
 @x
@@ -228,27 +285,15 @@ procedure initialize; {this procedure gets things started properly}
 
 @x
 @d max_in_open=6 {maximum number of input files and error insertions that
+  can be going on simultaneously}
 @y
 @d max_in_open=20 {maximum number of input files and error insertions that
+  can be going on simultaneously}
 @z
 
 @x
 @d param_size=150 {maximum number of simultaneous macro parameters}
 @y
-@d param_size_def=150 {maximum number of simultaneous macro parameters}
-@z
-
-% _____________________________________________________________________________
-%
-% [2.19]
-% _____________________________________________________________________________
-
-@x
-@d first_text_char=0 {ordinal number of the smallest element of |text_char|}
-@y
-@d tabulator=@'9
-@d form_feed=@'14
-@d first_text_char=0 {ordinal number of the smallest element of |text_char|}
 @z
 
 % _____________________________________________________________________________
@@ -268,10 +313,23 @@ procedure initialize; {this procedure gets things started properly}
 % _____________________________________________________________________________
 
 @x
+@^character set dependencies@>
+@^system dependencies@>
+
+@<Set init...@>=
 for i:=0 to @'37 do xchr[i]:=' ';
 for i:=@'177 to @'377 do xchr[i]:=' ';
 @y
-do_nothing;
+@^character set dependencies@>
+@^system dependencies@>
+
+@d tab = @'11 { ASCII horizontal tab }
+@d form_feed = @'14 { ASCII form feed }
+
+@<Set init...@>=
+{Initialize |xchr| to the identity mapping.}
+for i:=0 to @'37 do xchr[i]:=i;
+for i:=@'177 to @'377 do xchr[i]:=i;
 @z
 
 % _____________________________________________________________________________
@@ -280,12 +338,10 @@ do_nothing;
 % _____________________________________________________________________________
 
 @x
-@<Set init...@>=
 for i:=first_text_char to last_text_char do xord[chr(i)]:=@'177;
 for i:=@'200 to @'377 do xord[xchr[i]]:=i;
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 @y
-@<Set init...@>=
 miktex_initialize_char_tables;
 @z
 
@@ -295,10 +351,21 @@ miktex_initialize_char_tables;
 % _____________________________________________________________________________
 
 @x
+|name_of_file|.
+@^system dependencies@>
+@y
+|name_of_file|.
+@^system dependencies@>
+
+\MiKTeX: reserve two extra bytes: |name_of_file| starts with a dummy
+character (Web2C compatibility/idiocy) end ends with the null character.
+@z
+
+@x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @y
-@!name_of_file:packed array[1..file_name_size_plus_one] of char;@;@/
+@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @z
 
@@ -306,6 +373,14 @@ miktex_initialize_char_tables;
 %
 % [3.26]
 % _____________________________________________________________________________
+
+@x
+|name_of_file| could be opened.
+@y
+|name_of_file| could be opened.
+
+\MiKTeX: we use our own functions to open files.
+@z
 
 @x
 begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
@@ -338,6 +413,11 @@ begin rewrite(f,name_of_file,'/O'); w_open_out:=rewrite_OK(f);
 begin w_open_out:=miktex_open_output_file(f, false);
 @z
 
+% _____________________________________________________________________________
+%
+% [3.27]
+% _____________________________________________________________________________
+
 @x
 begin close(f);
 @y
@@ -367,10 +447,10 @@ begin miktex_close_file(f);
 @!last:0..buf_size; {end of the line just input to |buffer|}
 @!max_buf_stack:0..buf_size; {largest index used in |buffer|}
 @y
-@!buffer:array[0..buf_size_def] of ASCII_code; {lines of characters being read}
-@!first:0..buf_size_def; {the first unused position in |buffer|}
-@!last:0..buf_size_def; {end of the line just input to |buffer|}
-@!max_buf_stack:0..buf_size_def; {largest index used in |buffer|}
+@!buffer:array[0..sup_buf_size] of ASCII_code; {lines of characters being read}
+@!first:0..sup_buf_size; {the first unused position in |buffer|}
+@!last:0..sup_buf_size; {end of the line just input to |buffer|}
+@!max_buf_stack:0..sup_buf_size; {largest index used in |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -461,31 +541,15 @@ loop@+begin
 
 % _____________________________________________________________________________
 %
-% [4.37] \[4] String handling
+% [4.37]
 % _____________________________________________________________________________
 
 @x
 @!pool_pointer = 0..pool_size; {for variables that point into |str_pool|}
 @!str_number = 0..max_strings; {for variables that point into |str_start|}
 @y
-@!pool_pointer = 0..pool_size_def; {for variables that point into |str_pool|}
-@!str_number = 0..max_strings_def; {for variables that point into |str_start|}
-@z
-
-% _____________________________________________________________________________
-%
-% [4.47]
-% _____________________________________________________________________________
-
-@x
-@p @!init function get_strings_started:boolean; {initializes the string pool,
-@y
-@p function get_strings_started:boolean; {initializes the string pool,
-@z
-
-@x
-tini
-@y
+@!pool_pointer = 0..sup_pool_size; {for variables that point into |str_pool|}
+@!str_number = 0..sup_max_strings; {for variables that point into |str_start|}
 @z
 
 % _____________________________________________________________________________
@@ -503,18 +567,6 @@ tini
 
 % _____________________________________________________________________________
 %
-% [4.50]
-% _____________________________________________________________________________
-
-@x
-@!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
-tini
-@y
-@!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
-@z
-
-% _____________________________________________________________________________
-%
 % [4.51]
 % _____________________________________________________________________________
 
@@ -522,7 +574,7 @@ tini
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
-miktex_get_pool_file_name(name_of_file);
+miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
 if miktex_open_pool_file(pool_file) then
 @z
 
@@ -541,7 +593,7 @@ end
 
 % _____________________________________________________________________________
 %
-% [5.54] \[5] On-line and off-line printing
+% [5.54]
 % _____________________________________________________________________________
 
 @x
@@ -551,11 +603,11 @@ end
   {the number of characters on the current file line}
 @!trick_buf:array[0..error_line] of ASCII_code; {circular buffer for
 @y
-@!term_offset : 0..max_print_line_def;
+@!term_offset : 0..sup_max_print_line;
   {the number of characters on the current terminal line}
-@!file_offset : 0..max_print_line_def;
+@!file_offset : 0..sup_max_print_line;
   {the number of characters on the current file line}
-@!trick_buf:array[0..error_line_def] of ASCII_code; {circular buffer for
+@!trick_buf:array[0..sup_error_line] of ASCII_code; {circular buffer for
 @z
 
 % _____________________________________________________________________________
@@ -601,7 +653,7 @@ end;
 @x
 var @!k:0..buf_size; {index into |buffer|}
 @y
-var @!k:0..buf_size_def; {index into |buffer|}
+var @!k:0..sup_buf_size; {index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -665,15 +717,43 @@ end;
 % _____________________________________________________________________________
 
 @x
+line ready to be edited. But such an extension requires some system
+wizardry, so the present implementation simply types out the name of the
+file that should be
+edited and the relevant line number.
+@^system dependencies@>
+
+There is a secret `\.D' option available when the debugging routines haven't
+been commented~out.
+@^debugging@>
+@y
+line ready to be edited.
+We do this by calling the external procedure |call_edit| with a pointer to
+the filename, its length, and the line number.
+However, here we just set up the variables that will be used as arguments,
+since we don't want to do the switch-to-editor until after \MF\ has closed
+its files.
+@^system dependencies@>
+
+There is a secret `\.D' option available when the debugging routines have
+not been commented out.
+@^debugging@>
+@d edit_file==input_stack[file_ptr]
+@z
+
+@x
+"E": if file_ptr>0 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
   slow_print(input_stack[file_ptr].name_field);
   print(" at line "); print_int(line);@/
   interaction:=scroll_mode; jump_out;
 @y
-  begin edit_name_start:=str_start[input_stack[file_ptr].name_field];
-    edit_name_length:=str_start[input_stack[file_ptr].name_field+1] -
-                      str_start[input_stack[file_ptr].name_field];
+"E": if file_ptr>0 then
+    begin
+    edit_name_start:=str_start[edit_file.name_field];
+    edit_name_length:=str_start[edit_file.name_field+1] -
+    		      str_start[edit_file.name_field];
     edit_line:=line;
     jump_out;
 @z
@@ -804,7 +884,7 @@ end;
 
 % _____________________________________________________________________________
 %
-% [9.153] \[9] Packed data
+% [9.153]
 % _____________________________________________________________________________
 
 @x
@@ -814,9 +894,9 @@ end;
 @d max_halfword==65535 {largest allowable value in a |halfword|}
 @y
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword=1023 {largest allowable value in a |quarterword|}
+@d max_quarterword=255 {largest allowable value in a |quarterword|}
 @d min_halfword==0 {smallest allowable value in a |halfword|}
-@d max_halfword==@"3FFFFFFF {largest allowable value in a |halfword|}
+@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
 % _____________________________________________________________________________
@@ -827,23 +907,7 @@ end;
 @x
 @!mem : array[mem_min..mem_max] of memory_word; {the big dynamic storage area}
 @y
-@!mem : array[mem_min_def..mem_max_def] of memory_word; {the big dynamic storage area}
-@z
-
-% _____________________________________________________________________________
-%
-% [10.173]
-% _____________________________________________________________________________
-
-@x
-@p @!init procedure sort_avail; {sorts the available variable-size nodes
-@y
-@p procedure sort_avail; {sorts the available variable-size nodes
-@z
-
-@x
-tini
-@y
+@!mem : ^memory_word; {the big dynamic storage area}
 @z
 
 % _____________________________________________________________________________
@@ -855,8 +919,8 @@ tini
 @!debug @!free: packed array [mem_min..mem_max] of boolean; {free cells}
 @t\hskip1em@>@!was_free: packed array [mem_min..mem_max] of boolean;
 @y
-@!debug @!free: packed array [mem_min_def..mem_max_def] of boolean; {free cells}
-@t\hskip1em@>@!was_free: packed array [mem_min_def..mem_max_def] of boolean;
+@!debug @!free: packed array [0..1] of boolean; {free cells}
+@t\hskip1em@>@!was_free: packed array [0..1] of boolean;
 @z
 
 % _____________________________________________________________________________
@@ -885,24 +949,8 @@ internal[year]:=c4p_year*unity; {Anno Domini}
 for k:=127 to 255 do char_class[k]:=invalid_class;
 @y
 for k:=127 to 255 do char_class[k]:=invalid_class;
-char_class[tabulator]:=space_class;
+char_class[tab]:=space_class;
 char_class[form_feed]:=space_class;
-@z
-
-% _____________________________________________________________________________
-%
-% [13.210]
-% _____________________________________________________________________________
-
-@x
-@p @!init procedure primitive(@!s:str_number;@!c:halfword;@!o:halfword);
-@y
-@p procedure primitive(@!s:str_number;@!c:halfword;@!o:halfword);
-@z
-
-@x
-tini
-@y
 @z
 
 % _____________________________________________________________________________
@@ -914,10 +962,10 @@ tini
 @!delta_x,@!delta_y,@!delta:array[0..path_size] of scaled; {knot differences}
 @!psi:array[1..path_size] of angle; {turning angles}
 @y
-@!delta_x:array[0..path_size_def] of scaled; {knot differences}
-@!delta_y:array[0..path_size_def] of scaled; {knot differences}
-@!delta:array[0..path_size_def] of scaled; {knot differences}
-@!psi:array[1..path_size_def] of angle; {turning angles}
+@!delta_x:array[0..sup_path_size] of scaled; {knot differences}
+@!delta_y:array[0..sup_path_size] of scaled; {knot differences}
+@!delta:array[0..sup_path_size] of scaled; {knot differences}
+@!psi:array[1..sup_path_size] of angle; {turning angles}
 @z
 
 % _____________________________________________________________________________
@@ -928,7 +976,7 @@ tini
 @x
 @!k,@!n:0..path_size; {current and final knot numbers}
 @y
-@!k,@!n:0..path_size_def; {current and final knot numbers}
+@!k,@!n:0..sup_path_size; {current and final knot numbers}
 @z
 
 % _____________________________________________________________________________
@@ -942,10 +990,10 @@ tini
 @!vv:array[0..path_size] of angle; {values of $v_k$}
 @!ww:array[0..path_size] of fraction; {values of $w_k$}
 @y
-@!theta:array[0..path_size_def] of angle; {values of $\theta_k$}
-@!uu:array[0..path_size_def] of fraction; {values of $u_k$}
-@!vv:array[0..path_size_def] of angle; {values of $v_k$}
-@!ww:array[0..path_size_def] of fraction; {values of $w_k$}
+@!theta:array[0..sup_path_size] of angle; {values of $\theta_k$}
+@!uu:array[0..sup_path_size] of fraction; {values of $u_k$}
+@!vv:array[0..sup_path_size] of angle; {values of $v_k$}
+@!ww:array[0..sup_path_size] of fraction; {values of $w_k$}
 @z
 
 % _____________________________________________________________________________
@@ -956,7 +1004,7 @@ tini
 @x
 var @!k:0..path_size; {current knot number}
 @y
-var @!k:0..path_size_def; {current knot number}
+var @!k:0..sup_path_size; {current knot number}
 @z
 
 % _____________________________________________________________________________
@@ -968,8 +1016,8 @@ var @!k:0..path_size_def; {current knot number}
 @!move:array[0..move_size] of integer; {the recorded moves}
 @!move_ptr:0..move_size; {the number of items in the |move| list}
 @y
-@!move:array[0..move_size_def] of integer; {the recorded moves}
-@!move_ptr:0..move_size_def; {the number of items in the |move| list}
+@!move:array[0..sup_move_size] of integer; {the recorded moves}
+@!move_ptr:0..sup_move_size; {the number of items in the |move| list}
 @z
 
 @!move:array[0..move_size] of integer; {the recorded moves}
@@ -984,8 +1032,8 @@ var @!k:0..path_size_def; {current knot number}
 @!bisect_stack:array[0..bistack_size] of integer;
 @!bisect_ptr:0..bistack_size;
 @y
-@!bisect_stack:array[0..bistack_size_def] of integer;
-@!bisect_ptr:0..bistack_size_def;
+@!bisect_stack:array[0..sup_bistack_size] of integer;
+@!bisect_ptr:0..sup_bistack_size;
 @z
 
 % _____________________________________________________________________________
@@ -996,7 +1044,7 @@ var @!k:0..path_size_def; {current knot number}
 @x
 var@!k:1..move_size; {index into |move|}
 @y
-var@!k:1..move_size_def; {index into |move|}
+var@!k:1..sup_move_size; {index into |move|}
 @z
 
 % _____________________________________________________________________________
@@ -1007,7 +1055,7 @@ var@!k:1..move_size_def; {index into |move|}
 @x
 @!j,@!jj:0..move_size; {indices into |move|}
 @y
-@!j,@!jj:0..move_size_def; {indices into |move|}
+@!j,@!jj:0..sup_move_size; {indices into |move|}
 @z
 
 % _____________________________________________________________________________
@@ -1019,8 +1067,8 @@ var@!k:1..move_size_def; {index into |move|}
 var @!delta:0..move_size; {extent of |move| data}
 @!k:0..move_size; {index into |move|}
 @y
-var @!delta:0..move_size_def; {extent of |move| data}
-@!k:0..move_size_def; {index into |move|}
+var @!delta:0..sup_move_size; {extent of |move| data}
+@!k:0..sup_move_size; {index into |move|}
 @z
 
 % _____________________________________________________________________________
@@ -1031,7 +1079,7 @@ var @!delta:0..move_size_def; {extent of |move| data}
 @x
 var @!k:0..max_wiggle; {runs through the list of inputs}
 @y
-var @!k:0..max_wiggle_def; {runs through the list of inputs}
+var @!k:0..sup_max_wiggle; {runs through the list of inputs}
 @z
 
 % _____________________________________________________________________________
@@ -1045,11 +1093,11 @@ var @!k:0..max_wiggle_def; {runs through the list of inputs}
 @!cur_rounding_ptr:0..max_wiggle; {how many are being used}
 @!max_rounding_ptr:0..max_wiggle; {how many have been used}
 @y
-@!before:array[0..max_wiggle_def] of scaled; {data for |make_safe|}
-@!after:array[0..max_wiggle_def] of scaled; {data for |make_safe|}
-@!node_to_round:array[0..max_wiggle_def] of pointer; {reference back to the path}
-@!cur_rounding_ptr:0..max_wiggle_def; {how many are being used}
-@!max_rounding_ptr:0..max_wiggle_def; {how many have been used}
+@!before:array[0..sup_max_wiggle] of scaled; {data for |make_safe|}
+@!after:array[0..sup_max_wiggle] of scaled; {data for |make_safe|}
+@!node_to_round:array[0..sup_max_wiggle] of pointer; {reference back to the path}
+@!cur_rounding_ptr:0..sup_max_wiggle; {how many are being used}
+@!max_rounding_ptr:0..sup_max_wiggle; {how many have been used}
 @z
 
 % _____________________________________________________________________________
@@ -1060,7 +1108,7 @@ var @!k:0..max_wiggle_def; {runs through the list of inputs}
 @x
 @!k:0..max_wiggle; {runs through before-and-after values}
 @y
-@!k:0..max_wiggle_def; {runs through before-and-after values}
+@!k:0..sup_max_wiggle; {runs through before-and-after values}
 @z
 
 % _____________________________________________________________________________
@@ -1071,7 +1119,7 @@ var @!k:0..max_wiggle_def; {runs through the list of inputs}
 @x
 @!env_move:array[0..move_size] of integer;
 @y
-@!env_move:array[0..move_size_def] of integer;
+@!env_move:array[0..sup_move_size] of integer;
 @z
 
 % _____________________________________________________________________________
@@ -1082,7 +1130,7 @@ var @!k:0..max_wiggle_def; {runs through the list of inputs}
 @x
 @!smooth_bot,@!smooth_top:0..move_size; {boundaries of smoothing}
 @y
-@!smooth_bot,@!smooth_top:0..move_size_def; {boundaries of smoothing}
+@!smooth_bot,@!smooth_top:0..sup_move_size; {boundaries of smoothing}
 @z
 
 % _____________________________________________________________________________
@@ -1093,12 +1141,12 @@ var @!k:0..max_wiggle_def; {runs through the list of inputs}
 @x
 @!uv,@!xy:0..bistack_size; {pointers to the current packets of interest}
 @y
-@!uv,@!xy:0..bistack_size_def; {pointers to the current packets of interest}
+@!uv,@!xy:0..sup_bistack_size; {pointers to the current packets of interest}
 @z
 
 % _____________________________________________________________________________
 %
-% [27.564] \[27] Online graphic output
+% [27.564]
 % _____________________________________________________________________________
 
 @x
@@ -1110,7 +1158,7 @@ begin init_screen:=miktex_init_screen(screen_width, screen_depth);
 @x
 begin @!init wlog_ln('Calling UPDATESCREEN');@+tini {for testing only}
 @y
-begin @!init wlog_ln('Calling UPDATESCREEN');@+tini {for testing only}
+begin @!Init wlog_ln('Calling UPDATESCREEN');@+Tini {for testing only}
 miktex_update_screen;
 @z
 
@@ -1125,9 +1173,13 @@ var @!r:screen_row;
 begin @{@+for r:=top_row to bot_row-1 do
   for c:=left_col to right_col-1 do
     screen_pixel[r,c]:=white;@+@}@/
+@!init wlog_cr; {this will be done only after |init_screen=true|}
 @y
 begin
   miktex_blank_rectangle(left_col, right_col, top_row, bot_row);
+@!Init wlog_cr; {this will be done only after |init_screen=true|}
+wlog_ln('Calling BLANKRECTANGLE(',left_col:1,',',
+  right_col:1,',',top_row:1,',',bot_row:1,')');@+Tini
 @z
 
 % _____________________________________________________________________________
@@ -1144,10 +1196,22 @@ repeat incr(k);
   until c=a[k];
   b:=black-b; {$|black|\swap|white|$}
   until k=n;@+@}@/
+@!init wlog('Calling PAINTROW(',r:1,',',b:1,';');
+  {this is done only after |init_screen=true|}
+for k:=0 to n do
+  begin wlog(a[k]:1); if k<>n then wlog(',');
+  end;
+wlog_ln(')');@+tini
 @y
 var @!k:screen_col; {an index into |a|}
 begin
   miktex_paint_row(r, b, a, n);
+@!Init wlog('Calling PAINTROW(',r:1,',',b:1,';');
+  {this is done only after |init_screen=true|}
+for k:=0 to n do
+  begin wlog(a[k]:1); if k<>n then wlog(',');
+  end;
+wlog_ln(')');@+Tini
 @z
 
 % _____________________________________________________________________________
@@ -1160,9 +1224,9 @@ begin
 @!input_ptr : 0..stack_size; {first unused location of |input_stack|}
 @!max_in_stack: 0..stack_size; {largest value of |input_ptr| when pushing}
 @y
-@!input_stack : array[0..stack_size_def] of in_state_record;
-@!input_ptr : 0..stack_size_def; {first unused location of |input_stack|}
-@!max_in_stack: 0..stack_size_def; {largest value of |input_ptr| when pushing}
+@!input_stack : array[0..sup_stack_size] of in_state_record;
+@!input_ptr : 0..sup_stack_size; {first unused location of |input_stack|}
+@!max_in_stack: 0..sup_stack_size; {largest value of |input_ptr| when pushing}
 @z
 
 % _____________________________________________________________________________
@@ -1188,9 +1252,9 @@ begin
   {token list pointers for parameters}
 @!param_ptr:0..param_size; {first unused entry in |param_stack|}
 @y
-@!param_stack:array [0..param_size_def] of pointer;
+@!param_stack:array [0..0] of pointer;
   {token list pointers for parameters}
-@!param_ptr:0..param_size_def; {first unused entry in |param_stack|}
+@!param_ptr:integer; {first unused entry in |param_stack|}
 @z
 
 % _____________________________________________________________________________
@@ -1201,7 +1265,7 @@ begin
 @x
 @!file_ptr:0..stack_size; {shallowest level shown by |show_context|}
 @y
-@!file_ptr:0..stack_size_def; {shallowest level shown by |show_context|}
+@!file_ptr:0..sup_stack_size; {shallowest level shown by |show_context|}
 @z
 
 % _____________________________________________________________________________
@@ -1212,13 +1276,13 @@ begin
 @x
 @!i:0..buf_size; {index into |buffer|}
 @y
-@!i:0..buf_size_def; {index into |buffer|}
+@!i:0..sup_buf_size; {index into |buffer|}
 @z
 
 @x
 @!n:0..error_line; {length of line 1}
 @y
-@!n:0..error_line_def; {length of line 1}
+@!n:0..sup_error_line; {length of line 1}
 @z
 
 % _____________________________________________________________________________
@@ -1229,7 +1293,7 @@ begin
 @x
 var @!k:0..buf_size; {an index into |buffer|}
 @y
-var @!k:0..buf_size_def; {an index into |buffer|}
+var @!k:0..sup_buf_size; {an index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -1240,7 +1304,7 @@ var @!k:0..buf_size_def; {an index into |buffer|}
 @x
 var @!k:0..buf_size; {an index into |buffer|}
 @y
-var @!k:0..buf_size_def; {an index into |buffer|}
+var @!k:0..sup_buf_size; {an index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -1251,7 +1315,44 @@ var @!k:0..buf_size_def; {an index into |buffer|}
 @x
 @!k:0..param_size; {the total number of parameters}
 @y
-@!k:0..param_size_def; {the total number of parameters}
+@!k:integer; {the total number of parameters}
+@z
+
+% _____________________________________________________________________________
+%
+% [38.768]
+% _____________________________________________________________________________
+
+@x
+@ The file names we shall deal with for illustrative purposes have the
+following structure:  If the name contains `\.>' or `\.:', the file area
+consists of all characters up to and including the final such character;
+otherwise the file area is null.  If the remaining file name contains
+`\..', the file extension consists of all such characters from the first
+remaining `\..' to the end, otherwise the file extension is null.
+@^system dependencies@>
+
+We can scan such file names easily by using two global variables that keep track
+of the occurrences of area and extension delimiters:
+
+@<Glob...@>=
+@!area_delimiter:pool_pointer; {the most recent `\.>' or `\.:', if any}
+@!ext_delimiter:pool_pointer; {the relevant `\..', if any}
+@y
+@ The file names we shall deal with for illustrative purposes have the
+following structure:  If the name contains `\./', the file area
+consists of all characters up to and including the final such character;
+otherwise the file area is null.  If the remaining file name contains
+`\..', the file extension consists of all such characters from the first
+remaining `\..' to the end, otherwise the file extension is null.
+@^system dependencies@>
+
+We can scan such file names easily by using two global variables that keep
+track of the occurrences of area and extension delimiters:
+
+@<Glob...@>=
+@!area_delimiter:pool_pointer; {the most recent `\./', if any}
+@!ext_delimiter:pool_pointer; {the most recent `\..', if any}
 @z
 
 % _____________________________________________________________________________
@@ -1261,8 +1362,20 @@ var @!k:0..buf_size_def; {an index into |buffer|}
 
 @x
 @d MF_area=="MFinputs:"
+@.MFinputs@>
 @y
-@d MF_area==""
+In C, the default paths are specified separately.
+@z
+
+% _____________________________________________________________________________
+%
+% [38.770]
+% _____________________________________________________________________________
+
+@x
+begin area_delimiter:=0; ext_delimiter:=0;
+@y
+begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 @z
 
 % _____________________________________________________________________________
@@ -1274,8 +1387,147 @@ var @!k:0..buf_size_def; {an index into |buffer|}
 begin if c=" " then more_name:=false
 else  begin if (c=">")or(c=":") then
 @y
-begin if c=" " or c=tabulator then more_name:=false
-else  begin if (c="/") then
+begin
+if c="""" then begin
+  quoted_filename:=not quoted_filename;
+  more_name:=true;
+  end
+else if ((c=" ")or(c=tab)) and stop_at_space and (not quoted_filename) then
+  more_name:=false
+else  begin
+  if c="/" then
+@z
+
+@x
+  else if (c=".")and(ext_delimiter=0) then ext_delimiter:=pool_ptr;
+@y
+  else if c="." then ext_delimiter:=pool_ptr;
+@z
+
+% _____________________________________________________________________________
+%
+% [38.772]
+% _____________________________________________________________________________
+
+@x
+@p procedure end_name;
+begin if str_ptr+3>max_str_ptr then
+  begin if str_ptr+3>max_strings then
+    overflow("number of strings",max_strings-init_str_ptr);
+@:METAFONT capacity exceeded number of strings}{\quad number of strings@>
+  max_str_ptr:=str_ptr+3;
+  end;
+@y
+@p procedure end_name;
+var must_quote:boolean; {whether we need to quote a string}
+@!j,@!s,@!t: pool_pointer; {running indices}
+begin if str_ptr+3>max_str_ptr then
+  begin if str_ptr+3>max_strings then
+    overflow("number of strings",max_strings-init_str_ptr);
+@:METAFONT capacity exceeded number of strings}{\quad number of strings@>
+  max_str_ptr:=str_ptr+3;
+  end;
+str_room(6); {room for quotes, if they are needed}
+if area_delimiter<>0 then begin
+  {maybe quote |cur_area|}
+  must_quote:=false;
+  s:=str_start[str_ptr];
+  t:=area_delimiter+1;
+  j:=s;
+  while (not must_quote) and (j<>t) do begin
+    must_quote:=str_pool[j]=' '; incr(j);
+    end;
+  if must_quote then begin
+    for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
+    str_pool[t+1]:="""";
+    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+    str_pool[s]:="""";
+    if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
+    area_delimiter:=area_delimiter+2;
+    pool_ptr:=pool_ptr+2;
+    end;
+  s:=area_delimiter+1;
+  end
+else begin
+  s:=str_start[str_ptr];
+  end;
+{maybe quote |cur_name|}
+if ext_delimiter=0 then t:=pool_ptr else t:=ext_delimiter;
+must_quote:=false;
+j:=s;
+while (not must_quote) and (j<>t) do begin
+  must_quote:=str_pool[j]=" "; incr(j);
+  end;
+if must_quote then begin
+  for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
+  str_pool[t+1]:="""";
+  for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+  str_pool[s]:="""";
+  if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
+  pool_ptr:=pool_ptr+2;
+  end;
+if ext_delimiter<>0 then begin
+  {maybe quote |cur_ext|}
+  s:=ext_delimiter;
+  t:=pool_ptr;
+  must_quote:=false;
+  j:=s;
+  while (not must_quote) and (j<>t) do begin
+    must_quote:=str_pool[j]=' '; incr(j);
+    end;
+  if must_quote then begin
+    str_pool[t+1]:="""";
+    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+    str_pool[s]:="""";
+    pool_ptr:=pool_ptr+2;
+    end;
+  end;
+@z
+
+% _____________________________________________________________________________
+%
+% [38.773]
+% _____________________________________________________________________________
+
+@x
+begin slow_print(a); slow_print(n); slow_print(e);
+@y
+var must_quote: boolean; {whether to quote the filename}
+@!j:pool_pointer; {index into |str_pool|}
+begin
+must_quote:=false;
+if a<>0 then begin
+  j:=str_start[a];
+  while (not must_quote) and (j<>str_start[a+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+if n<>0 then begin
+  j:=str_start[n];
+  while (not must_quote) and (j<>str_start[n+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+if e<>0 then begin
+  j:=str_start[e];
+  while (not must_quote) and (j<>str_start[e+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end;
+if must_quote then slow_print("""");
+if a<>0 then
+  for j:=str_start[a] to str_start[a+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if n<>0 then
+  for j:=str_start[n] to str_start[n+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if e<>0 then
+  for j:=str_start[e] to str_start[e+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]));
+if must_quote then slow_print("""");
 @z
 
 % _____________________________________________________________________________
@@ -1284,9 +1536,26 @@ else  begin if (c="/") then
 % _____________________________________________________________________________
 
 @x
+@d append_to_name(#)==begin c:=#; incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end
+@y
+@d append_to_name(#)==begin c:=#; if not (c="""") then begin incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end end
+@z
+
+@x
+begin k:=0;
+@y
+begin k:=1;
+name_of_file[1]:=xchr[' '];
+@z
+
+@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
-name_of_file[ name_length + 1 ]:= chr(0);
+name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 @z
 
 % _____________________________________________________________________________
@@ -1295,14 +1564,34 @@ name_of_file[ name_length + 1 ]:= chr(0);
 % _____________________________________________________________________________
 
 @x
-MF_base_default:='MFbases:plain.base';
+@d base_default_length=18 {length of the |MF_base_default| string}
+@d base_area_length=8 {length of its area part}
 @y
-miktex_get_default_dump_file_name(MF_base_default);
+@d base_area_length=0 {no fixed area in C}
+@z
+
+@x
+@!MF_base_default:packed array[1..base_default_length] of char;
+@y
+@!base_default_length: integer;
+@!MF_base_default:packed array[1..file_name_size_plus_two] of char;
 @z
 
 % _____________________________________________________________________________
 %
 % [38.776]
+% _____________________________________________________________________________
+
+@x
+MF_base_default:='MFbases:plain.base';
+@y
+miktex_get_default_dump_file_name(MF_base_default);
+base_default_length:=c4pstrlen(MF_base_default);
+@z
+
+% _____________________________________________________________________________
+%
+% [38.777]
 % _____________________________________________________________________________
 
 @x
@@ -1317,21 +1606,16 @@ do_nothing;
 % _____________________________________________________________________________
 
 @x
-@p procedure pack_buffered_name(@!n:small_number;@!a,@!b:integer);
-var @!k:integer; {number of positions filled in |name_of_file|}
-@!c: ASCII_code; {character being packed}
-@!j:integer; {index into |buffer| or |MF_base_default|}
-begin if n+b-a+1+base_ext_length>file_name_size then
-  b:=a+file_name_size-n-1-base_ext_length;
 k:=0;
-for j:=1 to n do append_to_name(xord[MF_base_default[j]]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=base_default_length-base_ext_length+1 to base_default_length do
-  append_to_name(xord[MF_base_default[j]]);
-if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
-for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
-end;
 @y
+k:=1;
+name_of_file[1]:=xchr[' '];
+@z
+
+@x
+for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
+@y
+name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 @z
 
 % _____________________________________________________________________________
@@ -1342,7 +1626,7 @@ end;
 @x
 var @!j:0..buf_size; {the first space after the file name}
 @y
-var @!j:0..buf_size_def; {the first space after the file name}
+var @!j:0..sup_buf_size; {the first space after the file name}
 @z
 
 @x
@@ -1352,8 +1636,7 @@ var @!j:0..buf_size_def; {the first space after the file name}
     {now try the system base file area}
   if w_open_in(base_file) then goto found;
 @y
-  c4p_memcpy(name_of_file,file_name_size,c4p_ptr(buffer[loc]),j-loc);
-  name_of_file[j-loc+1]:=chr(0);
+  pack_buffered_name(0,loc,j-1);
   if miktex_open_base_file(base_file) then goto found;
 @z
 
@@ -1367,7 +1650,7 @@ var @!j:0..buf_size_def; {the first space after the file name}
 pack_buffered_name(base_default_length-base_ext_length,1,0);
 if not w_open_in(base_file) then
 @y
-c4p_strcpy(name_of_file,file_name_size_plus_one,MF_base_default);
+pack_buffered_name(base_default_length-base_ext_length,1,0);
 if not miktex_open_base_file(base_file) then
 @z
 
@@ -1379,13 +1662,48 @@ if not miktex_open_base_file(base_file) then
 
 % _____________________________________________________________________________
 %
+% [38.780]
+% _____________________________________________________________________________
+
+@x
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+  make_name_string:=make_string;
+  end;
+@y
+else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
+  make_name_string:=make_string;
+  end;
+  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
+   match the contents of |name_of_file|.}
+  k:=2;
+  begin_name;
+  stop_at_space:=false;
+  while (k<=name_length)and(more_name(name_of_file[k])) do
+    incr(k);
+  stop_at_space:=true;
+  end_name;  
+@z
+
+% _____________________________________________________________________________
+%
+% [38.781]
+% _____________________________________________________________________________
+
+@x
+while buffer[loc]=" " do incr(loc);
+@y
+while (buffer[loc]=" ")or(buffer[loc]=tab) do incr(loc);
+@z
+
+% _____________________________________________________________________________
+%
 % [38.786]
 % _____________________________________________________________________________
 
 @x
 var @!k:0..buf_size; {index into |buffer|}
 @y
-var @!k:0..buf_size_def; {index into |buffer|}
+var @!k:0..sup_buf_size; {index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -1397,8 +1715,8 @@ var @!k:0..buf_size_def; {index into |buffer|}
 @!k:0..buf_size; {index into |months| and |buffer|}
 @!l:0..buf_size; {end of first input line}
 @y
-@!k:0..buf_size_def; {index into |months| and |buffer|}
-@!l:0..buf_size_def; {end of first input line}
+@!k:0..sup_buf_size; {index into |months| and |buffer|}
+@!l:0..sup_buf_size; {end of first input line}
 @z
 
 % _____________________________________________________________________________
@@ -1423,13 +1741,39 @@ c4p_arrcpy(months,'JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC');
 % _____________________________________________________________________________
 
 @x
+begin @<Put the desired file name in |(cur_name,cur_ext,cur_area)|@>;
+if cur_ext="" then cur_ext:=".mf";
+pack_cur_name;
+loop@+  begin begin_file_reading; {set up |cur_file| and new level of input}
+  if a_open_in(cur_file) then goto done;
+  if cur_area="" then
+    begin pack_file_name(cur_name,MF_area,cur_ext);
+    if a_open_in(cur_file) then goto done;
+    end;
+@y
+var temp_str: str_number; k: integer;
+begin @<Put the desired file name in |(cur_name,cur_ext,cur_area)|@>;
+pack_cur_name;
+loop@+begin
+  begin_file_reading; {set up |cur_file| and new level of input}
+  if cur_ext = ".mf" then begin
+    cur_ext := "";
+    pack_cur_name;
+    end;
+  if a_open_in(cur_file) then
+    goto done;
+@z
+
+@x
 done: name:=a_make_name_string(cur_file); str_ref[cur_name]:=max_str_ref;
-if job_name=0 then
-  begin job_name:=cur_name; open_log_file;
 @y
 done: name:=a_make_name_string(cur_file); str_ref[cur_name]:=max_str_ref;
 full_source_filename_stack[in_open]:=miktex_make_full_name_string;
-if job_name=0 then
+@z
+
+@x
+  begin job_name:=cur_name; open_log_file;
+@y
   begin job_name:=miktex_get_job_name; open_log_file;
 @z
 
@@ -1478,7 +1822,7 @@ if s<>"" then
 @x
 @!n:0..max_print_line; {amount of macro text to show}
 @y
-@!n:0..max_print_line_def; {amount of macro text to show}
+@!n:0..sup_max_print_line; {amount of macro text to show}
 @z
 
 % _____________________________________________________________________________
@@ -1489,19 +1833,19 @@ if s<>"" then
 @x
 @!char_remainder:array[eight_bits] of 0..lig_table_size; {the |remainder| byte}
 @y
-@!char_remainder:array[eight_bits] of 0..lig_table_size_def; {the |remainder| byte}
+@!char_remainder:array[eight_bits] of 0..sup_lig_table_size; {the |remainder| byte}
 @z
 
 @x
 @!lig_kern:array[0..lig_table_size] of four_quarters; {the ligature/kern table}
 @y
-@!lig_kern:array[0..lig_table_size_def] of four_quarters; {the ligature/kern table}
+@!lig_kern:array[0..sup_lig_table_size] of four_quarters; {the ligature/kern table}
 @z
 
 @x
 @!skip_table:array[eight_bits] of 0..lig_table_size; {local label status}
 @y
-@!skip_table:array[eight_bits] of 0..lig_table_size_def; {local label status}
+@!skip_table:array[eight_bits] of 0..sup_lig_table_size; {local label status}
 @z
 
 @x
@@ -1509,9 +1853,20 @@ if s<>"" then
 @!ll,@!lll:0..lig_table_size; {registers used for lig/kern processing}
 @!label_loc:array[0..256] of -1..lig_table_size; {lig/kern starting addresses}
 @y
-@!bch_label:0..lig_table_size_def; {left boundary starting location}
-@!ll,@!lll:0..lig_table_size_def; {registers used for lig/kern processing}
-@!label_loc:array[0..256] of -1..lig_table_size_def; {lig/kern starting addresses}
+@!bch_label:0..sup_lig_table_size; {left boundary starting location}
+@!ll,@!lll:0..sup_lig_table_size; {registers used for lig/kern processing}
+@!label_loc:array[0..256] of -1..sup_lig_table_size; {lig/kern starting addresses}
+@z
+
+% _____________________________________________________________________________
+%
+% [45.1134]
+% _____________________________________________________________________________
+
+@x
+print_nl("Font metrics written on "); slow_print(metric_file_name);
+@y
+print_nl("Font metrics written on "); print_file_name(0,metric_file_name,0);
 @z
 
 % _____________________________________________________________________________
@@ -1528,18 +1883,24 @@ begin c4p_buf_write(gf_file,c4p_ptr(gf_buf[a]),b-a+1);
 
 % _____________________________________________________________________________
 %
-% [48.1186]
+% [47.1182]
 % _____________________________________________________________________________
 
 @x
-@!init procedure store_base_file;
+print_nl("Output written on "); slow_print(output_file_name);
 @y
-procedure store_base_file;
+print_nl("Output written on "); print_file_name(0,output_file_name,0);
 @z
 
+% _____________________________________________________________________________
+%
+% [48.1185]
+% _____________________________________________________________________________
+
 @x
-tini
+base_ident:=" (INIMF)";
 @y
+if miktex_is_init_program then base_ident:=" (INIMF)";
 @z
 
 % _____________________________________________________________________________
@@ -1587,16 +1948,70 @@ off_base:
 
 % _____________________________________________________________________________
 %
-% [48.1198]
+% [48.1188]
 % _____________________________________________________________________________
 
 @x
-dump_int(start_sym); dump_int(interaction); dump_int(base_ident);
+@d dump_wd(#)==begin base_file^:=#; put(base_file);@+end
 @y
-dump_int(start_sym);
-if miktex_get_interaction >= 0 then dump_int(error_stop_mode)
-else dump_int(interaction);
-dump_int(base_ident);
+@d dump_things(#)==miktex_dump(base_file, #)
+@d dump_wd(#)==begin base_file^:=#; put(base_file);@+end
+@z
+
+% _____________________________________________________________________________
+%
+% [48.1189]
+% _____________________________________________________________________________
+
+@x
+@d undump_wd(#)==begin get(base_file); #:=base_file^;@+end
+@y
+@d undump_things(#)==miktex_undump(base_file, #)
+@d undump_checked_things(#)==miktex_undump(base_file, #)
+@d undump_upper_check_things(#)==miktex_undump(base_file, #)
+@d undump_wd(#)==begin get(base_file); #:=base_file^;@+end
+@z
+
+% _____________________________________________________________________________
+%
+% [48.1190]
+% _____________________________________________________________________________
+
+@x
+dump_int(@$);@/
+@y
+dump_int(@"4D694B4D); {"MKiM"}
+dump_int(@$);@/
+@<Dump |xord|, |xchr|, and |xprn|@>;
+@z
+
+% _____________________________________________________________________________
+%
+% [48.1191]
+% _____________________________________________________________________________
+
+@x
+x:=base_file^.int;
+if x<>@$ then goto off_base; {check that strings are the same}
+undump_int(x);
+if x<>mem_min then goto off_base;
+undump_int(x);
+if x<>mem_top then goto off_base;
+@y
+x:=base_file^.int;
+if x<>@"4D694B4D then goto off_base; {not a base file}
+undump_int(x);
+if x<>@$ then goto off_base;
+@<Undump |xord|, |xchr|, and |xprn|@>;
+undump_int(x);
+if x<>mem_min then goto off_base;
+{Now we deal with dynamically allocating the memory. We don't provide
+ all the fancy features \.{tex.ch} does---all that matters is enough to
+ run the trap test with a memory size of 3000.}
+undump_int (mem_top); {Overwrite whatever we had.}
+if mem_max < mem_top then mem_max:=mem_top; {Use at least what we dumped.}
+if mem_min+1100>mem_top then goto off_base;
+mem:=miktex_reallocate(mem, mem_max - mem_min + 2);
 @z
 
 % _____________________________________________________________________________
@@ -1619,6 +2034,25 @@ miktex_allocate_memory;
     '---case ',bad:1);
 @y
     '---case ',bad);
+@z
+
+@x
+@!init if not get_strings_started then goto final_end;
+init_tab; {initialize the tables}
+init_prim; {call |primitive| for each primitive}
+init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr;@/
+max_str_ptr:=str_ptr; max_pool_ptr:=pool_ptr; fix_date_and_time;
+tini@/
+@y  22833
+@!init
+if miktex_is_init_program then begin
+if not get_strings_started then goto final_end;
+init_tab; {initialize the tables}
+init_prim; {call |primitive| for each primitive}
+init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr;@/
+max_str_ptr:=str_ptr; max_pool_ptr:=pool_ptr; fix_date_and_time;
+end;
+tini@/
 @z
 
 @x
@@ -1652,7 +2086,7 @@ end;
     end;
   end;
 @y
-    slow_print(log_name); print_char(".");
+    print_file_name(0,log_name,0); print_char(".");
     end;
   end;
 print_ln;
@@ -1667,23 +2101,19 @@ end;
 
 % _____________________________________________________________________________
 %
-% [49.1210]
+% [49.1209]
 % _____________________________________________________________________________
 
 @x
-@!init procedure init_prim; {initialize all the primitives}
+  begin @!init store_base_file; return;@+tini@/
 @y
-procedure init_prim; {initialize all the primitives}
-@z
-
-@x
-tini
-@y
+  begin
+    @!init if miktex_is_init_program then begin store_base_file; return;end;@+tini@/
 @z
 
 % _____________________________________________________________________________
 %
-% [50.1212] \[50] Debugging
+% [50.1212]
 % _____________________________________________________________________________
 
 @x
@@ -1696,7 +2126,7 @@ if miktex_get_interaction >= 0 then
 
 % _____________________________________________________________________________
 %
-% [51.1214] \[51] System-dependent changes
+% [51.1214]
 % _____________________________________________________________________________
 
 @x
@@ -1704,18 +2134,20 @@ if miktex_get_interaction >= 0 then
 @y
 @ @<Declare \MiKTeX\ procedures@>=
 
-function make_fraction(@!p,@!q:integer):fraction; forward;
-function miktex_c_style_error_messages_p : boolean; forward;
-function miktex_get_interaction : integer; forward;
-function miktex_get_job_name : str_number; forward;
-function miktex_get_quiet_flag : boolean; forward;
-function miktex_halt_on_error_p : boolean; forward;
-function miktex_init_screen : boolean; forward;
-function miktex_is_init_program : boolean; forward;
-function miktex_make_full_name_string : str_number; forward;
-function take_fraction(@!p,@!q:integer):fraction; forward;
-function take_scaled(@!p,@!q:integer):scaled; forward;
-{function make_scaled(@!p,@!q:integer):scaled; forward;}
+function make_fraction(@!p,@!q:integer):fraction; forward;@t\2@>@/
+function miktex_c_style_error_messages_p : boolean; forward;@t\2@>@/
+function miktex_enable_eightbit_chars_p : boolean; forward;@t\2@>@/
+function miktex_get_interaction : integer; forward;@t\2@>@/
+function miktex_get_job_name : str_number; forward;@t\2@>@/
+function miktex_get_quiet_flag : boolean; forward;@t\2@>@/
+function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
+function miktex_have_tcx_file_name : boolean; forward;@t\2@>@/
+function miktex_init_screen : boolean; forward;@t\2@>@/
+function miktex_is_init_program : boolean; forward;@t\2@>@/
+function miktex_make_full_name_string : str_number; forward;@t\2@>@/
+function take_fraction(@!p,@!q:integer):fraction; forward;@t\2@>@/
+function take_scaled(@!p,@!q:integer):scaled; forward;@t\2@>@/
+{function make_scaled(@!p,@!q:integer):scaled; forward;@t\2@>@/}
 
 @ @<Error handling procedures@>=
 
@@ -1739,28 +2171,80 @@ begin
 end;
 
 @ @<Global variables@>=
-@!edit_name_start: pool_pointer; {where the filename to switch to starts}
-@!edit_name_length,@!edit_line: integer; {what line to start editing at}
-@!bistack_size : integer;
-@!buf_size : integer;
-@!error_line : integer;
-@!half_error_line : integer;
-@!lig_table_size : integer;
-@!max_print_line : integer;
-@!max_strings : integer;
-@!mem_max : integer;
-@!mem_min : integer;
-@!mem_top : integer;
-@!max_wiggle : integer;
-@!move_size : integer;
-@!param_size : integer;
-@!path_size : integer;
-@!pool_size : integer;
-@!stack_size : integer;
-@!string_vacancies : integer;
+@!bistack_size:integer; {size of stack for bisection algorithms;
+  should probably be left at this value}
+@!buf_size:integer; {maximum number of characters simultaneously present in
+  current lines of open files; must not exceed |max_halfword|}
+@!dummy_xord:ASCII_code;
+@!dummy_xchr:text_char;
+@!dummy_xprn:ASCII_code;
+@!edit_line:integer; {what line to start editing at}
+@!edit_name_length:integer;
+@!edit_name_start:pool_pointer; {where the filename to switch to starts}
+@!error_line:integer; {width of context lines on terminal error messages}
+@!half_error_line:integer; {width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}
+@!lig_table_size:integer; {maximum number of ligature/kern steps, must be
+  at least 255 and at most 32510}
+@!main_memory:integer; {total memory words allocated in initex}
+@!max_print_line:integer; {width of longest text lines output; should be at least 60}
+@!max_wiggle:integer; {number of autorounded points per cycle}
+@!max_strings:integer; {maximum number of strings; must not exceed |max_halfword|}
+@!mem_max:integer; {greatest index in \MF's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INIMF}, otherwise |>=mem_top|}
+@!mem_top:integer; {largest index in the |mem| array dumped by \.{INIMF};
+  must be substantially larger than |mem_bot|,
+  equal to |mem_max| in \.{INIMF}, else not greater than |mem_max|}
+@!move_size:integer; {space for storing moves in a single octant}
+@!quoted_filename:boolean; {current filename is quoted}
+@!param_size:integer; {maximum number of simultaneous macro parameters}
+@!path_size:integer; {maximum number of knots between breakpoints of a path}
+@!pool_size:integer; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all identifiers;
+  must exceed |string_vacancies| by the total
+  length of \MF's own strings, which is currently about 22000}
+@!stack_size:integer; {maximum number of simultaneous input sources}
+@!stop_at_space:boolean; {whether |more_name| returns false for space}
+@!string_vacancies:integer; {the minimum number of characters that should be
+  available for the user's identifier names and strings,
+  after \MF's own error messages are stored}
+@!xprn:array[ASCII_code] of ASCII_code; {use \.{\^\^} notation?}
 
 @ @<Set init...@>=
 edit_name_start:=0;
+stop_at_space:=true;
+
+@ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
+in the format, so a TCX file loaded during format creation can set a
+default for users of the format.
+
+@<Dump |xord|, |xchr|, and |xprn|@>=
+dump_things(xord[0], 256);
+dump_things(xchr[0], 256);
+dump_things(xprn[0], 256);
+
+@ Undumping the |xord|, |xchr|, and |xprn| arrays.  This code is more
+complicated, because we want to ensure that a TCX file specified on
+the command line will override whatever is in the format.  Since the
+tcx file has already been loaded, that implies throwing away the data
+in the format.  Also, if no |translate_filename| is given, but
+|eight_bit_p| is set we have to make all characters printable.
+
+@<Undump |xord|, |xchr|, and |xprn|@>=
+if miktex_have_tcx_file_name then begin
+  for k:=0 to 255 do undump_things(dummy_xord, 1);
+  for k:=0 to 255 do undump_things(dummy_xchr, 1);
+  for k:=0 to 255 do undump_things(dummy_xprn, 1);
+  end
+else begin
+  undump_things(xord[0], 256);
+  undump_things(xchr[0], 256);
+  undump_things(xprn[0], 256);
+  if miktex_enable_eightbit_chars_p then
+    for k:=0 to 255 do
+      xprn[k]:=1;
+end;
 
 @* \[52] Index.
 @z

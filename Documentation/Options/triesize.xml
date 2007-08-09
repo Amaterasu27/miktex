@@ -1,11 +1,10 @@
 <varlistentry>
 <term><option>--trie-size=<replaceable>n</replaceable></option></term>
 <listitem><para>Set the amount of space for
-hyphenation patterns; should be larger for the <emphasis>INI</emphasis>
 <indexterm>
 <primary>--trie-size=n</primary>
 </indexterm>
-variant of the compiler.</para></listitem>
+hyphenation patterns.</para></listitem>
 </varlistentry>
 
 <!--

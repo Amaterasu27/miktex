@@ -103,12 +103,12 @@ TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   isTeXProgram = false;
   param_buf_size = -1;
   param_error_line = -1;
+  param_extra_mem_bot = -1;
+  param_extra_mem_top = -1;
   param_half_error_line = -1;
   param_max_print_line = -1;
   param_max_strings = -1;
-  param_mem_max = -1;
-  param_mem_min = -1;
-  param_mem_top = -1;
+  param_main_memory = -1;
   param_param_size = -1;
   param_pool_free = -1;
   param_pool_size = -1;
@@ -152,7 +152,7 @@ TeXMFApp::OnTeXMFStartJob ()
   tstring appName;
   for (const MIKTEXCHAR * lpsz = TheNameOfTheGame(); *lpsz != 0; ++ lpsz)
     {
-      if (*lpsz != T_('-'))	// pdf-e-tex => pdftex
+      if (*lpsz != T_('-'))	// pdf-e-tex => pdfetex
 	{
 	  appName += *lpsz;
 	}
@@ -214,17 +214,17 @@ enum {
   OPT_DONT_PARSE_FIRST_LINE,
   OPT_ENABLE_8BIT_CHARS,
   OPT_ERROR_LINE,
+  OPT_EXTRA_MEM_BOT,
+  OPT_EXTRA_MEM_TOP,
   OPT_HALF_ERROR_LINE,
   OPT_HALT_ON_ERROR,
   OPT_INITIALIZE,
   OPT_INTERACTION,
   OPT_JOB_NAME,
   OPT_JOB_TIME,
+  OPT_MAIN_MEMORY,
   OPT_MAX_PRINT_LINE,
   OPT_MAX_STRINGS,
-  OPT_MEM_MAX,
-  OPT_MEM_MIN,
-  OPT_MEM_TOP,
   OPT_NO_C_STYLE_ERRORS,
   OPT_OEM,
   OPT_OUTPUT_DIRECTORY,
@@ -296,6 +296,24 @@ Set error_line to N."),
 	     required_argument,
 	     T_("N"));
 
+  if (isTeXProgram)
+    {
+      AddOption (T_("extra-mem-bot\0\
+Set extra_mem_bot to N."),
+		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_BOT,
+		 required_argument,
+		 T_("N"));
+    }
+
+  if (isTeXProgram || AmI(T_("metapost")))
+    {
+      AddOption (T_("extra-mem-top\0\
+Set extra_mem_top to N."),
+		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_TOP,
+		 required_argument,
+		 T_("N"));
+    }
+
   AddOption (T_("half-error-line\0\
 Set half_error_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_HALF_ERROR_LINE,
@@ -332,6 +350,12 @@ Set the job time.  Take FILE's timestamp as the reference."),
 	     required_argument,
 	     T_("FILE"));
 
+  AddOption (T_("main-memory\0\
+Set main_memory to N."),
+	     FIRST_OPTION_VAL + optBase + OPT_MAIN_MEMORY,
+	     required_argument,
+	     T_("N"));
+
   AddOption (T_("max-print-line\0\
 Set max_print_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_PRINT_LINE,
@@ -341,24 +365,6 @@ Set max_print_line to N."),
   AddOption (T_("max-strings\0\
 Set max_strings to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_STRINGS,
-	     required_argument,
-	     T_("N"));
-
-  AddOption (T_("mem-max\0\
-Set mem_max to N."),
-	     FIRST_OPTION_VAL + optBase + OPT_MEM_MAX,
-	     required_argument,
-	     T_("N"));
-
-  AddOption (T_("mem-min\0\
-Set mem_min to N."),
-	     FIRST_OPTION_VAL + optBase + OPT_MEM_MIN,
-	     required_argument,
-	     T_("N"));
-
-  AddOption (T_("mem-top\0\
-Set mem_top to N."),
-	     FIRST_OPTION_VAL + optBase + OPT_MEM_TOP,
 	     required_argument,
 	     T_("N"));
 
@@ -384,7 +390,7 @@ Parse the first line of the input line to look for a dump name and/or\
 	     FIRST_OPTION_VAL + optBase + OPT_PARSE_FIRST_LINE,
 	     no_argument);
 
-  if (isTeXProgram && ! AmI(T_("omega")))
+  if (isTeXProgram)
     {
       AddOption (T_("pool-free\0\
 Set pool_free to N."),
@@ -419,7 +425,7 @@ Disable MiKTeX extensions."),
 	     FIRST_OPTION_VAL + optBase + OPT_STRICT,
 	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
 
-  if (isTeXProgram && ! AmI(T_("omega")))
+  if (isTeXProgram)
     {
       AddOption (T_("strings-free\0\
 Set strings_free to N."),
@@ -551,6 +557,14 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       param_error_line = _ttoi(lpszOptArg);
       break;
 
+    case OPT_EXTRA_MEM_BOT:
+      param_extra_mem_bot = _ttoi(lpszOptArg);
+      break;
+
+    case OPT_EXTRA_MEM_TOP:
+      param_extra_mem_top = _ttoi(lpszOptArg);
+      break;
+
     case OPT_HALF_ERROR_LINE:
       param_half_error_line = _ttoi(lpszOptArg);
       break;
@@ -615,6 +629,10 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       }
       break;
 
+    case OPT_MAIN_MEMORY:
+      param_main_memory = _ttoi(lpszOptArg);
+      break;
+
     case OPT_MAX_PRINT_LINE:
       param_max_print_line = _ttoi(lpszOptArg);
       break;
@@ -623,20 +641,8 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       param_max_strings = _ttoi(lpszOptArg);
       break;
 
-    case OPT_MEM_MAX:
-      param_mem_max = _ttoi(lpszOptArg);
-      break;
-
-    case OPT_MEM_MIN:
-      param_mem_min = _ttoi(lpszOptArg);
-      break;
-
     case OPT_TIME_STATISTICS:
       timeStatistics = true;
-      break;
-
-    case OPT_MEM_TOP:
-      param_mem_top = _ttoi(lpszOptArg);
       break;
 
     case OPT_NO_C_STYLE_ERRORS:
@@ -1299,4 +1305,3 @@ TeXMFApp::OpenPoolFile (/*[in]*/ void *			p,
   get (*reinterpret_cast<C4P_text*>(p));
   return (true);
 }
-

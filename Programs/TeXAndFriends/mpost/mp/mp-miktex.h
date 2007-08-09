@@ -143,13 +143,17 @@ public:
   {
     MetafontApp::AllocateMemory ();
 
-    GETPARAM (m_font_mem_size,
-	      fontmemsize,
-	      font_mem_size,
-	      mpost::mpost::font_mem_size());
+    GETPARAMCHECK (m_font_mem_size,
+		   fontmemsize,
+		   font_mem_size,
+		   mpost::mpost::font_mem_size());
 
     Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
-    Allocate (THEDATA(nextstr), THEDATA(maxstrings) + 1);
+
+    if (IsInitProgram())
+      {
+	Allocate (THEDATA(nextstr), THEDATA(maxstrings) + 1);
+      }
   }
 
 public:
@@ -331,6 +335,14 @@ miktexopenpstabfile (/*[in]*/ alphafile &		f,
 		     /*[in]*/ const MIKTEXCHAR *	lpszFileName)
 {
   return (MiKTeX::TeXAndFriends::OpenMAPFile(&f, lpszFileName));
+}
+
+inline
+bool
+miktexopenmetafontfile (/*[in]*/ alphafile &		f,
+			/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+{
+  return (MiKTeX::TeXAndFriends::OpenMETAFONTFile(&f, lpszFileName));
 }
 
 #include <miktex/mfapp.inl>

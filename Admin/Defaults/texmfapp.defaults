@@ -1,52 +1,48 @@
-;; Maximum number of characters simultaneously present in
-;; current lines of open files and in control sequences between
-;; \csname and \endcsname; must not exceed 1073741823.
+;; TeX uses the buffer to contain input lines, but macro
+;; expansion works by writing material into the buffer and reparsing the
+;; line.  As a consequence, certain constructs require the buffer to be
+;; very large, even though most documents can be handled with a small value.
 buf_size=200000
 
 ;; Width of context lines on terminal error messages.
 error_line=79
 
+;; Extra low memory for boxes, glue, breakpoints, etc.
+extra_mem_bot=0
+
+;; Extra high memory for chars, tokens, etc.
+extra_mem_top=0
+
 ;; Width of first lines of contexts in terminal error messages;
 ;; should be between 30 and (error_line - 15).
 half_error_line=50
 
+;; Words of inimemory available.
+main_memory=1500000
+
 ;; Width of longest text lines output; should be at least 60.
 max_print_line=79
 
-;; Maximum number of strings; must not exceed 1073741823.
+;; Maximum number of strings.
 max_strings=100000
-
-;; Smallest index in the mem array dumped by INITEX;
-;; must not be less than mem_min.
-mem_bot=0
-
-;; Greatest index in TeX's internal mem array; must be strictly less than
-;; 1073741823.
-mem_max=2000000
-
-;; Smallest index in TeX's internal mem array; must be 0 or more;
-;; must be equal to mem_bot in INITEX, otherwise &lt;=mem_bot.
-mem_min=0
-
-;; Largest index in the mem array dumped by INITEX; must be substantially
-;; larger than 0 and not greater than mem_max.
-mem_top=1048576
 
 ;; Maximum number of simultaneous macro parameters.
 param_size=10000
 
-;; Maximum number of characters in strings, including all
-;; error messages and help texts, and the names of all fonts and
-;; control sequences; must exceed string_vacancies by the total
-;; length of TeX's own strings, which is currently about 23000.
+;; Pool space free after format loaded.
+pool_free=47500
+
+;; Max number of characters in all strings, including all
+;; error messages, help texts, font names, control sequences.
+;; These values apply to TeX and MP.
 pool_size=1250000
-pool_free=5000
-strings_free=100
 
 ;; Maximum number of simultaneous input sources.
 stack_size=5000
 
-;; The minimum number of characters that should be
-;; available for the user's control sequences and font names,
-;; after TeX's own error messages are stored.
-string_vacancies=400000
+;; Strings available after format loaded.
+strings_free=100
+
+;; Minimum pool space after TeX/MP's own strings; must be at least
+;; 25000 less than pool_size, but doesn't need to be nearly that large.
+string_vacancies=90000

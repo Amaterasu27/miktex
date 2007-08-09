@@ -5,22 +5,17 @@ max_in_open=50
 ;; Maximum number of semantic levels simultaneously active.
 nest_size=500
 
-;; Space for saving values outside of current group; must be
-;; at most 1073741823.
-save_size=32768
+;; Space for saving values outside current group.
+save_size=5000
 
-;; Space for "opcodes" in the hyphenation patterns.
-trie_op_size=35111
-
-;; Space for hyphenation patterns; should be larger for
-;; INITEX than it is in production versions of TeX.
+;; Space for hyphenation patterns.
 trie_size=300000
 
-;; Maximum internal font number; must not exceed 5000.
+;; Total number of fonts.
 font_max=2000
 
-;; Number of words of font_info for all fonts.
-font_mem_size=1000000
+;; Words of font info for TeX (total size of all TFM files, approximately).
+font_mem_size=1200000
 
-;; Maximun number of hyphen exceptions.
-hyph_size=65535
+;; prime number of hyphenation exceptions.
+hyph_size=8191

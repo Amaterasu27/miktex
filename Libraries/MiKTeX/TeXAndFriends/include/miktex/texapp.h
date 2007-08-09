@@ -233,20 +233,30 @@ public:
   {
     GETPARAM (param_mem_bot, membot, mem_bot, 0);
 
+    if (THEDATA(membot) < 0 || THEDATA(membot) > 1)
+      {
+	MiKTeX::Core::Session::FatalMiKTeXError
+	  (MIKTEXTEXT("TeXApp::AllocateMemory"),
+	   MIKTEXTEXT("mem_bot must be 0 or 1."),
+	   0,
+	   MIKTEXTEXT(__FILE__),
+	   __LINE__);
+      }
+
     TeXMFApp::AllocateMemory ();
 
-    GETPARAM (param_max_in_open,
-	      maxinopen,
-	      max_in_open,
-	      texapp::texapp::max_in_open());
-    GETPARAM (param_nest_size,
-	      nestsize,
-	      nest_size,
-	      texapp::texapp::nest_size());
-    GETPARAM (param_save_size,
-	      savesize,
-	      save_size,
-	      texapp::texapp::save_size());
+    GETPARAMCHECK (param_max_in_open,
+		   maxinopen,
+		   max_in_open,
+		   texapp::texapp::max_in_open());
+    GETPARAMCHECK (param_nest_size,
+		   nestsize,
+		   nest_size,
+		   texapp::texapp::nest_size());
+    GETPARAMCHECK (param_save_size,
+		   savesize,
+		   save_size,
+		   texapp::texapp::save_size());
     GETPARAM (param_trie_size,
 	      triesize,
 	      trie_size,
@@ -264,19 +274,19 @@ public:
     Allocate (THEDATA(trier), THEDATA(triesize) + 1);
     Allocate (THEDATA(trietaken), THEDATA(triesize));
 
-#if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
-    GETPARAM (param_hyph_size,
-	      hyphsize,
-	      hyph_size,
-	      texapp::texapp::hyph_size());
+#if ! defined(MIKTEX_OMEGA)
+    GETPARAMCHECK (param_hyph_size,
+		   hyphsize,
+		   hyph_size,
+		   texapp::texapp::hyph_size());
     GETPARAM (param_font_max,
 	      fontmax,
 	      font_max,
 	      texapp::texapp::font_max());
-    GETPARAM (param_font_mem_size,
-	      fontmemsize,
-	      font_mem_size,
-	      texapp::texapp::font_mem_size());
+    GETPARAMCHECK (param_font_mem_size,
+		   fontmemsize,
+		   font_mem_size,
+		   texapp::texapp::font_mem_size());
 
     Allocate (THEDATA(trietrl), THEDATA(triesize));
     Allocate (THEDATA(trietro), THEDATA(triesize));
@@ -318,11 +328,11 @@ public:
       }
 #endif // not Omega
 
-#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+#if defined(MIKTEX_OMEGA)
     GETPARAM (param_trie_op_size,
 	      trieopsize,
 	      trie_op_size,
-	      texapp::texapp::trie_op_size());
+	      omega::omega::trie_op_size());
 
     Allocate (THEDATA(hyfdistance), THEDATA(trieopsize));
     Allocate (THEDATA(hyfnext), THEDATA(trieopsize));
@@ -363,7 +373,7 @@ public:
     Free (THEDATA(trier));
     Free (THEDATA(trietaken));
 
-#if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
+#if ! defined(MIKTEX_OMEGA)
     Free (THEDATA(hyphword));
     Free (THEDATA(hyphlist));
     Free (THEDATA(hyphlink));
@@ -399,7 +409,7 @@ public:
     Free (THEDATA(widthbase));
 #endif // not Omega
 
-#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+#if defined(MIKTEX_OMEGA)
     Free (THEDATA(hyfdistance));
     Free (THEDATA(hyfnext));
     Free (THEDATA(hyfnum));

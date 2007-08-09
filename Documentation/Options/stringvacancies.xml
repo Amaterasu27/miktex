@@ -6,7 +6,10 @@
 </indexterm>
 number of characters that should be available for the
 user's control sequences and font names, after the
-compiler's own error messages are stored.</para></listitem>
+compiler's own error messages are stored.
+Must be at least
+25000 less than <varname>pool_size</varname>,
+but doesn't need to be nearly that large.</para></listitem>
 </varlistentry>
 
 <!--

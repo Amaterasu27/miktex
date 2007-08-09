@@ -16,6 +16,12 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                    INSPIRED BY WEB2C'S PDFTEX.CH                       //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
+
 % _____________________________________________________________________________
 %
 % [1.2]
@@ -52,6 +58,19 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
+% [18.240]
+% _____________________________________________________________________________
+
+@x
+@d frozen_null_font=frozen_control_sequence+11
+  {permanent `\.{\\nullfont}'}
+@y
+@d frozen_null_font=frozen_control_sequence+12
+  {permanent `\.{\\nullfont}'}
+@z
+
+% _____________________________________________________________________________
+%
 % [19.286]
 % _____________________________________________________________________________
 
@@ -66,13 +85,12 @@ program PDFTEX; {all file names are defined dynamically}
 % [27.449]
 % _____________________________________________________________________________
 
-% todo
-
 @x
     if shell_enabled_p then cur_val := 1
     else cur_val := 0;
 @y
-    cur_val := 0;
+    if miktex_write18_p then cur_val := 1
+    else cur_val := 0;
 @z
 
 % _____________________________________________________________________________
@@ -151,16 +169,6 @@ end;
 
 % _____________________________________________________________________________
 %
-% [34.675]
-% _____________________________________________________________________________
-
-@x
-pdf_mem_size := inf_pdf_mem_size; {allocated size of |pdf_mem| array}
-@y
-@z
-
-% _____________________________________________________________________________
-%
 % [34.676]
 % _____________________________________________________________________________
 
@@ -168,16 +176,6 @@ pdf_mem_size := inf_pdf_mem_size; {allocated size of |pdf_mem| array}
         pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
 @y
         miktex_reallocate (pdf_mem, pdf_mem_size);
-@z
-
-% _____________________________________________________________________________
-%
-% [35.679]
-% _____________________________________________________________________________
-
-@x
-pdf_os_buf_size := inf_pdf_os_buf_size;
-@y
 @z
 
 % _____________________________________________________________________________
@@ -206,21 +204,8 @@ pdf_os_buf_size := inf_pdf_os_buf_size;
 
 % _____________________________________________________________________________
 %
-% [37.696]
-% _____________________________________________________________________________
-
-@x
-obj_tab_size := inf_obj_tab_size; {allocated size of |obj_tab| array}
-dest_names_size := inf_dest_names_size; {allocated size of |dest_names| array}
-@y
-@z
-
-% _____________________________________________________________________________
-%
 % [37.697]
 % _____________________________________________________________________________
-
-% todo
 
 @x
         dest_names := xrealloc_array(dest_names, dest_name_entry, dest_names_size);
@@ -342,8 +327,6 @@ found: @<Print character substition tracing log@>;
 %
 % [39.787]
 % _____________________________________________________________________________
-
-% todo
 
 @x
 if pdf_pk_mode <> null then begin
@@ -545,15 +528,15 @@ begin
     get_nullstr := "";
 end;
 
-function miktex_ptr_equal:boolean; forward;@t\2@>@/
 function colorstackused: integer; forward;@t\2@>@/
-function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
-function is_quote_bad: boolean; forward;@t\2@>@/
+function get_resname_prefix : str_number; forward;@t\2@>@/
 function getllx: scaled; forward;@t\2@>@/
 function getlly: scaled; forward;@t\2@>@/
 function geturx: scaled; forward;@t\2@>@/
 function getury: scaled; forward;@t\2@>@/
+function is_quote_bad: boolean; forward;@t\2@>@/
 function matrixused: boolean; forward;@t\2@>@/
+function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
+function miktex_ptr_equal:boolean; forward;@t\2@>@/
 function packet_byte : eight_bits; forward;@t\2@>@/
-function get_resname_prefix : str_number; forward;@t\2@>@/
 @z

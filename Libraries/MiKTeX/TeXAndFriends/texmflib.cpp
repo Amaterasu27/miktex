@@ -414,24 +414,25 @@ MiKTeX::TeXAndFriends::InitializeCharTables
 
 /* _________________________________________________________________________
 
-   OpenMapFile
+   OpenAlphaFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
-MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
-				    /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+STATICFUNC(bool)
+OpenAlphaFile (/*[in]*/ void *			p,
+	       /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	       /*[in]*/ FileType		fileType,
+	       /*[in]*/ const MIKTEXCHAR *	lpszExtension)
 {
-  MIKTEX_API_BEGIN ("OpenMAPFile");
   MIKTEX_ASSERT (p != 0);
   MIKTEX_ASSERT_BUFFER (p, sizeof(alphafile));
   MIKTEX_ASSERT_STRING (lpszFileName);
-  PathName mapFileName (lpszFileName);
-  if (mapFileName.GetExtension() == 0)
+  PathName fileName (lpszFileName);
+  if (fileName.GetExtension() == 0 && lpszExtension != 0)
     {
-      mapFileName.SetExtension (_T(".map"));
+      fileName.SetExtension (lpszExtension);
     }
   PathName path;
-  if (! SessionWrapper(true)->FindFile(mapFileName, FileType::MAP, path))
+  if (! SessionWrapper(true)->FindFile(fileName, fileType, path))
     {
       return (false);
     }
@@ -447,5 +448,34 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
   reinterpret_cast<alphafile*>(p)->Attach (pfile, true);
   get (*reinterpret_cast<alphafile*>(p));
   return (true);
+}
+
+/* _________________________________________________________________________
+
+   OpenMAPFile
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(bool)
+MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
+				    /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+{
+  MIKTEX_API_BEGIN ("OpenMAPFile");
+  return (OpenAlphaFile(p, lpszFileName, FileType::MAP, T_(".map")));
   MIKTEX_API_END ("OpenMAPFile");
 }
+
+/* _________________________________________________________________________
+
+   OpenMETAFONTFile
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(bool)
+MiKTeX::TeXAndFriends::OpenMETAFONTFile
+(/*[in]*/ void *		p,
+ /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+{
+  MIKTEX_API_BEGIN ("OpenMETAFONTFile");
+  return (OpenAlphaFile(p, lpszFileName, FileType::MF, T_(".mf")));
+  MIKTEX_API_END ("OpenMETAFONTFile");
+}
+

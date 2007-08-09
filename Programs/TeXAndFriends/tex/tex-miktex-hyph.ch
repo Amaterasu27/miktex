@@ -29,8 +29,10 @@
 
 @x
 @!trie_size=8000; {space for hyphenation patterns; should be larger for
+  \.{INITEX} than it is in production versions of \TeX}
 @y
-@!trie_size_def=80000; {space for hyphenation patterns; should be larger for
+@!inf_trie_size=8000;
+@!sup_trie_size=@"3FFFFF;
 @z
 
 @x
@@ -44,9 +46,11 @@
 @x
 @d hyph_size=307 {another prime; the number of \.{\\hyphenation} exceptions}
 @y
-@d hyph_size_def=65535 {Changing this requires changing (un)dumping!}
 @d hyph_prime=607 {another prime for hashing \.{\\hyphenation} exceptions;
                 if you change this, you should also change |iinf_hyphen_size|.}
+@<Constants...@>=
+@!inf_hyph_size=610; {Must be not less than |hyph_prime|!}
+@!sup_hyph_size=65535;
 @z
 
 % _____________________________________________________________________________
@@ -89,7 +93,7 @@ and |v:=hyf_next[v]|; repeat, if necessary, until |v=min_trie_op|.
 @x
 @!trie_pointer=0..trie_size; {an index into |trie|}
 @y
-@!trie_pointer=0..trie_size_def; {an index into |trie|}
+@!trie_pointer=0..sup_trie_size; {an index into |trie|}
 @!trie_opcode=min_trie_op..max_trie_op; {a trie opcode}
 @z
 
@@ -172,7 +176,7 @@ arrays start at |0|.
 @x
 @!hyph_pointer=0..hyph_size; {an index into the ordered hash table}
 @y
-@!hyph_pointer=0..hyph_size_def; {index into hyphen exceptions hash table;
+@!hyph_pointer=0..sup_hyph_size; {index into hyphen exceptions hash table;
                      enlarging this requires changing (un)dump code}
 @z
 
@@ -762,6 +766,7 @@ tini@/
 @ Define \MiKTeX\ variables.
 
 @<Global variables@>=
-@!hyph_size : integer;
-@!trie_size : integer;
+@!hyph_size : integer; {maximun number of hyphen exceptions}
+@!trie_size : integer; {space for hyphenation patterns; should be larger for
+  \.{INITEX} than it is in production versions of \TeX}
 @z

@@ -21,7 +21,6 @@
 #  pragma once
 #endif
 
-
 #if defined(MIKTEX_TRIPTEX)
 #  include "triptexdefs.h"
 #  define THEDATA(x) TRIPTEXDATA.m_##x

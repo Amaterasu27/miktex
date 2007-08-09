@@ -81,10 +81,6 @@ and &PNG; graphics formats.</para>
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;
-&optionmembot;
-&optionmemmax;
-&optionmemmin;
-&optionmemtop;
 &optionnestsize;
 &optionnocstyleerrors;
 &optionoutputdirectory;

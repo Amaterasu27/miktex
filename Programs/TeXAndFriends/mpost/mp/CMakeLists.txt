@@ -140,9 +140,8 @@ target_link_libraries(${trapmp_dll_name}
 set(trapmp_options)
 set(trapmp_options "${trapmp_options} -error-line=64")
 set(trapmp_options "${trapmp_options} -half-error-line=32")
+set(trapmp_options "${trapmp_options} -main-memory=4500")
 set(trapmp_options "${trapmp_options} -max-print-line=72")
-set(trapmp_options "${trapmp_options} -mem-max=4500")
-set(trapmp_options "${trapmp_options} -mem-top=4500")
 
 set(trap_dir ${CMAKE_CURRENT_SOURCE_DIR}/trapdir)
 
@@ -156,4 +155,41 @@ add_custom_target(traptest
   DEPENDS trapmp
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
+)
+
+## dev targets
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/mp-n.web
+  COMMAND ${webn_exe}
+	< ${mp_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/mp-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${mp_web_file}
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/mp-miktex.web
+	${CMAKE_CURRENT_BINARY_DIR}/mp-miktex-n.web
+  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/mp-miktex.web
+		${mp_web_file}
+		${mp_change_file}
+  COMMAND ${webn_exe}
+	< ${CMAKE_CURRENT_BINARY_DIR}/mp-miktex.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/mp-miktex-n.web
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${mp_web_file}
+	${mp_change_file}
+  VERBATIM
+)
+
+add_custom_target(dev ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/mp-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/mp-miktex-n.web
 )

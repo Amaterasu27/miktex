@@ -33,15 +33,15 @@ void
 btestin(void)
 {
     string fname =
-    kpse_find_file (nameoffile, kpse_program_binary_format, true); // MiKTeX
+    kpse_find_file (nameoffile+1, kpse_program_binary_format, true); // MiKTeX
 
     if (fname) {
 #if 0				// MiKTeX
       libcfree(nameoffile);
       nameoffile = xmalloc(2+strlen(fname));
 #endif
-      namelength = strlen(fname);
-      strcpy(nameoffile, fname); // MiKTeX
+      namelength = strlen(fname)+1;
+      strcpy(nameoffile+1, fname); // MiKTeX
     }
     else {
 #if 0				// MiKTeX

@@ -140,9 +140,9 @@ Set max_in_open to N."),
 	     T_("N"));
 
   AddOption (T_("mem-bot\0\
-Set mem_bot to N."),
+Set mem_bot to 0 or 1."),
 	     FIRST_OPTION_VAL + optBase + OPT_MEM_BOT,
-	     required_argument,
+	     required_argument | POPT_ARGFLAG_DOC_HIDDEN,
 	     T_("N"));
 
   AddOption (T_("nest-size\0\
@@ -162,7 +162,7 @@ Set trie_size to N."),
 	     required_argument,
 	     T_("N"));
 
-  if (StringCompare(GetProgramName(), T_("omega"), true) != 0)
+  if (! AmI(T_("omega")))
     {
       AddOption (T_("font-max\0\
 Set font_max to N."),
@@ -175,7 +175,9 @@ Set font_mem_size to N."),
 		 required_argument,
 		 T_("N"));
     }
-  else
+
+
+  if (AmI(T_("omega")))
     {
       AddOption (T_("trie-op-size\0\
 Set trie_op_size to N."),

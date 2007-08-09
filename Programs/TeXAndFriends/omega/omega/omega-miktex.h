@@ -1,6 +1,6 @@
 /* omega-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -41,11 +41,11 @@
 #  include "omega.rc"
 #endif
 
-#include <miktex/texapp.h>
-
 namespace omega {
 #include <omega.defaults.h>
 }
+
+#include <miktex/texapp.h>
 
 #if ! defined(MIKTEX_VIRTUAL_TEXAPP)
 #  define MIKTEX_VIRTUAL_TEXAPP
@@ -105,8 +105,6 @@ public:
 	      ocpstacksize,
 	      ocp_stack_size,
 	      omega::omega::ocp_stack_size());
-
-    THEDATA(maxstrings) += 0x10000;
 
     Allocate (THEDATA(inputfilemode), THEDATA(maxinopen));
     Allocate (THEDATA(inputfiletranslation), THEDATA(maxinopen));

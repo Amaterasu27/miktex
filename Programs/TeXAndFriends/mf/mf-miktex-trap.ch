@@ -1,6 +1,6 @@
 %% mf-miktex-trap.ch: traptest changes for METAFONT
 %% 
-%% Copyright (C) 1991-2005 Christian Schenk
+%% Copyright (C) 1991-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -15,6 +15,12 @@
 %% You should have received a copy of the GNU General Public License
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                      INSPIRED BY WEB2C'S TEX.CH                        //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
 
 @x
 @d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}

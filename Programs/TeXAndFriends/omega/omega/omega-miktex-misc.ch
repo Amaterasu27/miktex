@@ -1,6 +1,6 @@
 %% omega-miktex-misc.ch:
 %% 
-%% Copyright (C) 1998-2006 Christian Schenk
+%% Copyright (C) 1998-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -15,6 +15,12 @@
 %% You should have received a copy of the GNU General Public License
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                      INSPIRED BY WEB2C'S TEX.CH                        //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
 
 % _____________________________________________________________________________
 %
@@ -52,7 +58,7 @@
 @x
       if a_open_in(cur_file,kpse_tex_format) then begin
 @y
-      if miktex_open_onm_file(cur_file, name_of_file) then begin
+      if miktex_open_onm_file(cur_file, c4p_ptr(name_of_file[2])) then begin
 @z
 
 % _____________________________________________________________________________

@@ -151,15 +151,15 @@ public:
   {
     MetafontApp::AllocateMemory ();
 
-    GETPARAM (m_max_wiggle,
-	      maxwiggle,
-	      max_wiggle,
-	      mf::mf::max_wiggle());
+    GETPARAMCHECK (m_max_wiggle,
+		   maxwiggle,
+		   max_wiggle,
+		   mf::mf::max_wiggle());
 
-    GETPARAM (m_move_size,
-	      movesize,
-	      move_size,
-	      mf::mf::move_size());
+    GETPARAMCHECK (m_move_size,
+		   movesize,
+		   move_size,
+		   mf::mf::move_size());
 
     Allocate (THEDATA(after), THEDATA(maxwiggle) + 1);
     Allocate (THEDATA(before), THEDATA(maxwiggle) + 1);

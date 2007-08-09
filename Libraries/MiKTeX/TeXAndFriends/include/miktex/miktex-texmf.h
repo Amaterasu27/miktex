@@ -80,6 +80,10 @@ OpenMAPFile (/*[in]*/ void *			p,
 	     /*[in]*/ const MIKTEXCHAR *	lpszName);
 
 MIKTEXMFAPI(bool)
+OpenMETAFONTFile (/*[in]*/ void *		p,
+		  /*[in]*/ const MIKTEXCHAR *	lpszName);
+
+MIKTEXMFAPI(bool)
 OpenTFMFile (/*[in]*/ void *			p,
 	     /*[in]*/ const MIKTEXCHAR *	lpszName);
 

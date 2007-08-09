@@ -62,10 +62,6 @@
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;
-&optionmembot;
-&optionmemmax;
-&optionmemmin;
-&optionmemtop;
 &optionenablemltex;
 &optionnestsize;
 &optionnocstyleerrors;

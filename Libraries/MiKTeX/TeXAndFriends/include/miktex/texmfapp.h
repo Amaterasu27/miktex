@@ -38,17 +38,31 @@
 
 #if defined(MIKTEX_METAFONT) || defined(MIKTEX_METAPOST)
 #  define MIKTEX_META_COMPILER 1
-#endif
-
-#if defined(MIKTEX_TEX_COMPILER)
-#  if ! defined(MIKTEX_OMEGA)
-#    define ENABLE_8BIT_CHARS 1
-#    define IMPLEMENT_TCX 1
-#    define NAMEOFFILE_STARTS_WITH_SPACE 1
+#  define ENABLE_8BIT_CHARS 1
+#  define HAVE_MAIN_MEMORY 1
+#  define IMPLEMENT_TCX 1
+#  define NAMEOFFILE_STARTS_WITH_SPACE 1
+#  if defined(MIKTEX_METAPOST)
+#    define HAVE_POOL_FREE 1
+#    define HAVE_EXTRA_MEM_TOP 1
+#    define HAVE_MAIN_MEMORY 1
 #  endif
 #endif
 
-#if defined(MIKTEX_META_COMPILER) || defined(MIKTEX_BIBTEX)
+#if defined(MIKTEX_TEX_COMPILER)
+#    define HAVE_EXTRA_MEM_BOT 1
+#    define HAVE_EXTRA_MEM_TOP 1
+#    define HAVE_MAIN_MEMORY 1
+#    define HAVE_POOL_FREE 1
+#    define HAVE_STRINGS_FREE 1
+#    define NAMEOFFILE_STARTS_WITH_SPACE 1
+#  if ! defined(MIKTEX_OMEGA)
+#    define ENABLE_8BIT_CHARS 1
+#    define IMPLEMENT_TCX 1
+#  endif
+#endif
+
+#if defined(MIKTEX_BIBTEX)
 #  define IMPLEMENT_TCX 1
 #endif
 
@@ -95,6 +109,36 @@ MIKTEXMF_BEGIN_NAMESPACE;
   else								\
     {								\
       THEDATA(varname) = param;					\
+    }								\
+}
+
+/* _________________________________________________________________________
+
+   GETPARAMCHECK
+   _________________________________________________________________________ */
+
+#define GETPARAMCHECK(param, varname, cfgname, defcfgval)	\
+{								\
+  if (param < 0)						\
+    {								\
+      THEDATA(varname) =					\
+        pSession->GetConfigValue(0,				\
+                                 MIKTEXTEXT(#cfgname),		\
+                                 defcfgval);			\
+    }								\
+  else								\
+    {								\
+      THEDATA(varname) = param;					\
+    }								\
+  if (THEDATA(varname) < inf##varname				\
+      || THEDATA(varname) > sup##varname)			\
+    {								\
+      MiKTeX::Core::Session::FatalMiKTeXError			\
+	(MIKTEXTEXT("GETPARAMCHECK"),				\
+	 MIKTEXTEXT("Bad parameter value."),			\
+	 MIKTEXTEXT(#cfgname),					\
+	 MIKTEXTEXT(__FILE__),					\
+	 __LINE__);						\
     }								\
 }
 
@@ -474,97 +518,134 @@ public:
   void
   AllocateMemory ()
   {
-    GETPARAM (param_buf_size,
-	      bufsize,
-	      buf_size,
-	      texmfapp::texmfapp::buf_size());
-    GETPARAM (param_error_line,
-	      errorline,
-	      error_line,
-	      texmfapp::texmfapp::error_line());
-    GETPARAM (param_half_error_line,
-	      halferrorline,
-	      half_error_line,
-	      texmfapp::texmfapp::half_error_line());
-    GETPARAM (param_max_print_line,
-	      maxprintline,
-	      max_print_line,
-	      texmfapp::texmfapp::max_print_line());
-    GETPARAM (param_max_strings,
-	      maxstrings,
-	      max_strings,
-	      texmfapp::texmfapp::max_strings());
-    GETPARAM (param_mem_max,
-	      memmax,
-	      mem_max,
-	      texmfapp::texmfapp::mem_max());
-    GETPARAM (param_mem_min,
-	      memmin,
-	      mem_min,
-	      texmfapp::texmfapp::mem_min());
-    GETPARAM (param_mem_top,
-	      memtop,
-	      mem_top,
-	      texmfapp::texmfapp::mem_top());
-    GETPARAM (param_param_size,
-	      paramsize,
-	      param_size,
-	      texmfapp::texmfapp::param_size());
-#if defined(MIKTEX_TEX_COMPILER) && ! defined(MIKTEX_OMEGA)
-    GETPARAM (param_pool_free,
-	      poolfree,
-	      pool_free,
-	      texmfapp::texmfapp::pool_free());
+    GETPARAMCHECK (param_buf_size,
+		   bufsize,
+		   buf_size,
+		   texmfapp::texmfapp::buf_size());
+    GETPARAMCHECK (param_error_line,
+		   errorline,
+		   error_line,
+		   texmfapp::texmfapp::error_line());
+#if defined(HAVE_EXTRA_MEM_BOT)
+    GETPARAM (param_extra_mem_bot,
+	      extramembot,
+	      extra_mem_bot,
+	      texmfapp::texmfapp::extra_mem_bot());
 #endif
-    GETPARAM (param_pool_size,
-	      poolsize,
-	      pool_size,
-	      texmfapp::texmfapp::pool_size());
-    GETPARAM (param_stack_size,
-	      stacksize,
-	      stack_size,
-	      texmfapp::texmfapp::stack_size());
-#if defined(MIKTEX_TEX_COMPILER) && ! defined(MIKTEX_OMEGA)
-    GETPARAM (param_strings_free,
-	      stringsfree,
-	      strings_free,
-	      texmfapp::texmfapp::strings_free());
+#if defined(HAVE_EXTRA_MEM_TOP)
+    GETPARAM (param_extra_mem_top,
+	      extramemtop,
+	      extra_mem_top,
+	      texmfapp::texmfapp::extra_mem_top());
 #endif
-    GETPARAM (param_string_vacancies,
-	      stringvacancies,
-	      string_vacancies,
-	      texmfapp::texmfapp::string_vacancies());
-
-#if ! defined(MIKTEX_OMEGA)
+    GETPARAMCHECK (param_half_error_line,
+		   halferrorline,
+		   half_error_line,
+		   texmfapp::texmfapp::half_error_line());
+#if defined(HAVE_MAIN_MEMORY)
+#  if ! defined(infmainmemory)
+    const int infmainmemory = 3000;
+    const int supmainmemory = 32000000;
+#  endif
+    GETPARAMCHECK (param_main_memory,
+		   mainmemory,
+		   main_memory,
+		   texmfapp::texmfapp::main_memory());
+#endif
+    GETPARAMCHECK (param_max_print_line,
+		   maxprintline,
+		   max_print_line,
+		   texmfapp::texmfapp::max_print_line());
+    GETPARAMCHECK (param_max_strings,
+		   maxstrings,
+		   max_strings,
+		   texmfapp::texmfapp::max_strings());
+#if ! defined(infparamsize)
+    const int infparamsize = 60;
+    const int supparamsize = 600000;
+#endif
+    GETPARAMCHECK (param_param_size,
+		   paramsize,
+		   param_size,
+		   texmfapp::texmfapp::param_size());
+#if defined(HAVE_POOL_FREE)
+    GETPARAMCHECK (param_pool_free,
+		   poolfree,
+		   pool_free,
+		   texmfapp::texmfapp::pool_free());
+#endif
+    GETPARAMCHECK (param_pool_size,
+		   poolsize,
+		   pool_size,
+		   texmfapp::texmfapp::pool_size());
+    GETPARAMCHECK (param_stack_size,
+		   stacksize,
+		   stack_size,
+		   texmfapp::texmfapp::stack_size());
+#if defined(HAVE_STRINGS_FREE)
+    GETPARAMCHECK (param_strings_free,
+		   stringsfree,
+		   strings_free,
+		   texmfapp::texmfapp::strings_free());
+#endif
+    GETPARAMCHECK (param_string_vacancies,
+		   stringvacancies,
+		   string_vacancies,
+		   texmfapp::texmfapp::string_vacancies());
+    
     THEDATA(maxstrings) += 0x100;
+
+#if defined(HAVE_EXTRA_MEM_BOT)
+    if (IsInitProgram())
+      {
+	THEDATA(extramembot) = 0;
+      }
+    if (THEDATA(extramembot) > supmainmemory)
+      {
+	THEDATA(extramembot) = supmainmemory;
+      }
 #endif
 
+#if defined(HAVE_EXTRA_MEM_TOP)
     if (IsInitProgram())
-      {				// <fixme/>
-	THEDATA(memmax) = THEDATA(memtop);
-#if defined(MIKTEX_META_COMPILER)
-	THEDATA(memmin) = 0;
-#else
-	THEDATA(memmin) = THEDATA(membot);
-#endif
+      {
+	THEDATA(extramemtop) = 0;
       }
+    if (THEDATA(extramemtop) > supmainmemory)
+      {
+	THEDATA(extramemtop) = supmainmemory;
+      }
+#endif
+
+#if defined(MIKTEX_TEX_COMPILER)
+    THEDATA(memtop) = THEDATA(membot) + THEDATA(mainmemory) - 1;
+    THEDATA(memmin) = THEDATA(membot);
+    THEDATA(memmax) = THEDATA(memtop);
+#elif defined(MIKTEX_META_COMPILER)
+    THEDATA(memtop) = 0/*memmin*/ + THEDATA(mainmemory) - 1;
+    THEDATA(memmax) = THEDATA(memtop);
+#endif
 
     Allocate (THEDATA(buffer), THEDATA(bufsize) + 1);
     Allocate (THEDATA(inputstack), THEDATA(stacksize) + 1);
     Allocate (THEDATA(paramstack), THEDATA(paramsize) + 1);
     Allocate (THEDATA(trickbuf), THEDATA(errorline) + 1);
 
-    if (IsInitProgram() || ! isTeXProgram || AmI(MIKTEXTEXT("omega")))
+    if (IsInitProgram() || AmI(MIKTEXTEXT("metafont")))
       {
 	Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
       }
 
-#if 0
-    // <fixme/>
-    Allocate (THEDATA(mem), THEDATA(memmax) - THEDATA(memmin) + 1);
-#else
-    Allocate (THEDATA(mem), THEDATA(memmax) + 1);
-#endif
+    if (IsInitProgram())
+      {
+#  if defined(MIKTEX_TEX_COMPILER)
+	Allocate (THEDATA(yzmem), THEDATA(memtop) - THEDATA(membot) + 2);
+	THEDATA(zmem) = THEDATA(yzmem);
+	THEDATA(mem) = THEDATA(zmem);
+#  else
+	Allocate (THEDATA(mem), THEDATA(memtop) - 0/*memmin*/ + 2);
+#  endif
+      }
 
 #if ! defined(MIKTEX_OMEGA)
     Allocate (THEDATA(strstart), THEDATA(maxstrings) + 1);
@@ -1193,22 +1274,22 @@ private:
   int param_error_line;
 
 private:
+  int param_extra_mem_bot;
+
+private:
+  int param_extra_mem_top;
+
+private:
   int param_half_error_line;
+
+private:
+  int param_main_memory;
 
 private:
   int param_max_print_line;
 
 private:
   int param_max_strings;
-
-private:
-  int param_mem_max;
-
-private:
-  int param_mem_min;
-
-private:
-  int param_mem_top;
 
 private:
   int param_param_size;
