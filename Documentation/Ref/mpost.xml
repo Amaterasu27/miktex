@@ -79,6 +79,7 @@ explicitly.</para>
 &optionenableinstaller;
 &optionenablepipes;
 &optionerrorline;
+&optionextramemtop;
 &optionfontmemsize;
 &optionhalferrorline;
 &optionhaltonerror;
@@ -90,6 +91,7 @@ explicitly.</para>
 &optionjobname;
 &optionjobtime;
 &optionligtablesize;
+&optionmainmemory;
 &optionmaxprintline;
 &optionmaxstrings;
 &optionnocstyleerrors;

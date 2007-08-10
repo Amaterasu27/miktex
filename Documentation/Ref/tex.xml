@@ -123,6 +123,8 @@ character (usually <keycombo>
 &optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
+&optionextramembot;
+&optionextramemtop;
 &optionfontmax;
 &optionfontmemsize;
 &optionhalferrorline;
@@ -133,6 +135,7 @@ character (usually <keycombo>
 &optioninteraction;
 &optionjobname;
 &optionjobtime;
+&optionmainmemory;
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;

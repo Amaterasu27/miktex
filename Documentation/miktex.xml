@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2765">
-<!ENTITY month "July 2007">
-<!ENTITY date "July 28, 2007">
+<!ENTITY revj2000 "2778">
+<!ENTITY month "August 2007">
+<!ENTITY date "August 10, 2007">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -64,6 +64,7 @@
 <!ENTITY optiondisablewriteeighteen SYSTEM "Options/disablewriteeighteen.xml">
 <!ENTITY optiondontparsefirstline SYSTEM "Options/dontparsefirstline.xml">
 <!ENTITY optionenableenctex SYSTEM "Options/enableenctex.xml">
+<!ENTITY optionenableetex SYSTEM "Options/enableetex.xml">
 <!ENTITY optionenableinstaller SYSTEM "Options/enableinstaller.xml">
 <!ENTITY optionenablemltex SYSTEM "Options/enablemltex.xml">
 <!ENTITY optionenablepipes SYSTEM "Options/enablepipes.xml">
@@ -82,6 +83,9 @@
 <!ENTITY optionjobtime SYSTEM "Options/jobtime.xml">
 <!ENTITY optionligtablesize SYSTEM "Options/ligtablesize.xml">
 <!ENTITY optionmaxinopen SYSTEM "Options/maxinopen.xml">
+<!ENTITY optionmainmemory SYSTEM "Options/mainmemory.xml">
+<!ENTITY optionextramembot SYSTEM "Options/extramembot.xml">
+<!ENTITY optionextramemtop SYSTEM "Options/extramemtop.xml">
 <!ENTITY optionmaxprintline SYSTEM "Options/maxprintline.xml">
 <!ENTITY optionmaxstrings SYSTEM "Options/maxstrings.xml">
 <!ENTITY optionmaxwiggle SYSTEM "Options/maxwiggle.xml">

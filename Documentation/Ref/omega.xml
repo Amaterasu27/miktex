@@ -50,6 +50,8 @@
 &optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
+&optionextramembot;
+&optionextramemtop;
 &optionhalferrorline;
 &optionhaltonerror;
 &optionhelp;
@@ -59,6 +61,7 @@
 &optioninteraction;
 &optionjobname;
 &optionjobtime;
+&optionmainmemory;
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;

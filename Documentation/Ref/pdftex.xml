@@ -63,11 +63,14 @@ and &PNG; graphics formats.</para>
 <listitem><para>Switch on draft mode (generates no output).</para></listitem>
 </varlistentry>
 &optionenableenctex;
+&optionenableetex;
 &optionenableinstaller;
 &optionenablemltex;
 &optionenablepipes;
 &optionenablewriteeighteen;
 &optionerrorline;
+&optionextramembot;
+&optionextramemtop;
 &optionfontmax;
 &optionfontmemsize;
 &optionhalferrorline;
@@ -78,6 +81,7 @@ and &PNG; graphics formats.</para>
 &optioninteraction;
 &optionjobname;
 &optionjobtime;
+&optionmainmemory;
 &optionmaxinopen;
 &optionmaxprintline;
 &optionmaxstrings;
