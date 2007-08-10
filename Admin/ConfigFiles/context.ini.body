@@ -1,3 +1,8 @@
+[pdftex]
+
+extra_mem_bot=4000000
+extra_mem_top=2000000
+
 [ft.tex]
 
 path=.

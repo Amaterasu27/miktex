@@ -1,5 +1,6 @@
 [amstex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=AMS-TeX
@@ -7,6 +8,7 @@ input=amstex.ini
 
 [bplain]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=Babel plain TeX
@@ -14,6 +16,7 @@ input=bplain.ini
 
 [cont-en]
 
+arguments=-enable-8bit-chars
 attributes=exclude
 compiler=pdftex
 description=ConTeXt en
@@ -21,6 +24,7 @@ input=cont-en.ini
 
 [cont-de]
 
+arguments=-enable-8bit-chars
 attributes=exclude
 compiler=pdftex
 description=ConTeXt de
@@ -28,6 +32,7 @@ input=cont-de.ini
 
 [cont-nl]
 
+arguments=-enable-8bit-chars
 attributes=exclude
 compiler=pdftex
 description=ConTeXt nl
@@ -35,6 +40,7 @@ input=cont-nl.ini
 
 [cont-uk]
 
+arguments=-enable-8bit-chars
 attributes=exclude
 compiler=pdftex
 description=ConTeXt uk
@@ -42,6 +48,7 @@ input=cont-uk.ini
 
 [cslatex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=CSLaTeX
@@ -49,6 +56,7 @@ input=cslatex.ini
 
 [csplain]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=CSPlain
@@ -56,6 +64,7 @@ input=csplain.ini
 
 [etex]
 
+arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=plain e-TeX
 input=etex.ini
@@ -77,12 +86,14 @@ input=lambda.ini
 
 [latex]
 
+arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=LaTeX2e
 input=latex.ini
 
 [metafun]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=mpost
 description=
@@ -90,6 +101,7 @@ input=metafun.mp
 
 [mex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=MeX
@@ -97,12 +109,14 @@ input=mex.ini
 
 [mf]
 
+arguments=-tcx=cp227.tcx
 compiler=mf
 description=METAFONT default base file
 input=mf.ini
 
 [mfmp]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=mpost
 description=METAFONT compatible mem file
@@ -110,7 +124,7 @@ input=mfmp.ini
 
 [mllatex]
 
-arguments=-mltex
+arguments=-enable-mltex -tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=MLTeX extensions (LaTeX)
@@ -118,7 +132,7 @@ input=mllatex.ini
 
 [mltex]
 
-arguments=-mltex
+arguments=-enable-mltex -tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=MLTeX extensions (plain)
@@ -126,12 +140,14 @@ input=mltex.ini
 
 [mpost]
 
+arguments=-tcx=cp227.tcx
 compiler=mpost
 description=MetaPost default mem file
 input=mpost.ini
 
 [mptopdf]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=MPtoPDF
@@ -146,6 +162,7 @@ input=omega.ini
 
 [pdfetex]
 
+arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=plain PDF-e-TeX
 input=pdfetex.ini
@@ -160,12 +177,14 @@ preloaded=pdflatex
 
 [pdflatex]
 
+arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=pdfLaTeX
 input=pdflatex.ini
 
 [pdfmex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=pdfMeX
@@ -173,6 +192,7 @@ input=pdfmex.ini
 
 [pdfplatex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=pdfPLaTeX
@@ -180,12 +200,14 @@ input=pdfplatex.ini
 
 [pdftex]
 
+arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=plain pdfTeX
 input=pdftex.ini
 
 [platex]
 
+arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=PLaTeX

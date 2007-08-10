@@ -18,12 +18,16 @@
 ## USA.
 
 set(inc_ini_files
+  ${CMAKE_CURRENT_BINARY_DIR}/context.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm-common.ini
 )
 
 set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/amstex.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/context.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-de.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-en.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-nl.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-uk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cslatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm.ini
