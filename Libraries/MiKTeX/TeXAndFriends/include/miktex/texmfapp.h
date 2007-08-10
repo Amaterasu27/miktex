@@ -167,7 +167,7 @@ GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
     }
   for (int idx = 0; idx < stringLength; ++ idx)
     {
-      lpsz[idx] = THEDATA(xchr)[THEDATA(strpool)[stringStart + idx]];
+      lpsz[idx] = THEDATA(strpool)[stringStart + idx];
     }
   lpsz[stringLength] = 0;
 }

@@ -155,9 +155,11 @@ end;
 
 @x
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword==65535 {largest allowable value in a |quarterword|}
-@d min_halfword==0 {smallest allowable value in a |halfword|}
-@d max_halfword==@"3FFFFFFF {largest allowable value in a |halfword|}
+@d max_quarterword==255 {largest allowable value in a |quarterword|}
+@d min_halfhalfword==-@"8000
+@d max_halfhalfword==@"7FFF
+@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
+@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @y
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
 @d max_quarterword=255 {largest allowable value in a |quarterword|}
@@ -321,12 +323,6 @@ if not b_open_in(tfm_file) then abort;
 % _____________________________________________________________________________
 
 @x
-  print_nl("Output written on "); miktex_print_filename(output_file_name);
-@y
-  print_nl("Output written on "); print_file_name(0, output_file_name, 0);
-@z
-
-@x
   miktex_close_dvi_file(dvi_file);
 @y
   b_close(dvi_file);
@@ -423,17 +419,6 @@ miktex_allocate_memory;
 @y
 miktex_allocate_memory;
   input_file:=xmalloc_array (alpha_file, max_in_open);
-@z
-
-% _____________________________________________________________________________
-%
-% [51.1333]
-% _____________________________________________________________________________
-
-@x
-    miktex_print_filename(log_name); print_char(".");
-@y
-    print_file_name(0, log_name, 0); print_char(".");
 @z
 
 % _____________________________________________________________________________
