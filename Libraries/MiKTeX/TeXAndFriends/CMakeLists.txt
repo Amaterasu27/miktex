@@ -30,6 +30,7 @@ set(${texmf_dll_name}_sources
   StdAfx.h
   c4plib.cpp
   c4pstart.cpp
+  etexapp.cpp
   inputline.cpp
   internal.h
   mfapp.cpp

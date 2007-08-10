@@ -408,6 +408,30 @@ pdf_init_map_file('psfonts.map');
 
 % _____________________________________________________________________________
 %
+% [61.1634]
+% _____________________________________________________________________________
+
+@x
+@!init if (buffer[loc]="*")and(format_ident=" (INITEX)") then
+@y
+@!Init if (miktex_etex_p or (buffer[loc]="*"))and(format_ident=" (INITEX)") then
+@z
+
+@x
+  incr(loc); eTeX_mode:=1; {enter extended mode}
+@y
+  if (buffer[loc]="*") then incr(loc);
+  eTeX_mode:=1; {enter extended mode}
+@z
+
+@x
+tini@;@/
+@y
+Tini@;@/
+@z
+
+% _____________________________________________________________________________
+%
 % [61.1641]
 % _____________________________________________________________________________
 
@@ -529,6 +553,7 @@ begin
 end;
 
 function colorstackused: integer; forward;@t\2@>@/
+function miktex_etex_p: boolean; forward;@t\2@>@/
 function get_resname_prefix : str_number; forward;@t\2@>@/
 function getllx: scaled; forward;@t\2@>@/
 function getlly: scaled; forward;@t\2@>@/

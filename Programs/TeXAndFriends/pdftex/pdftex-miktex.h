@@ -34,7 +34,7 @@
 #include "pdftex.rc"
 
 #include <miktex/paths.h>
-#include <miktex/texapp.h>
+#include <miktex/etexapp.h>
 
 namespace pdftex {
 #include "pdftex.defaults.h"
@@ -51,7 +51,7 @@ namespace pdftex {
 
 class PDFTEXCLASS
 
-  : public MiKTeX::TeXAndFriends::TeXApp
+  : public MiKTeX::TeXAndFriends::ETeXApp
 
 {
 public:
@@ -67,7 +67,7 @@ public:
   MIKTEXMFCALL
   AddOptions ()
   {
-    TeXApp::AddOptions ();
+    ETeXApp::AddOptions ();
 
     AddOption (MIKTEXTEXT("draftmode\0\
 Switch on draft mode (generates no output)."),
@@ -110,7 +110,7 @@ public:
 	  }
 	break;
       default:
-	done = TeXApp::ProcessOption(opt, lpszOptArg);
+	done = ETeXApp::ProcessOption(opt, lpszOptArg);
 	break;
       }
     return (done);
@@ -120,7 +120,7 @@ public:
   void
   AllocateMemory ()
   {
-    TeXApp::AllocateMemory ();
+    ETeXApp::AllocateMemory ();
 
     GETPARAMCHECK (-1,
 		   pdfmemsize,
@@ -140,11 +140,6 @@ public:
 		   pdftex::pdftex::pdf_os_buf_size());
     
     size_t nFonts = THEDATA(fontmax) + 1 - constfontbase;
-
-    // etex
-    Allocate (THEDATA(eofseen), THEDATA(maxinopen) + 1);
-    Allocate (THEDATA(grpstack), THEDATA(maxinopen) + 1);
-    Allocate (THEDATA(ifstack), THEDATA(maxinopen) + 1);
 
     // pdftex
     Allocate (THEDATA(destnames), THEDATA(destnamessize));
@@ -186,12 +181,7 @@ public:
   void
   FreeMemory ()
   {
-    TeXApp::FreeMemory ();
-
-    // etex
-    Free (THEDATA(eofseen));
-    Free (THEDATA(grpstack));
-    Free (THEDATA(ifstack));
+    ETeXApp::FreeMemory ();
 
     // pdftex
     Free (THEDATA(destnames));
@@ -235,7 +225,7 @@ public:
   MIKTEXMFCALL
   Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   {
-    TeXApp::Init (lpszProgramInvocationName);
+    ETeXApp::Init (lpszProgramInvocationName);
 #if defined(IMPLEMENT_TCX)
     EnableFeature (MiKTeX::TeXAndFriends::Feature::EightBitChars);
     EnableFeature (MiKTeX::TeXAndFriends::Feature::TCX);
@@ -305,7 +295,7 @@ public:
 
 extern PDFTEXCLASS PDFTEXAPP;
 #define THEAPP PDFTEXAPP
-#include <miktex/texapp.inl>
+#include <miktex/etexapp.inl>
 
 /* _________________________________________________________________________
 

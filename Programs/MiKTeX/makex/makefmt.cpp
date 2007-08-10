@@ -504,7 +504,6 @@ MakeFmt::Run (/*[in]*/ int			argc,
 
   // make command line
   CommandLineBuilder arguments;
-  bool useInputPrimitive = false;
   arguments.AppendOption (T_("--initialize"));
   arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
   arguments.AppendOption (T_("--halt-on-error"));
@@ -523,16 +522,11 @@ MakeFmt::Run (/*[in]*/ int			argc,
     }
   if (IsExtended() && preloadedFormat.empty())
     {
-      arguments.AppendArgument (T_("*\\relax"));
-      useInputPrimitive = true;
+      arguments.AppendOption (T_("--enable-etex"));
     }
   if (IsPdf())
     {
       InstallPdftexConfigTex ();
-    }
-  if (useInputPrimitive)
-    {
-      arguments.AppendArgument (T_("\\input"));
     }
   arguments.AppendArgument (inputFile);
   if (! noDumpPrimitive)
