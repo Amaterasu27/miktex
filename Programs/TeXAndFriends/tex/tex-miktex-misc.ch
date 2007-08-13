@@ -587,29 +587,6 @@ loop@+begin
 
 % _____________________________________________________________________________
 %
-% [4.49]
-% _____________________________________________________________________________
-
-@x
-@^character set dependencies@>
-@^system dependencies@>
-@y
-@^character set dependencies@>
-@^system dependencies@>
-
-\MiKTeX: we use the function |miktex_is_printable| to test a character.
-@z
-
-@x
-@<Character |k| cannot be printed@>=
-  (k<" ")or(k>"~")
-@y
-@<Character |k| cannot be printed@>=
-  not miktex_is_printable (k)
-@z
-
-% _____________________________________________________________________________
-%
 % [4.51]
 % _____________________________________________________________________________
 

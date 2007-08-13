@@ -326,6 +326,7 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       else
 	{
 	  // get optional printable flag
+	  start = end;
 	  printable = _tcstol(start, &end, 0);
 	  if (start == end)
 	    {
