@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2778">
+<!ENTITY revj2000 "2781">
 <!ENTITY month "August 2007">
-<!ENTITY date "August 10, 2007">
+<!ENTITY date "August 13, 2007">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -105,7 +105,6 @@
 <!ENTITY optionstacksize SYSTEM "Options/stacksize.xml">
 <!ENTITY optionstringvacancies SYSTEM "Options/stringvacancies.xml">
 <!ENTITY optiontcx SYSTEM "Options/tcx.xml">
-<!ENTITY optionterminal SYSTEM "Options/terminal.xml">
 <!ENTITY optiontimestatistics SYSTEM "Options/timestatistics.xml">
 <!ENTITY optiontrace SYSTEM "Options/trace.xml">
 <!ENTITY optiontrieopsize SYSTEM "Options/trieopsize.xml">

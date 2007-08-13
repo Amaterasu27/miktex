@@ -226,7 +226,6 @@ enum {
   OPT_MAX_PRINT_LINE,
   OPT_MAX_STRINGS,
   OPT_NO_C_STYLE_ERRORS,
-  OPT_OEM,
   OPT_OUTPUT_DIRECTORY,
   OPT_PARAM_SIZE,
   OPT_PARSE_FIRST_LINE,
@@ -239,7 +238,6 @@ enum {
   OPT_STRINGS_FREE,
   OPT_STRING_VACANCIES,
   OPT_TCX,
-  OPT_TERMINAL,
   OPT_TIME_STATISTICS,
   OPT_UNDUMP,
 };
@@ -460,15 +458,6 @@ characters and re-mapping of output characters."),
 		 T_("TCXNAME"));
     }
 
-  if (! AmI(T_("omega")))
-    {
-      AddOption (T_("terminal\0\
-Use the DOS codepage for console output."),
-		 FIRST_OPTION_VAL + optBase + OPT_TERMINAL,
-		 required_argument,
-		 T_("oem"));
-    }
-
   // old option names
   if (! invokedAsInitProgram)
     {
@@ -478,13 +467,6 @@ Use the DOS codepage for console output."),
   if (IsFeatureEnabled(Feature::TCX))
     {
       AddOption (T_("translate-file"), T_("tcx"));
-    }
-  if (! AmI(T_("omega")))
-    {
-      AddOption (T_("oem\0\
-Use the DOS codepage for console output."),
-		 FIRST_OPTION_VAL + optBase + OPT_OEM,
-		 no_argument | POPT_ARGFLAG_DOC_HIDDEN);
     }
 
   // supported Web2C options
@@ -649,10 +631,6 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       showFileLineErrorMessages = false;
       break;
 
-    case OPT_OEM:
-      ConsoleOem (true);
-      break;
-
     case OPT_OUTPUT_DIRECTORY:
       outputDirectory = lpszOptArg;
       outputDirectory.MakeAbsolute ();
@@ -709,19 +687,6 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 
     case OPT_TCX:
       SetTcxFileName (lpszOptArg);
-      break;
-
-    case OPT_TERMINAL:
-      if (StringCompare(lpszOptArg, T_("oem")) == 0)
-	{
-	  ConsoleOem (true);
-	}
-      else
-	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
-			      T_("Invalid option argument."),
-			      lpszOptArg);
-	}
       break;
 
     case OPT_UNDUMP:

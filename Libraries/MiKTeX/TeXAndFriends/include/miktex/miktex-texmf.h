@@ -55,16 +55,6 @@
 
 MIKTEXMF_BEGIN_NAMESPACE;
 
-MIKTEXMFAPI(void)
-ConsoleOem (/*[in]*/ bool b);
-
-MIKTEXMFAPI(void)
-ConsolePrint (/*[in]*/ int ch);
-
-MIKTEXMFAPI(void)
-ConsolePrint (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	      /*[in]*/				...);
-
 const unsigned long ICT_TCX = 1;
 const unsigned long ICT_8BIT = 2;
 

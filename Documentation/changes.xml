@@ -17,6 +17,8 @@ with the exception of &Windows95; and &WindowsNT;.</para>
 
 <para>&pdfTeX; has been upgraded to version 1.40.4.</para>
 
+<para>The <option>-terminal=oem</option> is no longer available.</para>
+
 </section>
 
 </section>

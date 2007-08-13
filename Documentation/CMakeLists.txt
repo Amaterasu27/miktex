@@ -154,7 +154,6 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/stacksize.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/stringvacancies.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/tcx.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Options/terminal.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/timestatistics.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/trace.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Options/trieopsize.xml

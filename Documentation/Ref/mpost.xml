@@ -106,7 +106,6 @@ explicitly.</para>
 &optionstacksize;
 &optionstringvacancies;
 &optiontcx;
-&optionterminal;
 <varlistentry>
 <term><option>-tex=<replaceable>texprogram</replaceable></option></term>
 <listitem>
