@@ -320,29 +320,6 @@ miktex_initialize_char_tables;
 
 % _____________________________________________________________________________
 %
-% [3.26]
-% _____________________________________________________________________________
-
-@x
-|name_of_file|.
-@^system dependencies@>
-@y
-|name_of_file|.
-@^system dependencies@>
-
-\MiKTeX: reserve two extra bytes: |name_of_file| starts with a dummy
-character (Web2C compatibility/idiocy) end ends with the null character.
-@z
-
-@x
-@!name_of_file:packed array[1..file_name_size] of char;@;@/
-  {on some systems this may be a \&{record} variable}
-@y
-@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
-@z
-
-% _____________________________________________________________________________
-%
 % [3.27]
 % _____________________________________________________________________________
 

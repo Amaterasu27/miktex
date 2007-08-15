@@ -159,6 +159,7 @@ set(tex_miktex_quiet_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-quiet.ch"
 set(tex_miktex_src_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-src.ch")
 set(tex_miktex_stat_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-stat.ch")
 set(tex_miktex_write18_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-write18.ch")
+set(tex_miktex_web2c_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-web2c.ch")
 set(vadjust_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/vadjust.ch")
 
 # build utilities

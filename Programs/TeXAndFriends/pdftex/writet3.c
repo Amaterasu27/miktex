@@ -282,11 +282,7 @@ void writet3(int objnum, internalfontnumber f)
             return;
         }
     }
-#if defined(MIKTEX)
-    tex_printf("<%s", nameoffile);
-#else
     tex_printf("<%s", nameoffile + 1);
-#endif
     t3_getline();
     if (!t3_prefix(t3_font_scale_str) ||
         sscanf(t3_line_array + strlen(t3_font_scale_str) + 1, "%g",

@@ -274,6 +274,9 @@ public:
     Allocate (THEDATA(trier), THEDATA(triesize) + 1);
     Allocate (THEDATA(trietaken), THEDATA(triesize));
 
+    Allocate (THEDATA(nameoffile),
+	      MiKTeX::Core::BufferSizes::MaxPath + 1);
+
 #if ! defined(MIKTEX_OMEGA)
     GETPARAMCHECK (param_hyph_size,
 		   hyphsize,
@@ -372,6 +375,8 @@ public:
     Free (THEDATA(trieo));
     Free (THEDATA(trier));
     Free (THEDATA(trietaken));
+
+    Free (THEDATA(nameoffile));
 
 #if ! defined(MIKTEX_OMEGA)
     Free (THEDATA(hyphword));
