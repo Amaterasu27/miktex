@@ -355,7 +355,7 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 #define jobname THEDATA(jobname)
 #define memident THEDATA(memident)
 #define mpfontmap THEDATA(mpfontmap)
-#define nameoffile THEDATA(nameoffile)
+#define nameoffile (&(THEDATA(nameoffile)[-1]))
 #define nextstr THEDATA(nextstr)
 #define poolptr THEDATA(poolptr)
 #define poolsize THEDATA(poolsize)

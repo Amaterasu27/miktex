@@ -242,8 +242,8 @@ versions of the program.
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=258; {file names shouldn't be longer than this}
-@!file_name_size_plus_two=260; {two more for start and end}
+@!file_name_size=259; {file names shouldn't be longer than this}
+@!file_name_size_plus_one=260; {one more}
 @z
 
 @x
@@ -549,7 +549,7 @@ loop@+begin
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
-miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
+miktex_get_pool_file_name(name_of_file);
 if miktex_open_pool_file(pool_file) then
 @z
 
@@ -1297,13 +1297,6 @@ if must_quote then print_char("""");
 @z
 
 @x
-begin k:=0;
-@y
-begin k:=1;
-name_of_file[1]:=xchr[' '];
-@z
-
-@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1339,7 +1332,7 @@ length will be set in the main program.
 TEX_format_default:='TeXformats:plain.fmt';
 @y
 @!format_default_length: integer;
-@!TEX_format_default:packed array[1..file_name_size_plus_two] of char;
+@!TEX_format_default:packed array[1..file_name_size_plus_one] of char;
 
 @ @<Set init...@>=
 miktex_get_default_dump_file_name (TEX_format_default);
@@ -1361,13 +1354,6 @@ do_nothing;
 %
 % [29.530]
 % _____________________________________________________________________________
-
-@x
-k:=0;
-@y
-k:=1;
-name_of_file[1]:=xchr[' '];
-@z
 
 @x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
@@ -1427,7 +1413,7 @@ else  begin for k:=1 to name_length do append_char(name_of_file[k]);
   make_name_string:=make_string;
   end;
 @y
-else  begin for k:=2 to name_length do append_char(name_of_file[k]);
+else  begin for k:=1 to name_length do append_char(name_of_file[k]);
   make_name_string:=make_string;
   end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
@@ -1583,7 +1569,7 @@ else pack_file_name(nom,aire,".ofm");
 if not b_open_in(tfm_file) then abort;
 @y
 pack_file_name(nom,aire,"");
-if not miktex_open_xfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
+if not miktex_open_xfm_file(tfm_file,name_of_file) then abort;
 @z
 
 % _____________________________________________________________________________
@@ -1607,7 +1593,7 @@ pack_file_name(nom,aire,".ocp");
 if not b_open_in(ocp_file) then ocp_abort("opening file");
 @y
 pack_file_name(nom,aire,".ocp");
-if not miktex_open_ocp_file(ocp_file,c4p_ptr(name_of_file[2])) then ocp_abort("opening file");
+if not miktex_open_ocp_file(ocp_file,name_of_file) then ocp_abort("opening file");
 @z
 
 % _____________________________________________________________________________
@@ -1951,7 +1937,7 @@ flushable_string:=str_ptr-1;
 @y
   pack_cur_name;
   if a_open_in(read_file[n]) then
-     begin k:=2;
+     begin k:=1;
      name_in_progress:=true;
      begin_name;
      while (k<=name_length)and(more_name(name_of_file[k])) do

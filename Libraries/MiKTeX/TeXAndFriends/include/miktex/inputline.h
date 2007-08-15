@@ -239,9 +239,6 @@ public:
     const
   {
     char * lpszNameOfFile = THEDATA(nameoffile);
-#if NAMEOFFILE_STARTS_WITH_SPACE
-    lpszNameOfFile += 1;
-#endif
     return (lpszNameOfFile);
   }
 #endif

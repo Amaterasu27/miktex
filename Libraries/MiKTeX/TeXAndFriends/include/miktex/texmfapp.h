@@ -41,7 +41,6 @@
 #  define ENABLE_8BIT_CHARS 1
 #  define HAVE_MAIN_MEMORY 1
 #  define IMPLEMENT_TCX 1
-#  define NAMEOFFILE_STARTS_WITH_SPACE 1
 #  if defined(MIKTEX_METAPOST)
 #    define HAVE_POOL_FREE 1
 #    define HAVE_EXTRA_MEM_TOP 1
@@ -55,7 +54,6 @@
 #    define HAVE_MAIN_MEMORY 1
 #    define HAVE_POOL_FREE 1
 #    define HAVE_STRINGS_FREE 1
-#    define NAMEOFFILE_STARTS_WITH_SPACE 1
 #  if ! defined(MIKTEX_OMEGA)
 #    define ENABLE_8BIT_CHARS 1
 #    define IMPLEMENT_TCX 1

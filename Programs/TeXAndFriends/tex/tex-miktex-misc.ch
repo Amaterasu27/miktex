@@ -571,7 +571,7 @@ loop@+begin
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
-miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
+miktex_get_pool_file_name(name_of_file);
 if miktex_open_pool_file(pool_file) then
 @z
 
@@ -1416,13 +1416,6 @@ if must_quote then print_char("""");
 @z
 
 @x
-begin k:=0;
-@y
-begin k:=1;
-name_of_file[1]:=xchr[' '];
-@z
-
-@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1482,13 +1475,6 @@ do_nothing;
 % _____________________________________________________________________________
 
 @x
-k:=0;
-@y
-k:=1;
-name_of_file[1]:=xchr[' '];
-@z
-
-@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1546,7 +1532,7 @@ else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
 @y
-else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
@@ -1752,7 +1738,7 @@ else pack_file_name(nom,aire,".tfm");
 if not b_open_in(tfm_file) then abort;
 @y
 pack_file_name(nom,aire,"");
-if not miktex_open_tfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
+if not miktex_open_tfm_file(tfm_file,name_of_file) then abort;
 @z
 
 % _____________________________________________________________________________

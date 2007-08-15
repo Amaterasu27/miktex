@@ -212,8 +212,8 @@ versions of the program.
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=258; {file names shouldn't be longer than this}
-@!file_name_size_plus_two=260; {two more for start and end}
+@!file_name_size=259; {file names shouldn't be longer than this}
+@!file_name_size_plus_one=260; {one more}
 @z
 
 @x
@@ -357,15 +357,14 @@ miktex_initialize_char_tables;
 |name_of_file|.
 @^system dependencies@>
 
-\MiKTeX: reserve two extra bytes: |name_of_file| starts with a dummy
-character (Web2C compatibility/idiocy) end ends with the null character.
+\MiKTeX: reserve an extra char slot for the nul char.
 @z
 
 @x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @y
-@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
+@!name_of_file:packed array[1..file_name_size_plus_one] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @z
 
@@ -561,7 +560,7 @@ loop@+begin
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
-miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
+miktex_get_pool_file_name(name_of_file);
 if miktex_open_pool_file(pool_file) then
 @z
 
@@ -1518,13 +1517,6 @@ if must_quote then slow_print("""");
 @z
 
 @x
-begin k:=0;
-@y
-begin k:=1;
-name_of_file[1]:=xchr[' '];
-@z
-
-@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1546,7 +1538,7 @@ name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 @!MF_base_default:packed array[1..base_default_length] of char;
 @y
 @!base_default_length: integer;
-@!MF_base_default:packed array[1..file_name_size_plus_two] of char;
+@!MF_base_default:packed array[1..file_name_size_plus_one] of char;
 @z
 
 % _____________________________________________________________________________
@@ -1576,13 +1568,6 @@ do_nothing;
 %
 % [38.778]
 % _____________________________________________________________________________
-
-@x
-k:=0;
-@y
-k:=1;
-name_of_file[1]:=xchr[' '];
-@z
 
 @x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
@@ -1642,12 +1627,12 @@ else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
 @y
-else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   make_name_string:=make_string;
   end;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
-  k:=2;
+  k:=1;
   begin_name;
   stop_at_space:=false;
   while (k<=name_length)and(more_name(name_of_file[k])) do

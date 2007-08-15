@@ -201,8 +201,8 @@ versions of the program.
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=258; {file names shouldn't be longer than this}
-@!file_name_size_plus_two=260; {two more for start and end}
+@!file_name_size=259; {file names shouldn't be longer than this}
+@!file_name_size_plus_one=260; {one more}
 @z
 
 @x
@@ -358,15 +358,14 @@ miktex_initialize_char_tables;
 |name_of_file|.
 @^system dependencies@>
 
-\MiKTeX: reserve two extra bytes: |name_of_file| starts with a dummy
-character (Web2C compatibility/idiocy) end ends with the null character.
+\MiKTeX: reserve an extra char slot for the nul char.
 @z
 
 @x
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @y
-@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
+@!name_of_file:packed array[1..file_name_size_plus_one] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @z
 
@@ -1280,13 +1279,6 @@ if must_quote then print("""");
 @z
 
 @x
-begin k:=0;
-@y
-begin k:=1;
-name_of_file[1]:=xchr[' '];
-@z
-
-@x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
@@ -1307,7 +1299,7 @@ name_of_file[ name_length + 1 ]:= chr(0); {\MiKTeX: 0-terminate the file name}
 @x
 @!MP_mem_default:packed array[1..mem_default_length] of char;
 @y
-@!MP_mem_default:packed array[1..file_name_size_plus_two] of char;
+@!MP_mem_default:packed array[1..file_name_size_plus_one] of char;
 @!mem_default_length: integer;
 @z
 
@@ -1338,13 +1330,6 @@ do_nothing;
 %
 % [35.756]
 % _____________________________________________________________________________
-
-@x
-k:=0;
-@y
-k:=1;
-name_of_file[1]:=xchr[' '];
-@z
 
 @x
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
@@ -1384,7 +1369,7 @@ var @!j:0..sup_buf_size; {the first space after the file name}
 pack_buffered_name(mem_default_length-mem_ext_length,1,0);
 if not w_open_in(mem_file) then
 @y
-c4p_strcpy(c4p_ptr(name_of_file[2]),file_name_size_plus_two-1,MP_mem_default);
+c4p_strcpy(name_of_file,file_name_size_plus_one,MP_mem_default);
 if not miktex_open_mem_file(mem_file) then
 @z
 
@@ -1392,17 +1377,6 @@ if not miktex_open_mem_file(mem_file) then
   wterm_ln('I can''t find the PLAIN mem file!');
 @y
   wterm_ln('I can''t find the default mem file!');
-@z
-
-% _____________________________________________________________________________
-%
-% [35.758]
-% _____________________________________________________________________________
-
-@x
-  for k:=1 to name_length do append_char(xord[name_of_file[k]]);
-@y
-  for k:=2 to name_length do append_char(xord[name_of_file[k]]);
 @z
 
 % _____________________________________________________________________________
@@ -1498,7 +1472,7 @@ in_name:=cur_name; in_area:=cur_area;
 {The extension is not relevant for determining whether we're allowed to
  open the file.}
 if str_vs_str(ext,".mf")=0 then
-  try_extension:=miktex_open_metafont_file(cur_file, c4p_ptr(name_of_file[2]))
+  try_extension:=miktex_open_metafont_file(cur_file, name_of_file)
 else try_extension:=a_open_in(cur_file);
 @z
 
@@ -1540,7 +1514,7 @@ full_source_filename_stack[in_open]:=miktex_make_full_name_string;
   begin job_name:=cur_name; str_ref[job_name]:=max_str_ref;
 @y
   begin
-    j:=2;
+    j:=1;
     begin_name;
     stop_at_space:=false;
     while (j<=name_length)and(more_name(name_of_file[j])) do
@@ -1591,7 +1565,7 @@ for k:=old_name_length+1 to file_name_size do @+old_file_name[k]:=chr(0);
 @!old_file_name : packed array[1..file_name_size] of char;
   {analogous to |name_of_file|}
 @y
-@!old_file_name : packed array[1..file_name_size_plus_two] of char;
+@!old_file_name : packed array[1..file_name_size_plus_one] of char;
   {analogous to |name_of_file|}
 @z
 
@@ -1617,24 +1591,7 @@ copy_old_name(name)
 {System-dependent code should be added here}
 @y
 copy_old_name(name);
-miktex_run_makempx (old_file_name,c4p_ptr(name_of_file[2]));
-@z
-
-% _____________________________________________________________________________
-%
-% [35.779]
-% _____________________________________________________________________________
-
-@x
-for k:=1 to old_name_length do print(xord[old_file_name[k]]);
-@y
-for k:=2 to old_name_length do print(xord[old_file_name[k]]);
-@z
-
-@x
-for k:=1 to name_length do print(xord[name_of_file[k]]);
-@y
-for k:=2 to name_length do print(xord[name_of_file[k]]);
+miktex_run_makempx (old_file_name,name_of_file);
 @z
 
 % _____________________________________________________________________________
@@ -1811,7 +1768,7 @@ file_opened:=false;
 str_scan_file(fname);
 if cur_ext="" then cur_ext:=".tfm";
 pack_cur_name;
-file_opened:=miktex_open_tfm_file(tfm_infile, c4p_ptr(name_of_file[2]));
+file_opened:=miktex_open_tfm_file(tfm_infile, name_of_file);
 if not file_opened then goto bad_tfm;
 @z
 
@@ -1834,13 +1791,13 @@ mp_font_map:=xmalloc_array(fm_entry_ptr,font_max);
 begin name_of_file:=ps_tab_name;
 @y
 begin
-  c4p_strcpy(c4p_ptr(name_of_file[2]), file_name_size_plus_two-1, ps_tab_name);
+  c4p_strcpy(name_of_file, file_name_size_plus_one, ps_tab_name);
 @z
 
 @x
 if a_open_in(ps_tab_file) then
 @y
-if miktexopenpstabfile(ps_tab_file, c4p_ptr(name_of_file[2])) then
+if miktexopenpstabfile(ps_tab_file, name_of_file) then
 @z
 
 % _____________________________________________________________________________

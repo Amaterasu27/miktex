@@ -286,7 +286,7 @@ miktexopenonmfile (/*[in]*/ alphafile &		f,
 #define fonttables THEDATA(fonttables)
 #define last THEDATA(last)
 #define namelength THEDATA(namelength)
-#define nameoffile THEDATA(nameoffile)
+#define nameoffile (&(THEDATA(nameoffile)[-1]))
 #define ocpbufsize THEDATA(ocpbufsize)
 #define ocptables THEDATA(ocptables)
 #define otpinputbuf THEDATA(otpinputbuf)

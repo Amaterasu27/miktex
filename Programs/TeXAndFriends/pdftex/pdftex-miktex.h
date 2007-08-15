@@ -360,6 +360,9 @@ getbyte (/*[in]*/ bytefile & f)
 #  define MAKE_GLOBAL(type, name) extern type & name;
 #endif
 
+// special case: Web2C likes to add 1 to the nameoffile base address
+#define nameoffile (&PDFTEXDATA.m_nameoffile[-1])
+
 C4PEXTERN C4P_integer k;
 
 MAKE_GLOBAL(C4P_boolean, pdfosmode);
@@ -406,7 +409,6 @@ MAKE_GLOBAL(C4P_integer, fixedinclusioncopyfont);
 #define formatident THEDATA(formatident)
 #define jobname THEDATA(jobname)
 #define lasttokensstring THEDATA(lasttokensstring)
-#define nameoffile THEDATA(nameoffile)
 #define objtab THEDATA(objtab)
 #define onehundredbp THEDATA(onehundredbp)
 #define pdfcharmap THEDATA(pdfcharmap)
