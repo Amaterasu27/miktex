@@ -26,4 +26,5 @@
 @<Declare \MiKTeX\ functions@>=
 
 function translate_filename : boolean; forward;@t\2@>@/
+function eight_bit_p : boolean; forward;@t\2@>@/
 @z

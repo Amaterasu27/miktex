@@ -75,7 +75,8 @@ if translate_filename then read_tcx_file;
 % _____________________________________________________________________________
 
 @x
-@!name_of_file:packed array[1..file_name_size_plus_two] of char;@;@/
+@!name_of_file:packed array[1..file_name_size] of char;@;@/
+  {on some systems this may be a \&{record} variable}
 @y
 @!name_of_file:^text_char;
 @z
@@ -109,10 +110,10 @@ is considered an output file the file variable is |term_out|.
 % _____________________________________________________________________________
 
 @x
-miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
+miktex_get_pool_file_name(name_of_file);
 @y
 name_of_file := xmalloc_array (ASCII_code, name_length + 1);
-miktex_get_pool_file_name(c4p_ptr(name_of_file[2]));
+miktex_get_pool_file_name(name_of_file);
 @z
 
 % _____________________________________________________________________________
@@ -201,12 +202,10 @@ end;
 % _____________________________________________________________________________
 
 @x
-begin k:=1;
-name_of_file[1]:=xchr[' '];
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @y
-begin k:=1;
-name_of_file[1]:=xchr[' '];
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @z
 
 % _____________________________________________________________________________
@@ -215,23 +214,10 @@ name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
 % _____________________________________________________________________________
 
 @x
-k:=1;
-name_of_file[1]:=xchr[' '];
+for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
 @y
-k:=1;
-name_of_file[1]:=xchr[' '];
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
-@z
-
-% _____________________________________________________________________________
-%
-% [29.525]
-% _____________________________________________________________________________
-
-@x
-else  begin for k:=2 to name_length do append_char(xord[name_of_file[k]]);
-@y
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
 @z
 
 % _____________________________________________________________________________
@@ -299,7 +285,7 @@ end
 % _____________________________________________________________________________
 
 @x
-if not miktex_open_tfm_file(tfm_file,c4p_ptr(name_of_file[2])) then abort;
+if not miktex_open_tfm_file(tfm_file,name_of_file) then abort;
 @y
 if not b_open_in(tfm_file) then abort;
 @z

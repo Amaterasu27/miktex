@@ -23,6 +23,7 @@ set(C4P_FLAGS
   --auto-exit=10
   --chars-are-unsigned
   --declare-c-type=unicodefile
+  --declare-c-type=voidpointer
 )
 
 include_directories(BEFORE
@@ -55,6 +56,7 @@ set(miktex_tex_change_files
   ${tex_miktex_src_ch}
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
+  ${tex_miktex_web2c_ch}
 )
 
 set(xetex_change_files
@@ -70,15 +72,16 @@ set(change_files
   ${miktex_tex_change_files}
   ${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   ${xetex_change_files}
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-miktex.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
+set(xetex_change_file ${CMAKE_CURRENT_SOURCE_DIR}/xetex-miktex.ch)
+
 set(xetex_header_file ${CMAKE_CURRENT_BINARY_DIR}/xetexd.h)
 
 add_custom_command(
   OUTPUT ${xetex_web_file}
-  COMMAND ${tie_exe} -m ${xetex_web_file} ${change_files}
+  COMMAND ${tie_exe} -m ${xetex_web_file} ${tex_web} ${change_files}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS ${change_files}
 )
@@ -94,7 +97,6 @@ create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/jpegimage.c
   ${CMAKE_CURRENT_SOURCE_DIR}/mfileio.c
   ${CMAKE_CURRENT_SOURCE_DIR}/numbers.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdfimage.c
   ${CMAKE_CURRENT_SOURCE_DIR}/pngimage.c
   ${CMAKE_CURRENT_SOURCE_DIR}/trans.c
 )
@@ -106,7 +108,6 @@ set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/jpegimage.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/mfileio.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/numbers.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/pdfimage.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pngimage.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/trans.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FontTableCache.cpp
@@ -118,6 +119,7 @@ set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTLayoutEngine.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTMath.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/cmaps.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/pdfimage.cpp
 )
 
 set_source_files_properties(
@@ -159,7 +161,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${tex_web_file}
+	${tex_web}
 	${etex_ch}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 	${miktex_tex_change_files}
@@ -181,7 +183,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${tex_web_file}
+	${tex_web}
 	${etex_ch}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 	${miktex_tex_change_files}
@@ -205,7 +207,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-pre-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${tex_web_file}
+	${tex_web}
 	${etex_ch}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 	${miktex_tex_change_files}
