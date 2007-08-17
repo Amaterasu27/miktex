@@ -24,6 +24,9 @@ set(C4P_FLAGS
   --chars-are-unsigned
   --declare-c-type=unicodefile
   --declare-c-type=voidpointer
+  --declare-c-type=realrect
+  --declare-c-type=transform
+  --declare-c-type=realpoint
 )
 
 include_directories(BEFORE
@@ -68,7 +71,8 @@ set(xetex_change_files
 
 set(change_files
   ${etex_ch}
-  ${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+  ${etex_miktex_pre_ch}
+  ${etex_miktex_ch}
   ${miktex_tex_change_files}
   ${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   ${xetex_change_files}
@@ -154,7 +158,8 @@ add_custom_command(
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
 		${tex_web}
 		${etex_ch}
-		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+		${etex_miktex_pre_ch}
+		${etex_miktex_ch}
 		${miktex_tex_change_files}
   COMMAND ${webn_exe}
 	< ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
@@ -163,7 +168,8 @@ add_custom_command(
   DEPENDS
 	${tex_web}
 	${etex_ch}
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+	${etex_miktex_pre_ch}
+	${etex_miktex_ch}
 	${miktex_tex_change_files}
   VERBATIM
 )
@@ -175,7 +181,8 @@ add_custom_command(
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2.web
 		${tex_web}
 		${etex_ch}
-		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+		${etex_miktex_pre_ch}
+		${etex_miktex_ch}
 		${miktex_tex_change_files}
 		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   COMMAND ${webn_exe}
@@ -185,7 +192,8 @@ add_custom_command(
   DEPENDS
 	${tex_web}
 	${etex_ch}
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+	${etex_miktex_pre_ch}
+	${etex_miktex_ch}
 	${miktex_tex_change_files}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   VERBATIM
@@ -198,7 +206,8 @@ add_custom_command(
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/xetex-pre.web
 		${tex_web}
 		${etex_ch}
-		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+		${etex_miktex_pre_ch}
+		${etex_miktex_ch}
 		${miktex_tex_change_files}
 		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
 		${xetex_change_files}
@@ -209,7 +218,8 @@ add_custom_command(
   DEPENDS
 	${tex_web}
 	${etex_ch}
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
+	${etex_miktex_pre_ch}
+	${etex_miktex_ch}
 	${miktex_tex_change_files}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   VERBATIM
