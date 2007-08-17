@@ -58,18 +58,6 @@ miktexallocatememory ()
 
 /* _________________________________________________________________________
 
-   miktexappendext
-   _________________________________________________________________________ */
-
-inline
-void
-miktexappendext (/*[in]*/ strnumber e)
-{
-  AppendExt (e);
-}
-
-/* _________________________________________________________________________
-
    miktexclosedvifile
    _________________________________________________________________________ */
 
@@ -218,10 +206,10 @@ miktexmakesrcspecial (/*[in]*/ int fileName,
    miktexopendvifile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopendvifile (/*[in]*/ T & f)
+miktexopendvifile (/*[in]*/ FileType & f)
 {
   return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
 				THEAPP.GetNameOfFile(),
@@ -234,10 +222,10 @@ miktexopendvifile (/*[in]*/ T & f)
    miktexopenformatfile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline bool
-miktexopenformatfile (/*[in]*/ T &	f,
-		      /*[in]*/ bool	renew = false)
+miktexopenformatfile (/*[in]*/ FileType &	f,
+		      /*[in]*/ bool		renew = false)
 {
   return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
@@ -261,7 +249,7 @@ miktexremembersourceinfo (/*[in]*/ int fileName,
 
 inline
 bool
-miktexwrite18 (/*[in]*/ const MIKTEXCHAR * lpszCommand)
+miktexwrite18 (/*[in]*/ const TEXMFCHAR * lpszCommand)
 {
   int exitCode;
   bool done = THEAPP.Write18(lpszCommand, exitCode);

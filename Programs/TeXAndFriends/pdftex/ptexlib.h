@@ -24,9 +24,13 @@ $Id: ptexlib.h 185 2007-07-09 10:43:44Z oneiros $
 #  define PDFTEXLIB
 
 #  if defined(MIKTEX)
-#    define NAMEOFFILE_STARTS_WITH_SPACE 1
 #    include <miktex/kpsemu.h>
 #    include "pdftex-miktex.h"
+#    include <miktex/debug.h>
+#    if defined(assert)
+#      undef assert
+#    endif
+#    define assert MIKTEX_ASSERT
 #  endif
 
 /* WEB2C macros and prototypes */

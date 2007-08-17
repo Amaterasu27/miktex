@@ -1,6 +1,6 @@
 /* inputline.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -122,10 +122,10 @@ WebAppInputLine::ProcessOption (/*[in]*/ int			opt,
    _________________________________________________________________________ */
 
 PathName
-WebAppInputLine::MangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
+WebAppInputLine::MangleNameOfFile (/*[in]*/ const char * lpszFrom)
 {
   PathName ret;
-  MIKTEXCHAR * lpszTo = ret.GetBuffer();
+  char * lpszTo = ret.GetBuffer();
   MIKTEX_ASSERT_STRING (lpszFrom);
   size_t len = StrLen(lpszFrom);
   if (len >= ret.GetSize())
@@ -135,17 +135,55 @@ WebAppInputLine::MangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
   size_t idx;
   for (idx = 0; idx < len; ++ idx)
     {
-      if (lpszFrom[idx] == T_(' '))
+      if (lpszFrom[idx] == ' ')
 	{
-	  lpszTo[idx] = T_('*');
+	  lpszTo[idx] = '*';
 	}
-      else if (lpszFrom[idx] == T_('~'))
+      else if (lpszFrom[idx] == '~')
 	{
-	  lpszTo[idx] = T_('?');
+	  lpszTo[idx] = '?';
 	}
-      else if (lpszFrom[idx] == T_('\\'))
+      else if (lpszFrom[idx] == '\\')
 	{
-	  lpszTo[idx] = T_('/');
+	  lpszTo[idx] = '/';
+	}
+      else
+	{
+	  lpszTo[idx] = lpszFrom[idx];
+	}
+    }
+  lpszTo[idx] = 0;
+  return (ret);
+}
+
+/* _________________________________________________________________________
+
+   UnmangleNameOfFile_
+   _________________________________________________________________________ */
+
+template<typename CharType>
+static
+PathName
+UnmangleNameOfFile_ (/*[in]*/ const CharType * lpszFrom)
+{
+  PathName ret;
+  char * lpszTo = ret.GetBuffer();
+  MIKTEX_ASSERT_STRING (lpszFrom);
+  size_t len = StrLen(lpszFrom);
+  if (len >= ret.GetSize())
+    {
+      INVALID_ARGUMENT (T_("UnmangleNameOfFile_"), 0/*lpszFrom*/);
+    }
+  size_t idx;
+  for (idx = 0; idx < len; ++ idx)
+    {
+      if (lpszFrom[idx] == '*')
+	{
+	  lpszTo[idx] = ' ';
+	}
+      else if (lpszFrom[idx] == '?')
+	{
+	  lpszTo[idx] = '~';
 	}
       else
 	{
@@ -162,34 +200,20 @@ WebAppInputLine::MangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(PathName)
-WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
+WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const char * lpszFrom)
 {
-  PathName ret;
-  MIKTEXCHAR * lpszTo = ret.GetBuffer();
-  MIKTEX_ASSERT_STRING (lpszFrom);
-  size_t len = StrLen(lpszFrom);
-  if (len >= ret.GetSize())
-    {
-      INVALID_ARGUMENT (T_("WebAppInputLine::MangleNameOfFile"), lpszFrom);
-    }
-  size_t idx;
-  for (idx = 0; idx < len; ++ idx)
-    {
-      if (lpszFrom[idx] == T_('*'))
-	{
-	  lpszTo[idx] = T_(' ');
-	}
-      else if (lpszFrom[idx] == T_('?'))
-	{
-	  lpszTo[idx] = T_('~');
-	}
-      else
-	{
-	  lpszTo[idx] = lpszFrom[idx];
-	}
-    }
-  lpszTo[idx] = 0;
-  return (ret);
+  return (UnmangleNameOfFile_(lpszFrom));
+}
+
+/* _________________________________________________________________________
+
+   WebAppInputLine::UnmangleNameOfFile
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(PathName)
+WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const wchar_t * lpszFrom)
+{
+  return (UnmangleNameOfFile_(lpszFrom));
 }
 
 /* _________________________________________________________________________
@@ -199,13 +223,13 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR * lpszFrom)
 
 MIKTEXMFAPI(bool)
 WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
-				 /*[in]*/ const MIKTEXCHAR *	lpszPath,
+				 /*[in]*/ const char *		lpszPath,
 				 /*[in]*/ FileShare		share,
 				 /*[in]*/ bool			text)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   FILE * pfile = 0;
-  if (enablePipes && lpszPath[0] == T_('|'))
+  if (enablePipes && lpszPath[0] == '|')
     {
       pfile =
 	pSession->OpenFile(lpszPath + 1,
@@ -217,8 +241,8 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
     {
       PathName unmangled = UnmangleNameOfFile(lpszPath);
       bool isAuxFile =
-	! (unmangled.HasExtension(T_(".dvi")) // <fixme/>
-	   || unmangled.HasExtension(T_(".pdf")));
+	! (unmangled.HasExtension(".dvi") // <fixme/>
+	   || unmangled.HasExtension(".pdf"));
       PathName path;
       if (isAuxFile && ! auxDirectory.Empty())
 	{
@@ -255,14 +279,14 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
-				/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
+				/*[in]*/ const char *		lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
 
   FILE * pfile = 0;
 
-  if (enablePipes && lpszFileName[0] == T_('|'))
+  if (enablePipes && lpszFileName[0] == '|')
     {
       pfile =
 	pSession->OpenFile(lpszFileName + 1,
@@ -281,9 +305,9 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
       
       try
 	{
-	  if (fqNameOfFile.HasExtension(T_(".gz")))
+	  if (fqNameOfFile.HasExtension(".gz"))
 	    {
-	      CommandLineBuilder cmd (T_("zcat"));
+	      CommandLineBuilder cmd ("zcat");
 	      cmd.AppendArgument (fqNameOfFile);
 	      pfile =
 		pSession->OpenFile(cmd.Get(),
@@ -291,9 +315,9 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
 				   FileAccess::Read,
 				   false);
 	    }
-	  else if (fqNameOfFile.HasExtension(T_(".bz2")))
+	  else if (fqNameOfFile.HasExtension(".bz2"))
 	    {
-	      CommandLineBuilder cmd (T_("bzcat"));
+	      CommandLineBuilder cmd ("bzcat");
 	      cmd.AppendArgument (fqNameOfFile);
 	      pfile =
 		pSession->OpenFile(cmd.Get(),
@@ -337,6 +361,7 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::C4P_text &	f,
   f.Attach (pfile, true);
 
 #ifdef PASCAL_TEXT_IO
+  not_implemented ();
   get (f);
 #endif
 

@@ -234,22 +234,22 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("pdftex.fmt"));
+    return ("pdftex.fmt");
   }
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("pdftex.pool"));
+    return ("pdftex.pool");
   }
 
 public:

@@ -79,11 +79,11 @@ typedef MiKTeX::Core::EnumWrapper<FeatureEnum> Feature;
    miktexopentfmfile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopentfmfile (/*[out]*/ T &		f,
-		   /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+miktexopentfmfile (/*[out]*/ FileType &		f,
+		   /*[in]*/ const char *	lpszFileName)
 {
   return (OpenTFMFile(&f, lpszFileName));
 }
@@ -93,11 +93,11 @@ miktexopentfmfile (/*[out]*/ T &		f,
    miktexopenvffile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopenvffile (/*[out]*/ T &			f,
-		  /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+miktexopenvffile (/*[out]*/ FileType &		f,
+		  /*[in]*/ const char *		lpszFileName)
 {
   return (OpenVFFile(&f, lpszFileName));
 }
@@ -107,11 +107,11 @@ miktexopenvffile (/*[out]*/ T &			f,
    miktexopenxfmfile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopenxfmfile (/*[out]*/ T &		f,
-		   /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+miktexopenxfmfile (/*[out]*/ FileType &		f,
+		   /*[in]*/ const char *	lpszFileName)
 {
   return (OpenXFMFile(&f, lpszFileName));
 }
@@ -121,24 +121,24 @@ miktexopenxfmfile (/*[out]*/ T &		f,
    miktexopenxvffile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopenxvffile (/*[out]*/ T &		f,
-		   /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+miktexopenxvffile (/*[out]*/ FileType &		f,
+		   /*[in]*/ const char *	lpszFileName)
 {
   return (OpenXVFFile(&f, lpszFileName));
 }
 
 /* _________________________________________________________________________
 
-   miktexprintmiktexbanner<T>
+   miktexprintmiktexbanner
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 void
-miktexprintmiktexbanner (/*[in]*/ T & f)
+miktexprintmiktexbanner (/*[in]*/ FileType & f)
 {
   fprintf (f, " (%s)", MiKTeX::Core::Utils::GetMiKTeXBannerString().c_str());
 }
@@ -149,7 +149,9 @@ miktexprintmiktexbanner (/*[in]*/ T & f)
    _________________________________________________________________________ */
 
 class WebApp
+
   : public MiKTeX::App::Application
+
 {
 
   /* _______________________________________________________________________
@@ -634,4 +636,4 @@ MIKTEXMF_END_NAMESPACE;
 #pragma warning (disable: 4701)
 #pragma warning (disable: 4101)
 
-#endif	// miktex/webapp.h
+#endif

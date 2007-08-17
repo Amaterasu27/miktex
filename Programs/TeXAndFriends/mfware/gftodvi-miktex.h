@@ -166,24 +166,24 @@ public:
 	return (false);
       }
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
-    _tcscpy_s (reinterpret_cast<LPTSTR>(THEDATA(buffer)),
-	       terminallinelength,
-	       inputFile.c_str());
+    strcpy_s (reinterpret_cast<char*>(THEDATA(buffer)),
+	      terminallinelength,
+	      inputFile.c_str());
 #else
-    _tcscpy (reinterpret_cast<LPTSTR>(THEDATA(buffer)),
-	     inputFile.c_str());
+    strcpy (reinterpret_cast<char*>(THEDATA(buffer)),
+	    inputFile.c_str());
 #endif
     THEDATA(linelength) =
       static_cast<C4P_unsigned8>(inputFile.length());
-    inputFile = MIKTEXTEXT("");
+    inputFile = "";
     return (true);
   }
 
 private:
   strnumber
-  MakeString (/*[in]*/ const MIKTEXCHAR * lpsz)
+  MakeString (/*[in]*/ const char * lpsz)
   {
-    size_t l = _tcslen(lpsz);
+    size_t l = strlen(lpsz);
     if (l == 0)
       {
 	return (0);
@@ -231,22 +231,22 @@ public:
   }
 
 private:
-  tstring inputFile;
+  std::string inputFile;
 
 private:
-  tstring titleFont;
+  std::string titleFont;
 
 private:
-  tstring labelFont;
+  std::string labelFont;
 
 private:
-  tstring grayFont;
+  std::string grayFont;
 
 private:
-  tstring slantFont;
+  std::string slantFont;
 
 private:
-  tstring logoFont;
+  std::string logoFont;
 
 public:
   virtual

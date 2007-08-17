@@ -135,14 +135,14 @@ CompareFileNameChars (/*[in]*/ MIKTEXCHAR	ch1,
    _________________________________________________________________________ */
 
 int
-PathName::Compare (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
-		   /*[in]*/ const MIKTEXCHAR *	lpszPath2)
+PathName::Compare (/*[in]*/ const char *	lpszPath1,
+		   /*[in]*/ const char *	lpszPath2)
 {
   MIKTEX_ASSERT_STRING (lpszPath1);
   MIKTEX_ASSERT_STRING (lpszPath2);
 
   int ret;
-  MIKTEXCHARINT cmp;
+  int cmp;
   
   while ((cmp = CompareFileNameChars(*lpszPath1, *lpszPath2)) == 0
 	 && *lpszPath2 != 0)
@@ -196,8 +196,8 @@ NormalizePath (/*[in,out]*/ MIKTEXCHAR *	lpszPath)
    _________________________________________________________________________ */
 
 int
-PathName::Compare (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
-		   /*[in]*/ const MIKTEXCHAR *	lpszPath2,
+PathName::Compare (/*[in]*/ const char *	lpszPath1,
+		   /*[in]*/ const char *	lpszPath2,
 		   /*[in]*/ size_t		count)
  
 {
@@ -209,8 +209,8 @@ PathName::Compare (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
       return (0);
     }
 
-  MIKTEXCHAR szPath1[BufferSizes::MaxPath];
-  MIKTEXCHAR szPath2[BufferSizes::MaxPath];
+  char szPath1[BufferSizes::MaxPath];
+  char szPath2[BufferSizes::MaxPath];
 
   Utils::CopyString (szPath1, BufferSizes::MaxPath, lpszPath1);
   Utils::CopyString (szPath2, BufferSizes::MaxPath, lpszPath2);
@@ -272,7 +272,7 @@ PathName::Convert (/*[in]*/ ConvertPathNameFlags	flags)
     }
 #endif
 
-  for (MIKTEXCHAR * lpsz = GetBuffer(); *lpsz != 0; ++ lpsz)
+  for (char * lpsz = GetBuffer(); *lpsz != 0; ++ lpsz)
     {
       if (toUnix && *lpsz == PathName::DosDirectoryDelimiter)
 	{
@@ -323,8 +323,8 @@ Utils::MakeTeXPathName (/*[in,out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-PathName::Match (/*[in]*/ const MIKTEXCHAR *	lpszPattern,
-		 /*[in]*/ const MIKTEXCHAR *	lpszPath)
+PathName::Match (/*[in]*/ const char *	lpszPattern,
+		 /*[in]*/ const char *	lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   MIKTEX_ASSERT_STRING (lpszPattern);
@@ -482,11 +482,11 @@ RemoveDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 void
-PathName::Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
+PathName::Combine (/*[out]*/ char *		lpszPath,
 		   /*[in]*/ size_t		sizePath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszAbsPath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszExtension)
+		   /*[in]*/ const char *	lpszAbsPath,
+		   /*[in]*/ const char *	lpszRelPath,
+		   /*[in]*/ const char *	lpszExtension)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszAbsPath);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszRelPath);
@@ -540,22 +540,22 @@ PathName::Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 void
-PathName::Split (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		 /*[out]*/ MIKTEXCHAR *		lpszDir,
-		 /*[in]*/ size_t		sizeDir,
-		 /*[out]*/ MIKTEXCHAR *		lpszName,
-		 /*[in]*/ size_t		sizeName,
-		 /*[out]*/ MIKTEXCHAR *		lpszExtension,
-		 /*[in]*/ size_t		sizeExtension)
+PathName::Split (/*[in]*/ const char *	lpszPath,
+		 /*[out]*/ char *	lpszDir,
+		 /*[in]*/ size_t	sizeDir,
+		 /*[out]*/ char *	lpszName,
+		 /*[in]*/ size_t	sizeName,
+		 /*[out]*/ char *	lpszExtension,
+		 /*[in]*/ size_t	sizeExtension)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszDir, sizeDir);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszName, sizeName);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszExtension, sizeExtension);
 
-  const MIKTEXCHAR * lpsz;
+  const char * lpsz;
 
-  const MIKTEXCHAR * lpszName_ = 0;
+  const char * lpszName_ = 0;
 
   // find the beginning of the name
   for (lpsz = lpszPath; *lpsz != 0; ++ lpsz)
@@ -576,7 +576,7 @@ PathName::Split (/*[in]*/ const MIKTEXCHAR *	lpszPath,
     }
 
   // find the extension
-  const MIKTEXCHAR * lpszExtension_ = 0;
+  const char * lpszExtension_ = 0;
   for (lpsz = lpszName_; *lpsz != 0; ++ lpsz)
     {
       if (*lpsz == T_('.'))
@@ -628,7 +628,7 @@ GetFileNameExtension (/*[in]*/ const MIKTEXCHAR * lpszPath)
    PathName::GetExtension
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 PathName::GetExtension ()
   const
 {
@@ -642,12 +642,12 @@ PathName::GetExtension ()
 
 PathName &
 MIKTEXCALL
-PathName::SetExtension (/*[in]*/ const MIKTEXCHAR *	lpszExtension,
-			/*[in]*/ bool			override)
+PathName::SetExtension (/*[in]*/ const char *	lpszExtension,
+			/*[in]*/ bool		override)
 {
-  MIKTEXCHAR szDir[BufferSizes::MaxPath];
-  MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-  MIKTEXCHAR szExtOld[BufferSizes::MaxPath];
+  char szDir[BufferSizes::MaxPath];
+  char szFileName[BufferSizes::MaxPath];
+  char szExtOld[BufferSizes::MaxPath];
 
   PathName::Split (Get(),
 		   szDir, BufferSizes::MaxPath,
@@ -677,7 +677,7 @@ PathName::AppendDirectoryDelimiter ()
 	{
 	  BUF_TOO_SMALL (T_("PathName::AppendDirectoryDelimiter"));
 	}
-      buffer[l] = static_cast<MIKTEXCHAR>(DirectoryDelimiter);
+      buffer[l] = static_cast<char>(DirectoryDelimiter);
       buffer[l + 1] = 0;
     }
   return (*this);
@@ -727,9 +727,9 @@ PathName::GetHash ()
   const
 {
   size_t h = 0;
-  for (const MIKTEXCHAR * lpsz = buffer; *lpsz != 0; ++ lpsz)
+  for (const char * lpsz = buffer; *lpsz != 0; ++ lpsz)
     {
-      MIKTEXCHAR ch = *lpsz;
+      char ch = *lpsz;
 #if defined(MIKTEX_WINDOWS)
       if (ch == DirectoryDelimiter)
 	{

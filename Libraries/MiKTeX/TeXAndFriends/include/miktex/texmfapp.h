@@ -34,6 +34,7 @@
 
 #if defined(MIKTEX_OMEGA)
 #  define MIKTEX_TEX_COMPILER 1
+#  define MIKTEX_TEXMF_UNICODE 1
 #endif
 
 #if defined(MIKTEX_METAFONT) || defined(MIKTEX_METAPOST)
@@ -89,6 +90,16 @@ namespace texmfapp {
   }
 
 MIKTEXMF_BEGIN_NAMESPACE;
+
+#if defined(MIKTEX_TEXMF_UNICODE)
+typedef wchar_t TEXMFCHAR;
+typedef unsigned wchar_t TEXMFUCHAR;
+typedef wint_t TEXMFCHARINT;
+#else
+typedef char TEXMFCHAR;
+typedef unsigned char TEXMFUCHAR;
+typedef int TEXMFCHARINT;
+#endif
 
 /* _________________________________________________________________________
 
@@ -147,8 +158,8 @@ MIKTEXMF_BEGIN_NAMESPACE;
 
 #if defined(THEDATA)
 inline
-MIKTEXCHAR *
-GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
+TEXMFCHAR *
+GetTeXString (/*[out]*/ TEXMFCHAR *	lpsz,
 	      /*[out]*/ size_t		size,
 	      /*[in]*/ int		stringStart,
 	      /*[in]*/ int		stringLength)
@@ -179,11 +190,16 @@ GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
 
 #if defined(THEDATA)
 inline
-MIKTEXCHAR *
-GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
+TEXMFCHAR *
+GetTeXString (/*[out]*/ TEXMFCHAR *	lpsz,
 	      /*[in]*/ int		stringNumber,
 	      /*[in]*/ size_t		size = 0xffff)
 {
+#if defined(MIKTEX_OMEGA)
+  MIKTEX_ASSERT (stringNumber >= 65536);
+  stringNumber -= 65536;
+#endif
+  MIKTEX_ASSERT (stringNumber >= 0 && stringNumber < THEDATA(strptr));
 #if defined(MIKTEX_OMEGA)
   int stringStart = THEDATA(strstartar)[stringNumber];
   int stringLength =
@@ -206,7 +222,9 @@ GetTeXString (/*[out]*/ MIKTEXCHAR *	lpsz,
 class
 MIKTEXNOVTABLE
 TeXMFApp
+
   : public WebAppInputLine
+
 {
   /* _______________________________________________________________________
      
@@ -300,7 +318,7 @@ public:
 public:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileExtension ()
     const
@@ -336,7 +354,7 @@ public:
 protected:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
@@ -390,7 +408,7 @@ public:
 public:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
@@ -724,7 +742,7 @@ public:
 public:
 
   MIKTEXMFAPI(void)
-  GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
+  GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
     const;
 
   /* _______________________________________________________________________
@@ -754,7 +772,7 @@ public:
   {				
     if (jobName.empty())
       {
-	MIKTEXCHAR szName[MiKTeX::Core::BufferSizes::MaxPath];
+	char szName[MiKTeX::Core::BufferSizes::MaxPath];
 	MiKTeX::Core::PathName::Split
 	  (lastInputFileName.Get(),
 	   0, 0,
@@ -783,23 +801,23 @@ public:
 
   /* _______________________________________________________________________
      
-     InitializeBufferA
+     InitializeBuffer
      _______________________________________________________________________ */
 
 public:
 
   MIKTEXMFAPI(unsigned long)
-  InitializeBufferA (/*[in]*/ unsigned char * pBuffer);
+  InitializeBuffer (/*[in]*/ unsigned char * pBuffer);
 
   /* _______________________________________________________________________
      
-     InitializeBufferW
+     InitializeBuffer
      _______________________________________________________________________ */
 
 public:
 
   MIKTEXMFAPI(unsigned long)
-  InitializeBufferW (/*[in]*/ unsigned __int16 * pBuffer);
+  InitializeBuffer (/*[in]*/ unsigned short * pBuffer);
 
   /* _______________________________________________________________________
      
@@ -830,20 +848,24 @@ public:
 		/*[in]*/ int		transcriptFileNameLength)
     const
   {
-    MiKTeX::Core::PathName editFileName;
-    GetTeXString (editFileName.GetBuffer(),
-		  editFileName.GetSize(),
+    TEXMFCHAR szEditFileName[Core::BufferSizes::MaxPath];
+    GetTeXString (szEditFileName,
+		  Core::BufferSizes::MaxPath,
 		  editFileName_,
 		  editFileNameLength);
-    MiKTeX::Core::PathName transcriptFileName;
+    TEXMFCHAR szTranscriptFileName[Core::BufferSizes::MaxPath];
     if (transcriptFileName_ != 0)
       {
-	GetTeXString (transcriptFileName.GetBuffer(),
-		      transcriptFileName.GetSize(),
+	GetTeXString (szTranscriptFileName,
+		      Core::BufferSizes::MaxPath,
 		      transcriptFileName_,
 		      transcriptFileNameLength);
       }
-    InvokeEditor (editFileName, editLineNumber, transcriptFileName);
+    else
+      {
+	szTranscriptFileName[0] = 0;
+      }
+    InvokeEditor (szEditFileName, editLineNumber, szTranscriptFileName);
   }
 #endif
 
@@ -895,11 +917,12 @@ public:
 protected:
 
 #if defined(THEDATA)
+  template<typename CharType>
   int
-  MakeTeXString (/*[in]*/ const MIKTEXCHAR * lpsz)
+  MakeTeXString (/*[in]*/ const CharType * lpsz)
   {
-    MIKTEX_ASSERT (lpsz != 0);
-    size_t len = _tcslen(lpsz);
+    MIKTEX_ASSERT_STRING (lpsz);
+    size_t len = MiKTeX::Core::StrLen(lpsz);
     CheckPoolPointer (THEDATA(poolptr), len);
     while (len-- > 0)
       {
@@ -917,11 +940,11 @@ protected:
 public:
 
   MIKTEXMFAPI(bool)
-  OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		      /*[in]*/ FILE **			ppFile,
-		      /*[in]*/ void *			pBuf,
-		      /*[in]*/ size_t			size,
-		      /*[in]*/ bool			renew)
+  OpenMemoryDumpFile (/*[in]*/ const MiKTeX::Core::PathName &	fileName,
+		      /*[in]*/ FILE **				ppFile,
+		      /*[in]*/ void *				pBuf,
+		      /*[in]*/ size_t				size,
+		      /*[in]*/ bool				renew)
     const;
 
   /* _______________________________________________________________________
@@ -1113,8 +1136,8 @@ public:
 public:
 
   MIKTEXMFAPI(bool)
-  OpenPoolFile (/*[in]*/ void *			p,
-		/*[in]*/ const MIKTEXCHAR *	lpszName)
+  OpenPoolFile (/*[in]*/ void *				p,
+		/*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
 
   /* _______________________________________________________________________
@@ -1140,8 +1163,8 @@ public:
 public:
   static
   MIKTEXMFAPI(bool)
-  ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
-		  /*[in,out]*/ MiKTeX::Core::Argv &	argv);
+  ParseFirstLine (/*[in]*/ const MiKTeX::Core::PathName &	path,
+		  /*[in,out]*/ MiKTeX::Core::Argv &		argv);
 
   /* _______________________________________________________________________
      
@@ -1151,7 +1174,7 @@ public:
 private:
 
   MIKTEXMFAPI(void)
-  ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  ParseFirstLine (/*[in]*/ const MiKTeX::Core::PathName &	fileName);
 
   /* _______________________________________________________________________
      
@@ -1291,127 +1314,6 @@ private:
 private:
   int optBase;
 };
-
-/* _________________________________________________________________________
-     
-   PrintFileName
-   _________________________________________________________________________ */
-
-#if defined(THEDATA)
-inline
-void
-PrintFileNameHelper (/*[in]*/ const MIKTEXCHAR * lpszBuf)
-{
-  size_t l = MiKTeX::Core::StrLen(lpszBuf);
-  for (size_t i = 0; i < l; ++ i)
-    {
-      MIKTEXCHAR ch = lpszBuf[i];
-#if defined(MIKTEX_WINDOWS)
-      if (ch == MiKTeX::Core::PathName::AltDirectoryDelimiter)
-	{
-	  ch = MiKTeX::Core::PathName::DirectoryDelimiter;
-	}
-#endif
-      if (ch == MIKTEXTEXT('*'))
-	{
-	  ch = MIKTEXTEXT(' ');
-	}
-      else if (ch == MIKTEXTEXT('?'))
-	{
-	  ch = MIKTEXTEXT('~');
-	}
-      printchar (ch);
-    }
-}
-
-inline
-void
-PrintFileName (/*[in]*/ strnumber	area,
-	       /*[in]*/ strnumber	name,
-	       /*[in]*/ strnumber	extension)
-{
-  bool mustQuote = false;
-  MIKTEXCHAR szArea[MiKTeX::Core::BufferSizes::MaxPath];
-  if (area != 0)
-    {
-      GetTeXString (szArea, area, MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcspbrk(szArea, MIKTEXTEXT(" *?"));
-    }
-  MIKTEXCHAR szName[MiKTeX::Core::BufferSizes::MaxPath];
-  if (name != 0)
-    {
-      GetTeXString (szName, name, MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcspbrk(szName, MIKTEXTEXT(" *?"));
-    }
-  MIKTEXCHAR szExtension[MiKTeX::Core::BufferSizes::MaxPath];
-  if (extension)
-    {
-      GetTeXString (szExtension,
-		    extension,
-		    MiKTeX::Core::BufferSizes::MaxPath);
-      mustQuote = mustQuote || _tcspbrk(szExtension, MIKTEXTEXT(" *?"));
-    }
-  if (mustQuote)
-    {
-      printchar (MIKTEXTEXT('"'));
-    }
-  if (area != 0)
-    {
-      PrintFileNameHelper (szArea);
-    }
-  if (name != 0)
-    {
-      PrintFileNameHelper (szName);
-    }
-  if (extension != 0)
-    {
-      PrintFileNameHelper (szExtension);
-    }
-  if (mustQuote)
-    {
-      printchar (MIKTEXTEXT('"'));
-    }
-}
-
-inline
-void
-PrintFileName (/*[in]*/ strnumber	name,
-	       /*[in]*/ strnumber	extension)
-{
-  return (PrintFileName(0, name, extension));
-}
-
-inline
-void
-PrintFileName (/*[in]*/ strnumber	name)
-{
-  return (PrintFileName(0, name, 0));
-}
-
-inline
-void
-miktexprintfilename (/*[in]*/ strnumber area,
-		     /*[in]*/ strnumber name,
-		     /*[in]*/ strnumber extension)
-{
-  PrintFileName (area, name, extension);
-}
-
-inline
-void
-miktexprintfilename (/*[in]*/ strnumber name,
-		     /*[in]*/ strnumber extension)
-{
-  PrintFileName (name, extension);
-}
-
-inline
-void
-miktexprintfilename (/*[in]*/ strnumber name)
-{
-  PrintFileName (name);
-}
-#endif // THEDATA
 
 MIKTEXMF_END_NAMESPACE;
 

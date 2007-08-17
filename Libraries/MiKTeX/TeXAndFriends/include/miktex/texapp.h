@@ -169,12 +169,12 @@ public:
 public:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileExtension ()
     const
   {
-    return (MIKTEXTEXT(".fmt"));
+    return (".fmt");
   }
 
   /* _______________________________________________________________________
@@ -496,7 +496,7 @@ public:
 	       /*[in]*/ int	line)
     const
   {
-    MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
+    TEXMFCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
     GetTeXString (szFileName,
 		  sourceFileName,
 		  MiKTeX::Core::BufferSizes::MaxPath);
@@ -517,33 +517,33 @@ public:
 		  /*[in]*/ int	line)
   {
     poolpointer oldpoolptr = THEDATA(poolptr);
-    MIKTEXCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
+    TEXMFCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
     GetTeXString (szFileName,
 		  sourceFileName,
 		  MiKTeX::Core::BufferSizes::MaxPath);
     MiKTeX::Core::PathName fileName = UnmangleNameOfFile(szFileName);
     const size_t BUFSIZE = MiKTeX::Core::BufferSizes::MaxPath + 100;
-    MIKTEXCHAR szBuf[BUFSIZE];
+    char szBuf[BUFSIZE];
 #if _MSC_VER >= 1400
-    _stprintf_s (szBuf,
-		 BUFSIZE,
-		 MIKTEXTEXT("src:%d%s%s"),
-		 line,
-		 (_istdigit(fileName[0]) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
-		 fileName.Get());
-#else
-    _stprintf (szBuf,
-	       MIKTEXTEXT("src:%d%s%s"),
+    sprintf_s (szBuf,
+	       BUFSIZE,
+	       "src:%d%s%s",
 	       line,
-	       (_istdigit(fileName[0]) ? MIKTEXTEXT(" ") : MIKTEXTEXT("")),
+	       (isdigit(fileName[0]) ? " " : ""),
 	       fileName.Get());
+#else
+    sprintf (szBuf,
+	     "src:%d%s%s",
+	     line,
+	     (isdigit(fileName[0]) ? " " : ""),
+	     fileName.Get());
 #endif
     size_t len = MiKTeX::Core::StrLen(szBuf);
     CheckPoolPointer (THEDATA(poolptr), len);
-    MIKTEXCHAR * s = szBuf;
-    while (*s != 0)
+    char * lpsz = szBuf;
+    while (*lpsz != 0)
       {
-	THEDATA(strpool)[THEDATA(poolptr)++] = *s++;
+	THEDATA(strpool)[THEDATA(poolptr)++] = *lpsz++;
       }
     return (oldpoolptr);
   }
@@ -561,9 +561,11 @@ public:
   RememberSourceInfo (/*[in]*/ int	sourceFileName,
 		      /*[in]*/ int	line)
   {
-    GetTeXString (lastSourceFilename.GetBuffer(),
+    TEXMFCHAR szFileName[MiKTeX::Core::BufferSizes::MaxPath];
+    GetTeXString (szFileName,
 		  sourceFileName,
 		  MiKTeX::Core::BufferSizes::MaxPath);
+    lastSourceFilename = szFileName;
     lastLineNum = line;
   }
 #endif // THEDATA
@@ -576,7 +578,19 @@ public:
 public:
 
   MIKTEXMFAPI(bool)
-  Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+  Write18 (/*[in]*/ const char *	lpszCommand,
+	   /*[out]*/ int &		exitCode)
+    const;
+
+  /* _______________________________________________________________________
+     
+     Write18
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXMFAPI(bool)
+  Write18 (/*[in]*/ const wchar_t *	lpszCommand,
 	   /*[out]*/ int &		exitCode)
     const;
 
@@ -633,25 +647,6 @@ private:
 private:
   int optBase;
 };
-
-/* _________________________________________________________________________
-
-   AppendExt
-   _________________________________________________________________________ */
-
-#if defined(THEDATA)
-inline
-void
-AppendExt (/*[in]*/ strnumber e)
-{
-  MIKTEXCHAR szExt[MiKTeX::Core::BufferSizes::MaxPath];
-  GetTeXString (szExt, e, MiKTeX::Core::BufferSizes::MaxPath);
-  MiKTeX::Core::Utils::AppendString (THEDATA(nameoffile),
-				     (sizeof(THEDATA(nameoffile))
-				      / sizeof(THEDATA(nameoffile)[0])),
-				     szExt);
-}
-#endif
 
 MIKTEXMF_END_NAMESPACE;
 

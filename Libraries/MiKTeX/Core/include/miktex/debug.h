@@ -113,8 +113,8 @@ MIKTEX_DEBUG_END_NAMESPACE;
 
 #if defined(MIKTEX_DEBUG)
 
-#  define MIKTEX_ASSERT_CHAR_BUFFER(buf, n) \
-  MiKTeX::Debug::AssertValidBuf (buf, sizeof(MIKTEXCHAR) * n)
+#  define MIKTEX_ASSERT_CHAR_BUFFER(buf, n)			\
+  MiKTeX::Debug::AssertValidBuf (buf, sizeof(buf[0]) * (n))
 
 #else
 
@@ -132,7 +132,7 @@ MIKTEX_DEBUG_END_NAMESPACE;
 #  define MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL(buf, n)			\
   if (buf != 0)								\
     {									\
-      MiKTeX::Debug::AssertValidBuf (buf, sizeof(MIKTEXCHAR) * n);	\
+      MiKTeX::Debug::AssertValidBuf (buf, sizeof(buf[0]) * (n));	\
     }
 
 #else
@@ -230,14 +230,27 @@ MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
 inline
 void
-AssertValidString (/*[in]*/ const MIKTEXCHAR *	lp,
+AssertValidString (/*[in]*/ const char *	lp,
 		   /*[in]*/ size_t		n = 4096)
 {
   lp;
   n;
   MIKTEX_ASSERT (lp != 0);
 #if defined(MIKTEX_WINDOWS)
-  MIKTEX_ASSERT (! IsBadStringPtr(lp, n));
+  MIKTEX_ASSERT (! IsBadStringPtrA(lp, n));
+#endif
+}
+
+inline
+void
+AssertValidString (/*[in]*/ const wchar_t *	lp,
+		   /*[in]*/ size_t		n = 4096)
+{
+  lp;
+  n;
+  MIKTEX_ASSERT (lp != 0);
+#if defined(MIKTEX_WINDOWS)
+  MIKTEX_ASSERT (! IsBadStringPtrW(lp, n));
 #endif
 }
 

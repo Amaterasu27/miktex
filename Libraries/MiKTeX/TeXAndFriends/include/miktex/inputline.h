@@ -26,8 +26,6 @@
 
 #include <miktex/webapp.h>
 
-#include <cassert>
-
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace TeXAndFriends {
@@ -46,7 +44,9 @@ MIKTEXMF_BEGIN_NAMESPACE;
 class
 MIKTEXNOVTABLE
 WebAppInputLine
+
   : public WebApp
+
 {
 public:
   MIKTEXMFEXPORT
@@ -140,12 +140,12 @@ private:
   BufferSizeExceeded ()
   {
 #if defined(MIKTEX_BIBTEX)
-    _fputts (MIKTEXTEXT("Buffer size exceeded!"), stdout);
+    fputs ("Buffer size exceeded!", stdout);
     c4pthrow(9998l);
 #else
     if (GetFormatIdent() == 0)
       {
-	_fputts (MIKTEXTEXT("Buffer size exceeded!"), THEDATA(termout));
+	fputs ("Buffer size exceeded!", THEDATA(termout));
 	throw (new C4P::Exception9999l);
       }
     else
@@ -169,9 +169,9 @@ private:
 
 public:
 
-  template<class T>
+  template<class FileType>
   void
-  CloseFile (/*[in]*/ T & f)
+  CloseFile (/*[in]*/ FileType & f)
   {
     f.AssertValid ();
     TouchJobOutputFile (f);
@@ -185,13 +185,13 @@ public:
 
 private:
 
-  MIKTEXCHARINT
+  int
   GetCharacter (/*[in]*/ FILE * pFile)
     const
   {
     MIKTEX_ASSERT (pFile != 0);
-    MIKTEXCHARINT ch = _gettc(pFile);
-    if (ch == MIKTEXEOF)
+    int ch = getc(pFile);
+    if (ch == EOF)
       {
 	if (ferror(pFile) != 0)
 	  {
@@ -202,10 +202,10 @@ private:
 	  }
       }
 #if 0
-    const MIKTEXCHARINT e_o_f = 0x1a; // ^Z
+    const int e_o_f = 0x1a; // ^Z
     if (ch == e_o_f)
       {
-	ch = MIKTEXEOF;		// -1
+	ch = EOF;		// -1
 	HandleEof (pFile);
       }
 #endif
@@ -219,7 +219,7 @@ private:
 
 protected:
 
-  const MIKTEXCHAR *
+  const char *
   GetFQNameOfFile ()
     const
   {
@@ -271,9 +271,10 @@ public:
     f.AssertValid ();
 
 #if defined(PASCAL_TEXT_IO)
+    not_implemented ();
     if (bypassEndOfLine && feof(f) == 0)
       {
-	MIKTEX_ASSERT ((*f)() == MIKTEXTEXT('\n'));
+	MIKTEX_ASSERT ((*f)() == '\n');
 	c4pgetc (f);
       }
 #endif
@@ -285,7 +286,7 @@ public:
 #ifndef bufsize
     const unsigned long bufsize = THEDATA(bufsize);
 #endif
-#endif // ifndef MIKTEX_BIBTEX
+#endif
     
     THEDATA(last) = first;
     
@@ -297,6 +298,7 @@ public:
     int ch;
 
 #if defined(PASCAL_TEXT_IO)
+    not_implemented ();
     ch = (*f)();
 #else
     ch = GetCharacter(f);
@@ -304,27 +306,27 @@ public:
       {
 	return (false);
       }
-    if (ch == MIKTEXTEXT('\r'))
+    if (ch == '\r')
       {
 	ch = GetCharacter(f);
 	if (ch == EOF)
 	  {
 	    return (false);
 	  }
-	if (ch != MIKTEXTEXT('\n'))
+	if (ch != '\n')
 	  {
 	    ungetc (ch, f);
-	    ch = MIKTEXTEXT('\n');
+	    ch = '\n';
 	  }
       }
 #endif // not Pascal Text I/O
     
-    if (ch == MIKTEXTEXT('\n'))
+    if (ch == '\n')
       {
 	return (true);
       }
 
-#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+#if defined(MIKTEX_OMEGA)
     THEDATA(buffer)[ THEDATA(last)++ ] = ch;
 #else
     THEDATA(buffer)[ THEDATA(last)++ ] = THEDATA(xord)[ch & 0xff];
@@ -332,31 +334,31 @@ public:
 	
     while ((ch = GetCharacter(f)) != EOF && THEDATA(last) < bufsize)
       {
-	if (ch == MIKTEXTEXT('\r'))
+	if (ch == '\r')
 	  {
 	    ch = GetCharacter(f);
 	    if (ch == EOF)
 	      {
 		break;
 	      }
-	    if (ch != MIKTEXTEXT('\n'))
+	    if (ch != '\n')
 	      {
 		ungetc(ch, f);
-		ch = MIKTEXTEXT('\n');
+		ch = '\n';
 	      }
 	  }
-	if (ch == MIKTEXTEXT('\n'))
+	if (ch == '\n')
 	  {
 	    break;
 	  }
-#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
+#if defined(MIKTEX_OMEGA)
 	THEDATA(buffer)[ THEDATA(last)++ ] = ch;
 #else
 	THEDATA(buffer)[ THEDATA(last)++ ] = THEDATA(xord)[ch & 0xff];
 #endif
       }
     
-    if (ch != MIKTEXTEXT('\n') && ch != EOF)
+    if (ch != '\n' && ch != EOF)
       {
 	BufferSizeExceeded ();
       }
@@ -373,15 +375,16 @@ public:
 #endif // ifndef MIKTEX_BIBTEX
     
     while (THEDATA(last) > first
-	   && (THEDATA(buffer)[THEDATA(last) - 1] == MIKTEXTEXT(' ')
-	       || THEDATA(buffer)[THEDATA(last) - 1] == MIKTEXTEXT('\t')
-	       || THEDATA(buffer)[THEDATA(last) - 1] == MIKTEXTEXT('\r')))
+	   && (THEDATA(buffer)[THEDATA(last) - 1] == ' '
+	       || THEDATA(buffer)[THEDATA(last) - 1] == '\t'
+	       || THEDATA(buffer)[THEDATA(last) - 1] == '\r'))
       {
 	THEDATA(last)--;
       }
     
 #if defined(PASCAL_TEXT_IO)
-    f() = MIKTEXTEXT('\n');
+    not_implemented ();
+    f() = '\n';
 #endif
     
     return (true);
@@ -397,8 +400,8 @@ public:
 public:
 
   MIKTEXMFAPI(bool)
-  OpenInputFile (/*[in]*/ C4P::C4P_text & f,
-		 /*[in]*/ const MIKTEXCHAR * lpszFileName);
+  OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
+		 /*[in]*/ const char *		lpszFileName);
 
   /* _______________________________________________________________________
      
@@ -408,10 +411,10 @@ public:
 public:
 
   MIKTEXMFAPI(bool)
-  OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
-		  /*[in]*/ const MIKTEXCHAR *	lpszPath,
+  OpenOutputFile (/*[in]*/ C4P::FileRoot &		f,
+		  /*[in]*/ const char *			lpszPath,
 		  /*[in]*/ MiKTeX::Core::FileShare	share,
-		  /*[in]*/ bool			text);
+		  /*[in]*/ bool				text);
 
   /* _______________________________________________________________________
      
@@ -435,7 +438,7 @@ public:
 
   static
   MIKTEXMFAPI(MiKTeX::Core::PathName)
-  MangleNameOfFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  MangleNameOfFile (/*[in]*/ const char *	lpszFileName);
 
   /* _______________________________________________________________________
      
@@ -446,7 +449,18 @@ public:
 
   static
   MIKTEXMFAPI(MiKTeX::Core::PathName)
-  UnmangleNameOfFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  UnmangleNameOfFile (/*[in]*/ const char *	lpszFileName);
+
+  /* _______________________________________________________________________
+     
+     UnmangleNameOfFile
+     _______________________________________________________________________ */
+
+public:
+
+  static
+  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  UnmangleNameOfFile (/*[in]*/ const wchar_t *	lpszFileName);
 
   /* _______________________________________________________________________
      
@@ -480,4 +494,4 @@ MIKTEXMF_END_NAMESPACE;
 #undef MIKTEXMF_BEGIN_NAMESPACE
 #undef MIKTEXMF_END_NAMESPACE
 
-#endif	// miktex/inputline.h
+#endif

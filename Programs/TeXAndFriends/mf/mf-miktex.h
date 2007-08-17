@@ -180,22 +180,22 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("mf.base"));
+    return ("mf.base");
   }
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("mf.pool"));
+    return ("mf.pool");
   }
 
 public:

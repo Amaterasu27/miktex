@@ -144,6 +144,7 @@ set(wrapper_cpp "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/wrapper.cpp")
 set(xml_catalog_file "${CMAKE_BINARY_DIR}/BuildUtilities/docbook/catalog")
 
 # sed scripts
+set(etex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/dyn.sed")
 set(omega_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_omega_dir}/dyn.sed")
 set(pdftex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/dyn.sed")
 set(tex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/dyn.sed")
@@ -151,6 +152,9 @@ set(tex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/dyn.sed")
 # change files
 set(enctex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/enctex-miktex.ch")
 set(etex_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex.ch")
+set(etex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex.ch")
+set(etex_miktex_post_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-post.ch")
+set(etex_miktex_pre_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-pre.ch")
 set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(tex_fallback_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-fallback.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")

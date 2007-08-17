@@ -345,8 +345,8 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-TeXApp::Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
-		 /*[out]*/ int &		exitCode)
+TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
+		 /*[out]*/ int &	exitCode)
   const
 {
   MIKTEX_ASSERT_STRING (lpszCommand);
@@ -355,5 +355,25 @@ TeXApp::Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
       return (false);
     }
   Process::ExecuteSystemCommand (lpszCommand, &exitCode);
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   TeXApp::Write18
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(bool)
+TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
+		 /*[out]*/ int &		exitCode)
+  const
+{
+  MIKTEX_ASSERT_STRING (lpszCommand);
+  if (! enableWrite18)
+    {
+      return (false);
+    }
+  CharArray<char, 300> buf (lpszCommand);  // FIXME: hard-coded buffer size
+  Process::ExecuteSystemCommand (buf.Get(), &exitCode);
   return (true);
 }

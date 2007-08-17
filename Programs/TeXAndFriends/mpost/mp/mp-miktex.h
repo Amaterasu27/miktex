@@ -158,12 +158,12 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileExtension ()
     const
   {
-    return (MIKTEXTEXT(".mem"));
+    return (".mem");
   }
 
 public:
@@ -207,21 +207,21 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("mpost.mem"));
+    return ("mpost.mem");
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("mp.pool"));
+    return ("mp.pool");
   }
 
 public:
@@ -251,15 +251,6 @@ public:
     return (MIKTEXTEXT("MetaPost"));
   }
 
-public:
-  const
-  MiKTeX::Core::tstring &
-  GetTeXProgram ()
-    const
-  {
-    return (texProgram);
-  }
-
 private:
   MiKTeX::Core::tstring texProgram;
   
@@ -277,8 +268,8 @@ public:
 
 public:
   void
-  RunMakeMPX (/*[in]*/ const MIKTEXCHAR *	lpszMpFile,
-	      /*[in]*/ const MIKTEXCHAR *	lpszMpxFile)
+  RunMakeMPX (/*[in]*/ const char *	lpszMpFile,
+	      /*[in]*/ const char *	lpszMpxFile)
   {
     MiKTeX::Core::PathName makempx;
     if (! pSession->FindFile(MIKTEXTEXT("makempx"),
@@ -289,7 +280,7 @@ public:
       }
     
     MiKTeX::Core::PathName mpFile (lpszMpFile);
-    mpFile.SetExtension (MIKTEXTEXT(".mp"), false);
+    mpFile.SetExtension (".mp", false);
     
     MiKTeX::Core::CommandLineBuilder arguments;
     
@@ -315,8 +306,8 @@ extern MPCLASS MPAPP;
 
 inline
 void
-miktexrunmakempx (/*[in]*/ const MIKTEXCHAR * lpszSource,
-		  /*[in]*/ const MIKTEXCHAR * lpszDest)
+miktexrunmakempx (/*[in]*/ const char * lpszSource,
+		  /*[in]*/ const char * lpszDest)
 {
   THEAPP.RunMakeMPX (lpszSource, lpszDest);
 }
@@ -332,7 +323,7 @@ miktexopenmemfile (/*[in]*/ wordfile &		f,
 inline
 bool
 miktexopenpstabfile (/*[in]*/ alphafile &		f,
-		     /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+		     /*[in]*/ const char *	lpszFileName)
 {
   return (MiKTeX::TeXAndFriends::OpenMAPFile(&f, lpszFileName));
 }
@@ -340,7 +331,7 @@ miktexopenpstabfile (/*[in]*/ alphafile &		f,
 inline
 bool
 miktexopenmetafontfile (/*[in]*/ alphafile &		f,
-			/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+			/*[in]*/ const char *	lpszFileName)
 {
   return (MiKTeX::TeXAndFriends::OpenMETAFONTFile(&f, lpszFileName));
 }

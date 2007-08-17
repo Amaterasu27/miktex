@@ -62,22 +62,22 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("tex.fmt"));
+    return ("tex.fmt");
   }
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("tex.pool"));
+    return ("tex.pool");
   }
 
 public:

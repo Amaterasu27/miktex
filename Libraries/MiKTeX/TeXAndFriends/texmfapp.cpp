@@ -707,10 +707,10 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
+TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
 			  /*[in,out]*/ MiKTeX::Core::Argv &	argv)
 {
-  StreamReader reader (lpszPath);
+  StreamReader reader (path);
 
   tstring firstLine;
 
@@ -737,20 +737,18 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *		lpszPath,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 {
-  MIKTEX_ASSERT_STRING (lpszFileName);
-
   PathName path;
 
-  if (! pSession->FindFile(lpszFileName, GetInputFileType(), path))
+  if (! pSession->FindFile(fileName, GetInputFileType(), path))
     {
       return;
     }
 
   Argv argv;
 
-  if (! ParseFirstLine(path.Get(), argv))
+  if (! ParseFirstLine(path, argv))
     {
       return;
     }
@@ -802,21 +800,22 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-			/*[out]*/ FILE **		ppFile,
-			/*[in]*/ void *			pBuf,
-			/*[in]*/ size_t			size,
-			/*[in]*/ bool			renew)
+TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
+			      /*[out]*/ FILE **		ppFile,
+			      /*[in]*/ void *		pBuf,
+			      /*[in]*/ size_t		size,
+			      /*[in]*/ bool		renew)
   const
 {
-  MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT (ppFile);
+
   if (pBuf != 0)
     {
       MIKTEX_ASSERT_BUFFER (pBuf, size);
     }
 
-  PathName fileName (lpszFileName);
+  PathName fileName (fileName_);
+
   if (fileName.GetExtension() == 0)
     {
       fileName.SetExtension (GetMemoryDumpFileExtension());
@@ -952,7 +951,7 @@ TeXMFApp::IsVirgin () const
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ MIKTEXCHAR * lpszPath)
+TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
   const
 {
   MIKTEX_ASSERT_BUFFER (lpszPath, _MAX_PATH);
@@ -1005,14 +1004,14 @@ IsFileNameArgument (/*[in]*/ const MIKTEXCHAR * lpszArg)
 
 /* _________________________________________________________________________
 
-   InitializeBuffer<>
+   InitializeBuffer_
    _________________________________________________________________________ */
 
-template<class T>
+template<typename CharType>
 int
-InitializeBuffer (/*[in,out]*/ T *		pBuffer,
-		  /*[in]*/ FileType		inputFileType,
-		  /*[in]*/ bool			isTeXProgram)
+InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
+		   /*[in]*/ FileType		inputFileType,
+		   /*[in]*/ bool		isTeXProgram)
 {
   int fileNameArgIdx = -1;
   PathName fileName;
@@ -1072,7 +1071,7 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
   unsigned last = 0;
   for (int idx = 1; idx < c4pargc; ++ idx)
     {
-      pBuffer[last++] = T_(' ');
+      pBuffer[last++] = ' ';
       const MIKTEXCHAR * lpszOptArg;
       if (idx == fileNameArgIdx)
 	{
@@ -1097,30 +1096,30 @@ InitializeBuffer (/*[in,out]*/ T *		pBuffer,
 
 /* _________________________________________________________________________
 
-   TeXMFApp::InitializeBufferA
+   TeXMFApp::InitializeBuffer
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(unsigned long)
-TeXMFApp::InitializeBufferA (/*[in,out]*/ unsigned char * pBuffer)
+TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned char * pBuffer)
 {
   MIKTEX_ASSERT (pBuffer != 0);
-  return (InitializeBuffer<unsigned char>(pBuffer,
-					  GetInputFileType(),
-					  isTeXProgram));
+  return (InitializeBuffer_<unsigned char>(pBuffer,
+					   GetInputFileType(),
+					   isTeXProgram));
 }
 
 /* _________________________________________________________________________
 
-   TeXMFApp::InitializeBufferW
+   TeXMFApp::InitializeBuffer
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(unsigned long)
-TeXMFApp::InitializeBufferW (/*[in,out]*/ unsigned __int16 * pBuffer)
+TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned short * pBuffer)
 {
   MIKTEX_ASSERT (pBuffer != 0);
-  return (InitializeBuffer<unsigned __int16>(pBuffer,
-					     GetInputFileType(),
-					     isTeXProgram));
+  return (InitializeBuffer_<unsigned short>(pBuffer,
+					    GetInputFileType(),
+					    isTeXProgram));
 }
 
 /* _________________________________________________________________________
@@ -1248,19 +1247,17 @@ TeXMFApp::TouchJobOutputFile (/*[in]*/ FILE * pfile) const
 
 MIKTEXMFAPI(bool)
 TeXMFApp::OpenPoolFile (/*[in]*/ void *			p,
-			/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+			/*[in]*/ const PathName &	fileName_)
   const
 {
-  MIKTEX_ASSERT (p != 0);
   MIKTEX_ASSERT_BUFFER (p, sizeof(C4P_text));
-  MIKTEX_ASSERT_STRING (lpszFileName);
-  PathName poolFileName (lpszFileName);
-  if (poolFileName.GetExtension() == 0)
+  PathName fileName (fileName_);
+  if (fileName.GetExtension() == 0)
     {
-      poolFileName.SetExtension (T_(".pool"));
+      fileName.SetExtension (".pool");
     }
   PathName path;
-  if (! pSession->FindFile(poolFileName, GetPoolFileType(), path))
+  if (! pSession->FindFile(fileName, GetPoolFileType(), path))
     {
       return (false);
     }

@@ -49,9 +49,10 @@ MIKTEXMF_BEGIN_NAMESPACE;
    inputln
    _________________________________________________________________________ */
 
+template<class FileType>
 inline
 bool
-inputln (/*[in]*/ C4P::C4P_text &	f,
+inputln (/*[in]*/ FileType &		f,
 	 /*[in]*/ C4P::C4P_boolean	bypassEndOfLine = true)
 {
   return (THEAPP.InputLine(f, bypassEndOfLine));
@@ -62,10 +63,10 @@ inputln (/*[in]*/ C4P::C4P_text &	f,
    miktexclosefile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 void
-miktexclosefile (/*[in]*/ T & f)
+miktexclosefile (/*[in]*/ FileType & f)
 {
   THEAPP.CloseFile (f);
 }
@@ -87,11 +88,13 @@ miktexgetnameoffile ()
    miktexopeninputfile
    _________________________________________________________________________ */
 
+template<class FileType>
 inline
 bool
-miktexopeninputfile (/*[in]*/ C4P::C4P_text & f)
+miktexopeninputfile (/*[in]*/ FileType & f)
 {
-  return (THEAPP.OpenInputFile(f, THEAPP.GetNameOfFile()));
+  return (THEAPP.OpenInputFile(*static_cast<C4P::FileRoot*>(&f),
+			       THEAPP.GetNameOfFile()));
 }
 
 /* _________________________________________________________________________
@@ -99,18 +102,18 @@ miktexopeninputfile (/*[in]*/ C4P::C4P_text & f)
    miktexopenoutputfile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopenoutputfile (/*[in]*/ T &		f,
-		      /*[in]*/ C4P::C4P_boolean	text)
+miktexopenoutputfile (/*[in]*/ FileType &		f,
+		      /*[in]*/ C4P::C4P_boolean		text)
 {
 #if 0
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::None;
 #else
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::ReadWrite;
 #endif
-  return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
+  return (THEAPP.OpenOutputFile(*static_cast<C4P::FileRoot*>(&f),
 				miktexgetnameoffile(),
 				share,
 				text));

@@ -145,22 +145,22 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetMemoryDumpFileName ()
     const
   {
-    return (MIKTEXTEXT("omega.fmt"));
+    return ("omega.fmt");
   }
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetPoolFileName ()
     const
   {
-    return (MIKTEXTEXT("omega.pool"));
+    return ("omega.pool");
   }
 
 public:
@@ -206,7 +206,7 @@ public:
 public:
   bool
   OpenOCPFile (/*[in]*/ bytefile &	f,
-	       /*[out]*/ MIKTEXCHAR *	lpszFileName)
+	       /*[out]*/ char *		lpszFileName)
   {
     PathName fileName;
     if (! pSession->FindFile(lpszFileName, FileType::OCP, fileName))
@@ -230,7 +230,7 @@ public:
 public:
   bool
   OpenONMFile (/*[in]*/ alphafile &	f,
-	       /*[out]*/ MIKTEXCHAR *	lpszFileName)
+	       /*[out]*/ char *		lpszFileName)
   {
 #if 1
     return (false);
@@ -267,7 +267,7 @@ extern OMEGACLASS OMEGAAPP;
 inline
 bool
 miktexopenocpfile (/*[in]*/ bytefile &		f,
-		   /*[out]*/ MIKTEXCHAR *	n)
+		   /*[out]*/ char *		n)
 {
   return (THEAPP.OpenOCPFile(f, n));
 }
@@ -275,7 +275,7 @@ miktexopenocpfile (/*[in]*/ bytefile &		f,
 inline
 bool
 miktexopenonmfile (/*[in]*/ alphafile &		f,
-		   /*[out]*/ MIKTEXCHAR *	n)
+		   /*[out]*/ char *		n)
 {
   return (THEAPP.OpenONMFile(f, n));
 }

@@ -160,7 +160,7 @@ versions of the program.
   can be going on simultaneously}
 @y
 @!inf_max_in_open=6;
-@!sup_max_in_open=255;
+@!sup_max_in_open=127;
 @z
 
 @x
@@ -279,20 +279,6 @@ versions of the program.
 @y
 @d hash_prime=51001 {a prime number equal to about 85\pct! of |hash_size|}
 @z
-
-% _____________________________________________________________________________
-%
-% [2.20]
-%
-% Our chars are unsigned (VC++ option /J), i.e., the following isn't necessary.
-%
-% _____________________________________________________________________________
-
- @x
-@!xord: array [text_char] of ASCII_code;
- @y
-@!xord: array [eight_bits] of ASCII_code;
- @z
 
 % _____________________________________________________________________________
 %

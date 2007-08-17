@@ -1,7 +1,7 @@
-%% tex-miktex-web2c.ch:
+%% etex-miktex-post.ch:
 %% 
-%% Copyright (C) 2007 Christian Schenk
-%% 
+%% Copyright (C) 1998-2007 Christian Schenk
+%%
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
 %% Free Software Foundation; either version 2, or (at your option) any
@@ -16,15 +16,19 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+%% ////////////////////////////////////////////////////////////////////////////
+%% //                                                                        //
+%% //                      INSPIRED BY WEB2C'S TEX.CH                        //
+%% //                                                                        //
+%% ////////////////////////////////////////////////////////////////////////////
+
 @x
-@* \[54/MiKTeX] System-dependent changes for MiKTeX.
+@d int_pars=miktex_int_pars {total number of integer parameters}
 @y
-@* \[54/MiKTeX] System-dependent changes for MiKTeX.
+@z
 
-@ Define Web2C compatibility functions.
-
-@<Declare \MiKTeX\ functions@>=
-
-function translate_filename : boolean; forward;@t\2@>@/
-function eight_bit_p : boolean; forward;@t\2@>@/
+@x
+@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
+@y
+@d etex_int_base=miktex_int_pars {base for \eTeX's integer parameters}
 @z

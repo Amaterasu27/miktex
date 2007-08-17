@@ -326,9 +326,9 @@ Utils::AppendString (/*[in,out]*/ MIKTEXCHAR *		lpszBuf,
    _________________________________________________________________________ */
 
 size_t
-Utils::CopyString (/*[out]*/ MIKTEXCHAR *	lpszBuf,
+Utils::CopyString (/*[out]*/ char *		lpszBuf,
 		   /*[in]*/ size_t		bufSize,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSource)
+		   /*[in]*/ const char *	lpszSource)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
@@ -345,15 +345,66 @@ Utils::CopyString (/*[out]*/ MIKTEXCHAR *	lpszBuf,
 
   if (length == bufSize)
     {
-      TraceError (T_("Utils::CopyString() is going to throw an exception"));
-      TraceError (T_("  bufSize=%u"), static_cast<unsigned>(bufSize));
-      TraceError (T_("  lpszSource=%.*s..."),
-		  static_cast<int>(bufSize),
-		  lpszSource);
       BUF_TOO_SMALL (T_("Utils::CopyString"));
     }
 
   return (length);
+}
+
+/* _________________________________________________________________________
+
+   Utils::CopyString
+   _________________________________________________________________________ */
+
+size_t
+Utils::CopyString (/*[out]*/ char *		lpszBuf,
+		   /*[in]*/ size_t		bufSize,
+		   /*[in]*/ const wchar_t *	lpszSource)
+{
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
+  MIKTEX_ASSERT_STRING (lpszSource);
+
+#if defined(MIKTEX_WINDOWS)
+  int n = WideCharToMultiByte
+    (CP_ACP,
+     WC_NO_BEST_FIT_CHARS,
+     lpszSource,
+     -1,
+     lpszBuf,
+     bufSize,
+     0,
+     FALSE);
+  if (n == 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("WideCharToMultiByte"), 0);
+    }
+  if (n < 0)
+    {
+      UNEXPECTED_CONDITION (T_("Utils::CopyString"));
+    }
+  return (static_cast<size_t>(n));
+#else
+  size_t length;
+
+  for (length = 0; length < bufSize; ++ length)
+    {
+      if (*lpszSource > 255)
+	{
+	  INVALID_ARGUMENT (T_("Utils::CopyString"));
+	}
+      if ((lpszBuf[length] = lpszSource[length]) == 0)
+	{
+	  break;
+	}
+    }
+
+  if (length == bufSize)
+    {
+      BUF_TOO_SMALL (T_("Utils::CopyString"));
+    }
+
+  return (length);
+#endif
 }
 
 /* _________________________________________________________________________
@@ -583,7 +634,7 @@ MIKTEXCALL
 Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 		     /*[in]*/ va_list		  arglist)
 {
-  AutoBuffer autoBuffer;
+  AutoBuffer<MIKTEXCHAR> autoBuffer;
   int n;
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400

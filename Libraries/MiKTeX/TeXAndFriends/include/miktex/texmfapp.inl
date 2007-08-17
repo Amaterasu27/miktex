@@ -1,6 +1,6 @@
 /* texmfapp.inl: TeX/MF common inliners			  	-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -63,7 +63,7 @@ miktexcstyleerrormessagesp ()
 
 inline
 void
-miktexgetdefaultdumpfilename (/*[in]*/ MIKTEXCHAR * lpszPath)
+miktexgetdefaultdumpfilename (/*[out]*/ char * lpszPath)
 {
   THEAPP.GetDefaultMemoryDumpFileName (lpszPath);
 }
@@ -99,12 +99,14 @@ miktexgetjobname ()
 
 inline
 void
-miktexgetpoolfilename (/*[in]*/ MIKTEXCHAR * lpszPath)
+miktexgetpoolfilename (/*[out]*/ char * lpszPath)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  _tcscpy_s (lpszPath, _MAX_PATH, THEAPP.GetPoolFileName());
+  strcpy_s (lpszPath,
+	    MiKTeX::Core::BufferSizes::MaxPath,
+	    THEAPP.GetPoolFileName());
 #else
-  _tcscpy (lpszPath, THEAPP.GetPoolFileName());
+  strcpy (lpszPath, THEAPP.GetPoolFileName());
 #endif
 }
 
@@ -113,16 +115,13 @@ miktexgetpoolfilename (/*[in]*/ MIKTEXCHAR * lpszPath)
    miktexgetstringat
    _________________________________________________________________________ */
 
-#if ! (defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA))
 inline
-const MIKTEXCHAR *
+const TEXMFCHAR *
 miktexgetstringat (/*[in]*/ int idx)
 {
-  return (const_cast<const MIKTEXCHAR *>
-	  (reinterpret_cast<MIKTEXCHAR *>
-	   (&(THEDATA(strpool)[idx]))));
+  MIKTEX_ASSERT (sizeof(TEXMFCHAR) == sizeof(THEDATA(strpool)[idx]));
+  return (reinterpret_cast<TEXMFCHAR *>(&(THEDATA(strpool)[idx])));
 }
-#endif
 
 /* _________________________________________________________________________
      
@@ -145,11 +144,7 @@ inline
 void
 miktexinitializebuffer ()
 {
-#if defined(MIKTEX_OMEGA) || defined(MIKTEX_EOMEGA)
-  THEDATA(last) = THEAPP.InitializeBufferW(THEDATA(buffer));
-#else
-  THEDATA(last) = THEAPP.InitializeBufferA(THEDATA(buffer));
-#endif
+  THEDATA(last) = THEAPP.InitializeBuffer(THEDATA(buffer));
 }
 
 /* _________________________________________________________________________
@@ -255,10 +250,10 @@ miktexontexmfstartjob ()
    miktexopenpoolfile
    _________________________________________________________________________ */
 
-template<class T>
+template<class FileType>
 inline
 bool
-miktexopenpoolfile (/*[in]*/ T & f)
+miktexopenpoolfile (/*[in]*/ FileType & f)
 {
   return (THEAPP.OpenPoolFile(f));
 }
@@ -282,12 +277,12 @@ miktexreallocate (/*[in,out]*/ T * &	p,
    miktexdump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename EleType>
 inline
 void
-miktexdump (/*[in]*/ FILE_ &		f,
-	    /*[in]*/ const ELETYPE_ &	e,
+miktexdump (/*[in]*/ FileType &		f,
+	    /*[in]*/ const EleType &	e,
 	    /*[in]*/ size_t		n)
 {
   THEAPP.Dump (f, e, n);
@@ -298,12 +293,12 @@ miktexdump (/*[in]*/ FILE_ &		f,
    miktexdump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename EleType>
 inline
 void
-miktexdump (/*[in]*/ FILE_ &		f,
-	    /*[in]*/ const ELETYPE_ &	e)
+miktexdump (/*[in]*/ FileType &		f,
+	    /*[in]*/ const EleType &	e)
 {
   THEAPP.Dump (f, e);
 }
@@ -313,12 +308,12 @@ miktexdump (/*[in]*/ FILE_ &		f,
    miktexundump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename EleType>
 inline
 void
-miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[out]*/ ELETYPE_ &	e,
+miktexundump (/*[in]*/ FileType &	f,
+	      /*[out]*/ EleType &	e,
 	      /*[in]*/ size_t		n)
 {
   THEAPP.Undump (f, e, n);
@@ -329,12 +324,12 @@ miktexundump (/*[in]*/ FILE_ &		f,
    miktexundump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename EleType>
 inline
 void
-miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[out]*/ ELETYPE_ &	e)
+miktexundump (/*[in]*/ FileType &	f,
+	      /*[out]*/ EleType &	e)
 {
   THEAPP.Undump (f, e);
 }
@@ -344,21 +339,21 @@ miktexundump (/*[in]*/ FILE_ &		f,
    miktexundump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename LOWTYPE_,
-	 typename HIGHTYPE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename LowType,
+	 typename HighType,
+	 typename EleType>
 inline
 void
-miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[in]*/ LOWTYPE_ 	low,
-	      /*[in]*/ HIGHTYPE_ 	high,
-	      /*[out]*/ ELETYPE_ &	e,
+miktexundump (/*[in]*/ FileType &	f,
+	      /*[in]*/ LowType		low,
+	      /*[in]*/ HighType 	high,
+	      /*[out]*/ EleType &	e,
 	      /*[in]*/ size_t		n)
 {
   THEAPP.Undump (f,
-		 static_cast<ELETYPE_>(low),
-		 static_cast<ELETYPE_>(high),
+		 static_cast<EleType>(low),
+		 static_cast<EleType>(high),
 		 e,
 		 n);
 }
@@ -368,17 +363,17 @@ miktexundump (/*[in]*/ FILE_ &		f,
    miktexundump
    _________________________________________________________________________ */
 
-template<typename FILE_,
-	 typename HIGHTYPE_,
-	 typename ELETYPE_>
+template<typename FileType,
+	 typename HighType,
+	 typename EleType>
 inline
 void
-miktexundump (/*[in]*/ FILE_ &		f,
-	      /*[in]*/ HIGHTYPE_ 	high,
-	      /*[out]*/ ELETYPE_ &	e,
+miktexundump (/*[in]*/ FileType &	f,
+	      /*[in]*/ HighType 	high,
+	      /*[out]*/ EleType &	e,
 	      /*[in]*/ size_t		n)
 {
-  THEAPP.Undump (f, static_cast<ELETYPE_>(high), e, n);
+  THEAPP.Undump (f, static_cast<EleType>(high), e, n);
 }
 
 MIKTEXMF_END_NAMESPACE;

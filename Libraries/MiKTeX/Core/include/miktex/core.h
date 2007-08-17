@@ -1179,13 +1179,16 @@ public:
 
 MIKTEXINLINE
 size_t
-StrLen (/*[in]*/ const MIKTEXCHAR * lpsz)
+StrLen (/*[in]*/ const char * lpsz)
 {
-#if defined(MIKTEX_UNICODE)
-  return (wcslen(lpsz));
-#else
   return (strlen(lpsz));
-#endif
+}
+
+MIKTEXINLINE
+size_t
+StrLen (/*[in]*/ const wchar_t * lpsz)
+{
+  return (wcslen(lpsz));
 }
 
 MIKTEXINLINE
@@ -1417,9 +1420,23 @@ public:
   MIKTEXEXPORT
   size_t
   MIKTEXCALL
-  CopyString (/*[out]*/ MIKTEXCHAR *		lpszBuf,
+  CopyString (/*[out]*/ char *			lpszBuf,
 	      /*[in]*/ size_t			bufSize,
-	      /*[in]*/ const MIKTEXCHAR *	lpszSource);
+	      /*[in]*/ const char *	lpszSource);
+
+  /// Copies a wide string into a single-byte string.
+  /// @param[out] lpszBuf The destination string buffer.
+  /// @param bufSize Size (in characters) of the destination string buffer.
+  /// @param lpszSource The null-terminated string to be copied.
+  /// @return Returns the length (in characters) of the result.
+public:
+  static
+  MIKTEXEXPORT
+  size_t
+  MIKTEXCALL
+  CopyString (/*[out]*/ char *		lpszBuf,
+	      /*[in]*/ size_t		bufSize,
+	      /*[in]*/ const wchar_t *	lpszSource);
 
   /// Gets the value of an environment variable.
   /// @param lpszName The name of the environment variable.
@@ -1850,7 +1867,7 @@ private:
    _________________________________________________________________________ */
 
 /// Instances of this class store character strings of a fixed length.
-template<int SIZE>
+template<typename CharType, int SIZE>
 class CharArray
 {
   /// Initializes a new instance of the class.
@@ -1860,9 +1877,16 @@ public:
     buffer[0] = 0;
   }
 
+public:
+  CharArray (/*[in]*/ int zero)
+  {
+    MIKTEX_ASSERT (zero == 0);
+    buffer[0] = 0;
+  }
+
   /// Copies another CharArray object into a new CharArray object.
 public:
-  CharArray (/*[in]*/ const CharArray<SIZE> & other)
+  CharArray (/*[in]*/ const CharArray<CharType, SIZE> & other)
   {
     Utils::CopyString (buffer, SIZE, other.buffer);
   }
@@ -1870,7 +1894,22 @@ public:
   /// Copies a character string into a new CharArray object.
   /// @param lpsz A null-terminated character string.
 public:
-  CharArray (/*[in]*/ const MIKTEXCHAR * lpsz)
+  CharArray (/*[in]*/ const char * lpsz)
+  {
+    if (lpsz == 0)
+      {
+	buffer[0] = 0;
+      }
+    else
+      {
+	Utils::CopyString (buffer, SIZE, lpsz);
+      }
+  }
+
+  /// Copies a wide character string into a new CharArray object.
+  /// @param lpsz A null-terminated character string.
+public:
+  CharArray (/*[in]*/ const wchar_t * lpsz)
   {
     if (lpsz == 0)
       {
@@ -1886,8 +1925,8 @@ public:
   /// @param rhs The other CharArray object.
   /// @return Returns a reference to this object.
 public:
-  CharArray<SIZE> &
-  operator= (/*[in]*/ const CharArray<SIZE> & rhs)
+  CharArray<CharType, SIZE> &
+  operator= (/*[in]*/ const CharArray<CharType, SIZE> & rhs)
   {
     if (this != &rhs)
       {
@@ -1901,8 +1940,8 @@ public:
   /// object.
   /// @param lpszRhs A null-terminated character string.
   /// @return Returns a reference to this object.
-  CharArray<SIZE> &
-  operator= (/*[in]*/ const MIKTEXCHAR * lpszRhs)
+  CharArray<CharType, SIZE> &
+  operator= (/*[in]*/ const CharType * lpszRhs)
   {
     if (buffer != lpszRhs)
       {
@@ -1915,8 +1954,8 @@ public:
   /// @param rhs The string object to be copied.
   /// @return Returns a reference to this object.
 public:
-  CharArray<SIZE> &
-  operator= (/*[in]*/ const tstring & rhs)
+  CharArray<CharType, SIZE> &
+  operator= (/*[in]*/ const std::basic_string<CharType> & rhs)
   {
     Utils::CopyString (buffer, SIZE, rhs.c_str());
     return (*this);
@@ -1926,7 +1965,7 @@ public:
   /// @param idx Index into the char array.
   /// @return Returns a const reference to the character.
 public:
-  const MIKTEXCHAR &
+  const CharType &
   operator[] (/*[in]*/ size_t idx)
     const
   {
@@ -1938,7 +1977,7 @@ public:
   /// Returns a reference to the character at the specified index.
   /// @param idx Index into the char array.
   /// @return Returns a reference to the character.
-  MIKTEXCHAR &
+  CharType &
   operator[] (/*[in]*/ size_t idx)
   {
     MIKTEX_ASSERT (idx < SIZE);
@@ -1948,7 +1987,7 @@ public:
   /// Gets a pointer to the character sequence.
   /// @return Returns a pointer to the first character in the sequence.
 public:
-  const MIKTEXCHAR *
+  const CharType *
   Get ()
     const
   {
@@ -1956,7 +1995,7 @@ public:
   }
 
 public:
-  MIKTEXCHAR *
+  CharType *
   GetBuffer ()
   {
     return (buffer);
@@ -1995,25 +2034,25 @@ public:
   /// Converts this CharArray object into a string object.
   /// @return Returns a string object.
 public:
-  tstring
+  std::basic_string<CharType>
   ToString ()
     const
   {
-    return (tstring(buffer));
+    return (basic_string<CharType>(buffer));
   }
 
 protected:
-  MIKTEXCHAR buffer[SIZE];
+  CharType buffer[SIZE];
 };
 
 /// Compares two CharArray objects.
 /// @param lhs The first CharArray object.
 /// @param lhs The second CharArray object.
 /// @return Returns true if both CharArray objects compare equal.
-template<int SIZE>
+template<typename CharType, int SIZE>
 bool
-operator== (/*[in]*/ const CharArray<SIZE> & lhs,
-	    /*[in]*/ const CharArray<SIZE> & rhs)
+operator== (/*[in]*/ const CharArray<CharType, SIZE> & lhs,
+	    /*[in]*/ const CharArray<CharType, SIZE> & rhs)
 {
   return (StringCompare(lhs, rhs) == 0);
 }
@@ -2024,19 +2063,19 @@ operator== (/*[in]*/ const CharArray<SIZE> & lhs,
    _________________________________________________________________________ */
 
 /// Instances of this class can be used to store path names.
-class PathName : public CharArray<BufferSizes::MaxPath>
+class PathName : public CharArray<char, BufferSizes::MaxPath>
 {
 public:
   enum {
-    DosDirectoryDelimiter = MIKTEXTEXT('\\'),
-    DosPathNameDelimiter = MIKTEXTEXT(';'),
-    UnixDirectoryDelimiter = MIKTEXTEXT('/'),
-    UnixPathNameDelimiter = MIKTEXTEXT(':'),
+    DosDirectoryDelimiter = '\\',
+    DosPathNameDelimiter = ';',
+    UnixDirectoryDelimiter = '/',
+    UnixPathNameDelimiter = ':',
 #if defined(MIKTEX_WINDOWS)
     AltDirectoryDelimiter = UnixDirectoryDelimiter,
     DirectoryDelimiter = DosDirectoryDelimiter,
     PathNameDelimiter = DosPathNameDelimiter,
-    VolumeDelimiter = MIKTEXTEXT(':'),
+    VolumeDelimiter = ':',
 #elif defined(MIKTEX_UNIX)
     DirectoryDelimiter = UnixDirectoryDelimiter,
     PathNameDelimiter = UnixPathNameDelimiter,
@@ -2049,7 +2088,7 @@ public:
 public:
   static
   bool
-  IsVolumeDelimiter (/*[in]*/ MIKTEXCHARINT ch)
+  IsVolumeDelimiter (/*[in]*/ int ch)
   {
     return (ch == VolumeDelimiter);
   }
@@ -2061,7 +2100,7 @@ public:
   /// @return Returns true if the character is a directory delimiter.
   static
   bool
-  IsDirectoryDelimiter (/*[in]*/ MIKTEXCHARINT ch)
+  IsDirectoryDelimiter (/*[in]*/ int ch)
   {
     if (ch == DirectoryDelimiter)
       {
@@ -2084,32 +2123,46 @@ public:
   /// @param rhs The other PathName object.
 public:
   PathName (/*[in]*/ const PathName & rhs)
-    : CharArray<BufferSizes::MaxPath> (rhs)
+    : CharArray<char, BufferSizes::MaxPath> (rhs)
+  {
+  }
+
+public:
+  PathName (/*[in]*/ int zero)
+    : CharArray<char, BufferSizes::MaxPath> (zero)
   {
   }
 
   /// Copies a character string into a new PathName object.
   /// @param rhs Null-terminated character string.
 public:
-  PathName (/*[in]*/ const MIKTEXCHAR * rhs)
-    : CharArray<BufferSizes::MaxPath> (rhs)
+  PathName (/*[in]*/ const char * rhs)
+    : CharArray<char, BufferSizes::MaxPath> (rhs)
+  {
+  }
+
+  /// Copies a wide character string into a new PathName object.
+  /// @param rhs Null-terminated character string.
+public:
+  PathName (/*[in]*/ const wchar_t * rhs)
+    : CharArray<char, BufferSizes::MaxPath> (rhs)
   {
   }
 
   /// Copies a string object into a new PathName object.
   /// @param rhs String object.
 public:
-  PathName (/*[in]*/ const tstring & rhs)
-    : CharArray<BufferSizes::MaxPath> (rhs.c_str())
+  PathName (/*[in]*/ const std::basic_string<char> & rhs)
+    : CharArray<char, BufferSizes::MaxPath> (rhs.c_str())
   {
   }
 
 #if defined(MIKTEX_WINDOWS)
 public:
-  PathName (/*[in]*/ const MIKTEXCHAR * lpszDrive,
-	    /*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-	    /*[in]*/ const MIKTEXCHAR * lpszRelPath,
-	    /*[in]*/ const MIKTEXCHAR * lpszExtension)
+  PathName (/*[in]*/ const char * lpszDrive,
+	    /*[in]*/ const char * lpszAbsPath,
+	    /*[in]*/ const char * lpszRelPath,
+	    /*[in]*/ const char * lpszExtension)
   {
     Set (lpszDrive, lpszAbsPath, lpszRelPath, lpszExtension);
   }
@@ -2119,8 +2172,8 @@ public:
   /// @param lpszAbsPath The first component (absolute directory path).
   /// @param lpszRelPath The second component (relative file name path).
 public:
-  PathName (/*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-	    /*[in]*/ const MIKTEXCHAR * lpszRelPath)
+  PathName (/*[in]*/ const char * lpszAbsPath,
+	    /*[in]*/ const char * lpszRelPath)
   {
     Set (lpszAbsPath, lpszRelPath);
   }
@@ -2130,9 +2183,9 @@ public:
   /// @param lpszRelPath The second component (relative file name path).
   /// @param lpszExtension The third component (file name extension).
 public:
-  PathName (/*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-	    /*[in]*/ const MIKTEXCHAR * lpszRelPath,
-	    /*[in]*/ const MIKTEXCHAR * lpszExtension)
+  PathName (/*[in]*/ const char * lpszAbsPath,
+	    /*[in]*/ const char * lpszRelPath,
+	    /*[in]*/ const char * lpszExtension)
   {
     Set (lpszAbsPath, lpszRelPath, lpszExtension);
   }
@@ -2161,17 +2214,17 @@ public:
 
 public:
   PathName &
-  operator= (/*[in]*/ const MIKTEXCHAR * lpszRhs)
+  operator= (/*[in]*/ const char * lpszRhs)
   {
-    CharArray<BufferSizes::MaxPath>::operator= (lpszRhs);
+    CharArray<char, BufferSizes::MaxPath>::operator= (lpszRhs);
     return (*this);
   }
 
 public:
   PathName &
-  operator= (/*[in]*/ const tstring & rhs)
+  operator= (/*[in]*/ const std::basic_string<char> & rhs)
   {
-    CharArray<BufferSizes::MaxPath>::operator= (rhs);
+    CharArray<char, BufferSizes::MaxPath>::operator= (rhs);
     return (*this);
   }
 
@@ -2190,12 +2243,12 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
+  Combine (/*[out]*/ char *		lpszPath,
 	   /*[in]*/ size_t		sizePath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszDrive,
-	   /*[in]*/ const MIKTEXCHAR *	lpszAbsPath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszExtension);
+	   /*[in]*/ const char *	lpszDrive,
+	   /*[in]*/ const char *	lpszAbsPath,
+	   /*[in]*/ const char *	lpszRelPath,
+	   /*[in]*/ const char *	lpszExtension);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -2204,15 +2257,15 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  Split (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	 /*[out]*/ MIKTEXCHAR *		lpszDrive,
-	 /*[in]*/ size_t		sizeDrive,
-	 /*[out]*/ MIKTEXCHAR *		lpszDirectory,
-	 /*[in]*/ size_t		sizeDirectory,
-	 /*[out]*/ MIKTEXCHAR *		lpszName,
-	 /*[in]*/ size_t		sizeName,
-	 /*[out]*/ MIKTEXCHAR *		lpszExtension,
-	 /*[in]*/ size_t		sizeExtension);
+  Split (/*[in]*/ const char *	lpszPath,
+	 /*[out]*/ char *	lpszDrive,
+	 /*[in]*/ size_t	sizeDrive,
+	 /*[out]*/ char *	lpszDirectory,
+	 /*[in]*/ size_t	sizeDirectory,
+	 /*[out]*/ char *	lpszName,
+	 /*[in]*/ size_t	sizeName,
+	 /*[out]*/ char *	lpszExtension,
+	 /*[in]*/ size_t	sizeExtension);
 #endif
 
 public:
@@ -2220,20 +2273,20 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  Split (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	 /*[out]*/ MIKTEXCHAR *		lpszDirectory,
-	 /*[in]*/ size_t		sizeDirectory,
-	 /*[out]*/ MIKTEXCHAR *		lpszName,
-	 /*[in]*/ size_t		sizeName,
-	 /*[out]*/ MIKTEXCHAR *		lpszExtension,
-	 /*[in]*/ size_t		sizeExtension);
+  Split (/*[in]*/ const char *	lpszPath,
+	 /*[out]*/ char *	lpszDirectory,
+	 /*[in]*/ size_t	sizeDirectory,
+	 /*[out]*/ char *	lpszName,
+	 /*[in]*/ size_t	sizeName,
+	 /*[out]*/ char *	lpszExtension,
+	 /*[in]*/ size_t	sizeExtension);
 
 public:
-  MIKTEXCHAR *
-  GetFileName (/*[out]*/ MIKTEXCHAR * lpszFileName)
+  char *
+  GetFileName (/*[out]*/ char * lpszFileName)
     const
   {
-    MIKTEXCHAR szExtension[BufferSizes::MaxPath];
+    char szExtension[BufferSizes::MaxPath];
     Split (buffer,
 	   0, 0,
 	   lpszFileName, BufferSizes::MaxPath,
@@ -2243,8 +2296,8 @@ public:
   }
 
 public:
-  MIKTEXCHAR *
-  GetFileNameWithoutExtension (/*[out]*/ MIKTEXCHAR * lpszFileName)
+  char *
+  GetFileNameWithoutExtension (/*[out]*/ char * lpszFileName)
     const
   {
     Split (buffer,
@@ -2281,19 +2334,19 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
+  Combine (/*[out]*/ char *		lpszPath,
 	   /*[in]*/ size_t		sizePath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszAbsPath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszExtension);
+	   /*[in]*/ const char *	lpszAbsPath,
+	   /*[in]*/ const char *	lpszRelPath,
+	   /*[in]*/ const char *	lpszExtension);
 
 #if defined(MIKTEX_WINDOWS)
 public:
   PathName &
-  Set (/*[in]*/ const MIKTEXCHAR * lpszDrive,
-       /*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-       /*[in]*/ const MIKTEXCHAR * lpszRelPath, 
-       /*[in]*/ const MIKTEXCHAR * lpszExtension)
+  Set (/*[in]*/ const char * lpszDrive,
+       /*[in]*/ const char * lpszAbsPath,
+       /*[in]*/ const char * lpszRelPath, 
+       /*[in]*/ const char * lpszExtension)
   {
     Combine (buffer,
 	     GetSize(),
@@ -2312,8 +2365,8 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  Set (/*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-       /*[in]*/ const MIKTEXCHAR * lpszRelPath)
+  Set (/*[in]*/ const char * lpszAbsPath,
+       /*[in]*/ const char * lpszRelPath)
   {
     Combine (buffer,
 	     GetSize(),
@@ -2331,9 +2384,9 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  Set (/*[in]*/ const MIKTEXCHAR * lpszAbsPath,
-       /*[in]*/ const MIKTEXCHAR * lpszRelPath, 
-       /*[in]*/ const MIKTEXCHAR * lpszExtension)
+  Set (/*[in]*/ const char * lpszAbsPath,
+       /*[in]*/ const char * lpszRelPath, 
+       /*[in]*/ const char * lpszExtension)
   {
     Combine (buffer,
 	     GetSize(),
@@ -2397,7 +2450,7 @@ public:
   PathName &
   RemoveDirectorySpec ()
   {
-    MIKTEXCHAR fileName[BufferSizes::MaxPath];
+    char fileName[BufferSizes::MaxPath];
     GetFileName (fileName);
     Utils::CopyString (buffer, BufferSizes::MaxPath, fileName);
     return (*this);
@@ -2481,10 +2534,10 @@ public:
   /// @return Returns true, if this path name has the specified extension.
 public:
   bool
-  HasExtension (/*[in]*/ const MIKTEXCHAR * lpszExtension)
+  HasExtension (/*[in]*/ const char * lpszExtension)
     const
   {
-    const MIKTEXCHAR * lpszExt = GetExtension();
+    const char * lpszExt = GetExtension();
     return (lpszExt != 0
 	    && (PathName::Compare(lpszExt, lpszExtension) == 0));
   }
@@ -2494,8 +2547,8 @@ public:
   /// file name extension.
   /// @return Returns the string buffer.
 public:
-  MIKTEXCHAR *
-  GetExtension (/*[out]*/ MIKTEXCHAR *	lpszExtension)
+  char *
+  GetExtension (/*[out]*/ char *	lpszExtension)
     const
   {
     Split (buffer,
@@ -2510,7 +2563,7 @@ public:
   /// has no file name extension.
 public:
   MIKTEXEXPORT
-  const MIKTEXCHAR *
+  const char *
   MIKTEXCALL
   GetExtension ()
     const;
@@ -2524,8 +2577,8 @@ public:
   MIKTEXEXPORT
   PathName &
   MIKTEXCALL
-  SetExtension (/*[in]*/ const MIKTEXCHAR *	lpszExtension,
-		/*[in]*/ bool			override);
+  SetExtension (/*[in]*/ const char *	lpszExtension,
+		/*[in]*/ bool		override);
 
   /// Sets the file name extension.
   /// @param lpszExtension The file name extension to set. Can be 0,
@@ -2533,14 +2586,14 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  SetExtension (/*[in]*/ const MIKTEXCHAR * lpszExtension)
+  SetExtension (/*[in]*/ const char * lpszExtension)
   {
     return (SetExtension(lpszExtension, true));
   }
 
 public:
   PathName &
-  AppendExtension (/*[in]*/ const MIKTEXCHAR * lpszExtension)
+  AppendExtension (/*[in]*/ const char * lpszExtension)
   {
     Utils::AppendString (buffer, BufferSizes::MaxPath, lpszExtension);
     return (*this);
@@ -2564,8 +2617,8 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  Append (/*[in]*/ const MIKTEXCHAR *	lpsz,
-	  /*[in]*/ bool			appendDirectoryDelimiter)
+  Append (/*[in]*/ const char *	lpsz,
+	  /*[in]*/ bool		appendDirectoryDelimiter)
   {
     if (appendDirectoryDelimiter && buffer[0] != 0)
       {
@@ -2580,7 +2633,7 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  AppendComponent (/*[in]*/ const MIKTEXCHAR * lpszComponent)
+  AppendComponent (/*[in]*/ const char * lpszComponent)
   {
     return (Append(lpszComponent, true));
   }
@@ -2590,7 +2643,7 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  operator+= (/*[in]*/ const MIKTEXCHAR * lpszComponent)
+  operator+= (/*[in]*/ const char * lpszComponent)
   {
     return (AppendComponent(lpszComponent));
   }
@@ -2610,7 +2663,7 @@ public:
   /// @return Returns a reference to this object.
 public:
   PathName &
-  operator+= (/*[in]*/ const tstring & component)
+  operator+= (/*[in]*/ const std::basic_string<char> & component)
   {
     return (AppendComponent(component.c_str()));
   }
@@ -2660,8 +2713,8 @@ public:
   MIKTEXEXPORT
   int
   MIKTEXCALL
-  Compare (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
-	   /*[in]*/ const MIKTEXCHAR *	lpszPath2,
+  Compare (/*[in]*/ const char *	lpszPath1,
+	   /*[in]*/ const char *	lpszPath2,
 	   /*[in]*/ size_t		count);
 
 public:
@@ -2686,8 +2739,8 @@ public:
   MIKTEXEXPORT
   int
   MIKTEXCALL
-  Compare (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
-	   /*[in]*/ const MIKTEXCHAR *	lpszPath2);
+  Compare (/*[in]*/ const char *	lpszPath1,
+	   /*[in]*/ const char *	lpszPath2);
 
   /// Compares two path names.
   /// @param path1 The first path name.
@@ -2714,13 +2767,13 @@ public:
   MIKTEXEXPORT
   bool
   MIKTEXCALL
-  Match (/*[in]*/ const MIKTEXCHAR *	lpszPattern,
-	 /*[in]*/ const MIKTEXCHAR *	lpszPath);
+  Match (/*[in]*/ const char *	lpszPattern,
+	 /*[in]*/ const char *	lpszPath);
 
 public:
   static
   bool
-  Match (/*[in]*/ const MIKTEXCHAR *	lpszPattern,
+  Match (/*[in]*/ const char *		lpszPattern,
 	 /*[in]*/ const PathName &	path)
   {
     return (Match(lpszPattern, path.Get()));

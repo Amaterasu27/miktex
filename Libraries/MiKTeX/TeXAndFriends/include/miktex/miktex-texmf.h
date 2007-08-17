@@ -59,38 +59,38 @@ const unsigned long ICT_TCX = 1;
 const unsigned long ICT_8BIT = 2;
 
 MIKTEXMFAPI(bool)
-InitializeCharTables (/*[in]*/ unsigned long		flags,
-		      /*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		      /*[out]*/ void *			pChar,
-		      /*[out]*/ void *			pOrd,
-		      /*[out]*/ void *			pPrintable );
+InitializeCharTables (/*[in]*/ unsigned long	flags,
+		      /*[in]*/ const char *	lpszFileName,
+		      /*[out]*/ void *		pChar,
+		      /*[out]*/ void *		pOrd,
+		      /*[out]*/ void *		pPrintable );
 
 MIKTEXMFAPI(bool)
-OpenMAPFile (/*[in]*/ void *			p,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName);
+OpenMAPFile (/*[in]*/ void *		p,
+	     /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(bool)
-OpenMETAFONTFile (/*[in]*/ void *		p,
-		  /*[in]*/ const MIKTEXCHAR *	lpszName);
+OpenMETAFONTFile (/*[in]*/ void *	p,
+		  /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(bool)
-OpenTFMFile (/*[in]*/ void *			p,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName);
+OpenTFMFile (/*[in]*/ void *		p,
+	     /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(bool)
 OpenVFFile (/*[in]*/ void *		p,
-	    /*[in]*/ const MIKTEXCHAR *	lpszName);
+	    /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(bool)
-OpenXFMFile (/*[in]*/ void *			p,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName);
+OpenXFMFile (/*[in]*/ void *		p,
+	     /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(int)
-OpenXVFFile (/*[in]*/ void *			p,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName);
+OpenXVFFile (/*[in]*/ void *		p,
+	     /*[in]*/ const char *	lpszName);
 
 MIKTEXMFAPI(bool)
-Write18 (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+Write18 (/*[in]*/ const char *		lpszCommand,
 	 /*[in]*/ unsigned long *	lpExitCode = 0);
 
 MIKTEXMFAPI(int)

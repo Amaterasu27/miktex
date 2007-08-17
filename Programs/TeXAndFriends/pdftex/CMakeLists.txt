@@ -128,22 +128,27 @@ add_custom_command(
   OUTPUT ${pdftex_change_file}
   COMMAND ${tie_exe} -c ${pdftex_change_file}
 		${pdftex_web_file}
-		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
+#		${etex_miktex_post_ch}
+		${etex_miktex_ch}
 		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${pdftex_web_file}
-	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+	${etex_miktex_pre_ch}
 	${miktex_tex_change_files}
+#	${etex_miktex_post_ch}
 	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
 )
 
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
+file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #include <direct.h>
@@ -237,8 +242,10 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
 		${pdftex_web_file}
-		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
+#		${etex_miktex_post_ch}
+		${etex_miktex_ch}
 		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
   COMMAND ${webn_exe}
 	< ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
@@ -246,8 +253,9 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${pdftex_web_file}
-	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-pre.ch
+	${etex_miktex_pre_ch}
 	${miktex_tex_change_files}
+#	${etex_miktex_pre_ch}
 	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-post.ch
   VERBATIM
 )

@@ -32,10 +32,10 @@ typedef C4P_text alphafile;
    _________________________________________________________________________ */
 
 STATICFUNC(bool)
-OpenFontFile (/*[in]*/ bytefile *		pByteFile,
-	      /*[in]*/ const MIKTEXCHAR *	lpszFontName,
-	      /*[in]*/ FileType			filetype,
-	      /*[in]*/ const MIKTEXCHAR *	lpszMakeFontCommand)
+OpenFontFile (/*[in,out]*/ bytefile *	pByteFile,
+	      /*[in]*/ const char *	lpszFontName,
+	      /*[in]*/ FileType		filetype,
+	      /*[in]*/ const char *	lpszMakeFontCommand)
 {
   PathName pathFont;
   if (! SessionWrapper(true)->FindFile(lpszFontName,
@@ -57,12 +57,12 @@ OpenFontFile (/*[in]*/ bytefile *		pByteFile,
 			       T_(" not be found.")),
 			      lpszMakeFontCommand);
 	}
-      MIKTEXCHAR szBaseName[BufferSizes::MaxPath];
+      char szBaseName[BufferSizes::MaxPath];
       PathName::Split (lpszFontName,
 		       0, 0,
 		       szBaseName, BufferSizes::MaxPath,
 		       0, 0);
-      tstring arguments;
+      string arguments;
       arguments = _T(" -v \"");
       arguments += szBaseName;
       arguments += _T("\"");
@@ -97,7 +97,7 @@ OpenFontFile (/*[in]*/ bytefile *		pByteFile,
 
 MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::OpenTFMFile (/*[in]*/ void  *		p,
-				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
+				    /*[in]*/ const char *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenTFMFile");
   MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
@@ -116,7 +116,7 @@ MiKTeX::TeXAndFriends::OpenTFMFile (/*[in]*/ void  *		p,
 
 MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::OpenXFMFile (/*[in]*/ void *		p,
-				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
+				    /*[in]*/ const char *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenXFMFile");
   MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
@@ -135,7 +135,7 @@ MiKTeX::TeXAndFriends::OpenXFMFile (/*[in]*/ void *		p,
 
 MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::OpenVFFile (/*[in]*/ void *		p,
-				   /*[in]*/ const MIKTEXCHAR *	lpszFontName)
+				   /*[in]*/ const char *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenVFFile");
   MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
@@ -154,7 +154,7 @@ MiKTeX::TeXAndFriends::OpenVFFile (/*[in]*/ void *		p,
 
 MIKTEXMFAPI(int)
 MiKTeX::TeXAndFriends::OpenXVFFile (/*[in]*/ void *		p,
-				    /*[in]*/ const MIKTEXCHAR *	lpszFontName)
+				    /*[in]*/ const char *	lpszFontName)
 {
   MIKTEX_API_BEGIN ("OpenXVFFile");
   MIKTEX_ASSERT_BUFFER (p, sizeof(bytefile));
@@ -176,7 +176,7 @@ MiKTeX::TeXAndFriends::OpenXVFFile (/*[in]*/ void *		p,
    _________________________________________________________________________ */
 
 STATICFUNC(bool)
-ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 		/*[in,out]*/ unsigned char *	pChr,
 		/*[in,out]*/ unsigned char *	pOrd,
 		/*[in,out]*/ unsigned char *	pPrn)
@@ -190,17 +190,17 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
   StreamReader reader (tcxPath);
 
-  tstring line;
+  string line;
   int lineNumber = 0;
 
   while (reader.ReadLine(line))
     {
       ++ lineNumber;
 
-      const MIKTEXCHAR * start;
-      MIKTEXCHAR * end;
+      const char * start;
+      char * end;
 
-      if (line.empty() || line[0] == T_('%'))
+      if (line.empty() || line[0] == '%')
 	{
 	  continue;
 	}
@@ -250,7 +250,7 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	{
 	  // get optional printable flag
 	  start = end;
-	  printable = _tcstol(start, &end, 0);
+	  printable = strtol(start, &end, 0);
 	  if (start == end)
 	    {
 	      // not specified; by default printable
@@ -291,14 +291,13 @@ ProcessTCXFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::InitializeCharTables
-(/*[in]*/ unsigned long		flags,
- /*[in]*/ const MIKTEXCHAR *	lpszFileName,
- /*[in]*/ void *		pChr,
- /*[in]*/ void *		pOrd,
- /*[in]*/ void *		pPrn)
+(/*[in]*/ unsigned long	flags,
+ /*[in]*/ const char *	lpszFileName,
+ /*[in]*/ void *	pChr,
+ /*[in]*/ void *	pOrd,
+ /*[in]*/ void *	pPrn)
 {
   MIKTEX_API_BEGIN ("InitializeCharTables");
-  MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_BUFFER (pChr, 256);
   MIKTEX_ASSERT_BUFFER (pOrd, 256);
   MIKTEX_ASSERT_BUFFER_OR_NIL (pPrn, 256);
@@ -342,10 +341,10 @@ MiKTeX::TeXAndFriends::InitializeCharTables
    _________________________________________________________________________ */
 
 STATICFUNC(bool)
-OpenAlphaFile (/*[in]*/ void *			p,
-	       /*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	       /*[in]*/ FileType		fileType,
-	       /*[in]*/ const MIKTEXCHAR *	lpszExtension)
+OpenAlphaFile (/*[in]*/ void *		p,
+	       /*[in]*/ const char *	lpszFileName,
+	       /*[in]*/ FileType	fileType,
+	       /*[in]*/ const char *	lpszExtension)
 {
   MIKTEX_ASSERT (p != 0);
   MIKTEX_ASSERT_BUFFER (p, sizeof(alphafile));
@@ -381,7 +380,7 @@ OpenAlphaFile (/*[in]*/ void *			p,
 
 MIKTEXMFAPI(bool)
 MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
-				    /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+				    /*[in]*/ const char *	lpszFileName)
 {
   MIKTEX_API_BEGIN ("OpenMAPFile");
   return (OpenAlphaFile(p, lpszFileName, FileType::MAP, T_(".map")));
@@ -394,12 +393,10 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-MiKTeX::TeXAndFriends::OpenMETAFONTFile
-(/*[in]*/ void *		p,
- /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+MiKTeX::TeXAndFriends::OpenMETAFONTFile (/*[in]*/ void *	p,
+					 /*[in]*/ const char *	lpszFileName)
 {
   MIKTEX_API_BEGIN ("OpenMETAFONTFile");
   return (OpenAlphaFile(p, lpszFileName, FileType::MF, T_(".mf")));
   MIKTEX_API_END ("OpenMETAFONTFile");
 }
-

@@ -345,7 +345,7 @@ public:
 
 #define C4P_FILE_STRUCT(Bt) C4P::BufferedFile<Bt>
 
-typedef C4P_FILE_STRUCT(MIKTEXCHAR) C4P_text;
+typedef C4P_FILE_STRUCT(char) C4P_text;
 
 /* _________________________________________________________________________
 

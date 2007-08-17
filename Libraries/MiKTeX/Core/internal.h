@@ -838,16 +838,17 @@ private:
    AutoBuffer
    _________________________________________________________________________ */
 
+template<typename CharType>
 class AutoBuffer
 {
 protected:
   enum { BUFSIZE = 512 };
 
 protected:
-  MIKTEXCHAR smallBuffer[BUFSIZE];
+  CharType smallBuffer[BUFSIZE];
 
 protected:
-  MIKTEXCHAR * buffer;
+  CharType * buffer;
 
 protected:
   size_t n;
@@ -869,7 +870,7 @@ public:
       }
     else
       {
-	buffer = new MIKTEXCHAR[n];
+	buffer = new CharType[n];
       }
   }
 
@@ -885,7 +886,7 @@ public:
 	buffer = 0;
 	n = 0;
       }
-    catch (const exception &)
+    catch (const std::exception &)
       {
       }
   }
@@ -896,7 +897,7 @@ public:
   {
     if (newSize > BUFSIZE && newSize > n)
       {
-	char * newBuffer = new MIKTEXCHAR[newSize];
+	CharType * newBuffer = new CharType[newSize];
 	memcpy (newBuffer, buffer, n);
 	if (buffer != smallBuffer)
 	  {
@@ -908,7 +909,7 @@ public:
   }
 
 public:
-  MIKTEXCHAR *
+  CharType *
   GetBuffer ()
     const
   {
@@ -916,7 +917,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const CharType *
   Get ()
     const
   {
@@ -937,7 +938,7 @@ public:
    STRDUP
    _________________________________________________________________________ */
 
-class STRDUP : public AutoBuffer
+class STRDUP : public AutoBuffer<MIKTEXCHAR>
 {
 public:
   STRDUP (/*[in]*/ const MIKTEXCHAR * lpsz)

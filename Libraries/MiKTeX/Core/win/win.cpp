@@ -909,12 +909,12 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
    _________________________________________________________________________ */
 
 void
-PathName::Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
+PathName::Combine (/*[out]*/ char *		lpszPath,
 		   /*[in]*/ size_t		sizePath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszDrive,
-		   /*[in]*/ const MIKTEXCHAR *	lpszAbsPath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-		   /*[in]*/ const MIKTEXCHAR *	lpszExtension)
+		   /*[in]*/ const char *	lpszDrive,
+		   /*[in]*/ const char *	lpszAbsPath,
+		   /*[in]*/ const char *	lpszRelPath,
+		   /*[in]*/ const char *	lpszExtension)
 {
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400
@@ -929,7 +929,7 @@ PathName::Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
       FATAL_CRT_ERROR (T_("_tmakepath_s"), 0);
     }
 #  else
-  MIKTEXCHAR szPath[BufferSizes::MaxPath];
+  char szPath[BufferSizes::MaxPath];
   _tmakepath (szPath, lpszDrive, lpszAbsPath, lpszRelPath, lpszExtension);
   Utils::CopyString (lpszPath, sizePath, szPath);
 #  endif
@@ -944,15 +944,15 @@ PathName::Combine (/*[out]*/ MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 void
-PathName::Split (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		 /*[out]*/ MIKTEXCHAR *		lpszDrive,
-		 /*[in]*/ size_t		sizeDrive,
-		 /*[out]*/ MIKTEXCHAR *		lpszDir,
-		 /*[in]*/ size_t		sizeDir,
-		 /*[out]*/ MIKTEXCHAR *		lpszName,
-		 /*[in]*/ size_t		sizeName,
-		 /*[out]*/ MIKTEXCHAR *		lpszExtension,
-		 /*[in]*/ size_t		sizeExtension)
+PathName::Split (/*[in]*/ const char *	lpszPath,
+		 /*[out]*/ char *	lpszDrive,
+		 /*[in]*/ size_t	sizeDrive,
+		 /*[out]*/ char *	lpszDir,
+		 /*[in]*/ size_t	sizeDir,
+		 /*[out]*/ char *	lpszName,
+		 /*[in]*/ size_t	sizeName,
+		 /*[out]*/ char *	lpszExtension,
+		 /*[in]*/ size_t	sizeExtension)
 {
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszDrive, sizeDrive);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszDir, sizeDir);
@@ -1760,9 +1760,9 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (_tgetcwd(buffer, static_cast<int>(GetSize())) == 0)
+  if (getcwd(buffer, static_cast<int>(GetSize())) == 0)
     {
-      FATAL_CRT_ERROR (T_("_tgetcwd"), 0);
+      FATAL_CRT_ERROR (T_("getcwd"), 0);
     }
   return (*this);
 }
@@ -1775,10 +1775,10 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
-  unsigned long n = GetTempPath(static_cast<DWORD>(GetSize()), buffer);
+  unsigned long n = GetTempPathA(static_cast<DWORD>(GetSize()), buffer);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetTempPath"), 0);
+      FATAL_WINDOWS_ERROR (T_("GetTempPathA"), 0);
     }
   if (n >= GetSize())
     {
@@ -1797,11 +1797,11 @@ PathName::SetToTempFile ()
 {
   PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
 
-  UINT n = GetTempFileName(pathTempDir.Get(), T_("mik"), 0, buffer);
+  UINT n = GetTempFileNameA(pathTempDir.Get(), T_("mik"), 0, buffer);
 
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetTempFileName"), pathTempDir.Get());
+      FATAL_WINDOWS_ERROR (T_("GetTempFileNameA"), pathTempDir.Get());
     }
 
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
@@ -2661,7 +2661,7 @@ PathName::AppendAltDirectoryDelimiter ()
 	{
 	  BUF_TOO_SMALL (T_("PathName::AppendAltDirectoryDelimiter"));
 	}
-      buffer[l] = static_cast<MIKTEXCHAR>(AltDirectoryDelimiter);
+      buffer[l] = static_cast<char>(AltDirectoryDelimiter);
       buffer[l + 1] = 0;
     }
   return (*this);
