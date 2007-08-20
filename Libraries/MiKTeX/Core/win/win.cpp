@@ -2813,3 +2813,43 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 
   argv.push_back (0);
 }
+
+/* _________________________________________________________________________
+
+   Utils::UTF8ToWideChar
+   _________________________________________________________________________ */
+
+MIKTEXEXPORT
+wstring
+MIKTEXCALL
+Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
+{
+  if (*lpszUtf8 == 0)
+    {
+      return (L"");
+    }
+  int len =
+    MultiByteToWideChar(CP_UTF8,
+			MB_ERR_INVALID_CHARS,
+			lpszUtf8,
+			-1,
+			0,
+			0);
+  if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+    }
+  CharBuffer<wchar_t, 200> buf (len + 1);
+  len =
+    MultiByteToWideChar(CP_UTF8,
+			MB_ERR_INVALID_CHARS,
+			lpszUtf8,
+			-1,
+			buf.GetBuffer(),
+			buf.GetSize());
+  if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+    }
+  return (buf.Get());
+}

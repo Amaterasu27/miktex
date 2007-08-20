@@ -108,7 +108,11 @@ check_for_png (FILE *png_file)
 }
 
 int
+#if defined(MIKTEX)
+png_scan_file (struct xetex_png_info *info, FILE *png_file)
+#else
 png_scan_file (struct png_info *info, FILE *png_file)
+#endif
 {
   png_bytep stream_data_ptr;
   int       trans_type;

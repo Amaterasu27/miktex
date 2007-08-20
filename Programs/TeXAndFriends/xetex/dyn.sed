@@ -16,3 +16,7 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
+s/^\([_A-Za-z0-9]*\) \(m_fontflags\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_fontlayoutengine\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_fontletterspace\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^\([_A-Za-z0-9]*\) \(m_fontmapping\)\[ [A-Za-z0-9]* \];$/\1 *\2;/

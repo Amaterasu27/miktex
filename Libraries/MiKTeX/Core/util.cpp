@@ -634,7 +634,7 @@ MIKTEXCALL
 Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 		     /*[in]*/ va_list		  arglist)
 {
-  AutoBuffer<MIKTEXCHAR> autoBuffer;
+  CharBuffer<MIKTEXCHAR> autoBuffer;
   int n;
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400

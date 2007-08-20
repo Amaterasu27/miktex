@@ -883,7 +883,7 @@ CfgImpl::GetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 			  lpszValueName);
     }
 
-  AutoBuffer<MIKTEXCHAR> buffer (bufSize);
+  CharBuffer<MIKTEXCHAR> buffer (bufSize);
 
   if (! TryGetValue(lpszKey,
 		    lpszValueName,
@@ -970,7 +970,7 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
       return (false);
     }
 
-  AutoBuffer<MIKTEXCHAR> buffer (bufSize);
+  CharBuffer<MIKTEXCHAR> buffer (bufSize);
 
   if (! TryGetValue(lpszKey,
 		    lpszValueName,

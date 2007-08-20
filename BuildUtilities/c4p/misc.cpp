@@ -106,6 +106,9 @@ open_header_file ()
   generate_file_header ();
   out_form ("#ifndef C4P_HEADER_GUARD_%s\n", prog_symbol->s_repr);
   out_form ("#define C4P_HEADER_GUARD_%s\n", prog_symbol->s_repr);
+  out_s ("#ifdef HAVE_C4P_PRE_H\n");
+  out_s ("#include \"c4p_pre.h\"\n");
+  out_s ("#endif\n");
   out_s ("#include <miktex/c4plib.h>\n");
   out_s ("#ifdef __cplusplus\nusing namespace C4P;\n#endif\n");
   out_s ("#ifndef C4PEXTERN\n#define C4PEXTERN\n#endif\n");

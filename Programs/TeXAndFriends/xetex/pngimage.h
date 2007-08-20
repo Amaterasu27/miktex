@@ -55,7 +55,11 @@
 
 #include "mfileio.h"
 
+#if defined(MIKTEX)
+struct xetex_png_info {
+#else
 struct png_info {
+#endif
 	int	width;
 	int height;
 	double	xdpi;
@@ -64,7 +68,11 @@ struct png_info {
     int	num_components;
 };
 
+#if defined(MIKTEX)
+extern int png_scan_file (struct xetex_png_info *info, FILE *file);
+#else
 extern int png_scan_file (struct png_info *info, FILE *file);
+#endif
 extern int check_for_png (FILE *file);
 
 #endif /* _PNGIMAGE_H_ */

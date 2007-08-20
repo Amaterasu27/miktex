@@ -389,6 +389,12 @@
 #define recorder_record_input(fname)
 #define recorder_record_output(fname)
 
+#ifndef isblank
+#define isblank(c) ((c) == ' ' || (c) == '\t')
+#endif
+
+#define ISBLANK(c) (isascii (c) && isblank (c))
+
 /* _________________________________________________________________________
 
    Basic Types
@@ -602,7 +608,7 @@ GetSecondsAndMicros (/*[out]*/ int * pSeconds,
 		     /*[out]*/ int * pMicros);
 
 MIKTEXKPSAPI(int)
-OpenInput (/*[in]*/ const char *		lpszFileName,
+OpenInput (/*[in,out]*/ char *			lpszFileName,
 	   /*[in]*/ FILE **			ppfile,
 	   /*[in]*/ kpse_file_format_type	format,
 	   /*[in]*/ const char *		lpszMode);

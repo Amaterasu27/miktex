@@ -835,114 +835,14 @@ private:
 
 /* _________________________________________________________________________
 
-   AutoBuffer
-   _________________________________________________________________________ */
-
-template<typename CharType>
-class AutoBuffer
-{
-protected:
-  enum { BUFSIZE = 512 };
-
-protected:
-  CharType smallBuffer[BUFSIZE];
-
-protected:
-  CharType * buffer;
-
-protected:
-  size_t n;
-
-public:
-  AutoBuffer ()
-    : buffer (smallBuffer),
-      n (BUFSIZE)
-  {
-  }
-
-public:
-  AutoBuffer (/*[in]*/ size_t n)
-    : n (n)
-  {
-    if (n <= BUFSIZE)
-      {
-	buffer = smallBuffer;
-      }
-    else
-      {
-	buffer = new CharType[n];
-      }
-  }
-
-public:
-  ~AutoBuffer ()
-  {
-    try
-      {
-	if (buffer != smallBuffer)
-	  {
-	    delete [] buffer;
-	  }
-	buffer = 0;
-	n = 0;
-      }
-    catch (const std::exception &)
-      {
-      }
-  }
-
-public:
-  void
-  Resize (/*[in]*/ size_t newSize)
-  {
-    if (newSize > BUFSIZE && newSize > n)
-      {
-	CharType * newBuffer = new CharType[newSize];
-	memcpy (newBuffer, buffer, n);
-	if (buffer != smallBuffer)
-	  {
-	    delete [] buffer;
-	  }
-	buffer = newBuffer;
-	n = newSize;
-      }
-  }
-
-public:
-  CharType *
-  GetBuffer ()
-    const
-  {
-    return (buffer);
-  }
-
-public:
-  const CharType *
-  Get ()
-    const
-  {
-    return (buffer);
-  }
-
-public:
-  size_t
-  GetSize ()
-    const
-  {
-    return (n);
-  }
-};
-
-/* _________________________________________________________________________
-
    STRDUP
    _________________________________________________________________________ */
 
-class STRDUP : public AutoBuffer<MIKTEXCHAR>
+class STRDUP : public CharBuffer<MIKTEXCHAR>
 {
 public:
   STRDUP (/*[in]*/ const MIKTEXCHAR * lpsz)
-    : AutoBuffer (StrLen(lpsz) + 1)
+    : CharBuffer (StrLen(lpsz) + 1)
   {
     Utils::CopyString (buffer, GetSize(), lpsz);
   }
@@ -950,7 +850,7 @@ public:
 public:
   STRDUP (/*[in]*/ const MIKTEXCHAR *	lpsz,
 	  /*[in]*/ size_t		n)
-    : AutoBuffer (n + 1)
+    : CharBuffer (n + 1)
   {
     CopyString2 (buffer, GetSize(), lpsz, n);
   }

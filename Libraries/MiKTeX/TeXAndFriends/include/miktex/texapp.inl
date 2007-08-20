@@ -212,7 +212,7 @@ bool
 miktexopendvifile (/*[in]*/ FileType & f)
 {
   return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
-				THEAPP.GetNameOfFile(),
+				THEAPP.GetNameOfFile().Get(),
 				MiKTeX::Core::FileShare::Read,
 				false));
 }

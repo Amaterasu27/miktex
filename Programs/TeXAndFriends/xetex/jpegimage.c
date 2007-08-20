@@ -74,6 +74,11 @@
  *  Level 2.
  */
 
+#if defined(MIKTEX)
+#  include <cstdlib>
+#  include <miktex/kpsemu.h>
+#endif
+
 #include "mfileio.h"
 #include "numbers.h"
 
@@ -180,7 +185,11 @@ JPEG_info_clear (struct JPEG_info *j_info)
   j_info->flags    = 0;
 }
 
+#if defined(MIKTEX)
+static int
+#else
 static JPEG_marker
+#endif
 JPEG_get_marker (FILE *fp)
 {
   int c;
@@ -214,7 +223,11 @@ add_APPn_marker (struct JPEG_info *j_info,
   n = j_info->num_appn;
 
   j_info->appn[n].marker   = marker;
+#if defined(MIKTEX)
+  j_info->appn[n].app_sig  = (JPEG_APPn_sig)app_sig;
+#else
   j_info->appn[n].app_sig  = app_sig;
+#endif
   j_info->appn[n].app_data = app_data;
 
   j_info->num_appn += 1;
@@ -330,7 +343,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   count      = 0;
   found_SOFn = 0;
   while (!found_SOFn &&
-	 (marker = JPEG_get_marker(fp)) >= 0) {
+	 (marker = (JPEG_marker)JPEG_get_marker(fp)) >= 0) {
     if (marker == JM_SOI  ||
 	(marker >= JM_RST0 && marker <= JM_RST7)) {
       count++;

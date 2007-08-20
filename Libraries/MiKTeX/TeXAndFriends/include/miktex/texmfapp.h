@@ -32,6 +32,11 @@
 #  define MIKTEX_TEX_COMPILER 1
 #endif
 
+#if defined(MIKTEX_XETEX)
+#  define MIKTEX_TEX_COMPILER 1
+#  define MIKTEX_TEXMF_UNICODE 1
+#endif
+
 #if defined(MIKTEX_OMEGA)
 #  define MIKTEX_TEX_COMPILER 1
 #  define MIKTEX_TEXMF_UNICODE 1
@@ -55,9 +60,11 @@
 #    define HAVE_MAIN_MEMORY 1
 #    define HAVE_POOL_FREE 1
 #    define HAVE_STRINGS_FREE 1
+#  if ! (defined(MIKTEX_XETEX) || defined(MIKTEX_OMEGA))
+#    define IMPLEMENT_TCX 1
+#  endif
 #  if ! defined(MIKTEX_OMEGA)
 #    define ENABLE_8BIT_CHARS 1
-#    define IMPLEMENT_TCX 1
 #  endif
 #endif
 
@@ -188,28 +195,87 @@ GetTeXString (/*[out]*/ TEXMFCHAR *	lpsz,
    GetTeXString
    _________________________________________________________________________ */
 
+#if defined(THEDATA) && defined(MIKTEX_TEXMF_UNICODE)
+inline
+char *
+GetTeXString (/*[out]*/ char *	lpsz,
+	      /*[out]*/ size_t	size,
+	      /*[in]*/ int	stringStart,
+	      /*[in]*/ int	stringLength)
+{
+  MiKTeX::Core::CharBuffer<wchar_t, 200> buf (stringLength + 1);
+  GetTeXString (buf.GetBuffer(), buf.GetSize(), stringStart, stringLength);
+  MiKTeX::Core::Utils::CopyString (lpsz, size, buf.Get());
+  return (lpsz);
+}
+#endif
+
+/* _________________________________________________________________________
+   
+   GetTeXStringStart
+   _________________________________________________________________________ */
+
 #if defined(THEDATA)
 inline
-TEXMFCHAR *
-GetTeXString (/*[out]*/ TEXMFCHAR *	lpsz,
-	      /*[in]*/ int		stringNumber,
-	      /*[in]*/ size_t		size = 0xffff)
+int
+GetTeXStringStart (/*[in]*/ int stringNumber)
 {
-#if defined(MIKTEX_OMEGA)
+#if defined(MIKTEX_OMEGA) || defined(MIKTEX_XETEX)
   MIKTEX_ASSERT (stringNumber >= 65536);
   stringNumber -= 65536;
 #endif
   MIKTEX_ASSERT (stringNumber >= 0 && stringNumber < THEDATA(strptr));
 #if defined(MIKTEX_OMEGA)
   int stringStart = THEDATA(strstartar)[stringNumber];
+#else
+  int stringStart = THEDATA(strstart)[stringNumber];
+#endif
+  return (stringStart);
+}
+#endif // THEDATA
+
+/* _________________________________________________________________________
+   
+   GetTeXStringLength
+   _________________________________________________________________________ */
+
+#if defined(THEDATA)
+inline
+int
+GetTeXStringLength (/*[in]*/ int stringNumber)
+{
+#if defined(MIKTEX_OMEGA) || defined(MIKTEX_XETEX)
+  MIKTEX_ASSERT (stringNumber >= 65536);
+  stringNumber -= 65536;
+#endif
+  MIKTEX_ASSERT (stringNumber >= 0 && stringNumber < THEDATA(strptr));
+#if defined(MIKTEX_OMEGA)
   int stringLength =
     (THEDATA(strstartar)[stringNumber + 1]
      - THEDATA(strstartar)[stringNumber]);
 #else
-  int stringStart = THEDATA(strstart)[stringNumber];
   int stringLength =
     (THEDATA(strstart)[stringNumber + 1] - THEDATA(strstart)[stringNumber]);
 #endif
+  return (stringLength);
+}
+#endif // THEDATA
+
+/* _________________________________________________________________________
+   
+   GetTeXString
+   _________________________________________________________________________ */
+
+#if defined(THEDATA)
+template<typename CharType>
+inline
+CharType *
+GetTeXString (/*[out]*/ CharType *	lpsz,
+	      /*[in]*/ int		stringNumber,
+	      /*[in]*/ size_t		size = 0xffff)
+{
+  int stringStart = GetTeXStringStart(stringNumber);
+  int stringLength = GetTeXStringLength(stringNumber);
   return (GetTeXString(lpsz, size, stringStart, stringLength));
 }
 #endif // THEDATA
@@ -914,7 +980,7 @@ public:
      MakeTeXString
      _______________________________________________________________________ */
   
-protected:
+public:
 
 #if defined(THEDATA)
   template<typename CharType>
@@ -929,6 +995,25 @@ protected:
 	THEDATA(strpool)[THEDATA(poolptr)++] = *lpsz++;
       }
     return (makestring());
+  }
+#endif // THEDATA
+  
+  /* _______________________________________________________________________
+     
+     MakeTeXString
+     _______________________________________________________________________ */
+  
+public:
+
+#if defined(THEDATA) && defined(MIKTEX_XETEX)
+  template<>
+  int
+  MakeTeXString (/*[in]*/ const unsigned char * lpszUtf8)
+  {
+    std::wstring str =
+      MiKTeX::Core::Utils::UTF8ToWideChar
+      (reinterpret_cast<const char*>(lpszUtf8));
+    return (MakeTeXString(str.c_str()));
   }
 #endif // THEDATA
   

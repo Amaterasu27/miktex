@@ -44,10 +44,12 @@ set(kpathsea_includes
   getopt.h
   kpathsea.h
   lib.h
+  line.h
   magstep.h
   pathsearch.h
   proginit.h
   progname.h
+  readable.h
   systypes.h
   tex-file.h
   tex-glyph.h

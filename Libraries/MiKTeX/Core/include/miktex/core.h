@@ -1690,6 +1690,15 @@ public:
 		 /*[in]*/ int	nFallbackFolder,
 		 /*[in]*/ bool	getCurrentPath);
 #endif
+
+public:
+#if defined(MIKTEX_WINDOWS)
+  static
+  MIKTEXEXPORT
+  std::wstring
+  MIKTEXCALL
+  UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
+#endif
 };
 
 /* _________________________________________________________________________
@@ -2059,6 +2068,103 @@ operator== (/*[in]*/ const CharArray<CharType, SIZE> & lhs,
 
 /* _________________________________________________________________________
 
+   CharBuffer
+   _________________________________________________________________________ */
+
+template<typename CharType, int BUFSIZE=512>
+class CharBuffer
+{
+protected:
+  CharType smallBuffer[BUFSIZE];
+
+protected:
+  CharType * buffer;
+
+protected:
+  size_t n;
+
+public:
+  CharBuffer ()
+    : buffer (smallBuffer),
+      n (BUFSIZE)
+  {
+  }
+
+public:
+  CharBuffer (/*[in]*/ size_t n)
+    : n (n)
+  {
+    if (n <= BUFSIZE)
+      {
+	buffer = smallBuffer;
+      }
+    else
+      {
+	buffer = new CharType[n];
+      }
+  }
+
+public:
+  ~CharBuffer ()
+  {
+    try
+      {
+	if (buffer != smallBuffer)
+	  {
+	    delete [] buffer;
+	  }
+	buffer = 0;
+	n = 0;
+      }
+    catch (const std::exception &)
+      {
+      }
+  }
+
+public:
+  void
+  Resize (/*[in]*/ size_t newSize)
+  {
+    if (newSize > BUFSIZE && newSize > n)
+      {
+	CharType * newBuffer = new CharType[newSize];
+	memcpy (newBuffer, buffer, n);
+	if (buffer != smallBuffer)
+	  {
+	    delete [] buffer;
+	  }
+	buffer = newBuffer;
+	n = newSize;
+      }
+  }
+
+public:
+  CharType *
+  GetBuffer ()
+    const
+  {
+    return (buffer);
+  }
+
+public:
+  const CharType *
+  Get ()
+    const
+  {
+    return (buffer);
+  }
+
+public:
+  size_t
+  GetSize ()
+    const
+  {
+    return (n);
+  }
+};
+
+/* _________________________________________________________________________
+
    PathName
    _________________________________________________________________________ */
 
@@ -2153,6 +2259,14 @@ public:
   /// @param rhs String object.
 public:
   PathName (/*[in]*/ const std::basic_string<char> & rhs)
+    : CharArray<char, BufferSizes::MaxPath> (rhs.c_str())
+  {
+  }
+
+  /// Copies a string object into a new PathName object.
+  /// @param rhs String object.
+public:
+  PathName (/*[in]*/ const std::basic_string<wchar_t> & rhs)
     : CharArray<char, BufferSizes::MaxPath> (rhs.c_str())
   {
   }

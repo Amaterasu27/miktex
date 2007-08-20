@@ -73,18 +73,6 @@ miktexclosefile (/*[in]*/ FileType & f)
 
 /* _________________________________________________________________________
 
-   miktexgetnameoffile
-   _________________________________________________________________________ */
-
-inline
-const char *
-miktexgetnameoffile ()
-{
-  return (THEAPP.GetNameOfFile());
-}
-
-/* _________________________________________________________________________
-
    miktexopeninputfile
    _________________________________________________________________________ */
 
@@ -94,7 +82,7 @@ bool
 miktexopeninputfile (/*[in]*/ FileType & f)
 {
   return (THEAPP.OpenInputFile(*static_cast<C4P::FileRoot*>(&f),
-			       THEAPP.GetNameOfFile()));
+			       THEAPP.GetNameOfFile().Get()));
 }
 
 /* _________________________________________________________________________
@@ -114,7 +102,7 @@ miktexopenoutputfile (/*[in]*/ FileType &		f,
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::ReadWrite;
 #endif
   return (THEAPP.OpenOutputFile(*static_cast<C4P::FileRoot*>(&f),
-				miktexgetnameoffile(),
+				THEAPP.GetNameOfFile().Get(),
 				share,
 				text));
 }

@@ -31,25 +31,60 @@ authorization from SIL International.
 /* additional declarations we want to slip in for xetex */
 
 #define	native_node_size	6
+#if defined(MIKTEX)
+#define native_node_text(p)	((unsigned short*)(&(g_XETEXData.m_mem[(p) + native_node_size])))
+#else
 #define native_node_text(p)	((unsigned short*)(&(mem[(p) + native_node_size])))
-
+#endif
 #define getnativechar(p,i)		native_node_text(p)[i]
 #define setnativechar(p,i,v)	native_node_text(p)[i] = v
 
 /* p is native_word node; g is XeTeX_use_glyph_metrics flag */
+#if defined(MIKTEX)
+#define setnativemetrics(p,g)					measure_native_node(&(g_XETEXData.m_mem[p]), g)
+#else
 #define setnativemetrics(p,g)					measure_native_node(&(mem[p]), g)
+#endif
 
+#if defined(MIKTEX)
+#define setnativeglyphmetrics(p,g)				measure_native_glyph(&(g_XETEXData.m_mem[p]), g)
+#else
 #define setnativeglyphmetrics(p,g)				measure_native_glyph(&(mem[p]), g)
+#endif
 
+#if defined(MIKTEX)
+#define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(g_XETEXData.m_mem[p]))
+#else
 #define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(mem[p]))
+#endif
 
+#if defined(MIKTEX)
+#define getnativeitaliccorrection(p)			get_native_ital_corr(&(g_XETEXData.m_mem[p]))
+#else
 #define getnativeitaliccorrection(p)			get_native_ital_corr(&(mem[p]))
+#endif
+#if defined(MIKTEX)
+#define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(g_XETEXData.m_mem[p]))
+#else
 #define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(mem[p]))
+#endif
 
+#if defined(MIKTEX)
+#define getnativeglyph(p,i)						get_native_glyph_id(&(g_XETEXData.m_mem[p]), i)
+#else
 #define getnativeglyph(p,i)						get_native_glyph_id(&(mem[p]), i)
+#endif
 
+#if defined(MIKTEX)
+#define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(g_XETEXData.m_mem[p]))
+#else
 #define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
+#endif
+#if defined(MIKTEX)
+#define xdvbufferbyte(i)						g_XETEXData.m_xdvbuffer[i]
+#else
 #define xdvbufferbyte(i)						xdvbuffer[i]
+#endif
 
 void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
 
@@ -59,9 +94,17 @@ void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
 
 #define findpicfile(a,b,c,d)	find_pic_file(a, b, c, d)
 
+#if defined(MIKTEX)
+#define picpathbyte(p,i)		((unsigned char*)&(g_XETEXData.m_mem[p+pic_node_size]))[i]
+#else
 #define picpathbyte(p,i)		((unsigned char*)&(mem[p+pic_node_size]))[i]
+#endif
 
+#if defined(MIKTEX)
+#define dviopenout(f)			open_dvi_output(f)
+#else
 #define dviopenout(f)			open_dvi_output(&(f))
+#endif
 
 #define casttoptr(x)		(void*)(x)
 #define casttointeger(x)	(long)(x)
@@ -96,3 +139,7 @@ void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
 #include "trans.h"	/* functions for affine transform operations */
 #include "TECkit_Common.h" /* include this before XeTeX_ext.h */
 #include "XeTeX_ext.h" /* other extension functions */
+#if defined(MIKTEX)
+#include "XeTeXOTMath.h"
+#include "XeTeXLayoutInterface.h"
+#endif

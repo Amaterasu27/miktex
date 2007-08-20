@@ -644,7 +644,7 @@ miktex_fopen (/*[in]*/ const char *	lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXKPSAPI(int)
-Web2C::OpenInput (/*[in]*/ const char *			lpszFileName,
+Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
 		  /*[in]*/ FILE **			ppfile,
 		  /*[in]*/ kpse_file_format_type	format,
 		  /*[in]*/ const char *			lpszMode)
@@ -662,6 +662,10 @@ Web2C::OpenInput (/*[in]*/ const char *			lpszFileName,
     {
       free (lpszPath);
       throw;
+    }
+  if (*ppfile != 0)
+    {
+      Utils::CopyString (lpszFileName, BufferSizes::MaxPath, lpszPath);
     }
   free (lpszPath);
   return (*ppfile == 0 ? 0 : 1);

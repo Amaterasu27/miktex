@@ -39,10 +39,15 @@ authorization from SIL International.
 
 #include "zlib.h"
 
+#if defined(MIKTEX)
+#define C4PEXTERN extern
+#include "xetex-miktex.h"
+#else
 #define EXTERN extern
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
 #undef Byte
+#endif
 
 #ifdef XETEX_MAC
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
@@ -210,7 +215,11 @@ void initversionstring(char **versions)
 #endif
 			+ 6 * 3; /* for freetype version #s (ditto) */
 
+#if defined(MIKTEX)
+	*versions = (char *) xmalloc(len + 1);
+#else
 	*versions = xmalloc(len + 1);
+#endif
 		/* len will be more than enough, because of the placeholder chars in fmt
 			that get replaced by the arguments */
 
@@ -255,7 +264,11 @@ setinputfileencoding(UFILE* f, int mode, int encodingData)
 		case ICUMAPPING:
 			{
 				char*	name = gettexstring(encodingData);
+#if defined(MIKTEX)
+				UErrorCode	err = U_ZERO_ERROR;
+#else
 				UErrorCode	err = 0;
+#endif
 				UConverter*	cnv = ucnv_open(name, &err);
 				if (cnv == NULL) {
 					fprintf(stderr, "! Error %d creating Unicode converter for %s\n", err, name);
@@ -291,11 +304,18 @@ static char* byteBuffer = NULL;
 	int			i;
 	UConverter*	cnv;
 	long		outLen;
+#if defined(MIKTEX)
+	UErrorCode	errorCode = U_ZERO_ERROR;
+#else
 	UErrorCode	errorCode = 0;
+#endif
 
 	if (byteBuffer == NULL)
+#if defined(MIKTEX)
+	        byteBuffer = (char *) xmalloc(bufsize + 1);
+#else
 		byteBuffer = xmalloc(bufsize + 1);
-
+#endif
 	/* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
 	i = getc(f->f);
 	if (f->skipNextLF) {
@@ -326,7 +346,11 @@ static char* byteBuffer = NULL;
 	
 	/* now apply the mapping to turn external bytes into Unicode characters in buffer */
 	cnv = (UConverter*)(f->conversionData);
+#if defined(MIKTEX)
+	outLen = ucnv_toUChars(cnv, (UChar*)&buffer[first], (bufsize - first), byteBuffer, bytesRead, &errorCode);
+#else
 	outLen = ucnv_toUChars(cnv, &buffer[first], (bufsize - first), byteBuffer, bytesRead, &errorCode);
+#endif
 	if (errorCode != 0) {
 		fprintf(stderr, "! Unicode conversion failed: error code = %d\n", (int)errorCode);
 		return false;
@@ -357,7 +381,11 @@ static int				brkLocaleStrNum = 0;
 void
 linebreakstart(int localeStrNum, const UniChar* text, int textLength)
 {
+#if defined(MIKTEX)
+	UErrorCode	status = U_ZERO_ERROR;
+#else
 	UErrorCode	status = 0;
+#endif
 	int i;
 
 	if ((localeStrNum != brkLocaleStrNum) && (brkIter != NULL)) {
@@ -372,8 +400,11 @@ linebreakstart(int localeStrNum, const UniChar* text, int textLength)
 			fprintf(stderr, "\n! error %d creating linebreak iterator for locale \"%s\", trying default. ", status, locale);
 			if (brkIter != NULL)
 				ubrk_close(brkIter);
+#if defined(MIKTEX)
+			status = U_ZERO_ERROR;
+#else
 			status = 0;
-			brkIter = ubrk_open(UBRK_LINE, "en_us", NULL, 0, &status);
+#endif			brkIter = ubrk_open(UBRK_LINE, "en_us", NULL, 0, &status);
 		}
 		free(locale);
 		brkLocaleStrNum = localeStrNum;
@@ -383,7 +414,11 @@ linebreakstart(int localeStrNum, const UniChar* text, int textLength)
 		die("! failed to create linebreak iterator, status=%d", (int)status);
 	}
 
+#if defined(MIKTEX)
+	ubrk_setText(brkIter, (UChar*)text, textLength, &status);
+#else
 	ubrk_setText(brkIter, text, textLength, &status);
+#endif
 }
 
 int
@@ -399,7 +434,11 @@ getencodingmodeandinfo(long* info)
 	 *   -> name is packed in |nameoffile| as a C string, starting at [1]
 	 * Check if it's a built-in name; if not, try to open an ICU converter by that name
 	 */
+#if defined(MIKTEX)
+	UErrorCode	err = U_ZERO_ERROR;
+#else
 	UErrorCode	err = 0;
+#endif
 	UConverter*	cnv;
 	char*	name = (char*)nameoffile + 1;
 	*info = 0;
@@ -458,7 +497,11 @@ load_mapping_file(const char* s, const char* e)
 {
 	char*	mapPath;
 	TECkit_Converter	cnv = 0;
+#if defined(MIKTEX)
+	char*	buffer = (char*)xmalloc(e - s + 5);
+#else
 	char*	buffer = xmalloc(e - s + 5);
+#endif
 	strncpy(buffer, s, e - s);
 	buffer[e - s] = 0;
 	strcat(buffer, ".tec");
@@ -474,7 +517,11 @@ load_mapping_file(const char* s, const char* e)
 			fseek(mapFile, 0, SEEK_END);
 			mappingSize = ftell(mapFile);
 			fseek(mapFile, 0, SEEK_SET);
+#if defined(MIKTEX)
+			mapping = (Byte*)xmalloc(mappingSize);
+#else
 			mapping = xmalloc(mappingSize);
+#endif
 			fread(mapping, 1, mappingSize, mapFile);
 			fclose(mapFile);
 			status = TECkit_CreateConverter(mapping, mappingSize,
@@ -686,12 +733,28 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				tag = read_tag_with_param(cp1 + 1, &param);
 				++nAdded;
 				if (nAdded == 1) {
+#if defined(MIKTEX)
+					addFeatures = (UInt32*)xmalloc(sizeof(UInt32));
+#else
 					addFeatures = xmalloc(sizeof(UInt32));
+#endif
+#if defined(MIKTEX)
+					addParams = (SInt32*)xmalloc(sizeof(SInt32));
+#else
 					addParams = xmalloc(sizeof(SInt32));
+#endif
 				}
 				else {
+#if defined(MIKTEX)
+					addFeatures = (UInt32*)xrealloc(addFeatures, nAdded * sizeof(UInt32));
+#else
 					addFeatures = xrealloc(addFeatures, nAdded * sizeof(UInt32));
+#endif
+#if defined(MIKTEX)
+					addParams = (SInt32*)xrealloc(addParams, nAdded * sizeof(SInt32));
+#else
 					addParams = xrealloc(addParams, nAdded * sizeof(SInt32));
+#endif
 				}
 				addFeatures[nAdded-1] = tag;
 				addParams[nAdded-1] = param;
@@ -702,9 +765,17 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				tag = read_tag(cp1 + 1);
 				++nRemoved;
 				if (nRemoved == 1)
+#if defined(MIKTEX)
+					removeFeatures = (UInt32*)xmalloc(sizeof(UInt32));
+#else
 					removeFeatures = xmalloc(sizeof(UInt32));
+#endif
 				else
+#if defined(MIKTEX)
+					removeFeatures = (UInt32*)xrealloc(removeFeatures, nRemoved * sizeof(UInt32));
+#else
 					removeFeatures = xrealloc(removeFeatures, nRemoved * sizeof(UInt32));
+#endif
 				removeFeatures[nRemoved-1] = tag;
 				goto next_option;
 			}
@@ -724,18 +795,30 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			}
 			
 		bad_option:
+#if defined(MIKTEX)
+			fontfeaturewarning((voidpointer)cp1, cp2 - cp1, 0, 0);
+#else
 			fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
+#endif
 		
 		next_option:
 			cp1 = cp2;
 		}
 		
 		if (addFeatures != 0) {
+#if defined(MIKTEX)
+			addFeatures = (UInt32*)realloc(addFeatures, (nAdded + 1) * sizeof(UInt32));
+#else
 			addFeatures = realloc(addFeatures, (nAdded + 1) * sizeof(UInt32));
+#endif
 			addFeatures[nAdded] = 0;
 		}
 		if (removeFeatures != 0) {
+#if defined(MIKTEX)
+			removeFeatures = (UInt32*)realloc(removeFeatures, (nRemoved + 1) * sizeof(UInt32));
+#else
 			removeFeatures = realloc(removeFeatures, (nRemoved + 1) * sizeof(UInt32));
+#endif
 			removeFeatures[nRemoved] = 0;
 		}
 	}
@@ -831,18 +914,30 @@ findnativefont(unsigned char* uname, long scaled_size)
 
 	splitFontName(name, &var, &feat, &end);
 
+#if defined(MIKTEX)
+	nameString = (char*)xmalloc(var - name + 1);
+#else
 	nameString = xmalloc(var - name + 1);
+#endif
 	strncpy(nameString, name, var - name);
 	nameString[var - name] = 0;
 
 	if (feat > var) {
+#if defined(MIKTEX)
+		varString = (char*)xmalloc(feat - var);
+#else
 		varString = xmalloc(feat - var);
+#endif
 		strncpy(varString, var + 1, feat - var - 1);
 		varString[feat - var - 1] = 0;
 	}
 		
 	if (end > feat) {
+#if defined(MIKTEX)
+		featString = (char*)xmalloc(end - feat);
+#else
 		featString = xmalloc(end - feat);
+#endif
 		strncpy(featString, feat + 1, end - feat - 1);
 		featString[end - feat - 1] = 0;
 	}
@@ -873,6 +968,7 @@ findnativefont(unsigned char* uname, long scaled_size)
 		fontRef = findFontByName(nameString, varString, Fix2X(scaled_size));
 	
 		if (fontRef != 0) {
+#if ! defined(MIKTEX)
 			/* update nameoffile to the full name of the font, for error messages during font loading */
 			const char*	fullName = getFullName(fontRef);
 			namelength = strlen(fullName);
@@ -884,6 +980,7 @@ findnativefont(unsigned char* uname, long scaled_size)
 			nameoffile = xmalloc(namelength + 4); /* +2 would be correct: initial space, final NUL */
 			nameoffile[0] = ' ';
 			strcpy((char*)nameoffile + 1, fullName);
+#endif
 	
 #ifdef XETEX_MAC
 			/* decide whether to use AAT or OpenType rendering with this font */
@@ -1076,7 +1173,11 @@ makeXDVGlyphArrayData(void* pNode)
 {
 	unsigned char*	cp;
 	UInt16*		glyphIDs;
+#if defined(MIKTEX)
+	memoryword* p = (memoryword*)pNode;
+#else
 	memoryword* p = pNode;
+#endif
 	void*		glyph_info;
 	FixedPoint*	locations;
 	int			opcode;
@@ -1315,7 +1416,11 @@ applymapping(void* pCnv, const UniChar* txtPtr, int txtLen)
 		if (mappedtext != 0)
 			free(mappedtext);
 		outLength = txtLen * sizeof(UniChar) + 32;
+#if defined(MIKTEX)
+		mappedtext = (utf16code*)xmalloc(outLength);
+#else
 		mappedtext = xmalloc(outLength);
+#endif
 	}
 	
 	/* try the mapping */
@@ -1332,7 +1437,11 @@ retry:
 		case kStatus_OutputBufferFull:
 			outLength += (txtLen * sizeof(UniChar)) + 32;
 			free(mappedtext);
+#if defined(MIKTEX)
+			mappedtext = (utf16code*)xmalloc(outLength);
+#else
 			mappedtext = xmalloc(outLength);
+#endif
 			goto retry;
 			
 		default:
@@ -1351,9 +1460,15 @@ snap_zone(scaled* value, scaled snap_value, scaled fuzz)
 void
 getnativecharheightdepth(int font, int ch, scaled* height, scaled* depth)
 {
+#if defined(MIKTEX)
+#define QUAD(f)			fontinfo[6+parambase[f]].c4p_P2.c4p_int
+#define X_HEIGHT(f)		fontinfo[5+parambase[f]].c4p_P2.c4p_int
+#define CAP_HEIGHT(f)	fontinfo[8+parambase[f]].c4p_P2.c4p_int
+#else
 #define QUAD(f)			fontinfo[6+parambase[f]].cint
 #define X_HEIGHT(f)		fontinfo[5+parambase[f]].cint
 #define CAP_HEIGHT(f)	fontinfo[8+parambase[f]].cint
+#endif
 
 	float	ht = 0.0;
 	float	dp = 0.0;
@@ -1524,7 +1639,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 		UBiDi*	pBiDi = ubidi_open();
 		
 		UErrorCode	errorCode = (UErrorCode)0;
+#if defined(MIKTEX)
+		ubidi_setPara(pBiDi, (const UChar*)txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#else
 		ubidi_setPara(pBiDi, txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#endif
 		
 		dir = ubidi_getDirection(pBiDi);
 		if (dir == UBIDI_MIXED) {
@@ -1549,8 +1668,16 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 						free(positions);
 					}
 					maxGlyphs = nGlyphs + 20;
+#if defined(MIKTEX)
+					glyphs = (UInt32*)xmalloc(maxGlyphs * sizeof(UInt32));
+#else
 					glyphs = xmalloc(maxGlyphs * sizeof(UInt32));
+#endif
+#if defined(MIKTEX)
+					positions = (float*)xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#else
 					positions = xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#endif
 				}
 
 				getGlyphs(engine, glyphs, &status);
@@ -1606,8 +1733,16 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					free(positions);
 				}
 				maxGlyphs = nGlyphs + 20;
+#if defined(MIKTEX)
+				glyphs = (UInt32*)xmalloc(maxGlyphs * sizeof(UInt32));
+#else
 				glyphs = xmalloc(maxGlyphs * sizeof(UInt32));
+#endif
+#if defined(MIKTEX)
+				positions = (float*)xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#else
 				positions = xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#endif
 			}
 			getGlyphs(engine, glyphs, &status);
 			getGlyphPositions(engine, positions, &status);
@@ -1705,7 +1840,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 Fixed
 get_native_ital_corr(void* pNode)
 {
+#if defined(MIKTEX)
+	memoryword*	node = (memoryword*)pNode;
+#else
 	memoryword*	node = pNode;
+#endif
 	unsigned	f = native_font(node);
 	unsigned	n = native_glyph_count(node);
 	if (n > 0) {
@@ -1729,7 +1868,11 @@ get_native_ital_corr(void* pNode)
 Fixed
 get_native_glyph_ital_corr(void* pNode)
 {
+#if defined(MIKTEX)
+	memoryword* node = (memoryword*)pNode;
+#else
 	memoryword* node = pNode;
+#endif
 	UInt16		gid = native_glyph(node);
 	unsigned	f = native_font(node);
 
@@ -1746,7 +1889,11 @@ get_native_glyph_ital_corr(void* pNode)
 void
 measure_native_glyph(void* pNode, int use_glyph_metrics)
 {
+#if defined(MIKTEX)
+	memoryword* node = (memoryword*)pNode;
+#else
 	memoryword* node = pNode;
+#endif
 	UInt16		gid = native_glyph(node);
 	unsigned	f = native_font(node);
 
@@ -1853,8 +2000,10 @@ double Fix2X(Fixed f)
 #endif
 
 /* these are here, not XeTeX_mac.c, because we need stubs on other platforms */
+#if ! defined(MIKTEX)
 #ifndef XETEX_MAC
 typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
+#endif
 #endif
 
 void
@@ -1895,7 +2044,11 @@ atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheigh
 		   doesn't seem to return this value for OT/CFF fonts */
 		ByteCount	tableSize;
 		if (ATSFontGetTable(fontRef, LE_POST_TABLE_TAG, 0, 0, 0, &tableSize) == noErr) {
+#if defined(MIKTEX)
+			POSTTable*      post = (POSTTable*)xmalloc(tableSize);
+#else
 			POSTTable*      post = xmalloc(tableSize);
+#endif
 			ATSFontGetTable(fontRef, LE_POST_TABLE_TAG, 0, tableSize, post, 0);
 			*slant = X2Fix(tan(Fix2X( - SWAP32(post->italicAngle)) * M_PI / 180.0));
 			free(post);
@@ -2243,16 +2396,29 @@ printglyphname(int font, int gid)
 		printchar(*s++);
 }
 
+#if defined(MIKTEX)
+boolean
+u_open_in(unicodefile * f, int mode, int encodingData)
+#else
 boolean
 u_open_in(unicodefile* f, int filefmt, const_string fopen_mode, int mode, int encodingData)
+#endif
 {
 	boolean	rval;
+#if defined(MIKTEX)
+	*f = (unicodefile)malloc(sizeof(UFILE));
+#else
 	*f = malloc(sizeof(UFILE));
+#endif
 	(*f)->encodingMode = 0;
 	(*f)->conversionData = 0;
 	(*f)->savedChar = -1;
 	(*f)->skipNextLF = 0;
+#if defined(MIKTEX)
+	rval = THEAPP.OpenInputFile(&((*f)->f), THEAPP.GetNameOfFile().Get());
+#else
 	rval = open_input (&((*f)->f), filefmt, fopen_mode);
+#endif
 	if (rval) {
 		int	B1, B2;
 		if (mode == AUTO) {
@@ -2287,6 +2453,38 @@ u_open_in(unicodefile* f, int filefmt, const_string fopen_mode, int mode, int en
 	return rval;
 }
 
+#if defined(MIKTEX)
+boolean
+open_dvi_output(/*out*/ bytefile & dviFile)
+{
+  if (nopdfoutput)
+    {
+      return (THEAPP.OpenOutputFile
+	      (*reinterpret_cast<C4P::FileRoot*>(&dviFile),
+	       THEAPP.GetNameOfFile().Get(),
+	       MiKTeX::Core::FileShare::Read,
+	       false));
+    }
+  else
+    {
+      MiKTeX::Core::CommandLineBuilder args;
+      args.AppendOption ("-o", THEAPP.GetNameOfFile());
+      if (papersize != 0)
+	{
+	  args.AppendOption ("-p", papersize);
+	}
+      std::string cmd = outputdriver;
+      cmd += ' ';
+      cmd += args.Get();
+      FILE * pFile = _popen(cmd.c_str(), "wb");
+      if (pFile != 0)
+	{
+	  dviFile.Attach (pFile, true);
+	}
+      return (pFile != 0);
+    }
+}
+#else
 boolean
 open_dvi_output(FILE** fptr)
 {
@@ -2323,7 +2521,23 @@ open_dvi_output(FILE** fptr)
 		return (*fptr != 0);
 	}
 }
+#endif
 
+#if defined(MIKTEX)
+void
+dviclose(/*[in,out]*/ bytefile & dviFile)
+{
+  if (nopdfoutput)
+    {
+      THEAPP.CloseFile (dviFile);
+    }
+  else
+    {
+      _pclose (dviFile);
+      dviFile.Attach (0, true);
+    }
+}
+#else
 void
 dviclose(FILE* fptr)
 {
@@ -2332,6 +2546,7 @@ dviclose(FILE* fptr)
 	else
 		pclose(fptr);
 }
+#endif
 
 int
 get_uni_c(UFILE* f)
@@ -2421,7 +2636,11 @@ input_line(UFILE* f)
 	if (i != EOF && i != '\n' && i != '\r') {
 		fprintf (stderr, "! Unable to read an entire line---bufsize=%u.\n",
 						 (unsigned) bufsize);
+#if defined(MIKTEX)
+		fputs ("Please increase buf_size.\n", stderr);
+#else
 		fputs ("Please increase buf_size in texmf.cnf.\n", stderr);
+#endif
 		uexit (1);
 	}
 	
@@ -2451,7 +2670,11 @@ makeutf16name()
 		if (nameoffile16 != 0)
 			free(nameoffile16);
 		name16len = namelength + 10;
+#if defined(MIKTEX)
+		nameoffile16 = (UInt16*)xmalloc(name16len * sizeof(UInt16));
+#else
 		nameoffile16 = xmalloc(name16len * sizeof(UInt16));
+#endif
 	}
 	t = nameoffile16;
 	while (s <= nameoffile + namelength) {

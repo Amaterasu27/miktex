@@ -32,6 +32,10 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include/layout
 )
 
 add_definitions(
@@ -40,6 +44,9 @@ add_definitions(
   -DXETEXCLASS=XETEX
   -DXETEXDATA=g_XETEXData
   -DMIKTEX_XETEX
+  -DXETEX_OTHER
+  -DHAVE_C4P_PRE_H
+  -DLE_USE_CMEMORY
 )
 
 #add_custom_command(
@@ -91,8 +98,10 @@ add_custom_command(
 )
 
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
+file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
 create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeX_ext.c
@@ -140,12 +149,23 @@ set_source_files_properties(
   PROPERTIES COMPILE_FLAGS "-DCOMPILING_XETEX_CC"
 )
 
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/xetex.cc
+  PROPERTIES COMPILE_FLAGS "-DCOMPILING_XETEX_CC"
+)
+
 target_link_libraries(${xetex_dll_name}
   ${fofi_lib_name}
+  ${fontconfig_dll_name}
+  ${freetype2_dll_name}
   ${goo_lib_name}
+  ${icudt_dll_name}
+  ${icule_dll_name}
+  ${icuuc_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
   ${regex_dll_name}
+  ${teckit_dll_name}
   ${xpdf_lib_name}
 )
 

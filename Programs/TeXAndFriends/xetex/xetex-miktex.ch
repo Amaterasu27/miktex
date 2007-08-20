@@ -125,7 +125,10 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 
 @x
 @d int_pars=miktex_int_pars {total number of integer parameters}
+@#
+@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @y
+@d etex_int_base=miktex_int_pars {base for \eTeX's integer parameters}
 @z
 
 % _____________________________________________________________________________
@@ -157,6 +160,28 @@ name_of_file:= xmalloc_array (UTF8_code, (length(a)+length(n)+length(e))*3+1);
 @x
 name_of_file := xmalloc_array (UTF8_code, n+(b-a+1)+format_ext_length+1);
 @y
+@z
+
+% _____________________________________________________________________________
+%
+% [29.530]
+% _____________________________________________________________________________
+
+@x
+function a_make_name_string(var f:alpha_file):str_number;
+@y
+function a_make_name_string:str_number;
+@z
+
+% _____________________________________________________________________________
+%
+% [29.539]
+% _____________________________________________________________________________
+
+@x
+log_name:=a_make_name_string(log_file);
+@y
+log_name:=a_make_name_string;
 @z
 
 % _____________________________________________________________________________
@@ -194,6 +219,12 @@ k: integer;
   if u_open_in(cur_file, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
 @z
 
+@x
+done: name:=a_make_name_string(cur_file);
+@y
+done: name:=a_make_name_string;
+@z
+
 % _____________________________________________________________________________
 %
 % [30.569]
@@ -203,6 +234,39 @@ k: integer;
 if b_open_in(tfm_file) then begin
 @y
 if miktex_open_tfm_file(tfm_file,name_of_file) then begin
+@z
+
+% _____________________________________________________________________________
+%
+% [32.626]
+% _____________________________________________________________________________
+
+@x
+          if q = p then break
+@y
+          if q = p then c4p_break_loop
+@z
+
+% _____________________________________________________________________________
+%
+% [35.714]
+% _____________________________________________________________________________
+
+@x
+    if ot_assembly_ptr<>nil then
+@y
+    if is_null_pointer(ot_assembly_ptr) then
+@z
+
+% _____________________________________________________________________________
+%
+% [35.716]
+% _____________________________________________________________________________
+
+@x
+  if ot_assembly_ptr<>nil then goto found;
+@y
+  if is_null_pointer(ot_assembly_ptr) then goto found;
 @z
 
 % _____________________________________________________________________________
@@ -218,9 +282,10 @@ k:integer;
 @z
 
 @x
+  if open_in_name_ok(stringcast(name_of_file+1))
      and u_open_in(read_file[n], kpse_tex_format, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
 @y
-     and u_open_in(read_file[n], XeTeX_default_input_mode, XeTeX_default_input_encoding) then
+  if u_open_in(read_file[n], XeTeX_default_input_mode, XeTeX_default_input_encoding) then
 @z
 
 % _____________________________________________________________________________
@@ -343,6 +408,7 @@ function cast_to_integer : integer; forward;@t\2@>@/
 function cast_to_ushort : integer; forward;@t\2@>@/
 function linebreak_next : integer; forward;@t\2@>@/
 function null_pointer : void_pointer; forward;@t\2@>@/
+function is_null_pointer : boolean; forward;@t\2@>@/
 function xmalloc_char_array : void_pointer; forward;@t\2@>@/
 
 @ Define Web2C compatibility functions.

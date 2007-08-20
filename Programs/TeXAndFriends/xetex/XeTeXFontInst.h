@@ -54,9 +54,11 @@ authorization from SIL International.
 #include "XeTeXFontMgr.h"
 #include "XeTeX_ext.h"
 
+#if ! defined(MIKTEX)
 extern "C" {
 	void *xmalloc(unsigned);	// from kpathsea
 };
+#endif
 
 // Abstract superclass that XeTeXOTLayoutEngine uses;
 // create specific subclasses for each supported platform

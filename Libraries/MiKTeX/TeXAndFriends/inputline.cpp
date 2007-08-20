@@ -279,16 +279,14 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
+WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 				/*[in]*/ const char *		lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
 
-  FILE * pfile = 0;
-
   if (enablePipes && lpszFileName[0] == '|')
     {
-      pfile =
+      *ppFile =
 	pSession->OpenFile(lpszFileName + 1,
 			   FileMode::Command,
 			   FileAccess::Read,
@@ -309,7 +307,7 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
 	    {
 	      CommandLineBuilder cmd ("zcat");
 	      cmd.AppendArgument (fqNameOfFile);
-	      pfile =
+	      *ppFile =
 		pSession->OpenFile(cmd.Get(),
 				   FileMode::Command,
 				   FileAccess::Read,
@@ -319,7 +317,7 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
 	    {
 	      CommandLineBuilder cmd ("bzcat");
 	      cmd.AppendArgument (fqNameOfFile);
-	      pfile =
+	      *ppFile =
 		pSession->OpenFile(cmd.Get(),
 				   FileMode::Command,
 				   FileAccess::Read,
@@ -332,7 +330,7 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
 #else
 	      FileShare share = FileShare::ReadWrite;
 #endif
-	      pfile =
+	      *ppFile =
 		pSession->OpenFile(fqNameOfFile.Get(),
 				   FileMode::Open,
 				   FileAccess::Read,
@@ -353,12 +351,33 @@ WebAppInputLine::OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
 	}
     }
 
-  if (pfile == 0)
+  if (*ppFile == 0)
     {
       return (false);
     }
 
-  f.Attach (pfile, true);
+  lastInputFileName = lpszFileName;
+  
+  return (true);
+}
+
+/* _________________________________________________________________________
+   
+   WebAppInputLine::OpenInputFile
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(bool)
+WebAppInputLine::OpenInputFile (/*[out]*/ C4P::FileRoot &	f,
+				/*[in]*/ const char *		lpszFileName)
+{
+  FILE * pFile = 0;
+
+  if (!OpenInputFile(&pFile, lpszFileName))
+    {
+      return (false);
+    }
+
+  f.Attach (pFile, true);
 
 #ifdef PASCAL_TEXT_IO
   not_implemented ();

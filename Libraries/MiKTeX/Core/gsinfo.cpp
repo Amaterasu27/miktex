@@ -77,7 +77,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
 #  error Unimplemented:	SessionImpl::GetGhostscript()	  
 #endif
       int exitCode;
-      AutoBuffer<char> gsout (4096);
+      CharBuffer<char> gsout (4096);
       size_t n = static_cast<unsigned>(gsout.GetSize());
       if (! Process::Run(pathGsExe.Get(),
 			 T_("--version"),

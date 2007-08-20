@@ -35,8 +35,10 @@ authorization from SIL International.
 #include "XeTeX_ext.h"
 #include "XeTeXFontMgr.h"
 
+#if ! defined(MIKTEX)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 typedef struct XeTeXFont_rec* XeTeXFont;
@@ -136,6 +138,8 @@ const char* getGlyphName(XeTeXFont font, UInt16 gid, int* len);
 
 int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 
+#if ! defined(MIKTEX)
 #ifdef __cplusplus
 };
+#endif
 #endif

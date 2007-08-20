@@ -28,6 +28,10 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
+#if defined(MIKTEX)
+#include "xetex-miktex.h"
+#endif
+
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
 #include "XeTeXFontInst.h"
@@ -38,11 +42,13 @@ authorization from SIL International.
 
 typedef void*	voidptr;
 
+#if ! defined(MIKTEX)
 extern "C" {
 	extern voidptr*	fontlayoutengine;
 	extern integer*	fontarea;
 	extern integer*	fontsize;
 }
+#endif
 
 #include "LESwaps.h"
 

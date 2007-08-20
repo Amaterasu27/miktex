@@ -234,12 +234,17 @@ protected:
 public:
 
 #if defined(THEDATA)
-  const char *
+  MiKTeX::Core::PathName
   GetNameOfFile ()
     const
   {
-    char * lpszNameOfFile = THEDATA(nameoffile);
-    return (lpszNameOfFile);
+#if defined(MIKTEX_XETEX)
+    MIKTEX_ASSERT (sizeof(THEDATA(nameoffile)[0]) == sizeof(char));
+    const char * lpsz = reinterpret_cast<const char *>(THEDATA(nameoffile));
+    return (MiKTeX::Core::Utils::UTF8ToWideChar(lpsz));
+#else
+    return (THEDATA(nameoffile));
+#endif
   }
 #endif
 
@@ -263,7 +268,7 @@ private:
 
 public:
 
-#ifdef THEDATA
+#if defined(THEDATA) && ! defined(MIKTEX_XETEX)
   bool
   InputLine (/*[in]*/ C4P::C4P_text &	f,
 	     /*[in]*/ C4P::C4P_boolean	bypassEndOfLine)
@@ -390,7 +395,7 @@ public:
     return (true);
   }
 
-#endif // ifdef THEDATA
+#endif // THEDATA && ! MIKTEX_XETEX
 
   /* _______________________________________________________________________
      
@@ -400,7 +405,18 @@ public:
 public:
 
   MIKTEXMFAPI(bool)
-  OpenInputFile (/*[in]*/ C4P::FileRoot &	f,
+  OpenInputFile (/*[out]*/ FILE * *		ppFile,
+		 /*[in]*/ const char *		lpszFileName);
+
+  /* _______________________________________________________________________
+     
+     OpenInputFile
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXMFAPI(bool)
+  OpenInputFile (/*[out]*/ C4P::FileRoot &	f,
 		 /*[in]*/ const char *		lpszFileName);
 
   /* _______________________________________________________________________

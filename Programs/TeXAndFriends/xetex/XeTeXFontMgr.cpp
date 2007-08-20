@@ -44,6 +44,12 @@ authorization from SIL International.
 
 #include <math.h>
 
+#if defined(MIKTEX)
+#  if ! defined(M_PI)
+#    define M_PI           3.14159265358979323846
+#  endif
+#endif
+
 XeTeXFontMgr*	XeTeXFontMgr::sFontManager = NULL;
 char XeTeXFontMgr::sReqEngine = 0;
 

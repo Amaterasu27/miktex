@@ -16,8 +16,13 @@ XeTeX_pic.c
    only needs to get image dimensions, not actually load/process the file
 */
 
+#if defined(MIKTEX)
+#define C4PEXTERN extern
+#include "xetex-miktex.h"
+#else
 #define EXTERN extern
 #include "xetexd.h"
+#endif
 
 #include "XeTeX_ext.h"
 
@@ -85,7 +90,11 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 	}
 	
 	if (check_for_png(fp)) {
+#if defined(MIKTEX)
+		struct xetex_png_info	info;
+#else
 		struct png_info	info;
+#endif
 		err = png_scan_file(&info, fp);
 		if (err == 0) {
 			bounds->wd = (info.width * 72.27) / info.xdpi;

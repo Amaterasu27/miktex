@@ -35,8 +35,10 @@ authorization from SIL International.
 
 #include "LEFontInstance.h"
 
+#if ! defined(MIKTEX)
 /* public "C" APIs for calling from Web(-to-C) code */
 extern "C" {
+#endif
 	int getnativemathsyparam(int f, int n);
 	int getnativemathexparam(int f, int n);
 	int getotmathconstant(int f, int n);
@@ -50,7 +52,9 @@ extern "C" {
 	int otpartendconnector(int f, const GlyphAssembly* a, int i);
 	int otpartfulladvance(int f, const GlyphAssembly* a, int i);
 	int otminconnectoroverlap(int f);
+#if ! defined(MIKTEX)
 };
+#endif
 
 
 /* internal functions */
