@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2006, International Business Machines
+*   Copyright (C) 1996-2005, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -54,13 +54,6 @@
 #include "unicode/uobslete.h"
 #endif
 
-#ifdef U_HIDE_INTERNAL_API
-#include "unicode/uintrnal.h"
-#endif
-
-#ifdef U_HIDE_SYSTEM_API
-#include "unicode/usystem.h"
-#endif
 
 /*!
  * \file
@@ -197,14 +190,11 @@
  * @stable ICU 2.4
  */
 #define U_ICUDATA_ENTRY_POINT  U_DEF2_ICUDATA_ENTRY_POINT(U_ICU_VERSION_MAJOR_NUM, U_ICU_VERSION_MINOR_NUM)
-
 /**
- * Do not use.
  * @internal
  */
 #define U_DEF2_ICUDATA_ENTRY_POINT(major, minor) U_DEF_ICUDATA_ENTRY_POINT(major, minor)
 /**
- * Do not use.
  * @internal
  */
 #define U_DEF_ICUDATA_ENTRY_POINT(major, minor) icudt##major##minor##_dat
@@ -332,7 +322,7 @@ typedef void* UClassID;
  * \def U_DATA_API
  * Set to export library symbols from inside the stubdata library,
  * and to import them from outside.
- * @stable ICU 3.0
+ * @draft ICU 3.0
  */
 
 /**
@@ -486,11 +476,10 @@ typedef void* UClassID;
  *
  * Note: This is currently only done on Windows because
  * some Linux/Unix compilers have problems with defining global new/delete.
- * On Windows, WIN32 is defined, and it is _MSC_VER>=1200 for MSVC 6.0 and higher.
+ * On Windows, WIN32 is defined, and it is _MSC_Ver>=1200 for MSVC 6.0 and higher.
  */
-#if defined(XP_CPLUSPLUS) && defined(U_WINDOWS) && (_MSC_VER>=1200) && U_DEBUG && (defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_LAYOUT_IMPLEMENTATION) || defined(U_USTDIO_IMPLEMENTATION))
+#if defined(XP_CPLUSPLUS) && defined(U_WINDOWS) && (_MSC_Ver>=1200) && (defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_LAYOUT_IMPLEMENTATION) || defined(U_USTDIO_IMPLEMENTATION))
 
-#ifndef U_HIDE_INTERNAL_API
 /**
  * Global operator new, defined only inside ICU4C, must not be used.
  * Crashes intentionally.
@@ -537,7 +526,6 @@ operator delete[](void * /*p*/) {
     *q=5; /* break it */
 }
 
-#endif /* U_HIDE_INTERNAL_API */
 #endif
 
 /*===========================================================================*/
@@ -598,7 +586,7 @@ typedef enum UErrorCode {
     U_PARSE_ERROR             =  9,     /**< Equivalent to Java ParseException */
     U_INVALID_CHAR_FOUND      = 10,     /**< Character conversion: Unmappable input sequence. In other APIs: Invalid character. */
     U_TRUNCATED_CHAR_FOUND    = 11,     /**< Character conversion: Incomplete input sequence. */
-    U_ILLEGAL_CHAR_FOUND      = 12,     /**< Character conversion: Illegal input sequence/combination of input units. */
+    U_ILLEGAL_CHAR_FOUND      = 12,     /**< Character conversion: Illegal input sequence/combination of input units.. */
     U_INVALID_TABLE_FORMAT    = 13,     /**< Conversion table file found, but corrupted */
     U_INVALID_TABLE_FILE      = 14,     /**< Conversion table file not found */
     U_BUFFER_OVERFLOW_ERROR   = 15,     /**< A result would not fit in the supplied buffer */
@@ -683,8 +671,8 @@ typedef enum UErrorCode {
     /*
      * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
      */
-    U_BRK_INTERNAL_ERROR=0x10200,          /**< An internal error (bug) was detected.             */
     U_BRK_ERROR_START=0x10200,             /**< Start of codes indicating Break Iterator failures */
+    U_BRK_INTERNAL_ERROR,                  /**< An internal error (bug) was detected.             */
     U_BRK_HEX_DIGITS_EXPECTED,             /**< Hex digits expected as part of a escaped char in a rule. */
     U_BRK_SEMICOLON_EXPECTED,              /**< Missing ';' at the end of a RBBI rule.            */
     U_BRK_RULE_SYNTAX,                     /**< Syntax error in RBBI rule.                        */
@@ -703,8 +691,8 @@ typedef enum UErrorCode {
     /*
      * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errrs
      */
-    U_REGEX_INTERNAL_ERROR=0x10300,       /**< An internal error (bug) was detected.              */
     U_REGEX_ERROR_START=0x10300,          /**< Start of codes indicating Regexp failures          */
+    U_REGEX_INTERNAL_ERROR,               /**< An internal error (bug) was detected.              */
     U_REGEX_RULE_SYNTAX,                  /**< Syntax error in regexp pattern.                    */
     U_REGEX_INVALID_STATE,                /**< RegexMatcher in invalid state for requested operation */
     U_REGEX_BAD_ESCAPE_SEQUENCE,          /**< Unrecognized backslash escape sequence in pattern  */
@@ -723,15 +711,14 @@ typedef enum UErrorCode {
     /*
      * The error code in the range 0x10400-0x104ff are reserved for IDNA related error codes
      */
-    U_IDNA_PROHIBITED_ERROR=0x10400,
     U_IDNA_ERROR_START=0x10400,
+    U_IDNA_PROHIBITED_ERROR,
     U_IDNA_UNASSIGNED_ERROR,
     U_IDNA_CHECK_BIDI_ERROR,
     U_IDNA_STD3_ASCII_RULES_ERROR,
     U_IDNA_ACE_PREFIX_ERROR,
     U_IDNA_VERIFICATION_ERROR,
     U_IDNA_LABEL_TOO_LONG_ERROR,
-    U_IDNA_ZERO_LENGTH_LABEL_ERROR,
     U_IDNA_ERROR_LIMIT,
     /*
      * Aliases for StringPrep
