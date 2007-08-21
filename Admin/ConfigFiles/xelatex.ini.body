@@ -1,0 +1,13 @@
+[ft.tex]
+
+extensions=
+extensions;=.tex
+extensions;=.src
+extensions;=.ltx
+
+path=.
+path;=%R/tex/xetex/xelatex//
+path;=%R/tex/xetex/generic//
+path;=%R/tex/latex//
+path;=%R/tex/generic//
+path;=%R/tex//

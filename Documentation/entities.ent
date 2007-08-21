@@ -121,6 +121,7 @@
 <!ENTITY mtprint "<command>mtprint</command>">
 <!ENTITY networkfolder "\\server\miktex">
 <!ENTITY omega "<command>omega</command>">
+<!ENTITY LuaTeX "<application>LuaTeX</application>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
 <!ENTITY XeTeX "<application>XeTeX</application>">
 <!ENTITY encTeX "<application>encTeX</application>">

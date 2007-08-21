@@ -310,20 +310,16 @@ tt_read_VORG_table (sfnt *sfont)
  */
 
 struct tt_longMetrics *
-tt_read_longMetrics (sfnt *sfont, USHORT numGlyphs, USHORT numLongMetrics, ULONG tableSize)
+tt_read_longMetrics (sfnt *sfont, USHORT numGlyphs, USHORT numLongMetrics)
 {
   struct tt_longMetrics *m;
   USHORT gid, last_adv = 0;
-  SHORT last_sb;
-  USHORT numSideBearings = (tableSize - numLongMetrics * 4) / 2;
 
   m = NEW(numGlyphs, struct tt_longMetrics);
   for (gid = 0; gid < numGlyphs; gid++) {
     if (gid < numLongMetrics)
       last_adv = sfnt_get_ushort(sfont);
-    if (gid < numLongMetrics + numSideBearings)
-      last_sb = sfnt_get_short(sfont);
-    m[gid].sideBearing = last_sb;
+    m[gid].sideBearing = sfnt_get_short(sfont);
     m[gid].advance     = last_adv;
   }
 
@@ -374,30 +370,21 @@ tt_read_os2__table (sfnt *sfont)
   table->fsSelection      = sfnt_get_ushort(sfont);
   table->usFirstCharIndex = sfnt_get_ushort(sfont);
   table->usLastCharIndex  = sfnt_get_ushort(sfont);
-  if (sfnt_find_table_len(sfont, "OS/2") >= 78) {
-    /* these fields are not present in the original Apple spec (68-byte table),
-       but Microsoft's version of "format 0" does include them... grr! */
-    table->sTypoAscender    = sfnt_get_short(sfont);
-    table->sTypoDescender   = sfnt_get_short(sfont);
-    table->sTypoLineGap     = sfnt_get_short(sfont);
-    table->usWinAscent      = sfnt_get_ushort(sfont);
-    table->usWinDescent     = sfnt_get_ushort(sfont);
-    if (table->version > 0) {
-      /* format 1 adds the following 2 fields */
-      table->ulCodePageRange1 = sfnt_get_ulong(sfont);
-      table->ulCodePageRange2 = sfnt_get_ulong(sfont);
-      if (table->version > 1) {
-        /* and formats 2 and 3 (current) include 5 more.... these share the
-           same fields, only the precise definition of some was changed */
-        table->sxHeight      = sfnt_get_short(sfont);
-        table->sCapHeight    = sfnt_get_short(sfont);
-        table->usDefaultChar = sfnt_get_ushort(sfont);
-        table->usBreakChar   = sfnt_get_ushort(sfont);
-        table->usMaxContext  = sfnt_get_ushort(sfont);
-      }
-    }
+  table->sTypoAscender    = sfnt_get_short(sfont);
+  table->sTypoDescender   = sfnt_get_short(sfont);
+  table->sTypoLineGap     = sfnt_get_short(sfont);
+  table->usWinAscent      = sfnt_get_ushort(sfont);
+  table->usWinDescent     = sfnt_get_ushort(sfont);
+  table->ulCodePageRange1 = sfnt_get_ulong(sfont);
+  table->ulCodePageRange2 = sfnt_get_ulong(sfont);
+  if (table->version == 0x0002) {
+    table->sxHeight      = sfnt_get_short(sfont);
+    table->sCapHeight    = sfnt_get_short(sfont);
+    table->usDefaultChar = sfnt_get_ushort(sfont);
+    table->usBreakChar   = sfnt_get_ushort(sfont);
+    table->usMaxContext  = sfnt_get_ushort(sfont);
   }
-  
+
   return table;
 }
 

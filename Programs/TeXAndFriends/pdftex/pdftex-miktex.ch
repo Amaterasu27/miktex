@@ -397,30 +397,6 @@ pdf_init_map_file('psfonts.map');
 
 % _____________________________________________________________________________
 %
-% [61.1634]
-% _____________________________________________________________________________
-
-@x
-@!init if (buffer[loc]="*")and(format_ident=" (INITEX)") then
-@y
-@!Init if (miktex_etex_p or (buffer[loc]="*"))and(format_ident=" (INITEX)") then
-@z
-
-@x
-  incr(loc); eTeX_mode:=1; {enter extended mode}
-@y
-  if (buffer[loc]="*") then incr(loc);
-  eTeX_mode:=1; {enter extended mode}
-@z
-
-@x
-tini@;@/
-@y
-Tini@;@/
-@z
-
-% _____________________________________________________________________________
-%
 % [63.1861]
 % _____________________________________________________________________________
 

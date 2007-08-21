@@ -154,18 +154,18 @@ typedef struct {
 #define node_width(node)			node[width_offset].c4p_P2.c4p_int
 #define node_depth(node)			node[depth_offset].c4p_P2.c4p_int
 #define node_height(node)			node[height_offset].c4p_P2.c4p_int
-#define native_length(node)			node[native_info_offset].c4p_P2.hh.rh
-#define native_font(node)			node[native_info_offset].c4p_P2.hh.c4p_P1.c4p_P0.b1
-#define native_glyph_count(node)	node[native_glyph_info_offset].c4p_P2.hh.c4p_P1.lh
-#define native_glyph_info_ptr(node)	node[native_glyph_info_offset].c4p_P2.hh.rh
+#define native_length(node)			node[native_info_offset].c4p_P2.qqqq.b2
+#define native_font(node)			node[native_info_offset].c4p_P2.qqqq.b1
+#define native_glyph_count(node)	node[native_glyph_info_offset].c4p_P2.qqqq.b3
+#define native_glyph_info_ptr(node)	node[native_glyph_info_offset].c4p_P2.ptr
 #else
 #define node_width(node)			node[width_offset].cint
 #define node_depth(node)			node[depth_offset].cint
 #define node_height(node)			node[height_offset].cint
-#define native_length(node)			node[native_info_offset].hh.v.RH
-#define native_font(node)			node[native_info_offset].hh.b1
-#define native_glyph_count(node)	node[native_glyph_info_offset].hh.v.LH
-#define native_glyph_info_ptr(node)	node[native_glyph_info_offset].hh.v.RH
+#define native_length(node)			node[native_info_offset].qqqq.b2
+#define native_font(node)			node[native_info_offset].qqqq.b1
+#define native_glyph_count(node)	node[native_info_offset].qqqq.b3
+#define native_glyph_info_ptr(node)	node[native_glyph_info_offset].ptr
 #endif
 #define native_glyph_info_size		10	/* info for each glyph is location (FixedPoint) + glyph ID (UInt16) */
 
@@ -228,6 +228,8 @@ extern const UInt32 kSurrogateLowEnd;
 extern const UInt32 byteMask;
 extern const UInt32 byteMark;
 
+#include <stdio.h> /* for FILE */
+
 #include "trans.h"
 
 #if ! defined(MIKTEX)
@@ -237,51 +239,62 @@ extern "C" {
 #endif
 	void initversionstring(char **versions);
 
-	void setinputfileencoding(unicodefile f, int mode, int encodingData);
+	void setinputfileencoding(unicodefile f, integer mode, integer encodingData);
 	void uclose(unicodefile f);
 	int input_line_icu(unicodefile f);
-	void linebreakstart(int localeStrNum, const UniChar* text, int textLength);
+	void linebreakstart(integer localeStrNum, const UniChar* text, integer textLength);
 	int linebreaknext();
-	long getencodingmodeandinfo(long* info);
+	int getencodingmodeandinfo(integer* info);
 	void printutf8str(const unsigned char* str, int len);
 	void printchars(const unsigned short* str, int len);
 	void* load_mapping_file(const char* s, const char* e);
-	void* findnativefont(unsigned char* name, long scaled_size);
+	void* findnativefont(unsigned char* name, integer scaled_size);
 	void releasefontengine(void* engine, int type_flag);
 
-	/* 'integer' params here are really TeX 'scaled' values, but that typedef isn't available every place this is included */
+	/* the metrics params here are really TeX 'scaled' values, but that typedef isn't available every place this is included */
 	void otgetfontmetrics(void* engine, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
-	void getnativecharheightdepth(int font, int ch, integer* height, integer* depth);
-	void getnativecharsidebearings(int font, int ch, integer* lsb, integer* rsb);
+	void getnativecharheightdepth(integer font, integer ch, integer* height, integer* depth);
+	void getnativecharsidebearings(integer font, integer ch, integer* lsb, integer* rsb);
 
 	/* single-purpose metrics accessors */
-	integer getnativecharwd(int font, int ch);
-	integer getnativecharht(int font, int ch);
-	integer getnativechardp(int font, int ch);
-	integer getnativecharic(int font, int ch);
+	integer getnativecharwd(integer font, integer ch);
+	integer getnativecharht(integer font, integer ch);
+	integer getnativechardp(integer font, integer ch);
+	integer getnativecharic(integer font, integer ch);
 
-	long otfontget(int what, void* engine);
-	long otfontget1(int what, void* engine, long param);
-	long otfontget2(int what, void* engine, long param1, long param2);
-	long otfontget3(int what, void* engine, long param1, long param2, long param3);
+	integer otfontget(integer what, void* engine);
+	integer otfontget1(integer what, void* engine, integer param);
+	integer otfontget2(integer what, void* engine, integer param1, integer param2);
+	integer otfontget3(integer what, void* engine, integer param1, integer param2, integer param3);
 	int makeXDVGlyphArrayData(void* p);
-	long makefontdef(long f);
+	int makefontdef(integer f);
 	int applymapping(void* cnv, const UniChar* txtPtr, int txtLen);
 	void store_justified_native_glyphs(void* node);
 	void measure_native_node(void* node, int use_glyph_metrics);
 	Fixed get_native_ital_corr(void* node);
 	Fixed get_native_glyph_ital_corr(void* node);
 	void measure_native_glyph(void* node, int use_glyph_metrics);
-	int mapchartoglyph(int font, unsigned int ch);
-	int mapglyphtoindex(int font);
+	integer mapchartoglyph(integer font, integer ch);
+	integer mapglyphtoindex(integer font);
+	integer getfontcharrange(integer font, int first);
+	void printglyphname(integer font, integer gid);
 
+  	double read_double(const char** s);
+  	unsigned int read_rgb_a(const char** cp);
+  
 	const char* getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len);
 
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
+	int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
+	int open_dvi_output(FILE** fptr);
+	void dviclose(FILE* fptr);
+	int get_uni_c(UFILE* f);
+	int input_line(UFILE* f);
+	void makeutf16name();
 
 #ifdef XETEX_MAC
 /* functions in XeTeX_mac.c */
-	void* loadAATfont(ATSFontRef fontRef, long scaled_size, const char* cp1);
+	void* loadAATfont(ATSFontRef fontRef, integer scaled_size, const char* cp1);
 	void DoAtsuiLayout(void* node, int justify);
 	void GetGlyphBBox_AAT(ATSUStyle style, UInt16 gid, GlyphBBox* bbox);
 	float GetGlyphWidth_AAT(ATSUStyle style, UInt16 gid);
@@ -296,22 +309,19 @@ extern "C" {
 #if defined(MIKTEX)
   typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 
-  boolean u_open_in(unicodefile * f, int mode, int encodingData);
+  boolean u_open_in(unicodefile * f, integer mode, integer encodingData);
 
   void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
-  long atsufontget(int what, ATSUStyle style);
-  long atsufontget1(int what, ATSUStyle style, int param);
-  long atsufontget2(int what, ATSUStyle style, int param1, int param2);
-  long atsufontgetnamed(int what, ATSUStyle style);
-  long atsufontgetnamed1(int what, ATSUStyle style, int param);
+  int atsufontget(int what, ATSUStyle style);
+  int atsufontget1(int what, ATSUStyle style, int param);
+  int atsufontget2(int what, ATSUStyle style, int param1, int param2);
+  int atsufontgetnamed(int what, ATSUStyle style);
+  int atsufontgetnamed1(int what, ATSUStyle style, int param);
   void printglyphname(int font, int gid);
   void makeutf16name();
   int getfontcharrange(int font, int first);
   void printutf8str(const unsigned char* str, int len);
   void atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant);
-
-  boolean
-  input_line(UFILE* f);
 
   UInt16
   get_native_glyph_id(void* pNode, unsigned index);

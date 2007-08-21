@@ -66,7 +66,6 @@ public:
     OPT_PAPERSIZE,
   };
 
-
 public:
   virtual
   void
@@ -151,9 +150,7 @@ public:
   Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   {
     ETeXApp::Init (lpszProgramInvocationName);
-#if defined(IMPLEMENT_TCX)
     EnableFeature (MiKTeX::TeXAndFriends::Feature::EightBitChars);
-#endif
   }
 
 public:
@@ -232,58 +229,60 @@ extern XETEXCLASS XETEXAPP;
 #endif
 
 // special case: Web2C likes to add 1 to the nameoffile base address
-#define nameoffile (&XETEXDATA.m_nameoffile[-1])
+inline
+utf8code *
+GetNameOfFileForWeb2C ()
+{
+  return ((&XETEXDATA.m_nameoffile[-1]));
+}
 
+#define nameoffile (GetNameOfFileForWeb2C())
+
+MAKE_GLOBAL(C4P_boolean, nopdfoutput);
+MAKE_GLOBAL(C4P_integer*, depthbase);
+MAKE_GLOBAL(C4P_integer*, heightbase);
+MAKE_GLOBAL(C4P_integer*, parambase);
 MAKE_GLOBAL(C4P_integer, bufsize);
+MAKE_GLOBAL(C4P_integer, nativefonttypeflag);
+MAKE_GLOBAL(C4P_signed16, namelength);
+MAKE_GLOBAL(C4P_signed16, namelength16);
 MAKE_GLOBAL(C4P_signed32, first);
 MAKE_GLOBAL(C4P_signed32, last);
 MAKE_GLOBAL(C4P_signed32, maxbufstack);
-MAKE_GLOBAL(utf16code*, buffer);
-MAKE_GLOBAL(voidpointer, loadedfontmapping);
-MAKE_GLOBAL(char, loadedfontflags);
-MAKE_GLOBAL(scaled, loadedfontletterspace);
-MAKE_GLOBAL(C4P_integer, nativefonttypeflag);
-MAKE_GLOBAL(C4P_signed16, namelength);
-MAKE_GLOBAL(char*, xdvbuffer);
-MAKE_GLOBAL(strnumber*, fontarea);
-MAKE_GLOBAL(voidpointer*, fontlayoutengine);
 MAKE_GLOBAL(char*, fontflags);
-MAKE_GLOBAL(utf16code*, mappedtext);
+MAKE_GLOBAL(char*, xdvbuffer);
+MAKE_GLOBAL(char, loadedfontflags);
 MAKE_GLOBAL(memoryword*, fontinfo);
-MAKE_GLOBAL(C4P_integer*, parambase);
 MAKE_GLOBAL(scaled*, fontletterspace);
-MAKE_GLOBAL(C4P_integer*, heightbase);
-MAKE_GLOBAL(C4P_integer*, depthbase);
-MAKE_GLOBAL(C4P_signed16, namelength16);
-MAKE_GLOBAL(utf16code*, nameoffile16);
-MAKE_GLOBAL(C4P_boolean, nopdfoutput);
 MAKE_GLOBAL(scaled*, fontsize);
-#if 0
-MAKE_GLOBAL(, );
-MAKE_GLOBAL(, );
-MAKE_GLOBAL(, );
-#endif
+MAKE_GLOBAL(scaled, loadedfontletterspace);
+MAKE_GLOBAL(strnumber*, fontarea);
+MAKE_GLOBAL(utf16code*, buffer);
+MAKE_GLOBAL(utf16code*, mappedtext);
+MAKE_GLOBAL(utf16code*, nameoffile16);
+MAKE_GLOBAL(voidpointer*, fontlayoutengine);
+MAKE_GLOBAL(voidpointer, loadedfontmapping);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)
-#define nullpointer() ((void*)0)
-#define isnullpointer(p) ((p) == 0)
-#define x2fix X2Fix
-#define ycoord yCoord
-#define xcoord xCoord
+#define isnullptr(p) ((p) == 0)
+#define stringcast(x) ((char*)(x))
+
+#define afield aField
 #define bfield bField
 #define cfield cField
-#define afield aField
 #define dfield dField
-#define stringcast(x) ((char*)x)
-#define setpoint setPoint
-#define xfield xField
-#define yfield yField
+#define fix2x Fix2X
 #define htfield htField
+#define setpoint setPoint
 #define txfield txField
 #define tyfield tyField
 #define wdfield wdField
-#define fix2x Fix2X
+#define x2fix X2Fix
+#define xcoord xCoord
+#define xfield xField
+#define ycoord yCoord
+#define yfield yField
 
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
@@ -342,9 +341,10 @@ inline
 void
 miktexgetpoolfilename (/*[out]*/ utf8code * lpszPath)
 {
-  strcpy_s (reinterpret_cast<char*>(lpszPath),
-	    MiKTeX::Core::BufferSizes::MaxPath,
-	    THEAPP.GetPoolFileName());
+  // FIXME: we assume that the pool file name contains characters in
+  // the range 32..127
+  MiKTeX::TeXAndFriends::miktexgetpoolfilename
+    (reinterpret_cast<char*>(lpszPath));
 }
 
 /* _________________________________________________________________________
@@ -358,14 +358,14 @@ miktexopentfmfile (/*[out]*/ bytefile &		f,
 		   /*[in]*/ const utf8code *	lpszFileName_)
 {
   const char * lpszFileName = reinterpret_cast<const char *>(lpszFileName_);
-  MiKTeX::Core::PathName
-    fileName (MiKTeX::Core::Utils::UTF8ToWideChar(lpszFileName));
+  MiKTeX::Core::PathName fileName
+    (MiKTeX::Core::Utils::UTF8ToWideChar(lpszFileName));
   return (MiKTeX::TeXAndFriends::OpenTFMFile(&f, fileName.Get()));
 }
 
 /* _________________________________________________________________________
 
-   
+   xmallocchararray
    _________________________________________________________________________ */
 
 inline
@@ -377,7 +377,7 @@ xmallocchararray (/*[in]*/ size_t size)
 
 /* _________________________________________________________________________
 
-   
+   libcfree
    _________________________________________________________________________ */
 
 inline
@@ -389,7 +389,7 @@ libcfree (/*[in]*/ void * ptr)
 
 /* _________________________________________________________________________
 
-   
+   uopenin
    _________________________________________________________________________ */
 
 inline
@@ -403,80 +403,80 @@ uopenin (/*[in,out]*/ unicodefile &	f,
 
 /* _________________________________________________________________________
 
-   
+   otpartcount
    _________________________________________________________________________ */
 
 inline
 int
-otpartcount(const voidpointer a)
+otpartcount (const voidpointer a)
 {
-  return (otpartcount((const GlyphAssembly *)a));
+  return (otpartcount((const GlyphAssembly*) a));
 }
 
 /* _________________________________________________________________________
 
-   
+   printutf8str
    _________________________________________________________________________ */
 
 inline
 void
 printutf8str (const voidpointer str, int len)
 {
-  printutf8str((const unsigned char *) str, len);
+  printutf8str((const unsigned char*) str, len);
 }
 
 
 /* _________________________________________________________________________
 
-   
+   otpartisextender
    _________________________________________________________________________ */
 
 inline
 int
-otpartisextender(const voidpointer a, int i)
+otpartisextender (const voidpointer a, int i)
 {
   return (otpartisextender((const GlyphAssembly*) a, i));
 }
 
 /* _________________________________________________________________________
 
-   
+   otpartstartconnector
    _________________________________________________________________________ */
 
 inline
 int
-otpartstartconnector(int f, const voidpointer a, int i)
+otpartstartconnector (int f, const voidpointer a, int i)
 {
   return (otpartstartconnector(f, (const GlyphAssembly*) a, i));
 }
 
 /* _________________________________________________________________________
 
-   
+   otpartfulladvance
    _________________________________________________________________________ */
 
 inline
 int
-otpartfulladvance(int f, const voidpointer a, int i)
+otpartfulladvance (int f, const voidpointer a, int i)
 {
   return (otpartfulladvance(f, (const GlyphAssembly*) a, i));
 }
 
 /* _________________________________________________________________________
 
-   
+   otpartendconnector
    _________________________________________________________________________ */
 
 inline
 int
-otpartendconnector(int f, const voidpointer a, int i)
+otpartendconnector (int f, const voidpointer a, int i)
 {
   return (otpartendconnector(f, (const GlyphAssembly*) a, i));
 }
 
 /* _________________________________________________________________________
 
-   
+   otpartglyph
    _________________________________________________________________________ */
 
 inline
@@ -486,24 +486,9 @@ otpartglyph(const voidpointer a, int i)
   return (otpartglyph((GlyphAssembly*) a, i));
 }
 
-
-
 /* _________________________________________________________________________
 
-   
-   _________________________________________________________________________ */
-
-inline
-C4P_integer
-getencodingmodeandinfo(C4P_integer * info)
-{
-  MIKTEX_ASSERT (sizeof(long) == sizeof(C4P_integer));
-  return ((C4P_integer)getencodingmodeandinfo((long*) info));
-}
-
-/* _________________________________________________________________________
-
-   
+   c4p_break
    _________________________________________________________________________ */
 
 inline
@@ -519,7 +504,7 @@ c4p_break (/*[in]*/ unicodefile & f)
 
 /* _________________________________________________________________________
 
-   
+   inputln
    _________________________________________________________________________ */
 
 inline
@@ -527,36 +512,6 @@ bool
 inputln (/*[in]*/ unicodefile &		f,
 	 /*[in]*/ C4P::C4P_boolean	bypassEndOfLine = true)
 {
+  bypassEndOfLine;
   return (input_line(f));
 }
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-
-/* _________________________________________________________________________
-
-   
-   _________________________________________________________________________ */
-

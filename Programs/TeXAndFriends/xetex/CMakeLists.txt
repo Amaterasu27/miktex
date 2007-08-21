@@ -22,31 +22,31 @@ default_char_type_is_unsigned()
 set(C4P_FLAGS
   --auto-exit=10
   --chars-are-unsigned
-  --declare-c-type=unicodefile
-  --declare-c-type=voidpointer
+  --declare-c-type=realpoint
   --declare-c-type=realrect
   --declare-c-type=transform
-  --declare-c-type=realpoint
+  --declare-c-type=unicodefile
+  --declare-c-type=voidpointer
 )
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include/layout
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include/layout
 )
 
 add_definitions(
-  -DXeTeX
+  -DHAVE_C4P_PRE_H
+  -DLE_USE_CMEMORY
+  -DMIKTEX_XETEX
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
   -DXETEXDATA=g_XETEXData
-  -DMIKTEX_XETEX
   -DXETEX_OTHER
-  -DHAVE_C4P_PRE_H
-  -DLE_USE_CMEMORY
+  -DXeTeX
 )
 
 #add_custom_command(

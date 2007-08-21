@@ -203,7 +203,7 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
 	pSession->FindTfmFile(lpszFileName, result, mustExist ? true : false);
       break;
     case kpse_miscfonts_format:
-      found = pSession->FindFile(lpszFileName, T_("%R/fonts//"), result);
+      found = pSession->FindFile(lpszFileName, T_("%R/fonts/misc//"), result);
       break;
     case kpse_afm_format:
       found = pSession->FindFile(lpszFileName, FileType::AFM, result);

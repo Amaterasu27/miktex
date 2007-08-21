@@ -62,7 +62,31 @@ by subscribing to this Weblog:
 
 <title>&MiKTeX; 2.7</title>
 
+<para>Release date: December 2007</para>
+
+<bridgehead renderas="sect3">Highlights:</bridgehead>
+
+<highlights>
+<itemizedlist>
+<listitem><para>&XeTeX;</para></listitem>
+</itemizedlist>
+</highlights>
+
+</section>
+
+<section>
+
+<title>&MiKTeX; 2.8</title>
+
 <para>Release date: not fixed yet</para>
+
+<bridgehead renderas="sect3">Highlights:</bridgehead>
+
+<highlights>
+<itemizedlist>
+<listitem><para>&LuaTeX;</para></listitem>
+</itemizedlist>
+</highlights>
 
 </section>
 

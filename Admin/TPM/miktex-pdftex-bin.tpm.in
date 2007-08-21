@@ -2,8 +2,8 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	 xmlns:TPM="http://texlive.dante.de/">
   <rdf:Description about="http://www.miktex.org/packages/pdftex/">
-    <TPM:Name>pdf-e-TeX bin</TPM:Name>
-    <TPM:Title>pdf-e-TeX binaries</TPM:Title>
+    <TPM:Name>pdfTeX bin</TPM:Name>
+    <TPM:Title>pdfTeX binaries</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>

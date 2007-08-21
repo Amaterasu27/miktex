@@ -41,11 +41,11 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/mllatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mltex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/omega.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfjadetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdflatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfmex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfplatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdftexinfo.ini
   ${CMAKE_CURRENT_BINARY_DIR}/platex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/t4ht.ini
@@ -54,6 +54,8 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/texinfo.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2pk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2tfm.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xelatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/yap.ini
 )
 

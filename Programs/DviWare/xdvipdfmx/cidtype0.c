@@ -182,7 +182,7 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     vhea = tt_read_vhea_table(sfont);
   if (vhea && sfnt_find_table_pos(sfont, "vmtx") > 0) {
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, sfnt_find_table_len(sfont, "vmtx"));
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
   }
   /*
    * OpenType font must have OS/2 table.
@@ -312,7 +312,7 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
   hhea = tt_read_hhea_table(sfont);
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics, sfnt_find_table_len(sfont, "hmtx"));
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
 
   add_CIDHMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
   if (need_vmetrics)

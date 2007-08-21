@@ -237,8 +237,8 @@ versions of the program.
 @x
 @!file_name_size=40; {file names shouldn't be longer than this}
 @y
-@!file_name_size=258; {file names shouldn't be longer than this}
-@!file_name_size_plus_two=260; {two more for start and end}
+@!file_name_size=259; {file names shouldn't be longer than this}
+@!file_name_size_plus_one=260; {two more for start and end}
 @z
 
 % _____________________________________________________________________________
@@ -1437,7 +1437,7 @@ length will be set in the main program.
 TEX_format_default:='TeXformats:plain.fmt';
 @y
 @!format_default_length: integer;
-@!TEX_format_default:packed array[1..file_name_size_plus_two] of char;
+@!TEX_format_default:packed array[1..file_name_size_plus_one] of char;
 
 @ @<Set init...@>=
 miktex_get_default_dump_file_name (TEX_format_default);

@@ -25,7 +25,7 @@
 @d empty=0 {symbolic name for a null constant}
 @y
 @d empty=0 {symbolic name for a null constant}
-@d nil == null_pointer
+@d nil == null_ptr
 @z
 
 % _____________________________________________________________________________
@@ -58,6 +58,35 @@
 @x
 name_of_file := xmalloc_array (UTF8_code, name_length + 1);
 @y
+@z
+
+% _____________________________________________________________________________
+%
+% [5.58]
+% _____________________________________________________________________________
+
+@x
+term_and_log: begin wterm(xchr[s]); wlog(xchr[s]);
+@y
+term_and_log: begin wterm(chr(s)); wlog(chr(s));
+@z
+
+@x
+log_only: begin wlog(xchr[s]); incr(file_offset);
+@y
+log_only: begin wlog(chr(s)); incr(file_offset);
+@z
+
+@x
+term_only: begin wterm(xchr[s]); incr(term_offset);
+@y
+term_only: begin wterm(chr(s)); incr(term_offset);
+@z
+
+@x
+othercases write(write_file[selector],xchr[s])
+@y
+othercases write(write_file[selector],chr(s))
 @z
 
 % _____________________________________________________________________________
@@ -101,15 +130,22 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
   2: (@!b0:quarterword; @!b1:quarterword);
 @z
 
+@x
+  4: (@!qqqq:four_quarters);
+@y
+  4: (@!qqqq:four_quarters);
+  5: (@!ptr:void_pointer);
+@z
+
 % _____________________________________________________________________________
 %
 % [10.149]
 % _____________________________________________________________________________
 
 @x
-    native_glyph_info_ptr(dest) := cast_to_integer(xmalloc_array(char, glyph_count * native_glyph_info_size));
+    native_glyph_info_ptr(dest) := xmalloc_array(char, glyph_count * native_glyph_info_size);
 @y
-    native_glyph_info_ptr(dest) := cast_to_integer(xmalloc_char_array(glyph_count * native_glyph_info_size));
+    native_glyph_info_ptr(dest) := xmalloc_char_array(glyph_count * native_glyph_info_size);
 @z
 
 % _____________________________________________________________________________
@@ -255,7 +291,7 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 @x
     if ot_assembly_ptr<>nil then
 @y
-    if is_null_pointer(ot_assembly_ptr) then
+    if is_null_ptr(ot_assembly_ptr) then
 @z
 
 % _____________________________________________________________________________
@@ -266,7 +302,7 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 @x
   if ot_assembly_ptr<>nil then goto found;
 @y
-  if is_null_pointer(ot_assembly_ptr) then goto found;
+  if is_null_ptr(ot_assembly_ptr) then goto found;
 @z
 
 % _____________________________________________________________________________
@@ -403,12 +439,13 @@ font_ec:=xmalloc_array(UTF16_code, font_max);
 
 @<Declare \MiKTeX\ functions@>=
 
-function cast_to_ptr : void_pointer; forward;@t\2@>@/
 function cast_to_integer : integer; forward;@t\2@>@/
+function cast_to_ptr : void_pointer; forward;@t\2@>@/
 function cast_to_ushort : integer; forward;@t\2@>@/
+function is_null_ptr : boolean; forward;@t\2@>@/
 function linebreak_next : integer; forward;@t\2@>@/
-function null_pointer : void_pointer; forward;@t\2@>@/
-function is_null_pointer : boolean; forward;@t\2@>@/
+function miktex_etex_p: boolean; forward;@t\2@>@/
+function null_ptr : void_pointer; forward;@t\2@>@/
 function xmalloc_char_array : void_pointer; forward;@t\2@>@/
 
 @ Define Web2C compatibility functions.

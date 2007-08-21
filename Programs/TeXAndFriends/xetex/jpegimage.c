@@ -86,6 +86,8 @@
 
 #include <memory.h>
 
+#include "kpathsea/lib.h" /* for xmalloc/xrealloc prototypes */
+
 #define JPEG_DEBUG_STR "JPEG"
 #define JPEG_DEBUG     3
 
@@ -343,7 +345,11 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   count      = 0;
   found_SOFn = 0;
   while (!found_SOFn &&
+#if defined(MIKTEX)
 	 (marker = (JPEG_marker)JPEG_get_marker(fp)) >= 0) {
+#else
+	 (marker = JPEG_get_marker(fp)) >= 0) {
+#endif
     if (marker == JM_SOI  ||
 	(marker >= JM_RST0 && marker <= JM_RST7)) {
       count++;

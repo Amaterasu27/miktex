@@ -980,8 +980,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
 #ifdef XETEX
 
 static int
-pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face,
-                                  int layout_dir, int extend, int slant)
+pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face, int layout_dir)
 {
   char        *fontmap_key;
   fontmap_rec *mrec;
@@ -989,8 +988,8 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
   ASSERT(name);
   ASSERT(path || face);
 
-  fontmap_key = malloc(strlen(name) + 30);	// CHECK
-  sprintf(fontmap_key, "%s/%c/%d/%d", name, layout_dir == 0 ? 'H' : 'V', extend, slant);
+  fontmap_key = malloc(strlen(name) + 3);
+  sprintf(fontmap_key, "%s/%c", name, layout_dir == 0 ? 'H' : 'V');
 
   if (verbose)
     MESG("<NATIVE-FONTMAP:%s", fontmap_key);
@@ -1008,10 +1007,6 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
     mrec->opt.flags |= FONTMAP_OPT_VERT;
 
   fill_in_defaults(mrec, fontmap_key);
-  
-  mrec->opt.extend = extend / 65536.0;
-  mrec->opt.slant  = slant  / 65536.0;
-  
   pdf_insert_fontmap_record(mrec->map_name, mrec);
   pdf_clear_fontmap_record(mrec);
   RELEASE(mrec);
@@ -1025,7 +1020,7 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
 static FT_Library ftLib;
 
 static int
-pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, int slant)
+pdf_load_native_font_from_path(const char *ps_name, int layout_dir)
 {
   const char *p;
   char *filename = NEW(strlen(ps_name), char);
@@ -1064,8 +1059,7 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
   }
 
   if (error == 0)
-    return pdf_insert_native_fontmap_record(ps_name, filename, index, face,
-                                           layout_dir, extend, slant);
+    return pdf_insert_native_fontmap_record(ps_name, filename, index, face, layout_dir);
   else
     return error;
 }
@@ -1073,7 +1067,7 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
 int
 pdf_load_native_font (const char *ps_name,
                       const char *fam_name, const char *sty_name,
-                      int layout_dir, int extend, int slant)
+                      int layout_dir)
 {
   static int        sInitialized = 0;
   int error = -1;
@@ -1089,7 +1083,7 @@ pdf_load_native_font (const char *ps_name,
   }
   
   if (ps_name[0] == '[') {
-    error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant);
+    error = pdf_load_native_font_from_path(ps_name, layout_dir);
   }
   else {
     ATSFontRef  fontRef;
@@ -1111,8 +1105,7 @@ pdf_load_native_font (const char *ps_name,
             FT_Face face;
             ftErr = FT_New_Face_From_FSSpec(ftLib, &pathSpec, index, &face);
             if (ftErr == 0) {
-              error = pdf_insert_native_fontmap_record(ps_name, NULL, 0, face,
-                                                       layout_dir, extend, slant);
+              error = pdf_insert_native_fontmap_record(ps_name, NULL, 0, face, layout_dir);
             }
           }
         }
@@ -1143,7 +1136,7 @@ pdf_load_native_font (const char *ps_name,
   }
 
   if (ps_name[0] == '[') {
-    error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant);
+    error = pdf_load_native_font_from_path(ps_name, layout_dir);
   }
   else {
     os = FcObjectSetBuild(FC_FILE, FC_INDEX, FC_FAMILY, FC_STYLE, NULL);
@@ -1166,8 +1159,7 @@ pdf_load_native_font (const char *ps_name,
         FT_New_Face(ftLib, (char*)path, index, &face);
         name = (char *)FT_Get_Postscript_Name(face);
         if (!strcmp(name, ps_name)) {
-          error = pdf_insert_native_fontmap_record(ps_name, (char*)path, index, face,
-                                                   layout_dir, extend, slant);
+          error = pdf_insert_native_fontmap_record(ps_name, (char*)path, index, face, layout_dir);
           /* don't dispose of the FT_Face, as we'll be using it to retrieve font data */
           break;
         }

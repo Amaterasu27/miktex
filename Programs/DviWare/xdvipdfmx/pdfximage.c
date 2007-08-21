@@ -736,11 +736,6 @@ void set_distiller_template (char *s)
   return;
 }
 
-char *get_distiller_template (void)
-{
-  return _opts.cmdtmpl;
-}
-
 static int
 ps_include_page (pdf_ximage *ximage, const char *filename)
 {

@@ -47,6 +47,7 @@ public:
   enum EnumType {
     TeX,
     pdfTeX,
+    XeTeX,
     Omega,
   };
 };
@@ -105,6 +106,10 @@ private:
       {
 	engine = Engine::pdfTeX;
       }
+    else if (StringCompare(lpszEngine, T_("xetex"), true) == 0)
+      {
+	engine = Engine::XeTeX;
+      }
     else if (StringCompare(lpszEngine, T_("omega"), true) == 0)
       {
 	engine = Engine::Omega;
@@ -132,6 +137,8 @@ private:
 	return (T_("tex"));
       case Engine::pdfTeX:
 	return (T_("pdftex"));
+      case Engine::XeTeX:
+	return (T_("xetex"));
       case Engine::Omega:
 	return (T_("omega"));
       }
@@ -156,7 +163,7 @@ private:
   IsExtended ()
     const
   {
-    return (engine == Engine::pdfTeX);
+    return (engine == Engine::pdfTeX || engine == Engine::XeTeX);
   }
 
 private:

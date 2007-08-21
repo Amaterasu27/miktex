@@ -30,8 +30,6 @@
 /* spt_t */
 #include "pdfdev.h"
 
-extern double get_origin (int x);
-
 extern void  dvi_set_verbose (void);
 
 /* returns scale (dvi2pts) */

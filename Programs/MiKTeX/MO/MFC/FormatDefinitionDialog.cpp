@@ -1,6 +1,6 @@
 /* FormatDefinitionDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -36,7 +36,7 @@ FormatDefinitionDialog::FormatDefinitionDialog (/*in]*/ CWnd *	pParent,
 {
   if (lpszFormatName == 0)
     {
-      formatInfo.compiler = T_("pdfetex");
+      formatInfo.compiler = T_("pdftex");
       formatInfo.description = T_("New format");
       formatInfo.exclude = true;
       formatInfo.name = T_("newformat");

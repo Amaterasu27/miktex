@@ -106,8 +106,7 @@ void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
 #define dviopenout(f)			open_dvi_output(&(f))
 #endif
 
-#define casttoptr(x)		(void*)(x)
-#define casttointeger(x)	(long)(x)
+#define nullptr				(NULL)
 #define glyphinfobyte(p,k)	((unsigned char*)p)[k]
 #define casttoushort(x)		(unsigned short)(x)
 

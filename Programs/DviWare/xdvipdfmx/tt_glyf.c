@@ -249,7 +249,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
   g->emsize = head->unitsPerEm;
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics, sfnt_find_table_len(sfont, "hmtx"));
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
 
   os2 = tt_read_os2__table(sfont);
   if (os2) {
@@ -261,7 +261,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
     struct tt_vhea_table *vhea;
     vhea = tt_read_vhea_table(sfont);
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, sfnt_find_table_len(sfont, "vmtx"));
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
     RELEASE(vhea);
   } else {
     vmtx = NULL;
@@ -559,7 +559,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
   g->emsize = head->unitsPerEm;
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics, sfnt_find_table_len(sfont, "hmtx"));
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
 
   os2 = tt_read_os2__table(sfont);
   g->default_advh = os2->sTypoAscender - os2->sTypoDescender;
@@ -569,7 +569,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
     struct tt_vhea_table *vhea;
     vhea = tt_read_vhea_table(sfont);
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, sfnt_find_table_len(sfont, "vmtx"));
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
     RELEASE(vhea);
   } else {
     vmtx = NULL;
