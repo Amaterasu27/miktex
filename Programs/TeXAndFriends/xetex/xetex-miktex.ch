@@ -47,7 +47,7 @@
 @x
 @d t_open_in==term_in:=i@&nput
 @y
-@d t_open_in==do_nothing
+@d t_open_in==miktex_open_in
 @z
 
 % _____________________________________________________________________________

@@ -515,3 +515,25 @@ inputln (/*[in]*/ unicodefile &		f,
   bypassEndOfLine;
   return (input_line(f));
 }
+
+/* _________________________________________________________________________
+
+   miktexopenin
+   _________________________________________________________________________ */
+
+inline
+void
+miktexopenin ()
+{
+  static UFILE termin_file;
+  if (THEDATA(termin) == 0)
+    {
+      THEDATA(termin) = &termin_file;
+      THEDATA(termin)->f = stdin;
+      THEDATA(termin)->savedChar = -1;
+      THEDATA(termin)->skipNextLF = 0;
+      THEDATA(termin)->encodingMode = UTF8;
+      THEDATA(termin)->conversionData = 0;
+      THEDATA(inputfile)[0] = THEDATA(termin);
+    }
+}
