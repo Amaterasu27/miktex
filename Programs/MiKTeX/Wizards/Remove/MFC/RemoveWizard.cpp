@@ -49,6 +49,11 @@ RemoveWizard::RemoveWizard ()
   NONCLIENTMETRICS ncm;
   memset (&ncm, 0, sizeof(ncm));
   ncm.cbSize = sizeof(ncm);
+  if (WINVER >= 0x0600 && ! IsWindowsVista())
+    {
+      // work-around SDK bug
+      ncm.cbSize -= sizeof(int/*NONCLIENTMETRICS::iPaddedBorderWidth*/);
+    }
   if (! SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0))
     {
       FATAL_WINDOWS_ERROR (T_("SystemParametersInfo"), 0);
