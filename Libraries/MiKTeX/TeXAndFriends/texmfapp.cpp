@@ -303,7 +303,7 @@ Set extra_mem_bot to N."),
 		 T_("N"));
     }
 
-  if (isTeXProgram || AmI(T_("metapost")))
+  if (isTeXProgram || AmI(T_("mpost")))
     {
       AddOption (T_("extra-mem-top\0\
 Set extra_mem_top to N."),

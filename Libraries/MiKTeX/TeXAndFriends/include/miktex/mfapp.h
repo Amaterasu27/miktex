@@ -194,7 +194,7 @@ public:
     Allocate (THEDATA(deltay), THEDATA(pathsize) + 1);
     Allocate (THEDATA(ligkern), THEDATA(ligtablesize) + 1);
     Allocate (THEDATA(psi), THEDATA(pathsize));
-    if (IsInitProgram()	|| AmI(MIKTEXTEXT("metafont")))
+    if (IsInitProgram()	|| AmI(MIKTEXTEXT("mf")))
       {
 	Allocate (THEDATA(strref), THEDATA(maxstrings) + 1);
       }

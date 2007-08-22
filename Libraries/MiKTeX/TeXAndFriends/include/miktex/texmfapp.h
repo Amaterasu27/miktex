@@ -714,7 +714,7 @@ public:
     Allocate (THEDATA(paramstack), THEDATA(paramsize) + 1);
     Allocate (THEDATA(trickbuf), THEDATA(errorline) + 1);
 
-    if (IsInitProgram() || AmI(MIKTEXTEXT("metafont")))
+    if (IsInitProgram() || AmI(MIKTEXTEXT("mf")))
       {
 	Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
       }
