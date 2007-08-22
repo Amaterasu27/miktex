@@ -4,6 +4,11 @@
 
 using namespace std;
 
+#if defined(max)
+#  undef max
+#  undef min
+#endif
+
 /* _________________________________________________________________________
 
    Q79212 
@@ -167,8 +172,8 @@ RGBtoHLS (DWORD		lRGBColor,
   B = GetBValue(lRGBColor);
   
   /* calculate lightness */
-  cMax = static_cast<BYTE>(_MAX( _MAX(R,G), B));
-  cMin = static_cast<BYTE>(_MIN(  _MIN(R,G), B));
+  cMax = static_cast<BYTE>(std::max( std::max(R,G), B));
+  cMin = static_cast<BYTE>(std::min(  std::min(R,G), B));
   L = ( ((cMax+cMin)*HLSMAX) + RGBMAX )/(2*RGBMAX);
 
   if (cMax == cMin)

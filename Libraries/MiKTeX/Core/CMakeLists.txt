@@ -197,7 +197,7 @@ if(NATIVE_WINDOWS)
     )
     target_link_libraries(${core_ps_dll_name}
       oleaut32
-      rpcndr
+#      rpcndr
       rpcns4
       rpcrt4
       uuid

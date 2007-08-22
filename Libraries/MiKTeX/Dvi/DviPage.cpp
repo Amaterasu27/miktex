@@ -1,6 +1,6 @@
 /* DviPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -34,6 +34,11 @@ const int MaxHorizontalWhite = 32;
 #endif
 
 size_t DviPageImpl::totalSize = 0;
+
+#if defined(max)
+#undef max
+#undef min
+#endif
 
 /* _________________________________________________________________________
 
@@ -392,7 +397,7 @@ DviPageImpl::MakeDviBitmaps (/*[in]*/ int shrinkFactor)
 	}
       else
 	{
-	  bandBottom = _MAX(bandBottom, itemBottom);
+	  bandBottom = std::max(bandBottom, itemBottom);
 	}
 
       dviItemPointers.push_back (&*it);
@@ -478,11 +483,11 @@ DviPageImpl::ProcessBand (/*[in]*/ int			shrinkFactor,
 	}
       else
 	{
-	  x1 = _MIN(x1, item_left);
-	  x2 = _MAX(x2, item_left + item_width - 1);
-	  currentBitmap.x = _MIN(currentBitmap.x, x1);
-	  currentBitmap.y = _MIN(currentBitmap.y, itemTop);
-	  currentBitmap.width = _MAX(currentBitmap.width, x2 - x1 + 1);
+	  x1 = std::min(x1, item_left);
+	  x2 = std::max(x2, item_left + item_width - 1);
+	  currentBitmap.x = std::min(currentBitmap.x, x1);
+	  currentBitmap.y = std::min(currentBitmap.y, itemTop);
+	  currentBitmap.width = std::max(currentBitmap.width, x2 - x1 + 1);
 	  if (bitmapBottom < itemBottom)
 	    {
 	      bitmapBottom = itemBottom;

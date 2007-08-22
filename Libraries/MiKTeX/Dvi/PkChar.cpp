@@ -1,6 +1,6 @@
 /* pkchar.h:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -26,6 +26,11 @@
 #define twopwr(n) (((int) 1) << (n))
 
 const unsigned long bitsPerRasterWord = 16;
+
+#if defined(max)
+#undef max
+#undef min
+#endif
 
 /* _________________________________________________________________________
 
@@ -515,8 +520,8 @@ PkChar::CountBits (/*[in]*/ const RASTERWORD *	pRasterWord,
   while (w > 0)
     {
       unsigned long bitFieldLength =
-	_MIN(rightShift, static_cast<unsigned long>(w));
-      bitFieldLength = _MIN(bitFieldLength, maxBitFieldLength);
+	std::min(rightShift, static_cast<unsigned long>(w));
+      bitFieldLength = std::min(bitFieldLength, maxBitFieldLength);
       rightShift -= bitFieldLength;
       const RASTERWORD * pRasterWord2 = pRasterWord;
       for (int i = 0; i < h; ++ i, pRasterWord2 += rasterWordsPerLine)
@@ -661,8 +666,8 @@ PkChar::Shrink (/*[in]*/ int shrinkFactor)
 	  unsigned long n =
 	    color(CountBits(pUnpackedRaster + (rasterWordsPerLine * row),
 			    col, rasterWordsPerLine,
-			    _MIN(sampleWidth, rasterWidth - col),
-			    _MIN(sampleHeight, rasterHeight - row)),
+			    std::min(sampleWidth, rasterWidth - col),
+			    std::min(sampleHeight, rasterHeight - row)),
 		  bitsPerPixel,
 		  shrinkFactor);
 

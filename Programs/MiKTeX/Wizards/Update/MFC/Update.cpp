@@ -1,6 +1,6 @@
 /* Update.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -369,11 +369,11 @@ ULogOpen (/*[in]*/ bool append)
 {
   MIKTEX_ASSERT (append);
   pLogStream =
-    auto_ptr<StreamWriter>(File::Open(GetULogFileName(),
-				      (append
-				       ? FileMode::Append
-				       : FileMode::Create),
-				      FileAccess::Write));;
+    auto_ptr<StreamWriter>(new StreamWriter(File::Open(GetULogFileName(),
+						       (append
+							? FileMode::Append
+							: FileMode::Create),
+						       FileAccess::Write)));
   section = None;
 }
 
