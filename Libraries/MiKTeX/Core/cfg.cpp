@@ -1,6 +1,6 @@
 /* cfg.cpp: configuration files
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -791,6 +791,18 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
       if (SessionImpl::GetSession()->GetTTFDirs(ttfDirs))
 	{
 	  expansion = ttfDirs;
+	}
+      else
+	{
+	  expansion = T_("");
+	}
+    }
+  else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_OTFDIRS, true) == 0)
+    {
+      tstring otfDirs;
+      if (SessionImpl::GetSession()->GetOTFDirs(otfDirs))
+	{
+	  expansion = otfDirs;
 	}
       else
 	{

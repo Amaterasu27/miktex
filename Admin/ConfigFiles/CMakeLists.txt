@@ -54,6 +54,7 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/texinfo.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2pk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2tfm.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xdvipdfmx.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xelatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/yap.ini

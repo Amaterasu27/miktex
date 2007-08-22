@@ -3486,6 +3486,7 @@ public:
 #if defined(MIKTEX_WINDOWS)
     WindowsCommandScriptFile,
 #endif
+    OTF
   };
 };
 

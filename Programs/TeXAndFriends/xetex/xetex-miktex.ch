@@ -461,3 +461,9 @@ function xmalloc_char_array : void_pointer; forward;@t\2@>@/
 @y
 	l := native_node_size + (n * sizeof(name_of_file16[0]) + sizeof(mem[0]) - 1) div sizeof(mem[0]);
 @z
+
+@x
+	font_engine := find_native_font(name_of_file + 1, actual_size);
+@y
+	font_engine := find_native_font(name_of_file, actual_size);
+@z

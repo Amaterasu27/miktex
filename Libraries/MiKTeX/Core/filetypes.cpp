@@ -797,6 +797,29 @@ SessionImpl::RegisterFileTypes ()
 		 T_("TEXFONTS")
 		 ));
 
+  tstring otfFontDirs;
+  if (! SessionImpl::GetSession()->GetOTFDirs(otfFontDirs))
+    {
+      otfFontDirs = T_("");
+    }
+
+  RegisterFileType
+    (FileType::OTF,
+     T_("opentype fonts"),
+     0,
+     ListBuilder(
+		 T_(".otf")
+		 ),
+     ListBuilder(
+		 CURRENT_DIRECTORY,
+		 SearchSpecBuilder(MIKTEX_PATH_OPENTYPE_DIR),
+		 (otfFontDirs.empty() ? 0 : otfFontDirs.c_str())
+		 ),
+     ListBuilder(
+		 T_("OPENTYPEFONTS"),
+		 T_("TEXFONTS")
+		 ));
+
   RegisterFileType
     (FileType::TYPE1,
      T_("type1 fonts"),

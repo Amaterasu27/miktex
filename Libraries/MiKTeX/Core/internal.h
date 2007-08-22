@@ -239,6 +239,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 #define CFG_MACRO_NAME_BINDIR T_("bindir")
 #define CFG_MACRO_NAME_PSFONTDIRS T_("psfontdirs")
+#define CFG_MACRO_NAME_OTFDIRS T_("otfdirs")
 #define CFG_MACRO_NAME_TTFDIRS T_("ttfdirs")
 #define CFG_MACRO_NAME_WINDIR T_("windir")
 
@@ -1601,6 +1602,10 @@ public:
 
 public:
   bool
+  GetOTFDirs (/*[out]*/ tstring &	otfDirs);
+
+public:
+  bool
   GetTTFDirs (/*[out]*/ tstring &	ttfDirs);
 
 private:
@@ -1745,6 +1750,7 @@ private:
     enum EnumType {
       CachedPsFontDirs,
       CachedTtfDirs,
+      CachedOtfDirs,
 #if defined(MIKTEX_WINDOWS)
       CachedAcrobatFontDir,
 #endif
@@ -1767,6 +1773,9 @@ private:
 
 private:
   tstring ttfDirs;
+
+private:
+  tstring otfDirs;
 
 #if defined(MIKTEX_WINDOWS)
 private:

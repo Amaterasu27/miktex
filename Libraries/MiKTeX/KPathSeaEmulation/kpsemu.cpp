@@ -232,6 +232,9 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
     case kpse_truetype_format:
       found = pSession->FindFile(lpszFileName, FileType::TTF, result);
       break;
+    case kpse_opentype_format:
+      found = pSession->FindFile(lpszFileName, FileType::OTF, result);
+      break;
     case kpse_ovp_format:
       found = pSession->FindFile(lpszFileName, FileType::OVP, result);
       break;
@@ -289,6 +292,7 @@ IsBinary (/*[in]*/ kpse_file_format_type	format)
     case kpse_otp_format:
     case kpse_ocp_format:
     case kpse_truetype_format:
+    case kpse_opentype_format:
       bBin = true;
       break;
     }

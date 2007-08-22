@@ -620,6 +620,38 @@ SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
 
 /* _________________________________________________________________________
 
+   SessionImpl::GetOTFDirs
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::GetOTFDirs (/*[out]*/ tstring &	otfDirs)
+{
+  if (! flags.test(Flags::CachedOtfDirs))
+    {
+      flags.set (Flags::CachedOtfDirs);
+      PathName path;
+      if (GetWindowsFontsDirectory(path))
+	{
+	  if (this->otfDirs.length() > 0)
+	    {
+	      this->otfDirs += PATH_DELIMITER;
+	    }
+	  this->otfDirs = path.ToString();
+	}
+    }
+
+  if (this->otfDirs.length() == 0)
+    {
+      return (false);
+    }
+
+  otfDirs = this->otfDirs;
+
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    GetWindowsErrorMessage
    _________________________________________________________________________ */
 

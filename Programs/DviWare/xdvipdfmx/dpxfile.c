@@ -353,7 +353,7 @@ dpx_find_fontmap_file (const char *filename)
   char  *q;
 
   q = ensuresuffix(filename, ".map");
-#ifdef  MIKTEX
+#ifdef  MIKTEX_NO_KPATHSEA
   fqpn = dpx_find__app__xyz(q, ".map", 1);
 #else /* !MIKTEX */
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
@@ -379,7 +379,7 @@ dpx_find_agl_file (const char *filename)
   char  *q;
 
   q = ensuresuffix(filename, ".txt");
-#ifdef  MIKTEX
+#ifdef  MIKTEX_NO_KPATHSEA
   fqpn = dpx_find__app__xyz(q, ".txt", 1);
 #else /* !MIKTEX */
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
