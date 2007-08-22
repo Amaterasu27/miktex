@@ -1,6 +1,6 @@
 /* makebase.cpp:
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -29,6 +29,7 @@
 enum {
   OPT_AAA = 1,
   OPT_DESTNAME,
+  OPT_ENGINE_OPTION,
   OPT_NO_DUMP
 };
 
@@ -64,14 +65,25 @@ private:
 private:
   BEGIN_OPTION_MAP(MakeBase)
     OPTION_ENTRY_SET(OPT_DESTNAME, destinationName);
+    OPTION_ENTRY (OPT_ENGINE_OPTION, AppendEngineOption(lpszOptArg))
     OPTION_ENTRY_TRUE (OPT_NO_DUMP, noDumpPrimitive)
   END_OPTION_MAP();
+
+private:
+  void
+  AppendEngineOption (/*[in]*/ const MIKTEXCHAR * lpszOption)
+  {
+    engineOptions.Append (lpszOption);
+  }
 
 private:
   PathName destinationName;
 
 private:
   bool noDumpPrimitive;
+
+private:
+  Argv engineOptions;
 };
 
 /* _________________________________________________________________________
@@ -91,6 +103,7 @@ NAME is the name of the base file, such as 'mf'.\n\
 Options:\n\
 --debug, -d                         Print debugging information.\n\
 --dest-name NAME                    Destination file name.\n\
+--engine-option=OPTION              Add an engine option.\n\
 --help, -h                          Print this help screen and exit.\n\
 --no-dump                           Don't issue the dump command.\n\
 --print-only, -n                    Print what commands would be executed.\n\
@@ -110,6 +123,7 @@ namespace
   {
     COMMON_OPTIONS,
     T_("dest-name"),	required_argument,	0,	OPT_DESTNAME,
+    T_("engine-option"), required_argument,	0,	OPT_ENGINE_OPTION,
     T_("no-dump"),	no_argument,	0,		OPT_NO_DUMP,
     0,			no_argument,		0,	0,
   };
@@ -176,6 +190,7 @@ MakeBase::Run (/*[in]*/ int			argc,
   arguments.AppendOption (T_("--initialize"));
   arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
   arguments.AppendOption (T_("--halt-on-error"));
+  arguments.AppendArguments (engineOptions);
   if (! noDumpPrimitive)
     {
       arguments.AppendArgument (name + T_("; input modes; dump"));
