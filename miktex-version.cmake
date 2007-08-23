@@ -23,10 +23,10 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	7)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	2790)
+set(MIKTEX_J2000_VERSION	2791)
 
 ## the release number; only meaningful for rc/beta builds
-set(MIKTEX_RELEASE_NUM		0)
+set(MIKTEX_RELEASE_NUM		1)
 
 ## the release state; one of:
 ##   0 (general availability release)
@@ -34,7 +34,7 @@ set(MIKTEX_RELEASE_NUM		0)
 ##   2 (beta release)
 ##   3 (snapshot release)
 ##   4 (debug)
-set(MIKTEX_RELEASE_STATE 4)
+set(MIKTEX_RELEASE_STATE 2)
 
 ## sanity check
 if(MIKTEX_RELEASE_STATE EQUAL 0)
