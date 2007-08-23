@@ -5,7 +5,7 @@
     <TPM:Name>dvipdfmx bin</TPM:Name>
     <TPM:Title>Dvipdfmx binaries</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
-    <TPM:Date>Fri Dec 26 19:42:31 UTC 2003</TPM:Date>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
       This packages includes the dvipdfmx executable.
     </TPM:Description>
