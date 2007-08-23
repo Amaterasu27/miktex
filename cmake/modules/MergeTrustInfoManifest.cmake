@@ -1,6 +1,6 @@
 ## MergeTrustInfoManifest.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,6 +19,10 @@
 
 macro(merge_trustinfo_manifest _target _level)
   if(NATIVE_WINDOWS)
+    set_target_properties(
+      ${_target}
+      PROPERTIES LINK_FLAGS_RELWITHDEBINFO
+      "/MANIFESTUAC:NO")
     get_target_property(_target_exe ${_target} LOCATION)
     add_custom_command(
       TARGET ${_target}

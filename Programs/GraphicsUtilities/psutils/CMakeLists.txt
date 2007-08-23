@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -67,7 +67,7 @@ add_executable(psresize
   psutil.c
 )
 
-merge_trustinfo_manifest(psselect asInvoker)
+merge_trustinfo_manifest(psresize asInvoker)
 
 add_executable(psselect
   pserror.c
@@ -75,7 +75,7 @@ add_executable(psselect
   psutil.c
 )
 
-merge_trustinfo_manifest(pstops asInvoker)
+merge_trustinfo_manifest(psselect asInvoker)
 
 add_executable(pstops
   pserror.c
@@ -83,6 +83,8 @@ add_executable(pstops
   pstops.c
   psutil.c
 )
+
+merge_trustinfo_manifest(pstops asInvoker)
 
 install(TARGETS ${exes} DESTINATION ${bindir})
 

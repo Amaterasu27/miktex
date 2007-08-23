@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -43,6 +43,6 @@ add_custom_command(
 
 add_executable(sjisconv ${CMAKE_CURRENT_BINARY_DIR}/sjisconv.c)
 
-merge_trustinfo_manifest(sjiconv asInvoker)
+merge_trustinfo_manifest(sjisconv asInvoker)
 
 install(TARGETS sjisconv DESTINATION ${bindir})
