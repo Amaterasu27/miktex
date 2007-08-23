@@ -13,20 +13,23 @@ with the exception of &Windows95; and &WindowsNT;.</para>
 
 <section>
 
-<title>&pdfTeX;</title>
+<title>New: &XeTeX;</title>
 
-<para>&pdfTeX; has been upgraded to version 1.40.4.</para>
-
-<para>The <option>-terminal=oem</option> is no longer available.</para>
+<para>Another Unicode-capable &TeX; engine, &XeTeX;
+version 0.996-patch1, has been
+integrated into the &MiKTeX; distribution.  &XeTeX; might become your
+favorite &TeX; engine if you need easy access to &Windows; fonts,
+or if you want to typeset non-western scripts.</para>
 
 </section>
 
 <section>
 
-<title>&XeTeX;</title>
+<title>Update: &pdfTeX;</title>
 
-<para>&XeTeX; version 0.996-patch1
-has been integrated into the &MiKTeX; distribution.</para>
+<para>&pdfTeX; has been upgraded to version 1.40.4.</para>
+
+<para>The <option>-terminal=oem</option> is no longer available.</para>
 
 </section>
 
