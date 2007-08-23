@@ -2,8 +2,17 @@
 
 <title>System requirements</title>
 
-<para>&MiKTeXCurrentSeries; will run on all &Windows; variants
-with the exception of &Windows95; and &WindowsNT;.</para>
+<para>&MiKTeXCurrentSeries; requires one of the following
+&Windows; platforms:</para>
+
+<itemizedlist>
+<listitem><para>&WindowsVista;</para></listitem>
+<listitem><para>&WindowsXP;</para></listitem>
+<listitem><para>&Windows2000;</para></listitem>
+</itemizedlist>
+
+<para>&MiKTeXCurrentSeries; does not run on legacy &Windows; platforms
+(&Windows9xMeNT;).</para>
 
 </section>
 
@@ -15,17 +24,16 @@ with the exception of &Windows95; and &WindowsNT;.</para>
 
 <title>New: &XeTeX;</title>
 
-<para>Another Unicode-capable &TeX; engine, &XeTeX;
-version 0.996-patch1, has been
-integrated into the &MiKTeX; distribution.  &XeTeX; might become your
-favorite &TeX; engine if you need easy access to &Windows; fonts,
-or if you want to typeset non-western scripts.</para>
+<para>&XeTeX; version 0.996-patch1 has been integrated into the
+&MiKTeX; distribution. If you are looking for a Unicode-based &TeX;
+engine, or if want to access &Windows; fonts, then you should give
+&XeTeX; a try.</para>
 
 </section>
 
 <section>
 
-<title>Update: &pdfTeX;</title>
+<title>Updated: &pdfTeX;</title>
 
 <para>&pdfTeX; has been upgraded to version 1.40.4.</para>
 
