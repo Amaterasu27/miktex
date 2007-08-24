@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,8 +22,14 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/yap.manifest
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/yap.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/yap.rc
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_bmeps_dir}
 )
 
@@ -72,7 +78,8 @@ set(yap_mfc_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(yap_mfc_sources ${yap_mfc_sources} yap.rc)
+  set(yap_mfc_sources ${yap_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/yap.rc)
 endif(NATIVE_WINDOWS)
 
 add_custom_command(
