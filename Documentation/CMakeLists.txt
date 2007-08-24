@@ -690,8 +690,9 @@ if(BUILDING_MIKTEX)
   ) 
 
   install(
-    FILES	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
-    DESTINATION	${docdir}/faq
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/faq/
+    DESTINATION	${docdir}/faq/
+    PATTERN	".svn" EXCLUDE
   )
 endif(BUILDING_MIKTEX)
 
