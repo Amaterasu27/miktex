@@ -919,7 +919,7 @@ STRINGTABLE
 BEGIN
     IDP_FILE_ASSOCIATION    "Yap is not currently registered as the default DVI viewer.\nDo you wish to register Yap as the default DVI viewer?"
     IDS_PS_DISABLED         "The document cannot be rendered properly because the current render method does not support PostScript specials.\n\nTemporarily switch to the Dvips render method?"
-    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.2.6\nDVI File"
+    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.@MIKTEX_SERIES_STR@\nDVI File"
     IDR_MAINFRAME           "Yap"
     IDP_CHOOSE_EDITOR       "You must choose an editor so that Yap can perform the requested operation. Do you want to choose an editor now?"
 END
