@@ -1067,11 +1067,14 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	}
     }
 
-  // first = 0;
-  unsigned last = 0;
+  // first = 1;
+  unsigned last = 1;
   for (int idx = 1; idx < c4pargc; ++ idx)
     {
-      pBuffer[last++] = ' ';
+      if (idx > 1)
+	{
+	  pBuffer[last++] = ' ';
+	}
       const MIKTEXCHAR * lpszOptArg;
       if (idx == fileNameArgIdx)
 	{

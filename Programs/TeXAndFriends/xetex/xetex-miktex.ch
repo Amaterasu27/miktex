@@ -180,6 +180,62 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 
 % _____________________________________________________________________________
 %
+% [29.523]
+% _____________________________________________________________________________
+
+@x
+    if (str_pool[j]=" ") then must_quote:=true
+@y
+    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
+@z
+
+@x
+    if (str_pool[j]=" ") then must_quote:=true
+@y
+    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
+@z
+
+@x
+    if (str_pool[j]=" ") then must_quote:=true
+@y
+    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
+@z
+
+@x
+    print(str_pool[j]);
+@y
+    if str_pool[j]="*" then
+      print_char(" ")
+    else if str_pool[j]="?" then
+      print_char("~")
+    else
+      print(str_pool[j]);
+@z
+
+@x
+    print(str_pool[j]);
+@y
+    if str_pool[j]="*" then
+      print_char(" ")
+    else if str_pool[j]="?" then
+      print_char("~")
+    else
+      print(str_pool[j]);
+@z
+
+@x
+    print(str_pool[j]);
+@y
+    if str_pool[j]="*" then
+      print_char(" ")
+    else if str_pool[j]="?" then
+      print_char("~")
+    else
+      print(str_pool[j]);
+@z
+
+% _____________________________________________________________________________
+%
 % [29.524]
 % _____________________________________________________________________________
 
@@ -285,6 +341,17 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 
 % _____________________________________________________________________________
 %
+% [32.650]
+% _____________________________________________________________________________
+
+@x
+  print_nl("Output written on "); print(output_file_name);
+@y
+  print_nl("Output written on "); print_file_name(0, output_file_name, 0);
+@z
+
+% _____________________________________________________________________________
+%
 % [35.714]
 % _____________________________________________________________________________
 
@@ -372,6 +439,17 @@ font_ec:=xmalloc_array(UTF16_code, font_max);
 @x
   input_file:=xmalloc_array (unicode_file, max_in_open);
 @y
+@z
+
+% _____________________________________________________________________________
+%
+% [51.1347]
+% _____________________________________________________________________________
+
+@x
+    print(log_name); print_char(".");
+@y
+    print_file_name(0, log_name, 0); print_char(".");
 @z
 
 % _____________________________________________________________________________

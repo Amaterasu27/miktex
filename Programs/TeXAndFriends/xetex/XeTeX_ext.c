@@ -2473,7 +2473,9 @@ open_dvi_output(/*out*/ bytefile & dviFile)
   else
     {
       MiKTeX::Core::CommandLineBuilder args;
-      args.AppendOption ("-o ", THEAPP.GetNameOfFile());
+      args.AppendOption
+	("-o ",
+	 MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(THEAPP.GetNameOfFile().Get()));
       if (papersize != 0)
 	{
 	  args.AppendOption ("-p ", papersize);

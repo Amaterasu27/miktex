@@ -198,6 +198,62 @@ end;
 
 % _____________________________________________________________________________
 %
+% [29.518]
+% _____________________________________________________________________________
+
+@x
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
+@y
+    must_quote:=str_pool[j]=" "; incr(j);
+@z
+
+@x
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
+@y
+    must_quote:=str_pool[j]=" "; incr(j);
+@z
+
+@x
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
+@y
+    must_quote:=str_pool[j]=" "; incr(j);
+@z
+
+@x
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
+@y
+      print(so(str_pool[j]));
+@z
+
+@x
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
+@y
+      print(so(str_pool[j]));
+@z
+
+@x
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
+@y
+      print(so(str_pool[j]));
+@z
+
+% _____________________________________________________________________________
+%
 % [29.519]
 % _____________________________________________________________________________
 

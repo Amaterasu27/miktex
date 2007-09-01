@@ -1349,19 +1349,19 @@ must_quote:=false;
 if a<>0 then begin
   j:=str_start[a];
   while (not must_quote) and (j<str_start[a+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start[n];
   while (not must_quote) and (j<str_start[n+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start[e];
   while (not must_quote) and (j<str_start[e+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 {FIXME: Alternative is to assume that any filename that has to be quoted has
@@ -1374,15 +1374,30 @@ if must_quote then print_char("""");
 if a<>0 then
   for j:=str_start[a] to str_start[a+1]-1 do
     if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
 if n<>0 then
   for j:=str_start[n] to str_start[n+1]-1 do
     if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
 if e<>0 then
   for j:=str_start[e] to str_start[e+1]-1 do
     if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]));
 if must_quote then print_char("""");
 @z
 
