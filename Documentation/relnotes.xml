@@ -2,6 +2,9 @@
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 <!ENTITY % version.ent SYSTEM "version.ent">
+<!ENTITY optionmainmemory SYSTEM "Options/mainmemory.xml">
+<!ENTITY optionextramembot SYSTEM "Options/extramembot.xml">
+<!ENTITY optionextramemtop SYSTEM "Options/extramemtop.xml">
 %version.ent;
 %entities.ent;
 <!ENTITY changes SYSTEM "changes.xml">

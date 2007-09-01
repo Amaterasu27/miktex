@@ -14,6 +14,7 @@
 <!ENTITY ConTeXt "<application>ConTeXt</application>">
 <!ENTITY DANTEeV "DANTE&nbsp;e.V.">
 <!ENTITY DVI "<acronym>DVI</acronym>">
+<!ENTITY XDV "<acronym>XDV</acronym>">
 <!ENTITY DebugView "<application>DebugView</application>">
 <!ENTITY Dvipdfm "<application>Dvipdfm</application>">
 <!ENTITY Dvipdfmx "<application>Dvipdfmx</application>">
@@ -131,6 +132,8 @@
 <!ENTITY pdfinitex "<command>pdfinitex</command>">
 <!ENTITY pdflatex "<command>pdflatex</command>">
 <!ENTITY pdftex "<command>pdftex</command>">
+<!ENTITY xdvipdfmx "<command>xdvipdfmx</command>">
+<!ENTITY xetex "<command>xetex</command>">
 <!ENTITY pdfetex "<command>pdfetex</command>">
 <!ENTITY pdfvirtex "<command>pdfvirtex</command>">
 <!ENTITY progfldr "MiKTeX &MIKTEX_SERIES_STR;">

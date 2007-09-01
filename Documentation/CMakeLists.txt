@@ -178,6 +178,7 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/tex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/texify.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/updmapcfg.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Ref/xetex.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/miktex.xml
 )
 
@@ -529,6 +530,7 @@ if(BUILDING_MIKTEX)
 		relnotes.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
 	${html_xsl}

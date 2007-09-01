@@ -21,14 +21,42 @@ run on your system.</para>
 <listitem><para>&Windows2000;</para></listitem>
 </itemizedlist>
 
+</section>
+
+<section>
+
+<title>Breaking changes</title>
+
 <para>&MiKTeXCurrentSeries; does not work on legacy &Windows; platforms
 (&Windows9xMeNT;).</para>
+
+<para>The following command-line options have been removed in
+&MiKTeXCurrentSeries;:</para>
+
+<itemizedlist>
+<listitem><para><option>-mem-bot=<replaceable>n</replaceable></option></para></listitem>
+<listitem><para><option>-mem-max=<replaceable>n</replaceable></option></para></listitem>
+<listitem><para><option>-mem-min=<replaceable>n</replaceable></option></para></listitem>
+<listitem><para><option>-mem-top=<replaceable>n</replaceable></option></para></listitem>
+<listitem><para><option>-terminal=oem</option></para></listitem>
+</itemizedlist>
 
 </section>
 
 <section>
 
-<title>Programs</title>
+<title>Memory settings</title>
+
+<para>New command-line parameters have been introduced to control the sizes
+of internel arrays:</para>
+
+<variablelist>
+&optionextramembot;
+&optionextramemtop;
+&optionmainmemory;
+</variablelist>
+
+</section>
 
 <section>
 
@@ -43,12 +71,8 @@ engine, or if want to use &Windows; fonts, then you should give
 
 <section>
 
-<title>Updated: &pdfTeX;</title>
+<title>Upgraded: &pdfTeX;</title>
 
 <para>&pdfTeX; has been upgraded to version 1.40.4.</para>
-
-<para>The <option>-terminal=oem</option> is no longer available.</para>
-
-</section>
 
 </section>
