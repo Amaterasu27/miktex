@@ -312,38 +312,37 @@ versions of the program.
 @x
 begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
 @y
-begin if not miktex_open_input_file(f) then a_open_in:=false
-   else a_open_in:=true;
+begin a_open_in:=miktex_open_input_file(f);
 @z
 
 @x
 begin rewrite(f,name_of_file,'/O'); a_open_out:=rewrite_OK(f);
 @y
-begin a_open_out:=c4p_try_fopen(f,c4p_ptr(name_of_file[2]),c4p_w_mode);
+begin a_open_out:=miktex_open_output_file(f, true);
 @z
 
 @x
 begin reset(f,name_of_file,'/O'); b_open_in:=reset_OK(f);
 @y
-begin b_open_in:=false
+begin b_open_in:=false {\MiKTeX\ does not need this function}
 @z
 
 @x
 begin rewrite(f,name_of_file,'/O'); b_open_out:=rewrite_OK(f);
 @y
-begin b_open_out:=c4p_try_fopen(f,c4p_ptr(name_of_file[2]),c4p_wb_mode);
+begin b_open_out:=miktex_open_output_file(f, false);
 @z
 
 @x
 begin reset(f,name_of_file,'/O'); w_open_in:=reset_OK(f);
 @y
-begin w_open_in:=false
+begin w_open_in:=false {\MiKTeX\ does not need this function}
 @z
 
 @x
 begin rewrite(f,name_of_file,'/O'); w_open_out:=rewrite_OK(f);
 @y
-begin w_open_out:=c4p_try_fopen(f,c4p_ptr(name_of_file[2]),c4p_wb_mode);
+begin w_open_out:=miktex_open_output_file(f, false);
 @z
 
 % _____________________________________________________________________________
@@ -2043,7 +2042,7 @@ if x<>mem_bot then goto bad_fmt;
 undump_int(x);
 if x<>mem_top then goto bad_fmt;
 @y
-undump_int(x);
+x:=fmt_file^.int;
 if x<>@$ then goto bad_fmt; {check that strings are the same}
 undump_int(x);
 if x<>max_halfword then goto bad_fmt; {check |max_halfword|}
