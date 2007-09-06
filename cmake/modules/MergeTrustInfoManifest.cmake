@@ -19,10 +19,7 @@
 
 macro(merge_trustinfo_manifest _target _level)
   if(NATIVE_WINDOWS)
-    set_target_properties(
-      ${_target}
-      PROPERTIES LINK_FLAGS_RELWITHDEBINFO
-      "/MANIFESTUAC:NO")
+    add_link_flags(${_target} "/MANIFESTUAC:NO")
     get_target_property(_target_exe ${_target} LOCATION)
     add_custom_command(
       TARGET ${_target}

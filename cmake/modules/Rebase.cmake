@@ -1,6 +1,6 @@
-## MergeManifests.cmake
+## Rebase.cmake
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,20 +17,8 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-macro(merge_manifests _target _level)
+macro(rebase _target)
   if(NATIVE_WINDOWS)
-    add_link_flags(${_target} "/MANIFESTUAC:NO")
-    get_target_property(_target_exe ${_target} LOCATION)
-    add_custom_command(
-      TARGET ${_target}
-      POST_BUILD
-        COMMAND ${MT_EXE} -nologo
-	  -manifest ${CMAKE_SOURCE_DIR}/Resources/Manifests/${_level}.manifest
-	  -updateresource:${_target_exe}\;1
-        COMMAND ${MT_EXE} -nologo
-	  -manifest ${CMAKE_SOURCE_DIR}/Resources/Manifests/Common-Controls.manifest
-	  -updateresource:${_target_exe}\;1
-      VERBATIM
-    )
+    add_link_flags (${_target} "/BASE:\@${dll_locs},${_target}")
   endif(NATIVE_WINDOWS)
-endmacro(merge_manifests)
+endmacro(rebase)

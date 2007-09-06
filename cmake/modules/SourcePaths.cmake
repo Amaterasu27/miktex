@@ -166,6 +166,9 @@ set(tex_miktex_write18_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-write18
 set(tex_miktex_web2c_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-web2c.ch")
 set(vadjust_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/vadjust.ch")
 
+#
+set(dll_locs "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/dll_locs.txt")
+
 # build utilities
 if(WIN32)
   set(exe_suffix ".exe")
@@ -191,3 +194,4 @@ set(trapmf_exe "${outdir}/${CMAKE_CFG_INTDIR}/trapmf${exe_suffix}")
 set(trapmp_exe "${outdir}/${CMAKE_CFG_INTDIR}/trapmp${exe_suffix}")
 set(triptex_exe "${outdir}/${CMAKE_CFG_INTDIR}/triptex${exe_suffix}")
 set(webn_exe "${outdir}/${CMAKE_CFG_INTDIR}/web-n${exe_suffix}")
+set(mkdllbases_exe "${outdir}/${CMAKE_CFG_INTDIR}/mkdllbases${exe_suffix}")

@@ -139,18 +139,21 @@ include(CPack)
 
 include(Admin/COM/guids.cmake)
 
+include(AddLinkFlags)
 include(CheckFunctionExists)
 include(CreateCppFromC)
 include(CreateDllWrapper)
 include(CreateExeAlias)
 include(CreateWebApp)
 include(DefaultCharTypeIsUnsigned)
+include(DelayLoad)
 include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
 include(MergeTrustInfoManifest)
 include(MergeManifests)
 include(MergeCommonControlsManifest)
+include(Rebase)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
@@ -433,6 +436,9 @@ configure_file(${CMAKE_SOURCE_DIR}/BuildUtilities/docbook/catalog.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesdk.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesdk.cmd)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makelocfile.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makelocfile.cmd)
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/makesrc.cmd)

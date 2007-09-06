@@ -40,6 +40,7 @@ if(NATIVE_WINDOWS)
   add_executable(mkdllbases mkdllbases.cpp)
   merge_trustinfo_manifest(mkdllbases asInvoker)
   target_link_libraries(mkdllbases imagehlp)
+  add_link_flags(mkdllbases "setargv.obj")
   install(TARGETS mkdllbases DESTINATION "${bindir}")
 endif(NATIVE_WINDOWS)
 

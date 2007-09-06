@@ -1,0 +1,7 @@
+@echo off
+
+setlocal
+
+${mkdllbases_exe} ${outdir}/${CMAKE_CFG_INTDIR}/*.dll > ${dll_locs}
+
+endlocal
