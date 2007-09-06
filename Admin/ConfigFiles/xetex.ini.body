@@ -5,8 +5,7 @@ extensions;=.tex
 extensions;=.src
 
 path=.
-path;=%R/tex/xetex/xeplain//
-path;=%R/tex/xetex/generic//
+path;=%R/tex/xetex//
 path;=%R/tex/plain//
 path;=%R/tex/generic//
 path;=%R/tex//
