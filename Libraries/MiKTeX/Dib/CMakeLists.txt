@@ -46,6 +46,8 @@ target_link_libraries(${dib_dll_name}
   ${core_dll_name}
 )
 
+rebase(${dib_dll_name})
+
 add_executable(chunkdib chunkdib.cpp)
 
 merge_trustinfo_manifest(chunkdib asInvoker)

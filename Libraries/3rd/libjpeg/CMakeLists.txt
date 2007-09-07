@@ -94,4 +94,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${jpeg_dll_name} SHARED ${${jpeg_dll_name}_sources})
 
+rebase(${jpeg_dll_name})
+
 install(TARGETS ${jpeg_dll_name} DESTINATION "${bindir}")

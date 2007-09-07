@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2005-2006 Christian Schenk
+   Copyright (C) 2005-2007 Christian Schenk
 
    This file is part of the MiKTeX App Library.
 
@@ -37,10 +37,6 @@ using namespace MiKTeX::App;
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace std;
-
-#if defined(MIKTEX_WINDOWS)
-using namespace MiKTeX::UI;
-#endif
 
 /* _________________________________________________________________________
 

@@ -131,8 +131,9 @@ target_link_libraries(dvips
   ${bmeps_dll_name}
   ${core_dll_name}
   ${kpsemu_dll_name}
-  ${texmf_dll_name}
 )
+
+delay_load(dvips ${bmeps_dll_name})
 
 install(TARGETS dvips DESTINATION ${bindir})
 

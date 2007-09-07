@@ -167,4 +167,13 @@ else(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
+delay_load(${mpm_dll_name}
+  ${curl_dll_name}
+  ${extractor_dll_name}
+  Ws2_32
+  wininet
+)
+
+rebase(${mpm_dll_name})
+
 install(TARGETS ${mpm_dll_name} DESTINATION "${bindir}")

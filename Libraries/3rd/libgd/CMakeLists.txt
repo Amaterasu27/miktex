@@ -79,4 +79,12 @@ target_link_libraries(${gd_dll_name}
   ${zlib_dll_name}
 )
 
+delay_load(${gd_dll_name}
+  ${jpeg_dll_name}
+  ${png_dll_name}
+  ${zlib_dll_name}
+)
+
+rebase(${gd_dll_name})
+
 install(TARGETS ${gd_dll_name} DESTINATION "${bindir}")

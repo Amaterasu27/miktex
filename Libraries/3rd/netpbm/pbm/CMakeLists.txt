@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -89,6 +89,8 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${pbm_dll_name} SHARED ${${pbm_dll_name}_sources})
+
+rebase(${pbm_dll_name})
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pbm.h)

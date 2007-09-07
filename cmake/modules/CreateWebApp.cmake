@@ -214,6 +214,8 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ${texmf_dll_name}
   )
 
+  rebase(${${_short_name_l}_dll_name})
+
   install(
     TARGETS ${${_short_name_l}_dll_name}
     DESTINATION ${bindir}

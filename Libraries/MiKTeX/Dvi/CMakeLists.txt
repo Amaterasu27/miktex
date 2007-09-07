@@ -91,6 +91,8 @@ target_link_libraries(${dvi_dll_name}
   ${dib_dll_name}
 )
 
+rebase(${dvi_dll_name})
+
 add_executable(dviscan dviscan.cpp)
 
 merge_trustinfo_manifest(dviscan asInvoker)

@@ -250,6 +250,14 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
+delay_load(${core_dll_name}
+  ${bzip2_dll_name}
+  ${lzma_dll_name}
+  ${zlib_dll_name}
+)
+  
+rebase(${core_dll_name})
+
 install(TARGETS ${core_dll_name} DESTINATION "${bindir}")
 
 add_subdirectory(test)

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C)-2007 2006 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,6 +34,8 @@ target_link_libraries(${arctrl_dll_name}
   ${core_dll_name}
   ${popt_dll_name}
 )
+
+rebase(${arctrl_dll_name})
   
 set(exes
   arctrl

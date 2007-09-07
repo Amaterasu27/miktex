@@ -78,4 +78,6 @@ target_link_libraries(${ui_dll_name}
   ${mpm_dll_name}
 )
 
+rebase(${ui_dll_name})
+
 install(TARGETS ${ui_dll_name} DESTINATION "${bindir}")

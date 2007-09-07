@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -62,6 +62,8 @@ add_library(${pgm_dll_name} SHARED ${${pgm_dll_name}_sources})
 target_link_libraries(${pgm_dll_name}
   ${pbm_dll_name}
 )
+
+rebase(${pgm_dll_name})
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pgm.h)

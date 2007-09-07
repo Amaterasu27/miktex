@@ -56,4 +56,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${popt_dll_name} SHARED ${${popt_dll_name}_sources})
 
+rebase(${popt_dll_name})
+
 install(TARGETS ${popt_dll_name} DESTINATION "${bindir}")

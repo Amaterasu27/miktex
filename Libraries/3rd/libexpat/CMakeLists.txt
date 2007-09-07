@@ -66,4 +66,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${expat_dll_name} SHARED ${${expat_dll_name}_sources})
 
+rebase(${expat_dll_name})
+
 install(TARGETS ${expat_dll_name} DESTINATION "${bindir}")

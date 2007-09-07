@@ -130,4 +130,6 @@ add_custom_command(
 
 add_library(${tiff_dll_name} SHARED ${${tiff_dll_name}_sources})
 
+rebase(${tiff_dll_name})
+
 install(TARGETS ${tiff_dll_name} DESTINATION "${bindir}")

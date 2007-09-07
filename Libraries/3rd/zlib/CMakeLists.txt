@@ -58,4 +58,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
 
+rebase(${zlib_dll_name})
+
 install(TARGETS ${zlib_dll_name} DESTINATION "${bindir}")

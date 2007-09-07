@@ -90,4 +90,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${freetype2_dll_name} SHARED ${${freetype2_dll_name}_sources})
 
+rebase(${freetype2_dll_name})
+
 install(TARGETS ${freetype2_dll_name} DESTINATION "${bindir}")

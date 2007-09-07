@@ -57,6 +57,13 @@ target_link_libraries(${extractor_dll_name}
   ${mspack_dll_name}
 )
 
+delay_load(${extractor_dll_name}
+  ${bzip2_dll_name}
+  ${mspack_dll_name}
+)
+
+rebase(${extractor_dll_name})
+
 if(NATIVE_WINDOWS)
   target_link_libraries(${extractor_dll_name}
     fdi

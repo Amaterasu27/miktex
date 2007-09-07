@@ -51,6 +51,8 @@ target_link_libraries(${makex_dll_name}
   ${gnu_dll_name}
   ${texmf_dll_name}
 )
+
+rebase(${makex_dll_name})
   
 set(exes makebase makefmt makemem makemf makepk maketfm)
 

@@ -113,17 +113,10 @@ add_library(${texmf_dll_name} SHARED ${${texmf_dll_name}_sources})
 
 target_link_libraries(${texmf_dll_name}
   ${app_dll_name}
-  ${bzip2_dll_name}
   ${core_dll_name}
-  ${mpm_dll_name}
   ${popt_dll_name}
-  ${zlib_dll_name}
 )
 
-if(NATIVE_WINDOWS AND MFC_FOUND)
-  target_link_libraries(${texmf_dll_name}
-    ${ui_dll_name}
-  )
-endif(NATIVE_WINDOWS AND MFC_FOUND)
+rebase(${texmf_dll_name})
 
 install(TARGETS ${texmf_dll_name} DESTINATION "${bindir}")

@@ -150,9 +150,6 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 {
   initialized = true;
   pSession.CreateSession (initInfo);
-#if defined(MIKTEX_WINDOWS)
-  MiKTeX::UI::InitializeFramework ();
-#endif
   beQuiet = false;
   EnableInstaller
     (pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -263,14 +260,23 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
     {
       pPackageManager.Create ();
     }
+#if defined(MIKTEX_WINDOWS)
+  static bool initUiFrameworkDone = false;
+#endif
   if (enableInstaller == TriState::Undetermined)
     {
 #if defined(MIKTEX_WINDOWS)
+      static bool initUiFrameworkDone = false;
+      if (! initUiFrameworkDone)
+	{
+	  MiKTeX::UI::InitializeFramework ();
+	  initUiFrameworkDone = true;
+	}
       UINT msgBoxRet =
-	InstallPackageMessageBox(0,
-				 pPackageManager.Get(),
-				 lpszPackageName,
-				 lpszTrigger);
+	MiKTeX::UI::InstallPackageMessageBox(0,
+					     pPackageManager.Get(),
+					     lpszPackageName,
+					     lpszTrigger);
       bool doInstall = ((msgBoxRet & MiKTeX::UI::YES) != 0);
       if ((msgBoxRet & MiKTeX::UI::DONTASKAGAIN) != 0)
 	{
@@ -290,10 +296,17 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
   tstring url;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
-      && repositoryType == RepositoryType::Remote
-      && ! ProxyAuthenticationDialog(0))
+      && repositoryType == RepositoryType::Remote)
     {
-      return (false);
+      if (! initUiFrameworkDone)
+	{
+	  MiKTeX::UI::InitializeFramework ();
+	  initUiFrameworkDone = true;
+	}
+      if (! MiKTeX::UI::ProxyAuthenticationDialog(0))
+	{
+	  return (false);
+	}
     }
 #endif
   if (pInstaller.get() == 0)

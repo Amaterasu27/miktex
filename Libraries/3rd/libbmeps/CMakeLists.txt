@@ -52,7 +52,17 @@ endif(NATIVE_WINDOWS)
 
 add_library(${bmeps_dll_name} SHARED ${${bmeps_dll_name}_sources})
 
+rebase(${bmeps_dll_name})
+
 target_link_libraries(${bmeps_dll_name}
+  ${jpeg_dll_name}
+  ${pbm_dll_name}
+  ${png_dll_name}
+  ${pnm_dll_name}
+  ${zlib_dll_name}
+)
+
+delay_load(${bmeps_dll_name}
   ${jpeg_dll_name}
   ${pbm_dll_name}
   ${png_dll_name}

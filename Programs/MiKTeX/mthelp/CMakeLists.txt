@@ -47,6 +47,8 @@ target_link_libraries(${mthelp_dll_name}
   ${mpm_dll_name}
   ${popt_dll_name}
 )
+
+rebase(${mthelp_dll_name})
   
 set(exes mthelp)
 

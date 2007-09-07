@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -86,6 +86,8 @@ target_link_libraries(${pnm_dll_name}
   ${ppm_dll_name}
   ${tiff_dll_name}
 )
+
+rebase(${pnm_dll_name})
 
 foreach(e ${exes})
   add_executable(${e} ${e}.c pnm.h)

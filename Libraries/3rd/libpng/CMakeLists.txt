@@ -59,4 +59,6 @@ add_library(${png_dll_name} SHARED ${${png_dll_name}_sources})
 
 target_link_libraries(${png_dll_name} ${zlib_dll_name})
 
+rebase(${png_dll_name})
+
 install(TARGETS ${png_dll_name} DESTINATION "${bindir}")

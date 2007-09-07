@@ -115,10 +115,16 @@ target_link_libraries(xdvipdfmx
   ${app_dll_name}
   ${core_dll_name}
   ${fontconfig_dll_name}
-  ${gnu_dll_name}
+  ${freetype2_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
-  ${texmf_dll_name}
+  ${zlib_dll_name}
+)
+
+delay_load(xdvipdfmx
+  ${fontconfig_dll_name}
+  ${freetype2_dll_name}
+  ${png_dll_name}
   ${zlib_dll_name}
 )
 

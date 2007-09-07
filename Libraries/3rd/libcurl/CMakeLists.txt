@@ -156,4 +156,6 @@ if(NATIVE_WINDOWS)
   target_link_libraries(${curl_dll_name} winmm wsock32)
 endif(NATIVE_WINDOWS)
 
+rebase(${curl_dll_name})
+
 install(TARGETS ${curl_dll_name} DESTINATION "${bindir}")

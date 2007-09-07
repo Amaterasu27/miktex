@@ -80,4 +80,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${mspack_dll_name} SHARED ${${mspack_dll_name}_sources})
 
+rebase(${mspack_dll_name})
+
 install(TARGETS ${mspack_dll_name} DESTINATION "${bindir}")

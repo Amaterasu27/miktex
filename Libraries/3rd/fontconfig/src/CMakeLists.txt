@@ -71,6 +71,8 @@ endif(NATIVE_WINDOWS)
 
 add_library(${fontconfig_dll_name} SHARED ${${fontconfig_dll_name}_sources})
 
+rebase(${fontconfig_dll_name})
+
 target_link_libraries(${fontconfig_dll_name}
   ${expat_dll_name}
   ${freetype2_dll_name}

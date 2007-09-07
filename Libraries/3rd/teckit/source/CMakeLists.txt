@@ -42,4 +42,10 @@ target_link_libraries(${teckit_dll_name}
   ${zlib_dll_name}
 )
 
+delay_load(${teckit_dll_name}
+  ${zlib_dll_name}
+)
+
+rebase(${teckit_dll_name})
+
 install(TARGETS ${teckit_dll_name} DESTINATION "${bindir}")

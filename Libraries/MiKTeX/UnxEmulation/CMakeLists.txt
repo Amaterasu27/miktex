@@ -57,4 +57,6 @@ target_link_libraries(${unxemu_dll_name}
   ${core_dll_name}
 )
 
+rebase(${unxemu_dll_name})
+
 install(TARGETS ${unxemu_dll_name} DESTINATION "${bindir}")

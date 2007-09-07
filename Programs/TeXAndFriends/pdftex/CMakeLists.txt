@@ -234,6 +234,11 @@ target_link_libraries(${pdftex_dll_name}
   ${xpdf_lib_name}
 )
 
+delay_load(${pdftex_dll_name}
+  ${png_dll_name}
+  ${regex_dll_name}
+)
+  
 ## dev targets
 
 add_custom_command(

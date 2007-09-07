@@ -43,6 +43,8 @@ target_link_libraries(${mkfntmap_dll_name}
   ${core_dll_name}
   ${popt_dll_name}
 )
+
+rebase(${mkfntmap_dll_name})
   
 set(exes mkfntmap)
 

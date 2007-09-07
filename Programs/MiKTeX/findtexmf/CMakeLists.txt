@@ -44,6 +44,8 @@ target_link_libraries(${findtexmf_dll_name}
   ${mpm_dll_name}
   ${popt_dll_name}
 )
+
+rebase(${findtexmf_dll_name})
   
 set(exes findtexmf)
 

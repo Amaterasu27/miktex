@@ -45,6 +45,8 @@ target_link_libraries(${mcd_dll_name}
   ${regex_dll_name}
   ${texmf_dll_name}
 )
+
+rebase(${mcd_dll_name})
   
 create_dll_wrapper(texify ${mcd_dll_name} mcdmain)
 create_dll_wrapper(texi2dvi ${mcd_dll_name} mcdmain)
