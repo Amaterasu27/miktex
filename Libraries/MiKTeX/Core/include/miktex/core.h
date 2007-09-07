@@ -6696,17 +6696,16 @@ public:
 public:
   // hash algorithm taken from SGI's STL
   size_t
-  operator() (/*[in]*/ const tstring & str)
+  operator() (/*[in]*/ const std::string & str)
     const
   {
     size_t h = 0;
-    for (const MIKTEXCHAR * lpsz = str.c_str(); *lpsz != 0; ++ lpsz)
+    for (const char * lpsz = str.c_str(); *lpsz != 0; ++ lpsz)
       {
-	MIKTEXCHAR ch = *lpsz;
-	MIKTEX_ASSERT (static_cast<unsigned>(ch) < 0x80);
-	if (ch >= MIKTEXTEXT('a') && ch <= MIKTEXTEXT('z'))
+	char ch = *lpsz;
+	if (ch >= 'a' && ch <= 'z')
 	  {
-	    ch = MIKTEXTEXT('A') + (ch - MIKTEXTEXT('a'));
+	    ch = 'A' + (ch - 'a');
 	  }
 	h = 5 * h + ch;
       }
@@ -6715,8 +6714,8 @@ public:
 
 public:
   bool
-  operator() (/*[in]*/ const tstring & str1,
-	      /*[in]*/ const tstring & str2)
+  operator() (/*[in]*/ const std::string & str1,
+	      /*[in]*/ const std::string & str2)
     const
   {
     return (StringCompare(str1.c_str(), str2.c_str(), true) < 0);
@@ -6739,9 +6738,8 @@ public:
 #endif
 
 public:
-  // hash algorithm taken from SGI's STL
   size_t
-  operator() (/*[in]*/ const tstring & str)
+  operator() (/*[in]*/ const std::string & str)
     const
   {
     return (PathName(str).GetHash());
@@ -6749,8 +6747,8 @@ public:
   
 public:
   bool
-  operator() (/*[in]*/ const tstring & str1,
-	      /*[in]*/ const tstring & str2)
+  operator() (/*[in]*/ const std::string & str1,
+	      /*[in]*/ const std::string & str2)
     const
   {
     return (PathName::Compare(str1.c_str(), str2.c_str()) < 0);
