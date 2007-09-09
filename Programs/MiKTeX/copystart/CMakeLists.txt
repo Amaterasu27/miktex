@@ -17,12 +17,18 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-foreach(t conspawn findexe runbat runperl)
-  add_executable(${t} ${t}.cpp)
-  merge_trustinfo_manifest(${t} asInvoker)
-  target_link_libraries(${t}
-    ${app_dll_name}
-    ${core_dll_name}
-  )
-  install(TARGETS ${t} DESTINATION "${bindir}")
-endforeach(t)
+use_static_crt()
+use_static_libraries()
+
+add_executable(copystart_admin WIN32 copystart.cpp)
+
+merge_trustinfo_manifest(copystart_admin highestAvailable)
+
+target_link_libraries(copystart_admin
+  ${bzip2_lib_name}
+  ${core_lib_name}
+  ${md5_lib_name}
+  ${zlib_lib_name}
+)
+
+install(TARGETS copystart_admin DESTINATION "${bindir}")
