@@ -664,6 +664,10 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_copystart_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex_etc_dir})
 endif(BUILDING_MIKTEX)
 
