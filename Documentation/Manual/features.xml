@@ -62,10 +62,8 @@ components:</para>
 
 <varlistentry>
 <term>&pdfTeX;</term>
-<term>&eTeX;</term>
-<term>&pdfeTeX;</term>
+<term>&XeTeX;</term>
 <term>&Omega;</term>
-<term>&eOmega;</term>
 <term>&NTS;</term>
 <listitem><para>various &TeX; derivatives</para>
 </listitem>

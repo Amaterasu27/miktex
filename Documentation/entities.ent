@@ -64,7 +64,9 @@
 <!ENTITY TDS "<acronym>TDS</acronym>">
 <!ENTITY TEXMF "<acronym>TEXMF</acronym>">
 <!ENTITY TeXMF "&TeX;MF">
+<!ENTITY eTeX "<application>eTeX</application>">
 <!ENTITY TeX "<application>TeX</application>">
+<!ENTITY TeXAndFriends "<application>TeX</application>&nbsp;&amp;&nbsp;Friends">
 <!ENTITY TeXify "<application>TeXify</application>">
 <!ENTITY Texinfo "<application>Texinfo</application>">
 <!ENTITY TeXLive "<application>TeX&nbsp;Live</application>">
@@ -94,15 +96,9 @@
 <!ENTITY bibtex "<command>bibtex</command>">
 <!ENTITY dvicopy "<command>dvicopy</command>">
 <!ENTITY dvips "<command>dvips</command>">
-<!ENTITY eOmega "<application>e-Omega</application>">
-<!ENTITY eTeX "<application>e-TeX</application>">
-<!ENTITY einitex "<command>einitex</command>">
-<!ENTITY elatex "<command>elatex</command>">
 <!ENTITY eplain "<command>eplain</command>">
 <!ENTITY pdfopen "<command>pdfopen</command>">
 <!ENTITY pdfclose "<command>pdfclose</command>">
-<!ENTITY etex "<command>etex</command>">
-<!ENTITY evirtex "<command>evirtex</command>">
 <!ENTITY findtexmf "<command>findtexmf</command>">
 <!ENTITY gftodvi "<command>gftodvi</command>">
 <!ENTITY inimf "<command>inimf</command>">

@@ -8,12 +8,12 @@
 
 <varlistentry>
 <term>config</term>
-<listitem><para>configuration</para></listitem>
+<listitem><para>&MiKTeX; configuration settings</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term>core</term>
-<listitem><para>core library</para></listitem>
+<listitem><para>&MiKTeX; core library</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -33,7 +33,12 @@
 
 <varlistentry>
 <term>dvicolor</term>
-<listitem>dvifile<para>&DVI; files</para></listitem>
+<listitem><para>&DVI; color</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>dvifile</term>
+<listitem><para>&DVI; files</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -98,7 +103,7 @@
 
 <varlistentry>
 <term>extractor</term>
-<listitem><para>package archive file extractor</para></listitem>
+<listitem><para>&MiKTeX; package archive file extractor</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -119,6 +124,11 @@
 <varlistentry>
 <term>fontinfo</term>
 <listitem><para>font information retrieval</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>mem</term>
+<listitem><para>&TeXAndFriends; memory allocation</para></listitem>
 </varlistentry>
 
 <varlistentry>

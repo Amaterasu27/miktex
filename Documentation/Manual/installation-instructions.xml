@@ -10,9 +10,11 @@
 <listitem><para></para>&WindowsServer2003;</listitem>
 <listitem><para></para>&WindowsXP;</listitem>
 <listitem><para></para>&Windows2000;</listitem>
-<listitem><para></para>&WindowsMe;</listitem>
-<listitem><para></para>&Windows98;, &Windows98SE;</listitem>
 </itemizedlist>
+
+<para>Please note that
+&MiKTeX; &MIKTEX_VERSION_STR; does not work on legacy &Windows; platforms
+(&Windows9xMeNT;).</para>
 
 </section>
 
