@@ -1,6 +1,6 @@
 /* webapp.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -37,6 +37,7 @@ WebApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
+  tcerr << endl;
   tcerr << Utils::GetExeName() << T_(": ")
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;

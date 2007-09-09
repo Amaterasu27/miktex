@@ -94,6 +94,7 @@ TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
   WebAppInputLine::Init (lpszProgramInvocationName);
 
   trace_time = auto_ptr<TraceStream> (TraceStream::Open(MIKTEX_TRACE_TIME));
+  trace_mem = auto_ptr<TraceStream> (TraceStream::Open(MIKTEX_TRACE_MEM));
 
   clockStart = clock();
   disableExtensions = false;
@@ -134,6 +135,11 @@ TeXMFApp::Finalize ()
     {
       trace_time->Close ();
       trace_time.reset ();
+    }
+  if (trace_mem.get() != 0)
+    {
+      trace_mem->Close ();
+      trace_mem.reset ();
     }
   memoryDumpFileName = T_("");
   jobName = T_("");

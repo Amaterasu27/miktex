@@ -106,14 +106,16 @@ public:
 	      ocp_stack_size,
 	      omega::omega::ocp_stack_size());
 
-    Allocate (THEDATA(inputfilemode), THEDATA(maxinopen));
-    Allocate (THEDATA(inputfiletranslation), THEDATA(maxinopen));
-    Allocate (THEDATA(ocplistinfo), THEDATA(ocplistinfosize));
-    Allocate (THEDATA(ocplistlist), THEDATA(ocplistlistsize));
-    Allocate (THEDATA(ocplstackinfo), THEDATA(ocplstacksize));
-    Allocate (THEDATA(strstartar), THEDATA(maxstrings) + 1);
-    Allocate (THEDATA(triec), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trieoplang), THEDATA(trieopsize));
+    Allocate ("inputfilemode", THEDATA(inputfilemode), THEDATA(maxinopen));
+    Allocate ("inputfiletranslation",
+	      THEDATA(inputfiletranslation),
+	      THEDATA(maxinopen));
+    Allocate ("ocplistinfo", THEDATA(ocplistinfo), THEDATA(ocplistinfosize));
+    Allocate ("ocplistlist", THEDATA(ocplistlist), THEDATA(ocplistlistsize));
+    Allocate ("ocplstackinfo", THEDATA(ocplstackinfo), THEDATA(ocplstacksize));
+    Allocate ("strstartar", THEDATA(strstartar), THEDATA(maxstrings));
+    Allocate ("triec", THEDATA(triec), THEDATA(triesize));
+    Allocate ("trieoplang", THEDATA(trieoplang), THEDATA(trieopsize));
   }
 
 public:

@@ -138,43 +138,45 @@ public:
 		   pdfosbufsize,
 		   pdf_os_buf_size,
 		   pdftex::pdftex::pdf_os_buf_size());
+
+    MIKTEX_ASSERT (constfontbase == 0);
     
-    size_t nFonts = THEDATA(fontmax) + 1 - constfontbase;
+    size_t nFonts = THEDATA(fontmax) - constfontbase;
 
     // pdftex
-    Allocate (THEDATA(destnames), THEDATA(destnamessize));
-    Allocate (THEDATA(objtab), THEDATA(objtabsize));
-    Allocate (THEDATA(pdfcharused), nFonts);
-    Allocate (THEDATA(pdffontattr), nFonts);
-    Allocate (THEDATA(pdffontautoexpand), nFonts);
-    Allocate (THEDATA(pdffontblink), nFonts);
-    Allocate (THEDATA(pdffontefbase), nFonts);
-    Allocate (THEDATA(pdffontelink), nFonts);
-    Allocate (THEDATA(pdffontexpandratio), nFonts);
-    Allocate (THEDATA(pdffontknacbase), nFonts);
-    Allocate (THEDATA(pdffontknbcbase), nFonts);
-    Allocate (THEDATA(pdffontknbsbase), nFonts);
-    Allocate (THEDATA(pdffontlpbase), nFonts);
-    Allocate (THEDATA(pdffontmap), nFonts);
-    Allocate (THEDATA(pdffontnum), nFonts);
-    Allocate (THEDATA(pdffontrpbase), nFonts);
-    Allocate (THEDATA(pdffontshbsbase), nFonts);
-    Allocate (THEDATA(pdffontshrink), nFonts);
-    Allocate (THEDATA(pdffontsize), nFonts);
-    Allocate (THEDATA(pdffontstbsbase), nFonts);
-    Allocate (THEDATA(pdffontstep), nFonts);
-    Allocate (THEDATA(pdffontstretch), nFonts);
-    Allocate (THEDATA(pdffonttype), nFonts);
-    Allocate (THEDATA(pdfmem), THEDATA(pdfmemsize));
-    Allocate (THEDATA(pdfopbuf), pdfopbufsize);
-    Allocate (THEDATA(pdfosbuf), THEDATA(pdfosbufsize));
-    Allocate (THEDATA(pdfosobjnum), pdfosmaxobjs);
-    Allocate (THEDATA(pdfosobjoff), pdfosmaxobjs);
-    Allocate (THEDATA(vfdefaultfont), nFonts);
-    Allocate (THEDATA(vfefnts), nFonts);
-    Allocate (THEDATA(vfifnts), nFonts);
-    Allocate (THEDATA(vflocalfontnum), nFonts);
-    Allocate (THEDATA(vfpacketbase), nFonts);
+    Allocate ("destnames", THEDATA(destnames), THEDATA(destnamessize));
+    Allocate ("objtabsize", THEDATA(objtab), THEDATA(objtabsize));
+    Allocate ("pdfcharused", THEDATA(pdfcharused), nFonts);
+    Allocate ("pdffontautoexpand", THEDATA(pdffontattr), nFonts);
+    Allocate ("pdffontautoexpand", THEDATA(pdffontautoexpand), nFonts);
+    Allocate ("pdffontblink", THEDATA(pdffontblink), nFonts);
+    Allocate ("pdffontefbase", THEDATA(pdffontefbase), nFonts);
+    Allocate ("pdffontelink", THEDATA(pdffontelink), nFonts);
+    Allocate ("pdffontexpandratio", THEDATA(pdffontexpandratio), nFonts);
+    Allocate ("pdffontknacbase", THEDATA(pdffontknacbase), nFonts);
+    Allocate ("pdffontknbcbase", THEDATA(pdffontknbcbase), nFonts);
+    Allocate ("pdffontknbsbase", THEDATA(pdffontknbsbase), nFonts);
+    Allocate ("pdffontlpbase", THEDATA(pdffontlpbase), nFonts);
+    Allocate ("pdffontmap", THEDATA(pdffontmap), nFonts);
+    Allocate ("pdffontnum", THEDATA(pdffontnum), nFonts);
+    Allocate ("pdffontrpbase", THEDATA(pdffontrpbase), nFonts);
+    Allocate ("pdffontshbsbase", THEDATA(pdffontshbsbase), nFonts);
+    Allocate ("pdffontshrink", THEDATA(pdffontshrink), nFonts);
+    Allocate ("pdffontsize", THEDATA(pdffontsize), nFonts);
+    Allocate ("pdffontstbsbase", THEDATA(pdffontstbsbase), nFonts);
+    Allocate ("pdffontstep", THEDATA(pdffontstep), nFonts);
+    Allocate ("pdffontstretch", THEDATA(pdffontstretch), nFonts);
+    Allocate ("pdffonttype", THEDATA(pdffonttype), nFonts);
+    Allocate ("pdfmem", THEDATA(pdfmem), THEDATA(pdfmemsize));
+    Allocate ("pdfopbuf", THEDATA(pdfopbuf), pdfopbufsize);
+    Allocate ("pdfosbuf", THEDATA(pdfosbuf), THEDATA(pdfosbufsize));
+    Allocate ("pdfosobjnum", THEDATA(pdfosobjnum), pdfosmaxobjs);
+    Allocate ("pdfosobjoff", THEDATA(pdfosobjoff), pdfosmaxobjs);
+    Allocate ("vfdefaultfont", THEDATA(vfdefaultfont), nFonts);
+    Allocate ("vfefnts", THEDATA(vfefnts), nFonts);
+    Allocate ("vfifnts", THEDATA(vfifnts), nFonts);
+    Allocate ("vflocalfontnum", THEDATA(vflocalfontnum), nFonts);
+    Allocate ("vfpacketbase", THEDATA(vfpacketbase), nFonts);
   }
 
 public:

@@ -188,24 +188,24 @@ public:
 		   path_size,
 		   mfapp::mfapp::path_size());
 
-    Allocate (THEDATA(bisectstack), THEDATA(bistacksize) + 1);
-    Allocate (THEDATA(delta), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(deltax), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(deltay), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(ligkern), THEDATA(ligtablesize) + 1);
-    Allocate (THEDATA(psi), THEDATA(pathsize));
+    Allocate ("bisectstack", THEDATA(bisectstack), THEDATA(bistacksize));
+    Allocate ("delta", THEDATA(delta), THEDATA(pathsize));
+    Allocate ("deltax", THEDATA(deltax), THEDATA(pathsize));
+    Allocate ("deltay", THEDATA(deltay), THEDATA(pathsize));
+    Allocate ("ligkern", THEDATA(ligkern), THEDATA(ligtablesize));
+    Allocate ("psi", THEDATA(psi), THEDATA(pathsize));
     if (IsInitProgram()	|| AmI(MIKTEXTEXT("mf")))
       {
-	Allocate (THEDATA(strref), THEDATA(maxstrings) + 1);
+	Allocate ("strref", THEDATA(strref), THEDATA(maxstrings));
       }
-    Allocate (THEDATA(theta), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(uu), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(vv), THEDATA(pathsize) + 1);
-    Allocate (THEDATA(ww), THEDATA(pathsize) + 1);
+    Allocate ("theta", THEDATA(theta), THEDATA(pathsize));
+    Allocate ("uu", THEDATA(uu), THEDATA(pathsize));
+    Allocate ("vv", THEDATA(vv), THEDATA(pathsize));
+    Allocate ("ww", THEDATA(ww), THEDATA(pathsize));
 
 #if defined(TRAPMF)
-    Allocate (THEDATA(c4p_free), THEDATA(memmax) + 1);
-    Allocate (THEDATA(wasfree), THEDATA(memmax) + 1);
+    Allocate ("c4p", THEDATA(c4p_free), THEDATA(memmax));
+    Allocate ("wasfree", THEDATA(wasfree), THEDATA(memmax));
 #endif
   }
 #endif // THEDATA

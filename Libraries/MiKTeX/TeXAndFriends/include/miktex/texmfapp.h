@@ -550,18 +550,72 @@ public:
 public:
   template<typename T>
   T *
-  Reallocate (/*[in,out]*/ T * &	p,
+  Reallocate (/*[in]*/ const char *	lpszTableName,
+	      /*[in,out]*/ T * &	p,
 	      /*[in]*/ size_t		n)
   {
-    size_t amount = n * sizeof(T);
+    size_t amount = (n + 1) * sizeof(T);
+    if (trace_mem->IsEnabled())
+      {
+	trace_mem->WriteFormattedLine
+	  (MIKTEXTEXT("libtexmf"),
+	   MIKTEXTEXT("\
+Reallocate %s: p == %p, elementSize == %u, nElements == %u, bytes == %u"),
+	   (lpszTableName == 0 ? "table" : lpszTableName),
+	   p,
+	   static_cast<unsigned>(sizeof(T)),
+	   static_cast<unsigned>(n),
+	   static_cast<unsigned>(amount));
+      }
     p = reinterpret_cast<T *>(realloc(p, amount));
     if (p == 0 && amount > 0)
       {
-	FatalError (MIKTEXTEXT("Virtual memory exhausted."));
+	FatalError (MIKTEXTEXT("\
+Virtual memory exhausted while trying to reserve %u bytes for table %s."),
+		    static_cast<unsigned>(amount),
+		    (lpszTableName == 0 ? "???" : lpszTableName));
+      }
+    if (trace_mem->IsEnabled())
+      {
+	trace_mem->WriteFormattedLine
+	  (MIKTEXTEXT("libtexmf"),
+	   MIKTEXTEXT("\
+Reallocate: return %p"),
+	   p);
       }
     return (p);
   }
   
+  /* _______________________________________________________________________
+     
+     Reallocate
+     _______________________________________________________________________ */
+
+public:
+  template<typename T>
+  T *
+  Reallocate (/*[in,out]*/ T * &	p,
+	      /*[in]*/ size_t		n)
+  {
+    return (Reallocate(0, p, n));
+  }
+  
+  /* _______________________________________________________________________
+     
+     Allocate
+     _______________________________________________________________________ */
+
+protected:
+  template<typename T>
+  T *
+  Allocate (/*[in]*/ const char *	lpszTableName,
+	    /*[in,out]*/ T * &		p,
+	    /*[in]*/ size_t		n)
+  {
+    p = 0;
+    return (Reallocate(lpszTableName, p, n));
+  }
+
   /* _______________________________________________________________________
      
      Allocate
@@ -573,8 +627,7 @@ protected:
   Allocate (/*[in,out]*/ T * &	p,
 	    /*[in]*/ size_t	n)
   {
-    p = 0;
-    return (Reallocate(p, n));
+    return (Allocate(0, p, n));
   }
 
   /* _______________________________________________________________________
@@ -585,9 +638,23 @@ protected:
 protected:
   template<typename T>
   T *
+  Free (/*[in]*/ const char *	lpszTableName,
+	/*[in,out]*/ T * &	p)
+  {
+    return (Reallocate(lpszTableName, p, 0));
+  }
+  
+  /* _______________________________________________________________________
+     
+     Free
+     _______________________________________________________________________ */
+
+protected:
+  template<typename T>
+  T *
   Free (/*[in,out]*/ T * &	p)
   {
-    return (Reallocate(p, 0));
+    return (Free(0, p));
   }
   
   /* _______________________________________________________________________
@@ -709,29 +776,31 @@ public:
     THEDATA(memmax) = THEDATA(memtop);
 #endif
 
-    Allocate (THEDATA(buffer), THEDATA(bufsize) + 1);
-    Allocate (THEDATA(inputstack), THEDATA(stacksize) + 1);
-    Allocate (THEDATA(paramstack), THEDATA(paramsize) + 1);
-    Allocate (THEDATA(trickbuf), THEDATA(errorline) + 1);
+    Allocate ("buffer", THEDATA(buffer), THEDATA(bufsize));
+    Allocate ("inputstack", THEDATA(inputstack), THEDATA(stacksize));
+    Allocate ("paramstack", THEDATA(paramstack), THEDATA(paramsize));
+    Allocate ("trickbuf", THEDATA(trickbuf), THEDATA(errorline));
 
     if (IsInitProgram() || AmI(MIKTEXTEXT("mf")))
       {
-	Allocate (THEDATA(strpool), THEDATA(poolsize) + 1);
+	Allocate (THEDATA(strpool), THEDATA(poolsize));
       }
 
     if (IsInitProgram())
       {
 #  if defined(MIKTEX_TEX_COMPILER)
-	Allocate (THEDATA(yzmem), THEDATA(memtop) - THEDATA(membot) + 2);
+	Allocate ("mem",
+		  THEDATA(yzmem),
+		  THEDATA(memtop) - THEDATA(membot) + 2);
 	THEDATA(zmem) = THEDATA(yzmem);
 	THEDATA(mem) = THEDATA(zmem);
 #  else
-	Allocate (THEDATA(mem), THEDATA(memtop) - 0/*memmin*/ + 2);
+	Allocate ("mem", THEDATA(mem), THEDATA(memtop) - 0/*memmin*/ + 2);
 #  endif
       }
 
 #if ! defined(MIKTEX_OMEGA)
-    Allocate (THEDATA(strstart), THEDATA(maxstrings) + 1);
+    Allocate ("strstart", THEDATA(strstart), THEDATA(maxstrings));
 #endif
   }
 #endif // THEDATA
@@ -1314,6 +1383,9 @@ protected:
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_time;
+
+private:
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mem;
 
 private:
   MiKTeX::Core::tstring memoryDumpFileName;

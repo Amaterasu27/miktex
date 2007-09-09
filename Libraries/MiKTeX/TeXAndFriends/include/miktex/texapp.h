@@ -262,19 +262,42 @@ public:
 	      trie_size,
 	      texapp::texapp::trie_size());
    
-    Allocate (THEDATA(sourcefilenamestack), THEDATA(maxinopen));
-    Allocate (THEDATA(linestack), THEDATA(maxinopen));
-    Allocate (THEDATA(fullsourcefilenamestack), THEDATA(maxinopen));
-    Allocate (THEDATA(inputfile), THEDATA(maxinopen));
-    Allocate (THEDATA(nest), THEDATA(nestsize) + 1);
-    Allocate (THEDATA(savestack), THEDATA(savesize) + 1);
-    Allocate (THEDATA(triehash), THEDATA(triesize) + 1);
-    Allocate (THEDATA(triel), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trieo), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trier), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trietaken), THEDATA(triesize));
+    Allocate ("sourcefilenamestack",
+	      THEDATA(sourcefilenamestack),
+	      THEDATA(maxinopen));
+    Allocate ("linestack",
+	      THEDATA(linestack),
+	      THEDATA(maxinopen));
+    Allocate ("fullsourcefilenamestack",
+	      THEDATA(fullsourcefilenamestack),
+	      THEDATA(maxinopen));
+    Allocate ("inputfile",
+	      THEDATA(inputfile),
+	      THEDATA(maxinopen));
+    Allocate ("nest",
+	      THEDATA(nest),
+	      THEDATA(nestsize) + 1);
+    Allocate ("savestack",
+	      THEDATA(savestack),
+	      THEDATA(savesize) + 1);
+    Allocate ("triehash",
+	      THEDATA(triehash),
+	      THEDATA(triesize) + 1);
+    Allocate ("triel",
+	      THEDATA(triel),
+	      THEDATA(triesize) + 1);
+    Allocate ("trieo",
+	      THEDATA(trieo),
+	      THEDATA(triesize) + 1);
+    Allocate ("trier",
+	      THEDATA(trier),
+	      THEDATA(triesize) + 1);
+    Allocate ("trietaken",
+	      THEDATA(trietaken),
+	      THEDATA(triesize));
 
-    Allocate (THEDATA(nameoffile),
+    Allocate ("nameoffile",
+	      THEDATA(nameoffile),
 	      MiKTeX::Core::BufferSizes::MaxPath + 1);
 
 #if ! defined(MIKTEX_OMEGA)
@@ -291,43 +314,95 @@ public:
 		   font_mem_size,
 		   texapp::texapp::font_mem_size());
 
-    Allocate (THEDATA(trietrl), THEDATA(triesize));
-    Allocate (THEDATA(trietro), THEDATA(triesize));
-    Allocate (THEDATA(trietrc), THEDATA(triesize));
+    Allocate ("trietrl", THEDATA(trietrl), THEDATA(triesize));
+    Allocate ("trietro", THEDATA(trietro), THEDATA(triesize));
+    Allocate ("trietrc", THEDATA(trietrc), THEDATA(triesize));
 
-    Allocate (THEDATA(hyphword), THEDATA(hyphsize) + 1);
-    Allocate (THEDATA(hyphlist), THEDATA(hyphsize) + 1);
-    Allocate (THEDATA(hyphlink), THEDATA(hyphsize) + 1);
+    Allocate ("hyphword", THEDATA(hyphword), THEDATA(hyphsize));
+    Allocate ("hyphlist", THEDATA(hyphlist), THEDATA(hyphsize));
+    Allocate ("hyphlink", THEDATA(hyphlink), THEDATA(hyphsize));
 
-    Allocate (THEDATA(bcharlabel), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(charbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(depthbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(extenbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontarea), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontbc), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontbchar), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontcheck), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontdsize), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontec), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontfalsebchar), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontglue), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontname), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontparams), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontsize), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(fontused), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(heightbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(hyphenchar), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(italicbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(kernbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(ligkernbase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(parambase), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(skewchar), THEDATA(fontmax) + 1 - constfontbase);
-    Allocate (THEDATA(triec), THEDATA(triesize) + 1);
-    Allocate (THEDATA(widthbase), THEDATA(fontmax) + 1 - constfontbase);
+    Allocate ("bcharlabel",
+	      THEDATA(bcharlabel),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("charbase",
+	      THEDATA(charbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("depthbase",
+	      THEDATA(depthbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("extenbase",
+	      THEDATA(extenbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontarea",
+	      THEDATA(fontarea),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontbc",
+	      THEDATA(fontbc),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontbchar",
+	      THEDATA(fontbchar),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontcheck",
+	      THEDATA(fontcheck),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontdsize",
+	      THEDATA(fontdsize),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontec",
+	      THEDATA(fontec),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontfalsebchar",
+	      THEDATA(fontfalsebchar),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontglue",
+	      THEDATA(fontglue),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontname",
+	      THEDATA(fontname),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontparams",
+	      THEDATA(fontparams),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontsize",
+	      THEDATA(fontsize),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("fontused",
+	      THEDATA(fontused),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("heightbase",
+	      THEDATA(heightbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("hyphenchar",
+	      THEDATA(hyphenchar),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("italicbase",
+	      THEDATA(italicbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("kernbase",
+	      THEDATA(kernbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("ligkernbase",
+	      THEDATA(ligkernbase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("parambase",
+	      THEDATA(parambase),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("skewchar",
+	      THEDATA(skewchar),
+	      THEDATA(fontmax) - constfontbase);
+    Allocate ("triec",
+	      THEDATA(triec),
+	      THEDATA(triesize));
+    Allocate ("widthbase",
+	      THEDATA(widthbase),
+	      THEDATA(fontmax) - constfontbase);
 
     if (IsInitProgram() || ! AmITeXCompiler() || AmI(MIKTEXTEXT("omega")))
       {
-	Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
+	Allocate ("fontinfo",
+		  THEDATA(fontinfo),
+		  THEDATA(fontmemsize));
       }
 #endif // not Omega
 
@@ -337,13 +412,13 @@ public:
 	      trie_op_size,
 	      omega::omega::trie_op_size());
 
-    Allocate (THEDATA(hyfdistance), THEDATA(trieopsize));
-    Allocate (THEDATA(hyfnext), THEDATA(trieopsize));
-    Allocate (THEDATA(hyfnum), THEDATA(trieopsize));
-    Allocate (THEDATA(trie), THEDATA(triesize) + 1);
-    Allocate (THEDATA(trieophash), 2 * THEDATA(trieopsize) + 1);
-    Allocate (THEDATA(trieoplang), THEDATA(trieopsize));
-    Allocate (THEDATA(trieopval), THEDATA(trieopsize));
+    Allocate ("hyfdistance", THEDATA(hyfdistance), THEDATA(trieopsize));
+    Allocate ("hyfnext", THEDATA(hyfnext), THEDATA(trieopsize));
+    Allocate ("hyfnum", THEDATA(hyfnum), THEDATA(trieopsize));
+    Allocate ("trie", THEDATA(trie), THEDATA(triesize));
+    Allocate ("trieophash", THEDATA(trieophash), 2 * THEDATA(trieopsize));
+    Allocate ("trieoplang", THEDATA(trieoplang), THEDATA(trieopsize));
+    Allocate ("trieopval", THEDATA(trieopval), THEDATA(trieopsize));
 #endif // Omega
 
   }

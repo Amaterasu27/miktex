@@ -118,9 +118,9 @@ public:
   {
     TeXApp::AllocateMemory ();
 
-    Allocate (THEDATA(eofseen), THEDATA(maxinopen) + 1);
-    Allocate (THEDATA(grpstack), THEDATA(maxinopen) + 1);
-    Allocate (THEDATA(ifstack), THEDATA(maxinopen) + 1);
+    Allocate ("eofseen", THEDATA(eofseen), THEDATA(maxinopen));
+    Allocate ("grpstack", THEDATA(grpstack), THEDATA(maxinopen));
+    Allocate ("ifstack", THEDATA(ifstack), THEDATA(maxinopen));
   }
 #endif
 

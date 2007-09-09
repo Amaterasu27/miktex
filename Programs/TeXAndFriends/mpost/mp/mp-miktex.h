@@ -148,11 +148,11 @@ public:
 		   font_mem_size,
 		   mpost::mpost::font_mem_size());
 
-    Allocate (THEDATA(fontinfo), THEDATA(fontmemsize) + 1);
+    Allocate ("fontinfo", THEDATA(fontinfo), THEDATA(fontmemsize));
 
     if (IsInitProgram())
       {
-	Allocate (THEDATA(nextstr), THEDATA(maxstrings) + 1);
+	Allocate ("nextstr", THEDATA(nextstr), THEDATA(maxstrings));
       }
   }
 

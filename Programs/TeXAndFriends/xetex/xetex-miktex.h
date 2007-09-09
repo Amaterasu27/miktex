@@ -123,12 +123,12 @@ public:
   {
     ETeXApp::AllocateMemory ();
 
-    size_t nFonts = THEDATA(fontmax) + 1 - constfontbase;
+    size_t nFonts = THEDATA(fontmax) - constfontbase;
 
-    Allocate (THEDATA(fontmapping), nFonts);
-    Allocate (THEDATA(fontlayoutengine), nFonts);
-    Allocate (THEDATA(fontflags), nFonts);
-    Allocate (THEDATA(fontletterspace), nFonts);
+    Allocate ("fontmapping", THEDATA(fontmapping), nFonts);
+    Allocate ("fontlayoutengine", THEDATA(fontlayoutengine), nFonts);
+    Allocate ("fontflags", THEDATA(fontflags), nFonts);
+    Allocate ("fontletterspace", THEDATA(fontletterspace), nFonts);
   }
 
 public:

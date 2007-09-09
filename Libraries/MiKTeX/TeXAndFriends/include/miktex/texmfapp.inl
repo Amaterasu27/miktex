@@ -263,6 +263,10 @@ miktexopenpoolfile (/*[in]*/ FileType & f)
    miktexreallocate
    _________________________________________________________________________ */
 
+#if 1
+#define miktexreallocate(p, n) \
+  THEAPP.Reallocate(#p, p, n)
+#else
 template<typename T>
 inline
 T *
@@ -271,6 +275,7 @@ miktexreallocate (/*[in,out]*/ T * &	p,
 {
   return (THEAPP.Reallocate(p, n));
 }
+#endif
 
 /* _________________________________________________________________________
      

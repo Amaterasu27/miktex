@@ -161,11 +161,11 @@ public:
 		   move_size,
 		   mf::mf::move_size());
 
-    Allocate (THEDATA(after), THEDATA(maxwiggle) + 1);
-    Allocate (THEDATA(before), THEDATA(maxwiggle) + 1);
-    Allocate (THEDATA(envmove), THEDATA(movesize) + 1);
-    Allocate (THEDATA(move), THEDATA(movesize) + 1);
-    Allocate (THEDATA(nodetoround), THEDATA(maxwiggle) + 1);
+    Allocate ("after", THEDATA(after), THEDATA(maxwiggle));
+    Allocate ("before", THEDATA(before), THEDATA(maxwiggle));
+    Allocate ("envmove", THEDATA(envmove), THEDATA(movesize));
+    Allocate ("move", THEDATA(move), THEDATA(movesize));
+    Allocate ("nodetoround", THEDATA(nodetoround), THEDATA(maxwiggle));
   }
 
 public:
