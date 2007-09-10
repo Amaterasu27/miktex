@@ -1,6 +1,6 @@
 /* FileStream.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -284,7 +284,7 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
 #else
   int chWritten = fputc(ch, stream);
 #endif
-  if (chWritten != ch)
+  if (chWritten == MIKTEXEOF)
     {
       FATAL_CRT_ERROR (T_("fputc"), 0);
     }
