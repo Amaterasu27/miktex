@@ -101,50 +101,40 @@ SessionImpl::GetMyLocation ()
    GetHomeDirectory
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(MIKTEXCHAR *)
-GetHomeDirectory (/*[out]*/ MIKTEXCHAR * lpszPath)
+MIKTEXINTERNALFUNC(PathName)
+GetHomeDirectory ()
 {
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  tstring homeDrive;
-  tstring homePath;
+  PathName ret;
 #if defined(MIKTEX_WINDOWS)
+  PathName homeDrive;
+  PathName homePath;
   if (Utils::GetEnvironmentString(T_("HOMEDRIVE"), homeDrive)
       && Utils::GetEnvironmentString(T_("HOMEPATH"), homePath))
     {
-      tstring strPath = homeDrive;
-      if (! IsDirectoryDelimiter(homePath[0]))
-	{
-	  strPath += PathName::DirectoryDelimiter;
-	}
-      strPath += homePath;
-      if (strPath.length() < BufferSizes::MaxPath)
-	{
-	  Utils::CopyString (lpszPath, BufferSizes::MaxPath, strPath.c_str());
-	  return (lpszPath);
-	}
+      ret = homeDrive;
+      ret += homePath;
+      return (ret);
     }
 #endif
-  tstring home;
-  if (Utils::GetEnvironmentString(T_("HOME"), home))
+  if (Utils::GetEnvironmentString(T_("HOME"), ret))
     {
-      Utils::CopyString (lpszPath, BufferSizes::MaxPath, home.c_str());
-      return (lpszPath);
+      return (ret);
     }
 #if defined(MIKTEX_WINDOWS)
-  if (GetUserProfileDirectory(lpszPath) != 0)
+  if (GetUserProfileDirectory(ret))
     {
-      return (lpszPath);
+      return (ret);
     }
-  unsigned int n = GetWindowsDirectory(lpszPath, BufferSizes::MaxPath);
+  unsigned int n = GetWindowsDirectory(ret.GetBuffer(), ret.GetSize());
   if (n == 0)
     {
       FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
     }
-  else if (n >= BufferSizes::MaxPath)
+  else if (n >= ret.GetSize())
     {
       BUF_TOO_SMALL (T_("GetHomeDirectory"));
     }
-  return (lpszPath);
+  return (ret);
 #else
   UNEXPECTED_CONDITION (T_("GetHomeDirectory"));
 #endif
@@ -615,6 +605,28 @@ Fndb::FileExists (/*[in]*/ const PathName &	path)
 
 /* _________________________________________________________________________
 
+   GetEnvironmentString
+
+   Fast but insecure.
+   _________________________________________________________________________ */
+
+MIKTEXINTERNALFUNC(const MIKTEXCHAR *)
+GetEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
+{
+#if defined(_MSC_VER)
+#  pragma warning (push)
+#  pragma warning (disable: 4996)
+  return (_tgetenv(lpszName));
+#  pragma warning (pop)
+#elif defined(MIKTEX_UNICODE)
+#  error Unimplemented: GetEnvironmentString()
+#else
+  return (getenv(lpszName));
+#endif
+}
+
+/* _________________________________________________________________________
+
    Utils::GetEnvironmentString
    _________________________________________________________________________ */
 
@@ -623,45 +635,12 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
 			     /*[out]*/ tstring &		str)
 {
   bool haveValue = false;
-#if defined(_MSC_VER)
-  size_t bufSize;
-  if ((_tgetenv_s(&bufSize,
-		  0,
-		  0,
-		  lpszName)
-       == 0)
-      && (bufSize > 0))
-    {
-      MIKTEXCHAR * lpszBuf =
-	static_cast<MIKTEXCHAR *>(malloc(bufSize * sizeof(MIKTEXCHAR)));
-      if (lpszBuf == 0)
-	{
-	  OUT_OF_MEMORY (T_("GetEnvironmentString"));
-	}
-      AutoMemoryPointer xxx (lpszBuf);
-      if (_tgetenv_s(&bufSize,
-		     lpszBuf,
-		     bufSize,
-		     lpszName)
-	  != 0)
-	{
-	  FATAL_CRT_ERROR (T_("_tgetenv_s"), lpszName);
-	}
-      str = lpszBuf;
-      haveValue = true;
-    }
-#else
-#  if defined(MIKTEX_UNICODE)
-#    error Unimplemented: GetEnvironmentString()
-#  else
-  const MIKTEXCHAR * lpszOut = getenv(lpszName);
-#  endif
+  const MIKTEXCHAR * lpszOut = ::GetEnvironmentString(lpszName);
   if (lpszOut != 0)
     {
       str = lpszOut;
       haveValue = true;
     }
-#endif
   if (SessionImpl::TryGetSession() != 0
       && SessionImpl::GetSession()->trace_env.get() != 0
       && SessionImpl::GetSession()->trace_env->IsEnabled())
@@ -751,18 +730,9 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR *		lpszName)
+HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
 {
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  size_t bufSize;
-  return (_tgetenv_s(&bufSize, 0, 0, lpszName) == 0 && bufSize > 0);
-#elif defined(_MSC_VER)
-  return (_tgetenv(lpszName) != 0);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: Utils::HaveEnvironmentString()
-#else
-  return (getenv(lpszName) != 0);
-#endif
+  return (GetEnvironmentString(lpszName) != 0);
 }
 
 /* _________________________________________________________________________
@@ -775,7 +745,7 @@ SessionImpl::SetCWDEnv ()
 {
   tstring str;
   str.reserve (256);
-  for (deque<tstring>::const_iterator it = workingDirectories.begin();
+  for (deque<PathName>::const_iterator it = workingDirectories.begin();
        it != workingDirectories.end();
        ++ it)
     {
@@ -783,7 +753,7 @@ SessionImpl::SetCWDEnv ()
 	{
 	  str += PATH_DELIMITER;
 	}
-      str += *it;
+      str += it->Get();
     }
   Utils::SetEnvironmentString (MIKTEX_ENV_CWD_LIST, str.c_str());
 }
@@ -797,22 +767,7 @@ void
 SessionImpl::AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 				  /*[in]*/ bool			atEnd)
 {
-  AddWorkingDirectory (lpszPath, atEnd, true);
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::AddWorkingDirectory
-   _________________________________________________________________________ */
-
-void
-SessionImpl::AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-				  /*[in]*/ bool			atEnd,
-				  /*[in]*/ bool			updateEnv)
-{
   MIKTEX_ASSERT_STRING (lpszPath);
-
-  PathName pathAbs;
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
@@ -830,11 +785,6 @@ SessionImpl::AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
     {
       workingDirectories.push_front (lpszPath);
     }
-
-  if (updateEnv)
-    {
-      SetCWDEnv ();
-    }
 }
 
 /* _________________________________________________________________________
@@ -848,7 +798,7 @@ SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
   // clear the search path cache
   ClearSearchVectors ();
 
-  deque<tstring>::iterator it =
+  deque<PathName>::iterator it =
     find(workingDirectories.begin(),
 	 workingDirectories.end(),
 	 lpszPath);
@@ -859,8 +809,6 @@ SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
     }
 
   workingDirectories.erase (it);
-
-  SetCWDEnv ();
 }
 
 /* _________________________________________________________________________
@@ -868,33 +816,26 @@ SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
    SessionImpl::GetWorkingDirectory
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned		n,
-				  /*[out]*/ MIKTEXCHAR *	lpszPath)
+bool
+SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
+				  /*[out]*/ PathName &	path)
 {
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-
   if (n == 0)
     {
-      PathName cwd;
-      cwd.SetToCurrentDirectory ();
-      Utils::CopyString (lpszPath, BufferSizes::MaxPath, cwd.Get());
-      return (lpszPath);
+      path.SetToCurrentDirectory ();
+      return (true);
     }
   -- n;
   if (n == workingDirectories.size())
     {
-      return (0);
+      return (false);
     }
   if (n > workingDirectories.size())
     {
       INVALID_ARGUMENT (T_("GetWorkingDirectory"), NUMTOSTR(n));
     }
-  Utils::CopyString (lpszPath,
-		     BufferSizes::MaxPath,
-		     workingDirectories[n].c_str());
-
-  return (lpszPath);
+  path = workingDirectories[n];
+  return (true);
 }
 
 /* _________________________________________________________________________
@@ -948,10 +889,9 @@ SessionImpl::SetEnvironmentVariables ()
       Utils::SetEnvironmentString (T_("TMP"), path.Get());
     }
 
-  if (! HaveEnvironmentString(T_("HOME"))
-      && GetHomeDirectory(path.GetBuffer()))
+  if (! HaveEnvironmentString(T_("HOME")))
     {
-      Utils::SetEnvironmentString (T_("HOME"), path.Get());
+      Utils::SetEnvironmentString (T_("HOME"), GetHomeDirectory().Get());
     }
 
   SetCWDEnv ();
@@ -1069,13 +1009,11 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   tstring miktexCwd;
   if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD_LIST, miktexCwd))
     {
-      tstring dirList;
-      NormalizeSearchSpec (miktexCwd.c_str(), dirList);
-      for (CSVList cwd (dirList.c_str(), PATH_DELIMITER);
+      for (CSVList cwd (miktexCwd.c_str(), PATH_DELIMITER);
 	   cwd.GetCurrent() != 0;
 	   ++ cwd)
 	{
-	  AddWorkingDirectory (cwd.GetCurrent(), true, false);
+	  AddWorkingDirectory (cwd.GetCurrent(), true);
 	}
     }
   

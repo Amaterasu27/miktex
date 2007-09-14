@@ -1,6 +1,6 @@
 /* winProcess.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -328,6 +328,9 @@ winProcess::Create ()
 	  commandLine += T_(' ');
 	  commandLine += startinfo.Arguments;
 	}
+
+      // set environment variables
+      SessionImpl::GetSession()->SetEnvironmentVariables ();
       
       // start child process
       SessionImpl::GetSession()->trace_process->WriteFormattedLine
@@ -665,6 +668,7 @@ Wrap (/*[in,out]*/ tstring &	arguments)
     }
   else
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       // start a wrapper, if we are running on W9x
       PathName conspawn;
       if (! SessionImpl::GetSession()->FindFile(T_("conspawn"),
@@ -680,12 +684,16 @@ Wrap (/*[in,out]*/ tstring &	arguments)
       wrappedArguments += T_(' ');
       systemShell = conspawn;
       wrapped = true;
+#else
+      UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
     }
 
   wrappedArguments += T_("/c ");
 
   if (wrapped)
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       for (const MIKTEXCHAR * lpsz = arguments.c_str(); *lpsz != 0; ++ lpsz)
 	{
 	  if (*lpsz == T_('"'))
@@ -695,6 +703,9 @@ Wrap (/*[in,out]*/ tstring &	arguments)
 	  wrappedArguments += *lpsz;
 	}
       wrappedArguments += T_('"');
+#else
+      MIKTEX_ASSERT (! wrapped);
+#endif
     }
   else
     {

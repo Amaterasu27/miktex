@@ -28,9 +28,6 @@
 
 #include "fndbmem.h"
 
-#define FNDB_USE_CACHE 1
-#define FNDB_REMEMBER_RESULTS 0
-
 BEGIN_INTERNAL_NAMESPACE;
 
 /* _________________________________________________________________________
@@ -104,14 +101,6 @@ private:
 private:
   void
   Finalize ();
-
-#if FNDB_USE_CACHE
-private:
-  bool
-  CheckCandidate (/*[in]*/ const MIKTEXCHAR *	lpszSearchSpec,
-		  /*[out]*/ bool &		exists,
-		  /*[out]*/ PathName &		result);
-#endif
 
 private:
   FileNameDatabaseDirectory *
@@ -249,11 +238,6 @@ private:
 
 private:
   void
-  Remember (/*[in]*/ const MIKTEXCHAR * lpszSearchSpec,
-	    /*[in]*/ const MIKTEXCHAR * lpszResult);
-
-private:
-  void
   RemoveFileName (/*[in]*/ FileNameDatabaseDirectory *	pDir,
 		  /*[in]*/ const MIKTEXCHAR *		lpszFileName);
 
@@ -314,33 +298,9 @@ private:
 private:
   FileNameDatabaseHeader * pHeader;
 
-  // cache
-#if FNDB_USE_CACHE
-private:
-#  if FNDB_REMEMBER_RESULTS
-#    if defined(USE_HASH_MAP)
-  typedef hash_map<tstring, tstring, hash_compare_icase> CACHE;
-#    else
-  typedef map<tstring, tstring, hash_compare_icase> CACHE;
-#    endif
-#  else
-#    if defined(USE_HASH_SET)
-  typedef hash_set<tstring, hash_compare_icase> CACHE;
-#    else
-  typedef set<tstring, hash_compare_icase> CACHE;
-#    endif
-#  endif
-  CACHE cache;
-#endif
-
-#if 0
-private:
-  hash_map<tstring, FileNameDatabaseHeader::FndbOffset> stringTable;
-#endif
-
   // file-system path to root directory
-private:			// <fixme/>
-  tstring rootDirectory;
+private:
+  PathName rootDirectory;
 
 private:
   auto_ptr<TraceStream> traceStream;

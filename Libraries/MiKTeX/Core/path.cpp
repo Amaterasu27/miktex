@@ -457,6 +457,31 @@ AppendDirectoryDelimiter (/*[in,out]*/ tstring & path)
 
 /* _________________________________________________________________________
 
+   AppendDirectoryDelimiter
+   _________________________________________________________________________ */
+
+MIKTEXINTERNALFUNC(void)
+AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
+			  /*[in]*/ size_t		size)
+{
+  MIKTEX_ASSERT (size > 0);
+  MIKTEX_ASSERT_STRING (lpszPath);
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszPath, size);
+  size_t l = StrLen(lpszPath);
+  MIKTEX_ASSERT (l < size);
+  if (l > 0 && ! IsDirectoryDelimiter(lpszPath[l - 1]))
+    {
+      if (l + 1 >= size)
+	{
+	  INVALID_ARGUMENT (T_("AppendDirectoryDelimiter"), lpszPath);
+	}
+      lpszPath[l] = PathName::DirectoryDelimiter;
+      lpszPath[l + 1] = 0;
+    }
+}
+
+/* _________________________________________________________________________
+
    RemoveDirectoryDelimiter
    _________________________________________________________________________ */
 

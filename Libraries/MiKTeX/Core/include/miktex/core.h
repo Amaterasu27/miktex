@@ -1177,21 +1177,37 @@ public:
    C++ Inline Functions
    _________________________________________________________________________ */
 
-MIKTEXINLINE
+inline
+const char *
+StrChr (/*[in]*/ const char *	lpsz,
+	/*[in]*/ int		ch)
+{
+  return (strchr(lpsz, ch));
+}
+
+inline
+const wchar_t *
+StrChr (/*[in]*/ const wchar_t *	lpsz,
+	/*[in]*/ wint_t			ch)
+{
+  return (wcschr(lpsz, ch));
+}
+
+inline
 size_t
 StrLen (/*[in]*/ const char * lpsz)
 {
   return (strlen(lpsz));
 }
 
-MIKTEXINLINE
+inline
 size_t
 StrLen (/*[in]*/ const wchar_t * lpsz)
 {
   return (wcslen(lpsz));
 }
 
-MIKTEXINLINE
+inline
 int
 StringCompare (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 	       /*[in]*/ const MIKTEXCHAR *	lpsz2,
@@ -1210,7 +1226,7 @@ StringCompare (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 #endif
 }
 
-MIKTEXINLINE
+inline
 int
 StringCompare (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 	       /*[in]*/ const MIKTEXCHAR *	lpsz2)
@@ -2088,20 +2104,25 @@ public:
     : buffer (smallBuffer),
       n (BUFSIZE)
   {
+    Reset ();
+  }
+
+public:
+  CharBuffer (/*[in]*/ const CharType * lpsz)
+    : buffer (smallBuffer),
+      n (BUFSIZE)
+  {
+    MIKTEX_ASSERT_STRING_OR_NIL (lpsz);
+    operator= (lpsz);
   }
 
 public:
   CharBuffer (/*[in]*/ size_t n)
-    : n (n)
+    : buffer (smallBuffer),
+      n (BUFSIZE)
   {
-    if (n <= BUFSIZE)
-      {
-	buffer = smallBuffer;
-      }
-    else
-      {
-	buffer = new CharType[n];
-      }
+    Reset ();
+    Reserve (n);
   }
 
 public:
@@ -2109,12 +2130,7 @@ public:
   {
     try
       {
-	if (buffer != smallBuffer)
-	  {
-	    delete [] buffer;
-	  }
-	buffer = 0;
-	n = 0;
+	Reset ();
       }
     catch (const std::exception &)
       {
@@ -2123,7 +2139,55 @@ public:
 
 public:
   void
-  Resize (/*[in]*/ size_t newSize)
+  Set (/*[in]*/ const CharType * lpsz)
+  {
+    MIKTEX_ASSERT_STRING_OR_NIL (lpsz);
+    if (lpsz == 0)
+      {
+	Reset ();
+      }
+    else
+      {
+	Reserve (StrLen(lpsz) + 1);
+	Utils::CopyString (buffer, GetSize(), lpsz);
+      }
+  }
+
+public:
+  void
+  Append (/*[in]*/ const CharType * lpsz)
+  {
+    MIKTEX_ASSERT_STRING (lpsz);
+    Reserve (StrLen(buffer) + StrLen(lpsz) + 1);
+    Utils::AppendString (buffer, GetSize(), lpsz);
+  }
+
+public:
+  void
+  Append (/*[in]*/ const CharType ch)
+  {
+    size_t len = StrLen(buffer);
+    Reserve (len + 2);
+    buffer[len] = ch;
+    buffer[len + 1] = 0;
+  }
+
+public:
+  void
+  Reset ()
+  {
+    if (buffer != smallBuffer)
+      {
+	delete [] buffer;
+	buffer = smallBuffer;
+	n = BUFSIZE;
+      }
+    buffer[0] = 0;
+  }
+
+public:
+  void
+  Reserve (/*[in]*/ size_t newSize)
   {
     if (newSize > BUFSIZE && newSize > n)
       {
@@ -2160,6 +2224,30 @@ public:
     const
   {
     return (n);
+  }
+
+public:
+  CharBuffer &
+  operator= (/*[in]*/ const CharType * lpszRhs)
+  {
+    Set (lpszRhs);
+    return (*this);
+  }
+
+public:
+  CharBuffer &
+  operator+= (/*[in]*/ const CharType * lpszRhs)
+  {
+    Append (lpszRhs);
+    return (*this);
+  }
+
+public:
+  CharBuffer &
+  operator+= (/*[in]*/ CharType ch)
+  {
+    Append (ch);
+    return (*this);
   }
 };
 
@@ -6321,35 +6409,63 @@ private:
 
 /* _________________________________________________________________________
 
-   CSVList: Comma Separated Value List
+   BasicCsvList
    _________________________________________________________________________ */
 
-class CSVList
+template<typename CharType, int BUFSIZE>
+class BasicCsvList
+  : protected CharBuffer<CharType, BUFSIZE>
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
-  CSVList ();
+  BasicCsvList ()
+    : lpszNext (0),
+      lpszCurrent (0)
+  {
+  }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
-  CSVList (/*[in]*/ const MIKTEXCHAR *	lpszValueList,
-	   /*[in]*/ MIKTEXCHARINT	separator);
+  BasicCsvList (/*[in]*/ const CharType *	lpszValueList,
+		/*[in]*/ CharType		separator)
+    : CharBuffer (lpszValueList)
+  {
+    if (lpszValueList == 0 || *lpszValueList == 0)
+      {
+	lpszNext = lpszCurrent = 0;
+      }
+    else
+      {
+	this->separator = separator;
+	lpszCurrent = buffer;
+	lpszNext = const_cast<CharType*>(StrChr(buffer, separator));
+	if (lpszNext != 0)
+	  {
+	    *lpszNext++ = 0;
+	  }
+      }
+  }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
-  ~CSVList ();
+  const CharType *
+  operator++ ()
+  {
+    if (lpszNext != 0 && *lpszNext != 0)
+      {
+	lpszCurrent = lpszNext;
+	lpszNext = const_cast<CharType*>(StrChr(lpszNext, separator));
+	if (lpszNext != 0)
+	  {
+	    *lpszNext++ = 0;
+	  }
+      }
+    else
+      {
+	lpszCurrent = 0;
+      }
+    return (GetCurrent());
+  }
 
 public:
-  MIKTEXEXPORT
-  const MIKTEXCHAR *
-  MIKTEXCALL
-  operator++ ();
-
-public:
-  const MIKTEXCHAR *
+  const CharType *
   GetCurrent ()
     const
   {
@@ -6357,24 +6473,24 @@ public:
   }
 
 private:
-  CSVList (/*[in]*/ const CSVList & rhs);
+  BasicCsvList (/*[in]*/ const BasicCsvList & rhs);
 
 private:
-  CSVList &
-  operator= (/*[in]*/ const CSVList & rhs);
+  BasicCsvList &
+  operator= (/*[in]*/ const BasicCsvList & rhs);
 
 private:
-  MIKTEXCHAR separator;
+  CharType separator;
 
 private:
-  MIKTEXCHAR * lpszList;
+  CharType * lpszNext;
 
 private:
-  MIKTEXCHAR * lpszNext;
-
-private:
-  MIKTEXCHAR * lpszCurrent;
+  CharType * lpszCurrent;
 };
+
+typedef BasicCsvList<char, 512> CSVList;
+typedef BasicCsvList<wchar_t, 512> CSVListW;
 
 /* _________________________________________________________________________
 
@@ -6567,30 +6683,31 @@ private:
    _________________________________________________________________________ */
 
 class Tokenizer
+  : protected CharBuffer<char, 512>
 {
 public:
   MIKTEXEXPORT
   MIKTEXCALL
-  Tokenizer (/*[in]*/ const MIKTEXCHAR * lpsz,
-	     /*[in]*/ const MIKTEXCHAR * lpszDelim);
+  Tokenizer (/*[in]*/ const char * lpsz,
+	     /*[in]*/ const char * lpszDelim);
 
 public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  SetDelim (const MIKTEXCHAR * lpszDelim);
+  SetDelim (const char * lpszDelim);
 
 public:
-  const MIKTEXCHAR *
+  const char *
   GetCurrent ()
     const
   {
-    return (*lpszCurrent == 0 ? 0 : lpszCurrent);
+    return (lpszCurrent == 0 || *lpszCurrent == 0 ? 0 : lpszCurrent);
   }
 
 public:
   MIKTEXEXPORT
-  const MIKTEXCHAR *
+  const char *
   MIKTEXCALL
   operator++ ();
 
@@ -6611,13 +6728,10 @@ private:
   FindToken ();
 
 private:
-  MIKTEXCHAR * lpszOrig;
+  const char * lpszCurrent;
 
 private:
-  const MIKTEXCHAR * lpszCurrent;
-
-private:
-  MIKTEXCHAR * lpszNext;
+  char * lpszNext;
 
 private:
   void * pDelims;

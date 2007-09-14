@@ -1,6 +1,6 @@
 /* searchpath.cpp: managing search paths
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,22 +33,20 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 			   /*[in]*/ const PathName &	path)
 {
   // expand root directories
-  if (path[0] == T_('%')
-      && (path[1] == T_('R')
-	  || path[1] == T_('r')))
+  if (path[0] == T_('%') && (path[1] == T_('R') || path[1] == T_('r')))
     {
       for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
 	{
-	  tstring path2 = GetRootDirectory(idx).ToString();
-	  path2 += path.Get() + 2;
+	  PathName path2 = GetRootDirectory(idx);
+	  path2.Append (path.Get() + 2, false);
 	  // <recursivecall>
 	  PushBackPath (vec, path2);
 	  // </recursivecall>
 	}
       if (path[1] == T_('R'))
 	{
-	  tstring path2 = MPM_ROOT_PATH;
-	  path2 += path.Get() + 2;
+	  PathName path2 = MPM_ROOT_PATH;
+	  path2.Append (path.Get() + 2, false);
 	  // <recursivecall>
 	  PushBackPath (vec, path2);
 	  // </recursivecall>
@@ -57,19 +55,15 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     }
 
   // expand '~'
-  if (path[0] == T_('~')
-      && (path[1] == 0
-	  || IsDirectoryDelimiter(path[1])))
+  if (path[0] == T_('~') && (path[1] == 0 || IsDirectoryDelimiter(path[1])))
     {
-      PathName pathHomeDir;
-      GetHomeDirectory (pathHomeDir.GetBuffer());
-      if (! Utils::IsAbsolutePath(pathHomeDir.Get()))
+      PathName pathFQ = GetHomeDirectory();
+      if (! Utils::IsAbsolutePath(pathFQ.Get()))
 	{
-	  TraceError (T_("cannot expand ~: \"%s\" is not fully qualified"),
-		      pathHomeDir.Get());
+	  TraceError (T_("cannot expand ~: %s is not fully qualified"),
+		      Q_(pathFQ));
 	  return;
 	}
-      PathName pathFQ (pathHomeDir);
       if (path[1] != 0 && IsDirectoryDelimiter(path[1]) && path[2] != 0)
 	{
 	  pathFQ += &path[2];
@@ -92,16 +86,14 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     }
 
   // it is a relative path
-  PathName pathWD;
-  for (unsigned idx = 0; GetWorkingDirectory(idx, pathWD.GetBuffer()); ++ idx)
+  PathName pathFQ;
+  for (unsigned idx = 0; GetWorkingDirectory(idx, pathFQ); ++ idx)
     {
-      if (! Utils::IsAbsolutePath(pathWD.Get()))
+      if (! Utils::IsAbsolutePath(pathFQ.Get()))
 	{
-	  TraceError (T_("\"%s\" is not fully qualified"),
-		      pathWD.Get());
+	  TraceError (T_("%s is not fully qualified"), Q_(pathFQ));
 	  continue;
 	}
-      PathName pathFQ (pathWD);
       if (PathName::Compare(path, CURRENT_DIRECTORY) != 0)
 	{
 	  pathFQ += path.Get();
@@ -115,39 +107,6 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 
 /* _________________________________________________________________________
 
-   NormalizeSearchSpec
-   _________________________________________________________________________ */
-
-MIKTEXINTERNALFUNC(void)
-NormalizeSearchSpec (/*[in]*/ const MIKTEXCHAR *	lpszIn,
-		     /*[out]*/ tstring &		normalized)
-{
-  normalized = lpszIn;
-
-  // replace '\' with '/'
-#if defined(MIKTEX_WINDOWS)
-  for (size_t i = 0; i < normalized.length(); ++ i)
-    {
-      if (normalized[i] == PathName::AltDirectoryDelimiter)
-	{
-	  if (PathName::AltDirectoryDelimiter == RECURSION_INDICATOR[0]
-	      && i > 0
-	      && i + 1 < normalized.length()
-	      && normalized[i + 1] == RECURSION_INDICATOR[1])
-	    {
-	      ++ i;		// preserve RECURSION_INDICATOR
-	    }
-	  else
-	    {
-	      normalized[i] = PathName::DirectoryDelimiter;
-	    }
-	}
-    }
-#endif
-}
-
-/* _________________________________________________________________________
-
    SessionImpl::SplitSearchPath
    _________________________________________________________________________ */
 
@@ -155,9 +114,7 @@ void
 SessionImpl::SplitSearchPath (/*[in,out]*/ PathNameArray &	vec,
 			      /*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
 {
-  tstring temp;
-  NormalizeSearchSpec (lpszSearchPath, temp);
-  for (CSVList path (temp.c_str(), PATH_DELIMITER);
+  for (CSVList path (lpszSearchPath, PATH_DELIMITER);
        path.GetCurrent() != 0;
        ++ path)
     {
@@ -167,11 +124,11 @@ SessionImpl::SplitSearchPath (/*[in,out]*/ PathNameArray &	vec,
 
 /* _________________________________________________________________________
 
-   SessionImpl::DisassembleSearchPath
+   SessionImpl::SplitSearchPath
    _________________________________________________________________________ */
 
 PathNameArray
-SessionImpl::DisassembleSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
+SessionImpl::SplitSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
 {
   PathNameArray vec;
   SplitSearchPath (vec, lpszSearchPath);
@@ -209,14 +166,9 @@ void
 SessionImpl::AppendToSearchPath (/*[in,out]*/ tstring &		searchPath,
 				 /*[in]*/ const tstring &	searchPath2)
 {
-  PathNameArray vec;
+  PathNameArray vec = SplitSearchPath(searchPath.c_str());
 
-  SplitSearchPath (vec, searchPath.c_str());
-
-  tstring temp;
-  NormalizeSearchSpec (searchPath2.c_str(), temp);
-
-  for (CSVList path (temp.c_str(), PATH_DELIMITER);
+  for (CSVList path (searchPath2.c_str(), PATH_DELIMITER);
        path.GetCurrent() != 0;
        ++ path)
     {
@@ -268,7 +220,7 @@ SessionImpl::ConstructSearchVector (/*[in]*/ FileType fileType)
 
   if (pfti->searchVec.size() == 0)
     {
-      SplitSearchPath (pfti->searchVec, pfti->searchPath.c_str());
+      pfti->searchVec = SplitSearchPath(pfti->searchPath.c_str());
       
       // environment string
       for (CSVList env (pfti->envVarNames.c_str(), PATH_DELIMITER);

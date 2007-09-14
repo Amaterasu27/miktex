@@ -1018,66 +1018,53 @@ PathName::Split (/*[in]*/ const char *	lpszPath,
    GetUserProfileDirectory
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(MIKTEXCHAR *)
-GetUserProfileDirectory (/*[out]*/ MIKTEXCHAR * lpszPath)
+MIKTEXINTERNALFUNC(bool)
+GetUserProfileDirectory (/*[out]*/ PathName & path)
 {
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-
-  bool found = false;
-
-  const MIKTEXCHAR * lpszProfRecon =
-    T_("Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
-
-  AutoHKEY hkey;
-
-  LONG res =
-    RegOpenKeyEx(HKEY_CURRENT_USER,
-		 lpszProfRecon,
-		 0,
-		 KEY_READ,
-		 &hkey);
-
-  if (res == ERROR_SUCCESS)
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+  if (! IsWindowsNT())
     {
-      // Windows 98
-      unsigned long len = BufferSizes::MaxPath;
-      unsigned long type =  REG_SZ;
-      res =
-	RegQueryValueEx(hkey.Get(),
-			T_("ProfileDirectory"),
-			0,
-			&type,
-			reinterpret_cast<LPBYTE>(lpszPath),
-			&len);
+      const MIKTEXCHAR * lpszProfRecon =
+	T_("\
+Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
+      
+      AutoHKEY hkey;
+      
+      LONG res =
+	RegOpenKeyEx(HKEY_CURRENT_USER,
+		     lpszProfRecon,
+		     0,
+		     KEY_READ,
+		     &hkey);
+      
       if (res == ERROR_SUCCESS)
 	{
-	  found = true;
+	  unsigned long len = path.GetSize();
+	  unsigned long type = REG_SZ;
+	  res =
+	    RegQueryValueEx(hkey.Get(),
+			    T_("ProfileDirectory"),
+			    0,
+			    &type,
+			    reinterpret_cast<LPBYTE>(path.GetBuffer()),
+			    &len);
+	  if (res == ERROR_SUCCESS)
+	    {
+	      return (true);
+	    }
+	  else if (res != ERROR_FILE_NOT_FOUND)
+	    {
+	      FATAL_WINDOWS_ERROR (T_("ProfileDirectory"), 0);
+	    }
 	}
       else if (res != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR (T_("ProfileDirectory"), 0);
+	  FATAL_WINDOWS_ERROR (T_("ProfileReconciliation"), lpszProfRecon);
 	}
     }
-  else if (res != ERROR_FILE_NOT_FOUND)
-    {
-      FATAL_WINDOWS_ERROR (T_("ProfileDirectory"), lpszProfRecon);
-    }
+#endif
 
-  if (! found)
-    {
-      tstring userProfile;
-      if (Utils::GetEnvironmentString(T_("USERPROFILE"), userProfile)
-	  && userProfile.length() > 0
-	  && userProfile.length() < BufferSizes::MaxPath)
-	{
-	  Utils::CopyString (lpszPath,
-			     BufferSizes::MaxPath,
-			     userProfile.c_str());
-	  found = true;
-	}
-    }
-
-  return (found ? lpszPath : 0);
+  return (Utils::GetEnvironmentString(T_("USERPROFILE"), path));
 }
 
 /* _________________________________________________________________________
@@ -1400,7 +1387,11 @@ Utils::GetOSVersionString ()
 	 }
        else if (osvi.dwMajorVersion <= 4)
 	 {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	   str += T_("Microsoft Windows NT ");
+#else
+	   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
 	 }
        if (haveOsVersionInfoEx)
 	 {
@@ -1413,7 +1404,11 @@ Utils::GetOSVersionString ()
 	     {
 	       if (osvi.dwMajorVersion == 4)
 		 {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 		   str += T_("Workstation 4.0 ");
+#else
+		   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
 		 }
 	       else if ((osvi.wSuiteMask & VER_SUITE_PERSONAL) != 0)
 		 {
@@ -1506,6 +1501,7 @@ Utils::GetOSVersionString ()
 		 }
 	       else		// Windows NT 4.0
 		 {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 		   if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 		     {
 		       str += T_("Server 4.0, Enterprise Edition " );
@@ -1514,11 +1510,15 @@ Utils::GetOSVersionString ()
 		     {
 		       str += T_("Server 4.0 ");
 		     }
+#else
+		   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
 		 }
 	     }
 	 }
        else  // test for specific product on Windows NT 4.0 SP5 and earlier
 	 {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	   AutoHKEY hKey;
 	   LONG lRet;
 	   lRet =
@@ -1565,6 +1565,9 @@ Utils::GetOSVersionString ()
 	   str += T_('.');
 	   str += NUMTOSTR(osvi.dwMinorVersion);
 	   str += T_(' ');
+#else
+	   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
 	 }
      
        // get service pack (if any) and build number
@@ -1611,6 +1614,7 @@ Utils::GetOSVersionString ()
        break;
      
      case VER_PLATFORM_WIN32_WINDOWS: // Windows 95 product family
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
          {
 	   str += T_("Microsoft Windows 95");
@@ -1632,6 +1636,9 @@ Utils::GetOSVersionString ()
 	   str += T_("Microsoft Windows Millennium Edition");
          } 
        break;
+#else
+       UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+#endif
      }
 
   return (str);
@@ -2168,6 +2175,7 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
     }
   else
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       MIKTEXCHAR szWinDir[BufferSizes::MaxPath];
       if (GetWindowsDirectory(szWinDir, BufferSizes::MaxPath) == 0)
 	{
@@ -2243,6 +2251,9 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 	  writer.WriteLine  (*it);
 	}
       writer.Close ();
+#else
+      UNIMPLEMENTED (T_("SessionImpl::ScheduleFileRemoval"));
+#endif
     }
 }
 
@@ -2708,6 +2719,11 @@ void
 Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
 			     /*[in]*/ const MIKTEXCHAR *	lpszValue)
 {
+  const MIKTEXCHAR * lpszOldValue = ::GetEnvironmentString(lpszValueName);
+  if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
+    {
+      return;
+    }
   SessionImpl::GetSession()->trace_config->WriteFormattedLine
     (T_("core"),
      T_("setting env %s=%s"),

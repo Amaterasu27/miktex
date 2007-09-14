@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -29,49 +29,39 @@
    _________________________________________________________________________ */
 
 class SearchSpecBuilder
+  : protected CharBuffer<char, 512>
 {
 private:
-  tstring searchSpec;
-
-private:
   void
-  Build (/*[in]*/ bool			recursive,
-	 /*[in]*/ const MIKTEXCHAR *	lpszDir)
+  Build (/*[in]*/ bool		recursive,
+	 /*[in]*/ const char *	lpszDir)
   {
-    searchSpec = TEXMF_PLACEHOLDER;
-    searchSpec += PathName::DirectoryDelimiter;
-    searchSpec += lpszDir;
+    Set (TEXMF_PLACEHOLDER);
+    Append (PathName::DirectoryDelimiter);
+    Append (lpszDir);
     if (recursive)
       {
-	searchSpec += RECURSION_INDICATOR;
+	Append (RECURSION_INDICATOR);
       }
   }
 
 public:
   operator
-  const tstring & ()
+  const char * ()
     const
   {
-    return (searchSpec);
+    return (Get());
   }
 
 public:
-  operator
-  const MIKTEXCHAR * ()
-    const
-  {
-    return (searchSpec.c_str());
-  }
-
-public:
-  SearchSpecBuilder (/*[in]*/ const MIKTEXCHAR * lpszDir)
+  SearchSpecBuilder (/*[in]*/ const char * lpszDir)
   {
     Build (true, lpszDir);
   }
 
 public:
-  SearchSpecBuilder (/*[in]*/ bool			recursive,
-		     /*[in]*/ const MIKTEXCHAR *	lpszDir)
+  SearchSpecBuilder (/*[in]*/ bool		recursive,
+		     /*[in]*/ const char *	lpszDir)
   {
     Build (recursive, lpszDir);
   }
@@ -83,78 +73,77 @@ public:
    _________________________________________________________________________ */
 
 class ListBuilder
+  : protected CharBuffer<char, 512>
 {
-private:
-  tstring list;
-
-public:
-  operator
-  const tstring & ()
-    const
-  {
-    return (list);
-  }
-
 public:
   ListBuilder ()
   {
   }
 
 public:
-  ListBuilder (/*[in]*/ const MIKTEXCHAR *	lpszElement1,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement2 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement3 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement4 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement5 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement6 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement7 = 0,
-	       /*[in]*/ const MIKTEXCHAR *	lpszElement8 = 0)
+  operator
+  const char * ()
+    const
   {
-    list.reserve (0
-		  + StrLen(lpszElement1)
-		  + (lpszElement2 == 0 ? 0 : StrLen(lpszElement2) + 1)
-		  + (lpszElement3 == 0 ? 0 : StrLen(lpszElement3) + 1)
-		  + (lpszElement4 == 0 ? 0 : StrLen(lpszElement4) + 1)
-		  + (lpszElement5 == 0 ? 0 : StrLen(lpszElement5) + 1)
-		  + (lpszElement6 == 0 ? 0 : StrLen(lpszElement6) + 1)
-		  + (lpszElement7 == 0 ? 0 : StrLen(lpszElement7) + 1)
-		  + (lpszElement8 == 0 ? 0 : StrLen(lpszElement8) + 1)
-		  );
-    list = lpszElement1;
+    return (Get());
+  }
+
+public:
+  ListBuilder (/*[in]*/ const char *	lpszElement1,
+	       /*[in]*/ const char *	lpszElement2 = 0,
+	       /*[in]*/ const char *	lpszElement3 = 0,
+	       /*[in]*/ const char *	lpszElement4 = 0,
+	       /*[in]*/ const char *	lpszElement5 = 0,
+	       /*[in]*/ const char *	lpszElement6 = 0,
+	       /*[in]*/ const char *	lpszElement7 = 0,
+	       /*[in]*/ const char *	lpszElement8 = 0)
+  {
+    Reserve (0
+	     + StrLen(lpszElement1)
+	     + (lpszElement2 == 0 ? 0 : StrLen(lpszElement2) + 1)
+	     + (lpszElement3 == 0 ? 0 : StrLen(lpszElement3) + 1)
+	     + (lpszElement4 == 0 ? 0 : StrLen(lpszElement4) + 1)
+	     + (lpszElement5 == 0 ? 0 : StrLen(lpszElement5) + 1)
+	     + (lpszElement6 == 0 ? 0 : StrLen(lpszElement6) + 1)
+	     + (lpszElement7 == 0 ? 0 : StrLen(lpszElement7) + 1)
+	     + (lpszElement8 == 0 ? 0 : StrLen(lpszElement8) + 1)
+	     + 1
+	     );
+    Set (lpszElement1);
     if (lpszElement2 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement2;
+	Append (PATH_DELIMITER);
+	Append (lpszElement2);
       }
     if (lpszElement3 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement3;
+	Append (PATH_DELIMITER);
+	Append (lpszElement3);
       }
     if (lpszElement4 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement4;
+	Append (PATH_DELIMITER);
+	Append (lpszElement4);
       }
     if (lpszElement5 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement5;
+	Append (PATH_DELIMITER);
+	Append (lpszElement5);
       }
     if (lpszElement6 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement6;
+	Append (PATH_DELIMITER);
+	Append (lpszElement6);
       }
     if (lpszElement7 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement7;
+	Append (PATH_DELIMITER);
+	Append (lpszElement7);
       }
     if (lpszElement8 != 0)
       {
-	list += PATH_DELIMITER;
-	list += lpszElement8;
+	Append (PATH_DELIMITER);
+	Append (lpszElement8);
       }
   }
 };
@@ -169,9 +158,9 @@ SessionImpl::RegisterFileType
 (/*[in]*/ FileType		fileType,
  /*[in]*/ const MIKTEXCHAR *	lpszFileType,
  /*[in]*/ const MIKTEXCHAR *	lpszApplication,
- /*[in]*/ const tstring &	fileNameExtensions,
- /*[in]*/ const tstring &	searchPath,
- /*[in]*/ const tstring &	envVarNames)
+ /*[in]*/ const MIKTEXCHAR *	lpszFileNameExtensions,
+ /*[in]*/ const MIKTEXCHAR *	lpszDefaultSearchPath,
+ /*[in]*/ const MIKTEXCHAR *	lpszEnvVarNames)
 {
   MIKTEX_ASSERT_STRING (lpszFileType);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszApplication);
@@ -187,15 +176,15 @@ SessionImpl::RegisterFileType
   fti.fileNameExtensions =
     GetConfigValue(section.c_str(),
 		   T_("extensions"),
-		   fileNameExtensions.c_str());
+		   lpszFileNameExtensions);
   fti.searchPath =
     GetConfigValue(section.c_str(),
 		   T_("path"),
-		   searchPath.c_str());
+		   lpszDefaultSearchPath);
   fti.envVarNames =
     GetConfigValue(section.c_str(),
 		   T_("env"),
-		   envVarNames.c_str());
+		   lpszEnvVarNames);
   fileTypes.resize (fileType.Get() + 20);
   fileTypes[fileType.Get()] = fti;
 }
@@ -215,7 +204,7 @@ SessionImpl::RegisterFileTypes ()
 
   fileTypes.reserve (30);
 
-  CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
+  CSVList app (applicationNames.c_str(), PATH_DELIMITER);
   MIKTEX_ASSERT (app.GetCurrent() != 0);
   tstring applicationName = app.GetCurrent();
  
@@ -361,7 +350,7 @@ SessionImpl::RegisterFileTypes ()
     (FileType::EXE,
      T_("exe"),
      0,
-     extensions,
+     extensions.c_str(),
      exePath.c_str(),
      ListBuilder());
 
@@ -370,8 +359,7 @@ SessionImpl::RegisterFileTypes ()
      T_("fmt"),
      T_("TeX"),
      ListBuilder(
-		 T_(".fmt"),
-		 T_(".efmt")
+		 T_(".fmt")
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -562,7 +550,7 @@ SessionImpl::RegisterFileTypes ()
      T_("other binary files"),
      0,
      ListBuilder(),
-     applicationSearchPath,
+     applicationSearchPath.c_str(),
      ListBuilder());
 
   RegisterFileType
@@ -570,7 +558,7 @@ SessionImpl::RegisterFileTypes ()
      T_("other text files"),
      0,
      ListBuilder(),
-     applicationSearchPath,
+     applicationSearchPath.c_str(),
      ListBuilder());
   
   RegisterFileType
@@ -933,7 +921,7 @@ SessionImpl::DeriveFileType (/*[in]*/ const MIKTEXCHAR * lpszPath)
 	}
       else
 	{
-	  for (CSVList2 ext (it->fileNameExtensions.c_str(), PATH_DELIMITER);
+	  for (CSVList ext (it->fileNameExtensions.c_str(), PATH_DELIMITER);
 	       ext.GetCurrent() != 0;
 	       ++ ext)
 	    {
@@ -973,7 +961,6 @@ SessionImpl::GetNextFileTypeInfo (/*[in]*/ unsigned		index,
   fileTypeInfo = fileTypes[index];
   return (true);
 }
-
 
 /* _________________________________________________________________________
 

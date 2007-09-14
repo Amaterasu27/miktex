@@ -636,19 +636,22 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
   fileName += lpszPackageName;
   fileName.SetExtension (T_(".html"));
   StreamWriter writer (fileName);
+  int idx = 0;
   for (const MIKTEXCHAR * lpsz =
 	 reinterpret_cast<const MIKTEXCHAR *>(templateHtml);
-       *lpsz != 0;
-       ++ lpsz)
+       idx < sizeof(templateHtml);
+       ++ lpsz, ++ idx)
     {
       if (*lpsz == T_('%'))
 	{
 	  tstring tag;
 	  ++ lpsz;
-	  while (*lpsz != 0 && *lpsz != T_('%'))
+	  ++ idx;
+	  while (idx < sizeof(templateHtml) && *lpsz != T_('%'))
 	    {
 	      tag += *lpsz;
 	      ++ lpsz;
+	      ++ idx;
 	    }
 	  if (tag == T_("NAME"))
 	    {

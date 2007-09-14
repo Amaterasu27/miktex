@@ -529,7 +529,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 {
   bool haveValue = false;
 
-  for (CSVList2 app (applicationNames.c_str(), PATH_DELIMITER);
+  for (CSVList app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
        ++ app)
     {

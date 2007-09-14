@@ -159,27 +159,6 @@ IsWindowsNT ()
 
 /* _________________________________________________________________________
 
-   StrChr
-   _________________________________________________________________________ */
-
-inline
-const MIKTEXCHAR *
-StrChr (/*[in]*/ const MIKTEXCHAR *	lpsz,
-	/*[in]*/ MIKTEXCHARINT		ch)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcschr(lpsz, ch));
-#else
-  return (strchr(lpsz, ch));
-#endif
-}
-
-#if defined(StrStr)
-#  undef StrStr
-#endif
-
-/* _________________________________________________________________________
-
    Quoted
    _________________________________________________________________________ */
 

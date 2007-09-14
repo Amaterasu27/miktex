@@ -843,19 +843,25 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
 		     ConvertPathNameFlags::MakeLower);
 #endif
 
-  if (! pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
-    {
-      renew = true;
-    }
+  bool haveIt = false;
 
+  if (! renew)
+    {
+      haveIt = pSession->FindFile(fileName, GetMemoryDumpFileType(), path);
+      if (! haveIt)
+	{
+	  renew = true;
+	}
+    }
+  
   if (renew)
     {
       PathName exe;
       if (! pSession->FindFile(T_("initexmf"), FileType::EXE, exe))
 	{
 	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
-			      (T_("The MiKTeX configuration utility could")
-			       T_(" not be found.")),
+			      (T_("\
+The MiKTeX configuration utility could not be found.")),
 			      0);
 	}
       CommandLineBuilder arguments;
@@ -868,7 +874,12 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
 	}
     }
 
-  if (! pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
+  if (! haveIt)
+    {
+      haveIt = pSession->FindFile(fileName, GetMemoryDumpFileType(), path);
+    }
+
+  if (! haveIt)
     {
       FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
 			  T_("The dump file could not be found."),

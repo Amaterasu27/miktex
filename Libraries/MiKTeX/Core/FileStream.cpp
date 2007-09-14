@@ -444,7 +444,7 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
 #else
   int chWritten = fputc(ch, stream);
 #endif
-  if (chWritten != ch)
+  if (chWritten == MIKTEXEOF)
     {
       FATAL_CRT_ERROR (T_("fputc"), 0);
     }

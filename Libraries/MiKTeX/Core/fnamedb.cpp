@@ -1,6 +1,6 @@
 /* fnamedb2.cpp: file name database
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -24,12 +24,6 @@
 #include "internal.h"
 
 #include "fnamedb.h"
-
-#undef TRACE_FNDB_SEARCH
-
-#ifdef TRACE_FNDB_SEARCH
-namespace { bool tracingFndbSearch = true; }
-#endif
 
 /* _________________________________________________________________________
 
@@ -350,59 +344,6 @@ FileNameDatabase::IsInvariable ()
 {
   return (isInvariable);
 }
-
-/* _________________________________________________________________________
-     
-   FileNameDatabase::CheckCandidate
-   _________________________________________________________________________ */
-
-#if FNDB_USE_CACHE
-bool
-FileNameDatabase::CheckCandidate (/*[in]*/ const MIKTEXCHAR *	lpszSearchSpec,
-				  /*[out]*/ bool &		exists,
-				  /*[out]*/ PathName &		result)
-{
-  MIKTEX_ASSERT (pHeader != 0);
-  if (IsDirty())
-    {
-      cache.clear ();
-      timeStamp = pHeader->timeStamp;
-      return (false);
-    }
-  CACHE::const_iterator it = cache.find(lpszSearchSpec);
-  if (it == cache.end())
-    {
-      return (false);
-    }
-#if FNDB_REMEMBER_RESULTS
-  result = it->second;
-#else
-  result = T_("");
-#endif
-  exists = (result.GetLength() > 0);
-  return (true);
-}
-#endif
-
-/* _________________________________________________________________________
-     
-   FileNameDatabase::Remember
-   _________________________________________________________________________ */
-
-#if FNDB_USE_CACHE
-void
-FileNameDatabase::Remember (/*[in]*/ const MIKTEXCHAR * lpszSearchSpec,
-			    /*[in]*/ const MIKTEXCHAR * lpszResult)
-{
-#if FNDB_REMEMBER_RESULTS
-  cache[lpszSearchSpec] = (lpszResult == 0 ? T_("") : lpszResult);
-#else
-  cache.insert (lpszSearchSpec);
-  MIKTEX_ASSERT (lpszResult == 0);
-  UNUSED (lpszResult);
-#endif
-}
-#endif
 
 /* _________________________________________________________________________
      
@@ -743,16 +684,6 @@ FileNameDatabaseHeader::FndbOffset
 FileNameDatabase::CreateString (/*[in]*/ const MIKTEXCHAR * lpszName)
 {
   FileNameDatabaseHeader::FndbOffset foName;
-#if 0
-  if (1)
-    {
-      foName = stringTable[lpszName];
-      if (foName != 0)
-	{
-	  return (foName);
-	}
-    }
-#endif
   size_t neededBytes = StrLen(lpszName) + 1;
   foName = ROUND2(pHeader->size, 2);
   if (foName + neededBytes > foEnd)
@@ -763,12 +694,6 @@ FileNameDatabase::CreateString (/*[in]*/ const MIKTEXCHAR * lpszName)
     }
   memcpy (GetPointer(foName), lpszName, neededBytes);
   pHeader->size = foName + static_cast<U32>(neededBytes);
-#if 0
-  if (1)
-    {
-      stringTable[lpszName] = foName;
-    }
-#endif
   return (foName);
 }
 
@@ -1194,74 +1119,51 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			  /*[in]*/ size_t		sizeFileNameInfo)
 
 {
-  tstring searchSpec;
-  searchSpec.reserve (BufferSizes::MaxPath);
+  CharBuffer<char, BufferSizes::MaxPath + 10> searchSpec;
   searchSpec = lpszDirPath;
-  AppendDirectoryDelimiter (searchSpec);
+  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetSize());
   searchSpec += lpszFileName;
 
   traceStream->WriteFormattedLine
     (T_("core"),
-     T_("searching %s via fndb %p"),
-     Q_(searchSpec),
-     reinterpret_cast<void *>(this));
+     T_("fndb search: rootDirectory=\"%s\", searchspec==\"%s\""),
+     rootDirectory.Get(),
+     searchSpec.Get());
 
-  if (searchSpec.length() > BufferSizes::MaxPath)
+  if (StrLen(searchSpec.Get()) > BufferSizes::MaxPath)
     {
       return (false);
     }
 
-#if FNDB_USE_CACHE
-  bool exists;
-  if (CheckCandidate(searchSpec.c_str(), exists, result))
-    {
-      if (exists)
-	{
-	  traceStream->WriteFormattedLine
-	    (T_("core"),
-	     T_("cached result: %s"),
-	     Q_(result));
-	  return (true);
-	}
-      else
-	{
-	  traceStream->WriteFormattedLine
-	    (T_("core"),
-	     T_("dismissing search"));
-	  return (false);
-	}
-    }
-#endif
-
-  if (Utils::IsAbsolutePath(searchSpec.c_str()))
+  if (Utils::IsAbsolutePath(searchSpec.Get()))
     {
       const MIKTEXCHAR * lpsz =
-	Utils::GetRelativizedPath(searchSpec.c_str(),
-				  rootDirectory.c_str());
+	Utils::GetRelativizedPath(searchSpec.Get(),
+				  rootDirectory.Get());
       if (lpsz == 0)
 	{
 	  FATAL_MIKTEX_ERROR (T_("fndb_search"),
 			      (T_("File name is not covered by file name")
 			       T_(" database.")),
-			      searchSpec.c_str());
+			      searchSpec.Get());
 	}
       searchSpec = lpsz;
     }
 
   bool found = false;
-  tstring::size_type idx = searchSpec.find(RECURSION_INDICATOR);
-  if (idx == tstring::npos)
+  const char * lpszRecInd = StrStr(searchSpec.Get(), RECURSION_INDICATOR);
+  if (lpszRecInd == 0)
     {
       found =
 	Search(GetTopDirectory2(),
-	       searchSpec.c_str(),
+	       searchSpec.Get(),
 	       result,
 	       lpszFileNameInfo,
 	       sizeFileNameInfo);
     }
   else
     {
-      STRDUP subdir (searchSpec.c_str(), idx);
+      STRDUP subdir (searchSpec.Get(), lpszRecInd - searchSpec.Get());
       FileNameDatabaseHeader::FndbOffset foSubDir =
 	FindSubDirectory2(GetDirectoryAt(GetTopDirectory2()), subdir.Get());
       if (foSubDir != 0)
@@ -1269,9 +1171,7 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	  found =
 	    RecursiveSearch(foSubDir,
 			    0,
-			    (searchSpec.c_str()
-			     + idx
-			     + RECURSION_INDICATOR_LENGTH),
+			    (lpszRecInd + RECURSION_INDICATOR_LENGTH),
 			    result,
 			    lpszFileNameInfo,
 			    sizeFileNameInfo);
@@ -1284,28 +1184,17 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	{
 	  traceStream->WriteFormattedLine
 	    (T_("core"),
-	     T_("found %s (%s) in fndb %p"),
-	     Q_(result),
-	     Q_(lpszFileNameInfo),
-	     reinterpret_cast<void *>(this));
+	     T_("found: %s (%s)"),
+	     result.Get(),
+	     lpszFileNameInfo);
 	}
       else
 	{
 	  traceStream->WriteFormattedLine
 	    (T_("core"),
-	     T_("found %s in fndb %p"),
-	     Q_(result),
-	     reinterpret_cast<void *>(this));
+	     T_("found: %s"),
+	     result.Get());
 	}
-#if FNDB_REMEMBER_RESULTS
-      Remember (searchSpec.c_str(), result.Get());
-#endif
-    }
-  else
-    {
-#if FNDB_USE_CACHE
-      Remember (searchSpec.c_str(), 0);
-#endif
     }
 
   return (found);
@@ -1367,7 +1256,7 @@ FileNameDatabase::AddFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   if (Utils::IsAbsolutePath(lpszPath))
     {
       const MIKTEXCHAR * lpsz =
-	Utils::GetRelativizedPath(lpszPath, rootDirectory.c_str());
+	Utils::GetRelativizedPath(lpszPath, rootDirectory.Get());
       if (lpsz == 0)
 	{
 	  FATAL_MIKTEX_ERROR (T_("FileNameDatabase::AddFile"),
@@ -1443,14 +1332,14 @@ FileNameDatabase::Enumerate (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
   if (lpszPath != 0 && Utils::IsAbsolutePath(lpszPath))
     {
-      if (PathName::Compare(lpszPath, rootDirectory.c_str()) == 0)
+      if (PathName::Compare(lpszPath, rootDirectory.Get()) == 0)
 	{
 	  lpszPath = 0;
 	}
       else
 	{
 	  const MIKTEXCHAR * lpsz =
-	    Utils::GetRelativizedPath(lpszPath, rootDirectory.c_str());
+	    Utils::GetRelativizedPath(lpszPath, rootDirectory.Get());
 	  if (lpsz == 0)
 	    {
 	      FATAL_MIKTEX_ERROR (T_("FileNameDatabase::Enumerate"),
@@ -1536,7 +1425,7 @@ FileNameDatabase::TryGetParent (/*[in]*/ const MIKTEXCHAR *	lpszPath)
   if (Utils::IsAbsolutePath(lpszPath))
     {
       const MIKTEXCHAR * lpsz =
-	Utils::GetRelativizedPath(lpszPath, rootDirectory.c_str());
+	Utils::GetRelativizedPath(lpszPath, rootDirectory.Get());
       if (lpsz == 0)
 	{
 	  FATAL_MIKTEX_ERROR (T_("FileNameDatabase::TryGetParent"),

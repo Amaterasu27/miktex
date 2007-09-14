@@ -39,6 +39,8 @@
 #include "miktex/reg.h"
 #include "miktex/trace.h"
 
+#define MIKTEX_SUPPORT_LEGACY_WINDOWS 1
+
 using namespace MiKTeX::Core;
 
 #define BEGIN_INTERNAL_NAMESPACE		\
@@ -217,7 +219,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 #define T_(x) MIKTEXTEXT(x)
 
-#define Q_(x) Quoted(x).c_str()
+#define Q_(x) Quoted(x).Get()
 
 #if defined(MIKTEX_UNICODE)
 #  define tcout wcout
@@ -311,6 +313,10 @@ typedef std::vector<PathName> PathNameArray;
 void
 AppendDirectoryDelimiter (/*[in,out]*/ tstring & path);
 
+void
+AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
+			  /*[in]*/ size_t		size);
+
 MIKTEXCHARINT
 CompareFileNameChars (/*[in]*/ MIKTEXCHAR	ch1,
 		      /*[in]*/ MIKTEXCHAR	ch2);
@@ -334,12 +340,12 @@ GetCrtErrorMessage (/*[in]*/ int		functionResult,
 PathName
 GetFullPath (/*[in]*/ const MIKTEXCHAR * lpszPath);
 
-MIKTEXCHAR *
-GetHomeDirectory (/*[out]*/ MIKTEXCHAR *	lpszPath);
+PathName
+GetHomeDirectory ();
   
 #if defined(MIKTEX_WINDOWS)
-MIKTEXCHAR *
-GetUserProfileDirectory /*[in]*/ (MIKTEXCHAR *	lpszPath);
+bool
+GetUserProfileDirectory (/*[out]*/ PathName & path);
 #endif
   
   
@@ -347,17 +353,16 @@ const MIKTEXCHAR *
 GetFileNameExtension (/*[in]*/ const MIKTEXCHAR * lpszPath);
   
 bool
-HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR *		lpszName);
+HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName);
+
+const MIKTEXCHAR *
+GetEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName);
   
 bool
 IsExplicitlyRelativePath (/*[in]*/ const MIKTEXCHAR * lpszPath);
 
 bool
 IsMpmFile (/*[in]*/ const MIKTEXCHAR * lpszPath);
-  
-void
-NormalizeSearchSpec (/*[in]*/ const MIKTEXCHAR *	lpszIn,
-		     /*[out]*/ tstring &		normalized);
   
 void
 RemoveDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR * lpszPath);
@@ -561,46 +566,12 @@ StrPBrk (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 
 /* _________________________________________________________________________
 
-   StrChr
+   StrStr
    _________________________________________________________________________ */
-
-inline
-MIKTEXCHAR *
-StrChr (/*[in]*/ MIKTEXCHAR *		lpsz,
-	/*[in]*/ MIKTEXCHARINT		ch)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcschr(lpsz, ch));
-#else
-  return (strchr(lpsz, ch));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   StrChr
-   _________________________________________________________________________ */
-
-inline
-const MIKTEXCHAR *
-StrChr (/*[in]*/ const MIKTEXCHAR *	lpsz,
-	/*[in]*/ MIKTEXCHARINT		ch)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcschr(lpsz, ch));
-#else
-  return (strchr(lpsz, ch));
-#endif
-}
 
 #if defined(StrStr)
 #  undef StrStr
 #endif
-
-/* _________________________________________________________________________
-
-   StrStr
-   _________________________________________________________________________ */
 
 inline
 const MIKTEXCHAR *
@@ -740,20 +711,21 @@ ClearString (/*[in,out]*/ MIKTEXCHAR *	lpsz)
    Quoted
    _________________________________________________________________________ */
 
+template<typename CharType>
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+CharBuffer<CharType>
+Quoted (/*[in]*/ const CharType * lpsz)
 {
-  bool needQuotes = (StrChr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (StrChr(lpsz, ' ') != 0);
+  CharBuffer<CharType> result;
   if (needQuotes)
     {
-      result += T_('"');
+      result += '"';
     }
   result += lpsz;
   if (needQuotes)
     {
-      result += T_('"');
+      result += '"';
     }
   return (result);
 }
@@ -763,9 +735,10 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
+template<typename CharType>
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+CharBuffer<CharType>
+Quoted (/*[in]*/ const std::basic_string<CharType> & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -776,63 +749,11 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+CharBuffer<char>
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
 }
-
-/* _________________________________________________________________________
-
-   CSVList2: Comma Separated Value List
-   _________________________________________________________________________ */
-
-class CSVList2
-{
-public:
-  CSVList2 ();
-
-public:
-  CSVList2 (/*[in]*/ const MIKTEXCHAR *	lpszList,
-	    /*[in]*/ MIKTEXCHARINT	separator = T_(','));
-
-public:
-  const MIKTEXCHAR *
-  operator++ ();
-
-public:
-  const MIKTEXCHAR *
-  GetCurrent ()
-    const
-  {
-    return (lpszCurrent);
-  }
-
-private:
-  CSVList2 (/*[in]*/ const CSVList2 & rhs);
-
-private:
-  CSVList2 &
-  operator= (/*[in]*/ const CSVList2 & rhs);
-
-private:
-  MIKTEXCHAR separator;
-
-private:
-  MIKTEXCHAR * lpszList;
-
-private:
-  MIKTEXCHAR * lpszNext;
-
-private:
-  MIKTEXCHAR * lpszCurrent;
-
-private:
-  enum { BUFSIZE = 4096 };
-
-private:
-  MIKTEXCHAR buffer[BUFSIZE];
-};
 
 /* _________________________________________________________________________
 
@@ -843,9 +764,8 @@ class STRDUP : public CharBuffer<MIKTEXCHAR>
 {
 public:
   STRDUP (/*[in]*/ const MIKTEXCHAR * lpsz)
-    : CharBuffer (StrLen(lpsz) + 1)
+    : CharBuffer (lpsz)
   {
-    Utils::CopyString (buffer, GetSize(), lpsz);
   }
 
 public:
@@ -1808,9 +1728,9 @@ private:
 #endif
 
 private:
-  MIKTEXCHAR *
+  bool
   GetWorkingDirectory (/*[in]*/ unsigned	n,
-		       /*[out]*/ MIKTEXCHAR *	lpszPath);
+		       /*[out]*/ PathName &	path);
 
 private:
   PathNameArray
@@ -1820,10 +1740,6 @@ private:
   void
   TraceSearchVector (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 		     /*[in]*/ const PathNameArray &	pathvec);
-
-private:
-  PathNameArray
-  DisassembleSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath);
 
 private:
   void
@@ -1910,9 +1826,9 @@ private:
 		      /*[in,out]*/ Cfg *		pCfg);
 
 private:
-  deque<tstring> workingDirectories;
+  deque<PathName> workingDirectories;
 
-private:
+public:
   void
   SetEnvironmentVariables ();
 
@@ -2023,6 +1939,10 @@ private:
 		   /*[in]*/ const MIKTEXCHAR *	lpszSearchPath);
 
 private:
+  PathNameArray
+  SplitSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath);
+
+private:
   void
   PushBackPath (/*[in,out]*/ PathNameArray &	pathvec,
 		/*[in]*/ const PathName &	path);
@@ -2075,9 +1995,9 @@ private:
   RegisterFileType (/*[in]*/ FileType		fileType,
 		    /*[in]*/ const MIKTEXCHAR *	lpszFileType,
 		    /*[in]*/ const MIKTEXCHAR *	lpszApplication,
-		    /*[in]*/ const tstring &	fileNameExtensions,
-		    /*[in]*/ const tstring &	defaultSearchPath,
-		    /*[in]*/ const tstring &	envVarNames);
+		    /*[in]*/ const MIKTEXCHAR *	lpszFileNameExtensions,
+		    /*[in]*/ const MIKTEXCHAR *	lpszDefaultSearchPath,
+		    /*[in]*/ const MIKTEXCHAR *	lpszEnvVarNames);
     
 private:
   void
@@ -2087,12 +2007,6 @@ private:
   InternalFileTypeInfo *
   GetFileTypeInfo (/*[in]*/ FileType		fileType);
   
-private:
-  void
-  AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		       /*[in]*/ bool			atEnd,
-		       /*[in]*/ bool			updateEnv);
-
 private:
   void
   ClearSearchVectors ();
@@ -2295,11 +2209,23 @@ private:
    ToLower
    _________________________________________________________________________ */
 
+template<typename CharType>
 inline
-MIKTEXCHAR
-ToLower (/*[in]*/ MIKTEXCHAR ch)
+CharType
+ToLower (/*[in]*/ CharType ch)
 {
-  return (CTYPE_FACET.tolower(ch));
+  if (static_cast<unsigned>(ch) < 128)
+    {
+      if (ch >= 'A' && ch <= 'Z')
+	{
+	  ch = ch - 'A' + 'a';
+	}
+    }
+  else
+    {
+      ch = CTYPE_FACET.tolower(ch);
+    }
+  return (ch);
 }
 
 /* _________________________________________________________________________
@@ -2307,11 +2233,23 @@ ToLower (/*[in]*/ MIKTEXCHAR ch)
    ToUpper
    _________________________________________________________________________ */
 
+template<typename CharType>
 inline
-MIKTEXCHAR
-ToUpper (/*[in]*/ MIKTEXCHAR ch)
+CharType
+ToUpper (/*[in]*/ CharType ch)
 {
-  return (CTYPE_FACET.toupper(ch));
+  if (static_cast<unsigned>(ch) < 128)
+    {
+      if (ch >= 'a' && ch <= 'z')
+	{
+	  ch = ch - 'a' + 'A';
+	}
+    }
+  else
+    {
+      ch = CTYPE_FACET.toupper(ch);
+    }
+  return (ch);
 }
 
 /* _________________________________________________________________________
@@ -2485,26 +2423,28 @@ SkipNonDigit (/*[in]*/ const MIKTEXCHAR * &	lpsz)
    MakeLower
    _________________________________________________________________________ */
 
+template<typename CharType>
 inline
 MIKTEXCHAR *
-MakeLower (/*[out]*/ MIKTEXCHAR *	lpszBuf,
+MakeLower (/*[out]*/ CharType *		lpszBuf,
 	   /*[in]*/ size_t		bufSize,
-	   /*[in]*/ const MIKTEXCHAR *	lpszSource)
+	   /*[in]*/ const CharType *	lpszSource)
 {
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_tcscpy_s(lpszBuf, bufSize, lpszSource) != 0
-      || _tcslwr_s(lpszBuf, bufSize) != 0)
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
+  size_t l = 0;
+  for (; *lpszSource != 0; ++ lpszSource, ++ lpszBuf, ++ l)
     {
-      FATAL_CRT_ERROR (T_("MakeLower"), lpszSource);
-    }
-#else
-  UNUSED_ALWAYS (bufSize);
-  for (; *lpszSource != 0; ++ lpszSource, ++ lpszBuf)
-    {
+      if (l == bufSize)
+	{
+	  INVALID_ARGUMENT (T_("MakeLower"), lpszSource);
+	}
       *lpszBuf = ToLower(*lpszSource);
     }
+  if (l == bufSize)
+    {
+      INVALID_ARGUMENT (T_("MakeLower"), lpszSource);
+    }
   *lpszBuf = 0;
-#endif
   return (lpszBuf);
 }
 

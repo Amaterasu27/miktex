@@ -25,154 +25,14 @@
 
 /* _________________________________________________________________________
 
-   CSVList::CSVList
-   _________________________________________________________________________ */
-
-CSVList::CSVList ()
-  : lpszList(0),
-    lpszNext(0),
-    lpszCurrent(0)
-{
-}
-
-/* _________________________________________________________________________
-
-   CSVList::CSVList
-   _________________________________________________________________________ */
-
-CSVList::CSVList (/*[in]*/ const MIKTEXCHAR *	lpszValueList,
-		  /*[in]*/ MIKTEXCHARINT	separator)
-{
-  MIKTEX_ASSERT_STRING_OR_NIL (lpszValueList);
-
-  if (lpszValueList == 0 || *lpszValueList == 0)
-    {
-      lpszList = lpszNext = lpszCurrent = 0;
-    }
-  else
-    {
-      this->separator = static_cast<MIKTEXCHAR>(separator);
-      lpszList = StrDup(lpszValueList);
-      lpszCurrent = lpszList;
-      lpszNext = StrChr(lpszList, separator);
-      if (lpszNext != 0)
-	{
-	  *lpszNext++ = 0;
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
-   CSVList::~CSVList
-   _________________________________________________________________________ */
-
-CSVList::~CSVList ()
-{
-  if (lpszList != 0)
-    {
-      free (lpszList);
-      lpszList = 0;
-    }
-}
-
-/* _________________________________________________________________________
-
-   CSVList::operator++
-   _________________________________________________________________________ */
-
-const MIKTEXCHAR *
-CSVList::operator++ ()
-{
-  if (lpszNext != 0 && *lpszNext != 0)
-    {
-      lpszCurrent = lpszNext;
-      lpszNext = StrChr(lpszNext, separator);
-      if (lpszNext != 0)
-	{
-	  *lpszNext++ = 0;
-	}
-    }
-  else
-    {
-      lpszCurrent = 0;
-    }
-  return (GetCurrent());
-}
-
-/* _________________________________________________________________________
-
-   CSVList2::CSVList2
-   _________________________________________________________________________ */
-
-CSVList2::CSVList2 ()
-  : lpszNext (0),
-    lpszCurrent (0)
-{
-}
-
-/* _________________________________________________________________________
-
-   CSVList2::CSVList2
-   _________________________________________________________________________ */
-
-CSVList2::CSVList2 (/*[in]*/ const MIKTEXCHAR *	lpszValueList,
-		    /*[in]*/ MIKTEXCHARINT	separator)
-{
-  MIKTEX_ASSERT_STRING_OR_NIL (lpszValueList);
-
-  if (lpszValueList == 0 || *lpszValueList == 0)
-    {
-      lpszNext = lpszCurrent = 0;
-    }
-  else
-    {
-      this->separator = static_cast<MIKTEXCHAR>(separator);
-      CopyString2 (buffer, BUFSIZE, lpszValueList, BUFSIZE - 1);
-      lpszCurrent = buffer;
-      lpszNext = StrChr(buffer, separator);
-      if (lpszNext != 0)
-	{
-	  *lpszNext++ = 0;
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
-   CSVList2::operator++
-   _________________________________________________________________________ */
-
-const MIKTEXCHAR *
-CSVList2::operator++ ()
-{
-  if (lpszNext != 0 && *lpszNext != 0)
-    {
-      lpszCurrent = lpszNext;
-      lpszNext = StrChr(lpszNext, separator);
-      if (lpszNext != 0)
-	{
-	  *lpszNext++ = 0;
-	}
-    }
-  else
-    {
-      lpszCurrent = 0;
-    }
-  return (GetCurrent());
-}
-
-/* _________________________________________________________________________
-
    Tokenizer::Tokenizer
    _________________________________________________________________________ */
 
-Tokenizer::Tokenizer (/*[in]*/ const MIKTEXCHAR *	lpsz,
-		      /*[in]*/ const MIKTEXCHAR *	lpszDelim)
+Tokenizer::Tokenizer (/*[in]*/ const char *	lpsz,
+		      /*[in]*/ const char *	lpszDelim)
+  : CharBuffer(lpsz)
 {
-  MIKTEX_ASSERT_STRING (lpsz);
-  lpszOrig = StrDup(lpsz);
-  lpszNext = lpszOrig;
+  lpszNext = buffer;
   lpszCurrent = 0;
   pDelims = 0;
   SetDelim (lpszDelim);
@@ -185,7 +45,7 @@ Tokenizer::Tokenizer (/*[in]*/ const MIKTEXCHAR *	lpsz,
    _________________________________________________________________________ */
 
 void
-Tokenizer::SetDelim (/*[in]*/ const MIKTEXCHAR * lpszDelim)
+Tokenizer::SetDelim (/*[in]*/ const char * lpszDelim)
 {
   bitset<256> * psetDelim = reinterpret_cast<bitset<256>*>(pDelims);
   if (psetDelim == 0)
@@ -197,7 +57,7 @@ Tokenizer::SetDelim (/*[in]*/ const MIKTEXCHAR * lpszDelim)
   MIKTEX_ASSERT_STRING (lpszDelim);
   for ( ; *lpszDelim != 0; ++ lpszDelim)
     {
-      psetDelim->set (static_cast<MIKTEXUCHAR>(*lpszDelim));
+      psetDelim->set (static_cast<unsigned char>(*lpszDelim));
     }
 }
 
@@ -206,7 +66,7 @@ Tokenizer::SetDelim (/*[in]*/ const MIKTEXCHAR * lpszDelim)
    Tokenizer::operator++
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 Tokenizer::operator++ ()
 {
   FindToken ();
@@ -222,9 +82,6 @@ Tokenizer::~Tokenizer ()
 {
   try
     {
-      MIKTEX_ASSERT_STRING (lpszOrig);
-      free (lpszOrig);
-      lpszOrig = 0;
       if (pDelims != 0)
 	{
 	  bitset<256> * pDelims =
@@ -248,19 +105,20 @@ Tokenizer::~Tokenizer ()
 void
 Tokenizer::FindToken ()
 {
+  MIKTEX_ASSERT (lpszNext != 0);
   lpszCurrent = lpszNext;
   bitset<256> * pDelims = reinterpret_cast<bitset<256>*>(this->pDelims);
   MIKTEX_ASSERT (pDelims != 0);
-  while ((*pDelims)[static_cast<MIKTEXUCHAR>(*lpszCurrent)]
+  while ((*pDelims)[static_cast<unsigned char>(*lpszCurrent)]
 	 && *lpszCurrent != 0)
     {
       ++ lpszCurrent;
     }
-  for (lpszNext = const_cast<MIKTEXCHAR *>(lpszCurrent);
+  for (lpszNext = const_cast<char*>(lpszCurrent);
        *lpszNext != 0;
        ++ lpszNext)
     {
-      if ((*pDelims)[static_cast<MIKTEXUCHAR>(*lpszNext)])
+      if ((*pDelims)[static_cast<unsigned char>(*lpszNext)])
 	{
 	  *lpszNext = 0;
 	  ++ lpszNext;
@@ -643,7 +501,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
   {
     FATAL_CRT_ERROR (T_("_vsctprintf"), 0);
   }
-  autoBuffer.Resize (n + 1);
+  autoBuffer.Reserve (n + 1);
   n = _vstprintf_s(
     autoBuffer.GetBuffer(),
     autoBuffer.GetSize(),
@@ -679,7 +537,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
     }
     else if (autoBuffer.GetSize() < MAXSIZE)
     {
-      autoBuffer.Resize (autoBuffer.GetSize() + 1000);
+      autoBuffer.Reserve (autoBuffer.GetSize() + 1000);
     }
     else
     {
@@ -703,7 +561,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
   }
   else if (static_cast<size_t>(n) >= autoBuffer.GetSize())
   {
-    autoBuffer.Resize (n + 1);
+    autoBuffer.Reserve (n + 1);
     n =
       vsnprintf(autoBuffer.GetBuffer(),
 		autoBuffer.GetSize(),

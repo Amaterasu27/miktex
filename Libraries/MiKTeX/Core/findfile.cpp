@@ -107,10 +107,10 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
       PathName pathCurDirNew (lpszCurDir);
       pathCurDirNew += lpszSubDir;
 
-      // if the new sub-directory exists, then do a recursive search
-      // here
+      // if the new sub-directory exists...
       if (Directory::Exists(pathCurDirNew))
 	{
+	  // ...then do a recursive search here
 	  // <recursivecall>
 	  if (SearchFileSystem(pathCurDirNew.Get(), 0, lpszSearchSpec, result))
 	    {
@@ -134,9 +134,9 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
 	      // and do a recursive search
 	      // <recursivecall>
 	      if (SearchFileSystem(pathCurDirNew.Get(),
-			     lpszSubDir,
-			     lpszSearchSpec,
-			     result))
+				   lpszSubDir,
+				   lpszSearchSpec,
+				   result))
 		{
 		  pLister->Close ();
 		  return (true);
@@ -234,38 +234,38 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
 
   trace_filesearch->WriteFormattedLine
     (T_("core"),
-     T_("slow file search: %s, %s"),
+     T_("slow file search: relPath=\"%s\", dirPath=\"%s\""),
      lpszRelPath,
      lpszDirPath);
 
   // make a search spec: "DIRPATH\RELPATH"
-  tstring str;
-  str.reserve (StrLen(lpszDirPath) + StrLen(lpszRelPath) + 2);
-  str = lpszDirPath;
-  AppendDirectoryDelimiter (str);
-  str += lpszRelPath;
+  CharBuffer<char> searchSpec;
+  searchSpec = lpszDirPath;
+  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetSize());
+  searchSpec += lpszRelPath;
 
   // if search spec doesn't contain "//"...
-  tstring::size_type pos = str.find(RECURSION_INDICATOR);
-  if (pos == tstring::npos || pos == 0)
+  const char * lpszRecInd = strstr(searchSpec.Get(), RECURSION_INDICATOR);
+  if (lpszRecInd == 0)
     {
       // ...then try to access the file
-      result = str;
+      result = searchSpec.Get();
       return (CheckCandidate(result, 0));
     }
   else
     {
       // otherwise, do a recursive search
-      // pos points to the "//" sub-string
       PathName pathCurDir;
       CopyString2 (pathCurDir.GetBuffer(),
 		   pathCurDir.GetSize(),
-		   str.c_str(),
-		   pos);
+		   searchSpec.Get(),
+		   lpszRecInd - searchSpec.Get());
       if (Directory::Exists(pathCurDir))
 	{
-	  str.erase (0, pos + RECURSION_INDICATOR_LENGTH);
-	  return (SearchFileSystem(pathCurDir.Get(), 0, str.c_str(), result));
+	  return (SearchFileSystem(pathCurDir.Get(),
+				   0,
+				   (lpszRecInd + RECURSION_INDICATOR_LENGTH),
+				   result));
 	}
       else
 	{
@@ -284,7 +284,8 @@ SessionImpl::SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			   /*[in]*/ const MIKTEXCHAR *	lpszPathList,
 			   /*[out]*/ PathName &		result)
 {
-  // if an absolute filename is given, then don't look out any further
+  // if a fully qualified path name is given, then don't look out any
+  // further
   if (Utils::IsAbsolutePath(lpszFileName))
     {
       result = lpszFileName;
@@ -296,7 +297,7 @@ SessionImpl::SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   if (IsExplicitlyRelativePath(lpszFileName))
     {
       PathName pathWD;
-      for (unsigned i = 0; GetWorkingDirectory(i, pathWD.GetBuffer()); ++ i)
+      for (unsigned idx = 0; GetWorkingDirectory(idx, pathWD); ++ idx)
 	{
 	  result = pathWD;
 	  result += lpszFileName;
@@ -309,9 +310,9 @@ SessionImpl::SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       return (false);
     }
 
-  PathNameArray vec = DisassembleSearchPath(lpszPathList);
+  PathNameArray vec = SplitSearchPath(lpszPathList);
 
-  // search along vector
+  // search along search path
   bool found = false;
   for (PathNameArray::const_iterator it = vec.begin();
        ! found && it != vec.end();
@@ -347,7 +348,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   if (IsExplicitlyRelativePath(lpszFileName))
     {
       PathName pathWD;
-      for (unsigned i = 0; GetWorkingDirectory(i, pathWD.GetBuffer()); ++ i)
+      for (unsigned idx = 0; GetWorkingDirectory(idx, pathWD); ++ idx)
 	{
 	  result = pathWD;
 	  result += lpszFileName;
@@ -382,7 +383,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	}
 
       PathName pathWD;
-      for (unsigned i = 1; GetWorkingDirectory(i, pathWD.GetBuffer()); ++ i)
+      for (unsigned idx = 1; GetWorkingDirectory(idx, pathWD); ++ idx)
 	{
 	  if (PathName::Compare(*it, pathWD) == 0)
 	    {
@@ -437,7 +438,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING (lpszPathList);
 
-  PathNameArray vec = DisassembleSearchPath(lpszPathList);
+  PathNameArray vec = SplitSearchPath(lpszPathList);
 
   return (FindFileAlongVec(lpszFileName, vec, result));
 }
@@ -474,8 +475,8 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   bool hasRegisteredExtension = false;
   if (lpszExtension != 0)
     {
-      for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
-			 PATH_DELIMITER);
+      for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
+			PATH_DELIMITER);
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{
@@ -490,8 +491,8 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   // try each registered file name extension, if none was specified
   if (! hasRegisteredExtension)
     {
-      for (CSVList2 ext (pFileTypeInfo->fileNameExtensions.c_str(),
-			 PATH_DELIMITER);
+      for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
+			PATH_DELIMITER);
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{
@@ -617,7 +618,7 @@ SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 
   tstring searchPath;
 
-  for (const MIKTEXCHAR * q = searchPathTemplate.c_str(); *q != 0; ++ q )
+  for (const MIKTEXCHAR * q = searchPathTemplate.c_str(); *q != 0; ++ q)
     {
       if (*q == T_('%'))
 	{

@@ -368,6 +368,11 @@ void
 Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
 			     /*[in]*/ const MIKTEXCHAR *	lpszValue)
 {
+  const MIKTEXCHAR * lpszOldValue = ::GetEnvironmentString(lpszValueName);
+  if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
+    {
+      return;
+    }
   SessionImpl::theSession->trace_config->WriteFormattedLine
     (T_("core"),
      T_("setting env %s=%s"),

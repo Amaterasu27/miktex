@@ -1,6 +1,6 @@
 /* unxProcess.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -402,6 +402,7 @@ unxProcess::Create ()
 	  pipeStdout.Dispose ();
 	  pipeStderr.Dispose ();
 	  pipeStdin.Dispose ();
+	  SessionImpl::GetSession()->SetEnvironmentVariables ();
 	  execv (startinfo.FileName.c_str(),
 		 const_cast<MIKTEXCHAR * const *>(argv.GetArgv()));
 	  perror ("execv failed");
