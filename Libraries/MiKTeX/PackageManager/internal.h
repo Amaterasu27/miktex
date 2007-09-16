@@ -49,24 +49,6 @@ namespace MiKTeX {					\
 namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 #endif
 
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsNT ()
-{
-  return (GetVersion() < 0x80000000);
-}
-#endif
-
 /* _________________________________________________________________________
 
    Debug-dependant Macros

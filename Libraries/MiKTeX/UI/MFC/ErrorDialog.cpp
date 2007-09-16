@@ -1,6 +1,6 @@
 /* ErrorDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -251,17 +251,6 @@ Clipboard."));
     {
       CloseClipboard ();
     }
-}
-
-/* _________________________________________________________________________
-
-   IsWindowsNT
-   _________________________________________________________________________ */
-
-bool
-IsWindowsNT ()
-{
-  return (GetVersion() < 0x80000000 ? true : false);
 }
 
 /* _________________________________________________________________________

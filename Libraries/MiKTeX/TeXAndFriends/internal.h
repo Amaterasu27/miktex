@@ -168,17 +168,13 @@ using namespace std;
 			      __LINE__)
 #endif
 
-/* _________________________________________________________________________
-
-   IsWindowsNT
-   _________________________________________________________________________ */
-
-inline
-bool
-IsWindowsNT ()
-{
-  return (GetVersion () < 0x80000000);
-}
+#if defined(_MSC_VER)
+#define UNSUPPORTED_PLATFORM()						\
+  __assume(false)
+#else
+#define UNSUPPORTED_PLATFORM()						\
+  MIKTEX_ASSERT (false)
+#endif
 
 /* _________________________________________________________________________
 

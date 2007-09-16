@@ -39,8 +39,6 @@
 #include "miktex/reg.h"
 #include "miktex/trace.h"
 
-#define MIKTEX_SUPPORT_LEGACY_WINDOWS 1
-
 using namespace MiKTeX::Core;
 
 #define BEGIN_INTERNAL_NAMESPACE		\
@@ -210,6 +208,14 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 			      lpszInfo,					\
 			      T_(__FILE__),				\
 			      __LINE__)
+#endif
+
+#if defined(_MSC_VER)
+#define UNSUPPORTED_PLATFORM()						\
+  __assume(false)
+#else
+#define UNSUPPORTED_PLATFORM()						\
+  MIKTEX_ASSERT (false)
 #endif
 
 /* _________________________________________________________________________
@@ -665,34 +671,6 @@ GetLastChar (/*[in]*/ const MIKTEXCHAR *	lpsz)
   size_t len = StrLen(lpsz);
   return (len < 2 ? 0 : lpsz[len - 1]);
 }
-
-/* _________________________________________________________________________
-
-   IsWindowsNT
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsNT ()
-{
-  return (GetVersion() < 0x80000000);
-}
-#endif
-
-/* _________________________________________________________________________
-
-   IsWindowsVista
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
-#endif
 
 /* _________________________________________________________________________
 

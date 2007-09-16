@@ -72,18 +72,3 @@ typedef basic_ostringstream<MIKTEXCHAR> otstringstream;
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
-
-/* _________________________________________________________________________
-
-   IsWindowsVista
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
-#endif
-

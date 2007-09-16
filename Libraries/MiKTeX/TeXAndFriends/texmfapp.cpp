@@ -41,7 +41,11 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
 	     static_cast<unsigned>(clockSinceStart));
   if (! IsWindowsNT())
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       return;
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
   HINSTANCE hinstKernel;
   hinstKernel = LoadLibrary(T_("kernel32.dll"));

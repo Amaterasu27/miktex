@@ -765,7 +765,11 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  RegisterPath95 ();
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
     }
 }
@@ -887,7 +891,11 @@ FileCopyPage::DoTheInstallation ()
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  RegisterPath95 ();
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
     }
 }

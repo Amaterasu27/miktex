@@ -717,13 +717,8 @@ File::Delete (/*[in]*/ const PathName &		path,
       PathName dir;
       if (IsWindowsNT())
 	{
-#if defined(MIKTEX_UNICODE)
-	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
-	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameW"));
-#else
 	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
 	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameA"));
-#endif
 	  if (! getVolumePathName(absPath.Get(),
 				  dir.GetBuffer(),
 				  dir.GetSize()))
@@ -733,8 +728,12 @@ File::Delete (/*[in]*/ const PathName &		path,
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  dir = absPath;
 	  dir.RemoveFileSpec ();
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
       MIKTEXCHAR szTemp[BufferSizes::MaxPath];
       if (GetTempFileName(dir.Get(), T_("mik"), 0, szTemp) == 0)

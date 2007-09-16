@@ -627,11 +627,22 @@ FindSystemShell ()
 	}
       if (szCmd[0] == 0)
 	{
+	  const MIKTEXCHAR * lpszShell;
+	  if (IsWindowsNT())
+	    {
+	      lpszShell = T_("cmd.exe");
+	    }
+	  else
+	    {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+	      lpszShell = T_("command.com");
+#else
+	      UNSUPPORTED_PLATFORM ();
+#endif
+	    }
 	  MIKTEXCHAR * lpsz = 0;
 	  if (SearchPath(0,
-			 (IsWindowsNT()
-			  ? T_("cmd.exe")
-			  : T_("command.com")),
+			 lpszShell,
 			 0,
 			 ARRAY_SIZE(szCmd),
 			 szCmd,
@@ -685,7 +696,7 @@ Wrap (/*[in,out]*/ tstring &	arguments)
       systemShell = conspawn;
       wrapped = true;
 #else
-      UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+      UNSUPPORTED_PLATFORM ();
 #endif
     }
 

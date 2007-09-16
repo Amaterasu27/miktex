@@ -1371,11 +1371,15 @@ IsPathRegistered ()
     }
   else
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       tstring value;
       if (Utils::GetEnvironmentString(T_("PATH"), value))
 	{
 	  return (ContainsBinDir(value.c_str()));
 	}
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
   return (false);
 }
@@ -1752,6 +1756,7 @@ RegisterPathNT ()
    RegisterPath95
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 void
 RegisterPath95 ()
 {
@@ -1773,6 +1778,7 @@ RegisterPath95 ()
   Log (T_("set PATH=%s;%%PATH%%\n"), pathBinDir.Get());
   theApp.mustReboot = true;
 }
+#endif
 
 /* _________________________________________________________________________
 

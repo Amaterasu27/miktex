@@ -954,6 +954,16 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
       INVALID_ARGUMENT (T_("SessionImpl::Initialize"), 0);
     }
 
+  // check system requirements
+#if ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+  if (GetVersion() < 0x80000000)
+    {
+      FATAL_MIKTEX_ERROR (T_("SessionImpl::Initialize"),
+			  T_("This platform is not supported."),
+			  0);
+    }
+#endif
+
 #if defined(MIKTEX_WINDOWS)
   if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
     {

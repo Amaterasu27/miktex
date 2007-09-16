@@ -89,6 +89,9 @@
       FATAL_WINDOWS_ERROR (windowsFunction, lpszInfo);	\
     }
 
+#define UNSUPPORTED_PLATFORM()						\
+  __assume(false)
+
 /* _________________________________________________________________________
 
    Helper Macros
@@ -480,8 +483,10 @@ void LogV
 void
 RegisterMiKTeXFileTypes ();
 
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 void
 RegisterPath95 ();
+#endif
 
 void
 RegisterPathNT ();
@@ -514,30 +519,6 @@ void
 SplitUrl (/*[in]*/ const tstring &	url,
 	  /*[out]*/ tstring &		protocol,
 	  /*[out]*/ tstring &		host);
-
-/* _________________________________________________________________________
-
-   IsWindowsNT
-   _________________________________________________________________________ */
-
-inline
-bool
-IsWindowsNT ()
-{
-  return (GetVersion() < 0x80000000 ? true : false);
-}
-
-/* _________________________________________________________________________
-
-   IsWindowsVista
-   _________________________________________________________________________ */
-
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
 
 /* _________________________________________________________________________
 

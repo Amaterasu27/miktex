@@ -467,7 +467,11 @@ comSession::UpdateRegistry (/*[in]*/ BOOL doRegister)
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  str = T_("00");
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
       rme.szKey = L"ACCESS_SD";
       CT2W wstr (str.c_str());

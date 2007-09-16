@@ -1903,7 +1903,11 @@ AddEventSource ()
 {
   if (! IsWindowsNT())
     {
-      return (false);
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+      return (false)
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
 
   tstring registryPath = EVTLOGAPP;
@@ -2002,7 +2006,11 @@ RemoveEventSource ()
 {
   if (! IsWindowsNT())
     {
-      return (false);
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+      return (false)
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
   AutoHKEY hkey;
   LONG res =
@@ -2053,7 +2061,11 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
 #else
   if (! IsWindowsNT())
     {
-      return (false);
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+      return (false)
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
 
   vector<const MIKTEXCHAR *> vecStrings;
@@ -2252,7 +2264,7 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 	}
       writer.Close ();
 #else
-      UNIMPLEMENTED (T_("SessionImpl::ScheduleFileRemoval"));
+      UNSUPPORTED_PLATFORM ();
 #endif
     }
 }
@@ -2269,7 +2281,11 @@ SessionImpl::IsUserMemberOfGroup (/*[in]*/ DWORD localGroup)
 {
   if (! IsWindowsNT())
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::IsUserMemberOfGroup"));
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+      return (false)
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
 
   HANDLE hThread;
@@ -2547,11 +2563,15 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 {
   if (! IsWindowsNT())
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       if (! CreateDirectory (lpszPath, 0))
 	{
 	  FATAL_WINDOWS_ERROR (T_("CreateDirectory"), lpszPath);
 	}
       return;
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
 
   AutoSid pEveryoneSID;

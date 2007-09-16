@@ -127,9 +127,11 @@ private:
   void
   UnregisterPathNT (/*[in]*/ bool shared);
 
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 private:
   void
   UnregisterPath95 ();
+#endif
 
 private:
   bool yapIsDefaultViewer;

@@ -242,7 +242,11 @@ RemoveFilesPage::RemoveMiKTeX ()
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  UnregisterPath95 ();
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
     }
   catch (const MiKTeXException & e)
@@ -700,6 +704,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
    RemoveFilesPage::UnregisterPath95
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 void
 RemoveFilesPage::UnregisterPath95 ()
 {
@@ -738,6 +743,7 @@ RemoveFilesPage::UnregisterPath95 ()
 	}
     }
 }
+#endif
 
 /* _________________________________________________________________________
 

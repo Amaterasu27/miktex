@@ -182,15 +182,3 @@ IsMiKTeXPackage (/*[in]*/ const tstring & deploymentName)
 {
   return (deploymentName.compare(0, 7, T_("miktex-")) == 0);
 }
-
-/* _________________________________________________________________________
-
-   IsWindowsVista
-   _________________________________________________________________________ */
-
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}

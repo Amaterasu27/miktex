@@ -260,6 +260,39 @@ class PathName;
 
 /* _________________________________________________________________________
 
+   IsWindowsNT
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsNT ()
+{
+  DWORD windowsVersion = GetVersion();
+#if defined(_MSC_VER) && ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+  MIKTEX_ASSERT (windowsVersion < 0x80000000);
+  MIKTEX_ASSUME (windowsVersion < 0x80000000);
+#endif
+  return (windowsVersion < 0x80000000);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   IsWindowsVista
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindowsVista ()
+{
+  return ((GetVersion() & 0xff) >= 6);
+}
+#endif
+
+/* _________________________________________________________________________
+
    tstring
    _________________________________________________________________________ */
 

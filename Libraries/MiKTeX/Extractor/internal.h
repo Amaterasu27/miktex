@@ -43,24 +43,6 @@ namespace MiKTeX {					\
 #define BEGIN_ANONYMOUS_NAMESPACE namespace {
 #define END_ANONYMOUS_NAMESPACE }
 
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsVista ()
-{
-  return ((GetVersion() & 0xff) >= 6);
-}
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-inline
-bool
-IsWindowsNT ()
-{
-  return (GetVersion() < 0x80000000);
-}
-#endif
-
 /* _________________________________________________________________________
 
    Debug-dependant Macros
