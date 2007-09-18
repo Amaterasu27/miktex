@@ -1,0 +1,75 @@
+## CMakeLists.txt						-*- CMake -*-
+##
+## Copyright (C) 2007 Christian Schenk
+## 
+## This file is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published
+## by the Free Software Foundation; either version 2, or (at your
+## option) any later version.
+## 
+## This file is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+## 
+## You should have received a copy of the GNU General Public License
+## along with this file; if not, write to the Free Software
+## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+## USA.
+
+set (src_dir ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}/src)
+set (win32_dir ${CMAKE_SOURCE_DIR}/${rel_graphite_dir}/wrappers/win32)
+
+add_definitions(
+  -DGR_NAMESPACE
+  -DTRACING
+  -DUNICODE
+  -DWIN32
+  -D_UNICODE
+  -D_WINDOWS
+)
+
+include_directories(BEFORE
+  ${src_dir}/font
+  ${src_dir}/painter
+  ${src_dir}/segment
+  ${src_dir}/textsource
+  ${src_dir}/generic
+  ${win32_dir}
+)
+
+include_directories(BEFORE
+  ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}
+)
+
+set(${graphite_engine_lib_name}_sources
+  ${src_dir}/generic/Debug.cpp
+  ${src_dir}/generic/Util.cpp
+  ${src_dir}/segment/explicit_instantiations.cpp
+  ${src_dir}/font/Font.cpp
+  ${src_dir}/font/FileFont.cpp
+  ${src_dir}/segment/FontCache.cpp
+  ${src_dir}/segment/FontFace.cpp
+  ${src_dir}/segment/FileInput.cpp
+  ${src_dir}/segment/GrCharStream.cpp
+  ${src_dir}/segment/GrClassTable.cpp
+  ${src_dir}/segment/GrEngine.cpp
+  ${src_dir}/segment/GrFeature.cpp
+  ${src_dir}/segment/GrFSM.cpp
+  ${src_dir}/segment/GrGlyphTable.cpp
+  ${src_dir}/segment/GrPass.cpp
+  ${src_dir}/segment/GrPassActionCode.cpp
+  ${src_dir}/segment/GrSlotState.cpp
+  ${src_dir}/segment/GrSlotStream.cpp
+  ${src_dir}/segment/GrTableManager.cpp
+  ${src_dir}/segment/Segment.cpp
+  ${src_dir}/segment/SegmentAux.cpp
+  ${src_dir}/painter/SegmentPainter.cpp
+  ${src_dir}/segment/TransductionLog.cpp
+  ${src_dir}/segment/Platform.cpp
+  ${src_dir}/font/TtfUtil.cpp
+  ${win32_dir}/WinFont.cpp
+  ${win32_dir}/WinSegmentPainter.cpp
+)
+
+add_library(${graphite_engine_lib_name} ${${graphite_engine_lib_name}_sources})
