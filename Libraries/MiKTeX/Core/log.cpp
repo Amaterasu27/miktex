@@ -542,21 +542,25 @@ TraceMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 		  /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
 		  /*[in]*/ int			lpszSourceLine)
 {
-  SessionImpl::GetSession()->trace_error->WriteFormattedLine
-    (T_("core"),
-     T_("\
+  if (SessionImpl::GetSession() != 0
+      && SessionImpl::GetSession()->trace_error.get() != 0)
+    {
+      SessionImpl::GetSession()->trace_error->WriteFormattedLine
+	(T_("core"),
+	 T_("\
 The MiKTeX function %s fails for the following reason:\n\
 %s\n\
 Info: %s\n\
 Source: %s\n\
 Line: %d"),
-     (lpszMiktexFunction ? lpszMiktexFunction : T_("Unknown")),
-     lpszMessage,
-     (lpszInfo == 0
-      ? T_("")
-      : lpszInfo),
-     lpszSourceFile,
-     lpszSourceLine);
+	 (lpszMiktexFunction ? lpszMiktexFunction : T_("Unknown")),
+	 lpszMessage,
+	 (lpszInfo == 0
+	  ? T_("")
+	  : lpszInfo),
+	 lpszSourceFile,
+	 lpszSourceLine);
+    }
 }
 
 /* _________________________________________________________________________
