@@ -103,16 +103,6 @@ PackageManager::~PackageManager ()
 
 /* _________________________________________________________________________
 
-   PackageManager2::~PackageManager2
-   _________________________________________________________________________ */
-
-MPMCALL
-PackageManager2::~PackageManager2 ()
-{
-}
-
-/* _________________________________________________________________________
-
    PackageManagerImpl::PackageManagerImpl
    _________________________________________________________________________ */
 
@@ -155,19 +145,7 @@ PackageManager *
 MPMCALL
 PackageManager::Create ()
 {
-  return (PackageManager2::Create());
-}
-
-/* _________________________________________________________________________
-
-   PackageManager2::Create
-   _________________________________________________________________________ */
-
-PackageManager2 *
-MPMCALL
-PackageManager2::Create ()
-{
-  PackageManager2 * pManager = new PackageManagerImpl ();
+  PackageManager * pManager = new PackageManagerImpl ();
   return (pManager);
 }
 
@@ -2264,4 +2242,40 @@ PackageManagerImpl::TryVerifyInstalledPackage
     }
 
   return (ok);
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::GetContainerPath
+   _________________________________________________________________________ */
+
+tstring
+MPMCALL
+PackageManagerImpl::GetContainerPath (/*[in]*/ const tstring &	deploymentName,
+				      /*[in]*/ bool	useDisplayNames)
+{
+  tstring path;
+  PackageInfo packageInfo = GetPackageInfo(deploymentName);
+  for (size_t idx = 0; idx < packageInfo.requiredBy.size(); ++ idx)
+    {
+      PackageInfo packageInfo2 = GetPackageInfo(packageInfo.requiredBy[idx]);
+      if (packageInfo2.IsPureContainer())
+	{
+	  // <recursivecall>
+	  path =
+	    GetContainerPath(packageInfo.requiredBy[idx], useDisplayNames);
+	  // </recursivecall>
+	  path += PathName::DirectoryDelimiter;
+	  if (useDisplayNames)
+	    {
+	      path += packageInfo2.displayName;
+	    }
+	  else
+	    {
+	      path += packageInfo2.deploymentName;
+	    }
+	  break;
+	}
+    }
+  return (path);
 }

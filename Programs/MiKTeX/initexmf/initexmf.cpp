@@ -514,7 +514,7 @@ private:
   bool setupWizardRunning;
   
 private:
-  PackageManager2Ptr pManager;
+  PackageManagerPtr pManager;
 
 private:
   SessionWrapper pSession;

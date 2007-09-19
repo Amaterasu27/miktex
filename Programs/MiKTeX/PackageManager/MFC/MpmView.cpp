@@ -66,32 +66,6 @@ END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
 
-   MpmView::GetContainerPath
-   _________________________________________________________________________ */
-
-bool
-MpmView::GetContainerPath (/*[in]*/ const tstring &	deploymentName,
-				      /*[in,out]*/ tstring &	path)
-{
-  PackageInfo packageInfo = pManager->GetPackageInfo(deploymentName.c_str());
-  if (packageInfo.requiredBy.size() == 0)
-    {
-      return (false);
-    }
-  PackageInfo packageInfo2 =
-    pManager->GetPackageInfo(packageInfo.requiredBy[0].c_str());
-  tstring parent;
-  // <recursivecall>
-  GetContainerPath (packageInfo.requiredBy[0], parent);
-  // </recursivecall>
-  path = parent;
-  path += PathName::DirectoryDelimiter;
-  path += packageInfo2.displayName;
-  return (true);
-}
-
-/* _________________________________________________________________________
-
    MpmView::MpmView
    _________________________________________________________________________ */
 
@@ -378,10 +352,12 @@ MpmView::CompareItems (/*[in]*/ LPARAM	lParam1,
 	  break;
 	case 1:
 	  {
-	    tstring str1;
-	    tstring str2;
-	    This->GetContainerPath (packageInfo1.deploymentName, str1);
-	    This->GetContainerPath (packageInfo2.deploymentName, str2);
+	    tstring str1 =
+	      This->pManager->GetContainerPath(packageInfo1.deploymentName,
+					       true);
+	    tstring str2 =
+	      This->pManager->GetContainerPath(packageInfo2.deploymentName,
+					       true);
 	    ret = PathName::Compare(str1.c_str(), str2.c_str());
 	    break;
 	  }
@@ -555,11 +531,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 1
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 1;
-  tstring str;
-  if (! GetContainerPath(packageInfo.deploymentName, str))
-    {
-      str = T_("");
-    }
+  tstring str = pManager->GetContainerPath(packageInfo.deploymentName, true);
   lvitem.pszText = const_cast<MIKTEXCHAR *>(str.c_str());
   if (! listctrl.SetItem(&lvitem))
     {

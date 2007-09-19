@@ -238,18 +238,16 @@ private:
   Update (/*[in]*/ const vector<tstring> &	updates);
 
 private:
-  bool
-  GetContainerPath (/*[in]*/ const tstring &	deploymentName,
-		    /*[in,out]*/ tstring &	path);
-
-private:
-  bool
-  GetDirectories (/*[in]*/ const tstring &	deploymentName,
-		  /*[in,out]*/ tstring &	directories);
+  tstring
+  GetDirectories (/*[in]*/ const tstring &	deploymentName);
 
 private:
   void
   List (/*[in]*/ bool csv);
+
+private:
+  void
+  ListPackageNames ();
 
 private:
   void
@@ -284,7 +282,7 @@ private:
   SignalHandler (/*[in]*/ int sig);
 
 private:
-  PackageManager2Ptr pPackageManager;
+  PackageManagerPtr pPackageManager;
 
 private:
   SessionWrapper pSession;
@@ -323,6 +321,7 @@ enum Option
   OPT_INSTALL_ROOT,
   OPT_INSTALL_SOME,
   OPT_LIST,
+  OPT_LIST_PACKAGE_NAMES,
   OPT_LIST_REPOSITORIES,
   OPT_PICK_REPOSITORY_URL,
   OPT_PRINT_PACKAGE_INFO,
@@ -417,6 +416,11 @@ Use the specified directory as the installation destination."),
     T_("List the contents of the package database:\
  for each package, print the installation status, the number of files,\
  the size, and the name."), 0
+  },
+
+  {
+    T_("list-package-names"), 0, POPT_ARG_NONE, 0, OPT_LIST_PACKAGE_NAMES,
+    T_("List the package names."), 0
   },
 
   {
@@ -1137,35 +1141,13 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
 
 /* _________________________________________________________________________
 
-   Application::GetContainerPath
-   _________________________________________________________________________ */
-
-bool
-Application::GetContainerPath (/*[in]*/ const tstring &	deploymentName,
-			       /*[in,out]*/ tstring &	path)
-{
-  PackageInfo pi = pPackageManager->GetPackageInfo(deploymentName);
-  if (pi.requiredBy.size() == 0)
-    {
-      return (false);
-    }
-  tstring parent;
-  GetContainerPath (pi.requiredBy[0], parent);
-  path = parent;
-  path += PathName::DirectoryDelimiter;
-  path += pi.requiredBy[0];
-  return (true);
-}
-
-/* _________________________________________________________________________
-
    Application::GetDirectories
    _________________________________________________________________________ */
 
-bool
-Application::GetDirectories (/*[in]*/ const tstring &	deploymentName,
-			     /*[in,out]*/ tstring &	directories)
+tstring
+Application::GetDirectories (/*[in]*/ const tstring &	deploymentName)
 {
+  tstring ret;
   set<tstring> setDirectories;
   PackageInfo pi = pPackageManager->GetPackageInfo(deploymentName);
   for (vector<tstring>::const_iterator it = pi.runFiles.begin();
@@ -1184,12 +1166,13 @@ Application::GetDirectories (/*[in]*/ const tstring &	deploymentName,
     {
       if (it != setDirectories.begin())
 	{
-	  directories += PATH_DELIMITER;
+	  ret += PATH_DELIMITER;
 	}
-      directories += *it;
+      ret += *it;
     }
-  return (true);
+  return (ret);
 }
+
 /* _________________________________________________________________________
 
    Application::List
@@ -1220,10 +1203,9 @@ Application::List (/*[in]*/ bool csv)
     {
       if (csv)
 	{
-	  tstring path;
-	  GetContainerPath (it->deploymentName, path);
-	  tstring directories;
-	  GetDirectories (it->deploymentName, directories);
+	  tstring path =
+	    pPackageManager->GetContainerPath(it->deploymentName, false);
+	  tstring directories = GetDirectories(it->deploymentName);
 	  tcout << path << T_('\\') << it->deploymentName << T_(',')
 		<< directories << T_('\n');
 	}
@@ -1237,6 +1219,40 @@ Application::List (/*[in]*/ bool csv)
 		<< T_("  ") << it->deploymentName
 		<< endl;
 	}
+    }
+  pIter->Dispose ();
+}
+
+/* _________________________________________________________________________
+
+   Application::ListPackageNames
+   _________________________________________________________________________ */
+
+void
+Application::ListPackageNames ()
+{
+  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
+  PackageInfo packageInfo;
+  set<PackageInfo, PackageInfoComparer> setPi;
+  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
+    {
+      if (packageInfo.IsPureContainer())
+	{
+	  continue;
+	}
+      setPi.insert (packageInfo);
+    }
+  if (setPi.size() == 0)
+    {
+      Message (T_("The package database files have not been installed.\n"));
+    }
+  for (set<PackageInfo, PackageInfoComparer>::const_iterator
+	 it = setPi.begin();
+       it != setPi.end();
+       ++ it)
+    {
+      tcout << it->deploymentName
+	    << endl;
     }
   pIter->Dispose ();
 }
@@ -1412,6 +1428,7 @@ Application::Main (/*[in]*/ int			argc,
   bool optImport = false;
   bool optImportAll = false;
   bool optList = false;
+  bool optListPackageNames = false;
   bool optListRepositories = false;
   bool optPickRepositoryUrl = false;
   bool optPrintPackageInfo = false;
@@ -1487,6 +1504,9 @@ Application::Main (/*[in]*/ int			argc,
 	  break;
 	case OPT_LIST:
 	  optList = true;
+	  break;
+	case OPT_LIST_PACKAGE_NAMES:
+	  optListPackageNames = true;
 	  break;
 	case OPT_LIST_REPOSITORIES:
 	  optListRepositories = true;
@@ -1770,6 +1790,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optList)
     {
       List (optCsv);
+      restartWindowed = false;
+    }
+
+  if (optListPackageNames)
+    {
+      ListPackageNames ();
       restartWindowed = false;
     }
 

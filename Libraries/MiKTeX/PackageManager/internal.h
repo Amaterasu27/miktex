@@ -590,7 +590,7 @@ FileDigestTable;
 
 class
 PackageManagerImpl
-  : public PackageManager2,
+  : public PackageManager,
     public MiKTeX::Core::ICreateFndbCallback,
     public IProgressNotify_
 {
@@ -721,6 +721,13 @@ public:
   MPMCALL
   TryVerifyInstalledPackage
   (/*[in]*/ const MiKTeX::Core::tstring & deploymentName);
+
+public:
+  virtual
+  MiKTeX::Core::tstring
+  MPMCALL
+  GetContainerPath (/*[in]*/ const MiKTeX::Core::tstring & deploymentName,
+		    /*[in]*/ bool			useDisplayNames);
 
 public:
   PackageManagerImpl ();

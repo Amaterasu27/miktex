@@ -27,7 +27,7 @@
 UpdateWizardApplication theApp;
 
 PathName g_logFileName;
-PackageManager2Ptr g_pManager;
+PackageManagerPtr g_pManager;
 bool g_upgrading;
 
 /* _________________________________________________________________________
@@ -257,7 +257,7 @@ UpdateWizardApplication::InitInstance ()
     {
       SessionWrapper pSession (Session::InitInfo(T_("update")));
 
-      g_pManager = PackageManager2::Create();
+      g_pManager = PackageManager::Create();
 
       // get command-line arguments
       UpdateWizardCommandLineInfo cmdinfo;
