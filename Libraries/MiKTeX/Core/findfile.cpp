@@ -241,7 +241,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
   // make a search spec: "DIRPATH\RELPATH"
   CharBuffer<char> searchSpec;
   searchSpec = lpszDirPath;
-  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetSize());
+  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetCapacity());
   searchSpec += lpszRelPath;
 
   // if search spec doesn't contain "//"...
@@ -257,7 +257,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
       // otherwise, do a recursive search
       PathName pathCurDir;
       CopyString2 (pathCurDir.GetBuffer(),
-		   pathCurDir.GetSize(),
+		   pathCurDir.GetCapacity(),
 		   searchSpec.Get(),
 		   lpszRecInd - searchSpec.Get());
       if (Directory::Exists(pathCurDir))
@@ -409,7 +409,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 			  it->Get(),
 			  result,
 			  pathFileNameInfo.GetBuffer(),
-			  pathFileNameInfo.GetSize());
+			  pathFileNameInfo.GetCapacity());
 	  if (found)
 	    {
 	      found = CheckCandidate(result, pathFileNameInfo.Get());

@@ -128,7 +128,7 @@ WebAppInputLine::MangleNameOfFile (/*[in]*/ const char * lpszFrom)
   char * lpszTo = ret.GetBuffer();
   MIKTEX_ASSERT_STRING (lpszFrom);
   size_t len = StrLen(lpszFrom);
-  if (len >= ret.GetSize())
+  if (len >= ret.GetCapacity())
     {
       INVALID_ARGUMENT (T_("WebAppInputLine::MangleNameOfFile"), lpszFrom);
     }
@@ -170,7 +170,7 @@ UnmangleNameOfFile_ (/*[in]*/ const CharType * lpszFrom)
   char * lpszTo = ret.GetBuffer();
   MIKTEX_ASSERT_STRING (lpszFrom);
   size_t len = StrLen(lpszFrom);
-  if (len >= ret.GetSize())
+  if (len >= ret.GetCapacity())
     {
       INVALID_ARGUMENT (T_("UnmangleNameOfFile_"), 0/*lpszFrom*/);
     }

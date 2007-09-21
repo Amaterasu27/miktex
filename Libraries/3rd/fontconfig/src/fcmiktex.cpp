@@ -76,8 +76,8 @@ miktex_fc_default_fonts ()
 	{
 	  UINT l = 
 	    GetWindowsDirectory(path.GetBuffer(),
-				static_cast<UINT>(path.GetSize()));
-	  if (l == 0 || l >= path.GetSize())
+				static_cast<UINT>(path.GetCapacity()));
+	  if (l == 0 || l >= path.GetCapacity())
 	    {
 	      path = "C:/wInDoWs";
 	    }

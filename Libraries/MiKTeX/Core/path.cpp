@@ -657,7 +657,7 @@ const char *
 PathName::GetExtension ()
   const
 {
-  return (GetFileNameExtension(buffer));
+  return (GetFileNameExtension(Get()));
 }
 
 /* _________________________________________________________________________
@@ -695,15 +695,10 @@ PathName::SetExtension (/*[in]*/ const char *	lpszExtension,
 PathName &
 PathName::AppendDirectoryDelimiter ()
 {
-  size_t l = StrLen(buffer);
-  if (l == 0 || ! IsDirectoryDelimiter(buffer[l - 1]))
+  size_t l = GetLength();
+  if (l == 0 || ! IsDirectoryDelimiter(CharBuffer::operator[](l - 1)))
     {
-      if (l >= BufferSizes::MaxPath - 1)
-	{
-	  BUF_TOO_SMALL (T_("PathName::AppendDirectoryDelimiter"));
-	}
-      buffer[l] = static_cast<char>(DirectoryDelimiter);
-      buffer[l + 1] = 0;
+      CharBuffer::Append (DirectoryDelimiter);
     }
   return (*this);
 }
@@ -716,25 +711,26 @@ PathName::AppendDirectoryDelimiter ()
 PathName &
 PathName::CutOffLastComponent ()
 {
-  RemoveDirectoryDelimiter (buffer);
-  for (size_t end = StrLen(buffer); end > 0; -- end)
+  RemoveDirectoryDelimiter (GetBuffer());
+  for (size_t end = GetLength(); end > 0; -- end)
     {
-      if (end > 0 && IsDirectoryDelimiter(buffer[end - 1]))
+      if (end > 0 && IsDirectoryDelimiter(CharBuffer::operator[](end - 1)))
 	{
 #if defined(MIKTEX_WINDOWS)
-	  if (end > 1 && buffer[end - 2] == PathName::VolumeDelimiter)
+	  if (end > 1
+	      && CharBuffer::operator[](end - 2) == PathName::VolumeDelimiter)
 	    {
-	      buffer[end] = 0;
+	      CharBuffer::operator[](end) = 0;
 	      break;
 	    }
 #endif
 	  if (end == 1)
 	    {
-	      buffer[1] = 0;
+	      CharBuffer::operator[](1) = 0;
 	    }
 	  else
 	    {
-	      buffer[end - 1] = 0;
+	      CharBuffer::operator[](end - 1) = 0;
 	    }
 	  break;
 	}
@@ -752,7 +748,7 @@ PathName::GetHash ()
   const
 {
   size_t h = 0;
-  for (const char * lpsz = buffer; *lpsz != 0; ++ lpsz)
+  for (const char * lpsz = GetBuffer(); *lpsz != 0; ++ lpsz)
     {
       char ch = *lpsz;
 #if defined(MIKTEX_WINDOWS)

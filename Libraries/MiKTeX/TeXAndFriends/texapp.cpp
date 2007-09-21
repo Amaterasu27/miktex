@@ -373,7 +373,7 @@ TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
     {
       return (false);
     }
-  CharArray<char, 300> buf (lpszCommand);  // FIXME: hard-coded buffer size
+  CharBuffer<char> buf (lpszCommand);
   Process::ExecuteSystemCommand (buf.Get(), &exitCode);
   return (true);
 }

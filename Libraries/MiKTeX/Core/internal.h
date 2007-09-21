@@ -751,7 +751,7 @@ public:
 	  /*[in]*/ size_t		n)
     : CharBuffer (n + 1)
   {
-    CopyString2 (buffer, GetSize(), lpsz, n);
+    CopyString2 (GetBuffer(), GetCapacity(), lpsz, n);
   }
 };
 

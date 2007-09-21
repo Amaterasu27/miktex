@@ -368,7 +368,7 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
 
   DWORD type;
   PathName pathExe;
-  DWORD len = static_cast<DWORD>(pathExe.GetSize());
+  DWORD len = static_cast<DWORD>(pathExe.GetCapacity());
   res =
     RegQueryValueEx(hkey.Get(),
 		    T_(""),
@@ -460,7 +460,7 @@ SessionImpl::GetATMFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
 
   DWORD type;
   PathName fontDir;
-  DWORD len = static_cast<DWORD>(fontDir.GetSize());
+  DWORD len = static_cast<DWORD>(fontDir.GetCapacity());
   res = RegQueryValueEx(hkey.Get(),
 			T_("PFB_DIR"),
 			0,
@@ -577,7 +577,7 @@ MIKTEXSTATICFUNC(bool)
 GetWindowsFontsDirectory (/*[out]*/ PathName & path)
 {
   if (GetWindowsDirectory(path.GetBuffer(),
-			  static_cast<UINT>(path.GetSize()))
+			  static_cast<UINT>(path.GetCapacity()))
       == 0)
     {
       FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
@@ -1039,7 +1039,7 @@ Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
       
       if (res == ERROR_SUCCESS)
 	{
-	  unsigned long len = path.GetSize();
+	  unsigned long len = path.GetCapacity();
 	  unsigned long type = REG_SZ;
 	  res =
 	    RegQueryValueEx(hkey.Get(),
@@ -1799,7 +1799,7 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (getcwd(buffer, static_cast<int>(GetSize())) == 0)
+  if (getcwd(GetBuffer(), static_cast<int>(GetCapacity())) == 0)
     {
       FATAL_CRT_ERROR (T_("getcwd"), 0);
     }
@@ -1814,12 +1814,13 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
-  unsigned long n = GetTempPathA(static_cast<DWORD>(GetSize()), buffer);
+  unsigned long n =
+    GetTempPathA(static_cast<DWORD>(GetCapacity()), GetBuffer());
   if (n == 0)
     {
       FATAL_WINDOWS_ERROR (T_("GetTempPathA"), 0);
     }
-  if (n >= GetSize())
+  if (n >= GetCapacity())
     {
       UNEXPECTED_CONDITION (T_("PathName::SetToTempDirectory"));
     }
@@ -1836,7 +1837,7 @@ PathName::SetToTempFile ()
 {
   PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
 
-  UINT n = GetTempFileNameA(pathTempDir.Get(), T_("mik"), 0, buffer);
+  UINT n = GetTempFileNameA(pathTempDir.Get(), T_("mik"), 0, GetBuffer());
 
   if (n == 0)
     {
@@ -1846,7 +1847,7 @@ PathName::SetToTempFile ()
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     (T_("core"),
      T_("created temporary file %s"),
-     Q_(buffer));
+     Q_(Get()));
 
   return (*this);
 }
@@ -2528,7 +2529,7 @@ GetMediaType (/*[in]*/ const MIKTEXCHAR * lpszPath)
       && PathName::IsDirectoryDelimiter(lpszPath[2]))
     {
       CopyString2 (pathRootName.GetBuffer(),
-		   pathRootName.GetSize(),
+		   pathRootName.GetCapacity(),
 		   lpszPath,
 		   3);
     }
@@ -2717,15 +2718,10 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 PathName &
 PathName::AppendAltDirectoryDelimiter ()
 {
-  size_t l = StrLen(buffer);
-  if (l == 0 || ! IsDirectoryDelimiter(buffer[l - 1]))
+  size_t l = GetLength();
+  if (l == 0 || ! IsDirectoryDelimiter(CharBuffer::operator[](l - 1)))
     {
-      if (l >= BufferSizes::MaxPath - 1)
-	{
-	  BUF_TOO_SMALL (T_("PathName::AppendAltDirectoryDelimiter"));
-	}
-      buffer[l] = static_cast<char>(AltDirectoryDelimiter);
-      buffer[l + 1] = 0;
+      CharBuffer::Append (AltDirectoryDelimiter);
     }
   return (*this);
 }
@@ -2914,10 +2910,45 @@ Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 			lpszUtf8,
 			-1,
 			buf.GetBuffer(),
-			buf.GetSize());
+			buf.GetCapacity());
   if (len <= 0)
     {
       FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+    }
+  return (buf.Get());
+}
+
+/* _________________________________________________________________________
+
+   Utils::WideCharToAnsi
+   _________________________________________________________________________ */
+
+MIKTEXEXPORT
+string
+MIKTEXCALL
+Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
+{
+  if (*lpszWideChar == 0)
+    {
+      return ("");
+    }
+  CharBuffer<char, 512> buf (wcslen(lpszWideChar) + 1);
+  int n = WideCharToMultiByte
+    (CP_ACP,
+     WC_NO_BEST_FIT_CHARS,
+     lpszWideChar,
+     -1,
+     buf.GetBuffer(),
+     buf.GetCapacity(),
+     0,
+     FALSE);
+  if (n == 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("WideCharToMultiByte"), 0);
+    }
+  if (n < 0)
+    {
+      UNEXPECTED_CONDITION (T_("Utils::WideCharToAnsi"));
     }
   return (buf.Get());
 }

@@ -1121,7 +1121,7 @@ FileNameDatabase::Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 {
   CharBuffer<char, BufferSizes::MaxPath + 10> searchSpec;
   searchSpec = lpszDirPath;
-  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetSize());
+  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetCapacity());
   searchSpec += lpszFileName;
 
   traceStream->WriteFormattedLine

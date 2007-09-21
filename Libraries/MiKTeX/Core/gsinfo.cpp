@@ -78,7 +78,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
 #endif
       int exitCode;
       CharBuffer<char> gsout (4096);
-      size_t n = static_cast<unsigned>(gsout.GetSize());
+      size_t n = static_cast<unsigned>(gsout.GetCapacity());
       if (! Process::Run(pathGsExe.Get(),
 			 T_("--version"),
 			 gsout.GetBuffer(),
@@ -89,7 +89,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
 			      T_("MiKTeX Ghostscript could not be run."),
 			      0);
 	}
-      gsout.GetBuffer()[gsout.GetSize() - 1] = 0;
+      gsout.GetBuffer()[gsout.GetCapacity() - 1] = 0;
       gsVersion = VersionNumber::Parse(gsout.Get());
       if (exitCode != 0)
 	{

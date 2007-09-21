@@ -1254,11 +1254,11 @@ ComparePaths (/*[in]*/ const PathName &	path1,
   if (shortify
       && (GetShortPathName(path1.Get(),
 			   shortPath1.GetBuffer(),
-			   static_cast<DWORD>(shortPath1.GetSize()))
+			   static_cast<DWORD>(shortPath1.GetCapacity()))
 	  > 0)
       && (GetShortPathName(path2.Get(),
 			   shortPath2.GetBuffer(),
-			   static_cast<DWORD>(shortPath2.GetSize()))
+			   static_cast<DWORD>(shortPath2.GetCapacity()))
 	  > 0))
     {
       return (PathName::Compare(shortPath1, shortPath2));
@@ -1328,9 +1328,9 @@ IsPathRegistered (/*[in]*/ HKEY			hkeyRoot,
   bool found = false;
   if (result == ERROR_SUCCESS)
     {
-      AutoBuffer value (1024 * 32);
+      CharBuffer<char> value (1024 * 32);
       DWORD type;
-      DWORD valueSize = static_cast<DWORD>(value.GetSize());
+      DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
       result =
 	RegQueryValueEx(hkey,
 			T_("Path"),
@@ -1694,8 +1694,8 @@ RegisterPathNT ()
   AutoHKEY autoHKEY (hkey);
 
   DWORD type;
-  AutoBuffer value (32 * 1024);
-  DWORD valueSize = static_cast<DWORD>(value.GetSize());
+  CharBuffer<char> value (32 * 1024);
+  DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
 
   result =
     RegQueryValueEx(hkey,
@@ -2087,7 +2087,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 			      pathLink.Get(),
 			      static_cast<int>(pathLink.GetLength()),
 			      wszPath,
-			      static_cast<int>(pathLink.GetSize()))
+			      static_cast<int>(pathLink.GetCapacity()))
 	  == 0)
 	{
 	  FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
@@ -2251,7 +2251,7 @@ GetFileVersion (/*[in]*/ const PathName &	path)
     {
       FATAL_WINDOWS_ERROR (T_("GetFileVersionInfoSize"), path.Get());
     }
-  AutoBuffer buf (cchver);
+  CharBuffer<char> buf (cchver);
   if (! GetFileVersionInfo(path.Get(), dwHandle, cchver, buf.GetBuffer()))
     {
       FATAL_WINDOWS_ERROR (T_("GetFileVersionInfo"), path.Get());

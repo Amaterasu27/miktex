@@ -58,7 +58,7 @@ RemoveFilesPage::RemoveFilesPage ()
   m_psp.dwFlags &= ~ PSP_HASHELP;
 
   PathName dviViewer;
-  DWORD size = static_cast<DWORD>(dviViewer.GetSize());
+  DWORD size = static_cast<DWORD>(dviViewer.GetCapacity());
 
   yapIsDefaultViewer =
     (SUCCEEDED(AssocQueryString(0,
@@ -644,8 +644,8 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
   AutoHKEY autoHKEY (hkey);
 
   DWORD type;
-  AutoBuffer value (32 * 1024);
-  DWORD valueSize = static_cast<DWORD>(value.GetSize());
+  CharBuffer<char> value (32 * 1024);
+  DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
 
   result =
     RegQueryValueEx(hkey,

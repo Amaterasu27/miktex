@@ -1741,13 +1741,79 @@ public:
 #endif
 
 public:
-#if defined(MIKTEX_WINDOWS)
   static
   MIKTEXEXPORT
   std::wstring
   MIKTEXCALL
   UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
+
+public:
+#if defined(MIKTEX_WINDOWS)
+  static
+  MIKTEXEXPORT
+  std::string
+  MIKTEXCALL
+  WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
+
+public:
+#if defined(MIKTEX_WINDOWS)
+  static
+  std::string
+  UTF8ToAnsi (/*[in]*/ const char * lpszUtf8)
+  {
+    return (WideCharToAnsi(UTF8ToWideChar(lpszUtf8).c_str()));
+  }
+#endif
+
+public:
+  static
+  tstring
+  UTF8ToString (/*[in]*/ const char * lpszUtf8)
+  {
+#if defined(MIKTEX_UNICODE)
+    return (UTF8ToWideChar(lpszUtf8));
+#elif defined(MIKTEX_WINDOWS)
+    return (UTF8ToAnsi(lpszUtf8));
+#else
+    return (lpszUtf8);
+#endif
+  }
+
+public:
+  static
+  tstring
+  WideCharToString (/*[in]*/ const wchar_t * lpszWide)
+  {
+#if defined(MIKTEX_UNICODE)
+    return (lpszWide);
+#elif defined(MIKTEX_WINDOWS)
+    return (WideCharToAnsi(lpszWide));
+#else
+    return (WideCharToUTF8(lpszWide));
+#endif
+  }
+
+public:
+  static
+  MIKTEXEXPORT
+  bool
+  MIKTEXCALL
+  IsAscii (/*[in]*/ const char * lpsz);
+
+public:
+  static
+  MIKTEXEXPORT
+  bool
+  MIKTEXCALL
+  IsAscii (/*[in]*/ const wchar_t * lpsz);
+
+public:
+  static
+  MIKTEXEXPORT
+  bool
+  MIKTEXCALL 
+  IsUTF8 (/*[in]*/ const char * lpsz);
 };
 
 /* _________________________________________________________________________
@@ -1921,238 +1987,78 @@ private:
 
 /* _________________________________________________________________________
 
-   CharArray
-   _________________________________________________________________________ */
-
-/// Instances of this class store character strings of a fixed length.
-template<typename CharType, int SIZE>
-class CharArray
-{
-  /// Initializes a new instance of the class.
-public:
-  CharArray ()
-  {
-    buffer[0] = 0;
-  }
-
-public:
-  CharArray (/*[in]*/ int zero)
-  {
-    MIKTEX_ASSERT (zero == 0);
-    buffer[0] = 0;
-  }
-
-  /// Copies another CharArray object into a new CharArray object.
-public:
-  CharArray (/*[in]*/ const CharArray<CharType, SIZE> & other)
-  {
-    Utils::CopyString (buffer, SIZE, other.buffer);
-  }
-
-  /// Copies a character string into a new CharArray object.
-  /// @param lpsz A null-terminated character string.
-public:
-  CharArray (/*[in]*/ const char * lpsz)
-  {
-    if (lpsz == 0)
-      {
-	buffer[0] = 0;
-      }
-    else
-      {
-	Utils::CopyString (buffer, SIZE, lpsz);
-      }
-  }
-
-  /// Copies a wide character string into a new CharArray object.
-  /// @param lpsz A null-terminated character string.
-public:
-  CharArray (/*[in]*/ const wchar_t * lpsz)
-  {
-    if (lpsz == 0)
-      {
-	buffer[0] = 0;
-      }
-    else
-      {
-	Utils::CopyString (buffer, SIZE, lpsz);
-      }
-  }
-
-  /// Sets this CharArray object equal to another CharArray object.
-  /// @param rhs The other CharArray object.
-  /// @return Returns a reference to this object.
-public:
-  CharArray<CharType, SIZE> &
-  operator= (/*[in]*/ const CharArray<CharType, SIZE> & rhs)
-  {
-    if (this != &rhs)
-      {
-	Utils::CopyString (buffer, SIZE, rhs.buffer);
-      }
-    return (*this);
-  }
-
-public:
-  /// Copies a null-terminated character string into this CharArray
-  /// object.
-  /// @param lpszRhs A null-terminated character string.
-  /// @return Returns a reference to this object.
-  CharArray<CharType, SIZE> &
-  operator= (/*[in]*/ const CharType * lpszRhs)
-  {
-    if (buffer != lpszRhs)
-      {
-	Utils::CopyString (buffer, SIZE, lpszRhs);
-      }
-    return (*this);
-  }
-
-  /// Copies the contents of a string object into this CharArray object.
-  /// @param rhs The string object to be copied.
-  /// @return Returns a reference to this object.
-public:
-  CharArray<CharType, SIZE> &
-  operator= (/*[in]*/ const std::basic_string<CharType> & rhs)
-  {
-    Utils::CopyString (buffer, SIZE, rhs.c_str());
-    return (*this);
-  }
-
-  /// Returns a const reference to the character at the specified index.
-  /// @param idx Index into the char array.
-  /// @return Returns a const reference to the character.
-public:
-  const CharType &
-  operator[] (/*[in]*/ size_t idx)
-    const
-  {
-    MIKTEX_ASSERT (idx < SIZE);
-    return (buffer[idx]);
-  }
-
-public:
-  /// Returns a reference to the character at the specified index.
-  /// @param idx Index into the char array.
-  /// @return Returns a reference to the character.
-  CharType &
-  operator[] (/*[in]*/ size_t idx)
-  {
-    MIKTEX_ASSERT (idx < SIZE);
-    return (buffer[idx]);
-  }
-
-  /// Gets a pointer to the character sequence.
-  /// @return Returns a pointer to the first character in the sequence.
-public:
-  const CharType *
-  Get ()
-    const
-  {
-    return (buffer);
-  }
-
-public:
-  CharType *
-  GetBuffer ()
-  {
-    return (buffer);
-  }
-
-  /// Gets the size of this CharArray object.
-  /// @return Returns the size.
-public:
-  size_t
-  GetSize ()
-    const
-  {
-    return (SIZE);
-  }
-
-  /// Gets the length of the character sequence.
-  /// @return Returns the length (in characters).
-public:
-  size_t
-  GetLength ()
-    const
-  {
-    return (StrLen(buffer));
-  }
-
-  /// Tests if the character sequence is empty.
-  /// @return Returns true if the character sequence is empty.
-public:
-  bool
-  Empty ()
-    const
-  {
-    return (buffer[0] == 0);
-  }
-
-  /// Converts this CharArray object into a string object.
-  /// @return Returns a string object.
-public:
-  std::basic_string<CharType>
-  ToString ()
-    const
-  {
-    return (basic_string<CharType>(buffer));
-  }
-
-protected:
-  CharType buffer[SIZE];
-};
-
-/// Compares two CharArray objects.
-/// @param lhs The first CharArray object.
-/// @param lhs The second CharArray object.
-/// @return Returns true if both CharArray objects compare equal.
-template<typename CharType, int SIZE>
-bool
-operator== (/*[in]*/ const CharArray<CharType, SIZE> & lhs,
-	    /*[in]*/ const CharArray<CharType, SIZE> & rhs)
-{
-  return (StringCompare(lhs, rhs) == 0);
-}
-
-/* _________________________________________________________________________
-
    CharBuffer
    _________________________________________________________________________ */
 
+/// Instances of this class store characters.
 template<typename CharType, int BUFSIZE=512>
 class CharBuffer
 {
-protected:
+private:
   CharType smallBuffer[BUFSIZE];
 
-protected:
+private:
   CharType * buffer;
 
-protected:
-  size_t n;
+private:
+  size_t capacity;
 
 public:
   CharBuffer ()
     : buffer (smallBuffer),
-      n (BUFSIZE)
+      capacity (BUFSIZE)
   {
     Reset ();
   }
 
+  /// Copies another CharBuffer object into a new CharBuffer object.
 public:
-  CharBuffer (/*[in]*/ const CharType * lpsz)
+  CharBuffer (/*[in]*/ const CharBuffer & other)
     : buffer (smallBuffer),
-      n (BUFSIZE)
+      capacity (BUFSIZE)
+  {
+    Reset ();
+    Set (other);
+  }
+
+public:
+  CharBuffer (/*[in]*/ const char * lpsz)
+    : buffer (smallBuffer),
+      capacity (BUFSIZE)
   {
     MIKTEX_ASSERT_STRING_OR_NIL (lpsz);
-    operator= (lpsz);
+    Set (lpsz);
+  }
+
+public:
+  CharBuffer (/*[in]*/ const wchar_t * lpsz)
+    : buffer (smallBuffer),
+      capacity (BUFSIZE)
+  {
+    MIKTEX_ASSERT_STRING_OR_NIL (lpsz);
+    Set (lpsz);
+  }
+
+public:
+  CharBuffer (/*[in]*/ const std::basic_string<char> & other)
+    : buffer (smallBuffer),
+      capacity (BUFSIZE)
+  {
+    Set (other);
+  }
+
+public:
+  CharBuffer (/*[in]*/ const std::basic_string<wchar_t> & other)
+    : buffer (smallBuffer),
+      capacity (BUFSIZE)
+  {
+    Set (other);
   }
 
 public:
   CharBuffer (/*[in]*/ size_t n)
     : buffer (smallBuffer),
-      n (BUFSIZE)
+      capacity (BUFSIZE)
   {
     Reset ();
     Reserve (n);
@@ -2172,7 +2078,19 @@ public:
 
 public:
   void
-  Set (/*[in]*/ const CharType * lpsz)
+  Set (/*[in]*/ const CharBuffer & rhs)
+  {
+    if (this != &rhs)
+      {
+	Reserve (rhs.capacity);
+	memcpy (this->buffer, rhs.buffer, rhs.capacity * sizeof(CharType));
+      }
+  }
+
+public:
+  template<typename OtherCharType>
+  void
+  Set (/*[in]*/ const OtherCharType * lpsz)
   {
     MIKTEX_ASSERT_STRING_OR_NIL (lpsz);
     if (lpsz == 0)
@@ -2182,8 +2100,16 @@ public:
     else
       {
 	Reserve (StrLen(lpsz) + 1);
-	Utils::CopyString (buffer, GetSize(), lpsz);
+	Utils::CopyString (buffer, GetCapacity(), lpsz);
       }
+  }
+
+public:
+  template<typename OtherCharType>
+  void
+  Set (/*[in]*/ const std::basic_string<OtherCharType> & rhs)
+  {
+    Set (rhs.c_str());
   }
 
 public:
@@ -2191,18 +2117,49 @@ public:
   Append (/*[in]*/ const CharType * lpsz)
   {
     MIKTEX_ASSERT_STRING (lpsz);
-    Reserve (StrLen(buffer) + StrLen(lpsz) + 1);
-    Utils::AppendString (buffer, GetSize(), lpsz);
+    Reserve (GetLength() + StrLen(lpsz) + 1);
+    Utils::AppendString (buffer, GetCapacity(), lpsz);
+  }
+
+public:
+  void
+  Append (/*[in]*/ const CharType *	lpsz,
+	  /*[in]*/ size_t		len)
+  {
+    size_t idx = GetLength();
+    Reserve (idx + len + 1);
+    for (; len > 0; -- len)
+      {
+	buffer[idx] = *lpsz;
+      }
+    buffer[idx] = 0;
   }
 
 public:
   void
   Append (/*[in]*/ const CharType ch)
   {
-    size_t len = StrLen(buffer);
+    size_t len = GetLength();
     Reserve (len + 2);
     buffer[len] = ch;
     buffer[len + 1] = 0;
+  }
+
+public:
+  void
+  Clear ()
+  {
+    buffer[0] = 0;
+  }
+
+  /// Tests if the character sequence is empty.
+  /// @return Returns true if the character sequence is empty.
+public:
+  bool
+  Empty ()
+    const
+  {
+    return (buffer[0] == 0);
   }
 
 public:
@@ -2213,25 +2170,25 @@ public:
       {
 	delete [] buffer;
 	buffer = smallBuffer;
-	n = BUFSIZE;
+	capacity = BUFSIZE;
       }
-    buffer[0] = 0;
+    Clear ();
   }
 
 public:
   void
   Reserve (/*[in]*/ size_t newSize)
   {
-    if (newSize > BUFSIZE && newSize > n)
+    if (newSize > BUFSIZE && newSize > capacity)
       {
 	CharType * newBuffer = new CharType[newSize];
-	memcpy (newBuffer, buffer, n);
+	memcpy (newBuffer, buffer, capacity * sizeof(CharType));
 	if (buffer != smallBuffer)
 	  {
 	    delete [] buffer;
 	  }
 	buffer = newBuffer;
-	n = newSize;
+	capacity = newSize;
       }
   }
 
@@ -2253,17 +2210,76 @@ public:
 
 public:
   size_t
-  GetSize ()
+  GetLength ()
     const
   {
-    return (n);
+    size_t idx;
+    for (idx = 0; idx < capacity && buffer[idx] != 0; ++ idx)
+      {
+	;
+      }
+    MIKTEX_ASSERT (idx < capacity);
+    return (idx);
+  }
+
+public:
+  size_t
+  GetCapacity ()
+    const
+  {
+    return (capacity);
+  }
+
+  /// Converts this CharArray object into a string object.
+  /// @return Returns a string object.
+public:
+  std::basic_string<CharType>
+  ToString ()
+    const
+  {
+    return (std::basic_string<CharType>(buffer, capacity));
+  }
+
+public:
+  const CharType &
+  operator[] (/*[in]*/ size_t idx)
+    const
+  {
+    MIKTEX_ASSERT (idx < GetCapacity());
+    return (buffer[idx]);
+  }
+
+public:
+  CharType &
+  operator[] (/*[in]*/ size_t idx)
+  {
+    MIKTEX_ASSERT (idx < GetCapacity());
+    return (buffer[idx]);
   }
 
 public:
   CharBuffer &
-  operator= (/*[in]*/ const CharType * lpszRhs)
+  operator= (/*[in]*/ const CharBuffer & rhs)
+  {
+    Set (rhs);
+    return (*this);
+  }
+
+public:
+  template<typename OtherCharType>
+  CharBuffer &
+  operator= (/*[in]*/ const OtherCharType * lpszRhs)
   {
     Set (lpszRhs);
+    return (*this);
+  }
+
+public:
+  template<typename OtherCharType>
+  CharBuffer &
+  operator= (/*[in]*/ const std::basic_string<OtherCharType> & rhs)
+  {
+    Set (rhs);
     return (*this);
   }
 
@@ -2290,7 +2306,7 @@ public:
    _________________________________________________________________________ */
 
 /// Instances of this class can be used to store path names.
-class PathName : public CharArray<char, BufferSizes::MaxPath>
+class PathName : public CharBuffer<char, BufferSizes::MaxPath>
 {
 public:
   enum {
@@ -2350,13 +2366,13 @@ public:
   /// @param rhs The other PathName object.
 public:
   PathName (/*[in]*/ const PathName & rhs)
-    : CharArray<char, BufferSizes::MaxPath> (rhs)
+    : CharBuffer<char, BufferSizes::MaxPath> (rhs)
   {
   }
 
 public:
   PathName (/*[in]*/ int zero)
-    : CharArray<char, BufferSizes::MaxPath> (zero)
+    : CharBuffer<char, BufferSizes::MaxPath> (zero)
   {
   }
 
@@ -2364,7 +2380,7 @@ public:
   /// @param rhs Null-terminated character string.
 public:
   PathName (/*[in]*/ const char * rhs)
-    : CharArray<char, BufferSizes::MaxPath> (rhs)
+    : CharBuffer<char, BufferSizes::MaxPath> (rhs)
   {
   }
 
@@ -2372,7 +2388,7 @@ public:
   /// @param rhs Null-terminated character string.
 public:
   PathName (/*[in]*/ const wchar_t * rhs)
-    : CharArray<char, BufferSizes::MaxPath> (rhs)
+    : CharBuffer<char, BufferSizes::MaxPath> (rhs)
   {
   }
 
@@ -2380,7 +2396,7 @@ public:
   /// @param rhs String object.
 public:
   PathName (/*[in]*/ const std::basic_string<char> & rhs)
-    : CharArray<char, BufferSizes::MaxPath> (rhs.c_str())
+    : CharBuffer<char, BufferSizes::MaxPath> (rhs.c_str())
   {
   }
 
@@ -2388,7 +2404,7 @@ public:
   /// @param rhs String object.
 public:
   PathName (/*[in]*/ const std::basic_string<wchar_t> & rhs)
-    : CharArray<char, BufferSizes::MaxPath> (rhs.c_str())
+    : CharBuffer<char, BufferSizes::MaxPath> (rhs.c_str())
   {
   }
 
@@ -2451,7 +2467,7 @@ public:
   PathName &
   operator= (/*[in]*/ const char * lpszRhs)
   {
-    CharArray<char, BufferSizes::MaxPath>::operator= (lpszRhs);
+    CharBuffer<char, BufferSizes::MaxPath>::operator= (lpszRhs);
     return (*this);
   }
 
@@ -2459,7 +2475,7 @@ public:
   PathName &
   operator= (/*[in]*/ const std::basic_string<char> & rhs)
   {
-    CharArray<char, BufferSizes::MaxPath>::operator= (rhs);
+    CharBuffer<char, BufferSizes::MaxPath>::operator= (rhs);
     return (*this);
   }
 
@@ -2522,7 +2538,7 @@ public:
     const
   {
     char szExtension[BufferSizes::MaxPath];
-    Split (buffer,
+    Split (Get(),
 	   0, 0,
 	   lpszFileName, BufferSizes::MaxPath,
 	   szExtension, BufferSizes::MaxPath);
@@ -2535,7 +2551,7 @@ public:
   GetFileNameWithoutExtension (/*[out]*/ char * lpszFileName)
     const
   {
-    Split (buffer,
+    Split (Get(),
 	   0, 0,
 	   lpszFileName, BufferSizes::MaxPath,
 	   0, 0);
@@ -2547,9 +2563,9 @@ public:
   GetFileNameWithoutExtension (/*[out]*/ PathName & fileName)
     const
   {
-    Split (buffer,
+    Split (Get(),
 	   0, 0,
-	   fileName.buffer, BufferSizes::MaxPath,
+	   fileName.GetBuffer(), fileName.GetCapacity(),
 	   0, 0);
     return (fileName);
   }
@@ -2583,8 +2599,8 @@ public:
        /*[in]*/ const char * lpszRelPath, 
        /*[in]*/ const char * lpszExtension)
   {
-    Combine (buffer,
-	     GetSize(),
+    Combine (GetBuffer(),
+	     GetCapacity(),
 	     lpszDrive,
 	     lpszAbsPath,
 	     lpszRelPath,
@@ -2603,8 +2619,8 @@ public:
   Set (/*[in]*/ const char * lpszAbsPath,
        /*[in]*/ const char * lpszRelPath)
   {
-    Combine (buffer,
-	     GetSize(),
+    Combine (GetBuffer(),
+	     GetCapacity(),
 	     lpszAbsPath,
 	     lpszRelPath,
 	     0);
@@ -2623,8 +2639,8 @@ public:
        /*[in]*/ const char * lpszRelPath, 
        /*[in]*/ const char * lpszExtension)
   {
-    Combine (buffer,
-	     GetSize(),
+    Combine (GetBuffer(),
+	     GetCapacity(),
 	     lpszAbsPath,
 	     lpszRelPath,
 	     lpszExtension);
@@ -2642,8 +2658,8 @@ public:
   Set (/*[in]*/ const PathName &	absPath,
        /*[in]*/ const PathName &	relPath)
   {
-    Combine (buffer,
-	     GetSize(),
+    Combine (GetBuffer(),
+	     GetCapacity(),
 	     absPath.Get(),
 	     relPath.Get(),
 	     0);
@@ -2662,8 +2678,8 @@ public:
        /*[in]*/ const PathName &	relPath, 
        /*[in]*/ const PathName &	extension)
   {
-    Combine (buffer,
-	     GetSize(),
+    Combine (GetBuffer(),
+	     GetCapacity(),
 	     absPath.Get(),
 	     relPath.Get(),
 	     extension.Get());
@@ -2687,7 +2703,7 @@ public:
   {
     char fileName[BufferSizes::MaxPath];
     GetFileName (fileName);
-    Utils::CopyString (buffer, BufferSizes::MaxPath, fileName);
+    CharBuffer::Set (fileName);
     return (*this);
   }
 
@@ -2786,7 +2802,7 @@ public:
   GetExtension (/*[out]*/ char *	lpszExtension)
     const
   {
-    Split (buffer,
+    Split (Get(),
 	   0, 0,
 	   0, 0,
 	   lpszExtension, BufferSizes::MaxPath);
@@ -2830,7 +2846,7 @@ public:
   PathName &
   AppendExtension (/*[in]*/ const char * lpszExtension)
   {
-    Utils::AppendString (buffer, BufferSizes::MaxPath, lpszExtension);
+    CharBuffer::Append (lpszExtension);
     return (*this);
   }
 
@@ -2842,7 +2858,7 @@ public:
     const
   {
     size_t l = GetLength();
-    return (l > 0 && IsDirectoryDelimiter(buffer[l - 1]));
+    return (l > 0 && IsDirectoryDelimiter(CharBuffer::operator[](l - 1)));
   }
 
   /// Appends a character string to this path name.
@@ -2855,11 +2871,11 @@ public:
   Append (/*[in]*/ const char *	lpsz,
 	  /*[in]*/ bool		appendDirectoryDelimiter)
   {
-    if (appendDirectoryDelimiter && buffer[0] != 0)
+    if (appendDirectoryDelimiter && ! Empty())
       {
 	AppendDirectoryDelimiter ();
       }
-    Utils::AppendString (buffer, BufferSizes::MaxPath, lpsz);
+    CharBuffer::Append (lpsz);
     return (*this);
   }
 
@@ -6468,8 +6484,8 @@ public:
     else
       {
 	this->separator = separator;
-	lpszCurrent = buffer;
-	lpszNext = const_cast<CharType*>(StrChr(buffer, separator));
+	lpszCurrent = GetBuffer();
+	lpszNext = const_cast<CharType*>(StrChr(Get(), separator));
 	if (lpszNext != 0)
 	  {
 	    *lpszNext++ = 0;

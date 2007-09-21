@@ -102,7 +102,7 @@ ChunkDib::OnNewChunk (/*[in]*/ DibChunk * pChunk)
   nChunks += 1;
   PathName fileName;
   _stprintf_s (fileName.GetBuffer(),
-	       fileName.GetSize(),
+	       fileName.GetCapacity(),
 	       T_("chunk-%u-%u.bmp"),
 	       nBitmaps,
 	       nChunks);

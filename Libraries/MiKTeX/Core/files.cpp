@@ -721,7 +721,7 @@ File::Delete (/*[in]*/ const PathName &		path,
 	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameA"));
 	  if (! getVolumePathName(absPath.Get(),
 				  dir.GetBuffer(),
-				  dir.GetSize()))
+				  dir.GetCapacity()))
 	    {
 	      FATAL_WINDOWS_ERROR (T_("GetVolumePathName"), absPath.Get());
 	    }

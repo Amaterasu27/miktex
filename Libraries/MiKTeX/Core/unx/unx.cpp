@@ -193,7 +193,7 @@ Utils::GetOSVersionString ()
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (getcwd(buffer, GetSize()) == 0)
+  if (getcwd(buffer, GetCapacity()) == 0)
     {
       FATAL_CRT_ERROR (T_("getcwd"), 0);
     }
@@ -208,12 +208,12 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
-  if (! Utils::GetEnvironmentString(T_("TMPDIR"), buffer, GetSize()))
+  if (! Utils::GetEnvironmentString(T_("TMPDIR"), buffer, GetCapacity()))
     {
 #if defined(P_tmpdir)
-      Utils::CopyString (buffer, GetSize(), P_tmpdir);
+      Utils::CopyString (buffer, GetCapacity(), P_tmpdir);
 #else
-      Utils::CopyString (buffer, GetSize(), T_("/tmp"));
+      Utils::CopyString (buffer, GetCapacity(), T_("/tmp"));
 #endif
     }
   return (*this);

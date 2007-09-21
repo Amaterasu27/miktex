@@ -58,7 +58,7 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
     }
   AutoHKEY autoHKEY (hkey);
   unsigned long size =
-    (static_cast<unsigned long>(path.GetSize()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(path.GetCapacity()) * sizeof(MIKTEXCHAR));
   long res =
     RegQueryValueEx(hkey,
 		    T_("ProgramFilesDir"),
@@ -97,7 +97,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
   unsigned long type;
   PathName emacsDir;
   unsigned long size =
-    (static_cast<unsigned long>(emacsDir.GetSize()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(emacsDir.GetCapacity()) * sizeof(MIKTEXCHAR));
   res =
     RegQueryValueEx(hkey,
 		    T_("emacs_dir"),
@@ -151,7 +151,7 @@ MakeNTEmacsClientCommandLine (/*[out]*/ tstring &	program,
 	 || SearchPath(0,
 		       T_("gnuclientw.exe"),
 		       0,
-		       static_cast<unsigned long>(pathEmacs.GetSize()),
+		       static_cast<unsigned long>(pathEmacs.GetCapacity()),
 		       pathEmacs.GetBuffer(),
 		       &lpszFileName)))
     {
@@ -187,7 +187,7 @@ MakeXEmacsCommandLine (/*[out]*/ tstring &	program,
   unsigned long type;
   PathName pathEmacsDir;
   unsigned long size =
-    (static_cast<unsigned long>(pathEmacsDir.GetSize() * sizeof(MIKTEXCHAR)));
+    (static_cast<unsigned long>(pathEmacsDir.GetCapacity() * sizeof(MIKTEXCHAR)));
   res =
     RegQueryValueEx(hkey,
 		    T_("Path"),
@@ -237,7 +237,7 @@ LocateTeXnicCenter (/*[out]*/ PathName & tc)
   unsigned long type;
   PathName tcRoot;
   unsigned long size =
-    (static_cast<unsigned long>(tcRoot.GetSize()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(tcRoot.GetCapacity()) * sizeof(MIKTEXCHAR));
   res =
     RegQueryValueEx(hkey,
 		    T_("AppPath"),
@@ -334,7 +334,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
       unsigned long type;
       PathName pathWinEdtDir;
       unsigned long size =
-	(static_cast<unsigned long>(pathWinEdtDir.GetSize())
+	(static_cast<unsigned long>(pathWinEdtDir.GetCapacity())
 	 * sizeof(MIKTEXCHAR));
       res =
 	RegQueryValueEx(hkey,
@@ -368,7 +368,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
   AutoHKEY autoHKEY (hkey);
   unsigned long type;
   unsigned long size =
-    (static_cast<unsigned long>(winEdt.GetSize()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(winEdt.GetCapacity()) * sizeof(MIKTEXCHAR));
   res =
     RegQueryValueEx(hkey,
 		    0,

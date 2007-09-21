@@ -913,7 +913,7 @@ KPSE::VarValue (/*[in]*/ const char * lpszVarName)
     {
       if (GetModuleFileName(0,
 			    path.GetBuffer(),
-			    static_cast<DWORD>(path.GetSize()))
+			    static_cast<DWORD>(path.GetCapacity()))
 	  != 0)
 	{
 	  lpszRet = path.Get();

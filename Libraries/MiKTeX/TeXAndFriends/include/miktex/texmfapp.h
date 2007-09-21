@@ -204,7 +204,7 @@ GetTeXString (/*[out]*/ char *	lpsz,
 	      /*[in]*/ int	stringLength)
 {
   MiKTeX::Core::CharBuffer<wchar_t, 200> buf (stringLength + 1);
-  GetTeXString (buf.GetBuffer(), buf.GetSize(), stringStart, stringLength);
+  GetTeXString (buf.GetBuffer(), buf.GetCapacity(), stringStart, stringLength);
   MiKTeX::Core::Utils::CopyString (lpsz, size, buf.Get());
   return (lpsz);
 }

@@ -230,7 +230,7 @@ PsfileSpecialImpl::Parse ()
   hasRhi = false;
   hasClipFlag = false;
 
-  AutoBuffer<char> autoBuffer (specialString.length() + 1);
+  CharBuffer<char> autoBuffer (specialString.length() + 1);
   char * lpszSpecial = autoBuffer.GetBuffer();
   strcpy_s (lpszSpecial, specialString.length() + 1, GetXXX());
   pair<char *, char *> keyVal;

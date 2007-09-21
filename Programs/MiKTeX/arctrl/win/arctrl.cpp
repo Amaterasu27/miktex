@@ -48,105 +48,6 @@ const MIKTEXCHAR * const PROGNAME = T_("arctrl");
 
 /* _________________________________________________________________________
 
-   AutoBuffer
-   _________________________________________________________________________ */
-
-class AutoBuffer
-{
-protected:
-  enum { BUFSIZE = 512 };
-
-protected:
-  MIKTEXCHAR smallBuffer[BUFSIZE];
-
-protected:
-  MIKTEXCHAR * buffer;
-
-protected:
-  size_t n;
-
-public:
-  AutoBuffer ()
-    : buffer (smallBuffer),
-      n (BUFSIZE)
-  {
-  }
-
-public:
-  AutoBuffer (/*[in]*/ size_t n)
-    : n (n)
-  {
-    if (n <= BUFSIZE)
-      {
-	buffer = smallBuffer;
-      }
-    else
-      {
-	buffer = new MIKTEXCHAR[n];
-      }
-  }
-
-public:
-  ~AutoBuffer ()
-  {
-    try
-      {
-	if (buffer != smallBuffer)
-	  {
-	    delete [] buffer;
-	  }
-	buffer = 0;
-	n = 0;
-      }
-    catch (const exception &)
-      {
-      }
-  }
-
-public:
-  void
-  Resize (/*[in]*/ size_t newSize)
-  {
-    if (newSize > BUFSIZE && newSize > n)
-      {
-	char * newBuffer = new MIKTEXCHAR[newSize];
-	memcpy (newBuffer, buffer, n);
-	if (buffer != smallBuffer)
-	  {
-	    delete [] buffer;
-	  }
-	buffer = newBuffer;
-	n = newSize;
-      }
-  }
-
-public:
-  MIKTEXCHAR *
-  GetBuffer ()
-    const
-  {
-    return (buffer);
-  }
-
-public:
-  const MIKTEXCHAR *
-  Get ()
-    const
-  {
-    return (buffer);
-  }
-
-public:
-  size_t
-  GetSize ()
-    const
-  {
-    return (n);
-  }
-};
-
-/* _________________________________________________________________________
-
    Quoted
    _________________________________________________________________________ */
 
@@ -613,7 +514,7 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
 				    T_("DdeGetData() failed for some reason."),
 				    0);
 	      }
-	    AutoBuffer buf (len + 1);
+	    CharBuffer<char> buf (len + 1);
 	    DdeGetData (hdata,
 			reinterpret_cast<LPBYTE>(buf.GetBuffer()),
 			len + 1,

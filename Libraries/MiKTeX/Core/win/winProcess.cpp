@@ -69,7 +69,7 @@ winProcess::Create ()
       if (SearchPath(0,
 		     startinfo.FileName.c_str(),
 		     0,
-		     static_cast<DWORD>(fileName.GetSize()),
+		     static_cast<DWORD>(fileName.GetCapacity()),
 		     fileName.GetBuffer(),
 		     &lpszFilePart)
 	  == 0)

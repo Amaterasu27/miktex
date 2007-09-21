@@ -1406,8 +1406,8 @@ MakeFontMapApp::BuildFontconfigCache ()
 #if defined(MIKTEX_WINDOWS)
   PathName path;
   UINT l =
-    GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetSize()));
-  if (l == 0 || l >= path.GetSize())
+    GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetCapacity()));
+  if (l == 0 || l >= path.GetCapacity())
     {
       Abort (T_("GetWindowsDirectory() failed for some reason."));
     }

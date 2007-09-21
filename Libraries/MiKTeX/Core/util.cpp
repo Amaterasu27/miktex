@@ -32,7 +32,7 @@ Tokenizer::Tokenizer (/*[in]*/ const char *	lpsz,
 		      /*[in]*/ const char *	lpszDelim)
   : CharBuffer(lpsz)
 {
-  lpszNext = buffer;
+  lpszNext = GetBuffer();
   lpszCurrent = 0;
   pDelims = 0;
   SetDelim (lpszDelim);
@@ -504,14 +504,14 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
   autoBuffer.Reserve (n + 1);
   n = _vstprintf_s(
     autoBuffer.GetBuffer(),
-    autoBuffer.GetSize(),
+    autoBuffer.GetCapacity(),
     lpszFormat,
     arglist);
   if (n < 0)
   {
     FATAL_CRT_ERROR (T_("_vsntprintf_s"), 0);
   }
-  else if (static_cast<size_t>(n) >= autoBuffer.GetSize())
+  else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
   {
     FATAL_MIKTEX_ERROR (
       T_("Utils::FormatString"),
@@ -524,20 +524,20 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
   do
   {
     n = _vsntprintf(autoBuffer.GetBuffer(),
-		    autoBuffer.GetSize(),
+		    autoBuffer.GetCapacity(),
 		    lpszFormat,
 		    arglist);
     if (n < 0)
     {
       FATAL_CRT_ERROR (T_("_vsntprintf"), 0);
     }
-    else if (static_cast<size_t>(n) < autoBuffer.GetSize())
+    else if (static_cast<size_t>(n) < autoBuffer.GetCapacity())
     {
       done = true;
     }
-    else if (autoBuffer.GetSize() < MAXSIZE)
+    else if (autoBuffer.GetCapacity() < MAXSIZE)
     {
-      autoBuffer.Reserve (autoBuffer.GetSize() + 1000);
+      autoBuffer.Reserve (autoBuffer.GetCapacity() + 1000);
     }
     else
     {
@@ -552,26 +552,26 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 #else
   n =
     vsnprintf(autoBuffer.GetBuffer(),
-	      autoBuffer.GetSize(),
+	      autoBuffer.GetCapacity(),
 	      lpszFormat,
 	      arglist);
   if (n < 0)
   {
     FATAL_CRT_ERROR (T_("vsnprintf"), 0);
   }
-  else if (static_cast<size_t>(n) >= autoBuffer.GetSize())
+  else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
   {
     autoBuffer.Reserve (n + 1);
     n =
       vsnprintf(autoBuffer.GetBuffer(),
-		autoBuffer.GetSize(),
+		autoBuffer.GetCapacity(),
 		lpszFormat,
 		arglist);
     if (n < 0)
     {
       FATAL_CRT_ERROR (T_("vsnprintf"), 0);
     }
-    else if (static_cast<size_t>(n) >= autoBuffer.GetSize())
+    else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
     {
       FATAL_MIKTEX_ERROR (
 	T_("Utils::FormatString"),
@@ -786,6 +786,86 @@ NumberString::Init (/*[in]*/ double	num)
     {
       FATAL_CRT_ERROR (T_("sprintf"), 0);
     }
+}
+
+/* _________________________________________________________________________
+
+   Utils::IsAscii
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL 
+Utils::IsAscii (/*[in]*/ const char * lpsz)
+{
+  MIKTEX_ASSERT_STRING (lpsz);
+  for (; *lpsz != 0; ++ lpsz)
+    {
+      if (! isascii(*lpsz))
+	{
+	  return (false);
+	}
+    }
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   Utils::IsAscii
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL 
+Utils::IsAscii (/*[in]*/ const wchar_t * lpsz)
+{
+  MIKTEX_ASSERT_STRING (lpsz);
+  for (; *lpsz != 0; ++ lpsz)
+    {
+      if (! iswascii(*lpsz))
+	{
+	  return (false);
+	}
+    }
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   Utils::IsUTF8
+   _________________________________________________________________________ */
+
+bool
+MIKTEXCALL 
+Utils::IsUTF8 (/*[in]*/ const char * lpsz)
+{
+  MIKTEX_ASSERT_STRING (lpsz);
+  for (; lpsz[0] != 0; ++ lpsz)
+    {
+      if (((lpsz[0] & 0xe0) == static_cast<char>(0xc0))
+	  && ((lpsz[1] & 0xc0) == static_cast<char>(0x80)))
+	{
+	  return (true);
+	}
+      else if (((lpsz[0] & 0xf0) == static_cast<char>(0xe0))
+	       && ((lpsz[1] & 0xc0) == static_cast<char>(0x80))
+	       && ((lpsz[2] & 0xc0) == static_cast<char>(0x80)))
+	
+	{
+	  return (true);
+	}
+      else if (((lpsz[0] & 0xf8) == static_cast<char>(0xf0))
+	       && ((lpsz[1] & 0xc0) == static_cast<char>(0x80))
+	       && ((lpsz[2] & 0xc0) == static_cast<char>(0x80))
+	       && ((lpsz[3] & 0xc0) == static_cast<char>(0x80)))
+	
+	{
+	  return (true);
+	}
+      else if (lpsz[0] >= static_cast<char>(128))
+	{
+	  return (false);
+	}
+    }
+  return (false);
 }
 
 /* _________________________________________________________________________

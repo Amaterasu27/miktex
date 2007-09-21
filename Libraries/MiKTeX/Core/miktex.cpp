@@ -125,12 +125,12 @@ GetHomeDirectory ()
     {
       return (ret);
     }
-  unsigned int n = GetWindowsDirectory(ret.GetBuffer(), ret.GetSize());
+  unsigned int n = GetWindowsDirectory(ret.GetBuffer(), ret.GetCapacity());
   if (n == 0)
     {
       FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
     }
-  else if (n >= ret.GetSize())
+  else if (n >= ret.GetCapacity())
     {
       BUF_TOO_SMALL (T_("GetHomeDirectory"));
     }
@@ -667,7 +667,7 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
 {
   return (Utils::GetEnvironmentString(lpszName,
 				      path.GetBuffer(),
-				      path.GetSize()));
+				      path.GetCapacity()));
 }
 
 /* _________________________________________________________________________

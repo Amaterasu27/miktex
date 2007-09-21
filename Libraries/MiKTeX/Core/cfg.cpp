@@ -766,7 +766,7 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
     {
       PathName path;
       if (GetWindowsDirectory(path.GetBuffer(),
-			      static_cast<UINT>(path.GetSize()) == 0))
+			      static_cast<UINT>(path.GetCapacity()) == 0))
 	{
 	  FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
 	}
@@ -1007,7 +1007,7 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 		      /*[in]*/ const MIKTEXCHAR *	lpszValueName,
 		      /*[out]*/ PathName &		path)
 {
-  size_t size = path.GetSize();
+  size_t size = path.GetCapacity();
   return (TryGetValue(lpszKey, lpszValueName, path.GetBuffer(), size));
 }
 

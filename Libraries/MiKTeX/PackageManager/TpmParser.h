@@ -1,6 +1,6 @@
 /* TpmParser.h:							-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -58,14 +58,14 @@ private:
   static
   void
   OnStartElement (/*[in]*/ void *		pv,
-		  /*[in]*/ const MIKTEXCHAR *	lpszName,
-		  /*[in]*/ const MIKTEXCHAR **	aAttr);
+		  /*[in]*/ const XML_Char *	lpszName,
+		  /*[in]*/ const XML_Char **	aAttr);
 
 private:
   static
   void
   OnEndElement (/*[in]*/ void *			pv,
-		/*[in]*/ const MIKTEXCHAR *	lpszName);
+		/*[in]*/ const XML_Char *	lpszName);
 
 private:
   static
@@ -76,30 +76,26 @@ private:
   
 private:
   void
-  GetFiles (/*[in]*/ const MiKTeX::Core::tstring &	str,
-	    /*[in]*/ std::vector<MiKTeX::Core::tstring> &	files);
+  GetFiles (/*[in]*/ const XML_Char *			lpszFiles,
+	    /*[out]*/ std::vector<std::string> &	files);
   
   // the result
 private:
   PackageInfo packageInfo;
   
-  // contents of current element
+  // character buffer
 private:
-  MiKTeX::Core::tstring * pCurrent;
-  
-  // general purpose buffer
-private:
-  MiKTeX::Core::tstring tempString;
+  MiKTeX::Core::CharBuffer<XML_Char, 8192> charBuffer;
   
   // element stack
 private:
-  std::stack<MiKTeX::Core::tstring> elementStack;
+  std::stack<std::string> elementStack;
   
 private:
   void * pParser;
 
 private:
-  MiKTeX::Core::tstring texMFPrefix;
+  std::string texMFPrefix;
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> traceError;

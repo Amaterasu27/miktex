@@ -103,7 +103,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 			   /*[in]*/ unsigned long	p,
 			   /*[in]*/ DviSpecial * &	pSpecial)
 {
-  AutoBuffer<char> autoBuffer (p + 1);
+  CharBuffer<char> autoBuffer (p + 1);
   char * lpszBuf = autoBuffer.GetBuffer();
 
   for (unsigned long k = 0; k < p; ++ k)

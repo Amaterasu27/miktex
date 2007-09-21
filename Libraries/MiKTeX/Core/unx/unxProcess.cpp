@@ -708,13 +708,13 @@ FindSystemShell ()
     {
       FATAL_CRT_ERROR (T_("confstr"), 0);
     }
-  AutoBuffer pathList (n);
+  CharBuffer pathList (n);
   n = confstr(_CS_PATH, pathList.GetBuffer(), n);
   if (n == 0)
     {
       FATAL_CRT_ERROR (T_("confstr"), 0);
     }
-  if (n > pathList.GetSize())
+  if (n > pathList.GetCapacity())
     {
       UNEXPECTED_CONDITION (T_("Process::ExecuteSystemCommand"));
     }
