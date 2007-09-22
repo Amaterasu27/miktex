@@ -655,15 +655,27 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 	    }
 	  if (tag == T_("NAME"))
 	    {
+#if defined(MIKTEX_WINDOWS)
+	      WriteText (writer, Utils::AnsiToUTF8(pi.deploymentName.c_str()));
+#else
 	      WriteText (writer, pi.deploymentName);
+#endif
 	    }
 	  else if (tag == T_("TITLE"))
 	    {
+#if defined(MIKTEX_WINDOWS)
+	      WriteText (writer, Utils::AnsiToUTF8(pi.title.c_str()));
+#else
 	      WriteText (writer, pi.title);
+#endif
 	    }
 	  else if (tag == T_("DESCRIPTION"))
 	    {
+#if defined(MIKTEX_WINDOWS)
+	      WriteText (writer, Utils::AnsiToUTF8(pi.description.c_str()));
+#else
 	      WriteText (writer, pi.description);
+#endif
 	    }
 	  else if (tag == T_("TRURL"))
 	    {
@@ -673,8 +685,13 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 		{
 		  writer.WriteFormattedLine
 		    (T_("<tr><td><a href=\"file://%s\">%s</td></tr>"),
+#if defined(MIKTEX_WINDOWS)
+		     Utils::AnsiToUTF8(it->c_str()).c_str(),
+		     Utils::AnsiToUTF8(it->c_str()).c_str());
+#else
 		     it->c_str(),
 		     it->c_str());
+#endif
 		}
 	    }
 	}

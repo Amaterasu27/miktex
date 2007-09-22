@@ -1747,8 +1747,8 @@ public:
   MIKTEXCALL
   UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
 
-public:
 #if defined(MIKTEX_WINDOWS)
+public:
   static
   MIKTEXEXPORT
   std::string
@@ -1756,8 +1756,17 @@ public:
   WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
 
-public:
 #if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXEXPORT
+  std::wstring
+  MIKTEXCALL
+  AnsiToWideChar (/*[in]*/ const char * lpszAnsi);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
   static
   std::string
   UTF8ToAnsi (/*[in]*/ const char * lpszUtf8)
@@ -1766,33 +1775,15 @@ public:
   }
 #endif
 
+#if defined(MIKTEX_WINDOWS)
 public:
   static
-  tstring
-  UTF8ToString (/*[in]*/ const char * lpszUtf8)
+  std::string
+  AnsiToUTF8 (/*[in]*/ const char * lpszAnsi)
   {
-#if defined(MIKTEX_UNICODE)
-    return (UTF8ToWideChar(lpszUtf8));
-#elif defined(MIKTEX_WINDOWS)
-    return (UTF8ToAnsi(lpszUtf8));
-#else
-    return (lpszUtf8);
-#endif
+    return (WideCharToAnsi(AnsiToWideChar(lpszAnsi).c_str()));
   }
-
-public:
-  static
-  tstring
-  WideCharToString (/*[in]*/ const wchar_t * lpszWide)
-  {
-#if defined(MIKTEX_UNICODE)
-    return (lpszWide);
-#elif defined(MIKTEX_WINDOWS)
-    return (WideCharToAnsi(lpszWide));
-#else
-    return (WideCharToUTF8(lpszWide));
 #endif
-  }
 
 public:
   static
@@ -1813,7 +1804,16 @@ public:
   MIKTEXEXPORT
   bool
   MIKTEXCALL 
-  IsUTF8 (/*[in]*/ const char * lpsz);
+  IsUTF8 (/*[in]*/ const char * lpsz,
+	  /*[in]*/ bool		allowPureAscii);
+
+public:
+  static
+  bool
+  IsUTF8 (/*[in]*/ const char * lpsz)
+  {
+    return (IsUTF8(lpsz, true));
+  }
 };
 
 /* _________________________________________________________________________
@@ -2128,7 +2128,7 @@ public:
   {
     size_t idx = GetLength();
     Reserve (idx + len + 1);
-    for (; len > 0; -- len)
+    for (; len > 0; -- len, ++ idx, ++ lpsz)
       {
 	buffer[idx] = *lpsz;
       }
@@ -2230,15 +2230,27 @@ public:
     return (capacity);
   }
 
-  /// Converts this CharArray object into a string object.
+  /// Converts this CharBuffer object into a string object.
   /// @return Returns a string object.
 public:
   std::basic_string<CharType>
   ToString ()
     const
   {
-    return (std::basic_string<CharType>(buffer, capacity));
+    return (std::basic_string<CharType>(buffer));
   }
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  void
+  Ansify ()
+  {
+    if (Utils::IsUTF8(Get(), false))
+      {
+	Set (Utils::UTF8ToAnsi(Get()));
+      }
+  }
+#endif
 
 public:
   const CharType &

@@ -201,6 +201,9 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
       MIKTEX_ASSERT (! This->elementStack.empty());
       MIKTEX_ASSERT (This->elementStack.top() == lpszName);
       This->elementStack.pop ();
+#if defined(MIKTEX_WINDOWS)
+      This->charBuffer.Ansify ();
+#endif
       if (StrCmp(lpszName, X_("TPM:Creator")) == 0)
 	{
 	  This->packageInfo.creator = This->charBuffer.Get();
@@ -263,12 +266,10 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
 	}
       else if (StrCmp(lpszName, X_("TPM:MD5")) == 0)
 	{
-	  MIKTEX_ASSERT (Utils::IsAscii(This->charBuffer.Get()));
 	  This->packageInfo.digest = MD5::Parse(This->charBuffer.Get());
 	}
       else if (StrCmp(lpszName, X_("TPM:TimePackaged")) == 0)
 	{
-	  MIKTEX_ASSERT (Utils::IsAscii(This->charBuffer.Get()));
 	  This->packageInfo.timePackaged = AToI(This->charBuffer.Get());
 	}
       else if (StrCmp(lpszName, X_("TPM:RunFiles")) == 0)

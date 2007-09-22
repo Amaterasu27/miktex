@@ -2888,6 +2888,7 @@ wstring
 MIKTEXCALL
 Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 {
+  MIKTEX_ASSERT (IsUTF8(lpszUtf8));
   if (*lpszUtf8 == 0)
     {
       return (L"");
@@ -2949,6 +2950,39 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
   if (n < 0)
     {
       UNEXPECTED_CONDITION (T_("Utils::WideCharToAnsi"));
+    }
+  return (buf.Get());
+}
+
+/* _________________________________________________________________________
+
+   Utils::AnsiToWideChar
+   _________________________________________________________________________ */
+
+MIKTEXEXPORT
+wstring
+MIKTEXCALL
+Utils::AnsiToWideChar (/*[in]*/ const char * lpszAnsi)
+{
+  if (*lpszAnsi == 0)
+    {
+      return (L"");
+    }
+  CharBuffer<wchar_t, 512> buf (strlen(lpszAnsi) + 1);
+  int n = MultiByteToWideChar
+    (CP_ACP,
+     0,
+     lpszAnsi,
+     -1,
+     buf.GetBuffer(),
+     buf.GetCapacity());
+  if (n == 0)
+    {
+      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+    }
+  if (n < 0)
+    {
+      UNEXPECTED_CONDITION (T_("Utils::AnsiToWideChar"));
     }
   return (buf.Get());
 }

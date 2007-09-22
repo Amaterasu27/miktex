@@ -835,37 +835,38 @@ Utils::IsAscii (/*[in]*/ const wchar_t * lpsz)
 
 bool
 MIKTEXCALL 
-Utils::IsUTF8 (/*[in]*/ const char * lpsz)
+Utils::IsUTF8 (/*[in]*/ const char *	lpsz,
+	       /*[in]*/ bool		allowPureAscii)
 {
   MIKTEX_ASSERT_STRING (lpsz);
-  for (; lpsz[0] != 0; ++ lpsz)
+  const unsigned char * lpsz2 = reinterpret_cast<const unsigned char *>(lpsz);
+  for (; lpsz2[0] != 0; ++ lpsz2)
     {
-      if (((lpsz[0] & 0xe0) == static_cast<char>(0xc0))
-	  && ((lpsz[1] & 0xc0) == static_cast<char>(0x80)))
+      if (((lpsz2[0] & 0xe0) == 0xc0)
+	  && ((lpsz2[1] & 0xc0) == 0x80))
 	{
 	  return (true);
 	}
-      else if (((lpsz[0] & 0xf0) == static_cast<char>(0xe0))
-	       && ((lpsz[1] & 0xc0) == static_cast<char>(0x80))
-	       && ((lpsz[2] & 0xc0) == static_cast<char>(0x80)))
+      else if (((lpsz2[0] & 0xf0) == 0xe0)
+	       && ((lpsz2[1] & 0xc0) == 0x80)
+	       && ((lpsz2[2] & 0xc0) == 0x80))
 	
 	{
 	  return (true);
 	}
-      else if (((lpsz[0] & 0xf8) == static_cast<char>(0xf0))
-	       && ((lpsz[1] & 0xc0) == static_cast<char>(0x80))
-	       && ((lpsz[2] & 0xc0) == static_cast<char>(0x80))
-	       && ((lpsz[3] & 0xc0) == static_cast<char>(0x80)))
-	
+      else if (((lpsz2[0] & 0xf8) == 0xf0)
+	       && ((lpsz2[1] & 0xc0) == 0x80)
+	       && ((lpsz2[2] & 0xc0) == 0x80)
+	       && ((lpsz2[3] & 0xc0) == 0x80))
 	{
 	  return (true);
 	}
-      else if (lpsz[0] >= static_cast<char>(128))
+      else if (lpsz2[0] >= 128)
 	{
 	  return (false);
 	}
     }
-  return (false);
+  return (allowPureAscii);
 }
 
 /* _________________________________________________________________________
