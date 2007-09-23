@@ -69,20 +69,47 @@ set(miktex_tex_change_files
   ${tex_miktex_web2c_ch}
 )
 
-set(xetex_change_files
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-new.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-noenc.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-upwards.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-otmath.ch
-)
-
-set(change_files
+set(pre_xetex_change_files
   ${etex_ch}
   ${etex_miktex_pre_ch}
   ${etex_miktex_ch}
   ${miktex_tex_change_files}
-  ${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
-  ${xetex_change_files}
+)
+
+set(pre_xetex1_web_file ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex1.web)
+
+add_custom_command(
+  OUTPUT
+	${pre_xetex1_web_file}
+  COMMAND
+	${tie_exe} -m ${pre_xetex1_web_file}
+		${tex_web}
+		${pre_xetex_change_files}
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${tex_web}
+	${pre_xetex_change_files}
+)
+
+set(pre_xetex2_web_file ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2.web)
+
+add_custom_command(
+  OUTPUT
+	${pre_xetex2_web_file}
+  COMMAND
+	${tie_exe} -m ${pre_xetex2_web_file}
+		${pre_xetex1_web_file}
+		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${pre_xetex1_web_file}
+	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
+)
+
+set(xetex_change_files
+  ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
@@ -91,10 +118,30 @@ set(xetex_change_file ${CMAKE_CURRENT_SOURCE_DIR}/xetex-miktex.ch)
 set(xetex_header_file ${CMAKE_CURRENT_BINARY_DIR}/xetexd.h)
 
 add_custom_command(
-  OUTPUT ${xetex_web_file}
-  COMMAND ${tie_exe} -m ${xetex_web_file} ${tex_web} ${change_files}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${change_files}
+  OUTPUT
+	${xetex_web_file}
+  COMMAND
+	${tie_exe} -m ${xetex_web_file}
+		${pre_xetex2_web_file}
+		${xetex_change_files}
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${pre_xetex2_web}
+	${xetex_change_files}
+)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
+  COMMAND
+	perl ${CMAKE_CURRENT_SOURCE_DIR}/pool2c.pl
+		${CMAKE_CURRENT_BINARY_DIR}/xetex.pool
+		${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/xetex.pool
 )
 
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
@@ -123,11 +170,13 @@ set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/numbers.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pngimage.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/trans.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FontTableCache.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontInst.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontInst_FT2.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontMgr.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontMgr_FC.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXGrLayout.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXLayoutInterface.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTLayoutEngine.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTMath.cpp
@@ -193,7 +242,8 @@ add_custom_command(
   COMMAND ${webn_exe}
 	< ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
 	> ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${tex_web}
 	${etex_ch}
@@ -205,58 +255,47 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2.web
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2-n.web
-  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2.web
-		${tex_web}
-		${etex_ch}
-		${etex_miktex_pre_ch}
-		${etex_miktex_ch}
-		${miktex_tex_change_files}
-		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
+	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex1-n.web
   COMMAND ${webn_exe}
-	< ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2.web
-	> ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2-n.web
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	< ${pre_xetex1_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex1-n.web
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${tex_web}
-	${etex_ch}
-	${etex_miktex_pre_ch}
-	${etex_miktex_ch}
-	${miktex_tex_change_files}
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
+	${pre_xetex1_web_file}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-pre.web
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-pre-n.web
-  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/xetex-pre.web
-		${tex_web}
-		${etex_ch}
-		${etex_miktex_pre_ch}
-		${etex_miktex_ch}
-		${miktex_tex_change_files}
-		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
-		${xetex_change_files}
+	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2-n.web
   COMMAND ${webn_exe}
-	< ${CMAKE_CURRENT_BINARY_DIR}/xetex-pre.web
-	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-pre-n.web
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	< ${pre_xetex2_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2-n.web
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${tex_web}
-	${etex_ch}
-	${etex_miktex_pre_ch}
-	${etex_miktex_ch}
-	${miktex_tex_change_files}
-	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
+	${pre_xetex2_web_file}
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+  COMMAND ${webn_exe}
+	< ${xetex_web_file}
+	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${xetex_web_file}
   VERBATIM
 )
 
 add_custom_target(dev ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex2-n.web
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-pre-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex1-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
 )

@@ -18,6 +18,6 @@
    USA.  */
 
 #define MIKTEX_COMPONENT_VERSION 2808
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.996-patch1"
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.997"
 
 #include <miktex/version.h>

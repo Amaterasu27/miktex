@@ -70,7 +70,7 @@ if every_cr<>null then begin_token_list(every_cr,every_cr_text);
 @<Append character |cur_chr|...@>=
 @y
 @<Append character |cur_chr|...@>=
-if (head=tail and mode>0) then begin
+if ((head=tail) and (mode>0)) then begin
   if (miktex_insert_src_special_auto) then append_src_special;
 end;
 @z

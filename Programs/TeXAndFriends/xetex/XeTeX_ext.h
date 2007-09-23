@@ -70,8 +70,8 @@ typedef INTEGER_TYPE integer;
 typedef struct UFILE* unicodefile;
 #endif
 
-#define AAT_FONT_FLAG	65535
-#define	OT_FONT_FLAG	65534
+#define AAT_FONT_FLAG	0xFFFFU
+#define	OTGR_FONT_FLAG	0xFFFEU
 
 #define FONT_FLAGS_COLORED	0x01
 #define FONT_FLAGS_VERTICAL	0x02
@@ -279,11 +279,16 @@ extern "C" {
 	integer getfontcharrange(integer font, int first);
 	void printglyphname(integer font, integer gid);
 
-  	double read_double(const char** s);
-  	unsigned int read_rgb_a(const char** cp);
-  
+	void grprintfontname(integer what, void* pEngine, integer param1, integer param2);
+	integer grfontgetnamed(integer what, void* pEngine);
+	integer grfontgetnamed1(integer what, void* pEngine, integer param);
+
+	double read_double(const char** s);
+	unsigned int read_rgb_a(const char** cp);
+
 	const char* getGlyphNamePtr(const char* buffer, int tableSize, UInt16 gid, int* len);
 
+	int countpdffilepages();
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
 	int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
 	int open_dvi_output(FILE** fptr);

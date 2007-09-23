@@ -1245,7 +1245,7 @@ if area_delimiter<>0 then begin
   s:=str_start[str_ptr];
   t:=str_start[str_ptr]+area_delimiter;
   j:=s;
-  while (not must_quote) and (j<t) do begin
+  while (not must_quote) and (j<>t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1263,7 +1263,7 @@ s:=str_start[str_ptr]+area_delimiter;
 if ext_delimiter=0 then t:=pool_ptr else t:=str_start[str_ptr]+ext_delimiter-1;
 must_quote:=false;
 j:=s;
-while (not must_quote) and (j<t) do begin
+while (not must_quote) and (j<>t) do begin
   must_quote:=str_pool[j]=" "; incr(j);
   end;
 if must_quote then begin
@@ -1280,7 +1280,7 @@ if ext_delimiter<>0 then begin
   t:=pool_ptr;
   must_quote:=false;
   j:=s;
-  while (not must_quote) and (j<t) do begin
+  while (not must_quote) and (j<>t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1348,19 +1348,19 @@ begin
 must_quote:=false;
 if a<>0 then begin
   j:=str_start[a];
-  while (not must_quote) and (j<str_start[a+1]) do begin
+  while (not must_quote) and (j<>str_start[a+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start[n];
-  while (not must_quote) and (j<str_start[n+1]) do begin
+  while (not must_quote) and (j<>str_start[n+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start[e];
-  while (not must_quote) and (j<str_start[e+1]) do begin
+  while (not must_quote) and (j<>str_start[e+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
@@ -2604,6 +2604,38 @@ function miktex_make_full_name_string : str_number; forward;@t\2@>@/
 edit_name_start:=0;
 stop_at_space:=true;
 
+@ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
+in the format, so a TCX file loaded during format creation can set a
+default for users of the format.
+
+@<Dump |xord|, |xchr|, and |xprn|@>=
+dump_things(xord[0], 256);
+dump_things(xchr[0], 256);
+dump_things(xprn[0], 256);
+
+@ Undumping the |xord|, |xchr|, and |xprn| arrays.  This code is more
+complicated, because we want to ensure that a TCX file specified on
+the command line will override whatever is in the format.  Since the
+tcx file has already been loaded, that implies throwing away the data
+in the format.  Also, if no |translate_filename| is given, but
+|eight_bit_p| is set we have to make all characters printable.
+
+@<Undump |xord|, |xchr|, and |xprn|@>=
+if miktex_have_tcx_file_name then begin
+  for k:=0 to 255 do undump_things(dummy_xord, 1);
+  for k:=0 to 255 do undump_things(dummy_xchr, 1);
+  for k:=0 to 255 do undump_things(dummy_xprn, 1);
+  end
+else begin
+  undump_things(xord[0], 256);
+  undump_things(xchr[0], 256);
+  undump_things(xprn[0], 256);
+  if miktex_enable_eightbit_chars_p then
+    for k:=0 to 255 do
+      xprn[k]:=1;
+end;
+
+
 @* \[54/MiKTeX-string] The string recycling routines.  \TeX{} uses 2
 upto 4 {\it new\/} strings when scanning a filename in an \.{\\input},
 \.{\\openin}, or \.{\\openout} operation.  These strings are normally
@@ -2650,37 +2682,6 @@ if s>0 then
   end;
 slow_make_string:=t;
 exit:end;
-
-@ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
-in the format, so a TCX file loaded during format creation can set a
-default for users of the format.
-
-@<Dump |xord|, |xchr|, and |xprn|@>=
-dump_things(xord[0], 256);
-dump_things(xchr[0], 256);
-dump_things(xprn[0], 256);
-
-@ Undumping the |xord|, |xchr|, and |xprn| arrays.  This code is more
-complicated, because we want to ensure that a TCX file specified on
-the command line will override whatever is in the format.  Since the
-tcx file has already been loaded, that implies throwing away the data
-in the format.  Also, if no |translate_filename| is given, but
-|eight_bit_p| is set we have to make all characters printable.
-
-@<Undump |xord|, |xchr|, and |xprn|@>=
-if miktex_have_tcx_file_name then begin
-  for k:=0 to 255 do undump_things(dummy_xord, 1);
-  for k:=0 to 255 do undump_things(dummy_xchr, 1);
-  for k:=0 to 255 do undump_things(dummy_xprn, 1);
-  end
-else begin
-  undump_things(xord[0], 256);
-  undump_things(xchr[0], 256);
-  undump_things(xprn[0], 256);
-  if miktex_enable_eightbit_chars_p then
-    for k:=0 to 255 do
-      xprn[k]:=1;
-end;
 
 
 @* \[54/ML\TeX] System-dependent changes for ML\TeX.

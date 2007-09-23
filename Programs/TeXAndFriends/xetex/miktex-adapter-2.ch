@@ -83,6 +83,17 @@ if translate_filename then read_tcx_file;
 
 % _____________________________________________________________________________
 %
+% [3.30]
+% _____________________________________________________________________________
+
+@x
+@!buffer:array[0..sup_buf_size] of ASCII_code; {lines of characters being read}
+@y
+@!buffer:^ASCII_code; {lines of characters being read}
+@z
+
+% _____________________________________________________________________________
+%
 % [3.32]
 % _____________________________________________________________________________
 
@@ -111,9 +122,74 @@ is considered an output file the file variable is |term_out|.
 
 @x
 miktex_get_pool_file_name(name_of_file);
+if miktex_open_pool_file(pool_file) then
+  begin c:=false;
+  repeat @<Read one string, but return |false| if the
+    string memory space is getting too tight for comfort@>;
+  until c;
+  a_close(pool_file); get_strings_started:=true;
+  end
+else begin
+  wake_up_terminal;
+  write_ln(term_out, '! I can''t read TEX.POOL.');
+@.I can't read TEX.POOL@>
+  get_strings_started:=false;
+  return;
+end
 @y
+name_length := strlen (pool_name);
 name_of_file := xmalloc_array (ASCII_code, name_length + 1);
-miktex_get_pool_file_name(name_of_file);
+strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
+if a_open_in (pool_file, kpse_texpool_format) then
+  begin c:=false;
+  repeat @<Read one string, but return |false| if the
+    string memory space is getting too tight for comfort@>;
+  until c;
+  a_close(pool_file); get_strings_started:=true;
+  end
+else  bad_pool('! I can''t read ', pool_name, '; bad path?')
+@.I can't read TEX.POOL@>
+@z
+
+% _____________________________________________________________________________
+%
+% [4.52]
+% _____________________________________________________________________________
+
+@x
+begin if eof(pool_file) then bad_pool('! TEX.POOL has no check sum.');
+@y
+begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
+@z
+
+@x
+read(pool_file,m,n); {read two digits of string length}
+@y
+read(pool_file,m); read(pool_file,n); {read two digits of string length}
+@z
+
+@x
+    bad_pool('! TEX.POOL line doesn''t begin with two digits.');
+@y
+    bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
+@z
+
+% _____________________________________________________________________________
+%
+% [4.53]
+% _____________________________________________________________________________
+
+@x
+  bad_pool('! TEX.POOL check sum doesn''t have nine digits.');
+@y
+  bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
+@z
+
+@x
+done: if a<>@$ then bad_pool('! TEX.POOL doesn''t match; TANGLE me again.');
+@y
+done: if a<>@$ then
+  bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
 @z
 
 % _____________________________________________________________________________
@@ -359,6 +435,17 @@ if not b_open_in(tfm_file) then abort;
 
 % _____________________________________________________________________________
 %
+% [46.1034]
+% _____________________________________________________________________________
+
+@x
+  if (miktex_insert_src_special_auto) then append_src_special;
+@y
+  if (insert_src_special_auto) then append_src_special;
+@z
+
+% _____________________________________________________________________________
+%
 % [49.1275]
 % _____________________________________________________________________________
 
@@ -406,7 +493,7 @@ dump_int(@$);@/
 
 % _____________________________________________________________________________
 %
-% [50.1307]
+% [50.1308]
 % _____________________________________________________________________________
 
 @x
@@ -433,6 +520,19 @@ font_ec:=xmalloc_array(eight_bits, font_max);
 
 % _____________________________________________________________________________
 %
+% [50.1327]
+% _____________________________________________________________________________
+
+@x
+undump_int(x);
+if (x<>69069)or eof(fmt_file) then goto bad_fmt
+@y
+undump_int(x);
+if (x<>69069)or feof(fmt_file) then goto bad_fmt
+@z
+
+% _____________________________________________________________________________
+%
 % [51.1332]
 % _____________________________________________________________________________
 
@@ -447,6 +547,7 @@ miktex_process_command_line_options;
 miktex_allocate_memory;
 @y
 miktex_allocate_memory;
+  buffer:=xmalloc_array (ASCII_code, buf_size);
   input_file:=xmalloc_array (alpha_file, max_in_open);
 @z
 
