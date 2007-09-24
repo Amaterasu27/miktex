@@ -1055,7 +1055,11 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 */
 
 		bad_option:
+#if defined(MIKTEX)
+			fontfeaturewarning((voidpointer)cp1, cp2 - cp1, 0, 0);
+#else
 			fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
+#endif
 		
 		next_option:
 			cp1 = cp2;
@@ -1151,7 +1155,11 @@ findnativefont(unsigned char* uname, integer scaled_size)
 	loadedfontletterspace = 0;
 
 	splitFontName(name, &var, &feat, &end, &index);
+#if defined(MIKTEX)
+	nameString = (char*)xmalloc(var - name + 1);
+#else
 	nameString = xmalloc(var - name + 1);
+#endif
 	strncpy(nameString, name, var - name);
 	nameString[var - name] = 0;
 
@@ -1987,7 +1995,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			UBiDi*	pBiDi = ubidi_open();
 			
 			UErrorCode	errorCode = (UErrorCode)0;
+#if defined(MIKTEX)
+			ubidi_setPara(pBiDi, (UChar*)txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#else
 			ubidi_setPara(pBiDi, txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#endif
 			
 			dir = ubidi_getDirection(pBiDi);
 			if (dir == UBIDI_MIXED) {
@@ -2012,8 +2024,16 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 							free(positions);
 						}
 						maxGlyphs = nGlyphs + 20;
+#if defined(MIKTEX)
+						glyphs = (UInt32*)xmalloc(maxGlyphs * sizeof(UInt32));
+#else
 						glyphs = xmalloc(maxGlyphs * sizeof(UInt32));
+#endif
+#if defined(MIKTEX)
+						positions = (float*)xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#else
 						positions = xmalloc((maxGlyphs * 2 + 2) * sizeof(float));
+#endif
 					}
 	
 					getGlyphs(engine, glyphs, &status);

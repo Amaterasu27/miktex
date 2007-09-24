@@ -14,7 +14,6 @@ texmf/miktex/bin/${xetex_dll_name}.dll
 texmf/miktex/bin/xetex.exe
 texmf/miktex/config/xelatex.ini
 texmf/miktex/config/xetex.ini
-texmf/miktex/fmt/xetex.pool
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

@@ -208,6 +208,7 @@ target_link_libraries(${xetex_dll_name}
   ${fontconfig_dll_name}
   ${freetype2_dll_name}
   ${goo_lib_name}
+  ${graphite_engine_lib_name}
   ${icudt_dll_name}
   ${icule_dll_name}
   ${icuuc_dll_name}
@@ -220,9 +221,9 @@ target_link_libraries(${xetex_dll_name}
 delay_load(${xetex_dll_name}
   ${fontconfig_dll_name}
   ${freetype2_dll_name}
-  ${icudt_dll_name}
-  ${icule_dll_name}
-  ${icuuc_dll_name}
+#  icudt36
+#  icule36
+#  icuuc36
   ${png_dll_name}
   ${teckit_dll_name}
 )

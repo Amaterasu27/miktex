@@ -314,7 +314,7 @@ extern "C" {
 #if defined(MIKTEX)
   typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 
-  boolean u_open_in(unicodefile * f, integer mode, integer encodingData);
+  int u_open_in(unicodefile * f, integer mode, integer encodingData);
 
   void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
   int atsufontget(int what, ATSUStyle style);
@@ -330,6 +330,8 @@ extern "C" {
 
   UInt16
   get_native_glyph_id(void* pNode, unsigned index);
+
+  int initpool(int limit);
 #endif
 #if ! defined(MIKTEX)
 #ifdef __cplusplus

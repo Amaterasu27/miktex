@@ -18,9 +18,17 @@ open OUT, "> $outfile" or die "can't open output $outfile";
 print OUT <<__EOT__;
 /* This file is auto-generated from $ARGV[0] by pool2c.pl */
 #define EXTERN extern
+#if defined(MIKTEX)
+#  define C4PEXTERN extern
+#endif
 #include "${prog}d.h"
 
 #include <stdio.h>
+
+#if defined(MIKTEX)
+#  define poolptr XETEXDATA.m_poolptr
+#  define strpool XETEXDATA.m_strpool
+#endif
 
 static unsigned char POOL[] =
 __EOT__

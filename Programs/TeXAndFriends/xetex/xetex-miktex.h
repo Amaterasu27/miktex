@@ -257,7 +257,7 @@ MAKE_GLOBAL(scaled*, fontletterspace);
 MAKE_GLOBAL(scaled*, fontsize);
 MAKE_GLOBAL(scaled, loadedfontletterspace);
 MAKE_GLOBAL(strnumber*, fontarea);
-MAKE_GLOBAL(utf16code*, buffer);
+MAKE_GLOBAL(unicodescalar*, buffer);
 MAKE_GLOBAL(utf16code*, mappedtext);
 MAKE_GLOBAL(utf16code*, nameoffile16);
 MAKE_GLOBAL(voidpointer*, fontlayoutengine);
@@ -331,6 +331,13 @@ eightbitp ()
 {
   return (THEAPP.Enable8BitCharsP());
 }
+
+/* _________________________________________________________________________
+
+   inertsrcspecialauto
+   _________________________________________________________________________ */
+
+#define insertsrcspecialauto miktexinsertsrcspecialauto
 
 /* _________________________________________________________________________
 
@@ -537,3 +544,51 @@ miktexopenin ()
       THEDATA(inputfile)[0] = THEDATA(termin);
     }
 }
+
+/* _________________________________________________________________________
+
+   usinggraphite
+   _________________________________________________________________________ */
+
+inline
+boolean
+usinggraphite (/*[in]*/ const voidpointer p)
+{
+  return (usingGraphite(reinterpret_cast<XeTeXLayoutEngine>(p)));
+}
+
+/* _________________________________________________________________________
+
+   usingopentype
+   _________________________________________________________________________ */
+
+inline
+boolean
+usingopentype (/*[in]*/ const voidpointer p)
+{
+  return (usingOpenType(reinterpret_cast<XeTeXLayoutEngine>(p)));
+}
+
+
+/* _________________________________________________________________________
+
+   initgraphitebreaking
+   _________________________________________________________________________ */
+
+inline
+void
+initgraphitebreaking (/*[in]*/ const voidpointer	p,
+		      /*[in]*/ const utf16code *	pUtf16Code,
+		      /*[in]*/ int			len)
+{
+  initGraphiteBreaking (reinterpret_cast<XeTeXLayoutEngine>(p),
+			reinterpret_cast<const UniChar *>(pUtf16Code),
+			len);
+}
+
+/* _________________________________________________________________________
+
+   findnextgraphitebreak
+   _________________________________________________________________________ */
+
+#define findnextgraphitebreak findNextGraphiteBreak

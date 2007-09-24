@@ -36,6 +36,7 @@ include_directories(BEFORE
   ${src_dir}/segment
   ${src_dir}/textsource
   ${src_dir}/generic
+  ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}/include/graphite
   ${win32_dir}
 )
 

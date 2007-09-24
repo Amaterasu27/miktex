@@ -100,11 +100,9 @@ MIKTEXMF_BEGIN_NAMESPACE;
 
 #if defined(MIKTEX_TEXMF_UNICODE)
 typedef wchar_t TEXMFCHAR;
-typedef unsigned wchar_t TEXMFUCHAR;
 typedef wint_t TEXMFCHARINT;
 #else
 typedef char TEXMFCHAR;
-typedef unsigned char TEXMFUCHAR;
 typedef int TEXMFCHARINT;
 #endif
 
@@ -953,6 +951,16 @@ public:
 
   MIKTEXMFAPI(unsigned long)
   InitializeBuffer (/*[in]*/ unsigned short * pBuffer);
+
+  /* _______________________________________________________________________
+     
+     InitializeBuffer
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXMFAPI(unsigned long)
+  InitializeBuffer (/*[in]*/ C4P::C4P_signed32 * pBuffer);
 
   /* _______________________________________________________________________
      

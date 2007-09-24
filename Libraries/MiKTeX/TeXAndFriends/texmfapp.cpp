@@ -1148,6 +1148,20 @@ TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned short * pBuffer)
 
 /* _________________________________________________________________________
 
+   TeXMFApp::InitializeBuffer
+   _________________________________________________________________________ */
+
+MIKTEXMFAPI(unsigned long)
+TeXMFApp::InitializeBuffer (/*[in,out]*/ C4P_signed32 * pBuffer)
+{
+  MIKTEX_ASSERT (pBuffer != 0);
+  return (InitializeBuffer_<C4P_signed32>(pBuffer,
+					  GetInputFileType(),
+					  isTeXProgram));
+}
+
+/* _________________________________________________________________________
+
    TeXMFApp::InvokeEditor
    _________________________________________________________________________ */
 
