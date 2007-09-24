@@ -75,6 +75,7 @@ extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resou
 
 /* from psimage.h */
 extern void set_distiller_template (char *s);
+extern char *get_distiller_template (void);
 
 extern int
 pdf_ximage_scale_image (int            id,

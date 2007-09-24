@@ -182,7 +182,7 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     vhea = tt_read_vhea_table(sfont);
   if (vhea && sfnt_find_table_pos(sfont, "vmtx") > 0) {
     sfnt_locate_table(sfont, "vmtx");
-    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics);
+    vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, sfnt_find_table_len(sfont, "vmtx"));
   }
   /*
    * OpenType font must have OS/2 table.
@@ -312,7 +312,7 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
   hhea = tt_read_hhea_table(sfont);
 
   sfnt_locate_table(sfont, "hmtx");
-  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics);
+  hmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numberOfHMetrics, sfnt_find_table_len(sfont, "hmtx"));
 
   add_CIDHMetrics(sfont, fontdict, CIDToGIDMap, last_cid, maxp, head, hmtx);
   if (need_vmetrics)
@@ -832,8 +832,8 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);
@@ -1244,8 +1244,8 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+       = tt_get_fontdesc(sfont, &(opt->embed), 0, name)) == NULL)
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);

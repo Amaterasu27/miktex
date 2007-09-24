@@ -89,11 +89,12 @@ static unsigned key_bits    = 40;
 static unsigned permission  = 0x003C;
 
 /* Page device */
-static double paper_width  = 595.0;
-static double paper_height = 842.0;
+double paper_width  = 595.0;	/* not static, we allow dvi.c to access them */
+double paper_height = 842.0;
+char   landscape_mode    = 0;
+
 static double x_offset = 72.0;
 static double y_offset = 72.0;
-static char   landscape_mode    = 0;
 
 int always_embed = 0; /* always embed fonts, regardless of licensing flags */
 
@@ -641,6 +642,7 @@ do_dvi_pages (void)
 {
   long     page_no, page_count, i, step;
   double   page_width, page_height;
+  double   init_paper_width, init_paper_height;
   pdf_rect mediabox;
 
   spc_exec_at_begin_document();
@@ -655,8 +657,8 @@ do_dvi_pages (void)
     num_page_ranges = 1;
   }
 
-  page_width  = paper_width;
-  page_height = paper_height;
+  init_paper_width  = page_width  = paper_width;
+  init_paper_height = page_height = paper_height;
   page_count  = 0;
 
   mediabox.llx = 0.0;
@@ -679,6 +681,7 @@ do_dvi_pages (void)
         char   lm;
 
         /* Users want to change page size even after page is started! */
+        page_width = paper_width; page_height = paper_height;
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
         dvi_scan_paper_size(page_no, &w, &h, &xo, &yo, &lm);
@@ -694,8 +697,8 @@ do_dvi_pages (void)
           x_offset = xo;
           y_offset = yo;
         }
-        if (page_width  != paper_width ||
-            page_height != paper_height) {
+        if (page_width  != init_paper_width ||
+            page_height != init_paper_height) {
           mediabox.llx = 0.0;
           mediabox.lly = 0.0;
           mediabox.urx = page_width;

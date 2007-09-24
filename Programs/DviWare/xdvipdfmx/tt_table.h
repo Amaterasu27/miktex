@@ -179,7 +179,7 @@ extern struct tt_VORG_table *tt_read_VORG_table (sfnt *sfont);
 
 /* hmtx and vmtx */
 extern struct tt_longMetrics *tt_read_longMetrics (sfnt *sfont,
-	USHORT numGlyphs, USHORT numLongMetrics);
+	USHORT numGlyphs, USHORT numLongMetrics, ULONG tableSize);
 
 /* OS/2 table */
 extern struct tt_os2__table *tt_read_os2__table (sfnt *sfont);
