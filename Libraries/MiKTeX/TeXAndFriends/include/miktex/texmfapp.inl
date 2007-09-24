@@ -310,6 +310,20 @@ miktexdump (/*[in]*/ FileType &		f,
 
 /* _________________________________________________________________________
      
+   miktexdumpint
+   _________________________________________________________________________ */
+
+template<typename FileType>
+inline
+void
+miktexdumpint (/*[in]*/ FileType &	f,
+	       /*[in]*/ int		val)
+{
+  miktexdump (f, val);
+}
+
+/* _________________________________________________________________________
+     
    miktexundump
    _________________________________________________________________________ */
 
@@ -379,6 +393,20 @@ miktexundump (/*[in]*/ FileType &	f,
 	      /*[in]*/ size_t		n)
 {
   THEAPP.Undump (f, static_cast<EleType>(high), e, n);
+}
+
+/* _________________________________________________________________________
+     
+   miktexundumpint
+   _________________________________________________________________________ */
+
+template<typename FileType>
+inline
+void
+miktexundumpint (/*[in]*/ FileType &	f,
+		 /*[out]*/ int &		val)
+{
+  miktexundump (f, val);
 }
 
 MIKTEXMF_END_NAMESPACE;

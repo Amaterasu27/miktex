@@ -1997,9 +1997,15 @@ bad_fmt:
 
 @x
 @d dump_wd(#)==begin fmt_file^:=#; put(fmt_file);@+end
+@d dump_int(#)==begin fmt_file^.int:=#; put(fmt_file);@+end
+@d dump_hh(#)==begin fmt_file^.hh:=#; put(fmt_file);@+end
+@d dump_qqqq(#)==begin fmt_file^.qqqq:=#; put(fmt_file);@+end
 @y
 @d dump_things(#)==miktex_dump(fmt_file, #)
-@d dump_wd(#)==begin fmt_file^:=#; put(fmt_file);@+end
+@d dump_wd(#)==miktex_dump(fmt_file, #)
+@d dump_int(#)==miktex_dump_int(fmt_file, #)
+@d dump_hh(#)==miktex_dump(fmt_file, #)
+@d dump_qqqq(#)==miktex_dump(fmt_file, #)
 @z
 
 % _____________________________________________________________________________
@@ -2009,11 +2015,17 @@ bad_fmt:
 
 @x
 @d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
+@d undump_int(#)==begin get(fmt_file); #:=fmt_file^.int;@+end
+@d undump_hh(#)==begin get(fmt_file); #:=fmt_file^.hh;@+end
+@d undump_qqqq(#)==begin get(fmt_file); #:=fmt_file^.qqqq;@+end
 @y
 @d undump_things(#)==miktex_undump(fmt_file, #)
 @d undump_checked_things(#)==miktex_undump(fmt_file, #)
 @d undump_upper_check_things(#)==miktex_undump(fmt_file, #)
-@d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
+@d undump_wd(#)==miktex_undump(fmt_file, #)
+@d undump_int(#)==miktex_undump_int(fmt_file, #)
+@d undump_hh(#)==miktex_undump(fmt_file, #)
+@d undump_qqqq(#)==miktex_undump(fmt_file, #)
 @z
 
 % _____________________________________________________________________________
@@ -2186,6 +2198,17 @@ special_token:=cs_token_flag+special_loc;@/
 @!init trie_not_ready:=false @+tini
 @y
 @!Init trie_not_ready:=false @+Tini
+@z
+
+% _____________________________________________________________________________
+%
+% [50.1373]
+% _____________________________________________________________________________
+
+@x
+if (x<>69069)or eof(fmt_file) then goto bad_fmt
+@y
+if (x<>69069)or not eof(fmt_file) then goto bad_fmt
 @z
 
 % _____________________________________________________________________________

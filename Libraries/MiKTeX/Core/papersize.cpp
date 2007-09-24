@@ -1,6 +1,6 @@
 /* papersize.cpp: paper size info
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -224,7 +224,8 @@ SessionImpl::ReadDvipsPaperSizes ()
 		    }
 		  continue;
 		}
-	      MIKTEXCHAR * lpsz = STRDUP(line.c_str() + 1).GetBuffer();
+	      CharBuffer<MIKTEXCHAR> buf (line.c_str() + 1);
+	      MIKTEXCHAR * lpsz = buf.GetBuffer();
 	      SkipSpace (lpsz);
 	      if (*lpsz == 0)
 		{

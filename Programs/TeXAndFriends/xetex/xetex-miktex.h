@@ -265,6 +265,8 @@ MAKE_GLOBAL(voidpointer, loadedfontmapping);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)
+#undef nullptr
+#define nullptr() 0
 #define isnullptr(p) ((p) == 0)
 #define stringcast(x) ((char*)(x))
 

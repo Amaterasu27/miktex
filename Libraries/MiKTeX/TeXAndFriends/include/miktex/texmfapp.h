@@ -1126,13 +1126,14 @@ public:
     FILE * pfile;
     if (! OpenMemoryDumpFile(GetNameOfFile(),
 			     &pfile,
-			     &f.bufref(),
+			     0,
 			     sizeof(*f),
 			     renew))
       {
 	return (false);
       }
     f.Attach (pfile, true);
+    f.PascalFileIO (false);
     return (true);
   }
 #endif // THEDATA
@@ -1196,6 +1197,7 @@ public:
 	  /*[out]*/ ELETYPE_ &		e,
 	  /*[in]*/ size_t		n)
   {
+    f.PascalFileIO (false);
     if (fread(&e, sizeof(e), n, static_cast<FILE*>(f)) != n)
       {
 	MiKTeX::Core::Session::FatalCrtError

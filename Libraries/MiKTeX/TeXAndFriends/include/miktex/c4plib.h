@@ -168,6 +168,28 @@ public:
 protected:
   enum { Buffered = 0x00010000 };
 
+public:
+  void
+  PascalFileIO (/*[in]*/ bool turnOn)
+  {
+    if (turnOn)
+      {
+	flags |= Buffered;
+      }
+    else
+      {
+	flags &= ~ Buffered;
+      }
+  }
+
+public:
+  bool
+  IsPascalFileIO ()
+    const
+  {
+    return ((flags & Buffered) != 0);
+  }
+
 protected:
   ElementType currentElement;
 
@@ -176,7 +198,7 @@ public:
   bufref ()
     const
   {
-    MIKTEX_ASSERT ((flags & Buffered) != 0)
+    MIKTEX_ASSERT (IsPascalFileIO());
     return (currentElement);
   }
   
@@ -184,7 +206,7 @@ public:
   ElementType &
   bufref ()
   {
-    flags |= Buffered;
+    PascalFileIO (true);
     return (currentElement);
   }
 
@@ -212,7 +234,7 @@ public:
 	return (true);
       }
 
-    if ((flags & Buffered) != 0)
+    if (IsPascalFileIO())
       {
 	return (false);
       }
@@ -268,7 +290,10 @@ public:
 	MiKTeX::Core::Session::FatalCrtError
 	  (MIKTEXTEXT("fread"), 0, MIKTEXTEXT(__FILE__), __LINE__);
       }
-    currentElement = pBuf[n - 1];
+    if (IsPascalFileIO())
+      {
+	currentElement = pBuf[n - 1];
+      }
   }
 
 public:
@@ -276,7 +301,7 @@ public:
   Read ()
   {
     AssertValid ();
-    flags |= Buffered;
+    PascalFileIO (true);
     if (feof(*this) != 0)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
@@ -316,7 +341,7 @@ public:
   Write ()
   {
     AssertValid ();
-    MIKTEX_ASSERT ((flags & Buffered) != 0);
+    MIKTEX_ASSERT (IsPascalFileIO());
     if (fwrite(&currentElement, sizeof(ElementType), 1, *this) != 1
 	|| ferror(*this) != 0)
       {
@@ -336,7 +361,7 @@ public:
 	MiKTeX::Core::Session::FatalCrtError
 	  (MIKTEXTEXT("fseek"), 0, MIKTEXTEXT(__FILE__), __LINE__);
       }
-    if ((flags & Buffered) != 0)
+    if (IsPascalFileIO());
       {
 	Read ();
       }

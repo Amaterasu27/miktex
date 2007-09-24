@@ -127,7 +127,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-	${pre_xetex2_web}
+	${pre_xetex2_web_file}
 	${xetex_change_files}
 )
 

@@ -498,8 +498,12 @@ dump_int(@$);@/
 
 @x
 undump_int(x);
+if x<>@"4D694B54 then goto bad_fmt; {not a format file}
+undump_int(x);
 if x<>@$ then goto bad_fmt; {check that strings are the same}
 @y
+undump_int(x);
+if x<>@"4D694B54 then goto bad_fmt; {not a format file}
 format_engine:=xmalloc_array(text_char, x);
 undump_int(x);
 if x<>@$ then goto bad_fmt; {check that strings are the same}
@@ -525,7 +529,7 @@ font_ec:=xmalloc_array(eight_bits, font_max);
 
 @x
 undump_int(x);
-if (x<>69069)or eof(fmt_file) then goto bad_fmt
+if (x<>69069)or not eof(fmt_file) then goto bad_fmt
 @y
 undump_int(x);
 if (x<>69069)or feof(fmt_file) then goto bad_fmt

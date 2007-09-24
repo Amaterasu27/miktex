@@ -23,10 +23,10 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	7)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	2814)
+set(MIKTEX_J2000_VERSION	2828)
 
 ## the release number; only meaningful for rc/beta builds
-set(MIKTEX_RELEASE_NUM		2)
+set(MIKTEX_RELEASE_NUM		3)
 
 ## the release state; one of:
 ##   0 (general availability release)

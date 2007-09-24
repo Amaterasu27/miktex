@@ -1900,9 +1900,15 @@ off_base:
 
 @x
 @d dump_wd(#)==begin mem_file^:=#; put(mem_file);@+end
+@d dump_int(#)==begin mem_file^.int:=#; put(mem_file);@+end
+@d dump_hh(#)==begin mem_file^.hh:=#; put(mem_file);@+end
+@d dump_qqqq(#)==begin mem_file^.qqqq:=#; put(mem_file);@+end
 @y
 @d dump_things(#)==miktex_dump(mem_file, #)
-@d dump_wd(#)==begin mem_file^:=#; put(mem_file);@+end
+@d dump_wd(#)==miktex_dump(mem_file, #)
+@d dump_int(#)==miktex_dump_int(mem_file, #)
+@d dump_hh(#)==miktex_dump(mem_file, #)
+@d dump_qqqq(#)==miktex_dump(mem_file, #)
 @z
 
 % _____________________________________________________________________________
@@ -1912,9 +1918,17 @@ off_base:
 
 @x
 @d undump_wd(#)==begin get(mem_file); #:=mem_file^;@+end
+@d undump_int(#)==begin get(mem_file); #:=mem_file^.int;@+end
+@d undump_hh(#)==begin get(mem_file); #:=mem_file^.hh;@+end
+@d undump_qqqq(#)==begin get(mem_file); #:=mem_file^.qqqq;@+end
 @y
 @d undump_things(#)==miktex_undump(mem_file, #)
-@d undump_wd(#)==begin get(mem_file); #:=mem_file^;@+end
+@d undump_checked_things(#)==miktex_undump(mem_file, #)
+@d undump_upper_check_things(#)==miktex_undump(mem_file, #)
+@d undump_wd(#)==miktex_undump(mem_file, #)
+@d undump_int(#)==miktex_undump_int(mem_file, #)
+@d undump_hh(#)==miktex_undump(mem_file, #)
+@d undump_qqqq(#)==miktex_undump(mem_file, #)
 @z
 
 % _____________________________________________________________________________
@@ -1944,8 +1958,8 @@ if x<>mem_min then goto off_base;
 undump_int(x);
 if x<>mem_top then goto off_base;
 @y
-x:=mem_file^.int;
-if x<>@"4D694B50 then goto off_base; {not a base file}
+undump_int(x);
+if x<>@"4D694B50 then goto off_base; {not a mem file}
 undump_int(x);
 if x<>@$ then goto off_base; {check that strings are the same}
 undump_int(x);
@@ -1979,6 +1993,17 @@ str_ref:=miktex_reallocate(str_ref, max_strings);
 next_str:=miktex_reallocate(next_str, max_strings);
 str_start:=miktex_reallocate(str_start, max_strings);
 str_pool:=miktex_reallocate(str_pool, pool_size);
+@z
+
+% _____________________________________________________________________________
+%
+% [45.1331]
+% _____________________________________________________________________________
+
+@x
+undump_int(x);@+if (x<>69073)or eof(mem_file) then goto off_base
+@y
+undump_int(x);@+if (x<>69073)or not eof(mem_file) then goto off_base
 @z
 
 % _____________________________________________________________________________
