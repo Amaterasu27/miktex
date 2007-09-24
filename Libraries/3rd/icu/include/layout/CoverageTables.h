@@ -21,7 +21,7 @@ struct CoverageTable
 {
     le_uint16 coverageFormat;
 
-    U_EXPORT le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
+    le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
 };
 
 struct CoverageFormat1Table : CoverageTable
@@ -29,7 +29,7 @@ struct CoverageFormat1Table : CoverageTable
     le_uint16  glyphCount;
     TTGlyphID glyphArray[ANY_NUMBER];
 
-    U_EXPORT le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
+    le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
 };
 
 struct CoverageFormat2Table : CoverageTable
@@ -37,7 +37,7 @@ struct CoverageFormat2Table : CoverageTable
     le_uint16        rangeCount;
     GlyphRangeRecord rangeRecordArray[ANY_NUMBER];
 
-    U_EXPORT le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
+    le_int32 getGlyphCoverage(LEGlyphID glyphID) const;
 };
 
 U_NAMESPACE_END

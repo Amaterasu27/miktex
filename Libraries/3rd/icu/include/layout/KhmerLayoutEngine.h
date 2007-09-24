@@ -36,7 +36,7 @@ U_NAMESPACE_BEGIN
  *
  * @internal
  */
-class U_EXPORT KhmerOpenTypeLayoutEngine : public OpenTypeLayoutEngine
+class KhmerOpenTypeLayoutEngine : public OpenTypeLayoutEngine
 {
 public:
     /**

@@ -19,17 +19,17 @@
 
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc80/icudt.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc90/icudt.lib
     ${LIBRARY_OUTPUT_PATH}/icudt.lib
     COPYONLY
   )
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc80/icule.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc90/icule.lib
     ${LIBRARY_OUTPUT_PATH}/icule.lib
     COPYONLY
   )
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc80/icuuc.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc90/icuuc.lib
     ${LIBRARY_OUTPUT_PATH}/icuuc.lib
     COPYONLY
   )

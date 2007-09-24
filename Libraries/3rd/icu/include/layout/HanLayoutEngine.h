@@ -26,7 +26,7 @@ class LEGlyphStorage;
  *
  * @internal
  */
-class U_EXPORT HanOpenTypeLayoutEngine : public OpenTypeLayoutEngine
+class HanOpenTypeLayoutEngine : public OpenTypeLayoutEngine
 {
 public:
     /**

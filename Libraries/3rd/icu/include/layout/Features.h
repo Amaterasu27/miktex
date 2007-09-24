@@ -35,9 +35,9 @@ struct FeatureListTable
     le_uint16           featureCount;
     FeatureRecord       featureRecordArray[ANY_NUMBER];
 
-    const FeatureTable  U_EXPORT *getFeatureTable(le_uint16 featureIndex, LETag *featureTag) const;
+    const FeatureTable  *getFeatureTable(le_uint16 featureIndex, LETag *featureTag) const;
 
-    const FeatureTable U_EXPORT *getFeatureTable(LETag featureTag) const;
+    const FeatureTable *getFeatureTable(LETag featureTag) const;
 };
 
 U_NAMESPACE_END

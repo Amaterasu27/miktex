@@ -34,7 +34,7 @@ class LEGlyphStorage;
  *
  * @internal
  */
-class U_EXPORT IndicOpenTypeLayoutEngine : public OpenTypeLayoutEngine
+class IndicOpenTypeLayoutEngine : public OpenTypeLayoutEngine
 {
 public:
     /**

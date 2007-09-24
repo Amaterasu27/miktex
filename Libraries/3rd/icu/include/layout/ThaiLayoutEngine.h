@@ -26,7 +26,7 @@ class LEGlyphStorage;
  *
  * @internal
  */
-class U_EXPORT ThaiLayoutEngine : public LayoutEngine
+class ThaiLayoutEngine : public LayoutEngine
 {
 public:
     /**

@@ -17,7 +17,7 @@
 
 U_NAMESPACE_BEGIN
 
-struct U_EXPORT GlyphLookupTableHeader
+struct GlyphLookupTableHeader
 {
     fixed32 version;
     Offset  scriptListOffset;
