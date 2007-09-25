@@ -169,7 +169,7 @@ TpmParser::OnStartElement (/*[in]*/ void *			pv,
 	    {
 	      This->packageInfo.sizeDocFiles = size;
 	    }
-	  else if (StrCmp(lpszName, X_("TPM:DocFiles")) == 0)
+	  else if (StrCmp(lpszName, X_("TPM:SourceFiles")) == 0)
 	    {
 	      This->packageInfo.sizeSourceFiles = size;
 	    }
