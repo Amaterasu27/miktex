@@ -354,18 +354,40 @@ SessionImpl::RegisterFileTypes ()
      exePath.c_str(),
      ListBuilder());
 
-  RegisterFileType
-    (FileType::FMT,
-     T_("fmt"),
-     T_("TeX"),
-     ListBuilder(
-		 T_(".fmt")
-		 ),
-     ListBuilder(
-		 CURRENT_DIRECTORY,
-		 SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
-		 ),
-     ListBuilder());
+  Tokenizer engine (theNameOfTheGame.c_str(), T_(",;:"));
+  if (engine.GetCurrent() != 0)
+    {
+      PathName engineDir (MIKTEX_PATH_FMT_DIR);
+      engineDir += engine.GetCurrent();
+      RegisterFileType
+	(FileType::FMT,
+	 T_("fmt"),
+	 T_("TeX"),
+	 ListBuilder(
+		     T_(".fmt")
+		     ),
+	 ListBuilder(
+		     CURRENT_DIRECTORY,
+		     SearchSpecBuilder(engineDir.Get()),
+		     SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
+		     ),
+	 ListBuilder());
+    }
+  else
+    {
+      RegisterFileType
+	(FileType::FMT,
+	 T_("fmt"),
+	 T_("TeX"),
+	 ListBuilder(
+		     T_(".fmt")
+		     ),
+	 ListBuilder(
+		     CURRENT_DIRECTORY,
+		     SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
+		     ),
+	 ListBuilder());
+    }
   
   RegisterFileType
     (FileType::HBF,

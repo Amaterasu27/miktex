@@ -165,13 +165,29 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 MIKTEXAPPAPI(void)
-Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName)
+Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
+		   /*[in]*/ const MIKTEXCHAR *	lpszTheNameOfTheGame)
 {
   Session::InitInfo initInfo (lpszProgramInvocationName);
+  if (lpszTheNameOfTheGame != 0)
+    {
+      initInfo.SetTheNameOfTheGame (lpszTheNameOfTheGame);
+    }
 #if defined(MIKTEX_WINDOWS)
   initInfo.SetFlags (Session::InitFlags::InitializeCOM);
 #endif
   Init (initInfo);
+}
+
+/* _________________________________________________________________________
+     
+   Application::Init
+   _________________________________________________________________________ */
+
+MIKTEXAPPAPI(void)
+Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName)
+{
+  Init (lpszProgramInvocationName, 0);
 }
 
 /* _________________________________________________________________________

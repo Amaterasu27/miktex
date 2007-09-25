@@ -258,9 +258,7 @@ TeXMFApp::AddOptions ()
   WebAppInputLine::AddOptions ();
 
   bool invokedAsInitProgram = false;
-  if (Utils::Contains(GetInitProgramName(),
-		      Utils::GetExeName().c_str(),
-		      T_(";")))
+  if (Utils::Contains(GetInitProgramName(), Utils::GetExeName().c_str()))
     {
       invokedAsInitProgram = true;
     }
@@ -920,9 +918,7 @@ The MiKTeX configuration utility could not be found.")),
 MIKTEXMFAPI(void)
 TeXMFApp::ProcessCommandLineOptions ()
 {
-  if (Utils::Contains(GetInitProgramName(),
-		      Utils::GetExeName().c_str(),
-		      T_(";")))
+  if (Utils::Contains(GetInitProgramName(), Utils::GetExeName().c_str()))
     {
       isInitProgram = true;
     }
@@ -960,10 +956,8 @@ MIKTEXMFAPI(bool)
 TeXMFApp::IsVirgin () const
 {
   tstring exeName = Utils::GetExeName();
-  return (Utils::Contains(GetProgramName(), exeName.c_str(), T_(";"))
-	  || Utils::Contains(GetVirginProgramName(),
-			     exeName.c_str(),
-			     T_(";")));
+  return (Utils::Contains(GetProgramName(), exeName.c_str())
+	  || Utils::Contains(GetVirginProgramName(), exeName.c_str()));
 }
 
 /* _________________________________________________________________________

@@ -1539,7 +1539,27 @@ public:
   MIKTEXCALL
   Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
 	    /*[in]*/ const MIKTEXCHAR *	lpszElement,
-	    /*[in]*/ const MIKTEXCHAR *	lpszDelim);
+	    /*[in]*/ const MIKTEXCHAR *	lpszDelim,
+	    /*[in]*/ bool		ignoreCase);
+
+public:
+  static
+  bool
+  Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
+	    /*[in]*/ const MIKTEXCHAR *	lpszElement,
+	    /*[in]*/ const MIKTEXCHAR *	lpszDelim)
+  {
+    return (Contains(lpszList, lpszElement, lpszDelim, true));
+  }
+
+public:
+  static
+  bool
+  Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
+	    /*[in]*/ const MIKTEXCHAR *	lpszElement)
+  {
+    return (Contains(lpszList, lpszElement, MIKTEXTEXT(",;:")));
+  }
 
 public:
   static
@@ -5579,6 +5599,22 @@ public:
     {
       return (programInvocationName);
     }
+    /// Sets the name of the game.
+  public:
+    void
+    SetTheNameOfTheGame
+    (/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame)
+    {
+      theNameOfTheGame = lpszTheNameOfTheGame;
+    }
+    /// Gets the name of the game.
+  public:
+    tstring
+    GetTheNameOfTheGame ()
+      const
+    {
+      return (theNameOfTheGame);
+    }
   public:
     void
     SetStartupConfig (/*[in]*/ const StartupConfig & startupConfig)
@@ -5626,6 +5662,8 @@ public:
     unsigned long flags;
   private:
     tstring programInvocationName;
+  private:
+    tstring theNameOfTheGame;
   private:
     StartupConfig startupConfig;
   private:
@@ -6316,6 +6354,13 @@ public:
   void
   MIKTEXCALL
   ConfigureFile (/*[in]*/ const PathName & pathRel)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXCALL
+  SetTheNameOfTheGame (/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame)
     = 0;
 
 public:

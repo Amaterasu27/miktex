@@ -373,8 +373,7 @@ protected:
   AmI (/*[in]*/ const MIKTEXCHAR * lpszName)
     const
   {
-    return (MiKTeX::Core::StringCompare(GetProgramName(), lpszName, true)
-	    == 0);
+    return (MiKTeX::Core::Utils::Contains(GetProgramName(), lpszName));
   }
 
   /* _______________________________________________________________________

@@ -84,6 +84,15 @@ file type (see below).</para></listitem>
 <para>Start the associated program,
 if the file was found.</para></listitem>
 </varlistentry>
+<varlistentry>
+<term><option>--the-name-of-the-game=<replaceable>name</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--the-name-of-the-game=name</primary>
+</indexterm>
+<para>Set the name of the program. Relevant when searching for format
+files.</para></listitem>
+</varlistentry>
 &optionversion;
 </variablelist>
 

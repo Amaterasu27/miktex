@@ -52,7 +52,7 @@ using namespace std;
 
 #define Q_(x) Quoted(x).c_str()
 
-const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Find Utility");
+const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Finder");
 const MIKTEXCHAR * const PROGNAME = T_("findtexmf");
 
 /* _________________________________________________________________________
@@ -171,6 +171,7 @@ enum Option
   OPT_MUST_EXIST,
   OPT_SHOW_PATH,
   OPT_START,
+  OPT_THE_NAME_OF_THE_GAME,
   OPT_VERSION,
 };
 
@@ -185,8 +186,9 @@ const struct poptOption FindTeXMF::aoption[] =
     T_("alias"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
-    T_("Pretend to be APP, i.e., use APP's configuration settings \
-when searching for files."),
+    T_("\
+Pretend to be APP, i.e., use APP's configuration settings\
+ when searching for files."),
     T_("APP"),
   },
 
@@ -194,7 +196,8 @@ when searching for files."),
     T_("file-type"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
-    T_("The type of the file to search for."),
+    T_("\
+The type of the file to search for."),
     T_("FILETYPE"),
   },
 
@@ -202,7 +205,8 @@ when searching for files."),
     T_("list-file-types"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_LIST_FILE_TYPES,
-    T_("List known file types."),
+    T_("\
+List known file types."),
     0,
   },
 
@@ -210,7 +214,8 @@ when searching for files."),
     T_("must-exist"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_MUST_EXIST,
-    T_("Run the package installer, if necessary."),
+    T_("\
+Run the package installer, if necessary."),
     0,
   },
 
@@ -218,7 +223,8 @@ when searching for files."),
     T_("show-path"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_SHOW_PATH,
-    T_("Show the search path for a certain file type."),
+    T_("\
+Show the search path for a certain file type."),
     T_("FILETYPE"),
   },
 
@@ -226,15 +232,26 @@ when searching for files."),
     T_("start"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_START,
-    T_("Start the asoociated program."),
+    T_("\
+Start the program which is associated with the file name extension."),
     0,
+  },
+
+  {
+    T_("the-name-of-the-game"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_THE_NAME_OF_THE_GAME,
+    T_("\
+Set the name of the program. Relevant when searching for format files."),
+    T_("NAME"),
   },
 
   {
     T_("version"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_VERSION,
-    T_("Print version information and exit."),
+    T_("\
+Print version information and exit."),
     0
   },
 
@@ -250,7 +267,6 @@ when searching for files."),
 enum KpseOption
 {
   OPT_AAAA = 1024,
-  OPT_ENGINE,
 };
 
 const struct poptOption FindTeXMF::aoptionKpse[] =
@@ -259,8 +275,9 @@ const struct poptOption FindTeXMF::aoptionKpse[] =
     T_("alias"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
-    T_("Pretend to be APP, i.e., use APP's configuration settings \
-when searching for files."),
+    T_("\
+Pretend to be APP, i.e., use APP's configuration settings\
+ when searching for files."),
     T_("APP"),
   },
 
@@ -268,28 +285,34 @@ when searching for files."),
     T_("expand-path"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_PATH,
-    T_("Deprecated."), T_("PATH"),
+    T_("\
+Deprecated."),
+    T_("PATH"),
   },
 
   {
     T_("expand-var"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_EXPAND_VAR,
-    T_("Deprecated."), T_("VAR"),
+    T_("\
+Deprecated."),
+    T_("VAR"),
   },
 
   {
     T_("engine"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_ENGINE,
-    T_("Unsupported."), T_("ENGINE"),
+    OPT_THE_NAME_OF_THE_GAME,
+    T_("\
+Deprecated (Use -the-name-of-the-game instead)."), T_("ENGINE"),
   },
 
   {
     T_("file-type"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
-    T_("The type of the file to search for."),
+    T_("\
+The type of the file to search for."),
     T_("FILETYPE"),
   },
 
@@ -297,7 +320,8 @@ when searching for files."),
     T_("format"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
-    T_("Deprecated."),
+    T_("\
+Deprecated (use -file-type instead)."),
     T_("FORMAT"),
   },
 
@@ -305,7 +329,8 @@ when searching for files."),
     T_("list-file-types"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_LIST_FILE_TYPES,
-    T_("List known file types."),
+    T_("\
+List known file types."),
     0,
   },
 
@@ -313,7 +338,8 @@ when searching for files."),
     T_("must-exist"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_MUST_EXIST,
-    T_("Run the package installer, if necessary."),
+    T_("\
+Run the package installer, if necessary."),
     0,
   },
 
@@ -321,7 +347,8 @@ when searching for files."),
     T_("progname"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_ALIAS,
-    T_("Deprecated."),
+    T_("\
+Deprecated (use -alias instead)."),
     T_("PROGNAME"),
   },
 
@@ -329,7 +356,8 @@ when searching for files."),
     T_("show-path"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_SHOW_PATH,
-    T_("Show the search path for a certain file type."),
+    T_("\
+Show the search path for a certain file type."),
     T_("FILETYPE"),
   },
 
@@ -337,15 +365,26 @@ when searching for files."),
     T_("start"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_START,
-    T_("Start the associated program."),
+    T_("\
+Start the program which is associated with the file name extension."),
     0,
+  },
+
+  {
+    T_("the-name-of-the-game"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
+    OPT_THE_NAME_OF_THE_GAME,
+    T_("\
+Set the name of the program. Relevant when searching for format files."),
+    T_("NAME"),
   },
 
   {
     T_("version"), 0,
     POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
     OPT_VERSION,
-    T_("Print version information and exit."),
+    T_("\
+Print version information and exit."),
     0
   },
 
@@ -377,7 +416,7 @@ FindTeXMF::ShowVersion ()
   tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
 	<< T_("\n")
-	<< T_("Copyright (C) 2001-2006 Christian Schenk\n\
+	<< T_("Copyright (C) 2001-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
@@ -606,8 +645,9 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	  start = true;
 	  break;
 
-	case OPT_ENGINE:
-
+	case OPT_THE_NAME_OF_THE_GAME:
+	  
+	  pSession->SetTheNameOfTheGame (lpszOptArg);
 	  break;
 
 	case OPT_VERSION:

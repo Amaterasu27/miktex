@@ -135,11 +135,12 @@ Tokenizer::FindToken ()
 bool
 Utils::Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
 		 /*[in]*/ const MIKTEXCHAR *	lpszElement,
-		 /*[in]*/ const MIKTEXCHAR *	lpszDelims)
+		 /*[in]*/ const MIKTEXCHAR *	lpszDelims,
+		 /*[in]*/ bool			ignoreCase)
 {
   for (Tokenizer tok (lpszList, lpszDelims); tok.GetCurrent() != 0; ++ tok)
     {
-      if (StringCompare(tok.GetCurrent(), lpszElement, true) == 0)
+      if (StringCompare(tok.GetCurrent(), lpszElement, ignoreCase) == 0)
 	{
 	  return (true);
 	}

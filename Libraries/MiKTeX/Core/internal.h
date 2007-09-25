@@ -1448,6 +1448,12 @@ public:
   virtual
   void
   MIKTEXCALL
+  SetTheNameOfTheGame (/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame);
+
+public:
+  virtual
+  void
+  MIKTEXCALL
   ConfigureFile (/*[in]*/ const PathName & path);
 
   // -----------------------------------------------------------------------
@@ -2083,6 +2089,9 @@ private:
 
 private:
   tstring applicationNames;
+
+private:
+  tstring theNameOfTheGame;
 
 private:
   const tstring &

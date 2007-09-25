@@ -262,9 +262,13 @@ namespace {
 void
 MakeFmt::CreateDestinationDirectory ()
 {
+  PathName defDestDir;
+  defDestDir = MIKTEX_PATH_TEXMF_PLACEHOLDER;
+  defDestDir += MIKTEX_PATH_FMT_DIR;
+  defDestDir += GetEngineName();
   CreateDirectory (pSession->GetConfigValue(MIKTEX_REGKEY_MAKEFMT,
 					    MIKTEX_REGVAL_DESTDIR,
-					    DEFAULT_DESTDIR),
+					    defDestDir.Get()),
 		   destinationDirectory);
 }
 

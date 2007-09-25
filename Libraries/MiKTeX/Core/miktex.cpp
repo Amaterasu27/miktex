@@ -981,6 +981,8 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 
   this->initInfo = initInfo;
 
+  theNameOfTheGame = initInfo.GetTheNameOfTheGame();
+
   RegisterLibraryTraceStreams ();
 
   // enable trace streams
@@ -1053,6 +1055,21 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 				    T_("session locale: %s"),
 				    defaultLocale.name().c_str());
   
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::SetTheNameOfTheGame
+   _________________________________________________________________________ */
+
+void
+MIKTEXCALL
+SessionImpl::SetTheNameOfTheGame
+(/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame)
+{
+  MIKTEX_ASSERT_STRING (lpszTheNameOfTheGame);
+  fileTypes.clear ();
+  theNameOfTheGame = lpszTheNameOfTheGame;
 }
 
 /* _________________________________________________________________________
