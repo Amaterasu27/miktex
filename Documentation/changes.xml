@@ -62,7 +62,7 @@ of internel arrays:</para>
 
 <title>New: &XeTeX;</title>
 
-<para>&XeTeX; version 0.996-patch1 has been integrated into the
+<para>&XeTeX; version 0.997 has been integrated into the
 &MiKTeX; distribution. If you are looking for a Unicode-based &TeX;
 engine, or if want to use &Windows; fonts, then you should give
 &XeTeX; a try.</para>
