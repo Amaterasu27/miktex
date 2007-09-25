@@ -1,6 +1,6 @@
 /* FormatInfo.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -53,12 +53,12 @@ SessionImpl::GetFormatInfo (/*[in]*/ unsigned		index,
 
 FormatInfo
 MIKTEXCALL
-SessionImpl::GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName)
+SessionImpl::GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey)
 {
   FormatInfo formatInfo;
-  if (! TryGetFormatInfo(lpszFormatName, formatInfo))
+  if (! TryGetFormatInfo(lpszKey, formatInfo))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetFormatInfo"), lpszFormatName);
+      INVALID_ARGUMENT (T_("SessionImpl::GetFormatInfo"), lpszKey);
     }
   return (formatInfo);
 }
@@ -70,7 +70,7 @@ SessionImpl::GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName)
 
 bool
 MIKTEXCALL
-SessionImpl::TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName,
+SessionImpl::TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 			       /*[out]*/ FormatInfo &		formatInfo)
 {
   ReadFormatsIni ();
@@ -78,7 +78,7 @@ SessionImpl::TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName,
        it != formats.end();
        ++ it)
     {
-      if (PathName::Compare(it->name, lpszFormatName) == 0)
+      if (PathName::Compare(it->key, lpszKey) == 0)
 	{
 	  formatInfo = *it;
 	  return (true);
@@ -97,19 +97,19 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 {
   SmartPointer<Cfg> pFormats (Cfg::Create());
   pFormats->Read (cfgFile);
-  MIKTEXCHAR szFormatName[BufferSizes::MaxPath];
+  MIKTEXCHAR szKey[BufferSizes::MaxPath];
   bool custom =
     (TryDeriveTEXMFRoot(cfgFile.Get()) != GetInstallRoot());
-  for (MIKTEXCHAR * lpszFormatName
-	 = pFormats->FirstKey(szFormatName, BufferSizes::MaxPath);
-       lpszFormatName != 0;
-       lpszFormatName = pFormats->NextKey(szFormatName, BufferSizes::MaxPath))
+  for (MIKTEXCHAR * lpszKey
+	 = pFormats->FirstKey(szKey, BufferSizes::MaxPath);
+       lpszKey != 0;
+       lpszKey = pFormats->NextKey(szKey, BufferSizes::MaxPath))
     {
       FormatInfo_ formatInfo;
       vector<FormatInfo_>::iterator it;
       for (it = formats.begin(); it != formats.end(); ++ it)
 	{
-	  if (PathName::Compare(it->name, lpszFormatName) == 0)
+	  if (PathName::Compare(it->key, lpszKey) == 0)
 	    {
 	      formatInfo = *it;
 	      break;
@@ -117,44 +117,54 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 	}
       tstring val;
       formatInfo.cfgFile = cfgFile;
-      formatInfo.name = lpszFormatName;
-      if (pFormats->TryGetValue(lpszFormatName,
+      formatInfo.key = lpszKey;
+      if (pFormats->TryGetValue(lpszKey,
+				T_("name"),
+				val))
+	{
+	  formatInfo.name = val;
+	}
+      else
+	{
+	  formatInfo.name = lpszKey;
+	}
+      if (pFormats->TryGetValue(lpszKey,
 				T_("description"),
 				val))
 	{
 	  formatInfo.description = val;
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("compiler"),
 				val))
 	{
 	  formatInfo.compiler = val;
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("input"),
 				val))
 	{
 	  formatInfo.inputFile = val;
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("output"),
 				val))
 	{
 	  formatInfo.outputFile = val;
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("preloaded"),
 				val))
 	{
 	  formatInfo.preloaded = val;
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("attributes"),
 				val))
 	{
 	  formatInfo.exclude = (val == T_("exclude"));
 	}
-      if (pFormats->TryGetValue(lpszFormatName,
+      if (pFormats->TryGetValue(lpszKey,
 				T_("arguments"),
 				val))
 	{
@@ -224,9 +234,15 @@ SessionImpl::WriteFormatsIni ()
     {
       if (it->custom)
 	{
+	  if (PathName::Compare(it->key, it->name) != 0)
+	    {
+	      pFormats->PutValue (it->key.c_str(),
+				  T_("name"),
+				  it->name.c_str());
+	    }
 	  if (! it->description.empty())
 	    {
-	      pFormats->PutValue (it->name.c_str(),
+	      pFormats->PutValue (it->key.c_str(),
 				  T_("description"),
 				  it->description.c_str());
 	    }
@@ -234,44 +250,44 @@ SessionImpl::WriteFormatsIni ()
 	    {
 	      UNEXPECTED_CONDITION (T_("SessionImpl::WriteFormatsIni"));
 	    }
-	  pFormats->PutValue (it->name.c_str(),
+	  pFormats->PutValue (it->key.c_str(),
 			      T_("compiler"),
 			      it->compiler.c_str());
 	  if (it->inputFile.empty())
 	    {
 	      UNEXPECTED_CONDITION (T_("SessionImpl::WriteFormatsIni"));
 	    }
-	  pFormats->PutValue (it->name.c_str(),
+	  pFormats->PutValue (it->key.c_str(),
 			      T_("input"),
 			      it->inputFile.c_str());
 	  if (! it->outputFile.empty())
 	    {
-	      pFormats->PutValue (it->name.c_str(),
+	      pFormats->PutValue (it->key.c_str(),
 			      T_("output"),
 			      it->outputFile.c_str());
 	    }
 	  if (! it->preloaded.empty())
 	    {
-	      pFormats->PutValue (it->name.c_str(),
+	      pFormats->PutValue (it->key.c_str(),
 				  T_("preloaded"),
 				  it->preloaded.c_str());
 	    }
 	  if (! it->arguments.empty())
 	    {
-	      pFormats->PutValue (it->name.c_str(),
+	      pFormats->PutValue (it->key.c_str(),
 				  T_("arguments"),
 				  it->arguments.c_str());
 	    }
 	}
       if (it->exclude)
 	{
-	  pFormats->PutValue (it->name.c_str(),
+	  pFormats->PutValue (it->key.c_str(),
 			      T_("attributes"),
 			      T_("exclude"));
 	}
       else
 	{
-	  pFormats->PutValue (it->name.c_str(),
+	  pFormats->PutValue (it->key.c_str(),
 			      T_("attributes"),
 			      T_(""));
 	}
@@ -299,14 +315,14 @@ SessionImpl::WriteFormatsIni ()
 
 void
 MIKTEXCALL
-SessionImpl::DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
+SessionImpl::DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR * lpszKey)
 {
   ReadFormatsIni ();
   for (vector<FormatInfo_>::iterator it = formats.begin();
        it != formats.end();
        ++ it)
     {
-      if (PathName::Compare(it->name, lpszFormatName) == 0)
+      if (PathName::Compare(it->key, lpszKey) == 0)
 	{
 	  if (! it->custom)
 	    {
@@ -322,7 +338,7 @@ Built-in format definitions may not be deleted."),
     }
   FATAL_MIKTEX_ERROR (T_("SessionImpl::DeleteFormatInfo"),
 		      T_("The format could not be found."),
-		      lpszFormatName);
+		      lpszKey);
 }
 
 /* _________________________________________________________________________
@@ -338,7 +354,7 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
   vector<FormatInfo_>::iterator it;
   for (it = formats.begin(); it != formats.end(); ++ it)
     {
-      if (PathName::Compare(it->name, formatInfo.name) == 0)
+      if (PathName::Compare(it->key, formatInfo.key) == 0)
 	{
 	  if (! it->custom)
 	    {
@@ -347,7 +363,7 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
 		{
 		  cannotChange = true;
 		}
-	      if (formatInfo.description != it->description)
+	      if (formatInfo.name != it->name)
 		{
 		  cannotChange = true;
 		}

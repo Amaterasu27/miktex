@@ -24,9 +24,14 @@ set(inc_ini_files
 
 set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/amstex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-cz.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-de.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-en.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-es.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-fr.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-it.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-nl.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/cont-ro.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-uk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cslatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini

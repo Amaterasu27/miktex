@@ -11,6 +11,15 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/config/amstex.ini
+texmf/miktex/config/cont-cz.ini
+texmf/miktex/config/cont-de.ini
+texmf/miktex/config/cont-en.ini
+texmf/miktex/config/cont-es.ini
+texmf/miktex/config/cont-fr.ini
+texmf/miktex/config/cont-it.ini
+texmf/miktex/config/cont-nl.ini
+texmf/miktex/config/cont-ro.ini
+texmf/miktex/config/cont-uk.ini
 texmf/miktex/config/context.ini
 texmf/miktex/config/cslatex.ini
 texmf/miktex/config/csplain.ini

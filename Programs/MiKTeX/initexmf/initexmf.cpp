@@ -385,11 +385,16 @@ private:
   
 private:
   void
-  MakeFormatFile (/*[in]*/ const MIKTEXCHAR *	lpszFormatName);
+  MakeFormatFile (/*[in]*/ const MIKTEXCHAR *	lpszFormatKey);
 
 private:
   void
   MakeFormatFiles (/*[in]*/ const vector<tstring> & formats);
+  
+private:
+  void
+  MakeFormatFilesByName (/*[in]*/ const vector<tstring> & formatsByName,
+			 /*[in]*/ const tstring &		engine);
   
 private:
   void
@@ -542,7 +547,9 @@ enum Option
   OPT_AAA = 256,
 
   OPT_DUMP,
+  OPT_DUMP_BY_NAME,
   OPT_EDIT_CONFIG_FILE,
+  OPT_ENGINE,
   OPT_FORCE,
   OPT_LIST_MODES,
   OPT_MKLINKS,
@@ -602,8 +609,16 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("dump"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
     OPT_DUMP,
-    T_("Create format files."),
-    T_("FORMAT")
+    T_("Create memory dump files."),
+    T_("KEY")
+  },
+
+  {
+    T_("dump-by-name"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_DUMP_BY_NAME,
+    T_("Create a memory dump file by name."),
+    T_("NAME")
   },
 
   {
@@ -613,6 +628,14 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("engine"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_ENGINE,
+    T_("Engine to be used."),
+    T_("ENGINE")
   },
 
   {
@@ -803,12 +826,28 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
   },
 
   {
+    T_("dump-by-name"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_DUMP_BY_NAME,
+    T_("Create a memory dump file by name."),
+    T_("NAME")
+  },
+
+  {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("engine"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_ENGINE,
+    T_("Engine to be used."),
+    T_("ENGINE")
   },
 
   {
@@ -1047,12 +1086,28 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
   },
 
   {
+    T_("dump-by-name"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_DUMP_BY_NAME,
+    T_("Create a memory dump file by name."),
+    T_("NAME")
+  },
+
+  {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
     T_("Open the specified config file in an editor. FILE must be one of: \
 dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
     T_("FILE")
+  },
+
+  {
+    T_("engine"), 0,
+    POPT_ARG_STRING, 0,
+    OPT_ENGINE,
+    T_("Engine to be used."),
+    T_("ENGINE")
   },
 
   {
@@ -1552,9 +1607,10 @@ void
 IniTeXMFApp::ListFormats ()
 {
   FormatInfo formatInfo;
-  for (unsigned i = 0; pSession->GetFormatInfo(i, formatInfo); ++ i)
+  for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
     {
-      tcout << formatInfo.name
+      tcout << formatInfo.key << T_(": ")
+	    << formatInfo.name
 	    << T_(" ") << formatInfo.compiler
 	    << T_(" ") << formatInfo.inputFile
 	    << endl;
@@ -1669,18 +1725,18 @@ IniTeXMFApp::RunMakeTeX (/*[in]*/ const MIKTEXCHAR *		lpszMakeProg,
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
+IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatKey)
 {
-  if (find(formatsMade.begin(), formatsMade.end(), lpszFormatName)
+  if (find(formatsMade.begin(), formatsMade.end(), lpszFormatKey)
       != formatsMade.end())
     {
       return;
     }
 
   FormatInfo formatInfo;
-  if (! pSession->TryGetFormatInfo(lpszFormatName, formatInfo))
+  if (! pSession->TryGetFormatInfo(lpszFormatKey, formatInfo))
     {
-      FatalError (T_("Unknown format: %s"), Q_(lpszFormatName));
+      FatalError (T_("Unknown format: %s"), Q_(lpszFormatKey));
     }
 
   tstring maker;
@@ -1705,10 +1761,10 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
 
   if (! formatInfo.preloaded.empty())
     {
-      if (PathName::Compare(formatInfo.preloaded.c_str(), lpszFormatName)
+      if (PathName::Compare(formatInfo.preloaded.c_str(), lpszFormatKey)
 	  == 0)
 	{
-	  FatalError (T_("Rule recursion detected for:"), lpszFormatName);
+	  FatalError (T_("Rule recursion detected for:"), lpszFormatKey);
 	}
       // <recursivecall>
       MakeFormatFile (formatInfo.preloaded.c_str());
@@ -1730,7 +1786,7 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatName)
     
   RunMakeTeX (maker.c_str(), arguments);
 
-  formatsMade.push_back (lpszFormatName);
+  formatsMade.push_back (lpszFormatKey);
 }
 
 /* _________________________________________________________________________
@@ -1744,11 +1800,11 @@ IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
   if (formats.size() == 0)
     {
       FormatInfo formatInfo;
-      for (unsigned i = 0; pSession->GetFormatInfo(i, formatInfo); ++ i)
+      for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
 	{
 	  if (! formatInfo.exclude)
 	    {
-	      MakeFormatFile (formatInfo.name.c_str());
+	      MakeFormatFile (formatInfo.key.c_str());
 	    }
 	}
     }
@@ -1759,6 +1815,48 @@ IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
 	   ++ it)
 	{
 	  MakeFormatFile (it->c_str());
+	}
+    }
+}
+
+/* _________________________________________________________________________
+     
+   IniTeXMFApp::MakeFormatFilesByName
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::MakeFormatFilesByName
+(/*[in]*/ const vector<tstring> & formatsByName,
+ /*[in]*/ const tstring &		engine)
+{
+  for (vector<tstring>::const_iterator it = formatsByName.begin();
+       it != formatsByName.end();
+       ++ it)
+    {
+      bool done = false;
+      FormatInfo formatInfo;
+      for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
+	{
+	  if (formatInfo.name == *it
+	      && engine.empty() || formatInfo.compiler == engine)
+	    {
+	      MakeFormatFile (formatInfo.key.c_str());
+	      done = true;
+	    }
+	}
+      if (! done)
+	{
+	  if (engine.empty())
+	    {
+	      FatalError (T_("Unknown format name: %s"), Q_(it->c_str()));
+	    }
+	  else
+	    {
+	      FatalError (T_("Unknown format name/engine: %s/%s"),
+			  Q_(it->c_str()),
+			  engine.c_str());
+	    }
+
 	}
     }
 }
@@ -2395,17 +2493,18 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   vector<tstring> addFiles;
   vector<tstring> editConfigFiles;
   vector<tstring> formats;
+  vector<tstring> formatsByName;
   vector<tstring> listDirectories;
   vector<tstring> removeFiles;
   vector<tstring> updateRoots;
-
   tstring defaultPaperSize;
- 
+  tstring engine;
   tstring logFile;
 
   TriState triSharedSetup (TriState::Undetermined);
 
   bool optDump = false;
+  bool optDumpByName = false;
   bool optForce = false;
   bool optMakeMaps = false;
   bool optListFormats = false;
@@ -2454,15 +2553,25 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optDump = true;
 	  break;
 
-	case OPT_FORCE:
+	case OPT_DUMP_BY_NAME:
 
-	  optForce = true;
+	  formatsByName.push_back (lpszOptArg);
+	  optDumpByName = true;
 	  break;
 
 	case OPT_EDIT_CONFIG_FILE:
 
 	  editConfigFiles.push_back (lpszOptArg);
-	  break;	  
+	  break;
+
+	case OPT_ENGINE:
+	  engine = lpszOptArg;
+	  break;
+
+	case OPT_FORCE:
+
+	  optForce = true;
+	  break;
 
 	case OPT_INSTALL_ROOT:
 
@@ -2663,6 +2772,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (optDump)
     {
       MakeFormatFiles (formats);
+    }
+
+  if (optDumpByName)
+    {
+      MakeFormatFilesByName (formatsByName, engine);
     }
 
   if (optMakeLinks)

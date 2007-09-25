@@ -331,6 +331,8 @@ public:
 /// Information about a TeX format.
 struct FormatInfo
 {
+  /// The access key.
+  tstring key;
   /// Name of the format.
   tstring name;
   /// One-line description.
@@ -6234,14 +6236,14 @@ public:
   virtual
   FormatInfo
   MIKTEXCALL
-  GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName)
+  GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey)
     = 0;
 
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName,
+  TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 		    /*[out]*/ FormatInfo &	formatInfo)
     = 0;
 
@@ -6249,7 +6251,7 @@ public:
   virtual
   void
   MIKTEXCALL
-  DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName)
+  DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey)
     = 0;
 
 public:

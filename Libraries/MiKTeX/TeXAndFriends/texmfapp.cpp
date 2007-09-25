@@ -867,7 +867,12 @@ The MiKTeX configuration utility could not be found.")),
 			      0);
 	}
       CommandLineBuilder arguments;
-      arguments.AppendOption (T_("--dump="), szDumpName);
+      arguments.AppendOption (T_("--dump-by-name="), szDumpName);
+      if (isTeXProgram)
+	{
+	  arguments.AppendOption (T_("--engine="),
+				  GetProgramName());
+	}
       int exitCode;
       if (! (Process::Run(exe, arguments.Get(), 0, &exitCode, 0)
 	     && exitCode == 0))
@@ -884,7 +889,7 @@ The MiKTeX configuration utility could not be found.")),
   if (! haveIt)
     {
       FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
-			  T_("The dump file could not be found."),
+			  T_("The memory dump file could not be found."),
 			  fileName.Get());
     }
 
@@ -898,7 +903,7 @@ The MiKTeX configuration utility could not be found.")),
       if (stream.Read(pBuf, size) != size)
 	{
 	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
-			      T_("Premature end of dump file."),
+			      T_("Premature end of memory dump file."),
 			      path.Get());
 	}
     }

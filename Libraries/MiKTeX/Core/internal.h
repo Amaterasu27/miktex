@@ -1345,20 +1345,20 @@ public:
   virtual
   FormatInfo
   MIKTEXCALL
-  GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName);
+  GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName,
+  TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 		    /*[out]*/ FormatInfo &	formatInfo);
 
 public:
   virtual
   void
   MIKTEXCALL
-  DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszFormatName);
+  DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey);
 
 public:
   virtual

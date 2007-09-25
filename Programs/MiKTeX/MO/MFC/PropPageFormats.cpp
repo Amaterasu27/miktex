@@ -1,6 +1,6 @@
 /* PropPageFormats.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -99,11 +99,11 @@ PropPageFormats::OnMake ()
       while (pos != 0)
 	{
 	  int idx = listControl.GetNextSelectedItem(pos);
-	  CString formatName = listControl.GetItemText(idx, 0);
+	  CString formatKey = listControl.GetItemText(idx, 0);
 	  FormatInfo formatInfo =
-	    SessionWrapper(true)->GetFormatInfo(formatName);
+	    SessionWrapper(true)->GetFormatInfo(formatKey);
 	  CommandLineBuilder cmdLine;
-	  cmdLine.AppendOption (T_("--dump="), formatName);
+	  cmdLine.AppendOption (T_("--dump="), formatInfo.key);
 	  if (! pSheet->RunIniTeXMF(formatInfo.description.c_str(),
 				    cmdLine,
 				    ppd.get()))
@@ -201,18 +201,18 @@ PropPageFormats::OnEdit ()
   try
     {
       int idx = GetSelectedItem();
-      CString formatName = listControl.GetItemText(idx, 0);
-      FormatDefinitionDialog dlg (this, formatName);
+      CString formatKey = listControl.GetItemText(idx, 0);
+      FormatDefinitionDialog dlg (this, formatKey);
       if (dlg.DoModal() != IDOK)
 	{
 	  return;
 	}
       FormatInfo formatInfo = dlg.GetFormatInfo();
-      if (PathName::Compare(formatInfo.name.c_str(), formatName) != 0)
+      if (PathName::Compare(formatInfo.key.c_str(), formatKey) != 0)
 	{
-	  // rename: delete old, create new
-	  SessionWrapper(true)->DeleteFormatInfo (formatName);
-	  formatName = formatInfo.name.c_str();
+	  // rename key: delete old, create new
+	  SessionWrapper(true)->DeleteFormatInfo (formatKey);
+	  formatKey = formatInfo.key.c_str();
 	}
       SessionWrapper(true)->SetFormatInfo (formatInfo);
       Refresh ();
@@ -242,8 +242,8 @@ PropPageFormats::OnRemove ()
       for (int i = 0; i < n; ++i)
 	{
 	  int idx = GetSelectedItem();
-	  CString formatName = listControl.GetItemText(idx, 0);
-	  SessionWrapper(true)->DeleteFormatInfo (formatName);
+	  CString formatKey = listControl.GetItemText(idx, 0);
+	  SessionWrapper(true)->DeleteFormatInfo (formatKey);
 	  if (! listControl.DeleteItem(idx))
 	    {
 	      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteItem"), 0);
@@ -297,7 +297,7 @@ PropPageFormats::OnInitDialog ()
       listControl.SetExtendedStyle (listControl.GetExtendedStyle()
 				    | LVS_EX_FULLROWSELECT);
 
-      InsertColumn (0, T_("Name"), T_("pdfjadetex     "));
+      InsertColumn (0, T_("Key"), T_("pdfjadetex     "));
       InsertColumn (1, T_("Description"), T_("pdfLaTeX bla bla     "));
       InsertColumn (2, T_("Attributes"), T_("Exclude, bla bla  "));
       
@@ -368,7 +368,7 @@ PropPageFormats::Refresh ()
       lvitem.iItem = static_cast<int>(idx);
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
-      lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.name.c_str());
+      lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.key.c_str());
       lvitem.lParam = idx;
       int whereIndex = listControl.InsertItem(&lvitem);
       if (whereIndex < 0)

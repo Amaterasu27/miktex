@@ -30,26 +30,29 @@
    FormatDefinitionDialog::FormatDefinitionDialog
    _________________________________________________________________________ */
 
-FormatDefinitionDialog::FormatDefinitionDialog (/*in]*/ CWnd *	pParent,
-			      /*in]*/ const MIKTEXCHAR *	lpszFormatName)
+FormatDefinitionDialog::FormatDefinitionDialog
+(/*in]*/ CWnd *			pParent,
+ /*in]*/ const MIKTEXCHAR *	lpszKey)
   : CDialog (FormatDefinitionDialog::IDD, pParent)
 {
-  if (lpszFormatName == 0)
+  if (lpszKey == 0)
     {
       formatInfo.compiler = T_("pdftex");
       formatInfo.description = T_("New format");
       formatInfo.exclude = true;
+      formatInfo.key = T_("newformat");
       formatInfo.name = T_("newformat");
       formatInfo.inputFile = T_("newformat.tex");
     }
   else
     {
-      formatInfo = SessionWrapper(true)->GetFormatInfo(lpszFormatName);
+      formatInfo = SessionWrapper(true)->GetFormatInfo(lpszKey);
       originalFormatInfo = formatInfo;
     }
   compiler = formatInfo.compiler.c_str();
   description = formatInfo.description.c_str();
   exclude = (formatInfo.exclude ? TRUE : FALSE);
+  formatKey = formatInfo.key.c_str();
   formatName = formatInfo.name.c_str();
   inputName = formatInfo.inputFile.c_str();
   outputName = formatInfo.outputFile.c_str();
@@ -72,6 +75,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
   DDX_Control (pDX, IDC_COMPILER, compilerComboBox);
   DDX_Control (pDX, IDC_PRELOADED_FMT, preloadedFormatComboBox);
   DDX_Text (pDX, IDC_DESCRIPTION, description);
+  DDX_Text (pDX, IDC_FMT_KEY, formatKey);
   DDX_Text (pDX, IDC_FMT_NAME, formatName);
   DDX_Text (pDX, IDC_INPUT_NAME, inputName);
   DDX_Text (pDX, IDC_OUTPUT_NAME, outputName);
@@ -81,26 +85,28 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
       return;
     }
 
-  pDX->PrepareEditCtrl (IDC_FMT_NAME);
-  if (formatName.IsEmpty())
+  pDX->PrepareEditCtrl (IDC_FMT_KEY);
+  if (formatKey.IsEmpty())
     {
-      AfxMessageBox (T_("You must specify a format name."),
+      AfxMessageBox (T_("You must specify a format key."),
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
-  if (PathName::Compare(static_cast<const MIKTEXCHAR *>(formatName),
-			originalFormatInfo.name)
+  if (PathName::Compare(static_cast<const MIKTEXCHAR *>(formatKey),
+			originalFormatInfo.key)
       != 0)
     {
       FormatInfo unused;
-      if (SessionWrapper(true)->TryGetFormatInfo(formatName, unused))
+      if (SessionWrapper(true)->TryGetFormatInfo(formatKey, unused))
 	{
 	  AfxMessageBox
-	    (T_("A format with the given name already exists."),
+	    (T_("A format with the given key already exists."),
 	     MB_ICONEXCLAMATION);
 	  pDX->Fail ();
 	}
     }
+
+  pDX->PrepareEditCtrl (IDC_FMT_NAME);
 
   pDX->PrepareEditCtrl (IDC_INPUT_NAME);
   if (inputName.IsEmpty())
@@ -117,6 +123,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
       pDX->Fail ();
     }
 
+  formatInfo.key = formatKey;
   formatInfo.name = formatName;
   formatInfo.description = description;
   formatInfo.exclude = (exclude ? true : false);
@@ -209,11 +216,11 @@ FormatDefinitionDialog::OnInitDialog ()
 	   ++ idx)
 	{
 	  compilers.insert (formatInfo.compiler);
-	  if (PathName::Compare(formatInfo.name.c_str(), formatName) == 0)
+	  if (PathName::Compare(formatInfo.key.c_str(), formatKey) == 0)
 	    {
 	      continue;
 	    }
-	  preloadedFormatComboBox.AddString (formatInfo.name.c_str());
+	  preloadedFormatComboBox.AddString (formatInfo.key.c_str());
 	}
       for (set<tstring>::const_iterator it = compilers.begin();
 	   it != compilers.end();

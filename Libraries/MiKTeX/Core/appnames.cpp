@@ -50,6 +50,10 @@ SessionImpl::PushAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
     }
 
   applicationNames = newApplicationNames;
+
+  trace_config->WriteFormattedLine (T_("core"),
+				    T_("application tags: %s"),
+				    applicationNames.c_str());
 }
 
 /* _________________________________________________________________________
@@ -72,4 +76,8 @@ SessionImpl::PushBackAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
     }
 
   applicationNames += lpszName;
+
+  trace_config->WriteFormattedLine (T_("core"),
+				    T_("application tags: %s"),
+				    applicationNames.c_str());
 }

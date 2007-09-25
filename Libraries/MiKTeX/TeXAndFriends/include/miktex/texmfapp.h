@@ -111,19 +111,24 @@ typedef int TEXMFCHARINT;
    GETPARAM
    _________________________________________________________________________ */
 
-#define GETPARAM(param, varname, cfgname, defcfgval)		\
-{								\
-  if (param < 0)						\
-    {								\
-      THEDATA(varname) =					\
-        pSession->GetConfigValue(0,				\
-                                 MIKTEXTEXT(#cfgname),		\
-                                 defcfgval);			\
-    }								\
-  else								\
-    {								\
-      THEDATA(varname) = param;					\
-    }								\
+#define GETPARAM(param, varname, cfgname, defcfgval)			\
+{									\
+  if (param < 0)							\
+    {									\
+      THEDATA(varname) = GetParameter(MIKTEXTEXT(#cfgname), defcfgval);	\
+    }									\
+  else									\
+    {									\
+      THEDATA(varname) = param;						\
+    }									\
+  if (trace_mem->IsEnabled())						\
+    {									\
+      trace_mem->WriteFormattedLine					\
+	(MIKTEXTEXT("libtexmf"),					\
+	 MIKTEXTEXT("Parameter %s: %d"),				\
+	 MIKTEXTEXT(#cfgname),						\
+	 static_cast<int>(THEDATA(varname)));				\
+      }									\
 }
 
 /* _________________________________________________________________________
@@ -131,29 +136,34 @@ typedef int TEXMFCHARINT;
    GETPARAMCHECK
    _________________________________________________________________________ */
 
-#define GETPARAMCHECK(param, varname, cfgname, defcfgval)	\
-{								\
-  if (param < 0)						\
-    {								\
-      THEDATA(varname) =					\
-        pSession->GetConfigValue(0,				\
-                                 MIKTEXTEXT(#cfgname),		\
-                                 defcfgval);			\
-    }								\
-  else								\
-    {								\
-      THEDATA(varname) = param;					\
-    }								\
-  if (THEDATA(varname) < inf##varname				\
-      || THEDATA(varname) > sup##varname)			\
-    {								\
-      MiKTeX::Core::Session::FatalMiKTeXError			\
-	(MIKTEXTEXT("GETPARAMCHECK"),				\
-	 MIKTEXTEXT("Bad parameter value."),			\
-	 MIKTEXTEXT(#cfgname),					\
-	 MIKTEXTEXT(__FILE__),					\
-	 __LINE__);						\
-    }								\
+#define GETPARAMCHECK(param, varname, cfgname, defcfgval)		\
+{									\
+  if (param < 0)							\
+    {									\
+      THEDATA(varname) = GetParameter(MIKTEXTEXT(#cfgname), defcfgval);	\
+    }									\
+  else									\
+    {									\
+      THEDATA(varname) = param;						\
+    }									\
+  if (THEDATA(varname) < inf##varname					\
+      || THEDATA(varname) > sup##varname)				\
+    {									\
+      MiKTeX::Core::Session::FatalMiKTeXError				\
+	(MIKTEXTEXT("GETPARAMCHECK"),					\
+	 MIKTEXTEXT("Bad parameter value."),				\
+	 MIKTEXTEXT(#cfgname),						\
+	 MIKTEXTEXT(__FILE__),						\
+	 __LINE__);							\
+    }									\
+  if (trace_mem->IsEnabled())						\
+    {									\
+      trace_mem->WriteFormattedLine					\
+	(MIKTEXTEXT("libtexmf"),					\
+	 MIKTEXTEXT("Parameter %s: %d"),				\
+	 MIKTEXTEXT(#cfgname),						\
+	 static_cast<int>(THEDATA(varname)));				\
+      }									\
 }
 
 /* _________________________________________________________________________
@@ -539,6 +549,28 @@ public:
   virtual
   MIKTEXMFAPI(void)
   OnTeXMFFinishJob ();
+
+  /* _______________________________________________________________________
+     
+     GetParameter
+     _______________________________________________________________________ */
+
+protected:
+  template<typename ValueType>
+  ValueType
+  GetParameter (/*[in]*/ const MIKTEXCHAR *	lpszParameterName,
+		/*[in]*/ const ValueType &	defaultValue)
+  {
+    ValueType value = pSession->GetConfigValue(0, lpszParameterName, -1);
+    if (value < 0)
+      {
+	value =
+	  pSession->GetConfigValue(GetProgramName(),
+				   lpszParameterName,
+				   defaultValue);
+      }
+    return (value);
+  }
 
   /* _______________________________________________________________________
      
@@ -1394,7 +1426,7 @@ protected:
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_time;
 
-private:
+protected:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_mem;
 
 private:

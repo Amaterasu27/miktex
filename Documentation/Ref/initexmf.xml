@@ -44,11 +44,15 @@
 <primary>format files</primary>
 <secondary>creating</secondary>
 </indexterm>
-<para>Create all format files.</para></listitem>
+<indexterm>
+<primary>memory dump files</primary>
+<secondary>creating</secondary>
+</indexterm>
+<para>Create all memory dump files.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>--dump=<replaceable>fmtname</replaceable></option></term>
-<listitem><para>Dump the specified format file.</para></listitem>
+<term><option>--dump=<replaceable>key</replaceable></option></term>
+<listitem><para>Dump the specified memory dump file.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--edit-config-file=<replaceable>file</replaceable></option></term>

@@ -51,6 +51,7 @@
 #define IDC_PACKAGE_MANAGER             1047
 #define IDC_INSTALL_ON_THE_FLY          1048
 #define IDC_COMBO_PAPER                 1049
+#define IDC_FMT_KEY                     1050
 #define ID_WHATS_THIS                   40001
 #define AFX_IDS_APP_TITLE2              57345
 

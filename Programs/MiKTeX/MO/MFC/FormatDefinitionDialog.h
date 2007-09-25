@@ -1,6 +1,6 @@
 /* FormatDefinitionDialog.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -33,7 +33,7 @@ public:
   
 public:
   FormatDefinitionDialog (/*[in]*/ CWnd *		pParent,
-			  /*[in]*/ const MIKTEXCHAR *	lpszFormatName);
+			  /*[in]*/ const MIKTEXCHAR *	lpszKey);
 
 private:
   enum { IDD = IDD_FMT_DEFINITION };
@@ -43,6 +43,9 @@ private:
 
 private:
   CComboBox preloadedFormatComboBox;
+
+private:
+  CString formatKey;
 
 private:
   CString formatName;
