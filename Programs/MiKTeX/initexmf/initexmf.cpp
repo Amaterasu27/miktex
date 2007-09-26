@@ -307,6 +307,25 @@ private:
 
 /* _________________________________________________________________________
 
+   configShortcuts
+   _________________________________________________________________________ */
+
+static
+struct
+{
+  const MIKTEXCHAR *	lpszShortcut;
+  const MIKTEXCHAR *	lpszFile;
+}
+configShortcuts[] = {
+  T_("pdftex"), MIKTEX_PATH_PDFTEX_CFG,
+  T_("dvips"), MIKTEX_PATH_CONFIG_PS,
+  T_("dvipdfm"), MIKTEX_PATH_DVIPDFM_CONFIG,
+  T_("dvipdfmx"), MIKTEX_PATH_DVIPDFMX_CONFIG,
+  T_("updmap"), MIKTEX_PATH_UPDMAP_CFG,
+};
+
+/* _________________________________________________________________________
+
    IniTeXMFApp
    _________________________________________________________________________ */
 
@@ -625,9 +644,10 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
-    T_("Open the specified config file in an editor. FILE must be one of: \
-dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
-    T_("FILE")
+    T_("\
+Open the specified configuration file in an editor.\
+ See the manual, for more information."),
+    T_("CONFIGFILE")
   },
 
   {
@@ -837,9 +857,10 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
-    T_("Open the specified config file in an editor. FILE must be one of: \
-dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
-    T_("FILE")
+    T_("\
+Open the specified configuration file in an editor.\
+ See the manual, for more information."),
+    T_("CONFIGFILE")
   },
 
   {
@@ -1097,9 +1118,10 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
     T_("edit-config-file"), 0,
     POPT_ARG_STRING, 0,
     OPT_EDIT_CONFIG_FILE,
-    T_("Open the specified config file in an editor. FILE must be one of: \
-dvipdfm, dvipdfmx, dvips, pdftex, updmap."),
-    T_("FILE")
+    T_("\
+Open the specified configuration file in an editor.\
+ See the manual, for more information."),
+    T_("CONFIGFILE")
   },
 
   {
@@ -1609,10 +1631,9 @@ IniTeXMFApp::ListFormats ()
   FormatInfo formatInfo;
   for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
     {
-      tcout << formatInfo.key << T_(": ")
-	    << formatInfo.name
-	    << T_(" ") << formatInfo.compiler
-	    << T_(" ") << formatInfo.inputFile
+      tcout << formatInfo.key << T_(" (")
+	    << formatInfo.description
+	    << T_(")")
 	    << endl;
     }
 }
@@ -1837,8 +1858,9 @@ IniTeXMFApp::MakeFormatFilesByName
       FormatInfo formatInfo;
       for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
 	{
-	  if (formatInfo.name == *it
-	      && engine.empty() || formatInfo.compiler == engine)
+	  if (PathName::Compare(formatInfo.name, *it) == 0
+	      && (engine.empty()
+		  || PathName::Compare(formatInfo.compiler, engine) == 0))
 	    {
 	      MakeFormatFile (formatInfo.key.c_str());
 	      done = true;
@@ -2050,18 +2072,42 @@ IniTeXMFApp::MakeMaps ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszRelPath)
+IniTeXMFApp::EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszName)
 {
-  PathName configFile
-    (pSession->GetSpecialPath(SpecialPath::ConfigRoot), lpszRelPath);
-  if (! File::Exists(configFile))
+  PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
+  bool haveConfigFile = false;
+  for (size_t idx = 0;
+       (! haveConfigFile
+	&& idx < sizeof(configShortcuts) / sizeof(configShortcuts[0]));
+       ++ idx)
     {
-      if (! pSession->TryCreateFromTemplate(configFile))
+      if (PathName::Compare(lpszName, configShortcuts[idx].lpszShortcut) == 0)
 	{
-	  Directory::Create (PathName(configFile).RemoveFileSpec());
-	  StreamWriter writer (configFile);
-	  writer.Close ();
+	  configFile += configShortcuts[idx].lpszFile;
+	  haveConfigFile = true;
 	}
+    }
+  if (! haveConfigFile)
+    {
+      PathName fileName (lpszName);
+      fileName.RemoveDirectorySpec ();
+      if (fileName == lpszName)
+	{
+	  configFile += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+	}
+      configFile += fileName;
+      configFile.SetExtension (T_(".ini"), false);
+      if (! File::Exists(configFile))
+	{
+	  if (! pSession->TryCreateFromTemplate(configFile))
+	    {
+	      Directory::Create (PathName(configFile).RemoveFileSpec());
+	      StreamWriter writer (configFile);
+	      writer.Close ();
+	      Fndb::Add (configFile);
+	    }
+	}
+      haveConfigFile = true;
     }
   CommandLineBuilder commandLine;
   commandLine.AppendArgument (configFile);
@@ -2868,30 +2914,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
        it != editConfigFiles.end();
        ++ it)
     {
-      if (*it == T_("pdftex"))
-	{
-	  EditConfigFile (MIKTEX_PATH_PDFTEX_CFG);
-	}
-      else if (*it == T_("dvips"))
-	{
-	  EditConfigFile (MIKTEX_PATH_CONFIG_PS);
-	}
-      else if (*it == T_("dvipdfm"))
-	{
-	  EditConfigFile (MIKTEX_PATH_DVIPDFM_CONFIG);
-	}
-      else if (*it == T_("dvipdfmx"))
-	{
-	  EditConfigFile (MIKTEX_PATH_DVIPDFMX_CONFIG);
-	}
-      else if (*it == T_("updmap"))
-	{
-	  EditConfigFile (MIKTEX_PATH_UPDMAP_CFG);
-	}
-      else
-	{
-	  EditConfigFile (it->c_str());
-	}
+      EditConfigFile (it->c_str());
     }
 
   if (optListFormats)

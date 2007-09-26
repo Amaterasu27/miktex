@@ -294,7 +294,7 @@ latex thesis.tex</programlisting>
 <para>See <xref linkend="envvars"/>, to learn more about
 &MiKTeX; environment variables.</para>
 
-<bridgehead>Register your own root directory</bridgehead>
+<bridgehead>Register a local &TEXMF; directory</bridgehead>
 
 <para>Register the root of the directory tree which
 contains your files. The directory tree must conform to the &TDS;
@@ -328,7 +328,7 @@ explains how you can register your own root directory.</para></tip>
 
 <section>
 
-<title>Walkthrough: Registering Your Own Root Directory</title>
+<title>Walkthrough: Registering a Local &TEXMF; Directory</title>
 
 <para>In this walkthrough, we assume that your own additions are
 located in the directory tree rooted at <filename>C:\Local TeX

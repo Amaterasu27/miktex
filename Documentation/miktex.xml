@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2824">
+<!ENTITY revj2000 "2825">
 <!ENTITY month "September 2007">
-<!ENTITY date "September 25, 2007">
+<!ENTITY date "September 26, 2007">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -419,7 +419,7 @@ number of macros to be predefined; therefore, they support
 more efficiently than ordinary source code.</para>
 
 <para>For example, &LaTeX; macros are stored in the file
-<filename>latex.fmt</filename>. This file is loaded by &pdfeTeX;, when
+<filename>latex.fmt</filename>. This file is loaded by &pdfTeX;, when
 you start &latex;.</para>
 
 <indexterm>
@@ -477,7 +477,7 @@ as a short-cut for <userinput><replaceable>compiler</replaceable>
 these two commands are equivalent:</para>
 
 <programlisting>latex sample2e
-pdfetex "&amp;latex" sample2e</programlisting>
+pdftex "&amp;latex" sample2e</programlisting>
 
 </section>
 
@@ -540,7 +540,7 @@ pdfetex "&amp;latex" sample2e</programlisting>
 
 <chapter id="defaults">
 
-<title>Compile Time Defaults</title>
+<title>Program Defaults</title>
 
 <section id="texmfdefaults">
 

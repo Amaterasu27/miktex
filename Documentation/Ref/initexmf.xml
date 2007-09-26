@@ -55,16 +55,12 @@
 <listitem><para>Dump the specified memory dump file.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>--edit-config-file=<replaceable>file</replaceable></option></term>
+<term><option>--edit-config-file=<replaceable>configfile</replaceable></option></term>
 <listitem>
 <indexterm>
 <primary>--edit-config-file=file</primary>
 </indexterm>
-<para>Open the specified config file in an editor.
-<replaceable>file</replaceable> must be one of:
-<option>dvipdfm</option>, <option>dvipdfmx</option>,
-<option>dvips</option>, <option>pdftex</option>,
-<option>updmap</option>.</para>
+<para>Open the specified config file in an editor.</para>
 </listitem>
 </varlistentry>
 <varlistentry>

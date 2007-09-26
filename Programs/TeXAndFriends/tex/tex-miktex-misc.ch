@@ -270,14 +270,14 @@ versions of the program.
 @d hash_size=2100 {maximum number of control sequences; it should be at most
   about |(mem_max-mem_min)/10|}
 @y
-@d hash_size=60000 {maximum number of control sequences; it should be at most
+@d hash_size=110000 {maximum number of control sequences; it should be at most
   about |(mem_max-mem_min)/10|}
 @z
 
 @x
 @d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
 @y
-@d hash_prime=51001 {a prime number equal to about 85\pct! of |hash_size|}
+@d hash_prime=93503 {a prime number equal to about 85\pct! of |hash_size|}
 @z
 
 % _____________________________________________________________________________

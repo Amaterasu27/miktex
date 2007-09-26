@@ -12,13 +12,18 @@ max_print_line=255
 max_strings=262000
 nest_size=500
 param_size=10000
-pdf_mem_size=500000
 pool_free=47500
 pool_size=2000000
 save_size=50000
 stack_size=10000
 string_vacancies=125000
 trie_size=500000
+
+[pdftex]
+
+pdf_mem_size=500000
+obj_tab_size=300000
+dest_names_size=130000
 
 [ft.tex]
 

@@ -53,7 +53,7 @@ WebApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 MIKTEXMFAPI(void)
 WebApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
 {
-  Application::Init (lpszProgramInvocationName);
+  Application::Init (lpszProgramInvocationName, TheNameOfTheGame());
   theNameOfTheGame = Utils::GetExeName();
   enable8BitChars = false;
 }
