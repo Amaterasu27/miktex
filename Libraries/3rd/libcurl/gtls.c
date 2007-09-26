@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.c,v 1.25 2007-03-27 18:16:35 yangtse Exp $
+ * $Id: gtls.c,v 1.33 2007-08-30 20:34:57 danf Exp $
  ***************************************************************************/
 
 /*
@@ -63,7 +63,7 @@ static void tls_log_func(int level, const char *str)
     fprintf(stderr, "|<%d>| %s", level, str);
 }
 #endif
-
+static bool gtls_inited = FALSE;
 /*
  * Custom push and pull callback functions used by GNU TLS to read and write
  * to the socket.  These functions are simple wrappers to send() and recv()
@@ -85,17 +85,33 @@ static ssize_t Curl_gtls_pull(void *s, void *buf, size_t len)
 /* Global GnuTLS init, called from Curl_ssl_init() */
 int Curl_gtls_init(void)
 {
-  gnutls_global_init();
-#ifdef GTLSDEBUG
-  gnutls_global_set_log_function(tls_log_func);
-  gnutls_global_set_log_level(2);
-#endif
+/* Unfortunately we can not init here, things like curl --version will
+ * fail to work if there is no egd socket available because libgcrypt
+ * will EXIT the application!!
+ * By doing the actual init later (before actually trying to use GnuTLS),
+ * we can at least provide basic info etc.
+ */
   return 1;
+}
+
+static int _Curl_gtls_init(void)
+{
+  int ret = 1;
+  if (!gtls_inited) {
+    ret = gnutls_global_init()?0:1;
+#ifdef GTLSDEBUG
+    gnutls_global_set_log_function(tls_log_func);
+    gnutls_global_set_log_level(2);
+#endif
+    gtls_inited = TRUE;
+  }
+  return ret;
 }
 
 int Curl_gtls_cleanup(void)
 {
-  gnutls_global_deinit();
+  if (gtls_inited)
+    gnutls_global_deinit();
   return 1;
 }
 
@@ -132,7 +148,8 @@ static CURLcode handshake(struct connectdata *conn,
 {
   struct SessionHandle *data = conn->data;
   int rc;
-
+  if (!gtls_inited)
+    _Curl_gtls_init();
   do {
     rc = gnutls_handshake(session);
 
@@ -158,7 +175,7 @@ static CURLcode handshake(struct connectdata *conn,
       if(timeout_ms < 0) {
         /* a precaution, no need to continue if time already is up */
         failf(data, "SSL connection timeout");
-        return CURLE_OPERATION_TIMEOUTED;
+        return CURLE_OPERATION_TIMEDOUT;
       }
 
       rc = Curl_socket_ready(conn->sock[sockindex],
@@ -210,7 +227,7 @@ Curl_gtls_connect(struct connectdata *conn,
                   int sockindex)
 
 {
-  const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
+  static const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
   struct SessionHandle *data = conn->data;
   gnutls_session session;
   int rc;
@@ -227,6 +244,7 @@ Curl_gtls_connect(struct connectdata *conn,
   void *ssl_sessionid;
   size_t ssl_idsize;
 
+  if (!gtls_inited) _Curl_gtls_init();
   /* GnuTLS only supports TLSv1 (and SSLv3?) */
   if(data->set.ssl.version == CURL_SSLVERSION_SSLv2) {
     failf(data, "GnuTLS does not support SSLv2");
@@ -281,11 +299,13 @@ Curl_gtls_connect(struct connectdata *conn,
   if(rc < 0)
     return CURLE_SSL_CONNECT_ERROR;
 
-  if(data->set.cert) {
+  if(data->set.str[STRING_CERT]) {
     if( gnutls_certificate_set_x509_key_file(
-          conn->ssl[sockindex].cred, data->set.cert,
-          data->set.key != 0 ? data->set.key : data->set.cert,
-          do_file_type(data->set.cert_type) ) ) {
+          conn->ssl[sockindex].cred,
+          data->set.str[STRING_CERT],
+          data->set.str[STRING_KEY] ?
+          data->set.str[STRING_KEY] : data->set.str[STRING_CERT],
+          do_file_type(data->set.str[STRING_CERT_TYPE]) ) ) {
       failf(data, "error reading X.509 key or certificate file");
       return CURLE_SSL_CONNECT_ERROR;
     }
@@ -402,6 +422,43 @@ Curl_gtls_connect(struct connectdata *conn,
   else
     infof(data, "\t common name: %s (matched)\n", certbuf);
 
+  /* Check for time-based validity */
+  clock = gnutls_x509_crt_get_expiration_time(x509_cert);
+
+  if(clock == (time_t)-1) {
+    failf(data, "server cert expiration date verify failed");
+    return CURLE_SSL_CONNECT_ERROR;
+  }
+
+  if(clock < time(NULL)) {
+    if (data->set.ssl.verifypeer) {
+      failf(data, "server certificate expiration date has passed.");
+      return CURLE_SSL_PEER_CERTIFICATE;
+    }
+    else
+      infof(data, "\t server certificate expiration date FAILED\n");
+  }
+  else
+    infof(data, "\t server certificate expiration date OK\n");
+
+  clock = gnutls_x509_crt_get_activation_time(x509_cert);
+
+  if(clock == (time_t)-1) {
+    failf(data, "server cert activation date verify failed");
+    return CURLE_SSL_CONNECT_ERROR;
+  }
+
+  if(clock > time(NULL)) {
+    if (data->set.ssl.verifypeer) {
+      failf(data, "server certificate not activated yet.");
+      return CURLE_SSL_PEER_CERTIFICATE;
+    }
+    else
+      infof(data, "\t server certificate activation date FAILED\n");
+  }
+  else
+    infof(data, "\t server certificate activation date OK\n");
+
   /* Show:
 
   - ciphers used
@@ -501,16 +558,17 @@ static void close_one(struct connectdata *conn,
   if(conn->ssl[index].session) {
     gnutls_bye(conn->ssl[index].session, GNUTLS_SHUT_RDWR);
     gnutls_deinit(conn->ssl[index].session);
+    conn->ssl[index].session = NULL;
   }
-  gnutls_certificate_free_credentials(conn->ssl[index].cred);
+  if(conn->ssl[index].cred) {
+    gnutls_certificate_free_credentials(conn->ssl[index].cred);
+    conn->ssl[index].cred = NULL;
+  }
 }
 
-void Curl_gtls_close(struct connectdata *conn)
+void Curl_gtls_close(struct connectdata *conn, int sockindex)
 {
-  if(conn->ssl[0].use)
-    close_one(conn, 0);
-  if(conn->ssl[1].use)
-    close_one(conn, 1);
+  close_one(conn, sockindex);
 }
 
 /*
@@ -575,8 +633,8 @@ int Curl_gtls_shutdown(struct connectdata *conn, int sockindex)
   }
   gnutls_certificate_free_credentials(conn->ssl[sockindex].cred);
 
+  conn->ssl[sockindex].cred = NULL;
   conn->ssl[sockindex].session = NULL;
-  conn->ssl[sockindex].use = FALSE;
 
   return retval;
 }
@@ -633,7 +691,7 @@ void Curl_gtls_session_free(void *ptr)
 
 size_t Curl_gtls_version(char *buffer, size_t size)
 {
-  return snprintf(buffer, size, " GnuTLS/%s", gnutls_check_version(NULL));
+  return snprintf(buffer, size, "GnuTLS/%s", gnutls_check_version(NULL));
 }
 
 #endif /* USE_GNUTLS */

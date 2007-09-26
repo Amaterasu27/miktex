@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.42 2007-04-11 00:25:41 danf Exp $
+ * $Id: tftp.c,v 1.51 2007-09-07 20:35:37 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -114,7 +114,10 @@ typedef enum {
   TFTP_ERR_ILLEGAL,
   TFTP_ERR_UNKNOWNID,
   TFTP_ERR_EXISTS,
-  TFTP_ERR_NOSUCHUSER,
+  TFTP_ERR_NOSUCHUSER,	/* This will never be triggered by this code */
+
+  /* The remaining error codes are internal to curl */
+  TFTP_ERR_NONE = -100,
   TFTP_ERR_TIMEOUT,
   TFTP_ERR_NORESPONSE
 } tftp_error_t;
@@ -136,7 +139,6 @@ typedef struct tftp_state_data {
   time_t          max_time;
   unsigned short  block;
   struct Curl_sockaddr_storage   local_addr;
-  socklen_t       local_addrlen;
   struct Curl_sockaddr_storage   remote_addr;
   socklen_t       remote_addrlen;
   int             rbytes;
@@ -149,7 +151,6 @@ typedef struct tftp_state_data {
 /* Forward declarations */
 static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event) ;
 static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event) ;
-void tftp_set_timeouts(tftp_state_data_t *state) ;
 
 /**********************************************************
  *
@@ -161,7 +162,7 @@ void tftp_set_timeouts(tftp_state_data_t *state) ;
  *
  *
  **********************************************************/
-void tftp_set_timeouts(tftp_state_data_t *state)
+static void tftp_set_timeouts(tftp_state_data_t *state)
 {
 
   struct SessionHandle *data = state->conn->data;
@@ -179,6 +180,10 @@ void tftp_set_timeouts(tftp_state_data_t *state)
 
     /* Average restart after 5 seconds */
     state->retry_max = timeout/5;
+
+    if(state->retry_max < 1)
+      /* avoid division by zero below */
+      state->retry_max = 1;
 
     /* Compute the re-start interval to suit the timeout */
     state->retry_time = timeout/state->retry_max;
@@ -237,12 +242,12 @@ static void setpacketblock(tftp_packet_t *packet, unsigned short num)
   packet->data[3] = (unsigned char)(num & 0xff);
 }
 
-static unsigned short getrpacketevent(tftp_packet_t *packet)
+static unsigned short getrpacketevent(const tftp_packet_t *packet)
 {
   return (unsigned short)((packet->data[0] << 8) | packet->data[1]);
 }
 
-static unsigned short getrpacketblock(tftp_packet_t *packet)
+static unsigned short getrpacketblock(const tftp_packet_t *packet)
 {
   return (unsigned short)((packet->data[2] << 8) | packet->data[3]);
 }
@@ -367,6 +372,7 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
                     state->remote_addrlen);
     if(sbytes < 0) {
       failf(data, "%s\n", Curl_strerror(state->conn, SOCKERRNO));
+      return CURLE_SEND_ERROR;
     }
 
     /* Check if completed (That is, a less than full packet is received) */
@@ -396,6 +402,7 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
       /* Check all sbytes were sent */
       if(sbytes<0) {
         failf(data, "%s\n", Curl_strerror(state->conn, SOCKERRNO));
+        return CURLE_SEND_ERROR;
       }
     }
     break;
@@ -406,10 +413,9 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
 
   default:
     failf(data, "%s\n", "tftp_rx: internal error");
-    break;
+    return CURLE_TFTP_ILLEGAL; /* not really the perfect return code for
+                                  this */
   }
-  Curl_pgrsSetDownloadCounter(data,
-                              (curl_off_t) state->block*TFTP_BLOCKSIZE);
   return CURLE_OK;
 }
 
@@ -426,6 +432,7 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
   int sbytes;
   int rblock;
   CURLcode res = CURLE_OK;
+  struct Curl_transfer_keeper *k = &data->reqdata.keep;
 
   switch(event) {
 
@@ -478,7 +485,11 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
     /* Check all sbytes were sent */
     if(sbytes<0) {
       failf(data, "%s\n", Curl_strerror(state->conn, SOCKERRNO));
+      return CURLE_SEND_ERROR;
     }
+    /* Update the progress meter */
+    k->writebytecount += state->sbytes;
+    Curl_pgrsSetUploadCounter(data, k->writebytecount);
     break;
 
   case TFTP_EVENT_TIMEOUT:
@@ -490,7 +501,8 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
     if(state->retries > state->retry_max) {
       state->error = TFTP_ERR_TIMEOUT;
       state->state = TFTP_STATE_FIN;
-    } else {
+    }
+    else {
       /* Re-send the data packet */
       sbytes = sendto(state->sockfd, (void *)&state->spacket,
                       4+state->sbytes, SEND_4TH_ARG,
@@ -499,7 +511,10 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
       /* Check all sbytes were sent */
       if(sbytes<0) {
         failf(data, "%s\n", Curl_strerror(state->conn, SOCKERRNO));
+        return CURLE_SEND_ERROR;
       }
+      /* since this was a re-send, we remain at the still byte position */
+      Curl_pgrsSetUploadCounter(data, k->writebytecount);
     }
     break;
 
@@ -511,9 +526,6 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
     failf(data, "%s\n", "tftp_tx: internal error");
     break;
   }
-
-  /* Update the progress meter */
-  Curl_pgrsSetUploadCounter(data, (curl_off_t) state->block*TFTP_BLOCKSIZE);
 
   return res;
 }
@@ -579,6 +591,7 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
   state->conn = conn;
   state->sockfd = state->conn->sock[FIRSTSOCKET];
   state->state = TFTP_STATE_START;
+  state->error = TFTP_ERR_NONE;
 
   ((struct sockaddr *)&state->local_addr)->sa_family =
     (unsigned short)(conn->ip_addr->ai_family);
@@ -659,6 +672,7 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
   struct Curl_sockaddr_storage fromaddr;
   socklen_t             fromlen;
   int                   check_time = 0;
+  struct Curl_transfer_keeper *k = &data->reqdata.keep;
 
   *done = TRUE;
 
@@ -675,13 +689,18 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
     state = (tftp_state_data_t *)conn->data->reqdata.proto.tftp;
   }
 
+  code = Curl_readwrite_init(conn);
+  if(code)
+    return code;
+
   /* Run the TFTP State Machine */
   for(code=tftp_state_machine(state, TFTP_EVENT_INIT);
       (state->state != TFTP_STATE_FIN) && (code == CURLE_OK);
       code=tftp_state_machine(state, event) ) {
 
     /* Wait until ready to read or timeout occurs */
-    rc=Curl_socket_ready(state->sockfd, CURL_SOCKET_BAD, state->retry_time * 1000);
+    rc=Curl_socket_ready(state->sockfd, CURL_SOCKET_BAD,
+                         state->retry_time * 1000);
 
     if(rc == -1) {
       /* bail out */
@@ -730,6 +749,8 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
                                      state->rbytes-4);
             if(code)
               return code;
+            k->bytecount += state->rbytes-4;
+            Curl_pgrsSetDownloadCounter(data, (curl_off_t) k->bytecount);
           }
           break;
         case TFTP_EVENT_ERROR:
@@ -773,7 +794,7 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
     return code;
 
   /* If we have encountered an error */
-  if(state->error) {
+  if(state->error != TFTP_ERR_NONE) {
 
     /* Translate internal error codes to curl error codes */
     switch(state->error) {
@@ -784,8 +805,9 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
       code = CURLE_TFTP_PERM;
       break;
     case TFTP_ERR_DISKFULL:
-      code = CURLE_TFTP_DISKFULL;
+      code = CURLE_REMOTE_DISK_FULL;
       break;
+    case TFTP_ERR_UNDEF:
     case TFTP_ERR_ILLEGAL:
       code = CURLE_TFTP_ILLEGAL;
       break;
@@ -793,13 +815,13 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
       code = CURLE_TFTP_UNKNOWNID;
       break;
     case TFTP_ERR_EXISTS:
-      code = CURLE_TFTP_EXISTS;
+      code = CURLE_REMOTE_FILE_EXISTS;
       break;
     case TFTP_ERR_NOSUCHUSER:
       code = CURLE_TFTP_NOSUCHUSER;
       break;
     case TFTP_ERR_TIMEOUT:
-      code = CURLE_OPERATION_TIMEOUTED;
+      code = CURLE_OPERATION_TIMEDOUT;
       break;
     case TFTP_ERR_NORESPONSE:
       code = CURLE_COULDNT_CONNECT;

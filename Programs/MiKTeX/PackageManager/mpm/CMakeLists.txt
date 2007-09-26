@@ -60,6 +60,7 @@ endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpm
+    Wldap32
     fdi
     wininet
     winmm

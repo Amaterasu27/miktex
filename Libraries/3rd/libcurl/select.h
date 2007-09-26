@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: select.h,v 1.10 2007-03-27 18:15:26 yangtse Exp $
+ * $Id: select.h,v 1.13 2007-06-14 11:21:48 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -46,7 +46,7 @@
  * Definition of pollfd struct and constants for platforms lacking them.
  */
 
-#ifndef HAVE_POLL
+#ifndef HAVE_SYS_POLL_H
 
 #define POLLIN      0x01
 #define POLLPRI     0x02
@@ -76,17 +76,10 @@ struct pollfd
 #define POLLRDBAND POLLPRI
 #endif
 
-#define CSELECT_IN   0x01
-#define CSELECT_OUT  0x02
-#define CSELECT_ERR  0x04
-
-int Curl_socket_ready(curl_socket_t readfd, curl_socket_t writefd, int timeout_ms);
+int Curl_socket_ready(curl_socket_t readfd, curl_socket_t writefd,
+                      int timeout_ms);
 
 int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms);
-
-int Curl_select(int nfds,
-                fd_set *fds_read, fd_set *fds_write, fd_set *fds_excep,
-                struct timeval *timeout);
 
 #ifdef TPF
 int tpf_select_libcurl(int maxfds, fd_set* reads, fd_set* writes,

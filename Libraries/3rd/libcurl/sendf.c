@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.127 2007-03-21 13:09:39 yangtse Exp $
+ * $Id: sendf.c,v 1.131 2007-07-23 18:51:22 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -47,7 +47,7 @@
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
 
-#ifdef HAVE_KRB4
+#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
 #include "krb4.h"
 #else
 #define Curl_sec_send(a,b,c,d) -1
@@ -79,11 +79,11 @@ static struct curl_slist *slist_get_last(struct curl_slist *list)
 }
 
 /*
- * curl_slist_append() appends a string to the linked list. It always retunrs
- * the address of the first record, so that you can sure this function as an
+ * curl_slist_append() appends a string to the linked list. It always returns
+ * the address of the first record, so that you can use this function as an
  * initialization function as well as an append function. If you find this
  * bothersome, then simply create a separate _init function and call it
- * appropriately from within the proram.
+ * appropriately from within the program.
  */
 struct curl_slist *curl_slist_append(struct curl_slist *list,
                                      const char *data)
@@ -365,7 +365,7 @@ CURLcode Curl_write(struct connectdata *conn,
     bytes_written = Curl_sftp_send(conn, num, mem, len);
 #endif /* !USE_LIBSSH2 */
   else if(conn->sec_complete)
-    /* only TRUE if krb4 enabled */
+    /* only TRUE if krb enabled */
     bytes_written = Curl_sec_send(conn, num, mem, len);
   else
     bytes_written = Curl_plain_send(conn, num, mem, len);
@@ -416,7 +416,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
     /* If the previous block of data ended with CR and this block of data is
        just a NL, then the length might be zero */
     if (len) {
-      wrote = data->set.fwrite(ptr, 1, len, data->set.out);
+      wrote = data->set.fwrite_func(ptr, 1, len, data->set.out);
     }
     else {
       wrote = len;
@@ -435,7 +435,7 @@ CURLcode Curl_client_write(struct connectdata *conn,
      * header callback function (added after version 7.7.1).
      */
     curl_write_callback writeit=
-      data->set.fwrite_header?data->set.fwrite_header:data->set.fwrite;
+      data->set.fwrite_header?data->set.fwrite_header:data->set.fwrite_func;
 
     /* Note: The header is in the host encoding
        regardless of the ftp transfer mode (ASCII/Image) */
@@ -495,7 +495,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
     /* If we come here, it means that there is no data to read from the buffer,
      * so we read from the socket */
-    bytesfromsocket = MIN(sizerequested, sizeof(conn->master_buffer));
+    bytesfromsocket = MIN(sizerequested, BUFSIZE * sizeof (char));
     buffertofill = conn->master_buffer;
   }
   else {

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.168 2007-03-26 23:23:46 yangtse Exp $
+ * $Id: connect.c,v 1.179 2007-09-05 22:01:57 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -59,10 +59,10 @@
 #include <stdlib.h> /* required for free() prototype, without it, this crashes */
 #endif              /* on macos 68K */
 
-#if (defined(HAVE_FIONBIO) && defined(__NOVELL_LIBC__))
+#if (defined(HAVE_FIONBIO) && defined(NETWARE))
 #include <sys/filio.h>
 #endif
-#if (defined(NETWARE) && defined(__NOVELL_LIBC__))
+#ifdef NETWARE
 #undef in_addr_t
 #define in_addr_t unsigned long
 #endif
@@ -206,7 +206,7 @@ int waitconnect(curl_socket_t sockfd, /* socket */
     /* timeout, no connect today */
     return WAITCONN_TIMEOUT;
 
-  if(rc & CSELECT_ERR)
+  if(rc & CURL_CSELECT_ERR)
     /* error condition caught */
     return WAITCONN_FDSET_ERROR;
 
@@ -228,11 +228,12 @@ static CURLcode bindlocal(struct connectdata *conn,
                                                 "random" */
   /* how many port numbers to try to bind to, increasing one at a time */
   int portnum = data->set.localportrange;
+  const char *dev = data->set.str[STRING_DEVICE];
 
   /*************************************************************
    * Select device to bind socket to
    *************************************************************/
-  if (data->set.device && (strlen(data->set.device)<255) ) {
+  if (dev && (strlen(dev)<255) ) {
     struct Curl_dns_entry *h=NULL;
     char myhost[256] = "";
     in_addr_t in;
@@ -241,10 +242,10 @@ static CURLcode bindlocal(struct connectdata *conn,
     int in6 = -1;
 
     /* First check if the given name is an IP address */
-    in=inet_addr(data->set.device);
+    in=inet_addr((char *) dev);
 
     if((in == CURL_INADDR_NONE) &&
-       Curl_if2ip(data->set.device, myhost, sizeof(myhost))) {
+       Curl_if2ip(dev, myhost, sizeof(myhost))) {
       /*
        * We now have the numerical IPv4-style x.y.z.w in the 'myhost' buffer
        */
@@ -263,7 +264,7 @@ static CURLcode bindlocal(struct connectdata *conn,
        * This was not an interface, resolve the name as a host name
        * or IP number
        */
-      rc = Curl_resolv(conn, data->set.device, 0, &h);
+      rc = Curl_resolv(conn, dev, 0, &h);
       if(rc == CURLRESOLV_PENDING)
         (void)Curl_wait_for_resolv(conn, &h);
 
@@ -275,7 +276,7 @@ static CURLcode bindlocal(struct connectdata *conn,
                          myhost, sizeof myhost);
         else
           /* we know data->set.device is shorter than the myhost array */
-          strcpy(myhost, data->set.device);
+          strcpy(myhost, dev);
         Curl_resolv_unlock(data, h);
       }
     }
@@ -287,8 +288,8 @@ static CURLcode bindlocal(struct connectdata *conn,
          hostent_buf,
          sizeof(hostent_buf));
       */
-      failf(data, "Couldn't bind to '%s'", data->set.device);
-      return CURLE_HTTP_PORT_FAILED;
+      failf(data, "Couldn't bind to '%s'", dev);
+      return CURLE_INTERFACE_FAILED;
     }
 
     infof(data, "Bind local address to %s\n", myhost);
@@ -307,11 +308,10 @@ static CURLcode bindlocal(struct connectdata *conn,
        * hostname or ip address.
        */
       if (setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE,
-                     data->set.device, strlen(data->set.device)+1) != 0) {
+                     dev, strlen(dev)+1) != 0) {
         /* printf("Failed to BINDTODEVICE, socket: %d  device: %s error: %s\n",
-           sockfd, data->set.device, Curl_strerror(SOCKERRNO)); */
-        infof(data, "SO_BINDTODEVICE %s failed\n",
-              data->set.device);
+           sockfd, dev, Curl_strerror(SOCKERRNO)); */
+        infof(data, "SO_BINDTODEVICE %s failed\n", dev);
         /* This is typically "errno 1, error: Operation not permitted" if
            you're not running as root or another suitable privileged user */
       }
@@ -325,7 +325,7 @@ static CURLcode bindlocal(struct connectdata *conn,
 #endif
     if (CURL_INADDR_NONE == in && -1 == in6) {
       failf(data,"couldn't find my own IP address (%s)", myhost);
-      return CURLE_HTTP_PORT_FAILED;
+      return CURLE_INTERFACE_FAILED;
     } /* end of inet_addr */
 
     if ( h ) {
@@ -334,7 +334,7 @@ static CURLcode bindlocal(struct connectdata *conn,
       socksize = addr->ai_addrlen;
     }
     else
-      return CURLE_HTTP_PORT_FAILED;
+      return CURLE_INTERFACE_FAILED;
 
   }
   else if(port) {
@@ -370,7 +370,7 @@ static CURLcode bindlocal(struct connectdata *conn,
       size = sizeof(add);
       if(getsockname(sockfd, (struct sockaddr *) &add, &size) < 0) {
         failf(data, "getsockname() failed");
-        return CURLE_HTTP_PORT_FAILED;
+        return CURLE_INTERFACE_FAILED;
       }
       /* We re-use/clobber the port variable here below */
       if(((struct sockaddr *)&add)->sa_family == AF_INET)
@@ -393,7 +393,7 @@ static CURLcode bindlocal(struct connectdata *conn,
   data->state.os_errno = SOCKERRNO;
   failf(data, "bind failure: %s",
         Curl_strerror(conn, data->state.os_errno));
-  return CURLE_HTTP_PORT_FAILED;
+  return CURLE_INTERFACE_FAILED;
 
 }
 
@@ -432,16 +432,22 @@ static bool verifyconnect(curl_socket_t sockfd, int *error)
 
 #endif
 
-  if( -1 == getsockopt(sockfd, SOL_SOCKET, SO_ERROR,
-                       (void *)&err, &errSize))
+  if (0 != getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (void *)&err, &errSize))
     err = SOCKERRNO;
-
 #ifdef _WIN32_WCE
-  /* Always returns this error, bug in CE? */
-  if(WSAENOPROTOOPT==err)
-    err=0;
+  /* Old WinCE versions don't support SO_ERROR */
+  if (WSAENOPROTOOPT == err) {
+    SET_SOCKERRNO(0);
+    err = 0;
+  }
 #endif
-
+#ifdef __minix
+  /* Minix 3.1.x doesn't support getsockopt on UDP sockets */
+  if (EBADIOCTL == err) {
+    SET_SOCKERRNO(0);
+    err = 0;
+  }
+#endif
   if ((0 == err) || (EISCONN == err))
     /* we are connected, awesome! */
     rc = TRUE;
@@ -553,7 +559,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   if(has_passed > allow ) {
     /* time-out, bail out, go home */
     failf(data, "Connection time-out after %ld ms", has_passed);
-    return CURLE_OPERATION_TIMEOUTED;
+    return CURLE_OPERATION_TIMEDOUT;
   }
   if(conn->bits.tcpconnect) {
     /* we are connected already! */
@@ -578,6 +584,8 @@ CURLcode Curl_is_connected(struct connectdata *conn,
     data->state.os_errno = error;
     infof(data, "Connection failed\n");
     if(trynextip(conn, sockindex, connected)) {
+      failf(data, "Failed connect to %s:%d; %s",
+            conn->host.name, conn->port, Curl_strerror(conn, error));
       code = CURLE_COULDNT_CONNECT;
     }
   }
@@ -597,7 +605,7 @@ CURLcode Curl_is_connected(struct connectdata *conn,
       error = SOCKERRNO;
       data->state.os_errno = error;
       failf(data, "Failed connect to %s:%d; %s",
-            conn->host.name, conn->port, Curl_strerror(conn,error));
+            conn->host.name, conn->port, Curl_strerror(conn, error));
       code = CURLE_COULDNT_CONNECT;
     }
   }
@@ -782,6 +790,7 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   int num_addr;
   Curl_addrinfo *ai;
   Curl_addrinfo *curr_addr;
+  int timeout_set = 0;
 
   struct timeval after;
   struct timeval before = Curl_tvnow();
@@ -789,40 +798,43 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   /*************************************************************
    * Figure out what maximum time we have left
    *************************************************************/
-  long timeout_ms= DEFAULT_CONNECT_TIMEOUT;
+  long timeout_ms;
   long timeout_per_addr;
 
   *connected = FALSE; /* default to not connected */
 
-  if(data->set.timeout || data->set.connecttimeout) {
-    long has_passed;
+  /* if a timeout is set, use the most restrictive one */
 
-    /* Evaluate in milliseconds how much time that has passed */
-    has_passed = Curl_tvdiff(Curl_tvnow(), data->progress.t_startsingle);
+  if (data->set.timeout > 0)
+    timeout_set += 1;
+  if (data->set.connecttimeout > 0)
+    timeout_set += 2;
 
-#ifndef min
-#define min(a, b)   ((a) < (b) ? (a) : (b))
-#endif
-
-    /* get the most strict timeout of the ones converted to milliseconds */
-    if(data->set.timeout && data->set.connecttimeout) {
-      if (data->set.timeout < data->set.connecttimeout)
-        timeout_ms = data->set.timeout;
-      else
-        timeout_ms = data->set.connecttimeout;
-    }
-    else if(data->set.timeout)
+  switch (timeout_set) {
+  case 1:
+    timeout_ms = data->set.timeout;
+    break;
+  case 2:
+    timeout_ms = data->set.connecttimeout;
+    break;
+  case 3:
+    if (data->set.timeout < data->set.connecttimeout)
       timeout_ms = data->set.timeout;
     else
       timeout_ms = data->set.connecttimeout;
+    break;
+  default:
+    timeout_ms = DEFAULT_CONNECT_TIMEOUT;
+    break;
+  }
 
-    /* subtract the passed time */
-    timeout_ms -= has_passed;
-
+  if (timeout_set > 0) {
+    /* if a timeout was already set, substract elapsed time */
+    timeout_ms -= Curl_tvdiff(before, data->progress.t_startsingle);
     if(timeout_ms < 0) {
       /* a precaution, no need to continue if time already is up */
       failf(data, "Connection time-out");
-      return CURLE_OPERATION_TIMEOUTED;
+      return CURLE_OPERATION_TIMEDOUT;
     }
   }
   Curl_expire(data, timeout_ms);
@@ -858,7 +870,7 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
     timeout_ms -= Curl_tvdiff(after, before);
     if(timeout_ms < 0) {
       failf(data, "connect() timed out!");
-      return CURLE_OPERATION_TIMEOUTED;
+      return CURLE_OPERATION_TIMEDOUT;
     }
     before = after;
   }  /* end of connect-to-each-address loop */

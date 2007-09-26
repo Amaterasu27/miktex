@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.h,v 1.32 2007-02-01 11:27:42 yangtse Exp $
+ * $Id: url.h,v 1.34 2007-08-01 21:20:01 bagder Exp $
  ***************************************************************************/
 
 #include <stdarg.h> /* to make sure we have ap_list */
@@ -32,6 +32,8 @@
 CURLcode Curl_open(struct SessionHandle **curl);
 CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
                      va_list arg);
+CURLcode Curl_dupset(struct SessionHandle * dst, struct SessionHandle * src);
+void Curl_freeset(struct SessionHandle * data);
 CURLcode Curl_close(struct SessionHandle *data); /* opposite of curl_open() */
 CURLcode Curl_connect(struct SessionHandle *, struct connectdata **,
                       bool *async, bool *protocol_connect);
@@ -62,8 +64,8 @@ int Curl_doing_getsock(struct connectdata *conn,
                        curl_socket_t *socks,
                        int numsocks);
 
-void Curl_addHandleToPipeline(struct SessionHandle *handle,
-                              struct curl_llist *pipe);
+CURLcode Curl_addHandleToPipeline(struct SessionHandle *handle,
+                                  struct curl_llist *pipe);
 int Curl_removeHandleFromPipeline(struct SessionHandle *handle,
                                   struct curl_llist *pipe);
 bool Curl_isHandleAtHead(struct SessionHandle *handle,

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip4.c,v 1.38 2007-03-25 01:59:52 yangtse Exp $
+ * $Id: hostip4.c,v 1.41 2007-07-11 21:47:31 gknauf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -284,7 +284,11 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
      * which the gethostbyname() is the preferred() function.
      */
   else {
+#if (defined(NETWARE) && !defined(__NOVELL_LIBC__))
+    h = gethostbyname((char*)hostname);
+#else
     h = gethostbyname(hostname);
+#endif
     if (!h)
       infof(conn->data, "gethostbyname(2) failed for %s\n", hostname);
 #endif /*HAVE_GETHOSTBYNAME_R */
@@ -374,6 +378,9 @@ Curl_addrinfo *Curl_he2ai(const struct hostent *he, int port)
     /* make the ai_addr point to the address immediately following this struct
        and use that area to store the address */
     ai->ai_addr = (struct sockaddr *) ((char*)ai + sizeof(Curl_addrinfo));
+
+    /* FIXME: need to free this eventually */
+    ai->ai_canonname = strdup(he->h_name);
 
     /* leave the rest of the struct filled with zero */
 

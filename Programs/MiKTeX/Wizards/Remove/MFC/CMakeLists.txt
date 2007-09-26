@@ -67,6 +67,7 @@ target_link_libraries(remove
 
 if(NATIVE_WINDOWS)
   target_link_libraries(remove
+    Wldap32
     fdi
     version
     wininet

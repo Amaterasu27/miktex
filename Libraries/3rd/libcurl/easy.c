@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.101 2007-04-08 22:49:38 yangtse Exp $
+ * $Id: easy.c,v 1.108 2007-08-26 05:53:26 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -241,6 +241,12 @@ CURLcode curl_global_init(long flags)
   }
 #endif
 
+#ifdef NETWARE
+  if(netware_init()) {
+    DEBUGF(fprintf(stderr, "Warning: LONG namespace not available\n"));
+  }
+#endif
+
 #ifdef USE_LIBIDN
   idna_init();
 #endif
@@ -420,10 +426,13 @@ CURLcode curl_easy_perform(CURL *easy)
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
 
-    /* get file descriptors from the transfers */
+    /* Old deprecated style: get file descriptors from the transfers */
     curl_multi_fdset(multi, &fdread, &fdwrite, &fdexcep, &maxfd);
-
     rc = Curl_select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
+
+    /* The way is to extract the sockets and wait for them without using
+       select. This whole alternative version should probably rather use the
+       curl_multi_socket() approach. */
 
     if(rc == -1)
       /* select error */
@@ -511,6 +520,10 @@ void Curl_easy_addmulti(struct SessionHandle *data,
                         void *multi)
 {
   data->multi = multi;
+  if (multi == NULL)
+    /* the association is cleared, mark the easy handle as not used by an
+       interface */
+    data->state.used_interface = Curl_if_none;
 }
 
 void Curl_easy_initHandleData(struct SessionHandle *data)
@@ -566,7 +579,8 @@ CURL *curl_easy_duphandle(CURL *incurl)
     outcurl->state.headersize=HEADERSIZE;
 
     /* copy all userdefined values */
-    outcurl->set = data->set;
+    if (Curl_dupset(outcurl, data) != CURLE_OK)
+      break;
 
     if(data->state.used_interface == Curl_if_multi)
       outcurl->state.connc = data->state.connc;
@@ -636,8 +650,8 @@ CURL *curl_easy_duphandle(CURL *incurl)
 
   if(fail) {
     if(outcurl) {
-      if((outcurl->state.connc->type == CONNCACHE_PRIVATE) &&
-         outcurl->state.connc)
+      if(outcurl->state.connc &&
+         (outcurl->state.connc->type == CONNCACHE_PRIVATE))
         Curl_rm_connc(outcurl->state.connc);
       if(outcurl->state.headerbuff)
         free(outcurl->state.headerbuff);
@@ -645,6 +659,7 @@ CURL *curl_easy_duphandle(CURL *incurl)
         free(outcurl->change.url);
       if(outcurl->change.referer)
         free(outcurl->change.referer);
+      Curl_freeset(outcurl);
       free(outcurl); /* free the memory again */
       outcurl = NULL;
     }
@@ -668,6 +683,7 @@ void curl_easy_reset(CURL *curl)
   data->reqdata.proto.generic=NULL;
 
   /* zero out UserDefined data: */
+  Curl_freeset(data);
   memset(&data->set, 0, sizeof(struct UserDefined));
 
   /* zero out Progress data: */
@@ -683,10 +699,10 @@ void curl_easy_reset(CURL *curl)
   data->set.err  = stderr;  /* default stderr to stderr */
 
   /* use fwrite as default function to store output */
-  data->set.fwrite = (curl_write_callback)fwrite;
+  data->set.fwrite_func = (curl_write_callback)fwrite;
 
   /* use fread as default function to read input */
-  data->set.fread = (curl_read_callback)fread;
+  data->set.fread_func = (curl_read_callback)fread;
 
   data->set.infilesize = -1; /* we don't know any size */
   data->set.postfieldsize = -1;
@@ -719,11 +735,13 @@ void curl_easy_reset(CURL *curl)
   data->set.ssl.verifyhost = 2;
 #ifdef CURL_CA_BUNDLE
   /* This is our prefered CA cert bundle since install time */
-  data->set.ssl.CAfile = (char *)CURL_CA_BUNDLE;
+  (void) curl_easy_setopt(curl, CURLOPT_CAINFO, (char *) CURL_CA_BUNDLE);
 #endif
 
   data->set.ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
                                                       type */
+  data->set.new_file_perms = 0644;    /* Default permissions */
+  data->set.new_directory_perms = 0755; /* Default permissions */
 }
 
 #ifdef CURL_DOES_CONVERSIONS
@@ -868,7 +886,8 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
   } else {
 #ifdef HAVE_ICONV
     /* do the translation ourselves */
-    char *input_ptr, *output_ptr;
+    const char *input_ptr;
+    char *output_ptr;
     size_t in_bytes, out_bytes, rc;
     int error;
 
@@ -889,7 +908,7 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     /* call iconv */
     input_ptr = output_ptr = buffer;
     in_bytes = out_bytes = length;
-    rc = iconv(data->utf8_cd, (const char**)&input_ptr, &in_bytes,
+    rc = iconv(data->utf8_cd, &input_ptr, &in_bytes,
                &output_ptr, &out_bytes);
     if ((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;

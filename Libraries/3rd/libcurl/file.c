@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: file.c,v 1.85 2007-02-26 04:24:26 giva Exp $
+ * $Id: file.c,v 1.92 2007-08-29 05:36:53 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -96,7 +96,8 @@
  */
 CURLcode Curl_file_connect(struct connectdata *conn)
 {
-  char *real_path = curl_easy_unescape(conn->data, conn->data->reqdata.path, 0, NULL);
+  char *real_path = curl_easy_unescape(conn->data, conn->data->reqdata.path, 0,
+                                       NULL);
   struct FILEPROTO *file;
   int fd;
 #if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
@@ -113,9 +114,8 @@ CURLcode Curl_file_connect(struct connectdata *conn)
     return CURLE_OUT_OF_MEMORY;
   }
 
-  if (conn->data->reqdata.proto.file) {
+  if (conn->data->reqdata.proto.file)
     free(conn->data->reqdata.proto.file);
-  }
 
   conn->data->reqdata.proto.file = file;
 
@@ -177,6 +177,9 @@ CURLcode Curl_file_done(struct connectdata *conn,
   if(file->fd != -1)
     close(file->fd);
 
+  free(file);
+  conn->data->reqdata.proto.file= NULL; /* clear it! */
+
   return CURLE_OK;
 }
 
@@ -189,7 +192,7 @@ CURLcode Curl_file_done(struct connectdata *conn,
 static CURLcode file_upload(struct connectdata *conn)
 {
   struct FILEPROTO *file = conn->data->reqdata.proto.file;
-  char *dir = strchr(file->path, DIRSEP);
+  const char *dir = strchr(file->path, DIRSEP);
   FILE *fp;
   CURLcode res=CURLE_OK;
   struct SessionHandle *data = conn->data;
@@ -198,12 +201,14 @@ static CURLcode file_upload(struct connectdata *conn)
   size_t nwrite;
   curl_off_t bytecount = 0;
   struct timeval now = Curl_tvnow();
+  struct_stat file_stat;
+  const char* buf2;
 
   /*
    * Since FILE: doesn't do the full init, we need to provide some extra
    * assignments here.
    */
-  conn->fread = data->set.fread;
+  conn->fread_func = data->set.fread_func;
   conn->fread_in = data->set.in;
   conn->data->reqdata.upload_fromhere = buf;
 
@@ -213,7 +218,25 @@ static CURLcode file_upload(struct connectdata *conn)
   if(!dir[1])
      return CURLE_FILE_COULDNT_READ_FILE; /* fix: better error code */
 
-  fp = fopen(file->path, "wb");
+  if(data->reqdata.resume_from)
+    fp = fopen( file->path, "ab" );
+  else {
+    int fd;
+
+#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+    fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,
+              conn->data->set.new_file_perms);
+#else /* !(WIN32 || MSDOS || __EMX__) */
+    fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC,
+              conn->data->set.new_file_perms);
+#endif /* !(WIN32 || MSDOS || __EMX__) */
+    if (fd < 0) {
+      failf(data, "Can't open %s for writing", file->path);
+      return CURLE_WRITE_ERROR;
+    }
+    fp = fdopen(fd, "wb");
+  }
+
   if(!fp) {
     failf(data, "Can't open %s for writing", file->path);
     return CURLE_WRITE_ERROR;
@@ -222,6 +245,17 @@ static CURLcode file_upload(struct connectdata *conn)
   if(-1 != data->set.infilesize)
     /* known size of data to "upload" */
     Curl_pgrsSetUploadSize(data, data->set.infilesize);
+
+  /* treat the negative resume offset value as the case of "-" */
+  if(data->reqdata.resume_from < 0){
+    if(stat(file->path, &file_stat)){
+      fclose(fp);
+      failf(data, "Can't get the size of %s", file->path);
+      return CURLE_WRITE_ERROR;
+    }
+    else
+      data->reqdata.resume_from = (curl_off_t)file_stat.st_size;
+  }
 
   while (res == CURLE_OK) {
     int readcount;
@@ -234,8 +268,24 @@ static CURLcode file_upload(struct connectdata *conn)
 
     nread = (size_t)readcount;
 
+    /*skip bytes before resume point*/
+    if(data->reqdata.resume_from) {
+      if( (curl_off_t)nread <= data->reqdata.resume_from ) {
+        data->reqdata.resume_from -= nread;
+        nread = 0;
+        buf2 = buf;
+      }
+      else {
+        buf2 = buf + data->reqdata.resume_from;
+        nread -= data->reqdata.resume_from;
+        data->reqdata.resume_from = 0;
+      }
+    }
+    else
+      buf2 = buf;
+
     /* write the data to the target */
-    nwrite = fwrite(buf, 1, nread, fp);
+    nwrite = fwrite(buf2, 1, nread, fp);
     if(nwrite != nread) {
       res = CURLE_SEND_ERROR;
       break;
@@ -322,11 +372,11 @@ CURLcode Curl_file(struct connectdata *conn, bool *done)
       return result;
 
     if(fstated) {
-      struct tm *tm;
+      const struct tm *tm;
       time_t clock = (time_t)statbuf.st_mtime;
 #ifdef HAVE_GMTIME_R
       struct tm buffer;
-      tm = (struct tm *)gmtime_r(&clock, &buffer);
+      tm = (const struct tm *)gmtime_r(&clock, &buffer);
 #else
       tm = gmtime(&clock);
 #endif

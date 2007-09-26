@@ -82,7 +82,6 @@ set(${curl_dll_name}_sources
   inet_pton.h
   krb4.h
   ldap.c
-  ldap.h
   llist.c
   llist.h
   md5.c
@@ -153,7 +152,7 @@ endif(NATIVE_WINDOWS)
 add_library(${curl_dll_name} SHARED ${${curl_dll_name}_sources})
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(${curl_dll_name} winmm wsock32)
+  target_link_libraries(${curl_dll_name} winmm wsock32 Wldap32)
 endif(NATIVE_WINDOWS)
 
 rebase(${curl_dll_name})

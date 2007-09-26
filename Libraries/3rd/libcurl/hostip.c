@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip.c,v 1.182 2007-02-26 04:24:26 giva Exp $
+ * $Id: hostip.c,v 1.186 2007-08-26 05:53:26 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -131,7 +131,8 @@ static void freednsentry(void *freethis);
 void Curl_global_host_cache_init(void)
 {
   if (!host_cache_initialized) {
-    Curl_hash_init(&hostname_cache, 7, freednsentry);
+    Curl_hash_init(&hostname_cache, 7, Curl_hash_str, Curl_str_key_compare,
+                   freednsentry);
     host_cache_initialized = 1;
   }
 }
@@ -199,7 +200,7 @@ create_hostcache_id(const char *server, int port)
 }
 
 struct hostcache_prune_data {
-  int cache_timeout;
+  long cache_timeout;
   time_t now;
 };
 
@@ -231,7 +232,7 @@ hostcache_timestamp_remove(void *datap, void *hc)
  * Prune the DNS cache. This assumes that a lock has already been taken.
  */
 static void
-hostcache_prune(struct curl_hash *hostcache, int cache_timeout, time_t now)
+hostcache_prune(struct curl_hash *hostcache, long cache_timeout, time_t now)
 {
   struct hostcache_prune_data user;
 
@@ -537,7 +538,7 @@ static void freednsentry(void *freethis)
  */
 struct curl_hash *Curl_mk_dnscache(void)
 {
-  return Curl_hash_alloc(7, freednsentry);
+  return Curl_hash_alloc(7, Curl_hash_str, Curl_str_key_compare, freednsentry);
 }
 
 #ifdef CURLRES_ADDRINFO_COPY
@@ -574,6 +575,8 @@ void Curl_freeaddrinfo(Curl_addrinfo *ai)
   /* walk over the list and free all entries */
   while(ai) {
     next = ai->ai_next;
+    if(ai->ai_canonname)
+      free(ai->ai_canonname);
     free(ai);
     ai = next;
   }
@@ -598,6 +601,14 @@ struct namebuf {
 Curl_addrinfo *Curl_ip2addr(in_addr_t num, const char *hostname, int port)
 {
   Curl_addrinfo *ai;
+
+#if defined(VMS) && \
+    defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
+#pragma pointer_size save
+#pragma pointer_size short
+#pragma message disable PTRMISMATCH
+#endif
+
   struct hostent *h;
   struct in_addr *addrentry;
   struct namebuf buffer;
@@ -624,10 +635,16 @@ Curl_addrinfo *Curl_ip2addr(in_addr_t num, const char *hostname, int port)
   /* Now store the dotted version of the address */
   snprintf((char *)h->h_name, 16, "%s", hostname);
 
+#if defined(VMS) && \
+    defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
+#pragma pointer_size restore
+#pragma message enable PTRMISMATCH
+#endif
+
   ai = Curl_he2ai(h, port);
 
   return ai;
 }
-#endif
+#endif /* CURLRES_IPV4 || CURLRES_ARES */
 
 

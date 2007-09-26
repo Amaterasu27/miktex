@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup_once.h,v 1.24 2007-04-11 11:02:13 yangtse Exp $
+ * $Id: setup_once.h,v 1.27 2007-09-05 22:01:57 danf Exp $
  ***************************************************************************/
 
 
@@ -98,6 +98,13 @@ struct timeval {
 #endif
 
 
+#if defined(__minix)
+/* Minix doesn't support recv on TCP sockets */
+#define sread(x,y,z) (ssize_t)read((RECV_TYPE_ARG1)(x), \
+                                   (RECV_TYPE_ARG2)(y), \
+                                   (RECV_TYPE_ARG3)(z))
+
+#elif defined(HAVE_RECV)
 /*
  * The definitions for the return type and arguments types
  * of functions recv() and send() belong and come from the
@@ -120,7 +127,6 @@ struct timeval {
  * SEND_TYPE_RETV must also be defined.
  */
 
-#ifdef HAVE_RECV
 #if !defined(RECV_TYPE_ARG1) || \
     !defined(RECV_TYPE_ARG2) || \
     !defined(RECV_TYPE_ARG3) || \
@@ -143,7 +149,14 @@ struct timeval {
 #endif
 #endif /* HAVE_RECV */
 
-#ifdef HAVE_SEND
+
+#if defined(__minix)
+/* Minix doesn't support send on TCP sockets */
+#define swrite(x,y,z) (ssize_t)write((SEND_TYPE_ARG1)(x), \
+                                    (SEND_TYPE_ARG2)(y), \
+                                    (SEND_TYPE_ARG3)(z))
+
+#elif defined(HAVE_SEND)
 #if !defined(SEND_TYPE_ARG1) || \
     !defined(SEND_QUAL_ARG2) || \
     !defined(SEND_TYPE_ARG2) || \
@@ -343,6 +356,109 @@ typedef int sig_atomic_t;
 #define EREMOTE          WSAEREMOTE
 #endif
 
+
+/*
+ *  Actually use __32_getpwuid() on 64-bit VMS builds for getpwuid()
+ */
+
+#if defined(VMS) && \
+    defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
+#define getpwuid __32_getpwuid
+#endif
+
+
+/*
+ * Macro argv_item_t hides platform details to code using it.
+ */
+
+#ifdef VMS
+#define argv_item_t  __char_ptr32
+#else
+#define argv_item_t  char *
+#endif
+
+
+#if defined (__LP64__) && defined(__hpux) && !defined(_XOPEN_SOURCE_EXTENDED)
+#include <sys/socket.h>
+/* HP-UX has this oddity where it features a few functions that don't work
+   with socklen_t so we need to convert to ints
+
+   This is due to socklen_t being a 64bit int under 64bit ABI, but the
+   pre-xopen (default) interfaces require an int, which is 32bits.
+
+   Therefore, Anytime socklen_t is passed by pointer, the libc function
+   truncates the 64bit socklen_t value by treating it as a 32bit value.
+
+
+   Note that some socket calls are allowed to have a NULL pointer for
+   the socklen arg.
+*/
+
+inline static int Curl_hp_getsockname(int s, struct sockaddr *name,
+                                      socklen_t *namelen)
+{
+  int rc;
+  if(namelen) {
+     int len = *namelen;
+     rc = getsockname(s, name, &len);
+     *namelen = len;
+   }
+  else
+     rc = getsockname(s, name, 0);
+  return rc;
+}
+
+inline static int Curl_hp_getsockopt(int  s, int level, int optname,
+                                     void *optval, socklen_t *optlen)
+{
+  int rc;
+  if(optlen) {
+    int len = *optlen;
+    rc = getsockopt(s, level, optname, optval, &len);
+    *optlen = len;
+  }
+  else
+    rc = getsockopt(s, level, optname, optval, 0);
+  return rc;
+}
+
+inline static int Curl_hp_accept(int sockfd, struct sockaddr *addr,
+                                 socklen_t *addrlen)
+{
+  int rc;
+  if(addrlen) {
+     int len = *addrlen;
+     rc = accept(sockfd, addr, &len);
+     *addrlen = len;
+  }
+  else
+     rc = accept(sockfd, addr, 0);
+  return rc;
+}
+
+
+inline static ssize_t Curl_hp_recvfrom(int s, void *buf, size_t len, int flags,
+                                       struct sockaddr *from,
+                                       socklen_t *fromlen)
+{
+  ssize_t rc;
+  if(fromlen) {
+    int fromlen32 = *fromlen;
+    rc = recvfrom(s, buf, len, flags, from, &fromlen32);
+    *fromlen = fromlen32;
+  }
+  else {
+    rc = recvfrom(s, buf, len, flags, from, 0);
+  }
+  return rc;
+}
+
+#define getsockname(a,b,c) Curl_hp_getsockname((a),(b),(c))
+#define getsockopt(a,b,c,d,e) Curl_hp_getsockopt((a),(b),(c),(d),(e))
+#define accept(a,b,c) Curl_hp_accept((a),(b),(c))
+#define recvfrom(a,b,c,d,e,f) Curl_hp_recvfrom((a),(b),(c),(d),(e),(f))
+
+#endif /* HPUX work-around */
 
 #endif /* __SETUP_ONCE_H */
 

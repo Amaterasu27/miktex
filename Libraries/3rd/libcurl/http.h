@@ -21,17 +21,17 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.h,v 1.33 2007-01-27 03:43:06 yangtse Exp $
+ * $Id: http.h,v 1.35 2007-08-27 06:31:28 danf Exp $
  ***************************************************************************/
 #ifndef CURL_DISABLE_HTTP
-bool Curl_compareheader(char *headerline,     /* line to check */
+bool Curl_compareheader(const char *headerline,  /* line to check */
                         const char *header,   /* header keyword _with_ colon */
                         const char *content); /* content string to find */
 
 /* ftp can use this as well */
 CURLcode Curl_proxyCONNECT(struct connectdata *conn,
                            int tunnelsocket,
-                           char *hostname, int remote_port);
+                           const char *hostname, unsigned short remote_port);
 
 /* protocol-specific functions set up to be called by the main engine */
 CURLcode Curl_http(struct connectdata *conn, bool *done);
@@ -50,7 +50,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn, char *datap,
 /* These functions are in http.c */
 void Curl_http_auth_stage(struct SessionHandle *data, int stage);
 CURLcode Curl_http_input_auth(struct connectdata *conn,
-                              int httpcode, char *header);
+                              int httpcode, const char *header);
 CURLcode Curl_http_auth_act(struct connectdata *conn);
 
 int Curl_http_should_fail(struct connectdata *conn);

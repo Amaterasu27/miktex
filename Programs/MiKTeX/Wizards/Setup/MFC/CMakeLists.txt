@@ -103,6 +103,7 @@ target_link_libraries(setup
 
 if(NATIVE_WINDOWS)
   target_link_libraries(setup
+    Wldap32
     fdi
     version
     wininet

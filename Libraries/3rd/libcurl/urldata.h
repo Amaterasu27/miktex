@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.328 2007-04-10 20:46:40 bagder Exp $
+ * $Id: urldata.h,v 1.343 2007-08-31 19:36:33 danf Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -34,6 +34,7 @@
 #define PORT_HTTPS 443
 #define PORT_DICT 2628
 #define PORT_LDAP 389
+#define PORT_LDAPS 636
 #define PORT_TFTP 69
 #define PORT_SSH 22
 
@@ -82,6 +83,10 @@
 #include <nspr.h>
 #endif
 
+#ifdef USE_QSOSSL
+#include <qsossl.h>
+#endif
+
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
@@ -127,14 +132,14 @@
    of need. */
 #define HEADERSIZE 256
 
-#define CURLEASY_MAGIC_NUMBER 0xc0dedbad
+#define CURLEASY_MAGIC_NUMBER 0xc0dedbadU
 
 /* Just a convenience macro to get the larger value out of two given.
    We prefix with CURL to prevent name collisions. */
 #define CURLMAX(x,y) ((x)>(y)?(x):(y))
 
-#ifdef HAVE_KRB4
-/* Types needed for krb4-ftp connections */
+#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+/* Types needed for krb4/5-ftp connections */
 struct krb4buffer {
   void *data;
   size_t size;
@@ -145,7 +150,8 @@ enum protection_level {
   prot_clear,
   prot_safe,
   prot_confidential,
-  prot_private
+  prot_private,
+  prot_cmd
 };
 #endif
 
@@ -161,7 +167,9 @@ typedef enum {
 
 /* struct for data related to each SSL connection */
 struct ssl_connect_data {
-  bool use;        /* use ssl encrypted communications TRUE/FALSE */
+  bool use;        /* use ssl encrypted communications TRUE/FALSE, not
+                      necessarily using it atm but at least asked to or
+                      meaning to use it */
 #ifdef USE_SSLEAY
   /* these ones requires specific SSL-types */
   SSL_CTX* ctx;
@@ -176,6 +184,9 @@ struct ssl_connect_data {
 #ifdef USE_NSS
   PRFileDesc *handle;
 #endif /* USE_NSS */
+#ifdef USE_QSOSSL
+  SSLHandle *handle;
+#endif /* USE_QSOSSL */
 };
 
 struct ssl_config_data {
@@ -185,7 +196,7 @@ struct ssl_config_data {
   long verifyhost;       /* 0: no verify
                             1: check that CN exists
                             2: CN must match hostname */
-  char *CApath;          /* DOES NOT WORK ON WINDOWS */
+  char *CApath;          /* certificate dir (doesn't work on windows) */
   char *CAfile;          /* cerficate to verify peer against */
   char *random_file;     /* path to file containing "random" data */
   char *egdsocket;       /* path to file containing the EGD daemon socket */
@@ -287,7 +298,7 @@ struct HTTP {
   struct Curl_chunker chunk;
 
   struct back {
-    curl_read_callback fread; /* backup storage for fread pointer */
+    curl_read_callback fread_func; /* backup storage for fread pointer */
     void *fread_in;           /* backup storage for fread_in pointer */
     char *postdata;
     curl_off_t postsize;
@@ -406,6 +417,66 @@ struct ftp_conn {
   ftpstate state; /* always use ftp.c:state() to change state! */
 };
 
+/****************************************************************************
+ * SSH unique setup
+ ***************************************************************************/
+typedef enum {
+  SSH_NO_STATE = -1,  /* Used for "nextState" so say there is none */
+  SSH_STOP = 0,       /* do nothing state, stops the state machine */
+  SSH_S_STARTUP,      /* Session startup */
+  SSH_AUTHLIST,
+  SSH_AUTH_PKEY_INIT,
+  SSH_AUTH_PKEY,
+  SSH_AUTH_PASS_INIT,
+  SSH_AUTH_PASS,
+  SSH_AUTH_HOST_INIT,
+  SSH_AUTH_HOST,
+  SSH_AUTH_KEY_INIT,
+  SSH_AUTH_KEY,
+  SSH_AUTH_DONE,
+  SSH_SFTP_INIT,
+  SSH_SFTP_REALPATH,
+  SSH_GET_WORKINGPATH,
+  SSH_SFTP_QUOTE_INIT,
+  SSH_SFTP_POSTQUOTE_INIT,
+  SSH_SFTP_QUOTE,
+  SSH_SFTP_NEXT_QUOTE,
+  SSH_SFTP_QUOTE_STAT,
+  SSH_SFTP_QUOTE_SETSTAT,
+  SSH_SFTP_QUOTE_SYMLINK,
+  SSH_SFTP_QUOTE_MKDIR,
+  SSH_SFTP_QUOTE_RENAME,
+  SSH_SFTP_QUOTE_RMDIR,
+  SSH_SFTP_QUOTE_UNLINK,
+  SSH_SFTP_TRANS_INIT,
+  SSH_SFTP_UPLOAD_INIT,
+  SSH_SFTP_CREATE_DIRS_INIT,
+  SSH_SFTP_CREATE_DIRS,
+  SSH_SFTP_CREATE_DIRS_MKDIR,
+  SSH_SFTP_READDIR_INIT,
+  SSH_SFTP_READDIR,
+  SSH_SFTP_READDIR_LINK,
+  SSH_SFTP_READDIR_BOTTOM,
+  SSH_SFTP_READDIR_DONE,
+  SSH_SFTP_DOWNLOAD_INIT,
+  SSH_SFTP_DOWNLOAD_STAT,
+  SSH_SFTP_CLOSE,
+  SSH_SFTP_SHUTDOWN,
+  SSH_SCP_TRANS_INIT,
+  SSH_SCP_UPLOAD_INIT,
+  SSH_SCP_DOWNLOAD_INIT,
+  SSH_SCP_DONE,
+  SSH_SCP_SEND_EOF,
+  SSH_SCP_WAIT_EOF,
+  SSH_SCP_WAIT_CLOSE,
+  SSH_SCP_CHANNEL_FREE,
+  SSH_CHANNEL_CLOSE,
+  SSH_SESSION_DISCONECT,
+  SSH_SESSION_FREE,
+  SSH_QUIT,
+  SSH_LAST  /* never used */
+} sshstate;
+
 struct SSHPROTO {
   curl_off_t *bytecountp;
   char *user;
@@ -418,6 +489,33 @@ struct SSHPROTO {
   LIBSSH2_CHANNEL       *ssh_channel;  /* Secure Shell channel handle */
   LIBSSH2_SFTP          *sftp_session; /* SFTP handle */
   LIBSSH2_SFTP_HANDLE   *sftp_handle;
+#endif /* USE_LIBSSH2 */
+};
+
+/* ssh_conn is used for struct connection-oriented data in the connectdata
+   struct */
+struct ssh_conn {
+  const char *authlist; /* List of auth. methods, managed by libssh2 */
+#ifdef USE_LIBSSH2
+  const char *passphrase;
+  char *rsa_pub;
+  char *rsa;
+  bool authed;
+  sshstate state; /* always use ssh.c:state() to change state! */
+  sshstate nextState; /* the state to goto after stopping */
+  CURLcode actualCode;  /* the actual error code */
+  struct curl_slist *quote_item;
+  char *quote_path1;
+  char *quote_path2;
+  LIBSSH2_SFTP_ATTRIBUTES quote_attrs;
+  LIBSSH2_SFTP_ATTRIBUTES readdir_attrs;
+  char *readdir_filename;
+  char *readdir_longentry;
+  int readdir_len, readdir_totalLen, readdir_currLen;
+  char *readdir_line;
+  char *readdir_linkPath;
+  int secondCreateDirs;
+  char *slash_pos;
 #endif /* USE_LIBSSH2 */
 };
 
@@ -845,8 +943,8 @@ struct connectdata {
     char *cookiehost; /* free later if not NULL */
   } allocptr;
 
-  int sec_complete; /* if krb4 is enabled for this connection */
-#ifdef HAVE_KRB4
+  int sec_complete; /* if kerberos is enabled for this connection */
+#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
   enum protection_level command_prot;
   enum protection_level data_prot;
   enum protection_level request_data_prot;
@@ -868,7 +966,8 @@ struct connectdata {
   struct curl_llist *recv_pipe; /* List of handles waiting to read
                                    their responses on this pipeline */
 
-  char master_buffer[BUFSIZE]; /* The master buffer for this connection. */
+  char* master_buffer; /* The master buffer allocated on-demand;
+                          used for pipelining. */
   size_t read_pos; /* Current read position in the master buffer */
   size_t buf_len; /* Length of the buffer?? */
 
@@ -876,7 +975,7 @@ struct connectdata {
   /*************** Request - specific items ************/
 
   /* previously this was in the urldata struct */
-  curl_read_callback fread; /* function that reads the input */
+  curl_read_callback fread_func; /* function that reads the input */
   void *fread_in;           /* pointer to pass to the fread() above */
 
   struct ntlmdata ntlm;     /* NTLM differs from other authentication schemes
@@ -899,7 +998,10 @@ struct connectdata {
 
   union {
     struct ftp_conn ftpc;
+    struct ssh_conn sshc;
   } proto;
+
+  int cselect_bits; /* bitmask of socket events */
 };
 
 /* The end of connectdata. */
@@ -1136,52 +1238,78 @@ struct DynamicStatic {
  * calculated internally for the "session handle" MUST be defined within the
  * 'struct UrlState' instead. The only exceptions MUST note the changes in
  * the 'DynamicStatic' struct.
+ * Character pointer fields point to dynamic storage, unless otherwise stated.
  */
 struct Curl_one_easy; /* declared and used only in multi.c */
 struct Curl_multi;    /* declared and used only in multi.c */
 
+enum dupstring {
+  STRING_CERT,            /* client certificate file name */
+  STRING_CERT_TYPE,       /* format for certificate (default: PEM)*/
+  STRING_COOKIE,          /* HTTP cookie string to send */
+  STRING_COOKIEJAR,       /* dump all cookies to this file */
+  STRING_CUSTOMREQUEST,   /* HTTP/FTP request/method to use */
+  STRING_DEVICE,          /* local network interface/address to use */
+  STRING_ENCODING,        /* Accept-Encoding string */
+  STRING_FTP_ACCOUNT,     /* ftp account data */
+  STRING_FTP_ALTERNATIVE_TO_USER, /* command to send if USER/PASS fails */
+  STRING_FTPPORT,         /* port to send with the FTP PORT command */
+  STRING_KEY,             /* private key file name */
+  STRING_KEY_PASSWD,      /* plain text private key password */
+  STRING_KEY_TYPE,        /* format for private key (default: PEM) */
+  STRING_KRB_LEVEL,       /* krb security level */
+  STRING_NETRC_FILE,      /* if not NULL, use this instead of trying to find
+                             $HOME/.netrc */
+  STRING_POSTFIELDS,      /* if POST, set the fields' values here */
+  STRING_PROXY,           /* proxy to use */
+  STRING_PROXYUSERPWD,    /* Proxy <user:password>, if used */
+  STRING_SET_RANGE,       /* range, if used */
+  STRING_SET_REFERER,     /* custom string for the HTTP referer field */
+  STRING_SET_URL,         /* what original URL to work on */
+  STRING_SSH_PRIVATE_KEY, /* path to the private key file for auth */
+  STRING_SSH_PUBLIC_KEY,  /* path to the public key file for auth */
+  STRING_SSL_CAPATH,      /* CA directory name (doesn't work on windows) */
+  STRING_SSL_CAFILE,      /* certificate file to verify peer against */
+  STRING_SSL_CIPHER_LIST, /* list of ciphers to use */
+  STRING_SSL_EGDSOCKET,   /* path to file containing the EGD daemon socket */
+  STRING_SSL_RANDOM_FILE, /* path to file containing "random" data */
+  STRING_USERAGENT,       /* User-Agent string */
+  STRING_USERPWD,         /* <user:password>, if used */
+
+  /* -- end of strings -- */
+  STRING_LAST /* not used, just an end-of-list marker */
+};
+
 struct UserDefined {
   FILE *err;         /* the stderr user data goes here */
   void *debugdata;   /* the data that will be passed to fdebug */
-  char *errorbuffer; /* store failure messages in here */
-  char *proxyuserpwd;  /* Proxy <user:password>, if used */
+  char *errorbuffer; /* (Static) store failure messages in here */
   long proxyport; /* If non-zero, use this port number by default. If the
                      proxy string features a ":[port]" that one will override
                      this. */
   void *out;         /* the fetched file goes here */
   void *in;          /* the uploaded file is read from here */
   void *writeheader; /* write the header to this if non-NULL */
-  char *set_url;     /* what original URL to work on */
-  char *proxy;       /* proxy to use */
   long use_port;     /* which port to use (when not using default) */
-  char *userpwd;     /* <user:password>, if used */
   long httpauth;     /* what kind of HTTP authentication to use (bitmask) */
   long proxyauth;    /* what kind of proxy authentication to use (bitmask) */
-  char *set_range;   /* range, if used. See README for detailed specification
-                        on this syntax. */
   long followlocation; /* as in HTTP Location: */
   long maxredirs;    /* maximum no. of http(s) redirects to follow, set to -1
                         for infinity */
-  char *set_referer; /* custom string */
   bool free_referer; /* set TRUE if 'referer' points to a string we
                         allocated */
-  char *useragent;   /* User-Agent string */
-  char *encoding;    /* Accept-Encoding string */
-  char *postfields;  /* if POST, set the fields' values here */
   curl_off_t postfieldsize; /* if POST, this might have a size to use instead
                                of strlen(), and then the data *may* be binary
                                (contain zero bytes) */
-  char *ftpport;     /* port to send with the FTP PORT command */
-  char *device;      /* local network interface/address to use */
   unsigned short localport; /* local port number to bind to */
   int localportrange; /* number of additional port numbers to test in case the
                          'localport' one can't be bind()ed */
-  curl_write_callback fwrite;        /* function that stores the output */
+  curl_write_callback fwrite_func;   /* function that stores the output */
   curl_write_callback fwrite_header; /* function that stores headers */
-  curl_read_callback fread;          /* function that reads the input */
+  curl_read_callback fread_func;     /* function that reads the input */
   curl_progress_callback fprogress;  /* function for progress information */
   curl_debug_callback fdebug;      /* function that write informational data */
-  curl_ioctl_callback ioctl;       /* function for I/O control */
+  curl_ioctl_callback ioctl_func;  /* function for I/O control */
   curl_sockopt_callback fsockopt;  /* function for setting socket options */
   void *sockopt_client; /* pointer to pass to the socket options callback */
 
@@ -1204,19 +1332,10 @@ struct UserDefined {
   curl_off_t max_send_speed; /* high speed limit in bytes/second for upload */
   curl_off_t max_recv_speed; /* high speed limit in bytes/second for download */
   curl_off_t set_resume_from;  /* continue [ftp] transfer from here */
-  char *cookie;         /* HTTP cookie string to send */
   struct curl_slist *headers; /* linked list of extra headers */
   struct curl_httppost *httppost;  /* linked list of POST data */
-  char *cert;           /* certificate */
-  char *cert_type;      /* format for certificate (default: PEM) */
-  char *key;            /* private key */
-  char *key_type;       /* format for private key (default: PEM) */
-  char *key_passwd;     /* plain text private key password */
-  char *cookiejar;      /* dump all cookies to this file */
   bool cookiesession;   /* new cookie session? */
   bool crlf;            /* convert crlf on ftp upload(?) */
-  char *ftp_account;    /* ftp account data */
-  char *ftp_alternative_to_user;   /* command to send if USER/PASS fails */
   struct curl_slist *quote;     /* after connection is established */
   struct curl_slist *postquote; /* after the transfer */
   struct curl_slist *prequote; /* before the transfer, after type */
@@ -1229,22 +1348,16 @@ struct UserDefined {
   curl_TimeCond timecondition; /* kind of time/date comparison */
   time_t timevalue;       /* what time to compare with */
   Curl_HttpReq httpreq;   /* what kind of HTTP request (if any) is this */
-  char *customrequest;    /* HTTP/FTP request to use */
   long httpversion; /* when non-zero, a specific HTTP version requested to
                        be used in the library's request(s) */
-  char *auth_host; /* if set, this is the allocated string to the host name
-                    * to which to send the authorization data to, and no other
-                    * host (which location-following otherwise could lead to)
-                    */
-  char *krb4_level; /* what security level */
   struct ssl_config_data ssl;  /* user defined SSL stuff */
 
   curl_proxytype proxytype; /* what kind of proxy that is in use */
 
-  int dns_cache_timeout; /* DNS cache timeout */
+  long dns_cache_timeout; /* DNS cache timeout */
   long buffer_size;      /* size of receive buffer to use */
 
-  char *private_data; /* Private data */
+  void *private_data; /* Private data */
 
   struct Curl_one_easy *one_easy; /* When adding an easy handle to a multi
                                      handle, an internal 'Curl_one_easy'
@@ -1257,9 +1370,6 @@ struct UserDefined {
   long ip_version;
 
   curl_off_t max_filesize; /* Maximum file size to download */
-
-  char *source_url;     /* for 3rd party transfer */
-  char *source_userpwd;  /* for 3rd party transfer */
 
   curl_ftpfile ftp_filemethod; /* how to get to a file when FTP is used  */
 
@@ -1287,16 +1397,14 @@ struct UserDefined {
   bool upload;
   enum CURL_NETRC_OPTION
        use_netrc;        /* defined in include/curl.h */
-  char *netrc_file;      /* if not NULL, use this instead of trying to find
-                            $HOME/.netrc */
   bool verbose;
-  bool krb4;             /* kerberos4 connection requested */
+  bool krb;              /* kerberos connection requested */
   bool reuse_forbid;     /* forbidden to be reused, close after use */
   bool reuse_fresh;      /* do not re-use an existing connection  */
   bool ftp_use_epsv;     /* if EPSV is to be attempted or not */
   bool ftp_use_eprt;     /* if EPRT is to be attempted or not */
 
-  curl_ftpssl ftp_ssl;   /* if AUTH TLS is to be attempted etc */
+  curl_usessl ftp_ssl;   /* if AUTH TLS is to be attempted etc */
   curl_ftpauth ftpsslauth; /* what AUTH XXX to be attempted */
   curl_ftpccc ftp_ccc;   /* FTP CCC options */
   bool no_signal;        /* do not use any signal/alarm handler */
@@ -1307,14 +1415,14 @@ struct UserDefined {
                             us */
   bool connect_only;     /* make connection, let application use the socket */
   long ssh_auth_types;   /* allowed SSH auth types */
-  char *ssh_public_key;   /* the path to the public key file for
-                             authentication */
-  char *ssh_private_key;  /* the path to the private key file for
-                             authentication */
   bool http_te_skip;     /* pass the raw body data to the user, even when
                             transfer-encoded (chunked, compressed) */
   bool http_ce_skip;     /* pass the raw body data to the user, even when
                             content-encoded (chunked, compressed) */
+  long new_file_perms;    /* Permissions to use when creating remote files */
+  long new_directory_perms; /* Permissions to use when creating remote dirs */
+
+  char *str[STRING_LAST]; /* array of strings, pointing to allocated memory */
 };
 
 struct Names {

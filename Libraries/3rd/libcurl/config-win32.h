@@ -18,9 +18,6 @@
 /* Define if you have the <crypto.h> header file.  */
 /* #define HAVE_CRYPTO_H 1 */
 
-/* Define if you have the <dlfcn.h> header file.  */
-/* #define HAVE_DLFCN_H 1 */
-
 /* Define if you have the <err.h> header file.  */
 /* #define HAVE_ERR_H 1 */
 
@@ -282,7 +279,8 @@
 /* Define as the return type of signal handlers (int or void).  */
 #define RETSIGTYPE void
 
-#if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__)
+#if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__) || \
+    defined(__MINGW32__)
 #elif defined(_WIN64)
 #define ssize_t __int64
 #else
@@ -346,15 +344,29 @@
 #define HAVE_VARIADIC_MACROS_C99 1
 #endif
 
+/* Define if the compiler supports LONGLONG. */
+#if defined(__MINGW32__) || defined(__WATCOMC__)
+#define HAVE_LONGLONG 1
+#endif
+
 /* ---------------------------------------------------------------- */
-/*                        LDAP LIBRARY FILES                        */
+/*                           LDAP SUPPORT                           */
 /* ---------------------------------------------------------------- */
 
-/* lber dynamic library file */
-/* #define DL_LBER_FILE */
-
-/* ldap dynamic library file */
-#define DL_LDAP_FILE "wldap32.dll"
+#if defined(CURL_HAS_NOVELL_LDAPSDK) || defined(CURL_HAS_MOZILLA_LDAPSDK)
+#undef CURL_LDAP_HYBRID
+#undef CURL_LDAP_WIN
+#define HAVE_LDAP_SSL_H 1
+#define HAVE_LDAP_URL_PARSE 1
+#elif defined(CURL_HAS_OPENLDAP_LDAPSDK)
+#undef CURL_LDAP_HYBRID
+#undef CURL_LDAP_WIN
+#define HAVE_LDAP_URL_PARSE 1
+#else
+#undef CURL_LDAP_HYBRID
+#undef HAVE_LDAP_URL_PARSE
+#define CURL_LDAP_WIN 1
+#endif
 
 /* ---------------------------------------------------------------- */
 /*                       ADDITIONAL DEFINITIONS                     */

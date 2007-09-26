@@ -85,7 +85,6 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/inet_pton.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/krb4.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ldap.c
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ldap.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/llist.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/llist.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/md5.c

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_ntlm.c,v 1.63 2007-04-10 22:52:50 danf Exp $
+ * $Id: http_ntlm.c,v 1.66 2007-08-27 06:31:28 danf Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -46,6 +46,10 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#if (defined(NETWARE) && !defined(__NOVELL_LIBC__))
+#include <netdb.h>
 #endif
 
 #include "urldata.h"
@@ -214,8 +218,8 @@ static void print_hex(FILE *handle, const char *buf, size_t len)
 
 CURLntlm Curl_input_ntlm(struct connectdata *conn,
                          bool proxy,   /* if proxy or not */
-                         char *header) /* rest of the www-authenticate:
-                                          header */
+                         const char *header) /* rest of the www-authenticate:
+                                                header */
 {
   /* point to the correct struct with this */
   struct ntlmdata *ntlm;
@@ -912,6 +916,13 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 #endif
     useroff = domoff + domlen;
     hostoff = useroff + userlen;
+
+    /*
+     * In the case the server sets the flag NTLMFLAG_NEGOTIATE_UNICODE, we
+     * need to filter it off because libcurl doesn't UNICODE encode the
+     * strings it packs into the NTLM authenticate packet.
+     */
+    ntlm->flags &= ~NTLMFLAG_NEGOTIATE_UNICODE;
 
     /* Create the big type-3 message binary blob */
     size = snprintf((char *)ntlmbuf, sizeof(ntlmbuf),

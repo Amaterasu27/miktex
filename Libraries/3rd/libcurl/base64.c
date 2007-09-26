@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: base64.c,v 1.40 2007-04-04 23:41:35 danf Exp $
+ * $Id: base64.c,v 1.44 2007-08-30 20:34:57 danf Exp $
  ***************************************************************************/
 
 /* Base64 encoding/decoding
@@ -59,7 +59,7 @@ static void decodeQuantum(unsigned char *dest, const char *src)
   char *found;
 
   for(i = 0; i < 4; i++) {
-    if((found = strchr(table64, src[i])))
+    if((found = strchr(table64, src[i])) != NULL)
       x = (x << 6) + (unsigned int)(found - table64);
     else if(src[i] == '=')
       x = (x << 6);
@@ -137,7 +137,7 @@ size_t Curl_base64_decode(const char *src, unsigned char **outptr)
  *
  * Returns the length of the newly created base64 string. The third argument
  * is a pointer to an allocated area holding the base64 data. If something
- * went wrong, -1 is returned.
+ * went wrong, 0 is returned.
  *
  */
 size_t Curl_base64_encode(struct SessionHandle *data,
@@ -252,7 +252,7 @@ size_t Curl_base64_encode(struct SessionHandle *data,
 #define TEST_NEED_SUCK
 void *suck(int *);
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, argv_item_t argv[], char **envp)
 {
   char *base64;
   size_t base64Len;
@@ -265,7 +265,7 @@ int main(int argc, char **argv, char **envp)
   handle = curl_easy_init();
   if(handle == NULL) {
     fprintf(stderr, "Error: curl_easy_init failed\n");
-    return 0;
+    return 1;
   }
 #endif
   data = (unsigned char *)suck(&dataLen);
@@ -293,7 +293,7 @@ int main(int argc, char **argv, char **envp)
 #define TEST_NEED_SUCK
 void *suck(int *);
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, argv_item_t argv[], char **envp)
 {
   char *base64;
   int base64Len;
@@ -305,7 +305,7 @@ int main(int argc, char **argv, char **envp)
   struct SessionHandle *handle = curl_easy_init();
   if(handle == NULL) {
     fprintf(stderr, "Error: curl_easy_init failed\n");
-    return 0;
+    return 1;
   }
 #endif
 
