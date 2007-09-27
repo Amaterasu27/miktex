@@ -57,7 +57,6 @@ set(yap_mfc_sources
   InverseSearchOptionsPage.cpp
   MagnifyingGlassOptionsPage.cpp
   MainFrame.cpp
-  MyScrollView.cpp
   PrintOptionsPage.cpp
   ProgressIndicatorDialog.cpp
   Ruler.cpp

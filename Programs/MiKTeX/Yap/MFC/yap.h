@@ -37,7 +37,7 @@
   MIKTEX_TRACE_DVIGC
 
 // Windows 95/98/Me uses a 16-bit world coordinate system
-#if defined(MIKTEX_WINDOWS_32)
+#if defined(MIKTEX_WINDOWS_32) && defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 #  define SIXTEENBITGDI 1
 #else
 #  define SIXTEENBITGDI 0
