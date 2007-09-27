@@ -489,6 +489,10 @@ File::GetTimes (/*[in]*/ const PathName &	path,
     {
       FATAL_WINDOWS_ERROR (T_("FindFirstFile"), path.Get());
     }
+  if (! FindClose(findHandle))
+    {
+      FATAL_WINDOWS_ERROR (T_("FindClose"), 0);
+    }
   creationTime = FileTimeToCrtTime(findData.ftCreationTime);
   lastAccessTime = FileTimeToCrtTime(findData.ftLastAccessTime);
   lastWriteTime = FileTimeToCrtTime(findData.ftLastWriteTime);
