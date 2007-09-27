@@ -483,24 +483,15 @@ File::GetTimes (/*[in]*/ const PathName &	path,
 		/*[out]*/ time_t &		lastAccessTime,
 		/*[out]*/ time_t &		lastWriteTime)
 {
-  FileStream stream (File::Open(path,
-				FileMode::Open,
-				FileAccess::Read,
-				false));
-  FILETIME creationFileTime;
-  FILETIME lastAccessFileTime;
-  FILETIME lastWriteFileTime;
-  if (! GetFileTime(GET_OSFHANDLE(_fileno(stream.Get())),
-		    &creationFileTime,
-		    &lastAccessFileTime,
-		    &lastWriteFileTime))
+  WIN32_FIND_DATA findData;
+  HANDLE findHandle = FindFirstFile(path.Get(), &findData);
+  if (findHandle == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR (T_("GetFileTime"), 0);
+      FATAL_WINDOWS_ERROR (T_("FindFirstFile"), path.Get());
     }
-  stream.Close ();
-  creationTime = FileTimeToCrtTime(creationFileTime);
-  lastAccessTime = FileTimeToCrtTime(lastAccessFileTime);
-  lastWriteTime = FileTimeToCrtTime(lastWriteFileTime);
+  creationTime = FileTimeToCrtTime(findData.ftCreationTime);
+  lastAccessTime = FileTimeToCrtTime(findData.ftLastAccessTime);
+  lastWriteTime = FileTimeToCrtTime(findData.ftLastWriteTime);
 }
 
 /* _________________________________________________________________________
