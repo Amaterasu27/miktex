@@ -1,6 +1,6 @@
 /* MpmView.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -224,6 +224,14 @@ private:
 
 private:
   map<LPARAM,PackageInfo> packages;
+
+public:
+  int
+  GetNumberOfPackages ()
+    const
+  {
+    return (packages.size());
+  }
 
 private:
   int clickedColumn;

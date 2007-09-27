@@ -24,6 +24,7 @@
 #define IDC_EDIT_FILE_NAME              1011
 #define ID_RESET_VIEW                   1012
 #define IDC_THE_NAME_OF_THE_GAME        1013
+#define ID_INDICATOR_NUM_PACKAGES	1014
 
 // Next default values for new objects
 // 

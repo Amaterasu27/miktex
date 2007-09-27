@@ -23,6 +23,8 @@
 #include "mpm.h"
 
 #include "MainFrame.h"
+#include "MpmDoc.h"
+#include "MpmView.h"
 
 IMPLEMENT_DYNCREATE(MainFrame, CFrameWnd);
 
@@ -38,6 +40,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWnd)
   ON_COMMAND(ID_EDIT_CUT, &MainFrame::OnEditCut)
   ON_COMMAND(ID_EDIT_COPY, &MainFrame::OnEditCopy)
   ON_COMMAND(ID_EDIT_UNDO, &MainFrame::OnEditUndo)
+  ON_UPDATE_COMMAND_UI(ID_INDICATOR_NUM_PACKAGES, OnUpdateNumPackages)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -49,10 +52,8 @@ namespace {
 
 UINT indicators[] =
 {
-  ID_SEPARATOR,           // status line indicator
-  ID_INDICATOR_CAPS,
-  ID_INDICATOR_NUM,
-  ID_INDICATOR_SCRL,
+  ID_SEPARATOR,
+  ID_INDICATOR_NUM_PACKAGES,
 };
 
 }
@@ -187,6 +188,45 @@ void
 MainFrame::OnUpdateFilterOut (/*[in]*/ CCmdUI * pCmdUI)
 {
   pCmdUI->Enable (TRUE);
+}
+
+/* _________________________________________________________________________
+
+   MainFrame::OnUpdateNumPackages
+   _________________________________________________________________________ */
+
+void
+MainFrame::OnUpdateNumPackages (/*[in]*/ CCmdUI * pCmdUI)
+{
+  try
+    {
+      CView * pView = GetActiveView();
+      pCmdUI->Enable (pView != 0);
+      if (pView == 0)
+	{
+	  pCmdUI->SetText (T_(""));
+	  return;
+	}
+      if (! pView->IsKindOf(RUNTIME_CLASS(MpmView)))
+	{
+	  pCmdUI->SetText (T_(""));
+	  return;
+	}
+      MpmView * pMpmView = reinterpret_cast<MpmView*>(pView);
+      CString str;
+      str.Format (T_("Total: %d"), pMpmView->GetNumberOfPackages());
+      pCmdUI->SetText (str); 
+    }
+
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
 }
 
 /* _________________________________________________________________________

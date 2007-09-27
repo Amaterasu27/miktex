@@ -278,6 +278,11 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
+STRINGTABLE
+BEGIN
+    ID_INDICATOR_NUM_PACKAGES "Total: 9999"
+END
+
 STRINGTABLE 
 BEGIN
     ID_FILE_NEW             "Create a new document\nNew"

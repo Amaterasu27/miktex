@@ -90,6 +90,11 @@ protected:
 protected:
   afx_msg
   void
+  OnUpdateNumPackages (/*[in]*/ CCmdUI * pCmdUI);
+
+protected:
+  afx_msg
+  void
   OnEditPaste ();
 
 protected:
