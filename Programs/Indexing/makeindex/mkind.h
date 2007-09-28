@@ -590,3 +590,15 @@ VOIDP	malloc ARGS((size_t size));
 #ifndef    R_OK
 #define R_OK 4                         /* only symbol from sys/file.h */
 #endif
+
+#if defined(MIKTEX)
+#  if defined (_MSC_VER)
+#    define SPRINTF_S sprintf_s
+#    define STRCPY_S(dest, sizeofdest, src) \
+       strcpy_s(dest, sizeofdest, src)
+#    define STRCPY(dest, src) \
+       STRCPY_S(dest, sizeof(dest) / sizeof(dest[0]), src)
+#  else
+#    error Unimplemented: safe string functions
+#  endif
+#endif
