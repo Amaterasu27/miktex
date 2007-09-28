@@ -359,7 +359,11 @@ char    str[];
 		return (FALSE);
 	    case STR_DELIM:
 		clone[i] = NUL;
+#if defined(MIKTEX)
+		STRCPY_S (str, ARRAY_MAX, clone);
+#else
 		strcpy(str, clone);
+#endif
 		return (TRUE);
 	    case BSH:
 		switch (c = GET_CHAR(sty_fp)) {

@@ -214,7 +214,11 @@ make_key(VOID_ARG)
     ptr->data.group = group_type(ptr->data.sf[0]);
 
     /* process page number */
+#if defined(MIKTEX)
+    STRCPY (ptr->data.lpg, no);
+#else
     strcpy(ptr->data.lpg, no);
+#endif
     if (!scan_no(no, ptr->data.npg, &(ptr->data.count), &(ptr->data.type)))
 	return (FALSE);
 

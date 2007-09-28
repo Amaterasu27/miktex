@@ -183,7 +183,11 @@ char   *argv[];
 		    argc--;
 		    if (argc <= 0)
 			FATAL("Expected -p <num>\n","");
+#if defined(MIKTEX)
+		    STRCPY (pageno, *++argv);
+#else
 		    strcpy(pageno, *++argv);
+#endif
 		    init_page = TRUE;
 		    if (STREQ(pageno, EVEN)) {
 			log_given = TRUE;
@@ -234,7 +238,11 @@ char   *argv[];
 		char tmp[STRING_MAX + 5];
 		
 		/* base set by last call to check_idx */
+#if defined(MIKTEX)
+		SPRINTF_S (tmp, sizeof(tmp) / sizeof(tmp[0]), "%s%s", base, INDEX_STY);
+#else
 		sprintf (tmp, "%s%s", base, INDEX_STY);
+#endif
 		if (0 == access(tmp, R_OK)) {
 			open_sty (tmp);
 			sty_given = TRUE;
@@ -411,7 +419,11 @@ int     open_fn;
 
 	    if ((idx_fn = (char *) malloc(STRING_MAX)) == NULL)
 		FATAL("Not enough core...abort.\n", "");
+#if defined(MIKTEX)
+	    SPRINTF_S(idx_fn, sizeof(idx_fn) / sizeof(idx_fn[0]), "%s%s", base, INDEX_IDX);
+#else
 	    sprintf(idx_fn, "%s%s", base, INDEX_IDX);
+#endif
 	    if ((open_fn && 
 	 ((idx_fp = OPEN_IN(idx_fn)) == NULL)
 	) ||
@@ -438,7 +450,11 @@ int     log_given;
 
     /* index output file */
     if (!ind_given) {
+#if defined(MIKTEX)
+        SPRINTF_S(ind, sizeof(ind) / sizeof(ind[0]), "%s%s", base, INDEX_IND);
+#else
 	sprintf(ind, "%s%s", base, INDEX_IND);
+#endif
 	ind_fn = ind;
     }
     if ((ind_fp = OPEN_OUT(ind_fn)) == NULL)
@@ -446,14 +462,22 @@ int     log_given;
 
     /* index transcript file */
     if (!ilg_given) {
+#if defined(MIKTEX)
+        SPRINTF_S(ilg, sizeof(ilg) / sizeof(ilg[0]), "%s%s", base, INDEX_ILG);
+#else
 	sprintf(ilg, "%s%s", base, INDEX_ILG);
+#endif
 	ilg_fn = ilg;
     }
     if ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL)
 	FATAL("Can't create transcript file %s.\n", ilg_fn);
 
     if (log_given) {
+#if defined(MIKTEX)
+        SPRINTF_S(log_fn, sizeof(log_fn) / sizeof(log_fn[0]), "%s%s", base, INDEX_LOG);
+#else
 	sprintf(log_fn, "%s%s", base, INDEX_LOG);
+#endif
 	if ((log_fp = OPEN_IN(log_fn)) == NULL) {
 	    FATAL("Source log file %s not found.\n", log_fn);
 	} else {
@@ -509,7 +533,11 @@ char   *fn;
   if ((found = kpse_find_file (fn, kpse_ist_format, 1)) == NULL) {
      FATAL("Index style file %s not found.\n", fn);
   } else {
+#if defined(MIKTEX)
+    STRCPY (sty_fn, found);
+#else
     strcpy(sty_fn,found);
+#endif
     if ((sty_fp = OPEN_IN(sty_fn)) == NULL) {
       FATAL("Could not open style file %s.\n", sty_fn);
     }
@@ -517,7 +545,11 @@ char   *fn;
 #else
     if ((path = getenv(STYLE_PATH)) == NULL) {
 	/* style input path not defined */
+#if defined(MIKTEX)
+        STRCPY (sty_fn, fn);
+#else
 	strcpy(sty_fn, fn);
+#endif
 	sty_fp = OPEN_IN(sty_fn);
     } else {
 	len = ARRAY_MAX - strlen(fn) - 1;

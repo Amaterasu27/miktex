@@ -174,16 +174,32 @@ char   *term;
     if (level > prev_level) {
 	/* ascending level */
 	if (*curr->af[level] == NUL)
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s%s", term, item_u[level], curr->sf[level]);
+#else
 	    sprintf(line, "%s%s%s", term, item_u[level], curr->sf[level]);
+#endif
 	else
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s%s", term, item_u[level], curr->af[level]);
+#else
 	    sprintf(line, "%s%s%s", term, item_u[level], curr->af[level]);
+#endif
 	ind_lc += ilen_u[level];
     } else {
 	/* same or descending level */
 	if (*curr->af[level] == NUL)
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s%s", term, item_r[level], curr->sf[level]);
+#else
 	    sprintf(line, "%s%s%s", term, item_r[level], curr->sf[level]);
+#endif
 	else
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s%s", term, item_r[level], curr->af[level]);
+#else
 	    sprintf(line, "%s%s%s", term, item_r[level], curr->af[level]);
+#endif
 	ind_lc += ilen_r[level];
     }
 
@@ -191,9 +207,17 @@ char   *term;
     while (i < FIELD_MAX && *curr->sf[i] != NUL) {
 	PUT(line);
 	if (*curr->af[i] == NUL)
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s", item_x[i], curr->sf[i]);
+#else
 	    sprintf(line, "%s%s", item_x[i], curr->sf[i]);
+#endif
 	else
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s", item_x[i], curr->af[i]);
+#else
 	    sprintf(line, "%s%s", item_x[i], curr->af[i]);
+#endif
 	ind_lc += ilen_x[i];
 	level = i;		/* Added at 2.11 <brosig@gmdzi.gmd.de> */
 	i++;
@@ -280,7 +304,11 @@ old_entry(VOID_ARG)
 	    (*curr->encap != NUL) &&
 	    (*curr->encap != idx_rclose) &&
 	    STRNEQ(curr->encap, prev_encap)) {
+#if defined(MIKTEX)
+	    SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s%s%s%s", encap_p, curr->encap,
+#else
 	    sprintf(buff, "%s%s%s%s%s", encap_p, curr->encap,
+#endif
 		    encap_i, curr->lpg, encap_s);
 	    wrap_line(FALSE);
 	}
@@ -398,28 +426,60 @@ int     print;
 		int diff = page_diff(begin, the_end);
 		
 		if ((diff == 1) && *suffix_2p)
+#if defined(MIKTEX)
+		    SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s", begin->lpg, suffix_2p);
+#else
 		    sprintf(buff, "%s%s", begin->lpg, suffix_2p);
+#endif
 		else if ((diff == 2) && *suffix_3p)
+#if defined(MIKTEX)
+		    SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s", begin->lpg, suffix_3p);
+#else
 		    sprintf(buff, "%s%s", begin->lpg, suffix_3p);
+#endif
 		else if ((diff >= 2) && *suffix_mp)
+#if defined(MIKTEX)
+		    SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s", begin->lpg, suffix_mp);
+#else
 		    sprintf(buff, "%s%s", begin->lpg, suffix_mp);
+#endif
 		else
+#if defined(MIKTEX)
+		    SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s%s", begin->lpg, delim_r, the_end->lpg);
+#else
 		    sprintf(buff, "%s%s%s", begin->lpg, delim_r, the_end->lpg);
+#endif
 
 	    encap_range = FALSE;
 	}
 	else
+#if defined(MIKTEX)
+	        SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s%s", begin->lpg, delim_n, the_end->lpg);
+#else
 	   	sprintf(buff, "%s%s%s", begin->lpg, delim_n, the_end->lpg);
+#endif
     else
     {
 	encap_range = FALSE; /* might be true from page range on same page */
+#if defined(MIKTEX)
+	STRCPY (buff, begin->lpg);
+#else
 	strcpy(buff, begin->lpg);
+#endif
     }
 
     if (*prev_encap != NUL)
     {
+#if defined(MIKTEX)
+        STRCPY (tmp, buff);
+#else
 	strcpy(tmp, buff);
+#endif
+#if defined(MIKTEX)
+	SPRINTF_S(buff, sizeof(buff) / sizeof(buff[0]), "%s%s%s%s%s",
+#else
 	sprintf(buff, "%s%s%s%s%s",
+#endif
 		encap_p, prev_encap, encap_i, tmp, encap_s);
     }
     wrap_line(print);
@@ -447,7 +507,11 @@ int     print;
     } else {
 	if (len > linemax) {
 	    PUTLN(line);
+#if defined(MIKTEX)
+	    SPRINTF_S(line, sizeof(line) / sizeof(line[0]), "%s%s%s", indent_space, buff, delim_n);
+#else
 	    sprintf(line, "%s%s%s", indent_space, buff, delim_n);
+#endif
 	    ind_indent = indent_length;
 	} else {
 	    strcat(buff, delim_n);
