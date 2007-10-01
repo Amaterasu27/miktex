@@ -374,7 +374,9 @@ PaperSizeInfo::Parse (/*[in]*/ const MIKTEXCHAR * lpszSpec)
 
   double texWidth;
 
-  MIKTEXCHAR * lpsz = STRDUP(lpszSpec).GetBuffer();
+  CharBuffer<MIKTEXCHAR> buf (lpszSpec);
+
+  MIKTEXCHAR * lpsz = buf.GetBuffer();
 
   if (! ChopFloat(lpsz, texWidth))
     {
