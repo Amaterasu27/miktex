@@ -1,6 +1,6 @@
 /* mpm.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -32,10 +32,10 @@
    _________________________________________________________________________ */
 
 BEGIN_MESSAGE_MAP(PackageManagerApplication, CWinApp)
-  ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-  ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-  ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
-  ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+  ON_COMMAND(ID_APP_ABOUT, &PackageManagerApplication::OnAppAbout)
+  ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
+  ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
+  ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -65,7 +65,10 @@ PackageManagerApplication::InitInstance ()
 {
   CoInitializeEx (0, COINIT_MULTITHREADED);
 
-  InitCommonControls ();
+  INITCOMMONCONTROLSEX InitCtrls;
+  InitCtrls.dwSize = sizeof(InitCtrls);
+  InitCtrls.dwICC = ICC_WIN95_CLASSES;
+  InitCommonControlsEx (&InitCtrls);
 
   if (! CWinApp::InitInstance())
     {
@@ -78,7 +81,11 @@ PackageManagerApplication::InitInstance ()
       pSession.CreateSession (Session::InitInfo(T_("mpm")));
       TraceStream::SetTraceFlags ("error,mpm,config");
       
-      SetRegistryKey (T_("MiK\\MiKTeX\\CurrentVersion"));
+      SetRegistryKey (T_(MIKTEX_COMPANYNAME_STR)
+		      T_("\\")
+		      T_(MIKTEX_PRODUCTNAME_STR)
+		      T_("\\")
+		      T_(MIKTEX_SERIES_STR));
       
       LoadStdProfileSettings (0);
       
@@ -88,10 +95,10 @@ PackageManagerApplication::InitInstance ()
 			       RUNTIME_CLASS(MainFrame),
 			       RUNTIME_CLASS(MpmView));
       
-      AddDocTemplate(pDocTemplate);
+      AddDocTemplate (pDocTemplate);
       
       CCommandLineInfo cmdInfo;
-      ParseCommandLine(cmdInfo);
+      ParseCommandLine (cmdInfo);
       
       if (! ProcessShellCommand(cmdInfo))
 	{

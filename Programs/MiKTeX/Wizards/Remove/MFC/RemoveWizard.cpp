@@ -99,7 +99,7 @@ RemoveWizard::OnInitDialog ()
   BOOL ret = CPropertySheet::OnInitDialog();
   try
     {
-      SetIcon (AfxGetApp()->LoadIcon (IDI_REMOVE), TRUE);
+      SetIcon (AfxGetApp()->LoadIcon (IDR_MAINFRAME), TRUE);
       CString title;
       if (! title.LoadString(IDS_REMOVEWIZ))
 	{

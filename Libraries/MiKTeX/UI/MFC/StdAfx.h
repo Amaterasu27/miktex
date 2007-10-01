@@ -1,3 +1,4 @@
+
 /* StdAfx.h: pre-compiled header stuff
 
    Copyright (C) 2000-2007 Christian Schenk
@@ -21,22 +22,21 @@
 
 #pragma once
 
-#define VC_EXTRALEAN
-
-#if ! defined(WINVER)
-#  define WINVER 0x0600
-#  define WIN32_WINDOWS 0x0600
-#  define _WIN32_WINNT 0x0600
-#  define _WIN32_IE 0x0700
+#if ! defined(VC_EXTRALEAN)
+#  define VC_EXTRALEAN
 #endif
 
+#include "targetver.h"
+
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
+
+#include <afxwin.h>
+#include <afxext.h>
 #include <afxcmn.h>
 #include <afxdlgs.h>
-#include <afxext.h>
 #include <afxinet.h>
 #include <afxmt.h>
 #include <afxtempl.h>
-#include <afxwin.h>
 
 #include <Shlobj.h>
 

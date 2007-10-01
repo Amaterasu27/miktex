@@ -12,6 +12,9 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
 #include "afxres.h"
 #include "mo-version.h"
 
@@ -34,7 +37,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_MO                  ICON                    "miktex.ico"
+IDR_MAINFRAME                  ICON                    "miktex.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -61,6 +64,9 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "#include ""mo-version.h""\r\n"
     "\0"
@@ -354,7 +360,6 @@ IDR_MANIFEST            RT_MANIFEST             "res\\mo.manifest"
 STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "MiKTeX Options"
-    AFX_IDS_APP_TITLE2      "MiKTeX Options"
 END
 
 STRINGTABLE 

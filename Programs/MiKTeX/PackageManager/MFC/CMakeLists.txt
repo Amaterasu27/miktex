@@ -22,7 +22,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/Resources/Graphics
+)
 
 set(CMAKE_MFC_FLAG 2)
 

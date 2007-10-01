@@ -21,30 +21,19 @@
 
 #pragma once
 
-#define VC_EXTRALEAN
-
-// C4786: identifier was truncated to 'number'
-//        characters in the debug information
-// C4251: 'identifier' : class 'type' needs to
-//        have dll-interface to be used by clients
-//        of class 'type2'
-#pragma warning ( disable : 4786 4251 )
-
-#if ! defined(WINVER)
-#  define WINVER 0x0600
+#if ! defined(_SECURE_ATL)
+#  define _SECURE_ATL 1
 #endif
 
-#if ! defined(_WIN32_WINNT)
-#  define _WIN32_WINNT 0x0600
-#endif						
-
-#if ! defined(_WIN32_WINDOWS)
-#  define _WIN32_WINDOWS 0x0600
+#if ! defined(VC_EXTRALEAN)
+#  define VC_EXTRALEAN
 #endif
 
-#if ! defined(_WIN32_IE)
-#  define _WIN32_IE 0x0700
-#endif
+#include "targetver.h"
+
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
+
+#define _AFX_ALL_WARNINGS
 
 #include <afxwin.h>
 #include <afxext.h>

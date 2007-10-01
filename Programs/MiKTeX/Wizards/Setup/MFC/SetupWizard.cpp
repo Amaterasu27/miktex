@@ -126,7 +126,7 @@ SetupWizard::OnInitDialog ()
   BOOL ret = CPropertySheet::OnInitDialog();
   try
     {
-      SetIcon (AfxGetApp()->LoadIcon(IDI_SETUP), TRUE);
+      SetIcon (AfxGetApp()->LoadIcon(IDR_MAINFRAME), TRUE);
       CString title;
       if (theApp.isMiKTeXDirect)
 	{

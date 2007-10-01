@@ -35,12 +35,12 @@ IMPLEMENT_DYNCREATE(MainFrame, CFrameWnd);
 
 BEGIN_MESSAGE_MAP(MainFrame, CFrameWnd)
   ON_WM_CREATE()
-  ON_UPDATE_COMMAND_UI(IDOK, OnUpdateFilterOut)
+  ON_UPDATE_COMMAND_UI(IDOK, &MainFrame::OnUpdateFilterOut)
   ON_COMMAND(ID_EDIT_PASTE, &MainFrame::OnEditPaste)
   ON_COMMAND(ID_EDIT_CUT, &MainFrame::OnEditCut)
   ON_COMMAND(ID_EDIT_COPY, &MainFrame::OnEditCopy)
   ON_COMMAND(ID_EDIT_UNDO, &MainFrame::OnEditUndo)
-  ON_UPDATE_COMMAND_UI(ID_INDICATOR_NUM_PACKAGES, OnUpdateNumPackages)
+  ON_UPDATE_COMMAND_UI(ID_INDICATOR_NUM_PACKAGES, &MainFrame::OnUpdateNumPackages)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________

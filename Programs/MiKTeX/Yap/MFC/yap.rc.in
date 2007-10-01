@@ -7,6 +7,9 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
 #include "afxres.h"
 #include "yap-version.h"
 
@@ -22,16 +25,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Cursor
-//
-
-IDC_MAG                 CURSOR                  "res\\mag.cur"
-IDC_HAND_TOOL           CURSOR                  "res\\hand.cur"
-IDC_PRESSED_HAND        CURSOR                  "res\\pressed_hand.cur"
-IDC_HAND_POINT          CURSOR                  "res\\H_POINT.CUR"
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -45,6 +38,9 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "#include ""yap-version.h""\r\n"
     "\0"
@@ -52,14 +48,18 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "#include ""res\\yap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
-    "\r\n"
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
     "#define _AFX_NO_TRACKER_RESOURCES\r\n"
     "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\yap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
     "#include ""afxres.rc""  \t// Standard components\r\n"
     "#include ""afxprint.rc""\t// printing/print preview resources\r\n"
+    "#endif\r\n"
     "\0"
 END
 
@@ -73,8 +73,8 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_DVITYPE             ICON                    "res\\dvidoc.ico"
 IDR_MAINFRAME           ICON                    "res\\yap.ico"
+IDR_DVITYPE             ICON                    "res\\dvidoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -912,6 +912,16 @@ IDR_MANIFEST            RT_MANIFEST             "res\\yap.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Cursor
+//
+
+IDC_MAG                 CURSOR                  "res\\mag.cur"
+IDC_HAND_TOOL           CURSOR                  "res\\hand.cur"
+IDC_PRESSED_HAND        CURSOR                  "res\\pressed_hand.cur"
+IDC_HAND_POINT          CURSOR                  "res\\H_POINT.CUR"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -1072,14 +1082,18 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-#include "res\yap.rc2"  // non-Microsoft Visual C++ edited resources
-
 #define _AFX_NO_SPLITTER_RESOURCES
 #define _AFX_NO_OLE_RESOURCES
 #define _AFX_NO_TRACKER_RESOURCES
 #define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#include "res\yap.rc2"  // non-Microsoft Visual C++ edited resources
 #include "afxres.rc"  	// Standard components
 #include "afxprint.rc"	// printing/print preview resources
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

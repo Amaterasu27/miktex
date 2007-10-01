@@ -7,6 +7,9 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
 #include "afxres.h"
 #include "mikui-version.h"
 #include "miktex/version.h"
@@ -62,6 +65,9 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "#include ""mikui-version.h""\r\n"
     "#include ""miktex/version.h""\r\n"
@@ -79,7 +85,9 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#include ""res\\mikui.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+#ifndef _AFXDLL
     "#include ""afxres.rc""     // Standard components\r\n"
+#endif
     "#endif\r\n"
     "\0"
 END

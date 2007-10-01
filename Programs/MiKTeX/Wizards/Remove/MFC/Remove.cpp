@@ -34,7 +34,7 @@ PathName logFileName;
 
 BEGIN_MESSAGE_MAP(RemoveWizardApp, CWinApp)
 #if 0
-  ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+  ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 #endif
 END_MESSAGE_MAP();
 
@@ -57,7 +57,24 @@ RemoveWizardApp theApp;
 BOOL
 RemoveWizardApp::InitInstance ()
 {
-  InitCommonControls ();
+  INITCOMMONCONTROLSEX initCtrls;
+
+  initCtrls.dwSize = sizeof(initCtrls);
+  initCtrls.dwICC = ICC_WIN95_CLASSES;
+
+  if (! InitCommonControlsEx(&initCtrls))
+    {
+      AfxMessageBox (T_("The application could not be initialized (1)."),
+		     MB_ICONSTOP | MB_OK);
+      return (FALSE);
+    }
+
+  if (FAILED(CoInitialize(0)))
+    {
+      AfxMessageBox (T_("The application could not be initialized (2)."),
+		     MB_ICONSTOP | MB_OK);
+      return (FALSE);
+    }
 
   try
     {

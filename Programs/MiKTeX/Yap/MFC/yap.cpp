@@ -244,11 +244,11 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
    _________________________________________________________________________ */
 
 BEGIN_MESSAGE_MAP(YapApplication, CWinApp)
-  ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-  ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
-  ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
-  ON_COMMAND(ID_VIEW_TRACE, OnViewTrace)
-  ON_UPDATE_COMMAND_UI(ID_VIEW_TRACE, OnUpdateViewTrace)
+  ON_COMMAND(ID_APP_ABOUT, &YapApplication::OnAppAbout)
+  ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
+  ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
+  ON_COMMAND(ID_VIEW_TRACE, &YapApplication::OnViewTrace)
+  ON_UPDATE_COMMAND_UI(ID_VIEW_TRACE, &YapApplication::OnUpdateViewTrace)
   ON_COMMAND(ID_REGISTER_MIKTEX, &YapApplication::OnRegisterMiKTeX)
 END_MESSAGE_MAP();
 
@@ -312,15 +312,29 @@ namespace {
 BOOL
 YapApplication::InitInstance ()
 {
-  if (! CWinApp::InitInstance())
+  INITCOMMONCONTROLSEX initCtrls;
+  initCtrls.dwSize = sizeof(initCtrls);
+  initCtrls.dwICC = ICC_WIN95_CLASSES;
+  if (! InitCommonControlsEx(&initCtrls))
     {
+      AfxMessageBox (T_("The application could not be initialized (1)."),
+		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
-  if (FAILED(CoInitialize(0)))
-  {
-    return (FALSE);
-  }
+  if (! CWinApp::InitInstance())
+    {
+      AfxMessageBox (T_("The application could not be initialized (2)."),
+		     MB_ICONSTOP | MB_OK);
+      return (FALSE);
+    }
+
+  if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED)))
+    {
+      AfxMessageBox (T_("The application could not be initialized (3)."),
+		     MB_ICONSTOP | MB_OK);
+      return (FALSE);
+    }
 
   try
     {

@@ -1,6 +1,6 @@
 /* PropSheet.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -75,7 +75,7 @@ PropSheet::OnInitDialog ()
   BOOL result = CPropertySheet::OnInitDialog();
   try
     {
-      HICON hIcon = AfxGetApp()->LoadIcon(IDI_MO);
+      HICON hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
       if (hIcon == 0)
 	{
 	  FATAL_WINDOWS_ERROR (T_("CWinApp::LoadIcon"), 0);

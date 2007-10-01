@@ -105,7 +105,7 @@ UpdateWizard::OnInitDialog ()
   BOOL ret = CPropertySheet::OnInitDialog();
   try
     {
-      SetIcon (AfxGetApp()->LoadIcon (IDI_UPDATE), TRUE);
+      SetIcon (AfxGetApp()->LoadIcon (IDR_MAINFRAME), TRUE);
       CString title;
       if (! title.LoadString(g_upgrading ? IDS_UPGRADEWIZ : IDS_UPDATEWIZ))
 	{

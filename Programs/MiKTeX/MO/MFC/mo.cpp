@@ -1,6 +1,6 @@
 /* mo.cpp: MiKTeX Options
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -32,7 +32,7 @@ MiKTeXOptionsApplication theApp;
    _________________________________________________________________________ */
 
 BEGIN_MESSAGE_MAP(MiKTeXOptionsApplication, CWinApp)
-  ON_COMMAND (ID_HELP, CWinApp::OnHelp)
+  ON_COMMAND (ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP ();
 
 /* _________________________________________________________________________
@@ -90,8 +90,8 @@ MiKTeXOptionsApplication::InitInstance ()
 	INT_PTR ret = dlg.DoModal();
 	if (ret == IDOK
 	    && dlg.MustBuildFormats()
-	    && (AfxMessageBox("To apply the new settings, \
-it is necessary to rebuild the format files.",
+	    && (AfxMessageBox("\
+To apply the new settings, it is necessary to rebuild the format files.",
 			      MB_OKCANCEL)
 		== IDOK))
 	  {
