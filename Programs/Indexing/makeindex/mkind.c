@@ -420,7 +420,7 @@ int     open_fn;
 	    if ((idx_fn = (char *) malloc(STRING_MAX)) == NULL)
 		FATAL("Not enough core...abort.\n", "");
 #if defined(MIKTEX)
-	    SPRINTF_S(idx_fn, sizeof(idx_fn) / sizeof(idx_fn[0]), "%s%s", base, INDEX_IDX);
+	    SPRINTF_S(idx_fn, STRING_MAX, "%s%s", base, INDEX_IDX);
 #else
 	    sprintf(idx_fn, "%s%s", base, INDEX_IDX);
 #endif
