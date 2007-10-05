@@ -2095,19 +2095,19 @@ IniTeXMFApp::EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszName)
 	{
 	  configFile += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
 	}
-      configFile += fileName;
+      configFile += lpszName;
       configFile.SetExtension (T_(".ini"), false);
-      if (! File::Exists(configFile))
-	{
-	  if (! pSession->TryCreateFromTemplate(configFile))
-	    {
-	      Directory::Create (PathName(configFile).RemoveFileSpec());
-	      StreamWriter writer (configFile);
-	      writer.Close ();
-	      Fndb::Add (configFile);
-	    }
-	}
       haveConfigFile = true;
+    }
+  if (! File::Exists(configFile))
+    {
+      if (! pSession->TryCreateFromTemplate(configFile))
+	{
+	  Directory::Create (PathName(configFile).RemoveFileSpec());
+	  StreamWriter writer (configFile);
+	  writer.Close ();
+	  Fndb::Add (configFile);
+	}
     }
   CommandLineBuilder commandLine;
   commandLine.AppendArgument (configFile);
