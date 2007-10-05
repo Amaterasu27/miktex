@@ -56,7 +56,7 @@ BEGIN
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
-    "#include ""res\\yap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""@CMAKE_CURRENT_SOURCE_DIR@/res/yap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
     "#include ""afxres.rc""  \t// Standard components\r\n"
     "#include ""afxprint.rc""\t// printing/print preview resources\r\n"
     "#endif\r\n"
@@ -73,16 +73,16 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\yap.ico"
-IDR_DVITYPE             ICON                    "res\\dvidoc.ico"
+IDR_MAINFRAME           ICON                    "@CMAKE_CURRENT_SOURCE_DIR@/res/yap.ico"
+IDR_DVITYPE             ICON                    "@CMAKE_CURRENT_SOURCE_DIR@/res/dvidoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP                  "res\\toolbar.bmp"
-IDR_FULLSCREEN          BITMAP                  "res\\fullscreen.bmp"
+IDR_MAINFRAME           BITMAP                  "@CMAKE_CURRENT_SOURCE_DIR@/res/toolbar.bmp"
+IDR_FULLSCREEN          BITMAP                  "@CMAKE_CURRENT_SOURCE_DIR@/res/fullscreen.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -155,7 +155,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Keyboard Map\t?",            ID_HELP_KEYBOARD
         MENUITEM SEPARATOR
-        MENUITEM "Register MiKTeX...",          ID_REGISTER_MIKTEX
+        MENUITEM "&Give Back...",               ID_REGISTER_MIKTEX
         MENUITEM SEPARATOR
         MENUITEM "&About Yap...",               ID_APP_ABOUT
     END
@@ -247,7 +247,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Keyboard Map\t?",            ID_HELP_KEYBOARD
         MENUITEM SEPARATOR
-        MENUITEM "Register MiKTeX...",          ID_REGISTER_MIKTEX
+        MENUITEM "&Give Back...",               ID_REGISTER_MIKTEX
         MENUITEM SEPARATOR
         MENUITEM "&About Yap...",               ID_APP_ABOUT
     END
@@ -400,8 +400,8 @@ BEGIN
     LTEXT           "Yap is free software. You are welcome to redistribute it under certain conditions. See the help file for more information.\n\nYap comes WITH ABSOLUTELY NO WARRANTY OF ANY KIND.",IDC_STATIC,45,45,166,53,SS_NOPREFIX
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,45,102,166,1
     DEFPUSHBUTTON   "OK",IDOK,216,7,50,14,WS_GROUP
-    LTEXT           "Yap is a part of the MiKTeX distribution. You can support the project by becoming a registered user.",IDC_STATIC,45,111,166,16
-    PUSHBUTTON      "&Register...",ID_REGISTER_MIKTEX,45,130,50,14
+    LTEXT           "Yap is a part of the MiKTeX distribution. Please support the project by giving back something. Thank you!",IDC_STATIC,45,111,166,25
+    PUSHBUTTON      "&Give Back...",ID_REGISTER_MIKTEX,45,140,166,14
 END
 
 IDD_GOTOPAGE DIALOGEX 0, 0, 208, 62
@@ -908,17 +908,17 @@ END
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "res\\yap.manifest"
+IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/yap.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Cursor
 //
 
-IDC_MAG                 CURSOR                  "res\\mag.cur"
-IDC_HAND_TOOL           CURSOR                  "res\\hand.cur"
-IDC_PRESSED_HAND        CURSOR                  "res\\pressed_hand.cur"
-IDC_HAND_POINT          CURSOR                  "res\\H_POINT.CUR"
+IDC_MAG                 CURSOR                  "@CMAKE_CURRENT_SOURCE_DIR@/res/mag.cur"
+IDC_HAND_TOOL           CURSOR                  "@CMAKE_CURRENT_SOURCE_DIR@/res/hand.cur"
+IDC_PRESSED_HAND        CURSOR                  "@CMAKE_CURRENT_SOURCE_DIR@/res/pressed_hand.cur"
+IDC_HAND_POINT          CURSOR                  "@CMAKE_CURRENT_SOURCE_DIR@/res/H_POINT.CUR"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -929,9 +929,13 @@ STRINGTABLE
 BEGIN
     IDP_FILE_ASSOCIATION    "Yap is not currently registered as the default DVI viewer.\nDo you wish to register Yap as the default DVI viewer?"
     IDS_PS_DISABLED         "The document cannot be rendered properly because the current render method does not support PostScript specials.\n\nTemporarily switch to the Dvips render method?"
-    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.@MIKTEX_SERIES_STR@\nDVI File"
-    IDR_MAINFRAME           "Yap"
     IDP_CHOOSE_EDITOR       "You must choose an editor so that Yap can perform the requested operation. Do you want to choose an editor now?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "Yap"
+    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.@MIKTEX_SERIES_STR@\nDVI File"
 END
 
 STRINGTABLE 
@@ -939,16 +943,6 @@ BEGIN
     AFX_IDS_APP_TITLE       "Yap"
     AFX_IDS_IDLEMESSAGE     "For Help, press F1"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_INDICATOR_EXT        "EXT"
-    ID_INDICATOR_CAPS       "CAP"
-    ID_INDICATOR_NUM        "NUM"
-    ID_INDICATOR_SCRL       "SCRL"
-    ID_INDICATOR_OVR        "OVR"
-    ID_INDICATOR_REC        "REC"
 END
 
 STRINGTABLE 
@@ -1014,11 +1008,22 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_REGISTER_MIKTEX      "You can support the MiKTeX project."
     ID_VIEW_TRACE           "Turns tracing on or off.\nTrace on/off"
+    ID_BACK                 "Returns to the last page.\nBack"
+    ID_DARKER_TEXT          "Makes the text more like the foreground.\nDarker Text"
+    ID_DOUBLE_PAGE          "Displays two pages at a time.\nDouble Page Layout"
+    ID_FILE_DVIPS           "Prints the active document on a PostScript printer\nPrint PostScript"
+    ID_FIRST_PAGE           "Goes to the first page.\nFirst Page"
+    ID_FORWARD              "Goes to the page you viewed before clicking Back.\nForward"
+    ID_FULLSCREEN           "Maximizes window to full screen."
 END
 
 STRINGTABLE 
 BEGIN
+    ID_GOTO_PAGE            "Opens the pager control.\nRandom page"
+    ID_HELP_KEYBOARD        "Displays all Yap keyboard shortcuts.\nYap Shortcuts"
+    ID_INDICATOR_COMMAND_PREFIX "9999"
     ID_INDICATOR_PAGE_M_OF_N "Page: 000 (000th of 000)"
     ID_INDICATOR_POINT      "999.99,999.99bp"
     ID_INDICATOR_SOURCE     "(no source links found)"
@@ -1028,20 +1033,6 @@ BEGIN
     ID_NEXT_PAGE            "Goes to the next page.\nNext Page"
     ID_PAGE_EDITOR          "Invokes an editor to edit the source file.\nEdit"
     ID_PREV_PAGE            "Goes to the previous page.\nPrevious Page"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_BACK                 "Returns to the last page.\nBack"
-    ID_DARKER_TEXT          "Makes the text more like the foreground.\nDarker Text"
-    ID_DOUBLE_PAGE          "Displays two pages at a time.\nDouble Page Layout"
-    ID_FILE_DVIPS           "Prints the active document on a PostScript printer\nPrint PostScript"
-    ID_FIRST_PAGE           "Goes to the first page.\nFirst Page"
-    ID_FORWARD              "Goes to the page you viewed before clicking Back.\nForward"
-    ID_FULLSCREEN           "Maximizes window to full screen."
-    ID_GOTO_PAGE            "Opens the pager control.\nRandom page"
-    ID_HELP_KEYBOARD        "Displays all Yap keyboard shortcuts.\nYap Shortcuts"
-    ID_INDICATOR_COMMAND_PREFIX "9999"
 END
 
 STRINGTABLE 
@@ -1058,18 +1049,13 @@ BEGIN
     ID_ZOOM_IN              "Zooms in.\nZoom in"
     ID_ZOOM_OUT             "Zooms out.\nZoom out"
     ID_CONTINUOUS_SINGLE    "Displays pages in one vertical column.\nContinuous/Single Layout"
-    ID_CONTINUOUS_DOUBLE    "Displays pages in two vertical columns.\nContinuous/Double Layout"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_CONTINUOUS_DOUBLE    "Displays pages in two vertical columns.\nContinuous/Double Layout"
     ID_PAGEMODE_PK          "Uses PK fonts to render the DVI file."
     ID_PAGEMODE_DVIPS       "Uses Dvips to render the DVI file."
-END
-
-STRINGTABLE 
-BEGIN
-    ID_REGISTER_MIKTEX      "Opens the registration page."
 END
 
 #endif    // English (U.S.) resources
