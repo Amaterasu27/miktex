@@ -48,7 +48,7 @@ run on your system.</para>
 <title>Memory settings</title>
 
 <para>New command-line parameters have been introduced to control the sizes
-of internel arrays:</para>
+of internal arrays:</para>
 
 <variablelist>
 &optionextramembot;
