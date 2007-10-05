@@ -38,6 +38,7 @@
 #include "miktex/paths.h"
 #include "miktex/reg.h"
 #include "miktex/trace.h"
+#include "miktex/urls.h"
 
 using namespace MiKTeX::Core;
 

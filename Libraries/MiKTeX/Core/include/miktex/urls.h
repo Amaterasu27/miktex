@@ -1,6 +1,6 @@
 /* urls.h: hard-coded urls
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,8 +33,15 @@
 
 #define MIKTEX_URL_WWW MIKTEX_URL_WWW_NO_SLASH MIKTEXTEXT("/")
 
-#define MIKTEX_URL_WWW_REGISTRATION \
+#define MIKTEX_URL_WWW_GIVE_BACK \
+  MIKTEX_URL_WWW MIKTEXTEXT("giveback.aspx")
+
+#if 1
+#  define MIKTEX_URL_WWW_REGISTRATION MIKTEX_URL_WWW_GIVE_BACK
+#else
+#  define MIKTEX_URL_WWW_REGISTRATION \
   MIKTEX_URL_WWW MIKTEXTEXT("Registration.aspx")
+#endif
 
 #define MIKTEX_URL_WWW_KNOWN_ISSUES \
   MIKTEX_URL_WWW MIKTEXTEXT(MIKTEX_SERIES_STR) MIKTEXTEXT("/Issues.aspx")

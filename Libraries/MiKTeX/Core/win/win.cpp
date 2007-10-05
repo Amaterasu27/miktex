@@ -2780,7 +2780,11 @@ Utils::RegisterMiKTeXUser ()
 {
   ShellExecute (0,
 		T_("open"),
-		T_("http://miktex.org/Registration.aspx"),
+#if 1
+		MIKTEX_URL_WWW_GIVE_BACK,
+#else
+		MIKTEX_URL_WWW_REGISTRATION,
+#endif
 		0,
 		0,
 		SW_SHOW);
