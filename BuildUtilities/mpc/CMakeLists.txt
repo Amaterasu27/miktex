@@ -45,6 +45,7 @@ target_link_libraries(mpc
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpc
+    Wldap32
     fdi
     version
     wininet
