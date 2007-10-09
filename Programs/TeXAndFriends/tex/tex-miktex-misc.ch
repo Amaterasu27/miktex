@@ -1457,7 +1457,6 @@ if cur_ext="" then cur_ext:=".tex";
     if a_open_in(cur_file) then goto done;
     end;
 @y
-  if a_open_in(cur_file) then goto done;
 @z
 
 @x

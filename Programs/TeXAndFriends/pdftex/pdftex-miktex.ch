@@ -52,6 +52,19 @@ program PDFTEX; {all file names are defined dynamically}
 
 % _____________________________________________________________________________
 %
+% [18.240]
+% _____________________________________________________________________________
+
+@x
+@d frozen_null_font=frozen_control_sequence+11
+  {permanent `\.{\\nullfont}'}
+@y
+@d frozen_null_font=frozen_control_sequence+12
+  {permanent `\.{\\nullfont}'}
+@z
+
+% _____________________________________________________________________________
+%
 % [19.286]
 % _____________________________________________________________________________
 
@@ -66,13 +79,12 @@ program PDFTEX; {all file names are defined dynamically}
 % [27.449]
 % _____________________________________________________________________________
 
-% todo
-
 @x
     if shell_enabled_p then cur_val := 1
     else cur_val := 0;
 @y
-    cur_val := 0;
+    if miktex_write18_p then cur_val := 1
+    else cur_val := 0;
 @z
 
 % _____________________________________________________________________________
