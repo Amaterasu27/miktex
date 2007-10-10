@@ -2081,6 +2081,38 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	}
     }
   RepositoryInfo repositoryInfo;
+#if 1
+  RepositorySoapProxy repositorySoapProxy;
+  ProxySettings proxySettings;
+  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+    {
+      repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
+      repositorySoapProxy.proxy_port = proxySettings.port;
+      if (proxySettings.authenticationRequired)
+	{
+	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+	}
+    }
+  tstring url2 = url;
+  ClientInfo<mtrep4__ClientInfo> clientInfo;
+  _mtrep4__VerifyRepository arg;
+  arg.clientInfo = &clientInfo;
+  arg.url = &url2;
+  _mtrep4__VerifyRepositoryResponse resp;
+  if (repositorySoapProxy.VerifyRepository(&arg, &resp) != SOAP_OK)
+    {
+      FATAL_SOAP_ERROR (&repositorySoapProxy);
+    }
+  if (! resp.VerifyRepositoryResult)
+    {
+      FATAL_MPM_ERROR
+	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	 T_("Not a valid remote package repository."),
+	 url.c_str());
+    }
+  repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
+#else
   if (! TryGetRepositoryInfo(url, repositoryInfo))
     {
       FATAL_MPM_ERROR
@@ -2116,6 +2148,7 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	 T_("The remote package repository is not synchronized."),
 	 url.c_str());
     }
+#endif
   repositories.push_back (repositoryInfo);
   return (repositoryInfo);
 }

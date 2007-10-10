@@ -9,5 +9,6 @@ SOAP_NMAC struct Namespace namespaces[] =
 	{"mtrep", "http://miktex.org/2006/06/repository", NULL, NULL},
 	{"mtrep2", "http://miktex.org/2007/03/repository", NULL, NULL},
 	{"mtrep3", "http://miktex.org/2007/07/repository", NULL, NULL},
+	{"mtrep4", "http://miktex.org/2007/10/repository", NULL, NULL},
 	{NULL, NULL, NULL, NULL}
 };
