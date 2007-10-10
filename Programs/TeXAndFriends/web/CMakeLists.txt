@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,19 +22,35 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/inittangle.p
-  ${CMAKE_CURRENT_BINARY_DIR}/tangle.p
-  COPYONLY
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+  COMMAND
+	${CMAKE_COMMAND} -E copy_if_different
+		${CMAKE_CURRENT_SOURCE_DIR}/inittangle.p
+		${CMAKE_CURRENT_BINARY_DIR}/tangle.p
+  COMMAND
+	${CMAKE_COMMAND} -E copy_if_different
+		${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
+		${CMAKE_CURRENT_BINARY_DIR}/tangle.pool
+  COMMAND
+	${TOUCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/inittangle.p
+	${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
+  VERBATIM
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
-  ${CMAKE_CURRENT_BINARY_DIR}/tangle.pool
-  COPYONLY
+add_custom_target(
+  bootstrap
+  ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
 )
 
 create_web_app(Tangle)
 create_web_app(Weave)
 
+add_dependencies(${tangle_dll_name} bootstrap)
 add_dependencies(${weave_dll_name} tangle)

@@ -20,28 +20,13 @@
 set(${gnu_dll_name}_sources
   basename.c
   getopt.c
-  getopt.h
   getopt1.c
-  getopt_int.h
-  gnu-miktex.h
-  gnu-version.h
-  internal.h
   substring.c
 )
 
 set(${regex_dll_name}_sources
-  regcomp.c
-  regex-version.h
   regex.c
-  regex.h
-  regex_internal.c
-  regex_internal.h
-  regexec.c
 )
-
-set_source_files_properties(
-  regcomp.c regex_internal.c regexec.c
-  PROPERTIES HEADER_FILE_ONLY TRUE)
 
 if(NATIVE_WINDOWS)
   configure_file(
