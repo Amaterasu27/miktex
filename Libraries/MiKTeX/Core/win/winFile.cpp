@@ -83,6 +83,7 @@ Directory::Exists (/*[in]*/ const PathName &	path)
   unsigned long error = ::GetLastError();
   if (! (error == ERROR_FILE_NOT_FOUND
 	 || error == ERROR_INVALID_NAME
+	 || error == ERROR_BAD_NETPATH
 	 || error == ERROR_PATH_NOT_FOUND))
     {
       FATAL_WINDOWS_ERROR (T_("GetFileAttributes"), path.Get());
