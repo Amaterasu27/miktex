@@ -156,7 +156,7 @@ typedef struct {
 #define node_height(node)			node[height_offset].c4p_P2.c4p_int
 #define native_length(node)			node[native_info_offset].c4p_P2.qqqq.b2
 #define native_font(node)			node[native_info_offset].c4p_P2.qqqq.b1
-#define native_glyph_count(node)	node[native_glyph_info_offset].c4p_P2.qqqq.b3
+#define native_glyph_count(node)	node[native_info_offset].c4p_P2.qqqq.b3
 #define native_glyph_info_ptr(node)	node[native_glyph_info_offset].c4p_P2.ptr
 #else
 #define node_width(node)			node[width_offset].cint
