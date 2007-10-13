@@ -16,11 +16,6 @@
 /***************************************************************************/
 
 
-  /* define FIX_BYTECODE to implement the bytecode interpreter fixes */
-  /* needed to match Windows behaviour more accurately               */
-#define  FIX_BYTECODE
-
-
 #include <ft2build.h>
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_CALC_H
@@ -626,6 +621,10 @@
     exec->pts.n_points   = 0;
     exec->pts.n_contours = 0;
 
+    exec->zp1 = exec->pts;
+    exec->zp2 = exec->pts;
+    exec->zp0 = exec->pts;
+
     exec->instruction_trap = FALSE;
 
     return TT_Err_Ok;
@@ -1132,16 +1131,7 @@
     1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1
   };
 
-  static
-  const FT_Vector  Null_Vector = {0,0};
-
-
 #undef PACK
-
-
-#undef  NULL_Vector
-#define NULL_Vector  (FT_Vector*)&Null_Vector
-
 
 #if 1
 
@@ -1201,7 +1191,7 @@
     lo  = l;
 
     l   = lo + 0x2000U;
-    hi += (l < lo);
+    hi += l < lo;
 
     return ( hi << 18 ) | ( l >> 14 );
   }
@@ -2165,7 +2155,7 @@
       break;
     }
 
-    if ( (selector & 0x0F) == 0 )
+    if ( ( selector & 0x0F ) == 0 )
       CUR.threshold = CUR.period - 1;
     else
       CUR.threshold = ( (FT_Int)( selector & 0x0F ) - 4 ) * CUR.period / 8;
@@ -4663,7 +4653,7 @@
     FT_UShort  L, K;
 
 
-    L = (FT_UShort)(CUR.opcode - 0xB0 + 1);
+    L = (FT_UShort)( CUR.opcode - 0xB0 + 1 );
 
     if ( BOUNDS( L, CUR.stackSize + 1 - CUR.top ) )
     {
@@ -4688,7 +4678,7 @@
     FT_UShort  L, K;
 
 
-    L = (FT_UShort)(CUR.opcode - 0xB8 + 1);
+    L = (FT_UShort)( CUR.opcode - 0xB8 + 1 );
 
     if ( BOUNDS( L, CUR.stackSize + 1 - CUR.top ) )
     {
@@ -4831,32 +4821,7 @@
       if ( CUR.opcode & 1 )
         D = CUR_Func_project( CUR.zp0.cur + L, CUR.zp1.cur + K );
       else
-      {
-
-#ifdef FIX_BYTECODE
-
-        FT_Vector  vec1;
-
-
-        if ( CUR.GS.gep0 == 0 || CUR.GS.gep1 == 0 )
-          FT_ARRAY_COPY( CUR.twilight.orus,
-                         CUR.twilight.org,
-                         CUR.twilight.n_points );
-
-        /* get scaled orus coordinates */
-        vec1.x = TT_MULFIX( CUR.zp0.orus[L].x - CUR.zp1.orus[K].x,
-                            CUR.metrics.x_scale );
-        vec1.y = TT_MULFIX( CUR.zp0.orus[L].y - CUR.zp1.orus[L].y,
-                            CUR.metrics.y_scale );
-
-        D = CUR_fast_dualproj( &vec1 );
-
-#else
-
         D = CUR_Func_dualproj( CUR.zp0.org + L, CUR.zp1.org + K );
-
-#endif /* FIX_BYTECODE */
-      }
     }
 
     args[0] = D;
@@ -5109,25 +5074,25 @@
     A *= 64;
 
 #if 0
-    if ( (args[0] & 0x100) != 0 && CUR.metrics.pointSize <= A )
+    if ( ( args[0] & 0x100 ) != 0 && CUR.metrics.pointSize <= A )
       CUR.GS.scan_control = TRUE;
 #endif
 
-    if ( (args[0] & 0x200) != 0 && CUR.tt_metrics.rotated )
+    if ( ( args[0] & 0x200 ) != 0 && CUR.tt_metrics.rotated )
       CUR.GS.scan_control = TRUE;
 
-    if ( (args[0] & 0x400) != 0 && CUR.tt_metrics.stretched )
+    if ( ( args[0] & 0x400 ) != 0 && CUR.tt_metrics.stretched )
       CUR.GS.scan_control = TRUE;
 
 #if 0
-    if ( (args[0] & 0x800) != 0 && CUR.metrics.pointSize > A )
+    if ( ( args[0] & 0x800 ) != 0 && CUR.metrics.pointSize > A )
       CUR.GS.scan_control = FALSE;
 #endif
 
-    if ( (args[0] & 0x1000) != 0 && CUR.tt_metrics.rotated )
+    if ( ( args[0] & 0x1000 ) != 0 && CUR.tt_metrics.rotated )
       CUR.GS.scan_control = FALSE;
 
-    if ( (args[0] & 0x2000) != 0 && CUR.tt_metrics.stretched )
+    if ( ( args[0] & 0x2000 ) != 0 && CUR.tt_metrics.stretched )
       CUR.GS.scan_control = FALSE;
   }
 
@@ -5632,7 +5597,7 @@
     CUR.GS.rp1 = CUR.GS.rp0;
     CUR.GS.rp2 = point;
 
-    if ( (CUR.opcode & 1) != 0 )
+    if ( ( CUR.opcode & 1 ) != 0 )
       CUR.GS.rp0 = point;
   }
 
@@ -5704,7 +5669,7 @@
       return;
     }
 
-    /* UNDOCUMENTED!                                     */
+    /* XXX: UNDOCUMENTED!                                */
     /*                                                   */
     /* The behaviour of an MIAP instruction is quite     */
     /* different when used in the twilight zone.         */
@@ -5778,27 +5743,32 @@
     /* XXX: Is there some undocumented feature while in the */
     /*      twilight zone?                                  */
 
-#ifdef FIX_BYTECODE
+    /* XXX: UNDOCUMENTED: twilight zone special case */
 
+    if ( CUR.GS.gep0 == 0 || CUR.GS.gep1 == 0 )
+    {
+      FT_Vector*  vec1 = &CUR.zp1.org[point];
+      FT_Vector*  vec2 = &CUR.zp0.org[CUR.GS.rp0];
+
+
+      org_dist = CUR_Func_dualproj( vec1, vec2 );
+    }
+    else
     {
       FT_Vector*  vec1 = &CUR.zp1.orus[point];
       FT_Vector*  vec2 = &CUR.zp0.orus[CUR.GS.rp0];
 
 
-      if ( CUR.GS.gep0 == 0 || CUR.GS.gep1 == 0 )
-        FT_ARRAY_COPY( CUR.twilight.orus,
-                       CUR.twilight.org,
-                       CUR.twilight.n_points );
-
-      if ( CUR.metrics.x_scale == CUR.metrics.y_scale ) 
+      if ( CUR.metrics.x_scale == CUR.metrics.y_scale )
       {
         /* this should be faster */
         org_dist = CUR_Func_dualproj( vec1, vec2 );
         org_dist = TT_MULFIX( org_dist, CUR.metrics.x_scale );
       }
-      else 
+      else
       {
         FT_Vector  vec;
+
 
         vec.x = TT_MULFIX( vec1->x - vec2->x, CUR.metrics.x_scale );
         vec.y = TT_MULFIX( vec1->y - vec2->y, CUR.metrics.y_scale );
@@ -5806,13 +5776,6 @@
         org_dist = CUR_fast_dualproj( &vec );
       }
     }
-
-#else
-
-    org_dist = CUR_Func_dualproj( CUR.zp1.org + point,
-                                  CUR.zp0.org + CUR.GS.rp0 );
-
-#endif /* FIX_BYTECODE */
 
     /* single width cut-in test */
 
@@ -6165,14 +6128,13 @@
 
   /* SOMETIMES, DUMBER CODE IS BETTER CODE */
 
-#ifdef FIX_BYTECODE
-
   static void
   Ins_IP( INS_ARG )
   {
     FT_F26Dot6  old_range, cur_range;
     FT_Vector*  orus_base;
     FT_Vector*  cur_base;
+    FT_Int      twilight;
 
     FT_UNUSED_ARG;
 
@@ -6184,26 +6146,30 @@
     }
 
     /*
-     * We need to deal in a special way with the twilight zone.  The easiest
-     * solution is simply to copy the coordinates from `org' to `orus'
-     * whenever a font tries to perform intersections based on some of its
-     * points.
-     *
+     * We need to deal in a special way with the twilight zone.
      * Otherwise, by definition, the value of CUR.twilight.orus[n] is (0,0),
-     * whatever value of `n'.
+     * for every n.
      */
-    if ( CUR.GS.gep0 == 0 || CUR.GS.gep1 == 0 || CUR.GS.gep2 == 0 )
-      FT_ARRAY_COPY( CUR.twilight.orus,
-                     CUR.twilight.org,
-                     CUR.twilight.n_points );
+    twilight = CUR.GS.gep0 == 0 || CUR.GS.gep1 == 0 || CUR.GS.gep2 == 0;
 
-    orus_base = &CUR.zp0.orus[CUR.GS.rp1];
-    cur_base  = &CUR.zp0.cur[CUR.GS.rp1];
+    if ( BOUNDS( CUR.GS.rp1, CUR.zp0.n_points ) )
+    {
+      if ( CUR.pedantic_hinting )
+        CUR.error = TT_Err_Invalid_Reference;
+      return;
+    }
 
-    /* XXX: There are some glyphs in some braindead but popular  */
-    /*      fonts out there (e.g. [aeu]grave in monotype.ttf)    */
-    /*      calling IP[] with bad values of rp[12].              */
-    /*      Do something sane when this odd thing happens.       */
+    if ( twilight )
+      orus_base = &CUR.zp0.org[CUR.GS.rp1];
+    else
+      orus_base = &CUR.zp0.orus[CUR.GS.rp1];
+
+    cur_base = &CUR.zp0.cur[CUR.GS.rp1];
+
+    /* XXX: There are some glyphs in some braindead but popular */
+    /*      fonts out there (e.g. [aeu]grave in monotype.ttf)   */
+    /*      calling IP[] with bad values of rp[12].             */
+    /*      Do something sane when this odd thing happens.      */
     if ( BOUNDS( CUR.GS.rp1, CUR.zp0.n_points ) ||
          BOUNDS( CUR.GS.rp2, CUR.zp1.n_points ) )
     {
@@ -6212,8 +6178,14 @@
     }
     else
     {
-      old_range = CUR_Func_dualproj( &CUR.zp1.orus[CUR.GS.rp2], orus_base );
-      cur_range = CUR_Func_project ( &CUR.zp1.cur[CUR.GS.rp2],  cur_base );
+      if ( twilight )
+        old_range = CUR_Func_dualproj( &CUR.zp1.org[CUR.GS.rp2],
+                                       orus_base );
+      else
+        old_range = CUR_Func_dualproj( &CUR.zp1.orus[CUR.GS.rp2],
+                                       orus_base );
+
+      cur_range = CUR_Func_project ( &CUR.zp1.cur[CUR.GS.rp2], cur_base );
     }
 
     for ( ; CUR.GS.loop > 0; --CUR.GS.loop )
@@ -6233,104 +6205,21 @@
         continue;
       }
 
-      org_dist = CUR_Func_dualproj( &CUR.zp2.orus[point], orus_base );
+      if ( twilight )
+        org_dist = CUR_Func_dualproj( &CUR.zp2.org[point], orus_base );
+      else
+        org_dist = CUR_Func_dualproj( &CUR.zp2.orus[point], orus_base );
+
       cur_dist = CUR_Func_project ( &CUR.zp2.cur[point], cur_base );
-      new_dist = (old_range != 0)
+      new_dist = ( old_range != 0 )
                    ? TT_MULDIV( org_dist, cur_range, old_range )
                    : cur_dist;
 
-      CUR_Func_move( &CUR.zp2, point, new_dist - cur_dist );
+      CUR_Func_move( &CUR.zp2, (FT_UShort)point, new_dist - cur_dist );
     }
     CUR.GS.loop = 1;
     CUR.new_top = CUR.args;
   }
-
-#else /* !FIX_BYTECODE */
-
-  static void
-  Ins_IP( INS_ARG )
-  {
-    FT_F26Dot6  org_a, org_b, org_x,
-                cur_a, cur_b, cur_x,
-                distance = 0;
-    FT_UShort   point;
-
-    FT_UNUSED_ARG;
-
-
-    if ( CUR.top < CUR.GS.loop )
-    {
-      CUR.error = TT_Err_Invalid_Reference;
-      return;
-    }
-
-    /* XXX: There are some glyphs in some braindead but popular  */
-    /*      fonts out there (e.g. [aeu]grave in monotype.ttf)    */
-    /*      calling IP[] with bad values of rp[12].              */
-    /*      Do something sane when this odd thing happens.       */
-
-    if ( BOUNDS( CUR.GS.rp1, CUR.zp0.n_points ) ||
-         BOUNDS( CUR.GS.rp2, CUR.zp1.n_points ) )
-    {
-      org_a = cur_a = 0;
-      org_b = cur_b = 0;
-    }
-    else
-    {
-      org_a = CUR_fast_dualproj( &CUR.zp0.org[CUR.GS.rp1] );
-      org_b = CUR_fast_dualproj( &CUR.zp1.org[CUR.GS.rp2] );
-
-      cur_a = CUR_fast_project( &CUR.zp0.cur[CUR.GS.rp1] );
-      cur_b = CUR_fast_project( &CUR.zp1.cur[CUR.GS.rp2] );
-    }
-
-    while ( CUR.GS.loop > 0 )
-    {
-      CUR.args--;
-
-      point = (FT_UShort)CUR.stack[CUR.args];
-      if ( BOUNDS( point, CUR.zp2.n_points ) )
-      {
-        if ( CUR.pedantic_hinting )
-        {
-          CUR.error = TT_Err_Invalid_Reference;
-          return;
-        }
-      }
-      else
-      {
-        org_x = CUR_fast_dualproj( &CUR.zp2.org[point] );
-        cur_x = CUR_fast_project ( &CUR.zp2.cur[point] );
-
-        if ( ( org_a <= org_b && org_x <= org_a ) ||
-             ( org_a >  org_b && org_x >= org_a ) )
-
-          distance = ( cur_a - org_a ) + ( org_x - cur_x );
-
-        else if ( ( org_a <= org_b  &&  org_x >= org_b ) ||
-                  ( org_a >  org_b  &&  org_x <  org_b ) )
-
-          distance = ( cur_b - org_b ) + ( org_x - cur_x );
-
-        else if ( org_b != org_a )
-           /* note: it seems that rounding this value isn't a good */
-           /*       idea (cf. width of capital `S' in Times)       */
-
-           distance = TT_MULDIV( cur_b - cur_a,
-                                 org_x - org_a,
-                                 org_b - org_a ) + ( cur_a - cur_x );
-
-        CUR_Func_move( &CUR.zp2, point, distance );
-      }
-
-      CUR.GS.loop--;
-    }
-
-    CUR.GS.loop = 1;
-    CUR.new_top = CUR.args;
-  }
-
-#endif /* !FIX_BYTECODE */
 
 
   /*************************************************************************/
@@ -6373,6 +6262,7 @@
     FT_Vector*  orgs;   /* original and current coordinate */
     FT_Vector*  curs;   /* arrays                          */
     FT_Vector*  orus;
+    FT_UInt     max_points;
 
   } IUP_WorkerRec, *IUP_Worker;
 
@@ -6411,6 +6301,10 @@
 
 
     if ( p1 > p2 )
+      return;
+
+    if ( BOUNDS( ref1, worker->max_points ) ||
+         BOUNDS( ref2, worker->max_points ) )
       return;
 
     orus1 = worker->orus[ref1].x;
@@ -6512,6 +6406,10 @@
     FT_UNUSED_ARG;
 
 
+    /* ignore empty outlines */
+    if ( CUR.pts.n_contours == 0 )
+      return;
+
     if ( CUR.opcode & 1 )
     {
       mask   = FT_CURVE_TAG_TOUCH_X;
@@ -6526,6 +6424,7 @@
       V.curs = (FT_Vector*)( (FT_Pos*)CUR.pts.cur + 1 );
       V.orus = (FT_Vector*)( (FT_Pos*)CUR.pts.orus + 1 );
     }
+    V.max_points = CUR.pts.n_points;
 
     contour = 0;
     point   = 0;
@@ -6535,7 +6434,7 @@
       end_point   = CUR.pts.contours[contour] - CUR.pts.first_point;
       first_point = point;
 
-      while ( point <= end_point && (CUR.pts.tags[point] & mask) == 0 )
+      while ( point <= end_point && ( CUR.pts.tags[point] & mask ) == 0 )
         point++;
 
       if ( point <= end_point )
