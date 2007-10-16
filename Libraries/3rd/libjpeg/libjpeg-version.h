@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 1733
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "6b"
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

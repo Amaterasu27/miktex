@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2730
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "20070518"
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

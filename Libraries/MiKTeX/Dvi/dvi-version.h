@@ -19,4 +19,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2820
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

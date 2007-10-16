@@ -26,7 +26,7 @@
 #include "MiKTeX/Core/Environment"
 
 #include "fnamedb.h"
-#include "miktex/version.h"
+#include "MiKTeX/Core/Version"
 
 // index of the hidden MPM root
 #define MPM_ROOT static_cast<unsigned>(GetNumberOfTEXMFRoots())

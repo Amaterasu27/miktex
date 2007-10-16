@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2079
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "8.1"
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

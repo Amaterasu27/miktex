@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 1720
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "1.1.0"
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

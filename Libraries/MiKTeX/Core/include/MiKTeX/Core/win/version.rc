@@ -25,7 +25,7 @@
 #  include <winver.h>
 #endif
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>
 
 #define VER_PRODUCTNAME_STR MIKTEX_PRODUCTNAME_STR
 

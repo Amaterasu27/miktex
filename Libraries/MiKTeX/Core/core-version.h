@@ -21,4 +21,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2840
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>

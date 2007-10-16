@@ -18,8 +18,8 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/version.h.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/version.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version
 )
 
 configure_file(

@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>
 
 #if ! defined(MIKTEX__43B34B76_6294_45D5_B2BD_634D4B012B33__)
 #define MIKTEX__43B34B76_6294_45D5_B2BD_634D4B012B33__

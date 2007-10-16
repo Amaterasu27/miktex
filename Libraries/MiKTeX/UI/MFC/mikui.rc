@@ -12,7 +12,7 @@
 #endif
 #include "afxres.h"
 #include "mikui-version.h"
-#include "miktex/version.h"
+#include "MiKTeX/Core/Version"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -70,7 +70,7 @@ BEGIN
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "#include ""mikui-version.h""\r\n"
-    "#include ""miktex/version.h""\r\n"
+    "#include ""MiKTeX/Core/Version""\r\n"
     "\0"
 END
 

@@ -19,4 +19,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2039
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>
