@@ -53,7 +53,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/First
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Registry
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/test.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Test
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/trace.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/log.cpp

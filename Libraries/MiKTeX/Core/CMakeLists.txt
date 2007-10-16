@@ -71,7 +71,7 @@ set(${core_dll_name}_sources
   include/MiKTeX/Core/Environment
   include/MiKTeX/Core/First
   include/MiKTeX/Core/Registry
-  include/miktex/test.h
+  include/MiKTeX/Core/Test
   include/miktex/trace.h
   internal.h
   log.cpp
