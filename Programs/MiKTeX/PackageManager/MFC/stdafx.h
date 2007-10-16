@@ -59,7 +59,7 @@
 #include "mpm-version.h"
 
 #include <MiKTeX/Core/Core>
-#include <miktex/debug.h>
+#include <MiKTeX/Core/Debug>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
 #include <MiKTeX/Core/win/DllProc>

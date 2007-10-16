@@ -34,7 +34,7 @@
 #  include "MiKTeX/Core/win/DllProc"
 #endif
 
-#include "miktex/debug.h"
+#include "MiKTeX/Core/Debug"
 #include "miktex/paths.h"
 #include "miktex/reg.h"
 #include "miktex/trace.h"

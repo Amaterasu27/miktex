@@ -26,7 +26,7 @@ $Id: ptexlib.h 185 2007-07-09 10:43:44Z oneiros $
 #  if defined(MIKTEX)
 #    include <miktex/kpsemu.h>
 #    include "pdftex-miktex.h"
-#    include <miktex/debug.h>
+#    include <MiKTeX/Core/Debug>
 #    if defined(assert)
 #      undef assert
 #    endif

@@ -42,7 +42,7 @@
 #include <getopt.h>
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
-#include <miktex/debug.h>
+#include <MiKTeX/Core/Debug>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 
