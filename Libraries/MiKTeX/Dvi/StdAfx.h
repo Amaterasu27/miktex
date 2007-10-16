@@ -40,7 +40,7 @@
 #include <string>
 
 #include <miktex/DibChunker.h>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/debug.h>
 #include <miktex/paths.h>
 #include <miktex/trace.h>

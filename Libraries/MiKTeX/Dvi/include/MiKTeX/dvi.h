@@ -26,7 +26,7 @@
 #if ! defined(B371214BB940374EA689C48ED44141CD)
 #define B371214BB940374EA689C48ED44141CD
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/DibChunker.h>
 
 #if ! defined(A86DAFD3F286A340B6BD420E71BCD906)

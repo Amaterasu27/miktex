@@ -33,7 +33,7 @@
 
 #include "cjklatex-version.h"
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <MiKTeX/App/Application>
 #include <miktex/paths.h>
 

@@ -75,7 +75,7 @@
 
 #include "Setup-version.h"
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/Debug.h>
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>

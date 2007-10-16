@@ -45,7 +45,7 @@
 
 #define MPMAPI(type) MPMEXPORT type MPMCALL
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #include <string>
 #include <vector>

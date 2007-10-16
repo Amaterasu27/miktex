@@ -31,7 +31,7 @@
 
 #if ! IN_PROCESS
 #  include <process.h>
-#  include <miktex/core.h>
+#  include <MiKTeX/Core/Core>
 #  include <cerrno>
 #  include <cstdio>
 #endif

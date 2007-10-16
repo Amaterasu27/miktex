@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <MiKTeX/App/Application>
 
 #if ! defined(MAINFUNC)

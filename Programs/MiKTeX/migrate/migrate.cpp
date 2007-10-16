@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <atlbase.h>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/reg.h>
 
 using namespace std;

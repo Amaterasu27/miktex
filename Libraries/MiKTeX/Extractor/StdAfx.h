@@ -66,7 +66,7 @@ using stdext::hash_set;
 
 #include <cstdarg>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/debug.h>
 #include <miktex/env.h>
 #include <miktex/md5.h>

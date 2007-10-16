@@ -22,7 +22,7 @@
 #include <cstdlib>
 
 #include <MiKTeX/App/Application>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/DibChunker.h>
 
 using namespace MiKTeX::App;

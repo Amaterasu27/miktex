@@ -66,7 +66,7 @@
 
 #include "Remove-version.h"
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/debug.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>

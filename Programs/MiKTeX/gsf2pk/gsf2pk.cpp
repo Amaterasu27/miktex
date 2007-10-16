@@ -34,7 +34,7 @@
 #include <vector>
 
 #include <MiKTeX/App/Application>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #include <popt-miktex.h>
 

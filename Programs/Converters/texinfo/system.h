@@ -26,7 +26,7 @@
 #include <config.h>
 
 #ifdef MIKTEX
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <gnu-miktex.h>
 #define FLOAT HIDE_FLOAT
 #define S_ISDIR(x) ((x)&_S_IFDIR) 

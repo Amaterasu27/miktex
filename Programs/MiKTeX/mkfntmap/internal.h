@@ -21,7 +21,7 @@
 #include <set>
 #include <string>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 using namespace MiKTeX::Core;
 

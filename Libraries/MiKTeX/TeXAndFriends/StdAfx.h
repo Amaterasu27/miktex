@@ -30,7 +30,7 @@
 #include <iostream>
 
 #include <MiKTeX/App/Application>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <miktex/paths.h>
 #include <miktex/reg.h>

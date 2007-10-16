@@ -32,7 +32,7 @@
 #  include <windows.h>
 #endif
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)

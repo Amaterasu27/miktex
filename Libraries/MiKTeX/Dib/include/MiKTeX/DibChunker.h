@@ -36,7 +36,7 @@
 #  define DIBCHUNKERCALL
 #endif
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>

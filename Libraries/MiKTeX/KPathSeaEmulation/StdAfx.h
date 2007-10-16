@@ -25,7 +25,7 @@
 #include <malloc.h>
 
 #include <miktex/miktex-texmf.h>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #include <gnu-miktex.h>
 

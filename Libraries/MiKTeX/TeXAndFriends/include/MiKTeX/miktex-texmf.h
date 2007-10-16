@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #if ! defined(GUARD_EA5A87F23904AC44BC85743B1568911C_)
 #define GUARD_EA5A87F23904AC44BC85743B1568911C_

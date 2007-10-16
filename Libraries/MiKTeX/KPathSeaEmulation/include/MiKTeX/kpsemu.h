@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 #if ! defined(D0A4167033297F40884B97769F47801C)
 #  if defined(_MSC_VER)

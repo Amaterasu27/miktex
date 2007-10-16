@@ -37,7 +37,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/reg.h>
 #include <miktex/paths.h>
 #include <miktex/trace.h>

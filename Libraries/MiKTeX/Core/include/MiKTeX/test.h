@@ -36,7 +36,7 @@
 #endif
 
 #include <miktex/char.h>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/paths.h>
 #include <popt-miktex.h>
 

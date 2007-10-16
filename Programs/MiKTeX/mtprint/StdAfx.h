@@ -24,7 +24,7 @@
 
 #include <miktex/DibChunker.h>
 #include <MiKTeX/App/Application>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/debug.h>
 #include <miktex/help.h>
 #include <miktex/paths.h>

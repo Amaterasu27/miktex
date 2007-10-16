@@ -33,7 +33,7 @@
 #include <string>
 
 #include <MiKTeX/App/Application>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/trace.h>
 #include <popt-miktex.h>
 

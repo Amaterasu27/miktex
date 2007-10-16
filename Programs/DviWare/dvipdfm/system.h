@@ -3,7 +3,7 @@
 #define _SYSTEM_H_
 
 #if defined(MIKTEX)
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <gnu-miktex.h>
 #include <miktex/kpsemu.h>
 #endif

@@ -85,7 +85,7 @@
 #include <MiKTeX/UI/MFC/ErrorDialog>
 #include <MiKTeX/UI/MFC/ProgressDialog>
 #include <MiKTeX/UI/MFC/TextViewerDialog>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/debug.h>
 #include <miktex/dvi.h>
 #include <miktex/paths.h>

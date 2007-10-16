@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 #include <exception>
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/paths.h>
 
 using namespace MiKTeX::Core;

@@ -26,7 +26,7 @@
 #endif
 
 #define EAD86981C92C904D808A5E6CEC64B90E
-#include "miktex/core.h"
+#include "MiKTeX/Core/Core"
 
 #include "core-version.h"
 

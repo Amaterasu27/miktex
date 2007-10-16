@@ -23,7 +23,7 @@
 
 #include "mkfntmap-version.h"
    
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/paths.h>
 #include <popt-miktex.h>
 

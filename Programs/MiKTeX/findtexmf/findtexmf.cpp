@@ -30,7 +30,7 @@
 
 #include "findtexmf-version.h"
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <MiKTeX/App/Application>
 #include <miktex/paths.h>
 #include <popt-miktex.h>

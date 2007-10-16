@@ -26,7 +26,7 @@
 #define _SYSTEM_H_
 
 #ifdef MIKTEX
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include "gnu-miktex.h"
 #include <miktex/kpsemu.h>
 #else
