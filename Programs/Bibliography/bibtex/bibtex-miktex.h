@@ -36,7 +36,7 @@ using namespace MiKTeX::TeXAndFriends;
 using namespace MiKTeX::Core;
 
 #if ! defined(MIKTEXHELP_BIBTEX)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 class BIBTEXCLASS

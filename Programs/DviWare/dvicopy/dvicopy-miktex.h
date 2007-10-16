@@ -29,7 +29,7 @@
 #include <miktex/webapp.h>
 
 #if ! defined(MIKTEXHELP_DVICOPY)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::TeXAndFriends;

@@ -129,7 +129,7 @@ set(rel_xsl_dir		"${rel_doc_dir}/Styles")
 # source files
 set(alias_cpp "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/alias.cpp")
 set(entities_ent "${CMAKE_SOURCE_DIR}/${rel_doc_dir}/entities.ent")
-set(help_h "${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/help.h")
+set(help_h "${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Help")
 set(html_xsl "${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/html.xsl")
 set(htmlchunk_xsl "${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/htmlchunk.xsl")
 set(htmlhelp_xsl "${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/htmlhelp.xsl")

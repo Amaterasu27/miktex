@@ -52,7 +52,7 @@
 #include <miktex/trace.h>
 
 #if defined(MIKTEX_WINDOWS)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::Packages;

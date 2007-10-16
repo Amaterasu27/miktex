@@ -34,7 +34,7 @@
 #define OPT_LOGOFONT 1005
 
 #if ! defined(MIKTEXHELP_GFTODVI)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::TeXAndFriends;

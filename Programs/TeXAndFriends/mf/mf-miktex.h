@@ -39,7 +39,7 @@ namespace mf {
 #include "screen.h"
 
 #if ! defined(MIKTEXHELP_MF)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::Core;

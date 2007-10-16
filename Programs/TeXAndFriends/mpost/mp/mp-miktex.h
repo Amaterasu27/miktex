@@ -41,7 +41,7 @@ namespace mpost {
 }
 
 #if ! defined(MIKTEXHELP_MPOST)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 #if defined(MIKTEX_TRAPMP)

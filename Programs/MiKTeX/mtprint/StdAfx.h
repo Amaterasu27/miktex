@@ -26,7 +26,7 @@
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
-#include <miktex/help.h>
+#include <MiKTeX/Core/Help>
 #include <miktex/paths.h>
 #include <miktex/trace.h>
 #include <popt-miktex.h>

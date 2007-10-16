@@ -33,7 +33,7 @@
 #include <miktex/texapp.h>
 
 #if ! defined(MIKTEXHELP_TEX)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::TeXAndFriends;

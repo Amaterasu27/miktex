@@ -41,7 +41,7 @@ namespace pdftex {
 }
 
 #if ! defined(MIKTEXHELP_PDFTEX)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 /* _________________________________________________________________________

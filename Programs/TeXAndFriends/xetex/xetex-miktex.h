@@ -43,7 +43,7 @@ namespace xetex {
 #endif
 
 #if ! defined(MIKTEXHELP_XETEX)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 extern char * papersize;

@@ -52,7 +52,7 @@ namespace omega {
 #endif
 
 #if ! defined(MIKTEXHELP_OMEGA)
-#  include <miktex/help.h>
+#  include <MiKTeX/Core/Help>
 #endif
 
 using namespace MiKTeX::TeXAndFriends;
