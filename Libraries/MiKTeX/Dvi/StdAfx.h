@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <miktex/first.h>
+#include <MiKTeX/Core/First>
 
 #include <cctype>
 #include <climits>

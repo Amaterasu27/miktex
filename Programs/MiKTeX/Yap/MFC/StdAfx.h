@@ -18,7 +18,7 @@
    along with Yap; if not, write to the Free Software Foundation, 59
    Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
-#include <miktex/first.h>
+#include <MiKTeX/Core/First>
 
 #if ! defined(VC_EXTRALEAN)
 #  define VC_EXTRALEAN
