@@ -35,7 +35,7 @@
 #  include <process.h>
 #endif
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 #include <MiKTeX/Core/Core>
 #include <miktex/paths.h>
 #include <popt-miktex.h>

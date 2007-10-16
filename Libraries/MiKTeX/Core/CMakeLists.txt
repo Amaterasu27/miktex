@@ -18,13 +18,13 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/version.h.in
-  ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/version.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/version.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/version.h
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_inc_dir}/paths.h.in
-  ${CMAKE_BINARY_DIR}/${rel_core_inc_dir}/paths.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/paths.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/paths.h
 )
 
 configure_file(
@@ -66,7 +66,7 @@ set(${core_dll_name}_sources
   getdelim.cpp
   graphics.cpp
   gsinfo.cpp
-  include/miktex/char.h
+  include/MiKTeX/Core/Text
   include/MiKTeX/Core/Core
   include/miktex/env.h
   include/miktex/first.h

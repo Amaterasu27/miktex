@@ -122,10 +122,8 @@ set(rel_xpdf_xpdf_dir	"Programs/TeXAndFriends/pdftex/xpdf/xpdf")
 set(rel_yap_mfc_dir	"Programs/MiKTeX/Yap/MFC")
 set(rel_zlib_dir	"Libraries/3rd/zlib")
 
-set(rel_core_inc_dir	"${rel_core_dir}/include/miktex")
 set(rel_css_dir		"${rel_doc_dir}/Styles")
 set(rel_doc_api_dir     "${rel_doc_dir}/API")
-set(rel_mpmlib_inc_dir	"${rel_mpmlib_dir}/include/miktex")
 set(rel_xsl_dir		"${rel_doc_dir}/Styles")
 
 # source files

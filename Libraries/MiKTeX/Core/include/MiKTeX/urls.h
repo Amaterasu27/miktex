@@ -26,7 +26,7 @@
 #if ! defined(BCD264408F6CC94AB371F96954CBDA98_)
 #define BCD264408F6CC94AB371F96954CBDA98_
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 #include <miktex/version.h>
 
 #define MIKTEX_URL_WWW_NO_SLASH MIKTEXTEXT("http://miktex.org")

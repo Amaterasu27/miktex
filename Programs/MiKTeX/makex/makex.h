@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 
 #if ! defined(MKTEXAPI)
 #  if defined(_MSC_VER)

@@ -28,7 +28,7 @@
 #if ! defined(A5D53972CA7CCD40B4DB3ABBC0D957AF)
 #define A5D53972CA7CCD40B4DB3ABBC0D957AF
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 
 #if defined(MIKTEX_WINDOWS)
 #  define MIKTEX_REGPATH_COMPANY \

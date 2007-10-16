@@ -26,7 +26,7 @@
 #if ! defined(F0010C34E9B32544A57E69B47E7722FB)
 #define F0010C34E9B32544A57E69B47E7722FB
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 
 #define MIKTEX_TRACE_ACCESS MIKTEXTEXT("access")
 #define MIKTEX_TRACE_CONFIG MIKTEXTEXT("config")

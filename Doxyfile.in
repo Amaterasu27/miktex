@@ -128,9 +128,9 @@ STRIP_FROM_PATH        = \
 
 STRIP_FROM_INC_PATH    = \
 	@CMAKE_SOURCE_DIR@/@rel_core_dir@/COM \
-	@CMAKE_SOURCE_DIR@/@rel_core_inc_dir@ \
+	@CMAKE_SOURCE_DIR@/@rel_core_dir@/include \
 	@CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/COM \
-	@CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@ \
+	@CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/include \
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter 
 # (but less readable) file names. This can be useful is your file systems 
@@ -465,16 +465,14 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT += @CMAKE_BINARY_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_mpmlib_inc_dir@
-INPUT += @CMAKE_BINARY_DIR@/@rel_mpmlib_inc_dir@
+INPUT += @CMAKE_BINARY_DIR@/@rel_core_dir@/include/MiKTeX/Core
+INPUT += @CMAKE_BINARY_DIR@/@rel_core_dir@/include/MiKTeX/Core/win
+INPUT += @CMAKE_BINARY_DIR@/@rel_mpmlib_dir@/include/MiKTeX/PackageManager
 INPUT += @CMAKE_SOURCE_DIR@/@rel_core_dir@/COM
-INPUT += @CMAKE_SOURCE_DIR@/@rel_core_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_core_inc_dir@
+INPUT += @CMAKE_SOURCE_DIR@/@rel_core_dir@/include/MiKTeX/Core
+INPUT += @CMAKE_SOURCE_DIR@/@rel_core_dir@/include/MiKTeX/Core/win
 INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/COM
-INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@
-INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_inc_dir@
+INPUT += @CMAKE_SOURCE_DIR@/@rel_mpmlib_dir@/include/MiKTeX/PackageManager
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
