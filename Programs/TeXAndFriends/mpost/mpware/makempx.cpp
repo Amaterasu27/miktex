@@ -33,7 +33,7 @@
 
 #include "makempx.rc"
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/core.h>
 #include <miktex/texmfapp.h>
 #include <miktex/reg.h>

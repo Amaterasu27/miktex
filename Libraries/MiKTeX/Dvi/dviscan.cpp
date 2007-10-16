@@ -20,7 +20,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/char.h>
 #include <miktex/core.h>
 #include <miktex/dvi.h>

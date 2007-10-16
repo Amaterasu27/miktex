@@ -38,7 +38,7 @@
 #include <miktex/c4plib.h>
 #include <popt-miktex.h>
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

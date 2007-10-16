@@ -32,7 +32,7 @@
 #include <iostream>
 #include <string>
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/core.h>
 #include <miktex/trace.h>
 #include <popt-miktex.h>

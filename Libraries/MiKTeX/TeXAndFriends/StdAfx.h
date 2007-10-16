@@ -29,7 +29,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/core.h>
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <miktex/paths.h>

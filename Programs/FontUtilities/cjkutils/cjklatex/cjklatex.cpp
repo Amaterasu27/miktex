@@ -34,7 +34,7 @@
 #include "cjklatex-version.h"
 
 #include <miktex/core.h>
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/paths.h>
 
 using namespace MiKTeX::App;

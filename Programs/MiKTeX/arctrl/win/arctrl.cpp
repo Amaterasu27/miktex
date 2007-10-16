@@ -18,7 +18,7 @@
 #include "arctrl-version.h"
 
 #include <miktex/core.h>
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/paths.h>
 #include <popt-miktex.h>
 

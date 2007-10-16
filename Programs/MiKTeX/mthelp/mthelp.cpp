@@ -24,7 +24,7 @@
 
 #include "mthelp-version.h"
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 #include <miktex/core.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>

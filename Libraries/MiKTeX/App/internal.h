@@ -31,7 +31,7 @@
 
 #define BDF6E2537F116547846406B5B2B65949
 
-#include <miktex/app.h>
+#include <MiKTeX/App/Application>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;
