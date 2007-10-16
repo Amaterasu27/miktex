@@ -79,7 +79,7 @@
 #include <miktex/Debug.h>
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>
-#include <miktex/urls.h>
+#include <MiKTeX/Core/Urls>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/win/DllProc>

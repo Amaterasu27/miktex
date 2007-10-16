@@ -38,7 +38,7 @@
 #include "MiKTeX/Core/Paths"
 #include "MiKTeX/Core/Registry"
 #include "MiKTeX/Core/Trace"
-#include "miktex/urls.h"
+#include "MiKTeX/Core/Urls"
 
 using namespace MiKTeX::Core;
 
