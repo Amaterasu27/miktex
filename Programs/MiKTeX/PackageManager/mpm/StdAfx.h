@@ -47,7 +47,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <miktex/mpm.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
 #include <miktex/trace.h>
 

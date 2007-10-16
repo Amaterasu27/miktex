@@ -50,5 +50,5 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <miktex/mpm.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>

@@ -32,7 +32,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/App/Application>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
 
 using namespace MiKTeX::App;

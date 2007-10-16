@@ -39,7 +39,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <miktex/reg.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/trace.h>
 
 #if defined(MIKTEX_WINDOWS)

@@ -43,7 +43,7 @@
 #define EXTRACTORAPI(type) EXTRACTOREXPORT type EXTRACTORCALL
 
 #include <MiKTeX/Core/Core>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 
 #define EXTRACTOR_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

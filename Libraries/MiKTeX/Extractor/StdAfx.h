@@ -70,6 +70,6 @@ using stdext::hash_set;
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Environment>
 #include <miktex/md5.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 #include <miktex/trace.h>

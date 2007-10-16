@@ -88,7 +88,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <miktex/dvi.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
 #include <MiKTeX/Core/win/DllProc>

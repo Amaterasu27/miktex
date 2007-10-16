@@ -51,7 +51,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Core
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Environment
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/First
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/paths.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/reg.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/test.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/trace.h

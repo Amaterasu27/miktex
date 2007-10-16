@@ -35,7 +35,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/App/Application>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

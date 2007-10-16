@@ -37,7 +37,7 @@
 #include "initexmf-version.h"
 
 #include <MiKTeX/Core/Core>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 #include <popt-miktex.h>
 #include <miktex/mpm.h>

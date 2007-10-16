@@ -23,8 +23,8 @@ configure_file(
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/paths.h.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/paths.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
 )
 
 configure_file(

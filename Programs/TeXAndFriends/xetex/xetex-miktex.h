@@ -33,7 +33,7 @@
 
 #include "xetex.rc"
 
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/etexapp.h>
 
 #if 0

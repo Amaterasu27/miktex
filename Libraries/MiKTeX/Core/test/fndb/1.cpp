@@ -21,7 +21,7 @@
 
 #include <miktex/test.h>
 
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 
 BEGIN_TEST_SCRIPT();
 

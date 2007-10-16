@@ -40,5 +40,5 @@
 #include <MiKTeX/Core/Core>
 #include <miktex/md5.h>
 #include <miktex/mpm.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/version.h>

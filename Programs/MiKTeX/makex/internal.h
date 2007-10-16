@@ -43,7 +43,7 @@
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 
 #if defined(_MSC_VER)

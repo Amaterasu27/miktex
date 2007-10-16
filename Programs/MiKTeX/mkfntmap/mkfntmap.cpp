@@ -24,7 +24,7 @@
 #include "mkfntmap-version.h"
    
 #include <MiKTeX/Core/Core>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
 
 #include <cstdarg>

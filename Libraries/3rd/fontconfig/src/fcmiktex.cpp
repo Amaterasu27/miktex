@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <exception>
 #include <MiKTeX/Core/Core>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 
 using namespace MiKTeX::Core;
 using namespace std;

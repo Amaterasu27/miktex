@@ -80,7 +80,7 @@
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>
 #include <miktex/urls.h>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 #include <MiKTeX/Core/win/DllProc>
 

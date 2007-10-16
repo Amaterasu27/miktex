@@ -33,7 +33,7 @@
 
 #include "pdftex.rc"
 
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/etexapp.h>
 
 namespace pdftex {

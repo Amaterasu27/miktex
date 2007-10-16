@@ -32,7 +32,7 @@
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/UI/MFC/Prototypes>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/reg.h>
 #include <miktex/trace.h>
 

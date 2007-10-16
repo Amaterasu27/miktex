@@ -27,7 +27,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Help>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <miktex/trace.h>
 #include <popt-miktex.h>
 

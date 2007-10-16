@@ -37,7 +37,7 @@
 
 #include <MiKTeX/Core/Text>
 #include <MiKTeX/Core/Core>
-#include <miktex/paths.h>
+#include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
 
 #define MIKTEXTEST_BEGIN_NAMESPACE		\

@@ -24,7 +24,7 @@
 #include "internal.h"
 
 #include "MiKTeX/Core/Environment"
-#include "miktex/paths.h"
+#include "MiKTeX/Core/Paths"
 #include "miktex/reg.h"
 #include "miktex/version.h"
 
