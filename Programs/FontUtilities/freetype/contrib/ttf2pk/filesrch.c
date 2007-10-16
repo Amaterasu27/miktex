@@ -385,7 +385,7 @@ TeX_search_ttf_file(char **name)
 
 #elif defined(MIKTEX)
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 
 void
 TeX_search_init(char *exec_name,

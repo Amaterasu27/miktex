@@ -27,7 +27,7 @@
 #if defined(MIKTEX)
 #define USE_TEMP_FILE 1
 #if USE_TEMP_FILE
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #else
 #include <zlib.h>
 #include <filenames.h>

@@ -1,6 +1,6 @@
 %% hbf2gf-miktex.ch: CWEB change file for hbf2gf
 %% 
-%% Copyright (C) 1998-2006 Christian Schenk
+%% Copyright (C) 1998-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -66,7 +66,7 @@ int __cdecl Main(argc, argv)
 @x
 #include "miktex.h"
 @y
-#include <miktex/core.h>
+#include <miktex/Core/Core>
 @z
 
 % _____________________________________________________________________________

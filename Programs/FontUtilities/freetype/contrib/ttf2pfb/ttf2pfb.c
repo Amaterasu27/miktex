@@ -49,7 +49,7 @@
 #include "extend/ftxpost.h"     /* we are in the FreeType package tree */
 
 #if defined(MIKTEX)
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #endif
 
 char rcsid[] = "$Id: ttf2pfb.c,v 1.7 2005/09/07 14:33:14 csc Exp $";

@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <miktex/mpm.h>
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <vector>

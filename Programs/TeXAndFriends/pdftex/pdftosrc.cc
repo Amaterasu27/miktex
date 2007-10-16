@@ -27,7 +27,7 @@ $Id: pdftosrc.cc 114 2007-05-23 18:23:49Z ms $
 #include <ctype.h>
 #include <aconf.h>
 #if defined(MIKTEX)
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #define assert MIKTEX_ASSERT
 #else
 #include <assert.h>

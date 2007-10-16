@@ -16,7 +16,7 @@
 #include "errormsg.h"
 
 #if defined(MIKTEX)
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #endif
 
 

@@ -118,7 +118,7 @@ typedef	int	bool;
 #define	LocalFileName(fn)	(strchr(fn, ':') == NULL && strchr(fn, ']') == NULL)
 #endif
 #if defined(MIKTEX)
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <gnu-miktex.h>
 #define	PATH_DELIMITER ';'
 #define	HasDrive(fn)	(isalpha((fn)[0]) && (fn)[1] == ':')

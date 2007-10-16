@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #include <MiKTeX/UI/MFC/Prototypes>
 
 MIKUI_MFC_BEGIN_NAMESPACE;

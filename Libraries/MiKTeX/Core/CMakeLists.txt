@@ -67,7 +67,7 @@ set(${core_dll_name}_sources
   graphics.cpp
   gsinfo.cpp
   include/miktex/char.h
-  include/miktex/core.h
+  include/MiKTeX/Core/Core
   include/miktex/env.h
   include/miktex/first.h
   include/miktex/reg.h

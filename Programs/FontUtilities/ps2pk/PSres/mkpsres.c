@@ -73,7 +73,7 @@
 #if defined(MIKTEX)
 #include <windows.h>
 #define NO_C4P
-#include <miktex/core.h>
+#include <MiKTeX/Core/Core>
 #endif
 
 /* Not all compilers provide the ANSI strerror() <string.h> function */
