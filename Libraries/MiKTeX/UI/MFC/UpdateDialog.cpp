@@ -798,9 +798,9 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
   if (toBeInstalled.size() > 0
       && PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
       && repositoryType == RepositoryType::Remote
-      && ! MiKTeX::UI::ProxyAuthenticationDialog((pParent == 0
-						  ? 0
-						  : pParent->GetSafeHwnd())))
+      && ! ProxyAuthenticationDialog((pParent == 0
+				      ? 0
+				      : pParent->GetSafeHwnd())))
     {
       return (IDCANCEL);
     }

@@ -68,7 +68,7 @@ merge_trustinfo_manifest(mo asInvoker)
 
 target_link_libraries(mo
   ${core_dll_name}
-  ${ui_dll_name}
+  ${ui_mfc_dll_name}
 )
 
 get_target_property(mo_mfc_exe mo LOCATION)

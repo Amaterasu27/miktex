@@ -225,6 +225,7 @@ endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
+find_package(Qt4)
 find_package(THREADS REQUIRED)
 
 if(NATIVE_WINDOWS)

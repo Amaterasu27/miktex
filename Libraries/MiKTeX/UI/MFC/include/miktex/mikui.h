@@ -1,6 +1,6 @@
 /* miktex/mikui.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -32,16 +32,17 @@
 #define MIKTEXUICALL __stdcall
 #define MIKTEXUIAPI(type) MIKTEXUIEXPORT type MIKTEXUICALL
 
-#define MIKUI_BEGIN_NAMESPACE			\
+#define MIKUI_MFC_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
-    namespace UI {
+    namespace UI {				\
+      namespace MFC {
 
-#define MIKUI_END_NAMESPACE			\
+#define MIKUI_MFC_END_NAMESPACE			\
+      }						\
     }						\
   }
 
-MIKUI_BEGIN_NAMESPACE;
-
+MIKUI_MFC_BEGIN_NAMESPACE;
 
 /* _________________________________________________________________________
 
@@ -65,4 +66,4 @@ InstallPackageMessageBox
 MIKTEXUIAPI(bool)
 ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent);
 
-MIKUI_END_NAMESPACE;
+MIKUI_MFC_END_NAMESPACE;

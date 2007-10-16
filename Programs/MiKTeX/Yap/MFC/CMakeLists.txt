@@ -118,7 +118,7 @@ target_link_libraries(yap
   ${core_dll_name}
   ${dvi_dll_name}
   ${popt_dll_name}
-  ${ui_dll_name}
+  ${ui_mfc_dll_name}
 )
 
 get_target_property(yap_mfc_exe yap LOCATION)

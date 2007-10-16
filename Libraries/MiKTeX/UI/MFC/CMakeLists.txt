@@ -34,7 +34,7 @@ add_definitions(
   -D_AFXEXT
 )
 
-set(${ui_dll_name}_sources
+set(${ui_mfc_dll_name}_sources
   ConnectionSettingsDialog.cpp
   ConnectionSettingsDialog.h
   ErrorDialog.cpp
@@ -71,13 +71,13 @@ set(${ui_dll_name}_sources
   resource.h
 )
 
-add_library(${ui_dll_name} SHARED ${${ui_dll_name}_sources})
+add_library(${ui_mfc_dll_name} SHARED ${${ui_mfc_dll_name}_sources})
 
-target_link_libraries(${ui_dll_name}
+target_link_libraries(${ui_mfc_dll_name}
   ${core_dll_name}
   ${mpm_dll_name}
 )
 
-rebase(${ui_dll_name})
+rebase(${ui_mfc_dll_name})
 
-install(TARGETS ${ui_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${ui_mfc_dll_name} DESTINATION "${bindir}")

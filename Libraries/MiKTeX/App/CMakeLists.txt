@@ -49,11 +49,11 @@ target_link_libraries(${app_dll_name}
 
 if(NATIVE_WINDOWS AND MFC_FOUND)
   target_link_libraries(${app_dll_name}
-    ${ui_dll_name}
+    ${ui_mfc_dll_name}
   )
 endif(NATIVE_WINDOWS AND MFC_FOUND)
 
-delay_load(${app_dll_name} ${mpm_dll_name} ${ui_dll_name})
+delay_load(${app_dll_name} ${mpm_dll_name} ${ui_mfc_dll_name})
 rebase(${app_dll_name})
 
 install(TARGETS ${app_dll_name} DESTINATION "${bindir}")

@@ -60,7 +60,7 @@ merge_trustinfo_manifest(mpm_mfc asInvoker)
 target_link_libraries(mpm_mfc
   ${core_dll_name}
   ${mpm_dll_name}
-  ${ui_dll_name}
+  ${ui_mfc_dll_name}
 )
 
 get_target_property(mpm_mfc_exe mpm_mfc LOCATION)

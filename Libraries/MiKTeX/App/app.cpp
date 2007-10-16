@@ -285,16 +285,16 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
       static bool initUiFrameworkDone = false;
       if (! initUiFrameworkDone)
 	{
-	  MiKTeX::UI::InitializeFramework ();
+	  MiKTeX::UI::MFC::InitializeFramework ();
 	  initUiFrameworkDone = true;
 	}
       UINT msgBoxRet =
-	MiKTeX::UI::InstallPackageMessageBox(0,
-					     pPackageManager.Get(),
-					     lpszPackageName,
-					     lpszTrigger);
-      bool doInstall = ((msgBoxRet & MiKTeX::UI::YES) != 0);
-      if ((msgBoxRet & MiKTeX::UI::DONTASKAGAIN) != 0)
+	MiKTeX::UI::MFC::InstallPackageMessageBox(0,
+						  pPackageManager.Get(),
+						  lpszPackageName,
+						  lpszTrigger);
+      bool doInstall = ((msgBoxRet & MiKTeX::UI::MFC::YES) != 0);
+      if ((msgBoxRet & MiKTeX::UI::MFC::DONTASKAGAIN) != 0)
 	{
 	  enableInstaller =
 	    (doInstall ? TriState::True : TriState::False);
@@ -316,10 +316,10 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
     {
       if (! initUiFrameworkDone)
 	{
-	  MiKTeX::UI::InitializeFramework ();
+	  MiKTeX::UI::MFC::InitializeFramework ();
 	  initUiFrameworkDone = true;
 	}
-      if (! MiKTeX::UI::ProxyAuthenticationDialog(0))
+      if (! MiKTeX::UI::MFC::ProxyAuthenticationDialog(0))
 	{
 	  return (false);
 	}

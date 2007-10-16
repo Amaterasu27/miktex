@@ -100,6 +100,6 @@
 using namespace MiKTeX::Core;
 using namespace MiKTeX::DVI;
 using namespace MiKTeX::Graphics;
-using namespace MiKTeX::UI;
+using namespace MiKTeX::UI::MFC;
 using namespace MiKTeX;
 using namespace std;

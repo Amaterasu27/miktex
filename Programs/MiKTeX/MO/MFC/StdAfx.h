@@ -83,6 +83,6 @@
 
 using namespace MiKTeX;
 using namespace MiKTeX::Packages;
-using namespace MiKTeX::UI;
+using namespace MiKTeX::UI::MFC;
 using namespace MiKTeX::Core;
 using namespace std;

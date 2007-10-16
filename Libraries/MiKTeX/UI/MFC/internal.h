@@ -31,7 +31,7 @@
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
-using namespace MiKTeX::UI;
+using namespace MiKTeX::UI::MFC;
 using namespace std;
 
 typedef basic_ostringstream<MIKTEXCHAR> otstringstream;

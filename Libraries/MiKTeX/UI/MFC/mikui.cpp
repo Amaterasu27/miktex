@@ -1,6 +1,6 @@
 /* mikui.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -61,15 +61,15 @@ DllMain (/*[in]*/ HINSTANCE	hInstance,
 
 /* _________________________________________________________________________
    
-   MiKTeX::UI::InitializeFramework
+   MiKTeX::UI::MFC::InitializeFramework
    _________________________________________________________________________ */
 
 MIKTEXUIAPI(void)
-MiKTeX::UI::InitializeFramework ()
+MiKTeX::UI::MFC::InitializeFramework ()
 {
   if (! AfxWinInit(::GetModuleHandle(0), 0, ::GetCommandLine(), 0))
     {
-      Session::FatalMiKTeXError (T_("MiKTeX::UI::InitializeFramework"),
+      Session::FatalMiKTeXError (T_("MiKTeX::UI::MFC::InitializeFramework"),
 				 T_("AfxWinInit() failed for some reason."),
 				 0,
 				 T_(__FILE__),
@@ -79,11 +79,11 @@ MiKTeX::UI::InitializeFramework ()
 
 /* _________________________________________________________________________
    
-   MiKTeX::UI::InstallPackageMessageBox
+   MiKTeX::UI::MFC::InstallPackageMessageBox
    _________________________________________________________________________ */
 
 MIKTEXUIAPI(unsigned int)
-MiKTeX::UI::InstallPackageMessageBox
+MiKTeX::UI::MFC::InstallPackageMessageBox
 (/*[in]*/ HWND			hwndParent,
  /*[in]*/ PackageManager *	pManager,
  /*[in]*/ const MIKTEXCHAR *	lpszPackageName,
@@ -130,11 +130,11 @@ MiKTeX::UI::InstallPackageMessageBox
 
 /* _________________________________________________________________________
    
-   MiKTeX::UI::ProxyAuthenticationDialog
+   MiKTeX::UI::MFC::ProxyAuthenticationDialog
    _________________________________________________________________________ */
 
 MIKTEXUIAPI(bool)
-MiKTeX::UI::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
+MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
 {
   ProxySettings proxySettings;
 

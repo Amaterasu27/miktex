@@ -1,6 +1,6 @@
 /* miktex/UpdateDialog.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -28,7 +28,7 @@
 #include <miktex/mikui.h>
 #include <vector>
 
-MIKUI_BEGIN_NAMESPACE;
+MIKUI_MFC_BEGIN_NAMESPACE;
 
 class
 MIKTEXNOVTABLE
@@ -45,4 +45,4 @@ public:
 	   /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	toBeRemoved);
 };
 
-MIKUI_END_NAMESPACE;
+MIKUI_MFC_END_NAMESPACE;

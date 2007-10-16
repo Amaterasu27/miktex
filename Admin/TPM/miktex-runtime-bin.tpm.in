@@ -27,7 +27,7 @@ texmf/miktex/bin/${mpm_ps_dll_name}.dll
 texmf/miktex/bin/${mspack_dll_name}.dll
 texmf/miktex/bin/${popt_dll_name}.dll
 texmf/miktex/bin/${texmf_dll_name}.dll
-texmf/miktex/bin/${ui_dll_name}.dll
+texmf/miktex/bin/${ui_mfc_dll_name}.dll
 texmf/miktex/bin/${unxemu_dll_name}.dll
 texmf/miktex/bin/${zlib_dll_name}.dll
 texmf/miktex/bin/runbat.exe

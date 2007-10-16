@@ -1,6 +1,6 @@
 /* miktex/PropSheetPackage.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -26,7 +26,7 @@
 #include <miktex/mikui.h>
 #include <miktex/mpm.h>
 
-MIKUI_BEGIN_NAMESPACE;
+MIKUI_MFC_BEGIN_NAMESPACE;
 
 class
 MIKTEXNOVTABLE
@@ -40,4 +40,4 @@ public:
 	   /*[in]*/ CWnd *				pParentWnd = 0);
 };
 
-MIKUI_END_NAMESPACE;
+MIKUI_MFC_END_NAMESPACE;
