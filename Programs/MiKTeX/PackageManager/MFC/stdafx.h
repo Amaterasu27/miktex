@@ -72,10 +72,10 @@
 #pragma warning (pop)
 
 #include <MiKTeX/UI/MFC/ErrorDialog>
-#include <miktex/ProgressDialog.h>
-#include <miktex/PropSheetPackage.h>
-#include <miktex/SiteWizSheet.h>
-#include <miktex/UpdateDialog.h>
+#include <MiKTeX/UI/MFC/ProgressDialog>
+#include <MiKTeX/UI/MFC/PropSheetPackage>
+#include <MiKTeX/UI/MFC/SiteWizSheet>
+#include <MiKTeX/UI/MFC/UpdateDialog>
 
 using namespace MiKTeX;
 using namespace MiKTeX::Packages;

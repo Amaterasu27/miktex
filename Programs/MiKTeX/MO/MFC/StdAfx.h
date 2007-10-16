@@ -63,11 +63,11 @@
 #include <vector>
 
 #include <MiKTeX/UI/MFC/ErrorDialog>
-#include <miktex/PackageTreeCtrl.h>
-#include <miktex/ProgressDialog.h>
-#include <miktex/SiteWizSheet.h>
-#include <miktex/TextViewerDialog.h>
-#include <miktex/UpdateDialog.h>
+#include <MiKTeX/UI/MFC/PackageTreeCtrl>
+#include <MiKTeX/UI/MFC/ProgressDialog>
+#include <MiKTeX/UI/MFC/SiteWizSheet>
+#include <MiKTeX/UI/MFC/TextViewerDialog>
+#include <MiKTeX/UI/MFC/UpdateDialog>
 
 #if defined(_UNICODE)
 #  if defined(_M_IX86)

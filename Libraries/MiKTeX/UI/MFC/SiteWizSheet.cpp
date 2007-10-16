@@ -28,7 +28,7 @@
 #include "SiteWizRemote.h"
 #include "SiteWizType.h"
 
-#include <miktex/SiteWizSheet.h>
+#include <MiKTeX/UI/MFC/SiteWizSheet>
 
 /* _________________________________________________________________________
 

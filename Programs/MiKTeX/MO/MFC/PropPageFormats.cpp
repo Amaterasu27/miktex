@@ -23,7 +23,7 @@
 #include "mo.h"
 
 #include "FormatDefinitionDialog.h"
-#include "miktex/ProgressDialog.h"
+#include "MiKTeX/UI/MFC/ProgressDialog"
 #include "PropPageFormats.h"
 #include "PropSheet.h"
 #include "resource.hm"

@@ -1,4 +1,4 @@
-/* miktex/SiteWizSheet.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/SiteWizSheet:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

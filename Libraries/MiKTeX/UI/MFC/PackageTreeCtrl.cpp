@@ -23,8 +23,8 @@
 #include "internal.h"
 #include "resource.h"
 
-#include <miktex/PackageTreeCtrl.h>
-#include <miktex/PropSheetPackage.h>
+#include <MiKTeX/UI/MFC/PackageTreeCtrl>
+#include <MiKTeX/UI/MFC/PropSheetPackage>
 
 #include "SearchPackageDialog.h"
 

@@ -1,4 +1,4 @@
-/* miktex/PropSheetPackage.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/PropSheetPackage:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

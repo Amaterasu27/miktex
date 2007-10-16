@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "resource.h"
 
-#include <miktex/ProgressDialog.h>
+#include <MiKTeX/UI/MFC/ProgressDialog>
 
 /* _________________________________________________________________________
 

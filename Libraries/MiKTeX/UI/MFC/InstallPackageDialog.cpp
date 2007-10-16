@@ -25,7 +25,7 @@
 
 #include "InstallPackageDialog.h"
 
-#include <miktex/SiteWizSheet.h>
+#include <MiKTeX/UI/MFC/SiteWizSheet>
 
 /* _________________________________________________________________________
 

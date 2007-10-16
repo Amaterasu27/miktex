@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "resource.h"
 
-#include <miktex/TextViewerDialog.h>
+#include <MiKTeX/UI/MFC/TextViewerDialog>
 
 /* _________________________________________________________________________
 

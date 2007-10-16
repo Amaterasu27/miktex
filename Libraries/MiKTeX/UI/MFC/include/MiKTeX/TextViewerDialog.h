@@ -1,4 +1,4 @@
-/* miktex/TextViewerDialog.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/TextViewerDialog:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

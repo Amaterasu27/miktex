@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "resource.h"
 
-#include <miktex/UpdateDialog.h>
+#include <MiKTeX/UI/MFC/UpdateDialog>
 
 const SHORT PROGRESS_MAX = 1000;
 

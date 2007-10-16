@@ -1,4 +1,4 @@
-/* miktex/ProgressDialog.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/ProgressDialog:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

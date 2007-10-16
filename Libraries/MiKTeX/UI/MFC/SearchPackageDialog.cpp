@@ -25,7 +25,7 @@
 
 #include "SearchPackageDialog.h"
 
-#include <miktex/PropSheetPackage.h>
+#include <MiKTeX/UI/MFC/PropSheetPackage>
 
 /* _________________________________________________________________________
 

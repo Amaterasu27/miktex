@@ -1,4 +1,4 @@
-/* miktex/UpdateDialog.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/UpdateDialog:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

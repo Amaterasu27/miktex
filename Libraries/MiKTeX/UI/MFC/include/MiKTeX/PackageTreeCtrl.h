@@ -1,4 +1,4 @@
-/* miktex/PackageTreeCtrl.h:					-*- C++ -*-
+/* MiKTeX/UI/MFC/PackageTreeCtrl:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 

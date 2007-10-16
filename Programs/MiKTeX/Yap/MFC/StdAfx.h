@@ -83,8 +83,8 @@
 
 #include <miktex/DibChunker.h>
 #include <MiKTeX/UI/MFC/ErrorDialog>
-#include <miktex/ProgressDialog.h>
-#include <miktex/TextViewerDialog.h>
+#include <MiKTeX/UI/MFC/ProgressDialog>
+#include <MiKTeX/UI/MFC/TextViewerDialog>
 #include <miktex/core.h>
 #include <miktex/debug.h>
 #include <miktex/dvi.h>
