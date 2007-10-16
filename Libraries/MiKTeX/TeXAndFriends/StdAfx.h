@@ -31,7 +31,7 @@
 
 #include <miktex/app.h>
 #include <miktex/core.h>
-#include <miktex/mikui.h>
+#include <MiKTeX/UI/MFC/Prototypes>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
 #include <miktex/trace.h>

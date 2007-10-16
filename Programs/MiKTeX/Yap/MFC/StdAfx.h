@@ -82,7 +82,7 @@
 #include "yap-version.h"
 
 #include <miktex/DibChunker.h>
-#include <miktex/ErrorDialog.h>
+#include <MiKTeX/UI/MFC/ErrorDialog>
 #include <miktex/ProgressDialog.h>
 #include <miktex/TextViewerDialog.h>
 #include <miktex/core.h>

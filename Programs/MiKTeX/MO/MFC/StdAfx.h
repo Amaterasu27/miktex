@@ -62,7 +62,7 @@
 #include <string>
 #include <vector>
 
-#include <miktex/ErrorDialog.h>
+#include <MiKTeX/UI/MFC/ErrorDialog>
 #include <miktex/PackageTreeCtrl.h>
 #include <miktex/ProgressDialog.h>
 #include <miktex/SiteWizSheet.h>

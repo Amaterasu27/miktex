@@ -71,7 +71,7 @@
 #include <string>
 #pragma warning (pop)
 
-#include <miktex/ErrorDialog.h>
+#include <MiKTeX/UI/MFC/ErrorDialog>
 #include <miktex/ProgressDialog.h>
 #include <miktex/PropSheetPackage.h>
 #include <miktex/SiteWizSheet.h>

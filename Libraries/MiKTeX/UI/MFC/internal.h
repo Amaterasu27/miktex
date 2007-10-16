@@ -27,7 +27,7 @@
 
 #define MIKTEXUI__77F15D3E_7C53_4571_B9D9_2E57DAD53055__
 #include <MiKTeX/UI/MFC/Prototypes>
-#include <miktex/ErrorDialog.h>
+#include <MiKTeX/UI/MFC/ErrorDialog>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

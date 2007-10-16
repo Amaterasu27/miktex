@@ -43,5 +43,5 @@
 #include <miktex/trace.h>
 
 #if defined(MIKTEX_WINDOWS)
-#  include <miktex/mikui.h>
+#  include <MiKTeX/UI/MFC/Prototypes>
 #endif
