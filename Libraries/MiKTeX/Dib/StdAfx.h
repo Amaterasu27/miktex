@@ -26,7 +26,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX;

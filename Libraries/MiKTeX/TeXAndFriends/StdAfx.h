@@ -34,7 +34,7 @@
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 
 extern "C" {
 #include <zlib.h>

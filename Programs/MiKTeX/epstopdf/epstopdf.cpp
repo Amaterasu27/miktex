@@ -34,7 +34,7 @@
 
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 #include <popt-miktex.h>
 
 #include "epstopdf-version.h"

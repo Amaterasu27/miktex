@@ -49,7 +49,7 @@
 #include <miktex/mpm.h>
 #include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <MiKTeX/Core/Help>

@@ -72,4 +72,4 @@ using stdext::hash_set;
 #include <miktex/md5.h>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>

@@ -40,7 +40,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/Paths>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <MiKTeX/UI/MFC/Prototypes>

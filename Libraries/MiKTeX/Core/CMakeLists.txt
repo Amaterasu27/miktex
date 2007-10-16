@@ -72,7 +72,7 @@ set(${core_dll_name}_sources
   include/MiKTeX/Core/First
   include/MiKTeX/Core/Registry
   include/MiKTeX/Core/Test
-  include/miktex/trace.h
+  include/MiKTeX/Core/Trace
   internal.h
   log.cpp
   makefndb.cpp

@@ -43,4 +43,4 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Paths>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>

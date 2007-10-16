@@ -38,7 +38,7 @@
 
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 #include <MiKTeX/Core/Environment>
 #include <popt-miktex.h>
 #include <regex.h>

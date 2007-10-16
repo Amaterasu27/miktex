@@ -90,7 +90,7 @@
 #include <miktex/dvi.h>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
-#include <miktex/trace.h>
+#include <MiKTeX/Core/Trace>
 #include <MiKTeX/Core/win/DllProc>
 
 #include <popt-miktex.h>
