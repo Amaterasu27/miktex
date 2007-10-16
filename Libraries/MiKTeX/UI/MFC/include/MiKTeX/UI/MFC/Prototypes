@@ -1,4 +1,4 @@
-/* miktex/mikui.h:						-*- C++ -*-
+/* MiKTeX/UI/MFC/Prototypes:					-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 
@@ -46,7 +46,7 @@ MIKUI_MFC_BEGIN_NAMESPACE;
 
 /* _________________________________________________________________________
 
-   Protos
+   Prototypes 
    _________________________________________________________________________ */
 
 MIKTEXUIAPI(void)

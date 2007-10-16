@@ -26,7 +26,7 @@
 #define MIKTEXUIEXPORT __declspec(dllexport)
 
 #define MIKTEXUI__77F15D3E_7C53_4571_B9D9_2E57DAD53055__
-#include <miktex/mikui.h>
+#include <MiKTeX/UI/MFC/Prototypes>
 #include <miktex/ErrorDialog.h>
 
 using namespace MiKTeX::Core;

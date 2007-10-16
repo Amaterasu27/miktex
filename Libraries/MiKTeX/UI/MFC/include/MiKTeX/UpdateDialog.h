@@ -25,7 +25,7 @@
 
 #include <miktex/core.h>
 #include <miktex/mpm.h>
-#include <miktex/mikui.h>
+#include <MiKTeX/UI/MFC/Prototypes>
 #include <vector>
 
 MIKUI_MFC_BEGIN_NAMESPACE;
