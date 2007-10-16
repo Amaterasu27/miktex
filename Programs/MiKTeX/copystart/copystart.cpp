@@ -18,7 +18,7 @@
    USA.  */
 
 #include <MiKTeX/Core/Core>
-#include <miktex/env.h>
+#include <MiKTeX/Core/Environment>
 
 #define UNUSED_ALWAYS(x) (x)
 

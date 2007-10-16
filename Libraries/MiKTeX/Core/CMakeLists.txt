@@ -68,7 +68,7 @@ set(${core_dll_name}_sources
   gsinfo.cpp
   include/MiKTeX/Core/Text
   include/MiKTeX/Core/Core
-  include/miktex/env.h
+  include/MiKTeX/Core/Environment
   include/miktex/first.h
   include/miktex/reg.h
   include/miktex/test.h

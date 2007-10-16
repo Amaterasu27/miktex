@@ -23,7 +23,7 @@
 
 #include "internal.h"
 
-#include "miktex/env.h"
+#include "MiKTeX/Core/Environment"
 
 #include "fnamedb.h"
 #include "miktex/version.h"

@@ -49,7 +49,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/gsinfo.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Text
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Core
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/env.h
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Environment
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/first.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/paths.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/reg.h
