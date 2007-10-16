@@ -89,7 +89,7 @@
 #include <MiKTeX/Core/Debug>
 #include <miktex/dvi.h>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <miktex/trace.h>
 #include <MiKTeX/Core/win/DllProc>
 

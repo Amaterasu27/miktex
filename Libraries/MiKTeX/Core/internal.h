@@ -36,7 +36,7 @@
 
 #include "MiKTeX/Core/Debug"
 #include "MiKTeX/Core/Paths"
-#include "miktex/reg.h"
+#include "MiKTeX/Core/Registry"
 #include "miktex/trace.h"
 #include "miktex/urls.h"
 

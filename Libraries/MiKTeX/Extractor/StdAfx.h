@@ -71,5 +71,5 @@ using stdext::hash_set;
 #include <MiKTeX/Core/Environment>
 #include <miktex/md5.h>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <miktex/trace.h>

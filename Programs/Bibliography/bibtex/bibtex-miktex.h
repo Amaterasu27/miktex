@@ -29,7 +29,7 @@
 
 #include "bibtexdefs.h"
 
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <miktex/inputline.h>
 
 using namespace MiKTeX::TeXAndFriends;

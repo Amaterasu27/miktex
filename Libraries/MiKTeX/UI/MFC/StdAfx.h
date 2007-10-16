@@ -51,4 +51,4 @@
 #include <MiKTeX/Core/Debug>
 #include <miktex/mpm.h>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>

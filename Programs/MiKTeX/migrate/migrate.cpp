@@ -23,7 +23,7 @@
 #include <atlbase.h>
 
 #include <MiKTeX/Core/Core>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 
 using namespace std;
 using namespace MiKTeX::Core;

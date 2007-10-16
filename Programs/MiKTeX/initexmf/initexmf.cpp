@@ -38,7 +38,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <popt-miktex.h>
 #include <miktex/mpm.h>
 

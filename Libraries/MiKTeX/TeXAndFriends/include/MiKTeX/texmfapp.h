@@ -73,7 +73,7 @@
 #endif
 
 #include <miktex/inputline.h>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 
 namespace texmfapp {
 #include <miktex/texmfapp.defaults.h>

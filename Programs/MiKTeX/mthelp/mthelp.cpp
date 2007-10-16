@@ -28,7 +28,7 @@
 #include <MiKTeX/Core/Core>
 #include <miktex/mpm.h>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <popt-miktex.h>
 
 #include <iomanip>

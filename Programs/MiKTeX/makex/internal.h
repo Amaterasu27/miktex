@@ -44,7 +44,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 
 #if defined(_MSC_VER)
 #  define MKTEXAPI(func) extern "C" __declspec(dllexport) int __cdecl func

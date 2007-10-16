@@ -25,7 +25,7 @@
 
 #include "MiKTeX/Core/Environment"
 #include "MiKTeX/Core/Paths"
-#include "miktex/reg.h"
+#include "MiKTeX/Core/Registry"
 #include "miktex/version.h"
 
 #if defined(MIKTEX_WINDOWS)

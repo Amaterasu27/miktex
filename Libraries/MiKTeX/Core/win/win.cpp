@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "core-version.h"
 
-#include "miktex/reg.h"
+#include "MiKTeX/Core/Registry"
 #include "win/winRegistry.h"
 
 #include <MiKTeX/Core/win/DllProc>

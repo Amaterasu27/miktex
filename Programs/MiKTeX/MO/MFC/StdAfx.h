@@ -54,7 +54,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/win/DllProc>
 
 #include <memory>

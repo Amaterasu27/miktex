@@ -38,7 +38,7 @@
 #include <ctime>
 
 #include <MiKTeX/Core/Core>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/Paths>
 #include <miktex/trace.h>
 

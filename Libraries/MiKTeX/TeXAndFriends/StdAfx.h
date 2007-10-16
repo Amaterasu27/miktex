@@ -33,7 +33,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <miktex/trace.h>
 
 extern "C" {

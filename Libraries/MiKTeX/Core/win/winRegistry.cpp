@@ -24,7 +24,7 @@
 #include "internal.h"
 
 #include "win/winRegistry.h"
-#include "miktex/reg.h"
+#include "MiKTeX/Core/Registry"
 
 /* _________________________________________________________________________
 

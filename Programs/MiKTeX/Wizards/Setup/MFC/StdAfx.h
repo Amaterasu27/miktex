@@ -81,7 +81,7 @@
 #include <miktex/mpm.h>
 #include <miktex/urls.h>
 #include <MiKTeX/Core/Paths>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/win/DllProc>
 
 using namespace MiKTeX::Core;

@@ -1,4 +1,4 @@
-/* miktex/reg.h: MiKTeX settings
+/* MiKTeX/Core/Registry: MiKTeX settings
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -112,4 +112,4 @@
 #define MIKTEX_DVI_FILE_TYPE_IDENTIFIER \
   MIKTEXTEXT("MiKTeX.Yap.dvi.") MIKTEXTEXT(MIKTEX_SERIES_STR)
 
-#endif	/* miktex/reg.h */
+#endif	/* MiKTeX/Core/Registry */

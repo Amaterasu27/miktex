@@ -36,7 +36,7 @@
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
 #include <miktex/texmfapp.h>
-#include <miktex/reg.h>
+#include <MiKTeX/Core/Registry>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

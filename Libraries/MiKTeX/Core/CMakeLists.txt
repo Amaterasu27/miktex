@@ -70,7 +70,7 @@ set(${core_dll_name}_sources
   include/MiKTeX/Core/Core
   include/MiKTeX/Core/Environment
   include/MiKTeX/Core/First
-  include/miktex/reg.h
+  include/MiKTeX/Core/Registry
   include/miktex/test.h
   include/miktex/trace.h
   internal.h
