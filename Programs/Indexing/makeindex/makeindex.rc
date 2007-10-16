@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1989 Chen & Harrison International Systems, Inc. (C) 1988 Olivetti Research Center (C) 1987 Regents of the University of California"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

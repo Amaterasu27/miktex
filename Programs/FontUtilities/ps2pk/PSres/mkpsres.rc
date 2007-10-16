@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright 1991, 1994 Adobe Systems Incorporated"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (c) 2006 SIL International and Jin-Hwan Cho"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

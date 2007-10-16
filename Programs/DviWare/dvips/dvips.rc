@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1986-2004 by Tomas Rokicki"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

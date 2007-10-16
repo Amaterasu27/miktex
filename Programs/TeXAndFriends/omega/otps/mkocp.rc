@@ -24,4 +24,4 @@
 
 #define VER_FILEDESCRIPTION_STR "Make OCP"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

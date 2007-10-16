@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2002-2006 Jan-Åke Larsson"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

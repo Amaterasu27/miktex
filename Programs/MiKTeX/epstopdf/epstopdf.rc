@@ -25,4 +25,4 @@
 
 #define VER_FILEDESCRIPTION_STR "EPS-to-PDF Converter"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

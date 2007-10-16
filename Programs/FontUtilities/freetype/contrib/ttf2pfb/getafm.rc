@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1993 Robert Joop; Copyright (C) 2000-2007 Christian Schenk"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

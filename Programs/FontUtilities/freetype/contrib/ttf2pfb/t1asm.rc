@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1992 by I. Lee Hetherington, all rights reserved."
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

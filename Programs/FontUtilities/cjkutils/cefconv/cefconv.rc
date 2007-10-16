@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright 1996-1998 Werner Lemberg"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

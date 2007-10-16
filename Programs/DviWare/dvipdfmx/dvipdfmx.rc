@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1998, 99 Mark Wicks. Copyright (C) 2002-2003 by Jin-Hwan Cho and Shunsaku Hirata,the DVIPDFMx project team"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

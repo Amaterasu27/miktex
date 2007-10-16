@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth"
 
-#include <miktex/miktex.version>
+#include <MiKTeX/Core/win/version.rc>

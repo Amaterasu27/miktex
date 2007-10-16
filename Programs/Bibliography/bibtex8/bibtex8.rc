@@ -28,4 +28,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1991-1995 Niel Kempson; Copyright (C) 1995 Alejandro Aguilar-Sierra"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

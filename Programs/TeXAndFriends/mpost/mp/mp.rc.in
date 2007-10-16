@@ -30,4 +30,4 @@
 
 #define VER_FILETYPE VFT_DLL
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

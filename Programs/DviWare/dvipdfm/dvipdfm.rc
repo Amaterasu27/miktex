@@ -28,4 +28,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1998, 99 Mark Wicks"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"

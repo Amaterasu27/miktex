@@ -26,4 +26,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright © 2002 Keith Packard"
 
-#include "miktex/miktex.version"
+#include "MiKTeX/Core/win/version.rc"
