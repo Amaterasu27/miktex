@@ -82,7 +82,7 @@
 #include <miktex/urls.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
-#include <miktex/win/DllProc.h>
+#include <MiKTeX/Core/win/DllProc>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

@@ -55,7 +55,7 @@
 #include <miktex/debug.h>
 #include <miktex/paths.h>
 #include <miktex/reg.h>
-#include <miktex/win/DllProc.h>
+#include <MiKTeX/Core/win/DllProc>
 
 #include <memory>
 #include <set>

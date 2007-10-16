@@ -27,7 +27,7 @@
 #include "miktex/reg.h"
 #include "win/winRegistry.h"
 
-#include <miktex/win/DllProc.h>
+#include <MiKTeX/Core/win/DllProc>
 
 #define SET_SECURITY 1
 

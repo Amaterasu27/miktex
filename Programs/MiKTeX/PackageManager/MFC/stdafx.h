@@ -62,7 +62,7 @@
 #include <miktex/debug.h>
 #include <miktex/mpm.h>
 #include <miktex/paths.h>
-#include <miktex/win/DllProc.h>
+#include <MiKTeX/Core/win/DllProc>
 
 #pragma warning (push, 1)
 #pragma warning (disable: 4702)

@@ -31,7 +31,7 @@
 #include "core-version.h"
 
 #if defined(MIKTEX_WINDOWS)
-#  include "miktex/win/DllProc.h"
+#  include "MiKTeX/Core/win/DllProc"
 #endif
 
 #include "miktex/debug.h"
