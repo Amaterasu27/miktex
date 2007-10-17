@@ -52,7 +52,7 @@ set(${mpm_dll_name}_sources
   WebFile.h
   WebSession.cpp
   WebSession.h
-  include/miktex/mpm.h
+  include/MiKTeX/PackageManager/PackageManager
   internal.h
   mpm-version.h
 )

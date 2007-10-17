@@ -40,7 +40,7 @@
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
 #include <popt-miktex.h>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

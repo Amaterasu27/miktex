@@ -60,7 +60,7 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/win/DllProc>
 

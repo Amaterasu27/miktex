@@ -39,6 +39,6 @@
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/MD5>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Version>

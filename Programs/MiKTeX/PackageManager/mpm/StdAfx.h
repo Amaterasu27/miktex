@@ -46,7 +46,7 @@
 #include "mpm-version.h"
 
 #include <MiKTeX/Core/Core>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/Core/Paths>
 #include <popt-miktex.h>
 #include <MiKTeX/Core/Trace>

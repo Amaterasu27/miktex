@@ -78,7 +78,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Extractor/Extractor>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/Core/Urls>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>

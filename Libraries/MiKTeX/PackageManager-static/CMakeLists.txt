@@ -48,7 +48,7 @@ set(${mpm_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/WebFile.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/WebSession.cpp
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/WebSession.h
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include/miktex/mpm.h
+  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include/MiKTeX/PackageManager/PackageManager
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/mpm-version.h
   ${CMAKE_SOURCE_DIR}/${rel_mtrep_dir}/RepositorySoap.nsmap

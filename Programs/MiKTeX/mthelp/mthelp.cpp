@@ -26,7 +26,7 @@
 
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
 #include <popt-miktex.h>
