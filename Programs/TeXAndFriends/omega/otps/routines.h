@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include <stdlib.h>
 #else
 #if defined(MIKTEX)
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 #else
 extern void exit();
 #endif

@@ -26,7 +26,7 @@
 #if ! defined(GUARD_73FFE7F857E7814191871F96B92C5228_)
 #define GUARD_73FFE7F857E7814191871F96B92C5228_
 
-#include "miktex/Extractor.h"
+#include "MiKTeX/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
 

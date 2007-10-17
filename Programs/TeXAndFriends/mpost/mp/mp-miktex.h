@@ -338,7 +338,7 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 
 #include <miktex/mfapp.inl>
 
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 
 #define fontname THEDATA(fontname)
 #define fontpsnamefixed THEDATA(fontpsnamefixed)

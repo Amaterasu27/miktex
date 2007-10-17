@@ -36,7 +36,7 @@ set(${extractor_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarLzmaExtractor.cpp
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/TarLzmaExtractor.h
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/extractor-version.h
-  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include/miktex/Extractor.h
+  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include/MiKTeX/Extractor/Extractor
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/internal.h
 )
 

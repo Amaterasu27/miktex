@@ -5,7 +5,7 @@
 #if defined(MIKTEX)
 #include <MiKTeX/Core/Core>
 #include <gnu-miktex.h>
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 #endif
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>

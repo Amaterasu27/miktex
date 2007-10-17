@@ -76,7 +76,7 @@
 
 #if defined(MIKTEX)
 #  include <cstdlib>
-#  include <miktex/kpsemu.h>
+#  include <MiKTeX/KPSE/Emulation>
 #endif
 
 #include "mfileio.h"

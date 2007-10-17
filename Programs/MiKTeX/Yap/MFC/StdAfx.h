@@ -87,7 +87,7 @@
 #include <MiKTeX/UI/MFC/TextViewerDialog>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
-#include <miktex/dvi.h>
+#include <MiKTeX/DVI/Dvi>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Registry>
 #include <MiKTeX/Core/Trace>

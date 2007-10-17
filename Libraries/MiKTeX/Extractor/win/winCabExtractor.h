@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "miktex/Extractor.h"
+#include "MiKTeX/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
 

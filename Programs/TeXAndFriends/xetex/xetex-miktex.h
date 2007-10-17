@@ -218,7 +218,7 @@ extern XETEXCLASS XETEXAPP;
 #define THEAPP XETEXAPP
 #include <miktex/etexapp.inl>
 
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 
 #include "xetex.h"
 

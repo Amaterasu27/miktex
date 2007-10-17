@@ -26,7 +26,7 @@
 #if ! defined(GUARD_BF702FE4_09EC_4B95_9264_0F4FD967F75B_)
 #define GUARD_BF702FE4_09EC_4B95_9264_0F4FD967F75B_
 
-#include "miktex/Extractor.h"
+#include "MiKTeX/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
 

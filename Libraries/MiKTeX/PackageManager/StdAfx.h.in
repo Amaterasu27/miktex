@@ -92,7 +92,7 @@ using stdext::hash_set;
 #include <cstdarg>
 
 #include <bzlib.h>
-#include <miktex/Extractor.h>
+#include <MiKTeX/Extractor/Extractor>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Environment>

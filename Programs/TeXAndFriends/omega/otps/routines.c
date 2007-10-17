@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 
 #if defined(MIKTEX)
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 #else
 #include <kpathsea/config.h>
 #include <kpathsea/types.h>

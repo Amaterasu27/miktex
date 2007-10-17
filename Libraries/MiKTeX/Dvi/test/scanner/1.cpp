@@ -21,7 +21,7 @@
 
 #include <MiKTeX/Core/Test>
 
-#include <miktex/dvi.h>
+#include <MiKTeX/DVI/Dvi>
 
 using namespace MiKTeX::DVI;
 

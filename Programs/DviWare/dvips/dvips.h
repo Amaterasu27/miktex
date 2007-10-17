@@ -14,7 +14,7 @@
 #include <MiKTeX/Core/Core>
 #include <direct.h>
 #include <sys/stat.h>
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 #undef kpse_tex_hush
 #define kpse_tex_hush(what) 1
 #include <cstdlib>

@@ -33,7 +33,7 @@ set(${extractor_dll_name}_sources
   TarLzmaExtractor.cpp
   TarLzmaExtractor.h
   extractor-version.h
-  include/miktex/Extractor.h
+  include/MiKTeX/Extractor/Extractor
   internal.h
 )
 

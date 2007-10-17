@@ -23,7 +23,7 @@
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Text>
 #include <MiKTeX/Core/Core>
-#include <miktex/dvi.h>
+#include <MiKTeX/DVI/Dvi>
 #include <popt-miktex.h>
 
 using namespace MiKTeX::App;

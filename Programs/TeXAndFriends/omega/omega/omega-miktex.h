@@ -296,7 +296,7 @@ miktexopenonmfile (/*[in]*/ alphafile &		f,
 #define otpoutputbuf THEDATA(otpoutputbuf)
 #define otpoutputend THEDATA(otpoutputend)
 
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 
 #define cint c4p_P2.c4p_int
 #define cint1 c4p_P2.hh.c4p_P1.lh

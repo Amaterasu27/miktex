@@ -317,7 +317,7 @@ miktexptrequal(/*[in]*/ const void * ptr1,
    Web2C Compatibility
    _________________________________________________________________________ */
 
-#include <miktex/kpsemu.h>
+#include <MiKTeX/KPSE/Emulation>
 #include "pdftex.h"
 
 #define printid printID

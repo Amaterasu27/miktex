@@ -26,7 +26,7 @@
 #endif
 
 #define A86DAFD3F286A340B6BD420E71BCD906
-#include "miktex/dvi.h"
+#include "MiKTeX/DVI/Dvi"
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Graphics;

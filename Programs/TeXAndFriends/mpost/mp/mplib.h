@@ -42,7 +42,7 @@ $Id$
 #  include "avlstuff.h"
 
 #if defined(MIKTEX)
-#  include <miktex/kpsemu.h>
+#  include <MiKTeX/KPSE/Emulation>
 #  include "mp-miktex.h"
 #  define snprintf _snprintf
 #endif
