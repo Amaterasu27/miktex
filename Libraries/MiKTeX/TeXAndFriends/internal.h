@@ -34,7 +34,7 @@
 #define C1F0C63F01D5114A90DDF8FC10FF410B
 #define B8C7815676699B4EA2DE96F0BD727276
 #include "MiKTeX/C4P/C4P"
-#include "miktex/mfapp.h"
+#include "MiKTeX/TeXAndFriends/MetafontApp"
 #include "MiKTeX/TeXAndFriends/ETeXApp"
 
 using namespace C4P;

@@ -45,7 +45,7 @@ namespace omega {
 #include <omega.defaults.h>
 }
 
-#include <miktex/texapp.h>
+#include <MiKTeX/TeXAndFriends/TeXApp>
 
 #if ! defined(MIKTEX_VIRTUAL_TEXAPP)
 #  define MIKTEX_VIRTUAL_TEXAPP
@@ -263,7 +263,7 @@ public:
 #if defined(MIKTEX_OMEGA)
 extern OMEGACLASS OMEGAAPP;
 #define THEAPP OMEGAAPP
-#include <miktex/texapp.inl>
+#include <MiKTeX/TeXAndFriends/TeXApp.inliners>
 #endif
 
 inline

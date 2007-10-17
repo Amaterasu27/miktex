@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <malloc.h>
 
-#include <miktex/miktex-texmf.h>
+#include <MiKTeX/TeXAndFriends/Prototypes>
 #include <MiKTeX/Core/Core>
 
 #include <gnu-miktex.h>

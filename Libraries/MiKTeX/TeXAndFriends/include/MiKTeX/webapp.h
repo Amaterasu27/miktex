@@ -1,4 +1,4 @@
-/* miktex/webapp.h:					       	-*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebApp:					       	-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -24,7 +24,7 @@
 #if ! defined(MIKTEX__79ED517D_1F1C_42F4_B632_4CECD7C51331__)
 #define MIKTEX__79ED517D_1F1C_42F4_B632_4CECD7C51331__
 
-#include <miktex/miktex-texmf.h>
+#include <MiKTeX/TeXAndFriends/Prototypes>
 
 #include <cstdio>
 

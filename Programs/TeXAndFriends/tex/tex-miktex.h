@@ -30,7 +30,7 @@
 #endif
 
 #include "tex.rc"
-#include <miktex/texapp.h>
+#include <MiKTeX/TeXAndFriends/TeXApp>
 
 #if ! defined(MIKTEXHELP_TEX)
 #  include <MiKTeX/Core/Help>
@@ -129,4 +129,4 @@ extern TEXCLASS TEXAPP;
 #define THEAPP TEXAPP
 #endif
 
-#include <miktex/texapp.inl>
+#include <MiKTeX/TeXAndFriends/TeXApp.inliners>

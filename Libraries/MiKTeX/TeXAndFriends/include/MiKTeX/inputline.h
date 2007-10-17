@@ -1,4 +1,4 @@
-/* miktex/inputline.h: inputln() implementation for TeX & Friends -*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebAppInputLine: inputln() implementation for TeX & Friends -*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -24,7 +24,7 @@
 #if ! defined(GUARD_68E0A68C189D54439CC37B0BE0B55F36_)
 #define GUARD_68E0A68C189D54439CC37B0BE0B55F36_
 
-#include <miktex/webapp.h>
+#include <MiKTeX/TeXAndFriends/WebApp>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

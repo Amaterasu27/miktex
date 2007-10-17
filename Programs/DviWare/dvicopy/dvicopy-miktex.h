@@ -26,7 +26,7 @@
 
 #include "dvicopy.rc"
 #include "dvicopydefs.h"
-#include <miktex/webapp.h>
+#include <MiKTeX/TeXAndFriends/WebApp>
 
 #if ! defined(MIKTEXHELP_DVICOPY)
 #  include <MiKTeX/Core/Help>
@@ -230,4 +230,4 @@ setupoptions ()
   THEAPP.SetupOptions ();
 }
 
-#include <miktex/webapp.inl>
+#include <MiKTeX/TeXAndFriends/WebApp.inliners>

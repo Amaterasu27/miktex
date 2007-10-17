@@ -30,7 +30,7 @@
 #endif
 
 #include "mf.rc"
-#include <miktex/mfapp.h>
+#include <MiKTeX/TeXAndFriends/MetafontApp>
 
 namespace mf {
 #include "mf.defaults.h"
@@ -272,4 +272,4 @@ miktexopenbasefile (/*[in]*/ wordfile &		f,
   return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
 
-#include <miktex/mfapp.inl>
+#include <MiKTeX/TeXAndFriends/MetafontApp.inliners>

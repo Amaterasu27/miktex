@@ -32,7 +32,7 @@
 #  error THEDATA not defined
 #endif
 
-#include <miktex/texmfapp.inl>
+#include <MiKTeX/TeXAndFriends/TeXMFApp.inliners>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

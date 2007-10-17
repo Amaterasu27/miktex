@@ -24,7 +24,7 @@
 #if ! defined(GUARD_6024E96164A684468B745C9A039DF171_)
 #define GUARD_6024E96164A684468B745C9A039DF171_
 
-#include <miktex/texmfapp.h>
+#include <MiKTeX/TeXAndFriends/TeXMFApp>
 
 namespace mfapp {
 #include <miktex/mfapp.defaults.h>

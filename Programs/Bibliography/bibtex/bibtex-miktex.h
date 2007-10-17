@@ -30,7 +30,7 @@
 #include "bibtexdefs.h"
 
 #include <MiKTeX/Core/Registry>
-#include <miktex/inputline.h>
+#include <MiKTeX/TeXAndFriends/WebAppInputLine>
 
 using namespace MiKTeX::TeXAndFriends;
 using namespace MiKTeX::Core;
@@ -253,4 +253,4 @@ miktexopenbstfile (/*[in]*/ T & f)
   return (THEAPP.OpenBstFile(f));
 }
 
-#include <miktex/inputline.inl>
+#include <MiKTeX/TeXAndFriends/WebAppInputLine.inliners>

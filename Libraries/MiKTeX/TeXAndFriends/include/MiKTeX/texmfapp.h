@@ -1,4 +1,4 @@
-/* miktex/texmfapp.h: TeX/MF common implementation		-*- C++ -*-
+/* MiKTeX/TeXAndFriends/TeXMFApp: TeX/MF common implementation		-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -72,7 +72,7 @@
 #  define IMPLEMENT_TCX 1
 #endif
 
-#include <miktex/inputline.h>
+#include <MiKTeX/TeXAndFriends/WebAppInputLine>
 #include <MiKTeX/Core/Registry>
 
 namespace texmfapp {
@@ -1519,4 +1519,4 @@ MIKTEXMF_END_NAMESPACE;
 #undef MIKTEXMF_BEGIN_NAMESPACE
 #undef MIKTEXMF_END_NAMESPACE
 
-#endif	// miktex/texmfapp.h
+#endif	// MiKTeX/TeXAndFriends/TeXMFApp
