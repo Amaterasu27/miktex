@@ -76,7 +76,7 @@
 #include "Setup-version.h"
 
 #include <MiKTeX/Core/Core>
-#include <miktex/Debug.h>
+#include <MiKTeX/Core/Debug>
 #include <miktex/Extractor.h>
 #include <miktex/mpm.h>
 #include <MiKTeX/Core/Urls>
