@@ -323,92 +323,91 @@ SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetAcrobatFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
+SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
 {
-  if (flags.test(Flags::CachedAcrobatFontDir))
+  if (! flags.test(Flags::CachedAcrobatFontDir))
     {
-      if (acrobatFontDir.length() == 0)
+      flags.set (Flags::CachedAcrobatFontDir);
+
+      AutoHKEY hkey;
+      
+      const wchar_t * ACRORD32 =
+	(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion"
+	 L"\\App Paths\\AcroRd32.exe");
+  
+      LONG res =
+	RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+		      ACRORD32,
+		      0,
+		      KEY_READ,
+		      &hkey);
+
+      if (res != ERROR_SUCCESS)
 	{
+	  if (res != ERROR_FILE_NOT_FOUND)
+	    {
+	      TraceWindowsError (T_("RegOpenKeyEx"),
+				 res,
+				 T_("Acrobat"),
+				 T_(__FILE__),
+				 __LINE__);
+	    }
 	  return (false);
 	}
-      Utils::CopyString (lpszPath,
-			 BufferSizes::MaxPath,
-			 acrobatFontDir.c_str());
-      return (true);
-    }
 
-  flags.set (Flags::CachedAcrobatFontDir);
-  acrobatFontDir = T_("");
-
-  AutoHKEY hkey;
-
-  const MIKTEXCHAR * ACRORD32 =
-    (T_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
-     T_("\\App Paths\\AcroRd32.exe"));
-  
-  LONG res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 ACRORD32,
-		 0,
-		 KEY_READ,
-		 &hkey);
-
-  if (res != ERROR_SUCCESS)
-    {
-      if (res != ERROR_FILE_NOT_FOUND)
+      DWORD type;
+      PathName pathExe;
+      DWORD len =
+	static_cast<DWORD>(pathExe.GetCapacity() * sizeof(pathExe[0]));
+      res =
+	RegQueryValueExA
+	(hkey.Get(),
+	 "",
+	 0,
+	 &type,
+	 reinterpret_cast<unsigned char *>(pathExe.GetBuffer()),
+	 &len);
+      if (res != ERROR_SUCCESS)
 	{
-	  TraceWindowsError (T_("RegOpenKeyEx"),
-			     res,
-			     ACRORD32,
-			     T_(__FILE__),
-			     __LINE__);
+	  if (res != ERROR_FILE_NOT_FOUND)
+	    {
+	      TraceWindowsError (T_("RegQueryValueEx"),
+				 res,
+				 0,
+				 T_(__FILE__),
+				 __LINE__);
+	    }
+	  return (false);
 	}
-      return (false);
-    }
-
-  DWORD type;
-  PathName pathExe;
-  DWORD len = static_cast<DWORD>(pathExe.GetCapacity());
-  res =
-    RegQueryValueEx(hkey.Get(),
-		    T_(""),
-		    0,
-		    &type,
-		    reinterpret_cast<unsigned char *>(pathExe.GetBuffer()),
-		    &len);
-  if (res != ERROR_SUCCESS)
-    {
-      if (res != ERROR_FILE_NOT_FOUND)
-	{
-	  TraceWindowsError (T_("RegQueryValueEx"),
-			     res,
-			     0,
-			     T_(__FILE__),
-			     __LINE__);
-	}
-      return (false);
-    }
   
-  PathName dir (pathExe);
-  dir.RemoveFileSpec ();
+      PathName dir (pathExe);
+      dir.RemoveFileSpec ();
   
-  PathName fontDir;
+      PathName fontDir;
   
-  // try Acrobat Reader 3.0
-  fontDir.Set (dir.Get(), T_("FONTS"), 0);
-  if (! Directory::Exists(fontDir))
-    {
-      // try Acrobat Reader 4.0
-      fontDir.Set (dir.Get(), T_("..\\Resource\\Font"), 0);
+      // try Acrobat Reader 3.0
+      fontDir.Set (dir.Get(), T_("FONTS"), 0);
       if (! Directory::Exists(fontDir))
 	{
-	  return (false);
+	  // try Acrobat Reader 4.0
+	  fontDir.Set (dir.Get(), T_("..\\Resource\\Font"), 0);
+	  if (! Directory::Exists(fontDir))
+	    {
+	      return (false);
+	    }
 	}
+
+      RemoveDirectoryDelimiter (fontDir.GetBuffer());
+
+      acrobatFontDir = GetFullPath(fontDir.Get());
     }
 
-  acrobatFontDir = GetFullPath(fontDir.Get()).ToString();
+  if (acrobatFontDir.GetLength() == 0)
+    {
+      return (false);
+    }
 
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, acrobatFontDir.c_str());
+  path = acrobatFontDir;
 
   return (true);
 }
@@ -419,77 +418,75 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetATMFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
+SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 {
-  if (flags.test(Flags::CachedAtmFontDir))
+  if (! flags.test(Flags::CachedAtmFontDir))
     {
-      if (atmFontDir.length() == 0)
+      flags.set (Flags::CachedAtmFontDir);
+      
+      AutoHKEY hkey;
+      
+      LONG res =
+	RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+		      L"SOFTWARE\\Adobe\\Adobe Type Manager\\Setup",
+		      0,
+		      KEY_READ,
+		      &hkey);
+
+      if (res != ERROR_SUCCESS)
+	{
+	  if (res != ERROR_FILE_NOT_FOUND)
+	    {
+	      TraceWindowsError (T_("RegOpenKeyEx"),
+				 res,
+				 T_("ATM"),
+				 T_(__FILE__),
+				 __LINE__);
+	    }
+	  return (false);
+	}
+
+      DWORD type;
+      PathName fontDir;
+      DWORD len =
+	static_cast<DWORD>(fontDir.GetCapacity() * sizeof(fontDir[0]));
+      res =
+	RegQueryValueExA
+	(hkey.Get(),
+	 "PFB_DIR",
+	 0,
+	 &type,
+	 reinterpret_cast<unsigned char *>(fontDir.GetBuffer()),
+	 &len);
+      if (res != ERROR_SUCCESS)
+	{
+	  if (res != ERROR_FILE_NOT_FOUND)
+	    {
+	      TraceWindowsError (T_("RegQueryValueEx"),
+				 res,
+				 0,
+				 T_(__FILE__),
+				 __LINE__);
+	    }
+	  return (false);
+	}
+  
+      if (! Directory::Exists(fontDir))
 	{
 	  return (false);
 	}
-      Utils::CopyString (lpszPath, BufferSizes::MaxPath, atmFontDir.c_str());
-      return (true);
+      
+      RemoveDirectoryDelimiter (fontDir.GetBuffer());
+      
+      atmFontDir = GetFullPath(fontDir.Get());
     }
 
-  flags.set (Flags::CachedAtmFontDir);
-  atmFontDir = T_("");
-
-  AutoHKEY hkey;
-
-  const MIKTEXCHAR * ATM = T_("SOFTWARE\\Adobe\\Adobe Type Manager\\Setup");
-
-  LONG res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 ATM,
-		 0,
-		 KEY_READ,
-		 &hkey);
-
-  if (res != ERROR_SUCCESS)
-    {
-      if (res != ERROR_FILE_NOT_FOUND)
-	{
-	  TraceWindowsError (T_("RegOpenKeyEx"),
-			     res,
-			     ATM,
-			     T_(__FILE__),
-			     __LINE__);
-	}
-      return (false);
-    }
-
-  DWORD type;
-  PathName fontDir;
-  DWORD len = static_cast<DWORD>(fontDir.GetCapacity());
-  res = RegQueryValueEx(hkey.Get(),
-			T_("PFB_DIR"),
-			0,
-			&type,
-			reinterpret_cast<unsigned char *>(fontDir.GetBuffer()),
-			&len);
-  if (res != ERROR_SUCCESS)
-    {
-      if (res != ERROR_FILE_NOT_FOUND)
-	{
-	  TraceWindowsError (T_("RegQueryValueEx"),
-			     res,
-			     0,
-			     T_(__FILE__),
-			     __LINE__);
-	}
-      return (false);
-    }
-  
-  if (! Directory::Exists(fontDir))
+  if (atmFontDir.GetLength() == 0)
     {
       return (false);
     }
 
-  RemoveDirectoryDelimiter (fontDir.GetBuffer());
-
-  atmFontDir = GetFullPath(fontDir.Get()).ToString();
-
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, atmFontDir.c_str());
+  path = atmFontDir;
 
   return (true);
 }
@@ -500,7 +497,7 @@ SessionImpl::GetATMFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(bool)
-GetPsFontDirectory (/*[out]*/ MIKTEXCHAR *	lpszDir)
+GetPsFontDirectory (/*[out]*/ PathName & path)
 {
   MIKTEXCHAR szWinDir[BufferSizes::MaxPath];
 
@@ -517,14 +514,16 @@ GetPsFontDirectory (/*[out]*/ MIKTEXCHAR *	lpszDir)
 		   0, 0,
 		   0, 0);
 
-  PathName::Combine (lpszDir,
-		     BufferSizes::MaxPath,
-		     szWinDrive,
-		     T_("\\psfonts"),
-		     0,
-		     0);
+  PathName path_ (szWinDrive, T_("\\psfonts"), 0, 0);
 
-  return (Directory::Exists(lpszDir));
+  if (! Directory::Exists(path_))
+    {
+      return (false);
+    }
+
+  path = path_;
+
+  return (true);
 }
 
 /* _________________________________________________________________________
@@ -539,26 +538,25 @@ SessionImpl::GetPsFontDirs (/*[out]*/ tstring &	psFontDirs)
     {
       flags.set (Flags::CachedPsFontDirs);
       PathName path;
-      if (GetATMFontDir(path.GetBuffer())
-	  || GetPsFontDirectory(path.GetBuffer()))
+      if (GetATMFontDir(path) || GetPsFontDirectory(path))
 	{
-	  if (this->psFontDirs.length() > 0)
+	  if (! this->psFontDirs.empty())
 	    {
-	      this->psFontDirs += PATH_DELIMITER;
+	      this->psFontDirs += PathName::PathNameDelimiter;
 	    }
 	  this->psFontDirs += path.Get();
 	}
-      if (GetAcrobatFontDir(path.GetBuffer()))
+      if (GetAcrobatFontDir(path))
 	{
-	  if (this->psFontDirs.length() > 0)
+	  if (! this->psFontDirs.empty())
 	    {
-	      this->psFontDirs += PATH_DELIMITER;
+	      this->psFontDirs += PathName::PathNameDelimiter;
 	    }
 	  this->psFontDirs += path.Get();
 	}
     }
 
-  if (this->psFontDirs.length() == 0)
+  if (this->psFontDirs.empty())
     {
       return (false);
     }
@@ -573,16 +571,16 @@ SessionImpl::GetPsFontDirs (/*[out]*/ tstring &	psFontDirs)
    GetWindowsFontsDirectory
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(bool)
+MIKTEXINTERNALFUNC(bool)
 GetWindowsFontsDirectory (/*[out]*/ PathName & path)
 {
-  if (GetWindowsDirectory(path.GetBuffer(),
-			  static_cast<UINT>(path.GetCapacity()))
+  if (GetWindowsDirectoryA(path.GetBuffer(),
+			   static_cast<UINT>(path.GetCapacity()))
       == 0)
     {
       FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
     }
-  path += T_("Fonts");
+  path += "Fonts";
   return (Directory::Exists(path));
 }
 
@@ -600,15 +598,15 @@ SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
       PathName path;
       if (GetWindowsFontsDirectory(path))
 	{
-	  if (this->ttfDirs.length() > 0)
+	  if (! this->ttfDirs.empty())
 	    {
-	      this->ttfDirs += PATH_DELIMITER;
+	      this->ttfDirs += PathName::PathNameDelimiter;;
 	    }
-	  this->ttfDirs = path.ToString();
+	  this->ttfDirs += path.Get();
 	}
     }
 
-  if (this->ttfDirs.length() == 0)
+  if (this->ttfDirs.empty())
     {
       return (false);
     }
@@ -632,15 +630,15 @@ SessionImpl::GetOTFDirs (/*[out]*/ tstring &	otfDirs)
       PathName path;
       if (GetWindowsFontsDirectory(path))
 	{
-	  if (this->otfDirs.length() > 0)
+	  if (! this->otfDirs.empty())
 	    {
-	      this->otfDirs += PATH_DELIMITER;
+	      this->otfDirs += PathName::PathNameDelimiter;
 	    }
-	  this->otfDirs = path.ToString();
+	  this->otfDirs += path.Get();
 	}
     }
 
-  if (this->otfDirs.length() == 0)
+  if (this->otfDirs.empty())
     {
       return (false);
     }

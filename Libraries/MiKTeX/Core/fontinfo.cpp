@@ -634,3 +634,48 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
   return (true);
 }
 
+/* _________________________________________________________________________
+
+   SessionImpl::GetLocalFontDirectories
+   _________________________________________________________________________ */
+
+tstring
+MIKTEXCALL
+SessionImpl::GetLocalFontDirectories ()
+{
+  if (! flags.test(Flags::CachedLocalFontDirs))
+    {
+      flags.set (Flags::CachedLocalFontDirs);
+#if defined(MIKTEX_WINDOWS)
+      PathName winFontDir;
+      if (GetWindowsFontsDirectory(winFontDir))
+	{
+	  if (! localFontDirs.empty())
+	    {
+	      localFontDirs += PathName::PathNameDelimiter;
+	    }
+	  localFontDirs += winFontDir.Get();
+	}
+      PathName atmFontDir;
+      if (GetATMFontDir(atmFontDir))
+	{
+	  if (! localFontDirs.empty())
+	    {
+	      localFontDirs += PathName::PathNameDelimiter;
+	    }
+	  localFontDirs += atmFontDir.Get();
+	}
+      PathName acrobatFontDir;
+      if (GetAcrobatFontDir(acrobatFontDir))
+	{
+	  if (! localFontDirs.empty())
+	    {
+	      localFontDirs += PathName::PathNameDelimiter;
+	    }
+	  localFontDirs += acrobatFontDir.Get();
+	}
+#endif
+    }
+
+  return (localFontDirs);
+}

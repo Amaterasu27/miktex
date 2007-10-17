@@ -247,6 +247,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
   dir
 
 #define CFG_MACRO_NAME_BINDIR T_("bindir")
+#define CFG_MACRO_NAME_LOCALFONTDIRS T_("localfontdirs")
 #define CFG_MACRO_NAME_PSFONTDIRS T_("psfontdirs")
 #define CFG_MACRO_NAME_OTFDIRS T_("otfdirs")
 #define CFG_MACRO_NAME_TTFDIRS T_("ttfdirs")
@@ -354,7 +355,11 @@ GetHomeDirectory ();
 bool
 GetUserProfileDirectory (/*[out]*/ PathName & path);
 #endif
-  
+
+#if defined(MIKTEX_WINDOWS)
+bool
+GetWindowsFontsDirectory (/*[out]*/ PathName & path);
+#endif  
   
 const MIKTEXCHAR *
 GetFileNameExtension (/*[in]*/ const MIKTEXCHAR * lpszPath);
@@ -1453,6 +1458,12 @@ public:
 
 public:
   virtual
+  tstring
+  MIKTEXCALL
+  GetLocalFontDirectories ();
+
+public:
+  virtual
   void
   MIKTEXCALL
   ConfigureFile (/*[in]*/ const PathName & path);
@@ -1540,13 +1551,13 @@ private:
 #if defined(MIKTEX_WINDOWS)
 private:
   bool
-  GetAcrobatFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath);
+  GetAcrobatFontDir (/*[out]*/ PathName &	path);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 private:
   bool
-  GetATMFontDir (/*[out]*/ MIKTEXCHAR *	lpszPath);
+  GetATMFontDir (/*[out]*/ PathName &	path);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -1653,6 +1664,7 @@ private:
   class FlagsEnum {
   public:
     enum EnumType {
+      CachedLocalFontDirs,
       CachedPsFontDirs,
       CachedTtfDirs,
       CachedOtfDirs,
@@ -1674,6 +1686,9 @@ private:
   std::bitset<32> flags;
 
 private:
+  tstring localFontDirs;
+
+private:
   tstring psFontDirs;
 
 private:
@@ -1684,12 +1699,12 @@ private:
 
 #if defined(MIKTEX_WINDOWS)
 private:
-  tstring acrobatFontDir;
+  PathName acrobatFontDir;
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 private:
-  tstring atmFontDir;
+  PathName atmFontDir;
 #endif
 
 private:

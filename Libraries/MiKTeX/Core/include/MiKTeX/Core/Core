@@ -6366,6 +6366,13 @@ public:
     = 0;
 
 public:
+  virtual
+  tstring
+  MIKTEXCALL
+  GetLocalFontDirectories ()
+    = 0;
+
+public:
   static
   MIKTEXEXPORT
   void

@@ -773,6 +773,12 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
       expansion = path.ToString();
     }
 #endif
+  else if (StringCompare(lpszMacroName,
+			 CFG_MACRO_NAME_LOCALFONTDIRS, true)
+	   == 0)
+    {
+      expansion = SessionImpl::GetSession()->GetLocalFontDirectories();
+    }
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_PSFONTDIRS, true) == 0)
     {
       tstring psFontDirs;

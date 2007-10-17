@@ -1403,17 +1403,14 @@ MakeFontMapApp::BuildFontconfigCache ()
   writer.WriteLine (T_("<?xml version=\"1.0\"?>"));
   writer.WriteLine (T_("<fontconfig>"));
   vector<tstring> paths;
-#if defined(MIKTEX_WINDOWS)
-  PathName path;
-  UINT l =
-    GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetCapacity()));
-  if (l == 0 || l >= path.GetCapacity())
+  for (CSVList path
+	 (pSession->GetLocalFontDirectories().c_str(),
+	  PathName::PathNameDelimiter);
+       path.GetCurrent() != 0;
+       ++ path)
     {
-      Abort (T_("GetWindowsDirectory() failed for some reason."));
+      paths.push_back (path.GetCurrent());
     }
-  path += T_("Fonts");
-  paths.push_back (path.Get());
-#endif
   for (unsigned r = 0; r < pSession->GetNumberOfTEXMFRoots(); ++ r)
     {
       PathName root = pSession->GetRootDirectory(r);
