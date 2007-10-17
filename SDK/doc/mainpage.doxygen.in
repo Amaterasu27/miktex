@@ -1,19 +1,27 @@
 /**
- * @mainpage MiKTeX @MIKTEX_VERSION_STR@ SDK (experimental)
+ * @mainpage MiKTeX @MIKTEX_VERSION_STR@ SDK
  *
  * @section intro Introduction
  *
- * MiKTeX @MIKTEX_SERIES_STR@ exports two experimental COM objects
+ * MiKTeX @MIKTEX_SERIES_STR@ exports two COM objects
  * that make it possible to script MiKTeX:
- * @li The @link MiKTeXSessionLib::MiKTeXSession MiKTeX session
- *  object @endlink provides an interface to MiKTeX core functionality.
+ * @li The
+ *  @link
+ *   MiKTeXSession@MIKTEX_SERIES_ID_STR@::MiKTeXSession@MIKTEX_SERIES_ID_STR@
+ *   MiKTeX session object
+ *  @endlink
+ *  provides an interface to MiKTeX core functionality.
  *  The interface can be used to search for files,
  *  gather information about the MiKTeX @MIKTEX_SERIES_STR@
  *  installation and to run MiKTeX @MIKTEX_SERIES_STR@ applications.
- * @li The @link MiKTeXPackageManagerLib::PackageManager MiKTeX package
- *  manager object @endlink provides an interface to the MiKTeX package
- *  manager. The interface can be used to install/remove packages and
- *  to retrieve informataion about the MiKTeX installation.
+ * @li The
+ *  @link
+     MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@::PackageManager@MIKTEX_SERIES_ID_STR@
+ *   MiKTeX package manager object
+ *  @endlink
+ *  provides an interface to the MiKTeX package manager.
+ *  The interface can be used to install/remove packages and
+ *  to retrieve informataion about packages.
  *
  * @section getting Getting the MiKTeX @MIKTEX_VERSION_STR@ SDK
  *
