@@ -25,7 +25,7 @@ set(${md5_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/md5-version.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/md5c.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include/miktex/md5.h
+  ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include/MiKTeX/Core/MD5
 )
 
 add_library(${md5_lib_name} STATIC ${${md5_lib_name}_sources})

@@ -39,7 +39,7 @@
 #include <stack>
 #include <string>
 
-#include <miktex/DibChunker.h>
+#include <MiKTeX/Graphics/DibChunker>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Paths>

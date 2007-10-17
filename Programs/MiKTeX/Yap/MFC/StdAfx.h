@@ -81,7 +81,7 @@
 
 #include "yap-version.h"
 
-#include <miktex/DibChunker.h>
+#include <MiKTeX/Graphics/DibChunker>
 #include <MiKTeX/UI/MFC/ErrorDialog>
 #include <MiKTeX/UI/MFC/ProgressDialog>
 #include <MiKTeX/UI/MFC/TextViewerDialog>

@@ -38,7 +38,7 @@
 #include <getopt.h>
 
 #include <MiKTeX/Core/Core>
-#include <miktex/md5.h>
+#include <MiKTeX/Core/MD5>
 #include <miktex/mpm.h>
 #include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Version>

@@ -22,7 +22,7 @@
 
 #include "mtprint-version.h"
 
-#include <miktex/DibChunker.h>
+#include <MiKTeX/Graphics/DibChunker>
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>

@@ -23,7 +23,7 @@
 
 #include <MiKTeX/App/Application>
 #include <MiKTeX/Core/Core>
-#include <miktex/DibChunker.h>
+#include <MiKTeX/Graphics/DibChunker>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

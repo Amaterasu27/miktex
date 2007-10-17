@@ -24,7 +24,7 @@
 #define DIBCHUNKEREXPORT __declspec(dllexport)
 
 #define CA71604DC6CF21439A421D76D5C2E5D7
-#include "miktex/DibChunker.h"
+#include "MiKTeX/Graphics/DibChunker"
 
 using namespace MiKTeX::Graphics;
 

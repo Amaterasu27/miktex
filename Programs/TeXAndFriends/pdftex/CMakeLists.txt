@@ -159,7 +159,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #define __attribute__(x)
 ")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sysexits.h "")
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/md5.h "#include <miktex/md5.h>
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/md5.h "#include <MiKTeX/Core/MD5>
 typedef unsigned char md5_byte_t;
 typedef MiKTeX::Core::MD5_CTX md5_state_t;
 #define md5_init(pstate) MiKTeX::Core::MD5Init(pstate)

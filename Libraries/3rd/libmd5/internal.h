@@ -30,7 +30,7 @@
 #  define MIKTEXMD5API(type) type
 #endif
 
-#include "miktex/md5.h"
+#include "MiKTeX/Core/MD5"
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX;

@@ -27,7 +27,7 @@
 #define B371214BB940374EA689C48ED44141CD
 
 #include <MiKTeX/Core/Core>
-#include <miktex/DibChunker.h>
+#include <MiKTeX/Graphics/DibChunker>
 
 #if ! defined(A86DAFD3F286A340B6BD420E71BCD906)
 #  if defined(_MSC_VER)

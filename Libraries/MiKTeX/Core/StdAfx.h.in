@@ -188,7 +188,7 @@ using namespace std;
 
 #include <errno.h>
 
-#include <miktex/md5.h>
+#include <MiKTeX/Core/MD5>
 
 #include <bzlib.h>
 #include <zlib.h>

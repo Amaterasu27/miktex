@@ -27,7 +27,7 @@ set(${md5_dll_name}_sources
   internal.h
   md5-version.h
   md5c.cpp
-  include/miktex/md5.h
+  include/MiKTeX/Core/MD5
 )
 
 if(NATIVE_WINDOWS)
