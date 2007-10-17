@@ -35,15 +35,28 @@ import "miktexidl.idl";
 /// @brief Information about the MiKTeX setup.
 typedef [uuid(A889D812-7E98-4E73-A453-30C9B69A32B1)] struct MiKTeXSetupInfo
 {
+  /// @brief Shared MiKTeX setup indicator.
   VARIANT_BOOL sharedSetup;
+  /// @brief MiKTeX version number.
   BSTR version;
+  /// @brief MiKTeX series number.
+  /// The MiKTeX series denoted as an integer (e.g., @MIKTEX_SERIES_INT@).
   LONG series;
+  /// @brief MiKTeX bin directory.
   BSTR binDirectory;
+  /// @brief Number of configured TEXMF root directories.
   LONG numRoots;
+  /// @brief MiKTeX installation root directory.
   BSTR installRoot;
+  /// @brief MiKTeX common configuration root directory.
+  /// Valid only for shared MiKTeX setup. 
   BSTR commonConfigRoot;
+  /// @brief MiKTeX common data root directory.
+  /// Valid only for a shared MiKTeX setup. 
   BSTR commonDataRoot;
+  /// @brief MiKTeX user configuration root directory.
   BSTR userConfigRoot;
+  /// @brief MiKTeX user data root directory.
   BSTR userDataRoot;
 } MiKTeXSetupInfo;
 
@@ -100,6 +113,8 @@ interface ISession : IDispatch
   HRESULT
   GetErrorInfo ([out,retval] ErrorInfo * errorInfo);
 
+  /// @brief Get information about the MiKTeX setup.
+  /// @return Returns an MiKTeX setup info record.
   [
     id(4),
     helpstring("method GetMiKTeXSetupInfo")
@@ -107,9 +122,12 @@ interface ISession : IDispatch
   HRESULT
   GetMiKTeXSetupInfo ([out,retval] MiKTeXSetupInfo * setupInfo);
 
+  /// @brief Get a configured root directory.
+  /// @param[in] rootIdx Index of the requested root directory.
+  /// @return Returns the requested root directory.
   [
     id(5),
-    helpstring("method GetMiKTeXSetupInfo")
+    helpstring("method GetRootDirectory")
   ]
   HRESULT
   GetRootDirectory ([in] LONG rootIdx,
@@ -166,7 +184,11 @@ library MiKTeXSession@MIKTEX_SERIES_ID_STR@
 
   /// @brief The MiKTeX session COM object.
   ///
-  /// This COM object implements the @link ISession @endlink interface.
+  /// This COM object implements the
+  /// @link ISession @endlink
+  /// and 
+  /// @link ISession2 @endlink
+  /// interfaces.
   [
     uuid(@guid_MiKTeX_Session_CURVER@),
     helpstring("MiKTeX @MIKTEX_SERIES_STR@ Session")
