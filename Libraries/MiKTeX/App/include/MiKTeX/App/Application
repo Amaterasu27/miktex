@@ -29,7 +29,7 @@
 #include <memory>
 
 #include <MiKTeX/Core/Core>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 
 #if defined(_MSC_VER)
 #  include <hash_set>

@@ -1,4 +1,4 @@
-/* MiKTeX/UI/MFC/PackageTreeCtrl:					-*- C++ -*-
+/* MiKTeX/UI/MFC/PackageTreeCtrl:				-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 
@@ -24,7 +24,7 @@
 #endif
 
 #include <MiKTeX/Core/Core>
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/UI/MFC/Prototypes>
 #include <vector>
 

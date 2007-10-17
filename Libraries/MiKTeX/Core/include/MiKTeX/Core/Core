@@ -84,7 +84,7 @@
 #endif
 
 #include <MiKTeX/Core/Text>
-#include <miktex/md5.h>
+#include <MiKTeX/Core/MD5>
 
 #if defined(__cplusplus)
 #  include <cstdio>

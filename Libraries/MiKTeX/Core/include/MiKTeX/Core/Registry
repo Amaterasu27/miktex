@@ -1,4 +1,4 @@
-/* MiKTeX/Core/Registry: MiKTeX settings
+/* MiKTeX/Core/Registry: MiKTeX settings			-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>
 
 #if ! defined(A5D53972CA7CCD40B4DB3ABBC0D957AF)
 #define A5D53972CA7CCD40B4DB3ABBC0D957AF

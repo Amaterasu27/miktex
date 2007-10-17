@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <miktex/mpm.h>
+#include <MiKTeX/PackageManager/PackageManager>
 
 #if ! defined(MIKTEXUI__77F15D3E_7C53_4571_B9D9_2E57DAD53055__)
 #  define MIKTEXUIEXPORT __declspec(dllimport)

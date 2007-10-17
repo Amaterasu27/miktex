@@ -1,4 +1,4 @@
-/* urls.h: hard-coded urls
+/* MiKTeX/Core/urls: hard-coded urls				-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -27,7 +27,7 @@
 #define BCD264408F6CC94AB371F96954CBDA98_
 
 #include <MiKTeX/Core/Text>
-#include <miktex/version.h>
+#include <MiKTeX/Core/Version>
 
 #define MIKTEX_URL_WWW_NO_SLASH MIKTEXTEXT("http://miktex.org")
 
