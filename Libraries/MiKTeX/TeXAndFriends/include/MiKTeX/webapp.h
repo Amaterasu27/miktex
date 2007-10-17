@@ -35,7 +35,7 @@
 #include <string>
 #include <vector>
 
-#include <miktex/c4plib.h>
+#include <MiKTeX/C4P/C4P>
 #include <popt-miktex.h>
 
 #include <MiKTeX/App/Application>

@@ -109,7 +109,7 @@ open_header_file ()
   out_s ("#ifdef HAVE_C4P_PRE_H\n");
   out_s ("#include \"c4p_pre.h\"\n");
   out_s ("#endif\n");
-  out_s ("#include <miktex/c4plib.h>\n");
+  out_s ("#include <MiKTeX/C4P/C4P>\n");
   out_s ("#ifdef __cplusplus\nusing namespace C4P;\n#endif\n");
   out_s ("#ifndef C4PEXTERN\n#define C4PEXTERN\n#endif\n");
   if (! def_filename.empty())

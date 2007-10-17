@@ -29,7 +29,7 @@
 
 #include <gnu-miktex.h>
 
-#include <miktex/c4plib.h>
+#include <MiKTeX/C4P/C4P>
 
 #include <string>
 
