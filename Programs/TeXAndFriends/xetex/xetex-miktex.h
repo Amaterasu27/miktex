@@ -34,7 +34,7 @@
 #include "xetex.rc"
 
 #include <MiKTeX/Core/Paths>
-#include <miktex/etexapp.h>
+#include <MiKTeX/TeXAndFriends/ETeXApp>
 
 #if 0
 namespace xetex {

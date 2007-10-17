@@ -34,7 +34,7 @@
 #include "pdftex.rc"
 
 #include <MiKTeX/Core/Paths>
-#include <miktex/etexapp.h>
+#include <MiKTeX/TeXAndFriends/ETeXApp>
 
 namespace pdftex {
 #include "pdftex.defaults.h"

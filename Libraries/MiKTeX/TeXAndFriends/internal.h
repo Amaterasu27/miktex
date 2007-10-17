@@ -35,7 +35,7 @@
 #define B8C7815676699B4EA2DE96F0BD727276
 #include "MiKTeX/C4P/C4P"
 #include "miktex/mfapp.h"
-#include "miktex/etexapp.h"
+#include "MiKTeX/TeXAndFriends/ETeXApp"
 
 using namespace C4P;
 using namespace MiKTeX::Packages;
