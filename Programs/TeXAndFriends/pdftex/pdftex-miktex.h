@@ -297,7 +297,7 @@ public:
 
 extern PDFTEXCLASS PDFTEXAPP;
 #define THEAPP PDFTEXAPP
-#include <miktex/etexapp.inl>
+#include <MiKTeX/TeXAndFriends/ETeXApp.inliners>
 
 /* _________________________________________________________________________
 
