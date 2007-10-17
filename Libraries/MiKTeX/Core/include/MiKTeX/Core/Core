@@ -83,7 +83,7 @@
 #  include <windows.h>
 #endif
 
-#include <miktex/char.h>
+#include <MiKTeX/Core/Text>
 #include <miktex/md5.h>
 
 #if defined(__cplusplus)
@@ -250,7 +250,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 #if defined(__cplusplus)
 
-#include <miktex/debug.h>
+#include <MiKTeX/Core/Debug>
 
 /// @namespace MiKTeX::Core
 /// @brief The MiKTeX core namespace.
