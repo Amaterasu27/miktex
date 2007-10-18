@@ -92,40 +92,40 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
   MiKTeX::Core::TraceMiKTeXError (miktexFunction,		\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   MiKTeX::Core::Session::FatalMiKTeXError (miktexFunction,		\
 					traceMessage,			\
 					 lpszInfo,			\
-					 T_(__FILE__),			\
+					 __FILE__,			\
 					 __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)				\
   MiKTeX::Core::TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,				\
-				  T_(__FILE__),				\
+				  __FILE__,				\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)			\
   MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,				\
-				    T_(__FILE__),			\
+				    __FILE__,			\
 				    __LINE__)
 #endif
 
@@ -133,7 +133,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   MiKTeX::Core::Session::FatalWindowsError (windowsfunction,	\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -142,7 +142,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
   MiKTeX::Core::Session::FatalWindowsError (windowsfunction,		\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
 
@@ -151,7 +151,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 
 #  define FATAL_SOAP_ERROR(pSoap)		\
   FatalSoapError (pSoap,			\
-                  T_(__FILE__),			\
+                  __FILE__,			\
                   __LINE__)
 
 /* _________________________________________________________________________
@@ -186,9 +186,9 @@ const time_t Y2000 = 946681200;
 
 typedef std::basic_ostringstream<char> otstringstream;
 
-const char * const MPM_AGENT = T_("MPM/") VER_FILEVERSION_STR;
+const char * const MPM_AGENT = "MPM/" VER_FILEVERSION_STR;
 
-const char * const MPMSVC = T_("mpmsvc");
+const char * const MPMSVC = "mpmsvc";
 
 const size_t MAXURL = 1024;
 
@@ -197,7 +197,7 @@ const size_t MAXURL = 1024;
    CURRENT_DIRECTORY
    _________________________________________________________________________ */
 
-#define CURRENT_DIRECTORY T_(".")
+#define CURRENT_DIRECTORY "."
 
 /* _________________________________________________________________________
 
@@ -207,7 +207,7 @@ const size_t MAXURL = 1024;
    _________________________________________________________________________ */
 
 #define TEXMF_PREFIX_DIRECTORY \
-  T_("texmf") MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
+  "texmf" MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
 
 /* _________________________________________________________________________
 
@@ -229,8 +229,8 @@ PrefixedPath (/*[in]*/ const char * lpszPath)
 
 inline
 bool
-StripPrefix (/*[in]*/ const std::string &		str,
-	     /*[in]*/ const char *	lpszPrefix,
+StripPrefix (/*[in]*/ const std::string &	str,
+	     /*[in]*/ const char *		lpszPrefix,
 	     /*[out]*/ std::string &		result)
 {
   size_t n = MiKTeX::Core::StrLen(lpszPrefix);
@@ -288,9 +288,9 @@ public:
   {
     if (zero != 0)
       {
-	UNEXPECTED_CONDITION (T_("TempFile::operator="));
+	UNEXPECTED_CONDITION ("TempFile::operator=");
       }
-    path = T_("");
+    path = "";
     return (*this);
   }
 
@@ -301,7 +301,7 @@ public:
     if (path[0] != 0)
       {
 	MiKTeX::Core::PathName tmp (path);
-	path = T_("");
+	path = "";
 	MiKTeX::Core::File::Delete (tmp);
       }
   }
@@ -327,7 +327,8 @@ private:
    AssertValidBuf
    _________________________________________________________________________ */
 
-inline void
+inline
+void
 AssertValidBuf (/*[in]*/ void *	lp,
 		/*[in]*/ size_t	n)
 {
@@ -345,9 +346,10 @@ AssertValidBuf (/*[in]*/ void *	lp,
    AssertValidString
    _________________________________________________________________________ */
 
-inline void
+inline
+void
 AssertValidString (/*[in]*/ const char *	lp,
-		   /*[in]*/ size_t	n = 4096)
+		   /*[in]*/ size_t		n = 4096)
 {
 #if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
   MIKTEX_ASSERT (lp != 0);
@@ -366,14 +368,14 @@ AssertValidString (/*[in]*/ const char *	lp,
 static
 inline
 std::string &
-GetErrnoMessage (/*[in]*/ int		err,
+GetErrnoMessage (/*[in]*/ int			err,
 		 /*[out]*/ std::string &	message)
 {
 #if _MSC_VER >= 1400
   _TCHAR szBuf[256];
   if (strerror_s(szBuf, 256, err) != 0)
     {
-      message = T_("");
+      message = "";
     }
   else
     {
@@ -400,24 +402,6 @@ ClearString (/*[in,out]*/ char *	lpsz)
 
 /* _________________________________________________________________________
 
-   AToI
-   _________________________________________________________________________ */
-
-inline
-int
-AToI (/*[in]*/ const char * lpsz)
-{
-#if defined(_MSC_VER)
-  return (_ttoi(lpsz));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: AToI()
-#else
-  return (atoi(lpsz));
-#endif
-}
-
-/* _________________________________________________________________________
-
    StrCmp
    _________________________________________________________________________ */
 
@@ -430,33 +414,15 @@ int
 StrCmp (/*[in]*/ const char *	lpsz1,
 	/*[in]*/ const char *	lpsz2)
 {
-#if defined(MIKTEX_UNICODE)
-  return (wcscmp(lpsz1, lpsz2));
-#else
   return (strcmp(lpsz1, lpsz2));
-#endif
 }
-
-/* _________________________________________________________________________
-
-   StrNCmp
-   _________________________________________________________________________ */
-
-#if defined(StrNCmp)
-#  undef StrNCmp
-#endif
 
 inline
 int
-StrNCmp (/*[in]*/ const char *	lpsz1,
-	 /*[in]*/ const char *	lpsz2,
-	 /*[in]*/ size_t		n)
+StrCmp (/*[in]*/ const wchar_t *	lpsz1,
+	/*[in]*/ const wchar_t *	lpsz2)
 {
-#if defined(MIKTEX_UNICODE)
-  return (wcsncmp(lpsz1, lpsz2, n));
-#else
-  return (strncmp(lpsz1, lpsz2, n));
-#endif
+  return (wcscmp(lpsz1, lpsz2));
 }
 
 /* _________________________________________________________________________
@@ -467,18 +433,12 @@ StrNCmp (/*[in]*/ const char *	lpsz1,
 inline
 int
 FPutS (/*[in]*/ const char *	lpsz,
-       /*[in]*/ FILE *			stream)
+       /*[in]*/ FILE *		stream)
 {
-#if defined(_MSC_VER)
-  int n = _fputts(lpsz, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutS()
-#else
   int n = fputs(lpsz, stream);
-#endif
   if (n < 0)
     {
-      FATAL_CRT_ERROR (T_("fputs"), 0);
+      FATAL_CRT_ERROR ("fputs", 0);
     }
   return (n);
 }
@@ -491,18 +451,12 @@ FPutS (/*[in]*/ const char *	lpsz,
 inline
 int
 FPutC (/*[in]*/ int	ch,
-       /*[in]*/ FILE *		stream)
+       /*[in]*/ FILE *	stream)
 {
-#if defined(_MSC_VER)
-  int chWritten = _fputtc(ch, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutC()
-#else
   int chWritten = fputc(ch, stream);
-#endif
   if (chWritten == EOF)
     {
-      FATAL_CRT_ERROR (T_("fputc"), 0);
+      FATAL_CRT_ERROR ("fputc", 0);
     }
   return (chWritten);
 }
@@ -632,7 +586,7 @@ public:
   bool
   MPMCALL
   TryGetPackageInfo (/*[in]*/ const std::string &	deploymentName,
-		     /*[out]*/ PackageInfo &			packageInfo);
+		     /*[out]*/ PackageInfo &		packageInfo);
 
 private:
   virtual
@@ -647,7 +601,7 @@ private:
   virtual
   bool
   MIKTEXCALL
-  OnProgress (/*[in]*/ unsigned			level,
+  OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory);
 
 public:
@@ -679,7 +633,7 @@ public:
   virtual
   std::string
   MPMCALL
-  GetContainerPath (/*[in]*/ const std::string & deploymentName,
+  GetContainerPath (/*[in]*/ const std::string &	deploymentName,
 		    /*[in]*/ bool			useDisplayNames);
 
 public:
@@ -729,7 +683,7 @@ public:
 public:
   void
   DeclarePackageObsolete (/*[in]*/ const char *	lpszDeploymentName,
-			  /*[in]*/ bool			obsolete);
+			  /*[in]*/ bool		obsolete);
 
 public:
   void
@@ -743,8 +697,8 @@ public:
 
 public:
   void
-  TraceError (/*[in]*/ const char *   lpszFormat,
-	      /*[in]*/			    ...);
+  TraceError (/*[in]*/ const char *	lpszFormat,
+	      /*[in]*/			...);
 
 private:
   void
@@ -767,9 +721,9 @@ private:
 private:
   bool
   TryVerifyInstalledPackageHelper
-  (/*[in]*/ const std::string &	fileName,
-   /*[out]*/ bool &				haveDigest,
-   /*[out]*/ MiKTeX::Core::MD5 &		digest);
+  (/*[in]*/ const std::string &		fileName,
+   /*[out]*/ bool &			haveDigest,
+   /*[out]*/ MiKTeX::Core::MD5 &	digest);
 
 private:
   void
@@ -889,7 +843,7 @@ private:
   bool
   TryGetValue (/*[in]*/ const char *	lpszDeploymentName,
 	    /*[in]*/ const char *	lpszValueName,
-	    /*[out]*/ std::string &		value)
+	    /*[out]*/ std::string &	value)
   {
     return (pcfg->TryGetValue(lpszDeploymentName, lpszValueName, value));
   }
@@ -930,13 +884,13 @@ public:
   GetArchiveFileSize (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! TryGetValue(lpszDeploymentName, T_("CabSize"), str))
+    if (! TryGetValue(lpszDeploymentName, "CabSize", str))
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileSize"),
+	FATAL_MPM_ERROR ("DbLight::GetArchiveFileSize",
 			 T_("Unknown archive file size."),
 			 lpszDeploymentName);
       }
-    return (AToI(str.c_str()));
+    return (atoi(str.c_str()));
   }
 
 public:
@@ -944,9 +898,9 @@ public:
   GetArchiveFileDigest (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! pcfg->TryGetValue(lpszDeploymentName, T_("CabMD5"), str))
+    if (! pcfg->TryGetValue(lpszDeploymentName, "CabMD5", str))
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileDigest"),
+	FATAL_MPM_ERROR ("DbLight::GetArchiveFileDigest",
 			 T_("Unknown archive file digest."),
 			 lpszDeploymentName);
       }
@@ -958,9 +912,9 @@ public:
   GetPackageDigest (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! pcfg->TryGetValue(lpszDeploymentName, T_("MD5"), str))
+    if (! pcfg->TryGetValue(lpszDeploymentName, "MD5", str))
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetPackageDigest"),
+	FATAL_MPM_ERROR ("DbLight::GetPackageDigest",
 			 T_("Unknown package digest."),
 			 lpszDeploymentName);
       }
@@ -972,16 +926,16 @@ public:
   GetTimePackaged (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! TryGetValue(lpszDeploymentName, T_("TimePackaged"), str))
+    if (! TryGetValue(lpszDeploymentName, "TimePackaged", str))
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetTimePackaged"),
+	FATAL_MPM_ERROR ("DbLight::GetTimePackaged",
 			 T_("Unknown timestamp."),
 			 lpszDeploymentName);
       }
-    unsigned time = static_cast<unsigned>(AToI(str.c_str()));
+    unsigned time = static_cast<unsigned>(atoi(str.c_str()));
     if (time < Y2000)
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetTimePackaged"),
+	FATAL_MPM_ERROR ("DbLight::GetTimePackaged",
 			 T_("Invalid timestamp."),
 			 lpszDeploymentName);
       }
@@ -993,9 +947,9 @@ public:
   GetPackageLevel (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! TryGetValue(lpszDeploymentName, T_("Level"), str))
+    if (! TryGetValue(lpszDeploymentName, "Level", str))
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetPackageLevel"),
+	FATAL_MPM_ERROR ("DbLight::GetPackageLevel",
 			 T_("Unknown package level."),
 			 lpszDeploymentName);
       }
@@ -1007,9 +961,9 @@ public:
   GetPackageVersion (/*[in]*/ const char *	lpszDeploymentName)
   {
     std::string version;
-    if (! TryGetValue(lpszDeploymentName, T_("Version"), version))
+    if (! TryGetValue(lpszDeploymentName, "Version", version))
       {
-	version = T_("");
+	version = "";
       }
     return (version);
   }
@@ -1019,25 +973,25 @@ public:
   GetArchiveFileType (/*[in]*/  const char *	lpszDeploymentName)
   {
     std::string str;
-    if (! TryGetValue(lpszDeploymentName, T_("Type"), str))
+    if (! TryGetValue(lpszDeploymentName, "Type", str))
       {
 	return (MiKTeX::Extractor::ArchiveFileType::MSCab);
       }
-    if (str == T_("MSCab"))
+    if (str == "MSCab")
       {
 	return (MiKTeX::Extractor::ArchiveFileType::MSCab);
       }
-    else if (str == T_("TarBzip2"))
+    else if (str == "TarBzip2")
       {
 	return (MiKTeX::Extractor::ArchiveFileType::TarBzip2);
       }
-    else if (str == T_("TarLzma"))
+    else if (str == "TarLzma")
       {
 	return (MiKTeX::Extractor::ArchiveFileType::TarLzma);
       }
     else
       {
-	FATAL_MPM_ERROR (T_("DbLight::GetArchiveFileType"),
+	FATAL_MPM_ERROR ("DbLight::GetArchiveFileType",
 			 T_("Unknown archive file type."),
 			 lpszDeploymentName);
       }
@@ -1050,12 +1004,12 @@ public:
   {
     switch (toupper(ch))
     {
-    case T_('S'): return (PackageLevel::Essential);
-    case T_('M'): return (PackageLevel::Basic);
-    case T_('L'): return (PackageLevel::Advanced);
-    case T_('T'): return (PackageLevel::Complete);
+    case 'S': return (PackageLevel::Essential);
+    case 'M': return (PackageLevel::Basic);
+    case 'L': return (PackageLevel::Advanced);
+    case 'T': return (PackageLevel::Complete);
     default:
-      FATAL_MPM_ERROR (T_("DbLight::CharToPackageLevel"),
+      FATAL_MPM_ERROR ("DbLight::CharToPackageLevel",
 		       T_("Invalid package level."),
 		       0);
     }
@@ -1250,14 +1204,14 @@ public:
   void
   EXTRACTORCALL
   OnBeginFileExtraction (/*[in]*/ const char *	lpszFileName,
-			 /*[in]*/ size_t		uncompressedSize);
+			 /*[in]*/ size_t	uncompressedSize);
 
 public:
   virtual
   void
   EXTRACTORCALL
   OnEndFileExtraction (/*[in]*/ const char *	lpszFileName,
-		       /*[in]*/ size_t			uncompressedSize);
+		       /*[in]*/ size_t		uncompressedSize);
 
 public:
   virtual
@@ -1377,8 +1331,8 @@ private:
 
 private:
   void
-  ReportLine (/*[in]*/ const char *   lpsz,
-	      /*[in]*/			    ...);
+  ReportLine (/*[in]*/ const char *	lpsz,
+	      /*[in]*/			...);
 
 private:
   std::string
@@ -1402,8 +1356,8 @@ private:
   {
     if (pCallback != 0 && ! pCallback->OnProgress(nf))
       {
-	trace_mpm->WriteLine (T_("libmpm"), T_("client wants to cancel"));
-	trace_mpm->WriteLine (T_("libmpm"),
+	trace_mpm->WriteLine ("libmpm", T_("client wants to cancel"));
+	trace_mpm->WriteLine ("libmpm",
 			      T_("throwing OperationCancelledException"));
 	throw MiKTeX::Core::OperationCancelledException ();
       }
@@ -1510,19 +1464,19 @@ private:
   
 private:
   void
-  Download (/*[in]*/ const std::string &	url,
+  Download (/*[in]*/ const std::string &		url,
 	    /*[in]*/ const MiKTeX::Core::PathName &	dest,
-	    /*[in]*/ size_t		expectedSize = 0);
+	    /*[in]*/ size_t				expectedSize = 0);
   
 private:
   void
   Download (/*[in]*/ const MiKTeX::Core::PathName &	fileName,
-	    /*[in]*/ size_t		expectedSize = 0);
+	    /*[in]*/ size_t				expectedSize = 0);
   
 private:
   void
   RemoveFiles (/*[in]*/ const std::vector<std::string> & toBeRemoved,
-	       /*[in]*/ bool			silently = false);
+	       /*[in]*/ bool				silently = false);
   
 private:
   void
@@ -1536,7 +1490,7 @@ private:
 
 private:
   void
-  AddToFileList (/*[in,out]*/ std::vector<std::string> & fileList,
+  AddToFileList (/*[in,out]*/ std::vector<std::string> &	fileList,
 		 /*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
 
@@ -1544,13 +1498,13 @@ private:
   void
   RemoveFromFileList
     (/*[in,out]*/ std::vector<std::string> &	fileList,
-     /*[in]*/ const MiKTeX::Core::PathName &		fileName)
+     /*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
 
 private:
   void
-  CopyPackage (/*[in]*/ const MiKTeX::Core::PathName & pathSourceRoot,
-	       /*[in]*/ const std::string & deploymentName);
+  CopyPackage (/*[in]*/ const MiKTeX::Core::PathName &	pathSourceRoot,
+	       /*[in]*/ const std::string &		deploymentName);
   
 private:
   virtual
@@ -1578,9 +1532,9 @@ private:
 
 private:
   void
-  MyCopyFile (/*[in]*/ const MiKTeX::Core::PathName &		source,
-	      /*[in]*/ const MiKTeX::Core::PathName &		dest,
-	      /*[out]*/ size_t &		size);
+  MyCopyFile (/*[in]*/ const MiKTeX::Core::PathName &	source,
+	      /*[in]*/ const MiKTeX::Core::PathName &	dest,
+	      /*[out]*/ size_t &			size);
   
 private:
   void
@@ -1588,9 +1542,9 @@ private:
   
 private:
   bool
-  CheckArchiveFile (/*[in]*/ const char *	lpszPackage,
+  CheckArchiveFile (/*[in]*/ const char *		lpszPackage,
 		    /*[in]*/ const MiKTeX::Core::PathName & archiveFileName,
-		    /*[in]*/ bool		mustBeOk);
+		    /*[in]*/ bool			mustBeOk);
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
@@ -1651,7 +1605,7 @@ public:
   virtual
   void
   MPMCALL
-  AddFilter (/*[in]*/ unsigned int		filter,
+  AddFilter (/*[in]*/ unsigned int	filter,
 	     /*[in]*/ const char *	lpsz = 0)
   {
     if ((filter & PackageFilter::RequiredBy) != 0 && lpsz != 0)

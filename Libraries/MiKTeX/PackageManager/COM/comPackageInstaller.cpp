@@ -194,15 +194,15 @@ comPackageInstaller::Add (/*[in]*/ BSTR		packageName,
     {
       if (toBeInstalled)
 	{
-	  packagesToBeInstalled.push_back (string(CW2CT(packageName)));
-	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
+	  packagesToBeInstalled.push_back (string(CW2A(packageName)));
+	  trace_mpm->WriteFormattedLine ("mpmsvc",
 					 T_("to be installed: %s"),
 					 packagesToBeInstalled.back().c_str());
 	}
       else
 	{
-	  packagesToBeRemoved.push_back (string(CW2CT(packageName)));
-	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
+	  packagesToBeRemoved.push_back (string(CW2A(packageName)));
+	  trace_mpm->WriteFormattedLine ("mpmsvc",
 					 T_("to be removed: %s"),
 					 packagesToBeRemoved.back().c_str());
 	}
@@ -215,10 +215,10 @@ comPackageInstaller::Add (/*[in]*/ BSTR		packageName,
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("mpmsvc"),
+	MiKTeXException("mpmsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -248,7 +248,7 @@ comPackageInstaller::InstallRemove ()
   HRESULT hr = S_OK;
   try
     {
-      trace_mpm->WriteLine (T_("mpmsvc"), T_("install/remove"));
+      trace_mpm->WriteLine ("mpmsvc", T_("install/remove"));
       if (pInstaller.get() == 0)
 	{
 	  if (pManager.Get() == 0)
@@ -269,10 +269,10 @@ comPackageInstaller::InstallRemove ()
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("mpmsvc"),
+	MiKTeXException("mpmsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -323,7 +323,7 @@ comPackageInstaller::UpdateDb ()
   HRESULT hr = S_OK;
   try
     {
-      trace_mpm->WriteLine (T_("mpmsvc"), T_("update db"));
+      trace_mpm->WriteLine ("mpmsvc", T_("update db"));
       if (pInstaller.get() == 0)
 	{
 	  if (pManager.Get() == 0)
@@ -342,10 +342,10 @@ comPackageInstaller::UpdateDb ()
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("mpmsvc"),
+	MiKTeXException("mpmsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -363,7 +363,7 @@ comPackageInstaller::SetRepository (/*[in]*/ BSTR repository)
   HRESULT hr = S_OK;
   try
     {
-      trace_mpm->WriteLine (T_("mpmsvc"), T_("set repository"));
+      trace_mpm->WriteLine ("mpmsvc", T_("set repository"));
       if (pInstaller.get() == 0)
 	{
 	  if (pManager.Get() == 0)
@@ -382,10 +382,10 @@ comPackageInstaller::SetRepository (/*[in]*/ BSTR repository)
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("mpmsvc"),
+	MiKTeXException("mpmsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }

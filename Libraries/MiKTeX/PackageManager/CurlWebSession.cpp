@@ -56,7 +56,7 @@ void
 CurlWebSession::Initialize ()
 {
   trace_curl->WriteFormattedLine
-    (T_("libmpm"),
+    ("libmpm",
      T_("initializing cURL library version %s..."),
      LIBCURL_VERSION);
 
@@ -65,7 +65,7 @@ CurlWebSession::Initialize ()
   if (pCurl == 0)
     {
       FATAL_MPM_ERROR
-	(T_("CurlWebSession::Initialize"),
+	("CurlWebSession::Initialize",
 	 T_("The cURL easy interface could not be initialized."),
 	 0);
     }
@@ -75,23 +75,23 @@ CurlWebSession::Initialize ()
   string ftpMode =
     SessionWrapper(true)->GetConfigValue(0,
 					 MIKTEX_REGVAL_FTP_MODE,
-					 T_("pasv"));
+					 "pasv");
 
-  if (ftpMode == T_("port"))
+  if (ftpMode == "port")
     {
-      SetOption (CURLOPT_FTPPORT, T_("-"));
+      SetOption (CURLOPT_FTPPORT, "-");
     }
-  else if (ftpMode == T_("pasv"))
+  else if (ftpMode == "pasv")
     {
       SetOption (CURLOPT_FTP_USE_EPSV, static_cast<long>(false));
     }
-  else if (ftpMode == T_("epsv"))
+  else if (ftpMode == "epsv")
     {
       SetOption (CURLOPT_FTP_USE_EPSV, static_cast<long>(true));
     }
   else
     {
-      FATAL_MPM_ERROR (T_("CurlWebSession::Initialize"),
+      FATAL_MPM_ERROR ("CurlWebSession::Initialize",
 		       T_("Invalid FTP mode configured."),
 		       ftpMode.c_str());
     }
@@ -127,27 +127,27 @@ CurlWebSession::Initialize ()
   if (haveProxySettings && proxySettings.useProxy)
     {
       proxyPort = proxySettings.proxy;
-      proxyPort += T_(":");
+      proxyPort += ":";
       proxyPort += NUMTOSTR(proxySettings.port);
       SetOption (CURLOPT_PROXY, proxyPort.c_str());
       if (proxySettings.authenticationRequired)
 	{
-	  if (proxySettings.user.find(T_(':')) != string::npos)
+	  if (proxySettings.user.find(':') != string::npos)
 	    {
 	      FATAL_MPM_ERROR
-		(T_("CurlWebSession::Initialize"),
+		("CurlWebSession::Initialize",
 		 T_("Unsupported proxy user name (colons are not supported)."),
 		 0);
 	    }
-	  if (proxySettings.password.find(T_(':')) != string::npos)
+	  if (proxySettings.password.find(':') != string::npos)
 	    {
 	      FATAL_MPM_ERROR
-		(T_("CurlWebSession::Initialize"),
+		("CurlWebSession::Initialize",
 		 T_("Unsupported proxy password."),
 		 0);
 	    }
 	  userPassword = proxySettings.user;
-	  userPassword += T_(':');
+	  userPassword += ':';
 	  userPassword += proxySettings.password;
 	  SetOption (CURLOPT_PROXYUSERPWD, userPassword.c_str());
 	}
@@ -183,7 +183,7 @@ CurlWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
     {
       Initialize ();
     }
-  trace_curl->WriteFormattedLine (T_("libmpm"),
+  trace_curl->WriteFormattedLine ("libmpm",
 				  T_("going to download %s"),
 				  Q_(lpszUrl));
   return (new CurlWebFile (this, lpszUrl, pIProgressNotify));
@@ -199,7 +199,7 @@ CurlWebSession::Dispose ()
 {
   if (pCurl != 0)
     {
-      trace_curl->WriteLine (T_("libmpm"), T_("releasing cURL easy handle"));
+      trace_curl->WriteLine ("libmpm", T_("releasing cURL easy handle"));
       curl_easy_cleanup (pCurl);
       pCurl = 0;
     }
@@ -225,7 +225,7 @@ CurlWebSession::DebugCallback (/*[in]*/ CURL *		pCurl,
 	{
 	  MIKTEX_ASSERT (pData != 0);
 	  string text (pData, sizeData);
-	  This->trace_curl->Write (T_("curl"), text.c_str());
+	  This->trace_curl->Write ("curl", text.c_str());
 	}
     }
   catch (const exception &)

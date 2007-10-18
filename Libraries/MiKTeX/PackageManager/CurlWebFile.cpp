@@ -37,7 +37,7 @@ using namespace std;
    _________________________________________________________________________ */
 
 CurlWebFile::CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
-			  /*[in]*/ const char *	lpszUrl,
+			  /*[in]*/ const char *		lpszUrl,
 			  /*[in]*/ IProgressNotify_ *	pIProgressNotify)
   : handleAdded (false),
     pCurlm (0),
@@ -112,14 +112,14 @@ CurlWebFile::CurlInit ()
   if (pCurlm == 0)
     {
       FATAL_MPM_ERROR
-	(T_("CurlWebFile::CurlInit"),
+	("CurlWebFile::CurlInit",
 	 T_("The cURL multi interface could not be initialized."),
 	 0);
     }
   CURLMcode code = curl_multi_add_handle(pCurlm, pSession->GetHandle());
   if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
     {
-      FATAL_MPM_ERROR (T_("CurlWebFile::CurlInit"),
+      FATAL_MPM_ERROR ("CurlWebFile::CurlInit",
 		       GetCurlErrorString(code).c_str(),
 		       0);
     }
@@ -140,7 +140,7 @@ CurlWebFile::Connect ()
       code = curl_multi_perform(pCurlm, &runningHandles);
       if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::Connect"),
+	  FATAL_MPM_ERROR ("CurlWebFile::Connect",
 			   GetCurlErrorString(code).c_str(),
 			   0);
 	}
@@ -253,7 +253,7 @@ CurlWebFile::Perform ()
 	  
       if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::Perform"),
+	  FATAL_MPM_ERROR ("CurlWebFile::Perform",
 			   GetCurlErrorString(code).c_str(),
 			   0);
 	}
@@ -266,7 +266,7 @@ CurlWebFile::Perform ()
 
       if (n < 0)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::Perform"),
+	  FATAL_MPM_ERROR ("CurlWebFile::Perform",
 			   T_("select() failed for some reason."),
 			   NUMTOSTR(n));
 	}
@@ -278,7 +278,7 @@ CurlWebFile::Perform ()
 	      code = curl_multi_perform(pCurlm, &runningHandles);
 	      if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
 		{
-		  FATAL_MPM_ERROR (T_("CurlWebFile::Perform"),
+		  FATAL_MPM_ERROR ("CurlWebFile::Perform",
 				   GetCurlErrorString(code).c_str(),
 				   0);
 		}
@@ -326,19 +326,19 @@ CurlWebFile::Close ()
 {
   if (pCurlm != 0)
     {
-      trace_mpm->WriteLine (T_("libmpm"), T_("closing Web file"));
+      trace_mpm->WriteLine ("libmpm", T_("closing Web file"));
       CURLMcode r1 = curl_multi_remove_handle(pCurlm, pSession->GetHandle());
       CURLMcode r2 = curl_multi_cleanup(pCurlm);
       pCurlm = 0;
       if (r1 != CURLM_OK)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::Close"),
+	  FATAL_MPM_ERROR ("CurlWebFile::Close",
 			   GetCurlErrorString(r1).c_str(),
 			   0);
 	}
       if (r2 != CURLM_OK)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::Close"),
+	  FATAL_MPM_ERROR ("CurlWebFile::Close",
 			   GetCurlErrorString(r2).c_str(),
 			   0);
 	}
@@ -360,14 +360,14 @@ CurlWebFile::ReadInformationals ()
     {
       if (pCurlMsg->msg != CURLMSG_DONE)
 	{
-	  FATAL_MPM_ERROR (T_("CurlWebFile::ReadInformationals"),
+	  FATAL_MPM_ERROR ("CurlWebFile::ReadInformationals",
 			   T_("Unexpected cURL message."),
 			   NUMTOSTR(pCurlMsg->msg));
 	}
       if (pCurlMsg->data.result != CURLE_OK)
 	{
 	  FATAL_MPM_ERROR
-	    (T_("CurlWebFile::ReadInformationals"),
+	    ("CurlWebFile::ReadInformationals",
 	     pSession->GetCurlErrorString(pCurlMsg->data.result).c_str(),
 	     0);
 	}
@@ -385,11 +385,11 @@ CurlWebFile::ReadInformationals ()
       if (r != CURLE_OK)
 	{
 	  FATAL_MPM_ERROR
-	    (T_("CurlWebFile::ReadInformationals"),
+	    ("CurlWebFile::ReadInformationals",
 	     pSession->GetCurlErrorString(r).c_str(),
 	     0);
 	}
-      trace_mpm->WriteFormattedLine (T_("libmpm"),
+      trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("response code: %ld"),
 				     responseCode);
       if (responseCode >= 400)
@@ -397,7 +397,7 @@ CurlWebFile::ReadInformationals ()
 	  string msg = T_("Error response from server: ");
 	  msg += NUMTOSTR(responseCode);
 	  FATAL_MPM_ERROR
-	    (T_("CurlWebFile::ReadInformationals"),
+	    ("CurlWebFile::ReadInformationals",
 	     msg.c_str(),
 	     0);
 	}

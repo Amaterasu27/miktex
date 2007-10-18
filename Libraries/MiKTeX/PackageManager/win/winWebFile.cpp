@@ -56,11 +56,11 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			/*[in]*/ const char *	lpszUrl)
   : hUrl (0),
     url (lpszUrl),
-    trace_error (TraceStream::Open(T_("error"))),
-    trace_mpm (TraceStream::Open(T_("mpm")))
+    trace_error (TraceStream::Open("error")),
+    trace_mpm (TraceStream::Open("mpm"))
 {
   // open the rempote file
-  trace_mpm->WriteFormattedLine (T_("libmpm"), T_("opening \"%s\"..."), lpszUrl);
+  trace_mpm->WriteFormattedLine ("libmpm", T_("opening \"%s\"..."), lpszUrl);
   unsigned int flags = (0
 			| INTERNET_FLAG_EXISTING_CONNECT
 			| INTERNET_FLAG_KEEP_CONNECTION
@@ -76,18 +76,18 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
     {
       if (winWebSession::IsGlobalOffline())
 	{
-	  trace_mpm->WriteLine (T_("libmpm"), T_("we are offline"));
+	  trace_mpm->WriteLine ("libmpm", T_("we are offline"));
 	  if (InternetGoOnline(const_cast<char *>(lpszUrl),
 			       GetDesktopWindow(),
 			       0))
 	    {
-	      trace_mpm->WriteLine (T_("libmpm"), T_("gone online"));
+	      trace_mpm->WriteLine ("libmpm", T_("gone online"));
 	      hUrl = InternetOpenUrl(hInternet, lpszUrl , 0, 0, flags, 0);
 	    }
 	  else
 	    {
-	      trace_mpm->WriteLine (T_("libmpm"), T_("still offline"));
-	      FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	      trace_mpm->WriteLine ("libmpm", T_("still offline"));
+	      FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			       (T_("Packages cannot be downloaded when ")
 				T_("Internet Explorer is in offline mode.")),
 			       lpszUrl);
@@ -95,13 +95,13 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 	}
       else
 	{
-	  trace_mpm->WriteLine (T_("libmpm"), T_("we are online"));
+	  trace_mpm->WriteLine ("libmpm", T_("we are online"));
 	}
       if (hUrl == 0)
 	{
 	  string error;
 	  winWebSession::GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   error.c_str(),
 			   lpszUrl);
 	}
@@ -119,7 +119,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
     {
       string error;
       winWebSession::GetLastErrorMessage (error);
-      FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+      FATAL_MPM_ERROR ("winWebFile::winWebFile",
 		       error.c_str(),
 		       lpszUrl);
     }
@@ -146,7 +146,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 	{
 	  string error;
 	  winWebSession::GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   error.c_str(),
 			   lpszUrl);
 	}
@@ -160,8 +160,8 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
       // we only handle "proxy authentication required" errors
       if (code != HTTP_STATUS_PROXY_AUTH_REQ)
 	{
-	  trace_error->WriteFormattedLine (T_("libmpm"),
-			      T_("HTTP %u"),
+	  trace_error->WriteFormattedLine ("libmpm",
+			      "HTTP %u",
 			      static_cast<unsigned>(code));
 	  // return a meaningful error message
 	  char szText[1024];
@@ -175,12 +175,12 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 	    {
 	      winWebSession::GetLastErrorMessage (error);
 	    }
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   error.c_str(),
 			   lpszUrl);
 	}
       
-      trace_mpm->WriteLine (T_("libmpm"), T_("proxy authentication required"));
+      trace_mpm->WriteLine ("libmpm", T_("proxy authentication required"));
 
       // read and ignore the HTML page that follows
       unsigned long length;
@@ -188,7 +188,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 	{
 	  string error;
 	  winWebSession::GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   error.c_str(),
 			   lpszUrl);
 	}
@@ -210,9 +210,9 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			   0)
 	  != ERROR_INTERNET_FORCE_RETRY)
 	{
-	  trace_mpm->WriteLine (T_("libmpm"),
+	  trace_mpm->WriteLine ("libmpm",
 				T_("internet error dialog was cancelled"));
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   T_("Proxy authentication cancelled."),
 			   lpszUrl);
 	}
@@ -222,7 +222,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
         {
 	  string error;
 	  winWebSession::GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
+	  FATAL_MPM_ERROR ("winWebFile::winWebFile",
 			   error.c_str(),
 			   lpszUrl);
         }
@@ -262,7 +262,7 @@ winWebFile::Read (/*[out]*/ void *		pBuffer,
     {
       string error;
       winWebSession::GetLastErrorMessage (error);
-      FATAL_MPM_ERROR (T_("winWebFile::Read"),
+      FATAL_MPM_ERROR ("winWebFile::Read",
 		       error.c_str(),
 		       url.c_str());
     }
@@ -285,7 +285,7 @@ winWebFile::Close ()
 	{
 	  string error;
 	  winWebSession::GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebFile::Close"), error.c_str(), 0);
+	  FATAL_MPM_ERROR ("winWebFile::Close", error.c_str(), 0);
 	}
     }
   if (trace_mpm.get() != 0)

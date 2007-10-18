@@ -75,7 +75,7 @@ winWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
       // check to see if computer is connected to the Internet
       if (InternetAttemptConnect(0) != ERROR_SUCCESS)
 	{
-	  FATAL_WINDOWS_ERROR (T_("InternetAttemptConnect"), 0);
+	  FATAL_WINDOWS_ERROR ("InternetAttemptConnect", 0);
 	}
       
       hInternet
@@ -88,7 +88,7 @@ winWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
 	{
 	  string error;
 	  GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebSession::winWebSession"),
+	  FATAL_MPM_ERROR ("winWebSession::winWebSession",
 			   error.c_str(),
 			   0);
 	}
@@ -112,7 +112,7 @@ winWebSession::Dispose ()
 	{
 	  string error;
 	  GetLastErrorMessage (error);
-	  FATAL_MPM_ERROR (T_("winWebSession::Dispose"), error.c_str(), 0);
+	  FATAL_MPM_ERROR ("winWebSession::Dispose", error.c_str(), 0);
 	}
     }
 }
@@ -172,7 +172,7 @@ winWebSession::GetLastErrorMessage (/*[out]*/ string &	message)
 	  FormatMessage ((FORMAT_MESSAGE_ALLOCATE_BUFFER
 			  | FORMAT_MESSAGE_IGNORE_INSERTS
 			  | FORMAT_MESSAGE_FROM_HMODULE),
-			 GetModuleHandle(T_("wininet.dll")),
+			 GetModuleHandle("wininet.dll"),
 			 lastError,
 			 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 			 reinterpret_cast<char*>(&pMsgBuf),

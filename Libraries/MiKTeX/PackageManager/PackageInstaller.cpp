@@ -30,7 +30,7 @@ using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
 
-#define LF T_("\n")
+#define LF "\n"
 
 /* _________________________________________________________________________
 
@@ -45,15 +45,15 @@ PackageInstallerImpl::MakeUrl (/*[in]*/ const char * lpszBase,
   size_t l = url.length();
   if (l == 0)
     {
-      FATAL_MPM_ERROR (T_("MakeUrl"), T_("Invalid base URL."), lpszBase);
+      FATAL_MPM_ERROR ("MakeUrl", T_("Invalid base URL."), lpszBase);
     }
-  if (url[l - 1] != T_('/'))
+  if (url[l - 1] != '/')
     {
-      url += T_('/');
+      url += '/';
     }
-  if (lpszRel[0] == T_('/'))
+  if (lpszRel[0] == '/')
     {
-      FATAL_MPM_ERROR (T_("MakeUrl"), T_("Invalid relative URL."), lpszRel);
+      FATAL_MPM_ERROR ("MakeUrl", T_("Invalid relative URL."), lpszRel);
     }
   url += lpszRel;
   return (url);
@@ -87,7 +87,7 @@ PackageInstaller::~PackageInstaller ()
 MPMSTATICFUNC(bool)
 IsPureContainer (/*[in]*/ const char * lpszDeploymentName)
 {
-  return (StrNCmp(lpszDeploymentName, T_("_miktex-"), 8) == 0);
+  return (strncmp(lpszDeploymentName, "_miktex-", 8) == 0);
 }
 
 /* _________________________________________________________________________
@@ -98,7 +98,7 @@ IsPureContainer (/*[in]*/ const char * lpszDeploymentName)
 MPMSTATICFUNC(bool)
 IsMiKTeXPackage (/*[in]*/ const char * lpszDeploymentName)
 {
-  return (StrNCmp(lpszDeploymentName, T_("miktex-"), 7) == 0);
+  return (strncmp(lpszDeploymentName, "miktex-", 7) == 0);
 }
 
 /* _________________________________________________________________________
@@ -147,7 +147,7 @@ PackageInstallerImpl::PackageInstallerImpl
   if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
     {
       trace_mpm->WriteFormattedLine
-	(T_("libmpm"),
+	("libmpm",
 	 T_("using default package repository: %s"),
 	 repository.c_str());
       SetRepository (repository);
@@ -210,7 +210,7 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
 				/*[in]*/ size_t			expectedSize)
 {
   trace_mpm->WriteFormattedLine
-    (T_("libmpm"),
+    ("libmpm",
      T_("going to download: %s => %s"),
      Q_(url),
      Q_(dest));
@@ -240,7 +240,7 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
   downloadedFile = dest;
 
   // receive the data
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("start writing on %s"),
 				 Q_(dest));
   char buf[1024];
@@ -294,7 +294,7 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
     }
 
   // report statistics
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("downloaded %u bytes in %u milliseconds"),
 				 received,
 				 ((end - start) * CLOCKS_PER_SEC) / 1000);
@@ -373,7 +373,7 @@ PackageInstallerImpl::OnEndFileExtraction
   // update progress info
   MIKTEX_LOCK(ProgressIndicator)
     {
-      progressInfo.fileName = T_("");
+      progressInfo.fileName = "";
       progressInfo.cFilesPackageInstallCompleted += 1;
       progressInfo.cFilesInstallCompleted += 1;
       progressInfo.cbPackageInstallCompleted += uncompressedSize;
@@ -443,7 +443,7 @@ PackageInstallerImpl::InstallDbLight ()
 	       ? T_("remote package repository")
 	       : (repositoryType == RepositoryType::Local
 		  ? T_("local package repository")
-		  : T_("MiKTeXDirect"))));
+		  : "MiKTeXDirect")));
   
   // path to config dir
   PathName pathConfigDir (destinationDirectory, MIKTEX_PATH_MIKTEX_CONFIG_DIR);
@@ -514,7 +514,7 @@ PackageInstallerImpl::InstallDbLight ()
     }
   else
     {
-      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::InstallDbLight"));
+      UNEXPECTED_CONDITION ("PackageInstallerImpl::InstallDbLight");
     }
 }
 
@@ -611,7 +611,7 @@ void
 MPMCALL
 PackageInstallerImpl::FindUpdates ()
 {
-  trace_mpm->WriteLine (T_("libmpm"), T_("searching for updated packages"));
+  trace_mpm->WriteLine ("libmpm", T_("searching for updated packages"));
 
   // force a download of the lightweight database
   LoadDbLight (true);
@@ -647,7 +647,7 @@ PackageInstallerImpl::FindUpdates ()
 	      int verCmp = CompareSerieses(version, MIKTEX_SERIES_STR);
 	      if (verCmp == 0)
 		{
-		  trace_mpm->WriteFormattedLine (T_("libmpm"),
+		  trace_mpm->WriteFormattedLine ("libmpm",
 						 T_("%s: new MiKTeX package"),
 						 lpszPackage);
 		  updates.push_back (updateInfo);
@@ -675,15 +675,15 @@ PackageInstallerImpl::FindUpdates ()
 	      continue;
 	    }
 	  trace_mpm->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("%s: server has a different version"),
 	     lpszPackage);
 	  trace_mpm->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("server digest: %s"),
 	     md5.ToString().c_str());
 	  trace_mpm->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("local digest: %s"),
 	     pPackageInfo->digest.ToString().c_str());
 	  int verCmp =
@@ -706,7 +706,7 @@ PackageInstallerImpl::FindUpdates ()
 		}
 	      // server has a newer package
 	      trace_mpm->WriteFormattedLine
-		(T_("libmpm"),
+		("libmpm",
 		 T_("%s: server has updated package"),
 		 lpszPackage);
 	    }
@@ -714,7 +714,7 @@ PackageInstallerImpl::FindUpdates ()
 	    {
 	      // server has a newer version
 	      trace_mpm->WriteFormattedLine
-		(T_("libmpm"),
+		("libmpm",
 		 T_("%s: server has newer version"),
 		 lpszPackage);
 	    }
@@ -753,7 +753,7 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
       if (FAILED(hr))
 	{
-	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::FindUpdatesThread"),
+	  FATAL_MPM_ERROR ("PackageInstallerImpl::FindUpdatesThread",
 			   T_("Cannot start updater thread."),
 			   NUMTOHEXSTR(hr));
 	}
@@ -824,7 +824,7 @@ PackageInstallerImpl::RemoveFiles
       if (pInstalledFileInfo != 0 && pInstalledFileInfo->refCount > 0)
 	{
 	  trace_mpm->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("will not delete %s (ref count is %u)"),
 	     Q_(path),
 	     pInstalledFileInfo->refCount);
@@ -852,7 +852,7 @@ PackageInstallerImpl::RemoveFiles
       else
 	{
 	  trace_mpm->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("file %s does not exist"),
 	     Q_(path));
 	  done = true;
@@ -890,7 +890,7 @@ PackageInstallerImpl::RemoveFiles
 void
 PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
 {
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("going to remove %s"),
 				 Q_(deploymentName));
 
@@ -913,7 +913,7 @@ PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
 
   // clear the installTime value => package is not installed
   trace_mpm->WriteFormattedLine
-    (T_("libmpm"),
+    ("libmpm",
      T_("removing %s from the variable package table"),
      Q_(deploymentName));
   pManager->SetTimeInstalled (deploymentName.c_str(), 0);
@@ -938,14 +938,14 @@ PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
   size_t nTotal = (pPackageInfo->runFiles.size()
 		   + pPackageInfo->docFiles.size()
 		   + pPackageInfo->sourceFiles.size());
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("going to remove %u file(s)"),
 				 static_cast<unsigned>(nTotal));
   RemoveFiles (pPackageInfo->runFiles);
   RemoveFiles (pPackageInfo->docFiles);
   RemoveFiles (pPackageInfo->sourceFiles);
 
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("package %s successfully removed"),
 				 Q_(deploymentName));
   
@@ -1009,11 +1009,11 @@ PackageInstallerImpl::MyCopyFile (/*[in]*/ const PathName &	source,
 	  otstringstream text;
 	  text << T_("The file") LF
 	       << LF
-	       << T_("  ") << dest.Get() << LF
+	       << "  " << dest.Get() << LF
 	       << LF
 	       << T_("could not be opened for the following reason:") LF
 	       << LF
-	       << T_("  ") << e.what() << LF
+	       << "  " << e.what() << LF
 	       << LF
 	       << T_("Make sure that no other application uses")
 	       << T_(" the file and that you have write permission on the")
@@ -1111,7 +1111,7 @@ PackageInstallerImpl::CopyFiles (/*[in]*/ const PathName & pathSourceRoot,
       // update progress info
       MIKTEX_LOCK(ProgressIndicator)
 	{
-	  progressInfo.fileName = T_("");
+	  progressInfo.fileName = "";
 	  progressInfo.cFilesPackageInstallCompleted += 1;
 	  progressInfo.cFilesInstallCompleted += 1;
 	  progressInfo.cbPackageInstallCompleted += size;
@@ -1250,7 +1250,7 @@ PackageInstallerImpl::UpdateMpmFndb
 	}
       else
 	{
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("%s already exists in mpm fndb"),
 					 Q_(path));
 	}
@@ -1264,7 +1264,7 @@ PackageInstallerImpl::UpdateMpmFndb
 	}
       else
 	{
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("%s does not exist in mpm fndb"),
 					 Q_(path));
 	}
@@ -1279,7 +1279,7 @@ PackageInstallerImpl::UpdateMpmFndb
 void
 PackageInstallerImpl::InstallPackage (/*[in]*/ const string &	deploymentName)
 {
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("installing package %s"),
 				 Q_(deploymentName));
   
@@ -1357,7 +1357,7 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const string &	deploymentName)
   // reference counts)
   if (pManager->IsPackageInstalled(deploymentName.c_str()))
     {
-      trace_mpm->WriteFormattedLine (T_("libmpm"),
+      trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("%s: removing old files"),
 				     deploymentName.c_str());
       // make sure that the package info file does not get removed
@@ -1399,7 +1399,7 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const string &	deploymentName)
     }
   else
     {
-      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::InstallPackage"));
+      UNEXPECTED_CONDITION ("PackageInstallerImpl::InstallPackage");
     }
 
   // parse the new package definition file
@@ -1702,7 +1702,7 @@ PackageInstallerImpl::ConnectToServer ()
 			    sizeof(wszCLSID) / sizeof(wszCLSID[0]))
 		  < 0)
 		{
-		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
 				   0);
 		}
@@ -1722,7 +1722,7 @@ PackageInstallerImpl::ConnectToServer ()
 			    reinterpret_cast<void**>(&localServer.pManager));
 	      if (FAILED(hr))
 		{
-		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
 				   NUMTOHEXSTR(hr));
 		}
@@ -1737,7 +1737,7 @@ PackageInstallerImpl::ConnectToServer ()
 		 CLSCTX_LOCAL_SERVER);
 	      if (FAILED(hr))
 		{
-		  FATAL_MPM_ERROR (T_("ConnectToServer"),
+		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
 				   NUMTOHEXSTR(hr));
 		}
@@ -1748,7 +1748,7 @@ PackageInstallerImpl::ConnectToServer ()
       if (FAILED(hr))
 	{
 	  localServer.pManager.Release ();
-	  FATAL_MPM_ERROR (T_("ConnectToServer"),
+	  FATAL_MPM_ERROR ("ConnectToServer",
 			   MSG_CANNOT_START_SERVER,
 			   NUMTOHEXSTR(hr));
 	}
@@ -1772,18 +1772,18 @@ PackageInstallerImpl::RegisterComponent
 {
   ReportLine (T_("%s %s"),
 	      (doRegister
-	       ? T_("registering")
-	       : T_("unregistering")),
+	       ? "registering"
+	       : "unregistering"),
 	      path.Get());
   PathName regExe;
   CommandLineBuilder cmdLine;
   if (path.HasExtension(MIKTEX_SHARED_LIB_FILE_SUFFIX))
     {
-      regExe = T_("regsvr32.exe");
-      cmdLine.AppendOption (T_("/s"));
+      regExe = "regsvr32.exe";
+      cmdLine.AppendOption ("/s");
       if (! doRegister)
 	{
-	  cmdLine.AppendOption (T_("/u"));
+	  cmdLine.AppendOption ("/u");
 	}
       cmdLine.AppendArgument (path);
     }
@@ -1791,17 +1791,17 @@ PackageInstallerImpl::RegisterComponent
     {
       regExe = path;
       cmdLine.AppendOption (doRegister
-			    ? T_("/RegServer")
-			    : T_("/UnregServer"));
+			    ? "/RegServer"
+			    : "/UnregServer");
     }
   int exitCode;
   if (! Process::Run(regExe, cmdLine.Get(), 0, &exitCode, 0))
     {
-      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::RegisterComponent"));
+      UNEXPECTED_CONDITION ("PackageInstallerImpl::RegisterComponent");
     }
   if (exitCode != 0 && mustSucceed)
     {
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::RegisterComponent"),
+      FATAL_MPM_ERROR ("PackageInstallerImpl::RegisterComponent",
 		       T_("regsvr failed for some reason."),
 		       path.Get());
     }
@@ -1862,7 +1862,7 @@ PackageInstallerImpl::RegisterComponents
 		{
 		  PathName relPath (toBeConfigured[idx]);
 		  PathName relPathIn (relPath);
-		  relPathIn.AppendExtension (T_(".in"));
+		  relPathIn.AppendExtension (".in");
 		  if (PathName(fileName) != relPathIn)
 		    {
 		      continue;
@@ -1930,7 +1930,7 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 	  PathName relPath (toBeConfigured[idx]);
 	  PathName pathIn (destinationDirectory);
 	  pathIn += relPath;
-	  pathIn.AppendExtension (T_(".in"));
+	  pathIn.AppendExtension (".in");
 	  if (File::Exists(pathIn))
 	    {
 	      ReportLine (T_("configuring %s"), relPath.Get());
@@ -1981,7 +1981,7 @@ PackageInstallerImpl::RunIniTeXMF (/*[in]*/ const char *	lpszArguments)
 				       FileType::EXE,
 				       exe))
     {
-      FATAL_MPM_ERROR (T_("PackageInstallerImpl::RunIniTeXMF"),
+      FATAL_MPM_ERROR ("PackageInstallerImpl::RunIniTeXMF",
 			  (T_("\
 The MiKTeX configuration utility could not be found.")),
 			  0);
@@ -2018,7 +2018,7 @@ PackageInstallerImpl::InstallRemove ()
 	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_TRUE);
 	  if (FAILED(hr))
 	    {
-	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
 			       NUMTOHEXSTR(hr));
 	    }
@@ -2031,7 +2031,7 @@ PackageInstallerImpl::InstallRemove ()
 	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_FALSE);
 	  if (FAILED(hr))
 	    {
-	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
 			       NUMTOHEXSTR(hr));
 	    }
@@ -2046,7 +2046,7 @@ PackageInstallerImpl::InstallRemove ()
 	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
 	  if (FAILED(hr2))
 	    {
-	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("mpmsvc failed for some reason."),
 			       NUMTOHEXSTR(hr));
 	    }
@@ -2054,7 +2054,7 @@ PackageInstallerImpl::InstallRemove ()
 	  AutoSysString b (errorInfo.info);
 	  AutoSysString c (errorInfo.sourceFile);
 	  Session::FatalMiKTeXError
-	    (T_("PackageInstallerImpl::InstallRemove"),
+	    ("PackageInstallerImpl::InstallRemove",
 	     CW2CT(errorInfo.message),
 	     CW2CT(errorInfo.info),
 	     CW2CT(errorInfo.sourceFile),
@@ -2105,7 +2105,7 @@ PackageInstallerImpl::InstallRemove ()
       char szPackage[BufferSizes::MaxPackageName];
       if (dbLight.FirstPackage(szPackage) == 0)
 	{
-	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
+	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			   T_("No packages on server."),
 			   0);
 	}
@@ -2193,7 +2193,7 @@ PackageInstallerImpl::InstallRemove ()
 
   if (! noPostProcessing)
     {
-      RunIniTeXMF (T_("--mklinks --mkmaps"));
+      RunIniTeXMF ("--mklinks --mkmaps");
     }
 }
 
@@ -2227,7 +2227,7 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
       if (FAILED(hr))
 	{
-	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemoveThread"),
+	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemoveThread",
 			   T_("Cannot start installer thread."),
 			   NUMTOHEXSTR(hr));
 	}
@@ -2412,7 +2412,7 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
       if (FAILED(hr))
 	{
-	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::DownloadThread"),
+	  FATAL_MPM_ERROR ("PackageInstallerImpl::DownloadThread",
 			   T_("Cannot start downloader thread."),
 			   NUMTOHEXSTR(hr));
 	}
@@ -2526,7 +2526,7 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
 	  || IsPureContainer(szDeploymentName))
 	{
 	  // not installed: remove the package definition file
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("removing obsolete %s"),
 					 Q_(name));
 	  File::Delete (PathName(pathPackageDir, name), true);
@@ -2535,7 +2535,7 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
 	{
 	  // installed: declare the package as obsolete (we wont
 	  // uninstall obsolete packages)
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("declaring %s obsolete"),
 					 Q_(szDeploymentName));
 	  pManager->DeclarePackageObsolete (szDeploymentName, true);
@@ -2568,14 +2568,14 @@ PackageInstallerImpl::UpdateDb ()
 	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
 	  if (FAILED(hr2))
 	    {
-	      FATAL_MPM_ERROR (T_("PackageInstallerImpl::UpdateDb"),
+	      FATAL_MPM_ERROR ("PackageInstallerImpl::UpdateDb",
 			       T_("The service failed for some reason."),
 			       NUMTOHEXSTR(hr));
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
 	  AutoSysString c (errorInfo.sourceFile);
-	  Session::FatalMiKTeXError (T_("PackageInstallerImpl::UpdateDb"),
+	  Session::FatalMiKTeXError ("PackageInstallerImpl::UpdateDb",
 				     CW2CT(errorInfo.message),
 				     CW2CT(errorInfo.info),
 				     CW2CT(errorInfo.sourceFile),
@@ -2614,7 +2614,7 @@ PackageInstallerImpl::UpdateDb ()
     }
   else
     {
-      UNEXPECTED_CONDITION (T_("PackageInstallerImpl::UpdateDb"));
+      UNEXPECTED_CONDITION ("PackageInstallerImpl::UpdateDb");
     }
 
   // handle obsolete package definition files
@@ -2795,7 +2795,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
     case ERROR_UNKNOWN_PACKAGE:
       message << T_("The package") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const char *) << LF
+	      << "  " << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is unknown.");
       break;
@@ -2804,7 +2804,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
       lpszArg2 = va_arg(marker, const char *);
       message << T_("The file") << LF
 	      << LF
-	      << T_("  ") << lpszArg1 << LF
+	      << "  " << lpszArg1 << LF
 	      << LF
 	      << T_("could not be downloaded for the following reason:") << LF
 	      << LF
@@ -2813,7 +2813,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
     case ERROR_PACKAGE_NOT_INSTALLED:
       message << T_("The package") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const char *) << LF
+	      << "  " << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is not installed.");
       break;
@@ -2822,43 +2822,36 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
       lpszArg2 = va_arg(marker, const char *);
       message << T_("The file") << LF
 	      << LF
-	      << T_("  ") << lpszArg1 << LF
+	      << "  " << lpszArg1 << LF
 	      << LF
 	      << T_("could not be be deleted for the following reason:") << LF
 	      << LF
 	      << lpszArg2;
       break;
     case ERROR_MISSING_PACKAGE:
-      message << T_("The package file") << LF
+      message << T_("The required file") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const char *) << LF
+	      << "  " << va_arg(marker, const char *) << LF
 	      << LF
-	      << T_("is not available.");
+	      << T_("does not exist.");
       break;
     case ERROR_CORRUPTED_PACKAGE:
       lpszArg1 = va_arg(marker, const char *);
       lpszArg2 = va_arg(marker, const char *);
       lpszArg3 = va_arg(marker, const char *);
       message
-	<< T_("The package file") << LF
+	<< T_("The file") << LF
 	<< LF
-	<< T_("  ") << lpszArg1 << LF
+	<< "  " << lpszArg1 << LF
 	<< LF
-	<< T_("failed verification due to a MD5 checksum mismatch:") << LF
-	<< LF
-	<< T_("  ") << lpszArg2 << T_(" (expected MD5 checksum)") << LF
-	<< T_("  ") << lpszArg3 << T_(" (actual MD5 checksum)") << LF
-	<< LF
-	<< T_("This can be the result of a failed download operation.")
-	<< T_(" Another reason might be that the local package database")
-	<< T_(" is outdated.");
+	<< T_("failed verification.");
       break;
     case ERROR_SOURCE_FILE_NOT_FOUND:
-      message << T_("The file") << LF
+      message << T_("The required file") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const char *) << LF
+	      << "  " << va_arg(marker, const char *) << LF
 	      << LF
-	      << T_("is not available.");
+	      << T_("does not exist.");
       break;
     case ERROR_SIZE_MISMATCH:
       {
@@ -2866,18 +2859,11 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
 	size_t size1 = va_arg(marker, size_t);
 	size_t size2 = va_arg(marker, size_t);
 	message
-	  << T_("The package file") << LF
+	  << T_("The file") << LF
 	  << LF
-	  << T_("  ") << lpszArg1 << LF
+	  << "  " << lpszArg1 << LF
 	  << LF
-	  << T_("failed verification due to a size mismatch:") << LF
-	  << LF
-	  << T_("  ") << size1 << T_(" (expected size)") << LF
-	  << T_("  ") << size2 << T_(" (actual size)") << LF
-	  << LF
-	  << T_("This can be the result of a failed download operation.")
-	  << T_(" Another reason might be that the local package database")
-	  << T_(" is outdated.");
+	  << T_("failed verification (size mismatch).");
 	break;
       }
     default:
@@ -2891,7 +2877,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
       progressInfo.numErrors += 1;
     }
   MIKTEX_UNLOCK();
-  trace_error->WriteLine (T_("libmpm"), message.str().c_str());
+  trace_error->WriteLine ("libmpm", message.str().c_str());
   FATAL_MIKTEX_ERROR (0, message.str().c_str(), 0);
 }
 
@@ -2902,7 +2888,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
 
 void
 PackageInstallerImpl::ReportLine (/*[in]*/ const char *	lpszFormat,
-				  /*[in]*/			...)
+				  /*[in]*/		...)
 {
   if (pCallback == 0)
     {
@@ -3001,7 +2987,7 @@ PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
       WCHAR szRiid[100];
       if (StringFromGUID2(riid, szRiid, 100) > 0)
 	{
-	  trace_mpm->WriteFormattedLine (T_("libmpm"), T_("QI %S"), szRiid);
+	  trace_mpm->WriteFormattedLine ("libmpm", "QI %S", szRiid);
 	}
     }
   if (riid == __uuidof(IUnknown))

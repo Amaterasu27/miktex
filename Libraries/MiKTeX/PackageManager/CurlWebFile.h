@@ -36,7 +36,7 @@ CurlWebFile : public WebFile
 {
 public:
   CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
-	       /*[in]*/ const char *	lpszUrl,
+	       /*[in]*/ const char *		lpszUrl,
 	       /*[in]*/ IProgressNotify_ *	pIProgressNotify);
 
 public:

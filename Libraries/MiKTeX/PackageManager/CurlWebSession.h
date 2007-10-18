@@ -85,7 +85,7 @@ public:
     CURLcode code = curl_easy_setopt(pCurl, option, val);
     if (code != CURLE_OK)
       {
-	FATAL_MPM_ERROR (T_("CurlWebSession::SetOption"),
+	FATAL_MPM_ERROR ("CurlWebSession::SetOption",
 			 GetCurlErrorString(code).c_str(),
 			 NUMTOSTR(option));
       }

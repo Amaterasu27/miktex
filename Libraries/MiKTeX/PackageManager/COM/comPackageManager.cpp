@@ -165,7 +165,7 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
       
       MiKTeX::Packages::PackageInfo packageInfo =
 	pManager->GetPackageInfo(static_cast<const char *>
-				 (CW2CT(deploymentName)));
+				 (CW2A(deploymentName)));
 
 
       _bstr_t deploymentName = packageInfo.deploymentName.c_str();
@@ -269,8 +269,8 @@ ULONG
 GetAccessPermissionsForLUAServer (/*[out]*/ SECURITY_DESCRIPTOR **	ppSD)
 {
   DllProc4<BOOL, LPCWSTR, DWORD, PSECURITY_DESCRIPTOR, PULONG>
-    pConvert (T_("Advapi32.dll"),
-	      T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"));
+    pConvert ("Advapi32.dll",
+	      "ConvertStringSecurityDescriptorToSecurityDescriptorW");
   LPWSTR lpszSDDL = L"O:BAG:BAD:(A;;0x3;;;IU)(A;;0x3;;;SY)";
   SECURITY_DESCRIPTOR * pSD = 0;
   ULONG size = 0;
@@ -280,7 +280,7 @@ GetAccessPermissionsForLUAServer (/*[out]*/ SECURITY_DESCRIPTOR **	ppSD)
 		 &size))
     {
       FATAL_WINDOWS_ERROR
-	(T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"),
+	("ConvertStringSecurityDescriptorToSecurityDescriptorW",
 	 0);
     }
   *ppSD = pSD;
@@ -311,10 +311,10 @@ comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
 	}
       else
 	{
-	  str = T_("00");
+	  str = "00";
 	}
       rme.szKey = L"ACCESS_SD";
-      CT2W wstr (str.c_str());
+      CA2W wstr (str.c_str());
       rme.szData = wstr;
       regMapEntries.push_back (rme);
       rme.szKey = 0;

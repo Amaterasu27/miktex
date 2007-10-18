@@ -51,7 +51,7 @@ template<class Base>
 struct ClientInfo : public Base
 {
   ClientInfo ()
-    : name_ (T_("MPM")),
+    : name_ ("MPM"),
       version_ (VER_FILEVERSION_STR)
   {
     Name = &name_;
@@ -74,7 +74,7 @@ FatalSoapError (/*[in]*/ soap *			pSoap,
 {
   if (soap_check_state(pSoap))
     {
-      UNEXPECTED_CONDITION (T_("FatalSoapError"));
+      UNEXPECTED_CONDITION ("FatalSoapError");
     }
   else if (pSoap->error != SOAP_OK)
     {
@@ -87,7 +87,7 @@ FatalSoapError (/*[in]*/ soap *			pSoap,
     }
   else
     {
-      UNEXPECTED_CONDITION (T_("FatalSoapError"));
+      UNEXPECTED_CONDITION ("FatalSoapError");
     }
 }
 
@@ -114,7 +114,7 @@ PackageManagerImpl::PackageManagerImpl ()
     pSession (true),
     webSession (WebSession::Create())
 {
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("initializing MPM library version %s"),
 				 VER_FILEVERSION_STR);
 }
@@ -244,14 +244,14 @@ PackageManagerImpl::LoadVariablePackageTable ()
   if (! File::Exists(pathPackagesIni))
     {
       trace_mpm->WriteFormattedLine
-	(T_("libmpm"),
+	("libmpm",
 	 T_("variable package table does not exist (%s)"),
 	 Q_(pathPackagesIni));
       variablePackageTable->SetModified (false);
       return;
     }
 
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("loading variable package table (%s)"),
 				 Q_(pathPackagesIni));
 
@@ -280,7 +280,7 @@ PackageManagerImpl::FlushVariablePackageTable ()
      MIKTEX_PATH_PACKAGES_INI,
      0);
 
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("flushing variable package table (%s)"),
 				 Q_(pathPackagesIni));
   
@@ -302,12 +302,12 @@ PackageManagerImpl::GetTimeInstalled
   LoadVariablePackageTable ();
   string str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-					  T_("TimeInstalled"),
+					  "TimeInstalled",
 					  str))
     {
       return (0);
     }
-  return (AToI(str.c_str()));
+  return (atoi(str.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -334,12 +334,12 @@ PackageManagerImpl::IsPackageObsolete
   LoadVariablePackageTable ();
   string str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-					  T_("Obsolete"),
+					  "Obsolete",
 					  str))
     {
       return (false);
     }
-  return (AToI(str.c_str()) != 0);
+  return (atoi(str.c_str()) != 0);
 }
 
 /* _________________________________________________________________________
@@ -354,8 +354,8 @@ PackageManagerImpl::DeclarePackageObsolete
 {
   LoadVariablePackageTable ();
   variablePackageTable->PutValue (lpszDeploymentName,
-				  T_("Obsolete"),
-				  (obsolete ? T_("1") : T_("0")));
+				  "Obsolete",
+				  (obsolete ? "1" : "0"));
 }
 
 /* _________________________________________________________________________
@@ -370,7 +370,7 @@ PackageManagerImpl::SetTimeInstalled
 {
   LoadVariablePackageTable ();
   variablePackageTable->PutValue (lpszDeploymentName,
-				  T_("TimeInstalled"),
+				  "TimeInstalled",
 				  NUMTOSTR(timeInstalled));
 }
 
@@ -391,7 +391,7 @@ PackageManagerImpl::IncrementFileRefCounts
 #if POLLUTE_THE_DEBUG_STREAM
       if (installedFileInfoTable[*it].refCount >= 2)
 	{
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("%s: ref count > 1"),
 					 Q_(*it));
 	}
@@ -453,14 +453,14 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 (/*[in]*/ const PathName &	directory)
 {
   trace_mpm->WriteFormattedLine
-    (T_("libmpm"),
+    ("libmpm",
      T_("searching %s for package definition files"),
      Q_(directory));
 
   if (! Directory::Exists(directory))
     {
       trace_mpm->WriteFormattedLine
-	(T_("libmpm"),
+	("libmpm",
 	 T_("package definition directory (%s) does not exist"),
 	 Q_(directory));
       return;
@@ -468,7 +468,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 
   auto_ptr<DirectoryLister>
     pLister (DirectoryLister::Open(directory,
-			   T_("*") MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX));
+			   "*" MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX));
 
   // create parser object
   TpmParser tpmParser;
@@ -487,7 +487,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       // ignore redefinition
       if (packageTable.find(szDeploymentName) != packageTable.end())
 	{
-	  trace_mpm->WriteFormattedLine (T_("libmpm"),
+	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("%s: ignoring redefinition"),
 					 szDeploymentName);
 	  continue;
@@ -498,7 +498,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       tpmParser.Parse (PathName(directory, name, 0));
 
 #if POLLUTE_THE_DEBUG_STREAM
-      trace_mpm->WriteFormattedLine (T_("libmpm"),
+      trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("  adding %s"),
 				     szDeploymentName);
 #endif
@@ -520,7 +520,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 
   pLister->Close ();
 
-  trace_mpm->WriteFormattedLine (T_("libmpm"),
+  trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("found %u package definition files"),
 				 static_cast<unsigned>(count));
   
@@ -540,7 +540,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 	  if (it3 == packageTable.end())
 	    {
 	      trace_mpm->WriteFormattedLine
-		(T_("libmpm"),
+		("libmpm",
 		 T_("dependancy problem: %s is required by %s"),
 		 it2->c_str(),
 		 it->second.deploymentName.c_str());
@@ -573,9 +573,9 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 
   // create "Obsolete" container
   PackageInfo piObsolete;
-  piObsolete.deploymentName = T_("_miktex-obsolete");
-  piObsolete.displayName = T_("Obsolete");
-  piObsolete.title = T_("Obsolete packages");
+  piObsolete.deploymentName = "_miktex-obsolete";
+  piObsolete.displayName = "Obsolete";
+  piObsolete.title = "Obsolete packages";
   piObsolete.description =
     T_("Packages that were removed from the MiKTeX package repository.");
   for (it2 = packageTable.begin(); it2 != packageTable.end(); ++ it2)
@@ -596,7 +596,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 
   // create "Other" container
   PackageInfo piOther;
-  piOther.deploymentName = T_("_miktex-all-the-rest");
+  piOther.deploymentName = "_miktex-all-the-rest";
   piOther.displayName = T_("Uncategorized");
   piOther.title = T_("Uncategorized packages");
   for (it2 = packageTable.begin(); it2 != packageTable.end(); ++ it2)
@@ -776,7 +776,7 @@ PackageManagerImpl::GetPackageInfo (/*[in]*/ const string & deploymentName)
   const PackageInfo * pPackageInfo = TryGetPackageInfo(deploymentName);
   if (pPackageInfo == 0)
     {
-      FATAL_MPM_ERROR (T_("MiKTeX::Packages::GetPackageInfo"),
+      FATAL_MPM_ERROR ("MiKTeX::Packages::GetPackageInfo",
 		       T_("Unknown package."),
 		       deploymentName.c_str());
     }
@@ -845,8 +845,8 @@ PackageManager::GetRemotePackageRepository ()
   string url;
   if (! TryGetRemotePackageRepository(url))
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::GetRemotePackageRepository"),
-			  T_("No remote package repository is configured."),
+      FATAL_MIKTEX_ERROR ("PackageManager::GetRemotePackageRepository",
+			  T_("Invalid MiKTeX configuration."),
 			  0);
     }
   return (url);
@@ -860,7 +860,7 @@ PackageManager::GetRemotePackageRepository ()
 MPMSTATICFUNC(bool)
 IsUrl (/*[in]*/ const string & url)
 {
-  string::size_type pos = url.find(T_("://"));
+  string::size_type pos = url.find("://");
   if (pos == string::npos)
     {
       return (false);
@@ -892,8 +892,8 @@ PackageManagerImpl::DetermineRepositoryType
 
   if (! Utils::IsAbsolutePath(repository.c_str()))
     {
-      FATAL_MPM_ERROR (T_("PackageManagerImpl::DetermineRepositoryType"),
-		       T_("Invalid package repository."),
+      FATAL_MPM_ERROR ("PackageManagerImpl::DetermineRepositoryType",
+		       T_("Invalid MiKTeX configuration."),
 		       repository.c_str());
     }
 
@@ -914,8 +914,8 @@ PackageManagerImpl::DetermineRepositoryType
       return (RepositoryType::MiKTeXInstallation);
     }
 
-  FATAL_MPM_ERROR (T_("PackageManagerImpl::DetermineRepositoryType"),
-		   T_("Not a valid installation source."),
+  FATAL_MPM_ERROR ("PackageManagerImpl::DetermineRepositoryType",
+		   T_("Invalide MiKTeX configuration."),
 		   repository.c_str());
 }
 
@@ -977,8 +977,8 @@ PackageManager::GetLocalPackageRepository ()
   PathName path;
   if (! TryGetLocalPackageRepository(path))
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::GetLocalPackageRepository"),
-			  T_("No local package repository is configured."),
+      FATAL_MIKTEX_ERROR ("PackageManager::GetLocalPackageRepository",
+			  T_("Invalid MiKTeX configuration."),
 			  0);
     }
   return (path);
@@ -1042,8 +1042,8 @@ PackageManager::GetMiKTeXDirectRoot ()
   PathName path;
   if (! TryGetMiKTeXDirectRoot(path))
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::GetMiKTeXDirectRoot"),
-			  T_("No MiKTeXDirect root is configured."),
+      FATAL_MIKTEX_ERROR ("PackageManager::GetMiKTeXDirectRoot",
+			  T_("Invalid MiKTeX configuration."),
 			  0);
     }
   return (path);
@@ -1080,17 +1080,17 @@ PackageManager::TryGetDefaultPackageRepository
 					      MIKTEX_REGVAL_REPOSITORY_TYPE,
 					      str))
     {
-      if (str == T_("remote"))
+      if (str == "remote")
 	{
 	  urlOrPath = GetRemotePackageRepository();
 	  repositoryType = RepositoryType::Remote;
 	}
-      else if (str == (T_("local")))
+      else if (str == ("local"))
 	{
 	  urlOrPath = GetLocalPackageRepository().Get();
 	  repositoryType = RepositoryType::Local;
 	}
-      else if (str == T_("direct"))
+      else if (str == "direct")
 	{
 	  urlOrPath = GetMiKTeXDirectRoot().Get();
 	  repositoryType = RepositoryType::MiKTeXDirect;
@@ -1098,8 +1098,8 @@ PackageManager::TryGetDefaultPackageRepository
       else
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("PackageManager::TryGetDefaultPackageRepository"),
-	     T_("Invalid registry settings."),
+	    ("PackageManager::TryGetDefaultPackageRepository",
+	     T_("Invalid MiKTeX configuration."),
 	     str.c_str());
 	}
       return (true);
@@ -1128,8 +1128,8 @@ PackageManager::GetDefaultPackageRepository
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (! TryGetDefaultPackageRepository(repositoryType, urlOrPath))
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::GetDefaultPackageRepository"),
-			  T_("No package repository is configured."),
+      FATAL_MIKTEX_ERROR ("PackageManager::GetDefaultPackageRepository",
+			  T_("Invalid MiKTeX configuration."),
 			  0);
     }
   return (repositoryType);
@@ -1154,19 +1154,19 @@ PackageManager::SetDefaultPackageRepository
   switch (repositoryType.Get())
     {
     case RepositoryType::MiKTeXDirect:
-      repositoryTypeStr = T_("direct");
+      repositoryTypeStr = "direct";
       SetMiKTeXDirectRoot (urlOrPath);
       break;
     case RepositoryType::Local:
-      repositoryTypeStr = T_("local");
+      repositoryTypeStr = "local";
       SetLocalPackageRepository (urlOrPath);
       break;
     case RepositoryType::Remote:
-      repositoryTypeStr = T_("remote");
+      repositoryTypeStr = "remote";
       SetRemotePackageRepository (urlOrPath);
       break;
     default:
-      UNEXPECTED_CONDITION (T_("PackageManager::SetDefaultPackageRepository"));
+      UNEXPECTED_CONDITION ("PackageManager::SetDefaultPackageRepository");
     }
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -1315,7 +1315,7 @@ PackageManagerImpl::PickRepositoryUrl ()
     }
   if (resp.PickRepository2Result->Url == 0)
     {
-      UNEXPECTED_CONDITION (T_("PackageManagerImpl::PickRepositoryUrl"));
+      UNEXPECTED_CONDITION ("PackageManagerImpl::PickRepositoryUrl");
     }
   return (*resp.PickRepository2Result->Url);
 }
@@ -1331,7 +1331,7 @@ PackageManagerImpl::TraceError (/*[in]*/ const char *	lpszFormat,
 {
   va_list marker;
   va_start (marker, lpszFormat);
-  trace_error->VTrace (T_("libmpm"), lpszFormat, marker);
+  trace_error->VTrace ("libmpm", lpszFormat, marker);
   va_end (marker);
 }
 
@@ -1419,9 +1419,9 @@ RememberFileNameInfo (/*[in]*/ const string &	prefixedFileName,
 
   DirectoryInfo & directoryInfo = directoryInfoTable[path.Get()];
   directoryInfo.fileNames += lpszName;
-  directoryInfo.fileNames += T_('\0');
+  directoryInfo.fileNames += '\0';
   directoryInfo.packageNames += packageName;
-  directoryInfo.packageNames += T_('\0');
+  directoryInfo.packageNames += '\0';
 }
 
 /* _________________________________________________________________________
@@ -1448,9 +1448,9 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
        ++ it)
     {
       subDirectoryNames += *it;
-      subDirectoryNames += T_('\0');
+      subDirectoryNames += '\0';
     }
-  subDirectoryNames += T_('\0');
+  subDirectoryNames += '\0';
   MIKTEX_ASSERT (ppSubDirectoryNames != 0);
   *ppSubDirectoryNames =
     static_cast<char *>(malloc(subDirectoryNames.length()));
@@ -1462,7 +1462,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
   subDirectoryNames.copy (*ppSubDirectoryNames, subDirectoryNames.length());
 #endif
   MIKTEX_ASSERT (ppFileNames != 0);
-  directoryInfo.fileNames += T_('\0');
+  directoryInfo.fileNames += '\0';
   *ppFileNames =
     static_cast<char *>(malloc(directoryInfo.fileNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -1474,7 +1474,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
 				directoryInfo.fileNames.length());
 #endif
   MIKTEX_ASSERT (ppFileNameInfos != 0);
-  directoryInfo.packageNames += T_('\0');
+  directoryInfo.packageNames += '\0';
   *ppFileNameInfos =
     static_cast<char *>(malloc(directoryInfo.packageNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -1643,7 +1643,7 @@ public:
     : stream (stream),
       freshElement (false)
   {
-    FPutS (T_("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"), stream);
+    FPutS ("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n", stream);
   }
 
 public:
@@ -1652,9 +1652,9 @@ public:
   {
     if (freshElement)
       {
-	FPutC (T_('>'), stream);
+	FPutC ('>', stream);
       }
-    FPutC (T_('<'), stream);
+    FPutC ('<', stream);
     FPutS (lpszName, stream);
     freshElement = true;
     elements.push (lpszName);
@@ -1665,11 +1665,11 @@ public:
   AddAttribute (/*[in]*/ const char *	lpszAttributeName,
 		/*[in]*/ const char *	lpszAttributeValue)
   {
-    FPutC (T_(' '), stream);
+    FPutC (' ', stream);
     FPutS (lpszAttributeName, stream);
-    FPutS (T_("=\""), stream);
+    FPutS ("=\"", stream);
     FPutS (lpszAttributeValue, stream);
-    FPutC (T_('"'), stream);
+    FPutC ('"', stream);
   }
 
 public:
@@ -1678,20 +1678,20 @@ public:
   {
     if (elements.empty())
       {
-	FATAL_MIKTEX_ERROR (T_("XmlWriter::EndElement"),
+	FATAL_MIKTEX_ERROR ("XmlWriter::EndElement",
 			    T_("No elements on the stack."),
 			    0);
       }
     if (freshElement)
       {
-	FPutS (T_("/>"), stream);
+	FPutS ("/>", stream);
 	freshElement = false;
       }
     else
       {
-	FPutS (T_("</"), stream);
+	FPutS ("</", stream);
 	FPutS (elements.top().c_str(), stream);
-	FPutC (T_('>'), stream);
+	FPutC ('>', stream);
       }
     elements.pop ();
   }
@@ -1712,7 +1712,7 @@ public:
   {
     if (freshElement)
       {
-	FPutC (T_('>'), stream);
+	FPutC ('>', stream);
 	freshElement = false;
       }
     for (const char * lpszText = text.c_str();
@@ -1721,14 +1721,14 @@ public:
       {
 	switch (*lpszText)
 	  {
-	  case T_('&'):
-	    FPutS (T_("&amp;"), stream);
+	  case '&':
+	    FPutS ("&amp;", stream);
 	    break;
-	  case T_('<'):
-	    FPutS (T_("&lt;"), stream);
+	  case '<':
+	    FPutS ("&lt;", stream);
 	    break;
-	  case T_('>'):
-	    FPutS (T_("&gt;"), stream);
+	  case '>':
+	    FPutS ("&gt;", stream);
 	    break;
 	  default:
 	    FPutC (*lpszText, stream);
@@ -1767,38 +1767,37 @@ PackageManager::WritePackageDefinitionFile
   XmlWriter xml (stream.Get());
 
   // create "rdf:Description" node
-  xml.StartElement (T_("rdf:RDF"));
-  xml.AddAttribute (T_("xmlns:rdf"),
-		    T_("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-  xml.AddAttribute (T_("xmlns:TPM"),
-		    T_("http://texlive.dante.de/"));
-  xml.StartElement (T_("rdf:Description"));
-  string about (T_("http://www.miktex.org/packages/"));
+  xml.StartElement ("rdf:RDF");
+  xml.AddAttribute ("xmlns:rdf",
+		    "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+  xml.AddAttribute ("xmlns:TPM", "http://texlive.dante.de/");
+  xml.StartElement ("rdf:Description");
+  string about ("http://www.miktex.org/packages/");
   about += packageInfo.deploymentName;
-  xml.AddAttribute (T_("about"), about.c_str());
+  xml.AddAttribute ("about", about.c_str());
 
   // create "TPM:Name" node
-  xml.StartElement (T_("TPM:Name"));
+  xml.StartElement ("TPM:Name");
   xml.Text (packageInfo.displayName);
   xml.EndElement ();
 
   // create "TPM:Creator" node
-  xml.StartElement (T_("TPM:Creator"));
-  xml.Text (T_("mpc"));
+  xml.StartElement ("TPM:Creator");
+  xml.Text ("mpc");
   xml.EndElement ();
   
   // create "TPM:Title" node
-  xml.StartElement (T_("TPM:Title"));
+  xml.StartElement ("TPM:Title");
   xml.Text (packageInfo.title);
   xml.EndElement ();
 
   // create "TPM:Version" node
-  xml.StartElement (T_("TPM:Version"));
+  xml.StartElement ("TPM:Version");
   xml.Text (packageInfo.version);
   xml.EndElement ();
 
   // create "TPM:Description" node
-  xml.StartElement (T_("TPM:Description"));
+  xml.StartElement ("TPM:Description");
   xml.Text (packageInfo.description);
   xml.EndElement ();
   
@@ -1806,9 +1805,9 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:RunFiles" node
   if (packageInfo.runFiles.size() > 0)
     {
-      xml.StartElement (T_("TPM:RunFiles"));
+      xml.StartElement ("TPM:RunFiles");
       xml.AddAttribute
-	(T_("size"),
+	("size",
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeRunFiles)));
       for (vector<string>::const_iterator it = packageInfo.runFiles.begin();
 	   it != packageInfo.runFiles.end();
@@ -1816,7 +1815,7 @@ PackageManager::WritePackageDefinitionFile
 	{
 	  if (it != packageInfo.runFiles.begin())
 	    {
-	      xml.Text (T_(" "));
+	      xml.Text (" ");
 	    }
 	  xml.Text (*it);
 	}
@@ -1826,9 +1825,9 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:DocFiles" node
   if (packageInfo.docFiles.size() > 0)
     {
-      xml.StartElement (T_("TPM:DocFiles"));
+      xml.StartElement ("TPM:DocFiles");
       xml.AddAttribute
-	(T_("size"),
+	("size",
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeDocFiles)));
       for (vector<string>::const_iterator it = packageInfo.docFiles.begin();
 	   it != packageInfo.docFiles.end();
@@ -1836,7 +1835,7 @@ PackageManager::WritePackageDefinitionFile
 	{
 	  if (it != packageInfo.docFiles.begin())
 	    {
-	      xml.Text (T_(" "));
+	      xml.Text (" ");
 	    }
 	  xml.Text (*it);
 	}
@@ -1846,9 +1845,9 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:SourceFiles" node
   if (packageInfo.sourceFiles.size())
     {
-      xml.StartElement (T_("TPM:SourceFiles"));
+      xml.StartElement ("TPM:SourceFiles");
       xml.AddAttribute
-	(T_("size"),
+	("size",
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeSourceFiles)));
       for (vector<string>::const_iterator it
 	     = packageInfo.sourceFiles.begin();
@@ -1857,7 +1856,7 @@ PackageManager::WritePackageDefinitionFile
 	{
 	  if (it != packageInfo.sourceFiles.begin())
 	    {
-	      xml.Text (T_(" "));
+	      xml.Text (" ");
 	    }
 	  xml.Text (*it);
 	}
@@ -1867,14 +1866,14 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:Requires" node
   if (packageInfo.requiredPackages.size() > 0)
     {
-      xml.StartElement (T_("TPM:Requires"));
+      xml.StartElement ("TPM:Requires");
       for (vector<string>::const_iterator it
 	     = packageInfo.requiredPackages.begin();
 	   it != packageInfo.requiredPackages.end();
 	   ++ it)
 	{
-	  xml.StartElement (T_("TPM:Package"));
-	  xml.AddAttribute (T_("name"), it->c_str());
+	  xml.StartElement ("TPM:Package");
+	  xml.AddAttribute ("name", it->c_str());
 	  xml.EndElement ();
 	}
       xml.EndElement ();
@@ -1883,13 +1882,13 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:TimePackaged" node
   if (timePackaged != 0)
     {
-      xml.StartElement (T_("TPM:TimePackaged"));
+      xml.StartElement ("TPM:TimePackaged");
       xml.Text (NUMTOSTR(timePackaged));
       xml.EndElement ();
     }
 
   // create "TPM:MD5" node
-  xml.StartElement (T_("TPM:MD5"));
+  xml.StartElement ("TPM:MD5");
   xml.Text (packageInfo.digest.ToString());
 
   xml.EndAllElements ();
@@ -1911,7 +1910,7 @@ PackageManager::StripTeXMFPrefix (/*[in]*/ const string &	str,
     {
       return (true);
     }
-  PathName prefix2 (T_("."));
+  PathName prefix2 (".");
   prefix2 += TEXMF_PREFIX_DIRECTORY;
   return (StripPrefix(str, prefix2.Get(), result));
 }
@@ -1964,7 +1963,7 @@ PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
     {
       return (false);
     }
-  proxySettings.useProxy = (str == T_("t"));
+  proxySettings.useProxy = (str == "t");
   if (! (SessionWrapper(true)
 	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			     MIKTEX_REGVAL_PROXY_HOST,
@@ -1979,7 +1978,7 @@ PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
     {
       return (false);
     }
-  proxySettings.port = AToI(str.c_str());
+  proxySettings.port = atoi(str.c_str());
   if (! (SessionWrapper(true)
 	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			     MIKTEX_REGVAL_PROXY_AUTH_REQ,
@@ -1987,7 +1986,7 @@ PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
     {
       return (false);
     }
-  proxySettings.authenticationRequired = (str == T_("t"));
+  proxySettings.authenticationRequired = (str == "t");
   proxySettings.user = PackageManagerImpl::proxyUser;
   proxySettings.password = PackageManagerImpl::proxyPassword;
   return (true);
@@ -2005,7 +2004,7 @@ PackageManager::GetProxy ()
   ProxySettings proxySettings;
   if (! TryGetProxy(proxySettings))
     {
-      FATAL_MIKTEX_ERROR (T_("PackageManager::GetProxy"),
+      FATAL_MIKTEX_ERROR ("PackageManager::GetProxy",
 			  T_("No proxy host is configured."),
 			  0);
     }
@@ -2081,7 +2080,6 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 	}
     }
   RepositoryInfo repositoryInfo;
-#if 1
   RepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
   if (TryGetProxy(proxySettings) && proxySettings.useProxy)
@@ -2107,48 +2105,11 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
   if (! resp.VerifyRepositoryResult)
     {
       FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
+	("PackageManagerImpl::VerifyPackageRepository",
 	 T_("Not a valid remote package repository."),
 	 url.c_str());
     }
   repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
-#else
-  if (! TryGetRepositoryInfo(url, repositoryInfo))
-    {
-      FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
-	 T_("Not a valid remote package repository."),
-	 url.c_str());
-    }
-  if (repositoryInfo.status == RepositoryStatus::Offline)
-    {
-      FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
-	 T_("The remote package repository is offline."),
-	 url.c_str());
-    }
-  if (repositoryInfo.integrity == RepositoryIntegrity::Corrupted)
-    {
-      FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
-	 T_("The remote package repository is corrupted."),
-	 url.c_str());
-    }
-  if (repositoryInfo.integrity != RepositoryIntegrity::Intact)
-    {
-      FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
-	 T_("The remote package repository may be corrupted."),
-	 url.c_str());
-    }
-  if (repositoryInfo.delay >= 10)
-    {
-      FATAL_MPM_ERROR
-	(T_("PackageManagerImpl::VerifyPackageRepository"),
-	 T_("The remote package repository is not synchronized."),
-	 url.c_str());
-    }
-#endif
   repositories.push_back (repositoryInfo);
   return (repositoryInfo);
 }
@@ -2174,7 +2135,7 @@ PackageManagerImpl::TryVerifyInstalledPackageHelper
   if (! File::Exists(path))
     {
       trace_mpm->WriteFormattedLine
-	(T_("libmpm"),
+	("libmpm",
 	 T_("package verification failed: file %s does not exist"),
 	 Q_(path));
       return (false);
@@ -2269,7 +2230,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
   if (! ok)
     {
       trace_mpm->WriteFormattedLine
-	(T_("libmpm"),
+	("libmpm",
 	 T_("package %s verification failed: some files have been modified"),
 	 Q_(deploymentName));
     }

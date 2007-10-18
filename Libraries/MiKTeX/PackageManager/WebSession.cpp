@@ -72,7 +72,7 @@ WebSession::Create ()
   return (new CurlWebSession);
 #else
 #  warning Unimplemented: WebSession::Create()
-  FATAL_MIKTEX_ERROR (T_("WebSession::Create"),
+  FATAL_MIKTEX_ERROR ("WebSession::Create",
 		      T_("libCURL does not seem to be available."),
 		      0);
 #endif

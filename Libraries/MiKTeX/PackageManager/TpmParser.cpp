@@ -159,7 +159,7 @@ TpmParser::OnStartElement (/*[in]*/ void *			pv,
 	      && (lpszSize = GetAttributeValue(aAttr, X_("size"))) != 0)
 	    {
 	      MIKTEX_ASSERT (Utils::IsAscii(lpszSize));
-	      size = AToI(lpszSize);
+	      size = atoi(lpszSize);
 	    }
 	  if (StrCmp(lpszName, X_("TPM:RunFiles")) == 0)
 	    {
@@ -175,7 +175,7 @@ TpmParser::OnStartElement (/*[in]*/ void *			pv,
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("TpmParser::OnStartElement"));
+	      UNEXPECTED_CONDITION ("TpmParser::OnStartElement");
 	    }
 	}
       This->elementStack.push (lpszName);
@@ -270,7 +270,7 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
 	}
       else if (StrCmp(lpszName, X_("TPM:TimePackaged")) == 0)
 	{
-	  This->packageInfo.timePackaged = AToI(This->charBuffer.Get());
+	  This->packageInfo.timePackaged = atoi(This->charBuffer.Get());
 	}
       else if (StrCmp(lpszName, X_("TPM:RunFiles")) == 0)
 	{
@@ -333,7 +333,7 @@ TpmParser::Parse (/*[in]*/ const PathName & path)
 
 void
 TpmParser::Parse (/*[in]*/ const PathName &	path,
-		  /*[in]*/ const char *	lpszTeXMFPrefix)
+		  /*[in]*/ const char *		lpszTeXMFPrefix)
 {
   texMFPrefix = (lpszTeXMFPrefix == 0 ? X_("") : lpszTeXMFPrefix);
 
@@ -351,7 +351,7 @@ TpmParser::Parse (/*[in]*/ const PathName &	path,
       pParser = reinterpret_cast<void*>(XML_ParserCreate(0));
       if (pParser == 0)
 	{
-	  FATAL_MPM_ERROR (T_("TpmParser::Parse"),
+	  FATAL_MPM_ERROR ("TpmParser::Parse",
 			   T_("The TPM parser could not be created."),
 			   path.Get());
 	}
@@ -377,15 +377,15 @@ TpmParser::Parse (/*[in]*/ const PathName &	path,
       if (st == XML_STATUS_ERROR)
 	{
 	  traceError->WriteFormattedLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     T_("parse error in %s at line/column %d/%d:"),
 	     Q_(path),
 	     static_cast<int>(XML_GetCurrentLineNumber(p)),
 	     static_cast<int>(XML_GetCurrentColumnNumber(p)));
 	  traceError->WriteLine
-	    (T_("libmpm"),
+	    ("libmpm",
 	     XML_ErrorString(XML_GetErrorCode(p)));
-	  FATAL_MPM_ERROR (T_("TpmParser::Parse"),
+	  FATAL_MPM_ERROR ("TpmParser::Parse",
 			   T_("The TPM file could not be parsed."),
 			   path.Get());
 	}
