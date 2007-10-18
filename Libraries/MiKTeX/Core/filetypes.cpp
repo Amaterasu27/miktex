@@ -154,13 +154,12 @@ public:
    _________________________________________________________________________ */
 
 void
-SessionImpl::RegisterFileType
-(/*[in]*/ FileType		fileType,
- /*[in]*/ const char *	lpszFileType,
- /*[in]*/ const char *	lpszApplication,
- /*[in]*/ const char *	lpszFileNameExtensions,
- /*[in]*/ const char *	lpszDefaultSearchPath,
- /*[in]*/ const char *	lpszEnvVarNames)
+SessionImpl::RegisterFileType (/*[in]*/ FileType	fileType,
+			       /*[in]*/ const char *	lpszFileType,
+			       /*[in]*/ const char *	lpszApplication,
+			       /*[in]*/ const char *	lpszFileNameExtensions,
+			       /*[in]*/ const char *	lpszDefaultSearchPath,
+			       /*[in]*/ const char *	lpszEnvVarNames)
 {
   MIKTEX_ASSERT_STRING (lpszFileType);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszApplication);

@@ -1132,7 +1132,7 @@ SessionImpl::UnloadFilenameDatabase ()
 bool
 SessionImpl::IsTEXMFFile (/*[in]*/ const char *	lpszPath,
 			  /*[out]*/ char *	lpszRelPath,
-			  /*[out]*/ unsigned *		pRootIndex)
+			  /*[out]*/ unsigned *	pRootIndex)
 {
   for (unsigned r = 0; r < GetNumberOfTEXMFRoots(); ++ r)
     {

@@ -34,10 +34,10 @@
    _________________________________________________________________________ */
 
 bool
-winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
+winRegistry::TryGetRegistryValue (/*[in]*/ TriState	shared,
 				  /*[in]*/ const char *	lpszKeyName,
 				  /*[in]*/ const char *	lpszValueName,
-				  /*[out]*/ string &		value,
+				  /*[out]*/ string &	value,
 				  /*[in]*/ const char * lpszDefaultValue)
 {
   if (shared == TriState::Undetermined)
@@ -82,36 +82,36 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
   HKEY hkey;
 
   long result =
-    RegOpenKeyEx((shared == TriState::False
-		  ? HKEY_CURRENT_USER
-		  : HKEY_LOCAL_MACHINE),
-		 registryPath.c_str(),
-		 0,
-		 KEY_READ,
-		 &hkey);
-
+    RegOpenKeyExA((shared == TriState::False
+		   ? HKEY_CURRENT_USER
+		   : HKEY_LOCAL_MACHINE),
+		  registryPath.c_str(),
+		  0,
+		  KEY_READ,
+		  &hkey);
+  
   if (result == ERROR_SUCCESS)
     {
       unsigned long valueType;
       unsigned long valueSize = 0;
       unsigned char * pValue = 0;
       result =
-	RegQueryValueEx(hkey,
-			lpszValueName,
-			0,
-			&valueType,
-			0,
-			&valueSize);
+	RegQueryValueExA(hkey,
+			 lpszValueName,
+			 0,
+			 &valueType,
+			 0,
+			 &valueSize);
       if (result == ERROR_SUCCESS)
 	{
 	  pValue = reinterpret_cast<unsigned char *>(_alloca(valueSize));
 	  result =
-	    RegQueryValueEx(hkey,
-			    lpszValueName,
-			    0,
-			    &valueType,
-			    pValue,
-			    &valueSize);
+	    RegQueryValueExA(hkey,
+			     lpszValueName,
+			     0,
+			     &valueType,
+			     pValue,
+			     &valueSize);
 	}
       long result2 = RegCloseKey(hkey);
       if (result2 != ERROR_SUCCESS)
@@ -129,13 +129,13 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 	      value = reinterpret_cast<const char *>(pValue);
 	      return (true);
 	    }
-	  TraceError (T_("ignoring value \"%s\" of type %u"),
-		      lpszValueName,
+	  TraceError (T_("ignoring value %s of type %u"),
+		      Q_(lpszValueName),
 		      static_cast<unsigned>(valueType));
 	}
       else if (result != ERROR_FILE_NOT_FOUND)
 	{
-	  TraceWindowsError ("RegQueryValueEx",
+	  TraceWindowsError ("RegQueryValueExA",
 			     result,
 			     lpszValueName,
 			     __FILE__,
@@ -144,7 +144,7 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
     }
   else if (result != ERROR_FILE_NOT_FOUND)
     {
-      TraceWindowsError ("RegOpenKeyEx",
+      TraceWindowsError ("RegOpenKeyExA",
 			 result,
 			 registryPath.c_str(),
 			 __FILE__,
@@ -168,10 +168,10 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
    _________________________________________________________________________ */
 
 bool
-winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
+winRegistry::TryGetRegistryValue (/*[in]*/ TriState	shared,
 				  /*[in]*/ const char *	lpszKeyName,
 				  /*[in]*/ const char *	lpszValueName,
-				  /*[out]*/ PathName &		path,
+				  /*[out]*/ PathName &	path,
 				  /*[in]*/ const char * lpszDefaultPath)
 {
   string value;
@@ -219,13 +219,13 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
   HKEY hkey;
 
   long result =
-    RegOpenKeyEx((shared == TriState::False
-		  ? HKEY_CURRENT_USER
-		  : HKEY_LOCAL_MACHINE),
-		 registryPath.c_str(),
-		 0,
-		 KEY_ALL_ACCESS,
-		 &hkey);
+    RegOpenKeyExA((shared == TriState::False
+		   ? HKEY_CURRENT_USER
+		   : HKEY_LOCAL_MACHINE),
+		  registryPath.c_str(),
+		  0,
+		  KEY_ALL_ACCESS,
+		  &hkey);
 
   if (result != ERROR_SUCCESS)
     {
@@ -233,22 +233,22 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyEx",
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExA",
 			     result,
 			     registryPath.c_str());
     }
 
   AutoHKEY autoClose (hkey);
 
-  result = RegDeleteValue(hkey, lpszValueName);
-
+  result = RegDeleteValueA(hkey, lpszValueName);
+  
   if (result != ERROR_SUCCESS)
     {
       if (result == ERROR_FILE_NOT_FOUND)
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 ("RegDeleteValue",
+      FATAL_WINDOWS_ERROR_2 ("RegDeleteValueA",
 			     result,
 			     lpszValueName);
     }
@@ -315,19 +315,19 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
      registryPath.c_str());
 
   long result =
-    RegCreateKeyEx(hkeyRoot,
-		   registryPath.c_str(),
-		   0,
-		   "",
-		   REG_OPTION_NON_VOLATILE,
-		   KEY_ALL_ACCESS,
-		   0,
-		   &hkey,
-		   &disp);
+    RegCreateKeyExA(hkeyRoot,
+		    registryPath.c_str(),
+		    0,
+		    "",
+		    REG_OPTION_NON_VOLATILE,
+		    KEY_ALL_ACCESS,
+		    0,
+		    &hkey,
+		    &disp);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyEx",
+      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyExA",
 			     result,
 			     registryPath.c_str());
     }
@@ -338,17 +338,17 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
   sizeValue *= sizeof(char);
 
   result =
-    RegSetValueEx(hkey,
-		  lpszValueName,
-		  0,
-		  REG_SZ,
-		  const_cast<unsigned char *>
-		  (reinterpret_cast<const unsigned char *>(lpszValue)),
-		  sizeValue);
+    RegSetValueExA(hkey,
+		   lpszValueName,
+		   0,
+		   REG_SZ,
+		   const_cast<unsigned char *>
+		   (reinterpret_cast<const unsigned char *>(lpszValue)),
+		   sizeValue);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx",
+      FATAL_WINDOWS_ERROR_2 ("RegSetValueExA",
 			     result,
 			     lpszValueName);
     }
@@ -357,10 +357,10 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
 
   if (hkeyRoot == HKEY_LOCAL_MACHINE
       && TryGetRegistryValue(TriState::False,
-			  lpszKeyName,
-			  lpszValueName,
-			  value,
-			  0))
+			     lpszKeyName,
+			     lpszValueName,
+			     value,
+			     0))
     {
       TryDeleteRegistryValue (TriState::False, lpszKeyName, lpszValueName);
     }

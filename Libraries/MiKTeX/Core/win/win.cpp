@@ -42,7 +42,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 		      /*[in]*/ int	nFallbackFolder,
 		      /*[in]*/ bool	getCurrentPath)
 {
-  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, LPTSTR>
+  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, char *>
     pFunc ("shfolder.dll", "SHGetFolderPathA");
   PathName ret;
   DWORD flags =
@@ -99,9 +99,9 @@ PathName
 SessionImpl::GetMyProgramFile ()
 {
   PathName path;
-  if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
+  if (GetModuleFileNameA(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
+      FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
     }
   return (path);
 }
@@ -496,9 +496,9 @@ GetPsFontDirectory (/*[out]*/ PathName & path)
 {
   char szWinDir[BufferSizes::MaxPath];
 
-  if (GetWindowsDirectory(szWinDir, BufferSizes::MaxPath) == 0)
+  if (GetWindowsDirectoryA(szWinDir, BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
     }
 
   char szWinDrive[BufferSizes::MaxPath];
@@ -573,7 +573,7 @@ GetWindowsFontsDirectory (/*[out]*/ PathName & path)
 			   static_cast<UINT>(path.GetCapacity()))
       == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
     }
   path += "Fonts";
   return (Directory::Exists(path));
@@ -658,7 +658,7 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
 		  0,
 		  functionResult,
 		  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		  reinterpret_cast<LPTSTR>(&pMessageBuffer),
+		  reinterpret_cast<char *>(&pMessageBuffer),
 		  0,
 		  0);
   if (len == 0)
@@ -805,10 +805,10 @@ GetAlternate (/*[in]*/ const char *	lpszPath,
 	      /*[out]*/ char *		lpszAlternate)
 {
   WIN32_FIND_DATA finddata;
-  HANDLE hnd = FindFirstFile(lpszPath, &finddata);
+  HANDLE hnd = FindFirstFileA(lpszPath, &finddata);
   if (hnd == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("FindFirstFile", lpszPath);
+      FATAL_WINDOWS_ERROR ("FindFirstFileA", lpszPath);
     }
   if (! FindClose(hnd))
     {
@@ -817,7 +817,7 @@ GetAlternate (/*[in]*/ const char *	lpszPath,
   if (finddata.cAlternateFileName[0] == 0)
     {
       FATAL_MIKTEX_ERROR ("GetAlternate",
-			  T_("no alternate file name"),
+			  T_("No alternate file name found."),
 			  lpszPath);
     }
   Utils::CopyString (lpszAlternate,
@@ -1024,35 +1024,35 @@ Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
       AutoHKEY hkey;
       
       LONG res =
-	RegOpenKeyEx(HKEY_CURRENT_USER,
-		     lpszProfRecon,
-		     0,
-		     KEY_READ,
-		     &hkey);
+	RegOpenKeyExA(HKEY_CURRENT_USER,
+		      lpszProfRecon,
+		      0,
+		      KEY_READ,
+		      &hkey);
       
       if (res == ERROR_SUCCESS)
 	{
 	  unsigned long len = path.GetCapacity();
 	  unsigned long type = REG_SZ;
 	  res =
-	    RegQueryValueEx(hkey.Get(),
-			    "ProfileDirectory",
-			    0,
-			    &type,
-			    reinterpret_cast<LPBYTE>(path.GetBuffer()),
-			    &len);
+	    RegQueryValueExA(hkey.Get(),
+			     "ProfileDirectory",
+			     0,
+			     &type,
+			     reinterpret_cast<LPBYTE>(path.GetBuffer()),
+			     &len);
 	  if (res == ERROR_SUCCESS)
 	    {
 	      return (true);
 	    }
 	  else if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      FATAL_WINDOWS_ERROR ("ProfileDirectory", 0);
+	      FATAL_WINDOWS_ERROR ("RegQueryValueExA", 0);
 	    }
 	}
       else if (res != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR ("ProfileReconciliation", lpszProfRecon);
+	  FATAL_WINDOWS_ERROR ("RegOpenKeyExA", lpszProfRecon);
 	}
     }
 #endif
@@ -1515,28 +1515,28 @@ Utils::GetOSVersionString ()
 	   AutoHKEY hKey;
 	   LONG lRet;
 	   lRet =
-	     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			  ("SYSTEM\\CurrentControlSet\\Control"
-			   "\\ProductOptions"),
-			  0,
-			  KEY_QUERY_VALUE,
-			  &hKey);
+	     RegOpenKeyExA(HKEY_LOCAL_MACHINE,
+			   ("SYSTEM\\CurrentControlSet\\Control"
+			    "\\ProductOptions"),
+			   0,
+			   KEY_QUERY_VALUE,
+			   &hKey);
 	   if (lRet != ERROR_SUCCESS)
 	     {
-	       FATAL_WINDOWS_ERROR ("RegOpenKeyEx", 0);
+	       FATAL_WINDOWS_ERROR ("RegOpenKeyExA", 0);
 	     }
 	   char szProductType[80];
 	   unsigned long dwBufLen = ARRAY_SIZE(szProductType);
 	   lRet =
-	     RegQueryValueEx(hKey.Get(),
-			     "ProductType",
-			     0,
-			     0,
-			     reinterpret_cast<LPBYTE>(szProductType),
-			     &dwBufLen);
+	     RegQueryValueExA(hKey.Get(),
+			      "ProductType",
+			      0,
+			      0,
+			      reinterpret_cast<LPBYTE>(szProductType),
+			      &dwBufLen);
 	   if (lRet != ERROR_SUCCESS)
 	     {
-	       FATAL_WINDOWS_ERROR ("RegQueryValueEx", 0);
+	       FATAL_WINDOWS_ERROR ("RegQueryValueExA", 0);
 	     }
 	   if (dwBufLen > ARRAY_SIZE(szProductType))
 	     {
@@ -1644,8 +1644,6 @@ Utils::GetOSVersionString ()
    See Q246772.
    _________________________________________________________________________ */
 
-#define GETDEFAULTPRINTER "GetDefaultPrinterA"
-
 MIKTEXAPI(bool)
 Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
@@ -1702,10 +1700,10 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	}
       if (osv.dwMajorVersion >= 5)
 	{
-	  DllProc2<BOOL, LPTSTR, LPDWORD>
-	    pGetDefaultPrinter ("winspool.drv", GETDEFAULTPRINTER);
+	  DllProc2<BOOL, char *, LPDWORD>
+	    getDefaultPrinterA ("winspool.drv", "GetDefaultPrinterA");
 	  DWORD dwBufferSize = static_cast<DWORD>(*pBufferSize);
-	  BOOL bDone = pGetDefaultPrinter(pPrinterName, &dwBufferSize);
+	  BOOL bDone = getDefaultPrinterA(pPrinterName, &dwBufferSize);
 	  if (! bDone)
 	    {
 	      if (::GetLastError() == ERROR_FILE_NOT_FOUND)
@@ -1714,7 +1712,7 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		}
 	      else
 		{
-		  FATAL_WINDOWS_ERROR ("GetDefaultPrinter", 0);
+		  FATAL_WINDOWS_ERROR ("GetDefaultPrinterA", 0);
 		}
 	    }
 	  else
@@ -1725,7 +1723,7 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	}
       else
 	{
-	  TCHAR cBuffer[4096];
+	  char cBuffer[4096];
 	  if (GetProfileString("windows",
 			       "device",
 			       ",,,",
@@ -2170,28 +2168,28 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const char * lpszFileName)
      Q_(lpszFileName));
   if (IsWindowsNT())
     {
-      if (! MoveFileEx(lpszFileName, 0, MOVEFILE_DELAY_UNTIL_REBOOT))
+      if (! MoveFileExA(lpszFileName, 0, MOVEFILE_DELAY_UNTIL_REBOOT))
 	{
-	  FATAL_WINDOWS_ERROR ("MoveFileEx", lpszFileName);
+	  FATAL_WINDOWS_ERROR ("MoveFileExA", lpszFileName);
 	}
     }
   else
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       char szWinDir[BufferSizes::MaxPath];
-      if (GetWindowsDirectory(szWinDir, BufferSizes::MaxPath) == 0)
+      if (GetWindowsDirectoryA(szWinDir, BufferSizes::MaxPath) == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+	  FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
 	}
       PathName pathWinInitIni (szWinDir, "wininit", ".ini");
       vector<string> lines;
       lines.reserve (20);
       char szShortPathName[BufferSizes::MaxPath];
       unsigned long n =
-	GetShortPathName(lpszFileName, szShortPathName, BufferSizes::MaxPath);
+	GetShortPathNameA(lpszFileName, szShortPathName, BufferSizes::MaxPath);
       if (n == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetShortPathName", lpszFileName);
+	  FATAL_WINDOWS_ERROR ("GetShortPathNameA", lpszFileName);
 	}
       else if (n >= BufferSizes::MaxPath)
 	{
@@ -2554,9 +2552,9 @@ CreateDirectoryForEveryone (/*[in]*/ const char * lpszPath)
   if (! IsWindowsNT())
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-      if (! CreateDirectory (lpszPath, 0))
+      if (! CreateDirectoryA(lpszPath, 0))
 	{
-	  FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
+	  FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
 	}
       return;
 #else
@@ -2622,9 +2620,9 @@ CreateDirectoryForEveryone (/*[in]*/ const char * lpszPath)
   sa.lpSecurityDescriptor = pSD;
   sa.bInheritHandle = FALSE;
 
-  if (! CreateDirectory (lpszPath, &sa))
+  if (! CreateDirectoryA(lpszPath, &sa))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
     }
 }
 #endif
@@ -2687,14 +2685,14 @@ CreateDirectoryPath (/*[in]*/ const char *	lpszPath)
     {
       CreateDirectoryForEveryone (lpszPath);
     }
-  else if (! CreateDirectory(lpszPath, 0))
+  else if (! CreateDirectoryA(lpszPath, 0))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
     }
 #else
-  if (! CreateDirectory(lpszPath, 0))
+  if (! CreateDirectoryA(lpszPath, 0))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
     }
 #endif
 }

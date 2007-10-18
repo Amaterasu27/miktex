@@ -83,8 +83,8 @@ public:
 
 public:
   bool
-  Create (/*[in]*/ const char *		lpszFndbPath,
-	  /*[in]*/ const char *		lpszRootPath,
+  Create (/*[in]*/ const char *			lpszFndbPath,
+	  /*[in]*/ const char *			lpszRootPath,
 	  /*[in]*/ ICreateFndbCallback *	pCallback,
 	  /*[in]*/ bool				enableStringPooling,
 	  /*[in]*/ bool				storeFileNameInfo);
@@ -145,7 +145,7 @@ private:
 
 public:
   void
-  ReadDirectory (/*[in]*/ const char *		lpszPath,
+  ReadDirectory (/*[in]*/ const char *			lpszPath,
 		 /*[out]*/ vector<string> &		subDirectoryNames,
 		 /*[out]*/ vector<FILENAMEINFO> &	fileNames);
 
@@ -371,9 +371,8 @@ FndbManager::AlignMem (/*[in]*/ unsigned long align)
    _________________________________________________________________________ */
 
 void
-FndbManager::GetIgnorableFiles
-(/*[in]*/ const char *	lpszPath,
- /*[out]*/ vector<string> &	filesToBeIgnored)
+FndbManager::GetIgnorableFiles (/*[in]*/ const char *	lpszPath,
+				/*[out]*/ vector<string> & filesToBeIgnored)
 {
   PathName ignoreFile (lpszPath, FN_MIKTEXIGNORE, 0);
   if (! File::Exists(ignoreFile))
@@ -444,8 +443,8 @@ FndbManager::ReadDirectory (/*[in]*/ const char *		lpszPath,
 FileNameDatabaseHeader::FndbOffset
 FndbManager::ProcessFolder
 (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foParent,
- /*[in]*/ const char *			lpszParentPath,
- /*[in]*/ const char *			lpszFolderName,
+ /*[in]*/ const char *				lpszParentPath,
+ /*[in]*/ const char *				lpszFolderName,
  /*[in]*/ FileNameDatabaseHeader::FndbOffset	foFolderName)
 {
   const size_t cReservedEntries = 0;
@@ -603,8 +602,8 @@ FndbManager::ProcessFolder
    _________________________________________________________________________ */
 
 bool
-FndbManager::Create (/*[in]*/ const char *	lpszFndbPath,
-		     /*[in]*/ const char *	lpszRootPath,
+FndbManager::Create (/*[in]*/ const char *		lpszFndbPath,
+		     /*[in]*/ const char *		lpszRootPath,
 		     /*[in]*/ ICreateFndbCallback *	pCallback,
 		     /*[in]*/ bool			enableStringPooling,
 		     /*[in]*/ bool			storeFileNameInfo)
@@ -732,8 +731,8 @@ Fndb::Create (/*[in]*/ const char *	lpszFndbPath,
    _________________________________________________________________________ */
 
 bool
-Fndb::Create (/*[in]*/ const char *	lpszFndbPath,
-	      /*[in]*/ const char *	lpszRootPath,
+Fndb::Create (/*[in]*/ const char *		lpszFndbPath,
+	      /*[in]*/ const char *		lpszRootPath,
 	      /*[in]*/ ICreateFndbCallback *	pCallback,
 	      /*[in]*/ bool			enableStringPooling,
 	      /*[in]*/ bool			storeFileNameInfo)

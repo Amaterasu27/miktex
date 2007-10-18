@@ -226,7 +226,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 #define T_(x) MIKTEXTEXT(x)
 
-#define Q_(x) Quoted(x).Get()
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 #define MIKTEXINTERNALFUNC(type) type
 #define MIKTEXINTERNALVAR(type) type
@@ -574,55 +574,6 @@ void
 ClearString (/*[in,out]*/ char *	lpsz)
 {
   lpsz[0] = 0;
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-template<typename CharType>
-inline
-CharBuffer<CharType>
-Quoted (/*[in]*/ const CharType * lpsz)
-{
-  bool needQuotes = (StrChr(lpsz, ' ') != 0);
-  CharBuffer<CharType> result;
-  if (needQuotes)
-    {
-      result += '"';
-    }
-  result += lpsz;
-  if (needQuotes)
-    {
-      result += '"';
-    }
-  return (result);
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-template<typename CharType>
-inline
-CharBuffer<CharType>
-Quoted (/*[in]*/ const std::basic_string<CharType> & str)
-{
-  return (Quoted(str.c_str()));
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-CharBuffer<char>
-Quoted (/*[in]*/ const PathName & path)
-{
-  return (Quoted(path.Get()));
 }
 
 /* _________________________________________________________________________

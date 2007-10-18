@@ -82,7 +82,7 @@ public:
   MIKTEXCALL
   WriteFormattedLine (/*[in]*/ const char *	lpszFacility,
 		      /*[in]*/ const char *	lpszFormat,
-		      /*[in]*/				...);
+		      /*[in]*/			...);
 
 public:
   virtual
@@ -104,7 +104,7 @@ public:
   MIKTEXCALL
   VTrace (/*[in]*/ const char *	lpszFacility,
 	  /*[in]*/ const char *	lpszFormat,
-	  /*[in]*/ va_list		arglist);
+	  /*[in]*/ va_list	arglist);
 
 private:
   TraceStreamImpl (/*[in]*/ const char *	lpszName)
@@ -235,7 +235,7 @@ SessionImpl::RegisterLibraryTraceStreams ()
 void
 TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
 			 /*[in]*/ const char *	lpszMessage,
-			 /*[in]*/ bool			appendNewline)
+			 /*[in]*/ bool		appendNewline)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszMessage);
@@ -280,9 +280,9 @@ TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
 
 void
 TraceStreamImpl::FormatV (/*[in]*/ const char *	lpszFacility,
-			  /*[in]*/ bool			appendNewline,
+			  /*[in]*/ bool		appendNewline,
 			  /*[in]*/ const char *	lpszFormat,
-			  /*[in]*/ va_list		arglist)
+			  /*[in]*/ va_list	arglist)
 {
   string str = Utils::FormatString(lpszFormat, arglist);
   Logger (lpszFacility, str.c_str(), appendNewline);
@@ -358,7 +358,7 @@ void
 TraceStreamImpl::WriteFormattedLine
 (/*[in]*/ const char *	lpszFacility,
  /*[in]*/ const char *	lpszFormat,
- /*[in]*/			...)
+ /*[in]*/		...)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszFormat);
@@ -416,7 +416,7 @@ TraceStreamImpl::Write (/*[in]*/ const char *	lpszFacility,
 void
 TraceStreamImpl::VTrace (/*[in]*/ const char *	lpszFacility,
 			 /*[in]*/ const char *	lpszFormat,
-			 /*[in]*/ va_list		arglist)
+			 /*[in]*/ va_list	arglist)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszFormat);
@@ -482,7 +482,7 @@ TraceStream::TraceLastWin32Error
 (/*[in]*/ const char *	lpszWindowsFunction,
  /*[in]*/ const char *	lpszInfo,
  /*[in]*/ const char *	lpszSourceFile,
- /*[in]*/ int			lpszSourceLine)
+ /*[in]*/ int		lpszSourceLine)
 {
   TraceWindowsError (lpszWindowsFunction,
 		     ::GetLastError(),
@@ -499,11 +499,10 @@ TraceStream::TraceLastWin32Error
    _________________________________________________________________________ */
 
 void
-TraceStream::TraceLastCRTError
-(/*[in]*/ const char *	lpszCrtFunction,
- /*[in]*/ const char *	lpszInfo,
- /*[in]*/ const char *	lpszSourceFile,
- /*[in]*/ int			lpszSourceLine)
+TraceStream::TraceLastCRTError (/*[in]*/ const char *	lpszCrtFunction,
+				/*[in]*/ const char *	lpszInfo,
+				/*[in]*/ const char *	lpszSourceFile,
+				/*[in]*/ int		lpszSourceLine)
 {
   int lastError = errno;
   string errorMessage;
@@ -540,7 +539,7 @@ TraceMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 		  /*[in]*/ const char *	lpszMessage,
 		  /*[in]*/ const char *	lpszInfo,
 		  /*[in]*/ const char *	lpszSourceFile,
-		  /*[in]*/ int			lpszSourceLine)
+		  /*[in]*/ int		lpszSourceLine)
 {
   if (SessionImpl::GetSession() != 0
       && SessionImpl::GetSession()->trace_error.get() != 0)

@@ -79,59 +79,12 @@ using namespace std;
 #endif
 
 #define T_(x) MIKTEXTEXT(x)
-#define Q_(x) Quoted(x).c_str()
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 const char * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_ERROR T_(",")
   MIKTEX_TRACE_PROCESS T_(",")
   PROGRAM_NAME;
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-string
-Quoted (/*[in]*/ const char * lpsz)
-{
-  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  string result;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  result += lpsz;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  return (result);
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-string
-Quoted (/*[in]*/ const string & str)
-{
-  return (Quoted(str.c_str()));
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-string
-Quoted (/*[in]*/ const PathName & path)
-{
-  return (Quoted(path.Get()));
-}
 
 /* _________________________________________________________________________
 

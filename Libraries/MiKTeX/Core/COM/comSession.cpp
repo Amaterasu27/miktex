@@ -117,7 +117,7 @@ comSession::RegisterRootDirectories (/*[in]*/ BSTR	rootDirectories)
   try
     {
       CreateSession ();
-      pSession->RegisterRootDirectories(string(CW2CT(rootDirectories)));
+      pSession->RegisterRootDirectories(string(CW2A(rootDirectories)));
     }
   catch (const _com_error & e)
     {
@@ -159,8 +159,8 @@ comSession::FindPkFile (/*[in]*/ BSTR		fontName,
     {
       CreateSession ();
       PathName path_;
-      if (pSession->FindPkFile(CW2CT(fontName),
-			       CW2CT(mode),
+      if (pSession->FindPkFile(CW2A(fontName),
+			       CW2A(mode),
 			       dpi,
 			       path_))
 	{
@@ -355,13 +355,13 @@ comSession::FindFile (/*[in]*/ BSTR			fileName,
   try
     {
       CreateSession ();
-      FileType fileType = pSession->DeriveFileType(CW2CT(fileName));
+      FileType fileType = pSession->DeriveFileType(CW2A(fileName));
       if (fileType == FileType::None)
 	{
 	  fileType = FileType::TEX;
 	}
       PathName path_;
-      if (pSession->FindFile(CW2CT(fileName), fileType, path_))
+      if (pSession->FindFile(CW2A(fileName), fileType, path_))
 	{
 	  *path = _bstr_t(path_.Get()).Detach();
 	  *found = VARIANT_TRUE;
@@ -474,7 +474,7 @@ comSession::UpdateRegistry (/*[in]*/ BOOL doRegister)
 #endif
 	}
       rme.szKey = L"ACCESS_SD";
-      CT2W wstr (str.c_str());
+      CA2W wstr (str.c_str());
       rme.szData = wstr;
       regMapEntries.push_back (rme);
       rme.szKey = 0;

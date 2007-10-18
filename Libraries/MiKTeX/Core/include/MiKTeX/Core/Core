@@ -3253,7 +3253,7 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
-  AppendArguments (/*[in]*/ const std::vector<std::string>	argv);
+  AppendArguments (/*[in]*/ const std::vector<std::string> & argv);
 
 public:
   MIKTEXEXPORT
@@ -6836,6 +6836,49 @@ private:
 
 private:
   void * pDelims;
+};
+
+/* _________________________________________________________________________
+
+   Quoter
+   _________________________________________________________________________ */
+
+template<typename CharType>
+class Quoter : public CharBuffer<CharType>
+{
+public:
+  Quoter (/*[in]*/ const CharType * lpsz)
+  {
+    Quote (lpsz);
+  }
+
+public:
+  Quoter (/*[in]*/ const std::basic_string<CharType> & str)
+  {
+    Quote (str.c_str());
+  }
+
+public:
+  Quoter (/*[in]*/ const PathName & path)
+  {
+    Quote (path.Get());
+  }
+
+private:
+  void
+  Quote (/*[in]*/ const CharType * lpsz)
+  {
+    bool needQuotes = (StrChr(lpsz, ' ') != 0);
+    if (needQuotes)
+      {
+	Append ('"');
+      }
+    Append (lpsz);
+    if (needQuotes)
+      {
+	Append ('"');
+      }
+  }
 };
 
 /* _________________________________________________________________________

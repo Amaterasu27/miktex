@@ -351,9 +351,8 @@ FileNameDatabase::IsInvariable ()
    _________________________________________________________________________ */
 
 void
-FileNameDatabase::OpenFileNameDatabase
-(/*[in]*/ const char *	lpszFndbPath,
- /*[in]*/ bool			readWrite)
+FileNameDatabase::OpenFileNameDatabase (/*[in]*/ const char *	lpszFndbPath,
+					/*[in]*/ bool		readWrite)
 {
 #if defined(MIKTEX_WINDOWS)
   // check file attributes
@@ -444,7 +443,7 @@ FileNameDatabase::OpenFileNameDatabase
 void
 FileNameDatabase::Initialize (/*[in]*/ const char *	lpszFndbPath,
 			      /*[in]*/ const char *	lpszRoot,
-			      /*[in]*/ bool			readWrite)
+			      /*[in]*/ bool		readWrite)
 {
   rootDirectory = lpszRoot;
   isInvariable = ! readWrite;
@@ -467,7 +466,7 @@ FileNameDatabase::Initialize (/*[in]*/ const char *	lpszFndbPath,
 FileNameDatabaseHeader::FndbOffset
 FileNameDatabase::FindSubDirectory2
 (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
- /*[in]*/ const char *			lpszRelPath)
+ /*[in]*/ const char *				lpszRelPath)
   const
 {
   MIKTEX_ASSERT (pDir != 0);
@@ -531,7 +530,7 @@ FileNameDatabase::FindSubDirectory2
 const FileNameDatabaseDirectory *
 FileNameDatabase::FindSubDirectory
 (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
- /*[in]*/ const char *			lpszRelPath)
+ /*[in]*/ const char *				lpszRelPath)
   const
 {
   FileNameDatabaseHeader::FndbOffset fo = FindSubDirectory2(pDir, lpszRelPath);
@@ -546,7 +545,7 @@ FileNameDatabase::FindSubDirectory
 const FileNameDatabaseDirectory *
 FileNameDatabase::SearchFileName
 (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
- /*[in]*/ const char *			lpszFileName,
+ /*[in]*/ const char *				lpszFileName,
  /*[out]*/ U32 &				index)
   const
 {
@@ -706,7 +705,7 @@ U32
 FileNameDatabase::FindLowerBound
 (/*[in]*/ const FileNameDatabaseHeader::FndbOffset *	pBegin,
  /*[in]*/ U32						count,
- /*[in]*/ const char *				lpszName,
+ /*[in]*/ const char *					lpszName,
  /*[out]*/ bool &					isDuplicate)
   const
 {
@@ -792,7 +791,7 @@ FileNameDatabase::InsertDirectory
 FileNameDatabaseDirectory *
 FileNameDatabase::CreateDirectory
 (/*[out]*/ FileNameDatabaseDirectory *	pDir,
- /*[in]*/ const char *		lpszName)
+ /*[in]*/ const char *			lpszName)
 {
   while (pDir->capacity < pDir->SizeOfTable(HasFileNameInfo()) + 2)
     {
@@ -950,9 +949,9 @@ FileNameDatabase::Flush ()
 
 bool
 FileNameDatabase::Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
-			  /*[in]*/ const char *	lpszPath,
+			  /*[in]*/ const char *		lpszPath,
 			  /*[out]*/ PathName &		result,
-			  /*[out]*/ char *	lpszFileNameInfo,
+			  /*[out]*/ char *		lpszFileNameInfo,
 			  /*[in]*/ size_t		sizeFileNameInfo)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
@@ -1003,8 +1002,8 @@ FileNameDatabase::Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
 bool
 FileNameDatabase::RecursiveSearch
 (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
- /*[in]*/ const char *			lpszSubDir,
- /*[in]*/ const char *			lpszSearchSpec,
+ /*[in]*/ const char *				lpszSubDir,
+ /*[in]*/ const char *				lpszSearchSpec,
  /*[out]*/ PathName &				result,
  /*[out]*/ char *				lpszFileNameInfo,
  /*[in]*/ size_t				sizeFileNameInfo)
@@ -1112,10 +1111,10 @@ FileNameDatabase::RecursiveSearch
    _________________________________________________________________________ */
 
 bool
-FileNameDatabase::Search (/*[in]*/ const char *	lpszFileName,
-			  /*[in]*/ const char *	lpszDirPath,
+FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
+			  /*[in]*/ const char *		lpszDirPath,
 			  /*[out]*/ PathName &		result,
-			  /*[out]*/ char *	lpszFileNameInfo,
+			  /*[out]*/ char *		lpszFileNameInfo,
 			  /*[in]*/ size_t		sizeFileNameInfo)
 
 {
@@ -1126,9 +1125,9 @@ FileNameDatabase::Search (/*[in]*/ const char *	lpszFileName,
 
   traceStream->WriteFormattedLine
     ("core",
-     T_("fndb search: rootDirectory=\"%s\", searchspec==\"%s\""),
-     rootDirectory.Get(),
-     searchSpec.Get());
+     T_("fndb search: rootDirectory=%s, searchspec=%s"),
+     Q_(rootDirectory),
+     Q_(searchSpec.Get()));
 
   if (StrLen(searchSpec.Get()) > BufferSizes::MaxPath)
     {
@@ -1185,7 +1184,7 @@ FileNameDatabase::Search (/*[in]*/ const char *	lpszFileName,
 	  traceStream->WriteFormattedLine
 	    ("core",
 	     T_("found: %s (%s)"),
-	     result.Get(),
+	     Q_(result),
 	     lpszFileNameInfo);
 	}
       else
@@ -1193,7 +1192,7 @@ FileNameDatabase::Search (/*[in]*/ const char *	lpszFileName,
 	  traceStream->WriteFormattedLine
 	    ("core",
 	     T_("found: %s"),
-	     result.Get());
+	     Q_(result));
 	}
     }
 
@@ -1210,7 +1209,7 @@ FileNameDatabase::Search (/*[in]*/ const char *	lpszFileName,
 FileNameDatabase *
 FileNameDatabase::Create (/*[in]*/ const char *	lpszFndbPath,
 			  /*[in]*/ const char *	lpszRoot,
-			  /*[in]*/ bool			readOnly)
+			  /*[in]*/ bool		readOnly)
 {
   MIKTEX_ASSERT_STRING (lpszFndbPath);
   MIKTEX_ASSERT_STRING (lpszRoot);

@@ -77,20 +77,20 @@ MIKTEXSTATICFUNC(const ConfigMapping *)
 FindConfigMapping (/*[in]*/ const char *	lpszConfigSection,
 		   /*[in]*/ const char *	lpszConfigValueName)
 {
-  for (size_t i = 0;
-       i < sizeof(configMappings) / sizeof(configMappings);
-       ++ i)
+  for (size_t idx = 0;
+       idx < sizeof(configMappings) / sizeof(configMappings);
+       ++ idx)
     {
-      if ((StringCompare(configMappings[i].lpszConfigSection,
+      if ((StringCompare(configMappings[idx].lpszConfigSection,
 			 lpszConfigSection,
 			 true)
 	   == 0)
-	  && (StringCompare(configMappings[i].lpszConfigValueName,
+	  && (StringCompare(configMappings[idx].lpszConfigValueName,
 			    lpszConfigValueName,
 			    true))
 	  == 0)
 	{
-	  return (&configMappings[i]);
+	  return (&configMappings[idx]);
 	}
     }
   return (0);
@@ -137,11 +137,13 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
 #if defined(MIKTEX_WINDOWS)
 
   path = bindir;
+
 #  if defined(MIKTEX_WINDOWS_32)
   path += PARENT_PARENT_DIRECTORY;
 #  else
   path += PARENT_PARENT_PARENT_DIRECTORY;
 #  endif
+
   path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
   if (File::Exists(path))
     {
@@ -473,20 +475,20 @@ SessionImpl::GetBinDirectory ()
 
 void
 SessionImpl::ReadAllConfigFiles (/*[in]*/ const char *	lpszBaseName,
-				 /*[in,out]*/ Cfg *		pCfg)
+				 /*[in,out]*/ Cfg *	pCfg)
 {
   PathName fileName (MIKTEX_PATH_MIKTEX_CONFIG_DIR,
 		     lpszBaseName,
 		     ".ini");
 
   // read all configuration files in reverse order
-  for (unsigned i = GetNumberOfTEXMFRoots(); i > 0; -- i)
+  for (unsigned idx = GetNumberOfTEXMFRoots(); idx > 0; -- idx)
     {
-      if (! IsManagedRoot(i - 1))
+      if (! IsManagedRoot(idx - 1))
 	{
 	  continue;
 	}
-      PathName pathConfigFile (GetRootDirectory(i - 1), fileName);
+      PathName pathConfigFile (GetRootDirectory(idx - 1), fileName);
       if (File::Exists(pathConfigFile))
 	{
 	  pCfg->Read (pathConfigFile);
@@ -522,10 +524,10 @@ AppendToEnvVarName (/*[in,out]*/ string &	name,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetSessionValue (/*[in]*/ const char * lpszSectionName,
-			      /*[in]*/ const char * lpszValueName,
-			      /*[out]*/ string &	  value,
-			      /*[in]*/const char *  lpszDefaultValue)
+SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
+			      /*[in]*/ const char *	lpszValueName,
+			      /*[out]*/ string &	value,
+			      /*[in]*/const char *	lpszDefaultValue)
 {
   bool haveValue = false;
 
@@ -683,9 +685,9 @@ SessionImpl::GetSessionValue (/*[in]*/ const char * lpszSectionName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::TryGetConfigValue (/*[in]*/ const char * lpszSectionName,
-				/*[in]*/ const char * lpszValueName,
-				/*[out]*/ string &		value)
+SessionImpl::TryGetConfigValue (/*[in]*/ const char *	lpszSectionName,
+				/*[in]*/ const char *	lpszValueName,
+				/*[out]*/ string &	value)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -733,9 +735,9 @@ SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
    _________________________________________________________________________ */
 
 int
-SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 			     /*[in]*/ const char *	lpszValueName,
-			     /*[in]*/ int			defaultValue)
+			     /*[in]*/ int		defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -761,9 +763,9 @@ SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 			     /*[in]*/ const char *	lpszValueName,
-			     /*[in]*/ bool			defaultValue)
+			     /*[in]*/ bool		defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -812,9 +814,9 @@ SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
    _________________________________________________________________________ */
 
 TriState
-SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 			     /*[in]*/ const char *	lpszValueName,
-			     /*[in]*/ TriState			defaultValue)
+			     /*[in]*/ TriState		defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -913,9 +915,9 @@ environment variable definition is in the way."),
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
-				 /*[in]*/ const char * lpszValueName,
-				 /*[in]*/ bool			value)
+SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
+				 /*[in]*/ const char *	lpszValueName,
+				 /*[in]*/ bool		value)
 {
   SetUserConfigValue (lpszSectionName,
 		      lpszValueName,
@@ -930,9 +932,9 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
-				 /*[in]*/ const char * lpszValueName,
-				 /*[in]*/ int			value)
+SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
+				 /*[in]*/ const char *	lpszValueName,
+				 /*[in]*/ int		value)
 {
   SetUserConfigValue (lpszSectionName, lpszValueName, NUMTOSTR(value));
 }
@@ -1106,8 +1108,8 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 MIKTEXAPI(char *)
 miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
 			 /*[in]*/ const char *	lpszValueName,
-			 /*[out]*/ char *		lpszBuf,
-			 /*[in]*/ size_t		bufSize,
+			 /*[out]*/ char *	lpszBuf,
+			 /*[in]*/ size_t	bufSize,
 			 /*[in]*/ const char *	lpszDefaultValue)
 {
   C_FUNC_BEGIN ();

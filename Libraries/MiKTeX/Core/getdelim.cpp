@@ -1,7 +1,7 @@
 /* getdelim.cpp: reading input lines
 
-   Copyright (C) Free Software Foundation
    Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) Free Software Foundation
 
    This file is part of the MiKTeX Core Library.
 
@@ -34,7 +34,7 @@
 bool
 MIKTEXCALL
 Utils::ReadUntilDelim (/*[out]*/ string &	str,
-		       /*[in]*/ int	delim,
+		       /*[in]*/ int		delim,
 		       /*[in]*/ FILE *		stream)
 {
   if (delim == '\n')

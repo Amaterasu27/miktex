@@ -95,9 +95,9 @@ winMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
   
   // try to open an existing file mapping
   hMapping =
-    OpenFileMapping(readWrite ? FILE_MAP_WRITE : FILE_MAP_READ,
-		    FALSE,
-		    name.c_str());
+    OpenFileMappingA(readWrite ? FILE_MAP_WRITE : FILE_MAP_READ,
+		     FALSE,
+		     name.c_str());
 
   if (hMapping != 0)
     {
@@ -123,9 +123,9 @@ winMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
       // get the size
 #if defined(_MSC_VER)
       struct _stat statbuf;
-      if (_tstat(lpszPath, &statbuf) != 0)
+      if (_stat(lpszPath, &statbuf) != 0)
 	{
-	  FATAL_CRT_ERROR ("_tstat", lpszPath);
+	  FATAL_CRT_ERROR ("_stat", lpszPath);
 	}
       size = statbuf.st_size;
 #else
@@ -196,17 +196,17 @@ winMemoryMappedFile::OpenFile ()
      (readWrite ? T_("reading/writing") : "reading"));
     
   hFile =
-    CreateFile(path.c_str(),
-	       desiredAccess,
-	       shareMode,
-	       0,
-	       OPEN_EXISTING,
-	       FILE_FLAG_RANDOM_ACCESS,
-	       0);
+    CreateFileA(path.c_str(),
+		desiredAccess,
+		shareMode,
+		0,
+		OPEN_EXISTING,
+		FILE_FLAG_RANDOM_ACCESS,
+		0);
 
   if (hFile == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("CreateFile", path.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileA", path.c_str());
     }
 }
 
@@ -241,17 +241,17 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
   
   // create file-mapping object
   hMapping =
-    ::CreateFileMapping(hFile,
-			0,
-			(readWrite
-			 ? PAGE_READWRITE
-			 : PAGE_READONLY),
-			0,
-			static_cast<DWORD>(maximumFileSize),
-			name.c_str());
+    ::CreateFileMappingA(hFile,
+			 0,
+			 (readWrite
+			  ? PAGE_READWRITE
+			  : PAGE_READONLY),
+			 0,
+			 static_cast<DWORD>(maximumFileSize),
+			 name.c_str());
   if (hMapping == 0)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileMapping", name.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileMappingA", name.c_str());
     }
   
   // map file view into memory

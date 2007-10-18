@@ -197,7 +197,7 @@ DirectoryLister::~DirectoryLister ()
 
 void
 SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
-			     /*[in]*/ FileAccess		access)
+			     /*[in]*/ FileAccess	access)
 {
   if (! (recordingFileNames
 	 || recordingPackageNames
@@ -242,9 +242,9 @@ SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
 
 FILE *
 SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
-			  /*[in]*/ FileMode		mode,
-			  /*[in]*/ FileAccess		access,
-			  /*[in]*/ bool			text)
+			  /*[in]*/ FileMode	mode,
+			  /*[in]*/ FileAccess	access,
+			  /*[in]*/ bool		text)
 {
   try
     {
@@ -273,9 +273,9 @@ SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
 
 FILE *
 SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
-		       /*[in]*/ FileMode		mode,
-		       /*[in]*/ FileAccess		access,
-		       /*[in]*/ bool			text)
+		       /*[in]*/ FileMode	mode,
+		       /*[in]*/ FileAccess	access,
+		       /*[in]*/ bool		text)
 {
   return (OpenFile(lpszPath, mode, access, text, FileShare::Read));
 }
@@ -287,10 +287,10 @@ SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
 
 FILE *
 SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
-			  /*[in]*/ FileMode		mode,
-			  /*[in]*/ FileAccess		access,
-			  /*[in]*/ bool			text,
-			  /*[in]*/ FileShare		share)
+			  /*[in]*/ FileMode	mode,
+			  /*[in]*/ FileAccess	access,
+			  /*[in]*/ bool		text,
+			  /*[in]*/ FileShare	share)
 {
   try
     {
@@ -321,10 +321,10 @@ SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
 
 FILE *
 SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
-		       /*[in]*/ FileMode		mode,
-		       /*[in]*/ FileAccess		access,
-		       /*[in]*/ bool			text,
-		       /*[in]*/ FileShare		share)
+		       /*[in]*/ FileMode	mode,
+		       /*[in]*/ FileAccess	access,
+		       /*[in]*/ bool		text,
+		       /*[in]*/ FileShare	share)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -380,7 +380,7 @@ SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::InitiateProcessPipe (/*[in]*/ const char *	lpszCommand,
+SessionImpl::InitiateProcessPipe (/*[in]*/ const char *		lpszCommand,
 				  /*[in]*/ FileAccess		access,
 				  /*[in,out]*/ FileMode &	mode)
 {
@@ -718,12 +718,12 @@ File::Delete (/*[in]*/ const PathName &		path,
       if (IsWindowsNT())
 	{
 	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
-	    getVolumePathName ("Kernel32.dll",  "GetVolumePathNameA");
-	  if (! getVolumePathName(absPath.Get(),
-				  dir.GetBuffer(),
-				  dir.GetCapacity()))
+	    getVolumePathNameA ("Kernel32.dll",  "GetVolumePathNameA");
+	  if (! getVolumePathNameA(absPath.Get(),
+				   dir.GetBuffer(),
+				   dir.GetCapacity()))
 	    {
-	      FATAL_WINDOWS_ERROR ("GetVolumePathName", absPath.Get());
+	      FATAL_WINDOWS_ERROR ("GetVolumePathNameA", absPath.Get());
 	    }
 	}
       else
@@ -736,9 +736,9 @@ File::Delete (/*[in]*/ const PathName &		path,
 #endif
 	}
       char szTemp[BufferSizes::MaxPath];
-      if (GetTempFileName(dir.Get(), "mik", 0, szTemp) == 0)
+      if (GetTempFileNameA(dir.Get(), "mik", 0, szTemp) == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetTempFileName", dir.Get());
+	  FATAL_WINDOWS_ERROR ("GetTempFileNameA", dir.Get());
 	}
       File::Delete (szTemp);
       File::Move (absPath, szTemp);

@@ -73,9 +73,6 @@ SessionImpl::GetGhostscript (/*[out]*/ char *	lpszPath,
 
   if (pVersionNumber != 0 && gsVersion.n1 == 0)
     {
-#if defined(_UNICODE)
-#  error Unimplemented:	SessionImpl::GetGhostscript()	  
-#endif
       int exitCode;
       CharBuffer<char> gsout (4096);
       size_t n = static_cast<unsigned>(gsout.GetCapacity());

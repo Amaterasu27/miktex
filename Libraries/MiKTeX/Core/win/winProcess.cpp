@@ -66,12 +66,12 @@ winProcess::Create ()
   else
     {
       char * lpszFilePart = 0;
-      if (SearchPath(0,
-		     startinfo.FileName.c_str(),
-		     0,
-		     static_cast<DWORD>(fileName.GetCapacity()),
-		     fileName.GetBuffer(),
-		     &lpszFilePart)
+      if (SearchPathA(0,
+		      startinfo.FileName.c_str(),
+		      0,
+		      static_cast<DWORD>(fileName.GetCapacity()),
+		      fileName.GetBuffer(),
+		      &lpszFilePart)
 	  == 0)
 	{
 	  INVALID_ARGUMENT ("winProcess::Create",
@@ -293,7 +293,7 @@ winProcess::Create ()
 	}
 
       // set child handles
-      STARTUPINFO siStartInfo;
+      STARTUPINFOA siStartInfo;
       ZeroMemory (&siStartInfo, sizeof(siStartInfo));
       siStartInfo.cb = sizeof(siStartInfo);
       siStartInfo.dwFlags = STARTF_USESTDHANDLES;
@@ -335,20 +335,20 @@ winProcess::Create ()
       // start child process
       SessionImpl::GetSession()->trace_process->WriteFormattedLine
 	("core",
-	 T_("starting \"%s\""),
+	 T_("start process: %s"),
 	 commandLine.c_str());
-      if (! CreateProcess(fileName.Get(),
-			  STRDUP(commandLine.c_str()).GetBuffer(),
-			  0,	// lpProcessAttributes
-			  0,	// lpThreadAttributes
-			  TRUE,	// bInheritHandles
-			  0,	// dwCreationFlags
-			  0,	// lpEnvironment
-			  (startinfo.WorkingDirectory == ""
-			   ? 0
-			   : startinfo.WorkingDirectory.c_str()),
-			  &siStartInfo,
-			  &processInformation))
+      if (! CreateProcessA(fileName.Get(),
+			   STRDUP(commandLine.c_str()).GetBuffer(),
+			   0,	// lpProcessAttributes
+			   0,	// lpThreadAttributes
+			   TRUE,	// bInheritHandles
+			   0,	// dwCreationFlags
+			   0,	// lpEnvironment
+			   (startinfo.WorkingDirectory == ""
+			    ? 0
+			    : startinfo.WorkingDirectory.c_str()),
+			   &siStartInfo,
+			   &processInformation))
 	{
 	  FATAL_WINDOWS_ERROR ("CreateProcess",
 			       startinfo.FileName.c_str());
@@ -747,7 +747,7 @@ Wrap (/*[in,out]*/ string &	arguments)
    _________________________________________________________________________ */
 
 MIKTEXAPI(bool)
-Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine,
+Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
 			       /*[out]*/ int *			pExitCode,
 			       /*[in]*/ IRunProcessCallback *	pCallback,
 			       /*[in]*/ const char *	lpszDirectory)

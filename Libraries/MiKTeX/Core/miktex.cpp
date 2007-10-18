@@ -125,10 +125,10 @@ GetHomeDirectory ()
     {
       return (ret);
     }
-  unsigned int n = GetWindowsDirectory(ret.GetBuffer(), ret.GetCapacity());
+  unsigned int n = GetWindowsDirectoryA(ret.GetBuffer(), ret.GetCapacity());
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
     }
   else if (n >= ret.GetCapacity())
     {
@@ -196,7 +196,7 @@ SessionImpl::MakeMakePkCommandLine (/*[in]*/ const char *	lpszFontName,
 				    /*[in]*/ int		baseDpi,
 				    /*[in]*/ const char *	lpszMfMode,
 				    /*[out]*/ PathName &	fileName,
-				    /*[out]*/ char *	lpszArguments,
+				    /*[out]*/ char *		lpszArguments,
 				    /*[in]*/ size_t		maxArguments)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -351,7 +351,7 @@ Utils::GetMiKTeXBannerString ()
 
 string
 Utils::MakeProgramVersionString
-(/*[in]*/ const char *	lpszProgramName,
+(/*[in]*/ const char *		lpszProgramName,
  /*[in]*/ const VersionNumber &	programVersionNumber)
 {
   string str = lpszProgramName;
@@ -398,7 +398,7 @@ VersionNumber::ToString ()
 
 bool
 MIKTEXCALL
-VersionNumber::TryParse (/*[in]*/ const char *	lpszVersion,
+VersionNumber::TryParse (/*[in]*/ const char *		lpszVersion,
 			 /*[out]*/ VersionNumber &	versionNumber)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -660,7 +660,7 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
    _________________________________________________________________________ */
 
 bool
-Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
+Utils::GetEnvironmentString (/*[in]*/ const char *		lpszName,
 			     /*[out]*/ PathName &		path)
 {
   return (Utils::GetEnvironmentString(lpszName,
@@ -676,14 +676,14 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 bool
 Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			     /*[out]*/ char *		lpszOut,
-			     /*[in]*/ size_t			sizeOut)
+			     /*[in]*/ size_t		sizeOut)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   size_t bufSize;
-  if (_tgetenv_s(&bufSize,
-		 0,
-		 0,
-		 lpszName)
+  if (getenv_s(&bufSize,
+	       0,
+	       0,
+	       lpszName)
       != 0)
     {
       return (false);
@@ -702,7 +702,7 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 		 lpszName)
       != 0)
     {
-      FATAL_CRT_ERROR ("_tgetenv_s", lpszName);
+      FATAL_CRT_ERROR ("getenv_s", lpszName);
     }
   return (true);
 #else
@@ -937,7 +937,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 #if defined(_MSC_VER)
   if (Utils::GetEnvironmentString("MIKTEX_DEBUG_ON_STD_EXCEPTION", val))
     {
-      debugOnStdException = _ttoi(val.c_str());
+      debugOnStdException = atoi(val.c_str());
     }
 #endif
 
@@ -1031,7 +1031,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 #if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
   if (dynamicLoad.Get() == TriState::True)
     {
-      trace_core->WriteFormattedLine ("core", "dynamic load");
+      trace_core->WriteFormattedLine ("core", T_("dynamic load"));
     }
 #endif
   
@@ -1041,7 +1041,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   
   trace_core->WriteFormattedLine ("core",
 				  T_("program file: %s"),
-				  Q_(GetMyProgramFile()));
+				  GetMyProgramFile().Get());
 
   trace_config->WriteFormattedLine ("core",
 				    T_("session locale: %s"),
@@ -1166,7 +1166,7 @@ SessionImpl::ConnectToServer ()
 	  memset (&bo, 0, sizeof(bo));
 	  bo.cbStruct = sizeof(bo);
 	  bo.hwnd = GetForegroundWindow();
-	  bo.dwClassContext	= CLSCTX_LOCAL_SERVER;
+	  bo.dwClassContext = CLSCTX_LOCAL_SERVER;
 	  HRESULT hr =
 	    CoGetObject(monikerName.c_str(),
 			&bo,

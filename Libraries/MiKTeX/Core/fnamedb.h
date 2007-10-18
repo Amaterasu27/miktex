@@ -42,7 +42,7 @@ public:
   FileNameDatabase *
   Create (/*[in]*/ const char *	lpszFndbPath,
 	  /*[in]*/ const char *	lpszRoot,
-	  /*[in]*/ bool			readOnly);
+	  /*[in]*/ bool		readOnly);
 
 public:
   long
@@ -52,9 +52,9 @@ public:
   bool
   Search (/*[in]*/ const char *	lpszFileName,
 	  /*[in]*/ const char *	lpszDirPath,
-	  /*[out]*/ PathName &		result,
+	  /*[out]*/ PathName &	result,
 	  /*[out]*/ char *	lpszFileNameInfo,
-	  /*[in]*/ size_t		sizeFileNameInfo);
+	  /*[in]*/ size_t	sizeFileNameInfo);
 
 public:
   void
@@ -81,7 +81,7 @@ public:
 
 public:
   bool
-  Enumerate (/*[in]*/ const char *	lpszPath,
+  Enumerate (/*[in]*/ const char *		lpszPath,
 	     /*[in]*/ IEnumerateFndbCallback *	pCallback);
 
 public:
@@ -110,7 +110,7 @@ private:
 private:
   FileNameDatabaseDirectory *
   CreateDirectoryPath (/*[in]*/ FileNameDatabaseDirectory *	pDir,
-		       /*[in]*/ const char *		lpszRelPath);
+		       /*[in]*/ const char *			lpszRelPath);
 
 private:
   FileNameDatabaseHeader::FndbOffset
@@ -124,7 +124,7 @@ private:
   U32
   FindLowerBound (/*[in]*/ const FileNameDatabaseHeader::FndbOffset *	pBegin,
 		  /*[in]*/ U32			count,
-		  /*[in]*/ const char *	lpszName,
+		  /*[in]*/ const char *		lpszName,
 		  /*[out]*/ bool &		isDuplicate)
     const;
 
@@ -137,7 +137,7 @@ private:
 private:
   FileNameDatabaseHeader::FndbOffset
   FindSubDirectory2 (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
-		     /*[in]*/ const char *		lpszRelPath)
+		     /*[in]*/ const char *			lpszRelPath)
     const;
 
 private:
@@ -205,8 +205,8 @@ private:
 
 private:
   void
-  Initialize (/*[in]*/ const char *	lpszFndbPath,
-	      /*[in]*/ const char *	lpszRoot,
+  Initialize (/*[in]*/ const char *		lpszFndbPath,
+	      /*[in]*/ const char *		lpszRoot,
 	      /*[in]*/ bool			readWrite = false);
 
 private:
@@ -239,12 +239,12 @@ private:
 private:
   void
   RemoveFileName (/*[in]*/ FileNameDatabaseDirectory *	pDir,
-		  /*[in]*/ const char *		lpszFileName);
+		  /*[in]*/ const char *			lpszFileName);
 
 private:
   const FileNameDatabaseDirectory *
   SearchFileName (/*[in]*/ const FileNameDatabaseDirectory * 	pDir,
-		  /*[in]*/ const char *			lpszFileName,
+		  /*[in]*/ const char *				lpszFileName,
 		  /*[out]*/ U32 &				index)
     const;
 
@@ -262,15 +262,15 @@ private:
 		   /*[in]*/ const char *	lpszSubDir,
 		   /*[in]*/ const char *	lpszSearchSpec,
 		   /*[out]*/ PathName &		result,
-		   /*[out]*/ char *	lpszFileNameInfo,
+		   /*[out]*/ char *		lpszFileNameInfo,
 		   /*[in]*/ size_t		sizeFileNameInfo);
 
 private:
   bool
   Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset			foDir,
-	  /*[in]*/ const char *		lpszPath,
+	  /*[in]*/ const char *			lpszPath,
 	  /*[out]*/ PathName &			result,
-	  /*[out]*/ char *		lpszFileNameInfo,
+	  /*[out]*/ char *			lpszFileNameInfo,
 	  /*[in]*/ size_t			sizeFileNameInfo);
 
 

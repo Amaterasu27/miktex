@@ -52,7 +52,7 @@ SessionImpl::FindPerl (/*[out]*/ PathName & perl)
 
 bool
 SessionImpl::FindPerlScript (/*[in]*/ const char *	lpszName,
-			     /*[out]*/ PathName &		path)
+			     /*[out]*/ PathName &	path)
 {
   return (FindFile(PathName(0, lpszName, ".pl").Get(),
 		   FileType::PERLSCRIPT,
@@ -65,7 +65,7 @@ SessionImpl::FindPerlScript (/*[in]*/ const char *	lpszName,
    _________________________________________________________________________ */
 
 int
-SessionImpl::RunPerl (/*[in]*/ int			argc,
+SessionImpl::RunPerl (/*[in]*/ int		argc,
 		      /*[in]*/ const char **	argv)
 {
   MIKTEX_ASSERT (argc > 0);

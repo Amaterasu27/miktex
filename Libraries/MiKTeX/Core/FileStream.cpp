@@ -270,7 +270,7 @@ BZip2Stream::Close ()
 size_t
 MIKTEXCALL
 BZip2Stream::Read (/*[out]*/ void *	pBytes,
-		  /*[in]*/ size_t	count)
+		   /*[in]*/ size_t	count)
 {
   BZFILE * pBzFile = static_cast<BZFILE*>(this->pBzFile);
   int bzError;
@@ -290,7 +290,7 @@ BZip2Stream::Read (/*[out]*/ void *	pBytes,
 void
 MIKTEXCALL
 BZip2Stream::Write (/*[in]*/ const void *	pBytes,
-		   /*[in]*/ size_t		count)
+		    /*[in]*/ size_t		count)
 {
   UNUSED_ALWAYS (pBytes);
   UNUSED_ALWAYS (count);
@@ -305,7 +305,7 @@ BZip2Stream::Write (/*[in]*/ const void *	pBytes,
 void
 MIKTEXCALL
 BZip2Stream::Seek (/*[in]*/ long	offset,
-		  /*[in]*/ SeekOrigin	seekOrigin)
+		   /*[in]*/ SeekOrigin	seekOrigin)
 {
   UNUSED_ALWAYS (offset);
   UNUSED_ALWAYS (seekOrigin);
@@ -435,7 +435,7 @@ StreamWriter::Close ()
 inline
 int
 FPutC (/*[in]*/ int	ch,
-       /*[in]*/ FILE *		stream)
+       /*[in]*/ FILE *	stream)
 {
   int chWritten = fputc(ch, stream);
   if (chWritten == EOF)
@@ -453,7 +453,7 @@ FPutC (/*[in]*/ int	ch,
 inline
 void
 FPutS (/*[in]*/ const char *	lpsz,
-       /*[in]*/ FILE *			stream)
+       /*[in]*/ FILE *		stream)
 {
   int ok = fputs(lpsz, stream);
   if (ok < 0)
@@ -534,7 +534,7 @@ StreamWriter::WriteFormatted (/*[in]*/ const char *	lpszFormat,
 void
 MIKTEXCALL
 StreamWriter::WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
-				  /*[in]*/			...)
+				  /*[in]*/		...)
 {
   va_list marker;
   va_start (marker, lpszFormat);

@@ -150,7 +150,7 @@ namespace MiKTeX {					\
 
 #define T_(x) MIKTEXTEXT(x)
 
-#define Q_(x) Quoted(x).c_str()
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 #define EXTRACTORSTATICFUNC(type) static type
 #define EXTRACTORINTERNALFUNC(type) type
@@ -170,53 +170,6 @@ typedef std::basic_ostringstream<char> otstringstream;
    _________________________________________________________________________ */
 
 #define CURRENT_DIRECTORY "."
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const char * lpsz)
-{
-  bool needQuotes = (strchr(lpsz, ' ') != 0);
-  std::string result;
-  if (needQuotes)
-    {
-      result += '"';
-    }
-  result += lpsz;
-  if (needQuotes)
-    {
-      result += '"';
-    }
-  return (result);
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const std::string & str)
-{
-  return (Quoted(str.c_str()));
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const MiKTeX::Core::PathName & path)
-{
-  return (Quoted(path.Get()));
-}
 
 /* _________________________________________________________________________
 

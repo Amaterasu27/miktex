@@ -71,7 +71,7 @@ SessionImpl::GetFormatInfo (/*[in]*/ const char *	lpszKey)
 bool
 MIKTEXCALL
 SessionImpl::TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
-			       /*[out]*/ FormatInfo &		formatInfo)
+			       /*[out]*/ FormatInfo &	formatInfo)
 {
   ReadFormatsIni ();
   for (vector<FormatInfo_>::const_iterator it = formats.begin();

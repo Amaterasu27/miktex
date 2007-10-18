@@ -1,6 +1,6 @@
 /* CommandLine.cpp: command-line builder
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -177,7 +177,7 @@ CommandLineBuilder::Clear ()
 void
 CommandLineBuilder::AppendUnquoted (/*[in]*/ const char * lpszText)
 {
-  if (pData->str.length() > 0)
+  if (! pData->str.empty())
     {
       pData->str += ' ';
     }
@@ -196,8 +196,7 @@ CommandLineBuilder::AppendArgument (/*[in]*/ const char * lpszArgument)
     {
       pData->str += ' ';
     }
-  bool needsQuoting =
-    (*lpszArgument == 0 || StrChr(lpszArgument, ' ') != 0);
+  bool needsQuoting = (*lpszArgument == 0 || StrChr(lpszArgument, ' ') != 0);
   if (needsQuoting)
     {
       pData->str += '"';
@@ -216,11 +215,11 @@ CommandLineBuilder::AppendArgument (/*[in]*/ const char * lpszArgument)
 
 void
 CommandLineBuilder::AppendArguments (/*[in]*/ int			argc,
-				     /*[in]*/ const char * const * argv)
+				     /*[in]*/ const char * const *	argv)
 {
-  for (int i = 0; i < argc; ++ i)
+  for (int idx = 0; idx < argc; ++ idx)
     {
-      AppendArgument (argv[i]);
+      AppendArgument (argv[idx]);
     }
 }
 
@@ -230,7 +229,7 @@ CommandLineBuilder::AppendArguments (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendArguments (/*[in]*/ const vector<string>	argv)
+CommandLineBuilder::AppendArguments (/*[in]*/ const vector<string> &	argv)
 {
   for (vector<string>::const_iterator it = argv.begin();
        it != argv.end();
@@ -293,9 +292,8 @@ CommandLineBuilder::AppendOption (/*[in]*/ const char * lpszOption,
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendStdoutRedirection
-(/*[in]*/ const char *	lpszPath,
- /*[in]*/ bool			append)
+CommandLineBuilder::AppendStdoutRedirection (/*[in]*/ const char * lpszPath,
+					     /*[in]*/ bool	append)
 {
   pData->str += '>';
   if (append)
@@ -324,8 +322,7 @@ CommandLineBuilder::AppendStdoutRedirection
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendStdinRedirection
-(/*[in]*/ const char *	lpszPath)
+CommandLineBuilder::AppendStdinRedirection (/*[in]*/ const char * lpszPath)
 {
   pData->str += '<';
 #if defined(MIKTEX_WINDOWS)

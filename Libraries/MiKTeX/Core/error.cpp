@@ -29,6 +29,7 @@
    _________________________________________________________________________ */
 
 #if defined(_MSC_VER)
+
 BEGIN_INTERNAL_NAMESPACE;
 int debugOnStdException = 0;
 END_INTERNAL_NAMESPACE;
@@ -43,6 +44,7 @@ MiKTeX::Debug::OnThrowStdException ()
       DebugBreak ();
     }
 }
+
 #endif
 
 /* _________________________________________________________________________
@@ -179,19 +181,15 @@ MIKTEXINTERNALFUNC(bool)
 GetCrtErrorMessage (/*[in]*/ int		functionResult,
 		    /*[out]*/ string &		errorMessage)
 {
-#if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
+#if defined(_MSC_VER) && _MSC_VER >= 1400
   const size_t BUFSIZE = 512;
   char buffer[BUFSIZE];
-  if (_tcserror_s(buffer, BUFSIZE, functionResult) != 0)
+  if (strerror_s(buffer, BUFSIZE, functionResult) != 0)
     {
       return (false);
     }
   errorMessage = buffer;
 #  else
-  errorMessage = _tcserror(functionResult);
-#  endif
-#else
   errorMessage = strerror(functionResult);
 #endif
   return (true);
@@ -254,8 +252,7 @@ Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
     }
 #if 1
   string env;
-  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env)
-      && env == "1")
+  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env) && env == "1")
     {
       DEBUG_BREAK ();
     }

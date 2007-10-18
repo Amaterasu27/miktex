@@ -33,26 +33,26 @@ class winRegistry
 public:
   static
   bool
-  TryDeleteRegistryValue (/*[in]*/ TriState		shared,
+  TryDeleteRegistryValue (/*[in]*/ TriState	shared,
 			  /*[in]*/ const char *	lpszKeyName,
 			  /*[in]*/ const char *	lpszValueName);
 
 public:
   static
   bool
-  TryGetRegistryValue (/*[in]*/ TriState		shared,
+  TryGetRegistryValue (/*[in]*/ TriState	shared,
 		       /*[in]*/ const char *	lpszKeyName,
 		       /*[in]*/ const char *	lpszValueName,
-		       /*[out]*/ string &		value,
+		       /*[out]*/ string &	value,
 		       /*[in]*/ const char *	lpszDefaultValue);
 
 public:
   static
   bool
-  TryGetRegistryValue (/*[in]*/ TriState		shared,
+  TryGetRegistryValue (/*[in]*/ TriState	shared,
 		       /*[in]*/ const char *	lpszKeyName,
 		       /*[in]*/ const char *	lpszValueName,
-		       /*[out]*/ PathName &		path,
+		       /*[out]*/ PathName &	path,
 		       /*[in]*/ const char *	lpszDefaultPath);
 
 public:

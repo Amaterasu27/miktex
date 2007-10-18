@@ -32,7 +32,7 @@ bool
 SessionImpl::FindGraphicsRule (/*[in]*/ const char *	lpszFrom,
 			       /*[in]*/ const char *	lpszTo,
 			       /*[out]*/ char *		lpszRule,
-			       /*[in]*/ size_t			bufSize)
+			       /*[in]*/ size_t		bufSize)
 {
   MIKTEX_ASSERT_STRING (lpszFrom);
   MIKTEX_ASSERT_STRING (lpszTo);
@@ -76,8 +76,8 @@ SessionImpl::ConvertToBitmapFile (/*[in]*/ const char *	lpszPath,
 
   if (lpszExt == 0)
     {
-      FATAL_MIKTEX_ERROR ("",
-			  T_("no file name extension"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::ConvertToBitmapFile",
+			  T_("No file name extension in graphics rule."),
 			  lpszPath);
     }
 
@@ -86,8 +86,8 @@ SessionImpl::ConvertToBitmapFile (/*[in]*/ const char *	lpszPath,
 
   if (! FindGraphicsRule(lpszExt, ".bmp", szRule, MAXRULE))
     {
-      FATAL_MIKTEX_ERROR ("",
-			  T_("no conversion rule"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::ConvertToBitmapFile",
+			  T_("No conversion rule found."),
 			  lpszPath);
     }
 

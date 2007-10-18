@@ -161,7 +161,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 
 #define T_(x) MIKTEXTEXT(x)
 
-#define Q_(x) Quoted(x).c_str()
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 #define MPMSTATICFUNC(type) static type
 #define MPMINTERNALFUNC(type) type
@@ -208,53 +208,6 @@ const size_t MAXURL = 1024;
 
 #define TEXMF_PREFIX_DIRECTORY \
   T_("texmf") MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const char * lpsz)
-{
-  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  std::string result;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  result += lpsz;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  return (result);
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const std::string & str)
-{
-  return (Quoted(str.c_str()));
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-inline
-std::string
-Quoted (/*[in]*/ const MiKTeX::Core::PathName & path)
-{
-  return (Quoted(path.Get()));
-}
 
 /* _________________________________________________________________________
 

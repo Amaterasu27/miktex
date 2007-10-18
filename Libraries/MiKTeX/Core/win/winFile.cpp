@@ -58,7 +58,7 @@ Directory::SetCurrentDirectory (/*[in]*/ const PathName &	path)
 bool
 Directory::Exists (/*[in]*/ const PathName &	path)
 {
-  unsigned long attributes = GetFileAttributes(path.Get());
+  unsigned long attributes = GetFileAttributesA(path.Get());
   if (attributes != INVALID_FILE_ATTRIBUTES)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
@@ -77,7 +77,7 @@ Directory::Exists (/*[in]*/ const PathName &	path)
 	 || error == ERROR_BAD_NETPATH
 	 || error == ERROR_PATH_NOT_FOUND))
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributes", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
     }
   return (false);
 }
@@ -95,9 +95,9 @@ Directory::Delete (/*[in]*/ const PathName &	path)
      T_("deleting directory %s"),
      Q_(path));
 
-  if (! RemoveDirectory(path.Get()))
+  if (! RemoveDirectoryA(path.Get()))
     {
-      FATAL_WINDOWS_ERROR ("RemoveDirectory", path.Get());
+      FATAL_WINDOWS_ERROR ("RemoveDirectoryA", path.Get());
     }
 }
 
@@ -109,7 +109,7 @@ Directory::Delete (/*[in]*/ const PathName &	path)
 bool
 File::Exists (/*[in]*/ const PathName &	path)
 {
-  unsigned long attributes = GetFileAttributes(path.Get());
+  unsigned long attributes = GetFileAttributesA(path.Get());
   if (attributes != INVALID_FILE_ATTRIBUTES)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
@@ -131,7 +131,7 @@ File::Exists (/*[in]*/ const PathName &	path)
 	 || error == ERROR_INVALID_NAME
 	 || error == ERROR_PATH_NOT_FOUND))
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributes", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
     }
   SessionImpl::GetSession()->trace_access->WriteFormattedLine
     ("core",
@@ -178,11 +178,11 @@ File::GetAttributes (/*[in]*/ const PathName &	path)
 unsigned long
 File::GetNativeAttributes (/*[in]*/ const PathName & path)
 {
-  unsigned long attributes = GetFileAttributes(path.Get());
+  unsigned long attributes = GetFileAttributesA(path.Get());
 
   if (attributes == INVALID_FILE_ATTRIBUTES)
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributes", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
     }
 
   return (attributes);
@@ -242,9 +242,9 @@ File::SetNativeAttributes (/*[in]*/ const PathName &	path,
      static_cast<int>(nativeAttributes),
      Q_(path));
 
-  if (! SetFileAttributes(path.Get(), static_cast<DWORD>(nativeAttributes)))
+  if (! SetFileAttributesA(path.Get(), static_cast<DWORD>(nativeAttributes)))
     {
-      FATAL_WINDOWS_ERROR ("SetFileAttributes", path.Get());
+      FATAL_WINDOWS_ERROR ("SetFileAttributesA", path.Get());
     }
 }
 
@@ -257,17 +257,17 @@ size_t
 File::GetSize (/*[in]*/ const PathName &	path)
 {
   HANDLE h =
-    CreateFile(path.Get(),
-	       GENERIC_READ,
-	       FILE_SHARE_READ,
-	       0,
-	       OPEN_EXISTING,
-	       FILE_ATTRIBUTE_NORMAL,
-	       0);
+    CreateFileA(path.Get(),
+		GENERIC_READ,
+		FILE_SHARE_READ,
+		0,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		0);
 
   if (h == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("CreateFile", path.Get());
+      FATAL_WINDOWS_ERROR ("CreateFileA", path.Get());
     }
 
   AutoHANDLE autoClose (h);
@@ -476,10 +476,10 @@ File::GetTimes (/*[in]*/ const PathName &	path,
 		/*[out]*/ time_t &		lastWriteTime)
 {
   WIN32_FIND_DATA findData;
-  HANDLE findHandle = FindFirstFile(path.Get(), &findData);
+  HANDLE findHandle = FindFirstFileA(path.Get(), &findData);
   if (findHandle == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("FindFirstFile", path.Get());
+      FATAL_WINDOWS_ERROR ("FindFirstFileA", path.Get());
     }
   if (! FindClose(findHandle))
     {
@@ -502,9 +502,9 @@ File::Delete (/*[in]*/ const PathName &	path)
     ("core",
      T_("deleting %s"),
      Q_(path));
-  if (! DeleteFile(path.Get()))
+  if (! DeleteFileA(path.Get()))
     {
-      FATAL_WINDOWS_ERROR ("DeleteFile", path.Get());
+      FATAL_WINDOWS_ERROR ("DeleteFileA", path.Get());
     }
 }
 
@@ -523,9 +523,9 @@ File::Move (/*[in]*/ const PathName &	source,
      Q_(source),
      Q_(dest));
 
-  if (! MoveFile(source.Get(), dest.Get()))
+  if (! MoveFileA(source.Get(), dest.Get()))
     {
-      FATAL_WINDOWS_ERROR ("MoveFile", source.Get());
+      FATAL_WINDOWS_ERROR ("MoveFileA", source.Get());
     }
 }
 
@@ -559,9 +559,9 @@ File::Copy (/*[in]*/ const PathName &	source,
 	}
     }
 
-  if (! CopyFile(source.Get(), dest.Get(), FALSE))
+  if (! CopyFileA(source.Get(), dest.Get(), FALSE))
     {
-      FATAL_WINDOWS_ERROR ("CopyFile", source.Get());
+      FATAL_WINDOWS_ERROR ("CopyFileA", source.Get());
     }
 }
 
@@ -678,25 +678,25 @@ File::Open (/*[in]*/ const PathName &	path,
 	}
     }
 #  if (_MSC_VER >= 1400)
-  if (_tsopen_s(&fd,
-		path.Get(),
-		flags,
-		shflags,
-		(((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE))
+  if (_sopen_s(&fd,
+	       path.Get(),
+	       flags,
+	       shflags,
+	       (((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE))
       != 0)
     {
       fd = -1;
     }
 #else
   fd =
-    _tsopen(path.Get(),
-	    flags,
-	    shflags,
-	    (((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE));
+    _sopen(path.Get(),
+	   flags,
+	   shflags,
+	   (((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE));
 #endif
   if (fd < 0)
     {
-      FATAL_CRT_ERROR ("_tsopen", path.Get());
+      FATAL_CRT_ERROR ("_sopen", path.Get());
     }
 #else
   UNUSED_ALWAYS (shflags);

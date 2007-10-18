@@ -154,8 +154,8 @@ Utils::Contains (/*[in]*/ const char *	lpszList,
    _________________________________________________________________________ */
 
 size_t
-Utils::AppendString (/*[in,out]*/ char *		lpszBuf,
-		     /*[in]*/ size_t			bufSize,
+Utils::AppendString (/*[in,out]*/ char *	lpszBuf,
+		     /*[in]*/ size_t		bufSize,
 		     /*[in]*/ const char *	lpszSource)
 {
   MIKTEX_ASSERT_STRING (lpszBuf);
@@ -273,9 +273,9 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
 
 MIKTEXINTERNALFUNC(void)
 CopyString2 (/*[out]*/ char *		lpszBuf,
-	     /*[in]*/ size_t			bufSize,
+	     /*[in]*/ size_t		bufSize,
 	     /*[in]*/ const char *	lpszSource,
-	     /*[in]*/ size_t			count)
+	     /*[in]*/ size_t		count)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
@@ -321,7 +321,7 @@ CopyString2 (/*[out]*/ char *		lpszBuf,
 
 void
 Utils::ReplaceString (/*[out]*/ char *		lpszBuf,
-		      /*[in,out]*/ size_t &		bufSize,
+		      /*[in,out]*/ size_t &	bufSize,
 		      /*[in]*/ const char *	lpszSource,
 		      /*[in]*/ const char *	lpszString1,
 		      /*[in]*/ const char *	lpszString2)
@@ -491,26 +491,26 @@ MD5::Parse (/*[in]*/ const char *	lpszHexString)
 string
 MIKTEXCALL
 Utils::FormatString (/*[in]*/ const char *  lpszFormat,
-		     /*[in]*/ va_list		  arglist)
+		     /*[in]*/ va_list	  arglist)
 {
   CharBuffer<char> autoBuffer;
   int n;
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400
-  n = _vsctprintf(lpszFormat, arglist);
+  n = _vscprintf(lpszFormat, arglist);
   if (n < 0)
   {
-    FATAL_CRT_ERROR ("_vsctprintf", 0);
+    FATAL_CRT_ERROR ("_vscprintf", 0);
   }
   autoBuffer.Reserve (n + 1);
-  n = _vstprintf_s(
+  n = vsprintf_s(
     autoBuffer.GetBuffer(),
     autoBuffer.GetCapacity(),
     lpszFormat,
     arglist);
   if (n < 0)
   {
-    FATAL_CRT_ERROR ("_vsntprintf_s", 0);
+    FATAL_CRT_ERROR ("vsprintf_s", 0);
   }
   else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
   {
@@ -524,13 +524,13 @@ Utils::FormatString (/*[in]*/ const char *  lpszFormat,
   bool done = false;
   do
   {
-    n = _vsntprintf(autoBuffer.GetBuffer(),
-		    autoBuffer.GetCapacity(),
-		    lpszFormat,
-		    arglist);
+    n = _vsnprintf(autoBuffer.GetBuffer(),
+		   autoBuffer.GetCapacity(),
+		   lpszFormat,
+		   arglist);
     if (n < 0)
     {
-      FATAL_CRT_ERROR ("_vsntprintf", 0);
+      FATAL_CRT_ERROR ("_vsnprintf", 0);
     }
     else if (static_cast<size_t>(n) < autoBuffer.GetCapacity())
     {
@@ -865,7 +865,7 @@ Utils::IsUTF8 (/*[in]*/ const char *	lpsz,
 
 MIKTEXAPI(void)
 miktex_replace_string (/*[out]*/ char *		lpszBuf,
-		       /*[in]*/ size_t *		lpSizeDest,
+		       /*[in]*/ size_t *	lpSizeDest,
 		       /*[in]*/ const char *	lpszSource,
 		       /*[in]*/ const char *	lpszString1,
 		       /*[in]*/ const char *	lpszString2)

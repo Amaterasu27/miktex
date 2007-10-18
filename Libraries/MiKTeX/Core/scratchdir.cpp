@@ -67,7 +67,7 @@ SessionImpl::GetTempDirectory ()
 	  TraceError (T_("SystemDrive environment variable not defined"));
 	}
     }
-  if (systemDrive.length() == 0)
+  if (systemDrive.empty())
     {
       systemDrive = "C:";
     }
@@ -205,8 +205,8 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
 	    {
 	      SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
 		("core",
-		 T_("\"%s\" already exists"),
-		 pathScratchDirectory.Get());
+		 T_("directory %s already exists"),
+		 Q_(pathScratchDirectory));
 	    }
 	}
       MIKTEX_UNLOCK ();
@@ -270,8 +270,8 @@ ScratchDirectory::Enter (/*[in]*/ const char *	lpszPrefix)
   
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     ("core",
-     T_("entering scratch directory \"%s\""),
-     scratchDirectoryInfo.scratchDirectory.c_str());
+     T_("entering scratch directory %s"),
+     Q_(scratchDirectoryInfo.scratchDirectory));
   
   // change working directory
   Directory::SetCurrentDirectory
@@ -315,8 +315,8 @@ ScratchDirectory::Leave ()
 
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     ("core",
-     T_("leaving scratch directory \"%s\""),
-     scratchdir.scratchDirectory.c_str());
+     T_("leaving scratch directory %s"),
+     Q_(scratchdir.scratchDirectory));
   
   // sanity check
   PathName pathCwd;

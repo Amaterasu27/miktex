@@ -112,7 +112,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 
 void
 SessionImpl::SplitSearchPath (/*[in,out]*/ PathNameArray &	vec,
-			      /*[in]*/ const char *	lpszSearchPath)
+			      /*[in]*/ const char *		lpszSearchPath)
 {
   for (CSVList path (lpszSearchPath, PATH_DELIMITER);
        path.GetCurrent() != 0;
@@ -184,7 +184,7 @@ SessionImpl::AppendToSearchPath (/*[in,out]*/ string &		searchPath,
    _________________________________________________________________________ */
 
 void
-SessionImpl::TraceSearchVector (/*[in]*/ const char *	lpszKey,
+SessionImpl::TraceSearchVector (/*[in]*/ const char *		lpszKey,
 				/*[in]*/ const PathNameArray &	vec)
 {
   if (! trace_filesearch->IsEnabled())

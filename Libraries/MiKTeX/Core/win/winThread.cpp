@@ -74,10 +74,10 @@ winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
     {
       this->function = function;
       this->argument = argument;
-      hStarted = CreateEvent(0, TRUE, FALSE, 0);
+      hStarted = CreateEventA(0, TRUE, FALSE, 0);
       if (hStarted == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("CreateEvent", 0);
+	  FATAL_WINDOWS_ERROR ("CreateEventA", 0);
 	}
       handle =
 	reinterpret_cast<HANDLE>(_beginthreadex(0,

@@ -462,7 +462,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ string & path)
 
 MIKTEXINTERNALFUNC(void)
 AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
-			  /*[in]*/ size_t		size)
+			  /*[in]*/ size_t	size)
 {
   MIKTEX_ASSERT (size > 0);
   MIKTEX_ASSERT_STRING (lpszPath);

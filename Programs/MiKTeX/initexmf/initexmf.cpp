@@ -58,7 +58,7 @@ using namespace std;
 #  define tcerr cerr
 #endif
 
-#define Q_(x) Quoted(x).c_str()
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 const char * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
 #define PROGNAME T_("initexmf")
@@ -142,50 +142,6 @@ const char * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
 			      T_(__FILE__),				\
 			      __LINE__)
 #endif
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-string
-Quoted (/*[in]*/ const char * lpsz)
-{
-  bool needQuotes = (*lpsz == 0 || StrChr(lpsz, T_(' ')) != 0);
-  string result;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  result += lpsz;
-  if (needQuotes)
-    {
-      result += T_('"');
-    }
-  return (result);
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-string
-Quoted (/*[in]*/ const string & str)
-{
-  return (Quoted(str.c_str()));
-}
-
-/* _________________________________________________________________________
-
-   Quoted
-   _________________________________________________________________________ */
-
-string
-Quoted (/*[in]*/ const PathName & path)
-{
-  return (Quoted(path.Get()));
-}
 
 /* _________________________________________________________________________
 

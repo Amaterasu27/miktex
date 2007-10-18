@@ -30,7 +30,7 @@
 
 void
 Utils::UncompressFile (/*[in]*/ const char *	lpszPathIn,
-		       /*[out]*/ PathName &		pathOut)
+		       /*[out]*/ PathName &	pathOut)
 {
   MIKTEX_ASSERT_STRING (lpszPathIn);
 
@@ -113,7 +113,7 @@ Utils::UncompressFile (/*[in]*/ const char *	lpszPathIn,
 
 MIKTEXAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
-			/*[out]*/ char *		lpszPathOut)
+			/*[out]*/ char *	lpszPathOut)
 {
   C_FUNC_BEGIN ();
   PathName temp;

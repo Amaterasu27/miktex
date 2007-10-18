@@ -362,7 +362,7 @@ PaperSizeInfo::Parse (/*[in]*/ const char * lpszSpec)
 #undef BAD_PAPER_SIZE
 #define BAD_PAPER_SIZE()					\
   FATAL_MIKTEX_ERROR						\
-    ("PaperSizeInfo::Parse",				\
+    ("PaperSizeInfo::Parse",					\
      T_("The paper size specification could not be parsed."),	\
      lpsz)
 
@@ -522,7 +522,7 @@ public:
 public:
   void
   WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
-		      /*[in]*/				...)
+		      /*[in]*/			...)
   {
     va_list marker;
     va_start (marker, lpszFormat);

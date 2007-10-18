@@ -44,7 +44,7 @@ SessionImpl::SetFindFileCallback (/*[in]*/ IFindFileCallback *	pCallback)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::CheckCandidate (/*[in,out]*/ PathName &		path,
+SessionImpl::CheckCandidate (/*[in,out]*/ PathName &	path,
 			     /*[in]*/ const char *	lpszFileInfo)
 {
   bool found = false;
@@ -91,7 +91,7 @@ bool
 SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
 			       /*[in]*/ const char *	lpszSubDir,
 			       /*[in]*/ const char *	lpszSearchSpec,
-			       /*[out]*/ PathName &		result)
+			       /*[out]*/ PathName &	result)
 {
   MIKTEX_ASSERT (lpszCurDir != 0);
   MIKTEX_ASSERT (*lpszCurDir != 0);
@@ -177,8 +177,8 @@ SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
 	  PathName temp (lpszCurDir);
 	  temp += lpszSearchSpec;
 	  trace_filesearch->WriteFormattedLine ("core",
-						T_("trying \"%s\"..."),
-						temp.Get());
+						T_("trying %s..."),
+						Q_(temp));
 	  if (CheckCandidate(temp, 0))
 	    {
 	      result = temp;
@@ -220,7 +220,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
 bool
 SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
 			       /*[in]*/ const char *	lpszDirPath,
-			       /*[out]*/ PathName &		result)
+			       /*[out]*/ PathName &	result)
 {
   if ((PathName::Compare(MPM_ROOT_PATH,
 			 lpszDirPath,
@@ -234,9 +234,9 @@ SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
 
   trace_filesearch->WriteFormattedLine
     ("core",
-     T_("slow file search: relPath=\"%s\", dirPath=\"%s\""),
-     lpszRelPath,
-     lpszDirPath);
+     T_("slow file search: relPath=%s, dirPath=%s"),
+     Q_(lpszRelPath),
+     Q_(lpszDirPath));
 
   // make a search spec: "DIRPATH\RELPATH"
   CharBuffer<char> searchSpec;
@@ -433,7 +433,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
 bool
 SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ const char *	lpszPathList,
-		       /*[out]*/ PathName &		result)
+		       /*[out]*/ PathName &	result)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING (lpszPathList);
@@ -450,8 +450,8 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 
 bool
 SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
-		       /*[in]*/ FileType		fileType,
-		       /*[out]*/ PathName &		result)
+		       /*[in]*/ FileType	fileType,
+		       /*[out]*/ PathName &	result)
 {
   // try to derive the file type
   if (fileType == FileType::None)
@@ -522,9 +522,9 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 #define DEFAULT_PK_NAME_TEMPLATE "%f.pk"
 
 bool
-SessionImpl::MakePkFileName (/*[out]*/ PathName &		pkFileName,
+SessionImpl::MakePkFileName (/*[out]*/ PathName &	pkFileName,
 			     /*[in]*/ const char *	lpszFontName,
-			     /*[in]*/ int			dpi)
+			     /*[in]*/ int		dpi)
 {
   string nameTemplate;
 
@@ -593,8 +593,8 @@ SessionImpl::MakePkFileName (/*[out]*/ PathName &		pkFileName,
 bool
 SessionImpl::FindPkFile (/*[in]*/ const char *	lpszFontName,
 			 /*[in]*/ const char *	lpszMode,
-			 /*[in]*/ int			dpi,
-			 /*[out]*/ PathName &		result)
+			 /*[in]*/ int		dpi,
+			 /*[out]*/ PathName &	result)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszMode);
@@ -685,8 +685,8 @@ SessionImpl::FindPkFile (/*[in]*/ const char *	lpszFontName,
 
 bool
 SessionImpl::FindTfmFile (/*[in]*/ const char *	lpszFontName,
-			  /*[out]*/ PathName &		path,
-			  /*[in]*/ bool			create)
+			  /*[out]*/ PathName &	path,
+			  /*[in]*/ bool		create)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
   bool exists = SessionImpl::FindFile(lpszFontName, FileType::TFM, path);
@@ -867,7 +867,7 @@ miktex_find_enc_file (/*[in]*/ const char *	lpszFontName,
 
 MIKTEXAPI(int)
 miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
-			   /*[out]*/ char *	lpszPath)
+			   /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszHeaderName);
@@ -892,7 +892,7 @@ miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
 MIKTEXAPI(int)
 miktex_find_input_file (/*[in]*/ const char *	lpszApplicationName,
 			/*[in]*/ const char *	lpszFileName,
-			/*[out]*/ char *		lpszPath)
+			/*[out]*/ char *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING_OR_NIL (lpszApplicationName);

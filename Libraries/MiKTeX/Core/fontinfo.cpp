@@ -49,7 +49,7 @@ IsPrefixOf (/*[in]*/ const char *	lpsz1,
 
 MIKTEXSTATICFUNC(bool)
 SessionImpl::FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
-				/*[out]*/ char *		lpszTypeface)
+				/*[out]*/ char *	lpszTypeface)
 {
   const size_t FONT_ABBREV_LENGTH = 2;
 
@@ -93,7 +93,9 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
 	  continue;
 	}
       Utils::CopyString (lpszTypeface, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine ("core", T_("found \"%s\" in typeface.map"), lpszTypeface);
+      trace_fonts->WriteFormattedLine ("core",
+				       T_("found %s in typeface.map"),
+				       Q_(lpszTypeface));
       return (true);
     }
 
@@ -146,12 +148,17 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const char *	lpszFontName,
 	  continue;
 	}
       ++ tok;
-      if (tok.GetCurrent() == 0 || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+      if (tok.GetCurrent() == 0
+	  || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
-      Utils::CopyString (lpszSupplier, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine ("core", T_("found \"%s\" in supplier.map"), lpszSupplier);
+      Utils::CopyString (lpszSupplier,
+			 BufferSizes::MaxPath,
+			 tok.GetCurrent());
+      trace_fonts->WriteFormattedLine ("core",
+				       T_("found %s in supplier.map"),
+				       Q_(lpszSupplier));
       bFound = true;
     }
 
@@ -200,15 +207,17 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const char *	lpszFontName,
 	}
       Utils::CopyString (lpszSupplier, BufferSizes::MaxPath, tok.GetCurrent());
       ++ tok;
-      if (tok.GetCurrent() == 0 || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+      if (tok.GetCurrent() == 0
+	  || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
       Utils::CopyString (lpszTypeface, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine ("core",
-	     T_("found \"%s\"/\"%s\" in special.map"),
-	     lpszSupplier,
-	     lpszTypeface);
+      trace_fonts->WriteFormattedLine
+	("core",
+	 T_("found %s/%s in special.map"),
+	 Q_(lpszSupplier),
+	 Q_(lpszTypeface));
       return (true);
     }
 
@@ -236,11 +245,11 @@ SessionImpl::InternalGetFontInfo (/*[in]*/ const char *	lpszFontName,
 
 void
 SessionImpl::SplitFontPath (/*[in]*/ const char *	lpszFontPath,
-			    /*[out]*/ char *	lpszFontType,
-			    /*[out]*/ char *	lpszSupplier,
-			    /*[out]*/ char *	lpszTypeface,
-			    /*[out]*/ char *	lpszFontName,
-			    /*[out]*/ char *	lpszPointSize)
+			    /*[out]*/ char *		lpszFontType,
+			    /*[out]*/ char *		lpszSupplier,
+			    /*[out]*/ char *		lpszTypeface,
+			    /*[out]*/ char *		lpszFontName,
+			    /*[out]*/ char *		lpszPointSize)
 {
   MIKTEX_ASSERT_STRING (lpszFontPath);
   MIKTEX_ASSERT_PATH_BUFFER_OR_NIL (lpszFontType);
@@ -359,7 +368,7 @@ bool
 SessionImpl::GetFontInfo (/*[in]*/ const char *	lpszFontName,
 			  /*[out]*/ char *	lpszSupplier,
 			  /*[out]*/ char *	lpszTypeface,
-			  /*[out]*/ double *		lpGenSize)
+			  /*[out]*/ double *	lpGenSize)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
   MIKTEX_ASSERT_PATH_BUFFER_OR_NIL (lpszSupplier);
@@ -369,16 +378,12 @@ SessionImpl::GetFontInfo (/*[in]*/ const char *	lpszFontName,
   PathName pathFileName;
 
   // test TFM first
-  bool bFound = FindFile(lpszFontName,
-			 FileType::OFM,
-			 pathFileName);
+  bool bFound = FindFile(lpszFontName, FileType::OFM, pathFileName);
 
   // then MF
   if (! bFound)
     {
-      bFound = FindFile(lpszFontName,
-			FileType::MF,
-			pathFileName);
+      bFound = FindFile(lpszFontName, FileType::MF, pathFileName);
     }
 
   // then possible sauterized MF

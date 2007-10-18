@@ -45,7 +45,7 @@ DirectoryLister::Open (/*[in]*/ const PathName & directory)
 DirectoryLister *
 MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
-		       /*[in]*/ const char *	lpszPattern)
+		       /*[in]*/ const char *		lpszPattern)
 {
   return (new winDirectoryLister (directory, lpszPattern));
 }
@@ -144,30 +144,31 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      pathPattern += pattern.c_str();
 	    }
-	  handle = FindFirstFile(pathPattern.Get(), &ffdat);
+	  handle = FindFirstFileA(pathPattern.Get(), &ffdat);
 	  if (handle == INVALID_HANDLE_VALUE)
 	    {
 	      if (::GetLastError() != ERROR_FILE_NOT_FOUND)
 		{
-		  FATAL_WINDOWS_ERROR ("FindFirstFile", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindFirstFileA", directory.Get());
 		}
 	      return (false);
 	    }
 	}
       else
 	{
-	  if (! FindNextFile(handle, &ffdat))
+	  if (! FindNextFileA(handle, &ffdat))
 	    {
 	      if (::GetLastError() != ERROR_NO_MORE_FILES)
 		{
-		  FATAL_WINDOWS_ERROR ("FindNextFile", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindNextFileA", directory.Get());
 		}
 	      return (false);
 	    }
 	}
     }
   while (((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-	 && ((MiKTeX::Core::StringCompare(ffdat.cFileName, CURRENT_DIRECTORY) == 0)
+	 && ((MiKTeX::Core::StringCompare(ffdat.cFileName, CURRENT_DIRECTORY)
+	      == 0)
 	     || (MiKTeX::Core::StringCompare(ffdat.cFileName, PARENT_DIRECTORY)
 		 == 0)));
   direntry2.name = ffdat.cFileName;

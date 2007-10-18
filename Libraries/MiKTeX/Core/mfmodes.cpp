@@ -52,7 +52,7 @@ SessionImpl::ReadMetafontModes ()
   if (! FindFile("modes.mf", FileType::MF, path))
     {
       FATAL_MIKTEX_ERROR ("SessionImpl::ReadMetafontModes",
-			  T_("cannot find modes.mf"),
+			  T_("Cannot find modes.mf."),
 			  0);
     }
 
@@ -176,7 +176,7 @@ SessionImpl::GetMETAFONTMode (/*[in]*/ unsigned		idx,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindMETAFONTMode (/*[in]*/ const char *	lpszMnemonic,
+SessionImpl::FindMETAFONTMode (/*[in]*/ const char *		lpszMnemonic,
 			       /*[out]*/ MIKTEXMFMODE *		pMode)
 {
   MIKTEXMFMODE candidate;
