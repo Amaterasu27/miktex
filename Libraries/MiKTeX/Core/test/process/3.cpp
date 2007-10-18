@@ -25,16 +25,16 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  TEST (Process::ExecuteSystemCommand(T_("echo 0123456789x> a.txt")));
+  TEST (Process::ExecuteSystemCommand("echo 0123456789x> a.txt"));
   FILE * pFileIn
-    = File::Open(T_("a.txt"),
+    = File::Open("a.txt",
 		 FileMode::Open,
 		 FileAccess::Read,
 		 false);
   TEST (pFileIn != 0);
   PathName pathExe =
     pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  pathExe += T_("3-1") MIKTEX_EXE_FILE_SUFFIX;
+  pathExe += "3-1" MIKTEX_EXE_FILE_SUFFIX;
   FILE * pFileChildOut;
   TESTX (Process::Start(pathExe.Get(),
 			0,
@@ -53,29 +53,29 @@ BEGIN_TEST_FUNCTION(1);
   fclose (pFileIn);
   fclose (pFileChildOut);
 #if defined(MIKTEX_WINDOWS)
-  TEST (str == T_("0123456789x\r\n"));
+  TEST (str == "0123456789x\r\n");
 #else
-  TEST (str == T_("0123456789x\n"));
+  TEST (str == "0123456789x\n");
 #endif
-  TESTX (File::Delete(T_("a.txt")));
+  TESTX (File::Delete("a.txt"));
 }
 END_TEST_FUNCTION();
 
 #if defined(MIKTEX_WINDOWS)
 BEGIN_TEST_FUNCTION(2);
 {
-  TEST (Process::ExecuteSystemCommand(T_("echo 0123456789x> a.txt")));
+  TEST (Process::ExecuteSystemCommand("echo 0123456789x> a.txt"));
   FILE * pFileIn
-    = File::Open(T_("a.txt"),
+    = File::Open("a.txt",
 		 FileMode::Open,
 		 FileAccess::Read,
 		 false);
   TEST (pFileIn != 0);
   PathName pathExe =
     pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  pathExe += T_("3-1") MIKTEX_EXE_FILE_SUFFIX;
+  pathExe += "3-1" MIKTEX_EXE_FILE_SUFFIX;
   FILE * pFileChildOut
-    = File::Open(T_("b.txt"),
+    = File::Open("b.txt",
 		 FileMode::Create,
 		 FileAccess::Write,
 		 false);
@@ -87,11 +87,11 @@ BEGIN_TEST_FUNCTION(2);
   TEST (pProcess->WaitForExit(2000));
   fclose (pFileIn);
   fclose (pFileChildOut);
-  std::vector<unsigned char> vec1 (File::ReadAllBytes(T_("a.txt")));
-  std::vector<unsigned char> vec2 (File::ReadAllBytes(T_("b.txt")));
+  std::vector<unsigned char> vec1 (File::ReadAllBytes("a.txt"));
+  std::vector<unsigned char> vec2 (File::ReadAllBytes("b.txt"));
   TEST (vec1 == vec2);
-  TESTX (File::Delete(T_("a.txt")));
-  TESTX (File::Delete(T_("b.txt")));
+  TESTX (File::Delete("a.txt"));
+  TESTX (File::Delete("b.txt"));
 }
 END_TEST_FUNCTION();
 #endif

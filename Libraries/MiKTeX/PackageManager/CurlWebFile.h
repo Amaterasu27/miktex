@@ -36,7 +36,7 @@ CurlWebFile : public WebFile
 {
 public:
   CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
-	       /*[in]*/ const MIKTEXCHAR *	lpszUrl,
+	       /*[in]*/ const char *	lpszUrl,
 	       /*[in]*/ IProgressNotify_ *	pIProgressNotify);
 
 public:
@@ -97,14 +97,14 @@ private:
   ReadInformationals ();
 
 private:
-  MiKTeX::Core::tstring
+  std::string
   GetCurlErrorString (/*[in]*/ CURLMcode code)
     const
   {
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_multi_strerror(code));
 #else
-    MiKTeX::Core::tstring str = T_("The CURL multi interface returned error code ");
+    std::string str = T_("The CURL multi interface returned error code ");
     str += NUMTOSTR(code);
     return (str);
 #endif
@@ -120,7 +120,7 @@ private:
   CurlWebSession * pSession;
 
 private:
-  MiKTeX::Core::tstring url;
+  std::string url;
 
 private:
   std::vector<char> buffer;

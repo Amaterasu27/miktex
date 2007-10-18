@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "Setup.h"
 
-const MIKTEXCHAR * g_apszObsoleteFiles[] =
+const char * g_apszObsoleteFiles[] =
 {
   MIKTEX_PATH_BIN_DIR T_("\\bigtex.exe"),
   MIKTEX_PATH_BIN_DIR T_("\\biglatex.exe"),

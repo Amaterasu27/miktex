@@ -33,11 +33,11 @@ public:
 	 /*[in]*/ int			designSize,
 	 /*[in]*/ const char *		lpszAreaName,
 	 /*[in]*/ const char *		lpszFontName,
-	 /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	 /*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ double		tfmConv,
 	 /*[in]*/ double		conv,
 	 /*[in]*/ int			mag,
-	 /*[in]*/ const MIKTEXCHAR *	lpszMetafontMode,
+	 /*[in]*/ const char *	lpszMetafontMode,
 	 /*[in]*/ int			baseDpi);
 
 public:

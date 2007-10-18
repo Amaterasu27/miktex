@@ -146,7 +146,7 @@ public:
 
 public:
   bool
-  FindHyperLabel (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  FindHyperLabel (/*[in]*/ const char *	lpszFileName,
 		  /*[out]*/ DviPosition &	position);
   
 public:
@@ -184,7 +184,7 @@ public:
     const;
 
 public:
-  const MIKTEXCHAR *
+  const char *
   GetPageName (/*[in]*/ unsigned pageIdx);
 
 public:
@@ -228,7 +228,7 @@ public:
 
 private:
   void
-  CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName);
+  CreateDocument (/*[in]*/ const char * lpszPathName);
 
 public:
   void
@@ -270,7 +270,7 @@ public:
 public:
   virtual
   BOOL
-  OnOpenDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName);
+  OnOpenDocument (/*[in]*/ const char * lpszPathName);
 
 protected:
   virtual
@@ -324,7 +324,7 @@ private:
   DviPageMode dviPageMode;
 
 private:
-  tstring dvipsPaperName;
+  string dvipsPaperName;
 
 private:
   bool landscape;

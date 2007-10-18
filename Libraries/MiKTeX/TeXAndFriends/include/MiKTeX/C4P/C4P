@@ -1,4 +1,4 @@
-/* miktex/c4plib.h: Pascalish run-time support			-*- C++ -*-
+/* MiKTeX/C4P/C4P: Pascalish run-time support			-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -104,7 +104,7 @@ public:
 
 public:
   C4PAPI(bool)
-  Open (/*[in]*/ const MIKTEXCHAR *		lpszName,
+  Open (/*[in]*/ const char *			lpszName,
 	/*[in]*/ MiKTeX::Core::FileMode		mode,
 	/*[in]*/ MiKTeX::Core::FileAccess	access,
 	/*[in]*/ MiKTeX::Core::FileShare	share,
@@ -246,15 +246,14 @@ public:
 	if (ferror(pFile) != 0)
 	  {
 	    MiKTeX::Core::Session::FatalCrtError
-	      (MIKTEXTEXT("getc"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	      ("getc", 0, __FILE__, __LINE__);
 	  }
 	return (true);
       }
     
     if (ungetc(lookAhead, pFile) != lookAhead)
       {
-	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("ungetc"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	MiKTeX::Core::Session::FatalCrtError ("ungetc", 0, __FILE__, __LINE__);
       }
 
     return (false);
@@ -273,7 +272,7 @@ public:
 	  (MIKTEXTEXT("BufferedFile::read"),
 	   MIKTEXTEXT("Read operation failed."),
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
     if (fread(pBuf, sizeof(ElementType), n, *this) != n)
@@ -282,13 +281,13 @@ public:
 	  (MIKTEXTEXT("BufferedFile::read"),
 	   MIKTEXTEXT("Read operation failed."),
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
     if (ferror(*this) != 0)
       {
 	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fread"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	  ("fread", 0, __FILE__, __LINE__);
       }
     if (IsPascalFileIO())
       {
@@ -308,14 +307,13 @@ public:
 	  (MIKTEXTEXT("BufferedFile::read"),
 	   MIKTEXTEXT("Read operation failed."),
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
     fread (&currentElement, sizeof(ElementType), 1, *this);
     if (ferror(*this) != 0)
       {
-	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fread"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	MiKTeX::Core::Session::FatalCrtError ("fread", 0, __FILE__, __LINE__);
       }
   }
 
@@ -346,7 +344,7 @@ public:
 	|| ferror(*this) != 0)
       {
 	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fwrite"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	  ("fwrite", 0, __FILE__, __LINE__);
       }
   }
 
@@ -359,7 +357,7 @@ public:
     if (fseek(*this, offset, origin) != 0)
       {
 	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fseek"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	  ("fseek", 0, __FILE__, __LINE__);
       }
     if (IsPascalFileIO());
       {
@@ -404,14 +402,14 @@ C4P_BEGIN_NAMESPACE;
 C4PAPI(/*[in]*/ int)
 GetArgC ();
 
-C4PAPI(/*[in]*/ const MIKTEXCHAR * *)
+C4PAPI(/*[in]*/ const char * *)
 GetArgV ();
 
-C4PAPI(const MIKTEXCHAR *)
+C4PAPI(const char *)
 GetCmdLine ();
 
-C4PAPI(MIKTEXCHAR *)
-GetProgName (/*[out]*/ MIKTEXCHAR * lpsz);
+C4PAPI(char *)
+GetProgName (/*[out]*/ char * lpsz);
 
 C4PAPI(C4P_text *)
 GetStdFilePtr (/*[in]*/ unsigned idx);
@@ -437,9 +435,9 @@ Program
 public:
   C4PEXPORT
   C4PCALL
-  Program (/*[in]*/ const MIKTEXCHAR *	lpszName,
+  Program (/*[in]*/ const char *	lpszName,
 	   /*[in]*/ int			argc,
-	   /*[in]*/ const MIKTEXCHAR **	argv);
+	   /*[in]*/ const char **	argv);
 
 public:
   ~Program ()
@@ -535,7 +533,7 @@ const C4P_integer maxint = INT_MAX;
 C4PAPI(void)
 DiscardLine (/*[in]*/ C4P_text & textfile);
 
-C4PAPI(MIKTEXCHAR)
+C4PAPI(char)
 GetChar (/*[in]*/ C4P_text & textfile);
 
 C4PAPI(int)
@@ -636,17 +634,10 @@ c4p_write_c (/*[in]*/ Vt v,
 	     /*[in]*/ Ft & f)
 {
   f.AssertValid ();
-#if defined(_MSC_VER)
-  MIKTEXCHARINT ch = _puttc(v, f);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: c4p_write_c()
-#else
-  MIKTEXCHARINT ch = putc(v, f);
-#endif
-  if (ch == MIKTEXEOF)
+  int ch = putc(v, f);
+  if (ch == EOF)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fputc"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("putc", 0, __FILE__, __LINE__);
     }
 }
 
@@ -666,10 +657,10 @@ c4p_write_i (/*[in]*/ Vt v,
 	     /*[in]*/ Ft & f)
 {
   f.AssertValid ();
-  if (_ftprintf(f, MIKTEXTEXT("%ld"), static_cast<long>(v)) < 0)
+  if (fprintf(f, "%ld", static_cast<long>(v)) < 0)
     {
       MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fprintf"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	("fprintf", 0, __FILE__, __LINE__);
     }
 }
 
@@ -681,14 +672,10 @@ c4p_write_i1 (/*[in]*/ Vt	v,
 	      /*[in]*/ Ft &	f)
 {
   f.AssertValid ();
-  if (_ftprintf(f,
-		MIKTEXTEXT("%*ld"),
-		static_cast<int>(w1),
-		static_cast<long>(v))
+  if (fprintf(f, "%*ld", static_cast<int>(w1), static_cast<long>(v))
       < 0)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fprintf"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("fprintf", 0, __FILE__, __LINE__);
     }
 
 }
@@ -702,14 +689,14 @@ c4p_write_i2 (/*[in]*/ Vt v,
 	      /*[in]*/ Ft & f)
 {
   f.AssertValid ();
-  if (_ftprintf(f, MIKTEXTEXT("%*.*ld"),
-		static_cast<int>(w1),
-		static_cast<int>(w2),
-		static_cast<long>(v))
+  if (fprintf(f,
+	      "%*.*ld",
+	      static_cast<int>(w1),
+	      static_cast<int>(w2),
+	      static_cast<long>(v))
       < 0)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fprintf"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("fprintf", 0, __FILE__, __LINE__);
     }
 }
 
@@ -720,10 +707,9 @@ c4p_write_r (/*[in]*/ Vt	v,
 	     /*[in]*/ Ft &	f)
 {
   f.AssertValid ();
-  if (_ftprintf(f, MIKTEXTEXT("%f"), static_cast<float>(v)) < 0)
+  if (fprintf(f, "%f", static_cast<float>(v)) < 0)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fprintf"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("fprintf", 0, __FILE__, __LINE__);
     }
 }
 
@@ -736,15 +722,14 @@ c4p_write_r2 (/*[in]*/ Vt	v,
 	      /*[in]*/ Ft &	f)
 {
   f.AssertValid ();
-  if (_ftprintf(f,
-		MIKTEXTEXT("%*.*f"),
-		static_cast<int>(w1),
-		static_cast<int>(w2),
-		static_cast<float>(v))
+  if (fprintf(f,
+	      "%*.*f",
+	      static_cast<int>(w1),
+	      static_cast<int>(w2),
+	      static_cast<float>(v))
       < 0)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fprintf"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("fprintf", 0, __FILE__, __LINE__);
     }
 }
 
@@ -758,22 +743,21 @@ c4p_write_s (/*[in]*/ Vt	v,
   if (fputs(v, f) == EOF)
     {
       MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fputs"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	("fputs", 0, __FILE__, __LINE__);
     }
 }
 
 #define C4P_WRITE_END(f) }
-#define C4P_WRITELN_END(f) _puttc (MIKTEXTEXT('\n'), f); }
+#define C4P_WRITELN_END(f) putc ('\n', f); }
 
 inline
 void
 c4p_writeln ()
 {
   output.AssertValid ();
-  if (_puttc(MIKTEXTEXT('\n'), output) == MIKTEXEOF)
+  if (putc('\n', output) == EOF)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fputc"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("putc", 0, __FILE__, __LINE__);
     }
 }
 
@@ -790,7 +774,7 @@ c4pmget (/*[in]*/ T &				f,
 
 template<class T>
 inline
-MIKTEXCHAR
+char
 c4pgetc (/*[in]*/ T & f)
 {
   f.AssertValid ();
@@ -800,13 +784,12 @@ c4pgetc (/*[in]*/ T & f)
 template<class T>
 inline
 void
-c4p_puttc (/*[in]*/ T & f)
+c4pputc (/*[in]*/ T & f)
 {
   f.AssertValid ();
-  if (_puttc (*f, f) == MIKTEXEOF)
+  if (putc (*f, f) == EOF)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fputc"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("putc", 0, __FILE__, __LINE__);
     }
 }
 
@@ -818,8 +801,7 @@ c4p_break (/*[in]*/ T & f)
   f.AssertValid ();
   if (fflush(f) == EOF)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("flush"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("flush", 0, __FILE__, __LINE__);
     }
 }
 
@@ -843,8 +825,7 @@ c4pftell (/*[in]*/ Ft & f)
   long n = ftell(f);
   if (n < 0)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("ftell"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("ftell", 0, __FILE__, __LINE__);
     }
   return (n);
 }
@@ -860,8 +841,7 @@ c4pbufwrite (/*[in]*/ Ft &		f,
   //MIKTEX_ASSERT_BUFFER (buf, buf_size);
   if (fwrite(buf, buf_size, 1, f) != 1)
     {
-      MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("fwrite"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+      MiKTeX::Core::Session::FatalCrtError ("fwrite", 0, __FILE__, __LINE__);
     }
 }
 
@@ -892,16 +872,16 @@ c4pmemcpy (/*[out]*/ void *		pdst,
 
 inline
 void
-c4pstrcpy (/*[out]*/ MIKTEXCHAR *	pdst,
+c4pstrcpy (/*[out]*/ char *	pdst,
 	   /*[in]*/ size_t		size,
-	   /*[in]*/ const MIKTEXCHAR *	psrc)
+	   /*[in]*/ const char *	psrc)
 {
   MiKTeX::Core::Utils::CopyString (pdst, size, psrc);
 }
 
 inline
 size_t
-c4pstrlen (/*[in]*/ const MIKTEXCHAR * lpsz)
+c4pstrlen (/*[in]*/ const char * lpsz)
 {
   MIKTEX_ASSERT_STRING (lpsz);
   return (MiKTeX::Core::StrLen(lpsz));
@@ -915,19 +895,19 @@ c4pstrlen (/*[in]*/ const MIKTEXCHAR * lpsz)
 template<class T>
 inline
 bool
-c4pfopen (/*[in]*/ T &			f,
-	  /*[in]*/ const MIKTEXCHAR *	lpszName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszMode,
-	  /*[in]*/ bool			mustExist)
+c4pfopen (/*[in]*/ T &		f,
+	  /*[in]*/ const char *	lpszName,
+	  /*[in]*/ const char *	lpszMode,
+	  /*[in]*/ bool		mustExist)
 {
   MIKTEX_ASSERT_STRING (lpszName);
   MIKTEX_ASSERT_STRING (lpszMode);
   MIKTEX_ASSERT
-    (MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("r")) == 0
-     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("rb")) == 0
-     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("w")) == 0
-     || MiKTeX::Core::StringCompare(lpszMode, MIKTEXTEXT("wb")) == 0);
-  bool reading = (lpszMode[0] == MIKTEXTEXT('r'));
+    (MiKTeX::Core::StringCompare(lpszMode, "r") == 0
+     || MiKTeX::Core::StringCompare(lpszMode, "rb") == 0
+     || MiKTeX::Core::StringCompare(lpszMode, "w") == 0
+     || MiKTeX::Core::StringCompare(lpszMode, "wb") == 0);
+  bool reading = (lpszMode[0] == 'r');
   bool text = (lpszMode[1] == 0);
   return (f.Open(lpszName,
 		 (reading
@@ -946,9 +926,9 @@ c4pfopen (/*[in]*/ T &			f,
 template<class T>
 inline
 bool
-c4ptryfopen (/*[in]*/ T &			f,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszMode)
+c4ptryfopen (/*[in]*/ T &		f,
+	     /*[in]*/ const char *	lpszName,
+	     /*[in]*/ const char *	lpszMode)
 {
   return (c4pfopen(f, lpszName, lpszMode, false));
 }
@@ -1003,10 +983,10 @@ const int c4pcur = SEEK_CUR;
 const int c4pend = SEEK_END;
 const int c4pset = SEEK_SET;
 
-const MIKTEXCHAR * const c4prmode = MIKTEXTEXT("r");
-const MIKTEXCHAR * const c4pwmode = MIKTEXTEXT("w");
-const MIKTEXCHAR * const c4prbmode = MIKTEXTEXT("rb");
-const MIKTEXCHAR * const c4pwbmode = MIKTEXTEXT("wb");
+const char * const c4prmode = "r";
+const char * const c4pwmode = "w";
+const char * const c4prbmode = "rb";
+const char * const c4pwbmode = "wb";
 
 C4PAPI(unsigned)
 GetYear ();
@@ -1043,8 +1023,8 @@ C4PAPI(time_t)
 GetStartUpTime ();
 
 C4PAPI(int)
-MakeCommandLine (/*[in]*/ int			argc,
-		 /*[in]*/ const MIKTEXCHAR **	argv);
+MakeCommandLine (/*[in]*/ int		argc,
+		 /*[in]*/ const char **	argv);
 
 C4PAPI(C4P_integer)
 Round (double r);
@@ -1086,7 +1066,7 @@ inline
 C4P_boolean
 eoln (/*[in]*/ T & f)
 {
-  return (*f == MIKTEXTEXT('\n'));
+  return (*f == '\n');
 };
 
 template<class T>
@@ -1186,4 +1166,4 @@ C4P_END_NAMESPACE;
 #undef C4P_BEGIN_NAMESPACE
 #undef C4P_END_NAMESPACE
 
-#endif /* miktex/c4plib.h */
+#endif

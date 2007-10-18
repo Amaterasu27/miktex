@@ -1,6 +1,6 @@
-/* webapp.inl: inliners for web applications			-*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebApp.inliners: 			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-200y Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -109,4 +109,4 @@ MIKTEXMF_END_NAMESPACE;
 #undef MIKTEXMF_BEGIN_NAMESPACE
 #undef MIKTEXMF_END_NAMESPACE
 
-#endif	// webapp.inl
+#endif

@@ -35,7 +35,7 @@ PkFont::PkFont (/*[in]*/ DviImpl *		pDvi,
 		/*[in]*/ int			designSize,
 		/*[in]*/ const char *		lpszAreaName,
 		/*[in]*/ const char *		lpszFontName,
-		/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+		/*[in]*/ const char *	lpszFileName,
 		/*[in]*/ double			tfmConv,
 		/*[in]*/ double			conv,
 		/*[in]*/ int			mag,
@@ -417,9 +417,9 @@ bool
 PkFont::Make (/*[in]*/ const string &	name,
 	      /*[in]*/ int		dpi,
 	      /*[in]*/ int		baseDpi,
-	      /*[in]*/ const tstring &	metafontMode)
+	      /*[in]*/ const string &	metafontMode)
 {
-  MIKTEXCHAR szCmdLine[ 500 ];
+  char szCmdLine[ 500 ];
   dviInfo.transcript += T_("\r\n");
   dviInfo.transcript += T_("Making PK font:\r\n");
   PathName pathMakePk;
@@ -561,7 +561,7 @@ PkFont::MakeTFM (/*[in]*/ const string &	name)
 		       T_("The MakeTFM utility could not be found."),
 		       0);
     }
-  MIKTEXCHAR szBasename[BufferSizes::MaxPath];
+  char szBasename[BufferSizes::MaxPath];
   PathName::Split (name.c_str(),
 		   0, 0,
 		   szBasename, BufferSizes::MaxPath,

@@ -40,7 +40,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     MiKTeX::TeXAndFriends::WebApp::Init (lpszProgramInvocationName);
     THEDATA(maxchar) = 255;
@@ -59,7 +59,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -73,7 +73,7 @@ public:
   bool
   MIKTEXMFCALL
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)

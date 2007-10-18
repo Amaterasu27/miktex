@@ -1,4 +1,4 @@
-/* debug.h: MiKTeX debug macros					-*- C++ -*-
+/* MiKTeX/Core/Debug: MiKTeX debug macros			-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -34,17 +34,19 @@
     }						\
   }
 
+#include <MiKTeX/Core/Text>
+
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
 MIKTEXEXPORT
 void
 MIKTEXNORETURN
 MIKTEXCALL
-FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-		  /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-		  /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		  /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
-		  /*[in]*/ int			lpszSourceLine);
+FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
+		  /*[in]*/ const char *	lpszMessage,
+		  /*[in]*/ const char *	lpszInfo,
+		  /*[in]*/ const char *	lpszSourceFile,
+		  /*[in]*/ int		lpszSourceLine);
 
 MIKTEX_DEBUG_END_NAMESPACE;
 
@@ -63,7 +65,7 @@ MIKTEX_DEBUG_END_NAMESPACE;
            (0,					\
             MIKTEXTEXT("Assertion failed."),	\
             #expr,				\
-            MIKTEXTEXT(__FILE__),		\
+            __FILE__,				\
             __LINE__)))
 
 #else

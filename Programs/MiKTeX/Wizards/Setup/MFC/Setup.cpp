@@ -49,7 +49,7 @@ public:
   }
 
 public:
-  tstring folderName;
+  string folderName;
 
 public:
   StartupConfig startupConfig;
@@ -58,7 +58,7 @@ public:
   PathName localPackageRepository;
 
 public:
-  tstring remotePackageRepository;
+  string remotePackageRepository;
 
 public:
   SetupTask task;
@@ -93,14 +93,14 @@ public:
 void
 AddArgument (/*[in]*/ const CString &		argument,
 	     /*[in,out]*/ int &			argc,
-	     /*[in,out]*/ MIKTEXCHAR ** &	argv,
+	     /*[in,out]*/ char ** &	argv,
 	     /*[in,out]*/ int &			argMax)
 {
   if (argc == argMax)
     {
       argMax += 10;
       argv =
-	reinterpret_cast<MIKTEXCHAR**>(realloc(argv,
+	reinterpret_cast<char**>(realloc(argv,
 					       argMax * sizeof(argv[0])));
     }
   argv[ argc++ ] = _tcsdup(argument);
@@ -112,10 +112,10 @@ AddArgument (/*[in]*/ const CString &		argument,
    _________________________________________________________________________ */
 
 void
-GetArguments (/*[in]*/ const MIKTEXCHAR *		lpszCommandLine,
-	      /*[in]*/ const MIKTEXCHAR *		lpszExeName,
+GetArguments (/*[in]*/ const char *		lpszCommandLine,
+	      /*[in]*/ const char *		lpszExeName,
 	      /*[in,out]*/ int &			argc,
-	      /*[in,out]*/ MIKTEXCHAR ** &		argv)
+	      /*[in,out]*/ char ** &		argv)
 {
   argc = 0;
   argv = 0;
@@ -129,7 +129,7 @@ GetArguments (/*[in]*/ const MIKTEXCHAR *		lpszCommandLine,
   bool copying = false;
   bool inQuotedArg = false;
 
-  const MIKTEXCHAR * lpsz = lpszCommandLine;
+  const char * lpsz = lpszCommandLine;
 
   while (*lpsz != 0)
     {
@@ -168,7 +168,7 @@ GetArguments (/*[in]*/ const MIKTEXCHAR *		lpszCommandLine,
 
 void
 FreeArguments (/*[in]*/ int			argc,
-	       /*[in,out]*/ MIKTEXCHAR ** & 	argv)
+	       /*[in,out]*/ char ** & 	argv)
 {
   for (int i = 0; i < argc; ++ i)
     {
@@ -277,7 +277,7 @@ See the MiKTeX Manual for more information."));
 
 void
 ParseSetupCommandLine (/*[in]*/ int				argc,
-		       /*[in]*/ MIKTEXCHAR **			argv,
+		       /*[in]*/ char **			argv,
 		       /*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
 {
   int iOptIdx = 0;
@@ -473,7 +473,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
     }
   StreamReader reader (fileName);
   CString commandLine;
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       commandLine += T_(' ');
@@ -481,7 +481,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
     }
   reader.Close ();
   int argc;
-  MIKTEXCHAR ** argv;
+  char ** argv;
   GetArguments (commandLine, AfxGetAppName(), argc, argv);
   ParseSetupCommandLine (argc, argv, cmdinfo);
   FreeArguments (argc, argv);
@@ -520,7 +520,7 @@ PathName
 FindInstallDir ()
 {
   // probe the registry
-  tstring path;
+  string path;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
 			  MIKTEX_REGVAL_INSTALL,
@@ -558,10 +558,10 @@ FindInstallDir ()
    FindAddTEXMFDirs
    _________________________________________________________________________ */
 
-tstring
+string
 FindAddTEXMFDirs ()
 {
-  tstring directories;
+  string directories;
   if (! SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
 			  MIKTEX_REGVAL_ROOTS,
@@ -578,7 +578,7 @@ FindAddTEXMFDirs ()
    _________________________________________________________________________ */
 
 void
-CheckAddTEXMFDirs (/*[in,out]*/ tstring &	directories,
+CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 		   /*[out]*/ vector<PathName> &	vec)
 {
   CSVList path (directories.c_str(), T_(';'));
@@ -621,7 +621,7 @@ TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
       return (false);
     }
   StreamReader stream (pathInfoFile);
-  tstring firstLine;
+  string firstLine;
   bool haveFirstLine = stream.ReadLine(firstLine);
   stream.Close ();
   if (! haveFirstLine)
@@ -629,16 +629,16 @@ TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
       return (false);
     }
   PackageLevel packageLevel_ = PackageLevel::None;
-  if (firstLine.find(ESSENTIAL_MIKTEX) != tstring::npos)
+  if (firstLine.find(ESSENTIAL_MIKTEX) != string::npos)
     {
       packageLevel_ = PackageLevel::Essential;
     }
-  else if (firstLine.find(BASIC_MIKTEX) != tstring::npos)
+  else if (firstLine.find(BASIC_MIKTEX) != string::npos)
     {
       packageLevel_ = PackageLevel::Basic;
     }
-  else if (firstLine.find(COMPLETE_MIKTEX) != tstring::npos
-	   || firstLine.find(COMPLETE_MIKTEX_LEGACY) != tstring::npos)
+  else if (firstLine.find(COMPLETE_MIKTEX) != string::npos
+	   || firstLine.find(COMPLETE_MIKTEX_LEGACY) != string::npos)
     {
       packageLevel_ = PackageLevel::Complete;
     }
@@ -740,7 +740,7 @@ PathName
 GetDefaultLocalRepository ()
 {
   PathName ret;
-  tstring val;
+  string val;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
@@ -859,7 +859,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.remotePackageRepository = cmdinfo.remotePackageRepository;
   if (theApp.remotePackageRepository.empty())
     {
-      tstring str;
+      string str;
       if (theApp.pManager->TryGetRemotePackageRepository(str))
 	{
 	  theApp.remotePackageRepository = str.c_str();
@@ -1141,7 +1141,7 @@ SetupWizardApplication::InitInstance ()
       
       // get command-line arguments
       int argc;
-      MIKTEXCHAR ** argv;
+      char ** argv;
       GetArguments (m_lpCmdLine, AfxGetAppName(), argc, argv);
       SetupCommandLineInfo cmdinfo;
       if (GetModuleFileName(0, setupPath.GetBuffer(), BufferSizes::MaxPath)
@@ -1284,7 +1284,7 @@ ComparePaths (/*[in]*/ const PathName &	path1,
    _________________________________________________________________________ */
 
 bool
-ContainsBinDir (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+ContainsBinDir (/*[in]*/ const char *	lpszPath)
 {
   PathName pathBinDir;
   if (theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
@@ -1330,7 +1330,7 @@ ContainsBinDir (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 
 bool
 IsPathRegistered (/*[in]*/ HKEY			hkeyRoot,
-		  /*[in]*/ const MIKTEXCHAR *	lpszKey)
+		  /*[in]*/ const char *	lpszKey)
 {
   HKEY hkey;
   LONG result = RegOpenKeyEx(hkeyRoot, lpszKey, 0, KEY_QUERY_VALUE, &hkey);
@@ -1381,7 +1381,7 @@ IsPathRegistered ()
   else
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-      tstring value;
+      string value;
       if (Utils::GetEnvironmentString(T_("PATH"), value))
 	{
 	  return (ContainsBinDir(value.c_str()));
@@ -1460,8 +1460,8 @@ ULogOpen ()
 
 void
 AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
-			/*[in]*/ const MIKTEXCHAR *	lpszValueName,
-			/*[in]*/ const MIKTEXCHAR *	lpszValue)
+			/*[in]*/ const char *	lpszValueName,
+			/*[in]*/ const char *	lpszValue)
 {
   LONG result =
     RegSetValueEx
@@ -1482,7 +1482,7 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
 
 void
 AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
-			/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+			/*[in]*/ const char *	lpszValueName,
 			/*[in]*/ DWORD			value)
 {
   LONG result =
@@ -1525,7 +1525,7 @@ RegisterUninstaller ()
   // make uninstall command line
   PathName pathCopyStart (theApp.startupConfig.installRoot,
 			  MIKTEX_PATH_COPYSTART_ADMIN_EXE);
-  tstring commandLine;
+  string commandLine;
   commandLine += T_('"');
   commandLine += pathCopyStart.Get();
   commandLine += T_("\" \"");
@@ -1724,7 +1724,7 @@ RegisterPathNT ()
 	}
     }
 
-  tstring newPath (pathBinDir.Get());
+  string newPath (pathBinDir.Get());
 
   if (havePath)
     {
@@ -1833,7 +1833,7 @@ RegisterMiKTeXFileTypes ()
    _________________________________________________________________________ */
 
 CString &
-Expand (/*[in]*/ const MIKTEXCHAR *	lpszSource,
+Expand (/*[in]*/ const char *	lpszSource,
 	/*[out]*/ CString &		dest)
 {
   dest = lpszSource;
@@ -1853,7 +1853,7 @@ Expand (/*[in]*/ const MIKTEXCHAR *	lpszSource,
 
 void
 CreateInternetShortcut (/*[in]*/ const PathName &	path,
-			/*[in]*/ const MIKTEXCHAR *	lpszUrl)
+			/*[in]*/ const char *	lpszUrl)
 {
   _COM_SMARTPTR_TYPEDEF (IUniformResourceLocator,
 			 IID_IUniformResourceLocator);
@@ -1934,7 +1934,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
 	}
       PathName pathSubFolder (pathFolder,
-			      static_cast<const MIKTEXCHAR *>(subFolder));
+			      static_cast<const char *>(subFolder));
       Directory::Create (pathSubFolder);
       pathLink = pathSubFolder;
     }
@@ -2135,13 +2135,13 @@ CreateProgramIcons ()
    _________________________________________________________________________ */
 
 void
-LogV (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+LogV (/*[in]*/ const char *	lpszFormat,
       /*[in]*/ va_list			argList)
 {
   CSingleLock singleLock (&theApp.criticalSectionMonitorLogStream, TRUE);
-  tstring formatted = Utils::FormatString(lpszFormat, argList);
-  static tstring currentLine;
-  for (const MIKTEXCHAR * lpsz = formatted.c_str();
+  string formatted = Utils::FormatString(lpszFormat, argList);
+  static string currentLine;
+  for (const char * lpsz = formatted.c_str();
        *lpsz != 0;
        ++ lpsz)
     {
@@ -2174,7 +2174,7 @@ LogV (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-Log (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Log (/*[in]*/ const char *	lpszFormat,
      /*[in]*/				...)
 {
   va_list argList;
@@ -2197,7 +2197,7 @@ LogHeader ()
       UNEXPECTED_CONDITION (T_("LogHeader"));
     }
   Log (T_("%s %s Report\n\n"),
-       static_cast<const MIKTEXCHAR *>(banner),
+       static_cast<const char *>(banner),
        VER_FILEVERSION_STR);
   CTime t = CTime::GetCurrentTime();
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
@@ -2356,7 +2356,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 {
   try
     {
-      tstring str;
+      string str;
       str =
 	T_("The operation could not be completed for the following reason: ");
       str += T_("\n\n");
@@ -2389,7 +2389,7 @@ ReportError (/*[in]*/ const exception & e)
 {
   try
     {
-      tstring str;
+      string str;
       str =
 	T_("The operation could not be completed for the following reason: ");
       str += T_("\n\n");
@@ -2408,12 +2408,12 @@ ReportError (/*[in]*/ const exception & e)
    _________________________________________________________________________ */
 
 void
-SplitUrl (/*[in]*/ const tstring &	url,
-	  /*[out]*/ tstring &		protocol,
-	  /*[out]*/ tstring &		host)
+SplitUrl (/*[in]*/ const string &	url,
+	  /*[out]*/ string &		protocol,
+	  /*[out]*/ string &		host)
 {
-  MIKTEXCHAR szProtocol[200];
-  MIKTEXCHAR szHost[200];
+  char szProtocol[200];
+  char szHost[200];
   URL_COMPONENTS url_comp = { 0 };
   url_comp.dwStructSize = sizeof(url_comp);
   url_comp.lpszScheme = szProtocol;

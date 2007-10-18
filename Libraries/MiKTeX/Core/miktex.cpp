@@ -72,10 +72,10 @@ SessionImpl::GetPolicyFlags ()
    Get the application file name of the running program (e.g., tex).
    _________________________________________________________________________ */
 
-tstring
+string
 Utils::GetExeName ()
 {
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
+  char szName[BufferSizes::MaxPath];
   SessionImpl::GetSession()
     ->GetMyProgramFile().GetFileNameWithoutExtension (szName);
   return (szName);
@@ -108,15 +108,15 @@ GetHomeDirectory ()
 #if defined(MIKTEX_WINDOWS)
   PathName homeDrive;
   PathName homePath;
-  if (Utils::GetEnvironmentString(T_("HOMEDRIVE"), homeDrive)
-      && Utils::GetEnvironmentString(T_("HOMEPATH"), homePath))
+  if (Utils::GetEnvironmentString("HOMEDRIVE", homeDrive)
+      && Utils::GetEnvironmentString("HOMEPATH", homePath))
     {
       ret = homeDrive;
       ret += homePath;
       return (ret);
     }
 #endif
-  if (Utils::GetEnvironmentString(T_("HOME"), ret))
+  if (Utils::GetEnvironmentString("HOME", ret))
     {
       return (ret);
     }
@@ -128,15 +128,15 @@ GetHomeDirectory ()
   unsigned int n = GetWindowsDirectory(ret.GetBuffer(), ret.GetCapacity());
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
     }
   else if (n >= ret.GetCapacity())
     {
-      BUF_TOO_SMALL (T_("GetHomeDirectory"));
+      BUF_TOO_SMALL ("GetHomeDirectory");
     }
   return (ret);
 #else
-  UNEXPECTED_CONDITION (T_("GetHomeDirectory"));
+  UNEXPECTED_CONDITION ("GetHomeDirectory");
 #endif
 }
 
@@ -191,12 +191,12 @@ magstep (/*[in]*/ int	n,
    _________________________________________________________________________ */
 
 void
-SessionImpl::MakeMakePkCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
+SessionImpl::MakeMakePkCommandLine (/*[in]*/ const char *	lpszFontName,
 				    /*[in]*/ int		dpi,
 				    /*[in]*/ int		baseDpi,
-				    /*[in]*/ const MIKTEXCHAR *	lpszMfMode,
+				    /*[in]*/ const char *	lpszMfMode,
 				    /*[out]*/ PathName &	fileName,
-				    /*[out]*/ MIKTEXCHAR *	lpszArguments,
+				    /*[out]*/ char *	lpszArguments,
 				    /*[in]*/ size_t		maxArguments)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -207,7 +207,7 @@ SessionImpl::MakeMakePkCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 
   if (! FindFile(MIKTEX_MAKEPK_EXE, FileType::EXE, fileName))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::MakeMakePkCommandLine"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::MakeMakePkCommandLine",
 			  T_("The MakePk utility could not be found."),
 			  MIKTEX_MAKEPK_EXE);
     }
@@ -250,44 +250,44 @@ SessionImpl::MakeMakePkCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	}
     }
 
-  tstring strMagStep;
+  string strMagStep;
 
   if (m == 9999)
     {
       // a+b/c
       strMagStep = NUMTOSTR(dpi / baseDpi);
-      strMagStep += T_('+');
+      strMagStep += '+';
       strMagStep += NUMTOSTR(dpi % baseDpi);
-      strMagStep += T_('/');
+      strMagStep += '/';
       strMagStep += NUMTOSTR(baseDpi);
     }
   else if (m >= 0)
     {
       // magstep(a.b)
-      strMagStep = T_("magstep(");
+      strMagStep = "magstep(";
       strMagStep += NUMTOSTR( m / 2);
-      strMagStep += T_('.');
+      strMagStep += '.';
       strMagStep += NUMTOSTR((m & 1) * 5);
-      strMagStep += T_(')');
+      strMagStep += ')';
     }
   else
     {
       // magstep(-a.b)
-      strMagStep = T_("magstep(-");
+      strMagStep = "magstep(-";
       strMagStep += NUMTOSTR((-m) / 2);
-      strMagStep += T_('.');
+      strMagStep += '.';
       strMagStep += NUMTOSTR((m & 1) * 5);
-      strMagStep += T_(')');
+      strMagStep += ')';
     }
   
-  tstring cmdline;
+  string cmdline;
   cmdline.reserve (256);
 
-  cmdline += T_(" --verbose");
-  cmdline += T_(' '); cmdline += lpszFontName;
-  cmdline += T_(' '); cmdline += NUMTOSTR(dpi);
-  cmdline += T_(' '); cmdline += NUMTOSTR(baseDpi);
-  cmdline += T_(' '); cmdline += strMagStep;
+  cmdline += " --verbose";
+  cmdline += ' '; cmdline += lpszFontName;
+  cmdline += ' '; cmdline += NUMTOSTR(dpi);
+  cmdline += ' '; cmdline += NUMTOSTR(baseDpi);
+  cmdline += ' '; cmdline += strMagStep;
 
   if (lpszMfMode != 0)
     {
@@ -327,7 +327,7 @@ SessionImpl::GetMakeFontsFlag ()
    Utils::GetMiKTeXVersionString
    _________________________________________________________________________ */
 
-tstring
+string
 Utils::GetMiKTeXVersionString ()
 {
   return (MIKTEX_VERSION_STR);
@@ -338,7 +338,7 @@ Utils::GetMiKTeXVersionString ()
    Utils::GetMiKTeXBannerString
    _________________________________________________________________________ */
 
-tstring
+string
 Utils::GetMiKTeXBannerString ()
 {
   return (MIKTEX_BANNER_STR);
@@ -349,19 +349,19 @@ Utils::GetMiKTeXBannerString ()
    Utils::MakeProgramVersionString
    _________________________________________________________________________ */
 
-tstring
+string
 Utils::MakeProgramVersionString
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramName,
+(/*[in]*/ const char *	lpszProgramName,
  /*[in]*/ const VersionNumber &	programVersionNumber)
 {
-  tstring str = lpszProgramName;
-  if (tstring(MIKTEX_BANNER_STR).find(programVersionNumber.ToString())
-      == tstring::npos)
+  string str = lpszProgramName;
+  if (string(MIKTEX_BANNER_STR).find(programVersionNumber.ToString())
+      == string::npos)
     {
-      str += T_(' ');
+      str += ' ';
       str += programVersionNumber.ToString();
     }
-  str += T_(" (") MIKTEX_BANNER_STR T_(")");
+  str += T_(" (") MIKTEX_BANNER_STR ")";
   return (str);
 }
 
@@ -370,21 +370,21 @@ Utils::MakeProgramVersionString
    VersionNumber::ToString
    _________________________________________________________________________ */
 
-tstring
+string
 MIKTEXCALL
 VersionNumber::ToString ()
   const
 {
-  tstring str = NUMTOSTR(n1);
-  str += T_('.');
+  string str = NUMTOSTR(n1);
+  str += '.';
   str += NUMTOSTR(n2);
   if (n3 > 0 || n4 > 0)
     {
-      str += T_('.');
+      str += '.';
       str += NUMTOSTR(n3);
       if (n4 > 0)
 	{
-	  str += T_('.');
+	  str += '.';
 	  str += NUMTOSTR(n4);
 	}
     }
@@ -398,7 +398,7 @@ VersionNumber::ToString ()
 
 bool
 MIKTEXCALL
-VersionNumber::TryParse (/*[in]*/ const MIKTEXCHAR *	lpszVersion,
+VersionNumber::TryParse (/*[in]*/ const char *	lpszVersion,
 			 /*[out]*/ VersionNumber &	versionNumber)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -407,7 +407,7 @@ VersionNumber::TryParse (/*[in]*/ const MIKTEXCHAR *	lpszVersion,
 #  define SScanF sscanf
 #endif
   if (SScanF(lpszVersion,
-	     T_("%u.%u.%u.%u"),
+	     "%u.%u.%u.%u",
 	     &versionNumber.n1,
 	     &versionNumber.n2,
 	     &versionNumber.n3,
@@ -417,7 +417,7 @@ VersionNumber::TryParse (/*[in]*/ const MIKTEXCHAR *	lpszVersion,
       return (true);
     }
   else if (SScanF(lpszVersion,
-		  T_("%u.%u.%u"),
+		  "%u.%u.%u",
 		  &versionNumber.n1,
 		  &versionNumber.n2,
 		  &versionNumber.n3)
@@ -427,7 +427,7 @@ VersionNumber::TryParse (/*[in]*/ const MIKTEXCHAR *	lpszVersion,
       return (true);
     }
   else if (SScanF(lpszVersion,
-		  T_("%u.%u"),
+		  "%u.%u",
 		  &versionNumber.n1,
 		  &versionNumber.n2)
 	   == 2)
@@ -450,12 +450,12 @@ VersionNumber::TryParse (/*[in]*/ const MIKTEXCHAR *	lpszVersion,
 
 VersionNumber
 MIKTEXCALL
-VersionNumber::Parse (/*[in]*/ const MIKTEXCHAR * lpsz)
+VersionNumber::Parse (/*[in]*/ const char * lpsz)
 {
   VersionNumber versionNumber;
   if (! TryParse(lpsz, versionNumber))
     {
-      FATAL_MIKTEX_ERROR (T_("VersionNumber::Parse"),
+      FATAL_MIKTEX_ERROR ("VersionNumber::Parse",
 			  T_("A version number could not be parsed."),
 			  lpsz);
     }
@@ -468,7 +468,7 @@ VersionNumber::Parse (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 void
-Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath)
+Fndb::Add (/*[in]*/ const char * lpszPath)
 {
   Fndb::Add (lpszPath, 0);
 }
@@ -479,8 +479,8 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 void
-Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
-	   /*[in]*/ const MIKTEXCHAR * lpszFileNameInfo)
+Fndb::Add (/*[in]*/ const char * lpszPath,
+	   /*[in]*/ const char * lpszFileNameInfo)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -498,7 +498,7 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
 	SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::False);
       if (pFndb == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("Fndb::Add"));
+	  UNEXPECTED_CONDITION ("Fndb::Add");
 	}
       AutoFndbRelease autoRelease (pFndb);
       pFndb->AddFile (lpszPath, lpszFileNameInfo);
@@ -514,7 +514,7 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
 		 SessionImpl::GetSession()->GetRootDirectory(root).Get(),
 			 0))
 	{
-	  UNEXPECTED_CONDITION (T_("Fndb::Add"));
+	  UNEXPECTED_CONDITION ("Fndb::Add");
 	}
       if (! File::Exists(lpszPath))
 	{
@@ -532,7 +532,7 @@ Fndb::Add (/*[in]*/ const MIKTEXCHAR * lpszPath,
    _________________________________________________________________________ */
 
 bool
-Fndb::Enumerate (/*[in]*/ const MIKTEXCHAR *		lpszPath,
+Fndb::Enumerate (/*[in]*/ const char *		lpszPath,
 		 /*[in]*/ IEnumerateFndbCallback *	pCallback)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
@@ -543,7 +543,7 @@ Fndb::Enumerate (/*[in]*/ const MIKTEXCHAR *		lpszPath,
   if (pFndb == 0)
     {
       FATAL_MIKTEX_ERROR
-	(T_("Fndb::Enumerate"),
+	("Fndb::Enumerate",
 	 T_("The path is not covered by the file name database."),
 	 lpszPath);
     }
@@ -560,7 +560,7 @@ Fndb::Enumerate (/*[in]*/ const MIKTEXCHAR *		lpszPath,
 
 void
 MIKTEXCALL
-Fndb::Remove (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+Fndb::Remove (/*[in]*/ const char *	lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -571,7 +571,7 @@ Fndb::Remove (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 
   if (pFndb == 0)
     {
-      UNEXPECTED_CONDITION (T_("Fndb::Remove"));
+      UNEXPECTED_CONDITION ("Fndb::Remove");
     }
   
   AutoFndbRelease autoRelease (pFndb);
@@ -610,18 +610,16 @@ Fndb::FileExists (/*[in]*/ const PathName &	path)
    Fast but insecure.
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(const MIKTEXCHAR *)
-GetEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
+MIKTEXINTERNALFUNC(const char *)
+GetEnvironmentString (/*[in]*/ const char * lpszName)
 {
 #if defined(_MSC_VER)
 #  pragma warning (push)
 #  pragma warning (disable: 4996)
-  return (_tgetenv(lpszName));
-#  pragma warning (pop)
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: GetEnvironmentString()
-#else
+#endif
   return (getenv(lpszName));
+#if defined(_MSC_VER)
+#  pragma warning (pop)
 #endif
 }
 
@@ -631,11 +629,11 @@ GetEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
    _________________________________________________________________________ */
 
 bool
-Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
-			     /*[out]*/ tstring &		str)
+Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
+			     /*[out]*/ string &		str)
 {
   bool haveValue = false;
-  const MIKTEXCHAR * lpszOut = ::GetEnvironmentString(lpszName);
+  const char * lpszOut = ::GetEnvironmentString(lpszName);
   if (lpszOut != 0)
     {
       str = lpszOut;
@@ -646,12 +644,12 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
       && SessionImpl::GetSession()->trace_env->IsEnabled())
     {
       SessionImpl::GetSession()->trace_env->WriteFormattedLine
-	(T_("core"),
-	 T_("%s => %s"),
+	("core",
+	 "%s => %s",
 	 lpszName,
 	 (haveValue
 	  ? str.c_str()
-	  : T_("null")));
+	  : "null"));
     }
   return (haveValue);
 }
@@ -662,7 +660,7 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
    _________________________________________________________________________ */
 
 bool
-Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
+Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			     /*[out]*/ PathName &		path)
 {
   return (Utils::GetEnvironmentString(lpszName,
@@ -676,8 +674,8 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
    _________________________________________________________________________ */
 
 bool
-Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
-			     /*[out]*/ MIKTEXCHAR *		lpszOut,
+Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
+			     /*[out]*/ char *		lpszOut,
 			     /*[in]*/ size_t			sizeOut)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
@@ -696,7 +694,7 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
     }
   if (bufSize > sizeOut)
     {
-      BUF_TOO_SMALL (T_("Utils::GetEnvironmentString"));
+      BUF_TOO_SMALL ("Utils::GetEnvironmentString");
     }
   if (_tgetenv_s(&bufSize,
 		 lpszOut,
@@ -704,17 +702,11 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
 		 lpszName)
       != 0)
     {
-      FATAL_CRT_ERROR (T_("_tgetenv_s"), lpszName);
+      FATAL_CRT_ERROR ("_tgetenv_s", lpszName);
     }
   return (true);
 #else
-#  if defined(_MSC_VER)
-  const MIKTEXCHAR * lpsz = _tgetenv(lpszName);
-#  elif defined(MIKTEX_UNICODE)
-#    error Unimplemented: Utils::GetEnvironmentString()
-#  else
-  const MIKTEXCHAR * lpsz = getenv(lpszName);
-#  endif
+  const char * lpsz = getenv(lpszName);
   if (lpsz == 0)
     {
       return (false);
@@ -730,7 +722,7 @@ Utils::GetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszName,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
+HaveEnvironmentString (/*[in]*/ const char * lpszName)
 {
   return (GetEnvironmentString(lpszName) != 0);
 }
@@ -743,7 +735,7 @@ HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName)
 void
 SessionImpl::SetCWDEnv ()
 {
-  tstring str;
+  string str;
   str.reserve (256);
   for (deque<PathName>::const_iterator it = workingDirectories.begin();
        it != workingDirectories.end();
@@ -764,14 +756,14 @@ SessionImpl::SetCWDEnv ()
    _________________________________________________________________________ */
 
 void
-SessionImpl::AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
 				  /*[in]*/ bool			atEnd)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::AddWorkingDirectory"), lpszPath);
+      INVALID_ARGUMENT ("SessionImpl::AddWorkingDirectory", lpszPath);
     }
 
   // clear the search path cache
@@ -793,7 +785,7 @@ SessionImpl::AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 void
-SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
+SessionImpl::RemoveWorkingDirectory (/*[in]*/ const char * lpszPath)
 {
   // clear the search path cache
   ClearSearchVectors ();
@@ -805,7 +797,7 @@ SessionImpl::RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath)
 
   if (it == workingDirectories.end())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::RemoveWorkingDirectory"), lpszPath);
+      INVALID_ARGUMENT ("SessionImpl::RemoveWorkingDirectory", lpszPath);
     }
 
   workingDirectories.erase (it);
@@ -832,7 +824,7 @@ SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
     }
   if (n > workingDirectories.size())
     {
-      INVALID_ARGUMENT (T_("GetWorkingDirectory"), NUMTOSTR(n));
+      INVALID_ARGUMENT ("GetWorkingDirectory", NUMTOSTR(n));
     }
   path = workingDirectories[n];
   return (true);
@@ -846,52 +838,52 @@ SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
 void
 SessionImpl::SetEnvironmentVariables ()
 {
-  Utils::SetEnvironmentString (T_("GSC"), MIKTEX_GS_EXE);
-  Utils::SetEnvironmentString (T_("TEXSYSTEM"), T_("miktex"));
-  Utils::SetEnvironmentString (T_("TEXMFLOCAL"),
+  Utils::SetEnvironmentString ("GSC", MIKTEX_GS_EXE);
+  Utils::SetEnvironmentString ("TEXSYSTEM", "miktex");
+  Utils::SetEnvironmentString ("TEXMFLOCAL",
 			       GetSpecialPath(SpecialPath::DataRoot).Get());
-  Utils::SetEnvironmentString (T_("TEXMFMAIN"),
+  Utils::SetEnvironmentString ("TEXMFMAIN",
 			       GetSpecialPath(SpecialPath::InstallRoot).Get());
 
-  tstring str;
-  str = T_("%r");
+  string str;
+  str = "%r";
   str += PathName::DirectoryDelimiter;
-  str += T_("ghostscript");
+  str += "ghostscript";
   str += PathName::DirectoryDelimiter;
-  str += T_("base");
-  tstring searchPath;
+  str += "base";
+  string searchPath;
   AppendToSearchPath (searchPath, str);
-  str = T_("%r");
+  str = "%r";
   str += PathName::DirectoryDelimiter;
-  str +=  T_("fonts");
+  str +=  "fonts";
   AppendToSearchPath (searchPath, str);
-  Utils::SetEnvironmentString (T_("MIKTEX_GS_LIB"), searchPath.c_str());
+  Utils::SetEnvironmentString ("MIKTEX_GS_LIB", searchPath.c_str());
 
   PathName path = GetTempDirectory();
 
-  if (! HaveEnvironmentString(T_("TEMPDIR")))
+  if (! HaveEnvironmentString("TEMPDIR"))
     {
-      Utils::SetEnvironmentString (T_("TEMPDIR"), path.Get());
+      Utils::SetEnvironmentString ("TEMPDIR", path.Get());
     }
 
-  if (! HaveEnvironmentString(T_("TMPDIR")))
+  if (! HaveEnvironmentString("TMPDIR"))
     {
-      Utils::SetEnvironmentString (T_("TMPDIR"), path.Get());
+      Utils::SetEnvironmentString ("TMPDIR", path.Get());
     }
 
-  if (! HaveEnvironmentString(T_("TEMP")))
+  if (! HaveEnvironmentString("TEMP"))
     {
-      Utils::SetEnvironmentString (T_("TEMP"), path.Get());
+      Utils::SetEnvironmentString ("TEMP", path.Get());
     }
 
-  if (! HaveEnvironmentString(T_("TMP")))
+  if (! HaveEnvironmentString("TMP"))
     {
-      Utils::SetEnvironmentString (T_("TMP"), path.Get());
+      Utils::SetEnvironmentString ("TMP", path.Get());
     }
 
-  if (! HaveEnvironmentString(T_("HOME")))
+  if (! HaveEnvironmentString("HOME"))
     {
-      Utils::SetEnvironmentString (T_("HOME"), GetHomeDirectory().Get());
+      Utils::SetEnvironmentString ("HOME", GetHomeDirectory().Get());
     }
 
   SetCWDEnv ();
@@ -940,10 +932,10 @@ SessionImpl::SessionImpl ()
 void
 SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 {
-  tstring val;
+  string val;
 
 #if defined(_MSC_VER)
-  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_ON_STD_EXCEPTION"), val))
+  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_ON_STD_EXCEPTION", val))
     {
       debugOnStdException = _ttoi(val.c_str());
     }
@@ -953,7 +945,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 #if ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
   if (! (GetVersion() < 0x80000000))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::Initialize"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::Initialize",
 			  T_("This platform is not supported."),
 			  0);
     }
@@ -961,7 +953,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 
   if (initInfo.GetSizeOfStruct() != sizeof(initInfo))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::Initialize"), 0);
+      INVALID_ARGUMENT ("SessionImpl::Initialize", 0);
     }
 
 #if defined(MIKTEX_WINDOWS)
@@ -970,7 +962,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
       HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
       if (FAILED(hr))
 	{
-	  FATAL_MIKTEX_ERROR (T_(""),
+	  FATAL_MIKTEX_ERROR ("",
 			      T_("The COM library could not be initialized."),
 			      NUMTOSTR(hr));
 	}
@@ -986,7 +978,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   RegisterLibraryTraceStreams ();
 
   // enable trace streams
-  tstring traceOptions;
+  string traceOptions;
   traceOptions = initInfo.GetTraceFlags();
   if (traceOptions.empty())
     {
@@ -1002,7 +994,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 					     traceOptions,
 					     0))
 	{
-	  traceOptions = T_("");
+	  traceOptions = "";
 	}
     }
 #endif
@@ -1018,7 +1010,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 
   PushAppName (Utils::GetExeName().c_str());
   
-  tstring miktexCwd;
+  string miktexCwd;
   if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD_LIST, miktexCwd))
     {
       for (CSVList cwd (miktexCwd.c_str(), PATH_DELIMITER);
@@ -1032,26 +1024,26 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   SetEnvironmentVariables ();
 
   trace_core->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("initializing MiKTeX core library version %s"),
      VER_FILEVERSION_STR);
 
 #if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
   if (dynamicLoad.Get() == TriState::True)
     {
-      trace_core->WriteFormattedLine (T_("core"), T_("dynamic load"));
+      trace_core->WriteFormattedLine ("core", "dynamic load");
     }
 #endif
   
-  trace_core->WriteFormattedLine (T_("core"),
+  trace_core->WriteFormattedLine ("core",
 				  T_("operating system: %s"),
 				  Utils::GetOSVersionString().c_str());
   
-  trace_core->WriteFormattedLine (T_("core"),
+  trace_core->WriteFormattedLine ("core",
 				  T_("program file: %s"),
 				  Q_(GetMyProgramFile()));
 
-  trace_config->WriteFormattedLine (T_("core"),
+  trace_config->WriteFormattedLine ("core",
 				    T_("session locale: %s"),
 				    defaultLocale.name().c_str());
   
@@ -1065,7 +1057,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 void
 MIKTEXCALL
 SessionImpl::SetTheNameOfTheGame
-(/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame)
+(/*[in]*/ const char * lpszTheNameOfTheGame)
 {
   MIKTEX_ASSERT_STRING (lpszTheNameOfTheGame);
   fileTypes.clear ();
@@ -1103,7 +1095,7 @@ SessionImpl::Uninitialize ()
   try
     {
       initialized = false;
-      trace_core->WriteFormattedLine (T_("core"),
+      trace_core->WriteFormattedLine ("core",
 				      T_("uninitializing core library"));
       CheckOpenFiles ();
       WritePackageHistory ();
@@ -1111,7 +1103,7 @@ SessionImpl::Uninitialize ()
       if (n > 0)
 	{
 	  trace_error->WriteFormattedLine
-	    (T_("core"),
+	    ("core",
 	     T_("there are %u scratch directories in use"),
 	     static_cast<unsigned>(n));
 	  while (! scratchDirectoryStack.empty())
@@ -1150,7 +1142,7 @@ SessionImpl::Uninitialize ()
 void
 SessionImpl::ConnectToServer ()
 {
-  const MIKTEXCHAR * MSG_CANNOT_START_SERVER =
+  const char * MSG_CANNOT_START_SERVER =
     T_("Cannot start MiKTeX session.");
   if (localServer.pSession == 0)
     {
@@ -1163,7 +1155,7 @@ SessionImpl::ConnectToServer ()
 	       sizeof(wszCLSID) / sizeof(wszCLSID[0]))
 	      < 0)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+	      FATAL_MIKTEX_ERROR ("ConnectToServer",
 				  MSG_CANNOT_START_SERVER,
 				  0);
 	    }
@@ -1182,7 +1174,7 @@ SessionImpl::ConnectToServer ()
 			reinterpret_cast<void**>(&localServer.pSession));
 	  if (FAILED(hr))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+	      FATAL_MIKTEX_ERROR ("ConnectToServer",
 				  MSG_CANNOT_START_SERVER,
 				  NUMTOSTR(hr));
 	    }
@@ -1196,7 +1188,7 @@ SessionImpl::ConnectToServer ()
 	     CLSCTX_LOCAL_SERVER);
 	  if (FAILED(hr))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("ConnectToServer"),
+	      FATAL_MIKTEX_ERROR ("ConnectToServer",
 				  MSG_CANNOT_START_SERVER,
 				  NUMTOSTR(hr));
 	    }
@@ -1277,7 +1269,7 @@ Session::Get (/*[in]*/ const Session::InitInfo & initInfo)
 {
   if (SessionImpl::theSession != 0)
     {
-      FATAL_MIKTEX_ERROR (T_("Session::Get"),
+      FATAL_MIKTEX_ERROR ("Session::Get",
 			  T_("The core library is already initialized."),
 			  0);
     }
@@ -1308,7 +1300,7 @@ Session::Release (/*[in]*/ Session * pSession)
 {
   if (pSession != SessionImpl::theSession)
     {
-      UNEXPECTED_CONDITION (T_("Session::Release"));
+      UNEXPECTED_CONDITION ("Session::Release");
     }
   SessionImpl::theSession->refCount -= 1;
   if (SessionImpl::theSession->refCount == 0)
@@ -1335,11 +1327,11 @@ Session::~Session ()
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_get_miktex_version_string_ex (/*[out]*/ MIKTEXCHAR *	lpszVersion,
+miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
 				     /*[in]*/ size_t		bufSize)
 {
   C_FUNC_BEGIN ();
-  tstring version = Utils::GetMiKTeXVersionString();
+  string version = Utils::GetMiKTeXVersionString();
   Utils::CopyString (lpszVersion, bufSize, version.c_str());
   return (1);
   C_FUNC_END ();

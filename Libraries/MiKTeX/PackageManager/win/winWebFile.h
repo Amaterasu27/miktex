@@ -46,7 +46,7 @@ public:
 
 public:
   winWebFile (/*[in]*/ winWebSession *		pSession,
-	      /*[in]*/ const MIKTEXCHAR *	lpszUrl);
+	      /*[in]*/ const char *	lpszUrl);
 
 private:
   HINTERNET hUrl;
@@ -58,7 +58,7 @@ private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
-  MiKTeX::Core::tstring url; 
+  std::string url; 
 };
 
 END_INTERNAL_NAMESPACE;

@@ -1,6 +1,6 @@
 /* hypertex.cpp: html specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -187,7 +187,7 @@ HyperTeXSpecialImpl::Parse ()
       log_hypertex->WriteFormattedLine
 	(T_("libdvi"),
 	 T_("new hypertex target \"%s\" (%d, %d, %d, %d)"),
-	 A2T_(name.c_str()),
+	 name.c_str(),
 	 state.llx,
 	 state.lly,
 	 state.urx,
@@ -247,7 +247,7 @@ DviImpl::FindHyperLabel (/*[in]*/ const char *		lpszLabel,
       log_hypertex->WriteFormattedLine
 	(T_("libdvi"),
 	 T_("searching hyperlabel %s"),
-	 A2T_(lpszLabel));
+	 lpszLabel);
       
       for (int p = 0; p < GetNumberOfPages(); ++ p)
 	{
@@ -285,7 +285,7 @@ DviImpl::FindHyperLabel (/*[in]*/ const char *		lpszLabel,
 		  log_hypertex->WriteFormattedLine
 		    (T_("libdvi"),
 		     T_("found %s on page %d at %d,%d"),
-		     A2T_(lpszLabel),
+		     lpszLabel,
 		     p,
 		     position.x,
 		     position.y);

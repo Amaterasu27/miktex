@@ -92,7 +92,7 @@ public:
 public:
   void
   DoContextMenu (/*[in]*/ POINT			pt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszExternalName);
+		 /*[in]*/ const char *	lpszExternalName);
 
 public:
   CString

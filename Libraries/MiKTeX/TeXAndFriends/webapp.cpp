@@ -32,15 +32,15 @@
 
 MIKTEXNORETURN
 MIKTEXMFAPI(void)
-WebApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+WebApp::FatalError (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << endl;
-  tcerr << Utils::GetExeName() << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << endl;
+  cerr << Utils::GetExeName() << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -51,7 +51,7 @@ WebApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-WebApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+WebApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   Application::Init (lpszProgramInvocationName, TheNameOfTheGame());
   theNameOfTheGame = Utils::GetExeName();
@@ -73,7 +73,7 @@ WebApp::Finalize ()
 		    FileMode::Create,
 		    FileAccess::Write));
       vector<FileInfoRecord> fileInfoRecords = pSession->GetFileInfoRecords();
-      stdext::hash_set<tstring> packages;
+      stdext::hash_set<string> packages;
       for (vector<FileInfoRecord>::const_iterator it = fileInfoRecords.begin();
 	   it != fileInfoRecords.end();
 	   ++ it)
@@ -83,11 +83,11 @@ WebApp::Finalize ()
 	      packages.insert (it->packageName);
 	    }
 	}
-      for (stdext::hash_set<tstring>::const_iterator it2 = packages.begin();
+      for (stdext::hash_set<string>::const_iterator it2 = packages.begin();
 	   it2 != packages.end();
 	   ++ it2)
 	{
-	  _ftprintf (stream.Get(), _T("%s\n"), it2->c_str());
+	  fprintf (stream.Get(), T_("%s\n"), it2->c_str());
 	}
       stream.Close ();
     }
@@ -135,10 +135,10 @@ MIKTEXMFAPI(void)
 WebApp::BadUsage ()
   const
 {
-  tcerr << T_("Invalid command-line.\n")
-	<< T_("Try `") << Utils::GetExeName()
-	<< T_(" -help' for more information.")
-	<< endl;
+  cerr << T_("Invalid command-line.\n")
+       << T_("Try `") << Utils::GetExeName()
+       << T_(" -help' for more information.")
+       << endl;
   throw (1);
 }
 
@@ -148,12 +148,12 @@ WebApp::BadUsage ()
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
+WebApp::AddOption (/*[in]*/ const char *	lpszNameAndHelp,
 		   /*[in]*/ int			val,
 		   /*[in]*/ int			argInfo,
-		   /*[in]*/ const MIKTEXCHAR *	lpszArgDescription,
+		   /*[in]*/ const char *	lpszArgDescription,
 		   /*[in]*/ void *		pArg,
-		   /*[in]*/ MIKTEXCHAR		shortName)
+		   /*[in]*/ char		shortName)
 {
 #if defined(MIKTEX_DEBUG)
   if (lpszNameAndHelp != 0)
@@ -203,8 +203,8 @@ WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-WebApp::AddOption (/*[in]*/ const MIKTEXCHAR *	lpszAliasName,
-		   /*[in]*/ const MIKTEXCHAR *	lpszName)
+WebApp::AddOption (/*[in]*/ const char *	lpszAliasName,
+		   /*[in]*/ const char *	lpszName)
 {
   for (vector<poptOption>::const_iterator it = options.begin();
        it != options.end();
@@ -249,57 +249,57 @@ WebApp::AddOptions ()
 
   optBase = static_cast<int>(GetOptions().size());
 
-  AddOption (_T("alias\0\
+  AddOption (T_("alias\0\
 Pretend to be APP.  This affects both the format used and the search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_ALIAS,
 	     required_argument,
-	     _T("APP"));
+	     T_("APP"));
 
-  AddOption (_T("disable-installer\0\
+  AddOption (T_("disable-installer\0\
 Disable the package installer.  Missing files will not be installed."),
 	     FIRST_OPTION_VAL + optBase + OPT_DISABLE_INSTALLER);
 
-  AddOption (_T("enable-installer\0\
+  AddOption (T_("enable-installer\0\
 Enable the package installer.  Missing files will be installed."),
 	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_INSTALLER);
 
-  AddOption (_T("help\0\
+  AddOption (T_("help\0\
 Show this help screen and exit."),
 	     FIRST_OPTION_VAL + optBase + OPT_HELP);
 
-  AddOption (_T("include-directory\0\
+  AddOption (T_("include-directory\0\
 Prefix DIR to the input search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_INCLUDE_DIRECTORY,
 	     required_argument,
-	     _T("DIR"));
+	     T_("DIR"));
 
-  AddOption (_T("kpathsea-debug\0"),
+  AddOption (T_("kpathsea-debug\0"),
 	     OPT_UNSUPPORTED,
 	     required_argument);
 
-  AddOption (_T("record-package-usages\0\
+  AddOption (T_("record-package-usages\0\
 Enable the package usage recorder.  Output is written to FILE."),
 	     FIRST_OPTION_VAL + optBase + OPT_RECORD_PACKAGE_USAGES,
 	     required_argument,
-	     _T("FILE"));
+	     T_("FILE"));
 
-  AddOption (_T("trace\0\
+  AddOption (T_("trace\0\
 Turn tracing on.  OPTIONS must be a comma-separated list of trace options. \
   See the manual, for more information."),
 	     FIRST_OPTION_VAL + optBase + OPT_TRACE,
 	     required_argument,
-	     _T("OPTIONS"));
+	     T_("OPTIONS"));
 
-  AddOption (_T("verbose\0"), OPT_UNSUPPORTED);
+  AddOption (T_("verbose\0"), OPT_UNSUPPORTED);
 
-  AddOption (_T("version\0\
+  AddOption (T_("version\0\
 Print version information and exit."),
 	     FIRST_OPTION_VAL + optBase + OPT_VERSION);
 
 #if defined(MIKTEX_WINDOWS)
   if (GetHelpId() > 0)
     {
-      AddOption (_T("hhelp\0\
+      AddOption (T_("hhelp\0\
 Show the manual page in an HTMLHelp window and exit when the\
  window is closed."),
 		 FIRST_OPTION_VAL + optBase + OPT_HHELP);
@@ -314,7 +314,7 @@ Show the manual page in an HTMLHelp window and exit when the\
 
 MIKTEXMFAPI(bool)
 WebApp::ProcessOption (/*[in]*/ int			opt,
-		       /*[in]*/ const MIKTEXCHAR *	lpszArg)
+		       /*[in]*/ const char *	lpszArg)
 {
   if (opt == OPT_UNSUPPORTED)
     {
@@ -389,7 +389,7 @@ MIKTEXMFAPI(void)
 WebApp::ProcessCommandLineOptions ()
 {
   int argc = C4P::GetArgC();
-  const MIKTEXCHAR ** argv = C4P::GetArgV();
+  const char ** argv = C4P::GetArgV();
   
   if (options.size() == 0)
     {
@@ -442,7 +442,7 @@ WebApp::ProcessCommandLineOptions ()
    WebApp::TheNameOfTheGame
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const MIKTEXCHAR *)
+MIKTEXMFAPI(const char *)
 WebApp::TheNameOfTheGame ()
   const
 {
@@ -458,15 +458,15 @@ MIKTEXMFAPI(void)
 WebApp::ShowProgramVersion ()
   const
 {
-  tcout << MIKTEX_PRODUCTNAME_STR << T_('-') << TheNameOfTheGame()
-	<< T_(' ') << version
-	<< T_(" (") << Utils::GetMiKTeXBannerString() << T_(')') << T_('\n')
-	<< copyright << T_('\n');
+  cout << MIKTEX_PRODUCTNAME_STR << T_('-') << TheNameOfTheGame()
+       << T_(' ') << version
+       << T_(" (") << Utils::GetMiKTeXBannerString() << T_(')') << T_('\n')
+       << copyright << T_('\n');
   if (! trademarks.empty())
     {
-      tcout << trademarks << T_('\n');
+      cout << trademarks << T_('\n');
     }
-  tcout << flush;
+  cout << flush;
 }
 
 /* _________________________________________________________________________
@@ -475,10 +475,10 @@ WebApp::ShowProgramVersion ()
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-WebApp::SetProgramInfo (/*[in]*/ const MIKTEXCHAR * lpszProgramName,
-			/*[in]*/ const MIKTEXCHAR * lpszVersion,
-			/*[in]*/ const MIKTEXCHAR * lpszCopyright,
-			/*[in]*/ const MIKTEXCHAR * lpszTrademarks)
+WebApp::SetProgramInfo (/*[in]*/ const char * lpszProgramName,
+			/*[in]*/ const char * lpszVersion,
+			/*[in]*/ const char * lpszCopyright,
+			/*[in]*/ const char * lpszTrademarks)
 {
   if (lpszProgramName != 0)
     {

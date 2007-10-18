@@ -93,8 +93,8 @@ MpmView::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs)
 
 void
 MpmView::InsertColumn (/*[in]*/ int			colIdx,
-		       /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		       /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+		       /*[in]*/ const char *	lpszLabel,
+		       /*[in]*/ const char *	lpszLongest)
 {
   CListCtrl & listControl = GetListCtrl();
   if (listControl.InsertColumn(colIdx,
@@ -351,10 +351,10 @@ MpmView::CompareItems (/*[in]*/ LPARAM	lParam1,
 	  break;
 	case 1:
 	  {
-	    tstring str1 =
+	    string str1 =
 	      This->pManager->GetContainerPath(packageInfo1.deploymentName,
 					       true);
-	    tstring str2 =
+	    string str2 =
 	      This->pManager->GetContainerPath(packageInfo2.deploymentName,
 					       true);
 	    ret = PathName::Compare(str1.c_str(), str2.c_str());
@@ -444,9 +444,9 @@ MpmView::OnButtonSearchClicked ()
 	  // <todo>
 	  match =
 	    (searchWords.GetLength() == 0
-	     || (packageInfo.title.find(searchWords) != tstring::npos
+	     || (packageInfo.title.find(searchWords) != string::npos
 		 || (packageInfo.description.find(searchWords)
-		     != tstring::npos)));
+		     != string::npos)));
 	  // </todo>
 	  if (! match)
 	    {
@@ -454,7 +454,7 @@ MpmView::OnButtonSearchClicked ()
 	    }
 	  if (fileNamePattern.GetLength() > 0)
 	    {
-	      vector<tstring>::const_iterator it;
+	      vector<string>::const_iterator it;
 	      bool found = false;
 	      for (it = packageInfo.runFiles.begin();
 		   ! found && it != packageInfo.runFiles.end();
@@ -521,7 +521,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.mask = LVIF_TEXT | LVIF_PARAM;
   lvitem.iSubItem = 0;
   lvitem.lParam = idx;
-  lvitem.pszText = const_cast<MIKTEXCHAR *>(packageInfo.deploymentName.c_str());
+  lvitem.pszText = const_cast<char *>(packageInfo.deploymentName.c_str());
   if (listctrl.InsertItem(&lvitem) < 0)
     {
       FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
@@ -530,8 +530,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 1
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 1;
-  tstring str = pManager->GetContainerPath(packageInfo.deploymentName, true);
-  lvitem.pszText = const_cast<MIKTEXCHAR *>(str.c_str());
+  string str = pManager->GetContainerPath(packageInfo.deploymentName, true);
+  lvitem.pszText = const_cast<char *>(str.c_str());
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
@@ -540,7 +540,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 2
   lvitem.iSubItem = 2;
   lvitem.pszText =
-    const_cast<MIKTEXCHAR *>
+    const_cast<char *>
     (NUMTOSTR(static_cast<unsigned>(packageInfo.GetSize())));
   if (! listctrl.SetItem(&lvitem))
     {
@@ -552,7 +552,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.iSubItem = 3;
   CTime t (packageInfo.timePackaged);
   str2 = t.FormatGmt(T_("%Y-%m-%d"));
-  lvitem.pszText = const_cast<MIKTEXCHAR *>(str2.GetString());
+  lvitem.pszText = const_cast<char *>(str2.GetString());
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
@@ -569,7 +569,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
       CTime t (packageInfo.timeInstalled);
       str2 = t.FormatGmt(T_("%Y-%m-%d"));
     }
-  lvitem.pszText = const_cast<MIKTEXCHAR *>(str2.GetString());
+  lvitem.pszText = const_cast<char *>(str2.GetString());
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
@@ -577,7 +577,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
   // column 5
   lvitem.iSubItem = 5;
-  lvitem.pszText = const_cast<MIKTEXCHAR *>(packageInfo.title.c_str());
+  lvitem.pszText = const_cast<char *>(packageInfo.title.c_str());
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
@@ -782,8 +782,8 @@ void MpmView::OnInstall ()
 {
   try
     {
-      vector<tstring> toBeInstalled;
-      vector<tstring> toBeRemoved;
+      vector<string> toBeInstalled;
+      vector<string> toBeRemoved;
       int idx = -1;
       CListCtrl & listctrl = GetListCtrl();
       while ((idx = listctrl.GetNextItem(idx, LVNI_SELECTED)) >= 0)

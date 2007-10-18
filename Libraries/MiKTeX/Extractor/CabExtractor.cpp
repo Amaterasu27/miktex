@@ -36,7 +36,7 @@ using namespace std;
 
 struct mspack_file *
 CabExtractor::Open (/*[in]*/ struct mspack_system *	self,
-		    /*[in]*/ MIKTEXCHAR *		lpszFileName,
+		    /*[in]*/ char *		lpszFileName,
 		    /*[in]*/ int			mode)
 {
   UNUSED_ALWAYS (self);
@@ -236,7 +236,7 @@ CabExtractor::Tell (/*[in]*/ struct mspack_file * pFile)
 
 void
 CabExtractor::Message (/*[in]*/ struct mspack_file *	pFile,
-		       /*[in]*/ MIKTEXCHAR *		lpszFormat,
+		       /*[in]*/ char *		lpszFormat,
 		       /*[in]*/				...)
 {
   UNUSED_ALWAYS (pFile);
@@ -426,7 +426,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+		       /*[in]*/ const char *	lpszPrefix)
 {
   traceStream->WriteFormattedLine (T_("libextractor"),
 				   T_("extracting %s to %s (%s directories)"),
@@ -442,7 +442,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
     {
       pCabinet =
 	pDecompressor->open(pDecompressor,
-			    const_cast<MIKTEXCHAR *>(cabinetPath.Get()));
+			    const_cast<char *>(cabinetPath.Get()));
 
       if (pCabinet == 0)
 	{
@@ -566,7 +566,7 @@ CabExtractor::Extract (/*[in]*/ Stream *		pStream,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+		       /*[in]*/ const char *	lpszPrefix)
 {
   UNUSED_ALWAYS (pStream);
   UNUSED_ALWAYS (destDir);

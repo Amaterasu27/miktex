@@ -25,11 +25,11 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  for (std::vector<MiKTeX::Core::tstring>::const_iterator it = vecArgs.begin();
+  for (std::vector<std::string>::const_iterator it = vecArgs.begin();
        it != vecArgs.end();
        ++ it)
     {
-      TEST (PrintF(T_("%s\n"), it->c_str()) == strlen(it->c_str()) + 1);
+      TEST (PrintF("%s\n", it->c_str()) == strlen(it->c_str()) + 1);
     }
 }
 END_TEST_FUNCTION();

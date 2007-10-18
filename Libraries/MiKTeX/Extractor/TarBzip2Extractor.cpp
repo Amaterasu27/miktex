@@ -40,7 +40,7 @@ TarBzip2Extractor::Extract (/*[in]*/ const PathName &	tarbz2Path,
 			    /*[in]*/ const PathName &	destDir,
 			    /*[in]*/ bool		makeDirectories,
 			    /*[in]*/ IExtractCallback *	pCallback,
-			    /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+			    /*[in]*/ const char *	lpszPrefix)
 {
   traceStream->WriteFormattedLine (T_("libextractor"),
 				   T_("extracting %s"),

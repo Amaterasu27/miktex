@@ -333,7 +333,7 @@ TpmParser::Parse (/*[in]*/ const PathName & path)
 
 void
 TpmParser::Parse (/*[in]*/ const PathName &	path,
-		  /*[in]*/ const MIKTEXCHAR *	lpszTeXMFPrefix)
+		  /*[in]*/ const char *	lpszTeXMFPrefix)
 {
   texMFPrefix = (lpszTeXMFPrefix == 0 ? X_("") : lpszTeXMFPrefix);
 

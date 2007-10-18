@@ -39,7 +39,7 @@ WebAppInputLine::WebAppInputLine ()
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-WebAppInputLine::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+WebAppInputLine::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   WebApp::Init (lpszProgramInvocationName);
   enablePipes = false;
@@ -93,7 +93,7 @@ Disable input (output) from (to) processes."),
 
 MIKTEXMFAPI(bool)
 WebAppInputLine::ProcessOption (/*[in]*/ int			opt,
-				/*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+				/*[in]*/ const char *	lpszOptArg)
 {
   bool done = true;
 
@@ -401,7 +401,7 @@ WebAppInputLine::HandleEof (/*[in]*/ FILE * pfile)
 {
   MIKTEX_ASSERT (pfile != 0);
 #if 1
-  while (GetC(pfile) != MIKTEXEOF)
+  while (GetC(pfile) != EOF)
     {
       ;
     }

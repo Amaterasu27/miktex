@@ -113,7 +113,7 @@ private:
 
 private:
   bool
-  RemoveBinDirFromPath (/*[in,out]*/ tstring &	path);
+  RemoveBinDirFromPath (/*[in,out]*/ string &	path);
 
 private:
   void

@@ -86,8 +86,8 @@ MIKTEXUIAPI(unsigned int)
 MiKTeX::UI::MFC::InstallPackageMessageBox
 (/*[in]*/ HWND			hwndParent,
  /*[in]*/ PackageManager *	pManager,
- /*[in]*/ const MIKTEXCHAR *	lpszPackageName,
- /*[in]*/ const MIKTEXCHAR *	lpszTrigger)
+ /*[in]*/ const char *	lpszPackageName,
+ /*[in]*/ const char *	lpszTrigger)
 {
   SessionWrapper pSession (true);
   TriState enableInstaller

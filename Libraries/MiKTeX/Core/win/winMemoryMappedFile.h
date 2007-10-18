@@ -41,7 +41,7 @@ public:
   virtual
   void * 
   MIKTEXCALL
-  Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  Open (/*[in]*/ const char *	lpszPath,
 	/*[in]*/ bool			readWrite);
 
 public:
@@ -67,7 +67,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXCALL
   GetName ()
   {
@@ -112,10 +112,10 @@ private:
   bool readWrite;
 
 private:
-  tstring path;
+  string path;
 
 private:
-  tstring name;
+  string name;
 
 private:
   size_t size;

@@ -42,29 +42,21 @@ using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define Q_(x) Quoted(x).c_str()
 
-const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Finder");
-const MIKTEXCHAR * const PROGNAME = T_("findtexmf");
+const char * const TheNameOfTheGame = T_("MiKTeX Finder");
+const char * const PROGNAME = "findtexmf";
 
 /* _________________________________________________________________________
 
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -82,8 +74,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -93,7 +85,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -116,8 +108,8 @@ private:
 private:
   MIKTEXNORETURN
   void
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	      /*[in]*/				...);
+  FatalError (/*[in]*/ const char *	lpszFormat,
+	      /*[in]*/			...);
 
 private:
   void
@@ -129,12 +121,12 @@ private:
   
 private:
   void
-  PrintSearchPath (/*[in]*/ const MIKTEXCHAR * lpszSearchPath);
+  PrintSearchPath (/*[in]*/ const char * lpszSearchPath);
   
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
   
 private:
   bool kpseMode;
@@ -413,7 +405,7 @@ FindTeXMF::FindTeXMF ()
 void
 FindTeXMF::ShowVersion ()
 {
-  tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
+  cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
 	<< T_("\n")
 	<< T_("Copyright (C) 2001-2007 Christian Schenk\n\
@@ -422,7 +414,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
   if (kpseMode)
     {
-      tcout << T_("warning: running in deprecated kpathsea emulation mode")
+      cout << T_("warning: running in deprecated kpathsea emulation mode")
 	    << endl;
     }
 }
@@ -434,14 +426,14 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   
 MIKTEXNORETURN
 void
-FindTeXMF::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FindTeXMF::FatalError (/*[in]*/ const char *	lpszFormat,
 			 /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGNAME << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << PROGNAME << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -461,9 +453,9 @@ FindTeXMF::ListFileTypes ()
 	{
 	  continue;
 	}
-      tcout << T_("  ") << fti.fileTypeString
-	    << T_(" (") << fti.fileNameExtensions << T_(")")
-	    << endl;
+      cout << T_("  ") << fti.fileTypeString
+	   << T_(" (") << fti.fileNameExtensions << T_(")")
+	   << endl;
     }
 }
 
@@ -477,11 +469,11 @@ FindTeXMF::PrintPath (/*[in]*/ const PathName & path)
 {
   if (kpseMode)
     {
-      _putts (PathName(path).ToUnix().Get());
+      puts (PathName(path).ToUnix().Get());
     }
   else
     {
-      _putts (path.Get());
+      puts (path.Get());
     }
 }
 
@@ -491,14 +483,14 @@ FindTeXMF::PrintPath (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 void
-FindTeXMF::PrintSearchPath (/*[in]*/ const MIKTEXCHAR * lpszSearchPath)
+FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 {
   bool first = true;
   for (CSVList p (lpszSearchPath, T_(';'));
        p.GetCurrent() != 0;
        ++ p)
     {
-      const MIKTEXCHAR * lpszPath = p.GetCurrent();
+      const char * lpszPath = p.GetCurrent();
       if ((PathName::Compare(lpszPath,
 			     MPM_ROOT_PATH,
 			     static_cast<DWORD>(MPM_ROOT_PATH_LEN))
@@ -514,18 +506,18 @@ FindTeXMF::PrintSearchPath (/*[in]*/ const MIKTEXCHAR * lpszSearchPath)
 	}
       else
 	{
-	  _puttchar (T_(';'));
+	  putchar (T_(';'));
 	}
       if (kpseMode)
 	{
-	  _tprintf (T_("%s"), PathName(lpszPath).ToUnix().Get());
+	  printf (T_("%s"), PathName(lpszPath).ToUnix().Get());
 	}
       else
 	{
-	  _tprintf (T_("%s"), lpszPath);
+	  printf (T_("%s"), lpszPath);
 	}
     }
-  _puttchar (T_('\n'));
+  putchar (T_('\n'));
 }
 
 /* _________________________________________________________________________
@@ -534,8 +526,8 @@ FindTeXMF::PrintSearchPath (/*[in]*/ const MIKTEXCHAR * lpszSearchPath)
    _________________________________________________________________________ */
 
 void
-FindTeXMF::Run (/*[in]*/ int				argc,
-		  /*[in]*/ const MIKTEXCHAR **		argv)
+FindTeXMF::Run (/*[in]*/ int			argc,
+		/*[in]*/ const char **		argv)
 {
   kpseMode = (PathName::Compare(Utils::GetExeName(), T_("kpsewhich")) == 0);
 
@@ -546,7 +538,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
   int option;
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 
@@ -631,7 +623,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	      {
 		FatalError (T_("Unknown file type: %s."), lpszOptArg);
 	      }
-	    tstring searchPath = pSession->GetExpandedSearchPath(filetype);
+	    string searchPath = pSession->GetExpandedSearchPath(filetype);
 	    if (searchPath.length() != 0)
 	      {
 		PrintSearchPath (searchPath.c_str());
@@ -659,7 +651,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
@@ -667,7 +659,7 @@ FindTeXMF::Run (/*[in]*/ int				argc,
       
   EnableInstaller (mustExist ? TriState::True : TriState::False);
 
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -677,8 +669,8 @@ FindTeXMF::Run (/*[in]*/ int				argc,
 	}
       else if (kpseMode)
 	{
-	  tcout << T_("warning: running in deprecated kpathsea emulation mode")
-		<< endl;
+	  cout << T_("warning: running in deprecated kpathsea emulation mode")
+	       << endl;
 	  throw (1);
 	}
       else
@@ -732,7 +724,7 @@ __declspec(dllexport)
 int
 __cdecl
 findtexmf (/*[in]*/ int			argc,
-	   /*[in]*/ const MIKTEXCHAR **	argv)
+	   /*[in]*/ const char **	argv)
 {
   try
     {

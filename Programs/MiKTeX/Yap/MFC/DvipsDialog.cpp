@@ -146,7 +146,7 @@ DvipsDialog::OnInitDialog ()
 
       delete [] lpBuf;
       
-      MIKTEXCHAR szDefaultPrinter[300];
+      char szDefaultPrinter[300];
       size_t size = 300;
       if (Utils::GetDefPrinter(szDefaultPrinter, &size))
 	{

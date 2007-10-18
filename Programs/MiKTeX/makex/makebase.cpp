@@ -50,7 +50,7 @@ public:
   virtual
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   virtual
@@ -71,7 +71,7 @@ private:
 
 private:
   void
-  AppendEngineOption (/*[in]*/ const MIKTEXCHAR * lpszOption)
+  AppendEngineOption (/*[in]*/ const char * lpszOption)
   {
     engineOptions.Append (lpszOption);
   }
@@ -150,7 +150,7 @@ MakeBase::CreateDestinationDirectory ()
 
 void
 MakeBase::Run (/*[in]*/ int			argc,
-	       /*[in]*/ const MIKTEXCHAR **	argv)
+	       /*[in]*/ const char **	argv)
 {
   // get options and file name
   int optionIndex = 0;
@@ -216,7 +216,7 @@ MakeBase::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 MKTEXAPI(makebase) (/*[in]*/ int			argc,
-		    /*[in]*/ const MIKTEXCHAR **	argv)
+		    /*[in]*/ const char **	argv)
 {
   try
     {

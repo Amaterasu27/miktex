@@ -1,6 +1,6 @@
 /* dvitype-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2005 Christian Schenk
+   Copyright (C) 1991-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -67,7 +67,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -79,7 +79,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebApp::Init (lpszProgramInvocationName);
     THEDATA(outmode) = 4;
@@ -94,8 +94,8 @@ public:
   virtual
   bool
   MIKTEXMFCALL
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+  ProcessOption (/*[in]*/ int		opt,
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)
@@ -107,11 +107,11 @@ public:
 	  {
 	    BadUsage ();
 	  }
-	THEDATA(outmode) = _ttoi(lpszOptArg);
+	THEDATA(outmode) = atoi(lpszOptArg);
 	break;
       case OPT_START_THERE:
 	{
-	  const MIKTEXCHAR * lpsz = lpszOptArg;
+	  const char * lpsz = lpszOptArg;
 	  size_t k = 0;
 	  do 
 	    {
@@ -120,17 +120,17 @@ public:
 		  THEDATA(startthere)[k] = false;
 		  ++ lpsz;
 		}
-	      else if (! (_istdigit(*lpsz)
-			  || (*lpsz == MIKTEXTEXT('-') && _istdigit(lpsz[1]))))
+	      else if (! (isdigit(*lpsz)
+			  || (*lpsz == MIKTEXTEXT('-') && isdigit(lpsz[1]))))
 		{
 		  BadUsage ();
 		}
 	      else
 		{
 		  THEDATA(startthere)[k] = true;
-		  LPTSTR lpsz2 = 0;
-		  THEDATA(startcount)[k] = _tcstol(lpsz, &lpsz2, 10);
-		  lpsz = const_cast<const MIKTEXCHAR *>(lpsz2);
+		  char * lpsz2 = 0;
+		  THEDATA(startcount)[k] = strtol(lpsz, &lpsz2, 10);
+		  lpsz = const_cast<const char *>(lpsz2);
 		}
 	      if (k < 9 && *lpsz == '.')
 		{
@@ -159,17 +159,11 @@ public:
       case OPT_RESOLUTION:
 	{
 	  int num, den;
-#if _MSC_VER < 1400
-#define _stscanf_s _stscanf
-#endif
-	  if (_stscanf_s(lpszOptArg, MIKTEXTEXT("%d/%d"), &num, &den) != 2
+	  if (sscanf_s(lpszOptArg, "%d/%d", &num, &den) != 2
 	      || (num < 0))
 	    {
 	      BadUsage ();
 	    }
-#if _MSC_VER < 1400
-#undef _stscanf_s
-#endif
 	  THEDATA(resolution) = static_cast<float>(num) / den;
 	}
 	break;
@@ -178,7 +172,7 @@ public:
 	  {
 	    BadUsage ();
 	  }
-	THEDATA(newmag) = _ttoi(lpszOptArg);
+	THEDATA(newmag) = atoi(lpszOptArg);
 	break;
       default:
 	done = WebApp::ProcessOption(opt, lpszOptArg);

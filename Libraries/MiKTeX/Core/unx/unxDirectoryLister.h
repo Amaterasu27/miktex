@@ -55,7 +55,7 @@ private:
 
 private:
   unxDirectoryLister (/*[in]*/ const PathName &		directory,
-		      /*[in]*/ const MIKTEXCHAR *	lpszPattern);
+		      /*[in]*/ const char *	lpszPattern);
 
 private:
   virtual
@@ -68,7 +68,7 @@ private:
   DIR * pDir;
 
 private:
-  tstring pattern;
+  string pattern;
 
 private:
   friend class DirectoryLister;

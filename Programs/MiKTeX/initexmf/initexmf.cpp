@@ -60,7 +60,7 @@ using namespace std;
 
 #define Q_(x) Quoted(x).c_str()
 
-const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
+const char * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
 #define PROGNAME T_("initexmf")
 
 /* _________________________________________________________________________
@@ -148,11 +148,11 @@ const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (*lpsz == 0 || StrChr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -170,8 +170,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -181,7 +181,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -209,7 +209,7 @@ public:
 
 public:
   void
-  StartElement (/*[in]*/ const MIKTEXCHAR *	lpszName)
+  StartElement (/*[in]*/ const char *	lpszName)
   {
     if (freshElement)
       {
@@ -223,8 +223,8 @@ public:
 
 public:
   void
-  AddAttribute (/*[in]*/ const MIKTEXCHAR *	lpszAttributeName,
-		/*[in]*/ const MIKTEXCHAR *	lpszAttributeValue)
+  AddAttribute (/*[in]*/ const char *	lpszAttributeName,
+		/*[in]*/ const char *	lpszAttributeValue)
   {
     tcout << T_(' ');
     tcout << lpszAttributeName;
@@ -269,14 +269,14 @@ public:
 
 public:
   void
-  Text (/*[in]*/ const tstring & text )
+  Text (/*[in]*/ const string & text )
   {
     if (freshElement)
       {
 	tcout << T_('>');
 	freshElement = false;
       }
-    for (const MIKTEXCHAR * lpszText = text.c_str();
+    for (const char * lpszText = text.c_str();
 	 *lpszText != 0;
 	 ++ lpszText)
       {
@@ -299,7 +299,7 @@ public:
   }
 
 private:
-  stack<tstring> elements;
+  stack<string> elements;
 
 private:
   bool freshElement;
@@ -313,8 +313,8 @@ private:
 static
 struct
 {
-  const MIKTEXCHAR *	lpszShortcut;
-  const MIKTEXCHAR *	lpszFile;
+  const char *	lpszShortcut;
+  const char *	lpszFile;
 }
 configShortcuts[] = {
   T_("pdftex"), MIKTEX_PATH_PDFTEX_CFG,
@@ -341,7 +341,7 @@ public:
 
 public:
   void
-  Init (/*[in]*/ const MIKTEXCHAR * argv0);
+  Init (/*[in]*/ const char * argv0);
 
 public:
   void
@@ -349,28 +349,28 @@ public:
 
 private:
   void
-  Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Message (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   void
-  PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  PrintOnly (/*[in]*/ const char *	lpszFormat,
 	     /*[in]*/				...);
 
 private:
   void
-  Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Warning (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  FatalError (/*[in]*/ const char *	lpszFormat,
 	      /*[in]*/				...);
 
 private:
@@ -399,21 +399,21 @@ private:
   
 private:
   void
-  RunMakeTeX (/*[in]*/ const MIKTEXCHAR *		lpszMakeProg,
+  RunMakeTeX (/*[in]*/ const char *		lpszMakeProg,
 	      /*[in]*/ const CommandLineBuilder &	arguments);
   
 private:
   void
-  MakeFormatFile (/*[in]*/ const MIKTEXCHAR *	lpszFormatKey);
+  MakeFormatFile (/*[in]*/ const char *	lpszFormatKey);
 
 private:
   void
-  MakeFormatFiles (/*[in]*/ const vector<tstring> & formats);
+  MakeFormatFiles (/*[in]*/ const vector<string> & formats);
   
 private:
   void
-  MakeFormatFilesByName (/*[in]*/ const vector<tstring> & formatsByName,
-			 /*[in]*/ const tstring &		engine);
+  MakeFormatFilesByName (/*[in]*/ const vector<string> & formatsByName,
+			 /*[in]*/ const string &		engine);
   
 private:
   void
@@ -421,7 +421,7 @@ private:
 
 private:
   void
-  EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszRelPath);
+  EditConfigFile (/*[in]*/ const char * lpszRelPath);
 
 private:
   void
@@ -457,8 +457,8 @@ private:
 
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 #if defined(MIKTEX_WINDOWS)
 private:
@@ -477,26 +477,26 @@ private:
   virtual
   bool
   MIKTEXCALL
-  ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		 /*[out]*/ MIKTEXCHAR * *	ppSubDirNames,
-		 /*[out]*/ MIKTEXCHAR * *	ppFileNames,
-		 /*[out]*/ MIKTEXCHAR * *	ppFileNameInfos);
+  ReadDirectory (/*[in]*/ const char *	lpszPath,
+		 /*[out]*/ char * *	ppSubDirNames,
+		 /*[out]*/ char * *	ppFileNames,
+		 /*[out]*/ char * *	ppFileNameInfos);
 
 private:
   virtual
   bool
   MIKTEXCALL
-  OnProgress (/*[in]*/ unsigned			level,
-	      /*[in]*/ const MIKTEXCHAR *	lpszDirectory);
+  OnProgress (/*[in]*/ unsigned		level,
+	      /*[in]*/ const char *	lpszDirectory);
 
 private:
   virtual
   bool
   MIKTEXCALL
-  OnFndbItem (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	      /*[in]*/ const MIKTEXCHAR *	lpszName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-	      /*[in]*/  bool			isDirectory);
+  OnFndbItem (/*[in]*/ const char *	lpszPath,
+	      /*[in]*/ const char *	lpszName,
+	      /*[in]*/ const char *	lpszInfo,
+	      /*[in]*/  bool		isDirectory);
 
 private:
   PathName enumDir;
@@ -526,7 +526,7 @@ private:
   StartupConfig startupConfig;
   
 private:
-  vector<tstring> formatsMade;
+  vector<string> formatsMade;
   
 private:
   StreamWriter logStream;
@@ -1350,7 +1350,7 @@ IniTeXMFApp::~IniTeXMFApp ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * argv0)
+IniTeXMFApp::Init (/*[in]*/ const char * argv0)
 {
   Session::InitInfo initInfo (argv0);
 #if defined(MIKTEX_WINDOWS)
@@ -1390,19 +1390,19 @@ IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
 			      /*[in]*/ LPARAM	lparam)
 {
   IniTeXMFApp * This = reinterpret_cast<IniTeXMFApp*>(lparam);
-  MIKTEXCHAR szText[200];
+  char szText[200];
   if (GetWindowText(hwnd, szText, 200) == 0)
     {
       return (TRUE);
     }
-  if (_tcsstr(szText, T_("MiKTeX")) != 0)
+  if (strstr(szText, T_("MiKTeX")) != 0)
     {
-      if (_tcsstr(szText, T_("Update")) != 0)
+      if (strstr(szText, T_("Update")) != 0)
 	{
 	  This->updateWizardRunning = true;
 	}
-      else if (_tcsstr(szText, T_("Setup")) != 0
-	       || _tcsstr(szText, T_("Installer")) != 0)
+      else if (strstr(szText, T_("Setup")) != 0
+	       || strstr(szText, T_("Installer")) != 0)
 	{
 	  This->setupWizardRunning = true;
 	}
@@ -1434,8 +1434,8 @@ IniTeXMFApp::FindWizards ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+IniTeXMFApp::Message (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (quiet || printOnly)
     {
@@ -1453,8 +1453,8 @@ IniTeXMFApp::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+IniTeXMFApp::Verbose (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (! verbose || printOnly)
     {
@@ -1472,8 +1472,8 @@ IniTeXMFApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			/*[in]*/			...)
+IniTeXMFApp::PrintOnly (/*[in]*/ const char *	lpszFormat,
+			/*[in]*/		...)
 {
   if (! printOnly)
     {
@@ -1491,8 +1491,8 @@ IniTeXMFApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+IniTeXMFApp::Warning (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (quiet)
     {
@@ -1513,8 +1513,8 @@ IniTeXMFApp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
   
 MIKTEXNORETURN
 void
-IniTeXMFApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			 /*[in]*/			...)
+IniTeXMFApp::FatalError (/*[in]*/ const char *	lpszFormat,
+			 /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -1532,10 +1532,10 @@ IniTeXMFApp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 bool
 MIKTEXCALL
-IniTeXMFApp::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-			    /*[out]*/ MIKTEXCHAR * *	ppSubDirNames,
-			    /*[out]*/ MIKTEXCHAR * *	ppFileNames,
-			    /*[out]*/ MIKTEXCHAR * *	ppFileNameInfos)
+IniTeXMFApp::ReadDirectory (/*[in]*/ const char *	lpszPath,
+			    /*[out]*/ char * *		ppSubDirNames,
+			    /*[out]*/ char * *		ppFileNames,
+			    /*[out]*/ char * *		ppFileNameInfos)
   
 {
   UNUSED_ALWAYS (lpszPath);
@@ -1552,8 +1552,8 @@ IniTeXMFApp::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
 bool
 MIKTEXCALL
-IniTeXMFApp::OnProgress (/*[in]*/ unsigned		level,
-			 /*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+IniTeXMFApp::OnProgress (/*[in]*/ unsigned	level,
+			 /*[in]*/ const char *	lpszDirectory)
 {
   if (verbose && level == 1)
     {
@@ -1709,7 +1709,7 @@ IniTeXMFApp::SetTeXMFRootDirectories ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::RunMakeTeX (/*[in]*/ const MIKTEXCHAR *		lpszMakeProg,
+IniTeXMFApp::RunMakeTeX (/*[in]*/ const char *			lpszMakeProg,
 			 /*[in]*/ const CommandLineBuilder &	arguments)
 {
   PathName exe;
@@ -1746,7 +1746,7 @@ IniTeXMFApp::RunMakeTeX (/*[in]*/ const MIKTEXCHAR *		lpszMakeProg,
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatKey)
+IniTeXMFApp::MakeFormatFile (/*[in]*/ const char * lpszFormatKey)
 {
   if (find(formatsMade.begin(), formatsMade.end(), lpszFormatKey)
       != formatsMade.end())
@@ -1760,7 +1760,7 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatKey)
       FatalError (T_("Unknown format: %s"), Q_(lpszFormatKey));
     }
 
-  tstring maker;
+  string maker;
 
   CommandLineBuilder arguments;
 
@@ -1816,7 +1816,7 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const MIKTEXCHAR * lpszFormatKey)
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
+IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<string> & formats)
 {
   if (formats.size() == 0)
     {
@@ -1831,7 +1831,7 @@ IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
     }
   else
     {
-      for (vector<tstring>::const_iterator it = formats.begin();
+      for (vector<string>::const_iterator it = formats.begin();
 	   it != formats.end();
 	   ++ it)
 	{
@@ -1847,10 +1847,10 @@ IniTeXMFApp::MakeFormatFiles (/*[in]*/ const vector<tstring> & formats)
 
 void
 IniTeXMFApp::MakeFormatFilesByName
-(/*[in]*/ const vector<tstring> & formatsByName,
- /*[in]*/ const tstring &		engine)
+(/*[in]*/ const vector<string> &	formatsByName,
+ /*[in]*/ const string &		engine)
 {
-  for (vector<tstring>::const_iterator it = formatsByName.begin();
+  for (vector<string>::const_iterator it = formatsByName.begin();
        it != formatsByName.end();
        ++ it)
     {
@@ -1954,13 +1954,13 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
       auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
       while (pIter->GetNext(pi))
 	{
-	  for (vector<tstring>::const_iterator it
+	  for (vector<string>::const_iterator it
 		 = pi.runFiles.begin();
 	       it != pi.runFiles.end();
 	       ++ it)
 	    {
-	      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-	      MIKTEXCHAR szExt[BufferSizes::MaxPath];
+	      char szFileName[BufferSizes::MaxPath];
+	      char szExt[BufferSizes::MaxPath];
 	      PathName::Split (it->c_str(),
 			       0, 0,
 			       szFileName, BufferSizes::MaxPath,
@@ -2000,13 +2000,13 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
       auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
       while (pIter->GetNext(pi))
 	{
-	  for (vector<tstring>::const_iterator it
+	  for (vector<string>::const_iterator it
 		 = pi.runFiles.begin();
 	       it != pi.runFiles.end();
 	       ++ it)
 	    {
-	      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-	      MIKTEXCHAR szExt[BufferSizes::MaxPath];
+	      char szFileName[BufferSizes::MaxPath];
+	      char szExt[BufferSizes::MaxPath];
 	      PathName::Split (it->c_str(),
 			       0, 0,
 			       szFileName, BufferSizes::MaxPath,
@@ -2072,7 +2072,7 @@ IniTeXMFApp::MakeMaps ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::EditConfigFile (/*[in]*/ const MIKTEXCHAR * lpszName)
+IniTeXMFApp::EditConfigFile (/*[in]*/ const char * lpszName)
 {
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
   bool haveConfigFile = false;
@@ -2363,7 +2363,7 @@ IniTeXMFApp::ReportEnvironmentVariables ()
 	  return;
 	}
       xmlWriter.StartElement (T_("environment"));
-      for (LPTSTR p = lpszEnv; *p != 0; p += _tcslen(p) + 1)
+      for (LPTSTR p = lpszEnv; *p != 0; p += strlen(p) + 1)
 	{
 	  Tokenizer tok (p, T_("="));
 	  if (tok.GetCurrent() == 0)
@@ -2393,7 +2393,7 @@ IniTeXMFApp::ReportEnvironmentVariables ()
 void
 IniTeXMFApp::ReportBrokenPackages ()
 {
-  vector<tstring> broken;
+  vector<string> broken;
   auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
   PackageInfo packageInfo;
   for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
@@ -2415,7 +2415,7 @@ IniTeXMFApp::ReportBrokenPackages ()
       if (xml)
 	{
 	  xmlWriter.StartElement (T_("packages"));
-	  for (vector<tstring>::const_iterator it = broken.begin();
+	  for (vector<string>::const_iterator it = broken.begin();
 	       it != broken.end();
 	       ++ it)
 	    {
@@ -2428,7 +2428,7 @@ IniTeXMFApp::ReportBrokenPackages ()
 	}
       else
 	{
-	  for (vector<tstring>::const_iterator it = broken.begin();
+	  for (vector<string>::const_iterator it = broken.begin();
 	       it != broken.end();
 	       ++ it)
 	    {
@@ -2472,15 +2472,15 @@ IniTeXMFApp::WriteReport ()
 
 bool
 MIKTEXCALL
-IniTeXMFApp::OnFndbItem (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-			 /*[in]*/ const MIKTEXCHAR *	lpszName,
-			 /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			 /*[in]*/  bool			isDirectory)
+IniTeXMFApp::OnFndbItem (/*[in]*/ const char *	lpszPath,
+			 /*[in]*/ const char *	lpszName,
+			 /*[in]*/ const char *	lpszInfo,
+			 /*[in]*/ bool		isDirectory)
 {
   if (recursive)
     {
       PathName path (lpszPath, lpszName);
-      const MIKTEXCHAR * lpszRel =
+      const char * lpszRel =
 	Utils::GetRelativizedPath(path.Get(), enumDir.Get());
       if (! isDirectory)
 	{
@@ -2534,18 +2534,18 @@ IniTeXMFApp::OnFndbItem (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
 void
 IniTeXMFApp::Run (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv)
+		  /*[in]*/ const char **	argv)
 {
-  vector<tstring> addFiles;
-  vector<tstring> editConfigFiles;
-  vector<tstring> formats;
-  vector<tstring> formatsByName;
-  vector<tstring> listDirectories;
-  vector<tstring> removeFiles;
-  vector<tstring> updateRoots;
-  tstring defaultPaperSize;
-  tstring engine;
-  tstring logFile;
+  vector<string> addFiles;
+  vector<string> editConfigFiles;
+  vector<string> formats;
+  vector<string> formatsByName;
+  vector<string> listDirectories;
+  vector<string> removeFiles;
+  vector<string> updateRoots;
+  string defaultPaperSize;
+  string engine;
+  string logFile;
 
   TriState triSharedSetup (TriState::Undetermined);
 
@@ -2572,7 +2572,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 
@@ -2745,7 +2745,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
@@ -2835,7 +2835,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       MakeMaps ();
     }
 
-  for (vector<tstring>::const_iterator it = addFiles.begin();
+  for (vector<string>::const_iterator it = addFiles.begin();
        it != addFiles.end();
        ++ it)
     {
@@ -2855,7 +2855,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  for (vector<tstring>::const_iterator it = removeFiles.begin();
+  for (vector<string>::const_iterator it = removeFiles.begin();
        it != removeFiles.end();
        ++ it)
     {
@@ -2893,7 +2893,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
       else
 	{
-	  for (vector<tstring>::const_iterator it = updateRoots.begin();
+	  for (vector<string>::const_iterator it = updateRoots.begin();
 	       it != updateRoots.end();
 	       ++ it)
 	    {
@@ -2902,7 +2902,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  for (vector<tstring>::const_iterator it = listDirectories.begin();
+  for (vector<string>::const_iterator it = listDirectories.begin();
        it != listDirectories.end();
        ++ it)
     {
@@ -2910,7 +2910,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       Fndb::Enumerate (*it, this);
     }
 
-  for (vector<tstring>::const_iterator it = editConfigFiles.begin();
+  for (vector<string>::const_iterator it = editConfigFiles.begin();
        it != editConfigFiles.end();
        ++ it)
     {
@@ -2940,7 +2940,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 {
   try
     {

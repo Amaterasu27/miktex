@@ -40,9 +40,9 @@ LogFile::LogFile (/*[in]*/ RemoveFilesPage * pDlg)
    _________________________________________________________________________ */
 
 bool
-SkipPrefix (/*[in]*/ const tstring &	str,
-	    /*[in]*/ const MIKTEXCHAR *	lpszPrefix,
-	    /*[out]*/ tstring &		str2)
+SkipPrefix (/*[in]*/ const string &	str,
+	    /*[in]*/ const char *	lpszPrefix,
+	    /*[out]*/ string &		str2)
 {
   size_t n = StrLen(lpszPrefix);
   if (str.compare(0, n, lpszPrefix) != 0)
@@ -62,7 +62,7 @@ SkipPrefix (/*[in]*/ const tstring &	str,
 void
 LogFile::AddFile (/*[in]*/ const PathName & path)
 {
-  tstring fileName;
+  string fileName;
   if (SkipPrefix(path.Get(), T_("texmf/"), fileName)
       || SkipPrefix(path.Get(), T_("texmf\\"), fileName)
       || SkipPrefix(path.Get(), T_("./texmf/"), fileName)
@@ -105,7 +105,7 @@ LogFile::AddPackages ()
 	}
 
       // add files to the file set
-      vector<tstring>::const_iterator it;
+      vector<string>::const_iterator it;
       for (it = pi.runFiles.begin();
 	   it != pi.runFiles.end();
 	   ++it)
@@ -140,7 +140,7 @@ LogFile::ReadLogFile ()
   StreamReader stream (logFileName);
 
   // read lines
-  tstring line;
+  string line;
   enum Section { None, Files, HKCU, HKLM };
   Section section = None;
   while (stream.ReadLine(line) && ! pDlg->GetCancelFlag())
@@ -286,7 +286,7 @@ LogFile::RemoveRegistrySettings ()
 	  continue;
 	}
       RegDeleteValue (hkeySub, it->strValueName);
-      MIKTEXCHAR szName[BufferSizes::MaxPath];
+      char szName[BufferSizes::MaxPath];
       DWORD sizeName = BufferSizes::MaxPath;
       FILETIME fileTime;
       bool del =

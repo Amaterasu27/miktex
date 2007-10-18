@@ -50,7 +50,7 @@ public:
 
 public:
   winDirectoryLister (/*[in]*/ const PathName &		directory,
-		      /*[in]*/ const MIKTEXCHAR *	lpszPattern);
+		      /*[in]*/ const char *	lpszPattern);
 
 public:
   virtual
@@ -61,7 +61,7 @@ private:
   PathName directory;
 
 private:
-  tstring pattern;
+  string pattern;
 
 private:
   HANDLE handle;

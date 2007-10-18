@@ -40,7 +40,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+	   /*[in]*/ const char *			lpszPrefix);
 };
 
 END_INTERNAL_NAMESPACE;

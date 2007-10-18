@@ -27,12 +27,12 @@
 
 const unsigned char null_byte = 0;
 
-#define FN_MIKTEXIGNORE T_(".miktexignore")
+#define FN_MIKTEXIGNORE ".miktexignore"
 
 struct FILENAMEINFO
 {
-  tstring	FileName;
-  tstring	Info;
+  string	FileName;
+  string	Info;
 };
   
 struct COMPAREFILENAMEINFO
@@ -64,7 +64,7 @@ public:
 
 public:
   FndbManager ()
-    : traceStream (TraceStream::Open(T_("fndb")))
+    : traceStream (TraceStream::Open("fndb"))
   {
   }
 
@@ -83,8 +83,8 @@ public:
 
 public:
   bool
-  Create (/*[in]*/ const MIKTEXCHAR *		lpszFndbPath,
-	  /*[in]*/ const MIKTEXCHAR *		lpszRootPath,
+  Create (/*[in]*/ const char *		lpszFndbPath,
+	  /*[in]*/ const char *		lpszRootPath,
 	  /*[in]*/ ICreateFndbCallback *	pCallback,
 	  /*[in]*/ bool				enableStringPooling,
 	  /*[in]*/ bool				storeFileNameInfo);
@@ -132,7 +132,7 @@ private:
 
 private:
   FileNameDatabaseHeader::FndbOffset
-  PushBack (/*[in]*/ const MIKTEXCHAR * lpsz);
+  PushBack (/*[in]*/ const char * lpsz);
 
 private:
   void
@@ -140,20 +140,20 @@ private:
 
 private:
   static void
-  GetIgnorableFiles (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		     /*[out]*/ vector<tstring> &	filesToBeIgnored);
+  GetIgnorableFiles (/*[in]*/ const char *	lpszPath,
+		     /*[out]*/ vector<string> &	filesToBeIgnored);
 
 public:
   void
-  ReadDirectory (/*[in]*/ const MIKTEXCHAR *		lpszPath,
-		 /*[out]*/ vector<tstring> &		subDirectoryNames,
+  ReadDirectory (/*[in]*/ const char *		lpszPath,
+		 /*[out]*/ vector<string> &		subDirectoryNames,
 		 /*[out]*/ vector<FILENAMEINFO> &	fileNames);
 
 private:
   FileNameDatabaseHeader::FndbOffset
   ProcessFolder (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foParent,
-		 /*[in]*/ const MIKTEXCHAR *			lpszParentPath,
-		 /*[in]*/ const MIKTEXCHAR *			lpszFolderName,
+		 /*[in]*/ const char *			lpszParentPath,
+		 /*[in]*/ const char *			lpszFolderName,
 		 /*[in]*/ FileNameDatabaseHeader::FndbOffset	foFolderName);
 
 private:
@@ -176,9 +176,9 @@ private:
 
 private:
 #if defined(USE_HASH_MAP)
-  typedef hash_map<tstring, FileNameDatabaseHeader::FndbOffset> StringMap;
+  typedef hash_map<string, FileNameDatabaseHeader::FndbOffset> StringMap;
 #else
-  typedef map<tstring, FileNameDatabaseHeader::FndbOffset> StringMap;
+  typedef map<string, FileNameDatabaseHeader::FndbOffset> StringMap;
 #endif
 
 private:
@@ -329,7 +329,7 @@ FndbManager::PushBack (/*[in]*/ const void *	pData,
    _________________________________________________________________________ */
 
 FileNameDatabaseHeader::FndbOffset
-FndbManager::PushBack (/*[in]*/ const MIKTEXCHAR * lpsz)
+FndbManager::PushBack (/*[in]*/ const char * lpsz)
 {
   if (enableStringPooling)
     {
@@ -372,8 +372,8 @@ FndbManager::AlignMem (/*[in]*/ unsigned long align)
 
 void
 FndbManager::GetIgnorableFiles
-(/*[in]*/ const MIKTEXCHAR *	lpszPath,
- /*[out]*/ vector<tstring> &	filesToBeIgnored)
+(/*[in]*/ const char *	lpszPath,
+ /*[out]*/ vector<string> &	filesToBeIgnored)
 {
   PathName ignoreFile (lpszPath, FN_MIKTEXIGNORE, 0);
   if (! File::Exists(ignoreFile))
@@ -382,7 +382,7 @@ FndbManager::GetIgnorableFiles
     }
   StreamReader reader (ignoreFile);
   filesToBeIgnored.reserve (10);
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       filesToBeIgnored.push_back (line);
@@ -398,18 +398,18 @@ FndbManager::GetIgnorableFiles
    _________________________________________________________________________ */
 
 void
-FndbManager::ReadDirectory (/*[in]*/ const MIKTEXCHAR *		lpszPath,
-			    /*[out]*/ vector<tstring> &	subDirectoryNames,
+FndbManager::ReadDirectory (/*[in]*/ const char *		lpszPath,
+			    /*[out]*/ vector<string> &	subDirectoryNames,
 			    /*[out]*/ vector<FILENAMEINFO> &	fileNames)
 {
   if (! Directory::Exists(lpszPath))
     {
-      traceStream->WriteFormattedLine (T_("core"),
+      traceStream->WriteFormattedLine ("core",
 				       T_("the directory %s does not exist"),
 				       Q_(lpszPath));
       return;
     }
-  vector<tstring> filesToBeIgnored;
+  vector<string> filesToBeIgnored;
   GetIgnorableFiles (lpszPath, filesToBeIgnored);
   auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(lpszPath));
   DirectoryEntry entry;
@@ -444,8 +444,8 @@ FndbManager::ReadDirectory (/*[in]*/ const MIKTEXCHAR *		lpszPath,
 FileNameDatabaseHeader::FndbOffset
 FndbManager::ProcessFolder
 (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foParent,
- /*[in]*/ const MIKTEXCHAR *			lpszParentPath,
- /*[in]*/ const MIKTEXCHAR *			lpszFolderName,
+ /*[in]*/ const char *			lpszParentPath,
+ /*[in]*/ const char *			lpszFolderName,
  /*[in]*/ FileNameDatabaseHeader::FndbOffset	foFolderName)
 {
   const size_t cReservedEntries = 0;
@@ -455,7 +455,7 @@ FndbManager::ProcessFolder
       deepestLevel = currentLevel;
     }
 
-  vector<tstring> subDirectoryNames;
+  vector<string> subDirectoryNames;
   subDirectoryNames.reserve (40);
 
   vector<FILENAMEINFO> fileNames;
@@ -473,9 +473,9 @@ FndbManager::ProcessFolder
 	{
 	  throw OperationCancelledException ();
 	}
-      MIKTEXCHAR * lpszSubDirNames = 0;
-      MIKTEXCHAR * lpszFileNames = 0;
-      MIKTEXCHAR * lpszFileNameInfos = 0;
+      char * lpszSubDirNames = 0;
+      char * lpszFileNames = 0;
+      char * lpszFileNameInfos = 0;
       done =
 	pCallback->ReadDirectory(path.Get(),
 				 &lpszSubDirNames,
@@ -486,14 +486,14 @@ FndbManager::ProcessFolder
 	  AutoMemoryPointer xxx (lpszSubDirNames);
 	  AutoMemoryPointer xxy (lpszFileNames);
 	  AutoMemoryPointer xxz (lpszFileNameInfos);
-	  const MIKTEXCHAR * lpsz = lpszSubDirNames;
+	  const char * lpsz = lpszSubDirNames;
 	  while (*lpsz != 0)
 	    {
 	      subDirectoryNames.push_back (lpsz);
 	      lpsz += StrLen(lpsz) + 1;
 	    }
 	  lpsz = lpszFileNames;
-	  const MIKTEXCHAR * lpsz2 = lpszFileNameInfos;
+	  const char * lpsz2 = lpszFileNameInfos;
 	  while (*lpsz != 0)
 	    {
 	      FILENAMEINFO filenameinfo;
@@ -528,7 +528,7 @@ FndbManager::ProcessFolder
 		      + 2 * subDirectoryNames.size()
 		      + cReservedEntries);
   vector<FILENAMEINFO>::iterator it;
-  vector<tstring>::iterator it2;
+  vector<string>::iterator it2;
   for (it = fileNames.begin(); it != fileNames.end(); ++ it)
     {
       vecfndboff.push_back (PushBack((*it).FileName.c_str()));
@@ -603,13 +603,13 @@ FndbManager::ProcessFolder
    _________________________________________________________________________ */
 
 bool
-FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
-		     /*[in]*/ const MIKTEXCHAR *	lpszRootPath,
+FndbManager::Create (/*[in]*/ const char *	lpszFndbPath,
+		     /*[in]*/ const char *	lpszRootPath,
 		     /*[in]*/ ICreateFndbCallback *	pCallback,
 		     /*[in]*/ bool			enableStringPooling,
 		     /*[in]*/ bool			storeFileNameInfo)
 {
-  traceStream->WriteFormattedLine (T_("core"),
+  traceStream->WriteFormattedLine ("core",
 				   T_("creating fndb file %s..."),
 				   Q_(lpszFndbPath));
   unsigned rootIdx = SessionImpl::GetSession()->DeriveTEXMFRoot(lpszRootPath);
@@ -676,7 +676,7 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
 								      true);
 	  if (! unloaded)
 	    {
-	      traceStream->WriteFormattedLine (T_("core"), T_("Sleep(1)"));
+	      traceStream->WriteFormattedLine ("core", "Sleep(1)");
 	      Thread::Sleep (1);
 	    }
 	}
@@ -695,13 +695,13 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
 					FileAccess::Write,
 					false));
       streamFndb.Write (GetMemPointer(), GetMemTop());
-      traceStream->WriteFormattedLine (T_("core"),
+      traceStream->WriteFormattedLine ("core",
 				       T_("fndb creation completed"));
       return (true);
     }
   catch (const OperationCancelledException &)
     {
-      traceStream->WriteFormattedLine (T_("core"),
+      traceStream->WriteFormattedLine ("core",
 				       T_("fndb creation cancelled"));
       return (false);
     }
@@ -713,8 +713,8 @@ FndbManager::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
    _________________________________________________________________________ */
 
 bool
-Fndb::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
-	      /*[in]*/ const MIKTEXCHAR *	lpszRootPath,
+Fndb::Create (/*[in]*/ const char *	lpszFndbPath,
+	      /*[in]*/ const char *	lpszRootPath,
 	      /*[in]*/ ICreateFndbCallback *	pCallback)
 {
   MIKTEX_ASSERT_STRING (lpszFndbPath);
@@ -732,8 +732,8 @@ Fndb::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
    _________________________________________________________________________ */
 
 bool
-Fndb::Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
-	      /*[in]*/ const MIKTEXCHAR *	lpszRootPath,
+Fndb::Create (/*[in]*/ const char *	lpszFndbPath,
+	      /*[in]*/ const char *	lpszRootPath,
 	      /*[in]*/ ICreateFndbCallback *	pCallback,
 	      /*[in]*/ bool			enableStringPooling,
 	      /*[in]*/ bool			storeFileNameInfo)

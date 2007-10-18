@@ -40,7 +40,7 @@ public:
 
 public:
   static
-  const MIKTEXCHAR *
+  const char *
   GetFileNameExtension (/*[in]*/ EnumType archiveFileType)
   {
     switch (archiveFileType)
@@ -108,8 +108,8 @@ struct PackageSpec
       archiveFileType (ArchiveFileType::None)
   {
   }
-  tstring	deploymentName;	// external package name
-  MIKTEXCHAR	level;		// one of: '-', 'S', 'M', 'L', 'T'
+  string	deploymentName;	// external package name
+  char	level;		// one of: '-', 'S', 'M', 'L', 'T'
   ArchiveFileType archiveFileType;
 };
 
@@ -121,18 +121,18 @@ struct PackageSpec
    _________________________________________________________________________ */
 
 struct PathNameComparer
-  : public binary_function<tstring, tstring, bool>
+  : public binary_function<string, string, bool>
 {
   bool
-  operator() (/*[in]*/ const tstring & str1,
-	      /*[in]*/ const tstring & str2)
+  operator() (/*[in]*/ const string & str1,
+	      /*[in]*/ const string & str2)
     const
   {
     return (PathName::Compare(str1.c_str(), str2.c_str()) < 0);
   }
 };
 
-typedef map<tstring, MD5, PathNameComparer> FileDigestTable;
+typedef map<string, MD5, PathNameComparer> FileDigestTable;
   
 /* _________________________________________________________________________
 
@@ -188,7 +188,7 @@ bool optVerbose;
 // value of "TPM:TimePackaged"
 time_t timePackaged;
 
-tstring texmfPrefix = "texmf";
+string texmfPrefix = "texmf";
 
 // command-line options
 const struct option options[] =
@@ -213,13 +213,13 @@ const struct option options[] =
 };
 
 // accumulated --package-list contents
-map<tstring, PackageSpec> packageList;
+map<string, PackageSpec> packageList;
 
 // packages to be included
-set<tstring> toBeIncluded;
+set<string> toBeIncluded;
 
 // default package level
-MIKTEXCHAR defaultLevel = 'T';
+char defaultLevel = 'T';
 
 // default archive file type
 ArchiveFileType defaultArchiveFileType = ArchiveFileType::TarLzma;
@@ -247,7 +247,7 @@ Help ()
    _________________________________________________________________________ */
 
 void
-Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Verbose (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...)
 {
   if (optVerbose)
@@ -265,7 +265,7 @@ Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FatalError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   va_list arglist;
@@ -282,7 +282,7 @@ FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    Warning
    _________________________________________________________________________ */
 void
-Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Warning (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...)
 {
   va_list arglist;
@@ -408,7 +408,7 @@ MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
 	}
 
       // relativize file name
-      const MIKTEXCHAR * lpszRelPath
+      const char * lpszRelPath
 	= Utils::GetRelativizedPath(destPath.Get(), prefix.Get());
 
       // remember MD5
@@ -430,11 +430,11 @@ MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
    _________________________________________________________________________ */
 
 void
-MD5CopyFiles (/*[in]*/ const vector<tstring> &	files,
+MD5CopyFiles (/*[in]*/ const vector<string> &	files,
 	      /*[in]*/ const PathName &		sourceDir,
-	      /*[in]*/ const MIKTEXCHAR *	lpszSourceSubDir,
+	      /*[in]*/ const char *	lpszSourceSubDir,
 	      /*[in]*/ const PathName &		destDir,
-	      /*[in]*/ const MIKTEXCHAR *	lpszDestSubDir,
+	      /*[in]*/ const char *	lpszDestSubDir,
 	      /*[in,out]*/ FileDigestTable &	fileDigests)
 {
   // path to source root directory
@@ -443,7 +443,7 @@ MD5CopyFiles (/*[in]*/ const vector<tstring> &	files,
   // path to destination root directory
   PathName destRootDir (destDir, lpszDestSubDir);
 
-  for ( vector<tstring>::const_iterator it = files.begin();
+  for ( vector<string>::const_iterator it = files.begin();
 	it != files.end();
 	++ it)
     {
@@ -465,7 +465,7 @@ MD5CopyFiles (/*[in]*/ const vector<tstring> &	files,
    _________________________________________________________________________ */
 
 void
-WriteDescriptionFile (/*[in]*/ const tstring &	description,
+WriteDescriptionFile (/*[in]*/ const string &	description,
 		  /*[in]*/ const PathName &	directory)
 {
   Directory::Create (directory);
@@ -585,8 +585,8 @@ CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
    _________________________________________________________________________ */
 
 void
-ReadDescriptionFile (/*[in]*/ const MIKTEXCHAR *	lpszPackageDir,
-		     /*[out]*/ tstring &		description)
+ReadDescriptionFile (/*[in]*/ const char *	lpszPackageDir,
+		     /*[out]*/ string &		description)
 {
   PathName descriptionFileName (lpszPackageDir, "Description");
   if (! File::Exists(descriptionFileName))
@@ -597,10 +597,10 @@ ReadDescriptionFile (/*[in]*/ const MIKTEXCHAR *	lpszPackageDir,
   FileStream stream (File::Open(descriptionFileName,
 				FileMode::Open,
 				FileAccess::Read));
-  MIKTEXCHARINT ch;
+  int ch;
   while ((ch = fgetc(stream.Get())) != EOF)
     {
-      description += static_cast<MIKTEXCHAR>(ch);
+      description += static_cast<char>(ch);
     }
   stream.Close ();
 }
@@ -611,7 +611,7 @@ ReadDescriptionFile (/*[in]*/ const MIKTEXCHAR *	lpszPackageDir,
    _________________________________________________________________________ */
 
 void
-InitializePackageInfo (/*[in]*/ const MIKTEXCHAR *	lpszPackagePath,
+InitializePackageInfo (/*[in]*/ const char *	lpszPackagePath,
 		       /*[out]*/ MpcPackageInfo &	packageinfo)
 {
   SmartPointer<Cfg> pcfg (Cfg::Create());
@@ -641,7 +641,7 @@ InitializePackageInfo (/*[in]*/ const MIKTEXCHAR *	lpszPackagePath,
   pcfg->TryGetValue (0, "version", packageinfo.version);
 
   // get required packages (optional value)
-  tstring strReqList;
+  string strReqList;
   if (pcfg->TryGetValue(0, "requires", strReqList))
     {
       for (CSVList tok (strReqList.c_str(), ';');
@@ -653,7 +653,7 @@ InitializePackageInfo (/*[in]*/ const MIKTEXCHAR *	lpszPackagePath,
     }
 
   // get TDS digest (optional value)
-  tstring str;
+  string str;
   if (pcfg->TryGetValue(0, "md5", str))
     {
       packageinfo.digest = MD5::Parse(str.c_str());
@@ -671,7 +671,7 @@ InitializePackageInfo (/*[in]*/ const MIKTEXCHAR *	lpszPackagePath,
    GetPackageLevel
    _________________________________________________________________________ */
 
-MIKTEXCHAR
+char
 GetPackageLevel (/*[in]*/ const MpcPackageInfo &	packageInfo)
 {
   map<string, PackageSpec>::const_iterator
@@ -721,7 +721,7 @@ ConsiderP (/*[in]*/ const MpcPackageInfo &	packageInfo)
 void
 CollectFiles (/*[in]*/ const PathName &		rootDir,
 	      /*[in]*/ const PathName &		subDir,
-	      /*[in,out]*/ vector<tstring> &	files,
+	      /*[in,out]*/ vector<string> &	files,
 	      /*[in,out]*/ size_t &		size)
 {
   // directory to be inspected, e.g.:
@@ -770,8 +770,8 @@ CollectFiles (/*[in]*/ const PathName &		rootDir,
 
 void
 CollectSubTree (/*[in]*/ const PathName &	path,
-		/*[in]*/ const MIKTEXCHAR *	lpszSubDir,
-		/*[out]*/ vector<tstring> &	files,
+		/*[in]*/ const char *	lpszSubDir,
+		/*[out]*/ vector<string> &	files,
 		/*[out]*/ size_t &		size)
 {
   PathName sourceDir (path, lpszSubDir);
@@ -820,7 +820,7 @@ CollectPackage (/*[in,out]*/ MpcPackageInfo &	packageInfo)
 
 void
 CollectPackages (/*[in]*/ const PathName &			rootDir,
-		 /*[in,out]*/ map<tstring, MpcPackageInfo> &	packageTable)
+		 /*[in,out]*/ map<string, MpcPackageInfo> &	packageTable)
 {
   if (! Directory::Exists(rootDir))
     {
@@ -859,7 +859,7 @@ CollectPackages (/*[in]*/ const PathName &			rootDir,
       Verbose ("collecting %s...\n", packageInfo.deploymentName.c_str());
 
       // ignore duplicates
-      map<tstring, MpcPackageInfo>::const_iterator it
+      map<string, MpcPackageInfo>::const_iterator it
 	= packageTable.find(packageInfo.deploymentName);
       if (it !=  packageTable.end())
 	{
@@ -901,7 +901,7 @@ AssembleTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
       CopyPackage (it->second, destDir);
 
       // update database records
-      tstring level;
+      string level;
       level = GetPackageLevel(it->second);
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			   "Level",
@@ -928,14 +928,14 @@ AssembleTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 
 void
 WritePackageDefinitionFiles
-(/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
+(/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
  /*[in]*/ Cfg &					cfgDbLight)
 {
   // create package definition directory
   Directory::Create (destDir);
 
-  for (map<tstring, MpcPackageInfo>::const_iterator it = packageTable.begin();
+  for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
        it != packageTable.end();
        ++ it)
     {
@@ -958,7 +958,7 @@ WritePackageDefinitionFiles
 	}
 
       // write the package definition file
-      tstring str;
+      string str;
       time_t timePackaged;
       if (cfgDbLight.TryGetValue(it->second.deploymentName.c_str(),
 			      "TimePackaged",
@@ -984,9 +984,9 @@ WritePackageDefinitionFiles
 void
 RunArchiver (/*[in]*/ ArchiveFileType		archiveFileType,
 	     /*[in]*/ const PathName &		archiveFile,
-	     /*[in]*/ const MIKTEXCHAR *	lpszFilter)
+	     /*[in]*/ const char *	lpszFilter)
 {
-  tstring command;
+  string command;
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::TarBzip2:
@@ -1014,7 +1014,7 @@ RunArchiver (/*[in]*/ ArchiveFileType		archiveFileType,
    _________________________________________________________________________ */
 
 void
-WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
+WriteNetDatabase (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 		  /*[in]*/ const PathName &			destDir,
 		  /*[in,out]*/ Cfg &				cfgDbLight)
 {
@@ -1025,22 +1025,22 @@ WriteNetDatabase (/*[in]*/ const map<tstring, MpcPackageInfo> &	packageTable,
   Directory::SetCurrentDirectory (destDir);
 
   // remove obsolete package records
-  MIKTEXCHAR szExternalName[BufferSizes::MaxPackageName];
-  vector<tstring> obsoletePackages;
-  for (const MIKTEXCHAR * lpszExternalName =
+  char szExternalName[BufferSizes::MaxPackageName];
+  vector<string> obsoletePackages;
+  for (const char * lpszExternalName =
 	 cfgDbLight.FirstKey(szExternalName, BufferSizes::MaxPackageName);
        lpszExternalName != 0;
        lpszExternalName =
 	 cfgDbLight.NextKey(szExternalName, BufferSizes::MaxPackageName))
     {
-      map<tstring, MpcPackageInfo>::const_iterator
+      map<string, MpcPackageInfo>::const_iterator
 	it = packageTable.find(lpszExternalName);
       if (it == packageTable.end() || ! ConsiderP(it->second))
 	{
 	  obsoletePackages.push_back (lpszExternalName);
 	}
     }
-  for (vector<tstring>::const_iterator it = obsoletePackages.begin();
+  for (vector<string>::const_iterator it = obsoletePackages.begin();
        it != obsoletePackages.end();
        ++ it)
     {
@@ -1090,7 +1090,7 @@ ExtractFile (/*[in]*/ const PathName &	archiveFile,
 	     /*[in]*/ const PathName &	toBeExtracted,
 	     /*[in]*/ const PathName &	outFile)
 {
-  tstring command;
+  string command;
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::MSCab:
@@ -1135,7 +1135,7 @@ CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
 		 /*[in]*/ ArchiveFileType	archiveFileType,
 		 /*[in]*/ const PathName &	outFile)
 {
-  tstring command;
+  string command;
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::TarBzip2:
@@ -1273,7 +1273,7 @@ CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 	 packageInfo,
 	 timePackaged);
       
-      tstring command;
+      string command;
       
       // path to .tar file
       PathName tarFile (destDir,
@@ -1410,11 +1410,11 @@ LoadDbLight (/*[in]*/ const PathName &	directory,
    _________________________________________________________________________ */
 
 void
-AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
+AssembleNetPackages (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
 		     /*[in]*/ const PathName &			destDir,
 		     /*[out]*/ Cfg &				cfgDbLight)
 {
-  for (map<tstring, MpcPackageInfo>::iterator it = packageTable.begin();
+  for (map<string, MpcPackageInfo>::iterator it = packageTable.begin();
        it != packageTable.end();
        ++ it)
     {
@@ -1452,14 +1452,14 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 	}
 
       // update level field
-      tstring level;
+      string level;
       level = GetPackageLevel(it->second);
       cfgDbLight.PutValue (it->second.deploymentName.c_str(),
 			     "Level",
 			     level.c_str());
 
       // get digest of already existing package
-      tstring str;
+      string str;
       if (cfgDbLight.TryGetValue(it->second.deploymentName.c_str(),
 			      "md5",
 			      str))
@@ -1515,18 +1515,18 @@ AssembleNetPackages (/*[out]*/ map<tstring, MpcPackageInfo> &	packageTable,
 
 void
 ReadList (/*[in]*/ const PathName &		path,
-	  /*[out]*/ map<tstring, PackageSpec> &	mapPackageList)
+	  /*[out]*/ map<string, PackageSpec> &	mapPackageList)
 {
   StreamReader reader (path);
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       if (line.empty())
 	{
 	  continue;
 	}
-      MIKTEXCHAR ch = line[0];
-      const MIKTEXCHAR * lpsz = line.c_str() + 1;
+      char ch = line[0];
+      const char * lpsz = line.c_str() + 1;
       while (*lpsz != 0 && (*lpsz == ' ' || *lpsz == '\t'))
 	{
 	  ++ lpsz;
@@ -1587,7 +1587,7 @@ ReadList (/*[in]*/ const PathName &	path,
   FileStream stream (File::Open(path,
 				FileMode::Open,
 				FileAccess::Read));
-  tstring line;
+  string line;
   while (Utils::ReadUntilDelim(line, '\n', stream.Get()))
     {
       size_t l = line.length();
@@ -1626,11 +1626,11 @@ DisassemblePackage (/*[in]*/ const PathName &	packageDefinitionFile,
 					      texmfPrefix.c_str());
 
   // remove the package definition file from the RunFiles list
-  const MIKTEXCHAR * lpszRelPath
+  const char * lpszRelPath
     = Utils::GetRelativizedPath(packageDefinitionFile.Get(), sourceDir.Get());
   if (lpszRelPath != 0)
     {
-      vector<tstring>::iterator it;
+      vector<string>::iterator it;
       for (it = packageInfo.runFiles.begin();
 	   it != packageInfo.runFiles.end();
 	   ++ it)
@@ -1648,7 +1648,7 @@ DisassemblePackage (/*[in]*/ const PathName &	packageDefinitionFile,
 
   // determine the external package name, e.g.:
   // a0poster
-  MIKTEXCHAR szExternalName[BufferSizes::MaxPath];
+  char szExternalName[BufferSizes::MaxPath];
   packageDefinitionFile.GetFileNameWithoutExtension (szExternalName);
   packageInfo.deploymentName = szExternalName;
 
@@ -1717,9 +1717,9 @@ DisassemblePackage (/*[in]*/ const PathName &	packageDefinitionFile,
 
 void
 Run (/*[in]*/ int		argc,
-     /*[in]*/ MIKTEXCHAR **	argv)
+     /*[in]*/ char **	argv)
 {
-  vector<tstring> rootDirectories;
+  vector<string> rootDirectories;
 
   PathName databaseDir;
   PathName destDir;
@@ -1839,7 +1839,7 @@ Run (/*[in]*/ int		argc,
       || optAssembleTDS)
     {
       // collect the packages
-      map<tstring, MpcPackageInfo> packageTable;
+      map<string, MpcPackageInfo> packageTable;
       for (vector<string>::const_iterator it = rootDirectories.begin();
 	   it != rootDirectories.end();
 	   ++ it)
@@ -1909,7 +1909,7 @@ Run (/*[in]*/ int		argc,
 
 int
 main (/*[in]*/ int		argc,
-      /*[in]*/ MIKTEXCHAR **	argv)
+      /*[in]*/ char **	argv)
 {
   int result;
 

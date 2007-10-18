@@ -36,7 +36,7 @@ template<class Enum>
 struct EnumAndString
 {
   typename Enum::EnumType num;
-  const MIKTEXCHAR * lpsz;
+  const char * lpsz;
 };
 
 namespace
@@ -58,13 +58,13 @@ namespace
   };
 
 
-  const MIKTEXCHAR * const DEFAULT_SECURE_COMMANDS = T_("\
+  const char * const DEFAULT_SECURE_COMMANDS = T_("\
 gunzip,\
 zcat,\
 bunzip2,\
 bzcat");
 
-  const MIKTEXCHAR * const DEFAULT_GAMMA_VALUES = T_("\
+  const char * const DEFAULT_GAMMA_VALUES = T_("\
 0.01 \
 0.05 \
 0.1 \
@@ -95,7 +95,7 @@ bzcat");
    _________________________________________________________________________ */
 
 template<class Enum>
-const MIKTEXCHAR *
+const char *
 EnumToString (/*[in]*/ typename Enum::EnumType		num,
 	      /*[in]*/ const EnumAndString<Enum> *	pMap)
 {
@@ -116,7 +116,7 @@ EnumToString (/*[in]*/ typename Enum::EnumType		num,
 
 template<class Enum>
 typename Enum::EnumType
-StringToEnum (/*[in]*/ const MIKTEXCHAR *		lpsz,
+StringToEnum (/*[in]*/ const char *		lpsz,
 	      /*[in]*/ const EnumAndString<Enum> *	pMap)
 {
   for (size_t idx = 0; pMap[idx].lpsz != 0; ++ idx)
@@ -135,8 +135,8 @@ StringToEnum (/*[in]*/ const MIKTEXCHAR *		lpsz,
    _________________________________________________________________________ */
 
 bool
-GetProfileBool (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+GetProfileBool (/*[in]*/ const char *	lpszKeyName,
+		/*[in]*/ const char *	lpszValueName,
 		/*[in]*/ bool			defaultValue)
 {
    CWinApp * pApp = AfxGetApp();
@@ -153,8 +153,8 @@ GetProfileBool (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 double
-GetProfileDouble (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+GetProfileDouble (/*[in]*/ const char *	lpszKeyName,
+		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ double		fDefault)
 {
    CWinApp * pApp = AfxGetApp();
@@ -173,8 +173,8 @@ GetProfileDouble (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 bool
-RemoveDefaultValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		    /*[in]*/ const MIKTEXCHAR *	lpszValueName)
+RemoveDefaultValue (/*[in]*/ const char *	lpszKeyName,
+		    /*[in]*/ const char *	lpszValueName)
 {
   CString strPath;
   strPath.Format (T_("Software\\MiK\\MiKTeX\\yap\\%s"), lpszKeyName);
@@ -199,8 +199,8 @@ RemoveDefaultValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 void
-UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+UpdateRegValue (/*[in]*/ const char *	lpszKeyName,
+		/*[in]*/ const char *	lpszValueName,
 		/*[in]*/ bool			value,
 		/*[in]*/ bool			defaultValue)
 {
@@ -223,8 +223,8 @@ UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 void
-UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+UpdateRegValue (/*[in]*/ const char *	lpszKeyName,
+		/*[in]*/ const char *	lpszValueName,
 		/*[in]*/ double			value,
 		/*[in]*/ double			defaultValue)
 {
@@ -249,8 +249,8 @@ UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 void
-UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		/*[in]*/ const MIKTEXCHAR *	lpszValueName,
+UpdateRegValue (/*[in]*/ const char *	lpszKeyName,
+		/*[in]*/ const char *	lpszValueName,
 		/*[in]*/ int			value,
 		/*[in]*/ int			defaultValue)
 {
@@ -273,10 +273,10 @@ UpdateRegValue (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 void
-UpdateRegValue (/*[in]*/ const MIKTEXCHAR *		lpszKeyName,
-		/*[in]*/ const MIKTEXCHAR *		lpszValueName,
+UpdateRegValue (/*[in]*/ const char *		lpszKeyName,
+		/*[in]*/ const char *		lpszValueName,
 		/*[in]*/ const CString &		value,
-		/*[in]*/ const MIKTEXCHAR *		lpszDefaultValue)
+		/*[in]*/ const char *		lpszDefaultValue)
 {
   if (value == (lpszDefaultValue ? lpszDefaultValue : T_(""))
       && RemoveDefaultValue(lpszKeyName, lpszValueName))
@@ -299,7 +299,7 @@ UpdateRegValue (/*[in]*/ const MIKTEXCHAR *		lpszKeyName,
    _________________________________________________________________________ */
 
 bool
-SetMetafontMode (/*[in]*/ const MIKTEXCHAR *	lpszMnemonic,
+SetMetafontMode (/*[in]*/ const char *	lpszMnemonic,
 		 /*[out]*/ unsigned long &	metafontModeIdx)
 {
   MIKTEXMFMODE metafontMode;
@@ -322,7 +322,7 @@ SetMetafontMode (/*[in]*/ const MIKTEXCHAR *	lpszMnemonic,
    _________________________________________________________________________ */
 
 bool
-YapConfig::SetDisplayMetafontMode (/*[in]*/ const MIKTEXCHAR * lpszMnemonic)
+YapConfig::SetDisplayMetafontMode (/*[in]*/ const char * lpszMnemonic)
 {
   return (SetMetafontMode(lpszMnemonic, displayMetafontMode));
 }
@@ -333,7 +333,7 @@ YapConfig::SetDisplayMetafontMode (/*[in]*/ const MIKTEXCHAR * lpszMnemonic)
    _________________________________________________________________________ */
 
 bool
-YapConfig::SetPrinterMetafontMode (/*[in]*/ const MIKTEXCHAR * lpszMnemonic)
+YapConfig::SetPrinterMetafontMode (/*[in]*/ const char * lpszMnemonic)
 {
   return (SetMetafontMode(lpszMnemonic, printerMetafontMode));
 }
@@ -422,7 +422,7 @@ YapConfig::Load ()
     {
       FATAL_MIKTEX_ERROR (T_("YapConfig::Load"),
 			  T_("Unknown METAFONT mode."),
-			  static_cast<const MIKTEXCHAR *>(displayMode));
+			  static_cast<const char *>(displayMode));
     }
   displayShrinkFactor =
     pApp->GetProfileInt(T_("screen"),
@@ -460,7 +460,7 @@ YapConfig::Load ()
     {
       FATAL_MIKTEX_ERROR (T_("YapConfig::Load"),
 			  T_("Unknown METAFONT mode."),
-			  static_cast<const MIKTEXCHAR *>(printerMode));
+			  static_cast<const char *>(printerMode));
     }
   pageXShift =
     pApp->GetProfileInt(T_("printer"),
@@ -677,7 +677,7 @@ YapConfig::Save ()
   UpdateRegValue (T_("DVIPS"),
 		  T_("Extra Options"),
 		  dvipsExtraOptions,
-		  static_cast<const MIKTEXCHAR *>(0));
+		  static_cast<const char *>(0));
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Magnifying Glass

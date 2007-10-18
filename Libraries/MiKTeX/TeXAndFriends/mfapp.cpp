@@ -29,7 +29,7 @@
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-MetafontApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+MetafontApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXMFApp::Init (lpszProgramInvocationName);
 
@@ -93,7 +93,7 @@ Set path_size to N."),
 
 MIKTEXMFAPI(bool)
 MetafontApp::ProcessOption (/*[in]*/ int		opt,
-			    /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+			    /*[in]*/ const char *	lpszOptArg)
 {
   bool done = true;
   switch (opt - FIRST_OPTION_VAL - optBase)

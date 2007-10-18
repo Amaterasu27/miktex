@@ -28,9 +28,9 @@ namespace {
   struct tm startUpTimeStruct;
   C4P_text standardTextFiles[3];
   int argCount;
-  vector<const MIKTEXCHAR *> argumentVector;
-  tstring commandLine;
-  tstring programName;
+  vector<const char *> argumentVector;
+  string commandLine;
+  string programName;
 }
 
 /* _________________________________________________________________________
@@ -39,18 +39,18 @@ namespace {
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(int)
-C4P::MakeCommandLine (/*[in]*/ int			argc,
-		      /*[in]*/ const MIKTEXCHAR **	argv)
+C4P::MakeCommandLine (/*[in]*/ int		argc,
+		      /*[in]*/ const char **	argv)
 {
   MIKTEX_API_BEGIN ("C4P::MakeCommandLine");
   argCount = 0;
   argumentVector.clear ();
-  argumentVector.push_back (_tcsdup(Utils::GetExeName().c_str()));
+  argumentVector.push_back (strdup(Utils::GetExeName().c_str()));
   ++ argCount;
   commandLine = T_("");
   for (int i = 0; i < argc; ++i, ++ argCount)
     {
-      argumentVector.push_back (_tcsdup(argv[i]));
+      argumentVector.push_back (strdup(argv[i]));
       commandLine += T_(' ');
       MIKTEX_ASSERT_STRING (argv[i]);
       commandLine += argv[i];
@@ -105,9 +105,9 @@ C4P::GetStartUpTime ()
 
 C4PEXPORT
 C4PCALL
-C4P::Program::Program (/*[in]*/ const MIKTEXCHAR *	lpszProgramName,
+C4P::Program::Program (/*[in]*/ const char *	lpszProgramName,
 		       /*[in]*/ int			argc,
-		       /*[in]*/ const MIKTEXCHAR **	argv)
+		       /*[in]*/ const char **	argv)
 {
   MIKTEX_API_BEGIN ("C4P::StartUp");
   MIKTEX_ASSERT_STRING (lpszProgramName);
@@ -135,11 +135,11 @@ C4P::Program::Program (/*[in]*/ const MIKTEXCHAR *	lpszProgramName,
 C4PAPI(void)
 C4P::Program::Finish ()
 {
-  for (vector<const MIKTEXCHAR *>::iterator it = argumentVector.begin();
+  for (vector<const char *>::iterator it = argumentVector.begin();
        it != argumentVector.end();
        ++it)
     {
-      free (const_cast<MIKTEXCHAR *>(*it));
+      free (const_cast<char *>(*it));
     }
   argumentVector.clear ();
   commandLine = T_("");
@@ -257,7 +257,7 @@ C4P::GetArgC ()
    GetArgV
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const MIKTEXCHAR **)
+MIKTEXMFAPI(const char **)
 C4P::GetArgV ()
 {
   MIKTEX_API_BEGIN ("C4P::GetArgV");
@@ -270,7 +270,7 @@ C4P::GetArgV ()
    GetCmdLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const MIKTEXCHAR *)
+MIKTEXMFAPI(const char *)
 C4P::GetCmdLine ()
 {
   MIKTEX_API_BEGIN ("C4P::GetCmdLine");
@@ -283,8 +283,8 @@ C4P::GetCmdLine ()
    GetProgName
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(MIKTEXCHAR *)
-C4P::GetProgName (/*[in]*/ MIKTEXCHAR * lpszProgName)
+MIKTEXMFAPI(char *)
+C4P::GetProgName (/*[in]*/ char * lpszProgName)
 {
   MIKTEX_API_BEGIN ("C4P::GetProgName");
   Utils::CopyString (lpszProgName, BufferSizes::MaxPath, programName.c_str());

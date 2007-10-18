@@ -21,4 +21,4 @@
 #define MIKTEXHELP_TEXIFY 113
 #define MIKTEXHELP_MPMCON 114
 
-#endif	/* miktex/help.h */
+#endif

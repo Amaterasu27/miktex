@@ -1,6 +1,7 @@
 /* cjklatex.cpp:
 
    Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2001 Fabrice Popineau
 
    This file is part of CJKLaTeX.
 
@@ -43,14 +44,6 @@ using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define Q_(x) Quoted(x).c_str()
 
 /* _________________________________________________________________________
@@ -58,11 +51,11 @@ using namespace std;
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -80,8 +73,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -91,7 +84,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -137,8 +130,8 @@ const struct option aoption[] =
    _________________________________________________________________________ */
 
 struct CONVERTER {
-  const MIKTEXCHAR *	lpszName;
-  const MIKTEXCHAR *	lpszProgram;
+  const char *	lpszName;
+  const char *	lpszProgram;
 };
 
 const CONVERTER Converters [] =
@@ -166,22 +159,22 @@ public:
   
 private:
   void
-  Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	 /*[in]*/			...);
+  Error (/*[in]*/ const char *	lpszFormat,
+	 /*[in]*/		...);
 
 private:
   void
-  PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	     /*[in]*/				...);
+  PrintOnly (/*[in]*/ const char *	lpszFormat,
+	     /*[in]*/			...);
 
 private:
-  const MIKTEXCHAR *
-  GetConverterProgram (/*[in]*/ const MIKTEXCHAR *	lpszName);
+  const char *
+  GetConverterProgram (/*[in]*/ const char *	lpszName);
 
 private:
   void
-  ParseInvocationName (/*[out]*/ tstring &	converterProgram,
-		       /*[out]*/ tstring &	engine);
+  ParseInvocationName (/*[out]*/ string &	converterProgram,
+		       /*[out]*/ string &	engine);
     
 private:
   void
@@ -202,19 +195,19 @@ private:
   
 private:
   void
-  ProcessOptions (/*[in]*/ int			argc,
-		  /*[in]*/ MIKTEXCHAR **	argv);
+  ProcessOptions (/*[in]*/ int		argc,
+		  /*[in]*/ char **	argv);
 
 public:
   void
   Run (/*[in]*/ int		argc,
-       /*[in]*/ MIKTEXCHAR **	argv);
+       /*[in]*/ char **	argv);
 
 private:
-  tstring engine;
+  string engine;
 
 private:
-  tstring converterProgram;
+  string converterProgram;
 
 private:
   bool cleanUp;
@@ -242,14 +235,14 @@ CJKLaTeXApp::CJKLaTeXApp ()
 void
 CJKLaTeXApp::ShowVersion ()
 {
-  tcout << Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
+  cout << Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
 					   VER_FILEVERSION_STR)
-	<< T_("\n\
+       << T_("\n\
+Copyright (C) 2004-2007 Christian Schenk\n\
 Copyright (C) 2001 Fabrice Popineau\n\
-Copyright (C) 2004-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	<< endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -260,7 +253,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 void
 CJKLaTeXApp::Help ()
 {
-  tcout << T_("Usage: ") << Utils::GetExeName() << T_(" [OPTION...] FILE\n\
+  cout << T_("Usage: ") << Utils::GetExeName() << T_(" [OPTION...] FILE\n\
 \n\
 This program runs a converter on FILE and then LaTeX on the result.\n\
 \n\
@@ -279,7 +272,7 @@ Options:\n\
 --help                    Print this help screen and exit.\n\
 --verbose                 Print info about what is being done.\n\
 --version                 Print the version number and exit.")
-	<< endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -288,14 +281,14 @@ Options:\n\
    _________________________________________________________________________ */
 
 void
-CJKLaTeXApp::Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+CJKLaTeXApp::Error (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << Utils::GetExeName() << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << Utils::GetExeName() << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -306,8 +299,8 @@ CJKLaTeXApp::Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-CJKLaTeXApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			/*[in]*/			...)
+CJKLaTeXApp::PrintOnly (/*[in]*/ const char *	lpszFormat,
+			/*[in]*/		...)
 {
   if (! printOnly)
     {
@@ -315,7 +308,7 @@ CJKLaTeXApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist) << endl;
+  cout << Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
 }
 
@@ -376,8 +369,8 @@ CJKLaTeXApp::RunEngine (/*[in]*/ const PathName &	inputFile)
    CJKLaTeXApp::GetConverterProgram
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
-CJKLaTeXApp::GetConverterProgram (/*[in]*/ const MIKTEXCHAR *	lpszName)
+const char *
+CJKLaTeXApp::GetConverterProgram (/*[in]*/ const char *	lpszName)
 {
   for (size_t i = 0; i < sizeof(Converters) / sizeof(Converters[0]); ++ i)
     {
@@ -396,17 +389,17 @@ CJKLaTeXApp::GetConverterProgram (/*[in]*/ const MIKTEXCHAR *	lpszName)
 
 void
 CJKLaTeXApp::ParseInvocationName
-(/*[out]*/ tstring &		converterProgram,
- /*[out]*/ tstring &		engine)
+(/*[out]*/ string &		converterProgram,
+ /*[out]*/ string &		engine)
 {
-  tstring invocationName = Utils::GetExeName();
-  const MIKTEXCHAR * lpszInvocationName = invocationName.c_str();
+  string invocationName = Utils::GetExeName();
+  const char * lpszInvocationName = invocationName.c_str();
   size_t j = UINT_MAX;
   size_t len = 0;
   for (size_t i = 0; i < sizeof(Converters) / sizeof(Converters[0]); ++ i)
     {
-      size_t l = _tcslen(Converters[i].lpszName);
-      if (_tcsnicmp(lpszInvocationName, Converters[i].lpszName, l) == 0
+      size_t l = strlen(Converters[i].lpszName);
+      if (_strnicmp(lpszInvocationName, Converters[i].lpszName, l) == 0
 	  && l > len)
 	{
 	  j = i;
@@ -430,8 +423,8 @@ CJKLaTeXApp::ParseInvocationName
    _________________________________________________________________________ */
 
 void
-CJKLaTeXApp::ProcessOptions (/*[in]*/ int		argc,
-			     /*[in]*/ MIKTEXCHAR **	argv)
+CJKLaTeXApp::ProcessOptions (/*[in]*/ int	argc,
+			     /*[in]*/ char **	argv)
 {
   ParseInvocationName (converterProgram, engine);
   
@@ -452,7 +445,7 @@ CJKLaTeXApp::ProcessOptions (/*[in]*/ int		argc,
 	case OPT_CONV:
 
 	  {
-	    const MIKTEXCHAR * lpszConverterProgram =
+	    const char * lpszConverterProgram =
 	      GetConverterProgram(optarg);
 	    if (lpszConverterProgram == 0)
 	      {
@@ -507,8 +500,8 @@ CJKLaTeXApp::ProcessOptions (/*[in]*/ int		argc,
    _________________________________________________________________________ */
 
 void
-CJKLaTeXApp::Run (/*[in]*/ int			argc,
-		  /*[in]*/ MIKTEXCHAR **	argv)
+CJKLaTeXApp::Run (/*[in]*/ int		argc,
+		  /*[in]*/ char **	argv)
 {
   ProcessOptions (argc, argv);
   for (int i = optind; i != argc; ++ i)
@@ -535,8 +528,8 @@ extern "C"
 __declspec(dllexport)
 int
 __cdecl
-cjklatexmain (/*[in]*/ int		argc,
-	      /*[in]*/ MIKTEXCHAR **	argv)
+cjklatexmain (/*[in]*/ int	argc,
+	      /*[in]*/ char **	argv)
 {
   try
     {

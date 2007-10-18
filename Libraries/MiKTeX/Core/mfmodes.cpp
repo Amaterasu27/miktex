@@ -49,9 +49,9 @@ SessionImpl::ReadMetafontModes ()
 {
   PathName path;
 
-  if (! FindFile(T_("modes.mf"), FileType::MF, path))
+  if (! FindFile("modes.mf", FileType::MF, path))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::ReadMetafontModes"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::ReadMetafontModes",
 			  T_("cannot find modes.mf"),
 			  0);
     }
@@ -60,7 +60,7 @@ SessionImpl::ReadMetafontModes ()
 
   bool readingModeDef = false;
 
-  tstring line;
+  string line;
 
   metafontModes.reserve (200);
 
@@ -72,30 +72,30 @@ SessionImpl::ReadMetafontModes ()
     {
       if (readingModeDef)
 	{
-	  const MIKTEXCHAR * lpsz;
-	  if (StrNCmp(line.c_str(), T_("enddef;"), 7) == 0)
+	  const char * lpsz;
+	  if (strncmp(line.c_str(), "enddef;", 7) == 0)
 	    {
 	      metafontModes.push_back (mfmode);
 	      readingModeDef = false;
 	    }
 	  else if (mfmode.iHorzRes == 0
-		   && ((lpsz = StrStr(line.c_str(), T_("pixels_per_inch")))
+		   && ((lpsz = strstr(line.c_str(), "pixels_per_inch"))
 		       != 0))
 	    {
 	      SkipNonDigit (lpsz);
 	      mfmode.iHorzRes =
-		mfmode.iVertRes = AToI(lpsz);
+		mfmode.iVertRes = atoi(lpsz);
 	    }
-	  else if ((lpsz = StrStr(line.c_str(), T_("aspect_ratio"))) != 0)
+	  else if ((lpsz = strstr(line.c_str(), "aspect_ratio")) != 0)
 	    {
 	      SkipNonDigit (lpsz);
-	      mfmode.iVertRes = AToI(lpsz);
+	      mfmode.iVertRes = atoi(lpsz);
 	    }
 	}
-      else if (StrNCmp(line.c_str(), T_("mode_def"), 8) == 0)
+      else if (strncmp(line.c_str(), "mode_def", 8) == 0)
 	{
-	  const MIKTEXCHAR * lpsz = line.c_str() + 8;
-	  while (! IsAlpha(*lpsz) && *lpsz != T_('\n'))
+	  const char * lpsz = line.c_str() + 8;
+	  while (! IsAlpha(*lpsz) && *lpsz != '\n')
 	    {
 	      ++lpsz;
 	    }
@@ -103,18 +103,18 @@ SessionImpl::ReadMetafontModes ()
 	    {
 	      continue;
 	    }
-	  const MIKTEXCHAR * lpszModeName = lpsz;
+	  const char * lpszModeName = lpsz;
 	  SkipAlpha (lpsz);
 	  if (*lpsz == 0)
 	    {
 	      continue;
 	    }
-	  *const_cast<MIKTEXCHAR *>(lpsz++) = 0;
-	  if (StringCompare(lpszModeName, T_("help")) == 0)
+	  *const_cast<char *>(lpsz++) = 0;
+	  if (StringCompare(lpszModeName, "help") == 0)
 	    {
 	      continue;
 	    }
-	  lpsz = StrStr(lpsz, T_("%\\["));
+	  lpsz = strstr(lpsz, "%\\[");
 	  if (lpsz == 0)
 	    {
 	      continue;
@@ -125,7 +125,7 @@ SessionImpl::ReadMetafontModes ()
 	    {
 	      continue;
 	    }
-	  const MIKTEXCHAR * printer_name = lpsz;
+	  const char * printer_name = lpsz;
 	  readingModeDef = true;
 	  Utils::CopyString (mfmode.szMnemonic,
 			     ARRAY_SIZE(mfmode.szMnemonic),
@@ -158,7 +158,7 @@ SessionImpl::GetMETAFONTMode (/*[in]*/ unsigned		idx,
 
   if (idx > metafontModes.size())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetMETAFONTMode"), NUMTOSTR(idx));
+      INVALID_ARGUMENT ("SessionImpl::GetMETAFONTMode", NUMTOSTR(idx));
     }
   else if (idx == metafontModes.size())
     {
@@ -176,7 +176,7 @@ SessionImpl::GetMETAFONTMode (/*[in]*/ unsigned		idx,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindMETAFONTMode (/*[in]*/ const MIKTEXCHAR *	lpszMnemonic,
+SessionImpl::FindMETAFONTMode (/*[in]*/ const char *	lpszMnemonic,
 			       /*[out]*/ MIKTEXMFMODE *		pMode)
 {
   MIKTEXMFMODE candidate;
@@ -204,31 +204,31 @@ SessionImpl::DetermineMETAFONTMode (/*[in]*/ unsigned		dpi,
 {
   MIKTEX_ASSERT_BUFFER (pMode, sizeof(*pMode));
 
-  const MIKTEXCHAR * lpszMode = 0;
+  const char * lpszMode = 0;
 
   // favour well known modes
   switch (dpi)
     {
     case 85:
-      lpszMode = T_("sun");
+      lpszMode = "sun";
       break;
     case 100:
-      lpszMode = T_("nextscrn");
+      lpszMode = "nextscrn";
       break;
     case 180:
-      lpszMode = T_("toshiba");
+      lpszMode = "toshiba";
       break;
     case 300:
-      lpszMode = T_("cx");
+      lpszMode = "cx";
       break;
     case 400:
-      lpszMode = T_("nexthi");
+      lpszMode = "nexthi";
       break;
     case 600:
-      lpszMode = T_("ljfour");
+      lpszMode = "ljfour";
       break;
     case 1270:
-      lpszMode = T_("linoone");
+      lpszMode = "linoone";
       break;
     }
 
@@ -261,7 +261,7 @@ SessionImpl::DetermineMETAFONTMode (/*[in]*/ unsigned		dpi,
 
 MIKTEXAPI(int)
 miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
-				/*[out]*/ MIKTEXCHAR *	lpszMnemonic,
+				/*[out]*/ char *	lpszMnemonic,
 				/*[in]*/ size_t		bufSize)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszMnemonic, bufSize);

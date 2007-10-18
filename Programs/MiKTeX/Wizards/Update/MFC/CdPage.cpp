@@ -208,16 +208,16 @@ CdPage::ShowDrives ()
 	  continue;
 	}
 
-      MIKTEXCHAR szDrive[4];
-      szDrive[0] = MIKTEXCHAR('A') + static_cast<MIKTEXCHAR>(drv);
+      char szDrive[4];
+      szDrive[0] = char('A') + static_cast<char>(drv);
       szDrive[1] = T_(':');
       szDrive[2] = T_('\\');
       szDrive[3] = 0;
 
       DWORD fileSystemFlags;
       DWORD maximumComponentLength;
-      MIKTEXCHAR fileSystemName[BufferSizes::MaxPath];
-      MIKTEXCHAR volumeName[BufferSizes::MaxPath];
+      char fileSystemName[BufferSizes::MaxPath];
+      char volumeName[BufferSizes::MaxPath];
 
       if (! GetVolumeInformation(szDrive,
 				 volumeName,

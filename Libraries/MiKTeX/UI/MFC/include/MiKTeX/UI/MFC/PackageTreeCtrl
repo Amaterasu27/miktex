@@ -26,6 +26,7 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/PackageManager/PackageManager>
 #include <MiKTeX/UI/MFC/Prototypes>
+
 #include <vector>
 
 MIKUI_MFC_BEGIN_NAMESPACE;
@@ -65,8 +66,8 @@ public:
 public:
   virtual
   void
-  GetDelta (/*[out]*/ std::vector<MiKTeX::Core::tstring> & toBeInstalled,
-	    /*[out]*/ std::vector<MiKTeX::Core::tstring> & toBeRemoved)
+  GetDelta (/*[out]*/ std::vector<std::string> & toBeInstalled,
+	    /*[out]*/ std::vector<std::string> & toBeRemoved)
     = 0;
 };
 

@@ -48,9 +48,9 @@ using namespace MiKTeX::Core;
 struct RegistrySettings24
 {
   bool sharedMiKTeX;
-  tstring roots;
-  tstring installRoot;
-  tstring localRoot;
+  string roots;
+  string installRoot;
+  string localRoot;
 };
 
 /* _________________________________________________________________________
@@ -64,7 +64,7 @@ ReadRegistry24 ()
   RegistrySettings24 settings;
 
   const size_t MAX_VALUE = 8192;
-  MIKTEXCHAR szValue[MAX_VALUE];
+  char szValue[MAX_VALUE];
   ULONG valueSize;
 
   CRegKey hklmMiKTeX;
@@ -246,7 +246,7 @@ TryMigrateRegistry24 ()
 
 int
 main (/*[in]*/ int			argc,
-      /*[int]*/ const MIKTEXCHAR **	argv)
+      /*[int]*/ const char **	argv)
 {
   UNUSED_ALWAYS (argc);
   UNUSED_ALWAYS (argv);
@@ -256,7 +256,7 @@ main (/*[in]*/ int			argc,
       TryMigrateRegistry24 ();
       successCode = 0;
     }
-  catch (const MIKTEXCHAR * lpszMessage)
+  catch (const char * lpszMessage)
     {
       tcerr << T_("error: ") << lpszMessage << endl;
     }

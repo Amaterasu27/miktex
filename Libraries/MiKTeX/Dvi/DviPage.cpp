@@ -94,11 +94,11 @@ public:
    Copied from tex.web.
    _________________________________________________________________________ */
 
-tstring
+string
 ToRoman (/*[in]*/ unsigned n)
 {
-  tstring result;
-  const MIKTEXCHAR * NUMERALS = T_("m2d5c2l5x2v5i");
+  string result;
+  const char * NUMERALS = T_("m2d5c2l5x2v5i");
   unsigned j = 0;
   unsigned v = 1000;
   for (;;)
@@ -712,7 +712,7 @@ DviPageImpl::FreeContents (/*[in]*/ bool keepSpecials,
    DviPageImpl::GetName
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 DviPageImpl::GetName ()
 {
   return (pageName.c_str());
@@ -1180,7 +1180,7 @@ DviPageImpl::StartDvips ()
   // make Dvips command line
   CommandLineBuilder commandLine;
   commandLine.AppendOption (T_("-D"), NUMTOSTR(pDviImpl->GetResolution()));
-  tstring metafontMode = pDviImpl->GetMetafontMode();
+  string metafontMode = pDviImpl->GetMetafontMode();
   if (! metafontMode.empty())
     {
       commandLine.AppendOption (T_("-mode "), metafontMode.c_str());
@@ -1198,7 +1198,7 @@ DviPageImpl::StartDvips ()
 	  swap (width, height);
 	}
       commandLine.AppendOption (T_("-T"),
-				(tstring(NUMTOSTR(width)) + T_("bp")
+				(string(NUMTOSTR(width)) + T_("bp")
 				 + T_(',')
 				 + NUMTOSTR(height) + T_("bp")));
     }
@@ -1246,7 +1246,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
 
   // make Ghostscript command line
   CommandLineBuilder commandLine;
-  tstring res =
+  string res =
     NUMTOSTR(static_cast<double>(pDviImpl->GetResolution())
 	     / shrinkFactor);
   commandLine.AppendOption (T_("-r"), res + T_('x') + res);
@@ -1264,7 +1264,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
     static_cast<int>(((pDviImpl->GetResolution() * height) / 72.0)
 		     / shrinkFactor);
   commandLine.AppendOption (T_("-g"),
-			    (tstring(NUMTOSTR(width))
+			    (string(NUMTOSTR(width))
 			     + T_('x')
 			     + NUMTOSTR(height)));
   commandLine.AppendOption (T_("-sDEVICE="), T_("bmp16m"));

@@ -139,9 +139,9 @@ void
 ReportError (/*[in]*/ const exception & e);
 
 void
-SplitUrl (/*[in]*/ const tstring &	url,
-	  /*[out]*/ tstring &		protocol,
-	  /*[out]*/ tstring &		host);
+SplitUrl (/*[in]*/ const string &	url,
+	  /*[out]*/ string &		protocol,
+	  /*[out]*/ string &		host);
 
 /* _________________________________________________________________________
 
@@ -178,7 +178,7 @@ GetLocalConfigDir ()
 
 inline
 bool
-IsMiKTeXPackage (/*[in]*/ const tstring & deploymentName)
+IsMiKTeXPackage (/*[in]*/ const string & deploymentName)
 {
   return (deploymentName.compare(0, 7, T_("miktex-")) == 0);
 }

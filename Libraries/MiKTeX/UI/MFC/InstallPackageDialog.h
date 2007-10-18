@@ -37,8 +37,8 @@ public:
   InstallPackageDialog
   (/*[in]*/ CWnd *		pParent,
    /*[in]*/ PackageManager *	pManager,
-   /*[in]*/ const MIKTEXCHAR *	lpszPackageName,
-   /*[in]*/ const MIKTEXCHAR *	lpszTrigger);
+   /*[in]*/ const char *	lpszPackageName,
+   /*[in]*/ const char *	lpszTrigger);
 
 protected:
   virtual
@@ -58,7 +58,7 @@ public:
 private:
   void
   FormatControlText (/*[in]*/ UINT			ctrlId,
-		     /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		     /*[in]*/ const char *	lpszFormat,
 		     /*[in]*/				...);
 
 public:

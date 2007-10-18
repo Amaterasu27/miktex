@@ -501,7 +501,7 @@ public:
   
 public:
   bool
-  Navigate (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+  Navigate (/*[in]*/ const char *	lpszUrl,
 	    /*[in]*/ bool		remember = true);
 
 private:
@@ -693,12 +693,12 @@ private:
 
 private:
   bool
-  FindDviFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  FindDviFile (/*[in]*/ const char *	lpszFileName,
 	       /*[out]*/ PathName &		result);
 
 private:
   bool
-  FindGraphicsFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 		    /*[in]*/ PathName &		result);
 
 private:
@@ -748,13 +748,13 @@ private:
   
 private:
   bool
-  IsOtherDviFileLabel (/*[in]*/ const MIKTEXCHAR *	lpszLabel,
+  IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
 		       /*[in]*/ CString &		dviFileName,
 		       /*[in]*/ CString &		hashLabel);
 
 private:
   HENHMETAFILE
-  LoadEnhMetaFile (/*[in]*/ const MIKTEXCHAR * lpszFileName);
+  LoadEnhMetaFile (/*[in]*/ const char * lpszFileName);
 
 private:
   void
@@ -845,7 +845,7 @@ private:
   double tpicConv;
 
 private:
-  map<tstring, TempFile> tempFiles;
+  map<string, TempFile> tempFiles;
 
 private:
   static vector<double> gammaTable;

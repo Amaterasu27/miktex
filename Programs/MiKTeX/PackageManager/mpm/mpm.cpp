@@ -44,14 +44,14 @@
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR PATH_DELIMITER = T_(';');
+const char PATH_DELIMITER = T_(';');
 #define PATH_DELIMITER_STRING T_(";")
 #else
-const MIKTEXCHAR PATH_DELIMITER = T_(':');
+const char PATH_DELIMITER = T_(':');
 #define PATH_DELIMITER_STRING T_(":")
 #endif
 
-const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
+const char * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_CORE T_(",")
   MIKTEX_TRACE_CURL T_(",")
   MIKTEX_TRACE_ERROR T_(",")
@@ -70,8 +70,8 @@ const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
 
 inline
 int
-StrNCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	 /*[in]*/ const MIKTEXCHAR *	lpsz2,
+StrNCmp (/*[in]*/ const char *	lpsz1,
+	 /*[in]*/ const char *	lpsz2,
 	 /*[in]*/ size_t		n)
 {
 #if defined(MIKTEX_UNICODE)
@@ -156,14 +156,14 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
   // PackageInstallerCallback impl
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
   // PackageInstallerCallback impl
 public:
@@ -175,22 +175,22 @@ public:
 public:
   void
   Main (/*[in]*/ int			argc,
-	/*[in]*/ const MIKTEXCHAR **	argv);
+	/*[in]*/ const char **	argv);
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   void
-  Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Message (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Error (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...);
 
 private:
@@ -199,8 +199,8 @@ private:
 
 private:
   void
-  Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
-	   /*[in]*/ const vector<tstring> &	toBeRemoved);
+  Install (/*[in]*/ const vector<string> &	toBeInstalled,
+	   /*[in]*/ const vector<string> &	toBeRemoved);
 
 #if defined(MIKTEX_WINDOWS)
 private:
@@ -210,7 +210,7 @@ private:
 
 private:
   void
-  Verify (/*[in]*/ const vector<tstring> &	toBeVerified);
+  Verify (/*[in]*/ const vector<string> &	toBeVerified);
 
 private:
   void
@@ -222,12 +222,12 @@ private:
 
 private:
   void
-  ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
-		 /*[in,out]*/ vector<tstring> &	toBeinstalled);
+  ImportPackage (/*[in]*/ /*[in]*/ const string & deploymentName,
+		 /*[in,out]*/ vector<string> &	toBeinstalled);
 
 private:
   void
-  ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled);
+  ImportPackages (/*[in,out]*/ vector<string> & toBeinstalled);
 
 private:
   void
@@ -235,11 +235,11 @@ private:
 
 private:
   void
-  Update (/*[in]*/ const vector<tstring> &	updates);
+  Update (/*[in]*/ const vector<string> &	updates);
 
 private:
-  tstring
-  GetDirectories (/*[in]*/ const tstring &	deploymentName);
+  string
+  GetDirectories (/*[in]*/ const string &	deploymentName);
 
 private:
   void
@@ -259,11 +259,11 @@ private:
 
 private:
   void
-  PrintFiles (/*[in]*/ const vector<tstring> & files);
+  PrintFiles (/*[in]*/ const vector<string> & files);
 
 private:
   void
-  PrintPackageInfo (/*[in]*/ const tstring & deploymentName);
+  PrintPackageInfo (/*[in]*/ const string & deploymentName);
 
 #if defined(MIKTEX_WINDOWS)
 private:
@@ -274,7 +274,7 @@ private:
 private:
   void
   ReadFileList (/*[in]*/ const PathName &	path,
-		/*[in,out]*/ vector<tstring> &	files);
+		/*[in,out]*/ vector<string> &	files);
 
 private:
   static
@@ -300,7 +300,7 @@ private:
   bool quiet;
 
 private:
-  tstring repository;
+  string repository;
 };
 
 /* _________________________________________________________________________
@@ -591,7 +591,7 @@ volatile sig_atomic_t Application::interrupted = false;
    _________________________________________________________________________ */
 
 void
-Application::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Application::Message (/*[in]*/ const char *	lpszFormat,
 		      /*[in]*/				...)
 {
   if (quiet)
@@ -610,7 +610,7 @@ Application::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-Application::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Application::Verbose (/*[in]*/ const char *	lpszFormat,
 		      /*[in]*/				...)
 {
   if (! verbose)
@@ -630,7 +630,7 @@ Application::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-Application::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
+Application::Error (/*[in]*/ const char *		lpszFormat,
 		    /*[in]*/				...)
 {
   va_list arglist;
@@ -648,7 +648,7 @@ Application::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
 
 void
 MPMCALL
-Application::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+Application::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Verbose (T_("%s\n"), lpszLine);
 }
@@ -660,7 +660,7 @@ Application::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-Application::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   lpszMessage;
   return (false);
@@ -703,10 +703,10 @@ Application::UpdateDb ()
    _________________________________________________________________________ */
 
 void
-Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
-		      /*[in]*/ const vector<tstring> &	toBeRemoved)
+Application::Install (/*[in]*/ const vector<string> &	toBeInstalled,
+		      /*[in]*/ const vector<string> &	toBeRemoved)
 {
-  for (vector<tstring>::const_iterator it = toBeInstalled.begin();
+  for (vector<string>::const_iterator it = toBeInstalled.begin();
        it != toBeInstalled.end();
        ++ it)
     {
@@ -717,7 +717,7 @@ Application::Install (/*[in]*/ const vector<tstring> &	toBeInstalled,
 	}
     }
 
-  for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+  for (vector<string>::const_iterator it = toBeRemoved.begin();
        it != toBeRemoved.end();
        ++ it)
     {
@@ -787,12 +787,12 @@ Application::RegisterComponents (/*[in]*/ bool doRegister)
 void
 Application::FindConflicts ()
 {
-  map<tstring, vector<tstring> > filesAndPackages;
+  map<string, vector<string> > filesAndPackages;
   auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
   PackageInfo packageInfo;
   for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
     {
-      for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+      for (vector<string>::const_iterator it = packageInfo.runFiles.begin();
 	   it != packageInfo.runFiles.end();
 	   ++ it)
 	{
@@ -800,7 +800,7 @@ Application::FindConflicts ()
 	  file.Normalize ();
 	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
 	}
-      for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+      for (vector<string>::const_iterator it = packageInfo.docFiles.begin();
 	   it != packageInfo.docFiles.end();
 	   ++ it)
 	{
@@ -808,7 +808,7 @@ Application::FindConflicts ()
 	  file.Normalize ();
 	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
 	}
-      for (vector<tstring>::const_iterator it =
+      for (vector<string>::const_iterator it =
 	     packageInfo.sourceFiles.begin();
 	   it != packageInfo.sourceFiles.end();
 	   ++ it)
@@ -818,7 +818,7 @@ Application::FindConflicts ()
 	  filesAndPackages[file.Get()].push_back (packageInfo.deploymentName);
 	}
     }
-  for (map<tstring, vector<tstring> >::const_iterator it =
+  for (map<string, vector<string> >::const_iterator it =
 	 filesAndPackages.begin();
        it != filesAndPackages.end();
        ++ it)
@@ -826,7 +826,7 @@ Application::FindConflicts ()
       if (it->second.size() > 1)
 	{
 	  tcout << it->first << T_(":") << endl;
-	  for (vector<tstring>::const_iterator it2 = it->second.begin();
+	  for (vector<string>::const_iterator it2 = it->second.begin();
 	       it2 != it->second.end();
 	       ++ it2)
 	    {
@@ -845,7 +845,7 @@ Application::FindConflicts ()
 void
 Application::VerifyMiKTeX ()
 {
-  vector<tstring> toBeVerified;
+  vector<string> toBeVerified;
   auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
   PackageInfo packageInfo;
   for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
@@ -867,9 +867,9 @@ Application::VerifyMiKTeX ()
    _________________________________________________________________________ */
 
 void
-Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
+Application::Verify (/*[in]*/ const vector<string> &	toBeVerifiedArg)
 {
-  vector<tstring> toBeVerified = toBeVerifiedArg;
+  vector<string> toBeVerified = toBeVerifiedArg;
   bool verifyAll = (toBeVerified.size() == 0);
   if (verifyAll)
     {
@@ -886,7 +886,7 @@ Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
       pIter->Dispose ();
     }
   bool ok = true;
-  for (vector<tstring>::const_iterator it = toBeVerified.begin();
+  for (vector<string>::const_iterator it = toBeVerified.begin();
        it != toBeVerified.end();
        ++ it)
     {
@@ -928,8 +928,8 @@ Application::Verify (/*[in]*/ const vector<tstring> &	toBeVerifiedArg)
    _________________________________________________________________________ */
 
 void
-Application::ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
-			    /*[in,out]*/ vector<tstring> & toBeinstalled)
+Application::ImportPackage (/*[in]*/ /*[in]*/ const string & deploymentName,
+			    /*[in,out]*/ vector<string> & toBeinstalled)
 {
   if (repository.length() == 0)
     {
@@ -948,7 +948,7 @@ Application::ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
     {
       Error (T_("Cannot import package %s."), deploymentName.c_str());
     }
-  tstring str;
+  string str;
   if (! pCfg->TryGetValue(deploymentName.c_str(), T_("TimeInstalled"), str)
       || str == T_("")
       || str == T_("0"))
@@ -979,7 +979,7 @@ Application::ImportPackage (/*[in]*/ /*[in]*/ const tstring & deploymentName,
    _________________________________________________________________________ */
 
 void
-Application::ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled)
+Application::ImportPackages (/*[in,out]*/ vector<string> & toBeinstalled)
 {
   if (repository.length() == 0)
     {
@@ -994,8 +994,8 @@ Application::ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled)
     }
   SmartPointer<Cfg> pCfg = Cfg::Create();
   pCfg->Read (packagesIni);
-  MIKTEXCHAR szKey[BufferSizes::MaxCfgName];
-  for (MIKTEXCHAR * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
+  char szKey[BufferSizes::MaxCfgName];
+  for (char * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
        lpszKey != 0;
        lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
     {
@@ -1003,7 +1003,7 @@ Application::ImportPackages (/*[in,out]*/ vector<tstring> & toBeinstalled)
 	{
 	  continue;
 	}
-      tstring str;
+      string str;
       if (! pCfg->TryGetValue(lpszKey, T_("TimeInstalled"), str)
 	  || str == T_("")
 	  || str == T_("0"))
@@ -1065,7 +1065,7 @@ Application::FindUpdates ()
    _________________________________________________________________________ */
 
 void
-Application::Update (/*[in]*/ const vector<tstring> &	updates)
+Application::Update (/*[in]*/ const vector<string> &	updates)
 {
   auto_ptr<PackageInstaller> pInstaller (pPackageManager->CreateInstaller());
   if (repository.length() > 0)
@@ -1076,7 +1076,7 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
   pInstaller->FindUpdates ();
   vector<PackageInstaller::UpdateInfo> serverUpdates
     = pInstaller->GetUpdates();
-  vector<tstring> updates2;
+  vector<string> updates2;
   for (vector<PackageInstaller::UpdateInfo>::const_iterator it =
 	 serverUpdates.begin();
        it != serverUpdates.end();
@@ -1085,7 +1085,7 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
       updates2.push_back (it->deploymentName);
     }
   sort (updates2.begin(), updates2.end());
-  vector<tstring> toBeInstalled;
+  vector<string> toBeInstalled;
   if (updates.size() == 0)
     {
       if (updates2.size() == 0)
@@ -1096,7 +1096,7 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
     }
   else
     {
-      for (vector<tstring>::const_iterator it = updates.begin();
+      for (vector<string>::const_iterator it = updates.begin();
 	   it != updates.end();
 	   ++ it)
 	{
@@ -1124,7 +1124,7 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
     {
       Error (T_("Package \"") MYPKG T_("\" must be updated separately."));
     }
-  pInstaller->SetFileLists (toBeInstalled, vector<tstring>());
+  pInstaller->SetFileLists (toBeInstalled, vector<string>());
   pInstaller->InstallRemove ();
   pInstaller->Dispose ();
   if (toBeInstalled.size() == 1)
@@ -1144,13 +1144,13 @@ Application::Update (/*[in]*/ const vector<tstring> &	updates)
    Application::GetDirectories
    _________________________________________________________________________ */
 
-tstring
-Application::GetDirectories (/*[in]*/ const tstring &	deploymentName)
+string
+Application::GetDirectories (/*[in]*/ const string &	deploymentName)
 {
-  tstring ret;
-  set<tstring> setDirectories;
+  string ret;
+  set<string> setDirectories;
   PackageInfo pi = pPackageManager->GetPackageInfo(deploymentName);
-  for (vector<tstring>::const_iterator it = pi.runFiles.begin();
+  for (vector<string>::const_iterator it = pi.runFiles.begin();
        it != pi.runFiles.end();
        ++ it)
     {
@@ -1160,7 +1160,7 @@ Application::GetDirectories (/*[in]*/ const tstring &	deploymentName)
 	  setDirectories.insert (path.RemoveFileSpec().Get());
 	}
     }
-  for (set<tstring>::const_iterator it = setDirectories.begin();
+  for (set<string>::const_iterator it = setDirectories.begin();
        it != setDirectories.end();
        ++ it)
     {
@@ -1203,9 +1203,9 @@ Application::List (/*[in]*/ bool csv)
     {
       if (csv)
 	{
-	  tstring path =
+	  string path =
 	    pPackageManager->GetContainerPath(it->deploymentName, false);
-	  tstring directories = GetDirectories(it->deploymentName);
+	  string directories = GetDirectories(it->deploymentName);
 	  tcout << path << T_('\\') << it->deploymentName << T_(',')
 		<< directories << T_('\n');
 	}
@@ -1298,14 +1298,14 @@ Application::PickRepositoryUrl ()
    _________________________________________________________________________ */
 
 void
-Application::PrintFiles (/*[in]*/ const vector<tstring> & files)
+Application::PrintFiles (/*[in]*/ const vector<string> & files)
 {
-  for (vector<tstring>::const_iterator it = files.begin();
+  for (vector<string>::const_iterator it = files.begin();
        it != files.end();
        ++ it)
     {
       PathName path = pSession->GetSpecialPath(SpecialPath::InstallRoot);
-      tstring disp;
+      string disp;
       if (! PackageManager::StripTeXMFPrefix(*it, disp))
 	{
 	  disp = *it;
@@ -1321,7 +1321,7 @@ Application::PrintFiles (/*[in]*/ const vector<tstring> & files)
    _________________________________________________________________________ */
 
 void
-Application::PrintPackageInfo (/*[in]*/ const tstring & deploymentName)
+Application::PrintPackageInfo (/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = pPackageManager->GetPackageInfo(deploymentName);
   tcout << T_("name: ") << packageInfo.deploymentName << T_('\n')
@@ -1394,10 +1394,10 @@ Application::RestartWindowed ()
 
 void
 Application::ReadFileList (/*[in]*/ const PathName &		path,
-			   /*[in,out]*/ vector<tstring> &	files)
+			   /*[in,out]*/ vector<string> &	files)
 {
   StreamReader reader (path);
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       Tokenizer tok (line.c_str(), T_(" \t\n\r"));
@@ -1416,7 +1416,7 @@ Application::ReadFileList (/*[in]*/ const PathName &		path,
 
 void
 Application::Main (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv)
+		   /*[in]*/ const char **	argv)
 {
   StartupConfig startupConfig;
   Session::InitInfo initInfo;
@@ -1443,17 +1443,17 @@ Application::Main (/*[in]*/ int			argc,
   bool optVerifyMiKTeX = false;
   bool optVersion = false;
   int optProxyPort = -1;
-  tstring deploymentName;
-  tstring optProxy;
-  tstring optProxyPassword;
-  tstring optProxyUser;
-  tstring toBeImported;
-  vector<tstring> installSome;
-  vector<tstring> toBeInstalled;
-  vector<tstring> toBeRemoved;
-  vector<tstring> toBeVerified;
-  vector<tstring> updateSome;
-  vector<tstring> updates;
+  string deploymentName;
+  string optProxy;
+  string optProxyPassword;
+  string optProxyUser;
+  string toBeImported;
+  vector<string> installSome;
+  vector<string> toBeInstalled;
+  vector<string> toBeRemoved;
+  vector<string> toBeVerified;
+  vector<string> updateSome;
+  vector<string> updates;
 
   bool changeProxy = false;
 
@@ -1465,7 +1465,7 @@ Application::Main (/*[in]*/ int			argc,
   int option;
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_CSV:
@@ -1635,7 +1635,7 @@ Application::Main (/*[in]*/ int			argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       Error (T_("%s"), msg.c_str());
@@ -1732,7 +1732,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       restartWindowed = false;
     }
 
-  vector<tstring>::const_iterator it;
+  vector<string>::const_iterator it;
 
   for (it = installSome.begin(); it != installSome.end(); ++ it)
     {
@@ -1852,8 +1852,8 @@ Application::SignalHandler (/*[in]*/ int signalToBeHandled)
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ MIKTEXCHARINT		argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
 #if defined(MIKTEX_WINDOWS)
   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);

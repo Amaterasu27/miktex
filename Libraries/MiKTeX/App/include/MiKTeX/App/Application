@@ -118,7 +118,7 @@ public:
 
   virtual
   MIKTEXAPPAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName);
+  Init (/*[in]*/ const char *	lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -129,8 +129,8 @@ public:
 
   virtual
   MIKTEXAPPAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
-	/*[in]*/ const MIKTEXCHAR *	lpszTheNameOfTheGame);
+  Init (/*[in]*/ const char *	lpszProgramInvocationName,
+	/*[in]*/ const char *	lpszTheNameOfTheGame);
 
   /* _______________________________________________________________________
      
@@ -154,8 +154,8 @@ public:
   MIKTEXAPPEXPORT
   bool
   MIKTEXCALL
-  InstallPackage (/*[in]*/ const MIKTEXCHAR *	lpszPackageName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszTrigger);
+  InstallPackage (/*[in]*/ const char *	lpszPackageName,
+		  /*[in]*/ const char *	lpszTrigger);
 
   /* _______________________________________________________________________
      
@@ -168,7 +168,7 @@ public:
   MIKTEXAPPEXPORT
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
   /* _______________________________________________________________________
      
@@ -180,7 +180,7 @@ public:
   MIKTEXAPPEXPORT
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
   /* _______________________________________________________________________
      
@@ -289,9 +289,9 @@ private:
 
 private:
 #if defined(_MSC_VER)
-  stdext::hash_set<MiKTeX::Core::tstring> ignoredPackages;
+  stdext::hash_set<std::string> ignoredPackages;
 #else
-  std::set<MiKTeX::Core::tstring> ignoredPackages;
+  std::set<std::string> ignoredPackages;
 #endif
 
 protected:
@@ -306,4 +306,4 @@ MIKTEXAPP_END_NAMESPACE;
 #undef MIKTEXAPP_BEGIN_NAMESPACE
 #undef MIKTEXAPP_END_NAMESPACE
 
-#endif // miktexapp.h
+#endif

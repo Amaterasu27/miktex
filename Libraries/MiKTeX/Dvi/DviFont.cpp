@@ -34,7 +34,7 @@ DviFont::DviFont (/*[in]*/ DviImpl *		pDviImpl,
 		  /*[in]*/ int			designSize,
 		  /*[in]*/ const char *		lpszArea,
 		  /*[in]*/ const char *		lpszName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+		  /*[in]*/ const char *	lpszFileName,
 		  /*[in]*/ double		tfmConf,
 		  /*[in]*/ double		conv)
   : pDviImpl (pDviImpl),

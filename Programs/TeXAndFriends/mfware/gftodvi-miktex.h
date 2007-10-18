@@ -83,7 +83,7 @@ The value is given in TeX points."),
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -95,7 +95,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebApp::Init (lpszProgramInvocationName);
     THEDATA(overlabeloffset) = 10000000;
@@ -111,13 +111,13 @@ public:
   bool
   MIKTEXMFCALL
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)
       {
       case OPT_OVERFLOW_LABEL_OFFSET:
-	THEDATA(overlabeloffset) = C4P::Round(_tstof(lpszOptArg) * 65536.0);
+	THEDATA(overlabeloffset) = C4P::Round(atof(lpszOptArg) * 65536.0);
 	break;
       case OPT_TITLEFONT:
 	titleFont = lpszOptArg;
@@ -149,7 +149,7 @@ public:
   {
     WebApp::ProcessCommandLineOptions ();
     int argc = C4P::GetArgC();
-    const MIKTEXCHAR ** argv = C4P::GetArgV();
+    const char ** argv = C4P::GetArgV();
     if (argc > 1)
       {
 	inputFile = argv[1];

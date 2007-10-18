@@ -1,6 +1,6 @@
-/* inputline.inl: inputln() implementation for TeX & Friends -*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebAppInputLine:			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -112,4 +112,4 @@ MIKTEXMF_END_NAMESPACE;
 #undef MIKTEXMF_BEGIN_NAMESPACE
 #undef MIKTEXMF_END_NAMESPACE
 
-#endif // inputline.inl
+#endif

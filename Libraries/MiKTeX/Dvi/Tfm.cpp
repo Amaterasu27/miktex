@@ -35,7 +35,7 @@ Tfm::Tfm (/*[in]*/ DviImpl *		pDvi,
 	  /*[in]*/ int			designSize,
 	  /*[in]*/ const char *		lpszAreaName,
 	  /*[in]*/ const char *		lpszFontName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	  /*[in]*/ const char *	lpszFileName,
 	  /*[in]*/ double		tfmConv,
 	  /*[in]*/ double		conv)
 
@@ -378,7 +378,7 @@ Tfm::Make (/*[in]*/ const string &	name)
 		       T_("The MakeTFM utility could not be found."),
 		       0);
     }
-  MIKTEXCHAR szBasename[BufferSizes::MaxPath];
+  char szBasename[BufferSizes::MaxPath];
   PathName::Split (name.c_str(),
 		   0, 0,
 		   szBasename, BufferSizes::MaxPath,

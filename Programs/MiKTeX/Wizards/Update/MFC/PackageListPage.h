@@ -108,7 +108,7 @@ protected:
 
 private:
   bool
-  ContainsUpdateWizard (/*[in]*/ const tstring &	deploymentName);
+  ContainsUpdateWizard (/*[in]*/ const string &	deploymentName);
 
 private:
   static
@@ -123,13 +123,13 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
@@ -144,12 +144,12 @@ private:
 private:
   void
   InsertColumn (/*[in]*/ int			colIdx,
-		/*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		/*[in]*/ const MIKTEXCHAR *	lpszLongest);
+		/*[in]*/ const char *	lpszLabel,
+		/*[in]*/ const char *	lpszLongest);
  
 private:
   void
-  SetProgressText (/*[in]*/ const MIKTEXCHAR * lpszText);
+  SetProgressText (/*[in]*/ const char * lpszText);
 
 private:
   HANDLE hWorkerThread;
@@ -167,7 +167,7 @@ private:
   bool repairing;
 
 private:
-  tstring repository;
+  string repository;
   
 private:
   bool fillingTheListView;

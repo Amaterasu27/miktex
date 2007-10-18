@@ -30,9 +30,9 @@
 
 struct Data
 {
-  tstring str;
-  tstring optionIndicator;
-  tstring valueIndicator;
+  string str;
+  string optionIndicator;
+  string valueIndicator;
 };
 
 #define pData reinterpret_cast<Data*>(this->p)
@@ -65,7 +65,7 @@ CommandLineBuilder::CommandLineBuilder
    CommandLineBuilder::CommandLineBuilder
    _________________________________________________________________________ */
 
-CommandLineBuilder::CommandLineBuilder (/*[in]*/ const MIKTEXCHAR * lpszArg)
+CommandLineBuilder::CommandLineBuilder (/*[in]*/ const char * lpszArg)
   : p (new Data)
 {
   AppendArgument (lpszArg);
@@ -76,8 +76,8 @@ CommandLineBuilder::CommandLineBuilder (/*[in]*/ const MIKTEXCHAR * lpszArg)
    CommandLineBuilder::CommandLineBuilder
    _________________________________________________________________________ */
 
-CommandLineBuilder::CommandLineBuilder (/*[in]*/ const MIKTEXCHAR * lpszArg1,
-					/*[in]*/ const MIKTEXCHAR * lpszArg2)
+CommandLineBuilder::CommandLineBuilder (/*[in]*/ const char * lpszArg1,
+					/*[in]*/ const char * lpszArg2)
   : p (new Data)
 {
   AppendArgument (lpszArg1);
@@ -89,9 +89,9 @@ CommandLineBuilder::CommandLineBuilder (/*[in]*/ const MIKTEXCHAR * lpszArg1,
    CommandLineBuilder::CommandLineBuilder
    _________________________________________________________________________ */
 
-CommandLineBuilder::CommandLineBuilder (/*[in]*/ const MIKTEXCHAR * lpszArg1,
-					/*[in]*/ const MIKTEXCHAR * lpszArg2,
-					/*[in]*/ const MIKTEXCHAR * lpszArg3)
+CommandLineBuilder::CommandLineBuilder (/*[in]*/ const char * lpszArg1,
+					/*[in]*/ const char * lpszArg2,
+					/*[in]*/ const char * lpszArg3)
   : p (new Data)
 {
   AppendArgument (lpszArg1);
@@ -140,20 +140,20 @@ CommandLineBuilder::SetOptionConvention
   switch (optionConvention.Get())
     {
     case OptionConvention::None:
-      pData->optionIndicator = T_("");
-      pData->valueIndicator = T_("");
+      pData->optionIndicator = "";
+      pData->valueIndicator = "";
       break;
     case OptionConvention::Xt:
-      pData->optionIndicator = T_("-");
-      pData->valueIndicator = T_("=");
+      pData->optionIndicator = "-";
+      pData->valueIndicator = "=";
       break;
     case OptionConvention::GNU:
-      pData->optionIndicator = T_("--");
-      pData->valueIndicator = T_("=");
+      pData->optionIndicator = "--";
+      pData->valueIndicator = "=";
       break;
     case OptionConvention::DOS:
-      pData->optionIndicator = T_("/");
-      pData->valueIndicator = T_(":");
+      pData->optionIndicator = "/";
+      pData->valueIndicator = ":";
       break;
     }
 }
@@ -166,7 +166,7 @@ CommandLineBuilder::SetOptionConvention
 void
 CommandLineBuilder::Clear ()
 {
-  pData->str = T_("");
+  pData->str = "";
 }
 
 /* _________________________________________________________________________
@@ -175,11 +175,11 @@ CommandLineBuilder::Clear ()
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendUnquoted (/*[in]*/ const MIKTEXCHAR * lpszText)
+CommandLineBuilder::AppendUnquoted (/*[in]*/ const char * lpszText)
 {
   if (pData->str.length() > 0)
     {
-      pData->str += T_(' ');
+      pData->str += ' ';
     }
   pData->str += lpszText;
 }
@@ -190,22 +190,22 @@ CommandLineBuilder::AppendUnquoted (/*[in]*/ const MIKTEXCHAR * lpszText)
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendArgument (/*[in]*/ const MIKTEXCHAR * lpszArgument)
+CommandLineBuilder::AppendArgument (/*[in]*/ const char * lpszArgument)
 {
   if (! pData->str.empty())
     {
-      pData->str += T_(' ');
+      pData->str += ' ';
     }
   bool needsQuoting =
-    (*lpszArgument == 0 || StrChr(lpszArgument, T_(' ')) != 0);
+    (*lpszArgument == 0 || StrChr(lpszArgument, ' ') != 0);
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
   pData->str += lpszArgument;
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
 }
 
@@ -216,7 +216,7 @@ CommandLineBuilder::AppendArgument (/*[in]*/ const MIKTEXCHAR * lpszArgument)
 
 void
 CommandLineBuilder::AppendArguments (/*[in]*/ int			argc,
-				     /*[in]*/ const MIKTEXCHAR * const * argv)
+				     /*[in]*/ const char * const * argv)
 {
   for (int i = 0; i < argc; ++ i)
     {
@@ -230,9 +230,9 @@ CommandLineBuilder::AppendArguments (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendArguments (/*[in]*/ const vector<tstring>	argv)
+CommandLineBuilder::AppendArguments (/*[in]*/ const vector<string>	argv)
 {
-  for (vector<tstring>::const_iterator it = argv.begin();
+  for (vector<string>::const_iterator it = argv.begin();
        it != argv.end();
        ++ it)
     {
@@ -261,12 +261,12 @@ CommandLineBuilder::AppendArguments (/*[in]*/ const Argv & argv)
    _________________________________________________________________________ */
 
 void
-CommandLineBuilder::AppendOption (/*[in]*/ const MIKTEXCHAR * lpszOption,
-				  /*[in]*/ const MIKTEXCHAR * lpszValue)
+CommandLineBuilder::AppendOption (/*[in]*/ const char * lpszOption,
+				  /*[in]*/ const char * lpszValue)
 {
   if (! pData->str.empty())
     {
-      pData->str += T_(' ');
+      pData->str += ' ';
     }
   pData->str += pData->optionIndicator;
   pData->str += lpszOption;
@@ -274,15 +274,15 @@ CommandLineBuilder::AppendOption (/*[in]*/ const MIKTEXCHAR * lpszOption,
     {
       pData->str += pData->valueIndicator;
       bool needsQuoting =
-	(*lpszValue == 0 || StrChr(lpszValue, T_(' ')) != 0);
+	(*lpszValue == 0 || StrChr(lpszValue, ' ') != 0);
       if (needsQuoting)
 	{
-	  pData->str += T_('"');
+	  pData->str += '"';
 	}
       pData->str += lpszValue;
       if (needsQuoting)
 	{
-	  pData->str += T_('"');
+	  pData->str += '"';
 	}
     }
 }
@@ -294,27 +294,27 @@ CommandLineBuilder::AppendOption (/*[in]*/ const MIKTEXCHAR * lpszOption,
 
 void
 CommandLineBuilder::AppendStdoutRedirection
-(/*[in]*/ const MIKTEXCHAR *	lpszPath,
+(/*[in]*/ const char *	lpszPath,
  /*[in]*/ bool			append)
 {
-  pData->str += T_('>');
+  pData->str += '>';
   if (append)
     {
-      pData->str += T_('>');
+      pData->str += '>';
     }
 #if defined(MIKTEX_WINDOWS)
   PathName dosish (lpszPath);
   lpszPath = dosish.ToDos().Get();
 #endif
-  bool needsQuoting = (StrChr(lpszPath, T_(' ')) != 0);
+  bool needsQuoting = (StrChr(lpszPath, ' ') != 0);
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
   pData->str += lpszPath;
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
 }
 
@@ -325,22 +325,22 @@ CommandLineBuilder::AppendStdoutRedirection
 
 void
 CommandLineBuilder::AppendStdinRedirection
-(/*[in]*/ const MIKTEXCHAR *	lpszPath)
+(/*[in]*/ const char *	lpszPath)
 {
-  pData->str += T_('<');
+  pData->str += '<';
 #if defined(MIKTEX_WINDOWS)
   PathName dosish (lpszPath);
   lpszPath = dosish.ToDos().Get();
 #endif
-  bool needsQuoting = (StrChr(lpszPath, T_(' ')) != 0);
+  bool needsQuoting = (StrChr(lpszPath, ' ') != 0);
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
   pData->str += lpszPath;
   if (needsQuoting)
     {
-      pData->str += T_('"');
+      pData->str += '"';
     }
 }
 
@@ -349,7 +349,7 @@ CommandLineBuilder::AppendStdinRedirection
    CommandLineBuilder::Get
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 CommandLineBuilder::Get ()
 {
   return (pData->str.c_str());

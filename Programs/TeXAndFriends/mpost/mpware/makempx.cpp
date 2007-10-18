@@ -1,6 +1,6 @@
 /* makempx.cpp: making mpx files
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of MakeMpx.
 
@@ -43,14 +43,6 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::TeXAndFriends;
 using namespace std;
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define T_(x) MIKTEXTEXT(x)
 
 #define Q_(x) Quoted(x).c_str()
@@ -60,11 +52,11 @@ using namespace std;
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -82,8 +74,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -93,7 +85,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -108,58 +100,58 @@ class MakeMpx : public Application
 {
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 private:
   void
-  PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	     /*[in]*/				...);
+  PrintOnly (/*[in]*/ const char *	lpszFormat,
+	     /*[in]*/			...);
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   void
-  Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Message (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  Error (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	 /*[in]*/			...);
+  Error (/*[in]*/ const char *	lpszFormat,
+	 /*[in]*/		...);
 
 private:
   void
   GetOptions (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv);
+	      /*[in]*/ const char **	argv);
 
 private:
   void
-  InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszTeXFileName);
+  InvokeMPTO (/*[in]*/ const char *	lpszMpFileName,
+	      /*[in]*/ const char *	lpszTeXFileName);
 
 private:
   void
-  InvokeTeX (/*[in]*/ const MIKTEXCHAR * lpszTeXFileName);
+  InvokeTeX (/*[in]*/ const char * lpszTeXFileName);
 
 private:
   void
-  InvokeDVItoMP (/*[in]*/ const MIKTEXCHAR * lpszDviFileName,
-		 /*[in]*/ const MIKTEXCHAR * lpszMpxFileName,
-		 /*[in]*/ const MIKTEXCHAR * lpszDestDir);
+  InvokeDVItoMP (/*[in]*/ const char * lpszDviFileName,
+		 /*[in]*/ const char * lpszMpxFileName,
+		 /*[in]*/ const char * lpszDestDir);
 
 private:
   PathName
-  MakeTeXFileName (/*[in]*/ const MIKTEXCHAR *	lpszBaseName);
+  MakeTeXFileName (/*[in]*/ const char *	lpszBaseName);
 
 private:
   int
-  IsNewerFile (/*[in]*/ const MIKTEXCHAR * lpszFileName1,
-	       /*[in]*/ const MIKTEXCHAR * lpszFileName2);
+  IsNewerFile (/*[in]*/ const char * lpszFileName1,
+	       /*[in]*/ const char * lpszFileName2);
 
 private:
   bool verbose;
@@ -180,7 +172,7 @@ private:
   PathName mpxFile;
 
 private:
-  tstring texProgram;
+  string texProgram;
 
 private:
   static const struct poptOption aoption[];
@@ -192,8 +184,8 @@ private:
    _________________________________________________________________________ */
 
 void
-MakeMpx::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		  /*[in]*/				...)
+MakeMpx::Message (/*[in]*/ const char *	lpszFormat,
+		  /*[in]*/			...)
 {
   if (quiet || printOnly)
     {
@@ -201,7 +193,7 @@ MakeMpx::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -211,7 +203,7 @@ MakeMpx::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MakeMpx::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+MakeMpx::PrintOnly (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   if (! printOnly)
@@ -220,7 +212,7 @@ MakeMpx::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist) << endl;
+  cout << Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
 }
 
@@ -230,7 +222,7 @@ MakeMpx::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MakeMpx::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+MakeMpx::Verbose (/*[in]*/ const char *	lpszFormat,
 		  /*[in]*/				...)
 {
   if (! verbose || printOnly)
@@ -239,7 +231,7 @@ MakeMpx::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -250,13 +242,13 @@ MakeMpx::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-MakeMpx::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
-		/*[in]*/				...)
+MakeMpx::Error (/*[in]*/ const char *		lpszFormat,
+		/*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << T_("makempx") << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist) << endl;
+  cerr << T_("makempx") << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
   throw (1);
 }
@@ -321,7 +313,7 @@ const struct poptOption MakeMpx::aoption[] = {
 
 void
 MakeMpx::GetOptions (/*[in]*/ int			argc,
-			 /*[in]*/ const MIKTEXCHAR **	argv)
+			 /*[in]*/ const char **	argv)
 {
   debug = false;
   printOnly = false;
@@ -351,11 +343,11 @@ MakeMpx::GetOptions (/*[in]*/ int			argc,
 	  quiet = true;
 	  break;
 	case OPT_VERSION:
-	  tcout <<
+	  cout <<
 	    Utils::MakeProgramVersionString(T_("makempx"),
 					    VersionNumber(VER_FILEVERSION))
-		<< T_("\n\
-Copyright (C) 2005-2006 Christian Schenk\n\
+	       << T_("\n\
+Copyright (C) 2005-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    << endl;
@@ -365,13 +357,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       Error (T_("%s"), msg.c_str());
     }
 
-  const MIKTEXCHAR * * leftovers = popt.GetArgs();
+  const char * * leftovers = popt.GetArgs();
       
   PathName path;
 
@@ -404,8 +396,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
    _________________________________________________________________________ */
 
 void
-MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszTeXFileName)
+MakeMpx::InvokeMPTO (/*[in]*/ const char *	lpszMpFileName,
+		     /*[in]*/ const char *	lpszTeXFileName)
 {
   PathName mpto;
 
@@ -414,7 +406,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
       Error (T_("The MPTO executable could not be found."));
     }
 
-   tstring mptexpre;
+   string mptexpre;
 
   if (! Utils::GetEnvironmentString(T_("MPTEXPRE"), mptexpre))
     {
@@ -463,7 +455,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const MIKTEXCHAR *	lpszMpFileName,
    _________________________________________________________________________ */
 
 void
-MakeMpx::InvokeTeX (/*[in]*/ const MIKTEXCHAR * lpszTeXFileName)
+MakeMpx::InvokeTeX (/*[in]*/ const char * lpszTeXFileName)
 {
   if (texProgram.empty()
       && ! Utils::GetEnvironmentString(T_("TEX"), texProgram))
@@ -514,9 +506,9 @@ MakeMpx::InvokeTeX (/*[in]*/ const MIKTEXCHAR * lpszTeXFileName)
    _________________________________________________________________________ */
 
 void
-MakeMpx::InvokeDVItoMP (/*[in]*/ const MIKTEXCHAR * lpszDviFileName,
-			/*[in]*/ const MIKTEXCHAR * lpszMpxFileName,
-			/*[in]*/ const MIKTEXCHAR * lpszDestDir)
+MakeMpx::InvokeDVItoMP (/*[in]*/ const char * lpszDviFileName,
+			/*[in]*/ const char * lpszMpxFileName,
+			/*[in]*/ const char * lpszDestDir)
 {
   PathName dvitomp;
 
@@ -544,7 +536,7 @@ MakeMpx::InvokeDVItoMP (/*[in]*/ const MIKTEXCHAR * lpszDviFileName,
    _________________________________________________________________________ */
 
 PathName
-MakeMpx::MakeTeXFileName (/*[in]*/ const MIKTEXCHAR *	lpszBaseName)
+MakeMpx::MakeTeXFileName (/*[in]*/ const char *	lpszBaseName)
 {
   PathName texFile;
   texFile.SetToCurrentDirectory ();
@@ -560,8 +552,8 @@ MakeMpx::MakeTeXFileName (/*[in]*/ const MIKTEXCHAR *	lpszBaseName)
    _________________________________________________________________________ */
 
 int
-MakeMpx::IsNewerFile (/*[in]*/ const MIKTEXCHAR * lpszFileName1,
-		      /*[in]*/ const MIKTEXCHAR * lpszFileName2)
+MakeMpx::IsNewerFile (/*[in]*/ const char * lpszFileName1,
+		      /*[in]*/ const char * lpszFileName2)
 {
   struct stat x, y;
   if (stat(lpszFileName1, &x) < 0)
@@ -589,7 +581,7 @@ MakeMpx::IsNewerFile (/*[in]*/ const MIKTEXCHAR * lpszFileName1,
 
 void
 MakeMpx::Run (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv)
+	      /*[in]*/ const char **	argv)
 
 {
   // get command line options
@@ -611,7 +603,7 @@ MakeMpx::Run (/*[in]*/ int			argc,
   ScratchDirectory scratchDirectory;
   scratchDirectory.Enter ();
 
-  const MIKTEXCHAR * lpszName = T_("mpx314");
+  const char * lpszName = T_("mpx314");
 
   PathName texFile = MakeTeXFileName(lpszName);
 
@@ -638,8 +630,8 @@ MakeMpx::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 
 {
   try

@@ -57,8 +57,8 @@ public:
 public:
   virtual
   void
-  GetDelta (/*[out]*/ vector<tstring> & toBeInstalled,
-	    /*[out]*/ vector<tstring> & toBeRemoved);
+  GetDelta (/*[out]*/ vector<string> & toBeInstalled,
+	    /*[out]*/ vector<string> & toBeRemoved);
 
 protected:
   afx_msg
@@ -116,10 +116,10 @@ private:
 		 /*[in]*/ HTREEITEM	hItem);
 
 private:
-  map<HTREEITEM, tstring> packageNames;
+  map<HTREEITEM, string> packageNames;
 
 private:
-  multimap<tstring, HTREEITEM> treeItems;
+  multimap<string, HTREEITEM> treeItems;
 
 private:
   map<HTREEITEM, DWORD> treeItemStates;
@@ -235,7 +235,7 @@ PackageTreeCtrlImpl::Refresh ()
   ins.hInsertAfter = TVI_ROOT;
   ins.item.mask = TVIF_PARAM | TVIF_TEXT;
   ins.item.pszText =
-    const_cast<MIKTEXCHAR *>(rootPackageInfo.displayName.c_str());
+    const_cast<char *>(rootPackageInfo.displayName.c_str());
   ins.item.lParam = 0;
   HTREEITEM hRoot = InsertItem(&ins);
   if (hRoot == 0)
@@ -244,7 +244,7 @@ PackageTreeCtrlImpl::Refresh ()
     }
   packageNames[hRoot] = rootPackageInfo.deploymentName;
   treeItems.insert
-    (make_pair<tstring, HTREEITEM>(rootPackageInfo.deploymentName,
+    (make_pair<string, HTREEITEM>(rootPackageInfo.deploymentName,
 				   hRoot));
   treeItemStates[hRoot] = ITEMSTATE_UNDETERMINED;
 
@@ -286,7 +286,7 @@ PackageTreeCtrlImpl::AddPackage (/*[in]*/ HTREEITEM		hParent,
   ins.item.state = INDEXTOSTATEIMAGEMASK(state);
   ins.item.stateMask = TVIS_STATEIMAGEMASK;
   MIKTEX_ASSERT (packageInfo.displayName.length() > 0);
-  ins.item.pszText = const_cast<MIKTEXCHAR *>(packageInfo.displayName.c_str());
+  ins.item.pszText = const_cast<char *>(packageInfo.displayName.c_str());
   ins.item.lParam = lvl;
   HTREEITEM hItem = InsertItem(&ins);
   if (hItem == 0)
@@ -294,12 +294,12 @@ PackageTreeCtrlImpl::AddPackage (/*[in]*/ HTREEITEM		hParent,
       FATAL_WINDOWS_ERROR (T_("CTreeCtrl::InsertItem"), 0);
     }
   packageNames[hItem] = packageInfo.deploymentName;
-  treeItems.insert (make_pair<tstring, HTREEITEM>(packageInfo.deploymentName,
+  treeItems.insert (make_pair<string, HTREEITEM>(packageInfo.deploymentName,
 						  hItem));
   treeItemStates[hItem] = state;
   
   // insert sub-packages
-  for (vector<tstring>::const_iterator
+  for (vector<string>::const_iterator
 	 it = packageInfo.requiredPackages.begin();
        it != packageInfo.requiredPackages.end();
        ++ it)
@@ -345,8 +345,8 @@ PackageTreeCtrlImpl::PropagateState (/*[in]*/ HTREEITEM	hItem,
   MIKTEX_ASSERT (treeItemState != ITEMSTATE_NONE);
 
   // change the state of this item and all twin items
-  tstring displayName =  packageNames[hItem];
-  multimap<tstring, HTREEITEM>::const_iterator it =
+  string displayName =  packageNames[hItem];
+  multimap<string, HTREEITEM>::const_iterator it =
     treeItems.find(displayName);
   MIKTEX_ASSERT (it != treeItems.end());
   for (; it != treeItems.end() && it->first == displayName; ++it)
@@ -642,7 +642,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
 			 dlg.GetName())
 		== 0)
 	      {
-		multimap<tstring, HTREEITEM>::const_iterator
+		multimap<string, HTREEITEM>::const_iterator
 		  it = treeItems.find(packageInfo.deploymentName);
 		MIKTEX_ASSERT (it != treeItems.end());
 		if (it != treeItems.end())
@@ -669,10 +669,10 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
    _________________________________________________________________________ */
 
 void
-PackageTreeCtrlImpl::GetDelta (/*[out]*/ vector<tstring> &	toBeInstalled,
-			       /*[out]*/ vector<tstring> &	toBeRemoved)
+PackageTreeCtrlImpl::GetDelta (/*[out]*/ vector<string> &	toBeInstalled,
+			       /*[out]*/ vector<string> &	toBeRemoved)
 {
-  for (map<HTREEITEM, tstring>::const_iterator
+  for (map<HTREEITEM, string>::const_iterator
 	 it = packageNames.begin();
        it != packageNames.end();
        ++ it)

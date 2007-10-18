@@ -25,31 +25,31 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  TEST (! MiKTeX::Core::File::Exists(T_("xxx.zzz")));
-  Touch (T_("xxx.zzz"));
-  TEST (MiKTeX::Core::File::Exists(T_("xxx.zzz")));
-  TESTX (MiKTeX::Core::File::SetAttributes(T_("xxx.zzz"),
+  TEST (! MiKTeX::Core::File::Exists("xxx.zzz"));
+  Touch ("xxx.zzz");
+  TEST (MiKTeX::Core::File::Exists("xxx.zzz"));
+  TESTX (MiKTeX::Core::File::SetAttributes("xxx.zzz",
 				     MiKTeX::Core::FileAttributes::ReadOnly));
   if (verbose)
     {
       system ("ls -l xxx.zzz");
     }
   MiKTeX::Core::FileAttributes attributes =
-    MiKTeX::Core::File::GetAttributes(T_("xxx.zzz"));
+    MiKTeX::Core::File::GetAttributes("xxx.zzz");
   TEST ((attributes & MiKTeX::Core::FileAttributes::ReadOnly) != 0);
-  TESTX (MiKTeX::Core::File::SetAttributes(T_("xxx.zzz"),
+  TESTX (MiKTeX::Core::File::SetAttributes("xxx.zzz",
 				     MiKTeX::Core::FileAttributes::Normal));
-  attributes = MiKTeX::Core::File::GetAttributes(T_("xxx.zzz"));
+  attributes = MiKTeX::Core::File::GetAttributes("xxx.zzz");
   TEST ((attributes & MiKTeX::Core::FileAttributes::ReadOnly) == 0);
-  TESTX (MiKTeX::Core::File::Move(T_("xxx.zzz"), T_("zzz.xxx")));
-  TESTX (MiKTeX::Core::File::Delete(T_("zzz.xxx")));
+  TESTX (MiKTeX::Core::File::Move("xxx.zzz", "zzz.xxx"));
+  TESTX (MiKTeX::Core::File::Delete("zzz.xxx"));
 }
 END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(2);
 {
   FILE * stream =
-    MiKTeX::Core::File::Open(T_("abc.def"),
+    MiKTeX::Core::File::Open("abc.def",
 		       MiKTeX::Core::FileMode::Create,
 		       MiKTeX::Core::FileAccess::Write,
 		       true,
@@ -57,7 +57,7 @@ BEGIN_TEST_FUNCTION(2);
   TEST (stream != 0);
   fprintf (stream, "hello, world!\n");
   fclose (stream);
-  TESTX (MiKTeX::Core::File::Delete(T_("abc.def")));
+  TESTX (MiKTeX::Core::File::Delete("abc.def"));
 }
 END_TEST_FUNCTION();
 
@@ -65,16 +65,16 @@ BEGIN_TEST_FUNCTION(3);
 {
   MiKTeX::Core::PathName dir;
   dir.SetToCurrentDirectory ();
-  dir += T_("d");
+  dir += "d";
   MiKTeX::Core::PathName subdir (dir);
-  subdir += T_("dd/ddd");
+  subdir += "dd/ddd";
   TESTX (MiKTeX::Core::Directory::Create(subdir));
   TEST (MiKTeX::Core::Directory::Exists(subdir));
   TEST (! MiKTeX::Core::File::Exists(subdir));
   MiKTeX::Core::FileAttributes attributes = MiKTeX::Core::File::GetAttributes(subdir);
   TEST ((attributes & MiKTeX::Core::FileAttributes::Directory) != 0);
   MiKTeX::Core::PathName file = subdir;
-  file += T_("file.txt");
+  file += "file.txt";
   Touch (file.Get());
   TEST (MiKTeX::Core::File::Exists(file));
   TESTX (MiKTeX::Core::Directory::Delete(dir, true));

@@ -26,11 +26,11 @@ BEGIN_TEST_SCRIPT();
 BEGIN_TEST_FUNCTION(1);
 {
   printf ("%d\n", __LINE__);
-  FileStream lzmaFile (File::Open(T_("./test1.txt.lzma"),
+  FileStream lzmaFile (File::Open("./test1.txt.lzma",
 				    FileMode::Open,
 				    FileAccess::Read,
 				    false));
-  FileStream outFile (File::Open(T_("./test1.txt"),
+  FileStream outFile (File::Open("./test1.txt",
 				 FileMode::Create,
 				 FileAccess::Write,
 				 false));

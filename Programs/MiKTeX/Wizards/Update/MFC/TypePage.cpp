@@ -65,7 +65,7 @@ TypePage::TypePage ()
   if (sourceChoice < 0)
     {
       RepositoryType repositoryType (RepositoryType::Unknown);
-      tstring urlOrPath;
+      string urlOrPath;
       if (PackageManager::TryGetDefaultPackageRepository(repositoryType,
 							 urlOrPath))
 	{
@@ -148,8 +148,8 @@ TypePage::OnInitDialog ()
     {
       if (haveRemoteRepository)
 	{
-	  tstring protocol;
-	  tstring host;
+	  string protocol;
+	  string host;
 	  SplitUrl (remoteRepository, protocol, host);
 	  CString text;
 	  text.Format (T_("%s://%s (last used)"),

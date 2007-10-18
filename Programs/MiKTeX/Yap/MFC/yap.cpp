@@ -112,7 +112,7 @@ namespace {
 }
 
 void
-ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
+ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 		     /*[in]*/ YapCommandLineInfo &	cmdInfo)
 {
   cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
@@ -129,7 +129,7 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
   argv.Build (T_("yap"), lpszCommandLine);
 
   Cpopt popt (argv.GetArgc(),
-	      const_cast<const MIKTEXCHAR **>(argv.GetArgv()),
+	      const_cast<const char **>(argv.GetArgv()),
 	      aoption);
 
   popt.SetOtherOptionHelp (T_("[OPTION...] [DVIFILE]"));
@@ -146,7 +146,7 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
 
 	case OPT_FIND_SRC_SPECIAL:
 	  {
-	    MIKTEXCHAR * lpszFileName = 0;
+	    char * lpszFileName = 0;
 	    cmdInfo.sourceLineNum =
 	      strtol(popt.GetOptArg(), &lpszFileName, 10);
 	    if (lpszFileName != 0)
@@ -199,7 +199,7 @@ ParseYapCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
 			  0);
     }
 
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   // parse the rest
   for (; leftovers != 0 && *leftovers != 0; ++ leftovers)
@@ -381,7 +381,7 @@ YapApplication::InitInstance ()
 	{
 	  MIKTEX_ASSERT (_CrtIsValidHeapPointer(m_pszHelpFilePath));
 	  free (reinterpret_cast<void*>
-		(const_cast<MIKTEXCHAR *>(m_pszHelpFilePath)));
+		(const_cast<char *>(m_pszHelpFilePath)));
 	  m_pszHelpFilePath = _tcsdup(helpFileName.Get());
 	}
       
@@ -429,7 +429,7 @@ YapApplication::InitInstance ()
       if ((registering || g_pYapConfig->checkFileTypeAssociations)
 	  && ! unregistering)
 	{
-	  MIKTEXCHAR szClass[BufferSizes::MaxPath];
+	  char szClass[BufferSizes::MaxPath];
 	  long size = BufferSizes::MaxPath;
 	  if ((::RegQueryValue(HKEY_CLASSES_ROOT,
 			       T_(".dvi"),
@@ -658,9 +658,9 @@ YapApplication::ExitInstance ()
    _________________________________________________________________________ */
 
 void
-DdeExecute (/*[in]*/ const MIKTEXCHAR * server,
-	    /*[in]*/ const MIKTEXCHAR * topic,
-	    /*[in]*/ const MIKTEXCHAR * command);
+DdeExecute (/*[in]*/ const char * server,
+	    /*[in]*/ const char * topic,
+	    /*[in]*/ const char * command);
 
 bool
 YapApplication::ActivateFirstInstance
@@ -701,7 +701,7 @@ YapApplication::ActivateFirstInstance
     {
       ddeCommand.Format (T_("[findsrc(\"%d %s\")]"),
 			 static_cast<int>(cmdInfo.sourceLineNum),
-			 static_cast<const MIKTEXCHAR *>(cmdInfo.sourceFile));
+			 static_cast<const char *>(cmdInfo.sourceFile));
       DdeExecute (T_("yap"), T_("system"), ddeCommand);
     }
   
@@ -709,7 +709,7 @@ YapApplication::ActivateFirstInstance
   if (cmdInfo.hyperLabel.GetLength() > 0)
     {
       ddeCommand.Format (T_("[gotohyperlabel(\"%s\")]"),
-			 static_cast<const MIKTEXCHAR *>(cmdInfo.hyperLabel));
+			 static_cast<const char *>(cmdInfo.hyperLabel));
       DdeExecute (T_("yap"), T_("system"), ddeCommand);
     }
   
@@ -740,9 +740,9 @@ YapClientDDECallback (/*[in]*/ UINT,
    _________________________________________________________________________ */
 
 void
-DdeExecute (/*[in]*/ const MIKTEXCHAR * lpszServer,
-	    /*[in]*/ const MIKTEXCHAR * lpszTopic,
-	    /*[in]*/ const MIKTEXCHAR * lpszCommand)
+DdeExecute (/*[in]*/ const char * lpszServer,
+	    /*[in]*/ const char * lpszTopic,
+	    /*[in]*/ const char * lpszCommand)
 {
   YapLog (T_("DdeExecute(\"%s\", \"%s\", \"%s\")"),
 	  lpszServer,
@@ -788,7 +788,7 @@ DdeExecute (/*[in]*/ const MIKTEXCHAR * lpszServer,
   HDDEDATA hddedata;
   hddedata =
     DdeCreateDataHandle(inst,
-		reinterpret_cast<BYTE*>(const_cast<MIKTEXCHAR *>(lpszCommand)),
+		reinterpret_cast<BYTE*>(const_cast<char *>(lpszCommand)),
 			static_cast<unsigned long>(strlen(lpszCommand) + 1),
 			0, 0, CF_TEXT, 0);
   if (hddedata == 0)
@@ -824,7 +824,7 @@ namespace {
 }
 
 BOOL
-YapApplication::OnDDECommand (/*[in]*/ MIKTEXCHAR * lpszCommand)
+YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
 {
   ddeServing = true;
 
@@ -846,7 +846,7 @@ YapApplication::OnDDECommand (/*[in]*/ MIKTEXCHAR * lpszCommand)
 	      if (i != -1)
 		{
 		  src = src.Left(i);
-		  MIKTEXCHAR * lpszFileName = 0;
+		  char * lpszFileName = 0;
 		  long line = _tcstol(src, &lpszFileName, 10);
 		  while (*lpszFileName == T_(' '))
 		    {
@@ -892,7 +892,7 @@ YapApplication::OnDDECommand (/*[in]*/ MIKTEXCHAR * lpszCommand)
 
 bool
 YapApplication::FindSrcSpecial (/*[in]*/ int		line,
-				/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+				/*[in]*/ const char *	lpszFileName)
 {
   POSITION posTemplate = GetFirstDocTemplatePosition();
   while (posTemplate != 0)
@@ -932,7 +932,7 @@ YapApplication::FindSrcSpecial (/*[in]*/ int		line,
    _________________________________________________________________________ */
 
 bool
-YapApplication::GotoHyperLabel (/*[in]*/ const MIKTEXCHAR * lpszLabel)
+YapApplication::GotoHyperLabel (/*[in]*/ const char * lpszLabel)
 {
   CString hashLabel;
   hashLabel = T_('#');
@@ -975,8 +975,8 @@ YapApplication::GotoHyperLabel (/*[in]*/ const MIKTEXCHAR * lpszLabel)
    _________________________________________________________________________ */
 
 void
-StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszDocDir,
+StartEditor (/*[in]*/ const char *	lpszFileName,
+	     /*[in]*/ const char *	lpszDocDir,
 	     /*[in]*/ int			line)
 {
   // find the source file
@@ -1000,8 +1000,8 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
     }
 
   // make command line
-  tstring commandLine;
-  const MIKTEXCHAR * lpsz = g_pYapConfig->inverseSearchCommandLine;
+  string commandLine;
+  const char * lpsz = g_pYapConfig->inverseSearchCommandLine;
   bool haveName = false;
   bool haveLine = false;
   while (*lpsz != 0)
@@ -1025,7 +1025,7 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	      FATAL_MIKTEX_ERROR
 		(T_("StartEditor"),
 		 T_("The editor command is not valid."),
-		 (static_cast<const MIKTEXCHAR *>
+		 (static_cast<const char *>
 		  (g_pYapConfig->inverseSearchCommandLine)));
 	    }
 	  lpsz += 2;
@@ -1063,7 +1063,7 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   startupInfo.wShowWindow = SW_SHOWNORMAL;
   PROCESS_INFORMATION processInfo;
   if (! ::CreateProcess(0,
-			const_cast<MIKTEXCHAR *>(commandLine.c_str()),
+			const_cast<char *>(commandLine.c_str()),
 			0,
 			0,
 			FALSE,
@@ -1085,7 +1085,7 @@ StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 void
-VYapLog (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+VYapLog (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/ va_list		argptr)
 {
   if (theApp.trace_yap.get() != 0)
@@ -1100,7 +1100,7 @@ VYapLog (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-YapLog (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+YapLog (/*[in]*/ const char *	lpszFormat,
 	/*[in]*/			...)
 {
   if (theApp.trace_yap.get() != 0 && theApp.trace_yap->IsEnabled())
@@ -1118,7 +1118,7 @@ YapLog (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+TraceError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   if (theApp.trace_error.get() != 0)
@@ -1136,7 +1136,7 @@ TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 CDocument *
-YapApplication::OpenDocumentFile (/*[in]*/ const MIKTEXCHAR * lpszFileName)
+YapApplication::OpenDocumentFile (/*[in]*/ const char * lpszFileName)
 {
   try
     {
@@ -1209,7 +1209,7 @@ GetCommandPrefix (/*[in]*/ bool bClear)
    _________________________________________________________________________ */
 
 bool
-AddCommandPrefixChar (/*[in]*/ MIKTEXCHAR ch)
+AddCommandPrefixChar (/*[in]*/ char ch)
 {
   ASSERT_VALID (AfxGetApp());
   ASSERT_VALID (AfxGetApp()->m_pMainWnd);
@@ -1237,7 +1237,7 @@ YapApplication::OnViewTrace ()
 	}
       TraceStream::SetTraceFlags (tracing
 				  ? traceFlags
-				  : reinterpret_cast<const MIKTEXCHAR *>(0));
+				  : reinterpret_cast<const char *>(0));
     }
   catch (const MiKTeXException & e)
     {
@@ -1303,7 +1303,7 @@ AllowShellCommand (/*[in]*/ const CString & command)
 	message.Format ((T_("The following script is embedded in the ")
 			 T_("document:\n\n%s\n\n")
 			 T_("Do you allow to execute this script?")),
-			static_cast<const MIKTEXCHAR *>(command));
+			static_cast<const char *>(command));
 	return (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) == IDYES);
       }
     case YapConfig::SEC_SECURE_COMMANDS:

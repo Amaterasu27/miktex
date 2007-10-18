@@ -164,7 +164,7 @@ RemoveWizard::ReportError (/*[in]*/ const exception & e)
    _________________________________________________________________________ */
 
 CString
-RemoveWizard::SetNextText (/*[in]*/ const MIKTEXCHAR * lpszText)
+RemoveWizard::SetNextText (/*[in]*/ const char * lpszText)
 {
   CWnd * pWnd = GetDlgItem(ID_WIZNEXT);
   if (pWnd == 0)

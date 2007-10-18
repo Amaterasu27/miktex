@@ -146,7 +146,7 @@ BEGIN_TEST_PROGRAM();
   thread1->Join ();
   thread2->Join ();
 
-  PRINT (T_("%d + %d\n"), n1, n2);
+  PRINT ("%d + %d\n", n1, n2);
 
   CALL_TEST_FUNCTION(1);
 }

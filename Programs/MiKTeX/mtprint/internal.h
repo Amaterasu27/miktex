@@ -22,26 +22,6 @@
 
 /* _________________________________________________________________________
 
-   Debug-dependant Macros
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_DEBUG)
-
-#  define MIKTEX_ASSERT(expr)					\
-  static_cast<void>						\
-   ((expr)							\
-    ? 0								\
-    : (FATAL_MIKTEX_ERROR (0, T_("Assertion failed."), #expr),	\
-       0))
-
-#else
-
-#  define MIKTEX_ASSERT(expr)
-
-#endif
-
-/* _________________________________________________________________________
-
    Error Macros
    _________________________________________________________________________ */
 
@@ -142,11 +122,11 @@
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -165,8 +145,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -177,7 +157,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));

@@ -67,7 +67,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     MetafontApp::Init (lpszProgramInvocationName);
     SetProgramInfo (MIKTEXTEXT("mp;mpost"), 0, 0, 0);
@@ -110,7 +110,7 @@ public:
   bool
   MIKTEXMFCALL
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)
@@ -225,7 +225,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetInitProgramName ()
     const
@@ -234,7 +234,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetVirginProgramName ()
     const
@@ -243,7 +243,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   TheNameOfTheGame ()
     const
@@ -252,7 +252,7 @@ public:
   }
 
 private:
-  MiKTeX::Core::tstring texProgram;
+  std::string texProgram;
   
 private:
   int m_font_mem_size;

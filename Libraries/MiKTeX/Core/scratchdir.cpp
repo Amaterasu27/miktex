@@ -29,7 +29,7 @@
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(bool)
-IsGoodTempDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+IsGoodTempDirectory (/*[in]*/ const char *	lpszPath)
 {
   return (Utils::IsAbsolutePath(lpszPath) && Directory::Exists(lpszPath));
 }
@@ -42,7 +42,7 @@ IsGoodTempDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 PathName
 SessionImpl::GetTempDirectory ()
 {
-  tstring tempDirectory;
+  string tempDirectory;
 
   // try MiKTeX temp directory
   if ((GetSessionValue(MIKTEX_REGKEY_CORE,
@@ -59,17 +59,17 @@ SessionImpl::GetTempDirectory ()
 
 #if defined(MIKTEX_WINDOWS)
   // get system drive (usually C:)
-  tstring systemDrive;
+  string systemDrive;
   if (IsWindowsNT())
     {
-      if (! Utils::GetEnvironmentString(T_("SystemDrive"), systemDrive))
+      if (! Utils::GetEnvironmentString("SystemDrive", systemDrive))
 	{
 	  TraceError (T_("SystemDrive environment variable not defined"));
 	}
     }
   if (systemDrive.length() == 0)
     {
-      systemDrive = T_("C:");
+      systemDrive = "C:";
     }
 
   // try "C:\MiKTeXTemp"
@@ -93,14 +93,14 @@ SessionImpl::GetTempDirectory ()
 
 #if defined(MIKTEX_WINDOWS)
   // try C:\temp
-  path.Set (systemDrive.c_str(), T_("\\temp"), 0, 0);
+  path.Set (systemDrive.c_str(), "\\temp", 0, 0);
   if (IsGoodTempDirectory(path.Get()))
     {
       return (path);
     }
 
   // try C:\tmp
-  path.Set (systemDrive.c_str(), T_("\\tmp"), 0, 0);
+  path.Set (systemDrive.c_str(), "\\tmp", 0, 0);
   if (IsGoodTempDirectory(path.Get()))
     {
       return (path);
@@ -116,14 +116,14 @@ SessionImpl::GetTempDirectory ()
 
 #if defined(MIKTEX_WINDOWS)
   // as a last resort: try "C:\"
-  path.Set (systemDrive.c_str(), T_("\\"), 0, 0);
+  path.Set (systemDrive.c_str(), "\\", 0, 0);
   if (IsGoodTempDirectory(path.Get()))
     {
       return (path);
     }
 #endif
 
-  FATAL_MIKTEX_ERROR (T_("SessionImpl::GetTempDirectory"),
+  FATAL_MIKTEX_ERROR ("SessionImpl::GetTempDirectory",
 		      T_("No suitable temp directory found."),
 		      0);
 }
@@ -134,7 +134,7 @@ SessionImpl::GetTempDirectory ()
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(bool)
-NameExists (/*[in]*/ const MIKTEXCHAR *	lpszName)
+NameExists (/*[in]*/ const char *	lpszName)
 {
 #if defined(MIKTEX_WINDOWS)
   unsigned long attributes = GetFileAttributes(lpszName);
@@ -183,7 +183,7 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
   // make a unique sub-directory name
   for (size_t maxrounds = 5; maxrounds > 0; -- maxrounds)
     {
-      tstring fileName = T_("mik");
+      string fileName = "mik";
       MIKTEX_LOCK (ScratchDirectory)
 	{
 	  unsigned unique =
@@ -204,7 +204,7 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
 	  else
 	    {
 	      SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-		(T_("core"),
+		("core",
 		 T_("\"%s\" already exists"),
 		 pathScratchDirectory.Get());
 	    }
@@ -212,7 +212,7 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
       MIKTEX_UNLOCK ();
     }
 
-  FATAL_MIKTEX_ERROR (T_("ScratchDirectory::Create"),
+  FATAL_MIKTEX_ERROR ("ScratchDirectory::Create",
 		      T_("Could not create a unique sub-directory."),
 		      pathTempDir.Get());
 }
@@ -252,7 +252,7 @@ ScratchDirectory::~ScratchDirectory ()
    _________________________________________________________________________ */
 
 void
-ScratchDirectory::Enter (/*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+ScratchDirectory::Enter (/*[in]*/ const char *	lpszPrefix)
 {
   UNUSED_ALWAYS (lpszPrefix);
 
@@ -269,7 +269,7 @@ ScratchDirectory::Enter (/*[in]*/ const MIKTEXCHAR *	lpszPrefix)
     ->scratchDirectoryStack.push (scratchDirectoryInfo);
   
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("entering scratch directory \"%s\""),
      scratchDirectoryInfo.scratchDirectory.c_str());
   
@@ -300,7 +300,7 @@ ScratchDirectory::Leave ()
 
   if (SessionImpl::GetSession()->scratchDirectoryStack.empty())
     {
-      FATAL_MIKTEX_ERROR (T_("ScratchDirectory::Leave"),
+      FATAL_MIKTEX_ERROR ("ScratchDirectory::Leave",
 			  T_("The scratch directory could not be left."),
 			  T_("empty stack"));
     }
@@ -314,7 +314,7 @@ ScratchDirectory::Leave ()
     ->RemoveWorkingDirectory (scratchdir.previous.c_str());
 
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("leaving scratch directory \"%s\""),
      scratchdir.scratchDirectory.c_str());
   
@@ -324,7 +324,7 @@ ScratchDirectory::Leave ()
   PathName pathScratchDir (scratchdir.scratchDirectory.c_str());
   if (PathName::Compare(pathCwd, pathScratchDir) != 0)
     {
-      FATAL_MIKTEX_ERROR (T_("ScratchDirectory::Leave"),
+      FATAL_MIKTEX_ERROR ("ScratchDirectory::Leave",
 			  T_("The scratch directory could not be left."),
 			  pathScratchDir.Get());
     }

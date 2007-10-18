@@ -121,8 +121,8 @@ private:
 private:
   void
   InsertColumn (/*[in]*/ int			colIdx,
-		/*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		/*[in]*/ const MIKTEXCHAR *	lpszLongest);  
+		/*[in]*/ const char *	lpszLabel,
+		/*[in]*/ const char *	lpszLongest);  
 
 private:
   bool modified;

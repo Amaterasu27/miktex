@@ -43,7 +43,7 @@ ScanString (/*[in]*/ const char *	lpszString,
 #endif
   if (n < 0 && n != EOF)
     {
-      FATAL_CRT_ERROR (T_("sscanf"), 0);
+      FATAL_CRT_ERROR ("sscanf", 0);
     }
   return (n == 2);
 }
@@ -54,7 +54,7 @@ ScanString (/*[in]*/ const char *	lpszString,
    _________________________________________________________________________ */
 
 void
-SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
+SessionImpl::GetGhostscript (/*[out]*/ char *	lpszPath,
 			     /*[out]*/ unsigned long *	pVersionNumber)
 {
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
@@ -65,7 +65,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
       // try MiKTeX Ghostscript
       if (! FindFile(MIKTEX_GS_EXE, FileType::EXE, pathGsExe))
 	{
-	  FATAL_MIKTEX_ERROR (T_("SessionImpl::GetGhostscript"),
+	  FATAL_MIKTEX_ERROR ("SessionImpl::GetGhostscript",
 			      T_("MiKTeX Ghostscript could not be not found."),
 			      0);
 	}
@@ -80,12 +80,12 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
       CharBuffer<char> gsout (4096);
       size_t n = static_cast<unsigned>(gsout.GetCapacity());
       if (! Process::Run(pathGsExe.Get(),
-			 T_("--version"),
+			 "--version",
 			 gsout.GetBuffer(),
 			 &n,
 			 &exitCode))
 	{
-	  FATAL_MIKTEX_ERROR (T_("SessionImpl::GetGhostscript"),
+	  FATAL_MIKTEX_ERROR ("SessionImpl::GetGhostscript",
 			      T_("MiKTeX Ghostscript could not be run."),
 			      0);
 	}
@@ -93,9 +93,9 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
       gsVersion = VersionNumber::Parse(gsout.Get());
       if (exitCode != 0)
 	{
-	  TraceError (T_("%s"), gsout.GetBuffer());
+	  TraceError ("%s", gsout.GetBuffer());
 	}
-      trace_config->WriteFormattedLine (T_("core"),
+      trace_config->WriteFormattedLine ("core",
 					T_("Ghostscript version: %s"),
 					gsVersion.ToString().c_str());
     }
@@ -114,7 +114,7 @@ SessionImpl::GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_get_gs_exe (/*[out]*/ MIKTEXCHAR *	lpszPath)
+miktex_get_gs_exe (/*[out]*/ char *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);

@@ -34,34 +34,34 @@ public:
   static
   bool
   TryDeleteRegistryValue (/*[in]*/ TriState		shared,
-			  /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-			  /*[in]*/ const MIKTEXCHAR *	lpszValueName);
+			  /*[in]*/ const char *	lpszKeyName,
+			  /*[in]*/ const char *	lpszValueName);
 
 public:
   static
   bool
   TryGetRegistryValue (/*[in]*/ TriState		shared,
-		       /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		       /*[out]*/ tstring &		value,
-		       /*[in]*/ const MIKTEXCHAR *	lpszDefaultValue);
+		       /*[in]*/ const char *	lpszKeyName,
+		       /*[in]*/ const char *	lpszValueName,
+		       /*[out]*/ string &		value,
+		       /*[in]*/ const char *	lpszDefaultValue);
 
 public:
   static
   bool
   TryGetRegistryValue (/*[in]*/ TriState		shared,
-		       /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+		       /*[in]*/ const char *	lpszKeyName,
+		       /*[in]*/ const char *	lpszValueName,
 		       /*[out]*/ PathName &		path,
-		       /*[in]*/ const MIKTEXCHAR *	lpszDefaultPath);
+		       /*[in]*/ const char *	lpszDefaultPath);
 
 public:
   static
   void
   SetRegistryValue (/*[in]*/ TriState		shared,
-		    /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		    /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		    /*[in]*/ const MIKTEXCHAR *	lpszValue);
+		    /*[in]*/ const char *	lpszKeyName,
+		    /*[in]*/ const char *	lpszValueName,
+		    /*[in]*/ const char *	lpszValue);
 };
 
 END_INTERNAL_NAMESPACE;

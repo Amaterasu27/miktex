@@ -111,7 +111,7 @@ SiteWizLocal::OnBrowse ()
 	{
 	  return;
 	}
-      MIKTEXCHAR path[BufferSizes::MaxPath];
+      char path[BufferSizes::MaxPath];
       BOOL havePath = SHGetPathFromIDList(pidl, path);
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)
@@ -191,7 +191,7 @@ SiteWizLocal::OnWizardFinish ()
       else
 	{
 	  if (! (pManager->IsLocalPackageRepository
-		 (static_cast<const MIKTEXCHAR *>(directory))))
+		 (static_cast<const char *>(directory))))
 	    {
 	      PathName mpmIni (directory);
 	      mpmIni += T_("texmf");
@@ -210,7 +210,7 @@ SiteWizLocal::OnWizardFinish ()
 	}
       pManager->SetDefaultPackageRepository
 	(RepositoryType::Local,
-	 static_cast<const MIKTEXCHAR *>(directory));
+	 static_cast<const char *>(directory));
       return (CPropertyPage::OnWizardFinish());
     }
   catch (const MiKTeXException & e)

@@ -36,8 +36,8 @@ public:
   static
   INT_PTR
   DoModal (/*[in]*/ CWnd *		pParent,
-	   /*[in]*/ const MIKTEXCHAR *	lpszTitle,
-	   /*[in]*/ const MIKTEXCHAR *	lpszText);
+	   /*[in]*/ const char *	lpszTitle,
+	   /*[in]*/ const char *	lpszText);
 };
 
 MIKUI_MFC_END_NAMESPACE;

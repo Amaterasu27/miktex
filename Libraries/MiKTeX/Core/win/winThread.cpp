@@ -77,7 +77,7 @@ winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
       hStarted = CreateEvent(0, TRUE, FALSE, 0);
       if (hStarted == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CreateEvent"), 0);
+	  FATAL_WINDOWS_ERROR ("CreateEvent", 0);
 	}
       handle =
 	reinterpret_cast<HANDLE>(_beginthreadex(0,
@@ -88,16 +88,16 @@ winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
 						&id));
       if (handle == 0)
 	{
-	  FATAL_CRT_ERROR (T_("_beginthreadex"), 0);
+	  FATAL_CRT_ERROR ("_beginthreadex", 0);
 	}
       DWORD wait = WaitForSingleObject(hStarted, 1000);
       if (wait == WAIT_FAILED)
 	{
-	  FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+	  FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 	}
       if (wait == WAIT_TIMEOUT)
 	{
-	  FATAL_MIKTEX_ERROR (T_("winThread::winThread"),
+	  FATAL_MIKTEX_ERROR ("winThread::winThread",
 			      T_("The thread function could not be started."),
 			      0);
 	}
@@ -151,7 +151,7 @@ winThread::ThreadFunc (/*[in]*/ void * p)
       void * argument = This->argument;
       if (SetEvent(This->hStarted) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SetEvent"), 0);
+	  FATAL_WINDOWS_ERROR ("SetEvent", 0);
 	}
       function (argument);
     }

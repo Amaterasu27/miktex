@@ -73,13 +73,13 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
@@ -108,10 +108,10 @@ public:
   STDMETHOD(SetRepository) (/*[in]*/ BSTR repository);
 
 private:
-  std::vector<MiKTeX::Core::tstring> packagesToBeInstalled;
+  std::vector<std::string> packagesToBeInstalled;
 
 private:
-  std::vector<MiKTeX::Core::tstring> packagesToBeRemoved;
+  std::vector<std::string> packagesToBeRemoved;
 
 private:
   CComQIPtr<MiKTeXPackageManagerLib::IPackageInstallerCallback> pCallback;

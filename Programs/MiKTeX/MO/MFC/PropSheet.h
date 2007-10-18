@@ -45,7 +45,7 @@ public:
   
 public:
   bool
-  RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *		lpszTitle,
+  RunIniTeXMF (/*[in]*/ const char *		lpszTitle,
 	       /*[in]*/ const CommandLineBuilder &	cmdLine,
 	       /*[in]*/ ProgressDialog *		pProgressDialog);
 
@@ -99,7 +99,7 @@ private:
 		   /*[in]*/ size_t		n);
 
 private:
-  tstring processOutput;
+  string processOutput;
 
 private:
   ProgressDialog * pProgressDialog;

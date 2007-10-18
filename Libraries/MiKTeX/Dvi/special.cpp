@@ -1,6 +1,6 @@
 /* special.cpp: dvi specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -81,7 +81,7 @@ DviImpl::PatternToShadeLevel (/*[in]*/ const char * lpszTexture)
 	  log_error->WriteFormattedLine
 	    (T_("libdvi"),
 	     T_("invalid texture: %s"),
-	     A2T_(lpszTexture));
+	     lpszTexture);
 	  return (0.5);
 	}
       lpszPattern++;
@@ -218,7 +218,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 		  log_error->WriteFormattedLine
 		    (T_("libdvi"),
 		     T_("invalid special: %s"),
-		     A2T_(lpsz));
+		     lpsz);
 		}
 	      else
 		{
@@ -341,7 +341,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("bad pn special: %s"),
-		 A2T_(lpszSpecial));
+		 lpszSpecial);
 	    }
 	  else
 	    {
@@ -369,7 +369,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("bad pa special: %s"),
-		 A2T_(lpszSpecial));
+		 lpszSpecial);
 	    }
 	  else
 	    {
@@ -416,7 +416,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("bad sh special: %s"),
-		 A2T_(lpszSpecial));
+		 lpszSpecial);
 	    }
 	  else
 	    {
@@ -455,7 +455,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
     {
       log_error->WriteFormattedLine (T_("libdvi"),
 				     T_("unimplemented special: %s"),
-				     A2T_(lpszSpecial));
+				     lpszSpecial);
     }
 
   return (ret);

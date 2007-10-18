@@ -1,4 +1,4 @@
-/* MiKTeX/UI/MFC/ProgressDialog:					-*- C++ -*-
+/* MiKTeX/UI/MFC/ProgressDialog:				-*- C++ -*-
 
    Copyright (C) 2000-2007 Christian Schenk
 
@@ -46,13 +46,13 @@ public:
   virtual
   bool
   SetLine (/*[in]*/ unsigned		lineNum,
-	   /*[in]*/ const MIKTEXCHAR *	lpszText)
+	   /*[in]*/ const char *	lpszText)
     = 0;
 
 public:
   virtual
   bool
-  SetTitle (/*[in]*/ const MIKTEXCHAR *	lpszTitle)
+  SetTitle (/*[in]*/ const char *	lpszTitle)
     = 0;
 
 public:

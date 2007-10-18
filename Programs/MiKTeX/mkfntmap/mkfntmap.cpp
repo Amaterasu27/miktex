@@ -50,14 +50,6 @@ using namespace std;
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Fontmap Maintenance Utility")
 #endif
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #if MIKTEX_SERIES_INT < 207
 #  define CREATE_DEPRECATED_MAP_FILES 1
 #else
@@ -145,7 +137,7 @@ private:
 private:
   void
   ProcessOptions (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv);
+		  /*[in]*/ const char **	argv);
 
 private:
   void
@@ -153,13 +145,13 @@ private:
 
 private:
   bool
-  ToBool (/*[in]*/ const tstring & param);
+  ToBool (/*[in]*/ const string & param);
 
 private:
   bool
-  ScanConfigLine (/*[in]*/ const tstring &	line,
-		  /*[out]*/ tstring &		directive,
-		  /*[out]*/ tstring &		param);
+  ScanConfigLine (/*[in]*/ const string &	line,
+		  /*[out]*/ string &		directive,
+		  /*[out]*/ string &		param);
 
 private:
   void
@@ -167,18 +159,18 @@ private:
 
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 private:
   bool
-  LocateMap (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[out]*/ PathName &		path,
-	     /*[in]*/ bool			mustExist);
+  LocateMap (/*[in]*/ const char *	lpszFileName,
+	     /*[out]*/ PathName &	path,
+	     /*[in]*/ bool		mustExist);
 
 private:
   void
-  ReadMap (/*[in]*/ const tstring &		fileName,
+  ReadMap (/*[in]*/ const string &		fileName,
 	   /*[in,out]*/ set<FontMapEntry> &	fontMapEntries,
 	   /*[in]*/ bool			mustExist);
 
@@ -189,7 +181,7 @@ private:
 
 private:
   PathName
-  CreateOutputDir (/*[in]*/ const MIKTEXCHAR * lpszRelPath);
+  CreateOutputDir (/*[in]*/ const char * lpszRelPath);
 
 private:
   PathName
@@ -224,9 +216,9 @@ private:
   
 private:
   bool
-  GetInstructionParam (/*[in]*/ const tstring &	str,
-		       /*[in]*/ const tstring &	instruction,
-		       /*[out]*/ tstring &	param);
+  GetInstructionParam (/*[in]*/ const string &	str,
+		       /*[in]*/ const string &	instruction,
+		       /*[out]*/ string &	param);
 
 private:
   void
@@ -251,7 +243,7 @@ private:
  
 private:
   set<FontMapEntry>
-  CatMaps (/*[in]*/ const set<tstring> & fileNames);
+  CatMaps (/*[in]*/ const set<string> & fileNames);
 
 private:
   set<FontMapEntry>
@@ -259,12 +251,12 @@ private:
 
 private:
   void
-  TranslateFontFile (/*[in]*/ const map<tstring, tstring> &	transMap,
+  TranslateFontFile (/*[in]*/ const map<string, string> &	transMap,
 		     /*[in,out]*/ FontMapEntry &		fontMapEntry);
 
 private:
   void
-  TranslatePSName (/*[in]*/ const map<tstring, tstring> & files,
+  TranslatePSName (/*[in]*/ const map<string, string> & files,
 		   /*[in,out]*/ FontMapEntry &		fontMapEntry);
 
 private:
@@ -286,25 +278,25 @@ private:
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  Abort (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Abort (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  CfgError (/*[in]*/ const MIKTEXCHAR *	lpszMessage,
+  CfgError (/*[in]*/ const char *	lpszMessage,
 	    /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  MapError (/*[in]*/ const MIKTEXCHAR *	lpszMessage,
+  MapError (/*[in]*/ const char *	lpszMessage,
 	    /*[in]*/			...);
 
 private:
@@ -337,10 +329,10 @@ private:
   NamingConvention namingConvention;
 
 private:
-  set<tstring> mapFiles;
+  set<string> mapFiles;
 
 private:
-  set<tstring> mixedMapFiles;
+  set<string> mixedMapFiles;
 
 private:
   bool verbose;
@@ -348,23 +340,23 @@ private:
   // transform file names from URWkb (berry names) to URW (vendor
   // names)
 private:
-  static map<tstring, tstring> fileURW;
+  static map<string, string> fileURW;
 
   // transform file names from URWkb (berry names) to ADOBE (vendor
   // names)
 private:
-  static map<tstring, tstring> fileADOBE;
+  static map<string, string> fileADOBE;
 
   // transform file names from URW to ADOBE (both berry names)
 private:
-  static map<tstring, tstring> fileADOBEkb;
+  static map<string, string> fileADOBEkb;
 
   // transform font names from URW to Adobe
 private:
-  static map<tstring, tstring> psADOBE;
+  static map<string, string> psADOBE;
 
 private:
-  tstring outputDirectory;
+  string outputDirectory;
 
 private:
   SessionWrapper pSession;
@@ -381,10 +373,10 @@ private:
    Local Variables
    _________________________________________________________________________ */
 
-map<tstring, tstring> MakeFontMapApp::fileURW;
-map<tstring, tstring> MakeFontMapApp::fileADOBE;
-map<tstring, tstring> MakeFontMapApp::fileADOBEkb;
-map<tstring, tstring> MakeFontMapApp::psADOBE;
+map<string, string> MakeFontMapApp::fileURW;
+map<string, string> MakeFontMapApp::fileADOBE;
+map<string, string> MakeFontMapApp::fileADOBEkb;
+map<string, string> MakeFontMapApp::psADOBE;
 
 /* _________________________________________________________________________
 
@@ -394,13 +386,13 @@ map<tstring, tstring> MakeFontMapApp::psADOBE;
 void
 MakeFontMapApp::ShowVersion ()
 {
-  tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					   VersionNumber(VER_FILEVERSION))
-	<< T_("\n\
+  cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+					  VersionNumber(VER_FILEVERSION))
+       << T_("\n\
 Copyright (C) 2002-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	<< endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -409,8 +401,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
    _________________________________________________________________________ */
 
 void
-MakeFontMapApp::ProcessOptions (/*[in]*/ int			argc,
-				/*[in]*/ const MIKTEXCHAR **	argv)
+MakeFontMapApp::ProcessOptions (/*[in]*/ int		argc,
+				/*[in]*/ const char **	argv)
 {
   Cpopt popt (argc, argv, aoption);
 
@@ -435,7 +427,7 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int			argc,
   
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       Abort (T_("%s"), msg.c_str());
@@ -453,8 +445,8 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 void
-MakeFontMapApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			 /*[in]*/			...)
+MakeFontMapApp::Verbose (/*[in]*/ const char *	lpszFormat,
+			 /*[in]*/		...)
 {
   if (! verbose)
     {
@@ -462,7 +454,7 @@ MakeFontMapApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist)
+  cout << Utils::FormatString(lpszFormat, arglist)
 	<< endl;
   va_end (arglist);
 }
@@ -474,12 +466,12 @@ MakeFontMapApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-MakeFontMapApp::CfgError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			  /*[in]*/			...)
+MakeFontMapApp::CfgError (/*[in]*/ const char *	lpszFormat,
+			  /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << cfgContext.path.Get() << T_(":")
+  cerr << cfgContext.path.Get() << T_(":")
 	<< cfgContext.line << T_(": error: ")
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
@@ -494,12 +486,12 @@ MakeFontMapApp::CfgError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-MakeFontMapApp::MapError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			  /*[in]*/			...)
+MakeFontMapApp::MapError (/*[in]*/ const char *	lpszFormat,
+			  /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << mapContext.path.Get() << T_(":")
+  cerr << mapContext.path.Get() << T_(":")
 	<< mapContext.line << T_(": error: ")
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
@@ -514,14 +506,14 @@ MakeFontMapApp::MapError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-MakeFontMapApp::Abort (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		       /*[in]*/				...)
+MakeFontMapApp::Abort (/*[in]*/ const char *	lpszFormat,
+		       /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGRAM_NAME << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << PROGRAM_NAME << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -532,7 +524,7 @@ MakeFontMapApp::Abort (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 bool
-MakeFontMapApp::ToBool (/*[in]*/ const tstring & param)
+MakeFontMapApp::ToBool (/*[in]*/ const string & param)
 {
   if (param.empty())
     {
@@ -558,12 +550,12 @@ MakeFontMapApp::ToBool (/*[in]*/ const tstring & param)
    _________________________________________________________________________ */
 
 bool
-MakeFontMapApp::ScanConfigLine (/*[in]*/ const tstring &	line,
-				/*[out]*/ tstring &		directive,
-				/*[out]*/ tstring &		param)
+MakeFontMapApp::ScanConfigLine (/*[in]*/ const string &		line,
+				/*[out]*/ string &		directive,
+				/*[out]*/ string &		param)
 {
   if (line.empty()
-      || tstring(T_("*#;%")).find_first_of(line[0]) != tstring::npos)
+      || string(T_("*#;%")).find_first_of(line[0]) != string::npos)
     {
       return (false);
     }
@@ -597,12 +589,12 @@ MakeFontMapApp::ParseConfigFile (/*[in]*/ const PathName & path)
   StreamReader reader (path);
   cfgContext.path = path;
   cfgContext.line = 0;
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       ++ cfgContext.line;
-      tstring directive;
-      tstring param;
+      string directive;
+      string param;
       if (! ScanConfigLine(line, directive, param))
 	{
 	  continue;
@@ -696,7 +688,7 @@ MakeFontMapApp::Initialize ()
 
   for (unsigned i = pSession->GetNumberOfTEXMFRoots(); i > 0; -- i)
     {
-      static const MIKTEXCHAR * lpszConfigFiles[] = {
+      static const char * lpszConfigFiles[] = {
 	MIKTEX_PATH_MKFNTMAP_CFG,
 	(MIKTEX_PATH_MIKTEX_CONFIG_DIR
 	 MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
@@ -876,7 +868,7 @@ MakeFontMapApp::Initialize ()
    _________________________________________________________________________ */
 
 bool
-MakeFontMapApp::LocateMap (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+MakeFontMapApp::LocateMap (/*[in]*/ const char *	lpszFileName,
 			   /*[out]*/ PathName &		path,
 			   /*[in]*/ bool		mustExist)
 {
@@ -946,9 +938,9 @@ MakeFontMapApp::WriteMap (/*[in]*/ StreamWriter &		writer,
    _________________________________________________________________________ */
 
 bool
-MakeFontMapApp::GetInstructionParam (/*[in]*/ const tstring &	str,
-				     /*[in]*/ const tstring &	instruction,
-				     /*[out]*/ tstring &	param)
+MakeFontMapApp::GetInstructionParam (/*[in]*/ const string &	str,
+				     /*[in]*/ const string &	instruction,
+				     /*[out]*/ string &	param)
 {
   param = T_("");
   for (Tokenizer tok (str.c_str(), T_(" \t")); tok.GetCurrent() != 0; ++ tok)
@@ -975,13 +967,13 @@ MakeFontMapApp::WriteDvipdfmMap (/*[in]*/ StreamWriter &		writer,
        it != set1.end();
        ++ it)
     {
-      tstring field1 = it->texName;
-      tstring field2;
+      string field1 = it->texName;
+      string field2;
       if (! it->encFile.empty())
 	{
 	  field2 = PathName(it->encFile).GetFileNameWithoutExtension().Get();
 	}
-      tstring field3;
+      string field3;
       if (! it->fontFile.empty())
 	{
 	  field3 = PathName(it->fontFile).GetFileNameWithoutExtension().Get();
@@ -990,8 +982,8 @@ MakeFontMapApp::WriteDvipdfmMap (/*[in]*/ StreamWriter &		writer,
 	{
 	  field3 = it->psName;
 	}
-      tstring options;
-      tstring param;
+      string options;
+      string param;
       if (GetInstructionParam(it->specialInstructions,
 			      T_("ExtendFont"),
 			      param))
@@ -1052,7 +1044,7 @@ MakeFontMapApp::WriteDvipdfmMap (/*[in]*/ StreamWriter &		writer,
    _________________________________________________________________________ */
 
 PathName
-MakeFontMapApp::CreateOutputDir (/*[in]*/ const MIKTEXCHAR * lpszRelPath)
+MakeFontMapApp::CreateOutputDir (/*[in]*/ const char * lpszRelPath)
 {
   PathName path;
   if (! outputDirectory.empty())
@@ -1169,7 +1161,7 @@ MakeFontMapApp::ParseDvipsMapFile
 
   StreamReader reader (mapFile);
 
-  tstring line;
+  string line;
 
   mapContext.path = mapFile;
   mapContext.line = 0;
@@ -1200,7 +1192,7 @@ MakeFontMapApp::ParseDvipsMapFile
    _________________________________________________________________________ */
 
 void
-MakeFontMapApp::ReadMap (/*[in]*/ const tstring &		fileName,
+MakeFontMapApp::ReadMap (/*[in]*/ const string &		fileName,
 			 /*[in,out]*/ set<FontMapEntry> &	result,
 			 /*[in]*/ bool				mustExist)
 {
@@ -1218,10 +1210,10 @@ MakeFontMapApp::ReadMap (/*[in]*/ const tstring &		fileName,
    _________________________________________________________________________ */
 
 set<FontMapEntry>
-MakeFontMapApp::CatMaps (/*[in]*/ const set<tstring> &	fileNames)
+MakeFontMapApp::CatMaps (/*[in]*/ const set<string> &	fileNames)
 {
   set<FontMapEntry> result;
-  for (set<tstring>::const_iterator it = fileNames.begin();
+  for (set<string>::const_iterator it = fileNames.begin();
        it != fileNames.end();
        ++ it)
     {
@@ -1237,10 +1229,10 @@ MakeFontMapApp::CatMaps (/*[in]*/ const set<tstring> &	fileNames)
 
 void
 MakeFontMapApp::TranslateFontFile
-(/*[in]*/ const map<tstring, tstring> &	transMap,
- /*[in,out]*/ FontMapEntry &	fontMapEntry)
+(/*[in]*/ const map<string, string> &	transMap,
+ /*[in,out]*/ FontMapEntry &		fontMapEntry)
 {
-  map<tstring, tstring>::const_iterator it;
+  map<string, string>::const_iterator it;
   it = transMap.find(fontMapEntry.fontFile);
   if (it != transMap.end())
     {
@@ -1254,7 +1246,7 @@ MakeFontMapApp::TranslateFontFile
 	{
 	  fontMapEntry.headerList += T_(';');
 	}
-      const MIKTEXCHAR * lpsz;
+      const char * lpsz;
       for (lpsz = header.GetCurrent();
 	   *lpsz == T_('<') || *lpsz == T_('[');
 	   ++ lpsz)
@@ -1279,10 +1271,10 @@ MakeFontMapApp::TranslateFontFile
    _________________________________________________________________________ */
 
 void
-MakeFontMapApp::TranslatePSName (/*[in]*/ const map<tstring, tstring> &	names,
+MakeFontMapApp::TranslatePSName (/*[in]*/ const map<string, string> &	names,
 				 /*[in,out]*/ FontMapEntry &	fontMapEntry)
 {
-  map<tstring, tstring>::const_iterator it;
+  map<string, string>::const_iterator it;
   it = names.find(fontMapEntry.psName);
   if (it != names.end())
     {
@@ -1388,7 +1380,7 @@ MakeFontMapApp::CopyFiles ()
    MakeFontMapApp::BuildFontconfigCache
    _________________________________________________________________________ */
 
-static const MIKTEXCHAR * const topDirs[] = {
+static const char * const topDirs[] = {
   T_("fonts/type1"),
   T_("fonts/opentype"),
   T_("fonts/truetype"),
@@ -1402,7 +1394,7 @@ MakeFontMapApp::BuildFontconfigCache ()
   StreamWriter writer (configFile);
   writer.WriteLine (T_("<?xml version=\"1.0\"?>"));
   writer.WriteLine (T_("<fontconfig>"));
-  vector<tstring> paths;
+  vector<string> paths;
   for (CSVList path
 	 (pSession->GetLocalFontDirectories().c_str(),
 	  PathName::PathNameDelimiter);
@@ -1424,7 +1416,7 @@ MakeFontMapApp::BuildFontconfigCache ()
 	    }
 	}
     }
-  for (vector<tstring>::const_iterator it = paths.begin();
+  for (vector<string>::const_iterator it = paths.begin();
        it != paths.end();
        ++ it)
     {
@@ -1455,7 +1447,7 @@ bool
 HasPaintType (/*[in]*/ const FontMapEntry & fontMapEntry)
 {
   return (fontMapEntry.specialInstructions.find(T_("PaintType"))
-	  != tstring::npos);
+	  != string::npos);
 }
 
 void
@@ -1563,7 +1555,7 @@ MakeFontMapApp::MakeMaps ()
 
 void
 MakeFontMapApp::Run (/*[in]*/ int			argc,
-		     /*[in]*/ const MIKTEXCHAR **	argv)
+		     /*[in]*/ const char **	argv)
 {
   pSession.CreateSession (Session::InitInfo(argv[0]));
   ProcessOptions (argc, argv);
@@ -1582,7 +1574,7 @@ __declspec(dllexport)
 int
 __cdecl
 mkfntmap (/*[in]*/ int			argc,
-	  /*[in]*/ const MIKTEXCHAR **	argv)
+	  /*[in]*/ const char **	argv)
 {
   try
     {

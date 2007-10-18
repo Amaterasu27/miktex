@@ -41,8 +41,8 @@ DllProcBase::DllProcBase ()
    _________________________________________________________________________ */
 
 MIKTEXCALL
-DllProcBase::DllProcBase (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-			  /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+DllProcBase::DllProcBase (/*[in]*/ const char *	lpszDllName,
+			  /*[in]*/ const char *	lpszProcName)
   : dllName (lpszDllName),
     procName (lpszProcName),
     hModule (0),
@@ -62,7 +62,7 @@ DllProcBase::~DllProcBase ()
     {
       if (hModule != 0 && ! FreeLibrary(hModule))
 	{
-	  FATAL_WINDOWS_ERROR (T_("FreeLibrary"), 0);
+	  FATAL_WINDOWS_ERROR ("FreeLibrary", 0);
 	}
     }
   catch (const exception &)
@@ -85,18 +85,16 @@ DllProcBase::GetProc ()
     }
   if (hModule == 0)
     {
-      hModule = LoadLibrary(dllName.c_str());
+      hModule = LoadLibraryA(dllName.c_str());
       if (hModule == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("DllProcBase::GetProc"),
-			       dllName.c_str());
+	  FATAL_WINDOWS_ERROR ("LoadLibrary", dllName.c_str());
 	}
     }
   proc = GetProcAddress(hModule, procName.c_str());
   if (proc == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("DllProcBase::GetProc"),
-			   procName.c_str());
+      FATAL_WINDOWS_ERROR ("GetProcAddress", procName.c_str());
     }
   return (proc);
 }

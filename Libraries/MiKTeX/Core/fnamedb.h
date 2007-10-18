@@ -40,8 +40,8 @@ class FileNameDatabase
 public:
   static
   FileNameDatabase *
-  Create (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
-	  /*[in]*/ const MIKTEXCHAR *	lpszRoot,
+  Create (/*[in]*/ const char *	lpszFndbPath,
+	  /*[in]*/ const char *	lpszRoot,
 	  /*[in]*/ bool			readOnly);
 
 public:
@@ -50,16 +50,16 @@ public:
 
 public:
   bool
-  Search (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszDirPath,
+  Search (/*[in]*/ const char *	lpszFileName,
+	  /*[in]*/ const char *	lpszDirPath,
 	  /*[out]*/ PathName &		result,
-	  /*[out]*/ MIKTEXCHAR *	lpszFileNameInfo,
+	  /*[out]*/ char *	lpszFileNameInfo,
 	  /*[in]*/ size_t		sizeFileNameInfo);
 
 public:
   void
-  AddFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFileNameInfo);
+  AddFile (/*[in]*/ const char *	lpszPath,
+	   /*[in]*/ const char *	lpszFileNameInfo);
 
 public:
   long
@@ -72,7 +72,7 @@ public:
 
 public:  
   void
-  RemoveFile (/*[in]*/ const MIKTEXCHAR *	lpszPath);
+  RemoveFile (/*[in]*/ const char *	lpszPath);
 
 public:
   bool
@@ -81,7 +81,7 @@ public:
 
 public:
   bool
-  Enumerate (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  Enumerate (/*[in]*/ const char *	lpszPath,
 	     /*[in]*/ IEnumerateFndbCallback *	pCallback);
 
 public:
@@ -105,16 +105,16 @@ private:
 private:
   FileNameDatabaseDirectory *
   CreateDirectory (/*[out]*/ FileNameDatabaseDirectory *	pDir,
-		   /*[in]*/ const MIKTEXCHAR *			lpszName);
+		   /*[in]*/ const char *			lpszName);
 
 private:
   FileNameDatabaseDirectory *
   CreateDirectoryPath (/*[in]*/ FileNameDatabaseDirectory *	pDir,
-		       /*[in]*/ const MIKTEXCHAR *		lpszRelPath);
+		       /*[in]*/ const char *		lpszRelPath);
 
 private:
   FileNameDatabaseHeader::FndbOffset
-  CreateString (/*[in]*/ const MIKTEXCHAR * lpszName);
+  CreateString (/*[in]*/ const char * lpszName);
 
 private:
   FileNameDatabaseDirectory *
@@ -124,25 +124,25 @@ private:
   U32
   FindLowerBound (/*[in]*/ const FileNameDatabaseHeader::FndbOffset *	pBegin,
 		  /*[in]*/ U32			count,
-		  /*[in]*/ const MIKTEXCHAR *	lpszName,
+		  /*[in]*/ const char *	lpszName,
 		  /*[out]*/ bool &		isDuplicate)
     const;
 
 private:
   const FileNameDatabaseDirectory *
   FindSubDirectory (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
-		    /*[in]*/ const MIKTEXCHAR *			lpszRelPath)
+		    /*[in]*/ const char *			lpszRelPath)
     const;
 
 private:
   FileNameDatabaseHeader::FndbOffset
   FindSubDirectory2 (/*[in]*/ const FileNameDatabaseDirectory *	pDir,
-		     /*[in]*/ const MIKTEXCHAR *		lpszRelPath)
+		     /*[in]*/ const char *		lpszRelPath)
     const;
 
 private:
   FileNameDatabaseDirectory *
-  TryGetParent (/*[in]*/ const MIKTEXCHAR *	lpszPath);
+  TryGetParent (/*[in]*/ const char *	lpszPath);
   
 private:
   void
@@ -180,7 +180,7 @@ private:
   GetPointer (/*[in]*/ FileNameDatabaseHeader::FndbOffset fndboff);
   
 private:
-  const MIKTEXCHAR *
+  const char *
   GetString (/*[in]*/ FileNameDatabaseHeader::FndbOffset fndboff)
     const;
 
@@ -205,8 +205,8 @@ private:
 
 private:
   void
-  Initialize (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
-	      /*[in]*/ const MIKTEXCHAR *	lpszRoot,
+  Initialize (/*[in]*/ const char *	lpszFndbPath,
+	      /*[in]*/ const char *	lpszRoot,
 	      /*[in]*/ bool			readWrite = false);
 
 private:
@@ -233,18 +233,18 @@ private:
 
 private:
   void
-  OpenFileNameDatabase (/*[in]*/ const MIKTEXCHAR *	lpszFndbPath,
+  OpenFileNameDatabase (/*[in]*/ const char *	lpszFndbPath,
 			/*[in]*/ bool			readWrite = false);
 
 private:
   void
   RemoveFileName (/*[in]*/ FileNameDatabaseDirectory *	pDir,
-		  /*[in]*/ const MIKTEXCHAR *		lpszFileName);
+		  /*[in]*/ const char *		lpszFileName);
 
 private:
   const FileNameDatabaseDirectory *
   SearchFileName (/*[in]*/ const FileNameDatabaseDirectory * 	pDir,
-		  /*[in]*/ const MIKTEXCHAR *			lpszFileName,
+		  /*[in]*/ const char *			lpszFileName,
 		  /*[out]*/ U32 &				index)
     const;
 
@@ -259,18 +259,18 @@ private:
 private:
   bool
   RecursiveSearch (/*[in]*/ FileNameDatabaseHeader::FndbOffset		foDir,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSubDir,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSearchSpec,
+		   /*[in]*/ const char *	lpszSubDir,
+		   /*[in]*/ const char *	lpszSearchSpec,
 		   /*[out]*/ PathName &		result,
-		   /*[out]*/ MIKTEXCHAR *	lpszFileNameInfo,
+		   /*[out]*/ char *	lpszFileNameInfo,
 		   /*[in]*/ size_t		sizeFileNameInfo);
 
 private:
   bool
   Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset			foDir,
-	  /*[in]*/ const MIKTEXCHAR *		lpszPath,
+	  /*[in]*/ const char *		lpszPath,
 	  /*[out]*/ PathName &			result,
-	  /*[out]*/ MIKTEXCHAR *		lpszFileNameInfo,
+	  /*[out]*/ char *		lpszFileNameInfo,
 	  /*[in]*/ size_t			sizeFileNameInfo);
 
 

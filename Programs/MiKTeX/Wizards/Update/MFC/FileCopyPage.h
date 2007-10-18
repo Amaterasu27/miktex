@@ -99,13 +99,13 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
@@ -140,21 +140,21 @@ private:
 
 private:
   void
-  Log (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Log (/*[in]*/ const char *	lpszFormat,
        /*[in]*/				...);
 
 private:
   void
   Report (/*[in]*/ bool			writeLog,
 	  /*[in]*/ bool			immediate,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	  /*[in]*/ const char *	lpszFormat,
 	  /*[in]*/			...);
 
 private:
   void
-  CollectFiles (/*[out]*/ vector<tstring> &	vec,
+  CollectFiles (/*[out]*/ vector<string> &	vec,
 		/*[in]*/ const PathName &	dir,
-		/*[in]*/ const MIKTEXCHAR *	lpszExt);
+		/*[in]*/ const char *	lpszExt);
     
 private:
   void
@@ -210,7 +210,7 @@ private:
     bool waitingForClickOnNext;
     int progress1Pos;
     int progress2Pos;
-    tstring packageName;
+    string packageName;
   };
 
 private:

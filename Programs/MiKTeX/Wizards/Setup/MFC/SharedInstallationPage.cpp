@@ -83,7 +83,7 @@ SharedInstallationPage::OnInitDialog ()
 	{
 	  UNEXPECTED_CONDITION (T_("SharedInstallationPage::OnInitDialog"));
 	}
-      MIKTEXCHAR szLogonName[30];
+      char szLogonName[30];
       DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
       if (! GetUserName(szLogonName, &sizeLogonName))
 	{
@@ -102,7 +102,7 @@ SharedInstallationPage::OnInitDialog ()
       str += szLogonName;
       if (IsWindowsNT())
 	{
-	  MIKTEXCHAR szDisplayName[30];
+	  char szDisplayName[30];
 #if defined(MIKTEX_UNICODE)
 	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
 	    getUserNameEx (T_("Secur32.dll"), T_("GetUserNameExW"));

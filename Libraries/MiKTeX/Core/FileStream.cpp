@@ -98,7 +98,7 @@ FileStream::Read (/*[out]*/ void *	pBytes,
   size_t n = fread(pBytes, 1, count, pFile);
   if (ferror(pFile) != 0)
     {
-      FATAL_CRT_ERROR (T_("fread"), 0);
+      FATAL_CRT_ERROR ("fread", 0);
     }
   return (n);
 }
@@ -115,7 +115,7 @@ FileStream::Write (/*[in]*/ const void *	pBytes,
 {
   if (fwrite(pBytes, 1, count, pFile) != count)
     {
-      FATAL_CRT_ERROR (T_("fwrite"), 0);
+      FATAL_CRT_ERROR ("fwrite", 0);
     }
 }
 
@@ -142,12 +142,12 @@ FileStream::Seek (/*[in]*/ long		offset,
       origin = SEEK_CUR;
       break;
     default:
-      UNEXPECTED_CONDITION (T_("FileStream::Seek"));
+      UNEXPECTED_CONDITION ("FileStream::Seek");
       break;
     }
   if (fseek(pFile, offset, origin) != 0)
     {
-      FATAL_CRT_ERROR (T_("fseek"), 0);
+      FATAL_CRT_ERROR ("fseek", 0);
     }
 }
 
@@ -163,7 +163,7 @@ FileStream::GetPosition ()
   long pos = ftell(pFile);
   if (pos < 0)
     {
-      FATAL_CRT_ERROR (T_("ftell"), 0);
+      FATAL_CRT_ERROR ("ftell", 0);
     }
   return (pos);
 }
@@ -207,12 +207,12 @@ BZip2Stream::BZip2Stream (/*[in]*/ const FileStream &	fileStream,
 		       0);
       if (bzError != BZ_OK)
 	{
-	  UNEXPECTED_CONDITION (T_("BZip2Stream::BZip2Stream"));
+	  UNEXPECTED_CONDITION ("BZip2Stream::BZip2Stream");
 	}
     }
   else
     {
-      UNIMPLEMENTED (T_("BZip2Stream::BZip2Stream"));
+      UNIMPLEMENTED ("BZip2Stream::BZip2Stream");
     }
 }
 
@@ -252,12 +252,12 @@ BZip2Stream::Close ()
 	  BZ2_bzReadClose (&bzError, pBzFile);
 	  if (bzError != BZ_OK)
 	    {
-	      UNEXPECTED_CONDITION (T_("BZip2Stream::Close"));
+	      UNEXPECTED_CONDITION ("BZip2Stream::Close");
 	    }
 	}
       else
 	{
-	  UNIMPLEMENTED (T_("BZip2Stream::Close"));
+	  UNIMPLEMENTED ("BZip2Stream::Close");
 	}
     }
 }
@@ -277,7 +277,7 @@ BZip2Stream::Read (/*[out]*/ void *	pBytes,
   int n = BZ2_bzRead(&bzError, pBzFile, pBytes, static_cast<int>(count));
   if (bzError != BZ_OK && bzError != BZ_STREAM_END)
     {
-      UNEXPECTED_CONDITION (T_("BZip2Stream::Read"));
+      UNEXPECTED_CONDITION ("BZip2Stream::Read");
     }
   return (n);
 }
@@ -294,7 +294,7 @@ BZip2Stream::Write (/*[in]*/ const void *	pBytes,
 {
   UNUSED_ALWAYS (pBytes);
   UNUSED_ALWAYS (count);
-  UNIMPLEMENTED (T_("BZip2Stream::Write"));
+  UNIMPLEMENTED ("BZip2Stream::Write");
 }
 
 /* _________________________________________________________________________
@@ -309,7 +309,7 @@ BZip2Stream::Seek (/*[in]*/ long	offset,
 {
   UNUSED_ALWAYS (offset);
   UNUSED_ALWAYS (seekOrigin);
-  UNIMPLEMENTED (T_("BZip2Stream::Seek"));
+  UNIMPLEMENTED ("BZip2Stream::Seek");
 }
 
 /* _________________________________________________________________________
@@ -321,7 +321,7 @@ long
 MIKTEXCALL
 BZip2Stream::GetPosition ()
 {
-  UNIMPLEMENTED (T_("BZip2Stream::GetPosition"));
+  UNIMPLEMENTED ("BZip2Stream::GetPosition");
 }
 
 /* _________________________________________________________________________
@@ -341,7 +341,7 @@ StreamReader::StreamReader (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 MIKTEXCALL
-StreamReader::StreamReader (/*[in]*/ const MIKTEXCHAR * lpszPath)
+StreamReader::StreamReader (/*[in]*/ const char * lpszPath)
   : stream (File::Open(lpszPath, FileMode::Open, FileAccess::Read))
 {
 }
@@ -382,7 +382,7 @@ StreamReader::Close ()
 
 bool
 MIKTEXCALL
-StreamReader::ReadLine (/*[out]*/ tstring & line)
+StreamReader::ReadLine (/*[out]*/ string & line)
 {
   return (Utils::ReadLine(line, stream.Get(), false));
 }
@@ -433,20 +433,14 @@ StreamWriter::Close ()
    _________________________________________________________________________ */
 
 inline
-MIKTEXCHARINT
-FPutC (/*[in]*/ MIKTEXCHARINT	ch,
+int
+FPutC (/*[in]*/ int	ch,
        /*[in]*/ FILE *		stream)
 {
-#if defined(_MSC_VER)
-  MIKTEXCHARINT chWritten = _fputtc(ch, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutC()
-#else
   int chWritten = fputc(ch, stream);
-#endif
-  if (chWritten == MIKTEXEOF)
+  if (chWritten == EOF)
     {
-      FATAL_CRT_ERROR (T_("fputc"), 0);
+      FATAL_CRT_ERROR ("fputc", 0);
     }
   return (chWritten);
 }
@@ -458,19 +452,13 @@ FPutC (/*[in]*/ MIKTEXCHARINT	ch,
 
 inline
 void
-FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
+FPutS (/*[in]*/ const char *	lpsz,
        /*[in]*/ FILE *			stream)
 {
-#if defined(_MSC_VER)
-  int ok = _fputts(lpsz, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutS()
-#else
   int ok = fputs(lpsz, stream);
-#endif
   if (ok < 0)
     {
-      FATAL_CRT_ERROR (T_("fputs"), 0);
+      FATAL_CRT_ERROR ("fputs", 0);
     }
 }
 
@@ -481,7 +469,7 @@ FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
 
 void
 MIKTEXCALL
-StreamWriter::Write (/*[in]*/ MIKTEXCHAR	ch)
+StreamWriter::Write (/*[in]*/ char	ch)
 {
   FPutC (ch, stream.Get());
 }
@@ -492,7 +480,7 @@ StreamWriter::Write (/*[in]*/ MIKTEXCHAR	ch)
    _________________________________________________________________________ */
 
 void
-StreamWriter::Write (/*[in]*/ const tstring & line)
+StreamWriter::Write (/*[in]*/ const string & line)
 {
   FPutS (line.c_str(), stream.Get());
 }
@@ -504,7 +492,7 @@ StreamWriter::Write (/*[in]*/ const tstring & line)
 
 void
 MIKTEXCALL
-StreamWriter::WriteLine (/*[in]*/ const tstring & line)
+StreamWriter::WriteLine (/*[in]*/ const string & line)
 {
   Write (line);
   WriteLine ();
@@ -519,7 +507,7 @@ void
 MIKTEXCALL
 StreamWriter::WriteLine ()
 {
-  FPutC (T_('\n'), stream.Get());
+  FPutC ('\n', stream.Get());
 }
 
 /* _________________________________________________________________________
@@ -529,7 +517,7 @@ StreamWriter::WriteLine ()
 
 void
 MIKTEXCALL
-StreamWriter::WriteFormatted (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+StreamWriter::WriteFormatted (/*[in]*/ const char *	lpszFormat,
 			      /*[in]*/			...)
 {
   va_list marker;
@@ -545,7 +533,7 @@ StreamWriter::WriteFormatted (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 void
 MIKTEXCALL
-StreamWriter::WriteFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+StreamWriter::WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
 				  /*[in]*/			...)
 {
   va_list marker;

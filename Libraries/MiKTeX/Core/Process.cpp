@@ -38,13 +38,13 @@ Process::~Process ()
    _________________________________________________________________________ */
 
 void
-Process::Start (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		/*[in]*/ const MIKTEXCHAR *	lpszArguments,
+Process::Start (/*[in]*/ const char *	lpszFileName,
+		/*[in]*/ const char *	lpszArguments,
 		/*[in]*/ FILE *			pFileStandardInput,
 		/*[out]*/ FILE **		ppFileStandardInput,
 		/*[out]*/ FILE **		ppFileStandardOutput,
 		/*[out]*/ FILE **		ppFileStandardError,
-		/*[in]*/ const MIKTEXCHAR *	lpszWorkingDirectory)
+		/*[in]*/ const char *	lpszWorkingDirectory)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
@@ -102,10 +102,10 @@ Process::Start (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 
 bool
 Process::Run (/*[in]*/ const PathName &		fileName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+	      /*[in]*/ const char *	lpszArguments,
 	      /*[out]*/ IRunProcessCallback *	pCallback,
 	      /*[out]*/ int *			pExitCode,
-	      /*[in]*/  const MIKTEXCHAR *	lpszWorkingDirectory)
+	      /*[in]*/  const char *	lpszWorkingDirectory)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszWorkingDirectory);
@@ -134,7 +134,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
   if (pCallback != 0)
     {
       SessionImpl::GetSession()->trace_process->WriteLine
-	(T_("core"),
+	("core",
 	 T_("start reading the pipe"));
       const size_t CHUNK_SIZE = 64;
       char buf[ CHUNK_SIZE ];
@@ -147,14 +147,14 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 	  int err = ferror(stdoutStream.Get());
 	  if (err != 0 && err != EPIPE)
 	    {
-	      FATAL_CRT_ERROR (T_("fread"), 0);
+	      FATAL_CRT_ERROR ("fread", 0);
 	    }
 	  // pass output to caller
 	  total += n;
 	  cancelled = ! pCallback->OnProcessOutput(buf, n);
 	}
       SessionImpl::GetSession()->trace_process->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("read %u bytes from the pipe"),
 	 static_cast<unsigned>(total));
     }
@@ -232,7 +232,7 @@ END_ANONYMOUS_NAMESPACE;
 
 bool
 Process::Run (/*[in]*/ const PathName &		fileName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+	      /*[in]*/ const char *	lpszArguments,
 	      /*[out]*/ void *			pBuf,
 	      /*[in,out]*/ size_t *		pBufSize,
 	      /*[in]*/ int *			pExitCode)
@@ -266,7 +266,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 void
 MIKTEXCALL
 Process::Run (/*[in]*/ const PathName &		fileName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+	      /*[in]*/ const char *	lpszArguments)
 {
   if (! Process::Run (fileName,
 		      lpszArguments,
@@ -274,7 +274,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 		      0,
 		      0))
     {
-      FATAL_MIKTEX_ERROR (T_("Process::Run"),
+      FATAL_MIKTEX_ERROR ("Process::Run",
 			  T_("The operation failed for some reason."),
 			  fileName.Get());
     }
@@ -288,12 +288,12 @@ Process::Run (/*[in]*/ const PathName &		fileName,
 void
 MIKTEXCALL
 Process::Run (/*[in]*/ const PathName &		fileName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+	      /*[in]*/ const char *	lpszArguments,
 	      /*[int]*/ IRunProcessCallback *	pCallback)
 {
   if (! Run(fileName, lpszArguments, pCallback, 0, 0))
     {
-      FATAL_MIKTEX_ERROR (T_("Process::Run"),
+      FATAL_MIKTEX_ERROR ("Process::Run",
 			  T_("The operation failed for some reason."),
 			  fileName.Get());
     }
@@ -305,7 +305,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(bool)
-Process::ExecuteSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine)
+Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine)
 {
   return (ExecuteSystemCommand(lpszCommandLine, 0, 0, 0));
 }
@@ -316,7 +316,7 @@ Process::ExecuteSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine)
    _________________________________________________________________________ */
 
 MIKTEXAPI(bool)
-Process::ExecuteSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine,
+Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine,
 			       /*[out]*/ int *		pExitCode)
 {
   return (ExecuteSystemCommand(lpszCommandLine, pExitCode, 0, 0));
@@ -328,13 +328,13 @@ Process::ExecuteSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine,
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_start_process (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		      /*[in]*/ const MIKTEXCHAR *	lpszArguments,
+miktex_start_process (/*[in]*/ const char *	lpszFileName,
+		      /*[in]*/ const char *	lpszArguments,
 		      /*[in]*/ FILE *			pFileStandardInput,
 		      /*[out]*/ FILE **			ppFileStandardInput,
 		      /*[out]*/ FILE **			ppFileStandardOutput,
 		      /*[out]*/ FILE **			ppFileStandardError,
-		      /*[in]*/ const MIKTEXCHAR *	lpszWorkingDirectory)
+		      /*[in]*/ const char *	lpszWorkingDirectory)
 {
   C_FUNC_BEGIN ();
   Process::Start (lpszFileName,

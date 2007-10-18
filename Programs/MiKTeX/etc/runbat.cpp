@@ -29,7 +29,7 @@ using namespace MiKTeX::Core;
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 {
   try
     {

@@ -40,12 +40,12 @@
 #if 0
 struct ConfigMapping
 {
-  const MIKTEXCHAR *	lpszConfigSection;
-  const MIKTEXCHAR *	lpszConfigValueName;
-  const MIKTEXCHAR *	lpszEnvVarName;
+  const char *	lpszConfigSection;
+  const char *	lpszConfigValueName;
+  const char *	lpszEnvVarName;
 #if defined(MIKTEX_WINDOWS)
-  const MIKTEXCHAR *	lpszRegKey;
-  const MIKTEXCHAR *	lpszRegValueName;
+  const char *	lpszRegKey;
+  const char *	lpszRegValueName;
 #endif
 };
 #endif
@@ -74,8 +74,8 @@ namespace {
 
 #if 0
 MIKTEXSTATICFUNC(const ConfigMapping *)
-FindConfigMapping (/*[in]*/ const MIKTEXCHAR *	lpszConfigSection,
-		   /*[in]*/ const MIKTEXCHAR *	lpszConfigValueName)
+FindConfigMapping (/*[in]*/ const char *	lpszConfigSection,
+		   /*[in]*/ const char *	lpszConfigValueName)
 {
   for (size_t i = 0;
        i < sizeof(configMappings) / sizeof(configMappings);
@@ -112,7 +112,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
       return (false);
     }
 
-  tstring str;
+  string str;
 
   if (Utils::GetEnvironmentString(MIKTEX_ENV_STARTUP_FILE, str))
     {
@@ -157,8 +157,8 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
 
   RemoveDirectoryDelimiter (bindir.GetBuffer());
 
-  if (PathName::Compare(bindir, T_("/usr/local/bin")) == 0
-      || PathName::Compare(bindir, T_("/usr/bin")) == 0)
+  if (PathName::Compare(bindir, "/usr/local/bin") == 0
+      || PathName::Compare(bindir, "/usr/bin") == 0)
     {
       PathName root (bindir);
 
@@ -169,7 +169,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
       // /usr/local/share/texmf/miktex/config/paths.ini
       // /usr/share/texmf/miktex/config/paths.ini
       path = root;
-      path += T_("share/texmf");
+      path += "share/texmf";
       path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
       if (File::Exists(path))
@@ -180,7 +180,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
       // /usr/local/texmf/miktex/config/paths.ini
       // /usr/texmf/miktex/config/paths.ini
       path = root;
-      path += T_("texmf");
+      path += "texmf";
       path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
       if (File::Exists(path))
@@ -227,44 +227,44 @@ SessionImpl::ReadStartupConfigFile ()
       
       pcfg->Read (path);
 
-      tstring str;
+      string str;
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_ROOTS,
 			    str))
 	{
 	  ret.roots = str;
 	}
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_INSTALL,
 			    str))
 	{
 	  ret.installRoot = str;
 	}
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_COMMON_DATA,
 			    str))
 	{
 	  ret.commonDataRoot = str;
 	}
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_USER_DATA,
 			    str))
 	{
 	  ret.userDataRoot = str;
 	}
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_COMMON_CONFIG,
 			    str))
 	{
 	  ret.commonConfigRoot = str;
 	}
       
-      if (pcfg->TryGetValue(T_("Paths"),
+      if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_USER_CONFIG,
 			    str))
 	{
@@ -294,14 +294,14 @@ SessionImpl::WriteStartupConfigFile
 
   SmartPointer<Cfg> pcfg (Cfg::Create());
 
-  pcfg->PutValue (T_("Paths"),
+  pcfg->PutValue ("Paths",
 		  MIKTEX_REGVAL_ROOTS,
 		  startupConfig.roots.c_str());
 
   if (! startupConfig.installRoot.Empty()
       && startupConfig.installRoot != defaultConfig.installRoot)
     {
-      pcfg->PutValue (T_("Paths"),
+      pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_INSTALL,
 		      startupConfig.installRoot.Get());
     }
@@ -309,7 +309,7 @@ SessionImpl::WriteStartupConfigFile
   if (! startupConfig.commonDataRoot.Empty()
       && startupConfig.commonDataRoot != defaultConfig.commonDataRoot)
     {
-      pcfg->PutValue (T_("Paths"),
+      pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_DATA,
 		      startupConfig.commonDataRoot.Get());
     }
@@ -317,7 +317,7 @@ SessionImpl::WriteStartupConfigFile
   if (! startupConfig.userDataRoot.Empty()
       && startupConfig.userDataRoot != defaultConfig.userDataRoot)
     {
-      pcfg->PutValue (T_("Paths"),
+      pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_DATA,
 		      startupConfig.userDataRoot.Get());
     }
@@ -325,7 +325,7 @@ SessionImpl::WriteStartupConfigFile
   if (! startupConfig.commonConfigRoot.Empty()
       && startupConfig.commonConfigRoot != defaultConfig.commonConfigRoot)
     {
-      pcfg->PutValue (T_("Paths"),
+      pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_CONFIG,
 		      startupConfig.commonConfigRoot.Get());
     }
@@ -333,14 +333,14 @@ SessionImpl::WriteStartupConfigFile
   if (! startupConfig.userConfigRoot.Empty()
       && startupConfig.userConfigRoot != defaultConfig.userConfigRoot)
     {
-      pcfg->PutValue (T_("Paths"),
+      pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_CONFIG,
 		      startupConfig.userConfigRoot.Get());
     }
 
   if (startupConfigFile.Empty())
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::WriteStartupConfigFile"));
+      UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
     }
 
   pcfg->Write (startupConfigFile.Get());
@@ -358,7 +358,7 @@ SessionImpl::ReadEnvironment ()
 
   StartupConfig ret;
 
-  tstring str;
+  string str;
 
   if (Utils::GetEnvironmentString (MIKTEX_ENV_ROOTS, str))
     {
@@ -443,7 +443,7 @@ SessionImpl::IsMiKTeXDirect ()
 PathName
 SessionImpl::GetBinDirectory ()
 {
-  tstring str;
+  string str;
   PathName ret;
   if (! IsMiKTeXDirect()
       && Utils::GetEnvironmentString(MIKTEX_ENV_BIN_DIR, str))
@@ -472,12 +472,12 @@ SessionImpl::GetBinDirectory ()
    _________________________________________________________________________ */
 
 void
-SessionImpl::ReadAllConfigFiles (/*[in]*/ const MIKTEXCHAR *	lpszBaseName,
+SessionImpl::ReadAllConfigFiles (/*[in]*/ const char *	lpszBaseName,
 				 /*[in,out]*/ Cfg *		pCfg)
 {
   PathName fileName (MIKTEX_PATH_MIKTEX_CONFIG_DIR,
 		     lpszBaseName,
-		     T_(".ini"));
+		     ".ini");
 
   // read all configuration files in reverse order
   for (unsigned i = GetNumberOfTEXMFRoots(); i > 0; -- i)
@@ -500,8 +500,8 @@ SessionImpl::ReadAllConfigFiles (/*[in]*/ const MIKTEXCHAR *	lpszBaseName,
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-AppendToEnvVarName (/*[in,out]*/ tstring &	name,
-		    /*[in]*/ const MIKTEXCHAR *	lpszPart)
+AppendToEnvVarName (/*[in,out]*/ string &	name,
+		    /*[in]*/ const char *	lpszPart)
 {
   for (; *lpszPart != 0; ++ lpszPart)
     {
@@ -522,10 +522,10 @@ AppendToEnvVarName (/*[in,out]*/ tstring &	name,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-			      /*[in]*/ const MIKTEXCHAR * lpszValueName,
-			      /*[out]*/ tstring &	  value,
-			      /*[in]*/const MIKTEXCHAR *  lpszDefaultValue)
+SessionImpl::GetSessionValue (/*[in]*/ const char * lpszSectionName,
+			      /*[in]*/ const char * lpszValueName,
+			      /*[out]*/ string &	  value,
+			      /*[in]*/const char *  lpszDefaultValue)
 {
   bool haveValue = false;
 
@@ -555,7 +555,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 	    }
 	}
 
-      const MIKTEXCHAR * lpszSectionName2 = lpszSectionName;
+      const char * lpszSectionName2 = lpszSectionName;
 	  
       // section name defaults to application name
       if (lpszSectionName2 == 0)
@@ -577,16 +577,16 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
 #endif
       
       {
-	tstring envVarName;
+	string envVarName;
 	envVarName.reserve (100);
 	
 	// try environment variable
 	// MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
 	envVarName = MIKTEX_ENV_PREFIX_;
 	AppendToEnvVarName (envVarName, app.GetCurrent());
-	envVarName += T_('_');
+	envVarName += '_';
 	AppendToEnvVarName (envVarName, lpszSectionName2);
-	envVarName += T_('_');
+	envVarName += '_';
 	AppendToEnvVarName (envVarName, lpszValueName);
 	if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	  {
@@ -620,9 +620,9 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
   // MIKTEX_<SECTIONNAME>_<VALUENAME>
   if (! haveValue && lpszSectionName != 0)
     {
-      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      string envVarName (MIKTEX_ENV_PREFIX_);
       AppendToEnvVarName (envVarName, lpszSectionName);
-      envVarName += T_('_');
+      envVarName += '_';
       AppendToEnvVarName (envVarName, lpszValueName);
       if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	{
@@ -634,7 +634,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
   // MIKTEX_<VALUENAME>
   if (! haveValue)
     {
-      tstring envVarName (MIKTEX_ENV_PREFIX_);
+      string envVarName (MIKTEX_ENV_PREFIX_);
       AppendToEnvVarName (envVarName, lpszValueName);
       if (Utils::GetEnvironmentString(envVarName.c_str(), value))
 	{
@@ -653,22 +653,22 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
     {
       if (lpszSectionName != 0)
 	{
-	  trace_values->WriteFormattedLine (T_("core"),
-					    T_("[%s]%s => %s"),
+	  trace_values->WriteFormattedLine ("core",
+					    "[%s]%s => %s",
 					    lpszSectionName,
 					    lpszValueName,
 					    (haveValue
 					     ? value.c_str()
-					     : T_("null")));
+					     : "null"));
 	}
       else
 	{
-	  trace_values->WriteFormattedLine (T_("core"),
-					    T_("%s => %s"),
+	  trace_values->WriteFormattedLine ("core",
+					    "%s => %s",
 					    lpszValueName,
 					    (haveValue
 					     ? value.c_str()
-					     : T_("null")));
+					     : "null"));
 	}
     }
       
@@ -683,9 +683,9 @@ SessionImpl::GetSessionValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::TryGetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-				/*[in]*/ const MIKTEXCHAR * lpszValueName,
-				/*[out]*/ tstring &		value)
+SessionImpl::TryGetConfigValue (/*[in]*/ const char * lpszSectionName,
+				/*[in]*/ const char * lpszValueName,
+				/*[out]*/ string &		value)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -703,23 +703,23 @@ SessionImpl::TryGetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    Get a configuration parameter.
    _________________________________________________________________________ */
 
-tstring
-SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-			     /*[in]*/ const MIKTEXCHAR * lpszValueName,
-			     /*[in]*/ const MIKTEXCHAR * lpszDefaultValue)
+string
+SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char * lpszValueName,
+			     /*[in]*/ const char * lpszDefaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
   MIKTEX_ASSERT_STRING (lpszDefaultValue);
 
-  tstring value;
+  string value;
 
   if (! GetSessionValue(lpszSectionName,
 			lpszValueName,
 			value,
 			lpszDefaultValue))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetConfigValue"), 0);
+      INVALID_ARGUMENT ("SessionImpl::GetConfigValue", 0);
     }
 
   return (value);
@@ -733,14 +733,14 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 int
-SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char *	lpszValueName,
 			     /*[in]*/ int			defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
 
-  tstring value;
+  string value;
 
   if (! GetSessionValue(lpszSectionName,
 			lpszValueName,
@@ -750,7 +750,7 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       return (defaultValue);
     }
 
-  return (AToI(value.c_str()));
+  return (atoi(value.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -761,14 +761,14 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char *	lpszValueName,
 			     /*[in]*/ bool			defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
 
-  tstring value;
+  string value;
 
   if (! GetSessionValue(lpszSectionName,
 			lpszValueName,
@@ -778,25 +778,25 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       return (defaultValue);
     }
 
-  if (value == T_("0")
-      || value == T_("disable")
-      || value == T_("off")
-      || value == T_("f")
-      || value == T_("false")
-      || value == T_("n")
-      || value == T_("no"))
+  if (value == "0"
+      || value == "disable"
+      || value == "off"
+      || value == "f"
+      || value == "false"
+      || value == "n"
+      || value == "no")
     {
       return (false);
     }
-  else if (! (value == T_("1")
-	      || value == T_("enable")
-	      || value == T_("on")
-	      || value == T_("t")
-	      || value == T_("true")
-	      || value == T_("y")
-	      || value == T_("yes")))
+  else if (! (value == "1"
+	      || value == "enable"
+	      || value == "on"
+	      || value == "t"
+	      || value == "true"
+	      || value == "y"
+	      || value == "yes"))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::GetConfigValue"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::GetConfigValue",
 			  T_("Invalid configuration value."),
 			  value.c_str());
     }
@@ -812,14 +812,14 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 TriState
-SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char *	lpszValueName,
 			     /*[in]*/ TriState			defaultValue)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
   MIKTEX_ASSERT_STRING (lpszValueName);
 
-  tstring value;
+  string value;
 
   if (! GetSessionValue(lpszSectionName,
 			lpszValueName,
@@ -829,35 +829,35 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
       return (defaultValue);
     }
 
-  if (value == T_("0")
-      || value == T_("disable")
-      || value == T_("off")
-      || value == T_("f")
-      || value == T_("false")
-      || value == T_("n")
-      || value == T_("no"))
+  if (value == "0"
+      || value == "disable"
+      || value == "off"
+      || value == "f"
+      || value == "false"
+      || value == "n"
+      || value == "no")
     {
       return (TriState::False);
     }
-  else if (value == T_("1")
-	   || value == T_("enable")
-	   || value == T_("on")
-	   || value == T_("t")
-	   || value == T_("true")
-	   || value == T_("y")
-	   || value == T_("yes"))
+  else if (value == "1"
+	   || value == "enable"
+	   || value == "on"
+	   || value == "t"
+	   || value == "true"
+	   || value == "y"
+	   || value == "yes")
     {
       return (TriState::True);
     }
-  else if (! (value == T_("")
-	      || value == T_("2")
-	      || value == T_("?")
-	      || value == T_("undetermined")))
+  else if (! (value == ""
+	      || value == "2"
+	      || value == "?"
+	      || value == "undetermined"))
     {
       tostringstream str;
-      str << T_("Invalid configuration data (") << value << T_(")")
-	  << T_(" for value ") << lpszValueName << T_(".");
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::GetConfigValue"),
+      str << T_("Invalid configuration data (") << value << ")"
+	  << T_(" for value ") << lpszValueName << ".";
+      FATAL_MIKTEX_ERROR ("SessionImpl::GetConfigValue",
 			  str.str().c_str(),
 			  0);
     }
@@ -873,22 +873,22 @@ SessionImpl::GetConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-				 /*[in]*/ const MIKTEXCHAR * lpszValueName,
-				 /*[in]*/ const MIKTEXCHAR * lpszValue)
+SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
+				 /*[in]*/ const char * lpszValueName,
+				 /*[in]*/ const char * lpszValue)
 {
 #if defined(MIKTEX_WINDOWS)
   winRegistry::SetRegistryValue (TriState::False,
 				 lpszSectionName,
 				 lpszValueName,
 				 lpszValue);
-  tstring newValue;
+  string newValue;
   if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
     {
       if (newValue != lpszValue)
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SessionImpl::SetUserConfigValue"),
+	    ("SessionImpl::SetUserConfigValue",
 	     T_("The configuration value could not be changed. Possibly an \
 environment variable definition is in the way."),
 	     lpszValueName);
@@ -896,12 +896,12 @@ environment variable definition is in the way."),
     }
 #else
   UNUSED_ALWAYS (lpszSectionName);
-  trace_error->WriteFormattedLine (T_("core"),
+  trace_error->WriteFormattedLine ("core",
 				   T_("cannot set %s to %s"),
 				   lpszValueName,
 				   lpszValue);
 #  warning Unimplemented: SessionImpl::SetUserConfigValue()
-  UNIMPLEMENTED (T_("SessionImpl::SetUserConfigValue"));
+  UNIMPLEMENTED ("SessionImpl::SetUserConfigValue");
 #endif
 }
 
@@ -913,13 +913,13 @@ environment variable definition is in the way."),
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-				 /*[in]*/ const MIKTEXCHAR * lpszValueName,
+SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
+				 /*[in]*/ const char * lpszValueName,
 				 /*[in]*/ bool			value)
 {
   SetUserConfigValue (lpszSectionName,
 		      lpszValueName,
-		      value ? T_("t") : T_("f"));
+		      value ? "t" : "f");
 }
 
 /* _________________________________________________________________________
@@ -930,8 +930,8 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const MIKTEXCHAR * lpszSectionName,
-				 /*[in]*/ const MIKTEXCHAR * lpszValueName,
+SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
+				 /*[in]*/ const char * lpszValueName,
 				 /*[in]*/ int			value)
 {
   SetUserConfigValue (lpszSectionName, lpszValueName, NUMTOSTR(value));
@@ -966,7 +966,7 @@ SessionImpl::SharedMiKTeXSetup (/*[in]*/ bool shared,
 				     NUMTOSTR(shared));
 #else
 #  warning Unimplemented: SessionImpl::SharedMiKTeXSetup()
-      UNIMPLEMENTED (T_("SessionImpl::SharedMiKTeXSetup"));
+      UNIMPLEMENTED ("SessionImpl::SharedMiKTeXSetup");
 #endif
     }
   sharedSetup = (shared ? TriState::True : TriState::False);
@@ -985,7 +985,7 @@ SessionImpl::IsSharedMiKTeXSetup ()
 #if defined(MIKTEX_WINDOWS)
       if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
 	{
-	  tstring value;
+	  string value;
 	  if (winRegistry::TryGetRegistryValue(TriState::True,
 					       MIKTEX_REGKEY_CORE,
 					       MIKTEX_REGVAL_SHARED_SETUP,
@@ -993,7 +993,7 @@ SessionImpl::IsSharedMiKTeXSetup ()
 					       0))
 	    {
 	      sharedSetup =
-		((value == T_("0")) ? TriState::False : TriState::True);
+		((value == "0") ? TriState::False : TriState::True);
 	    }
 	}
 #else
@@ -1013,7 +1013,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathRel)
 {
   PathName pathIn (GetSpecialPath(SpecialPath::InstallRoot));
   pathIn += pathRel;
-  pathIn.AppendExtension (T_(".in"));
+  pathIn.AppendExtension (".in");
   PathName pathOut (GetSpecialPath(SpecialPath::ConfigRoot));
   pathOut += pathRel;
   ConfigureFile (pathIn, pathOut);
@@ -1041,30 +1041,30 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
     (OpenFile(pathOut.Get(), FileMode::Create, FileAccess::Write, false));
   char chr;
   bool readingName = false;
-  tstring name;
+  string name;
   while (streamIn.Read(&chr, 1) == 1)
     {
       if (chr == '@')
 	{
 	  if (readingName)
 	    {
-	      tstring value;
+	      string value;
 	      readingName = false;
 	      if (name == MIKTEX_ENV_INSTALL)
 		{
 		  value = GetSpecialPath(SpecialPath::InstallRoot).Get();
 		}
-	      else if (name == T_("MIKTEX_CONFIG"))
+	      else if (name == "MIKTEX_CONFIG")
 		{
 		  value = GetSpecialPath(SpecialPath::ConfigRoot).Get();
 		}
-	      else if (name == T_("MIKTEX_DATA"))
+	      else if (name == "MIKTEX_DATA")
 		{
 		  value = GetSpecialPath(SpecialPath::DataRoot).Get();
 		}
 	      else
 		{
-		  FATAL_MIKTEX_ERROR (T_("SessionImpl::ConfigureFile"),
+		  FATAL_MIKTEX_ERROR ("SessionImpl::ConfigureFile",
 				      T_("Unknown variable."),
 				      name.c_str());
 		}
@@ -1073,7 +1073,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 	  else
 	    {
 	      readingName = true;
-	      name = T_("");
+	      name = "";
 	    }
 	}
       else if (readingName)
@@ -1103,15 +1103,15 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
    Get a configuration parameter.
    _________________________________________________________________________ */
 
-MIKTEXAPI(MIKTEXCHAR *)
-miktex_get_config_value (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-			 /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-			 /*[out]*/ MIKTEXCHAR *		lpszBuf,
+MIKTEXAPI(char *)
+miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
+			 /*[in]*/ const char *	lpszValueName,
+			 /*[out]*/ char *		lpszBuf,
 			 /*[in]*/ size_t		bufSize,
-			 /*[in]*/ const MIKTEXCHAR *	lpszDefaultValue)
+			 /*[in]*/ const char *	lpszDefaultValue)
 {
   C_FUNC_BEGIN ();
-  tstring value;
+  string value;
   if (! SessionImpl::GetSession()->TryGetConfigValue(lpszSectionName,
 						     lpszValueName,
 						     value))

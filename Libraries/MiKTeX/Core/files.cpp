@@ -48,18 +48,18 @@ Close (/*[in]*/ int fd)
    _________________________________________________________________________ */
 
 FILE *
-POpen (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
-       /*[in]*/ const MIKTEXCHAR *	lpszMode)
+POpen (/*[in]*/ const char *	lpszCommand,
+       /*[in]*/ const char *	lpszMode)
 {
   FILE * pFile;
 #if defined(_MSC_VER)
-  pFile = _popen(lpszCommand, (*lpszMode == T_('r') ? T_("rb") : T_("wb")));
+  pFile = _popen(lpszCommand, (*lpszMode == 'r' ? "rb" : "wb"));
 #else
   pFile = popen(lpszCommand, lpszMode);
 #endif
   if (pFile == 0)
     {
-      FATAL_CRT_ERROR (T_("popen"), lpszCommand);
+      FATAL_CRT_ERROR ("popen", lpszCommand);
     }
   return (pFile);
 }
@@ -80,7 +80,7 @@ PClose (/*[in]*/ FILE * pFile)
 #endif
   if (exitCode < 0)
     {
-      FATAL_CRT_ERROR (T_("pclose"), 0);
+      FATAL_CRT_ERROR ("pclose", 0);
     }
   return (exitCode);
 }
@@ -103,7 +103,7 @@ Pipe (/*[out]*/ int	filedes[2],
 #endif
   if (p != 0)
     {
-      FATAL_CRT_ERROR (T_("pipe"), 0);
+      FATAL_CRT_ERROR ("pipe", 0);
     }
 }
 
@@ -122,8 +122,8 @@ Pipe (/*[out]*/ FILE *	pFiles[2],
   pFiles[1] = 0;
   try
     {
-      pFiles[0] = FdOpen(handles[0], T_("rb"));
-      pFiles[1] = FdOpen(handles[1], T_("wb"));
+      pFiles[0] = FdOpen(handles[0], "rb");
+      pFiles[1] = FdOpen(handles[1], "wb");
     }
   catch (const exception &)
     {
@@ -196,7 +196,7 @@ DirectoryLister::~DirectoryLister ()
    _________________________________________________________________________ */
 
 void
-SessionImpl::RecordFileInfo (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
 			     /*[in]*/ FileAccess		access)
 {
   if (! (recordingFileNames
@@ -219,7 +219,7 @@ SessionImpl::RecordFileInfo (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 	    {
 	      AutoFndbRelease autoRelease (pFndb);
 	      PathName path;
-	      MIKTEXCHAR szPackageName[BufferSizes::MaxPackageName];
+	      char szPackageName[BufferSizes::MaxPackageName];
 	      if (pFndb->Search(pathRelPath.Get(),
 				MPM_ROOT_PATH,
 				path,
@@ -241,7 +241,7 @@ SessionImpl::RecordFileInfo (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
 			  /*[in]*/ FileMode		mode,
 			  /*[in]*/ FileAccess		access,
 			  /*[in]*/ bool			text)
@@ -272,7 +272,7 @@ SessionImpl::TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ FileMode		mode,
 		       /*[in]*/ FileAccess		access,
 		       /*[in]*/ bool			text)
@@ -286,7 +286,7 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::TryOpenFile (/*[in]*/ const char *	lpszPath,
 			  /*[in]*/ FileMode		mode,
 			  /*[in]*/ FileAccess		access,
 			  /*[in]*/ bool			text,
@@ -320,7 +320,7 @@ SessionImpl::TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+SessionImpl::OpenFile (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ FileMode		mode,
 		       /*[in]*/ FileAccess		access,
 		       /*[in]*/ bool			text,
@@ -329,8 +329,8 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   MIKTEX_ASSERT_STRING (lpszPath);
 
   trace_files->WriteFormattedLine
-    (T_("core"),
-     T_("OpenFile(\"%s\", %d, 0x%x, %d, %d)"),
+    ("core",
+     "OpenFile(\"%s\", %d, 0x%x, %d, %d)",
      lpszPath,
      static_cast<int>(mode.Get()),
      static_cast<int>(access.Get()),
@@ -364,7 +364,7 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 	  TraceError (T_("setvbuf() failed for some reason"));
 	}
       RecordFileInfo (lpszPath, access);
-      trace_files->WriteFormattedLine (T_("core"), T_("  => %p"), pFile);
+      trace_files->WriteFormattedLine ("core", "  => %p", pFile);
       return (pFile);
     }
   catch (const exception &)
@@ -380,28 +380,28 @@ SessionImpl::OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 FILE *
-SessionImpl::InitiateProcessPipe (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+SessionImpl::InitiateProcessPipe (/*[in]*/ const char *	lpszCommand,
 				  /*[in]*/ FileAccess		access,
 				  /*[in,out]*/ FileMode &	mode)
 {
   Argv argv;
-  argv.Build (T_(""), lpszCommand);
+  argv.Build ("", lpszCommand);
   int argc = argv.GetArgc();
   if (argc == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::InitiateProcessPipe"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::InitiateProcessPipe",
 			  T_("Invalid command."),
 			  lpszCommand);
     }
-  tstring verb = argv[1];
-  if (verb == T_("zcat")
+  string verb = argv[1];
+  if (verb == "zcat"
       && argc == 3
       && access.Get() == FileAccess::Read)
     {
       mode = FileMode::Open;
       return (OpenGZipFile(argv[2]));
     }
-  else if (verb == T_("bzcat")
+  else if (verb == "bzcat"
 	   && argc == 3 &&
 	   access.Get() == FileAccess::Read)
     {
@@ -411,7 +411,7 @@ SessionImpl::InitiateProcessPipe (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
   else
     {
       return (POpen(lpszCommand,
-		    access.Get() == FileAccess::Read ? T_("r") : T_("w")));
+		    access.Get() == FileAccess::Read ? "r" : "w"));
     }
 }
 
@@ -447,13 +447,13 @@ GZipReaderThread (/*[in]*/ void * pv)
 	}
       if (len < 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_("GZipReaderThread"),
+	  FATAL_MIKTEX_ERROR ("GZipReaderThread",
 			      T_("gzread() failed for some reason."),
 			      0);
 	}
       if (ferror(pArg->fileout))
 	{
-	  FATAL_CRT_ERROR (T_("fwrite"), 0);
+	  FATAL_CRT_ERROR ("fwrite", 0);
 	}
     }
   catch (const exception &)
@@ -469,10 +469,10 @@ GZipReaderThread (/*[in]*/ void * pv)
 FILE *
 SessionImpl::OpenGZipFile (/*[in]*/ const PathName & path)
 {
-  AutoGZ autoGz (gzopen(path.Get(), T_("rb")));
+  AutoGZ autoGz (gzopen(path.Get(), "rb"));
   if (autoGz.Get() == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("OpenGZipFile"),
+      FATAL_MIKTEX_ERROR ("OpenGZipFile",
 			  T_("gzopen() failed for some."),
 			  path.Get());
     }
@@ -536,13 +536,13 @@ BZip2ReaderThread (/*[in]*/ void * pv)
       BZ2_bzerror (pArg->bzin, &bzerr);
       if (bzerr != BZ_OK)
 	{
-	  FATAL_MIKTEX_ERROR (T_("BZip2ReaderThread"),
+	  FATAL_MIKTEX_ERROR ("BZip2ReaderThread",
 			      T_("BZ2_bzread() failed for some reason."),
 			      0);
 	}
       if (ferror(pArg->fileout))
 	{
-	  FATAL_CRT_ERROR (T_("fwrite"), 0);
+	  FATAL_CRT_ERROR ("fwrite", 0);
 	}
     }
   catch (const exception &)
@@ -558,10 +558,10 @@ BZip2ReaderThread (/*[in]*/ void * pv)
 FILE *
 SessionImpl::OpenBZip2File (/*[in]*/ const PathName & path)
 {
-  AutoBZ2 autoBz2 (BZ2_bzopen(path.Get(), T_("rb")));
+  AutoBZ2 autoBz2 (BZ2_bzopen(path.Get(), "rb"));
   if (autoBz2.Get() == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("OpenBZip2File"),
+      FATAL_MIKTEX_ERROR ("OpenBZip2File",
 			  T_("BZ2_bzopen() failed for some."),
 			  path.Get());
     }
@@ -600,7 +600,7 @@ void
 SessionImpl::CloseFile (/*[in]*/ FILE * pFile)
 {
   MIKTEX_ASSERT_BUFFER (pFile, sizeof(*pFile));
-  trace_files->WriteFormattedLine (T_("core"), T_("CloseFile(%p)"), pFile);
+  trace_files->WriteFormattedLine ("core", "CloseFile(%p)", pFile);
   map<const FILE *, OpenFileInfo>::iterator it = openFilesMap.find(pFile);
   bool isCommand = false;
   if (it != openFilesMap.end())
@@ -614,7 +614,7 @@ SessionImpl::CloseFile (/*[in]*/ FILE * pFile)
     }
   else if (fclose(pFile) != 0)
     {
-      FATAL_CRT_ERROR (T_("fclose"), 0);
+      FATAL_CRT_ERROR ("fclose", 0);
     }
 }
 
@@ -718,12 +718,12 @@ File::Delete (/*[in]*/ const PathName &		path,
       if (IsWindowsNT())
 	{
 	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
-	    getVolumePathName (T_("Kernel32.dll"),  T_("GetVolumePathNameA"));
+	    getVolumePathName ("Kernel32.dll",  "GetVolumePathNameA");
 	  if (! getVolumePathName(absPath.Get(),
 				  dir.GetBuffer(),
 				  dir.GetCapacity()))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("GetVolumePathName"), absPath.Get());
+	      FATAL_WINDOWS_ERROR ("GetVolumePathName", absPath.Get());
 	    }
 	}
       else
@@ -735,10 +735,10 @@ File::Delete (/*[in]*/ const PathName &		path,
 	  UNSUPPORTED_PLATFORM ();
 #endif
 	}
-      MIKTEXCHAR szTemp[BufferSizes::MaxPath];
-      if (GetTempFileName(dir.Get(), T_("mik"), 0, szTemp) == 0)
+      char szTemp[BufferSizes::MaxPath];
+      if (GetTempFileName(dir.Get(), "mik", 0, szTemp) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetTempFileName"), dir.Get());
+	  FATAL_WINDOWS_ERROR ("GetTempFileName", dir.Get());
 	}
       File::Delete (szTemp);
       File::Move (absPath, szTemp);

@@ -39,8 +39,8 @@ MyPathNameCompare (/*[in]*/ const PathName & path1,
       return (0);
     }
 
-  const MIKTEXCHAR * lpszExtension1 = path1.GetExtension();
-  const MIKTEXCHAR * lpszExtension2 = path2.GetExtension();
+  const char * lpszExtension1 = path1.GetExtension();
+  const char * lpszExtension2 = path2.GetExtension();
 
   if ((lpszExtension1 == 0 && lpszExtension2 == 0)
       || (lpszExtension1 != 0 && lpszExtension2 != 0))
@@ -70,7 +70,7 @@ MyPathNameCompare (/*[in]*/ const PathName & path1,
 
 bool
 MIKTEXDVICALL
-DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 		     /*[in]*/ int			line,
 		     /*[out]*/ DviPosition &		position)
 {
@@ -96,7 +96,7 @@ DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
       documentLocation.RemoveFileSpec ();
 
       // file name relative to the location of the DVI document
-      const MIKTEXCHAR * lpszRelFileName;
+      const char * lpszRelFileName;
 
       // absolute file name
       PathName fqFileName;
@@ -181,7 +181,7 @@ DviImpl::FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 	      // try relative file names
 	      if (! nameMatch && lpszRelFileName != 0)
 		{
-		  const MIKTEXCHAR * lpszRelName;
+		  const char * lpszRelName;
 		  if (! Utils::IsAbsolutePath(lpszName))
 		    {
 		      lpszRelName = lpszName;

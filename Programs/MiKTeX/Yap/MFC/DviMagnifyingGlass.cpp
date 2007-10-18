@@ -27,7 +27,7 @@
 #include "DviView.h"
 
 namespace {
-  const MIKTEXCHAR * const YAP_MAGNIFYING_GLASS_CLASS = "MiKTeX_mag";
+  const char * const YAP_MAGNIFYING_GLASS_CLASS = "MiKTeX_mag";
   bool classRegistered = false;
 }
 

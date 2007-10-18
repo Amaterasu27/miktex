@@ -249,7 +249,7 @@ DviDoc::GetSource (/*[in]*/ const DviPosition &	position,
    _________________________________________________________________________ */
 
 bool
-DviDoc::FindSrcSpecial (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+DviDoc::FindSrcSpecial (/*[in]*/ const char *	lpszFileName,
 			/*[in]*/ int			line,
 			/*[in]*/ DviPosition &		position)
 {

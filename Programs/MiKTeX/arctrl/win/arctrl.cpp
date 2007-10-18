@@ -29,33 +29,25 @@ using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define Q_(x) Quoted(x).c_str()
 
 #if ! defined(UNUSED_ALWAYS)
 #  define UNUSED_ALWAYS(x) static_cast<void>(x)
 #endif
 
-const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX AR Controller");
-const MIKTEXCHAR * const PROGNAME = T_("arctrl");
+const char * const TheNameOfTheGame = T_("MiKTeX AR Controller");
+const char * const PROGNAME = T_("arctrl");
 
 /* _________________________________________________________________________
 
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -73,8 +65,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -84,7 +76,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -111,13 +103,13 @@ private:
 private:
   MIKTEXNORETURN
   void
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  FatalError (/*[in]*/ const char *	lpszFormat,
 	      /*[in]*/				...);
 
 public:
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   enum {
@@ -129,7 +121,7 @@ private:
 
 private:
   HSZ
-  CreateDdeString (/*[in]*/ const MIKTEXCHAR * lpsz);
+  CreateDdeString (/*[in]*/ const char * lpsz);
 
 private:
   void
@@ -141,7 +133,7 @@ private:
 
 private:
   void
-  ExecuteDdeCommand (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+  ExecuteDdeCommand (/*[in]*/ const char *	lpszCommand,
 		     /*[in]*/				...);
 
 private:
@@ -176,7 +168,7 @@ private:
 private:
   void
   DocGoToNameDest (/*[in]*/ const PathName &	path,
-		   /*[in]*/ const tstring &	nameDest);
+		   /*[in]*/ const string &	nameDest);
 
 private:
   void
@@ -184,7 +176,7 @@ private:
 
 private:
   bool
-  Execute (/*[in]*/ const tstring & command);
+  Execute (/*[in]*/ const string & command);
 
 private:
   void
@@ -399,12 +391,12 @@ ArCtrl::~ArCtrl ()
 void
 ArCtrl::ShowVersion ()
 {
-  tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
+  cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
-	<< T_("\n")
-	<< T_("Written by Christian Schenk in 2006.\n")
-	<< T_("Based on public domain work by Fabrice Popineau.\n")
-	<< T_("Based on Adobe documentation.") << endl;
+       << T_("\n")
+       << T_("Written by Christian Schenk in 2006.\n")
+       << T_("Based on public domain work by Fabrice Popineau.\n")
+       << T_("Based on Adobe documentation.") << endl;
 }
 
 /* _________________________________________________________________________
@@ -414,14 +406,14 @@ ArCtrl::ShowVersion ()
   
 MIKTEXNORETURN
 void
-ArCtrl::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+ArCtrl::FatalError (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGNAME << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << PROGNAME << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -432,7 +424,7 @@ ArCtrl::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
   
 HSZ
-ArCtrl::CreateDdeString (/*[in]*/ const MIKTEXCHAR * lpsz)
+ArCtrl::CreateDdeString (/*[in]*/ const char * lpsz)
 {
   HSZ hsz = DdeCreateStringHandle(idInst, lpsz, CP_WINANSI);
   if (hsz == 0)
@@ -457,7 +449,7 @@ ArCtrl::StartAR ()
     }
   PathName dir = pdfFile;
   dir.RemoveFileSpec ();
-  MIKTEXCHAR szExecutable[BufferSizes::MaxPath];
+  char szExecutable[BufferSizes::MaxPath];
   if (FindExecutable(T_("miktex.pdf"), dir.Get(), szExecutable)
       <= reinterpret_cast<HINSTANCE>(32))
     {
@@ -620,17 +612,17 @@ ArCtrl::TerminateConversation ()
    _________________________________________________________________________ */
 
 void
-ArCtrl::ExecuteDdeCommand (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+ArCtrl::ExecuteDdeCommand (/*[in]*/ const char *	lpszCommand,
 			   /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszCommand);
-  tstring data = Utils::FormatString(lpszCommand, arglist);
+  string data = Utils::FormatString(lpszCommand, arglist);
   HDDEDATA h =
     DdeClientTransaction(const_cast<BYTE *>
 			 (reinterpret_cast<const BYTE *>(data.c_str())),
 			 static_cast<DWORD>
-			 ((data.length() + 1) * sizeof(MIKTEXCHAR)),
+			 ((data.length() + 1) * sizeof(char)),
 			 hConv,
 			 0,
 			 0,
@@ -749,7 +741,7 @@ ArCtrl::DocGoTo (/*[in]*/ const PathName &	path,
 
 void
 ArCtrl::DocGoToNameDest (/*[in]*/ const PathName &	path,
-			 /*[in]*/ const tstring &	nameDest)
+			 /*[in]*/ const string &	nameDest)
 {
     if (! File::Exists(path))
     {
@@ -785,17 +777,17 @@ ArCtrl::FileOpen (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 bool
-ArCtrl::Execute (/*[in]*/ const tstring & command)
+ArCtrl::Execute (/*[in]*/ const string & command)
 {
   StreamWriter stdErr (stderr);
   Tokenizer tok (command.c_str(), T_(" \t\r\n"));
-  const MIKTEXCHAR * lpszCommand = tok.GetCurrent();
+  const char * lpszCommand = tok.GetCurrent();
   if (lpszCommand == 0)
     {
       return (true);
     }
   ++ tok;
-  const MIKTEXCHAR * lpszArgument = tok.GetCurrent();
+  const char * lpszArgument = tok.GetCurrent();
   if (StringCompare(lpszCommand, T_("open"), true) == 0)
     {
       if (lpszArgument == 0)
@@ -836,7 +828,7 @@ ArCtrl::Execute (/*[in]*/ const tstring & command)
 	  stdErr.WriteLine (T_("Error: missing page number argument."));
 	  return (true);
 	}
-      DocGoTo (lpszArgument, _ttoi(tok.GetCurrent()) - 1);
+      DocGoTo (lpszArgument, atoi(tok.GetCurrent()) - 1);
     }
   else if (StringCompare(lpszCommand, T_("gotoname"), true) == 0)
     {
@@ -868,17 +860,17 @@ ArCtrl::Execute (/*[in]*/ const tstring & command)
     }
   else if (StringCompare(lpszCommand, T_("help"), true) == 0)
     {
-      tcout << T_("")
-	    << T_("close FILE\n")
-	    << T_("closeall\n")
-	    << T_("exit\n")
-	    << T_("goto FILE PAGE\n")
-	    << T_("gotoname FILE NAMEDEST\n")
-	    << T_("help\n")
-	    << T_("hide\n")
-	    << T_("open FILE\n")
-	    << T_("show\n")
-	    << T_("");
+      cout << T_("")
+	   << T_("close FILE\n")
+	   << T_("closeall\n")
+	   << T_("exit\n")
+	   << T_("goto FILE PAGE\n")
+	   << T_("gotoname FILE NAMEDEST\n")
+	   << T_("help\n")
+	   << T_("hide\n")
+	   << T_("open FILE\n")
+	   << T_("show\n")
+	   << T_("");
     }
   return (true);
 }
@@ -892,7 +884,7 @@ void
 ArCtrl::ReadAndExecute ()
 {
   StreamReader reader (true);
-  tstring command;
+  string command;
   while (reader.ReadLine(command))
     {
       if (! Execute(command))
@@ -909,15 +901,15 @@ ArCtrl::ReadAndExecute ()
 
 void
 ArCtrl::Run (/*[in]*/ int				argc,
-	     /*[in]*/ const MIKTEXCHAR **		argv)
+	     /*[in]*/ const char **		argv)
 {
-  tstring program = Utils::GetExeName();
+  string program = Utils::GetExeName();
 
   const poptOption * pOption = &aoption[0];
 
   PathName file;
   int pageNum = -1;
-  tstring nameDest;
+  string nameDest;
   bool all = false;
   
   if (PathName::Compare(program, T_("pdfopen")) == 0)
@@ -941,7 +933,7 @@ ArCtrl::Run (/*[in]*/ int				argc,
   int option;
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_ALL:
@@ -982,7 +974,7 @@ ArCtrl::Run (/*[in]*/ int				argc,
 	    {
 	      FatalError (T_("Multiple --page arguments are not supported."));
 	    }
-	  pageNum = _ttoi(lpszOptArg) - 1;
+	  pageNum = atoi(lpszOptArg) - 1;
 	  break;
 	  
 	case OPT_VERSION:
@@ -994,13 +986,13 @@ ArCtrl::Run (/*[in]*/ int				argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
     }
       
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers != 0)
     {
@@ -1059,7 +1051,7 @@ __declspec(dllexport)
 int
 __cdecl
 arctrlmain (/*[in]*/ int			argc,
-	    /*[in]*/ const MIKTEXCHAR **	argv)
+	    /*[in]*/ const char **	argv)
 {
   try
     {

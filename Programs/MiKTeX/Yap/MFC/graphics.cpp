@@ -32,7 +32,7 @@
    _________________________________________________________________________ */
 
 bool
-DviView::FindGraphicsFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+DviView::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 			   /*[out]*/ PathName &		result)
 {
   if (Utils::IsAbsolutePath(lpszFileName))
@@ -99,7 +99,7 @@ GetGraphicsType (/*[in]*/ const PathName & fileName)
    _________________________________________________________________________ */
 
 HENHMETAFILE
-DviView::LoadEnhMetaFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 {
   HENHMETAFILE hEmf = 0;
 

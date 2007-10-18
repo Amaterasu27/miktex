@@ -102,7 +102,7 @@ DviDoc::~DviDoc ()
    _________________________________________________________________________ */
 
 BOOL
-DviDoc::OnOpenDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName) 
+DviDoc::OnOpenDocument (/*[in]*/ const char * lpszPathName) 
 {
   try
     {
@@ -190,7 +190,7 @@ DviDoc::EndDviPrinting ()
    _________________________________________________________________________ */
 
 void
-DviDoc::CreateDocument (/*[in]*/ const MIKTEXCHAR * lpszPathName)
+DviDoc::CreateDocument (/*[in]*/ const char * lpszPathName)
 {
   fileStatus = DVIFILE_NOT_LOADED;
   modificationTime = File::GetLastWriteTime(lpszPathName);
@@ -318,7 +318,7 @@ DviDoc::Unshrink ()
    DviDoc::GetPageName
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 DviDoc::GetPageName (/*[in]*/ unsigned pageIdx)
 {
   MIKTEX_ASSERT (pDvi != 0);
@@ -560,7 +560,7 @@ DviDoc::OnProgress (/*[in]*/ DviNotification	nf)
   if (nf == DviNotification::BeginLoadFont && makingFonts)
     {
       MIKTEX_ASSERT (pDvi != 0);
-      tstring statusText = pDvi->GetStatusText();
+      string statusText = pDvi->GetStatusText();
       if (statusText.empty())
 	{
 	  return;

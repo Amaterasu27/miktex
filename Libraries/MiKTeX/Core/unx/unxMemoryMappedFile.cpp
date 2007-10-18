@@ -80,7 +80,7 @@ unxMemoryMappedFile::~unxMemoryMappedFile ()
    _________________________________________________________________________ */
 
 void *
-unxMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+unxMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
 			   /*[in]*/ bool		readWrite)
 {
   path = lpszPath;
@@ -113,7 +113,7 @@ unxMemoryMappedFile::Resize (/*[in]*/ size_t newSize)
   DestroyMapping ();
   if (ftruncate(filedes, newSize) != 0)
     {
-      FATAL_CRT_ERROR (T_("ftruncate"), path.c_str());
+      FATAL_CRT_ERROR ("ftruncate", path.c_str());
     }
   CreateMapping (newSize);
   return (ptr);
@@ -131,7 +131,7 @@ unxMemoryMappedFile::OpenFile ()
   filedes = open(path.c_str(), oflag);
   if (filedes < 0)
     {
-      FATAL_CRT_ERROR (T_("open"), path.c_str());
+      FATAL_CRT_ERROR ("open", path.c_str());
     }
 }
 
@@ -147,7 +147,7 @@ unxMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 
   if (fstat(filedes, &statbuf) != 0)
     {
-      FATAL_CRT_ERROR (T_("fstat"), path.c_str());
+      FATAL_CRT_ERROR ("fstat", path.c_str());
     }
 
   if (maximumFileSize == 0)
@@ -169,7 +169,7 @@ unxMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 
   if (ptr == MAP_FAILED)
     {
-      FATAL_CRT_ERROR (T_("mmap"), path.c_str());
+      FATAL_CRT_ERROR ("mmap", path.c_str());
     }
 }
 
@@ -189,7 +189,7 @@ unxMemoryMappedFile::CloseFile ()
   this->filedes = -1;
   if (close(filedes) < 0)
     {
-      FATAL_CRT_ERROR (T_("close"), path.c_str());
+      FATAL_CRT_ERROR ("close", path.c_str());
     }
 }
 
@@ -209,7 +209,7 @@ unxMemoryMappedFile::DestroyMapping ()
   this->ptr = 0;
   if (munmap(ptr, size) != 0)
     {
-      FATAL_CRT_ERROR (T_("munmap"), path.c_str());
+      FATAL_CRT_ERROR ("munmap", path.c_str());
     }
 }
 
@@ -224,6 +224,6 @@ unxMemoryMappedFile::Flush ()
   int err = msync(ptr, size, MS_SYNC);
   if (err != 0)
     {
-      FATAL_CRT_ERROR (T_("msync"), path.c_str());
+      FATAL_CRT_ERROR ("msync", path.c_str());
     }
 }

@@ -168,8 +168,8 @@ SiteWizRemote::DownloadList (/*[in]*/ void * pv)
 
 void
 SiteWizRemote::InsertColumn (/*[in]*/ int			colIdx,
-			     /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-			     /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+			     /*[in]*/ const char *	lpszLabel,
+			     /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,
@@ -309,7 +309,7 @@ SiteWizRemote::OnItemSelection (/*[in]*/ NMHDR *	pNMHDR,
 void
 SiteWizRemote::SetItemText (/*[in]*/ int		itemIdx,
 			    /*[in]*/ int		colIdx,
-			    /*[in]*/ const MIKTEXCHAR *	lpszText)
+			    /*[in]*/ const char *	lpszText)
 {
   if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
     {
@@ -323,12 +323,12 @@ SiteWizRemote::SetItemText (/*[in]*/ int		itemIdx,
    _________________________________________________________________________ */
 
 void
-SplitUrl (/*[in]*/ const tstring &	url,
-	  /*[out]*/ tstring &		protocol,
-	  /*[out]*/ tstring &		host)
+SplitUrl (/*[in]*/ const string &	url,
+	  /*[out]*/ string &		protocol,
+	  /*[out]*/ string &		host)
 {
-  MIKTEXCHAR szProtocol[200];
-  MIKTEXCHAR szHost[200];
+  char szProtocol[200];
+  char szHost[200];
   URL_COMPONENTS url_comp = { 0 };
   url_comp.dwStructSize = sizeof(url_comp);
   url_comp.lpszScheme = szProtocol;
@@ -366,7 +366,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
       
       bool selected = false;
       
-      tstring url;
+      string url;
 
       if (! pManager->TryGetRemotePackageRepository(url))
 	{
@@ -398,8 +398,8 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
 	    }
 
-	  tstring protocol;
-	  tstring host;
+	  string protocol;
+	  string host;
 
 	  SplitUrl (it->url, protocol, host);
 

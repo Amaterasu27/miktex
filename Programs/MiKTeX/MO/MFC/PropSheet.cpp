@@ -117,7 +117,7 @@ PropSheet::OnProcessOutput
 
 bool
 PropSheet::RunIniTeXMF
-(/*[in]*/ const MIKTEXCHAR *		lpszTitle,
+(/*[in]*/ const char *		lpszTitle,
  /*[in]*/ const CommandLineBuilder &	cmdLine,
  /*[in]*/ ProgressDialog *		pProgressDialog)
 {

@@ -35,8 +35,8 @@ class TextViewerDlgImpl : public CDialog
 {
 public:
   TextViewerDlgImpl (/*[in]*/ CWnd *			pParent,
-		     /*[in]*/ const MIKTEXCHAR *	lpszTitle,
-		     /*[in]*/ const MIKTEXCHAR *	lpszText);
+		     /*[in]*/ const char *	lpszTitle,
+		     /*[in]*/ const char *	lpszText);
 
 private:
   virtual
@@ -67,8 +67,8 @@ protected:
    _________________________________________________________________________ */
 
 TextViewerDlgImpl::TextViewerDlgImpl (/*[in]*/ CWnd *		pParent,
-				      /*[in]*/ const MIKTEXCHAR * lpszTitle,
-				      /*[in]*/ const MIKTEXCHAR * lpszText)
+				      /*[in]*/ const char * lpszTitle,
+				      /*[in]*/ const char * lpszText)
   : CDialog (IDD_TEXT_VIEWER, pParent)
 {
   if (lpszTitle != 0)
@@ -123,8 +123,8 @@ TextViewerDlgImpl::OnInitDialog ()
 
 INT_PTR
 TextViewerDialog::DoModal (/*[in]*/ CWnd *			pParent,
-			   /*[in]*/ const MIKTEXCHAR *		lpszTitle,
-			   /*[in]*/ const MIKTEXCHAR *		lpszText)
+			   /*[in]*/ const char *		lpszTitle,
+			   /*[in]*/ const char *		lpszText)
 {
   TextViewerDlgImpl dlg (pParent, lpszTitle, lpszText);
   return (dlg.DoModal());

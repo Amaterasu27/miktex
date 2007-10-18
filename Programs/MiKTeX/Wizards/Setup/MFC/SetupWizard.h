@@ -112,7 +112,7 @@ public:
 
 public:
   CString
-  SetNextText (/*[in]*/ const MIKTEXCHAR * lpszText);
+  SetNextText (/*[in]*/ const char * lpszText);
 
 private:
   void

@@ -103,17 +103,17 @@ private:
   virtual
   bool
   MIKTEXCALL
-  ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-		 /*[out]*/ MIKTEXCHAR * *	ppSubDirNames,
-		 /*[out]*/ MIKTEXCHAR * *	ppFileNames,
-		 /*[out]*/ MIKTEXCHAR * *	ppFileNameInfos);
+  ReadDirectory (/*[in]*/ const char *	lpszPath,
+		 /*[out]*/ char * *	ppSubDirNames,
+		 /*[out]*/ char * *	ppFileNames,
+		 /*[out]*/ char * *	ppFileNameInfos);
 
 private:
   virtual
   bool
   MIKTEXCALL
   OnProgress (/*[in]*/ unsigned			level,
-	      /*[in]*/ const MIKTEXCHAR *	lpszDirectory);
+	      /*[in]*/ const char *	lpszDirectory);
 
 private:
   bool isModified;
@@ -133,8 +133,8 @@ private:
 private:
   void
   InsertColumn (/*[in]*/ int			colIdx,
-		/*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		/*[in]*/ const MIKTEXCHAR *	lpszLongest);
+		/*[in]*/ const char *	lpszLabel,
+		/*[in]*/ const char *	lpszLongest);
 
 private:
   void

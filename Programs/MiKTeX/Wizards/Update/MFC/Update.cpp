@@ -55,14 +55,14 @@ public:
 void
 AddArgument (/*[in]*/ const CString &		argument,
 	     /*[in,out]*/ int &			argc,
-	     /*[in,out]*/ MIKTEXCHAR ** &	argv,
+	     /*[in,out]*/ char ** &	argv,
 	     /*[in,out]*/ int &			argMax)
 {
   if (argc == argMax)
     {
       argMax += 10;
       argv =
-	reinterpret_cast<MIKTEXCHAR**>(realloc(argv,
+	reinterpret_cast<char**>(realloc(argv,
 					       argMax * sizeof(argv[0])));
     }
   argv[ argc ++ ] = _tcsdup(argument);
@@ -74,10 +74,10 @@ AddArgument (/*[in]*/ const CString &		argument,
    _________________________________________________________________________ */
 
 void
-GetArguments (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
-	      /*[in]*/ const MIKTEXCHAR *	lpszExeName,
+GetArguments (/*[in]*/ const char *	lpszCommandLine,
+	      /*[in]*/ const char *	lpszExeName,
 	      /*[in,out]*/ int &		argc,
-	      /*[in,out]*/ MIKTEXCHAR ** &	argv)
+	      /*[in,out]*/ char ** &	argv)
 {
   argc = 0;
   argv = 0;
@@ -90,7 +90,7 @@ GetArguments (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
   bool copying = false;
   bool inQuotedArg = false;
 
-  for (const MIKTEXCHAR * lpsz = lpszCommandLine; *lpsz != 0; ++ lpsz)
+  for (const char * lpsz = lpszCommandLine; *lpsz != 0; ++ lpsz)
     {
       if (*lpsz == T_(' ') && ! inQuotedArg)
 	{
@@ -126,7 +126,7 @@ GetArguments (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
 
 void
 FreeArguments (/*[in]*/ int		argc,
-	       /*[in]*/ MIKTEXCHAR ** & argv)
+	       /*[in]*/ char ** & argv)
 {
   for (int i = 0; i < argc; ++ i)
     {
@@ -173,11 +173,11 @@ Options:\r\n\r\n\
    _________________________________________________________________________ */
 
 void
-ParseUpdateCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszCommandLine,
+ParseUpdateCommandLine (/*[in]*/ const char *	lpszCommandLine,
 			/*[in,out]*/ UpdateWizardCommandLineInfo & cmdinfo)
 {
   int argc;
-  MIKTEXCHAR ** argv;
+  char ** argv;
 
   GetArguments (lpszCommandLine, AfxGetAppName(), argc, argv);
 
@@ -328,7 +328,7 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 				  T_("migrate.exe could not be found."),
 				  0);
 	    }
-	  MIKTEXCHAR szBuf[1024];
+	  char szBuf[1024];
 	  size_t sizeBuf = 1024;
 	  if (! Process::Run(migrate, 0, szBuf, &sizeBuf, 0))
 	    {
@@ -431,7 +431,7 @@ ULogAddFile (/*[in]*/ const PathName & path)
 void
 ReportError (/*[in]*/ const MiKTeXException & e)
 {
-  tstring str;
+  string str;
   str = T_("The operation could not be completed for the following reason: ");
   str += T_("\n\n");
   str += e.what();
@@ -452,7 +452,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 void
 ReportError (/*[in]*/ const exception & e)
 {
-  tstring str;
+  string str;
   str = T_("The operation could not be completed for the following reason: ");
   str += T_("\n\n");
   str += e.what();
@@ -465,12 +465,12 @@ ReportError (/*[in]*/ const exception & e)
    _________________________________________________________________________ */
 
 void
-SplitUrl (/*[in]*/ const tstring &	url,
-	  /*[out]*/ tstring &		protocol,
-	  /*[out]*/ tstring &		host)
+SplitUrl (/*[in]*/ const string &	url,
+	  /*[out]*/ string &		protocol,
+	  /*[out]*/ string &		host)
 {
-  MIKTEXCHAR szProtocol[200];
-  MIKTEXCHAR szHost[200];
+  char szProtocol[200];
+  char szHost[200];
   URL_COMPONENTS url_comp = { 0 };
   url_comp.dwStructSize = sizeof(url_comp);
   url_comp.lpszScheme = szProtocol;

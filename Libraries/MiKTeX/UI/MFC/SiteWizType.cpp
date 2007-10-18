@@ -37,7 +37,7 @@ SiteWizType::SiteWizType ()
     repositoryType (-1)
 {
   m_psp.dwFlags &= ~ PSP_HASHELP;
-  tstring urlOrPath;
+  string urlOrPath;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType,
 						     urlOrPath))

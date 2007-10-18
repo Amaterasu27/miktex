@@ -140,7 +140,7 @@ PackageListPage::OnSetActive ()
 
 	  EnableSelectButtons ();
 	  
-	  tstring repository = pSheet->GetRepository();
+	  string repository = pSheet->GetRepository();
 	  
 	  // start search thread, if this is the first activation or
 	  // if the package repository URL has changed; otherwise fill
@@ -243,7 +243,7 @@ PackageListPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      vector<tstring> selectedPackages;
+      vector<string> selectedPackages;
       selectedPackages.reserve (updates.size());
       int n = listControl.GetItemCount();
       for (int i = 0; i < n; ++ i)
@@ -517,7 +517,7 @@ PackageListPage::OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
    _________________________________________________________________________ */
 
 bool
-PackageListPage::ContainsUpdateWizard (/*[in]*/ const tstring & deploymentName)
+PackageListPage::ContainsUpdateWizard (/*[in]*/ const string & deploymentName)
 {
   return (PathName::Compare(deploymentName.c_str(), MYPKG) == 0);
 }
@@ -643,7 +643,7 @@ PackageListPage::DoFindUpdates ()
 
 void
 MPMCALL
-PackageListPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+PackageListPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
   UNUSED_ALWAYS (lpszLine);
 }
@@ -655,11 +655,11 @@ PackageListPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-PackageListPage::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UINT style = MB_ICONSTOP;
   style |= MB_RETRYCANCEL;
-  tstring str = lpszMessage;
+  string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
   return (::MessageBox(0, str.c_str(), 0, style) != IDCANCEL);
 }
@@ -710,7 +710,7 @@ PackageListPage::EnableSelectButtons ()
    _________________________________________________________________________ */
 
 void
-PackageListPage::SetProgressText (/*[in]*/ const MIKTEXCHAR * lpszText)
+PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
 {
   AUTO_TOGGLE (fillingTheListView);
   if (! listControl.DeleteAllItems())
@@ -742,8 +742,8 @@ PackageListPage::SetProgressText (/*[in]*/ const MIKTEXCHAR * lpszText)
 
 void
 PackageListPage::InsertColumn (/*[in]*/ int			colIdx,
-			       /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-			       /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+			       /*[in]*/ const char *	lpszLabel,
+			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,

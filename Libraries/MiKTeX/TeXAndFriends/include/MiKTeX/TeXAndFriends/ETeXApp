@@ -59,7 +59,7 @@ protected:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -92,8 +92,8 @@ protected:
 
   virtual
   MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			c,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  ProcessOption (/*[in]*/ int		c,
+		 /*[in]*/ const char *	lpszOptArg);
 
   /* _______________________________________________________________________
      

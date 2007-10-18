@@ -468,7 +468,7 @@ FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
 
 void
 MPMCALL
-FileCopyPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Report (true, true, T_("%s\n"), lpszLine);
 }
@@ -480,11 +480,11 @@ FileCopyPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-FileCopyPage::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UINT uType = MB_ICONSTOP;
   uType |= MB_RETRYCANCEL;
-  tstring str = lpszMessage;
+  string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
   UINT u = ::MessageBox(0, str.c_str(), 0, uType);
   return (u != IDCANCEL);
@@ -586,7 +586,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 void
 FileCopyPage::DoTheUpdate ()
 {
-  vector<tstring> toBeRemoved;
+  vector<string> toBeRemoved;
 
   pInstaller->SetCallback (this);
 
@@ -757,7 +757,7 @@ FileCopyPage::OpenLog ()
   // C:\texmf\miktex\config\update-2005-11-04-08-50.log
   CTime t = CTime::GetCurrentTime();
   PathName pathLog (GetMainConfigDir(),
-		    static_cast<const MIKTEXCHAR *>
+		    static_cast<const char *>
 		    (t.Format(T_("update-%Y-%m-%d-%H-%M"))),
 		    T_(".log"));
 
@@ -780,7 +780,7 @@ FileCopyPage::OpenLog ()
    _________________________________________________________________________ */
 
 void
-FileCopyPage::Log (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FileCopyPage::Log (/*[in]*/ const char *	lpszFormat,
 		   /*[in]*/			...)
 {
   CSingleLock singleLock (&criticalSectionMonitor, TRUE);
@@ -801,7 +801,7 @@ FileCopyPage::Log (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 void
 FileCopyPage::Report (/*[in]*/ bool			writeLog,
 		      /*[in]*/ bool			immediate,
-		      /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+		      /*[in]*/ const char *	lpszFmt,
 		      /*[in]*/				...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
@@ -823,7 +823,7 @@ FileCopyPage::Report (/*[in]*/ bool			writeLog,
   sharedData.reportUpdate = true;
   if (writeLog)
     {
-      Log (T_("%s"), static_cast<const MIKTEXCHAR *>(str));
+      Log (T_("%s"), static_cast<const char *>(str));
     }
   if (immediate)
     {
@@ -869,9 +869,9 @@ FileCopyPage::EnableControl (/*[in]*/ UINT	controlId,
    _________________________________________________________________________ */
 
 void
-FileCopyPage::CollectFiles (/*[in,out]*/ vector<tstring> &	vec,
+FileCopyPage::CollectFiles (/*[in,out]*/ vector<string> &	vec,
 			    /*[in]*/ const PathName &		dir,
-			    /*[in]*/ const MIKTEXCHAR *		lpszExt)
+			    /*[in]*/ const char *		lpszExt)
 {
   auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(dir, lpszExt));
   DirectoryEntry entry;
@@ -899,9 +899,9 @@ FileCopyPage::RemoveFormatFiles ()
     {
       return;
     }
-  vector<tstring> toBeDeleted;
+  vector<string> toBeDeleted;
   CollectFiles (toBeDeleted, pathFmt, MIKTEX_FORMAT_FILE_SUFFIX);
-  for (vector<tstring>::const_iterator it = toBeDeleted.begin();
+  for (vector<string>::const_iterator it = toBeDeleted.begin();
        it != toBeDeleted.end();
        ++ it)
     {
@@ -915,13 +915,13 @@ FileCopyPage::RemoveFormatFiles ()
    FileCopyPage::RemoveFalseConfigFiles
    _________________________________________________________________________ */
 
-static const MIKTEXCHAR * const configFiles[] = {
+static const char * const configFiles[] = {
   MIKTEX_PATH_PDFTEXCONFIG_TEX,
   T_("tex\\generic\\config\\language.dat"),
   T_("web2c\\updmap.cfg"),
 };
 
-static const MIKTEXCHAR * const configDirs[] = {
+static const char * const configDirs[] = {
   MIKTEX_PATH_DVIPDFMX_CONFIG_DIR,
   MIKTEX_PATH_DVIPDFM_CONFIG_DIR,
   MIKTEX_PATH_DVIPS_CONFIG_DIR,
@@ -989,7 +989,7 @@ FileCopyPage::RemoveOldRegistrySettings ()
 			  MIKTEX_REGKEY_MIGRATE);
     }
 
-  MIKTEXCHAR szVersion[20];
+  char szVersion[20];
   ULONG nChars = 20;
 
   if (root25.QueryStringValue(MIKTEX_REGVAL_VERSION, szVersion, &nChars)
@@ -1000,8 +1000,8 @@ FileCopyPage::RemoveOldRegistrySettings ()
 			  MIKTEX_REGVAL_VERSION);
     }
 
-  tstring rootKey;
-  tstring subKey;
+  string rootKey;
+  string subKey;
 
   if (StringCompare(T_("2.4"), szVersion) == 0)
     {

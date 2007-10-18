@@ -53,13 +53,13 @@ MiKTeX::Debug::OnThrowStdException ()
 void
 Utils::PrintException (/*[in]*/ const exception &	e)
 {
-  if (tcerr.fail())
+  if (cerr.fail())
     {
       return;
     }
   try
     {
-      tcerr << T_("*** ") << e.what() << endl;
+      cerr << "*** " << e.what() << endl;
     }
   catch (const exception &)
     {
@@ -74,35 +74,35 @@ Utils::PrintException (/*[in]*/ const exception &	e)
 void
 Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
 {
-  if (tcerr.fail())
+  if (cerr.fail())
     {
       return;
     }
   try
     {
-      tstring programInvocationName (e.GetProgramInvocationName());
-      MIKTEXCHAR szName[BufferSizes::MaxPath];
+      string programInvocationName (e.GetProgramInvocationName());
+      char szName[BufferSizes::MaxPath];
       bool haveName = (programInvocationName.length() > 0);
       if (haveName)
 	{
 	  PathName path (programInvocationName);
 	  path.GetFileName (szName);
 	}
-      MIKTEXCHARINT last = T_('\n');
-      for (const MIKTEXCHAR * lpsz = e.what();
+      int last = '\n';
+      for (const char * lpsz = e.what();
 	   *lpsz != 0;
 	   ++ lpsz)
 	{
-	  if (haveName && last == T_('\n'))
+	  if (haveName && last == '\n')
 	    {
-	      tcerr << szName << T_(": ");
+	      cerr << szName << ": ";
 	    }
-	  tcerr << *lpsz;
+	  cerr << *lpsz;
 	  last = *lpsz;
 	}
-      if (last != T_('\n'))
+      if (last != '\n')
 	{
-	  tcerr << endl;
+	  cerr << endl;
 	}
     }
   catch (const exception &)
@@ -118,13 +118,13 @@ Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
 void
 MIKTEXNORETURN
 MIKTEXCALL
-Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-			   /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-			   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+Session::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
+			   /*[in]*/ const char *	lpszMessage,
+			   /*[in]*/ const char *	lpszInfo,
+			   /*[in]*/ const char *	lpszSourceFile,
 			   /*[in]*/ int			sourceLine)
 {
-  tstring programInvocationName;
+  string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
       TraceMiKTeXError (lpszMiktexFunction,
@@ -136,9 +136,8 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
 #if 1
-  tstring env;
-  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
-      && env == T_("1"))
+  string env;
+  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env) && env == "1")
     {
       DEBUG_BREAK ();
     }
@@ -158,12 +157,11 @@ Session::FatalMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
 void
 MIKTEXNORETURN
 MIKTEXCALL
-MiKTeX::Debug::FatalMiKTeXError
-(/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+MiKTeX::Debug::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
+				 /*[in]*/ const char *	lpszMessage,
+				 /*[in]*/ const char *	lpszInfo,
+				 /*[in]*/ const char *	lpszSourceFile,
+				 /*[in]*/ int		sourceLine)
 {
   Session::FatalMiKTeXError (lpszMiktexFunction,
 			     lpszMessage,
@@ -179,12 +177,12 @@ MiKTeX::Debug::FatalMiKTeXError
 
 MIKTEXINTERNALFUNC(bool)
 GetCrtErrorMessage (/*[in]*/ int		functionResult,
-		    /*[out]*/ tstring &		errorMessage)
+		    /*[out]*/ string &		errorMessage)
 {
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400
   const size_t BUFSIZE = 512;
-  MIKTEXCHAR buffer[BUFSIZE];
+  char buffer[BUFSIZE];
   if (_tcserror_s(buffer, BUFSIZE, functionResult) != 0)
     {
       return (false);
@@ -207,10 +205,10 @@ GetCrtErrorMessage (/*[in]*/ int		functionResult,
 void
 MIKTEXNORETURN
 MIKTEXCALL
-Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
-			/*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			/*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
-			/*[in]*/ int			sourceLine)
+Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
+			/*[in]*/ const char *	lpszInfo,
+			/*[in]*/ const char *	lpszSourceFile,
+			/*[in]*/ int		sourceLine)
 {
   FatalCrtError (lpszCrtFunction,
 		 errno,
@@ -227,13 +225,13 @@ Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
 void
 MIKTEXNORETURN
 MIKTEXCALL
-Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
-			/*[in]*/ int			errorCode,
-			/*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			/*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
-			/*[in]*/ int			sourceLine)
+Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
+			/*[in]*/ int		errorCode,
+			/*[in]*/ const char *	lpszInfo,
+			/*[in]*/ const char *	lpszSourceFile,
+			/*[in]*/ int		sourceLine)
 {
-  tstring errorMessage;
+  string errorMessage;
   if (! GetCrtErrorMessage(errorCode, errorMessage))
     { 
       errorMessage = T_("runtime error ");
@@ -241,10 +239,10 @@ Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
     }
   if (lpszInfo != 0)
     {
-      errorMessage += T_(": ");
+      errorMessage += ": ";
       errorMessage += lpszInfo;
     }
-  tstring programInvocationName;
+  string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
       TraceStream::TraceLastCRTError (lpszCrtFunction,
@@ -255,9 +253,9 @@ Session::FatalCrtError (/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
 	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
 #if 1
-  tstring env;
-  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
-      && env == T_("1"))
+  string env;
+  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env)
+      && env == "1")
     {
       DEBUG_BREAK ();
     }
@@ -308,19 +306,19 @@ MiKTeXException::MiKTeXException ()
    _________________________________________________________________________ */
 
 MiKTeXException::MiKTeXException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : programInvocationName (lpszProgramInvocationName == 0
-			   ?  T_("")
+			   ?  ""
 			   : lpszProgramInvocationName),
     message (lpszMessage == 0 || *lpszMessage == 0
 	     ? T_("Unknown MiKTeX exception.")
 	     : lpszMessage),
-    info (lpszInfo == 0 ? T_("") : lpszInfo),
-    sourceFile (lpszSourceFile == 0 ? T_("") : lpszSourceFile),
+    info (lpszInfo == 0 ? "" : lpszInfo),
+    sourceFile (lpszSourceFile == 0 ? "" : lpszSourceFile),
     sourceLine (sourceLine)
 {
 }
@@ -345,11 +343,11 @@ OperationCancelledException::OperationCancelledException ()
    _________________________________________________________________________ */
 
 OperationCancelledException::OperationCancelledException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
+ /*[in]*/ int		sourceLine)
   : MiKTeXException (lpszProgramInvocationName,
 		     lpszMessage,
 		     lpszInfo,
@@ -373,10 +371,10 @@ IOException::IOException ()
    _________________________________________________________________________ */
 
 IOException::IOException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : MiKTeXException (lpszProgramInvocationName,
 		     lpszMessage,
@@ -401,11 +399,11 @@ FileNotFoundException::FileNotFoundException ()
    _________________________________________________________________________ */
 
 FileNotFoundException::FileNotFoundException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
+ /*[in]*/ int		sourceLine)
   : IOException (lpszProgramInvocationName,
 		 lpszMessage,
 		 lpszInfo,
@@ -429,11 +427,11 @@ BrokenPipeException::BrokenPipeException ()
    _________________________________________________________________________ */
 
 BrokenPipeException::BrokenPipeException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
+ /*[in]*/ int		sourceLine)
   : IOException (lpszProgramInvocationName,
 		 lpszMessage,
 		 lpszInfo,
@@ -457,11 +455,11 @@ UnauthorizedAccessException::UnauthorizedAccessException ()
    _________________________________________________________________________ */
 
 UnauthorizedAccessException::UnauthorizedAccessException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
+ /*[in]*/ int		sourceLine)
   : MiKTeXException (lpszProgramInvocationName,
 		     lpszMessage,
 		     lpszInfo,

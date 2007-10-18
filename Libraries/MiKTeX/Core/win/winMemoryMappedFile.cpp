@@ -74,19 +74,19 @@ winMemoryMappedFile::~winMemoryMappedFile ()
    _________________________________________________________________________ */
 
 void *
-winMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+winMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
 			   /*[in]*/ bool		readWrite)
 {
   path = lpszPath;
   this->readWrite = readWrite;
 
   // create a unique object name
-  name = T_("");
+  name = "";
   name.reserve (BufferSizes::MaxPath);
   for (size_t i = 0; lpszPath[i] != 0; ++ i)
     {
       if (IsDirectoryDelimiter(lpszPath[i])
-	  || lpszPath[i] == T_(':'))
+	  || lpszPath[i] == ':')
 	{
 	  continue;
 	}
@@ -102,7 +102,7 @@ winMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   if (hMapping != 0)
     {
       traceStream->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("using existing file mapping object %s"),
 	 Q_(name));
 
@@ -117,7 +117,7 @@ winMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 		      0);
       if (ptr == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("MapViewOfFile"), lpszPath);
+	  FATAL_WINDOWS_ERROR ("MapViewOfFile", lpszPath);
 	}
 
       // get the size
@@ -125,7 +125,7 @@ winMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
       struct _stat statbuf;
       if (_tstat(lpszPath, &statbuf) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("_tstat"), lpszPath);
+	  FATAL_CRT_ERROR ("_tstat", lpszPath);
 	}
       size = statbuf.st_size;
 #else
@@ -135,7 +135,7 @@ winMemoryMappedFile::Open (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   else
     {
       traceStream->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("creating new file mapping object %s"),
 	 Q_(name));
 
@@ -190,10 +190,10 @@ winMemoryMappedFile::OpenFile ()
     }
 
   traceStream->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("opening memory-mapped file %s for %s"),
      Q_(path),
-     (readWrite ? T_("reading/writing") : T_("reading")));
+     (readWrite ? T_("reading/writing") : "reading"));
     
   hFile =
     CreateFile(path.c_str(),
@@ -206,7 +206,7 @@ winMemoryMappedFile::OpenFile ()
 
   if (hFile == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateFile"), path.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFile", path.c_str());
     }
 }
 
@@ -225,15 +225,15 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 	GetFileSize(hFile, &fileSizeHigh);
       if (maximumFileSize == INVALID_FILE_SIZE)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetFileSize"), path.c_str());
+	  FATAL_WINDOWS_ERROR ("GetFileSize", path.c_str());
 	}
       if (fileSizeHigh != 0)
 	{
-	  UNEXPECTED_CONDITION (T_("winMemoryMappedFile::CreateMapping"));
+	  UNEXPECTED_CONDITION ("winMemoryMappedFile::CreateMapping");
 	}
       if (maximumFileSize == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("winMemoryMappedFile::CreateMapping"));
+	  UNEXPECTED_CONDITION ("winMemoryMappedFile::CreateMapping");
 	}
     }
   
@@ -251,7 +251,7 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 			name.c_str());
   if (hMapping == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateFileMapping"), name.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileMapping", name.c_str());
     }
   
   // map file view into memory
@@ -263,7 +263,7 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 		  maximumFileSize);
   if (ptr == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateFileMapping"), name.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileMapping", name.c_str());
     }
 }
 
@@ -282,12 +282,12 @@ winMemoryMappedFile::CloseFile ()
   HANDLE hFile = this->hFile;
   this->hFile = INVALID_HANDLE_VALUE;
   traceStream->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("closing memory-mapped file %s"),
      Q_(path));
   if (! CloseHandle(hFile))
     {
-      FATAL_WINDOWS_ERROR (T_("CloseHandle"), 0);
+      FATAL_WINDOWS_ERROR ("CloseHandle", 0);
     }
 }
 
@@ -305,7 +305,7 @@ winMemoryMappedFile::DestroyMapping ()
       this->ptr = 0;
       if (! UnmapViewOfFile(ptr))
 	{
-	  FATAL_WINDOWS_ERROR (T_("UnmapViewOfFile"), 0);
+	  FATAL_WINDOWS_ERROR ("UnmapViewOfFile", 0);
 	}
     }
   if (hMapping != 0)
@@ -314,7 +314,7 @@ winMemoryMappedFile::DestroyMapping ()
       hMapping = 0;
       if (! CloseHandle(h))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CloseHandle"), 0);
+	  FATAL_WINDOWS_ERROR ("CloseHandle", 0);
 	}
     }
 }
@@ -329,6 +329,6 @@ winMemoryMappedFile::Flush ()
 {
   if (! FlushViewOfFile(GetPtr(), 0))
     {
-      FATAL_WINDOWS_ERROR (T_("FlushViewOfFile"), 0);
+      FATAL_WINDOWS_ERROR ("FlushViewOfFile", 0);
     }
 }

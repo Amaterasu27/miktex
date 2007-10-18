@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/WebAppInputLine: inputln() implementation for TeX & Friends -*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebAppInputLine: inputln() implementation  -*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -62,7 +62,7 @@ public:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -95,8 +95,8 @@ protected:
 
   virtual
   MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  ProcessOption (/*[in]*/ int		opt,
+		 /*[in]*/ const char *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -195,9 +195,9 @@ private:
       {
 	if (ferror(pFile) != 0)
 	  {
-	    MiKTeX::Core::Session::FatalCrtError (MIKTEXTEXT("getc"),
+	    MiKTeX::Core::Session::FatalCrtError ("getc",
 						  0,
-						  MIKTEXTEXT(__FILE__),
+						  __FILE__,
 						  __LINE__);
 	  }
       }

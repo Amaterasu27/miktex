@@ -29,15 +29,7 @@
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Print Utility")
 #endif
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
-const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
+const char * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_ERROR T_(",") MIKTEX_TRACE_MTPRINT
   ;
 
@@ -49,8 +41,8 @@ const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
 struct PAPERSIZEINFO
 {
   short			paperSize;
-  const MIKTEXCHAR *	lpszName;
-  const MIKTEXCHAR *	lpszDvipsSize;
+  const char *	lpszName;
+  const char *	lpszDvipsSize;
   unsigned		width;
   unsigned		height;
 };
@@ -73,10 +65,10 @@ struct DVIPSOPTS
   bool runQuietly;
   bool sendCtrlDAtEnd;
   bool shiftLowCharsToHigherPos;
-  tstring config;
-  tstring offsetX;
-  tstring offsetY;
-  tstring paperFormat;
+  string config;
+  string offsetX;
+  string offsetY;
+  string paperFormat;
   vector<PAGERANGE> pageRanges;
   DVIPSOPTS ()
     : evenPagesOnly (false),
@@ -143,13 +135,13 @@ public:
 public:
   virtual
   void
-  Report (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Report (/*[in]*/ const char *	lpszFormat,
 	  /*[in]*/			...);
 
 public:
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   void
@@ -162,10 +154,10 @@ private:
 
 private:
   void
-  StartDvips (/*[in]*/ const MIKTEXCHAR *	lpszDviFileName,
+  StartDvips (/*[in]*/ const char *	lpszDviFileName,
 	      /*[in]*/ const DVIPSOPTS &	dvipsOpts,
 	      /*[in]*/ unsigned			resolution,
-	      /*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+	      /*[in]*/ const char *	lpszPrinterName,
 	      /*[in]*/ short			paperSize,
 	      /*[out]*/ FILE * *		ppfileDvipsOutRd = 0,
 	      /*[out]*/ FILE * *		ppfileDvipsErrRd = 0);
@@ -180,15 +172,15 @@ private:
 
 private:
   void
-  Spool (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  Spool (/*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ PrintMethod		printMethod,
 	 /*[in]*/ const DVIPSOPTS &	dvipsOpts,
 	 /*[in]*/ const GSOPTS &	gsOpts,
-	 /*[in]*/ const tstring &	printerName);
+	 /*[in]*/ const string &	printerName);
 
 
 private:
-  tstring printerName;
+  string printerName;
 
 private:
   PrintMethod printMethod;
@@ -428,8 +420,8 @@ const struct poptOption PrintUtility::aoption[] = {
    _________________________________________________________________________ */
 
 void
-PrintUtility::Report (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+PrintUtility::Report (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (! verbose)
     {
@@ -437,7 +429,7 @@ PrintUtility::Report (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list argList;
   va_start (argList, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, argList);
+  cout << Utils::FormatString(lpszFormat, argList);
   va_end (argList);
 }
 
@@ -469,10 +461,10 @@ PrintUtility::GetPaperSizeInfo (/*[in]*/ short			paperSize,
    _________________________________________________________________________ */
 
 void
-PrintUtility::StartDvips (/*[in]*/ const MIKTEXCHAR *	lpszDviFileName,
+PrintUtility::StartDvips (/*[in]*/ const char *		lpszDviFileName,
 			  /*[in]*/ const DVIPSOPTS &	dvipsOpts,
 			  /*[in]*/ unsigned		resolution,
-			  /*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+			  /*[in]*/ const char *		lpszPrinterName,
 			  /*[in]*/ short		paperSize,
 			  /*[out]*/ FILE * *		ppfileDvipsOutRd,
 			  /*[out]*/ FILE * *		ppfileDvipsErrRd)
@@ -522,7 +514,7 @@ PrintUtility::StartDvips (/*[in]*/ const MIKTEXCHAR *	lpszDviFileName,
   if (dvipsOpts.offsetX.length() > 0
       && dvipsOpts.offsetY.length() > 0)
     {
-      tstring str (dvipsOpts.offsetX);
+      string str (dvipsOpts.offsetX);
       str += T_(",");
       str += dvipsOpts.offsetY;
       commandLine.AppendOption (T_("-O"), str.c_str());
@@ -539,7 +531,7 @@ PrintUtility::StartDvips (/*[in]*/ const MIKTEXCHAR *	lpszDviFileName,
        it != dvipsOpts.pageRanges.end();
        ++ it)
     {
-      tstring str (NUMTOSTR(it->firstPage));
+      string str (NUMTOSTR(it->firstPage));
       str += T_(':');
       str += NUMTOSTR(it->lastPage);
       commandLine.AppendOption (T_("-pp "), str.c_str());
@@ -635,11 +627,11 @@ PrintUtility::StartGhostscript (/*[in]*/ const GSOPTS &	gsOpts,
    _________________________________________________________________________ */
 
 void
-PrintUtility::Spool (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+PrintUtility::Spool (/*[in]*/ const char *		lpszFileName,
 		     /*[in]*/ PrintMethod		printMethod,
 		     /*[in]*/ const DVIPSOPTS &		dvipsOpts,
 		     /*[in]*/ const GSOPTS &		gsOpts,
-		     /*[in]*/ const tstring &		printerName)
+		     /*[in]*/ const string &		printerName)
 {
   // get printer resolution and paper size
   unsigned resolution;
@@ -706,13 +698,13 @@ PrintUtility::Spool (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
 void
 PrintUtility::ShowVersion ()
 {
-  tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+  cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					   VER_FILEVERSION_STR)
-	<< T_("\n")
-	<< T_("Copyright (C) 2003-2006 Christian Schenk\n\
+       << T_("\n")
+       << T_("Copyright (C) 2003-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	<< endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -722,10 +714,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 void
 PrintUtility::Run (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv)
+		   /*[in]*/ const char **	argv)
 {
   // initialize printerName with the default printer
-  MIKTEXCHAR szPrinterName[300];
+  char szPrinterName[300];
   size_t size = 300;
   if (Utils::GetDefPrinter(szPrinterName, &size))
     {
@@ -758,10 +750,10 @@ PrintUtility::Run (/*[in]*/ int			argc,
 	case OPT_PAGE_RANGE:
 	  {
 	    DVIPSOPTS::PAGERANGE pagerange;
-	    if (_stscanf_s(popt.GetOptArg(),
-			   T_("%d-%d"),
-			   &pagerange.firstPage,
-			   &pagerange.lastPage)
+	    if (sscanf_s(popt.GetOptArg(),
+			 T_("%d-%d"),
+			 &pagerange.firstPage,
+			 &pagerange.lastPage)
 		!= 2)
 	      {
 		FATAL_MIKTEX_ERROR (T_("PrintUtility::Run"),
@@ -776,12 +768,12 @@ PrintUtility::Run (/*[in]*/ int			argc,
 	  break;
 	case OPT_PRINT_METHOD:
 	  {
-	    const MIKTEXCHAR * lpszMethod = popt.GetOptArg();
-	    if (_tcsicmp(lpszMethod, T_("ps")) == 0)
+	    const char * lpszMethod = popt.GetOptArg();
+	    if (stricmp(lpszMethod, T_("ps")) == 0)
 	      {
 		printMethod = PrintMethodPostScript;
 	      }
-	    else if (_tcsicmp(lpszMethod, T_("psbmp")) == 0)
+	    else if (stricmp(lpszMethod, T_("psbmp")) == 0)
 	      {
 		printMethod = PrintMethodPostScriptBMP;
 	      }
@@ -804,13 +796,13 @@ PrintUtility::Run (/*[in]*/ int			argc,
 
   if (option != -1)
     {
-      tcerr << popt.BadOption(POPT_BADOPTION_NOALIAS) << T_(": ")
-	    << popt.Strerror(option)
-	    << endl;
+      cerr << popt.BadOption(POPT_BADOPTION_NOALIAS) << T_(": ")
+	   << popt.Strerror(option)
+	   << endl;
       throw (1);
     }
       
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -841,8 +833,8 @@ PrintUtility::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   try
     {

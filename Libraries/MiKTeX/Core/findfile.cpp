@@ -45,7 +45,7 @@ SessionImpl::SetFindFileCallback (/*[in]*/ IFindFileCallback *	pCallback)
 
 bool
 SessionImpl::CheckCandidate (/*[in,out]*/ PathName &		path,
-			     /*[in]*/ const MIKTEXCHAR *	lpszFileInfo)
+			     /*[in]*/ const char *	lpszFileInfo)
 {
   bool found = false;
   if (IsMpmFile(path.Get()))
@@ -88,9 +88,9 @@ SessionImpl::CheckCandidate (/*[in,out]*/ PathName &		path,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
-			       /*[in]*/ const MIKTEXCHAR *	lpszSubDir,
-			       /*[in]*/ const MIKTEXCHAR *	lpszSearchSpec,
+SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
+			       /*[in]*/ const char *	lpszSubDir,
+			       /*[in]*/ const char *	lpszSearchSpec,
 			       /*[out]*/ PathName &		result)
 {
   MIKTEX_ASSERT (lpszCurDir != 0);
@@ -150,7 +150,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
   else
     {
       // no sub-directory is given
-      const MIKTEXCHAR * lpszRecInd;
+      const char * lpszRecInd;
       lpszRecInd = StrStr(lpszSearchSpec, RECURSION_INDICATOR);
       if (lpszRecInd != 0)
 	{
@@ -176,7 +176,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
 	  // the resulting file name is accessible
 	  PathName temp (lpszCurDir);
 	  temp += lpszSearchSpec;
-	  trace_filesearch->WriteFormattedLine (T_("core"),
+	  trace_filesearch->WriteFormattedLine ("core",
 						T_("trying \"%s\"..."),
 						temp.Get());
 	  if (CheckCandidate(temp, 0))
@@ -218,8 +218,8 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-			       /*[in]*/ const MIKTEXCHAR *	lpszDirPath,
+SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
+			       /*[in]*/ const char *	lpszDirPath,
 			       /*[out]*/ PathName &		result)
 {
   if ((PathName::Compare(MPM_ROOT_PATH,
@@ -233,7 +233,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
     }
 
   trace_filesearch->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("slow file search: relPath=\"%s\", dirPath=\"%s\""),
      lpszRelPath,
      lpszDirPath);
@@ -280,8 +280,8 @@ SessionImpl::SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-			   /*[in]*/ const MIKTEXCHAR *	lpszPathList,
+SessionImpl::SlowFindFile (/*[in]*/ const char *	lpszFileName,
+			   /*[in]*/ const char *	lpszPathList,
 			   /*[out]*/ PathName &		result)
 {
   // if a fully qualified path name is given, then don't look out any
@@ -330,7 +330,7 @@ SessionImpl::SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
 			       /*[in]*/ const PathNameArray &	vec,
 			       /*[out]*/ PathName &		result)
      
@@ -431,8 +431,8 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPathList,
+SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ const char *	lpszPathList,
 		       /*[out]*/ PathName &		result)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
@@ -449,7 +449,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ FileType		fileType,
 		       /*[out]*/ PathName &		result)
 {
@@ -471,7 +471,7 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   MIKTEX_ASSERT (pFileTypeInfo != 0);
 
   // check to see whether we have a registered file name extension
-  const MIKTEXCHAR * lpszExtension = GetFileNameExtension(lpszFileName);
+  const char * lpszExtension = GetFileNameExtension(lpszFileName);
   bool hasRegisteredExtension = false;
   if (lpszExtension != 0)
     {
@@ -519,51 +519,51 @@ SessionImpl::FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    SessionImpl::MakePkFileName
    _________________________________________________________________________ */
 
-#define DEFAULT_PK_NAME_TEMPLATE T_("%f.pk")
+#define DEFAULT_PK_NAME_TEMPLATE "%f.pk"
 
 bool
 SessionImpl::MakePkFileName (/*[out]*/ PathName &		pkFileName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszFontName,
+			     /*[in]*/ const char *	lpszFontName,
 			     /*[in]*/ int			dpi)
 {
-  tstring nameTemplate;
+  string nameTemplate;
 
   if (! GetSessionValue(MIKTEX_REGKEY_CORE,
 			MIKTEX_REGVAL_PK_FN_TEMPLATE,
 			nameTemplate,
 			DEFAULT_PK_NAME_TEMPLATE))
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::MakePkFileName "));
+      UNEXPECTED_CONDITION ("SessionImpl::MakePkFileName ");
     }
 
-  tstring str;
+  string str;
 
   str.reserve (BufferSizes::MaxPath);
 
-  for (const MIKTEXCHAR * p = nameTemplate.c_str(); *p != 0; ++ p)
+  for (const char * p = nameTemplate.c_str(); *p != 0; ++ p)
     {
-      if (p[0] == T_('%'))
+      if (p[0] == '%')
 	{
 	  ++ p;
 	  if (*p == 0)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::MakePkFileName"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::MakePkFileName",
 				  T_("Invalid file name template."),
 				  nameTemplate.c_str());
 	    }
 	  switch (*p)
 	    {
-	    case T_('%'):
-	      str += T_('%');
+	    case '%':
+	      str += '%';
 	      break;
-	    case T_('d'):
+	    case 'd':
 	      str += NUMTOSTR(dpi);
 	      break;
-	    case T_('f'):
+	    case 'f':
 	      str += lpszFontName;
 	      break;
 	    default:
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::MakePkFileName"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::MakePkFileName",
 				  T_("Invalid file name template."),
 				  nameTemplate.c_str());
 	    }
@@ -585,14 +585,14 @@ SessionImpl::MakePkFileName (/*[out]*/ PathName &		pkFileName,
    _________________________________________________________________________ */
 
 #if defined(MIKTEX_WINDOWS)
-#  define DEFAULT_PK_SEARCH_PATH T_(".;%R\\fonts\\pk\\%m//dpi%d")
+#  define DEFAULT_PK_SEARCH_PATH ".;%R\\fonts\\pk\\%m//dpi%d"
 #else
-#  define DEFAULT_PK_SEARCH_PATH T_(".:%R/fonts/pk/%m//dpi%d")
+#  define DEFAULT_PK_SEARCH_PATH ".:%R/fonts/pk/%m//dpi%d"
 #endif
 
 bool
-SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			 /*[in]*/ const MIKTEXCHAR *	lpszMode,
+SessionImpl::FindPkFile (/*[in]*/ const char *	lpszFontName,
+			 /*[in]*/ const char *	lpszMode,
 			 /*[in]*/ int			dpi,
 			 /*[out]*/ PathName &		result)
 {
@@ -606,39 +606,39 @@ SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
       return (false);
     }
 
-  tstring searchPathTemplate;
+  string searchPathTemplate;
 
   if (! GetSessionValue(MIKTEX_REGKEY_CORE,
-			T_("PKPath"),
+			"PKPath",
 			searchPathTemplate,
 			DEFAULT_PK_SEARCH_PATH))
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::FindPkFile"));
+      UNEXPECTED_CONDITION ("SessionImpl::FindPkFile");
     }
 
-  tstring searchPath;
+  string searchPath;
 
-  for (const MIKTEXCHAR * q = searchPathTemplate.c_str(); *q != 0; ++ q)
+  for (const char * q = searchPathTemplate.c_str(); *q != 0; ++ q)
     {
-      if (*q == T_('%'))
+      if (*q == '%')
 	{
 	  ++ q;
 	  if (*q == 0)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::FindPkFile"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::FindPkFile",
 				  T_("Invalid search path template."),
 				  searchPathTemplate.c_str());
 	    }
 	  switch (*q)
 	    {
-	    case T_('R'):
-	      searchPath += T_('%');
-	      searchPath += T_('R');
+	    case 'R':
+	      searchPath += '%';
+	      searchPath += 'R';
 	      break;
-	    case T_('%'):
-	      searchPath += T_('%');
+	    case '%':
+	      searchPath += '%';
 	      break;
-	    case T_('m'):
+	    case 'm':
 	      if (lpszMode != 0)
 		{
 		  searchPath += lpszMode;
@@ -646,15 +646,15 @@ SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	      else
 		{
 		  // <fixme>hardcoded METAFONT mode
-		  searchPath += T_("ljfour");
+		  searchPath += "ljfour";
 		  // </fixme>
 		}
 	      break;
-	    case T_('d'):
+	    case 'd':
 	      searchPath += NUMTOSTR(dpi);
 	      break;
 	    default:
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::FindPkFile"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::FindPkFile",
 				  T_("Invalid search path template."),
 				  searchPathTemplate.c_str());
 	    }
@@ -668,10 +668,10 @@ SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   bool found = FindFile(pkFileName.Get(), searchPath.c_str(), result);
 
   if (! found
-      && (lpszMode == 0 || StringCompare(lpszMode, T_("modeless"), true) != 0))
+      && (lpszMode == 0 || StringCompare(lpszMode, "modeless", true) != 0))
     {
       // <recursivecall>
-      found = FindPkFile(lpszFontName, T_("modeless"), dpi, result);
+      found = FindPkFile(lpszFontName, "modeless", dpi, result);
       // </recursivecall>
     }
 
@@ -684,7 +684,7 @@ SessionImpl::FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindTfmFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
+SessionImpl::FindTfmFile (/*[in]*/ const char *	lpszFontName,
 			  /*[out]*/ PathName &		path,
 			  /*[in]*/ bool			create)
 {
@@ -697,17 +697,17 @@ SessionImpl::FindTfmFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   PathName makeTFM;
   if (! SessionImpl::FindFile(MIKTEX_MAKETFM_EXE, FileType::EXE, makeTFM))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::FindTfmFile"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::FindTfmFile",
 			  T_("The MakeTFM utility could not be found."),
 			  0);
     }
-  MIKTEXCHAR szBasename[BufferSizes::MaxPath];
+  char szBasename[BufferSizes::MaxPath];
   PathName::Split (lpszFontName,
 		   0, 0,
 		   szBasename, BufferSizes::MaxPath,
 		   0, 0);
   CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("-v"));
+  commandLine.AppendOption ("-v");
   commandLine.AppendArgument (szBasename);
   char szBuf[4096];
   size_t size = 4096;
@@ -723,13 +723,13 @@ SessionImpl::FindTfmFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   if (exitCode != 0)
     {
       TraceError (T_("MakeTFM failed; output follows"));
-      TraceError (T_("%.*s"), static_cast<int>(size), szBuf);
+      TraceError ("%.*s", static_cast<int>(size), szBuf);
       return (false);
     }
   if (! SessionImpl::FindFile(lpszFontName, FileType::TFM, path))
     {
       FATAL_MIKTEX_ERROR
-	(T_("SessionImpl::FindTfmFile"),
+	("SessionImpl::FindTfmFile",
 	 T_("MakeTFM succeeded but the TFM file could not be found."),
 	 szBasename);
     }
@@ -743,9 +743,9 @@ SessionImpl::FindTfmFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 
 
 MIKTEXAPI(int)
-miktex_find_file (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszPathList,
-		  /*[out]*/ MIKTEXCHAR *	lpszPath)
+miktex_find_file (/*[in]*/ const char *	lpszFileName,
+		  /*[in]*/ const char *	lpszPathList,
+		  /*[out]*/ char *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFileName);
@@ -769,8 +769,8 @@ miktex_find_file (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_tfm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		      /*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_tfm_file (/*[in]*/ const char *	lpszFontName,
+		      /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -793,8 +793,8 @@ miktex_find_tfm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_ttf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		      /*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
+		      /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -817,8 +817,8 @@ miktex_find_ttf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_afm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		      /*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
+		      /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -841,8 +841,8 @@ miktex_find_afm_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_enc_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		      /*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_enc_file (/*[in]*/ const char *	lpszFontName,
+		      /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -866,8 +866,8 @@ miktex_find_enc_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_psheader_file (/*[in]*/ const MIKTEXCHAR *	lpszHeaderName,
-			   /*[out]*/ MIKTEXCHAR *	lpszPath)
+miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
+			   /*[out]*/ char *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszHeaderName);
@@ -890,9 +890,9 @@ miktex_find_psheader_file (/*[in]*/ const MIKTEXCHAR *	lpszHeaderName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_input_file (/*[in]*/ const MIKTEXCHAR *	lpszApplicationName,
-			/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-			/*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_input_file (/*[in]*/ const char *	lpszApplicationName,
+			/*[in]*/ const char *	lpszFileName,
+			/*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING_OR_NIL (lpszApplicationName);
@@ -907,7 +907,7 @@ miktex_find_input_file (/*[in]*/ const MIKTEXCHAR *	lpszApplicationName,
 	{
 	  return (0);
 	}
-      tstring searchPath = CURRENT_DIRECTORY;
+      string searchPath = CURRENT_DIRECTORY;
       searchPath += PATH_DELIMITER;
       searchPath += TEXMF_PLACEHOLDER;
       searchPath += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
@@ -931,8 +931,8 @@ miktex_find_input_file (/*[in]*/ const MIKTEXCHAR *	lpszApplicationName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_hbf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		      /*[out]*/ MIKTEXCHAR *		lpszPath)
+miktex_find_hbf_file (/*[in]*/ const char *	lpszFontName,
+		      /*[out]*/ char *		lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -955,8 +955,8 @@ miktex_find_hbf_file (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_find_miktex_executable (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
-			       /*[out]*/ MIKTEXCHAR *		lpszExePath)
+miktex_find_miktex_executable (/*[in]*/ const char *	lpszExeName,
+			       /*[out]*/ char *		lpszExePath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszExeName);

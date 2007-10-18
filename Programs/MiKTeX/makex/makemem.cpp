@@ -51,7 +51,7 @@ public:
   virtual
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
   
 private:
   virtual
@@ -72,7 +72,7 @@ private:
   
 private:
   void
-  AppendEngineOption (/*[in]*/ const MIKTEXCHAR * lpszOption)
+  AppendEngineOption (/*[in]*/ const char * lpszOption)
   {
     engineOptions.Append (lpszOption);
   }
@@ -150,7 +150,7 @@ MakeMem::CreateDestinationDirectory ()
 
 void
 MakeMem::Run (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv)
+	      /*[in]*/ const char **	argv)
 {
   // get options and file name
   int optionIndex = 0;
@@ -214,7 +214,7 @@ MakeMem::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 MKTEXAPI(makemem) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv)
+		   /*[in]*/ const char **	argv)
 {
   try
     {

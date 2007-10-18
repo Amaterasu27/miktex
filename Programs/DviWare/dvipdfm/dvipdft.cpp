@@ -1,6 +1,6 @@
 /* dvipdft.cpp: run dvipdfm-gswin32-dvipdfm
 
-   Copyright (C) 2000-2005 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of dvipdm.
 
@@ -38,13 +38,13 @@ using namespace std;
    _________________________________________________________________________ */
 
 void
-FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FatalError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
-  _ftprintf (stderr, _T("%s: "), Utils::GetExeName().c_str());
+  fprintf (stderr, "%s: ", Utils::GetExeName().c_str());
   va_list marker;
   va_start (marker, lpszFormat);
-  _vftprintf (stderr, lpszFormat, marker);
+  vfprintf (stderr, lpszFormat, marker);
   va_end (marker);
   fputc ('\n', stderr);
   throw (1);
@@ -56,10 +56,10 @@ FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-FatalFileError (/*[in]*/ const MIKTEXCHAR * lpszPath)
+FatalFileError (/*[in]*/ const char * lpszPath)
 {
-  _ftprintf (stderr, _T("%s: "), Utils::GetExeName().c_str());
-  _tperror (lpszPath);
+  fprintf (stderr, "%s: ", Utils::GetExeName().c_str());
+  perror (lpszPath);
   throw (1);
 }
 
@@ -71,7 +71,7 @@ FatalFileError (/*[in]*/ const MIKTEXCHAR * lpszPath)
 void
 BadUsage ()
 {
-  FatalError (_T("No DVI file name specified."));
+  FatalError (MIKTEXTEXT("No DVI file name specified."));
 }
 
 /* _________________________________________________________________________
@@ -88,7 +88,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   Get ()
     const
   {
@@ -102,7 +102,7 @@ public:
     if (path[0] != 0)
       {
 	PathName tmp (path);
-	path = _T("");
+	path = "";
 	Directory::Delete (tmp, true);
       }
   }
@@ -129,8 +129,8 @@ private:
    _________________________________________________________________________ */
 
 void
-dvipdft (/*[in]*/ int			argc,
-	 /*[in]*/ const MIKTEXCHAR **	argv)
+dvipdft (/*[in]*/ int		argc,
+	 /*[in]*/ const char **	argv)
 {
   // must have at least one argument: the DVI file name
   if (argc == 1)
@@ -138,15 +138,15 @@ dvipdft (/*[in]*/ int			argc,
       BadUsage ();
     }
 
-  MIKTEXCHAR szGSExePath[BufferSizes::MaxPath];
+  char szGSExePath[BufferSizes::MaxPath];
   SessionWrapper(true)->GetGhostscript (szGSExePath, 0);
 
   PathName dvipdfmExe;
-  if (! SessionWrapper(true)->FindFile(_T("dvipdfm"),
+  if (! SessionWrapper(true)->FindFile("dvipdfm",
 				       FileType::EXE,
 				       dvipdfmExe))
     {
-      FatalError (_T("The Dvipdfm executable could not be found."));
+      FatalError (MIKTEXTEXT("The Dvipdfm executable could not be found."));
     }
 
   // create a temporary directory
@@ -159,7 +159,7 @@ dvipdft (/*[in]*/ int			argc,
   for (int i = 1; i < argc - 1; ++ i)
     {
       arguments.AppendArgument (argv[i]);
-      if (_tcscmp(argv[i], _T("-o")) == 0 && i + 1 < argc - 1)
+      if (strcmp(argv[i], "-o") == 0 && i + 1 < argc - 1)
 	{
 	  ++ i;
 	  arguments.AppendArgument (argv[i]);
@@ -168,7 +168,7 @@ dvipdft (/*[in]*/ int			argc,
 	}
     }
 
-  const MIKTEXCHAR * lpszUserFilename = argv[argc - 1];
+  const char * lpszUserFilename = argv[argc - 1];
   if (fileNoExt.GetLength() == 0)
     {
       fileNoExt = lpszUserFilename;
@@ -176,13 +176,13 @@ dvipdft (/*[in]*/ int			argc,
     }
 
   // run dvipdfm with the fastest options for the first pass
-  arguments.AppendOption (_T("-e"));
-  arguments.AppendOption (_T("-z"), _T("0"));
+  arguments.AppendOption ("-e");
+  arguments.AppendOption ("-z", "0");
   arguments.AppendArgument (lpszUserFilename);
   int exitCode = 0;
   if (! Process::Run(dvipdfmExe.Get(), arguments.Get(), 0, &exitCode, 0))
     {
-      FatalError (_T("%s could not be started."), dvipdfmExe.Get());
+      FatalError (MIKTEXTEXT("%s could not be started."), dvipdfmExe.Get());
     }
   if (exitCode != 0)
     {
@@ -190,17 +190,17 @@ dvipdft (/*[in]*/ int			argc,
     }
 
   // run GhostScript to create thumbnails
-  PathName outFileTemplate (tempDir.Get(), fileNoExt.Get(), _T("%d"));
+  PathName outFileTemplate (tempDir.Get(), fileNoExt.Get(), "%d");
   arguments.Clear ();
-  arguments.AppendOption (_T("-r"), _T("10"));
-  arguments.AppendOption (_T("-dNOPAUSE"));
-  arguments.AppendOption (_T("-dBATCH"));
-  arguments.AppendOption (_T("-sDEVICE:"), _T("png256"));
-  arguments.AppendOption (_T("-sOutputFile:"), outFileTemplate.Get());
-  arguments.AppendArgument (PathName(0, fileNoExt.Get(), _T(".pdf")).Get());
+  arguments.AppendOption ("-r", "10");
+  arguments.AppendOption ("-dNOPAUSE");
+  arguments.AppendOption ("-dBATCH");
+  arguments.AppendOption ("-sDEVICE:", "png256");
+  arguments.AppendOption ("-sOutputFile:", outFileTemplate.Get());
+  arguments.AppendArgument (PathName(0, fileNoExt.Get(), ".pdf").Get());
   if (! Process::Run(szGSExePath, arguments.Get(), 0, &exitCode, 0))
     {
-      FatalError (_T("%s could not be started."), szGSExePath);
+      FatalError (MIKTEXTEXT("%s could not be started."), szGSExePath);
     }
   if (exitCode != 0)
     {
@@ -209,13 +209,13 @@ dvipdft (/*[in]*/ int			argc,
 
   // run dvipdfm with the users specified options for the last pass
   arguments.Clear ();
-  arguments.AppendOption (_T("-dt"));
+  arguments.AppendOption ("-dt");
   arguments.AppendArguments (argc - 1, &argv[1]);
-  printf (_T("dvipdfm %s\n"), arguments.Get());
-  Utils::SetEnvironmentString (_T("MIKTEX_TEMP"), tempDir.Get());
+  printf ("dvipdfm %s\n", arguments.Get());
+  Utils::SetEnvironmentString ("MIKTEX_TEMP", tempDir.Get());
   if (! Process::Run(dvipdfmExe.Get(), arguments.Get(), 0, &exitCode, 0))
     {
-      FatalError (_T("%s could not be started."), dvipdfmExe.Get());
+      FatalError (MIKTEXTEXT("%s could not be started."), dvipdfmExe.Get());
     }
   if (exitCode != 0)
     {
@@ -231,8 +231,8 @@ dvipdft (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   try
     {

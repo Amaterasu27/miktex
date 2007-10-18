@@ -49,13 +49,13 @@ protected:
 
 public:
   void
-  SetUpdateList (/*[in]*/ const vector<tstring> & toBeUpdated)
+  SetUpdateList (/*[in]*/ const vector<string> & toBeUpdated)
   {
     this->toBeUpdated = toBeUpdated;
   }
 
 public:
-  const vector<tstring> &
+  const vector<string> &
   GetUpdateList ()
     const
   {
@@ -149,7 +149,7 @@ public:
   }
 
 public:
-  tstring
+  string
   GetRepository ();
 
 public:
@@ -195,7 +195,7 @@ private:
   FinishPage finishPage;
   
 private:
-  vector<tstring> toBeUpdated;
+  vector<string> toBeUpdated;
 
 private:
   bool error;
@@ -210,7 +210,7 @@ private:
   RepositoryType repositoryType;
 
 private:
-  tstring randomRepository;
+  string randomRepository;
 
 private:
   int cameFrom;

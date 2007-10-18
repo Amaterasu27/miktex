@@ -155,7 +155,7 @@ FindHelpFile ()
 BOOL
 OnHelpInfo (/*[in]*/ HELPINFO *		pHelpInfo,
 	    /*[in]*/ const DWORD *	pHelpIds,
-	    /*[in]*/ const MIKTEXCHAR *	lpszTopicFile)
+	    /*[in]*/ const char *	lpszTopicFile)
 {
   try
     {
@@ -200,7 +200,7 @@ void
 DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
 		 /*[in]*/ CPoint		point,
 		 /*[in]*/ const DWORD *		pHelpIds,
-		 /*[in]*/ const MIKTEXCHAR *	lpszTopicFile)
+		 /*[in]*/ const char *	lpszTopicFile)
 {
   // HtmlHelp() (unlike WinHelp()) doesn't display the "What's This?"
   // menu
@@ -223,7 +223,7 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
       CHECK_WINDOWS_ERROR (T_("CMenu::TrackPopupMenu"), 0);
       return;
     }
-  tstring helpFileUrl = FindHelpFile().ToString();
+  string helpFileUrl = FindHelpFile().ToString();
   helpFileUrl += T_("::/");
   helpFileUrl += lpszTopicFile;
   HtmlHelp (pWnd->GetSafeHwnd(),
@@ -244,7 +244,7 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
 #define PACKVERSION(major,minor) MAKELONG(minor,major)
 
 DWORD
-GetDllVersion (/*[in]*/ const MIKTEXCHAR * lpszDllName)
+GetDllVersion (/*[in]*/ const char * lpszDllName)
 {
   DWORD version = 0;
 

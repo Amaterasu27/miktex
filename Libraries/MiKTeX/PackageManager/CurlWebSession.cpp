@@ -72,7 +72,7 @@ CurlWebSession::Initialize ()
 
   SetOption (CURLOPT_USERAGENT, MPM_AGENT);
 
-  tstring ftpMode =
+  string ftpMode =
     SessionWrapper(true)->GetConfigValue(0,
 					 MIKTEX_REGVAL_FTP_MODE,
 					 T_("pasv"));
@@ -132,14 +132,14 @@ CurlWebSession::Initialize ()
       SetOption (CURLOPT_PROXY, proxyPort.c_str());
       if (proxySettings.authenticationRequired)
 	{
-	  if (proxySettings.user.find(T_(':')) != tstring::npos)
+	  if (proxySettings.user.find(T_(':')) != string::npos)
 	    {
 	      FATAL_MPM_ERROR
 		(T_("CurlWebSession::Initialize"),
 		 T_("Unsupported proxy user name (colons are not supported)."),
 		 0);
 	    }
-	  if (proxySettings.password.find(T_(':')) != tstring::npos)
+	  if (proxySettings.password.find(T_(':')) != string::npos)
 	    {
 	      FATAL_MPM_ERROR
 		(T_("CurlWebSession::Initialize"),
@@ -176,7 +176,7 @@ CurlWebSession::~CurlWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-CurlWebSession::OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+CurlWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
 			 /*[in]*/ IProgressNotify_ *	pIProgressNotify)
 {
   if (pCurl == 0)
@@ -224,7 +224,7 @@ CurlWebSession::DebugCallback (/*[in]*/ CURL *		pCurl,
       if (infoType == CURLINFO_TEXT)
 	{
 	  MIKTEX_ASSERT (pData != 0);
-	  tstring text (pData, sizeData);
+	  string text (pData, sizeData);
 	  This->trace_curl->Write (T_("curl"), text.c_str());
 	}
     }

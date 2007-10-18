@@ -1,4 +1,4 @@
-/* miktex/dvi.h: DVI interfaces					-*- C++ -*-
+/* MiKTeX/DVI/Dvi: DVI interfaces				-*- C++ -*-
 
    Copyright (C) 1996-2006 Christian Schenk
 
@@ -68,11 +68,11 @@ public:
 public:
   MIKTEXDVIEXPORT
   MIKTEXCALL
-  DviException (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
-		/*[in]*/ const MIKTEXCHAR *	lpszMessage,
-		/*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		/*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
-		/*[in]*/ int			sourceLine);
+  DviException (/*[in]*/ const char *	lpszProgramInvocationName,
+		/*[in]*/ const char *	lpszMessage,
+		/*[in]*/ const char *	lpszInfo,
+		/*[in]*/ const char *	lpszSourceFile,
+		/*[in]*/ int		sourceLine);
 };
 
 /* _________________________________________________________________________
@@ -91,10 +91,10 @@ public:
   MIKTEXDVIEXPORT
   MIKTEXCALL
   DviPageNotFoundException
-  (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
-   /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+  (/*[in]*/ const char *	lpszProgramInvocationName,
+   /*[in]*/ const char *	lpszMessage,
+   /*[in]*/ const char *	lpszInfo,
+   /*[in]*/ const char *	lpszSourceFile,
    /*[in]*/ int			sourceLine);
 };
 
@@ -114,10 +114,10 @@ public:
   MIKTEXDVIEXPORT
   MIKTEXCALL
   DviFileInUseException
-  (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
-   /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+  (/*[in]*/ const char *	lpszProgramInvocationName,
+   /*[in]*/ const char *	lpszMessage,
+   /*[in]*/ const char *	lpszInfo,
+   /*[in]*/ const char *	lpszSourceFile,
    /*[in]*/ int			sourceLine);
 };
 
@@ -231,7 +231,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetXXX ()
     = 0;
@@ -307,7 +307,7 @@ SourceSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
     = 0;
@@ -474,7 +474,7 @@ HypertexSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetName ()
     = 0;
@@ -528,7 +528,7 @@ GraphicsSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
     = 0;
@@ -566,14 +566,14 @@ PsdefSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetDef ()
     = 0;
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
     = 0;
@@ -590,14 +590,14 @@ DvipsSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetString ()
     = 0;
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
     = 0;
@@ -649,7 +649,7 @@ PsfileSpecial : public DviSpecial
 {
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
     = 0;
@@ -937,7 +937,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetName ()
     = 0;
@@ -993,12 +993,12 @@ public:
 
 struct DviFontInfo
 {
-  bool			notLoadable;
-  bool			isVirtualFont;
-  MiKTeX::Core::tstring	name;
-  MiKTeX::Core::tstring	fileName;
-  MiKTeX::Core::tstring	transcript;
-  MiKTeX::Core::tstring	comment;
+  bool		notLoadable;
+  bool		isVirtualFont;
+  std::string	name;
+  std::string	fileName;
+  std::string	transcript;
+  std::string	comment;
 };
 
 /* _________________________________________________________________________
@@ -1151,8 +1151,8 @@ public:
   MIKTEXDVIEXPORT
   Dvi *
   MIKTEXDVICALL
-  Create (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszMetafontMode,
+  Create (/*[in]*/ const char *		lpszFileName,
+	  /*[in]*/ const char *		lpszMetafontMode,
 	  /*[in]*/ int			resolution,
 	  /*[in]*/ int			shrinkFactor,
 	  /*[in]*/ DviAccess		access,
@@ -1163,15 +1163,15 @@ public:
   MIKTEXDVIEXPORT
   Dvi *
   MIKTEXDVICALL
-  Create (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
-	  /*[in]*/ const MIKTEXCHAR *		lpszMetafontMode,
-	  /*[in]*/ int				resolution,
-	  /*[in]*/ int				shrinkFactor,
-	  /*[in]*/ DviAccess			access,
-	  /*[in]*/ DviPageMode			pageMode,
+  Create (/*[in]*/ const char *				lpszFileName,
+	  /*[in]*/ const char *				lpszMetafontMode,
+	  /*[in]*/ int					resolution,
+	  /*[in]*/ int					shrinkFactor,
+	  /*[in]*/ DviAccess				access,
+	  /*[in]*/ DviPageMode				pageMode,
 	  /*[in]*/ const MiKTeX::Core::PaperSizeInfo &	defaultPaperSizeInfo,
-	  /*[in]*/ bool				landscape,
-	  /*[in]*/ IDviCallback *		pCallback);
+	  /*[in]*/ bool					landscape,
+	  /*[in]*/ IDviCallback *			pCallback);
 
 public:
   virtual
@@ -1193,9 +1193,9 @@ public:
   virtual
   bool
   MIKTEXDVICALL
-  FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	      /*[in]*/ int			line,
-	      /*[out]*/ DviPosition &		position)
+  FindSource (/*[in]*/ const char *	lpszFileName,
+	      /*[in]*/ int		line,
+	      /*[out]*/ DviPosition &	position)
     = 0;
 
 public:
@@ -1258,13 +1258,13 @@ public:
   virtual
   bool
   MIKTEXDVICALL
-  FindHyperLabel (/*[in]*/ const MIKTEXCHAR *	lpszLabel,
+  FindHyperLabel (/*[in]*/ const char *		lpszLabel,
 		  /*[out]*/ DviPosition &	position)
     = 0;
 
 public:
   virtual
-  MiKTeX::Core::tstring
+  std::string
   MIKTEXDVICALL
   GetStatusText ()
     = 0;

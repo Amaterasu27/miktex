@@ -81,11 +81,11 @@ using namespace std;
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -104,8 +104,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -116,7 +116,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -229,10 +229,10 @@ Quoted (/*[in]*/ const PathName & path)
 
 inline
 bool
-HasPrefix (/*[in]*/ const MIKTEXCHAR * lpsz1,
-	   /*[in]*/ const MIKTEXCHAR * lpsz2)
+HasPrefix (/*[in]*/ const char * lpsz1,
+	   /*[in]*/ const char * lpsz2)
 {
-  return (_tcsnicmp(lpsz1, lpsz2, strlen(lpsz2)) == 0);
+  return (_strnicmp(lpsz1, lpsz2, strlen(lpsz2)) == 0);
 }
 
 /* _________________________________________________________________________
@@ -264,7 +264,7 @@ public:
   virtual
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv)
+       /*[in]*/ const char **	argv)
     = 0;
       
 protected:
@@ -283,27 +283,27 @@ protected:
   virtual
   void
   HandleOption (/*[in]*/ int			ch,
-		/*[in]*/ const MIKTEXCHAR *	lpszOptArg,
+		/*[in]*/ const char *	lpszOptArg,
 		/*[in,out]*/ bool &		handled)
     = 0;
 
 protected:
   void
   GetOptions (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv,
+	      /*[in]*/ const char **	argv,
 	      /*[in]*/ const struct option *	pLongOptions,
 	      /*[out]*/ int &			index);
 
 protected:
   bool
-  RunProcess (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments);
+  RunProcess (/*[in]*/ const char *	lpszExeName,
+	      /*[in]*/ const char *	lpszArguments);
   
 protected:
   bool
-  RunMETAFONT (/*[in]*/ const MIKTEXCHAR *	lpszName,
-	       /*[in]*/ const MIKTEXCHAR *	lpszMode,
-	       /*[in]*/ const MIKTEXCHAR *	lpszMag);
+  RunMETAFONT (/*[in]*/ const char *	lpszName,
+	       /*[in]*/ const char *	lpszMode,
+	       /*[in]*/ const char *	lpszMag);
 
 protected:
   void
@@ -312,13 +312,13 @@ protected:
 
 protected:
   void
-  CreateDirectory (/*[in]*/ const tstring &	templ,
+  CreateDirectory (/*[in]*/ const string &	templ,
 		   /*[out]*/ PathName &		path);
 
 protected:
   MIKTEXNORETURN
   void
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  FatalError (/*[in]*/ const char *	lpszFormat,
 	      /*[in]*/				...)
     const;
 
@@ -328,17 +328,17 @@ protected:
 
 protected:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR * lpszFormat,
+  Verbose (/*[in]*/ const char * lpszFormat,
 	   /*[in]*/			...);
 
 protected:
   void
-  Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Message (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 protected:
   void
-  PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  PrintOnly (/*[in]*/ const char *	lpszFormat,
 	     /*[in]*/				...);
 
 protected:
@@ -360,7 +360,7 @@ protected:
   PathName destinationDirectory;
 
 protected:
-  tstring name;
+  string name;
 };
 
 /* _________________________________________________________________________
@@ -378,8 +378,8 @@ protected:
 
 #define BEGIN_OPTION_MAP(cls)				\
 void							\
-cls::HandleOption (MIKTEXCHARINT	ch,		\
-		   const MIKTEXCHAR *	lpszOptArg,	\
+cls::HandleOption (int	ch,		\
+		   const char *	lpszOptArg,	\
 		   bool &		bHandled)	\
 {							\
   UNUSED_ALWAYS(lpszOptArg);				\

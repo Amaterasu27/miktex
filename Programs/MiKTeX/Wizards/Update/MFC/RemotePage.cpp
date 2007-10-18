@@ -284,7 +284,7 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
       
       bool selected = false;
 
-      tstring url;
+      string url;
 
       if (! g_pManager->TryGetRemotePackageRepository(url))
 	{
@@ -314,8 +314,8 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
 	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
 	    }
 
-	  tstring protocol;
-	  tstring host;
+	  string protocol;
+	  string host;
 
 	  SplitUrl (it->url, protocol, host);
 
@@ -449,8 +449,8 @@ RemotePage::WorkerThread (/*[in]*/ void * pv)
 
 void
 RemotePage::InsertColumn (/*[in]*/ int			colIdx,
-			  /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-			  /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+			  /*[in]*/ const char *	lpszLabel,
+			  /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,
@@ -471,7 +471,7 @@ RemotePage::InsertColumn (/*[in]*/ int			colIdx,
 void
 RemotePage::SetItemText (/*[in]*/ int			itemIdx,
 			 /*[in]*/ int			colIdx,
-			 /*[in]*/ const MIKTEXCHAR *	lpszText)
+			 /*[in]*/ const char *	lpszText)
 {
   if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
     {
@@ -485,7 +485,7 @@ RemotePage::SetItemText (/*[in]*/ int			itemIdx,
    _________________________________________________________________________ */
 
 void
-RemotePage::SetProgressText (/*[in]*/ const MIKTEXCHAR * lpszText)
+RemotePage::SetProgressText (/*[in]*/ const char * lpszText)
 {
   if (! listControl.DeleteAllItems())
     {

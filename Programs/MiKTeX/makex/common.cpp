@@ -1,6 +1,6 @@
 /* common.cpp: common stuff
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -70,11 +70,11 @@ public:
    _________________________________________________________________________ */
 
 bool
-MakeUtility::RunMETAFONT (/*[in]*/ const MIKTEXCHAR *	lpszName,
-			  /*[in]*/ const MIKTEXCHAR *	lpszMode,
-			  /*[in]*/ const MIKTEXCHAR *	lpszMag)
+MakeUtility::RunMETAFONT (/*[in]*/ const char *	lpszName,
+			  /*[in]*/ const char *	lpszMode,
+			  /*[in]*/ const char *	lpszMag)
 {
-  tstring arguments;
+  string arguments;
   arguments += T_("\\mode:=");
   arguments += (lpszMode == 0 ? T_("cx") : lpszMode);
   arguments += T_(';');
@@ -97,7 +97,7 @@ MakeUtility::RunMETAFONT (/*[in]*/ const MIKTEXCHAR *	lpszName,
       PathName pathLogFile (0, lpszName, T_(".log"));
       AutoFILE pLogFile
 	(File::Open(pathLogFile, FileMode::Open, FileAccess::Read));
-      tstring line;
+      string line;
       bool noError = true;
       size_t nStrangePaths = 0;
       while (noError && Utils::ReadUntilDelim(line, T_('\n'), pLogFile.Get()))
@@ -106,7 +106,7 @@ MakeUtility::RunMETAFONT (/*[in]*/ const MIKTEXCHAR *	lpszName,
 	    {
 	      continue;
 	    }
-	  if (_tcsncmp(line.c_str(), T_("! Strange path"), 14) == 0)
+	  if (strncmp(line.c_str(), T_("! Strange path"), 14) == 0)
 	    {
 	      ++ nStrangePaths;
 	      continue;
@@ -129,8 +129,8 @@ MakeUtility::RunMETAFONT (/*[in]*/ const MIKTEXCHAR *	lpszName,
    _________________________________________________________________________ */
 
 bool
-MakeUtility::RunProcess (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
-			 /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+MakeUtility::RunProcess (/*[in]*/ const char *	lpszExeName,
+			 /*[in]*/ const char *	lpszArguments)
 {
   // find the executable; make sure it contains no blanks
   PathName exe;
@@ -144,7 +144,7 @@ MakeUtility::RunProcess (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
 
   // run the program
   int exitCode = 0;
-  if (! printOnly || _tcsstr(lpszArguments, T_("--print-only")) != 0)
+  if (! printOnly || strstr(lpszArguments, T_("--print-only")) != 0)
     {
       ProcessOutputTrash trash;
       ProcessOutputStderr toStderr;
@@ -178,8 +178,8 @@ MakeUtility::RunProcess (/*[in]*/ const MIKTEXCHAR *	lpszExeName,
 
 MIKTEXNORETURN
 void
-MakeUtility::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			 /*[in]*/			...)
+MakeUtility::FatalError (/*[in]*/ const char *	lpszFormat,
+			 /*[in]*/		...)
   const
 {
   va_list arglist;
@@ -214,8 +214,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
    _________________________________________________________________________ */
 
 void
-MakeUtility::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		       /*[in]*/				...)
+MakeUtility::Verbose (/*[in]*/ const char *	lpszFormat,
+		       /*[in]*/			...)
 {
   if (! verbose || printOnly || quiet)
     {
@@ -233,8 +233,8 @@ MakeUtility::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MakeUtility::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+MakeUtility::Message (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (quiet || printOnly)
     {
@@ -252,8 +252,8 @@ MakeUtility::Message (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MakeUtility::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			/*[in]*/			...)
+MakeUtility::PrintOnly (/*[in]*/ const char *	lpszFormat,
+			/*[in]*/		...)
 {
   if (! printOnly)
     {
@@ -299,14 +299,14 @@ MakeUtility::Install (/*[in]*/ const PathName &	source,
 
 void
 GetShortOptions (/*[in]*/ const struct option *	pLongOptions,
-		 /*[out]*/ tstring &		shortOptions)
+		 /*[out]*/ string &		shortOptions)
 {
   shortOptions = T_("");
   for (const struct option * opt = pLongOptions; opt->name != 0; ++ opt)
     {
       if (isprint(opt->val))
 	{
-	  shortOptions += static_cast<MIKTEXCHAR>(opt->val);
+	  shortOptions += static_cast<char>(opt->val);
 	  if (opt->has_arg == required_argument)
 	    {
 	      shortOptions += T_(':');
@@ -326,22 +326,22 @@ GetShortOptions (/*[in]*/ const struct option *	pLongOptions,
 
 void
 MakeUtility::GetOptions (/*[in]*/ int				argc,
-			 /*[in]*/ const MIKTEXCHAR **		argv,
+			 /*[in]*/ const char **			argv,
 			 /*[in]*/ const struct option *		pLongOptions,
 			 /*[in]*/ int &				optionIndex)
 {
-  tstring shortOptions;
+  string shortOptions;
   GetShortOptions (pLongOptions, shortOptions);
 
   int c;
   int idx;
   optind = 0;
   while ((c = getopt_long(argc,
-			  const_cast<MIKTEXCHAR * const *>(argv),
+			  const_cast<char * const *>(argv),
 			  shortOptions.c_str(),
 			  pLongOptions,
 			  &idx))
-	 != MIKTEXEOF)
+	 != EOF)
     {
       switch (c)
 	{
@@ -387,10 +387,10 @@ MakeUtility::GetOptions (/*[in]*/ int				argc,
    _________________________________________________________________________ */
 
 void
-MakeUtility::CreateDirectory (/*[in]*/ const tstring &	templ,
+MakeUtility::CreateDirectory (/*[in]*/ const string &	templ,
 			      /*[out]*/ PathName &	path)
 {
-  const MIKTEXCHAR * lpszTemplate = templ.c_str();
+  const char * lpszTemplate = templ.c_str();
   if (lpszTemplate[0] == T_('%')
       && lpszTemplate[1] == T_('R')
       && IsDirectoryDelimiter(lpszTemplate[2]))

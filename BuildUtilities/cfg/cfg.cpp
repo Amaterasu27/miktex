@@ -1,6 +1,6 @@
 /* cfg.cpp:
 
-   Copyright (C) 2006 Christian Schenk
+   Copyright (C) 2006-2007 Christian Schenk
 
    This file is part of cfg.
 
@@ -35,14 +35,6 @@ using namespace MiKTeX::Core;
 using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
-
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
 
 /* _________________________________________________________________________
 
@@ -92,14 +84,14 @@ const struct poptOption aoption[] = {
    _________________________________________________________________________ */
 
 void
-FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FatalError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << Utils::GetExeName() << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << Utils::GetExeName() << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -112,7 +104,7 @@ FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 void
 PrintDigest (/*[in]*/ const MD5 & md5)
 {
-  tcout << T_('@') <<  md5.ToString() << endl;
+  cout << T_('@') <<  md5.ToString() << endl;
 }
 
 /* _________________________________________________________________________
@@ -120,8 +112,8 @@ PrintDigest (/*[in]*/ const MD5 & md5)
    
    _________________________________________________________________________ */
 
-MIKTEXCHAR
-DownChar (/*[in]*/ MIKTEXCHAR c) 
+char
+DownChar (/*[in]*/ char c) 
 { 
   const static locale loc;
   if (isalnum(c, loc))
@@ -139,10 +131,10 @@ DownChar (/*[in]*/ MIKTEXCHAR c)
    
    _________________________________________________________________________ */
 
-tstring
-ToLower (/*[in]*/ const tstring & s)
+string
+ToLower (/*[in]*/ const string & s)
 { 
-  tstring result (s);
+  string result (s);
   transform (result.begin(),
 	     result.end(),
 	     result.begin(),
@@ -155,11 +147,11 @@ ToLower (/*[in]*/ const tstring & s)
    
    _________________________________________________________________________ */
 
-tstring
-ToStr (/*[in]*/ const tstring & s)
+string
+ToStr (/*[in]*/ const string & s)
 {
-  tstring result;
-  for (tstring::const_iterator it = s.begin(); it != s.end(); ++ it)
+  string result;
+  for (string::const_iterator it = s.begin(); it != s.end(); ++ it)
     {
       switch (*it)
 	{
@@ -185,45 +177,45 @@ ToStr (/*[in]*/ const tstring & s)
 void
 DoPrintClasses (/*[in]*/ Cfg * pCfg)
 {
-  MIKTEXCHAR szKey[BufferSizes::MaxCfgName];
-  for (MIKTEXCHAR * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
+  char szKey[BufferSizes::MaxCfgName];
+  for (char * lpszKey = pCfg->FirstKey(szKey, BufferSizes::MaxCfgName);
        lpszKey != 0;
        lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
     {
-      tcout << T_("class ") << ToLower(lpszKey) << T_(" {") << endl;
-      MIKTEXCHAR szValueName[BufferSizes::MaxCfgName];
-      for (MIKTEXCHAR * lpszValueName =
+      cout << T_("class ") << ToLower(lpszKey) << T_(" {") << endl;
+      char szValueName[BufferSizes::MaxCfgName];
+      for (char * lpszValueName =
 	     pCfg->FirstValue(lpszKey, szValueName, BufferSizes::MaxCfgName);
 	   lpszValueName != 0;
 	   lpszValueName =
 	     pCfg->NextValue(szValueName, BufferSizes::MaxCfgName))
 	{
-	  tstring value = pCfg->GetValue(lpszKey, lpszValueName);
-	  MIKTEXCHAR * endptr = 0;
+	  string value = pCfg->GetValue(lpszKey, lpszValueName);
+	  char * endptr = 0;
 	  strtol (value.c_str(), &endptr, 0);
 	  bool isString = (endptr != 0 && *endptr != 0);
-	  tcout << T_("  public: static ");
+	  cout << T_("  public: static ");
 	  if (isString)
 	    {
-	      tcout << T_("std::string");
+	      cout << T_("std::string");
 	    }
 	  else
 	    {
-	      tcout << T_("int");
+	      cout << T_("int");
 	    }
-	  tcout << T_(" ") << ToLower(lpszValueName)
-		<< T_(" () { return (");
+	  cout << T_(" ") << ToLower(lpszValueName)
+	       << T_(" () { return (");
 	  if (isString)
 	    {
-	      tcout << T_('"') << ToStr(value) << T_('"');
+	      cout << T_('"') << ToStr(value) << T_('"');
 	    }
 	  else
 	    {
-	      tcout << value;
+	      cout << value;
 	    }
-	  tcout << T_("); }") << endl;
+	  cout << T_("); }") << endl;
 	}
-      tcout << T_("};") << endl;
+      cout << T_("};") << endl;
     }
 }
 
@@ -234,7 +226,7 @@ DoPrintClasses (/*[in]*/ Cfg * pCfg)
 
 void
 Main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 {
   int option;
 
@@ -257,27 +249,27 @@ Main (/*[in]*/ int			argc,
 	  task = PrintClasses;
 	  break;
 	case OPT_VERSION:
-	  tcout <<
+	  cout <<
 	    Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
 					    VersionNumber(VER_FILEVERSION))
-		<< T_("\n\
-Copyright (C) 2006 Christian Schenk\n\
+	       << T_("\n\
+Copyright (C) 2006-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-		<< endl;
+	       << endl;
 	  return;
 	}
     }
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
     }
       
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -301,7 +293,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 {
   int exitCode;
   try

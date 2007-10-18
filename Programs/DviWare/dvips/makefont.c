@@ -154,7 +154,7 @@ makefont P3C(char *, name, int, dpi, int, bdpi)
    if (dontmakefont == 0)
      {
        PathName pathMakePk;
-       MIKTEXCHAR szArguments[ 1024 ];
+       char szArguments[ 1024 ];
        SessionWrapper(true)->MakeMakePkCommandLine (name,
 						    dpi,
 						    bdpi,

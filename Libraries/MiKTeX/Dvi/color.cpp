@@ -117,8 +117,8 @@ DebugCheckColorNames ()
     }
   for (size_t i = 1; i < sizeof(colorNames) / sizeof(colorNames[0]); ++ i)
     {
-      MIKTEX_ASSERT (StringCompare(A2T_(colorNames[i].lpszName),
-				   A2T_(colorNames[i-1].lpszName),
+      MIKTEX_ASSERT (StringCompare(colorNames[i].lpszName,
+				   colorNames[i-1].lpszName,
 				   true)
 		     > 0);
     }
@@ -143,7 +143,7 @@ LookupColorName (/*[in]*/ const char *	lpszName,
        idx < sizeof(colorNames) / sizeof(colorNames[0]);
        ++ idx)
     {
-      if (StringCompare(A2T_(colorNames[idx].lpszName), lpszName, true) == 0)
+      if (StringCompare(colorNames[idx].lpszName, lpszName, true) == 0)
 	{
 	  color = colorNames[idx].color;
 	  return (true);
@@ -427,7 +427,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("invalid color triple: %s"),
-		 A2T_(lpsz));
+		 lpsz);
 	      return (false);
 	    }
 	  if (isRgb)
@@ -456,7 +456,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("invalid gray value: %s"),
-		 A2T_(lpsz));
+		 lpsz);
 	      return (false);
 	    }
 	  CmykColor cmykcolor;
@@ -480,7 +480,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("invalid cmyk quadrupel: %s"),
-		 A2T_(lpsz));
+		 lpsz);
 	      return (false);
 	    }
 	  CmykColor cmykcolor;
@@ -498,7 +498,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	  log_error->WriteFormattedLine
 	    (T_("libdvi"),
 	     T_("invalid color name: %s"),
-	     A2T_(lpsz));
+	     lpsz);
 	  return (false);
 	}
       string name;
@@ -512,7 +512,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	  log_error->WriteFormattedLine
 	    (T_("libdvi"),
 	     T_("unknown color name: %s"),
-	     A2T_(name.c_str()));
+	     name.c_str());
 	  return (false);
 	}
       rgb = cmykcolor;

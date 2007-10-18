@@ -313,7 +313,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+		       /*[in]*/ const char *	lpszPrefix)
 {
   traceStream->WriteFormattedLine (T_("libextractor"),
 				   T_("extracting to %s (%s directories)"),
@@ -471,7 +471,7 @@ TarExtractor::Extract (/*[in]*/ const PathName &	tarPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+		       /*[in]*/ const char *	lpszPrefix)
 {
   traceStream->WriteFormattedLine (T_("libextractor"),
 				   T_("extracting %s"),

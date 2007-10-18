@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -42,11 +42,11 @@ using namespace MiKTeX::Core;
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+std::string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  std::string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -65,8 +65,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+std::string
+Quoted (/*[in]*/ const std::string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -77,7 +77,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+std::string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));

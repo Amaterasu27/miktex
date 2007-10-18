@@ -105,11 +105,11 @@
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (StrChr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -128,8 +128,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -140,7 +140,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -261,10 +261,10 @@ public:
   PackageManagerPtr pManager;
 
 public:
-  tstring folderName;
+  string folderName;
 
 public:
-  tstring paperSize;
+  string paperSize;
 
 public:
   TriState installOnTheFly;
@@ -282,7 +282,7 @@ public:
   PathName MiKTeXDirectRoot;
 
 public:
-  tstring remotePackageRepository;
+  string remotePackageRepository;
 
 public:
   PathName setupPath;
@@ -332,7 +332,7 @@ extern SetupWizardApplication theApp;
    _________________________________________________________________________ */
 
 void
-CheckAddTEXMFDirs (/*[out,out]*/ tstring &	directories,
+CheckAddTEXMFDirs (/*[out,out]*/ string &	directories,
 		   /*[out]*/ vector<PathName> &	vec);
 
 int
@@ -364,21 +364,21 @@ bool
 IsPathRegistered ();
 
 void
-Log (/*[in]*/ const MIKTEXCHAR *	lpsz,
+Log (/*[in]*/ const char *	lpsz,
      /*[in]*/				...);
 
 void
-TraceWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
+TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ unsigned long	functionResult,
-		   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+		   /*[in]*/ const char *	lpszInfo,
+		   /*[in]*/ const char *	lpszSourceFile,
 		   /*[in]*/ int			lpszSourceLine);
 
 void
 LogHeader ();
 
 void LogV
-(/*[in]*/ const MIKTEXCHAR *	lpsz,
+(/*[in]*/ const char *	lpsz,
  /*[in]*/ va_list		args);
 
 void
@@ -417,13 +417,13 @@ void
 ReportError (/*[in]*/ const exception & e);
 
 void
-SplitUrl (/*[in]*/ const tstring &	url,
-	  /*[out]*/ tstring &		protocol,
-	  /*[out]*/ tstring &		host);
+SplitUrl (/*[in]*/ const string &	url,
+	  /*[out]*/ string &		protocol,
+	  /*[out]*/ string &		host);
 
 /* _________________________________________________________________________
 
    STR_BYT_SIZ
    _________________________________________________________________________ */
 
-#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(MIKTEXCHAR))
+#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(char))

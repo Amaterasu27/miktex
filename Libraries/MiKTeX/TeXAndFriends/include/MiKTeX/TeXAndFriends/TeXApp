@@ -1,4 +1,4 @@
-/* texapp.h: TeX, pdfTeX, e-TeX, Omega				-*- C++ -*-
+/* MiKTeX/TeXAndFriends/TeXApp: TeX and derivates		-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -88,7 +88,7 @@ protected:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -137,8 +137,8 @@ protected:
 
   virtual
   MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			c,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  ProcessOption (/*[in]*/ int		c,
+		 /*[in]*/ const char *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -236,10 +236,10 @@ public:
     if (THEDATA(membot) < 0 || THEDATA(membot) > 1)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
-	  (MIKTEXTEXT("TeXApp::AllocateMemory"),
+	  ("TeXApp::AllocateMemory",
 	   MIKTEXTEXT("mem_bot must be 0 or 1."),
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
 
@@ -398,7 +398,7 @@ public:
 	      THEDATA(widthbase),
 	      THEDATA(fontmax) - constfontbase);
 
-    if (IsInitProgram() || ! AmITeXCompiler() || AmI(MIKTEXTEXT("omega")))
+    if (IsInitProgram() || ! AmITeXCompiler() || AmI("omega"))
       {
 	Allocate ("fontinfo",
 		  THEDATA(fontinfo),

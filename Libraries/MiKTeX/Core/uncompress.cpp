@@ -29,19 +29,19 @@
    _________________________________________________________________________ */
 
 void
-Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
+Utils::UncompressFile (/*[in]*/ const char *	lpszPathIn,
 		       /*[out]*/ PathName &		pathOut)
 {
   MIKTEX_ASSERT_STRING (lpszPathIn);
 
   SessionImpl::GetSession()->trace_process->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("uncompressing %s..."),
      Q_(lpszPathIn));
 
   if (! File::Exists(lpszPathIn))
     {
-      FATAL_MIKTEX_ERROR (T_("Utils::UncompressFile"),
+      FATAL_MIKTEX_ERROR ("Utils::UncompressFile",
 			  T_("The file could not be found."),
 			  lpszPathIn);
     }
@@ -57,9 +57,9 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 
   FILE * pInputStream = 0;
 
-  if (PathName(lpszPathIn).HasExtension(T_(".gz")))
+  if (PathName(lpszPathIn).HasExtension(".gz"))
     {
-      CommandLineBuilder cmd (T_("zcat"));
+      CommandLineBuilder cmd ("zcat");
       cmd.AppendArgument (lpszPathIn);
       pInputStream =
 	SessionImpl::GetSession()->OpenFile(cmd.Get(),
@@ -67,9 +67,9 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
 					    FileAccess::Read,
 					    false);
     }
-  else if (PathName(lpszPathIn).HasExtension(T_(".bz2")))
+  else if (PathName(lpszPathIn).HasExtension(".bz2"))
     {
-      CommandLineBuilder cmd (T_("bzcat"));
+      CommandLineBuilder cmd ("bzcat");
       cmd.AppendArgument (lpszPathIn);
       pInputStream =
 	SessionImpl::GetSession()->OpenFile(cmd.Get(),
@@ -79,7 +79,7 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
     }
   else
     {
-      FATAL_MIKTEX_ERROR (T_("MiKTeX::Core::UncompressFile"),
+      FATAL_MIKTEX_ERROR ("MiKTeX::Core::UncompressFile",
 			  T_("Could not uncompress file."),
 			  lpszPathIn);
     }
@@ -112,8 +112,8 @@ Utils::UncompressFile (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_uncompress_file (/*[in]*/ const MIKTEXCHAR *	lpszPathIn,
-			/*[out]*/ MIKTEXCHAR *		lpszPathOut)
+miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
+			/*[out]*/ char *		lpszPathOut)
 {
   C_FUNC_BEGIN ();
   PathName temp;

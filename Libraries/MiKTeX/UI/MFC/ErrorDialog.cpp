@@ -63,7 +63,7 @@ private:
   DoDataExchange (/*[in]*/ CDataExchange * pDX);
 
 private:
-  tstring
+  string
   CreateReport ();
 
 private:
@@ -202,7 +202,7 @@ ErrorDialogImpl::OnCopy ()
   HGLOBAL hGlobal = 0;
   try
     {
-      tstring report = CreateReport();
+      string report = CreateReport();
       if (! OpenClipboard())
 	{
 	  FATAL_MIKTEX_ERROR (T_("ErrorDialogImpl::OnCopy"),
@@ -227,7 +227,7 @@ ErrorDialogImpl::OnCopy ()
       else
 	{
 	  AutoGlobal autoGlobal (pGlobal);
-	  Utils::CopyString (reinterpret_cast<MIKTEXCHAR *>(pGlobal),
+	  Utils::CopyString (reinterpret_cast<char *>(pGlobal),
 			     report.length() + 1,
 			     report.c_str());
 	}
@@ -258,7 +258,7 @@ Clipboard."));
    ErrorDialogImpl::CreateReport
    _________________________________________________________________________ */
 
-tstring
+string
 ErrorDialogImpl::CreateReport ()
 {
   otstringstream s;

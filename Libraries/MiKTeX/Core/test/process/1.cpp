@@ -27,35 +27,35 @@ BEGIN_TEST_FUNCTION(1);
 {
   PathName pathExe =
     pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  pathExe += T_("1-1") MIKTEX_EXE_FILE_SUFFIX;
+  pathExe += "1-1" MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
   TEST (Process::Run(pathExe.Get(),
-		     T_("a.txt"),
+		     "a.txt",
 		     0,
 		     &exitCode,
 		     0));
   TEST (exitCode == 0);
-  TEST (File::Exists(T_("a.txt")));
-  TESTX (File::Delete(T_("a.txt"), true));
+  TEST (File::Exists("a.txt"));
+  TESTX (File::Delete("a.txt", true));
 }
 END_TEST_FUNCTION();
 
-tstring outputBuffer;
+string outputBuffer;
 
 BEGIN_TEST_FUNCTION(2);
 {
   PathName pathExe =
     pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  pathExe += T_("1-2") MIKTEX_EXE_FILE_SUFFIX;
+  pathExe += "1-2" MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
   ProcessOutput processOutput;
   TEST (Process::Run(pathExe.Get(),
-		     T_("hello world!"),
+		     "hello world!",
 		     &processOutput,
 		     &exitCode,
 		     0));
   TEST (exitCode == 0);
-  TEST (processOutput.GetOutput() == T_("hello\nworld!\n"));
+  TEST (processOutput.GetOutput() == "hello\nworld!\n");
 }
 END_TEST_FUNCTION();
 
@@ -63,29 +63,29 @@ BEGIN_TEST_FUNCTION(3);
 {
   PathName pathExe = 
     pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  pathExe += T_("1-2") MIKTEX_EXE_FILE_SUFFIX;
+  pathExe += "1-2" MIKTEX_EXE_FILE_SUFFIX;
   int exitCode;
   char buf[100];
   size_t n = 10;
   TEST (Process::Run(pathExe.Get(),
-		     T_("01234567890123456789"),
+		     "01234567890123456789",
 		     buf,
 		     &n,
 		     &exitCode));
   TEST (exitCode == 0);
   TEST (n == 10);
   std::string str (buf, n);
-  TEST (str == T_("0123456789"));
+  TEST (str == "0123456789");
   n = 100;
   TEST (Process::Run(pathExe.Get(),
-		     T_("01234567890123456789"),
+		     "01234567890123456789",
 		     buf,
 		     &n,
 		     &exitCode));
   TEST (exitCode == 0);
   TEST (n == 21);
   str.assign (buf, n);
-  TEST (str == T_("01234567890123456789\n"));
+  TEST (str == "01234567890123456789\n");
 }
 END_TEST_FUNCTION();
 

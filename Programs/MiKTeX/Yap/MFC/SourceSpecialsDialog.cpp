@@ -170,22 +170,22 @@ SourceSpecialsDialog::OnInitDialog ()
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
 	  lvitem.pszText =
-	    (const_cast<MIKTEXCHAR *>
-	     (static_cast<const MIKTEXCHAR *>(it->pageName)));
+	    (const_cast<char *>
+	     (static_cast<const char *>(it->pageName)));
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
 	    }
 	  lvitem.iSubItem = 1;
 	  lvitem.pszText =
-	    (const_cast<MIKTEXCHAR *>
-	     (static_cast<const MIKTEXCHAR *>(it->fileName)));
+	    (const_cast<char *>
+	     (static_cast<const char *>(it->fileName)));
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
 	    }
 	  lvitem.iSubItem = 2;
-	  lvitem.pszText = const_cast<MIKTEXCHAR *>(NUMTOSTR(it->line));
+	  lvitem.pszText = const_cast<char *>(NUMTOSTR(it->line));
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
@@ -290,8 +290,8 @@ SourceSpecialsDialog::OnEditSource ()
       int idx = listControl.GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
       MIKTEX_ASSERT (idx >= 0);
       LV_ITEM item;
-      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-      MIKTEXCHAR szLineNum[BufferSizes::MaxPath];
+      char szFileName[BufferSizes::MaxPath];
+      char szLineNum[BufferSizes::MaxPath];
       item.mask = LVIF_TEXT;
       item.cchTextMax = BufferSizes::MaxPath;
       item.iItem = idx;

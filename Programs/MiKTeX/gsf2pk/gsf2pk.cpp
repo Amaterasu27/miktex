@@ -1,7 +1,7 @@
 /* gsf2pk.cpp: Gsf-to-Pk converter (based on gsftopk)
 
-   Copyright (C) 1993-2000  Paul Vojta
    Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 1993-2000  Paul Vojta
    
    Permission is hereby granted, free of charge, to any person
    obtaining a copy of this software and associated documentation
@@ -47,23 +47,15 @@ using namespace std;
 
 #if defined(_MSC_VER)
 #  if (_MSC_VER < 1400)
-#    define SScanF _stscanf
+#    define SScanF sscanf
 #  else
-#    define SScanF _stscanf_s
+#    define SScanF sscanf_s
 #  endif
 #else
 #  define SScanF sscanf
 #endif
 
 #define T_(x) MIKTEXTEXT(x)
-
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
 
 #define Q_(x) Quoted(x).c_str()
 
@@ -72,11 +64,11 @@ using namespace std;
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -94,8 +86,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    Quoted
    _________________________________________________________________________ */
 
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -105,7 +97,7 @@ Quoted (/*[in]*/ const tstring & str)
    Quoted
    _________________________________________________________________________ */
 
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -140,18 +132,18 @@ public:
 public:
   void
   Main (/*[in]*/ int			argc,
-	/*[in]*/ const MIKTEXCHAR * *	argv);
+	/*[in]*/ const char * *	argv);
 
 private:
   MIKTEXNORETURN
   void
-  Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
+  Error (/*[in]*/ const char *		lpszFormat,
 	 /*[in]*/				...)
     const;
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
@@ -219,7 +211,7 @@ private:
 
 private:
   void
-  ReadTFMFile (/*[in]*/ const MIKTEXCHAR * lpszTeXFontName);
+  ReadTFMFile (/*[in]*/ const char * lpszTeXFontName);
   
 private:
   void
@@ -263,8 +255,8 @@ private:
 
 private:
   void
-  putspecl (/*[in]*/ const MIKTEXCHAR * str1,
-	    /*[in]*/ const MIKTEXCHAR * str2 = 0);
+  putspecl (/*[in]*/ const char * str1,
+	    /*[in]*/ const char * str2 = 0);
 
 private:
   void
@@ -277,15 +269,15 @@ private:
 
 private:
   void
-  WritePkFile (/*[in]*/ const MIKTEXCHAR *	lpszPkFile);
+  WritePkFile (/*[in]*/ const char *	lpszPkFile);
 
 private:
   Process *
-  StartGhostscript (/*[in]*/ const MIKTEXCHAR *	lpszFontFile,
-		    /*[in]*/ const MIKTEXCHAR *	lpszEncFile,
-		    /*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		    /*[in]*/ const MIKTEXCHAR *	lpszSpecInfo,
-		    /*[in]*/ const MIKTEXCHAR *	lpszDPI,
+  StartGhostscript (/*[in]*/ const char *	lpszFontFile,
+		    /*[in]*/ const char *	lpszEncFile,
+		    /*[in]*/ const char *	lpszFontName,
+		    /*[in]*/ const char *	lpszSpecInfo,
+		    /*[in]*/ const char *	lpszDPI,
 		    /*[out]*/ FILE **		ppGsOut,
 		    /*[out]*/ FILE **		ppGsErr);
 
@@ -297,13 +289,13 @@ private:
 
 private:
   void
-  Convert (/*[in]*/ const MIKTEXCHAR *	lpszTeXFontName,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFontName,
-	   /*[in]*/ const MIKTEXCHAR *	lpszSpecInfo,
-	   /*[in]*/ const MIKTEXCHAR *	lpszEncFile,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFontFile,
-	   /*[in]*/ const MIKTEXCHAR *	lpszDPI,
-	   /*[in]*/ const MIKTEXCHAR *	lpszPkFile);
+  Convert (/*[in]*/ const char *	lpszTeXFontName,
+	   /*[in]*/ const char *	lpszFontName,
+	   /*[in]*/ const char *	lpszSpecInfo,
+	   /*[in]*/ const char *	lpszEncFile,
+	   /*[in]*/ const char *	lpszFontFile,
+	   /*[in]*/ const char *	lpszDPI,
+	   /*[in]*/ const char *	lpszPkFile);
 
 public:
   void
@@ -326,7 +318,7 @@ private:
   AutoFILE pFileGsErr;
 
 private:
-  tstring gsStdErr;
+  string gsStdErr;
 
 private:
   vector<int> lengths;
@@ -338,7 +330,7 @@ private:
   vector<int> widthIndex;
 
 private:
-  tstring chars;
+  string chars;
 
 private:
   int checkSum;
@@ -395,7 +387,7 @@ private:
   size_t bitmapSize;
 
 private:
-  tstring fontName;
+  string fontName;
 
   // area for saving bit counts
 private:
@@ -521,14 +513,15 @@ Converter::~Converter ()
 
 MIKTEXNORETURN
 void
-Converter::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
-		  /*[in]*/				...)
+Converter::Error (/*[in]*/ const char *		lpszFormat,
+		  /*[in]*/			...)
   const
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << T_("gsf2pk") << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist) << endl;
+  cerr << T_("gsf2pk") << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   ShowGhostscriptTranscript ();
   throw (1);
@@ -540,7 +533,7 @@ Converter::Error (/*[in]*/ const MIKTEXCHAR *		lpszFormat,
    _________________________________________________________________________ */
 
 void
-Converter::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Converter::Verbose (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   if (! verbose)
@@ -549,7 +542,7 @@ Converter::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -566,7 +559,7 @@ Converter::ShowGhostscriptTranscript ()
     {
       return;
     }
-  tcerr << T_("Ghostscript transcript follows:\n")
+  cerr << T_("Ghostscript transcript follows:\n")
 	<< gsStdErr
 	<< endl;
 }
@@ -795,7 +788,7 @@ Converter::GetFirstByte (/*[in]*/ const PathName & file)
    _________________________________________________________________________ */
 
 void
-Converter::ReadTFMFile (/*[in]*/ const MIKTEXCHAR *	lpszTeXFontName)
+Converter::ReadTFMFile (/*[in]*/ const char *	lpszTeXFontName)
 {
   lengths.resize (12, 0);
   widths.resize (256, 0);
@@ -859,13 +852,13 @@ Converter::ReadTFMFile (/*[in]*/ const MIKTEXCHAR *	lpszTeXFontName)
    _________________________________________________________________________ */
 
 Process *
-Converter::StartGhostscript (/*[in]*/ const MIKTEXCHAR *	lpszFontFile,
-			      /*[in]*/ const MIKTEXCHAR *	lpszEncFile,
-			      /*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			      /*[in]*/ const MIKTEXCHAR *	lpszSpecInfo,
-			      /*[in]*/ const MIKTEXCHAR *	lpszDPI,
-			      /*[out]*/ FILE **			ppGsOut,
-			      /*[out]*/ FILE **			ppGsErr)
+Converter::StartGhostscript (/*[in]*/ const char *	lpszFontFile,
+			      /*[in]*/ const char *	lpszEncFile,
+			      /*[in]*/ const char *	lpszFontName,
+			      /*[in]*/ const char *	lpszSpecInfo,
+			      /*[in]*/ const char *	lpszDPI,
+			      /*[out]*/ FILE **		ppGsOut,
+			      /*[out]*/ FILE **		ppGsErr)
 {
   PathName pathGs;
 
@@ -906,7 +899,7 @@ Converter::StartGhostscript (/*[in]*/ const MIKTEXCHAR *	lpszFontFile,
   commandLine.AppendArgument (lpszFontName);
 
   // - font/enc load string
-  tstring loadString;
+  string loadString;
   PathName pathFont;
   if (! pSession->FindFile(lpszFontFile,
 			   FileType::TYPE1,
@@ -973,7 +966,7 @@ Converter::StartGhostscript (/*[in]*/ const MIKTEXCHAR *	lpszFontFile,
   *ppGsErr = pProcess->get_StandardError();
   AutoFILE pFileGsErr (*ppGsErr);
   
-  tstring designSizeString =
+  string designSizeString =
     NUMTOSTR(static_cast<float>(designSize) / (1 << 20));
   designSizeString += '\n';
 
@@ -1559,7 +1552,7 @@ Converter::PutGlyph (/*[in]*/ int cc)
 {
   if (! haveFirstLine)
     {
-      tstring line;
+      string line;
       Expect ("#^", &line);
       if (SScanF(line.c_str(),
 		 "#^ %d %d %d %d %d %f\n",
@@ -1580,7 +1573,7 @@ Converter::PutGlyph (/*[in]*/ int cc)
     }
   if (idx > cc)
     {
-      tcerr << T_("Character ") << cc << T_(" is missing.") << endl;
+      cerr << T_("Character ") << cc << T_(" is missing.") << endl;
       haveFirstLine = true;
       return;
     }
@@ -1669,8 +1662,8 @@ Converter::PutGlyph (/*[in]*/ int cc)
    _________________________________________________________________________ */
 
 void
-Converter::putspecl (/*[in]*/ const MIKTEXCHAR * str1,
-		     /*[in]*/ const MIKTEXCHAR * str2)
+Converter::putspecl (/*[in]*/ const char * str1,
+		     /*[in]*/ const char * str2)
 {
   int len1 = static_cast<int>(strlen(str1));
   int len2 = 0;
@@ -1698,7 +1691,7 @@ Converter::putspecl (/*[in]*/ const MIKTEXCHAR * str1,
    _________________________________________________________________________ */
 
 void
-Converter::WritePkFile (/*[in]*/ const MIKTEXCHAR *	lpszPkFile)
+Converter::WritePkFile (/*[in]*/ const char *	lpszPkFile)
 {
   Verbose (T_("Writing Pk file %s...\n"), Q_(lpszPkFile));
 
@@ -1713,11 +1706,11 @@ Converter::WritePkFile (/*[in]*/ const MIKTEXCHAR *	lpszPkFile)
   PutByte (PK_PRE);
   PutByte (PK_ID);
 
-  tstring line;
+  string line;
 
   // read version number / write id string
   Expect ("V", &line);
-  tstring id = "gsf2pk ";
+  string id = "gsf2pk ";
   id += VER_FILEVERSION_STR;
   int gsVersion;
   if (SScanF(line.c_str(), "V %d", &gsVersion) == 1)
@@ -1765,16 +1758,16 @@ Converter::WritePkFile (/*[in]*/ const MIKTEXCHAR *	lpszPkFile)
    _________________________________________________________________________ */
 
 void
-Converter::Convert (/*[in]*/ const MIKTEXCHAR *		lpszTeXFontName,
-		    /*[in]*/ const MIKTEXCHAR *		lpszFontName,
-		    /*[in]*/ const MIKTEXCHAR *		lpszSpecInfo,
-		    /*[in]*/ const MIKTEXCHAR *		lpszEncFile,
-		    /*[in]*/ const MIKTEXCHAR *		lpszFontFile,
-		    /*[in]*/ const MIKTEXCHAR *		lpszDPI,
-		    /*[out]*/ const MIKTEXCHAR *	lpszPkFile)
+Converter::Convert (/*[in]*/ const char *		lpszTeXFontName,
+		    /*[in]*/ const char *		lpszFontName,
+		    /*[in]*/ const char *		lpszSpecInfo,
+		    /*[in]*/ const char *		lpszEncFile,
+		    /*[in]*/ const char *		lpszFontFile,
+		    /*[in]*/ const char *		lpszDPI,
+		    /*[out]*/ const char *	lpszPkFile)
 {
   fontName = lpszTeXFontName;
-  dpi = _ttoi(lpszDPI);
+  dpi = atoi(lpszDPI);
 
   ReadTFMFile (lpszTeXFontName);
 
@@ -1824,7 +1817,7 @@ Converter::Convert (/*[in]*/ const MIKTEXCHAR *		lpszTeXFontName,
 
 void
 Converter::Main (/*[in]*/ int			argc,
-		 /*[in]*/ const MIKTEXCHAR * *	argv)
+		 /*[in]*/ const char * *	argv)
 {
   Cpopt popt (argc, argv, aoption);
 
@@ -1849,21 +1842,21 @@ Converter::Main (/*[in]*/ int			argc,
 	  verbose = true;
 	  break;
 	case OPT_VERSION:
-	  tcout << Utils::MakeProgramVersionString(T_("gsf2pk"),
-						   VersionNumber(VER_FILEVERSION))
-		<< T_("\n\
+	  cout << Utils::MakeProgramVersionString(T_("gsf2pk"),
+					   VersionNumber(VER_FILEVERSION))
+	       << T_("\n\
+Copyright (C) 2004-2007 Christian Schenk\n\
 Copyright (C) 1993-2000  Paul Vojta\n\
-Copyright (C) 2004-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	    << endl;
+	       << endl;
 	  return;
 	}
     }
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       Error (T_("%s"), msg.c_str());
@@ -1874,7 +1867,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       Error (T_("Wrong number of command-line arguments."));
     }
 
-  const MIKTEXCHAR * * leftovers = popt.GetArgs();
+  const char * * leftovers = popt.GetArgs();
 
   Init (argv[0]);
 
@@ -1896,7 +1889,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR * *	argv)
+      /*[in]*/ const char * *	argv)
 {
   try
     {

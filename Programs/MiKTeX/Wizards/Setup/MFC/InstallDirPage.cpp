@@ -295,7 +295,7 @@ InstallDirPage::OnBrowse ()
 	{
 	  return;
 	}
-      MIKTEXCHAR szDir[BufferSizes::MaxPath];
+      char szDir[BufferSizes::MaxPath];
       BOOL done = SHGetPathFromIDList(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! done)

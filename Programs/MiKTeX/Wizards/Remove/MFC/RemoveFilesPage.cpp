@@ -543,10 +543,10 @@ RemoveFilesPage::GetCancelFlag ()
    _________________________________________________________________________ */
 
 bool
-RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ tstring &	path)
+RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ string &	path)
 {
   bool removed = false;
-  tstring newPath;
+  string newPath;
   PathName binDir =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
   binDir.AppendDirectoryDelimiter ();
@@ -666,7 +666,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
     }
   else
     {
-      tstring path = value.Get();
+      string path = value.Get();
       if (RemoveBinDirFromPath(path))
 	{
 	  result =
@@ -712,14 +712,14 @@ RemoveFilesPage::UnregisterPath95 ()
   if (File::Exists(AUTOEXEC_BAT))
     {
       StreamReader reader (AUTOEXEC_BAT);
-      vector<tstring> lines;
-      tstring line;
+      vector<string> lines;
+      string line;
       bool removed = false;
       while (reader.ReadLine(line))
 	{
 	  if (line.substr(0, 9) == T_("set PATH="))
 	    {
-	      tstring path = line.substr(9);
+	      string path = line.substr(9);
 	      if (RemoveBinDirFromPath(path))
 		{
 		  removed = true;
@@ -733,7 +733,7 @@ RemoveFilesPage::UnregisterPath95 ()
       if (removed)
 	{
 	  StreamWriter writer (AUTOEXEC_BAT);
-	  for (vector<tstring>::const_iterator it = lines.begin();
+	  for (vector<string>::const_iterator it = lines.begin();
 	       it != lines.end();
 	       ++ it)
 	    {
@@ -832,7 +832,7 @@ RemoveFilesPage::RemoveRegistryKey (/*[in]*/ HKEY		hkeyRoot,
       FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyEx"), result, 0);
     }
   
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
+  char szName[BufferSizes::MaxPath];
   DWORD size = BufferSizes::MaxPath;
 
   FILETIME fileTime;

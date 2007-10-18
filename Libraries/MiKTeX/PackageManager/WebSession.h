@@ -53,7 +53,7 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+  OpenUrl (/*[in]*/ const char *	lpszUrl,
 	   /*[in]*/ IProgressNotify_ *	pIProgressNotify)
     = 0;
 

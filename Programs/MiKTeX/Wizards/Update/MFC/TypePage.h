@@ -113,7 +113,7 @@ private:
   int localChoice;
 
 private:
-  tstring remoteRepository;
+  string remoteRepository;
 
 private:
   bool haveRemoteRepository;

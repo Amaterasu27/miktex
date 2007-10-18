@@ -189,7 +189,7 @@ ConnectionSettingsDialog::OnOK ()
       proxySettings.useProxy = (useProxy ? true : false);
       proxySettings.authenticationRequired =
 	(proxyAuthenticationRequired ? true : false);
-      proxySettings.proxy = static_cast<const MIKTEXCHAR *>(proxyHost);
+      proxySettings.proxy = static_cast<const char *>(proxyHost);
       proxySettings.port = proxyPort;
       PackageManager::SetProxy (proxySettings);
     }

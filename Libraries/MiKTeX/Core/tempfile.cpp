@@ -29,12 +29,12 @@
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_remember_temp_file (/*[in]*/ const MIKTEXCHAR * lpszFileName)
+miktex_remember_temp_file (/*[in]*/ const char * lpszFileName)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_STRING (lpszFileName);
   UNUSED (lpszFileName);
-  UNIMPLEMENTED (T_("miktex_remember_temp_file"));
+  UNIMPLEMENTED ("miktex_remember_temp_file");
   C_FUNC_END ();
 }
 
@@ -44,7 +44,7 @@ miktex_remember_temp_file (/*[in]*/ const MIKTEXCHAR * lpszFileName)
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_create_temp_file_name (/*[out]*/ MIKTEXCHAR *	lpszFileName)
+miktex_create_temp_file_name (/*[out]*/ char *	lpszFileName)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_PATH_BUFFER (lpszFileName);

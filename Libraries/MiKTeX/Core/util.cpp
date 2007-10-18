@@ -133,9 +133,9 @@ Tokenizer::FindToken ()
    _________________________________________________________________________ */
 
 bool
-Utils::Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
-		 /*[in]*/ const MIKTEXCHAR *	lpszElement,
-		 /*[in]*/ const MIKTEXCHAR *	lpszDelims,
+Utils::Contains (/*[in]*/ const char *	lpszList,
+		 /*[in]*/ const char *	lpszElement,
+		 /*[in]*/ const char *	lpszDelims,
 		 /*[in]*/ bool			ignoreCase)
 {
   for (Tokenizer tok (lpszList, lpszDelims); tok.GetCurrent() != 0; ++ tok)
@@ -154,9 +154,9 @@ Utils::Contains (/*[in]*/ const MIKTEXCHAR *	lpszList,
    _________________________________________________________________________ */
 
 size_t
-Utils::AppendString (/*[in,out]*/ MIKTEXCHAR *		lpszBuf,
+Utils::AppendString (/*[in,out]*/ char *		lpszBuf,
 		     /*[in]*/ size_t			bufSize,
-		     /*[in]*/ const MIKTEXCHAR *	lpszSource)
+		     /*[in]*/ const char *	lpszSource)
 {
   MIKTEX_ASSERT_STRING (lpszBuf);
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
@@ -171,7 +171,7 @@ Utils::AppendString (/*[in,out]*/ MIKTEXCHAR *		lpszBuf,
   
   if (length == bufSize)
     {
-      INVALID_ARGUMENT (T_("MiKTeX::Core::Utils::AppendString"), lpszBuf);
+      INVALID_ARGUMENT ("MiKTeX::Core::Utils::AppendString", lpszBuf);
     }
 
   length += CopyString(&lpszBuf[length], bufSize - length, lpszSource);
@@ -204,7 +204,7 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
 
   if (length == bufSize)
     {
-      BUF_TOO_SMALL (T_("Utils::CopyString"));
+      BUF_TOO_SMALL ("Utils::CopyString");
     }
 
   return (length);
@@ -235,11 +235,11 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
      FALSE);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("WideCharToMultiByte"), 0);
+      FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
     }
   if (n < 0)
     {
-      UNEXPECTED_CONDITION (T_("Utils::CopyString"));
+      UNEXPECTED_CONDITION ("Utils::CopyString");
     }
   return (static_cast<size_t>(n));
 #else
@@ -249,7 +249,7 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
     {
       if (*lpszSource > 255)
 	{
-	  INVALID_ARGUMENT (T_("Utils::CopyString"));
+	  INVALID_ARGUMENT ("Utils::CopyString");
 	}
       if ((lpszBuf[length] = lpszSource[length]) == 0)
 	{
@@ -259,7 +259,7 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
 
   if (length == bufSize)
     {
-      BUF_TOO_SMALL (T_("Utils::CopyString"));
+      BUF_TOO_SMALL ("Utils::CopyString");
     }
 
   return (length);
@@ -272,9 +272,9 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-CopyString2 (/*[out]*/ MIKTEXCHAR *		lpszBuf,
+CopyString2 (/*[out]*/ char *		lpszBuf,
 	     /*[in]*/ size_t			bufSize,
-	     /*[in]*/ const MIKTEXCHAR *	lpszSource,
+	     /*[in]*/ const char *	lpszSource,
 	     /*[in]*/ size_t			count)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
@@ -287,7 +287,7 @@ CopyString2 (/*[out]*/ MIKTEXCHAR *		lpszBuf,
       return;
     }
 
-  MIKTEXCHAR * lpsz = lpszBuf;
+  char * lpsz = lpszBuf;
 
   while (bufSize > 0
 	 && count > 0
@@ -300,12 +300,12 @@ CopyString2 (/*[out]*/ MIKTEXCHAR *		lpszBuf,
   if (bufSize == 0)
     {
       TraceError (T_("CopyString2() is going to throw an exception"));
-      TraceError (T_("  bufSize=%u"), static_cast<unsigned>(bufSize));
-      TraceError (T_("  count=%u"), static_cast<unsigned>(count));
-      TraceError (T_("  lpszSource=%.*s..."),
+      TraceError ("  bufSize=%u", static_cast<unsigned>(bufSize));
+      TraceError ("  count=%u", static_cast<unsigned>(count));
+      TraceError ("  lpszSource=%.*s...",
 		  static_cast<int>(bufSize),
 		  lpszSource);
-      BUF_TOO_SMALL (T_("CopyString2"));
+      BUF_TOO_SMALL ("CopyString2");
     }
 
   if (count == 0)
@@ -320,11 +320,11 @@ CopyString2 (/*[out]*/ MIKTEXCHAR *		lpszBuf,
    _________________________________________________________________________ */
 
 void
-Utils::ReplaceString (/*[out]*/ MIKTEXCHAR *		lpszBuf,
+Utils::ReplaceString (/*[out]*/ char *		lpszBuf,
 		      /*[in,out]*/ size_t &		bufSize,
-		      /*[in]*/ const MIKTEXCHAR *	lpszSource,
-		      /*[in]*/ const MIKTEXCHAR *	lpszString1,
-		      /*[in]*/ const MIKTEXCHAR *	lpszString2)
+		      /*[in]*/ const char *	lpszSource,
+		      /*[in]*/ const char *	lpszString1,
+		      /*[in]*/ const char *	lpszString2)
 {
   MIKTEX_ASSERT_STRING (lpszSource);
   MIKTEX_ASSERT_STRING (lpszString1);
@@ -363,7 +363,7 @@ Utils::ReplaceString (/*[out]*/ MIKTEXCHAR *		lpszBuf,
 		  bufSize -= 1;
 		  if (bufSize == 0)
 		    {
-		      BUF_TOO_SMALL (T_("MiKTeX::Core::Utils::ReplaceString"));
+		      BUF_TOO_SMALL ("MiKTeX::Core::Utils::ReplaceString");
 		    }
 		}
 	      ++ lpszSource;
@@ -416,7 +416,7 @@ Utils::ReplaceString (/*[out]*/ MIKTEXCHAR *		lpszBuf,
 
 MD5
 MIKTEXCALL
-MD5::FromFile (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+MD5::FromFile (/*[in]*/ const char *	lpszPath)
 {
   MD5Builder md5Builder;
   md5Builder.Init ();
@@ -436,23 +436,23 @@ MD5::FromFile (/*[in]*/ const MIKTEXCHAR *	lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(int)
-Unhex (/*[in]*/ MIKTEXCHAR x)
+Unhex (/*[in]*/ char x)
 {
-  if (x >= T_('0') && x <= T_('9'))
+  if (x >= '0' && x <= '9')
     {
-      return (x - T_('0'));
+      return (x - '0');
     }
-  else if (x >= T_('A') && x <= T_('F'))
+  else if (x >= 'A' && x <= 'F')
     {
-      return (x - T_('A') + 10);
+      return (x - 'A' + 10);
     }
-  else if (x >= T_('a') && x <= T_('f'))
+  else if (x >= 'a' && x <= 'f')
     {
-      return (x - T_('a') + 10);
+      return (x - 'a' + 10);
     }
   else
     {
-      FATAL_MIKTEX_ERROR (T_("Unhex"),
+      FATAL_MIKTEX_ERROR ("Unhex",
 			  T_("Hex digit expected."),
 			  0);
     }
@@ -465,12 +465,12 @@ Unhex (/*[in]*/ MIKTEXCHAR x)
 
 MD5
 MIKTEXCALL
-MD5::Parse (/*[in]*/ const MIKTEXCHAR *	lpszHexString)
+MD5::Parse (/*[in]*/ const char *	lpszHexString)
 {
   size_t l = StrLen(lpszHexString);
   if (l != 32)
     {
-      FATAL_MIKTEX_ERROR (T_("MD5::Parse"), T_("Invalid MD5."), lpszHexString);
+      FATAL_MIKTEX_ERROR ("MD5::Parse", T_("Invalid MD5."), lpszHexString);
     }
   MD5 md5;
   for (size_t i = 0; i < 16; ++i)
@@ -488,19 +488,19 @@ MD5::Parse (/*[in]*/ const MIKTEXCHAR *	lpszHexString)
    Utils::FormatString
    _________________________________________________________________________ */
 
-tstring
+string
 MIKTEXCALL
-Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
+Utils::FormatString (/*[in]*/ const char *  lpszFormat,
 		     /*[in]*/ va_list		  arglist)
 {
-  CharBuffer<MIKTEXCHAR> autoBuffer;
+  CharBuffer<char> autoBuffer;
   int n;
 #if defined(_MSC_VER)
 #  if _MSC_VER >= 1400
   n = _vsctprintf(lpszFormat, arglist);
   if (n < 0)
   {
-    FATAL_CRT_ERROR (T_("_vsctprintf"), 0);
+    FATAL_CRT_ERROR ("_vsctprintf", 0);
   }
   autoBuffer.Reserve (n + 1);
   n = _vstprintf_s(
@@ -510,12 +510,12 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
     arglist);
   if (n < 0)
   {
-    FATAL_CRT_ERROR (T_("_vsntprintf_s"), 0);
+    FATAL_CRT_ERROR ("_vsntprintf_s", 0);
   }
   else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
   {
     FATAL_MIKTEX_ERROR (
-      T_("Utils::FormatString"),
+      "Utils::FormatString",
       T_("Invalid format string or argument list."),
       0);
   }
@@ -530,7 +530,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 		    arglist);
     if (n < 0)
     {
-      FATAL_CRT_ERROR (T_("_vsntprintf"), 0);
+      FATAL_CRT_ERROR ("_vsntprintf", 0);
     }
     else if (static_cast<size_t>(n) < autoBuffer.GetCapacity())
     {
@@ -543,7 +543,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
     else
     {
       FATAL_MIKTEX_ERROR (
-	T_("Utils::FormatString"),
+	"Utils::FormatString",
 	T_("Invalid format string or argument list."),
 	0);
     }
@@ -558,7 +558,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 	      arglist);
   if (n < 0)
   {
-    FATAL_CRT_ERROR (T_("vsnprintf"), 0);
+    FATAL_CRT_ERROR ("vsnprintf", 0);
   }
   else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
   {
@@ -570,12 +570,12 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
 		arglist);
     if (n < 0)
     {
-      FATAL_CRT_ERROR (T_("vsnprintf"), 0);
+      FATAL_CRT_ERROR ("vsnprintf", 0);
     }
     else if (static_cast<size_t>(n) >= autoBuffer.GetCapacity())
     {
       FATAL_MIKTEX_ERROR (
-	T_("Utils::FormatString"),
+	"Utils::FormatString",
 	T_("Invalid format string or argument list."),
 	0);
     }
@@ -589,7 +589,7 @@ Utils::FormatString (/*[in]*/ const MIKTEXCHAR *  lpszFormat,
    PathNameParser::PathNameParser
    _________________________________________________________________________ */
 
-PathNameParser::PathNameParser (/*[in]*/ const MIKTEXCHAR * lpszPath)
+PathNameParser::PathNameParser (/*[in]*/ const char * lpszPath)
 {
   Utils::CopyString (buffer, BufferSizes::MaxPath, lpszPath);
   lpszNext = buffer;
@@ -602,12 +602,12 @@ PathNameParser::PathNameParser (/*[in]*/ const MIKTEXCHAR * lpszPath)
    PathNameParser::operator++
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 PathNameParser::operator++ ()
 {
   lpszCurrent = lpszNext;
 
-  MIKTEXCHAR * lpsz;
+  char * lpsz;
 
   if (lpszCurrent == buffer && IsDirectoryDelimiter(buffer[0]))
     {
@@ -651,14 +651,14 @@ PathNameParser::operator++ ()
    Hexify
    _________________________________________________________________________ */
 
-MIKTEXAPI(tstring)
+MIKTEXAPI(string)
 Utils::Hexify (/*[in]*/ const void *	pv,
 	       /*[in]*/ size_t		nBytes,
 	       /*[in]*/ bool		lowerCase)
 {
-  tstring ret;
-#define TOHEX(x) ((x) < 10 ? T_('0') + (x) : (x) - 10 + T_('A'))
-#define tohex(x) ((x) < 10 ? T_('0') + (x) : (x) - 10 + T_('a'))
+  string ret;
+#define TOHEX(x) ((x) < 10 ? '0' + (x) : (x) - 10 + 'A')
+#define tohex(x) ((x) < 10 ? '0' + (x) : (x) - 10 + 'a')
   for (size_t i = 0; i < nBytes; ++ i)
     {
       unsigned char XX = reinterpret_cast<const unsigned char *>(pv)[i];
@@ -675,7 +675,7 @@ Utils::Hexify (/*[in]*/ const void *	pv,
    Hexify
    _________________________________________________________________________ */
 
-MIKTEXAPI(tstring)
+MIKTEXAPI(string)
 Utils::Hexify (/*[in]*/ const void *	pv,
 	       /*[in]*/ size_t		nBytes)
 {
@@ -704,7 +704,7 @@ MIKTEXEXPORT
 MIKTEXCALL
 Argv::~Argv ()
 {
-  for (vector<MIKTEXCHAR*>::const_iterator it = argv.begin();
+  for (vector<char*>::const_iterator it = argv.begin();
        it != argv.end() && *it != 0;
        ++ it)
     {
@@ -719,8 +719,8 @@ Argv::~Argv ()
 
 void
 MIKTEXCALL
-Argv::Build (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+Argv::Build (/*[in]*/ const char *	lpszFileName,
+	     /*[in]*/ const char *	lpszArguments)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
@@ -745,21 +745,15 @@ NumberString::Init (/*[in]*/ long long	num,
 		    /*[in]*/ bool	hex)
 {
   int n;
-  const MIKTEXCHAR * lpszFormat = (hex ? T_("%llx") : T_("%lld"));
-#if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
+  const char * lpszFormat = (hex ? "%llx" : "%lld");
+#if defined(_MSC_VER) && _MSC_VER >= 1400
   n = _stprintf_s (buffer, BUFSIZE, lpszFormat, num);
-#  else
-  n = _stprintf (buffer, lpszFormat, num);
-#  endif
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: NumberString::NumberString()
 #else
   n = sprintf (buffer, lpszFormat, num);
 #endif
   if (n < 0)
     {
-      FATAL_CRT_ERROR (T_("sprintf"), 0);
+      FATAL_CRT_ERROR ("sprintf", 0);
     }
 }
 
@@ -772,20 +766,14 @@ void
 NumberString::Init (/*[in]*/ double	num)
 {
   int n;
-#if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
-  n = _stprintf_s (buffer, BUFSIZE, T_("%f"), num);
-#  else
-  n = _stprintf (buffer, T_("%f"), num);
-#  endif
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: NumberToStringConverter_::NumberToStringConverter_()
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+  n = _stprintf_s (buffer, BUFSIZE, "%f", num);
 #else
-  n = sprintf (buffer, T_("%f"), num);
+  n = sprintf (buffer, "%f", num);
 #endif
   if (n < 0)
     {
-      FATAL_CRT_ERROR (T_("sprintf"), 0);
+      FATAL_CRT_ERROR ("sprintf", 0);
     }
 }
 
@@ -876,11 +864,11 @@ Utils::IsUTF8 (/*[in]*/ const char *	lpsz,
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-miktex_replace_string (/*[out]*/ MIKTEXCHAR *		lpszBuf,
+miktex_replace_string (/*[out]*/ char *		lpszBuf,
 		       /*[in]*/ size_t *		lpSizeDest,
-		       /*[in]*/ const MIKTEXCHAR *	lpszSource,
-		       /*[in]*/ const MIKTEXCHAR *	lpszString1,
-		       /*[in]*/ const MIKTEXCHAR *	lpszString2)
+		       /*[in]*/ const char *	lpszSource,
+		       /*[in]*/ const char *	lpszString1,
+		       /*[in]*/ const char *	lpszString2)
 {
   C_FUNC_BEGIN ();
 

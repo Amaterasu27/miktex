@@ -60,8 +60,8 @@ MIKTEXUIAPI(unsigned int)
 InstallPackageMessageBox
 (/*[in]*/ HWND						hwndParent,
  /*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
- /*[in]*/ const MIKTEXCHAR *				lpszPackageName,
- /*[in]*/ const MIKTEXCHAR *				lpszTrigger);
+ /*[in]*/ const char *					lpszPackageName,
+ /*[in]*/ const char *					lpszTrigger);
 
 MIKTEXUIAPI(bool)
 ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent);

@@ -35,8 +35,8 @@
 InstallPackageDialog::InstallPackageDialog
 (/*[in]*/ CWnd *		pParent,
  /*[in]*/ PackageManager *	pManager,
- /*[in]*/ const MIKTEXCHAR *	lpszPackageName,
- /*[in]*/ const MIKTEXCHAR *	lpszTrigger)
+ /*[in]*/ const char *	lpszPackageName,
+ /*[in]*/ const char *	lpszTrigger)
   : CDialog (InstallPackageDialog::IDD, pParent),
     alwaysAsk (TRUE),
     pManager (pManager),
@@ -55,7 +55,7 @@ InstallPackageDialog::InstallPackageDialog
 void
 InstallPackageDialog::FormatControlText
 (/*[in]*/ UINT			ctrlId,
- /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+ /*[in]*/ const char *	lpszFormat,
  /*[in]*/			...)
 {
   CWnd * pWnd = GetDlgItem(ctrlId);
@@ -65,7 +65,7 @@ InstallPackageDialog::FormatControlText
     }
   va_list marker;
   va_start (marker, lpszFormat);
-  tstring str = Utils::FormatString(lpszFormat, marker);
+  string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
   pWnd->SetWindowText (str.c_str());
 }
@@ -81,7 +81,7 @@ InstallPackageDialog::OnInitDialog ()
   BOOL ret = CDialog::OnInitDialog();
   try
     {
-      tstring repository;
+      string repository;
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
 	{
@@ -157,7 +157,7 @@ InstallPackageDialog::OnChangeRepository ()
 	{
 	  return;
 	}
-      tstring repository;
+      string repository;
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (pManager->TryGetDefaultPackageRepository(repositoryType,
 						   repository))

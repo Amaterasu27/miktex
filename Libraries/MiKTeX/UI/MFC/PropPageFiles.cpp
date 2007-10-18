@@ -91,7 +91,7 @@ xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
 	}
 
-      vector<tstring>::const_iterator it;
+      vector<string>::const_iterator it;
       int idx = 0;
       
       for (it = packageInfo.runFiles.begin();
@@ -134,7 +134,7 @@ xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
 
 void
 PropPageFiles::AddFile (/*[in]*/ int			idx,
-			/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+			/*[in]*/ const char *	lpszFileName)
 {
   PathName fileName (lpszFileName);
   fileName.RemoveDirectorySpec ();

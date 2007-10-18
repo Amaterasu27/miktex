@@ -250,7 +250,7 @@ LocalRepositoryPage::OnBrowse ()
 	{
 	  return;
 	}
-      MIKTEXCHAR szFolderPath[BufferSizes::MaxPath];
+      char szFolderPath[BufferSizes::MaxPath];
       BOOL havePath = SHGetPathFromIDList(pidl, szFolderPath);
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)

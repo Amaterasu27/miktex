@@ -49,8 +49,8 @@ public:
 
 public:
   void
-  SetFileLists (/*[in]*/ const vector<tstring> & toBeInstalled,
-		/*[in]*/ const vector<tstring> & toBeRemoved);
+  SetFileLists (/*[in]*/ const vector<string> & toBeInstalled,
+		/*[in]*/ const vector<string> & toBeRemoved);
 
 protected:
   virtual
@@ -83,13 +83,13 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
@@ -109,7 +109,7 @@ private:
 private:
   void
   Report (/*[in]*/ bool			immediate,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+	  /*[in]*/ const char *	lpszFmt,
 	  /*[in]*/			...);
 
 private:
@@ -140,7 +140,7 @@ private:
 private:
   void
   FormatControlText (/*[in]*/ UINT			ctrlId,
-		     /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		     /*[in]*/ const char *	lpszFormat,
 		     /*[in]*/				...);
 
 private:
@@ -192,7 +192,7 @@ private:
     bool waitingForClickOnClose;
     int progress1Pos;
     int progress2Pos;
-    tstring packageName;
+    string packageName;
   };
 
 private:
@@ -553,7 +553,7 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
 
 void
 MPMCALL
-UpdateDialogImpl::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+UpdateDialogImpl::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Report (true, T_("%s\n"), lpszLine);
 }
@@ -565,7 +565,7 @@ UpdateDialogImpl::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-UpdateDialogImpl::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+UpdateDialogImpl::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UNUSED_ALWAYS (lpszMessage);
   return (false);
@@ -695,7 +695,7 @@ UpdateDialogImpl::DoTheUpdate ()
 
 void
 UpdateDialogImpl::Report (/*[in]*/ bool			immediate,
-			  /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+			  /*[in]*/ const char *	lpszFmt,
 			  /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
@@ -759,12 +759,12 @@ UpdateDialogImpl::EnableControl (/*[in]*/ UINT	controlId,
 
 void
 UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
-				     /*[in]*/ const MIKTEXCHAR * lpszFormat,
+				     /*[in]*/ const char * lpszFormat,
 				     /*[in]*/			...)
 {
   va_list marker;
   va_start (marker, lpszFormat);
-  tstring str = Utils::FormatString(lpszFormat, marker);
+  string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
   GetControl(ctrlId)->SetWindowText (str.c_str());
 }
@@ -775,8 +775,8 @@ UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
    _________________________________________________________________________ */
 
 void
-UpdateDialogImpl::SetFileLists (/*[in]*/ const vector<tstring> & toBeInstalled,
-				/*[in]*/ const vector<tstring> & toBeRemoved)
+UpdateDialogImpl::SetFileLists (/*[in]*/ const vector<string> & toBeInstalled,
+				/*[in]*/ const vector<string> & toBeRemoved)
 {
   pInstaller->SetFileLists (toBeInstalled, toBeRemoved);
 }
@@ -790,10 +790,10 @@ INT_PTR
 MIKTEXUICALL
 UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		       /*[in]*/ PackageManager *	pManager,
-		       /*[in]*/ const vector<tstring> &	toBeInstalled,
-		       /*[in]*/ const vector<tstring> &	toBeRemoved)
+		       /*[in]*/ const vector<string> &	toBeInstalled,
+		       /*[in]*/ const vector<string> &	toBeRemoved)
 {
-  tstring url;
+  string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (toBeInstalled.size() > 0
       && PackageManager::TryGetDefaultPackageRepository(repositoryType, url)

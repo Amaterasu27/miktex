@@ -29,9 +29,9 @@
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindGraphicsRule (/*[in]*/ const MIKTEXCHAR *	lpszFrom,
-			       /*[in]*/ const MIKTEXCHAR *	lpszTo,
-			       /*[out]*/ MIKTEXCHAR *		lpszRule,
+SessionImpl::FindGraphicsRule (/*[in]*/ const char *	lpszFrom,
+			       /*[in]*/ const char *	lpszTo,
+			       /*[out]*/ char *		lpszRule,
 			       /*[in]*/ size_t			bufSize)
 {
   MIKTEX_ASSERT_STRING (lpszFrom);
@@ -39,12 +39,12 @@ SessionImpl::FindGraphicsRule (/*[in]*/ const MIKTEXCHAR *	lpszFrom,
 
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszRule, bufSize);
 
-  tstring strKey = lpszFrom;
+  string strKey = lpszFrom;
   strKey += lpszTo;
   
-  tstring strRule;
+  string strRule;
 
-  bool b = GetSessionValue(T_("Graphics"), strKey.c_str(), strRule, 0);
+  bool b = GetSessionValue("Graphics", strKey.c_str(), strRule, 0);
 
   if (! b)
     {
@@ -65,28 +65,28 @@ SessionImpl::FindGraphicsRule (/*[in]*/ const MIKTEXCHAR *	lpszFrom,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::ConvertToBitmapFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-				  /*[out]*/ MIKTEXCHAR *	lpszBmpFile,
+SessionImpl::ConvertToBitmapFile (/*[in]*/ const char *	lpszPath,
+				  /*[out]*/ char *	lpszBmpFile,
 				  /*[in]*/ IRunProcessCallback * pCallback)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   MIKTEX_ASSERT_PATH_BUFFER (lpszBmpFile);
 
-  const MIKTEXCHAR * lpszExt = GetFileNameExtension(lpszPath);
+  const char * lpszExt = GetFileNameExtension(lpszPath);
 
   if (lpszExt == 0)
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("no file name extension"),
 			  lpszPath);
     }
 
   const size_t MAXRULE = 1024;
-  MIKTEXCHAR szRule[MAXRULE];
+  char szRule[MAXRULE];
 
-  if (! FindGraphicsRule(lpszExt, T_(".bmp"), szRule, MAXRULE))
+  if (! FindGraphicsRule(lpszExt, ".bmp", szRule, MAXRULE))
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("no conversion rule"),
 			  lpszPath);
     }
@@ -99,20 +99,20 @@ SessionImpl::ConvertToBitmapFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 
   Utils::CopyString (lpszBmpFile, BufferSizes::MaxPath, temp.Get());
   
-  tstring strCommandLine;
+  string strCommandLine;
   strCommandLine.reserve (256);
 
-  for (const MIKTEXCHAR * lpsz = szRule; *lpsz != 0; ++ lpsz)
+  for (const char * lpsz = szRule; *lpsz != 0; ++ lpsz)
     {
-      if (*lpsz == T_('%'))
+      if (*lpsz == '%')
 	{
 	  ++ lpsz;
 	  switch (*lpsz)
 	    {
-	    case T_('i'):
+	    case 'i':
 	      strCommandLine += lpszPath;
 	      break;
-	    case T_('o'):
+	    case 'o':
 	      strCommandLine += lpszBmpFile;
 	      break;
 	    }

@@ -37,9 +37,9 @@
    C:\abcd\ef.gh		C:\ab			<NULL>
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
-Utils::GetRelativizedPath (/*[in]*/ const MIKTEXCHAR * lpszPath,
-			   /*[in]*/ const MIKTEXCHAR * lpszRoot)
+const char *
+Utils::GetRelativizedPath (/*[in]*/ const char * lpszPath,
+			   /*[in]*/ const char * lpszRoot)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   MIKTEX_ASSERT_STRING (lpszRoot);
@@ -62,7 +62,7 @@ Utils::GetRelativizedPath (/*[in]*/ const MIKTEXCHAR * lpszPath,
       return (0);
     }
 
-  MIKTEXCHARINT ch = lpszRoot[rootLen - 1];
+  int ch = lpszRoot[rootLen - 1];
 
   if (IsDirectoryDelimiter(ch))
     {
@@ -83,7 +83,7 @@ Utils::GetRelativizedPath (/*[in]*/ const MIKTEXCHAR * lpszPath,
    _________________________________________________________________________ */
 
 bool
-Utils::IsAbsolutePath (/*[in]*/ const MIKTEXCHAR * lpszPath)
+Utils::IsAbsolutePath (/*[in]*/ const char * lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -94,7 +94,7 @@ Utils::IsAbsolutePath (/*[in]*/ const MIKTEXCHAR * lpszPath)
     }
 #if defined(MIKTEX_WINDOWS)
   else if (IsDriveLetter(lpszPath[0]) // "C:\xyz\foo.txt"
-	   && lpszPath[1] == T_(':')
+	   && lpszPath[1] == ':'
 	   && IsDirectoryDelimiter(lpszPath[2]))
     {
       return (true);
@@ -111,20 +111,20 @@ Utils::IsAbsolutePath (/*[in]*/ const MIKTEXCHAR * lpszPath)
    CompareFileNameChars
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(MIKTEXCHARINT)
-CompareFileNameChars (/*[in]*/ MIKTEXCHAR	ch1,
-		      /*[in]*/ MIKTEXCHAR	ch2)
+MIKTEXINTERNALFUNC(int)
+CompareFileNameChars (/*[in]*/ char	ch1,
+		      /*[in]*/ char	ch2)
 {
   if (IsDirectoryDelimiter(ch1) && IsDirectoryDelimiter(ch2))
     {
       return (0);
     }
 #if defined(MIKTEX_WINDOWS)
-  MIKTEXCHARINT norm1 = ToLower(ch1);
-  MIKTEXCHARINT norm2 = ToLower(ch2);
+  int norm1 = ToLower(ch1);
+  int norm2 = ToLower(ch2);
 #else
-  MIKTEXCHARINT norm1 = ch1;
-  MIKTEXCHARINT norm2 = ch2;
+  int norm1 = ch1;
+  int norm2 = ch2;
 #endif
   return (norm1 - norm2);
 }
@@ -173,7 +173,7 @@ PathName::Compare (/*[in]*/ const char *	lpszPath1,
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-NormalizePath (/*[in,out]*/ MIKTEXCHAR *	lpszPath)
+NormalizePath (/*[in,out]*/ char *	lpszPath)
 {
 #if defined(MIKTEX_WINDOWS)
   for (size_t l = 0; lpszPath[l] != 0; ++ l)
@@ -225,8 +225,8 @@ PathName::Compare (/*[in]*/ const char *	lpszPath1,
     {
       if (*lpszPath1 == 0 || *lpszPath1 != *lpszPath2)
 	{
-	  return (*reinterpret_cast<const MIKTEXUCHAR *>(lpszPath1)
-		  - *reinterpret_cast<const MIKTEXUCHAR *>(lpszPath2));
+	  return (*reinterpret_cast<const unsigned char *>(lpszPath1)
+		  - *reinterpret_cast<const unsigned char *>(lpszPath2));
 	}
     }
   
@@ -308,9 +308,9 @@ Utils::MakeTeXPathName (/*[in,out]*/ PathName & path)
 		| ConvertPathNameFlags::ToUnix);
 #else
 #  warning Unimplemented: Utils::MakeTeXPathName()
-  if (StrChr(path.Get(), T_(' ')) != 0)
+  if (StrChr(path.Get(), ' ') != 0)
     {
-      FATAL_MIKTEX_ERROR (T_("Utils::MakeTeXPathName"),
+      FATAL_MIKTEX_ERROR ("Utils::MakeTeXPathName",
 			  T_("Path name contains the space character."),
 			  path.Get());
     }
@@ -334,12 +334,12 @@ PathName::Match (/*[in]*/ const char *	lpszPattern,
     case 0:
       return (*lpszPath == 0);
       
-    case T_('*'):
+    case '*':
       return (Match(lpszPattern + 1, lpszPath) // <recursivecall/>
 	      || (*lpszPath != 0
 		  && Match(lpszPattern, lpszPath + 1)));
       
-    case T_('?'):
+    case '?':
       return (*lpszPath != 0	// <recursivecall/>
 	      && Match(lpszPattern + 1, lpszPath + 1));
       
@@ -355,8 +355,8 @@ PathName::Match (/*[in]*/ const char *	lpszPattern,
    _________________________________________________________________________ */
 
 bool
-Utils::IsParentDirectoryOf (/*[in]*/ const MIKTEXCHAR * lpszParentDir,
-			    /*[in]*/ const MIKTEXCHAR * lpszFileName)
+Utils::IsParentDirectoryOf (/*[in]*/ const char * lpszParentDir,
+			    /*[in]*/ const char * lpszFileName)
 {
   size_t len1 = StrLen(lpszParentDir);
   if (PathName::Compare(lpszParentDir, lpszFileName, len1) != 0)
@@ -383,7 +383,7 @@ Utils::IsParentDirectoryOf (/*[in]*/ const MIKTEXCHAR * lpszParentDir,
    _________________________________________________________________________ */
 
 bool
-Utils::GetUncRootFromPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+Utils::GetUncRootFromPath (/*[in]*/ const char *	lpszPath,
 			   /*[out]*/ PathName &		uncRoot)
 {
   // must start with "\\"
@@ -395,7 +395,7 @@ Utils::GetUncRootFromPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   
   uncRoot = lpszPath;
 
-  MIKTEXCHAR * lpsz = uncRoot.GetBuffer() + 2;
+  char * lpsz = uncRoot.GetBuffer() + 2;
 
   if (lpsz[0] == 0 || lpsz[1] == 0)
     {
@@ -446,7 +446,7 @@ Utils::GetUncRootFromPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-AppendDirectoryDelimiter (/*[in,out]*/ tstring & path)
+AppendDirectoryDelimiter (/*[in,out]*/ string & path)
 {
   size_t l = path.length();
   if (l > 0 && ! IsDirectoryDelimiter(path[l - 1]))
@@ -461,7 +461,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ tstring & path)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
+AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
 			  /*[in]*/ size_t		size)
 {
   MIKTEX_ASSERT (size > 0);
@@ -473,7 +473,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
     {
       if (l + 1 >= size)
 	{
-	  INVALID_ARGUMENT (T_("AppendDirectoryDelimiter"), lpszPath);
+	  INVALID_ARGUMENT ("AppendDirectoryDelimiter", lpszPath);
 	}
       lpszPath[l] = PathName::DirectoryDelimiter;
       lpszPath[l + 1] = 0;
@@ -486,7 +486,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-RemoveDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR * lpszPath)
+RemoveDirectoryDelimiter (/*[in,out]*/ char * lpszPath)
 {
   size_t l = StrLen(lpszPath);
   if (l > 1 && IsDirectoryDelimiter(lpszPath[l - 1]))
@@ -530,7 +530,7 @@ PathName::Combine (/*[out]*/ char *		lpszPath,
     {
       if (n + 1 >= sizePath)
 	{
-	  BUF_TOO_SMALL (T_("PathName::Combine"));
+	  BUF_TOO_SMALL ("PathName::Combine");
 	}
       lpszPath[n] = DirectoryDelimiter;
       ++ n;
@@ -544,13 +544,13 @@ PathName::Combine (/*[out]*/ char *		lpszPath,
 
   if (lpszExtension != 0 && *lpszExtension != 0)
     {
-      if (*lpszExtension != T_('.'))
+      if (*lpszExtension != '.')
 	{
 	  if (n + 1 >= sizePath)
 	    {
-	      BUF_TOO_SMALL (T_("PathName::Combine"));
+	      BUF_TOO_SMALL ("PathName::Combine");
 	    }
-	  lpszPath[n] = T_('.');
+	  lpszPath[n] = '.';
 	  ++ n;
 	}
       n += Utils::CopyString(&lpszPath[n], sizePath - n, lpszExtension);
@@ -604,7 +604,7 @@ PathName::Split (/*[in]*/ const char *	lpszPath,
   const char * lpszExtension_ = 0;
   for (lpsz = lpszName_; *lpsz != 0; ++ lpsz)
     {
-      if (*lpsz == T_('.'))
+      if (*lpsz == '.')
 	{
 	  lpszExtension_ = lpsz;
 	}
@@ -630,17 +630,17 @@ PathName::Split (/*[in]*/ const char *	lpszPath,
    GetFileNameExtension
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(const MIKTEXCHAR *)
-GetFileNameExtension (/*[in]*/ const MIKTEXCHAR * lpszPath)
+MIKTEXINTERNALFUNC(const char *)
+GetFileNameExtension (/*[in]*/ const char * lpszPath)
 {
-  const MIKTEXCHAR * lpszExtension = 0;
-  for (const MIKTEXCHAR * lpsz = lpszPath; *lpsz != 0; ++ lpsz)
+  const char * lpszExtension = 0;
+  for (const char * lpsz = lpszPath; *lpsz != 0; ++ lpsz)
     {
       if (IsDirectoryDelimiter(*lpsz))
 	{
 	  lpszExtension = 0;
 	}
-      else if (*lpsz == T_('.'))
+      else if (*lpsz == '.')
 	{
 	  lpszExtension = lpsz;
 	}
@@ -772,7 +772,7 @@ PathName::GetHash ()
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(PathName)
-GetFullPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
+GetFullPath (/*[in]*/ const char * lpszPath)
 {
   PathName path;
 
@@ -802,12 +802,12 @@ GetFullPath (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-IsExplicitlyRelativePath (/*[in]*/ const MIKTEXCHAR * lpszPath)
+IsExplicitlyRelativePath (/*[in]*/ const char * lpszPath)
 {
-  if (lpszPath[0] == T_('.'))
+  if (lpszPath[0] == '.')
     {
       return (IsDirectoryDelimiter(lpszPath[1])
-	      || (lpszPath[1] == T_('.')
+	      || (lpszPath[1] == '.'
 		  && IsDirectoryDelimiter(lpszPath[2])));
     }
   else
@@ -852,7 +852,7 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
       path = GetRootDirectory(GetConfigRoot());
       break;
     default:
-      UNEXPECTED_CONDITION (T_("SessionImpl::GetSpecialPath"));
+      UNEXPECTED_CONDITION ("SessionImpl::GetSpecialPath");
       break;
     }
   return (path);
@@ -864,8 +864,8 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
    _________________________________________________________________________ */
 
 MIKTEXAPI(int)
-miktex_pathcmp (/*[in]*/ const MIKTEXCHAR *	lpszPath1,
-		/*[in]*/ const MIKTEXCHAR *	lpszPath2)
+miktex_pathcmp (/*[in]*/ const char *	lpszPath1,
+		/*[in]*/ const char *	lpszPath2)
 {
   C_FUNC_BEGIN ();
   return (PathName::Compare(lpszPath1, lpszPath2));

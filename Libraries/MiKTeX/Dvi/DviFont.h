@@ -32,7 +32,7 @@ protected:
 	   /*[in]*/ int			designSize,
 	   /*[in]*/ const char *	lpszArea,
 	   /*[in]*/ const char *	lpszName,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	   /*[in]*/ const char *	lpszFileName,
 	   /*[in]*/ double		tfmConv,
 	   /*[in]*/ double		conv);
 
@@ -53,7 +53,7 @@ public:
   GetLineSpacing ();
 
 public:
-  const tstring &
+  const string &
   GetFileName ()
   {
     return (dviInfo.fileName);

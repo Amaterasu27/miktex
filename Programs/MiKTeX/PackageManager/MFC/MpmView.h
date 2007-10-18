@@ -207,8 +207,8 @@ protected:
 protected:
   void
   InsertColumn (/*[in]*/ int			colIdx,
-		/*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		/*[in]*/ const MIKTEXCHAR *	lpszLongest);
+		/*[in]*/ const char *	lpszLabel,
+		/*[in]*/ const char *	lpszLongest);
 
 protected:
   void
@@ -216,8 +216,8 @@ protected:
 
 private:
   bool
-  GetContainerPath (/*[in]*/ const tstring &	deploymentName,
-		    /*[in,out]*/ tstring &	path);
+  GetContainerPath (/*[in]*/ const string &	deploymentName,
+		    /*[in,out]*/ string &	path);
 
 private:
   PackageManagerPtr pManager;

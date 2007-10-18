@@ -28,7 +28,7 @@
    InputStream::InputStream
    _________________________________________________________________________ */
 
-InputStream::InputStream (/*[in]*/ const MIKTEXCHAR * lpszFileName)
+InputStream::InputStream (/*[in]*/ const char * lpszFileName)
   : nBytes (0),
     pBytes (0),
     fileName (lpszFileName),
@@ -229,10 +229,10 @@ DviException::DviException ()
    _________________________________________________________________________ */
 
 DviException::DviException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : MiKTeXException (lpszProgramInvocationName,
 		     lpszMessage,
@@ -257,10 +257,10 @@ DviFileInUseException::DviFileInUseException ()
    _________________________________________________________________________ */
 
 DviFileInUseException::DviFileInUseException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : DviException (lpszProgramInvocationName,
 		  lpszMessage,
@@ -285,10 +285,10 @@ DviPageNotFoundException::DviPageNotFoundException ()
    _________________________________________________________________________ */
 
 DviPageNotFoundException::DviPageNotFoundException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : DviException (lpszProgramInvocationName,
 		  lpszMessage,
@@ -344,10 +344,10 @@ ScaleFix (/*[in]*/ int		tfm,
 
 void
 MIKTEXNORETURN
-FatalDviError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-	       /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-	       /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-	       /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
+	       /*[in]*/ const char *	lpszMessage,
+	       /*[in]*/ const char *	lpszInfo,
+	       /*[in]*/ const char *	lpszSourceFile,
 	       /*[in]*/ int			sourceLine)
 {
   UNUSED_ALWAYS (lpszMiktexFunction);

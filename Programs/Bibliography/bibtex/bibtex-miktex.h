@@ -81,7 +81,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebAppInputLine::Init (lpszProgramInvocationName);
 #if defined(IMPLEMENT_TCX)
@@ -155,7 +155,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -168,7 +168,7 @@ public:
   bool
   MIKTEXMFCALL
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)
@@ -187,7 +187,7 @@ public:
   }
   
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   TheNameOfTheGame ()
     const
@@ -210,7 +210,7 @@ public:
   OpenBstFile (/*[in]*/ T & f)
     const
   {
-    const MIKTEXCHAR * lpszFileName = THEDATA(nameoffile);
+    const char * lpszFileName = THEDATA(nameoffile);
     MIKTEX_ASSERT_STRING (lpszFileName);
     PathName bstFileName (lpszFileName);
     if (bstFileName.GetExtension() == 0)
@@ -238,7 +238,7 @@ extern BIBTEXCLASS BIBTEXAPP;
 template<class T>
 inline
 void
-miktexbibtexrealloc (/*[in]*/ const MIKTEXCHAR *	lpszVar,
+miktexbibtexrealloc (/*[in]*/ const char *	lpszVar,
 		     /*[in]*/ T * &			p,
 		     /*[in]*/ size_t			n)
 {

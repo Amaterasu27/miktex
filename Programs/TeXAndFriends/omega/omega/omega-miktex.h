@@ -137,7 +137,7 @@ public:
   virtual
   void
   MIKTEXMFCALL
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+  Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     TeXApp::Init (lpszProgramInvocationName);
 #if defined(IMPLEMENT_TCX)
@@ -167,7 +167,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetInitProgramName ()
     const
@@ -177,7 +177,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetVirginProgramName ()
     const
@@ -187,7 +187,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   TheNameOfTheGame ()
     const

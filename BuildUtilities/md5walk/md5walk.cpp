@@ -1,6 +1,6 @@
 /* md5walk.cpp: calculate the MD5 of a file tree
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MD5Walk.
 
@@ -57,21 +57,13 @@ using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 /* _________________________________________________________________________
 
    Special Names
    _________________________________________________________________________ */
 
-const MIKTEXCHAR * MD5WALK_FILE = T_(".nvsbl");
-const MIKTEXCHAR * NAME_CHECK_INTEGRITY = T_("chkdata");
+const char * MD5WALK_FILE = T_(".nvsbl");
+const char * NAME_CHECK_INTEGRITY = T_("chkdata");
 
 /* _________________________________________________________________________
 
@@ -160,15 +152,15 @@ const int NOT_OF_INTEGRITY = 3;
    Global Variables
    _________________________________________________________________________ */
 
-typedef map<tstring, MD5, hash_compare_icase> FileNameToMD5;
-typedef multimap<size_t, tstring> SizeToFileName;
+typedef map<string, MD5, hash_compare_icase> FileNameToMD5;
+typedef multimap<size_t, string> SizeToFileName;
 #if defined(_MSC_VER)
-typedef stdext::hash_multimap<MD5, tstring, hash_compare_md5sum> MD5ToFileName;
+typedef stdext::hash_multimap<MD5, string, hash_compare_md5sum> MD5ToFileName;
 #else
-typedef multimap<MD5, tstring, hash_compare_md5sum> MD5ToFileName;
+typedef multimap<MD5, string, hash_compare_md5sum> MD5ToFileName;
 #endif
 
-set<tstring> ignoreExtensions;
+set<string> ignoreExtensions;
 int optVerbose = false;
 int optBinary = false;
 #if defined(MIKTEX_WINDOWS)
@@ -181,7 +173,7 @@ int optPauseWhenFinished = false;
    _________________________________________________________________________ */
 
 void
-Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+Verbose (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...)
 {
   if (! optVerbose)
@@ -190,7 +182,7 @@ Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -254,14 +246,14 @@ const struct poptOption aoption[] = {
    _________________________________________________________________________ */
 
 void
-FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FatalError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << Utils::GetExeName() << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << Utils::GetExeName() << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (FATAL_ERROR);
 }
@@ -274,7 +266,7 @@ FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 void
 DirectoryWalk (/*[in]*/ TASK			task,
 	       /*[in]*/ const PathName &	path,
-	       /*[in]*/ const MIKTEXCHAR *	lpszStripPrefix,
+	       /*[in]*/ const char *	lpszStripPrefix,
 	       /*[in,out]*/ FileNameToMD5 &	mapFnToMD5,
 	       /*[in,out]*/ SizeToFileName &	mapSizeToFn)
 {
@@ -294,7 +286,7 @@ DirectoryWalk (/*[in]*/ TASK			task,
 	}
       else
 	{
-	  const MIKTEXCHAR * lpszExt = path2.GetExtension();
+	  const char * lpszExt = path2.GetExtension();
 	  if (lpszExt == 0
 	      || ignoreExtensions.find(lpszExt) == ignoreExtensions.end())
 	    {
@@ -338,7 +330,7 @@ PrintMD5 (/*[in]*/ const MD5 & md5)
     }
   else
     {
-      tcout << md5.ToString() << endl;
+      cout << md5.ToString() << endl;
     }
 }
 
@@ -348,7 +340,7 @@ PrintMD5 (/*[in]*/ const MD5 & md5)
    _________________________________________________________________________ */
 
 void
-PrintDuplicates (const set<tstring> & setstr)
+PrintDuplicates (const set<string> & setstr)
 {
   if (setstr.size() <= 1)
     {
@@ -357,13 +349,13 @@ PrintDuplicates (const set<tstring> & setstr)
   Verbose (T_("found %u identical files (size: %u):\n"),
 	   static_cast<unsigned>(setstr.size()),
 	   static_cast<unsigned>(File::GetSize(setstr.begin()->c_str())));
-  for (set<tstring>::const_iterator it = setstr.begin();
+  for (set<string>::const_iterator it = setstr.begin();
        it != setstr.end();
        ++ it)
     {
-      tcout << T_("  ") << it->c_str() << T_('\n');
+      cout << T_("  ") << it->c_str() << T_('\n');
     }
-  tcout << endl;
+  cout << endl;
 }
 
 /* _________________________________________________________________________
@@ -372,21 +364,21 @@ PrintDuplicates (const set<tstring> & setstr)
    _________________________________________________________________________ */
 
 void
-FindDuplicateFiles (const set<tstring> & setstr)
+FindDuplicateFiles (const set<string> & setstr)
 {
   if (setstr.size() <= 1)
     {
       return;
     }
   MD5ToFileName mapMd5sumToFn;
-  for (set<tstring>::const_iterator it = setstr.begin();
+  for (set<string>::const_iterator it = setstr.begin();
        it != setstr.end();
        ++ it)
     {
       mapMd5sumToFn.insert (make_pair(MD5::FromFile(it->c_str()), *it));
     }
   MD5 md5Last;
-  set<tstring> setstrFiles;
+  set<string> setstrFiles;
   for (MD5ToFileName::const_iterator it2 = mapMd5sumToFn.begin();
        it2 != mapMd5sumToFn.end();
        ++ it2)
@@ -408,8 +400,8 @@ FindDuplicateFiles (const set<tstring> & setstr)
    _________________________________________________________________________ */
 
 void
-Main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+Main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   int option;
 
@@ -452,21 +444,21 @@ Main (/*[in]*/ int			argc,
 	  task = FindDuplicates;
 	  break;
 	case OPT_VERSION:
-	  tcout <<
+	  cout <<
 	    Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
 					    VersionNumber(VER_FILEVERSION))
-		<< T_("\n\
-Copyright (C) 2005-2006 Christian Schenk\n\
+	       << T_("\n\
+Copyright (C) 2005-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-		<< endl;
+	       << endl;
 	  return;
 	}
     }
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
@@ -475,9 +467,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   FileNameToMD5 mapFnToMD5;
   SizeToFileName mapSizeToFn;
 
-  vector<tstring> directories;
+  vector<string> directories;
 
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -497,7 +489,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   MD5 md5Good;
   bool haveMD5File = false;
 
-  for (vector<tstring>::const_iterator it = directories.begin();
+  for (vector<string>::const_iterator it = directories.begin();
        it != directories.end();
        ++ it)
     {
@@ -542,7 +534,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 Findings: "));
 	    if (! haveMD5File)
 	      {
-		tcerr << T_("The data might have been corrupted.") << endl;
+		cerr << T_("The data might have been corrupted.") << endl;
 		throw (CANNOT_CHECK_INTEGRITY);
 	      }
 	    if (md5 == md5Good)
@@ -551,7 +543,7 @@ Findings: "));
 	      }
 	    else
 	      {
-		tcerr << T_("The data has been corrupted.") << endl;
+		cerr << T_("The data has been corrupted.") << endl;
 		throw (NOT_OF_INTEGRITY);
 	      }
 	  }
@@ -562,7 +554,7 @@ Findings: "));
       }
     case FindDuplicates:
       {
-	set<tstring> setstr;
+	set<string> setstr;
 	size_t lastSize = 0;
 	for (SizeToFileName::const_iterator it = mapSizeToFn.begin();
 	     it != mapSizeToFn.end();
@@ -582,8 +574,8 @@ Findings: "));
 }
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   int exitCode;
   try
@@ -612,7 +604,7 @@ main (/*[in]*/ int			argc,
 #if defined(MIKTEX_WINDOWS)
   if (optPauseWhenFinished)
     {
-      tcout << T_("\nPress any key to continue...") << flush;
+      cout << T_("\nPress any key to continue...") << flush;
       _getch ();
     }
 #endif

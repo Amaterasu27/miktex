@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/WebApp:					       	-*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebApp:				       	-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -163,7 +163,7 @@ public:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -229,7 +229,7 @@ public:
 protected:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -259,8 +259,8 @@ protected:
 
   virtual
   MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  ProcessOption (/*[in]*/ int		opt,
+		 /*[in]*/ const char *	lpszOptArg);
 	    
 
   /* _______________________________________________________________________
@@ -271,7 +271,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(const MIKTEXCHAR *)
+  MIKTEXMFAPI(const char *)
   TheNameOfTheGame ()
     const;
 
@@ -284,8 +284,8 @@ public:
 
   MIKTEXNORETURN
   MIKTEXMFAPI(void)
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	      /*[in]*/				...);
+  FatalError (/*[in]*/ const char *	lpszFormat,
+	      /*[in]*/			...);
 
   /* _______________________________________________________________________
      
@@ -306,12 +306,12 @@ protected:
   };
 
   MIKTEXMFAPI(void)
-  AddOption (/*[in]*/ const MIKTEXCHAR *	lpszNameAndHelp,
-	     /*[in]*/ int			opt,
-	     /*[in]*/ int			argInfo = POPT_ARG_NONE,
-	     /*[in]*/ const MIKTEXCHAR *	lpszArgDescription = 0,
-	     /*[in]*/ void *			pArg = 0,
-	     /*[in]*/ MIKTEXCHAR		shortName = 0);
+  AddOption (/*[in]*/ const char *	lpszNameAndHelp,
+	     /*[in]*/ int		opt,
+	     /*[in]*/ int		argInfo = POPT_ARG_NONE,
+	     /*[in]*/ const char *	lpszArgDescription = 0,
+	     /*[in]*/ void *		pArg = 0,
+	     /*[in]*/ char		shortName = 0);
 
   /* _______________________________________________________________________
      
@@ -321,8 +321,8 @@ protected:
 protected:
 
   MIKTEXMFAPI(void)
-  AddOption (/*[in]*/ const MIKTEXCHAR *	lpszAliasName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszName);
+  AddOption (/*[in]*/ const char *	lpszAliasName,
+	     /*[in]*/ const char *	lpszName);
 
   /* _______________________________________________________________________
      
@@ -356,7 +356,7 @@ public:
 
 public:
 
-  const MIKTEXCHAR *
+  const char *
   GetProgramName ()
     const
   {
@@ -370,7 +370,7 @@ public:
 
 protected:
   bool
-  AmI (/*[in]*/ const MIKTEXCHAR * lpszName)
+  AmI (/*[in]*/ const char * lpszName)
     const
   {
     return (MiKTeX::Core::Utils::Contains(GetProgramName(), lpszName));
@@ -461,10 +461,10 @@ public:
 public:
 
   MIKTEXMFAPI(void)
-  SetProgramInfo (/*[in]*/ const MIKTEXCHAR * lpszProgramName,
-		  /*[in]*/ const MIKTEXCHAR * lpszVersion,
-		  /*[in]*/ const MIKTEXCHAR * lpszCopyright,
-		  /*[in]*/ const MIKTEXCHAR * lpszTrademarks);
+  SetProgramInfo (/*[in]*/ const char * lpszProgramName,
+		  /*[in]*/ const char * lpszVersion,
+		  /*[in]*/ const char * lpszCopyright,
+		  /*[in]*/ const char * lpszTrademarks);
 
   /* _______________________________________________________________________
      
@@ -487,7 +487,7 @@ protected:
 protected:
 
   void
-  SetTcxFileName (/*[in]*/ const MIKTEXCHAR * lpszTcxFileName)
+  SetTcxFileName (/*[in]*/ const char * lpszTcxFileName)
   {
     tcxFileName = lpszTcxFileName;
   }
@@ -540,13 +540,13 @@ private:
   Cpopt popt;
   
 private:
-  MiKTeX::Core::tstring copyright;
+  std::string copyright;
   
 private:
   MiKTeX::Core::PathName packageListFileName;
   
 private:
-  MiKTeX::Core::tstring programName;
+  std::string programName;
   
 private:
   MiKTeX::Core::PathName tcxFileName;
@@ -555,16 +555,16 @@ private:
   bool enable8BitChars;
   
 private:
-  MiKTeX::Core::tstring trademarks;
+  std::string trademarks;
   
 private:
-  MiKTeX::Core::tstring version;
+  std::string version;
   
 private:
   std::vector<poptOption> options;
 
 private:
-  MiKTeX::Core::tstring theNameOfTheGame;
+  std::string theNameOfTheGame;
 
 private:
   int optBase;

@@ -51,7 +51,7 @@ public:
 
 public:
   void
-  AttachFile (/*[in]*/ const MIKTEXCHAR * lpszFileName);
+  AttachFile (/*[in]*/ const char * lpszFileName);
 
 private:
   const BITMAPINFO *

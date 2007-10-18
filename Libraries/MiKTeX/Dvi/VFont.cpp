@@ -1,6 +1,6 @@
 /* vfont.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -33,7 +33,7 @@ VFont::VFont (/*[in]*/ DviImpl *		pDvi,
 	      /*[in]*/ int			designSize,
 	      /*[in]*/ const char *		lpszAreaName,
 	      /*[in]*/ const char *		lpszFontName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	      /*[in]*/ const char *		lpszFileName,
 	      /*[in]*/ double			tfmConv,
 	      /*[in]*/ double			conv,
 	      /*[in]*/ int			mag,
@@ -175,7 +175,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
   log_vfont->WriteFormattedLine
     (T_("libdvi"),
      T_("comment: %s"),
-     A2T_(dviInfo.comment.c_str()));
+     dviInfo.comment.c_str());
   log_vfont->WriteFormattedLine
     (T_("libdvi"),
      T_("checkSum: 0%o"),
@@ -190,7 +190,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
       log_error->WriteFormattedLine
 	(T_("libdvi"),
 	 T_("%s: designSize mismatch"),
-	 A2T_(dviInfo.name.c_str()));
+	 dviInfo.name.c_str());
     }
 
   if (my_checkSum != checkSum)
@@ -198,7 +198,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
       log_error->WriteFormattedLine
 	(T_("libdvi"),
 	 T_("%s: checkSum mismatch"),
-	 A2T_(dviInfo.name.c_str()));
+	 dviInfo.name.c_str());
     }
 }
 
@@ -284,11 +284,11 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
   log_vfont->WriteFormattedLine
     (T_("libdvi"),
      T_("areaname: %s"),
-     A2T_(szArea));
+     szArea);
   log_vfont->WriteFormattedLine
     (T_("libdvi"),
      T_("fontname: %s"),
-     A2T_(szName));
+     szName);
   log_vfont->WriteFormattedLine
     (T_("libdvi"),
      T_("checkSum: 0%o"),

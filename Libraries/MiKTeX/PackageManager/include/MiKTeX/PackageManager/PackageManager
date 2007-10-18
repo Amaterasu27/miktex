@@ -1,4 +1,4 @@
-/* mpm.h: MiKTeX package manager API				-*- C++ -*-
+/* MiKTeX/PackageManager/PackageManager: MiKTeX package manager API -*- C++ -*-
 
    Copyright (C) 2001-2007 Christian Schenk
 
@@ -71,22 +71,22 @@ MPM_BEGIN_NAMESPACE;
 struct PackageInfo
 {
   /// Deployment name.
-  MiKTeX::Core::tstring deploymentName;
+  std::string deploymentName;
 
   /// Display name.
-  MiKTeX::Core::tstring displayName;
+  std::string displayName;
 
   /// One-line package description.
-  MiKTeX::Core::tstring title;
+  std::string title;
 
   /// Informal version information.
-  MiKTeX::Core::tstring version;
+  std::string version;
 
   /// Multi-line package description.
-  MiKTeX::Core::tstring description;
+  std::string description;
 
   /// Name of creator (packer).
-  MiKTeX::Core::tstring creator;
+  std::string creator;
 
   /// Accumulated file sizes of the run file list.
   size_t sizeRunFiles;
@@ -98,21 +98,21 @@ struct PackageInfo
   size_t sizeSourceFiles;
 
   /// The run file list.
-  std::vector<MiKTeX::Core::tstring> runFiles;
+  std::vector<std::string> runFiles;
 
   /// The doc file list.
-  std::vector<MiKTeX::Core::tstring> docFiles;
+  std::vector<std::string> docFiles;
 
   /// The source file list.
-  std::vector<MiKTeX::Core::tstring> sourceFiles;
+  std::vector<std::string> sourceFiles;
 
   /// List of required packages.
   // (these should be <set>s; but <set>s cannot be
   // exported from a DLL (see Q172396))
-  std::vector<MiKTeX::Core::tstring> requiredPackages;
+  std::vector<std::string> requiredPackages;
 
   /// List of dependants.
-  std::vector<MiKTeX::Core::tstring> requiredBy;
+  std::vector<std::string> requiredBy;
 
   /// Date/time when the package was created.
   time_t timePackaged;
@@ -368,13 +368,13 @@ struct RepositoryInfo
   {
   }
   /// URL of the repository.
-  MiKTeX::Core::tstring url;
+  std::string url;
   /// One-line description.
-  MiKTeX::Core::tstring description;
+  std::string description;
   /// Country where the repository is resident.
-  MiKTeX::Core::tstring country;
+  std::string country;
   /// Town where the repository is resident.
-  MiKTeX::Core::tstring town;
+  std::string town;
   /// Package level.
   PackageLevel packageLevel;
   /// Version number.
@@ -397,11 +397,11 @@ struct RepositoryInfo
 struct ProxySettings
 {
   bool useProxy;
-  MiKTeX::Core::tstring proxy;
+  std::string proxy;
   int port;
   bool authenticationRequired;
-  MiKTeX::Core::tstring user;
-  MiKTeX::Core::tstring password;
+  std::string user;
+  std::string password;
   ProxySettings ()
     : useProxy (false),
       authenticationRequired (false),
@@ -483,7 +483,7 @@ public:
   virtual
   PackageInfo
   MPMCALL
-  GetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring & deploymentName)
+  GetPackageInfo (/*[in]*/ const std::string & deploymentName)
     = 0;
 
 public:
@@ -518,7 +518,7 @@ public:
   /// @return Returns a string object.
 public:
   virtual
-  MiKTeX::Core::tstring
+  std::string
   MPMCALL
   PickRepositoryUrl ()
     = 0;
@@ -527,23 +527,23 @@ public:
   virtual
   bool
   MPMCALL
-  TryGetPackageInfo (/*[in]*/ const MiKTeX::Core::tstring &	deploymentName,
-		     /*[out]*/ PackageInfo &			packageInfo)
+  TryGetPackageInfo (/*[in]*/ const std::string &	deploymentName,
+		     /*[out]*/ PackageInfo &		packageInfo)
     = 0;
 
 public:
   virtual
   bool
   MPMCALL
-  TryGetRepositoryInfo (/*[in]*/ const MiKTeX::Core::tstring &	url,
-			/*[out]*/ RepositoryInfo &		repositoryInfo)
+  TryGetRepositoryInfo (/*[in]*/ const std::string &	url,
+			/*[out]*/ RepositoryInfo &	repositoryInfo)
     = 0;
 
 public:
   virtual
   RepositoryInfo
   MPMCALL
-  VerifyPackageRepository (/*[in]*/ const MiKTeX::Core::tstring & url)
+  VerifyPackageRepository (/*[in]*/ const std::string & url)
     = 0;
 
 public:
@@ -551,14 +551,14 @@ public:
   bool
   MPMCALL
   TryVerifyInstalledPackage
-  (/*[in]*/ const MiKTeX::Core::tstring & deploymentName)
+  (/*[in]*/ const std::string & deploymentName)
     = 0;
 
 public:
   virtual
-  MiKTeX::Core::tstring
+  std::string
   MPMCALL
-  GetContainerPath (/*[in]*/ const MiKTeX::Core::tstring & deploymentName,
+  GetContainerPath (/*[in]*/ const std::string &	deploymentName,
 		    /*[in]*/ bool			useDisplayNames)
     = 0;
 
@@ -572,7 +572,7 @@ public:
 public:
   static
   MPMEXPORT
-  MiKTeX::Core::tstring
+  std::string
   MPMCALL
   GetRemotePackageRepository ();
 
@@ -581,7 +581,7 @@ public:
   MPMEXPORT
   bool
   MPMCALL
-  TryGetRemotePackageRepository (/*[out]*/ MiKTeX::Core::tstring & url);
+  TryGetRemotePackageRepository (/*[out]*/ std::string & url);
 
 public:
   static
@@ -616,7 +616,7 @@ public:
   MPMEXPORT
   RepositoryType
   MPMCALL
-  GetDefaultPackageRepository (/*[out]*/ MiKTeX::Core::tstring & urlOrPath);
+  GetDefaultPackageRepository (/*[out]*/ std::string & urlOrPath);
 
 public:
   static
@@ -624,7 +624,7 @@ public:
   bool
   MPMCALL
   TryGetDefaultPackageRepository (/*[out]*/ RepositoryType & repositoryType,
-				  /*[out]*/ MiKTeX::Core::tstring & urlOrPath);
+				  /*[out]*/ std::string & urlOrPath);
 
 public:
   static
@@ -633,7 +633,7 @@ public:
   MPMCALL
   SetDefaultPackageRepository
   (/*[in]*/ RepositoryType			repositoryType,
-   /*[in]*/ const MiKTeX::Core::tstring &	urlOrPath);
+   /*[in]*/ const std::string &	urlOrPath);
 
 public:
   static
@@ -647,7 +647,7 @@ public:
   MPMEXPORT
   void
   MPMCALL
-  SetRemotePackageRepository (/*[in]*/ const MiKTeX::Core::tstring & url);
+  SetRemotePackageRepository (/*[in]*/ const std::string & url);
 
 public:
   static
@@ -669,7 +669,7 @@ public:
   PackageInfo
   MPMCALL
   ReadPackageDefinitionFile (/*[in]*/ const MiKTeX::Core::PathName &	path,
-			     /*[in]*/ const MIKTEXCHAR * lpszTeXMFPrefix);
+			     /*[in]*/ const char * lpszTeXMFPrefix);
 
 public:
   static
@@ -689,8 +689,8 @@ public:
   MPMEXPORT
   bool
   MPMCALL
-  StripTeXMFPrefix (/*[in]*/ const MiKTeX::Core::tstring &	str,
-		    /*[out]*/ MiKTeX::Core::tstring &		result);
+  StripTeXMFPrefix (/*[in]*/ const std::string &	str,
+		    /*[out]*/ std::string &		result);
 
 public:
   static
@@ -750,7 +750,7 @@ public:
   void
   MPMCALL
   AddFilter (/*[in]*/ unsigned int		filter,
-	     /*[in]*/ const MIKTEXCHAR *	lpsz = 0)
+	     /*[in]*/ const char *	lpsz = 0)
     = 0;
 
   /// Gets the next entry in the package database.
@@ -819,7 +819,7 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+  ReportLine (/*[in]*/ const char * lpszLine)
     = 0;
 
   /// Error handling. This method is called by the installer if a
@@ -830,7 +830,7 @@ public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+  OnRetryableError (/*[in]*/ const char * lpszMessage)
     = 0;
 
   /// Progress. This method is called by the installer if new
@@ -877,7 +877,7 @@ public:
   virtual
   void
   MPMCALL
-  SetRepository (/*[in]*/ const MiKTeX::Core::tstring & repository)
+  SetRepository (/*[in]*/ const std::string & repository)
     = 0;
 
   /// Sets the installation directory for this package installer.
@@ -927,7 +927,7 @@ public:
     {
     }
     /// Package deployment name.
-    MiKTeX::Core::tstring deploymentName;
+    std::string deploymentName;
     /// Date/Time the package was created.
     time_t timePackaged;
 
@@ -1016,10 +1016,10 @@ public:
     }
 
     /// Deployment name of package.
-    MiKTeX::Core::tstring deploymentName;
+    std::string deploymentName;
 
     /// Display name of package.
-    MiKTeX::Core::tstring displayName;
+    std::string displayName;
 
     /// Path name of current file.
     MiKTeX::Core::PathName fileName;
@@ -1118,8 +1118,8 @@ public:
   void
   MPMCALL
   SetFileLists
-  (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled,
-   /*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeRemoved)
+  (/*[in]*/ const std::vector<std::string> & toBeInstalled,
+   /*[in]*/ const std::vector<std::string> & toBeRemoved)
     = 0;
 
   /// Sets the package level.
@@ -1137,7 +1137,7 @@ public:
   void
   MPMCALL
   SetFileList
-  (/*[in]*/ const std::vector<MiKTeX::Core::tstring> & toBeInstalled)
+  (/*[in]*/ const std::vector<std::string> & toBeInstalled)
     = 0;
 
   /// Tests if the installer is running.

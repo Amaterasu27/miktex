@@ -43,7 +43,7 @@ public:
 public:
   void
   Parse (/*[in]*/ const MiKTeX::Core::PathName &	path,
-	 /*[in]*/ const MIKTEXCHAR *	lpszTeXMFPrefix);
+	 /*[in]*/ const char *	lpszTeXMFPrefix);
   
   // get the result
 public:

@@ -72,7 +72,7 @@ public:
 public:
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   DviPageMode pageMode;
@@ -85,11 +85,11 @@ private:
 
 void
 DviScanner::Run (/*[in]*/ int			argc,
-		 /*[in]*/ const MIKTEXCHAR **	argv)
+		 /*[in]*/ const char **	argv)
 {
   Session::InitInfo initInfo (argv[0]);
 
-  tstring metafontMode (T_("ljfour"));
+  string metafontMode (T_("ljfour"));
   int dpi = 600;
 
   Cpopt popt (argc, argv, long_options);
@@ -100,7 +100,7 @@ DviScanner::Run (/*[in]*/ int			argc,
 
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_PAGE_MODE:
@@ -135,7 +135,7 @@ DviScanner::Run (/*[in]*/ int			argc,
       throw (1);
     }
 
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -147,7 +147,7 @@ DviScanner::Run (/*[in]*/ int			argc,
 
   for (; *leftovers != 0; ++ leftovers)
     {
-      const MIKTEXCHAR * lpszDviFileName = *leftovers;
+      const char * lpszDviFileName = *leftovers;
       auto_ptr<Dvi> pDvi
 	(Dvi::Create(lpszDviFileName,
 		     metafontMode.c_str(),
@@ -187,7 +187,7 @@ DviScanner::Run (/*[in]*/ int			argc,
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 
 {
   try
@@ -206,7 +206,7 @@ main (/*[in]*/ int			argc,
       Utils::PrintException (e);
       return (1);
     }
-  catch (const MIKTEXCHAR *	lpszMessage)
+  catch (const char *	lpszMessage)
     {
       fprintf (stderr, "fatal error: %s\n", lpszMessage);
       return (1);

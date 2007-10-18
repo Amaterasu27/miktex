@@ -180,10 +180,10 @@ UpdateWizard::ReportError (/*[in]*/ const exception & e)
    UpdateWizard::GetRepository
    _________________________________________________________________________ */
 
-tstring
+string
 UpdateWizard::GetRepository ()
 {
-  tstring repository;
+  string repository;
   switch (GetRepositoryType().Get())
     {
     case RepositoryType::Remote:

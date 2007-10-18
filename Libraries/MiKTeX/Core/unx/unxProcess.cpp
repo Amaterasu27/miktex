@@ -52,7 +52,7 @@ Dup (/*[in]*/ int fd)
   int dupfd = dup(fd);
   if (dupfd < 0)
     {
-      FATAL_CRT_ERROR (T_("dup"), 0);
+      FATAL_CRT_ERROR ("dup", 0);
     }
   return (dupfd);
 }
@@ -68,7 +68,7 @@ Dup2 (/*[in]*/ int fd,
 {
   if (dup2(fd, fd2) < 0)
     {
-      FATAL_CRT_ERROR (T_("dup2"), 0);
+      FATAL_CRT_ERROR ("dup2", 0);
     }
 }
 
@@ -82,7 +82,7 @@ Close_ (/*[in]*/ int fd)
 {
   if (close(fd) < 0)
     {
-      FATAL_CRT_ERROR (T_("close"), 0);
+      FATAL_CRT_ERROR ("close", 0);
     }
 }
 
@@ -118,7 +118,7 @@ public:
   {
     if (pipe(twofd) < 0)
       {
-	FATAL_CRT_ERROR (T_("pipe"), 0);
+	FATAL_CRT_ERROR ("pipe", 0);
       }
   }
 
@@ -201,7 +201,7 @@ private:
 
 void
 MIKTEXCALL
-Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
+Argv::Append (/*[in]*/ const char *	lpszArguments)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
   MIKTEX_ASSERT (argv.size() > 0);
@@ -210,12 +210,12 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 
   if (argv.size() == 0)
     {
-      argv.push_back (StrDup(T_("foo")));
+      argv.push_back (StrDup("foo"));
     }
 
-  tstring arg;
-  MIKTEXCHAR quote = 0;
-  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
+  string arg;
+  char quote = 0;
+  for (const char * lpsz = lpszArguments; *lpsz != 0; ++ lpsz)
     {
       if (*lpsz == quote)
 	{
@@ -223,18 +223,18 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 	}
       else if (quote != 0)
 	{
-	  if (*lpsz == T_('\\'))
+	  if (*lpsz == '\\')
 	    {
 	      ++ lpsz;
 	      if (*lpsz == 0)
 		{
-		  FATAL_MIKTEX_ERROR (T_("Argv::Build"),
+		  FATAL_MIKTEX_ERROR ("Argv::Build",
 				      T_("Invalid command-line."),
 				      lpszArguments);
 		}
 	      if (*lpsz != quote)
 		{
-		  arg += T_('\\');
+		  arg += '\\';
 		}
 	    }
 	  arg += *lpsz;
@@ -244,22 +244,22 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 	  if (arg.length() > 0)
 	    {
 	      argv.push_back (StrDup(arg.c_str()));
-	      arg = T_("");
+	      arg = "";
 	    }
 	}
       else
 	{
 	  switch (*lpsz)
 	    {
-	    case T_('"'):
-	    case T_('\''):
+	    case '"':
+	    case '\'':
 	      quote = *lpsz;
 	      break;
-	    case T_('\\'):
+	    case '\\':
 	      ++ lpsz;
 	      if (*lpsz == 0)
 		  {
-		    FATAL_MIKTEX_ERROR (T_("Argv::Build"),
+		    FATAL_MIKTEX_ERROR ("Argv::Build",
 					T_("Invalid command-line."),
 					lpszArguments);
 		  }
@@ -305,7 +305,7 @@ unxProcess::Create ()
 {
   if (startinfo.FileName.length() == 0)
     {
-      INVALID_ARGUMENT (T_("unxProcess::Create"), 0);
+      INVALID_ARGUMENT ("unxProcess::Create", 0);
     }
 
   Argv argv;
@@ -343,7 +343,7 @@ unxProcess::Create ()
       fdChildStdin = fileno(startinfo.StandardInput);
       if (fdChildStdin < 0)
 	{
-	  FATAL_CRT_ERROR (T_("fileno"), 0);
+	  FATAL_CRT_ERROR ("fileno", 0);
 	}
     }
   else if (startinfo.RedirectStandardInput)
@@ -353,7 +353,7 @@ unxProcess::Create ()
 
   // fork
   SessionImpl::theSession->trace_process->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("forking..."));
   if (pipeStdout.GetReadEnd() >=0
       || pipeStderr.GetReadEnd() >= 0
@@ -369,7 +369,7 @@ unxProcess::Create ()
     }
   if (pid < 0)
     {
-      FATAL_CRT_ERROR (T_("fork"), 0);
+      FATAL_CRT_ERROR ("fork", 0);
     }
 
   if (pid == 0)
@@ -404,7 +404,7 @@ unxProcess::Create ()
 	  pipeStdin.Dispose ();
 	  SessionImpl::GetSession()->SetEnvironmentVariables ();
 	  execv (startinfo.FileName.c_str(),
-		 const_cast<MIKTEXCHAR * const *>(argv.GetArgv()));
+		 const_cast<char * const *>(argv.GetArgv()));
 	  perror ("execv failed");
 	}
       catch (const exception &)
@@ -504,7 +504,7 @@ WaitThread (/*[in]*/ void * p)
 	  pid_t pid2 = waitpid(pid, &status, WNOHANG);
 	  if (pid2 < 0)
 	    {
-	      FATAL_CRT_ERROR (T_("waitpid"), 0);
+	      FATAL_CRT_ERROR ("waitpid", 0);
 	    }
 	  if (pid2 > 0)
 	    {
@@ -545,7 +545,7 @@ unxProcess::Close ()
     {
       pid_t pid = this->pid;
       this->pid = -1;
-      SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
+      SessionImpl::theSession->trace_process->WriteFormattedLine ("core",
 	     T_("starting wait thread"));
       Thread * pThread = Thread::Start(WaitThread, new Data (pid));
       delete pThread;
@@ -568,7 +568,7 @@ unxProcess::get_StandardInput ()
     {
       return (0);
     }
-  pFileStandardInput = FdOpen(fdStandardInput, T_("wb"));
+  pFileStandardInput = FdOpen(fdStandardInput, "wb");
   fdStandardInput = -1;
   return (pFileStandardInput);
 }
@@ -589,7 +589,7 @@ unxProcess::get_StandardOutput ()
     {
       return (0);
     }
-  pFileStandardOutput = FdOpen(fdStandardOutput, T_("rb"));
+  pFileStandardOutput = FdOpen(fdStandardOutput, "rb");
   fdStandardOutput = -1;
   return (pFileStandardOutput);
 }
@@ -610,7 +610,7 @@ unxProcess::get_StandardError ()
     {
       return (0);
     }
-  pFileStandardError = FdOpen(fdStandardError, T_("rb"));
+  pFileStandardError = FdOpen(fdStandardError, "rb");
   fdStandardError = -1;
   return (pFileStandardError);
 }
@@ -625,16 +625,16 @@ unxProcess::WaitForExit ()
 {
   if (this->pid > 0)
     {
-      SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
+      SessionImpl::theSession->trace_process->WriteFormattedLine ("core",
 	     T_("waiting for process %d"),
 	     static_cast<int>(this->pid));
       pid_t pid = this->pid;
       this->pid = -1;
       if (waitpid(pid, &status, 0) <= 0)
 	{
-	  FATAL_CRT_ERROR (T_("waitpid"), 0);
+	  FATAL_CRT_ERROR ("waitpid", 0);
 	}
-      SessionImpl::theSession->trace_process->WriteFormattedLine (T_("core"),
+      SessionImpl::theSession->trace_process->WriteFormattedLine ("core",
 	     T_("process %d exited with status %d"),
 	     static_cast<int>(pid),
 	     status);
@@ -664,7 +664,7 @@ unxProcess::WaitForExit (/*[in]*/ int milliseconds)
       else if (pid < 0)
 	{
 	  this->pid = -1;
-	  FATAL_CRT_ERROR (T_("waitpid"), 0);
+	  FATAL_CRT_ERROR ("waitpid", 0);
 	}
       MIKTEX_ASSERT (pid == 0);
       Thread::Sleep (1);
@@ -701,30 +701,30 @@ MIKTEXSTATICFUNC(PathName)
 FindSystemShell ()
 {
   PathName ret;
-  const MIKTEXCHAR * lpszPathList;
+  const char * lpszPathList;
 #if defined(HAVE_CONFSTR)
   size_t n = confstr(_CS_PATH, 0, 0);
   if (n == 0)
     {
-      FATAL_CRT_ERROR (T_("confstr"), 0);
+      FATAL_CRT_ERROR ("confstr", 0);
     }
   CharBuffer pathList (n);
   n = confstr(_CS_PATH, pathList.GetBuffer(), n);
   if (n == 0)
     {
-      FATAL_CRT_ERROR (T_("confstr"), 0);
+      FATAL_CRT_ERROR ("confstr", 0);
     }
   if (n > pathList.GetCapacity())
     {
-      UNEXPECTED_CONDITION (T_("Process::ExecuteSystemCommand"));
+      UNEXPECTED_CONDITION ("Process::ExecuteSystemCommand");
     }
   lpszPathList = pathList.GetBuffer();
 #else
-  lpszPathList = T_("/bin");
+  lpszPathList = "/bin";
 #endif
-  if (! SessionImpl::theSession->FindFile(T_("sh"), lpszPathList, ret))
+  if (! SessionImpl::theSession->FindFile("sh", lpszPathList, ret))
     {
-      FATAL_MIKTEX_ERROR (T_("Process:ExecuteSystemCommand"),
+      FATAL_MIKTEX_ERROR ("Process:ExecuteSystemCommand",
 			  T_("The command processor could not be found."),
 			  lpszPathList);
     }
@@ -737,11 +737,11 @@ FindSystemShell ()
    _________________________________________________________________________ */
 
 MIKTEXAPI(void)
-Process::StartSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine)
+Process::StartSystemCommand (/*[in]*/ const char * lpszCommandLine)
 {
-  tstring arguments = T_("-c '");
+  string arguments = "-c '";
   arguments += lpszCommandLine;
-  arguments += T_('\'');
+  arguments += '\'';
   Process::Start (FindSystemShell(), arguments.c_str());
 }
 
@@ -760,14 +760,14 @@ Process::StartSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine)
    _________________________________________________________________________ */
 
 MIKTEXAPI(bool)
-Process::ExecuteSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszCommandLine,
+Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine,
 			       /*[out]*/ int *			pExitCode,
 			       /*[in]*/ IRunProcessCallback *	pCallback,
-			       /*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+			       /*[in]*/ const char *	lpszDirectory)
 {
-  tstring arguments = T_("-c '");
+  string arguments = "-c '";
   arguments += lpszCommandLine;
-  arguments += T_('\'');
+  arguments += '\'';
   return (Process::Run(FindSystemShell(),
 		       arguments.c_str(),
 		       pCallback,

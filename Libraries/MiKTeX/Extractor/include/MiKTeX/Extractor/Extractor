@@ -74,7 +74,7 @@ public:
 
 public:
   static
-  const MIKTEXCHAR *
+  const char *
   GetFileNameExtension (/*[in]*/ EnumType archiveFileType)
   {
     switch (archiveFileType)
@@ -115,23 +115,23 @@ public:
   virtual
   void
   EXTRACTORCALL
-  OnBeginFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-			 /*[in]*/ size_t		uncompressedSize)
+  OnBeginFileExtraction (/*[in]*/ const char *	lpszFileName,
+			 /*[in]*/ size_t	uncompressedSize)
     = 0;
 
 public:
   virtual
   void
   EXTRACTORCALL
-  OnEndFileExtraction (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		       /*[in]*/ size_t			uncompressedSize)
+  OnEndFileExtraction (/*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ size_t		uncompressedSize)
     = 0;
 
 public:
   virtual
   bool
   EXTRACTORCALL
-  OnError (/*[in]*/ const MIKTEXCHAR *	lpszMessage)
+  OnError (/*[in]*/ const char *	lpszMessage)
     = 0;
 };
 
@@ -159,7 +159,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix)
+	   /*[in]*/ const char *			lpszPrefix)
     = 0;
 
 public:
@@ -170,7 +170,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix)
+	   /*[in]*/ const char *			lpszPrefix)
     = 0;
 
 public:

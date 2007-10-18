@@ -31,9 +31,9 @@ FindFiles (/*[in]*/ size_t rounds)
   PathName path;
   for (size_t i = 0; i < rounds; ++i)
     {
-      if (! (pSession->FindFile(T_("test.tex"), T_("%R/tex//"), path)
-	     && pSession->FindFile(T_("test.cls"),
-				   T_("%R/tex/latex//"),
+      if (! (pSession->FindFile("test.tex", "%R/tex//", path)
+	     && pSession->FindFile("test.cls",
+				   "%R/tex/latex//",
 				   path)))
 	{
 	  return (false);

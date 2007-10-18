@@ -112,7 +112,7 @@ RemoveWizardApp::InitInstance ()
 void
 ReportError (/*[in]*/ const MiKTeXException & e)
 {
-  tstring str;
+  string str;
   str = T_("The operation could not be completed for the following reason: ");
   str += T_("\n\n");
   str += e.what();
@@ -133,7 +133,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 void
 ReportError (/*[in]*/ const exception & e)
 {
-  tstring str;
+  string str;
   str = T_("The operation could not be completed for the following reason: ");
   str += T_("\n\n");
   str += e.what();

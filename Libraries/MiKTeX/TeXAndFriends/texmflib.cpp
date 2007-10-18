@@ -63,9 +63,9 @@ OpenFontFile (/*[in,out]*/ bytefile *	pByteFile,
 		       szBaseName, BufferSizes::MaxPath,
 		       0, 0);
       string arguments;
-      arguments = _T(" -v \"");
+      arguments = " -v \"";
       arguments += szBaseName;
-      arguments += _T("\"");
+      arguments += "\"";
       int exitCode;
       if (! (Process::Run(exe, arguments.c_str(), 0, &exitCode, 0)
 	     && exitCode == 0))
@@ -215,7 +215,7 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 	}
 
       // get xord index (src)
-      long xordidx = _tcstol(start, &end, 0);
+      long xordidx = strtol(start, &end, 0);
       if (start == end)
 	{
 	  FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
@@ -234,7 +234,7 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 
       // get optional xchr index (dest)
       start = end;
-      long xchridx = _tcstol(start, &end, 0);
+      long xchridx = strtol(start, &end, 0);
       if (start == end)
 	{
 	  // xchridx not specified; make it the same as xordidx

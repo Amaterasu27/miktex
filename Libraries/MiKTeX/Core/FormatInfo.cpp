@@ -36,7 +36,7 @@ SessionImpl::GetFormatInfo (/*[in]*/ unsigned		index,
   ReadFormatsIni ();
   if (index > formats.size())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetFormatInfo"), NUMTOSTR(index));
+      INVALID_ARGUMENT ("SessionImpl::GetFormatInfo", NUMTOSTR(index));
     }
   if (index == formats.size())
     {
@@ -53,12 +53,12 @@ SessionImpl::GetFormatInfo (/*[in]*/ unsigned		index,
 
 FormatInfo
 MIKTEXCALL
-SessionImpl::GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey)
+SessionImpl::GetFormatInfo (/*[in]*/ const char *	lpszKey)
 {
   FormatInfo formatInfo;
   if (! TryGetFormatInfo(lpszKey, formatInfo))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetFormatInfo"), lpszKey);
+      INVALID_ARGUMENT ("SessionImpl::GetFormatInfo", lpszKey);
     }
   return (formatInfo);
 }
@@ -70,7 +70,7 @@ SessionImpl::GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey)
 
 bool
 MIKTEXCALL
-SessionImpl::TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+SessionImpl::TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
 			       /*[out]*/ FormatInfo &		formatInfo)
 {
   ReadFormatsIni ();
@@ -97,10 +97,10 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 {
   SmartPointer<Cfg> pFormats (Cfg::Create());
   pFormats->Read (cfgFile);
-  MIKTEXCHAR szKey[BufferSizes::MaxPath];
+  char szKey[BufferSizes::MaxPath];
   bool custom =
     (TryDeriveTEXMFRoot(cfgFile.Get()) != GetInstallRoot());
-  for (MIKTEXCHAR * lpszKey
+  for (char * lpszKey
 	 = pFormats->FirstKey(szKey, BufferSizes::MaxPath);
        lpszKey != 0;
        lpszKey = pFormats->NextKey(szKey, BufferSizes::MaxPath))
@@ -115,11 +115,11 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 	      break;
 	    }
 	}
-      tstring val;
+      string val;
       formatInfo.cfgFile = cfgFile;
       formatInfo.key = lpszKey;
       if (pFormats->TryGetValue(lpszKey,
-				T_("name"),
+				"name",
 				val))
 	{
 	  formatInfo.name = val;
@@ -129,43 +129,43 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 	  formatInfo.name = lpszKey;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("description"),
+				"description",
 				val))
 	{
 	  formatInfo.description = val;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("compiler"),
+				"compiler",
 				val))
 	{
 	  formatInfo.compiler = val;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("input"),
+				"input",
 				val))
 	{
 	  formatInfo.inputFile = val;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("output"),
+				"output",
 				val))
 	{
 	  formatInfo.outputFile = val;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("preloaded"),
+				"preloaded",
 				val))
 	{
 	  formatInfo.preloaded = val;
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("attributes"),
+				"attributes",
 				val))
 	{
-	  formatInfo.exclude = (val == T_("exclude"));
+	  formatInfo.exclude = (val == "exclude");
 	}
       if (pFormats->TryGetValue(lpszKey,
-				T_("arguments"),
+				"arguments",
 				val))
 	{
 	  formatInfo.arguments = val;
@@ -212,7 +212,7 @@ SessionImpl::ReadFormatsIni ()
     }
   if (! readSomething)
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::ReadFormatsIni"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::ReadFormatsIni",
 			  T_("No formats.ini exists."),
 			  0);
     }
@@ -237,59 +237,59 @@ SessionImpl::WriteFormatsIni ()
 	  if (PathName::Compare(it->key, it->name) != 0)
 	    {
 	      pFormats->PutValue (it->key.c_str(),
-				  T_("name"),
+				  "name",
 				  it->name.c_str());
 	    }
 	  if (! it->description.empty())
 	    {
 	      pFormats->PutValue (it->key.c_str(),
-				  T_("description"),
+				  "description",
 				  it->description.c_str());
 	    }
 	  if (it->compiler.empty())
 	    {
-	      UNEXPECTED_CONDITION (T_("SessionImpl::WriteFormatsIni"));
+	      UNEXPECTED_CONDITION ("SessionImpl::WriteFormatsIni");
 	    }
 	  pFormats->PutValue (it->key.c_str(),
-			      T_("compiler"),
+			      "compiler",
 			      it->compiler.c_str());
 	  if (it->inputFile.empty())
 	    {
-	      UNEXPECTED_CONDITION (T_("SessionImpl::WriteFormatsIni"));
+	      UNEXPECTED_CONDITION ("SessionImpl::WriteFormatsIni");
 	    }
 	  pFormats->PutValue (it->key.c_str(),
-			      T_("input"),
+			      "input",
 			      it->inputFile.c_str());
 	  if (! it->outputFile.empty())
 	    {
 	      pFormats->PutValue (it->key.c_str(),
-			      T_("output"),
+			      "output",
 			      it->outputFile.c_str());
 	    }
 	  if (! it->preloaded.empty())
 	    {
 	      pFormats->PutValue (it->key.c_str(),
-				  T_("preloaded"),
+				  "preloaded",
 				  it->preloaded.c_str());
 	    }
 	  if (! it->arguments.empty())
 	    {
 	      pFormats->PutValue (it->key.c_str(),
-				  T_("arguments"),
+				  "arguments",
 				  it->arguments.c_str());
 	    }
 	}
       if (it->exclude)
 	{
 	  pFormats->PutValue (it->key.c_str(),
-			      T_("attributes"),
-			      T_("exclude"));
+			      "attributes",
+			      "exclude");
 	}
       else
 	{
 	  pFormats->PutValue (it->key.c_str(),
-			      T_("attributes"),
-			      T_(""));
+			      "attributes",
+			      "");
 	}
     }
 
@@ -315,7 +315,7 @@ SessionImpl::WriteFormatsIni ()
 
 void
 MIKTEXCALL
-SessionImpl::DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR * lpszKey)
+SessionImpl::DeleteFormatInfo (/*[in]*/ const char * lpszKey)
 {
   ReadFormatsIni ();
   for (vector<FormatInfo_>::iterator it = formats.begin();
@@ -326,7 +326,7 @@ SessionImpl::DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR * lpszKey)
 	{
 	  if (! it->custom)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::DeleteFormatInfo"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::DeleteFormatInfo",
 				  T_("\
 Built-in format definitions may not be deleted."),
 				  0);
@@ -336,7 +336,7 @@ Built-in format definitions may not be deleted."),
 	  return;
 	}
     }
-  FATAL_MIKTEX_ERROR (T_("SessionImpl::DeleteFormatInfo"),
+  FATAL_MIKTEX_ERROR ("SessionImpl::DeleteFormatInfo",
 		      T_("The format could not be found."),
 		      lpszKey);
 }
@@ -390,7 +390,7 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
 	      if (cannotChange)
 		{
 		  FATAL_MIKTEX_ERROR
-		    (T_(""),
+		    ("",
 		     T_("Built-in format definitions may not be changed."),
 		     formatInfo.name.c_str());
 		}
@@ -403,7 +403,7 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
     {
       if (! formatInfo.custom)
 	{
-	  INVALID_ARGUMENT (T_("SessionImpl::SetFormatInfo"), 0);
+	  INVALID_ARGUMENT ("SessionImpl::SetFormatInfo", 0);
 	}
       formats.push_back (formatInfo);
     }

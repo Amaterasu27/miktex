@@ -72,7 +72,7 @@ public:
   virtual
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   virtual
@@ -96,7 +96,7 @@ private:
 
 private:
   void
-  SetEngine (/*[in]*/ const MIKTEXCHAR * lpszEngine)
+  SetEngine (/*[in]*/ const char * lpszEngine)
   {
     if (StringCompare(lpszEngine, T_("tex"), true) == 0)
       {
@@ -122,13 +122,13 @@ private:
 
 private:
   void
-  AppendEngineOption (/*[in]*/ const MIKTEXCHAR * lpszOption)
+  AppendEngineOption (/*[in]*/ const char * lpszOption)
   {
     engineOptions.Append (lpszOption);
   }
 
 private:
-  const MIKTEXCHAR *
+  const char *
   GetEngineName ()
   {
     switch (engine.Get())
@@ -168,13 +168,13 @@ private:
 
 private:
   void
-  ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
+  ParsePdfConfigFiles (/*[in,out]*/ vector<string> & primitives)
     const;
   
 private:
   void
   ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
-		      /*[in,out]*/ vector<tstring> &	primitives)
+		      /*[in,out]*/ vector<string> &	primitives)
     const;
 
 private:
@@ -189,10 +189,10 @@ private:
   PathName destinationName;
 
 private:
-  tstring preloadedFormat;
+  string preloadedFormat;
 
 private:
-  tstring jobTime;
+  string jobTime;
 
 private:
   bool noDumpPrimitive;
@@ -297,7 +297,7 @@ MakeFmt::FindInputFile (/*[in]*/  const PathName &	inputName,
    _________________________________________________________________________ */
 
 void
-MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
+MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ vector<string> & primitives)
   const
 {
   // read all configuration files in reverse order
@@ -305,7 +305,7 @@ MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
     {
       PathName root = pSession->GetRootDirectory(i - 1);
       root.AppendDirectoryDelimiter ();
-      tstring searchSpec = root.ToString();
+      string searchSpec = root.ToString();
       searchSpec += MIKTEX_PATH_PDFTEX_DIR;
       searchSpec += MIKTEX_PATH_RECURSION_INDICATOR;
       PathName cfgFile;
@@ -326,8 +326,8 @@ MakeFmt::ParsePdfConfigFiles (/*[in,out]*/ vector<tstring> & primitives)
 namespace {
   struct MAPPING
   {
-    const MIKTEXCHAR *	lpszCfgKey;
-    const MIKTEXCHAR *	lpszPrimitive;
+    const char *	lpszCfgKey;
+    const char *	lpszPrimitive;
   };
   const MAPPING mappings[] =
   {
@@ -362,29 +362,29 @@ namespace {
    _________________________________________________________________________ */
 
 bool
-ParseLine (/*[in]*/ const tstring &	line,
-	   /*[out]*/ tstring &		primitive)
+ParseLine (/*[in]*/ const string &	line,
+	   /*[out]*/ string &		primitive)
 {
   Tokenizer tok (line.c_str(), T_(" \t\r\n"));
   if (tok.GetCurrent() == 0)
     {
       return (false);
     }
-  tstring key = tok.GetCurrent();
+  string key = tok.GetCurrent();
   tok.SetDelim (T_("\r\n"));
   ++ tok;
   if (tok.GetCurrent() == 0)
     {
       return (false);
     }
-  tstring val = tok.GetCurrent();
+  string val = tok.GetCurrent();
   for (size_t i = 0; i < sizeof(mappings) / sizeof(mappings[0]); ++ i)
     {
       if (key == mappings[i].lpszCfgKey)
 	{
 	  primitive = mappings[i].lpszPrimitive;
-	  tstring::size_type pos = primitive.find(T_("%1"));
-	  if (pos != tstring::npos)
+	  string::size_type pos = primitive.find(T_("%1"));
+	  if (pos != string::npos)
 	    {
 	      primitive.replace (pos, 2, val);
 	    }
@@ -401,14 +401,14 @@ ParseLine (/*[in]*/ const tstring &	line,
 
 void
 MakeFmt::ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
-			     /*[in,out]*/ vector<tstring> &	primitives)
+			     /*[in,out]*/ vector<string> &	primitives)
   const
 {
   AutoFILE pFile (File::Open(cfgFile, FileMode::Open, FileAccess::Read));
-  tstring line;
+  string line;
   while (Utils::ReadUntilDelim(line, T_('\n'), pFile.Get()))
     {
-      tstring primitive;
+      string primitive;
       if (ParseLine(line, primitive))
 	{
 	  primitives.push_back (primitive);
@@ -426,7 +426,7 @@ void
 MakeFmt::InstallPdftexConfigTex ()
   const
 {
-  vector<tstring> primitives;
+  vector<string> primitives;
   ParsePdfConfigFiles (primitives);
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot),
 		       MIKTEX_PATH_PDFTEXCONFIG_TEX);
@@ -439,7 +439,7 @@ MakeFmt::InstallPdftexConfigTex ()
 %%% Run 'initexmf --edit-config-file pdftex' to edit configuration settings"));
   writer.WriteLine (T_("\
 %%% for pdfTeX."));
-  for (vector<tstring>::iterator it = primitives.begin();
+  for (vector<string>::iterator it = primitives.begin();
        it != primitives.end();
        ++ it)
     {
@@ -467,7 +467,7 @@ MakeFmt::InstallPdftexConfigTex ()
 
 void
 MakeFmt::Run (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv)
+	      /*[in]*/ const char **	argv)
 {
   // get options and file name
   int optionIndex = 0;
@@ -529,7 +529,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
   arguments.AppendArguments (engineOptions);
   if (preloadedFormat.length() > 0)
     {
-      arguments.AppendArgument (tstring(T_("&")) + preloadedFormat);
+      arguments.AppendArgument (string(T_("&")) + preloadedFormat);
     }
   if (IsExtended() && preloadedFormat.empty())
     {
@@ -563,7 +563,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 MKTEXAPI(makefmt) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv)
+		   /*[in]*/ const char **	argv)
 {
   try
     {

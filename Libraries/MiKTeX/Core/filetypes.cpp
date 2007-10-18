@@ -156,11 +156,11 @@ public:
 void
 SessionImpl::RegisterFileType
 (/*[in]*/ FileType		fileType,
- /*[in]*/ const MIKTEXCHAR *	lpszFileType,
- /*[in]*/ const MIKTEXCHAR *	lpszApplication,
- /*[in]*/ const MIKTEXCHAR *	lpszFileNameExtensions,
- /*[in]*/ const MIKTEXCHAR *	lpszDefaultSearchPath,
- /*[in]*/ const MIKTEXCHAR *	lpszEnvVarNames)
+ /*[in]*/ const char *	lpszFileType,
+ /*[in]*/ const char *	lpszApplication,
+ /*[in]*/ const char *	lpszFileNameExtensions,
+ /*[in]*/ const char *	lpszDefaultSearchPath,
+ /*[in]*/ const char *	lpszEnvVarNames)
 {
   MIKTEX_ASSERT_STRING (lpszFileType);
   MIKTEX_ASSERT_STRING_OR_NIL (lpszApplication);
@@ -171,19 +171,19 @@ SessionImpl::RegisterFileType
     {
       fti.applicationName = lpszApplication;
     }
-  tstring section = T_("ft.");
+  string section = "ft.";
   section += lpszFileType;
   fti.fileNameExtensions =
     GetConfigValue(section.c_str(),
-		   T_("extensions"),
+		   "extensions",
 		   lpszFileNameExtensions);
   fti.searchPath =
     GetConfigValue(section.c_str(),
-		   T_("path"),
+		   "path",
 		   lpszDefaultSearchPath);
   fti.envVarNames =
     GetConfigValue(section.c_str(),
-		   T_("env"),
+		   "env",
 		   lpszEnvVarNames);
   fileTypes.resize (fileType.Get() + 20);
   fileTypes[fileType.Get()] = fti;
@@ -206,9 +206,9 @@ SessionImpl::RegisterFileTypes ()
 
   CSVList app (applicationNames.c_str(), PATH_DELIMITER);
   MIKTEX_ASSERT (app.GetCurrent() != 0);
-  tstring applicationName = app.GetCurrent();
+  string applicationName = app.GetCurrent();
  
-  tstring applicationSearchPath = CURRENT_DIRECTORY;
+  string applicationSearchPath = CURRENT_DIRECTORY;
   applicationSearchPath += PATH_DELIMITER;
   applicationSearchPath += TEXMF_PLACEHOLDER;
   applicationSearchPath += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
@@ -217,26 +217,26 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::AFM,
-     T_("afm"),
+     "afm",
      0,
      ListBuilder(
-		 T_(".afm")
+		 ".afm"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_AFM_DIR)
 		 ),
      ListBuilder(
-		 T_("AFMFONTS"),
-		 T_("TEXFONTS")
+		 "AFMFONTS",
+		 "TEXFONTS"
 		 ));
   
   RegisterFileType
     (FileType::BASE,
-     T_("base"),
-     T_("METAFONT"),
+     "base",
+     "METAFONT",
      ListBuilder(
-		 T_(".base")
+		 ".base"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -246,41 +246,41 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::BIB,
-     T_("bib"),
-     T_("BibTeX"),
+     "bib",
+     "BibTeX",
      ListBuilder(
-		 T_(".bib")
+		 ".bib"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
 		 ),
      ListBuilder(
-		 T_("BIBINPUTS"),
-		 T_("TEXBIB")
+		 "BIBINPUTS",
+		 "TEXBIB"
 		 ));
 
   RegisterFileType
     (FileType::BST,
-     T_("bst"),
-     T_("BibTeX"),
+     "bst",
+     "BibTeX",
      ListBuilder(
-		 T_(".bst")
+		 ".bst"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
 		 ),
      ListBuilder(
-		 T_("BSTINPUTS")
+		 "BSTINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::DVI,
-     T_("dvi"),
+     "dvi",
      0,
      ListBuilder(
-		 T_(".dvi")
+		 ".dvi"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -290,22 +290,22 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::DVIPSCONFIG,
-     T_("dvips config"),
-     T_("Dvips"),
+     "dvips config",
+     "Dvips",
      ListBuilder(),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR)
 		 ),
      ListBuilder(
-		 T_("TEXCONFIG")
+		 "TEXCONFIG"
 		 ));
   
   RegisterFileType
     (FileType::ENC,
-     T_("enc"),
+     "enc",
      0,
      ListBuilder(
-		 T_(".enc")
+		 ".enc"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -316,20 +316,20 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_DVIPDFM_DIR)
 		 ),
      ListBuilder(
-		 T_("ENCFONTS"),
-		 T_("TEXFONTS")
+		 "ENCFONTS",
+		 "TEXFONTS"
 		 ));
   
-  tstring extensions;
+  string extensions;
   
 #if defined(MIKTEX_WINDOWS)
-  if (! Utils::GetEnvironmentString(T_("PATHEXT"), extensions)
+  if (! Utils::GetEnvironmentString("PATHEXT", extensions)
       || extensions.empty())
     {
       extensions = ListBuilder(
-			       T_(".com"),
-			       T_(".exe"),
-			       T_(".bat")
+			       ".com",
+			       ".exe",
+			       ".bat"
 			       );
     }
 #elif defined(MIKTEX_EXE_FILE_SUFFIX)
@@ -339,7 +339,7 @@ SessionImpl::RegisterFileTypes ()
   PathName binDir = GetSpecialPath(SpecialPath::BinDirectory);
   PathName myLocation = GetMyLocation();
 
-  tstring exePath = binDir.Get();
+  string exePath = binDir.Get();
   if (binDir != myLocation)
     {
       exePath += PATH_DELIMITER;
@@ -348,23 +348,23 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::EXE,
-     T_("exe"),
+     "exe",
      0,
      extensions.c_str(),
      exePath.c_str(),
      ListBuilder());
 
-  Tokenizer engine (theNameOfTheGame.c_str(), T_(",;:"));
+  Tokenizer engine (theNameOfTheGame.c_str(), ",;:");
   if (engine.GetCurrent() != 0)
     {
       PathName engineDir (MIKTEX_PATH_FMT_DIR);
       engineDir += engine.GetCurrent();
       RegisterFileType
 	(FileType::FMT,
-	 T_("fmt"),
-	 T_("TeX"),
+	 "fmt",
+	 "TeX",
 	 ListBuilder(
-		     T_(".fmt")
+		     ".fmt"
 		     ),
 	 ListBuilder(
 		     CURRENT_DIRECTORY,
@@ -377,10 +377,10 @@ SessionImpl::RegisterFileTypes ()
     {
       RegisterFileType
 	(FileType::FMT,
-	 T_("fmt"),
-	 T_("TeX"),
+	 "fmt",
+	 "TeX",
 	 ListBuilder(
-		     T_(".fmt")
+		     ".fmt"
 		     ),
 	 ListBuilder(
 		     CURRENT_DIRECTORY,
@@ -391,10 +391,10 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::HBF,
-     T_("hbf"),
+     "hbf",
      0,
      ListBuilder(
-		 T_(".hbf")
+		 ".hbf"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -405,12 +405,12 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::GRAPHICS,
-     T_("graphic/figure"),
+     "graphic/figure",
      0,
      ListBuilder(
-		 T_(".eps"),
-		 T_(".epsi"),
-		 T_(".png")
+		 ".eps",
+		 ".epsi",
+		 ".png"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -418,33 +418,33 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
 		 SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
 		 ),
-     ListBuilder(T_("TEXPICTS"),
-		 T_("TEXINPUTS")));
+     ListBuilder("TEXPICTS",
+		 "TEXINPUTS"));
   
   // <todo>FileType::GF</todo>
 
   RegisterFileType
     (FileType::IST,
-     T_("ist"),
-     T_("MakeIndex"),
+     "ist",
+     "MakeIndex",
      ListBuilder(
-		 T_(".ist")
+		 ".ist"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_MAKEINDEX_DIR)
 		 ),
      ListBuilder(
-		 T_("TEXINDEXSTYLE"),
-		 T_("INDEXSTYLE")
+		 "TEXINDEXSTYLE",
+		 "INDEXSTYLE"
 		 ));
   
   RegisterFileType
     (FileType::MAP,
-     T_("map"),
+     "map",
      0,
      ListBuilder(
-		 T_(".map")
+		 ".map"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -455,16 +455,16 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_DVIPDFM_DIR)
 		 ),
      ListBuilder(
-		 T_("TEXFONTMAPS"),
-		 T_("TEXFONTS")
+		 "TEXFONTMAPS",
+		 "TEXFONTS"
 		 ));
 
   RegisterFileType
     (FileType::MEM,
-     T_("mem"),
-     T_("MetaPost"),
+     "mem",
+     "MetaPost",
      ListBuilder(
-		 T_(".mem")
+		 ".mem"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -474,10 +474,10 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::MF,
-     T_("mf"),
-     T_("METAFONT"),
+     "mf",
+     "METAFONT",
      ListBuilder(
-		 T_(".mf")
+		 ".mf"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -485,15 +485,15 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_FONT_SOURCE_DIR)
 		 ),
      ListBuilder(
-		 T_("MFINPUTS")
+		 "MFINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::MFPOOL,
-     T_("mfpool"),
-     T_("METAFONT"),
+     "mfpool",
+     "METAFONT",
      ListBuilder(
-		 T_(".pool")
+		 ".pool"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -506,25 +506,25 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::MP,
-     T_("mp"),
-     T_("MetaPost"),
+     "mp",
+     "MetaPost",
      ListBuilder(
-		 T_(".mp")
+		 ".mp"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_METAPOST_DIR)
 		 ),
      ListBuilder(
-		 T_("MPINPUTS")
+		 "MPINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::MPPOOL,
-     T_("mppool"),
-     T_("MetaPost"),
+     "mppool",
+     "MetaPost",
      ListBuilder(
-		 T_(".pool")
+		 ".pool"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -534,26 +534,26 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::OCP,
-     T_("ocp"),
-     T_("Omega"),
+     "ocp",
+     "Omega",
      ListBuilder(
-		 T_(".ocp")
+		 ".ocp"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_OCP_DIR)
 		 ),
      ListBuilder(
-		 T_("OCPINPUTS")
+		 "OCPINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::OFM,
-     T_("ofm"),
-     T_("Omega"),
+     "ofm",
+     "Omega",
      ListBuilder(
-		 T_(".ofm"),
-		 T_(".tfm")
+		 ".ofm",
+		 ".tfm"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -561,15 +561,15 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_TFM_DIR)
 		 ),
      ListBuilder(
-		 T_("OFMFONTS"),
-		 T_("TEXFONTS")
+		 "OFMFONTS",
+		 "TEXFONTS"
 		 ));
 
   // <todo>FileType::OPL</todo>
 
   RegisterFileType
     (FileType::PROGRAMBINFILE,
-     T_("other binary files"),
+     "other binary files",
      0,
      ListBuilder(),
      applicationSearchPath.c_str(),
@@ -577,7 +577,7 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::PROGRAMTEXTFILE,
-     T_("other text files"),
+     "other text files",
      0,
      ListBuilder(),
      applicationSearchPath.c_str(),
@@ -585,57 +585,57 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::OTP,
-     T_("otp"),
-     T_("otp2ocp"),
+     "otp",
+     "otp2ocp",
      ListBuilder(
-		 T_(".otp")
+		 ".otp"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_OTP_DIR)
 		 ),
      ListBuilder(
-		 T_("OTPINPUTS")
+		 "OTPINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::OVF,
-     T_("ovf"),
+     "ovf",
      0,
      ListBuilder(
-		 T_(".ovf")
+		 ".ovf"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_OVF_DIR)
 		 ),
      ListBuilder(
-		 T_("OVFFONTS"),
-		 T_("TEXFONTS")
+		 "OVFFONTS",
+		 "TEXFONTS"
 		 ));
   
   RegisterFileType
     (FileType::OVP,
-     T_("ovp"),
+     "ovp",
      0,
      ListBuilder(
-		 T_(".ovp")
+		 ".ovp"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_OVP_DIR)
 		 ),
      ListBuilder(
-		 T_("OVPFONTS"),
-		 T_("TEXFONTS")
+		 "OVPFONTS",
+		 "TEXFONTS"
 		 ));
 
   RegisterFileType
     (FileType::PERLSCRIPT,
-     T_("perlscript"),
+     "perlscript",
      0,
      ListBuilder(
-		 T_(".pl")
+		 ".pl"
 		 ),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
@@ -651,19 +651,19 @@ SessionImpl::RegisterFileTypes ()
 
   // <todo>FileType::PK</todo>
 
-  tstring psFontDirs;
+  string psFontDirs;
   if (! SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
     {
-      psFontDirs = T_("");
+      psFontDirs = "";
     }
 
   RegisterFileType
     (FileType::PSHEADER,
-     T_("PostScript header"),
+     "PostScript header",
      0,
      ListBuilder(
-		 T_(".pro"),
-		 T_(".enc")
+		 ".pro",
+		 ".enc"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -675,19 +675,19 @@ SessionImpl::RegisterFileTypes ()
 		 (psFontDirs.empty() ? 0 : psFontDirs.c_str())
 		 ),
      ListBuilder(
-		 T_("TEXPSHEADERS"),
-		 T_("PSHEADERS")
+		 "TEXPSHEADERS",
+		 "PSHEADERS"
 		 ));
 
   RegisterFileType
     (FileType::SCRIPT,
-     T_("texmfscripts"),
+     "texmfscripts",
      0,
      ListBuilder(
-		 T_(".lua"),
-		 T_(".pl"),
-		 T_(".py"),
-		 T_(".rb")
+		 ".lua",
+		 ".pl",
+		 ".py",
+		 ".rb"
 		 ),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
@@ -700,15 +700,15 @@ SessionImpl::RegisterFileTypes ()
 		 SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
 		 ),
      ListBuilder(
-		 T_("TEXMFSCRIPTS")
+		 "TEXMFSCRIPTS"
 		 ));
 
   RegisterFileType
     (FileType::TCX,
-     T_("tcx"),
+     "tcx",
      0,
      ListBuilder(
-		 T_(".tcx")
+		 ".tcx"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -721,25 +721,25 @@ SessionImpl::RegisterFileTypes ()
   
   RegisterFileType
     (FileType::TEX,
-     T_("tex"),
-     T_("TeX"),
+     "tex",
+     "TeX",
      ListBuilder(
-		 T_(".tex")
+		 ".tex"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
 		 ),
      ListBuilder(
-		 T_("TEXINPUTS")
+		 "TEXINPUTS"
 		 ));
 
   RegisterFileType
     (FileType::TEXPOOL,
-     T_("texpool"),
-     T_("TeX"),
+     "texpool",
+     "TeX",
      ListBuilder(
-		 T_(".pool")
+		 ".pool"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -749,17 +749,17 @@ SessionImpl::RegisterFileTypes ()
 	    
   RegisterFileType
     (FileType::TEXSYSDOC,
-     T_("TeX system documentation"),
+     "TeX system documentation",
      0,
      ListBuilder(
 #if defined(MIKTEX_WINDOWS)
-		 T_(".chm"),
+		 ".chm",
 #endif
-		 T_(".dvi"),
-		 T_(".html")
-		 T_(".txt"),
-		 T_(".pdf"),
-		 T_(".ps")
+		 ".dvi",
+		 ".html"
+		 ".txt",
+		 ".pdf",
+		 ".ps"
 		 ),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_MIKTEX_DOC_DIR),
@@ -769,33 +769,33 @@ SessionImpl::RegisterFileTypes ()
 
   RegisterFileType
     (FileType::TFM,
-     T_("tfm"),
+     "tfm",
      0,
      ListBuilder(
-		 T_(".tfm")
+		 ".tfm"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_TFM_DIR)
 		 ),
      ListBuilder(
-		 T_("TFMFONTS"),
-		 T_("TEXFONTS")
+		 "TFMFONTS",
+		 "TEXFONTS"
 		 ));
 
-  tstring ttfFontDirs;
+  string ttfFontDirs;
   if (! SessionImpl::GetSession()->GetTTFDirs(ttfFontDirs))
     {
-      ttfFontDirs = T_("");
+      ttfFontDirs = "";
     }
 
   RegisterFileType
     (FileType::TTF,
-     T_("truetype fonts"),
+     "truetype fonts",
      0,
      ListBuilder(
-		 T_(".ttf"),
-		 T_(".ttc")
+		 ".ttf",
+		 ".ttc"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -803,22 +803,22 @@ SessionImpl::RegisterFileTypes ()
 		 (ttfFontDirs.empty() ? 0 : ttfFontDirs.c_str())
 		 ),
      ListBuilder(
-		 T_("TTFONTS"),
-		 T_("TEXFONTS")
+		 "TTFONTS",
+		 "TEXFONTS"
 		 ));
 
-  tstring otfFontDirs;
+  string otfFontDirs;
   if (! SessionImpl::GetSession()->GetOTFDirs(otfFontDirs))
     {
-      otfFontDirs = T_("");
+      otfFontDirs = "";
     }
 
   RegisterFileType
     (FileType::OTF,
-     T_("opentype fonts"),
+     "opentype fonts",
      0,
      ListBuilder(
-		 T_(".otf")
+		 ".otf"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -826,17 +826,17 @@ SessionImpl::RegisterFileTypes ()
 		 (otfFontDirs.empty() ? 0 : otfFontDirs.c_str())
 		 ),
      ListBuilder(
-		 T_("OPENTYPEFONTS"),
-		 T_("TEXFONTS")
+		 "OPENTYPEFONTS",
+		 "TEXFONTS"
 		 ));
 
   RegisterFileType
     (FileType::TYPE1,
-     T_("type1 fonts"),
+     "type1 fonts",
      0,
      ListBuilder(
-		 T_(".pfb"),
-		 T_(".pfa")
+		 ".pfb",
+		 ".pfa"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
@@ -844,33 +844,33 @@ SessionImpl::RegisterFileTypes ()
 		 (psFontDirs.empty() ? 0 : psFontDirs.c_str())
 		 ),
      ListBuilder(
-		 T_("T1FONTS"),
-		 T_("T1INPUTS"),
-		 T_("TEXFONTS"),
-		 T_("TEXPSHEADERS"),
-		 T_("PSHEADERS")
+		 "T1FONTS",
+		 "T1INPUTS",
+		 "TEXFONTS",
+		 "TEXPSHEADERS",
+		 "PSHEADERS"
 		 ));
 
   RegisterFileType
     (FileType::VF,
-     T_("vf"),
+     "vf",
      0,
      ListBuilder(
-		 T_(".vf")
+		 ".vf"
 		 ),
      ListBuilder(
 		 CURRENT_DIRECTORY,
 		 SearchSpecBuilder(MIKTEX_PATH_VF_DIR)
 		 ),
      ListBuilder(
-		 T_("VFFONTS"),
-		 T_("TEXFONTS")
+		 "VFFONTS",
+		 "TEXFONTS"
 		 ));
 
   // <todo>FileType::WEB</todo>
   RegisterFileType
     (FileType::WEB2C,
-     T_("web2c files"),
+     "web2c files",
      0,
      ListBuilder(),
      ListBuilder(
@@ -881,10 +881,10 @@ SessionImpl::RegisterFileTypes ()
 #if defined(MIKTEX_WINDOWS)
   RegisterFileType
     (FileType::WindowsCommandScriptFile,
-     T_("Windows command script file"),
+     "Windows command script file",
      0,
-     ListBuilder(T_(".bat"),
-		 T_(".cmd")),
+     ListBuilder(".bat",
+		 ".cmd"),
      ListBuilder(
 		 SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
 		 exePath.c_str()
@@ -907,7 +907,7 @@ SessionImpl::GetFileTypeInfo (/*[in]*/ FileType		fileType)
     }
   if (static_cast<size_t>(fileType.Get()) >= fileTypes.size())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetFileTypeInfo"),
+      INVALID_ARGUMENT ("SessionImpl::GetFileTypeInfo",
 			NUMTOSTR(fileType.Get()));
     }
   return (&fileTypes[fileType.Get()]);
@@ -919,7 +919,7 @@ SessionImpl::GetFileTypeInfo (/*[in]*/ FileType		fileType)
    _________________________________________________________________________ */
 
 FileType
-SessionImpl::DeriveFileType (/*[in]*/ const MIKTEXCHAR * lpszPath)
+SessionImpl::DeriveFileType (/*[in]*/ const char * lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -928,7 +928,7 @@ SessionImpl::DeriveFileType (/*[in]*/ const MIKTEXCHAR * lpszPath)
       RegisterFileTypes ();
     }
 
-  const MIKTEXCHAR * lpszExt = GetFileNameExtension(lpszPath);
+  const char * lpszExt = GetFileNameExtension(lpszPath);
 
   for (vector<InternalFileTypeInfo>::const_iterator it = fileTypes.begin();
        it != fileTypes.end();
@@ -977,7 +977,7 @@ SessionImpl::GetNextFileTypeInfo (/*[in]*/ unsigned		index,
     }
   if (index > fileTypes.size())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetNextFileTypeInfo"),
+      INVALID_ARGUMENT ("SessionImpl::GetNextFileTypeInfo",
 			NUMTOSTR(index));
     }
   fileTypeInfo = fileTypes[index];

@@ -1,6 +1,6 @@
 /* dvicopy-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2005 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of DVIcopy.
 
@@ -89,7 +89,7 @@ public:
 	  {
 	    pageStart = MIKTEXTEXT("*");
 	  }
-	tstring str = pageStart;
+	std::string str = pageStart;
 	str += MIKTEXTEXT(" ");
 	str += maxPages;
 	selections.push_back (str);
@@ -101,7 +101,7 @@ public:
 Too mant page selections."));
       }
 	
-    for (std::vector<tstring>::const_iterator it = selections.begin();
+    for (std::vector<std::string>::const_iterator it = selections.begin();
 	 it != selections.end();
 	 ++ it)
       {
@@ -111,15 +111,15 @@ Too mant page selections."));
 Invalid page selection."));
 	  }
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-	_stprintf_s (THEDATA(options)[THEDATA(nopt)++],
-		     (sizeof(THEDATA(options)[0])
-		      / sizeof(THEDATA(options)[0][0])),
-		     MIKTEXTEXT("select %s"),
-		     it->c_str());
-#else
-	_stprintf (THEDATA(options)[THEDATA(nopt)++],
+	sprintf_s (THEDATA(options)[THEDATA(nopt)++],
+		   (sizeof(THEDATA(options)[0])
+		    / sizeof(THEDATA(options)[0][0])),
 		   MIKTEXTEXT("select %s"),
 		   it->c_str());
+#else
+	sprintf (THEDATA(options)[THEDATA(nopt)++],
+		 MIKTEXTEXT("select %s"),
+		 it->c_str());
 #endif
       }
 
@@ -131,22 +131,22 @@ Invalid page selection."));
 Invalid magnification."));
 	  }
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-	_stprintf_s (THEDATA(options)[THEDATA(nopt)++],
-		     (sizeof(THEDATA(options)[0])
-		      / sizeof(THEDATA(options)[0][0])),
-		     MIKTEXTEXT("mag %s"),
-		     mag.c_str());
-#else
-	_stprintf (THEDATA(options)[THEDATA(nopt)++],
+	sprintf_s (THEDATA(options)[THEDATA(nopt)++],
+		   (sizeof(THEDATA(options)[0])
+		    / sizeof(THEDATA(options)[0][0])),
 		   MIKTEXTEXT("mag %s"),
 		   mag.c_str());
+#else
+	sprintf (THEDATA(options)[THEDATA(nopt)++],
+		 MIKTEXTEXT("mag %s"),
+		 mag.c_str());
 #endif
       }
   }
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -159,7 +159,7 @@ public:
   bool
   MIKTEXMFCALL
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+		 /*[in]*/ const char *	lpszOptArg)
   {
     bool done = true;
     switch (opt)
@@ -199,16 +199,16 @@ public:
   }
 
 private:
-  std::vector<tstring> selections;
+  std::vector<std::string> selections;
 
 private:
-  tstring mag;
+  std::string mag;
 
 private:
-  tstring pageStart;
+  std::string pageStart;
 
 private:
-  tstring maxPages;
+  std::string maxPages;
 
 public:
   unsigned long

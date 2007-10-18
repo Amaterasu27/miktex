@@ -33,7 +33,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 			   /*[in]*/ const PathName &	path)
 {
   // expand root directories
-  if (path[0] == T_('%') && (path[1] == T_('R') || path[1] == T_('r')))
+  if (path[0] == '%' && (path[1] == 'R' || path[1] == 'r'))
     {
       for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
 	{
@@ -43,7 +43,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 	  PushBackPath (vec, path2);
 	  // </recursivecall>
 	}
-      if (path[1] == T_('R'))
+      if (path[1] == 'R')
 	{
 	  PathName path2 = MPM_ROOT_PATH;
 	  path2.Append (path.Get() + 2, false);
@@ -55,7 +55,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     }
 
   // expand '~'
-  if (path[0] == T_('~') && (path[1] == 0 || IsDirectoryDelimiter(path[1])))
+  if (path[0] == '~' && (path[1] == 0 || IsDirectoryDelimiter(path[1])))
     {
       PathName pathFQ = GetHomeDirectory();
       if (! Utils::IsAbsolutePath(pathFQ.Get()))
@@ -112,7 +112,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 
 void
 SessionImpl::SplitSearchPath (/*[in,out]*/ PathNameArray &	vec,
-			      /*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
+			      /*[in]*/ const char *	lpszSearchPath)
 {
   for (CSVList path (lpszSearchPath, PATH_DELIMITER);
        path.GetCurrent() != 0;
@@ -128,7 +128,7 @@ SessionImpl::SplitSearchPath (/*[in,out]*/ PathNameArray &	vec,
    _________________________________________________________________________ */
 
 PathNameArray
-SessionImpl::SplitSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
+SessionImpl::SplitSearchPath (/*[in]*/ const char *	lpszSearchPath)
 {
   PathNameArray vec;
   SplitSearchPath (vec, lpszSearchPath);
@@ -140,10 +140,10 @@ SessionImpl::SplitSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath)
    MakeSearchPath
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(tstring)
+MIKTEXSTATICFUNC(string)
 MakeSearchPath (/*[in]*/ const PathNameArray &	vec)
 {
-  tstring searchPath;
+  string searchPath;
   for (PathNameArray::const_iterator it = vec.begin();
        it != vec.end();
        ++ it)
@@ -163,8 +163,8 @@ MakeSearchPath (/*[in]*/ const PathNameArray &	vec)
    _________________________________________________________________________ */
 
 void
-SessionImpl::AppendToSearchPath (/*[in,out]*/ tstring &		searchPath,
-				 /*[in]*/ const tstring &	searchPath2)
+SessionImpl::AppendToSearchPath (/*[in,out]*/ string &		searchPath,
+				 /*[in]*/ const string &	searchPath2)
 {
   PathNameArray vec = SplitSearchPath(searchPath.c_str());
 
@@ -184,7 +184,7 @@ SessionImpl::AppendToSearchPath (/*[in,out]*/ tstring &		searchPath,
    _________________________________________________________________________ */
 
 void
-SessionImpl::TraceSearchVector (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+SessionImpl::TraceSearchVector (/*[in]*/ const char *	lpszKey,
 				/*[in]*/ const PathNameArray &	vec)
 {
   if (! trace_filesearch->IsEnabled())
@@ -192,7 +192,7 @@ SessionImpl::TraceSearchVector (/*[in]*/ const MIKTEXCHAR *	lpszKey,
       return;
     }
   trace_filesearch->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("search vector %s:"),
      lpszKey);
   unsigned nr = 0;
@@ -201,7 +201,7 @@ SessionImpl::TraceSearchVector (/*[in]*/ const MIKTEXCHAR *	lpszKey,
        ++ it, ++ nr)
     {
       trace_filesearch->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("  %2u: %s"),
 	 nr,
 	 it->Get());
@@ -227,7 +227,7 @@ SessionImpl::ConstructSearchVector (/*[in]*/ FileType fileType)
 	   env.GetCurrent() != 0;
 	   ++ env)
 	{
-	  tstring searchPath;
+	  string searchPath;
 	  if (Utils::GetEnvironmentString(env.GetCurrent(), searchPath))
 	    {
 	      SplitSearchPath (pfti->searchVec, searchPath.c_str());
@@ -245,7 +245,7 @@ SessionImpl::ConstructSearchVector (/*[in]*/ FileType fileType)
    SessionImpl::GetExpandedSearchPath
    _________________________________________________________________________ */
 
-tstring
+string
 SessionImpl::GetExpandedSearchPath (/*[in]*/ FileType	fileType)
 {
   MIKTEX_ASSERT (fileType != FileType::None);

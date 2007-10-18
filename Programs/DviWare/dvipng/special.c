@@ -43,8 +43,8 @@ ps2png(FILE *psfilestream, char *device, int hresolution, int vresolution,
   HANDLE hPsStream;
   HANDLE hStdErr;
   PROCESS_INFORMATION pi;
-  _TCHAR szCommandLine[2048];
-  _TCHAR szGsPath[_MAX_PATH];
+  char szCommandLine[2048];
+  char szGsPath[_MAX_PATH];
 #define GS_PATH szGsPath
   int fd;
 #endif

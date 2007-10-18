@@ -33,9 +33,9 @@
 static
 void
 MakeOneLine (/*[out]*/ CString &	dest,
-	     /*[in]*/ const tstring &	source)
+	     /*[in]*/ const string &	source)
 {
-  for (tstring::const_iterator it = source.begin();
+  for (string::const_iterator it = source.begin();
        it != source.end();
        ++ it)
     {

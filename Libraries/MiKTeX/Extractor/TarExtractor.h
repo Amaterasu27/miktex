@@ -48,7 +48,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+	   /*[in]*/ const char *			lpszPrefix);
   
 public:
   virtual
@@ -58,7 +58,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+	   /*[in]*/ const char *			lpszPrefix);
   
 public:
   virtual

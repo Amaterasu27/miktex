@@ -33,7 +33,7 @@ Directory::SetCurrentDirectory (/*[in]*/ const PathName &	path)
 {
   if (chdir(path.Get()) != 0)
     {
-      FATAL_CRT_ERROR (T_("chdir"), path.Get());
+      FATAL_CRT_ERROR ("chdir", path.Get());
     }
 }
 
@@ -51,7 +51,7 @@ Directory::Exists (/*[in]*/ const PathName & path)
       if (S_ISDIR(statbuf.st_mode) == 0)
 	{
 	  SessionImpl::theSession->trace_access->WriteFormattedLine
-	    (T_("core"),
+	    ("core",
 	     T_("%s is not a directory"),
 	     Q_(path));
 	  return (false);
@@ -61,7 +61,7 @@ Directory::Exists (/*[in]*/ const PathName & path)
   int error = errno;
   if (error != ENOENT)
     {
-      FATAL_CRT_ERROR (T_("stat"), path.Get());
+      FATAL_CRT_ERROR ("stat", path.Get());
     }
   return (false);
 }
@@ -75,13 +75,13 @@ void
 Directory::Delete (/*[in]*/ const PathName & path)
 {
   SessionImpl::theSession->trace_files->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("deleting directory %s"),
      Q_(path));
 
   if (rmdir(path.Get()) != 0)
     {
-      FATAL_CRT_ERROR (T_("rmdir"), path.Get());
+      FATAL_CRT_ERROR ("rmdir", path.Get());
     }
 }
 
@@ -99,13 +99,13 @@ File::Exists (/*[in]*/ const PathName & path)
       if (S_ISDIR(statbuf.st_mode) != 0)
 	{
 	  SessionImpl::theSession->trace_access->WriteFormattedLine
-	    (T_("core"),
+	    ("core",
 	     T_("%s is a directory"),
 	     Q_(path));
 	  return (false);
 	}
       SessionImpl::theSession->trace_access->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("accessing file %s: OK"),
 	 Q_(path));
       return (true);
@@ -113,10 +113,10 @@ File::Exists (/*[in]*/ const PathName & path)
   int error = errno;
   if (error != ENOENT)
     {
-      FATAL_CRT_ERROR (T_("stat"), path.Get());
+      FATAL_CRT_ERROR ("stat", path.Get());
     }
   SessionImpl::theSession->trace_access->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("accessing file %s: NOK"),
      Q_(path));
   return (false);
@@ -161,7 +161,7 @@ File::GetNativeAttributes (/*[in]*/ const PathName & path)
 
   if (stat(path.Get(), &statbuf) != 0)
     {
-      FATAL_CRT_ERROR (T_("stat"), path.Get());
+      FATAL_CRT_ERROR ("stat", path.Get());
     }
 
   return (static_cast<unsigned long>(statbuf.st_mode));
@@ -212,14 +212,14 @@ File::SetNativeAttributes (/*[in]*/ const PathName &	path,
 			   /*[in]*/ unsigned long	nativeAttributes)
 {
   SessionImpl::theSession->trace_files->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("setting new attributes (%x) on %s"),
      static_cast<int>(nativeAttributes),
      Q_(path));
 
   if (chmod(path.Get(), static_cast<mode_t>(nativeAttributes)) != 0)
     {
-      FATAL_CRT_ERROR (T_("chmod"), path.Get());
+      FATAL_CRT_ERROR ("chmod", path.Get());
     }
 }
 
@@ -234,7 +234,7 @@ File::GetSize (/*[in]*/ const PathName &	path)
   struct stat statbuf;
   if (stat(path.Get(), &statbuf) != 0)
     {
-      FATAL_CRT_ERROR (T_("stat"), path.Get());
+      FATAL_CRT_ERROR ("stat", path.Get());
     }
   return (statbuf.st_size);
 }
@@ -254,7 +254,7 @@ File::SetTimes (/*[in]*/ FILE *			stream,
   UNUSED_ALWAYS (creationTime);
   UNUSED_ALWAYS (lastAccessTime);
   UNUSED_ALWAYS (lastWriteTime);
-  UNIMPLEMENTED (T_("File::SetTimes"));
+  UNIMPLEMENTED ("File::SetTimes");
 }
 
 /* _________________________________________________________________________
@@ -283,7 +283,7 @@ File::SetTimes (/*[in]*/ const PathName &	path,
   times.modtime = lastWriteTime;
   if (utime(path.Get(), &times) != 0)
     {
-      FATAL_CRT_ERROR (T_("utimes"), path.Get());
+      FATAL_CRT_ERROR ("utimes", path.Get());
     }
 }
 
@@ -295,13 +295,13 @@ File::SetTimes (/*[in]*/ const PathName &	path,
 void
 File::Delete (/*[in]*/ const PathName & path)
 {
-  SessionImpl::theSession->trace_files->WriteFormattedLine (T_("core"),
+  SessionImpl::theSession->trace_files->WriteFormattedLine ("core",
 							    T_("deleting %s"),
 							    Q_(path));
 
   if (remove(path.Get()) != 0)
     {
-      FATAL_CRT_ERROR (T_("remove"), path.Get());
+      FATAL_CRT_ERROR ("remove", path.Get());
     }
 }
 
@@ -317,7 +317,7 @@ File::Move (/*[in]*/ const PathName &	source,
   struct stat sourceStat;
   if (stat(source.Get(), &sourceStat) != 0)
     {
-      FATAL_CRT_ERROR (T_("stat"), source.Get());
+      FATAL_CRT_ERROR ("stat", source.Get());
     }
 
   PathName destDir (dest);
@@ -326,7 +326,7 @@ File::Move (/*[in]*/ const PathName &	source,
   struct stat destStat;
   if (stat(destDir.Get(), &destStat) != 0)
     {
-      FATAL_CRT_ERROR (T_("stat"), destDir.Get());
+      FATAL_CRT_ERROR ("stat", destDir.Get());
     }
   
   bool sameDevice = (sourceStat.st_dev == destStat.st_dev);
@@ -334,13 +334,13 @@ File::Move (/*[in]*/ const PathName &	source,
   if (sameDevice)
     {
       SessionImpl::theSession->trace_files->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("renaming %s to %s"),
 	 Q_(source),
 	 Q_(dest));
       if (rename(source.Get(), dest.Get()) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("rename"), source.Get());
+	  FATAL_CRT_ERROR ("rename", source.Get());
 	}
     }
   else
@@ -378,7 +378,7 @@ File::Copy (/*[in]*/ const PathName &	source,
 	    /*[in]*/ bool		preserveAttributes)
 {
   SessionImpl::theSession->trace_files->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("copying %s to %s"),
      Q_(source),
      Q_(dest));
@@ -389,7 +389,7 @@ File::Copy (/*[in]*/ const PathName &	source,
     {
       if (stat(source.Get(), &sourceStat) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("stat"), source.Get());
+	  FATAL_CRT_ERROR ("stat", source.Get());
 	}
     }
   
@@ -423,7 +423,7 @@ File::Copy (/*[in]*/ const PathName &	source,
 #if defined(HAVE_CHOWN)
 	  if (chown(dest.Get(), sourceStat.st_uid, sourceStat.st_gid) != 0)
 	    {
-	      FATAL_CRT_ERROR (T_("chown"), dest.Get());
+	      FATAL_CRT_ERROR ("chown", dest.Get());
 	    }
 #endif
 	  
@@ -465,7 +465,7 @@ File::Open (/*[in]*/ const PathName &	path,
   UNUSED_ALWAYS (share);
 
   SessionImpl::theSession->trace_files->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("opening file %s (%d 0x%x %d %d)"),
      Q_(path),
      static_cast<int>(mode.Get()),
@@ -474,7 +474,7 @@ File::Open (/*[in]*/ const PathName &	path,
      static_cast<int>(isTextFile));
 
   int flags = 0;
-  tstring strFlags;
+  string strFlags;
 
   if (mode == FileMode::Create)
     {
@@ -490,29 +490,29 @@ File::Open (/*[in]*/ const PathName &	path,
       flags |= O_RDWR;
       if (mode == FileMode::Append)
 	{
-	  strFlags += T_("a+");
+	  strFlags += "a+";
 	}
       else
 	{
-	  strFlags += T_("r+");
+	  strFlags += "r+";
 	}
     }
   else if (access == FileAccess::Read)
     {
       flags |= O_RDONLY;
-      strFlags += T_("r");
+      strFlags += "r";
     }
   else if (access == FileAccess::Write)
     {
       flags |= O_WRONLY;
       if (mode == FileMode::Append)
 	{
-	  strFlags += T_("a");
+	  strFlags += "a";
 	}
       else
 	{
 	  flags |= O_TRUNC;
-	  strFlags += T_("w");
+	  strFlags += "w";
 	}
     }
 
@@ -542,7 +542,7 @@ File::Open (/*[in]*/ const PathName &	path,
 
   if (fd < 0)
     {
-      FATAL_CRT_ERROR (T_("open"), path.Get());
+      FATAL_CRT_ERROR ("open", path.Get());
     }
 
   try

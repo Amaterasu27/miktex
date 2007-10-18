@@ -157,40 +157,40 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,					\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  __FILE__,		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    __FILE__,			\
 				    __LINE__)
 #endif
 
@@ -198,7 +198,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -207,7 +207,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
 
@@ -228,14 +228,6 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 #define Q_(x) Quoted(x).Get()
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define MIKTEXINTERNALFUNC(type) type
 #define MIKTEXINTERNALVAR(type) type
 
@@ -246,12 +238,12 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
   dir
 
-#define CFG_MACRO_NAME_BINDIR T_("bindir")
-#define CFG_MACRO_NAME_LOCALFONTDIRS T_("localfontdirs")
-#define CFG_MACRO_NAME_PSFONTDIRS T_("psfontdirs")
-#define CFG_MACRO_NAME_OTFDIRS T_("otfdirs")
-#define CFG_MACRO_NAME_TTFDIRS T_("ttfdirs")
-#define CFG_MACRO_NAME_WINDIR T_("windir")
+#define CFG_MACRO_NAME_BINDIR "bindir"
+#define CFG_MACRO_NAME_LOCALFONTDIRS "localfontdirs"
+#define CFG_MACRO_NAME_PSFONTDIRS "psfontdirs"
+#define CFG_MACRO_NAME_OTFDIRS "otfdirs"
+#define CFG_MACRO_NAME_TTFDIRS "ttfdirs"
+#define CFG_MACRO_NAME_WINDIR "windir"
 
 /* _________________________________________________________________________
 
@@ -260,11 +252,11 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 const unsigned PAGESIZE = 0x1000;
 
-#define TEXMF_PLACEHOLDER T_("%R")
+#define TEXMF_PLACEHOLDER "%R"
 
-#define CURRENT_DIRECTORY T_(".")
+#define CURRENT_DIRECTORY "."
 
-#define PARENT_DIRECTORY T_("..")
+#define PARENT_DIRECTORY ".."
 
 #define PARENT_PARENT_DIRECTORY			\
   PARENT_DIRECTORY				\
@@ -277,16 +269,16 @@ const unsigned PAGESIZE = 0x1000;
   PARENT_PARENT_DIRECTORY
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR PATH_DELIMITER = T_(';');
-#define PATH_DELIMITER_STRING T_(";")
+const char PATH_DELIMITER = ';';
+#define PATH_DELIMITER_STRING ";"
 #else
-const MIKTEXCHAR PATH_DELIMITER = T_(':');
-#define PATH_DELIMITER_STRING T_(":")
+const char PATH_DELIMITER = ':';
+#define PATH_DELIMITER_STRING ":"
 #endif
 
-const MIKTEXCHAR * const RECURSION_INDICATOR = T_("//");
+const char * const RECURSION_INDICATOR = "//";
 const size_t RECURSION_INDICATOR_LENGTH = 2;
-const MIKTEXCHAR * const SESSIONSVC = T_("sessionsvc");
+const char * const SESSIONSVC = "sessionsvc";
 
 /* _________________________________________________________________________
 
@@ -304,7 +296,7 @@ typedef uint32_t U32;
    otstringstream
    _________________________________________________________________________ */
 
-typedef basic_ostringstream<MIKTEXCHAR> tostringstream;
+typedef basic_ostringstream<char> tostringstream;
 
 /* _________________________________________________________________________
 
@@ -319,34 +311,34 @@ typedef std::vector<PathName> PathNameArray;
    _________________________________________________________________________ */
 
 void
-AppendDirectoryDelimiter (/*[in,out]*/ tstring & path);
+AppendDirectoryDelimiter (/*[in,out]*/ string & path);
 
 void
-AppendDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR *	lpszPath,
+AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
 			  /*[in]*/ size_t		size);
 
-MIKTEXCHARINT
-CompareFileNameChars (/*[in]*/ MIKTEXCHAR	ch1,
-		      /*[in]*/ MIKTEXCHAR	ch2);
+int
+CompareFileNameChars (/*[in]*/ char	ch1,
+		      /*[in]*/ char	ch2);
   
 void
-CopyString2 (/*[out]*/ MIKTEXCHAR *		lpszBuf,
+CopyString2 (/*[out]*/ char *		lpszBuf,
 	     /*[in]*/ size_t			bufSize,
-	     /*[in]*/ const MIKTEXCHAR *	lpszSource,
+	     /*[in]*/ const char *	lpszSource,
 	     /*[in]*/ size_t			count);
 
 void
-CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath);
+CreateDirectoryPath (/*[in]*/ const char *	lpszPath);
 
 bool
-FileIsOnROMedia (/*[in]*/ const MIKTEXCHAR *	lpszPath);
+FileIsOnROMedia (/*[in]*/ const char *	lpszPath);
   
 bool
 GetCrtErrorMessage (/*[in]*/ int		functionResult,
-		    /*[out]*/ tstring &		errorMessage);
+		    /*[out]*/ string &		errorMessage);
 
 PathName
-GetFullPath (/*[in]*/ const MIKTEXCHAR * lpszPath);
+GetFullPath (/*[in]*/ const char * lpszPath);
 
 PathName
 GetHomeDirectory ();
@@ -361,23 +353,23 @@ bool
 GetWindowsFontsDirectory (/*[out]*/ PathName & path);
 #endif  
   
-const MIKTEXCHAR *
-GetFileNameExtension (/*[in]*/ const MIKTEXCHAR * lpszPath);
+const char *
+GetFileNameExtension (/*[in]*/ const char * lpszPath);
   
 bool
-HaveEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName);
+HaveEnvironmentString (/*[in]*/ const char * lpszName);
 
-const MIKTEXCHAR *
-GetEnvironmentString (/*[in]*/ const MIKTEXCHAR * lpszName);
+const char *
+GetEnvironmentString (/*[in]*/ const char * lpszName);
   
 bool
-IsExplicitlyRelativePath (/*[in]*/ const MIKTEXCHAR * lpszPath);
+IsExplicitlyRelativePath (/*[in]*/ const char * lpszPath);
 
 bool
-IsMpmFile (/*[in]*/ const MIKTEXCHAR * lpszPath);
+IsMpmFile (/*[in]*/ const char * lpszPath);
   
 void
-RemoveDirectoryDelimiter (/*[in,out]*/ MIKTEXCHAR * lpszPath);
+RemoveDirectoryDelimiter (/*[in,out]*/ char * lpszPath);
   
 #if defined(MIKTEX_WINDOWS)
 bool
@@ -387,22 +379,22 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
 #endif
   
 void
-TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+TraceError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...);
 
 void
-TraceMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-		  /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-		  /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		  /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+TraceMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
+		  /*[in]*/ const char *	lpszMessage,
+		  /*[in]*/ const char *	lpszInfo,
+		  /*[in]*/ const char *	lpszSourceFile,
 		  /*[in]*/ int			lpszSourceLine);
   
 #if defined(MIKTEX_WINDOWS)
 void
-TraceWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
+TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ unsigned long	functionResult,
-		   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+		   /*[in]*/ const char *	lpszInfo,
+		   /*[in]*/ const char *	lpszSourceFile,
 		   /*[in]*/ int			lpszSourceLine);
 #endif
 
@@ -455,11 +447,11 @@ private:
    _________________________________________________________________________ */
 
 struct StringComparerIgnoringCase
-  : public std::binary_function<tstring, tstring, bool>
+  : public std::binary_function<string, string, bool>
 {
   bool
-  operator() (/*[in]*/ const tstring & lhs,
-	      /*[in]*/ const tstring & rhs)
+  operator() (/*[in]*/ const string & lhs,
+	      /*[in]*/ const string & rhs)
     const
   {
     return (StringCompare(lhs.c_str(), rhs.c_str(), true) < 0);
@@ -471,40 +463,16 @@ struct StringComparerIgnoringCase
 #endif
 
 inline
-MIKTEXCHAR *
-StrDup (/*[in]*/ const MIKTEXCHAR * lpsz)
+char *
+StrDup (/*[in]*/ const char * lpsz)
 {
-  MIKTEXCHAR * ret;
-#if defined(_MSC_VER)
-  ret = _tcsdup(lpsz);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: StrDup()
-#else
+  char * ret;
   ret = strdup(lpsz);
-#endif
   if (ret == 0)
     {
-      FATAL_CRT_ERROR (T_("strdup"), 0);
+      FATAL_CRT_ERROR ("strdup", 0);
     }
   return (ret);
-}
-
-/* _________________________________________________________________________
-
-   AToI
-   _________________________________________________________________________ */
-
-inline
-int
-AToI (/*[in]*/ const MIKTEXCHAR * lpsz)
-{
-#if defined(_MSC_VER)
-  return (_ttoi(lpsz));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: AToI()
-#else
-  return (atoi(lpsz));
-#endif
 }
 
 /* _________________________________________________________________________
@@ -513,19 +481,13 @@ AToI (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-MIKTEXCHARINT
+int
 GetC (/*[in]*/ FILE *	stream)
 {
-#if defined(_MSC_VER)
-  MIKTEXCHARINT ch = _gettc(stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: GetC()
-#else
-  MIKTEXCHARINT ch = getc(stream);
-#endif
+  int ch = getc(stream);
   if (ferror(stream) != 0)
     {
-      FATAL_CRT_ERROR (T_("getc"), 0);
+      FATAL_CRT_ERROR ("getc", 0);
     }
   return (ch);
 }
@@ -537,86 +499,14 @@ GetC (/*[in]*/ FILE *	stream)
 
 inline
 void
-UnGetC (/*[in]*/ MIKTEXCHARINT	ch,
+UnGetC (/*[in]*/ int	ch,
 	/*[in]*/ FILE *		stream)
 {
-#if defined(_MSC_VER)
-  MIKTEXCHARINT ch2 = _ungettc(ch, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: GetC()
-#else
-  MIKTEXCHARINT ch2 = ungetc(ch, stream);
-#endif
-  if (ch2 == MIKTEXEOF)
+  int ch2 = ungetc(ch, stream);
+  if (ch2 == EOF)
     {
-      FATAL_CRT_ERROR (T_("ungetc"), 0);
+      FATAL_CRT_ERROR ("ungetc", 0);
     }
-}
-
-/* _________________________________________________________________________
-
-   StrPBrk
-   _________________________________________________________________________ */
-
-#if defined(StrPBrk)
-#  undef StrPBrk
-#endif
-
-inline
-const MIKTEXCHAR *
-StrPBrk (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	 /*[in]*/ const MIKTEXCHAR *	lpsz2)
-{
-#if defined(_MSC_VER)
-  return (_tcspbrk(lpsz1, lpsz2));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: StrPBrk()
-#else
-  return (strpbrk(lpsz1, lpsz2));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   StrStr
-   _________________________________________________________________________ */
-
-#if defined(StrStr)
-#  undef StrStr
-#endif
-
-inline
-const MIKTEXCHAR *
-StrStr (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	/*[in]*/ const MIKTEXCHAR *	lpsz2)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcsstr(lpsz1, lpsz2));
-#else
-  return (strstr(lpsz1, lpsz2));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   StrNCmp
-   _________________________________________________________________________ */
-
-#if defined(StrNCmp)
-#  undef StrNCmp
-#endif
-
-inline
-int
-StrNCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	 /*[in]*/ const MIKTEXCHAR *	lpsz2,
-	 /*[in]*/ size_t		n)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcsncmp(lpsz1, lpsz2, n));
-#else
-  return (strncmp(lpsz1, lpsz2, n));
-#endif
 }
 
 /* _________________________________________________________________________
@@ -626,14 +516,12 @@ StrNCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 
 inline
 int
-StrNCmpI (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	  /*[in]*/ const MIKTEXCHAR *	lpsz2,
+StrNCmpI (/*[in]*/ const char *	lpsz1,
+	  /*[in]*/ const char *	lpsz2,
 	  /*[in]*/ size_t		n)
 {
 #if defined(_MSC_VER)
-  return (_tcsnicmp(lpsz1, lpsz2, n));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: StrNCmpI()
+  return (_strnicmp(lpsz1, lpsz2, n));
 #else
   return (strncasecmp(lpsz1, lpsz2, n));
 #endif
@@ -646,20 +534,18 @@ StrNCmpI (/*[in]*/ const MIKTEXCHAR *	lpsz1,
 
 inline
 FILE *
-FdOpen (/*[in]*/ int			fd,
-	/*[in]*/ const MIKTEXCHAR *	lpszMode)
+FdOpen (/*[in]*/ int		fd,
+	/*[in]*/ const char *	lpszMode)
 {
   FILE * stream;
 #if defined(_MSC_VER)
   stream = _tfdopen(fd, lpszMode);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FdOpen()
 #else
   stream = fdopen(fd, lpszMode);
 #endif
   if (stream == 0)
     {
-      FATAL_CRT_ERROR (T_("fdopen"), 0);
+      FATAL_CRT_ERROR ("fdopen", 0);
     }
   return (stream);
 }
@@ -670,8 +556,8 @@ FdOpen (/*[in]*/ int			fd,
    _________________________________________________________________________ */
 
 inline
-MIKTEXCHAR
-GetLastChar (/*[in]*/ const MIKTEXCHAR *	lpsz)
+char
+GetLastChar (/*[in]*/ const char *	lpsz)
 {
   MIKTEX_ASSERT (lpsz != 0);
   size_t len = StrLen(lpsz);
@@ -685,7 +571,7 @@ GetLastChar (/*[in]*/ const MIKTEXCHAR *	lpsz)
 
 inline
 void
-ClearString (/*[in,out]*/ MIKTEXCHAR *	lpsz)
+ClearString (/*[in,out]*/ char *	lpsz)
 {
   lpsz[0] = 0;
 }
@@ -744,16 +630,16 @@ Quoted (/*[in]*/ const PathName & path)
    STRDUP
    _________________________________________________________________________ */
 
-class STRDUP : public CharBuffer<MIKTEXCHAR>
+class STRDUP : public CharBuffer<char>
 {
 public:
-  STRDUP (/*[in]*/ const MIKTEXCHAR * lpsz)
+  STRDUP (/*[in]*/ const char * lpsz)
     : CharBuffer (lpsz)
   {
   }
 
 public:
-  STRDUP (/*[in]*/ const MIKTEXCHAR *	lpsz,
+  STRDUP (/*[in]*/ const char *	lpsz,
 	  /*[in]*/ size_t		n)
     : CharBuffer (n + 1)
   {
@@ -896,7 +782,7 @@ public:
 class DvipsPaperSizeInfo : public PaperSizeInfo
 {
 public:
-  vector<tstring> definition;
+  vector<string> definition;
 };
 
 /* _________________________________________________________________________
@@ -930,19 +816,19 @@ public:
   virtual
   void
   MIKTEXCALL
-  PushAppName (/*[in]*/ const MIKTEXCHAR *	lpszAppName);
+  PushAppName (/*[in]*/ const char *	lpszAppName);
 
 public:
   virtual
   void
   MIKTEXCALL
-  PushBackAppName (/*[in]*/ const MIKTEXCHAR *	lpszAppName);
+  PushBackAppName (/*[in]*/ const char *	lpszAppName);
 
 public:
   virtual
   void
   MIKTEXCALL
-  AddWorkingDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ bool			bAtEnd);
 
 public:
@@ -1005,7 +891,7 @@ public:
   virtual
   void
   MIKTEXCALL
-  RegisterRootDirectories (/*[in]*/ const tstring &	roots);
+  RegisterRootDirectories (/*[in]*/ const string &	roots);
 
 public:
   virtual
@@ -1038,64 +924,64 @@ public:
   virtual
   bool
   MIKTEXCALL
-  TryGetConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		     /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		     /*[out]*/ tstring &		value);
+  TryGetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		     /*[in]*/ const char *	lpszValueName,
+		     /*[out]*/ string &		value);
 
 public:
   virtual
-  tstring
+  string
   MIKTEXCALL
-  GetConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszDefaultValue);
+  GetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ const char *	lpszDefaultValue);
 
 public:
   virtual
   int
   MIKTEXCALL
-  GetConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+  GetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ int			defaultValue);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  GetConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+  GetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ bool			defaultValue);
 
 public:
   virtual
   TriState
   MIKTEXCALL
-  GetConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+  GetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ TriState		defaultValue);
 
 public:
   virtual
   void
   MIKTEXCALL
-  SetUserConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValue);
+  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ const char *	lpszValue);
 
 public:
   virtual
   void
   MIKTEXCALL
-  SetUserConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ bool			value);
 
 public:
   virtual
   void
   MIKTEXCALL
-  SetUserConfigValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		      /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
+		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ int			value);
 
 public:
@@ -1115,7 +1001,7 @@ public:
   virtual
   FILE *
   MIKTEXCALL
-  OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
 	    /*[in]*/ bool		isTextFile);
@@ -1124,7 +1010,7 @@ public:
   virtual
   FILE *
   MIKTEXCALL
-  TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode		mode,
 	       /*[in]*/ FileAccess		access,
 	       /*[in]*/ bool			isTextFile);
@@ -1133,7 +1019,7 @@ public:
   virtual
   FILE *
   MIKTEXCALL
-  OpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
 	    /*[in]*/ bool		isTextFile,
@@ -1143,7 +1029,7 @@ public:
   virtual
   FILE *
   MIKTEXCALL
-  TryOpenFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode		mode,
 	       /*[in]*/ FileAccess		access,
 	       /*[in]*/ bool			isTextFile,
@@ -1166,7 +1052,7 @@ public:
   virtual
   bool
   MIKTEXCALL
-  IsFileAlreadyOpen (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  IsFileAlreadyOpen (/*[in]*/ const char *	lpszFileName);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -1174,7 +1060,7 @@ public:
   virtual
   void
   MIKTEXCALL
-  ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  ScheduleFileRemoval (/*[in]*/ const char *	lpszFileName);
 #endif
 
 public:
@@ -1193,21 +1079,21 @@ public:
   virtual
   FileType
   MIKTEXCALL
-  DeriveFileType (/*[in]*/ const MIKTEXCHAR * lpszPath);
+  DeriveFileType (/*[in]*/ const char * lpszPath);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszPathList,
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
 	    /*[out]*/ PathName &	path);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  FindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathName &	path);
 
@@ -1215,8 +1101,8 @@ public:
   virtual
   bool
   MIKTEXCALL
-  FindPkFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszMode,
+  FindPkFile (/*[in]*/ const char *	lpszFontName,
+	      /*[in]*/ const char *	lpszMode,
 	      /*[in]*/ int			dpi,
 	      /*[out]*/ PathName &		path);
 
@@ -1224,7 +1110,7 @@ public:
   virtual
   bool
   MIKTEXCALL
-  FindTfmFile (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
+  FindTfmFile (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ PathName &		path,
 	       /*[in]*/ bool			create);
 
@@ -1238,32 +1124,32 @@ public:
   virtual
   void
   MIKTEXCALL
-  SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
-		 /*[out]*/ MIKTEXCHAR *		lpszFontType,
-		 /*[out]*/ MIKTEXCHAR *		lpszSupplier,
-		 /*[out]*/ MIKTEXCHAR *		lpszTypeface,
-		 /*[out]*/ MIKTEXCHAR *		lpszFontName,
-		 /*[out]*/ MIKTEXCHAR *		lpszPointSize);
+  SplitFontPath (/*[in]*/ const char *	lpszFontPath,
+		 /*[out]*/ char *		lpszFontType,
+		 /*[out]*/ char *		lpszSupplier,
+		 /*[out]*/ char *		lpszTypeface,
+		 /*[out]*/ char *		lpszFontName,
+		 /*[out]*/ char *		lpszPointSize);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-	       /*[out]*/ MIKTEXCHAR *		lpszSupplier,
-	       /*[out]*/ MIKTEXCHAR *		lpszTypeface,
+  GetFontInfo (/*[in]*/ const char *	lpszFontName,
+	       /*[out]*/ char *		lpszSupplier,
+	       /*[out]*/ char *		lpszTypeface,
 	       /*[out]*/ double *		lpGenSize);
 
 public:
   virtual
   void
   MIKTEXCALL
-  GetGhostscript (/*[out]*/ MIKTEXCHAR *	lpszPath,
+  GetGhostscript (/*[out]*/ char *	lpszPath,
 		  /*[out]*/ unsigned long *	pVersionNumber);
 
 public:
   virtual
-  tstring
+  string
   MIKTEXCALL
   GetExpandedSearchPath (/*[in]*/ FileType	fileType);
 
@@ -1271,17 +1157,17 @@ public:
   virtual
   bool
   MIKTEXCALL
-  FindGraphicsRule (/*[in]*/ const MIKTEXCHAR *	lpszFrom,
-		    /*[in]*/ const MIKTEXCHAR *	lpszTo,
-		    /*[out]*/ MIKTEXCHAR *	lpszRule,
+  FindGraphicsRule (/*[in]*/ const char *	lpszFrom,
+		    /*[in]*/ const char *	lpszTo,
+		    /*[out]*/ char *	lpszRule,
 		    /*[in]*/ size_t	bufSize);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  ConvertToBitmapFile (/*[in]*/ const MIKTEXCHAR *	lpszSourceFileName,
-		       /*[out]*/ MIKTEXCHAR *		lpszDestFileName,
+  ConvertToBitmapFile (/*[in]*/ const char *	lpszSourceFileName,
+		       /*[out]*/ char *		lpszDestFileName,
 		       /*[in]*/ IRunProcessCallback *	pCallback);
 
 public:
@@ -1300,12 +1186,12 @@ public:
   virtual
   void
   MIKTEXCALL
-  MakeMakePkCommandLine (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
+  MakeMakePkCommandLine (/*[in]*/ const char *	lpszFontName,
 			 /*[in]*/ int			dpi,
 			 /*[in]*/ int			baseDpi,
-			 /*[in]*/ const MIKTEXCHAR *	lpszMfMode,
+			 /*[in]*/ const char *	lpszMfMode,
 			 /*[out]*/ PathName &		fileName,
-			 /*[out]*/ MIKTEXCHAR *		lpszArguments,
+			 /*[out]*/ char *		lpszArguments,
 			 /*[in]*/ size_t		bufSize);
 
 #if defined(MIKTEX_WINDOWS)
@@ -1314,7 +1200,7 @@ public:
   int
   MIKTEXCALL
   RunBatch (/*[in]*/ int			argc,
-	    /*[in]*/ const MIKTEXCHAR **	argv);
+	    /*[in]*/ const char **	argv);
 #endif
 
 public:
@@ -1322,7 +1208,7 @@ public:
   int
   MIKTEXCALL
   RunPerl (/*[in]*/ int			argc,
-	   /*[in]*/ const MIKTEXCHAR **	argv);
+	   /*[in]*/ const char **	argv);
 
 #if defined(MIKTEX_WINDOWS)
 public:
@@ -1351,20 +1237,20 @@ public:
   virtual
   FormatInfo
   MIKTEXCALL
-  GetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey);
+  GetFormatInfo (/*[in]*/ const char *	lpszKey);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+  TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
 		    /*[out]*/ FormatInfo &	formatInfo);
 
 public:
   virtual
   void
   MIKTEXCALL
-  DeleteFormatInfo (/*[in]*/ const MIKTEXCHAR *	lpszKey);
+  DeleteFormatInfo (/*[in]*/ const char *	lpszKey);
 
 public:
   virtual
@@ -1401,7 +1287,7 @@ public:
   virtual
   PaperSizeInfo
   MIKTEXCALL
-  GetPaperSizeInfo (/*[in]*/ const MIKTEXCHAR *	lpszName);
+  GetPaperSizeInfo (/*[in]*/ const char *	lpszName);
 
 public:
   virtual
@@ -1413,7 +1299,7 @@ public:
   virtual
   void
   MIKTEXCALL
-  SetDefaultPaperSize (/*[in]*/ const MIKTEXCHAR * lpszDvipsName);
+  SetDefaultPaperSize (/*[in]*/ const char * lpszDvipsName);
 
 public:
   virtual
@@ -1454,11 +1340,11 @@ public:
   virtual
   void
   MIKTEXCALL
-  SetTheNameOfTheGame (/*[in]*/ const MIKTEXCHAR * lpszTheNameOfTheGame);
+  SetTheNameOfTheGame (/*[in]*/ const char * lpszTheNameOfTheGame);
 
 public:
   virtual
-  tstring
+  string
   MIKTEXCALL
   GetLocalFontDirectories ();
 
@@ -1477,13 +1363,13 @@ public:
 
 public:
   bool
-  IsTEXMFFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	       /*[out]*/ MIKTEXCHAR *		lpszRelPath,
+  IsTEXMFFile (/*[in]*/ const char *	lpszPath,
+	       /*[out]*/ char *		lpszRelPath,
 	       /*[out]*/ unsigned *		pRootIndex);
 
 public:
   void
-  RecordFileInfo (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+  RecordFileInfo (/*[in]*/ const char *	lpszPath,
 		  /*[in]*/ FileAccess		access);
 
 public:
@@ -1498,7 +1384,7 @@ public:
 
 public:
   class FileNameDatabase *
-  GetFileNameDatabase (/*[in]*/ const MIKTEXCHAR *	lpszPath);
+  GetFileNameDatabase (/*[in]*/ const char *	lpszPath);
 
 public:
   PathName
@@ -1506,7 +1392,7 @@ public:
 
 public:
   void
-  RemoveWorkingDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath);
+  RemoveWorkingDirectory (/*[in]*/ const char * lpszPath);
   
 public:
   PathName
@@ -1514,15 +1400,15 @@ public:
 
 public:
   bool
-  GetPsFontDirs (/*[out]*/ tstring &	psFontDirs);
+  GetPsFontDirs (/*[out]*/ string &	psFontDirs);
 
 public:
   bool
-  GetOTFDirs (/*[out]*/ tstring &	otfDirs);
+  GetOTFDirs (/*[out]*/ string &	otfDirs);
 
 public:
   bool
-  GetTTFDirs (/*[out]*/ tstring &	ttfDirs);
+  GetTTFDirs (/*[out]*/ string &	ttfDirs);
 
 private:
   void
@@ -1595,10 +1481,10 @@ public:
   struct ScratchDirectoryInfo
   {
     // previous directory
-    tstring previous;
+    string previous;
     
     // fully qualified & resolved path to scratch directory
-    tstring scratchDirectory;
+    string scratchDirectory;
   };
 
 public:
@@ -1638,7 +1524,7 @@ public:
     if (theSession == 0)
       {
 	FATAL_MIKTEX_ERROR
-	  (T_("SessionImpl::GetSession"),
+	  ("SessionImpl::GetSession",
 	   T_("The MiKTeX Core library has not been initialized."),
 	   0);
       }
@@ -1686,16 +1572,16 @@ private:
   std::bitset<32> flags;
 
 private:
-  tstring localFontDirs;
+  string localFontDirs;
 
 private:
-  tstring psFontDirs;
+  string psFontDirs;
 
 private:
-  tstring ttfDirs;
+  string ttfDirs;
 
 private:
-  tstring otfDirs;
+  string otfDirs;
 
 #if defined(MIKTEX_WINDOWS)
 private:
@@ -1717,13 +1603,13 @@ private:
 
 private:
   bool
-  FindPerlScript (/*[in]*/ const MIKTEXCHAR *	lpszName,
+  FindPerlScript (/*[in]*/ const char *	lpszName,
 		  /*[out]*/ PathName &		path);
 
 #if defined(MIKTEX_WINDOWS)
 private:
   bool
-  FindBatchFile (/*[in]*/ const MIKTEXCHAR *	lpszName,
+  FindBatchFile (/*[in]*/ const char *	lpszName,
 		 /*[in]*/ PathName &		path);
 #endif
 
@@ -1738,7 +1624,7 @@ private:
 
 private:
   void
-  TraceSearchVector (/*[in]*/ const MIKTEXCHAR *	lpszKey,
+  TraceSearchVector (/*[in]*/ const char *	lpszKey,
 		     /*[in]*/ const PathNameArray &	pathvec);
 
 private:
@@ -1752,77 +1638,77 @@ private:
   
 private:
   bool
-  FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[out]*/ MIKTEXCHAR *		lpszTypeface);
+  FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
+		     /*[out]*/ char *		lpszTypeface);
 
 private:
   bool
-  FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		     /*[out]*/ MIKTEXCHAR *		lpszSupplier,
-		     /*[out]*/ MIKTEXCHAR *		lpszTypeface);
+  FindInSupplierMap (/*[in]*/ const char *	lpszFontName,
+		     /*[out]*/ char *		lpszSupplier,
+		     /*[out]*/ char *		lpszTypeface);
 
 private:
   bool
-  FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		    /*[out]*/ MIKTEXCHAR *	lpszSupplier,
-		    /*[out]*/ MIKTEXCHAR *	lpszTypeface);
+  FindInSpecialMap (/*[in]*/ const char *	lpszFontName,
+		    /*[out]*/ char *	lpszSupplier,
+		    /*[out]*/ char *	lpszTypeface);
 
 private:
   bool
-  InternalGetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-		       /*[out]*/ MIKTEXCHAR *		lpszSupplier,
-		       /*[out]*/ MIKTEXCHAR *		lpszTypeface);
+  InternalGetFontInfo (/*[in]*/ const char *	lpszFontName,
+		       /*[out]*/ char *		lpszSupplier,
+		       /*[out]*/ char *		lpszTypeface);
 
 
 private:
   bool
   MakePkFileName (/*[out]*/ PathName &		pkFileName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszFontName,
+		  /*[in]*/ const char *	lpszFontName,
 		  /*[in]*/ int			dpi);
 
 
 private:
   bool
-  FindFileAlongVec (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
+  FindFileAlongVec (/*[in]*/ const char *		lpszFileName,
 		    /*[in]*/ const PathNameArray &	vec,
 		    /*[out]*/ PathName &		path);
 
 private:
   bool
-  SlowFindFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		/*[in]*/ const MIKTEXCHAR *	lpszPathList,
+  SlowFindFile (/*[in]*/ const char *	lpszFileName,
+		/*[in]*/ const char *	lpszPathList,
 		/*[in]*/ PathName &		path);
 
 private:
   bool
-  SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszRelPath,
-		    /*[in]*/ const MIKTEXCHAR *	lpszDirPath,
+  SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
+		    /*[in]*/ const char *	lpszDirPath,
 		    /*[out]*/ PathName &	result);
 
 
 private:
 bool
-SearchFileSystem (/*[in]*/ const MIKTEXCHAR *	lpszCurDir,
-		  /*[in]*/ const MIKTEXCHAR *	lpszSubDir,
-		  /*[in]*/ const MIKTEXCHAR *	lpszSearchSpec,
+SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
+		  /*[in]*/ const char *	lpszSubDir,
+		  /*[in]*/ const char *	lpszSearchSpec,
 		  /*[out]*/ PathName &		result);
 
 
 private:
   bool
   CheckCandidate (/*[in,out]*/ PathName &	path,
-		  /*[in]*/ const MIKTEXCHAR *	lpszFileInfo);
+		  /*[in]*/ const char *	lpszFileInfo);
 
 private:
   bool
-  GetSessionValue (/*[in]*/ const MIKTEXCHAR *	lpszSectionName,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		   /*[out]*/ tstring &		value,
-		   /*[in]*/const MIKTEXCHAR *	lpszDefaultValue);
+  GetSessionValue (/*[in]*/ const char *	lpszSectionName,
+		   /*[in]*/ const char *	lpszValueName,
+		   /*[out]*/ string &		value,
+		   /*[in]*/const char *	lpszDefaultValue);
 
 private:
   void
-  ReadAllConfigFiles (/*[in]*/ const MIKTEXCHAR *	lpszBaseName,
+  ReadAllConfigFiles (/*[in]*/ const char *	lpszBaseName,
 		      /*[in,out]*/ Cfg *		pCfg);
 
 private:
@@ -1930,17 +1816,17 @@ private:
 
 private:
   void
-  AppendToSearchPath (/*[in,out]*/ tstring &	strSearchPath,
-		      /*[in]*/ const tstring &	strSearchPath2);
+  AppendToSearchPath (/*[in,out]*/ string &	strSearchPath,
+		      /*[in]*/ const string &	strSearchPath2);
 
 private:
   void
   SplitSearchPath (/*[in,out]*/ PathNameArray &	pathvec,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSearchPath);
+		   /*[in]*/ const char *	lpszSearchPath);
 
 private:
   PathNameArray
-  SplitSearchPath (/*[in]*/ const MIKTEXCHAR *	lpszSearchPath);
+  SplitSearchPath (/*[in]*/ const char *	lpszSearchPath);
 
 private:
   void
@@ -1965,12 +1851,12 @@ private:
 
 private:
   bool
-  FindMETAFONTMode (/*[in]*/ const MIKTEXCHAR *	lpszMnemonic,
+  FindMETAFONTMode (/*[in]*/ const char *	lpszMnemonic,
 		    /*[out]*/ MIKTEXMFMODE *	pMode);
 
 private:
   FILE *
-  InitiateProcessPipe (/*[in]*/ const MIKTEXCHAR *	lpszCommand,
+  InitiateProcessPipe (/*[in]*/ const char *	lpszCommand,
 		       /*[in]*/ FileAccess		access,
 		       /*[in,out]*/ FileMode &		mode);
 
@@ -1993,11 +1879,11 @@ private:
 private:
   void
   RegisterFileType (/*[in]*/ FileType		fileType,
-		    /*[in]*/ const MIKTEXCHAR *	lpszFileType,
-		    /*[in]*/ const MIKTEXCHAR *	lpszApplication,
-		    /*[in]*/ const MIKTEXCHAR *	lpszFileNameExtensions,
-		    /*[in]*/ const MIKTEXCHAR *	lpszDefaultSearchPath,
-		    /*[in]*/ const MIKTEXCHAR *	lpszEnvVarNames);
+		    /*[in]*/ const char *	lpszFileType,
+		    /*[in]*/ const char *	lpszApplication,
+		    /*[in]*/ const char *	lpszFileNameExtensions,
+		    /*[in]*/ const char *	lpszDefaultSearchPath,
+		    /*[in]*/ const char *	lpszEnvVarNames);
     
 private:
   void
@@ -2037,7 +1923,7 @@ private:
     {
     }
     const FILE *	pFile;
-    tstring		fileName;
+    string		fileName;
     FileMode		mode;
     FileAccess		access;
   };
@@ -2060,7 +1946,7 @@ private:
 
   // package history file
 private:
-  tstring packageHistoryFile;
+  string packageHistoryFile;
 
 private:
   bool makeFonts;
@@ -2068,11 +1954,11 @@ private:
 private:
 #if defined(USE_HASH_MAP)
   typedef
-  hash_map<tstring, SmartPointer<Cfg>, hash_compare_icase>
+  hash_map<string, SmartPointer<Cfg>, hash_compare_icase>
   ConfigurationSettings;
 #else
   typedef
-  map<tstring, SmartPointer<Cfg>, hash_compare_icase> ConfigurationSettings;
+  map<string, SmartPointer<Cfg>, hash_compare_icase> ConfigurationSettings;
 #endif
  
 private:
@@ -2104,13 +1990,13 @@ private:
 #endif
 
 private:
-  tstring applicationNames;
+  string applicationNames;
 
 private:
-  tstring theNameOfTheGame;
+  string theNameOfTheGame;
 
 private:
-  const tstring &
+  const string &
   get_ApplicationNames ()
     const
   {
@@ -2205,7 +2091,7 @@ private:
    _________________________________________________________________________ */
 
 #define CTYPE_FACET \
-  use_facet<ctype<MIKTEXCHAR> >(SessionImpl::GetDefaultLocale())
+  use_facet<ctype<char> >(SessionImpl::GetDefaultLocale())
 
 /* _________________________________________________________________________
 
@@ -2263,10 +2149,9 @@ ToUpper (/*[in]*/ CharType ch)
 #if defined(MIKTEX_WINDOWS)
 inline
 bool
-IsDriveLetter (/*[in]*/ MIKTEXCHAR ch)
+IsDriveLetter (/*[in]*/ char ch)
 {
-  return (ch >= T_('A') && ch <= T_('Z')
-	  || ch >= T_('a') && ch <= T_('z'));
+  return (ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z');
 }
 #endif
 
@@ -2277,9 +2162,9 @@ IsDriveLetter (/*[in]*/ MIKTEXCHAR ch)
 
 inline
 bool
-IsAlpha (/*[in]*/ MIKTEXCHAR ch)
+IsAlpha (/*[in]*/ char ch)
 {
-  return (CTYPE_FACET.is(ctype<MIKTEXCHAR>::alpha, ch));
+  return (CTYPE_FACET.is(ctype<char>::alpha, ch));
 }
 
 /* _________________________________________________________________________
@@ -2289,9 +2174,9 @@ IsAlpha (/*[in]*/ MIKTEXCHAR ch)
 
 inline
 bool
-IsDigit (/*[in]*/ MIKTEXCHAR ch)
+IsDigit (/*[in]*/ char ch)
 {
-  return (CTYPE_FACET.is(ctype<MIKTEXCHAR>::digit, ch));
+  return (CTYPE_FACET.is(ctype<char>::digit, ch));
 }
 
 /* _________________________________________________________________________
@@ -2301,9 +2186,9 @@ IsDigit (/*[in]*/ MIKTEXCHAR ch)
 
 inline
 bool
-IsAlNum (/*[in]*/ MIKTEXCHAR ch)
+IsAlNum (/*[in]*/ char ch)
 {
-  return (CTYPE_FACET.is(ctype<MIKTEXCHAR>::alnum, ch));
+  return (CTYPE_FACET.is(ctype<char>::alnum, ch));
 }
 
 /* _________________________________________________________________________
@@ -2313,9 +2198,9 @@ IsAlNum (/*[in]*/ MIKTEXCHAR ch)
 
 inline
 bool
-IsSpace (/*[in]*/ MIKTEXCHAR ch)
+IsSpace (/*[in]*/ char ch)
 {
-  return (CTYPE_FACET.is(ctype<MIKTEXCHAR>::space, ch));
+  return (CTYPE_FACET.is(ctype<char>::space, ch));
 }
 
 /* _________________________________________________________________________
@@ -2325,7 +2210,7 @@ IsSpace (/*[in]*/ MIKTEXCHAR ch)
 
 inline
 void
-SkipSpace (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
+SkipSpace (/*[in,out]*/ const char * &	lpsz)
 {
   while (*lpsz != 0 && IsSpace(*lpsz))
     {
@@ -2340,7 +2225,7 @@ SkipSpace (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipSpace (/*[in,out]*/ MIKTEXCHAR * &	lpsz)
+SkipSpace (/*[in,out]*/ char * &	lpsz)
 {
   while (*lpsz != 0 && IsSpace(*lpsz))
     {
@@ -2355,7 +2240,7 @@ SkipSpace (/*[in,out]*/ MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipNonSpace (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
+SkipNonSpace (/*[in,out]*/ const char * &	lpsz)
 {
   while (*lpsz != 0 && ! IsSpace(*lpsz))
     {
@@ -2370,7 +2255,7 @@ SkipNonSpace (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipNonSpace (/*[in,out]*/ MIKTEXCHAR * &	lpsz)
+SkipNonSpace (/*[in,out]*/ char * &	lpsz)
 {
   while (*lpsz != 0 && ! IsSpace(*lpsz))
     {
@@ -2385,7 +2270,7 @@ SkipNonSpace (/*[in,out]*/ MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipAlpha (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
+SkipAlpha (/*[in,out]*/ const char * &	lpsz)
 {
   while (*lpsz != 0 && IsAlpha(*lpsz))
     {
@@ -2400,7 +2285,7 @@ SkipAlpha (/*[in,out]*/ const MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipNonDigit (/*[in]*/ const MIKTEXCHAR * &	lpsz)
+SkipNonDigit (/*[in]*/ const char * &	lpsz)
 {
   while (*lpsz != 0 && ! IsDigit(*lpsz))
     {
@@ -2410,25 +2295,12 @@ SkipNonDigit (/*[in]*/ const MIKTEXCHAR * &	lpsz)
 
 /* _________________________________________________________________________
 
-   STSCANF
-   _________________________________________________________________________ */
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-#  define STSCANF _stscanf_s
-#elif defined (MIKTEX_UNICODE)
-#  error Unimplemented: STSCANF
-#else
-#  define STSCANF sscanf
-#endif
-
-/* _________________________________________________________________________
-
    MakeLower
    _________________________________________________________________________ */
 
 template<typename CharType>
 inline
-MIKTEXCHAR *
+char *
 MakeLower (/*[out]*/ CharType *		lpszBuf,
 	   /*[in]*/ size_t		bufSize,
 	   /*[in]*/ const CharType *	lpszSource)
@@ -2439,13 +2311,13 @@ MakeLower (/*[out]*/ CharType *		lpszBuf,
     {
       if (l == bufSize)
 	{
-	  INVALID_ARGUMENT (T_("MakeLower"), lpszSource);
+	  INVALID_ARGUMENT ("MakeLower", lpszSource);
 	}
       *lpszBuf = ToLower(*lpszSource);
     }
   if (l == bufSize)
     {
-      INVALID_ARGUMENT (T_("MakeLower"), lpszSource);
+      INVALID_ARGUMENT ("MakeLower", lpszSource);
     }
   *lpszBuf = 0;
   return (lpszBuf);
@@ -2457,11 +2329,11 @@ MakeLower (/*[out]*/ CharType *		lpszBuf,
    _________________________________________________________________________ */
 
 inline
-tstring
-MakeLower (/*[in]*/ const tstring &	str)
+string
+MakeLower (/*[in]*/ const string &	str)
 {
-  tstring ret;
-  for (tstring::const_iterator it = str.begin(); it != str.end(); ++ it)
+  string ret;
+  for (string::const_iterator it = str.begin(); it != str.end(); ++ it)
     {
       ret += ToLower(*it);
     }

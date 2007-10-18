@@ -1,6 +1,6 @@
 /* wrapper.cpp: wrap a main function
 
-   Copyright (C) 2004-2006 Christian Schenk
+   Copyright (C) 2004-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -28,7 +28,6 @@
 
 #if defined(_MSC_VER)
 #  define MAINAPI __cdecl
-#  define main _tmain
 #else
 #  define MAINAPI
 #endif
@@ -38,22 +37,26 @@ extern "C"
 #endif
 int
 MAINAPI
-MAINFUNC (/*[in]*/ int			argc,
-	  /*[in]*/ MIKTEXCHAR **	argv);
+MAINFUNC (/*[in]*/ int		argc,
+	  /*[in]*/ char **	argv);
 
 // Keep the application object in the global scope (C functions might
 // call exit())
 MiKTeX::App::Application app;
 
+#if defined(main)
+#  undef main
+#endif
+
 int
 MAINAPI
-main (/*[in]*/ int		argc,
-      /*[in]*/ MIKTEXCHAR **	argv)
+main (/*[in]*/ int	argc,
+      /*[in]*/ char **	argv)
 {
   try
     {
 #if defined(APPNAMEx) // <fixme/>
-      MiKTeX::Core::PushAppName (MIKTEXTEXT(APPNAME));
+      MiKTeX::Core::PushAppName (APPNAME);
 #endif
 
       app.Init (argv[0]);

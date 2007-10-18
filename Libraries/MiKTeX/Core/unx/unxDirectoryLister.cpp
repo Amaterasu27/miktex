@@ -45,7 +45,7 @@ DirectoryLister::Open (/*[in]*/ const PathName & directory)
 DirectoryLister *
 MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPattern)
+		       /*[in]*/ const char *	lpszPattern)
 {
   return (new unxDirectoryLister (directory, lpszPattern));
 }
@@ -57,9 +57,9 @@ DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 
 unxDirectoryLister::unxDirectoryLister
 (/*[in]*/ const PathName &	directory,
- /*[in]*/ const MIKTEXCHAR *	lpszPattern)
+ /*[in]*/ const char *	lpszPattern)
   : directory (directory),
-    pattern (lpszPattern == 0 ? T_("") : lpszPattern),
+    pattern (lpszPattern == 0 ? "" : lpszPattern),
     pDir (0)
 {
 }
@@ -98,7 +98,7 @@ unxDirectoryLister::Close ()
   this->pDir = 0;
   if (closedir(pDir) != 0)
     {
-      FATAL_CRT_ERROR (T_("closedir"), 0);
+      FATAL_CRT_ERROR ("closedir", 0);
     }
 }
 
@@ -147,7 +147,7 @@ unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 &	direntry2,
       pDir = opendir(directory.Get());
       if (pDir == 0)
 	{
-	  FATAL_CRT_ERROR (T_("opendir"), directory.Get());
+	  FATAL_CRT_ERROR ("opendir", directory.Get());
 	}
     }
   struct dirent * pDirent;
@@ -159,7 +159,7 @@ unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 &	direntry2,
 	{
 	  if (errno != olderrno)
 	    {
-	      FATAL_CRT_ERROR (T_("readdir"), directory.Get());
+	      FATAL_CRT_ERROR ("readdir", directory.Get());
 	    }
 	  return (false);
 	}
@@ -183,7 +183,7 @@ unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 &	direntry2,
       PathName path (directory.Get(), pDirent->d_name, 0);
       if (lstat(path.Get(), &statbuf) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("lstat"), path.Get());
+	  FATAL_CRT_ERROR ("lstat", path.Get());
 	}
       direntry2.isDirectory = (S_ISDIR(statbuf.st_mode) != 0);
       direntry2.size = statbuf.st_size;

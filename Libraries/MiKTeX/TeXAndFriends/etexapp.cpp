@@ -38,7 +38,7 @@ ETeXApp::ETeXApp ()
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-ETeXApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+ETeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXApp::Init (lpszProgramInvocationName);
   enableETeX = false;
@@ -97,7 +97,7 @@ Enable e-TeX extensions."),
 
 MIKTEXMFAPI(bool)
 ETeXApp::ProcessOption (/*[in]*/ int			optchar,
-			/*[in]*/ const MIKTEXCHAR *	lpszArg)
+			/*[in]*/ const char *	lpszArg)
 {
   bool done = true;
   switch (optchar - FIRST_OPTION_VAL - optBase)

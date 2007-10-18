@@ -41,7 +41,7 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+  OpenUrl (/*[in]*/ const char *	lpszUrl,
 	   /*[in]*/ IProgressNotify_ *	pIProgressNotify);
 
 public:
@@ -62,14 +62,14 @@ public:
   }
 
 public:
-  MiKTeX::Core::tstring
+  std::string
   GetCurlErrorString (/*[in]*/ CURLcode code)
     const
   {
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_easy_strerror(code));
 #else
-    MiKTeX::Core::tstring str = T_("The cURL easy interface returned error code ");
+    std::string str = T_("The cURL easy interface returned error code ");
     str += NUMTOSTR(code);
     return (str);
 #endif
@@ -105,10 +105,10 @@ private:
 		 /*[in]*/ void *		pv);
 
 private:
-  MiKTeX::Core::tstring proxyPort;
+  std::string proxyPort;
 
 private:
-  MiKTeX::Core::tstring userPassword;
+  std::string userPassword;
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_curl;

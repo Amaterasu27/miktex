@@ -23,12 +23,12 @@
 
 #include "internal.h"
 
-#define FATAL_CFG_ERROR(function, message)				\
-  FATAL_MIKTEX_ERROR							\
-    (function,								\
-     T_("Damaged configuration file."),					\
-     (tstring(Q_(currentFile)) + T_(":") + NUMTOSTR(lineno) + T_(": ")	\
-      + message + T_(".")).c_str())
+#define FATAL_CFG_ERROR(function, message)			\
+  FATAL_MIKTEX_ERROR						\
+    (function,							\
+     T_("Damaged configuration file."),				\
+     (string(Q_(currentFile)) + ":" + NUMTOSTR(lineno) + ": "	\
+      + message + ".").c_str())
 
 /* _________________________________________________________________________
 
@@ -36,8 +36,8 @@
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-GetBaseNameSansExt (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-		    /*[out]*/ MIKTEXCHAR *	lpszBaseName,
+GetBaseNameSansExt (/*[in]*/ const char *	lpszFileName,
+		    /*[out]*/ char *		lpszBaseName,
 		    /*[in]*/ size_t		bufSize)
 {
   PathName::Split (lpszFileName,
@@ -51,17 +51,17 @@ GetBaseNameSansExt (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    Trim
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(tstring &)
-Trim (/*[in,out]*/ tstring & str)
+MIKTEXSTATICFUNC(string &)
+Trim (/*[in,out]*/ string & str)
 {
-  const MIKTEXCHAR * whitespace = T_(" \t\r\n");
+  const char * whitespace = " \t\r\n";
   size_t pos = str.find_last_not_of(whitespace);
-  if (pos != tstring::npos)
+  if (pos != string::npos)
     {
       str.erase (pos + 1);
     }
   pos = str.find_first_not_of(whitespace);
-  if (pos == tstring::npos)
+  if (pos == string::npos)
     {
       str.erase ();
     }
@@ -83,13 +83,13 @@ public:
   bool expanded;
 
 public:
-  tstring expandedValue;
+  string expandedValue;
 
 public:
-  tstring name;
+  string name;
 
 public:
-  tstring value;
+  string value;
 
 private:
   enum { INITIAL_VALUE_SIZE = 256 };
@@ -133,11 +133,11 @@ operator< (/*[in]*/ const CfgValue & lhs,
    _________________________________________________________________________ */
 
 #if defined(USE_HASH_MAP)
-typedef hash_map<tstring,
+typedef hash_map<string,
 		 CfgValue,
 		 hash_compare_icase> ValueMap;
 #else
-typedef map<tstring,
+typedef map<string,
 	    CfgValue,
 	    hash_compare_icase> ValueMap;
 #endif
@@ -145,7 +145,7 @@ typedef map<tstring,
 struct CfgKey
 {
 public:
-  tstring name;
+  string name;
 
 public:
   ValueMap valueMap;
@@ -169,7 +169,7 @@ public:
 
 public:
   CfgValue *
-  FindValue (/*[in]*/ const MIKTEXCHAR * lpszValueName);
+  FindValue (/*[in]*/ const char * lpszValueName);
 
 public:
   void
@@ -194,7 +194,7 @@ operator< (/*[in]*/ const CfgKey & lhs,
    _________________________________________________________________________ */
 
 CfgValue *
-CfgKey::FindValue (/*[in]*/ const MIKTEXCHAR * lpszValueName)
+CfgKey::FindValue (/*[in]*/ const char * lpszValueName)
 {
   ValueMap::iterator it = valueMap.find(lpszValueName);
   if (it == valueMap.end())
@@ -220,10 +220,10 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer,
       if (! noKey)
 	{
 	  writer.WriteLine ();
-	  writer.WriteFormattedLine (T_("[%s]"), name.c_str());
+	  writer.WriteFormattedLine ("[%s]", name.c_str());
 	  noKey = true;
 	}
-      writer.WriteFormattedLine (T_("%s=%s"),
+      writer.WriteFormattedLine ("%s=%s",
 				 it->second.name.c_str(),
 				 it->second.value.c_str());
     }
@@ -235,11 +235,11 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer,
    _________________________________________________________________________ */
 
 #if defined(USE_HASH_MAP)
-typedef hash_map<tstring,
+typedef hash_map<string,
 		 CfgKey,
 		 hash_compare_icase> KeyMap;
 #else
-typedef map<tstring,
+typedef map<string,
 	    CfgKey,
 	    hash_compare_icase> KeyMap;
 #endif
@@ -278,35 +278,35 @@ public:
 
 public:
   virtual
-  tstring
+  string
   MIKTEXCALL
-  GetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	    /*[in]*/ const MIKTEXCHAR *	lpszValueName);
+  GetValue (/*[in]*/ const char *	lpszKey,
+	    /*[in]*/ const char *	lpszValueName);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	       /*[out]*/ MIKTEXCHAR *		lpszValue,
-	       /*[in,out]*/ size_t &		bufSize);
+  TryGetValue (/*[in]*/ const char *	lpszKey,
+	       /*[in]*/ const char *	lpszValueName,
+	       /*[out]*/ char *		lpszValue,
+	       /*[in,out]*/ size_t &	bufSize);
   
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	       /*[out]*/ tstring &		value);
+  TryGetValue (/*[in]*/ const char *	lpszKey,
+	       /*[in]*/ const char *	lpszValueName,
+	       /*[out]*/ string &	value);
 
 public:
   virtual
   bool
   MIKTEXCALL
-  TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	       /*[out]*/ PathName &		path);
+  TryGetValue (/*[in]*/ const char *	lpszKey,
+	       /*[in]*/ const char *	lpszValueName,
+	       /*[out]*/ PathName &	path);
 
 public:
   virtual
@@ -324,9 +324,9 @@ public:
   virtual
   void
   MIKTEXCALL
-  PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	    /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszValue);
+  PutValue (/*[in]*/ const char *	lpszKey,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const char *	lpszValue);
   
 public:
   virtual
@@ -342,43 +342,43 @@ public:
 
 public:
   virtual
-  MIKTEXCHAR *
+  char *
   MIKTEXCALL
-  FirstKey (/*[out]*/ MIKTEXCHAR *	lpsz,
-	    /*[in]*/ size_t		bufSize);
+  FirstKey (/*[out]*/ char *	lpsz,
+	    /*[in]*/ size_t	bufSize);
 
 public:
   virtual
-  MIKTEXCHAR *
+  char *
   MIKTEXCALL
-  NextKey (/*[out]*/ MIKTEXCHAR *	lpsz,
-	   /*[in]*/ size_t		bufSize);
+  NextKey (/*[out]*/ char *	lpsz,
+	   /*[in]*/ size_t	bufSize);
 
 public:
   virtual
   void
   MIKTEXCALL
-  DeleteKey (/*[in]*/ const MIKTEXCHAR * lpszKey);
+  DeleteKey (/*[in]*/ const char * lpszKey);
 
 public:
   virtual
-  MIKTEXCHAR *
+  char *
   MIKTEXCALL
-  FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	      /*[out]*/ MIKTEXCHAR *		lpszValueName,
-	      /*[in]*/ size_t			valueNameSize);
+  FirstValue (/*[in]*/ const char *	lpszKey,
+	      /*[out]*/ char *		lpszValueName,
+	      /*[in]*/ size_t		valueNameSize);
 
 public:
   virtual
-  MIKTEXCHAR *
+  char *
   MIKTEXCALL
-  NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
-	     /*[in]*/ size_t		valueNameSize);
+  NextValue (/*[out]*/ char *	lpszValueName,
+	     /*[in]*/ size_t	valueNameSize);
 
 private:
   void
   Read (/*[in]*/ const PathName &	path,
-	/*[in]*/ const MIKTEXCHAR *	lpszDefaultKey,
+	/*[in]*/ const char *		lpszDefaultKey,
 	/*[in]*/ int			level);
 
 private:
@@ -390,10 +390,10 @@ private:
 
 private:
   bool
-  ParseValueDefinition (/*[in]*/ const tstring &	line,
-			/*[out]*/ tstring &		valueName,
-			/*[out]*/ tstring &		value,
-			/*[out]*/ PutMode &		putMode);
+  ParseValueDefinition (/*[in]*/ const string &	line,
+			/*[out]*/ string &	valueName,
+			/*[out]*/ string &	value,
+			/*[out]*/ PutMode &	putMode);
 
 private:
   PathName path;
@@ -434,7 +434,7 @@ private:
 private:
   CfgImpl (/*[in]*/ const CfgImpl &)
   {
-    UNEXPECTED_CONDITION (T_("CfgImpl::CfgImpl"));
+    UNEXPECTED_CONDITION ("CfgImpl::CfgImpl");
   };
   
 private:
@@ -442,17 +442,17 @@ private:
   ~CfgImpl ();
 
 private:
-  MIKTEXCHAR *
-  GetDefaultKey (/*[in]*/ MIKTEXCHAR * lpszDefaultKey)
+  char *
+  GetDefaultKey (/*[in]*/ char * lpszDefaultKey)
     const;
 
 private:
   CfgKey *
-  FindKey (/*[in]*/ const MIKTEXCHAR * lpszKey);
+  FindKey (/*[in]*/ const char * lpszKey);
 
 private:
   const CfgKey *
-  FindKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
+  FindKey (/*[in]*/ const char * lpszKey)
     const;
 
 private:
@@ -461,21 +461,21 @@ private:
 
 private:
   void
-  Expand (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszIn,
-	  /*[out]*/ tstring &		expansion);
+  Expand (/*[in]*/ const char *	lpszKeyName,
+	  /*[in]*/ const char *	lpszIn,
+	  /*[out]*/ string &	expansion);
 
 private:
   void
-  ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-	       /*[in]*/ const MIKTEXCHAR *	lpszMacroName,
-	       /*[out]*/ tstring &		expansion);
+  ExpandMacro (/*[in]*/ const char *	lpszKeyName,
+	       /*[in]*/ const char *	lpszMacroName,
+	       /*[out]*/ string &	expansion);
 
 private:
   void
-  PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-	    /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszValue,
+  PutValue (/*[in]*/ const char *	lpszKey,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const char *	lpszValue,
 	    /*[in]*/ PutMode		putMode);
 
 private:
@@ -563,8 +563,8 @@ CfgImpl::Release ()
    CfgImpl::GetDefaultKey
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-CfgImpl::GetDefaultKey (/*[out]*/ MIKTEXCHAR * lpszDefaultKey)
+char *
+CfgImpl::GetDefaultKey (/*[out]*/ char * lpszDefaultKey)
   const
 {
   if (path.Empty())
@@ -581,9 +581,9 @@ CfgImpl::GetDefaultKey (/*[out]*/ MIKTEXCHAR * lpszDefaultKey)
    _________________________________________________________________________ */
 
 CfgKey *
-CfgImpl::FindKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
+CfgImpl::FindKey (/*[in]*/ const char * lpszKey)
 {
-  MIKTEXCHAR szDefaultKey[BufferSizes::MaxCfgName];
+  char szDefaultKey[BufferSizes::MaxCfgName];
   if (lpszKey == 0)
     {
       lpszKey = GetDefaultKey(szDefaultKey);
@@ -606,10 +606,10 @@ CfgImpl::FindKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
    _________________________________________________________________________ */
 
 const CfgKey *
-CfgImpl::FindKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
+CfgImpl::FindKey (/*[in]*/ const char * lpszKey)
   const
 {
-  MIKTEXCHAR szDefaultKey[BufferSizes::MaxCfgName];
+  char szDefaultKey[BufferSizes::MaxCfgName];
   if (lpszKey == 0)
     {
       lpszKey = GetDefaultKey(szDefaultKey);
@@ -652,13 +652,13 @@ CfgImpl::WriteKeys (/*[in]*/ StreamWriter & writer)
    _________________________________________________________________________ */
 
 void
-CfgImpl::DeleteKey (/*[in]*/ const MIKTEXCHAR * lpszKey)
+CfgImpl::DeleteKey (/*[in]*/ const char * lpszKey)
 {
   MIKTEX_ASSERT_STRING (lpszKey);
   KeyMap::iterator it = keyMap.find(lpszKey);
   if (it == keyMap.end())
     {
-      INVALID_ARGUMENT (T_("CfgImpl::DeleteKey"), lpszKey);
+      INVALID_ARGUMENT ("CfgImpl::DeleteKey", lpszKey);
     }
   keyMap.erase (it);
 }
@@ -686,7 +686,7 @@ CfgImpl::GetDigest ()
        it != keys.end();
        ++ it)
     {
-      MIKTEXCHAR szKeyName[BufferSizes::MaxCfgName];
+      char szKeyName[BufferSizes::MaxCfgName];
       MakeLower (szKeyName,
 		 BufferSizes::MaxCfgName,
 		 it->name.c_str());
@@ -705,7 +705,7 @@ CfgImpl::GetDigest ()
 	   it2 != values.end();
 	   ++ it2)
 	{
-	  MIKTEXCHAR szValueName[BufferSizes::MaxCfgName];
+	  char szValueName[BufferSizes::MaxCfgName];
 	  MakeLower (szValueName,
 		     BufferSizes::MaxCfgName,
 		     it2->name.c_str());
@@ -750,9 +750,9 @@ Cfg::Create ()
    _________________________________________________________________________ */
 
 void
-CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		      /*[in]*/ const MIKTEXCHAR *	lpszMacroName,
-		      /*[out]*/ tstring &		expansion)
+CfgImpl::ExpandMacro (/*[in]*/ const char *	lpszKeyName,
+		      /*[in]*/ const char *	lpszMacroName,
+		      /*[out]*/ string &	expansion)
 {
   UNUSED_ALWAYS (lpszKeyName);
   if (StringCompare(lpszMacroName, CFG_MACRO_NAME_BINDIR, true) == 0)
@@ -768,7 +768,7 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
       if (GetWindowsDirectory(path.GetBuffer(),
 			      static_cast<UINT>(path.GetCapacity()) == 0))
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
+	  FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
 	}
       expansion = path.ToString();
     }
@@ -781,44 +781,43 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
     }
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_PSFONTDIRS, true) == 0)
     {
-      tstring psFontDirs;
+      string psFontDirs;
       if (SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
 	{
 	  expansion = psFontDirs;
 	}
       else
 	{
-	  expansion = T_("");
+	  expansion = "";
 	}
     }
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_TTFDIRS, true) == 0)
     {
-      tstring ttfDirs;
+      string ttfDirs;
       if (SessionImpl::GetSession()->GetTTFDirs(ttfDirs))
 	{
 	  expansion = ttfDirs;
 	}
       else
 	{
-	  expansion = T_("");
+	  expansion = "";
 	}
     }
   else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_OTFDIRS, true) == 0)
     {
-      tstring otfDirs;
+      string otfDirs;
       if (SessionImpl::GetSession()->GetOTFDirs(otfDirs))
 	{
 	  expansion = otfDirs;
 	}
       else
 	{
-	  expansion = T_("");
+	  expansion = "";
 	}
     }
   else
     {
-      FATAL_CFG_ERROR (T_("CfgImpl::ExpandMacro"),
-		       T_("unknown macro"));
+      FATAL_CFG_ERROR ("CfgImpl::ExpandMacro", T_("unknown macro name"));
     }
 }
 
@@ -828,40 +827,39 @@ CfgImpl::ExpandMacro (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    _________________________________________________________________________ */
 
 void
-CfgImpl::Expand (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-		 /*[in]*/ const MIKTEXCHAR *	lpszIn,
-		 /*[out]*/ tstring &		expansion)
+CfgImpl::Expand (/*[in]*/ const char *	lpszKeyName,
+		 /*[in]*/ const char *	lpszIn,
+		 /*[out]*/ string &	expansion)
 {
-  const MIKTEXCHAR * lpsz = lpszIn;
-  tstring macroName;
+  const char * lpsz = lpszIn;
+  string macroName;
   expansion.reserve (StrLen(lpsz));
   for (; *lpsz != 0; ++ lpsz)
     {
-      if (lpsz[0] == T_('$'))
+      if (lpsz[0] == '$')
 	{
-	  if (lpsz[1] == T_('$'))
+	  if (lpsz[1] == '$')
 	    {
 	      lpsz += 2;
-	      expansion += T_('$');
+	      expansion += '$';
 	    }
-	  else if (lpsz[1] == T_('('))
+	  else if (lpsz[1] == '(')
 	    {
-	      macroName = T_("");
-	      for (lpsz += 2; *lpsz != 0 && *lpsz != T_(')'); ++ lpsz)
+	      macroName = "";
+	      for (lpsz += 2; *lpsz != 0 && *lpsz != ')'; ++ lpsz)
 		{
 		  macroName += *lpsz;
 		}
-	      if (*lpsz != T_(')'))
+	      if (*lpsz != ')')
 		{
-		  FATAL_CFG_ERROR (T_("CfgImpl::Expand"),
-				   T_("missing `)'"));
+		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing `)'"));
 		}
 	      if (macroName.empty())
 		{
-		  FATAL_CFG_ERROR (T_("CfgImpl::Expand"),
+		  FATAL_CFG_ERROR ("CfgImpl::Expand",
 				   T_("missing macro name"));
 		}
-	      tstring expandedMacro;
+	      string expandedMacro;
 	      ExpandMacro (lpszKeyName,
 			   macroName.c_str(),
 			   expandedMacro);
@@ -869,7 +867,7 @@ CfgImpl::Expand (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
 	    }
 	  else
 	    {
-	      FATAL_CFG_ERROR (T_("CfgImpl::Expand"),
+	      FATAL_CFG_ERROR ("CfgImpl::Expand",
 			       T_("invalid control sequence"));
 	    }
 	}
@@ -885,9 +883,9 @@ CfgImpl::Expand (/*[in]*/ const MIKTEXCHAR *	lpszKeyName,
    CfgImpl::GetValue
    _________________________________________________________________________ */
 
-tstring
-CfgImpl::GetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValueName)
+string
+CfgImpl::GetValue (/*[in]*/ const char *	lpszKey,
+		   /*[in]*/ const char *	lpszValueName)
 {
   size_t bufSize = 0;
 
@@ -896,19 +894,19 @@ CfgImpl::GetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 		    0,
 		    bufSize))
     {
-      FATAL_MIKTEX_ERROR (T_("CfgImpl::GetValue"),
+      FATAL_MIKTEX_ERROR ("CfgImpl::GetValue",
 			  T_("The configuration value does not exist."),
 			  lpszValueName);
     }
 
-  CharBuffer<MIKTEXCHAR> buffer (bufSize);
+  CharBuffer<char> buffer (bufSize);
 
   if (! TryGetValue(lpszKey,
 		    lpszValueName,
 		    buffer.GetBuffer(),
 		    bufSize))
     {
-      UNEXPECTED_CONDITION (T_("CfgImpl::GetValue"));
+      UNEXPECTED_CONDITION ("CfgImpl::GetValue");
     }
 
   return (buffer.Get());
@@ -920,10 +918,10 @@ CfgImpl::GetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    _________________________________________________________________________ */
 
 bool
-CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		      /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		      /*[out]*/ MIKTEXCHAR *		lpszValue,
-		      /*[in,out]*/ size_t &		bufSize)
+CfgImpl::TryGetValue (/*[in]*/ const char *	lpszKey,
+		      /*[in]*/ const char *	lpszValueName,
+		      /*[out]*/ char *		lpszValue,
+		      /*[in,out]*/ size_t &	bufSize)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszKey);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -974,9 +972,9 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    _________________________________________________________________________ */
 
 bool
-CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		      /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		      /*[out]*/ tstring &		value)
+CfgImpl::TryGetValue (/*[in]*/ const char *	lpszKey,
+		      /*[in]*/ const char *	lpszValueName,
+		      /*[out]*/ string &	value)
 {
   size_t bufSize = 0;
 
@@ -988,14 +986,14 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
       return (false);
     }
 
-  CharBuffer<MIKTEXCHAR> buffer (bufSize);
+  CharBuffer<char> buffer (bufSize);
 
   if (! TryGetValue(lpszKey,
 		    lpszValueName,
 		    buffer.GetBuffer(),
 		    bufSize))
     {
-      UNEXPECTED_CONDITION (T_("CfgImpl::TryGetValue"));
+      UNEXPECTED_CONDITION ("CfgImpl::TryGetValue");
     }
 
   value = buffer.Get();
@@ -1009,9 +1007,9 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    _________________________________________________________________________ */
 
 bool
-CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		      /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		      /*[out]*/ PathName &		path)
+CfgImpl::TryGetValue (/*[in]*/ const char *	lpszKey,
+		      /*[in]*/ const char *	lpszValueName,
+		      /*[out]*/ PathName &	path)
 {
   size_t size = path.GetCapacity();
   return (TryGetValue(lpszKey, lpszValueName, path.GetBuffer(), size));
@@ -1023,19 +1021,19 @@ CfgImpl::TryGetValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    _________________________________________________________________________ */
 
 void
-CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValue,
+CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
+		   /*[in]*/ const char *	lpszValueName,
+		   /*[in]*/ const char *	lpszValue,
 		   /*[in]*/ CfgImpl::PutMode	putMode)
 {
-  MIKTEXCHAR szDefaultKey[BufferSizes::MaxCfgName];
+  char szDefaultKey[BufferSizes::MaxCfgName];
 
   if (lpszKey == 0)
     {
       lpszKey = GetDefaultKey(szDefaultKey);
       if (lpszKey == 0)
 	{
-	  FATAL_CFG_ERROR (T_("CfgImpl::PutValue"),
+	  FATAL_CFG_ERROR ("CfgImpl::PutValue",
 			   T_("missing section definition"));
 	}
     }
@@ -1044,7 +1042,7 @@ CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
   cfgkey.name = lpszKey;
 
   pair<KeyMap::iterator, bool> pair1
-    = keyMap.insert(make_pair<tstring, CfgKey>(lpszKey, cfgkey));
+    = keyMap.insert(make_pair<string, CfgKey>(lpszKey, cfgkey));
 
   KeyMap::iterator itstrkey = pair1.first;
   MIKTEX_ASSERT (itstrkey != keyMap.end());
@@ -1055,14 +1053,13 @@ CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 
   pair<ValueMap::iterator, bool> pair2
     = (itstrkey->second.valueMap
-       .insert(make_pair<tstring, CfgValue>(lpszValueName,
-					    cfgvalue)));
+       .insert(make_pair<string, CfgValue>(lpszValueName, cfgvalue)));
 
   if (! pair2.second)
     {
       ValueMap::iterator itstrval = pair2.first;
       itstrval->second.expanded = false;
-      itstrval->second.expandedValue = T_("");
+      itstrval->second.expandedValue = "";
       if (putMode == Append)
 	{
 	  itstrval->second.value += lpszValue;
@@ -1088,9 +1085,9 @@ CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    _________________________________________________________________________ */
 
 void
-CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-		   /*[in]*/ const MIKTEXCHAR *	lpszValue)
+CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
+		   /*[in]*/ const char *	lpszValueName,
+		   /*[in]*/ const char *	lpszValue)
 {
   return (PutValue(lpszKey, lpszValueName, lpszValue, None));
 }
@@ -1103,7 +1100,7 @@ CfgImpl::PutValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 void
 CfgImpl::Read (/*[in]*/ const PathName &	path)
 {
-  MIKTEXCHAR szDefaultKey[BufferSizes::MaxCfgName];
+  char szDefaultKey[BufferSizes::MaxCfgName];
 
   GetBaseNameSansExt (path.Get(), szDefaultKey, BufferSizes::MaxCfgName);
 
@@ -1119,13 +1116,13 @@ CfgImpl::Read (/*[in]*/ const PathName &	path)
 
 void
 CfgImpl::Read (/*[in]*/ const PathName &	path,
-	       /*[in]*/ const MIKTEXCHAR *	lpszDefaultKey,
+	       /*[in]*/ const char *		lpszDefaultKey,
 	       /*[in]*/ int			level)
 {
   UNUSED_ALWAYS (level);
 
   traceStream->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("parsing: %s..."),
      path.Get());
 
@@ -1138,13 +1135,13 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 
   StreamReader reader (path);
 
-  tstring line;
+  string line;
   line.reserve (128);
 
   AutoRestore<int> autoRestore1 (lineno);
   AutoRestore<PathName> autoRestore (currentFile);
 
-  MIKTEXCHAR szKeyName[BufferSizes::MaxCfgName];
+  char szKeyName[BufferSizes::MaxCfgName];
   Utils::CopyString (szKeyName, BufferSizes::MaxCfgName, lpszDefaultKey);
 
   lineno = 0;
@@ -1153,7 +1150,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
   while (reader.ReadLine(line))
     {
       ++ lineno;
-      if (line[0] == T_('@'))
+      if (line[0] == '@')
 	{
 	  if (wasEmpty && level == 0)
 	    {
@@ -1161,22 +1158,22 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	      haveOriginalDigest = true;
 	    }
 	}
-      else if (line[0] == T_('!'))
+      else if (line[0] == '!')
 	{
-	  Tokenizer tok (line.c_str() + 1, T_(" \t"));
-	  const MIKTEXCHAR * lpsz = tok.GetCurrent();
+	  Tokenizer tok (line.c_str() + 1, " \t");
+	  const char * lpsz = tok.GetCurrent();
 	  if (lpsz == 0)
 	    {
-	      FATAL_CFG_ERROR (T_("CfgImpl::Read"),
+	      FATAL_CFG_ERROR ("CfgImpl::Read",
 			       T_("invalid cfg directive"));
 	    }
-	  if (StringCompare(lpsz, T_("include")) == 0)
+	  if (StringCompare(lpsz, "include") == 0)
 	    {
 	      ++ tok;
 	      lpsz = tok.GetCurrent();
 	      if (lpsz == 0)
 		{
-		  FATAL_CFG_ERROR (T_("CfgImpl::Read"),
+		  FATAL_CFG_ERROR ("CfgImpl::Read",
 				   T_("missing file name argument"));
 		}
 	      PathName path2 (path);
@@ -1187,29 +1184,29 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	    }
 	  else
 	    {
-	      FATAL_CFG_ERROR (T_("CfgImpl::Read"),
+	      FATAL_CFG_ERROR ("CfgImpl::Read",
 			       T_("unknown cfg directive"));
 	    }
 	}
-      else if (line[0] == T_('['))
+      else if (line[0] == '[')
 	{
-	  Tokenizer tok (line.c_str() + 1, T_("]"));
-	  const MIKTEXCHAR * lpsz = tok.GetCurrent();
+	  Tokenizer tok (line.c_str() + 1, "]");
+	  const char * lpsz = tok.GetCurrent();
 	  if (lpsz == 0)
 	    {
-	      FATAL_CFG_ERROR (T_("CfgImpl::Read"),
+	      FATAL_CFG_ERROR ("CfgImpl::Read",
 			       T_("incomplete secion name"));
 	    }
 	  Utils::CopyString (szKeyName, BufferSizes::MaxCfgName, lpsz);
 	}
-      else if (IsAlNum(line[0]) || line[0] == T_('.'))
+      else if (IsAlNum(line[0]) || line[0] == '.')
 	{
-	  tstring valueName;
-	  tstring value;
+	  string valueName;
+	  string value;
 	  PutMode putMode;
 	  if (! ParseValueDefinition(line, valueName, value, putMode))
 	    {
-	      FATAL_CFG_ERROR (T_("CfgImpl::Read"),
+	      FATAL_CFG_ERROR ("CfgImpl::Read",
 			       T_("invalid value definition"));
 	    }
 	  PutValue (szKeyName, valueName.c_str(), value.c_str(), putMode);
@@ -1229,18 +1226,18 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
    _________________________________________________________________________ */
 
 bool
-CfgImpl::ParseValueDefinition (/*[in]*/ const tstring &		line,
-			       /*[out]*/ tstring &		valueName,
-			       /*[out]*/ tstring &		value,
+CfgImpl::ParseValueDefinition (/*[in]*/ const string &		line,
+			       /*[out]*/ string &		valueName,
+			       /*[out]*/ string &		value,
 			       /*[out]*/ CfgImpl::PutMode &	putMode)
 {
-  MIKTEX_ASSERT (IsAlNum(line[0]) || line[0] == T_('.'));
+  MIKTEX_ASSERT (IsAlNum(line[0]) || line[0] == '.');
 
-  size_t posEqual = line.find(T_('='));
+  size_t posEqual = line.find('=');
 
   putMode = None;
 
-  if (posEqual == tstring::npos)
+  if (posEqual == string::npos)
     {
       return (false);
     }
@@ -1248,12 +1245,12 @@ CfgImpl::ParseValueDefinition (/*[in]*/ const tstring &		line,
   value = line.substr(posEqual + 1);
   Trim (value);
 
-  if (line[posEqual - 1] == T_('+'))
+  if (line[posEqual - 1] == '+')
     {
       putMode = Append;
       posEqual -= 1;
     }
-  else if (line[posEqual - 1] == T_(';'))
+  else if (line[posEqual - 1] == ';')
     {
       putMode = SearchPathAppend;
       posEqual -= 1;
@@ -1281,7 +1278,7 @@ CfgImpl::Write (/*[in]*/ const PathName &	path)
 #if 0
   // this breaks Config::IniFiles
   writer.WriteLine ();
-  writer.WriteFormattedLine (T_("@%s"), GetDigest().ToString().c_str());
+  writer.WriteFormattedLine ("@%s", GetDigest().ToString().c_str());
 #endif
   writer.Close ();
   File::SetTimes (path, t, t, t);
@@ -1292,8 +1289,8 @@ CfgImpl::Write (/*[in]*/ const PathName &	path)
    CfgImpl::FirstKey
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-CfgImpl::FirstKey (/*[out]*/ MIKTEXCHAR *	lpsz,
+char *
+CfgImpl::FirstKey (/*[out]*/ char *	lpsz,
 		   /*[in]*/ size_t	bufSize)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpsz, bufSize);
@@ -1315,15 +1312,15 @@ CfgImpl::FirstKey (/*[out]*/ MIKTEXCHAR *	lpsz,
    CfgImpl::NextKey
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-CfgImpl::NextKey (/*[out]*/ MIKTEXCHAR *	lpsz,
+char *
+CfgImpl::NextKey (/*[out]*/ char *	lpsz,
 		  /*[in]*/ size_t	bufSize)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpsz, bufSize);
 
   if (iter == keyMap.end())
     {
-      INVALID_ARGUMENT (T_("CfgImpl::NextKey"), 0);
+      INVALID_ARGUMENT ("CfgImpl::NextKey", 0);
     }
 
   ++ iter;
@@ -1343,10 +1340,10 @@ CfgImpl::NextKey (/*[out]*/ MIKTEXCHAR *	lpsz,
    CfgImpl::FirstValue
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-CfgImpl::FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
-		     /*[out]*/ MIKTEXCHAR *		lpszValueName,
-		     /*[in]*/ size_t			valueNameSize)
+char *
+CfgImpl::FirstValue (/*[in]*/ const char *	lpszKey,
+		     /*[out]*/ char *		lpszValueName,
+		     /*[in]*/ size_t		valueNameSize)
 {
   MIKTEX_ASSERT_STRING (lpszKey);
   MIKTEX_ASSERT_CHAR_BUFFER (lpszValueName, valueNameSize);
@@ -1355,7 +1352,7 @@ CfgImpl::FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
 
   if (pCfgKey == 0)
     {
-      UNEXPECTED_CONDITION (T_("CfgImpl::FirstValue"));
+      UNEXPECTED_CONDITION ("CfgImpl::FirstValue");
     }
 
   iter2 = pCfgKey->valueMap.begin();
@@ -1376,15 +1373,15 @@ CfgImpl::FirstValue (/*[in]*/ const MIKTEXCHAR *	lpszKey,
    CfgImpl::NextValue
    _________________________________________________________________________ */
 
-MIKTEXCHAR *
-CfgImpl::NextValue (/*[out]*/ MIKTEXCHAR *	lpszValueName,
-		    /*[in]*/ size_t		valueNameSize)
+char *
+CfgImpl::NextValue (/*[out]*/ char *	lpszValueName,
+		    /*[in]*/ size_t	valueNameSize)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszValueName, valueNameSize);
 
   if (iter2 == iter3)
     {
-      INVALID_ARGUMENT (T_("CfgImpl::NextValue"), 0);
+      INVALID_ARGUMENT ("CfgImpl::NextValue", 0);
     }
 
   ++ iter2;

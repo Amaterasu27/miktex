@@ -56,22 +56,22 @@ using namespace std;
 #  define tcerr cerr
 #endif
 
-const MIKTEXCHAR * const TheNameOfTheGame = T_("MiKTeX Help Utility");
-const MIKTEXCHAR * const PROGNAME = T_("mthelp");
+const char * const TheNameOfTheGame = T_("MiKTeX Help Utility");
+const char * const PROGNAME = T_("mthelp");
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR PATH_DELIMITER = T_(';');
+const char PATH_DELIMITER = T_(';');
 #define PATH_DELIMITER_STRING T_(";")
 #else
-const MIKTEXCHAR PATH_DELIMITER = T_(':');
+const char PATH_DELIMITER = T_(':');
 #define PATH_DELIMITER_STRING T_(":")
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR * const DEFAULT_DOC_EXTENSIONS =
+const char * const DEFAULT_DOC_EXTENSIONS =
   T_(".chm;.html;.dvi;.pdf;.ps;.txt");
 #else
-const MIKTEXCHAR * const DEFAULT_DOC_EXTENSIONS =
+const char * const DEFAULT_DOC_EXTENSIONS =
   T_(".html:.pdf:.dvi:.ps:.txt");
 #endif
 
@@ -81,11 +81,11 @@ const MIKTEXCHAR * const DEFAULT_DOC_EXTENSIONS =
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -104,8 +104,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -116,7 +116,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -140,7 +140,7 @@ public:
 public:
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   void
@@ -148,46 +148,46 @@ private:
   
 private:
   void
-  Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Warning (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/				...);
 
 private:
   MIKTEXNORETURN
   void
-  FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  FatalError (/*[in]*/ const char *	lpszFormat,
 	      /*[in]*/				...);
 
 private:
   bool
-  SkipPrefix (/*[in]*/ const tstring &		str,
-	      /*[in]*/ const MIKTEXCHAR *	lpszPrefix,
-	      /*[out]*/ tstring &		result);
+  SkipPrefix (/*[in]*/ const string &		str,
+	      /*[in]*/ const char *	lpszPrefix,
+	      /*[out]*/ string &		result);
 
 private:
   bool
-  SkipTeXMFPrefix (/*[in]*/ const tstring &	str,
-		   /*[out]*/ tstring &		result);
+  SkipTeXMFPrefix (/*[in]*/ const string &	str,
+		   /*[out]*/ string &		result);
 
 private:
   void
   FindDocFilesByPackage
-  (/*[in]*/ const tstring &			packageName,
-   /*[out]*/ map<tstring, vector<tstring> > &	filesByExtension);
+  (/*[in]*/ const string &			packageName,
+   /*[out]*/ map<string, vector<string> > &	filesByExtension);
 
 private:
   void
   FindDocFilesByPackage
-  (/*[in]*/ const tstring &		packageName,
-   /*[out]*/ vector<tstring> &		files);
+  (/*[in]*/ const string &		packageName,
+   /*[out]*/ vector<string> &		files);
 
 private:
   void
-  FindDocFilesByName (/*[in]*/ const tstring &		name,
-		      /*[out]*/ vector<tstring> &	files);
+  FindDocFilesByName (/*[in]*/ const string &		name,
+		      /*[out]*/ vector<string> &	files);
 
 private:
   void
-  PrintFiles (/*[in]*/ const vector<tstring> & files);
+  PrintFiles (/*[in]*/ const vector<string> & files);
 
 private:
   void
@@ -195,13 +195,13 @@ private:
 
 private:
   void
-  CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
-		     /*[in]*/ const vector<tstring> & files);
+  CreateHtmlAndView (/*[in]*/ const char * lpszPackageName,
+		     /*[in]*/ const vector<string> & files);
 
 private:
   void
   WriteText (/*[in]*/ StreamWriter &	writer,
-	     /*[in]*/ const tstring &	text);
+	     /*[in]*/ const string &	text);
 
 
 private:
@@ -314,7 +314,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
    _________________________________________________________________________ */
 
 void
-MiKTeXHelp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+MiKTeXHelp::Warning (/*[in]*/ const char *	lpszFormat,
 		     /*[in]*/				...)
 {
   if (quiet)
@@ -334,7 +334,7 @@ MiKTeXHelp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
   
 MIKTEXNORETURN
 void
-MiKTeXHelp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+MiKTeXHelp::FatalError (/*[in]*/ const char *	lpszFormat,
 			/*[in]*/			...)
 {
   va_list arglist;
@@ -352,9 +352,9 @@ MiKTeXHelp::FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 bool
-MiKTeXHelp::SkipPrefix (/*[in]*/ const tstring &	str,
-			/*[in]*/ const MIKTEXCHAR *	lpszPrefix,
-			/*[out]*/ tstring &		result)
+MiKTeXHelp::SkipPrefix (/*[in]*/ const string &	str,
+			/*[in]*/ const char *	lpszPrefix,
+			/*[out]*/ string &		result)
 {
   size_t n = StrLen(lpszPrefix);
   if (str.compare(0, n, lpszPrefix) != 0)
@@ -371,8 +371,8 @@ MiKTeXHelp::SkipPrefix (/*[in]*/ const tstring &	str,
    _________________________________________________________________________ */
 
 bool
-MiKTeXHelp::SkipTeXMFPrefix (/*[in]*/ const tstring &	str,
-			     /*[out]*/ tstring &	result)
+MiKTeXHelp::SkipTeXMFPrefix (/*[in]*/ const string &	str,
+			     /*[out]*/ string &	result)
 {
   return (SkipPrefix(str, T_("texmf/"), result)
 	  || SkipPrefix(str, T_("texmf\\"), result)
@@ -387,31 +387,31 @@ MiKTeXHelp::SkipTeXMFPrefix (/*[in]*/ const tstring &	str,
 
 void
 MiKTeXHelp::FindDocFilesByPackage
-(/*[in]*/ const tstring &			packageName,
- /*[out]*/ map<tstring, vector<tstring> > &	filesByExtension)
+(/*[in]*/ const string &			packageName,
+ /*[out]*/ map<string, vector<string> > &	filesByExtension)
 {
   PackageInfo pi;
   if (! pManager->TryGetPackageInfo(packageName, pi))
     {
       return;
     }
-  for (vector<tstring>::const_iterator it = pi.docFiles.begin();
+  for (vector<string>::const_iterator it = pi.docFiles.begin();
        it != pi.docFiles.end();
        ++ it)
     {
-      MIKTEXCHAR szExt[BufferSizes::MaxPath];
+      char szExt[BufferSizes::MaxPath];
       PathName::Split (it->c_str(),
 		       0, 0,
 		       0, 0,
 		       szExt, BufferSizes::MaxPath);
-      tstring file;
+      string file;
       PathName path;
       if (SkipTeXMFPrefix(*it, file)
 	  && pSession->FindFile(file.c_str(),
 				MIKTEX_PATH_TEXMF_PLACEHOLDER_NO_MPM,
 				path))
 	{
-	  vector<tstring> & files = filesByExtension[szExt];
+	  vector<string> & files = filesByExtension[szExt];
 	  files.push_back (path.ToString());
 	}
     }
@@ -423,12 +423,12 @@ MiKTeXHelp::FindDocFilesByPackage
    _________________________________________________________________________ */
 
 void
-MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const tstring &	packageName,
-				   /*[out]*/ vector<tstring> &	files)
+MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const string &	packageName,
+				   /*[out]*/ vector<string> &	files)
 {
-  map<tstring, vector<tstring> > filesByExtension;
+  map<string, vector<string> > filesByExtension;
   FindDocFilesByPackage (packageName, filesByExtension);
-  tstring extensions =
+  string extensions =
     pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_DOC_EXTENSIONS,
 			     DEFAULT_DOC_EXTENSIONS);
@@ -436,11 +436,11 @@ MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const tstring &	packageName,
        ext.GetCurrent() != 0;
        ++ ext)
     {
-      vector<tstring> & vec = filesByExtension[ext.GetCurrent()];
-      vector<tstring>::iterator it = vec.begin();
+      vector<string> & vec = filesByExtension[ext.GetCurrent()];
+      vector<string>::iterator it = vec.begin();
       while (it != vec.end())
 	{
-	  MIKTEXCHAR szName[BufferSizes::MaxPath];
+	  char szName[BufferSizes::MaxPath];
 	  PathName::Split (it->c_str(),
 			   0, 0,
 			   szName, BufferSizes::MaxPath,
@@ -460,7 +460,7 @@ MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const tstring &	packageName,
        ext.GetCurrent() != 0;
        ++ ext)
     {
-      vector<tstring> & vec = filesByExtension[ext.GetCurrent()];
+      vector<string> & vec = filesByExtension[ext.GetCurrent()];
       files.insert (files.end(), vec.begin(), vec.end());
     }
 }
@@ -471,14 +471,14 @@ MiKTeXHelp::FindDocFilesByPackage (/*[in]*/ const tstring &	packageName,
    _________________________________________________________________________ */
 
 void
-MiKTeXHelp::FindDocFilesByName (/*[in]*/ const tstring &	name,
-				/*[out]*/ vector<tstring> &	files)
+MiKTeXHelp::FindDocFilesByName (/*[in]*/ const string &	name,
+				/*[out]*/ vector<string> &	files)
 {
-  tstring extensions =
+  string extensions =
     pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_DOC_EXTENSIONS,
 			     DEFAULT_DOC_EXTENSIONS);
-  tstring searchSpec = MIKTEX_PATH_TEXMF_PLACEHOLDER_NO_MPM;
+  string searchSpec = MIKTEX_PATH_TEXMF_PLACEHOLDER_NO_MPM;
   searchSpec += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
   searchSpec += MIKTEX_PATH_DOC_DIR;
   searchSpec += MIKTEX_PATH_RECURSION_INDICATOR;
@@ -501,9 +501,9 @@ MiKTeXHelp::FindDocFilesByName (/*[in]*/ const tstring &	name,
    _________________________________________________________________________ */
 
 void
-MiKTeXHelp::PrintFiles (/*[in]*/ const vector<tstring> & files)
+MiKTeXHelp::PrintFiles (/*[in]*/ const vector<string> & files)
 {
-  for (vector<tstring>::const_iterator it = files.begin();
+  for (vector<string>::const_iterator it = files.begin();
        it != files.end();
        ++ it)
     {
@@ -519,13 +519,13 @@ MiKTeXHelp::PrintFiles (/*[in]*/ const vector<tstring> & files)
 void
 MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 {
-  tstring viewer;
+  string viewer;
 
-  const MIKTEXCHAR * lpszExt = fileName.GetExtension();
+  const char * lpszExt = fileName.GetExtension();
 
   if (lpszExt != 0)
     {
-      tstring env = T_("MIKTEX_VIEW_");
+      string env = T_("MIKTEX_VIEW_");
       env += (lpszExt + 1);
       if (! Utils::GetEnvironmentString(env.c_str(), viewer))
 	{
@@ -536,7 +536,7 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 #if defined(MIKTEX_WINDOWS)
   if (viewer.empty())
     {
-      MIKTEXCHAR szExecutable[BufferSizes::MaxPath];
+      char szExecutable[BufferSizes::MaxPath];
       PathName directory (fileName);
       HINSTANCE hInst =
 	FindExecutable(fileName.Get(), T_("C:\\"), szExecutable);
@@ -563,7 +563,7 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 
   if (viewer.empty())
     {
-      tstring pager;
+      string pager;
       if (! Utils::GetEnvironmentString(T_("PAGER"), pager))
 	{
 	  pager = T_("more");
@@ -600,11 +600,11 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
       FatalError (T_("No viewer associated with file type."));
     }
 
-  tstring commandLine = viewer;
+  string commandLine = viewer;
 
-  tstring::size_type pos = 0;
+  string::size_type pos = 0;
 
-  while ((pos = commandLine.find(T_("%f"), pos)) != tstring::npos)
+  while ((pos = commandLine.find(T_("%f"), pos)) != string::npos)
     {
       commandLine.replace (pos, 2, fileName.Get());
       pos += fileName.GetLength();
@@ -626,8 +626,8 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
    _________________________________________________________________________ */
 
 void
-MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
-			       /*[in]*/ const vector<tstring> & files)
+MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const char * lpszPackageName,
+			       /*[in]*/ const vector<string> & files)
 {
   PackageInfo pi = pManager->GetPackageInfo(lpszPackageName);
   PathName fileName = pSession->GetSpecialPath(SpecialPath::DataRoot);
@@ -637,14 +637,14 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
   fileName.SetExtension (T_(".html"));
   StreamWriter writer (fileName);
   int idx = 0;
-  for (const MIKTEXCHAR * lpsz =
-	 reinterpret_cast<const MIKTEXCHAR *>(templateHtml);
+  for (const char * lpsz =
+	 reinterpret_cast<const char *>(templateHtml);
        idx < sizeof(templateHtml);
        ++ lpsz, ++ idx)
     {
       if (*lpsz == T_('%'))
 	{
-	  tstring tag;
+	  string tag;
 	  ++ lpsz;
 	  ++ idx;
 	  while (idx < sizeof(templateHtml) && *lpsz != T_('%'))
@@ -679,7 +679,7 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 	    }
 	  else if (tag == T_("TRURL"))
 	    {
-	      for (vector<tstring>::const_iterator it = files.begin();
+	      for (vector<string>::const_iterator it = files.begin();
 		   it != files.end();
 		   ++ it)
 		{
@@ -711,9 +711,9 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 
 void
 MiKTeXHelp::WriteText (/*[in]*/ StreamWriter &		writer,
-		       /*[in]*/ const tstring &		text)
+		       /*[in]*/ const string &		text)
 {
-  for (tstring::const_iterator it = text.begin(); it != text.end(); ++ it)
+  for (string::const_iterator it = text.begin(); it != text.end(); ++ it)
     {
       switch (*it)
 	{
@@ -774,13 +774,13 @@ MiKTeXHelp::Run (/*[in]*/ int		argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
     }
       
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (leftovers == 0)
     {
@@ -789,9 +789,9 @@ MiKTeXHelp::Run (/*[in]*/ int		argc,
 
   for (; *leftovers != 0; ++ leftovers)
     {
-      vector<tstring> filesByPackage;
+      vector<string> filesByPackage;
       FindDocFilesByPackage (*leftovers, filesByPackage);
-      vector<tstring> filesByName;
+      vector<string> filesByName;
       FindDocFilesByName (*leftovers, filesByName);
       if (filesByPackage.size() + filesByName.size() == 0)
 	{
@@ -839,12 +839,12 @@ __declspec(dllexport)
 int
 __cdecl
 mthelp (/*[in]*/ int			argc,
-	/*[in]*/ const MIKTEXCHAR **	argv)
+	/*[in]*/ const char **	argv)
 #else
 extern "C"
 int
 mthelp (/*[in]*/ int			argc,
-	/*[in]*/ const MIKTEXCHAR **	argv)
+	/*[in]*/ const char **	argv)
 #endif
 {
   try

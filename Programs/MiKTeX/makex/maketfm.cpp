@@ -32,7 +32,7 @@ public:
   virtual
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   virtual
@@ -56,7 +56,7 @@ private:
 
 private:
   bool
-  MakeFromHBF (/*[in]*/ const MIKTEXCHAR * lpszName);
+  MakeFromHBF (/*[in]*/ const char * lpszName);
 };
 
 /* _________________________________________________________________________
@@ -116,13 +116,13 @@ MakeTfm::CreateDestinationDirectory ()
     }
 
   // get destination path template
-  tstring templ1 =
+  string templ1 =
     pSession->GetConfigValue(MIKTEX_REGKEY_MAKETFM,
 			     MIKTEX_REGVAL_DESTDIR,
 			     T_("%R/fonts/tfm/%s/%t"));
 
-  tstring templ2;
-  for (const MIKTEXCHAR * lpsz = templ1.c_str(); *lpsz != 0; ++ lpsz)
+  string templ2;
+  for (const char * lpsz = templ1.c_str(); *lpsz != 0; ++ lpsz)
     {
       if (lpsz[0] == T_('%'))
 	{
@@ -159,7 +159,7 @@ MakeTfm::CreateDestinationDirectory ()
    _________________________________________________________________________ */
 
 bool
-MakeTfm::MakeFromHBF (/*[in]*/ const MIKTEXCHAR * lpszName)
+MakeTfm::MakeFromHBF (/*[in]*/ const char * lpszName)
 {
   // run hbf2gf to make a .pl file
   CommandLineBuilder arguments;
@@ -194,7 +194,7 @@ MakeTfm::MakeFromHBF (/*[in]*/ const MIKTEXCHAR * lpszName)
 
 void
 MakeTfm::Run (/*[in]*/ int			argc,
-	      /*[in]*/ const MIKTEXCHAR **	argv)
+	      /*[in]*/ const char **	argv)
 {
   // get command line options and name
   int optionIndex = 0;
@@ -280,7 +280,7 @@ MakeTfm::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 MKTEXAPI(maketfm) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv)
+		   /*[in]*/ const char **	argv)
 {
   try
     {

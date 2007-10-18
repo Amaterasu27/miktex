@@ -42,7 +42,7 @@ public:
 private:
   void
   AddFile (/*[in]*/ int			idx,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFileName);
+	   /*[in]*/ const char *	lpszFileName);
 
 private:
   CListCtrl listControl;

@@ -25,7 +25,7 @@ class IPrinterCallback
 public:
   virtual
   void
-  Report (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Report (/*[in]*/ const char *	lpszFormat,
 	  /*[in]*/			...)
     = 0;
 };
@@ -42,7 +42,7 @@ public:
 public:
   struct PRINTINFO
   {
-    tstring printerName;
+    string printerName;
     IPrinterCallback * pCallback;
   };
 
@@ -53,18 +53,18 @@ public:
 public:
   static
   PRINTER_INFO_2 *
-  GetPrinterInfo (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+  GetPrinterInfo (/*[in]*/ const char *	lpszPrinterName,
 		  /*[out]*/ DEVMODE **		ppDevMode);
 
 public:
   static
   DEVMODE *
-  GetDevMode (/*[in]*/ const MIKTEXCHAR * lpszPrinterName);
+  GetDevMode (/*[in]*/ const char * lpszPrinterName);
 
 public:
   static
   void
-  GetPrinterCaps (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+  GetPrinterCaps (/*[in]*/ const char *	lpszPrinterName,
 		  /*[in]*/ unsigned &		resolution);
 
 protected:
@@ -114,7 +114,7 @@ protected:
 private:
   static
   HDC
-  CreateDC (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName);
+  CreateDC (/*[in]*/ const char *	lpszPrinterName);
 
 private:
   void

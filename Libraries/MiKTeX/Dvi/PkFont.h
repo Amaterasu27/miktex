@@ -30,11 +30,11 @@ public:
 	  /*[in]*/ int			designSize,
 	  /*[in]*/ const char *		lpszAreaName,
 	  /*[in]*/ const char *		lpszFontName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+	  /*[in]*/ const char *	lpszFileName,
 	  /*[in]*/ double		tfmConf,
 	  /*[in]*/ double		conv,
 	  /*[in]*/ int			mag,
-	  /*[in]*/ const MIKTEXCHAR *	lpszMetafontMode,
+	  /*[in]*/ const char *	lpszMetafontMode,
 	  /*[in]*/ int			baseDpi);
 
 public:
@@ -63,7 +63,7 @@ private:
   Make (/*[in]*/ const string &		name,
 	/*[in]*/ int			dpi,
 	/*[in]*/ int			baseDpi,
-	/*[in]*/ const tstring &	metafontMode);
+	/*[in]*/ const string &	metafontMode);
 
 private:
   bool
@@ -81,7 +81,7 @@ private:
   int mag;
 
 private:
-  tstring metafontMode;
+  string metafontMode;
 
 private:
   int baseDpi;

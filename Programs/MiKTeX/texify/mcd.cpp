@@ -1,9 +1,9 @@
 /* mcd.cpp: MiKTeX compiler driver
 
+   Copyright (C) 1998-2007 Christian Schenk
+
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,
    2002, 2003, 2004, 2005 Free Software Foundation, Inc.
-
-   Copyright (C) 1998-2006 Christian Schenk
 
    This file is part of the MiKTeX Compiler Driver.
 
@@ -78,18 +78,10 @@ using namespace std;
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Compiler Driver")
 #endif
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define T_(x) MIKTEXTEXT(x)
 #define Q_(x) Quoted(x).c_str()
 
-const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
+const char * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_ERROR T_(",")
   MIKTEX_TRACE_PROCESS T_(",")
   PROGRAM_NAME;
@@ -100,11 +92,11 @@ const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -123,8 +115,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -135,7 +127,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -148,14 +140,14 @@ Quoted (/*[in]*/ const PathName & path)
 
 MIKTEXNORETURN
 void
-FatalError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+FatalError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGRAM_NAME << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << PROGRAM_NAME << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -202,14 +194,14 @@ public:
     return (true);
   }
 public:
-  const tstring &
+  const string &
   GetOutput ()
     const
   {
     return (output);
   }
 private:
-  tstring output;
+  string output;
 };
 
 /* _________________________________________________________________________
@@ -241,10 +233,10 @@ CompareFiles (/*[in]*/ const PathName &	fileName1,
    _________________________________________________________________________ */
 
 void
-CopyFiles (/*[in]*/ const vector<tstring> &	vec,
+CopyFiles (/*[in]*/ const vector<string> &	vec,
 	   /*[in]*/ const PathName &		destDir)
 {
-  for (vector<tstring>::const_iterator it = vec.begin();
+  for (vector<string>::const_iterator it = vec.begin();
        it != vec.end();
        ++ it)
     {
@@ -257,11 +249,11 @@ CopyFiles (/*[in]*/ const vector<tstring> &	vec,
    ReadFile
    _________________________________________________________________________ */
 
-vector<MIKTEXCHAR>
+vector<char>
 ReadFile (/*[in]*/ const PathName &	fileName)
 {
   size_t fileSize = File::GetSize(fileName);
-  vector<MIKTEXCHAR> vec (fileSize + 1);
+  vector<char> vec (fileSize + 1);
   FileStream stream (File::Open(fileName,
 				FileMode::Open,
 				FileAccess::Read));
@@ -280,7 +272,7 @@ bool
 Contains (/*[in]*/ const PathName &		fileName,
 	  /*[in]*/ regex_t *			preg)
 {
-  vector<MIKTEXCHAR> file = ReadFile(fileName);
+  vector<char> file = ReadFile(fileName);
   return (regexec(preg, &file[0], 0, 0, 0) == 0);
 }
 
@@ -291,13 +283,13 @@ Contains (/*[in]*/ const PathName &		fileName,
 
 bool
 Contains (/*[in]*/ const PathName &	fileName,
-	  /*[in]*/ const MIKTEXCHAR *	lpszText)
+	  /*[in]*/ const char *		lpszText)
 {
   auto_ptr<MemoryMappedFile> pMappedFile (MemoryMappedFile::Create());
-  const MIKTEXCHAR * ptr =
-    reinterpret_cast<MIKTEXCHAR*>(pMappedFile->Open(fileName, false));
+  const char * ptr =
+    reinterpret_cast<char*>(pMappedFile->Open(fileName, false));
   size_t size = pMappedFile->GetSize();
-  const MIKTEXCHAR * p = lpszText;
+  const char * p = lpszText;
   for (size_t i = 0; *p != 0 && i < size; ++ i, ++ ptr)
     {
       if (*ptr == *p)
@@ -318,12 +310,12 @@ Contains (/*[in]*/ const PathName &	fileName,
    FlattenStringVector
    _________________________________________________________________________ */
 
-tstring
-FlattenStringVector (/*[in]*/ const vector<tstring> &	vec,
-		     /*[in]*/ MIKTEXCHAR		sep)
+string
+FlattenStringVector (/*[in]*/ const vector<string> &	vec,
+		     /*[in]*/ char			sep)
 {
-  tstring str = T_("");
-  for (vector<tstring>::const_iterator it = vec.begin();
+  string str = T_("");
+  for (vector<string>::const_iterator it = vec.begin();
        it != vec.end();
        ++ it)
     {
@@ -331,7 +323,7 @@ FlattenStringVector (/*[in]*/ const vector<tstring> &	vec,
 	{
 	  str += sep;
 	}
-      bool mustQuote = (it->find(sep) != tstring::npos);
+      bool mustQuote = (it->find(sep) != string::npos);
       if (mustQuote)
 	{
 	  str += T_('"');
@@ -351,8 +343,8 @@ FlattenStringVector (/*[in]*/ const vector<tstring> &	vec,
    _________________________________________________________________________ */
 
 bool
-IsPrefixOf (/*[in]*/ const MIKTEXCHAR *	lpszPrefix,
-	    /*[in]*/ const tstring &	str)
+IsPrefixOf (/*[in]*/ const char *	lpszPrefix,
+	    /*[in]*/ const string &	str)
 {
   return (str.compare(0, StrLen(lpszPrefix), lpszPrefix) == 0);
 }
@@ -449,40 +441,40 @@ public:
   int maxIterations;
 
 public:
-  vector<tstring> includeDirectories;
+  vector<string> includeDirectories;
 
 public:
-  vector<tstring> texinfoCommands;
+  vector<string> texinfoCommands;
 
 public:
   MacroLanguage macroLanguage;
 
 public:
-  tstring sourceSpecialsWhere;
+  string sourceSpecialsWhere;
 
 public:
-  tstring bibtexProgram;
+  string bibtexProgram;
 
 public:
-  tstring latexProgram;
+  string latexProgram;
 
 public:
-  tstring pdflatexProgram;
+  string pdflatexProgram;
 
 public:
-  tstring makeindexProgram;
+  string makeindexProgram;
 
 public:
-  tstring makeinfoProgram;
+  string makeinfoProgram;
 
 public:
-  tstring texProgram;
+  string texProgram;
 
 public:
-  tstring pdftexProgram;
+  string pdftexProgram;
 
 public:
-  tstring texindexProgram;
+  string texindexProgram;
 
 public:
   Argv makeindexOptions;
@@ -494,13 +486,13 @@ public:
   Argv viewerOptions;
 
 public:
-  tstring traceStreams;
+  string traceStreams;
 
 private:
   void
-  SetProgramName (/*[out]*/ tstring &		str,
-		  /*[in]*/ const MIKTEXCHAR *	lpszEnvName,
-		  /*[in]*/ const MIKTEXCHAR *	lpszDefault)
+  SetProgramName (/*[out]*/ string &	str,
+		  /*[in]*/ const char *	lpszEnvName,
+		  /*[in]*/ const char *	lpszDefault)
   {
     if (! Utils::GetEnvironmentString(lpszEnvName, str))
       {
@@ -633,17 +625,17 @@ public:
 
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 public:
   void
-  Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	 /*[in]*/			...);
+  Trace (/*[in]*/ const char *	lpszFormat,
+	 /*[in]*/		...);
 
 public:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
@@ -663,8 +655,8 @@ public:
    _________________________________________________________________________ */
 
 void
-McdApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		 /*[in]*/			...)
+McdApp::Verbose (/*[in]*/ const char *	lpszFormat,
+		 /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -672,8 +664,8 @@ McdApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 			  Utils::FormatString(lpszFormat, arglist).c_str());
   if (options.verbose)
     {
-      tcout << Utils::FormatString(lpszFormat, arglist)
-	    << endl;
+      cout << Utils::FormatString(lpszFormat, arglist)
+	   << endl;
     }
   va_end (arglist);
 }
@@ -684,8 +676,8 @@ McdApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-McdApp::Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	       /*[in]*/				...)
+McdApp::Trace (/*[in]*/ const char *	lpszFormat,
+	       /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -702,15 +694,15 @@ McdApp::Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 void
 McdApp::Version ()
 {
-  tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					   VersionNumber(VER_FILEVERSION))
-	    << T_("\n\
+  cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+					  VersionNumber(VER_FILEVERSION))
+       << T_("\n\
+Copyright (C) 1998-2007 Christian Schenk\n\
 Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,\n\
               2002, 2003, 2004, 2005 Free Software Foundation, Inc.\n\
-Copyright (C) 1998-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	    << endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -728,9 +720,9 @@ public:
 
 public:
   void
-  Initialize (/*[in]*/ McdApp *			pApplication,
-	      /*[in]*/ Options *		pOptions,
-	      /*[in]*/ const MIKTEXCHAR *	lpszFileName);
+  Initialize (/*[in]*/ McdApp *		pApplication,
+	      /*[in]*/ Options *	pOptions,
+	      /*[in]*/ const char *	lpszFileName);
 
 public:
   void
@@ -778,7 +770,7 @@ private:
 
 private:
   void
-  RunIndexGenerator (/*[in]*/ const vector<tstring> & idxFiles);
+  RunIndexGenerator (/*[in]*/ const vector<string> & idxFiles);
 
 private:
   void
@@ -799,18 +791,18 @@ private:
 
 private:
   void
-  GetAuxFiles (/*[out]*/ vector<tstring> &	auxFiles,
-	       /*[out]*/ vector<tstring> *	pIdxFiles = 0);
+  GetAuxFiles (/*[out]*/ vector<string> &	auxFiles,
+	       /*[out]*/ vector<string> *	pIdxFiles = 0);
 
 private:
   void
   GetAuxFiles (/*[in]*/ const PathName &	baseName,
-	       /*[in]*/ const MIKTEXCHAR *	lpszExtension,
-	       /*[out]*/ vector<tstring> &	auxFiles);
+	       /*[in]*/ const char *		lpszExtension,
+	       /*[out]*/ vector<string> &	auxFiles);
 
 private:
   void
-  InstallProgram (/*[in]*/ const MIKTEXCHAR * lpszProgram);
+  InstallProgram (/*[in]*/ const char * lpszProgram);
 
   // the macro language
 private:
@@ -861,7 +853,7 @@ private:
 
   // contains auxiliary files from the last run
 private:
-  vector<tstring> previousAuxFiles;
+  vector<string> previousAuxFiles;
 
 private:
   bool madeTempDirectory;
@@ -921,7 +913,7 @@ Driver::~Driver ()
 void
 Driver::Initialize (/*[in]*/ McdApp *		pApplication,
 		    /*[in]*/ Options *		pOptions,
-		    /*[in]*/ const MIKTEXCHAR *	lpszFileName)
+		    /*[in]*/ const char *	lpszFileName)
 {
   this->pApplication = pApplication;
   this->pOptions = pOptions;
@@ -999,13 +991,13 @@ MacroLanguage
 Driver::GuessMacroLanguage (/*[in]*/ const PathName & fileName)
 {
   StreamReader reader (fileName);
-  tstring firstLine;
+  string firstLine;
   if (! reader.ReadLine(firstLine))
     {
       return (MacroLanguage::None);
     }
   reader.Close ();
-  if (firstLine.find(T_("input texinfo")) != tstring::npos)
+  if (firstLine.find(T_("input texinfo")) != string::npos)
     {
       return (MacroLanguage::Texinfo);
     }
@@ -1050,7 +1042,7 @@ Driver::TexinfoPreprocess (/*[in]*/ const PathName &	pathFrom,
   bool at_ifnottex = false;
   bool at_ifinfo = false;
   bool at_menu = false;
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       if (IsPrefixOf(T_("@tex"), line))
@@ -1090,7 +1082,7 @@ Driver::TexinfoPreprocess (/*[in]*/ const PathName &	pathFrom,
 
       if (commentingOut)
 	{
-	  writer.WriteLine (tstring(T_("@c texi2dvi")) + line);
+	  writer.WriteLine (string(T_("@c texi2dvi")) + line);
 	}
       else if (! deleting)
 	{
@@ -1141,7 +1133,7 @@ Driver::TexinfoUncomment (/*[in]*/ const PathName &	pathFrom,
 {
   StreamReader reader (pathFrom);
   StreamWriter writer (pathTo);
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       if (IsPrefixOf(T_("@c texi2dvi"), line))
@@ -1172,12 +1164,12 @@ Driver::TexinfoUncomment (/*[in]*/ const PathName &	pathFrom,
 void
 Driver::Set_MIKTEX_CWD ()
 {
-  tstring MIKTEX_CWD;
+  string MIKTEX_CWD;
   MIKTEX_CWD.reserve (256);
   MIKTEX_CWD += pOptions->startDirectory.Get();
   MIKTEX_CWD += T_(';');
   MIKTEX_CWD += originalInputDirectory.Get();
-  for (vector<tstring>::iterator it = pOptions->includeDirectories.begin();
+  for (vector<string>::iterator it = pOptions->includeDirectories.begin();
        it != pOptions->includeDirectories.end();
        ++ it)
     {
@@ -1215,7 +1207,7 @@ Driver::RunMakeinfo (/*[in]*/ const PathName &	pathFrom,
   commandLine.AppendOption (T_("--footnote-style="), T_("end"));
   commandLine.AppendOption (T_("-I "), originalInputDirectory);
 
-  for (vector<tstring>::iterator it = pOptions->includeDirectories.begin();
+  for (vector<string>::iterator it = pOptions->includeDirectories.begin();
        it != pOptions->includeDirectories.end();
        ++ it)
     {
@@ -1253,7 +1245,7 @@ Driver::RunMakeinfo (/*[in]*/ const PathName &	pathFrom,
    _________________________________________________________________________ */
 
 // minimum texinfo.tex version to have macro expansion
-const MIKTEXCHAR * txiprereq = T_("19990129");
+const char * txiprereq = T_("19990129");
 
 bool
 Driver::Check_texinfo_tex ()
@@ -1295,12 +1287,12 @@ Driver::Check_texinfo_tex ()
 		  0)
 	  == 0)
 	{
-	  tstring txiformat;
+	  string txiformat;
 	  for (int i = regMatch[1].rm_so; i < regMatch[1].rm_eo; ++ i)
 	    {
 	      txiformat += processOutput.GetOutput()[i];
 	    }
-	  tstring version;
+	  string version;
 	  version += processOutput.GetOutput()[regMatch[2].rm_so + 0];
 	  version += processOutput.GetOutput()[regMatch[2].rm_so + 1];
 	  version += processOutput.GetOutput()[regMatch[2].rm_so + 2];
@@ -1313,7 +1305,7 @@ Driver::Check_texinfo_tex ()
 texinfo.tex preloaded as %s, version is %s..."),
 				 txiformat.c_str(),
 				 version.c_str());
-	  newer = (_ttoi(txiprereq) <= _ttoi(version.c_str()));
+	  newer = (atoi(txiprereq) <= atoi(version.c_str()));
 	}
     }
 
@@ -1396,13 +1388,13 @@ Driver::InsertCommands ()
     {
       return;
     }
-  tstring extra = FlattenStringVector(pOptions->texinfoCommands, T_('\n'));
+  string extra = FlattenStringVector(pOptions->texinfoCommands, T_('\n'));
   pApplication->Verbose (T_("Inserting extra commands: %s"), extra.c_str());
   PathName path (extraDirectory, inputName);
   StreamWriter writer (path);
   bool inserted = false;
   StreamReader reader (pathInputFile);
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       writer.WriteLine (line);
@@ -1465,7 +1457,7 @@ Driver::RunBibTeX ()
 ChapterBib detected. Preparing to run BibTeX on first-level aux files..."));
 
       // read the main .aux file
-      vector<MIKTEXCHAR> auxFile = ReadFile(auxName);
+      vector<char> auxFile = ReadFile(auxName);
 
       regmatch_t regMatch[2];
 
@@ -1480,7 +1472,7 @@ ChapterBib detected. Preparing to run BibTeX on first-level aux files..."));
 	   offset += regMatch[0].rm_eo)
         {
 	  // get SubAuxNameNoExt out of \@input{SubAuxNameNoExt.aux}
-	  tstring tmp (&auxFile[offset + regMatch[0].rm_so + 8],
+	  string tmp (&auxFile[offset + regMatch[0].rm_so + 8],
 		       regMatch[0].rm_eo - regMatch[0].rm_so - 13);
 	  PathName subAuxNameNoExt (tmp);
 
@@ -1495,7 +1487,7 @@ ChapterBib detected. Preparing to run BibTeX on first-level aux files..."));
 
 	  PathName subDir;
 
-	  if (_tcschr(subAuxNameNoExt.Get(), PathName::AltDirectoryDelimiter)
+	  if (strchr(subAuxNameNoExt.Get(), PathName::AltDirectoryDelimiter)
 	      != 0)
 	    {
 	      // we have \@input{SubDir/SubAuxNameNoExt.aux}
@@ -1583,9 +1575,9 @@ Sub-directories not supported when --clean is in effect."));
    _________________________________________________________________________ */
 
 void
-Driver::RunIndexGenerator (/*[in]*/ const vector<tstring> & idxFiles)
+Driver::RunIndexGenerator (/*[in]*/ const vector<string> & idxFiles)
 {
-  const MIKTEXCHAR * lpszExeName =
+  const char * lpszExeName =
     (macroLanguage == MacroLanguage::Texinfo
      ? pOptions->texindexProgram.c_str()
      : pOptions->makeindexProgram.c_str());
@@ -1629,7 +1621,7 @@ Driver::RunIndexGenerator (/*[in]*/ const vector<tstring> & idxFiles)
    _________________________________________________________________________ */
 
 void
-Driver::InstallProgram (/*[in]*/ const MIKTEXCHAR *	lpszProgram)
+Driver::InstallProgram (/*[in]*/ const char *	lpszProgram)
 {
   ALWAYS_UNUSED (lpszProgram);
   PathName pathExe;
@@ -1651,7 +1643,7 @@ Driver::InstallProgram (/*[in]*/ const MIKTEXCHAR *	lpszProgram)
 void
 Driver::RunTeX ()
 {
-  const MIKTEXCHAR * lpszExeName =
+  const char * lpszExeName =
     (macroLanguage == MacroLanguage::Texinfo
      ? (pOptions->outputType == OutputType::PDF
 	? pOptions->pdftexProgram.c_str()
@@ -1752,7 +1744,7 @@ Driver::Ready ()
       return (false);
     }
 
-  vector<tstring> auxFiles;
+  vector<string> auxFiles;
 
   GetAuxFiles (auxFiles);
 
@@ -1765,7 +1757,7 @@ Driver::Ready ()
 
   // File list is the same.  We must compare each file until we find
   // a difference.
-  for (vector<tstring>::iterator it = auxFiles.begin();
+  for (vector<string>::iterator it = auxFiles.begin();
        it != auxFiles.end();
        ++ it)
     {
@@ -1792,7 +1784,7 @@ Driver::Ready ()
 void
 Driver::InstallOutputFile ()
 {
-  const MIKTEXCHAR * lpszExt
+  const char * lpszExt
     = (pOptions->outputType == OutputType::PDF ? T_(".pdf") : T_(".dvi"));
   pApplication->Verbose (T_("Copying %s file from %s to %s..."),
 			 lpszExt,
@@ -1810,8 +1802,8 @@ Driver::InstallOutputFile ()
 
 void
 Driver::GetAuxFiles (/*[in]*/ const PathName &		baseName,
-		      /*[in]*/ const MIKTEXCHAR *	lpszExtension,
-		      /*[in]*/ vector<tstring> &	vec)
+		      /*[in]*/ const char *	lpszExtension,
+		      /*[in]*/ vector<string> &	vec)
 {
   PathName pattern (0, baseName, lpszExtension);
 
@@ -1838,7 +1830,7 @@ Driver::GetAuxFiles (/*[in]*/ const PathName &		baseName,
       // first character is not a backslash or single quote.
       FileStream stream
 	(File::Open(entry.name, FileMode::Open, FileAccess::Read));
-      MIKTEXCHAR buf[1];
+      char buf[1];
       if (stream.Read(buf, 1) == 1
 	  && (buf[0] == T_('\\')
 	      || buf[0] == T_('\'')))
@@ -1862,8 +1854,8 @@ Driver::GetAuxFiles (/*[in]*/ const PathName &		baseName,
    _________________________________________________________________________ */
 
 void
-Driver::GetAuxFiles (/*[out]*/ vector<tstring> &		auxFiles,
-		     /*[out]*/ vector<tstring> *		pIdxFiles)
+Driver::GetAuxFiles (/*[out]*/ vector<string> &		auxFiles,
+		     /*[out]*/ vector<string> *		pIdxFiles)
 {
   auxFiles.clear ();
 
@@ -1875,7 +1867,7 @@ Driver::GetAuxFiles (/*[out]*/ vector<tstring> &		auxFiles,
   GetAuxFiles (inputNameNoExt, T_(".?o?"), auxFiles);
   GetAuxFiles (inputNameNoExt, T_(".aux"), auxFiles);
 
-  vector<tstring> files;
+  vector<string> files;
 
   GetAuxFiles (inputNameNoExt, T_(".??"), files);
 
@@ -1908,7 +1900,7 @@ Driver::GetAuxFiles (/*[out]*/ vector<tstring> &		auxFiles,
 void
 Driver::RunViewer ()
 {
-  const MIKTEXCHAR * lpszExt
+  const char * lpszExt
     = (pOptions->outputType == OutputType::PDF ? T_(".pdf") : T_(".dvi"));
 
   PathName pathFileName (0, inputNameNoExt, lpszExt);
@@ -1931,7 +1923,7 @@ Driver::RunViewer ()
     }
   else
     {
-      MIKTEXCHAR szExecutable[BufferSizes::MaxPath];
+      char szExecutable[BufferSizes::MaxPath];
       if (FindExecutable(pathDest.Get(),
 			 pOptions->startDirectory.Get(),
 			 szExecutable)
@@ -1979,7 +1971,7 @@ Driver::Run ()
   for (int i = 0; i < pOptions->maxIterations; ++ i)
     {
       Application::CheckCancel ();
-      vector<tstring> idxFiles;
+      vector<string> idxFiles;
       GetAuxFiles (previousAuxFiles, &idxFiles);
       if (previousAuxFiles.size() > 0)
 	{
@@ -2244,8 +2236,8 @@ Turn on tracing.\
    _________________________________________________________________________ */
 
 void
-McdApp::Run (/*[in]*/ int			argc,
-	     /*[in]*/ const MIKTEXCHAR **	argv)
+McdApp::Run (/*[in]*/ int		argc,
+	     /*[in]*/ const char **	argv)
 {
   Session::InitInfo initInfo (argv[0]);
 
@@ -2255,7 +2247,7 @@ McdApp::Run (/*[in]*/ int			argc,
 
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_AT:
@@ -2288,11 +2280,11 @@ McdApp::Run (/*[in]*/ int			argc,
 	    break;
 	  }
 	case OPT_LANGUAGE:
-	  if (_tcsicmp(lpszOptArg, T_("latex")) == 0)
+	  if (_stricmp(lpszOptArg, T_("latex")) == 0)
 	    {
 	      options.macroLanguage = MacroLanguage::LaTeX;
 	    }
-	  else if (_tcsicmp(lpszOptArg, T_("texinfo")) == 0)
+	  else if (_stricmp(lpszOptArg, T_("texinfo")) == 0)
 	    {
 	      options.macroLanguage = MacroLanguage::Texinfo;
 	    }
@@ -2360,7 +2352,7 @@ McdApp::Run (/*[in]*/ int			argc,
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       FatalError (T_("%s"), msg.c_str());
@@ -2373,7 +2365,7 @@ McdApp::Run (/*[in]*/ int			argc,
       FatalError (T_("Missing file argument."));
     }
 
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (options.traceStreams.length() > 0)
     {
@@ -2412,8 +2404,8 @@ extern "C"
 __declspec(dllexport)
 int
 __cdecl
-mcdmain (/*[in]*/ int			argc,
-	 /*[in]*/ const MIKTEXCHAR **	argv)
+mcdmain (/*[in]*/ int		argc,
+	 /*[in]*/ const char **	argv)
 {
   try
     {

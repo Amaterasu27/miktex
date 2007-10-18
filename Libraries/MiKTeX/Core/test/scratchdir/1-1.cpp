@@ -25,7 +25,7 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  TEST (FindFile(T_("a.txt"), T_(".")));
+  TEST (FindFile("a.txt", "."));
 }
 END_TEST_FUNCTION();
 

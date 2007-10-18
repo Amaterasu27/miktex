@@ -117,7 +117,7 @@ comSession::RegisterRootDirectories (/*[in]*/ BSTR	rootDirectories)
   try
     {
       CreateSession ();
-      pSession->RegisterRootDirectories(tstring(CW2CT(rootDirectories)));
+      pSession->RegisterRootDirectories(string(CW2CT(rootDirectories)));
     }
   catch (const _com_error & e)
     {
@@ -131,10 +131,10 @@ comSession::RegisterRootDirectories (/*[in]*/ BSTR	rootDirectories)
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("sessionsvc"),
+	MiKTeXException("sessionsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -185,10 +185,10 @@ comSession::FindPkFile (/*[in]*/ BSTR		fontName,
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("sessionsvc"),
+	MiKTeXException("sessionsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -290,10 +290,10 @@ comSession::GetMiKTeXSetupInfo (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo)
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("sessionsvc"),
+	MiKTeXException("sessionsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -330,10 +330,10 @@ comSession::GetRootDirectory (/*[in]*/ LONG		rootIdx,
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("sessionsvc"),
+	MiKTeXException("sessionsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -384,10 +384,10 @@ comSession::FindFile (/*[in]*/ BSTR			fileName,
   catch (const exception & e)
     {
       lastMiKTeXException =
-	MiKTeXException(T_("sessionsvc"),
+	MiKTeXException("sessionsvc",
 			e.what(),
 			0,
-			T_(__FILE__),
+			__FILE__,
 			__LINE__);
       hr = E_FAIL;
     }
@@ -425,8 +425,8 @@ ULONG
 GetAccessPermissionsForLUAServer (/*[out]*/ SECURITY_DESCRIPTOR **	ppSD)
 {
   DllProc4<BOOL, LPCWSTR, DWORD, PSECURITY_DESCRIPTOR, PULONG>
-    pConvert (T_("Advapi32.dll"),
-	      T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"));
+    pConvert ("Advapi32.dll",
+	      "ConvertStringSecurityDescriptorToSecurityDescriptorW");
   LPWSTR lpszSDDL = L"O:BAG:BAD:(A;;0x3;;;IU)(A;;0x3;;;SY)";
   SECURITY_DESCRIPTOR * pSD = 0;
   ULONG size = 0;
@@ -436,7 +436,7 @@ GetAccessPermissionsForLUAServer (/*[out]*/ SECURITY_DESCRIPTOR **	ppSD)
 		 &size))
     {
       FATAL_WINDOWS_ERROR
-	(T_("ConvertStringSecurityDescriptorToSecurityDescriptorW"),
+	("ConvertStringSecurityDescriptorToSecurityDescriptorW",
 	 0);
     }
   *ppSD = pSD;
@@ -457,7 +457,7 @@ comSession::UpdateRegistry (/*[in]*/ BOOL doRegister)
     {
       vector<_ATL_REGMAP_ENTRY> regMapEntries;
       _ATL_REGMAP_ENTRY rme;
-      tstring str;
+      string str;
       if (IsWindowsNT())
 	{
 	  SECURITY_DESCRIPTOR * pSd;
@@ -468,7 +468,7 @@ comSession::UpdateRegistry (/*[in]*/ BOOL doRegister)
       else
 	{
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	  str = T_("00");
+	  str = "00";
 #else
 	  UNSUPPORTED_PLATFORM ();
 #endif

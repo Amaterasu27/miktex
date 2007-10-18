@@ -1,7 +1,7 @@
 /* epstopdf.cpp: epstopdf
 
-   Copyright (C) 1998-2001 by Sebastian Rahtz et al.
    Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 1998-2001 by Sebastian Rahtz et al.
 
    This file is part of EPStoPDF.
 
@@ -50,18 +50,10 @@ using namespace std;
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX EPS-to-PDF Converter")
 #endif
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #define T_(x) MIKTEXTEXT(x)
 #define Q_(x) Quoted(x).c_str()
 
-const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
+const char * DEFAULT_TRACE_STREAMS =
   MIKTEX_TRACE_ERROR T_(",")
   MIKTEX_TRACE_PROCESS T_(",")
   PROGRAM_NAME;
@@ -72,11 +64,11 @@ const MIKTEXCHAR * DEFAULT_TRACE_STREAMS =
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (_tcschr(lpsz, T_(' ')) != 0);
-  tstring result;
+  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -95,8 +87,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -107,7 +99,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -137,46 +129,46 @@ public:
 public:
   void
   Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+       /*[in]*/ const char **	argv);
 
 private:
   void
-  Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Trace (/*[in]*/ const char *	lpszFormat,
 	 /*[in]*/			...);
 
 private:
   void
-  Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Verbose (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   void
-  PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  PrintOnly (/*[in]*/ const char *	lpszFormat,
 	     /*[in]*/				...);
 
 private:
   void
-  Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  Warning (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
-  Fatal (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	 /*[in]*/			...);
+  Fatal (/*[in]*/ const char *	lpszFormat,
+	 /*[in]*/		...);
 
 private:
   bool
-  GetLine (/*[out]*/ tstring & line);
+  GetLine (/*[out]*/ string & line);
 
 private:
   void
-  PutFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  PutFormattedLine (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...);
 
 private:
   void
-  PutLine (/*[in]*/ const tstring &	line);
+  PutLine (/*[in]*/ const string &	line);
 
 private:
   void
@@ -187,7 +179,7 @@ private:
 
 private:
   bool
-  BoundingBoxWithValues (/*[in]*/ const tstring &	line,
+  BoundingBoxWithValues (/*[in]*/ const string &	line,
 			 /*[out]*/ double &		llx,
 			 /*[out]*/ double &		lly,
 			 /*[out]*/ double &		urx,
@@ -195,7 +187,7 @@ private:
 
 private:
   bool
-  BoundingBoxWithAtEnd (/*[in]*/ const tstring &	line);
+  BoundingBoxWithAtEnd (/*[in]*/ const string &	line);
 
 private:
   void
@@ -207,7 +199,7 @@ private:
 
 private:
   void
-  GetFirstLine (/*[out]*/ tstring & line);
+  GetFirstLine (/*[out]*/ string & line);
 
 private:
   void
@@ -218,7 +210,7 @@ private:
   void
   PrepareOutput (/*[in]*/ bool				runAsFilter,
 		 /*[in]*/ bool				runGhostscript,
-		 /*[in]*/ const MIKTEXCHAR *		lpszGSExe,
+		 /*[in]*/ const char *			lpszGSExe,
 		 /*[in]*/ const CommandLineBuilder &	gsOptions,
 		 /*[in]*/ const PathName &		outFile);
 
@@ -238,7 +230,7 @@ private:
   bool hiResBoundingBox;
   
 private:
-  tstring boundingBoxName;
+  string boundingBoxName;
   
 private:
   FileStream inStream;
@@ -265,7 +257,7 @@ private:
   double enlarge;
 
 private:
-  tstring pdfVersion;
+  string pdfVersion;
 
 private:
   static struct poptOption aoption[];
@@ -437,7 +429,7 @@ stream."),
   },
 
   {
-    _T("nopdfvers"), 0,
+    T_("nopdfvers"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_NOPDFVERS,
     T_("Do not set the PDF version."),
@@ -453,7 +445,7 @@ stream."),
   },
 
   {
-    _T("print-only"), T_('n'),
+    T_("print-only"), T_('n'),
     POPT_ARG_NONE, 0,
     OPT_PRINT_ONLY,
     T_("Print what would be done."),
@@ -461,7 +453,7 @@ stream."),
   },
   
   {
-    _T("pdf-version"), 0,
+    T_("pdf-version"), 0,
     POPT_ARG_STRING, 0,
     OPT_PDF_VERSION,
     T_("Set the PDF version."),
@@ -469,7 +461,7 @@ stream."),
   },
   
   {
-    _T("pdfvers"), 0,
+    T_("pdfvers"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PDF_VERSION,
     T_("Set the PDF version."),
@@ -512,7 +504,7 @@ Turn on tracing.\
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+EpsToPdfApp::Trace (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   va_list arglist;
@@ -528,8 +520,8 @@ EpsToPdfApp::Trace (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+EpsToPdfApp::Verbose (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   if (! verbose || printOnly)
     {
@@ -537,8 +529,8 @@ EpsToPdfApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cout << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
 }
 
@@ -548,8 +540,8 @@ EpsToPdfApp::Verbose (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			/*[in]*/			...)
+EpsToPdfApp::PrintOnly (/*[in]*/ const char *	lpszFormat,
+			/*[in]*/		...)
 {
   if (! printOnly)
     {
@@ -557,8 +549,8 @@ EpsToPdfApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cout << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
 }
 
@@ -568,14 +560,14 @@ EpsToPdfApp::PrintOnly (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-		      /*[in]*/				...)
+EpsToPdfApp::Warning (/*[in]*/ const char *	lpszFormat,
+		      /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << T_("warning: ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << T_("warning: ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
 }
 
@@ -586,14 +578,14 @@ EpsToPdfApp::Warning (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 MIKTEXNORETURN
 void
-EpsToPdfApp::Fatal (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+EpsToPdfApp::Fatal (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGRAM_NAME << T_(": ")
-	<< Utils::FormatString(lpszFormat, arglist)
-	<< endl;
+  cerr << PROGRAM_NAME << T_(": ")
+       << Utils::FormatString(lpszFormat, arglist)
+       << endl;
   va_end (arglist);
   throw (1);
 }
@@ -604,7 +596,7 @@ EpsToPdfApp::Fatal (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 bool
-EpsToPdfApp::GetLine (/*[out]*/ tstring & line)
+EpsToPdfApp::GetLine (/*[out]*/ string & line)
 {
   if (stopReadingAt > 0)
     {
@@ -617,8 +609,8 @@ EpsToPdfApp::GetLine (/*[out]*/ tstring & line)
   bool done = Utils::ReadUntilDelim(line, T_('\n'), inStream.Get());
   if (done)
     {
-      tstring::size_type l = line.length();
-      for (tstring::const_reverse_iterator it = line.rbegin();
+      string::size_type l = line.length();
+      for (string::const_reverse_iterator it = line.rbegin();
 	   it != line.rend();
 	   ++ it)
 	{
@@ -640,16 +632,16 @@ EpsToPdfApp::GetLine (/*[out]*/ tstring & line)
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::PutFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
-			       /*[in]*/				...)
+EpsToPdfApp::PutFormattedLine (/*[in]*/ const char *	lpszFormat,
+			       /*[in]*/			...)
 {
   if (! printOnly)
     {
       va_list marker;
       va_start (marker, lpszFormat);
-      _vftprintf (outStream.Get(), lpszFormat, marker);
+      vfprintf (outStream.Get(), lpszFormat, marker);
       va_end (marker);
-      _fputtc (T_('\n'), outStream.Get());
+      fputc (T_('\n'), outStream.Get());
     }
 }
 
@@ -659,11 +651,11 @@ EpsToPdfApp::PutFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::PutLine (/*[in]*/ const tstring &	line)
+EpsToPdfApp::PutLine (/*[in]*/ const string &	line)
 {
   if (! printOnly)
     {
-      _ftprintf (outStream.Get(), T_("%s\n"), line.c_str());
+      fprintf (outStream.Get(), T_("%s\n"), line.c_str());
     }
 }
 
@@ -702,7 +694,7 @@ EpsToPdfApp::CorrectBoundingBox (/*[in]*/ double llx,
    _________________________________________________________________________ */
 
 bool
-EpsToPdfApp::BoundingBoxWithValues (/*[in]*/ const tstring &	line,
+EpsToPdfApp::BoundingBoxWithValues (/*[in]*/ const string &	line,
 				    /*[out]*/ double &		llx,
 				    /*[out]*/ double &		lly,
 				    /*[out]*/ double &		urx,
@@ -713,14 +705,14 @@ EpsToPdfApp::BoundingBoxWithValues (/*[in]*/ const tstring &	line,
       return (false);
     }
 #if _MSC_VER < 1400
-#  define _stscanf_s _stscanf
+#  define sscanf_s sscanf
 #endif
-  if (_stscanf_s(line.c_str() + boundingBoxName.length(),
-		 T_(" %lf %lf %lf %lf"),
-		 &llx,
-		 &lly,
-		 &urx,
-		 &ury)
+  if (sscanf_s(line.c_str() + boundingBoxName.length(),
+	       T_(" %lf %lf %lf %lf"),
+	       &llx,
+	       &lly,
+	       &urx,
+	       &ury)
       != 4)
     {
       return (false);
@@ -734,14 +726,14 @@ EpsToPdfApp::BoundingBoxWithValues (/*[in]*/ const tstring &	line,
    _________________________________________________________________________ */
 
 bool
-EpsToPdfApp::BoundingBoxWithAtEnd (/*[in]*/ const tstring &	line)
+EpsToPdfApp::BoundingBoxWithAtEnd (/*[in]*/ const string &	line)
 {
   if (line.compare(0, boundingBoxName.length(), boundingBoxName) != 0)
     {
       return (false);
     }
-  const MIKTEXCHAR * lpsz = line.c_str() + boundingBoxName.length();
-  while (_istspace(*lpsz))
+  const char * lpsz = line.c_str() + boundingBoxName.length();
+  while (isspace(*lpsz))
     {
       ++ lpsz;
     }
@@ -756,7 +748,7 @@ EpsToPdfApp::BoundingBoxWithAtEnd (/*[in]*/ const tstring &	line)
 void
 EpsToPdfApp::ScanHeader ()
 {
-  tstring line;
+  string line;
 
   while (GetLine(line))
     {
@@ -838,7 +830,7 @@ EpsToPdfApp::ReadDosBinary4 ()
    _________________________________________________________________________ */
 
 void
-EpsToPdfApp::GetFirstLine (/*[out]*/ tstring & line)
+EpsToPdfApp::GetFirstLine (/*[out]*/ string & line)
 {
   unsigned char buf[4];
   if (inStream.Read(buf, 4) != 4)
@@ -847,8 +839,8 @@ EpsToPdfApp::GetFirstLine (/*[out]*/ tstring & line)
     }
   if (buf[0] == '%' && buf[1] == '!' && buf[2] == 'P' && buf[3] == 'S')
     {
-      line = _T("%!PS");
-      tstring line1;
+      line = T_("%!PS");
+      string line1;
       stopReadingAt = 0;
       if (GetLine(line1))
 	{
@@ -907,7 +899,7 @@ EpsToPdfApp::PrepareInput (/*[in]*/ bool		runAsFilter,
 void
 EpsToPdfApp::PrepareOutput (/*[in]*/ bool			runAsFilter,
 			    /*[in]*/ bool			runGhostscript,
-			    /*[in]*/ const MIKTEXCHAR *		lpszGSExe,
+			    /*[in]*/ const char *		lpszGSExe,
 			    /*[in]*/ const CommandLineBuilder & gsOptions,
 			    /*[in]*/ const PathName &		outFile)
 {
@@ -977,7 +969,7 @@ EpsToPdfApp::PrepareOutput (/*[in]*/ bool			runAsFilter,
 
 void
 EpsToPdfApp::Run (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv)
+		  /*[in]*/ const char **	argv)
 {
   PathName outFile;
   
@@ -994,7 +986,7 @@ EpsToPdfApp::Run (/*[in]*/ int			argc,
 
   while ((option = popt.GetNextOpt()) >= 0)
     {
-      const MIKTEXCHAR * lpszOptArg = popt.GetOptArg();
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_ANTIALIASING:
@@ -1071,21 +1063,21 @@ EpsToPdfApp::Run (/*[in]*/ int			argc,
 	  verbose = true;
 	  break;
 	case OPT_VERSION:
-	  tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+	  cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					       VersionNumber(VER_FILEVERSION))
-		<< T_("\n\
+	       << T_("\n\
+Copyright (C) 2000-2007 Christian Schenk\n\
 Copyright (C) 1998-2001 by Sebastian Rahtz et al.\n\
-Copyright (C) 2000-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-		<< endl;
+	       << endl;
 	  return;
 	}
     }
 
   if (option != -1)
     {
-      tstring msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
       msg += T_(": ");
       msg += popt.Strerror(option);
       Fatal (T_("%s"), msg.c_str());
@@ -1096,7 +1088,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   PathName inputFile;
 
   int argCount = popt.GetArgCount();
-  const MIKTEXCHAR ** leftovers = popt.GetArgs();
+  const char ** leftovers = popt.GetArgs();
 
   if (runAsFilter)
     {
@@ -1181,7 +1173,7 @@ Input file cannot be specified together with --filter option."));
       Verbose (T_("Making %s from %s..."), Q_(outFile), Q_(inputFile));
     }
 
-  MIKTEXCHAR szGSExe[BufferSizes::MaxPath];
+  char szGSExe[BufferSizes::MaxPath];
 
   if (runGhostscript)
     {
@@ -1191,7 +1183,7 @@ Input file cannot be specified together with --filter option."));
   PrepareInput (runAsFilter, inputFile);
   PrepareOutput (runAsFilter, runGhostscript, szGSExe, gsOptions, outFile);
 
-  tstring line;
+  string line;
 
   GetFirstLine (line);
 
@@ -1232,7 +1224,7 @@ Input file cannot be specified together with --filter option."));
 
 int
 main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+      /*[in]*/ const char **	argv)
 {
   try
     {

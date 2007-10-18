@@ -79,10 +79,10 @@ Printer::~Printer ()
    _________________________________________________________________________ */
 
 DEVMODE *
-Printer::GetDevMode (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName)
+Printer::GetDevMode (/*[in]*/ const char *	lpszPrinterName)
 {
   HANDLE hPrinter;
-  if (! OpenPrinter(const_cast<MIKTEXCHAR *>(lpszPrinterName), &hPrinter, 0))
+  if (! OpenPrinter(const_cast<char *>(lpszPrinterName), &hPrinter, 0))
     {
       FATAL_WINDOWS_ERROR (T_("OpenPrinter"), lpszPrinterName);
     }
@@ -90,7 +90,7 @@ Printer::GetDevMode (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName)
   long bytesNeeded =
     DocumentProperties(0,
 		       hPrinter,
-		       const_cast<MIKTEXCHAR *>(lpszPrinterName),
+		       const_cast<char *>(lpszPrinterName),
 		       0,
 		       0,
 		       0);
@@ -105,7 +105,7 @@ Printer::GetDevMode (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName)
     }
   if (DocumentProperties(0,
 			 hPrinter,
-			 const_cast<MIKTEXCHAR *>(lpszPrinterName),
+			 const_cast<char *>(lpszPrinterName),
 			 pDevMode,
 			 0,
 			 DM_OUT_BUFFER)
@@ -123,11 +123,11 @@ Printer::GetDevMode (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName)
    _________________________________________________________________________ */
 
 PRINTER_INFO_2 *
-Printer::GetPrinterInfo (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+Printer::GetPrinterInfo (/*[in]*/ const char *	lpszPrinterName,
 			 /*[in]*/ DEVMODE **		ppDevMode)
 {
   HANDLE hPrinter;
-  if (! OpenPrinter(const_cast<MIKTEXCHAR*>(lpszPrinterName), &hPrinter, 0))
+  if (! OpenPrinter(const_cast<char*>(lpszPrinterName), &hPrinter, 0))
     {
       FATAL_WINDOWS_ERROR (T_("OpenPrinter"), lpszPrinterName);
     }
@@ -159,7 +159,7 @@ Printer::GetPrinterInfo (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
       long bytesNeeded =
 	DocumentProperties(0,
 			   hPrinter,
-			   const_cast<MIKTEXCHAR*>(lpszPrinterName),
+			   const_cast<char*>(lpszPrinterName),
 			   0,
 			   0,
 			   0);
@@ -174,7 +174,7 @@ Printer::GetPrinterInfo (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
 	}
       if (DocumentProperties(0,
 			     hPrinter,
-			     const_cast<MIKTEXCHAR*>(lpszPrinterName),
+			     const_cast<char*>(lpszPrinterName),
 			     *ppDevMode,
 			     0,
 			     DM_OUT_BUFFER)
@@ -194,7 +194,7 @@ Printer::GetPrinterInfo (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
    _________________________________________________________________________ */
 
 HDC
-Printer::CreateDC (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName)
+Printer::CreateDC (/*[in]*/ const char *	lpszPrinterName)
 {
   DEVMODE * pDevMode = 0;
   PRINTER_INFO_2 * p2 = GetPrinterInfo(lpszPrinterName, &pDevMode);
@@ -236,7 +236,7 @@ Printer::CreateDC ()
    _________________________________________________________________________ */
 
 void
-Printer::GetPrinterCaps (/*[in]*/ const MIKTEXCHAR *	lpszPrinterName,
+Printer::GetPrinterCaps (/*[in]*/ const char *	lpszPrinterName,
 			 /*[in]*/ unsigned &		resolution)
 {
   HDC hdc = CreateDC(lpszPrinterName);

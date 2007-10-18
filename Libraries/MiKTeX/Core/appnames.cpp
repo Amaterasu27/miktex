@@ -29,7 +29,7 @@
    _________________________________________________________________________ */
 
 void
-SessionImpl::PushAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
+SessionImpl::PushAppName (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);
 
@@ -37,7 +37,7 @@ SessionImpl::PushAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
 
   applicationNames.reserve (100);
 
-  tstring newApplicationNames;
+  string newApplicationNames;
 
   newApplicationNames.reserve (applicationNames.length() + 40);
 
@@ -51,7 +51,7 @@ SessionImpl::PushAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
 
   applicationNames = newApplicationNames;
 
-  trace_config->WriteFormattedLine (T_("core"),
+  trace_config->WriteFormattedLine ("core",
 				    T_("application tags: %s"),
 				    applicationNames.c_str());
 }
@@ -62,7 +62,7 @@ SessionImpl::PushAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
    _________________________________________________________________________ */
 
 void
-SessionImpl::PushBackAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
+SessionImpl::PushBackAppName (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);
 
@@ -77,7 +77,7 @@ SessionImpl::PushBackAppName (/*[in]*/ const MIKTEXCHAR * lpszName)
 
   applicationNames += lpszName;
 
-  trace_config->WriteFormattedLine (T_("core"),
+  trace_config->WriteFormattedLine ("core",
 				    T_("application tags: %s"),
 				    applicationNames.c_str());
 }

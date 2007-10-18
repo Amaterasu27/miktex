@@ -25,9 +25,9 @@
 
 #include "internal.h"
 
-const MIKTEXCHAR * WHITESPACE = T_(" \t\r\n");
+const char * WHITESPACE = " \t\r\n";
 
-const MIKTEXCHAR * const MAP_SEARCH_PATH = MAKE_SEARCH_PATH(T_("fontname"));
+const char * const MAP_SEARCH_PATH = MAKE_SEARCH_PATH("fontname");
 
 /* _________________________________________________________________________
 
@@ -35,8 +35,8 @@ const MIKTEXCHAR * const MAP_SEARCH_PATH = MAKE_SEARCH_PATH(T_("fontname"));
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(int)
-IsPrefixOf (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	    /*[in]*/ const MIKTEXCHAR *	lpsz2)
+IsPrefixOf (/*[in]*/ const char *	lpsz1,
+	    /*[in]*/ const char *	lpsz2)
 {
   size_t l1 = StrLen(lpsz1);
   return (l1 <= StrLen(lpsz2) && StrNCmp(lpsz1, lpsz2, l1) == 0);
@@ -48,8 +48,8 @@ IsPrefixOf (/*[in]*/ const MIKTEXCHAR *	lpsz1,
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(bool)
-SessionImpl::FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-				/*[out]*/ MIKTEXCHAR *		lpszTypeface)
+SessionImpl::FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
+				/*[out]*/ char *		lpszTypeface)
 {
   const size_t FONT_ABBREV_LENGTH = 2;
 
@@ -59,25 +59,25 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
     }
 
   // "ptmr8r" => "tm"
-  MIKTEXCHAR szFontAbbrev[FONT_ABBREV_LENGTH + 1];
+  char szFontAbbrev[FONT_ABBREV_LENGTH + 1];
   CopyString2 (szFontAbbrev,
 	       FONT_ABBREV_LENGTH + 1,
 	       lpszFontName + 1,
 	       FONT_ABBREV_LENGTH);
 
   PathName pathFileName;
-  if (! FindFile(T_("typeface.map"),
+  if (! FindFile("typeface.map",
 		 MAP_SEARCH_PATH,
 		 pathFileName))
     {
-      FATAL_MIKTEX_ERROR (T_("FindInTypefaceMap"),
+      FATAL_MIKTEX_ERROR ("FindInTypefaceMap",
 			  T_("typeface.map not found"),
 			  0);
     }
 
   StreamReader reader (pathFileName);
 
-  tstring line;
+  string line;
   while (reader.ReadLine(line))
     {
       Tokenizer tok (line.c_str(), WHITESPACE);
@@ -93,7 +93,7 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	  continue;
 	}
       Utils::CopyString (lpszTypeface, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine (T_("core"), T_("found \"%s\" in typeface.map"), lpszTypeface);
+      trace_fonts->WriteFormattedLine ("core", T_("found \"%s\" in typeface.map"), lpszTypeface);
       return (true);
     }
 
@@ -106,9 +106,9 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-				/*[out]*/ MIKTEXCHAR *	lpszSupplier,
-				/*[out]*/ MIKTEXCHAR *	lpszTypeface)
+SessionImpl::FindInSupplierMap (/*[in]*/ const char *	lpszFontName,
+				/*[out]*/ char *	lpszSupplier,
+				/*[out]*/ char *	lpszTypeface)
 {
   const size_t SUPPLIER_ABBREV_LENGTH = 1;
 
@@ -118,25 +118,25 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
     }
 
   // "ptmr8r" => "p"
-  MIKTEXCHAR szSupplierAbbrev[SUPPLIER_ABBREV_LENGTH + 1];
+  char szSupplierAbbrev[SUPPLIER_ABBREV_LENGTH + 1];
   CopyString2 (szSupplierAbbrev,
 	       SUPPLIER_ABBREV_LENGTH + 1,
 	       lpszFontName,
 	       SUPPLIER_ABBREV_LENGTH);
 
   PathName pathFileName;
-  if (! FindFile(T_("supplier.map"),
+  if (! FindFile("supplier.map",
 		 MAP_SEARCH_PATH,
 		 pathFileName))
     {
-      FATAL_MIKTEX_ERROR (T_("FindInSupplierMap"),
+      FATAL_MIKTEX_ERROR ("FindInSupplierMap",
 			  T_("supplier.map not found"),
 			  0);
     }
 
   StreamReader reader (pathFileName);
 
-  tstring line;
+  string line;
   bool bFound = false;
   while (! bFound && reader.ReadLine(line))
     {
@@ -151,7 +151,7 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	  continue;
 	}
       Utils::CopyString (lpszSupplier, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine (T_("core"), T_("found \"%s\" in supplier.map"), lpszSupplier);
+      trace_fonts->WriteFormattedLine ("core", T_("found \"%s\" in supplier.map"), lpszSupplier);
       bFound = true;
     }
 
@@ -164,23 +164,23 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			       /*[out]*/ MIKTEXCHAR *		lpszSupplier,
-			       /*[out]*/ MIKTEXCHAR *		lpszTypeface)
+SessionImpl::FindInSpecialMap (/*[in]*/ const char *	lpszFontName,
+			       /*[out]*/ char *		lpszSupplier,
+			       /*[out]*/ char *		lpszTypeface)
 {
   PathName pathFileName;
-  if (! FindFile(T_("special.map"),
+  if (! FindFile("special.map",
 		 MAP_SEARCH_PATH,
 		 pathFileName))
     {
-      FATAL_MIKTEX_ERROR (T_("FindInSpecialMap"),
+      FATAL_MIKTEX_ERROR ("FindInSpecialMap",
 			  T_("special.map not found"),
 			  0);
     }
 
   StreamReader reader (pathFileName);
 
-  tstring line;
+  string line;
   bool bFound = false;
   while (! bFound && reader.ReadLine(line))
     {
@@ -205,7 +205,7 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	  continue;
 	}
       Utils::CopyString (lpszTypeface, BufferSizes::MaxPath, tok.GetCurrent());
-      trace_fonts->WriteFormattedLine (T_("core"),
+      trace_fonts->WriteFormattedLine ("core",
 	     T_("found \"%s\"/\"%s\" in special.map"),
 	     lpszSupplier,
 	     lpszTypeface);
@@ -221,9 +221,9 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::InternalGetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-				  /*[out]*/ MIKTEXCHAR *	lpszSupplier,
-				  /*[out]*/ MIKTEXCHAR *	lpszTypeface)
+SessionImpl::InternalGetFontInfo (/*[in]*/ const char *	lpszFontName,
+				  /*[out]*/ char *	lpszSupplier,
+				  /*[out]*/ char *	lpszTypeface)
 {
   return (FindInSpecialMap(lpszFontName, lpszSupplier, lpszTypeface)
 	  || FindInSupplierMap(lpszFontName, lpszSupplier, lpszTypeface));
@@ -235,12 +235,12 @@ SessionImpl::InternalGetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 void
-SessionImpl::SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
-			    /*[out]*/ MIKTEXCHAR *	lpszFontType,
-			    /*[out]*/ MIKTEXCHAR *	lpszSupplier,
-			    /*[out]*/ MIKTEXCHAR *	lpszTypeface,
-			    /*[out]*/ MIKTEXCHAR *	lpszFontName,
-			    /*[out]*/ MIKTEXCHAR *	lpszPointSize)
+SessionImpl::SplitFontPath (/*[in]*/ const char *	lpszFontPath,
+			    /*[out]*/ char *	lpszFontType,
+			    /*[out]*/ char *	lpszSupplier,
+			    /*[out]*/ char *	lpszTypeface,
+			    /*[out]*/ char *	lpszFontName,
+			    /*[out]*/ char *	lpszPointSize)
 {
   MIKTEX_ASSERT_STRING (lpszFontPath);
   MIKTEX_ASSERT_PATH_BUFFER_OR_NIL (lpszFontType);
@@ -270,10 +270,10 @@ SessionImpl::SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
 	  if (SplitTEXMFPath(lpszFontPath, root, pathRel)
 	      != INVALID_ROOT_INDEX)
 	    {
-	      const MIKTEXCHAR * d1, * d2;
+	      const char * d1, * d2;
 	      PathNameParser tok (pathRel.Get());
 	      if (((d1 = tok.GetCurrent()) != 0)
-		  && PathName::Compare(d1, T_("fonts")) == 0
+		  && PathName::Compare(d1, "fonts") == 0
 		  && ((d2 = ++ tok) != 0))
 		{
 		  if (lpszFontType != 0)
@@ -282,7 +282,7 @@ SessionImpl::SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
 					 BufferSizes::MaxPath,
 					 d2);
 		    }
-		  const MIKTEXCHAR * d3, * d4;
+		  const char * d3, * d4;
 		  if (((d3 = ++ tok) != 0) && ((d4 = ++ tok) != 0))
 		    {
 		      if (lpszSupplier != 0)
@@ -305,12 +305,12 @@ SessionImpl::SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
 
   if (lpszFontName != 0 || lpszPointSize != 0)
     {
-      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
+      char szFileName[BufferSizes::MaxPath];
       PathName::Split (lpszFontPath,
 		       0, 0,
 		       szFileName, BufferSizes::MaxPath,
 		       0, 0);
-      MIKTEXCHAR * lpsz = szFileName + StrLen(szFileName) - 1;
+      char * lpsz = szFileName + StrLen(szFileName) - 1;
       while (IsDigit(*lpsz))
 	{
 	  -- lpsz;
@@ -342,8 +342,8 @@ SessionImpl::SplitFontPath (/*[in]*/ const MIKTEXCHAR *	lpszFontPath,
 
 inline
 int
-Comp2 (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-       /*[in]*/ const MIKTEXCHAR *	lpsz2)
+Comp2 (/*[in]*/ const char *	lpsz1,
+       /*[in]*/ const char *	lpsz2)
 {
   MIKTEX_ASSERT (StrLen(lpsz2) == 2);
   return (CompareFileNameChars(lpsz1[0], lpsz2[0]) == 0
@@ -356,9 +356,9 @@ Comp2 (/*[in]*/ const MIKTEXCHAR *	lpsz1,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
-			  /*[out]*/ MIKTEXCHAR *	lpszSupplier,
-			  /*[out]*/ MIKTEXCHAR *	lpszTypeface,
+SessionImpl::GetFontInfo (/*[in]*/ const char *	lpszFontName,
+			  /*[out]*/ char *	lpszSupplier,
+			  /*[out]*/ char *	lpszTypeface,
 			  /*[out]*/ double *		lpGenSize)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
@@ -384,7 +384,7 @@ SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   // then possible sauterized MF
   if (! bFound)
     {
-      tstring strFontNameSauter (T_("b-"));
+      string strFontNameSauter ("b-");
       strFontNameSauter += lpszFontName;
       bFound = FindFile(strFontNameSauter.c_str(),
 			FileType::MF,
@@ -393,18 +393,18 @@ SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 
   // LH fonts get special treatment
   if (! bFound
-      && ((Comp2(lpszFontName, T_("wn")) == 0)
-	  || (Comp2(lpszFontName, T_("lh")) == 0)
-	  || (Comp2(lpszFontName, T_("ll")) == 0)
-	  || (Comp2(lpszFontName, T_("rx")) == 0)
-	  || (Comp2(lpszFontName, T_("la")) == 0)
-	  || (Comp2(lpszFontName, T_("lb")) == 0)
-	  || (Comp2(lpszFontName, T_("lc")) == 0)))
+      && ((Comp2(lpszFontName, "wn") == 0)
+	  || (Comp2(lpszFontName, "lh") == 0)
+	  || (Comp2(lpszFontName, "ll") == 0)
+	  || (Comp2(lpszFontName, "rx") == 0)
+	  || (Comp2(lpszFontName, "la") == 0)
+	  || (Comp2(lpszFontName, "lb") == 0)
+	  || (Comp2(lpszFontName, "lc") == 0)))
     {
-      tstring strFontNameLH;
+      string strFontNameLH;
       strFontNameLH = lpszFontName[0];
       strFontNameLH += lpszFontName[1];
-      strFontNameLH += T_("codes");
+      strFontNameLH += "codes";
       bFound = FindFile(strFontNameLH.c_str(),
 			FileType::MF,
 			pathFileName);
@@ -432,38 +432,38 @@ SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
   // determine the point size
   if (lpGenSize != 0)
     {
-      MIKTEXCHAR ptsize[BufferSizes::MaxPath];
+      char ptsize[BufferSizes::MaxPath];
       SplitFontPath (lpszFontName, 0, 0, 0, 0, ptsize);
       size_t l = StrLen(ptsize);
       if (l == 0)
 	{
 	  return (false);
 	}
-      else if (StringCompare(ptsize, T_("11")) == 0)
+      else if (StringCompare(ptsize, "11") == 0)
 	{
 	  *lpGenSize = 10.95;	// \magstephalf
 	}
-      else if (StringCompare(ptsize, T_("14")) == 0)
+      else if (StringCompare(ptsize, "14") == 0)
 	{
 	  *lpGenSize = 14.4;	// \magstep2
 	}
-      else if (StringCompare(ptsize, T_("17")) == 0)
+      else if (StringCompare(ptsize, "17") == 0)
 	{
 	  *lpGenSize = 17.28;	// \magstep3
 	}
-      else if (StringCompare(ptsize, T_("20")) == 0)
+      else if (StringCompare(ptsize, "20") == 0)
 	{
 	  *lpGenSize = 20.74;	// \magstep4
 	}
-      else if (StringCompare(ptsize, T_("25")) == 0)
+      else if (StringCompare(ptsize, "25") == 0)
 	{
 	  *lpGenSize = 24.88;	// \magstep5;
 	}
-      else if (StringCompare(ptsize, T_("30")) == 0)
+      else if (StringCompare(ptsize, "30") == 0)
 	{
 	  *lpGenSize = 29.86;	// \magstep6
 	}
-      else if (StringCompare(ptsize, T_("36")) == 0)
+      else if (StringCompare(ptsize, "36") == 0)
 	{
 	  *lpGenSize = 35.83;	// \magstep7
 	}
@@ -473,11 +473,11 @@ SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
 	     the font name and four digits for the pointsize. The
 	     number is pointsize * 100. We effectively divide by 100
 	     by ignoring the last two digits. */
-	  *lpGenSize = AToI(ptsize) / 100.0;
+	  *lpGenSize = atoi(ptsize) / 100.0;
 	}
       else
 	{
-	  *lpGenSize = AToI(ptsize);
+	  *lpGenSize = atoi(ptsize);
 	}
     }
 
@@ -490,53 +490,53 @@ SessionImpl::GetFontInfo (/*[in]*/ const MIKTEXCHAR *	lpszFontName,
    _________________________________________________________________________ */
 
 bool
-Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
+Utils::ParseDvipsMapLine (/*[in]*/ const string &	line,
 			  /*[out]*/ FontMapEntry &	mapEntry)
 {
-  mapEntry.texName = T_("");
-  mapEntry.psName = T_("");
-  mapEntry.specialInstructions = T_("");
-  mapEntry.encFile = T_("");
-  mapEntry.fontFile = T_("");
-  mapEntry.headerList = T_("");
+  mapEntry.texName = "";
+  mapEntry.psName = "";
+  mapEntry.specialInstructions = "";
+  mapEntry.encFile = "";
+  mapEntry.fontFile = "";
+  mapEntry.headerList = "";
 
   if (line.empty()
-      || line[0] <= T_(' ')
-      || line[0] == T_('*')
-      || line[0] == T_('#')
-      || line[0] == T_(';')
-      || line[0] == T_('%')
+      || line[0] <= ' '
+      || line[0] == '*'
+      || line[0] == '#'
+      || line[0] == ';'
+      || line[0] == '%'
       )
     {
       return (false);
     }
 
-  for (tstring::const_iterator it = line.begin();
+  for (string::const_iterator it = line.begin();
        it != line.end();
        ++ it)
     {
-      for (; it != line.end() && *it <= T_(' '); ++ it)
+      for (; it != line.end() && *it <= ' '; ++ it)
 	{
 	}
       if (it == line.end())
 	{
 	  break;
 	}
-      if (*it == T_('"'))
+      if (*it == '"')
 	{
-	  tstring temp;
+	  string temp;
 	  ++ it;
-	  for (; it != line.end() && *it != T_('"'); ++ it)
+	  for (; it != line.end() && *it != '"'; ++ it)
 	    {
 	      temp += *it;
 	    }
-	  for (Tokenizer tok (temp.c_str(), T_(" \t"));
+	  for (Tokenizer tok (temp.c_str(), " \t");
 	       tok.GetCurrent() != 0;
 	       ++ tok)
 	    {
 	      if (mapEntry.specialInstructions.length() > 0)
 		{
-		  mapEntry.specialInstructions += T_(' ');
+		  mapEntry.specialInstructions += ' ';
 		}
 	      mapEntry.specialInstructions += tok.GetCurrent();
 	    }
@@ -545,7 +545,7 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
 	      break;
 	    }
 	}
-      else if (*it == T_('<'))
+      else if (*it == '<')
 	{
 	  ++ it;
 	  if (it == line.end())
@@ -554,12 +554,12 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
 	    }
 	  bool haveEncoding = false;
 	  bool noPartial = false;
-	  if (*it == T_('['))
+	  if (*it == '[')
 	    {
 	      haveEncoding = true;
 	      ++ it;
 	    }
-	  else if (*it == T_('<'))
+	  else if (*it == '<')
 	    {
 	      noPartial = true;
 	      ++ it;
@@ -568,15 +568,15 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
 	    {
 	      break;
 	    }
-	  for (; it != line.end() && *it <= T_(' '); ++ it)
+	  for (; it != line.end() && *it <= ' '; ++ it)
 	    {
 	    }
 	  if (it == line.end())
 	    {
 	      break;
 	    }
-	  tstring temp;
-	  for (; it != line.end() && *it > T_(' '); ++ it)
+	  string temp;
+	  for (; it != line.end() && *it > ' '; ++ it)
 	    {
 	      temp += *it;
 	    }
@@ -587,32 +587,32 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
 	  PathName fileName (temp);
 	  if (mapEntry.headerList.length() > 0)
 	    {
-	      mapEntry.headerList += T_(';');
+	      mapEntry.headerList += ';';
 	    }
-	  mapEntry.headerList += T_('<');
-	  if (haveEncoding || fileName.HasExtension(T_(".enc")))
+	  mapEntry.headerList += '<';
+	  if (haveEncoding || fileName.HasExtension(".enc"))
 	    {
 	      mapEntry.encFile = fileName.Get();
 	      if (haveEncoding)
 		{
-		  mapEntry.headerList += T_('[');
+		  mapEntry.headerList += '[';
 		}
 	    }
-	  else if (fileName.HasExtension(T_(".pfa"))
-		   || fileName.HasExtension(T_(".pfb")))
+	  else if (fileName.HasExtension(".pfa")
+		   || fileName.HasExtension(".pfb"))
 	    {
 	      mapEntry.fontFile = fileName.Get();
 	    }
 	  if (noPartial)
 	    {
-	      mapEntry.headerList += T_('<');
+	      mapEntry.headerList += '<';
 	    }
 	  mapEntry.headerList += fileName.Get();
 	}
       else
 	{
-	  tstring name;
-	  for (; it != line.end() && *it > T_(' '); ++ it)
+	  string name;
+	  for (; it != line.end() && *it > ' '; ++ it)
 	    {
 	      name += *it;
 	    }
@@ -639,7 +639,7 @@ Utils::ParseDvipsMapLine (/*[in]*/ const tstring &	line,
    SessionImpl::GetLocalFontDirectories
    _________________________________________________________________________ */
 
-tstring
+string
 MIKTEXCALL
 SessionImpl::GetLocalFontDirectories ()
 {

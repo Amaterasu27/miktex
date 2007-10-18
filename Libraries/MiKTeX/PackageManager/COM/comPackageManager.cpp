@@ -164,7 +164,7 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	}
       
       MiKTeX::Packages::PackageInfo packageInfo =
-	pManager->GetPackageInfo(static_cast<const MIKTEXCHAR *>
+	pManager->GetPackageInfo(static_cast<const char *>
 				 (CW2CT(deploymentName)));
 
 
@@ -301,7 +301,7 @@ comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
     {
       vector<_ATL_REGMAP_ENTRY> regMapEntries;
       _ATL_REGMAP_ENTRY rme;
-      tstring str;
+      string str;
       if (IsWindowsNT())
 	{
 	  SECURITY_DESCRIPTOR * pSd;

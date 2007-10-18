@@ -25,29 +25,29 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  StreamWriter writer (T_("test1"));
+  StreamWriter writer ("test1");
   writer.WriteLine (T_("hello, world!"));
   writer.Close ();
   auto_ptr<MemoryMappedFile> mmap (MemoryMappedFile::Create());
-  TESTX (mmap->Open(T_("test1"), true));
-  MIKTEXCHAR * lpsz = (reinterpret_cast<MIKTEXCHAR *>(mmap->GetPtr()));
-  TEST (memcmp(lpsz, T_("hello, world!"), 13 * sizeof(MIKTEXCHAR)) == 0);
-  memcpy (lpsz, T_("uryyb, jbeyq!"), 13 * sizeof(MIKTEXCHAR));
+  TESTX (mmap->Open("test1", true));
+  char * lpsz = (reinterpret_cast<char *>(mmap->GetPtr()));
+  TEST (memcmp(lpsz, "hello, world!", 13 * sizeof(char)) == 0);
+  memcpy (lpsz, "uryyb, jbeyq!", 13 * sizeof(char));
   TESTX (mmap->Close());
-  StreamReader reader (T_("test1"));
-  tstring line;
+  StreamReader reader ("test1");
+  string line;
   TEST (reader.ReadLine(line));
   reader.Close ();
-  TEST (memcmp(line.c_str(), T_("uryyb, jbeyq!"), 13 * sizeof(MIKTEXCHAR))
+  TEST (memcmp(line.c_str(), "uryyb, jbeyq!", 13 * sizeof(char))
 	== 0);
-  TESTX (File::Delete(T_("test1")));
+  TESTX (File::Delete("test1"));
 }
 END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(2);
 {
   FileStream stream;
-  stream.Attach (File::Open(T_("test2"),
+  stream.Attach (File::Open("test2",
 			    FileMode::Create,
 			    FileAccess::Write,
 			    false));
@@ -56,14 +56,14 @@ BEGIN_TEST_FUNCTION(2);
   stream.Write (buf, 1024);
   stream.Close ();
   auto_ptr<MemoryMappedFile> mmap (MemoryMappedFile::Create());
-  TEST (mmap->Open(T_("test2"), true) != 0);
+  TEST (mmap->Open("test2", true) != 0);
   TEST (mmap->Resize(2048) != 0);
   memcpy (static_cast<char*>(mmap->GetPtr()) + 1024, buf, 1024);
   TESTX (mmap->Close());
-  TEST (File::GetSize(T_("test2")) == 2048);
-  TEST (MD5::FromFile(T_("test2"))
-	== MD5::Parse(T_("e36f492c295ce23fdcfbf63fd665072b")));
-  TESTX (File::Delete(T_("test2")));
+  TEST (File::GetSize("test2") == 2048);
+  TEST (MD5::FromFile("test2")
+	== MD5::Parse("e36f492c295ce23fdcfbf63fd665072b"));
+  TESTX (File::Delete("test2"));
 }
 END_TEST_FUNCTION();
 

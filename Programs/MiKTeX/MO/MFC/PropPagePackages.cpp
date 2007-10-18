@@ -37,7 +37,7 @@ PropPagePackages::PropPagePackages (/*[in]*/ PackageManager * pManager)
     pPackageTreeCtrl (PackageTreeCtrl::Create(pManager))
 {
   m_psp.dwFlags &= ~(PSP_HASHELP);
-  tstring repository;
+  string repository;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
     {
@@ -129,8 +129,8 @@ PropPagePackages::OnApply ()
 {
   try
     {
-      vector<tstring> toBeInstalled;
-      vector<tstring> toBeRemoved;
+      vector<string> toBeInstalled;
+      vector<string> toBeRemoved;
       pPackageTreeCtrl->GetDelta (toBeInstalled, toBeRemoved);
       if (toBeInstalled.size() == 0 && toBeRemoved.size() == 0)
 	{
@@ -318,7 +318,7 @@ PropPagePackages::OnSelchangedTree (/*[in]*/ NMHDR *	pNMHDR,
 
 void
 PropPagePackages::SetWindowText (/*[in]*/ UINT			controlId,
-				 /*[in]*/ const MIKTEXCHAR *	lpszText)
+				 /*[in]*/ const char *	lpszText)
 {
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
@@ -401,7 +401,7 @@ PropPagePackages::OnChangeUrl ()
     {
       if (SiteWizSheet::DoModal(this) == ID_WIZFINISH)
 	{
-	  tstring repository;
+	  string repository;
 	  RepositoryType repositoryType =
 	    pManager->GetDefaultPackageRepository(repository);
 	  this->url = repository.c_str();
@@ -506,8 +506,8 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 	  return;
 	}
 #if 0
-      set<tstring> directories;
-      for (vector<tstring>::const_iterator it = pi.runFiles.begin();
+      set<string> directories;
+      for (vector<string>::const_iterator it = pi.runFiles.begin();
 	   it != pi.runFiles.end();
 	   ++ it)
 	{
@@ -517,7 +517,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 	      directories.insert (path.RemoveFileSpec().Get());
 	    }
 	}
-      for (vector<tstring>::const_iterator it = pi.docFiles.begin();
+      for (vector<string>::const_iterator it = pi.docFiles.begin();
 	   it != pi.docFiles.end();
 	   ++ it)
 	{
@@ -525,7 +525,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 	  directories.insert (path.RemoveFileSpec().Get());
 	}
 #endif
-      tstring info;
+      string info;
       if (! pi.title.empty())
 	{
 	  info += pi.title;
@@ -545,7 +545,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 	    {
 	      info += _T("\r\n\r\n");
 	    }
-	  for (set<tstring>::const_iterator it = directories.begin();
+	  for (set<string>::const_iterator it = directories.begin();
 	       it != directories.end();
 	       ++ it)
 	    {

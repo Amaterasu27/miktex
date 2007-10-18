@@ -35,10 +35,10 @@
 
 bool
 winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
-				  /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-				  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-				  /*[out]*/ tstring &		value,
-				  /*[in]*/ const MIKTEXCHAR * lpszDefaultValue)
+				  /*[in]*/ const char *	lpszKeyName,
+				  /*[in]*/ const char *	lpszValueName,
+				  /*[out]*/ string &		value,
+				  /*[in]*/ const char * lpszDefaultValue)
 {
   if (shared == TriState::Undetermined)
     {
@@ -72,11 +72,11 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 #endif
     }
 
-  tstring registryPath =
+  string registryPath =
     (SessionImpl::GetSession()->IsMiKTeXDirect()
      ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
      : MIKTEX_REGPATH_SERIES);
-  registryPath += T_('\\');
+  registryPath += '\\';
   registryPath += lpszKeyName;
 
   HKEY hkey;
@@ -116,17 +116,17 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
       long result2 = RegCloseKey(hkey);
       if (result2 != ERROR_SUCCESS)
 	{
-	  TraceWindowsError (T_("RegCloseKey"),
+	  TraceWindowsError ("RegCloseKey",
 			     result2,
 			     registryPath.c_str(),
-			     T_(__FILE__),
+			     __FILE__,
 			     __LINE__);
 	}
       if (result == ERROR_SUCCESS)
 	{
 	  if (valueType == REG_SZ)
 	    {
-	      value = reinterpret_cast<const MIKTEXCHAR *>(pValue);
+	      value = reinterpret_cast<const char *>(pValue);
 	      return (true);
 	    }
 	  TraceError (T_("ignoring value \"%s\" of type %u"),
@@ -135,19 +135,19 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 	}
       else if (result != ERROR_FILE_NOT_FOUND)
 	{
-	  TraceWindowsError (T_("RegQueryValueEx"),
+	  TraceWindowsError ("RegQueryValueEx",
 			     result,
 			     lpszValueName,
-			     T_(__FILE__),
+			     __FILE__,
 			     __LINE__);
 	}
     }
   else if (result != ERROR_FILE_NOT_FOUND)
     {
-      TraceWindowsError (T_("RegOpenKeyEx"),
+      TraceWindowsError ("RegOpenKeyEx",
 			 result,
 			 registryPath.c_str(),
-			 T_(__FILE__),
+			 __FILE__,
 			 __LINE__);
     }
 
@@ -169,12 +169,12 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
 
 bool
 winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
-				  /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-				  /*[in]*/ const MIKTEXCHAR *	lpszValueName,
+				  /*[in]*/ const char *	lpszKeyName,
+				  /*[in]*/ const char *	lpszValueName,
 				  /*[out]*/ PathName &		path,
-				  /*[in]*/ const MIKTEXCHAR * lpszDefaultPath)
+				  /*[in]*/ const char * lpszDefaultPath)
 {
-  tstring value;
+  string value;
   if (! TryGetRegistryValue(shared,
 			 lpszKeyName,
 			 lpszValueName,
@@ -194,8 +194,8 @@ winRegistry::TryGetRegistryValue (/*[in]*/ TriState		shared,
   
 bool
 winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
-				     /*[in]*/ const MIKTEXCHAR * lpszKeyName,
-				     /*[in]*/ const MIKTEXCHAR * lpszValueName)
+				     /*[in]*/ const char * lpszKeyName,
+				     /*[in]*/ const char * lpszValueName)
 {
   if (shared == TriState::Undetermined)
     {
@@ -209,11 +209,11 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
       // </recursivecall>
     }
 
-  tstring registryPath =
+  string registryPath =
     (SessionImpl::GetSession()->IsMiKTeXDirect()
      ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
      : MIKTEX_REGPATH_SERIES);
-  registryPath += T_('\\');
+  registryPath += '\\';
   registryPath += lpszKeyName;
 
   HKEY hkey;
@@ -233,7 +233,7 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyEx"),
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyEx",
 			     result,
 			     registryPath.c_str());
     }
@@ -248,7 +248,7 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 (T_("RegDeleteValue"),
+      FATAL_WINDOWS_ERROR_2 ("RegDeleteValue",
 			     result,
 			     lpszValueName);
     }
@@ -263,9 +263,9 @@ winRegistry::TryDeleteRegistryValue (/*[in]*/ TriState		shared,
 
 void
 winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
-			       /*[in]*/ const MIKTEXCHAR *	lpszKeyName,
-			       /*[in]*/ const MIKTEXCHAR *	lpszValueName,
-			       /*[in]*/ const MIKTEXCHAR *	lpszValue)
+			       /*[in]*/ const char *	lpszKeyName,
+			       /*[in]*/ const char *	lpszValueName,
+			       /*[in]*/ const char *	lpszValue)
 {
   MIKTEX_ASSERT_STRING (lpszKeyName);
   MIKTEX_ASSERT_STRING (lpszValueName);
@@ -292,11 +292,11 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
       return;
     }
  
-  tstring registryPath =
+  string registryPath =
     (SessionImpl::GetSession()->IsMiKTeXDirect()
      ? MIKTEX_REGPATH_SERIES_MIKTEXDIRECT
      : MIKTEX_REGPATH_SERIES);
-  registryPath += T_('\\');
+  registryPath += '\\';
   registryPath += lpszKeyName;
 
   HKEY hkey;
@@ -309,8 +309,8 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
      : HKEY_LOCAL_MACHINE);
 
   SessionImpl::GetSession()->trace_config->WriteFormattedLine
-    (T_("core"),
-     T_("RegCreateKey (%p, \"%s\")"),
+    ("core",
+     "RegCreateKey (%p, \"%s\")",
      reinterpret_cast<void*>(hkeyRoot),
      registryPath.c_str());
 
@@ -318,7 +318,7 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
     RegCreateKeyEx(hkeyRoot,
 		   registryPath.c_str(),
 		   0,
-		   T_(""),
+		   "",
 		   REG_OPTION_NON_VOLATILE,
 		   KEY_ALL_ACCESS,
 		   0,
@@ -327,7 +327,7 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegCreateKeyEx"),
+      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyEx",
 			     result,
 			     registryPath.c_str());
     }
@@ -335,7 +335,7 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
   AutoHKEY autoClose (hkey);
 
   unsigned long sizeValue = static_cast<unsigned long>(StrLen(lpszValue) + 1);
-  sizeValue *= sizeof(MIKTEXCHAR);
+  sizeValue *= sizeof(char);
 
   result =
     RegSetValueEx(hkey,
@@ -348,12 +348,12 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"),
+      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx",
 			     result,
 			     lpszValueName);
     }
 
-  tstring value;
+  string value;
 
   if (hkeyRoot == HKEY_LOCAL_MACHINE
       && TryGetRegistryValue(TriState::False,

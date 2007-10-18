@@ -268,8 +268,8 @@ PropPageFormats::OnRemove ()
 
 void
 PropPageFormats::InsertColumn (/*[in]*/ int			colIdx,
-			       /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-			       /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+			       /*[in]*/ const char *	lpszLabel,
+			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,
@@ -368,7 +368,7 @@ PropPageFormats::Refresh ()
       lvitem.iItem = static_cast<int>(idx);
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
-      lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.key.c_str());
+      lvitem.pszText = const_cast<char*>(formatInfo.key.c_str());
       lvitem.lParam = idx;
       int whereIndex = listControl.InsertItem(&lvitem);
       if (whereIndex < 0)
@@ -378,7 +378,7 @@ PropPageFormats::Refresh ()
       lvitem.iItem = whereIndex;
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 1;
-      lvitem.pszText = const_cast<MIKTEXCHAR*>(formatInfo.description.c_str());
+      lvitem.pszText = const_cast<char*>(formatInfo.description.c_str());
       if (! listControl.SetItem(&lvitem))
 	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);

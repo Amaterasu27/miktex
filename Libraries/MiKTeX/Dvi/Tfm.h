@@ -33,7 +33,7 @@ public:
        /*[in]*/ int			designSize,
        /*[in]*/ const char *		lpszAreaName,
        /*[in]*/ const char *		lpszFontName,
-       /*[in]*/ const MIKTEXCHAR *	lpszFileName,
+       /*[in]*/ const char *	lpszFileName,
        /*[in]*/ double			tfmConf,
        /*[in]*/ double			conv);
 

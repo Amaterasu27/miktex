@@ -75,7 +75,7 @@ Application::CheckCancel ()
 {
   if (Cancelled())
     {
-      tstring programInvocationName = Utils::GetExeName();
+      string programInvocationName = Utils::GetExeName();
       throw MiKTeXException (programInvocationName.c_str(),
 			     T_("Operation cancelled (Ctrl-C)."),
 			     0,
@@ -129,13 +129,13 @@ InstallSignalHandler (/*[in]*/ int sig)
   oldHandlerFunc = signal(sig, SignalHandler);
   if (oldHandlerFunc == SIG_ERR)
     {
-      FATAL_CRT_ERROR (T_("signal"), 0);
+      FATAL_CRT_ERROR ("signal", 0);
     }
   if (oldHandlerFunc != SIG_DFL)
     {
       if (signal(sig, oldHandlerFunc) == SIG_ERR)
 	{
-	  FATAL_CRT_ERROR (T_("signal"), 0);
+	  FATAL_CRT_ERROR ("signal", 0);
 	}
     }
 }
@@ -165,8 +165,8 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 MIKTEXAPPAPI(void)
-Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
-		   /*[in]*/ const MIKTEXCHAR *	lpszTheNameOfTheGame)
+Application::Init (/*[in]*/ const char *	lpszProgramInvocationName,
+		   /*[in]*/ const char *	lpszTheNameOfTheGame)
 {
   Session::InitInfo initInfo (lpszProgramInvocationName);
   if (lpszTheNameOfTheGame != 0)
@@ -185,7 +185,7 @@ Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
    _________________________________________________________________________ */
 
 MIKTEXAPPAPI(void)
-Application::Init (/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName)
+Application::Init (/*[in]*/ const char *	lpszProgramInvocationName)
 {
   Init (lpszProgramInvocationName, 0);
 }
@@ -219,12 +219,12 @@ Application::Finalize ()
 
 void
 MPMCALL
-Application::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+Application::ReportLine (/*[in]*/ const char * lpszLine)
 {
   if (! GetQuietFlag())
     {
-      FPutS (lpszLine, stdout);
-      FPutC (T_('\n'), stdout);
+      fputs (lpszLine, stdout);
+      putc ('\n', stdout);
     }
 }
 
@@ -235,7 +235,7 @@ Application::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-Application::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UNUSED_ALWAYS (lpszMessage);
   return (false);
@@ -261,8 +261,8 @@ Application::OnProgress (/*[in]*/ Notification		nf)
 
 bool
 MIKTEXCALL
-Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
-			     /*[in]*/ const MIKTEXCHAR * lpszTrigger)
+Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
+			     /*[in]*/ const char * lpszTrigger)
 {
   if (ignoredPackages.find(lpszPackageName) != ignoredPackages.end())
     {
@@ -309,7 +309,7 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
 	}
     }
 #if defined(MIKTEX_WINDOWS)
-  tstring url;
+  string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
       && repositoryType == RepositoryType::Remote)
@@ -330,13 +330,13 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
       pInstaller.reset (pPackageManager->CreateInstaller());
     }
   pInstaller->SetCallback (this);
-  vector<tstring> fileList;
+  vector<string> fileList;
   fileList.push_back (lpszPackageName);
-  pInstaller->SetFileLists (fileList, vector<tstring>());
+  pInstaller->SetFileLists (fileList, vector<string>());
   if (! GetQuietFlag())
     {
-      FPutS (T_("\n\
-======================================================================\n"),
+      fputs ("\n\
+======================================================================\n",
 	     stdout);
     }
   bool done = false;
@@ -353,8 +353,8 @@ Application::InstallPackage (/*[in]*/ const MIKTEXCHAR * lpszPackageName,
     }
   if (! GetQuietFlag())
     {
-      FPutS (T_("\
-======================================================================\n"),
+      fputs ("\
+======================================================================\n",
 	     stdout);
     }
   return (done);

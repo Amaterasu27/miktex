@@ -103,7 +103,7 @@ private:
 private:
   void
   SetWindowText (/*[in]*/ UINT			controlId,
-		 /*[in]*/ const MIKTEXCHAR *	lpszText);
+		 /*[in]*/ const char *	lpszText);
 
 private:
   void

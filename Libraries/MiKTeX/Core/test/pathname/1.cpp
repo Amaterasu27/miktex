@@ -25,49 +25,49 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  TEST (PathName::Compare (T_("//aBc/[e]/ghi.jkl"),
-			   T_("//aBc/[e]/qwe.rty"),
+  TEST (PathName::Compare ("//aBc/[e]/ghi.jkl",
+			   "//aBc/[e]/qwe.rty",
 			   10)
 	== 0);
-  TEST (PathName::Compare (T_("/abc/def/ghi.jkl"),
-			   T_("/abc/def/qwe.rty"),
+  TEST (PathName::Compare ("/abc/def/ghi.jkl",
+			   "/abc/def/qwe.rty",
 			   10)
 	!= 0);
-  MIKTEXCHAR szDir[BufferSizes::MaxPath];
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
-  MIKTEXCHAR szExt[BufferSizes::MaxPath];
-  PathName::Split (T_("/abc/def/ghi.jkl"),
+  char szDir[BufferSizes::MaxPath];
+  char szName[BufferSizes::MaxPath];
+  char szExt[BufferSizes::MaxPath];
+  PathName::Split ("/abc/def/ghi.jkl",
 		   szDir, BufferSizes::MaxPath,
 		   szName, BufferSizes::MaxPath,
 		   szExt, BufferSizes::MaxPath);
-  TEST (PathName::Compare(szDir, T_("/abc/def")) != 0);
-  TEST (PathName::Compare(szDir, T_("/abc/def/")) == 0);
-  TEST (PathName::Compare(szName, T_("ghi")) == 0);
-  TEST (PathName::Compare(szExt, T_(".jkl")) == 0);
-  TEST (PathName::Compare(szExt, T_("jkl")) != 0);
+  TEST (PathName::Compare(szDir, "/abc/def") != 0);
+  TEST (PathName::Compare(szDir, "/abc/def/") == 0);
+  TEST (PathName::Compare(szName, "ghi") == 0);
+  TEST (PathName::Compare(szExt, ".jkl") == 0);
+  TEST (PathName::Compare(szExt, "jkl") != 0);
 }
 END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(2);
 {
 #if defined(MIKTEX_WINDOWS)
-  PathNameParser component (T_("C:/abc/def/ghi.jkl"));
-  TEST (PathName::Compare(component.GetCurrent(), T_("C:")) == 0);
+  PathNameParser component ("C:/abc/def/ghi.jkl");
+  TEST (PathName::Compare(component.GetCurrent(), "C:") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("abc")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "abc") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("def")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "def") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("ghi.jkl")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "ghi.jkl") == 0);
   ++ component;
   TEST (component.GetCurrent() == 0);
 #endif
-  PathNameParser component2 (T_("/abc/def/ghi.jkl"));
-  TEST (PathName::Compare(component2.GetCurrent(), T_("/abc")) == 0);
+  PathNameParser component2 ("/abc/def/ghi.jkl");
+  TEST (PathName::Compare(component2.GetCurrent(), "/abc") == 0);
   ++ component2;
-  TEST (PathName::Compare(component2.GetCurrent(), T_("def")) == 0);
+  TEST (PathName::Compare(component2.GetCurrent(), "def") == 0);
   ++ component2;
-  TEST (PathName::Compare(component2.GetCurrent(), T_("ghi.jkl"))
+  TEST (PathName::Compare(component2.GetCurrent(), "ghi.jkl")
 	== 0);
   ++ component2;
   TEST (component2.GetCurrent() == 0);
@@ -76,12 +76,12 @@ END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(3);
 {
-  PathNameParser component (T_("//abc/def/ghi.jkl"));
-  TEST (PathName::Compare(component.GetCurrent(), T_("//abc")) == 0);
+  PathNameParser component ("//abc/def/ghi.jkl");
+  TEST (PathName::Compare(component.GetCurrent(), "//abc") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("def")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "def") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("ghi.jkl")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "ghi.jkl") == 0);
   ++ component;
   TEST (component.GetCurrent() == 0);
 }
@@ -89,12 +89,12 @@ END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(4);
 {
-  PathNameParser component (T_("/abc///def/ghi.jkl"));
-  TEST (PathName::Compare(component.GetCurrent(), T_("/abc")) == 0);
+  PathNameParser component ("/abc///def/ghi.jkl");
+  TEST (PathName::Compare(component.GetCurrent(), "/abc") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("def")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "def") == 0);
   ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), T_("ghi.jkl")) == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "ghi.jkl") == 0);
   ++ component;
   TEST (component.GetCurrent() == 0);
 }
@@ -105,22 +105,22 @@ BEGIN_TEST_FUNCTION(5);
   PathName path;
 
 #if defined(MIKTEX_WINDOWS)
-  path = T_("C:/abc/def/../ghi.jkl");
+  path = "C:/abc/def/../ghi.jkl";
   path.MakeAbsolute ();
-  TEST (PathName::Compare(path.Get(), T_("C:/abc/ghi.jkl")) == 0);
+  TEST (PathName::Compare(path.Get(), "C:/abc/ghi.jkl") == 0);
 #endif
 
-  path = T_("/abc/def/../ghi.jkl");
+  path = "/abc/def/../ghi.jkl";
   path.MakeAbsolute ();
-  TEST (PathName::Compare(path.Get(), T_("/abc/ghi.jkl")) == 0);
+  TEST (PathName::Compare(path.Get(), "/abc/ghi.jkl") == 0);
 
   PathName path2;
 
-  path = T_("abc/./def/../ghi.jkl");
+  path = "abc/./def/../ghi.jkl";
   path.MakeAbsolute ();
 
   path2.SetToCurrentDirectory ();
-  path2 += T_("abc/ghi.jkl");
+  path2 += "abc/ghi.jkl";
 
   TEST (PathName::Compare(path.Get(), path2) == 0);
 }
@@ -129,38 +129,38 @@ END_TEST_FUNCTION();
 BEGIN_TEST_FUNCTION(6);
 {
 #if defined(MIKTEX_WINDOWS)
-  PathName path (T_("C:/abc/def/ghi.jkl/"));
-  TEST (path.CutOffLastComponent() == T_("C:/abc/def"));
-  TEST (path.CutOffLastComponent() == T_("C:/abc"));
-  TEST (path.CutOffLastComponent() == T_("C:/"));
-  TEST (path.CutOffLastComponent() == T_("C:/"));
+  PathName path ("C:/abc/def/ghi.jkl/");
+  TEST (path.CutOffLastComponent() == "C:/abc/def");
+  TEST (path.CutOffLastComponent() == "C:/abc");
+  TEST (path.CutOffLastComponent() == "C:/");
+  TEST (path.CutOffLastComponent() == "C:/");
 #endif
-  PathName path2 (T_("/abc/def/ghi.jkl/"));
-  TEST (path2.CutOffLastComponent() == T_("/abc/def"));
-  TEST (path2.CutOffLastComponent() == T_("/abc"));
-  TEST (path2.CutOffLastComponent() == T_("/"));
-  TEST (path2.CutOffLastComponent() == T_("/"));
+  PathName path2 ("/abc/def/ghi.jkl/");
+  TEST (path2.CutOffLastComponent() == "/abc/def");
+  TEST (path2.CutOffLastComponent() == "/abc");
+  TEST (path2.CutOffLastComponent() == "/");
+  TEST (path2.CutOffLastComponent() == "/");
 }
 END_TEST_FUNCTION();
 
 BEGIN_TEST_FUNCTION(7)
 {
-  PathName path (T_("/abc/def/ghi.jkl/mno.pqr.stu"));
-  TEST (PathName::Compare(path.GetExtension(), T_(".stu")) == 0);
-  TEST (path.HasExtension(T_(".stu")));
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
+  PathName path ("/abc/def/ghi.jkl/mno.pqr.stu");
+  TEST (PathName::Compare(path.GetExtension(), ".stu") == 0);
+  TEST (path.HasExtension(".stu"));
+  char szName[BufferSizes::MaxPath];
   TEST (PathName::Compare(path.GetFileNameWithoutExtension(szName),
-			  T_("mno.pqr"))
+			  "mno.pqr")
 	== 0);
-  MIKTEXCHAR szExt[BufferSizes::MaxPath];
+  char szExt[BufferSizes::MaxPath];
   PathName::Split (path.Get(),
 		   0, 0,
 		   szName, BufferSizes::MaxPath,
 		   szExt, BufferSizes::MaxPath);
-  TEST (PathName::Compare(szName, T_("mno.pqr")) == 0);
-  TEST (PathName::Compare(szExt, T_(".stu")) == 0);
-  path.SetExtension (T_(".vwx"));
-  TEST (path.HasExtension(T_(".vwx")));
+  TEST (PathName::Compare(szName, "mno.pqr") == 0);
+  TEST (PathName::Compare(szExt, ".stu") == 0);
+  path.SetExtension (".vwx");
+  TEST (path.HasExtension(".vwx"));
 }
 END_TEST_FUNCTION();
 

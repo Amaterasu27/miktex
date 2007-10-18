@@ -361,10 +361,10 @@ PropPageGeneral::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 
 bool
 MIKTEXCALL
-PropPageGeneral::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
-				/*[out]*/ MIKTEXCHAR * * ppSubDirNames,
-				/*[out]*/ MIKTEXCHAR * * ppFileNames,
-				/*[out]*/ MIKTEXCHAR * * ppFileNameInfos)
+PropPageGeneral::ReadDirectory (/*[in]*/ const char * lpszPath,
+				/*[out]*/ char * * ppSubDirNames,
+				/*[out]*/ char * * ppFileNames,
+				/*[out]*/ char * * ppFileNameInfos)
   
 {
   UNUSED_ALWAYS (lpszPath);
@@ -382,7 +382,7 @@ PropPageGeneral::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
 bool
 MIKTEXCALL
 PropPageGeneral::OnProgress (/*[in]*/ unsigned			level,
-			     /*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+			     /*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);
   pProgressDialog->SetLine (2, lpszDirectory);

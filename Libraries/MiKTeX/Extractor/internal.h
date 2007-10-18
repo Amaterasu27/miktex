@@ -86,40 +86,40 @@ namespace MiKTeX {					\
   MiKTeX::Core::TraceMiKTeXError (miktexFunction,		\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   MiKTeX::Core::Session::FatalMiKTeXError (miktexFunction,		\
 					traceMessage,			\
 					 lpszInfo,			\
-					 T_(__FILE__),			\
+					 __FILE__,			\
 					 __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)				\
   MiKTeX::Core::TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,				\
-				  T_(__FILE__),				\
+				  __FILE__,				\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)			\
   MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,				\
-				    T_(__FILE__),			\
+				    __FILE__,				\
 				    __LINE__)
 #endif
 
@@ -127,7 +127,7 @@ namespace MiKTeX {					\
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   MiKTeX::Core::Session::FatalWindowsError (windowsfunction,	\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -136,17 +136,12 @@ namespace MiKTeX {					\
   MiKTeX::Core::Session::FatalWindowsError (windowsfunction,		\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
 
 #define FATAL_EXTRACTOR_ERROR(miktexFunction, traceMessage, lpszInfo) \
   FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)
-
-#  define FATAL_SOAP_ERROR(pSoap)		\
-  FatalSoapError (pSoap,			\
-                  T_(__FILE__),			\
-                  __LINE__)
 
 /* _________________________________________________________________________
 
@@ -167,14 +162,14 @@ namespace MiKTeX {					\
 
 BEGIN_INTERNAL_NAMESPACE;
 
-typedef std::basic_ostringstream<MIKTEXCHAR> otstringstream;
+typedef std::basic_ostringstream<char> otstringstream;
 
 /* _________________________________________________________________________
 
    CURRENT_DIRECTORY
    _________________________________________________________________________ */
 
-#define CURRENT_DIRECTORY T_(".")
+#define CURRENT_DIRECTORY "."
 
 /* _________________________________________________________________________
 
@@ -182,19 +177,19 @@ typedef std::basic_ostringstream<MIKTEXCHAR> otstringstream;
    _________________________________________________________________________ */
 
 inline
-MiKTeX::Core::tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+std::string
+Quoted (/*[in]*/ const char * lpsz)
 {
-  bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  MiKTeX::Core::tstring result;
+  bool needQuotes = (strchr(lpsz, ' ') != 0);
+  std::string result;
   if (needQuotes)
     {
-      result += T_('"');
+      result += '"';
     }
   result += lpsz;
   if (needQuotes)
     {
-      result += T_('"');
+      result += '"';
     }
   return (result);
 }
@@ -205,8 +200,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-MiKTeX::Core::tstring
-Quoted (/*[in]*/ const MiKTeX::Core::tstring & str)
+std::string
+Quoted (/*[in]*/ const std::string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -217,7 +212,7 @@ Quoted (/*[in]*/ const MiKTeX::Core::tstring & str)
    _________________________________________________________________________ */
 
 inline
-MiKTeX::Core::tstring
+std::string
 Quoted (/*[in]*/ const MiKTeX::Core::PathName & path)
 {
   return (Quoted(path.Get()));
@@ -255,9 +250,9 @@ public:
   {
     if (zero != 0)
       {
-	UNEXPECTED_CONDITION (T_("TempFile::operator="));
+	UNEXPECTED_CONDITION ("TempFile::operator=");
       }
-    path = T_("");
+    path = "";
     return (*this);
   }
 
@@ -268,7 +263,7 @@ public:
     if (path[0] != 0)
       {
 	MiKTeX::Core::PathName tmp (path);
-	path = T_("");
+	path = "";
 	MiKTeX::Core::File::Delete (tmp);
       }
   }
@@ -291,56 +286,20 @@ private:
 
 /* _________________________________________________________________________
 
-   AssertValidBuf
-   _________________________________________________________________________ */
-
-inline void
-AssertValidBuf (/*[in]*/ void *	lp,
-		/*[in]*/ size_t	n)
-{
-#if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
-  MIKTEX_ASSERT (lp != 0);
-  MIKTEX_ASSERT (! IsBadWritePtr(lp, n));
-#else
-  UNUSED (lp);
-  UNUSED (n);
-#endif
-}
-
-/* _________________________________________________________________________
-
-   AssertValidString
-   _________________________________________________________________________ */
-
-inline void
-AssertValidString (/*[in]*/ const MIKTEXCHAR *	lp,
-		   /*[in]*/ size_t	n = 4096)
-{
-#if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
-  MIKTEX_ASSERT (lp != 0);
-  MIKTEX_ASSERT (! IsBadStringPtr(lp, n));
-#else
-  UNUSED (lp);
-  UNUSED (n);
-#endif
-}
-
-/* _________________________________________________________________________
-
    GetErrnoMessage
    _________________________________________________________________________ */
 
 static
 inline
-MiKTeX::Core::tstring &
-GetErrnoMessage (/*[in]*/ int		err,
-		 /*[out]*/ MiKTeX::Core::tstring &	message)
+std::string &
+GetErrnoMessage (/*[in]*/ int			err,
+		 /*[out]*/ std::string &	message)
 {
 #if _MSC_VER >= 1400
-  _TCHAR szBuf[256];
+  char szBuf[256];
   if (strerror_s(szBuf, 256, err) != 0)
     {
-      message = T_("");
+      message = "";
     }
   else
     {
@@ -351,147 +310,6 @@ GetErrnoMessage (/*[in]*/ int		err,
 #endif
   return (message);
 }
-
-/* _________________________________________________________________________
-
-   ClearString
-   _________________________________________________________________________ */
-
-inline
-bool
-ClearString (/*[in,out]*/ MIKTEXCHAR *	lpsz)
-{
-  lpsz[0] = 0;
-  return (true);
-}
-
-/* _________________________________________________________________________
-
-   AToI
-   _________________________________________________________________________ */
-
-inline
-int
-AToI (/*[in]*/ const MIKTEXCHAR * lpsz)
-{
-#if defined(_MSC_VER)
-  return (_ttoi(lpsz));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: AToI()
-#else
-  return (atoi(lpsz));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   StrCmp
-   _________________________________________________________________________ */
-
-#if defined(StrCmp)
-#  undef StrCmp
-#endif
-
-inline
-int
-StrCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	/*[in]*/ const MIKTEXCHAR *	lpsz2)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcscmp(lpsz1, lpsz2));
-#else
-  return (strcmp(lpsz1, lpsz2));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   StrNCmp
-   _________________________________________________________________________ */
-
-#if defined(StrNCmp)
-#  undef StrNCmp
-#endif
-
-inline
-int
-StrNCmp (/*[in]*/ const MIKTEXCHAR *	lpsz1,
-	 /*[in]*/ const MIKTEXCHAR *	lpsz2,
-	 /*[in]*/ size_t		n)
-{
-#if defined(MIKTEX_UNICODE)
-  return (wcsncmp(lpsz1, lpsz2, n));
-#else
-  return (strncmp(lpsz1, lpsz2, n));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   FPutS
-   _________________________________________________________________________ */
-
-inline
-MIKTEXCHARINT
-FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
-       /*[in]*/ FILE *			stream)
-{
-#if defined(_MSC_VER)
-  MIKTEXCHARINT n = _fputts(lpsz, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutS()
-#else
-  int n = fputs(lpsz, stream);
-#endif
-  if (n < 0)
-    {
-      FATAL_CRT_ERROR (T_("fputs"), 0);
-    }
-  return (n);
-}
-
-/* _________________________________________________________________________
-
-   FPutC
-   _________________________________________________________________________ */
-
-inline
-MIKTEXCHARINT
-FPutC (/*[in]*/ MIKTEXCHARINT	ch,
-       /*[in]*/ FILE *		stream)
-{
-#if defined(_MSC_VER)
-  MIKTEXCHARINT chWritten = _fputtc(ch, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutC()
-#else
-  int chWritten = fputc(ch, stream);
-#endif
-  if (chWritten == MIKTEXEOF)
-    {
-      FATAL_CRT_ERROR (T_("fputc"), 0);
-    }
-  return (chWritten);
-}
-
-/* _________________________________________________________________________
-
-   PathNameComparer
-   _________________________________________________________________________ */
-
-struct PathNameComparer
-  : public std::binary_function<MiKTeX::Core::tstring,
-				MiKTeX::Core::tstring,
-				bool>
-{
-  bool
-  operator() (/*[in]*/ const MiKTeX::Core::tstring & str1,
-	      /*[in]*/ const MiKTeX::Core::tstring & str2)
-    const
-  {
-    return (MiKTeX::Core::PathName::Compare(str1.c_str(), str2.c_str()) < 0);
-  }
-};
 
 /* _________________________________________________________________________ */
 

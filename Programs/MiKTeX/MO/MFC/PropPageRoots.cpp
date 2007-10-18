@@ -197,7 +197,7 @@ PropPageTeXMFRoots::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
       switch (uMsg) 
 	{
 	case BFFM_INITIALIZED:
-	  MIKTEXCHAR szDrive[BufferSizes::MaxPath];
+	  char szDrive[BufferSizes::MaxPath];
 	  PathName::Split (PathName().SetToCurrentDirectory().Get(),
 			   szDrive, BufferSizes::MaxPath,
 			   0, 0,
@@ -257,7 +257,7 @@ PropPageTeXMFRoots::OnAdd ()
 	{
 	  return;
 	}
-      MIKTEXCHAR szDir[BufferSizes::MaxPath];
+      char szDir[BufferSizes::MaxPath];
       BOOL done = SHGetPathFromIDList(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! done)
@@ -295,7 +295,7 @@ PropPageTeXMFRoots::OnAdd ()
    PropPageTeXMFRoots::CheckRoot
    _________________________________________________________________________ */
 
-const MIKTEXCHAR * tdsDirs[] = {
+const char * tdsDirs[] = {
   T_("bibtex"),
   T_("dvipdfm"),
   T_("dvips"),
@@ -529,8 +529,8 @@ PropPageTeXMFRoots::OnRemove ()
 
 void
 PropPageTeXMFRoots::InsertColumn (/*[in]*/ int			colIdx,
-				  /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-				  /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+				  /*[in]*/ const char *	lpszLabel,
+				  /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,
@@ -691,13 +691,13 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  compacted = root;
 	}
-      lvitem.pszText = const_cast<MIKTEXCHAR*>(compacted.Get());
+      lvitem.pszText = const_cast<char*>(compacted.Get());
       lvitem.lParam = r;
       if (listControl.InsertItem(&lvitem) < 0)
 	{
 	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
 	}
-      tstring description;
+      string description;
       if (root == installRoot)
 	{
 	  if (! description.empty())
@@ -742,7 +742,7 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 1;
-	  lvitem.pszText = const_cast<MIKTEXCHAR*>(description.c_str());
+	  lvitem.pszText = const_cast<char*>(description.c_str());
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
@@ -772,7 +772,7 @@ PropPageTeXMFRoots::OnApply ()
 	  
 	  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
 	  
-	  tstring str;
+	  string str;
 
 	  for (vector<PathName>::const_iterator it = roots.begin();
 	       it != roots.end();
@@ -863,10 +863,10 @@ PropPageTeXMFRoots::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 
 bool
 MIKTEXCALL
-PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
-				   /*[out]*/ MIKTEXCHAR * * ppSubDirNames,
-				   /*[out]*/ MIKTEXCHAR * * ppFileNames,
-				   /*[out]*/ MIKTEXCHAR * * ppFileNameInfos)
+PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const char * lpszPath,
+				   /*[out]*/ char * * ppSubDirNames,
+				   /*[out]*/ char * * ppFileNames,
+				   /*[out]*/ char * * ppFileNameInfos)
   
 {
   UNUSED_ALWAYS (lpszPath);
@@ -884,7 +884,7 @@ PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
 bool
 MIKTEXCALL
 PropPageTeXMFRoots::OnProgress (/*[in]*/ unsigned		level,
-				/*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+				/*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);
   pProgressDialog->SetLine (2, lpszDirectory);
@@ -906,7 +906,7 @@ PropPageTeXMFRoots::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
       NMLVGETINFOTIP * pInfoTip = reinterpret_cast<NMLVGETINFOTIP*>(pNMHDR);
       MIKTEX_ASSERT (pInfoTip != 0);
       PathName path = roots[pInfoTip->iItem];
-      tstring info = path.Get();
+      string info = path.Get();
       if (path == installRoot)
 	{
 	  info += T_("\r\n\r\nThis is the installation directory. Packages");

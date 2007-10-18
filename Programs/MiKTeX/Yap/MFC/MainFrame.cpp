@@ -449,7 +449,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
 #define pxl2mm(pxl) (((pxl) * 25.4) / pDviDoc->GetDisplayResolution())
 #define pxl2pc(pxl) (((pxl) * 12.0) / pDviDoc->GetDisplayResolution())
       double x2, y2;
-      const MIKTEXCHAR * lpszUnit = 0;
+      const char * lpszUnit = 0;
       switch (g_pYapConfig->unit.Get())
 	{
 	case Units::Centimeters:
@@ -506,7 +506,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
    _________________________________________________________________________ */
 
 bool
-MainFrame::AddCommandPrefixChar (/*[in]*/ MIKTEXCHAR	ch)
+MainFrame::AddCommandPrefixChar (/*[in]*/ char	ch)
 {
   bool done = true;
   if (isdigit(ch))

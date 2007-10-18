@@ -293,12 +293,12 @@ public:
   virtual
   bool
   SetLine (/*[in]*/ unsigned		lineNum,
-	   /*[in]*/ const MIKTEXCHAR *	lpszText);
+	   /*[in]*/ const char *	lpszText);
 
 public:
   virtual
   bool
-  SetTitle (/*[in]*/ const MIKTEXCHAR *	lpszTitle);
+  SetTitle (/*[in]*/ const char *	lpszTitle);
 
 public:
   virtual
@@ -392,7 +392,7 @@ ProgressDialogImpl::HasUserCancelled ()
 
 bool
 ProgressDialogImpl::SetLine (/*[in]*/ unsigned			lineNum,
-			     /*[in]*/ const MIKTEXCHAR *	lpszText)
+			     /*[in]*/ const char *	lpszText)
 {
   MIKTEX_ASSERT (lineNum > 0 && lineNum <= 2);
   if (pThread == 0)
@@ -418,7 +418,7 @@ ProgressDialogImpl::SetLine (/*[in]*/ unsigned			lineNum,
    _________________________________________________________________________ */
 
 bool
-ProgressDialogImpl::SetTitle (/*[in]*/ const MIKTEXCHAR * lpszTitle)
+ProgressDialogImpl::SetTitle (/*[in]*/ const char * lpszTitle)
 {
   if (pThread == 0)
     {

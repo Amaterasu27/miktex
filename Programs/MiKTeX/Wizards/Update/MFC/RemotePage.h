@@ -92,18 +92,18 @@ private:
 private:
   void
   InsertColumn (/*[in]*/ int			colIdx,
-		/*[in]*/ const MIKTEXCHAR *	lpszLabel,
-		/*[in]*/ const MIKTEXCHAR *	lpszLongest);
+		/*[in]*/ const char *	lpszLabel,
+		/*[in]*/ const char *	lpszLongest);
   
 private:
   void
   SetItemText (/*[in]*/ int			itemIdx,
 	       /*[in]*/ int			colIdx,
-	       /*[in]*/ const MIKTEXCHAR *	lpszText);
+	       /*[in]*/ const char *	lpszText);
   
 private:
   void
-  SetProgressText (/*[in]*/ const MIKTEXCHAR * lpszText);
+  SetProgressText (/*[in]*/ const char * lpszText);
 
 private:
   CListCtrl listControl;

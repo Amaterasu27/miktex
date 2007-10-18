@@ -31,7 +31,7 @@ using namespace MiKTeX::KPSE;
 
 namespace {
   unsigned kpse_baseResolution = 600;
-  tstring kpse_mode;
+  std::string kpse_mode;
 }
 
 /* _________________________________________________________________________
@@ -242,7 +242,7 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
       found = false;
       Session::FatalMiKTeXError
 	(T_("KPSE::FindFile"),
-	 ((tstring(T_("Unsupported file format type: "))
+	 ((std::string(T_("Unsupported file format type: "))
 	   + NUMTOSTR(format))
 	  .c_str()),
 	 0,
@@ -840,7 +840,7 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 
 MIKTEXKPSAPI(void)
 KPSE::InitProg (/*[in]*/ const char *		prefix,
-		/*[in]*/ unsigned			dpi,
+		/*[in]*/ unsigned		dpi,
 		/*[in]*/ const char *		mode,
 		/*[in]*/ const char *		fallback)
 {
@@ -860,7 +860,7 @@ KPSE::InitProg (/*[in]*/ const char *		prefix,
 
 MIKTEXKPSAPI(void)
 miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
-		       /*[in]*/ unsigned		dpi,
+		       /*[in]*/ unsigned	dpi,
 		       /*[in]*/ const char *	mode,
 		       /*[in]*/ const char *	fallback)
 {
@@ -907,7 +907,7 @@ MIKTEXKPSAPI(char *)
 KPSE::VarValue (/*[in]*/ const char * lpszVarName)
 {
   PathName path;
-  tstring val;
+  std::string val;
   const char * lpszRet = 0;
   if (StringCompare(lpszVarName, T_("SELFAUTOLOC")) == 0)
     {

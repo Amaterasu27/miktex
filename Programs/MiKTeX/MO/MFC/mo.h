@@ -48,13 +48,13 @@ public:
 BOOL
 OnHelpInfo (/*[in]*/ HELPINFO *			pHelpInfo,
 	    /*[in]*/ const DWORD *		pHelpIDs,
-	    /*[in]*/ const MIKTEXCHAR *		lpszTopicFile);
+	    /*[in]*/ const char *		lpszTopicFile);
 
 void
 DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
 		 /*[in]*/ CPoint		point,
 		 /*[in]*/ const DWORD *		pHelpIDs,
-		 /*[in]*/ const MIKTEXCHAR *	lpszTopicFile);
+		 /*[in]*/ const char *	lpszTopicFile);
 
 bool
 HasIE3 ();

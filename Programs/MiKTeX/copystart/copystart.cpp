@@ -1,6 +1,6 @@
 /* copystart.cpp: MiKTeX copy starter
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -31,13 +31,10 @@ using namespace std;
    _________________________________________________________________________ */
 
 void
-CopyStart (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	   /*[in]*/ const MIKTEXCHAR *	lpszArgs,
-	   /*[in]*/ int			nCmdShow)
+CopyStart (/*[in]*/ const char *	lpszFileName,
+	   /*[in]*/ const char *	lpszArgs)
 {
-  UNUSED_ALWAYS (nCmdShow);
-
-  SessionWrapper pSession (Session::InitInfo(_T("copystart")));
+  SessionWrapper pSession (Session::InitInfo("copystart"));
 
   MD5 digest = MD5::FromFile(lpszFileName);
 
@@ -52,7 +49,7 @@ CopyStart (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
   // create the destination file name
   pathExe.SetToTempDirectory ();
   pathExe += PathName(lpszFileName).GetFileNameWithoutExtension();
-  pathExe.SetExtension (_T(".tmp"));
+  pathExe.SetExtension (".tmp");
   if (File::Exists(pathExe))
     {
       if (MD5::FromFile(pathExe.Get()) == digest)
@@ -99,23 +96,23 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
     {
       if (lpCmdLine == 0 || *lpCmdLine == 0)
 	{
-	  throw (_T("Internal error (1)."));
+	  throw (MIKTEXTEXT("Internal error (1)."));
 	}
 
-      bool quoted = (*lpCmdLine == _T('"'));
+      bool quoted = (*lpCmdLine == '"');
 
-      MIKTEXCHAR endChar = (quoted ? _T('"') : _T(' '));
+      char endChar = (quoted ? '"' : ' ');
 
       if (quoted)
 	{
 	  ++ lpCmdLine;
 	  if (*lpCmdLine == 0)
 	    {
-	      throw (_T("Internal error (2)."));
+	      throw (MIKTEXTEXT("Internal error (2)."));
 	    }
 	}
 
-      tstring exe;
+      string exe;
 
       for (; *lpCmdLine != endChar && *lpCmdLine != 0; ++ lpCmdLine)
 	{
@@ -124,7 +121,7 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
 
       if (quoted && *lpCmdLine == 0)
 	{
-	  throw (_T("Internal error (3)."));
+	  throw (MIKTEXTEXT("Internal error (3)."));
 	}
 
       if (quoted)
@@ -132,23 +129,23 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
 	  ++ lpCmdLine;
 	}
 
-      CopyStart (exe.c_str(), lpCmdLine, nCmdShow);
+      CopyStart (exe.c_str(), lpCmdLine);
 
       return (0);
     }
   catch (const MiKTeXException & e)
     {
-      MessageBox (0, e.what(), _T("MiKTeX"), MB_OK | MB_ICONSTOP);
+      MessageBox (0, e.what(), "MiKTeX", MB_OK | MB_ICONSTOP);
       return (1);
     }
   catch (const exception & e)
     {
-      MessageBox (0, e.what(), _T("MiKTeX"), MB_OK | MB_ICONSTOP);
+      MessageBox (0, e.what(), "MiKTeX", MB_OK | MB_ICONSTOP);
       return (1);
     }
-  catch (const MIKTEXCHAR * lpszMessage)
+  catch (const char * lpszMessage)
     {
-      MessageBox (0, lpszMessage, _T("MiKTeX"), MB_OK | MB_ICONSTOP);
+      MessageBox (0, lpszMessage, "MiKTeX", MB_OK | MB_ICONSTOP);
       return (1);
     }
 }

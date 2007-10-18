@@ -1,6 +1,6 @@
 /* graphics.cpp: graphics specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -106,7 +106,7 @@ GraphicsSpecialImpl::Parse ()
       log_error->WriteFormattedLine
 	(T_("libdvi"),
 	 T_("unknown graphics special: %s"),
-	 A2T_(lpsz));
+	 lpsz);
       return (DviSpecialType::Unknown);
     }
 
@@ -134,7 +134,7 @@ GraphicsSpecialImpl::Parse ()
 	  log_error->WriteFormattedLine
 	    (T_("libdvi"),
 	     T_("invalid width specification: %s"),
-	     A2T_(lpsz));
+	     lpsz);
 	  return (DviSpecialType::Unknown);
 	}
       width =
@@ -161,7 +161,7 @@ GraphicsSpecialImpl::Parse ()
 	      log_error->WriteFormattedLine
 		(T_("libdvi"),
 		 T_("invalid width specification: %s"),
-		 A2T_(lpsz));
+		 lpsz);
 	      return (DviSpecialType::Unknown);
 	    }
 	  height =

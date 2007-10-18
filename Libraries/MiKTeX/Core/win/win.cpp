@@ -42,13 +42,8 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 		      /*[in]*/ int	nFallbackFolder,
 		      /*[in]*/ bool	getCurrentPath)
 {
-#if defined(MIKTEX_UNICODE)
   static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, LPTSTR>
-    pFunc (T_("shfolder.dll"), T_("SHGetFolderPathW"));
-#else
-  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, LPTSTR>
-    pFunc (T_("shfolder.dll"), T_("SHGetFolderPathA"));
-#endif
+    pFunc ("shfolder.dll", "SHGetFolderPathA");
   PathName ret;
   DWORD flags =
     ( 0
@@ -73,7 +68,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
     }
   if (hr != S_OK)
     {
-      FATAL_MIKTEX_ERROR (T_("Utils::GetFolderPath"),
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("The file system path could not be retrieved."),
 			  NUMTOSTR(nFolder));
     }
@@ -106,7 +101,7 @@ SessionImpl::GetMyProgramFile ()
   PathName path;
   if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+      FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
     }
   return (path);
 }
@@ -120,36 +115,36 @@ StartupConfig
 SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
 {
   StartupConfig ret;
-  tstring product = (IsMiKTeXDirect() ? T_("MiKTeXDirect") : T_("MiKTeX"));
+  string product = (IsMiKTeXDirect() ? "MiKTeXDirect" : "MiKTeX");
   if (sharedSetup
       || ! IsWindowsNT()
       || IsUserAnAdministrator()
       || IsUserAPowerUser())
     {
       ret.installRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-      ret.installRoot += T_("MiKTeX") T_(" ") T_(MIKTEX_SERIES_STR);
+      ret.installRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
     }
   else
     {
       ret.installRoot =
 	Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-      ret.installRoot += T_("MiKTeX") T_(" ") T_(MIKTEX_SERIES_STR);
+      ret.installRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
     }
   if (sharedSetup)
     {
       ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
       ret.commonDataRoot += product;
-      ret.commonDataRoot += T_(MIKTEX_SERIES_STR);
+      ret.commonDataRoot += MIKTEX_SERIES_STR;
       ret.commonConfigRoot = ret.commonDataRoot;
     }
   ret.userDataRoot =
     Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
   ret.userDataRoot += product;
-  ret.userDataRoot += T_(MIKTEX_SERIES_STR);
+  ret.userDataRoot += MIKTEX_SERIES_STR;
   ret.userConfigRoot =
     Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
   ret.userConfigRoot += product;
-  ret.userConfigRoot += T_(MIKTEX_SERIES_STR);
+  ret.userConfigRoot += MIKTEX_SERIES_STR;
   return (ret);
 }
 
@@ -167,7 +162,7 @@ SessionImpl::ReadRegistry ()
 
   StartupConfig ret;
 
-  tstring str;
+  string str;
 
   if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
 				       MIKTEX_REGKEY_CORE,
@@ -346,10 +341,10 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
 	{
 	  if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      TraceWindowsError (T_("RegOpenKeyEx"),
+	      TraceWindowsError ("RegOpenKeyEx",
 				 res,
-				 T_("Acrobat"),
-				 T_(__FILE__),
+				 "Acrobat",
+				 __FILE__,
 				 __LINE__);
 	    }
 	  return (false);
@@ -371,10 +366,10 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
 	{
 	  if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      TraceWindowsError (T_("RegQueryValueEx"),
+	      TraceWindowsError ("RegQueryValueEx",
 				 res,
 				 0,
-				 T_(__FILE__),
+				 __FILE__,
 				 __LINE__);
 	    }
 	  return (false);
@@ -386,11 +381,11 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
       PathName fontDir;
   
       // try Acrobat Reader 3.0
-      fontDir.Set (dir.Get(), T_("FONTS"), 0);
+      fontDir.Set (dir.Get(), "FONTS", 0);
       if (! Directory::Exists(fontDir))
 	{
 	  // try Acrobat Reader 4.0
-	  fontDir.Set (dir.Get(), T_("..\\Resource\\Font"), 0);
+	  fontDir.Set (dir.Get(), "..\\Resource\\Font", 0);
 	  if (! Directory::Exists(fontDir))
 	    {
 	      return (false);
@@ -437,10 +432,10 @@ SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 	{
 	  if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      TraceWindowsError (T_("RegOpenKeyEx"),
+	      TraceWindowsError ("RegOpenKeyEx",
 				 res,
-				 T_("ATM"),
-				 T_(__FILE__),
+				 "ATM",
+				 __FILE__,
 				 __LINE__);
 	    }
 	  return (false);
@@ -462,10 +457,10 @@ SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 	{
 	  if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      TraceWindowsError (T_("RegQueryValueEx"),
+	      TraceWindowsError ("RegQueryValueEx",
 				 res,
 				 0,
-				 T_(__FILE__),
+				 __FILE__,
 				 __LINE__);
 	    }
 	  return (false);
@@ -499,14 +494,14 @@ SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 MIKTEXSTATICFUNC(bool)
 GetPsFontDirectory (/*[out]*/ PathName & path)
 {
-  MIKTEXCHAR szWinDir[BufferSizes::MaxPath];
+  char szWinDir[BufferSizes::MaxPath];
 
   if (GetWindowsDirectory(szWinDir, BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
     }
 
-  MIKTEXCHAR szWinDrive[BufferSizes::MaxPath];
+  char szWinDrive[BufferSizes::MaxPath];
 
   PathName::Split (szWinDir,
 		   szWinDrive, BufferSizes::MaxPath,
@@ -514,7 +509,7 @@ GetPsFontDirectory (/*[out]*/ PathName & path)
 		   0, 0,
 		   0, 0);
 
-  PathName path_ (szWinDrive, T_("\\psfonts"), 0, 0);
+  PathName path_ (szWinDrive, "\\psfonts", 0, 0);
 
   if (! Directory::Exists(path_))
     {
@@ -532,7 +527,7 @@ GetPsFontDirectory (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetPsFontDirs (/*[out]*/ tstring &	psFontDirs)
+SessionImpl::GetPsFontDirs (/*[out]*/ string &	psFontDirs)
 {
   if (! flags.test(Flags::CachedPsFontDirs))
     {
@@ -578,7 +573,7 @@ GetWindowsFontsDirectory (/*[out]*/ PathName & path)
 			   static_cast<UINT>(path.GetCapacity()))
       == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
     }
   path += "Fonts";
   return (Directory::Exists(path));
@@ -590,7 +585,7 @@ GetWindowsFontsDirectory (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
+SessionImpl::GetTTFDirs (/*[out]*/ string &	ttfDirs)
 {
   if (! flags.test(Flags::CachedTtfDirs))
     {
@@ -622,7 +617,7 @@ SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetOTFDirs (/*[out]*/ tstring &	otfDirs)
+SessionImpl::GetOTFDirs (/*[out]*/ string &	otfDirs)
 {
   if (! flags.test(Flags::CachedOtfDirs))
     {
@@ -655,7 +650,7 @@ SessionImpl::GetOTFDirs (/*[out]*/ tstring &	otfDirs)
 
 MIKTEXSTATICFUNC(bool)
 GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
-			/*[out]*/ tstring &	errorMessage)
+			/*[out]*/ string &	errorMessage)
 {
   void * pMessageBuffer;
   unsigned long len =
@@ -672,7 +667,7 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
       return (false);
     }
   AutoLocalMemory autoFree (pMessageBuffer);
-  errorMessage = reinterpret_cast<MIKTEXCHAR *>(pMessageBuffer);
+  errorMessage = reinterpret_cast<char *>(pMessageBuffer);
   return (true);
 }
 
@@ -684,13 +679,13 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
 void
 MIKTEXNORETURN
 MIKTEXCALL
-Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
+Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 			    /*[in]*/ unsigned long	errorCode,
-			    /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			    /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+			    /*[in]*/ const char *	lpszInfo,
+			    /*[in]*/ const char *	lpszSourceFile,
 			    /*[in]*/ int		sourceLine)
 {
-  tstring programInvocationName;
+  string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
       TraceStream::TraceLastWin32Error (lpszWindowsFunction,
@@ -700,22 +695,22 @@ Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
       programInvocationName =
 	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }
-  tstring errorMessage = T_("Windows API error ");
+  string errorMessage = T_("Windows API error ");
   errorMessage += NUMTOSTR(errorCode);
-  tstring windowsErrorMessage;
+  string windowsErrorMessage;
   if (GetWindowsErrorMessage(errorCode, windowsErrorMessage))
     {
-      errorMessage += T_(": ");
+      errorMessage += ": ";
       errorMessage += windowsErrorMessage;
     }
   else
     {
-      errorMessage += T_('.');
+      errorMessage += '.';
     }
 #if 1
-  tstring env;
-  if (Utils::GetEnvironmentString(T_("MIKTEX_DEBUG_BREAK"), env)
-      && env == T_("1"))
+  string env;
+  if (Utils::GetEnvironmentString("MIKTEX_DEBUG_BREAK", env)
+      && env == "1")
     {
       DEBUG_BREAK ();
     }
@@ -760,9 +755,9 @@ Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
 void
 MIKTEXNORETURN
 MIKTEXCALL
-Session::FatalWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
-			    /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-			    /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
+			    /*[in]*/ const char *	lpszInfo,
+			    /*[in]*/ const char *	lpszSourceFile,
 			    /*[in]*/ int		sourceLine)
 {
   FatalWindowsError (lpszWindowsFunction,
@@ -787,10 +782,10 @@ SharingViolationException::SharingViolationException ()
    _________________________________________________________________________ */
 
 SharingViolationException::SharingViolationException
-(/*[in]*/ const MIKTEXCHAR *	lpszProgramInvocationName,
- /*[in]*/ const MIKTEXCHAR *	lpszMessage,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszProgramInvocationName,
+ /*[in]*/ const char *	lpszMessage,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			sourceLine)
   : IOException (lpszProgramInvocationName,
 		 lpszMessage,
@@ -806,22 +801,22 @@ SharingViolationException::SharingViolationException
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-GetAlternate (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-	      /*[out]*/ MIKTEXCHAR *		lpszAlternate)
+GetAlternate (/*[in]*/ const char *	lpszPath,
+	      /*[out]*/ char *		lpszAlternate)
 {
   WIN32_FIND_DATA finddata;
   HANDLE hnd = FindFirstFile(lpszPath, &finddata);
   if (hnd == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR (T_("FindFirstFile"), lpszPath);
+      FATAL_WINDOWS_ERROR ("FindFirstFile", lpszPath);
     }
   if (! FindClose(hnd))
     {
-      FATAL_WINDOWS_ERROR (T_("FindClose"), 0);
+      FATAL_WINDOWS_ERROR ("FindClose", 0);
     }
   if (finddata.cAlternateFileName[0] == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("GetAlternate"),
+      FATAL_MIKTEX_ERROR ("GetAlternate",
 			  T_("no alternate file name"),
 			  lpszPath);
     }
@@ -842,13 +837,13 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
   PathName temp (path);
 
   // points to the null char
-  MIKTEXCHAR * lpszEnd = temp.GetBuffer() + temp.GetLength();
+  char * lpszEnd = temp.GetBuffer() + temp.GetLength();
 
   // back iterator
-  MIKTEXCHAR * lpsz = lpszEnd;
+  char * lpsz = lpszEnd;
 
   // points to the last '/' found (if any)
-  MIKTEXCHAR * lpszSlash = 0;
+  char * lpszSlash = 0;
 
   // true, if lpsz points to a char sequence that includes a blank
   // char
@@ -863,7 +858,7 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
 	  lpszSlash = lpsz;
 	  break;
 	}
-      if (*lpsz == T_(' '))
+      if (*lpsz == ' ')
 	{
 	  containsBlanks = true;
 	}
@@ -880,7 +875,7 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
   MIKTEX_ASSERT (lpszSlash == 0 || IsDirectoryDelimiter(*lpszSlash));
   
   // buffer for file name w/o blanks
-  MIKTEXCHAR szAlternate[BufferSizes::MaxPath];
+  char szAlternate[BufferSizes::MaxPath];
 
   if (containsBlanks)
     {
@@ -897,7 +892,7 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
     }
 
   // the new file name doesn't contain a space
-  MIKTEX_ASSERT (StrChr(szAlternate, T_(' ')) == 0);
+  MIKTEX_ASSERT (StrChr(szAlternate, ' ') == 0);
 
   if (lpszSlash == temp.Get()	// "/foo.bar"
       || (lpszSlash == temp.Get() + 1 // "//foo.bar"
@@ -921,7 +916,7 @@ Utils::RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path)
       RemoveBlanksFromPathName (temp);
       // </recursivecall>
       // path now hasn't any blanks; combine path with new file name
-      MIKTEX_ASSERT (StrChr(temp.Get(), T_(' ')) == 0);
+      MIKTEX_ASSERT (StrChr(temp.Get(), ' ') == 0);
       path = temp;
       path += szAlternate;
     }
@@ -956,7 +951,7 @@ PathName::Combine (/*[out]*/ char *		lpszPath,
 		   lpszExtension)
       != 0)
     {
-      FATAL_CRT_ERROR (T_("_tmakepath_s"), 0);
+      FATAL_CRT_ERROR ("_tmakepath_s", 0);
     }
 #  else
   char szPath[BufferSizes::MaxPath];
@@ -1001,7 +996,7 @@ PathName::Split (/*[in]*/ const char *	lpszPath,
 		    sizeExtension)
       != 0)
     {
-      FATAL_CRT_ERROR (T_("_tsplitpath_s"), 0);
+      FATAL_CRT_ERROR ("_tsplitpath_s", 0);
     }
 #  else
   _tsplitpath (lpszPath, lpszDrive, lpszDir, lpszName, lpszExtension);
@@ -1022,7 +1017,7 @@ GetUserProfileDirectory (/*[out]*/ PathName & path)
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
   if (! IsWindowsNT())
     {
-      const MIKTEXCHAR * lpszProfRecon =
+      const char * lpszProfRecon =
 	T_("\
 Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
       
@@ -1041,7 +1036,7 @@ Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
 	  unsigned long type = REG_SZ;
 	  res =
 	    RegQueryValueEx(hkey.Get(),
-			    T_("ProfileDirectory"),
+			    "ProfileDirectory",
 			    0,
 			    &type,
 			    reinterpret_cast<LPBYTE>(path.GetBuffer()),
@@ -1052,17 +1047,17 @@ Software\\Microsoft\\Windows\\CurrentVersion\\ProfileReconciliation");
 	    }
 	  else if (res != ERROR_FILE_NOT_FOUND)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("ProfileDirectory"), 0);
+	      FATAL_WINDOWS_ERROR ("ProfileDirectory", 0);
 	    }
 	}
       else if (res != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR (T_("ProfileReconciliation"), lpszProfRecon);
+	  FATAL_WINDOWS_ERROR ("ProfileReconciliation", lpszProfRecon);
 	}
     }
 #endif
 
-  return (Utils::GetEnvironmentString(T_("USERPROFILE"), path));
+  return (Utils::GetEnvironmentString("USERPROFILE", path));
 }
 
 /* _________________________________________________________________________
@@ -1213,7 +1208,7 @@ typedef BOOL (WINAPI * PGPI) (/*[in]*/ DWORD,
 #  define PRODUCT_WEB_SERVER 0x00000011
 #endif
 
-tstring
+string
 Utils::GetOSVersionString ()
 {
   // get Windows version information
@@ -1227,7 +1222,7 @@ Utils::GetOSVersionString ()
       osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
       if (! GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&osvi)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetVersionEx"), 0);
+	  FATAL_WINDOWS_ERROR ("GetVersionEx", 0);
 	}
     }
   
@@ -1236,7 +1231,7 @@ Utils::GetOSVersionString ()
   bool haveSystemInfo = false;
 
   // build version string
-  tstring str;
+  string str;
   switch (osvi.dwPlatformId)
      {
      case VER_PLATFORM_WIN32_NT: // Windows NT product family
@@ -1244,16 +1239,16 @@ Utils::GetOSVersionString ()
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
-	       str += T_("Microsoft Windows Vista ");
+	       str += "Microsoft Windows Vista ";
 	     }
 	   else
 	     {
-	       str += T_("Microsoft Windows Server \"Longhorn\" ");
+	       str += "Microsoft Windows Server \"Longhorn\" ";
 	     }
 	   PGPI pGPI =
 	     reinterpret_cast<PGPI>
-	     (GetProcAddress(GetModuleHandle(T_("kernel32.dll")),
-			     T_("GetProductInfo")));
+	     (GetProcAddress(GetModuleHandle("kernel32.dll"),
+			     "GetProductInfo"));
 	   DWORD dwProductType;
 	   if (pGPI != 0 && pGPI(6, 0, 0, 0, &dwProductType))
 	     {
@@ -1263,86 +1258,86 @@ Utils::GetOSVersionString ()
 		   str += T_("(not activated, grace period expired) ");
 		   break;
 		 case PRODUCT_BUSINESS:
-		   str += T_("Business Edition ");
+		   str += "Business Edition ";
 		   break;
 		 case PRODUCT_BUSINESS_N:
-		   str += T_("Business N Edition ");
+		   str += "Business N Edition ";
 		   break;
 		 case PRODUCT_CLUSTER_SERVER:
-		   str += T_("Cluster Server Edition ");
+		   str += "Cluster Server Edition ";
 		   break;
 		 case PRODUCT_DATACENTER_SERVER:
-		   str += T_("Server Datacenter Edition (full installation) ");
+		   str += "Server Datacenter Edition (full installation) ";
 		   break;
 		 case PRODUCT_DATACENTER_SERVER_CORE:
-		   str += T_("Server Datacenter Edition (core installation) ");
+		   str += "Server Datacenter Edition (core installation) ";
 		   break;
 		 case PRODUCT_ENTERPRISE:
-		   str += T_("Enterprise Edition ");
+		   str += "Enterprise Edition ";
 		   break;
 		 case PRODUCT_ENTERPRISE_SERVER:
-		   str += T_("Server Enterprise Edition (full installation) ");
+		   str += "Server Enterprise Edition (full installation) ";
 		   break;
 		 case PRODUCT_ENTERPRISE_SERVER_CORE:
-		   str += T_("Server Enterprise Edition (core installation) ");
+		   str += "Server Enterprise Edition (core installation) ";
 		   break;
 		 case PRODUCT_ENTERPRISE_SERVER_IA64:
 		   str +=
-		     (T_("Server Enterprise Edition ")
-		      T_("for Itanium-based Systems "));
+		     ("Server Enterprise Edition "
+		      "for Itanium-based Systems ");
 		   break;
 		 case PRODUCT_HOME_BASIC:
-		   str += T_("Home Basic Edition ");
+		   str += "Home Basic Edition ";
 		   break;
 		 case PRODUCT_HOME_BASIC_N:
-		   str += T_("Home Basic N Edition ");
+		   str += "Home Basic N Edition ";
 		   break;
 		 case PRODUCT_HOME_PREMIUM:
-		   str += T_("Home Premium Edition ");
+		   str += "Home Premium Edition ";
 		   break;
 		 case PRODUCT_HOME_SERVER:
-		   str += T_("Home Server Edition ");
+		   str += "Home Server Edition ";
 		   break;
 		 case PRODUCT_SERVER_FOR_SMALLBUSINESS:
-		   str += T_("Server for Small Business Edition ");
+		   str += "Server for Small Business Edition ";
 		   break;
 		 case PRODUCT_SMALLBUSINESS_SERVER:
-		   str += T_("Small Business Server ");
+		   str += "Small Business Server ";
 		   break;
 		 case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-		   str += T_("Small Business Server Premium Edition ");
+		   str += "Small Business Server Premium Edition ";
 		   break;
 		 case PRODUCT_STANDARD_SERVER:
 		   str +=
-		     T_("Server Standard Edition (full installation) ");
+		     "Server Standard Edition (full installation) ";
 		   break;
 		 case PRODUCT_STANDARD_SERVER_CORE :
 		   str +=
-		     T_("Server Standard Edition (core installation) ");
+		     "Server Standard Edition (core installation) ";
 		   break;
 		 case PRODUCT_STARTER:
-		   str += T_("Starter Edition ");
+		   str += "Starter Edition ";
 		   break;
 		 case PRODUCT_STORAGE_ENTERPRISE_SERVER:
-		   str += T_("Storage Server Enterprise Edition ");
+		   str += "Storage Server Enterprise Edition ";
 		   break;
 		 case PRODUCT_STORAGE_EXPRESS_SERVER:
-		   str += T_("Storage Server Express Edition ");
+		   str += "Storage Server Express Edition ";
 		   break;
 		 case PRODUCT_STORAGE_STANDARD_SERVER:
-		   str += T_("Storage Server Standard Edition ");
+		   str += "Storage Server Standard Edition ";
 		   break;
 		 case PRODUCT_STORAGE_WORKGROUP_SERVER:
-		   str += T_("Storage Server Workgroup Edition ");
+		   str += "Storage Server Workgroup Edition ";
 		   break;
 		 case PRODUCT_UNDEFINED:
 		   str += T_("(unknown product) ");
 		   break;
 		 case PRODUCT_ULTIMATE:
-		   str += T_("Ultimate Edition ");
+		   str += "Ultimate Edition ";
 		   break;
 		 case PRODUCT_WEB_SERVER:
-		   str += T_("Web Server Edition ");
+		   str += "Web Server Edition ";
 		   break;
 		 }
 	     }
@@ -1352,8 +1347,8 @@ Utils::GetOSVersionString ()
 	   // use GetProcAddress to avoid load issues on Windows 2000
 	   PGNSI pGNSI =
 	     reinterpret_cast<PGNSI>
-	     (GetProcAddress(GetModuleHandle(T_("kernel32.dll")),
-			     T_("GetNativeSystemInfo")));
+	     (GetProcAddress(GetModuleHandle("kernel32.dll"),
+			     "GetNativeSystemInfo"));
 	   if (pGNSI != 0)
 	     {
 	       pGNSI (&si);
@@ -1361,34 +1356,34 @@ Utils::GetOSVersionString ()
 	     }
 	   if (GetSystemMetrics(SM_SERVERR2))
 	     {
-	       str += T_("Microsoft Windows Server 2003 \"R2\" ");
+	       str += "Microsoft Windows Server 2003 \"R2\" ";
 	     }
 	   else if (osvi.wProductType == VER_NT_WORKSTATION
 		    && haveSystemInfo
 		    && (si.wProcessorArchitecture
 			== PROCESSOR_ARCHITECTURE_AMD64))
 	     {
-	       str += T_("Microsoft Windows XP Professional x64 Edition ");
+	       str += "Microsoft Windows XP Professional x64 Edition ";
 	     }
 	   else
 	     {
-	       str += T_("Microsoft Windows Server 2003 ");
+	       str += "Microsoft Windows Server 2003 ";
 	     }
 	 }
        else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
 	 {
-	   str += T_("Microsoft Windows XP ");
+	   str += "Microsoft Windows XP ";
 	 }
        else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
 	 {
-	   str += T_("Microsoft Windows 2000 ");
+	   str += "Microsoft Windows 2000 ";
 	 }
        else if (osvi.dwMajorVersion <= 4)
 	 {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	   str += T_("Microsoft Windows NT ");
+	   str += "Microsoft Windows NT ";
 #else
-	   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+	   UNIMPLEMENTED ("Utils::GetOSVersionString");
 #endif
 	 }
        if (haveOsVersionInfoEx)
@@ -1403,14 +1398,14 @@ Utils::GetOSVersionString ()
 	       if (osvi.dwMajorVersion == 4)
 		 {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-		   str += T_("Workstation 4.0 ");
+		   str += "Workstation 4.0 ";
 #else
-		   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+		   UNIMPLEMENTED ("Utils::GetOSVersionString");
 #endif
 		 }
 	       else if ((osvi.wSuiteMask & VER_SUITE_PERSONAL) != 0)
 		 {
-		   str += T_("Home Edition ");
+		   str += "Home Edition ";
 		 }
 	       else
 		 {
@@ -1435,14 +1430,14 @@ Utils::GetOSVersionString ()
 		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
 			 {
 			   str +=
-			     T_("Datacenter Edition")
-			     T_(" for Itanium-based Systems ");
+			     "Datacenter Edition"
+			     " for Itanium-based Systems ";
 			 }
 		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 			 {
 			   str +=
-			     T_("Enterprise Edition")
-			     T_(" for Itanium-based Systems ");
+			     "Enterprise Edition"
+			     " for Itanium-based Systems ";
 			 }
 		     }
 		   else if (haveSystemInfo
@@ -1451,34 +1446,34 @@ Utils::GetOSVersionString ()
 		     {
 		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
 			 {
-			   str += T_("Datacenter x64 Edition ");
+			   str += "Datacenter x64 Edition ";
 			 }
 		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 			 {
-			   str += T_("Enterprise x64 Edition ");
+			   str += "Enterprise x64 Edition ";
 			 }
 		       else
 			 {
-			   str += T_("Standard x64 Edition ");
+			   str += "Standard x64 Edition ";
 			 }
 		     }
 		   else
 		     {
 		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
 			 {
-			   str += T_("Datacenter Edition ");
+			   str += "Datacenter Edition ";
 			 }
 		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 			 {
-			   str+= T_("Enterprise Edition ");
+			   str+= "Enterprise Edition ";
 			 }
 		       else if ((osvi.wSuiteMask == VER_SUITE_BLADE) != 0)
 			 {
-			   str += T_("Web Edition ");
+			   str += "Web Edition ";
 			 }
 		       else
 			 {
-			   str += T_("Standard Edition ");
+			   str += "Standard Edition ";
 			 }
 		     }
 		 }
@@ -1486,15 +1481,15 @@ Utils::GetOSVersionString ()
 		 {
 		   if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
 		     {
-		       str += T_("Datacenter Server ");
+		       str += "Datacenter Server ";
 		     }
 		   else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 		     {
-		       str += T_("Advanced Server ");
+		       str += "Advanced Server ";
 		     }
 		   else
 		     {
-		       str += T_("Server ");
+		       str += "Server ";
 		     }
 		 }
 	       else		// Windows NT 4.0
@@ -1506,10 +1501,10 @@ Utils::GetOSVersionString ()
 		     }
 		   else
 		     {
-		       str += T_("Server 4.0 ");
+		       str += "Server 4.0 ";
 		     }
 #else
-		   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+		   UNIMPLEMENTED ("Utils::GetOSVersionString");
 #endif
 		 }
 	     }
@@ -1521,56 +1516,56 @@ Utils::GetOSVersionString ()
 	   LONG lRet;
 	   lRet =
 	     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			  (T_("SYSTEM\\CurrentControlSet\\Control")
-			   T_("\\ProductOptions")),
+			  ("SYSTEM\\CurrentControlSet\\Control"
+			   "\\ProductOptions"),
 			  0,
 			  KEY_QUERY_VALUE,
 			  &hKey);
 	   if (lRet != ERROR_SUCCESS)
 	     {
-	       FATAL_WINDOWS_ERROR (T_("RegOpenKeyEx"), 0);
+	       FATAL_WINDOWS_ERROR ("RegOpenKeyEx", 0);
 	     }
-	   MIKTEXCHAR szProductType[80];
+	   char szProductType[80];
 	   unsigned long dwBufLen = ARRAY_SIZE(szProductType);
 	   lRet =
 	     RegQueryValueEx(hKey.Get(),
-			     T_("ProductType"),
+			     "ProductType",
 			     0,
 			     0,
 			     reinterpret_cast<LPBYTE>(szProductType),
 			     &dwBufLen);
 	   if (lRet != ERROR_SUCCESS)
 	     {
-	       FATAL_WINDOWS_ERROR (T_("RegQueryValueEx"), 0);
+	       FATAL_WINDOWS_ERROR ("RegQueryValueEx", 0);
 	     }
 	   if (dwBufLen > ARRAY_SIZE(szProductType))
 	     {
-	       BUF_TOO_SMALL (T_("GetWindowsVersion"));
+	       BUF_TOO_SMALL ("GetWindowsVersion");
 	     }
-	   else if (_tcsicmp(T_("WINNT"), szProductType) == 0)
+	   else if (_tcsicmp("WINNT", szProductType) == 0)
 	     {
-	       str += T_("Workstation ");
+	       str += "Workstation ";
 	     }
-	   else if (_tcsicmp(T_("LANMANNT"), szProductType) == 0)
+	   else if (_tcsicmp("LANMANNT", szProductType) == 0)
 	     {
-	       str += T_("Server ");
+	       str += "Server ";
 	     }
-	   else if (_tcsicmp (T_("SERVERNT"), szProductType) == 0)
+	   else if (_tcsicmp ("SERVERNT", szProductType) == 0)
 	     {
-	       str += T_("Advanced Server ");
+	       str += "Advanced Server ";
 	     }
 	   str += NUMTOSTR(osvi.dwMajorVersion);
-	   str += T_('.');
+	   str += '.';
 	   str += NUMTOSTR(osvi.dwMinorVersion);
-	   str += T_(' ');
+	   str += ' ';
 #else
-	   UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+	   UNIMPLEMENTED ("Utils::GetOSVersionString");
 #endif
 	 }
      
        // get service pack (if any) and build number
        if (osvi.dwMajorVersion == 4
-	   && _tcsicmp(osvi.szCSDVersion, T_("Service Pack 6")) == 0)
+	   && _tcsicmp(osvi.szCSDVersion, "Service Pack 6") == 0)
 	 {
 	   HKEY hKey;
 	   LONG lRet;
@@ -1578,24 +1573,24 @@ Utils::GetOSVersionString ()
 	   // test for SP6 versus SP6a
 	   lRet =
 	     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			  (T_("SOFTWARE\\Microsoft\\Windows NT")
-			   T_("\\CurrentVersion\\Hotfix\\Q246009")),
+			  ("SOFTWARE\\Microsoft\\Windows NT"
+			   "\\CurrentVersion\\Hotfix\\Q246009"),
 			  0,
 			  KEY_QUERY_VALUE,
 			  &hKey);
 	   if (lRet == ERROR_SUCCESS)
 	     {
 	       RegCloseKey (hKey);
-	       str += T_("Service Pack 6a (Build ");
+	       str += "Service Pack 6a (Build ";
 	       str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	       str += T_(')');
+	       str += ')';
 	     }
 	   else
 	     {
 	       str += osvi.szCSDVersion;
-	       str += T_(" (Build ");
+	       str += " (Build ";
 	       str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	       str += T_(')');
+	       str += ')';
 	     }
 	 }
        else // Windows NT 3.51 and earlier or Windows 2000 and later
@@ -1603,11 +1598,11 @@ Utils::GetOSVersionString ()
 	   if (osvi.szCSDVersion[0] != 0)
 	     {
 	       str += osvi.szCSDVersion;
-	       str += T_(' ');
+	       str += ' ';
 	     }
-	   str += T_("(Build ");
+	   str += "(Build ";
 	   str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	   str += T_(')');
+	   str += ')';
 	 }
        break;
      
@@ -1615,27 +1610,27 @@ Utils::GetOSVersionString ()
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
          {
-	   str += T_("Microsoft Windows 95");
+	   str += "Microsoft Windows 95";
 	   if (osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B')
 	     {
-	       str += T_(" OSR2");
+	       str += " OSR2";
 	     }
          }
        else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
          {
-	   str += T_("Microsoft Windows 98");
+	   str += "Microsoft Windows 98";
 	   if ( osvi.szCSDVersion[1] == 'A')
 	     {
-	       str += T_(" SE");
+	       str += " SE";
 	     }
          } 
        else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
          {
-	   str += T_("Microsoft Windows Millennium Edition");
+	   str += "Microsoft Windows Millennium Edition";
          } 
        break;
 #else
-       UNIMPLEMENTED (T_("Utils::GetOSVersionString"));
+       UNIMPLEMENTED ("Utils::GetOSVersionString");
 #endif
      }
 
@@ -1649,14 +1644,10 @@ Utils::GetOSVersionString ()
    See Q246772.
    _________________________________________________________________________ */
 
-#if defined(UNICODE)
-#  define GETDEFAULTPRINTER "GetDefaultPrinterW"
-#else
-#  define GETDEFAULTPRINTER "GetDefaultPrinterA"
-#endif
+#define GETDEFAULTPRINTER "GetDefaultPrinterA"
 
 MIKTEXAPI(bool)
-Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
+Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
 {
   OSVERSIONINFO osv;
@@ -1679,7 +1670,7 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
       AutoGlobalMemory hMem (GlobalAlloc(GPTR, dwNeeded));
       if (hMem.Get() == 0)
 	{
-	  OUT_OF_MEMORY (T_("Utils::GetDefPrinter"));
+	  OUT_OF_MEMORY ("Utils::GetDefPrinter");
 	}
       PRINTER_INFO_2 * ppi2 =
 	reinterpret_cast<PRINTER_INFO_2*>(hMem.Get());
@@ -1707,12 +1698,12 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
     {
       if (osv.dwPlatformId != VER_PLATFORM_WIN32_NT)
 	{
-	  UNEXPECTED_CONDITION (T_("Utils::GetDefPrinter"));
+	  UNEXPECTED_CONDITION ("Utils::GetDefPrinter");
 	}
       if (osv.dwMajorVersion >= 5)
 	{
 	  DllProc2<BOOL, LPTSTR, LPDWORD>
-	    pGetDefaultPrinter (T_("winspool.drv"), GETDEFAULTPRINTER);
+	    pGetDefaultPrinter ("winspool.drv", GETDEFAULTPRINTER);
 	  DWORD dwBufferSize = static_cast<DWORD>(*pBufferSize);
 	  BOOL bDone = pGetDefaultPrinter(pPrinterName, &dwBufferSize);
 	  if (! bDone)
@@ -1723,7 +1714,7 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
 		}
 	      else
 		{
-		  FATAL_WINDOWS_ERROR (T_("GetDefaultPrinter"), 0);
+		  FATAL_WINDOWS_ERROR ("GetDefaultPrinter", 0);
 		}
 	    }
 	  else
@@ -1735,16 +1726,16 @@ Utils::GetDefPrinter (/*[out]*/ MIKTEXCHAR *		pPrinterName,
       else
 	{
 	  TCHAR cBuffer[4096];
-	  if (GetProfileString(T_("windows"),
-			       T_("device"),
-			       T_(",,,"),
+	  if (GetProfileString("windows",
+			       "device",
+			       ",,,",
 			       cBuffer,
 			       4096)
 	      <= 0)
 	    {
 	      return (false);
 	    }
-	  Tokenizer tok (cBuffer, T_(","));
+	  Tokenizer tok (cBuffer, ",");
 	  if (tok.GetCurrent() == 0)
 	    {
 	      return (false);
@@ -1773,7 +1764,7 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 				    /*[in]*/ unsigned long	topic)
 {
   PathName pathHelpFile;
-  if (! FindFile(T_("miktex.chm"), T_("%R\\doc\\miktex//"), pathHelpFile))
+  if (! FindFile("miktex.chm", "%R\\doc\\miktex//", pathHelpFile))
     {
       return (false);
     }
@@ -1799,7 +1790,7 @@ PathName::SetToCurrentDirectory ()
 {
   if (getcwd(GetBuffer(), static_cast<int>(GetCapacity())) == 0)
     {
-      FATAL_CRT_ERROR (T_("getcwd"), 0);
+      FATAL_CRT_ERROR ("getcwd", 0);
     }
   return (*this);
 }
@@ -1816,11 +1807,11 @@ PathName::SetToTempDirectory ()
     GetTempPathA(static_cast<DWORD>(GetCapacity()), GetBuffer());
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetTempPathA"), 0);
+      FATAL_WINDOWS_ERROR ("GetTempPathA", 0);
     }
   if (n >= GetCapacity())
     {
-      UNEXPECTED_CONDITION (T_("PathName::SetToTempDirectory"));
+      UNEXPECTED_CONDITION ("PathName::SetToTempDirectory");
     }
   return (*this);
 }
@@ -1835,15 +1826,15 @@ PathName::SetToTempFile ()
 {
   PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
 
-  UINT n = GetTempFileNameA(pathTempDir.Get(), T_("mik"), 0, GetBuffer());
+  UINT n = GetTempFileNameA(pathTempDir.Get(), "mik", 0, GetBuffer());
 
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetTempFileNameA"), pathTempDir.Get());
+      FATAL_WINDOWS_ERROR ("GetTempFileNameA", pathTempDir.Get());
     }
 
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("created temporary file %s"),
      Q_(Get()));
 
@@ -1856,19 +1847,19 @@ PathName::SetToTempFile ()
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-TraceWindowsError (/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
+TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ unsigned long	functionResult,
-		   /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		   /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+		   /*[in]*/ const char *	lpszInfo,
+		   /*[in]*/ const char *	lpszSourceFile,
 		   /*[in]*/ int			sourceLine)
 {
-  tstring errorMessage;
+  string errorMessage;
   if (! GetWindowsErrorMessage(functionResult, errorMessage))
     {
       return;
     }
   SessionImpl::GetSession()->trace_error->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("\
 Windows function %s failed for the following reason:\n	\
 %s\n\
@@ -1879,7 +1870,7 @@ Line: %d"),
      lpszWindowsFunction,
      errorMessage.c_str(),
      static_cast<unsigned>(functionResult),
-     (lpszInfo == 0 ? T_("") : lpszInfo),
+     (lpszInfo == 0 ? "" : lpszInfo),
      lpszSourceFile,
      sourceLine);
 }
@@ -1891,10 +1882,10 @@ Line: %d"),
 
 #if REPORT_EVENTS
 
-#define SOURCE T_("MiKTeX")
+#define SOURCE "MiKTeX"
 
 #define EVTLOGAPP \
-  T_("SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application")
+  "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application"
 
 #if ! defined(MIKTEX_STATIC)
 MIKTEXSTATICFUNC(bool)
@@ -1909,8 +1900,8 @@ AddEventSource ()
 #endif
     }
 
-  tstring registryPath = EVTLOGAPP;
-  registryPath += T_('\\');
+  string registryPath = EVTLOGAPP;
+  registryPath += '\\';
   registryPath += SOURCE;
 
   AutoHKEY hkey;
@@ -1919,7 +1910,7 @@ AddEventSource ()
     RegCreateKeyEx(HKEY_LOCAL_MACHINE,
 		   registryPath.c_str(),
 		   0,
-		   T_(""),
+		   "",
 		   REG_OPTION_NON_VOLATILE,
 		   KEY_ALL_ACCESS,
 		   0,
@@ -1927,7 +1918,7 @@ AddEventSource ()
 		   &disp);
   if (res != ERROR_SUCCESS)
     {
-      TraceWindowsError (T_(""),
+      TraceWindowsError ("",
 			 res,
 			 registryPath.c_str(),
 			 __FILE__,
@@ -1936,29 +1927,29 @@ AddEventSource ()
     }
   
   // set the name of the message file
-  MIKTEXCHAR szModule[BufferSizes::MaxPath];
+  char szModule[BufferSizes::MaxPath];
   if (GetModuleFileName(SessionImpl::hinstDLL, szModule, BufferSizes::MaxPath)
       == 0)
     {
-      TraceStream::TraceLastWin32Error (T_("GetModuleFileName"),
+      TraceStream::TraceLastWin32Error ("GetModuleFileName",
 					0,
-					T_(__FILE__),
+					__FILE__,
 					__LINE__);
       return (false);
     }
   res =
     RegSetValueEx(hkey.Get(),
-		  T_("EventMessageFile"),
+		  "EventMessageFile",
 		  0,
 		  REG_EXPAND_SZ,
 		  reinterpret_cast<unsigned char *>(&szModule),
 		  static_cast<unsigned long>((StrLen(szModule) + 1)
-					     * sizeof(MIKTEXCHAR)));
+					     * sizeof(char)));
   if (res != ERROR_SUCCESS)
     {
-      TraceWindowsError (T_("RegSetValueEx"),
+      TraceWindowsError ("RegSetValueEx",
 			 res,
-			 T_("EventMessageFile"),
+			 "EventMessageFile",
 			 __FILE__,
 			 __LINE__);
       return (false);
@@ -1970,7 +1961,7 @@ AddEventSource ()
 			  | EVENTLOG_INFORMATION_TYPE);
   res =
     RegSetValueEx(hkey.Get(),
-		  T_("TypesSupported"),
+		  "TypesSupported",
 		  0,
 		  REG_DWORD,
 		  reinterpret_cast<unsigned char *>(&dwData),
@@ -1978,9 +1969,9 @@ AddEventSource ()
   
   if (res != ERROR_SUCCESS)
     {
-      TraceWindowsError (T_("RegSetValueEx"),
+      TraceWindowsError ("RegSetValueEx",
 			 res,
-			 T_("TypesSupported"),
+			 "TypesSupported",
 			 __FILE__,
 			 __LINE__);
       return (false);
@@ -2020,9 +2011,9 @@ RemoveEventSource ()
 		 &hkey);
   if (res != ERROR_SUCCESS)
     {
-      TraceWindowsError (T_("RemoveEventSource"),
+      TraceWindowsError ("RemoveEventSource",
 			 res,
-			 T_("EventLog\\Application"),
+			 "EventLog\\Application",
 			 __FILE__,
 			 __LINE__);
       return (false);
@@ -2030,9 +2021,9 @@ RemoveEventSource ()
   res = RegDeleteKey(hkey.Get(), SOURCE);
   if (res != ERROR_SUCCESS)
     {
-      TraceWindowsError (T_("RemoveEventSource"),
+      TraceWindowsError ("RemoveEventSource",
 			 res,
-			 T_("EventLog\\Application\\MiKTeX"),
+			 "EventLog\\Application\\MiKTeX",
 			 __FILE__,
 			 __LINE__);
       return (false);
@@ -2067,12 +2058,12 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
 #endif
     }
 
-  vector<const MIKTEXCHAR *> vecStrings;
+  vector<const char *> vecStrings;
   va_list marker;
   va_start (marker, eventId);
-  for (const MIKTEXCHAR * lpsz = va_arg(marker, const MIKTEXCHAR *);
+  for (const char * lpsz = va_arg(marker, const char *);
        lpsz != 0;
-       lpsz = va_arg(marker, const MIKTEXCHAR *))
+       lpsz = va_arg(marker, const char *))
     {
       vecStrings.push_back (lpsz);
     }
@@ -2089,15 +2080,15 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
   AutoMemoryPointer pBuf (malloc(bufSize));
   if (pBuf.Get() == 0)
     {
-      OUT_OF_MEMORY (T_("ReportMiKTeXEvent"));
+      OUT_OF_MEMORY ("ReportMiKTeXEvent");
     }
-  MIKTEXCHAR szAccountName[BufferSizes::MaxPath];
+  char szAccountName[BufferSizes::MaxPath];
   unsigned long n = BufferSizes::MaxPath;
   if (GetUserName(szAccountName, &n))
     {
       unsigned long sidSize = static_cast<unsigned long>(bufSize);
       pSid = reinterpret_cast<PSID>(pBuf.Get());
-      MIKTEXCHAR szDomainName[BufferSizes::MaxPath];
+      char szDomainName[BufferSizes::MaxPath];
       unsigned long domainNameSize = BufferSizes::MaxPath;
       SID_NAME_USE use;
       if (! LookupAccountName(0,
@@ -2133,7 +2124,7 @@ ReportMiKTeXEvent (/*[in]*/ unsigned short	eventType,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::IsFileAlreadyOpen (/*[in]*/ const MIKTEXCHAR * lpszFileName)
+SessionImpl::IsFileAlreadyOpen (/*[in]*/ const char * lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
 
@@ -2156,7 +2147,7 @@ SessionImpl::IsFileAlreadyOpen (/*[in]*/ const MIKTEXCHAR * lpszFileName)
     {
       if (! CloseHandle(hFile))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CloseHandle"), lpszFileName);
+	  FATAL_WINDOWS_ERROR ("CloseHandle", lpszFileName);
 	}
     }
 
@@ -2170,43 +2161,43 @@ SessionImpl::IsFileAlreadyOpen (/*[in]*/ const MIKTEXCHAR * lpszFileName)
    _________________________________________________________________________ */
 
 void
-SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
+SessionImpl::ScheduleFileRemoval (/*[in]*/ const char * lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
   trace_files->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("scheduling removal of %s"),
      Q_(lpszFileName));
   if (IsWindowsNT())
     {
       if (! MoveFileEx(lpszFileName, 0, MOVEFILE_DELAY_UNTIL_REBOOT))
 	{
-	  FATAL_WINDOWS_ERROR (T_("MoveFileEx"), lpszFileName);
+	  FATAL_WINDOWS_ERROR ("MoveFileEx", lpszFileName);
 	}
     }
   else
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-      MIKTEXCHAR szWinDir[BufferSizes::MaxPath];
+      char szWinDir[BufferSizes::MaxPath];
       if (GetWindowsDirectory(szWinDir, BufferSizes::MaxPath) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetWindowsDirectory"), 0);
+	  FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
 	}
-      PathName pathWinInitIni (szWinDir, T_("wininit"), T_(".ini"));
-      vector<tstring> lines;
+      PathName pathWinInitIni (szWinDir, "wininit", ".ini");
+      vector<string> lines;
       lines.reserve (20);
-      MIKTEXCHAR szShortPathName[BufferSizes::MaxPath];
+      char szShortPathName[BufferSizes::MaxPath];
       unsigned long n =
 	GetShortPathName(lpszFileName, szShortPathName, BufferSizes::MaxPath);
       if (n == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetShortPathName"), lpszFileName);
+	  FATAL_WINDOWS_ERROR ("GetShortPathName", lpszFileName);
 	}
       else if (n >= BufferSizes::MaxPath)
 	{
-	  BUF_TOO_SMALL (T_("SessionImpl::ScheduleFileRemoval"));
+	  BUF_TOO_SMALL ("SessionImpl::ScheduleFileRemoval");
 	}
-      tstring deleteStatement = T_("NUL=");
+      string deleteStatement = "NUL=";
       deleteStatement += szShortPathName;
       bool hasDeleteStatement = false;
       bool hasRenameSection = false;
@@ -2214,14 +2205,14 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
       if (File::Exists(pathWinInitIni))
 	{
 	  StreamReader reader (pathWinInitIni);
-	  tstring line;
+	  string line;
 	  while (reader.ReadLine(line))
 	    {
 	      if (line.length() > 0
-		  && line[0] == T_('[')
+		  && line[0] == '['
 		  && ! hasDeleteStatement)
 		{
-		  if (_tcsnicmp(line.c_str(), T_("[rename]"), 8) == 0)
+		  if (_tcsnicmp(line.c_str(), "[rename]", 8) == 0)
 		    {
 		      hasRenameSection = true;
 		      inRenameSection = true;
@@ -2250,12 +2241,12 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const MIKTEXCHAR * lpszFileName)
 	{
 	  if (! inRenameSection)
 	    {
-	      lines.push_back (T_("[rename]"));
+	      lines.push_back ("[rename]");
 	    }
 	  lines.push_back (deleteStatement);
 	}
       StreamWriter writer(pathWinInitIni);
-      for (vector<tstring>::const_iterator it = lines.begin();
+      for (vector<string>::const_iterator it = lines.begin();
 	   it != lines.end();
 	   ++ it)
 	{
@@ -2419,7 +2410,7 @@ SessionImpl::RunningElevated ()
   HANDLE hToken;
   if (! OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &hToken))
     {
-      FATAL_WINDOWS_ERROR (T_("OpenProcessToken"), 0);
+      FATAL_WINDOWS_ERROR ("OpenProcessToken", 0);
     }
   DWORD infoLen;
   TOKEN_ELEVATION_TYPE elevationType;
@@ -2429,7 +2420,7 @@ SessionImpl::RunningElevated ()
 			    sizeof(elevationType),
 			    &infoLen))
     {
-      FATAL_WINDOWS_ERROR (T_("GetTokenInformation"), 0);
+      FATAL_WINDOWS_ERROR ("GetTokenInformation", 0);
     }
   TOKEN_ELEVATION elevation;
   if (! GetTokenInformation(hToken,
@@ -2438,7 +2429,7 @@ SessionImpl::RunningElevated ()
 			    sizeof(elevation),
 			    &infoLen))
     {
-      FATAL_WINDOWS_ERROR (T_("GetTokenInformation"), 0);
+      FATAL_WINDOWS_ERROR ("GetTokenInformation", 0);
     }
   switch (elevationType)
     {
@@ -2449,7 +2440,7 @@ SessionImpl::RunningElevated ()
     case TokenElevationTypeLimited:
       return (false);
     default:
-      UNEXPECTED_CONDITION (T_("SessionImpl::RunningElevated"));
+      UNEXPECTED_CONDITION ("SessionImpl::RunningElevated");
     }
 }
 
@@ -2519,7 +2510,7 @@ SessionImpl::RunningAsPowerUser ()
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(unsigned int)
-GetMediaType (/*[in]*/ const MIKTEXCHAR * lpszPath)
+GetMediaType (/*[in]*/ const char * lpszPath)
 {
   PathName pathRootName;
   if (IsAlpha(lpszPath[0])
@@ -2544,7 +2535,7 @@ GetMediaType (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-FileIsOnROMedia (/*[in]*/ const MIKTEXCHAR * lpszPath)
+FileIsOnROMedia (/*[in]*/ const char * lpszPath)
 {
   return (GetMediaType(lpszPath) == DRIVE_CDROM);
 }
@@ -2558,14 +2549,14 @@ FileIsOnROMedia (/*[in]*/ const MIKTEXCHAR * lpszPath)
 
 #if SET_SECURITY
 MIKTEXSTATICFUNC(void)
-CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
+CreateDirectoryForEveryone (/*[in]*/ const char * lpszPath)
 {
   if (! IsWindowsNT())
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       if (! CreateDirectory (lpszPath, 0))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CreateDirectory"), lpszPath);
+	  FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
 	}
       return;
 #else
@@ -2589,7 +2580,7 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 				 0,
 				 &pEveryoneSID))
     {
-      FATAL_WINDOWS_ERROR (T_("AllocateAndInitializeSid"), 0);
+      FATAL_WINDOWS_ERROR ("AllocateAndInitializeSid", 0);
     }
 
   EXPLICIT_ACCESS ea[1];
@@ -2600,11 +2591,11 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
   ea[0].Trustee.TrusteeForm = TRUSTEE_IS_SID;
   ea[0].Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
   ea[0].Trustee.ptstrName =
-    reinterpret_cast<MIKTEXCHAR *>(pEveryoneSID.Get());
+    reinterpret_cast<char *>(pEveryoneSID.Get());
   
   if (SetEntriesInAcl(1, ea, 0, &pACL) != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR (T_("SetEntriesInAcl"), 0);
+      FATAL_WINDOWS_ERROR ("SetEntriesInAcl", 0);
     }
 
   AutoLocalMemory xxx (reinterpret_cast<void*>(pACL));
@@ -2615,7 +2606,7 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 
   if (! InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) 
     {
-      FATAL_WINDOWS_ERROR (T_("InitializeSecurityDescriptor"), 0);
+      FATAL_WINDOWS_ERROR ("InitializeSecurityDescriptor", 0);
     } 
  
   if (! SetSecurityDescriptorDacl(pSD,
@@ -2623,7 +2614,7 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 				  pACL,
 				  FALSE))
     {
-      FATAL_WINDOWS_ERROR (T_("SetSecurityDescriptorDacl"), 0);
+      FATAL_WINDOWS_ERROR ("SetSecurityDescriptorDacl", 0);
     } 
 
   SECURITY_ATTRIBUTES sa;
@@ -2633,7 +2624,7 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
 
   if (! CreateDirectory (lpszPath, &sa))
     {
-      FATAL_WINDOWS_ERROR (T_("CreateDirectory"), lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
     }
 }
 #endif
@@ -2646,7 +2637,7 @@ CreateDirectoryForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+CreateDirectoryPath (/*[in]*/ const char *	lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
@@ -2664,9 +2655,9 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
     }
 
   // create the parent directory
-  MIKTEXCHAR szDir[BufferSizes::MaxPath];
-  MIKTEXCHAR szFname[BufferSizes::MaxPath];
-  MIKTEXCHAR szExt[BufferSizes::MaxPath];
+  char szDir[BufferSizes::MaxPath];
+  char szFname[BufferSizes::MaxPath];
+  char szExt[BufferSizes::MaxPath];
   PathName::Split (lpszPath,
 		   szDir, BufferSizes::MaxPath,
 		   szFname, BufferSizes::MaxPath,
@@ -2698,12 +2689,12 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
     }
   else if (! CreateDirectory(lpszPath, 0))
     {
-      FATAL_WINDOWS_ERROR (T_("CreateDirectory"), lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
     }
 #else
   if (! CreateDirectory(lpszPath, 0))
     {
-      FATAL_WINDOWS_ERROR (T_("CreateDirectory"), lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectory", lpszPath);
     }
 #endif
 }
@@ -2730,41 +2721,32 @@ PathName::AppendAltDirectoryDelimiter ()
    _________________________________________________________________________ */
 
 void
-Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszValue)
+Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
+			     /*[in]*/ const char *	lpszValue)
 {
-  const MIKTEXCHAR * lpszOldValue = ::GetEnvironmentString(lpszValueName);
+  const char * lpszOldValue = ::GetEnvironmentString(lpszValueName);
   if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
     {
       return;
     }
   SessionImpl::GetSession()->trace_config->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("setting env %s=%s"),
      lpszValueName,
      lpszValue);
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   if (_tputenv_s(lpszValueName, lpszValue) != 0)
     {
-      FATAL_CRT_ERROR (T_("_tputenv_s"), lpszValueName);
+      FATAL_CRT_ERROR ("_tputenv_s", lpszValueName);
     }
 #else
-  tstring str = lpszValueName;
-  str += T_('=');
+  string str = lpszValueName;
+  str += '=';
   str += lpszValue;
-#  if defined(_MSC_VER)
-  if (_tputenv(str.c_str()) != 0)
-    {
-      FATAL_CRT_ERROR (T_("_tputenv"), str.c_str());
-    }
-#  elif defined(MIKTEX_UNICODE)
-#      error Unimplemented: Utils::SetEnvironmentString()
-#  else
   if (putenv(str.c_str()) != 0)
     {
-      FATAL_CRT_ERROR (T_("putenv"), str.c_str());
+      FATAL_CRT_ERROR ("putenv", str.c_str());
     }
-#  endif
 #endif
 }
 
@@ -2777,7 +2759,7 @@ void
 Utils::RegisterMiKTeXUser ()
 {
   ShellExecute (0,
-		T_("open"),
+		"open",
 #if 1
 		MIKTEX_URL_WWW_GIVE_BACK,
 #else
@@ -2797,7 +2779,7 @@ Utils::RegisterMiKTeXUser ()
 
 void
 MIKTEXCALL
-Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
+Argv::Append (/*[in]*/ const char *	lpszArguments)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
   MIKTEX_ASSERT (argv.size() > 0);
@@ -2806,13 +2788,13 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 
   if (argv.size() == 0)
     {
-      argv.push_back (StrDup(T_("foo")));
+      argv.push_back (StrDup("foo"));
     }
 
-  for (const MIKTEXCHAR * lpsz = lpszArguments; *lpsz != 0; )
+  for (const char * lpsz = lpszArguments; *lpsz != 0; )
     {
       // skip white space
-      for (; *lpsz == T_(' ') || *lpsz == T_('\t'); ++ lpsz)
+      for (; *lpsz == ' ' || *lpsz == '\t'; ++ lpsz)
 	{
 	}
 
@@ -2822,13 +2804,13 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 	}
 
       // get the next argument
-      tstring arg;
+      string arg;
       bool inQuotation = false;
       for (; ; ++ lpsz)
 	{
 	  // count backslashes
 	  size_t nBackslashes = 0;
-	  for (; *lpsz == T_('\\'); ++ lpsz)
+	  for (; *lpsz == '\\'; ++ lpsz)
 	    {
 	      ++ nBackslashes;
 	    }
@@ -2836,11 +2818,11 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 	  bool quoteOrUnquote = false;
 
 	  // quotation mark madness
-	  if (lpsz[0] == T_('"'))
+	  if (lpsz[0] == '"')
 	    {
 	      if (nBackslashes % 2 == 0)
 		{
-		  if (lpsz[1] == T_('"') && inQuotation)
+		  if (lpsz[1] == '"' && inQuotation)
 		    {
 		      // two quotation marks in quotation => one
 		      // quotation mark
@@ -2859,12 +2841,12 @@ Argv::Append (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
 	  // write backslashes
 	  for (; nBackslashes > 0; -- nBackslashes)
 	    {
-	      arg += T_('\\');
+	      arg += '\\';
 	    }
 
 	  // check to see if we have the complete argument
 	  if (*lpsz == 0
-	      || ((*lpsz == T_(' ') || *lpsz == T_('\t'))
+	      || ((*lpsz == ' ' || *lpsz == '\t')
 		  && ! inQuotation))
 	    {
 	      argv.push_back (StrDup(arg.c_str()));
@@ -2904,7 +2886,7 @@ Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 			0);
   if (len <= 0)
     {
-      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
     }
   CharBuffer<wchar_t, 200> buf (len + 1);
   len =
@@ -2916,7 +2898,7 @@ Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 			buf.GetCapacity());
   if (len <= 0)
     {
-      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
     }
   return (buf.Get());
 }
@@ -2947,11 +2929,11 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
      FALSE);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("WideCharToMultiByte"), 0);
+      FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
     }
   if (n < 0)
     {
-      UNEXPECTED_CONDITION (T_("Utils::WideCharToAnsi"));
+      UNEXPECTED_CONDITION ("Utils::WideCharToAnsi");
     }
   return (buf.Get());
 }
@@ -2980,11 +2962,11 @@ Utils::AnsiToWideChar (/*[in]*/ const char * lpszAnsi)
      buf.GetCapacity());
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
     }
   if (n < 0)
     {
-      UNEXPECTED_CONDITION (T_("Utils::AnsiToWideChar"));
+      UNEXPECTED_CONDITION ("Utils::AnsiToWideChar");
     }
   return (buf.Get());
 }

@@ -54,7 +54,7 @@ Thread::Sleep (/*[in]*/ int milliseconds)
   requestedTime.tv_nsec = (milliseconds % 1000) * 1000000;
   if (nanosleep(&requestedTime, 0) < 0)
     {
-      FATAL_CRT_ERROR (T_("nanosleep"), NUMTOSTR(milliseconds));
+      FATAL_CRT_ERROR ("nanosleep", NUMTOSTR(milliseconds));
     }
 }
 
@@ -98,7 +98,7 @@ unxThread::unxThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
   if (err != 0)
     {
       free (pData);
-      FATAL_CRT_ERROR_2 (T_("pthread_create"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_create", err, 0);
     }
   // thread is running => Data will be (has been) deleted by
   // ThreadFunc
@@ -147,7 +147,7 @@ unxThread::Join ()
   int err = pthread_join(pthread, 0);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_join"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_join", err, 0);
     }
 }
 
@@ -162,17 +162,17 @@ CriticalSectionMonitor::Initialize_ ()
   int err = pthread_mutexattr_init(&mutexAttr);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutexattr_init"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutexattr_init", err, 0);
     }
   err = pthread_mutexattr_settype(&mutexAttr, PTHREAD_MUTEX_RECURSIVE);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutexattr_settype"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutexattr_settype", err, 0);
     }
   err = pthread_mutex_init(&mutex, &mutexAttr);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutex_init"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutex_init", err, 0);
     }
 }
 
@@ -187,12 +187,12 @@ CriticalSectionMonitor::Delete_ ()
   int err = pthread_mutex_destroy(&mutex);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutex_destroy"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutex_destroy", err, 0);
     }
   err = pthread_mutexattr_destroy(&mutexAttr);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutexattr_destroy"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutexattr_destroy", err, 0);
     }
 }
 
@@ -207,7 +207,7 @@ CriticalSectionMonitor::Enter ()
   int err = pthread_mutex_lock(&mutex);
   if (err != 0)
     {
-      FATAL_CRT_ERROR_2 (T_("pthread_mutex_lock"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutex_lock", err, 0);
     }
   ++ nLocks;
 }
@@ -225,6 +225,6 @@ CriticalSectionMonitor::Leave ()
   if (err != 0)
     {
       ++ nLocks;
-      FATAL_CRT_ERROR_2 (T_("pthread_mutex_unlock"), err, 0);
+      FATAL_CRT_ERROR_2 ("pthread_mutex_unlock", err, 0);
     }
 }

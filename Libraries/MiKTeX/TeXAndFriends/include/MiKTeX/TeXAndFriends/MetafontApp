@@ -1,4 +1,4 @@
-/* mfapp.h: METAFONT, MetaPost					-*- C++ -*-
+/* MiKTeX/TeXAndFriends/MetafontApp: METAFONT, MetaPost		-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -62,7 +62,7 @@ protected:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -95,8 +95,8 @@ protected:
 
   virtual
   MIKTEXMFAPI(bool)
-  ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+  ProcessOption (/*[in]*/ int		opt,
+		 /*[in]*/ const char *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -194,7 +194,7 @@ public:
     Allocate ("deltay", THEDATA(deltay), THEDATA(pathsize));
     Allocate ("ligkern", THEDATA(ligkern), THEDATA(ligtablesize));
     Allocate ("psi", THEDATA(psi), THEDATA(pathsize));
-    if (IsInitProgram()	|| AmI(MIKTEXTEXT("mf")))
+    if (IsInitProgram()	|| AmI("mf"))
       {
 	Allocate ("strref", THEDATA(strref), THEDATA(maxstrings));
       }

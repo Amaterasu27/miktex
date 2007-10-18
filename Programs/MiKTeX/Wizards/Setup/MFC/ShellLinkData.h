@@ -32,13 +32,13 @@ struct ShellLinkData
 #define LD_USESHOWCMD  0x00000020
   UINT subFolderID;
   UINT nameID;
-  const MIKTEXCHAR * lpszPathName;
+  const char * lpszPathName;
   unsigned long flags;
-  const MIKTEXCHAR * lpszDescription;
-  const MIKTEXCHAR * lpszArgs;
-  const MIKTEXCHAR * lpszIconPath;
+  const char * lpszDescription;
+  const char * lpszArgs;
+  const char * lpszIconPath;
   int iconIndex;
-  const MIKTEXCHAR * lpszWorkingDir;
+  const char * lpszWorkingDir;
   int showCmd;
   WORD hotKey;
 };

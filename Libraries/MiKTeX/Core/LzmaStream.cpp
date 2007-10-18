@@ -138,7 +138,7 @@ public:
 	size_t n = fread(pData, 1, size, pLzmaFile);
 	if (ferror(pLzmaFile) != 0)
 	  {
-	    FATAL_CRT_ERROR (T_("fread"), 0);
+	    FATAL_CRT_ERROR ("fread", 0);
 	  }
 	*pProcessedSize = n;
 	return (S_OK);
@@ -229,19 +229,19 @@ private:
 	    != S_OK)
 	  {
 	    pSetProp = 0;
-	    UNEXPECTED_CONDITION (T_("LzmaStreamHelper::Uncompress"));
+	    UNEXPECTED_CONDITION ("LzmaStreamHelper::Uncompress");
 	  }
 	unsigned char props[5];
 	UInt32 n;
 	if (Read(props, 5, &n) != S_OK || n != 5)
 	  {
-	    FATAL_MIKTEX_ERROR (T_("LzmaStreamHelper::Uncompress"),
+	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("Unexpected end of file."),
 				0);
 	  }
 	if (pSetProp->SetDecoderProperties2(props, 5) != S_OK)
 	  {
-	    FATAL_MIKTEX_ERROR (T_("LzmaStreamHelper::Uncompress"),
+	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("LZMA decoder error."),
 				0);
 	  }
@@ -251,7 +251,7 @@ private:
 	    unsigned char b;
 	    if (Read(&b, 1, &n) != S_OK || n != 1)
 	      {
-		FATAL_MIKTEX_ERROR (T_("LzmaStreamHelper::Uncompress"),
+		FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				    T_("Unexpected end of file."),
 				    0);
 	      }
@@ -259,7 +259,7 @@ private:
 	  }
 	if (pCompressCoder->Code(this, this, 0, &fileSize, 0) != S_OK)
 	  {
-	    FATAL_MIKTEX_ERROR (T_("LzmaStreamHelper::Uncompress"),
+	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("LZMA decoder error."),
 				0);
 	  }
@@ -377,7 +377,7 @@ LzmaStream::LzmaStream (/*[in]*/ const FileStream &	fileStream,
 {
   if (! reading)
     {
-      UNIMPLEMENTED (T_("LzmaStream::LzmaStream"));
+      UNIMPLEMENTED ("LzmaStream::LzmaStream");
     }
   LzmaStreamHelper * pHelper = new LzmaStreamHelper (fileStream.Get());
   pHelper->AddRef ();
@@ -445,7 +445,7 @@ LzmaStream::Write (/*[in]*/ const void *	pBytes,
 {
   UNUSED_ALWAYS (pBytes);
   UNUSED_ALWAYS (count);
-  UNIMPLEMENTED (T_("LzmaStream::Write"));
+  UNIMPLEMENTED ("LzmaStream::Write");
 }
 
 /* _________________________________________________________________________
@@ -460,7 +460,7 @@ LzmaStream::Seek (/*[in]*/ long		offset,
 {
   UNUSED_ALWAYS (offset);
   UNUSED_ALWAYS (seekOrigin);
-  UNIMPLEMENTED (T_("LzmaStream::Seek"));
+  UNIMPLEMENTED ("LzmaStream::Seek");
 }
 
 /* _________________________________________________________________________
@@ -472,5 +472,5 @@ long
 MIKTEXCALL
 LzmaStream::GetPosition ()
 {
-  UNIMPLEMENTED (T_("LzmaStream::GetPosition"));
+  UNIMPLEMENTED ("LzmaStream::GetPosition");
 }

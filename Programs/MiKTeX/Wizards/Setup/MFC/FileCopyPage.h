@@ -98,13 +98,13 @@ public:
   virtual
   void
   MPMCALL
-  ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine);
+  ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
   MPMCALL
-  OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage);
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
@@ -144,7 +144,7 @@ private:
 private:
   void
   Report (/*[in]*/ bool			writeLog,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+	  /*[in]*/ const char *	lpszFmt,
 	  /*[in]*/			...);
 
 private:
@@ -226,7 +226,7 @@ private:
     bool waitingForClickOnNext;
     int progress1Pos;
     int progress2Pos;
-    tstring packageName;
+    string packageName;
   };
 
 private:

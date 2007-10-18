@@ -32,7 +32,7 @@ using namespace MiKTeX::Core;
 
 #if defined(MIKTEX_WINDOWS)
 bool
-SessionImpl::FindBatchFile (/*[in]*/ const MIKTEXCHAR *	lpszName,
+SessionImpl::FindBatchFile (/*[in]*/ const char *	lpszName,
 			    /*[out]*/ PathName &	path)
 {
   return (FindFile(lpszName, FileType::WindowsCommandScriptFile, path));
@@ -47,12 +47,12 @@ SessionImpl::FindBatchFile (/*[in]*/ const MIKTEXCHAR *	lpszName,
 #if defined(MIKTEX_WINDOWS)
 int
 SessionImpl::RunBatch (/*[in]*/ int			argc,
-		       /*[in]*/ const MIKTEXCHAR **	argv)
+		       /*[in]*/ const char **	argv)
 {
   MIKTEX_ASSERT (argc > 0);
 
   // determine batch name
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
+  char szName[BufferSizes::MaxPath];
   PathName::Split (argv[0],
 		   0, 0,
 		   szName, BufferSizes::MaxPath,
@@ -63,7 +63,7 @@ SessionImpl::RunBatch (/*[in]*/ int			argc,
   if (! FindBatchFile(szName, scriptPath))
     {
       FATAL_MIKTEX_ERROR
-	(T_(""),
+	("",
 	 T_("The Windows command script file could not be found."),
 	 szName);
     }

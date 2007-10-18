@@ -116,7 +116,7 @@ winCabExtractor::Dispose ()
 
 void
 MIKTEXNORETURN
-winCabExtractor::FatalFdiError (/*[in]*/ const MIKTEXCHAR * lpszCabinetPath)
+winCabExtractor::FatalFdiError (/*[in]*/ const char * lpszCabinetPath)
 {
   if (! erf.fError)
     {
@@ -124,7 +124,7 @@ winCabExtractor::FatalFdiError (/*[in]*/ const MIKTEXCHAR * lpszCabinetPath)
 			     T_("Cabinet extraction problem."),
 			     lpszCabinetPath);
     }
-  tstring message;
+  string message;
   switch (erf.erfOper)
     {
     case FDIERROR_CABINET_NOT_FOUND:
@@ -181,7 +181,7 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 			  /*[in]*/ const PathName &	destDir,
 			  /*[in]*/ bool			makeDirectories,
 			  /*[in]*/ IExtractCallback *	pCallback,
-			  /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+			  /*[in]*/ const char *	lpszPrefix)
 {
   trace_extractor->WriteFormattedLine
     (T_("libextractor"),
@@ -213,8 +213,8 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
   fileCount = 0;
   BOOL ok =
     FDICopy(hfdi,
-	    const_cast<MIKTEXCHAR*>(pathCabName.Get()),
-	    const_cast<MIKTEXCHAR*>(path.Get()),
+	    const_cast<char*>(pathCabName.Get()),
+	    const_cast<char*>(path.Get()),
 	    0,
 	    Notify,
 	    0,
@@ -249,7 +249,7 @@ winCabExtractor::Extract (/*[in]*/ Stream *		pStream,
 			  /*[in]*/ const PathName &	destDir,
 			  /*[in]*/ bool			makeDirectories,
 			  /*[in]*/ IExtractCallback *	pCallback,
-			  /*[in]*/ const MIKTEXCHAR *	lpszPrefix)
+			  /*[in]*/ const char *	lpszPrefix)
 {
   UNUSED_ALWAYS (pStream);
   UNUSED_ALWAYS (destDir);
@@ -331,7 +331,7 @@ FNOPEN(winCabExtractor::Open)
 	    {
 	      int err = errno;
 	      CRT_ERROR (T_("open"), pszFile);
-	      tstring errorMessage;
+	      string errorMessage;
 	      otstringstream text;
 	      text << T_("The file") << CRLF
 		   << CRLF
@@ -382,9 +382,9 @@ FNREAD(winCabExtractor::Read)
 	  if (ret < 0)
 	    {
 	      int err = errno;
-	      const MIKTEXCHAR * lpszFileName = openFiles[hf].Get();
+	      const char * lpszFileName = openFiles[hf].Get();
 	      CRT_ERROR (T_("read"), lpszFileName);
-	      tstring errorMessage;
+	      string errorMessage;
 	      otstringstream text;
 	      text << T_("The file") << CRLF
 		   << CRLF
@@ -429,9 +429,9 @@ FNWRITE(winCabExtractor::Write)
 	  if (static_cast<unsigned>(ret) != cb)
 	    {
 	      int err = errno;
-	      const MIKTEXCHAR * lpszFileName = openFiles[hf].Get();
+	      const char * lpszFileName = openFiles[hf].Get();
 	      CRT_ERROR (T_("write"), lpszFileName);
-	      tstring errorMessage;
+	      string errorMessage;
 	      otstringstream text;
 	      text << T_("The file") << CRLF
 		   << CRLF
@@ -442,9 +442,9 @@ FNWRITE(winCabExtractor::Write)
 		   << CRLF
 		   << GetErrnoMessage(err, errorMessage) << CRLF
 		   << CRLF;
-	      MIKTEXCHAR szDrive[BufferSizes::MaxPath];
-	      MIKTEXCHAR szDirectory[BufferSizes::MaxPath];
-	      MIKTEXCHAR szDisplayName[BufferSizes::MaxPath];
+	      char szDrive[BufferSizes::MaxPath];
+	      char szDirectory[BufferSizes::MaxPath];
+	      char szDisplayName[BufferSizes::MaxPath];
 	      PathName::Split (lpszFileName,
 			       szDrive, BufferSizes::MaxPath,
 			       szDirectory, BufferSizes::MaxPath,
@@ -544,9 +544,9 @@ FNSEEK(winCabExtractor::Seek)
 	  if (ret < 0)
 	    {
 	      int err = errno;
-	      const MIKTEXCHAR * lpszFileName = openFiles[hf].Get();
+	      const char * lpszFileName = openFiles[hf].Get();
 	      CRT_ERROR (T_("seek"), lpszFileName);
-	      tstring errorMessage;
+	      string errorMessage;
 	      otstringstream text;
 	      text << T_("The file") << CRLF
 		   << CRLF
@@ -602,7 +602,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
 
 	    MIKTEX_ASSERT_STRING (pfdin->psz1);
 
-	    const MIKTEXCHAR * lpszPath = pfdin->psz1;
+	    const char * lpszPath = pfdin->psz1;
 
 	    // skip prefix directory
 	    if (PathName::Compare(This->prefixToBeStripped.c_str(),
@@ -735,7 +735,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
 
 	    // skip the prefix directory
 	    MIKTEX_ASSERT_STRING (pfdin->psz1);
-	    const MIKTEXCHAR * lpszPath = pfdin->psz1;
+	    const char * lpszPath = pfdin->psz1;
 	    if (PathName::Compare(This->prefixToBeStripped.c_str(),
 				  pfdin->psz1,
 				  static_cast<unsigned long>

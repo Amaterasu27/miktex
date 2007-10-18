@@ -44,19 +44,19 @@ protected:
   OnInitDialog ();
 
 public:
-  MiKTeX::Core::tstring
+  std::string
   GetName ()
     const
   {
-    return (static_cast<const MIKTEXCHAR *>(name));
+    return (static_cast<const char *>(name));
   }
 
 public:
-  MiKTeX::Core::tstring
+  std::string
   GetPassword ()
     const
   {
-    return (static_cast<const MIKTEXCHAR *>(password));
+    return (static_cast<const char *>(password));
   }
 
 protected:

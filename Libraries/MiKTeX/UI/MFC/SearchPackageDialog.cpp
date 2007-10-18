@@ -305,7 +305,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  CString givenTitle = GetWindowText(IDC_TITLE);
 	  haveMatch =
 	    (givenTitle.GetLength() == 0
-	     || packageInfo.title.find(givenTitle) != tstring::npos);
+	     || packageInfo.title.find(givenTitle) != string::npos);
 	  if (! haveMatch)
 	    {
 	      continue;
@@ -323,7 +323,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  if (givenFile.GetLength() > 0)
 	    {
 	      bool found = false;
-	      vector<tstring>::const_iterator it;
+	      vector<string>::const_iterator it;
 	      for (it = packageInfo.runFiles.begin();
 		   ! found && it != packageInfo.runFiles.end();
 		   ++ it)
@@ -458,7 +458,7 @@ SearchPackageDialog::OnNMRclickListPackages (/*[in]*/ NMHDR *	pNMHDR,
 void
 SearchPackageDialog::DoContextMenu
 (/*[in]*/ POINT			pt,
- /*[in]*/ const MIKTEXCHAR *	lpszExternalName)
+ /*[in]*/ const char *	lpszExternalName)
 {
   CMenu menu;
   if (! menu.LoadMenu(ID_PACKAGE_MENU2))

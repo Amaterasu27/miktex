@@ -41,8 +41,8 @@ public:
   MIKTEXUICALL
   DoModal (/*[in]*/ CWnd *					pParent,
 	   /*[in]*/ MiKTeX::Packages::PackageManager *		pManager,
-	   /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	toBeInstalled,
-	   /*[in]*/ const std::vector<MiKTeX::Core::tstring> &	toBeRemoved);
+	   /*[in]*/ const std::vector<std::string> &		toBeInstalled,
+	   /*[in]*/ const std::vector<std::string> &		toBeRemoved);
 };
 
 MIKUI_MFC_END_NAMESPACE;

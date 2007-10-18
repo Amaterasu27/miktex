@@ -32,7 +32,7 @@
 
 FormatDefinitionDialog::FormatDefinitionDialog
 (/*in]*/ CWnd *			pParent,
- /*in]*/ const MIKTEXCHAR *	lpszKey)
+ /*in]*/ const char *	lpszKey)
   : CDialog (FormatDefinitionDialog::IDD, pParent)
 {
   if (lpszKey == 0)
@@ -92,7 +92,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
-  if (PathName::Compare(static_cast<const MIKTEXCHAR *>(formatKey),
+  if (PathName::Compare(static_cast<const char *>(formatKey),
 			originalFormatInfo.key)
       != 0)
     {
@@ -210,7 +210,7 @@ FormatDefinitionDialog::OnInitDialog ()
   try
     {
       FormatInfo formatInfo;
-      set<tstring> compilers;
+      set<string> compilers;
       for (unsigned idx = 0;
 	   SessionWrapper(true)->GetFormatInfo(idx, formatInfo);
 	   ++ idx)
@@ -222,7 +222,7 @@ FormatDefinitionDialog::OnInitDialog ()
 	    }
 	  preloadedFormatComboBox.AddString (formatInfo.key.c_str());
 	}
-      for (set<tstring>::const_iterator it = compilers.begin();
+      for (set<string>::const_iterator it = compilers.begin();
 	   it != compilers.end();
 	   ++ it)
 	{

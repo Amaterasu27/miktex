@@ -1,6 +1,6 @@
 /* screen.cpp: METAFONT online displays
 
-   Copyright (C) 1998-2005 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
    Copyright (C) 1998 Wolfgang Kleinschmidt
 
    This file is free software; you can redistribute it and/or modify
@@ -131,19 +131,22 @@ ScreenThreadFunc (/*[in]*/ LPVOID lpv)
 {
   LPPOINT ppt = reinterpret_cast<LPPOINT>(lpv);
 
-  _TCHAR szWindowName[100];
+  char szWindowName[100];
 #if _MSC_VER >= 1400
-  _stprintf_s (szWindowName,
-	       100,
-	       _T("METAFONT Screen (%d x %d)"),
-	       ppt->x,
-	       ppt->y);
+  sprintf_s (szWindowName,
+	     100,
+	     MIKTEXTEXT("METAFONT Screen (%d x %d)"),
+	     ppt->x,
+	     ppt->y);
 #else
-  _stprintf (szWindowName, _T("METAFONT Screen (%d x %d)"), ppt->x, ppt->y);
+  sprintf (szWindowName,
+	   MIKTEXTEXT("METAFONT Screen (%d x %d)"),
+	   ppt->x,
+	   ppt->y);
 #endif
   g_hwnd =
     CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
-		   _T("MF_Screen"),
+		   "MF_Screen",
 		   szWindowName,
 		   WS_OVERLAPPEDWINDOW,
 		   CW_USEDEFAULT,
@@ -171,7 +174,7 @@ ScreenThreadFunc (/*[in]*/ LPVOID lpv)
       DispatchMessage (&msg);
     }
 
-  UnregisterClass (_T("MF_Screen"), g_hinstance);
+  UnregisterClass ("MF_Screen", g_hinstance);
 
   return (0);
 }
@@ -203,7 +206,7 @@ miktexinitscreen (/*[in]*/ int	w,
   wc.hIcon = LoadIcon(g_hinstance, MAKEINTRESOURCE(IDR_MFSCREEN));
   wc.hCursor = LoadCursor(0, IDC_ARROW);
   wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BTNFACE + 1);
-  wc.lpszClassName = _T("MF_Screen");
+  wc.lpszClassName = "MF_Screen";
   RegisterClass (&wc);
 
   g_pt.x = w;

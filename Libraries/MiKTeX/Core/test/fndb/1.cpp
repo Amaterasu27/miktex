@@ -52,20 +52,20 @@ END_TEST_FUNCTION();
 BEGIN_TEST_FUNCTION(2);
 {
   PathName path;
-  TEST (pSession->FindFile(T_("test.tex"), T_("%R/tex//"), path));
-  if (File::Exists(T_("./test.tex")))
+  TEST (pSession->FindFile("test.tex", "%R/tex//", path));
+  if (File::Exists("./test.tex"))
     {
-      File::Delete (T_("./test.tex"));
+      File::Delete ("./test.tex");
     }
-  TEST (! pSession->FindFile(T_("./test.tex"), T_("%R/tex//"), path));
-  Touch (T_("./test.tex"));
-  TEST (pSession->FindFile(T_("./test.tex"), T_("%R/tex//"), path));
+  TEST (! pSession->FindFile("./test.tex", "%R/tex//", path));
+  Touch ("./test.tex");
+  TEST (pSession->FindFile("./test.tex", "%R/tex//", path));
   path.MakeAbsolute ();
   PathName path2;
   path2.SetToCurrentDirectory();
-  path2 += T_("test.tex");
+  path2 += "test.tex";
   TEST (path == path2);
-  File::Delete (T_("./test.tex"));
+  File::Delete ("./test.tex");
 }
 END_TEST_FUNCTION();
 

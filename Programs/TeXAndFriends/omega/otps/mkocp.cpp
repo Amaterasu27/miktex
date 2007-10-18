@@ -54,7 +54,7 @@ using namespace std;
 
 int
 main (/*[in]*/ int		argc,
-      /*[in]*/ MIKTEXCHAR **	argv)
+      /*[in]*/ char **	argv)
 {
   try
     {
@@ -73,8 +73,8 @@ main (/*[in]*/ int		argc,
 	  tcerr << T_("mkocp: otp2ocp executable could not be found.") << endl;
 	  throw (1);
 	}
-      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-      MIKTEXCHAR szExt[BufferSizes::MaxPath];
+      char szFileName[BufferSizes::MaxPath];
+      char szExt[BufferSizes::MaxPath];
       PathName::Split (argv[1],
 		       0, 0,
 		       szFileName, BufferSizes::MaxPath,

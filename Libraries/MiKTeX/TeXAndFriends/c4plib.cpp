@@ -51,16 +51,16 @@ DiscardLine (/*[in]*/ C4P_text & textfile)
    GetChar
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(MIKTEXCHAR)
+MIKTEXMFAPI(char)
 GetChar (/*[in]*/ C4P_text & textfile)
 {
   MIKTEX_API_BEGIN ("GetChar");
   textfile.AssertValid ();
-  MIKTEXCHAR ch = *textfile;
-  MIKTEXCHARINT ch2 = GetC(textfile);
-  if (ch2 != MIKTEXEOF)
+  char ch = *textfile;
+  int ch2 = GetC(textfile);
+  if (ch2 != EOF)
     {
-      *textfile = static_cast<MIKTEXCHAR>(ch2);
+      *textfile = static_cast<char>(ch2);
     }
   return (ch);
   MIKTEX_API_END ("GetChar");
@@ -76,14 +76,14 @@ GetInteger (/*[in]*/ C4P_text & textfile)
 {
   MIKTEX_API_BEGIN ("GetInteger");
   textfile.AssertValid ();
-  MIKTEXCHARINT ch = GetChar(textfile);
+  int ch = GetChar(textfile);
   int sign = (ch == T_('-') ? -1 : 1);
   C4P_integer result = 0;
   if (ch == T_('+') || ch == T_('-'))
     {
       ch = GetChar(textfile);
     }
-  while (IsDigit(ch))
+  while (isdigit(ch))
     {
       result *= 10;
       result += (ch - T_('0'));

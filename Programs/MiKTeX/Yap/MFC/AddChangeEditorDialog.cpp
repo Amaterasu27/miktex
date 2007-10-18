@@ -169,7 +169,7 @@ AddChangeEditorDialog::OnBrowse ()
       ofn.lStructSize = sizeof(ofn);
       ofn.hwndOwner = GetSafeHwnd();
       ofn.hInstance = 0;
-      tstring filter;
+      string filter;
       filter += T_("Executables (*.exe)");
       filter += T_('\0');
       filter += T_("*.exe");
@@ -182,7 +182,7 @@ AddChangeEditorDialog::OnBrowse ()
       ofn.lpstrCustomFilter = 0;
       ofn.nMaxCustFilter = 0;
       ofn.nFilterIndex = 1;
-      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
+      char szFileName[BufferSizes::MaxPath];
       szFileName[0] = 0;
       ofn.lpstrFile = szFileName;
       ofn.nMaxFile = BufferSizes::MaxPath;

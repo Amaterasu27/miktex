@@ -157,8 +157,8 @@ SetupWizard::OnInitDialog ()
 	      break;
 	    }
 	  title.Format (T_("%sMiKTeX %s Installer"),
-			static_cast<const MIKTEXCHAR *>(prefix),
-			static_cast<const MIKTEXCHAR *>(version));
+			static_cast<const char *>(prefix),
+			static_cast<const char *>(version));
 	}
       else
 	{
@@ -201,7 +201,7 @@ SetupWizard::EnableCancelButton (/*[in]*/ bool enable)
    _________________________________________________________________________ */
 
 CString
-SetupWizard::SetNextText (/*[in]*/ const MIKTEXCHAR * lpszText)
+SetupWizard::SetNextText (/*[in]*/ const char * lpszText)
 {
   CWnd * pWnd = GetDlgItem(ID_WIZNEXT);
   if (pWnd == 0)

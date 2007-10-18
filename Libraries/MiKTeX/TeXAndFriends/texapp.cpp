@@ -40,7 +40,7 @@ TeXApp::TeXApp ()
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXMFApp::Init (lpszProgramInvocationName);
 
@@ -229,7 +229,7 @@ Insert source specials in certain places of the DVI file.")),
 
 MIKTEXMFAPI(bool)
 TeXApp::ProcessOption (/*[in]*/ int			optchar,
-		       /*[in]*/ const MIKTEXCHAR *	lpszArg)
+		       /*[in]*/ const char *	lpszArg)
 {
   bool done = true;
   switch (optchar - FIRST_OPTION_VAL - optBase)
@@ -241,16 +241,16 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
       enableWrite18 = true;
       break;
     case OPT_FONT_MAX:
-      param_font_max = _ttoi(lpszArg);
+      param_font_max = atoi(lpszArg);
       break;
     case OPT_FONT_MEM_SIZE:
-      param_font_mem_size = _ttoi(lpszArg);
+      param_font_mem_size = atoi(lpszArg);
       break;
     case OPT_MAX_IN_OPEN:
-      param_max_in_open = _ttoi(lpszArg);
+      param_max_in_open = atoi(lpszArg);
       break;
     case OPT_MEM_BOT:
-      param_mem_bot = _ttoi(lpszArg);
+      param_mem_bot = atoi(lpszArg);
       break;
     case OPT_ENABLE_ENCTEX:
       enableEncTeX = true;
@@ -259,10 +259,10 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
       enableMLTeX = true;
       break;
     case OPT_NEST_SIZE:
-      param_nest_size = _ttoi(lpszArg);
+      param_nest_size = atoi(lpszArg);
       break;
     case OPT_SAVE_SIZE:
-      param_save_size = _ttoi(lpszArg);
+      param_save_size = atoi(lpszArg);
       break;
     case OPT_SRC_SPECIALS:
 #if EXPERT_SRC_SPECIALS
@@ -327,10 +327,10 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
 #endif // EXPERT_SRC_SPECIALS
       break;
     case OPT_TRIE_SIZE:
-      param_trie_size = _ttoi(lpszArg);
+      param_trie_size = atoi(lpszArg);
       break;
     case OPT_TRIE_OP_SIZE:
-      param_trie_op_size = _ttoi(lpszArg);
+      param_trie_op_size = atoi(lpszArg);
       break;
     default:
       done = TeXMFApp::ProcessOption(optchar, lpszArg);

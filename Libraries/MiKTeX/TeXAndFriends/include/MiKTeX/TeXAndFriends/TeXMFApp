@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/TeXMFApp: TeX/MF common implementation		-*- C++ -*-
+/* MiKTeX/TeXAndFriends/TeXMFApp: TeX/MF common implementation	-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -115,7 +115,7 @@ typedef int TEXMFCHARINT;
 {									\
   if (param < 0)							\
     {									\
-      THEDATA(varname) = GetParameter(MIKTEXTEXT(#cfgname), defcfgval);	\
+      THEDATA(varname) = GetParameter(#cfgname, defcfgval);		\
     }									\
   else									\
     {									\
@@ -124,9 +124,9 @@ typedef int TEXMFCHARINT;
   if (trace_mem->IsEnabled())						\
     {									\
       trace_mem->WriteFormattedLine					\
-	(MIKTEXTEXT("libtexmf"),					\
+	("libtexmf",							\
 	 MIKTEXTEXT("Parameter %s: %d"),				\
-	 MIKTEXTEXT(#cfgname),						\
+	 #cfgname,							\
 	 static_cast<int>(THEDATA(varname)));				\
       }									\
 }
@@ -140,7 +140,7 @@ typedef int TEXMFCHARINT;
 {									\
   if (param < 0)							\
     {									\
-      THEDATA(varname) = GetParameter(MIKTEXTEXT(#cfgname), defcfgval);	\
+      THEDATA(varname) = GetParameter(#cfgname, defcfgval);		\
     }									\
   else									\
     {									\
@@ -150,18 +150,18 @@ typedef int TEXMFCHARINT;
       || THEDATA(varname) > sup##varname)				\
     {									\
       MiKTeX::Core::Session::FatalMiKTeXError				\
-	(MIKTEXTEXT("GETPARAMCHECK"),					\
+	("GETPARAMCHECK",						\
 	 MIKTEXTEXT("Bad parameter value."),				\
-	 MIKTEXTEXT(#cfgname),						\
-	 MIKTEXTEXT(__FILE__),						\
+	 #cfgname,							\
+	 __FILE__,							\
 	 __LINE__);							\
     }									\
   if (trace_mem->IsEnabled())						\
     {									\
       trace_mem->WriteFormattedLine					\
-	(MIKTEXTEXT("libtexmf"),					\
+	("libtexmf",							\
 	 MIKTEXTEXT("Parameter %s: %d"),				\
-	 MIKTEXTEXT(#cfgname),						\
+	 #cfgname,							\
 	 static_cast<int>(THEDATA(varname)));				\
       }									\
 }
@@ -183,10 +183,10 @@ GetTeXString (/*[out]*/ TEXMFCHAR *	lpsz,
   if (stringLength < 0 || stringLength >= size)
     {
       MiKTeX::Core::Session::FatalMiKTeXError
-	(MIKTEXTEXT("GetTeXString"),
+	("GetTeXString",
 	 MIKTEXTEXT("Bad string size."),
 	 0,
-	 MIKTEXTEXT(__FILE__),
+	 __FILE__,
 	 __LINE__);
     }
   for (int idx = 0; idx < stringLength; ++ idx)
@@ -309,7 +309,7 @@ public:
 
   virtual
   MIKTEXMFAPI(void)
-  Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName);
+  Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
      
@@ -341,7 +341,7 @@ protected:
 protected:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetUsage ()
     const
@@ -370,7 +370,7 @@ protected:
   virtual
   MIKTEXMFAPI(bool)
   ProcessOption (/*[in]*/ int			opt,
-		 /*[in]*/ const MIKTEXCHAR *	lpszOptArg);
+		 /*[in]*/ const char *	lpszOptArg);
 
   /* _______________________________________________________________________
      
@@ -446,7 +446,7 @@ protected:
 protected:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetInitProgramName ()
     const
@@ -500,7 +500,7 @@ public:
 protected:
 
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXMFCALL
   GetVirginProgramName ()
     const
@@ -558,7 +558,7 @@ public:
 protected:
   template<typename ValueType>
   ValueType
-  GetParameter (/*[in]*/ const MIKTEXCHAR *	lpszParameterName,
+  GetParameter (/*[in]*/ const char *		lpszParameterName,
 		/*[in]*/ const ValueType &	defaultValue)
   {
     ValueType value = pSession->GetConfigValue(0, lpszParameterName, -1);
@@ -588,7 +588,7 @@ public:
     if (trace_mem->IsEnabled())
       {
 	trace_mem->WriteFormattedLine
-	  (MIKTEXTEXT("libtexmf"),
+	  ("libtexmf",
 	   MIKTEXTEXT("\
 Reallocate %s: p == %p, elementSize == %u, nElements == %u, bytes == %u"),
 	   (lpszTableName == 0 ? "table" : lpszTableName),
@@ -608,7 +608,7 @@ Virtual memory exhausted while trying to reserve %u bytes for table %s."),
     if (trace_mem->IsEnabled())
       {
 	trace_mem->WriteFormattedLine
-	  (MIKTEXTEXT("libtexmf"),
+	  ("libtexmf",
 	   MIKTEXTEXT("\
 Reallocate: return %p"),
 	   p);
@@ -811,7 +811,7 @@ public:
     Allocate ("paramstack", THEDATA(paramstack), THEDATA(paramsize));
     Allocate ("trickbuf", THEDATA(trickbuf), THEDATA(errorline));
 
-    if (IsInitProgram() || AmI(MIKTEXTEXT("mf")))
+    if (IsInitProgram() || AmI("mf"))
       {
 	Allocate (THEDATA(strpool), THEDATA(poolsize));
       }
@@ -876,10 +876,10 @@ protected:
     if (poolptr + len >= poolsize)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
-	  (MIKTEXTEXT("TeXMFApp::CheckPoolPointer"),
+	  ("TeXMFApp::CheckPoolPointer",
 	   MIKTEXTEXT("String pool overflow."),
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
   }
@@ -1188,9 +1188,9 @@ public:
     if (fwrite(&e, sizeof(e), n, static_cast<FILE*>(f)) != n)
       {
 	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fwrite"),
+	  ("fwrite",
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
   }
@@ -1233,9 +1233,9 @@ public:
     if (fread(&e, sizeof(e), n, static_cast<FILE*>(f)) != n)
       {
 	MiKTeX::Core::Session::FatalCrtError
-	  (MIKTEXTEXT("fread"),
+	  ("fread",
 	   0,
-	   MIKTEXTEXT(__FILE__),
+	   __FILE__,
 	   __LINE__);
       }
   }
@@ -1282,10 +1282,10 @@ public:
 	if ((&e)[idx] < low || (&e)[idx] > high)
 	  {
 	    MiKTeX::Core::Session::FatalMiKTeXError
-	      (MIKTEXTEXT("GetTeXString"),
+	      ("GetTeXString",
 	       MIKTEXTEXT("Bad format file."),
 	       0,
-	       MIKTEXTEXT(__FILE__),
+	       __FILE__,
 	       __LINE__);
 	  }
       }
@@ -1314,10 +1314,10 @@ public:
 	if ((&e)[idx] > high)
 	  {
 	    MiKTeX::Core::Session::FatalMiKTeXError
-	      (MIKTEXTEXT("GetTeXString"),
+	      ("GetTeXString",
 	       MIKTEXTEXT("Bad format file."),
 	       0,
-	       MIKTEXTEXT(__FILE__),
+	       __FILE__,
 	       __LINE__);
 	  }
       }
@@ -1430,10 +1430,10 @@ protected:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_mem;
 
 private:
-  MiKTeX::Core::tstring memoryDumpFileName;
+  std::string memoryDumpFileName;
 
 private:
-  MiKTeX::Core::tstring jobName;
+  std::string jobName;
 
 private:
   clock_t clockStart;

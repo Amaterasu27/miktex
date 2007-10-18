@@ -102,7 +102,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText = const_cast<MIKTEXCHAR*>(it->name.c_str());
+	  lvitem.pszText = const_cast<char*>(it->name.c_str());
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));
@@ -111,7 +111,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.pszText =
 	    (it->notLoadable
 	     ? T_("   >>> Not loadable - double-click to see details")
-	     : const_cast<MIKTEXCHAR*>(it->fileName.c_str()));
+	     : const_cast<char*>(it->fileName.c_str()));
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));

@@ -93,7 +93,7 @@ SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root)
 	  return (idx);
 	}
     }
-  trace_config->WriteFormattedLine (T_("core"),
+  trace_config->WriteFormattedLine ("core",
 				    T_("registering TEXMF root: %s"),
 				    root.Get());
   RootDirectory rootDirectory (root);
@@ -231,19 +231,19 @@ SessionImpl::InitializeRootDirectories
       if (StrLen(root.GetCurrent()) == 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("SessionImpl::InitializeRootDirectories"));
+	    ("SessionImpl::InitializeRootDirectories");
 	}
       if (find(vec.begin(), vec.end(), root.GetCurrent()) != vec.end())
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("SessionImpl::InitializeRootDirectories"));
+	    ("SessionImpl::InitializeRootDirectories");
 	}
       if (startupConfig.commonConfigRoot == root.GetCurrent())
 	{
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("SessionImpl::InitializeRootDirectories"));
+		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveCommonConfigRoot = true;
 	}
@@ -252,7 +252,7 @@ SessionImpl::InitializeRootDirectories
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("SessionImpl::InitializeRootDirectories"));
+		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveCommonDataRoot = true;
 	}
@@ -265,7 +265,7 @@ SessionImpl::InitializeRootDirectories
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("SessionImpl::InitializeRootDirectories"));
+		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveUserConfigRoot = true;
 	}
@@ -274,7 +274,7 @@ SessionImpl::InitializeRootDirectories
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("SessionImpl::InitializeRootDirectories"));
+		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveUserDataRoot = true;
 	}
@@ -347,7 +347,7 @@ SessionImpl::InitializeRootDirectories
 
   if (rootDirectories.size() == 0)
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::InitializeRootDirectories"));
+      UNEXPECTED_CONDITION ("SessionImpl::InitializeRootDirectories");
     }
 
   if (installRootIndex == INVALID_ROOT_INDEX)
@@ -379,29 +379,29 @@ SessionImpl::InitializeRootDirectories
 
   RegisterRootDirectory (MPM_ROOT_PATH);
 
-  trace_config->WriteFormattedLine (T_("core"),
-				    T_("UserData: %s"),
+  trace_config->WriteFormattedLine ("core",
+				    "UserData: %s",
 				    GetRootDirectory(userDataRootIndex).Get());
 
   trace_config->WriteFormattedLine
-    (T_("core"),
-     T_("UserConfig: %s"),
+    ("core",
+     "UserConfig: %s",
      GetRootDirectory(userConfigRootIndex).Get());
 
   if (IsSharedMiKTeXSetup() == TriState::True)
     {
       trace_config->WriteFormattedLine
-	(T_("core"),
-	 T_("CommonData: %s"),
+	("core",
+	 "CommonData: %s",
 	 GetRootDirectory(commonDataRootIndex).Get());
       trace_config->WriteFormattedLine
-	(T_("core"),
-	 T_("CommonConfig: %s"),
+	("core",
+	 "CommonConfig: %s",
 	 GetRootDirectory(commonConfigRootIndex).Get());
     }
 
-  trace_config->WriteFormattedLine (T_("core"),
-				    T_("Install: %s"),
+  trace_config->WriteFormattedLine ("core",
+				    "Install: %s",
 				    GetRootDirectory(installRootIndex).Get());
 }
 
@@ -437,7 +437,7 @@ SessionImpl::GetRootDirectory (/*[in]*/ unsigned	r)
   unsigned n = GetNumberOfTEXMFRoots();
   if (r == INVALID_ROOT_INDEX || r >= n)
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetRootDirectory"), NUMTOSTR(r));
+      INVALID_ARGUMENT ("SessionImpl::GetRootDirectory", NUMTOSTR(r));
     }
   return (rootDirectories[r].get_Path());
 }
@@ -527,7 +527,7 @@ SessionImpl::SaveRootDirectories ()
 #if defined(MIKTEX_WINDOWS)
       WriteRegistry (startupConfig);
 #else
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::SaveRootDirectories"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
 			  T_("The startup configuration cannot be saved."),
 			  0);
 #endif
@@ -542,7 +542,7 @@ SessionImpl::SaveRootDirectories ()
    _______________________________________________________________________ */
 
 void
-SessionImpl::RegisterRootDirectories (/*[in]*/ const tstring &	roots)
+SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
 {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
@@ -556,7 +556,7 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const tstring &	roots)
 	  HRESULT hr2 = localServer.pSession->GetErrorInfo(&errorInfo);
 	  if (FAILED(hr2))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::RegisterRootDirectories"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::RegisterRootDirectories",
 				  T_("sessionsvc failed for some reason."),
 				  NUMTOSTR(hr));
 	    }
@@ -564,7 +564,7 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const tstring &	roots)
 	  AutoSysString b (errorInfo.info);
 	  AutoSysString c (errorInfo.sourceFile);
 	  Session::FatalMiKTeXError
-	    (T_("SessionImpl::RegisterRootDirectories"),
+	    ("SessionImpl::RegisterRootDirectories",
 	     CW2CT(errorInfo.message),
 	     CW2CT(errorInfo.info),
 	     CW2CT(errorInfo.sourceFile),
@@ -593,7 +593,7 @@ SessionImpl::RegisterRootDirectories
 {
   if (IsMiKTeXDirect())
     {
-      UNEXPECTED_CONDITION (T_("SessionImpl::RegisterRootDirectories"));
+      UNEXPECTED_CONDITION ("SessionImpl::RegisterRootDirectories");
     }
 
   // clear the search path cache
@@ -770,7 +770,7 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
     }
   else if (r >= GetNumberOfTEXMFRoots())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::FindFilenameDatabase"), NUMTOSTR(r));
+      INVALID_ARGUMENT ("SessionImpl::FindFilenameDatabase", NUMTOSTR(r));
     }
   else
     {
@@ -787,7 +787,7 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
       // try INSTALL\miktex\conig\mpm.fndb
       if (GetInstallRoot() == INVALID_ROOT_INDEX)
 	{
-	  UNEXPECTED_CONDITION (T_("SessionImpl::FindFilenameDatabase"));
+	  UNEXPECTED_CONDITION ("SessionImpl::FindFilenameDatabase");
 	}
       path.Set (rootDirectories[GetInstallRoot()].get_Path(),
 		MIKTEX_PATH_MPM_FNDB);
@@ -847,14 +847,11 @@ SessionImpl::GetMpmDatabasePathName ()
 PathName
 SessionImpl::GetRelativeFilenameDatabasePathName (/*[in]*/  unsigned	r)
 {
-  tstring fndbFileName = MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+  string fndbFileName = MIKTEX_PATH_MIKTEX_CONFIG_DIR;
   fndbFileName += PathName::DirectoryDelimiter;
   PathName root (rootDirectories[r].get_Path());
   root.Normalize ();
   MD5Builder md5Builder;
-#if defined(MIKTEX_UNICODE)
-#  error Unimplemented: SessionImpl::GetRelativeFilenameDatabasePathName()
-#endif
   md5Builder.Update (root.Get(), root.GetLength());
   md5Builder.Final ();
   fndbFileName += md5Builder.GetMD5().ToString();
@@ -890,7 +887,7 @@ SessionImpl::GetFileNameDatabase (/*[in]*/ unsigned	r,
   
   if (r != MPM_ROOT && r >= GetNumberOfTEXMFRoots())
     {
-      INVALID_ARGUMENT (T_("SessionImpl::GetFileNameDatabase"), NUMTOSTR(r));
+      INVALID_ARGUMENT ("SessionImpl::GetFileNameDatabase", NUMTOSTR(r));
     }
   
   bool readOnly;
@@ -950,11 +947,11 @@ SessionImpl::GetFileNameDatabase (/*[in]*/ unsigned	r,
 	  return (0);
 	}
       
-      trace_fndb->WriteFormattedLine (T_("core"),
+      trace_fndb->WriteFormattedLine ("core",
 				      T_("loading fndb%s: %s"),
 				      (readOnly
 				       ? T_(" read-only")
-				       : T_("")),
+				       : ""),
 				      fqFndbFileName.Get());
       
       FileNameDatabase * pFndb =
@@ -977,7 +974,7 @@ SessionImpl::GetFileNameDatabase (/*[in]*/ unsigned	r,
    _________________________________________________________________________ */
 
 FileNameDatabase *
-SessionImpl::GetFileNameDatabase (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+SessionImpl::GetFileNameDatabase (/*[in]*/ const char *	lpszPath)
 {
   unsigned root = TryDeriveTEXMFRoot(lpszPath);
   if (root == INVALID_ROOT_INDEX)
@@ -999,7 +996,7 @@ SessionImpl::TryDeriveTEXMFRoot (/*[in]*/ const PathName & path)
 {
   if (! Utils::IsAbsolutePath(path.Get()))
     {
-      INVALID_ARGUMENT (T_("SessionImpl::DeriveRootDirectory"), path.Get());
+      INVALID_ARGUMENT ("SessionImpl::DeriveRootDirectory", path.Get());
     }
       
   if (IsMpmFile(path.Get()))
@@ -1047,7 +1044,7 @@ SessionImpl::DeriveTEXMFRoot (/*[in]*/ const PathName & path)
   unsigned root = TryDeriveTEXMFRoot(path);
   if (root == INVALID_ROOT_INDEX)
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::DeriveTEXMFRoot"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::DeriveTEXMFRoot",
 			  T_("Not a TEXMF root directory."),
 			  path.Get());
     }
@@ -1066,7 +1063,7 @@ SessionImpl::UnloadFilenameDatabaseInternal (/*[in]*/ unsigned	r,
 					     /*[in]*/ bool	remove)
 {
   trace_fndb->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("going to unload file name database %u"),
      r);
   MIKTEX_LOCK(fndb)
@@ -1076,7 +1073,7 @@ SessionImpl::UnloadFilenameDatabaseInternal (/*[in]*/ unsigned	r,
 	  // check the reference count
 	  if (rootDirectories[r].GetFndb()->GetRefCount() != 1)
 	    {
-	      trace_fndb->WriteFormattedLine (T_("core"),
+	      trace_fndb->WriteFormattedLine ("core",
 		     T_("cannot unload fndb #%u: still in use"),
 		     r);
 	      return (false);
@@ -1133,8 +1130,8 @@ SessionImpl::UnloadFilenameDatabase ()
    _________________________________________________________________________ */
 
 bool
-SessionImpl::IsTEXMFFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-			  /*[out]*/ MIKTEXCHAR *	lpszRelPath,
+SessionImpl::IsTEXMFFile (/*[in]*/ const char *	lpszPath,
+			  /*[out]*/ char *	lpszRelPath,
 			  /*[out]*/ unsigned *		pRootIndex)
 {
   for (unsigned r = 0; r < GetNumberOfTEXMFRoots(); ++ r)
@@ -1147,7 +1144,7 @@ SessionImpl::IsTEXMFFile (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 	{
 	  if (lpszRelPath != 0)
 	    {
-	      const MIKTEXCHAR * lpsz = &lpszPath[cchRoot];
+	      const char * lpsz = &lpszPath[cchRoot];
 	      if (IsDirectoryDelimiter(*lpsz))
 		{
 		  ++ lpsz;
@@ -1189,7 +1186,7 @@ SessionImpl::SplitTEXMFPath (/*[in]*/  const PathName &		path,
 		       BufferSizes::MaxPath,
 		       rootDir.Get(),
 		       rootDirLen);
-	  const MIKTEXCHAR * lpsz = &path[0] + rootDirLen;
+	  const char * lpsz = &path[0] + rootDirLen;
 	  if (IsDirectoryDelimiter(*lpsz))
 	    {
 	      ++ lpsz;
@@ -1226,7 +1223,7 @@ SessionImpl::IsManagedRoot (/*[in]*/ unsigned root)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-IsMpmFile (/*[in]*/ const MIKTEXCHAR * lpszPath)
+IsMpmFile (/*[in]*/ const char * lpszPath)
 {
   return ((PathName::Compare(MPM_ROOT_PATH,
 			     lpszPath,
@@ -1273,9 +1270,9 @@ miktex_get_number_of_texmf_roots ()
    miktex_get_root_directory
    _________________________________________________________________________ */
 
-MIKTEXAPI(MIKTEXCHAR *)
+MIKTEXAPI(char *)
 miktex_get_root_directory (/*[in]*/  unsigned		r,
-			   /*[out]*/ MIKTEXCHAR *	lpszPath)
+			   /*[out]*/ char *	lpszPath)
 {
   C_FUNC_BEGIN ();
   MIKTEX_ASSERT_PATH_BUFFER (lpszPath);

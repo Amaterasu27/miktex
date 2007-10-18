@@ -37,7 +37,7 @@ using namespace std;
    _________________________________________________________________________ */
 
 CurlWebFile::CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
-			  /*[in]*/ const MIKTEXCHAR *	lpszUrl,
+			  /*[in]*/ const char *	lpszUrl,
 			  /*[in]*/ IProgressNotify_ *	pIProgressNotify)
   : handleAdded (false),
     pCurlm (0),
@@ -394,7 +394,7 @@ CurlWebFile::ReadInformationals ()
 				     responseCode);
       if (responseCode >= 400)
 	{
-	  tstring msg = T_("Error response from server: ");
+	  string msg = T_("Error response from server: ");
 	  msg += NUMTOSTR(responseCode);
 	  FATAL_MPM_ERROR
 	    (T_("CurlWebFile::ReadInformationals"),

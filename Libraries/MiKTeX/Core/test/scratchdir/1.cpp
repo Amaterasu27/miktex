@@ -25,8 +25,8 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(2);
 {
-  TEST (FindFile(T_("a.txt"), T_(".")));
-  TEST (RunSystemCommand(T_("1-1")) == 0);
+  TEST (FindFile("a.txt", "."));
+  TEST (RunSystemCommand("1-1") == 0);
 }
 END_TEST_FUNCTION();
 
@@ -34,7 +34,7 @@ void
 EnterMany (/*[in]*/ int n)
 {
   MiKTeX::Core::ScratchDirectory scratchDir;
-  scratchDir.Enter (T_("y"));
+  scratchDir.Enter ("y");
   if (n > 0)
     {
       EnterMany (n - 1);
@@ -47,14 +47,14 @@ BEGIN_TEST_FUNCTION(1);
   MiKTeX::Core::PathName cwdOrig;
   cwdOrig.SetToCurrentDirectory ();
   MiKTeX::Core::ScratchDirectory scratchDir;
-  scratchDir.Enter (T_("x"));
+  scratchDir.Enter ("x");
   MiKTeX::Core::PathName scratch1;
   scratch1.SetToCurrentDirectory ();
   TEST (MiKTeX::Core::PathName::Compare(scratch1, cwdOrig) != 0);
-  MiKTeX::Core::PathName dir (T_("./x/y/z"));
+  MiKTeX::Core::PathName dir ("./x/y/z");
   dir.MakeAbsolute ();
   MiKTeX::Core::Directory::Create (dir);
-  Touch (T_("x/y/z/a.txt"));
+  Touch ("x/y/z/a.txt");
   pSession->AddWorkingDirectory (dir.Get(), true);
   EnterMany (21);
   scratchDir.Leave ();

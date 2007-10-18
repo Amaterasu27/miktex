@@ -52,20 +52,15 @@ MIKTEXTEST_BEGIN_NAMESPACE
 
 #define T_(x) MIKTEXTEXT(x)
 
-#if defined(_MSC_VER)
-#  define FPrintF _ftprintf
-#  define PrintF _tprintf
-#else
-#  define FPrintF fprintf
-#  define PrintF printf
-#endif
+#define FPrintF fprintf
+#define PrintF printf
 
 #if defined(MIKTEX_WINDOWS)
-const MIKTEXCHAR PATH_DELIMITER = T_(';');
-#define PATH_DELIMITER_STRING T_(";")
+const char PATH_DELIMITER = ';';
+#define PATH_DELIMITER_STRING ";"
 #else
-const MIKTEXCHAR PATH_DELIMITER = T_(':');
-#define PATH_DELIMITER_STRING T_(":")
+const char PATH_DELIMITER = ':';
+#define PATH_DELIMITER_STRING ":"
 #endif
 
 class OptionEnum
@@ -134,7 +129,7 @@ public:
 public:
   int
   Main (/*[in]*/ int argc,
-	/*[in]*/ const MIKTEXCHAR **argv)
+	/*[in]*/ const char **argv)
   {
 #if defined(_MSC_VER)
     _setmode (_fileno(stdin), _O_BINARY);
@@ -167,7 +162,7 @@ public:
             ;
 	  }
       }
-    const MIKTEXCHAR ** leftovers = popt.GetArgs();
+    const char ** leftovers = popt.GetArgs();
     if (leftovers != 0)
       {
 	for (; *leftovers != 0; ++ leftovers)
@@ -235,7 +230,7 @@ protected:
   struct FAILURE
   {
     int iNum;
-    MiKTeX::Core::tstring strFile;
+    std::string strFile;
     int iLine;
     FAILURE (/*[in]*/ int i)
       : iNum (i)
@@ -260,7 +255,7 @@ protected:
 
 protected:
   int
-  RunSystemCommand (/*[in]*/ const MIKTEXCHAR * lpszProgramName)
+  RunSystemCommand (/*[in]*/ const char * lpszProgramName)
   {
     MiKTeX::Core::PathName binDir = pSession->GetMyLocation();
     return (system(MiKTeX::Core::PathName(binDir, lpszProgramName).Get()));
@@ -268,20 +263,16 @@ protected:
 
 protected:
   void
-  Touch (/*[in]*/ const MIKTEXCHAR * lpszPath)
+  Touch (/*[in]*/ const char * lpszPath)
   {
     FILE * pFile;
-#if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
-    if (_tfopen_s(&pFile, lpszPath, T_("wb")) != 0)
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    if (fopen_s(&pFile, lpszPath, "wb") != 0)
       {
 	pFile = 0;
       }
-#  else
-    pFile = _tfopen(lpszPath, T_("wb"));
-#  endif
 #else
-    pFile = fopen(lpszPath, T_("wb"));
+    pFile = fopen(lpszPath, "wb");
 #endif
     if (pFile == 0)
       {
@@ -294,22 +285,22 @@ protected:
   MiKTeX::Core::SessionWrapper pSession;
 
 protected:
-  std::vector<MiKTeX::Core::tstring> vecArgs;
+  std::vector<std::string> vecArgs;
 
 protected:
   bool verbose;
 
 protected:
-  MiKTeX::Core::tstring traceFlags;
+  std::string traceFlags;
 
 protected:
-  MiKTeX::Core::tstring rootDirectories;
+  std::string rootDirectories;
 
 protected:
-  MiKTeX::Core::tstring installRoot;
+  std::string installRoot;
 
 protected:
-  MiKTeX::Core::tstring dataRoot;
+  std::string dataRoot;
 
 private:
   static
@@ -323,15 +314,15 @@ private:
    _________________________________________________________________________ */
 
 const struct poptOption TestScript::optionTable[] = {
-  { T_("install-root"), 0, POPT_ARG_STRING, 0, Option::InstallRoot,
+  { "install-root", 0, POPT_ARG_STRING, 0, Option::InstallRoot,
     T_("Set the install root directory."), 0},
-  { T_("data-root"), 0, POPT_ARG_STRING, 0, Option::DataRoot,
+  { "data-root", 0, POPT_ARG_STRING, 0, Option::DataRoot,
     T_("Set the data root directory."), 0},
-  { T_("root-directories"), 0, POPT_ARG_STRING, 0, Option::RootDirectories,
+  { "root-directories", 0, POPT_ARG_STRING, 0, Option::RootDirectories,
     T_("Set the root directories."), 0},
-  { T_("trace"), 0, POPT_ARG_STRING, 0, Option::Trace,
+  { "trace", 0, POPT_ARG_STRING, 0, Option::Trace,
     T_("Set trace flags."), 0},
-  { T_("verbose"), 0, POPT_ARG_NONE, 0, Option::Verbose,
+  { "verbose", 0, POPT_ARG_NONE, 0, Option::Verbose,
     T_("Print information about what is being done."), 0},
   POPT_TABLEEND
 };
@@ -351,13 +342,13 @@ public:
   OnProcessOutput (/*[in]*/ const void *	ptr,
 		   /*[in]*/ size_t		n)
   {
-    output.append (reinterpret_cast<const MIKTEXCHAR *>(ptr), n);
+    output.append (reinterpret_cast<const char *>(ptr), n);
     return (true);
   }
 private:
-  MiKTeX::Core::tstring output;
+  std::string output;
 public:
-  MiKTeX::Core::tstring
+  std::string
   GetOutput ()
     const
   {
@@ -471,7 +462,7 @@ Run ()						\
 #define RUN_TEST_SCRIPT()			\
 int						\
 main (/*[in]*/ int argc,			\
-      /*[in]*/ const MIKTEXCHAR **argv)		\
+      /*[in]*/ const char **argv)		\
 {						\
   MyTestScript script;				\
   return (script.Main(argc, argv));		\

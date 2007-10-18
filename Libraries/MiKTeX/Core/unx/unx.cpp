@@ -37,10 +37,10 @@ SessionImpl::GetMyProgramFile ()
   // we do this once
   if (myProgramFile.GetLength() == 0)
     {
-      tstring invocationName = initInfo.GetProgramInvocationName();
+      string invocationName = initInfo.GetProgramInvocationName();
       if (invocationName.length() == 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_("SessionImpl::GetMyProgramFile"),
+	  FATAL_MIKTEX_ERROR ("SessionImpl::GetMyProgramFile",
 			      T_("No invocation name has been set."),
 			      0);
 	}
@@ -49,25 +49,25 @@ SessionImpl::GetMyProgramFile ()
 	  myProgramFile = invocationName;
 	}
       else if (invocationName.length() > 3
-	       && (invocationName.substr(0, 2) == T_("./")
-		   || invocationName.substr(0, 3) == T_("../")))
+	       && (invocationName.substr(0, 2) == "./"
+		   || invocationName.substr(0, 3) == "../"))
 	{
 	  myProgramFile = GetFullPath(invocationName.c_str());
 	}
       else
 	{
-	  tstring path;
-	  if (! Utils::GetEnvironmentString(T_("PATH"), path))
+	  string path;
+	  if (! Utils::GetEnvironmentString("PATH", path))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::GetMyProgramFile"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::GetMyProgramFile",
 				  T_("\
 The environment variable PATH is not defined."),
 				  0);
 	    }
-	  if (path.find(RECURSION_INDICATOR) != tstring::npos
-	      || path.find(TEXMF_PLACEHOLDER) != tstring::npos)
+	  if (path.find(RECURSION_INDICATOR) != string::npos
+	      || path.find(TEXMF_PLACEHOLDER) != string::npos)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::GetMyProgramFile"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::GetMyProgramFile",
 				  T_("\
 The environment variable PATH has an obscure value."),
 				  path.c_str());
@@ -76,7 +76,7 @@ The environment variable PATH has an obscure value."),
 			     path.c_str(),
 			     myProgramFile))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("SessionImpl::GetMyProgramFile"),
+	      FATAL_MIKTEX_ERROR ("SessionImpl::GetMyProgramFile",
 				  T_("\
 The invoked program could not be found in the PATH."),
 				  0);
@@ -96,34 +96,34 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
 {
   UNUSED_ALWAYS (shared);
   StartupConfig ret;
-  tstring home;
-  if (! Utils::GetEnvironmentString(T_("HOME"), home))
+  string home;
+  if (! Utils::GetEnvironmentString("HOME", home))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::DefaultConfig"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::DefaultConfig",
 			  T_("Environment variable HOME is not set."),
 			  0);
     }
   PathName defaultPath (home);
-  defaultPath += T_(".miktex");
+  defaultPath += ".miktex";
 #if defined(MIKTEX_ROOTS)
   ret.roots = MIKTEX_ROOTS;
 #endif
 #if defined(MIKTEX_INSTALLROOT)
-  ret.installRoot = T_(MIKTEX_INSTALLROOT);
+  ret.installRoot = MIKTEX_INSTALLROOT;
 #endif
   if (ret.installRoot.Empty())
     {
       ret.installRoot = defaultPath;
     }
 #if defined(MIKTEX_DATAROOT)
-  ret.userDataRoot = T_(MIKTEX_DATAROOT);
+  ret.userDataRoot = MIKTEX_DATAROOT;
 #endif
   if (ret.userDataRoot.Empty())
     {
       ret.userDataRoot = defaultPath;
     }
 #if defined(MIKTEX_CONFIGROOT)
-  ret.userConfigRoot = T_(MIKTEX_CONFIGROOT);
+  ret.userConfigRoot = MIKTEX_CONFIGROOT;
 #endif
   if (ret.userConfigRoot.Empty())
     {
@@ -138,7 +138,7 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetPsFontDirs (/*[out]*/ tstring &	psFontDirs)
+SessionImpl::GetPsFontDirs (/*[out]*/ string &	psFontDirs)
 {
 #  warning Unimplemented: SessionImpl::GetPsFontDirs
   return (false);
@@ -150,7 +150,7 @@ SessionImpl::GetPsFontDirs (/*[out]*/ tstring &	psFontDirs)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
+SessionImpl::GetTTFDirs (/*[out]*/ string &	ttfDirs)
 {
 #  warning Unimplemented: SessionImpl::GetPsTtfDirs
   return (false);
@@ -161,26 +161,26 @@ SessionImpl::GetTTFDirs (/*[out]*/ tstring &	ttfDirs)
    Utils::GetOSVersionString
    _________________________________________________________________________ */
 
-tstring
+string
 Utils::GetOSVersionString ()
 {
-  tstring version;
+  string version;
 #if defined(HAVE_UNAME_SYSCALL)
   struct utsname buf;
   if (uname(&buf) < 0)
     {
-      FATAL_CRT_ERROR (T_("uname"), 0);
+      FATAL_CRT_ERROR ("uname", 0);
     }
   version = buf.sysname;
-  version += T_(' ');
+  version += ' ';
   version += buf.release;
-  version += T_(' ');
+  version += ' ';
   version += buf.version;
-  version += T_(' ');
+  version += ' ';
   version += buf.machine;
 #else
 #  warning Unimplemented: Utils::GetOSVersionString
-  version = T_("UnkOS 0.1");
+  version = "UnkOS 0.1";
 #endif
   return (version);
 }
@@ -195,7 +195,7 @@ PathName::SetToCurrentDirectory ()
 {
   if (getcwd(buffer, GetCapacity()) == 0)
     {
-      FATAL_CRT_ERROR (T_("getcwd"), 0);
+      FATAL_CRT_ERROR ("getcwd", 0);
     }
   return (*this);
 }
@@ -208,12 +208,12 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
-  if (! Utils::GetEnvironmentString(T_("TMPDIR"), buffer, GetCapacity()))
+  if (! Utils::GetEnvironmentString("TMPDIR", buffer, GetCapacity()))
     {
 #if defined(P_tmpdir)
       Utils::CopyString (buffer, GetCapacity(), P_tmpdir);
 #else
-      Utils::CopyString (buffer, GetCapacity(), T_("/tmp"));
+      Utils::CopyString (buffer, GetCapacity(), "/tmp");
 #endif
     }
   return (*this);
@@ -229,19 +229,19 @@ PathName::SetToTempFile ()
 {
   *this = SessionImpl::theSession->GetTempDirectory();
 
-  AppendComponent (T_("mikXXXXXX"));
+  AppendComponent ("mikXXXXXX");
 
   int fd = mkstemp(buffer);
 
   if (fd < 0)
     {
-      FATAL_CRT_ERROR (T_("mkstemp"), 0);
+      FATAL_CRT_ERROR ("mkstemp", 0);
     }
 
   close (fd);
 
   SessionImpl::theSession->trace_tempfile->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("created temporary file \"%s\""),
      buffer);
 
@@ -254,13 +254,13 @@ PathName::SetToTempFile ()
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(bool)
-FileIsOnROMedia (/*[in]*/ const MIKTEXCHAR * lpszPath)
+FileIsOnROMedia (/*[in]*/ const char * lpszPath)
 {
 #if defined(HAVE_STATVFS)
   struct statvfs buf;
   if (statvfs(lpszPath, &buf) < 0)
     {
-      FATAL_CRT_ERROR (T_("statvfs"), lpszPath);
+      FATAL_CRT_ERROR ("statvfs", lpszPath);
     }
   return ((buf.f_flag & ST_RDONLY) != 0);
 #else
@@ -278,7 +278,7 @@ FileIsOnROMedia (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
-CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
+CreateDirectoryPath (/*[in]*/ const char *	lpszPath,
 		     /*[in]*/ mode_t			mode)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
@@ -297,9 +297,9 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
     }
 
   // create the parent directory
-  MIKTEXCHAR szDir[BufferSizes::MaxPath];
-  MIKTEXCHAR szFname[BufferSizes::MaxPath];
-  MIKTEXCHAR szExt[BufferSizes::MaxPath];
+  char szDir[BufferSizes::MaxPath];
+  char szFname[BufferSizes::MaxPath];
+  char szExt[BufferSizes::MaxPath];
   PathName::Split (lpszPath,
 		   szDir, BufferSizes::MaxPath,
 		   szFname, BufferSizes::MaxPath,
@@ -318,14 +318,14 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
     }
 
   SessionImpl::theSession->trace_config->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("creating directory %s..."),
      Q_(lpszPath));
 
   // create the directory itself
   if (mkdir(lpszPath, mode) != 0)
     {
-      FATAL_CRT_ERROR (T_("mkdir"), lpszPath);
+      FATAL_CRT_ERROR ("mkdir", lpszPath);
     }
 }
 
@@ -337,7 +337,7 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath,
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
+CreateDirectoryPath (/*[in]*/ const char *	lpszPath)
 {
   ::CreateDirectoryPath (lpszPath,
 			 S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
@@ -352,7 +352,7 @@ CreateDirectoryPath (/*[in]*/ const MIKTEXCHAR *	lpszPath)
 
 #if 0
 MIKTEXINTERNALFUNC(void)
-CreateDirectoryPathForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
+CreateDirectoryPathForEveryone (/*[in]*/ const char * lpszPath)
 {
   ::CreateDirectoryPath (lpszPath,
 			 S_IRWXU | S_IRWXG | S_IRWXO);
@@ -365,22 +365,22 @@ CreateDirectoryPathForEveryone (/*[in]*/ const MIKTEXCHAR * lpszPath)
    _________________________________________________________________________ */
 
 void
-Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
-			     /*[in]*/ const MIKTEXCHAR *	lpszValue)
+Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
+			     /*[in]*/ const char *	lpszValue)
 {
-  const MIKTEXCHAR * lpszOldValue = ::GetEnvironmentString(lpszValueName);
+  const char * lpszOldValue = ::GetEnvironmentString(lpszValueName);
   if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
     {
       return;
     }
   SessionImpl::theSession->trace_config->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("setting env %s=%s"),
      lpszValueName,
      lpszValue);
   if (setenv(lpszValueName, lpszValue, 1) != 0)
     {
-      FATAL_CRT_ERROR (T_("setenv"), lpszValueName);
+      FATAL_CRT_ERROR ("setenv", lpszValueName);
     }
 }
 

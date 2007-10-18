@@ -48,7 +48,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+	   /*[in]*/ const char *			lpszPrefix);
   
 public:
   virtual
@@ -58,7 +58,7 @@ public:
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
 	   /*[in]*/ IExtractCallback *			pCallback,
-	   /*[in]*/ const MIKTEXCHAR *			lpszPrefix);
+	   /*[in]*/ const char *			lpszPrefix);
   
 public:
   virtual
@@ -73,7 +73,7 @@ private:
   static
   struct mspack_file *
   Open (/*[in]*/ struct mspack_system *	self,
-	/*[in]*/ MIKTEXCHAR *		lpszFileName,
+	/*[in]*/ char *		lpszFileName,
 	/*[in]*/ int			mode);
 
 private:
@@ -111,7 +111,7 @@ private:
   static
   void
   Message (/*[in]*/ struct mspack_file *	pFile,
-	   /*[in]*/ MIKTEXCHAR *		lpszFormat,
+	   /*[in]*/ char *		lpszFormat,
 	   /*[in]*/				...);
 
 private:
@@ -145,7 +145,7 @@ private:
       : pFile (0)
     {
     }
-    MiKTeX::Core::tstring	fileName;
+    std::string	fileName;
     FILE *			pFile;
   };
 

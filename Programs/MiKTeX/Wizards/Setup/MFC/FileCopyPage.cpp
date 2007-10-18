@@ -459,7 +459,7 @@ FileCopyPage::OnReport (/*[in]*/ WPARAM	wParam,
   UNUSED_ALWAYS (lParam);
   long len = reportControl.GetTextLength();
   reportControl.SetSel (len, len);
-  reportControl.ReplaceSel (reinterpret_cast<const MIKTEXCHAR *>(wParam));
+  reportControl.ReplaceSel (reinterpret_cast<const char *>(wParam));
   reportControl.SendMessage (EM_SCROLLCARET);
   return (0);
 }
@@ -484,7 +484,7 @@ FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
 
 void
 MPMCALL
-FileCopyPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Report (true, T_("%s\n"), lpszLine);
 }
@@ -496,11 +496,11 @@ FileCopyPage::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-FileCopyPage::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UINT uType = MB_ICONSTOP;
   uType |= MB_RETRYCANCEL;
-  tstring str = lpszMessage;
+  string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
   UINT u = ::MessageBox(0, str.c_str(), 0, uType);
   return (u != IDCANCEL);
@@ -716,8 +716,8 @@ FileCopyPage::DoTheDownload ()
   // now copy the setup program
   if (! theApp.setupPath.Empty())
     {
-      MIKTEXCHAR szFileName[BufferSizes::MaxPath];
-      MIKTEXCHAR szExt[BufferSizes::MaxPath];
+      char szFileName[BufferSizes::MaxPath];
+      char szExt[BufferSizes::MaxPath];
       PathName::Split (theApp.setupPath.Get(),
 		       0, 0,
 		       0, 0,
@@ -936,7 +936,7 @@ FileCopyPage::ConfigureMiKTeX ()
     CSingleLock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
-    sharedData.packageName = static_cast<const MIKTEXCHAR *>(str);
+    sharedData.packageName = static_cast<const char *>(str);
     sharedData.newPackage = true;
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
@@ -983,7 +983,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	  cmdLine.AppendOption (T_("--common-config="),
 				theApp.startupConfig.commonConfigRoot);
 	}
-      tstring rootDirectories;
+      string rootDirectories;
       rootDirectories += theApp.startupConfig.installRoot.Get();
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
 	{
@@ -1188,7 +1188,7 @@ FileCopyPage::CalculateExpenditure ()
 
 void
 FileCopyPage::Report (/*[in]*/ bool			writeLog,
-		      /*[in]*/ const MIKTEXCHAR *	lpszFmt,
+		      /*[in]*/ const char *	lpszFmt,
 		      /*[in]*/				...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
@@ -1201,10 +1201,10 @@ FileCopyPage::Report (/*[in]*/ bool			writeLog,
   CSingleLock (&criticalSectionMonitor, TRUE);
   if (writeLog)
     {
-      Log (T_("%s"), static_cast<const MIKTEXCHAR *>(str));
+      Log (T_("%s"), static_cast<const char *>(str));
     }
   SendMessage (WM_REPORT,
-	       reinterpret_cast<WPARAM>(static_cast<const MIKTEXCHAR *>(str)));
+	       reinterpret_cast<WPARAM>(static_cast<const char *>(str)));
 }
 
 /* _________________________________________________________________________
@@ -1244,7 +1244,7 @@ FileCopyPage::EnableControl (/*[in]*/ UINT	controlId,
 void
 FileCopyPage::RemoveObsoleteFiles ()
 {
-  extern const MIKTEXCHAR * g_apszObsoleteFiles[];
+  extern const char * g_apszObsoleteFiles[];
   for (size_t i = 0; g_apszObsoleteFiles[i] != 0; ++ i)
     {
       PathName path (theApp.startupConfig.installRoot, g_apszObsoleteFiles[i]);
@@ -1262,7 +1262,7 @@ FileCopyPage::CreateInfoFile ()
 {
   StreamWriter
     stream (PathName(theApp.localPackageRepository, DOWNLOAD_INFO_FILE));
-  const MIKTEXCHAR * lpszPackageSet;
+  const char * lpszPackageSet;
   switch (theApp.packageLevel.Get())
     {
     case PackageLevel::Essential:

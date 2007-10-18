@@ -37,11 +37,11 @@ using namespace std;
    PackageInstallerImpl::MakeUrl
    _________________________________________________________________________ */
 
-tstring
-PackageInstallerImpl::MakeUrl (/*[in]*/ const MIKTEXCHAR * lpszBase,
-			       /*[in]*/ const MIKTEXCHAR * lpszRel)
+string
+PackageInstallerImpl::MakeUrl (/*[in]*/ const char * lpszBase,
+			       /*[in]*/ const char * lpszRel)
 {
-  tstring url (lpszBase);
+  string url (lpszBase);
   size_t l = url.length();
   if (l == 0)
     {
@@ -64,8 +64,8 @@ PackageInstallerImpl::MakeUrl (/*[in]*/ const MIKTEXCHAR * lpszBase,
    PackageInstallerImpl::MakeUrl
    _________________________________________________________________________ */
 
-tstring
-PackageInstallerImpl::MakeUrl (/*[in]*/ const MIKTEXCHAR * lpszRel)
+string
+PackageInstallerImpl::MakeUrl (/*[in]*/ const char * lpszRel)
 {
   return (MakeUrl(repository.c_str(), lpszRel));
 }
@@ -85,7 +85,7 @@ PackageInstaller::~PackageInstaller ()
    _________________________________________________________________________ */
 
 MPMSTATICFUNC(bool)
-IsPureContainer (/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
+IsPureContainer (/*[in]*/ const char * lpszDeploymentName)
 {
   return (StrNCmp(lpszDeploymentName, T_("_miktex-"), 8) == 0);
 }
@@ -96,7 +96,7 @@ IsPureContainer (/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
    _________________________________________________________________________ */
 
 MPMSTATICFUNC(bool)
-IsMiKTeXPackage (/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
+IsMiKTeXPackage (/*[in]*/ const char * lpszDeploymentName)
 {
   return (StrNCmp(lpszDeploymentName, T_("miktex-"), 7) == 0);
 }
@@ -109,7 +109,7 @@ IsMiKTeXPackage (/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
    _________________________________________________________________________ */
 
 MPMSTATICFUNC(PathName)
-PrefixedPackageDefinitionFile (/*[in]*/ const tstring & deploymentName)
+PrefixedPackageDefinitionFile (/*[in]*/ const string & deploymentName)
 {
   PathName path (TEXMF_PREFIX_DIRECTORY);
   path += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
@@ -143,7 +143,7 @@ PackageInstallerImpl::PackageInstallerImpl
 		 && PackageLevel::Advanced < PackageLevel::Complete);
   
   // get the default remote repository URL
-  tstring repository;
+  string repository;
   if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
     {
       trace_mpm->WriteFormattedLine
@@ -205,7 +205,7 @@ PackageInstallerImpl::OnProgress ()
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::Download (/*[in]*/ const tstring &	url,
+PackageInstallerImpl::Download (/*[in]*/ const string &	url,
 				/*[in]*/ const PathName &	dest,
 				/*[in]*/ size_t			expectedSize)
 {
@@ -325,7 +325,7 @@ PackageInstallerImpl::Download (/*[in]*/ const tstring &	url,
 void
 EXTRACTORCALL
 PackageInstallerImpl::OnBeginFileExtraction
-(/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+(/*[in]*/ const char *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
 {
   UNUSED_ALWAYS (uncompressedSize);
@@ -358,7 +358,7 @@ PackageInstallerImpl::OnBeginFileExtraction
 void
 EXTRACTORCALL
 PackageInstallerImpl::OnEndFileExtraction
-(/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+(/*[in]*/ const char *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
 {
   // update file name database
@@ -392,7 +392,7 @@ PackageInstallerImpl::OnEndFileExtraction
 
 bool
 EXTRACTORCALL
-PackageInstallerImpl::OnError (/*[in]*/ const MIKTEXCHAR *	lpszMessage)
+PackageInstallerImpl::OnError (/*[in]*/ const char *	lpszMessage)
 {
   // we have a problem: let the client decide how to proceed
   return (! AbortOrRetry(lpszMessage));
@@ -552,8 +552,8 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
    _________________________________________________________________________ */
 
 int
-CompareVersions (/*[in]*/ const tstring &	ver1,
-		 /*[in]*/ const tstring &	ver2)
+CompareVersions (/*[in]*/ const string &	ver1,
+		 /*[in]*/ const string &	ver2)
 {
   if (ver1.empty() || ver2.empty())
     {
@@ -578,8 +578,8 @@ CompareVersions (/*[in]*/ const tstring &	ver1,
    _________________________________________________________________________ */
 
 int
-CompareSerieses (/*[in]*/ const tstring &	ver1,
-		 /*[in]*/ const tstring &	ver2)
+CompareSerieses (/*[in]*/ const string &	ver1,
+		 /*[in]*/ const string &	ver2)
 {
   if (ver1.empty() || ver2.empty())
     {
@@ -619,8 +619,8 @@ PackageInstallerImpl::FindUpdates ()
   updates.clear ();
 
   // read lightweight database
-  MIKTEXCHAR szPackage[BufferSizes::MaxPackageName];
-  for (const MIKTEXCHAR * lpszPackage = dbLight.FirstPackage(szPackage);
+  char szPackage[BufferSizes::MaxPackageName];
+  for (const char * lpszPackage = dbLight.FirstPackage(szPackage);
        lpszPackage != 0;
        lpszPackage = dbLight.NextPackage(szPackage))
     {
@@ -643,7 +643,7 @@ PackageInstallerImpl::FindUpdates ()
 	       <= PackageLevel::Essential)
 	      && IsMiKTeXPackage(lpszPackage))
 	    {
-	      tstring version = dbLight.GetPackageVersion(lpszPackage);
+	      string version = dbLight.GetPackageVersion(lpszPackage);
 	      int verCmp = CompareSerieses(version, MIKTEX_SERIES_STR);
 	      if (verCmp == 0)
 		{
@@ -789,17 +789,17 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 
 void
 PackageInstallerImpl::RemoveFiles
-(/*[in]*/ const vector<tstring> &	toBeRemoved,
+(/*[in]*/ const vector<string> &	toBeRemoved,
  /*[in]*/ bool				silently)
 {
-  for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+  for (vector<string>::const_iterator it = toBeRemoved.begin();
        it != toBeRemoved.end();
        ++ it)
     {
       Notify ();
 
       // only consider texmf files
-      tstring fileName;
+      string fileName;
       if (! PackageManager::StripTeXMFPrefix(*it, fileName))
 	{
 	  continue;
@@ -888,7 +888,7 @@ PackageInstallerImpl::RemoveFiles
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::RemovePackage (/*[in]*/ const tstring &	deploymentName)
+PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
 {
   trace_mpm->WriteFormattedLine (T_("libmpm"),
 				 T_("going to remove %s"),
@@ -1064,16 +1064,16 @@ PackageInstallerImpl::MyCopyFile (/*[in]*/ const PathName &	source,
 
 void
 PackageInstallerImpl::CopyFiles (/*[in]*/ const PathName & pathSourceRoot,
-				 /*[in]*/ const vector<tstring> & fileList)
+				 /*[in]*/ const vector<string> & fileList)
 {
-  for (vector<tstring>::const_iterator it = fileList.begin();
+  for (vector<string>::const_iterator it = fileList.begin();
        it != fileList.end();
        ++ it)
     {
       Notify ();
 
       // only consider texmf files
-      tstring fileName;
+      string fileName;
       if (! (PackageManager::StripTeXMFPrefix(*it, fileName)))
 	{
 	  continue;
@@ -1131,12 +1131,12 @@ PackageInstallerImpl::CopyFiles (/*[in]*/ const PathName & pathSourceRoot,
 
 void
 PackageInstallerImpl::AddToFileList
-(/*[in,out]*/ vector<tstring> &		fileList,
+(/*[in,out]*/ vector<string> &		fileList,
  /*[in]*/ const PathName &		fileName)
   const
 {
   // avoid duplicates
-  for (vector<tstring>::const_iterator it = fileList.begin();
+  for (vector<string>::const_iterator it = fileList.begin();
        it != fileList.end();
        ++ it)
     {
@@ -1155,11 +1155,11 @@ PackageInstallerImpl::AddToFileList
 
 void
 PackageInstallerImpl::RemoveFromFileList
-(/*[in,out]*/ vector<tstring> &	fileList,
+(/*[in,out]*/ vector<string> &	fileList,
  /*[in]*/ const PathName &	fileName)
   const
 {
-  for (vector<tstring>::iterator it = fileList.begin();
+  for (vector<string>::iterator it = fileList.begin();
        it != fileList.end();
        ++ it)
     {
@@ -1178,7 +1178,7 @@ PackageInstallerImpl::RemoveFromFileList
 
 void
 PackageInstallerImpl::CopyPackage (/*[in]*/ const PathName & pathSourceRoot,
-				   /*[in]*/ const tstring & deploymentName)
+				   /*[in]*/ const string & deploymentName)
 {
   // parse the package definition file
   PathName pathPackageFile = pathSourceRoot;
@@ -1209,9 +1209,9 @@ PackageInstallerImpl::CopyPackage (/*[in]*/ const PathName & pathSourceRoot,
    _________________________________________________________________________ */
 
 #if defined(USE_HASH_SET)
-typedef hash_set<tstring> StringSet;
+typedef hash_set<string> StringSet;
 #else
-typedef set<tstring> StringSet;
+typedef set<string> StringSet;
 #endif
 
 MPMSTATICFUNC(void)
@@ -1231,16 +1231,16 @@ GetFiles (/*[in]*/ const PackageInfo &	packageInfo,
 
 void
 PackageInstallerImpl::UpdateMpmFndb
-(/*[in]*/ const vector<tstring> &	installedFiles,
- /*[in]*/ const vector<tstring> &	removedFiles,
- /*[in]*/ const MIKTEXCHAR *		lpszPackageName)
+(/*[in]*/ const vector<string> &	installedFiles,
+ /*[in]*/ const vector<string> &	removedFiles,
+ /*[in]*/ const char *		lpszPackageName)
 {
 #if 0
   ReportLine (T_("updating MPM file name database:"));
   ReportLine (T_("  %u records to be added"), installedFiles.size());
   ReportLine (T_("  %u records to be removed"), removedFiles.size());
 #endif
-  vector<tstring>::const_iterator it;
+  vector<string>::const_iterator it;
   for (it = installedFiles.begin(); it != installedFiles.end(); ++ it)
     {
       PathName path (MPM_ROOT_PATH, *it);
@@ -1277,7 +1277,7 @@ PackageInstallerImpl::UpdateMpmFndb
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::InstallPackage (/*[in]*/ const tstring &	deploymentName)
+PackageInstallerImpl::InstallPackage (/*[in]*/ const string &	deploymentName)
 {
   trace_mpm->WriteFormattedLine (T_("libmpm"),
 				 T_("installing package %s"),
@@ -1420,24 +1420,24 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const tstring &	deploymentName)
   StringSet set2;
   GetFiles (packageInfo, set2);
   StringSet::const_iterator it;
-  vector<tstring> recycledFiles;
+  vector<string> recycledFiles;
   for (it = set1.begin(); it != set1.end(); ++ it)
     {
       if (set2.find(*it) == set2.end())
 	{
-	  tstring str;
+	  string str;
 	  if (PackageManager::StripTeXMFPrefix(*it, str))
 	    {
 	      recycledFiles.push_back (str);
 	    }
 	}
     }
-  vector<tstring> newFiles;
+  vector<string> newFiles;
   for (it = set2.begin(); it != set2.end(); ++ it)
     {
       if (set1.find(*it) == set1.end())
 	{
-	  tstring str;
+	  string str;
 	  if (PackageManager::StripTeXMFPrefix(*it, str))
 	    {
 	      newFiles.push_back (str);
@@ -1480,7 +1480,7 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const tstring &	deploymentName)
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::DownloadPackage (/*[in]*/ const tstring & deploymentName)
+PackageInstallerImpl::DownloadPackage (/*[in]*/ const string & deploymentName)
 {
   size_t expectedSize;
 
@@ -1526,7 +1526,7 @@ PackageInstallerImpl::DownloadPackage (/*[in]*/ const tstring & deploymentName)
 void
 PackageInstallerImpl::CalculateExpenditure (/*[in]*/ bool downloadOnly)
 {
-  vector<tstring>::const_iterator it;
+  vector<string>::const_iterator it;
 
   ProgressInfo packageInfo;
 
@@ -1612,10 +1612,10 @@ PackageInstallerImpl::CalculateExpenditure (/*[in]*/ bool downloadOnly)
 
 bool
 MIKTEXCALL
-PackageInstallerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
-				     /*[out]*/ MIKTEXCHAR * * ppSubDirNames,
-				     /*[out]*/ MIKTEXCHAR * * ppFileNames,
-				     /*[out]*/ MIKTEXCHAR * * ppFileNameInfos)
+PackageInstallerImpl::ReadDirectory (/*[in]*/ const char * lpszPath,
+				     /*[out]*/ char * * ppSubDirNames,
+				     /*[out]*/ char * * ppFileNames,
+				     /*[out]*/ char * * ppFileNameInfos)
 
 {
   UNUSED_ALWAYS (lpszPath);
@@ -1633,7 +1633,7 @@ PackageInstallerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR * lpszPath,
 bool
 MIKTEXCALL
 PackageInstallerImpl::OnProgress (/*[in]*/ unsigned		level,
-				  /*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+				  /*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);
   UNUSED_ALWAYS (lpszDirectory);
@@ -1655,7 +1655,7 @@ PackageInstallerImpl::OnProgress (/*[in]*/ unsigned		level,
 
 bool
 PackageInstallerImpl::CheckArchiveFile
-(/*[in]*/ const MIKTEXCHAR *	lpszPackage,
+(/*[in]*/ const char *	lpszPackage,
  /*[in]*/ const PathName &	archiveFileName,
  /*[in]*/ bool			mustBeOk)
 {
@@ -1686,7 +1686,7 @@ PackageInstallerImpl::CheckArchiveFile
 void
 PackageInstallerImpl::ConnectToServer ()
 {
-  const MIKTEXCHAR * MSG_CANNOT_START_SERVER =
+  const char * MSG_CANNOT_START_SERVER =
     T_("Cannot start MiKTeX package manager.");
   if (localServer.pInstaller == 0)
     {
@@ -1816,7 +1816,7 @@ PackageInstallerImpl::RegisterComponent
 
 #if defined(MIKTEX_WINDOWS)
 
-static const MIKTEXCHAR * const components[] = {
+static const char * const components[] = {
   MIKTEX_PATH_CORE_DLL,
   MIKTEX_PATH_CORE_PS_DLL,
   MIKTEX_PATH_MPM_DLL,
@@ -1825,16 +1825,16 @@ static const MIKTEXCHAR * const components[] = {
 
 #endif
 
-static const MIKTEXCHAR * const toBeConfigured[] = {
+static const char * const toBeConfigured[] = {
   MIKTEX_PATH_FONTCONFIG_CONFIG_FILE,
 };
 
 void
 PackageInstallerImpl::RegisterComponents
 (/*[in]*/ bool				doRegister,
- /*[in]*/ const vector<tstring> &	packages)
+ /*[in]*/ const vector<string> &	packages)
 {
-  for (vector<tstring>::const_iterator it = packages.begin();
+  for (vector<string>::const_iterator it = packages.begin();
        it != packages.end();
        ++ it)
     {
@@ -1844,12 +1844,12 @@ PackageInstallerImpl::RegisterComponents
 	{
 	  FatalError (ERROR_UNKNOWN_PACKAGE, it->c_str());
 	}
-      for (vector<tstring>::const_iterator it2 =
+      for (vector<string>::const_iterator it2 =
 	     pPackageInfo->runFiles.begin();
 	   it2 != pPackageInfo->runFiles.end();
 	   ++ it2)
 	{
-	  tstring fileName;
+	  string fileName;
 	  if (! PackageManager::StripTeXMFPrefix(*it2, fileName))
 	    {
 	      continue;
@@ -1972,7 +1972,7 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::RunIniTeXMF (/*[in]*/ const MIKTEXCHAR *	lpszArguments)
+PackageInstallerImpl::RunIniTeXMF (/*[in]*/ const char *	lpszArguments)
 {
 #if defined(MIKTEX_WINDOWS)
   // find initexmf
@@ -1988,7 +1988,7 @@ The MiKTeX configuration utility could not be found.")),
     }
 
   // run initexmf.exe
-  tstring arguments = lpszArguments;
+  string arguments = lpszArguments;
   Process::Run (exe, arguments.c_str());
 #else
   UNUSED_ALWAYS (lpszArguments);
@@ -2010,7 +2010,7 @@ PackageInstallerImpl::InstallRemove ()
     {
       HRESULT hr;
       ConnectToServer ();
-      for (vector<tstring>::const_iterator it = toBeInstalled.begin();
+      for (vector<string>::const_iterator it = toBeInstalled.begin();
 	   it != toBeInstalled.end();
 	   ++ it)
 	{
@@ -2023,7 +2023,7 @@ PackageInstallerImpl::InstallRemove ()
 			       NUMTOHEXSTR(hr));
 	    }
 	}
-      for (vector<tstring>::const_iterator it = toBeRemoved.begin();
+      for (vector<string>::const_iterator it = toBeRemoved.begin();
 	   it != toBeRemoved.end();
 	   ++ it)
 	{
@@ -2102,7 +2102,7 @@ PackageInstallerImpl::InstallRemove ()
     {
       LoadDbLight (true);
       
-      MIKTEXCHAR szPackage[BufferSizes::MaxPackageName];
+      char szPackage[BufferSizes::MaxPackageName];
       if (dbLight.FirstPackage(szPackage) == 0)
 	{
 	  FATAL_MPM_ERROR (T_("PackageInstallerImpl::InstallRemove"),
@@ -2159,7 +2159,7 @@ PackageInstallerImpl::InstallRemove ()
   // calculate total size and more
   CalculateExpenditure ();
   
-  vector<tstring>::const_iterator it;
+  vector<string>::const_iterator it;
 
   RegisterComponents (false, toBeInstalled, toBeRemoved);
 
@@ -2302,7 +2302,7 @@ PackageInstallerImpl::Download ()
   LoadDbLight (true);
  
   // collect required packages
-  MIKTEXCHAR szPackage[BufferSizes::MaxPackageName];
+  char szPackage[BufferSizes::MaxPackageName];
   if (dbLight.FirstPackage(szPackage) != 0)
     {
       do
@@ -2374,7 +2374,7 @@ PackageInstallerImpl::Download ()
   Download (MIKTEX_MPM_DB_FULL_FILE_NAME);
 
   // download archive files
-  for (vector<tstring>::const_iterator it = toBeInstalled.begin();
+  for (vector<string>::const_iterator it = toBeInstalled.begin();
        it != toBeInstalled.end();
        ++ it)
     {
@@ -2515,7 +2515,7 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
 
       // now we know that the package is obsolete
 
-      MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      char szDeploymentName[BufferSizes::MaxPackageName];
       MIKTEX_ASSERT
 	(PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX)
 	 == (PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX).GetExtension()));
@@ -2642,7 +2642,7 @@ PackageInstallerImpl::UpdateDb ()
 	}
 
       // get external package name
-      MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      char szDeploymentName[BufferSizes::MaxPackageName];
       MIKTEX_ASSERT
 	(PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX)
 	 == (PathName(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX).GetExtension()));
@@ -2787,21 +2787,21 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
   va_list marker;
   va_start (marker, error);
   otstringstream message;
-  const MIKTEXCHAR * lpszArg1;
-  const MIKTEXCHAR * lpszArg2;
-  const MIKTEXCHAR * lpszArg3;
+  const char * lpszArg1;
+  const char * lpszArg2;
+  const char * lpszArg3;
   switch (error)
     {
     case ERROR_UNKNOWN_PACKAGE:
       message << T_("The package") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const MIKTEXCHAR *) << LF
+	      << T_("  ") << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is unknown.");
       break;
     case ERROR_DOWNLOAD:
-      lpszArg1 = va_arg(marker, const MIKTEXCHAR *);
-      lpszArg2 = va_arg(marker, const MIKTEXCHAR *);
+      lpszArg1 = va_arg(marker, const char *);
+      lpszArg2 = va_arg(marker, const char *);
       message << T_("The file") << LF
 	      << LF
 	      << T_("  ") << lpszArg1 << LF
@@ -2813,13 +2813,13 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
     case ERROR_PACKAGE_NOT_INSTALLED:
       message << T_("The package") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const MIKTEXCHAR *) << LF
+	      << T_("  ") << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is not installed.");
       break;
     case ERROR_CANNOT_DELETE:
-      lpszArg1 = va_arg(marker, const MIKTEXCHAR *);
-      lpszArg2 = va_arg(marker, const MIKTEXCHAR *);
+      lpszArg1 = va_arg(marker, const char *);
+      lpszArg2 = va_arg(marker, const char *);
       message << T_("The file") << LF
 	      << LF
 	      << T_("  ") << lpszArg1 << LF
@@ -2831,14 +2831,14 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
     case ERROR_MISSING_PACKAGE:
       message << T_("The package file") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const MIKTEXCHAR *) << LF
+	      << T_("  ") << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is not available.");
       break;
     case ERROR_CORRUPTED_PACKAGE:
-      lpszArg1 = va_arg(marker, const MIKTEXCHAR *);
-      lpszArg2 = va_arg(marker, const MIKTEXCHAR *);
-      lpszArg3 = va_arg(marker, const MIKTEXCHAR *);
+      lpszArg1 = va_arg(marker, const char *);
+      lpszArg2 = va_arg(marker, const char *);
+      lpszArg3 = va_arg(marker, const char *);
       message
 	<< T_("The package file") << LF
 	<< LF
@@ -2856,13 +2856,13 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
     case ERROR_SOURCE_FILE_NOT_FOUND:
       message << T_("The file") << LF
 	      << LF
-	      << T_("  ") << va_arg(marker, const MIKTEXCHAR *) << LF
+	      << T_("  ") << va_arg(marker, const char *) << LF
 	      << LF
 	      << T_("is not available.");
       break;
     case ERROR_SIZE_MISMATCH:
       {
-	lpszArg1 = va_arg(marker, const MIKTEXCHAR *);
+	lpszArg1 = va_arg(marker, const char *);
 	size_t size1 = va_arg(marker, size_t);
 	size_t size2 = va_arg(marker, size_t);
 	message
@@ -2901,7 +2901,7 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
    _________________________________________________________________________ */
 
 void
-PackageInstallerImpl::ReportLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+PackageInstallerImpl::ReportLine (/*[in]*/ const char *	lpszFormat,
 				  /*[in]*/			...)
 {
   if (pCallback == 0)
@@ -2910,7 +2910,7 @@ PackageInstallerImpl::ReportLine (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
     }
   va_list marker;
   va_start (marker, lpszFormat);
-  tstring str = Utils::FormatString(lpszFormat, marker);
+  string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
   pCallback->ReportLine (str.c_str());
 }
@@ -3072,7 +3072,7 @@ PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
       if (pCallback != 0)
 	{
 	  _bstr_t bstr (line, false);
-	  pCallback->ReportLine (static_cast<const MIKTEXCHAR *>(bstr));
+	  pCallback->ReportLine (static_cast<const char *>(bstr));
 	}
       return (S_OK);
     }
@@ -3103,7 +3103,7 @@ PackageInstallerImpl::OnRetryableError
 	{
 	  _bstr_t bstr (message, false);
 	  *pDoContinue =
-	    (pCallback->OnRetryableError(static_cast<const MIKTEXCHAR *>(bstr))
+	    (pCallback->OnRetryableError(static_cast<const char *>(bstr))
 	     ? VARIANT_TRUE
 	     : VARIANT_FALSE);
 	}

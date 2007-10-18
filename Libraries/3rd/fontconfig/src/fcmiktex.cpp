@@ -1,4 +1,4 @@
-/* miktex.cpp:							-*- C++ -*-
+/* fcmiktex.cpp:						-*- C++ -*-
 
    Copyright (C) 2007 Christian Schenk
 
@@ -110,4 +110,3 @@ miktex_fontconfig_file ()
       exit (1);
     }
 }
-

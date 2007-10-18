@@ -150,11 +150,11 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -173,8 +173,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -185,7 +185,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -199,35 +199,35 @@ Quoted (/*[in]*/ const PathName & path)
 struct EditorInfo
 {
 public:
-  EditorInfo (/*[in]*/ const tstring & name,
-	      /*[in]*/ const tstring & program,
-	      /*[in]*/ const tstring & arguments)
+  EditorInfo (/*[in]*/ const string & name,
+	      /*[in]*/ const string & program,
+	      /*[in]*/ const string & arguments)
     : name (name),
       program (program),
       arguments (arguments)
   {
   }
 public:
-  EditorInfo (/*[in]*/ const MIKTEXCHAR *	lpszName,
-	      /*[in]*/ const MIKTEXCHAR *	lpszProgram,
-	      /*[in]*/ const MIKTEXCHAR *	lpszArguments)
+  EditorInfo (/*[in]*/ const char *	lpszName,
+	      /*[in]*/ const char *	lpszProgram,
+	      /*[in]*/ const char *	lpszArguments)
     : name (lpszName),
       program (lpszProgram),
       arguments (lpszArguments)
   {
   }
 public:
-  tstring name;
+  string name;
 public:
-  tstring program;
+  string program;
 public:
-  tstring arguments;
+  string arguments;
 public:
-  tstring
+  string
   GetCommandLine ()
     const
   {
-    tstring ret = Q_(program);
+    string ret = Q_(program);
     ret += T_(' ');
     ret += arguments;
     return (ret);
@@ -392,11 +392,11 @@ public:
 
 public:
   bool
-  SetDisplayMetafontMode (/*[in]*/ const MIKTEXCHAR * lpszMetafontMode);
+  SetDisplayMetafontMode (/*[in]*/ const char * lpszMetafontMode);
 
 public:
   bool
-  SetPrinterMetafontMode (/*[in]*/ const MIKTEXCHAR * lpszMetafontMode);
+  SetPrinterMetafontMode (/*[in]*/ const char * lpszMetafontMode);
   
 private:
   void
@@ -580,11 +580,11 @@ private:
 private:
   bool
   FindSrcSpecial (/*[in]*/ int			lineNum,
-		  /*[in]*/ const MIKTEXCHAR *	lpszFileName);
+		  /*[in]*/ const char *	lpszFileName);
 
 private:
   bool
-  GotoHyperLabel (/*[in]*/ const MIKTEXCHAR * lpszLabel);
+  GotoHyperLabel (/*[in]*/ const char * lpszLabel);
 
 protected:
   bool tracing;
@@ -737,7 +737,7 @@ public:
   }
 
 public:
-  TempFile (/*[in]*/ const MIKTEXCHAR * lpszPath)
+  TempFile (/*[in]*/ const char * lpszPath)
     : pTempFile_ (new TempFile_ (lpszPath))
   {
   }
@@ -749,7 +749,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   Get ()
     const
   {
@@ -989,7 +989,7 @@ private:
    _________________________________________________________________________ */
 
 bool
-AddCommandPrefixChar (/*[in]*/ MIKTEXCHAR ch);
+AddCommandPrefixChar (/*[in]*/ char ch);
 
 bool
 AllowShellCommand (/*[in]*/ const CString & command);
@@ -1020,23 +1020,23 @@ RGBtoHLS (/*[in]*/ DWORD,
 	  /*[out]*/ WORD &);
 
 void
-StartEditor (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
-	     /*[in]*/ const MIKTEXCHAR *	lpszDocDir,
+StartEditor (/*[in]*/ const char *	lpszFileName,
+	     /*[in]*/ const char *	lpszDocDir,
 	     /*[in]*/ int			line);
 
 void
-VYapLog (/*[in]*/ const MIKTEXCHAR *,
+VYapLog (/*[in]*/ const char *,
 	 /*[in]*/ va_list);
 
 void
 UpdateAllDviViews (/*[in]*/ bool reread = false);
 
 void
-YapLog (/*[in]*/ const MIKTEXCHAR *,
+YapLog (/*[in]*/ const char *,
 	/*[in]*/		...);
 
 void
-TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+TraceError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...);
 
 /* _________________________________________________________________________
@@ -1073,14 +1073,14 @@ public:
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {
-    output.append (reinterpret_cast<const MIKTEXCHAR *>(pOutput), n);
+    output.append (reinterpret_cast<const char *>(pOutput), n);
     return (pProgressDialog
 	    ? (! pProgressDialog->HasUserCancelled())
 	    : true);
   }
 
 private:
-  tstring output;
+  string output;
 
 private:
   ProgressDialog * pProgressDialog;

@@ -27,7 +27,7 @@
 #define RULER_COLOR RGB(186, 218, 254)
 
 namespace {
-  const MIKTEXCHAR * const YAP_RULER_CLASS = "MiKTeX_ruler";
+  const char * const YAP_RULER_CLASS = "MiKTeX_ruler";
   bool classRegistered = false;
 }
 

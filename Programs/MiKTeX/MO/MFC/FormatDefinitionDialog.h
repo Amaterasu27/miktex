@@ -33,7 +33,7 @@ public:
   
 public:
   FormatDefinitionDialog (/*[in]*/ CWnd *		pParent,
-			  /*[in]*/ const MIKTEXCHAR *	lpszKey);
+			  /*[in]*/ const char *	lpszKey);
 
 private:
   enum { IDD = IDD_FMT_DEFINITION };

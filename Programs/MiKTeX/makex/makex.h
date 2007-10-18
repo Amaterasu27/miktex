@@ -34,19 +34,19 @@
 #endif
 
 MKTEXAPI(makebase) (/*[in]*/ int			argc,
-		    /*[in]*/ const MIKTEXCHAR **	argv);
+		    /*[in]*/ const char **	argv);
 
 MKTEXAPI(makefmt) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv);
+		   /*[in]*/ const char **	argv);
 
 MKTEXAPI(makemem) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv);
+		   /*[in]*/ const char **	argv);
 
 MKTEXAPI(makemf) (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv);
+		  /*[in]*/ const char **	argv);
 
 MKTEXAPI(makepk) (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv);
+		  /*[in]*/ const char **	argv);
 
 MKTEXAPI(maketfm) (/*[in]*/ int			argc,
-		   /*[in]*/ const MIKTEXCHAR **	argv);
+		   /*[in]*/ const char **	argv);

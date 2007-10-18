@@ -123,7 +123,7 @@ comPackageInstaller::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 
 void
 MPMCALL
-comPackageInstaller::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
+comPackageInstaller::ReportLine (/*[in]*/ const char * lpszLine)
 {
   if (pCallback == 0)
     {
@@ -143,7 +143,7 @@ comPackageInstaller::ReportLine (/*[in]*/ const MIKTEXCHAR * lpszLine)
 
 bool
 MPMCALL
-comPackageInstaller::OnRetryableError (/*[in]*/ const MIKTEXCHAR * lpszMessage)
+comPackageInstaller::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   if (pCallback == 0)
     {
@@ -194,14 +194,14 @@ comPackageInstaller::Add (/*[in]*/ BSTR		packageName,
     {
       if (toBeInstalled)
 	{
-	  packagesToBeInstalled.push_back (tstring(CW2CT(packageName)));
+	  packagesToBeInstalled.push_back (string(CW2CT(packageName)));
 	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
 					 T_("to be installed: %s"),
 					 packagesToBeInstalled.back().c_str());
 	}
       else
 	{
-	  packagesToBeRemoved.push_back (tstring(CW2CT(packageName)));
+	  packagesToBeRemoved.push_back (string(CW2CT(packageName)));
 	  trace_mpm->WriteFormattedLine (T_("mpmsvc"),
 					 T_("to be removed: %s"),
 					 packagesToBeRemoved.back().c_str());
@@ -372,7 +372,7 @@ comPackageInstaller::SetRepository (/*[in]*/ BSTR repository)
 	    }
 	  pInstaller.reset (pManager->CreateInstaller());
 	}
-      pInstaller->SetRepository (tstring(_bstr_t(repository)));
+      pInstaller->SetRepository (string(_bstr_t(repository)));
     }
   catch (const MiKTeXException & e)
     {

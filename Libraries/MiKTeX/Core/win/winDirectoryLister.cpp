@@ -45,7 +45,7 @@ DirectoryLister::Open (/*[in]*/ const PathName & directory)
 DirectoryLister *
 MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
-		       /*[in]*/ const MIKTEXCHAR *	lpszPattern)
+		       /*[in]*/ const char *	lpszPattern)
 {
   return (new winDirectoryLister (directory, lpszPattern));
 }
@@ -57,9 +57,9 @@ DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 
 winDirectoryLister::winDirectoryLister
 (/*[in]*/ const PathName &	directory,
- /*[in]*/ const MIKTEXCHAR *	lpszPattern)
+ /*[in]*/ const char *	lpszPattern)
   : directory (directory),
-    pattern (lpszPattern == 0 ? T_("") : lpszPattern),
+    pattern (lpszPattern == 0 ? "" : lpszPattern),
     handle (INVALID_HANDLE_VALUE)
 {
 }
@@ -98,7 +98,7 @@ winDirectoryLister::Close ()
   this->handle = INVALID_HANDLE_VALUE;
   if (! FindClose(handle))
     {
-      FATAL_WINDOWS_ERROR (T_("FindClose"), 0);
+      FATAL_WINDOWS_ERROR ("FindClose", 0);
     }
 }
 
@@ -138,7 +138,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	  PathName pathPattern (directory);
 	  if (pattern.length() == 0)
 	    {
-	      pathPattern += T_("*");
+	      pathPattern += "*";
 	    }
 	  else
 	    {
@@ -149,7 +149,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      if (::GetLastError() != ERROR_FILE_NOT_FOUND)
 		{
-		  FATAL_WINDOWS_ERROR (T_("FindFirstFile"), directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindFirstFile", directory.Get());
 		}
 	      return (false);
 	    }
@@ -160,7 +160,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      if (::GetLastError() != ERROR_NO_MORE_FILES)
 		{
-		  FATAL_WINDOWS_ERROR (T_("FindNextFile"), directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindNextFile", directory.Get());
 		}
 	      return (false);
 	    }
@@ -176,7 +176,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
   direntry2.size = ffdat.nFileSizeLow;
   if (ffdat.nFileSizeHigh != 0)
     {
-      UNEXPECTED_CONDITION (T_("winDirectoryLister::GetNext"));
+      UNEXPECTED_CONDITION ("winDirectoryLister::GetNext");
     }
   return (true);
 }

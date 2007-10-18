@@ -74,19 +74,11 @@ using namespace std;
 #endif
 
 /* _________________________________________________________________________
-
+u
    Helper Macros
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
-
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
 
 /* _________________________________________________________________________
 
@@ -114,40 +106,40 @@ using namespace std;
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,					\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  __FILE__,		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    __FILE__,			\
 				    __LINE__)
 #endif
 
@@ -155,7 +147,7 @@ using namespace std;
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -164,7 +156,7 @@ using namespace std;
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
 
@@ -183,10 +175,10 @@ using namespace std;
 
 inline
 void
-ParseFileName (/*[in]*/ tstring &		filename,
-	       /*[in]*/ const MIKTEXCHAR * &	lpsz)
+ParseFileName (/*[in]*/ string &	filename,
+	       /*[in]*/ const char * &	lpsz)
 {
-  while (*lpsz != 0 && ! _istspace(*lpsz))
+  while (*lpsz != 0 && ! isspace(*lpsz))
     {
       filename += *lpsz;
       ++ lpsz;
@@ -200,9 +192,9 @@ ParseFileName (/*[in]*/ tstring &		filename,
 
 inline
 void
-SkipSpace (/*[in]*/ const MIKTEXCHAR * &	lpsz)
+SkipSpace (/*[in]*/ const char * &	lpsz)
 {
-  while (_istspace(*lpsz))
+  while (isspace(*lpsz))
     {
       ++ lpsz;
     }
@@ -210,9 +202,9 @@ SkipSpace (/*[in]*/ const MIKTEXCHAR * &	lpsz)
 
 inline
 void
-SkipSpace (/*[in]*/ LPTSTR &	lpsz)
+SkipSpace (/*[in]*/ char * &	lpsz)
 {
-  while (_istspace(*lpsz))
+  while (isspace(*lpsz))
     {
       ++ lpsz;
     }
@@ -223,90 +215,7 @@ SkipSpace (/*[in]*/ LPTSTR &	lpsz)
    STRDUP
    _________________________________________________________________________ */
 
-class STRDUP
-{
-private:
-  enum { BUFSIZE = 512 };
-
-private:
-  _TCHAR szBuf[BUFSIZE];
-
-private:
-  LPTSTR lpszBuf;
-
-public:
-  STRDUP (/*[in]*/ const MIKTEXCHAR * lpsz)
-  {
-    size_t l = _tcslen(lpsz);
-    if (l < BUFSIZE)
-      {
-	Utils::CopyString (szBuf, BUFSIZE, lpsz);
-	lpszBuf = szBuf;
-      }
-    else
-      {
-	lpszBuf = _tcsdup(lpsz);
-      }
-  }
-
-public:
-  ~STRDUP ()
-  {
-    if (lpszBuf != 0 && lpszBuf != szBuf)
-      {
-	free (lpszBuf);
-	lpszBuf = 0;
-      }
-  }
-
-public:
-  operator LPTSTR ()
-  {
-    return (lpszBuf);
-  }
-};
-
-/* _________________________________________________________________________
-
-   FPrintF
-   _________________________________________________________________________ */
-
-inline
-int
-FPrintF (/*[in]*/ FILE *		pfile,
-	 /*[in]*/ const MIKTEXCHAR *	lpszFormat,
-	 /*[in]*/ const MIKTEXCHAR *	lpsz)
-{
-#if defined(_MSC_VER)
-  return (_ftprintf(pfile, lpszFormat, lpsz));
-#else
-  return (fprintf(pfile, lpszFormat, lpsz));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   FPutS
-   _________________________________________________________________________ */
-
-inline
-MIKTEXCHARINT
-FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
-       /*[in]*/ FILE *			stream)
-{
-#if defined(_MSC_VER)
-  MIKTEXCHARINT n = _fputts(lpsz, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutS()
-#else
-  int n = fputs(lpsz, stream);
-#endif
-  if (n < 0)
-    {
-      FATAL_CRT_ERROR (T_("fputs"), 0);
-    }
-  return (n);
-}
+typedef CharBuffer<char> STRDUP;
 
 /* _________________________________________________________________________
 
@@ -314,59 +223,13 @@ FPutS (/*[in]*/ const MIKTEXCHAR *	lpsz,
    _________________________________________________________________________ */
 
 inline
-MIKTEXCHARINT
+int
 GetC (/*[in]*/ FILE *		stream)
 {
-#if defined(MIKTEX_UNICODE)
-  MIKTEXCHARINT ch = getwc(stream);
-#else
-  MIKTEXCHARINT ch = getc(stream);
-#endif
-  if (ch == MIKTEXEOF && ferror(stream) != 0)
+  int ch = getc(stream);
+  if (ch == EOF && ferror(stream) != 0)
     {
-      FATAL_CRT_ERROR (T_("getc"), 0);
+      FATAL_CRT_ERROR ("getc", 0);
     }
   return (ch);
-}
-
-/* _________________________________________________________________________
-
-   IsDigit
-   _________________________________________________________________________ */
-
-inline
-int
-IsDigit (/*[in]*/ MIKTEXCHARINT ch)
-{
-#if defined(_MSC_VER)
-  return (_istdigit(ch));
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: IsDigit()
-#else
-  return (isdigit(ch));
-#endif
-}
-
-/* _________________________________________________________________________
-
-   FPutC
-   _________________________________________________________________________ */
-
-inline
-MIKTEXCHARINT
-FPutC (/*[in]*/ MIKTEXCHARINT	ch,
-       /*[in]*/ FILE *		stream)
-{
-#if defined(_MSC_VER)
-  MIKTEXCHARINT chWritten = _fputtc(ch, stream);
-#elif defined(MIKTEX_UNICODE)
-#  error Unimplemented: FPutC()
-#else
-  int chWritten = fputc(ch, stream);
-#endif
-  if (chWritten != ch)
-    {
-      FATAL_CRT_ERROR (T_("fputc"), 0);
-    }
-  return (chWritten);
 }

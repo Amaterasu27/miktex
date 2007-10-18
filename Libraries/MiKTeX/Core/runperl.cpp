@@ -29,16 +29,16 @@
    _________________________________________________________________________ */
 
 #if defined(MIKTEX_WINDOWS)
-#  define PERL_EXE T_("perl.exe")
+#  define PERL_EXE "perl.exe"
 #else
-#  define PERL_EXE T_("perl")
+#  define PERL_EXE "perl"
 #endif
 
 bool
 SessionImpl::FindPerl (/*[out]*/ PathName & perl)
 {
-  tstring path;
-  if (! Utils::GetEnvironmentString(T_("PATH"), path))
+  string path;
+  if (! Utils::GetEnvironmentString("PATH", path))
     {
       return (false);
     }
@@ -51,10 +51,10 @@ SessionImpl::FindPerl (/*[out]*/ PathName & perl)
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindPerlScript (/*[in]*/ const MIKTEXCHAR *	lpszName,
+SessionImpl::FindPerlScript (/*[in]*/ const char *	lpszName,
 			     /*[out]*/ PathName &		path)
 {
-  return (FindFile(PathName(0, lpszName, T_(".pl")).Get(),
+  return (FindFile(PathName(0, lpszName, ".pl").Get(),
 		   FileType::PERLSCRIPT,
 		   path));
 }
@@ -66,7 +66,7 @@ SessionImpl::FindPerlScript (/*[in]*/ const MIKTEXCHAR *	lpszName,
 
 int
 SessionImpl::RunPerl (/*[in]*/ int			argc,
-		      /*[in]*/ const MIKTEXCHAR **	argv)
+		      /*[in]*/ const char **	argv)
 {
   MIKTEX_ASSERT (argc > 0);
 
@@ -74,13 +74,13 @@ SessionImpl::RunPerl (/*[in]*/ int			argc,
   PathName perl;
   if (! FindPerl(perl))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::RunPerl"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::RunPerl",
 			  T_("The Perl interpreter could not be found."),
 			  0);
     }
 
   // determine script name
-  MIKTEXCHAR szName[BufferSizes::MaxPath];
+  char szName[BufferSizes::MaxPath];
   PathName::Split (argv[0],
 		   0, 0,
 		   szName, BufferSizes::MaxPath,
@@ -90,7 +90,7 @@ SessionImpl::RunPerl (/*[in]*/ int			argc,
   PathName scriptPath;
   if (! FindPerlScript(szName, scriptPath))
     {
-      FATAL_MIKTEX_ERROR (T_("SessionImpl::RunPerl"),
+      FATAL_MIKTEX_ERROR ("SessionImpl::RunPerl",
 			  T_("The Perl script could not be found."),
 			  szName);
     }

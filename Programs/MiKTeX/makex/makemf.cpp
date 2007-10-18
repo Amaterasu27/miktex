@@ -1,6 +1,6 @@
 /* makemf.cpp:
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2007 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -28,7 +28,7 @@
    lhpref
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 const lhpref[] = {
   T_("la"),
   T_("lb"),
@@ -45,7 +45,7 @@ const lhpref[] = {
    cspref
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 const cspref[] = {
   T_("cs"),
   T_("ics"),
@@ -58,7 +58,7 @@ const cspref[] = {
    cbpref
    _________________________________________________________________________ */
 
-const MIKTEXCHAR *
+const char *
 const cbpref[] = {
   T_("glic"),
   T_("glii"),
@@ -138,8 +138,8 @@ const cbpref[] = {
    _________________________________________________________________________ */
 
 bool
-HasPrefix (/*[in]*/ const MIKTEXCHAR *		lpsz,
-	   /*[in]*/ const MIKTEXCHAR * const	lpszPrefixes[])
+HasPrefix (/*[in]*/ const char *		lpsz,
+	   /*[in]*/ const char * const	lpszPrefixes[])
 {
   for (size_t i = 0; lpszPrefixes[i] != 0; ++ i)
     {
@@ -167,8 +167,8 @@ public:
 public:
   virtual
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 private:
   virtual
@@ -241,7 +241,7 @@ namespace {
 void
 MakeMf::CreateDestinationDirectory ()
 {
-  tstring templ;
+  string templ;
   templ = T_("%R");
   templ += PathName::DirectoryDelimiter;
   templ += T_("fonts");
@@ -263,8 +263,8 @@ MakeMf::CreateDestinationDirectory ()
    _________________________________________________________________________ */
 
 void
-MakeMf::Run (/*[in]*/ int			argc,
-	     /*[in]*/ const MIKTEXCHAR **	argv)
+MakeMf::Run (/*[in]*/ int		argc,
+	     /*[in]*/ const char **	argv)
 {
   // get options and file name
   int optionIndex = 0;
@@ -277,7 +277,7 @@ MakeMf::Run (/*[in]*/ int			argc,
 
   // derive TeX font name from name (e.g., "ecbi3583.mf" =>
   // "ecbi3583")
-  MIKTEXCHAR szTeXFontname[BufferSizes::MaxPath];
+  char szTeXFontname[BufferSizes::MaxPath];
   PathName::Split (name.c_str(),
 		   0, 0,
 		   szTeXFontname, BufferSizes::MaxPath,
@@ -285,7 +285,7 @@ MakeMf::Run (/*[in]*/ int			argc,
 
   // derive driver name from the TeX font name (e.g., "ecbi3583" =>
   // "ecbi"
-  MIKTEXCHAR szDriverName[BufferSizes::MaxPath];
+  char szDriverName[BufferSizes::MaxPath];
   pSession->SplitFontPath (szTeXFontname,
 			   0,
 			   0,
@@ -296,7 +296,7 @@ MakeMf::Run (/*[in]*/ int			argc,
   // find the driver file
   {
     // try a sauterized driver first
-    tstring strSauterDriverName = T_("b-");
+    string strSauterDriverName = T_("b-");
     strSauterDriverName += szDriverName;
     PathName driverPath;
     if (! pSession->FindFile(strSauterDriverName.c_str(),
@@ -306,7 +306,7 @@ MakeMf::Run (/*[in]*/ int			argc,
 	// lh fonts get special treatment
 	if (HasPrefix(szDriverName, lhpref))
 	  {
-	    tstring strLHDriverName;
+	    string strLHDriverName;
 	    strLHDriverName += szDriverName[0];
 	    strLHDriverName += szDriverName[1];
 	    strLHDriverName += T_("codes");
@@ -377,32 +377,32 @@ MakeMf::Run (/*[in]*/ int			argc,
 
   if (HasPrefix(szTeXFontname, T_("ec")) || HasPrefix(szTeXFontname, T_("tc")))
     {
-      _ftprintf (stream, T_("if unknown exbase: input exbase fi;\n"));
-      _ftprintf (stream, T_("gensize:=%0.2f;\n"), true_pt_size);
-      _ftprintf (stream, T_("generate %s;\n"), szDriverName);
+      fprintf (stream, T_("if unknown exbase: input exbase fi;\n"));
+      fprintf (stream, T_("gensize:=%0.2f;\n"), true_pt_size);
+      fprintf (stream, T_("generate %s;\n"), szDriverName);
     }
   else if (HasPrefix(szTeXFontname, T_("dc")))
     {
-      _ftprintf (stream, T_("if unknown dxbase: input dxbase fi;\n"));
-      _ftprintf (stream, T_("gensize:=%f;\n"), true_pt_size);
-      _ftprintf (stream, T_("generate %s;\n"), szDriverName);
+      fprintf (stream, T_("if unknown dxbase: input dxbase fi;\n"));
+      fprintf (stream, T_("gensize:=%f;\n"), true_pt_size);
+      fprintf (stream, T_("generate %s;\n"), szDriverName);
     }
   else if (HasPrefix(szTeXFontname, lhpref))
     {
-      _ftprintf (stream, T_("input fikparm;\n"));
+      fprintf (stream, T_("input fikparm;\n"));
     }
   else if (HasPrefix(szTeXFontname, cspref))
     {
-      _ftprintf (stream, T_("input cscode\nuse_driver;\n"));
+      fprintf (stream, T_("input cscode\nuse_driver;\n"));
     }
   else if (HasPrefix(szTeXFontname, cbpref))
     {
-      _ftprintf (stream, T_("input cbgreek;\n"));
+      fprintf (stream, T_("input cbgreek;\n"));
     }
   else
     {
-      _ftprintf (stream, T_("design_size:=%f;\n"), true_pt_size);
-      _ftprintf (stream, T_("input b-%s;\n"), szDriverName);
+      fprintf (stream, T_("design_size:=%f;\n"), true_pt_size);
+      fprintf (stream, T_("input b-%s;\n"), szDriverName);
     }
 
   PrintOnly (T_("__END__"));
@@ -426,7 +426,7 @@ MakeMf::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 MKTEXAPI(makemf) (/*[in]*/ int			argc,
-		  /*[in]*/ const MIKTEXCHAR **	argv)
+		  /*[in]*/ const char **	argv)
 {
   try
     {

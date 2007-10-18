@@ -211,7 +211,7 @@ EditTEXMFPage::OnAdd ()
 	{
 	  return;
 	}
-      MIKTEXCHAR szDir[BufferSizes::MaxPath];
+      char szDir[BufferSizes::MaxPath];
       BOOL havePath = SHGetPathFromIDList(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! havePath)

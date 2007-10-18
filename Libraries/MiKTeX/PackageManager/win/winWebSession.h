@@ -35,7 +35,7 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+  OpenUrl (/*[in]*/ const char *	lpszUrl,
 	   /*[in]*/ IProgressNotify_ *	pIProgressNotify);
 
 public:
@@ -57,7 +57,7 @@ public:
 public:
   static
   void
-  GetLastErrorMessage (/*[out]*/ MiKTeX::Core::tstring &	message);
+  GetLastErrorMessage (/*[out]*/ std::string &	message);
 
 public:
   static

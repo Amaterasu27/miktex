@@ -53,7 +53,7 @@ typedef AutoResource<HINTERNET, InternetCloseHandle_> AutoInternetHandle;
    _________________________________________________________________________ */
 
 winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
-			/*[in]*/ const MIKTEXCHAR *	lpszUrl)
+			/*[in]*/ const char *	lpszUrl)
   : hUrl (0),
     url (lpszUrl),
     trace_error (TraceStream::Open(T_("error"))),
@@ -77,7 +77,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
       if (winWebSession::IsGlobalOffline())
 	{
 	  trace_mpm->WriteLine (T_("libmpm"), T_("we are offline"));
-	  if (InternetGoOnline(const_cast<MIKTEXCHAR *>(lpszUrl),
+	  if (InternetGoOnline(const_cast<char *>(lpszUrl),
 			       GetDesktopWindow(),
 			       0))
 	    {
@@ -99,7 +99,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 	}
       if (hUrl == 0)
 	{
-	  tstring error;
+	  string error;
 	  winWebSession::GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
 			   error.c_str(),
@@ -117,7 +117,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			     &type,
 			     &size))
     {
-      tstring error;
+      string error;
       winWebSession::GetLastErrorMessage (error);
       FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
 		       error.c_str(),
@@ -144,7 +144,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			  &size,
 			  0))
 	{
-	  tstring error;
+	  string error;
 	  winWebSession::GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
 			   error.c_str(),
@@ -164,9 +164,9 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			      T_("HTTP %u"),
 			      static_cast<unsigned>(code));
 	  // return a meaningful error message
-	  MIKTEXCHAR szText[1024];
+	  char szText[1024];
 	  unsigned long size = sizeof(szText);
-	  tstring error;
+	  string error;
 	  if (HttpQueryInfo(hUrl, HTTP_QUERY_STATUS_TEXT, szText, &size, 0))
 	    {
 	      error = szText;
@@ -186,7 +186,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
       unsigned long length;
       if (! InternetQueryDataAvailable(hUrl, &length, 0, 0))
 	{
-	  tstring error;
+	  string error;
 	  winWebSession::GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
 			   error.c_str(),
@@ -220,7 +220,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
       // retry the request
       if (! HttpSendRequest(hUrl, 0, 0, 0, 0))
         {
-	  tstring error;
+	  string error;
 	  winWebSession::GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebFile::winWebFile"),
 			   error.c_str(),
@@ -260,7 +260,7 @@ winWebFile::Read (/*[out]*/ void *		pBuffer,
   unsigned long nRead;
   if (! InternetReadFile(hUrl, pBuffer, static_cast<unsigned long>(n), &nRead))
     {
-      tstring error;
+      string error;
       winWebSession::GetLastErrorMessage (error);
       FATAL_MPM_ERROR (T_("winWebFile::Read"),
 		       error.c_str(),
@@ -283,7 +283,7 @@ winWebFile::Close ()
       this->hUrl = 0;
       if (! InternetCloseHandle(hUrl))
 	{
-	  tstring error;
+	  string error;
 	  winWebSession::GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebFile::Close"), error.c_str(), 0);
 	}

@@ -85,7 +85,7 @@ private:
   int drive;
   
 private:
-  vector<tstring> drives;
+  vector<string> drives;
   
 private:
   bool noDriveFound;

@@ -33,32 +33,32 @@
 
 bool
 MIKTEXCALL
-Utils::ReadUntilDelim (/*[out]*/ tstring &	str,
-		       /*[in]*/ MIKTEXCHARINT	delim,
+Utils::ReadUntilDelim (/*[out]*/ string &	str,
+		       /*[in]*/ int	delim,
 		       /*[in]*/ FILE *		stream)
 {
-  if (delim == T_('\n'))
+  if (delim == '\n')
     {
       // special case
       return (ReadLine(str, stream, true));
     }
   else
     {
-      str = T_("");
+      str = "";
       if (feof(stream) != 0)
 	{
 	  return (false);
 	}
-      MIKTEXCHARINT ch;
-      while ((ch = GetC(stream)) != MIKTEXEOF)
+      int ch;
+      while ((ch = GetC(stream)) != EOF)
 	{
-	  str += static_cast<MIKTEXCHAR>(ch);
+	  str += static_cast<char>(ch);
 	  if (ch == delim)
 	    {
 	      return (true);
 	    }
 	}
-      return (ch == MIKTEXEOF ? ! str.empty() : true);
+      return (ch == EOF ? ! str.empty() : true);
     }
 }
 
@@ -73,50 +73,50 @@ Utils::ReadUntilDelim (/*[out]*/ tstring &	str,
 
 bool
 MIKTEXCALL
-Utils::ReadLine (/*[out]*/ tstring &	str,
+Utils::ReadLine (/*[out]*/ string &	str,
 		 /*[in]*/ FILE *	stream,
 		 /*[in]*/ bool		keepLineEnding)
 {
-  str = T_("");
+  str = "";
   if (feof(stream) != 0)
     {
       return (false);
     }
-  MIKTEXCHARINT ch;
-  while ((ch = GetC(stream)) != MIKTEXEOF)
+  int ch;
+  while ((ch = GetC(stream)) != EOF)
     {
-      if (ch == T_('\r'))
+      if (ch == '\r')
 	{
 	  if (keepLineEnding)
 	    {
-	      str += T_('\r');
+	      str += '\r';
 	    }
 	  ch = GetC(stream);
-	  if (ch == T_('\n'))
+	  if (ch == '\n')
 	    {
 	      if (keepLineEnding)
 		{
-		  str += T_('\n');
+		  str += '\n';
 		}
 	    }
-	  else if (ch != MIKTEXEOF)
+	  else if (ch != EOF)
 	    {
 	      UnGetC (ch, stream);
 	    }
 	  return (true);
 	}
-      else if (ch == T_('\n'))
+      else if (ch == '\n')
 	{
 	  if (keepLineEnding)
 	    {
-	      str += T_('\n');
+	      str += '\n';
 	    }
 	  return (true);
 	}
       else
 	{
-	  str += static_cast<MIKTEXCHAR>(ch);
+	  str += static_cast<char>(ch);
 	}
     }
-  return (ch == MIKTEXEOF ? ! str.empty() : true);
+  return (ch == EOF ? ! str.empty() : true);
 }

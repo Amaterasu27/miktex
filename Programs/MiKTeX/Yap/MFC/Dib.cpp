@@ -157,7 +157,7 @@ Dib::Draw (/*[in]*/ CDC *	pDC,
    _________________________________________________________________________ */
 
 void
-Dib::AttachFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName)
+Dib::AttachFile (/*[in]*/ const char *	lpszFileName)
 {
   YapLog (T_("reading bitmap file %s"), lpszFileName);
   hFile =

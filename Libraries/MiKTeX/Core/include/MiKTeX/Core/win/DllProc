@@ -1,4 +1,4 @@
-/* DllProc.h:							-*- C++ -*-
+/* MiKTeX/Core/win/DllProc:					-*- C++ -*-
 
    Copyright (C) 1996-2007 Christian Schenk
 
@@ -33,8 +33,8 @@ public:
 public:
   MIKTEXEXPORT
   MIKTEXCALL
-  DllProcBase (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	       /*[in]*/ const MIKTEXCHAR *	lpszProcName);
+  DllProcBase (/*[in]*/ const char *	lpszDllName,
+	       /*[in]*/ const char *	lpszProcName);
 
 protected:
   MIKTEXEXPORT
@@ -49,10 +49,10 @@ protected:
   GetProc ();
 
 private:
-  MiKTeX::Core::tstring dllName;
+  std::string dllName;
 
 private:
-  MiKTeX::Core::tstring procName;
+  std::string procName;
 
 private:
   HMODULE hModule;
@@ -66,8 +66,8 @@ template<
 class DllProc0 : public DllProcBase
 {
 public:
-  DllProc0 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc0 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }
@@ -88,8 +88,8 @@ template<
 class DllProc1 : public DllProcBase
 {
 public:
-  DllProc1 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc1 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }
@@ -111,8 +111,8 @@ template<
 class DllProc2 : public DllProcBase
 {
 public:
-  DllProc2 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc2 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }
@@ -139,8 +139,8 @@ template<
 class DllProc3 : public DllProcBase
 {
 public:
-  DllProc3 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc3 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }
@@ -171,8 +171,8 @@ template<
 class DllProc4 : public DllProcBase
 {
 public:
-  DllProc4 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc4 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }
@@ -207,8 +207,8 @@ template<
 class DllProc5 : public DllProcBase
 {
 public:
-  DllProc5 (/*[in]*/ const MIKTEXCHAR *	lpszDllName,
-	    /*[in]*/ const MIKTEXCHAR *	lpszProcName)
+  DllProc5 (/*[in]*/ const char *	lpszDllName,
+	    /*[in]*/ const char *	lpszProcName)
     : DllProcBase (lpszDllName, lpszProcName)
   {
   }

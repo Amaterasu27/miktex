@@ -1,6 +1,6 @@
 /* dvi.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -96,8 +96,8 @@ DviImpl::RulePixels (/*[in]*/ int x)
    DviImpl::DviImpl
    _________________________________________________________________________ */
 
-DviImpl::DviImpl (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
-		  /*[in]*/ const MIKTEXCHAR *		lpszMetafontMode,
+DviImpl::DviImpl (/*[in]*/ const char *		lpszFileName,
+		  /*[in]*/ const char *		lpszMetafontMode,
 		  /*[in]*/ int				resolution,
 		  /*[in]*/ int				shrinkFactor,
 		  /*[in]*/ DviAccess			dviAccess,
@@ -700,9 +700,9 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
   fontName[fontNameLen] = 0;
 
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"), T_("areaName: %s"), A2T_(areaName));
+    (T_("libdvi"), T_("areaName: %s"), areaName);
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"), T_("fontname: %s"), A2T_(fontName));
+    (T_("libdvi"), T_("fontname: %s"), fontName);
   log_dvifile->WriteFormattedLine (T_("libdvi"), "checkSum: %#o", checkSum);
   log_dvifile->WriteFormattedLine (T_("libdvi"), "scaledSize: %d", scaledSize);
   log_dvifile->WriteFormattedLine (T_("libdvi"), "designSize: %d", designSize);
@@ -1799,7 +1799,7 @@ DviImpl::GetLoadedPage (/*[in]*/ int	pageIdx)
 
 void
 DviImpl::Progress (/*[in]*/ DviNotification	nf,
-		   /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+		   /*[in]*/ const char *	lpszFormat,
 		   /*[in]*/			...)
 {
   if ((pPageLoaderThread.get() != 0
@@ -1832,7 +1832,7 @@ DviImpl::Progress (/*[in]*/ DviNotification	nf,
    DviImpl::GetStatusText
    _________________________________________________________________________ */
 
-tstring
+string
 MIKTEXDVICALL
 DviImpl::GetStatusText ()
 {

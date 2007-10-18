@@ -25,23 +25,23 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  MiKTeX::Core::tstring commandLine;
-  commandLine = T_("echo 0123456789 > a.txt");
+  std::string commandLine;
+  commandLine = "echo 0123456789 > a.txt";
   int exitCode;
   TEST (MiKTeX::Core::Process::ExecuteSystemCommand(commandLine.c_str(),
 						    &exitCode));
   TEST (exitCode == 0);
-  TEST (MiKTeX::Core::File::Exists(T_("a.txt")));
-  TESTX (MiKTeX::Core::File::Delete(T_("a.txt"), true));
+  TEST (MiKTeX::Core::File::Exists("a.txt"));
+  TESTX (MiKTeX::Core::File::Delete("a.txt", true));
 }
 END_TEST_FUNCTION();
 
-MiKTeX::Core::tstring outputBuffer;
+std::string outputBuffer;
 
 BEGIN_TEST_FUNCTION(2);
 {
-  MiKTeX::Core::tstring commandLine;
-  commandLine = T_("echo 0123456789");
+  std::string commandLine;
+  commandLine = "echo 0123456789";
   int exitCode;
   ProcessOutput processOutput;
   TEST (MiKTeX::Core::Process::ExecuteSystemCommand(commandLine.c_str(),
@@ -50,9 +50,9 @@ BEGIN_TEST_FUNCTION(2);
 					      0));
   TEST (exitCode == 0);
 #if defined(MIKTEX_WINDOWS)
-  TEST (processOutput.GetOutput() == T_("0123456789\r\n"));
+  TEST (processOutput.GetOutput() == "0123456789\r\n");
 #else
-  TEST (processOutput.GetOutput() == T_("0123456789\n"));
+  TEST (processOutput.GetOutput() == "0123456789\n");
 #endif
 }
 END_TEST_FUNCTION();

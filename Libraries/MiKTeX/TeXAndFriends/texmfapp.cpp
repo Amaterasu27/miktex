@@ -36,9 +36,9 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
   trace_time->WriteFormattedLine (T_("libtexmf"),
 				  T_("gross execution time: %u ms"),
 				  static_cast<unsigned>(clockSinceStart));
-  _ftprintf (stderr,
-	     T_("gross execution time: %u ms\n"),
-	     static_cast<unsigned>(clockSinceStart));
+  fprintf (stderr,
+	   T_("gross execution time: %u ms\n"),
+	   static_cast<unsigned>(clockSinceStart));
   if (! IsWindowsNT())
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
@@ -80,11 +80,11 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
      static_cast<unsigned>(tUser),
      static_cast<unsigned>(tKernel),
      static_cast<unsigned>(tUser + tKernel));
-  _ftprintf (stderr,
-	     T_("user mode: %u ms, kernel mode: %u ms, total: %u\n"),
-	     static_cast<unsigned>(tUser),
-	     static_cast<unsigned>(tKernel),
-	     static_cast<unsigned>(tUser + tKernel));
+  fprintf (stderr,
+	   T_("user mode: %u ms, kernel mode: %u ms, total: %u\n"),
+	   static_cast<unsigned>(tUser),
+	   static_cast<unsigned>(tKernel),
+	   static_cast<unsigned>(tUser + tKernel));
 }
 
 /* _________________________________________________________________________
@@ -93,7 +93,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(void)
-TeXMFApp::Init (/*[in]*/ const MIKTEXCHAR * lpszProgramInvocationName)
+TeXMFApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   WebAppInputLine::Init (lpszProgramInvocationName);
 
@@ -159,8 +159,8 @@ MIKTEXMFAPI(void)
 TeXMFApp::OnTeXMFStartJob ()
 {
   MIKTEX_ASSERT_STRING (TheNameOfTheGame());
-  tstring appName;
-  for (const MIKTEXCHAR * lpsz = TheNameOfTheGame(); *lpsz != 0; ++ lpsz)
+  string appName;
+  for (const char * lpsz = TheNameOfTheGame(); *lpsz != 0; ++ lpsz)
     {
       if (*lpsz != T_('-'))	// pdf-e-tex => pdfetex
 	{
@@ -504,7 +504,7 @@ characters and re-mapping of output characters."),
 
 MIKTEXMFAPI(bool)
 TeXMFApp::ProcessOption (/*[in]*/ int			opt,
-			 /*[in]*/ const MIKTEXCHAR *	lpszOptArg)
+			 /*[in]*/ const char *	lpszOptArg)
 {
   bool done = true;
 
@@ -532,7 +532,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_BUF_SIZE:
-      param_buf_size = _ttoi(lpszOptArg);
+      param_buf_size = atoi(lpszOptArg);
       break;
 
     case OPT_C_STYLE_ERRORS:
@@ -544,19 +544,19 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_ERROR_LINE:
-      param_error_line = _ttoi(lpszOptArg);
+      param_error_line = atoi(lpszOptArg);
       break;
 
     case OPT_EXTRA_MEM_BOT:
-      param_extra_mem_bot = _ttoi(lpszOptArg);
+      param_extra_mem_bot = atoi(lpszOptArg);
       break;
 
     case OPT_EXTRA_MEM_TOP:
-      param_extra_mem_top = _ttoi(lpszOptArg);
+      param_extra_mem_top = atoi(lpszOptArg);
       break;
 
     case OPT_HALF_ERROR_LINE:
-      param_half_error_line = _ttoi(lpszOptArg);
+      param_half_error_line = atoi(lpszOptArg);
       break;
 
     case OPT_HALT_ON_ERROR:
@@ -620,15 +620,15 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_MAIN_MEMORY:
-      param_main_memory = _ttoi(lpszOptArg);
+      param_main_memory = atoi(lpszOptArg);
       break;
 
     case OPT_MAX_PRINT_LINE:
-      param_max_print_line = _ttoi(lpszOptArg);
+      param_max_print_line = atoi(lpszOptArg);
       break;
 
     case OPT_MAX_STRINGS:
-      param_max_strings = _ttoi(lpszOptArg);
+      param_max_strings = atoi(lpszOptArg);
       break;
 
     case OPT_TIME_STATISTICS:
@@ -656,7 +656,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_PARAM_SIZE:
-      param_param_size = _ttoi(lpszOptArg);
+      param_param_size = atoi(lpszOptArg);
       break;
 
     case OPT_PARSE_FIRST_LINE:
@@ -664,11 +664,11 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_POOL_FREE:
-      param_pool_free = _ttoi(lpszOptArg);
+      param_pool_free = atoi(lpszOptArg);
       break;
 
     case OPT_POOL_SIZE:
-      param_pool_size = _ttoi(lpszOptArg);
+      param_pool_size = atoi(lpszOptArg);
       break;
 
     case OPT_QUIET:
@@ -681,7 +681,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_STACK_SIZE:
-      param_stack_size = _ttoi(lpszOptArg);
+      param_stack_size = atoi(lpszOptArg);
       break;
 
     case OPT_STRICT:
@@ -690,7 +690,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_STRING_VACANCIES:
-      param_string_vacancies = _ttoi(lpszOptArg);
+      param_string_vacancies = atoi(lpszOptArg);
       break;
 
     case OPT_TCX:
@@ -720,7 +720,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
 {
   StreamReader reader (path);
 
-  tstring firstLine;
+  string firstLine;
 
   if (! reader.ReadLine(firstLine))
     {
@@ -768,7 +768,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
       optidx = 2;
       if (memoryDumpFileName.empty())
 	{
-	  tstring memoryDumpFileName = argv[1];
+	  string memoryDumpFileName = argv[1];
 	  PathName fileName (memoryDumpFileName);
 	  if (fileName.GetExtension() == 0)
 	    {
@@ -791,7 +791,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
   if (optidx < argv.GetArgc())
     {
       for (Cpopt popt (argv.GetArgc() - optidx,
-		       const_cast<const MIKTEXCHAR**>(argv.GetArgv()) + optidx,
+		       const_cast<const char**>(argv.GetArgv()) + optidx,
 		       &(GetOptions())[0],
 		       POPT_CONTEXT_KEEP_FIRST);
 	   ((opt = popt.GetNextOpt()) >= 0);
@@ -829,7 +829,7 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
       fileName.SetExtension (GetMemoryDumpFileExtension());
     }
 
-  MIKTEXCHAR szProgName[BufferSizes::MaxPath];
+  char szProgName[BufferSizes::MaxPath];
   GetProgName (szProgName);
 #if 0
   PathName::Convert (szProgName, szProgName, ConvertPathNameFlags::MakeLower);
@@ -837,7 +837,7 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
 
   PathName path;
 
-  MIKTEXCHAR szDumpName[BufferSizes::MaxPath];
+  char szDumpName[BufferSizes::MaxPath];
   fileName.GetFileNameWithoutExtension (szDumpName);
 #if 0
   PathName::Convert (szDumpName,
@@ -960,7 +960,7 @@ TeXMFApp::ProcessCommandLineOptions ()
 MIKTEXMFAPI(bool)
 TeXMFApp::IsVirgin () const
 {
-  tstring exeName = Utils::GetExeName();
+  string exeName = Utils::GetExeName();
   return (Utils::Contains(GetProgramName(), exeName.c_str())
 	  || Utils::Contains(GetVirginProgramName(), exeName.c_str()));
 }
@@ -1000,7 +1000,7 @@ TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
    _________________________________________________________________________ */
 
 bool
-IsFileNameArgument (/*[in]*/ const MIKTEXCHAR * lpszArg)
+IsFileNameArgument (/*[in]*/ const char * lpszArg)
 {
   for (size_t l = 0; lpszArg[l] != 0; ++ l)
     {
@@ -1008,7 +1008,7 @@ IsFileNameArgument (/*[in]*/ const MIKTEXCHAR * lpszArg)
 	{
 	  return (false);
 	}
-      MIKTEXCHAR ch = lpszArg[l];
+      char ch = lpszArg[l];
       if (ch == T_('<')
 	  || ch == T_('>')
 	  || ch == T_('"')
@@ -1062,7 +1062,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	  fileNameArgIdx = 2;
 	}
       else if (c4pargc == 3
-	       && _tcscmp(c4pargv[2], T_("\\dump")) == 0
+	       && strcmp(c4pargv[2], T_("\\dump")) == 0
 	       && IsFileNameArgument(c4pargv[1])
 	       && SessionWrapper(true)->FindFile(c4pargv[1],
 						 inputFileType,
@@ -1072,7 +1072,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	}
       else if (c4pargc == 4
 	       && c4pargv[1][0] == T_('&')
-	       && _tcscmp(c4pargv[3], T_("\\dump")) == 0
+	       && strcmp(c4pargv[3], T_("\\dump")) == 0
 	       && IsFileNameArgument(c4pargv[2])
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
@@ -1095,7 +1095,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	{
 	  pBuffer[last++] = ' ';
 	}
-      const MIKTEXCHAR * lpszOptArg;
+      const char * lpszOptArg;
       if (idx == fileNameArgIdx)
 	{
 	  lpszOptArg = fileName.Get();
@@ -1170,23 +1170,23 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 			/*[in]*/ const PathName &	transcriptFileName)
   const
 {
-  tstring commandLine;
+  string commandLine;
   commandLine.reserve (256);
 
   // <fixme>We use a non-standard section name. Instead, we should
   // read the Registry directly.
-  tstring defaultEditor =
+  string defaultEditor =
     pSession->GetConfigValue(MIKTEX_REGKEY_YAP_SETTINGS,
 			     MIKTEX_REGVAL_EDITOR,
 			     T_("notepad.exe \"%f\""));
   // </fixme>
 
-  tstring templ =
+  string templ =
     pSession->GetConfigValue(0,
 			     MIKTEX_REGVAL_EDITOR,
 			     defaultEditor.c_str());
 
-  const MIKTEXCHAR * lpszCommandLineTemplate = templ.c_str();
+  const char * lpszCommandLineTemplate = templ.c_str();
 
   while (*lpszCommandLineTemplate != 0)
     {
@@ -1242,9 +1242,10 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
   memset (&si, 0, sizeof(si));
   si.cb = sizeof(si);
   
+  STRDUP commandLineDup (commandLine);
   PROCESS_INFORMATION pi;
   if (CreateProcess(0,
-		    STRDUP(commandLine.c_str()),
+		    commandLineDup.GetBuffer(),
 		    0,
 		    0,
 		    FALSE,

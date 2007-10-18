@@ -77,7 +77,7 @@ DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ CString & name)
 		      PixelShrink(lly) + 1);
       if (hrefRect.PtInRect(ptDvi))
 	{
-	  const MIKTEXCHAR * lpsz = pHyperSpecial->GetName();
+	  const char * lpsz = pHyperSpecial->GetName();
 	  name = (lpsz != 0 ? lpsz : T_(""));
 	  return (true);
 	}
@@ -92,7 +92,7 @@ DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ CString & name)
    _________________________________________________________________________ */
 
 bool
-DviView::Navigate (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 		   /*[in]*/ bool		remember)
 {
   CWaitCursor wait;
@@ -144,7 +144,7 @@ DviView::Navigate (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
       // check to see whether it is DVI file reference
       if (_tcsnicmp(T_("file:"), lpszUrl, 5) == 0)
 	{
-	  const MIKTEXCHAR * lpszFileLabel = lpszUrl + 5;
+	  const char * lpszFileLabel = lpszUrl + 5;
 	  CString dviFileName;
 	  CString hashLabel;
 	  if (IsOtherDviFileLabel(lpszFileLabel, dviFileName, hashLabel))
@@ -273,7 +273,7 @@ DviView::OnUpdateForward (/*[in]*/ CCmdUI * pCmdUI)
    _________________________________________________________________________ */
 
 bool
-DviView::IsOtherDviFileLabel (/*[in]*/ const MIKTEXCHAR *	lpszLabel,
+DviView::IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
 			      /*[out]*/ CString &		dviFileName,
 			      /*[out]*/ CString &		hashLabel)
 {
@@ -347,7 +347,7 @@ DviView::GotoLocation (/*[in]*/ const DviView::location & loc)
    _________________________________________________________________________ */
 
 bool
-DviView::FindDviFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+DviView::FindDviFile (/*[in]*/ const char *	lpszFileName,
 		      /*[out]*/ PathName &		result)
 {
   if (Utils::IsAbsolutePath(lpszFileName))
@@ -377,7 +377,7 @@ DviView::FindDviFile (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-DviDoc::FindHyperLabel (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+DviDoc::FindHyperLabel (/*[in]*/ const char *	lpszFileName,
 			/*[in]*/ DviPosition &		position)
 {
   return (pDvi->FindHyperLabel(lpszFileName, position));

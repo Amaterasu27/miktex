@@ -90,8 +90,8 @@ END_MESSAGE_MAP ()
 
 void
 PropPageLanguages::InsertColumn (/*[in]*/ int			colIdx,
-				 /*[in]*/ const MIKTEXCHAR *	lpszLabel,
-				 /*[in]*/ const MIKTEXCHAR *	lpszLongest)
+				 /*[in]*/ const char *	lpszLabel,
+				 /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
 			       lpszLabel,
@@ -189,15 +189,15 @@ PropPageLanguages::OnApply ()
 	  writer.WriteFormattedLine
 	    (T_("%s%s %s"),
 	     it->active ? T_("") : T_("%"),
-	     static_cast<const MIKTEXCHAR *>(it->languageName),
-	     static_cast<const MIKTEXCHAR *>(it->fileName));
+	     static_cast<const char *>(it->languageName),
+	     static_cast<const char *>(it->fileName));
 	  for (vector<CString>::const_iterator it2 = it->synonyms.begin();
 	       it2 != it->synonyms.end();
 	       ++it2)
 	    {
 	      writer.WriteFormattedLine
 		(T_("=%s"),
-		 static_cast<const MIKTEXCHAR *>(*it2));
+		 static_cast<const char *>(*it2));
 	    }
 	}
       writer.Close ();
@@ -290,7 +290,7 @@ The language definition file (languages.dat) could not be found."),
       return;
     }
   StreamReader reader (languageDat);
-  tstring line;
+  string line;
   size_t idx = 0;
   while (reader.ReadLine(line))
     {
@@ -319,11 +319,11 @@ The language definition file (languages.dat) could not be found."),
       else
 	{
 	  Tokenizer tok (line.c_str(), T_(" \t\n"));
-	  const MIKTEXCHAR * lpsz = tok.GetCurrent();
+	  const char * lpsz = tok.GetCurrent();
 	  if (lpsz != 0 && *lpsz != T_('%'))
 	    {
 	      ++ tok;
-	      const MIKTEXCHAR * lpsz2 = tok.GetCurrent();
+	      const char * lpsz2 = tok.GetCurrent();
 	      if (lpsz2 != 0)
 		{
 		  LANGUAGE lang;

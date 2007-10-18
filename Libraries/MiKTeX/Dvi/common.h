@@ -175,11 +175,11 @@ class DviImpl;
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
+string
+Quoted (/*[in]*/ const char * lpsz)
 {
   bool needQuotes = (strchr(lpsz, T_(' ')) != 0);
-  tstring result;
+  string result;
   if (needQuotes)
     {
       result += T_('"');
@@ -198,8 +198,8 @@ Quoted (/*[in]*/ const MIKTEXCHAR * lpsz)
    _________________________________________________________________________ */
 
 inline
-tstring
-Quoted (/*[in]*/ const tstring & str)
+string
+Quoted (/*[in]*/ const string & str)
 {
   return (Quoted(str.c_str()));
 }
@@ -210,7 +210,7 @@ Quoted (/*[in]*/ const tstring & str)
    _________________________________________________________________________ */
 
 inline
-tstring
+string
 Quoted (/*[in]*/ const PathName & path)
 {
   return (Quoted(path.Get()));
@@ -270,10 +270,10 @@ typedef map<int, DviPoint> MAPNUMTOPOINT;
 
 void
 MIKTEXNORETURN
-FatalDviError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-	       /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-	       /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-	       /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
+	       /*[in]*/ const char *	lpszMessage,
+	       /*[in]*/ const char *	lpszInfo,
+	       /*[in]*/ const char *	lpszSourceFile,
 	       /*[in]*/ int			sourceLine);
 
 int
@@ -288,7 +288,7 @@ ExpandBoundingBox (/*[in]*/ int llx,
 
 int
 CalculateWidth (/*[in]*/ float			width,
-		/*[in]*/ const MIKTEXCHAR *	unit,
+		/*[in]*/ const char *	unit,
 		/*[in]*/ int			resolution);
 
 /* _________________________________________________________________________
@@ -463,7 +463,7 @@ public:
 class InputStream
 {
 public:
-  InputStream (/*[in]*/ const MIKTEXCHAR * lpszFileName);
+  InputStream (/*[in]*/ const char * lpszFileName);
 
 public:
   InputStream (/*[in]*/ const BYTE *	pBytes,
@@ -488,7 +488,7 @@ public:
 
 public:
   bool
-  TryToReadByte (/*[out]*/ MIKTEXCHARINT & by);
+  TryToReadByte (/*[out]*/ int & by);
 
 public:
   short
@@ -810,7 +810,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetName ();
 
@@ -1087,7 +1087,7 @@ private:
   time_t lastVisited;
 
 private:
-  tstring pageName;
+  string pageName;
 
 private:
   bool frozen;
@@ -1102,10 +1102,10 @@ private:
   int dibShrinkFactor;
 
 private:
-  tstring dvipsTranscript;
+  string dvipsTranscript;
 
 private:
-  tstring gsTranscript;
+  string gsTranscript;
 
 private:
   DviImpl * pDviImpl;
@@ -1151,7 +1151,7 @@ private:
 
 struct DviInfo
 {
-  tstring		comment;
+  string		comment;
   long			nPages;
   time_t		lastWriteTime;
 };
@@ -1181,7 +1181,7 @@ public:
   virtual
   bool
   MIKTEXDVICALL
-  FindSource (/*[in]*/ const MIKTEXCHAR *	lpszFileName,
+  FindSource (/*[in]*/ const char *	lpszFileName,
 	      /*[in]*/ int			line,
 	      /*[out]*/ DviPosition &		position);
 
@@ -1242,7 +1242,7 @@ public:
   
 public:
   virtual
-  tstring
+  string
   MIKTEXDVICALL
   GetStatusText ();
 
@@ -1295,8 +1295,8 @@ public:
   Scan ();
 
 private:
-  DviImpl (/*[in]*/ const MIKTEXCHAR *		lpszFileName,
-	   /*[in]*/ const MIKTEXCHAR *		lpszMetafontMode,
+  DviImpl (/*[in]*/ const char *		lpszFileName,
+	   /*[in]*/ const char *		lpszMetafontMode,
 	   /*[in]*/ int				resolution,
 	   /*[in]*/ int				shrinkFactor,
 	   /*[in]*/ DviAccess			access,
@@ -1326,7 +1326,7 @@ public:
   void
   Progress
   (/*[in]*/ DviNotification		nf,
-   /*[in]*/ const MIKTEXCHAR *		lpszFormat,
+   /*[in]*/ const char *		lpszFormat,
    /*[in]*/				...);
 
 public:
@@ -1389,7 +1389,7 @@ public:
   }
 
 public:
-  tstring
+  string
   GetMetafontMode ()
   {
     return (metafontMode);
@@ -1452,7 +1452,7 @@ private:
 
 private:
   bool
-  ParseColorSpec (/*[in]*/ const MIKTEXCHAR *	lpsz,
+  ParseColorSpec (/*[in]*/ const char *	lpsz,
 		  /*[in]*/ unsigned long &	rgb);
 
 private:
@@ -1634,7 +1634,7 @@ private:
   int maxH;
   
 private:
-  tstring metafontMode;
+  string metafontMode;
 
 private:
   vector<class DviPageImpl *> pages;
@@ -1712,7 +1712,7 @@ private:
   unsigned lineWidth;
 
 private:
-  tstring progressStatus;
+  string progressStatus;
 
 private:
   IDviCallback * pCallback;
@@ -1804,7 +1804,7 @@ protected:
   int x, y;
 
 protected:
-  tstring specialString;
+  string specialString;
 
 protected:
   DviSpecialType specialType;
@@ -1848,7 +1848,7 @@ public:
 
 public:
   virtual
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetXXX ()
   {
@@ -1868,7 +1868,7 @@ public:
   DviSpecialObject (/*[in]*/ DviPageImpl *		ppage,
 		    /*[in]*/ int			x,
 		    /*[in]*/ int			y,
-		    /*[in]*/ const MIKTEXCHAR *		lpszSpecial)
+		    /*[in]*/ const char *		lpszSpecial)
   {
     pDviPageImpl = ppage;
     this->x = x;
@@ -1975,7 +1975,7 @@ SourceSpecialImpl
     public SpecialRoot
 {
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
   {
@@ -2006,7 +2006,7 @@ protected:
   int id;
 
 protected:
-  tstring fileName;
+  string fileName;
 
 protected:
   int lineNum;
@@ -2274,7 +2274,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetName ()
   {
@@ -2308,7 +2308,7 @@ protected:
   Parse ();
 
 protected:
-  tstring name;
+  string name;
 
 protected:
   int llx, lly, urx, ury;
@@ -2348,7 +2348,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
   {
@@ -2384,7 +2384,7 @@ protected:
   Parse ();
 
 protected:
-  tstring fileName;
+  string fileName;
 
 protected:
   int width;
@@ -2408,7 +2408,7 @@ PsdefSpecialImpl
     public SpecialRoot
 {
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetDef ()
   {
@@ -2416,7 +2416,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
   {
@@ -2428,7 +2428,7 @@ protected:
   Parse ();
 
 protected:
-  tstring str;
+  string str;
 
 protected:
   bool isFileName;
@@ -2446,7 +2446,7 @@ DvipsSpecialImpl
     public SpecialRoot
 {
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetString ()
   {
@@ -2454,7 +2454,7 @@ public:
   }
 
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
   {
@@ -2474,7 +2474,7 @@ protected:
   Parse ();
 
 protected:
-  tstring str;
+  string str;
 
 protected:
   bool protection;
@@ -2541,7 +2541,7 @@ PsfileSpecialImpl
     public SpecialRoot
 {
 public:
-  const MIKTEXCHAR *
+  const char *
   MIKTEXDVICALL
   GetFileName ()
   {
@@ -2794,7 +2794,7 @@ protected:
   Parse ();
 
 protected:
-  tstring fileName;
+  string fileName;
 
 protected:
   int hSize, vSize;

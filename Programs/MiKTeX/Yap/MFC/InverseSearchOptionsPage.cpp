@@ -58,7 +58,7 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
     }
   AutoHKEY autoHKEY (hkey);
   unsigned long size =
-    (static_cast<unsigned long>(path.GetCapacity()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(path.GetCapacity()) * sizeof(char));
   long res =
     RegQueryValueEx(hkey,
 		    T_("ProgramFilesDir"),
@@ -80,7 +80,7 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
 
 bool
 LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
-	       /*[in]*/ const MIKTEXCHAR *	lpszName)
+	       /*[in]*/ const char *	lpszName)
 {
   HKEY hkey;
   long res =
@@ -97,7 +97,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
   unsigned long type;
   PathName emacsDir;
   unsigned long size =
-    (static_cast<unsigned long>(emacsDir.GetCapacity()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(emacsDir.GetCapacity()) * sizeof(char));
   res =
     RegQueryValueEx(hkey,
 		    T_("emacs_dir"),
@@ -122,8 +122,8 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
    _________________________________________________________________________ */
 
 bool
-MakeNTEmacsCommandLine (/*[out]*/ tstring &	program,
-		        /*[out]*/ tstring &	arguments)
+MakeNTEmacsCommandLine (/*[out]*/ string &	program,
+		        /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
   if (! LocateNTEmacs(pathEmacs, T_("runemacs.exe"))
@@ -142,11 +142,11 @@ MakeNTEmacsCommandLine (/*[out]*/ tstring &	program,
    _________________________________________________________________________ */
 
 bool
-MakeNTEmacsClientCommandLine (/*[out]*/ tstring &	program,
-			      /*[out]*/ tstring &	arguments)
+MakeNTEmacsClientCommandLine (/*[out]*/ string &	program,
+			      /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
-  MIKTEXCHAR * lpszFileName;
+  char * lpszFileName;
   if (! (LocateNTEmacs(pathEmacs, T_("gnuclientw.exe"))
 	 || SearchPath(0,
 		       T_("gnuclientw.exe"),
@@ -168,8 +168,8 @@ MakeNTEmacsClientCommandLine (/*[out]*/ tstring &	program,
    _________________________________________________________________________ */
 
 bool
-MakeXEmacsCommandLine (/*[out]*/ tstring &	program,
-		       /*[out]*/ tstring &	arguments)
+MakeXEmacsCommandLine (/*[out]*/ string &	program,
+		       /*[out]*/ string &	arguments)
 {
   HKEY hkey;
   long res =
@@ -187,7 +187,7 @@ MakeXEmacsCommandLine (/*[out]*/ tstring &	program,
   unsigned long type;
   PathName pathEmacsDir;
   unsigned long size =
-    (static_cast<unsigned long>(pathEmacsDir.GetCapacity() * sizeof(MIKTEXCHAR)));
+    (static_cast<unsigned long>(pathEmacsDir.GetCapacity() * sizeof(char)));
   res =
     RegQueryValueEx(hkey,
 		    T_("Path"),
@@ -237,7 +237,7 @@ LocateTeXnicCenter (/*[out]*/ PathName & tc)
   unsigned long type;
   PathName tcRoot;
   unsigned long size =
-    (static_cast<unsigned long>(tcRoot.GetCapacity()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(tcRoot.GetCapacity()) * sizeof(char));
   res =
     RegQueryValueEx(hkey,
 		    T_("AppPath"),
@@ -262,8 +262,8 @@ LocateTeXnicCenter (/*[out]*/ PathName & tc)
    _________________________________________________________________________ */
 
 bool
-MakeTeXnicCenterCommandLine (/*[out]*/ tstring &	program,
-			     /*[out]*/ tstring &	arguments)
+MakeTeXnicCenterCommandLine (/*[out]*/ string &	program,
+			     /*[out]*/ string &	arguments)
 {
   PathName tc;
   if (! LocateTeXnicCenter(tc))
@@ -300,8 +300,8 @@ LocateVisualTeX (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-MakeVisualTeXCommandLine (/*[out]*/ tstring &	program,
-			  /*[out]*/ tstring &	arguments)
+MakeVisualTeXCommandLine (/*[out]*/ string &	program,
+			  /*[out]*/ string &	arguments)
 {
   PathName path;
   if (! LocateVisualTeX(path))
@@ -335,7 +335,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
       PathName pathWinEdtDir;
       unsigned long size =
 	(static_cast<unsigned long>(pathWinEdtDir.GetCapacity())
-	 * sizeof(MIKTEXCHAR));
+	 * sizeof(char));
       res =
 	RegQueryValueEx(hkey,
 			T_("Install Root"),
@@ -368,7 +368,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
   AutoHKEY autoHKEY (hkey);
   unsigned long type;
   unsigned long size =
-    (static_cast<unsigned long>(winEdt.GetCapacity()) * sizeof(MIKTEXCHAR));
+    (static_cast<unsigned long>(winEdt.GetCapacity()) * sizeof(char));
   res =
     RegQueryValueEx(hkey,
 		    0,
@@ -389,8 +389,8 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
    _________________________________________________________________________ */
 
 bool
-MakeWinEdtCommandLine (/*[out]*/ tstring &	program,
-		       /*[out]*/ tstring &	arguments)
+MakeWinEdtCommandLine (/*[out]*/ string &	program,
+		       /*[out]*/ string &	arguments)
 {
   PathName pathWinEdt;
   if (! LocateWinEdt(pathWinEdt))
@@ -427,8 +427,8 @@ LocateLaTeXMng (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-MakeLaTeXMngCommandLine (/*[out]*/ tstring &	program,
-			 /*[out]*/ tstring &	arguments)
+MakeLaTeXMngCommandLine (/*[out]*/ string &	program,
+			 /*[out]*/ string &	arguments)
 {
   PathName path;
   if (! LocateLaTeXMng(path))
@@ -469,8 +469,8 @@ LocateWinTeXXP (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-MakeWinTeXXPCommandLine (/*[out]*/ tstring &	program,
-			  /*[out]*/ tstring &	arguments)
+MakeWinTeXXPCommandLine (/*[out]*/ string &	program,
+			  /*[out]*/ string &	arguments)
 {
   PathName path;
   if (! LocateWinTeXXP(path))
@@ -507,8 +507,8 @@ LocateWinShell (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-MakeWinShellCommandLine (/*[out]*/ tstring &	program,
-			 /*[out]*/ tstring &	arguments)
+MakeWinShellCommandLine (/*[out]*/ string &	program,
+			 /*[out]*/ string &	arguments)
 {
   PathName path;
   if (! LocateWinShell(path))
@@ -545,8 +545,8 @@ LocateLaTeXWIDE (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 bool
-MakeLaTeXWIDECommandLine (/*[out]*/ tstring &	program,
-			  /*[out]*/ tstring &	arguments)
+MakeLaTeXWIDECommandLine (/*[out]*/ string &	program,
+			  /*[out]*/ string &	arguments)
 {
   PathName path;
   if (! LocateLaTeXWIDE(path))
@@ -875,8 +875,8 @@ InverseSearchOptionsPage::EnableButtons ()
 void
 InverseSearchOptionsPage::CollectEditors ()
 {
-  tstring program;
-  tstring arguments;
+  string program;
+  string arguments;
 
   /// free editors
 
@@ -948,8 +948,8 @@ InverseSearchOptionsPage::CollectEditors ()
 	{
 	  SmartPointer<Cfg> pCfg (Cfg::Create());
 	  pCfg->Read (editorsIni);
-	  MIKTEXCHAR szName[BufferSizes::MaxCfgName];
-	  for (MIKTEXCHAR * lpszName =
+	  char szName[BufferSizes::MaxCfgName];
+	  for (char * lpszName =
 		 pCfg->FirstKey(szName, BufferSizes::MaxCfgName);
 	       lpszName != 0;
 	       lpszName = pCfg->NextKey(szName, BufferSizes::MaxCfgName))

@@ -1,6 +1,6 @@
 /* chunkdib.cpp: test driver for the DibChunker interfaces
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License
@@ -64,8 +64,8 @@ public:
 
 public:
   void
-  Run (/*[in]*/ int			argc,
-       /*[in]*/ const MIKTEXCHAR **	argv);
+  Run (/*[in]*/ int		argc,
+       /*[in]*/ const char **	argv);
 
 private:
   FileStream stream;
@@ -101,11 +101,11 @@ ChunkDib::OnNewChunk (/*[in]*/ DibChunk * pChunk)
 {
   nChunks += 1;
   PathName fileName;
-  _stprintf_s (fileName.GetBuffer(),
-	       fileName.GetCapacity(),
-	       T_("chunk-%u-%u.bmp"),
-	       nBitmaps,
-	       nChunks);
+  sprintf_s (fileName.GetBuffer(),
+	     fileName.GetCapacity(),
+	     "chunk-%u-%u.bmp",
+	     nBitmaps,
+	     nChunks);
   FileStream bitmapFile (File::Open(fileName,
 				    FileMode::Create,
 				    FileAccess::Write,
@@ -149,8 +149,8 @@ ChunkDib::OnNewChunk (/*[in]*/ DibChunk * pChunk)
    _________________________________________________________________________ */
 
 void
-ChunkDib::Run (/*[in]*/ int			argc,
-	       /*[in]*/ const MIKTEXCHAR **	argv)
+ChunkDib::Run (/*[in]*/ int		argc,
+	       /*[in]*/ const char **	argv)
 {
   unsigned long chunkSize;
   auto_ptr<DibChunker> pChunker (DibChunker::Create());
@@ -184,8 +184,8 @@ ChunkDib::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int			argc,
-      /*[in]*/ const MIKTEXCHAR **	argv)
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
 {
   try
     {
@@ -205,7 +205,7 @@ main (/*[in]*/ int			argc,
       Utils::PrintException (e);
       return (1);
     }
-  catch (const MIKTEXCHAR *	lpszMessage)
+  catch (const char *	lpszMessage)
     {
       fprintf (stderr, "fatal error: %s\n", lpszMessage);
       return (1);

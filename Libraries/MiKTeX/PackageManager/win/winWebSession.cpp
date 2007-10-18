@@ -66,7 +66,7 @@ winWebSession::~winWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-winWebSession::OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
+winWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
 			/*[in]*/ IProgressNotify_ *	pIProgressNotify)
 {
   UNUSED_ALWAYS (pIProgressNotify);
@@ -86,7 +86,7 @@ winWebSession::OpenUrl (/*[in]*/ const MIKTEXCHAR *	lpszUrl,
 		       INTERNET_FLAG_KEEP_CONNECTION);
       if (hInternet == 0)
 	{
-	  tstring error;
+	  string error;
 	  GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebSession::winWebSession"),
 			   error.c_str(),
@@ -110,7 +110,7 @@ winWebSession::Dispose ()
       this->hInternet = 0;
       if (! InternetCloseHandle(hInternet))
 	{
-	  tstring error;
+	  string error;
 	  GetLastErrorMessage (error);
 	  FATAL_MPM_ERROR (T_("winWebSession::Dispose"), error.c_str(), 0);
 	}
@@ -140,7 +140,7 @@ winWebSession::IsGlobalOffline ()
    _________________________________________________________________________ */
 
 void
-winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
+winWebSession::GetLastErrorMessage (/*[out]*/ string &	message)
 {
   unsigned int lastError = ::GetLastError();
   void * pMsgBuf = 0;
@@ -158,7 +158,7 @@ winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
 	      if (pMsgBuf != 0)
 		{
 		  if (! InternetGetLastResponseInfo(&inetError,
-				    reinterpret_cast<MIKTEXCHAR*>(pMsgBuf),
+				    reinterpret_cast<char*>(pMsgBuf),
 						    &length))
 		    {
 		      LocalFree (pMsgBuf);
@@ -175,7 +175,7 @@ winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
 			 GetModuleHandle(T_("wininet.dll")),
 			 lastError,
 			 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			 reinterpret_cast<MIKTEXCHAR*>(&pMsgBuf),
+			 reinterpret_cast<char*>(&pMsgBuf),
 			 0,
 			 0);
 	}
@@ -188,7 +188,7 @@ winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
 		     0,
 		     lastError,
 		     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		     reinterpret_cast<MIKTEXCHAR*>(&pMsgBuf),
+		     reinterpret_cast<char*>(&pMsgBuf),
 		     0,
 		     0);
     }
@@ -198,7 +198,7 @@ winWebSession::GetLastErrorMessage (/*[out]*/ tstring &	message)
     }
   else
     {
-      message = reinterpret_cast<const MIKTEXCHAR*>(pMsgBuf);
+      message = reinterpret_cast<const char*>(pMsgBuf);
       LocalFree (pMsgBuf);
     }
 }

@@ -56,7 +56,7 @@ DviView::OnPreparePrinting (/*[in]*/ CPrintInfo * pInfo)
       int dpi = GetDeviceCaps(pInfo->m_pPD->m_pd.hDC, LOGPIXELSX);
       if (dpi != pDoc->GetPrinterResolution())
 	{
-	  tstring str = NUMTOSTR(dpi);
+	  string str = NUMTOSTR(dpi);
 	  str += T_(" vs. ");
 	  str += NUMTOSTR(pDoc->GetPrinterResolution());
 	  FATAL_MIKTEX_ERROR (T_("DviView::OnPreparePrinting"),

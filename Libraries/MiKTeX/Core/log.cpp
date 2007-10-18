@@ -80,34 +80,34 @@ public:
   virtual
   void
   MIKTEXCALL
-  WriteFormattedLine (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-		      /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  WriteFormattedLine (/*[in]*/ const char *	lpszFacility,
+		      /*[in]*/ const char *	lpszFormat,
 		      /*[in]*/				...);
 
 public:
   virtual
   void
   MIKTEXCALL
-  Write (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-	 /*[in]*/ const MIKTEXCHAR *	lpszText);
+  Write (/*[in]*/ const char *	lpszFacility,
+	 /*[in]*/ const char *	lpszText);
 
 public:
   virtual
   void
   MIKTEXCALL
-  WriteLine (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-	     /*[in]*/ const MIKTEXCHAR *	lpszText);
+  WriteLine (/*[in]*/ const char *	lpszFacility,
+	     /*[in]*/ const char *	lpszText);
 
 public:
   virtual
   void
   MIKTEXCALL
-  VTrace (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-	  /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+  VTrace (/*[in]*/ const char *	lpszFacility,
+	  /*[in]*/ const char *	lpszFormat,
 	  /*[in]*/ va_list		arglist);
 
 private:
-  TraceStreamImpl (/*[in]*/ const MIKTEXCHAR *	lpszName)
+  TraceStreamImpl (/*[in]*/ const char *	lpszName)
     : Name (lpszName),
       open (true)
   {
@@ -131,10 +131,10 @@ private:
   bool open;
 
 private:
-  tstring Name;
+  string Name;
 
 private:
-  const tstring &
+  const string &
   get_Name ()
     const
   {
@@ -143,15 +143,15 @@ private:
 
 private:
   void
-  Logger (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-	  /*[in]*/ const MIKTEXCHAR *	lpszMessage,
+  Logger (/*[in]*/ const char *	lpszFacility,
+	  /*[in]*/ const char *	lpszMessage,
 	  /*[in]*/ bool			appendNewline);
 
 private:
   void
-  FormatV (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
+  FormatV (/*[in]*/ const char *	lpszFacility,
 	   /*[in]*/ bool		appendNewline,
-	   /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+	   /*[in]*/ const char *	lpszFormat,
 	   /*[in]*/ va_list		arglist);
 
 private:
@@ -176,7 +176,7 @@ private:
       {
 	if (traceStreams[Name].refCounter == 0)
 	  {
-	    UNEXPECTED_CONDITION (T_("TraceStreamImpl::Release"));
+	    UNEXPECTED_CONDITION ("TraceStreamImpl::Release");
 	  }
 	traceStreams[Name].refCounter -= 1;
       }
@@ -188,20 +188,20 @@ private:
 
 private:
 #if defined(USE_HASH_MAP)
-  typedef hash_map<tstring, TraceStreamInfo> TraceStreamTable;
+  typedef hash_map<string, TraceStreamInfo> TraceStreamTable;
 #else
-  typedef map<tstring, TraceStreamInfo> TraceStreamTable;
+  typedef map<string, TraceStreamInfo> TraceStreamTable;
 #endif
 
 private:
   static TraceStreamTable traceStreams;
 
 private:
-  static tstring traceFlags;
+  static string traceFlags;
 };
 
 TraceStreamImpl::TraceStreamTable TraceStreamImpl::traceStreams;
-tstring TraceStreamImpl::traceFlags;
+string TraceStreamImpl::traceFlags;
 
 /* _________________________________________________________________________
 
@@ -233,34 +233,34 @@ SessionImpl::RegisterLibraryTraceStreams ()
    _________________________________________________________________________ */
 
 void
-TraceStreamImpl::Logger (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-			 /*[in]*/ const MIKTEXCHAR *	lpszMessage,
+TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
+			 /*[in]*/ const char *	lpszMessage,
 			 /*[in]*/ bool			appendNewline)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszMessage);
-  tstring str;
+  string str;
   str.reserve (256);
-  str += T_('[');
+  str += '[';
 #if defined(MIKTEX_WINDOWS)
   PathName path;
   if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) != 0)
     {
-      MIKTEXCHAR szName[BufferSizes::MaxPath];
+      char szName[BufferSizes::MaxPath];
       path.GetFileNameWithoutExtension (szName);
       str += szName;
     }
 #endif
-  str += T_('.');
+  str += '.';
   if (lpszFacility != 0)
     {
       str += lpszFacility;
     }
-  str += T_("]: ");
+  str += "]: ";
   str += lpszMessage;
   if (appendNewline)
     {
-      str += T_('\n');
+      str += '\n';
     }
 #if defined(MIKTEX_WINDOWS)
   OutputDebugString (str.c_str());
@@ -279,12 +279,12 @@ TraceStreamImpl::Logger (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
    _________________________________________________________________________ */
 
 void
-TraceStreamImpl::FormatV (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
+TraceStreamImpl::FormatV (/*[in]*/ const char *	lpszFacility,
 			  /*[in]*/ bool			appendNewline,
-			  /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+			  /*[in]*/ const char *	lpszFormat,
 			  /*[in]*/ va_list		arglist)
 {
-  tstring str = Utils::FormatString(lpszFormat, arglist);
+  string str = Utils::FormatString(lpszFormat, arglist);
   Logger (lpszFacility, str.c_str(), appendNewline);
 }
 
@@ -294,13 +294,13 @@ TraceStreamImpl::FormatV (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
    _________________________________________________________________________ */
 
 void
-TraceStream::SetTraceFlags (/*[in]*/ const MIKTEXCHAR *	lpszFlags)
+TraceStream::SetTraceFlags (/*[in]*/ const char *	lpszFlags)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFlags);
 
   if (lpszFlags == 0)
     {
-      lpszFlags = T_("error");
+      lpszFlags = "error";
     }
 
   TraceStreamImpl::traceFlags = lpszFlags;
@@ -313,9 +313,9 @@ TraceStream::SetTraceFlags (/*[in]*/ const MIKTEXCHAR *	lpszFlags)
       (*it).second.enabled = false;
     }
 
-  for (Tokenizer tok (lpszFlags, T_(",; \n\t")); tok.GetCurrent() != 0; ++ tok)
+  for (Tokenizer tok (lpszFlags, ",; \n\t"); tok.GetCurrent() != 0; ++ tok)
     {
-      tstring name (tok.GetCurrent());
+      string name (tok.GetCurrent());
       TraceStreamImpl::traceStreams[name].enabled = true;
     }
 }
@@ -337,13 +337,13 @@ TraceStreamImpl::Enable (/*[in]*/ bool	enable)
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+TraceError (/*[in]*/ const char *	lpszFormat,
 	    /*[in]*/			...)
 {
   va_list marker;
   va_start (marker, lpszFormat);
   SessionImpl::GetSession()->trace_error->VTrace
-    (T_("core"),
+    ("core",
      lpszFormat,
      marker);
   va_end (marker);
@@ -356,8 +356,8 @@ TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 
 void
 TraceStreamImpl::WriteFormattedLine
-(/*[in]*/ const MIKTEXCHAR *	lpszFacility,
- /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+(/*[in]*/ const char *	lpszFacility,
+ /*[in]*/ const char *	lpszFormat,
  /*[in]*/			...)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
@@ -378,8 +378,8 @@ TraceStreamImpl::WriteFormattedLine
    _________________________________________________________________________ */
 
 void
-TraceStreamImpl::WriteLine (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-			    /*[in]*/ const MIKTEXCHAR *	lpszText)
+TraceStreamImpl::WriteLine (/*[in]*/ const char *	lpszFacility,
+			    /*[in]*/ const char *	lpszText)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszText);
@@ -396,8 +396,8 @@ TraceStreamImpl::WriteLine (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
    _________________________________________________________________________ */
 
 void
-TraceStreamImpl::Write (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-			/*[in]*/ const MIKTEXCHAR *	lpszText)
+TraceStreamImpl::Write (/*[in]*/ const char *	lpszFacility,
+			/*[in]*/ const char *	lpszText)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
   MIKTEX_ASSERT_STRING (lpszText);
@@ -414,8 +414,8 @@ TraceStreamImpl::Write (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
    _________________________________________________________________________ */
 
 void
-TraceStreamImpl::VTrace (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
-			 /*[in]*/ const MIKTEXCHAR *	lpszFormat,
+TraceStreamImpl::VTrace (/*[in]*/ const char *	lpszFacility,
+			 /*[in]*/ const char *	lpszFormat,
 			 /*[in]*/ va_list		arglist)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszFacility);
@@ -433,14 +433,14 @@ TraceStreamImpl::VTrace (/*[in]*/ const MIKTEXCHAR *	lpszFacility,
    _________________________________________________________________________ */
 
 MIKTEXAPI(TraceStream *)
-TraceStream::Open (/*[in]*/ const MIKTEXCHAR * lpszName)
+TraceStream::Open (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);
   TraceStreamImpl * pTraceStream = new TraceStreamImpl (lpszName);
   bool enable =
     Utils::Contains(TraceStreamImpl::traceFlags.c_str(),
 		    lpszName,
-		    T_(",; \n\t"));
+		    ",; \n\t");
   pTraceStream->Enable (enable);
   return (pTraceStream);
 }
@@ -479,9 +479,9 @@ TraceStreamImpl::IsEnabled ()
 #if defined(MIKTEX_WINDOWS)
 void
 TraceStream::TraceLastWin32Error
-(/*[in]*/ const MIKTEXCHAR *	lpszWindowsFunction,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszWindowsFunction,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			lpszSourceLine)
 {
   TraceWindowsError (lpszWindowsFunction,
@@ -500,19 +500,19 @@ TraceStream::TraceLastWin32Error
 
 void
 TraceStream::TraceLastCRTError
-(/*[in]*/ const MIKTEXCHAR *	lpszCrtFunction,
- /*[in]*/ const MIKTEXCHAR *	lpszInfo,
- /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+(/*[in]*/ const char *	lpszCrtFunction,
+ /*[in]*/ const char *	lpszInfo,
+ /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int			lpszSourceLine)
 {
   int lastError = errno;
-  tstring errorMessage;
+  string errorMessage;
   if (! GetCrtErrorMessage(lastError, errorMessage))
     {
       return;
     }
   SessionImpl::GetSession()->trace_error->WriteFormattedLine
-    (T_("core"),
+    ("core",
      T_("\
 CRT function %s failed for the following reason:\n\
 %s\n\
@@ -524,7 +524,7 @@ Line: %d"),
      errorMessage.c_str(),
      lastError,
      (lpszInfo == 0
-      ? T_("")
+      ? ""
       : lpszInfo),
      lpszSourceFile,
      lpszSourceLine);
@@ -536,27 +536,27 @@ Line: %d"),
    _________________________________________________________________________ */
 
 MIKTEXINTERNALFUNC(void)
-TraceMiKTeXError (/*[in]*/ const MIKTEXCHAR *	lpszMiktexFunction,
-		  /*[in]*/ const MIKTEXCHAR *	lpszMessage,
-		  /*[in]*/ const MIKTEXCHAR *	lpszInfo,
-		  /*[in]*/ const MIKTEXCHAR *	lpszSourceFile,
+TraceMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
+		  /*[in]*/ const char *	lpszMessage,
+		  /*[in]*/ const char *	lpszInfo,
+		  /*[in]*/ const char *	lpszSourceFile,
 		  /*[in]*/ int			lpszSourceLine)
 {
   if (SessionImpl::GetSession() != 0
       && SessionImpl::GetSession()->trace_error.get() != 0)
     {
       SessionImpl::GetSession()->trace_error->WriteFormattedLine
-	(T_("core"),
+	("core",
 	 T_("\
 The MiKTeX function %s fails for the following reason:\n\
 %s\n\
 Info: %s\n\
 Source: %s\n\
 Line: %d"),
-	 (lpszMiktexFunction ? lpszMiktexFunction : T_("Unknown")),
+	 (lpszMiktexFunction ? lpszMiktexFunction : "Unknown"),
 	 lpszMessage,
 	 (lpszInfo == 0
-	  ? T_("")
+	  ? ""
 	  : lpszInfo),
 	 lpszSourceFile,
 	 lpszSourceLine);

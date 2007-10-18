@@ -35,8 +35,8 @@ using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
 
-tstring PackageManagerImpl::proxyUser;
-tstring PackageManagerImpl::proxyPassword;
+string PackageManagerImpl::proxyUser;
+string PackageManagerImpl::proxyPassword;
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 bool PackageManagerImpl::localServer = false;
@@ -58,8 +58,8 @@ struct ClientInfo : public Base
     Version = &version_;
   };
 private:
-  tstring name_;
-  tstring version_;
+  string name_;
+  string version_;
 };
 
 /* _________________________________________________________________________
@@ -69,7 +69,7 @@ private:
 
 void
 FatalSoapError (/*[in]*/ soap *			pSoap,
-		/*[in]*/ const MIKTEXCHAR *	lpszFile,
+		/*[in]*/ const char *	lpszFile,
 		/*[in]*/ int			line)
 {
   if (soap_check_state(pSoap))
@@ -78,7 +78,7 @@ FatalSoapError (/*[in]*/ soap *			pSoap,
     }
   else if (pSoap->error != SOAP_OK)
     {
-      const MIKTEXCHAR ** pp = soap_faultstring(pSoap);
+      const char ** pp = soap_faultstring(pSoap);
       Session::FatalMiKTeXError (0,
 				 (pp != 0 ? *pp : 0),
 				 0,
@@ -297,10 +297,10 @@ PackageManagerImpl::FlushVariablePackageTable ()
 
 time_t
 PackageManagerImpl::GetTimeInstalled
-(/*[in]*/ const MIKTEXCHAR * lpszDeploymentName)
+(/*[in]*/ const char * lpszDeploymentName)
 {
   LoadVariablePackageTable ();
-  tstring str;
+  string str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
 					  T_("TimeInstalled"),
 					  str))
@@ -317,7 +317,7 @@ PackageManagerImpl::GetTimeInstalled
 
 bool
 PackageManagerImpl::IsPackageInstalled
-(/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
+(/*[in]*/ const char *	lpszDeploymentName)
 {
   return (GetTimeInstalled(lpszDeploymentName) > 0);
 }
@@ -329,10 +329,10 @@ PackageManagerImpl::IsPackageInstalled
 
 bool
 PackageManagerImpl::IsPackageObsolete
-(/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName)
+(/*[in]*/ const char *	lpszDeploymentName)
 {
   LoadVariablePackageTable ();
-  tstring str;
+  string str;
   if (! variablePackageTable->TryGetValue(lpszDeploymentName,
 					  T_("Obsolete"),
 					  str))
@@ -349,7 +349,7 @@ PackageManagerImpl::IsPackageObsolete
 
 void
 PackageManagerImpl::DeclarePackageObsolete
-(/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName,
+(/*[in]*/ const char *	lpszDeploymentName,
  /*[in]*/ bool			obsolete)
 {
   LoadVariablePackageTable ();
@@ -365,7 +365,7 @@ PackageManagerImpl::DeclarePackageObsolete
 
 void
 PackageManagerImpl::SetTimeInstalled
-(/*[in]*/ const MIKTEXCHAR *	lpszDeploymentName,
+(/*[in]*/ const char *	lpszDeploymentName,
  /*[in]*/ time_t		timeInstalled)
 {
   LoadVariablePackageTable ();
@@ -381,9 +381,9 @@ PackageManagerImpl::SetTimeInstalled
 
 void
 PackageManagerImpl::IncrementFileRefCounts
-(/*[in]*/ const vector<tstring> & files)
+(/*[in]*/ const vector<string> & files)
 {
-  for ( vector<tstring>::const_iterator it = files.begin();
+  for ( vector<string>::const_iterator it = files.begin();
 	it != files.end();
 	++ it)
     {
@@ -406,7 +406,7 @@ PackageManagerImpl::IncrementFileRefCounts
 
 void
 PackageManagerImpl::IncrementFileRefCounts
-(/*[in]*/ const tstring &	deploymentName)
+(/*[in]*/ const string &	deploymentName)
 {
   NeedInstalledFileInfoTable ();
   const PackageInfo & pi = packageTable[deploymentName];
@@ -422,12 +422,12 @@ PackageManagerImpl::IncrementFileRefCounts
 
 PackageInfo *
 PackageManagerImpl::DefinePackage
-(/*[in]*/ const tstring &	deploymentName,
+(/*[in]*/ const string &	deploymentName,
  /*[in]*/ const PackageInfo &	packageInfo)
 {
   pair<PackageDefinitionTable::iterator, bool> p =
     packageTable.insert
-    (make_pair<tstring, PackageInfo>(deploymentName, packageInfo));
+    (make_pair<string, PackageInfo>(deploymentName, packageInfo));
   p.first->second.deploymentName = deploymentName;
   if (pSession->IsMiKTeXDirect())
     {
@@ -481,7 +481,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       PathName name (direntry.name.c_str());
 
       // get deployment name
-      MIKTEXCHAR szDeploymentName[BufferSizes::MaxPackageName];
+      char szDeploymentName[BufferSizes::MaxPackageName];
       name.GetFileNameWithoutExtension (szDeploymentName);
 
       // ignore redefinition
@@ -531,7 +531,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
     {
       time_t timeInstalledMin = static_cast<time_t>(0xffffffffffffffffULL);
       time_t timeInstalledMax = 0;
-      for (vector<tstring>::const_iterator
+      for (vector<string>::const_iterator
 	     it2 = it->second.requiredPackages.begin();
 	   it2 != it->second.requiredPackages.end();
 	   ++ it2)
@@ -717,7 +717,7 @@ PackageManagerImpl::UnloadDatabase ()
    _________________________________________________________________________ */
 
 PackageInfo *
-PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const tstring & deploymentName)
+PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
 {
   PackageDefinitionTable::iterator it = packageTable.find(deploymentName);
   if (it != packageTable.end())
@@ -750,7 +750,7 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const tstring & deploymentName)
 
 bool
 MPMCALL
-PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const tstring & deploymentName,
+PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName,
 				       /*[out]*/ PackageInfo &	packageInfo)
 {
   PackageInfo * pPackageInfo = TryGetPackageInfo(deploymentName);
@@ -771,7 +771,7 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const tstring & deploymentName,
    _________________________________________________________________________ */
 
 PackageInfo
-PackageManagerImpl::GetPackageInfo (/*[in]*/ const tstring & deploymentName)
+PackageManagerImpl::GetPackageInfo (/*[in]*/ const string & deploymentName)
 {
   const PackageInfo * pPackageInfo = TryGetPackageInfo(deploymentName);
   if (pPackageInfo == 0)
@@ -819,7 +819,7 @@ PackageManagerImpl::NeedInstalledFileInfoTable ()
 
 bool
 MPMCALL
-PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
+PackageManager::TryGetRemotePackageRepository (/*[out]*/ string & url)
 {
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -838,11 +838,11 @@ PackageManager::TryGetRemotePackageRepository (/*[out]*/ tstring & url)
    PackageManager::GetRemotePackageRepository
    _________________________________________________________________________ */
 
-tstring
+string
 MPMCALL
 PackageManager::GetRemotePackageRepository ()
 {
-  tstring url;
+  string url;
   if (! TryGetRemotePackageRepository(url))
     {
       FATAL_MIKTEX_ERROR (T_("PackageManager::GetRemotePackageRepository"),
@@ -858,15 +858,15 @@ PackageManager::GetRemotePackageRepository ()
    _________________________________________________________________________ */
 
 MPMSTATICFUNC(bool)
-IsUrl (/*[in]*/ const tstring & url)
+IsUrl (/*[in]*/ const string & url)
 {
-  tstring::size_type pos = url.find(T_("://"));
-  if (pos == tstring::npos)
+  string::size_type pos = url.find(T_("://"));
+  if (pos == string::npos)
     {
       return (false);
     }
-  tstring scheme = url.substr(0, pos);
-  for (tstring::const_iterator it = scheme.begin(); it != scheme.end(); ++ it)
+  string scheme = url.substr(0, pos);
+  for (string::const_iterator it = scheme.begin(); it != scheme.end(); ++ it)
     {
       if (! isalpha(*it, locale()))
 	{
@@ -883,7 +883,7 @@ IsUrl (/*[in]*/ const tstring & url)
 
 RepositoryType
 PackageManagerImpl::DetermineRepositoryType
-(/*[in]*/ const tstring & repository)
+(/*[in]*/ const string & repository)
 {
   if (IsUrl(repository))
     {
@@ -926,7 +926,7 @@ PackageManagerImpl::DetermineRepositoryType
 
 void
 MPMCALL
-PackageManager::SetRemotePackageRepository (/*[in]*/ const tstring & url)
+PackageManager::SetRemotePackageRepository (/*[in]*/ const string & url)
 {
   SessionWrapper(true)
     ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -943,7 +943,7 @@ bool
 MPMCALL
 PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
 {
-  tstring str;
+  string str;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
@@ -1008,7 +1008,7 @@ bool
 MPMCALL
 PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
 {
-  tstring str;
+  string str;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			  MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
@@ -1073,9 +1073,9 @@ bool
 MPMCALL
 PackageManager::TryGetDefaultPackageRepository
 (/*[out]*/ RepositoryType &	repositoryType,
- /*[out]*/ tstring &		urlOrPath)
+ /*[out]*/ string &		urlOrPath)
 {
-  tstring str;
+  string str;
   if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 					      MIKTEX_REGVAL_REPOSITORY_TYPE,
 					      str))
@@ -1123,7 +1123,7 @@ PackageManager::TryGetDefaultPackageRepository
 RepositoryType
 MPMCALL
 PackageManager::GetDefaultPackageRepository
-(/*[out]*/ tstring &	urlOrPath)
+(/*[out]*/ string &	urlOrPath)
 {
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (! TryGetDefaultPackageRepository(repositoryType, urlOrPath))
@@ -1144,13 +1144,13 @@ void
 MPMCALL
 PackageManager::SetDefaultPackageRepository
 (/*[in]*/ RepositoryType	repositoryType,
- /*[in]*/ const tstring &	urlOrPath)
+ /*[in]*/ const string &	urlOrPath)
 {
   if (repositoryType == RepositoryType::Unknown)
     {
       repositoryType = PackageManagerImpl::DetermineRepositoryType(urlOrPath);
     }
-  tstring repositoryTypeStr;
+  string repositoryTypeStr;
   switch (repositoryType.Get())
     {
     case RepositoryType::MiKTeXDirect:
@@ -1289,7 +1289,7 @@ PackageManagerImpl::DownloadRepositoryList ()
    PackageManagerImpl::PickRepositoryUrl
    _________________________________________________________________________ */
 
-tstring
+string
 MPMCALL
 PackageManagerImpl::PickRepositoryUrl ()
 {
@@ -1326,7 +1326,7 @@ PackageManagerImpl::PickRepositoryUrl ()
    _________________________________________________________________________ */
 
 void
-PackageManagerImpl::TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
+PackageManagerImpl::TraceError (/*[in]*/ const char *	lpszFormat,
 				/*[in]*/			...)
 {
   va_list marker;
@@ -1343,26 +1343,26 @@ PackageManagerImpl::TraceError (/*[in]*/ const MIKTEXCHAR *	lpszFormat,
 namespace {
 
 #if defined(USE_HASH_SET)
-  typedef hash_set<tstring, hash_compare_path> SubDirectoryTable;
+  typedef hash_set<string, hash_compare_path> SubDirectoryTable;
 #else
-  typedef set<tstring, hash_compare_path> SubDirectoryTable;
+  typedef set<string, hash_compare_path> SubDirectoryTable;
 #endif
   
   struct DirectoryInfo
   {
     SubDirectoryTable subDirectoryNames;
-    tstring fileNames;
-    tstring packageNames;
+    string fileNames;
+    string packageNames;
   };
 
   
 #if defined(USE_HASH_MAP)
   typedef
-  hash_map<tstring, DirectoryInfo, hash_compare_path>
+  hash_map<string, DirectoryInfo, hash_compare_path>
   DirectoryInfoTable;
 #else
   typedef
-  map<tstring, DirectoryInfo, hash_compare_path>
+  map<string, DirectoryInfo, hash_compare_path>
   DirectoryInfoTable;
 #endif  
 
@@ -1374,10 +1374,10 @@ namespace {
 }
 
 MPMSTATICFUNC(void)
-RememberFileNameInfo (/*[in]*/ const tstring &	prefixedFileName,
-		      /*[in]*/ const tstring &	packageName)
+RememberFileNameInfo (/*[in]*/ const string &	prefixedFileName,
+		      /*[in]*/ const string &	packageName)
 {
-  tstring fileName;
+  string fileName;
 
   // ignore non-texmf files
   if (! PackageManager::StripTeXMFPrefix(prefixedFileName, fileName))
@@ -1397,12 +1397,12 @@ RememberFileNameInfo (/*[in]*/ const tstring &	prefixedFileName,
   //  path += CURRENT_DIRECTORY;
 
   // lpsz1: current path name component
-  const MIKTEXCHAR * lpsz1 = pathtok.GetCurrent();
+  const char * lpsz1 = pathtok.GetCurrent();
 
   // lpszName: file name component
-  const MIKTEXCHAR * lpszName = lpsz1;
+  const char * lpszName = lpsz1;
 
-  for (const MIKTEXCHAR * lpsz2 = ++ pathtok; lpsz2 != 0; lpsz2 = ++ pathtok)
+  for (const char * lpsz2 = ++ pathtok; lpsz2 != 0; lpsz2 = ++ pathtok)
     {
       directoryInfoTable[path.Get()].subDirectoryNames.insert (lpsz1);
       lpszName = lpsz2;
@@ -1431,17 +1431,17 @@ RememberFileNameInfo (/*[in]*/ const tstring &	prefixedFileName,
 
 bool
 MIKTEXCALL
-PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
-				   /*[out]*/ MIKTEXCHAR ** ppSubDirectoryNames,
-				   /*[out]*/ MIKTEXCHAR ** ppFileNames,
-				   /*[out]*/ MIKTEXCHAR ** ppFileNameInfos)
+PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
+				   /*[out]*/ char ** ppSubDirectoryNames,
+				   /*[out]*/ char ** ppFileNames,
+				   /*[out]*/ char ** ppFileNameInfos)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
   // get the directory info for the given path
   DirectoryInfo & directoryInfo = directoryInfoTable[lpszPath];
 
-  tstring subDirectoryNames;
+  string subDirectoryNames;
   for (SubDirectoryTable::const_iterator
 	 it = directoryInfo.subDirectoryNames.begin();
        it != directoryInfo.subDirectoryNames.end();
@@ -1453,7 +1453,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   subDirectoryNames += T_('\0');
   MIKTEX_ASSERT (ppSubDirectoryNames != 0);
   *ppSubDirectoryNames =
-    static_cast<MIKTEXCHAR *>(malloc(subDirectoryNames.length()));
+    static_cast<char *>(malloc(subDirectoryNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   subDirectoryNames._Copy_s (*ppSubDirectoryNames,
 			     subDirectoryNames.length(),
@@ -1464,7 +1464,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   MIKTEX_ASSERT (ppFileNames != 0);
   directoryInfo.fileNames += T_('\0');
   *ppFileNames =
-    static_cast<MIKTEXCHAR *>(malloc(directoryInfo.fileNames.length()));
+    static_cast<char *>(malloc(directoryInfo.fileNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   directoryInfo.fileNames._Copy_s (*ppFileNames,
 				   directoryInfo.fileNames.length(),
@@ -1476,7 +1476,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
   MIKTEX_ASSERT (ppFileNameInfos != 0);
   directoryInfo.packageNames += T_('\0');
   *ppFileNameInfos =
-    static_cast<MIKTEXCHAR *>(malloc(directoryInfo.packageNames.length()));
+    static_cast<char *>(malloc(directoryInfo.packageNames.length()));
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   directoryInfo.packageNames._Copy_s (*ppFileNameInfos,
 				      directoryInfo.packageNames.length(),
@@ -1496,7 +1496,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const MIKTEXCHAR *	lpszPath,
 bool
 MIKTEXCALL
 PackageManagerImpl::OnProgress (/*[in]*/ unsigned		level,
-				/*[in]*/ const MIKTEXCHAR *	lpszDirectory)
+				/*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);
   UNUSED_ALWAYS (lpszDirectory);
@@ -1523,7 +1523,7 @@ PackageManagerImpl::CreateMpmFndb ()
        ++ it)
     {
       const PackageInfo & pi = it->second;
-      vector<tstring>::const_iterator it2;
+      vector<string>::const_iterator it2;
       for (it2 = pi.runFiles.begin();
 	   it2 != pi.runFiles.end();
 	   ++ it2)
@@ -1580,7 +1580,7 @@ PackageManagerImpl::GetAllPackageDefinitions
 
 InstalledFileInfo *
 PackageManagerImpl::GetInstalledFileInfo
-(/*[in]*/ const MIKTEXCHAR * lpszPath)
+(/*[in]*/ const char * lpszPath)
 {
   ParseAllPackageDefinitionFiles ();
   InstalledFileInfoTable::iterator it = installedFileInfoTable.find(lpszPath);
@@ -1624,7 +1624,7 @@ PackageInfo
 MPMCALL
 PackageManager::ReadPackageDefinitionFile
 (/*[in]*/ const PathName &	path,
- /*[in]*/ const MIKTEXCHAR *	lpszTeXMFPrefix)
+ /*[in]*/ const char *	lpszTeXMFPrefix)
 {
   TpmParser tpmParser;
   tpmParser.Parse (path, lpszTeXMFPrefix);
@@ -1648,7 +1648,7 @@ public:
 
 public:
   void
-  StartElement (/*[in]*/ const MIKTEXCHAR *	lpszName)
+  StartElement (/*[in]*/ const char *	lpszName)
   {
     if (freshElement)
       {
@@ -1662,8 +1662,8 @@ public:
 
 public:
   void
-  AddAttribute (/*[in]*/ const MIKTEXCHAR *	lpszAttributeName,
-		/*[in]*/ const MIKTEXCHAR *	lpszAttributeValue)
+  AddAttribute (/*[in]*/ const char *	lpszAttributeName,
+		/*[in]*/ const char *	lpszAttributeValue)
   {
     FPutC (T_(' '), stream);
     FPutS (lpszAttributeName, stream);
@@ -1708,14 +1708,14 @@ public:
 
 public:
   void
-  Text (/*[in]*/ const tstring & text )
+  Text (/*[in]*/ const string & text )
   {
     if (freshElement)
       {
 	FPutC (T_('>'), stream);
 	freshElement = false;
       }
-    for (const MIKTEXCHAR * lpszText = text.c_str();
+    for (const char * lpszText = text.c_str();
 	 *lpszText != 0;
 	 ++ lpszText)
       {
@@ -1741,7 +1741,7 @@ private:
   FILE * stream;
 
 private:
-  stack<tstring> elements;
+  stack<string> elements;
 
 private:
   bool freshElement;
@@ -1773,7 +1773,7 @@ PackageManager::WritePackageDefinitionFile
   xml.AddAttribute (T_("xmlns:TPM"),
 		    T_("http://texlive.dante.de/"));
   xml.StartElement (T_("rdf:Description"));
-  tstring about (T_("http://www.miktex.org/packages/"));
+  string about (T_("http://www.miktex.org/packages/"));
   about += packageInfo.deploymentName;
   xml.AddAttribute (T_("about"), about.c_str());
 
@@ -1810,7 +1810,7 @@ PackageManager::WritePackageDefinitionFile
       xml.AddAttribute
 	(T_("size"),
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeRunFiles)));
-      for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+      for (vector<string>::const_iterator it = packageInfo.runFiles.begin();
 	   it != packageInfo.runFiles.end();
 	   ++ it)
 	{
@@ -1830,7 +1830,7 @@ PackageManager::WritePackageDefinitionFile
       xml.AddAttribute
 	(T_("size"),
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeDocFiles)));
-      for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+      for (vector<string>::const_iterator it = packageInfo.docFiles.begin();
 	   it != packageInfo.docFiles.end();
 	   ++ it)
 	{
@@ -1850,7 +1850,7 @@ PackageManager::WritePackageDefinitionFile
       xml.AddAttribute
 	(T_("size"),
 	 NUMTOSTR(static_cast<unsigned>(packageInfo.sizeSourceFiles)));
-      for (vector<tstring>::const_iterator it
+      for (vector<string>::const_iterator it
 	     = packageInfo.sourceFiles.begin();
 	   it != packageInfo.sourceFiles.end();
 	   ++ it)
@@ -1868,7 +1868,7 @@ PackageManager::WritePackageDefinitionFile
   if (packageInfo.requiredPackages.size() > 0)
     {
       xml.StartElement (T_("TPM:Requires"));
-      for (vector<tstring>::const_iterator it
+      for (vector<string>::const_iterator it
 	     = packageInfo.requiredPackages.begin();
 	   it != packageInfo.requiredPackages.end();
 	   ++ it)
@@ -1904,8 +1904,8 @@ PackageManager::WritePackageDefinitionFile
 
 bool
 MPMCALL
-PackageManager::StripTeXMFPrefix (/*[in]*/ const tstring &	str,
-				  /*[out]*/ tstring &		result)
+PackageManager::StripTeXMFPrefix (/*[in]*/ const string &	str,
+				  /*[out]*/ string &		result)
 {
   if (StripPrefix(str, TEXMF_PREFIX_DIRECTORY, result))
     {
@@ -1956,7 +1956,7 @@ bool
 MPMCALL
 PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
 {
-  tstring str;
+  string str;
   if (! (SessionWrapper(true)
 	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			     MIKTEX_REGVAL_USE_PROXY,
@@ -2030,7 +2030,7 @@ PackageManagerImpl::OnProgress ()
 bool
 MPMCALL
 PackageManagerImpl::TryGetRepositoryInfo
-(/*[in]*/ const tstring &	url,
+(/*[in]*/ const string &	url,
  /*[out]*/ RepositoryInfo &	repositoryInfo)
 {
   RepositorySoapProxy repositorySoapProxy;
@@ -2046,7 +2046,7 @@ PackageManagerImpl::TryGetRepositoryInfo
 	}
     }
   ClientInfo<mtrep3__ClientInfo> clientInfo;
-  tstring url2 = url;
+  string url2 = url;
   _mtrep3__TryGetRepositoryInfo2 arg;
   arg.clientInfo = &clientInfo;
   arg.url = &url2;
@@ -2069,7 +2069,7 @@ PackageManagerImpl::TryGetRepositoryInfo
 
 RepositoryInfo
 MPMCALL
-PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
+PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 {
   for (vector<RepositoryInfo>::const_iterator it = repositories.begin();
        it != repositories.end();
@@ -2094,7 +2094,7 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
 	}
     }
-  tstring url2 = url;
+  string url2 = url;
   ClientInfo<mtrep4__ClientInfo> clientInfo;
   _mtrep4__VerifyRepository arg;
   arg.clientInfo = &clientInfo;
@@ -2160,11 +2160,11 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 
 bool
 PackageManagerImpl::TryVerifyInstalledPackageHelper
-(/*[in]*/ const tstring &	fileName,
+(/*[in]*/ const string &	fileName,
  /*[out]*/ bool &		haveDigest,
  /*[out]*/ MD5 &		digest)
 {
-  tstring unprefixed;
+  string unprefixed;
   if (! StripTeXMFPrefix(fileName, unprefixed))
     {
       return (true);
@@ -2197,13 +2197,13 @@ PackageManagerImpl::TryVerifyInstalledPackageHelper
 bool
 MPMCALL
 PackageManagerImpl::TryVerifyInstalledPackage
-(/*[in]*/ const tstring & deploymentName)
+(/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = GetPackageInfo(deploymentName);
 
   FileDigestTable fileDigests;
 
-  for (vector<tstring>::const_iterator it = packageInfo.runFiles.begin();
+  for (vector<string>::const_iterator it = packageInfo.runFiles.begin();
        it != packageInfo.runFiles.end();
        ++ it)
     {
@@ -2219,7 +2219,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
 	}
     }
 
-  for (vector<tstring>::const_iterator it = packageInfo.docFiles.begin();
+  for (vector<string>::const_iterator it = packageInfo.docFiles.begin();
        it != packageInfo.docFiles.end();
        ++ it)
     {
@@ -2235,7 +2235,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
 	}
     }
 
-  for (vector<tstring>::const_iterator it = packageInfo.sourceFiles.begin();
+  for (vector<string>::const_iterator it = packageInfo.sourceFiles.begin();
        it != packageInfo.sourceFiles.end();
        ++ it)
     {
@@ -2282,12 +2282,12 @@ PackageManagerImpl::TryVerifyInstalledPackage
    PackageManagerImpl::GetContainerPath
    _________________________________________________________________________ */
 
-tstring
+string
 MPMCALL
-PackageManagerImpl::GetContainerPath (/*[in]*/ const tstring &	deploymentName,
+PackageManagerImpl::GetContainerPath (/*[in]*/ const string &	deploymentName,
 				      /*[in]*/ bool	useDisplayNames)
 {
-  tstring path;
+  string path;
   PackageInfo packageInfo = GetPackageInfo(deploymentName);
   for (size_t idx = 0; idx < packageInfo.requiredBy.size(); ++ idx)
     {
