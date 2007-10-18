@@ -1006,18 +1006,24 @@ PackageInstallerImpl::MyCopyFile (/*[in]*/ const PathName &	source,
 	}
       catch (const MiKTeXException & e)
 	{
-	  otstringstream text;
-	  text << T_("The file") LF
+	  ostringstream text;
+	  text << T_("\
+The following file could not be written:")
 	       << LF
-	       << "  " << dest.Get() << LF
 	       << LF
-	       << T_("could not be opened for the following reason:") LF
+	       << "  " << dest.Get()
 	       << LF
-	       << "  " << e.what() << LF
 	       << LF
-	       << T_("Make sure that no other application uses")
-	       << T_(" the file and that you have write permission on the")
-	       << T_(" file.");
+	       << T_("\
+The write operation failed for the following reason:")
+	       << LF
+	       << LF
+	       << "  " << e.what()
+	       << LF
+	       << LF
+	       << T_("\
+Make sure that no other application uses the file and that \
+you have write permission on the file.");
 	  if (AbortOrRetry(text.str().c_str()))
 	    {
 	      throw;
@@ -2786,90 +2792,107 @@ PackageInstallerImpl::FatalError (/*[in]*/ ErrorCode	error,
 {
   va_list marker;
   va_start (marker, error);
-  otstringstream message;
+  ostringstream message;
   const char * lpszArg1;
   const char * lpszArg2;
   const char * lpszArg3;
+  size_t size1;
+  size_t size2;
   switch (error)
     {
     case ERROR_UNKNOWN_PACKAGE:
-      message << T_("The package") << LF
-	      << LF
-	      << "  " << va_arg(marker, const char *) << LF
-	      << LF
-	      << T_("is unknown.");
+      lpszArg1 = va_arg(marker, const char *);
+      message
+	<< T_("\
+The operation could not be completed because the following \
+package is unknown:")
+	<< LF
+	<< LF
+	<< lpszArg1;
       break;
     case ERROR_DOWNLOAD:
       lpszArg1 = va_arg(marker, const char *);
       lpszArg2 = va_arg(marker, const char *);
-      message << T_("The file") << LF
-	      << LF
-	      << "  " << lpszArg1 << LF
-	      << LF
-	      << T_("could not be downloaded for the following reason:") << LF
-	      << LF
-	      << lpszArg2;
+      message
+	<< T_("\
+The download operation could not be completed for the following reason:")
+	<< LF
+	<< LF
+	<< lpszArg2;
       break;
     case ERROR_PACKAGE_NOT_INSTALLED:
-      message << T_("The package") << LF
-	      << LF
-	      << "  " << va_arg(marker, const char *) << LF
-	      << LF
-	      << T_("is not installed.");
+      message
+	<< T_("\
+The operation could not be completed because the following \
+package is not installed:")
+	<< LF
+	<< LF
+	<< va_arg(marker, const char *);
       break;
     case ERROR_CANNOT_DELETE:
       lpszArg1 = va_arg(marker, const char *);
       lpszArg2 = va_arg(marker, const char *);
-      message << T_("The file") << LF
-	      << LF
-	      << "  " << lpszArg1 << LF
-	      << LF
-	      << T_("could not be be deleted for the following reason:") << LF
-	      << LF
-	      << lpszArg2;
+      message
+	<< T_("\
+The operation could not be completed because the removal of the \
+following file did not succeed:")
+	<< LF
+	<< LF
+	<< lpszArg1
+	<< LF
+	<< LF
+	<< T_("\
+The removal failed for the following reason:")
+	<< LF
+	<< LF
+	<< lpszArg2;
       break;
     case ERROR_MISSING_PACKAGE:
-      message << T_("The required file") << LF
-	      << LF
-	      << "  " << va_arg(marker, const char *) << LF
-	      << LF
-	      << T_("does not exist.");
+      lpszArg1 = va_arg(marker, const char *);
+      message << T_("\
+The operation could not be completed because a required \
+file does not exist.");
       break;
     case ERROR_CORRUPTED_PACKAGE:
       lpszArg1 = va_arg(marker, const char *);
       lpszArg2 = va_arg(marker, const char *);
       lpszArg3 = va_arg(marker, const char *);
       message
-	<< T_("The file") << LF
+	<< T_("\
+The operation could not be completed because the following file failed \
+verification:")
 	<< LF
-	<< "  " << lpszArg1 << LF
 	<< LF
-	<< T_("failed verification.");
+	<< lpszArg1;
       break;
     case ERROR_SOURCE_FILE_NOT_FOUND:
-      message << T_("The required file") << LF
-	      << LF
-	      << "  " << va_arg(marker, const char *) << LF
-	      << LF
-	      << T_("does not exist.");
+      lpszArg1 = va_arg(marker, const char *);
+      message
+	<< T_("\
+The operation could not be completed because the following file \
+does not exist:")
+	<< LF
+	<< LF
+	<< lpszArg1;
       break;
     case ERROR_SIZE_MISMATCH:
-      {
-	lpszArg1 = va_arg(marker, const char *);
-	size_t size1 = va_arg(marker, size_t);
-	size_t size2 = va_arg(marker, size_t);
-	message
-	  << T_("The file") << LF
-	  << LF
-	  << "  " << lpszArg1 << LF
-	  << LF
-	  << T_("failed verification (size mismatch).");
-	break;
-      }
+      lpszArg1 = va_arg(marker, const char *);
+      size1 = va_arg(marker, size_t);
+      size2 = va_arg(marker, size_t);
+      message
+	<< T_("\
+The operation could not be completed because the following file failed \
+verification:")
+	<< LF
+	<< LF
+	<< lpszArg1;
+      break;
     default:
       // this shouldn't happen
-      message << T_("An error (") << error << T_(") occurred.");
-      break;
+      message
+	<< T_("\
+The operation could not be completed.");
+	break;
     }
   va_end (marker);
   MIKTEX_LOCK(This)

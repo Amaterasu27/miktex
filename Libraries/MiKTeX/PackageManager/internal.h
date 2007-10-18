@@ -79,7 +79,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 #define INVALID_ARGUMENT(function, param)				\
   FATAL_MIKTEX_ERROR (function, T_("Invalid argument."), param)
 
-#define OUT_OF_MEMORY(function)					\
+#define OUT_OF_MEMORY(function)						\
   FATAL_MIKTEX_ERROR(function, T_("Virtual memory exhausted."), 0)
 
 #define UNEXPECTED_CONDITION(function)				\
@@ -125,7 +125,7 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)			\
   MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,				\
-				    __FILE__,			\
+				    __FILE__,				\
 				    __LINE__)
 #endif
 
@@ -183,8 +183,6 @@ namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 BEGIN_INTERNAL_NAMESPACE;
 
 const time_t Y2000 = 946681200;
-
-typedef std::basic_ostringstream<char> otstringstream;
 
 const char * const MPM_AGENT = "MPM/" VER_FILEVERSION_STR;
 
@@ -372,7 +370,7 @@ GetErrnoMessage (/*[in]*/ int			err,
 		 /*[out]*/ std::string &	message)
 {
 #if _MSC_VER >= 1400
-  _TCHAR szBuf[256];
+  char szBuf[256];
   if (strerror_s(szBuf, 256, err) != 0)
     {
       message = "";
@@ -929,14 +927,14 @@ public:
     if (! TryGetValue(lpszDeploymentName, "TimePackaged", str))
       {
 	FATAL_MPM_ERROR ("DbLight::GetTimePackaged",
-			 T_("Unknown timestamp."),
+			 T_("Unknown package time-stamp."),
 			 lpszDeploymentName);
       }
     unsigned time = static_cast<unsigned>(atoi(str.c_str()));
     if (time < Y2000)
       {
 	FATAL_MPM_ERROR ("DbLight::GetTimePackaged",
-			 T_("Invalid timestamp."),
+			 T_("Invalid package time-stamp."),
 			 lpszDeploymentName);
       }
     return (time);
@@ -1519,7 +1517,7 @@ private:
   virtual
   bool
   MIKTEXCALL
-  OnProgress (/*[in]*/ unsigned			level,
+  OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory);
 
 private:

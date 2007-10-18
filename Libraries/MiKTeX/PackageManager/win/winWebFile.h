@@ -45,7 +45,7 @@ public:
   Close ();
 
 public:
-  winWebFile (/*[in]*/ winWebSession *		pSession,
+  winWebFile (/*[in]*/ winWebSession *	pSession,
 	      /*[in]*/ const char *	lpszUrl);
 
 private:

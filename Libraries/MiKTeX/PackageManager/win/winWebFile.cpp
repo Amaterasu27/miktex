@@ -60,7 +60,7 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
     trace_mpm (TraceStream::Open("mpm"))
 {
   // open the rempote file
-  trace_mpm->WriteFormattedLine ("libmpm", T_("opening \"%s\"..."), lpszUrl);
+  trace_mpm->WriteFormattedLine ("libmpm", T_("opening %s"), lpszUrl);
   unsigned int flags = (0
 			| INTERNET_FLAG_EXISTING_CONNECT
 			| INTERNET_FLAG_KEEP_CONNECTION
@@ -71,25 +71,25 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
 			| INTERNET_FLAG_TRANSFER_BINARY
 			| 0);
   HINTERNET hInternet = pSession->GetHandle();
-  hUrl = InternetOpenUrl(hInternet, lpszUrl , 0, 0, flags, 0);
+  hUrl = InternetOpenUrlA(hInternet, lpszUrl , 0, 0, flags, 0);
   if (hUrl == 0)
     {
       if (winWebSession::IsGlobalOffline())
 	{
 	  trace_mpm->WriteLine ("libmpm", T_("we are offline"));
-	  if (InternetGoOnline(const_cast<char *>(lpszUrl),
-			       GetDesktopWindow(),
-			       0))
+	  if (InternetGoOnlineA(const_cast<char *>(lpszUrl),
+				GetDesktopWindow(),
+				0))
 	    {
 	      trace_mpm->WriteLine ("libmpm", T_("gone online"));
-	      hUrl = InternetOpenUrl(hInternet, lpszUrl , 0, 0, flags, 0);
+	      hUrl = InternetOpenUrlA(hInternet, lpszUrl , 0, 0, flags, 0);
 	    }
 	  else
 	    {
 	      trace_mpm->WriteLine ("libmpm", T_("still offline"));
 	      FATAL_MPM_ERROR ("winWebFile::winWebFile",
-			       (T_("Packages cannot be downloaded when ")
-				T_("Internet Explorer is in offline mode.")),
+			       T_("\
+Packages cannot be downloaded when Internet Explorer is in offline mode."),
 			       lpszUrl);
 	    }
 	}
@@ -161,13 +161,13 @@ winWebFile::winWebFile (/*[in]*/ winWebSession *	pSession,
       if (code != HTTP_STATUS_PROXY_AUTH_REQ)
 	{
 	  trace_error->WriteFormattedLine ("libmpm",
-			      "HTTP %u",
-			      static_cast<unsigned>(code));
+					   "HTTP %u",
+					   static_cast<unsigned>(code));
 	  // return a meaningful error message
 	  char szText[1024];
 	  unsigned long size = sizeof(szText);
 	  string error;
-	  if (HttpQueryInfo(hUrl, HTTP_QUERY_STATUS_TEXT, szText, &size, 0))
+	  if (HttpQueryInfoA(hUrl, HTTP_QUERY_STATUS_TEXT, szText, &size, 0))
 	    {
 	      error = szText;
 	    }

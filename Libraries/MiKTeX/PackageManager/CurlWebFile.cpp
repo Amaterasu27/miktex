@@ -404,5 +404,4 @@ CurlWebFile::ReadInformationals ()
     }
 }
 
-
 #endif // libCURL

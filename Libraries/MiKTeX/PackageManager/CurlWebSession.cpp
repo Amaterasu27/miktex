@@ -57,7 +57,7 @@ CurlWebSession::Initialize ()
 {
   trace_curl->WriteFormattedLine
     ("libmpm",
-     T_("initializing cURL library version %s..."),
+     T_("initializing cURL library version %s"),
      LIBCURL_VERSION);
 
   pCurl = curl_easy_init();
@@ -92,8 +92,8 @@ CurlWebSession::Initialize ()
   else
     {
       FATAL_MPM_ERROR ("CurlWebSession::Initialize",
-		       T_("Invalid FTP mode configured."),
-		       ftpMode.c_str());
+		       T_("Invalid MiKTeX configuration."),
+		       MIKTEX_REGVAL_FTP_MODE);
     }
 
   if (trace_curl->IsEnabled())
@@ -136,7 +136,7 @@ CurlWebSession::Initialize ()
 	    {
 	      FATAL_MPM_ERROR
 		("CurlWebSession::Initialize",
-		 T_("Unsupported proxy user name (colons are not supported)."),
+		 T_("Unsupported proxy user name."),
 		 0);
 	    }
 	  if (proxySettings.password.find(':') != string::npos)
@@ -176,7 +176,7 @@ CurlWebSession::~CurlWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-CurlWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
+CurlWebSession::OpenUrl (/*[in]*/ const char *		lpszUrl,
 			 /*[in]*/ IProgressNotify_ *	pIProgressNotify)
 {
   if (pCurl == 0)

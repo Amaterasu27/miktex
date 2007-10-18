@@ -104,7 +104,8 @@ private:
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_multi_strerror(code));
 #else
-    std::string str = T_("The CURL multi interface returned error code ");
+    std::string str =
+      T_("The CURL multi interface returned an error code: ");
     str += NUMTOSTR(code);
     return (str);
 #endif

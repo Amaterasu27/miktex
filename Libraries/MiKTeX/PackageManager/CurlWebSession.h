@@ -69,7 +69,7 @@ public:
 #if LIBCURL_VERSION_NUM >= 0x70c00
     return (curl_easy_strerror(code));
 #else
-    std::string str = T_("The cURL easy interface returned error code ");
+    std::string str = T_("The cURL easy interface returned an error code: ");
     str += NUMTOSTR(code);
     return (str);
 #endif

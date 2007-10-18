@@ -68,9 +68,9 @@ private:
    _________________________________________________________________________ */
 
 void
-FatalSoapError (/*[in]*/ soap *			pSoap,
+FatalSoapError (/*[in]*/ soap *		pSoap,
 		/*[in]*/ const char *	lpszFile,
-		/*[in]*/ int			line)
+		/*[in]*/ int		line)
 {
   if (soap_check_state(pSoap))
     {
@@ -468,7 +468,7 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
 
   auto_ptr<DirectoryLister>
     pLister (DirectoryLister::Open(directory,
-			   "*" MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX));
+				   "*" MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX));
 
   // create parser object
   TpmParser tpmParser;
@@ -574,8 +574,8 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
   // create "Obsolete" container
   PackageInfo piObsolete;
   piObsolete.deploymentName = "_miktex-obsolete";
-  piObsolete.displayName = "Obsolete";
-  piObsolete.title = "Obsolete packages";
+  piObsolete.displayName = T_("Obsolete");
+  piObsolete.title = T_("Obsolete packages");
   piObsolete.description =
     T_("Packages that were removed from the MiKTeX package repository.");
   for (it2 = packageTable.begin(); it2 != packageTable.end(); ++ it2)
@@ -1122,8 +1122,7 @@ PackageManager::TryGetDefaultPackageRepository
 
 RepositoryType
 MPMCALL
-PackageManager::GetDefaultPackageRepository
-(/*[out]*/ string &	urlOrPath)
+PackageManager::GetDefaultPackageRepository (/*[out]*/ string &	urlOrPath)
 {
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (! TryGetDefaultPackageRepository(repositoryType, urlOrPath))
@@ -1495,7 +1494,7 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
 
 bool
 MIKTEXCALL
-PackageManagerImpl::OnProgress (/*[in]*/ unsigned		level,
+PackageManagerImpl::OnProgress (/*[in]*/ unsigned	level,
 				/*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);

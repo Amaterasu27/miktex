@@ -66,7 +66,7 @@ winWebSession::~winWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-winWebSession::OpenUrl (/*[in]*/ const char *	lpszUrl,
+winWebSession::OpenUrl (/*[in]*/ const char *		lpszUrl,
 			/*[in]*/ IProgressNotify_ *	pIProgressNotify)
 {
   UNUSED_ALWAYS (pIProgressNotify);
@@ -150,14 +150,14 @@ winWebSession::GetLastErrorMessage (/*[out]*/ string &	message)
 	{
 	  unsigned long inetError;
 	  unsigned long length;
-	  if (! InternetGetLastResponseInfo(&inetError, 0, &length)
+	  if (! InternetGetLastResponseInfoA(&inetError, 0, &length)
 	      && GetLastError() == ERROR_INSUFFICIENT_BUFFER)
 	    {
 	      length += 1;
 	      pMsgBuf = LocalAlloc(LMEM_FIXED, length);
 	      if (pMsgBuf != 0)
 		{
-		  if (! InternetGetLastResponseInfo(&inetError,
+		  if (! InternetGetLastResponseInfoA(&inetError,
 				    reinterpret_cast<char*>(pMsgBuf),
 						    &length))
 		    {
@@ -169,28 +169,28 @@ winWebSession::GetLastErrorMessage (/*[out]*/ string &	message)
 	}
       else
 	{
-	  FormatMessage ((FORMAT_MESSAGE_ALLOCATE_BUFFER
-			  | FORMAT_MESSAGE_IGNORE_INSERTS
-			  | FORMAT_MESSAGE_FROM_HMODULE),
-			 GetModuleHandle("wininet.dll"),
-			 lastError,
-			 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			 reinterpret_cast<char*>(&pMsgBuf),
-			 0,
-			 0);
+	  FormatMessageA ((FORMAT_MESSAGE_ALLOCATE_BUFFER
+			   | FORMAT_MESSAGE_IGNORE_INSERTS
+			   | FORMAT_MESSAGE_FROM_HMODULE),
+			  GetModuleHandleA("wininet.dll"),
+			  lastError,
+			  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			  reinterpret_cast<char*>(&pMsgBuf),
+			  0,
+			  0);
 	}
     }
   else
     {
-      FormatMessage ((FORMAT_MESSAGE_ALLOCATE_BUFFER
-		      | FORMAT_MESSAGE_IGNORE_INSERTS
-		      | FORMAT_MESSAGE_FROM_SYSTEM),
-		     0,
-		     lastError,
-		     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		     reinterpret_cast<char*>(&pMsgBuf),
-		     0,
-		     0);
+      FormatMessageA ((FORMAT_MESSAGE_ALLOCATE_BUFFER
+		       | FORMAT_MESSAGE_IGNORE_INSERTS
+		       | FORMAT_MESSAGE_FROM_SYSTEM),
+		      0,
+		      lastError,
+		      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		      reinterpret_cast<char*>(&pMsgBuf),
+		      0,
+		      0);
     }
   if (pMsgBuf == 0)
     {
