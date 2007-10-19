@@ -80,14 +80,14 @@ EditTEXMFPage::OnSetActive ()
 	  listBox.ResetContent ();
 	  if (! theApp.startupConfig.roots.empty())
 	    {
-	      for (CSVList root (theApp.startupConfig.roots.c_str(), T_(';'));
+	      for (CSVList root (theApp.startupConfig.roots.c_str(), ';');
 		   root.GetCurrent();
 		   ++ root)
 		{
 		  int r = listBox.AddString (root.GetCurrent());
 		  if (r == LB_ERR || r == LB_ERRSPACE)
 		    {
-		      FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+		      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 		    }
 		  ++ root;
 		}
@@ -160,11 +160,11 @@ EditTEXMFPage::OnKillActive ()
     {
       try
 	{
-	  theApp.startupConfig.roots = T_("");
+	  theApp.startupConfig.roots = "";
 	  int count = listBox.GetCount();
 	  if (count == LB_ERR)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListBox::GetCount"), 0);
+	      FATAL_WINDOWS_ERROR ("CListBox::GetCount", 0);
 	    }
 	  for (int i = 0; i < count; ++ i)
 	    {
@@ -173,7 +173,7 @@ EditTEXMFPage::OnKillActive ()
 	      theApp.startupConfig.roots += str;
 	      if (i + 1 < count)
 		{
-		  theApp.startupConfig.roots += T_(';');
+		  theApp.startupConfig.roots += ';';
 		}
 	    }
 	  CheckAddTEXMFDirs (theApp.startupConfig.roots, theApp.addTEXMFDirs);
@@ -216,11 +216,11 @@ EditTEXMFPage::OnAdd ()
       CoTaskMemFree (pidl);
       if (! havePath)
 	{
-	  UNEXPECTED_CONDITION (T_("EditTEXMFPage::OnAdd"));
+	  UNEXPECTED_CONDITION ("EditTEXMFPage::OnAdd");
 	}
       if (listBox.AddString(szDir) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	}
       OnSelChange ();
     }
@@ -247,11 +247,11 @@ EditTEXMFPage::OnDelete ()
       int idx = listBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::GetCurSel", 0);
 	}
       if (listBox.DeleteString(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::DeleteString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::DeleteString", 0);
 	}
       OnSelChange ();
     }
@@ -278,22 +278,22 @@ EditTEXMFPage::OnDown ()
       int idx = listBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::GetCurSel", 0);
 	}
       CString str;
       listBox.GetText (idx, str);
       if (listBox.DeleteString(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::DeleteString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::DeleteString", 0);
 	}
       idx += 1;
       if (listBox.InsertString(idx, str) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::InsertString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::InsertString", 0);
 	}
       if (listBox.SetCurSel(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::SetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::SetCurSel", 0);
 	}
       OnSelChange ();
     }
@@ -320,22 +320,22 @@ EditTEXMFPage::OnUp ()
       int idx = listBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::GetCurSel", 0);
 	}
       CString str;
       listBox.GetText (idx, str);
       if (listBox.DeleteString(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::DeleteString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::DeleteString", 0);
 	}
       idx -= 1;
       if (listBox.InsertString(idx, str) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::InsertString"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::InsertString", 0);
 	}
       if (listBox.SetCurSel(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::SetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::SetCurSel", 0);
 	}
       OnSelChange ();
     }
@@ -362,12 +362,12 @@ EditTEXMFPage::OnSelChange ()
       int idx = listBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::GetCurSel", 0);
 	}
       int count = listBox.GetCount();
       if (count < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListBox::GetCount"), 0);
+	  FATAL_WINDOWS_ERROR ("CListBox::GetCount", 0);
 	}
       deleteButton.EnableWindow (TRUE);
       upButton.EnableWindow (idx > 0);

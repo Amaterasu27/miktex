@@ -118,40 +118,40 @@ using namespace std;
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,				\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,				\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  __FILE__,		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    __FILE__,		\
 				    __LINE__)
 #endif
 
@@ -159,7 +159,7 @@ using namespace std;
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,			\
 			      __LINE__)
 #endif
 
@@ -168,7 +168,7 @@ using namespace std;
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -322,12 +322,12 @@ protected:
    _________________________________________________________________________ */
 
 #define COMMON_OPTIONS							\
-    T_("debug"),	no_argument,		0,	T_('d'),	\
-    T_("help"),		no_argument,		0,	T_('h'),	\
-    T_("print-only"),	no_argument,		0,	T_('n'),	\
-    T_("quiet"),	no_argument,		0,	T_('q'),	\
-    T_("verbose"),	no_argument,		0,	T_('v'),	\
-    T_("version"),	no_argument,		0,	T_('V')
+    T_("debug"),	no_argument,		0,	'd',	\
+    T_("help"),		no_argument,		0,	'h',	\
+    T_("print-only"),	no_argument,		0,	'n',	\
+    T_("quiet"),	no_argument,		0,	'q',	\
+    T_("verbose"),	no_argument,		0,	'v',	\
+    T_("version"),	no_argument,		0,	'V'
 
 #define BEGIN_OPTION_MAP(cls)				\
 void							\

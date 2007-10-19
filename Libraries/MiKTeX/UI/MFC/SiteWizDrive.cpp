@@ -116,8 +116,8 @@ SiteWizDrive::ShowDrives ()
 
       char szDrive[4];
       szDrive[0] = char('A') + static_cast<char>(drv);
-      szDrive[1] = T_(':');
-      szDrive[2] = T_('\\');
+      szDrive[1] = ':';
+      szDrive[2] = '\\';
       szDrive[3] = 0;
 
       DWORD fileSystemFlags;
@@ -145,12 +145,12 @@ SiteWizDrive::ShowDrives ()
       szDrive[2] = 0;
 
       CString comboBoxItem (szDrive);
-      comboBoxItem += T_(" (");
+      comboBoxItem += " (";
       comboBoxItem += volumeName;
-      comboBoxItem += T_(')');
+      comboBoxItem += ')';
       if (driveComboBox.AddString(comboBoxItem) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::AddString"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	}
 
       drives.push_back (szDrive);
@@ -163,7 +163,7 @@ SiteWizDrive::ShowDrives ()
       CString str;
       if (! str.LoadString(IDS_NO_DISK))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CString::LoadString"), 0);
+	  FATAL_WINDOWS_ERROR ("CString::LoadString", 0);
 	}
       driveComboBox.AddString (str);
     }
@@ -222,7 +222,7 @@ SiteWizDrive::OnWizardFinish ()
   try
     {
       UpdateData ();
-      PathName path (drives[drive].c_str(), T_("\\"), 0, 0);
+      PathName path (drives[drive].c_str(), "\\", 0, 0);
       pManager->SetDefaultPackageRepository (RepositoryType::MiKTeXDirect,
 					     path.Get());
       return (CPropertyPage::OnWizardFinish());

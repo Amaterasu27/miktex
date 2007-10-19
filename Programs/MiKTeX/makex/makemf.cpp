@@ -30,13 +30,13 @@
 
 const char *
 const lhpref[] = {
-  T_("la"),
-  T_("lb"),
-  T_("lc"),
-  T_("lh"),
-  T_("ll"),
-  T_("rx"),
-  T_("wn"),
+  "la",
+  "lb",
+  "lc",
+  "lh",
+  "ll",
+  "rx",
+  "wn",
   0,
 };
 
@@ -47,9 +47,9 @@ const lhpref[] = {
 
 const char *
 const cspref[] = {
-  T_("cs"),
+  "cs",
   T_("ics"),
-  T_("lcs"),
+  "lcs",
   0,
 };
 
@@ -65,31 +65,31 @@ const cbpref[] = {
   T_("glin"),
   T_("glio"),
   T_("gliu"),
-  T_("gljc"),
-  T_("gljn"),
+  "gljc",
+  "gljn",
   T_("gljo"),
-  T_("glmc"),
+  "glmc",
   T_("glmi"),
-  T_("glmn"),
+  "glmn",
   T_("glmo"),
   T_("glmu"),
-  T_("gltc"),
-  T_("gltn"),
+  "gltc",
+  "gltn",
   T_("glto"),
-  T_("glwc"),
+  "glwc",
   T_("glwi"),
-  T_("glwn"),
+  "glwn",
   T_("glwo"),
   T_("glwu"),
-  T_("glxc"),
+  "glxc",
   T_("glxi"),
-  T_("glxn"),
+  "glxn",
   T_("glxo"),
   T_("glxu"),
-  T_("gmmn"),
+  "gmmn",
   T_("gmmo"),
-  T_("gmtr"),
-  T_("gmxn"),
+  "gmtr",
+  "gmxn",
   T_("gmxo"),
   T_("gomc"),
   T_("gomi"),
@@ -101,32 +101,32 @@ const cbpref[] = {
   T_("goxn"),
   T_("goxo"),
   T_("goxu"),
-  T_("grbl"),
-  T_("grmc"),
+  "grbl",
+  "grmc",
   T_("grmi"),
-  T_("grml"),
-  T_("grmn"),
+  "grml",
+  "grmn",
   T_("grmo"),
   T_("grmu"),
-  T_("grxc"),
+  "grxc",
   T_("grxi"),
-  T_("grxl"),
-  T_("grxn"),
+  "grxl",
+  "grxn",
   T_("grxo"),
   T_("grxu"),
-  T_("gsmc"),
+  "gsmc",
   T_("gsmi"),
-  T_("gsmn"),
+  "gsmn",
   T_("gsmo"),
   T_("gsmu"),
-  T_("gsxc"),
+  "gsxc",
   T_("gsxi"),
-  T_("gsxn"),
+  "gsxn",
   T_("gsxo"),
   T_("gsxu"),
-  T_("gttc"),
+  "gttc",
   T_("gtti"),
-  T_("gttn"),
+  "gttn",
   T_("gtto"),
   T_("gttu"),
   0
@@ -228,7 +228,7 @@ namespace {
   const struct option aLongOptions[] =
   {
     COMMON_OPTIONS,
-    T_("stdout"),	no_argument,		0,	T_('c'),
+    T_("stdout"),	no_argument,		0,	'c',
     0,			no_argument,		0,	0,
   };
 }
@@ -242,7 +242,7 @@ void
 MakeMf::CreateDestinationDirectory ()
 {
   string templ;
-  templ = T_("%R");
+  templ = "%R";
   templ += PathName::DirectoryDelimiter;
   templ += T_("fonts");
   templ += PathName::DirectoryDelimiter;
@@ -296,7 +296,7 @@ MakeMf::Run (/*[in]*/ int		argc,
   // find the driver file
   {
     // try a sauterized driver first
-    string strSauterDriverName = T_("b-");
+    string strSauterDriverName = "b-";
     strSauterDriverName += szDriverName;
     PathName driverPath;
     if (! pSession->FindFile(strSauterDriverName.c_str(),
@@ -364,7 +364,7 @@ MakeMf::Run (/*[in]*/ int		argc,
   else
     {
       // make fully qualified destination file name
-      pathDest.Set (destinationDirectory, szTeXFontname, T_(".mf"));
+      pathDest.Set (destinationDirectory, szTeXFontname, ".mf");
       Verbose (T_("Writing on %s...\n"), Q_(pathDest));
       if (! printOnly)
 	{
@@ -375,13 +375,13 @@ MakeMf::Run (/*[in]*/ int		argc,
 
   PrintOnly (T_("cat <<__END__ > %s"), Q_(pathDest));
 
-  if (HasPrefix(szTeXFontname, T_("ec")) || HasPrefix(szTeXFontname, T_("tc")))
+  if (HasPrefix(szTeXFontname, "ec") || HasPrefix(szTeXFontname, "tc"))
     {
       fprintf (stream, T_("if unknown exbase: input exbase fi;\n"));
       fprintf (stream, T_("gensize:=%0.2f;\n"), true_pt_size);
       fprintf (stream, T_("generate %s;\n"), szDriverName);
     }
-  else if (HasPrefix(szTeXFontname, T_("dc")))
+  else if (HasPrefix(szTeXFontname, "dc"))
     {
       fprintf (stream, T_("if unknown dxbase: input dxbase fi;\n"));
       fprintf (stream, T_("gensize:=%f;\n"), true_pt_size);

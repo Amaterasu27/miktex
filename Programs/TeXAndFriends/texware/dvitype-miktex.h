@@ -48,20 +48,20 @@ public:
   {
     AddOption (MIKTEXTEXT("out-mode\0Set output mode."),
 	       OPT_OUT_MODE, required_argument,
-	       MIKTEXTEXT("MODE"));
+	       "MODE");
     AddOption (MIKTEXTEXT("start-there\0Set starting page."),
 	       OPT_START_THERE, required_argument,
-	       MIKTEXTEXT("PAGESPEC"));
+	       "PAGESPEC");
     AddOption (MIKTEXTEXT("max-pages\0Set maximum number of pages."),
 	       OPT_MAX_PAGES, required_argument,
-	       MIKTEXTEXT("N"));
+	       "N");
     AddOption (MIKTEXTEXT("resolution\0Set desired resolution."),
 	       OPT_RESOLUTION, required_argument,
 	       MIKTEXTEXT("NUM/DEN"));
     AddOption (MIKTEXTEXT("new-mag\0Set new magnification."),
 	       OPT_NEW_MAG,
 	       required_argument,
-	       MIKTEXTEXT("MAG"));
+	       "MAG");
     WebApp::AddOptions ();
   }
 

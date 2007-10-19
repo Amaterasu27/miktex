@@ -104,7 +104,7 @@ GraphicsSpecialImpl::Parse ()
   else
     {
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("unknown graphics special: %s"),
 	 lpsz);
       return (DviSpecialType::Unknown);
@@ -132,7 +132,7 @@ GraphicsSpecialImpl::Parse ()
       if (sscanf_s(lpsz, "%f%2s", &texWidth, unit) != 2)
 	{
 	  log_error->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("invalid width specification: %s"),
 	     lpsz);
 	  return (DviSpecialType::Unknown);
@@ -159,7 +159,7 @@ GraphicsSpecialImpl::Parse ()
 	  if (sscanf_s(lpsz, "%f%2s", &texHeight, unit) != 2)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("invalid width specification: %s"),
 		 lpsz);
 	      return (DviSpecialType::Unknown);

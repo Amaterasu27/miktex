@@ -33,7 +33,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
 		    /*[in]*/ clock_t		clockStart)
 {
   clock_t clockSinceStart = clock() - clockStart;
-  trace_time->WriteFormattedLine (T_("libtexmf"),
+  trace_time->WriteFormattedLine ("libtexmf",
 				  T_("gross execution time: %u ms"),
 				  static_cast<unsigned>(clockSinceStart));
   fprintf (stderr,
@@ -48,13 +48,13 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
 #endif
     }
   HINSTANCE hinstKernel;
-  hinstKernel = LoadLibrary(T_("kernel32.dll"));
+  hinstKernel = LoadLibraryA("kernel32.dll");
   if (hinstKernel == 0)
     {
       return;
     }
   FARPROC pfGetProcessTimes;
-  pfGetProcessTimes = GetProcAddress(hinstKernel, T_("GetProcessTimes"));
+  pfGetProcessTimes = GetProcAddress(hinstKernel, "GetProcessTimes");
   if (pfGetProcessTimes == 0)
     {
       return;
@@ -75,7 +75,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
   tUser = static_cast<DWORD>(tUser64.QuadPart / 10000);
   tKernel = static_cast<DWORD>(tKernel64.QuadPart / 10000);
   trace_time->WriteFormattedLine
-    (T_("libtexmf"),
+    ("libtexmf",
      T_("user mode: %u ms, kernel mode: %u ms, total: %u"),
      static_cast<unsigned>(tUser),
      static_cast<unsigned>(tKernel),
@@ -145,8 +145,8 @@ TeXMFApp::Finalize ()
       trace_mem->Close ();
       trace_mem.reset ();
     }
-  memoryDumpFileName = T_("");
-  jobName = T_("");
+  memoryDumpFileName = "";
+  jobName = "";
   WebAppInputLine::Finalize ();
 }
 
@@ -162,7 +162,7 @@ TeXMFApp::OnTeXMFStartJob ()
   string appName;
   for (const char * lpsz = TheNameOfTheGame(); *lpsz != 0; ++ lpsz)
     {
-      if (*lpsz != T_('-'))	// pdf-e-tex => pdfetex
+      if (*lpsz != '-')		// pdf-e-tex => pdfetex
 	{
 	  appName += *lpsz;
 	}
@@ -188,19 +188,19 @@ TeXMFApp::OnTeXMFFinishJob ()
 {
   if (recordFileNames)
     {
-      StreamWriter writer (PathName(0, jobName.c_str(), T_("fls")));
+      StreamWriter writer (PathName(0, jobName.c_str(), "fls"));
       PathName cwd;
       cwd.SetToCurrentDirectory ();
-      writer.WriteFormattedLine (T_("PWD %s"), cwd.ToUnix().Get());
+      writer.WriteFormattedLine ("PWD %s", cwd.ToUnix().Get());
       vector<FileInfoRecord> fileInfoRecords = pSession->GetFileInfoRecords();
       for (vector<FileInfoRecord>::const_iterator it = fileInfoRecords.begin();
 	   it != fileInfoRecords.end();
 	   ++ it)
 	{
-	  writer.WriteFormattedLine (T_("%s %s"),
+	  writer.WriteFormattedLine ("%s %s",
 				     (it->access == FileAccess::Read
-				      ? T_("INPUT")
-				      : T_("OUTPUT")),
+				      ? "INPUT"
+				      : "OUTPUT"),
 				     PathName(it->fileName).ToUnix().Get());
 	}
       writer.Close ();
@@ -279,13 +279,13 @@ Make only 7-bit characters printable by."),
 Use DIR as the directory to write auxiliary files to."),
 	     FIRST_OPTION_VAL + optBase + OPT_AUX_DIRECTORY,
 	     required_argument,
-	     T_("DIR"));
+	     "DIR");
 
   AddOption (T_("buf-size\0\
 Set buf_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_BUF_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("c-style-errors\0\
 Enable file:line:error style messages."),
@@ -300,7 +300,7 @@ Do not parse the first line of the input line to look for a dump name and/or\
 Set error_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_ERROR_LINE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   if (isTeXProgram)
     {
@@ -308,23 +308,23 @@ Set error_line to N."),
 Set extra_mem_bot to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_BOT,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
-  if (isTeXProgram || AmI(T_("mpost")))
+  if (isTeXProgram || AmI("mpost"))
     {
       AddOption (T_("extra-mem-top\0\
 Set extra_mem_top to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_TOP,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
   AddOption (T_("half-error-line\0\
 Set half_error_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_HALF_ERROR_LINE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("halt-on-error\0\
 Stop after the first error."),
@@ -342,37 +342,37 @@ Set the interaction mode; MODE must be one of:\
  batchmode, nonstopmode, scrollmode, errorstopmode."),
 	     FIRST_OPTION_VAL + optBase + OPT_INTERACTION,
 	     required_argument,
-	     T_("MODE"));
+	     "MODE");
 
   AddOption (T_("job-name\0\
 Set the job name and hence the name(s) of the output file(s)."),
 	     FIRST_OPTION_VAL + optBase + OPT_JOB_NAME,
 	     required_argument,
-	     T_("NAME"));
+	     "NAME");
 
   AddOption (T_("job-time\0\
 Set the job time.  Take FILE's timestamp as the reference."),
 	     FIRST_OPTION_VAL + optBase + OPT_JOB_TIME,
 	     required_argument,
-	     T_("FILE"));
+	     "FILE");
 
   AddOption (T_("main-memory\0\
 Set main_memory to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAIN_MEMORY,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("max-print-line\0\
 Set max_print_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_PRINT_LINE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("max-strings\0\
 Set max_strings to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_STRINGS,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("no-c-style-errors\0\
 Disable file:line:error style messages."),
@@ -382,13 +382,13 @@ Disable file:line:error style messages."),
 Use DIR as the directory to write output files to."),
 	     FIRST_OPTION_VAL + optBase + OPT_OUTPUT_DIRECTORY,
 	     required_argument,
-	     T_("DIR"));
+	     "DIR");
 
   AddOption (T_("param-size\0\
 Set param_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_PARAM_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("parse-first-line\0\
 Parse the first line of the input line to look for a dump name and/or\
@@ -402,14 +402,14 @@ Parse the first line of the input line to look for a dump name and/or\
 Set pool_free to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_POOL_FREE,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
   AddOption (T_("pool-size\0\
 Set pool_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_POOL_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("quiet\0\
 Suppress all output (except errors)."),
@@ -424,7 +424,7 @@ Turn on the file name recorder to leave a trace of the files\
 Set stack_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_STACK_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("strict\0\
 Disable MiKTeX extensions."),
@@ -437,14 +437,14 @@ Disable MiKTeX extensions."),
 Set strings_free to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_STRINGS_FREE,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
   AddOption (T_("string-vacancies\0\
 Set string_vacancies to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_STRING_VACANCIES,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("time-statistics\0\
 Show processing time statistics."),
@@ -454,7 +454,7 @@ Show processing time statistics."),
 Use NAME instead of program name when loading internal tables."),
 	     FIRST_OPTION_VAL + optBase + OPT_UNDUMP,
 	     required_argument,
-	     T_("NAME"));
+	     "NAME");
 
   if (IsFeatureEnabled(Feature::TCX))
     {
@@ -463,38 +463,38 @@ Use the TCXNAME translation table to set the mapping of input\
 characters and re-mapping of output characters."),
 		 FIRST_OPTION_VAL + optBase + OPT_TCX,
 		 required_argument,
-		 T_("TCXNAME"));
+		 "TCXNAME");
     }
 
   // old option names
   if (! invokedAsInitProgram)
     {
-      AddOption (T_("ini"), T_("initialize"));
+      AddOption ("ini", "initialize");
     }
-  AddOption (T_("silent"), T_("quiet"));
+  AddOption ("silent", "quiet");
   if (IsFeatureEnabled(Feature::TCX))
     {
-      AddOption (T_("translate-file"), T_("tcx"));
+      AddOption ("translate-file", "tcx");
     }
 
   // supported Web2C options
   if (IsFeatureEnabled(Feature::EightBitChars))
     {
-      AddOption (T_("8bit"), T_("enable-8bit-chars"));
+      AddOption ("8bit", "enable-8bit-chars");
     }
-  AddOption (T_("file-line-error"), T_("c-style-errors"));
-  AddOption (T_("file-line-error-style"), T_("c-style-errors"));
-  AddOption (T_("jobname"), T_("job-name"));
-  AddOption (T_("no-file-line-error"), T_("no-c-style-errors"));
-  AddOption (T_("no-parse-first-line"), T_("dont-parse-first-line"));
-  AddOption (T_("progname"), T_("alias"));
+  AddOption ("file-line-error", "c-style-errors");
+  AddOption ("file-line-error-style", "c-style-errors");
+  AddOption ("jobname", "job-name");
+  AddOption ("no-file-line-error", "no-c-style-errors");
+  AddOption ("no-parse-first-line", "dont-parse-first-line");
+  AddOption ("progname", "alias");
 
   // unsupported Web2C options
-  AddOption (T_("default-translate-file"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("maketex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("mktex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("no-maketex\0"), OPT_UNSUPPORTED, required_argument);
-  AddOption (T_("no-mktex\0"), OPT_UNSUPPORTED, required_argument);
+  AddOption ("default-translate-file", OPT_UNSUPPORTED, required_argument);
+  AddOption ("maketex\0", OPT_UNSUPPORTED, required_argument);
+  AddOption ("mktex\0", OPT_UNSUPPORTED, required_argument);
+  AddOption ("no-maketex\0", OPT_UNSUPPORTED, required_argument);
+  AddOption ("no-mktex\0", OPT_UNSUPPORTED, required_argument);
 }
 
 /* _________________________________________________________________________
@@ -524,7 +524,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       auxDirectory.MakeAbsolute ();
       if (! Directory::Exists(auxDirectory))
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
+	  FATAL_MIKTEX_ERROR ("TeXMFApp::ProcessOption",
 			      T_("The specified directory does not exist."),
 			      auxDirectory.Get());
 	}
@@ -568,25 +568,25 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_INTERACTION:
-      if (StringCompare(lpszOptArg, T_("batchmode")) == 0)
+      if (StringCompare(lpszOptArg, "batchmode") == 0)
 	{
 	  interactionMode = 0;
 	}
-      else if (StringCompare(lpszOptArg, T_("nonstopmode")) == 0)
+      else if (StringCompare(lpszOptArg, "nonstopmode") == 0)
 	{
 	  interactionMode = 1;
 	}
-      else if (StringCompare(lpszOptArg, T_("scrollmode")) == 0)
+      else if (StringCompare(lpszOptArg, "scrollmode") == 0)
 	{
 	  interactionMode = 2;
 	}
-      else if (StringCompare(lpszOptArg, T_("errorstopmode")) == 0)
+      else if (StringCompare(lpszOptArg, "errorstopmode") == 0)
 	{
 	  interactionMode = 3;
 	}
       else
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
+	  FATAL_MIKTEX_ERROR ("TeXMFApp::ProcessOption",
 			      T_("Invalid option argument."),
 			      lpszOptArg);
 	}
@@ -644,7 +644,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       outputDirectory.MakeAbsolute ();
       if (! Directory::Exists(outputDirectory))
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::ProcessOption"),
+	  FATAL_MIKTEX_ERROR ("TeXMFApp::ProcessOption",
 			      T_("The specified directory does not exist."),
 			      outputDirectory.Get());
 	}
@@ -729,12 +729,12 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
 
   reader.Close ();
 
-  if (! (firstLine.substr(0, 2) == T_("%&")))
+  if (! (firstLine.substr(0, 2) == "%&"))
     {
       return (false);
     }
 
-  argv.Build (T_("foo"), firstLine.c_str() + 2);
+  argv.Build ("foo", firstLine.c_str() + 2);
 
   return (argv.GetArgc() > 1);
 }
@@ -763,7 +763,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 
   int optidx;
 
-  if (argv.GetArgc() > 1 && argv[1][0] != T_('-'))
+  if (argv.GetArgc() > 1 && argv[1][0] != '-')
     {
       optidx = 2;
       if (memoryDumpFileName.empty())
@@ -859,18 +859,18 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
   if (renew)
     {
       PathName exe;
-      if (! pSession->FindFile(T_("initexmf"), FileType::EXE, exe))
+      if (! pSession->FindFile("initexmf", FileType::EXE, exe))
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
+	  FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
 			      (T_("\
 The MiKTeX configuration utility could not be found.")),
 			      0);
 	}
       CommandLineBuilder arguments;
-      arguments.AppendOption (T_("--dump-by-name="), szDumpName);
+      arguments.AppendOption ("--dump-by-name=", szDumpName);
       if (isTeXProgram)
 	{
-	  arguments.AppendOption (T_("--engine="),
+	  arguments.AppendOption ("--engine=",
 				  GetProgramName());
 	}
       int exitCode;
@@ -888,7 +888,7 @@ The MiKTeX configuration utility could not be found.")),
 
   if (! haveIt)
     {
-      FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
+      FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
 			  T_("The memory dump file could not be found."),
 			  fileName.Get());
     }
@@ -902,7 +902,7 @@ The MiKTeX configuration utility could not be found.")),
     {
       if (stream.Read(pBuf, size) != size)
 	{
-	  FATAL_MIKTEX_ERROR (T_("TeXMFApp::OpenMemoryDumpFile"),
+	  FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
 			      T_("Premature end of memory dump file."),
 			      path.Get());
 	}
@@ -943,9 +943,9 @@ TeXMFApp::ProcessCommandLineOptions ()
 
   if (parseFirstLine
       && GetArgC() > 1
-      && GetArgV()[1][0] != T_('&')
-      && GetArgV()[1][0] != T_('*') // <fixme/>
-      && GetArgV()[1][0] != T_('\\')
+      && GetArgV()[1][0] != '&'
+      && GetArgV()[1][0] != '*' // <fixme/>
+      && GetArgV()[1][0] != '\\'
       && (memoryDumpFileName.empty() || GetTcxFileName().Empty()))
     {
       ParseFirstLine (GetArgV()[1]);
@@ -1009,12 +1009,12 @@ IsFileNameArgument (/*[in]*/ const char * lpszArg)
 	  return (false);
 	}
       char ch = lpszArg[l];
-      if (ch == T_('<')
-	  || ch == T_('>')
-	  || ch == T_('"')
-	  || ch == T_('|')
-	  || ch == T_('*')
-	  || ch == T_('?'))
+      if (ch == '<'
+	  || ch == '>'
+	  || ch == '"'
+	  || ch == '|'
+	  || ch == '*'
+	  || ch == '?')
 	{
 	  return (false);
 	}
@@ -1053,7 +1053,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	  fileNameArgIdx = 1;
 	}
       else if (c4pargc == 3
-	       && c4pargv[1][0] == T_('&')
+	       && c4pargv[1][0] == '&'
 	       && IsFileNameArgument(c4pargv[2])
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
@@ -1062,7 +1062,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	  fileNameArgIdx = 2;
 	}
       else if (c4pargc == 3
-	       && strcmp(c4pargv[2], T_("\\dump")) == 0
+	       && strcmp(c4pargv[2], "\\dump") == 0
 	       && IsFileNameArgument(c4pargv[1])
 	       && SessionWrapper(true)->FindFile(c4pargv[1],
 						 inputFileType,
@@ -1071,8 +1071,8 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	  fileNameArgIdx = 1;
 	}
       else if (c4pargc == 4
-	       && c4pargv[1][0] == T_('&')
-	       && strcmp(c4pargv[3], T_("\\dump")) == 0
+	       && c4pargv[1][0] == '&'
+	       && strcmp(c4pargv[3], "\\dump") == 0
 	       && IsFileNameArgument(c4pargv[2])
 	       && SessionWrapper(true)->FindFile(c4pargv[2],
 						 inputFileType,
@@ -1190,17 +1190,17 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 
   while (*lpszCommandLineTemplate != 0)
     {
-      if (lpszCommandLineTemplate[0] == T_('%')
+      if (lpszCommandLineTemplate[0] == '%'
 	  && lpszCommandLineTemplate[1] != 0)
 	{
 	  switch (lpszCommandLineTemplate[1])
 	    {
 	    default:
 	      break;
-	    case T_('%'):
-	      commandLine += T_('%');
+	    case '%':
+	      commandLine += '%';
 	      break;
-	    case T_('f'):
+	    case 'f':
 	      {
 		PathName unmangled = UnmangleNameOfFile(editFileName.Get());
 		PathName path;
@@ -1216,16 +1216,16 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 		  }
 		break;
 	      }
-	    case T_('h'):
+	    case 'h':
 	      /* <todo/> */
 	      break;
-	    case T_('t'):
+	    case 't':
 	      commandLine += transcriptFileName.Get();
 	      break;
-	    case T_('l'):
+	    case 'l':
 	      commandLine += NUMTOSTR(editLineNumber);
 	      break;
-	    case T_('m'):
+	    case 'm':
 	      /* <todo/> */
 	      break;
 	    }
@@ -1256,7 +1256,7 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 		    &pi)
       == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("TeXMFApp::InvokeEditorIfNecessary"),
+      FATAL_MIKTEX_ERROR ("TeXMFApp::InvokeEditorIfNecessary",
 			  T_("The editor could not be started."),
 			  commandLine.c_str());
     }

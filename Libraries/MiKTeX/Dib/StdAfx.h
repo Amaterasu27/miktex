@@ -27,7 +27,3 @@
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Debug>
 #include <MiKTeX/Core/Trace>
-
-using namespace MiKTeX::Core;
-using namespace MiKTeX;
-using namespace std;

@@ -67,7 +67,7 @@ GotoPageDialog::OnInitDialog ()
 	  MIKTEX_ASSERT (this->pageIdx < pageComboBox.GetCount());
 	  if (pageComboBox.SetCurSel(this->pageIdx) < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("GotoPageDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("GotoPageDialog::OnInitDialog");
 	    }
 	}
     }

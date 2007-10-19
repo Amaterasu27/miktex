@@ -98,7 +98,7 @@ string
 ToRoman (/*[in]*/ unsigned n)
 {
   string result;
-  const char * NUMERALS = T_("m2d5c2l5x2v5i");
+  const char * NUMERALS = "m2d5c2l5x2v5i";
   unsigned j = 0;
   unsigned v = 1000;
   for (;;)
@@ -113,11 +113,11 @@ ToRoman (/*[in]*/ unsigned n)
 	  return (result);
 	}
       unsigned k = j + 2;
-      unsigned u = v / (NUMERALS[k - 1] - T_('0'));
-      if (NUMERALS[k - 1] == T_('2'))
+      unsigned u = v / (NUMERALS[k - 1] - '0');
+      if (NUMERALS[k - 1] == '2')
 	{
 	  k += 2;
-	  u /= (NUMERALS[k - 1] - T_('0'));
+	  u /= (NUMERALS[k - 1] - '0');
 	}
       if (n + u >= v)
 	{
@@ -127,7 +127,7 @@ ToRoman (/*[in]*/ unsigned n)
       else
 	{
 	  j += 2;
-	  v /= (NUMERALS[j - 1] - T_('0'));
+	  v /= (NUMERALS[j - 1] - '0');
 	}
     }
 }
@@ -192,7 +192,7 @@ DviPageImpl::DviPageImpl (/*[in]*/ DviImpl *	pDviImpl,
     {
       if (k > 0)
 	{
-	  pageName += T_('-');
+	  pageName += '-';
 	}
       if (counts[k] > 0)
 	{
@@ -205,7 +205,7 @@ DviPageImpl::DviPageImpl (/*[in]*/ DviImpl *	pDviImpl,
     }
 
   tracePage->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("created page object '%s'"),
      pageName.c_str());
 
@@ -272,7 +272,7 @@ DviPageImpl::AddSpecial (/*[in]*/ DviSpecial * pSpecial)
       if (pageMode == DviPageMode::Auto)
 	{
 	  tracePage->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("switching to Dvips mode on page '%s'"),
 	     pageName.c_str());
 	  pageMode = DviPageMode::Dvips;
@@ -525,7 +525,7 @@ DviPageImpl::MakeDviBitmap
   bitmaps.reserve (1000 / shrinkFactor);
 
   traceBitmap->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("bitmap %d; bounding box: %d,%d,%d,%d"),
      bitmaps.size(),
      bitmap.x,
@@ -541,7 +541,7 @@ DviPageImpl::MakeDviBitmap
   bitmap.pPixels = malloc(rasterSize);
   if (bitmap.pPixels == 0)
     {
-      OUT_OF_MEMORY (T_("DviPageImpl::MakeDviBitmap"));
+      OUT_OF_MEMORY ("DviPageImpl::MakeDviBitmap");
     }
   size += rasterSize;
   totalSize += rasterSize;
@@ -857,7 +857,7 @@ DviPageImpl::GetRule (/*[in]*/ int idx)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviPageImpl::GetRule"));
+	  UNEXPECTED_CONDITION ("DviPageImpl::GetRule");
 	}
     }
   else
@@ -884,7 +884,7 @@ DviPageImpl::GetSpecial (/*[in]*/ int idx)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviPageImpl::GetSpecial"));
+	  UNEXPECTED_CONDITION ("DviPageImpl::GetSpecial");
 	}
     }
   else
@@ -941,7 +941,7 @@ DviPageImpl::Unlock ()
       if (nLocks == 0 && autoClean)
 	{
 	  tracePage->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("auto-cleaning page '%s'"),
 	     pageName.c_str());
 	  FreeContents (false, false);
@@ -1026,21 +1026,21 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
     }
   gsOut.Close ();
   gsErr.Close ();
-  tracePage->WriteLine (T_("libdvi"), T_("Dvips transcript:"));
-  tracePage->WriteLine (T_("libdvi"), dvipsTranscript.c_str());
-  tracePage->WriteLine (T_("libdvi"), T_("Ghostscript transcript:"));
-  tracePage->WriteLine (T_("libdvi"), gsTranscript.c_str());
+  tracePage->WriteLine ("libdvi", T_("Dvips transcript:"));
+  tracePage->WriteLine ("libdvi", dvipsTranscript.c_str());
+  tracePage->WriteLine ("libdvi", T_("Ghostscript transcript:"));
+  tracePage->WriteLine ("libdvi", gsTranscript.c_str());
   MIKTEX_ASSERT (pDvips.get() != 0);
   if (pDvips->get_ExitCode() != 0)
     {
-      FATAL_DVI_ERROR (T_("DviPageImpl::MakeDibChunks"),
+      FATAL_DVI_ERROR ("DviPageImpl::MakeDibChunks",
 		       T_("The page could not be rendered."),
 		       dvipsTranscript.c_str());
     }
   MIKTEX_ASSERT (pGhostscript.get() != 0);
   if (pGhostscript->get_ExitCode() != 0)
     {
-      FATAL_DVI_ERROR (T_("DviPageImpl::MakeDibChunks"),
+      FATAL_DVI_ERROR ("DviPageImpl::MakeDibChunks",
 		       T_("The page could not be rendered."),
 		       gsTranscript.c_str());
     }
@@ -1060,7 +1060,7 @@ DviPageImpl::DvipsTranscriptReader (/*[in]*/ void * p)
     {
 #define CHUNK_SIZE 64
       char buf[ CHUNK_SIZE ];
-      This->dvipsTranscript = T_("");
+      This->dvipsTranscript = "";
       try
 	{
 	  size_t n;
@@ -1095,7 +1095,7 @@ DviPageImpl::GhostscriptTranscriptReader (/*[in]*/ void * p)
     {
 #define CHUNK_SIZE 64
       char buf[ CHUNK_SIZE ];
-      This->gsTranscript = T_("");
+      This->gsTranscript = "";
       try
 	{
 	  size_t n;
@@ -1131,7 +1131,7 @@ DviPageImpl::OnNewChunk (/*[in]*/ DibChunk * pChunk)
   const BITMAPINFO * pBitmapInfo = pChunk->GetBitmapInfo();
 
   traceBitmap->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("new DIB chunk %d; bounding box: %d,%d,%d,%d"),
      dibChunks.size(),
      pChunk->GetX(),
@@ -1172,22 +1172,22 @@ DviPageImpl::StartDvips ()
 				       FileType::EXE,
 				       dvipsPath))
     {
-      FATAL_DVI_ERROR (T_("DviPageImpl::StartDvips"),
+      FATAL_DVI_ERROR ("DviPageImpl::StartDvips",
 		       T_("The Dvips utility could not be found."),
 		       0);
     }
 
   // make Dvips command line
   CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("-D"), NUMTOSTR(pDviImpl->GetResolution()));
+  commandLine.AppendOption ("-D", NUMTOSTR(pDviImpl->GetResolution()));
   string metafontMode = pDviImpl->GetMetafontMode();
   if (! metafontMode.empty())
     {
-      commandLine.AppendOption (T_("-mode "), metafontMode.c_str());
+      commandLine.AppendOption ("-mode ", metafontMode.c_str());
     }
-  commandLine.AppendOption (T_("-f"), T_("1"));
-  commandLine.AppendOption (T_("-p="), NUMTOSTR(pageIdx + 1));
-  commandLine.AppendOption (T_("-l"), NUMTOSTR(pageIdx + 1));
+  commandLine.AppendOption ("-f", "1");
+  commandLine.AppendOption ("-p=", NUMTOSTR(pageIdx + 1));
+  commandLine.AppendOption ("-l", NUMTOSTR(pageIdx + 1));
   if (! pDviImpl->HavePaperSizeSpecial())
     {
       PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
@@ -1197,20 +1197,20 @@ DviPageImpl::StartDvips ()
 	{
 	  swap (width, height);
 	}
-      commandLine.AppendOption (T_("-T"),
-				(string(NUMTOSTR(width)) + T_("bp")
-				 + T_(',')
-				 + NUMTOSTR(height) + T_("bp")));
+      commandLine.AppendOption ("-T",
+				(string(NUMTOSTR(width)) + "bp"
+				 + ','
+				 + NUMTOSTR(height) + "bp"));
     }
-  commandLine.AppendOption (T_("-Ic"));
-  commandLine.AppendOption (T_("-MiKTeX:nolandscape"));
-  if (SessionWrapper(true)->GetConfigValue(T_("Dvips"),
-					   T_("Pedantic"),
+  commandLine.AppendOption ("-Ic");
+  commandLine.AppendOption ("-MiKTeX:nolandscape");
+  if (SessionWrapper(true)->GetConfigValue("Dvips",
+					   "Pedantic",
 					   false))
     {
-      commandLine.AppendOption (T_("-MiKTeX:pedantic"));
+      commandLine.AppendOption ("-MiKTeX:pedantic");
     }
-  commandLine.AppendOption (T_("-MiKTeX:allowallpaths"));
+  commandLine.AppendOption ("-MiKTeX:allowallpaths");
   commandLine.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
@@ -1249,7 +1249,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   string res =
     NUMTOSTR(static_cast<double>(pDviImpl->GetResolution())
 	     / shrinkFactor);
-  commandLine.AppendOption (T_("-r"), res + T_('x') + res);
+  commandLine.AppendOption ("-r", res + 'x' + res);
   PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
   int width = paperSizeInfo.width;
   int height = paperSizeInfo.height;
@@ -1263,21 +1263,21 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   height = 
     static_cast<int>(((pDviImpl->GetResolution() * height) / 72.0)
 		     / shrinkFactor);
-  commandLine.AppendOption (T_("-g"),
+  commandLine.AppendOption ("-g",
 			    (string(NUMTOSTR(width))
-			     + T_('x')
+			     + 'x'
 			     + NUMTOSTR(height)));
-  commandLine.AppendOption (T_("-sDEVICE="), T_("bmp16m"));
-  commandLine.AppendOption (T_("-q"));
-  commandLine.AppendOption (T_("-dBATCH"));
-  commandLine.AppendOption (T_("-dNOPAUSE"));
-  commandLine.AppendOption (T_("-dSAFER"));
-  commandLine.AppendOption (T_("-sstdout="), T_("%stderr"));
-  commandLine.AppendOption (T_("-dTextAlphaBits="), T_("4"));
-  commandLine.AppendOption (T_("-dGraphicsAlphaBits="), T_("4"));
-  commandLine.AppendOption (T_("-dDOINTERPOLATE"));
-  commandLine.AppendOption (T_("-sOutputFile="), T_("-"));
-  commandLine.AppendArgument (T_("-"));
+  commandLine.AppendOption ("-sDEVICE=", "bmp16m");
+  commandLine.AppendOption ("-q");
+  commandLine.AppendOption ("-dBATCH");
+  commandLine.AppendOption ("-dNOPAUSE");
+  commandLine.AppendOption ("-dSAFER");
+  commandLine.AppendOption ("-sstdout=", "%stderr");
+  commandLine.AppendOption ("-dTextAlphaBits=", "4");
+  commandLine.AppendOption ("-dGraphicsAlphaBits=", "4");
+  commandLine.AppendOption ("-dDOINTERPOLATE");
+  commandLine.AppendOption ("-sOutputFile=", "-");
+  commandLine.AppendArgument ("-");
 
   ProcessStartInfo processStartInfo;
 

@@ -66,18 +66,18 @@ PrintOptionsPage::OnInitDialog ()
 	   SessionWrapper(true)->GetMETAFONTMode(idx, &mode); ++ idx)
 	{
 	  CString modeString = mode.szMnemonic;
-	  modeString += T_(" (");
+	  modeString += " (";
 	  modeString += mode.szDescription;
-	  modeString += T_(")");
+	  modeString += ")";
 	  if (modeComboBox.AddString(modeString) < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("PrintOptionsPage::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("PrintOptionsPage::OnInitDialog");
 	    }
 	  if (idx == metafontModeIdx)
 	    {
 	      if (modeComboBox.SetCurSel(idx) < 0)
 		{
-		  UNEXPECTED_CONDITION (T_("PrintOptionsPage::OnInitDialog"));
+		  UNEXPECTED_CONDITION ("PrintOptionsPage::OnInitDialog");
 		}
 	      resolution = mode.iHorzRes;
 	      resolutionControl.SetWindowText (NUMTOSTR(resolution));
@@ -156,7 +156,7 @@ PrintOptionsPage::OnChangeMode ()
       int idx = modeComboBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::GetCurSel", 0);
 	}
       MIKTEXMFMODE mode;
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))

@@ -39,7 +39,7 @@ DiscardLine (/*[in]*/ C4P_text & textfile)
   MIKTEX_API_BEGIN ("DiscardLine");
   textfile.AssertValid ();
   // <fixme>macintosh</fixme>
-  while (! feof(textfile) && GetChar(textfile) != T_('\n'))
+  while (! feof(textfile) && GetChar(textfile) != '\n')
     {
       ;
     }
@@ -77,16 +77,16 @@ GetInteger (/*[in]*/ C4P_text & textfile)
   MIKTEX_API_BEGIN ("GetInteger");
   textfile.AssertValid ();
   int ch = GetChar(textfile);
-  int sign = (ch == T_('-') ? -1 : 1);
+  int sign = (ch == '-' ? -1 : 1);
   C4P_integer result = 0;
-  if (ch == T_('+') || ch == T_('-'))
+  if (ch == '+' || ch == '-')
     {
       ch = GetChar(textfile);
     }
   while (isdigit(ch))
     {
       result *= 10;
-      result += (ch - T_('0'));
+      result += (ch - '0');
       ch = GetChar(textfile);
     }
   return (result * sign);
@@ -102,7 +102,7 @@ MIKTEXMFAPI(C4P_real)
 GetReal (/*[in]*/ C4P_text & /*textfile*/)
 {
   MIKTEX_API_BEGIN ("GetReal");
-  UNIMPLEMENTED (T_("GetReal"));
+  UNIMPLEMENTED ("GetReal");
   MIKTEX_API_END ("GetReal");
 }
 

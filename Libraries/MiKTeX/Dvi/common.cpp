@@ -96,7 +96,7 @@ InputStream::Read (/*[out]*/ void *	pBytes,
 	{
 	  if (! allowEof)
 	    {
-	      FATAL_DVI_ERROR (T_("InputStream::Read"),
+	      FATAL_DVI_ERROR ("InputStream::Read",
 			       T_("Unexpected end of stream."),
 			       fileName.Get());
 	    }
@@ -107,7 +107,7 @@ InputStream::Read (/*[out]*/ void *	pBytes,
 	}
       else if (idx + nBytes > this->nBytes)
 	{
-	  UNEXPECTED_CONDITION (T_("InputStream::Read"));
+	  UNEXPECTED_CONDITION ("InputStream::Read");
 	}
       else
 	{
@@ -122,7 +122,7 @@ InputStream::Read (/*[out]*/ void *	pBytes,
 	{
 	  if (! allowEof)
 	    {
-	      FATAL_DVI_ERROR (T_("InputStream::Read"),
+	      FATAL_DVI_ERROR ("InputStream::Read",
 			       T_("Unexpected end of file."),
 			       fileName.Get());
 	    }
@@ -145,7 +145,7 @@ InputStream::SkipBytes (/*[in]*/ long count)
 {
   if (pBytes != 0)
     {
-      UNEXPECTED_CONDITION (T_("InputStream::SkipBytes"));
+      UNEXPECTED_CONDITION ("InputStream::SkipBytes");
     }
   else
     {
@@ -164,7 +164,7 @@ InputStream::SetReadPosition (/*[in]*/ long		offset,
 {
   if (pBytes != 0)
     {
-      UNEXPECTED_CONDITION (T_("InputStream::SkipBytes"));
+      UNEXPECTED_CONDITION ("InputStream::SkipBytes");
     }
   else
     {
@@ -182,7 +182,7 @@ InputStream::GetReadPosition ()
 {
   if (pBytes != 0)
     {
-      UNEXPECTED_CONDITION (T_("InputStream::SkipBytes"));
+      UNEXPECTED_CONDITION ("InputStream::SkipBytes");
     }
   else
     {
@@ -233,7 +233,7 @@ DviException::DviException
  /*[in]*/ const char *	lpszMessage,
  /*[in]*/ const char *	lpszInfo,
  /*[in]*/ const char *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+ /*[in]*/ int		sourceLine)
   : MiKTeXException (lpszProgramInvocationName,
 		     lpszMessage,
 		     lpszInfo,
@@ -261,7 +261,7 @@ DviFileInUseException::DviFileInUseException
  /*[in]*/ const char *	lpszMessage,
  /*[in]*/ const char *	lpszInfo,
  /*[in]*/ const char *	lpszSourceFile,
- /*[in]*/ int			sourceLine)
+ /*[in]*/ int		sourceLine)
   : DviException (lpszProgramInvocationName,
 		  lpszMessage,
 		  lpszInfo,
@@ -348,7 +348,7 @@ FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
 	       /*[in]*/ const char *	lpszMessage,
 	       /*[in]*/ const char *	lpszInfo,
 	       /*[in]*/ const char *	lpszSourceFile,
-	       /*[in]*/ int			sourceLine)
+	       /*[in]*/ int		sourceLine)
 {
   UNUSED_ALWAYS (lpszMiktexFunction);
   throw DviException (0,

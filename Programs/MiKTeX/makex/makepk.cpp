@@ -217,31 +217,31 @@ MakePk::CreateDestinationDirectory ()
   string templ2;
   for (const char * lpsz = templ1.c_str(); *lpsz != 0; ++ lpsz)
     {
-      if (lpsz[0] == T_('%'))
+      if (lpsz[0] == '%')
 	{
 	  switch (lpsz[1])
 	    {
 	    default:
 	      break;
-	    case T_('%'):
-	      templ2 += T_('%');
+	    case '%':
+	      templ2 += '%';
 	      break;
-	    case T_('R'):
-	      templ2 += T_("%R");
+	    case 'R':
+	      templ2 += "%R";
 	      break;
-	    case T_('b'):
+	    case 'b':
 	      templ2 += NUMTOSTR(bdpi);
 	      break;
-	    case T_('d'):
+	    case 'd':
 	      templ2 += NUMTOSTR(dpi);
 	      break;
-	    case T_('m'):
+	    case 'm':
 	      templ2 += (modeless ? T_("modeless") : mfMode);
 	      break;
-	    case T_('s'):
+	    case 's':
 	      templ2 += supplier.Get();
 	      break;
-	    case T_('t'):
+	    case 't':
 	      templ2 += typeface.Get();
 	      break;
 	    }
@@ -271,24 +271,24 @@ MakePk::MakePKFilename (/*[in]*/ const char *		lpszName,
   string templ =
     pSession->GetConfigValue(MIKTEX_REGKEY_CORE,
 			     MIKTEX_REGVAL_PK_FN_TEMPLATE,
-			     T_("%f.pk"));
+			     "%f.pk");
   string temp;
   for (const char * lpsz = templ.c_str(); *lpsz != 0; ++ lpsz)
     {
-      if (lpsz[0] == T_('%'))
+      if (lpsz[0] == '%')
 	{
 	  switch (lpsz[1])
 	    {
-	    case T_('%'):
-	      temp += T_('%');
+	    case '%':
+	      temp += '%';
 	      break;
-	    case T_('f'):
+	    case 'f':
 	      temp += lpszName;
 	      break;
-	    case T_('b'):
+	    case 'b':
 	      temp += NUMTOSTR(bdpi);
 	      break;
-	    case T_('d'):
+	    case 'd':
 	      temp += NUMTOSTR(dpi);
 	      break;
 	    }
@@ -333,8 +333,8 @@ GetInstructionParam (/*[in]*/ const string &	str,
 		     /*[in]*/ const string &	instruction,
 		     /*[out]*/ string &		param)
 {
-  param = T_("");
-  for (Tokenizer tok (str.c_str(), T_(" \t")); tok.GetCurrent() != 0; ++ tok)
+  param = "";
+  for (Tokenizer tok (str.c_str(), " \t"); tok.GetCurrent() != 0; ++ tok)
     {
       if (instruction == tok.GetCurrent())
 	{
@@ -356,7 +356,7 @@ MakePk::ExtraPS2PKOptions (/*[in]*/ const FontMapEntry &	mapEntry,
 {
   if (mapEntry.encFile.length() > 0)
     {
-      arguments.AppendOption (T_("-e"));
+      arguments.AppendOption ("-e");
       arguments.AppendArgument (mapEntry.encFile);
     }
 
@@ -366,7 +366,7 @@ MakePk::ExtraPS2PKOptions (/*[in]*/ const FontMapEntry &	mapEntry,
 			  T_("ExtendFont"),
 			  param))
     {
-      arguments.AppendOption (T_("-E"));
+      arguments.AppendOption ("-E");
       arguments.AppendArgument (param);
     }
 
@@ -374,7 +374,7 @@ MakePk::ExtraPS2PKOptions (/*[in]*/ const FontMapEntry &	mapEntry,
 			  T_("SlantFont"),
 			  param))
     {
-      arguments.AppendOption (T_("-S"));
+      arguments.AppendOption ("-S");
       arguments.AppendArgument (param);
     }
 }
@@ -397,7 +397,7 @@ MakePk::RunGSF2PK (/*[in]*/ const FontMapEntry &	mapEntry,
   arguments.AppendArgument (mapEntry.fontFile);
   arguments.AppendArgument (NUMTOSTR(dpi));
   arguments.AppendArgument (lpszPkName);
-  if (! RunProcess(T_("gsf2pk"), arguments.Get()))
+  if (! RunProcess("gsf2pk", arguments.Get()))
     {
       FatalError (T_("GSF2PK failed on %s."), Q_(mapEntry.fontFile));
     }
@@ -419,15 +419,15 @@ MakePk::RunPS2PK (/*[in]*/ const FontMapEntry &	mapEntry,
 
   if (verbose)
     {
-      arguments.AppendOption (T_("-v"));
+      arguments.AppendOption ("-v");
     }
 
   if (oldFonts)
     {
-      arguments.AppendOption (T_("-O"));
+      arguments.AppendOption ("-O");
     }
 
-  arguments.AppendOption (T_("-X"), NUMTOSTR(dpi));
+  arguments.AppendOption ("-X", NUMTOSTR(dpi));
 
   ExtraPS2PKOptions (mapEntry, arguments);
 
@@ -435,7 +435,7 @@ MakePk::RunPS2PK (/*[in]*/ const FontMapEntry &	mapEntry,
 
   arguments.AppendArgument (lpszPkName);
 
-  if (! RunProcess(T_("ps2pk"), arguments.Get()))
+  if (! RunProcess("ps2pk", arguments.Get()))
     {
       FatalError (T_("PS2PK failed on %s."), Q_(mapEntry.fontFile));
     }
@@ -514,7 +514,7 @@ MakePk::FindFontMapping (/*[in]*/ const char *		lpszTeXFontName,
   // try to find the font mapping
   bool found = false;
   string line;
-  while (! found && Utils::ReadUntilDelim(line, T_('\n'), pStream.Get()))
+  while (! found && Utils::ReadUntilDelim(line, '\n', pStream.Get()))
     {
       if (Utils::ParseDvipsMapLine(line, mapEntry)
 	  && mapEntry.texName == lpszTeXFontName)
@@ -571,9 +571,9 @@ MakePk::IsHbf (/*[in]*/	const char *	lpszName)
     {
       hbfcfg[ l - 2 ] = 0;
     }
-  hbfcfg.SetExtension (T_(".cfg"), false);
+  hbfcfg.SetExtension (".cfg", false);
   PathName path;
-  return (pSession->FindFile(hbfcfg, T_("%R/HBF2GF//"), path));
+  return (pSession->FindFile(hbfcfg, "%R/HBF2GF//", path));
 }
 
 /* _________________________________________________________________________
@@ -619,9 +619,9 @@ MakePk::Run (/*[in]*/ int			argc,
   scratchDirectory.Enter ();
 
   string gfName (name);
-  gfName += T_('.');
+  gfName += '.';
   gfName += NUMTOSTR(dpi);
-  gfName += T_("gf");
+  gfName += "gf";
 
   FontMapEntry mapEntry;
 
@@ -644,15 +644,15 @@ MakePk::Run (/*[in]*/ int			argc,
       CommandLineBuilder arguments;
       if (debug)
 	{
-	  arguments.AppendOption (T_("--debug"));
+	  arguments.AppendOption ("--debug");
 	}
       if (verbose)
 	{
-	  arguments.AppendOption (T_("--verbose"));
+	  arguments.AppendOption ("--verbose");
 	}
       if (printOnly)
 	{
-	  arguments.AppendOption (T_("--print-only"));
+	  arguments.AppendOption ("--print-only");
 	}
       arguments.AppendArgument (name);
       if (RunProcess(T_("makemf"), arguments.Get()))
@@ -665,20 +665,20 @@ MakePk::Run (/*[in]*/ int			argc,
   if (! haveSource)
     {
       CommandLineBuilder arguments;
-      arguments.AppendOption (T_("-q")); // suppress informational output
-      arguments.AppendOption (T_("-t")); // test for font (returns 0 on succ.)
+      arguments.AppendOption ("-q"); // suppress informational output
+      arguments.AppendOption ("-t"); // test for font (returns 0 on succ.)
       arguments.AppendArgument (name);
-      if (RunProcess(T_("ttf2pk"), arguments.Get()))
+      if (RunProcess("ttf2pk", arguments.Get()))
 	{
 	  arguments.Clear ();
 	  if (! debug)
 	    {
-	      arguments.AppendOption (T_("-q"));
+	      arguments.AppendOption ("-q");
 	    }
-	  arguments.AppendOption (T_("-n")); // only use '.pk' as extension
+	  arguments.AppendOption ("-n"); // only use '.pk' as extension
 	  arguments.AppendArgument (name);
 	  arguments.AppendArgument (NUMTOSTR(dpi));
-	  if (RunProcess(T_("ttf2pk"), arguments.Get()))
+	  if (RunProcess("ttf2pk", arguments.Get()))
 	    {
 	      isTTF = true;
 	      modeless = true;
@@ -693,12 +693,12 @@ MakePk::Run (/*[in]*/ int			argc,
       CommandLineBuilder arguments;
       if (debug)
 	{
-	  arguments.AppendOption (T_("-q"));
+	  arguments.AppendOption ("-q");
 	}
-      arguments.AppendOption (T_("-p"));
+      arguments.AppendOption ("-p");
       arguments.AppendArgument (name);
       arguments.AppendArgument (NUMTOSTR(dpi));
-      if (RunProcess(T_("hbf2gf"), arguments.Get()))
+      if (RunProcess("hbf2gf", arguments.Get()))
 	{
 	  isHBF = true;
 	  modeless = true;

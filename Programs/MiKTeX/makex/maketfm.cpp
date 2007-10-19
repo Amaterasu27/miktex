@@ -124,20 +124,20 @@ MakeTfm::CreateDestinationDirectory ()
   string templ2;
   for (const char * lpsz = templ1.c_str(); *lpsz != 0; ++ lpsz)
     {
-      if (lpsz[0] == T_('%'))
+      if (lpsz[0] == '%')
 	{
 	  switch (lpsz[1])
 	    {
-	    case T_('%'):
-	      templ2 += T_('%');
+	    case '%':
+	      templ2 += '%';
 	      break;
-	    case T_('R'):
-	      templ2 += T_("%R");
+	    case 'R':
+	      templ2 += "%R";
 	      break;
-	    case T_('s'):
+	    case 's':
 	      templ2 += supplier.Get();
 	      break;
-	    case T_('t'):
+	    case 't':
 	      templ2 += typeface.Get();
 	      break;
 	    }
@@ -165,20 +165,20 @@ MakeTfm::MakeFromHBF (/*[in]*/ const char * lpszName)
   CommandLineBuilder arguments;
   if (debug)
     {
-      arguments.AppendOption (T_("-q"));
+      arguments.AppendOption ("-q");
     }
-  arguments.AppendOption (T_("-g"));
+  arguments.AppendOption ("-g");
   arguments.AppendArgument (lpszName);
   arguments.AppendArgument (NUMTOSTR(300));
-  if (! RunProcess(T_("hbf2gf"), arguments.Get()))
+  if (! RunProcess("hbf2gf", arguments.Get()))
     {
       return (false);
     }
 
   // run PLtoTF
   arguments.Clear ();
-  arguments.AppendArgument (PathName(0, lpszName, T_(".pl")));
-  arguments.AppendArgument (PathName(0, lpszName, T_(".tfm")));
+  arguments.AppendArgument (PathName(0, lpszName, ".pl"));
+  arguments.AppendArgument (PathName(0, lpszName, ".tfm"));
   if (! RunProcess(T_("pltotf"), arguments.Get()))
     {
       FatalError (T_("PLtoTF failed on %s."), Q_(lpszName));
@@ -213,7 +213,7 @@ MakeTfm::Run (/*[in]*/ int			argc,
   CreateDestinationDirectory ();
 
   // make TFM file name
-  PathName pathTFMName (0, name, T_(".tfm"));
+  PathName pathTFMName (0, name, ".tfm");
 
   // make fully qualified destination path name
   PathName pathDest (destinationDirectory, pathTFMName, 0);
@@ -233,15 +233,15 @@ MakeTfm::Run (/*[in]*/ int			argc,
       CommandLineBuilder arguments;
       if (debug)
 	{
-	  arguments.AppendOption (T_("--debug"));
+	  arguments.AppendOption ("--debug");
 	}
       if (verbose)
 	{
-	  arguments.AppendOption (T_("--verbose"));
+	  arguments.AppendOption ("--verbose");
 	}
       if (printOnly)
 	{
-	  arguments.AppendOption (T_("--print-only"));
+	  arguments.AppendOption ("--print-only");
 	}
       arguments.AppendArgument (name);
       if (! RunProcess(T_("makemf"), arguments.Get()))
@@ -261,7 +261,7 @@ MakeTfm::Run (/*[in]*/ int			argc,
       Verbose (T_("Making %s from %s...\n"),
 	       Q_(pathTFMName),
 	       Q_(mfPath));
-      if (! RunMETAFONT(name.c_str(), T_("cx"), 0))
+      if (! RunMETAFONT(name.c_str(), "cx", 0))
 	{
 	  FatalError (T_("METAFONT failed on %s."), Q_(name));
 	}

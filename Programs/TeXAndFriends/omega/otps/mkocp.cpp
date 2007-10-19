@@ -80,7 +80,7 @@ main (/*[in]*/ int		argc,
 		       szFileName, BufferSizes::MaxPath,
 		       szExt, BufferSizes::MaxPath);
       PathName outputName;
-      if (PathName::Compare(szExt, T_(".ocp")) == 0)
+      if (PathName::Compare(szExt, ".ocp") == 0)
 	{
 	  outputName = szFileName;
 	}
@@ -91,7 +91,7 @@ main (/*[in]*/ int		argc,
       CommandLineBuilder commandLine;
       commandLine.AppendArgument (outputName.Get());
       Process::Run (otp2ocp.Get(), commandLine.Get());
-      tcout << outputName.Get() << T_(".ocp") << endl;
+      tcout << outputName.Get() << ".ocp" << endl;
       return (0);
     }
   catch (const MiKTeXException & e)

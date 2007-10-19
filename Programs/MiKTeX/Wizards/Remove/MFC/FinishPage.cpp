@@ -61,7 +61,7 @@ FinishPage::OnInitDialog ()
       CWnd * pWnd = GetDlgItem(IDC_WELCOME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("FinishPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("FinishPage::OnInitDialog");
 	}
       pWnd->SetFont (&fntWelcome);
     }

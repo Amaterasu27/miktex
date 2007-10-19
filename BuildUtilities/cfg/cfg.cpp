@@ -89,7 +89,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << Utils::GetExeName() << T_(": ")
+  cerr << Utils::GetExeName() << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -104,7 +104,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 void
 PrintDigest (/*[in]*/ const MD5 & md5)
 {
-  cout << T_('@') <<  md5.ToString() << endl;
+  cout << '@' <<  md5.ToString() << endl;
 }
 
 /* _________________________________________________________________________
@@ -122,7 +122,7 @@ DownChar (/*[in]*/ char c)
     }
   else
     {
-      return (T_('_'));
+      return ('_');
     }
 }
 
@@ -155,11 +155,11 @@ ToStr (/*[in]*/ const string & s)
     {
       switch (*it)
 	{
-	case T_('\\'):
-	  result += T_("\\\\");
+	case '\\':
+	  result += "\\\\";
 	  break;
-	case T_('"'):
-	  result += T_("\\\"");
+	case '"':
+	  result += "\\\"";
 	  break;
 	default:
 	  result += *it;
@@ -182,7 +182,7 @@ DoPrintClasses (/*[in]*/ Cfg * pCfg)
        lpszKey != 0;
        lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
     {
-      cout << T_("class ") << ToLower(lpszKey) << T_(" {") << endl;
+      cout << T_("class ") << ToLower(lpszKey) << " {" << endl;
       char szValueName[BufferSizes::MaxCfgName];
       for (char * lpszValueName =
 	     pCfg->FirstValue(lpszKey, szValueName, BufferSizes::MaxCfgName);
@@ -197,25 +197,25 @@ DoPrintClasses (/*[in]*/ Cfg * pCfg)
 	  cout << T_("  public: static ");
 	  if (isString)
 	    {
-	      cout << T_("std::string");
+	      cout << "std::string";
 	    }
 	  else
 	    {
 	      cout << T_("int");
 	    }
-	  cout << T_(" ") << ToLower(lpszValueName)
+	  cout << " " << ToLower(lpszValueName)
 	       << T_(" () { return (");
 	  if (isString)
 	    {
-	      cout << T_('"') << ToStr(value) << T_('"');
+	      cout << '"' << ToStr(value) << '"';
 	    }
 	  else
 	    {
 	      cout << value;
 	    }
-	  cout << T_("); }") << endl;
+	  cout << "); }" << endl;
 	}
-      cout << T_("};") << endl;
+      cout << "};" << endl;
     }
 }
 
@@ -264,9 +264,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   const char ** leftovers = popt.GetArgs();

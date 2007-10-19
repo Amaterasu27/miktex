@@ -239,7 +239,7 @@ PkChar::Read (/*[in]*/ InputStream &	inputstream,
     {
 #if 0
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%d: no glyph!"),
 	 charCode);
 #endif
@@ -247,7 +247,7 @@ PkChar::Read (/*[in]*/ InputStream &	inputstream,
   else
     {
       log_pkchar->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("going to read character %d"),
 	 charCode);
       pPackedRaster = new BYTE[packetSize];
@@ -368,7 +368,7 @@ PkChar::Unpack ()
   if (rasterWidth == 0 || rasterHeight == 0)
     {
 #if 0
-      UNEXPECTED_CONDITION (T_("PkChar::Unpack"));
+      UNEXPECTED_CONDITION ("PkChar::Unpack");
 #endif
       return;
     }
@@ -485,7 +485,7 @@ PkChar::Unpack ()
 	}
       if ((rows_left != 0) || (h_bit != rasterWidth))
 	{
-	  UNEXPECTED_CONDITION (T_("PkChar::Unpack"));	  
+	  UNEXPECTED_CONDITION ("PkChar::Unpack");	  
 	}
     }
 }

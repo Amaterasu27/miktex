@@ -28,7 +28,7 @@
 
 IMPLEMENT_DYNCREATE(PackageListPage, CPropertyPage);
 
-#define MYPKG T_("miktex-bin") T_("-") MIKTEX_SERIES_STR
+#define MYPKG T_("miktex-bin") "-" MIKTEX_SERIES_STR
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
 
@@ -318,7 +318,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 
       if (! listControl.DeleteAllItems())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
 	}
       
       int idx = 0;
@@ -337,7 +337,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	    }
 
 	  // try to get the package info
@@ -363,7 +363,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  if (locallyKnown && oldPackageInfo.timeInstalled > 0)
 	    {
 	      CTime timeOld (oldPackageInfo.timePackaged);
-	      CString strOld = timeOld.Format(T_("%d-%b-%y"));
+	      CString strOld = timeOld.Format("%d-%b-%y");
 	      listControl.SetItemText (idx, 1, strOld);
 	    }
 
@@ -372,7 +372,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  if (! it->IsBroken())
 	    {
 	      CTime timeNew (it->timePackaged);
-	      CString strNew = timeNew.Format (T_("%d-%b-%y"));
+	      CString strNew = timeNew.Format ("%d-%b-%y");
 	      listControl.SetItemText (idx, 2, strNew);
 	    }
 
@@ -552,7 +552,7 @@ PackageListPage::WorkerThread (/*[in]*/ void * pv)
     {
       if (! This->PostMessage(WM_FILL_LIST))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -694,12 +694,12 @@ PackageListPage::EnableSelectButtons ()
   CWnd * pWnd;
   if ((pWnd = GetDlgItem(IDC_SELECT_ALL)) == 0)
     {
-      UNEXPECTED_CONDITION (T_("PackageListPage::EnableSelectButtons"));
+      UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
     }
   pWnd->EnableWindow (enable);
   if ((pWnd = GetDlgItem(IDC_DESELECT_ALL)) == 0)
     {
-      UNEXPECTED_CONDITION (T_("PackageListPage::EnableSelectButtons"));
+      UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
     }
   pWnd->EnableWindow (enable && ! repairing);
 }
@@ -715,7 +715,7 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
   AUTO_TOGGLE (fillingTheListView);
   if (! listControl.DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
   LV_ITEM lvitem;
   lvitem.iItem = 0;
@@ -723,15 +723,15 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
   lvitem.iSubItem = 0;
   if (listControl.InsertItem(&lvitem) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   if (! listControl.SetItemText(0, 0, lpszText))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
   if (! listControl.SetItemState(0, 0, LVIS_STATEIMAGEMASK))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemState"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
     }
 }
 
@@ -752,6 +752,6 @@ PackageListPage::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }

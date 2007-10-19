@@ -365,13 +365,13 @@ bool
 ParseLine (/*[in]*/ const string &	line,
 	   /*[out]*/ string &		primitive)
 {
-  Tokenizer tok (line.c_str(), T_(" \t\r\n"));
+  Tokenizer tok (line.c_str(), " \t\r\n");
   if (tok.GetCurrent() == 0)
     {
       return (false);
     }
   string key = tok.GetCurrent();
-  tok.SetDelim (T_("\r\n"));
+  tok.SetDelim ("\r\n");
   ++ tok;
   if (tok.GetCurrent() == 0)
     {
@@ -383,7 +383,7 @@ ParseLine (/*[in]*/ const string &	line,
       if (key == mappings[i].lpszCfgKey)
 	{
 	  primitive = mappings[i].lpszPrimitive;
-	  string::size_type pos = primitive.find(T_("%1"));
+	  string::size_type pos = primitive.find("%1");
 	  if (pos != string::npos)
 	    {
 	      primitive.replace (pos, 2, val);
@@ -406,7 +406,7 @@ MakeFmt::ParsePdfConfigFile (/*[in]*/ const PathName &		cfgFile,
 {
   AutoFILE pFile (File::Open(cfgFile, FileMode::Open, FileAccess::Read));
   string line;
-  while (Utils::ReadUntilDelim(line, T_('\n'), pFile.Get()))
+  while (Utils::ReadUntilDelim(line, '\n', pFile.Get()))
     {
       string primitive;
       if (ParseLine(line, primitive))
@@ -515,25 +515,25 @@ MakeFmt::Run (/*[in]*/ int			argc,
 
   // make command line
   CommandLineBuilder arguments;
-  arguments.AppendOption (T_("--initialize"));
-  arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
-  arguments.AppendOption (T_("--halt-on-error"));
+  arguments.AppendOption ("--initialize");
+  arguments.AppendOption ("--interaction=", T_("nonstopmode"));
+  arguments.AppendOption ("--halt-on-error");
   if (destinationName != GetEngineName())
     {
-      arguments.AppendOption (T_("--alias="), destinationName);
+      arguments.AppendOption ("--alias=", destinationName);
     }
   if (jobTime.length() > 0)
     {
-      arguments.AppendOption (T_("--job-time="), jobTime);
+      arguments.AppendOption ("--job-time=", jobTime);
     }
   arguments.AppendArguments (engineOptions);
   if (preloadedFormat.length() > 0)
     {
-      arguments.AppendArgument (string(T_("&")) + preloadedFormat);
+      arguments.AppendArgument (string("&") + preloadedFormat);
     }
   if (IsExtended() && preloadedFormat.empty())
     {
-      arguments.AppendOption (T_("--enable-etex"));
+      arguments.AppendOption ("--enable-etex");
     }
   if (IsPdf())
     {

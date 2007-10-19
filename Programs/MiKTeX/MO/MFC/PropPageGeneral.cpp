@@ -99,13 +99,13 @@ PropPageGeneral::OnInitDialog ()
 			    true)
 	      != 0)
 	    {
-	      displayName += T_(" (");
+	      displayName += " (";
 	      displayName += paperSizeInfo.dvipsName.c_str();
-	      displayName += T_(")");
+	      displayName += ")";
 	    }
 	  if (paperSizeComboBox.AddString(displayName) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CComboBox::AddString"), 0);
+	      FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	    }
 	  if (StringCompare(paperSizeInfo.dvipsName.c_str(),
 			    defaultPaperSizeInfo.dvipsName.c_str(),
@@ -116,7 +116,7 @@ PropPageGeneral::OnInitDialog ()
 	      previousPaperSizeIndex = idx;
 	      if (paperSizeComboBox.SetCurSel(idx) < 0)
 		{
-		  FATAL_WINDOWS_ERROR (T_("CComboBox::SetCurSel"), 0);
+		  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 		}
 	    }
 	}
@@ -183,7 +183,7 @@ PropPageGeneral::OnApply ()
 	  if (! SessionWrapper(true)->GetPaperSizeInfo(paperSizeIndex,
 						       paperSizeInfo))
 	    {
-	      UNEXPECTED_CONDITION (T_("PropPageGeneral::OnApply"));
+	      UNEXPECTED_CONDITION ("PropPageGeneral::OnApply");
 	    }
 	  SessionWrapper(true)
 	    ->SetDefaultPaperSize (paperSizeInfo.dvipsName.c_str());

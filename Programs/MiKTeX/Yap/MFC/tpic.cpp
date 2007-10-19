@@ -70,13 +70,13 @@ DviView::DrawTpicSpecial (/*[in]*/ CDC *		pDC,
     }
   if (! pen.CreatePen(PS_SOLID, penSize, RGB(0, 0, 0)))
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawTpicSpecial"));
+      UNEXPECTED_CONDITION ("DviView::DrawTpicSpecial");
     }
   AutoDeleteObject autoDeletePen (&pen);
   CPen * pOldPen = pDC->SelectObject(&pen);
   if (pOldPen == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawTpicSpecial"));
+      UNEXPECTED_CONDITION ("DviView::DrawTpicSpecial");
     }
   AutoSelectObject selectOldPen (pDC, pOldPen);
   TpicPolySpecial * pPolySpecial;
@@ -374,7 +374,7 @@ DviView::DrawTpicLine (/*[in]*/ CDC *				pDC,
   if (! pDC->LineTo(PixelShrink(static_cast<int>(x + ptTo.x * tpicConv)),
 		    PixelShrink(static_cast<int>(y + ptTo.y * tpicConv))))
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawTpicLine"));
+      UNEXPECTED_CONDITION ("DviView::DrawTpicLine");
     }
 }
 
@@ -431,7 +431,7 @@ DviView::FlushTpicPathD (/*[in]*/ CDC *				pDC,
 			    + 1,
 			    PixelShrink(static_cast<int>(y + cy0 * tpicConv))))
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::FlushTpicPathD"));
+	      UNEXPECTED_CONDITION ("DviView::FlushTpicPathD");
 	    }
 #endif
 	}

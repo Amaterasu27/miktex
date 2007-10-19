@@ -43,17 +43,17 @@ namespace
 {
   const EnumAndString<DviPageMode> dviPageModes[] = {
     { DviPageMode::Auto, T_("auto") },
-    { DviPageMode::Pk, T_("pk") },
+    { DviPageMode::Pk, "pk" },
     { DviPageMode::Dvips, T_("dvips") },
     { DviPageMode::None, 0 },
   };
 
   const EnumAndString<Units> units[] = {
-    { Units::BigPoints, T_("bp") },
-    { Units::Centimeters, T_("cm") },
+    { Units::BigPoints, "bp" },
+    { Units::Centimeters, "cm" },
     { Units::Inches, T_("in") },
-    { Units::Millimeters, T_("mm") },
-    { Units::Picas, T_("pc") },
+    { Units::Millimeters, "mm" },
+    { Units::Picas, "pc" },
     { Units::None, 0 },
   };
 
@@ -238,7 +238,7 @@ UpdateRegValue (/*[in]*/ const char *	lpszKeyName,
       CWinApp * pApp = AfxGetApp();
       ASSERT_VALID (pApp);
       CString strVal;
-      strVal.Format (T_("%f"), value);
+      strVal.Format ("%f", value);
       pApp->WriteProfileString (lpszKeyName, lpszValueName, strVal);
     }
 }
@@ -278,7 +278,7 @@ UpdateRegValue (/*[in]*/ const char *		lpszKeyName,
 		/*[in]*/ const CString &		value,
 		/*[in]*/ const char *		lpszDefaultValue)
 {
-  if (value == (lpszDefaultValue ? lpszDefaultValue : T_(""))
+  if (value == (lpszDefaultValue ? lpszDefaultValue : "")
       && RemoveDefaultValue(lpszKeyName, lpszValueName))
     {
       return;
@@ -420,7 +420,7 @@ YapConfig::Load ()
 			   T_("ljfour"));
   if (! SetDisplayMetafontMode(displayMode))
     {
-      FATAL_MIKTEX_ERROR (T_("YapConfig::Load"),
+      FATAL_MIKTEX_ERROR ("YapConfig::Load",
 			  T_("Unknown METAFONT mode."),
 			  static_cast<const char *>(displayMode));
     }
@@ -458,7 +458,7 @@ YapConfig::Load ()
 			   T_("ljfour"));
   if (! SetPrinterMetafontMode(printerMode))
     {
-      FATAL_MIKTEX_ERROR (T_("YapConfig::Load"),
+      FATAL_MIKTEX_ERROR ("YapConfig::Load",
 			  T_("Unknown METAFONT mode."),
 			  static_cast<const char *>(printerMode));
     }

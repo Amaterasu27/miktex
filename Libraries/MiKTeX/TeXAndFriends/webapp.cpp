@@ -38,7 +38,7 @@ WebApp::FatalError (/*[in]*/ const char *	lpszFormat,
   va_list arglist;
   va_start (arglist, lpszFormat);
   cerr << endl;
-  cerr << Utils::GetExeName() << T_(": ")
+  cerr << Utils::GetExeName() << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -87,19 +87,19 @@ WebApp::Finalize ()
 	   it2 != packages.end();
 	   ++ it2)
 	{
-	  fprintf (stream.Get(), T_("%s\n"), it2->c_str());
+	  fprintf (stream.Get(), "%s\n", it2->c_str());
 	}
       stream.Close ();
     }
   features.reset ();
-  copyright = T_("");
-  packageListFileName = T_("");
-  programName = T_("");
-  tcxFileName = T_("");
-  trademarks = T_("");
-  version = T_("");
+  copyright = "";
+  packageListFileName = "";
+  programName = "";
+  tcxFileName = "";
+  trademarks = "";
+  version = "";
   options.clear ();
-  theNameOfTheGame = T_("");
+  theNameOfTheGame = "";
   Application::Finalize ();
 }
 
@@ -135,9 +135,8 @@ MIKTEXMFAPI(void)
 WebApp::BadUsage ()
   const
 {
-  cerr << T_("Invalid command-line.\n")
-       << T_("Try `") << Utils::GetExeName()
-       << T_(" -help' for more information.")
+  cerr << T_("Invalid command-line. Try this:\n")
+       << Utils::GetExeName() << " -help"
        << endl;
   throw (1);
 }
@@ -164,7 +163,7 @@ WebApp::AddOption (/*[in]*/ const char *	lpszNameAndHelp,
 	{
 	  if (StringCompare(lpszNameAndHelp, it->longName, false) == 0)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("WebApp::AddOption"),
+	      FATAL_MIKTEX_ERROR ("WebApp::AddOption",
 				  T_("Option already added."),
 				  lpszNameAndHelp);
 	    }
@@ -219,7 +218,7 @@ WebApp::AddOption (/*[in]*/ const char *	lpszAliasName,
 	  return;
 	}
     }
-  FATAL_MIKTEX_ERROR (T_("WebApp::AddOption"),
+  FATAL_MIKTEX_ERROR ("WebApp::AddOption",
 		      T_("Unknown command-line option."),
 		      lpszName);
 }
@@ -290,7 +289,7 @@ Turn tracing on.  OPTIONS must be a comma-separated list of trace options. \
 	     required_argument,
 	     T_("OPTIONS"));
 
-  AddOption (T_("verbose\0"), OPT_UNSUPPORTED);
+  AddOption ("verbose\0", OPT_UNSUPPORTED);
 
   AddOption (T_("version\0\
 Print version information and exit."),
@@ -313,12 +312,12 @@ Show the manual page in an HTMLHelp window and exit when the\
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-WebApp::ProcessOption (/*[in]*/ int			opt,
+WebApp::ProcessOption (/*[in]*/ int		opt,
 		       /*[in]*/ const char *	lpszArg)
 {
   if (opt == OPT_UNSUPPORTED)
     {
-      FATAL_MIKTEX_ERROR (T_("WebApp::ProcessOption"),
+      FATAL_MIKTEX_ERROR ("WebApp::ProcessOption",
 			  T_("Unsupported command-line option."),
 			  0);
     }
@@ -407,7 +406,7 @@ WebApp::ProcessCommandLineOptions ()
     {
       if (! ProcessOption(opt, popt.GetOptArg()))
 	{
-	  FATAL_MIKTEX_ERROR (T_("WebApp::ProcessCommandLineOptions"),
+	  FATAL_MIKTEX_ERROR ("WebApp::ProcessCommandLineOptions",
 			      T_("Unprocessed command-line option."),
 			      0);
 	}
@@ -415,7 +414,7 @@ WebApp::ProcessCommandLineOptions ()
 
   if (opt != -1)
     {
-      FATAL_MIKTEX_ERROR (T_("WebApp::ProcessCommandLineOptions"),
+      FATAL_MIKTEX_ERROR ("WebApp::ProcessCommandLineOptions",
 			  T_("Invalid command-line option"),
 			  popt.Strerror(opt));
     }
@@ -458,13 +457,13 @@ MIKTEXMFAPI(void)
 WebApp::ShowProgramVersion ()
   const
 {
-  cout << MIKTEX_PRODUCTNAME_STR << T_('-') << TheNameOfTheGame()
-       << T_(' ') << version
-       << T_(" (") << Utils::GetMiKTeXBannerString() << T_(')') << T_('\n')
-       << copyright << T_('\n');
+  cout << MIKTEX_PRODUCTNAME_STR << '-' << TheNameOfTheGame()
+       << ' ' << version
+       << " (" << Utils::GetMiKTeXBannerString() << ')' << '\n'
+       << copyright << '\n';
   if (! trademarks.empty())
     {
-      cout << trademarks << T_('\n');
+      cout << trademarks << '\n';
     }
   cout << flush;
 }

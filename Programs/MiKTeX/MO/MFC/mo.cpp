@@ -81,7 +81,7 @@ MiKTeXOptionsApplication::InitInstance ()
 
   try
     {
-      SessionWrapper pSession (Session::InitInfo(T_("mo")));
+      SessionWrapper pSession (Session::InitInfo("mo"));
       
       PackageManagerPtr pManager (PackageManager::Create());
       
@@ -173,7 +173,7 @@ OnHelpInfo (/*[in]*/ HELPINFO *		pHelpInfo,
 	  return (FALSE);
 	}
       CString htmlHelpUrl = helpFile.Get();
-      htmlHelpUrl += T_("::/");
+      htmlHelpUrl += "::/";
       htmlHelpUrl += lpszTopicFile;
       HtmlHelp (reinterpret_cast<HWND>(pHelpInfo->hItemHandle),
 		htmlHelpUrl,
@@ -207,12 +207,12 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
   CMenu menu;
   if (! menu.LoadMenu(IDR_MENU_WHATS_THIS))
     {
-      FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+      FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
     }
   CMenu * pPopup = menu.GetSubMenu(0);
   if (pPopup == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CMenu::GetSubMenu"), 0);
+      FATAL_WINDOWS_ERROR ("CMenu::GetSubMenu", 0);
     }
   if (pPopup->TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
 			     point.x,
@@ -220,11 +220,11 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
 			     pWnd)
       != ID_WHATS_THIS)
     {
-      CHECK_WINDOWS_ERROR (T_("CMenu::TrackPopupMenu"), 0);
+      CHECK_WINDOWS_ERROR ("CMenu::TrackPopupMenu", 0);
       return;
     }
   string helpFileUrl = FindHelpFile().ToString();
-  helpFileUrl += T_("::/");
+  helpFileUrl += "::/";
   helpFileUrl += lpszTopicFile;
   HtmlHelp (pWnd->GetSafeHwnd(),
 	    helpFileUrl.c_str(),

@@ -89,7 +89,7 @@ AddChangeEditorDialog::OnInitDialog ()
     {
       if (FAILED(SHAutoComplete(programEdit.m_hWnd, SHACF_FILESYSTEM)))
 	{
-	  UNEXPECTED_CONDITION (T_("AddChangeEditorDialog::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("AddChangeEditorDialog::OnInitDialog");
 	}
       EnableButtons ();
     }
@@ -141,12 +141,12 @@ AddChangeEditorDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	  pDX->Fail ();
 	}
       pDX->PrepareEditCtrl (IDC_ARGUMENTS);
-      if (! (arguments.Find(T_("%f")) >= 0))
+      if (! (arguments.Find("%f") >= 0))
 	{
 	  AfxMessageBox (T_("Missing file name (%f) in argument string."));
 	  pDX->Fail ();
 	}
-      if (! (arguments.Find(T_("%l")) >= 0))
+      if (! (arguments.Find("%l") >= 0))
 	{
 	  AfxMessageBox (T_("Missing line number (%l) in argument string."));
 	  pDX->Fail ();
@@ -171,13 +171,13 @@ AddChangeEditorDialog::OnBrowse ()
       ofn.hInstance = 0;
       string filter;
       filter += T_("Executables (*.exe)");
-      filter += T_('\0');
+      filter += '\0';
       filter += T_("*.exe");
-      filter += T_('\0');
+      filter += '\0';
       filter += T_("All files (*.*)");
-      filter += T_('\0');
-      filter += T_("*.*");
-      filter += T_('\0');
+      filter += '\0';
+      filter += "*.*";
+      filter += '\0';
       ofn.lpstrFilter = filter.c_str();
       ofn.lpstrCustomFilter = 0;
       ofn.nMaxCustFilter = 0;
@@ -195,7 +195,7 @@ AddChangeEditorDialog::OnBrowse ()
       ofn.Flags = 0;
       ofn.Flags |= OFN_FILEMUSTEXIST;
       ofn.Flags |= OFN_PATHMUSTEXIST;
-      ofn.lpstrDefExt = T_(".exe");
+      ofn.lpstrDefExt = ".exe";
       if (! GetOpenFileName(&ofn))
 	{
 	  // <todo>check error condition with CommDlgExtendedError</todo>
@@ -291,7 +291,7 @@ AddChangeEditorDialog::EnableButtons ()
   CWnd * pOk = GetDlgItem(IDOK);
   if (pOk == 0)
     {
-      UNEXPECTED_CONDITION (T_("AddChangeEditorDialog::EnableButtons"));
+      UNEXPECTED_CONDITION ("AddChangeEditorDialog::EnableButtons");
     }
   CString name;
   nameEdit.GetWindowText (name);
@@ -301,8 +301,8 @@ AddChangeEditorDialog::EnableButtons ()
   argumentsEdit.GetWindowText (arguments);
   pOk->EnableWindow
     (! (name.IsEmpty() || program.IsEmpty() || arguments.IsEmpty())
-     && arguments.Find(T_("%f")) >= 0
-     && arguments.Find(T_("%l")) >= 0);
+     && arguments.Find("%f") >= 0
+     && arguments.Find("%l") >= 0);
 }
 
 /* _________________________________________________________________________

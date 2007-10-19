@@ -30,7 +30,7 @@
 #endif
 
 const char * DEFAULT_TRACE_STREAMS =
-  MIKTEX_TRACE_ERROR T_(",") MIKTEX_TRACE_MTPRINT
+  MIKTEX_TRACE_ERROR "," MIKTEX_TRACE_MTPRINT
   ;
 
 /* _________________________________________________________________________
@@ -213,8 +213,8 @@ private:
 #define mm2pt(mm) static_cast<int>((mm) * (1.0 / 25.4) * 72.0)
 #define in2pt(inch) static_cast<int>((inch) * 72.0)
 
-#define MM2PT(a, b) #a T_("mm,") #b T_("mm"), mm2pt(a), mm2pt(b)
-#define IN2PT(a, b) #a T_("in,") #b T_("in"), in2pt(a), in2pt(b)
+#define MM2PT(a, b) #a "mm," #b "mm", mm2pt(a), mm2pt(b)
+#define IN2PT(a, b) #a T_("in,") #b "in", in2pt(a), in2pt(b)
 
 #define INCHPAPER(a, b, c, d) DMPAPER_##a, b, IN2PT(c, d)
 #define MMPAPER(a, b, c, d) DMPAPER_##a, b, MM2PT(c, d)
@@ -227,25 +227,25 @@ const PAPERSIZEINFO PrintUtility::paperSizes[] = {
   INCHPAPER (LEGAL, T_("Legal"), 8.5, 14),
   INCHPAPER (STATEMENT, T_("Statement"), 5.5, 8.5),
   INCHPAPER (EXECUTIVE, T_("Executive"), 7.25, 10.5),
-  MMPAPER (A3, T_("A3"), 297, 420),
-  MMPAPER (A4, T_("A4"), 210, 297),
+  MMPAPER (A3, "A3", 297, 420),
+  MMPAPER (A4, "A4", 210, 297),
   MMPAPER (A4SMALL, T_("A4 Small"), 210, 297),
-  MMPAPER (A5, T_("A5"), 148, 210),
-  MMPAPER (B4, T_("B4"), 250, 354), // <fixme/>
-  MMPAPER (B5, T_("B5"), 182, 257),
+  MMPAPER (A5, "A5", 148, 210),
+  MMPAPER (B4, "B4", 250, 354), // <fixme/>
+  MMPAPER (B5, "B5", 182, 257),
   INCHPAPER (FOLIO, T_("Folio"), 8.5, 13),
   MMPAPER (QUARTO, T_("Quarto"), 215, 275), // <fixme/>
-  INCHPAPER (10X14, T_("10x14"), 10, 14),
-  INCHPAPER (11X17, T_("11x17"), 11, 17),
+  INCHPAPER (10X14, "10x14", 10, 14),
+  INCHPAPER (11X17, "11x17", 11, 17),
   INCHPAPER (NOTE, T_("Note"), 8.5, 11),
   INCHPAPER (ENV_9, T_("Envelope #9"), 3.875, 8.875),
   INCHPAPER (ENV_10, T_("Envelope #10"), 4.125, 9.5),
   INCHPAPER (ENV_11, T_("Envelope #11"), 4.5, 10.375),
   INCHPAPER (ENV_12, T_("Envelope #12"), 4.75, 11),
   INCHPAPER (ENV_14, T_("Envelope #14"), 5, 11.5),
-  INCHPAPER (CSHEET, T_("C"), 17, 22),
-  INCHPAPER (DSHEET, T_("D"), 22, 34),
-  INCHPAPER (ESHEET, T_("E"), 34, 44),
+  INCHPAPER (CSHEET, "C", 17, 22),
+  INCHPAPER (DSHEET, "D", 22, 34),
+  INCHPAPER (ESHEET, "E", 34, 44),
   MMPAPER (ENV_DL, T_("Envelope DL"), 110, 220),
   MMPAPER (ENV_C5, T_("Envelope C5"), 162, 229),
   MMPAPER (ENV_C3, T_("Envelope C3 "), 324, 458),
@@ -264,9 +264,9 @@ const PAPERSIZEINFO PrintUtility::paperSizes[] = {
 #if(WINVER >= 0x0400)
   MMPAPER (ISO_B4, T_("B4 (ISO)"), 250, 353),
   MMPAPER (JAPANESE_POSTCARD, T_("Japanese Postcard"), 100, 148),
-  INCHPAPER (9X11, T_("9x11"), 9, 11),
-  INCHPAPER (10X11, T_("10x11"), 10, 11),
-  INCHPAPER (15X11, T_("15x11"), 15, 11),
+  INCHPAPER (9X11, "9x11", 9, 11),
+  INCHPAPER (10X11, "10x11", 10, 11),
+  INCHPAPER (15X11, "15x11", 15, 11),
   MMPAPER (ENV_INVITE, T_("Envelope Invite"), 220, 220),
   INCHPAPER (LETTER_EXTRA, T_("Letter Extra"), 9.5, 12),
   INCHPAPER (LEGAL_EXTRA, T_("Legal Extra"), 9.5, 15),
@@ -284,13 +284,13 @@ const PAPERSIZEINFO PrintUtility::paperSizes[] = {
   MMPAPER (A3_EXTRA, T_("A3 Extra"), 322, 445),
   MMPAPER (A5_EXTRA, T_("A5 Extra"), 174, 235),
   MMPAPER (B5_EXTRA, T_("B5 (ISO) Extra"), 201, 276),
-  MMPAPER (A2, T_("A2"), 420, 594),
+  MMPAPER (A2, "A2", 420, 594),
   MMPAPER (A3_TRANSVERSE, T_("A3 Transverse"), 297, 420),
   MMPAPER (A3_EXTRA_TRANSVERSE, T_("A3 Extra Transverse"), 322, 445),
 #endif /* WINVER >= 0x0400 */
 #if(WINVER >= 0x0500)
   MMPAPER (DBL_JAPANESE_POSTCARD, T_("Japanese Double Postcard"), 200, 148),
-  MMPAPER (A6, T_("A6"), 105, 148),
+  MMPAPER (A6, "A6", 105, 148),
   // DMPAPER_JENV_KAKU2          71  /* Japanese Envelope Kaku #2 */
   // DMPAPER_JENV_KAKU3          72  /* Japanese Envelope Kaku #3 */
   // DMPAPER_JENV_CHOU3          73  /* Japanese Envelope Chou #3 */
@@ -312,11 +312,11 @@ const PAPERSIZEINFO PrintUtility::paperSizes[] = {
   // DMPAPER_JENV_CHOU4_ROTATED  87  /* Japanese Envelope Chou #4 Rotated */
   MMPAPER (B6_JIS, T_("B6 (JIS)"), 128, 182),
   MMPAPER (B6_JIS_ROTATED, T_("B6 (JIS) Rotated"), 182, 128),
-  DMPAPER_12X11, T_("12x11"), IN2PT(12, 11),
+  DMPAPER_12X11, "12x11", IN2PT(12, 11),
   // DMPAPER_JENV_YOU4           91  /* Japanese Envelope You #4        */
   // DMPAPER_JENV_YOU4_ROTATED   92  /* Japanese Envelope You #4 Rotated*/
-  MMPAPER (P16K, T_("PRC 16K"), 146, 215),
-  MMPAPER (P32K, T_("PRC 32K"), 97, 151),
+  MMPAPER (P16K, "PRC 16K", 146, 215),
+  MMPAPER (P32K, "PRC 32K", 97, 151),
   MMPAPER (P32KBIG, T_("PRC 32K(Big)"), 97, 151),
   MMPAPER (PENV_1, T_("PRC Envelope #1"), 102, 165),
   MMPAPER (PENV_2, T_("PRC Envelope #2"), 102, 176),
@@ -475,7 +475,7 @@ PrintUtility::StartDvips (/*[in]*/ const char *		lpszDviFileName,
 				       FileType::EXE,
 				       dvipsPath))
     {
-      FATAL_MIKTEX_ERROR (T_("PrintUtility::StartDvips"),
+      FATAL_MIKTEX_ERROR ("PrintUtility::StartDvips",
 			  T_("The Dvips utility could not be found."),
 			  0);
     }
@@ -488,34 +488,34 @@ PrintUtility::StartDvips (/*[in]*/ const char *		lpszDviFileName,
     }
   if (dvipsOpts.evenPagesOnly)
     {
-      commandLine.AppendOption (T_("-B"));
+      commandLine.AppendOption ("-B");
     }
   if (resolution > 0)
     {
-      commandLine.AppendOption (T_("-D"), NUMTOSTR(resolution));
+      commandLine.AppendOption ("-D", NUMTOSTR(resolution));
     }
   PAPERSIZEINFO paperSizeInfo;
   if (GetPaperSizeInfo(paperSize, paperSizeInfo))
     {
-      commandLine.AppendOption (T_("-T"), paperSizeInfo.lpszDvipsSize);
+      commandLine.AppendOption ("-T", paperSizeInfo.lpszDvipsSize);
     }
   if (dvipsOpts.runAsFilter)
     {
-      commandLine.AppendOption (T_("-f"), T_("1"));
+      commandLine.AppendOption ("-f", "1");
     }
   if (dvipsOpts.sendCtrlDAtEnd)
     {
-      commandLine.AppendOption (T_("-F"), T_("1"));
+      commandLine.AppendOption ("-F"), "1";
     }
   if (dvipsOpts.shiftLowCharsToHigherPos)
     {
-      commandLine.AppendOption (T_("-G"), T_("1"));
+      commandLine.AppendOption ("-G"), "1";
     }
   if (dvipsOpts.offsetX.length() > 0
       && dvipsOpts.offsetY.length() > 0)
     {
       string str (dvipsOpts.offsetX);
-      str += T_(",");
+      str += ",";
       str += dvipsOpts.offsetY;
       commandLine.AppendOption (T_("-O"), str.c_str());
     }
@@ -532,21 +532,21 @@ PrintUtility::StartDvips (/*[in]*/ const char *		lpszDviFileName,
        ++ it)
     {
       string str (NUMTOSTR(it->firstPage));
-      str += T_(':');
+      str += ':';
       str += NUMTOSTR(it->lastPage);
-      commandLine.AppendOption (T_("-pp "), str.c_str());
+      commandLine.AppendOption ("-pp ", str.c_str());
     }
   if (dvipsOpts.config.length() > 0)
     {
-      commandLine.AppendOption (T_("-P "), dvipsOpts.config.c_str());
+      commandLine.AppendOption ("-P ", dvipsOpts.config.c_str());
     }
   if (dvipsOpts.runQuietly)
     {
-      commandLine.AppendOption (T_("-q"), T_("1"));
+      commandLine.AppendOption ("-q", "1");
     }
   if (dvipsOpts.paperFormat.length() > 0)
     {
-      commandLine.AppendOption (T_("-t "), dvipsOpts.paperFormat.c_str());
+      commandLine.AppendOption ("-t ", dvipsOpts.paperFormat.c_str());
     }
   commandLine.AppendArgument (lpszDviFileName);
 
@@ -588,12 +588,12 @@ PrintUtility::StartGhostscript (/*[in]*/ const GSOPTS &	gsOpts,
 
   // make GS command line
   CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("-sDEVICE="), T_("bmp16m"));
+  commandLine.AppendOption (T_("-sDEVICE="), "bmp16m");
   MIKTEX_ASSERT (ppfileGsOut != 0);
-  commandLine.AppendOption (T_("-sOutputFile="), T_("-"));
+  commandLine.AppendOption (T_("-sOutputFile="), "-");
   if (resolution > 0)
     {
-      commandLine.AppendOption (T_("-r"), NUMTOSTR(resolution));
+      commandLine.AppendOption ("-r", NUMTOSTR(resolution));
     }
   PAPERSIZEINFO paperSizeInfo;
   if (GetPaperSizeInfo(paperSize, paperSizeInfo))
@@ -603,11 +603,11 @@ PrintUtility::StartGhostscript (/*[in]*/ const GSOPTS &	gsOpts,
       commandLine.AppendOption (T_("-dDEVICEHEIGHTPOINTS="),
 				NUMTOSTR(paperSizeInfo.height));
     }
-  commandLine.AppendOption (T_("-q"));
+  commandLine.AppendOption ("-q");
   commandLine.AppendOption (T_("-dBATCH"));
   commandLine.AppendOption (T_("-dNOPAUSE"));
   commandLine.AppendOption (T_("-dSAFER"));
-  commandLine.AppendArgument (T_("-"));
+  commandLine.AppendArgument ("-");
 
   trace_mtprint->WriteLine (T_("mtprint"), commandLine.Get());
 
@@ -700,7 +700,7 @@ PrintUtility::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					   VER_FILEVERSION_STR)
-       << T_("\n")
+       << "\n"
        << T_("Copyright (C) 2003-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
@@ -751,12 +751,12 @@ PrintUtility::Run (/*[in]*/ int			argc,
 	  {
 	    DVIPSOPTS::PAGERANGE pagerange;
 	    if (sscanf_s(popt.GetOptArg(),
-			 T_("%d-%d"),
+			 "%d-%d",
 			 &pagerange.firstPage,
 			 &pagerange.lastPage)
 		!= 2)
 	      {
-		FATAL_MIKTEX_ERROR (T_("PrintUtility::Run"),
+		FATAL_MIKTEX_ERROR ("PrintUtility::Run",
 				    T_("Invalid page range."),
 				    popt.GetOptArg());
 	      }
@@ -769,17 +769,17 @@ PrintUtility::Run (/*[in]*/ int			argc,
 	case OPT_PRINT_METHOD:
 	  {
 	    const char * lpszMethod = popt.GetOptArg();
-	    if (stricmp(lpszMethod, T_("ps")) == 0)
+	    if (stricmp(lpszMethod, "ps") == 0)
 	      {
 		printMethod = PrintMethodPostScript;
 	      }
-	    else if (stricmp(lpszMethod, T_("psbmp")) == 0)
+	    else if (stricmp(lpszMethod, "psbmp") == 0)
 	      {
 		printMethod = PrintMethodPostScriptBMP;
 	      }
 	    else
 	      {
-		FATAL_MIKTEX_ERROR (T_("PrintUtility::Run"),
+		FATAL_MIKTEX_ERROR ("PrintUtility::Run",
 				    T_("Unknown print method."),
 				    lpszMethod);
 	      }
@@ -796,7 +796,7 @@ PrintUtility::Run (/*[in]*/ int			argc,
 
   if (option != -1)
     {
-      cerr << popt.BadOption(POPT_BADOPTION_NOALIAS) << T_(": ")
+      cerr << popt.BadOption(POPT_BADOPTION_NOALIAS) << ": "
 	   << popt.Strerror(option)
 	   << endl;
       throw (1);

@@ -23,17 +23,17 @@
 #include "resource.h"
 
 #define YAP_TRACE_FLAGS_LVL_1			\
-  MIKTEX_TRACE_ERROR T_(",")			\
-  MIKTEX_TRACE_PROCESS T_(",")			\
+  MIKTEX_TRACE_ERROR ","			\
+  MIKTEX_TRACE_PROCESS ","			\
   MIKTEX_TRACE_YAP
 
 #define YAP_TRACE_FLAGS_LVL_2			\
-  YAP_TRACE_FLAGS_LVL_1 T_(",")			\
-  MIKTEX_TRACE_DVIFILE T_(",")			\
+  YAP_TRACE_FLAGS_LVL_1 ","			\
+  MIKTEX_TRACE_DVIFILE ","			\
   MIKTEX_TRACE_DVIPKFONT
 
 #define YAP_TRACE_FLAGS_LVL_3			\
-  YAP_TRACE_FLAGS_LVL_2 T_(",")			\
+  YAP_TRACE_FLAGS_LVL_2 ","			\
   MIKTEX_TRACE_DVIGC
 
 // Windows 95/98/Me uses a 16-bit world coordinate system
@@ -74,40 +74,40 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,				\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,				\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  __FILE__,		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    __FILE__,		\
 				    __LINE__)
 #endif
 
@@ -115,7 +115,7 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,			\
 			      __LINE__)
 #endif
 
@@ -124,7 +124,7 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -132,7 +132,7 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
   FatalDviError (miktexFunction,				\
 		 traceMessage,					\
 		 lpszInfo,					\
-		 T_(__FILE__),					\
+		 __FILE__,					\
 		 __LINE__)
 
 /* _________________________________________________________________________
@@ -181,7 +181,7 @@ public:
     const
   {
     string ret = Q_(program);
-    ret += T_(' ');
+    ret += ' ';
     ret += arguments;
     return (ret);
   }

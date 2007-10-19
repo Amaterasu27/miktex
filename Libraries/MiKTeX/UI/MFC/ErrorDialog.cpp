@@ -117,7 +117,7 @@ ErrorDialogImpl::ErrorDialogImpl (/*[in]*/ CWnd *		pParent,
     isMiKTeXException (false),
     stdException (e),
     message (e.what()),
-    info (T_(""))
+    info ("")
 {
 }
 
@@ -205,24 +205,24 @@ ErrorDialogImpl::OnCopy ()
       string report = CreateReport();
       if (! OpenClipboard())
 	{
-	  FATAL_MIKTEX_ERROR (T_("ErrorDialogImpl::OnCopy"),
+	  FATAL_MIKTEX_ERROR ("ErrorDialogImpl::OnCopy",
 			      T_("The Clipboard could not be opened."),
 			      0);
 	}
       opened = true;
       if (! EmptyClipboard())
 	{
-	  FATAL_WINDOWS_ERROR (T_("EmptyClipboard"), 0);
+	  FATAL_WINDOWS_ERROR ("EmptyClipboard", 0);
 	}
       hGlobal =	GlobalAlloc(GMEM_DDESHARE, report.length() + 1);
       if (hGlobal == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GlobalAlloc"), 0);
+	  FATAL_WINDOWS_ERROR ("GlobalAlloc", 0);
 	}
       void * pGlobal = GlobalLock(hGlobal);
       if (pGlobal == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GlobalLock"), 0);
+	  FATAL_WINDOWS_ERROR ("GlobalLock", 0);
 	}
       else
 	{
@@ -233,11 +233,11 @@ ErrorDialogImpl::OnCopy ()
 	}
       if (SetClipboardData(CF_TEXT, hGlobal) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SetClipboardData"), 0);
+	  FATAL_WINDOWS_ERROR ("SetClipboardData", 0);
 	}
       hGlobal = 0;
-      AfxMessageBox (T_("The error report has been copied to the \
-Clipboard."));
+      AfxMessageBox (T_("\
+The error report has been copied to the Clipboard."));
     }
   catch (const exception & e)
     {
@@ -278,27 +278,27 @@ ErrorDialogImpl::CreateReport ()
       try
 	{
 	  TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
-	  s << T_("MiKTeX: ")
+	  s << "MiKTeX: "
 	    << Utils::GetMiKTeXVersionString() << endl
-	    << T_("OS: ") << Utils::GetOSVersionString() << endl;
+	    << "OS: " << Utils::GetOSVersionString() << endl;
 	  if (IsWindowsNT())
 	    {
-	      s << T_("SystemAdmin: ") << (pSession->RunningAsAdministrator()
-					   ? T_("yes")
-					   : T_("no"))
+	      s << "SystemAdmin: " << (pSession->RunningAsAdministrator()
+				       ? T_("yes")
+				       : T_("no"))
 		<< endl;
-	      s << T_("PowerUser: ") << (pSession->RunningAsPowerUser()
-					 ? T_("yes")
-					 : T_("no"))
+	      s << "PowerUser: " << (pSession->RunningAsPowerUser()
+				     ? T_("yes")
+				     : T_("no"))
 		<< endl;
 	    }
-	  s << T_("SharedSetup: ") << (sharedSetup == TriState::True
-				       ? T_("yes")
-				       : (sharedSetup == TriState::False
-					  ? T_("no")
-					  : T_("unknown")))
+	  s << "SharedSetup: " << (sharedSetup == TriState::True
+				   ? T_("yes")
+				   : (sharedSetup == TriState::False
+				      ? T_("no")
+				      : T_("unknown")))
 	    << endl
-	    << T_("BinDir: ")
+	    << "BinDir: "
 	    << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
 	    << endl;
 	  for (unsigned idx = 0;
@@ -307,24 +307,24 @@ ErrorDialogImpl::CreateReport ()
 	    {
 	      PathName absFileName;
 	      PathName root = pSession->GetRootDirectory(idx);
-	      s << T_("Root") << idx << T_(": ") << root.Get() << endl;
+	      s << "Root" << idx << ": " << root.Get() << endl;
 	    }
-	  s << T_("Install: ")
+	  s << "Install: "
 	    << pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
 	    << endl;
-	  s << T_("UserConfig: ")
+	  s << "UserConfig: "
 	    << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
 	    << endl;
-	  s << T_("UserData: ")
+	  s << "UserData: "
 	    << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
 	    << endl;
 	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
 	    {
-	      s << T_("CommonConfig: ")
+	      s << "CommonConfig: "
 		<< (pSession
 		    ->GetSpecialPath(SpecialPath::CommonConfigRoot).Get())
 		<< endl;
-	      s << T_("CommonData: ")
+	      s << "CommonData: "
 		<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
 		<< endl;
 	    }

@@ -112,11 +112,11 @@ SiteWizLocal::OnBrowse ()
 	  return;
 	}
       char path[BufferSizes::MaxPath];
-      BOOL havePath = SHGetPathFromIDList(pidl, path);
+      BOOL havePath = SHGetPathFromIDListA(pidl, path);
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SHGetPathFromIDList"), 0);
+	  FATAL_WINDOWS_ERROR ("SHGetPathFromIDListA", 0);
 	}
       CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
       ASSERT_KINDOF (CPropertySheet, pSheet);
@@ -147,7 +147,7 @@ SiteWizLocal::OnChangeDirectory ()
       CWnd * pWnd = reinterpret_cast<CEdit*>(GetDlgItem(IDC_FILENAME));
       if (pWnd == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::GetDlgItem", 0);
 	}
       CPropertySheet * pSheet = reinterpret_cast<CPropertySheet*>(GetParent());
       ASSERT_KINDOF (CPropertySheet, pSheet);
@@ -184,7 +184,7 @@ SiteWizLocal::OnWizardFinish ()
 	{
 	  CString prompt;
 	  AfxFormatString1 (prompt, IDP_NOT_A_FOLDER, directory);
-	  FATAL_MIKTEX_ERROR (T_("SiteWizLocal::OnWizardFinish"),
+	  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
 			      prompt,
 			      directory);
 	}
@@ -194,7 +194,7 @@ SiteWizLocal::OnWizardFinish ()
 		 (static_cast<const char *>(directory))))
 	    {
 	      PathName mpmIni (directory);
-	      mpmIni += T_("texmf");
+	      mpmIni += "texmf";
 	      mpmIni += MIKTEX_PATH_MPM_INI;
 	      if (! File::Exists(mpmIni))
 		{
@@ -202,7 +202,7 @@ SiteWizLocal::OnWizardFinish ()
 		  AfxFormatString1 (prompt,
 				    IDP_NOT_LOCAL_REPOSITORY,
 				    directory);
-		  FATAL_MIKTEX_ERROR (T_("SiteWizLocal::OnWizardFinish"),
+		  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
 				      prompt,
 				      directory);
 		}

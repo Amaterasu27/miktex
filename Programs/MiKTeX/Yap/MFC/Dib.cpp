@@ -185,7 +185,7 @@ Dib::AttachFile (/*[in]*/ const char *	lpszFileName)
   pBitmapFileHeader = reinterpret_cast<BITMAPFILEHEADER *>(pv);
   if (pBitmapFileHeader->bfType != 0x4d42)
     {
-      FATAL_MIKTEX_ERROR (T_("Dib::AttachFile"),
+      FATAL_MIKTEX_ERROR ("Dib::AttachFile",
 			  T_("Not a BMP file."),
 			  lpszFileName);
     }

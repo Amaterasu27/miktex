@@ -113,7 +113,7 @@ public:
   void
   SetRandomRepositoryFlag (/*[in]*/ bool f)
   {
-    randomRepository = T_("");
+    randomRepository = "";
     randomRepositoryFlag = f;
   }
 

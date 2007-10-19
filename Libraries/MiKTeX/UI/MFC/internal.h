@@ -51,13 +51,13 @@ typedef basic_ostringstream<char> otstringstream;
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,					\
 			     __LINE__)
 
 #define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,		\
 			      lpszInfo,			\
-			      T_(__FILE__),		\
+			      __FILE__,			\
 			      __LINE__)
 
 #define CHECK_WINDOWS_ERROR(windowsFunction, lpszInfo)	\

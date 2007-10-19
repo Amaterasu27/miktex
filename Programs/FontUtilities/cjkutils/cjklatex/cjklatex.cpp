@@ -92,14 +92,14 @@ struct CONVERTER {
 
 const CONVERTER Converters [] =
 {
-  T_("bg5"),	T_("bg5conv"),
-  T_("bg5+"),	T_("extconv"),
-  T_("bg5p"),	T_("extconv"),
+  "bg5",	T_("bg5conv"),
+  "bg5+",	T_("extconv"),
+  "bg5p",	T_("extconv"),
   T_("cef"),	T_("cefconv"),
   T_("cef5"),	T_("cef5conv"),
   T_("cefs"),	T_("cefsconv"),
-  T_("cjk"),	0,
-  T_("gbk"),	T_("extconv"),
+  "cjk",	0,
+  "gbk",	T_("extconv"),
   T_("sjis"),	T_("sjisconv"),
 };
 
@@ -242,7 +242,7 @@ CJKLaTeXApp::Error (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << Utils::GetExeName() << T_(": ")
+  cerr << Utils::GetExeName() << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -289,7 +289,7 @@ CJKLaTeXApp::RunConverter (/*[in]*/ const PathName &	inputFile,
   cmdLine.AppendArgument (converter);
   cmdLine.AppendStdinRedirection (inputFile);
   cmdLine.AppendStdoutRedirection (intermediateFile);
-  PrintOnly (T_("%s"), cmdLine.Get());
+  PrintOnly ("%s", cmdLine.Get());
   if (! printOnly && ! Process::ExecuteSystemCommand(cmdLine.Get()))
     {
       Error (T_("Converter %s failed on %s."),
@@ -313,7 +313,7 @@ CJKLaTeXApp::RunEngine (/*[in]*/ const PathName &	inputFile)
     }
   CommandLineBuilder arguments;
   arguments.AppendArgument (inputFile);
-  PrintOnly (T_("%s %s"), Q_(engineExe), arguments.Get());
+  PrintOnly ("%s %s", Q_(engineExe), arguments.Get());
   if (! printOnly)
     {
       Process::Run (engineExe, arguments.Get());
@@ -390,7 +390,7 @@ CJKLaTeXApp::ProcessOptions (/*[in]*/ int	argc,
   
   while ((optionChar = getopt_long_only(argc,
 				      argv,
-				      T_(""),
+				      "",
 				      aoption,
 				      &optionIndex))
 	 != EOF)
@@ -465,7 +465,7 @@ CJKLaTeXApp::Run (/*[in]*/ int		argc,
       PathName pathInputFile (argv[i]);
       pathInputFile.MakeAbsolute ();
       PathName pathIntermediateFile (pathInputFile);
-      pathIntermediateFile.SetExtension (T_(".cjk"));
+      pathIntermediateFile.SetExtension (".cjk");
       RunConverter (pathInputFile, pathIntermediateFile);
       RunEngine (pathIntermediateFile);
       if (cleanUp && ! printOnly)

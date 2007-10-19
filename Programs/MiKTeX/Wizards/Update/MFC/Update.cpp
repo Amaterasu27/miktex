@@ -92,16 +92,16 @@ GetArguments (/*[in]*/ const char *	lpszCommandLine,
 
   for (const char * lpsz = lpszCommandLine; *lpsz != 0; ++ lpsz)
     {
-      if (*lpsz == T_(' ') && ! inQuotedArg)
+      if (*lpsz == ' ' && ! inQuotedArg)
 	{
 	  if (copying)
 	    {
 	      AddArgument (argument, argc, argv, argMax);
-	      argument = T_("");
+	      argument = "";
 	      copying = false;
 	    }
 	}
-      else if (*lpsz == T_('"'))
+      else if (*lpsz == '"')
 	{
 	  inQuotedArg = ! inQuotedArg;
 	  copying = true;
@@ -142,7 +142,7 @@ FreeArguments (/*[in]*/ int		argc,
    long_options / short_options
    _________________________________________________________________________ */
 
-#define OPT_HELP T_('h')
+#define OPT_HELP 'h'
 #define OPT_DRYRUN 1
 
 const struct option long_options[] =
@@ -188,7 +188,7 @@ ParseUpdateCommandLine (/*[in]*/ const char *	lpszCommandLine,
 
   optind = 0;
 
-  while ((c = getopt_long_only(argc, argv, T_(""), long_options, &iOptIdx))
+  while ((c = getopt_long_only(argc, argv, "", long_options, &iOptIdx))
 	 != EOF)
     {
       switch (c)
@@ -324,7 +324,7 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 	  PathName migrate;
 	  if (! pSession->FindFile(T_("migrate"), FileType::EXE, migrate))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("UpdateWizardApplication::Upgrade"),
+	      FATAL_MIKTEX_ERROR ("UpdateWizardApplication::Upgrade",
 				  T_("migrate.exe could not be found."),
 				  0);
 	    }
@@ -332,7 +332,7 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 	  size_t sizeBuf = 1024;
 	  if (! Process::Run(migrate, 0, szBuf, &sizeBuf, 0))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("UpdateWizardApplication::Upgrade"),
+	      FATAL_MIKTEX_ERROR ("UpdateWizardApplication::Upgrade",
 				  T_("Migration failed for some reason."),
 				  0);
 	    }
@@ -359,7 +359,7 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
 PathName
 GetULogFileName ()
 {
-  return (PathName(GetMainConfigDir().Get(), T_("uninst"), T_(".log")));
+  return (PathName(GetMainConfigDir().Get(), "uninst", ".log"));
 }
 
 /* _________________________________________________________________________
@@ -433,11 +433,11 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 {
   string str;
   str = T_("The operation could not be completed for the following reason: ");
-  str += T_("\n\n");
+  str += "\n\n";
   str += e.what();
   if (! e.GetInfo().empty())
     {
-      str += T_("\n\n");
+      str += "\n\n";
       str += T_("Details: ");
       str += e.GetInfo();
     }
@@ -454,7 +454,7 @@ ReportError (/*[in]*/ const exception & e)
 {
   string str;
   str = T_("The operation could not be completed for the following reason: ");
-  str += T_("\n\n");
+  str += "\n\n";
   str += e.what();
   AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
 }

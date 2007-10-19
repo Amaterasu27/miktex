@@ -100,7 +100,7 @@ PropPageLanguages::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -166,7 +166,7 @@ PropPageLanguages::OnApply ()
       if (SessionWrapper(true)->SplitTEXMFPath(languageDat, root, relative)
 	  == INVALID_ROOT_INDEX)
 	{
-	  UNEXPECTED_CONDITION (T_("PropPageLanguages::OnApply"));
+	  UNEXPECTED_CONDITION ("PropPageLanguages::OnApply");
 	}
       PathName localRoot =
 	SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
@@ -187,8 +187,8 @@ PropPageLanguages::OnApply ()
 	   ++it)
 	{
 	  writer.WriteFormattedLine
-	    (T_("%s%s %s"),
-	     it->active ? T_("") : T_("%"),
+	    ("%s%s %s",
+	     it->active ? "" : "%",
 	     static_cast<const char *>(it->languageName),
 	     static_cast<const char *>(it->fileName));
 	  for (vector<CString>::const_iterator it2 = it->synonyms.begin();
@@ -196,7 +196,7 @@ PropPageLanguages::OnApply ()
 	       ++it2)
 	    {
 	      writer.WriteFormattedLine
-		(T_("=%s"),
+		("=%s",
 		 static_cast<const char *>(*it2));
 	    }
 	}
@@ -283,7 +283,7 @@ PropPageLanguages::ReadLanguageDat ()
 				       FileType::TEX,
 				       languageDat))
     {
-      FATAL_MIKTEX_ERROR (T_("PropPageLanguages::ReadLanguageDat"),
+      FATAL_MIKTEX_ERROR ("PropPageLanguages::ReadLanguageDat",
 			  T_("\
 The language definition file (languages.dat) could not be found."),
 			  0);
@@ -299,16 +299,16 @@ The language definition file (languages.dat) could not be found."),
 	  continue;
 	}
       bool active = true;
-      if (line[0] == T_('%'))
+      if (line[0] == '%')
 	{
 	  line.erase (0, 1);
 	  active = false;
 	}
-      if (line[0] == T_('='))
+      if (line[0] == '=')
 	{
 	  if (idx > 0)
 	    {
-	      Tokenizer tok (line.c_str() + 1, T_(" \t\n"));
+	      Tokenizer tok (line.c_str() + 1, " \t\n");
 	      if (tok.GetCurrent() != 0)
 		{
 		  LANGUAGE & lang = languages[idx - 1];
@@ -318,9 +318,9 @@ The language definition file (languages.dat) could not be found."),
 	}
       else
 	{
-	  Tokenizer tok (line.c_str(), T_(" \t\n"));
+	  Tokenizer tok (line.c_str(), " \t\n");
 	  const char * lpsz = tok.GetCurrent();
-	  if (lpsz != 0 && *lpsz != T_('%'))
+	  if (lpsz != 0 && *lpsz != '%')
 	    {
 	      ++ tok;
 	      const char * lpsz2 = tok.GetCurrent();
@@ -357,7 +357,7 @@ PropPageLanguages::InsertLanguage (/*[in]*/ int idx)
   inserting = true;
   if (listControl.InsertItem(&lvitem) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   inserting = false;
 
@@ -374,7 +374,7 @@ PropPageLanguages::Refresh ()
 {
   if (listControl.DeleteAllItems() < 0)
     {
-       FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+       FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
     
   int idx = 0;
@@ -434,7 +434,7 @@ PropPageLanguages::OnRemove ()
 	  int idx = GetSelectedItem();
 	  if (! listControl.DeleteItem(idx))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
 	    }
 	  languages.erase (languages.begin() + idx);
 	}
@@ -505,7 +505,7 @@ PropPageLanguages::GetSelectedItem ()
   POSITION pos = listControl.GetFirstSelectedItemPosition();
   if (pos == 0)
     {
-      UNEXPECTED_CONDITION (T_("PropPageLanguages::GetSelectedItem"));
+      UNEXPECTED_CONDITION ("PropPageLanguages::GetSelectedItem");
     }
   return (listControl.GetNextSelectedItem(pos));
 }
@@ -562,22 +562,22 @@ PropPageLanguages::RefreshRow (/*[in]*/ int idx)
 
   if (! listControl.SetItemText(idx, colIdx++, lang.languageName))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
   
   if (! HasIE3())
     {
       if (! listControl.SetItemText(idx,
 				    colIdx++,
-				    lang.active ? T_("Active") : T_("")))
+				    lang.active ? T_("Active") : ""))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
 	}
     }
 
   if (! listControl.SetItemText(idx, colIdx++, lang.fileName))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
 
   CString synonyms;
@@ -588,14 +588,14 @@ PropPageLanguages::RefreshRow (/*[in]*/ int idx)
     {
       if (synonyms.GetLength() > 0)
 	{
-	  synonyms += T_(",");
+	  synonyms += ",";
 	}
       synonyms += *it;
     }
 
   if (! listControl.SetItemText(idx, colIdx++, synonyms))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
 
   if (HasIE3())
@@ -643,28 +643,28 @@ PropPageLanguages::OnMoveDown ()
       lvitem.iItem = idx;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx + 1;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
 
       lvitem.iItem = idx + 1;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
 
       if (! listControl.SortItems(CompareItems, 0))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItems", 0);
 	}
 
       EnableButtons ();
@@ -703,28 +703,28 @@ PropPageLanguages::OnMoveUp ()
       lvitem.iItem = idx - 1;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx;
       if (! listControl.SetItem(&lvitem))
   	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
     
       lvitem.iItem = idx;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx - 1;
       if (! listControl.SetItem(&lvitem))
   	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
       
       if (! listControl.SortItems(CompareItems, 0))
         	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItems", 0);
 	}
 
       EnableButtons ();
@@ -756,7 +756,7 @@ PropPageLanguages::EnableButtons ()
       POSITION pos = listControl.GetFirstSelectedItemPosition();
       if (pos == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("PropPageLanguages::EnableButtons"));
+	  UNEXPECTED_CONDITION ("PropPageLanguages::EnableButtons");
 	}
       firstSelected = listControl.GetNextSelectedItem(pos);
     }

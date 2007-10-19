@@ -78,7 +78,7 @@ cmbxti12")),
 				  0)
 	  < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
 	}
 
       if (listControl.InsertColumn(1,
@@ -89,7 +89,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 				  1)
 	  < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
 	}
 	  
       int idx = 0;
@@ -105,7 +105,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.pszText = const_cast<char*>(it->name.c_str());
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
 	  lvitem.pszText =
@@ -114,7 +114,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	     : const_cast<char*>(it->fileName.c_str()));
 	  if (! listControl.SetItem(&lvitem))
 	    {
-	      UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
 	    }
 	}
     }
@@ -148,7 +148,7 @@ DocumentFontsPage::OnDoubleClick (/*[in]*/ NMHDR *	pNMHDR,
       int idx = listControl.GetNextItem(-1, LVNI_SELECTED);
       if (idx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DocumentFontsPage::OnDoubleClick"));
+	  UNEXPECTED_CONDITION ("DocumentFontsPage::OnDoubleClick");
 	}
       MIKTEX_ASSERT (idx < static_cast<int>(fontTable.size()));
       const DviFontInfo & info = fontTable[idx];

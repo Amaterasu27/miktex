@@ -24,18 +24,18 @@
 class PkFont : public DviFont
 {
 public:
-  PkFont (/*[in]*/ DviImpl *		pDvi,
-	  /*[in]*/ int			checksum,
-	  /*[in]*/ int			scaledSize,
-	  /*[in]*/ int			designSize,
-	  /*[in]*/ const char *		lpszAreaName,
-	  /*[in]*/ const char *		lpszFontName,
+  PkFont (/*[in]*/ DviImpl *	pDvi,
+	  /*[in]*/ int		checksum,
+	  /*[in]*/ int		scaledSize,
+	  /*[in]*/ int		designSize,
+	  /*[in]*/ const char *	lpszAreaName,
+	  /*[in]*/ const char *	lpszFontName,
 	  /*[in]*/ const char *	lpszFileName,
-	  /*[in]*/ double		tfmConf,
-	  /*[in]*/ double		conv,
-	  /*[in]*/ int			mag,
+	  /*[in]*/ double	tfmConf,
+	  /*[in]*/ double	conv,
+	  /*[in]*/ int		mag,
 	  /*[in]*/ const char *	lpszMetafontMode,
-	  /*[in]*/ int			baseDpi);
+	  /*[in]*/ int		baseDpi);
 
 public:
   virtual

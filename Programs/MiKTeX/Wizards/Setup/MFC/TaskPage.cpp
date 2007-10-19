@@ -161,7 +161,7 @@ TaskPage::OnWizardNext ()
 	  next = IDD_PACKAGE_SET_INSTALL;
 	  break;
 	default:
-	  UNEXPECTED_CONDITION (T_("TaskPage::OnWizardNext"));
+	  UNEXPECTED_CONDITION ("TaskPage::OnWizardNext");
 	}
     }
   catch (const MiKTeXException & e)
@@ -269,7 +269,7 @@ TaskPage::EnableButtons ()
   CWnd * pWnd = GetDlgItem(IDC_CONNECTION_SETTINGS);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
+      UNEXPECTED_CONDITION ("TaskPage::EnableButtons");
     }
   pWnd->EnableWindow (task == 0);
 }

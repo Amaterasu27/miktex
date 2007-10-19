@@ -76,13 +76,13 @@ MakeUtility::RunMETAFONT (/*[in]*/ const char *	lpszName,
 {
   string arguments;
   arguments += T_("\\mode:=");
-  arguments += (lpszMode == 0 ? T_("cx") : lpszMode);
-  arguments += T_(';');
+  arguments += (lpszMode == 0 ? "cx" : lpszMode);
+  arguments += ';';
   if (lpszMag != 0)
     {
       arguments += T_(" \\mag:=");
       arguments += lpszMag;
-      arguments += T_(';');
+      arguments += ';';
     }
   if (! debug)
     {
@@ -90,19 +90,19 @@ MakeUtility::RunMETAFONT (/*[in]*/ const char *	lpszName,
     }
   arguments += T_("input ");
   arguments += lpszName;
-  int exitCode = RunProcess(T_("mf"), arguments.c_str());
+  int exitCode = RunProcess("mf", arguments.c_str());
   if (exitCode != 0)
     {
       Verbose (T_("METAFONT failed for some reason\n"));
-      PathName pathLogFile (0, lpszName, T_(".log"));
+      PathName pathLogFile (0, lpszName, ".log");
       AutoFILE pLogFile
 	(File::Open(pathLogFile, FileMode::Open, FileAccess::Read));
       string line;
       bool noError = true;
       size_t nStrangePaths = 0;
-      while (noError && Utils::ReadUntilDelim(line, T_('\n'), pLogFile.Get()))
+      while (noError && Utils::ReadUntilDelim(line, '\n', pLogFile.Get()))
 	{
-	  if (line[0] != T_('!'))
+	  if (line[0] != '!')
 	    {
 	      continue;
 	    }
@@ -140,11 +140,11 @@ MakeUtility::RunProcess (/*[in]*/ const char *	lpszExeName,
     }
 
   Message (T_("Running %s...\n"), Q_(lpszExeName));
-  PrintOnly (T_("%s %s"), Q_(lpszExeName), lpszArguments);
+  PrintOnly ("%s %s", Q_(lpszExeName), lpszArguments);
 
   // run the program
   int exitCode = 0;
-  if (! printOnly || strstr(lpszArguments, T_("--print-only")) != 0)
+  if (! printOnly || strstr(lpszArguments, "--print-only") != 0)
     {
       ProcessOutputTrash trash;
       ProcessOutputStderr toStderr;
@@ -184,7 +184,7 @@ MakeUtility::FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << Utils::GetExeName() << T_(": ")
+  tcerr << Utils::GetExeName() << ": "
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
   va_end (arglist);
@@ -274,7 +274,7 @@ void
 MakeUtility::Install (/*[in]*/ const PathName &	source,
 		      /*[in]*/ const PathName &	dest)
 {
-  PrintOnly (T_("cp %s %s"), Q_(source), Q_(dest));
+  PrintOnly ("cp %s %s", Q_(source), Q_(dest));
   PrintOnly (T_("initexmf --update-fndb"));
   
   if (printOnly)
@@ -301,7 +301,7 @@ void
 GetShortOptions (/*[in]*/ const struct option *	pLongOptions,
 		 /*[out]*/ string &		shortOptions)
 {
-  shortOptions = T_("");
+  shortOptions = "";
   for (const struct option * opt = pLongOptions; opt->name != 0; ++ opt)
     {
       if (isprint(opt->val))
@@ -309,11 +309,11 @@ GetShortOptions (/*[in]*/ const struct option *	pLongOptions,
 	  shortOptions += static_cast<char>(opt->val);
 	  if (opt->has_arg == required_argument)
 	    {
-	      shortOptions += T_(':');
+	      shortOptions += ':';
 	    }
 	  else if (opt->has_arg == optional_argument)
 	    {
-	      shortOptions += T_("::");
+	      shortOptions += "::";
 	    }
 	}
     }
@@ -345,23 +345,23 @@ MakeUtility::GetOptions (/*[in]*/ int				argc,
     {
       switch (c)
 	{
-	case T_('h'):
+	case 'h':
 	  Usage ();
 	  throw (0);
 	  break;
-	case T_('n'):
+	case 'n':
 	  printOnly = true;
 	  break;
-	case T_('d'):
+	case 'd':
 	  debug = true;
 	  break;
-	case T_('v'):
+	case 'v':
 	  verbose = true;
 	  break;
-	case T_('q'):
+	case 'q':
 	  quiet = true;
 	  break;
-	case T_('V'):
+	case 'V':
 	  ShowVersion ();
 	  throw (0);
 	  break;
@@ -391,8 +391,8 @@ MakeUtility::CreateDirectory (/*[in]*/ const string &	templ,
 			      /*[out]*/ PathName &	path)
 {
   const char * lpszTemplate = templ.c_str();
-  if (lpszTemplate[0] == T_('%')
-      && lpszTemplate[1] == T_('R')
+  if (lpszTemplate[0] == '%'
+      && lpszTemplate[1] == 'R'
       && IsDirectoryDelimiter(lpszTemplate[2]))
     {
       path = pSession->GetSpecialPath(SpecialPath::DataRoot);

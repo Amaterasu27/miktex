@@ -36,7 +36,7 @@ using namespace std;
 
 struct mspack_file *
 CabExtractor::Open (/*[in]*/ struct mspack_system *	self,
-		    /*[in]*/ char *		lpszFileName,
+		    /*[in]*/ char *			lpszFileName,
 		    /*[in]*/ int			mode)
 {
   UNUSED_ALWAYS (self);
@@ -66,7 +66,7 @@ CabExtractor::Open (/*[in]*/ struct mspack_system *	self,
 	  break;
 	default:
 	  delete pMyFile;
-	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Open"),
+	  FATAL_EXTRACTOR_ERROR ("CabExtractor::Open",
 				 T_("Problem with mspack interface."),
 				 NUMTOSTR(mode));
 	}
@@ -127,7 +127,7 @@ CabExtractor::Read (/*[in]*/ struct mspack_file *	pFile,
       size_t n = fread(pBuffer, 1, numBytes, pMyFile->pFile);
       if (ferror(pMyFile->pFile) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("fread"), pMyFile->fileName.c_str());
+	  FATAL_CRT_ERROR ("fread", pMyFile->fileName.c_str());
 	}
       return (static_cast<int>(n));
     }
@@ -153,7 +153,7 @@ CabExtractor::Write (/*[in]*/ struct mspack_file *	pFile,
       size_t n = fwrite(pBuffer, 1, numBytes, pMyFile->pFile);
       if (ferror(pMyFile->pFile) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("fwrite"), pMyFile->fileName.c_str());
+	  FATAL_CRT_ERROR ("fwrite", pMyFile->fileName.c_str());
 	}
       return (static_cast<int>(n));
     }
@@ -189,13 +189,13 @@ CabExtractor::Seek (/*[in]*/ struct mspack_file *	pFile,
 	  origin = SEEK_END;
 	  break;
 	default:
-	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Seek"),
+	  FATAL_EXTRACTOR_ERROR ("CabExtractor::Seek",
 				 T_("Problem with mspack interface."),
 				 NUMTOSTR(mode));
 	}
       if (fseek(pMyFile->pFile, offset, origin) != 0)
 	{
-	  FATAL_CRT_ERROR (T_("fseek"), pMyFile->fileName.c_str());
+	  FATAL_CRT_ERROR ("fseek", pMyFile->fileName.c_str());
 	}
       return (0);
     }
@@ -219,7 +219,7 @@ CabExtractor::Tell (/*[in]*/ struct mspack_file * pFile)
       long position = ftell(pMyFile->pFile);
       if (position < 0)
 	{
-	  FATAL_CRT_ERROR (T_("ftell"), pMyFile->fileName.c_str());
+	  FATAL_CRT_ERROR ("ftell", pMyFile->fileName.c_str());
 	}
       return (position);
     }
@@ -258,7 +258,7 @@ CabExtractor::Alloc (/*[in]*/ struct mspack_system *	self,
       void * ptr = malloc(numBytes);
       if (ptr == 0)
 	{
-	  OUT_OF_MEMORY (T_("CabExtractor::Alloc"));
+	  OUT_OF_MEMORY ("CabExtractor::Alloc");
 	}
       return (ptr);
     }
@@ -315,7 +315,7 @@ CabExtractor::CabExtractor ()
   pDecompressor = mspack_create_cab_decompressor(&mspackSystem);
   if (pDecompressor == 0)
     {
-      FATAL_EXTRACTOR_ERROR (T_("CabExtractor::CabExtractor"),
+      FATAL_EXTRACTOR_ERROR ("CabExtractor::CabExtractor",
 			     T_("Could not create cabinet decompressor."),
 			     0);
     }
@@ -426,15 +426,15 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const char *	lpszPrefix)
+		       /*[in]*/ const char *		lpszPrefix)
 {
-  traceStream->WriteFormattedLine (T_("libextractor"),
-				   T_("extracting %s to %s (%s directories)"),
+  traceStream->WriteFormattedLine ("libextractor",
+				   T_("extracting %s to %s (%s)"),
 				   Q_(cabinetPath),
 				   Q_(destDir),
 				   (makeDirectories
-				    ? T_("make")
-				    : T_("don't make")));
+				    ? T_("make directories")
+				    : T_("don't make directories")));
   
   mscabd_cabinet * pCabinet = 0;
 
@@ -446,9 +446,9 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 
       if (pCabinet == 0)
 	{
-	  FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Extract"),
-			   T_("The cabinet could not be opened."),
-			   cabinetPath.Get());
+	  FATAL_EXTRACTOR_ERROR ("CabExtractor::Extract",
+				 T_("The cabinet could not be opened."),
+				 cabinetPath.Get());
 	}
 
       size_t prefixLen = (lpszPrefix == 0 ? 0 : StrLen(lpszPrefix));
@@ -504,9 +504,9 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 				   path.GetBuffer());
 	  if (r != MSPACK_ERR_OK)
 	    {
-	      FATAL_EXTRACTOR_ERROR (T_("CabExtractor::Extract"),
-			       T_("The file could not be extracted."),
-			       pCabFile->filename);
+	      FATAL_EXTRACTOR_ERROR ("CabExtractor::Extract",
+				     T_("The file could not be extracted."),
+				     pCabFile->filename);
 	    }
 
 	  fileCount += 1;
@@ -523,7 +523,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	  time_t time = mktime(&tm);
 	  if (time == static_cast<time_t>(-1))
 	    {
-	      FATAL_CRT_ERROR (T_("mktime"), 0);
+	      FATAL_CRT_ERROR ("mktime", 0);
 	    }
 	  File::SetTimes (path, time, time, time);
 
@@ -537,7 +537,7 @@ CabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	    }
 	}
       
-      traceStream->WriteFormattedLine (T_("libextractor"),
+      traceStream->WriteFormattedLine ("libextractor",
 				       T_("extracted %u file(s)"),
 				       fileCount);
       
@@ -566,12 +566,12 @@ CabExtractor::Extract (/*[in]*/ Stream *		pStream,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const char *	lpszPrefix)
+		       /*[in]*/ const char *		lpszPrefix)
 {
   UNUSED_ALWAYS (pStream);
   UNUSED_ALWAYS (destDir);
   UNUSED_ALWAYS (makeDirectories);
   UNUSED_ALWAYS (pCallback);
   UNUSED_ALWAYS (lpszPrefix);
-  UNIMPLEMENTED (T_("CabExtractor::Extract"));
+  UNIMPLEMENTED ("CabExtractor::Extract");
 }

@@ -33,7 +33,7 @@
 #  define STANDALONE 1
 #endif
 
-#define MYPKG T_("miktex-bin")
+#define MYPKG "miktex-bin"
 
 #if defined(MIKTEX_UNICODE)
 #  define tcout wcout
@@ -44,18 +44,18 @@
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-const char PATH_DELIMITER = T_(';');
-#define PATH_DELIMITER_STRING T_(";")
+const char PATH_DELIMITER = ';';
+#define PATH_DELIMITER_STRING ";"
 #else
-const char PATH_DELIMITER = T_(':');
-#define PATH_DELIMITER_STRING T_(":")
+const char PATH_DELIMITER = ':';
+#define PATH_DELIMITER_STRING ":"
 #endif
 
 const char * DEFAULT_TRACE_STREAMS =
-  MIKTEX_TRACE_CORE T_(",")
-  MIKTEX_TRACE_CURL T_(",")
-  MIKTEX_TRACE_ERROR T_(",")
-  MIKTEX_TRACE_FNDB T_(",")
+  MIKTEX_TRACE_CORE ","
+  MIKTEX_TRACE_CURL ","
+  MIKTEX_TRACE_ERROR ","
+  MIKTEX_TRACE_FNDB ","
   MIKTEX_TRACE_MPM
   ;
 
@@ -354,178 +354,178 @@ enum Option
 const struct poptOption Application::aoption[] = {
 
   {				// experimental
-    T_("csv"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
+    "csv", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
     T_("Output comma-separated value lists."), 0,
   },
 
   {				// internal
-    T_("find-conflicts"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    "find-conflicts", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_FIND_CONFLICTS,
     T_("Find file conflicts."), 0,
   },
 
   {
-    T_("find-updates"), 0, POPT_ARG_NONE, 0, OPT_FIND_UPDATES,
+    "find-updates", 0, POPT_ARG_NONE, 0, OPT_FIND_UPDATES,
     T_("Test the package repository for updates, then print the list of\
  updateable packages."), 0,
   },
 
 #if defined(MIKTEX_WINDOWS)
   {
-    T_("hhelp"), 0, POPT_ARG_NONE, 0, OPT_HHELP,
-    T_("Show the manual page in an HTMLHelp window and")
-    T_(" exit when the window is closed."), 0
+    "hhelp", 0, POPT_ARG_NONE, 0, OPT_HHELP,
+    T_("Show the manual page in an HTMLHelp window and \
+exit when the window is closed."), 0
   },
 #endif
 
   {
-    T_("import"), 0, POPT_ARG_STRING, 0, OPT_IMPORT,
+    "import", 0, POPT_ARG_STRING, 0, OPT_IMPORT,
     T_("Import the specified package from another MiKTeX installation."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
   {
-    T_("import-all"), 0, POPT_ARG_NONE, 0, OPT_IMPORT_ALL,
+    "import-all", 0, POPT_ARG_NONE, 0, OPT_IMPORT_ALL,
     T_("Import all installed packages from another MiKTeX installation."),
     0
   },
 
   {
-    T_("install"), 0, POPT_ARG_STRING, 0, OPT_INSTALL,
+    "install", 0, POPT_ARG_STRING, 0, OPT_INSTALL,
     T_("Install the specified package."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
 #if STANDALONE
   {
-    T_("install-root"), 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
+    "install-root", 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
     T_("\
 Use the specified directory as the installation destination."),
-    T_("DIR")
+    "DIR"
   },
 #endif
 
   {
-    T_("install-some"), 0, POPT_ARG_STRING, 0, OPT_INSTALL_SOME,
+    "install-some", 0, POPT_ARG_STRING, 0, OPT_INSTALL_SOME,
     T_("Install packages listed (line-by-line) in the specified file."),
-    T_("FILE")
+    "FILE"
   },
 
   {
-    T_("list"), 0, POPT_ARG_NONE, 0, OPT_LIST,
+    "list", 0, POPT_ARG_NONE, 0, OPT_LIST,
     T_("List the contents of the package database:\
  for each package, print the installation status, the number of files,\
  the size, and the name."), 0
   },
 
   {
-    T_("list-package-names"), 0, POPT_ARG_NONE, 0, OPT_LIST_PACKAGE_NAMES,
+    "list-package-names", 0, POPT_ARG_NONE, 0, OPT_LIST_PACKAGE_NAMES,
     T_("List the package names."), 0
   },
 
   {
-    T_("list-repositories"), 0, POPT_ARG_NONE, 0, OPT_LIST_REPOSITORIES,
+    "list-repositories", 0, POPT_ARG_NONE, 0, OPT_LIST_REPOSITORIES,
     T_("\
 Download the list of known package repository URLs from\
  the MiKTeX project server, then print the list."), 0
   },
 
   {
-    T_("pick-repository-url"), 0, POPT_ARG_NONE, 0, OPT_PICK_REPOSITORY_URL,
+    "pick-repository-url", 0, POPT_ARG_NONE, 0, OPT_PICK_REPOSITORY_URL,
     T_("\
 Pick a suitable package repository URL and print it."), 0
   },
 
   {
-    T_("print-package-info"), 0, POPT_ARG_STRING, 0, OPT_PRINT_PACKAGE_INFO,
+    "print-package-info", 0, POPT_ARG_STRING, 0, OPT_PRINT_PACKAGE_INFO,
     T_("Print detailed information about the specified package."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
   {				// experimental
-    T_("proxy"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
+    "proxy", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
     T_("Use the specified proxy host[:port]."),
-    T_("HOST[:PORT]")
+    "HOST[:PORT]"
   },
 
   {				// experimental
-    T_("proxy-password"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    "proxy-password", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_PASSWORD,
     T_("Use the specified password for proxy authentication."),
-    T_("PASSWORD")
+    "PASSWORD"
   },
 
   {				// experimental
-    T_("proxy-user"), 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    "proxy-user", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_USER,
     T_("Use the specified user for proxy authentication."),
-    T_("USER")
+    "USER"
   },
 
   {
-    T_("quiet"), 0, POPT_ARG_NONE, 0, OPT_QUIET,
+    "quiet", 0, POPT_ARG_NONE, 0, OPT_QUIET,
     T_("Suppress all output (except errors)."), 0
   },
 
 #if defined(MIKTEX_WINDOWS)
   {
-    T_("register-components"), 0, POPT_ARG_NONE, 0, OPT_REGISTER_COMPONENTS,
+    "register-components", 0, POPT_ARG_NONE, 0, OPT_REGISTER_COMPONENTS,
     T_("Register COMponents."), 0
   },
 #endif
 
   {
-    T_("repository"), 0, POPT_ARG_STRING, 0, OPT_REPOSITORY,
+    "repository", 0, POPT_ARG_STRING, 0, OPT_REPOSITORY,
     T_("\
 Use the specified location as the package repository.\
   The location can be either a fully qualified path name\
  (a local package repository) or an URL (a remote package repository)."),
-    T_("LOCATION")
+    "LOCATION"
   },
 
 #if defined(MIKTEX_WINDOWS)
   {
-    T_("set-repository"), 0, POPT_ARG_STRING, 0, OPT_SET_REPOSITORY,
+    "set-repository", 0, POPT_ARG_STRING, 0, OPT_SET_REPOSITORY,
     T_("Register the location of the default package repository.\
   The location can be either a fully qualified path name\
  (a local package repository) or an URL (a remote package repository)."),
-    T_("LOCATION")
+    "LOCATION"
   },
 #endif
 
   {
-    T_("trace"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_TRACE,
+    "trace", 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_TRACE,
     T_("\
 Turn on tracing.\
   TRACESTREAMS, if specified, is a comma-separated list of trace stream names\
  (see the MiKTeX manual)."),
-    T_("TRACESTREAMS"),
+    "TRACESTREAMS",
   },
 
   {
-    T_("uninstall"), 0, POPT_ARG_STRING, 0, OPT_UNINSTALL,
+    "uninstall", 0, POPT_ARG_STRING, 0, OPT_UNINSTALL,
     T_("Uninstall the specified package."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
 #if defined(MIKTEX_WINDOWS)
   {
-    T_("unregister-components"), 0, POPT_ARG_NONE, 0,
+    "unregister-components", 0, POPT_ARG_NONE, 0,
     OPT_UNREGISTER_COMPONENTS,
     T_("Unregister COMponents."), 0
   },
 #endif
 
   {
-    T_("update"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_UPDATE,
+    "update", 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0, OPT_UPDATE,
     T_("Update the specified package, if an updated version\
  is available in the package repository.  Install all updateable\
  packages, if the package name is omitted."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
   {				// experimental
-    T_("update-all"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    "update-all", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_UPDATE_ALL,
     T_("Test the package repository for updates, then install\
  all updateable packages."),
@@ -533,44 +533,44 @@ Turn on tracing.\
   },
 
   {
-    T_("update-db"), 0, POPT_ARG_NONE, 0, OPT_UPDATE_DB,
+    "update-db", 0, POPT_ARG_NONE, 0, OPT_UPDATE_DB,
     T_("Synchronize the local package database with\
  the package repository."), 0
   },
 
   {				// experimental
-    T_("update-fndb"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    "update-fndb", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_UPDATE_FNDB,
     T_("Update mpm.fndb."), 0
   },
 
   {
-    T_("update-some"), 0, POPT_ARG_STRING, 0, OPT_UPDATE_SOME,
+    "update-some", 0, POPT_ARG_STRING, 0, OPT_UPDATE_SOME,
     T_("Update packages listed (line-by-line) in the specified file."),
-    T_("FILE")
+    "FILE"
   },
 
   {
-    T_("verbose"), 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
+    "verbose", 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
     T_("Turn on verbose output mode."), 0
   },
 
   {
-    T_("verify"), 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
+    "verify", 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
     0, OPT_VERIFY,
     T_("Verify the integrity of the installed packages."),
-    T_("PACKAGE")
+    "PACKAGE"
   },
 
   {				// experimental
-    T_("verify-miktex"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
+    "verify-miktex", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_VERIFY_MIKTEX,
     T_("Verify the integrity of the installed MiKTeX packages."),
     0
   },
 
   {
-    T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
+    "version", 0, POPT_ARG_NONE, 0, OPT_VERSION,
     T_("Show version information and exit."), 0
   },
 
@@ -635,7 +635,7 @@ Application::Error (/*[in]*/ const char *		lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << T_("mpm") << T_(": ")
+  tcerr << "mpm" << ": "
 	<< Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
   throw (1);
@@ -650,7 +650,7 @@ void
 MPMCALL
 Application::ReportLine (/*[in]*/ const char * lpszLine)
 {
-  Verbose (T_("%s\n"), lpszLine);
+  Verbose ("%s\n", lpszLine);
 }
 
 /* _________________________________________________________________________
@@ -825,12 +825,12 @@ Application::FindConflicts ()
     {
       if (it->second.size() > 1)
 	{
-	  tcout << it->first << T_(":") << endl;
+	  tcout << it->first << ":" << endl;
 	  for (vector<string>::const_iterator it2 = it->second.begin();
 	       it2 != it->second.end();
 	       ++ it2)
 	    {
-	      tcout << T_("  ") << *it2 << endl;
+	      tcout << "  " << *it2 << endl;
 	    }
 	}
     }
@@ -852,7 +852,7 @@ Application::VerifyMiKTeX ()
     {
       if (! packageInfo.IsPureContainer()
 	  && packageInfo.IsInstalled()
-	  && packageInfo.deploymentName.compare (0, 7, T_("miktex-")) == 0)
+	  && packageInfo.deploymentName.compare (0, 7, "miktex-") == 0)
 	{
 	  toBeVerified.push_back (packageInfo.deploymentName);
 	}
@@ -944,19 +944,19 @@ Application::ImportPackage (/*[in]*/ /*[in]*/ const string & deploymentName,
     }
   SmartPointer<Cfg> pCfg = Cfg::Create();
   pCfg->Read (packagesIni);
-  if (StrNCmp(deploymentName.c_str(), T_("miktex-"), 7) == 0)
+  if (StrNCmp(deploymentName.c_str(), "miktex-", 7) == 0)
     {
       Error (T_("Cannot import package %s."), deploymentName.c_str());
     }
   string str;
-  if (! pCfg->TryGetValue(deploymentName.c_str(), T_("TimeInstalled"), str)
-      || str == T_("")
-      || str == T_("0"))
+  if (! pCfg->TryGetValue(deploymentName.c_str(), "TimeInstalled", str)
+      || str == ""
+      || str == "0")
     {
       Error (T_("Package %s is not installed."), deploymentName.c_str());
     }
   if (pCfg->TryGetValue(deploymentName.c_str(), T_("Obsolete"), str)
-      && str == T_("1"))
+      && str == "1")
     {
       Error (T_("Package %s is obsolete."), deploymentName.c_str());
     }
@@ -999,19 +999,19 @@ Application::ImportPackages (/*[in,out]*/ vector<string> & toBeinstalled)
        lpszKey != 0;
        lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
     {
-      if (StrNCmp(lpszKey, T_("miktex-"), 7) == 0)
+      if (StrNCmp(lpszKey, "miktex-", 7) == 0)
 	{
 	  continue;
 	}
       string str;
-      if (! pCfg->TryGetValue(lpszKey, T_("TimeInstalled"), str)
-	  || str == T_("")
-	  || str == T_("0"))
+      if (! pCfg->TryGetValue(lpszKey, "TimeInstalled", str)
+	  || str == ""
+	  || str == "0")
 	{
 	  continue;
 	}
       if (pCfg->TryGetValue(lpszKey, T_("Obsolete"), str)
-	  && str == T_("1"))
+	  && str == "1")
 	{
 	  continue;
 	}
@@ -1054,7 +1054,7 @@ Application::FindUpdates ()
 	   it != updates.end();
 	   ++ it)
 	{
-	  tcout << it->deploymentName << T_('\n');
+	  tcout << it->deploymentName << '\n';
 	}
     }
 }
@@ -1122,7 +1122,7 @@ Application::Update (/*[in]*/ const vector<string> &	updates)
   if (binary_search(updates2.begin(), updates2.end(), MYPKG)
       && ! (toBeInstalled.size() == 1 && toBeInstalled[0] == MYPKG))
     {
-      Error (T_("Package \"") MYPKG T_("\" must be updated separately."));
+      Error (T_("Package \"%s\" must be updated separately."), MYPKG);
     }
   pInstaller->SetFileLists (toBeInstalled, vector<string>());
   pInstaller->InstallRemove ();
@@ -1206,17 +1206,17 @@ Application::List (/*[in]*/ bool csv)
 	  string path =
 	    pPackageManager->GetContainerPath(it->deploymentName, false);
 	  string directories = GetDirectories(it->deploymentName);
-	  tcout << path << T_('\\') << it->deploymentName << T_(',')
-		<< directories << T_('\n');
+	  tcout << path << '\\' << it->deploymentName << ','
+		<< directories << '\n';
 	}
       else
 	{
-	  tcout << (it->IsInstalled() ? T_('i') : T_('-'))
-		<< T_("  ") << setw(5) << static_cast<int>(it->GetNumFiles())
-		<< T_(" ")
+	  tcout << (it->IsInstalled() ? 'i' : '-')
+		<< "  " << setw(5) << static_cast<int>(it->GetNumFiles())
+		<< " "
 		<< setw(10) << left << static_cast<int>(it->GetSize())
 		<< resetiosflags(ios_base::left)
-		<< T_("  ") << it->deploymentName
+		<< "  " << it->deploymentName
 		<< endl;
 	}
     }
@@ -1277,7 +1277,7 @@ Application::ListRepositories (/*[in]*/ bool csv)
        it != repositories.end();
        ++ it)
     {
-      tcout << it->url << T_('\n');
+      tcout << it->url << '\n';
     }
 }
 
@@ -1311,7 +1311,7 @@ Application::PrintFiles (/*[in]*/ const vector<string> & files)
 	  disp = *it;
 	}
       path += disp;
-      tcout << T_("  ") << path.ToString() << T_('\n');
+      tcout << "  " << path.ToString() << '\n';
     }
 }
 
@@ -1324,8 +1324,8 @@ void
 Application::PrintPackageInfo (/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = pPackageManager->GetPackageInfo(deploymentName);
-  tcout << T_("name: ") << packageInfo.deploymentName << T_('\n')
-	<< T_("title: ") << packageInfo.title << T_('\n');
+  tcout << T_("name: ") << packageInfo.deploymentName << '\n'
+	<< T_("title: ") << packageInfo.title << '\n';
   if (packageInfo.runFiles.size() > 0)
     {
       tcout << T_("run-time files:\n");
@@ -1400,7 +1400,7 @@ Application::ReadFileList (/*[in]*/ const PathName &		path,
   string line;
   while (reader.ReadLine(line))
     {
-      Tokenizer tok (line.c_str(), T_(" \t\n\r"));
+      Tokenizer tok (line.c_str(), " \t\n\r");
       if (tok.GetCurrent() != 0)
 	{
 	  files.push_back (tok.GetCurrent());
@@ -1521,7 +1521,7 @@ Application::Main (/*[in]*/ int			argc,
 	case OPT_PROXY:
 	  {
 	    changeProxy = true;
-	    Tokenizer tok (lpszOptArg, T_(":"));
+	    Tokenizer tok (lpszOptArg, ":");
 	    optProxy = tok.GetCurrent();
 	    ++ tok;
 	    if (tok.GetCurrent() != 0)
@@ -1636,9 +1636,9 @@ Application::Main (/*[in]*/ int			argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      Error (T_("%s"), msg.c_str());
+      Error ("%s", msg.c_str());
     }
       
   if (popt.GetArgs() != 0)
@@ -1750,8 +1750,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     {
       if (optRegisterComponents && optUnregisterComponents)
 	{
-	  Error (T_("--register-components conflicts ")
-		 T_("with --unregister-components."));
+	  Error (T_("--register-components conflicts \
+with --unregister-components."));
 	}
       RegisterComponents (optRegisterComponents);
       restartWindowed = false;
@@ -1859,7 +1859,7 @@ main (/*[in]*/ int		argc,
   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
   if (FAILED(hr))
     {
-      tcerr << T_("mpm") << T_(": ")
+      tcerr << "mpm" << ": "
 	    << T_("The COM library could not be initialized.")
 	    << endl;
       return (1);

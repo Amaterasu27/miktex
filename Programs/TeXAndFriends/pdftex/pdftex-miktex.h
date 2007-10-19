@@ -76,7 +76,7 @@ Switch on draft mode (generates no output)."),
     AddOption (MIKTEXTEXT("output-format\0Set the output format."),
 	       OPT_OUTPUT_FORMAT,
 	       required_argument,
-	       MIKTEXTEXT("FORMAT"));
+	       "FORMAT");
   }
 
 public:
@@ -95,11 +95,11 @@ public:
 	break;
       case OPT_OUTPUT_FORMAT:
 	THEDATA(pdfoutputoption) = 1;
-	if (MiKTeX::Core::StringCompare(lpszOptArg, MIKTEXTEXT("dvi")) == 0)
+	if (MiKTeX::Core::StringCompare(lpszOptArg, "dvi") == 0)
 	  {
 	    THEDATA(pdfoutputvalue) = 0;
 	  }
-	else if (MiKTeX::Core::StringCompare(lpszOptArg, MIKTEXTEXT("pdf"))
+	else if (MiKTeX::Core::StringCompare(lpszOptArg, "pdf")
 		 == 0)
 	  {
 	    THEDATA(pdfoutputvalue) = 2;
@@ -261,7 +261,7 @@ public:
   GetInitProgramName ()
     const
   {
-    return (MIKTEXTEXT("pdfinitex"));
+    return ("pdfinitex");
   }
   
 public:
@@ -271,7 +271,7 @@ public:
   GetVirginProgramName ()
     const
   {
-    return (MIKTEXTEXT("pdfvirtex"));
+    return ("pdfvirtex");
   }
   
 public:
@@ -281,7 +281,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("pdfTeX"));
+    return ("pdfTeX");
   }
 
 public:

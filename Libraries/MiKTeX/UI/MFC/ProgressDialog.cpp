@@ -245,7 +245,7 @@ ProgressUIThread::InitInstance ()
 	}
       if (! pDlg->Create(IDD_PROGRESS, pWnd))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CDialog::Create"), 0);
+	  FATAL_WINDOWS_ERROR ("CDialog::Create", 0);
 	}
       hWindow = pDlg->GetSafeHwnd();
       MIKTEX_ASSERT (hWindow != 0);
@@ -376,8 +376,8 @@ ProgressDialogImpl::HasUserCancelled ()
 			   1000,
 			   &res))
     {
-      CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
-      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::HasUserCancelled"),
+      CHECK_WINDOWS_ERROR ("SendMessageTimeout", 0);
+      FATAL_MIKTEX_ERROR ("ProgressDialogImpl::HasUserCancelled",
 			  T_("The progress window does not respond."),
 			  0);
     }
@@ -391,7 +391,7 @@ ProgressDialogImpl::HasUserCancelled ()
    _________________________________________________________________________ */
 
 bool
-ProgressDialogImpl::SetLine (/*[in]*/ unsigned			lineNum,
+ProgressDialogImpl::SetLine (/*[in]*/ unsigned		lineNum,
 			     /*[in]*/ const char *	lpszText)
 {
   MIKTEX_ASSERT (lineNum > 0 && lineNum <= 2);
@@ -403,11 +403,11 @@ ProgressDialogImpl::SetLine (/*[in]*/ unsigned			lineNum,
   HWND hwndLine = ::GetDlgItem(hWindow, lineNum == 1 ? IDC_LINE1 : IDC_LINE2);
   if (hwndLine == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetDlgItem"), 0);
+      FATAL_WINDOWS_ERROR ("GetDlgItem", 0);
     }
-  if (! SetWindowText(hwndLine, lpszText))
+  if (! SetWindowTextA(hwndLine, lpszText))
     {
-      FATAL_WINDOWS_ERROR (T_("SetWindowText"), 0);
+      FATAL_WINDOWS_ERROR ("SetWindowTextA", 0);
     }
   return (true);
 }
@@ -425,9 +425,9 @@ ProgressDialogImpl::SetTitle (/*[in]*/ const char * lpszTitle)
       title = lpszTitle;
       return (true);
     }
-  if (! SetWindowText(hWindow, lpszTitle))
+  if (! SetWindowTextA(hWindow, lpszTitle))
     {
-      FATAL_WINDOWS_ERROR (T_("SetWindowText"), 0);
+      FATAL_WINDOWS_ERROR ("SetWindowTextA", 0);
     }
   return (true);
 }
@@ -448,7 +448,7 @@ ProgressDialogImpl::StartProgressDialog (/*[in]*/ HWND hwndParent)
 {
   if (haveProgressDialog)
     {
-      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::StartProgressDialog"),
+      FATAL_MIKTEX_ERROR ("ProgressDialogImpl::StartProgressDialog",
 			  T_("A progress dialog window is already open."),
 			  0);
     }
@@ -460,7 +460,7 @@ ProgressDialogImpl::StartProgressDialog (/*[in]*/ HWND hwndParent)
       pParent = CWnd::FromHandlePermanent(hwndParent);
       if (pParent == 0)
 	{
-	  INVALID_ARGUMENT (T_("ProgressDialogImpl::StartProgressDialog"), 0);
+	  INVALID_ARGUMENT ("ProgressDialogImpl::StartProgressDialog", 0);
 	}
     }
 
@@ -487,7 +487,7 @@ ProgressDialogImpl::StartProgressDialog (/*[in]*/ HWND hwndParent)
   CSingleLock singleLock (&readyEvent);
   if (! singleLock.Lock(1000))
     {
-      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::StartProgressDialog"),
+      FATAL_MIKTEX_ERROR ("ProgressDialogImpl::StartProgressDialog",
 			  T_("The progress window is not available."),
 			  0);
     }
@@ -539,8 +539,8 @@ ProgressDialogImpl::StopProgressDialog ()
 			   1000,
 			   &res))
     {
-      CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
-      FATAL_MIKTEX_ERROR (T_("ProgressDialogImpl::StopProgressDialog"),
+      CHECK_WINDOWS_ERROR ("SendMessageTimeout", 0);
+      FATAL_MIKTEX_ERROR ("ProgressDialogImpl::StopProgressDialog",
 			  T_("The progress window does not respond."),
 			  0);
     }

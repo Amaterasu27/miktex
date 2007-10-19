@@ -62,7 +62,7 @@ DviStatusBar::OnRButtonDown (/*[in]*/ UINT	nFlags,
       ASSERT_VALID (AfxGetApp()->m_pMainWnd);
       if (! menu.LoadMenu(menuId))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+	  FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
 	}
       AutoDetachMenu autoDetachMenu (&menu);
       CMenu * pPopup = menu.GetSubMenu(0);
@@ -73,7 +73,7 @@ DviStatusBar::OnRButtonDown (/*[in]*/ UINT	nFlags,
 				   AfxGetApp()->m_pMainWnd,
 				   0))
 	{
-	  UNEXPECTED_CONDITION (T_("DviStatusBar::OnRButtonDown"));
+	  UNEXPECTED_CONDITION ("DviStatusBar::OnRButtonDown");
 	}
     }
   catch (const MiKTeXException & e)

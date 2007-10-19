@@ -57,9 +57,9 @@ public:
 
 private:
   void
-  FormatControlText (/*[in]*/ UINT			ctrlId,
+  FormatControlText (/*[in]*/ UINT		ctrlId,
 		     /*[in]*/ const char *	lpszFormat,
-		     /*[in]*/				...);
+		     /*[in]*/			...);
 
 public:
   BOOL alwaysAsk;

@@ -162,8 +162,6 @@ namespace MiKTeX {					\
 
 BEGIN_INTERNAL_NAMESPACE;
 
-typedef std::basic_ostringstream<char> otstringstream;
-
 /* _________________________________________________________________________
 
    CURRENT_DIRECTORY

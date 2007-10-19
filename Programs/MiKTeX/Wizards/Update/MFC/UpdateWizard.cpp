@@ -67,17 +67,17 @@ UpdateWizard::UpdateWizard ()
   ::ReleaseDC (0, hdc);
   if (! fntWelcome.CreateFontIndirect(&TitleLogFont))
     {
-      FATAL_WINDOWS_ERROR (T_("CFont::CreateFontIndirect"), 0);
+      FATAL_WINDOWS_ERROR ("CFont::CreateFontIndirect", 0);
     }
 
   if (! watermarkBitmap.LoadBitmap(IDB_WATERMARK))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   if (! headerBitmap.LoadBitmap(IDB_HEADER))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   Construct (IDS_UPDATEWIZ, 0, 0, watermarkBitmap, 0, headerBitmap);
@@ -109,7 +109,7 @@ UpdateWizard::OnInitDialog ()
       CString title;
       if (! title.LoadString(g_upgrading ? IDS_UPGRADEWIZ : IDS_UPDATEWIZ))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CString::LoadString"), 0);
+	  FATAL_WINDOWS_ERROR ("CString::LoadString", 0);
 	}
       SetTitle (title);
       if (! g_upgrading
@@ -146,7 +146,7 @@ UpdateWizard::EnableCancelButton (/*[in]*/ bool enable)
   CWnd * pWnd = GetDlgItem(IDCANCEL);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("UpdateWizard::EnableCancel"));
+      UNEXPECTED_CONDITION ("UpdateWizard::EnableCancel");
     }
   pWnd->EnableWindow (enable ? TRUE : FALSE);
 }

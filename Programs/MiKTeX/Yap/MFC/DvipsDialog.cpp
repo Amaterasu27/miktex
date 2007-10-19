@@ -105,7 +105,7 @@ DvipsDialog::OnInitDialog ()
 #if 1
 		  TraceStream::TraceLastWin32Error (T_("OpenPrinter"),
 						    lppi1->pName,
-						    T_(__FILE__),
+						    __FILE__,
 						    __LINE__);
 		  continue;
 #else
@@ -133,7 +133,7 @@ DvipsDialog::OnInitDialog ()
 		}
 	      if (m_comboPrinterName.AddString(lppi2->pPrinterName) < 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DvipsDialog::OnInitDialog"));
+		  UNEXPECTED_CONDITION ("DvipsDialog::OnInitDialog");
 		}
 	    }
 	}
@@ -152,7 +152,7 @@ DvipsDialog::OnInitDialog ()
 	{
 	  if (m_comboPrinterName.SelectString(-1, szDefaultPrinter) < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DvipsDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("DvipsDialog::OnInitDialog");
 	    }
 	}
   

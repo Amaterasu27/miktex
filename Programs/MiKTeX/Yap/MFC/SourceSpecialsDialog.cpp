@@ -64,7 +64,7 @@ SourceSpecialsDialog::SourceSpecialsDialog (/*[in]*/ CWnd *	pParent,
       if (pDviPage == 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("SourceSpecialsDialog::SourceSpecialsDialog"));
+	    ("SourceSpecialsDialog::SourceSpecialsDialog");
 	}
       
       AutoUnlockPage autoUnlockPage (pDviPage);
@@ -88,7 +88,7 @@ SourceSpecialsDialog::SourceSpecialsDialog (/*[in]*/ CWnd *	pParent,
   
   if (sourceSpecials.size() == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("SourceSpecialsDialog::SourceSpecialsDialog"),
+      FATAL_MIKTEX_ERROR ("SourceSpecialsDialog::SourceSpecialsDialog",
 			  T_("The document contains no source links."),
 			  0);
     }
@@ -134,7 +134,7 @@ SourceSpecialsDialog::OnInitDialog ()
 				   0)
 	  < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	}
 
       if (listControl.InsertColumn(1,
@@ -145,7 +145,7 @@ SourceSpecialsDialog::OnInitDialog ()
 				   1)
 	  < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	}
 
       if (listControl.InsertColumn(2,
@@ -156,7 +156,7 @@ SourceSpecialsDialog::OnInitDialog ()
 				   2)
 	  < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	}
 
       int idx = 0;
@@ -174,7 +174,7 @@ SourceSpecialsDialog::OnInitDialog ()
 	     (static_cast<const char *>(it->pageName)));
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
 	  lvitem.pszText =
@@ -182,13 +182,13 @@ SourceSpecialsDialog::OnInitDialog ()
 	     (static_cast<const char *>(it->fileName)));
 	  if (! listControl.SetItem(&lvitem))
 	    {
-	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 2;
 	  lvitem.pszText = const_cast<char *>(NUMTOSTR(it->line));
 	  if (! listControl.SetItem(&lvitem))
 	    {
-	      UNEXPECTED_CONDITION (T_("SourceSpecialsDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	}
 
@@ -233,19 +233,19 @@ SourceSpecialsDialog::OnGoto ()
       item.pszText = szPageNum;
       if (! listControl.GetItem(&item))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 1;
       item.pszText = szFileName;
       if (! listControl.GetItem(&item))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
       item.pszText = szLineNum;
       if (! listControl.GetItem(&item))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       pView->GotoSrcSpecial (atoi(szLineNum), szFileName);
     }
@@ -299,13 +299,13 @@ SourceSpecialsDialog::OnEditSource ()
       item.pszText = szFileName;
       if (! listControl.GetItem(&item))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
       item.pszText = szLineNum;
       if (! listControl.GetItem(&item))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       StartEditor (szFileName, pDviDoc->GetDocDir(), atoi(szLineNum));
     }

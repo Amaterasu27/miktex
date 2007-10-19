@@ -80,7 +80,7 @@ RemoteRepositoryPage::OnInitDialog ()
 
       InsertColumn (colIdx,
 		    T_("Protocol"),
-		    T_("xxxx HTTP"));
+		    "xxxx HTTP");
 
       ++ colIdx;
 
@@ -300,7 +300,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 
       if (! listControl.DeleteAllItems())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
 	}
       
       bool selected = false;
@@ -327,7 +327,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	    }
 
 	  string protocol;
@@ -340,7 +340,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  protUC.MakeUpper ();
 	  SetItemText (idx, 1, protUC);
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CTime(it->timeDate).Format(T_("%d-%b-%y")));
+      	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
 	  SetItemText (idx, 4, it->description.c_str());
 
 	  if (it->url == theApp.remotePackageRepository)
@@ -349,7 +349,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 					     LVIS_SELECTED,
 					     LVIS_SELECTED))
 		{
-		  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemState"), 0);
+		  FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
 		}
 	      selected = true;
 	    }
@@ -440,7 +440,7 @@ RemoteRepositoryPage::WorkerThread (/*[in]*/ void * pv)
     {
       if (! This->PostMessage(WM_FILL_LIST))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -474,7 +474,7 @@ RemoteRepositoryPage::InsertColumn (/*[in]*/ int		colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -490,7 +490,7 @@ RemoteRepositoryPage::SetItemText (/*[in]*/ int			itemIdx,
 {
   if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
 }
 
@@ -504,7 +504,7 @@ RemoteRepositoryPage::SetProgressText (/*[in]*/ const char * lpszText)
 {
   if (! listControl.DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
   LV_ITEM lvitem;
   lvitem.iItem = 0;
@@ -512,11 +512,11 @@ RemoteRepositoryPage::SetProgressText (/*[in]*/ const char * lpszText)
   lvitem.iSubItem = 0;
   if (listControl.InsertItem(&lvitem) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   if (! listControl.SetItemText(0, 0, lpszText))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
   listControl.SetItemState (0, 0, LVIS_STATEIMAGEMASK);
 }

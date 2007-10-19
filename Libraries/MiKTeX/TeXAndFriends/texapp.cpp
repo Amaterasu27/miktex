@@ -84,7 +84,7 @@ TeXApp::OnTeXMFStartJob ()
 MIKTEXMFAPI(void)
 TeXApp::Finalize ()
 {
-  lastSourceFilename = T_("");
+  lastSourceFilename = "";
   sourceSpecials.reset ();
   TeXMFApp::Finalize ();
 }
@@ -137,53 +137,54 @@ Enable the \\write18{COMMAND} construct."),
 Set max_in_open to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_IN_OPEN,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("mem-bot\0\
 Set mem_bot to 0 or 1."),
 	     FIRST_OPTION_VAL + optBase + OPT_MEM_BOT,
 	     required_argument | POPT_ARGFLAG_DOC_HIDDEN,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("nest-size\0\
 Set nest_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_NEST_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("save-size\0\
 Set save_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_SAVE_SIZE,
-	     required_argument, T_("N"));
+	     required_argument,
+	     "N");
 
   AddOption (T_("trie-size\0\
 Set trie_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_TRIE_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
-  if (! AmI(T_("omega")))
+  if (! AmI("omega"))
     {
       AddOption (T_("font-max\0\
 Set font_max to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_FONT_MAX,
 		 required_argument,
-		 T_("N"));
+		 "N");
       AddOption (T_("font-mem-size\0\
 Set font_mem_size to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_FONT_MEM_SIZE,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
 
-  if (AmI(T_("omega")))
+  if (AmI("omega"))
     {
       AddOption (T_("trie-op-size\0\
 Set trie_op_size to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_TRIE_OP_SIZE,
 		 required_argument,
-		 T_("N"));
+		 "N");
     }
 
 #if EXPERT_SRC_SPECIALS
@@ -193,7 +194,7 @@ Insert source specials in certain places of the DVI file.\
  cr display hbox math par parend vbox.")),
 	     FIRST_OPTION_VAL + optBase + OPT_SRC_SPECIALS,
 	     optional_argument,
-	     T_("WHERE"));
+	     "WHERE");
 #else
   AddOption ((T_("src-specials\0\
 Insert source specials in certain places of the DVI file.")),
@@ -201,25 +202,25 @@ Insert source specials in certain places of the DVI file.")),
 #endif
 
   // obsolete options
-  AddOption (T_("try-gz\0"), OPT_UNSUPPORTED);
+  AddOption ("try-gz\0", OPT_UNSUPPORTED);
 
   // old option names
-  AddOption (T_("src"), T_("src-specials"));
+  AddOption ("src", "src-specials");
 
   // supported Web2C options
-  AddOption (T_("enc"), T_("enable-enctex"));
-  AddOption (T_("mltex"), T_("enable-mltex"));
-  AddOption (T_("fmt"), T_("undump"));
-  AddOption (T_("no-shell-escape"), T_("disable-write18"));
-  AddOption (T_("shell-escape"), T_("enable-write18"));
+  AddOption ("enc", "enable-enctex");
+  AddOption ("mltex", "enable-mltex");
+  AddOption ("fmt", "undump");
+  AddOption ("no-shell-escape", "disable-write18");
+  AddOption ("shell-escape", "enable-write18");
 
   // unsupported Web2C options
-  AddOption (T_("ipc"), OPT_UNSUPPORTED);
-  AddOption (T_("ipc-start"), OPT_UNSUPPORTED);
-  AddOption (T_("output-comment"),
+  AddOption ("ipc", OPT_UNSUPPORTED);
+  AddOption ("ipc-start", OPT_UNSUPPORTED);
+  AddOption ("output-comment",
 	     OPT_UNSUPPORTED,
 	     required_argument,
-	     T_("comment"));
+	     "comment");
 }
 
 /* _________________________________________________________________________
@@ -228,7 +229,7 @@ Insert source specials in certain places of the DVI file.")),
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-TeXApp::ProcessOption (/*[in]*/ int			optchar,
+TeXApp::ProcessOption (/*[in]*/ int		optchar,
 		       /*[in]*/ const char *	lpszArg)
 {
   bool done = true;
@@ -276,48 +277,48 @@ TeXApp::ProcessOption (/*[in]*/ int			optchar,
 	}
       else
 	{
-	  Tokenizer tok (lpszArg, T_(", "));
+	  Tokenizer tok (lpszArg, ", ");
 	  while (tok.GetCurrent() != 0)
 	    {
-	      if (StringCompare(tok.GetCurrent(), T_("everypar")) == 0
-		  || StringCompare(tok.GetCurrent(), T_("par")) == 0)
+	      if (StringCompare(tok.GetCurrent(), "everypar") == 0
+		  || StringCompare(tok.GetCurrent(), "par") == 0)
 		{
 		  sourceSpecials[SourceSpecials::Auto] = true;
 		  sourceSpecials[SourceSpecials::Paragraph] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everyparend")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("parend")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everyparend") == 0
+		       || StringCompare(tok.GetCurrent(), "parend") == 0)
 		{
 		  sourceSpecials[SourceSpecials::ParagraphEnd] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everycr")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("cr")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everycr") == 0
+		       || StringCompare(tok.GetCurrent(), "cr") == 0)
 		{
 		  sourceSpecials[SourceSpecials::CarriageReturn] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everymath")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("math")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everymath") == 0
+		       || StringCompare(tok.GetCurrent(), "math") == 0)
 		{
 		  sourceSpecials[SourceSpecials::Math] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everyhbox")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("hbox")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everyhbox") == 0
+		       || StringCompare(tok.GetCurrent(), "hbox") == 0)
 		{
 		  sourceSpecials[SourceSpecials::HorizontalBox] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everyvbox")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("vbox")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everyvbox") == 0
+		       || StringCompare(tok.GetCurrent(), "vbox") == 0)
 		{
 		  sourceSpecials[SourceSpecials::VerticalBox] = true;
 		}
-	      else if (StringCompare(tok.GetCurrent(), T_("everydisplay")) == 0
-		       || StringCompare(tok.GetCurrent(), T_("display")) == 0)
+	      else if (StringCompare(tok.GetCurrent(), "everydisplay") == 0
+		       || StringCompare(tok.GetCurrent(), "display") == 0)
 		{
 		  sourceSpecials[SourceSpecials::Display] = true;
 		}
 	      else
 		{
-		  FATAL_MIKTEX_ERROR (T_(""),
+		  FATAL_MIKTEX_ERROR ("",
 				      T_("Unknown source special."),
 				      tok.GetCurrent());
 		}

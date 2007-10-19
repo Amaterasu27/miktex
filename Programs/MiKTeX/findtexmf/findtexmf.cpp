@@ -363,7 +363,7 @@ FindTeXMF::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
-	<< T_("\n")
+	<< "\n"
 	<< T_("Copyright (C) 2001-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
@@ -387,7 +387,7 @@ FindTeXMF::FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGNAME << T_(": ")
+  cerr << PROGNAME << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -409,8 +409,8 @@ FindTeXMF::ListFileTypes ()
 	{
 	  continue;
 	}
-      cout << T_("  ") << fti.fileTypeString
-	   << T_(" (") << fti.fileNameExtensions << T_(")")
+      cout << "  " << fti.fileTypeString
+	   << " (" << fti.fileNameExtensions << ")"
 	   << endl;
     }
 }
@@ -442,7 +442,7 @@ void
 FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 {
   bool first = true;
-  for (CSVList p (lpszSearchPath, T_(';'));
+  for (CSVList p (lpszSearchPath, ';');
        p.GetCurrent() != 0;
        ++ p)
     {
@@ -462,18 +462,18 @@ FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 	}
       else
 	{
-	  putchar (T_(';'));
+	  putchar (';');
 	}
       if (kpseMode)
 	{
-	  printf (T_("%s"), PathName(lpszPath).ToUnix().Get());
+	  printf ("%s", PathName(lpszPath).ToUnix().Get());
 	}
       else
 	{
-	  printf (T_("%s"), lpszPath);
+	  printf ("%s", lpszPath);
 	}
     }
-  putchar (T_('\n'));
+  putchar ('\n');
 }
 
 /* _________________________________________________________________________
@@ -608,9 +608,9 @@ FindTeXMF::Run (/*[in]*/ int			argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   EnableInstaller (mustExist ? TriState::True : TriState::False);

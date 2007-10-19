@@ -133,7 +133,7 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
 
   while (*lpsz != 0)
     {
-      if (*lpsz == T_(' ') && ! inQuotedArg)
+      if (*lpsz == ' ' && ! inQuotedArg)
 	{
 	  if (copying)
 	    {
@@ -142,7 +142,7 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
 	      copying = false;
 	    }
 	}
-      else if (*lpsz == T_('"'))
+      else if (*lpsz == '"')
 	{
 	  inQuotedArg = ! inQuotedArg;
 	  copying = true;
@@ -476,7 +476,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
   string line;
   while (reader.ReadLine(line))
     {
-      commandLine += T_(' ');
+      commandLine += ' ';
       commandLine += line.c_str();
     }
   reader.Close ();
@@ -548,7 +548,7 @@ FindInstallDir ()
 				 CSIDL_APPDATA,
 				 true);
 	}
-      path += T_(MIKTEX_PRODUCTNAME_STR) T_(" ") T_(MIKTEX_SERIES_STR);
+      path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
       return (path);
     }
 }
@@ -581,7 +581,7 @@ void
 CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 		   /*[out]*/ vector<PathName> &	vec)
 {
-  CSVList path (directories.c_str(), T_(';'));
+  CSVList path (directories.c_str(), ';');
 
   vec.clear ();
   directories = T_("");
@@ -596,7 +596,7 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 	{
 	  if (vec.size() > 0)
 	    {
-	      directories += T_(';');
+	      directories += ';';
 	    }
 	  vec.push_back (path.GetCurrent());
 	  directories += path.GetCurrent();
@@ -687,8 +687,8 @@ SearchLocalRepository (/*[out]*/ PathName &		localRepository,
 
   // try ..\tm\packages
   localRepository = SessionWrapper(true)->GetMyLocation();
-  localRepository += T_("..");
-  localRepository += T_("tm");
+  localRepository += "..";
+  localRepository += "tm";
   localRepository += T_("packages");
   localRepository.MakeAbsolute ();
   if (TestLocalRepository(localRepository, packageLevel))
@@ -718,7 +718,7 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 {
   // check ..\texmf\miktex\config\md.ini
   MiKTeXDirectRoot = SessionWrapper(true)->GetMyLocation();
-  MiKTeXDirectRoot += T_("..");
+  MiKTeXDirectRoot += "..";
   MiKTeXDirectRoot.MakeAbsolute ();
   PathName pathMdIni = MiKTeXDirectRoot;
   pathMdIni += T_("texmf");
@@ -753,8 +753,8 @@ GetDefaultLocalRepository ()
       // default is "%TEMP%\MiKTeX X.Y Packages"
       ret.SetToTempDirectory ();
       ret +=
-	(T_(MIKTEX_PRODUCTNAME_STR)
-	 T_(" ") T_(MIKTEX_SERIES_STR)
+	(MIKTEX_PRODUCTNAME_STR
+	 " " MIKTEX_SERIES_STR
 	 T_(" Packages"));
     }
   return (ret);
@@ -814,7 +814,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   if (theApp.folderName.empty())
     {
       theApp.folderName =
-	T_(MIKTEX_PRODUCTNAME_STR) T_(" ") T_(MIKTEX_SERIES_STR);
+	MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
     }
 
   // local package repository
@@ -1013,7 +1013,7 @@ CloseLog (/*[in]*/ bool cancel)
     {
       pathLogFile += t.Format(T_("setup-%Y-%m-%d-%H-%M"));
     }
-  pathLogFile.SetExtension (T_(".log"));
+  pathLogFile.SetExtension (".log");
 
   // install the log file
   // <todo>add the log file to the uninstall script</todo>
@@ -1155,7 +1155,7 @@ SetupWizardApplication::InitInstance ()
       if (cmdinfo.optPrivate && cmdinfo.optShared)
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SetupWizardApplication::InitInstance"),
+	    ("SetupWizardApplication::InitInstance",
 	     T_("You cannot specify --private along with --shared."),
 	     0);
 	}
@@ -1164,7 +1164,7 @@ SetupWizardApplication::InitInstance ()
 		&& cmdinfo.startupConfig.commonConfigRoot.Empty()))
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SetupWizardApplication::InitInstance"),
+	    ("SetupWizardApplication::InitInstance",
 	     T_("You cannot specify --private along with \
 --common-data and/or --common-config."),
 	     0);
@@ -1295,7 +1295,7 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
     {
       pathBinDir.Set (theApp.startupConfig.installRoot, MIKTEX_PATH_BIN_DIR);
     }
-  CSVList bindir (lpszPath, T_(';'));
+  CSVList bindir (lpszPath, ';');
   for (; bindir.GetCurrent() != 0; ++ bindir)
     {
       size_t l = StrLen(bindir.GetCurrent());
@@ -1304,9 +1304,9 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
 	  continue;
 	}
       PathName pathBinDir2;
-      if (bindir.GetCurrent()[0] == T_('"')
+      if (bindir.GetCurrent()[0] == '"'
 	  && l > 2
-	  && bindir.GetCurrent()[l - 1] == T_('"'))
+	  && bindir.GetCurrent()[l - 1] == '"')
 	{
 	  pathBinDir2 = bindir.GetCurrent() + 1;
 	  pathBinDir2[l - 2] = 0;
@@ -1443,15 +1443,15 @@ ULogOpen ()
    _________________________________________________________________________ */
 
 #define UNINST_DISPLAY_NAME \
-  MIKTEX_PRODUCTNAME_STR T_(" ") MIKTEX_VERSION_STR
+  MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
 
 #define UNINST_DISPLAY_NAME_MIKTEXDIRECT \
-  "MiKTeXDirect" T_(" ") MIKTEX_VERSION_STR
+  "MiKTeXDirect" " " MIKTEX_VERSION_STR
 
 #define UNINST_REG_PATH							\
     (theApp.setupTask == SetupTask::PrepareMiKTeXDirect			\
-     ? REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME_MIKTEXDIRECT	\
-     : REGSTR_PATH_UNINSTALL T_("\\") UNINST_DISPLAY_NAME)
+     ? REGSTR_PATH_UNINSTALL "\\" UNINST_DISPLAY_NAME_MIKTEXDIRECT	\
+     : REGSTR_PATH_UNINSTALL "\\" UNINST_DISPLAY_NAME)
 
 #define UNINST_HKEY_ROOT			\
   (theApp.commonUserSetup			\
@@ -1526,19 +1526,19 @@ RegisterUninstaller ()
   PathName pathCopyStart (theApp.startupConfig.installRoot,
 			  MIKTEX_PATH_COPYSTART_ADMIN_EXE);
   string commandLine;
-  commandLine += T_('"');
+  commandLine += '"';
   commandLine += pathCopyStart.Get();
-  commandLine += T_("\" \"");
+  commandLine += "\" \"";
   PathName pathUninstallDat (theApp.startupConfig.installRoot,
 			     MIKTEX_PATH_UNINSTALL_DAT);
   commandLine += pathUninstallDat.Get();
-  commandLine += T_('"');
+  commandLine += '"';
 
   // make icon path
   PathName iconPath (theApp.startupConfig.installRoot);
   iconPath += MIKTEX_PATH_BIN_DIR;
   iconPath += MIKTEX_MO_EXE;
-  iconPath.Append (T_(",0"), false);
+  iconPath.Append (",0", false);
 
   // create registry key
   HKEY hkey;
@@ -1645,7 +1645,7 @@ ULogAddRegValue (/*[in]*/ HKEY		hkey,
     }
   if (hkey == HKEY_LOCAL_MACHINE && section != HKLM)
     {
-      theApp.uninstStream.WriteLine (T_("[hklm]"));
+      theApp.uninstStream.WriteLine ("[hklm]");
       section = HKLM;
     }
   else if (hkey == HKEY_CURRENT_USER && section != HKCU)
@@ -1654,7 +1654,7 @@ ULogAddRegValue (/*[in]*/ HKEY		hkey,
       section = HKCU;
     }
   theApp.uninstStream.WriteFormattedLine
-    (T_("%s;%s"), lpszSubKey, lpszValueName);
+    ("%s;%s", lpszSubKey, lpszValueName);
 }
 
 /* _________________________________________________________________________
@@ -1728,7 +1728,7 @@ RegisterPathNT ()
 
   if (havePath)
     {
-      newPath += T_(';');
+      newPath += ';';
       newPath += value.Get();
     }
 
@@ -1823,7 +1823,7 @@ RegisterMiKTeXFileTypes ()
       PathName yap (theApp.startupConfig.installRoot);
       yap += MIKTEX_PATH_BIN_DIR;
       yap += MIKTEX_YAP_EXE;
-      Process::Run (yap.Get(), T_("--register"));
+      Process::Run (yap.Get(), "--register");
     }
 }
 
@@ -1951,7 +1951,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
     }
 
   pathLink += strItemName;
-  pathLink.SetExtension (ld.isUrl ? T_(".url") : T_(".lnk"));
+  pathLink.SetExtension (ld.isUrl ? ".url" : ".lnk");
 
   if (File::Exists(pathLink))
     {
@@ -2149,7 +2149,7 @@ LogV (/*[in]*/ const char *	lpszFormat,
 	  || (lpsz[0] == T_('\r') && lpsz[1] == T_('\n')))
 	{
 	  theApp.traceStream->WriteFormattedLine (T_("setup"),
-						  T_("%s"),
+						  "%s",
 						  currentLine.c_str());
 	  if (theApp.logStream.IsOpen())
 	    {
@@ -2201,7 +2201,7 @@ LogHeader ()
        VER_FILEVERSION_STR);
   CTime t = CTime::GetCurrentTime();
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
-  Log (T_("Time: %s\n"), t.Format(T_("%H:%M:%S")));
+  Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
   Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
   if (IsWindowsNT())
     {
@@ -2268,7 +2268,7 @@ GetFileVersion (/*[in]*/ const PathName &	path)
   UINT uLen;
   void * pVer;
   if (! VerQueryValue(buf.GetBuffer(),
-		      T_("\\"),
+		      "\\",
 		      &pVer,
 		      &uLen))
     {
@@ -2294,7 +2294,7 @@ DDV_Path (/*[in]*/ CDataExchange *	pDX,
       return;
     }
   CString str2;
-  if (isalpha(str[0]) && str[1] == T_(':') && IsDirectoryDelimiter(str[2]))
+  if (isalpha(str[0]) && str[1] == ':' && IsDirectoryDelimiter(str[2]))
     {
       CString driveRoot = str.Left(3);
       if (! Directory::Exists(PathName(driveRoot)))
@@ -2333,7 +2333,7 @@ root directory %s does not exist."),
 	}
       str2 = str;
     }
-  int i = str2.FindOneOf(T_(":*?\"<>|;="));
+  int i = str2.FindOneOf(":*?\"<>|;=");
   if (i >= 0)
     {
       CString message;
@@ -2359,11 +2359,11 @@ ReportError (/*[in]*/ const MiKTeXException & e)
       string str;
       str =
 	T_("The operation could not be completed for the following reason: ");
-      str += T_("\n\n");
+      str += "\n\n";
       str += e.what();
       if (! e.GetInfo().empty())
 	{
-	  str += T_("\n\n");
+	  str += "\n\n";
 	  str += T_("Details: ");
 	  str += e.GetInfo();
 	}
@@ -2392,9 +2392,9 @@ ReportError (/*[in]*/ const exception & e)
       string str;
       str =
 	T_("The operation could not be completed for the following reason: ");
-      str += T_("\n\n");
+      str += "\n\n";
       str += e.what();
-      Log (T_("\n%s\n"), str.c_str());
+      Log ("\n%s\n", str.c_str());
       AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
     }
   catch (const exception &)

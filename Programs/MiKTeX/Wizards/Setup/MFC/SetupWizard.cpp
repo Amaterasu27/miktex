@@ -67,17 +67,17 @@ SetupWizard::SetupWizard (/*[in]*/ PackageManager * pManager)
   ::ReleaseDC (0, hdc);
   if (! fntWelcome.CreateFontIndirect(&TitleLogFont))
     {
-      FATAL_WINDOWS_ERROR (T_("CFont::CreateFontIndirect"), 0);
+      FATAL_WINDOWS_ERROR ("CFont::CreateFontIndirect", 0);
     }
 
   if (! watermarkBitmap.LoadBitmap(IDB_WATERMARK))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   if (! headerBitmap.LoadBitmap(IDB_HEADER))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   Construct (IDS_SETUPWIZ, 0, 0, watermarkBitmap, 0, headerBitmap);
@@ -148,7 +148,7 @@ SetupWizard::OnInitDialog ()
 	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    case PackageLevel::Complete:
-	      prefix = T_("");
+	      prefix = "";
 	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    default:
@@ -190,7 +190,7 @@ SetupWizard::EnableCancelButton (/*[in]*/ bool enable)
   CWnd * pWnd = GetDlgItem(IDCANCEL);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("SetupWizard::EnableCancel"));
+      UNEXPECTED_CONDITION ("SetupWizard::EnableCancel");
     }
   pWnd->EnableWindow (enable ? TRUE : FALSE);
 }
@@ -206,7 +206,7 @@ SetupWizard::SetNextText (/*[in]*/ const char * lpszText)
   CWnd * pWnd = GetDlgItem(ID_WIZNEXT);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("SetupWizard::SetNextText"));
+      UNEXPECTED_CONDITION ("SetupWizard::SetNextText");
     }
   CString ret;
   pWnd->GetWindowText (ret);

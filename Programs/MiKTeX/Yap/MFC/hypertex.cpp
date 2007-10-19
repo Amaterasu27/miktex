@@ -58,7 +58,7 @@ DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ CString & name)
 
   if (pDviPage == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::GetHyperTeXSpecialAtCursor"));
+      UNEXPECTED_CONDITION ("DviView::GetHyperTeXSpecialAtCursor");
     }
 
   AutoUnlockPage autoUnlockPage (pDviPage);
@@ -78,7 +78,7 @@ DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ CString & name)
       if (hrefRect.PtInRect(ptDvi))
 	{
 	  const char * lpsz = pHyperSpecial->GetName();
-	  name = (lpsz != 0 ? lpsz : T_(""));
+	  name = (lpsz != 0 ? lpsz : "");
 	  return (true);
 	}
     }
@@ -96,7 +96,7 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 		   /*[in]*/ bool		remember)
 {
   CWaitCursor wait;
-  if (*lpszUrl == T_('#'))
+  if (*lpszUrl == '#')
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
@@ -277,13 +277,13 @@ DviView::IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
 			      /*[out]*/ CString &		dviFileName,
 			      /*[out]*/ CString &		hashLabel)
 {
-  dviFileName = T_("");
-  hashLabel = T_("");
-  while (*lpszLabel != 0 && *lpszLabel != T_('#'))
+  dviFileName = "";
+  hashLabel = "";
+  while (*lpszLabel != 0 && *lpszLabel != '#')
     {
       dviFileName += *lpszLabel++;
     }
-  if (! PathName(dviFileName).HasExtension(T_(".dvi")))
+  if (! PathName(dviFileName).HasExtension(".dvi"))
     {
       return (false);
     }
@@ -332,7 +332,7 @@ DviView::GotoLocation (/*[in]*/ const DviView::location & loc)
   ASSERT_VALID (pDoc);
   if (loc.pageidx < 0 || loc.pageidx >= pDoc->GetPageCount())
     {
-      UNEXPECTED_CONDITION (T_("DviView::GotoLocation"));
+      UNEXPECTED_CONDITION ("DviView::GotoLocation");
     }
   ChangePage (loc.pageidx);
   CPoint pt (loc.pt);

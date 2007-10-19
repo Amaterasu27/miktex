@@ -1776,7 +1776,7 @@ PackageInstallerImpl::RegisterComponent
  /*[in]*/ const PathName &	path,
  /*[in]*/ bool			mustSucceed)
 {
-  ReportLine (T_("%s %s"),
+  ReportLine ("%s %s",
 	      (doRegister
 	       ? "registering"
 	       : "unregistering"),

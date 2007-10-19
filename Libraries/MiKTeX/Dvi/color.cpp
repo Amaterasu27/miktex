@@ -425,7 +425,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      || frac3 < 0.0 || frac3 > 1.0)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("invalid color triple: %s"),
 		 lpsz);
 	      return (false);
@@ -454,7 +454,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      || frac1 < 0.0 || frac1 > 1.0)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("invalid gray value: %s"),
 		 lpsz);
 	      return (false);
@@ -478,7 +478,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	    
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("invalid cmyk quadrupel: %s"),
 		 lpsz);
 	      return (false);
@@ -496,7 +496,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
       if (! isalpha(*lpsz))
 	{
 	  log_error->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("invalid color name: %s"),
 	     lpsz);
 	  return (false);
@@ -510,7 +510,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
       if (! LookupColorName(name.c_str(), cmykcolor))
 	{
 	  log_error->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("unknown color name: %s"),
 	     name.c_str());
 	  return (false);
@@ -544,7 +544,7 @@ DviImpl::SetCurrentColor (/*[in]*/ const char *	lpszColor)
 
   bool ret;
 
-  if (strncmp(lpsz, T_("push"), 4) == 0)
+  if (strncmp(lpsz, "push", 4) == 0)
     {
       unsigned long rgb;
       ret = ParseColorSpec(lpsz + 4, rgb);
@@ -553,7 +553,7 @@ DviImpl::SetCurrentColor (/*[in]*/ const char *	lpszColor)
 	  PushColor (rgb);
 	}
     }
-  else if (strncmp(lpsz, T_("pop"), 3) == 0)
+  else if (strncmp(lpsz, "pop", 3) == 0)
     {
       ret = true;
       PopColor ();
@@ -580,7 +580,7 @@ DviImpl::SetCurrentColor (/*[in]*/ const char *	lpszColor)
 void
 DviImpl::PushColor (/*[in]*/ unsigned long rgb)
 {
-  log_color->WriteFormattedLine (T_("libdvi"), T_("push color %x"), rgb);
+  log_color->WriteFormattedLine ("libdvi", T_("push color %x"), rgb);
   colorStack.push (currentColor);
   currentColor = rgb;
 }
@@ -595,15 +595,13 @@ DviImpl::PopColor ()
 {
   if (colorStack.empty())
     {
-      log_error->WriteLine
-	(T_("libdvi"),
-	 T_("color pop: color stack is empty"));
+      log_error->WriteLine ("libdvi", T_("color pop: color stack is empty"));
       return;
     }
   currentColor = colorStack.top();
   colorStack.pop ();
   log_color->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("pop color; currentcolor now %x"),
      currentColor);
 }
@@ -616,7 +614,7 @@ DviImpl::PopColor ()
 void
 DviImpl::ResetCurrentColor ()
 {
-  log_color->WriteFormattedLine (T_("libdvi"), T_("reset color stack"));
+  log_color->WriteFormattedLine ("libdvi", T_("reset color stack"));
   while (! colorStack.empty())
     {
       colorStack.pop ();

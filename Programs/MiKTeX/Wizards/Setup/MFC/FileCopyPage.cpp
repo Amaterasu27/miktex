@@ -139,7 +139,7 @@ FileCopyPage::OnSetActive ()
 	  // starting shot
 	  if (! PostMessage (WM_STARTFILECOPY))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -237,7 +237,7 @@ FileCopyPage::OnQueryCancel ()
 	  pSheet->SetCancelFlag ();
 	  if (! PostMessage(WM_PROGRESS))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
       else
@@ -274,14 +274,14 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 				  ? IDA_DOWNLOAD
 				  : IDA_FILECOPY))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimatCtrl::Open"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Open", 0);
 	}
 
       if (! animationControl.Play(0,
 				  static_cast<UINT>(-1),
 				  static_cast<UINT>(-1)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimatCtrl::Play"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Play", 0);
 	}
 
       // initialize progress bar controls
@@ -312,7 +312,7 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 			    FALSE,
 			    DUPLICATE_SAME_ACCESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	  FATAL_WINDOWS_ERROR ("DuplicateHandle", 0);
 	}
       pThread->ResumeThread ();
     }
@@ -367,14 +367,14 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  // stop the video
 	  if (! animationControl.Stop())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Stop"), 0);
+	      FATAL_WINDOWS_ERROR ("CAnimateCtrl::Stop", 0);
 	    }
 	  animationControl.Close (); // always returns FALSE
 	  animationControl.ShowWindow (SW_HIDE);
 
 	  // disable controls
 	  EnableControl (IDC_PROGRESS1_TITLE, false);
-	  GetControl(IDC_PACKAGE)->SetWindowText (T_(""));
+	  GetControl(IDC_PACKAGE)->SetWindowText ("");
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
@@ -383,7 +383,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  progressControl2.EnableWindow (FALSE);
 #if 0
 	  GetControl(IDC_ETA_TITLE)->ShowWindow (SW_HIDE);
-	  GetControl(IDC_ETA)->SetWindowText (T_(""));
+	  GetControl(IDC_ETA)->SetWindowText ("");
 	  GetControl(IDC_ETA)->ShowWindow (SW_HIDE);
 #endif
       
@@ -473,7 +473,7 @@ MIKTEXCALL
 FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
 			       /*[in]*/ size_t		n)
 {
-  Report (true, T_("%.*s"), n, reinterpret_cast<const char *>(pOutput));
+  Report (true, "%.*s", n, reinterpret_cast<const char *>(pOutput));
   return (! (pSheet->GetErrorFlag() || pSheet->GetCancelFlag()));
 }
 
@@ -486,7 +486,7 @@ void
 MPMCALL
 FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
-  Report (true, T_("%s\n"), lpszLine);
+  Report (true, "%s\n", lpszLine);
 }
 
 /* _________________________________________________________________________
@@ -502,7 +502,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   uType |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  UINT u = ::MessageBox(0, str.c_str(), 0, uType);
+  UINT u = ::MessageBoxA(0, str.c_str(), 0, uType);
   return (u != IDCANCEL);
 }
 
@@ -575,7 +575,7 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 
   if (! PostMessage(WM_PROGRESS))
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
 
   return (! (pSheet->GetErrorFlag() || pSheet->GetCancelFlag()));
@@ -605,7 +605,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
       // initialize COM
       if (FAILED(CoInitialize(0)))
 	{
-	  UNEXPECTED_CONDITION (T_("FileCopyPage::WorkerThread"));
+	  UNEXPECTED_CONDITION ("FileCopyPage::WorkerThread");
 	}
       comInit = true;
 
@@ -650,7 +650,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
     {
       if (! This->PostMessage(WM_PROGRESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -941,7 +941,7 @@ FileCopyPage::ConfigureMiKTeX ()
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
       {
-	FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
       }
   }
   
@@ -951,8 +951,8 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       // [1] set shared flag
       cmdLine.Clear ();
-      cmdLine.AppendOption (T_("--shared-setup="),
-			    (theApp.commonUserSetup ? T_("1") : T_("0")));
+      cmdLine.AppendOption ("--shared-setup=",
+			    (theApp.commonUserSetup ? "1"  : "0"));
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
 	{
@@ -961,37 +961,37 @@ FileCopyPage::ConfigureMiKTeX ()
 
       // [2] define roots & remove old fndbs
       cmdLine.Clear ();
-      cmdLine.AppendOption (T_("--install-root="),
+      cmdLine.AppendOption ("--install-root=",
 			    theApp.startupConfig.installRoot);
       if (! theApp.startupConfig.userDataRoot.Empty())
 	{
-	  cmdLine.AppendOption (T_("--user-data="),
+	  cmdLine.AppendOption ("--user-data=",
 				theApp.startupConfig.userDataRoot);
 	}
       if (! theApp.startupConfig.userConfigRoot.Empty())
 	{
-	  cmdLine.AppendOption (T_("--user-config="),
+	  cmdLine.AppendOption ("--user-config=",
 				theApp.startupConfig.userConfigRoot);
 	}
       if (! theApp.startupConfig.commonDataRoot.Empty())
 	{
-	  cmdLine.AppendOption (T_("--common-data="),
+	  cmdLine.AppendOption ("--common-data=",
 				theApp.startupConfig.commonDataRoot);
 	}
       if (! theApp.startupConfig.commonConfigRoot.Empty())
 	{
-	  cmdLine.AppendOption (T_("--common-config="),
+	  cmdLine.AppendOption ("--common-config=",
 				theApp.startupConfig.commonConfigRoot);
 	}
       string rootDirectories;
       rootDirectories += theApp.startupConfig.installRoot.Get();
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
 	{
-	  rootDirectories += T_(";");
+	  rootDirectories += ";";
 	  rootDirectories += theApp.startupConfig.roots.c_str();
 	}
-      cmdLine.AppendOption (T_("--roots="), rootDirectories);
-      cmdLine.AppendOption (T_("--rmfndb"));
+      cmdLine.AppendOption ("--roots=", rootDirectories);
+      cmdLine.AppendOption ("--rmfndb");
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
 	{
@@ -999,11 +999,11 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
       
       // [3] register components, configure files
-      RunMpm (T_("--register-components"));
+      RunMpm ("--register-components");
 
       // [4] create filename database files
       cmdLine.Clear ();
-      cmdLine.AppendOption (T_("--update-fndb"));
+      cmdLine.AppendOption ("--update-fndb");
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
 	{
@@ -1012,14 +1012,14 @@ FileCopyPage::ConfigureMiKTeX ()
 
 
       // [5] create latex.exe, context.exe, ...
-      RunIniTeXMF (CommandLineBuilder(T_("--force"), T_("--mklinks")));
+      RunIniTeXMF (CommandLineBuilder("--force", "--mklinks"));
       if (pSheet->GetCancelFlag())
 	{
 	  return;
 	}
       
       // [6] create font map files
-      RunIniTeXMF (T_("--mkmaps"));
+      RunIniTeXMF ("--mkmaps");
       if (pSheet->GetCancelFlag())
 	{
 	  return;
@@ -1030,13 +1030,13 @@ FileCopyPage::ConfigureMiKTeX ()
   if (! theApp.paperSize.empty())
     {
       cmdLine.Clear ();
-      if (StringCompare(theApp.paperSize.c_str(), T_("a4"), true) == 0)
+      if (StringCompare(theApp.paperSize.c_str(), "a4", true) == 0)
 	{
-	  cmdLine.AppendOption (T_("--default-paper-size="), T_("A4size"));
+	  cmdLine.AppendOption ("--default-paper-size=", "A4size");
 	}
       else
 	{
-	  cmdLine.AppendOption (T_("--default-paper-size="), T_("letterSize"));
+	  cmdLine.AppendOption ("--default-paper-size=", "letterSize");
 	}
       RunIniTeXMF (cmdLine);
     }
@@ -1048,7 +1048,7 @@ FileCopyPage::ConfigureMiKTeX ()
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
       // [8] refresh file name database again
-      RunIniTeXMF (T_("--update-fndb"));
+      RunIniTeXMF ("--update-fndb");
       if (pSheet->GetCancelFlag())
 	{
 	  return;
@@ -1056,7 +1056,7 @@ FileCopyPage::ConfigureMiKTeX ()
     }
       
   // [9] create report
-  RunIniTeXMF (T_("--report"));
+  RunIniTeXMF ("--report");
   if (pSheet->GetCancelFlag())
     {
       return;
@@ -1079,13 +1079,13 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
-  cmdLine.AppendOption (T_("--log-file="), GetLogFileName());
-  cmdLine.AppendOption (T_("--verbose"));
+  cmdLine.AppendOption ("--log-file=", GetLogFileName());
+  cmdLine.AppendOption ("--verbose");
 
   // run initexmf.exe
   if (! theApp.dryRun)
     {
-      Log (T_("%s %s:\n"), Q_(exePath.Get()), cmdLine.Get());
+      Log ("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
       ULogClose ();
       SessionWrapper(true)->UnloadFilenameDatabase ();
       Process::Run (exePath.Get(), cmdLine.Get(), this);
@@ -1129,12 +1129,12 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
-  cmdLine.AppendOption (T_("--verbose"));
+  cmdLine.AppendOption ("--verbose");
 
   // run mpm.exe
   if (! theApp.dryRun)
     {
-      Log (T_("%s %s:\n"), Q_(exePath.Get()), cmdLine.Get());
+      Log ("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
       ULogClose ();
       SessionWrapper(true)->UnloadFilenameDatabase ();
       Process::Run (exePath.Get(), cmdLine.Get(), this);
@@ -1201,7 +1201,7 @@ FileCopyPage::Report (/*[in]*/ bool			writeLog,
   CSingleLock (&criticalSectionMonitor, TRUE);
   if (writeLog)
     {
-      Log (T_("%s"), static_cast<const char *>(str));
+      Log ("%s", static_cast<const char *>(str));
     }
   SendMessage (WM_REPORT,
 	       reinterpret_cast<WPARAM>(static_cast<const char *>(str)));
@@ -1218,7 +1218,7 @@ FileCopyPage::GetControl (/*[in]*/ UINT	controlId)
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("FileCopyPage::GetControl"));
+      UNEXPECTED_CONDITION ("FileCopyPage::GetControl");
     }
   return (pWnd);
 }

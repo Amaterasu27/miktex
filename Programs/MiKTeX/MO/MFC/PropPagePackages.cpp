@@ -178,7 +178,7 @@ PropPagePackages::OnApply ()
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("PropPagePackages::OnApply"));
+	      UNEXPECTED_CONDITION ("PropPagePackages::OnApply");
 	    }
 	}
       else
@@ -323,7 +323,7 @@ PropPagePackages::SetWindowText (/*[in]*/ UINT			controlId,
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("PropPagePackages::SetWindowText"));
+      UNEXPECTED_CONDITION ("PropPagePackages::SetWindowText");
     }
   pWnd->SetWindowText (lpszText);
 }
@@ -338,10 +338,10 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
 {
   if (pPackageInfo == 0)
     {
-      SetWindowText (IDC_INFO, T_(""));
-      SetWindowText (IDC_INSTALLED, T_(""));
-      SetWindowText (IDC_PACKAGE_SIZE, T_(""));
-      SetWindowText (IDC_VERSION, T_(""));
+      SetWindowText (IDC_INFO, "");
+      SetWindowText (IDC_INSTALLED, "");
+      SetWindowText (IDC_PACKAGE_SIZE, "");
+      SetWindowText (IDC_VERSION, "");
     }
   else
     {
@@ -470,7 +470,7 @@ PropPagePackages::OnBnClickedPackageManager ()
 					   path))
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("PropPagePackages::OnBnClickedPackageManager"),
+	    ("PropPagePackages::OnBnClickedPackageManager",
 	     T_("The package manager application could not be found."),
 	     0);
 	}
@@ -589,13 +589,13 @@ PropPagePackages::SetElevationRequired (/*[in]*/ bool f)
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("PropPagePackages::SetElevationRequired"));
+	  UNEXPECTED_CONDITION ("PropPagePackages::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
       hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
       if (hwnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("PropPagePackages::SetElevationRequired"));
+	  UNEXPECTED_CONDITION ("PropPagePackages::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
     }

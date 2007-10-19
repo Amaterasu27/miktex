@@ -91,7 +91,7 @@ public:
 
 public:
   void
-  DoContextMenu (/*[in]*/ POINT			pt,
+  DoContextMenu (/*[in]*/ POINT		pt,
 		 /*[in]*/ const char *	lpszExternalName);
 
 public:

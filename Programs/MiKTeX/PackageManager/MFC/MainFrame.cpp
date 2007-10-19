@@ -89,14 +89,14 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT pCreateStruct)
     {
       if (CFrameWnd::OnCreate(pCreateStruct) < 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::OnCreate"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::OnCreate",
 			      T_("The main window could not be created."),
 			      0);
 	}
       
       if (! toolBar.CreateEx(this) || ! toolBar.LoadToolBar(IDR_MAINFRAME))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::OnCreate"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::OnCreate",
 			      T_("The toolbar control could not be created."),
 			      0);
 	}
@@ -106,7 +106,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT pCreateStruct)
 			     CBRS_ALIGN_TOP,
 			     AFX_IDW_DIALOGBAR))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::OnCreate"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::OnCreate",
 		      T_("The dialog bar controlcould not be created."),
 			      0);
 	}
@@ -115,7 +115,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT pCreateStruct)
 	  || ! reBar.AddBar(&toolBar)
 	  || ! reBar.AddBar(&dialogBar))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::OnCreate"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::OnCreate",
 			      T_("The coolbar control could not be created."),
 			      0);
 	}
@@ -124,7 +124,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT pCreateStruct)
 	  || ! statusBar.SetIndicators(indicators,
 				       sizeof(indicators) / sizeof(UINT)))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::OnCreate"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::OnCreate",
 		      T_("The status bar control could not be created."),
 			      0);
 	}
@@ -159,7 +159,7 @@ MainFrame::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs)
     {
       if (! CFrameWnd::PreCreateWindow(cs))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MainFrame::PreCreateWindow"),
+	  FATAL_MIKTEX_ERROR ("MainFrame::PreCreateWindow",
 			      T_("The main window could not be initialized."),
 			      0);
 	}
@@ -204,12 +204,12 @@ MainFrame::OnUpdateNumPackages (/*[in]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pView != 0);
       if (pView == 0)
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       if (! pView->IsKindOf(RUNTIME_CLASS(MpmView)))
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       MpmView * pMpmView = reinterpret_cast<MpmView*>(pView);

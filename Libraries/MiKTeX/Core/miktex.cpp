@@ -361,7 +361,7 @@ Utils::MakeProgramVersionString
       str += ' ';
       str += programVersionNumber.ToString();
     }
-  str += T_(" (") MIKTEX_BANNER_STR ")";
+  str += " (" MIKTEX_BANNER_STR ")";
   return (str);
 }
 

@@ -59,7 +59,7 @@ WelcomePage::OnInitDialog ()
       CWnd * pWnd = GetDlgItem(IDC_WELCOME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("WelcomePage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("WelcomePage::OnInitDialog");
 	}
       extern CFont fntWelcome;
       pWnd->SetFont (&fntWelcome);

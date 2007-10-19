@@ -67,7 +67,7 @@ using namespace std;
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 /* _________________________________________________________________________
@@ -403,17 +403,17 @@ enum Option
 const struct poptOption Converter::aoption[] = {
 
   {
-    T_("quiet"), 0, POPT_ARG_NONE, 0, OPT_QUIET,
+    "quiet", 0, POPT_ARG_NONE, 0, OPT_QUIET,
     T_("Suppress all output (except errors)."), 0
   },
 
   {
-    T_("verbose"), 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
+    "verbose", 0, POPT_ARG_NONE, 0, OPT_VERBOSE,
     T_("Turn on verbose output mode."), 0
   },
 
   {
-    T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
+    "version", 0, POPT_ARG_NONE, 0, OPT_VERSION,
     T_("Show version information and exit."), 0
   },
 
@@ -475,7 +475,7 @@ Converter::Error (/*[in]*/ const char *		lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << T_("gsf2pk") << T_(": ")
+  cerr << "gsf2pk" << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -534,7 +534,7 @@ Converter::GetByte (/*[in]*/ FILE * pfile)
     {
       if (ferror(pfile))
 	{
-	  FATAL_CRT_ERROR (T_("fgetc"), 0);
+	  FATAL_CRT_ERROR ("fgetc", 0);
 	}
       else
 	{
@@ -571,7 +571,7 @@ Converter::Read (/*[out]*/ void *	pv,
 {
   if (fread(pv, 1, len, pFileGsf.Get()) != len)
     {
-      FATAL_CRT_ERROR (T_("fread"), 0);
+      FATAL_CRT_ERROR ("fread", 0);
     }
 }
 
@@ -586,7 +586,7 @@ Converter::Write (/*[out]*/ const void *	pv,
 {
   if (fwrite(pv, 1, len, pFilePk.Get()) != len)
     {
-      FATAL_CRT_ERROR (T_("fwrite"), 0);
+      FATAL_CRT_ERROR ("fwrite", 0);
     }
 }
 
@@ -637,7 +637,7 @@ Converter::GetInt ()
   int i = 0;
   do
     {
-      i = i * 10 + (c - T_('0'));
+      i = i * 10 + (c - '0');
       c = GetByte();
     }
   while (c >= '0' && c <= '9');
@@ -687,7 +687,7 @@ Converter::PutByte (/*[in]*/ int	by)
 {
   if (fputc(by, pFilePk.Get()) == EOF)
     {
-      FATAL_CRT_ERROR (T_("fputc"), 0);
+      FATAL_CRT_ERROR ("fputc", 0);
     }
 }
 
@@ -719,7 +719,7 @@ Converter::PutByteArray (/*[in]*/ const void *	pv,
   PutByte (static_cast<int>(len));
   if (fwrite(pv, 1, len, pFilePk.Get()) != len)
     {
-      FATAL_CRT_ERROR (T_("fwrite"), 0);
+      FATAL_CRT_ERROR ("fwrite", 0);
     }
 }
 
@@ -774,7 +774,7 @@ Converter::ReadTFMFile (/*[in]*/ const char *	lpszTeXFontName)
 
   if (fseek(pFile.Get(), 4 * (lh() + 6), SEEK_SET) != 0)
     {
-      FATAL_CRT_ERROR (T_("fseek"), 0);
+      FATAL_CRT_ERROR ("fseek", 0);
     }
 
   for (int cc = bc(); cc <= ec(); ++ cc)
@@ -784,7 +784,7 @@ Converter::ReadTFMFile (/*[in]*/ const char *	lpszTeXFontName)
 	{
 	  if (chars.length() > 0)
 	    {
-	      chars += T_(' ');
+	      chars += ' ';
 	    }
 	  chars += NUMTOSTR(cc);
 	}
@@ -827,23 +827,23 @@ Converter::StartGhostscript (/*[in]*/ const char *	lpszFontFile,
   CommandLineBuilder commandLine;
 
   // - no device output
-  commandLine.AppendOption (T_("-dNODISPLAY"));
+  commandLine.AppendOption ("-dNODISPLAY");
 
   // - no garbage collection
-  commandLine.AppendOption (T_("-dNOGC"));
+  commandLine.AppendOption ("-dNOGC");
 
   // - set font substitution
-  commandLine.AppendOption (T_("-sSUBSTFONT="), lpszFontName);
+  commandLine.AppendOption ("-sSUBSTFONT=", lpszFontName);
 
   // - be quiet
-  commandLine.AppendOption (T_("-q"));
+  commandLine.AppendOption ("-q");
 
   // ???
-  commandLine.AppendOption (T_("--"));
+  commandLine.AppendOption ("--");
 
   // - path to render.ps
   PathName pathRenderPS;
-  if (! pSession->FindFile(T_("render.ps"),
+  if (! pSession->FindFile("render.ps",
 			   FileType::PSHEADER,
 			   pathRenderPS))
     {
@@ -863,21 +863,21 @@ Converter::StartGhostscript (/*[in]*/ const char *	lpszFontFile,
     {
       Error (T_("The font file could not be found."));
     }
-  loadString = T_("(");
+  loadString = "(";
   loadString += pathFont.ToUnix().Get();
-  loadString += T_(") ");
+  loadString += ") ";
   int by = GetFirstByte(pathFont);
   if (by == 0)
     {
-      loadString += T_("ttload");
+      loadString += "ttload";
     }
   else if (by == 0200)
     {
-      loadString += T_("brun");
+      loadString += "brun";
     }
   else
     {
-      loadString += T_("run");
+      loadString += "run";
     }
   if (lpszEncFile != 0 && *lpszEncFile != 0)
     {
@@ -888,14 +888,14 @@ Converter::StartGhostscript (/*[in]*/ const char *	lpszFontFile,
 	{
 	  Error (T_("The encoding file could not be found."));
 	}
-      loadString += T_(" (");
+      loadString += " (";
       loadString += pathEnc.ToUnix().Get();
-      loadString += T_(" ) run");
+      loadString += " ) run";
     }
   commandLine.AppendArgument (loadString.c_str());
 
   // - special info
-  commandLine.AppendArgument (lpszSpecInfo == 0 ? T_("") : lpszSpecInfo);
+  commandLine.AppendArgument (lpszSpecInfo == 0 ? "" : lpszSpecInfo);
 
   // - DPI
   commandLine.AppendArgument (lpszDPI);
@@ -1529,7 +1529,7 @@ Converter::PutGlyph (/*[in]*/ int cc)
     }
   if (idx > cc)
     {
-      cerr << T_("Character ") << cc << T_(" is missing.") << endl;
+      cerr << T_("Missing character: ") << cc << endl;
       haveFirstLine = true;
       return;
     }
@@ -1798,7 +1798,7 @@ Converter::Main (/*[in]*/ int			argc,
 	  verbose = true;
 	  break;
 	case OPT_VERSION:
-	  cout << Utils::MakeProgramVersionString(T_("gsf2pk"),
+	  cout << Utils::MakeProgramVersionString("gsf2pk",
 					   VersionNumber(VER_FILEVERSION))
 	       << T_("\n\
 Copyright (C) 2004-2007 Christian Schenk\n\
@@ -1813,9 +1813,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      Error (T_("%s"), msg.c_str());
+      Error ("%s", msg.c_str());
     }
 
   if (popt.GetArgCount() != 7)

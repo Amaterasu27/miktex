@@ -78,7 +78,7 @@ BitmapPrinter::PrintChunk (/*[in]*/ DibChunk * pChunk)
       
       if (n == GDI_ERROR)
 	{
-	  FATAL_MIKTEX_ERROR (T_("BitmapPrinter::PrintChunk"),
+	  FATAL_MIKTEX_ERROR ("BitmapPrinter::PrintChunk",
 			      T_("StretchDIBits() failed for some reason."),
 			      0);
 	}
@@ -101,7 +101,7 @@ BitmapPrinter::OnNewChunk (/*[in]*/ DibChunk * pChunk)
       if ((rasterCaps & RC_STRETCHDIB) == 0)
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("BitmapPrinter::OnNewChunk"),
+	    ("BitmapPrinter::OnNewChunk",
 	     T_("StretchDIBits() is not supported."),
 	     0);
 	}

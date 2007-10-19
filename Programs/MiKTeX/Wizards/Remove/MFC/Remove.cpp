@@ -114,11 +114,11 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 {
   string str;
   str = T_("The operation could not be completed for the following reason: ");
-  str += T_("\n\n");
+  str += "\n\n";
   str += e.what();
   if (! e.GetInfo().empty())
     {
-      str += T_("\n\n");
+      str += "\n\n";
       str += T_("Details: ");
       str += e.GetInfo();
     }
@@ -135,7 +135,7 @@ ReportError (/*[in]*/ const exception & e)
 {
   string str;
   str = T_("The operation could not be completed for the following reason: ");
-  str += T_("\n\n");
+  str += "\n\n";
   str += e.what();
   AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
 }

@@ -102,7 +102,7 @@ DviMagnifyingGlass::OnPaint ()
 
       if (pPage == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
 
       AutoUnlockPage autoUnlockPage (pPage);
@@ -119,7 +119,7 @@ DviMagnifyingGlass::OnPaint ()
 
       if (! dcMem.CreateCompatibleDC(&dc))
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
       
       CBitmap bitmap;
@@ -128,7 +128,7 @@ DviMagnifyingGlass::OnPaint ()
 					  sizeWindow.cx,
 					  sizeWindow.cy))
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
 
       AutoDeleteObject autoDeleteBitmap (&bitmap);
@@ -137,7 +137,7 @@ DviMagnifyingGlass::OnPaint ()
 
       if (pBitmapOld == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
 
       AutoSelectObject autoSelectOldBitmap (&dcMem, pBitmapOld);
@@ -148,7 +148,7 @@ DviMagnifyingGlass::OnPaint ()
 			 sizeWindow.cy,
 			 WHITENESS))
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
       
       dcMem.SetViewportOrg (CPoint(- (x / shrinkFactor) + sizeWindow.cx / 2,
@@ -178,7 +178,7 @@ DviMagnifyingGlass::OnPaint ()
 		      0,
 		      SRCCOPY))
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::OnPaint"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::OnPaint");
 	}
     }
 
@@ -239,7 +239,7 @@ DviMagnifyingGlass::Create (/*[in]*/ const CPoint & point)
       wndcls.lpszClassName = YAP_MAGNIFYING_GLASS_CLASS;
       if (! AfxRegisterClass(&wndcls))
 	{
-	  UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::Create"));
+	  UNEXPECTED_CONDITION ("DviMagnifyingGlass::Create");
 	}
       else
 	{
@@ -259,7 +259,7 @@ DviMagnifyingGlass::Create (/*[in]*/ const CPoint & point)
 		 pDviView->m_hWnd,
 		 0))
     {
-      UNEXPECTED_CONDITION (T_("DviMagnifyingGlass::Create"));
+      UNEXPECTED_CONDITION ("DviMagnifyingGlass::Create");
     }
   if (g_pYapConfig->magGlassOpacity >= 0
       && g_pYapConfig->magGlassOpacity < 100)

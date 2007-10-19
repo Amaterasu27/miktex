@@ -96,8 +96,8 @@ DviImpl::RulePixels (/*[in]*/ int x)
    DviImpl::DviImpl
    _________________________________________________________________________ */
 
-DviImpl::DviImpl (/*[in]*/ const char *		lpszFileName,
-		  /*[in]*/ const char *		lpszMetafontMode,
+DviImpl::DviImpl (/*[in]*/ const char *			lpszFileName,
+		  /*[in]*/ const char *			lpszMetafontMode,
 		  /*[in]*/ int				resolution,
 		  /*[in]*/ int				shrinkFactor,
 		  /*[in]*/ DviAccess			dviAccess,
@@ -142,17 +142,17 @@ DviImpl::DviImpl (/*[in]*/ const char *		lpszFileName,
   hByeByteEvent = CreateEvent(0, TRUE, FALSE, 0);
   if (hByeByteEvent == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateEvent"), 0);
+      FATAL_WINDOWS_ERROR ("CreateEvent", 0);
     }
-  hNewPageEvent = CreateEvent(0, FALSE, FALSE, 0);
+  hNewPageEvent = CreateEventA(0, FALSE, FALSE, 0);
   if (hNewPageEvent == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateEvent"), 0);
+      FATAL_WINDOWS_ERROR ("CreateEvent", 0);
     }
   hScannedEvent = CreateEvent(0, FALSE, FALSE, 0);
   if (hScannedEvent == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CreateEvent"), 0);
+      FATAL_WINDOWS_ERROR ("CreateEvent", 0);
     }
   if (dviAccess == DviAccess::Random)
     {
@@ -191,7 +191,7 @@ DviImpl::Dispose ()
     {
       if (SetEvent(hByeByteEvent) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SetEvent"), 0);
+	  FATAL_WINDOWS_ERROR ("SetEvent", 0);
 	}
     }
   if (pGarbageCollectorThread.get())
@@ -440,7 +440,7 @@ DviImpl::FirstParam (/*[in]*/ InputStream &	inputStream,
       return (opCode - fnt_num);
     }
 
-  UNEXPECTED_CONDITION (T_("DviImpl::FirstParam"));
+  UNEXPECTED_CONDITION ("DviImpl::FirstParam");
 }
 
 /* _________________________________________________________________________
@@ -460,7 +460,7 @@ DviImpl::Scan ()
   FreeContents (false);
   
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("going to scan %s"),
      Q_(dviFileName));
   
@@ -470,7 +470,7 @@ DviImpl::Scan ()
   // process the preamble
   if (inputStream.ReadByte() != pre || inputStream.ReadByte() != dvi_id)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Not a DVI file."),
 		       dviFileName.Get());
     }
@@ -480,14 +480,14 @@ DviImpl::Scan ()
   denominator = inputStream.ReadSignedQuad();
   
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("numerator/denominator: %d/%d"),
+    ("libdvi",
+     "numerator/denominator: %d/%d",
      static_cast<int>(numerator),
      static_cast<int>(denominator));
   
   if (numerator <= 0 || denominator <= 0)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Invalid DVI file."),
 		       dviFileName.Get());
     }
@@ -495,8 +495,8 @@ DviImpl::Scan ()
   // get desired magnification
   mag = inputStream.ReadSignedQuad();
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("mag: %d"),
+    ("libdvi",
+     "mag: %d",
      static_cast<int>(mag));
   
   tfmConv = (((25400000.0 / numerator )
@@ -510,8 +510,8 @@ DviImpl::Scan ()
 	     * 254000000.0));
   
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("conv: %g"),
+    ("libdvi",
+     "conv: %g",
      static_cast<double>(conv));
   
   // read the introductory comment
@@ -522,8 +522,8 @@ DviImpl::Scan ()
   dviInfo.comment = tmp;
   
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("comment: %s"),
+    ("libdvi",
+     "comment: %s",
      dviInfo.comment.c_str());
   
   // find the postamble, working back from the end
@@ -540,7 +540,7 @@ DviImpl::Scan ()
   while (k == 223);
   if (k != dvi_id)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Invalid DVI file."),
 		       dviFileName.Get());
     }
@@ -548,7 +548,7 @@ DviImpl::Scan ()
   int q = inputStream.ReadSignedQuad();
   if (q < 0 || q > m - 33)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Invalid DVI file."),
 		       dviFileName.Get());
     }
@@ -556,7 +556,7 @@ DviImpl::Scan ()
   k = inputStream.ReadByte();
   if (k != post)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Invalid DVI file."),
 		       dviFileName.Get());
     }
@@ -570,22 +570,22 @@ DviImpl::Scan ()
   maxV = inputStream.ReadSignedQuad();
   maxH = inputStream.ReadSignedQuad();
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("maxv: %d"),
+    ("libdvi",
+     "maxv: %d",
      static_cast<int>(maxV));
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("maxh: %d"),
+    ("libdvi",
+     "maxh: %d",
      static_cast<int>(maxH));
   int maxs = inputStream.ReadPair();
   dviInfo.nPages = inputStream.ReadPair();
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("maxs: %d"),
+    ("libdvi",
+     "maxs: %d",
      static_cast<int>(maxs));
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
-     T_("dviInfo.nPages: %d"),
+    ("libdvi",
+     "dviInfo.nPages: %d",
      static_cast<int>(dviInfo.nPages));
   
   // process the font definitions of the postamble
@@ -603,7 +603,7 @@ DviImpl::Scan ()
   
   if (k != post_post)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+      FATAL_DVI_ERROR ("DviImpl::Scan",
 		       T_("Invalid DVI file."),
 		       dviFileName.Get());
     }
@@ -618,7 +618,7 @@ DviImpl::Scan ()
       inputStream.SetReadPosition (backpointer, SeekOrigin::Begin);
       if (inputStream.ReadByte() != bop)
 	{
-	  FATAL_DVI_ERROR (T_("DviImpl::Scan"),
+	  FATAL_DVI_ERROR ("DviImpl::Scan",
 			   T_("Invalid DVI file."),
 			   dviFileName.Get());
 	}
@@ -678,7 +678,7 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		     /*[in]*/ int		fontNum)
 {
   log_dvifile->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("going to define font %d"),
      static_cast<int>(fontNum));
 
@@ -699,13 +699,11 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
   inputStream.Read (fontName, fontNameLen);
   fontName[fontNameLen] = 0;
 
-  log_dvifile->WriteFormattedLine
-    (T_("libdvi"), T_("areaName: %s"), areaName);
-  log_dvifile->WriteFormattedLine
-    (T_("libdvi"), T_("fontname: %s"), fontName);
-  log_dvifile->WriteFormattedLine (T_("libdvi"), "checkSum: %#o", checkSum);
-  log_dvifile->WriteFormattedLine (T_("libdvi"), "scaledSize: %d", scaledSize);
-  log_dvifile->WriteFormattedLine (T_("libdvi"), "designSize: %d", designSize);
+  log_dvifile->WriteFormattedLine ("libdvi", "areaName: %s", areaName);
+  log_dvifile->WriteFormattedLine ("libdvi", "fontname: %s", fontName);
+  log_dvifile->WriteFormattedLine ("libdvi", "checkSum: %#o", checkSum);
+  log_dvifile->WriteFormattedLine ("libdvi", "scaledSize: %d", scaledSize);
+  log_dvifile->WriteFormattedLine ("libdvi", "designSize: %d", designSize);
   
   DviFont * pfont;
   PathName fileName;
@@ -713,7 +711,7 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
       || SessionWrapper(true)->FindFile(fontName, FileType::OVF, fileName))
     {
       log_dvifile->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("found VF file %s"),
 	 Q_(fileName));
       pfont =
@@ -739,7 +737,7 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		   designSize,
 		   areaName,
 		   fontName,
-		   T_(""),
+		   "",
 		   tfmConv,
 		   conv,
 		   mag,
@@ -755,7 +753,7 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		designSize,
 		areaName,
 		fontName,
-		T_(""),
+		"",
 		tfmConv,
 		conv);
     }
@@ -866,14 +864,14 @@ DviImpl::DoPage (/*[in]*/ int pageIdx)
   if (background)
     {
       log_dvipage->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("doing page #%d (background)"),
 	 pageIdx);
     }
   else
     {
       log_dvipage->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("doing page #%d"),
 	 pageIdx);
     }
@@ -883,13 +881,13 @@ DviImpl::DoPage (/*[in]*/ int pageIdx)
       if (SessionWrapper(true)->IsFileAlreadyOpen(dviFileName.Get()))
 	{
 	  log_error->WriteLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("the DVI file is used by another process"));
 	  throw DviFileInUseException
 	    (0,
 	     T_("The DVI file is used by another process."),
 	     0,
-	     T_(__FILE__),
+	     __FILE__,
 	     __LINE__);
 	}
     
@@ -928,7 +926,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
   DWORD wait = WaitForSingleObject(hByeByteEvent, 0);
   if (wait == WAIT_FAILED)
     {
-      FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+      FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
     }
   if (wait == WAIT_OBJECT_0)
     {
@@ -936,7 +934,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	(0,
 	 T_("Operation cancelled."),
 	 0,
-	 T_(__FILE__),
+	 __FILE__,
 	 __LINE__);
     }
 
@@ -952,7 +950,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 
       if (pCurrentFont == 0)
 	{
-	  FATAL_DVI_ERROR (T_("DviImpl::DoNextCommand"),
+	  FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			   T_("Invalid DVI file."),
 			   0);
 	}
@@ -965,10 +963,8 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	  
 	  if (recursion >= maxRecursion)
 	    {
-	      log_error->WriteLine
-		(T_("libdvi"),
-		 T_("infinite VF recursion?"));
-	      FATAL_DVI_ERROR (T_("DviImpl::DoNextCommand"),
+	      log_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
+	      FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			       T_("Invalid DVI file."),
 			       0);
 	    }
@@ -977,7 +973,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	  
 	  if (pVfChar == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DviImpl::DoNextCommand"));
+	      UNEXPECTED_CONDITION ("DviImpl::DoNextCommand");
 	    }
 
 	  AutoRestore<FontMap *> autoRestorFontMap (pFontMap);
@@ -1038,7 +1034,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	      pCurrentChar = pPkChar;
 	      if (pCurrentChar == 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DviImpl::DoNextCommand"));
+		  UNEXPECTED_CONDITION ("DviImpl::DoNextCommand");
 		}
 	      DviItem item;
 	      item.x = currentState.hh + resolution;
@@ -1057,12 +1053,12 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	      Tfm * pTfm = dynamic_cast<Tfm*>(pCurrentFont);
 	      if (pTfm == 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DviImpl::DoNextCommand"));
+		  UNEXPECTED_CONDITION ("DviImpl::DoNextCommand");
 		}
 	      pCurrentChar = (*pTfm)[p];
 	      if (pCurrentChar == 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DviImpl::DoNextCommand"));
+		  UNEXPECTED_CONDITION ("DviImpl::DoNextCommand");
 		}
 	      int x = currentState.hh + resolution;
 	      int y = currentState.vv + resolution;
@@ -1100,7 +1096,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 
 	case bop:
 
-	  FATAL_DVI_ERROR (T_("DviImpl::DoNextCommand"),
+	  FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			   T_("Invalid DVI file."),
 			   0);
 	  break;
@@ -1109,13 +1105,13 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 
 	  if (! stateStack.empty())
 	    {
-	      FATAL_DVI_ERROR (T_("DviImpl::DoNextCommand"),
+	      FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			       T_("Invalid DVI file."),
 			       0);
 	    }
 	  if (recursion > 0)
 	    {
-	      FATAL_DVI_ERROR (T_("DviImpl::DoNextCommand"),
+	      FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			       T_("Invalid DVI file."),
 			       0);
 	    }
@@ -1374,7 +1370,7 @@ DviImpl::SpecialCases (/*[in]*/ InputStream &	inputStream,
       {
 	if (p < 0)
 	  {
-	    FATAL_DVI_ERROR (T_("DviImpl::SpecialCases"),
+	    FATAL_DVI_ERROR ("DviImpl::SpecialCases",
 			     T_("Invalid DVI file."),
 			     0);
 	  }
@@ -1390,18 +1386,18 @@ DviImpl::SpecialCases (/*[in]*/ InputStream &	inputStream,
       return;
       
     case pre:
-      FATAL_DVI_ERROR (T_("DviImpl::SpecialCases"),
+      FATAL_DVI_ERROR ("DviImpl::SpecialCases",
 		       T_("Invalid DVI file."),
 		       0);
       
     case post:
     case post_post:
-      FATAL_DVI_ERROR (T_("DviImpl::SpecialCases"),
+      FATAL_DVI_ERROR ("DviImpl::SpecialCases",
 		       T_("Invalid DVI file."),
 		       0);
 
     default:
-      FATAL_DVI_ERROR (T_("DviImpl::SpecialCases"),
+      FATAL_DVI_ERROR ("DviImpl::SpecialCases",
 		       T_("Invalid DVI file."),
 		       0);
     }
@@ -1433,7 +1429,7 @@ DviImpl::SpecialCases (/*[in]*/ InputStream &	inputStream,
   pCurrentFont = (*pFontMap)[p];
   if (pCurrentFont == 0)
     {
-      FATAL_DVI_ERROR (T_("DviImpl::SpecialCases"),
+      FATAL_DVI_ERROR ("DviImpl::SpecialCases",
 		       T_("Invalid DVI file."),
 		       0);
     }
@@ -1455,7 +1451,7 @@ Dvi::Create (/*[in]*/ const char *	lpszFileName,
   PaperSizeInfo defaultPaperSizeInfo;
   if (! SessionWrapper(true)->GetPaperSizeInfo(-1, defaultPaperSizeInfo))
     {
-      UNEXPECTED_CONDITION (T_("Dvi::Create"));
+      UNEXPECTED_CONDITION ("Dvi::Create");
     }
   return (Create(lpszFileName,
 		 lpszMetafontMode,
@@ -1656,7 +1652,7 @@ DviImpl::GetPage (/*[in]*/ int pageIdx)
 	      && currentPageIdx != pageIdx)
 	    {
 	      log_dvifile->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("getting page #%d"),
 		 static_cast<int>(pageIdx));
 	      if (pageIdx < currentPageIdx)
@@ -1670,7 +1666,7 @@ DviImpl::GetPage (/*[in]*/ int pageIdx)
 	      currentPageIdx = pageIdx;
 	      if (! SetEvent(hNewPageEvent))
 		{
-		  FATAL_WINDOWS_ERROR (T_("SetEvent"), 0);
+		  FATAL_WINDOWS_ERROR ("SetEvent", 0);
 		}
 	    }
 	  return (pPage);
@@ -1871,7 +1867,7 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 #if 1
       if (SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SetThreadPriority"), 0);
+	  FATAL_WINDOWS_ERROR ("SetThreadPriority", 0);
 	}
 #endif
       
@@ -1892,7 +1888,7 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 
       if (wait == WAIT_FAILED)
 	{
-	  FATAL_WINDOWS_ERROR (T_("WaitForMultipleObjects"), 0);
+	  FATAL_WINDOWS_ERROR ("WaitForMultipleObjects", 0);
 	}
 
       if (wait == WAIT_OBJECT_0)
@@ -1908,7 +1904,7 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 	{
 	  if (wait == WAIT_FAILED)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+	      FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 	    }
 	  DviPage * pPage = 0;
 	  AutoUnlockPage autoUnlockPage (0);
@@ -1917,7 +1913,7 @@ DviImpl::PageLoader (/*[in]*/ void * p)
 	      wait = WaitForSingleObject(This->hNewPageEvent, 0);
 	      if (wait == WAIT_FAILED)
 		{
-		  FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+		  FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 		}
 	      if (wait == WAIT_OBJECT_0)
 		{
@@ -1997,7 +1993,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
       time_t timeKeepBitmaps = timeKeepBitmapsLowestPrio;
       if (SetThreadPriority(GetCurrentThread(), priority) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SetThreadPriority"), 0);
+	  FATAL_WINDOWS_ERROR ("SetThreadPriority", 0);
 	}
       DWORD wait;
       while ((wait = WaitForSingleObject(This->hByeByteEvent, sleepDuration))
@@ -2005,7 +2001,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 	{
 	  if (wait == WAIT_FAILED)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+	      FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 	    }
 	  size_t sizeBiggest = 0;
 	  int biggestPageIdx = -1;
@@ -2019,7 +2015,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 	    {
 	      if (wait == WAIT_FAILED)
 		{
-		  FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+		  FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 		}
 	      MIKTEX_BEGIN_CRITICAL_SECTION(&This->criticalSectionMonitor)
 		{
@@ -2066,7 +2062,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 	  wait = WaitForSingleObject(This->hByeByteEvent, 0);
 	  if (wait == WAIT_FAILED)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("WaitForSingleObject"), 0);
+	      FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
 	    }
 	  if (wait == WAIT_OBJECT_0)
 	    {
@@ -2116,10 +2112,10 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 	      priority = newPriority;
 	      if (SetThreadPriority(GetCurrentThread(), priority) == 0)
 		{
-		  FATAL_WINDOWS_ERROR (T_("SetThreadPriority"), 0);
+		  FATAL_WINDOWS_ERROR ("SetThreadPriority", 0);
 		}
 	      This->log_gc->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("gc priority: %d"),
 		 static_cast<int>(priority));
 	    }
@@ -2141,7 +2137,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 	      pPage->Lock ();
 	      AutoUnlockPage autoUnlockPage (pPage);
 	      This->log_gc->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("freeing page #%d (%u bytes)"),
 		 biggestPageIdx,
 		 pPage->GetSize());
@@ -2198,7 +2194,7 @@ DviImpl::MakeFonts (/*[in]*/ const FontMap &	fontMap,
       if (recursion >= maxRecursion)
 	{
 	  log_error->WriteLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("infinite VF recursion?"));
 	}
       done = done && MakeFonts(pVFont->GetFontMap(), recursion + 1);
@@ -2220,7 +2216,7 @@ DviImpl::MakeFonts ()
     {
       if (pFontMap == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviImpl::MakeFonts"));
+	  UNEXPECTED_CONDITION ("DviImpl::MakeFonts");
 	}
       return (MakeFonts(*pFontMap, 0));
     }
@@ -2252,7 +2248,7 @@ DviImpl::GetFontTable (/*[in]*/ const FontMap &		fontMap,
       const int maxRecursion = 20;
       if (recursion >= maxRecursion)
 	{
-	  log_error->WriteLine (T_("libdvi"), T_("infinite VF recursion?"));
+	  log_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
 	}
       GetFontTable (pVFont->GetFontMap(), vec, recursion + 1);
     }

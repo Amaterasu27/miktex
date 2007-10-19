@@ -172,12 +172,12 @@ MakeBase::Run (/*[in]*/ int			argc,
 
   // make the base file name
   PathName baseFile (name);
-  baseFile.SetExtension (T_(".base"));
+  baseFile.SetExtension (".base");
 
   // make fully qualified destination file name
   PathName pathDest (destinationDirectory,
 		     destinationName,
-		     T_(".base"));
+		     ".base");
   
   Verbose (T_("Creating the %s base file...\n"), Q_(destinationName));
 
@@ -187,9 +187,9 @@ MakeBase::Run (/*[in]*/ int			argc,
   
   // invoke METAFONT to make the base file
   CommandLineBuilder arguments;
-  arguments.AppendOption (T_("--initialize"));
-  arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
-  arguments.AppendOption (T_("--halt-on-error"));
+  arguments.AppendOption ("--initialize");
+  arguments.AppendOption ("--interaction=", T_("nonstopmode"));
+  arguments.AppendOption ("--halt-on-error");
   arguments.AppendArguments (engineOptions);
   if (! noDumpPrimitive)
     {
@@ -199,7 +199,7 @@ MakeBase::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (name);
     }
-  if (! RunProcess(T_("mf"), arguments.Get()))
+  if (! RunProcess("mf", arguments.Get()))
     {
       FatalError (T_("METAFONT failed on %s."), Q_(name));
     }

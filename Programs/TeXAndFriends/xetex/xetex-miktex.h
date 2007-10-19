@@ -82,13 +82,13 @@ no-pdf\0Generate XDV (extended DVI) output rather than PDF."),
 output-driver\0Use CMD as the XDV-to-PDF driver instead of xdvipdfmx."),
 	       OPT_OUTPUT_DRIVER,
 	       required_argument,
-	       MIKTEXTEXT("CMD"));
+	       "CMD");
 
     AddOption (MIKTEXTEXT("\
 papersize\0Set PDF media size to STRING"),
 	       OPT_PAPERSIZE,
 	       required_argument,
-	       MIKTEXTEXT("STRING"));
+	       "STRING");
   }
 
 public:
@@ -180,7 +180,7 @@ public:
   GetInitProgramName ()
     const
   {
-    return (MIKTEXTEXT("inixetex"));
+    return ("inixetex");
   }
   
 public:
@@ -190,7 +190,7 @@ public:
   GetVirginProgramName ()
     const
   {
-    return (MIKTEXTEXT("virxetex"));
+    return ("virxetex");
   }
   
 public:
@@ -200,7 +200,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("XeTeX"));
+    return ("XeTeX");
   }
 
 public:
@@ -507,7 +507,7 @@ c4p_break (/*[in]*/ unicodefile & f)
   if (fflush(f->f) == EOF)
     {
       MiKTeX::Core::Session::FatalCrtError
-	(MIKTEXTEXT("flush"), 0, MIKTEXTEXT(__FILE__), __LINE__);
+	("flush", 0, MIKTEXTEXT(__FILE__), __LINE__);
     }
 }
 

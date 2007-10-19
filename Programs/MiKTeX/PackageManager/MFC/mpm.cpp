@@ -78,14 +78,14 @@ PackageManagerApplication::InitInstance ()
 
   try
     {
-      pSession.CreateSession (Session::InitInfo(T_("mpm")));
+      pSession.CreateSession (Session::InitInfo("mpm"));
       TraceStream::SetTraceFlags ("error,mpm,config");
       
-      SetRegistryKey (T_(MIKTEX_COMPANYNAME_STR)
-		      T_("\\")
-		      T_(MIKTEX_PRODUCTNAME_STR)
-		      T_("\\")
-		      T_(MIKTEX_SERIES_STR));
+      SetRegistryKey (MIKTEX_COMPANYNAME_STR
+		      "\\"
+		      MIKTEX_PRODUCTNAME_STR
+		      "\\"
+		      MIKTEX_SERIES_STR);
       
       LoadStdProfileSettings (0);
       
@@ -192,12 +192,12 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	  CString str;
 	  str.Format (T_("MiKTeX Package Manager (windowed mode) version %s"),
 		      VER_FILEVERSION_STR);
-	  str += T_("\r\n");
+	  str += "\r\n";
 	  str += MIKTEX_LEGALCOPYRIGHT_STR;
 	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("AboutDialog::DoDataExchange"));
+	      UNEXPECTED_CONDITION ("AboutDialog::DoDataExchange");
 	    }
 	  pWnd->SetWindowText (str);
 	}

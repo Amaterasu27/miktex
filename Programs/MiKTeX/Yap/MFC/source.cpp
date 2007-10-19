@@ -104,7 +104,7 @@ DviView::OnPageEditor ()
 	}
       else
 	{
-	  FATAL_MIKTEX_ERROR (T_("DviView::OnPageEditor"),
+	  FATAL_MIKTEX_ERROR ("DviView::OnPageEditor",
 			      T_("The source file could not be opened because \
 the page contains no source links."),
 			      0);

@@ -78,7 +78,7 @@ ProgramFolderPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
     {
       folderName.TrimLeft ();
       folderName.TrimRight ();
-      if (folderName.FindOneOf(T_("\\/:*?\"<>|")) >= 0)
+      if (folderName.FindOneOf("\\/:*?\"<>|") >= 0)
 	{
 	  AfxMessageBox ("The folder name is not valid.", MB_OK | MB_ICONSTOP);
 	  pDX->Fail ();
@@ -152,7 +152,7 @@ ProgramFolderPage::OnChangeFolder ()
       CWnd * pWnd = GetDlgItem(IDC_FOLDER);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("ProgramFolderPage::OnChangeFolder"));
+	  UNEXPECTED_CONDITION ("ProgramFolderPage::OnChangeFolder");
 	}
       CString str;
       pWnd->GetWindowText (str);

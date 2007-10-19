@@ -150,7 +150,7 @@ LogFile::ReadLogFile ()
 	{
 	  continue;
 	}
-      if (line[cchLine - 1] == T_('\n'))
+      if (line[cchLine - 1] == '\n')
 	{
 	  line[--cchLine] = 0;
 	}
@@ -164,7 +164,7 @@ LogFile::ReadLogFile ()
 	  section = HKCU;
 	  continue;
 	}
-      else if (line == T_("[hklm]"))
+      else if (line == "[hklm]")
 	{
 	  section = HKLM;
 	  continue;
@@ -179,7 +179,7 @@ LogFile::ReadLogFile ()
 	case HKCU:
 	case HKLM:
 	  {
-	    Tokenizer tok (line.c_str(), T_(";"));
+	    Tokenizer tok (line.c_str(), ";");
 	    if (tok.GetCurrent() == 0)
 	      {
 		continue;

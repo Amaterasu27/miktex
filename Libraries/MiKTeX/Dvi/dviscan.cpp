@@ -42,14 +42,14 @@ enum {
 
 static const struct poptOption long_options[] = {
   {
-    T_("page-mode"), 0, POPT_ARG_STRING, 0, OPT_PAGE_MODE,
-    T_("Sets the DVI page mode."),
-    T_("PAGEMODE")
+    "page-mode", 0, POPT_ARG_STRING, 0, OPT_PAGE_MODE,
+    "Sets the DVI page mode.",
+    "PAGEMODE"
   },
   {
-    T_("trace"), 0, POPT_ARG_STRING, 0, OPT_TRACE,
-    T_("Turn on tracing."),
-    T_("TRACESTREAMS")
+    "trace", 0, POPT_ARG_STRING, 0, OPT_TRACE,
+    "Turn on tracing.",
+    "TRACESTREAMS"
   },
   POPT_AUTOHELP
   POPT_TABLEEND
@@ -71,7 +71,7 @@ public:
 
 public:
   void
-  Run (/*[in]*/ int			argc,
+  Run (/*[in]*/ int		argc,
        /*[in]*/ const char **	argv);
 
 private:
@@ -84,12 +84,12 @@ private:
    _________________________________________________________________________ */
 
 void
-DviScanner::Run (/*[in]*/ int			argc,
+DviScanner::Run (/*[in]*/ int		argc,
 		 /*[in]*/ const char **	argv)
 {
   Session::InitInfo initInfo (argv[0]);
 
-  string metafontMode (T_("ljfour"));
+  string metafontMode ("ljfour");
   int dpi = 600;
 
   Cpopt popt (argc, argv, long_options);
@@ -104,15 +104,15 @@ DviScanner::Run (/*[in]*/ int			argc,
       switch (option)
 	{
 	case OPT_PAGE_MODE:
-	  if (StringCompare(lpszOptArg, T_("pk")) == 0)
+	  if (StringCompare(lpszOptArg, "pk") == 0)
 	    {
 	      pageMode = DviPageMode::Pk;
 	    }
-	  else if (StringCompare(lpszOptArg, T_("dvips")) == 0)
+	  else if (StringCompare(lpszOptArg, "dvips") == 0)
 	    {
 	      pageMode = DviPageMode::Dvips;
 	    }
-	  else if (StringCompare(lpszOptArg, T_("auto")) == 0)
+	  else if (StringCompare(lpszOptArg, "auto") == 0)
 	    {
 	      pageMode = DviPageMode::Auto;
 	    }
@@ -155,7 +155,7 @@ DviScanner::Run (/*[in]*/ int			argc,
 		     5,
 		     DviAccess::Sequential,
 		     pageMode,
-		     pSession->GetPaperSizeInfo(T_("A4size")),
+		     pSession->GetPaperSizeInfo("A4size"),
 		     false,
 		     0));
       pDvi->Scan ();
@@ -186,7 +186,7 @@ DviScanner::Run (/*[in]*/ int			argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int			argc,
+main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
 
 {
@@ -208,7 +208,7 @@ main (/*[in]*/ int			argc,
     }
   catch (const char *	lpszMessage)
     {
-      fprintf (stderr, "fatal error: %s\n", lpszMessage);
+      fprintf (stderr, T_("fatal error: %s\n"), lpszMessage);
       return (1);
     }
   catch (int retCode)

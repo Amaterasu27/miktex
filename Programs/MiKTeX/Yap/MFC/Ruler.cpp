@@ -132,7 +132,7 @@ Ruler::Ruler (/*[in]*/ CWnd *		pParent,
       pixelsPerUnit = pixelsPerInch / 72.0;
       break;
     default:
-      UNEXPECTED_CONDITION (T_("Ruler::Ruler"));
+      UNEXPECTED_CONDITION ("Ruler::Ruler");
     }
 }
 
@@ -169,7 +169,7 @@ Ruler::OnPaint ()
 	  lastPosition = sizeWindow.cy;
 	}
       CString sample;
-      sample.Format (T_("%d"),
+      sample.Format ("%d",
 		     static_cast<int>(lastPosition / pixelsPerUnit));
       CRect rect (0, 0, 0, 0);
       dc.DrawText (sample, &rect, DT_CALCRECT);
@@ -194,12 +194,12 @@ Ruler::OnPaint ()
 	    }
 	  break;
 	default:
-	  UNEXPECTED_CONDITION (T_("Ruler::OnPaint"));
+	  UNEXPECTED_CONDITION ("Ruler::OnPaint");
 	}
       for (int i1 = 0; TICK_POSITION(i1, 0) < lastPosition; i1 += markerStep)
 	{
 	  CString marker;
-	  marker.Format (T_("%d"), i1);
+	  marker.Format ("%d", i1);
 	  int p = TICK_POSITION(i1, 0);
 	  UINT format;
 	  if (kind == Horizontal)
@@ -333,13 +333,13 @@ Ruler::OnEraseBkgnd (/*[in]*/ CDC * pDC)
       CBrush * pOldBrush = pDC->SelectObject(&brushBack);
       if (pOldBrush == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	  UNEXPECTED_CONDITION ("DviView::OnEraseBkgnd");
 	}
       AutoSelectObject autoSelectOldBrush (pDC, pOldBrush);
       CRect rect;
       if (pDC->GetClipBox(&rect) == ERROR)
 	{
-	  UNEXPECTED_CONDITION (T_("Ruler::OnEraseBkgnd"));
+	  UNEXPECTED_CONDITION ("Ruler::OnEraseBkgnd");
 	}
       if (! pDC->PatBlt(rect.left,
 			rect.top,
@@ -347,7 +347,7 @@ Ruler::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 			rect.Height(),
 			PATCOPY))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	  UNEXPECTED_CONDITION ("DviView::OnEraseBkgnd");
 	}
       return (TRUE);
     }
@@ -397,7 +397,7 @@ Ruler::Create (/*[in]*/ const CPoint & point)
       wndcls.lpszClassName = YAP_RULER_CLASS;
       if (! AfxRegisterClass(&wndcls))
 	{
-	  UNEXPECTED_CONDITION (T_("Ruler::Create"));
+	  UNEXPECTED_CONDITION ("Ruler::Create");
 	}
       else
 	{
@@ -415,7 +415,7 @@ Ruler::Create (/*[in]*/ const CPoint & point)
 		 pParent->m_hWnd,
 		 0))
     {
-      UNEXPECTED_CONDITION (T_("Ruler::Create"));
+      UNEXPECTED_CONDITION ("Ruler::Create");
     }
   MakeTransparent (m_hWnd, RGB(255, 255, 255), 128);
   ShowWindow (SW_SHOWNA);

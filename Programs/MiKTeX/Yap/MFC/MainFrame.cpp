@@ -139,14 +139,14 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT lpCreateStruct)
 			      | 0))
 	  || ! toolBar.LoadToolBar(IDR_MAINFRAME))
 	{
-	  UNEXPECTED_CONDITION (T_("MainFrame::OnCreate"));
+	  UNEXPECTED_CONDITION ("MainFrame::OnCreate");
 	}
 
       if (! statusBar.Create(this)
 	  || ! statusBar.SetIndicators(indicators,
 				       sizeof(indicators) / sizeof(UINT)))
 	{
-	  UNEXPECTED_CONDITION (T_("MainFrame::OnCreate"));
+	  UNEXPECTED_CONDITION ("MainFrame::OnCreate");
 	}
 
       toolBar.SetBarStyle (toolBar.GetBarStyle()
@@ -258,13 +258,13 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
@@ -273,7 +273,7 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
 	  || pDviView->GetCurrentPageIdx() < 0)
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       int m = pDviView->GetCurrentPageIdx() + 1;
@@ -284,17 +284,17 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
 		  m,
 		  (m % 10 == 1
 		   ? (m % 100 == 11
-		      ? T_("th")
-		      : T_("st"))
+		      ? "th"
+		      : "st")
 		   : (m % 10 == 2
 		      ? (m % 100 == 12
-			 ? T_("th")
-			 : T_("nd"))
+			 ? "th"
+			 : "nd")
 		      : (m % 10 == 3
 			 ? (m % 100 == 13
-			    ? T_("th")
-			    : T_("rd"))
-			 : T_("th")))),
+			    ? "th"
+			    : "rd")
+			 : "th"))),
 		  n);
       pCmdUI->SetText (str); 
     }
@@ -363,13 +363,13 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
@@ -386,7 +386,7 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviView->GetSource(sourceFileName, line))
 	{
 	  CString str;
-	  str.Format (T_("%s L:%d"), sourceFileName.Get(), line);
+	  str.Format ("%s L:%d", sourceFileName.Get(), line);
 	  pCmdUI->SetText (str); 
 	}
       else
@@ -394,7 +394,7 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
 	  CString s;
 	  if (! s.LoadString(ID_INDICATOR_SOURCE))
 	    {
-	      UNEXPECTED_CONDITION (T_("MainFrame::OnUpdateSource"));
+	      UNEXPECTED_CONDITION ("MainFrame::OnUpdateSource");
 	    }
 	  pCmdUI->SetText (s);
 	}
@@ -425,13 +425,13 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
       CDocument * pDoc = pChild->GetActiveDocument();
@@ -440,7 +440,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
 	  || ! reinterpret_cast<DviView*>(pView)->GetPoint(x, y))
 	{
-	  pCmdUI->SetText (T_(""));
+	  pCmdUI->SetText ("");
 	  return;
 	}
 #define pxl2bp(pxl) (((pxl) * 72.0) / pDviDoc->GetDisplayResolution())
@@ -455,7 +455,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
 	case Units::Centimeters:
 	  x2 = pxl2cm(x);
 	  y2 = pxl2cm(y);
-	  lpszUnit = T_("cm");
+	  lpszUnit = "cm";
 	  break;
 	case Units::Inches:
 	  x2 = pxl2in(x);
@@ -465,24 +465,24 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
 	case Units::Millimeters:
 	  x2 = pxl2mm(x);
 	  y2 = pxl2mm(y);
-	  lpszUnit = T_("mm");
+	  lpszUnit = "mm";
 	  break;
 	case Units::Picas:
 	  x2 = pxl2pc(x);
 	  y2 = pxl2pc(y);
-	  lpszUnit = T_("pc");
+	  lpszUnit = "pc";
 	  break;
 	case Units::BigPoints:
 	  x2 = pxl2bp(x);
 	  y2 = pxl2bp(y);
-	  lpszUnit = T_("pt");
+	  lpszUnit = "pt";
 	  break;
 	default:
-	  UNEXPECTED_CONDITION (T_("MainFrame::OnUpdatePoint"));
+	  UNEXPECTED_CONDITION ("MainFrame::OnUpdatePoint");
 	}
       CString str;
       int precision = 2;
-      str.Format (T_("%.*f,%.*f%s"),
+      str.Format ("%.*f,%.*f%s",
 		  precision, x2,
 		  precision, y2,
 		  lpszUnit);
@@ -553,7 +553,7 @@ MainFrame::GetCommandPrefix (/*[in]*/ bool clear)
   CString str = commandPrefix;
   if (clear)
     {
-      commandPrefix = T_("");
+      commandPrefix = "";
     }
   return (str);
 }
@@ -795,7 +795,7 @@ MainFrame::OnViewFullScreen ()
 					   | CBRS_FLOATING))
 	      || !pFullScreenBar->LoadToolBar(IDR_FULLSCREEN))
 	    {
-	      UNEXPECTED_CONDITION (T_("MainFrame::OnViewFullScreen"));
+	      UNEXPECTED_CONDITION ("MainFrame::OnViewFullScreen");
 	    }
 	      
 	  pFullScreenBar->EnableDocking (0);
@@ -810,7 +810,7 @@ MainFrame::OnViewFullScreen ()
 						| SWP_NOACTIVATE
 						| SWP_SHOWWINDOW)))
 	    {
-	      UNEXPECTED_CONDITION (T_("MainFrame::OnViewFullScreen"));
+	      UNEXPECTED_CONDITION ("MainFrame::OnViewFullScreen");
 	    }
 	     
 	     pFullScreenBar->SetWindowText (_T("Full Screen"));
@@ -834,7 +834,7 @@ MainFrame::OnViewFullScreen ()
 
       if (!SetWindowPlacement(&wpNew))
 	{
-	  UNEXPECTED_CONDITION (T_("MainFrame::OnViewFullScreen"));
+	  UNEXPECTED_CONDITION ("MainFrame::OnViewFullScreen");
 	}
     }
 
@@ -899,7 +899,7 @@ MainFrame::OnCancel ()
     {
       OnViewFullScreen ();
     }
-  commandPrefix = T_("");
+  commandPrefix = "";
 }
 
 /* _________________________________________________________________________

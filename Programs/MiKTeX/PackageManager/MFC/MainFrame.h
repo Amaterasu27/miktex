@@ -59,7 +59,7 @@ public:
     CWnd * pWnd = dialogBar.GetDlgItem(controlId);
     if (pWnd == 0)
       {
-	FATAL_WINDOWS_ERROR (T_("MainFrame::GetDlgItem"), 0);
+	FATAL_WINDOWS_ERROR ("MainFrame::GetDlgItem", 0);
       }
     return (pWnd);
   }

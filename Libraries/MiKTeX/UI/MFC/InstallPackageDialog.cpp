@@ -40,7 +40,7 @@ InstallPackageDialog::InstallPackageDialog
   : CDialog (InstallPackageDialog::IDD, pParent),
     alwaysAsk (TRUE),
     pManager (pManager),
-    trigger (lpszTrigger == 0 ? T_("") : lpszTrigger)
+    trigger (lpszTrigger == 0 ? "" : lpszTrigger)
 {
   PackageInfo packageInfo = pManager->GetPackageInfo(lpszPackageName);
   packageName = packageInfo.deploymentName.c_str();
@@ -61,7 +61,7 @@ InstallPackageDialog::FormatControlText
   CWnd * pWnd = GetDlgItem(ctrlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("InstallPackageDialog::FormatControlText"));
+      UNEXPECTED_CONDITION ("InstallPackageDialog::FormatControlText");
     }
   va_list marker;
   va_start (marker, lpszFormat);
@@ -86,13 +86,13 @@ InstallPackageDialog::OnInitDialog ()
       if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
 	{
 	  FormatControlText (IDC_EDIT_REPOSITORY_LOCATION,
-			     T_("%s"),
+			     "%s",
 			     repository.c_str());
 	}
       else
 	{
 	  FormatControlText (IDC_EDIT_REPOSITORY_LOCATION,
-			     T_("%s"),
+			     "%s",
 			     T_("<Random package repository>"));
 	}
       bool restrictedUserSetup =
@@ -103,7 +103,7 @@ InstallPackageDialog::OnInitDialog ()
 	  HWND hwnd = ::GetDlgItem(m_hWnd, IDOK);
 	  if (hwnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("InstallPackageDialog::OnInitDialog"));
+	      UNEXPECTED_CONDITION ("InstallPackageDialog::OnInitDialog");
 	    }
 	  Button_SetElevationRequiredState (hwnd, TRUE);
 	}
@@ -163,7 +163,7 @@ InstallPackageDialog::OnChangeRepository ()
 						   repository))
 	{
 	  FormatControlText (IDC_EDIT_REPOSITORY_LOCATION,
-			     T_("%s"),
+			     "%s",
 			     repository.c_str());
 	}
     }

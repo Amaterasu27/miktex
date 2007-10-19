@@ -116,7 +116,7 @@ LicensePage::OnInitDialog ()
       pLicense = LockResource(hglobal);
       if (pLicense == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("LicensePage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("LicensePage::OnInitDialog");
 	}
       sizeLicense = SizeofResource(0, hrsrc);
       if (sizeLicense == 0)

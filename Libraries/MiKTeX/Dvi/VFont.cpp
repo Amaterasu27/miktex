@@ -129,13 +129,13 @@ VFont::Read ()
   InputStream stream (dviInfo.fileName.c_str());
 
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("reading vf file %s"),
      Q_(dviInfo.fileName));
 
   if (stream.ReadByte() != pre)
     {
-      FATAL_DVI_ERROR (T_("VFont::Read"),
+      FATAL_DVI_ERROR ("VFont::Read",
 		       T_("Not a VF file."),
 		       dviInfo.fileName.c_str());
     }
@@ -157,7 +157,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
 {
   if (inputStream.ReadByte() != id_byte)
     {
-      FATAL_DVI_ERROR (T_("VFont::ReadPreamble"),
+      FATAL_DVI_ERROR ("VFont::ReadPreamble",
 		       T_("Bad VF file."),
 		       dviInfo.fileName.c_str());
     }
@@ -173,22 +173,22 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
   int my_designSize = inputStream.ReadSignedQuad();
 
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("comment: %s"),
+    ("libdvi",
+     "comment: %s",
      dviInfo.comment.c_str());
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("checkSum: 0%o"),
+    ("libdvi",
+     "checkSum: 0%o",
      my_checkSum);
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("designSize: %d"),
+    ("libdvi",
+     "designSize: %d",
      my_designSize);
 
   if (my_designSize * tfmConv != designSize)
     {
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%s: designSize mismatch"),
 	 dviInfo.name.c_str());
     }
@@ -196,7 +196,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
   if (my_checkSum != checkSum)
     {
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%s: checkSum mismatch"),
 	 dviInfo.name.c_str());
     }
@@ -255,14 +255,14 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
       fontNum = inputStream.ReadSignedQuad();
       break;
     default:
-      FATAL_DVI_ERROR (T_("VFont::ReadFontDef"),
+      FATAL_DVI_ERROR ("VFont::ReadFontDef",
 		       T_("Bad VF file."),
 		       dviInfo.fileName.c_str());
       break;
     }
 
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("defining font %d"),
      fontNum);
 
@@ -282,24 +282,24 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
   szName[fontNameSize] = 0;
 
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("areaname: %s"),
+    ("libdvi",
+     "areaname: %s",
      szArea);
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("fontname: %s"),
+    ("libdvi",
+     "fontname: %s",
      szName);
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("checkSum: 0%o"),
+    ("libdvi",
+     "checkSum: 0%o",
      cs);
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("scaledSize: %d"),
+    ("libdvi",
+     "scaledSize: %d",
      ss);
   log_vfont->WriteFormattedLine
-    (T_("libdvi"),
-     T_("designSize: %d"),
+    ("libdvi",
+     "designSize: %d",
      ds);
   
   DviFont * pFont;
@@ -307,7 +307,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
   if (SessionWrapper(true)->FindFile(szName, FileType::VF, fileName))
     {
       log_vfont->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("found vf file %s"),
 	 Q_(fileName));
       pFont =
@@ -333,7 +333,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
 		    static_cast<int>(ds * tfmConv),
 		    szArea,
 		    szName,
-		    T_(""),
+		    "",
 		    tfmConv,
 		    conv,
 		    mag,
@@ -349,7 +349,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
 		 static_cast<int>(ds * tfmConv),
 		 szArea,
 		 szName,
-		 T_(""),
+		 "",
 		 tfmConv,
 		 conv);
     }
@@ -385,7 +385,7 @@ VFont::ReadPostamble (/*[in]*/ InputStream & inputStream)
     {
       if (by != post)
 	{
-	  FATAL_DVI_ERROR (T_("VFont::ReadPostamble"),
+	  FATAL_DVI_ERROR ("VFont::ReadPostamble",
 			   T_("Bad VF file."),
 			   dviInfo.fileName.c_str());
 	}

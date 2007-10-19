@@ -34,7 +34,7 @@
 class TextViewerDlgImpl : public CDialog
 {
 public:
-  TextViewerDlgImpl (/*[in]*/ CWnd *			pParent,
+  TextViewerDlgImpl (/*[in]*/ CWnd *		pParent,
 		     /*[in]*/ const char *	lpszTitle,
 		     /*[in]*/ const char *	lpszText);
 
@@ -67,8 +67,8 @@ protected:
    _________________________________________________________________________ */
 
 TextViewerDlgImpl::TextViewerDlgImpl (/*[in]*/ CWnd *		pParent,
-				      /*[in]*/ const char * lpszTitle,
-				      /*[in]*/ const char * lpszText)
+				      /*[in]*/ const char *	lpszTitle,
+				      /*[in]*/ const char *	lpszText)
   : CDialog (IDD_TEXT_VIEWER, pParent)
 {
   if (lpszTitle != 0)

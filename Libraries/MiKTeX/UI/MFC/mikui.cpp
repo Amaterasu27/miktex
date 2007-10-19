@@ -72,7 +72,7 @@ MiKTeX::UI::MFC::InitializeFramework ()
       Session::FatalMiKTeXError (T_("MiKTeX::UI::MFC::InitializeFramework"),
 				 T_("AfxWinInit() failed for some reason."),
 				 0,
-				 T_(__FILE__),
+				 __FILE__,
 				 __LINE__);
     }
 }
@@ -121,7 +121,7 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
 	    {
 	      pSession->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 					    MIKTEX_REGVAL_AUTO_INSTALL,
-					    T_("1"));
+					    "1");
 	    }
 	}
     }

@@ -87,7 +87,7 @@ Enable e-TeX extensions."),
 	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_ETEX);
 
   // supported Web2C options
-  AddOption (T_("etex"), T_("enable-etex"));
+  AddOption ("etex", "enable-etex");
 }
 
 /* _________________________________________________________________________
@@ -96,7 +96,7 @@ Enable e-TeX extensions."),
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-ETeXApp::ProcessOption (/*[in]*/ int			optchar,
+ETeXApp::ProcessOption (/*[in]*/ int		optchar,
 			/*[in]*/ const char *	lpszArg)
 {
   bool done = true;

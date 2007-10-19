@@ -42,7 +42,7 @@ DviDraw::DviDraw ()
       void * p = malloc(sizeof(BITMAPINFO) + 16 * (sizeof(WORD)));
       if (p == 0)
 	{
-	  OUT_OF_MEMORY (T_("DviDraw::DviDraw"));
+	  OUT_OF_MEMORY ("DviDraw::DviDraw");
 	}
       LPBITMAPINFO pBitmapInfo = reinterpret_cast<LPBITMAPINFO>(p);
       bitmapInfoTable[DVIVIEW_DISPLAY] = pBitmapInfo;
@@ -62,7 +62,7 @@ DviDraw::DviDraw ()
       p = malloc(sizeof(BITMAPINFO) + 2 * (sizeof(DWORD)));
       if (p == 0)
 	{
-	  OUT_OF_MEMORY (T_("DviDraw::DviDraw"));
+	  OUT_OF_MEMORY ("DviDraw::DviDraw");
 	}
       pBitmapInfo = reinterpret_cast<LPBITMAPINFO>(p);
       bitmapInfoTable[DVIVIEW_PRINTER] = pBitmapInfo;
@@ -141,7 +141,7 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 #if USE_STRETCHDIBITS
   if ((pDC->GetDeviceCaps(RASTERCAPS) & RC_STRETCHDIB) == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DviDraw::DrawDviBitmaps"),
+      FATAL_MIKTEX_ERROR ("DviDraw::DrawDviBitmaps",
 			  T_("Device does not support StretchDIBits()."),
 			  0);
     }
@@ -152,7 +152,7 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
   HDC hdcMem = CreateCompatibleDC(pDC->GetSafeHdc());
   if (hdcMem == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+      UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
     }
 #endif
   
@@ -168,11 +168,11 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 	SelectPalette(pDC->GetSafeHdc(), foregroundPalettes[fb], TRUE);
       if (hPalOld == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       if (pDC->RealizePalette() == GDI_ERROR)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
     }
 
@@ -217,11 +217,11 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 	  HPALETTE hPalOld = SelectPalette(pDC->GetSafeHdc(), hPal, TRUE);
 	  if (hPalOld == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	      UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	    }
 	  if (pDC->RealizePalette() == GDI_ERROR)
 	    {
-	      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	      UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	    }
 	}
 
@@ -283,7 +283,7 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	      UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	    }
       	}
 #endif
@@ -300,13 +300,13 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 			: DIB_PAL_COLORS));
       if (hBitmap == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       HBITMAP hOldBitmap =
 	static_cast<HBITMAP>(SelectObject(hdcMem, hBitmap));
       if (hOldBitmap == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       SetMapMode (hdcMem, GetMapMode(pDC->GetSafeHdc()));
       if (! BitBlt(pDC->GetSafeHdc(),
@@ -319,7 +319,7 @@ DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
 		   0,
 		   SRCCOPY))
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       // <fixme>use AutoResource
       if (! SelectObject(hdcMem, hOldBitmap))
@@ -362,7 +362,7 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
 #if USE_STRETCHDIBITS
   if ((pDC->GetDeviceCaps(RASTERCAPS) & RC_STRETCHDIB) == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DviDraw::DrawDviBitmaps"),
+      FATAL_MIKTEX_ERROR ("DviDraw::DrawDviBitmaps",
 			  T_("Device does not support StretchDIBits()."),
 			  0);
     }
@@ -373,7 +373,7 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
   HDC hdcMem = CreateCompatibleDC(pDC->GetSafeHdc());
   if (hdcMem == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+      UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
     }
 #endif
   
@@ -423,7 +423,7 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
 		      SRCCOPY);
       if (n != pBitmapInfo->bmiHeader.biHeight)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
       	}
 #endif
       
@@ -437,13 +437,13 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
 		       DIB_RGB_COLORS);
       if (hBitmap == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       HBITMAP hOldBitmap =
 	static_cast<HBITMAP>(SelectObject(hdcMem, hBitmap));
       if (hOldBitmap == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       SetMapMode (hdcMem, GetMapMode(pDC->GetSafeHdc()));
       if (! BitBlt(pDC->GetSafeHdc(),
@@ -456,7 +456,7 @@ DviDraw::DrawDibChunks (/*[in]*/ CDC *		pDC,
 		   0,
 		   SRCCOPY))
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawDviBitmaps"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawDviBitmaps");
 	}
       // <fixme>use AutoResource
       if (! SelectObject(hdcMem, hOldBitmap))
@@ -524,7 +524,7 @@ DviDraw::InitializeDviBitmapPalettes ()
     {
       if (! DeleteObject((*it).second))
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::InitializeDviBitmapPalettes"));
+	  UNEXPECTED_CONDITION ("DviDraw::InitializeDviBitmapPalettes");
 	}
       (*it).second = 0;
     }
@@ -583,7 +583,7 @@ DviDraw::CreateDviBitmapPalette (/*[in]*/ COLORREF	foreColor,
       HPALETTE ret = CreatePalette(pLogPal);
       if (ret == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::CreateDviBitmapPalette"));
+	  UNEXPECTED_CONDITION ("DviDraw::CreateDviBitmapPalette");
 	}
       delete [] reinterpret_cast<BYTE*>(pLogPal);
       return (ret);
@@ -639,13 +639,13 @@ DviDraw::DrawRules (/*[in]*/ CDC *	pDC,
       CBrush brush;
       if (! brush.CreateSolidBrush(pRule->GetBackgroundColor()))
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawRules"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawRules");
 	}
       CBrush * pOldBrush =
 	reinterpret_cast<CBrush*>(pDC->SelectObject(&brush));
       if (pOldBrush == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviDraw::DrawRules"));
+	  UNEXPECTED_CONDITION ("DviDraw::DrawRules");
 	}
       AutoSelectObject autoSelectOldBrush (pDC, pOldBrush);
       pDC->FillRect (&rectRule, &brush);

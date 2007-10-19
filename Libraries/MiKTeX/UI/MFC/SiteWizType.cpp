@@ -254,7 +254,7 @@ SiteWizType::EnableButtons ()
   CWnd * pWnd = GetDlgItem(IDC_CONNECTION_SETTINGS);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("TaskPage::EnableButtons"));
+      UNEXPECTED_CONDITION ("TaskPage::EnableButtons");
     }
   pWnd->EnableWindow (checked == IDC_INSTALL_FROM_INTERNET);
 }

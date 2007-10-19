@@ -23,6 +23,11 @@
 
 #include "internal.h"
 
+using namespace MiKTeX::Core;
+using namespace MiKTeX::Graphics;
+using namespace MiKTeX;
+using namespace std;
+
 const COLORREF RGB_WHITE = RGB(255, 255, 255);
 const COLORREF RGB_BLACK = RGB(0, 0, 0);
 
@@ -134,7 +139,7 @@ DibChunkerImpl::Read (/*[out]*/ void *	pData,
 	    {
 	      return (false);
 	    }
-	  FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::Read"),
+	  FATAL_MIKTEX_ERROR ("DibChunkerImpl::Read",
 			      T_("Unexpected end of bitmap input stream."),
 			      0);
 	}
@@ -158,7 +163,7 @@ DibChunkerImpl::ReadBitmapFileHeader ()
     }
   if (bitmapFileHeader.bfType != 0x4d42)
     {
-      FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::ReadBitmapFileHeader"),
+      FATAL_MIKTEX_ERROR ("DibChunkerImpl::ReadBitmapFileHeader",
 			  T_("Not a bitmap file header."),
 			  0);
     }
@@ -198,7 +203,7 @@ DibChunkerImpl::ReadBitmapInfo ()
   Read (&bitmapInfoHeader, sizeof(bitmapInfoHeader));
   if (bitmapInfoHeader.biSize < sizeof(bitmapInfoHeader))
     {
-      FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::ReadBitmapInfo"),
+      FATAL_MIKTEX_ERROR ("DibChunkerImpl::ReadBitmapInfo",
 			  T_("Unsupported bitmap format."),
 			  0);
     }
@@ -207,15 +212,15 @@ DibChunkerImpl::ReadBitmapInfo ()
 	 || bitmapInfoHeader.biBitCount == 8
 	 || bitmapInfoHeader.biBitCount == 24))
     {
-       FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::ReadBitmapInfo"),
-			  T_("Unsupported bitmap format."),
-			  0);
+      FATAL_MIKTEX_ERROR ("DibChunkerImpl::ReadBitmapInfo",
+			   T_("Unsupported bitmap format."),
+			   0);
     }
   if (bitmapInfoHeader.biCompression != BI_RGB)
     {
-       FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::ReadBitmapInfo"),
-			  T_("Unsupported bitmap format."),
-			  0);
+       FATAL_MIKTEX_ERROR ("DibChunkerImpl::ReadBitmapInfo",
+			   T_("Unsupported bitmap format."),
+			   0);
     }
 
   // skip unknown part of bitmap info header
@@ -225,7 +230,7 @@ DibChunkerImpl::ReadBitmapInfo ()
       void * p = malloc(n);
       if (p == 0)
 	{
-	  OUT_OF_MEMORY (T_("DibChunkerImpl::ReadBitmapInfo"));
+	  OUT_OF_MEMORY ("DibChunkerImpl::ReadBitmapInfo");
 	}
       AutoMemoryPointer autoFree (p);
       Read (p, n);
@@ -245,7 +250,7 @@ DibChunkerImpl::ReadBitmapInfo ()
   // seek for bitmap bits
   if (bitmapFileHeader.bfOffBits < numBytesRead)
     {
-      FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::ReadBitmapInfo"),
+      FATAL_MIKTEX_ERROR ("DibChunkerImpl::ReadBitmapInfo",
 			  T_("Invalid bitmap data."),
 			  0);
     }
@@ -255,13 +260,13 @@ DibChunkerImpl::ReadBitmapInfo ()
       void * p = malloc(n);
       if (p == 0)
 	{
-	  OUT_OF_MEMORY (T_("DibChunkerImpl::ReadBitmapInfo"));
+	  OUT_OF_MEMORY ("DibChunkerImpl::ReadBitmapInfo");
 	}
       AutoMemoryPointer autoFree (p);
       Read (p, n);
     }
   MIKTEX_ASSERT (bitmapFileHeader.bfOffBits == numBytesRead);
-  trace_dib->WriteFormattedLine (T_("libdib"),
+  trace_dib->WriteFormattedLine ("libdib",
 				 T_("chunking bitmap %ldx%ld, %u colors"),
 				 bitmapInfoHeader.biWidth,
 				 bitmapInfoHeader.biHeight,
@@ -470,7 +475,7 @@ DibChunkerImpl::ReadScanLine (/*[out]*/ unsigned long &	left,
 	  isBlackAndWhite = Crop24(left, right);
 	  break;
 	default:
-	  UNEXPECTED_CONDITION (T_("DibChunkerImpl::ReadScanLine"));
+	  UNEXPECTED_CONDITION ("DibChunkerImpl::ReadScanLine");
 	}
     }
   else
@@ -493,7 +498,7 @@ DibChunkerImpl::ReadScanLine (/*[out]*/ unsigned long &	left,
 	  right = bitmapInfoHeader.biWidth * 3 - 1;
 	  break;
 	default:
-	  UNEXPECTED_CONDITION (T_("DibChunkerImpl::ReadScanLine"));
+	  UNEXPECTED_CONDITION ("DibChunkerImpl::ReadScanLine");
 	}
     }
 
@@ -615,7 +620,7 @@ DibChunkerImpl::EndChunk ()
 	}
       break;
     default:
-      UNEXPECTED_CONDITION (T_("DibChunkerImpl::EndChunk"));
+      UNEXPECTED_CONDITION ("DibChunkerImpl::EndChunk");
     }
 
   SmartPointer<DibChunkImpl>
@@ -665,15 +670,15 @@ DibChunkerImpl::EndChunk ()
 	}
     }
   trace_dib->WriteFormattedLine
-    (T_("libdib"),
+    ("libdib",
      T_("shipping chunk: x=%ld, y=%ld, w=%ld, h=%ld, monochromized=%s"),
      pChunk->GetX(),
      pChunk->GetY(),
      bitmapinfoheader.biWidth,
      bitmapinfoheader.biHeight,
      (monochromize24
-      ? T_("true")
-      : T_("false")));
+      ? "true"
+      : "false"));
   inChunk = false;
   pChunk->SetBitmapInfo (bitmapinfoheader, numColors, pColors);
   pCallback->OnNewChunk (pChunk.Get());
@@ -699,7 +704,7 @@ DibChunkerImpl::Process (/*[in]*/ unsigned long		flags,
   ReadBitmapInfo ();
   if (BytesPerLine() > chunkSize)
     {
-       INVALID_ARGUMENT (T_("DibChunkerImpl::Process"), 0);
+       INVALID_ARGUMENT ("DibChunkerImpl::Process", 0);
     }
   pBits = new unsigned char[chunkSize];
   try
@@ -739,7 +744,7 @@ DibChunkerImpl::Process (/*[in]*/ unsigned long		flags,
 	    {
 	      if (! (flags & CreateChunks))
 		{
-		  FATAL_MIKTEX_ERROR (T_("DibChunkerImpl::Process"),
+		  FATAL_MIKTEX_ERROR ("DibChunkerImpl::Process",
 				      T_("Chunk size exceeded."),
 				      0);
 		}

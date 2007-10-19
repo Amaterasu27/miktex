@@ -241,12 +241,12 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
     default:
       found = false;
       Session::FatalMiKTeXError
-	(T_("KPSE::FindFile"),
+	("KPSE::FindFile",
 	 ((std::string(T_("Unsupported file format type: "))
 	   + NUMTOSTR(format))
 	  .c_str()),
 	 0,
-	 T_(__FILE__),
+	 __FILE__,
 	 __LINE__);
       break;
     }
@@ -317,7 +317,7 @@ KPSE::OpenFile (/*[in]*/ const char *		lpszFileName,
   FILE * pfile;
   try
     {
-      pfile = TryFOpen(lpszPath, IsBinary(format) ? T_("rb") : T_("r"));
+      pfile = TryFOpen(lpszPath, IsBinary(format) ? "rb" : "r");
     }
   catch (const exception &)
     {
@@ -441,7 +441,7 @@ KPSE::BaseName (/*[in]*/ const char * lpszFileName)
   while (lpsz != lpszFileName)
     {
       -- lpsz;
-      if (IsDirectoryDelimiter(*lpsz) || *lpsz == T_(':'))
+      if (IsDirectoryDelimiter(*lpsz) || *lpsz == ':')
 	{
 	  return (lpsz + 1);
 	}
@@ -549,25 +549,25 @@ TranslateModeString (/*[in]*/ const char *	lpszMode,
 		     /*[out]*/ FileAccess &	access,
 		     /*[out]*/ bool &		isTextFile)
 {
-  if (StringCompare(lpszMode, T_("r")) == 0)
+  if (StringCompare(lpszMode, "r") == 0)
     {
       mode = FileMode::Open;
       access = FileAccess::Read;
       isTextFile = true;
     }
-  else if (StringCompare(lpszMode, T_("w")) == 0)
+  else if (StringCompare(lpszMode, "w") == 0)
     {
       mode = FileMode::Create;
       access = FileAccess::Write;
       isTextFile = true;
     }
-  else if (StringCompare(lpszMode, T_("rb")) == 0)
+  else if (StringCompare(lpszMode, "rb") == 0)
     {
       mode = FileMode::Open;
       access = FileAccess::Read;
       isTextFile = false;
     }
-  else if (StringCompare(lpszMode, T_("wb")) == 0)
+  else if (StringCompare(lpszMode, "wb") == 0)
     {
       mode = FileMode::Create;
       access = FileAccess::Write;
@@ -584,7 +584,7 @@ TranslateModeString (/*[in]*/ const char *	lpszMode,
       Session::FatalMiKTeXError (T_("TranslateModeString"),
 				 T_("Unsupported mode."),
 				 lpszMode,
-				 T_(__FILE__),
+				 __FILE__,
 				 __LINE__);
 
     }
@@ -729,7 +729,7 @@ miktex_kpathsea_version_string = KPSEVERSION;
    _________________________________________________________________________ */
 
 MIKTEXKPSDATA(char *)
-miktex_web2c_version_string = T_("0.0");
+miktex_web2c_version_string = "0.0";
 
 /* _________________________________________________________________________
 
@@ -885,12 +885,12 @@ KPSE::FindSuffix (const char * lpszPath)
 	  lpszExt = 0;
 	}
 #if defined(MIKTEX_WINDOWS)
-      else if (*lpszPath == T_(':'))
+      else if (*lpszPath == ':')
 	{
 	  lpszExt = 0;
 	}
 #endif
-      else if (*lpszPath == T_('.'))
+      else if (*lpszPath == '.')
 	{
 	  lpszExt = lpszPath + 1;
 	}

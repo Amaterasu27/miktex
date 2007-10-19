@@ -25,13 +25,13 @@
 #include "ShellLinkData.h"
 
 #define EXEPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_BIN_DIR T_("\\") name
+ T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_BIN_DIR "\\" name
 
 #define CONFIGPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_CONFIG_DIR T_("\\") name
+ T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_CONFIG_DIR "\\" name
 
 #define DOCPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_DOC_DIR T_("\\") name
+ T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_DOC_DIR "\\" name
 
 const ShellLinkData shellLinks[] = {
 
@@ -75,7 +75,7 @@ const ShellLinkData shellLinks[] = {
     EXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
     LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
-    T_("\"") CONFIGPATH(MIKTEX_UPDATE_DAT) T_("\""),
+    "\"" CONFIGPATH(MIKTEX_UPDATE_DAT) "\"",
     CONFIGPATH(MIKTEX_UPDATE_DAT),
     0,
     0,

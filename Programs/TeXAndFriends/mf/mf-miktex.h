@@ -72,7 +72,7 @@ public:
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     MetafontApp::Init (lpszProgramInvocationName);
-    SetProgramInfo (MIKTEXTEXT("mf"), 0, 0, 0);
+    SetProgramInfo ("mf", 0, 0, 0);
 #ifdef IMPLEMENT_TCX
     EnableFeature (Feature::TCX);
 #endif
@@ -94,15 +94,15 @@ public:
   AddOptions ()
   {
     MetafontApp::AddOptions ();
-    AddOption (MIKTEXTEXT("base"), MIKTEXTEXT("undump"));
+    AddOption ("base", "undump");
     AddOption (MIKTEXTEXT("max-wiggle\0Set max_wiggle to N."),
 	       OPT_MAX_WIGGLE,
 	       required_argument,
-	       MIKTEXTEXT("N"));
+	       "N");
     AddOption (MIKTEXTEXT("move-size\0Set move_size to N."),
 	       OPT_MOVE_SIZE,
 	       required_argument,
-	       MIKTEXTEXT("N"));
+	       "N");
     AddOption (MIKTEXTEXT("screen\0Enable screen output."),
 	       OPT_SCREEN);
   }
@@ -205,7 +205,7 @@ public:
   GetInitProgramName ()
     const
   {
-    return (MIKTEXTEXT("inimf"));
+    return ("inimf");
   }
 
 public:
@@ -215,7 +215,7 @@ public:
   GetVirginProgramName ()
     const
   {
-    return (MIKTEXTEXT("virmf"));
+    return ("virmf");
   }
 
 public:
@@ -225,7 +225,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("METAFONT"));
+    return ("METAFONT");
   }
 
 public:

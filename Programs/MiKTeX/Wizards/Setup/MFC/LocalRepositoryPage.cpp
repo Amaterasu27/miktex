@@ -79,7 +79,7 @@ LocalRepositoryPage::OnSetActive ()
 	  CWnd * pWnd = GetDlgItem(IDC_FILENAME);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("LocalRepositoryPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("LocalRepositoryPage::OnSetActive");
 	    }
 	  pWnd->SetWindowText (fileName);
 	  if (fileName.GetLength() > 0)
@@ -237,7 +237,7 @@ LocalRepositoryPage::OnBrowse ()
       CString title;
       if (! title.LoadString(IDS_BROWSE_LOCAL))
 	{
-	  UNEXPECTED_CONDITION (T_("LocalRepositoryPage::OnBrowse"));
+	  UNEXPECTED_CONDITION ("LocalRepositoryPage::OnBrowse");
 	}
       bi.lpszTitle = title;
       bi.ulFlags = (BIF_NEWDIALOGSTYLE | BIF_RETURNONLYFSDIRS);
@@ -255,7 +255,7 @@ LocalRepositoryPage::OnBrowse ()
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)
 	{
-	  UNEXPECTED_CONDITION (T_("LocalRepositoryPage::OnBrowse"));
+	  UNEXPECTED_CONDITION ("LocalRepositoryPage::OnBrowse");
 	}
       fileName = szFolderPath;
       UpdateData (FALSE);
@@ -284,7 +284,7 @@ LocalRepositoryPage::OnChangePathName ()
       CWnd * pWnd = GetDlgItem(IDC_FILENAME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("LocalRepositoryPage::OnChangeFilename"));
+	  UNEXPECTED_CONDITION ("LocalRepositoryPage::OnChangeFilename");
 	}
       if (pWnd->GetWindowTextLength() > 0)
 	{

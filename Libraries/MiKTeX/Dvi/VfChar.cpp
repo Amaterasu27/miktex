@@ -93,26 +93,26 @@ VfChar::Read (/*[in]*/ InputStream &	inputstream,
     }
 
   log_vfchar->WriteLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("going to read vf character packet"));
   log_vfchar->WriteFormattedLine
-    (T_("libdvi"), T_("pl: %d"),
+    ("libdvi", "pl: %d",
      packetSize);
   log_vfchar->WriteFormattedLine
-    (T_("libdvi"),
-     T_("cc: %d"),
+    ("libdvi",
+     "cc: %d",
      charCode);
   log_vfchar->WriteFormattedLine
-    (T_("libdvi"),
-     T_("tfm: %d"),
+    ("libdvi",
+     "tfm: %d",
      tfm);
 
   tfm = ScaleFix(tfm, pDviFont->GetScaledAt());
   cx = static_cast<int>(tfm * conv + 0.5);
 
   log_vfchar->WriteFormattedLine
-    (T_("libdvi"),
-     T_("dx: %d"),
+    ("libdvi",
+     "dx: %d",
      cx);
 
   if (packetSize <= sizeof(smallPacket))

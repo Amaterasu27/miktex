@@ -212,7 +212,7 @@ InfoListPage::CreateReport ()
       break;
     }
 
-  info = T_("");
+  info = "";
 
   switch (theApp.setupTask.Get())
     {
@@ -306,7 +306,7 @@ InfoListPage::CreateReport ()
   CWnd * pWnd = GetDlgItem(IDC_INFO);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("InfoListPage::CreateReport"));
+      UNEXPECTED_CONDITION ("InfoListPage::CreateReport");
     }
   pWnd->SetWindowText (info);
 }

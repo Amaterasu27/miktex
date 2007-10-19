@@ -42,7 +42,7 @@ TarLzmaExtractor::Extract (/*[in]*/ const PathName &	tarlzmaPath,
 			   /*[in]*/ IExtractCallback *	pCallback,
 			   /*[in]*/ const char *	lpszPrefix)
 {
-  traceStream->WriteFormattedLine (T_("libextractor"),
+  traceStream->WriteFormattedLine ("libextractor",
 				   T_("extracting %s"),
 				   Q_(tarlzmaPath));
 

@@ -203,7 +203,7 @@ MakeMpx::Error (/*[in]*/ const char *		lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << T_("makempx") << T_(": ")
+  cerr << T_("makempx") << ": "
        << Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
   throw (1);
@@ -234,17 +234,17 @@ enum Option
 const struct poptOption MakeMpx::aoption[] = {
 
   {
-    T_("debug"), T_('d'), POPT_ARG_NONE, 0, OPT_DEBUG,
+    T_("debug"), 'd', POPT_ARG_NONE, 0, OPT_DEBUG,
     T_("Print debugging information."), 0,
   },
 
   {
-    T_("print-only"), T_('n'), POPT_ARG_NONE, 0, OPT_PRINT_ONLY,
+    T_("print-only"), 'n', POPT_ARG_NONE, 0, OPT_PRINT_ONLY,
     T_("Print what commands would be executed."), 0,
   },
 
   {
-    T_("quiet"), T_('q'), POPT_ARG_NONE, 0, OPT_QUIET,
+    T_("quiet"), 'q', POPT_ARG_NONE, 0, OPT_QUIET,
     T_("Suppress all output (except errors)."), 0,
   },
 
@@ -314,9 +314,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      Error (T_("%s"), msg.c_str());
+      Error ("%s", msg.c_str());
     }
 
   const char * * leftovers = popt.GetArgs();
@@ -371,7 +371,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const char *	lpszMpFileName,
 
   if (File::Exists(mptexpre))
     {
-      PrintOnly (T_("cp %s %s"), Q_(mptexpre), Q_(lpszTeXFileName));
+      PrintOnly ("cp %s %s", Q_(mptexpre), Q_(lpszTeXFileName));
       if (! printOnly)
 	{
 	  File::Copy (mptexpre, lpszTeXFileName, false);
@@ -392,7 +392,7 @@ MakeMpx::InvokeMPTO (/*[in]*/ const char *	lpszMpFileName,
   psi.Arguments = commandLineBuilder.Get();
   psi.StandardOutput = pTeXFile.Get();
 
-  PrintOnly (T_("%s %s"), Q_(mpto), commandLineBuilder.Get());
+  PrintOnly ("%s %s", Q_(mpto), commandLineBuilder.Get());
 
   if (! printOnly)
     {
@@ -419,7 +419,7 @@ MakeMpx::InvokeTeX (/*[in]*/ const char * lpszTeXFileName)
       Argv argv;
       if (TeXMFApp::ParseFirstLine(lpszTeXFileName, argv))
 	{
-	  if (argv.GetArgc() > 1 && argv[1][0] != T_('-'))
+	  if (argv.GetArgc() > 1 && argv[1][0] != '-')
 	    {
 	      texProgram = argv[1];
 	      texProgram += T_(" -parse-first-line");
@@ -438,12 +438,12 @@ MakeMpx::InvokeTeX (/*[in]*/ const char * lpszTeXFileName)
 
   if (debug)
     {
-      commandLineBuilder.AppendOption (T_("-interaction="), T_("nonstopmode"));
+      commandLineBuilder.AppendOption ("-interaction=", T_("nonstopmode"));
     }
 
   commandLineBuilder.AppendArgument (lpszTeXFileName);
   
-  PrintOnly (T_("%s"), commandLineBuilder.Get());
+  PrintOnly ("%s", commandLineBuilder.Get());
 
   if (! printOnly)
     {
@@ -478,7 +478,7 @@ MakeMpx::InvokeDVItoMP (/*[in]*/ const char * lpszDviFileName,
   commandLineBuilder.AppendArgument (lpszDviFileName);
   commandLineBuilder.AppendArgument (PathName(lpszDestDir, lpszMpxFileName));
 
-  PrintOnly (T_("%s %s"), Q_(dvitomp), commandLineBuilder.Get());
+  PrintOnly ("%s %s", Q_(dvitomp), commandLineBuilder.Get());
 
   if (! printOnly)
     {
@@ -497,7 +497,7 @@ MakeMpx::MakeTeXFileName (/*[in]*/ const char *	lpszBaseName)
   PathName texFile;
   texFile.SetToCurrentDirectory ();
   texFile += lpszBaseName;
-  texFile.SetExtension (T_(".tex"));
+  texFile.SetExtension (".tex");
   fclose (File::Open(texFile, FileMode::Create, FileAccess::Write, false));
   return (texFile);
 }
@@ -559,7 +559,7 @@ MakeMpx::Run (/*[in]*/ int			argc,
   ScratchDirectory scratchDirectory;
   scratchDirectory.Enter ();
 
-  const char * lpszName = T_("mpx314");
+  const char * lpszName = "mpx314";
 
   PathName texFile = MakeTeXFileName(lpszName);
 
@@ -570,7 +570,7 @@ MakeMpx::Run (/*[in]*/ int			argc,
   InvokeTeX (texFile.Get());
 
   // invoke dvitomp
-  InvokeDVItoMP (PathName(0, lpszName, T_(".dvi")).Get(),
+  InvokeDVItoMP (PathName(0, lpszName, ".dvi").Get(),
 		 mpxFile.Get(),
 		 destDir.Get());
 

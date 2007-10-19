@@ -28,15 +28,15 @@
    DviFont::DviFont
    _________________________________________________________________________ */
 
-DviFont::DviFont (/*[in]*/ DviImpl *		pDviImpl,
-		  /*[in]*/ int			checkSum,
-		  /*[in]*/ int			scaledAt,
-		  /*[in]*/ int			designSize,
-		  /*[in]*/ const char *		lpszArea,
-		  /*[in]*/ const char *		lpszName,
+DviFont::DviFont (/*[in]*/ DviImpl *	pDviImpl,
+		  /*[in]*/ int		checkSum,
+		  /*[in]*/ int		scaledAt,
+		  /*[in]*/ int		designSize,
+		  /*[in]*/ const char *	lpszArea,
+		  /*[in]*/ const char *	lpszName,
 		  /*[in]*/ const char *	lpszFileName,
-		  /*[in]*/ double		tfmConf,
-		  /*[in]*/ double		conv)
+		  /*[in]*/ double	tfmConf,
+		  /*[in]*/ double	conv)
   : pDviImpl (pDviImpl),
     checkSum (checkSum),
     scaledAt (scaledAt),

@@ -104,7 +104,7 @@ MpmView::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -133,37 +133,37 @@ MpmView::OnInitialUpdate ()
 
       InsertColumn (colIdx,
 		    T_("Name"),
-		    T_("xxx mmmmmmmm"));
+		    "xxx mmmmmmmm");
 
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Category"),
-		    T_("xxx Formats\\LaTeX\\LaTeX contrib"));
+		    "xxx Formats\\LaTeX\\LaTeX contrib");
 
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Size"),
-		    T_("xxx 12341234"));
+		    "xxx 12341234");
 
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Packaged on"),
-		    T_("xxx 2002-02-22"));
+		    "xxx 2002-02-22");
 
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Installed on"),
-		    T_("xxx 2002-02-22"));
+		    "xxx 2002-02-22");
 
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Title"),
-	    T_("xxx mmmm mmmmmmmm mmmmmmmmm mmmmmmmmmmm mm mmmmmmmmm"));
+		    "xxx mmmm mmmmmmmm mmmmmmmmm mmmmmmmmmmm mm mmmmmmmmm");
       
       PostMessage (WM_FILLLISTVIEW);
     }
@@ -242,7 +242,7 @@ MpmView::FillListView ()
   packages.clear ();
   if (! GetListCtrl().DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
   for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
     {
@@ -310,7 +310,7 @@ MpmView::OnLvnColumnclick (/*[in]*/ NMHDR *	pNMHDR,
       if (! GetListCtrl().SortItems(CompareItems,
 				    reinterpret_cast<LPARAM>(this)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItems", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -428,7 +428,7 @@ MpmView::OnButtonSearchClicked ()
       packages.clear ();
       if (! listctrl.DeleteAllItems())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
 	}
       while (pIter->GetNext(packageInfo))
 	{
@@ -524,7 +524,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.pszText = const_cast<char *>(packageInfo.deploymentName.c_str());
   if (listctrl.InsertItem(&lvitem) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   
   // column 1
@@ -534,7 +534,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.pszText = const_cast<char *>(str.c_str());
   if (! listctrl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 
   // column 2
@@ -544,35 +544,35 @@ MpmView::InsertItem (/*[in]*/ int			idx,
     (NUMTOSTR(static_cast<unsigned>(packageInfo.GetSize())));
   if (! listctrl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 
   // column 3
   CString str2;
   lvitem.iSubItem = 3;
   CTime t (packageInfo.timePackaged);
-  str2 = t.FormatGmt(T_("%Y-%m-%d"));
+  str2 = t.FormatGmt("%Y-%m-%d");
   lvitem.pszText = const_cast<char *>(str2.GetString());
   if (! listctrl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 
   // column 4
   lvitem.iSubItem = 4;
   if (packageInfo.timeInstalled == 0)
     {
-      str2 = T_("");
+      str2 = "";
     }
   else
     {
       CTime t (packageInfo.timeInstalled);
-      str2 = t.FormatGmt(T_("%Y-%m-%d"));
+      str2 = t.FormatGmt("%Y-%m-%d");
     }
   lvitem.pszText = const_cast<char *>(str2.GetString());
   if (! listctrl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 
   // column 5
@@ -580,7 +580,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.pszText = const_cast<char *>(packageInfo.title.c_str());
   if (! listctrl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 }
 
@@ -608,7 +608,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 	{
 	  if (! menu.LoadMenu(IDR_CONTEXT_MENU))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
 	    }
 	}
       else
@@ -629,18 +629,18 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 		      ++ nUninstall;
 		    }
 		}
-	      CHECK_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	      CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	      MIKTEX_ASSERT (nInstall + nUninstall == count);
 	    }
 	  if (! menu.LoadMenu(IDR_CONTEXT_MENU_SEL))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
 	    }
 	}
       CMenu * pPopup = menu.GetSubMenu(0);
       if (pPopup == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CMenu::GetSubMenu"), 0);
+	  FATAL_WINDOWS_ERROR ("CMenu::GetSubMenu", 0);
 	}
       if (count > 0)
 	{
@@ -651,7 +651,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 					 : MF_GRAYED)))
 	      < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::EnableMenuItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::EnableMenuItem", 0);
 	    }
 	  if (pPopup->EnableMenuItem(ID_UNINSTALL,
 				     (MF_BYCOMMAND
@@ -660,7 +660,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 					 : MF_GRAYED)))
 	      < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::EnableMenuItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::EnableMenuItem", 0);
 	    }
 	  if (pPopup->EnableMenuItem(ID_PROPERTIES,
 				     (MF_BYCOMMAND
@@ -668,7 +668,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 					 MF_ENABLED
 					 : MF_GRAYED))))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::EnableMenuItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::EnableMenuItem", 0);
 	    }
 	}
       UINT cmd =
@@ -681,7 +681,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 		       0);
       if (cmd == 0)
 	{
-	  CHECK_WINDOWS_ERROR (T_("TrackPopupMenu"), 0);
+	  CHECK_WINDOWS_ERROR ("TrackPopupMenu", 0);
 	  return;
 	}
       switch (cmd)
@@ -759,7 +759,7 @@ MpmView::OnUpdateInstall (/*[in]*/ CCmdUI *	pCmdUI)
 		  enable = FALSE;
 		}
 	    }
-	  CHECK_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	  CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	}
       pCmdUI->Enable (enable);
     }
@@ -798,12 +798,12 @@ void MpmView::OnInstall ()
 	      toBeRemoved.push_back (packageInfo.deploymentName);
 	    }
 	}
-      CHECK_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+      CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
       MIKTEX_ASSERT (toBeInstalled.size() > 0 || toBeRemoved.size() > 0);
       CString str1;
-      str1.Format (T_("%u"), toBeInstalled.size());
+      str1.Format ("%u", toBeInstalled.size());
       CString str2;
-      str2.Format (T_("%u"), toBeRemoved.size());
+      str2.Format ("%u", toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
       bool restrictedUserSetup =
@@ -812,7 +812,7 @@ void MpmView::OnInstall ()
       if (IsWindowsVista() && ! restrictedUserSetup)
 	{
 	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
-	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
+	    taskDialogIndirect ("comctl32.dll", "TaskDialogIndirect");
 	  TASKDIALOGCONFIG taskDialogConfig;
 	  memset (&taskDialogConfig, 0, sizeof(taskDialogConfig));
 	  taskDialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -842,7 +842,7 @@ void MpmView::OnInstall ()
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("MpmView::OnInstall"));
+	      UNEXPECTED_CONDITION ("MpmView::OnInstall");
 	    }
 	}
       else
@@ -882,7 +882,7 @@ MpmView::OnProperties ()
       int nItem = listctrl.GetNextItem(-1, LVNI_SELECTED);
       if (nItem < 0)
 	{
-	  CHECK_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	  CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	  return;
 	}
       PackageInfo packageInfo = packages[listctrl.GetItemData(nItem)];
@@ -950,7 +950,7 @@ MpmView::OnUpdateUninstall (/*[in]*/ CCmdUI *	pCmdUI)
 		  enable = FALSE;
 		}
 	    }
-	  CHECK_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	  CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	}
       pCmdUI->Enable (enable);
     }
@@ -990,11 +990,11 @@ MpmView::OnResetView ()
 	(pApp->GetMainWnd()->IsKindOf(RUNTIME_CLASS(MainFrame)));
       MainFrame * pMain =
 	DYNAMIC_DOWNCAST(MainFrame, pApp->GetMainWnd());
-      pMain->GetDlgBarItem(IDC_EDIT_PACKAGE_NAME)->SetWindowText(T_(""));
+      pMain->GetDlgBarItem(IDC_EDIT_PACKAGE_NAME)->SetWindowText("");
       CString searchWords;
-      pMain->GetDlgBarItem(IDC_EDIT_WORDS)->SetWindowText(T_(""));
+      pMain->GetDlgBarItem(IDC_EDIT_WORDS)->SetWindowText("");
       CString strFileName;
-      pMain->GetDlgBarItem(IDC_EDIT_FILE_NAME)->SetWindowText(T_(""));
+      pMain->GetDlgBarItem(IDC_EDIT_FILE_NAME)->SetWindowText("");
       FillListView ();
     }
   catch (const MiKTeXException & e)
@@ -1047,7 +1047,7 @@ MpmView::OnUpdateDatabase ()
       auto_ptr<ProgressDialog> pProgDlg (ProgressDialog::Create());
       pProgDlg->SetTitle (T_("Synchronize"));
       pProgDlg->SetLine (1, T_("Synchronizing the package database..."));
-      pProgDlg->SetLine (2, T_(""));
+      pProgDlg->SetLine (2, "");
       pProgDlg->StartProgressDialog (GetSafeHwnd());
       while (! pProgDlg->HasUserCancelled())
 	{
@@ -1114,11 +1114,11 @@ MpmView::OnSelectInstallablePackages ()
 	      int idx = listctrl.FindItem(&fi);
 	      if (idx < 0)
 		{
-		  FATAL_WINDOWS_ERROR (T_("CListCtrl::FindItem"), 0);
+		  FATAL_WINDOWS_ERROR ("CListCtrl::FindItem", 0);
 		}
 	      if (! listctrl.SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED))
 		{
-		  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemState"), 0);
+		  FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
 		}
 	    }
 	}
@@ -1161,7 +1161,7 @@ MpmView::OnSelectAll ()
 	{
 	  if (! listctrl.SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemState"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
 	    }
 	}
     }
@@ -1189,7 +1189,7 @@ MpmView::OnUpdateWizard ()
       updateDat += MIKTEX_PATH_UPDATE_DAT;
       if (! File::Exists(updateDat))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MpmView::OnUpdateWizard"),
+	  FATAL_MIKTEX_ERROR ("MpmView::OnUpdateWizard",
 			      T_("The update wizard could not be found."),
 			      0);
 	}
@@ -1198,7 +1198,7 @@ MpmView::OnUpdateWizard ()
 			       FileType::EXE,
 			       copystart))
 	{
-	  FATAL_MIKTEX_ERROR (T_("MpmView::OnUpdateWizard"),
+	  FATAL_MIKTEX_ERROR ("MpmView::OnUpdateWizard",
 			      T_("The update helper could not be found."),
 			      0);
 	}
@@ -1207,7 +1207,7 @@ MpmView::OnUpdateWizard ()
       if (! pSession->UnloadFilenameDatabase())
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("MpmView::OnUpdateWizard"),
+	    ("MpmView::OnUpdateWizard",
 	     T_("The file name database could not be closed."),
 	     0);
 	}

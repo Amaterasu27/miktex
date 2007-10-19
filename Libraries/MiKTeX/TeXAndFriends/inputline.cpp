@@ -53,10 +53,10 @@ WebAppInputLine::Init (/*[in]*/ const char * lpszProgramInvocationName)
 MIKTEXMFAPI(void)
 WebAppInputLine::Finalize ()
 {
-  auxDirectory = T_("");
-  fqNameOfFile = T_("");
-  lastInputFileName = T_("");
-  outputDirectory = T_("");
+  auxDirectory = "";
+  fqNameOfFile = "";
+  lastInputFileName = "";
+  outputDirectory = "";
   WebApp::Finalize ();
 }
 
@@ -92,7 +92,7 @@ Disable input (output) from (to) processes."),
    _________________________________________________________________________ */
 
 MIKTEXMFAPI(bool)
-WebAppInputLine::ProcessOption (/*[in]*/ int			opt,
+WebAppInputLine::ProcessOption (/*[in]*/ int		opt,
 				/*[in]*/ const char *	lpszOptArg)
 {
   bool done = true;
@@ -130,7 +130,7 @@ WebAppInputLine::MangleNameOfFile (/*[in]*/ const char * lpszFrom)
   size_t len = StrLen(lpszFrom);
   if (len >= ret.GetCapacity())
     {
-      INVALID_ARGUMENT (T_("WebAppInputLine::MangleNameOfFile"), lpszFrom);
+      INVALID_ARGUMENT ("WebAppInputLine::MangleNameOfFile", lpszFrom);
     }
   size_t idx;
   for (idx = 0; idx < len; ++ idx)
@@ -172,7 +172,7 @@ UnmangleNameOfFile_ (/*[in]*/ const CharType * lpszFrom)
   size_t len = StrLen(lpszFrom);
   if (len >= ret.GetCapacity())
     {
-      INVALID_ARGUMENT (T_("UnmangleNameOfFile_"), 0/*lpszFrom*/);
+      INVALID_ARGUMENT ("UnmangleNameOfFile_", 0/*lpszFrom*/);
     }
   size_t idx;
   for (idx = 0; idx < len; ++ idx)

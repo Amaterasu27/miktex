@@ -73,7 +73,7 @@ class DviImpl;
 #define INVALID_ARGUMENT(function, param)				\
   FATAL_MIKTEX_ERROR (function, T_("Invalid argument."), param)
 
-#define OUT_OF_MEMORY(function)					\
+#define OUT_OF_MEMORY(function)						\
   FATAL_MIKTEX_ERROR(function, T_("Virtual memory exhausted."), 0)
 
 #define UNEXPECTED_CONDITION(function)				\
@@ -86,40 +86,40 @@ class DviImpl;
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    T_(__FILE__),				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,					\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
   TraceStream::TraceLastCRTError (lpszCrtFunction,	\
 				  lpszInfo,		\
-				  T_(__FILE__),		\
+				  __FILE__,		\
 				  __LINE__)
 
 #define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,		\
 			  lpszInfo,			\
-			  T_(__FILE__),			\
+			  __FILE__,			\
 			  __LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
   Session::FatalCrtError (lpszCrtFunction,			\
 			  errorCode,				\
 			  lpszInfo,				\
-			  T_(__FILE__),				\
+			  __FILE__,				\
 			  __LINE__)
 
 #if defined(MIKTEX_WINDOWS)
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    T_(__FILE__),		\
+				    __FILE__,			\
 				    __LINE__)
 #endif
 
@@ -127,7 +127,7 @@ class DviImpl;
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      T_(__FILE__),			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -136,7 +136,7 @@ class DviImpl;
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      T_(__FILE__),				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
 
@@ -144,7 +144,7 @@ class DviImpl;
   FatalDviError (miktexFunction,				\
 		 traceMessage,					\
 		 lpszInfo,					\
-		 T_(__FILE__),					\
+		 __FILE__,					\
 		 __LINE__)
 
 /* _________________________________________________________________________
@@ -227,7 +227,7 @@ FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
 	       /*[in]*/ const char *	lpszMessage,
 	       /*[in]*/ const char *	lpszInfo,
 	       /*[in]*/ const char *	lpszSourceFile,
-	       /*[in]*/ int			sourceLine);
+	       /*[in]*/ int		sourceLine);
 
 int
 ScaleFix (/*[in]*/ int tfm,
@@ -240,9 +240,9 @@ ExpandBoundingBox (/*[in]*/ int llx,
 		   /*[in]*/ int ury);
 
 int
-CalculateWidth (/*[in]*/ float			width,
+CalculateWidth (/*[in]*/ float		width,
 		/*[in]*/ const char *	unit,
-		/*[in]*/ int			resolution);
+		/*[in]*/ int		resolution);
 
 /* _________________________________________________________________________
 
@@ -514,7 +514,7 @@ public:
       }
     else
       {
-	UNEXPECTED_CONDITION (T_("InputStream::IsEndOfStream"));
+	UNEXPECTED_CONDITION ("InputStream::IsEndOfStream");
       }
   }
 
@@ -1135,8 +1135,8 @@ public:
   bool
   MIKTEXDVICALL
   FindSource (/*[in]*/ const char *	lpszFileName,
-	      /*[in]*/ int			line,
-	      /*[out]*/ DviPosition &		position);
+	      /*[in]*/ int		line,
+	      /*[out]*/ DviPosition &	position);
 
 public:
   virtual
@@ -1405,7 +1405,7 @@ private:
 
 private:
   bool
-  ParseColorSpec (/*[in]*/ const char *	lpsz,
+  ParseColorSpec (/*[in]*/ const char *		lpsz,
 		  /*[in]*/ unsigned long &	rgb);
 
 private:
@@ -1469,13 +1469,13 @@ private:
 private:
   void
   GetFontTable (/*[in]*/ const FontMap &	mapnumtofontptr,
-		/*[out]*/ vector<DviFontInfo> &		vec,
-		/*[in]*/ int				recursion);
+		/*[out]*/ vector<DviFontInfo> &	vec,
+		/*[in]*/ int			recursion);
 
 private:
   bool
   MakeFonts (/*[in]*/ const FontMap &	mapnumtofontptr,
-	     /*[in]*/ int			recursion);
+	     /*[in]*/ int		recursion);
 
 private:
   double

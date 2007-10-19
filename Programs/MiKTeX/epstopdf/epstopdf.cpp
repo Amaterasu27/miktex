@@ -54,8 +54,8 @@ using namespace std;
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 const char * DEFAULT_TRACE_STREAMS =
-  MIKTEX_TRACE_ERROR T_(",")
-  MIKTEX_TRACE_PROCESS T_(",")
+  MIKTEX_TRACE_ERROR ","
+  MIKTEX_TRACE_PROCESS ","
   PROGRAM_NAME;
 
 /* _________________________________________________________________________
@@ -280,7 +280,7 @@ struct poptOption EpsToPdfApp::aoption[] = {
     POPT_ARG_STRING, 0,
     OPT_ENLARGE,
     T_("Enlarge bounding box by N PostScript points."),
-    T_("N"),
+    "N",
   },
 
   {
@@ -302,7 +302,7 @@ stream."),
   },
 
   {
-    T_("gs"), 0,
+    "gs", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_GS,
     T_("Run Ghostscript."),
@@ -398,7 +398,7 @@ stream."),
   },
 
   {
-    T_("print-only"), T_('n'),
+    T_("print-only"), 'n',
     POPT_ARG_NONE, 0,
     OPT_PRINT_ONLY,
     T_("Print what would be done."),
@@ -536,7 +536,7 @@ EpsToPdfApp::Fatal (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGRAM_NAME << T_(": ")
+  cerr << PROGRAM_NAME << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -559,7 +559,7 @@ EpsToPdfApp::GetLine (/*[out]*/ string & line)
 	  return (false);
 	}
     }
-  bool done = Utils::ReadUntilDelim(line, T_('\n'), inStream.Get());
+  bool done = Utils::ReadUntilDelim(line, '\n', inStream.Get());
   if (done)
     {
       string::size_type l = line.length();
@@ -567,7 +567,7 @@ EpsToPdfApp::GetLine (/*[out]*/ string & line)
 	   it != line.rend();
 	   ++ it)
 	{
-	  if (*it != T_('\n') && *it != T_('\r'))
+	  if (*it != '\n' && *it != '\r')
 	    {
 	      break;
 	    }
@@ -594,7 +594,7 @@ EpsToPdfApp::PutFormattedLine (/*[in]*/ const char *	lpszFormat,
       va_start (marker, lpszFormat);
       vfprintf (outStream.Get(), lpszFormat, marker);
       va_end (marker);
-      fputc (T_('\n'), outStream.Get());
+      fputc ('\n', outStream.Get());
     }
 }
 
@@ -608,7 +608,7 @@ EpsToPdfApp::PutLine (/*[in]*/ const string &	line)
 {
   if (! printOnly)
     {
-      fprintf (outStream.Get(), T_("%s\n"), line.c_str());
+      fprintf (outStream.Get(), "%s\n", line.c_str());
     }
 }
 
@@ -661,7 +661,7 @@ EpsToPdfApp::BoundingBoxWithValues (/*[in]*/ const string &	line,
 #  define sscanf_s sscanf
 #endif
   if (sscanf_s(line.c_str() + boundingBoxName.length(),
-	       T_(" %lf %lf %lf %lf"),
+	       " %lf %lf %lf %lf",
 	       &llx,
 	       &lly,
 	       &urx,
@@ -792,7 +792,7 @@ EpsToPdfApp::GetFirstLine (/*[out]*/ string & line)
     }
   if (buf[0] == '%' && buf[1] == '!' && buf[2] == 'P' && buf[3] == 'S')
     {
-      line = T_("%!PS");
+      line = "%!PS";
       string line1;
       stopReadingAt = 0;
       if (GetLine(line1))
@@ -859,7 +859,7 @@ EpsToPdfApp::PrepareOutput (/*[in]*/ bool			runAsFilter,
   if (runGhostscript)
     {
       CommandLineBuilder cmdLine (gsOptions);
-      cmdLine.AppendOption (T_("-q"));
+      cmdLine.AppendOption ("-q");
       cmdLine.AppendOption (T_("-sDEVICE="), T_("pdfwrite"));
       cmdLine.AppendOption (T_("-dSAFER"));
 #if 1				// 642845
@@ -871,16 +871,16 @@ EpsToPdfApp::PrepareOutput (/*[in]*/ bool			runAsFilter,
 	}
       if (runAsFilter)
 	{
-	  cmdLine.AppendOption (T_("-sOutputFile="), T_("-"));
+	  cmdLine.AppendOption (T_("-sOutputFile="), "-");
 	}
       else
 	{
 	  cmdLine.AppendOption (T_("-sOutputFile="), outFile);
 	}
-      cmdLine.AppendOption (T_("-"));
-      cmdLine.AppendOption (T_("-c"));
+      cmdLine.AppendOption ("-");
+      cmdLine.AppendOption ("-c");
       cmdLine.AppendArgument (T_("quit"));
-      PrintOnly (T_("%s %s\n"), Q_(lpszGSExe), cmdLine.Get());
+      PrintOnly ("%s %s\n", Q_(lpszGSExe), cmdLine.Get());
       if (! printOnly)
 	{
 	  ProcessStartInfo processStartInfo;
@@ -991,7 +991,7 @@ EpsToPdfApp::Run (/*[in]*/ int			argc,
 	  hiResBoundingBox = false;
 	  break;
 	case OPT_NOPDFVERS:
-	  pdfVersion = T_("");
+	  pdfVersion = "";
 	  break;
 	case OPT_OUTFILE:
 	  outFile = lpszOptArg;
@@ -1031,9 +1031,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      Fatal (T_("%s"), msg.c_str());
+      Fatal ("%s", msg.c_str());
     }
 
   Init (initInfo);
@@ -1062,7 +1062,7 @@ Input file cannot be specified together with --filter option."));
 	{
 	  Fatal (T_("Too many input files."));
 	}
-      if (! pSession->FindFile(leftovers[0], T_("."), inputFile))
+      if (! pSession->FindFile(leftovers[0], ".", inputFile))
 	{
 	  Fatal (T_("The input file does not exist."));
 	}
@@ -1076,8 +1076,8 @@ Input file cannot be specified together with --filter option."));
 
   if (antiAliasing)
     {
-      gsOptions.AppendOption (T_("-dTextAlphaBits="), T_("4"));
-      gsOptions.AppendOption (T_("-dGraphicsAlphaBits="), T_("4"));
+      gsOptions.AppendOption (T_("-dTextAlphaBits="), "4");
+      gsOptions.AppendOption (T_("-dGraphicsAlphaBits="), "4");
     }
 
   if (! doCompress)
@@ -1110,14 +1110,14 @@ Input file cannot be specified together with --filter option."));
       if (runGhostscript)
 	{
 	  outFile = inputFile;
-	  outFile.SetExtension (T_(".pdf"));
+	  outFile.SetExtension (".pdf");
 	}
       else
 	{
 	  outFile = inputFile;
 	  outFile.SetExtension (0);
-	  outFile.Append (T_("2"), false);
-	  outFile.SetExtension (T_(".eps"));
+	  outFile.Append ("2", false);
+	  outFile.SetExtension (".eps");
 	}
     }
 

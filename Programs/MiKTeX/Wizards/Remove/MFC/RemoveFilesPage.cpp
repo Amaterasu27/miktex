@@ -63,7 +63,7 @@ RemoveFilesPage::RemoveFilesPage ()
   yapIsDefaultViewer =
     (SUCCEEDED(AssocQueryString(0,
 				ASSOCSTR_EXECUTABLE,
-				T_(".dvi"),
+				".dvi",
 				T_("open"),
 				dviViewer.GetBuffer(),
 				&size))
@@ -125,7 +125,7 @@ RemoveFilesPage::OnSetActive ()
 	  // starting shot
 	  if (! PostMessage(WM_REMOVEFILES))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -197,7 +197,7 @@ RemoveFilesPage::OnStartRemovingFiles (/*[in]*/ WPARAM	wParam,
       
       if (SetTimer(nIDTimer, 100, 0) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::SetTime"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::SetTime", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -443,7 +443,7 @@ RemoveFilesPage::OnTimer (/*[in]*/ UINT nIDEvent)
       CWnd * pWnd = GetDlgItem(IDC_CURRENT_FILE);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("RemoveFilesPage::OnTimer"));
+	  UNEXPECTED_CONDITION ("RemoveFilesPage::OnTimer");
 	}
       pWnd->SetWindowText (currentFileName);
       if (total != 0)
@@ -458,12 +458,12 @@ RemoveFilesPage::OnTimer (/*[in]*/ UINT nIDEvent)
 	  CString prompt;
 	  if (! prompt.LoadString(IDS_READY))
 	    {
-	      UNEXPECTED_CONDITION (T_("RemoveFilesPage::OnTimer"));
+	      UNEXPECTED_CONDITION ("RemoveFilesPage::OnTimer");
 	    }
 	  CWnd * pWnd = GetDlgItem(IDC_PROMPT);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("RemoveFilesPage::OnTimer"));
+	      UNEXPECTED_CONDITION ("RemoveFilesPage::OnTimer");
 	    }
 	  pWnd->SetWindowText (prompt);
       
@@ -471,9 +471,9 @@ RemoveFilesPage::OnTimer (/*[in]*/ UINT nIDEvent)
 	  pWnd = GetDlgItem(IDC_CURRENT_FILE);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("RemoveFilesPage::OnTimer"));
+	      UNEXPECTED_CONDITION ("RemoveFilesPage::OnTimer");
 	    }
-	  pWnd ->SetWindowText (T_(""));
+	  pWnd ->SetWindowText ("");
 	  pWnd->EnableWindow (FALSE);
 	  progressControl.SetPos (0);
 	  progressControl.EnableWindow (FALSE);
@@ -803,7 +803,7 @@ RemoveFilesPage::RemoveRegistryKeys ()
     {
       if (yapIsDefaultViewer)
 	{
-	  RemoveRegistryKey (HKEY_CLASSES_ROOT, T_(".dvi"));
+	  RemoveRegistryKey (HKEY_CLASSES_ROOT, ".dvi");
 	}
       RemoveRegistryKey (HKEY_CLASSES_ROOT, MIKTEX_DVI_FILE_TYPE_IDENTIFIER);
     }

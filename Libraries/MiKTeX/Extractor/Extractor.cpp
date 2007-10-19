@@ -31,9 +31,8 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Extractor;
 using namespace std;
 
-#if defined (MIKTEX_WINDOWS)
+#if defined (MIKTEX_WINDOWS) && defined(ENABLE_WINDOWS_CAB_EXTRACTOR)
 #  include "win/winCabExtractor.h"
-static bool USE_WINDOWS_CABEXTRACTOR = false;
 #endif
 
 /* _________________________________________________________________________
@@ -58,7 +57,8 @@ Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::MSCab:
-#if defined (MIKTEX_WINDOWS)
+#if defined (MIKTEX_WINDOWS) && defined(ENABLE_WINDOWS_CAB_EXTRACTOR)
+      static bool USE_WINDOWS_CABEXTRACTOR = false;
       if (USE_WINDOWS_CABEXTRACTOR)
 	{
 	  return (new winCabExtractor);
@@ -72,6 +72,6 @@ Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
     case ArchiveFileType::Tar:
       return (new TarExtractor);
     default:
-      UNIMPLEMENTED (T_("Extractor::CreateExtractor"));
+      UNIMPLEMENTED ("Extractor::CreateExtractor");
     }
 }

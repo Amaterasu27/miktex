@@ -48,7 +48,7 @@ GetOctal (/*[int]*/ const char *	lpszField)
 
   if (SSCANF(lpszField, "%o", &ret) != 1)
     {
-      FATAL_EXTRACTOR_ERROR (T_("TarExtractor::Extract"),
+      FATAL_EXTRACTOR_ERROR ("TarExtractor::Extract",
 			     T_("Invalid octal field."),
 			     0);
     }
@@ -254,11 +254,11 @@ Skip (/*[in]*/ Stream *		pStream,
   char buffer[sizeof(Header)];
   if (bytes > sizeof(Header))
     {
-      UNEXPECTED_CONDITION (T_("Skip"));
+      UNEXPECTED_CONDITION ("Skip");
     }
   if (pStream->Read(buffer, bytes) != bytes)
     {
-      FATAL_EXTRACTOR_ERROR (T_("Skip"),
+      FATAL_EXTRACTOR_ERROR ("Skip",
 			     T_("Invalid package archive file."),
 			     0);
     }
@@ -313,14 +313,14 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const char *	lpszPrefix)
+		       /*[in]*/ const char *		lpszPrefix)
 {
-  traceStream->WriteFormattedLine (T_("libextractor"),
-				   T_("extracting to %s (%s directories)"),
+  traceStream->WriteFormattedLine ("libextractor",
+				   T_("extracting to %s (%s)"),
 				   Q_(destDir),
 				   (makeDirectories
-				    ? T_("make")
-				    : T_("don't make")));
+				    ? T_("make directories")
+				    : T_("don't make directories")));
 
   size_t len;
   Header header;
@@ -335,7 +335,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
       if (len != sizeof(header))
 	{
 	  FATAL_EXTRACTOR_ERROR
-	    (T_("TarExtractor::Extract"),
+	    ("TarExtractor::Extract",
 	     T_("Invalid package archive file."),
 	     0);
 	}
@@ -350,7 +350,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 	  if (! header.Check())
 	    {
 	      FATAL_EXTRACTOR_ERROR
-		(T_("TarExtractor::Extract"),
+		("TarExtractor::Extract",
 		 T_("Invalid package archive file."),
 		 0);
 	    }
@@ -422,7 +422,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 	  size_t n = (remaining > BUFSIZE ? BUFSIZE : remaining);
 	  if (pStreamIn->Read(buffer, n) != n)
 	    {
-	      FATAL_EXTRACTOR_ERROR (T_("TarExtractor::Extract"),
+	      FATAL_EXTRACTOR_ERROR ("TarExtractor::Extract",
 				     T_("Invalid package archive file."),
 				     0);
 	    }
@@ -455,7 +455,7 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 	}
     }
   
-  traceStream->WriteFormattedLine (T_("libextractor"),
+  traceStream->WriteFormattedLine ("libextractor",
 				   T_("extracted %u file(s)"),
 				   fileCount);
 }
@@ -471,9 +471,9 @@ TarExtractor::Extract (/*[in]*/ const PathName &	tarPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
 		       /*[in]*/ IExtractCallback *	pCallback,
-		       /*[in]*/ const char *	lpszPrefix)
+		       /*[in]*/ const char *		lpszPrefix)
 {
-  traceStream->WriteFormattedLine (T_("libextractor"),
+  traceStream->WriteFormattedLine ("libextractor",
 				   T_("extracting %s"),
 				   Q_(tarPath));
 

@@ -53,17 +53,17 @@ public:
   {
     WebApp::AddOptions ();
     AddOption (MIKTEXTEXT("mag\0Override existing magnification with MAG."),
-	       OPT_MAG,  required_argument, MIKTEXTEXT("MAG"));
-    AddOption (MIKTEXTEXT("magnification"), MIKTEXTEXT("mag"));
+	       OPT_MAG,  required_argument, "MAG");
+    AddOption ("magnification", "mag");
     AddOption (MIKTEXTEXT("select\0\
 Select a page range (start page and page count), \
 for example `2 12' or `5.*.-2 4'. This option can be \
 used up to 10 times.  This option cannot be used together \
 with -max-pages or -page-start."),
-	       OPT_SELECT,  required_argument, MIKTEXTEXT("SEL"));
+	       OPT_SELECT,  required_argument, "SEL");
     AddOption (MIKTEXTEXT("max-pages\0Process N pages; default one million. ")
 	       MIKTEXTEXT("This option cannot be used together with -select."),
-	       OPT_MAX_PAGES, required_argument, MIKTEXTEXT("N"));
+	       OPT_MAX_PAGES, required_argument, "N");
     AddOption (MIKTEXTEXT("page-start\0Start at PAGE-SPEC, for example ")
 	       MIKTEXTEXT("`2' or `5.*.-2'. This option cannot be used")
 	       MIKTEXTEXT(" together with -select."),
@@ -83,14 +83,14 @@ public:
 	  }
 	if (maxPages.length() == 0)
 	  {
-	    maxPages = MIKTEXTEXT("1000000");
+	    maxPages = "1000000";
 	  }
 	if (pageStart.length() == 0)
 	  {
-	    pageStart = MIKTEXTEXT("*");
+	    pageStart = "*";
 	  }
 	std::string str = pageStart;
-	str += MIKTEXTEXT(" ");
+	str += " ";
 	str += maxPages;
 	selections.push_back (str);
       }

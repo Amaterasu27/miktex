@@ -29,15 +29,15 @@
    Tfm::Tfm
    _________________________________________________________________________ */
 
-Tfm::Tfm (/*[in]*/ DviImpl *		pDvi,
-	  /*[in]*/ int			checkSum,
-	  /*[in]*/ int			scaledSize,
-	  /*[in]*/ int			designSize,
-	  /*[in]*/ const char *		lpszAreaName,
-	  /*[in]*/ const char *		lpszFontName,
+Tfm::Tfm (/*[in]*/ DviImpl *	pDvi,
+	  /*[in]*/ int		checkSum,
+	  /*[in]*/ int		scaledSize,
+	  /*[in]*/ int		designSize,
+	  /*[in]*/ const char *	lpszAreaName,
+	  /*[in]*/ const char *	lpszFontName,
 	  /*[in]*/ const char *	lpszFileName,
-	  /*[in]*/ double		tfmConv,
-	  /*[in]*/ double		conv)
+	  /*[in]*/ double	tfmConv,
+	  /*[in]*/ double	conv)
 
   : DviFont (pDvi,
 	     checkSum,
@@ -53,7 +53,7 @@ Tfm::Tfm (/*[in]*/ DviImpl *		pDvi,
 
 {
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("creating TFM object '%s'"),
      dviInfo.name.c_str());
   dviInfo.isVirtualFont = false;
@@ -105,7 +105,7 @@ Tfm::operator[] (/*[in]*/ unsigned long idx)
   if (pDviChar == 0)
     {
       log_tfm->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%s: nil character at %u"),
 	 dviInfo.name.c_str(),
 	 idx);
@@ -129,7 +129,7 @@ Tfm::Read ()
     }
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("going to load TFM file %s"),
      dviInfo.name.c_str());
 
@@ -155,23 +155,23 @@ Tfm::Read ()
 	}
       if (! tfmFileExists)
 	{
-	  dviInfo.transcript += T_("\r\n");
+	  dviInfo.transcript += "\r\n";
 	  dviInfo.transcript += T_("Loading 'cmr10' instead.\r\n");
 	  log_error->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("'%s' not loadable - loading 'cmr10' instead!"),
 	     dviInfo.name.c_str());
-	  if (! (SessionWrapper(true)->FindTfmFile(T_("cmr10"),
+	  if (! (SessionWrapper(true)->FindTfmFile("cmr10",
 						   fileName,
 						   false)
-		 || (Make(T_("cmr10"))
-		     && SessionWrapper(true)->FindTfmFile(T_("cmr10"),
+		 || (Make("cmr10")
+		     && SessionWrapper(true)->FindTfmFile("cmr10",
 							  fileName,
 							  false))))
 	    {
 	      dviInfo.transcript += T_("'cmr10' not loadable either!");
 	      log_error->WriteLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("'cmr10' not loadable - will display blank chars!"));
 	      return;
 	    }
@@ -181,7 +181,7 @@ Tfm::Read ()
   dviInfo.fileName = fileName.ToString();
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("opening TFM file %s"),
      fileName.Get());
 
@@ -191,7 +191,7 @@ Tfm::Read ()
 
   if (lf == 0)
     {
-      FATAL_DVI_ERROR (T_("Tfm::Read"),
+      FATAL_DVI_ERROR ("Tfm::Read",
 		       T_("Invalid TFM file."),
 		       0);
     }
@@ -209,78 +209,78 @@ Tfm::Read ()
   long np = inputStream.ReadSignedPair();
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("header size: %ld"),
      lh);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("smallest character code: %ld"),
      bc);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("largest character code: %ld"),
      ec);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("width table size: %ld"),
      nw);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("height table size: %ld"),
      nh);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("depth table size: %ld"),
      nd);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("italic correction table size: %ld"),
      ni);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("lig/kern table size: %ld"),
      nl);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("kern table size: %ld"),
      nk);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("extensible character table size: %ld"),
      ne);
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
+    ("libdvi",
      T_("font parameter size: %ld"),
      np);
 
   int my_checkSum = inputStream.ReadSignedQuad();
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
-     T_("checkSum: 0%lo"),
+    ("libdvi",
+     "checkSum: 0%lo",
      my_checkSum);
   
   int my_designSize = inputStream.ReadSignedQuad();
 
   log_tfm->WriteFormattedLine
-    (T_("libdvi"),
-     T_("designSize: %ld"),
+    ("libdvi",
+     "designSize: %ld",
      my_designSize);
 
   if (my_checkSum != checkSum)
     {
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%s: checkSum mismatch"),
 	 dviInfo.name.c_str());
     }
@@ -288,7 +288,7 @@ Tfm::Read ()
   if (my_designSize * tfmConv != designSize)
     {
       log_error->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("%s: designSize mismatch"),
 	 dviInfo.name.c_str());
     }
@@ -367,14 +367,14 @@ Tfm::Read ()
 bool
 Tfm::Make (/*[in]*/ const string &	name)
 {
-  dviInfo.transcript += T_("\r\n");
+  dviInfo.transcript += "\r\n";
   dviInfo.transcript += T_("Making TFM file:\r\n");
   PathName makeTFM;
   if (! SessionWrapper(true)->FindFile(MIKTEX_MAKETFM_EXE,
 				       FileType::EXE,
 				       makeTFM))
     {
-      FATAL_DVI_ERROR (T_("Tfm::Make"),
+      FATAL_DVI_ERROR ("Tfm::Make",
 		       T_("The MakeTFM utility could not be found."),
 		       0);
     }
@@ -384,12 +384,12 @@ Tfm::Make (/*[in]*/ const string &	name)
 		   szBasename, BufferSizes::MaxPath,
 		   0, 0);
   CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("-v"));
+  commandLine.AppendOption ("-v");
   commandLine.AppendArgument (szBasename);
   dviInfo.transcript += commandLine.Get();
-  dviInfo.transcript += T_("\r\n");
+  dviInfo.transcript += "\r\n";
   pDviImpl->Progress (DviNotification::BeginLoadFont,
-		      T_("%s..."),
+		      "%s...",
 		      dviInfo.name.c_str());
   char szBuf[4096];
   size_t size = 4096;
@@ -404,10 +404,10 @@ Tfm::Make (/*[in]*/ const string &	name)
   szBuf[4096 - 1] = 0;
   if (! done)
     {
-      log_error->WriteLine (T_("libdvi"), szBuf);
+      log_error->WriteLine ("libdvi", szBuf);
     }
   dviInfo.transcript += szBuf;
-  dviInfo.transcript += T_("\r\n");
+  dviInfo.transcript += "\r\n";
   return (done);
 }
 

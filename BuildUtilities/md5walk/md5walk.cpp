@@ -62,7 +62,7 @@ using namespace std;
    Special Names
    _________________________________________________________________________ */
 
-const char * MD5WALK_FILE = T_(".nvsbl");
+const char * MD5WALK_FILE = ".nvsbl";
 const char * NAME_CHECK_INTEGRITY = T_("chkdata");
 
 /* _________________________________________________________________________
@@ -251,7 +251,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << Utils::GetExeName() << T_(": ")
+  cerr << Utils::GetExeName() << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -353,7 +353,7 @@ PrintDuplicates (const set<string> & setstr)
        it != setstr.end();
        ++ it)
     {
-      cout << T_("  ") << it->c_str() << T_('\n');
+      cout << "  " << it->c_str() << '\n';
     }
   cout << endl;
 }
@@ -459,9 +459,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   FileNameToMD5 mapFnToMD5;

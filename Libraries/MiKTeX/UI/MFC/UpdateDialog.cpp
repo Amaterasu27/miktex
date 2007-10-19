@@ -139,9 +139,9 @@ private:
 
 private:
   void
-  FormatControlText (/*[in]*/ UINT			ctrlId,
+  FormatControlText (/*[in]*/ UINT		ctrlId,
 		     /*[in]*/ const char *	lpszFormat,
-		     /*[in]*/				...);
+		     /*[in]*/			...);
 
 private:
   void
@@ -299,7 +299,7 @@ UpdateDialogImpl::OnInitDialog ()
       reportEditBox.LimitText (100000);
       if (! PostMessage(WM_STARTFILECOPY))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -352,7 +352,7 @@ UpdateDialogImpl::OnCancel ()
 	  SetCancelFlag ();
 	  if (! PostMessage(WM_PROGRESS))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
     }
@@ -373,7 +373,7 @@ UpdateDialogImpl::OnCancel ()
 
 LRESULT
 UpdateDialogImpl::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
-			       /*[in]*/ LPARAM	lParam)
+				   /*[in]*/ LPARAM	lParam)
 {
   UNUSED_ALWAYS (wParam);
   UNUSED_ALWAYS (lParam);
@@ -382,14 +382,14 @@ UpdateDialogImpl::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
     {
       if (! animationControl.Open(IDA_DOWNLOAD))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Open"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimateCtrl::Open", 0);
 	}
 
       if (! animationControl.Play(0,
 				  static_cast<unsigned int>(-1),
 				  static_cast<unsigned int>(-1)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Play"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimateCtrl::Play", 0);
 	}
 
       // initialize progress bar controls
@@ -415,7 +415,7 @@ UpdateDialogImpl::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 			    FALSE,
 			    DUPLICATE_SAME_ACCESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	  FATAL_WINDOWS_ERROR ("DuplicateHandle", 0);
 	}
       pThread->ResumeThread ();
     }
@@ -471,21 +471,21 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
 	  // stop the video
 	  if (! animationControl.Stop())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Stop"), 0);
+	      FATAL_WINDOWS_ERROR ("CAnimateCtrl::Stop", 0);
 	    }
 	  animationControl.Close (); // always returns FALSE
 	  animationControl.ShowWindow (SW_HIDE);
 
 	  // disable controls
 	  EnableControl (IDC_PROGRESS1_TITLE, false);
-	  FormatControlText (IDC_PACKAGE, T_(""));
+	  FormatControlText (IDC_PACKAGE, "");
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
 	  EnableControl (IDC_PROGRESS2_TITLE, false);
 	  progressControl2.SetPos (0);
 	  progressControl2.EnableWindow (FALSE);
-	  FormatControlText (IDCANCEL, T_("%s"), T_("Close"));
+	  FormatControlText (IDCANCEL, "%s", T_("Close"));
 	  EnableControl (IDCANCEL, true);
 	}
       else
@@ -494,7 +494,7 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      FormatControlText (IDC_PACKAGE,
-				 T_("%s"),
+				 "%s",
 				 sharedData.packageName.c_str());
 	      sharedData.newPackage = false;
 	    }
@@ -505,31 +505,31 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
 
 	  // update "Removed files (packages)"
 	  FormatControlText (IDC_REMOVED_FILES,
-			     T_("%u (%u)"),
+			     "%u (%u)",
 			     sharedData.progressInfo.cFilesRemoveCompleted,
 			     sharedData.progressInfo.cPackagesRemoveCompleted);
 	  
 	  // update "New files (packages)"
 	  FormatControlText
 	    (IDC_NEW_FILES,
-	     T_("%u (%u)"),
+	     "%u (%u)",
 	     sharedData.progressInfo.cFilesInstallCompleted,
 	     sharedData.progressInfo.cPackagesInstallCompleted);
 	  
 	  // update "Downloaded bytes"
 	  FormatControlText (IDC_DOWNLOADED_BYTES,
-			     T_("%u"),
+			     "%u",
 			     sharedData.progressInfo.cbDownloadCompleted);
 	  
 	  // update "Package"
 	  FormatControlText (IDC_PACKAGE,
-			     T_("%s"),
+			     "%s",
 			     sharedData.progressInfo.displayName.c_str());
 	  
 	  // update "KB/s"
 	  FormatControlText
 	    (IDC_KB_SEC,
-	     T_("%.2f"),
+	     "%.2f",
 	     (static_cast<double>(sharedData.progressInfo.bytesPerSecond)
 	      / 1024.0));
 	}
@@ -555,7 +555,7 @@ void
 MPMCALL
 UpdateDialogImpl::ReportLine (/*[in]*/ const char * lpszLine)
 {
-  Report (true, T_("%s\n"), lpszLine);
+  Report (true, "%s\n", lpszLine);
 }
 
 /* _________________________________________________________________________
@@ -609,7 +609,7 @@ UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
     = static_cast<DWORD>(progressInfo.timeRemaining / 1000);
   if (! PostMessage(WM_PROGRESS))
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
   return (! (GetErrorFlag() || GetCancelFlag()));
 }
@@ -631,7 +631,7 @@ UpdateDialogImpl::WorkerThread (/*[in]*/ void * pParam)
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
       if (FAILED(hr))
 	{
-	  FATAL_MIKTEX_ERROR (T_("UpdateDialogImpl::WorkerThread"),
+	  FATAL_MIKTEX_ERROR ("UpdateDialogImpl::WorkerThread",
 			      T_("Cannot start worker thread."),
 			      0);
 	}
@@ -657,7 +657,7 @@ UpdateDialogImpl::WorkerThread (/*[in]*/ void * pParam)
     {
       if (! This->PostMessage(WM_PROGRESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -694,9 +694,9 @@ UpdateDialogImpl::DoTheUpdate ()
    _________________________________________________________________________ */
 
 void
-UpdateDialogImpl::Report (/*[in]*/ bool			immediate,
+UpdateDialogImpl::Report (/*[in]*/ bool		immediate,
 			  /*[in]*/ const char *	lpszFmt,
-			  /*[in]*/			...)
+			  /*[in]*/		...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
   CString str;
@@ -708,9 +708,9 @@ UpdateDialogImpl::Report (/*[in]*/ bool			immediate,
   CSingleLock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
     {
-      if (str[i] == T_('\n') && i > 0 && sharedData.report[i - 1] != T_('\r'))
+      if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')
 	{
-	  sharedData.report += T_('\r');
+	  sharedData.report += '\r';
 	}
       sharedData.report += str[i];
     }
@@ -719,7 +719,7 @@ UpdateDialogImpl::Report (/*[in]*/ bool			immediate,
     {
       if (! PostMessage(WM_PROGRESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
 }
@@ -735,7 +735,7 @@ UpdateDialogImpl::GetControl (/*[in]*/ UINT	controlId)
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("UpdateDialogImpl::GetControl"));
+      UNEXPECTED_CONDITION ("UpdateDialogImpl::GetControl");
     }
   return (pWnd);
 }
@@ -759,7 +759,7 @@ UpdateDialogImpl::EnableControl (/*[in]*/ UINT	controlId,
 
 void
 UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
-				     /*[in]*/ const char * lpszFormat,
+				     /*[in]*/ const char *	lpszFormat,
 				     /*[in]*/			...)
 {
   va_list marker;

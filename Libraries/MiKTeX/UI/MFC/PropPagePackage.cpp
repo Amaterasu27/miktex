@@ -39,9 +39,9 @@ MakeOneLine (/*[out]*/ CString &	dest,
        it != source.end();
        ++ it)
     {
-      if (*it == T_('\n'))
+      if (*it == '\n')
 	{
-	  dest += T_(' ');
+	  dest += ' ';
 	}
       else
 	{
@@ -61,7 +61,7 @@ PropPagePackage::PropPagePackage (/*[in]*/ const PackageInfo & packageInfo)
   Construct (IDD_PROPPAGE_PACKAGE);
   m_psp.dwFlags &= ~ (PSP_HASHELP);
   date =
-    CTime(packageInfo.timePackaged).Format(T_("%Y-%m-%d %H:%M:%S"));
+    CTime(packageInfo.timePackaged).Format("%Y-%m-%d %H:%M:%S");
   MakeOneLine (description, packageInfo.description);
   name = packageInfo.displayName.c_str();
   MakeOneLine (title, packageInfo.title);

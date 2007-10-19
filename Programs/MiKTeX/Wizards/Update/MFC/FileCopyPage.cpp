@@ -135,7 +135,7 @@ FileCopyPage::OnSetActive ()
 	  // starting shot
 	  if (! PostMessage(WM_STARTFILECOPY))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -239,7 +239,7 @@ FileCopyPage::OnQueryCancel ()
 	  pSheet->SetCancelFlag ();
 	  if (! PostMessage(WM_PROGRESS))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	    }
 	}
       else
@@ -274,14 +274,14 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
     {
       if (! animationControl.Open(IDA_UPDATE))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimatCtrl::Open"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Open", 0);
 	}
       
       if (! animationControl.Play(0,
 				  static_cast<UINT>(-1),
 				  static_cast<UINT>(-1)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CAnimatCtrl::Play"), 0);
+	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Play", 0);
 	}
       
       // initialize progress bar controls
@@ -363,14 +363,14 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  // stop the video
 	  if (! animationControl.Stop())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CAnimateCtrl::Stop"), 0);
+	      FATAL_WINDOWS_ERROR ("CAnimateCtrl::Stop", 0);
 	    }
 	  animationControl.Close (); // always returns FALSE
 	  animationControl.ShowWindow (SW_HIDE);
 
 	  // disable controls
 	  EnableControl (IDC_PROGRESS1_TITLE, false);
-	  GetControl(IDC_PACKAGE)->SetWindowText (T_(""));
+	  GetControl(IDC_PACKAGE)->SetWindowText ("");
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
@@ -379,7 +379,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  progressControl2.EnableWindow (FALSE);
 #if 0
 	  GetControl(IDC_ETA_TITLE)->ShowWindow (SW_HIDE);
-	  GetControl(IDC_ETA)->SetWindowText (T_(""));
+	  GetControl(IDC_ETA)->SetWindowText ("");
 	  GetControl(IDC_ETA)->ShowWindow (SW_HIDE);
 #endif
       
@@ -455,7 +455,7 @@ FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
 {
   Report (true,
 	  true,
-	  T_("%.*s"),
+	  "%.*s",
 	  static_cast<int>(n),
 	  reinterpret_cast<const char *>(pOutput));
   return (! (pSheet->GetErrorFlag() || pSheet->GetCancelFlag()));
@@ -470,7 +470,7 @@ void
 MPMCALL
 FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
-  Report (true, true, T_("%s\n"), lpszLine);
+  Report (true, true, "%s\n", lpszLine);
 }
 
 /* _________________________________________________________________________
@@ -527,7 +527,7 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
     = static_cast<DWORD>(progressInfo.timeRemaining / 1000);
   if (! PostMessage(WM_PROGRESS))
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
   return (! (pSheet->GetErrorFlag() || pSheet->GetCancelFlag()));
 }
@@ -563,7 +563,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
     {
       if (! This->PostMessage(WM_PROGRESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -653,14 +653,14 @@ FileCopyPage::ConfigureMiKTeX ()
     }
 
   // register components, configure files
-  RunMpm (T_("--register-components"));
+  RunMpm ("--register-components");
 
   CommandLineBuilder cmdLine;
 
-  cmdLine.AppendOption (T_("--update-fndb"));
-  cmdLine.AppendOption (T_("--force"));
-  cmdLine.AppendOption (T_("--mklinks"));
-  cmdLine.AppendOption (T_("--mkmaps"));
+  cmdLine.AppendOption ("--update-fndb");
+  cmdLine.AppendOption ("--force");
+  cmdLine.AppendOption ("--mklinks");
+  cmdLine.AppendOption ("--mkmaps");
 
   RunIniTeXMF (cmdLine);
 }
@@ -679,7 +679,7 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 				       FileType::EXE,
 				       exePath))
     {
-      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RunMpm"),
+      FATAL_MIKTEX_ERROR ("FileCopyPage::RunMpm",
 			  T_("\
 The MiKTeX package management utility could not be found."),
 			  0);
@@ -709,7 +709,7 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 				       FileType::EXE,
 				       exePath))
     {
-      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RunIniTeXMF"),
+      FATAL_MIKTEX_ERROR ("FileCopyPage::RunIniTeXMF",
 			  T_("\
 The MiKTeX configuration utility could not be found."),
 			  0);
@@ -759,7 +759,7 @@ FileCopyPage::OpenLog ()
   PathName pathLog (GetMainConfigDir(),
 		    static_cast<const char *>
 		    (t.Format(T_("update-%Y-%m-%d-%H-%M"))),
-		    T_(".log"));
+		    ".log");
 
   // open the log file
   sharedData.pLogStream = auto_ptr<StreamWriter>(new StreamWriter(pathLog));
@@ -771,7 +771,7 @@ FileCopyPage::OpenLog ()
   Log (T_("MiKTeX Update Wizard Report\n\n"));
   Log (T_("Version: %s\n"), VER_FILEVERSION_STR);
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
-  Log (T_("Time: %s\n"), t.Format(T_("%H:%M:%S")));
+  Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
 }
 
 /* _________________________________________________________________________
@@ -814,22 +814,22 @@ FileCopyPage::Report (/*[in]*/ bool			writeLog,
   CSingleLock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
     {
-      if (str[i] == T_('\n') && i > 0 && sharedData.report[i - 1] != T_('\r'))
+      if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')
 	{
-	  sharedData.report += T_('\r');
+	  sharedData.report += '\r';
 	}
       sharedData.report += str[i];
     }
   sharedData.reportUpdate = true;
   if (writeLog)
     {
-      Log (T_("%s"), static_cast<const char *>(str));
+      Log ("%s", static_cast<const char *>(str));
     }
   if (immediate)
     {
       if (! PostMessage(WM_PROGRESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
 }
@@ -845,7 +845,7 @@ FileCopyPage::GetControl (/*[in]*/ UINT	controlId)
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("FileCopyPage::GetControl"));
+      UNEXPECTED_CONDITION ("FileCopyPage::GetControl");
     }
   return (pWnd);
 }
@@ -980,11 +980,11 @@ FileCopyPage::RemoveOldRegistrySettings ()
   bool sharedSetup = (pSession->IsSharedMiKTeXSetup() == TriState::True);
   
   if ((root25.Open(sharedSetup ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER,
-		   MIKTEX_REGPATH_SERIES T_("\\") MIKTEX_REGKEY_MIGRATE,
+		   MIKTEX_REGPATH_SERIES "\\" MIKTEX_REGKEY_MIGRATE,
 		   KEY_READ))
       != ERROR_SUCCESS)
     {
-      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RemoveOldRegistrySettings"),
+      FATAL_MIKTEX_ERROR ("FileCopyPage::RemoveOldRegistrySettings",
 			  T_("Missing registry settings."),
 			  MIKTEX_REGKEY_MIGRATE);
     }
@@ -995,7 +995,7 @@ FileCopyPage::RemoveOldRegistrySettings ()
   if (root25.QueryStringValue(MIKTEX_REGVAL_VERSION, szVersion, &nChars)
       != ERROR_SUCCESS)
     {
-      FATAL_MIKTEX_ERROR (T_("FileCopyPage::RemoveOldRegistrySettings"),
+      FATAL_MIKTEX_ERROR ("FileCopyPage::RemoveOldRegistrySettings",
 			  T_("Missing registry value."),
 			  MIKTEX_REGVAL_VERSION);
     }
@@ -1003,7 +1003,7 @@ FileCopyPage::RemoveOldRegistrySettings ()
   string rootKey;
   string subKey;
 
-  if (StringCompare(T_("2.4"), szVersion) == 0)
+  if (StringCompare("2.4", szVersion) == 0)
     {
       rootKey = T_("Software\\MiK\\MiKTeX");
       subKey = T_("CurrentVersion");

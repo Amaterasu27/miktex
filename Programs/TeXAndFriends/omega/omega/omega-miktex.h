@@ -72,7 +72,7 @@ protected:
   AddOptions ()
   {
     TeXApp::AddOptions ();
-    AddOption (MIKTEXTEXT("oft"), MIKTEXTEXT("undump"));
+    AddOption ("oft", "undump");
   }
 
 public:
@@ -172,7 +172,7 @@ public:
   GetInitProgramName ()
     const
   {
-    return (MIKTEXTEXT("iniomega"));
+    return ("iniomega");
   }
 
 public:
@@ -182,7 +182,7 @@ public:
   GetVirginProgramName ()
     const
   {
-    return (MIKTEXTEXT("viromega"));
+    return ("viromega");
   }
 
 public:
@@ -192,7 +192,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("Omega"));
+    return ("Omega");
   }
 
 public:

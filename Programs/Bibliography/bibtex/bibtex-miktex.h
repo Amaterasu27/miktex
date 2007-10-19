@@ -89,7 +89,7 @@ public:
 #endif
     THEDATA(mincrossrefs) =
       pSession->GetConfigValue(MIKTEX_REGKEY_BIBTEX,
-			       MIKTEXTEXT("min_crossrefs"),
+			       "min_crossrefs",
 			       2);
     THEDATA(maxbibfiles) = 20;
     THEDATA(maxentints) = 3000;
@@ -136,11 +136,11 @@ public:
     WebAppInputLine::AddOptions ();
     AddOption (MIKTEXTEXT("min-crossrefs\0\
 Include item after N cross-refs; default 2."),
-	       OPT_MIN_CROSSREFS,  required_argument, MIKTEXTEXT("N"));
+	       OPT_MIN_CROSSREFS,  required_argument, "N");
     AddOption (MIKTEXTEXT("quiet\0Suppress all output (except errors)."),
 	       OPT_QUIET, no_argument);
-    AddOption (MIKTEXTEXT("silent"), MIKTEXTEXT("quiet"));
-    AddOption (MIKTEXTEXT("terse"), MIKTEXTEXT("quiet"));
+    AddOption ("silent", "quiet");
+    AddOption ("terse", "quiet");
   }
   
 public:
@@ -192,7 +192,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("BibTeX"));
+    return ("BibTeX");
   }
 
 public:

@@ -470,7 +470,7 @@ TypePage::GetControl (/*[in]*/ UINT	controlId)
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("TypePage::GetControl"));
+      UNEXPECTED_CONDITION ("TypePage::GetControl");
     }
   return (pWnd);
 }

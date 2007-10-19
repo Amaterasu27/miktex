@@ -74,14 +74,14 @@ SharedInstallationPage::OnInitDialog ()
 	  if (pWnd == 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("SharedInstallationPage::OnInitDialog"));
+		("SharedInstallationPage::OnInitDialog");
 	    }
 	  pWnd->EnableWindow (FALSE);
 	}
       CWnd * pWnd = GetDlgItem(IDC_JUST_FOR_ME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("SharedInstallationPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("SharedInstallationPage::OnInitDialog");
 	}
       char szLogonName[30];
       DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
@@ -98,7 +98,7 @@ SharedInstallationPage::OnInitDialog ()
 	}
       CString str;
       pWnd->GetWindowText(str);
-      str += T_(" ");
+      str += " ";
       str += szLogonName;
       if (IsWindowsNT())
 	{
@@ -114,9 +114,9 @@ SharedInstallationPage::OnInitDialog ()
 	    sizeof(szDisplayName) / sizeof(szDisplayName[0]);
 	  if (getUserNameEx(NameDisplay, szDisplayName, &sizeDisplayName))
 	    {
-	      str += T_(" (");
+	      str += " (";
 	      str += szDisplayName;
-	      str += T_(')');
+	      str += ')';
 	    }
 	}
       pWnd->SetWindowText(str);

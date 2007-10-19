@@ -28,7 +28,7 @@
 
 #include "SearchPackageDialog.h"
 
-#define ROOT_EXTERNAL_NAME T_("_miktex")
+#define ROOT_EXTERNAL_NAME "_miktex"
 
 /* _________________________________________________________________________
 
@@ -188,7 +188,7 @@ PackageTreeCtrlImpl::DetermineState (/*[in]*/ HTREEITEM hItem)
 			 INDEXTOSTATEIMAGEMASK(treeItemState),
 			 TVIS_STATEIMAGEMASK))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CTreeCtrl::SetItemState"), 0);
+	  FATAL_WINDOWS_ERROR ("CTreeCtrl::SetItemState", 0);
 	}
       treeItemStates[hItem] = treeItemState;
     }
@@ -211,7 +211,7 @@ PackageTreeCtrlImpl::Refresh ()
 			     1,
 			     RGB(255, 255, 255)))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CImageList::Create"), 0);
+	  FATAL_WINDOWS_ERROR ("CImageList::Create", 0);
 	}
       SetImageList (&imageList, TVSIL_STATE);
     }
@@ -219,7 +219,7 @@ PackageTreeCtrlImpl::Refresh ()
   // cut down the tree
   if (! DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CTreeCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CTreeCtrl::DeleteAllItems", 0);
     }
 
   // clear maps
@@ -240,7 +240,7 @@ PackageTreeCtrlImpl::Refresh ()
   HTREEITEM hRoot = InsertItem(&ins);
   if (hRoot == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CTreeCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CTreeCtrl::InsertItem", 0);
     }
   packageNames[hRoot] = rootPackageInfo.deploymentName;
   treeItems.insert
@@ -291,7 +291,7 @@ PackageTreeCtrlImpl::AddPackage (/*[in]*/ HTREEITEM		hParent,
   HTREEITEM hItem = InsertItem(&ins);
   if (hItem == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CTreeCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CTreeCtrl::InsertItem", 0);
     }
   packageNames[hItem] = packageInfo.deploymentName;
   treeItems.insert (make_pair<string, HTREEITEM>(packageInfo.deploymentName,
@@ -358,7 +358,7 @@ PackageTreeCtrlImpl::PropagateState (/*[in]*/ HTREEITEM	hItem,
 			     INDEXTOSTATEIMAGEMASK(treeItemState),
 			     TVIS_STATEIMAGEMASK))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CTreeCtrl::SetItemState"), 0);
+	      FATAL_WINDOWS_ERROR ("CTreeCtrl::SetItemState", 0);
 	    }
 	  treeItemStates[it->second] = treeItemState;
 	}
@@ -537,13 +537,13 @@ PackageTreeCtrlImpl::OnRButtonDown (/*[in]*/ UINT	nFlags,
       HTREEITEM hItemSelected = GetSelectedItem();
       if (! Select(hItem, TVGN_CARET))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CTreeCtrl::Select"), 0);
+	  FATAL_WINDOWS_ERROR ("CTreeCtrl::Select", 0);
 	}
       if (! DoContextMenu(point, hItem) && hItemSelected != 0)
 	{
 	  if (! Select(hItemSelected, TVGN_CARET))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CTreeCtrl::Select"), 0);
+	      FATAL_WINDOWS_ERROR ("CTreeCtrl::Select", 0);
 	    }
 	}
     }
@@ -569,12 +569,12 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
   CMenu menu;
   if (! menu.LoadMenu(ID_PACKAGE_MENU))
     {
-      FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+      FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
     }
   CMenu * pPopup = menu.GetSubMenu(0);
   if (pPopup == 0)
     {
-      UNEXPECTED_CONDITION (T_("PackageTreeCtrlImpl::DoContextMenu"));
+      UNEXPECTED_CONDITION ("PackageTreeCtrlImpl::DoContextMenu");
     }
   PackageInfo packageInfo;
   if (hItem == GetRootItem())
@@ -582,7 +582,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
       if (pPopup->EnableMenuItem(ID_PROPERTIES, MF_GRAYED)
 	  == static_cast<UINT>(-1))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CMenu::EnableItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CMenu::EnableItem", 0);
 	}
     }
   else
@@ -593,7 +593,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
 	  if (pPopup->EnableMenuItem(ID_SEARCH_PACKAGE, MF_GRAYED)
 	      == static_cast<UINT>(-1))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CMenu::EnableItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CMenu::EnableItem", 0);
 	    }
 	}
     }
@@ -616,7 +616,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
     {
       if (::GetLastError() != 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("TrackPopupMenu"), 0);
+	  FATAL_WINDOWS_ERROR ("TrackPopupMenu", 0);
 	}
       return (false);
     }
@@ -649,7 +649,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
 		  {
 		    if (! Select(it->second, TVGN_CARET))
 		      {
-			FATAL_WINDOWS_ERROR (T_("CTreeCtrl::Select"), 0);
+			FATAL_WINDOWS_ERROR ("CTreeCtrl::Select", 0);
 		      }
 		    return (true);
 		  }

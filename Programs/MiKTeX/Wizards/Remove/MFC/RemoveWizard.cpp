@@ -66,17 +66,17 @@ RemoveWizard::RemoveWizard ()
   ::ReleaseDC (0, hdc);
   if (! fntWelcome.CreateFontIndirect(&TitleLogFont))
     {
-      FATAL_WINDOWS_ERROR (T_("CFont::CreateFontIndirect"), 0);
+      FATAL_WINDOWS_ERROR ("CFont::CreateFontIndirect", 0);
     }
 
   if (! watermarkBitmap.LoadBitmap(IDB_WATERMARK))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   if (! headerBitmap.LoadBitmap(IDB_HEADER))
     {
-      FATAL_WINDOWS_ERROR (T_("CBitmap::LoadBitmap"), 0);
+      FATAL_WINDOWS_ERROR ("CBitmap::LoadBitmap", 0);
     }
 
   Construct (IDS_REMOVEWIZ, 0, 0, watermarkBitmap, 0, headerBitmap);
@@ -103,7 +103,7 @@ RemoveWizard::OnInitDialog ()
       CString title;
       if (! title.LoadString(IDS_REMOVEWIZ))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CString::LoadString"), 0);
+	  FATAL_WINDOWS_ERROR ("CString::LoadString", 0);
 	}
       SetTitle (title);
     }
@@ -129,7 +129,7 @@ RemoveWizard::EnableCancelButton (/*[in]*/ bool enable)
   CWnd * pWnd = GetDlgItem(IDCANCEL);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("RemoveWizard::EnableCancel"));
+      UNEXPECTED_CONDITION ("RemoveWizard::EnableCancel");
     }
   pWnd->EnableWindow (enable ? TRUE : FALSE);
 }
@@ -169,7 +169,7 @@ RemoveWizard::SetNextText (/*[in]*/ const char * lpszText)
   CWnd * pWnd = GetDlgItem(ID_WIZNEXT);
   if (pWnd == 0)
     {
-      UNEXPECTED_CONDITION (T_("RemoveWizard::SetNextText"));
+      UNEXPECTED_CONDITION ("RemoveWizard::SetNextText");
     }
   CString ret;
   pWnd->GetWindowText (ret);

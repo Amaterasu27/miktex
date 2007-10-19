@@ -81,13 +81,13 @@ SiteWizRemote::OnSetActive ()
 	  lvitem.iSubItem = 0;
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	    }
 	  if (! listControl.SetItemText(0,
 					0,
 					T_("Connecting...")))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
 	    }
 	  pSheet->SetWizardButtons (0);
 	  firstSetActive = false;
@@ -147,7 +147,7 @@ SiteWizRemote::DownloadList (/*[in]*/ void * pv)
 	    CountryComparer());
       if (! This->PostMessage(FILL_LIST))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::PostMessage"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -167,7 +167,7 @@ SiteWizRemote::DownloadList (/*[in]*/ void * pv)
    _________________________________________________________________________ */
 
 void
-SiteWizRemote::InsertColumn (/*[in]*/ int			colIdx,
+SiteWizRemote::InsertColumn (/*[in]*/ int		colIdx,
 			     /*[in]*/ const char *	lpszLabel,
 			     /*[in]*/ const char *	lpszLongest)
 {
@@ -178,7 +178,7 @@ SiteWizRemote::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -201,31 +201,31 @@ SiteWizRemote::OnInitDialog ()
       
       InsertColumn (colIdx,
 		    T_("Country"),
-		    T_("xxxx Australia"));
+		    "xxxx Australia");
       
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Protocol"),
-		    T_("xxxx HTTP"));
+		    "xxxx HTTP");
 
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Host"),
-		    T_("xxxx scratchy.emate.ucr.ac.cr"));
+		    "xxxx scratchy.emate.ucr.ac.cr");
       
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Version"),
-		    T_("xxxx 30-Aug-04"));
+		    "xxxx 30-Aug-04");
       
       ++ colIdx;
       
       InsertColumn (colIdx,
 		    T_("Description"),
-		    T_("xxxx Primary Package Repository"));
+		    "xxxx Primary Package Repository");
       
       ++ colIdx;
     }
@@ -313,7 +313,7 @@ SiteWizRemote::SetItemText (/*[in]*/ int		itemIdx,
 {
   if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemText"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
 }
 
@@ -337,7 +337,7 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.dwHostNameLength = 200;
   if (! InternetCrackUrl(url.c_str(), 0, 0, &url_comp))
     {
-      FATAL_WINDOWS_ERROR (T_("InternetCrackUrl"), 0);
+      FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
     }
   protocol = szProtocol;
   host = szHost;
@@ -361,7 +361,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
     {
       if (! listControl.DeleteAllItems())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
 	}
       
       bool selected = false;
@@ -370,7 +370,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 
       if (! pManager->TryGetRemotePackageRepository(url))
 	{
-	  url = T_("");
+	  url = "";
 	}
 
       int idx = 0;
@@ -395,7 +395,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
       
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	    }
 
 	  string protocol;
@@ -408,7 +408,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 	  protUC.MakeUpper ();
 	  SetItemText (idx, 1, protUC);
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CTime(it->timeDate).Format(T_("%d-%b-%y")));
+      	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
 	  SetItemText (idx, 4, it->description.c_str());
 
 	  if (it->url == url)
@@ -417,7 +417,7 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 					     LVIS_SELECTED,
 					     LVIS_SELECTED))
 		{
-		  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItemState"), 0);
+		  FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
 		}
 	      selected = true;
 	    }

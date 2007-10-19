@@ -46,7 +46,7 @@ DisplayOptionsPage::DisplayOptionsPage ()
   : CPropertyPage (IDD),
     metafontModeIdx (static_cast<int>(g_pYapConfig->displayMetafontMode))
 {
-  shrinkFactor.Format (T_("%d"), g_pYapConfig->displayShrinkFactor);
+  shrinkFactor.Format ("%d", g_pYapConfig->displayShrinkFactor);
 }
 
 /* _________________________________________________________________________
@@ -67,18 +67,18 @@ DisplayOptionsPage::OnInitDialog ()
 	   ++ idx)
 	{
 	  CString modeString = mode.szMnemonic;
-	  modeString += T_(" (");
+	  modeString += " (";
 	  modeString += mode.szDescription;
-	  modeString += T_(")");
+	  modeString += ")";
 	  if (modeComboBox.AddString(modeString) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CComboBox::AddString"), 0);
+	      FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	    }
 	  if (idx == metafontModeIdx)
 	    {
 	      if (modeComboBox.SetCurSel(idx) < 0)
 		{
-		  FATAL_WINDOWS_ERROR (T_("CComboBox::SetCurSel"), 0);
+		  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 		}
 	      resolution = mode.iHorzRes;
 	      resolutionControl.SetWindowText (NUMTOSTR(resolution));
@@ -96,7 +96,7 @@ DisplayOptionsPage::OnInitDialog ()
 	}
       if (comboPageMode.SetCurSel(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::SetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 	}
       idx = -1;
       switch (g_pYapConfig->unit.Get())
@@ -119,7 +119,7 @@ DisplayOptionsPage::OnInitDialog ()
 	}
       if (unitComboBox.SetCurSel(idx) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::SetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 	}
     }
   catch (const MiKTeXException & e)
@@ -171,7 +171,7 @@ DisplayOptionsPage::OnApply ()
       int idx = comboPageMode.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::GetCurSel", 0);
 	}
       switch (idx)
 	{
@@ -185,7 +185,7 @@ DisplayOptionsPage::OnApply ()
       idx = unitComboBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::GetCurSel", 0);
 	}
       switch (idx)
 	{
@@ -232,7 +232,7 @@ DisplayOptionsPage::OnChangeMode ()
       int idx = modeComboBox.GetCurSel();
       if (idx < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CComboBox::GetCurSel"), 0);
+	  FATAL_WINDOWS_ERROR ("CComboBox::GetCurSel", 0);
 	}
       MIKTEXMFMODE mode;
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))

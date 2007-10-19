@@ -101,7 +101,7 @@ Printer::GetDevMode (/*[in]*/ const char *	lpszPrinterName)
   DEVMODE * pDevMode = reinterpret_cast<DEVMODE*>(malloc(bytesNeeded));
   if (pDevMode == 0)
     {
-      OUT_OF_MEMORY (T_("Printer::GetDevMode"));
+      OUT_OF_MEMORY ("Printer::GetDevMode");
     }
   if (DocumentProperties(0,
 			 hPrinter,
@@ -142,7 +142,7 @@ Printer::GetPrinterInfo (/*[in]*/ const char *	lpszPrinterName,
     reinterpret_cast<PRINTER_INFO_2*>(malloc(bytesNeeded));
   if (p2 == 0)
     {
-      OUT_OF_MEMORY (T_("Printer::GetPrinterInfo"));
+      OUT_OF_MEMORY ("Printer::GetPrinterInfo");
     }
   AutoMemoryPointer autoFreeResult (p2);
   unsigned long bytesReturned;
@@ -170,7 +170,7 @@ Printer::GetPrinterInfo (/*[in]*/ const char *	lpszPrinterName,
       *ppDevMode = reinterpret_cast<DEVMODE*>(malloc(bytesNeeded));
       if (ppDevMode == 0)
 	{
-	  OUT_OF_MEMORY (T_("Printer::GetPrinterInfo"));
+	  OUT_OF_MEMORY ("Printer::GetPrinterInfo");
 	}
       if (DocumentProperties(0,
 			     hPrinter,
@@ -212,7 +212,7 @@ Printer::CreateDC (/*[in]*/ const char *	lpszPrinterName)
   HDC hdc = ::CreateDC(p2->pDriverName, p2->pPrinterName, 0, pDevMode2);
   if (hdc == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("Printer::CreateDC"),
+      FATAL_MIKTEX_ERROR ("Printer::CreateDC",
 			  T_("The device context could not be created."),
 			  lpszPrinterName);
     }
@@ -267,7 +267,7 @@ Printer::StartJob ()
 	{
 	  DeleteDC (hdcPrinter);
 	  hdcPrinter = 0;
-	  FATAL_MIKTEX_ERROR (T_("Printer::StartJob"),
+	  FATAL_MIKTEX_ERROR ("Printer::StartJob",
 			      T_("The print job could not be started."),
 			      0);
 	}
@@ -310,7 +310,7 @@ Printer::StartPage ()
     {
       if (::StartPage(hdcPrinter) <= 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_("Printer::StartJob"),
+	  FATAL_MIKTEX_ERROR ("Printer::StartJob",
 			      T_("The page could not be started."),
 			      NUMTOSTR(static_cast<unsigned>(currentPageNum)));
 	}
@@ -337,7 +337,7 @@ Printer::EndPage ()
     }
   if (printInfo.pCallback != 0)
     {
-      printInfo.pCallback->Report (T_("]"));
+      printInfo.pCallback->Report ("]");
     }
   pageStarted = false;
 }

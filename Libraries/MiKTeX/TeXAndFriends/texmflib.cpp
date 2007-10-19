@@ -52,9 +52,9 @@ OpenFontFile (/*[in,out]*/ bytefile *	pByteFile,
 					   FileType::EXE,
 					   exe))
 	{
-	  FATAL_MIKTEX_ERROR (T_("OpenFontFile"),
-			      (T_("The font creation utility could")
-			       T_(" not be found.")),
+	  FATAL_MIKTEX_ERROR ("OpenFontFile",
+			      T_("\
+The font creation utility could not be found."),
 			      lpszMakeFontCommand);
 	}
       char szBaseName[BufferSizes::MaxPath];
@@ -76,7 +76,7 @@ OpenFontFile (/*[in,out]*/ bytefile *	pByteFile,
 					   filetype,
 					   pathFont))
 	{
-	  FATAL_MIKTEX_ERROR (T_("OpenFontFile"),
+	  FATAL_MIKTEX_ERROR ("OpenFontFile",
 			      T_("The font file could not be found."),
 			      lpszFontName);
 	}
@@ -209,7 +209,7 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 
       if (start == 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+	  FATAL_MIKTEX_ERROR ("ProcessTCXFile",
 			      T_("Invalid tcx file."),
 			      tcxPath.Get());
 	}
@@ -218,13 +218,13 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
       long xordidx = strtol(start, &end, 0);
       if (start == end)
 	{
-	  FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+	  FATAL_MIKTEX_ERROR ("ProcessTCXFile",
 			      T_("Invalid tcx file."),
 			      tcxPath.Get());
 	}
       else if (xordidx < 0 || xordidx > 255)
 	{
-	  FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+	  FATAL_MIKTEX_ERROR ("ProcessTCXFile",
 			      T_("Invalid tcx file."),
 			      tcxPath.Get());
 	}
@@ -242,7 +242,7 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 	}
       else if (xchridx < 0 || xchridx > 255)
 	{
-	  FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+	  FATAL_MIKTEX_ERROR ("ProcessTCXFile",
 			      T_("Invalid tcx file."),
 			      tcxPath.Get());
 	}
@@ -258,7 +258,7 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
 	    }
 	  else if (printable < 0 || printable > 1)
 	    {
-	      FATAL_MIKTEX_ERROR (T_("ProcessTCXFile"),
+	      FATAL_MIKTEX_ERROR ("ProcessTCXFile",
 				  T_("Invalid tcx file."),
 				  tcxPath.Get());
 	    }
@@ -383,7 +383,7 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
 				    /*[in]*/ const char *	lpszFileName)
 {
   MIKTEX_API_BEGIN ("OpenMAPFile");
-  return (OpenAlphaFile(p, lpszFileName, FileType::MAP, T_(".map")));
+  return (OpenAlphaFile(p, lpszFileName, FileType::MAP, ".map"));
   MIKTEX_API_END ("OpenMAPFile");
 }
 
@@ -397,6 +397,6 @@ MiKTeX::TeXAndFriends::OpenMETAFONTFile (/*[in]*/ void *	p,
 					 /*[in]*/ const char *	lpszFileName)
 {
   MIKTEX_API_BEGIN ("OpenMETAFONTFile");
-  return (OpenAlphaFile(p, lpszFileName, FileType::MF, T_(".mf")));
+  return (OpenAlphaFile(p, lpszFileName, FileType::MF, ".mf"));
   MIKTEX_API_END ("OpenMETAFONTFile");
 }

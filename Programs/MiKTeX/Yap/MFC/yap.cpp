@@ -57,13 +57,13 @@ namespace {
       T_("Starts up for DDE."), 0
     },
     {
-      T_("find-src-special"), T_('s'),
+      T_("find-src-special"), 's',
       POPT_ARG_STRING, 0,
       OPT_FIND_SRC_SPECIAL,
       T_("Initiates forward search."), T_("SrcSpecial")
     },
     {
-      T_("goto-hyper-label"), T_('g'),
+      T_("goto-hyper-label"), 'g',
       POPT_ARG_STRING, 0,
       OPT_GOTO_HYPER_LABEL,
       T_("Jumps to a HyperTeX label."), T_("HYPERLABEL")
@@ -81,7 +81,7 @@ namespace {
       T_("Stores Yap related keys in the Windows Registry."), 0
     },
     {
-      T_("single-instance"), T_('1'),
+      T_("single-instance"), '1',
       POPT_ARG_NONE, 0,
       OPT_SINGLE_INSTANCE,
       T_("Reuses an application window, if one exists."), 0
@@ -151,7 +151,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 	      strtol(popt.GetOptArg(), &lpszFileName, 10);
 	    if (lpszFileName != 0)
 	      {
-		while (*lpszFileName == T_(' '))
+		while (*lpszFileName == ' ')
 		  {
 		    ++ lpszFileName;
 		  }
@@ -214,9 +214,9 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 	  // we have a file name argument; append .dvi to the file
 	  // name, if necessary
 	  PathName pathFileName = *leftovers;
-	  if (! pathFileName.HasExtension(T_(".dvi")))
+	  if (! pathFileName.HasExtension(".dvi"))
 	    {
-	      pathFileName.Append (T_(".dvi"), false);
+	      pathFileName.Append (".dvi", false);
 	    }
 	  
 	  // locate the .dvi file
@@ -289,7 +289,7 @@ YapApplication::RegisterWindowClass ()
       wndcls.lpszClassName = YAP_WND_CLASS;
       if (! AfxRegisterClass(&wndcls))
 	{
-	  FATAL_MIKTEX_ERROR (T_("YapApplication::RegisterWindowClass"),
+	  FATAL_MIKTEX_ERROR ("YapApplication::RegisterWindowClass",
 			      T_("The windows class could not be registered."),
 			      0);
 	}
@@ -386,11 +386,11 @@ YapApplication::InitInstance ()
 	}
       
       // change the registry key under which our settings are stored
-      SetRegistryKey (T_(MIKTEX_COMPANYNAME_STR)
-		      T_("\\")
-		      T_(MIKTEX_PRODUCTNAME_STR)
-		      T_("\\")
-		      T_(MIKTEX_SERIES_STR));
+      SetRegistryKey (MIKTEX_COMPANYNAME_STR
+		      "\\"
+		      MIKTEX_PRODUCTNAME_STR
+		      "\\"
+		      MIKTEX_SERIES_STR);
       
       // load standard ini file options (including MRU)
       LoadStdProfileSettings ();
@@ -415,7 +415,7 @@ YapApplication::InitInstance ()
       if (! pMainFrame->LoadFrame(IDR_MAINFRAME))
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("YapApplication::InitInstance"),
+	    ("YapApplication::InitInstance",
 	     T_("The main frame window could not be initialized."),
 	     0);
 	}
@@ -432,7 +432,7 @@ YapApplication::InitInstance ()
 	  char szClass[BufferSizes::MaxPath];
 	  long size = BufferSizes::MaxPath;
 	  if ((::RegQueryValue(HKEY_CLASSES_ROOT,
-			       T_(".dvi"),
+			       ".dvi",
 			       szClass,
 			       &size)
 	       == ERROR_SUCCESS)
@@ -447,7 +447,7 @@ YapApplication::InitInstance ()
 		      == IDYES)))
 	    {
 	      // remove .dvi file association; will be restored later
-	      SHDeleteKey (HKEY_CLASSES_ROOT, T_(".dvi"));
+	      SHDeleteKey (HKEY_CLASSES_ROOT, ".dvi");
 	    }
 	}
       
@@ -546,7 +546,7 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
     {
       CString str;
       str.Format (T_(T_("Yet Another Previewer %s")), VER_FILEVERSION_STR);
-      str += T_(T_("\r\n"));
+      str += "\r\n";
       str += MIKTEX_LEGALCOPYRIGHT_STR;
       GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
     }
@@ -842,13 +842,13 @@ YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
 	  if (ddeCommand.Left(10) == T_("[findsrc(\""))
 	    {
 	      CString src = ddeCommand.Right(ddeCommand.GetLength() - 10);
-	      int i = src.Find(T_('"'));
+	      int i = src.Find('"');
 	      if (i != -1)
 		{
 		  src = src.Left(i);
 		  char * lpszFileName = 0;
 		  long line = _tcstol(src, &lpszFileName, 10);
-		  while (*lpszFileName == T_(' '))
+		  while (*lpszFileName == ' ')
 		    {
 		      ++ lpszFileName;
 		    }
@@ -859,7 +859,7 @@ YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
 	  else if (ddeCommand.Left(17) == T_("[gotohyperlabel(\""))
 	    {
 	      CString label = ddeCommand.Right(ddeCommand.GetLength() - 17);
-	      int i = label.Find(T_('"'));
+	      int i = label.Find('"');
 	      if (i != -1)
 		{
 		  label = label.Left(i);
@@ -935,7 +935,7 @@ bool
 YapApplication::GotoHyperLabel (/*[in]*/ const char * lpszLabel)
 {
   CString hashLabel;
-  hashLabel = T_('#');
+  hashLabel = '#';
   hashLabel += lpszLabel;
   POSITION posTemplate = GetFirstDocTemplatePosition();
   while (posTemplate != 0)
@@ -994,7 +994,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 				       FileType::TEX,
 				       path2))
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::OnPageEditor"),
+      FATAL_MIKTEX_ERROR ("DviView::OnPageEditor",
 			  T_("The source file could not be found."),
 			  lpszFileName);
     }
@@ -1006,18 +1006,18 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
   bool haveLine = false;
   while (*lpsz != 0)
     {
-      if (*lpsz == T_('%'))
+      if (*lpsz == '%')
 	{
 	  switch (lpsz[1])
 	    {
-	    case T_('%'):
-	      commandLine += T_('%');
+	    case '%':
+	      commandLine += '%';
 	      break;
-	    case T_('f'):
+	    case 'f':
 	      commandLine += path2.Get();
 	      haveName = true;
 	      break;
-	    case T_('l'):
+	    case 'l':
 	      commandLine += NUMTOSTR(line);
 	      haveLine = true;
 	      break;
@@ -1308,8 +1308,8 @@ AllowShellCommand (/*[in]*/ const CString & command)
       }
     case YapConfig::SEC_SECURE_COMMANDS:
       {
-	CString name = command.SpanExcluding(T_(" "));
-	for (Tokenizer tok (g_pYapConfig->secureCommands, T_(" ,;"));
+	CString name = command.SpanExcluding(" ");
+	for (Tokenizer tok (g_pYapConfig->secureCommands, " ,;");
 	     tok.GetCurrent() != 0;
 	     ++ tok)
 	  {

@@ -76,14 +76,14 @@ protected:
 
 private:
   void
-  InsertColumn (/*[in]*/ int			colIdx,
+  InsertColumn (/*[in]*/ int		colIdx,
 		/*[in]*/ const char *	lpszLabel,
 		/*[in]*/ const char *	lpszLongest);
 
 private:
   void
-  SetItemText (/*[in]*/ int			itemIdx,
-	       /*[in]*/ int			colIdx,
+  SetItemText (/*[in]*/ int		itemIdx,
+	       /*[in]*/ int		colIdx,
 	       /*[in]*/ const char *	lpszText);
 
 private:

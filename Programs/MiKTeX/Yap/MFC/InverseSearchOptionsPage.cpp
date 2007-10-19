@@ -112,7 +112,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
   PathName pathBinDir (emacsDir, T_("bin"));
   ntEmacs = pathBinDir;
   ntEmacs += lpszName;
-  ntEmacs.SetExtension (T_(".exe"));
+  ntEmacs.SetExtension (".exe");
   return (File::Exists(ntEmacs));
 }
 
@@ -132,7 +132,7 @@ MakeNTEmacsCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = pathEmacs.Get();
-  arguments = T_("+%l \"%f\"");
+  arguments = "+%l \"%f\"";
   return (true);
 }
 
@@ -158,7 +158,7 @@ MakeNTEmacsClientCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = pathEmacs.Get();
-  arguments = T_("-F +%l \"%f\"");
+  arguments = "-F +%l \"%f\"";
   return (true);
 }
 
@@ -210,7 +210,7 @@ MakeXEmacsCommandLine (/*[out]*/ string &	program,
 	}
     }
   program = pathEmacs.Get();
-  arguments = T_("+%l \"%f\"");
+  arguments = "+%l \"%f\"";
   return (true);
 }
 
@@ -440,7 +440,7 @@ MakeLaTeXMngCommandLine (/*[out]*/ string &	program,
   //latexmng -l%l %f
 
 
-  arguments = T_("-l%l \"%f\"");
+  arguments = "-l%l \"%f\"";
   return (true);
 }
 
@@ -478,7 +478,7 @@ MakeWinTeXXPCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = path.Get();
-  arguments = T_("-f \"%f\" -l %l");
+  arguments = "-f \"%f\" -l %l";
   return (true);
 }
 
@@ -516,7 +516,7 @@ MakeWinShellCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = path.Get();
-  arguments = T_("-c \"%f\" -l %l");
+  arguments = "-c \"%f\" -l %l";
   return (true);
 }
 
@@ -554,7 +554,7 @@ MakeLaTeXWIDECommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = path.Get();
-  arguments = T_("\"%f\" /l%l");
+  arguments = "\"%f\" /l%l";
   return (true);
 }
 
@@ -616,7 +616,7 @@ InverseSearchOptionsPage::OnInitDialog ()
 	  if (editorListBox.AddString(str) < 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("InverseSearchOptionsPage::OnInitDialog"));
+		("InverseSearchOptionsPage::OnInitDialog");
 	    }
 	}
 
@@ -625,7 +625,7 @@ InverseSearchOptionsPage::OnInitDialog ()
 	  if (editorListBox.SetCurSel(commandLineIdx) < 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("InverseSearchOptionsPage::OnInitDialog"));
+		("InverseSearchOptionsPage::OnInitDialog");
 	    }
 	  commandLineDisplay.SetWindowText
 	    (editors[commandLineIdx].GetCommandLine().c_str());
@@ -677,7 +677,7 @@ InverseSearchOptionsPage::OnSelChangeEditor ()
       if (idx >= static_cast<int>(editors.size()))
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("InverseSearchOptionsPage::OnSelChangeEditor"));
+	    ("InverseSearchOptionsPage::OnSelChangeEditor");
 	}
       commandLineIdx = idx;
       if (idx >= 0)
@@ -687,7 +687,7 @@ InverseSearchOptionsPage::OnSelChangeEditor ()
 	}
       else
 	{
-	  commandLineDisplay.SetWindowText (T_(""));
+	  commandLineDisplay.SetWindowText ("");
 	}
       SetModified (TRUE);
       EnableButtons ();
@@ -720,7 +720,7 @@ InverseSearchOptionsPage::OnAddEditor ()
 	  if (editorListBox.AddString(editorInfo.name.c_str()) < 0)
 	    {
 	      UNEXPECTED_CONDITION
-		(T_("InverseSearchOptionsPage::OnAddEditor"));
+		("InverseSearchOptionsPage::OnAddEditor");
 	    }
 	  mustWrite = true;
 	}
@@ -777,7 +777,7 @@ InverseSearchOptionsPage::OnDeleteEditor ()
       if (editorListBox.DeleteString(commandLineIdx) < 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("InverseSearchOptionsPage::OnDeleteEditor"));
+	    ("InverseSearchOptionsPage::OnDeleteEditor");
 	}
       editors.erase (editors.begin() + commandLineIdx);
       commandLineIdx = -1;
@@ -837,7 +837,7 @@ InverseSearchOptionsPage::OnApply ()
 	}
       else
 	{
-	  g_pYapConfig->inverseSearchCommandLine = T_("");
+	  g_pYapConfig->inverseSearchCommandLine = "";
 	}
       return (CPropertyPage::OnApply());
     }

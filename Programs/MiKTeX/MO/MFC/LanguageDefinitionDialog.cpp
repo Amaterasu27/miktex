@@ -46,7 +46,7 @@ LanguageDefinitionDialog::LanguageDefinitionDialog (/*[in]*/ CWnd * pParent,
     {
       if (it != language.synonyms.begin())
 	{
-	  synonyms += T_(',');
+	  synonyms += ',';
 	}
       synonyms += *it;
     }
@@ -78,7 +78,7 @@ LanguageDefinitionDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 
   language.synonyms.clear ();
 
-  for (CSVList syn (synonyms, T_(',')); syn.GetCurrent() != 0; ++ syn)
+  for (CSVList syn (synonyms, ','); syn.GetCurrent() != 0; ++ syn)
     {
       language.synonyms.push_back (syn.GetCurrent());
     }
@@ -177,14 +177,14 @@ LanguageDefinitionDialog::OnBrowse ()
       ofn.hInstance = 0;
       string filter;
       filter += T_("Hyphenation patterns (*.tex)");
-      filter += T_('\0');
+      filter += '\0';
       filter += T_("*.tex");
-      filter += T_('\0');
+      filter += '\0';
       filter += T_("All files (*.*)");
-      filter += T_('\0');
-      filter += T_("*.*");
-      filter += T_('\0');
-      filter += T_('\0');
+      filter += '\0';
+      filter += "*.*";
+      filter += '\0';
+      filter += '\0';
       ofn.lpstrFilter = filter.c_str();
       ofn.lpstrCustomFilter = 0;
       ofn.nMaxCustFilter = 0;
@@ -213,7 +213,7 @@ LanguageDefinitionDialog::OnBrowse ()
       ofn.Flags = 0;
       ofn.Flags |= OFN_FILEMUSTEXIST;
       ofn.Flags |= OFN_PATHMUSTEXIST;
-      ofn.lpstrDefExt = T_(".tex");
+      ofn.lpstrDefExt = ".tex";
       if (! GetOpenFileName(&ofn))
 	{
 	  // <todo>check error condition with CommDlgExtendedError</todo>
@@ -224,7 +224,7 @@ LanguageDefinitionDialog::OnBrowse ()
       CWnd * pWnd = GetDlgItem(IDC_HYPHENATION_FILE);
       if (pWnd == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CWnd::GetDlgItem", 0);
 	}
       pWnd->SetWindowText (fileName.Get());
     }

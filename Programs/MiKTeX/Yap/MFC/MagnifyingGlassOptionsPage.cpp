@@ -72,13 +72,13 @@ MagnifyingGlassOptionsPage::MagnifyingGlassOptionsPage ()
 
 {
   smallShrinkFactor.Format
-    (T_("%d"),
+    ("%d",
      g_pYapConfig->magGlassSmallShrinkFactor);
   mediumShrinkFactor.Format
-    (T_("%d"),
+    ("%d",
      g_pYapConfig->magGlassMediumShrinkFactor);
   largeShrinkFactor.Format
-    (T_("%d"),
+    ("%d",
      g_pYapConfig->magGlassLargeShrinkFactor);
 }
 
@@ -109,7 +109,7 @@ MagnifyingGlassOptionsPage::OnInitDialog ()
       if (comboOpacity.SetCurSel(idx) < 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("MagnifyingGlassOptionsPage::OnInitDialog"));
+	    ("MagnifyingGlassOptionsPage::OnInitDialog");
 	}
     }
   catch (const MiKTeXException & e)
@@ -167,7 +167,7 @@ MagnifyingGlassOptionsPage::OnApply ()
 
       if (idx < 0 || idx > 9)
 	{
-	  UNEXPECTED_CONDITION (T_("MagnifyingGlassOptionsPage::OnApply"));
+	  UNEXPECTED_CONDITION ("MagnifyingGlassOptionsPage::OnApply");
 	}
 
       g_pYapConfig->magGlassOpacity = (idx + 1) * 10;

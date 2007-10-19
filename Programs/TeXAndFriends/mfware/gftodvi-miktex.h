@@ -57,27 +57,27 @@ box at which the overflow equations (if any) are typeset. \
 The value is given in TeX points."),
 	       OPT_OVERFLOW_LABEL_OFFSET,
 	       required_argument,
-	       MIKTEXTEXT("REAL"));
+	       "REAL");
     AddOption (MIKTEXTEXT("title-font\0Font for titles."),
 	       OPT_TITLEFONT,
 	       required_argument,
-	       MIKTEXTEXT("FONT"));
+	       "FONT");
     AddOption (MIKTEXTEXT("label-font\0Font for labels."),
 	       OPT_LABELFONT,
 	       required_argument,
-	       MIKTEXTEXT("FONT"));
+	       "FONT");
     AddOption (MIKTEXTEXT("gray-font\0Font for pixels."),
 	       OPT_GRAYFONT,
 	       required_argument,
-	       MIKTEXTEXT("FONT"));
+	       "FONT");
     AddOption (MIKTEXTEXT("slant-font\0Font for slants."),
 	       OPT_SLANTFONT,
 	       required_argument,
-	       MIKTEXTEXT("FONT"));
+	       "FONT");
     AddOption (MIKTEXTEXT("logo-font\0Font for METAFONT logo."),
 	       OPT_LOGOFONT,
 	       required_argument,
-	       MIKTEXTEXT("FONT"));
+	       "FONT");
     WebApp::AddOptions ();
   }
 
@@ -99,11 +99,11 @@ public:
   {
     WebApp::Init (lpszProgramInvocationName);
     THEDATA(overlabeloffset) = 10000000;
-    titleFont = MIKTEXTEXT("cmr8");
-    labelFont = MIKTEXTEXT("cmtt10");
-    grayFont = MIKTEXTEXT("gray");
-    slantFont = MIKTEXTEXT("");
-    logoFont = MIKTEXTEXT("logo8");
+    titleFont = "cmr8";
+    labelFont = "cmtt10";
+    grayFont = "gray";
+    slantFont = "";
+    logoFont = "logo8";
   }
   
 public:

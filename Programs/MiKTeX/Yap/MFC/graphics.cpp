@@ -66,20 +66,20 @@ DviView::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 GraphicsInclusion::Type
 GetGraphicsType (/*[in]*/ const PathName & fileName)
 {
-  if (fileName.HasExtension(T_(".bmp")))
+  if (fileName.HasExtension(".bmp"))
     {
       return (GraphicsInclusion::BMP);
     }
-  else if (fileName.HasExtension(T_(".emf")))
+  else if (fileName.HasExtension(".emf"))
     {
       return (GraphicsInclusion::EMF);
     }
-  else if (fileName.HasExtension(T_(".wmf")))
+  else if (fileName.HasExtension(".wmf"))
     {
       return (GraphicsInclusion::WMF);
     }
   else if (SessionWrapper(true)->FindGraphicsRule(fileName.GetExtension(),
-						  T_(".bmp"),
+						  ".bmp",
 						  0,
 						  0))
     {
@@ -154,7 +154,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
       hEmf = GetEnhMetaFile(lpszFileName);
       if (hEmf == 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_(""),
+	  FATAL_MIKTEX_ERROR ("",
 			      T_("The metafile could not be loaded."),
 			      lpszFileName);
 	}
@@ -175,7 +175,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 			   0);
       if (hEmf == 0)
 	{
-	  FATAL_MIKTEX_ERROR (T_(""),
+	  FATAL_MIKTEX_ERROR ("",
 			      T_("The metafile could not be loaded."),
 			      lpszFileName);
 	}
@@ -186,7 +186,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 
   if (hMf == 0)
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("The metafile could not be loaded."),
 			  lpszFileName);
     }
@@ -197,7 +197,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 
   if (size == 0)
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("The metafile could not be loaded."),
 			  lpszFileName);
     }
@@ -206,7 +206,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 
   if (pvData == 0)
     {
-      OUT_OF_MEMORY (T_("DviView::LoadEnhMetaFile"));
+      OUT_OF_MEMORY ("DviView::LoadEnhMetaFile");
     }
 
   AutoMemoryPointer autoFree (pvData);
@@ -215,7 +215,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 
   if (size == 0)
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("The metafile could not be loaded."),
 			  lpszFileName);
     }
@@ -229,7 +229,7 @@ DviView::LoadEnhMetaFile (/*[in]*/ const char *	lpszFileName)
 
   if (hEmf == 0)
     {
-      FATAL_MIKTEX_ERROR (T_(""),
+      FATAL_MIKTEX_ERROR ("",
 			  T_("The metafile could not be loaded."),
 			  lpszFileName);
     }
@@ -257,7 +257,7 @@ DviView::CreateTempBitmapFile (/*[in]*/ const PathName &	origFileName)
 						  tempFileName.GetBuffer(),
 						  &reader))
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::CreateTempBitmapFile"),
+      FATAL_MIKTEX_ERROR ("DviView::CreateTempBitmapFile",
 			  T_("Could not make bitmap file."),
 			  origFileName.Get());
     }
@@ -278,7 +278,7 @@ DviView::IncludeGraphics (/*[in]*/ int			pageIdx,
   PathName fileName;
   if (! FindGraphicsFile(pGraphicsSpecial->GetFileName(), fileName))
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::IncludeGraphics"),
+      FATAL_MIKTEX_ERROR ("DviView::IncludeGraphics",
 			  T_("The graphics file could not be found."),
 			  pGraphicsSpecial->GetFileName());
     }
@@ -307,7 +307,7 @@ DviView::IncludeGraphics (/*[in]*/ int			pageIdx,
 	break;
       }
     case GraphicsInclusion::Unknown:
-      FATAL_MIKTEX_ERROR (T_("DviView::IncludeGraphics"),
+      FATAL_MIKTEX_ERROR ("DviView::IncludeGraphics",
 			  T_("Unknown graphics inclusion type."),
 			  fileName.Get());
     }
@@ -388,7 +388,7 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
 	  if (! pDC->PlayMetaFile(graphicsInclusion.GetEnhancedMetafile(),
 				  bbox))
 	    {
-	      FATAL_MIKTEX_ERROR (T_("DviView::RenderGraphicsInclusions"),
+	      FATAL_MIKTEX_ERROR ("DviView::RenderGraphicsInclusions",
 				  T_("The metafile could not be rendered."),
 				  0);
 	    }

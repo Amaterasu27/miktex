@@ -95,7 +95,7 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	      UNEXPECTED_CONDITION ("DviView::OnDraw");
 	    }
 	}
       pDC->RealizePalette ();
@@ -117,7 +117,7 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnDraw"));
+	      UNEXPECTED_CONDITION ("DviView::OnDraw");
 	    }
 	}
 
@@ -231,7 +231,7 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
   DviPage * pPage = pDoc->GetLoadedPage(pageIdx);
   if (pPage == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawPage"));
+      UNEXPECTED_CONDITION ("DviView::DrawPage");
     }
   AutoUnlockPage autoUnlockPage (pPage);
 
@@ -361,14 +361,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			  else
 			    {
 			      UNEXPECTED_CONDITION
-				(T_("DviView::DrawSpecials"));
+				("DviView::DrawSpecials");
 			    }
 			}
 		      AutoDeleteObject autoDeletePen (&pen);
 		      CPen * pOldPen = pDC->SelectObject(&pen);
 		      if (pOldPen == 0)
 			{
-			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			  UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 			}
 		      AutoSelectObject autoSelectOldPen (pDC, pOldPen);
 		      int llx, lly, urx, ury;
@@ -384,7 +384,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			  else
 			    {
 			      UNEXPECTED_CONDITION
-				(T_("DviView::DrawSpecials"));
+				("DviView::DrawSpecials");
 			    }
 			}
 		    }
@@ -405,14 +405,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			}
 		      else
 			{
-			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			  UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 			}
 		    }
 		  AutoDeleteObject autoDeletePen (&pen);
 		  CPen * pOldPen = pDC->SelectObject (&pen);
 		  if (pOldPen == 0)
 		    {
-		      UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		      UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 		    }
 		  AutoSelectObject autoSelectOldPen (pDC, pOldPen);
 		  if (! pDC->Ellipse(PixelShrink(pSpecial->GetX()) - 4,
@@ -426,7 +426,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			}
 		      else
 			{
-			  UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			  UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 			}
 		    }
 		}
@@ -455,14 +455,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		      }
 		    else
 		      {
-			UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 		      }
 		  }
 		AutoDeleteObject autoDeletePen (&pen);
 		CPen * pOldPen = pDC->SelectObject(&pen);
 		if (pOldPen == 0)
 		  {
-		    UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+		    UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 		  }
 		AutoSelectObject autoSelectOldPen (pDC, pOldPen);
 		pDC->MoveTo (PixelShrink(pSolidLineSpecial->GetStartX()),
@@ -478,7 +478,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		      }
 		    else
 		      {
-			UNEXPECTED_CONDITION (T_("DviView::DrawSpecials"));
+			UNEXPECTED_CONDITION ("DviView::DrawSpecials");
 		      }
 		  }
 	      }
@@ -511,7 +511,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	}
     }
 
@@ -527,7 +527,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
     CBrush * pOldBrush = pDC->SelectObject(&brushWhite);
     if (pOldBrush == 0)
       {
-	UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	UNEXPECTED_CONDITION ("DviView::DrawPaper");
       }
     AutoSelectObject autoSelectOldBrush (pDC, pOldBrush);
     if (! pDC->PatBlt(rectPage.left,
@@ -542,7 +542,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	  }
 	else
 	  {
-	    UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	    UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	  }
       }
   }
@@ -564,7 +564,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
       
       if (pOldBrush == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	  UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	}
 
       AutoSelectObject autoSelectOldBrush (pDC, pOldBrush);
@@ -581,7 +581,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
       
@@ -597,7 +597,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
       
@@ -613,7 +613,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
 
@@ -629,7 +629,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
 
@@ -647,7 +647,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
 
@@ -664,7 +664,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::DrawPaper"));
+	      UNEXPECTED_CONDITION ("DviView::DrawPaper");
 	    }
 	}
     }
@@ -702,7 +702,7 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	  UNEXPECTED_CONDITION ("DviView::DrawSourcePosition");
 	}
     }
   AutoRestoreDC autoRestoreDC (pDC, savedDC);
@@ -715,13 +715,13 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	  UNEXPECTED_CONDITION ("DviView::DrawSourcePosition");
 	}
     }
   AutoDeleteObject autoDeletePen (&pen);
   if (pDC->SelectObject(&pen) == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+      UNEXPECTED_CONDITION ("DviView::DrawSourcePosition");
     }
   if (! pDC->Ellipse(PixelShrink(searchPosition.x) - 4,
 		     PixelShrink(searchPosition.y) - 4,
@@ -734,7 +734,7 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
 	}
       else
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::DrawSourcePosition"));
+	  UNEXPECTED_CONDITION ("DviView::DrawSourcePosition");
 	}
     }
 }
@@ -761,7 +761,7 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
       CBrush * pOldBrush = pDC->SelectObject(&brushBack);
       if (pOldBrush == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	  UNEXPECTED_CONDITION ("DviView::OnEraseBkgnd");
 	}
       AutoSelectObject autoSelectOldBrush (pDC, pOldBrush);
       CRect rect;
@@ -773,7 +773,7 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	      UNEXPECTED_CONDITION ("DviView::OnEraseBkgnd");
 	    }
 	}
       if (! pDC->PatBlt(rect.left,
@@ -788,7 +788,7 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 	    }
 	  else
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnEraseBkgnd"));
+	      UNEXPECTED_CONDITION ("DviView::OnEraseBkgnd");
 	    }
 	}
       return (TRUE);

@@ -93,16 +93,16 @@ public:
     AddOption (MIKTEXTEXT("font-mem-size\0Set font_mem_size to N."),
 	       OPT_FONT_MEM_SIZE,
 	       required_argument,
-	       MIKTEXTEXT("N"));
+	       "N");
 
     AddOption (MIKTEXTEXT("tex\0Use TEXPROGRAM for text labels."),
 	       OPT_TEX_PROGRAM,
 	       required_argument,
-	       MIKTEXTEXT("TEXPROGRAM"));
+	       "TEXPROGRAM");
 
-    AddOption (MIKTEXTEXT("mem"), MIKTEXTEXT("undump"));
+    AddOption ("mem", "undump");
 
-    AddOption (MIKTEXTEXT("troff"), OPT_UNSUPPORTED, 0, 0, 0, MIKTEXTEXT('T'));
+    AddOption ("troff", OPT_UNSUPPORTED, 0, 0, 0, MIKTEXTEXT('T'));
   }
 
 public:
@@ -248,7 +248,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("MetaPost"));
+    return ("MetaPost");
   }
 
 private:
@@ -272,7 +272,7 @@ public:
 	      /*[in]*/ const char *	lpszMpxFile)
   {
     MiKTeX::Core::PathName makempx;
-    if (! pSession->FindFile(MIKTEXTEXT("makempx"),
+    if (! pSession->FindFile("makempx",
 			     MiKTeX::Core::FileType::EXE,
 			     makempx))
       {

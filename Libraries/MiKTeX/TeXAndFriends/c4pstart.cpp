@@ -47,11 +47,11 @@ C4P::MakeCommandLine (/*[in]*/ int		argc,
   argumentVector.clear ();
   argumentVector.push_back (strdup(Utils::GetExeName().c_str()));
   ++ argCount;
-  commandLine = T_("");
+  commandLine = "";
   for (int i = 0; i < argc; ++i, ++ argCount)
     {
       argumentVector.push_back (strdup(argv[i]));
-      commandLine += T_(' ');
+      commandLine += ' ';
       MIKTEX_ASSERT_STRING (argv[i]);
       commandLine += argv[i];
     }
@@ -72,13 +72,13 @@ C4P::SetStartUpTime (/*[in]*/ time_t time)
 #if defined(_MSC_VER) && (_MSC_VER) >= 1400
   if (_localtime64_s(&startUpTimeStruct, &startUpTime) != 0)
     {
-      FATAL_CRT_ERROR (T_("_localtime_s"), 0);
+      FATAL_CRT_ERROR ("_localtime_s", 0);
     }
 #else
   struct tm * p = localtime(&startUpTime);
   if (p == 0)
     {
-      FATAL_CRT_ERROR (T_("localtime"), 0);
+      FATAL_CRT_ERROR ("localtime", 0);
     }
   startUpTimeStruct = *p;
 #endif
@@ -120,9 +120,9 @@ C4P::Program::Program (/*[in]*/ const char *	lpszProgramName,
   standardTextFiles[0].Attach (stdin, false);
   standardTextFiles[1].Attach (stdout, false);
   standardTextFiles[2].Attach (stderr, false);
-  *input = T_('\n');
-  *output = T_('\0');
-  *c4perroroutput = T_('\0');
+  *input = '\n';
+  *output = '\0';
+  *c4perroroutput = '\0';
   running = true;
   MIKTEX_API_END ("C4P::StartUp");
 }
@@ -142,8 +142,8 @@ C4P::Program::Finish ()
       free (const_cast<char *>(*it));
     }
   argumentVector.clear ();
-  commandLine = T_("");
-  programName = T_("");
+  commandLine = "";
+  programName = "";
 }
 
 /* _________________________________________________________________________

@@ -62,7 +62,7 @@ FinishPage::OnInitDialog ()
       CWnd * pWnd = GetDlgItem(IDC_WELCOME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("FinishPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("FinishPage::OnInitDialog");
 	}
       pWnd->SetFont (&fntWelcome);
     }
@@ -95,14 +95,14 @@ FinishPage::OnSetActive ()
 
 	  if (! str.LoadString(IDS_FINISH_ERROR))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 
 	  status.SetWindowText (str);
 
 	  if (! str.LoadString(IDS_REMEDY))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 
 	  message.SetWindowText (str);
@@ -113,7 +113,7 @@ FinishPage::OnSetActive ()
 
 	  if (! str.LoadString(IDS_VIEW_LOG_FILE))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 
 	  checkBox.SetWindowText (str);
@@ -124,7 +124,7 @@ FinishPage::OnSetActive ()
 
 	  if (! str.LoadString(IDS_DOWNLOAD_COMPLETE))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 
 	  message.SetWindowText (str);
@@ -190,7 +190,7 @@ FinishPage::OnWizardFinish ()
 	  CWnd * pWnd = GetDlgItem(IDC_VIEW_RELNOTES);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnWizardFinish"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnWizardFinish");
 	    }
 	  if (viewReleaseNotes == BST_CHECKED)
 	    {
@@ -210,7 +210,7 @@ FinishPage::OnWizardFinish ()
 				   SW_SHOWNORMAL)
 		      <= reinterpret_cast<HINSTANCE>(32))
 		    {
-		      FATAL_MIKTEX_ERROR (T_("FinishPage::OnWizardFinish"),
+		      FATAL_MIKTEX_ERROR ("FinishPage::OnWizardFinish",
 				  T_("The file could not be opened."),
 					  pathRelNotes.Get());
 		    }

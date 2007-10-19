@@ -26,8 +26,6 @@
 #define CA71604DC6CF21439A421D76D5C2E5D7
 #include "MiKTeX/Graphics/DibChunker"
 
-using namespace MiKTeX::Graphics;
-
 /* _________________________________________________________________________
 
    Debug-dependant Macros
@@ -58,7 +56,7 @@ using namespace MiKTeX::Graphics;
 #define INVALID_ARGUMENT(function, param)				\
   FATAL_MIKTEX_ERROR (function, T_("Invalid argument."), param)
 
-#define OUT_OF_MEMORY(function)					\
+#define OUT_OF_MEMORY(function)						\
   FATAL_MIKTEX_ERROR(function, T_("Virtual memory exhausted."), 0)
 
 #define UNEXPECTED_CONDITION(function)				\
@@ -68,61 +66,61 @@ using namespace MiKTeX::Graphics;
   FATAL_MIKTEX_ERROR (function, T_("Function not implemented."), 0)
 
 #define MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  TraceMiKTeXError (miktexFunction,				\
-                    traceMessage,				\
-                    lpszInfo,					\
-                    T_(__FILE__),				\
-		    __LINE__)
-
-#define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  Session::FatalMiKTeXError (miktexFunction,				\
-			     traceMessage,				\
-			     lpszInfo,					\
-			     T_(__FILE__),				\
-			     __LINE__)
-
-#define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
-  TraceStream::TraceLastCRTError (lpszCrtFunction,	\
-				  lpszInfo,		\
-				  T_(__FILE__),		\
+  MiKTeX::Core::TraceMiKTeXError (miktexFunction,		\
+				  traceMessage,			\
+				  lpszInfo,			\
+				  __FILE__,			\
 				  __LINE__)
 
-#define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)	\
-  Session::FatalCrtError (lpszCrtFunction,		\
-			  lpszInfo,			\
-			  T_(__FILE__),			\
-			  __LINE__)
+#define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
+  MiKTeX::Core::Session::FatalMiKTeXError (miktexFunction,		\
+					   traceMessage,		\
+					   lpszInfo,			\
+					   __FILE__,			\
+					   __LINE__)
+
+#define CRT_ERROR(lpszCrtFunction, lpszInfo)				\
+  MiKTeX::Core::TraceStream::TraceLastCRTError (lpszCrtFunction,	\
+						lpszInfo,		\
+						__FILE__,		\
+						__LINE__)
+
+#define FATAL_CRT_ERROR(lpszCrtFunction, lpszInfo)		\
+  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
+					lpszInfo,		\
+					__FILE__,		\
+					__LINE__)
 
 #define FATAL_CRT_ERROR_2(lpszCrtFunction, errorCode, lpszInfo)	\
-  Session::FatalCrtError (lpszCrtFunction,			\
-			  errorCode,				\
-			  lpszInfo,				\
-			  T_(__FILE__),				\
-			  __LINE__)
+  MiKTeX::Core::Session::FatalCrtError (lpszCrtFunction,	\
+					errorCode,		\
+					lpszInfo,		\
+					__FILE__,		\
+					__LINE__)
 
 #if defined(MIKTEX_WINDOWS)
-#  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
-  TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
-				    lpszInfo,			\
-				    T_(__FILE__),		\
-				    __LINE__)
+#  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)			\
+  MiKTeX::Core::TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
+						  lpszInfo,		\
+						  __FILE__,		\
+						  __LINE__)
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,			\
-			      lpszInfo,				\
-			      T_(__FILE__),			\
-			      __LINE__)
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,	\
+					    lpszInfo,		\
+					    __FILE__,		\
+					    __LINE__)
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 #  define FATAL_WINDOWS_ERROR_2(windowsfunction, errorCode, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,				\
-			      errorCode,				\
-			      lpszInfo,					\
-			      T_(__FILE__),				\
-			      __LINE__)
+  MiKTeX::Core::Session::FatalWindowsError (windowsfunction,		\
+					    errorCode,			\
+					    lpszInfo,			\
+					    __FILE__,			\
+					    __LINE__)
 #endif
 
 #define FATAL_MPM_ERROR(miktexFunction, traceMessage, lpszInfo) \
@@ -142,7 +140,7 @@ using namespace MiKTeX::Graphics;
    DibChunkImpl
    _________________________________________________________________________ */
 
-class DibChunkImpl : public DibChunk
+class DibChunkImpl : public MiKTeX::Graphics::DibChunk
 {
 public:
   DibChunkImpl (/*[in]*/ unsigned	bytesPerLine,
@@ -154,7 +152,7 @@ public:
     pBits = malloc(size);
     if (pBits == 0)
       {
-	OUT_OF_MEMORY (T_("DibChunkerImpl::EndChunk"));
+	OUT_OF_MEMORY ("DibChunkerImpl::EndChunk");
       }
   }
       
@@ -290,7 +288,7 @@ public:
 					   + numColors * sizeof(RGBQUAD)));
     if (pBitmapInfo == 0)
       {
-	OUT_OF_MEMORY (T_("DibChunkImpl::SetBitmapInfo"));
+	OUT_OF_MEMORY ("DibChunkImpl::SetBitmapInfo");
       }
     memcpy (&pBitmapInfo->bmiHeader,
 	    &bitmapInfoHeader,
@@ -332,7 +330,7 @@ private:
    DibChunkerImpl
    _________________________________________________________________________ */
 
-class DibChunkerImpl : public DibChunker
+class DibChunkerImpl : public MiKTeX::Graphics::DibChunker
 {
 public:
   DibChunkerImpl ();
@@ -346,9 +344,9 @@ public:
   virtual
   bool
   DIBCHUNKERCALL
-  Process (/*[in]*/ unsigned long		flags,
-	   /*[in]*/ unsigned long		chunkSize,
-	   /*[in]*/ IDibChunkerCallback *	pCallback);
+  Process (/*[in]*/ unsigned long				flags,
+	   /*[in]*/ unsigned long				chunkSize,
+	   /*[in]*/ MiKTeX::Graphics::IDibChunkerCallback *	pCallback);
 
 private:
   bool
@@ -444,7 +442,7 @@ private:
 		  /*[in]*/ unsigned long		width);
 
 private:
-  IDibChunkerCallback * pCallback;
+  MiKTeX::Graphics::IDibChunkerCallback * pCallback;
 
 private:
   RGBQUAD * pColors;
@@ -492,7 +490,7 @@ private:
   BITMAPINFOHEADER bitmapInfoHeader;
 
 private:
-  auto_ptr<TraceStream> trace_dib;
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_dib;
 
 private:
   int processingFlags;

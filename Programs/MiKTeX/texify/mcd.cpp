@@ -82,8 +82,8 @@ using namespace std;
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 const char * DEFAULT_TRACE_STREAMS =
-  MIKTEX_TRACE_ERROR T_(",")
-  MIKTEX_TRACE_PROCESS T_(",")
+  MIKTEX_TRACE_ERROR ","
+  MIKTEX_TRACE_PROCESS ","
   PROGRAM_NAME;
 
 /* _________________________________________________________________________
@@ -98,7 +98,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGRAM_NAME << T_(": ")
+  cerr << PROGRAM_NAME << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -267,7 +267,7 @@ string
 FlattenStringVector (/*[in]*/ const vector<string> &	vec,
 		     /*[in]*/ char			sep)
 {
-  string str = T_("");
+  string str = "";
   for (vector<string>::const_iterator it = vec.begin();
        it != vec.end();
        ++ it)
@@ -279,12 +279,12 @@ FlattenStringVector (/*[in]*/ const vector<string> &	vec,
       bool mustQuote = (it->find(sep) != string::npos);
       if (mustQuote)
 	{
-	  str += T_('"');
+	  str += '"';
 	}
       str += *it;
       if (mustQuote)
 	{
-	  str += T_('"');
+	  str += '"';
 	}
     }
   return (str);
@@ -894,13 +894,13 @@ Driver::Initialize (/*[in]*/ McdApp *		pApplication,
   madeTempDirectory = true;
 
   // create scratch directory
-  scratchDirectory.Set (tempDirectory, T_("_src"));
+  scratchDirectory.Set (tempDirectory, "_src");
   Directory::Create (scratchDirectory);
   scratchDirectory.ToUnix ();
   pApplication->Trace (T_("scratch directory: %s"), Q_(scratchDirectory));
 
   // create extra directory
-  extraDirectory.Set (tempDirectory, T_("_xtr"));
+  extraDirectory.Set (tempDirectory, "_xtr");
   Directory::Create (extraDirectory);
   extraDirectory.ToUnix ();
   pApplication->Trace (T_("extra directory: %s"), Q_(extraDirectory));
@@ -954,10 +954,10 @@ Driver::GuessMacroLanguage (/*[in]*/ const PathName & fileName)
     {
       return (MacroLanguage::Texinfo);
     }
-  if (fileName.HasExtension(T_(".dtx"))
-      || fileName.HasExtension(T_(".tex"))
-      || fileName.HasExtension(T_(".latex"))
-      || fileName.HasExtension(T_(".ltx")))
+  if (fileName.HasExtension(".dtx")
+      || fileName.HasExtension(".tex")
+      || fileName.HasExtension(".latex")
+      || fileName.HasExtension(".ltx"))
     {
       return (MacroLanguage::LaTeX);
     }
@@ -1010,7 +1010,7 @@ Driver::TexinfoPreprocess (/*[in]*/ const PathName &	pathFrom,
 	{
 	  at_macro = true;
 	}
-      else if (IsPrefixOf(T_("@html"), line))
+      else if (IsPrefixOf("@html", line))
 	{
 	  at_html = true;
 	}
@@ -1120,13 +1120,13 @@ Driver::Set_MIKTEX_CWD ()
   string MIKTEX_CWD;
   MIKTEX_CWD.reserve (256);
   MIKTEX_CWD += pOptions->startDirectory.Get();
-  MIKTEX_CWD += T_(';');
+  MIKTEX_CWD += ';';
   MIKTEX_CWD += originalInputDirectory.Get();
   for (vector<string>::iterator it = pOptions->includeDirectories.begin();
        it != pOptions->includeDirectories.end();
        ++ it)
     {
-      MIKTEX_CWD += T_(';');
+      MIKTEX_CWD += ';';
       MIKTEX_CWD += *it;
     }
   Utils::SetEnvironmentString (MIKTEX_ENV_CWD_LIST, MIKTEX_CWD.c_str());
@@ -1157,7 +1157,7 @@ Driver::RunMakeinfo (/*[in]*/ const PathName &	pathFrom,
 
   CommandLineBuilder commandLine;
 
-  commandLine.AppendOption (T_("--footnote-style="), T_("end"));
+  commandLine.AppendOption ("--footnote-style=", T_("end"));
   commandLine.AppendOption (T_("-I "), originalInputDirectory);
 
   for (vector<string>::iterator it = pOptions->includeDirectories.begin();
@@ -1173,7 +1173,7 @@ Driver::RunMakeinfo (/*[in]*/ const PathName &	pathFrom,
   commandLine.AppendOption (T_("-o "), T_("/dev/null"));
 #endif
 
-  commandLine.AppendOption (T_("--macro-expand="), pathTo);
+  commandLine.AppendOption ("--macro-expand=", pathTo);
 
   commandLine.AppendArgument (pathFrom);
 
@@ -1198,7 +1198,7 @@ Driver::RunMakeinfo (/*[in]*/ const PathName &	pathFrom,
    _________________________________________________________________________ */
 
 // minimum texinfo.tex version to have macro expansion
-const char * txiprereq = T_("19990129");
+const char * txiprereq = "19990129";
 
 bool
 Driver::Check_texinfo_tex ()
@@ -1213,7 +1213,7 @@ Driver::Check_texinfo_tex ()
   bool newer = false;
 
   ScratchDirectory scratchDirectory;
-  scratchDirectory.Enter (T_("mcd"));
+  scratchDirectory.Enter ("mcd");
 
   StreamWriter writer (T_("txiversion.tex"));
   writer.WriteLine (T_("\\input texinfo.tex @bye"));
@@ -1341,7 +1341,7 @@ Driver::InsertCommands ()
     {
       return;
     }
-  string extra = FlattenStringVector(pOptions->texinfoCommands, T_('\n'));
+  string extra = FlattenStringVector(pOptions->texinfoCommands, '\n');
   pApplication->Verbose (T_("Inserting extra commands: %s"), extra.c_str());
   PathName path (extraDirectory, inputName);
   StreamWriter writer (path);
@@ -1394,8 +1394,8 @@ Driver::RunBibTeX ()
       FatalError (T_("%s could not be found."), Q_(pOptions->bibtexProgram));
     }
 
-  PathName logName (0, inputNameNoExt, T_(".log"));
-  PathName auxName (0, inputNameNoExt, T_(".aux"));
+  PathName logName (0, inputNameNoExt, ".log");
+  PathName auxName (0, inputNameNoExt, ".aux");
 
   int exitCode;
 
@@ -1430,7 +1430,7 @@ ChapterBib detected. Preparing to run BibTeX on first-level aux files..."));
 	  PathName subAuxNameNoExt (tmp);
 
 	  // append .aux extension
-	  PathName subAuxName (0, subAuxNameNoExt, T_(".aux"));
+	  PathName subAuxName (0, subAuxNameNoExt, ".aux");
           if (! (File::Exists(subAuxName)
 		 && Contains(subAuxName, &pOptions->regex_bibdata)
 		 && Contains(subAuxName, &pOptions->regex_bibstyle)))
@@ -1584,7 +1584,7 @@ Driver::InstallProgram (/*[in]*/ const char *	lpszProgram)
     }
   ProcessOutputTrash trash;
   Process::Run (pathExe,
-		T_("--mklinks"),
+		"--mklinks",
 		(pOptions->quiet ? &trash : 0));
 }
 
@@ -1622,28 +1622,28 @@ Driver::RunTeX ()
     {
       if (pOptions->sourceSpecialsWhere.length() > 0)
 	{
-	  commandLine.AppendOption (T_("--src-specials="),
+	  commandLine.AppendOption ("--src-specials=",
 				    pOptions->sourceSpecialsWhere);
 	}
       else
 	{
-	  commandLine.AppendOption (T_("--src-specials"));
+	  commandLine.AppendOption ("--src-specials");
 	}
     }
 #endif
   if (pOptions->quiet)
     {
-      commandLine.AppendOption (T_("--quiet"));
+      commandLine.AppendOption ("--quiet");
     }
   if (pOptions->batch && ! pOptions->quiet)
     {
-      commandLine.AppendOption (T_("--interaction="), T_("scrollmode"));
+      commandLine.AppendOption ("--interaction=", T_("scrollmode"));
     }
   commandLine.AppendArguments (pOptions->texOptions);
 #if 0
   if (pOptions->traceStreams.length() > 0)
     {
-      commandLine.AppendOption (T_("--trace="), pOptions->traceStreams);
+      commandLine.AppendOption ("--trace=", pOptions->traceStreams);
     }
 #endif
   commandLine.AppendArgument (pathInputFile);
@@ -1656,7 +1656,7 @@ Driver::RunTeX ()
   Process::Run (pathExe, commandLine.Get(), 0, &exitCode, 0);
   if (exitCode != 0)
     {
-      PathName logName (0, inputNameNoExt, T_(".log"));
+      PathName logName (0, inputNameNoExt, ".log");
       if (pOptions->clean)
 	{
 	  try
@@ -1690,7 +1690,7 @@ Driver::RunTeX ()
 bool
 Driver::Ready ()
 {
-  PathName logName (0, inputNameNoExt, T_(".log"));
+  PathName logName (0, inputNameNoExt, ".log");
 
   if (Contains(logName, T_("Rerun to get")))
     {
@@ -1738,7 +1738,7 @@ void
 Driver::InstallOutputFile ()
 {
   const char * lpszExt
-    = (pOptions->outputType == OutputType::PDF ? T_(".pdf") : T_(".dvi"));
+    = (pOptions->outputType == OutputType::PDF ? ".pdf" : ".dvi");
   pApplication->Verbose (T_("Copying %s file from %s to %s..."),
 			 lpszExt,
 			 Q_(scratchDirectory),
@@ -1785,8 +1785,8 @@ Driver::GetAuxFiles (/*[in]*/ const PathName &		baseName,
 	(File::Open(entry.name, FileMode::Open, FileAccess::Read));
       char buf[1];
       if (stream.Read(buf, 1) == 1
-	  && (buf[0] == T_('\\')
-	      || buf[0] == T_('\'')))
+	  && (buf[0] == '\\'
+	      || buf[0] == '\''))
 	{
 	  vec.push_back (entry.name);
 	}
@@ -1818,11 +1818,11 @@ Driver::GetAuxFiles (/*[out]*/ vector<string> &		auxFiles,
     }
 
   GetAuxFiles (inputNameNoExt, T_(".?o?"), auxFiles);
-  GetAuxFiles (inputNameNoExt, T_(".aux"), auxFiles);
+  GetAuxFiles (inputNameNoExt, ".aux", auxFiles);
 
   vector<string> files;
 
-  GetAuxFiles (inputNameNoExt, T_(".??"), files);
+  GetAuxFiles (inputNameNoExt, ".??", files);
 
   auxFiles.insert (auxFiles.end(), files.begin(), files.end());
 
@@ -1833,7 +1833,7 @@ Driver::GetAuxFiles (/*[out]*/ vector<string> &		auxFiles,
 
   files.clear ();
 
-  GetAuxFiles (inputNameNoExt, T_(".idx"), files);
+  GetAuxFiles (inputNameNoExt, ".idx", files);
 
   auxFiles.insert (auxFiles.end(), files.begin(), files.end());
 
@@ -1854,7 +1854,7 @@ void
 Driver::RunViewer ()
 {
   const char * lpszExt
-    = (pOptions->outputType == OutputType::PDF ? T_(".pdf") : T_(".dvi"));
+    = (pOptions->outputType == OutputType::PDF ? ".pdf" : ".dvi");
 
   PathName pathFileName (0, inputNameNoExt, lpszExt);
 
@@ -1917,7 +1917,7 @@ Driver::Run ()
   // If clean mode was specified, then move to the temporary directory.
   if (pOptions->clean)
     {
-      pApplication->Verbose (T_("cd %s"), Q_(scratchDirectory));
+      pApplication->Verbose ("cd %s", Q_(scratchDirectory));
       Directory::SetCurrentDirectory (scratchDirectory);
     }
 
@@ -1930,7 +1930,7 @@ Driver::Run ()
 	{
 	  pApplication->Verbose (T_("Backing up xref files: %s"),
 				 (FlattenStringVector(previousAuxFiles,
-						      T_(' '))
+						      ' ')
 				  .c_str()));
 	  CopyFiles (previousAuxFiles, auxDirectory);
 	}
@@ -2003,7 +2003,7 @@ enum CommandLineOptions {
 
 const struct poptOption optionTable[] = {
   {
-    T_("texiat"), T_('@'),
+    T_("texiat"), '@',
     POPT_ARG_NONE, 0,
     OPT_AT,
     T_("Use @input instead of \\input; for preloaded Texinfo."),
@@ -2011,7 +2011,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("batch"), T_('b'),
+    T_("batch"), 'b',
     POPT_ARG_NONE, 0,
     OPT_BATCH,
     T_("No interaction."),
@@ -2019,7 +2019,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("clean"), T_('c'),
+    T_("clean"), 'c',
     POPT_ARG_NONE, 0,
     OPT_CLEAN,
     T_("Remove all auxiliary files."),
@@ -2027,7 +2027,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("debug"), T_('D'),
+    T_("debug"), 'D',
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_DEBUG,
     T_("Print debug information."),
@@ -2035,7 +2035,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("expand"), T_('e'),
+    T_("expand"), 'e',
     POPT_ARG_NONE, 0,
     OPT_EXPAND,
     T_("Force macro expansion using makeinfo."),
@@ -2043,7 +2043,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("include-directory"), T_('I'),
+    T_("include-directory"), 'I',
     POPT_ARG_STRING, 0,
     OPT_INCLUDE,
     T_("Prepend DIR to the input search path."),
@@ -2051,7 +2051,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("language"), T_('l'),
+    T_("language"), 'l',
     POPT_ARG_STRING, 0,
     OPT_LANGUAGE,
     T_("Specify the LANG of FILE: LaTeX or Texinfo."),
@@ -2059,7 +2059,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("pdf"), T_('p'),
+    "pdf", 'p',
     POPT_ARG_NONE, 0,
     OPT_PDF,
     T_("Use pdftex or pdflatex for processing."),
@@ -2067,7 +2067,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("quiet"), T_('q'),
+    T_("quiet"), 'q',
     POPT_ARG_NONE, 0,
     OPT_QUIET,
     T_("No output unless errors (implies --batch)."),
@@ -2075,7 +2075,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("silent"), T_('s'),
+    T_("silent"), 's',
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_QUIET,
     T_("No output unless errors (implies --batch)."),
@@ -2083,15 +2083,15 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("texinfo"), T_('t'),
+    T_("texinfo"), 't',
     POPT_ARG_STRING, 0,
     OPT_TEXINFO,
     T_("Insert CMD after @setfilename in copy of input file."),
-    T_("CMD"),
+    "CMD",
   },
 
   {
-    T_("version"), T_('v'),
+    T_("version"), 'v',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Display version information and exit successfully."),
@@ -2099,7 +2099,7 @@ const struct poptOption optionTable[] = {
   },
 
   {
-    T_("verbose"), T_('V'),
+    T_("verbose"), 'V',
     POPT_ARG_NONE, 0,
     OPT_VERBOSE,
     T_("Report on what is done."),
@@ -2114,7 +2114,7 @@ const struct poptOption optionTable[] = {
     POPT_ARG_STRING, 0,
     OPT_MAX_ITER,
     T_("Limit number of iterations."),
-    T_("N"),
+    "N",
   },
 
   {
@@ -2127,7 +2127,7 @@ const struct poptOption optionTable[] = {
 
 #if defined(SUPPORT_OPT_SRC_SPECIALS)
   {
-    T_("src"), 0,
+    "src", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_SRC,
     T_("Pass option --src-specials to the TeX compiler."),
@@ -2264,7 +2264,7 @@ McdApp::Run (/*[in]*/ int		argc,
 	  break;
 #if defined(SUPPORT_OPT_SRC_SPECIALS)
 	case OPT_SRC:
-	  options.sourceSpecialsWhere = T_("");
+	  options.sourceSpecialsWhere = "";
 	  options.sourceSpecials = true;
 	  break;
 	case OPT_SRC_SPECIALS:
@@ -2306,9 +2306,9 @@ McdApp::Run (/*[in]*/ int		argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   int argCount = popt.GetArgCount();

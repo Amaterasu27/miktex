@@ -103,7 +103,7 @@ PropPageFormats::OnMake ()
 	  FormatInfo formatInfo =
 	    SessionWrapper(true)->GetFormatInfo(formatKey);
 	  CommandLineBuilder cmdLine;
-	  cmdLine.AppendOption (T_("--dump="), formatInfo.key);
+	  cmdLine.AppendOption ("--dump=", formatInfo.key);
 	  if (! pSheet->RunIniTeXMF(formatInfo.description.c_str(),
 				    cmdLine,
 				    ppd.get()))
@@ -164,7 +164,7 @@ PropPageFormats::MakeAlias (/*[in]*/ const FormatInfo & formatInfo)
 {
   if (SessionWrapper(true)->IsMiKTeXDirect())
     {
-      FATAL_MIKTEX_ERROR (T_("PropPageFormats::MakeAlias"),
+      FATAL_MIKTEX_ERROR ("PropPageFormats::MakeAlias",
 			  T_("Operation not supported."),
 			  formatInfo.compiler.c_str());
     }
@@ -173,13 +173,13 @@ PropPageFormats::MakeAlias (/*[in]*/ const FormatInfo & formatInfo)
 				       FileType::EXE,
 				       compilerPath))
     {
-      FATAL_MIKTEX_ERROR (T_("PropPageFormats::MakeAlias"),
+      FATAL_MIKTEX_ERROR ("PropPageFormats::MakeAlias",
 			  T_("The compiler could not be found."),
 			  formatInfo.compiler.c_str());
     }
   PathName pathBinDir =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
-  PathName pathAlias (pathBinDir, formatInfo.name, T_(".exe"));
+  PathName pathAlias (pathBinDir, formatInfo.name, ".exe");
   if (compilerPath != pathAlias && ! File::Exists(pathAlias))
     {
       File::Copy (compilerPath, pathAlias);
@@ -246,7 +246,7 @@ PropPageFormats::OnRemove ()
 	  SessionWrapper(true)->DeleteFormatInfo (formatKey);
 	  if (! listControl.DeleteItem(idx))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
 	    }
 	}
       EnableButtons ();
@@ -278,7 +278,7 @@ PropPageFormats::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -340,7 +340,7 @@ PropPageFormats::GetSelectedItem ()
   POSITION pos = listControl.GetFirstSelectedItemPosition();
   if (pos == 0)
     {
-      UNEXPECTED_CONDITION (T_("PropPageFormats::GetSelectedItem"));
+      UNEXPECTED_CONDITION ("PropPageFormats::GetSelectedItem");
     }
   return (listControl.GetNextSelectedItem(pos));
 }
@@ -355,7 +355,7 @@ PropPageFormats::Refresh ()
 {
   if (! listControl.DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
 
   FormatInfo formatInfo;
@@ -373,7 +373,7 @@ PropPageFormats::Refresh ()
       int whereIndex = listControl.InsertItem(&lvitem);
       if (whereIndex < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	}
       lvitem.iItem = whereIndex;
       lvitem.mask = LVIF_TEXT;
@@ -381,14 +381,14 @@ PropPageFormats::Refresh ()
       lvitem.pszText = const_cast<char*>(formatInfo.description.c_str());
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 2;
-      lvitem.pszText = (formatInfo.exclude ? T_("exclude") : T_(""));
+      lvitem.pszText = (formatInfo.exclude ? T_("exclude") : "");
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
     }
   

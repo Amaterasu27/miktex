@@ -197,7 +197,7 @@ enum Option
 const struct poptOption ArCtrl::aoption[] =
 {
   {
-    T_("version"), T_('V'),
+    T_("version"), 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -228,7 +228,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
     POPT_ARG_STRING, 0,
     OPT_PAGE,
     T_("Go to the N-th page."),
-    T_("N"),
+    "N",
   },
 
   {
@@ -240,7 +240,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
   },
 
   {
-    T_("version"), T_('V'),
+    T_("version"), 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -275,7 +275,7 @@ const struct poptOption ArCtrl::aoptionClose[] =
   },
 
   {
-    T_("version"), T_('V'),
+    T_("version"), 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -294,7 +294,7 @@ const struct poptOption ArCtrl::aoptionClose[] =
 const struct poptOption ArCtrl::aoptionCommandLoop[] =
 {
   {
-    T_("version"), T_('V'),
+    T_("version"), 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -349,7 +349,7 @@ ArCtrl::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
-       << T_("\n")
+       << "\n"
        << T_("Written by Christian Schenk in 2006.\n")
        << T_("Based on public domain work by Fabrice Popineau.\n")
        << T_("Based on Adobe documentation.") << endl;
@@ -367,7 +367,7 @@ ArCtrl::FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGNAME << T_(": ")
+  cerr << PROGNAME << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -428,7 +428,7 @@ ArCtrl::StartAR ()
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     T_(__FILE__),				\
+			     __FILE__,				\
 			     __LINE__)
 
 HDDEDATA
@@ -458,7 +458,7 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
 	    DWORD len = DdeGetData(hdata, 0, 0, 0);
 	    if (DdeGetLastError(idInst) != DMLERR_NO_ERROR)
 	      {
-		FATAL_MIKTEX_ERROR (T_("ArCtrl::DdeCallback"),
+		FATAL_MIKTEX_ERROR ("ArCtrl::DdeCallback",
 				    T_("DdeGetData() failed for some reason."),
 				    0);
 	      }
@@ -469,7 +469,7 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
 			0);
 	    if (DdeGetLastError(idInst) != DMLERR_NO_ERROR)
 	      {
-		FATAL_MIKTEX_ERROR (T_("ArCtrl::DdeCallback"),
+		FATAL_MIKTEX_ERROR ("ArCtrl::DdeCallback",
 				    T_("DdeGetData() failed for some reason."),
 				    0);
 	      }
@@ -736,7 +736,7 @@ bool
 ArCtrl::Execute (/*[in]*/ const string & command)
 {
   StreamWriter stdErr (stderr);
-  Tokenizer tok (command.c_str(), T_(" \t\r\n"));
+  Tokenizer tok (command.c_str(), " \t\r\n");
   const char * lpszCommand = tok.GetCurrent();
   if (lpszCommand == 0)
     {
@@ -943,9 +943,9 @@ ArCtrl::Run (/*[in]*/ int				argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   const char ** leftovers = popt.GetArgs();

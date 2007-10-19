@@ -64,7 +64,7 @@ FinishPage::OnInitDialog ()
       CWnd * pWnd = GetDlgItem(IDC_WELCOME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("FinishPage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("FinishPage::OnInitDialog");
 	}
       pWnd->SetFont (&fntWelcome);
     }
@@ -95,23 +95,23 @@ FinishPage::OnSetActive ()
 	  CString str;
 	  if (! str.LoadString(IDS_FINISH_ERROR))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 	  CWnd * pWnd;
 	  pWnd = GetDlgItem(IDC_STATUS);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 	  pWnd->SetWindowText (str);
 	  if (! str.LoadString(IDS_REMEDY))
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 	  pWnd = GetDlgItem(IDC_MESSAGE);
 	  if (pWnd == 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("FinishPage::OnSetActive"));
+	      UNEXPECTED_CONDITION ("FinishPage::OnSetActive");
 	    }
 	  pWnd->SetWindowText (str);
 	  viewReport = BST_CHECKED;

@@ -21,6 +21,8 @@
 
 #pragma once
 
+#if defined(ENABLE_WINDOWS_CAB_EXTRACTOR)
+
 #include "MiKTeX/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
@@ -117,3 +119,5 @@ private:
 };
 
 END_INTERNAL_NAMESPACE;
+
+#endif

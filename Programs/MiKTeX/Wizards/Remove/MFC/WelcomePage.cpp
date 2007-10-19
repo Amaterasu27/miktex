@@ -77,7 +77,7 @@ WelcomePage::OnInitDialog ()
       CWnd * pWnd = GetDlgItem(IDC_WELCOME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("WelcomePage::OnInitDialog"));
+	  UNEXPECTED_CONDITION ("WelcomePage::OnInitDialog");
 	}
       extern CFont fntWelcome;
       pWnd->SetFont (&fntWelcome);
@@ -176,15 +176,15 @@ WelcomePage::ShowItems ()
   listBox.ResetContent ();
   if (listBox.AddString(T_("Installed packages")) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
     }
   if (listBox.AddString(T_("Program folder")) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
     }
   if (listBox.AddString(T_("MiKTeX registry settings")) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
     }
   if (thoroughly != FALSE)
     {
@@ -195,7 +195,7 @@ WelcomePage::ShowItems ()
 	{
 	  if (listBox.AddString(it->Get()) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListBox::AddString"), 0);
+	      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	    }
 	}
     }

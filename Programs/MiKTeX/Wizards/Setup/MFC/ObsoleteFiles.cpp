@@ -28,9 +28,9 @@ const char * g_apszObsoleteFiles[] =
   MIKTEX_PATH_BIN_DIR T_("\\biglatex.exe"),
   MIKTEX_PATH_BIN_DIR T_("\\hugetex.exe"),
   MIKTEX_PATH_BIN_DIR T_("\\hugelatex.exe"),
-  MIKTEX_PATH_BIN_DIR T_("\\mfc42.dll"),
-  MIKTEX_PATH_BIN_DIR T_("\\msvcp50.dll"),
-  MIKTEX_PATH_BIN_DIR T_("\\msvcp60.dll"),
-  MIKTEX_PATH_BIN_DIR T_("\\msvcrt.dll"),
+  MIKTEX_PATH_BIN_DIR "\\mfc42.dll",
+  MIKTEX_PATH_BIN_DIR "\\msvcp50.dll",
+  MIKTEX_PATH_BIN_DIR "\\msvcp60.dll",
+  MIKTEX_PATH_BIN_DIR "\\msvcrt.dll",
   0,
 };

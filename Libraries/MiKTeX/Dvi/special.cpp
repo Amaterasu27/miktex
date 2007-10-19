@@ -79,7 +79,7 @@ DviImpl::PatternToShadeLevel (/*[in]*/ const char * lpszTexture)
 	  break;
 	default:
 	  log_error->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("invalid texture: %s"),
 	     lpszTexture);
 	  return (0.5);
@@ -216,7 +216,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      if (sscanf_s(lpsz, "%f%2s", &texWidth, unit) != 2)
 		{
 		  log_error->WriteFormattedLine
-		    (T_("libdvi"),
+		    ("libdvi",
 		     T_("invalid special: %s"),
 		     lpsz);
 		}
@@ -253,7 +253,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	    }
 	  else if (strncmp(lpsz, "message", 7) == 0)
 	    {
-	      log_dvifile->WriteLine (T_("libdvi"), lpsz + 7);
+	      log_dvifile->WriteLine ("libdvi", lpsz + 7);
 	      ret = true;
 	    }
 	}
@@ -339,7 +339,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      != 1)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("bad pn special: %s"),
 		 lpszSpecial);
 	    }
@@ -367,7 +367,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	  if (sscanf_s(lpszSpecial, "pa %d %d", &p.x, &p.y) != 2)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("bad pa special: %s"),
 		 lpszSpecial);
 	    }
@@ -414,7 +414,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
 	      != 2)
 	    {
 	      log_error->WriteFormattedLine
-		(T_("libdvi"),
+		("libdvi",
 		 T_("bad sh special: %s"),
 		 lpszSpecial);
 	    }
@@ -453,7 +453,7 @@ DviImpl::InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
   
   if (! ret)
     {
-      log_error->WriteFormattedLine (T_("libdvi"),
+      log_error->WriteFormattedLine ("libdvi",
 				     T_("unimplemented special: %s"),
 				     lpszSpecial);
     }

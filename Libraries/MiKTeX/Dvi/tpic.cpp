@@ -45,7 +45,7 @@ TpicPolySpecialImpl::Parse ()
       if (sscanf_s(GetXXX(), "da %f", &m_length) != 1)
 	{
 	  log_error->WriteLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("bad da special"));
 	}
       else
@@ -58,7 +58,7 @@ TpicPolySpecialImpl::Parse ()
       if (sscanf_s(GetXXX(), "dt %f", &m_length) != 1)
 	{
 	  log_error->WriteLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("bad dt special"));
 	}
       else
@@ -96,13 +96,11 @@ TpicArcSpecialImpl::Parse ()
 {
   m_bOutline = (strncmp(GetXXX(), "ar", 2) == 0);
   if (sscanf_s(GetXXX() + 2,
-	     " %d %d %d %d %f %f",
-	     &cx, &cy, &m_rx, &m_ry, &m_s, &m_e)
+	       " %d %d %d %d %f %f",
+	       &cx, &cy, &m_rx, &m_ry, &m_s, &m_e)
       != 6)
     {
-      log_error->WriteLine
-	(T_("libdvi"),
-	 T_("bad ar special"));
+      log_error->WriteLine ("libdvi", T_("bad ar special"));
       return (DviSpecialType::Unknown);
     }
   return (DviSpecialType::Tpic);

@@ -71,19 +71,19 @@ MetafontApp::AddOptions ()
 Set bistack_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_BISTACK_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("lig-table-size\0\
 Set lig_table_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_LIG_TABLE_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 
   AddOption (T_("path-size\0\
 Set path_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_PATH_SIZE,
 	     required_argument,
-	     T_("N"));
+	     "N");
 }
 
 /* _________________________________________________________________________

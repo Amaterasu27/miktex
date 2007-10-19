@@ -63,7 +63,7 @@ DviDoc::DviDoc ()
   PaperSizeInfo paperSizeInfo;
   if (! pSession->GetPaperSizeInfo(-1, paperSizeInfo))
     {
-      UNEXPECTED_CONDITION (T_("YapConfig::Load"));
+      UNEXPECTED_CONDITION ("YapConfig::Load");
     }
   dvipsPaperName = paperSizeInfo.dvipsName;
 }
@@ -198,7 +198,7 @@ DviDoc::CreateDocument (/*[in]*/ const char * lpszPathName)
   MIKTEXMFMODE mfmode;
   if (! pSession->GetMETAFONTMode(GetMetafontMode(), &mfmode))
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::CreateDocument"));
+      UNEXPECTED_CONDITION ("DviDoc::CreateDocument");
     }
   MIKTEX_ASSERT (pDvi == 0);
   pDvi =
@@ -265,7 +265,7 @@ DviDoc::GetDisplayResolution ()
   MIKTEX_ASSERT (g_pYapConfig.get() != 0);
   if (! pSession->GetMETAFONTMode(g_pYapConfig->displayMetafontMode, &mfmode))
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetDisplayResolution"));
+      UNEXPECTED_CONDITION ("DviDoc::GetDisplayResolution");
     }
   return (mfmode.iHorzRes);
 }
@@ -283,7 +283,7 @@ DviDoc::GetPrinterResolution ()
   MIKTEX_ASSERT (g_pYapConfig.get() != 0);
   if (! pSession->GetMETAFONTMode(g_pYapConfig->printerMetafontMode, &mfmode))
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetPrinterResolution"));
+      UNEXPECTED_CONDITION ("DviDoc::GetPrinterResolution");
     }
   return (mfmode.iHorzRes);
 }
@@ -325,7 +325,7 @@ DviDoc::GetPageName (/*[in]*/ unsigned pageIdx)
   DviPage * pDviPage = pDvi->GetPage(pageIdx);
   if (pDviPage == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetPageName"));
+      UNEXPECTED_CONDITION ("DviDoc::GetPageName");
     }
   AutoUnlockPage autoUnlockPage (pDviPage);
   return (pDviPage->GetName());
@@ -344,7 +344,7 @@ DviDoc::GetPageNum (/*[in]*/ int pageIdx)
   DviPage * pDviPage = pDvi->GetPage(pageIdx);
   if (pDviPage == 0)
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetPageNum"));
+      UNEXPECTED_CONDITION ("DviDoc::GetPageNum");
     }
   AutoUnlockPage autoUnlockPage (pDviPage);
   return (pDviPage->GetReg(0));
@@ -611,7 +611,7 @@ DviDoc::MakeFonts ()
     }
   if (! done)
     {
-      FATAL_MIKTEX_ERROR (T_("DviDoc::MakeFonts"),
+      FATAL_MIKTEX_ERROR ("DviDoc::MakeFonts",
 			  T_("Not all fonts could be loaded. \
 See 'File->Document Properties', for details."),
 			  0);

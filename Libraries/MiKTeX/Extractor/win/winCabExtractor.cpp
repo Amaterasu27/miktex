@@ -21,6 +21,8 @@
 
 #include "StdAfx.h"
 
+#if defined(ENABLE_WINDOWS_CAB_EXTRACTOR)
+
 #include "internal.h"
 
 #include "win/winCabExtractor.h"
@@ -30,7 +32,7 @@ using namespace MiKTeX::Extractor;
 using namespace std;
 
 #define ERROR_TITLE T_("Cabinet Extraction Problem")
-#define CRLF T_("\r\n")
+#define CRLF "\r\n"
 
 BEGIN_INTERNAL_NAMESPACE;
 
@@ -54,8 +56,8 @@ winCabExtractor::winCabExtractor ()
     hfdi (0),
     fileCount (0),
     pCallback (0),
-    trace_error (TraceStream::Open(T_("error"))),
-    trace_extractor (TraceStream::Open(T_("extractor")))
+    trace_error (TraceStream::Open("error")),
+    trace_extractor (TraceStream::Open("extractor"))
 {
   memset (&erf, 0, sizeof(erf));
 }
@@ -92,9 +94,10 @@ winCabExtractor::Dispose ()
       this->hfdi = 0;
       if (! FDIDestroy(hfdi))
 	{
-	  FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Dispose"),
-			   T_("The cabinet extractor could not be destroyed."),
-			   0);
+	  FATAL_EXTRACTOR_ERROR
+	    ("winCabExtractor::Dispose",
+	     T_("The cabinet extractor could not be destroyed."),
+	     0);
 	}
     }
   if (trace_error.get() != 0)
@@ -120,7 +123,7 @@ winCabExtractor::FatalFdiError (/*[in]*/ const char * lpszCabinetPath)
 {
   if (! erf.fError)
     {
-      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::FatalFdiError"),
+      FATAL_EXTRACTOR_ERROR ("winCabExtractor::FatalFdiError",
 			     T_("Cabinet extraction problem."),
 			     lpszCabinetPath);
     }
@@ -165,9 +168,9 @@ winCabExtractor::FatalFdiError (/*[in]*/ const char * lpszCabinetPath)
       message = T_("Cabinet extraction problem.");
       break;
     }
-  FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::FatalFdiError"),
-		   message.c_str(),
-		   lpszCabinetPath);
+  FATAL_EXTRACTOR_ERROR ("winCabExtractor::FatalFdiError",
+			 message.c_str(),
+			 lpszCabinetPath);
 }
 
 /* _________________________________________________________________________
@@ -184,17 +187,17 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 			  /*[in]*/ const char *	lpszPrefix)
 {
   trace_extractor->WriteFormattedLine
-    (T_("libextractor"),
-     T_("extracting %s to %s (%s directories)"),
+    ("libextractor",
+     T_("extracting %s to %s (%s)"),
      Q_(cabinetPath),
      Q_(destDir),
      (makeDirectories
-      ? T_("make")
-      : T_("don't make")));
+      ? T_("make directories")
+      : T_("don't make directories")));
   hfdi = FDICreate(Alloc, Free, Open, Read, Write, Close, Seek, 0, &erf);
   if (hfdi == 0)
     {
-      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Extract"),
+      FATAL_EXTRACTOR_ERROR ("winCabExtractor::Extract",
 			     T_("The cabinet extractor could not be created."),
 			     0);
     }
@@ -221,9 +224,9 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 	    this);
   if (error)
     {
-      FATAL_EXTRACTOR_ERROR (T_("winCabExtractor::Extract"),
-		       T_("Cabinet extraction problem."),
-		       pathCabName.Get());
+      FATAL_EXTRACTOR_ERROR ("winCabExtractor::Extract",
+			     T_("Cabinet extraction problem."),
+			     pathCabName.Get());
     }
   if (cancelled)
     {
@@ -233,9 +236,9 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
     {
       FatalFdiError (cabinetPath.Get());
     }
-  trace_extractor->WriteFormattedLine (T_("libextractor"),
-				 T_("%u file(s)"),
-				 static_cast<unsigned>(fileCount));
+  trace_extractor->WriteFormattedLine ("libextractor",
+				       T_("%u file(s)"),
+				       static_cast<unsigned>(fileCount));
 }
 
 /* _________________________________________________________________________
@@ -256,7 +259,7 @@ winCabExtractor::Extract (/*[in]*/ Stream *		pStream,
   UNUSED_ALWAYS (makeDirectories);
   UNUSED_ALWAYS (pCallback);
   UNUSED_ALWAYS (lpszPrefix);
-  UNIMPLEMENTED (T_("winCabExtractor::Extract"));
+  UNIMPLEMENTED ("winCabExtractor::Extract");
 }
 
 /* _________________________________________________________________________
@@ -271,7 +274,7 @@ FNALLOC(winCabExtractor::Alloc)
       void * pv = malloc(cb);
       if (pv == 0)
 	{
-	  OUT_OF_MEMORY (T_("winCabExtractor::Alloc"));
+	  OUT_OF_MEMORY ("winCabExtractor::Alloc");
 	}
       return (pv);
     }
@@ -330,26 +333,25 @@ FNOPEN(winCabExtractor::Open)
 	  else
 	    {
 	      int err = errno;
-	      CRT_ERROR (T_("open"), pszFile);
+	      CRT_ERROR ("open", pszFile);
 	      string errorMessage;
-	      otstringstream text;
-	      text << T_("The file") << CRLF
-		   << CRLF
-		   << T_("  ") << pszFile << CRLF
-		   << CRLF
-		   << T_("could not be accessed for")
-		   << T_(" the following reason:") << CRLF
-		   << CRLF
-		   << GetErrnoMessage(err, errorMessage) << CRLF
-		   << CRLF
-		   << T_("Make sure that no other application")
-		   << T_(" uses the file and that you have ")
-		   << ((oflag & _O_RDONLY) != 0 ? T_("read") : T_("write"))
-		   << T_(" permission on the file.");
-	      if (MessageBox(0,
-			     text.str().c_str(),
-			     ERROR_TITLE,
-			     MB_ICONSTOP | MB_RETRYCANCEL)
+	      ostringstream text;
+	      text
+		<< T_("\
+The operation could not be completed because the following file could not \
+be accessed:")
+		<< CRLF
+		<< CRLF
+		<< pszFile
+		<< CRLF
+		<< CRLF
+		<< T_("\
+Make sure that no other application uses the file and that you have \
+permission to access the file.");
+	      if (MessageBoxA(0,
+			      text.str().c_str(),
+			      ERROR_TITLE,
+			      MB_ICONSTOP | MB_RETRYCANCEL)
 		  != IDRETRY)
 		{
 		  break;
@@ -383,20 +385,24 @@ FNREAD(winCabExtractor::Read)
 	    {
 	      int err = errno;
 	      const char * lpszFileName = openFiles[hf].Get();
-	      CRT_ERROR (T_("read"), lpszFileName);
+	      CRT_ERROR ("read", lpszFileName);
 	      string errorMessage;
-	      otstringstream text;
-	      text << T_("The file") << CRLF
-		   << CRLF
-		   << T_("  ") << lpszFileName << CRLF
-		   << CRLF
-		   << T_("could not be read for the following reason:") << CRLF
-		   << CRLF
-		   << GetErrnoMessage(err, errorMessage);
-	      if (MessageBox(0,
-			     text.str().c_str(),
-			     ERROR_TITLE,
-			     MB_ICONSTOP | MB_RETRYCANCEL)
+	      ostringstream text;
+	      text
+		<< T_("\
+The operation could not be completed because the following file could not \
+be read:")
+		<< CRLF
+		<< CRLF
+		<< lpszFileName
+		<< CRLF
+		<< CRLF
+		<< T_("Reason: ")
+		<< GetErrnoMessage(err, errorMessage);
+	      if (MessageBoxA(0,
+			      text.str().c_str(),
+			      ERROR_TITLE,
+			      MB_ICONSTOP | MB_RETRYCANCEL)
 		  != IDRETRY)
 		{
 		  break;
@@ -430,66 +436,24 @@ FNWRITE(winCabExtractor::Write)
 	    {
 	      int err = errno;
 	      const char * lpszFileName = openFiles[hf].Get();
-	      CRT_ERROR (T_("write"), lpszFileName);
+	      CRT_ERROR ("write", lpszFileName);
 	      string errorMessage;
-	      otstringstream text;
-	      text << T_("The file") << CRLF
-		   << CRLF
-		   << T_("  ") << lpszFileName << CRLF
-		   << CRLF
-		   << T_("could not be written for the")
-		   << T_(" following reason:") << CRLF
-		   << CRLF
-		   << GetErrnoMessage(err, errorMessage) << CRLF
-		   << CRLF;
-	      char szDrive[BufferSizes::MaxPath];
-	      char szDirectory[BufferSizes::MaxPath];
-	      char szDisplayName[BufferSizes::MaxPath];
-	      PathName::Split (lpszFileName,
-			       szDrive, BufferSizes::MaxPath,
-			       szDirectory, BufferSizes::MaxPath,
-			       szDisplayName, BufferSizes::MaxPath,
-			       0, 0);
-	      switch (err)
-		{
-		case EACCES:
-		  text << T_("Make sure that the name \"")
-		       << szDisplayName
-		       << T_("\" is not reserved by the system.")
-		       << T_(" You can check this by entering") << CRLF
-		       << CRLF
-		       << T_("  echo TEST > ")
-		       << szDisplayName << T_(".txt") << CRLF
-		       << CRLF
-		       << T_("in the command prompt window.");
-#if 0
-		  if (PathName::Compare(szDisplayName, T_("cd")) == 0)
-		    {
-		      // <todo>check config.sys</todo
-		    }
-#endif
-		  break;
-		case ENOSPC:
-		  if (szDrive[0] != 0)
-		    {
-		      text << T_("Make sure that drive ")
-			   << szDrive
-			   << T_(' ');
-		    }
-		  else
-		    {
-		      text << T_("Make sure that the directory") << CRLF
-			   << CRLF
-			   << T_("  ") << szDirectory << CRLF
-			   << CRLF;
-		    }
-		  text << T_("has enough free disk space.");
-		  break;
-		}
-	      if (MessageBox(0,
-			     text.str().c_str(),
-			     ERROR_TITLE,
-			     MB_ICONSTOP | MB_RETRYCANCEL)
+	      ostringstream text;
+	      text
+		<< T_("\
+The operation could not be completed because the following file could not \
+be written:")
+		<< CRLF
+		<< CRLF
+		<< lpszFileName
+		<< CRLF
+		<< CRLF
+		<< T_("Reason: ")
+		<< GetErrnoMessage(err, errorMessage);
+	      if (MessageBoxA(0,
+			      text.str().c_str(),
+			      ERROR_TITLE,
+			      MB_ICONSTOP | MB_RETRYCANCEL)
 		  != IDRETRY)
 		{
 		  break;
@@ -517,7 +481,7 @@ FNCLOSE(winCabExtractor::Close)
       int ret = _close(static_cast<int>(hf));
       if (ret != 0)
 	{
-	  CRT_ERROR (T_("close"), openFiles[hf].Get());
+	  CRT_ERROR ("close", openFiles[hf].Get());
 	}
       openFiles.erase (hf);
       return (ret);
@@ -545,21 +509,24 @@ FNSEEK(winCabExtractor::Seek)
 	    {
 	      int err = errno;
 	      const char * lpszFileName = openFiles[hf].Get();
-	      CRT_ERROR (T_("seek"), lpszFileName);
+	      CRT_ERROR ("seek", lpszFileName);
 	      string errorMessage;
-	      otstringstream text;
-	      text << T_("The file") << CRLF
-		   << CRLF
-		   << T_("  ") << lpszFileName << CRLF
-		   << CRLF
-		   << T_("could not be accessed for the")
-		   << T_(" following reason:") << CRLF
-		   << CRLF
-		   << GetErrnoMessage(err, errorMessage);
-	      if (MessageBox(0,
-			     text.str().c_str(),
-			     ERROR_TITLE,
-			     MB_ICONSTOP | MB_RETRYCANCEL)
+	      ostringstream text;
+	      text
+		<< T_("\
+The operation could not be completed because the following file could not \
+be read:")
+		<< CRLF
+		<< CRLF
+		<< lpszFileName
+		<< CRLF
+		<< CRLF
+		<< T_("Reason: ")
+		<< GetErrnoMessage(err, errorMessage);
+	      if (MessageBoxA(0,
+			      text.str().c_str(),
+			      ERROR_TITLE,
+			      MB_ICONSTOP | MB_RETRYCANCEL)
 		  != IDRETRY)
 		{
 		  break;
@@ -652,18 +619,22 @@ FNFDINOTIFY(winCabExtractor::Notify)
 		      {
 			throw;
 		      }
-		    otstringstream text;
-		    text << T_("The directory") << CRLF
-			 << CRLF
-			 << T_("  ") << pathDestDir.Get() << CRLF
-			 << CRLF
-			 <<  T_("could not be created for the following")
-			 << T_(" reason:") << CRLF
-			 << CRLF
-			 << e.what() << CRLF
-			 << CRLF
-			 << T_("Make sure you have permission to")
-			 << T_(" create this directory.");
+		    ostringstream text;
+		    text
+		      << T_("\
+The operation could not be completed because the following directory \
+could not be created:")
+		      << CRLF
+		      << CRLF
+		      << pathDestDir.Get()
+		      << CRLF
+		      << CRLF
+		      << T_("Reason: ")
+		      << e.what()
+		      << CRLF
+		      << CRLF
+		      << T_("\
+Make sure you have permission to create this directory.");
 		    if (! This->pCallback->OnError(text.str().c_str()))
 		      {
 			throw;
@@ -704,19 +675,19 @@ FNFDINOTIFY(winCabExtractor::Notify)
 	    // set the file time
 	    if (_commit(static_cast<int>(pfdin->hf)) != 0)
 	      {
-		CRT_ERROR (T_("_commit"), 0);
+		CRT_ERROR ("_commit", 0);
 	      }
 	    FILETIME filetime;
 	    if (! DosDateTimeToFileTime(pfdin->date, pfdin->time, &filetime))
 	      {
-		WINDOWS_ERROR (T_("DosDateTimeToFileTime"), 0);
+		WINDOWS_ERROR ("DosDateTimeToFileTime", 0);
 	      }
 	    else
 	      {
 		FILETIME filetimeLocal;
 		if (! LocalFileTimeToFileTime(&filetime, &filetimeLocal))
 		  {
-		    WINDOWS_ERROR (T_("LocalFileTimeToFileTime"), 0);
+		    WINDOWS_ERROR ("LocalFileTimeToFileTime", 0);
 		  }
 		else
 		  {
@@ -725,7 +696,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
 				      0,
 				      &filetimeLocal))
 		      {
-			WINDOWS_ERROR (T_("SetFileTime"), 0);
+			WINDOWS_ERROR ("SetFileTime", 0);
 		      }
 		  }
 	      }
@@ -776,7 +747,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
 	      }
 	    if (! SetFileAttributes(path.Get(), attributes))
 	      {
-		WINDOWS_ERROR (T_("SetFileAttributes"), path.Get());
+		WINDOWS_ERROR ("SetFileAttributes", path.Get());
 	      }
 
 	    // notify the client
@@ -799,7 +770,7 @@ FNFDINOTIFY(winCabExtractor::Notify)
     }
   catch (const OperationCancelledException &)
     {
-      This->trace_extractor->WriteFormattedLine (T_("libextractor"),
+      This->trace_extractor->WriteFormattedLine ("libextractor",
 			      T_("operation cancelled by client"));
       This->cancelled = true;
       return (-1);
@@ -812,3 +783,5 @@ FNFDINOTIFY(winCabExtractor::Notify)
 }
 
 END_INTERNAL_NAMESPACE;
+
+#endif

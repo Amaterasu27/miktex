@@ -519,7 +519,7 @@ DviDoc::GetGraphicsInclusion (/*[in]*/ int			pageIdx,
 #if 0
   if (static_cast<size_t>(pageIdx) >= graphicsInclusions.size())
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetGraphicsInclusion"));
+      UNEXPECTED_CONDITION ("DviDoc::GetGraphicsInclusion");
     }
 #endif
   vector<GraphicsInclusion> & vec = graphicsInclusions[pageIdx];
@@ -529,7 +529,7 @@ DviDoc::GetGraphicsInclusion (/*[in]*/ int			pageIdx,
     }
   if (idx > vec.size())
     {
-      UNEXPECTED_CONDITION (T_("DviDoc::GetGraphicsInclusion"));
+      UNEXPECTED_CONDITION ("DviDoc::GetGraphicsInclusion");
     }
   graphicsInclusion = vec[idx];
   return (true);

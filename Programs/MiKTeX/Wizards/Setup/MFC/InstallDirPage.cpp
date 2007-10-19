@@ -95,10 +95,10 @@ InstallDirPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
       if (pDX->m_bSaveAndValidate)
 	{
 	  m_strInstallDir.Trim ();
-	  m_strInstallDir.Replace (T_('/'), T_('\\'));
+	  m_strInstallDir.Replace ('/', '\\');
 	  if (m_strInstallDir.GetLength() > 3)
 	    {
-	      m_strInstallDir.TrimRight (T_('\\'));
+	      m_strInstallDir.TrimRight ('\\');
 	    }
 	}
       DDV_Path (pDX, m_strInstallDir);
@@ -205,7 +205,7 @@ InstallDirPage::OnChangePathName ()
       CWnd * pWnd = GetDlgItem(IDC_PATHNAME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("InstallDirPage::OnChangePathName"));
+	  UNEXPECTED_CONDITION ("InstallDirPage::OnChangePathName");
 	}
       CString str;
       pWnd->GetWindowText (str);
@@ -305,7 +305,7 @@ InstallDirPage::OnBrowse ()
       CWnd * pWnd = GetDlgItem(IDC_PATHNAME);
       if (pWnd == 0)
 	{
-	  UNEXPECTED_CONDITION (T_("InstallDirPage::OnBrowse"));
+	  UNEXPECTED_CONDITION ("InstallDirPage::OnBrowse");
 	}
       pWnd->SetWindowText (szDir);
       OnChangePathName ();

@@ -82,23 +82,23 @@ SearchPackageDialog::OnInitDialog ()
       if (listControl.InsertColumn(0,
 				   T_("Name"),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-xxx mmmmmmmm")),
+				   listControl.GetStringWidth("\
+xxx mmmmmmmm"),
 				   0)
 	  < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
 	}
 
       if (listControl.InsertColumn(1,
 				   T_("Title"),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
+				   listControl.GetStringWidth("\
+xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
 				   1)
 	  < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
 	}
 
       EnableButtons ();
@@ -214,7 +214,7 @@ SearchPackageDialog::GetWindowText (/*[in]*/ UINT controlId)
   CWnd * pWnd = GetDlgItem(controlId);
   if (pWnd == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::GetDlgItem", 0);
     }
   CString str;
   pWnd->GetWindowText (str);
@@ -238,12 +238,12 @@ SearchPackageDialog::EnableButtons ()
   CWnd * pOk = GetDlgItem(IDOK);
   if (pOk == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::GetDlgItem", 0);
     }
   CWnd * pFindNow = GetDlgItem(IDC_FIND_NOW);
   if (pFindNow == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CWnd::GetDlgItem"), 0);
+      FATAL_WINDOWS_ERROR ("CWnd::GetDlgItem", 0);
     }
   pOk->EnableWindow (l > 0);
   CButton * pbn;
@@ -282,7 +282,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
       CWaitCursor cur;
       if (! listControl.DeleteAllItems())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
 	}
       packages.clear ();
       auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
@@ -362,7 +362,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  lvitem.pszText = const_cast<LPTSTR>(packageInfo.displayName.c_str());
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	    }
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iItem = idx;
@@ -370,7 +370,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  lvitem.pszText = const_cast<LPTSTR>(packageInfo.title.c_str());
 	  if (! listControl.SetItem(&lvitem))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	    }
 	  packages[idx] = packageInfo;
 	  ++ idx;
@@ -434,7 +434,7 @@ SearchPackageDialog::OnNMRclickListPackages (/*[in]*/ NMHDR *	pNMHDR,
       int nItem = listControl.GetNextItem(-1, LVNI_SELECTED);
       if (nItem < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	}
       DWORD_PTR itemData = listControl.GetItemData(nItem);
       DoContextMenu (pNMIA->ptAction,
@@ -456,24 +456,23 @@ SearchPackageDialog::OnNMRclickListPackages (/*[in]*/ NMHDR *	pNMHDR,
    _________________________________________________________________________ */
 
 void
-SearchPackageDialog::DoContextMenu
-(/*[in]*/ POINT			pt,
- /*[in]*/ const char *	lpszExternalName)
+SearchPackageDialog::DoContextMenu (/*[in]*/ POINT		pt,
+				    /*[in]*/ const char * lpszExternalName)
 {
   CMenu menu;
   if (! menu.LoadMenu(ID_PACKAGE_MENU2))
     {
-      FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+      FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
     }
   CMenu * pPopup = menu.GetSubMenu(0);
   if (pPopup == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CMenu::GetSubMenu"), 0);
+      FATAL_WINDOWS_ERROR ("CMenu::GetSubMenu", 0);
     }
   PackageInfo packageInfo = pManager->GetPackageInfo(lpszExternalName);
   if (GetCursorPos(&pt))
     {
-      FATAL_WINDOWS_ERROR (T_("GetCursorPos"), 0);
+      FATAL_WINDOWS_ERROR ("GetCursorPos", 0);
     }
   UINT cmd =
     TrackPopupMenu(pPopup->GetSafeHmenu(),
@@ -485,7 +484,7 @@ SearchPackageDialog::DoContextMenu
 		   0);
   if (cmd == 0)
     {
-      CHECK_WINDOWS_ERROR (T_("TrackPopupMenu"), 0);
+      CHECK_WINDOWS_ERROR ("TrackPopupMenu", 0);
       return;
     }
   switch (cmd)
@@ -519,7 +518,7 @@ SearchPackageDialog::OnNMDblclkListPackages (/*[in]*/ NMHDR *	pNMHDR,
       int nItem = listControl.GetNextItem(-1, LVNI_SELECTED);
       if (nItem < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetNextItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
 	}
       DWORD_PTR itemData = listControl.GetItemData(nItem);
       PackageInfo packageInfo =

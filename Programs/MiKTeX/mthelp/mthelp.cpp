@@ -60,11 +60,11 @@ const char * const TheNameOfTheGame = T_("MiKTeX Help Utility");
 const char * const PROGNAME = T_("mthelp");
 
 #if defined(MIKTEX_WINDOWS)
-const char PATH_DELIMITER = T_(';');
-#define PATH_DELIMITER_STRING T_(";")
+const char PATH_DELIMITER = ';';
+#define PATH_DELIMITER_STRING ";"
 #else
-const char PATH_DELIMITER = T_(':');
-#define PATH_DELIMITER_STRING T_(":")
+const char PATH_DELIMITER = ':';
+#define PATH_DELIMITER_STRING ":"
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -192,12 +192,12 @@ enum Option
 
 const struct poptOption MiKTeXHelp::aoption[] = {
   {
-    T_("list-only"), T_('l'), POPT_ARG_NONE, 0, OPT_LIST_ONLY,
+    T_("list-only"), 'l', POPT_ARG_NONE, 0, OPT_LIST_ONLY,
     T_("List documentation files but do not start a viewer."),
     0
   },
   {
-    T_("print-only"), T_('n'), POPT_ARG_NONE, 0, OPT_PRINT_ONLY,
+    T_("print-only"), 'n', POPT_ARG_NONE, 0, OPT_PRINT_ONLY,
     T_("Print the commands that would be executed, but do not execute them."),
     0
   },
@@ -254,7 +254,7 @@ MiKTeXHelp::ShowVersion ()
 {
   tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					   VER_FILEVERSION_STR)
-	<< T_("\n")
+	<< "\n"
 	<< T_("Copyright (C) 2004-2006 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
@@ -292,7 +292,7 @@ MiKTeXHelp::FatalError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << PROGNAME << T_(": ")
+  tcerr << PROGNAME << ": "
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
   va_end (arglist);
@@ -482,7 +482,7 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
       env += (lpszExt + 1);
       if (! Utils::GetEnvironmentString(env.c_str(), viewer))
 	{
-	  viewer = T_("");
+	  viewer = "";
 	}
     }
 
@@ -492,13 +492,13 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
       char szExecutable[BufferSizes::MaxPath];
       PathName directory (fileName);
       HINSTANCE hInst =
-	FindExecutable(fileName.Get(), T_("C:\\"), szExecutable);
+	FindExecutable(fileName.Get(), "C:\\", szExecutable);
       if (hInst >= reinterpret_cast<HINSTANCE>(32))
 	{
 	  viewer = szExecutable;
 	  if (printOnly)
 	    {
-	      tcout << Q_(szExecutable) << T_(' ') << Q_(fileName) << endl;
+	      tcout << Q_(szExecutable) << ' ' << Q_(fileName) << endl;
 	    }
 	  else
 	    {
@@ -523,27 +523,27 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 	}
       if (lpszExt == 0)
 	{
-	  viewer = pager + T_(" %f");
+	  viewer = pager + " %f";
 	}
-      else if (PathName::Compare(lpszExt, T_(".dvi")) == 0)
+      else if (PathName::Compare(lpszExt, ".dvi") == 0)
 	{
 	  viewer = T_("xdvi %f &");
 	}
-      else if (PathName::Compare(lpszExt, T_(".pdf")) == 0)
+      else if (PathName::Compare(lpszExt, ".pdf") == 0)
 	{
-	  viewer = T_("xpdf %f &");
+	  viewer = "xpdf %f &";
 	}
-      else if (PathName::Compare(lpszExt, T_(".ps")) == 0)
+      else if (PathName::Compare(lpszExt, ".ps") == 0)
 	{
-	  viewer = T_("gv %f &");
+	  viewer = "gv %f &";
 	}
-      else if (PathName::Compare(lpszExt, T_(".html")) == 0)
+      else if (PathName::Compare(lpszExt, ".html") == 0)
 	{
 	  viewer = T_("firefox %f &");
 	}
-      else if (PathName::Compare(lpszExt, T_(".txt")) == 0)
+      else if (PathName::Compare(lpszExt, ".txt") == 0)
 	{
-	  viewer = pager + T_(" %f");
+	  viewer = pager + " %f";
 	}
     }
 #endif
@@ -557,7 +557,7 @@ MiKTeXHelp::ViewFile (/*[in]*/ const PathName & fileName)
 
   string::size_type pos = 0;
 
-  while ((pos = commandLine.find(T_("%f"), pos)) != string::npos)
+  while ((pos = commandLine.find("%f", pos)) != string::npos)
     {
       commandLine.replace (pos, 2, fileName.Get());
       pos += fileName.GetLength();
@@ -587,7 +587,7 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const char * lpszPackageName,
   fileName += MIKTEX_PATH_MIKTEX_MTHELP_DIR;
   Directory::Create (fileName);
   fileName += lpszPackageName;
-  fileName.SetExtension (T_(".html"));
+  fileName.SetExtension (".html");
   StreamWriter writer (fileName);
   int idx = 0;
   for (const char * lpsz =
@@ -595,12 +595,12 @@ MiKTeXHelp::CreateHtmlAndView (/*[in]*/ const char * lpszPackageName,
        idx < sizeof(templateHtml);
        ++ lpsz, ++ idx)
     {
-      if (*lpsz == T_('%'))
+      if (*lpsz == '%')
 	{
 	  string tag;
 	  ++ lpsz;
 	  ++ idx;
-	  while (idx < sizeof(templateHtml) && *lpsz != T_('%'))
+	  while (idx < sizeof(templateHtml) && *lpsz != '%')
 	    {
 	      tag += *lpsz;
 	      ++ lpsz;
@@ -670,13 +670,13 @@ MiKTeXHelp::WriteText (/*[in]*/ StreamWriter &		writer,
     {
       switch (*it)
 	{
-	case T_('<'):
-	  writer.Write (T_("&lt;"));
+	case '<':
+	  writer.Write ("&lt;");
 	  break;
-	case T_('>'):
-	  writer.Write (T_("&gt;"));
+	case '>':
+	  writer.Write ("&gt;");
 	  break;
-	case T_('&'):
+	case '&':
 	  writer.Write (T_("&amp;"));
 	  break;
 	default:
@@ -728,9 +728,9 @@ MiKTeXHelp::Run (/*[in]*/ int		argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      FatalError (T_("%s"), msg.c_str());
+      FatalError ("%s", msg.c_str());
     }
       
   const char ** leftovers = popt.GetArgs();

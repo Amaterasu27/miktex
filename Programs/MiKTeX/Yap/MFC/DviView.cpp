@@ -147,7 +147,7 @@ DviView::~DviView ()
 	    {
 	      TraceStream::TraceLastWin32Error (T_("DestroyWindow"),
 						0,
-						T_(__FILE__),
+						__FILE__,
 						__LINE__);
 	    }
 	  pSourceSpecialDialog = 0;
@@ -158,7 +158,7 @@ DviView::~DviView ()
 	    {
 	      TraceStream::TraceLastWin32Error (T_("DestroyWindow"),
 						0,
-						T_(__FILE__),
+						__FILE__,
 						__LINE__);
 	    }
 	  pToolWindow = 0;
@@ -173,7 +173,7 @@ DviView::~DviView ()
 	    {
 	      TraceStream::TraceLastWin32Error (T_("ReleaseCapture"),
 						0,
-						T_(__FILE__),
+						__FILE__,
 						__LINE__);
 	    }
 	  mouseCaptured = false;
@@ -647,7 +647,7 @@ DviView::OnNextPage ()
       int pageIdx = GetCurrentPageIdx();
       if (pageIdx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnNextPage"));
+	  UNEXPECTED_CONDITION ("DviView::OnNextPage");
 	}
       int d = 1;
       CString commandPrefix = GetCommandPrefix(true);
@@ -696,7 +696,7 @@ DviView::OnUpdateNextPage (/*[in]*/ CCmdUI * pCmdUI)
 	  int pageIdx = GetCurrentPageIdx();
 	  if (pageIdx < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
+	      UNEXPECTED_CONDITION ("DviView::OnUpdateNextPage");
 	    }
 	  if (g_pYapConfig->doublePage)
 	    {
@@ -737,7 +737,7 @@ DviView::OnPrevPage ()
       int pageIdx = GetCurrentPageIdx();
       if (pageIdx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnNextPage"));
+	  UNEXPECTED_CONDITION ("DviView::OnNextPage");
 	}
       int pageIdxOld = pageIdx;
       int d = -1;
@@ -799,7 +799,7 @@ DviView::OnUpdatePrevPage (/*[in]*/ CCmdUI * pCmdUI)
 	  int pageIdx = GetCurrentPageIdx();
 	  if (pageIdx < 0)
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnUpdateNextPage"));
+	      UNEXPECTED_CONDITION ("DviView::OnUpdateNextPage");
 	    }
 	  enable = (pageIdx > 0);
 	}
@@ -1060,7 +1060,7 @@ DviView::OnLastPage ()
       int p = pDoc->GetPageCount();
       if (p <= 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnLastPage"));
+	  UNEXPECTED_CONDITION ("DviView::OnLastPage");
 	}
       ChangePage (p - 1);
     }
@@ -1117,7 +1117,7 @@ DviView::OnFirstPage ()
       ASSERT_VALID (pDoc);
       if (pDoc->GetPageCount() <= 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnLastPage"));
+	  UNEXPECTED_CONDITION ("DviView::OnLastPage");
 	}
       ChangePage (0);
     }
@@ -1190,7 +1190,7 @@ DviView::OnGotoPage ()
 	}
       if (pageIdx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnGotoPage"));
+	  UNEXPECTED_CONDITION ("DviView::OnGotoPage");
 	}
       RememberCurrentLocation ();
       while (! forwardLocations.empty())
@@ -1458,7 +1458,7 @@ DviView::OnLButtonDown (/*[in]*/ UINT	flags,
 
       if (havePage && pageIdx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnLButtonDown"));
+	  UNEXPECTED_CONDITION ("DviView::OnLButtonDown");
 	}
 
       if (! havePage || GetHyperTeXSpecialAtCursor(hyperTarget))
@@ -1573,7 +1573,7 @@ DviView::OnLButtonUp (/*[in]*/ UINT	flags,
 	    }
 	  if (! ReleaseCapture())
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnLButtonUp"));
+	      UNEXPECTED_CONDITION ("DviView::OnLButtonUp");
 	    }
 	  mouseCaptured = false;
 	  pToolWindow->ShowWindow (SW_HIDE);
@@ -1623,7 +1623,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
 	      Ruler * pRuler = dynamic_cast<Ruler *>(pToolWindow);
 	      if (pRuler == 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DviView::OnMouseMove"));
+		  UNEXPECTED_CONDITION ("DviView::OnMouseMove");
 		}
 	      CPoint screenPoint = point;
 	      ClientToScreen (&screenPoint);
@@ -1647,7 +1647,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
 		dynamic_cast<DviMagnifyingGlass *>(pToolWindow);
 	      if (pGlass == 0)
 		{
-		  UNEXPECTED_CONDITION (T_("DviView::OnMouseMove"));
+		  UNEXPECTED_CONDITION ("DviView::OnMouseMove");
 		}
 	      CPoint screenPoint = point;
 	      ClientToScreen (&screenPoint);
@@ -1684,7 +1684,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
 	     ? DetermineRowIdx(GetScrollPosition().y + point.y)
 	     : 0);
 	CString info;
-	info.Format (T_("r:%d p:%d(%d) x:%d y:%d"),
+	info.Format ("r:%d p:%d(%d) x:%d y:%d",
 		     sheetIdx,
 		     pageIdx,
 		     static_cast<int>(bPage),
@@ -1733,7 +1733,7 @@ DviView::OnSetCursor (/*[in]*/ CWnd *	pWnd,
 	}
       if (pageIdx < 0)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnSetCursor"));
+	  UNEXPECTED_CONDITION ("DviView::OnSetCursor");
 	}
       if (! leftButtonDown && GetHyperTeXSpecialAtCursor(hyperTarget))
 	{
@@ -1794,7 +1794,7 @@ DviView::OnContextMenu (/*[in]*/ CWnd * pWnd,
 	    }
 	  if (! ReleaseCapture())
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnContextMenu"));
+	      UNEXPECTED_CONDITION ("DviView::OnContextMenu");
 	    }
 	  mouseCaptured = false;
 	}
@@ -1802,7 +1802,7 @@ DviView::OnContextMenu (/*[in]*/ CWnd * pWnd,
 	{
 	  if (! pToolWindow->DestroyWindow())
 	    {
-	      UNEXPECTED_CONDITION (T_("DviView::OnContextMenu"));
+	      UNEXPECTED_CONDITION ("DviView::OnContextMenu");
 	    }
 	  pToolWindow = 0;
 	}
@@ -1811,7 +1811,7 @@ DviView::OnContextMenu (/*[in]*/ CWnd * pWnd,
       CMenu menu;
       if (! menu.LoadMenu(IDR_CONTEXT_MENU))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CMenu::LoadMenu"), 0);
+	  FATAL_WINDOWS_ERROR ("CMenu::LoadMenu", 0);
 	}
       AutoDetachMenu autoDetachMenu (&menu);
       CMenu * pPopup = menu.GetSubMenu(0);
@@ -1822,7 +1822,7 @@ DviView::OnContextMenu (/*[in]*/ CWnd * pWnd,
 				   AfxGetApp()->m_pMainWnd,
 				   0))
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnContextMenu"));
+	  UNEXPECTED_CONDITION ("DviView::OnContextMenu");
 	}
     }
   catch (const MiKTeXException & e)
@@ -2017,7 +2017,7 @@ DviView::GetPageUnderCursor (/*[in]*/ int &	pageIdx,
 
   if (pageIdx < 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::GetPageUnderCursor"));
+      UNEXPECTED_CONDITION ("DviView::GetPageUnderCursor");
     }
 
   CSize sizePage = pDoc->GetPaperSize();
@@ -2266,7 +2266,7 @@ DviView::DetermineRowIdx (/*[in]*/ int y)
 #if 0
   if (y < 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DetermineRowIdx"));
+      UNEXPECTED_CONDITION ("DviView::DetermineRowIdx");
     }
 #endif
   const DviDoc * pDoc = GetDocument();
@@ -2276,7 +2276,7 @@ DviView::DetermineRowIdx (/*[in]*/ int y)
 	   : pDoc->GetPageCount());
   if (n <= 0)
     {
-      UNEXPECTED_CONDITION (T_("DviView::DetermineRowIdx"));
+      UNEXPECTED_CONDITION ("DviView::DetermineRowIdx");
     }
   int cy = pDoc->GetPaperSize().cy * n;
   cy += (GetTopMargin() + (n - 1) * GetVerticalInterPageOffset());

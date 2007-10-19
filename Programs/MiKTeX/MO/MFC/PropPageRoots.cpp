@@ -205,7 +205,7 @@ PropPageTeXMFRoots::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 			   0, 0);
 	  if (szDrive[0] != 0)
 	    {
-	      PathName root (szDrive, T_("\\"), 0, 0);
+	      PathName root (szDrive, "\\", 0, 0);
 	      ::SendMessage (hwnd,
 			     BFFM_SETSELECTION,
 			     TRUE,
@@ -273,7 +273,7 @@ PropPageTeXMFRoots::OnAdd ()
       lvitem.lParam = lvitem.iItem;
       if (listControl.InsertItem(&lvitem) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	}
       roots.push_back (szDir);
       SetChanged (true);
@@ -304,15 +304,15 @@ const char * tdsDirs[] = {
   T_("makeindex"),
   T_("metafont"),
   T_("metapost"),
-  T_("mft"),
+  "mft",
   T_("miktex"),
   T_("pdftex"),
   T_("psutils"),
   T_("scripts"),
   T_("tex"),
-  T_("tpm"),
-  T_("ttf2pfb"),
-  T_("ttf2tfm"),
+  "tpm",
+  "ttf2pfb",
+  "ttf2tfm",
 };
 
 void
@@ -340,7 +340,7 @@ PropPageTeXMFRoots::CheckRoot (/*[in]*/ const PathName & root)
     }
   if (! isEmpty)
     {
-      FATAL_MIKTEX_ERROR (T_("PropPageTeXMFRoots::CheckRoot"),
+      FATAL_MIKTEX_ERROR ("PropPageTeXMFRoots::CheckRoot",
 			  T_("Not a TDS-compliant root directory."),
 			  root.Get());
     }
@@ -385,28 +385,28 @@ PropPageTeXMFRoots::OnMovedown ()
       lvitem.iItem = idx;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx + 1;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
 
       lvitem.iItem = idx + 1;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
 
       if (! listControl.SortItems(CompareItems, 0))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItem", 0);
 	}
 
       EnableButtons ();
@@ -448,28 +448,28 @@ PropPageTeXMFRoots::OnMoveup ()
       lvitem.iItem = idx - 1;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
 
       lvitem.iItem = idx;
       if (! listControl.GetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::GetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       lvitem.lParam = idx - 1;
       if (! listControl.SetItem(&lvitem))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
       
       if (! listControl.SortItems(CompareItems, 0))
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::SortItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItem", 0);
 	}
       
       EnableButtons ();
@@ -504,7 +504,7 @@ PropPageTeXMFRoots::OnRemove ()
 	  int idx = GetSelectedItem();
 	  if (! listControl.DeleteItem(idx))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
 	    }
 	  roots.erase (roots.begin() + idx);
 	}
@@ -539,7 +539,7 @@ PropPageTeXMFRoots::InsertColumn (/*[in]*/ int			colIdx,
 			       colIdx)
       < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
     }
 }
 
@@ -660,7 +660,7 @@ PropPageTeXMFRoots::GetSelectedItem ()
   POSITION pos = listControl.GetFirstSelectedItemPosition();
   if (pos == 0)
     {
-      UNEXPECTED_CONDITION (T_("PropPageTeXMFRoots::GetSelectedItem"));
+      UNEXPECTED_CONDITION ("PropPageTeXMFRoots::GetSelectedItem");
     }
   return (listControl.GetNextSelectedItem(pos));
 }
@@ -675,7 +675,7 @@ PropPageTeXMFRoots::Refresh ()
 {
   if (! listControl.DeleteAllItems())
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::DeleteAllItems"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
   roots.clear ();
   unsigned nRoots = SessionWrapper(true)->GetNumberOfTEXMFRoots();
@@ -695,14 +695,14 @@ PropPageTeXMFRoots::Refresh ()
       lvitem.lParam = r;
       if (listControl.InsertItem(&lvitem) < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	}
       string description;
       if (root == installRoot)
 	{
 	  if (! description.empty())
 	    {
-	      description += T_(", ");
+	      description += ", ";
 	    }
 	  description += T_("Install");
 	}
@@ -710,7 +710,7 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  if (! description.empty())
 	    {
-	      description += T_(", ");
+	      description += ", ";
 	    }
 	  description += T_("UserData");
 	}
@@ -718,7 +718,7 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  if (! description.empty())
 	    {
-	      description += T_(", ");
+	      description += ", ";
 	    }
 	  description += T_("CommonData");
 	}
@@ -726,7 +726,7 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  if (! description.empty())
 	    {
-	      description += T_(", ");
+	      description += ", ";
 	    }
 	  description += T_("UserConfig");
 	}
@@ -734,7 +734,7 @@ PropPageTeXMFRoots::Refresh ()
 	{
 	  if (! description.empty())
 	    {
-	      description += T_(", ");
+	      description += ", ";
 	    }
 	  description += T_("CommonConfig");
 	}
@@ -745,7 +745,7 @@ PropPageTeXMFRoots::Refresh ()
 	  lvitem.pszText = const_cast<char*>(description.c_str());
 	  if (! listControl.SetItem(&lvitem))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	    }
 	}
       roots.push_back (root);
@@ -767,7 +767,7 @@ PropPageTeXMFRoots::OnApply ()
 	{
 	  if (SessionWrapper(true)->IsMiKTeXDirect())
 	    {
-	      UNEXPECTED_CONDITION (T_("PropPageTeXMFRoots::OnApply"));
+	      UNEXPECTED_CONDITION ("PropPageTeXMFRoots::OnApply");
 	    }
 	  
 	  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
@@ -786,7 +786,7 @@ PropPageTeXMFRoots::OnApply ()
 		}
 	      if (! str.empty())
 		{
-		  str += T_(';');
+		  str += ';';
 		}
 	      str += it->Get();
 	    }
@@ -966,14 +966,14 @@ PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
       if (hwnd == 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("PropPageTeXMFRoots::SetElevationRequired"));
+	    ("PropPageTeXMFRoots::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
       hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
       if (hwnd == 0)
 	{
 	  UNEXPECTED_CONDITION
-	    (T_("PropPageTeXMFRoots::SetElevationRequired"));
+	    ("PropPageTeXMFRoots::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
     }

@@ -71,15 +71,15 @@ MyPathNameCompare (/*[in]*/ const PathName & path1,
 bool
 MIKTEXDVICALL
 DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
-		     /*[in]*/ int			line,
-		     /*[out]*/ DviPosition &		position)
+		     /*[in]*/ int		line,
+		     /*[out]*/ DviPosition &	position)
 {
   CheckCondition ();
 
   MIKTEX_BEGIN_CRITICAL_SECTION (&criticalSectionMonitor)
     {
       log_search->WriteFormattedLine
-	(T_("libdvi"),
+	("libdvi",
 	 T_("searching src special %d %s"),
 	 line,
 	 lpszFileName);
@@ -139,7 +139,7 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 		(0,
 		 T_("The DVI page could not be found."),
 		 0,
-		 T_(__FILE__),
+		 __FILE__,
 		 __LINE__);
 	    }
 
@@ -259,19 +259,19 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 
       if (pSourceSpecial1Best == 0 && pSourceSpecial2Best == 0)
 	{
-	  log_search->WriteLine (T_("libdvi"), T_("search failed"));
+	  log_search->WriteLine ("libdvi", T_("search failed"));
 	  return (false);
 	}
       
       if (pSourceSpecial1Best == 0)
 	{
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("found src2 on page #%d"),
 	     pageIdx2);
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
-	     T_("   src2 = [%d (%d,%d)]"),
+	    ("libdvi",
+	     "   src2 = [%d (%d,%d)]",
 	     pSourceSpecial2Best->GetLineNum(),
 	     pSourceSpecial2Best->GetX(),
 	     pSourceSpecial2Best->GetY());
@@ -282,12 +282,12 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
       else if (pSourceSpecial2Best == 0)
 	{
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("found src1 on page #%d"),
 	     pageIdx1);
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
-	     T_("   src1 = [%d (%d,%d)]"),
+	    ("libdvi",
+	     "   src1 = [%d (%d,%d)]",
 	     pSourceSpecial1Best->GetLineNum(),
 	     pSourceSpecial1Best->GetX(),
 	     pSourceSpecial1Best->GetY());
@@ -299,18 +299,18 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 	{
 	  position.pageIdx = pageIdx1;
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
+	    ("libdvi",
 	     T_("found src region on page #%d"),
 	     position.pageIdx);
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
-	     T_("   src1 = [%d (%d,%d)]"),
+	    ("libdvi",
+	     "   src1 = [%d (%d,%d)]",
 	     pSourceSpecial1Best->GetLineNum(),
 	     pSourceSpecial1Best->GetX(),
 	     pSourceSpecial1Best->GetY());
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
-	     T_("   src2 = [%d (%d,%d)]"),
+	    ("libdvi",
+	     "   src2 = [%d (%d,%d)]",
 	     pSourceSpecial2Best->GetLineNum(),
 	     pSourceSpecial2Best->GetX(),
 	     pSourceSpecial2Best->GetY());
@@ -330,8 +330,8 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 			 - pSourceSpecial1Best->GetLineNum())));
 	    }
 	  log_search->WriteFormattedLine
-	    (T_("libdvi"),
-	     T_("   interpolated (x,y) = (%d,%d)"),
+	    ("libdvi",
+	     "   interpolated (x,y) = (%d,%d)",
 	     position.x,
 	     position.y);
 	}
@@ -371,7 +371,7 @@ DviImpl::GetSource (/*[in]*/ const DviPosition &	pos,
 	    (0,
 	     T_("The DVI page could not be found."),
 	     0,
-	     T_(__FILE__),
+	     __FILE__,
 	     __LINE__);
 	}
 

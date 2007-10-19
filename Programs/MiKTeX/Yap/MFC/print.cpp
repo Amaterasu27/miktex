@@ -50,16 +50,16 @@ DviView::OnPreparePrinting (/*[in]*/ CPrintInfo * pInfo)
       
       if (pInfo->m_bPreview)
 	{
-	  UNEXPECTED_CONDITION (T_("DviView::OnPreparePrinting"));
+	  UNEXPECTED_CONDITION ("DviView::OnPreparePrinting");
 	}
       
       int dpi = GetDeviceCaps(pInfo->m_pPD->m_pd.hDC, LOGPIXELSX);
       if (dpi != pDoc->GetPrinterResolution())
 	{
 	  string str = NUMTOSTR(dpi);
-	  str += T_(" vs. ");
+	  str += " vs. ";
 	  str += NUMTOSTR(pDoc->GetPrinterResolution());
-	  FATAL_MIKTEX_ERROR (T_("DviView::OnPreparePrinting"),
+	  FATAL_MIKTEX_ERROR ("DviView::OnPreparePrinting",
 			      T_("METAFONT mode mismatch."),
 			      str.c_str());
 	}
@@ -245,7 +245,7 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
   PathName mtprint;
   if (! SessionWrapper(true)->FindFile("mtprint.exe", FileType::EXE, mtprint))
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::PrintPostScript"),
+      FATAL_MIKTEX_ERROR ("DviView::PrintPostScript",
 			  T_("The MiKTeX print utility could not be found."),
 			  T_("mtprint.exe"));
     }
@@ -254,8 +254,8 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
 
   // make command-line
   CommandLineBuilder commandLine;
-  commandLine.AppendOption (T_("--printer="), printerName);
-  commandLine.AppendOption (T_("--print-method="), T_("ps"));
+  commandLine.AppendOption ("--printer=", printerName);
+  commandLine.AppendOption ("--print-method=", "ps");
   switch (pr.nRange)
     {
     case PrintRange::All:
@@ -264,17 +264,17 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
       {
 	CString str;
 	str.Format ("%d-%d", pr.nFirst, pr.nLast);
-	commandLine.AppendOption (T_("--page-range="), str);
+	commandLine.AppendOption ("--page-range=", str);
 	break;
       }
     }
   switch (pr.nEvenOdd)
     {
     case PrintRange::EvenOnly:
-      commandLine.AppendOption (T_("--even-only"));
+      commandLine.AppendOption ("--even-only");
       break;
     case PrintRange::OddOnly:
-      commandLine.AppendOption (T_("--odd-only"));
+      commandLine.AppendOption ("--odd-only");
       break;
     }
   commandLine.AppendArgument (dviFileName);
@@ -298,14 +298,14 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
 
   if (! done)
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::PrintPostScript"),
+      FATAL_MIKTEX_ERROR ("DviView::PrintPostScript",
 			  T_("The MiKTeX print utility could not be run."),
 			  T_("mtprint.exe"));
     }
 
   if (exitCode != 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DviView::PrintPostScript"),
+      FATAL_MIKTEX_ERROR ("DviView::PrintPostScript",
 			  (T_("The MiKTeX print utility failed for some ")
 			   T_("reason.")),
 			  T_("mtprint.exe"));

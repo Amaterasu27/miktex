@@ -44,7 +44,7 @@
 using namespace MiKTeX::Core;
 using namespace std;
 
-#define PROGRAM_NAME T_("mkfntmap")
+#define PROGRAM_NAME "mkfntmap"
 
 #if ! defined(THE_NAME_OF_THE_GAME)
 #  define THE_NAME_OF_THE_GAME T_("MiKTeX Fontmap Maintenance Utility")
@@ -70,15 +70,15 @@ enum Option
 
 const struct poptOption aoption[] = {
   {
-    T_("output-directory"), 0,
+    "output-directory", 0,
     POPT_ARG_STRING, 0,
     OPT_OUTPUT_DIRECTORY,
     T_("Set the output directory."),
-    T_("DIR")
+    "DIR"
   },
 
   {
-    T_("verbose"), 0,
+    "verbose", 0,
     POPT_ARG_NONE, 0,
     OPT_VERBOSE,
     T_("Turn on verbose mode."),
@@ -86,7 +86,7 @@ const struct poptOption aoption[] = {
   },
 
   {
-    T_("version"), 0,
+    "version", 0,
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -428,9 +428,9 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int		argc,
   if (option != -1)
     {
       string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
-      msg += T_(": ");
+      msg += ": ";
       msg += popt.Strerror(option);
-      Abort (T_("%s"), msg.c_str());
+      Abort ("%s", msg.c_str());
     }
       
   if (popt.GetArgs() != 0)
@@ -471,7 +471,7 @@ MakeFontMapApp::CfgError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << cfgContext.path.Get() << T_(":")
+  cerr << cfgContext.path.Get() << ":"
 	<< cfgContext.line << T_(": error: ")
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
@@ -491,7 +491,7 @@ MakeFontMapApp::MapError (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << mapContext.path.Get() << T_(":")
+  cerr << mapContext.path.Get() << ":"
 	<< mapContext.line << T_(": error: ")
 	<< Utils::FormatString(lpszFormat, arglist)
 	<< endl;
@@ -511,7 +511,7 @@ MakeFontMapApp::Abort (/*[in]*/ const char *	lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGRAM_NAME << T_(": ")
+  cerr << PROGRAM_NAME << ": "
        << Utils::FormatString(lpszFormat, arglist)
        << endl;
   va_end (arglist);
@@ -555,11 +555,11 @@ MakeFontMapApp::ScanConfigLine (/*[in]*/ const string &		line,
 				/*[out]*/ string &		param)
 {
   if (line.empty()
-      || string(T_("*#;%")).find_first_of(line[0]) != string::npos)
+      || string("*#;%").find_first_of(line[0]) != string::npos)
     {
       return (false);
     }
-  Tokenizer tok (line.c_str(), T_(" \t\n"));
+  Tokenizer tok (line.c_str(), " \t\n");
   if (tok.GetCurrent() == 0)
     {
       return (false);
@@ -568,7 +568,7 @@ MakeFontMapApp::ScanConfigLine (/*[in]*/ const string &		line,
   ++ tok;
   if (tok.GetCurrent() == 0)
     {
-      param = T_("");
+      param = "";
     }
   else
     {
@@ -599,30 +599,30 @@ MakeFontMapApp::ParseConfigFile (/*[in]*/ const PathName & path)
 	{
 	  continue;
 	}
-      if (StringCompare(directive.c_str(), T_("dvipsPreferOutline"), true)
+      if (StringCompare(directive.c_str(), "dvipsPreferOutline", true)
 	  == 0)
 	{
 	  dvipsPreferOutline = ToBool(param);
 	}
-      else if (StringCompare(directive.c_str(), T_("LW35"), true) == 0)
+      else if (StringCompare(directive.c_str(), "LW35", true) == 0)
 	{
 	  if (param.empty())
 	    {
 	      CfgError (T_("missing value"));
 	    }
-	  if (StringCompare(param.c_str(), T_("URW"), true) == 0)
+	  if (StringCompare(param.c_str(), "URW", true) == 0)
 	    {
 	      namingConvention = URW;
 	    }
-	  else if (StringCompare(param.c_str(), T_("URWkb"), true) == 0)
+	  else if (StringCompare(param.c_str(), "URWkb", true) == 0)
 	    {
 	      namingConvention = URWkb;
 	    }
-	  else if (StringCompare(param.c_str(), T_("ADOBE"), true) == 0)
+	  else if (StringCompare(param.c_str(), "ADOBE", true) == 0)
 	    {
 	      namingConvention = ADOBE;
 	    }
-	  else if (StringCompare(param.c_str(), T_("ADOBEkb"), true) == 0)
+	  else if (StringCompare(param.c_str(), "ADOBEkb", true) == 0)
 	    {
 	      namingConvention = ADOBEkb;
 	    }
@@ -632,27 +632,27 @@ MakeFontMapApp::ParseConfigFile (/*[in]*/ const PathName & path)
 	    }
 	}
       else if (StringCompare(directive.c_str(),
-			     T_("dvipsDownloadBase35"),
+			     "dvipsDownloadBase35",
 			     true)
 	       == 0)
 	{
 	  dvipsDownloadBase35 = ToBool(param);
 	}
       else if (StringCompare(directive.c_str(),
-			     T_("pdftexDownloadBase14"),
+			     "pdftexDownloadBase14",
 			     true)
 	       == 0)
 	{
 	  pdftexDownloadBase14 = ToBool(param);
 	}
       else if (StringCompare(directive.c_str(),
-			     T_("dvipdfmDownloadBase14"),
+			     "dvipdfmDownloadBase14",
 			     true)
 	       == 0)
 	{
 	  dvipdfmDownloadBase14 = ToBool(param);
 	}
-      else if (StringCompare(directive.c_str(), T_("Map"), true) == 0)
+      else if (StringCompare(directive.c_str(), "Map", true) == 0)
 	{
 	  if (param.empty())
 	    {
@@ -660,7 +660,7 @@ MakeFontMapApp::ParseConfigFile (/*[in]*/ const PathName & path)
 	    }
 	  mapFiles.insert (param);
 	}
-      else if (StringCompare(directive.c_str(), T_("MixedMap"), true) == 0)
+      else if (StringCompare(directive.c_str(), "MixedMap", true) == 0)
 	{
 	  if (param.empty())
 	    {
@@ -692,10 +692,10 @@ MakeFontMapApp::Initialize ()
 	MIKTEX_PATH_MKFNTMAP_CFG,
 	(MIKTEX_PATH_MIKTEX_CONFIG_DIR
 	 MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
-	 T_("updmap.cfg")),
+	 "updmap.cfg"),
 	(MIKTEX_PATH_WEB2C_DIR
 	 MIKTEX_PATH_DIRECTORY_DELIMITER_STRING
-	 T_("updmap.cfg"))
+	 "updmap.cfg")
       };
 
       for (size_t j = sizeof(lpszConfigFiles) / sizeof(lpszConfigFiles[0]);
@@ -717,149 +717,149 @@ MakeFontMapApp::Initialize ()
       Abort (T_("The config file could not be found."));
     }
 
-  fileURW[T_("uagd8a.pfb")] = T_("a010015l.pfb");
-  fileURW[T_("uagdo8a.pfb")] = T_("a010035l.pfb");
-  fileURW[T_("uagk8a.pfb")] = T_("a010013l.pfb");
-  fileURW[T_("uagko8a.pfb")] = T_("a010033l.pfb");
-  fileURW[T_("ubkd8a.pfb")] = T_("b018015l.pfb");
-  fileURW[T_("ubkdi8a.pfb")] = T_("b018035l.pfb");
-  fileURW[T_("ubkl8a.pfb")] = T_("b018012l.pfb");
-  fileURW[T_("ubkli8a.pfb")] = T_("b018032l.pfb");
-  fileURW[T_("ucrb8a.pfb")] = T_("n022004l.pfb");
-  fileURW[T_("ucrbo8a.pfb")] = T_("n022024l.pfb");
-  fileURW[T_("ucrr8a.pfb")] = T_("n022003l.pfb");
-  fileURW[T_("ucrro8a.pfb")] = T_("n022023l.pfb");
-  fileURW[T_("uhvb8a.pfb")] = T_("n019004l.pfb");
-  fileURW[T_("uhvb8ac.pfb")] = T_("n019044l.pfb");
-  fileURW[T_("uhvbo8a.pfb")] = T_("n019024l.pfb");
-  fileURW[T_("uhvbo8ac.pfb")] = T_("n019064l.pfb");
-  fileURW[T_("uhvr8a.pfb")] = T_("n019003l.pfb");
-  fileURW[T_("uhvr8ac.pfb")] = T_("n019043l.pfb");
-  fileURW[T_("uhvro8a.pfb")] = T_("n019023l.pfb");
-  fileURW[T_("uhvro8ac.pfb")] = T_("n019063l.pfb");
-  fileURW[T_("uncb8a.pfb")] = T_("c059016l.pfb");
-  fileURW[T_("uncbi8a.pfb")] = T_("c059036l.pfb");
-  fileURW[T_("uncr8a.pfb")] = T_("c059013l.pfb");
-  fileURW[T_("uncri8a.pfb")] = T_("c059033l.pfb");
-  fileURW[T_("uplb8a.pfb")] = T_("p052004l.pfb");
-  fileURW[T_("uplbi8a.pfb")] = T_("p052024l.pfb");
-  fileURW[T_("uplr8a.pfb")] = T_("p052003l.pfb");
-  fileURW[T_("uplri8a.pfb")] = T_("p052023l.pfb");
-  fileURW[T_("usyr.pfb")] = T_("s050000l.pfb");
-  fileURW[T_("utmb8a.pfb")] = T_("n021004l.pfb");
-  fileURW[T_("utmbi8a.pfb")] = T_("n021024l.pfb");
-  fileURW[T_("utmr8a.pfb")] = T_("n021003l.pfb");
-  fileURW[T_("utmri8a.pfb")] = T_("n021023l.pfb");
-  fileURW[T_("uzcmi8a.pfb")] = T_("z003034l.pfb");
-  fileURW[T_("uzdr.pfb")] = T_("d050000l.pfb");
+  fileURW["uagd8a.pfb"] = "a010015l.pfb";
+  fileURW["uagdo8a.pfb"] = "a010035l.pfb";
+  fileURW["uagk8a.pfb"] = "a010013l.pfb";
+  fileURW["uagko8a.pfb"] = "a010033l.pfb";
+  fileURW["ubkd8a.pfb"] = "b018015l.pfb";
+  fileURW["ubkdi8a.pfb"] = "b018035l.pfb";
+  fileURW["ubkl8a.pfb"] = "b018012l.pfb";
+  fileURW["ubkli8a.pfb"] = "b018032l.pfb";
+  fileURW["ucrb8a.pfb"] = "n022004l.pfb";
+  fileURW["ucrbo8a.pfb"] = "n022024l.pfb";
+  fileURW["ucrr8a.pfb"] = "n022003l.pfb";
+  fileURW["ucrro8a.pfb"] = "n022023l.pfb";
+  fileURW["uhvb8a.pfb"] = "n019004l.pfb";
+  fileURW["uhvb8ac.pfb"] = "n019044l.pfb";
+  fileURW["uhvbo8a.pfb"] = "n019024l.pfb";
+  fileURW["uhvbo8ac.pfb"] = "n019064l.pfb";
+  fileURW["uhvr8a.pfb"] = "n019003l.pfb";
+  fileURW["uhvr8ac.pfb"] = "n019043l.pfb";
+  fileURW["uhvro8a.pfb"] = "n019023l.pfb";
+  fileURW["uhvro8ac.pfb"] = "n019063l.pfb";
+  fileURW["uncb8a.pfb"] = "c059016l.pfb";
+  fileURW["uncbi8a.pfb"] = "c059036l.pfb";
+  fileURW["uncr8a.pfb"] = "c059013l.pfb";
+  fileURW["uncri8a.pfb"] = "c059033l.pfb";
+  fileURW["uplb8a.pfb"] = "p052004l.pfb";
+  fileURW["uplbi8a.pfb"] = "p052024l.pfb";
+  fileURW["uplr8a.pfb"] = "p052003l.pfb";
+  fileURW["uplri8a.pfb"] = "p052023l.pfb";
+  fileURW["usyr.pfb"] = "s050000l.pfb";
+  fileURW["utmb8a.pfb"] = "n021004l.pfb";
+  fileURW["utmbi8a.pfb"] = "n021024l.pfb";
+  fileURW["utmr8a.pfb"] = "n021003l.pfb";
+  fileURW["utmri8a.pfb"] = "n021023l.pfb";
+  fileURW["uzcmi8a.pfb"] = "z003034l.pfb";
+  fileURW["uzdr.pfb"] = "d050000l.pfb";
 
-  fileADOBE[T_("uagd8a.pfb")] = T_("agd_____.pfb");
-  fileADOBE[T_("uagdo8a.pfb")] = T_("agdo____.pfb");
-  fileADOBE[T_("uagk8a.pfb")] = T_("agw_____.pfb");
-  fileADOBE[T_("uagko8a.pfb")] = T_("agwo____.pfb");
-  fileADOBE[T_("ubkd8a.pfb")] = T_("bkd_____.pfb");
-  fileADOBE[T_("ubkdi8a.pfb")] = T_("bkdi____.pfb");
-  fileADOBE[T_("ubkl8a.pfb")] = T_("bkl_____.pfb");
-  fileADOBE[T_("ubkli8a.pfb")] = T_("bkli____.pfb");
-  fileADOBE[T_("ucrb8a.pfb")] = T_("cob_____.pfb");
-  fileADOBE[T_("ucrbo8a.pfb")] = T_("cobo____.pfb");
-  fileADOBE[T_("ucrr8a.pfb")] = T_("com_____.pfb");
-  fileADOBE[T_("ucrro8a.pfb")] = T_("coo_____.pfb");
-  fileADOBE[T_("uhvb8a.pfb")] = T_("hvb_____.pfb");
-  fileADOBE[T_("uhvb8ac.pfb")] = T_("hvnb____.pfb");
-  fileADOBE[T_("uhvbo8a.pfb")] = T_("hvbo____.pfb");
-  fileADOBE[T_("uhvbo8ac.pfb")] = T_("hvnbo___.pfb");
-  fileADOBE[T_("uhvr8a.pfb")] = T_("hv______.pfb");
-  fileADOBE[T_("uhvr8ac.pfb")] = T_("hvn_____.pfb");
-  fileADOBE[T_("uhvro8a.pfb")] = T_("hvo_____.pfb");
-  fileADOBE[T_("uhvro8ac.pfb")] = T_("hvno____.pfb");
-  fileADOBE[T_("uncb8a.pfb")] = T_("ncb_____.pfb");
-  fileADOBE[T_("uncbi8a.pfb")] = T_("ncbi____.pfb");
-  fileADOBE[T_("uncr8a.pfb")] = T_("ncr_____.pfb");
-  fileADOBE[T_("uncri8a.pfb")] = T_("nci_____.pfb");
-  fileADOBE[T_("uplb8a.pfb")] = T_("pob_____.pfb");
-  fileADOBE[T_("uplbi8a.pfb")] = T_("pobi____.pfb");
-  fileADOBE[T_("uplr8a.pfb")] = T_("por_____.pfb");
-  fileADOBE[T_("uplri8a.pfb")] = T_("poi_____.pfb");
-  fileADOBE[T_("usyr.pfb")] = T_("sy______.pfb");
-  fileADOBE[T_("utmb8a.pfb")] = T_("tib_____.pfb");
-  fileADOBE[T_("utmbi8a.pfb")] = T_("tibi____.pfb");
-  fileADOBE[T_("utmr8a.pfb")] = T_("tir_____.pfb");
-  fileADOBE[T_("utmri8a.pfb")] = T_("tii_____.pfb");
-  fileADOBE[T_("uzcmi8a.pfb")] = T_("zcmi____.pfb");
-  fileADOBE[T_("uzdr.pfb")] = T_("zd______.pfb");
+  fileADOBE["uagd8a.pfb"] = "agd_____.pfb";
+  fileADOBE["uagdo8a.pfb"] = "agdo____.pfb";
+  fileADOBE["uagk8a.pfb"] = "agw_____.pfb";
+  fileADOBE["uagko8a.pfb"] = "agwo____.pfb";
+  fileADOBE["ubkd8a.pfb"] = "bkd_____.pfb";
+  fileADOBE["ubkdi8a.pfb"] = "bkdi____.pfb";
+  fileADOBE["ubkl8a.pfb"] = "bkl_____.pfb";
+  fileADOBE["ubkli8a.pfb"] = "bkli____.pfb";
+  fileADOBE["ucrb8a.pfb"] = "cob_____.pfb";
+  fileADOBE["ucrbo8a.pfb"] = "cobo____.pfb";
+  fileADOBE["ucrr8a.pfb"] = "com_____.pfb";
+  fileADOBE["ucrro8a.pfb"] = "coo_____.pfb";
+  fileADOBE["uhvb8a.pfb"] = "hvb_____.pfb";
+  fileADOBE["uhvb8ac.pfb"] = "hvnb____.pfb";
+  fileADOBE["uhvbo8a.pfb"] = "hvbo____.pfb";
+  fileADOBE["uhvbo8ac.pfb"] = "hvnbo___.pfb";
+  fileADOBE["uhvr8a.pfb"] = "hv______.pfb";
+  fileADOBE["uhvr8ac.pfb"] = "hvn_____.pfb";
+  fileADOBE["uhvro8a.pfb"] = "hvo_____.pfb";
+  fileADOBE["uhvro8ac.pfb"] = "hvno____.pfb";
+  fileADOBE["uncb8a.pfb"] = "ncb_____.pfb";
+  fileADOBE["uncbi8a.pfb"] = "ncbi____.pfb";
+  fileADOBE["uncr8a.pfb"] = "ncr_____.pfb";
+  fileADOBE["uncri8a.pfb"] = "nci_____.pfb";
+  fileADOBE["uplb8a.pfb"] = "pob_____.pfb";
+  fileADOBE["uplbi8a.pfb"] = "pobi____.pfb";
+  fileADOBE["uplr8a.pfb"] = "por_____.pfb";
+  fileADOBE["uplri8a.pfb"] = "poi_____.pfb";
+  fileADOBE["usyr.pfb"] = "sy______.pfb";
+  fileADOBE["utmb8a.pfb"] = "tib_____.pfb";
+  fileADOBE["utmbi8a.pfb"] = "tibi____.pfb";
+  fileADOBE["utmr8a.pfb"] = "tir_____.pfb";
+  fileADOBE["utmri8a.pfb"] = "tii_____.pfb";
+  fileADOBE["uzcmi8a.pfb"] = "zcmi____.pfb";
+  fileADOBE["uzdr.pfb"] = "zd______.pfb";
 
-  fileADOBEkb[T_("uagd8a.pfb")] = T_("pagd8a.pfb");
-  fileADOBEkb[T_("uagdo8a.pfb")] = T_("pagdo8a.pfb");
-  fileADOBEkb[T_("uagk8a.pfb")] = T_("pagk8a.pfb");
-  fileADOBEkb[T_("uagko8a.pfb")] = T_("pagko8a.pfb");
-  fileADOBEkb[T_("ubkd8a.pfb")] = T_("pbkd8a.pfb");
-  fileADOBEkb[T_("ubkdi8a.pfb")] = T_("pbkdi8a.pfb");
-  fileADOBEkb[T_("ubkl8a.pfb")] = T_("pbkl8a.pfb");
-  fileADOBEkb[T_("ubkli8a.pfb")] = T_("pbkli8a.pfb");
-  fileADOBEkb[T_("ucrb8a.pfb")] = T_("pcrb8a.pfb");
-  fileADOBEkb[T_("ucrbo8a.pfb")] = T_("pcrbo8a.pfb");
-  fileADOBEkb[T_("ucrr8a.pfb")] = T_("pcrr8a.pfb");
-  fileADOBEkb[T_("ucrro8a.pfb")] = T_("pcrro8a.pfb");
-  fileADOBEkb[T_("uhvb8a.pfb")] = T_("phvb8a.pfb");
-  fileADOBEkb[T_("uhvb8ac.pfb")] = T_("phvb8an.pfb");
-  fileADOBEkb[T_("uhvbo8a.pfb")] = T_("phvbo8a.pfb");
-  fileADOBEkb[T_("uhvbo8ac.pfb")] = T_("phvbo8an.pfb");
-  fileADOBEkb[T_("uhvr8a.pfb")] = T_("phvr8a.pfb");
-  fileADOBEkb[T_("uhvr8ac.pfb")] = T_("phvr8an.pfb");
-  fileADOBEkb[T_("uhvro8a.pfb")] = T_("phvro8a.pfb");
-  fileADOBEkb[T_("uhvro8ac.pfb")] = T_("phvro8an.pfb");
-  fileADOBEkb[T_("uncb8a.pfb")] = T_("pncb8a.pfb");
-  fileADOBEkb[T_("uncbi8a.pfb")] = T_("pncbi8a.pfb");
-  fileADOBEkb[T_("uncr8a.pfb")] = T_("pncr8a.pfb");
-  fileADOBEkb[T_("uncri8a.pfb")] = T_("pncri8a.pfb");
-  fileADOBEkb[T_("uplb8a.pfb")] = T_("pplb8a.pfb");
-  fileADOBEkb[T_("uplbi8a.pfb")] = T_("pplbi8a.pfb");
-  fileADOBEkb[T_("uplr8a.pfb")] = T_("pplr8a.pfb");
-  fileADOBEkb[T_("uplri8a.pfb")] = T_("pplri8a.pfb");
-  fileADOBEkb[T_("usyr.pfb")] = T_("psyr.pfb");
-  fileADOBEkb[T_("utmb8a.pfb")] = T_("ptmb8a.pfb");
-  fileADOBEkb[T_("utmbi8a.pfb")] = T_("ptmbi8a.pfb");
-  fileADOBEkb[T_("utmr8a.pfb")] = T_("ptmr8a.pfb");
-  fileADOBEkb[T_("utmri8a.pfb")] = T_("ptmri8a.pfb");
-  fileADOBEkb[T_("uzcmi8a.pfb")] = T_("pzcmi8a.pfb");
-  fileADOBEkb[T_("uzdr.pfb")] = T_("pzdr.pfb");
+  fileADOBEkb["uagd8a.pfb"] = "pagd8a.pfb";
+  fileADOBEkb["uagdo8a.pfb"] = "pagdo8a.pfb";
+  fileADOBEkb["uagk8a.pfb"] = "pagk8a.pfb";
+  fileADOBEkb["uagko8a.pfb"] = "pagko8a.pfb";
+  fileADOBEkb["ubkd8a.pfb"] = "pbkd8a.pfb";
+  fileADOBEkb["ubkdi8a.pfb"] = "pbkdi8a.pfb";
+  fileADOBEkb["ubkl8a.pfb"] = "pbkl8a.pfb";
+  fileADOBEkb["ubkli8a.pfb"] = "pbkli8a.pfb";
+  fileADOBEkb["ucrb8a.pfb"] = "pcrb8a.pfb";
+  fileADOBEkb["ucrbo8a.pfb"] = "pcrbo8a.pfb";
+  fileADOBEkb["ucrr8a.pfb"] = "pcrr8a.pfb";
+  fileADOBEkb["ucrro8a.pfb"] = "pcrro8a.pfb";
+  fileADOBEkb["uhvb8a.pfb"] = "phvb8a.pfb";
+  fileADOBEkb["uhvb8ac.pfb"] = "phvb8an.pfb";
+  fileADOBEkb["uhvbo8a.pfb"] = "phvbo8a.pfb";
+  fileADOBEkb["uhvbo8ac.pfb"] = "phvbo8an.pfb";
+  fileADOBEkb["uhvr8a.pfb"] = "phvr8a.pfb";
+  fileADOBEkb["uhvr8ac.pfb"] = "phvr8an.pfb";
+  fileADOBEkb["uhvro8a.pfb"] = "phvro8a.pfb";
+  fileADOBEkb["uhvro8ac.pfb"] = "phvro8an.pfb";
+  fileADOBEkb["uncb8a.pfb"] = "pncb8a.pfb";
+  fileADOBEkb["uncbi8a.pfb"] = "pncbi8a.pfb";
+  fileADOBEkb["uncr8a.pfb"] = "pncr8a.pfb";
+  fileADOBEkb["uncri8a.pfb"] = "pncri8a.pfb";
+  fileADOBEkb["uplb8a.pfb"] = "pplb8a.pfb";
+  fileADOBEkb["uplbi8a.pfb"] = "pplbi8a.pfb";
+  fileADOBEkb["uplr8a.pfb"] = "pplr8a.pfb";
+  fileADOBEkb["uplri8a.pfb"] = "pplri8a.pfb";
+  fileADOBEkb["usyr.pfb"] = "psyr.pfb";
+  fileADOBEkb["utmb8a.pfb"] = "ptmb8a.pfb";
+  fileADOBEkb["utmbi8a.pfb"] = "ptmbi8a.pfb";
+  fileADOBEkb["utmr8a.pfb"] = "ptmr8a.pfb";
+  fileADOBEkb["utmri8a.pfb"] = "ptmri8a.pfb";
+  fileADOBEkb["uzcmi8a.pfb"] = "pzcmi8a.pfb";
+  fileADOBEkb["uzdr.pfb"] = "pzdr.pfb";
 
-  psADOBE[T_("URWGothicL-Demi")] = T_("AvantGarde-Demi");
-  psADOBE[T_("URWGothicL-DemiObli")] = T_("AvantGarde-DemiOblique");
-  psADOBE[T_("URWGothicL-Book")] = T_("AvantGarde-Book");
-  psADOBE[T_("URWGothicL-BookObli")] = T_("AvantGarde-BookOblique");
-  psADOBE[T_("URWBookmanL-DemiBold")] = T_("Bookman-Demi");
-  psADOBE[T_("URWBookmanL-DemiBoldItal")] = T_("Bookman-DemiItalic");
-  psADOBE[T_("URWBookmanL-Ligh")] = T_("Bookman-Light");
-  psADOBE[T_("URWBookmanL-LighItal")] = T_("Bookman-LightItalic");
-  psADOBE[T_("NimbusMonL-Bold")] = T_("Courier-Bold");
-  psADOBE[T_("NimbusMonL-BoldObli")] = T_("Courier-BoldOblique");
-  psADOBE[T_("NimbusMonL-Regu")] = T_("Courier");
-  psADOBE[T_("NimbusMonL-ReguObli")] = T_("Courier-Oblique");
-  psADOBE[T_("NimbusSanL-Bold")] = T_("Helvetica-Bold");
-  psADOBE[T_("NimbusSanL-BoldCond")] = T_("Helvetica-Narrow-Bold");
-  psADOBE[T_("NimbusSanL-BoldItal")] = T_("Helvetica-BoldOblique");
-  psADOBE[T_("NimbusSanL-BoldCondItal")] = T_("Helvetica-Narrow-BoldOblique");
-  psADOBE[T_("NimbusSanL-Regu")] = T_("Helvetica");
-  psADOBE[T_("NimbusSanL-ReguCond")] = T_("Helvetica-Narrow");
-  psADOBE[T_("NimbusSanL-ReguItal")] = T_("Helvetica-Oblique");
-  psADOBE[T_("NimbusSanL-ReguCondItal")] = T_("Helvetica-Narrow-Oblique");
-  psADOBE[T_("CenturySchL-Bold")] = T_("NewCenturySchlbk-Bold");
-  psADOBE[T_("CenturySchL-BoldItal")] = T_("NewCenturySchlbk-BoldItalic");
-  psADOBE[T_("CenturySchL-Roma")] = T_("NewCenturySchlbk-Roman");
-  psADOBE[T_("CenturySchL-Ital")] = T_("NewCenturySchlbk-Italic");
-  psADOBE[T_("URWPalladioL-Bold")] = T_("Palatino-Bold");
-  psADOBE[T_("URWPalladioL-BoldItal")] = T_("Palatino-BoldItalic");
-  psADOBE[T_("URWPalladioL-Roma")] = T_("Palatino-Roman");
-  psADOBE[T_("URWPalladioL-Ital")] = T_("Palatino-Italic");
-  psADOBE[T_("StandardSymL")] = T_("Symbol");
-  psADOBE[T_("NimbusRomNo9L-Medi")] = T_("Times-Bold");
-  psADOBE[T_("NimbusRomNo9L-MediItal")] = T_("Times-BoldItalic");
-  psADOBE[T_("NimbusRomNo9L-Regu")] = T_("Times-Roman");
-  psADOBE[T_("NimbusRomNo9L-ReguItal")] = T_("Times-Italic");
-  psADOBE[T_("URWChanceryL-MediItal")] = T_("ZapfChancery-MediumItalic");
-  psADOBE[T_("Dingbats")] = T_("ZapfDingbats");
+  psADOBE["URWGothicL-Demi"] = "AvantGarde-Demi";
+  psADOBE["URWGothicL-DemiObli"] = "AvantGarde-DemiOblique";
+  psADOBE["URWGothicL-Book"] = "AvantGarde-Book";
+  psADOBE["URWGothicL-BookObli"] = "AvantGarde-BookOblique";
+  psADOBE["URWBookmanL-DemiBold"] = "Bookman-Demi";
+  psADOBE["URWBookmanL-DemiBoldItal"] = "Bookman-DemiItalic";
+  psADOBE["URWBookmanL-Ligh"] = "Bookman-Light";
+  psADOBE["URWBookmanL-LighItal"] = "Bookman-LightItalic";
+  psADOBE["NimbusMonL-Bold"] = "Courier-Bold";
+  psADOBE["NimbusMonL-BoldObli"] = "Courier-BoldOblique";
+  psADOBE["NimbusMonL-Regu"] = "Courier";
+  psADOBE["NimbusMonL-ReguObli"] = "Courier-Oblique";
+  psADOBE["NimbusSanL-Bold"] = "Helvetica-Bold";
+  psADOBE["NimbusSanL-BoldCond"] = "Helvetica-Narrow-Bold";
+  psADOBE["NimbusSanL-BoldItal"] = "Helvetica-BoldOblique";
+  psADOBE["NimbusSanL-BoldCondItal"] = "Helvetica-Narrow-BoldOblique";
+  psADOBE["NimbusSanL-Regu"] = "Helvetica";
+  psADOBE["NimbusSanL-ReguCond"] = "Helvetica-Narrow";
+  psADOBE["NimbusSanL-ReguItal"] = "Helvetica-Oblique";
+  psADOBE["NimbusSanL-ReguCondItal"] = "Helvetica-Narrow-Oblique";
+  psADOBE["CenturySchL-Bold"] = "NewCenturySchlbk-Bold";
+  psADOBE["CenturySchL-BoldItal"] = "NewCenturySchlbk-BoldItalic";
+  psADOBE["CenturySchL-Roma"] = "NewCenturySchlbk-Roman";
+  psADOBE["CenturySchL-Ital"] = "NewCenturySchlbk-Italic";
+  psADOBE["URWPalladioL-Bold"] = "Palatino-Bold";
+  psADOBE["URWPalladioL-BoldItal"] = "Palatino-BoldItalic";
+  psADOBE["URWPalladioL-Roma"] = "Palatino-Roman";
+  psADOBE["URWPalladioL-Ital"] = "Palatino-Italic";
+  psADOBE["StandardSymL"] = "Symbol";
+  psADOBE["NimbusRomNo9L-Medi"] = "Times-Bold";
+  psADOBE["NimbusRomNo9L-MediItal"] = "Times-BoldItalic";
+  psADOBE["NimbusRomNo9L-Regu"] = "Times-Roman";
+  psADOBE["NimbusRomNo9L-ReguItal"] = "Times-Italic";
+  psADOBE["URWChanceryL-MediItal"] = "ZapfChancery-MediumItalic";
+  psADOBE["Dingbats"] = "ZapfDingbats";
 }
 
 /* _________________________________________________________________________
@@ -897,9 +897,9 @@ MakeFontMapApp::WriteHeader (/*[in]*/ StreamWriter &	writer,
   writer.WriteLine (T_("\
 %%% DO NOT EDIT THIS FILE! It will be overwritten."));
   writer.WriteLine (T_("\
-%%% Run 'initexmf --edit-config-file updmap' to integrate new"));
-  writer.WriteLine (T_("\
-%%% font map files."));
+%%% Run this command to integrate new font map files:"));
+  writer.WriteLine ("\
+%%%   initexmf --edit-config-file updmap");
 }
 
 /* _________________________________________________________________________
@@ -915,18 +915,18 @@ MakeFontMapApp::WriteMap (/*[in]*/ StreamWriter &		writer,
        it != set1.end();
        ++ it)
     {
-      writer.WriteFormatted (T_("%s"), it->texName.c_str());
-      writer.WriteFormatted (T_(" %s"), it->psName.c_str());
+      writer.WriteFormatted ("%s", it->texName.c_str());
+      writer.WriteFormatted (" %s", it->psName.c_str());
       if (! it->specialInstructions.empty())
 	{
-	  writer.WriteFormatted (T_(" \" %s \""),
+	  writer.WriteFormatted (" \" %s \"",
 				 it->specialInstructions.c_str());
 	}
-      for (Tokenizer tok (it->headerList.c_str(), T_(";"));
+      for (Tokenizer tok (it->headerList.c_str(), ";");
 	   tok.GetCurrent() != 0;
 	   ++ tok)
 	{
-	  writer.WriteFormatted (T_(" %s"), tok.GetCurrent());
+	  writer.WriteFormatted (" %s", tok.GetCurrent());
 	}
       writer.WriteLine ();
     }
@@ -942,8 +942,8 @@ MakeFontMapApp::GetInstructionParam (/*[in]*/ const string &	str,
 				     /*[in]*/ const string &	instruction,
 				     /*[out]*/ string &	param)
 {
-  param = T_("");
-  for (Tokenizer tok (str.c_str(), T_(" \t")); tok.GetCurrent() != 0; ++ tok)
+  param = "";
+  for (Tokenizer tok (str.c_str(), " \t"); tok.GetCurrent() != 0; ++ tok)
     {
       if (instruction == tok.GetCurrent())
 	{
@@ -985,54 +985,54 @@ MakeFontMapApp::WriteDvipdfmMap (/*[in]*/ StreamWriter &		writer,
       string options;
       string param;
       if (GetInstructionParam(it->specialInstructions,
-			      T_("ExtendFont"),
+			      "ExtendFont",
 			      param))
 	{
-	  options += T_(" -e ");
+	  options += " -e ";
 	  options += param;
 	}
       if (GetInstructionParam(it->specialInstructions,
-			      T_("SlantFont"),
+			      "SlantFont",
 			      param))
 	{
-	  options += T_(" -s ");
+	  options += " -s ";
 	  options += param;
 	}
-      if (it->texName.substr(0, 2) == T_("cm")
-	  || it->texName.substr(0, 2) == T_("eu")
-	  || (it->texName.substr(0, 2) == T_("la")
-	      && ! (it->encFile.substr(0, 12) == T_("cm-super-t2a")))
-	  || (it->texName.substr(0, 2) == T_("lc")
-	      && ! (it->encFile.substr(0, 12) == T_("cm-super-t2c")))
-	  || it->texName.substr(0, 4) == T_("line")
-	  || it->texName.substr(0, 4) == T_("msam")
-	  || it->texName.substr(0, 2) == T_("xy"))
+      if (it->texName.substr(0, 2) == "cm"
+	  || it->texName.substr(0, 2) == "eu"
+	  || (it->texName.substr(0, 2) == "la"
+	      && ! (it->encFile.substr(0, 12) == "cm-super-t2a"))
+	  || (it->texName.substr(0, 2) == "lc"
+	      && ! (it->encFile.substr(0, 12) == "cm-super-t2c"))
+	  || it->texName.substr(0, 4) == "line"
+	  || it->texName.substr(0, 4) == "msam"
+	  || it->texName.substr(0, 2) == "xy")
 	{
-	  if (! (it->fontFile.substr(0, 4)  == T_("fmex")))
+	  if (! (it->fontFile.substr(0, 4)  == "fmex"))
 	    {
-	      options += T_(" -r");
+	      options += " -r";
 	    }
 	}
-      if (field2 == T_("") && field3 == T_("") && options == T_(""))
+      if (field2 == "" && field3 == "" && options == "")
 	{
 	  continue;
 	}
       writer.Write (field1);
       if (! field2.empty())
 	{
-	  writer.WriteFormatted (T_(" %s"), field2.c_str());
+	  writer.WriteFormatted (" %s", field2.c_str());
 	}
       else if (! field3.empty())
 	{
-	  writer.WriteFormatted (T_(" %s"), T_("default"));
+	  writer.WriteFormatted (" %s", "default");
 	}
       if (! field3.empty())
 	{
-	  writer.WriteFormatted (T_(" %s"), field3.c_str());
+	  writer.WriteFormatted (" %s", field3.c_str());
 	}
       if (! options.empty())
 	{
-	  writer.WriteFormatted (T_("%s"), options.c_str());
+	  writer.WriteFormatted ("%s", options.c_str());
 	}
       writer.WriteLine ();
     }
@@ -1179,7 +1179,7 @@ MakeFontMapApp::ParseDvipsMapFile
 	}
       catch (const MiKTeXException & e)
 	{
-	  MapError (T_("%s"), e.what());
+	  MapError ("%s", e.what());
 	}
     }
 
@@ -1238,17 +1238,17 @@ MakeFontMapApp::TranslateFontFile
     {
       fontMapEntry.fontFile = it->second;
     }
-  Tokenizer header (fontMapEntry.headerList.c_str(), T_(";"));
-  fontMapEntry.headerList = T_("");
+  Tokenizer header (fontMapEntry.headerList.c_str(), ";");
+  fontMapEntry.headerList = "";
   for (; header.GetCurrent() != 0; ++ header)
     {
       if (! fontMapEntry.headerList.empty())
 	{
-	  fontMapEntry.headerList += T_(';');
+	  fontMapEntry.headerList += ';';
 	}
       const char * lpsz;
       for (lpsz = header.GetCurrent();
-	   *lpsz == T_('<') || *lpsz == T_('[');
+	   *lpsz == '<' || *lpsz == '[';
 	   ++ lpsz)
 	{
 	  fontMapEntry.headerList += *lpsz;
@@ -1350,28 +1350,24 @@ MakeFontMapApp::CopyFiles ()
   PathName pathSrc;
 
   pathSrc.Set (dvipsOutputDir,
-	       (dvipsPreferOutline ? T_("psfonts_t1") : T_("psfonts_pk")),
-	       T_(".map"));
-  CopyFile (pathSrc, PathName(dvipsOutputDir, T_("psfonts.map")));
+	       (dvipsPreferOutline ? "psfonts_t1" : "psfonts_pk"),
+	       ".map");
+  CopyFile (pathSrc, PathName(dvipsOutputDir, "psfonts.map"));
 
   pathSrc.Set (dvipdfmOutputDir,
-	       (dvipdfmDownloadBase14
-		? T_("dvipdfm_dl14")
-		: T_("dvipdfm_ndl14")),
-	       T_(".map"));
-  CopyFile (pathSrc, PathName(dvipdfmOutputDir, T_("dvipdfm.map")));
+	       (dvipdfmDownloadBase14 ? "dvipdfm_dl14" : "dvipdfm_ndl14"),
+	       ".map");
+  CopyFile (pathSrc, PathName(dvipdfmOutputDir, "dvipdfm.map"));
 #if CREATE_DEPRECATED_MAP_FILES
-  CopyFile (pathSrc, PathName(dvipdfmOutputDir, T_("psfonts.map")));
+  CopyFile (pathSrc, PathName(dvipdfmOutputDir, "psfonts.map"));
 #endif
 
   pathSrc.Set (pdftexOutputDir,
-	       (pdftexDownloadBase14
-		? T_("pdftex_dl14")
-		: T_("pdftex_ndl14")),
-	       T_(".map"));
-  CopyFile (pathSrc, PathName(pdftexOutputDir, T_("pdftex.map")));
+	       (pdftexDownloadBase14 ? "pdftex_dl14" : "pdftex_ndl14"),
+	       ".map");
+  CopyFile (pathSrc, PathName(pdftexOutputDir, "pdftex.map"));
 #if CREATE_DEPRECATED_MAP_FILES
-  CopyFile (pathSrc, PathName(pdftexOutputDir, T_("psfonts.map")));
+  CopyFile (pathSrc, PathName(pdftexOutputDir, "psfonts.map"));
 #endif
 }
 
@@ -1381,9 +1377,9 @@ MakeFontMapApp::CopyFiles ()
    _________________________________________________________________________ */
 
 static const char * const topDirs[] = {
-  T_("fonts/type1"),
-  T_("fonts/opentype"),
-  T_("fonts/truetype"),
+  "fonts/type1",
+  "fonts/opentype",
+  "fonts/truetype",
 };
 
 void
@@ -1392,8 +1388,16 @@ MakeFontMapApp::BuildFontconfigCache ()
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
   configFile += MIKTEX_PATH_FONTCONFIG_LOCALFONTS_FILE;
   StreamWriter writer (configFile);
-  writer.WriteLine (T_("<?xml version=\"1.0\"?>"));
-  writer.WriteLine (T_("<fontconfig>"));
+  writer.WriteLine ("<?xml version=\"1.0\"?>");
+  writer.WriteLine ();
+  writer.WriteLine ("<!--");
+  writer.WriteLine (T_("\
+	DO NOT EDIT THIS FILE."));
+  writer.WriteLine (T_("\
+	IT WILL BE REPLACED WHEN MIKTEX IS UPDATED."));
+  writer.WriteLine ("-->");
+  writer.WriteLine ();
+  writer.WriteLine ("<fontconfig>");
   vector<string> paths;
   for (CSVList path
 	 (pSession->GetLocalFontDirectories().c_str(),
@@ -1420,20 +1424,20 @@ MakeFontMapApp::BuildFontconfigCache ()
        it != paths.end();
        ++ it)
     {
-      writer.WriteFormattedLine (T_("<dir>%s</dir>"), it->c_str());
+      writer.WriteFormattedLine ("<dir>%s</dir>", it->c_str());
     }
-  writer.WriteLine (T_("</fontconfig>"));
+  writer.WriteLine ("</fontconfig>");
   writer.Close ();
   PathName pathFcCache;
-  if (! pSession->FindFile (T_("fc-cache"), FileType::EXE, pathFcCache))
+  if (! pSession->FindFile ("fc-cache", FileType::EXE, pathFcCache))
     {
-      Abort (T_("The fc-cache executable could not be found."));
+      Abort ("The fc-cache executable could not be found.");
     }
   CommandLineBuilder arguments;
-  arguments.AppendOption (T_("--force"));
+  arguments.AppendOption ("--force");
   if (verbose)
     {
-      arguments.AppendOption (T_("--verbose"));
+      arguments.AppendOption ("--verbose");
     }
   Process::Run (pathFcCache, arguments.Get());
 }
@@ -1446,21 +1450,20 @@ MakeFontMapApp::BuildFontconfigCache ()
 bool
 HasPaintType (/*[in]*/ const FontMapEntry & fontMapEntry)
 {
-  return (fontMapEntry.specialInstructions.find(T_("PaintType"))
-	  != string::npos);
+  return (fontMapEntry.specialInstructions.find("PaintType") != string::npos);
 }
 
 void
 MakeFontMapApp::MakeMaps ()
 {
   set<FontMapEntry> dvips35;
-  ReadMap (T_("dvips35.map"), dvips35, true);
+  ReadMap ("dvips35.map", dvips35, true);
   set<FontMapEntry> pdftex35;
-  ReadMap (T_("pdftex35.map"), pdftex35, true);
+  ReadMap ("pdftex35.map", pdftex35, true);
   set<FontMapEntry> dvipdfm35;
-  ReadMap (T_("dvipdfm35.map"), dvipdfm35, true);
+  ReadMap ("dvipdfm35.map", dvipdfm35, true);
   set<FontMapEntry> ps2pk35;
-  ReadMap (T_("ps2pk35.map"), ps2pk35, true);
+  ReadMap ("ps2pk35.map", ps2pk35, true);
 
   set<FontMapEntry> transLW35_ps2pk35 (TranslateLW35(ps2pk35));
 
@@ -1474,20 +1477,20 @@ MakeFontMapApp::MakeMaps ()
 
   set<FontMapEntry> tmp2 (CatMaps(mapFiles));
 
-  WriteDvipsMapFile (T_("ps2pk.map"), transLW35_ps2pk35, tmp1, tmp2);
+  WriteDvipsMapFile ("ps2pk.map", transLW35_ps2pk35, tmp1, tmp2);
 
   set<FontMapEntry> empty;
 
-  WriteDvipsMapFile (T_("download35.map"), transLW35_ps2pk35, empty, empty);
+  WriteDvipsMapFile ("download35.map", transLW35_ps2pk35, empty, empty);
 
-  WriteDvipsMapFile (T_("builtin35.map"), transLW35_dvips35, empty, empty);
+  WriteDvipsMapFile ("builtin35.map", transLW35_dvips35, empty, empty);
 
   set<FontMapEntry> transLW35_dftdvips
     (TranslateLW35(dvipsDownloadBase35 ? ps2pk35 : dvips35));
 
-  WriteDvipsMapFile (T_("psfonts_t1.map"), transLW35_dftdvips, tmp1, tmp2);
+  WriteDvipsMapFile ("psfonts_t1.map", transLW35_dftdvips, tmp1, tmp2);
 
-  WriteDvipsMapFile (T_("psfonts_pk.map"), transLW35_dftdvips, empty, tmp2);
+  WriteDvipsMapFile ("psfonts_pk.map", transLW35_dftdvips, empty, tmp2);
 
   set<FontMapEntry> tmp3 = transLW35_pdftex35;
   tmp3.insert (tmp1.begin(), tmp1.end());
@@ -1537,11 +1540,11 @@ MakeFontMapApp::MakeMaps ()
 	}
     }
 
-  WritePdfTeXMapFile (T_("pdftex_ndl14.map"), tmp3, empty, empty);
-  WritePdfTeXMapFile (T_("pdftex_dl14.map"), tmp7, empty, empty);
+  WritePdfTeXMapFile ("pdftex_ndl14.map", tmp3, empty, empty);
+  WritePdfTeXMapFile ("pdftex_dl14.map", tmp7, empty, empty);
 
-  WriteDvipdfmMapFile (T_("dvipdfm_dl14.map"), tmp7, empty, empty);
-  WriteDvipdfmMapFile (T_("dvipdfm_ndl14.map"), tmp6, empty, empty);
+  WriteDvipdfmMapFile ("dvipdfm_dl14.map", tmp7, empty, empty);
+  WriteDvipdfmMapFile ("dvipdfm_ndl14.map", tmp6, empty, empty);
 
   CopyFiles ();
 
@@ -1554,7 +1557,7 @@ MakeFontMapApp::MakeMaps ()
    _________________________________________________________________________ */
 
 void
-MakeFontMapApp::Run (/*[in]*/ int			argc,
+MakeFontMapApp::Run (/*[in]*/ int		argc,
 		     /*[in]*/ const char **	argv)
 {
   pSession.CreateSession (Session::InitInfo(argv[0]));

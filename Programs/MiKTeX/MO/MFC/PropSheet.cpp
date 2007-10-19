@@ -78,7 +78,7 @@ PropSheet::OnInitDialog ()
       HICON hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
       if (hIcon == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CWinApp::LoadIcon"), 0);
+	  FATAL_WINDOWS_ERROR ("CWinApp::LoadIcon", 0);
 	}
       SetIcon (hIcon, TRUE);
       ModifyStyleEx (0, WS_EX_CONTEXTHELP);
@@ -124,7 +124,7 @@ PropSheet::RunIniTeXMF
   PathName exePath;
   if (! SessionWrapper(true)->FindFile(T_("initexmf"), FileType::EXE, exePath))
     {
-      FATAL_MIKTEX_ERROR (T_("PropSheet::RunIniTeXMF"),
+      FATAL_MIKTEX_ERROR ("PropSheet::RunIniTeXMF",
 			  T_("\
 The MiKTeX configuration utility could not be found."),
 			  0);
@@ -132,7 +132,7 @@ The MiKTeX configuration utility could not be found."),
 
   CommandLineBuilder commandLine (cmdLine);
 
-  commandLine.AppendOption (T_("--verbose"));
+  commandLine.AppendOption ("--verbose");
 
   this->pProgressDialog = pProgressDialog;
 
@@ -145,7 +145,7 @@ The MiKTeX configuration utility could not be found."),
 
   SessionWrapper(true)->UnloadFilenameDatabase ();
 
-  processOutput = T_("");
+  processOutput = "";
   int exitCode;
   Process::Run (exePath,
 		commandLine.Get(),
@@ -194,7 +194,7 @@ PropSheet::BuildFormats ()
 	  continue;
 	}
       CommandLineBuilder cmdLine;
-      cmdLine.AppendOption (T_("--dump="), formatInfo.name);
+      cmdLine.AppendOption ("--dump=", formatInfo.name);
       RunIniTeXMF (formatInfo.description.c_str(), cmdLine, pProgDlg.get());
     }
   pProgDlg->StopProgressDialog ();

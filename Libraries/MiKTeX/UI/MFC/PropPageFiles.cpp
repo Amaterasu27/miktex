@@ -72,23 +72,23 @@ PropPageFiles::OnInitDialog ()
       if (listControl.InsertColumn(0,
 				   T_("File name"),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-xxx mmmmmmmm.txt")),
+				   listControl.GetStringWidth("\
+xxx mmmmmmmm.txt"),
 				   0)
 	  < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
 	}
 
       if (listControl.InsertColumn(1,
 				   T_("Path"),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
+				   listControl.GetStringWidth("\
+xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
 				   1)
 	  < 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertColumn"), 0);
+	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
 	}
 
       vector<string>::const_iterator it;
@@ -133,7 +133,7 @@ xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
    _________________________________________________________________________ */
 
 void
-PropPageFiles::AddFile (/*[in]*/ int			idx,
+PropPageFiles::AddFile (/*[in]*/ int		idx,
 			/*[in]*/ const char *	lpszFileName)
 {
   PathName fileName (lpszFileName);
@@ -147,13 +147,13 @@ PropPageFiles::AddFile (/*[in]*/ int			idx,
   lvitem.pszText = fileName.GetBuffer();
   if (listControl.InsertItem(&lvitem) < 0)
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::InsertItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   lvitem.iItem = idx;
   lvitem.iSubItem = 1;
   lvitem.pszText = path.GetBuffer();
   if (! listControl.SetItem(&lvitem))
     {
-      FATAL_WINDOWS_ERROR (T_("CListCtrl::SetItem"), 0);
+      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
     }
 }

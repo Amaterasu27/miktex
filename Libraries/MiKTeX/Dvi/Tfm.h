@@ -27,15 +27,15 @@ class DviImpl;
 class Tfm : public DviFont
 {
 public:
-  Tfm (/*[in]*/ DviImpl *		pDvi,
-       /*[in]*/ int			checksum,
-       /*[in]*/ int			scaledSize,
-       /*[in]*/ int			designSize,
-       /*[in]*/ const char *		lpszAreaName,
-       /*[in]*/ const char *		lpszFontName,
+  Tfm (/*[in]*/ DviImpl *	pDvi,
+       /*[in]*/ int		checksum,
+       /*[in]*/ int		scaledSize,
+       /*[in]*/ int		designSize,
+       /*[in]*/ const char *	lpszAreaName,
+       /*[in]*/ const char *	lpszFontName,
        /*[in]*/ const char *	lpszFileName,
-       /*[in]*/ double			tfmConf,
-       /*[in]*/ double			conv);
+       /*[in]*/ double		tfmConf,
+       /*[in]*/ double		conv);
 
 public:
   virtual

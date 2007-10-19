@@ -87,7 +87,7 @@ public:
   GetInitProgramName ()
     const
   {
-    return (MIKTEXTEXT("initex"));
+    return ("initex");
   }
 
 public:
@@ -97,7 +97,7 @@ public:
   GetVirginProgramName ()
     const
   {
-    return (MIKTEXTEXT("virtex"));
+    return ("virtex");
   }
 
 public:
@@ -107,7 +107,7 @@ public:
   TheNameOfTheGame ()
     const
   {
-    return (MIKTEXTEXT("TeX"));
+    return ("TeX");
   }
 
 public:

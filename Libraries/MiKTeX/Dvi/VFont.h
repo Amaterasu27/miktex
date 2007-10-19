@@ -27,18 +27,18 @@ class VfChar;
 class VFont : public DviFont
 {
 public:
-  VFont (/*[in]*/ DviImpl *		pDvi,
-	 /*[in]*/ int			checkSum,
-	 /*[in]*/ int			scaledSize,
-	 /*[in]*/ int			designSize,
-	 /*[in]*/ const char *		lpszAreaName,
-	 /*[in]*/ const char *		lpszFontName,
+  VFont (/*[in]*/ DviImpl *	pDvi,
+	 /*[in]*/ int		checkSum,
+	 /*[in]*/ int		scaledSize,
+	 /*[in]*/ int		designSize,
+	 /*[in]*/ const char *	lpszAreaName,
+	 /*[in]*/ const char *	lpszFontName,
 	 /*[in]*/ const char *	lpszFileName,
-	 /*[in]*/ double		tfmConv,
-	 /*[in]*/ double		conv,
-	 /*[in]*/ int			mag,
+	 /*[in]*/ double	tfmConv,
+	 /*[in]*/ double	conv,
+	 /*[in]*/ int		mag,
 	 /*[in]*/ const char *	lpszMetafontMode,
-	 /*[in]*/ int			baseDpi);
+	 /*[in]*/ int		baseDpi);
 
 public:
   virtual

@@ -57,7 +57,7 @@ BOOL
 SettingsPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  paperSize = T_("A4");
+  paperSize = "A4";
   BOOL ret = CPropertyPage::OnInitDialog();
   return (ret);
 }

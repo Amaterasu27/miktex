@@ -172,10 +172,10 @@ MakeMem::Run (/*[in]*/ int			argc,
 
   // make the mem file name
   PathName memFile (name);
-  memFile.SetExtension (T_(".mem"));
+  memFile.SetExtension (".mem");
 
   // make fully qualified destination path name
-  PathName pathDest (destinationDirectory, destinationName, T_(".mem"));
+  PathName pathDest (destinationDirectory, destinationName, ".mem");
   
   Verbose (T_("Creating the %s memory file...\n"), Q_(destinationName));
 
@@ -185,9 +185,9 @@ MakeMem::Run (/*[in]*/ int			argc,
 
   // invoke MetaPost to make the mem file
   CommandLineBuilder arguments;
-  arguments.AppendOption (T_("--initialize"));
-  arguments.AppendOption (T_("--interaction="), T_("nonstopmode"));
-  arguments.AppendOption (T_("--halt-on-error"));
+  arguments.AppendOption ("--initialize");
+  arguments.AppendOption ("--interaction=", T_("nonstopmode"));
+  arguments.AppendOption ("--halt-on-error");
   arguments.AppendArguments (engineOptions);
   if (! noDumpPrimitive)
     {
@@ -197,7 +197,7 @@ MakeMem::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (name);
     }
-  if (! RunProcess(T_("mp"), arguments.Get()))
+  if (! RunProcess("mp", arguments.Get()))
     {
       FatalError (T_("MetaPost failed on %s."), Q_(name));
     }
