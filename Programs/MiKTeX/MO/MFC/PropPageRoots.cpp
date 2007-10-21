@@ -104,9 +104,12 @@ PropPageTeXMFRoots::OnInitDialog ()
 				    | LVS_EX_FULLROWSELECT
 				    | LVS_EX_INFOTIP);
       InsertColumn
-	(0, T_("Path"),
-	 (T_("C:\\Documents and Settings\\All Users\\...\\MiKTeX xxx")));
-      InsertColumn (1, T_("Description"), T_("common config xxx"));
+	(0,
+	 T_("Path"),
+	 "C:\\Documents and Settings\\All Users\\...\\MiKTeX xxx");
+      InsertColumn (1,
+		    T_("Description"),
+		    "common config xxx");
       Refresh ();
     }
   catch (const MiKTeXException & e)
@@ -151,7 +154,7 @@ PropPageTeXMFRoots::OnScan ()
       auto_ptr<ProgressDialog> pProgressDialog (ProgressDialog::Create());
       pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
       pProgressDialog->SetTitle (T_("MiKTeX FNDB Maintenance"));
-      pProgressDialog->SetLine (1, "Scanning directories...");
+      pProgressDialog->SetLine (1, T_("Scanning directories..."));
       POSITION pos = listControl.GetFirstSelectedItemPosition();
       this->pProgressDialog = pProgressDialog.get();
       MIKTEX_ASSERT (pos != 0);
@@ -232,7 +235,7 @@ PropPageTeXMFRoots::OnAdd ()
 {
   try
     {
-      BROWSEINFO browseInfo;
+      BROWSEINFOA browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
       browseInfo.hwndOwner = GetSafeHwnd();
       browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
@@ -248,24 +251,24 @@ PropPageTeXMFRoots::OnAdd ()
       LPITEMIDLIST pidlRoot = 0;
       if (SHGetSpecialFolderLocation(0, CSIDL_DRIVES, &pidlRoot) != S_OK)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SHGetSpecialFolderLocation"), 0);
+	  FATAL_WINDOWS_ERROR ("SHGetSpecialFolderLocation", 0);
 	}
       AutoCoTaskMem autoFree (pidlRoot);
       browseInfo.pidlRoot = pidlRoot;
-      LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
+      LPITEMIDLIST pidl = SHBrowseForFolderA(&browseInfo);
       if (pidl == 0)
 	{
 	  return;
 	}
       char szDir[BufferSizes::MaxPath];
-      BOOL done = SHGetPathFromIDList(pidl, szDir);
+      BOOL done = SHGetPathFromIDListA(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! done)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SHGetPathFromIDList"), 0);
+	  FATAL_WINDOWS_ERROR ("SHGetPathFromIDList", 0);
 	}
       CheckRoot (szDir);
-      LV_ITEM lvitem;
+      LVITEMA lvitem;
       lvitem.iItem = listControl.GetItemCount();
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
@@ -296,20 +299,20 @@ PropPageTeXMFRoots::OnAdd ()
    _________________________________________________________________________ */
 
 const char * tdsDirs[] = {
-  T_("bibtex"),
-  T_("dvipdfm"),
-  T_("dvips"),
-  T_("fontname"),
-  T_("fonts"),
-  T_("makeindex"),
-  T_("metafont"),
-  T_("metapost"),
+  "bibtex",
+  "dvipdfm",
+  "dvips",
+  "fontname",
+  "fonts",
+  "makeindex",
+  "metafont",
+  "metapost",
   "mft",
-  T_("miktex"),
-  T_("pdftex"),
-  T_("psutils"),
-  T_("scripts"),
-  T_("tex"),
+  "miktex",
+  "pdftex",
+  "psutils",
+  "scripts",
+  "tex",
   "tpm",
   "ttf2pfb",
   "ttf2tfm",
@@ -378,7 +381,7 @@ PropPageTeXMFRoots::OnMovedown ()
       roots[idx] = roots[idx + 1];
       roots[idx + 1] = tmp;
 
-      LVITEM lvitem;
+      LVITEMA lvitem;
       lvitem.mask = LVIF_PARAM;
       lvitem.iSubItem = 0;
 
@@ -441,7 +444,7 @@ PropPageTeXMFRoots::OnMoveup ()
       roots[idx] = roots[idx - 1];
       roots[idx - 1] = tmp;
 
-      LVITEM lvitem;
+      LVITEMA lvitem;
       lvitem.mask = LVIF_PARAM;
       lvitem.iSubItem = 0;
       
@@ -528,7 +531,7 @@ PropPageTeXMFRoots::OnRemove ()
    _________________________________________________________________________ */
 
 void
-PropPageTeXMFRoots::InsertColumn (/*[in]*/ int			colIdx,
+PropPageTeXMFRoots::InsertColumn (/*[in]*/ int		colIdx,
 				  /*[in]*/ const char *	lpszLabel,
 				  /*[in]*/ const char *	lpszLongest)
 {
@@ -682,7 +685,7 @@ PropPageTeXMFRoots::Refresh ()
   for (unsigned r = 0; r < nRoots; ++ r)
     {
       PathName root = SessionWrapper(true)->GetRootDirectory(r);
-      LV_ITEM lvitem;
+      LVITEMA lvitem;
       lvitem.iItem = r;
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
@@ -704,7 +707,7 @@ PropPageTeXMFRoots::Refresh ()
 	    {
 	      description += ", ";
 	    }
-	  description += T_("Install");
+	  description += "Install";
 	}
       if (root == userDataRoot)
 	{
@@ -712,7 +715,7 @@ PropPageTeXMFRoots::Refresh ()
 	    {
 	      description += ", ";
 	    }
-	  description += T_("UserData");
+	  description += "UserData";
 	}
       if (root == commonDataRoot)
 	{
@@ -720,7 +723,7 @@ PropPageTeXMFRoots::Refresh ()
 	    {
 	      description += ", ";
 	    }
-	  description += T_("CommonData");
+	  description += "CommonData";
 	}
       if (root == userConfigRoot)
 	{
@@ -728,7 +731,7 @@ PropPageTeXMFRoots::Refresh ()
 	    {
 	      description += ", ";
 	    }
-	  description += T_("UserConfig");
+	  description += "UserConfig";
 	}
       if (root == commonConfigRoot)
 	{
@@ -736,7 +739,7 @@ PropPageTeXMFRoots::Refresh ()
 	    {
 	      description += ", ";
 	    }
-	  description += T_("CommonConfig");
+	  description += "CommonConfig";
 	}
       if (! description.empty())
 	{
@@ -797,8 +800,8 @@ PropPageTeXMFRoots::OnApply ()
 	    pProgressDialog (ProgressDialog::Create());
 
 	  pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
-	  pProgressDialog->SetTitle ("MiKTeX FNDB Maintenance");
-	  pProgressDialog->SetLine (1, "Scanning directories...");
+	  pProgressDialog->SetTitle (T_("MiKTeX FNDB Maintenance"));
+	  pProgressDialog->SetLine (1, T_("Scanning directories..."));
 	  this->pProgressDialog = pProgressDialog.get();
 
 	  isModified = ! Fndb::Refresh(this);
@@ -830,7 +833,7 @@ PropPageTeXMFRoots::OnApply ()
 BOOL
 PropPageTeXMFRoots::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo) 
 {
-  return (::OnHelpInfo(pHelpInfo, aHelpIDs, T_("RootsPage.txt")));
+  return (::OnHelpInfo(pHelpInfo, aHelpIDs, "RootsPage.txt"));
 }
 
 /* _________________________________________________________________________
@@ -844,7 +847,7 @@ PropPageTeXMFRoots::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, T_("RootsPage.txt"));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "RootsPage.txt");
     }
   catch (const MiKTeXException & e)
     {
@@ -883,7 +886,7 @@ PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const char * lpszPath,
 
 bool
 MIKTEXCALL
-PropPageTeXMFRoots::OnProgress (/*[in]*/ unsigned		level,
+PropPageTeXMFRoots::OnProgress (/*[in]*/ unsigned	level,
 				/*[in]*/ const char *	lpszDirectory)
 {
   UNUSED_ALWAYS (level);
@@ -907,32 +910,49 @@ PropPageTeXMFRoots::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
       MIKTEX_ASSERT (pInfoTip != 0);
       PathName path = roots[pInfoTip->iItem];
       string info = path.Get();
+      bool maintainedByMiKTeX =
+	(path == installRoot
+	 || path == userDataRoot
+	 || path == commonDataRoot
+	 || path == userConfigRoot
+	 || path == commonConfigRoot);
       if (path == installRoot)
 	{
-	  info += T_("\r\n\r\nThis is the installation directory. Packages");
-	  info += T_(" will be installed here.");
+	  info += T_("\r\n\r\n\
+This is the installation directory.");
 	}
       if (path == userDataRoot)
 	{
-	  info += T_("\r\n\r\nThis is the per-user data directory.");
-	  info += T_(" User-specific data will be installed here.");
+	  info += T_("\r\n\r\n\
+This is the per-user data directory.");
 	}
       if (path == commonDataRoot)
 	{
-	  info += T_("\r\n\r\nThis is the per-machine data directory.");
-	  info += T_(" Common data will be installed here.");
+	  info += T_("\r\n\r\n\
+This is the per-machine data directory.");
 	}
       if (path == userConfigRoot)
 	{
-	  info += T_("\r\n\r\nThis is the per-user configuration directory.");
-	  info +=
-	    T_(" User-specific configuration files will be installed here.");
+	  info += T_("\r\n\r\n\
+This is the per-user configuration directory.");
 	}
       if (path == commonConfigRoot)
 	{
 	  info +=
-	    T_("\r\n\r\nThis is the per-machine configuration directory.");
-	  info += T_(" Common configuration files will be installed here.");
+	    T_("\r\n\r\n\
+This is the per-machine configuration directory.");
+	}
+      if (maintainedByMiKTeX)
+	{
+	  info += T_("\r\n\r\n\
+This directory is maintained by MiKTeX. \
+You should not install your own files here, because they might get lost \
+when MiKTeX is updated.");
+	}
+      else
+	{
+	  info += T_("\r\n\r\n\
+This directory can be used for local additions.");
 	}
       Utils::CopyString (pInfoTip->pszText,
 			 pInfoTip->cchTextMax,
@@ -965,15 +985,13 @@ PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)
 	{
-	  UNEXPECTED_CONDITION
-	    ("PropPageTeXMFRoots::SetElevationRequired");
+	  UNEXPECTED_CONDITION ("PropPageTeXMFRoots::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
       hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
       if (hwnd == 0)
 	{
-	  UNEXPECTED_CONDITION
-	    ("PropPageTeXMFRoots::SetElevationRequired");
+	  UNEXPECTED_CONDITION ("PropPageTeXMFRoots::SetElevationRequired");
 	}
       Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
     }
