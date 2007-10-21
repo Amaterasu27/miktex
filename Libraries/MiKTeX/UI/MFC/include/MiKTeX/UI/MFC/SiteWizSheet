@@ -35,7 +35,6 @@ public:
   AFX_EXT_CLASS
   static
   INT_PTR
-  MIKTEXUICALL
   DoModal (/*[in]*/ CWnd * pParent = 0);
 };
 

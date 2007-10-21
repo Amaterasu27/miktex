@@ -96,7 +96,6 @@ END_MESSAGE_MAP();
    _________________________________________________________________________ */
 
 INT_PTR
-MIKTEXUICALL
 PropSheetPackage::DoModal (/*[in]*/ const PackageInfo &	packageInfo,
 			   /*[in]*/ CWnd *		pParentWnd)
 {

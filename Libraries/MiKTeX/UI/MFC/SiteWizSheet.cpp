@@ -121,7 +121,6 @@ END_MESSAGE_MAP();
    _________________________________________________________________________ */
 
 INT_PTR
-MIKTEXUICALL
 SiteWizSheet::DoModal (/*[in]*/ CWnd * pParent)
 {
   BEGIN_USE_MY_RESOURCES()
