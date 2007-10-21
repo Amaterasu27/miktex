@@ -1,0 +1,5 @@
+MiKTeX 2.7
+
+       * make sure each exported function has an explicit calling convention
+       * Yap: auto render mode (feature #1581199)
+       * manual: MiKTeX-maintained TEXMF directories are a prohibited zone
