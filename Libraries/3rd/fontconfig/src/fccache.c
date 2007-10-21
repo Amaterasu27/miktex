@@ -200,6 +200,12 @@ struct _FcCacheSkip {
     dev_t	    cache_dev;
     ino_t	    cache_ino;
     time_t	    cache_mtime;
+#if defined(MIKTEX)
+    time_t	    cache_atime;
+    time_t	    cache_ctime;
+    size_t	    cache_size;
+#endif
+
     FcCacheSkip	    *next[1];
 };
 
@@ -291,12 +297,22 @@ FcCacheInsert (FcCache *cache, struct stat *cache_stat)
 	s->cache_dev = cache_stat->st_dev;
 	s->cache_ino = cache_stat->st_ino;
 	s->cache_mtime = cache_stat->st_mtime;
+#if defined(MIKTEX)
+	s->cache_atime = cache_stat->st_atime;
+	s->cache_ctime = cache_stat->st_ctime;
+	s->cache_size = cache_stat->st_size;
+#endif
     }
     else
     {
 	s->cache_dev = 0;
 	s->cache_ino = 0;
 	s->cache_mtime = 0;
+#if defined(MIKTEX)
+	s->cache_atime = 0;
+	s->cache_ctime = 0;
+	s->cache_size = 0;
+#endif
     }
     
     /*
@@ -366,6 +382,11 @@ FcCacheFindByStat (struct stat *cache_stat)
     for (s = fcCacheChains[0]; s; s = s->next[0])
 	if (s->cache_dev == cache_stat->st_dev &&
 	    s->cache_ino == cache_stat->st_ino &&
+#if defined(MIKTEX)
+	    s->cache_atime == cache_stat->st_atime &&
+	    s->cache_ctime == cache_stat->st_ctime &&
+	    s->cache_size == cache_stat->st_size &&
+#endif
 	    s->cache_mtime == cache_stat->st_mtime)
 	{
 	    s->ref++;
@@ -803,7 +824,11 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
 	goto bail5;
     }
 
+#if defined(MIKTEX)
+    miktex_close_cache_file (fd);
+#else
     close(fd);
+#endif
     if (!FcAtomicReplaceOrig(atomic))
         goto bail4;
     FcStrFree (cache_hashed);

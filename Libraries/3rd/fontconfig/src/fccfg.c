@@ -1614,6 +1614,9 @@ FcConfigGetPath (void)
     int	    i;
 
     npath = 2;	/* default dir + null */
+#if defined(MIKTEX)
+    npath += miktex_get_fontconfig_config_dirs(0, 0);
+#endif
     env = (FcChar8 *) getenv ("FONTCONFIG_PATH");
     if (env)
     {
@@ -1648,6 +1651,10 @@ FcConfigGetPath (void)
 	    i++;
 	}
     }
+
+#if defined(MIKTEX)
+    i += miktex_get_fontconfig_config_dirs(path, i);
+#endif
     
     dir = (FcChar8 *) FONTCONFIG_PATH;
     path[i] = malloc (strlen ((char *) dir) + 1);

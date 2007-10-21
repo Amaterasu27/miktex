@@ -29,6 +29,13 @@ miktex_fc_default_fonts ();
 const char *
 miktex_fontconfig_file ();
 
+int
+miktex_get_fontconfig_config_dirs (/*[in,out]*/ char ** pPaths,
+				   /*[in]*/ int nPaths);
+
+void
+miktex_close_cache_file (/*[in]*/ int fd);
+
 #define FONTCONFIG_PATH miktex_fontconfig_path()
 
 #define FC_CACHEDIR miktex_fc_cachedir()

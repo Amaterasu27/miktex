@@ -18,6 +18,7 @@
    USA.  */
 
 #include <cstdlib>
+#include <io.h>
 #include <exception>
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Paths>
@@ -95,15 +96,54 @@ extern "C"
 const char *
 miktex_fontconfig_file ()
 {
+  return (MIKTEX_FONTS_CONF);
+}
+
+extern "C"
+int
+miktex_get_fontconfig_config_dirs (/*[in,out]*/ char **	pPaths,
+				   /*[in]*/ int		nPaths)
+{
   try
     {
-      static PathName path;
-      if (path[0] == 0)
+      unsigned nConfigDirs = SessionWrapper(true)->GetNumberOfTEXMFRoots();
+      if (pPaths != 0)
 	{
-	  path = SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
-	  path += MIKTEX_PATH_FONTCONFIG_CONFIG_FILE;
+	  MIKTEX_ASSERT_BUFFER (pPaths,
+				(nPaths + nConfigDirs) * sizeof(pPaths[0]));
+	  for (unsigned idx = nConfigDirs; idx > 0; -- idx, ++ nPaths)
+	    {
+	      PathName path (SessionWrapper(true)->GetRootDirectory(idx - 1));
+	      path +=  MIKTEX_PATH_FONTCONFIG_CONFIG_DIR;
+	      pPaths[nPaths] = strdup(path.Get());
+	    }
 	}
-      return (path.Get());
+      return (static_cast<int>(nConfigDirs));
+    }
+  catch (const exception &)
+    {
+      exit (1);
+    }
+}
+
+extern "C"
+void
+miktex_close_cache_file (/*[in]*/ int fd)
+{
+  static time_t cache_ctime = static_cast<time_t>(-1);
+  static time_t cache_atime = static_cast<time_t>(-1);
+  static time_t cache_mtime = static_cast<time_t>(-1);
+  try
+    {
+      if (cache_ctime == static_cast<time_t>(-1))
+	{
+	  cache_ctime = cache_atime = cache_mtime = time(0);
+	}
+      File::SetTimes (fd, cache_ctime, cache_atime, cache_mtime);
+      cache_ctime += 2;
+      cache_atime += 2;
+      cache_mtime += 2;
+      _close (fd);
     }
   catch (const exception &)
     {

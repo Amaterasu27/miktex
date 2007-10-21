@@ -24,8 +24,9 @@
 
 #if defined(MIKTEX)
 #  define main __cdecl Main
-#  if defined(_MSC_VER)
+#  if defined(MIKTEX_WINDOWS)
 #    include <io.h>
+#    include <fcntl.h>
 #  endif
 #endif /* MIKTEX */
 
@@ -151,6 +152,10 @@ main (int argc, char **argv)
     if (fs)
     {
 	int	j;
+
+#if defined(MIKTEX) && defined(MIKTEX_WINDOWS)
+	_setmode (_fileno(stdout), _O_BINARY);
+#endif
 
 	for (j = 0; j < fs->nfont; j++)
 	{
