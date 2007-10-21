@@ -28,7 +28,7 @@
 #include "InstallPackageDialog.h"
 #include "ProxyAuthenticationDialog.h"
 
-static AFX_EXTENSION_MODULE MikuiDLL = { 0, 0 };
+AFX_EXTENSION_MODULE MikuiDLL = { 0, 0 };
 
 /* _________________________________________________________________________
    

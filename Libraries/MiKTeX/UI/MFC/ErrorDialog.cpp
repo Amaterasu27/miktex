@@ -112,7 +112,7 @@ ErrorDialogImpl::ErrorDialogImpl (/*[in]*/ CWnd *		pParent,
    _________________________________________________________________________ */
 
 ErrorDialogImpl::ErrorDialogImpl (/*[in]*/ CWnd *		pParent,
-				  /*[in]*/ const exception & e)
+				  /*[in]*/ const exception &	e)
   : CDialog (IDD, pParent),
     isMiKTeXException (false),
     stdException (e),
@@ -158,8 +158,12 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
 {
   try
     {
-      ErrorDialogImpl dlg (pParent, e);
-      return (dlg.DoModal());
+      BEGIN_USE_MY_RESOURCES()
+	{
+	  ErrorDialogImpl dlg (pParent, e);
+	  return (dlg.DoModal());
+	}
+      END_USE_MY_RESOURCES()
     }
   catch (const exception & e)
     {
@@ -180,8 +184,12 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
 {
   try
     {
-      ErrorDialogImpl dlg (pParent, e);
-      return (dlg.DoModal());
+      BEGIN_USE_MY_RESOURCES()
+	{
+	  ErrorDialogImpl dlg (pParent, e);
+	  return (dlg.DoModal());
+	}
+      END_USE_MY_RESOURCES()
     }
   catch (const exception & e)
     {
@@ -261,7 +269,7 @@ The error report has been copied to the Clipboard."));
 string
 ErrorDialogImpl::CreateReport ()
 {
-  otstringstream s;
+  ostringstream s;
   s << T_("MiKTeX Problem Report") << endl
     << T_("Message: ")
     << (isMiKTeXException ? miktexException.what() : stdException.what())

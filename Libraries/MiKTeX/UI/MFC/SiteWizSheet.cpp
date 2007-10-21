@@ -1,6 +1,6 @@
 /* SiteWizSheet.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -121,8 +121,13 @@ END_MESSAGE_MAP();
    _________________________________________________________________________ */
 
 INT_PTR
+MIKTEXUICALL
 SiteWizSheet::DoModal (/*[in]*/ CWnd * pParent)
 {
-  SiteWizSheetImpl dlg (pParent);
-  return (dlg.DoModal());
+  BEGIN_USE_MY_RESOURCES()
+    {
+      SiteWizSheetImpl dlg (pParent);
+      return (dlg.DoModal());
+    }
+  END_USE_MY_RESOURCES();
 }

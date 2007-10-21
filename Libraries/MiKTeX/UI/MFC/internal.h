@@ -34,8 +34,6 @@ using namespace MiKTeX::Packages;
 using namespace MiKTeX::UI::MFC;
 using namespace std;
 
-typedef basic_ostringstream<char> otstringstream;
-
 /* _________________________________________________________________________
 
    Error Macros
@@ -72,3 +70,31 @@ typedef basic_ostringstream<char> otstringstream;
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
+
+/* _________________________________________________________________________
+
+   USE_MY_RESOURCES
+   _________________________________________________________________________ */
+
+class USE_MY_RESOURCES
+{
+public:
+  USE_MY_RESOURCES ()
+    : defaultResourceHandle (AfxGetResourceHandle())
+  {
+    extern AFX_EXTENSION_MODULE MikuiDLL;
+    AfxSetResourceHandle (MikuiDLL.hModule);
+  }
+
+public:
+  ~USE_MY_RESOURCES ()
+  {
+    AfxSetResourceHandle (defaultResourceHandle);
+  }
+
+private:
+  HINSTANCE defaultResourceHandle;
+};
+
+#define BEGIN_USE_MY_RESOURCES() { USE_MY_RESOURCES useMyResources;
+#define END_USE_MY_RESOURCES() }

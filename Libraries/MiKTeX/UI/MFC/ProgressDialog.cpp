@@ -243,10 +243,14 @@ ProgressUIThread::InitInstance ()
 	{
 	  pWnd = CWnd::FromHandle(hParentWindow);
 	}
-      if (! pDlg->Create(IDD_PROGRESS, pWnd))
+      BEGIN_USE_MY_RESOURCES()
 	{
-	  FATAL_WINDOWS_ERROR ("CDialog::Create", 0);
+	  if (! pDlg->Create(IDD_PROGRESS, pWnd))
+	    {
+	      FATAL_WINDOWS_ERROR ("CDialog::Create", 0);
+	    }
 	}
+      END_USE_MY_RESOURCES();
       hWindow = pDlg->GetSafeHwnd();
       MIKTEX_ASSERT (hWindow != 0);
       pReadyEvent->SetEvent ();

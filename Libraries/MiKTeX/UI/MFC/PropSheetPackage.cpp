@@ -1,6 +1,6 @@
 /* PropSheetPackage.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -96,9 +96,14 @@ END_MESSAGE_MAP();
    _________________________________________________________________________ */
 
 INT_PTR
+MIKTEXUICALL
 PropSheetPackage::DoModal (/*[in]*/ const PackageInfo &	packageInfo,
 			   /*[in]*/ CWnd *		pParentWnd)
 {
-  PropSheetPackageImpl dlg (packageInfo, pParentWnd);
-  return (dlg.DoModal());
+  BEGIN_USE_MY_RESOURCES()
+    {
+      PropSheetPackageImpl dlg (packageInfo, pParentWnd);
+      return (dlg.DoModal());
+    }
+  END_USE_MY_RESOURCES()
 }
