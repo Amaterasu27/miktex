@@ -4565,6 +4565,16 @@ public:
   MIKTEXEXPORT
   void
   MIKTEXCALL
+  SetTimes (/*[in]*/ int			fd,
+	    /*[in]*/ time_t			creationTime,
+	    /*[in]*/ time_t			lastAccessTime,
+	    /*[in]*/ time_t			lastWriteTime);
+
+public:
+  static
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
   SetTimes (/*[in]*/ FILE *			stream,
 	    /*[in]*/ time_t			creationTime,
 	    /*[in]*/ time_t			lastAccessTime,

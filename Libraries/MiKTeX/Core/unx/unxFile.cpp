@@ -245,6 +245,24 @@ File::GetSize (/*[in]*/ const PathName &	path)
    _________________________________________________________________________ */
 
 void
+File::SetTimes (/*[in]*/ int			fd,
+		/*[in]*/ time_t			creationTime,
+		/*[in]*/ time_t			lastAccessTime,
+		/*[in]*/ time_t			lastWriteTime)
+{
+  UNUSED_ALWAYS (stream);
+  UNUSED_ALWAYS (creationTime);
+  UNUSED_ALWAYS (lastAccessTime);
+  UNUSED_ALWAYS (lastWriteTime);
+  UNIMPLEMENTED ("File::SetTimes");
+}
+
+/* _________________________________________________________________________
+
+   File::SetTimes
+   _________________________________________________________________________ */
+
+void
 File::SetTimes (/*[in]*/ FILE *			stream,
 		/*[in]*/ time_t			creationTime,
 		/*[in]*/ time_t			lastAccessTime,

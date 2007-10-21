@@ -407,10 +407,10 @@ FileTimeToCrtTime (/*[in]*/ FILETIME	fileTime)
   reinterpret_cast<HANDLE>(_get_osfhandle(static_cast<int>(hf)))
 
 void
-File::SetTimes (/*[in]*/ FILE *			stream,
-		/*[in]*/ time_t			creationTime,
-		/*[in]*/ time_t			lastAccessTime,
-		/*[in]*/ time_t			lastWriteTime)
+File::SetTimes (/*[in]*/ int		fd,
+		/*[in]*/ time_t		creationTime,
+		/*[in]*/ time_t		lastAccessTime,
+		/*[in]*/ time_t		lastWriteTime)
 {
   FILETIME creationFileTime;
   FILETIME lastAccessFileTime;
@@ -427,7 +427,7 @@ File::SetTimes (/*[in]*/ FILE *			stream,
     {
       lastWriteFileTime = CrtTimeToFileTime(lastWriteTime);
     }
-  if (! SetFileTime(GET_OSFHANDLE(_fileno(stream)),
+  if (! SetFileTime(GET_OSFHANDLE(fd),
 		    (creationTime != static_cast<time_t>(-1)
 		     ? &creationFileTime
 		     : 0),
@@ -447,8 +447,19 @@ File::SetTimes (/*[in]*/ FILE *			stream,
    File::SetTimes
    _________________________________________________________________________ */
 
-#define GET_OSFHANDLE(hf) \
-  reinterpret_cast<HANDLE>(_get_osfhandle(static_cast<int>(hf)))
+void
+File::SetTimes (/*[in]*/ FILE *			stream,
+		/*[in]*/ time_t			creationTime,
+		/*[in]*/ time_t			lastAccessTime,
+		/*[in]*/ time_t			lastWriteTime)
+{
+  SetTimes (_fileno(stream), creationTime, lastAccessTime, lastWriteTime);
+}
+
+/* _________________________________________________________________________
+
+   File::SetTimes
+   _________________________________________________________________________ */
 
 void
 File::SetTimes (/*[in]*/ const PathName &	path,
