@@ -22,6 +22,7 @@
 #include <string>
 
 #include <MiKTeX/Core/Core>
+#include <MiKTeX/Core/Paths>
 
 using namespace MiKTeX::Core;
 
