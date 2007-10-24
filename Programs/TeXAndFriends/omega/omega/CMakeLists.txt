@@ -120,7 +120,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(dev ALL
+add_custom_target(omega-dev ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/omega-n.web
 )

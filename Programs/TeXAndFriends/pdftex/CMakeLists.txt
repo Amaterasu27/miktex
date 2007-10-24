@@ -265,7 +265,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(dev ALL
+add_custom_target(pdftex-dev ALL
     DEPENDS
 	${pdftex_change_file}
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web

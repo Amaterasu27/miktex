@@ -150,7 +150,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/traptest.perl
 )
 
-add_custom_target(traptest
+add_custom_target(mp-traptest
   COMMAND ${PERL_EXE} ${CMAKE_CURRENT_BINARY_DIR}/traptest.perl
   DEPENDS trapmp
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -188,7 +188,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(dev ALL
+add_custom_target(mp-dev ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/mp-n.web
 	${CMAKE_CURRENT_BINARY_DIR}/mp-miktex-n.web

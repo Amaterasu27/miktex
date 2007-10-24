@@ -138,7 +138,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(dev ALL
+add_custom_target(tex-dev ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
 	${CMAKE_CURRENT_BINARY_DIR}/tex-miktex-n.web

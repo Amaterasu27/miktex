@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,16 +17,16 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_executable(test1 1.cpp)
+add_executable(core_pathname_test1 1.cpp)
 
-merge_trustinfo_manifest(test1 asInvoker)
+merge_trustinfo_manifest(core_pathname_test1 asInvoker)
 
-target_link_libraries(test1
+target_link_libraries(core_pathname_test1
   ${CMAKE_THREAD_LIBS_INIT}
   ${core_dll_name}
   ${popt_dll_name}
 )
 
-get_target_property(test1_exe test1 LOCATION)
+get_target_property(core_pathname_test1_exe test1 LOCATION)
 
-add_test(test1 ${test1_exe})
+add_test(core_pathname_test1 ${core_pathname_test1_exe})
