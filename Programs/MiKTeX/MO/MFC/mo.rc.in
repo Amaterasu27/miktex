@@ -37,7 +37,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME                  ICON                    "miktex.ico"
+IDR_MAINFRAME                  ICON                    "@miktex_ico@"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ BEGIN
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
-    "#include ""res\\mo.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""@CMAKE_CURRENT_SOURCE_DIR@/res/mo.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
     "#include ""afxres.rc""         // Standard components\r\n"
     "#endif\r\n"
     "\0"
@@ -350,7 +350,7 @@ END
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "res\\mo.manifest"
+IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/mo.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //

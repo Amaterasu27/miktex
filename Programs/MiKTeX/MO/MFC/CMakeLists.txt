@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,8 +22,14 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/mo.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/mo.rc
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 set(CMAKE_MFC_FLAG 2)
@@ -59,7 +65,8 @@ set(mo_mfc_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(mo_mfc_sources ${mo_mfc_sources} mo.rc)
+  set(mo_mfc_sources ${mo_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/mo.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(mo WIN32 ${mo_mfc_sources})
