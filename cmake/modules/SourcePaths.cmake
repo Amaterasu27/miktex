@@ -147,6 +147,8 @@ set(xml_catalog_file "${CMAKE_BINARY_DIR}/BuildUtilities/docbook/catalog")
 # resources
 set(download_avi "${CMAKE_SOURCE_DIR}/Resources/Videos/download.avi")
 set(miktex_ico "${CMAKE_SOURCE_DIR}/Resources/Graphics/miktex.ico")
+set(wiz97_header_bmp "${CMAKE_SOURCE_DIR}/Resources/Graphics/wiz97-header.bmp")
+set(wiz97_watermark_bmp "${CMAKE_SOURCE_DIR}/Resources/Graphics/wiz97-watermark.bmp")
 
 # sed scripts
 set(etex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/dyn.sed")

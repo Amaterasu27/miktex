@@ -25,6 +25,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Remove.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Remove.rc
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -43,7 +48,8 @@ set(remove_mfc_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(remove_mfc_sources ${remove_mfc_sources} Remove.rc)
+  set(remove_mfc_sources ${remove_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/Remove.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(remove WIN32 ${remove_mfc_sources})

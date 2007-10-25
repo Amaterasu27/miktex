@@ -58,7 +58,7 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#endif //_WIN32\r\n"
-    "#include ""res\\Remove.rc2""\r\n"
+    "#include ""@CMAKE_CURRENT_SOURCE_DIR@/res/Remove.rc2""\r\n"
     "#include ""afxres.rc""\r\n"
     "#endif\r\n"
     "\0"
@@ -74,7 +74,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "miktex.ico"
+IDR_MAINFRAME           ICON                    "@miktex_ico@"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -150,15 +150,15 @@ END
 // Bitmap
 //
 
-IDB_HEADER              BITMAP                  "wiz97-header.bmp"
-IDB_WATERMARK           BITMAP                  "wiz97-watermark.bmp"
+IDB_HEADER              BITMAP                  "@wiz97_header_bmp@"
+IDB_WATERMARK           BITMAP                  "@wiz97_watermark_bmp@"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "res\\Remove.manifest"
+IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Remove.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //
