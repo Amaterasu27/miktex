@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,10 +22,14 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
 )
 
-include_directories(
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/mpm.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/mpm.rc
+)
+
+include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/Resources/Graphics
 )
 
 set(CMAKE_MFC_FLAG 2)
@@ -50,7 +54,8 @@ set(mpm_mfc_sources
 )
 
 if(NATIVE_WINDOWS)
-  set(mpm_mfc_sources ${mpm_mfc_sources} mpm.rc)
+  set(mpm_mfc_sources ${mpm_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/mpm.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
