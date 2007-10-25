@@ -25,6 +25,11 @@ include_directories(
 )
 
 configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/mikui.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/mikui.rc
+)
+
+configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/res/mikui.rc2.in
   ${CMAKE_CURRENT_BINARY_DIR}/res/mikui.rc2
 )
@@ -67,7 +72,7 @@ set(${ui_mfc_dll_name}_sources
   internal.h
   mikui-version.h
   mikui.cpp
-  mikui.rc
+  ${CMAKE_CURRENT_BINARY_DIR}/mikui.rc
   resource.h
 )
 

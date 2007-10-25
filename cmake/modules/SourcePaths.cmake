@@ -144,6 +144,9 @@ set(tex_web "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex.web")
 set(wrapper_cpp "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/wrapper.cpp")
 set(xml_catalog_file "${CMAKE_BINARY_DIR}/BuildUtilities/docbook/catalog")
 
+# resources
+set(download_avi "${CMAKE_SOURCE_DIR}/Resources/Videos/download.avi")
+
 # sed scripts
 set(etex_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/dyn.sed")
 set(omega_dyn_sed "${CMAKE_SOURCE_DIR}/${rel_omega_dir}/dyn.sed")
