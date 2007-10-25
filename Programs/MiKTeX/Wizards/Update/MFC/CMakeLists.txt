@@ -25,6 +25,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/Update.manifest
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Update.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Update.rc
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -69,7 +74,8 @@ foreach(f
 endforeach(f)
 
 if(NATIVE_WINDOWS)
-  set(update_mfc_sources ${update_mfc_sources} Update.rc)
+  set(update_mfc_sources ${update_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/Update.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(update WIN32 ${update_mfc_sources})
