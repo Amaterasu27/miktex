@@ -30,8 +30,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // AVI
 //
 
-IDA_FILECOPY            AVI                     "filecopy.avi"
-IDA_DOWNLOAD            AVI                     "download.avi"
+IDA_FILECOPY            AVI                     "@filecopy_avi@"
+IDA_DOWNLOAD            AVI                     "@download_avi@"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +78,7 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#endif //_WIN32\r\n"
-    "#include ""res\\Setup.rc2""\r\n"
+    "#include ""@CMAKE_CURRENT_SOURCE_DIR@/res/Setup.rc2""\r\n"
     "#include ""afxres.rc""\r\n"
     "#endif\r\n"
     "\0"
@@ -94,22 +94,22 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFAME            ICON                    "miktex.ico"
+IDR_MAINFAME            ICON                    "@miktex_ico@"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDB_HEADER              BITMAP                  "wiz97-header.bmp"
-IDB_WATERMARK           BITMAP                  "wiz97-watermark.bmp"
+IDB_HEADER              BITMAP                  "@wiz97_header_bmp@"
+IDB_WATERMARK           BITMAP                  "@wiz97_watermark_bmp@"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "res\\Setup.manifest"
+IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Setup.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //

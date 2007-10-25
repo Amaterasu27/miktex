@@ -25,6 +25,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/res/Setup.manifest
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Setup.rc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Setup.rc
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -79,7 +84,8 @@ foreach(f
 endforeach(f)
 
 if(NATIVE_WINDOWS)
-  set(setup_mfc_sources ${setup_mfc_sources} Setup.rc)
+  set(setup_mfc_sources ${setup_mfc_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/Setup.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(setup WIN32 ${setup_mfc_sources})
