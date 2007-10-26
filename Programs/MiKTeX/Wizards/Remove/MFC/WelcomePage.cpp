@@ -1,6 +1,6 @@
 /* WelcomePage.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2007 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -178,7 +178,7 @@ WelcomePage::ShowItems ()
     {
       FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
     }
-  if (listBox.AddString(T_("Program folder")) < 0)
+  if (listBox.AddString(T_("Shortcuts")) < 0)
     {
       FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
     }
