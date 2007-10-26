@@ -1,6 +1,6 @@
 /* RemotePage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -28,6 +28,8 @@
 IMPLEMENT_DYNCREATE(RemotePage, CPropertyPage);
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
+
+#define SHOW_DESCRIPTION 0
 
 /* _________________________________________________________________________
 
@@ -77,32 +79,29 @@ RemotePage::OnInitDialog ()
       InsertColumn (colIdx,
 		    T_("Country"),
 		    T_("xxxx The Czech Republic"));
-      
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Protocol"),
-		    "xxxx HTTP");
-
+		    "xxxx Protocol");
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Host"),
 		    T_("xxxx scratchy.emate.ucr.ac.cr"));
-
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Version"),
 		    T_("xxxx 30-Aug-04"));
-
       ++ colIdx;
-      
+
+#if SHOW_DESCRIPTION
       InsertColumn (colIdx,
 		    T_("Description"),
 		    T_("xxxx Primary Package Repository"));
-      
       ++ colIdx;
+#endif
     }
   catch (const MiKTeXException & e)
     {
@@ -302,7 +301,7 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
 	      continue;
 	    }
 	  
-	  LV_ITEM lvitem;
+	  LVITEM lvitem;
 	  
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_PARAM;
@@ -325,7 +324,9 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  SetItemText (idx, 1, protUC);
 	  SetItemText (idx, 2, host.c_str());
       	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
+#if SHOW_DESCRIPTION
 	  SetItemText (idx, 4, it->description.c_str());
+#endif
 
 	  if (it->url == url)
 	    {
@@ -491,7 +492,7 @@ RemotePage::SetProgressText (/*[in]*/ const char * lpszText)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
     }
-  LV_ITEM lvitem;
+  LVITEM lvitem;
   lvitem.iItem = 0;
   lvitem.mask = 0;
   lvitem.iSubItem = 0;
@@ -505,4 +506,3 @@ RemotePage::SetProgressText (/*[in]*/ const char * lpszText)
     }
   listControl.SetItemState (0, 0, LVIS_STATEIMAGEMASK);
 }
-
