@@ -90,9 +90,20 @@ LocalRepositoryPage::OnSetActive ()
 	    {
 	      pSheet->SetWizardButtons (PSWIZB_BACK);
 	    }
-	  if (theApp.setupTask != SetupTask::Download)
+	  pWnd = GetDlgItem(IDC_FILENAME);
+	  if (pWnd == 0)
 	    {
-	      message.SetWindowText (T_("Install MiKTeX from:"));
+	      UNEXPECTED_CONDITION ("LocalRepositoryPage::OnSetActive");
+	    }
+	  if (theApp.setupTask == SetupTask::Download)
+	    {
+	      pWnd->SetWindowText
+		(T_("Download the MiKTeX distribution to::"));
+	    }
+	  else
+	    {
+	      pWnd->SetWindowText
+		(T_("Install MiKTeX from:"));
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -118,7 +129,6 @@ void
 LocalRepositoryPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
-  DDX_Control (pDX, IDC_MESSAGE, message);
   DDX_Text (pDX, IDC_FILENAME, fileName);
 }
 
