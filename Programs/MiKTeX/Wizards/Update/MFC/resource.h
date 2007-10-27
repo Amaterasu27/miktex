@@ -28,7 +28,7 @@
 #define IDD_WELCOME                     121
 #define IDB_WATERMARK                   122
 #define IDB_HEADER                      123
-#define IDA_UPDATE                      124
+#define IDA_DOWNLOAD                    124
 #define IDD_CONNECTION_SETTINGS         125
 #define IDD_FINISH                      126
 #define IDD_DIALOG1                     127
@@ -40,6 +40,7 @@
 #define IDD_PACKAGE_LIST                133
 #define IDD_REMOTE_REPOSITORY           134
 #define IDD_CD                          135
+#define IDA_FILECOPY                    136
 #define IDC_SELECT_ALL                  1000
 #define IDC_DESELECT_ALL                1001
 #define IDC_CD                          1002
@@ -84,6 +85,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1036
-#define _APS_NEXT_SYMED_VALUE           136
+#define _APS_NEXT_SYMED_VALUE           137
 #endif
 #endif

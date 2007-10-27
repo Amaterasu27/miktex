@@ -47,7 +47,8 @@ IDB_HEADER              BITMAP                  "@wiz97_header_bmp@"
 // AVI
 //
 
-IDA_UPDATE              AVI                     "@filecopy_avi@"
+IDA_DOWNLOAD            AVI                     "@download_avi@"
+IDA_FILECOPY            AVI                     "@filecopy_avi@"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
