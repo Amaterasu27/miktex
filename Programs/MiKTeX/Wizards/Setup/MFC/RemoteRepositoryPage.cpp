@@ -1,6 +1,6 @@
 /* RemoteRepositoryPag.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -26,6 +26,8 @@
 #include "SetupWizard.h"
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
+
+#define SHOW_DESCRIPTION 0
 
 /* _________________________________________________________________________
 
@@ -75,32 +77,29 @@ RemoteRepositoryPage::OnInitDialog ()
       InsertColumn (colIdx,
 		    T_("Country"),
 		    T_("xxxx The Czech Republic"));
-      
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Protocol"),
-		    "xxxx HTTP");
-
+		    "xxxx Protocol");
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Host"),
 		    T_("xxxx scratchy.emate.ucr.ac.cr"));
-
       ++ colIdx;
 
       InsertColumn (colIdx,
 		    T_("Version"),
 		    T_("xxxx 30-Aug-04"));
-
       ++ colIdx;
       
+#if SHOW_DESCRIPTION
       InsertColumn (colIdx,
 		    T_("Description"),
 		    T_("xxxx Primary Package Repository"));
-      
       ++ colIdx;
+#endif
     }
   catch (const MiKTeXException & e)
     {
@@ -341,7 +340,9 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  SetItemText (idx, 1, protUC);
 	  SetItemText (idx, 2, host.c_str());
       	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
+#if SHOW_DESCRIPTION
 	  SetItemText (idx, 4, it->description.c_str());
+#endif
 
 	  if (it->url == theApp.remotePackageRepository)
 	    {
