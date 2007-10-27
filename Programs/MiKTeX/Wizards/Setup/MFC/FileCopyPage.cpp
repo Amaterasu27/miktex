@@ -274,14 +274,14 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 				  ? IDA_DOWNLOAD
 				  : IDA_FILECOPY))
 	{
-	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Open", 0);
+	  FATAL_WINDOWS_ERROR ("CAnimateCtrl::Open", 0);
 	}
 
       if (! animationControl.Play(0,
 				  static_cast<UINT>(-1),
 				  static_cast<UINT>(-1)))
 	{
-	  FATAL_WINDOWS_ERROR ("CAnimatCtrl::Play", 0);
+	  FATAL_WINDOWS_ERROR ("CAnimateCtrl::Play", 0);
 	}
 
       // initialize progress bar controls
