@@ -86,7 +86,7 @@ authorization from SIL International.
 #define xdvbufferbyte(i)						xdvbuffer[i]
 #endif
 
-void* getotassemblyptr(int f, int g); /* function in XeTeXOTMath.cpp */
+void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
 
 #define pic_node_size		8
 

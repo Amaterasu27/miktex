@@ -289,7 +289,7 @@ MAKE_GLOBAL(voidpointer, loadedfontmapping);
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
 
-void
+int
 dviclose (/*[in,out]*/ bytefile & dviFile);
 
 /* _________________________________________________________________________

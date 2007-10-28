@@ -477,6 +477,14 @@ getencodingmodeandinfo(integer* info)
 }
 
 void
+printcstring(const char* str)
+{
+	if (str != NULL)
+		while (*str)
+			printvisiblechar(*(str++));
+}
+
+void
 printutf8str(const unsigned char* str, int len)
 {
 	while (len-- > 0)
@@ -2913,27 +2921,31 @@ open_dvi_output(FILE** fptr)
 #endif
 
 #if defined(MIKTEX)
-void
+int
 dviclose(/*[in,out]*/ bytefile & dviFile)
 {
   if (nopdfoutput)
     {
       THEAPP.CloseFile (dviFile);
+      return (0);
     }
   else
     {
-      _pclose (dviFile);
+      int ret = _pclose (dviFile);
       dviFile.Attach (0, true);
+      return (ret);
     }
 }
 #else
-void
+int
 dviclose(FILE* fptr)
 {
-	if (nopdfoutput)
-		fclose(fptr);
+	if (nopdfoutput) {
+		if (fclose(fptr) != 0)
+			return errno;
+	}
 	else
-		pclose(fptr);
+		return pclose(fptr);
 }
 #endif
 

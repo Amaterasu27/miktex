@@ -1245,7 +1245,7 @@ if area_delimiter<>0 then begin
   s:=str_start[str_ptr];
   t:=str_start[str_ptr]+area_delimiter;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1263,7 +1263,7 @@ s:=str_start[str_ptr]+area_delimiter;
 if ext_delimiter=0 then t:=pool_ptr else t:=str_start[str_ptr]+ext_delimiter-1;
 must_quote:=false;
 j:=s;
-while (not must_quote) and (j<>t) do begin
+while (not must_quote) and (j<t) do begin
   must_quote:=str_pool[j]=" "; incr(j);
   end;
 if must_quote then begin
@@ -1280,7 +1280,7 @@ if ext_delimiter<>0 then begin
   t:=pool_ptr;
   must_quote:=false;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -1348,19 +1348,19 @@ begin
 must_quote:=false;
 if a<>0 then begin
   j:=str_start[a];
-  while (not must_quote) and (j<>str_start[a+1]) do begin
+  while (not must_quote) and (j<str_start[a+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start[n];
-  while (not must_quote) and (j<>str_start[n+1]) do begin
+  while (not must_quote) and (j<str_start[n+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start[e];
-  while (not must_quote) and (j<>str_start[e+1]) do begin
+  while (not must_quote) and (j<str_start[e+1]) do begin
     must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
   end;
 end;
@@ -1812,6 +1812,15 @@ else begin dvi_out(fnt1+1);
   print_nl("Output written on "); slow_print(output_file_name);
 @y
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
+@z
+
+@x
+  print(" ("); print_int(total_pages); print(" page");
+  if total_pages<>1 then print_char("s");
+@y
+  print(" ("); print_int(total_pages); 
+  if total_pages<>1 then print(" pages")
+  else print(" page");
 @z
 
 @x

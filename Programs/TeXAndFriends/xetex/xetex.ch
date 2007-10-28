@@ -2826,7 +2826,7 @@ if area_delimiter<>0 then begin
   s:=str_start[str_ptr];
   t:=str_start[str_ptr]+area_delimiter;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -2844,7 +2844,7 @@ s:=str_start[str_ptr]+area_delimiter;
 if ext_delimiter=0 then t:=pool_ptr else t:=str_start[str_ptr]+ext_delimiter-1;
 must_quote:=false;
 j:=s;
-while (not must_quote) and (j<>t) do begin
+while (not must_quote) and (j<t) do begin
   must_quote:=str_pool[j]=" "; incr(j);
   end;
 if must_quote then begin
@@ -2861,7 +2861,7 @@ if ext_delimiter<>0 then begin
   t:=pool_ptr;
   must_quote:=false;
   j:=s;
-  while (not must_quote) and (j<>t) do begin
+  while (not must_quote) and (j<t) do begin
     must_quote:=str_pool[j]=" "; incr(j);
     end;
   if must_quote then begin
@@ -2912,19 +2912,19 @@ begin
 must_quote:=false;
 if a<>0 then begin
   j:=str_start[a];
-  while (not must_quote) and (j<>str_start[a+1]) do begin
+  while (not must_quote) and (j<str_start[a+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if n<>0 then begin
   j:=str_start[n];
-  while (not must_quote) and (j<>str_start[n+1]) do begin
+  while (not must_quote) and (j<str_start[n+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
 if e<>0 then begin
   j:=str_start[e];
-  while (not must_quote) and (j<>str_start[e+1]) do begin
+  while (not must_quote) and (j<str_start[e+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
   end;
 end;
@@ -2959,7 +2959,7 @@ must_quote:=false;
 quote_char:=0;
 if a<>0 then begin
   j:=str_start_macro(a);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(a+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(a+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -2970,7 +2970,7 @@ if a<>0 then begin
 end;
 if n<>0 then begin
   j:=str_start_macro(n);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(n+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(n+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -2981,7 +2981,7 @@ if n<>0 then begin
 end;
 if e<>0 then begin
   j:=str_start_macro(e);
-  while ((not must_quote) or (quote_char=0)) and (j<>str_start_macro(e+1)) do begin
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(e+1)) do begin
     if (str_pool[j]=" ") then must_quote:=true
     else if (str_pool[j]="""") or (str_pool[j]="'") then begin
       must_quote:=true;
@@ -3721,6 +3721,13 @@ if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 @z
 
 @x
+begin if tracing_output>0 then
+@y
+begin if job_name=0 then open_log_file;
+if tracing_output>0 then
+@z
+
+@x
 dvi_four(last_bop); last_bop:=page_loc;
 @y
 dvi_four(last_bop); last_bop:=page_loc;
@@ -3760,18 +3767,28 @@ if not no_pdf_output then fflush(dvi_file);
 
 @x
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
-@y
-  print_nl("Output written on "); print(output_file_name);
-@z
-
-@x
+@.Output written on x@>
+  print(" ("); print_int(total_pages);
+  if total_pages<>1 then print(" pages")
+  else print(" page");
   print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
   b_close(dvi_file);
 @y
-  if no_pdf_output then begin
-    print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
-  end else print(").");
-  dvi_close(dvi_file);
+  k:=dvi_close(dvi_file);
+  if k=0 then begin
+    print_nl("Output written on "); print(output_file_name);
+@.Output written on x@>
+    print(" ("); print_int(total_pages);
+    if total_pages<>1 then print(" pages")
+    else print(" page");
+    if no_pdf_output then begin
+      print(", "); print_int(dvi_offset+dvi_ptr); print(" bytes).");
+    end else print(").");
+  end else begin
+    print_nl("Error "); print_int(k); print(" (");
+    printcstring(strerror(k)); print(") generating output;");
+    print_nl("file "); print(output_file_name); print(" may not be valid.");
+    end;
 @z
 
 @x
@@ -4267,7 +4284,7 @@ if is_ot_font(g) then begin
   free_node(b, native_size(b));
   f:=g; c:=x; w:=0; n:=0;
   repeat
-    y:=get_ot_math_variant(g, x, n, address_of(u));
+    y:=get_ot_math_variant(g, x, n, address_of(u), 0);
     if u>w then begin
       c:=y; w:=u;
       if u>=v then goto found;
@@ -4275,7 +4292,7 @@ if is_ot_font(g) then begin
     n:=n+1;
   until u<0;
   {if we get here, then we didn't find a big enough glyph; check if the char is extensible}
-  ot_assembly_ptr:=get_ot_assembly_ptr(g, x);
+  ot_assembly_ptr:=get_ot_assembly_ptr(g, x, 0);
   if ot_assembly_ptr<>nil then goto found;
 end else
 @z
@@ -4411,13 +4428,13 @@ procedure make_math_accent(@!q:pointer);
 label done,done1;
 var p,@!x,@!y:pointer; {temporary registers for box construction}
 @!a:integer; {address of lig/kern instruction}
-@!c:integer; {accent character}
+@!c,@!g:integer; {accent character}
 @!f:internal_font_number; {its font}
 @!i:four_quarters; {its |char_info|}
 @!s:scaled; {amount to skew the accent to the right}
 @!h:scaled; {height of character being accented}
 @!delta:scaled; {space to remove between accent and accentee}
-@!w:scaled; {width of the accentee, not including sub/superscripts}
+@!w,@!wa,@!w2:scaled; {width of the accentee, not including sub/superscripts}
 begin fetch(accent_chr(q));
 x:=null;
 if is_native_font(cur_f) then
@@ -4432,6 +4449,70 @@ else if char_exists(cur_i) then
   @<Switch to a larger accent if available and appropriate@>;
   end;
 if x<>null then begin
+@z
+
+@x
+  y:=char_box(f,c);
+  shift_amount(y):=s+half(w-width(y));
+@y
+  y:=char_box(f,c);
+  if is_native_font(f) then begin
+    {turn the native_word node into a native_glyph one}
+    p:=get_node(glyph_node_size);
+    type(p):=whatsit_node; subtype(p):=glyph_node;
+    native_font(p):=f; native_glyph(p):=get_native_glyph(list_ptr(y), 0);
+    set_native_glyph_metrics(p, 1);
+    free_node(list_ptr(y), native_size(list_ptr(y)));
+    list_ptr(y):=p;
+
+    @<Switch to a larger native-font accent if available and appropriate@>;
+
+    {determine horiz positioning}
+    wa:=get_ot_math_accent_pos(f,native_glyph(p));
+    if wa=@"7FFFFFFF then wa:=half(width(y));
+    p:=list_ptr(x);
+    if (type(p)=whatsit_node) and (subtype(p)=glyph_node) and (link(p)=null) then begin
+      w:=get_ot_math_accent_pos(native_font(p), native_glyph(p));
+      if w=@"7FFFFFFF then w:=half(width(x));
+    end else
+      w:=half(width(x));
+    shift_amount(y):=s+w-wa;
+  end else
+    shift_amount(y):=s+half(w-width(y));
+@z
+
+@x
+@ @<Switch to a larger accent if available and appropriate@>=
+@y
+@ @<Switch to a larger native-font accent if available and appropriate@>=
+  wa:=width(x);
+  c:=native_glyph(p);
+  a:=0;
+  repeat
+    g:=get_ot_math_variant(f, c, a, address_of(w2), 1);
+    if (w2>0) and (w2<=wa) then begin
+      native_glyph(p):=g;
+      set_native_glyph_metrics(p, 1);
+      incr(a);
+    end;
+  until (w2<0) or (w2>=wa);
+{
+  if (w2<0) then begin
+    ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
+    if ot_assembly_ptr<>nil then begin
+      free_node(p,glyph_node_size);
+      p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w1);
+      list_ptr(y):=p;
+      goto found;
+    end;
+  end else
+}
+    set_native_glyph_metrics(p, 1);
+{found:}
+  width(y):=width(p); height(y):=height(p); depth(y):=depth(p);
+  if depth(y)<0 then depth(y):=0;
+
+@ @<Switch to a larger accent if available and appropriate@>=
 @z
 
 @x
@@ -4539,13 +4620,13 @@ if math_type(nucleus(q))=math_char then
         c:=native_glyph(p);
         n:=0;
         repeat
-          g:=get_ot_math_variant(cur_f, c, n, address_of(h2));
+          g:=get_ot_math_variant(cur_f, c, n, address_of(h2), 0);
           if h2>0 then native_glyph(p):=g;
           incr(n);
         until (h2<0) or (h2>=h1);
         if (h2<0) then begin
           {if we get here, then we didn't find a big enough glyph; check if the char is extensible}
-          ot_assembly_ptr:=get_ot_assembly_ptr(cur_f, c);
+          ot_assembly_ptr:=get_ot_assembly_ptr(cur_f, c, 0);
           if ot_assembly_ptr<>nil then begin
             free_node(p,glyph_node_size);
             p:=build_opentype_assembly(cur_f, ot_assembly_ptr, h1);
