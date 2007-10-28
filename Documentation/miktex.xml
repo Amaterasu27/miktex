@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2825">
-<!ENTITY month "September 2007">
-<!ENTITY date "September 26, 2007">
+<!ENTITY revj2000 "2856">
+<!ENTITY month "October 2007">
+<!ENTITY date "October 27, 2007">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 

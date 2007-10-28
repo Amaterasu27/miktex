@@ -154,4 +154,6 @@
 <!ENTITY TeXnicCenter "<application>TeXnicCenter</application>">
 <!ENTITY TeXnFriends "&TeX;&nbsp;&amp;&nbsp;Friends">
 <!ENTITY InternetExplorer "<application>Internet Explorer</application>">
+<!ENTITY WindowsExplorer "<application>Windows Explorer</application>">
 <!ENTITY InternetExplorer40 "<application>Internet Explorer&nbsp;4.0</application>">
+<!ENTITY miktexnetsize "600&nbsp;<acronym>MB</acronym>">

@@ -283,9 +283,10 @@ the following:</para>
 <primary>--include-directory=dir</primary>
 </indexterm>
 
-<para>The option
+<para>The command-line option
 <option>--include-directory=<replaceable>dir</replaceable></option>
-allows you to extend the input search path for one invocation.</para>
+causes the program to include <replaceable>dir</replaceable> into
+the list of input directories.</para>
 
 <para>For example:</para>
 
@@ -294,9 +295,6 @@ allows you to extend the input search path for one invocation.</para>
 <para>This prepends <filename>C:\My Styles</filename> to the input search
 path, i.e., <filename>C:\My Styles</filename> will be searched first,
 when &TeX; tries to find an input file.</para>
-
-<para>You can specify either absolute paths (as in the example above)
-or relative paths.</para>
 
 </section>
 

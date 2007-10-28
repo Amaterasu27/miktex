@@ -25,20 +25,29 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">Internet</ulink>
 <secondary>getting</secondary>
 </indexterm>
 
-<para>&MiKTeX; is available on the
-&CTAN;<footnote><para>Comprehenisive TeX Archive Network</para>
-</footnote> and on &CDR;/&DVDdashR;.</para>
+<para>The &MiKTeX; distribution can be downloaded from the Internet.
+And it is available on &CDR;/&DVDdashR;.</para>
 
 <section>
 
-<title>Downloading from &CTAN;</title>
+<title>Downloading &MiKTeX;</title>
 
 <indexterm>
 <primary>MiKTeX</primary>
 <secondary>downloading</secondary>
 </indexterm>
-<para>You can download &MiKTeX; from &CTAN; with the help of
-&MiKTeXNetInstaller; (see <xref linkend="netinstall"/>).</para>
+<para>There &MiKTeX; setup program comes in two flavors:</para>
+<itemizedlist>
+<listitem><para>&BasicMiKTeXInstaller;</para></listitem>
+<listitem><para>&MiKTeXNetInstaller;</para></listitem>
+</itemizedlist>
+
+<para>You use the &BasicMiKTeXInstaller; to install a basic
+&MiKTeX; system.
+The &MiKTeXNetInstaller; can be used to download and install a
+complete &MiKTeX; system.
+All this is explained later
+in this manual (see <xref linkend="installing"/>).</para>
 
 </section>
 
@@ -46,10 +55,12 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">Internet</ulink>
 
 <title>&MiKTeX; on &CDRDVDdashR;</title>
 
-<para>If you cannot easily download more than 400&nbsp;MB (the
-complete &MiKTeX; distribution), then you may wish to obtain a copy of
-the &MiKTeX; &CDRDVDdashR;.  Visit <ulink url="http://miktex.org/CD/">the
-&CDRDVDdashR; info page</ulink>, for more information.
+<para>The &MiKTeX; &CDRDVDdashR; allows you to install &MiKTeX; on the
+hard-disk or to run the programs directly from the &DVDdashR;.</para>
+
+<para>If you wish to obtain a copy of
+the &MiKTeX; &CDRDVDdashR;, visit <ulink url="http://miktex.org/CD/">the
+&CDRDVDdashR; info page</ulink>.
 <indexterm>
 <primary>CD-R</primary>
 <secondary>obtaining</secondary>
@@ -57,10 +68,6 @@ the &MiKTeX; &CDRDVDdashR;.  Visit <ulink url="http://miktex.org/CD/">the
 <indexterm>
 <primary>DVD-R</primary>
 <secondary>obtaining</secondary>
-</indexterm>
-<indexterm>
-<primary>CD-R</primary>
-<secondary>running MiKTeX from the</secondary>
 </indexterm>
 <indexterm>
 <primary>DVD-R</primary>
@@ -81,9 +88,6 @@ the &MiKTeX; &CDRDVDdashR;.  Visit <ulink url="http://miktex.org/CD/">the
 <secondary>DVD-R</secondary>
 </indexterm></para>
 
-<para>The &MiKTeX; &CDRDVDdashR; allows you to install &MiKTeX; on the
-hard-disk or to run the programs directly from the &CDRDVDdashR;.</para>
-
 </section>
 
 </section>
@@ -93,7 +97,10 @@ hard-disk or to run the programs directly from the &CDRDVDdashR;.</para>
 <title>Give Back</title>
 
 <para>If you enjoy &MiKTeX; and want to support the project, then
-please consider the give back options.  Visit <ulink
+please become an esteemed &MiKTeX; user by giving back something. It
+encourages me to continue, and is the perfect way to say thank you!</para>
+
+<para>Visit <ulink
 url="http://www.miktex.org/giveback.aspx">the &MiKTeX; Give Back page</ulink>,
 for more information.
 <indexterm>

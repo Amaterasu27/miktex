@@ -6,9 +6,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.5.2513">
-<!ENTITY date "November 18, 2006">
-<!ENTITY month "November 2006">
+<!ENTITY rev "2.7.2856">
+<!ENTITY date "October 27, 2007">
+<!ENTITY month "October 2007">
 ]>
 
 <article>
@@ -25,7 +25,7 @@
 </author>
 
 <copyright>
-<year>2001&ndash;2006</year>
+<year>2001&ndash;2007</year>
 <holder>Christian Schenk</holder>
 </copyright>
 
@@ -525,6 +525,16 @@ enter all or part of a file name. For example, enter
 <title>(La)&TeX;</title>
 
 <qandaset>
+
+<qandaentry id="pdftex">
+<question>
+<para>Why does latex use &pdfTeX; (and not &TeX;)?</para>
+</question>
+<answer>
+<para>&pdfTeX; is now the default typesetting engine. The &DVI; output should
+be identical to that of &TeX;.</para>
+</answer>
+</qandaentry>
 
 <qandaentry id="texoutputfile">
 <question>

@@ -6,10 +6,10 @@
 &Windows; operating systems:</para>
 
 <itemizedlist>
-<listitem><para></para>&WindowsVista;</listitem>
-<listitem><para></para>&WindowsServer2003;</listitem>
-<listitem><para></para>&WindowsXP;</listitem>
-<listitem><para></para>&Windows2000;</listitem>
+<listitem><para>&WindowsVista;</para></listitem>
+<listitem><para>&WindowsServer2003;</para></listitem>
+<listitem><para>&WindowsXP;</para></listitem>
+<listitem><para>&Windows2000;</para></listitem>
 </itemizedlist>
 
 <para>Please note that
@@ -48,8 +48,8 @@ which gets you started.</para></listitem>
 </variablelist>
 
 <para>Choose Basic &MiKTeX;, if you have to download over a slow
-Internet connection, or if you want to conserve disk space.  Missing
-files can be installed later (in the course of use).</para>
+Internet connection, or if you want to conserve disk space. &MiKTeX;
+can be configured to install missing components in the course of use.</para>
 
 </section>
 
@@ -88,26 +88,39 @@ page</ulink> and run it.</para>
 
 <para>Get the &MiKTeXNetInstaller; (&setupexefile;) from the <ulink
 url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532">download
-page</ulink>. You will use the installer to a) download the complete &MiKTeX;
-distribution and b) install &MiKTeX;.</para>
+page</ulink>. You will use the installer to download the complete
+&MiKTeX; distribution. Once you have downoaded the distribution, you
+can install it.</para>
 
 <section>
 
-<title>Download</title>
+<title>Task #1: Download the complete &MiKTeX; distribution</title>
 
-<para>Start the installer and choose <guilabel>Download
+<para>Start the &MiKTeXNetInstaller; and choose <guilabel>Download
 MiKTeX</guilabel> on the task page. You will be prompted to choose an
 installation size (choose <guilabel>Complete MiKTeX</guilabel>), a
 download source and a destination directory.</para>
+
+<tip><para>You should use a download source which is located
+in the proximity of you.</para></tip>
+
+<para>Depending on your Internet connection, the download can take several
+hours to complete. If something goes wrong, you can resume the
+download operation by starting the &MiKTeXNetInstaller; again. </para>
 
 </section>
 
 <section>
 
-<title>Install</title>
+<title>Task #2: Install &MiKTeX;</title>
 
-<para>Start the installer a second time and choose <guilabel>Install
-&MiKTeX;</guilabel> on the task page.</para>
+<para>Once the download operation is complete, you are ready to install
+&MiKTeX;:
+start &WindowsExplorer; and browse to the directory which
+contains the complete &MiKTeX; distribution (see previous section).
+Lookout for a file named <filename>setup</filename>.
+This is the &MiKTeX; setup application. Start <filename>setup</filename>
+by double-clicking its icon.</para>
 
 </section>
 
