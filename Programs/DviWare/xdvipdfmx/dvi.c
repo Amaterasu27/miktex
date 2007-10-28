@@ -1961,7 +1961,7 @@ do_glyph_array (int yLocsPresent)
             font->glyph_widths[glyph_id] = 0;
         }
         else {
-          FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE);
+          FT_Load_Glyph(font->ft_face, glyph_id, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
           font->glyph_widths[glyph_id] = (font->layout_dir == 0)
                                           ? font->ft_face->glyph->metrics.horiAdvance
                                           : font->ft_face->glyph->metrics.vertAdvance;

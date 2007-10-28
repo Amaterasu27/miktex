@@ -238,6 +238,8 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   else
     error = spc_read_color_pdf(spe, colorspec, ap);
 
+  skip_blank(&ap->curptr, ap->endptr);
+
   return  error;
 }
 
