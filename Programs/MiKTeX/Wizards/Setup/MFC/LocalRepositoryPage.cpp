@@ -90,7 +90,7 @@ LocalRepositoryPage::OnSetActive ()
 	    {
 	      pSheet->SetWizardButtons (PSWIZB_BACK);
 	    }
-	  pWnd = GetDlgItem(IDC_FILENAME);
+	  pWnd = GetDlgItem(IDC_MESSAGE);
 	  if (pWnd == 0)
 	    {
 	      UNEXPECTED_CONDITION ("LocalRepositoryPage::OnSetActive");
@@ -98,7 +98,7 @@ LocalRepositoryPage::OnSetActive ()
 	  if (theApp.setupTask == SetupTask::Download)
 	    {
 	      pWnd->SetWindowText
-		(T_("Download the MiKTeX distribution to::"));
+		(T_("Download the MiKTeX distribution to:"));
 	    }
 	  else
 	    {

@@ -70,8 +70,8 @@
 #define IDB_WATERMARK                   162
 #define IDA_FILECOPY                    163
 #define IDA_DOWNLOAD                    164
-#define IDC_BROWSE                      165
-#define IDC_FILENAME                    166
+
+
 #define IDD_LOCAL_REPOSITORY            167
 #define IDD_PACKAGE_SET_INSTALL         168
 #define IDD_REMOTE_REPOSITORY           169
@@ -130,6 +130,8 @@
 #define IDC_COMBO1                      1045
 #define IDC_COMBO2                      1046
 #define IDC_INSTALL_ON_THE_FLY          1047
+#define IDC_FILENAME                    1048
+#define IDC_BROWSE                      1049
 
 // Next default values for new objects
 // 
@@ -137,7 +139,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1048
+#define _APS_NEXT_CONTROL_VALUE         1050
 #define _APS_NEXT_SYMED_VALUE           177
 #endif
 #endif

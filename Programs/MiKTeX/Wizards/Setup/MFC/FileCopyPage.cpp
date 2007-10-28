@@ -1278,13 +1278,17 @@ FileCopyPage::CreateInfoFile ()
       MIKTEX_ASSERT (false);
       __assume (false);
     }
+  PathName setupExe (theApp.setupPath);
+  setupExe.RemoveDirectorySpec ();
   stream.WriteFormattedLine (T_("\
 This folder contains the %s package set.\n\
 \n\
+To install MiKTeX, run %s.\n\
+\n\
 For more information, visit the MiKTeX project page at\n\
-http://www.miktex.org.\n\
- "),
-			     lpszPackageSet);
+http://miktex.org.\n"),
+			     lpszPackageSet,
+			     setupExe.Get());
   stream.Close ();
 }
 

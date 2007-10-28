@@ -138,7 +138,7 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
 	  if (copying)
 	    {
 	      AddArgument (arg, argc, argv, argMax);
-	      arg = T_("");
+	      arg = "";
 	      copying = false;
 	    }
 	}
@@ -209,29 +209,29 @@ enum {
 
 const struct option long_options[] =
 {
-  { T_("allow-unattended-reboot"), no_argument, 0,
+  { "allow-unattended-reboot", no_argument, 0,
     OPT_ALLOW_UNATTENDED_REBOOT },
-  { T_("common-config"), required_argument, 0, OPT_COMMON_CONFIG },
-  { T_("common-data"), required_argument, 0, OPT_COMMON_DATA },
-  { T_("download-only"), no_argument, 0, OPT_DOWNLOAD_ONLY },
-  { T_("dry-run"), no_argument, 0, OPT_DRY_RUN },
-  { T_("help"), no_argument, 0, OPT_HELP },
-  { T_("install-from-local-repository"), no_argument, 0,
+  { "common-config", required_argument, 0, OPT_COMMON_CONFIG },
+  { "common-data", required_argument, 0, OPT_COMMON_DATA },
+  { "download-only", no_argument, 0, OPT_DOWNLOAD_ONLY },
+  { "dry-run", no_argument, 0, OPT_DRY_RUN },
+  { "help", no_argument, 0, OPT_HELP },
+  { "install-from-local-repository", no_argument, 0,
     OPT_INSTALL_FROM_LOCAL_REPOSITORY },
-  { T_("install-root"), required_argument, 0, OPT_INSTALL_ROOT },
-  { T_("local-package-repository"), required_argument, 0,
+  { "install-root", required_argument, 0, OPT_INSTALL_ROOT },
+  { "local-package-repository", required_argument, 0,
     OPT_LOCAL_PACKAGE_REPOSITORY },
-  { T_("no-additional-roots"), no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
-  { T_("package-set"), required_argument, 0, OPT_PACKAGE_SET },
-  { T_("private"), no_argument, 0, OPT_PRIVATE },
-  { T_("program-folder"), required_argument, 0, OPT_PROGRAM_FOLDER },
-  { T_("remote-package-repository"), required_argument, 0,
+  { "no-additional-roots", no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
+  { "package-set", required_argument, 0, OPT_PACKAGE_SET },
+  { "private", no_argument, 0, OPT_PRIVATE },
+  { "program-folder", required_argument, 0, OPT_PROGRAM_FOLDER },
+  { "remote-package-repository", required_argument, 0,
     OPT_REMOTE_PACKAGE_REPOSITORY },
-  { T_("roots"), required_argument, 0, OPT_ROOTS },
-  { T_("shared"), no_argument, 0, OPT_SHARED },
-  { T_("unattended"), no_argument, 0, OPT_UNATTENDED },
-  { T_("user-config"), required_argument, 0, OPT_USER_CONFIG },
-  { T_("user-data"), required_argument, 0, OPT_USER_DATA },
+  { "roots", required_argument, 0, OPT_ROOTS },
+  { "shared", no_argument, 0, OPT_SHARED },
+  { "unattended", no_argument, 0, OPT_UNATTENDED },
+  { "user-config", required_argument, 0, OPT_USER_CONFIG },
+  { "user-data", required_argument, 0, OPT_USER_DATA },
   { 0, no_argument, 0, 0 }
 };
 
@@ -243,7 +243,8 @@ const struct option long_options[] =
 void
 ShowHelpAndExit (/*[in]*/ int retCode = 0)
 {
-  AfxMessageBox (T_("Usage: setupwiz [OPTIONS]\r\n\r\n\
+  AfxMessageBox (T_("Usage: setupwiz [OPTIONS]\r\n\
+\r\n\
 Options:\r\n\r\n\
   --allow-unattended-reboot\r\n\
   --common-config=DIR\r\n\
@@ -263,8 +264,8 @@ Options:\r\n\r\n\
   --shared\r\n\
   --unattended\r\n\
   --user-config=DIR\r\n\
-  --user-data=DIR")
-		 T_("\r\n\r\n\
+  --user-data=DIR\r\n\
+\r\n\
 setupwiz reads its arguments from setupwiz.opt, if such a file exists.\r\n\
 See the MiKTeX Manual for more information."));
   exit (retCode);
@@ -277,7 +278,7 @@ See the MiKTeX Manual for more information."));
 
 void
 ParseSetupCommandLine (/*[in]*/ int				argc,
-		       /*[in]*/ char **			argv,
+		       /*[in]*/ char **				argv,
 		       /*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
 {
   int iOptIdx = 0;
@@ -287,7 +288,7 @@ ParseSetupCommandLine (/*[in]*/ int				argc,
 
   optind = 0;
 
-  while ((c = getopt_long_only(argc, argv, T_(""), long_options, &iOptIdx))
+  while ((c = getopt_long_only(argc, argv, "", long_options, &iOptIdx))
 	 != EOF)
     {
       switch (c)
@@ -303,7 +304,7 @@ ParseSetupCommandLine (/*[in]*/ int				argc,
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine"),
+		("ParseSetupCommandLine",
 		 T_("You must have administrator privileges to set up \
 a common configuration directory."),
 		 0);
@@ -317,7 +318,7 @@ a common configuration directory."),
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine"),
+		("ParseSetupCommandLine",
 		 T_("You must have administrator privileges to set up \
 a common data directory."),
 		 0);
@@ -355,26 +356,26 @@ a common data directory."),
 	  break;
 
 	case OPT_PACKAGE_SET:
-	  if (StringCompare(optarg, T_("essential")) == 0)
+	  if (StringCompare(optarg, "essential") == 0)
 	    {
 	      cmdinfo.packageLevel = PackageLevel::Essential;
 	    }
-	  else if (StringCompare(optarg, T_("basic")) == 0)
+	  else if (StringCompare(optarg, "basic") == 0)
 	    {
 	      cmdinfo.packageLevel = PackageLevel::Basic;
 	    }
-	  else if (StringCompare(optarg, T_("advanced")) == 0)
+	  else if (StringCompare(optarg, "advanced") == 0)
 	    {
 	      cmdinfo.packageLevel = PackageLevel::Advanced;
 	    }
-	  else if (StringCompare(optarg, T_("complete")) == 0)
+	  else if (StringCompare(optarg, "complete") == 0)
 	    {
 	      cmdinfo.packageLevel = PackageLevel::Complete;
 	    }
 	  else
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine"),
+		("ParseSetupCommandLine",
 		 T_("Invalid package set."),
 		 0);
 	    }
@@ -402,7 +403,7 @@ a common data directory."),
 		    || SessionWrapper(true)->RunningAsPowerUser()))
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("ParseSetupCommandLine"),
+		("ParseSetupCommandLine",
 		 T_("You must have administrator privileges to set up \
 a shared MiKTeX system."),
 		 0);
@@ -467,7 +468,7 @@ bool
 ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
 {
   PathName fileName;
-  if (! FindFile(T_("setupwiz.opt"), fileName))
+  if (! FindFile("setupwiz.opt", fileName))
     {
       return (false);
     }
@@ -567,7 +568,7 @@ FindAddTEXMFDirs ()
 			  MIKTEX_REGVAL_ROOTS,
 			  directories))
     {
-      directories = T_("");
+      directories = "";
     }
   return (directories);
 }
@@ -584,7 +585,7 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
   CSVList path (directories.c_str(), ';');
 
   vec.clear ();
-  directories = T_("");
+  directories = "";
 
   for (; path.GetCurrent() != 0; ++ path)
     {
@@ -689,7 +690,7 @@ SearchLocalRepository (/*[out]*/ PathName &		localRepository,
   localRepository = SessionWrapper(true)->GetMyLocation();
   localRepository += "..";
   localRepository += "tm";
-  localRepository += T_("packages");
+  localRepository += "packages";
   localRepository.MakeAbsolute ();
   if (TestLocalRepository(localRepository, packageLevel))
     {
@@ -721,7 +722,7 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
   MiKTeXDirectRoot += "..";
   MiKTeXDirectRoot.MakeAbsolute ();
   PathName pathMdIni = MiKTeXDirectRoot;
-  pathMdIni += T_("texmf");
+  pathMdIni += "texmf";
   pathMdIni += MIKTEX_PATH_MD_INI;
   if (! File::Exists(pathMdIni))
     {
@@ -750,12 +751,34 @@ GetDefaultLocalRepository ()
     }
   else
     {
-      // default is "%TEMP%\MiKTeX X.Y Packages"
-      ret.SetToTempDirectory ();
-      ret +=
-	(MIKTEX_PRODUCTNAME_STR
-	 " " MIKTEX_SERIES_STR
-	 T_(" Packages"));
+      // try Internet Explorer download directory
+      AutoHKEY hkey;
+      LONG res =
+	RegOpenKeyExW(HKEY_CURRENT_USER,
+		      L"SOFTWARE\\Microsoft\\Internet Explorer",
+		      0,
+		      KEY_READ,
+		      &hkey);
+      if (res == ERROR_SUCCESS)
+	{
+	  DWORD type;
+	  DWORD len = static_cast<DWORD>(ret.GetCapacity() * sizeof(ret[0]));
+	  res =
+	    RegQueryValueExA
+	    (hkey.Get(),
+	     "Download Directory",
+	     0,
+	     &type,
+	     reinterpret_cast<unsigned char *>(ret.GetBuffer()),
+	     &len);
+	}
+      if (res != ERROR_SUCCESS || ! Directory::Exists(ret))
+	{
+	  // default is "%TEMP%\MiKTeX X.Y Packages"
+	  ret.SetToTempDirectory ();
+	}
+      ret += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR " ";
+      ret.Append (T_("Setup"), false);
     }
   return (ret);
 }
@@ -782,7 +805,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   if (theApp.isMiKTeXDirect)
     {
       theApp.MiKTeXDirectTeXMFRoot = theApp.MiKTeXDirectRoot;
-      theApp.MiKTeXDirectTeXMFRoot += T_("texmf");
+      theApp.MiKTeXDirectTeXMFRoot += "texmf";
     }
 
   // startup configuration
@@ -826,7 +849,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 				   theApp.packageLevel))
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SetupGlobalVars"),
+	    ("SetupGlobalVars",
 	     T_("The specified local repository does not exist."),
 	     0);
 	}
@@ -872,14 +895,14 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
       if (theApp.setupTask == SetupTask::None)
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SetupGlobalVars"),
+	    ("SetupGlobalVars",
 	     T_("No setup task has been specified."),
 	     0);
 	}
       if (theApp.packageLevel == PackageLevel::None)
 	{
 	  FATAL_MIKTEX_ERROR
-	    (T_("SetupGlobalVars"),
+	    ("SetupGlobalVars",
 	     T_("No package set has been specified."),
 	     0);
 	}
@@ -889,7 +912,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	  if (theApp.localPackageRepository.Empty())
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("SetupGlobalVars"),
+		("SetupGlobalVars",
 		 T_("No local package repository has been specified."),
 		 0);
 	    }
@@ -900,7 +923,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	  if (theApp.remotePackageRepository.empty())
 	    {
 	      FATAL_MIKTEX_ERROR
-		(T_("SetupGlobalVars"),
+		("SetupGlobalVars",
 		 T_("No remote package repository has been specified."),
 		 0);
 	    }
@@ -1007,11 +1030,11 @@ CloseLog (/*[in]*/ bool cancel)
   CTime t = CTime::GetCurrentTime();
   if (theApp.setupTask == SetupTask::Download)
     {
-      pathLogFile += t.Format(T_("download-%Y-%m-%d-%H-%M"));
+      pathLogFile += t.Format("download-%Y-%m-%d-%H-%M");
     }
   else
     {
-      pathLogFile += t.Format(T_("setup-%Y-%m-%d-%H-%M"));
+      pathLogFile += t.Format("setup-%Y-%m-%d-%H-%M");
     }
   pathLogFile.SetExtension (".log");
 
@@ -1026,14 +1049,14 @@ CloseLog (/*[in]*/ bool cancel)
     {
       INT_PTR r =
 	reinterpret_cast<INT_PTR>(ShellExecute(0,
-					       T_("open"),
+					       "open",
 					       pathLogFile.Get(),
 					       0,
 					       0,
 					       SW_SHOWNORMAL));
       if (r <= 32)
 	{
-	  Process::Start (T_("notepad.exe"), pathLogFile.Get());
+	  Process::Start ("notepad.exe", pathLogFile.Get());
 	}
     }
 }
@@ -1049,7 +1072,7 @@ ExtractFiles (/*[in,out]*/ ScratchDirectory &	sfxDir)
   PathName path;
   if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+      FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
     }
   FileStream myImage (File::Open(path,
 				 FileMode::Open,
@@ -1122,7 +1145,7 @@ SetupWizardApplication::InitInstance ()
       startupConfig.commonDataRoot = scratchRoot.Get();
       startupConfig.commonConfigRoot = scratchRoot.Get();
       startupConfig.installRoot = scratchRoot.Get();
-      Session::InitInfo initInfo (T_("setup"),
+      Session::InitInfo initInfo ("setup",
 				  Session::InitFlags::NoConfigFiles);
       initInfo.SetStartupConfig (startupConfig);
       SessionWrapper pSession (initInfo);
@@ -1135,9 +1158,9 @@ SetupWizardApplication::InitInstance ()
       pManager = PackageManager::Create();
 
       // set trace options
-      traceStream = auto_ptr<TraceStream>(TraceStream::Open(T_("setup")));
+      traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
       TraceStream::SetTraceFlags
-	(T_("error,extractor,mpm,process,config,setup"));
+	("error,extractor,mpm,process,config,setup");
       
       // get command-line arguments
       int argc;
@@ -1147,7 +1170,7 @@ SetupWizardApplication::InitInstance ()
       if (GetModuleFileName(0, setupPath.GetBuffer(), BufferSizes::MaxPath)
 	  == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+	  FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
 	}
       ReadSetupWizIni (cmdinfo);
       ParseSetupCommandLine (argc, argv, cmdinfo);
@@ -1342,7 +1365,7 @@ IsPathRegistered (/*[in]*/ HKEY			hkeyRoot,
       DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
       result =
 	RegQueryValueEx(hkey,
-			T_("Path"),
+			"Path",
 			0,
 			&type,
 			reinterpret_cast<LPBYTE>(value.GetBuffer()),
@@ -1368,11 +1391,11 @@ IsPathRegistered ()
     {
       if (IsPathRegistered(HKEY_LOCAL_MACHINE,
 			   (REGSTR_PATH_CURRENTCONTROLSET
-			    T_("\\Control\\Session Manager\\Environment"))))
+			    "\\Control\\Session Manager\\Environment")))
 	{
 	  return (true);
 	}
-      if (IsPathRegistered(HKEY_CURRENT_USER, T_("Environment")))
+      if (IsPathRegistered(HKEY_CURRENT_USER, "Environment"))
 			   
 	{
 	  return (true);
@@ -1382,7 +1405,7 @@ IsPathRegistered ()
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       string value;
-      if (Utils::GetEnvironmentString(T_("PATH"), value))
+      if (Utils::GetEnvironmentString("PATH", value))
 	{
 	  return (ContainsBinDir(value.c_str()));
 	}
@@ -1474,7 +1497,7 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
   
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
     }
   
   ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
@@ -1496,7 +1519,7 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
   
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
     }
   
   ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
@@ -1507,15 +1530,15 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
    RegisterUninstaller
    _________________________________________________________________________ */
 
-#define UNINST_HELP_LINK T_("http://miktex.org/Support.aspx")
+#define UNINST_HELP_LINK "http://miktex.org/Support.aspx"
 #define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
 #define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
 #define UNINST_DISPLAY_STRING				\
   (theApp.setupTask == SetupTask::PrepareMiKTeXDirect	\
    ? UNINST_DISPLAY_NAME_MIKTEXDIRECT			\
    : UNINST_DISPLAY_NAME)
-#define UNINST_ABOUT_URL T_("http://miktex.org/About.aspx")
-#define UNINST_UPDATE_URL T_("http://miktex.org")
+#define UNINST_ABOUT_URL "http://miktex.org/About.aspx"
+#define UNINST_UPDATE_URL "http://miktex.org"
 #define UNINST_COMMENT T_("Uninstall MiKTeX")
 #define UNINST_README MIKTEX_URL_WWW_KNOWN_ISSUES
 
@@ -1555,25 +1578,25 @@ RegisterUninstaller ()
 		   &disp);
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegCreateKeyEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyEx", result, 0);
     }
   AutoHKEY autoHKEY (hkey);
   
   // set values
   PathName installRoot (theApp.startupConfig.installRoot);
-  AddUninstallerRegValue (hkey, T_("Comment"), UNINST_COMMENT);
-  AddUninstallerRegValue (hkey, T_("DisplayIcon"), iconPath.Get());
-  AddUninstallerRegValue (hkey, T_("DisplayName"), UNINST_DISPLAY_STRING); 
-  AddUninstallerRegValue (hkey, T_("DisplayVersion"), UNINST_DISPLAY_VERSION);
-  AddUninstallerRegValue (hkey, T_("HelpLink"), UNINST_HELP_LINK);
-  AddUninstallerRegValue (hkey, T_("InstallLocation"), installRoot.Get());
-  AddUninstallerRegValue (hkey, T_("NoModify"), 1);
-  AddUninstallerRegValue (hkey, T_("NoRepair"), 1);
-  AddUninstallerRegValue (hkey, T_("Publisher"), UNINST_PUBLISHER);
-  AddUninstallerRegValue (hkey, T_("Readme"), UNINST_README);
-  AddUninstallerRegValue (hkey, T_("UninstallString"), commandLine.c_str());
-  AddUninstallerRegValue (hkey, T_("UrlInfoAbout"), UNINST_ABOUT_URL);
-  AddUninstallerRegValue (hkey, T_("UrlUpdateInfo"), UNINST_UPDATE_URL);
+  AddUninstallerRegValue (hkey, "Comment", UNINST_COMMENT);
+  AddUninstallerRegValue (hkey, "DisplayIcon", iconPath.Get());
+  AddUninstallerRegValue (hkey, "DisplayName", UNINST_DISPLAY_STRING); 
+  AddUninstallerRegValue (hkey, "DisplayVersion", UNINST_DISPLAY_VERSION);
+  AddUninstallerRegValue (hkey, "HelpLink", UNINST_HELP_LINK);
+  AddUninstallerRegValue (hkey, "InstallLocation", installRoot.Get());
+  AddUninstallerRegValue (hkey, "NoModify", 1);
+  AddUninstallerRegValue (hkey, "NoRepair", 1);
+  AddUninstallerRegValue (hkey, "Publisher", UNINST_PUBLISHER);
+  AddUninstallerRegValue (hkey, "Readme", UNINST_README);
+  AddUninstallerRegValue (hkey, "UninstallString", commandLine.c_str());
+  AddUninstallerRegValue (hkey, "UrlInfoAbout", UNINST_ABOUT_URL);
+  AddUninstallerRegValue (hkey, "UrlUpdateInfo", UNINST_UPDATE_URL);
 }
 
 /* _________________________________________________________________________
@@ -1620,7 +1643,7 @@ ULogAddFile (/*[in]*/ const PathName & path)
     }
   if (section != Files)
     {
-      theApp.uninstStream.WriteLine (T_("[files]"));
+      theApp.uninstStream.WriteLine ("[files]");
       section = Files;
     }
   PathName absolutePath (path);
@@ -1650,7 +1673,7 @@ ULogAddRegValue (/*[in]*/ HKEY		hkey,
     }
   else if (hkey == HKEY_CURRENT_USER && section != HKCU)
     {
-      theApp.uninstStream.WriteLine (T_("[hkcu]"));
+      theApp.uninstStream.WriteLine ("[hkcu]");
       section = HKCU;
     }
   theApp.uninstStream.WriteFormattedLine
@@ -1679,8 +1702,8 @@ RegisterPathNT ()
   Log (T_("Registering bin dir: %s\n"), Q_(pathBinDir));
 
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
-   REGSTR_PATH_CURRENTCONTROLSET T_("\\Control\\Session Manager\\Environment")
-#define REGSTR_KEY_ENVIRONMENT_USER T_("Environment")
+   REGSTR_PATH_CURRENTCONTROLSET "\\Control\\Session Manager\\Environment"
+#define REGSTR_KEY_ENVIRONMENT_USER "Environment"
 
   HKEY hkey;
 
@@ -1697,7 +1720,7 @@ RegisterPathNT ()
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKey"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKey", result, 0);
     }
 
   AutoHKEY autoHKEY (hkey);
@@ -1708,7 +1731,7 @@ RegisterPathNT ()
 
   result =
     RegQueryValueEx(hkey,
-		    T_("Path"),
+		    "Path",
 		    0,
 		    &type,
 		    reinterpret_cast<LPBYTE>(value.GetBuffer()),
@@ -1720,7 +1743,7 @@ RegisterPathNT ()
     {
       if (result != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR_2 (T_("RegQueryValueEx"), result, 0);
+	  FATAL_WINDOWS_ERROR_2 ("RegQueryValueEx", result, 0);
 	}
     }
 
@@ -1734,7 +1757,7 @@ RegisterPathNT ()
 
   result =
     RegSetValueEx(hkey,
-		  T_("Path"),
+		  "Path",
 		  0,
 		  (havePath ? type : REG_SZ),
 		  reinterpret_cast<const BYTE *>(newPath.c_str()),
@@ -1742,7 +1765,7 @@ RegisterPathNT ()
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
     }
 
   DWORD sendMessageResult;
@@ -1750,13 +1773,13 @@ RegisterPathNT ()
   if (SendMessageTimeout(HWND_BROADCAST,
 			 WM_SETTINGCHANGE,
 			 0,
-			 reinterpret_cast<LPARAM>(T_("Environment")),
+			 reinterpret_cast<LPARAM>("Environment"),
 			 SMTO_ABORTIFHUNG,
 			 5000,
 			 &sendMessageResult)
       == 0)
     {
-      CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
+      CHECK_WINDOWS_ERROR ("SendMessageTimeout", 0);
     }
 }
 
@@ -1779,12 +1802,12 @@ RegisterPath95 ()
       pathBinDir.Set (theApp.startupConfig.installRoot, MIKTEX_PATH_BIN_DIR);
     }
   Utils::RemoveBlanksFromPathName (pathBinDir);
-  StreamWriter writer (File::Open(T_("c:\\autoexec.bat"), // <fixme/>
+  StreamWriter writer (File::Open("c:\\autoexec.bat", // <fixme/>
 				  FileMode::Append,
 				  FileAccess::Write));
-  writer.WriteFormattedLine (T_("set PATH=%s;%%PATH%%"), pathBinDir.Get());
+  writer.WriteFormattedLine ("set PATH=%s;%%PATH%%", pathBinDir.Get());
   writer.Close ();
-  Log (T_("set PATH=%s;%%PATH%%\n"), pathBinDir.Get());
+  Log ("set PATH=%s;%%PATH%%\n", pathBinDir.Get());
   theApp.mustReboot = true;
 }
 #endif
@@ -1838,7 +1861,7 @@ Expand (/*[in]*/ const char *	lpszSource,
 {
   dest = lpszSource;
   int pos;
-  while ((pos = dest.Find(T_("%MIKTEX_INSTALL%"))) >= 0)
+  while ((pos = dest.Find("%MIKTEX_INSTALL%")) >= 0)
     {
       dest.Delete (pos, 16);
       dest.Insert (pos, theApp.startupConfig.installRoot.Get());
@@ -1870,7 +1893,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
   if (FAILED(hr))
     {
       Log (T_("IUniformResourceLocator could not be created (%08x)\n"), hr);
-      UNEXPECTED_CONDITION (T_("CreateInternetShortcut"));
+      UNEXPECTED_CONDITION ("CreateInternetShortcut");
     }
 
   hr = pURL->SetURL(lpszUrl, 0);
@@ -1878,7 +1901,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
   if (FAILED(hr))
     {
       Log (T_("IUniformResourceLocator::SetURL() failed (%08x)\n"), hr);
-      UNEXPECTED_CONDITION (T_("CreateInternetShortcut"));
+      UNEXPECTED_CONDITION ("CreateInternetShortcut");
     }
 
   IPersistFilePtr pPF;
@@ -1888,7 +1911,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
   if (FAILED(hr))
     {
       Log (T_("IPersistFile could not be created (%08x)\n"), hr);
-      UNEXPECTED_CONDITION (T_("CreateInternetShortcut"));
+      UNEXPECTED_CONDITION ("CreateInternetShortcut");
     }
 
 #if defined(MIKTEX_UNICODE)
@@ -1903,7 +1926,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
 			  BufferSizes::MaxPath)
       == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
     }
   hr = pPF->Save(wszPath, TRUE);
 #endif
@@ -1911,7 +1934,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
   if (FAILED(hr))
     {
       Log (T_("IPersistFile::Save() failed (%08x)\n"), hr);
-      UNEXPECTED_CONDITION (T_("CreateInternetShortcut"));
+      UNEXPECTED_CONDITION ("CreateInternetShortcut");
     }
 }
 
@@ -1931,7 +1954,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       CString subFolder;
       if (! subFolder.LoadString(ld.subFolderID))
 	{
-	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	  UNEXPECTED_CONDITION ("CreateShellLink");
 	}
       PathName pathSubFolder (pathFolder,
 			      static_cast<const char *>(subFolder));
@@ -1947,7 +1970,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 
   if (! strItemName.LoadString(ld.nameID))
     {
-      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+      UNEXPECTED_CONDITION ("CreateShellLink");
     }
 
   pathLink += strItemName;
@@ -2001,7 +2024,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       if (FAILED(hr))
 	{
 	  Log (T_("IShellLink could not be created (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	  UNEXPECTED_CONDITION ("CreateShellLink");
 	}
       
       CString str;
@@ -2011,7 +2034,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       if (FAILED(hr))
 	{
 	  Log (T_("IShellLink::SetPath() failed (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	  UNEXPECTED_CONDITION ("CreateShellLink");
 	}
       
       if ((ld.flags & LD_USEARGS) != 0)
@@ -2020,7 +2043,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLink::SetArguments() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
       
@@ -2030,7 +2053,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLink::SetDescription() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
       
@@ -2041,7 +2064,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLink::SetIconLocation() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
       
@@ -2052,7 +2075,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	    {
 	      Log (T_("IShellLink::SetWorkingDirectory() failed (%08x)\n"),
 		   hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
 
@@ -2062,7 +2085,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLink::SetShowCmd() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
       
@@ -2072,7 +2095,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLink::SetHotkey() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	      UNEXPECTED_CONDITION ("CreateShellLink");
 	    }
 	}
       
@@ -2084,7 +2107,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       if (FAILED(hr))
 	{
 	  Log (T_("IPersistFile could not be created (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	  UNEXPECTED_CONDITION ("CreateShellLink");
 	}
 
 #if defined(MIKTEX_UNICODE)
@@ -2099,7 +2122,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 			      static_cast<int>(pathLink.GetCapacity()))
 	  == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("MultiByteToWideChar"), 0);
+	  FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
 	}
       hr = ppf->Save(wszPath, TRUE);
 #endif
@@ -2107,7 +2130,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       if (FAILED(hr))
 	{
 	  Log (T_("IShellLink::Save() failed (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION (T_("CreateShellLink"));
+	  UNEXPECTED_CONDITION ("CreateShellLink");
 	}
     }
 
@@ -2148,14 +2171,14 @@ LogV (/*[in]*/ const char *	lpszFormat,
       if (lpsz[0] == T_('\n')
 	  || (lpsz[0] == T_('\r') && lpsz[1] == T_('\n')))
 	{
-	  theApp.traceStream->WriteFormattedLine (T_("setup"),
+	  theApp.traceStream->WriteFormattedLine ("setup",
 						  "%s",
 						  currentLine.c_str());
 	  if (theApp.logStream.IsOpen())
 	    {
 	      theApp.logStream.WriteLine (currentLine);
 	    }
-	  currentLine = T_("");
+	  currentLine = "";
 	  if (lpsz[0] == T_('\r'))
 	    {
 	      ++ lpsz;
@@ -2194,30 +2217,30 @@ LogHeader ()
   CString banner;
   if (! banner.LoadString(IDS_SETUPWIZ))
     {
-      UNEXPECTED_CONDITION (T_("LogHeader"));
+      UNEXPECTED_CONDITION ("LogHeader");
     }
   Log (T_("%s %s Report\n\n"),
        static_cast<const char *>(banner),
        VER_FILEVERSION_STR);
   CTime t = CTime::GetCurrentTime();
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
-  Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
+  Log (T_("Time: %s\n"), t.Format(T_("%H:%M:%S")));
   Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
   if (IsWindowsNT())
     {
-      Log (T_("SystemAdmin: %s\n"),
+      Log ("SystemAdmin: %s\n",
 	   (SessionWrapper(true)->RunningAsAdministrator()
-	    ? T_("yes")
-	    : T_("false")));
-      Log (T_("PowerUser: %s\n"),
+	    ? "yes"
+	    : "false"));
+      Log ("PowerUser: %s\n",
 	   (SessionWrapper(true)->RunningAsPowerUser()
-	    ? T_("yes")
-	    : T_("false")));
+	    ? "yes"
+	    : "false"));
     }
   if (theApp.setupTask != SetupTask::Download)
     {
-      Log (T_("SharedSetup: %s\n"),
-	   (theApp.commonUserSetup ? T_("yes") : T_("false")));
+      Log ("SharedSetup: %s\n",
+	   (theApp.commonUserSetup ? "yes" : "false"));
     }
   Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
   if (theApp.setupTask != SetupTask::Download)
@@ -2226,19 +2249,19 @@ LogHeader ()
 	   (theApp.noAddTEXMFDirs || theApp.startupConfig.roots.empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.roots.c_str()));
-      Log (T_("UserData: %s\n"),
+      Log ("UserData: %s\n",
 	   (theApp.startupConfig.userDataRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userDataRoot.Get()));
-      Log (T_("UserConfig: %s\n"),
+      Log ("UserConfig: %s\n",
 	   (theApp.startupConfig.userConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userConfigRoot.Get()));
-      Log (T_("CommonData: %s\n"),
+      Log ("CommonData: %s\n",
 	   (theApp.startupConfig.commonDataRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonDataRoot.Get()));
-      Log (T_("CommonConfig: %s\n"),
+      Log ("CommonConfig: %s\n",
 	   (theApp.startupConfig.commonConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonConfigRoot.Get()));
@@ -2258,12 +2281,12 @@ GetFileVersion (/*[in]*/ const PathName &	path)
   DWORD cchver = GetFileVersionInfoSize(path.Get(), &dwHandle);
   if (cchver == 0)
     {
-      FATAL_WINDOWS_ERROR (T_("GetFileVersionInfoSize"), path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileVersionInfoSize", path.Get());
     }
   CharBuffer<char> buf (cchver);
   if (! GetFileVersionInfo(path.Get(), dwHandle, cchver, buf.GetBuffer()))
     {
-      FATAL_WINDOWS_ERROR (T_("GetFileVersionInfo"), path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileVersionInfo", path.Get());
     }
   UINT uLen;
   void * pVer;
@@ -2272,7 +2295,7 @@ GetFileVersion (/*[in]*/ const PathName &	path)
 		      &pVer,
 		      &uLen))
     {
-      FATAL_WINDOWS_ERROR (T_("VerQueryValue"), path.Get());
+      FATAL_WINDOWS_ERROR ("VerQueryValue", path.Get());
     }
   return
     (VersionNumber
@@ -2422,7 +2445,7 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.dwHostNameLength = 200;
   if (! InternetCrackUrl(url.c_str(), 0, 0, &url_comp))
     {
-      FATAL_WINDOWS_ERROR (T_("InternetCrackUrl"), 0);
+      FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
     }
   protocol = szProtocol;
   host = szHost;
