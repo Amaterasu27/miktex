@@ -1,6 +1,6 @@
 /* runbat.cpp: the MiKTeX batch file runner
 
-   Copyright (C) 2004-2006 Christian Schenk
+   Copyright (C) 2004-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -35,7 +35,31 @@ main (/*[in]*/ int			argc,
     {
       Application app;
       app.Init (argv[0]);
-      int exitCode = app.GetSession()->RunBatch(argc, argv);
+      const char * lpszArguments = GetCommandLineA();
+      bool inQuote = false;
+      for (;
+	   (*lpszArguments != 0
+	    && (inQuote
+		|| (*lpszArguments != ' '
+		    && *lpszArguments != '\t')));
+	   ++ lpszArguments)
+	{
+	  if (*lpszArguments == '"')
+	    {
+	      inQuote = ! inQuote;
+	    }
+	}
+      for (;
+	   *lpszArguments == ' ' || *lpszArguments == '\t';
+	   ++ lpszArguments)
+	{
+	}
+      char szName[BufferSizes::MaxPath];
+      PathName::Split (argv[0],
+		       0, 0,
+		       szName, BufferSizes::MaxPath,
+		       0, 0);
+      int exitCode = app.GetSession()->RunBatch(szName, lpszArguments);
       app.Finalize ();
       return (exitCode);
     }

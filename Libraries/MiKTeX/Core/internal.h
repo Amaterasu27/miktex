@@ -2010,6 +2010,15 @@ public:
   RunningAsPowerUser ();
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments);
+#endif
+
   // -----------------------------------------------------------------------
   // *** public ***
 

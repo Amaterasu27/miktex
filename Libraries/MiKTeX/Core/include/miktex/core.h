@@ -1,6 +1,6 @@
 /* core.h: MiKTeX core API					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -5799,6 +5799,16 @@ public:
   bool
   MIKTEXCALL
   RunningAsPowerUser ()
+    = 0;
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments)
     = 0;
 #endif
 
