@@ -38,6 +38,13 @@
 
 extern int always_embed; /* flag declared in dvipdfmx.c */
 
+static int verbose = 0;
+
+void tt_aux_set_verbose()
+{
+  ++verbose;
+}
+
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
   LONG version;
@@ -184,18 +191,16 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int type, const char* fontnam
       /* the least restrictive license granted takes precedence. */
       *embed = 1;
     } else if (os2->fsType & 0x0004) {
-      fprintf(stderr,
-              "\n** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
+      if (verbose > 0)
+        MESG("** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
       *embed = 1;
     } else {
       if (always_embed) {
-        fprintf(stderr,
-                "\n** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
+        MESG("** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
         *embed = 1;
       }
       else {
-        fprintf(stderr,
-                "\n*** Embedding of font \"%s\" disabled due to license restrictions ***\n", fontname);
+        WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
         *embed = 0;
       }
     }
