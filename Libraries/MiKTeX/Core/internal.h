@@ -1486,11 +1486,11 @@ public:
    _________________________________________________________________________ */
 
 class
-SessionImpl : public Session
+SessionImpl : public Session2
 {
 
   // -----------------------------------------------------------------------
-  // *** interface ***
+  // *** Session interface ***
 
 public:
   SessionImpl ();
@@ -2009,6 +2009,9 @@ public:
   MIKTEXCALL
   RunningAsPowerUser ();
 #endif
+
+  // -----------------------------------------------------------------------
+  // *** Session2 interface ***
 
 #if defined(MIKTEX_WINDOWS)
 public:

@@ -59,7 +59,18 @@ main (/*[in]*/ int			argc,
 		       0, 0,
 		       szName, BufferSizes::MaxPath,
 		       0, 0);
-      int exitCode = app.GetSession()->RunBatch(szName, lpszArguments);
+      Session * pSession = app.GetSession();
+      Session2 * pSession2 = dynamic_cast<Session2*>(pSession);
+      int exitCode;
+      if (pSession == 0)
+	{
+	  fprintf (stderr, "Invalid MiKTeX configuration\n");
+	  exitCode = 1;
+	}
+      else
+	{
+	  exitCode = pSession2->RunBatch(szName, lpszArguments);
+	}
       app.Finalize ();
       return (exitCode);
     }

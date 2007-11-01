@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1224,6 +1224,16 @@ Session::Release (/*[in]*/ Session * pSession)
    _________________________________________________________________________ */
 
 Session::~Session ()
+{
+}
+
+/* _________________________________________________________________________
+
+   Session2::~Session2
+
+   _________________________________________________________________________ */
+
+Session2::~Session2 ()
 {
 }
 
