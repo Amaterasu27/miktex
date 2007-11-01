@@ -6066,6 +6066,33 @@ public:
 
 /* _________________________________________________________________________
 
+   Session2
+   _________________________________________________________________________ */
+
+/// The MiKTeX session interface (verison 2).
+class
+MIKTEXNOVTABLE
+Session2 : public Session
+{
+protected:
+  virtual
+  MIKTEXCALL
+  ~Session2 ()
+    = 0;
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments)
+    = 0;
+#endif
+};
+
+/* _________________________________________________________________________
+
    SessionWrapper
    _________________________________________________________________________ */
 
