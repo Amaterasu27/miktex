@@ -1,7 +1,8 @@
 MiKTeX 2.7
 
-       * make sure each exported function has an explicit calling convention
-       * Yap: auto render mode (feature #1581199)
-       * manual: MiKTeX-maintained TEXMF directories are a prohibited zone
-       * manual: screenshots
-       * mo: create root directory
+       1 make sure each exported function has an explicit calling convention
+       1 update.dat goes in new miktex-update-2.7 package
+       2 Yap: auto render mode (feature #1581199)
+       3 manual: MiKTeX-maintained TEXMF directories are a prohibited zone
+       3 manual: screenshots
+       4 mo: create root directory
