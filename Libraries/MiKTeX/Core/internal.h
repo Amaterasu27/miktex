@@ -742,11 +742,11 @@ public:
    _________________________________________________________________________ */
 
 class
-SessionImpl : public Session
+SessionImpl : public Session2
 {
 
   // -----------------------------------------------------------------------
-  // *** interface ***
+  // *** Session interface ***
 
 public:
   SessionImpl ();
@@ -1304,6 +1304,18 @@ public:
   void
   MIKTEXCALL
   ConfigureFile (/*[in]*/ const PathName & path);
+
+  // -----------------------------------------------------------------------
+  // *** Session2 interface ***
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments);
+#endif
 
   // -----------------------------------------------------------------------
   // *** public ***

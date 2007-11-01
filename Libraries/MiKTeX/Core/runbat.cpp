@@ -86,3 +86,42 @@ SessionImpl::RunBatch (/*[in]*/ int			argc,
   return (exitCode);
 }
 #endif
+
+/* _________________________________________________________________________
+
+   SessionImpl::RunBatch
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+int
+SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
+		       /*[in]*/ const char *	lpszArguments)
+{
+  // find batch file
+  PathName scriptPath;
+  if (! FindBatchFile(lpszName, scriptPath))
+    {
+      FATAL_MIKTEX_ERROR
+	("SessionImpl::RunBatch",
+	 T_("The Windows command script file could not be found."),
+	 lpszName);
+    }
+  
+  // we cannot quote the command => remove all blanks from the script path
+  Utils::RemoveBlanksFromPathName (scriptPath);
+
+  string batchCommandLine = scriptPath.Get();
+
+  if (lpszArguments != 0)
+    {
+      batchCommandLine += ' ';
+      batchCommandLine += lpszArguments;
+    }
+
+  int exitCode;
+
+  Process::ExecuteSystemCommand (batchCommandLine.c_str(), &exitCode);
+
+  return (exitCode);
+}
+#endif
