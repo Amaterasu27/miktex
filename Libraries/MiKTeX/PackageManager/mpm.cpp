@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -2081,6 +2081,7 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	 T_("The remote package repository is corrupted."),
 	 url.c_str());
     }
+#if 0
   if (repositoryInfo.integrity != RepositoryIntegrity::Intact)
     {
       FATAL_MPM_ERROR
@@ -2088,6 +2089,7 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const tstring & url)
 	 T_("The remote package repository may be corrupted."),
 	 url.c_str());
     }
+#endif
   if (repositoryInfo.delay >= 10)
     {
       FATAL_MPM_ERROR
