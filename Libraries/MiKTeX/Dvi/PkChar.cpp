@@ -97,8 +97,8 @@ PkChar::PkChar (/*[in]*/ DviFont * pFont)
     rasterHeight (0),
     cxOffset (0),
     cyOffset (0),
-    log_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
-    log_pkchar (TraceStream::Open(MIKTEX_TRACE_DVIPKCHAR))
+    trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
+    trace_pkchar (TraceStream::Open(MIKTEX_TRACE_DVIPKCHAR))
 
 {
   ;
@@ -129,15 +129,15 @@ PkChar::~PkChar ()
 	  free (it->second);
 	  it->second = 0;
 	}
-      if (log_error.get())
+      if (trace_error.get())
 	{
-	  log_error->Close ();
-	  log_error.reset ();
+	  trace_error->Close ();
+	  trace_error.reset ();
 	}
-      if (log_pkchar.get())
+      if (trace_pkchar.get())
 	{
-	  log_pkchar->Close ();
-	  log_pkchar.reset ();
+	  trace_pkchar->Close ();
+	  trace_pkchar.reset ();
 	}
     }
   catch (const exception &)
@@ -238,7 +238,7 @@ PkChar::Read (/*[in]*/ InputStream &	inputstream,
   if (packetSize == 0)
     {
 #if 0
-      log_error->WriteFormattedLine
+      trace_error->WriteFormattedLine
 	("libdvi",
 	 T_("%d: no glyph!"),
 	 charCode);
@@ -246,7 +246,7 @@ PkChar::Read (/*[in]*/ InputStream &	inputstream,
     }
   else
     {
-      log_pkchar->WriteFormattedLine
+      trace_pkchar->WriteFormattedLine
 	("libdvi",
 	 T_("going to read character %d"),
 	 charCode);

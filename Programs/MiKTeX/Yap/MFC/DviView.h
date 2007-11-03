@@ -1,6 +1,6 @@
 /* DviView.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of Yap.
 
@@ -145,13 +145,15 @@ protected:
   OnDarkerText ();
   
 protected:
-  afx_msg void OnDviPageModeDvips ();
+  afx_msg
+  void
+  OnDviPageModeAuto ();
   
 protected:
   afx_msg
   void
-  OnUpdateDviPageModeDvips (/*[in]*/ CCmdUI * pCmdUI);
-  
+  OnUpdateDviPageModeAuto (/*[in]*/ CCmdUI * pCmdUI);
+
 protected:
   afx_msg
   void
@@ -162,6 +164,14 @@ protected:
   void
   OnUpdateDviPageModePk (/*[in]*/ CCmdUI * pCmdUI);
 
+protected:
+  afx_msg void OnDviPageModeDvips ();
+  
+protected:
+  afx_msg
+  void
+  OnUpdateDviPageModeDvips (/*[in]*/ CCmdUI * pCmdUI);
+  
 protected:
   afx_msg
   BOOL

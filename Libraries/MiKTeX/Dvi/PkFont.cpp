@@ -55,11 +55,11 @@ PkFont::PkFont (/*[in]*/ DviImpl *	pDvi,
     metafontMode (lpszMetafontMode),
     baseDpi (baseDpi),
     checkDpi (false),
-    log_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
-    log_pkfont (TraceStream::Open(MIKTEX_TRACE_DVIPKFONT))
+    trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
+    trace_pkfont (TraceStream::Open(MIKTEX_TRACE_DVIPKFONT))
 
 {
-  log_pkfont->WriteFormattedLine
+  trace_pkfont->WriteFormattedLine
     ("libdvi",
      T_("creating pk font object '%s'"),
      dviInfo.name.c_str());
@@ -89,15 +89,15 @@ PkFont::~PkFont ()
 	  it->second = 0;
 	}
       pkChars.clear ();
-      if (log_error.get())
+      if (trace_error.get())
 	{
-	  log_error->Close ();
-	  log_error.reset ();
+	  trace_error->Close ();
+	  trace_error.reset ();
 	}
-      if (log_pkfont.get())
+      if (trace_pkfont.get())
 	{
-	  log_pkfont->Close ();
-	  log_pkfont.reset ();
+	  trace_pkfont->Close ();
+	  trace_pkfont.reset ();
 	}
     }
   catch (const exception &)
@@ -223,7 +223,7 @@ PkFont::Read ()
       return;
     }
 
-  log_pkfont->WriteFormattedLine
+  trace_pkfont->WriteFormattedLine
     ("libdvi",
      T_("going to load pk font %s"),
      dviInfo.name.c_str());
@@ -264,7 +264,7 @@ PkFont::Read ()
 	{
 	  dviInfo.transcript += "\r\n";
 	  dviInfo.transcript += T_("Loading 'cmr10' instead.\r\n");
-	  log_error->WriteFormattedLine
+	  trace_error->WriteFormattedLine
 	    ("libdvi",
 	     T_("'%s' not loadable - loading 'cmr10' instead!"),
 	     dviInfo.name.c_str());
@@ -279,7 +279,7 @@ PkFont::Read ()
 							 fileName))))
 	    {
 	      dviInfo.transcript += T_("'cmr10' not loadable either!");
-	      log_error->WriteLine
+	      trace_error->WriteLine
 		("libdvi",
 		 T_("'cmr10' not loadable - will display blank chars!"));
 	      return;
@@ -289,7 +289,7 @@ PkFont::Read ()
 
   dviInfo.fileName = fileName.ToString();
 
-  log_pkfont->WriteFormattedLine
+  trace_pkfont->WriteFormattedLine
     ("libdvi",
      T_("opening pk file %s"),
      fileName.Get());
@@ -357,37 +357,37 @@ PkFont::Read ()
 	    int my_checkSum = inputstream.ReadSignedQuad();
 	    hppp = inputstream.ReadSignedQuad();
 	    vppp = inputstream.ReadSignedQuad();
-	    log_pkfont->WriteFormattedLine
+	    trace_pkfont->WriteFormattedLine
 	      ("libdvi",
 	       "comment: %s",
 	       dviInfo.comment.c_str());
-	    log_pkfont->WriteFormattedLine
+	    trace_pkfont->WriteFormattedLine
 	      ("libdvi",
 	       "designSize: %d",
 	       my_designSize);
-	    log_pkfont->WriteFormattedLine
+	    trace_pkfont->WriteFormattedLine
 	      ("libdvi",
 	       "checkSum: 0%o",
 	       my_checkSum);
-	    log_pkfont->WriteFormattedLine
+	    trace_pkfont->WriteFormattedLine
 	      ("libdvi",
 	       "hppp: %d",
 	       hppp);
-	    log_pkfont->WriteFormattedLine
+	    trace_pkfont->WriteFormattedLine
 	      ("libdvi",
 	       "vppp: %d",
 	       vppp);
 
 	    if (my_designSize * tfmConv != designSize)
 	      {
-		log_error->WriteFormattedLine
+		trace_error->WriteFormattedLine
 		  ("libdvi",
 		   T_("%s: designSize mismatch"),
 		   dviInfo.name.c_str());
 	      }
 	    if (my_checkSum != checkSum)
 	      {
-		log_error->WriteFormattedLine
+		trace_error->WriteFormattedLine
 		  ("libdvi",
 		   T_("%s: checkSum mismatch"),
 		   dviInfo.name.c_str());
@@ -448,7 +448,7 @@ PkFont::Make (/*[in]*/ const string &	name,
   buf[4096 - 1] = 0;
   if (! b)
     {
-      log_error->WriteLine ("libdvi", buf);
+      trace_error->WriteLine ("libdvi", buf);
     }
   dviInfo.transcript += buf;
   dviInfo.transcript += "\r\n";
@@ -467,7 +467,7 @@ PkFont::operator[] (unsigned long idx)
   PkChar * pPkChar = pkChars[idx];
   if (pPkChar == 0)
     {
-      log_pkfont->WriteFormattedLine
+      trace_pkfont->WriteFormattedLine
 	("libdvi",
 	 T_("%s: nil character at %u"),
 	 dviInfo.name.c_str(),
@@ -491,7 +491,7 @@ PkFont::ReadTFM ()
       return;
     }
 
-  log_pkfont->WriteFormattedLine
+  trace_pkfont->WriteFormattedLine
     ("libdvi",
      T_("going to load TFM file %s"),
      dviInfo.name.c_str());
@@ -520,7 +520,7 @@ PkFont::ReadTFM ()
 	{
 	  dviInfo.transcript += "\r\n";
 	  dviInfo.transcript += T_("Loading 'cmr10' instead.\r\n");
-	  log_error->WriteFormattedLine
+	  trace_error->WriteFormattedLine
 	    ("libdvi",
 	     T_("'%s' not loadable - loading 'cmr10' instead!"),
 	     dviInfo.name.c_str());
@@ -533,7 +533,7 @@ PkFont::ReadTFM ()
 							  false))))
 	    {
 	      dviInfo.transcript += T_("'cmr10' not loadable either!");
-	      log_error->WriteLine
+	      trace_error->WriteLine
 		("libdvi",
 		 T_("'cmr10' not loadable - will display blank chars!"));
 	      return;
@@ -587,7 +587,7 @@ PkFont::MakeTFM (/*[in]*/ const string &	name)
   szBuf[4096 - 1] = 0;
   if (! done)
     {
-      log_error->WriteLine ("libdvi", szBuf);
+      trace_error->WriteLine ("libdvi", szBuf);
     }
   dviInfo.transcript += szBuf;
   dviInfo.transcript += "\r\n";

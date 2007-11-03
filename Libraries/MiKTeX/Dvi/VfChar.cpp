@@ -34,7 +34,7 @@ VfChar::VfChar (/*[in]*/ DviFont * pFont)
   : DviChar (pFont),
     pPacket (0),
     packetSize (0),
-    log_vfchar (TraceStream::Open(MIKTEX_TRACE_DVIVFCHAR))
+    trace_vfchar (TraceStream::Open(MIKTEX_TRACE_DVIVFCHAR))
 {
 }
 
@@ -56,10 +56,10 @@ VfChar::~VfChar ()
 	  pPacket = 0;
 	  packetSize = 0;
 	}
-      if (log_vfchar.get() != 0)
+      if (trace_vfchar.get() != 0)
 	{
-	  log_vfchar->Close ();
-	  log_vfchar.reset ();
+	  trace_vfchar->Close ();
+	  trace_vfchar.reset ();
 	}
     }
   catch (const exception &)
@@ -92,17 +92,17 @@ VfChar::Read (/*[in]*/ InputStream &	inputstream,
       tfm = inputstream.ReadTrio();
     }
 
-  log_vfchar->WriteLine
+  trace_vfchar->WriteLine
     ("libdvi",
      T_("going to read vf character packet"));
-  log_vfchar->WriteFormattedLine
+  trace_vfchar->WriteFormattedLine
     ("libdvi", "pl: %d",
      packetSize);
-  log_vfchar->WriteFormattedLine
+  trace_vfchar->WriteFormattedLine
     ("libdvi",
      "cc: %d",
      charCode);
-  log_vfchar->WriteFormattedLine
+  trace_vfchar->WriteFormattedLine
     ("libdvi",
      "tfm: %d",
      tfm);
@@ -110,7 +110,7 @@ VfChar::Read (/*[in]*/ InputStream &	inputstream,
   tfm = ScaleFix(tfm, pDviFont->GetScaledAt());
   cx = static_cast<int>(tfm * conv + 0.5);
 
-  log_vfchar->WriteFormattedLine
+  trace_vfchar->WriteFormattedLine
     ("libdvi",
      "dx: %d",
      cx);

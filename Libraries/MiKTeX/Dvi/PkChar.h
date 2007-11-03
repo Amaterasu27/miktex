@@ -268,8 +268,8 @@ private:
   };
 
 private:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> log_pkchar;
+  auto_ptr<TraceStream> trace_pkchar;
 };

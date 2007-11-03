@@ -215,8 +215,9 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Render Method"
         BEGIN
+            MENUITEM "Auto",                        ID_PAGEMODE_AUTO
+            MENUITEM "Pk",                          ID_PAGEMODE_PK
             MENUITEM "Dvips",                       ID_PAGEMODE_DVIPS
-            MENUITEM "Pk fonts",                    ID_PAGEMODE_PK
         END
         POPUP "Text"
         BEGIN
@@ -288,8 +289,9 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Render Mode"
         BEGIN
+            MENUITEM "Auto",                        ID_PAGEMODE_AUTO
+            MENUITEM "Pk",                          ID_PAGEMODE_PK
             MENUITEM "Dvips",                       ID_PAGEMODE_DVIPS
-            MENUITEM "PK",                          ID_PAGEMODE_PK
         END
         MENUITEM SEPARATOR
         MENUITEM "Zoom &In\t+",                 ID_ZOOM_IN
@@ -798,10 +800,12 @@ BEGIN
 0x6950, 0x6163, 0x0073, 
     IDC_COMBO_UNIT, 0x403, 7, 0
 0x6f50, 0x6e69, 0x7374, "\000" 
+    IDC_COMBO_PAGE_MODE, 0x403, 5, 0
+0x7541, 0x6f74, "\000" 
+    IDC_COMBO_PAGE_MODE, 0x403, 3, 0
+0x6b50, "\000" 
     IDC_COMBO_PAGE_MODE, 0x403, 6, 0
 0x7644, 0x7069, 0x0073, 
-    IDC_COMBO_PAGE_MODE, 0x403, 9, 0
-0x6b50, 0x6620, 0x6e6f, 0x7374, "\000" 
     IDC_COMBO_DISPLAY_SHRINK_FACTOR, 0x403, 2, 0
 0x0031, 
     IDC_COMBO_DISPLAY_SHRINK_FACTOR, 0x403, 2, 0
@@ -1054,7 +1058,8 @@ END
 STRINGTABLE 
 BEGIN
     ID_CONTINUOUS_DOUBLE    "Displays pages in two vertical columns.\nContinuous/Double Layout"
-    ID_PAGEMODE_PK          "Uses PK fonts to render the DVI file."
+    ID_PAGEMODE_AUTO        "If possible, uses Pk fonts to render the DVI file."
+    ID_PAGEMODE_PK          "Uses Pk fonts to render the DVI file."
     ID_PAGEMODE_DVIPS       "Uses Dvips to render the DVI file."
 END
 

@@ -1,6 +1,6 @@
 /* YapConfig.cpp: Yap configuration settings
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of Yap.
 
@@ -24,9 +24,9 @@
 
 auto_ptr<YapConfig> g_pYapConfig;
 
-#define DEFAULT_DVIPAGE_MODE DviPageMode::Pk
+#define DEFAULT_DVIPAGE_MODE DviPageMode::Auto
 #define DEFAULT_DVIPAGE_MODE_STRING \
-  EnumToString<DviPageMode>(DviPageMode::Pk, dviPageModes)
+  EnumToString<DviPageMode>(DviPageMode::Auto, dviPageModes)
 
 #define DEFAULT_UNIT Units::BigPoints
 #define DEFAULT_UNIT_STRING \
@@ -42,29 +42,29 @@ struct EnumAndString
 namespace
 {
   const EnumAndString<DviPageMode> dviPageModes[] = {
-    { DviPageMode::Auto, T_("auto") },
+    { DviPageMode::Auto, "auto" },
     { DviPageMode::Pk, "pk" },
-    { DviPageMode::Dvips, T_("dvips") },
+    { DviPageMode::Dvips, "dvips" },
     { DviPageMode::None, 0 },
   };
 
   const EnumAndString<Units> units[] = {
     { Units::BigPoints, "bp" },
     { Units::Centimeters, "cm" },
-    { Units::Inches, T_("in") },
+    { Units::Inches, "in" },
     { Units::Millimeters, "mm" },
     { Units::Picas, "pc" },
     { Units::None, 0 },
   };
 
 
-  const char * const DEFAULT_SECURE_COMMANDS = T_("\
+  const char * const DEFAULT_SECURE_COMMANDS = "\
 gunzip,\
 zcat,\
 bunzip2,\
-bzcat");
+bzcat";
 
-  const char * const DEFAULT_GAMMA_VALUES = T_("\
+  const char * const DEFAULT_GAMMA_VALUES = "\
 0.01 \
 0.05 \
 0.1 \
@@ -86,7 +86,7 @@ bzcat");
 5.0 \
 7.5 \
 10.0 \
-100.0");
+100.0";
 };
 
 /* _________________________________________________________________________
@@ -106,7 +106,7 @@ EnumToString (/*[in]*/ typename Enum::EnumType		num,
 	  return (pMap[idx].lpsz);
 	}
     }
-  UNEXPECTED_CONDITION (T_("EnumToString"));
+  UNEXPECTED_CONDITION ("EnumToString");
 }
 
 /* _________________________________________________________________________
@@ -126,7 +126,7 @@ StringToEnum (/*[in]*/ const char *		lpsz,
 	  return (pMap[idx].num);
 	}
     }
-  UNEXPECTED_CONDITION (T_("StringToEnum"));
+  UNEXPECTED_CONDITION ("StringToEnum");
 }
 
 /* _________________________________________________________________________
@@ -177,7 +177,7 @@ RemoveDefaultValue (/*[in]*/ const char *	lpszKeyName,
 		    /*[in]*/ const char *	lpszValueName)
 {
   CString strPath;
-  strPath.Format (T_("Software\\MiK\\MiKTeX\\yap\\%s"), lpszKeyName);
+  strPath.Format ("Software\\MiK\\MiKTeX\\yap\\%s", lpszKeyName);
   HKEY hKey;
   LONG res =
     RegOpenKeyEx(HKEY_CURRENT_USER,
@@ -354,43 +354,43 @@ YapConfig::Load ()
   // HKCU/Software/MiK/MiKTeX/Yap/Settings
   //
   checkFileTypeAssociations =
-    GetProfileBool(T_("Settings"),
-		   T_("Check Associations"),
+    GetProfileBool("Settings",
+		   "Check Associations",
 		   true);
   inverseSearchCommandLine =
-    pApp->GetProfileString(T_("Settings"),
-			   T_("Editor"),
-			   T_("notepad \"%f\""));
+    pApp->GetProfileString("Settings",
+			   "Editor",
+			   "notepad \"%f\"");
   lastTool =
-    pApp->GetProfileInt(T_("Settings"),
-			T_("Last Tool"),
+    pApp->GetProfileInt("Settings",
+			"Last Tool",
 			0);
   maintainHorizontalPosition =
-    GetProfileBool(T_("Settings"),
-		   T_("Maintain Horizontal Position"),
+    GetProfileBool("Settings",
+		   "Maintain Horizontal Position",
 		   false);
   maintainVerticalPosition =
-    GetProfileBool(T_("Settings"),
-		   T_("Maintain Vertical Position"),
+    GetProfileBool("Settings",
+		   "Maintain Vertical Position",
 		   false);
 
 #if defined(MIKTEX_DEBUG)
   showBoundingBoxes =
-    GetProfileBool(T_("Settings"),
-		   T_("Show Bounding Boxes"),
+    GetProfileBool("Settings",
+		   "Show Bounding Boxes",
 		   false);
 #endif
   showSourceSpecials =
-    GetProfileBool(T_("Settings"),
-		   T_("Show Source Specials"),
+    GetProfileBool("Settings",
+		   "Show Source Specials",
 		   false);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/screen
   //
   continuousView =
-    GetProfileBool(T_("screen"),
-		   T_("ContinuousView"),
+    GetProfileBool("screen",
+		   "ContinuousView",
 		   true);
 #if WIN95NOCONTVIEW
   if (continuousView && win95)
@@ -399,25 +399,25 @@ YapConfig::Load ()
     }
 #endif
   doublePage =
-    GetProfileBool(T_("screen"),
-		   T_("doublepage"),
+    GetProfileBool("screen",
+		   "doublepage",
 		   false);
   gamma =
-    GetProfileDouble(T_("screen"),
-		     T_("gamma"),
+    GetProfileDouble("screen",
+		     "gamma",
 		     1.0);
   if (gamma <= 0.0)
     {
       gamma = 1.0;
     }
   gammaValues =
-    pApp->GetProfileString(T_("screen"),
-			   T_("gammavalues"),
+    pApp->GetProfileString("screen",
+			   "gammavalues",
 			   DEFAULT_GAMMA_VALUES);
   CString displayMode =
-    pApp->GetProfileString(T_("screen"),
-			   T_("mode"),
-			   T_("ljfour"));
+    pApp->GetProfileString("screen",
+			   "mode",
+			   "ljfour");
   if (! SetDisplayMetafontMode(displayMode))
     {
       FATAL_MIKTEX_ERROR ("YapConfig::Load",
@@ -425,27 +425,27 @@ YapConfig::Load ()
 			  static_cast<const char *>(displayMode));
     }
   displayShrinkFactor =
-    pApp->GetProfileInt(T_("screen"),
-			T_("shrinkfactor"),
+    pApp->GetProfileInt("screen",
+			"shrinkfactor",
 			6);
   if (displayShrinkFactor == 0)
     {
       displayShrinkFactor = 1;
     }
   renderGraphicsInBackground =
-    GetProfileBool(T_("screen"),
-		   T_("graphicsinbackground"),
+    GetProfileBool("screen",
+		   "graphicsinbackground",
 		   DEFAULT_bRenderGraphicsInBackground);
   dviPageMode =
     StringToEnum<DviPageMode>
-    (pApp->GetProfileString(T_("screen"),
-			    T_("dvipagemode"),
+    (pApp->GetProfileString("screen",
+			    "dvipagemode",
 			    DEFAULT_DVIPAGE_MODE_STRING),
      dviPageModes);
   unit =
     StringToEnum<Units>
-    (pApp->GetProfileString(T_("screen"),
-			    T_("unit"),
+    (pApp->GetProfileString("screen",
+			    "unit",
 			    DEFAULT_UNIT_STRING),
      units);
 
@@ -453,9 +453,9 @@ YapConfig::Load ()
   // HKCU/Software/MiK/MiKTeX/Yap/printer
   //
   CString printerMode =
-    pApp->GetProfileString(T_("printer"),
-			   T_("mode"),
-			   T_("ljfour"));
+    pApp->GetProfileString("printer",
+			   "mode",
+			   "ljfour");
   if (! SetPrinterMetafontMode(printerMode))
     {
       FATAL_MIKTEX_ERROR ("YapConfig::Load",
@@ -463,103 +463,103 @@ YapConfig::Load ()
 			  static_cast<const char *>(printerMode));
     }
   pageXShift =
-    pApp->GetProfileInt(T_("printer"),
-			T_("nPageXShift"),
+    pApp->GetProfileInt("printer",
+			"nPageXShift",
 			0);
   pageYShift =
-    pApp->GetProfileInt(T_("printer"),
-			T_("nPageYShift"),
+    pApp->GetProfileInt("printer",
+			"nPageYShift",
 			0);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/DVIPS
   //
   dvipsExtraOptions =
-    pApp->GetProfileString(T_("DVIPS"),
-			   T_("Extra Options"));
+    pApp->GetProfileString("DVIPS",
+			   "Extra Options");
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Magnifying Glass
   //
   magGlassHidesCursor =
-    GetProfileBool(T_("Magnifying Glass"),
-		   T_("Hide Cursor"),
+    GetProfileBool("Magnifying Glass",
+		   "Hide Cursor",
 		   false);
   magGlassOpacity =
-    pApp->GetProfileInt(T_("Magnifying Glass"),
-			T_("Opacity"),
+    pApp->GetProfileInt("Magnifying Glass",
+			"Opacity",
 			70);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Small Magnifying Glass
   //
   magGlassSmallHeight =
-    pApp->GetProfileInt(T_("Small Magnifying Glass"),
-			T_("Height"),
+    pApp->GetProfileInt("Small Magnifying Glass",
+			"Height",
 			150);
   magGlassSmallShrinkFactor =
-    pApp->GetProfileInt(T_("Small Magnifying Glass"),
-			T_("Shrink Factor"),
+    pApp->GetProfileInt("Small Magnifying Glass",
+			"Shrink Factor",
 			1);
   if (magGlassSmallShrinkFactor == 0)
     {
       magGlassSmallShrinkFactor = 1;
     }
   magGlassSmallWidth =
-    pApp->GetProfileInt(T_("Small Magnifying Glass"),
-			T_("Width"),
+    pApp->GetProfileInt("Small Magnifying Glass",
+			"Width",
 			200);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Medium Magnifying Glass
   //
   magGlassMediumHeight =
-    pApp->GetProfileInt(T_("Medium Magnifying Glass"),
-			T_("Height"),
+    pApp->GetProfileInt("Medium Magnifying Glass",
+			"Height",
 			250);
   magGlassMediumShrinkFactor =
-    pApp->GetProfileInt(T_("Medium Magnifying Glass"),
-			T_("Shrink Factor"),
+    pApp->GetProfileInt("Medium Magnifying Glass",
+			"Shrink Factor",
 			1);
   if (magGlassMediumShrinkFactor == 0)
     {
       magGlassMediumShrinkFactor = 1;
     }
   magGlassMediumWidth =
-    pApp->GetProfileInt(T_("Medium Magnifying Glass"),
-			T_("Width"),
+    pApp->GetProfileInt("Medium Magnifying Glass",
+			"Width",
 			400);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Large Magnifying Glass
   //
   magGlassLargeHeight =
-    pApp->GetProfileInt(T_("Large Magnifying Glass"),
-			T_("Height"),
+    pApp->GetProfileInt("Large Magnifying Glass",
+			"Height",
 			500);
   magGlassLargeShrinkFactor =
-    pApp->GetProfileInt(T_("Large Magnifying Glass"),
-			T_("Shrink Factor"),
+    pApp->GetProfileInt("Large Magnifying Glass",
+			"Shrink Factor",
 			1);
   if (magGlassLargeShrinkFactor == 0)
     {
       magGlassLargeShrinkFactor = 1;
     }
   magGlassLargeWidth =
-    pApp->GetProfileInt(T_("Large Magnifying Glass"),
-			T_("Width"),
+    pApp->GetProfileInt("Large Magnifying Glass",
+			"Width",
 			700);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Security
   //
   enableShellCommands =
-    pApp->GetProfileInt(T_("Security"),
-			T_("EnableEmbeddedCommands"),
+    pApp->GetProfileInt("Security",
+			"EnableEmbeddedCommands",
 			SEC_ASK_USER);
   secureCommands =
-    pApp->GetProfileString(T_("Security"),
-			   T_("SecureCommands"),
+    pApp->GetProfileString("Security",
+			   "SecureCommands",
 			   DEFAULT_SECURE_COMMANDS);
 }
 
@@ -576,78 +576,78 @@ YapConfig::Save ()
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Settings
   //
-  UpdateRegValue (T_("Settings"),
-		  T_("Check Associations"),
+  UpdateRegValue ("Settings",
+		  "Check Associations",
 		  checkFileTypeAssociations,
 		  true);
-  UpdateRegValue (T_("Settings"),
-		  T_("Editor"),
+  UpdateRegValue ("Settings",
+		  "Editor",
 		  inverseSearchCommandLine,
-		  T_("notepad \"%f\""));
-  UpdateRegValue (T_("Settings"),
-		  T_("Last Tool"),
+		  "notepad \"%f\"");
+  UpdateRegValue ("Settings",
+		  "Last Tool",
 		  lastTool,
 		  0);
-  UpdateRegValue (T_("Settings"),
-		  T_("Maintain Horizontal Position"),
+  UpdateRegValue ("Settings",
+		  "Maintain Horizontal Position",
 		  maintainHorizontalPosition,
 		  false);
-  UpdateRegValue (T_("Settings"),
-		  T_("Maintain Vertical Position"),
+  UpdateRegValue ("Settings",
+		  "Maintain Vertical Position",
 		  maintainVerticalPosition,
 		  false);
 #if defined(MIKTEX_DEBUG)
-  UpdateRegValue (T_("Settings"),
-		  T_("Show Bounding Boxes"),
+  UpdateRegValue ("Settings",
+		  "Show Bounding Boxes",
 		  showBoundingBoxes,
 		  false);
 #endif
-  UpdateRegValue (T_("Settings"),
-		  T_("Show Source Specials"),
+  UpdateRegValue ("Settings",
+		  "Show Source Specials",
 		  showSourceSpecials,
 		  false);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/screen
   //
-  UpdateRegValue (T_("screen"),
-		  T_("ContinuousView"),
+  UpdateRegValue ("screen",
+		  "ContinuousView",
 		  continuousView,
 		  true);
-  UpdateRegValue (T_("screen"),
-		  T_("DoublePage"),
+  UpdateRegValue ("screen",
+		  "DoublePage",
 		  doublePage,
 		  false);
-  UpdateRegValue (T_("screen"),
-		  T_("gamma"),
+  UpdateRegValue ("screen",
+		  "gamma",
 		  gamma,
 		  1.0);
-  UpdateRegValue (T_("screen"),
-		  T_("gammavalues"),
+  UpdateRegValue ("screen",
+		  "gammavalues",
 		  gammaValues,
 		  DEFAULT_GAMMA_VALUES);
   if (SessionWrapper(true)->GetMETAFONTMode(displayMetafontMode, &mfmode))
     {
-      UpdateRegValue (T_("screen"),
-		      T_("mode"),
+      UpdateRegValue ("screen",
+		      "mode",
 		      CString(mfmode.szMnemonic),
-		      T_("ljfour"));
+		      "ljfour");
     }
-  UpdateRegValue (T_("screen"),
-		  T_("shrinkfactor"),
+  UpdateRegValue ("screen",
+		  "shrinkfactor",
 		  displayShrinkFactor,
 		  6);
-  UpdateRegValue (T_("screen"),
-		  T_("graphicsinbackground"),
+  UpdateRegValue ("screen",
+		  "graphicsinbackground",
 		  renderGraphicsInBackground,
 		  DEFAULT_bRenderGraphicsInBackground);
-  UpdateRegValue (T_("screen"),
-		  T_("dvipagemode"),
+  UpdateRegValue ("screen",
+		  "dvipagemode",
 		  CString(EnumToString<DviPageMode>(dviPageMode.Get(),
 						    dviPageModes)),
 		  DEFAULT_DVIPAGE_MODE_STRING);
-  UpdateRegValue (T_("screen"),
-		  T_("unit"),
+  UpdateRegValue ("screen",
+		  "unit",
 		  CString(EnumToString<Units>(unit.Get(),
 					      units)),
 		  DEFAULT_UNIT_STRING);
@@ -657,97 +657,97 @@ YapConfig::Save ()
   //
   if (SessionWrapper(true)->GetMETAFONTMode(printerMetafontMode, &mfmode))
     {
-      UpdateRegValue (T_("printer"),
-		      T_("mode"),
+      UpdateRegValue ("printer",
+		      "mode",
 		      CString(mfmode.szMnemonic),
-		      T_("ljfour"));
+		      "ljfour");
     }
-  UpdateRegValue (T_("printer"),
-		  T_("nPageXShift"),
+  UpdateRegValue ("printer",
+		  "nPageXShift",
 		  pageXShift,
 		  0);
-  UpdateRegValue (T_("printer"),
-		  T_("nPageYShift"),
+  UpdateRegValue ("printer",
+		  "nPageYShift",
 		  pageYShift,
 		  0);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/DVIPS
   //
-  UpdateRegValue (T_("DVIPS"),
-		  T_("Extra Options"),
+  UpdateRegValue ("DVIPS",
+		  "Extra Options",
 		  dvipsExtraOptions,
 		  static_cast<const char *>(0));
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Magnifying Glass
   //
-  UpdateRegValue (T_("Magnifying Glass"),
-		  T_("Hide Cursor"),
+  UpdateRegValue ("Magnifying Glass",
+		  "Hide Cursor",
 		  magGlassHidesCursor,
 		  false);
-  UpdateRegValue (T_("Magnifying Glass"),
-		  T_("Opacity"),
+  UpdateRegValue ("Magnifying Glass",
+		  "Opacity",
 		  magGlassOpacity,
 		  70);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Small Magnifying Glass
   //
-  UpdateRegValue (T_("Small Magnifying Glass"),
-		  T_("Height"),
+  UpdateRegValue ("Small Magnifying Glass",
+		  "Height",
 		  magGlassSmallHeight,
 		  150);
-  UpdateRegValue (T_("Small Magnifying Glass"),
-		  T_("Shrink Factor"),
+  UpdateRegValue ("Small Magnifying Glass",
+		  "Shrink Factor",
 		  magGlassSmallShrinkFactor,
 		  1);
-  UpdateRegValue (T_("Small Magnifying Glass"),
-		  T_("Width"),
+  UpdateRegValue ("Small Magnifying Glass",
+		  "Width",
 		  magGlassSmallWidth,
 		  200);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Medium Magnifying Glass
   //
-  UpdateRegValue (T_("Medium Magnifying Glass"),
-		  T_("Height"),
+  UpdateRegValue ("Medium Magnifying Glass",
+		  "Height",
 		  magGlassMediumHeight,
 		  250);
-  UpdateRegValue (T_("Medium Magnifying Glass"),
-		  T_("Shrink Factor"),
+  UpdateRegValue ("Medium Magnifying Glass",
+		  "Shrink Factor",
 		  magGlassMediumShrinkFactor,
 		  1);
-  UpdateRegValue (T_("Medium Magnifying Glass"),
-		  T_("Width"),
+  UpdateRegValue ("Medium Magnifying Glass",
+		  "Width",
 		  magGlassMediumWidth,
 		  400);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Large Magnifying Glass
   //
-  UpdateRegValue (T_("Large Magnifying Glass"),
-		  T_("Height"),
+  UpdateRegValue ("Large Magnifying Glass",
+		  "Height",
 		  magGlassLargeHeight,
 		  500);
-  UpdateRegValue (T_("Large Magnifying Glass"),
-		  T_("Shrink Factor"),
+  UpdateRegValue ("Large Magnifying Glass",
+		  "Shrink Factor",
 		  magGlassLargeShrinkFactor,
 		  1);
-  UpdateRegValue (T_("Large Magnifying Glass"),
-		  T_("Width"),
+  UpdateRegValue ("Large Magnifying Glass",
+		  "Width",
 		  magGlassLargeWidth,
 		  700);
 
   //
   // HKCU/Software/MiK/MiKTeX/Yap/Security
   //
-  UpdateRegValue (T_("Security"),
-		  T_("EnableEmbeddedCommands"),
+  UpdateRegValue ("Security",
+		  "EnableEmbeddedCommands",
 		  enableShellCommands,
 		  SEC_ASK_USER);
-  UpdateRegValue (T_("Security"),
-		  T_("SecureCommands"),
+  UpdateRegValue ("Security",
+		  "SecureCommands",
 		  secureCommands,
 		  DEFAULT_SECURE_COMMANDS);
 }

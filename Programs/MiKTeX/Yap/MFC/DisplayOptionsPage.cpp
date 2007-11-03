@@ -1,6 +1,6 @@
 /* DisplayOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of Yap.
 
@@ -87,11 +87,14 @@ DisplayOptionsPage::OnInitDialog ()
       int idx = -1;
       switch (g_pYapConfig->dviPageMode.Get())
 	{
-	case DviPageMode::Dvips:
+	case DviPageMode::Auto:
 	  idx = 0;
 	  break;
 	case DviPageMode::Pk:
 	  idx = 1;
+	  break;
+	case DviPageMode::Dvips:
+	  idx = 2;
 	  break;
 	}
       if (comboPageMode.SetCurSel(idx) < 0)
@@ -176,10 +179,13 @@ DisplayOptionsPage::OnApply ()
       switch (idx)
 	{
 	case 0:
-	  g_pYapConfig->dviPageMode = DviPageMode::Dvips;
+	  g_pYapConfig->dviPageMode = DviPageMode::Auto;
 	  break;
 	case 1:
 	  g_pYapConfig->dviPageMode = DviPageMode::Pk;
+	  break;
+	case 2:
+	  g_pYapConfig->dviPageMode = DviPageMode::Dvips;
 	  break;
 	}
       idx = unitComboBox.GetCurSel();

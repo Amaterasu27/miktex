@@ -57,5 +57,5 @@ private:
   BYTE * pPacket;
 
 private:
-  auto_ptr<TraceStream> log_vfchar;
+  auto_ptr<TraceStream> trace_vfchar;
 };

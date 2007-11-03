@@ -116,13 +116,13 @@ DviImpl::DviImpl (/*[in]*/ const char *			lpszFileName,
     landscape (landscape),
     lastChecked (0),
     lineWidth (0),
-    log_color (TraceStream::Open(MIKTEX_TRACE_DVICOLOR)),
-    log_dvifile (TraceStream::Open(MIKTEX_TRACE_DVIFILE)),
-    log_dvipage (TraceStream::Open(MIKTEX_TRACE_DVIPAGE)),
-    log_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
-    log_gc (TraceStream::Open(MIKTEX_TRACE_DVIGC)),
-    log_hypertex (TraceStream::Open(MIKTEX_TRACE_DVIHYPERTEX)),
-    log_search (TraceStream::Open(MIKTEX_TRACE_DVISEARCH)),
+    trace_color (TraceStream::Open(MIKTEX_TRACE_DVICOLOR)),
+    trace_dvifile (TraceStream::Open(MIKTEX_TRACE_DVIFILE)),
+    trace_dvipage (TraceStream::Open(MIKTEX_TRACE_DVIPAGE)),
+    trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
+    trace_gc (TraceStream::Open(MIKTEX_TRACE_DVIGC)),
+    trace_hypertex (TraceStream::Open(MIKTEX_TRACE_DVIHYPERTEX)),
+    trace_search (TraceStream::Open(MIKTEX_TRACE_DVISEARCH)),
     metafontMode (lpszMetafontMode),
     pCallback (0),
     pageMode (pageMode),
@@ -229,40 +229,40 @@ DviImpl::Dispose ()
 	}
     }
   MIKTEX_END_CRITICAL_SECTION();
-  if (log_dvifile.get() != 0)
+  if (trace_dvifile.get() != 0)
     {
-      log_dvifile->Close ();
-      log_dvifile.reset ();
+      trace_dvifile->Close ();
+      trace_dvifile.reset ();
     }
-  if (log_color.get() != 0)
+  if (trace_color.get() != 0)
     {
-      log_color->Close ();
-      log_color.reset ();
+      trace_color->Close ();
+      trace_color.reset ();
     }
-  if (log_dvipage.get() != 0)
+  if (trace_dvipage.get() != 0)
     {
-      log_dvipage->Close ();
-      log_dvipage.reset ();
+      trace_dvipage->Close ();
+      trace_dvipage.reset ();
     }
-  if (log_error.get() != 0)
+  if (trace_error.get() != 0)
     {
-      log_error->Close ();
-      log_error.reset ();
+      trace_error->Close ();
+      trace_error.reset ();
     }
-  if (log_gc.get() != 0)
+  if (trace_gc.get() != 0)
     {
-      log_gc->Close ();
-      log_gc.reset ();
+      trace_gc->Close ();
+      trace_gc.reset ();
     }
-  if (log_hypertex.get() != 0)
+  if (trace_hypertex.get() != 0)
     {
-      log_hypertex->Close ();
-      log_hypertex.reset ();
+      trace_hypertex->Close ();
+      trace_hypertex.reset ();
     }
-  if (log_search.get() != 0)
+  if (trace_search.get() != 0)
     {
-      log_search->Close ();
-      log_search.reset ();
+      trace_search->Close ();
+      trace_search.reset ();
     }
 }
 
@@ -459,7 +459,7 @@ DviImpl::Scan ()
   // reset this object
   FreeContents (false);
   
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      T_("going to scan %s"),
      Q_(dviFileName));
@@ -479,7 +479,7 @@ DviImpl::Scan ()
   numerator = inputStream.ReadSignedQuad();
   denominator = inputStream.ReadSignedQuad();
   
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "numerator/denominator: %d/%d",
      static_cast<int>(numerator),
@@ -494,7 +494,7 @@ DviImpl::Scan ()
   
   // get desired magnification
   mag = inputStream.ReadSignedQuad();
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "mag: %d",
      static_cast<int>(mag));
@@ -509,7 +509,7 @@ DviImpl::Scan ()
 	  / (static_cast<double>(denominator)
 	     * 254000000.0));
   
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "conv: %g",
      static_cast<double>(conv));
@@ -521,7 +521,7 @@ DviImpl::Scan ()
   tmp[len] = 0;
   dviInfo.comment = tmp;
   
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "comment: %s",
      dviInfo.comment.c_str());
@@ -564,26 +564,26 @@ DviImpl::Scan ()
   // process the postamble
   int firstbackpointer = 	// pointer to last page
     inputStream.ReadSignedQuad();
-  /*int postamble_num =*/ inputStream.ReadSignedQuad();
-  /*int postamble_den =*/ inputStream.ReadSignedQuad();
-  /*int postamble_mag =*/ inputStream.ReadSignedQuad();
+  inputStream.ReadSignedQuad(); // postamble_num
+  inputStream.ReadSignedQuad(); // postamble_den
+  inputStream.ReadSignedQuad(); // postamble_mag
   maxV = inputStream.ReadSignedQuad();
   maxH = inputStream.ReadSignedQuad();
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "maxv: %d",
      static_cast<int>(maxV));
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "maxh: %d",
      static_cast<int>(maxH));
   int maxs = inputStream.ReadPair();
   dviInfo.nPages = inputStream.ReadPair();
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "maxs: %d",
      static_cast<int>(maxs));
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      "dviInfo.nPages: %d",
      static_cast<int>(dviInfo.nPages));
@@ -677,7 +677,7 @@ void
 DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		     /*[in]*/ int		fontNum)
 {
-  log_dvifile->WriteFormattedLine
+  trace_dvifile->WriteFormattedLine
     ("libdvi",
      T_("going to define font %d"),
      static_cast<int>(fontNum));
@@ -699,18 +699,18 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
   inputStream.Read (fontName, fontNameLen);
   fontName[fontNameLen] = 0;
 
-  log_dvifile->WriteFormattedLine ("libdvi", "areaName: %s", areaName);
-  log_dvifile->WriteFormattedLine ("libdvi", "fontname: %s", fontName);
-  log_dvifile->WriteFormattedLine ("libdvi", "checkSum: %#o", checkSum);
-  log_dvifile->WriteFormattedLine ("libdvi", "scaledSize: %d", scaledSize);
-  log_dvifile->WriteFormattedLine ("libdvi", "designSize: %d", designSize);
+  trace_dvifile->WriteFormattedLine ("libdvi", "areaName: %s", areaName);
+  trace_dvifile->WriteFormattedLine ("libdvi", "fontname: %s", fontName);
+  trace_dvifile->WriteFormattedLine ("libdvi", "checkSum: %#o", checkSum);
+  trace_dvifile->WriteFormattedLine ("libdvi", "scaledSize: %d", scaledSize);
+  trace_dvifile->WriteFormattedLine ("libdvi", "designSize: %d", designSize);
   
   DviFont * pfont;
   PathName fileName;
   if (SessionWrapper(true)->FindFile(fontName, FileType::VF, fileName)
       || SessionWrapper(true)->FindFile(fontName, FileType::OVF, fileName))
     {
-      log_dvifile->WriteFormattedLine
+      trace_dvifile->WriteFormattedLine
 	("libdvi",
 	 T_("found VF file %s"),
 	 Q_(fileName));
@@ -728,7 +728,21 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		  metafontMode.c_str(),
 		  resolution);
     }
-  else if (pageMode == DviPageMode::Pk)
+  else if (pageMode == DviPageMode::Dvips)
+    {
+      // no need to display glyph bitmaps
+      pfont =
+	new Tfm(this,
+		checkSum,
+		scaledSize,
+		designSize,
+		areaName,
+		fontName,
+		"",
+		tfmConv,
+		conv);
+    }
+  else
     {
       pfont =
 	new PkFont(this,
@@ -743,19 +757,6 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
 		   mag,
 		   metafontMode.c_str(),
 		   resolution);
-    }
-  else
-    {
-      pfont =
-	new Tfm(this,
-		checkSum,
-		scaledSize,
-		designSize,
-		areaName,
-		fontName,
-		"",
-		tfmConv,
-		conv);
     }
 
   (*pFontMap)[fontNum] = pfont;
@@ -863,14 +864,14 @@ DviImpl::DoPage (/*[in]*/ int pageIdx)
 
   if (background)
     {
-      log_dvipage->WriteFormattedLine
+      trace_dvipage->WriteFormattedLine
 	("libdvi",
 	 T_("doing page #%d (background)"),
 	 pageIdx);
     }
   else
     {
-      log_dvipage->WriteFormattedLine
+      trace_dvipage->WriteFormattedLine
 	("libdvi",
 	 T_("doing page #%d"),
 	 pageIdx);
@@ -880,7 +881,7 @@ DviImpl::DoPage (/*[in]*/ int pageIdx)
     {
       if (SessionWrapper(true)->IsFileAlreadyOpen(dviFileName.Get()))
 	{
-	  log_error->WriteLine
+	  trace_error->WriteLine
 	    ("libdvi",
 	     T_("the DVI file is used by another process"));
 	  throw DviFileInUseException
@@ -963,7 +964,7 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	  
 	  if (recursion >= maxRecursion)
 	    {
-	      log_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
+	      trace_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
 	      FATAL_DVI_ERROR ("DviImpl::DoNextCommand",
 			       T_("Invalid DVI file."),
 			       0);
@@ -1243,15 +1244,12 @@ DviImpl::DoNextCommand (/*[in]*/ InputStream &		inputStream,
 	     * tfmConv);
 	}
 
-      if (pageMode == DviPageMode::Pk)
-	{
-	  page.AddRule (new DviRuleImpl(this,
-					currentState.hh + resolution,
-					currentState.vv + resolution,
-					RulePixels(q),
-					RulePixels(p),
-					currentColor));
-	}
+      page.AddRule (new DviRuleImpl(this,
+	currentState.hh + resolution,
+	currentState.vv + resolution,
+	RulePixels(q),
+	RulePixels(p),
+	currentColor));
     }
 
   if (opCode == put_rule)
@@ -1651,7 +1649,7 @@ DviImpl::GetPage (/*[in]*/ int pageIdx)
 		  || ! Thread::IsCurrentThread(pGarbageCollectorThread.get()))
 	      && currentPageIdx != pageIdx)
 	    {
-	      log_dvifile->WriteFormattedLine
+	      trace_dvifile->WriteFormattedLine
 		("libdvi",
 		 T_("getting page #%d"),
 		 static_cast<int>(pageIdx));
@@ -2114,7 +2112,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 		{
 		  FATAL_WINDOWS_ERROR ("SetThreadPriority", 0);
 		}
-	      This->log_gc->WriteFormattedLine
+	      This->trace_gc->WriteFormattedLine
 		("libdvi",
 		 T_("gc priority: %d"),
 		 static_cast<int>(priority));
@@ -2136,7 +2134,7 @@ DviImpl::GarbageCollector (/*[in]*/ void * p)
 		}
 	      pPage->Lock ();
 	      AutoUnlockPage autoUnlockPage (pPage);
-	      This->log_gc->WriteFormattedLine
+	      This->trace_gc->WriteFormattedLine
 		("libdvi",
 		 T_("freeing page #%d (%u bytes)"),
 		 biggestPageIdx,
@@ -2193,7 +2191,7 @@ DviImpl::MakeFonts (/*[in]*/ const FontMap &	fontMap,
       const int maxRecursion = 20;
       if (recursion >= maxRecursion)
 	{
-	  log_error->WriteLine
+	  trace_error->WriteLine
 	    ("libdvi",
 	     T_("infinite VF recursion?"));
 	}
@@ -2248,7 +2246,7 @@ DviImpl::GetFontTable (/*[in]*/ const FontMap &		fontMap,
       const int maxRecursion = 20;
       if (recursion >= maxRecursion)
 	{
-	  log_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
+	  trace_error->WriteLine ("libdvi", T_("infinite VF recursion?"));
 	}
       GetFontTable (pVFont->GetFontMap(), vec, recursion + 1);
     }

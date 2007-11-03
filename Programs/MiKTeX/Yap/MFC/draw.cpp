@@ -1,6 +1,6 @@
 /* draw.cpp: DVI drawing routines
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
    
    This file is part of Yap.
 
@@ -91,7 +91,7 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("SelectPalette"), 0);
+	      FATAL_WINDOWS_ERROR ("SelectPalette", 0);
 	    }
 	  else
 	    {
@@ -113,7 +113,7 @@ DviView::OnDraw (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	      FATAL_WINDOWS_ERROR ("SaveDC", 0);
 	    }
 	  else
 	    {
@@ -239,7 +239,7 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
   if (! pDoc->GraphicsDone(pageIdx))
     {
       // render PostScript specials
-      if (pDoc->GetDviPageMode() == DviPageMode::Pk)
+      if (pDoc->GetDviPageMode() != DviPageMode::Dvips)
 	{
 	  DrawSpecials (pDC, 1, pPage, pageIdx);
 	}
@@ -300,7 +300,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
   DviSpecial * pSpecial;
 
   if (iteration == 1
-      && pDoc->GetDviPageMode() == DviPageMode::Pk
+      && pDoc->GetDviPageMode() != DviPageMode::Dvips
       && ! warnPostScript)
     {
       return;
@@ -343,7 +343,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 	  switch (pSpecial->GetType().Get())
 	    {
 	    case DviSpecialType::Hypertex:
-	      if (g_pYapConfig->dviPageMode == DviPageMode::Pk)
+	      if (g_pYapConfig->dviPageMode != DviPageMode::Dvips)
 		{
 		  HypertexSpecial * pHypertexSpecial
 		    = reinterpret_cast<HypertexSpecial*>(pSpecial);
@@ -356,7 +356,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			{
 			  if (IsWindowsNT())
 			    {
-			      FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+			      FATAL_WINDOWS_ERROR ("CreatePen", 0);
 			    }
 			  else
 			    {
@@ -379,7 +379,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 			{
 			  if (IsWindowsNT())
 			    {
-			      FATAL_WINDOWS_ERROR (T_("LineTo"), 0);
+			      FATAL_WINDOWS_ERROR ("LineTo", 0);
 			    }
 			  else
 			    {
@@ -401,7 +401,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		    {
 		      if (IsWindowsNT())
 			{
-			  FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+			  FATAL_WINDOWS_ERROR ("CreatePen", 0);
 			}
 		      else
 			{
@@ -422,7 +422,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		    {
 		      if (IsWindowsNT())
 			{
-			  FATAL_WINDOWS_ERROR (T_("Ellipse"), 0);
+			  FATAL_WINDOWS_ERROR ("Ellipse", 0);
 			}
 		      else
 			{
@@ -451,7 +451,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		  {
 		    if (IsWindowsNT())
 		      {
-			FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+			FATAL_WINDOWS_ERROR ("CreatePen", 0);
 		      }
 		    else
 		      {
@@ -474,7 +474,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 		  {
 		    if (IsWindowsNT())
 		      {
-			FATAL_WINDOWS_ERROR (T_("LineTo"), 0);
+			FATAL_WINDOWS_ERROR ("LineTo", 0);
 		      }
 		    else
 		      {
@@ -507,7 +507,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
     {
       if (IsWindowsNT())
 	{
-	  FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	  FATAL_WINDOWS_ERROR ("SaveDC", 0);
 	}
       else
 	{
@@ -538,7 +538,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
       {
 	if (IsWindowsNT())
 	  {
-	    FATAL_WINDOWS_ERROR (T_("PatBlt"), 0);
+	    FATAL_WINDOWS_ERROR ("PatBlt", 0);
 	  }
 	else
 	  {
@@ -577,7 +577,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -593,7 +593,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -609,7 +609,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -625,7 +625,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
       	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -643,7 +643,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -660,7 +660,7 @@ DviView::DrawPaper (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("Rectangle"), 0);
+	      FATAL_WINDOWS_ERROR ("Rectangle", 0);
 	    }
 	  else
 	    {
@@ -698,7 +698,7 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
     {
       if (IsWindowsNT())
 	{
-	  FATAL_WINDOWS_ERROR (T_("SaveDC"), 0);
+	  FATAL_WINDOWS_ERROR ("SaveDC", 0);
 	}
       else
 	{
@@ -711,7 +711,7 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
     {
       if (IsWindowsNT())
 	{
-	  FATAL_WINDOWS_ERROR (T_("CreatePen"), 0);
+	  FATAL_WINDOWS_ERROR ("CreatePen", 0);
 	}
       else
 	{
@@ -730,7 +730,7 @@ DviView::DrawSourcePosition (/*[in]*/ CDC * pDC)
     {
       if (IsWindowsNT())
 	{
-	  FATAL_WINDOWS_ERROR (T_("Ellipse"), 0);
+	  FATAL_WINDOWS_ERROR ("Ellipse", 0);
 	}
       else
 	{
@@ -769,7 +769,7 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("GetClipBox"), 0);
+	      FATAL_WINDOWS_ERROR ("GetClipBox", 0);
 	    }
 	  else
 	    {
@@ -784,7 +784,7 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
 	{
 	  if (IsWindowsNT())
 	    {
-	      FATAL_WINDOWS_ERROR (T_("PatBlt"), 0);
+	      FATAL_WINDOWS_ERROR ("PatBlt", 0);
 	    }
 	  else
 	    {

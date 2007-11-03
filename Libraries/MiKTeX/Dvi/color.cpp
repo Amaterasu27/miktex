@@ -424,7 +424,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      || frac2 < 0.0 || frac2 > 1.0
 	      || frac3 < 0.0 || frac3 > 1.0)
 	    {
-	      log_error->WriteFormattedLine
+	      trace_error->WriteFormattedLine
 		("libdvi",
 		 T_("invalid color triple: %s"),
 		 lpsz);
@@ -453,7 +453,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	  if (sscanf_s(lpsz, "%f", &frac1) != 1
 	      || frac1 < 0.0 || frac1 > 1.0)
 	    {
-	      log_error->WriteFormattedLine
+	      trace_error->WriteFormattedLine
 		("libdvi",
 		 T_("invalid gray value: %s"),
 		 lpsz);
@@ -477,7 +477,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
 	      || frac4 < 0.0 || frac4 > 1.0)
 	    
 	    {
-	      log_error->WriteFormattedLine
+	      trace_error->WriteFormattedLine
 		("libdvi",
 		 T_("invalid cmyk quadrupel: %s"),
 		 lpsz);
@@ -495,7 +495,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
     {
       if (! isalpha(*lpsz))
 	{
-	  log_error->WriteFormattedLine
+	  trace_error->WriteFormattedLine
 	    ("libdvi",
 	     T_("invalid color name: %s"),
 	     lpsz);
@@ -509,7 +509,7 @@ DviImpl::ParseColorSpec (/*[in]*/ const char *		lpsz,
       CmykColor cmykcolor;
       if (! LookupColorName(name.c_str(), cmykcolor))
 	{
-	  log_error->WriteFormattedLine
+	  trace_error->WriteFormattedLine
 	    ("libdvi",
 	     T_("unknown color name: %s"),
 	     name.c_str());
@@ -580,7 +580,7 @@ DviImpl::SetCurrentColor (/*[in]*/ const char *	lpszColor)
 void
 DviImpl::PushColor (/*[in]*/ unsigned long rgb)
 {
-  log_color->WriteFormattedLine ("libdvi", T_("push color %x"), rgb);
+  trace_color->WriteFormattedLine ("libdvi", T_("push color %x"), rgb);
   colorStack.push (currentColor);
   currentColor = rgb;
 }
@@ -595,12 +595,12 @@ DviImpl::PopColor ()
 {
   if (colorStack.empty())
     {
-      log_error->WriteLine ("libdvi", T_("color pop: color stack is empty"));
+      trace_error->WriteLine ("libdvi", T_("color pop: color stack is empty"));
       return;
     }
   currentColor = colorStack.top();
   colorStack.pop ();
-  log_color->WriteFormattedLine
+  trace_color->WriteFormattedLine
     ("libdvi",
      T_("pop color; currentcolor now %x"),
      currentColor);
@@ -614,7 +614,7 @@ DviImpl::PopColor ()
 void
 DviImpl::ResetCurrentColor ()
 {
-  log_color->WriteFormattedLine ("libdvi", T_("reset color stack"));
+  trace_color->WriteFormattedLine ("libdvi", T_("reset color stack"));
   while (! colorStack.empty())
     {
       colorStack.pop ();

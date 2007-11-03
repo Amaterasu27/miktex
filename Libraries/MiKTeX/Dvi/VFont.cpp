@@ -52,8 +52,8 @@ VFont::VFont (/*[in]*/ DviImpl *		pDvi,
     mag (mag),
     metafontMode (lpszMetafontMode),
     baseDpi (baseDpi),
-    log_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
-    log_vfont (TraceStream::Open(MIKTEX_TRACE_DVIVFONT))
+    trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
+    trace_vfont (TraceStream::Open(MIKTEX_TRACE_DVIVFONT))
 
 {
   dviInfo.isVirtualFont = true;
@@ -86,15 +86,15 @@ VFont::~VFont ()
 	  it2->second = 0;
 	}
       fontMap.clear ();
-      if (log_error.get())
+      if (trace_error.get())
 	{
-	  log_error->Close ();
-	  log_error.reset ();
+	  trace_error->Close ();
+	  trace_error.reset ();
 	}
-      if (log_vfont.get())
+      if (trace_vfont.get())
 	{
-	  log_vfont->Close ();
-	  log_vfont.reset ();
+	  trace_vfont->Close ();
+	  trace_vfont.reset ();
 	}
     }
   catch (const exception &)
@@ -128,7 +128,7 @@ VFont::Read ()
 
   InputStream stream (dviInfo.fileName.c_str());
 
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      T_("reading vf file %s"),
      Q_(dviInfo.fileName));
@@ -172,22 +172,22 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
   int my_checkSum = inputStream.ReadSignedQuad();
   int my_designSize = inputStream.ReadSignedQuad();
 
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "comment: %s",
      dviInfo.comment.c_str());
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "checkSum: 0%o",
      my_checkSum);
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "designSize: %d",
      my_designSize);
 
   if (my_designSize * tfmConv != designSize)
     {
-      log_error->WriteFormattedLine
+      trace_error->WriteFormattedLine
 	("libdvi",
 	 T_("%s: designSize mismatch"),
 	 dviInfo.name.c_str());
@@ -195,7 +195,7 @@ VFont::ReadPreamble (/*[in]*/ InputStream & inputStream)
 
   if (my_checkSum != checkSum)
     {
-      log_error->WriteFormattedLine
+      trace_error->WriteFormattedLine
 	("libdvi",
 	 T_("%s: checkSum mismatch"),
 	 dviInfo.name.c_str());
@@ -261,7 +261,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
       break;
     }
 
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      T_("defining font %d"),
      fontNum);
@@ -281,23 +281,23 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
   inputStream.Read (szName, fontNameSize);
   szName[fontNameSize] = 0;
 
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "areaname: %s",
      szArea);
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "fontname: %s",
      szName);
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "checkSum: 0%o",
      cs);
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "scaledSize: %d",
      ss);
-  log_vfont->WriteFormattedLine
+  trace_vfont->WriteFormattedLine
     ("libdvi",
      "designSize: %d",
      ds);
@@ -306,7 +306,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
   PathName fileName;
   if (SessionWrapper(true)->FindFile(szName, FileType::VF, fileName))
     {
-      log_vfont->WriteFormattedLine
+      trace_vfont->WriteFormattedLine
 	("libdvi",
 	 T_("found vf file %s"),
 	 Q_(fileName));
@@ -324,7 +324,7 @@ VFont::ReadFontDef (/*[in]*/ InputStream &	inputStream,
 		   metafontMode.c_str(),
 		   baseDpi);
     }
-  else if (pDviImpl->GetPageMode() == DviPageMode::Pk)
+  else if (pDviImpl->GetPageMode() != DviPageMode::Dvips)
     {
       pFont =
 	new PkFont (pDviImpl,

@@ -103,7 +103,7 @@ GraphicsSpecialImpl::Parse ()
     }
   else
     {
-      log_error->WriteFormattedLine
+      trace_error->WriteFormattedLine
 	("libdvi",
 	 T_("unknown graphics special: %s"),
 	 lpsz);
@@ -131,7 +131,7 @@ GraphicsSpecialImpl::Parse ()
       char unit[3];
       if (sscanf_s(lpsz, "%f%2s", &texWidth, unit) != 2)
 	{
-	  log_error->WriteFormattedLine
+	  trace_error->WriteFormattedLine
 	    ("libdvi",
 	     T_("invalid width specification: %s"),
 	     lpsz);
@@ -158,7 +158,7 @@ GraphicsSpecialImpl::Parse ()
 	  float texHeight;
 	  if (sscanf_s(lpsz, "%f%2s", &texHeight, unit) != 2)
 	    {
-	      log_error->WriteFormattedLine
+	      trace_error->WriteFormattedLine
 		("libdvi",
 		 T_("invalid width specification: %s"),
 		 lpsz);

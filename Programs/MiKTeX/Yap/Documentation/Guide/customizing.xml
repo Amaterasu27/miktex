@@ -90,9 +90,11 @@ change various display settings:</para>
 <varlistentry>
 <term><guilabel>Default render method</guilabel></term>
 <listitem>
-<para>The default render method (one of <guilabel>Pk fonts</guilabel>,
-<guilabel>Dvips</guilabel>). See <xref linkend="rendermethods"/>,
-for more information.</para>
+<para>The default render method (one of
+<guilabel>Auto</guilabel>,
+<guilabel>Pk</guilabel>,
+<guilabel>Dvips</guilabel>).
+See <xref linkend="rendermethods"/>, for more information.</para>
 </listitem>
 </varlistentry>
 <varlistentry>

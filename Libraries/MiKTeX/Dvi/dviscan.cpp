@@ -1,6 +1,6 @@
 /* dviscan.cpp: test driver for the DVI interfaces
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License
@@ -65,7 +65,7 @@ class DviScanner
 {
 public:
   DviScanner ()
-    : pageMode (DviPageMode::Pk)
+    : pageMode (DviPageMode::Auto)
   {
   }
 

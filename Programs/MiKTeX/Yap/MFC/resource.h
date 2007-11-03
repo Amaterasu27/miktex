@@ -138,20 +138,21 @@
 #define ID_CONTINUOUS_DOUBLE            32816
 #define ID_FILE_SAVEAS                  32817
 #define ID_DOCUMENT_UP                  32818
-#define ID_PAGEMODE_PK                  32819
-#define ID_PAGEMODE_DVIPS               32820
-#define ID_VIEW_CENTIMETERS             32821
-#define ID_VIEW_INCHES                  32822
-#define ID_VIEW_MILLIMETERS             32823
-#define ID_VIEW_PICAS                   32824
-#define ID_VIEW_POINTS                  32825
+#define ID_PAGEMODE_AUTO                32819
+#define ID_PAGEMODE_PK                  32820
+#define ID_PAGEMODE_DVIPS               32821
+#define ID_VIEW_CENTIMETERS             32822
+#define ID_VIEW_INCHES                  32823
+#define ID_VIEW_MILLIMETERS             32824
+#define ID_VIEW_PICAS                   32825
+#define ID_VIEW_POINTS                  32826
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         32826
+#define _APS_NEXT_COMMAND_VALUE         32827
 #define _APS_NEXT_CONTROL_VALUE         1065
 #define _APS_NEXT_SYMED_VALUE           118
 #endif

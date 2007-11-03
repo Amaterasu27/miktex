@@ -99,7 +99,7 @@ DvipsSpecialImpl::Parse ()
 		}
 	      if (str.length() == 0)
 		{
-		  log_error->WriteLine
+		  trace_error->WriteLine
 		    ("libdvi",
 		     T_("bad ps: plotfile special"));
 		}

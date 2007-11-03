@@ -38,9 +38,9 @@ class DviFont;
 class DviImpl;
 
 #if 1
-#  define DEFAULT_PAGE_MODE DviPageMode::Pk
-#else
 #  define DEFAULT_PAGE_MODE DviPageMode::Auto
+#else
+#  define DEFAULT_PAGE_MODE DviPageMode::Pk
 #endif
 
 /* _________________________________________________________________________
@@ -1689,25 +1689,25 @@ private:
   bool fatalError;
 
 private:
-  auto_ptr<TraceStream> log_color;
+  auto_ptr<TraceStream> trace_color;
 
 private:
-  auto_ptr<TraceStream> log_dvifile;
+  auto_ptr<TraceStream> trace_dvifile;
 
 private:
-  auto_ptr<TraceStream> log_dvipage;
+  auto_ptr<TraceStream> trace_dvipage;
 
 private:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> log_gc;
+  auto_ptr<TraceStream> trace_gc;
 
 private:
-  auto_ptr<TraceStream> log_hypertex;
+  auto_ptr<TraceStream> trace_hypertex;
 
 private:
-  auto_ptr<TraceStream> log_search;
+  auto_ptr<TraceStream> trace_search;
 };
 
 /* _________________________________________________________________________
@@ -1722,7 +1722,7 @@ SpecialRoot
 public:
   SpecialRoot ()
     : specialType (DviSpecialType::Unknown),
-      log_error (TraceStream::Open(MIKTEX_TRACE_ERROR))
+      trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR))
   {
   }
 
@@ -1732,10 +1732,10 @@ public:
   {
     try
       {
-	if (log_error.get() != 0)
+	if (trace_error.get() != 0)
 	  {
-	    log_error->Close ();
-	    log_error.reset ();
+	    trace_error->Close ();
+	    trace_error.reset ();
 	  }
       }
     catch (const exception &)
@@ -1763,7 +1763,7 @@ protected:
   DviSpecialType specialType;
 
 protected:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 };
 
 /* _________________________________________________________________________
@@ -2205,7 +2205,7 @@ HyperTeXSpecialImpl
 {
 public:
   HyperTeXSpecialImpl ()
-    : log_hypertex (TraceStream::Open(MIKTEX_TRACE_DVIHYPERTEX))
+    : trace_hypertex (TraceStream::Open(MIKTEX_TRACE_DVIHYPERTEX))
   {
   }
 
@@ -2215,10 +2215,10 @@ public:
   {
     try
       {
-	if (log_hypertex.get() != 0)
+	if (trace_hypertex.get() != 0)
 	  {
-	    log_hypertex->Close ();
-	    log_hypertex.reset ();
+	    trace_hypertex->Close ();
+	    trace_hypertex.reset ();
 	  }
       }
     catch (const exception &)
@@ -2270,7 +2270,7 @@ protected:
   bool isName;
 
 protected:
-  auto_ptr<TraceStream> log_hypertex;
+  auto_ptr<TraceStream> trace_hypertex;
 
 public:
   static struct State

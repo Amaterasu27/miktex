@@ -101,8 +101,8 @@ private:
   FontMap fontMap;
 
 private:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> log_vfont;
+  auto_ptr<TraceStream> trace_vfont;
 };

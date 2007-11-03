@@ -57,8 +57,8 @@ private:
   map<int, DviChar *> dviChars;
 
 private:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> log_tfm;
+  auto_ptr<TraceStream> trace_tfm;
 };

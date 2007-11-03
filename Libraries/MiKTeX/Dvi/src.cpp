@@ -78,7 +78,7 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 
   MIKTEX_BEGIN_CRITICAL_SECTION (&criticalSectionMonitor)
     {
-      log_search->WriteFormattedLine
+      trace_search->WriteFormattedLine
 	("libdvi",
 	 T_("searching src special %d %s"),
 	 line,
@@ -259,17 +259,17 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 
       if (pSourceSpecial1Best == 0 && pSourceSpecial2Best == 0)
 	{
-	  log_search->WriteLine ("libdvi", T_("search failed"));
+	  trace_search->WriteLine ("libdvi", T_("search failed"));
 	  return (false);
 	}
       
       if (pSourceSpecial1Best == 0)
 	{
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     T_("found src2 on page #%d"),
 	     pageIdx2);
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     "   src2 = [%d (%d,%d)]",
 	     pSourceSpecial2Best->GetLineNum(),
@@ -281,11 +281,11 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 	}
       else if (pSourceSpecial2Best == 0)
 	{
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     T_("found src1 on page #%d"),
 	     pageIdx1);
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     "   src1 = [%d (%d,%d)]",
 	     pSourceSpecial1Best->GetLineNum(),
@@ -298,17 +298,17 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
       else
 	{
 	  position.pageIdx = pageIdx1;
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     T_("found src region on page #%d"),
 	     position.pageIdx);
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     "   src1 = [%d (%d,%d)]",
 	     pSourceSpecial1Best->GetLineNum(),
 	     pSourceSpecial1Best->GetX(),
 	     pSourceSpecial1Best->GetY());
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     "   src2 = [%d (%d,%d)]",
 	     pSourceSpecial2Best->GetLineNum(),
@@ -329,7 +329,7 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 		      / (pSourceSpecial2Best->GetLineNum()
 			 - pSourceSpecial1Best->GetLineNum())));
 	    }
-	  log_search->WriteFormattedLine
+	  trace_search->WriteFormattedLine
 	    ("libdvi",
 	     "   interpolated (x,y) = (%d,%d)",
 	     position.x,

@@ -1,6 +1,6 @@
 /* DviView.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
    
    This file is part of Yap.
 
@@ -57,6 +57,7 @@ BEGIN_MESSAGE_MAP(DviView, CMyScrollView)
   ON_COMMAND(ID_LAST_PAGE, &DviView::OnLastPage)
   ON_COMMAND(ID_LIGHTER_TEXT, &DviView::OnLighterText)
   ON_COMMAND(ID_NEXT_PAGE, &DviView::OnNextPage)
+  ON_COMMAND(ID_PAGEMODE_AUTO, &DviView::OnDviPageModeAuto)
   ON_COMMAND(ID_PAGEMODE_DVIPS, &DviView::OnDviPageModeDvips)
   ON_COMMAND(ID_PAGEMODE_PK, &DviView::OnDviPageModePk)
   ON_COMMAND(ID_PAGE_EDITOR, &DviView::OnPageEditor)
@@ -85,6 +86,7 @@ BEGIN_MESSAGE_MAP(DviView, CMyScrollView)
   ON_UPDATE_COMMAND_UI(ID_LAST_PAGE, &DviView::OnUpdateLastPage)
   ON_UPDATE_COMMAND_UI(ID_LIGHTER_TEXT, &DviView::OnUpdateLighterText)
   ON_UPDATE_COMMAND_UI(ID_NEXT_PAGE, &DviView::OnUpdateNextPage)
+  ON_UPDATE_COMMAND_UI(ID_PAGEMODE_AUTO, &DviView::OnUpdateDviPageModeAuto)
   ON_UPDATE_COMMAND_UI(ID_PAGEMODE_DVIPS, &DviView::OnUpdateDviPageModeDvips)
   ON_UPDATE_COMMAND_UI(ID_PAGEMODE_PK, &DviView::OnUpdateDviPageModePk)
   ON_UPDATE_COMMAND_UI(ID_PREV_PAGE, &DviView::OnUpdatePrevPage)
@@ -145,7 +147,7 @@ DviView::~DviView ()
 	{
 	  if (! pSourceSpecialDialog->DestroyWindow())
 	    {
-	      TraceStream::TraceLastWin32Error (T_("DestroyWindow"),
+	      TraceStream::TraceLastWin32Error ("DestroyWindow",
 						0,
 						__FILE__,
 						__LINE__);
@@ -156,7 +158,7 @@ DviView::~DviView ()
 	{
 	  if (! pToolWindow->DestroyWindow())
 	    {
-	      TraceStream::TraceLastWin32Error (T_("DestroyWindow"),
+	      TraceStream::TraceLastWin32Error ("DestroyWindow",
 						0,
 						__FILE__,
 						__LINE__);
@@ -171,7 +173,7 @@ DviView::~DviView ()
 	    }
 	  if (! ReleaseCapture())
 	    {
-	      TraceStream::TraceLastWin32Error (T_("ReleaseCapture"),
+	      TraceStream::TraceLastWin32Error ("ReleaseCapture",
 						0,
 						__FILE__,
 						__LINE__);
@@ -219,7 +221,7 @@ DviView::OnActivateView (/*[in]*/ BOOL		activate,
 		}
 	      if (! ReleaseCapture())
 		{
-		  FATAL_WINDOWS_ERROR (T_("ReleaseCapture"), 0);
+		  FATAL_WINDOWS_ERROR ("ReleaseCapture", 0);
 		}
 	      mouseCaptured = false;
 	    }
@@ -227,7 +229,7 @@ DviView::OnActivateView (/*[in]*/ BOOL		activate,
 	    {
 	      if (! pToolWindow->DestroyWindow())
 		{
-		  FATAL_WINDOWS_ERROR (T_("DestroyWindow"), 0);
+		  FATAL_WINDOWS_ERROR ("DestroyWindow", 0);
 		}
 	      pToolWindow = 0;
 	    }
@@ -256,7 +258,7 @@ DviView::OnInitialUpdate ()
   curPageIdx = 0;
   try
     {
-      if (g_pYapConfig->dviPageMode == DviPageMode::Pk)
+      if (g_pYapConfig->dviPageMode != DviPageMode::Dvips)
 	{
 	  PostMessage (WM_MAKEFONTS);
 	}
@@ -369,7 +371,7 @@ DviView::OnScroll (/*[in]*/ UINT	scrollCode,
 	{
 	  if (! GetScrollInfo(SB_HORZ, &info, SIF_TRACKPOS))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("OnScroll"), 0);
+	      FATAL_WINDOWS_ERROR ("OnScroll", 0);
 	    }
 	  pos = info.nTrackPos;
 	}
@@ -378,7 +380,7 @@ DviView::OnScroll (/*[in]*/ UINT	scrollCode,
 	{
 	  if (! GetScrollInfo(SB_VERT, &info, SIF_TRACKPOS))
 	    {
-	      FATAL_WINDOWS_ERROR (T_("OnScroll"), 0);
+	      FATAL_WINDOWS_ERROR ("OnScroll", 0);
 	    }
 	  pos = info.nTrackPos;
 	}
@@ -1672,7 +1674,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
 	}
       else
 	{
-	  pMain->SetMessageText (T_(""));
+	  pMain->SetMessageText ("");
 	}
 
 #if 0
@@ -1934,7 +1936,7 @@ DviView::GetPoint (/*[out]*/ int & x,
     }
   if (pageIdx < 0)
     {
-      UNEXPECTED_CONDITION (T_(""));
+      UNEXPECTED_CONDITION ("");
     }
   return (true);
 }
@@ -2442,7 +2444,8 @@ DviView::OnUpdateLighterText (/*[in]*/ CCmdUI * pCmdUI)
     {
       size_t idx = GetGammaTableIndex();
       MIKTEX_ASSERT (idx >= 0 && idx < gammaTable.size());
-      pCmdUI->Enable (idx > 0 && g_pYapConfig->dviPageMode == DviPageMode::Pk);
+      pCmdUI->Enable (idx > 0
+		      && g_pYapConfig->dviPageMode != DviPageMode::Dvips);
     }
 
   catch (const MiKTeXException & e)
@@ -2496,7 +2499,7 @@ DviView::OnUpdateDarkerText (/*[in]*/ CCmdUI * pCmdUI)
       size_t idx = GetGammaTableIndex();
       MIKTEX_ASSERT (idx >= 0 && idx < gammaTable.size());
       pCmdUI->Enable (idx + 1 < gammaTable.size()
-		      && g_pYapConfig->dviPageMode == DviPageMode::Pk);
+		      && g_pYapConfig->dviPageMode != DviPageMode::Dvips);
     }
 
   catch (const MiKTeXException & e)
@@ -2532,20 +2535,19 @@ DviView::InitializeGammaTable ()
   sort (gammaTable.begin(), gammaTable.end());
 }
 
-
 /* _________________________________________________________________________
 
-   DviView::OnDviPageModeDvips
+   DviView::OnDviPageModeAuto
    _________________________________________________________________________ */
 
 void
-DviView::OnDviPageModeDvips ()
+DviView::OnDviPageModeAuto ()
 {
   try
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      pDoc->SetDviPageMode (DviPageMode::Dvips);
+      pDoc->SetDviPageMode (DviPageMode::Auto);
       pDoc->Reread ();
       pDoc->UpdateAllViews (0);
     }
@@ -2563,15 +2565,15 @@ DviView::OnDviPageModeDvips ()
 
 /* _________________________________________________________________________
 
-   DviView::OnUpdateDviPageModeDvips
+   DviView::OnUpdateDviPageModeAuto
    _________________________________________________________________________ */
 
 void
-DviView::OnUpdateDviPageModeDvips (/*[in]*/ CCmdUI * pCmdUI)
+DviView::OnUpdateDviPageModeAuto (/*[in]*/ CCmdUI * pCmdUI)
 {
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
-  pCmdUI->SetCheck (pDoc->GetDviPageMode() == DviPageMode::Dvips);
+  pCmdUI->SetCheck (pDoc->GetDviPageMode() == DviPageMode::Auto);
 }
 
 /* _________________________________________________________________________
@@ -2613,4 +2615,45 @@ DviView::OnUpdateDviPageModePk (/*[in]*/ CCmdUI * pCmdUI)
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
   pCmdUI->SetCheck (pDoc->GetDviPageMode() == DviPageMode::Pk);
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnDviPageModeDvips
+   _________________________________________________________________________ */
+
+void
+DviView::OnDviPageModeDvips ()
+{
+  try
+    {
+      DviDoc * pDoc = GetDocument();
+      ASSERT_VALID (pDoc);
+      pDoc->SetDviPageMode (DviPageMode::Dvips);
+      pDoc->Reread ();
+      pDoc->UpdateAllViews (0);
+    }
+
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   DviView::OnUpdateDviPageModeDvips
+   _________________________________________________________________________ */
+
+void
+DviView::OnUpdateDviPageModeDvips (/*[in]*/ CCmdUI * pCmdUI)
+{
+  DviDoc * pDoc = GetDocument();
+  ASSERT_VALID (pDoc);
+  pCmdUI->SetCheck (pDoc->GetDviPageMode() == DviPageMode::Dvips);
 }

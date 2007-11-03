@@ -297,7 +297,7 @@ void
 DviPageImpl::AddRule (/*[in]*/ DviRuleImpl * pRule)
 {
   MIKTEX_ASSERT (IsLocked());
-  if (pageMode == DviPageMode::Pk)
+  if (pageMode != DviPageMode::Dvips)
     {
       dviRules.reserve (100);
       dviRules.push_back (pRule);
@@ -346,7 +346,12 @@ DviPageImpl::GetNumberOfDibChunks (/*[in]*/ int shrinkFactor)
 void
 DviPageImpl::MakeShrinkedRaster (/*[in]*/ int shrinkFactor)
 {
-  if (pageMode == DviPageMode::Pk)
+  if (pageMode == DviPageMode::Dvips)
+    {
+      // make DIB chunks
+      MakeDibChunks (shrinkFactor);
+    }
+  else
     {
       if (! dviItems.empty())
 	{
@@ -356,11 +361,6 @@ DviPageImpl::MakeShrinkedRaster (/*[in]*/ int shrinkFactor)
 	  // make DVI bitmaps
 	  MakeDviBitmaps (shrinkFactor);
 	}
-    }
-  else
-    {
-      // make DIB chunks
-      MakeDibChunks (shrinkFactor);
     }
   haveShrinkedRaster[ shrinkFactor ] = true;
 }

@@ -102,8 +102,8 @@ private:
   int vppp;
 
 private:
-  auto_ptr<TraceStream> log_error;
+  auto_ptr<TraceStream> trace_error;
 
 private:
-  auto_ptr<TraceStream> log_pkfont;
+  auto_ptr<TraceStream> trace_pkfont;
 };
