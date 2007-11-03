@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2006 Christian Schenk
+%% Copyright (C) 1998-2007 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -48,7 +48,8 @@ program PDFTEX; {all file names are defined dynamically}
     if shell_enabled_p then cur_val := 1
     else cur_val := 0;
 @y
-    cur_val := 0; {todo}
+    if miktex_write18_p then cur_val := 1
+    else cur_val := 0;
 @z
 
 % _____________________________________________________________________________
@@ -362,6 +363,7 @@ begin
     get_nullstr := "";
 end;
 
+function miktex_write18_p : boolean; forward;@t\2@>@/
 function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
 function is_quote_bad: boolean; forward;@t\2@>@/
 function packet_byte : eight_bits; forward;@t\2@>@/
