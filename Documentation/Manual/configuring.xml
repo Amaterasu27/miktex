@@ -448,5 +448,11 @@ TeX Files</filename> are now available to &MiKTeX;.</para>
 
 </chapter>
 
-<!-- Local Variables: mode:xml sgml-parent-document: ("../miktex.xml"
-"book") sgml-indent-step: 0 sgml-set-face: t End: -->
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../miktex.xml" "book")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->
