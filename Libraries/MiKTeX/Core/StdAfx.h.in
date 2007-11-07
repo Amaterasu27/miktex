@@ -38,11 +38,15 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #  include <windows.h>
+#  include <Sddl.h>
 #  include <aclapi.h>
 #  include <htmlhelp.h>
-#  include <shlwapi.h>
+#  include <shellapi.h>
 #  include <shlobj.h>
-#  include <Sddl.h>
+#  include <shlwapi.h>
+#  include <wininet.h>
+#  include <tchar.h>
+#  include <strsafe.h>
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)

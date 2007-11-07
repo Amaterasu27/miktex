@@ -2708,6 +2708,182 @@ Utils::SetEnvironmentString (/*[in]*/ const MIKTEXCHAR *	lpszValueName,
 
 /* _________________________________________________________________________
 
+   ShellExecuteURL
+   
+   See MSDN community content:
+
+   Using lpExecInfo->lpClass and lpExecInfo->hkeyClass (KJK_Hyperion)
+
+   If you are afraid ShellExecute(Ex) might misidentify the file type,
+   because the path might be ambiguous or if you use a non-standard
+   type system, you can force one by filling the lpClass or hkeyClass
+   fields in lpExecInfo. You set lpClass to either the extension
+   (e.g. ".txt") or the URL scheme (e.g. "http") or the OLE
+   ProgId/ClassId; better yet, you use AssocQueryKey to retrieve the
+   appropriate hkeyClass for the given class name and verb. For
+   example, this is how you safely execute URLs with ShellExecute(Ex):
+   _________________________________________________________________________ */
+
+BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
+{
+    BOOL bRet;
+    DWORD dwErr;
+    HRESULT hr;
+    PARSEDURL pu;
+    TCHAR szSchemeBuffer[INTERNET_MAX_SCHEME_LENGTH + 1];
+    HKEY hkeyClass;
+ 
+    /* Default error codes */
+    bRet = FALSE;
+    dwErr = ERROR_INVALID_PARAMETER;
+    hr = S_OK;
+ 
+    lpExecInfo->hInstApp =
+        (HINSTANCE)UlongToHandle(SE_ERR_ACCESSDENIED);
+ 
+    /* Validate parameters */
+    if
+    (
+        lpExecInfo->cbSize == sizeof(*lpExecInfo) &&
+        lpExecInfo->lpFile != NULL &&
+        (lpExecInfo->fMask & SEE_MASK_INVOKEIDLIST) == 0 &&
+        (lpExecInfo->fMask & SEE_MASK_CLASSNAME) == 0 &&
+        (lpExecInfo->fMask & 0x00400000) == 0 /* SEE_MASK_FILEANDURL */
+    )
+    {
+        /* Extract the scheme out of the URL */
+        pu.cbSize = sizeof(pu);
+        hr = ParseURL(lpExecInfo->lpFile, &pu);
+ 
+        /* Is the URL really, unambiguously an URL? */
+        if
+        (
+            SUCCEEDED(hr) &&
+            pu.pszProtocol == lpExecInfo->lpFile &&
+            pu.pszProtocol[pu.cchProtocol] == TEXT(':')
+        )
+        {
+            /* We need the scheme name NUL-terminated, so we copy it */
+            hr = StringCbCopyN
+            (
+                szSchemeBuffer,
+                sizeof(szSchemeBuffer),
+                pu.pszProtocol,
+                pu.cchProtocol * sizeof(TCHAR)
+            );
+ 
+            if(SUCCEEDED(hr))
+            {
+                /* Is the URL scheme a registered ProgId? */
+                hr = AssocQueryKey
+                (
+                    ASSOCF_INIT_IGNOREUNKNOWN,
+                    ASSOCKEY_CLASS,
+                    szSchemeBuffer,
+                    NULL,
+                    &hkeyClass
+                );
+ 
+                if(SUCCEEDED(hr))
+                {
+                    /* Is the ProgId really an URL scheme? */
+                    dwErr = RegQueryValueEx
+                    (
+                        hkeyClass,
+                        TEXT("URL Protocol"),
+                        NULL,
+                        NULL,
+                        NULL,
+                        NULL
+                    );
+ 
+                    /* All clear! */
+                    if(dwErr == NO_ERROR || dwErr == ERROR_MORE_DATA)
+                    {
+                        /* Don't let ShellExecuteEx guess */
+                        lpExecInfo->fMask |= SEE_MASK_CLASSKEY;
+                        lpExecInfo->lpClass = NULL;
+                        lpExecInfo->hkeyClass = hkeyClass;
+ 
+                        /* Finally, execute the damn URL */
+                        bRet = ShellExecuteEx(lpExecInfo);
+ 
+                        /* To preserve ShellExecuteEx's last error */
+                        dwErr = NO_ERROR;
+                    }
+ 
+                    RegCloseKey(hkeyClass);
+                }
+            }
+        }
+    }
+ 
+    /* Last error was a HRESULT */
+    if(FAILED(hr))
+    {
+        /* Try to dissect it */
+        if(HRESULT_FACILITY(hr) == FACILITY_WIN32)
+            dwErr = HRESULT_CODE(hr);
+        else
+            dwErr = hr;
+    }
+ 
+    /* We have a last error to set */
+    if(dwErr)
+        SetLastError(dwErr);
+ 
+    return bRet;
+}
+ 
+BOOL ShellExecuteURLEx(LPSHELLEXECUTEINFO lpExecInfo)
+{
+    BOOL bRet;
+    SHELLEXECUTEINFO ExecInfo;
+ 
+    /* We use a copy of the parameters, because you never know */
+    CopyMemory(&ExecInfo, lpExecInfo, sizeof(ExecInfo));
+ 
+    /* Do the magic */
+    bRet = ShellExecuteURLExInternal(&ExecInfo);
+ 
+    /* These need to be copied back */
+    lpExecInfo->hInstApp = ExecInfo.hInstApp;
+    lpExecInfo->hProcess = ExecInfo.hProcess;
+    return bRet;
+}
+ 
+HINSTANCE ShellExecuteURL
+(
+    HWND hwnd,
+    LPCTSTR lpOperation,
+    LPCTSTR lpFile,
+    LPCTSTR lpParameters,
+    LPCTSTR lpDirectory,
+    INT nShowCmd
+)
+{
+    SHELLEXECUTEINFO ExecuteInfo;
+ 
+    ExecuteInfo.fMask = SEE_MASK_FLAG_NO_UI; /* Odd but true */
+    ExecuteInfo.hwnd = hwnd;
+    ExecuteInfo.cbSize = sizeof(ExecuteInfo);
+    ExecuteInfo.lpVerb = lpOperation;
+    ExecuteInfo.lpFile = lpFile;
+    ExecuteInfo.lpParameters = lpParameters;
+    ExecuteInfo.lpDirectory = lpDirectory;
+    ExecuteInfo.nShow = nShowCmd;
+ 
+    ShellExecuteURLExInternal(&ExecuteInfo);
+ 
+    return ExecuteInfo.hInstApp;
+}
+
+// Note that we use ParseURL instead of more sophisticated functions
+// like InternetCrackUrl because it's much more forgiving, and we only
+// need to extract the scheme anyway
+
+/* _________________________________________________________________________
+
    Utils::RegisterMiKTeXUser
    _________________________________________________________________________ */
 
