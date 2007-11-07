@@ -804,6 +804,16 @@ public:
   MIKTEXDVICALL
   GetNumberOfDibChunks (/*[in]*/ int shrinkFactor);
 
+
+public:
+  virtual
+  DviPageMode
+  MIKTEXDVICALL
+  GetDviPageMode ()
+  {
+    return (pageMode);
+  }
+
 public:
   DviImpl *
   GetDviObject ();

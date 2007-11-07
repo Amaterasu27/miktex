@@ -118,6 +118,11 @@ protected:
 protected:
   afx_msg
   void
+  OnUpdateEffectivePageMode (/*[in]*/ CCmdUI * pCmdUI);
+  
+protected:
+  afx_msg
+  void
   OnUpdateSinglePage (/*[in]*/ CCmdUI * pCmdUI);
   
 protected:

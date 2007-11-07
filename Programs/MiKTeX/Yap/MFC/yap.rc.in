@@ -1063,6 +1063,11 @@ BEGIN
     ID_PAGEMODE_DVIPS       "Uses Dvips to render the DVI file."
 END
 
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EFFECTIVE_PAGE_MODE         "Dvips"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

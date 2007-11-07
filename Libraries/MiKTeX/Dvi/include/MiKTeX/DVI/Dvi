@@ -1,6 +1,6 @@
 /* MiKTeX/DVI/Dvi: DVI interfaces				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -892,6 +892,24 @@ struct DviBitmap
 
 /* _________________________________________________________________________
 
+   DviPageMode
+   _________________________________________________________________________ */
+
+class DviPageModeEnum
+{
+public:
+  enum EnumType {
+    None,
+    Auto,
+    Pk,
+    Dvips
+  };
+};
+
+typedef MiKTeX::Core::EnumWrapper<DviPageModeEnum> DviPageMode;
+
+/* _________________________________________________________________________
+
    DviPage
    _________________________________________________________________________ */
 
@@ -984,6 +1002,13 @@ public:
   MIKTEXDVICALL
   GetNumberOfDibChunks (/*[in]*/ int shrinkFactor)
     = 0;
+
+public:
+  virtual
+  DviPageMode
+  MIKTEXDVICALL
+  GetDviPageMode ()
+    = 0;
 };
 
 /* _________________________________________________________________________
@@ -1053,24 +1078,6 @@ public:
 };
 
 typedef MiKTeX::Core::EnumWrapper<DviAccessEnum> DviAccess;
-
-/* _________________________________________________________________________
-
-   DviPageMode
-   _________________________________________________________________________ */
-
-class DviPageModeEnum
-{
-public:
-  enum EnumType {
-    None,
-    Auto,
-    Pk,
-    Dvips
-  };
-};
-
-typedef MiKTeX::Core::EnumWrapper<DviPageModeEnum> DviPageMode;
 
 /* _________________________________________________________________________
 

@@ -76,3 +76,23 @@ engine, or if want to use &Windows; fonts, then you should give
 <para>&pdfTeX; has been upgraded to version 1.40.4.</para>
 
 </section>
+
+<section>
+
+<title>&Yap;</title>
+
+<para>The render method is now deduced from the &DVI; file:
+<guilabel>Pk</guilabel> is used, if the &DVI; file contains no
+&PostScript; instructions. Otherwise, <guilabel>Dvips</guilabel>
+is used.</para>
+
+</section>
+
+<!--
+Local Variables:
+mode: xml
+sgml-parent-document: ("relnotes.xml" "article")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

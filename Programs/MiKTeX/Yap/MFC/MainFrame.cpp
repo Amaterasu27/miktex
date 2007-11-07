@@ -61,6 +61,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWnd)
   ON_UPDATE_COMMAND_UI(ID_INDICATOR_COMMAND_PREFIX, &MainFrame::OnUpdateCommandPrefix)
   ON_UPDATE_COMMAND_UI(ID_INDICATOR_PAGE_M_OF_N, &MainFrame::OnUpdatePageMofN)
   ON_UPDATE_COMMAND_UI(ID_INDICATOR_POINT, &MainFrame::OnUpdatePoint)
+  ON_UPDATE_COMMAND_UI(ID_INDICATOR_EFFECTIVE_PAGE_MODE, &MainFrame::OnUpdateEffectivePageMode)
   ON_UPDATE_COMMAND_UI(ID_INDICATOR_SOURCE, &MainFrame::OnUpdateSource)
   ON_UPDATE_COMMAND_UI(ID_SINGLE_PAGE, &MainFrame::OnUpdateSinglePage)
   ON_UPDATE_COMMAND_UI(ID_VIEW_FULLSCREEN, &MainFrame::OnUpdateViewFullScreen)
@@ -94,6 +95,7 @@ namespace {
       ID_SEPARATOR,           // status line indicator
       ID_INDICATOR_COMMAND_PREFIX,
       ID_INDICATOR_SOURCE,
+      ID_INDICATOR_EFFECTIVE_PAGE_MODE,
       ID_INDICATOR_POINT,
       ID_INDICATOR_PAGE_M_OF_N,
     };
@@ -487,6 +489,76 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
 		  precision, y2,
 		  lpszUnit);
       pCmdUI->SetText (str); 
+    }
+
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   MainFrame::OnUpdateEffectivePageMode
+   _________________________________________________________________________ */
+
+void
+MainFrame::OnUpdateEffectivePageMode (/*[in,out]*/ CCmdUI * pCmdUI)
+{
+  try
+    {
+      CMDIChildWnd * pChild = MDIGetActive();
+      pCmdUI->Enable (pChild != 0);
+      if (pChild == 0)
+	{
+	  pCmdUI->SetText ("");
+	  return;
+	}
+      CDocument * pDoc = pChild->GetActiveDocument();
+      DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
+      if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED)
+	{
+	  pCmdUI->SetText ("");
+	  return;
+	}
+      CView * pView = pChild->GetActiveView();
+      if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
+	{
+	  pCmdUI->SetText ("");
+	  return;
+	}
+      DviView * pDviView = reinterpret_cast<DviView*>(pView);
+      int pageIdx;
+      int x, y;
+      if (! pDviView->GetPageUnderCursor(pageIdx, x, y))
+	{
+	  pCmdUI->SetText ("");
+	  return;
+	}
+      if (pDviDoc->GetPageStatus(pageIdx) != PageStatus::Loaded)
+	{
+	  pCmdUI->SetText ("");
+	  return;
+	}
+      DviPage * pDviPage = pDviDoc->GetLoadedPage(pageIdx);
+      if (pDviPage == 0)
+	{
+	  UNEXPECTED_CONDITION ("MainFrame::OnUpdateEffectivePageMode");
+	}
+      AutoUnlockPage autoUnlockPage (pDviPage);
+      if (pDviPage->GetDviPageMode() == DviPageMode::Dvips)
+	{
+	  pCmdUI->SetText ("Dvips");
+	}
+      else
+	{
+	  pCmdUI->SetText ("Pk");
+	}
     }
 
   catch (const MiKTeXException & e)
