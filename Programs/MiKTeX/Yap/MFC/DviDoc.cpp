@@ -510,7 +510,26 @@ DviDoc::OnIdle ()
   try
     {
       CDocument::OnIdle ();
-      if (pDvi != 0)
+      DviFileStatus oldStatus = fileStatus;
+      DviFileStatus newStatus = GetDviFileStatus();
+      if (newStatus == DVIFILE_MODIFIED)
+	{
+	  YapLog (T_("document has been modified"));
+	  POSITION posView = GetFirstViewPosition();
+	  while (posView != 0)
+	    {
+	      CView * pView = GetNextView(posView);
+	      if (pView->IsKindOf(RUNTIME_CLASS(DviView)))
+		{
+		  DviView * pDviView = reinterpret_cast<DviView*>(pView);
+		  if (! pDviView->PostMessage(WM_COMMAND, ID_VIEW_REFRESH))
+		    {
+		      // unexpected
+		    }
+		}
+	    }
+	}
+      else if (pDvi != 0)
 	{
 	  pSession->UnloadFilenameDatabase (); // <fixme/>
 	}
@@ -540,6 +559,7 @@ DviDoc::GetDviFileStatus ()
 	  modificationTime = File::GetLastWriteTime(PathName(GetPathName()));
 	  if (timeMod != modificationTime)
 	    {
+	      YapLog (T_("%s has been modified"), Q_(GetPathName()));
 	      modificationTime = timeMod;
 	      fileStatus = DVIFILE_MODIFIED;
 	    }
