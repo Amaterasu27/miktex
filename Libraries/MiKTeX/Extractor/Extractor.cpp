@@ -40,7 +40,6 @@ using namespace std;
    Extractor::~Extractor
    _________________________________________________________________________ */
 
-EXTRACTORCALL
 Extractor::~Extractor ()
 {
 }
@@ -51,7 +50,6 @@ Extractor::~Extractor ()
    _________________________________________________________________________ */
 
 Extractor *
-EXTRACTORCALL
 Extractor::CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType)
 {
   switch (archiveFileType.Get())

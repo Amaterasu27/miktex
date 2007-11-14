@@ -59,7 +59,6 @@ bool SessionImpl::runningAsLocalServer = false;
 #endif
 
 PolicyFlags
-MIKTEXCALL
 SessionImpl::GetPolicyFlags ()
 {
   return (DEFAULT_MIKTEX_POLICIES);
@@ -90,7 +89,6 @@ Utils::GetExeName ()
    _________________________________________________________________________ */
 
 PathName
-MIKTEXCALL
 SessionImpl::GetMyLocation ()
 {
   return (GetMyProgramFile().RemoveFileSpec());
@@ -371,7 +369,6 @@ Utils::MakeProgramVersionString
    _________________________________________________________________________ */
 
 string
-MIKTEXCALL
 VersionNumber::ToString ()
   const
 {
@@ -397,7 +394,6 @@ VersionNumber::ToString ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 VersionNumber::TryParse (/*[in]*/ const char *		lpszVersion,
 			 /*[out]*/ VersionNumber &	versionNumber)
 {
@@ -449,7 +445,6 @@ VersionNumber::TryParse (/*[in]*/ const char *		lpszVersion,
    _________________________________________________________________________ */
 
 VersionNumber
-MIKTEXCALL
 VersionNumber::Parse (/*[in]*/ const char * lpsz)
 {
   VersionNumber versionNumber;
@@ -559,7 +554,6 @@ Fndb::Enumerate (/*[in]*/ const char *		lpszPath,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Fndb::Remove (/*[in]*/ const char *	lpszPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
@@ -585,7 +579,6 @@ Fndb::Remove (/*[in]*/ const char *	lpszPath)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 Fndb::FileExists (/*[in]*/ const PathName &	path)
 {
   unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(path);
@@ -1055,9 +1048,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
-SessionImpl::SetTheNameOfTheGame
-(/*[in]*/ const char * lpszTheNameOfTheGame)
+SessionImpl::SetTheNameOfTheGame (/*[in]*/ const char * lpszTheNameOfTheGame)
 {
   MIKTEX_ASSERT_STRING (lpszTheNameOfTheGame);
   fileTypes.clear ();
@@ -1336,9 +1327,9 @@ Session2::~Session2 ()
    miktex_get_miktex_version_string_ex
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
-				     /*[in]*/ size_t		bufSize)
+				     /*[in]*/ size_t	bufSize)
 {
   C_FUNC_BEGIN ();
   string version = Utils::GetMiKTeXVersionString();

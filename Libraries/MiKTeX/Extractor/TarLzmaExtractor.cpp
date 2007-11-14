@@ -35,7 +35,6 @@ using namespace std;
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 TarLzmaExtractor::Extract (/*[in]*/ const PathName &	tarlzmaPath,
 			   /*[in]*/ const PathName &	destDir,
 			   /*[in]*/ bool		makeDirectories,

@@ -117,7 +117,7 @@ ProcessOutputTrash
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {
@@ -139,7 +139,7 @@ ProcessOutputSaver
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {

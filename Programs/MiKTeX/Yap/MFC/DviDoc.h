@@ -37,7 +37,7 @@ public:
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ DviNotification	nf);
 
 public:

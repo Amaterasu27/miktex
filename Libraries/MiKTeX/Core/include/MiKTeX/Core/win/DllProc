@@ -26,26 +26,26 @@ MIKTEX_CORE_BEGIN_NAMESPACE;
 class DllProcBase
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   DllProcBase ();
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   DllProcBase (/*[in]*/ const char *	lpszDllName,
 	       /*[in]*/ const char *	lpszProcName);
 
 protected:
-  MIKTEXEXPORT
+  MIKTEXCOREEXPORT
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~DllProcBase ();
 
 protected:
-  MIKTEXEXPORT
+  MIKTEXCOREEXPORT
   FARPROC
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetProc ();
 
 private:

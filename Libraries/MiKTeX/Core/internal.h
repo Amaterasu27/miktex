@@ -20,9 +20,9 @@
    02111-1307, USA. */
 
 #if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
-#  define MIKTEXEXPORT __declspec(dllexport)
+#  define MIKTEXCOREEXPORT __declspec(dllexport)
 #else
-#  define MIKTEXEXPORT
+#  define MIKTEXCOREEXPORT
 #endif
 
 #define EAD86981C92C904D808A5E6CEC64B90E
@@ -766,74 +766,74 @@ private:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PushAppName (/*[in]*/ const char *	lpszAppName);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PushBackAppName (/*[in]*/ const char *	lpszAppName);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ bool			bAtEnd);
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetSpecialPath (/*[in]*/ SpecialPath		specialPath);
 
 public:
   virtual
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNumberOfTEXMFRoots ();
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetRootDirectory (/*[in]*/ unsigned	r);
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMpmDatabasePathName ();
 
 public:
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeriveTEXMFRoot (/*[in]*/ const PathName & path);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFilenameDatabase (/*[in]*/ unsigned	r,
 			/*[out]*/ PathName &	path);
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFilenameDatabasePathName (/*[in]*/ unsigned	r);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   UnloadFilenameDatabase ();
 
 public:
   virtual
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SplitTEXMFPath (/*[in]*/ const PathName &	path,
 		  /*[out]*/ PathName &		root,
 		  /*[out]*/ PathName &		relative);
@@ -841,40 +841,40 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const string &	roots);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const StartupConfig &	startupConfig,
 			   /*[in]*/ bool			sessionOnly);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsMiKTeXDirect ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMETAFONTMode (/*[in]*/ unsigned		idx,
 		   /*[out]*/ MIKTEXMFMODE *	pMode);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DetermineMETAFONTMode (/*[in]*/ unsigned		dpi,
 			 /*[out]*/ MIKTEXMFMODE *	pMode);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		     /*[in]*/ const char *	lpszValueName,
 		     /*[out]*/ string &		value);
@@ -882,7 +882,7 @@ public:
 public:
   virtual
   string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ const char *	lpszDefaultValue);
@@ -890,7 +890,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ int			defaultValue);
@@ -898,7 +898,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ bool			defaultValue);
@@ -906,7 +906,7 @@ public:
 public:
   virtual
   TriState
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ TriState		defaultValue);
@@ -914,7 +914,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ const char *	lpszValue);
@@ -922,7 +922,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ bool			value);
@@ -930,7 +930,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ int			value);
@@ -938,20 +938,20 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SharedMiKTeXSetup (/*[in]*/ bool shared);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SharedMiKTeXSetup (/*[in]*/ bool shared,
 		     /*[in]*/ bool sessionOnly);
   
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
@@ -960,7 +960,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode		mode,
 	       /*[in]*/ FileAccess		access,
@@ -969,7 +969,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
@@ -979,7 +979,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode		mode,
 	       /*[in]*/ FileAccess		access,
@@ -989,20 +989,20 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   CloseFile (/*[in]*/ FILE *	pFile);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsOutputFile (/*[in]*/ const FILE *	pFile);
 
 #if defined(MIKTEX_WINDOWS)
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsFileAlreadyOpen (/*[in]*/ const char *	lpszFileName);
 #endif
 
@@ -1010,32 +1010,32 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ScheduleFileRemoval (/*[in]*/ const char *	lpszFileName);
 #endif
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   StartFileInfoRecorder (/*[in]*/ bool bRecordPackageNames);
 
 public:
   virtual
   vector<FileInfoRecord>
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFileInfoRecords ();
 
 public:
   virtual
   FileType
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeriveFileType (/*[in]*/ const char * lpszPath);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
 	    /*[out]*/ PathName &	path);
@@ -1043,7 +1043,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathName &	path);
@@ -1051,7 +1051,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindPkFile (/*[in]*/ const char *	lpszFontName,
 	      /*[in]*/ const char *	lpszMode,
 	      /*[in]*/ int			dpi,
@@ -1060,7 +1060,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindTfmFile (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ PathName &		path,
 	       /*[in]*/ bool			create);
@@ -1068,13 +1068,13 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetFindFileCallback (/*[in]*/ IFindFileCallback *	pCallback);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SplitFontPath (/*[in]*/ const char *	lpszFontPath,
 		 /*[out]*/ char *		lpszFontType,
 		 /*[out]*/ char *		lpszSupplier,
@@ -1085,7 +1085,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFontInfo (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ char *		lpszSupplier,
 	       /*[out]*/ char *		lpszTypeface,
@@ -1094,20 +1094,20 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetGhostscript (/*[out]*/ char *	lpszPath,
 		  /*[out]*/ unsigned long *	pVersionNumber);
 
 public:
   virtual
   string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetExpandedSearchPath (/*[in]*/ FileType	fileType);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindGraphicsRule (/*[in]*/ const char *	lpszFrom,
 		    /*[in]*/ const char *	lpszTo,
 		    /*[out]*/ char *	lpszRule,
@@ -1116,7 +1116,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConvertToBitmapFile (/*[in]*/ const char *	lpszSourceFileName,
 		       /*[out]*/ char *		lpszDestFileName,
 		       /*[in]*/ IRunProcessCallback *	pCallback);
@@ -1124,19 +1124,19 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   EnableFontMaker (/*[in]*/ bool enable);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMakeFontsFlag ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   MakeMakePkCommandLine (/*[in]*/ const char *	lpszFontName,
 			 /*[in]*/ int			dpi,
 			 /*[in]*/ int			baseDpi,
@@ -1149,7 +1149,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunBatch (/*[in]*/ int			argc,
 	    /*[in]*/ const char **	argv);
 #endif
@@ -1157,7 +1157,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunPerl (/*[in]*/ int			argc,
 	   /*[in]*/ const char **	argv);
 
@@ -1165,7 +1165,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 			 /*[in]*/ unsigned long	topic);
 #endif
@@ -1173,136 +1173,136 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNextFileTypeInfo (/*[in]*/ unsigned	index,
 		       /*[out]*/ FileTypeInfo &	fileTypeInfo);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFormatInfo (/*[in]*/ unsigned	index,
 		 /*[out]*/ FormatInfo &	formatInfo);
 
 public:
   virtual
   FormatInfo
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFormatInfo (/*[in]*/ const char *	lpszKey);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
 		    /*[out]*/ FormatInfo &	formatInfo);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeleteFormatInfo (/*[in]*/ const char *	lpszKey);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo);
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMyLocation ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunningAsAdministrator ();
 
 public:
   virtual
   TriState
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsSharedMiKTeXSetup ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo (/*[in]*/ int		idx,
 		    /*[out]*/ PaperSizeInfo &	paperSize);
 
 public:
   virtual
   PaperSizeInfo
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo (/*[in]*/ const char *	lpszName);
 
 public:
   virtual
   PolicyFlags
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPolicyFlags ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetDefaultPaperSize (/*[in]*/ const char * lpszDvipsName);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryCreateFromTemplate (/*[in]*/ const PathName & path);
 
 #if defined(MIKTEX_WINDOWS)
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunningAsPowerUser ();
 #endif
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsUserAnAdministrator ();
 
 #if defined(MIKTEX_WINDOWS)
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsUserAPowerUser ();
 #endif
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & pathIn,
 		 /*[in]*/ const PathName & pathOut);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetTheNameOfTheGame (/*[in]*/ const char * lpszTheNameOfTheGame);
 
 public:
   virtual
   string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetLocalFontDirectories ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & path);
 
   // -----------------------------------------------------------------------
@@ -1312,7 +1312,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunBatch (/*[in]*/ const char *	lpszName,
 	    /*[in]*/ const char *	lpszArguments);
 #endif

@@ -239,7 +239,6 @@ PathName::Compare (/*[in]*/ const char *	lpszPath1,
    _________________________________________________________________________ */
 
 PathName &
-MIKTEXCALL
 PathName::Convert (/*[in]*/ ConvertPathNameFlags	flags)
 {
   bool toUnix = ((flags & ConvertPathNameFlags::ToUnix) != 0 ? true : false);
@@ -666,7 +665,6 @@ PathName::GetExtension ()
    _________________________________________________________________________ */
 
 PathName &
-MIKTEXCALL
 PathName::SetExtension (/*[in]*/ const char *	lpszExtension,
 			/*[in]*/ bool		override)
 {
@@ -863,7 +861,7 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
    miktex_pathcmp
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_pathcmp (/*[in]*/ const char *	lpszPath1,
 		/*[in]*/ const char *	lpszPath2)
 {

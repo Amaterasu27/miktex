@@ -52,14 +52,14 @@ public:
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Read (/*[out]*/ void *	pBuf,
 	/*[in]*/ size_t		size);
 
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   OnNewChunk (/*[in]*/ DibChunk * pChunk);
 
 public:
@@ -83,7 +83,7 @@ private:
    _________________________________________________________________________ */
 
 size_t
-DIBCHUNKERCALL
+MIKTEXTHISCALL
 ChunkDib::Read (/*[out]*/ void *	pBuf,
 		/*[in]*/ size_t		size)
 {
@@ -96,7 +96,7 @@ ChunkDib::Read (/*[out]*/ void *	pBuf,
    _________________________________________________________________________ */
 
 void
-DIBCHUNKERCALL
+MIKTEXTHISCALL
 ChunkDib::OnNewChunk (/*[in]*/ DibChunk * pChunk)
 {
   nChunks += 1;

@@ -1,6 +1,6 @@
 /* PackageIterator.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -98,7 +98,6 @@ PackageIteratorImpl::~PackageIteratorImpl ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageIteratorImpl::Dispose ()
 {
 }
@@ -108,7 +107,6 @@ PackageIteratorImpl::Dispose ()
    PackageIterator::~PackageIterator
    _________________________________________________________________________ */
 
-MPMCALL
 PackageIterator::~PackageIterator ()
 {
 }

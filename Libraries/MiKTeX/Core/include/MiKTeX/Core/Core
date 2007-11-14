@@ -39,45 +39,7 @@
 #if ! defined(A089FEF06254514BA063DED44B70E66F_)
 #define A089FEF06254514BA063DED44B70E66F_
 
-#if ! defined(MIKTEX)
-#  define MIKTEX 1
-#endif
-
-#if defined(_WIN64)
-#  define MIKTEX_WINDOWS 1
-#  define MIKTEX_WINDOWS_64 1
-#elif defined(_WIN32)
-#  define MIKTEX_WINDOWS 1
-#  define MIKTEX_WINDOWS_32 1
-#else
-#  define MIKTEX_UNIX 1
-#endif
-
-#if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define MIKTEXEXPORT __declspec(dllimport)
-#  else
-#    define MIKTEXEXPORT
-#  endif
-#endif
-
-#if defined(_MSC_VER)
-#  define MIKTEXCALL __stdcall
-#  define MIKTEXCALLBACK __stdcall
-#  define MIKTEXDEPRECATED __declspec(deprecated)
-#  define MIKTEXINLINE __forceinline
-#  define MIKTEXNOVTABLE __declspec(novtable)
-#  define MIKTEXNORETURN __declspec(noreturn)
-#else
-#  define MIKTEXCALL
-#  define MIKTEXCALLBACK
-#  define MIKTEXDEPRECATED
-#  define MIKTEXINLINE inline
-#  define MIKTEXNOVTABLE
-#  define MIKTEXNORETURN
-#endif
-
-#define MIKTEXAPI(type) MIKTEXEXPORT type MIKTEXCALL
+#include <MiKTeX/Core/Definitions>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>
@@ -110,13 +72,18 @@
 #  pragma comment (lib, "shell32")
 #endif
 
-#if defined(__cplusplus)
-#  define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
-#  define MIKTEX_END_EXTERN_C_BLOCK }
-#else
-#  define MIKTEX_BEGIN_EXTERN_C_BLOCK
-#  define MIKTEX_END_EXTERN_C_BLOCK
+// DLL import/export switch
+#if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#    define MIKTEXCOREEXPORT __declspec(dllimport)
+#  else
+#    define MIKTEXCOREEXPORT
+#  endif
 #endif
+
+// API decoration for exported member functions
+#define MIKTEXCORETHISAPI(type) MIKTEXCOREEXPORT type MIKTEXTHISCALL
+#define MIKTEXCORECEEAPI(type) MIKTEXCOREEXPORT type MIKTEXCEECALL
 
 #define MIKTEX_CORE_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
@@ -136,88 +103,90 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK;
    support utilities which cannot be compiled with a C++ compiler.
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+#define MIKTEXCEEAPI(type) MIKTEXCOREEXPORT type MIKTEXCEECALL
+
+MIKTEXCEEAPI(void)
 miktex_create_temp_file_name (/*[out]*/ char *	lpszFileName);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
 				/*[out]*/ char *	lpszMnemonic,
 				/*[in]*/ size_t		bufSize);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_input_file (/*[in]*/ const char *	lpszApplicationNames,
 			/*[in]*/ const char *	lpszFileName,
 			/*[out]*/ char *	lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_enc_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_file (/*[in]*/ const char *	lpszFileName,
 		  /*[in]*/ const char *	lpszPathList,
 		  /*[out]*/ char *	lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_hbf_file (/*[in]*/ const char *	lpszFileName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_miktex_executable (/*[in]*/ const char *	lpszExeName,
 			       /*[out]*/ char *		lpszExePath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
 			   /*[in]*/ char *		lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_tfm_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXAPI(char *)
+MIKTEXCEEAPI(char *)
 miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
 			 /*[in]*/ const char *	lpszValueName,
 			 /*[out]*/ char *	lpszBuf,
 			 /*[in]*/ size_t	bufSize,
 			 /*[in]*/ const char *	lpszDefaultValue);
 
-MIKTEXAPI(unsigned)
+MIKTEXCEEAPI(unsigned)
 miktex_get_number_of_texmf_roots ();
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_get_gs_exe (/*[out]*/ char * lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
 				     /*[in]*/ size_t	maxsize);
 
-MIKTEXAPI(char *)
+MIKTEXCEEAPI(char *)
 miktex_get_root_directory (/*[in]*/  unsigned	r,
 			   /*[out]*/ char *	lpszPath);
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_pathcmp (/*[in]*/ const char *	lpszPath1,
 		/*[in]*/ const char *	lpszPath2);
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_remember_temp_file (/*[in]*/ const char *	lpszFileName);
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_replace_string (/*[out]*/ char *		lpszBuf,
 		       /*[in,out]*/ size_t *	lpSzeDest,
 		       /*[in]*/ const char *	lpszSource,
 		       /*[in]*/ const char *	lpszString1,
 		       /*[in]*/ const char *	lpszString2);
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_start_process (/*[in]*/ const char *	lpszFileName,
 		      /*[in]*/ const char *	lpszArguments,
 		      /*[in]*/ FILE *		pFileStandardInput,
@@ -226,7 +195,7 @@ miktex_start_process (/*[in]*/ const char *	lpszFileName,
 		      /*[out]*/ FILE **		ppFileStandardError,
 		      /*[in]*/ const char *	lpszWorkingDirectory);
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut);
 
@@ -690,9 +659,7 @@ struct VersionNumber
 
   /// Converts this version number into a string object.
   /// @return Returns the string object.
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(std::string)
   ToString ()
     const;
 
@@ -701,9 +668,7 @@ struct VersionNumber
   /// @param[out] The version number object to fill.
   /// @returns Returns true if the string could be parsed.
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   TryParse (/*[in]*/ const char * lpsz,
 	    /*[out]*/ VersionNumber &	versionNumber);
 
@@ -711,9 +676,7 @@ struct VersionNumber
   /// @param lpsz The string to parse.
   /// @returns Returns the parsed version number.
   static
-  MIKTEXEXPORT
-  VersionNumber
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(VersionNumber)
   Parse (/*[in]*/ const char * lpsz);
 };
 
@@ -902,8 +865,8 @@ class MiKTeXException : public std::exception
 {
   /// Initializes a new MiKTeX exception.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   MiKTeXException ();
 
   /// Initializes a new MiKTeXException object.
@@ -915,8 +878,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   MiKTeXException (/*[in]*/ const char *	lpszProgramInvocationName,
 		   /*[in]*/ const char *	lpszMessage,
 		   /*[in]*/ const char *	lpszInfo,
@@ -938,9 +901,9 @@ public:
   /// Destructor.
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~MiKTeXException ()
-  throw ()
+    throw ()
   {
   }
 
@@ -1012,13 +975,13 @@ private:
 class OperationCancelledException : public MiKTeXException
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   OperationCancelledException ();
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   OperationCancelledException
   (/*[in]*/ const char * lpszProgramInvocationName,
    /*[in]*/ const char *	lpszMessage,
@@ -1037,8 +1000,8 @@ class IOException : public MiKTeXException
 {
   /// Initializes a new IOException object.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   IOException ();
 
   /// Initializes a new IOException object.
@@ -1050,8 +1013,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   IOException (/*[in]*/ const char *	lpszProgramInvocationName,
 	       /*[in]*/ const char *	lpszMessage,
 	       /*[in]*/ const char *	lpszInfo,
@@ -1070,8 +1033,8 @@ class BrokenPipeException : public IOException
 {
   /// Initializes a new BrokenPipeException object.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   BrokenPipeException ();
 
   /// Initializes a new BrokenPipeException object.
@@ -1083,8 +1046,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   BrokenPipeException (/*[in]*/ const char *	lpszProgramInvocationName,
 		       /*[in]*/ const char *	lpszMessage,
 		       /*[in]*/ const char *	lpszInfo,
@@ -1103,8 +1066,8 @@ class FileNotFoundException : public IOException
 {
   /// Initializes a new FileNotFoundException object.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   FileNotFoundException ();
 
   /// Initializes a new FileNotFoundException object.
@@ -1116,8 +1079,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   FileNotFoundException (/*[in]*/ const char *	lpszProgramInvocationName,
 			 /*[in]*/ const char *	lpszMessage,
 			 /*[in]*/ const char *	lpszInfo,
@@ -1137,8 +1100,8 @@ class UnauthorizedAccessException : public MiKTeXException
 {
   /// Initializes a new UnauthorizedAccessException object.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   UnauthorizedAccessException ();
 
   /// Initializes a new UnauthorizedAccessException object.
@@ -1150,8 +1113,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   UnauthorizedAccessException
   (/*[in]*/ const char *	lpszProgramInvocationName,
    /*[in]*/ const char *	lpszMessage,
@@ -1171,8 +1134,8 @@ class SharingViolationException : public IOException
 {
   /// Initializes a new SharingViolationException object.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   SharingViolationException ();
 
   /// Initializes a new SharingViolationException object.
@@ -1184,8 +1147,8 @@ public:
   /// @param sourceLine The location within the source file where the
   /// exception was thrown.
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   SharingViolationException
   (/*[in]*/ const char *	lpszProgramInvocationName,
    /*[in]*/ const char *	lpszMessage,
@@ -1384,9 +1347,7 @@ PaperSizeInfo
 {
 public:
   static
-  MIKTEXEXPORT
-  PaperSizeInfo
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(PaperSizeInfo)
   Parse (/*[in]*/ const char *	lpsz);
 
   /// Paper name (e.g., "A4")
@@ -1423,9 +1384,7 @@ public:
   /// @param lpszSource The null-terminated string to be appended.
   /// @return Returns the length (in characters) of the result.
   static
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(size_t)
   AppendString (/*[in,out]*/ char *	lpszBuf,
 		/*[in]*/ size_t			bufSize,
 		/*[in]*/ const char *	lpszSource);
@@ -1438,9 +1397,7 @@ public:
   /// @param lpszString2 The replacement sub-string.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   ReplaceString (/*[out]*/ char *	lpszBuf,
 		 /*[in,out]*/ size_t &	bufSize,
 		 /*[in]*/ const char *	lpszSource,
@@ -1454,9 +1411,7 @@ public:
   /// @return Returns the length (in characters) of the result.
 public:
   static
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(size_t)
   CopyString (/*[out]*/ char *		lpszBuf,
 	      /*[in]*/ size_t		bufSize,
 	      /*[in]*/ const char *	lpszSource);
@@ -1468,9 +1423,7 @@ public:
   /// @return Returns the length (in characters) of the result.
 public:
   static
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(size_t)
   CopyString (/*[out]*/ char *		lpszBuf,
 	      /*[in]*/ size_t		bufSize,
 	      /*[in]*/ const wchar_t *	lpszSource);
@@ -1481,17 +1434,13 @@ public:
   /// @return Returns true if the environment variable exists.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   GetEnvironmentString (/*[in]*/ const char *		lpszName,
 			/*[out]*/ std::string &		str);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			/*[out]*/ PathName &	path);
 
@@ -1503,9 +1452,7 @@ public:
   /// @return Returns true if the environment variable exists.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			/*[out]*/ char *	lpszOut,
 			/*[in]*/ size_t		sizeOut);
@@ -1513,18 +1460,14 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   GetDefPrinter (/*[out]*/ char *		lpszPrinterName,
 		 /*[in,out]*/ size_t *		pBufferSize);
 #endif
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Contains (/*[in]*/ const char *	lpszList,
 	    /*[in]*/ const char *	lpszElement,
 	    /*[in]*/ const char *	lpszDelim,
@@ -1551,17 +1494,13 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   GetExeName ();
 
   /// Gets the MiKTeX version information as a string.
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   GetMiKTeXVersionString ();
 
   /// Gets the MiKTeX banner string.
@@ -1569,119 +1508,89 @@ public:
   /// @return Returns a string object.
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   GetMiKTeXBannerString ();
 
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   MakeProgramVersionString (/*[in]*/ const char *	lpszProgramName,
 			    /*[in]*/ const VersionNumber &	versionNumber);
 
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   GetOSVersionString ();
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   UncompressFile (/*[in]*/ const char *	lpszPathIn,
 		  /*[out]*/ PathName &	pathOut);
 
 public:
   static
-  MIKTEXEXPORT
-  const char *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(const char *)
   GetRelativizedPath (/*[in]*/ const char * lpszPath,
 		      /*[in]*/ const char * lpszRoot);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   GetUncRootFromPath (/*[in]*/ const char *	lpszPath,
 		      /*[out]*/ PathName &	uncRoot);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsAbsolutePath (/*[in]*/ const char *	lpszPath);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsParentDirectoryOf (/*[in]*/ const char * lpszParentDir,
 		       /*[in]*/ const char * lpszFileName);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   MakeTeXPathName (/*[in,out]*/ PathName &	path);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
 			/*[in]*/ const char *	lpszValue);
 
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   RemoveBlanksFromPathName (/*[in,out]*/ PathName &	path);
 #endif
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   PrintException (/*[in]*/ const std::exception &	e);
 
   /// Prints a MiKTeXException to the standard error stream.
   /// @param e Execption to print.  
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   PrintException (/*[in]*/ const MiKTeXException &	e);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ReadUntilDelim (/*[out]*/ std::string &	str,
 		  /*[in]*/ int			delim,
 		  /*[in]*/ FILE *		stream);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ReadLine (/*[out]*/ std::string &	str,
 	    /*[in]*/ FILE *		stream,
 	    /*[in]*/ bool		keepLineEnding);
@@ -1692,57 +1601,43 @@ public:
   /// @return Returns a string object.
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   FormatString (/*[in]*/ const char *	lpszFormat,
 		/*[in]*/ va_list	arglist);
 
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   Hexify (/*[in]*/ const void *	pv,
 	  /*[in]*/ size_t	nBytes,
 	  /*[in]*/ bool		lowerCase);
 
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   Hexify (/*[in]*/ const void *	pv,
 	  /*[in]*/ size_t	nBytes);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ParseDvipsMapLine (/*[in]*/ const std::string &	line,
 		     /*[out]*/ FontMapEntry &		fontMapEntry);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   RegisterMiKTeXUser ();
 
 public:
 #if defined(MIKTEX_WINDOWS)
   static
-  MIKTEXEXPORT
-  PathName
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(PathName)
   GetFolderPath (/*[in]*/ int	nFolder,
 		 /*[in]*/ int	nFallbackFolder,
 		 /*[in]*/ bool	getCurrentPath);
@@ -1750,26 +1645,20 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  std::wstring
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::wstring)
   UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
 
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  std::string
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::string)
   WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  std::wstring
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::wstring)
   AnsiToWideChar (/*[in]*/ const char * lpszAnsi);
 #endif
 
@@ -1795,23 +1684,17 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsAscii (/*[in]*/ const char * lpsz);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsAscii (/*[in]*/ const wchar_t * lpsz);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL 
+  MIKTEXCORECEEAPI(bool)
   IsUTF8 (/*[in]*/ const char * lpsz,
 	  /*[in]*/ bool		allowPureAscii);
 
@@ -1851,9 +1734,7 @@ public:
   /// @return Returns the MD5 of the file.
 public:
   static
-  MIKTEXEXPORT
-  MD5
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(MD5)
   FromFile (/*[in]*/ const char * lpszPath);
 
   /// Parses the string represention of an MD5.
@@ -1861,9 +1742,7 @@ public:
   /// @return Returns the MD5.
 public:
   static
-  MIKTEXEXPORT
-  MD5
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(MD5)
   Parse (/*[in]*/ const char * lpszHexString);
 
   /// Converts this MD5 into a string object.
@@ -2502,18 +2381,14 @@ public:
   /// Calculates the hash value of this PathName object.
   /// @return Returns the hash value.
 public:
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(size_t)
   GetHash ()
     const;
 
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Combine (/*[out]*/ char *		lpszPath,
 	   /*[in]*/ size_t		sizePath,
 	   /*[in]*/ const char *	lpszDrive,
@@ -2525,9 +2400,7 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Split (/*[in]*/ const char *	lpszPath,
 	 /*[out]*/ char *	lpszDrive,
 	 /*[in]*/ size_t	sizeDrive,
@@ -2541,9 +2414,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Split (/*[in]*/ const char *	lpszPath,
 	 /*[out]*/ char *	lpszDirectory,
 	 /*[in]*/ size_t	sizeDirectory,
@@ -2602,9 +2473,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Combine (/*[out]*/ char *		lpszPath,
 	   /*[in]*/ size_t		sizePath,
 	   /*[in]*/ const char *	lpszAbsPath,
@@ -2730,31 +2599,23 @@ public:
   /// Sets this PathName object equal to the current (working) directory.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   SetToCurrentDirectory ();
 
   /// Sets this PathName object equal to the temporary directory.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   SetToTempDirectory ();
 
   /// Sets this PathName object equal to the name of a temporary file.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   SetToTempFile ();
 
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   Convert (/*[in]*/ ConvertPathNameFlags	flags);
 
   /// Replaces backslashes with normal slashes.
@@ -2833,9 +2694,7 @@ public:
   /// @return Returns the file name extension. Returns 0, if the path name
   /// has no file name extension.
 public:
-  MIKTEXEXPORT
-  const char *
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(const char *)
   GetExtension ()
     const;
 
@@ -2845,9 +2704,7 @@ public:
   /// shall be overridden.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   SetExtension (/*[in]*/ const char *	lpszExtension,
 		/*[in]*/ bool		override);
 
@@ -2942,24 +2799,18 @@ public:
   /// Cuts off the last component from the path name.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   CutOffLastComponent ();
 
   /// Makes sure that this path name ends with a directory delimiter.
   /// @return Returns a reference to this object.
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   AppendDirectoryDelimiter ();
 
 #if defined(MIKTEX_WINDOWS)
 public:
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(PathName &)
   AppendAltDirectoryDelimiter ();
 #endif
 
@@ -2981,9 +2832,7 @@ public:
   /// Returns 0, if both prefixes compare equal.
   /// Returns 1, if the first prefix compares greater than the second.
   static
-  MIKTEXEXPORT
-  int
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(int)
   Compare (/*[in]*/ const char *	lpszPath1,
 	   /*[in]*/ const char *	lpszPath2,
 	   /*[in]*/ size_t		count);
@@ -3007,9 +2856,7 @@ public:
   /// Returns 1, if the first path name compares greater than the second.
 public:
   static
-  MIKTEXEXPORT
-  int
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(int)
   Compare (/*[in]*/ const char *	lpszPath1,
 	   /*[in]*/ const char *	lpszPath2);
 
@@ -3035,9 +2882,7 @@ public:
   /// @return Returns true, if the pattern matches.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Match (/*[in]*/ const char *	lpszPattern,
 	 /*[in]*/ const char *	lpszPath);
 
@@ -3091,27 +2936,23 @@ operator!= (/*[in]*/ const PathName & lhs,
 class Argv
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   Argv ();
 
 public:
-  MIKTEXEXPORT
   virtual
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~Argv ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Build (/*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ const char *	lpszArguments);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Append (/*[in]*/ const char *	lpszArguments);
 
 public:
@@ -3166,60 +3007,52 @@ class
 CommandLineBuilder
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   CommandLineBuilder ();
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   CommandLineBuilder (/*[in]*/ const CommandLineBuilder & other);
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~CommandLineBuilder ();
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   CommandLineBuilder (/*[in]*/ const char *	lpszArgument);
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   CommandLineBuilder (/*[in]*/ const char *	lpszArgument1,
 		      /*[in]*/ const char *	lpszArgument2);
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   CommandLineBuilder (/*[in]*/ const char *	lpszArgument1,
 		      /*[in]*/ const char *	lpszArgument2,
 		      /*[in]*/ const char *	lpszArgument3);
 
 public:
-  MIKTEXEXPORT
-  CommandLineBuilder &
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(CommandLineBuilder &)
   operator= (/*[in]*/ const CommandLineBuilder & othe);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   SetOptionConvention (/*[in]*/ OptionConvention optionConvention);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Clear ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendArgument (/*[in]*/ const char * lpszArgument);
 
 public:
@@ -3237,34 +3070,24 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendUnquoted (/*[in]*/ const char * lpszText);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendArguments (/*[in]*/ int				argc,
 		   /*[in]*/ const char * const *	argv);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendArguments (/*[in]*/ const std::vector<std::string> & argv);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendArguments (/*[in]*/ const Argv & argv);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendOption (/*[in]*/ const char * lpszOption,
 		/*[in]*/ const char * lpszValue);
 
@@ -3292,15 +3115,12 @@ public:
   }
   
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendStdoutRedirection (/*[in]*/ const char *	lpszPath,
 			   /*[in]*/ bool		append);
 
 public:
   void
-  MIKTEXCALL
   AppendStdoutRedirection (/*[in]*/ const PathName &	path,
 			   /*[in]*/ bool		append)
   {
@@ -3308,14 +3128,11 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AppendStdinRedirection (/*[in]*/ const char *	lpszPath);
 
 public:
   void
-  MIKTEXCALL
   AppendStdinRedirection (/*[in]*/ const PathName &	path)
   {
     AppendStdinRedirection (path.Get());
@@ -3336,9 +3153,7 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  const char *
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(const char *)
   Get ();
 
 private:
@@ -3496,7 +3311,7 @@ IFindFileCallback
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   InstallPackage (/*[in]*/ const char *	lpszPackageName,
 		  /*[in]*/ const char *	lpszTrigger)
     = 0;
@@ -3515,7 +3330,7 @@ IRunProcessCallback
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
     = 0;
@@ -3529,7 +3344,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessError (/*[in]*/ const void *	pError,
 		  /*[in]*/ size_t	n)
     = 0;
@@ -3543,7 +3358,7 @@ ICreateFndbCallback
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ReadDirectory (/*[in]*/ const char *	lpszPath,
 		 /*[out]*/ char * *	ppSubDirNames,
 		 /*[out]*/ char * *	ppFileNames,
@@ -3553,7 +3368,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory)
     = 0;
@@ -3566,7 +3381,7 @@ IEnumerateFndbCallback
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnFndbItem (/*[in]*/ const char *	lpszPath,
 	      /*[in]*/ const char *	lpszName,
 	      /*[in]*/ const char *	lpszInfo,
@@ -3663,20 +3478,20 @@ Cfg
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   AddRef ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Release ()
     = 0;
 
 protected:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Cfg ()
     = 0;
 
@@ -3684,16 +3499,14 @@ public:
   /// Creates a new Cfg object. The caller is responsible for deleting
   /// the object.
   static
-  MIKTEXEXPORT
-  Cfg *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Cfg *)
   Create ();
 
   /// Tests whether the Cfg object is empty.
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Empty ()
     = 0;
 
@@ -3701,14 +3514,14 @@ public:
 public:
   virtual
   MD5
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetDigest ()
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetOriginalDigest (/*[out]*/ MD5 & originalDigest)
     = 0;
 
@@ -3716,7 +3529,7 @@ public:
 public:
   virtual
   std::string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName)
     = 0;
@@ -3725,7 +3538,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ char *		lpszValue,
@@ -3736,7 +3549,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ std::string &	value)
@@ -3746,7 +3559,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ PathName &	path)
@@ -3756,7 +3569,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetModified (/*[in]*/ bool b)
     = 0;
 
@@ -3764,7 +3577,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsModified ()
     = 0;
 
@@ -3772,7 +3585,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PutValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName,
 	    /*[in]*/ const char *	lpszValue)
@@ -3782,7 +3595,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Read (/*[in]*/ const PathName &	path)
     = 0;
 
@@ -3790,7 +3603,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Write (/*[in]*/ const PathName & 	path)
     = 0;
 
@@ -3798,7 +3611,7 @@ public:
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FirstKey (/*[out]*/ char *	lpsz,
 	    /*[in]*/ size_t		bufSize)
     = 0;
@@ -3807,7 +3620,7 @@ public:
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   NextKey (/*[out]*/ char *	lpsz,
 	   /*[in]*/ size_t	bufSize)
     = 0;
@@ -3816,7 +3629,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeleteKey (/*[in]*/ const char * lpszKey)
     = 0;
 
@@ -3824,7 +3637,7 @@ public:
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FirstValue (/*[in]*/ const char *	lpszKey,
 	      /*[out]*/ char *		lpszValueName,
 	      /*[in]*/ size_t		valueNameSize)
@@ -3834,7 +3647,7 @@ public:
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   NextValue (/*[out]*/ char *	lpszValueName,
 	     /*[in]*/ size_t		valueNameSize)
     = 0;
@@ -3879,50 +3692,38 @@ Directory
   /// Creates a new directory.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Create (/*[in]*/ const PathName &	path);
 
   /// Gets the current (working) directory.
 public:
   static
-  MIKTEXEXPORT
-  PathName
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(PathName)
   GetCurrentDirectory ();
 
   /// Sets the current (working) directory.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetCurrentDirectory (/*[in]*/ const PathName &	path);
 
   /// Deletes a directory.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Delete (/*[in]*/ const PathName &	path);
 
   /// Deletes a directory (recursively).
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Delete (/*[in]*/ const PathName &	path,
 	  /*[in]*/ bool			recursive);
 
   /// Tests if a directory exists.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Exists (/*[in]*/ const PathName &	path);
 };
 
@@ -3961,8 +3762,8 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~StdioFile ();
 
 public:
@@ -3974,15 +3775,11 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   AddRef ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Release ();
 
 private:
@@ -4007,14 +3804,14 @@ Stream
 {
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Stream ()
     = 0;
 
 public:
   virtual
   size_t
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Read (/*[out]*/ void *	pBytes,
 	/*[in]*/ size_t		count)
     = 0;
@@ -4022,7 +3819,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Write (/*[in]*/ const void *		pBytes,
 	 /*[in]*/ size_t		count)
     = 0;
@@ -4030,7 +3827,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Seek (/*[in]*/ long		offset,
 	/*[in]*/ SeekOrigin	origin)
     = 0;
@@ -4038,7 +3835,7 @@ public:
 public:
   virtual
   long
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPosition ()
     = 0;
 };
@@ -4066,58 +3863,44 @@ public:
 
 public:
   virtual
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~FileStream ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Attach (/*[in]*/ FILE * pFile);
 
   /// Closes the encapsulated stream (except for stdin/stdout/stderr).
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Close ();
 
 public:
   virtual
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(size_t)
   Read (/*[out]*/ void *	pBytes,
 	/*[in]*/ size_t		count);
 
 public:
   virtual
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Write (/*[in]*/ const void *		pBytes,
 	 /*[in]*/ size_t		count);
 
 public:
   virtual
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Seek (/*[in]*/ long		offset,
 	/*[in]*/ SeekOrigin	origin);
 
 public:
   virtual
-  MIKTEXEXPORT
-  long
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(long)
   GetPosition ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   SetBinary ();
 
 public:
@@ -4150,51 +3933,43 @@ class
 BZip2Stream : public Stream
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   BZip2Stream (/*[in]*/ const FileStream &	fileStream,
 	       /*[in]*/ bool			reading);
 
 public:
   virtual
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~BZip2Stream ();
 
 public:
   virtual
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(size_t)
   Read (/*[out]*/ void *	pBytes,
 	/*[in]*/ size_t		count);
 
 public:
   virtual
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Write (/*[in]*/ const void *		pBytes,
 	 /*[in]*/ size_t		count);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Seek (/*[in]*/ long		offset,
 	/*[in]*/ SeekOrigin	origin);
 
 public:
   virtual
-  MIKTEXEXPORT
-  long
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(long)
   GetPosition ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Close ();
 
 private:
@@ -4213,51 +3988,43 @@ class
 LzmaStream : public Stream
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   LzmaStream (/*[in]*/ const FileStream &	fileStream,
 	      /*[in]*/ bool			reading);
 
 public:
   virtual
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~LzmaStream ();
 
 public:
   virtual
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(size_t)
   Read (/*[out]*/ void *	pBytes,
 	/*[in]*/ size_t		count);
 
 public:
   virtual
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Write (/*[in]*/ const void *		pBytes,
 	 /*[in]*/ size_t		count);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Seek (/*[in]*/ long		offset,
 	/*[in]*/ SeekOrigin	origin);
 
 public:
   virtual
-  MIKTEXEXPORT
-  long
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(long)
   GetPosition ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Close ();
 
 private:
@@ -4281,13 +4048,13 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   StreamReader (/*[in]*/ const PathName & path);
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   StreamReader (/*[in]*/ const char * lpszPath);
 
 public:
@@ -4304,20 +4071,16 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~StreamReader ();
 
 public:
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(bool)
   ReadLine (/*[out]*/ std::string & line);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Close ();
 
 private:
@@ -4338,8 +4101,8 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   StreamWriter (/*[in]*/ const PathName & path);
 
 public:
@@ -4364,52 +4127,42 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~StreamWriter ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Write (/*[in]*/ char ch);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Write (/*[in]*/ const std::string & line);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   WriteLine (/*[in]*/ const std::string & line);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   WriteLine ();
 
 public:
-  MIKTEXEXPORT
+  MIKTEXCOREEXPORT
   void
-  MIKTEXCALL
+  MIKTEXCEECALL
   WriteFormatted (/*[in]*/ const char *	lpszFormat,
 		  /*[in]*/		...);
 
 public:
-  MIKTEXEXPORT
+  MIKTEXCOREEXPORT
   void
-  MIKTEXCALL
+  MIKTEXCEECALL
   WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
 		      /*[in]*/			...);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Close ();
 
 private:
@@ -4429,24 +4182,18 @@ File
   /// Deletes a file.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Delete (/*[in]*/ const PathName &	path);
   
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Delete (/*[in]*/ const PathName &	path,
 	  /*[in]*/ bool			tryHarder);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Delete (/*[in]*/ const PathName &	path,
 	  /*[in]*/ bool			tryHarder,
 	  /*[in]*/ bool			updateFndb);
@@ -4454,57 +4201,43 @@ public:
   /// Tests if a file exists.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Exists (/*[in]*/ const PathName &	path);
     
 public:
   static
-  MIKTEXEXPORT
-  FileAttributes
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(FileAttributes)
   GetAttributes (/*[in]*/ const PathName &	path);
 
 public:
   static
-  MIKTEXEXPORT
-  unsigned long
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(unsigned long)
   GetNativeAttributes (/*[in]*/ const PathName &	path);
 
   /// Gets the size of a file.
 public:
   static
-  MIKTEXEXPORT
-  size_t
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(size_t)
   GetSize (/*[in]*/ const PathName & path);
 
   /// Renames a file.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Move (/*[in]*/ const PathName &	source,
 	/*[in]*/ const PathName &	dest);
 
   /// Copies a file.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Copy (/*[in]*/ const PathName &	source,
 	/*[in]*/ const PathName &	dest);
 
   /// Copies a file (preserving attributes).
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Copy (/*[in]*/ const PathName &	source,
 	/*[in]*/ const PathName &	dest,
 	/*[in]*/ bool			preserveAttributes);
@@ -4512,9 +4245,7 @@ public:
   /// Opens a text stream on a file.
 public:
   static
-  MIKTEXEXPORT
-  FILE *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(FILE *)
   Open (/*[in]*/ const PathName &	path,
 	/*[in]*/ FileMode		mode,
 	/*[in]*/ FileAccess		access);
@@ -4522,9 +4253,7 @@ public:
   /// Opens a stream on a file.
 public:
   static
-  MIKTEXEXPORT
-  FILE *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(FILE *)
   Open (/*[in]*/ const PathName &	path,
 	/*[in]*/ FileMode		mode,
 	/*[in]*/ FileAccess		access,
@@ -4533,9 +4262,7 @@ public:
   /// Opens a stream on a file.
 public:
   static
-  MIKTEXEXPORT
-  FILE *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(FILE *)
   Open (/*[in]*/ const PathName &	path,
 	/*[in]*/ FileMode		mode,
 	/*[in]*/ FileAccess		access,
@@ -4545,26 +4272,20 @@ public:
   /// Sets file attributes.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetAttributes (/*[in]*/ const PathName &		path,
 		 /*[in]*/ FileAttributes		attributes);
 
   /// Sets native file attributes.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetNativeAttributes (/*[in]*/ const PathName &	path,
 		       /*[in]*/ unsigned long		nativeAttributes);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetTimes (/*[in]*/ int			fd,
 	    /*[in]*/ time_t			creationTime,
 	    /*[in]*/ time_t			lastAccessTime,
@@ -4572,9 +4293,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetTimes (/*[in]*/ FILE *			stream,
 	    /*[in]*/ time_t			creationTime,
 	    /*[in]*/ time_t			lastAccessTime,
@@ -4583,9 +4302,7 @@ public:
   /// Set file time-stamps.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetTimes (/*[in]*/ const PathName &		path,
 	    /*[in]*/ time_t			creationTime,
 	    /*[in]*/ time_t			lastAccessTime,
@@ -4594,9 +4311,7 @@ public:
   /// Gets file time-stamps.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   GetTimes (/*[in]*/ const PathName &		path,
 	    /*[out]*/ time_t &			creationTime,
 	    /*[out]*/ time_t &			lastAccessTime,
@@ -4619,9 +4334,7 @@ public:
   /// @return Returns the read bytes.
 public:
   static
-  MIKTEXEXPORT
-  std::vector<unsigned char>
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(std::vector<unsigned char>)
   ReadAllBytes (/*[in]*/ const PathName &		path);
 };
 
@@ -4636,9 +4349,7 @@ Fndb
 {
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Add (/*[in]*/ const char *	lpszPath);
 
 public:
@@ -4651,9 +4362,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Add (/*[in]*/ const char *	lpszPath,
        /*[in]*/ const char *	lpszFileNameInfo);
 
@@ -4668,9 +4377,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Create (/*[in]*/ const char *			lpszFndbPath,
 	  /*[in]*/ const char *			lpszRootPath,
 	  /*[in]*/ ICreateFndbCallback *	pCallback);
@@ -4687,9 +4394,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Create (/*[in]*/ const char *			lpszFndbPath,
 	  /*[in]*/ const char *			lpszRootPath,
 	  /*[in]*/ ICreateFndbCallback *	pCallback,
@@ -4698,9 +4403,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Enumerate (/*[in]*/ const char *		lpszPath,
 	     /*[in]*/ IEnumerateFndbCallback *	pCallback);
   
@@ -4715,24 +4418,18 @@ public:
   
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Refresh (/*[in]*/ const PathName &		path,
 	   /*[in]*/ ICreateFndbCallback *	pCallback);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Refresh (/*[in]*/ ICreateFndbCallback *	pCallback);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Remove (/*[in]*/ const char *	lpszPath);
 
 public:
@@ -4745,9 +4442,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   FileExists (/*[in]*/ const PathName &	path);
 };
 
@@ -4790,7 +4485,7 @@ DirectoryLister
   /// Destructor.
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~DirectoryLister ()
     = 0;
 
@@ -4798,7 +4493,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ()
     = 0;
 
@@ -4809,7 +4504,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry & direntry)
     = 0;
   
@@ -4820,7 +4515,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
     = 0;
   
@@ -4830,9 +4525,7 @@ public:
   /// @return Returns the DirectoryLister object.
 public:
   static
-  MIKTEXEXPORT
-  DirectoryLister *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(DirectoryLister *)
   Open (/*[in]*/ const PathName & directory);
 
   /// Creates a DirectoryLister object. The caller is responsible for deleting
@@ -4842,9 +4535,7 @@ public:
   /// @return Returns the DirectoryLister object.
 public:
   static
-  MIKTEXEXPORT
-  DirectoryLister *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(DirectoryLister *)
   Open (/*[in]*/ const PathName &	directory,
 	/*[in]*/ const char *		lpszPattern);
 };
@@ -4862,7 +4553,7 @@ MemoryMappedFile
   /// Destructor.
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~MemoryMappedFile ()
     = 0;
 
@@ -4874,7 +4565,7 @@ public:
 public:
   virtual
   void *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Open (/*[in]*/ const char *	lpszPath,
 	/*[in]*/ bool		readWrite)
     = 0;
@@ -4891,7 +4582,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ()
     = 0;
 
@@ -4901,7 +4592,7 @@ public:
 public:
   virtual
   void *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Resize (/*[in]*/ size_t newSize)
     = 0;
 
@@ -4910,14 +4601,14 @@ public:
 public:
   virtual
   void *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPtr ()
     = 0;
 
 public:
   virtual
   const char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetName ()
     = 0;
 
@@ -4926,7 +4617,7 @@ public:
 public:
   virtual
   size_t
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetSize ()
     = 0;
 
@@ -4934,7 +4625,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Flush ()
     = 0;
 
@@ -4943,9 +4634,7 @@ public:
   /// @return Returns the MemoryMappedFile object.
 public:
   static
-  MIKTEXEXPORT
-  MemoryMappedFile *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(MemoryMappedFile *)
   Create ();
 };
 
@@ -4962,7 +4651,7 @@ Thread
   /// Destructor.
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Thread ()
     = 0;
 
@@ -4970,7 +4659,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Join ()
     = 0;
 
@@ -4981,9 +4670,7 @@ public:
   /// responsoble for deleting the object.
 public:
   static
-  MIKTEXEXPORT
-  Thread *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Thread *)
   Start (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
 	 /*[in]*/ void * argument);
 
@@ -4992,16 +4679,12 @@ public:
   /// should be suspended.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Sleep (/*[in]*/ int milliseconds);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   IsCurrentThread (/*[in]*/ Thread * pThread);
 };
 
@@ -5083,14 +4766,14 @@ Process
 {
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Process ()
     = 0;
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardInput ()
     = 0;
 
@@ -5100,14 +4783,14 @@ public:
   /// the output was not redirected.
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardOutput ()
     = 0;
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardError ()
     = 0;
 
@@ -5115,7 +4798,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit ()
     = 0;
 
@@ -5123,7 +4806,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit (/*[in]*/ int milliseconds)
     = 0;
 
@@ -5132,14 +4815,14 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_ExitCode ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ()
     = 0;
 
@@ -5147,9 +4830,7 @@ public:
   /// @param lpszCommandLine Command to be executed.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   StartSystemCommand (/*[in]*/ const char *	lpszCommandLine);
 
   /// Executes the system shell to execute a command.
@@ -5157,9 +4838,7 @@ public:
   /// @return Returns true, if the command exited successfully.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine);
 
   /// Executes the system shell to execute a command.
@@ -5171,9 +4850,7 @@ public:
   /// if pExitCode isn't null.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
 			/*[out]*/ int *			pExitCode);
 
@@ -5186,9 +4863,7 @@ public:
   /// if pExitCode isn't null.
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   ExecuteSystemCommand (/*[in]*/ const char *		lpszCommandLine,
 			/*[out]*/ int *			pExitCode,
 			/*[in]*/ IRunProcessCallback *	pCallback,
@@ -5200,9 +4875,7 @@ public:
   /// the process.
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const char *		lpszArguments);
 
@@ -5216,18 +4889,14 @@ public:
   
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const char *		lpszArguments,
        /*[int]*/ IRunProcessCallback *	pCallback);
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const char *		lpszArguments,
        /*[int]*/ IRunProcessCallback *	pCallback,
@@ -5236,9 +4905,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(bool)
   Run (/*[in]*/ const PathName &	fileName,
        /*[in]*/ const char *		lpszArguments,
        /*[out]*/ void *			pBuf,
@@ -5247,16 +4914,12 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  Process *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Process *)
   Start (/*[in]*/ const ProcessStartInfo & startinfo);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Start (/*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ const char *	lpszArguments,
 	 /*[in]*/ FILE *	pFileStandardInput,
@@ -5325,27 +4988,23 @@ class
 ScratchDirectory
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ScratchDirectory ();
 
 public:
   virtual
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~ScratchDirectory ();
 
 public:
   static
-  MIKTEXEXPORT
-  PathName &
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(PathName &)
   Create (/*[out]*/ PathName &	path);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Enter (/*[in]*/ const char *	lpszPrefix);
 
 public:
@@ -5356,9 +5015,7 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Leave ();
 
 private:
@@ -5376,49 +5033,45 @@ TraceStream
 {
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~TraceStream ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Enable (/*[in]*/ bool		enable)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsEnabled ()
     = 0;
 
 public:
   static
-  MIKTEXEXPORT
-  TraceStream *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(TraceStream *)
   Open (/*[in]*/ const char *	lpszName);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   SetTraceFlags (/*[in]*/ const char *	lpszOptions);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Write (/*[in]*/ const char *	lpszFacility,
 	 /*[in]*/ const char *	lpszText)
     = 0;
@@ -5426,7 +5079,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WriteLine (/*[in]*/ const char *	lpszFacility,
 	     /*[in]*/ const char *	lpszText)
     = 0;
@@ -5434,7 +5087,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXCEECALL
   WriteFormattedLine (/*[in]*/ const char *	lpszFacility,
 		      /*[in]*/ const char *	lpszFormat,
 		      /*[in]*/			...)
@@ -5442,9 +5095,7 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   TraceLastCRTError (/*[in]*/ const char *	lpszCrtFunction,
 		     /*[in]*/ const char *	lpszInfo,
 		     /*[in]*/ const char *	lpszSourceFile,
@@ -5453,9 +5104,7 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   TraceLastWin32Error (/*[in]*/ const char *	lpszWindowsFunction,
 		       /*[in]*/ const char *	lpszInfo,
 		       /*[in]*/ const char *	lpszSourceFile,
@@ -5465,7 +5114,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   VTrace (/*[in]*/ const char *	lpszFacility,
 	  /*[in]*/ const char *	lpszFormat,
 	  /*[in]*/ va_list	arglist)
@@ -5672,56 +5321,48 @@ public:
 
 public:
   static
-  MIKTEXEXPORT
-  Session *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Session *)
   Get ();
 
 public:
   static
-  MIKTEXEXPORT
-  Session *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Session *)
   TryGet ();
 
 public:
   static
-  MIKTEXEXPORT
-  Session *
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(Session *)
   Get (/*[in]*/ const InitInfo & initInfo);
 
 public:
   static
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORECEEAPI(void)
   Release (/*[in]*/ Session * pSession);
 
 protected:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Session ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PushAppName (/*[in]*/ const char *	lpszAppName)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PushBackAppName (/*[in]*/ const char *	lpszAppName)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ bool		bAtEnd)
     = 0;
@@ -5732,7 +5373,7 @@ public:
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetSpecialPath (/*[in]*/ SpecialPath		specialPath)
     = 0;
 
@@ -5740,14 +5381,14 @@ public:
 public:
   virtual
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNumberOfTEXMFRoots ()
     = 0;
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetRootDirectory (/*[in]*/ unsigned	r)
     = 0;
 
@@ -5755,14 +5396,14 @@ public:
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMpmDatabasePathName ()
     = 0;
 
 public:
   virtual
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeriveTEXMFRoot (/*[in]*/ const PathName & path)
     = 0;
 
@@ -5772,7 +5413,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFilenameDatabase (/*[in]*/ unsigned	r,
 			/*[out]*/ PathName &	path)
     = 0;
@@ -5783,7 +5424,7 @@ public:
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFilenameDatabasePathName (/*[in]*/ unsigned	r)
     = 0;
 
@@ -5793,7 +5434,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   UnloadFilenameDatabase ()
     = 0;
 
@@ -5805,7 +5446,7 @@ public:
 public:
   virtual
   unsigned
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SplitTEXMFPath (/*[in]*/ const PathName &	path,
 		  /*[out]*/ PathName &		root,
 		  /*[out]*/ PathName &		relative)
@@ -5814,14 +5455,14 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const std::string &	roots)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const StartupConfig &	startupConfig,
 			   /*[in]*/ bool			sessionOnly)
     = 0;
@@ -5829,14 +5470,14 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsMiKTeXDirect ()
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMETAFONTMode (/*[in]*/ unsigned		idx,
 		   /*[out]*/ MIKTEXMFMODE *	pMode)
     = 0;
@@ -5844,7 +5485,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DetermineMETAFONTMode (/*[in]*/ unsigned		dpi,
 			 /*[out]*/ MIKTEXMFMODE *	pMode)
     = 0;
@@ -5852,7 +5493,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		     /*[in]*/ const char *	lpszValueName,
 		     /*[out]*/ std::string &	value)
@@ -5861,7 +5502,7 @@ public:
 public:
   virtual
   std::string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ const char *	lpszDefaultValue)
@@ -5870,7 +5511,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ int		defaultValue)
@@ -5879,7 +5520,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ bool		defaultValue)
@@ -5888,7 +5529,7 @@ public:
 public:
   virtual
   TriState
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 		  /*[in]*/ const char *	lpszValueName,
 		  /*[in]*/ TriState	defaultValue)
@@ -5897,7 +5538,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ const char *	lpszValue)
@@ -5906,7 +5547,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ bool			value)
@@ -5915,7 +5556,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ int			value)
@@ -5924,14 +5565,14 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SharedMiKTeXSetup (/*[in]*/ bool shared)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SharedMiKTeXSetup (/*[in]*/ bool shared,
 		     /*[in]*/ bool sessionOnly)
     = 0;
@@ -5939,7 +5580,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
@@ -5949,7 +5590,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode	mode,
 	       /*[in]*/ FileAccess	access,
@@ -5959,7 +5600,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OpenFile (/*[in]*/ const char *	lpszPath,
 	    /*[in]*/ FileMode		mode,
 	    /*[in]*/ FileAccess		access,
@@ -5970,7 +5611,7 @@ public:
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryOpenFile (/*[in]*/ const char *	lpszPath,
 	       /*[in]*/ FileMode	mode,
 	       /*[in]*/ FileAccess	access,
@@ -5981,14 +5622,14 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   CloseFile (/*[in]*/ FILE *	pFile)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsOutputFile (/*[in]*/ const FILE *	pFile)
     = 0;
 
@@ -5996,7 +5637,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsFileAlreadyOpen (/*[in]*/ const char *	lpszFileName)
     = 0;
 #endif
@@ -6005,7 +5646,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ScheduleFileRemoval (/*[in]*/ const char *	lpszFileName)
     = 0;
 #endif
@@ -6013,21 +5654,21 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   StartFileInfoRecorder (/*[in]*/ bool bRecordPackageNames)
     = 0;
 
 public:
   virtual
   std::vector<FileInfoRecord>
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFileInfoRecords ()
     = 0;
 
 public:
   virtual
   FileType
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeriveFileType (/*[in]*/ const char * lpszPath)
     = 0;
 
@@ -6038,7 +5679,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
 	    /*[out]*/ PathName &	path)
@@ -6060,7 +5701,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathName &	path)
@@ -6078,7 +5719,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindPkFile (/*[in]*/ const char *	lpszFontName,
 	      /*[in]*/ const char *	lpszMode,
 	      /*[in]*/ int		dpi,
@@ -6088,7 +5729,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindTfmFile (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ PathName &	path,
 	       /*[in]*/ bool		create)
@@ -6097,14 +5738,14 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetFindFileCallback (/*[in]*/ IFindFileCallback *	pCallback)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SplitFontPath (/*[in]*/ const char *	lpszFontPath,
 		 /*[out]*/ char *	lpszFontType,
 		 /*[out]*/ char *	lpszSupplier,
@@ -6116,7 +5757,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFontInfo (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ char *		lpszSupplier,
 	       /*[out]*/ char *		lpszTypeface,
@@ -6126,7 +5767,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetGhostscript (/*[out]*/ char *		lpszPath,
 		  /*[out]*/ unsigned long *	pVersionNumber)
     = 0;
@@ -6134,14 +5775,14 @@ public:
 public:
   virtual
   std::string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetExpandedSearchPath (/*[in]*/ FileType	fileType)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FindGraphicsRule (/*[in]*/ const char *	lpszFrom,
 		    /*[in]*/ const char *	lpszTo,
 		    /*[out]*/ char *		lpszRule,
@@ -6151,7 +5792,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConvertToBitmapFile (/*[in]*/ const char *		lpszSourceFileName,
 		       /*[out]*/ char *			lpszDestFileName,
 		       /*[in]*/ IRunProcessCallback *	pCallback)
@@ -6160,21 +5801,21 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   EnableFontMaker (/*[in]*/ bool enable)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMakeFontsFlag ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   MakeMakePkCommandLine (/*[in]*/ const char *	lpszFontName,
 			 /*[in]*/ int		dpi,
 			 /*[in]*/ int		baseDpi,
@@ -6188,7 +5829,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunBatch (/*[in]*/ int		argc,
 	    /*[in]*/ const char **	argv)
     = 0;
@@ -6197,7 +5838,7 @@ public:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunPerl (/*[in]*/ int			argc,
 	   /*[in]*/ const char **	argv)
     = 0;
@@ -6206,7 +5847,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 			 /*[in]*/ unsigned long	topic)
     = 0;
@@ -6215,7 +5856,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNextFileTypeInfo (/*[in]*/ unsigned	index,
 		       /*[out]*/ FileTypeInfo &	fileTypeInfo)
     = 0;
@@ -6223,7 +5864,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFormatInfo (/*[in]*/ unsigned	index,
 		 /*[out]*/ FormatInfo &	formatInfo)
     = 0;
@@ -6231,14 +5872,14 @@ public:
 public:
   virtual
   FormatInfo
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetFormatInfo (/*[in]*/ const char *	lpszKey)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
 		    /*[out]*/ FormatInfo &	formatInfo)
     = 0;
@@ -6246,42 +5887,42 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeleteFormatInfo (/*[in]*/ const char *	lpszKey)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
     = 0;
 
 public:
   virtual
   PathName
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetMyLocation ()
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunningAsAdministrator ()
     = 0;
 
 public:
   virtual
   TriState
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsSharedMiKTeXSetup ()
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo (/*[in]*/ int		idx,
 		    /*[out]*/ PaperSizeInfo &	paperSize)
     = 0;
@@ -6289,28 +5930,28 @@ public:
 public:
   virtual
   PaperSizeInfo
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo (/*[in]*/ const char *	lpszDvipsName)
     = 0;
 
 public:
   virtual
   PolicyFlags
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPolicyFlags ()
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetDefaultPaperSize (/*[in]*/ const char * lpszDvipsName)
     = 0;
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryCreateFromTemplate (/*[in]*/ const PathName & path)
     = 0;
 
@@ -6318,7 +5959,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunningAsPowerUser ()
     = 0;
 #endif
@@ -6326,7 +5967,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsUserAnAdministrator ()
     = 0;
 
@@ -6334,7 +5975,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsUserAPowerUser ()
     = 0;
 #endif
@@ -6342,7 +5983,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & pathIn,
 		 /*[in]*/ const PathName & pathOut)
     = 0;
@@ -6350,30 +5991,30 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & pathRel)
     = 0;
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetTheNameOfTheGame (/*[in]*/ const char * lpszTheNameOfTheGame)
     = 0;
 
 public:
   virtual
   std::string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetLocalFontDirectories ()
     = 0;
 
 public:
   static
-  MIKTEXEXPORT
-  void
+  MIKTEXCOREEXPORT
   MIKTEXNORETURN
-  MIKTEXCALL
+  void
+  MIKTEXCEECALL
   FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
 		 /*[in]*/ const char *	lpszInfo,
 		 /*[in]*/ const char *	lpszSourceFile,
@@ -6381,10 +6022,10 @@ public:
   
 public:
   static
-  MIKTEXEXPORT
-  void
+  MIKTEXCOREEXPORT
   MIKTEXNORETURN
-  MIKTEXCALL
+  void
+  MIKTEXCEECALL
   FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
 		 /*[in]*/ int		errorCode,
 		 /*[in]*/ const char *	lpszInfo,
@@ -6393,10 +6034,10 @@ public:
   
 public:
   static
-  MIKTEXEXPORT
-  void
+  MIKTEXCOREEXPORT
   MIKTEXNORETURN
-  MIKTEXCALL
+  void
+  MIKTEXCEECALL
   FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 		    /*[in]*/ const char *	lpszMessage,
 		    /*[in]*/ const char *	lpszInfo,
@@ -6406,10 +6047,10 @@ public:
 #if defined(MIKTEX_WINDOWS)  
 public:
   static
-  MIKTEXEXPORT
-  void
+  MIKTEXCOREEXPORT
   MIKTEXNORETURN
-  MIKTEXCALL
+  void
+  MIKTEXCEECALL
   FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		     /*[in]*/ const char *	lpszInfo,
 		     /*[in]*/ const char *	lpszSourceFile,
@@ -6419,10 +6060,10 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
-  MIKTEXEXPORT
-  void
+  MIKTEXCOREEXPORT
   MIKTEXNORETURN
-  MIKTEXCALL
+  void
+  MIKTEXCEECALL
   FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		     /*[in]*/ unsigned long	errorCode,
 		     /*[in]*/ const char *	lpszInfo,
@@ -6443,7 +6084,7 @@ Session2 : public Session
 {
 protected:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~Session2 ()
     = 0;
 
@@ -6451,7 +6092,7 @@ protected:
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   RunBatch (/*[in]*/ const char *	lpszName,
 	    /*[in]*/ const char *	lpszArguments)
     = 0;
@@ -6680,9 +6321,7 @@ public:
   }
 
 private:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Initialize_ ();
 
 public:
@@ -6694,15 +6333,11 @@ public:
   }
   
 private:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Delete_ ();
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Enter ();
 
 public:
@@ -6713,9 +6348,7 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Leave ();
 
 public:
@@ -6824,15 +6457,13 @@ class Tokenizer
   : protected CharBuffer<char, 512>
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   Tokenizer (/*[in]*/ const char * lpsz,
 	     /*[in]*/ const char * lpszDelim);
 
 public:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   SetDelim (const char * lpszDelim);
 
 public:
@@ -6844,14 +6475,12 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  const char *
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(const char *)
   operator++ ();
 
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   ~Tokenizer ();
 
 private:
@@ -6938,8 +6567,8 @@ IsDirectoryDelimiter (/*[in]*/ int ch)
 class PathNameParser
 {
 public:
-  MIKTEXEXPORT
-  MIKTEXCALL
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
   PathNameParser (/*[in]*/ const char * lpszPath);
 
 public:
@@ -6951,9 +6580,7 @@ public:
   }
 
 public:
-  MIKTEXEXPORT
-  const char *
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(const char *)
   operator++ ();
 
 private:
@@ -7061,16 +6688,12 @@ private:
   enum { BUFSIZE = 30 };
 
 private:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Init (/*[in]*/ long long	num,
 	/*[in]*/ bool		hex);
 
 private:
-  MIKTEXEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXCORETHISAPI(void)
   Init (/*[in]*/ double		num);
 
 public:

@@ -122,7 +122,6 @@ comPackageInstaller::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
    _________________________________________________________________________ */
 
 void
-MPMCALL
 comPackageInstaller::ReportLine (/*[in]*/ const char * lpszLine)
 {
   if (pCallback == 0)
@@ -142,7 +141,6 @@ comPackageInstaller::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 comPackageInstaller::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   if (pCallback == 0)
@@ -164,7 +162,6 @@ comPackageInstaller::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 comPackageInstaller::OnProgress (/*[in]*/ Notification	nf)
 {
   if (pCallback == 0)

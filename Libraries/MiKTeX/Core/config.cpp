@@ -1105,7 +1105,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
    Get a configuration parameter.
    _________________________________________________________________________ */
 
-MIKTEXAPI(char *)
+MIKTEXCEEAPI(char *)
 miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
 			 /*[in]*/ const char *	lpszValueName,
 			 /*[out]*/ char *	lpszBuf,

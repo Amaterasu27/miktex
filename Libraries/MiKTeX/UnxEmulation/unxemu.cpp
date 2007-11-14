@@ -53,7 +53,7 @@ struct DIR_
    closedir
    _________________________________________________________________________ */
 
-MIKTEXUNXAPI(int)
+MIKTEXUNXCEEAPI(int)
 closedir (/*[in]*/ DIR * pDir)
 {
   C_FUNC_BEGIN ();
@@ -67,7 +67,7 @@ closedir (/*[in]*/ DIR * pDir)
    opendir
    _________________________________________________________________________ */
 
-MIKTEXUNXAPI(DIR *)
+MIKTEXUNXCEEAPI(DIR *)
 opendir (/*[in]*/ const char * lpszPath)
 {
   C_FUNC_BEGIN ();
@@ -85,7 +85,7 @@ opendir (/*[in]*/ const char * lpszPath)
    readdir
    _________________________________________________________________________ */
 
-MIKTEXUNXAPI(struct dirent *)
+MIKTEXUNXCEEAPI(struct dirent *)
 readdir (/*[in]*/ DIR * pDir)
 {
   C_FUNC_BEGIN ();

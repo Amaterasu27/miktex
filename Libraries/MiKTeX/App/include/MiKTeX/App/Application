@@ -27,6 +27,7 @@
 #define F4C0E5199356C44CBA46523020038822
 
 #include <memory>
+#include <string>
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/PackageManager/PackageManager>
@@ -37,6 +38,7 @@
 #  include <set>
 #endif
 
+// DLL import/export switch
 #if ! defined(BDF6E2537F116547846406B5B2B65949)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXAPPEXPORT __declspec(dllimport)
@@ -45,24 +47,19 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define MIKTEXAPPCALL __stdcall
-#else
-#  define MIKTEXAPPCALL
-#endif
+// API decoration for exported member functions
+#define MIKTEXAPPTHISAPI(type) MIKTEXAPPEXPORT type MIKTEXTHISCALL
+#define MIKTEXAPPCEEAPI(type) MIKTEXAPPEXPORT type MIKTEXCEECALL
 
-#define MIKTEXAPPAPI(type) MIKTEXAPPEXPORT type MIKTEXAPPCALL
-#define MIKTEXAPPDATA(type) MIKTEXAPPEXPORT type
-
-#define MIKTEXAPP_BEGIN_NAMESPACE		\
+#define MIKTEX_APP_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace App {
 
-#define MIKTEXAPP_END_NAMESPACE			\
+#define MIKTEX_APP_END_NAMESPACE		\
     }						\
   }
 
-MIKTEXAPP_BEGIN_NAMESPACE;
+MIKTEX_APP_BEGIN_NAMESPACE;
 
 /* _________________________________________________________________________
 
@@ -83,7 +80,7 @@ Application
 public:
 
   MIKTEXAPPEXPORT
-  MIKTEXAPPCALL
+  MIKTEXTHISCALL
   Application ();
 
   /* _______________________________________________________________________
@@ -95,7 +92,7 @@ public:
 
   virtual
   MIKTEXAPPEXPORT
-  MIKTEXAPPCALL
+  MIKTEXTHISCALL
   ~Application ();
 
   /* _______________________________________________________________________
@@ -106,7 +103,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPAPI(void)
+  MIKTEXAPPTHISAPI(void)
   Init (/*[in]*/ const MiKTeX::Core::Session::InitInfo & initInfo);
 
   /* _______________________________________________________________________
@@ -117,7 +114,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPAPI(void)
+  MIKTEXAPPTHISAPI(void)
   Init (/*[in]*/ const char *	lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -128,7 +125,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPAPI(void)
+  MIKTEXAPPTHISAPI(void)
   Init (/*[in]*/ const char *	lpszProgramInvocationName,
 	/*[in]*/ const char *	lpszTheNameOfTheGame);
 
@@ -140,7 +137,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPAPI(void)
+  MIKTEXAPPTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -151,9 +148,7 @@ public:
 public:
   
   virtual
-  MIKTEXAPPEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXAPPTHISAPI(bool)
   InstallPackage (/*[in]*/ const char *	lpszPackageName,
 		  /*[in]*/ const char *	lpszTrigger);
 
@@ -165,9 +160,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPEXPORT
-  void
-  MPMCALL
+  MIKTEXAPPTHISAPI(void)
   ReportLine (/*[in]*/ const char * lpszLine);
 
   /* _______________________________________________________________________
@@ -177,9 +170,7 @@ public:
 
 public:
   virtual
-  MIKTEXAPPEXPORT
-  bool
-  MPMCALL
+  MIKTEXAPPTHISAPI(bool)
   OnRetryableError (/*[in]*/ const char * lpszMessage);
 
   /* _______________________________________________________________________
@@ -190,9 +181,7 @@ public:
 public:
 
   virtual
-  MIKTEXAPPEXPORT
-  bool
-  MPMCALL
+  MIKTEXAPPTHISAPI(bool)
   OnProgress (/*[in]*/ MiKTeX::Packages::Notification	nf);
 
   /* _______________________________________________________________________
@@ -202,7 +191,7 @@ public:
   
 public:
 
-  MIKTEXAPPAPI(void)
+  MIKTEXAPPTHISAPI(void)
   EnableInstaller (/*[in]*/ MiKTeX::Core::TriState tri);
 
   /* _______________________________________________________________________
@@ -253,9 +242,7 @@ public:
 
 protected:
   static
-  MIKTEXAPPEXPORT
-  bool
-  MIKTEXCALL
+  MIKTEXAPPCEEAPI(bool)
   Cancelled ();
   
   /* _______________________________________________________________________
@@ -265,9 +252,7 @@ protected:
 
 public:
   static
-  MIKTEXAPPEXPORT
-  void
-  MIKTEXCALL
+  MIKTEXAPPCEEAPI(void)
   CheckCancel ();
   
   /* _______________________________________________________________________
@@ -301,9 +286,9 @@ private:
   bool initialized;
 };
 
-MIKTEXAPP_END_NAMESPACE;
+MIKTEX_APP_END_NAMESPACE;
 
-#undef MIKTEXAPP_BEGIN_NAMESPACE
-#undef MIKTEXAPP_END_NAMESPACE
+#undef MIKTEX_APP_BEGIN_NAMESPACE
+#undef MIKTEX_APP_END_NAMESPACE
 
 #endif

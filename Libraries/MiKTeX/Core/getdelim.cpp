@@ -32,7 +32,6 @@
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 Utils::ReadUntilDelim (/*[out]*/ string &	str,
 		       /*[in]*/ int		delim,
 		       /*[in]*/ FILE *		stream)
@@ -72,7 +71,6 @@ Utils::ReadUntilDelim (/*[out]*/ string &	str,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 Utils::ReadLine (/*[out]*/ string &	str,
 		 /*[in]*/ FILE *	stream,
 		 /*[in]*/ bool		keepLineEnding)

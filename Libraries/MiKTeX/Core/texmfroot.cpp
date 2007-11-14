@@ -1238,7 +1238,7 @@ IsMpmFile (/*[in]*/ const char * lpszPath)
    Utils::IsMiKTeXDirectRoot
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Utils::IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root)
 {
   PathName path (root);
@@ -1257,7 +1257,7 @@ Utils::IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root)
    miktex_get_number_of_texmf_roots
    _________________________________________________________________________ */
 
-MIKTEXAPI(unsigned)
+MIKTEXCEEAPI(unsigned)
 miktex_get_number_of_texmf_roots ()
 {
   C_FUNC_BEGIN ();
@@ -1270,7 +1270,7 @@ miktex_get_number_of_texmf_roots ()
    miktex_get_root_directory
    _________________________________________________________________________ */
 
-MIKTEXAPI(char *)
+MIKTEXCEEAPI(char *)
 miktex_get_root_directory (/*[in]*/  unsigned		r,
 			   /*[out]*/ char *	lpszPath)
 {

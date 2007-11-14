@@ -323,7 +323,6 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 PackageInstallerImpl::OnBeginFileExtraction
 (/*[in]*/ const char *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
@@ -356,7 +355,6 @@ PackageInstallerImpl::OnBeginFileExtraction
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 PackageInstallerImpl::OnEndFileExtraction
 (/*[in]*/ const char *	lpszFileName,
  /*[in]*/ size_t		uncompressedSize)
@@ -391,7 +389,6 @@ PackageInstallerImpl::OnEndFileExtraction
    _________________________________________________________________________ */
 
 bool
-EXTRACTORCALL
 PackageInstallerImpl::OnError (/*[in]*/ const char *	lpszMessage)
 {
   // we have a problem: let the client decide how to proceed
@@ -608,7 +605,6 @@ CompareSerieses (/*[in]*/ const string &	ver1,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::FindUpdates ()
 {
   trace_mpm->WriteLine ("libmpm", T_("searching for updated packages"));
@@ -740,7 +736,6 @@ PackageInstallerImpl::FindUpdatesAsync ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
@@ -1617,7 +1612,6 @@ PackageInstallerImpl::CalculateExpenditure (/*[in]*/ bool downloadOnly)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PackageInstallerImpl::ReadDirectory (/*[in]*/ const char * lpszPath,
 				     /*[out]*/ char * * ppSubDirNames,
 				     /*[out]*/ char * * ppFileNames,
@@ -1637,7 +1631,6 @@ PackageInstallerImpl::ReadDirectory (/*[in]*/ const char * lpszPath,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PackageInstallerImpl::OnProgress (/*[in]*/ unsigned		level,
 				  /*[in]*/ const char *	lpszDirectory)
 {
@@ -1924,7 +1917,6 @@ PackageInstallerImpl::RegisterComponents
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 {
   if (doRegister)
@@ -2008,7 +2000,6 @@ The MiKTeX configuration utility could not be found.")),
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::InstallRemove ()
 {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
@@ -2220,7 +2211,6 @@ PackageInstallerImpl::InstallRemoveAsync ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
@@ -2284,7 +2274,6 @@ PackageInstallerImpl::Download (/*[in]*/ const PathName &	fileName,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::Download ()
 {
   if (repositoryType == RepositoryType::Remote)
@@ -2405,7 +2394,6 @@ PackageInstallerImpl::DownloadAsync ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
@@ -2559,7 +2547,6 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::UpdateDb ()
 {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
@@ -2725,7 +2712,6 @@ PackageInstallerImpl::UpdateDbAsync ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 PackageInstallerImpl::UpdateDbThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
@@ -2770,7 +2756,6 @@ PackageInstallerImpl::StartTaskThread
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::WaitForCompletion ()
 {
   pThread->Join ();
@@ -2930,7 +2915,6 @@ PackageInstallerImpl::ReportLine (/*[in]*/ const char *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageInstallerImpl::Dispose ()
 {
   if (pThread != 0)

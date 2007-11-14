@@ -338,7 +338,7 @@ ProcessOutput : public MiKTeX::Core::IRunProcessCallback
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	ptr,
 		   /*[in]*/ size_t		n)
   {

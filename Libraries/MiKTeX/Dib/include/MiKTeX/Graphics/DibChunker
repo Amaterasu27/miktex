@@ -26,31 +26,29 @@
 #if ! defined(EA12EA6239A13E40B589B41B84360852)
 #define EA12EA6239A13E40B589B41B84360852
 
-#if ! defined(CA71604DC6CF21439A421D76D5C2E5D7)
-#  define DIBCHUNKEREXPORT __declspec(dllimport)
-#endif
-
-#if defined(_MSC_VER)
-#  define DIBCHUNKERCALL __stdcall
-#else
-#  define DIBCHUNKERCALL
-#endif
-
 #include <MiKTeX/Core/Core>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>
 #endif
 
-#define DIBCHUNKER_BEGIN_NAMESPACE		\
+// DLL import/export switch
+#if ! defined(CA71604DC6CF21439A421D76D5C2E5D7)
+#  define MIKTEXDIBEXPORT __declspec(dllimport)
+#endif
+
+// API decoration for exported member functions
+#define MIKTEXDIBCEEAPI(type) MIKTEXDIBEXPORT type MIKTEXCEECALL
+
+#define MIKTEX_GRAPHICS_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace Graphics {
 
-#define DIBCHUNKER_END_NAMESPACE		\
+#define MIKTEX_GRAPHICS_END_NAMESPACE		\
     }						\
   }
 
-DIBCHUNKER_BEGIN_NAMESPACE;
+MIKTEX_GRAPHICS_BEGIN_NAMESPACE;
 
 /* _________________________________________________________________________
 
@@ -63,70 +61,70 @@ DibChunk
 {
 protected:
   virtual
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   ~DibChunk ()
     = 0;
 
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   AddRef ()
     = 0;
 
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Release ()
     = 0;
 
 public:
   virtual
   int
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetX ()
     = 0;
 
 public:
   virtual
   int
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetY ()
     = 0;
 
 public:
   virtual
   BITMAPINFOHEADER
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBitmapInfoHeader ()
     = 0;
 
 public:
   virtual
   const RGBQUAD *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetColors ()
     = 0;
 
 public:
   virtual
   const void *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBits ()
     = 0;
 
 public:
   virtual
   const BITMAPINFO *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBitmapInfo ()
     = 0;
 
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetSize ()
     = 0;
 };
@@ -144,7 +142,7 @@ IDibChunkerCallback
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Read (/*[out]*/ void *	pBuf,
 	/*[in]*/ size_t		size)
     = 0;
@@ -152,7 +150,7 @@ public:
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   OnNewChunk (/*[in]*/ DibChunk * pChunk)
     = 0;
 };
@@ -168,7 +166,7 @@ DibChunker
 {
 public:
   virtual
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   ~DibChunker ()
     = 0;
 
@@ -183,7 +181,7 @@ public:
 public:
   virtual
   bool
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Process (/*[in]*/ unsigned long		flags,
 	   /*[in]*/ unsigned long		chunkSize,
 	   /*[in]*/ IDibChunkerCallback *	pCallback)
@@ -191,15 +189,13 @@ public:
 
 public:
   static
-  DIBCHUNKEREXPORT
-  DibChunker *
-  DIBCHUNKERCALL
+  MIKTEXDIBCEEAPI(DibChunker *)
   Create ();
 };
 
-DIBCHUNKER_END_NAMESPACE;
+MIKTEX_GRAPHICS_END_NAMESPACE;
 
-#undef DIBCHUNKER_BEGIN_NAMESPACE
-#undef DIBCHUNKER_END_NAMESPACE
+#undef MIKTEX_GRAPHICS_BEGIN_NAMESPACE
+#undef MIKTEX_GRAPHICS_END_NAMESPACE
 
 #endif

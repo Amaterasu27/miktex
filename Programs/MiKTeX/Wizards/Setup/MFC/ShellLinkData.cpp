@@ -164,12 +164,12 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "MiKTeX on the Web->Registration"
+  // "MiKTeX on the Web->Give back"
   {
     true,
     IDS_MIKTEX_ON_THE_WEB,
-    IDS_REGISTRATION,
-    MIKTEX_URL_WWW_REGISTRATION,
+    IDS_GIVE_BACK,
+    MIKTEX_URL_WWW_GIVE_BACK,
     0,
     0,
     0,

@@ -249,44 +249,44 @@ class CfgImpl : public Cfg
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   AddRef ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Release ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Empty ();
 
 public:
   virtual
   MD5
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetDigest ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetOriginalDigest (/*[out]*/ MD5 & originalDigest);
 
 public:
   virtual
   string
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ char *		lpszValue,
@@ -295,7 +295,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ string &	value);
@@ -303,7 +303,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   TryGetValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char *	lpszValueName,
 	       /*[out]*/ PathName &	path);
@@ -311,19 +311,19 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   SetModified (/*[in]*/ bool b);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsModified ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   PutValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName,
 	    /*[in]*/ const char *	lpszValue);
@@ -331,39 +331,39 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Read (/*[in]*/ const PathName &	path);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Write (/*[in]*/ const PathName &	path);
 
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FirstKey (/*[out]*/ char *	lpsz,
 	    /*[in]*/ size_t	bufSize);
 
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   NextKey (/*[out]*/ char *	lpsz,
 	   /*[in]*/ size_t	bufSize);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DeleteKey (/*[in]*/ const char * lpszKey);
 
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   FirstValue (/*[in]*/ const char *	lpszKey,
 	      /*[out]*/ char *		lpszValueName,
 	      /*[in]*/ size_t		valueNameSize);
@@ -371,7 +371,7 @@ public:
 public:
   virtual
   char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   NextValue (/*[out]*/ char *	lpszValueName,
 	     /*[in]*/ size_t	valueNameSize);
 
@@ -536,7 +536,6 @@ CfgImpl::~CfgImpl ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 CfgImpl::AddRef ()
 {
   ++ refCount;
@@ -548,7 +547,6 @@ CfgImpl::AddRef ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 CfgImpl::Release ()
 {
   -- refCount;

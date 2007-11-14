@@ -34,6 +34,7 @@
 
 #include <MiKTeX/Core/Core>
 
+// DLL import/export switch
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define C4PEXPORT __declspec(dllimport)
@@ -42,13 +43,9 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define C4PCALL __stdcall
-#else
-#  define C4PCALL
-#endif
-
-#define C4PAPI(type) C4PEXPORT type C4PCALL
+// API decoration for exported functions and data
+#define C4PTHISAPI(type) C4PEXPORT type MIKTEXTHISCALL
+#define C4PCEEAPI(type) C4PEXPORT type MIKTEXCEECALL
 #define C4PDATA(type) C4PEXPORT type
 
 #define C4P_BEGIN_NAMESPACE namespace C4P {
@@ -103,7 +100,7 @@ public:
   }
 
 public:
-  C4PAPI(bool)
+  C4PTHISAPI(bool)
   Open (/*[in]*/ const char *			lpszName,
 	/*[in]*/ MiKTeX::Core::FileMode		mode,
 	/*[in]*/ MiKTeX::Core::FileAccess	access,
@@ -399,19 +396,19 @@ C4P_BEGIN_NAMESPACE;
    Command Line Arguments
    _________________________________________________________________________ */
 
-C4PAPI(/*[in]*/ int)
+C4PCEEAPI(int)
 GetArgC ();
 
-C4PAPI(/*[in]*/ const char * *)
+C4PCEEAPI(const char * *)
 GetArgV ();
 
-C4PAPI(const char *)
+C4PCEEAPI(const char *)
 GetCmdLine ();
 
-C4PAPI(char *)
+C4PCEEAPI(char *)
 GetProgName (/*[out]*/ char * lpsz);
 
-C4PAPI(C4P_text *)
+C4PCEEAPI(C4P_text *)
 GetStdFilePtr (/*[in]*/ unsigned idx);
 
 #define c4pargc C4P::GetArgC()
@@ -434,7 +431,7 @@ Program
 {
 public:
   C4PEXPORT
-  C4PCALL
+  MIKTEXTHISCALL
   Program (/*[in]*/ const char *	lpszName,
 	   /*[in]*/ int			argc,
 	   /*[in]*/ const char **	argv);
@@ -455,9 +452,7 @@ public:
   }
 
 public:
-  C4PEXPORT
-  void
-  C4PCALL
+  C4PTHISAPI(void)
   Finish ();
 
 private:
@@ -530,16 +525,16 @@ const C4P_integer maxint = INT_MAX;
    File I/O
    _________________________________________________________________________ */
 
-C4PAPI(void)
+C4PCEEAPI(void)
 DiscardLine (/*[in]*/ C4P_text & textfile);
 
-C4PAPI(char)
+C4PCEEAPI(char)
 GetChar (/*[in]*/ C4P_text & textfile);
 
-C4PAPI(int)
+C4PCEEAPI(int)
 GetInteger (/*[in]*/ C4P_text & textfile);
 
-C4PAPI(C4P_real)
+C4PCEEAPI(C4P_real)
 GetReal (/*[in]*/ C4P_text & textfile);
 
 #define C4P_READ_BEGIN() {
@@ -988,22 +983,22 @@ const char * const c4pwmode = "w";
 const char * const c4prbmode = "rb";
 const char * const c4pwbmode = "wb";
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetYear ();
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetMonth ();
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetDay ();
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetHour ();
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetMinute ();
 
-C4PAPI(unsigned)
+C4PCEEAPI(unsigned)
 GetSecond ();
 
 #define c4pyear C4P::GetYear()
@@ -1016,17 +1011,17 @@ GetSecond ();
 #define C4P_PROC_ENTRY(handle)
 #define C4P_PROC_EXIT(handle) C4P_LABEL_PROC_EXIT:
 
-C4PAPI(void)
+C4PCEEAPI(void)
 SetStartUpTime (/*[in]*/ time_t time);
 
-C4PAPI(time_t)
+C4PCEEAPI(time_t)
 GetStartUpTime ();
 
-C4PAPI(int)
+C4PCEEAPI(int)
 MakeCommandLine (/*[in]*/ int		argc,
 		 /*[in]*/ const char **	argv);
 
-C4PAPI(C4P_integer)
+C4PCEEAPI(C4P_integer)
 Round (double r);
 
 /* _________________________________________________________________________

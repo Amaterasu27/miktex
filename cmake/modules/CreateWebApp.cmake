@@ -131,7 +131,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}wrapper.cpp
     PROPERTIES COMPILE_FLAGS
-      "-DDLLMAIN=MiKTeX_${_name_u} -DDLLAPI=__stdcall -DMIKTEX_${_name_u}"
+      "-DDLLMAIN=MiKTeX_${_name_u} -DMIKTEX_${_name_u}"
   )
 
   if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)

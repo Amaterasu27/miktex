@@ -37,13 +37,13 @@ public:
 
 public:
   virtual
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   ~CabExtractor ();
 
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	cabinetPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -53,7 +53,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ /*[in]*/ MiKTeX::Core::Stream *	pStream,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -63,7 +63,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Dispose ();
 
 private:

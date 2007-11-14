@@ -35,6 +35,7 @@ public:
   AFX_EXT_CLASS
   static
   INT_PTR
+  MIKTEXCEECALL
   DoModal (/*[in]*/ CWnd *		pParent,
 	   /*[in]*/ const char *	lpszTitle,
 	   /*[in]*/ const char *	lpszText);

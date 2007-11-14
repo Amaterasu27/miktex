@@ -237,7 +237,6 @@ ExpandBoundingBox (/*[in]*/ int llx,
    _________________________________________________________________________ */
 
 bool
-MIKTEXDVICALL
 DviImpl::FindHyperLabel (/*[in]*/ const char *		lpszLabel,
 			 /*[out]*/ DviPosition &	position)
 {

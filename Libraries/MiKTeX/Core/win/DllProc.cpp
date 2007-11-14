@@ -28,7 +28,6 @@
    DllProcBase::DllProcBase
    _________________________________________________________________________ */
 
-MIKTEXCALL
 DllProcBase::DllProcBase ()
   : hModule (0),
     proc (0)
@@ -40,7 +39,6 @@ DllProcBase::DllProcBase ()
    DllProcBase::DllProcBase
    _________________________________________________________________________ */
 
-MIKTEXCALL
 DllProcBase::DllProcBase (/*[in]*/ const char *	lpszDllName,
 			  /*[in]*/ const char *	lpszProcName)
   : dllName (lpszDllName),
@@ -55,7 +53,6 @@ DllProcBase::DllProcBase (/*[in]*/ const char *	lpszDllName,
    DllProcBase::~DllProcBase
    _________________________________________________________________________ */
 
-MIKTEXCALL
 DllProcBase::~DllProcBase ()
 {
   try
@@ -76,7 +73,6 @@ DllProcBase::~DllProcBase ()
    _________________________________________________________________________ */
 
 FARPROC
-MIKTEXCALL
 DllProcBase::GetProc ()
 {
   if (proc != 0)

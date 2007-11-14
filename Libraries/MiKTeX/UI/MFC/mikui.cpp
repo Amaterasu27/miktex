@@ -64,7 +64,9 @@ DllMain (/*[in]*/ HINSTANCE	hInstance,
    MiKTeX::UI::MFC::InitializeFramework
    _________________________________________________________________________ */
 
-MIKTEXUIAPI(void)
+MIKTEXUIEXPORT
+void
+MIKTEXCEECALL
 MiKTeX::UI::MFC::InitializeFramework ()
 {
   if (! AfxWinInit(::GetModuleHandle(0), 0, ::GetCommandLine(), 0))
@@ -82,7 +84,9 @@ MiKTeX::UI::MFC::InitializeFramework ()
    MiKTeX::UI::MFC::InstallPackageMessageBox
    _________________________________________________________________________ */
 
-MIKTEXUIAPI(unsigned int)
+MIKTEXUIEXPORT
+unsigned int
+MIKTEXCEECALL
 MiKTeX::UI::MFC::InstallPackageMessageBox
 (/*[in]*/ HWND			hwndParent,
  /*[in]*/ PackageManager *	pManager,
@@ -133,7 +137,9 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
    MiKTeX::UI::MFC::ProxyAuthenticationDialog
    _________________________________________________________________________ */
 
-MIKTEXUIAPI(bool)
+MIKTEXUIEXPORT
+bool
+MIKTEXCEECALL
 MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
 {
   ProxySettings proxySettings;

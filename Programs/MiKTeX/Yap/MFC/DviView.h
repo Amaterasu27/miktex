@@ -33,7 +33,7 @@
 class DrawingCancelledException : public MiKTeXException
 {
 public:
-  MIKTEXCALL
+  MIKTEXTHISCALL
   DrawingCancelledException ()
     : MiKTeXException (0,
 		       T_("Drawing cancelled."),

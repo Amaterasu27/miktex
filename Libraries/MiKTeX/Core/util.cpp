@@ -415,7 +415,6 @@ Utils::ReplaceString (/*[out]*/ char *		lpszBuf,
    _________________________________________________________________________ */
 
 MD5
-MIKTEXCALL
 MD5::FromFile (/*[in]*/ const char *	lpszPath)
 {
   MD5Builder md5Builder;
@@ -464,7 +463,6 @@ Unhex (/*[in]*/ char x)
    _________________________________________________________________________ */
 
 MD5
-MIKTEXCALL
 MD5::Parse (/*[in]*/ const char *	lpszHexString)
 {
   size_t l = StrLen(lpszHexString);
@@ -489,7 +487,6 @@ MD5::Parse (/*[in]*/ const char *	lpszHexString)
    _________________________________________________________________________ */
 
 string
-MIKTEXCALL
 Utils::FormatString (/*[in]*/ const char *  lpszFormat,
 		     /*[in]*/ va_list	  arglist)
 {
@@ -651,7 +648,7 @@ PathNameParser::operator++ ()
    Hexify
    _________________________________________________________________________ */
 
-MIKTEXAPI(string)
+string
 Utils::Hexify (/*[in]*/ const void *	pv,
 	       /*[in]*/ size_t		nBytes,
 	       /*[in]*/ bool		lowerCase)
@@ -675,7 +672,7 @@ Utils::Hexify (/*[in]*/ const void *	pv,
    Hexify
    _________________________________________________________________________ */
 
-MIKTEXAPI(string)
+string
 Utils::Hexify (/*[in]*/ const void *	pv,
 	       /*[in]*/ size_t		nBytes)
 {
@@ -688,7 +685,6 @@ Utils::Hexify (/*[in]*/ const void *	pv,
    Argv::Argv
    _________________________________________________________________________ */
 
-MIKTEXCALL
 Argv::Argv ()
 {
   argv.push_back (0);
@@ -700,8 +696,6 @@ Argv::Argv ()
    Argv::~Argv
    _________________________________________________________________________ */
 
-MIKTEXEXPORT
-MIKTEXCALL
 Argv::~Argv ()
 {
   for (vector<char*>::const_iterator it = argv.begin();
@@ -718,7 +712,6 @@ Argv::~Argv ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Argv::Build (/*[in]*/ const char *	lpszFileName,
 	     /*[in]*/ const char *	lpszArguments)
 {
@@ -783,7 +776,6 @@ NumberString::Init (/*[in]*/ double	num)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL 
 Utils::IsAscii (/*[in]*/ const char * lpsz)
 {
   MIKTEX_ASSERT_STRING (lpsz);
@@ -803,7 +795,6 @@ Utils::IsAscii (/*[in]*/ const char * lpsz)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL 
 Utils::IsAscii (/*[in]*/ const wchar_t * lpsz)
 {
   MIKTEX_ASSERT_STRING (lpsz);
@@ -823,7 +814,6 @@ Utils::IsAscii (/*[in]*/ const wchar_t * lpsz)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL 
 Utils::IsUTF8 (/*[in]*/ const char *	lpsz,
 	       /*[in]*/ bool		allowPureAscii)
 {
@@ -863,7 +853,7 @@ Utils::IsUTF8 (/*[in]*/ const char *	lpsz,
    miktex_replace_string
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_replace_string (/*[out]*/ char *		lpszBuf,
 		       /*[in]*/ size_t *	lpSizeDest,
 		       /*[in]*/ const char *	lpszSource,

@@ -20,9 +20,9 @@
    USA. */
 
 #if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
-#  define MPMEXPORT __declspec(dllexport)
+#  define MIKTEXMPMEXPORT __declspec(dllexport)
 #else
-#  define MPMEXPORT
+#  define MIKTEXMPMEXPORT
 #endif
 
 #define F927BA187CB94546AB9CA9099D989E81
@@ -501,73 +501,73 @@ PackageManagerImpl
 {
 public:
   virtual
-  MPMCALL
+  MIKTEXTHISCALL
   ~PackageManagerImpl ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   AddRef ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   Release ();
 
 public:
   virtual
   class PackageInstaller *
-  MPMCALL
+  MIKTEXTHISCALL
   CreateInstaller ();
 
 public:
   virtual
   class PackageIterator *
-  MPMCALL
+  MIKTEXTHISCALL
   CreateIterator ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   CreateMpmFndb ();
 
 public:
   virtual
   unsigned long
-  MPMCALL
+  MIKTEXTHISCALL
   GetFileRefCount (/*[in]*/ const MiKTeX::Core::PathName &	path);
 
 public:
   virtual
   PackageInfo
-  MPMCALL
+  MIKTEXTHISCALL
   GetPackageInfo (/*[in]*/ const std::string & deploymentName);
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   LoadDatabase (/*[in]*/ const MiKTeX::Core::PathName & path);
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   UnloadDatabase ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   DownloadRepositoryList ();
 
 public:
   virtual
   std::vector<RepositoryInfo>
-  MPMCALL
+  MIKTEXTHISCALL
   GetRepositories ()
   {
     return (repositories);
@@ -576,20 +576,20 @@ public:
 public:
   virtual
   std::string
-  MPMCALL
+  MIKTEXTHISCALL
   PickRepositoryUrl ();
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   TryGetPackageInfo (/*[in]*/ const std::string &	deploymentName,
 		     /*[out]*/ PackageInfo &		packageInfo);
 
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ReadDirectory (/*[in]*/ const char *	lpszPath,
 		 /*[out]*/ char * *	ppSubDirNames,
 		 /*[out]*/ char * *	ppFileNames,
@@ -598,7 +598,7 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory);
 
@@ -610,27 +610,27 @@ public:
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   TryGetRepositoryInfo (/*[in]*/ const std::string &	url,
 			/*[out]*/ RepositoryInfo &	repositoryInfo);
 
 public:
   virtual
   RepositoryInfo
-  MPMCALL
+  MIKTEXTHISCALL
   VerifyPackageRepository (/*[in]*/ const std::string & url);
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   TryVerifyInstalledPackage
   (/*[in]*/ const std::string & deploymentName);
 
 public:
   virtual
   std::string
-  MPMCALL
+  MIKTEXTHISCALL
   GetContainerPath (/*[in]*/ const std::string &	deploymentName,
 		    /*[in]*/ bool			useDisplayNames);
 
@@ -1043,19 +1043,19 @@ public:
 
 public:
   virtual
-  MPMCALL
+  MIKTEXTHISCALL
   ~PackageInstallerImpl ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   Dispose ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetRepository (/*[in]*/ const std::string & repository)
   {
     this->repository = repository;
@@ -1066,7 +1066,7 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetDestination (/*[in]*/ const MiKTeX::Core::PathName & destinationDirectory)
   {
     this->destinationDirectory = destinationDirectory;
@@ -1075,31 +1075,31 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   UpdateDb ();
   
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   UpdateDbAsync ();
   
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   FindUpdates ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   FindUpdatesAsync ();
 
 public:
   virtual
   std::vector<UpdateInfo>
-  MPMCALL
+  MIKTEXTHISCALL
   GetUpdates ()
   {
     return (updates);
@@ -1108,31 +1108,31 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   InstallRemove ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   InstallRemoveAsync ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   WaitForCompletion ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   Download ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   DownloadAsync ();
 
 private:
@@ -1142,7 +1142,7 @@ private:
 public:
   virtual
   ProgressInfo
-  MPMCALL
+  MIKTEXTHISCALL
   GetProgressInfo ()
   {
     MIKTEX_LOCK(ProgressIndicator)
@@ -1159,13 +1159,13 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetCallback (/*[in]*/ PackageInstallerCallback *	pCallback);
   
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetFileLists (/*[in]*/ const std::vector<std::string> & tbi,
 		/*[in]*/ const std::vector<std::string> & tbr)
   {
@@ -1176,7 +1176,7 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetPackageLevel (/*[in]*/ PackageLevel packageLevel)
   {
     taskPackageLevel = packageLevel;
@@ -1185,7 +1185,7 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetFileList (/*[in]*/ const std::vector<std::string> & tbi)
   {
     this->toBeInstalled = tbi;
@@ -1200,21 +1200,21 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnBeginFileExtraction (/*[in]*/ const char *	lpszFileName,
 			 /*[in]*/ size_t	uncompressedSize);
 
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnEndFileExtraction (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ size_t		uncompressedSize);
 
 public:
   virtual
   bool
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnError (/*[in]*/ const char *	lpszMessage);
 
 private:
@@ -1240,7 +1240,7 @@ private:
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   IsRunning ()
     const
   {
@@ -1254,13 +1254,13 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   RegisterComponents (/*[in]*/ bool doRegister);
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetNoPostProcessing (/*[in]*/ bool noPostProcessing)
   {
     this->noPostProcessing = noPostProcessing;
@@ -1269,7 +1269,7 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   SetNoLocalServer (/*[in]*/ bool noLocalServer)
   {
     this->noLocalServer = noLocalServer;
@@ -1507,7 +1507,7 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ReadDirectory (/*[in]*/ const char *	lpszPath,
 		 /*[out]*/ char * *	ppSubDirNames,
 		 /*[out]*/ char * *	ppFileNames,
@@ -1516,7 +1516,7 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory);
 
@@ -1590,19 +1590,19 @@ class PackageIteratorImpl : public PackageIterator
 {
 public:
   virtual
-  MPMCALL
+  MIKTEXTHISCALL
   ~PackageIteratorImpl ();
 
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   Dispose ();
   
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   AddFilter (/*[in]*/ unsigned int	filter,
 	     /*[in]*/ const char *	lpsz = 0)
   {
@@ -1616,7 +1616,7 @@ public:
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ PackageInfo & packageinfo);
   
 public:

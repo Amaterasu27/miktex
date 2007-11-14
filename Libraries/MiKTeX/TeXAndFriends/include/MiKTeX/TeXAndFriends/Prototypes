@@ -28,6 +28,7 @@
 #if ! defined(GUARD_EA5A87F23904AC44BC85743B1568911C_)
 #define GUARD_EA5A87F23904AC44BC85743B1568911C_
 
+// DLL import/export switch
 #if ! defined(B8C7815676699B4EA2DE96F0BD727276)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXMFEXPORT __declspec(dllimport)
@@ -36,13 +37,9 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define MIKTEXMFCALL __stdcall
-#else
-#  define MIKTEXMFCALL
-#endif
-
-#define MIKTEXMFAPI(type) MIKTEXMFEXPORT type MIKTEXMFCALL
+// API decoration for exported member functions and data
+#define MIKTEXMFTHISAPI(type) MIKTEXMFEXPORT type MIKTEXTHISCALL
+#define MIKTEXMFCEEAPI(type) MIKTEXMFEXPORT type MIKTEXCEECALL
 #define MIKTEXMFDATA(type) MIKTEXMFEXPORT type
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
@@ -58,57 +55,57 @@ MIKTEXMF_BEGIN_NAMESPACE;
 const unsigned long ICT_TCX = 1;
 const unsigned long ICT_8BIT = 2;
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 InitializeCharTables (/*[in]*/ unsigned long	flags,
 		      /*[in]*/ const char *	lpszFileName,
 		      /*[out]*/ void *		pChar,
 		      /*[out]*/ void *		pOrd,
 		      /*[out]*/ void *		pPrintable );
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 OpenMAPFile (/*[in]*/ void *		p,
 	     /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 OpenMETAFONTFile (/*[in]*/ void *	p,
 		  /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 OpenTFMFile (/*[in]*/ void *		p,
 	     /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 OpenVFFile (/*[in]*/ void *		p,
 	    /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 OpenXFMFile (/*[in]*/ void *		p,
 	     /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(int)
+MIKTEXMFCEEAPI(int)
 OpenXVFFile (/*[in]*/ void *		p,
 	     /*[in]*/ const char *	lpszName);
 
-MIKTEXMFAPI(bool)
+MIKTEXMFCEEAPI(bool)
 Write18 (/*[in]*/ const char *		lpszCommand,
 	 /*[in]*/ unsigned long *	lpExitCode = 0);
 
-MIKTEXMFAPI(int)
+MIKTEXMFCEEAPI(int)
 TakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 
-MIKTEXMFAPI(int)
+MIKTEXMFCEEAPI(int)
 TakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
 
-MIKTEXMFAPI(int)
+MIKTEXMFCEEAPI(int)
 MakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 
-MIKTEXMFAPI(int)
+MIKTEXMFCEEAPI(int)
 MakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);

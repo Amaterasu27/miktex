@@ -76,7 +76,7 @@ TeXApp
 {
 public:
   MIKTEXMFEXPORT
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   TeXApp ();
 
   /* _______________________________________________________________________
@@ -87,7 +87,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -98,7 +98,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -109,7 +109,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
   
   /* _______________________________________________________________________
@@ -120,8 +120,7 @@ protected:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetInputFileType ()
     const
   {
@@ -136,7 +135,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int		c,
 		 /*[in]*/ const char *	lpszOptArg);
 
@@ -148,8 +147,7 @@ protected:
 public:
 
   virtual
-  int
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(int)
   GetFormatIdent ()
     const
   {
@@ -169,8 +167,7 @@ public:
 public:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetMemoryDumpFileExtension ()
     const
   {
@@ -185,8 +182,7 @@ public:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetMemoryDumpFileType ()
     const
   {
@@ -201,8 +197,7 @@ public:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetPoolFileType ()
     const
   {
@@ -217,7 +212,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   OnTeXMFStartJob ();
 
   /* _______________________________________________________________________
@@ -652,7 +647,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   Write18 (/*[in]*/ const char *	lpszCommand,
 	   /*[out]*/ int &		exitCode)
     const;
@@ -664,7 +659,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   Write18 (/*[in]*/ const wchar_t *	lpszCommand,
 	   /*[out]*/ int &		exitCode)
     const;

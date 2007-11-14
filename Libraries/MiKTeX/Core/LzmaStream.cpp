@@ -369,7 +369,6 @@ private:
    LzmaStream::LzmaStream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 LzmaStream::LzmaStream (/*[in]*/ const FileStream &	fileStream,
 			/*[in]*/ bool			reading)
   : reading (reading)
@@ -390,7 +389,6 @@ LzmaStream::LzmaStream (/*[in]*/ const FileStream &	fileStream,
    LzmaStream::~LzmaStream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 LzmaStream::~LzmaStream ()
 {
   try
@@ -408,7 +406,6 @@ LzmaStream::~LzmaStream ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 LzmaStream::Close ()
 {
   if (p != 0)
@@ -425,7 +422,6 @@ LzmaStream::Close ()
    _________________________________________________________________________ */
 
 size_t
-MIKTEXCALL
 LzmaStream::Read (/*[out]*/ void *	pBytes,
 		  /*[in]*/ size_t	count)
 {
@@ -439,7 +435,6 @@ LzmaStream::Read (/*[out]*/ void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 LzmaStream::Write (/*[in]*/ const void *	pBytes,
 		   /*[in]*/ size_t		count)
 {
@@ -454,7 +449,6 @@ LzmaStream::Write (/*[in]*/ const void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 LzmaStream::Seek (/*[in]*/ long		offset,
 		  /*[in]*/ SeekOrigin	seekOrigin)
 {
@@ -469,7 +463,6 @@ LzmaStream::Seek (/*[in]*/ long		offset,
    _________________________________________________________________________ */
 
 long
-MIKTEXCALL
 LzmaStream::GetPosition ()
 {
   UNIMPLEMENTED ("LzmaStream::GetPosition");

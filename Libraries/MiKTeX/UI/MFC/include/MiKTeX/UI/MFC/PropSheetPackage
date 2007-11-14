@@ -36,6 +36,7 @@ public:
   AFX_EXT_CLASS
   static
   INT_PTR
+  MIKTEXCEECALL
   DoModal (/*[in]*/ const MiKTeX::Packages::PackageInfo &	packageInfo,
 	   /*[in]*/ CWnd *				pParentWnd = 0);
 };

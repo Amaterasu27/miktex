@@ -38,7 +38,7 @@ namespace {
    MakeCommandLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(int)
+C4PCEEAPI(int)
 C4P::MakeCommandLine (/*[in]*/ int		argc,
 		      /*[in]*/ const char **	argv)
 {
@@ -64,7 +64,7 @@ C4P::MakeCommandLine (/*[in]*/ int		argc,
    SetStartUpTime
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+C4PCEEAPI(void)
 C4P::SetStartUpTime (/*[in]*/ time_t time)
 {
   MIKTEX_API_BEGIN ("C4P::SetStartUpTime");
@@ -90,7 +90,7 @@ C4P::SetStartUpTime (/*[in]*/ time_t time)
    GetStartUpTime
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(time_t)
+C4PCEEAPI(time_t)
 C4P::GetStartUpTime ()
 {
   MIKTEX_API_BEGIN ("C4P::GetStartUpTime");
@@ -103,8 +103,6 @@ C4P::GetStartUpTime ()
    Program::Program
    _________________________________________________________________________ */
 
-C4PEXPORT
-C4PCALL
 C4P::Program::Program (/*[in]*/ const char *	lpszProgramName,
 		       /*[in]*/ int			argc,
 		       /*[in]*/ const char **	argv)
@@ -132,7 +130,7 @@ C4P::Program::Program (/*[in]*/ const char *	lpszProgramName,
    Program::Finish
    _________________________________________________________________________ */
 
-C4PAPI(void)
+C4PTHISAPI(void)
 C4P::Program::Finish ()
 {
   for (vector<const char *>::iterator it = argumentVector.begin();
@@ -151,7 +149,7 @@ C4P::Program::Finish ()
    GetYear
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetYear ()
 {
   MIKTEX_API_BEGIN ("C4P::GetYear");
@@ -164,7 +162,7 @@ C4P::GetYear ()
    GetMonth
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetMonth ()
 {
   MIKTEX_API_BEGIN ("C4P::GetMonth");
@@ -177,7 +175,7 @@ C4P::GetMonth ()
    GetDay
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetDay ()
 {
   MIKTEX_API_BEGIN ("C4P::GetDay");
@@ -190,7 +188,7 @@ C4P::GetDay ()
    GetHour
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetHour ()
 {
   MIKTEX_API_BEGIN ("C4P::GetHour");
@@ -203,7 +201,7 @@ C4P::GetHour ()
    GetMinute
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetMinute ()
 {
   MIKTEX_API_BEGIN ("C4P::GetMinute");
@@ -216,7 +214,7 @@ C4P::GetMinute ()
    GetSecond
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned)
+C4PCEEAPI(unsigned)
 C4P::GetSecond ()
 {
   MIKTEX_API_BEGIN ("C4P::GetSecond");
@@ -229,7 +227,7 @@ C4P::GetSecond ()
    GetStdFilePtr
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(C4P::C4P_text *)
+C4PCEEAPI(C4P::C4P_text *)
 C4P::GetStdFilePtr (/*[in]*/ unsigned idx)
 {
   MIKTEX_API_BEGIN ("C4P::GetStdFilePtr");
@@ -244,7 +242,7 @@ C4P::GetStdFilePtr (/*[in]*/ unsigned idx)
    GetArgC
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(int)
+C4PCEEAPI(int)
 C4P::GetArgC ()
 {
   MIKTEX_API_BEGIN ("C4P::GetArgC");
@@ -257,7 +255,7 @@ C4P::GetArgC ()
    GetArgV
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const char **)
+C4PCEEAPI(const char **)
 C4P::GetArgV ()
 {
   MIKTEX_API_BEGIN ("C4P::GetArgV");
@@ -270,7 +268,7 @@ C4P::GetArgV ()
    GetCmdLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const char *)
+C4PCEEAPI(const char *)
 C4P::GetCmdLine ()
 {
   MIKTEX_API_BEGIN ("C4P::GetCmdLine");
@@ -283,7 +281,7 @@ C4P::GetCmdLine ()
    GetProgName
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(char *)
+C4PCEEAPI(char *)
 C4P::GetProgName (/*[in]*/ char * lpszProgName)
 {
   MIKTEX_API_BEGIN ("C4P::GetProgName");

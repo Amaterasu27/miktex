@@ -68,7 +68,7 @@ class OMEGACLASS
 protected:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     TeXApp::AddOptions ();
@@ -136,7 +136,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     TeXApp::Init (lpszProgramInvocationName);
@@ -148,7 +148,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetMemoryDumpFileName ()
     const
   {
@@ -158,7 +158,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetPoolFileName ()
     const
   {
@@ -168,7 +168,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetInitProgramName ()
     const
   {
@@ -178,7 +178,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetVirginProgramName ()
     const
   {
@@ -188,7 +188,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   TheNameOfTheGame ()
     const
   {
@@ -198,7 +198,7 @@ public:
 public:
   virtual
   DWORD
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

@@ -1052,7 +1052,6 @@ DviPageImpl::MakeDibChunks (/*[in]*/ int shrinkFactor)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 DviPageImpl::DvipsTranscriptReader (/*[in]*/ void * p)
 {
   DviPageImpl * This = reinterpret_cast<DviPageImpl*>(p);
@@ -1087,7 +1086,6 @@ DviPageImpl::DvipsTranscriptReader (/*[in]*/ void * p)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALLBACK
 DviPageImpl::GhostscriptTranscriptReader (/*[in]*/ void * p)
 {
   DviPageImpl * This = reinterpret_cast<DviPageImpl*>(p);
@@ -1122,7 +1120,6 @@ DviPageImpl::GhostscriptTranscriptReader (/*[in]*/ void * p)
    _________________________________________________________________________ */
 
 void
-DIBCHUNKERCALL
 DviPageImpl::OnNewChunk (/*[in]*/ DibChunk * pChunk)
 {
   vector<SmartPointer<DibChunk> > & dibChunks =
@@ -1151,7 +1148,6 @@ DviPageImpl::OnNewChunk (/*[in]*/ DibChunk * pChunk)
    _________________________________________________________________________ */
 
 size_t
-DIBCHUNKERCALL
 DviPageImpl::Read (/*[out]*/ void *	pBuf,
 		   /*[in]*/ size_t	size)
 {

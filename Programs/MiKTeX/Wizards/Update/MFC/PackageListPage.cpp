@@ -642,7 +642,6 @@ PackageListPage::DoFindUpdates ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageListPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
   UNUSED_ALWAYS (lpszLine);
@@ -654,7 +653,6 @@ PackageListPage::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UINT style = MB_ICONSTOP;
@@ -670,7 +668,6 @@ PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageListPage::OnProgress (/*[in]*/ Notification	nf)
 {
   UNUSED_ALWAYS (nf);

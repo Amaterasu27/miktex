@@ -43,7 +43,7 @@ class DVITYPECLASS
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     AddOption (MIKTEXTEXT("out-mode\0Set output mode."),
@@ -68,7 +68,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetUsage ()
     const
   {
@@ -78,7 +78,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebApp::Init (lpszProgramInvocationName);
@@ -93,7 +93,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int		opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -184,7 +184,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessCommandLineOptions ()
   {
     WebApp::ProcessCommandLineOptions ();

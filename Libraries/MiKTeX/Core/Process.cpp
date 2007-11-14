@@ -210,7 +210,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {
@@ -264,7 +264,6 @@ Process::Run (/*[in]*/ const PathName &	fileName,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Process::Run (/*[in]*/ const PathName &	fileName,
 	      /*[in]*/ const char *	lpszArguments)
 {
@@ -286,7 +285,6 @@ Process::Run (/*[in]*/ const PathName &	fileName,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Process::Run (/*[in]*/ const PathName &		fileName,
 	      /*[in]*/ const char *		lpszArguments,
 	      /*[int]*/ IRunProcessCallback *	pCallback)
@@ -304,7 +302,7 @@ Process::Run (/*[in]*/ const PathName &		fileName,
    Process::ExecuteSystemCommand
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine)
 {
   return (ExecuteSystemCommand(lpszCommandLine, 0, 0, 0));
@@ -315,7 +313,7 @@ Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine)
    Process::ExecuteSystemCommand
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
 			       /*[out]*/ int *		pExitCode)
 {
@@ -327,7 +325,7 @@ Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
    miktex_start_process
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_start_process (/*[in]*/ const char *	lpszFileName,
 		      /*[in]*/ const char *	lpszArguments,
 		      /*[in]*/ FILE *		pFileStandardInput,

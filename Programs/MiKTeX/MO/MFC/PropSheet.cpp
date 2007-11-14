@@ -101,7 +101,6 @@ PropSheet::OnInitDialog ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PropSheet::OnProcessOutput
 (/*[in]*/ const void *	pOutput,
  /*[in]*/ size_t	n)

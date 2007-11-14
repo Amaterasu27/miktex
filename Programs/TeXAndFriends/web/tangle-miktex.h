@@ -39,7 +39,7 @@ class TANGLECLASS
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     MiKTeX::TeXAndFriends::WebApp::Init (lpszProgramInvocationName);
@@ -49,7 +49,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     AddOption (MIKTEXTEXT("omega\0Create Omega compatible output file."),
@@ -60,7 +60,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetUsage ()
     const
   {
@@ -71,7 +71,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -90,7 +90,7 @@ public:
 
 public:
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessCommandLineOptions ()
   {
     WebApp::ProcessCommandLineOptions ();

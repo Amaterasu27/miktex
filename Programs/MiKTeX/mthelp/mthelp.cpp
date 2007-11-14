@@ -86,13 +86,14 @@ public:
   MiKTeXHelp ();
 
 public:
+  virtual
   void
-  MIKTEXAPPCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const Session::InitInfo & initInfo);
 
 public:
   void
-  Run (/*[in]*/ int			argc,
+  Run (/*[in]*/ int		argc,
        /*[in]*/ const char **	argv);
 
 private:
@@ -102,19 +103,19 @@ private:
 private:
   void
   Warning (/*[in]*/ const char *	lpszFormat,
-	   /*[in]*/				...);
+	   /*[in]*/			...);
 
 private:
   MIKTEXNORETURN
   void
   FatalError (/*[in]*/ const char *	lpszFormat,
-	      /*[in]*/				...);
+	      /*[in]*/			...);
 
 private:
   bool
-  SkipPrefix (/*[in]*/ const string &		str,
+  SkipPrefix (/*[in]*/ const string &	str,
 	      /*[in]*/ const char *	lpszPrefix,
-	      /*[out]*/ string &		result);
+	      /*[out]*/ string &	result);
 
 private:
   bool
@@ -237,7 +238,6 @@ MiKTeXHelp::MiKTeXHelp ()
    _________________________________________________________________________ */
 
 void
-MIKTEXAPPCALL
 MiKTeXHelp::Init (/*[in]*/ const Session::InitInfo & initInfo)
 {
   Application::Init (initInfo);

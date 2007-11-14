@@ -37,7 +37,6 @@
    _________________________________________________________________________ */
 
 PathName
-MIKTEXCALL
 Utils::GetFolderPath (/*[in]*/ int	nFolder,
 		      /*[in]*/ int	nFallbackFolder,
 		      /*[in]*/ bool	getCurrentPath)
@@ -677,8 +676,6 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
 Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 			    /*[in]*/ unsigned long	errorCode,
 			    /*[in]*/ const char *	lpszInfo,
@@ -753,8 +750,6 @@ Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
 Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 			    /*[in]*/ const char *	lpszInfo,
 			    /*[in]*/ const char *	lpszSourceFile,
@@ -1644,7 +1639,7 @@ Utils::GetOSVersionString ()
    See Q246772.
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
 {
@@ -2357,7 +2352,6 @@ SessionImpl::IsUserMemberOfGroup (/*[in]*/ DWORD localGroup)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::IsUserAnAdministrator ()
 {
   if (isUserAnAdministrator == TriState::Undetermined)
@@ -2380,7 +2374,6 @@ SessionImpl::IsUserAnAdministrator ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::IsUserAPowerUser ()
 {
   if (isUserAPowerUser == TriState::Undetermined)
@@ -2448,7 +2441,6 @@ SessionImpl::RunningElevated ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::RunningAsAdministrator ()
 {
   if (runningAsAdministrator == TriState::Undetermined)
@@ -2478,7 +2470,6 @@ SessionImpl::RunningAsAdministrator ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::RunningAsPowerUser ()
 {
   if (runningAsPowerUser == TriState::Undetermined)
@@ -2955,7 +2946,6 @@ Utils::RegisterMiKTeXUser ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Argv::Append (/*[in]*/ const char *	lpszArguments)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
@@ -3044,9 +3034,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
    Utils::UTF8ToWideChar
    _________________________________________________________________________ */
 
-MIKTEXEXPORT
 wstring
-MIKTEXCALL
 Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 {
   MIKTEX_ASSERT (IsUTF8(lpszUtf8));
@@ -3085,9 +3073,7 @@ Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
-MIKTEXEXPORT
 string
-MIKTEXCALL
 Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
 {
   if (*lpszWideChar == 0)
@@ -3120,9 +3106,7 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
    Utils::AnsiToWideChar
    _________________________________________________________________________ */
 
-MIKTEXEXPORT
 wstring
-MIKTEXCALL
 Utils::AnsiToWideChar (/*[in]*/ const char * lpszAnsi)
 {
   if (*lpszAnsi == 0)

@@ -38,10 +38,10 @@
 
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
-MIKTEXEXPORT
+MIKTEXCOREEXPORT
 void
 MIKTEXNORETURN
-MIKTEXCALL
+MIKTEXCEECALL
 FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 		  /*[in]*/ const char *	lpszMessage,
 		  /*[in]*/ const char *	lpszInfo,

@@ -184,7 +184,6 @@ DviImpl::~DviImpl ()
    _________________________________________________________________________ */
 
 void
-MIKTEXDVICALL
 DviImpl::Dispose ()
 {
   if (hByeByteEvent != 0)
@@ -451,7 +450,6 @@ DviImpl::FirstParam (/*[in]*/ InputStream &	inputStream,
 const int dvi_id = 2;
 
 void
-MIKTEXDVICALL
 DviImpl::Scan ()
 {
   InputStream inputStream (dviFileName.Get());
@@ -768,7 +766,6 @@ DviImpl::DefineFont (/*[in]*/ InputStream &	inputStream,
    _________________________________________________________________________ */
 
 PageStatus
-MIKTEXDVICALL
 DviImpl::GetPageStatus (/*[in]*/ int	pageIdx)
 {
   CheckCondition ();
@@ -1612,7 +1609,6 @@ DviRuleImpl::GetForegroundColor ()
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetNumberOfPages ()
 {
   CheckCondition ();
@@ -1629,7 +1625,6 @@ DviImpl::GetNumberOfPages ()
    _________________________________________________________________________ */
 
 DviPage *
-MIKTEXDVICALL
 DviImpl::GetPage (/*[in]*/ int pageIdx)
 {
   CheckCondition ();
@@ -1690,7 +1685,6 @@ DviImpl::GetPage (/*[in]*/ int pageIdx)
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetMinPageNumber ()
 {
   CheckCondition ();
@@ -1703,7 +1697,6 @@ DviImpl::GetMinPageNumber ()
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetMaxPageNumber ()
 {
   CheckCondition ();
@@ -1716,7 +1709,6 @@ DviImpl::GetMaxPageNumber ()
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetMagnification ()
 {
   CheckCondition ();
@@ -1729,7 +1721,6 @@ DviImpl::GetMagnification ()
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetMaxH ()
 {
   CheckCondition ();
@@ -1742,7 +1733,6 @@ DviImpl::GetMaxH ()
    _________________________________________________________________________ */
 
 int
-MIKTEXDVICALL
 DviImpl::GetMaxV ()
 {
   CheckCondition ();
@@ -1755,7 +1745,6 @@ DviImpl::GetMaxV ()
    _________________________________________________________________________ */
 
 DviPage *
-MIKTEXDVICALL
 DviImpl::GetLoadedPage (/*[in]*/ int	pageIdx)
 {
   CheckCondition ();
@@ -1827,7 +1816,6 @@ DviImpl::Progress (/*[in]*/ DviNotification	nf,
    _________________________________________________________________________ */
 
 string
-MIKTEXDVICALL
 DviImpl::GetStatusText ()
 {
   CheckCondition ();
@@ -2206,7 +2194,6 @@ DviImpl::MakeFonts (/*[in]*/ const FontMap &	fontMap,
    _________________________________________________________________________ */
 
 bool
-MIKTEXDVICALL
 DviImpl::MakeFonts ()
 {
   CheckCondition ();
@@ -2258,7 +2245,6 @@ DviImpl::GetFontTable (/*[in]*/ const FontMap &		fontMap,
    _________________________________________________________________________ */
 
 vector<DviFontInfo>
-MIKTEXDVICALL
 DviImpl::GetFontTable ()
 {
   CheckCondition ();

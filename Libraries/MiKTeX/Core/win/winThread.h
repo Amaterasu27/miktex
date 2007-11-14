@@ -1,6 +1,6 @@
 /* winThread.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -24,7 +24,7 @@ class winThread : public Thread
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Join ();
 
 private:

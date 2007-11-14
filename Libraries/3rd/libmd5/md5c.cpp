@@ -28,7 +28,7 @@
 #endif
 
 #if defined(MIKTEX)
-#include "internal.h"
+#include "internal.h";
 #else
 #include "global.h"
 #include "md5.h"
@@ -123,7 +123,7 @@ static unsigned char PADDING[64] = {
 /* MD5 initialization. Begins an MD5 operation, writing a new context.
  */
 #if defined(MIKTEX)
-MIKTEXMD5API(void) MiKTeX::Core::MD5Init (MD5_CTX * context)
+MIKTEXMD5API(void)  MiKTeX::Core::MD5Init (MD5_CTX * context)
 #else
 void MD5Init (context)
 MD5_CTX *context;                                        /* context */

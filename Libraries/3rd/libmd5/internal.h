@@ -1,6 +1,6 @@
 /* internal.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -23,9 +23,9 @@
 #include "global.h"
 
 #if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#  define MIKTEXMD5API(type) __declspec(dllexport) type __stdcall
+#  define MIKTEXMD5API(type) __declspec(dllexport) type __cdecl
 #elif defined(_MSC_VER)
-#  define MIKTEXMD5API(type) type __stdcall
+#  define MIKTEXMD5API(type) type __cdecl
 #else
 #  define MIKTEXMD5API(type) type
 #endif

@@ -80,7 +80,7 @@ private:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebAppInputLine::Init (lpszProgramInvocationName);
@@ -110,7 +110,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Finalize ()
   {
     Free (THEDATA(bibfile));
@@ -130,7 +130,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     WebAppInputLine::AddOptions ();
@@ -146,7 +146,7 @@ Include item after N cross-refs; default 2."),
 public:
   virtual
   MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetInputFileType ()
     const
   {
@@ -156,7 +156,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetUsage ()
     const
   {
@@ -166,7 +166,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -188,7 +188,7 @@ public:
   
 public:
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   TheNameOfTheGame ()
     const
   {
@@ -197,7 +197,7 @@ public:
 
 public:
   unsigned long
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

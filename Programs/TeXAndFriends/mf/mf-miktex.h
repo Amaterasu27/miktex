@@ -68,7 +68,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     MetafontApp::Init (lpszProgramInvocationName);
@@ -90,7 +90,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     MetafontApp::AddOptions ();
@@ -110,7 +110,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -171,7 +171,7 @@ public:
 public:
   virtual
   int
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetFormatIdent ()
     const
   {
@@ -181,7 +181,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetMemoryDumpFileName ()
     const
   {
@@ -191,7 +191,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetPoolFileName ()
     const
   {
@@ -201,7 +201,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetInitProgramName ()
     const
   {
@@ -211,7 +211,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetVirginProgramName ()
     const
   {
@@ -221,7 +221,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   TheNameOfTheGame ()
     const
   {
@@ -248,7 +248,7 @@ private:
 public:
   virtual
   unsigned long
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

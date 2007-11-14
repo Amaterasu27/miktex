@@ -50,7 +50,7 @@ WebAppInputLine
 {
 public:
   MIKTEXMFEXPORT
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   WebAppInputLine ();
 
   /* _______________________________________________________________________
@@ -61,7 +61,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -72,7 +72,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -83,7 +83,7 @@ public:
 protected:
   
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
 
   /* _______________________________________________________________________
@@ -94,7 +94,7 @@ protected:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int		opt,
 		 /*[in]*/ const char *	lpszOptArg);
 
@@ -106,8 +106,7 @@ protected:
 public:
 
   virtual
-  int
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(int)
   GetFormatIdent ()
     const
   {
@@ -124,7 +123,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   TouchJobOutputFile (/*[in]*/ FILE *)
     const;
 
@@ -256,7 +255,7 @@ public:
 private:
 
 #if 0  
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   HandleEof (/*[in]*/ FILE * pFile)
     const;
 #endif
@@ -404,7 +403,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   OpenInputFile (/*[out]*/ FILE * *		ppFile,
 		 /*[in]*/ const char *		lpszFileName);
 
@@ -415,7 +414,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   OpenInputFile (/*[out]*/ C4P::FileRoot &	f,
 		 /*[in]*/ const char *		lpszFileName);
 
@@ -426,7 +425,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   OpenOutputFile (/*[in]*/ C4P::FileRoot &		f,
 		  /*[in]*/ const char *			lpszPath,
 		  /*[in]*/ MiKTeX::Core::FileShare	share,
@@ -453,7 +452,7 @@ protected:
 public:
 
   static
-  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  MIKTEXMFCEEAPI(MiKTeX::Core::PathName)
   MangleNameOfFile (/*[in]*/ const char *	lpszFileName);
 
   /* _______________________________________________________________________
@@ -464,7 +463,7 @@ public:
 public:
 
   static
-  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  MIKTEXMFCEEAPI(MiKTeX::Core::PathName)
   UnmangleNameOfFile (/*[in]*/ const char *	lpszFileName);
 
   /* _______________________________________________________________________
@@ -475,7 +474,7 @@ public:
 public:
 
   static
-  MIKTEXMFAPI(MiKTeX::Core::PathName)
+  MIKTEXMFCEEAPI(MiKTeX::Core::PathName)
   UnmangleNameOfFile (/*[in]*/ const wchar_t *	lpszFileName);
 
   /* _______________________________________________________________________

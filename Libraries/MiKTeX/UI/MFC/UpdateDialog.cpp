@@ -82,19 +82,19 @@ protected:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ Notification	nf);
 
 private:
@@ -552,7 +552,6 @@ UpdateDialogImpl::OnProgress (/*[in]*/ WPARAM	wParam,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 UpdateDialogImpl::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Report (true, "%s\n", lpszLine);
@@ -564,7 +563,6 @@ UpdateDialogImpl::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 UpdateDialogImpl::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UNUSED_ALWAYS (lpszMessage);
@@ -577,7 +575,6 @@ UpdateDialogImpl::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
 {
   CSingleLock (&criticalSectionMonitor, TRUE);
@@ -787,7 +784,6 @@ UpdateDialogImpl::SetFileLists (/*[in]*/ const vector<string> & toBeInstalled,
    _________________________________________________________________________ */
 
 INT_PTR
-MIKTEXUICALL
 UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		       /*[in]*/ PackageManager *	pManager,
 		       /*[in]*/ const vector<string> &	toBeInstalled,

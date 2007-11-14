@@ -47,7 +47,7 @@ ETeXApp
 {
 public:
   MIKTEXMFEXPORT
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ETeXApp ();
 
   /* _______________________________________________________________________
@@ -58,7 +58,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -69,7 +69,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -80,7 +80,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
   
   /* _______________________________________________________________________
@@ -91,7 +91,7 @@ protected:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int		c,
 		 /*[in]*/ const char *	lpszOptArg);
 
@@ -103,7 +103,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   OnTeXMFStartJob ();
 
   /* _______________________________________________________________________

@@ -469,7 +469,6 @@ FileCopyPage::OnReport (/*[in]*/ WPARAM	wParam,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
 			       /*[in]*/ size_t		n)
 {
@@ -483,7 +482,6 @@ FileCopyPage::OnProcessOutput (/*[in]*/ const void *	pOutput,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Report (true, "%s\n", lpszLine);
@@ -495,7 +493,6 @@ FileCopyPage::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UINT uType = MB_ICONSTOP;
@@ -512,7 +509,6 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
   CSingleLock (&criticalSectionMonitor, TRUE);

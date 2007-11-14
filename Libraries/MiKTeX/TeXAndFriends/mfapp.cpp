@@ -28,7 +28,7 @@
    MetafontApp::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 MetafontApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXMFApp::Init (lpszProgramInvocationName);
@@ -43,7 +43,7 @@ MetafontApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
    MetafontApp::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 MetafontApp::Finalize ()
 {
   TeXMFApp::Finalize ();
@@ -60,7 +60,7 @@ enum {
   OPT_PATH_SIZE,
 };
 
-MIKTEXMFAPI(void)
+void
 MetafontApp::AddOptions ()
 {
   TeXMFApp::AddOptions ();
@@ -91,7 +91,7 @@ Set path_size to N."),
    MetafontApp::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 MetafontApp::ProcessOption (/*[in]*/ int		opt,
 			    /*[in]*/ const char *	lpszOptArg)
 {

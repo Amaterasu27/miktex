@@ -152,7 +152,6 @@ ErrorDialogImpl::OnInitDialog ()
    _________________________________________________________________________ */
 
 INT_PTR
-MIKTEXUICALL
 ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		      /*[in]*/ const MiKTeXException &	e)
 {
@@ -178,7 +177,6 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
    _________________________________________________________________________ */
 
 INT_PTR
-MIKTEXUICALL
 ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		      /*[in]*/ const exception &	e)
 {

@@ -118,8 +118,6 @@ Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
 Session::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 			   /*[in]*/ const char *	lpszMessage,
 			   /*[in]*/ const char *	lpszInfo,
@@ -157,8 +155,7 @@ Session::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
+MIKTEXCEECALL
 MiKTeX::Debug::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 				 /*[in]*/ const char *	lpszMessage,
 				 /*[in]*/ const char *	lpszInfo,
@@ -201,8 +198,6 @@ GetCrtErrorMessage (/*[in]*/ int		functionResult,
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
 Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
 			/*[in]*/ const char *	lpszInfo,
 			/*[in]*/ const char *	lpszSourceFile,
@@ -221,8 +216,6 @@ Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
    _________________________________________________________________________ */
 
 void
-MIKTEXNORETURN
-MIKTEXCALL
 Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
 			/*[in]*/ int		errorCode,
 			/*[in]*/ const char *	lpszInfo,

@@ -58,7 +58,6 @@ SignalHandler (/*[in]*/ int signalToBeHandled)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 Application::Cancelled ()
 {
   return (cancelled == 0 ? false : true);
@@ -70,7 +69,6 @@ Application::Cancelled ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Application::CheckCancel ()
 {
   if (Cancelled())
@@ -89,8 +87,6 @@ Application::CheckCancel ()
    Application::Application
    _________________________________________________________________________ */
 
-MIKTEXAPPEXPORT
-MIKTEXAPPCALL
 Application::Application ()
   : enableInstaller (TriState::Undetermined),
     initialized (false)
@@ -102,7 +98,6 @@ Application::Application ()
    Application::~Application
    _________________________________________________________________________ */
 
-MIKTEXAPPCALL
 Application::~Application ()
 {
   try
@@ -145,7 +140,7 @@ InstallSignalHandler (/*[in]*/ int sig)
    Application::Init
    _________________________________________________________________________ */
 
-MIKTEXAPPAPI(void)
+void
 Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 {
   initialized = true;
@@ -164,7 +159,7 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    Application::Init
    _________________________________________________________________________ */
 
-MIKTEXAPPAPI(void)
+void
 Application::Init (/*[in]*/ const char *	lpszProgramInvocationName,
 		   /*[in]*/ const char *	lpszTheNameOfTheGame)
 {
@@ -184,7 +179,7 @@ Application::Init (/*[in]*/ const char *	lpszProgramInvocationName,
    Application::Init
    _________________________________________________________________________ */
 
-MIKTEXAPPAPI(void)
+void
 Application::Init (/*[in]*/ const char *	lpszProgramInvocationName)
 {
   Init (lpszProgramInvocationName, 0);
@@ -195,7 +190,7 @@ Application::Init (/*[in]*/ const char *	lpszProgramInvocationName)
    Application::Finalize
    _________________________________________________________________________ */
 
-MIKTEXAPPAPI(void)
+void
 Application::Finalize ()
 {
   if (pInstaller.get() != 0)
@@ -218,7 +213,6 @@ Application::Finalize ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 Application::ReportLine (/*[in]*/ const char * lpszLine)
 {
   if (! GetQuietFlag())
@@ -234,7 +228,6 @@ Application::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   UNUSED_ALWAYS (lpszMessage);
@@ -247,7 +240,6 @@ Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 Application::OnProgress (/*[in]*/ Notification		nf)
 {
   UNUSED_ALWAYS (nf);
@@ -260,7 +252,6 @@ Application::OnProgress (/*[in]*/ Notification		nf)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
 			     /*[in]*/ const char * lpszTrigger)
 {
@@ -365,7 +356,7 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
    Application::EnableInstaller
    _________________________________________________________________________ */
 
-MIKTEXAPPAPI(void)
+void
 Application::EnableInstaller (/*[in]*/ TriState tri)
 {
   enableInstaller = tri;

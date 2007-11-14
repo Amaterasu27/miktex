@@ -33,7 +33,7 @@ ProcessOutputTrash
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {
@@ -55,7 +55,7 @@ ProcessOutputStderr
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProcessOutput (/*[in]*/ const void *	pOutput,
 		   /*[in]*/ size_t		n)
   {

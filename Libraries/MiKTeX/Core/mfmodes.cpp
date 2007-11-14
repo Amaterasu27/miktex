@@ -1,6 +1,6 @@
 /* mfmodes.cpp: METAFONT modes
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -259,11 +259,12 @@ SessionImpl::DetermineMETAFONTMode (/*[in]*/ unsigned		dpi,
    miktex_determine_metafont_mode
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
 				/*[out]*/ char *	lpszMnemonic,
 				/*[in]*/ size_t		bufSize)
 {
+  C_FUNC_BEGIN ();
   MIKTEX_ASSERT_CHAR_BUFFER (lpszMnemonic, bufSize);
   MIKTEXMFMODE mode;
   if (! SessionImpl::GetSession()->DetermineMETAFONTMode(dpi, &mode))
@@ -272,4 +273,5 @@ miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
     }
   Utils::CopyString (lpszMnemonic, bufSize, mode.szMnemonic);
   return (1);
+  C_FUNC_END ();
 }

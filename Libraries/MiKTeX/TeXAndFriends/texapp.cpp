@@ -39,7 +39,7 @@ TeXApp::TeXApp ()
    TeXApp::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXMFApp::Init (lpszProgramInvocationName);
@@ -66,7 +66,7 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
    TeXApp::OnTeXMFStartJob
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXApp::OnTeXMFStartJob ()
 {
   TeXMFApp::OnTeXMFStartJob ();
@@ -81,7 +81,7 @@ TeXApp::OnTeXMFStartJob ()
    TeXApp::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXApp::Finalize ()
 {
   lastSourceFilename = "";
@@ -110,7 +110,7 @@ enum {
   OPT_TRIE_SIZE,
 };
 
-MIKTEXMFAPI(void)
+void
 TeXApp::AddOptions ()
 {
   TeXMFApp::AddOptions ();
@@ -228,7 +228,7 @@ Insert source specials in certain places of the DVI file.")),
    TeXApp::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXApp::ProcessOption (/*[in]*/ int		optchar,
 		       /*[in]*/ const char *	lpszArg)
 {
@@ -345,7 +345,7 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
    TeXApp::Write18
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
 		 /*[out]*/ int &	exitCode)
   const
@@ -364,7 +364,7 @@ TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
    TeXApp::Write18
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
 		 /*[out]*/ int &		exitCode)
   const

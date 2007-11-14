@@ -92,7 +92,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
    TeXMFApp::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   WebAppInputLine::Init (lpszProgramInvocationName);
@@ -132,7 +132,7 @@ TeXMFApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
    TeXMFApp::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::Finalize ()
 {
   if (trace_time.get() != 0)
@@ -155,7 +155,7 @@ TeXMFApp::Finalize ()
    TeXMFApp::OnTeXMFStartJob
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::OnTeXMFStartJob ()
 {
   MIKTEX_ASSERT_STRING (TheNameOfTheGame());
@@ -183,7 +183,7 @@ TeXMFApp::OnTeXMFStartJob ()
    TeXMFApp::OnTeXMFFinishJob
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::OnTeXMFFinishJob ()
 {
   if (recordFileNames)
@@ -252,7 +252,7 @@ enum {
   OPT_UNDUMP,
 };
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::AddOptions ()
 {
   WebAppInputLine::AddOptions ();
@@ -502,7 +502,7 @@ characters and re-mapping of output characters."),
    TeXMFApp::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 			 /*[in]*/ const char *	lpszOptArg)
 {
@@ -714,7 +714,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
    TeXMFApp::ParseFirstLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
 			  /*[in,out]*/ MiKTeX::Core::Argv &	argv)
 {
@@ -744,7 +744,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
    TeXMFApp::ParseFirstLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 {
   PathName path;
@@ -807,7 +807,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
    TeXMFApp::OpenMemoryDumpFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
 			      /*[out]*/ FILE **		ppFile,
 			      /*[in]*/ void *		pBuf,
@@ -920,7 +920,7 @@ The MiKTeX configuration utility could not be found.")),
    TeXMFApp::ProcessCommandLineOptions
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::ProcessCommandLineOptions ()
 {
   if (Utils::Contains(GetInitProgramName(), Utils::GetExeName().c_str()))
@@ -957,7 +957,7 @@ TeXMFApp::ProcessCommandLineOptions ()
    TeXMFApp::IsVirgin
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXMFApp::IsVirgin () const
 {
   string exeName = Utils::GetExeName();
@@ -970,7 +970,7 @@ TeXMFApp::IsVirgin () const
    TeXMFApp::GetDefaultMemoryDumpFileName
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
   const
 {
@@ -1122,7 +1122,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
    TeXMFApp::InitializeBuffer
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned long)
+unsigned long
 TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned char * pBuffer)
 {
   MIKTEX_ASSERT (pBuffer != 0);
@@ -1136,7 +1136,7 @@ TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned char * pBuffer)
    TeXMFApp::InitializeBuffer
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned long)
+unsigned long
 TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned short * pBuffer)
 {
   MIKTEX_ASSERT (pBuffer != 0);
@@ -1150,7 +1150,7 @@ TeXMFApp::InitializeBuffer (/*[in,out]*/ unsigned short * pBuffer)
    TeXMFApp::InitializeBuffer
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(unsigned long)
+unsigned long
 TeXMFApp::InitializeBuffer (/*[in,out]*/ C4P_signed32 * pBuffer)
 {
   MIKTEX_ASSERT (pBuffer != 0);
@@ -1164,7 +1164,7 @@ TeXMFApp::InitializeBuffer (/*[in,out]*/ C4P_signed32 * pBuffer)
    TeXMFApp::InvokeEditor
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 			/*[in]*/ int			editLineNumber,
 			/*[in]*/ const PathName &	transcriptFileName)
@@ -1267,7 +1267,7 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
    TeXMFApp::TouchJobOutputFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 TeXMFApp::TouchJobOutputFile (/*[in]*/ FILE * pfile) const
 {
   MIKTEX_ASSERT (pfile != 0);
@@ -1283,7 +1283,7 @@ TeXMFApp::TouchJobOutputFile (/*[in]*/ FILE * pfile) const
    TeXMFApp::OpenPoolFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 TeXMFApp::OpenPoolFile (/*[in]*/ void *			p,
 			/*[in]*/ const PathName &	fileName_)
   const

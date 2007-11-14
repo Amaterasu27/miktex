@@ -31,7 +31,6 @@
    _________________________________________________________________________ */
 
 DirectoryLister *
-MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName & directory)
 {
   return (new winDirectoryLister (directory, 0));
@@ -43,7 +42,6 @@ DirectoryLister::Open (/*[in]*/ const PathName & directory)
    _________________________________________________________________________ */
 
 DirectoryLister *
-MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 		       /*[in]*/ const char *		lpszPattern)
 {
@@ -69,7 +67,6 @@ winDirectoryLister::winDirectoryLister
    winDirectoryLister::~winDirectoryLister
    _________________________________________________________________________ */
 
-MIKTEXCALL
 winDirectoryLister::~winDirectoryLister ()
 {
   try
@@ -87,7 +84,6 @@ winDirectoryLister::~winDirectoryLister ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 winDirectoryLister::Close ()
 {
   HANDLE handle = this->handle;
@@ -108,7 +104,6 @@ winDirectoryLister::Close ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
 {
   DirectoryEntry2 direntry2;
@@ -127,7 +122,6 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 {
   WIN32_FIND_DATA ffdat;

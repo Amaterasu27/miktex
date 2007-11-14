@@ -567,7 +567,6 @@ private:
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::TryCreateFromTemplate (/*[in]*/ const PathName & path)
 {
   unsigned r = TryDeriveTEXMFRoot(path);

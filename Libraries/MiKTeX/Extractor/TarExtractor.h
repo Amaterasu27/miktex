@@ -37,13 +37,13 @@ public:
 
 public:
   virtual
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   ~TarExtractor ();
 
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	tarPath,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -53,7 +53,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ MiKTeX::Core::Stream *		pStream,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -63,7 +63,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Dispose ();
 
 protected:

@@ -1,6 +1,6 @@
 /* tempfile.cpp: managing temporary files
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -28,7 +28,7 @@
    miktex_remember_temp_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_remember_temp_file (/*[in]*/ const char * lpszFileName)
 {
   C_FUNC_BEGIN ();
@@ -43,7 +43,7 @@ miktex_remember_temp_file (/*[in]*/ const char * lpszFileName)
    miktex_create_temp_file_name
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_create_temp_file_name (/*[out]*/ char *	lpszFileName)
 {
   C_FUNC_BEGIN ();

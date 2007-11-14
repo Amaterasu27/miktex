@@ -35,7 +35,6 @@ using namespace std;
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 TarBzip2Extractor::Extract (/*[in]*/ const PathName &	tarbz2Path,
 			    /*[in]*/ const PathName &	destDir,
 			    /*[in]*/ bool		makeDirectories,

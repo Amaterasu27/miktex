@@ -52,7 +52,7 @@
 #define IDS_PROJECT_PAGE                144
 #define IDS_MIKTEX_ON_THE_WEB           145
 #define IDS_KNOWN_ISSUES                146
-#define IDS_REGISTRATION                147
+#define IDS_GIVE_BACK                   147
 #define IDS_BROWSE_LOCAL                148
 #define IDS_HEADER_LICENSE              149
 #define IDS_SUBHEADER_LICENSE           150

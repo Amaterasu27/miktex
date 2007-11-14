@@ -48,7 +48,7 @@ class DVICOPYCLASS
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     WebApp::AddOptions ();
@@ -147,7 +147,7 @@ Invalid magnification."));
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetUsage ()
     const
   {
@@ -157,7 +157,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -212,7 +212,7 @@ private:
 
 public:
   unsigned long
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

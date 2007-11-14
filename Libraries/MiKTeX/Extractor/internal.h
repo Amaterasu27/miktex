@@ -20,9 +20,9 @@
    USA. */
 
 #if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
-#  define EXTRACTOREXPORT __declspec(dllexport)
+#  define MIKTEXEXTRACTOREXPORT __declspec(dllexport)
 #else
-#  define EXTRACTOREXPORT
+#  define MIKTEXEXTRACTOREXPORT
 #endif
 
 #define DAA6476494C144C8BED9A9E8810BAABA

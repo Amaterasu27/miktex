@@ -24,43 +24,43 @@ class winProcess : public Process
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardInput ();
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardOutput ();
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardError ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit (/*[in]*/ int milliseconds);
 
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_ExitCode ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
 
 private:

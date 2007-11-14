@@ -1,6 +1,6 @@
 /* c4plib.cpp: C4P runtime routines
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -33,7 +33,7 @@ C4P_BEGIN_NAMESPACE;
    DiscardLine
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+C4PCEEAPI(void)
 DiscardLine (/*[in]*/ C4P_text & textfile)
 {
   MIKTEX_API_BEGIN ("DiscardLine");
@@ -51,7 +51,7 @@ DiscardLine (/*[in]*/ C4P_text & textfile)
    GetChar
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(char)
+C4PCEEAPI(char)
 GetChar (/*[in]*/ C4P_text & textfile)
 {
   MIKTEX_API_BEGIN ("GetChar");
@@ -71,7 +71,7 @@ GetChar (/*[in]*/ C4P_text & textfile)
    GetInteger
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(C4P_integer)
+C4PCEEAPI(C4P_integer)
 GetInteger (/*[in]*/ C4P_text & textfile)
 {
   MIKTEX_API_BEGIN ("GetInteger");
@@ -98,7 +98,7 @@ GetInteger (/*[in]*/ C4P_text & textfile)
    GetReal
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(C4P_real)
+C4PCEEAPI(C4P_real)
 GetReal (/*[in]*/ C4P_text & /*textfile*/)
 {
   MIKTEX_API_BEGIN ("GetReal");
@@ -111,7 +111,7 @@ GetReal (/*[in]*/ C4P_text & /*textfile*/)
    FileRoot::open
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 FileRoot::Open (/*[in]*/ LPCTSTR	lpszPath,
 		/*[in]*/ FileMode	mode,
 		/*[in]*/ FileAccess	access,
@@ -154,7 +154,7 @@ FileRoot::Open (/*[in]*/ LPCTSTR	lpszPath,
    Round
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(C4P_integer)
+C4PCEEAPI(C4P_integer)
 Round (/*[in]*/ double r)
 {
   MIKTEX_API_BEGIN ("Round");

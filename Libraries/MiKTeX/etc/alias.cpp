@@ -29,6 +29,8 @@
 #  define IN_PROCESS 1
 #endif
 
+#include <MiKTeX/Core/Definitions>
+
 #if ! IN_PROCESS
 #  include <process.h>
 #  include <MiKTeX/Core/Core>
@@ -43,7 +45,7 @@
 #  endif
 
 #  if ! defined(DLLAPI)
-#    define DLLAPI __cdecl
+#    define DLLAPI MIKTEXCEECALL
 #  endif
 
 extern
@@ -69,7 +71,7 @@ namespace {
 
 #if IN_PROCESS
 int
-__cdecl
+MIKTEXCEECALL
 main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
 {
@@ -102,7 +104,7 @@ main (/*[in]*/ int		argc,
 
 #if ! IN_PROCESS
 int
-__cdecl
+MIKTEXCEECALL
 main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
 {

@@ -1,6 +1,6 @@
 /* uncompress.cpp: uncompressing files
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -111,7 +111,7 @@ Utils::UncompressFile (/*[in]*/ const char *	lpszPathIn,
    miktex_uncompress_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut)
 {

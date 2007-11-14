@@ -41,7 +41,6 @@ const RGBQUAD whiteAndBlack[2] = { RGBQUAD_WHITE, RGBQUAD_BLACK };
    DibChunk::~DibChunk
    _________________________________________________________________________ */
 
-DIBCHUNKERCALL
 DibChunk::~DibChunk ()
 {
 }
@@ -52,7 +51,6 @@ DibChunk::~DibChunk ()
    _________________________________________________________________________ */
 
 DibChunker *
-DIBCHUNKERCALL
 DibChunker::Create ()
 {
   return (new DibChunkerImpl);
@@ -63,7 +61,6 @@ DibChunker::Create ()
    DibChunker::~DibChunker
    _________________________________________________________________________ */
 
-DIBCHUNKERCALL
 DibChunker::~DibChunker ()
 {
 }

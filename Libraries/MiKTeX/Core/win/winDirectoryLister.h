@@ -33,19 +33,19 @@ class winDirectoryLister : public DirectoryLister
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry & direntry);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry2 & direntry2);
 
 public:
@@ -54,7 +54,7 @@ public:
 
 public:
   virtual
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ~winDirectoryLister ();
 
 private:

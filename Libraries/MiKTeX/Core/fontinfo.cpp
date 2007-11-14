@@ -645,7 +645,6 @@ Utils::ParseDvipsMapLine (/*[in]*/ const string &	line,
    _________________________________________________________________________ */
 
 string
-MIKTEXCALL
 SessionImpl::GetLocalFontDirectories ()
 {
   if (! flags.test(Flags::CachedLocalFontDirs))

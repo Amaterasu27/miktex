@@ -96,7 +96,6 @@ FatalSoapError (/*[in]*/ soap *		pSoap,
    PackageManager::~PackageManager
    _________________________________________________________________________ */
 
-MPMCALL
 PackageManager::~PackageManager ()
 {
 }
@@ -124,7 +123,6 @@ PackageManagerImpl::PackageManagerImpl ()
    PackageManagerImpl::~PackageManagerImpl
    _________________________________________________________________________ */
 
-MPMCALL
 PackageManagerImpl::~PackageManagerImpl ()
 {
   try
@@ -142,7 +140,6 @@ PackageManagerImpl::~PackageManagerImpl ()
    _________________________________________________________________________ */
 
 PackageManager *
-MPMCALL
 PackageManager::Create ()
 {
   PackageManager * pManager = new PackageManagerImpl ();
@@ -155,7 +152,6 @@ PackageManager::Create ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManagerImpl::AddRef ()
 {
   ++ refCount;
@@ -167,7 +163,6 @@ PackageManagerImpl::AddRef ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManagerImpl::Release ()
 {
   -- refCount;
@@ -200,7 +195,6 @@ PackageManagerImpl::Dispose ()
    _________________________________________________________________________ */
 
 PackageInstaller *
-MPMCALL
 PackageManagerImpl::CreateInstaller ()
 {
   return (new PackageInstallerImpl (this));
@@ -212,7 +206,6 @@ PackageManagerImpl::CreateInstaller ()
    _________________________________________________________________________ */
 
 PackageIterator *
-MPMCALL
 PackageManagerImpl::CreateIterator ()
 {
   return (new PackageIteratorImpl (this));
@@ -749,7 +742,6 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName,
 				       /*[out]*/ PackageInfo &	packageInfo)
 {
@@ -818,7 +810,6 @@ PackageManagerImpl::NeedInstalledFileInfoTable ()
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::TryGetRemotePackageRepository (/*[out]*/ string & url)
 {
   if (SessionWrapper(true)
@@ -839,7 +830,6 @@ PackageManager::TryGetRemotePackageRepository (/*[out]*/ string & url)
    _________________________________________________________________________ */
 
 string
-MPMCALL
 PackageManager::GetRemotePackageRepository ()
 {
   string url;
@@ -925,7 +915,6 @@ PackageManagerImpl::DetermineRepositoryType
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::SetRemotePackageRepository (/*[in]*/ const string & url)
 {
   SessionWrapper(true)
@@ -940,7 +929,6 @@ PackageManager::SetRemotePackageRepository (/*[in]*/ const string & url)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
 {
   string str;
@@ -971,7 +959,6 @@ PackageManager::TryGetLocalPackageRepository (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 PathName
-MPMCALL
 PackageManager::GetLocalPackageRepository ()
 {
   PathName path;
@@ -990,7 +977,6 @@ PackageManager::GetLocalPackageRepository ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::SetLocalPackageRepository (/*[in]*/ const PathName & path)
 {
   SessionWrapper(true)
@@ -1005,7 +991,6 @@ PackageManager::SetLocalPackageRepository (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
 {
   string str;
@@ -1036,7 +1021,6 @@ PackageManager::TryGetMiKTeXDirectRoot (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 PathName
-MPMCALL
 PackageManager::GetMiKTeXDirectRoot ()
 {
   PathName path;
@@ -1055,7 +1039,6 @@ PackageManager::GetMiKTeXDirectRoot ()
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::SetMiKTeXDirectRoot (/*[in]*/ const PathName & path)
 {
   SessionWrapper(true)
@@ -1070,7 +1053,6 @@ PackageManager::SetMiKTeXDirectRoot (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::TryGetDefaultPackageRepository
 (/*[out]*/ RepositoryType &	repositoryType,
  /*[out]*/ string &		urlOrPath)
@@ -1121,7 +1103,6 @@ PackageManager::TryGetDefaultPackageRepository
    _________________________________________________________________________ */
 
 RepositoryType
-MPMCALL
 PackageManager::GetDefaultPackageRepository (/*[out]*/ string &	urlOrPath)
 {
   RepositoryType repositoryType (RepositoryType::Unknown);
@@ -1140,7 +1121,6 @@ PackageManager::GetDefaultPackageRepository (/*[out]*/ string &	urlOrPath)
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::SetDefaultPackageRepository
 (/*[in]*/ RepositoryType	repositoryType,
  /*[in]*/ const string &	urlOrPath)
@@ -1246,7 +1226,6 @@ MakeRepositoryInfo (/*[in]*/ const RepositoryInfo_ * pMwsRepositoryInfo)
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManagerImpl::DownloadRepositoryList ()
 {
   repositories.clear ();
@@ -1289,7 +1268,6 @@ PackageManagerImpl::DownloadRepositoryList ()
    _________________________________________________________________________ */
 
 string
-MPMCALL
 PackageManagerImpl::PickRepositoryUrl ()
 {
   RepositorySoapProxy repositorySoapProxy;
@@ -1429,7 +1407,6 @@ RememberFileNameInfo (/*[in]*/ const string &	prefixedFileName,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
 				   /*[out]*/ char ** ppSubDirectoryNames,
 				   /*[out]*/ char ** ppFileNames,
@@ -1493,7 +1470,6 @@ PackageManagerImpl::ReadDirectory (/*[in]*/ const char *	lpszPath,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PackageManagerImpl::OnProgress (/*[in]*/ unsigned	level,
 				/*[in]*/ const char *	lpszDirectory)
 {
@@ -1596,7 +1572,6 @@ PackageManagerImpl::GetInstalledFileInfo
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::IsLocalPackageRepository (/*[in]*/ const PathName & path)
 {
   if (! Directory::Exists(path))
@@ -1620,7 +1595,6 @@ PackageManager::IsLocalPackageRepository (/*[in]*/ const PathName & path)
    _________________________________________________________________________ */
 
 PackageInfo
-MPMCALL
 PackageManager::ReadPackageDefinitionFile
 (/*[in]*/ const PathName &	path,
  /*[in]*/ const char *	lpszTeXMFPrefix)
@@ -1752,7 +1726,6 @@ private:
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::WritePackageDefinitionFile
 (/*[in]*/ const PathName &	path,
  /*[in]*/ const PackageInfo &	packageInfo,
@@ -1901,7 +1874,6 @@ PackageManager::WritePackageDefinitionFile
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::StripTeXMFPrefix (/*[in]*/ const string &	str,
 				  /*[out]*/ string &		result)
 {
@@ -1920,7 +1892,6 @@ PackageManager::StripTeXMFPrefix (/*[in]*/ const string &	str,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
 {
 #if defined(MIKTEX_WINDOWS)
@@ -1951,7 +1922,6 @@ PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
 {
   string str;
@@ -1997,7 +1967,6 @@ PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
    _________________________________________________________________________ */
 
 ProxySettings
-MPMCALL
 PackageManager::GetProxy ()
 {
   ProxySettings proxySettings;
@@ -2026,7 +1995,6 @@ PackageManagerImpl::OnProgress ()
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManagerImpl::TryGetRepositoryInfo
 (/*[in]*/ const string &	url,
  /*[out]*/ RepositoryInfo &	repositoryInfo)
@@ -2066,7 +2034,6 @@ PackageManagerImpl::TryGetRepositoryInfo
    _________________________________________________________________________ */
 
 RepositoryInfo
-MPMCALL
 PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 {
   for (vector<RepositoryInfo>::const_iterator it = repositories.begin();
@@ -2155,7 +2122,6 @@ PackageManagerImpl::TryVerifyInstalledPackageHelper
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 PackageManagerImpl::TryVerifyInstalledPackage
 (/*[in]*/ const string & deploymentName)
 {
@@ -2243,7 +2209,6 @@ PackageManagerImpl::TryVerifyInstalledPackage
    _________________________________________________________________________ */
 
 string
-MPMCALL
 PackageManagerImpl::GetContainerPath (/*[in]*/ const string &	deploymentName,
 				      /*[in]*/ bool	useDisplayNames)
 {

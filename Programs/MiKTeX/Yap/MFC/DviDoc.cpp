@@ -574,7 +574,6 @@ DviDoc::GetDviFileStatus ()
    _________________________________________________________________________ */
 
 void
-MIKTEXDVICALL
 DviDoc::OnProgress (/*[in]*/ DviNotification	nf)
 {
   if (nf == DviNotification::BeginLoadFont && makingFonts)

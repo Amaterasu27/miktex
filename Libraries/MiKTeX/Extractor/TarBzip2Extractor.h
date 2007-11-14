@@ -35,7 +35,7 @@ class TarBzip2Extractor : public TarExtractor
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	tarbz2Path,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,

@@ -48,7 +48,7 @@ class GFTODVICLASS
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     AddOption (MIKTEXTEXT("overflow-label-offset\0\
@@ -84,7 +84,7 @@ The value is given in TeX points."),
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetUsage ()
     const
   {
@@ -94,7 +94,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     WebApp::Init (lpszProgramInvocationName);
@@ -109,7 +109,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -144,7 +144,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessCommandLineOptions ()
   {
     WebApp::ProcessCommandLineOptions ();
@@ -251,7 +251,7 @@ private:
 public:
   virtual
   unsigned long
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

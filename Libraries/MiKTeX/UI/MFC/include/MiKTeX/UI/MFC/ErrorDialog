@@ -36,7 +36,7 @@ public:
   AFX_EXT_CLASS
   static
   INT_PTR
-  MIKTEXUICALL
+  MIKTEXCEECALL
   DoModal (/*[in]*/ CWnd *					pParent,
 	   /*[in]*/ const MiKTeX::Core::MiKTeXException &	e);
 
@@ -44,7 +44,7 @@ public:
   AFX_EXT_CLASS
   static
   INT_PTR
-  MIKTEXUICALL
+  MIKTEXCEECALL
   DoModal (/*[in]*/ CWnd *					pParent,
 	   /*[in]*/ const std::exception &			e);
 };

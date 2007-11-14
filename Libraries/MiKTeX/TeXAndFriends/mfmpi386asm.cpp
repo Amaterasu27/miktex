@@ -45,7 +45,7 @@
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-__stdcall
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::TakeFraction (/*[in]*/ C4P_integer	p,
 				     /*[in]*/ C4P_integer	q,
 				     /*[in]*/ C4P_boolean &	arithError)
@@ -96,7 +96,7 @@ LL3:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-__stdcall
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::TakeScaled (/*[in]*/ C4P_integer		p,
 				   /*[in]*/ C4P_integer		q,
 				   /*[in]*/ C4P_boolean &	arithError)
@@ -147,7 +147,7 @@ LL3:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-__stdcall
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::MakeScaled (/*[in]*/ C4P_integer		p,
 				   /*[in]*/ C4P_integer		q,
 				   /*[in]*/ C4P_boolean &	arithError)
@@ -211,7 +211,7 @@ LL34:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-__stdcall
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::MakeFraction (/*[in]*/ C4P_integer	p,
 				     /*[in]*/ C4P_integer	q,
 				     /*[in]*/ C4P_boolean &	arithError)

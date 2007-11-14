@@ -61,7 +61,7 @@ MetafontApp
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -72,7 +72,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -83,7 +83,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
   
   /* _______________________________________________________________________
@@ -94,7 +94,7 @@ protected:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int		opt,
 		 /*[in]*/ const char *	lpszOptArg);
 
@@ -106,8 +106,7 @@ protected:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetInputFileType ()
     const
   {
@@ -122,8 +121,7 @@ public:
 public:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetMemoryDumpFileExtension ()
     const
   {
@@ -138,8 +136,7 @@ public:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetMemoryDumpFileType ()
     const
   {
@@ -154,8 +151,7 @@ public:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetPoolFileType ()
     const
   {

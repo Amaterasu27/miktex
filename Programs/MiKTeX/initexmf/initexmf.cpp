@@ -432,7 +432,7 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ReadDirectory (/*[in]*/ const char *	lpszPath,
 		 /*[out]*/ char * *	ppSubDirNames,
 		 /*[out]*/ char * *	ppFileNames,
@@ -441,14 +441,14 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ unsigned		level,
 	      /*[in]*/ const char *	lpszDirectory);
 
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnFndbItem (/*[in]*/ const char *	lpszPath,
 	      /*[in]*/ const char *	lpszName,
 	      /*[in]*/ const char *	lpszInfo,
@@ -1487,7 +1487,6 @@ IniTeXMFApp::FatalError (/*[in]*/ const char *	lpszFormat,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 IniTeXMFApp::ReadDirectory (/*[in]*/ const char *	lpszPath,
 			    /*[out]*/ char * *		ppSubDirNames,
 			    /*[out]*/ char * *		ppFileNames,
@@ -1507,7 +1506,6 @@ IniTeXMFApp::ReadDirectory (/*[in]*/ const char *	lpszPath,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 IniTeXMFApp::OnProgress (/*[in]*/ unsigned	level,
 			 /*[in]*/ const char *	lpszDirectory)
 {
@@ -2427,7 +2425,6 @@ IniTeXMFApp::WriteReport ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 IniTeXMFApp::OnFndbItem (/*[in]*/ const char *	lpszPath,
 			 /*[in]*/ const char *	lpszName,
 			 /*[in]*/ const char *	lpszInfo,

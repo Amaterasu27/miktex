@@ -72,19 +72,19 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   ReportLine (/*[in]*/ const char * lpszLine);
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnRetryableError (/*[in]*/ const char * lpszMessage);
 
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ MiKTeX::Packages::Notification	nf);
 
 public:

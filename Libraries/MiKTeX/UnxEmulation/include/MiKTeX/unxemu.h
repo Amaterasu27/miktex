@@ -23,6 +23,10 @@
 #  pragma once
 #endif
 
+#include <MiKTeX/Core/Definitions>
+#include <sys/stat.h>
+
+// DLL import/export switch
 #if ! defined(D2A2BA842ACE40C6A8A17A9358F2147E)
 #  if defined(_MSC_VER)
 #    define MIKTEXUNXEXPORT __declspec(dllimport)
@@ -31,16 +35,9 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define MIKTEXUNXCALL __stdcall
-#else
-#  define MIKTEXUNXCALL
-#endif
+// API decoration for exported functions
+#define MIKTEXUNXCEEAPI(type) MIKTEXUNXEXPORT type MIKTEXCEECALL
 
-#define MIKTEXUNXAPI(type) MIKTEXUNXEXPORT type MIKTEXUNXCALL
-#define MIKTEXUNXDATA(type) MIKTEXUNXEXPORT type
-
-#include <sys/stat.h>
 
 #define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 
@@ -63,13 +60,13 @@ struct dirent
   char d_name[260];
 };
 
-MIKTEXUNXAPI(int)
+MIKTEXUNXCEEAPI(int)
 closedir (/*[in]*/ DIR * pDir);
 
-MIKTEXUNXAPI(DIR *)
+MIKTEXUNXCEEAPI(DIR *)
 opendir (/*[in]*/ const char * lpszPath);
 
-MIKTEXUNXAPI(struct dirent *)
+MIKTEXUNXCEEAPI(struct dirent *)
 readdir (/*[in]*/ DIR * pDir);
 
 #if defined(__cplusplus)

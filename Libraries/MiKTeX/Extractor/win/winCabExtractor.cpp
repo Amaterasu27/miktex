@@ -67,7 +67,6 @@ winCabExtractor::winCabExtractor ()
    winCabExtractor::~winCabExtractor
    _________________________________________________________________________ */
 
-EXTRACTORCALL
 winCabExtractor::~winCabExtractor ()
 {
   try
@@ -85,7 +84,6 @@ winCabExtractor::~winCabExtractor ()
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 winCabExtractor::Dispose ()
 {
   if (hfdi != 0)
@@ -179,7 +177,6 @@ winCabExtractor::FatalFdiError (/*[in]*/ const char * lpszCabinetPath)
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
 			  /*[in]*/ const PathName &	destDir,
 			  /*[in]*/ bool			makeDirectories,
@@ -247,12 +244,11 @@ winCabExtractor::Extract (/*[in]*/ const PathName &	cabinetPath,
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 winCabExtractor::Extract (/*[in]*/ Stream *		pStream,
 			  /*[in]*/ const PathName &	destDir,
 			  /*[in]*/ bool			makeDirectories,
 			  /*[in]*/ IExtractCallback *	pCallback,
-			  /*[in]*/ const char *	lpszPrefix)
+			  /*[in]*/ const char *		lpszPrefix)
 {
   UNUSED_ALWAYS (pStream);
   UNUSED_ALWAYS (destDir);

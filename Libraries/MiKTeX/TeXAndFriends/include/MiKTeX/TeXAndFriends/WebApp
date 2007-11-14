@@ -162,7 +162,7 @@ class WebApp
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -173,7 +173,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -184,7 +184,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
 
   /* _______________________________________________________________________
@@ -195,8 +195,7 @@ protected:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetInputFileType ()
     const
   {
@@ -213,8 +212,7 @@ public:
 public:
 
   virtual
-  unsigned long
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(unsigned long)
   GetHelpId ()
     const
   {
@@ -229,8 +227,7 @@ public:
 protected:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetUsage ()
     const
   {
@@ -247,7 +244,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   ProcessCommandLineOptions ();
 
   /* _______________________________________________________________________
@@ -258,7 +255,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int		opt,
 		 /*[in]*/ const char *	lpszOptArg);
 	    
@@ -271,7 +268,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(const char *)
+  MIKTEXMFTHISAPI(const char *)
   TheNameOfTheGame ()
     const;
 
@@ -283,7 +280,7 @@ public:
 public:
 
   MIKTEXNORETURN
-  MIKTEXMFAPI(void)
+  MIKTEXMFCEEAPI(void)
   FatalError (/*[in]*/ const char *	lpszFormat,
 	      /*[in]*/			...);
 
@@ -305,7 +302,7 @@ protected:
     OPT_NOOP,
   };
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOption (/*[in]*/ const char *	lpszNameAndHelp,
 	     /*[in]*/ int		opt,
 	     /*[in]*/ int		argInfo = POPT_ARG_NONE,
@@ -320,7 +317,7 @@ protected:
   
 protected:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOption (/*[in]*/ const char *	lpszAliasName,
 	     /*[in]*/ const char *	lpszName);
 
@@ -331,7 +328,7 @@ protected:
 
 protected:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   BadUsage ()
     const;
   
@@ -460,7 +457,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   SetProgramInfo (/*[in]*/ const char * lpszProgramName,
 		  /*[in]*/ const char * lpszVersion,
 		  /*[in]*/ const char * lpszCopyright,
@@ -499,7 +496,7 @@ protected:
 
 protected:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   ShowHelp (/*[in]*/ bool usageOnly = false)
     const;
 
@@ -510,7 +507,7 @@ protected:
   
 protected:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   ShowProgramVersion ()
     const;
 
@@ -598,7 +595,7 @@ appclass app;								\
 extern "C"								\
 __declspec(dllexport)							\
 int									\
-MIKTEXMFCALL								\
+MIKTEXCEECALL								\
 dllentry (/*[in]*/ int			argc,				\
           /*[in]*/ const char **	argv)				\
 {									\

@@ -33,18 +33,21 @@ ProgressDialog
 {
 public:
   virtual
+  MIKTEXTHISCALL
   ~ProgressDialog ()
     = 0;
 
 public:
   virtual
   bool
+  MIKTEXTHISCALL
   HasUserCancelled ()
     = 0;
 
 public:
   virtual
   bool
+  MIKTEXTHISCALL
   SetLine (/*[in]*/ unsigned		lineNum,
 	   /*[in]*/ const char *	lpszText)
     = 0;
@@ -52,18 +55,21 @@ public:
 public:
   virtual
   bool
+  MIKTEXTHISCALL
   SetTitle (/*[in]*/ const char *	lpszTitle)
     = 0;
 
 public:
   virtual
   bool
+  MIKTEXTHISCALL
   StartProgressDialog (/*[in]*/ HWND hwndParent)
     = 0;
 
 public:
   virtual
   bool
+  MIKTEXTHISCALL
   StopProgressDialog ()
     = 0;
 
@@ -71,6 +77,7 @@ public:
   AFX_EXT_CLASS
   static
   ProgressDialog *
+  MIKTEXCEECALL
   Create ();
 };
 

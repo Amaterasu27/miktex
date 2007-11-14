@@ -61,25 +61,25 @@ TraceStreamImpl : public TraceStream
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Enable (/*[in]*/ bool		enable);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   IsEnabled ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXCEECALL
   WriteFormattedLine (/*[in]*/ const char *	lpszFacility,
 		      /*[in]*/ const char *	lpszFormat,
 		      /*[in]*/			...);
@@ -87,21 +87,21 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Write (/*[in]*/ const char *	lpszFacility,
 	 /*[in]*/ const char *	lpszText);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WriteLine (/*[in]*/ const char *	lpszFacility,
 	     /*[in]*/ const char *	lpszText);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   VTrace (/*[in]*/ const char *	lpszFacility,
 	  /*[in]*/ const char *	lpszFormat,
 	  /*[in]*/ va_list	arglist);
@@ -432,7 +432,7 @@ TraceStreamImpl::VTrace (/*[in]*/ const char *	lpszFacility,
    TraceStream::Open
    _________________________________________________________________________ */
 
-MIKTEXAPI(TraceStream *)
+TraceStream *
 TraceStream::Open (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);

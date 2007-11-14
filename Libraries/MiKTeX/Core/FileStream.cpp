@@ -28,7 +28,6 @@
    Stream::~Stream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 Stream::~Stream ()
 {
 }
@@ -38,7 +37,6 @@ Stream::~Stream ()
    FileStream::~FileStream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 FileStream::~FileStream ()
 {
   try
@@ -56,7 +54,6 @@ FileStream::~FileStream ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 FileStream::Attach (/*[in]*/ FILE *	pFile)
 {
   if (this->pFile != 0)
@@ -72,7 +69,6 @@ FileStream::Attach (/*[in]*/ FILE *	pFile)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 FileStream::Close ()
 {
   if (pFile != 0)
@@ -91,7 +87,6 @@ FileStream::Close ()
    _________________________________________________________________________ */
 
 size_t
-MIKTEXCALL
 FileStream::Read (/*[out]*/ void *	pBytes,
 		  /*[in]*/ size_t	count)
 {
@@ -109,7 +104,6 @@ FileStream::Read (/*[out]*/ void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 FileStream::Write (/*[in]*/ const void *	pBytes,
 		   /*[in]*/ size_t		count)
 {
@@ -125,7 +119,6 @@ FileStream::Write (/*[in]*/ const void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 FileStream::Seek (/*[in]*/ long		offset,
 		  /*[in]*/ SeekOrigin	seekOrigin)
 {
@@ -157,7 +150,6 @@ FileStream::Seek (/*[in]*/ long		offset,
    _________________________________________________________________________ */
 
 long
-MIKTEXCALL
 FileStream::GetPosition ()
 {
   long pos = ftell(pFile);
@@ -174,7 +166,6 @@ FileStream::GetPosition ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 FileStream::SetBinary ()
 {
 #if defined(MIKTEX_WINDOWS)
@@ -190,7 +181,6 @@ FileStream::SetBinary ()
    BZip2Stream::BZip2Stream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 BZip2Stream::BZip2Stream (/*[in]*/ const FileStream &	fileStream,
 			  /*[in]*/ bool			reading)
   : reading (reading)
@@ -221,7 +211,6 @@ BZip2Stream::BZip2Stream (/*[in]*/ const FileStream &	fileStream,
    BZip2Stream::~BZip2Stream
    _________________________________________________________________________ */
 
-MIKTEXCALL
 BZip2Stream::~BZip2Stream ()
 {
   try
@@ -239,7 +228,6 @@ BZip2Stream::~BZip2Stream ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 BZip2Stream::Close ()
 {
   BZFILE * pBzFile = static_cast<BZFILE*>(this->pBzFile);
@@ -268,7 +256,6 @@ BZip2Stream::Close ()
    _________________________________________________________________________ */
 
 size_t
-MIKTEXCALL
 BZip2Stream::Read (/*[out]*/ void *	pBytes,
 		   /*[in]*/ size_t	count)
 {
@@ -288,7 +275,6 @@ BZip2Stream::Read (/*[out]*/ void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 BZip2Stream::Write (/*[in]*/ const void *	pBytes,
 		    /*[in]*/ size_t		count)
 {
@@ -303,7 +289,6 @@ BZip2Stream::Write (/*[in]*/ const void *	pBytes,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 BZip2Stream::Seek (/*[in]*/ long	offset,
 		   /*[in]*/ SeekOrigin	seekOrigin)
 {
@@ -318,7 +303,6 @@ BZip2Stream::Seek (/*[in]*/ long	offset,
    _________________________________________________________________________ */
 
 long
-MIKTEXCALL
 BZip2Stream::GetPosition ()
 {
   UNIMPLEMENTED ("BZip2Stream::GetPosition");
@@ -329,7 +313,6 @@ BZip2Stream::GetPosition ()
    StreamReader::StreamReader
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StreamReader::StreamReader (/*[in]*/ const PathName & path)
   : stream (File::Open(path, FileMode::Open, FileAccess::Read))
 {
@@ -340,7 +323,6 @@ StreamReader::StreamReader (/*[in]*/ const PathName & path)
    StreamReader::StreamReader
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StreamReader::StreamReader (/*[in]*/ const char * lpszPath)
   : stream (File::Open(lpszPath, FileMode::Open, FileAccess::Read))
 {
@@ -351,7 +333,6 @@ StreamReader::StreamReader (/*[in]*/ const char * lpszPath)
    StreamReader::~StreamReader
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StreamReader::~StreamReader ()
 {
   try
@@ -369,7 +350,6 @@ StreamReader::~StreamReader ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamReader::Close ()
 {
   stream.Close ();
@@ -381,7 +361,6 @@ StreamReader::Close ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 StreamReader::ReadLine (/*[out]*/ string & line)
 {
   return (Utils::ReadLine(line, stream.Get(), false));
@@ -392,7 +371,6 @@ StreamReader::ReadLine (/*[out]*/ string & line)
    StreamWriter::StreamWriter
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StreamWriter::StreamWriter (/*[in]*/ const PathName & path)
   : stream (File::Open(path, FileMode::Create, FileAccess::Write))
 {
@@ -403,7 +381,6 @@ StreamWriter::StreamWriter (/*[in]*/ const PathName & path)
    StreamWriter::~StreamWriter
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StreamWriter::~StreamWriter ()
 {
   try
@@ -421,7 +398,6 @@ StreamWriter::~StreamWriter ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::Close ()
 {
   stream.Close ();
@@ -468,7 +444,6 @@ FPutS (/*[in]*/ const char *	lpsz,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::Write (/*[in]*/ char	ch)
 {
   FPutC (ch, stream.Get());
@@ -491,7 +466,6 @@ StreamWriter::Write (/*[in]*/ const string & line)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::WriteLine (/*[in]*/ const string & line)
 {
   Write (line);
@@ -504,7 +478,6 @@ StreamWriter::WriteLine (/*[in]*/ const string & line)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::WriteLine ()
 {
   FPutC ('\n', stream.Get());
@@ -516,7 +489,6 @@ StreamWriter::WriteLine ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::WriteFormatted (/*[in]*/ const char *	lpszFormat,
 			      /*[in]*/			...)
 {
@@ -532,7 +504,6 @@ StreamWriter::WriteFormatted (/*[in]*/ const char *	lpszFormat,
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 StreamWriter::WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
 				  /*[in]*/		...)
 {
@@ -548,7 +519,6 @@ StreamWriter::WriteFormattedLine (/*[in]*/ const char *	lpszFormat,
    StdioFile::~StdioFile
    _________________________________________________________________________ */
 
-MIKTEXCALL
 StdioFile::~StdioFile ()
 {
   if (pFile != 0)

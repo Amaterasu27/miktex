@@ -741,8 +741,7 @@ SessionImpl::FindTfmFile (/*[in]*/ const char *	lpszFontName,
    miktex_find_file
    _________________________________________________________________________ */
 
-
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_file (/*[in]*/ const char *	lpszFileName,
 		  /*[in]*/ const char *	lpszPathList,
 		  /*[out]*/ char *	lpszPath)
@@ -768,7 +767,7 @@ miktex_find_file (/*[in]*/ const char *	lpszFileName,
    miktex_find_tfm_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_tfm_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath)
 {
@@ -792,7 +791,7 @@ miktex_find_tfm_file (/*[in]*/ const char *	lpszFontName,
    miktex_find_ttf_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath)
 {
@@ -816,7 +815,7 @@ miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
    miktex_find_afm_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath)
 {
@@ -840,7 +839,7 @@ miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
    miktex_find_enc_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_enc_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath)
 {
@@ -865,7 +864,7 @@ miktex_find_enc_file (/*[in]*/ const char *	lpszFontName,
    miktex_find_psheader_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
 			   /*[out]*/ char *		lpszPath)
 {
@@ -889,7 +888,7 @@ miktex_find_psheader_file (/*[in]*/ const char *	lpszHeaderName,
    miktex_find_input_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_input_file (/*[in]*/ const char *	lpszApplicationName,
 			/*[in]*/ const char *	lpszFileName,
 			/*[out]*/ char *	lpszPath)
@@ -930,7 +929,7 @@ miktex_find_input_file (/*[in]*/ const char *	lpszApplicationName,
    miktex_find_hbf_file
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_hbf_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath)
 {
@@ -954,7 +953,7 @@ miktex_find_hbf_file (/*[in]*/ const char *	lpszFontName,
    miktex_find_miktex_executable
    _________________________________________________________________________ */
 
-MIKTEXAPI(int)
+MIKTEXCEEAPI(int)
 miktex_find_miktex_executable (/*[in]*/ const char *	lpszExeName,
 			       /*[out]*/ char *		lpszExePath)
 {

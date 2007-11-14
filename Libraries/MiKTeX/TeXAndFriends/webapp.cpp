@@ -30,8 +30,7 @@
    WebApp::FatalError
    _______________________________________________________________________ */
 
-MIKTEXNORETURN
-MIKTEXMFAPI(void)
+void
 WebApp::FatalError (/*[in]*/ const char *	lpszFormat,
 		    /*[in]*/			...)
 {
@@ -50,7 +49,7 @@ WebApp::FatalError (/*[in]*/ const char *	lpszFormat,
    WebApp::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   Application::Init (lpszProgramInvocationName, TheNameOfTheGame());
@@ -63,7 +62,7 @@ WebApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
    WebApp::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::Finalize ()
 {
   if (! packageListFileName.Empty())
@@ -108,7 +107,7 @@ WebApp::Finalize ()
    WebApp::ShowHelp
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::ShowHelp (/*[in]*/ bool usageOnly)
   const
 {
@@ -131,7 +130,7 @@ WebApp::ShowHelp (/*[in]*/ bool usageOnly)
    WebApp::BadUsage
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::BadUsage ()
   const
 {
@@ -146,7 +145,7 @@ WebApp::BadUsage ()
    WebApp::AddOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::AddOption (/*[in]*/ const char *	lpszNameAndHelp,
 		   /*[in]*/ int			val,
 		   /*[in]*/ int			argInfo,
@@ -201,7 +200,7 @@ WebApp::AddOption (/*[in]*/ const char *	lpszNameAndHelp,
    WebApp::AddOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::AddOption (/*[in]*/ const char *	lpszAliasName,
 		   /*[in]*/ const char *	lpszName)
 {
@@ -241,7 +240,7 @@ enum {
   OPT_VERSION,
 };
 
-MIKTEXMFAPI(void)
+void
 WebApp::AddOptions ()
 {
   options.reserve (50);
@@ -311,7 +310,7 @@ Show the manual page in an HTMLHelp window and exit when the\
    WebApp::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 WebApp::ProcessOption (/*[in]*/ int		opt,
 		       /*[in]*/ const char *	lpszArg)
 {
@@ -384,7 +383,7 @@ operator< (/*[in]*/ const poptOption &	opt1,
   return (StringCompare(opt1.longName, opt2.longName, false) < 0);
 }
 
-MIKTEXMFAPI(void)
+void
 WebApp::ProcessCommandLineOptions ()
 {
   int argc = C4P::GetArgC();
@@ -441,7 +440,7 @@ WebApp::ProcessCommandLineOptions ()
    WebApp::TheNameOfTheGame
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(const char *)
+const char *
 WebApp::TheNameOfTheGame ()
   const
 {
@@ -453,7 +452,7 @@ WebApp::TheNameOfTheGame ()
    WebApp::ShowProgramversion
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::ShowProgramVersion ()
   const
 {
@@ -473,7 +472,7 @@ WebApp::ShowProgramVersion ()
    CWebApp::SetProgramInfo
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebApp::SetProgramInfo (/*[in]*/ const char * lpszProgramName,
 			/*[in]*/ const char * lpszVersion,
 			/*[in]*/ const char * lpszCopyright,

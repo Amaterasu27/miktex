@@ -360,7 +360,6 @@ PropPageGeneral::OnContextMenu (/*[in]*/ CWnd *	pWnd,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PropPageGeneral::ReadDirectory (/*[in]*/ const char * lpszPath,
 				/*[out]*/ char * * ppSubDirNames,
 				/*[out]*/ char * * ppFileNames,
@@ -380,7 +379,6 @@ PropPageGeneral::ReadDirectory (/*[in]*/ const char * lpszPath,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PropPageGeneral::OnProgress (/*[in]*/ unsigned			level,
 			     /*[in]*/ const char *	lpszDirectory)
 {

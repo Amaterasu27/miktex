@@ -26,17 +26,11 @@
 #  define MAINFUNC Main
 #endif
 
-#if defined(_MSC_VER)
-#  define MAINAPI __cdecl
-#else
-#  define MAINAPI
-#endif
-
 #if ! defined(CPLUSPLUSMAIN)
 extern "C"
 #endif
 int
-MAINAPI
+MIKTEXCEECALL
 MAINFUNC (/*[in]*/ int		argc,
 	  /*[in]*/ char **	argv);
 
@@ -49,7 +43,7 @@ MiKTeX::App::Application app;
 #endif
 
 int
-MAINAPI
+MIKTEXCEECALL
 main (/*[in]*/ int	argc,
       /*[in]*/ char **	argv)
 {

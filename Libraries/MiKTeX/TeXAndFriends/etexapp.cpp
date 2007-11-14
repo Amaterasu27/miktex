@@ -37,7 +37,7 @@ ETeXApp::ETeXApp ()
    ETeXApp::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 ETeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   TeXApp::Init (lpszProgramInvocationName);
@@ -49,7 +49,7 @@ ETeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
    ETeXApp::OnTeXMFStartJob
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 ETeXApp::OnTeXMFStartJob ()
 {
   TeXApp::OnTeXMFStartJob ();
@@ -60,7 +60,7 @@ ETeXApp::OnTeXMFStartJob ()
    ETeXApp::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 ETeXApp::Finalize ()
 {
   TeXApp::Finalize ();
@@ -75,7 +75,7 @@ enum {
   OPT_ENABLE_ETEX,
 };
 
-MIKTEXMFAPI(void)
+void
 ETeXApp::AddOptions ()
 {
   TeXApp::AddOptions ();
@@ -95,7 +95,7 @@ Enable e-TeX extensions."),
    ETeXApp::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 ETeXApp::ProcessOption (/*[in]*/ int		optchar,
 			/*[in]*/ const char *	lpszArg)
 {

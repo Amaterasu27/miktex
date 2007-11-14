@@ -38,7 +38,7 @@ WebAppInputLine::WebAppInputLine ()
    WebAppInputLine::Init
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebAppInputLine::Init (/*[in]*/ const char * lpszProgramInvocationName)
 {
   WebApp::Init (lpszProgramInvocationName);
@@ -50,7 +50,7 @@ WebAppInputLine::Init (/*[in]*/ const char * lpszProgramInvocationName)
    WebAppInputLine::Finalize
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebAppInputLine::Finalize ()
 {
   auxDirectory = "";
@@ -70,7 +70,7 @@ enum {
   OPT_ENABLE_PIPES,
 };
 
-MIKTEXMFAPI(void)
+void
 WebAppInputLine::AddOptions ()
 {
   WebApp::AddOptions ();
@@ -91,7 +91,7 @@ Disable input (output) from (to) processes."),
    WebAppInputLine::ProcessOption
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 WebAppInputLine::ProcessOption (/*[in]*/ int		opt,
 				/*[in]*/ const char *	lpszOptArg)
 {
@@ -199,7 +199,7 @@ UnmangleNameOfFile_ (/*[in]*/ const CharType * lpszFrom)
    WebAppInputLine::UnmangleNameOfFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(PathName)
+PathName
 WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const char * lpszFrom)
 {
   return (UnmangleNameOfFile_(lpszFrom));
@@ -210,7 +210,7 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const char * lpszFrom)
    WebAppInputLine::UnmangleNameOfFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(PathName)
+PathName
 WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const wchar_t * lpszFrom)
 {
   return (UnmangleNameOfFile_(lpszFrom));
@@ -221,7 +221,7 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const wchar_t * lpszFrom)
    WebAppInputLine::OpenOutputFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ const char *		lpszPath,
 				 /*[in]*/ FileShare		share,
@@ -278,7 +278,7 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
    WebAppInputLine::OpenInputFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 				/*[in]*/ const char *		lpszFileName)
 {
@@ -366,7 +366,7 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
    WebAppInputLine::OpenInputFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
 WebAppInputLine::OpenInputFile (/*[out]*/ C4P::FileRoot &	f,
 				/*[in]*/ const char *		lpszFileName)
 {
@@ -395,7 +395,7 @@ WebAppInputLine::OpenInputFile (/*[out]*/ C4P::FileRoot &	f,
    _________________________________________________________________________ */
 
 #if 0
-MIKTEXMFAPI(void)
+void
 WebAppInputLine::HandleEof (/*[in]*/ FILE * pfile)
   const
 {
@@ -416,7 +416,7 @@ WebAppInputLine::HandleEof (/*[in]*/ FILE * pfile)
    WebAppInputLine::TouchJobOutputFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(void)
+void
 WebAppInputLine::TouchJobOutputFile (/*[in]*/ FILE *)
   const
 {

@@ -865,7 +865,6 @@ PropPageTeXMFRoots::OnContextMenu (/*[in]*/ CWnd *	pWnd,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const char * lpszPath,
 				   /*[out]*/ char * * ppSubDirNames,
 				   /*[out]*/ char * * ppFileNames,
@@ -885,7 +884,6 @@ PropPageTeXMFRoots::ReadDirectory (/*[in]*/ const char * lpszPath,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 PropPageTeXMFRoots::OnProgress (/*[in]*/ unsigned	level,
 				/*[in]*/ const char *	lpszDirectory)
 {

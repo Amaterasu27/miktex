@@ -308,7 +308,7 @@ TeXMFApp
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Init (/*[in]*/ const char * lpszProgramInvocationName);
 
   /* _______________________________________________________________________
@@ -319,7 +319,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   Finalize ();
 
   /* _______________________________________________________________________
@@ -330,7 +330,7 @@ public:
 protected:
   
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   AddOptions ();
 
   /* _______________________________________________________________________
@@ -341,8 +341,7 @@ protected:
 protected:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetUsage ()
     const
   {
@@ -357,7 +356,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   ProcessCommandLineOptions ();
   
   /* _______________________________________________________________________
@@ -368,7 +367,7 @@ public:
 protected:
 
   virtual
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg);
 
@@ -380,7 +379,7 @@ protected:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   TouchJobOutputFile (/*[in]*/ FILE * pFile)
     const;
 
@@ -392,8 +391,7 @@ public:
 public:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetMemoryDumpFileExtension ()
     const
   {
@@ -410,8 +408,7 @@ public:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetMemoryDumpFileType ()
     const
   {
@@ -428,8 +425,7 @@ public:
 protected:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetMemoryDumpFileName ()
     const
   {
@@ -446,8 +442,7 @@ protected:
 protected:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetInitProgramName ()
     const
   {
@@ -464,8 +459,7 @@ protected:
 public:
 
   virtual
-  MiKTeX::Core::FileType
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
   GetPoolFileType ()
     const
   {
@@ -482,8 +476,7 @@ public:
 public:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetPoolFileName ()
     const
   {
@@ -500,8 +493,7 @@ public:
 protected:
 
   virtual
-  const char *
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(const char *)
   GetVirginProgramName ()
     const
   {
@@ -518,8 +510,7 @@ protected:
 public:
 
   virtual
-  void
-  MIKTEXMFCALL
+  MIKTEXMFTHISAPI(void)
   OnTeXMFInitialize ()
     const
   {
@@ -536,7 +527,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   OnTeXMFStartJob ();
 
   /* _______________________________________________________________________
@@ -547,7 +538,7 @@ public:
 public:
 
   virtual
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   OnTeXMFFinishJob ();
 
   /* _______________________________________________________________________
@@ -906,7 +897,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
     const;
 
@@ -971,7 +962,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(unsigned long)
+  MIKTEXMFTHISAPI(unsigned long)
   InitializeBuffer (/*[in]*/ unsigned char * pBuffer);
 
   /* _______________________________________________________________________
@@ -981,7 +972,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(unsigned long)
+  MIKTEXMFTHISAPI(unsigned long)
   InitializeBuffer (/*[in]*/ unsigned short * pBuffer);
 
   /* _______________________________________________________________________
@@ -991,7 +982,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(unsigned long)
+  MIKTEXMFTHISAPI(unsigned long)
   InitializeBuffer (/*[in]*/ C4P::C4P_signed32 * pBuffer);
 
   /* _______________________________________________________________________
@@ -1001,7 +992,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   InvokeEditor (/*[in]*/ const MiKTeX::Core::PathName &	editFileName,
 		/*[in]*/ int				editLineNumber,
 		/*[in]*/ const MiKTeX::Core::PathName &	transcriptFileName)
@@ -1065,7 +1056,7 @@ public:
 
 protected:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   IsVirgin ()
     const;
 
@@ -1133,7 +1124,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   OpenMemoryDumpFile (/*[in]*/ const MiKTeX::Core::PathName &	fileName,
 		      /*[in]*/ FILE **				ppFile,
 		      /*[in]*/ void *				pBuf,
@@ -1331,7 +1322,7 @@ public:
 
 public:
 
-  MIKTEXMFAPI(bool)
+  MIKTEXMFTHISAPI(bool)
   OpenPoolFile (/*[in]*/ void *				p,
 		/*[in]*/ const MiKTeX::Core::PathName &	fileName)
     const;
@@ -1358,7 +1349,7 @@ public:
 
 public:
   static
-  MIKTEXMFAPI(bool)
+  MIKTEXMFCEEAPI(bool)
   ParseFirstLine (/*[in]*/ const MiKTeX::Core::PathName &	path,
 		  /*[in,out]*/ MiKTeX::Core::Argv &		argv);
 
@@ -1369,7 +1360,7 @@ public:
 
 private:
 
-  MIKTEXMFAPI(void)
+  MIKTEXMFTHISAPI(void)
   ParseFirstLine (/*[in]*/ const MiKTeX::Core::PathName &	fileName);
 
   /* _______________________________________________________________________

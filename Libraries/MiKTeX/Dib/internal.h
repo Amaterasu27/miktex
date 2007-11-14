@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX DibChunker Library.
 
@@ -21,7 +21,7 @@
 
 #pragma once
 
-#define DIBCHUNKEREXPORT __declspec(dllexport)
+#define MIKTEXDIBEXPORT __declspec(dllexport)
 
 #define CA71604DC6CF21439A421D76D5C2E5D7
 #include "MiKTeX/Graphics/DibChunker"
@@ -158,7 +158,7 @@ public:
       
 protected:
   virtual
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   ~DibChunkImpl ()
   {
     if (pBitmapInfo != 0)
@@ -176,7 +176,7 @@ protected:
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   AddRef ()
   {
     ++ refCount;
@@ -185,7 +185,7 @@ public:
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Release ()
   {
     -- refCount;
@@ -198,7 +198,7 @@ public:
 public:
   virtual
   int
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetX ()
   {
     return (x);
@@ -207,7 +207,7 @@ public:
 public:
   virtual
   int
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetY ()
   {
     return (y);
@@ -216,7 +216,7 @@ public:
 public:
   virtual
   BITMAPINFOHEADER
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBitmapInfoHeader ()
   {
     return (pBitmapInfo->bmiHeader);
@@ -225,7 +225,7 @@ public:
 public:
   virtual
   const RGBQUAD *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetColors ()
   {
     return (&pBitmapInfo->bmiColors[0]);
@@ -234,7 +234,7 @@ public:
 public:
   virtual
   const void *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBits ()
   {
     return (pBits);
@@ -243,7 +243,7 @@ public:
 public:
   virtual
   const BITMAPINFO *
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetBitmapInfo ()
   {
     return (pBitmapInfo);
@@ -252,7 +252,7 @@ public:
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   GetSize ()
   {
     return (size);
@@ -337,13 +337,13 @@ public:
 
 public:
   virtual
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   ~DibChunkerImpl ();
 
 public:
   virtual
   bool
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Process (/*[in]*/ unsigned long				flags,
 	   /*[in]*/ unsigned long				chunkSize,
 	   /*[in]*/ MiKTeX::Graphics::IDibChunkerCallback *	pCallback);

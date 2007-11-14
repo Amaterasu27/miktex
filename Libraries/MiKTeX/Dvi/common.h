@@ -600,43 +600,43 @@ public:
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetLeft (/*[in]*/ int shrinkFactor);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRight (/*[in]*/ int shrinkFactor);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetTop (/*[in]*/ int shrinkFactor);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBottom (/*[in]*/ int shrinkFactor);
 
 public:
   virtual
   unsigned long
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBackgroundColor ();
 
 public:
   virtual
   unsigned long
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetForegroundColor ();
 
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   IsBlackboard ();
 
 public:
@@ -733,82 +733,82 @@ class DviPageImpl
 public:
   virtual
   const DviBitmap &
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetDviBitmap (/*[in]*/ int shrinkFactor,
 		/*[in]*/ int idx);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetNumberOfDviBitmaps (/*[in]*/ int shrinkFactor);
 
 public:
   virtual
   DviSpecial *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetSpecial (/*[in]*/ int idx);
 
 public:
   virtual
   DviRule *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRule (/*[in]*/ int idx);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetReg (/*[in]*/ int idx);
 
 public:
   virtual
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetName ();
 
 public:
   virtual
   unsigned long
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBackgroundColor ();
 
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Lock();
 
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Unlock();
 
 public:
   virtual
   HypertexSpecial *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetNextHyperref (/*[in,out]*/ int & idx);
 
 public:
   virtual
   DibChunk *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetDibChunk (/*[in]*/ int shrinkFactor,
 	       /*[in]*/ int idx);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetNumberOfDibChunks (/*[in]*/ int shrinkFactor);
 
 
 public:
   virtual
   DviPageMode
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetDviPageMode ()
   {
     return (pageMode);
@@ -977,14 +977,14 @@ private:
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Read (/*[out]*/ void *	pBuf,
 	/*[in]*/ size_t		size);
 
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   OnNewChunk (/*[in]*/ DibChunk * pChunk);
 
 private:
@@ -1129,13 +1129,13 @@ class DviImpl : public Dvi
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetNumberOfPages ();
 
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetSource (/*[in]*/ const DviPosition &	pos,
 	     /*[out]*/ PathName &		fileName,
 	     /*[out]*/ int *			pLineNum);
@@ -1143,7 +1143,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   FindSource (/*[in]*/ const char *	lpszFileName,
 	      /*[in]*/ int		line,
 	      /*[out]*/ DviPosition &	position);
@@ -1151,80 +1151,80 @@ public:
 public:
   virtual
   DviPage *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPage (int pageidx);
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetMinPageNumber ();
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetMaxPageNumber ();
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetMagnification ();
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetMaxH ();
 
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetMaxV ();
 
 public:
   virtual
   PageStatus
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPageStatus (/*[in]*/ int pageidx);
 
 public:
   virtual
   DviPage *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetLoadedPage (/*[in]*/ int pageno);
 
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   FindHyperLabel (/*[in]*/ const char *		lpszLabel,
 		  /*[out]*/ DviPosition &	position);
   
 public:
   virtual
   string
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetStatusText ();
 
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   MakeFonts ();
 
 public:
   virtual
   vector<DviFontInfo>
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFontTable ();
 
 public:
   virtual
   PaperSizeInfo
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo ()
   {
     return (paperSizeInfo);
@@ -1233,7 +1233,7 @@ public:
 public:
   virtual
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Landscape ()
   {
     return (landscape);
@@ -1242,19 +1242,19 @@ public:
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Lock();
 
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Unlock();
 
 public:
   virtual
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   Scan ();
 
 private:
@@ -1269,13 +1269,13 @@ private:
 
 private:
   virtual
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   ~DviImpl ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Dispose ();
 
 private:
@@ -1794,7 +1794,7 @@ public:
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetX ()
   {
     return (x);
@@ -1803,7 +1803,7 @@ public:
 public:
   virtual
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetY ()
   {
     return (y);
@@ -1812,7 +1812,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetXXX ()
   {
     return (specialString.c_str());
@@ -1821,7 +1821,7 @@ public:
 public:
   virtual
   DviSpecialType
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetType ()
   {
     return (specialType);
@@ -1857,7 +1857,7 @@ SolidLineSpecialImpl
 {
 public:
   unsigned long
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetColor ()
   {
     return (color);
@@ -1865,7 +1865,7 @@ public:
 
 public:
   unsigned
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetWidth ()
   {
     return (width);
@@ -1873,7 +1873,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetStartX ()
   {
     return (xStart);
@@ -1881,7 +1881,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetStartY ()
   {
     return (yStart);
@@ -1889,7 +1889,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetEndX ()
   {
     return (xEnd);
@@ -1897,7 +1897,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetEndY ()
   {
     return (yEnd);
@@ -1939,7 +1939,7 @@ SourceSpecialImpl
 {
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFileName ()
   {
     return (fileName.c_str());
@@ -1947,7 +1947,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetLineNum ()
   {
     return (lineNum);
@@ -1955,7 +1955,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetId ()
   {
     return (id);
@@ -2032,7 +2032,7 @@ TpicSpecialObject : public T
 {
 public:
   const TpicSpecial::path &
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPath ()
   {
     return (tpicPath);
@@ -2040,7 +2040,7 @@ public:
 
 public:
   float
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetShade ()
   {
     return (shade);
@@ -2048,7 +2048,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPenSize ()
   {
     return (penSize);
@@ -2092,7 +2092,7 @@ public:
 
 public:
   OutlineStyle
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetOutlineStyle (/*[out]*/ float & length)
   {
     length = m_length;
@@ -2101,7 +2101,7 @@ public:
   
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   IsSpline ()
   {
     return (m_bSpline);
@@ -2134,7 +2134,7 @@ TpicArcSpecialImpl
 {
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetCx ()
   {
     return (cx);
@@ -2142,7 +2142,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetCy ()
   {
     return (cy);
@@ -2150,7 +2150,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRx ()
   {
     return (m_rx);
@@ -2158,7 +2158,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRy ()
   {
     return (m_ry);
@@ -2166,7 +2166,7 @@ public:
 
 public:
   float
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetS ()
   {
     return (m_s);
@@ -2174,7 +2174,7 @@ public:
 
 public:
   float
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetE ()
   {
     return (m_e);
@@ -2182,7 +2182,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasOutline ()
   {
     return (m_bOutline);
@@ -2238,7 +2238,7 @@ public:
 
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetName ()
   {
     return (name.c_str());
@@ -2246,7 +2246,7 @@ public:
 
 public:
   void
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBbox (/*[out]*/ int & llx,
 	   /*[out]*/ int & lly,
 	   /*[out]*/ int & urx,
@@ -2260,7 +2260,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   IsName ()
   {
     return (isName);
@@ -2312,7 +2312,7 @@ public:
 
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFileName ()
   {
     return (fileName.c_str());
@@ -2320,7 +2320,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetWidth ()
   {
     return (width);
@@ -2328,7 +2328,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetHeight ()
   {
     return (height);
@@ -2336,7 +2336,7 @@ public:
 
 public:
   GraphicsSpecialAction
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetAction ()
   {
     return (graphicsAction);
@@ -2372,7 +2372,7 @@ PsdefSpecialImpl
 {
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetDef ()
   {
     return (isFileName ? 0 : str.c_str());
@@ -2380,7 +2380,7 @@ public:
 
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFileName ()
   {
     return (isFileName ? str.c_str() : 0);
@@ -2410,7 +2410,7 @@ DvipsSpecialImpl
 {
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetString ()
   {
     return (isFileName ? 0 : str.c_str());
@@ -2418,7 +2418,7 @@ public:
 
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFileName ()
   {
     return (isFileName ? str.c_str() : 0);
@@ -2426,7 +2426,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetProtection ()
   {
     return (protection);
@@ -2459,7 +2459,7 @@ PaperSizeSpecialImpl
 {
 public:
   PaperSizeInfo
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetPaperSizeInfo ()
   {
     return (paperSizeInfo);
@@ -2505,7 +2505,7 @@ PsfileSpecialImpl
 {
 public:
   const char *
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetFileName ()
   {
     return (fileName.c_str());
@@ -2513,7 +2513,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetHsize ()
   {
     return (hSize);
@@ -2521,7 +2521,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetVsize ()
   {
     return (vSize);
@@ -2529,7 +2529,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetHoffset ()
   {
     return (hOffset);
@@ -2537,7 +2537,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetVoffset ()
   {
     return (vOffset);
@@ -2545,7 +2545,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetHscale ()
   {
     return (hScale);
@@ -2553,7 +2553,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetVscale ()
   {
     return (vScale);
@@ -2561,7 +2561,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetAngke ()
   {
     return (angle);
@@ -2569,7 +2569,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetLlx ()
   {
     return (llx);
@@ -2577,7 +2577,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetLly ()
   {
     return (lly);
@@ -2585,7 +2585,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetUrx ()
   {
     return (urx);
@@ -2593,7 +2593,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetUry ()
   {
     return (ury);
@@ -2601,7 +2601,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRwi ()
   {
     return (rwi);
@@ -2609,7 +2609,7 @@ public:
 
 public:
   int
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetRhi ()
   {
     return (rhi);
@@ -2617,7 +2617,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   IsClipped ()
   {
     return (isClipped);
@@ -2625,7 +2625,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasHsize ()
   {
     return (hasHSize);
@@ -2633,7 +2633,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasVsize ()
   {
     return (hasVSize);
@@ -2641,7 +2641,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasHoffset ()
   {
     return (hasHOffset);
@@ -2649,7 +2649,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasVoffset ()
   {
     return (hasVOffset);
@@ -2657,7 +2657,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasHscale ()
   {
     return (hasHSale);
@@ -2665,7 +2665,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasVscale ()
   {
     return (hasVScale);
@@ -2673,7 +2673,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasAngle ()
   {
     return (hasAngle);
@@ -2681,7 +2681,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasLlx ()
   {
     return (hasLlx);
@@ -2689,7 +2689,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasLly ()
   {
     return (hasLLy);
@@ -2697,7 +2697,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasUrx ()
   {
     return (hasUrx);
@@ -2705,7 +2705,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasUry ()
   {
     return (hasUry);
@@ -2713,7 +2713,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasRwi ()
   {
     return (hasRwi);
@@ -2721,7 +2721,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasRhi ()
   {
     return (hasRhi);
@@ -2729,7 +2729,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   HasClipFlag ()
   {
     return (hasClipFlag);
@@ -2737,7 +2737,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBoundingBox (/*[out]*/ float &	left,
 		  /*[out]*/ float &	bottom,
 		  /*[out]*/ float &	right,
@@ -2745,7 +2745,7 @@ public:
 
 public:
   bool
-  MIKTEXDVICALL
+  MIKTEXTHISCALL
   GetBoundingBox (/*[in]*/ int		shrinkFactor, 
 		  /*[out]*/ int &	left,
 		  /*[out]*/ int &	bottom,

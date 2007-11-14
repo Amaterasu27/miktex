@@ -85,7 +85,7 @@ protected:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   ReadDirectory (/*[in]*/ const char *	lpszPath,
 		 /*[out]*/ char * *	ppSubDirNames,
 		 /*[out]*/ char * *	ppFileNames,
@@ -94,7 +94,7 @@ private:
 private:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ unsigned			level,
 	      /*[in]*/ const char *	lpszDirectory);
 

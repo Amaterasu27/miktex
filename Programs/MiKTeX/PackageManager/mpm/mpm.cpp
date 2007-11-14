@@ -155,21 +155,21 @@ public:
 public:
   virtual
   void
-  MPMCALL
+  MIKTEXTHISCALL
   ReportLine (/*[in]*/ const char * lpszLine);
 
   // PackageInstallerCallback impl
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnRetryableError (/*[in]*/ const char * lpszMessage);
 
   // PackageInstallerCallback impl
 public:
   virtual
   bool
-  MPMCALL
+  MIKTEXTHISCALL
   OnProgress (/*[in]*/ Notification	nf);
 
 public:
@@ -647,7 +647,6 @@ Application::Error (/*[in]*/ const char *		lpszFormat,
    _________________________________________________________________________ */
 
 void
-MPMCALL
 Application::ReportLine (/*[in]*/ const char * lpszLine)
 {
   Verbose ("%s\n", lpszLine);
@@ -659,7 +658,6 @@ Application::ReportLine (/*[in]*/ const char * lpszLine)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
 {
   lpszMessage;
@@ -672,7 +670,6 @@ Application::OnRetryableError (/*[in]*/ const char * lpszMessage)
    _________________________________________________________________________ */
 
 bool
-MPMCALL
 Application::OnProgress (/*[in]*/ Notification		nf)
 {
   nf;

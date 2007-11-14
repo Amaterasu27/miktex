@@ -26,11 +26,12 @@
 #if ! defined(CE2192A940434CEB82EFF92FA64AC9D4_)
 #define CE2192A940434CEB82EFF92FA64AC9D4_
 
+// DLL import/export switch
 #if ! defined(DAA6476494C144C8BED9A9E8810BAABA)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define EXTRACTOREXPORT __declspec(dllimport)
+#    define MIKTEXEXTRACTOREXPORT __declspec(dllimport)
 #  else
-#    define EXTRACTOREXPORT
+#    define MIKTEXEXTRACTOREXPORT
 #  endif
 #endif
 
@@ -40,7 +41,8 @@
 #  define EXTRACTORCALL
 #endif
 
-#define EXTRACTORAPI(type) EXTRACTOREXPORT type EXTRACTORCALL
+// API decoration for exported member functions
+#define MIKTEXEXTRACTORCEEAPI(type) MIKTEXEXTRACTOREXPORT type MIKTEXCEECALL
 
 #include <MiKTeX/Core/Core>
 #include <MiKTeX/Core/Paths>
@@ -114,7 +116,7 @@ IExtractCallback
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnBeginFileExtraction (/*[in]*/ const char *	lpszFileName,
 			 /*[in]*/ size_t	uncompressedSize)
     = 0;
@@ -122,7 +124,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnEndFileExtraction (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ size_t		uncompressedSize)
     = 0;
@@ -130,7 +132,7 @@ public:
 public:
   virtual
   bool
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   OnError (/*[in]*/ const char *	lpszMessage)
     = 0;
 };
@@ -147,14 +149,14 @@ Extractor
 {
 public:
   virtual
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   ~Extractor ()
     = 0;
 
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ const MiKTeX::Core::PathName &	path,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -165,7 +167,7 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Extract (/*[in]*/ MiKTeX::Core::Stream *		pStream,
 	   /*[in]*/ const MiKTeX::Core::PathName &	destDir,
 	   /*[in]*/ bool				makeDirectories,
@@ -176,15 +178,13 @@ public:
 public:
   virtual
   void
-  EXTRACTORCALL
+  MIKTEXTHISCALL
   Dispose ()
     = 0;
 
 public:
   static
-  EXTRACTOREXPORT
-  Extractor *
-  EXTRACTORCALL
+  MIKTEXEXTRACTORCEEAPI(Extractor*)
   CreateExtractor (/*[in]*/ ArchiveFileType archiveFileType);
 };
 

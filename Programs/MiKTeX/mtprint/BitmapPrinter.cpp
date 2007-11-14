@@ -1,6 +1,6 @@
 /* BitmapPrinter.cpp:
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -91,7 +91,6 @@ BitmapPrinter::PrintChunk (/*[in]*/ DibChunk * pChunk)
    _________________________________________________________________________ */
 
 void
-DIBCHUNKERCALL
 BitmapPrinter::OnNewChunk (/*[in]*/ DibChunk * pChunk)
 {
   if (! JobStarted())
@@ -129,7 +128,6 @@ BitmapPrinter::OnNewChunk (/*[in]*/ DibChunk * pChunk)
    _________________________________________________________________________ */
 
 size_t
-DIBCHUNKERCALL
 BitmapPrinter::Read (/*[out]*/ void *	pBuf,
 		     /*[in]*/ size_t	size)
 {

@@ -69,7 +69,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   AddOptions ()
   {
     ETeXApp::AddOptions ();
@@ -94,7 +94,7 @@ papersize\0Set PDF media size to STRING"),
 public:
   virtual
   bool
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   ProcessOption (/*[in]*/ int			opt,
 		 /*[in]*/ const char *	lpszOptArg)
   {
@@ -146,7 +146,7 @@ public:
 public:
   virtual
   void
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     ETeXApp::Init (lpszProgramInvocationName);
@@ -156,7 +156,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetMemoryDumpFileName ()
     const
   {
@@ -166,7 +166,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetPoolFileName ()
     const
   {
@@ -176,7 +176,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetInitProgramName ()
     const
   {
@@ -186,7 +186,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetVirginProgramName ()
     const
   {
@@ -196,7 +196,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   TheNameOfTheGame ()
     const
   {
@@ -206,7 +206,7 @@ public:
 public:
   virtual
   unsigned long
-  MIKTEXMFCALL
+  MIKTEXTHISCALL
   GetHelpId ()
     const
   {

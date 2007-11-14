@@ -29,7 +29,6 @@
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::GetFormatInfo (/*[in]*/ unsigned		index,
 			    /*[out]*/ FormatInfo &	formatInfo)
 {
@@ -52,7 +51,6 @@ SessionImpl::GetFormatInfo (/*[in]*/ unsigned		index,
    _________________________________________________________________________ */
 
 FormatInfo
-MIKTEXCALL
 SessionImpl::GetFormatInfo (/*[in]*/ const char *	lpszKey)
 {
   FormatInfo formatInfo;
@@ -69,7 +67,6 @@ SessionImpl::GetFormatInfo (/*[in]*/ const char *	lpszKey)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::TryGetFormatInfo (/*[in]*/ const char *	lpszKey,
 			       /*[out]*/ FormatInfo &	formatInfo)
 {
@@ -314,7 +311,6 @@ SessionImpl::WriteFormatsIni ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 SessionImpl::DeleteFormatInfo (/*[in]*/ const char * lpszKey)
 {
   ReadFormatsIni ();
@@ -347,7 +343,6 @@ Built-in format definitions may not be deleted."),
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
 {
   ReadFormatsIni ();

@@ -746,7 +746,7 @@ Wrap (/*[in,out]*/ string &	arguments)
      command /c tifftopnm "%i" | ppmtobmp -windows > "%o"
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
 			       /*[out]*/ int *			pExitCode,
 			       /*[in]*/ IRunProcessCallback *	pCallback,
@@ -766,7 +766,7 @@ Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
    Process::StartSystemCommand
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+void
 Process::StartSystemCommand (/*[in]*/ const char * lpszCommandLine)
 {
   string arguments (lpszCommandLine);

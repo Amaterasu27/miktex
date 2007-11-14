@@ -279,7 +279,6 @@ TarExtractor::TarExtractor ()
    TarExtractor::~TarExtractor
    _________________________________________________________________________ */
 
-EXTRACTORCALL
 TarExtractor::~TarExtractor ()
 {
   try
@@ -297,7 +296,6 @@ TarExtractor::~TarExtractor ()
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 TarExtractor::Dispose ()
 {
 }
@@ -308,7 +306,6 @@ TarExtractor::Dispose ()
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,
@@ -466,7 +463,6 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn,
    _________________________________________________________________________ */
 
 void
-EXTRACTORCALL
 TarExtractor::Extract (/*[in]*/ const PathName &	tarPath,
 		       /*[in]*/ const PathName &	destDir,
 		       /*[in]*/ bool			makeDirectories,

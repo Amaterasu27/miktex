@@ -245,7 +245,6 @@ CommandLineBuilder::AppendArguments (/*[in]*/ const vector<string> &	argv)
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 CommandLineBuilder::AppendArguments (/*[in]*/ const Argv & argv)
 {
   if (argv.GetArgc() > 0)

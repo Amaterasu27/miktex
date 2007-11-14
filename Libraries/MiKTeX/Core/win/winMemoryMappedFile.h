@@ -1,6 +1,6 @@
 /* winMemoryMappedFile.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -40,26 +40,26 @@ public:
 public:
   virtual
   void * 
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Open (/*[in]*/ const char *	lpszPath,
 	/*[in]*/ bool			readWrite);
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
 
 public:
   virtual
   void *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Resize (/*[in]*/ size_t newSize);
 
 public:
   virtual
   void *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetPtr ()
   {
     return (ptr);
@@ -68,7 +68,7 @@ public:
 public:
   virtual
   const char *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetName ()
   {
     return (name.c_str());
@@ -77,7 +77,7 @@ public:
 public:
   virtual
   size_t
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetSize ()
   {
     return (size);
@@ -86,7 +86,7 @@ public:
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Flush ();
 
 private:

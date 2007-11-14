@@ -95,7 +95,8 @@ The font creation utility could not be found."),
    OpenTFMFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenTFMFile (/*[in]*/ void  *		p,
 				    /*[in]*/ const char *	lpszFontName)
 {
@@ -114,7 +115,8 @@ MiKTeX::TeXAndFriends::OpenTFMFile (/*[in]*/ void  *		p,
    OpenXFMFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenXFMFile (/*[in]*/ void *		p,
 				    /*[in]*/ const char *	lpszFontName)
 {
@@ -133,7 +135,8 @@ MiKTeX::TeXAndFriends::OpenXFMFile (/*[in]*/ void *		p,
    OpenVFFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenVFFile (/*[in]*/ void *		p,
 				   /*[in]*/ const char *	lpszFontName)
 {
@@ -152,7 +155,8 @@ MiKTeX::TeXAndFriends::OpenVFFile (/*[in]*/ void *		p,
    OpenXVFFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(int)
+int
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenXVFFile (/*[in]*/ void *		p,
 				    /*[in]*/ const char *	lpszFontName)
 {
@@ -289,7 +293,8 @@ ProcessTCXFile (/*[in]*/ const char *		lpszFileName,
    InitializeCharTables
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::InitializeCharTables
 (/*[in]*/ unsigned long	flags,
  /*[in]*/ const char *	lpszFileName,
@@ -378,7 +383,8 @@ OpenAlphaFile (/*[in]*/ void *		p,
    OpenMAPFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
 				    /*[in]*/ const char *	lpszFileName)
 {
@@ -392,7 +398,8 @@ MiKTeX::TeXAndFriends::OpenMAPFile (/*[in]*/ void *		p,
    OpenMETAFONTFile
    _________________________________________________________________________ */
 
-MIKTEXMFAPI(bool)
+bool
+MIKTEXCEECALL
 MiKTeX::TeXAndFriends::OpenMETAFONTFile (/*[in]*/ void *	p,
 					 /*[in]*/ const char *	lpszFileName)
 {

@@ -570,7 +570,7 @@ BEGIN
     IDS_PROJECT_PAGE        "MiKTeX Project Page"
     IDS_MIKTEX_ON_THE_WEB   "MiKTeX on the Web"
     IDS_KNOWN_ISSUES        "Known Issues"
-    IDS_REGISTRATION        "Registration"
+    IDS_GIVE_BACK           "Give back"
     IDS_BROWSE_LOCAL        "Local package repository:"
     IDS_HEADER_LICENSE      "Copying Conditions"
     IDS_SUBHEADER_LICENSE   "MiKTeX is freely redistributable under certain conditions."

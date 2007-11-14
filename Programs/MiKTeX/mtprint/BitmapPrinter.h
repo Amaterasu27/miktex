@@ -1,6 +1,6 @@
 /* BitmapPrinter.h:						-*- C++ -*-
 
-   Copyright (C) 2003-2006 Christian Schenk
+   Copyright (C) 2003-2007 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -33,14 +33,14 @@ public:
 public:
   virtual
   size_t
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   Read (/*[out]*/ void *	pBuf,
 	/*[in]*/ size_t		size);
 
 public:
   virtual
   void
-  DIBCHUNKERCALL
+  MIKTEXTHISCALL
   OnNewChunk (/*[in]*/ DibChunk * pChunk);
 
 public:

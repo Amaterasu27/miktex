@@ -35,6 +35,7 @@
 
 #include <MiKTeX/Core/Core>
 
+// DLL import/export switch
 #if ! defined(D0A4167033297F40884B97769F47801C)
 #  if defined(_MSC_VER)
 #    define MIKTEXKPSEXPORT __declspec(dllimport)
@@ -43,13 +44,8 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define MIKTEXKPSCALL __stdcall
-#else
-#  define MIKTEXKPSCALL
-#endif
-
-#define MIKTEXKPSAPI(type) MIKTEXKPSEXPORT type MIKTEXKPSCALL
+// API decoration for exported functions and data
+#define MIKTEXKPSCEEAPI(type) MIKTEXKPSEXPORT type MIKTEXCEECALL
 #define MIKTEXKPSDATA(type) MIKTEXKPSEXPORT type
 
 #define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
@@ -76,16 +72,16 @@
    Macros
    _________________________________________________________________________ */
 
-#define FOPEN_R_MODE MIKTEXTEXT("r")
-#define FOPEN_W_MODE MIKTEXTEXT("w")
-#define FOPEN_RBIN_MODE MIKTEXTEXT("rb")
-#define FOPEN_WBIN_MODE MIKTEXTEXT("wb")
-#define FOPEN_ABIN_MODE MIKTEXTEXT("ab")
+#define FOPEN_R_MODE "r"
+#define FOPEN_W_MODE "w"
+#define FOPEN_RBIN_MODE "rb"
+#define FOPEN_WBIN_MODE "wb"
+#define FOPEN_ABIN_MODE "ab"
 
 #if defined(MIKTEX_WINDOWS)
-# define DIR_SEP_STRING MIKTEXTEXT("\\")
+# define DIR_SEP_STRING "\\"
 #else
-# define DIR_SEP_STRING MIKTEXTEXT("/")
+# define DIR_SEP_STRING "/"
 #endif
 
 /* _________________________________________________________________________
@@ -185,7 +181,7 @@
 #  define KPSEDLL
 #endif
 
-#define KPSEVERSION MIKTEXTEXT("kpathsea version 3.3.2")
+#define KPSEVERSION "kpathsea version 3.3.2"
 
 #if defined(__cplusplus)
 #  define FILESTRCASEEQ(s1, s2) (MiKTeX::Core::PathName::Compare(s1, s2) == 0)
@@ -197,7 +193,7 @@
 
 #define ISXDIGIT(c) isxdigit(c)
 
-#define IS_DIR_SEP(c) ((c) == MIKTEXTEXT('\\') || (c) == MIKTEXTEXT('/'))
+#define IS_DIR_SEP(c) ((c) == '\\' || (c) == '/')
 
 #define MAKE_TEX_PK_BY_DEFAULT 1
 
@@ -517,79 +513,79 @@ MIKTEX_END_EXTERN_C_BLOCK
 #if defined(__cplusplus)
 MIKTEXKPSE_BEGIN_NAMESPACE;
 
-MIKTEXKPSAPI(const char *)
+MIKTEXKPSCEEAPI(const char *)
 BaseName (/*[in]*/ const char * lpszFileName);
 
-MIKTEXKPSAPI(int)
+MIKTEXKPSCEEAPI(int)
 BitmapTolerance (/*[in]*/ double	dpi1,
 		 /*[in]*/ double	dpi2);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 FClose (/*[in]*/ FILE *		stream,
 	/*[in]*/ const char *	fileName);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 FindFile (/*[in]*/ const char *			lpszFileName,
 	  /*[in]*/ kpse_file_format_type	format,
 	  /*[in]*/ int				mustExist);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 FindGlyph (/*[in]*/ char *			lpszFontName,
 	   /*[in]*/ unsigned			dpi,
 	   /*[in]*/ kpse_file_format_type	format,
 	   /*[out]*/ kpse_glyph_file_type *	glyph_file);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 FindSuffix (const char * lpszPath);
 
-MIKTEXKPSAPI(FILE *)
+MIKTEXKPSCEEAPI(FILE *)
 FOpen (/*[in]*/ const char *	lpszName,
        /*[in]*/ const char *	lpszMode);
 
-MIKTEXKPSAPI(FILE *)
+MIKTEXKPSCEEAPI(FILE *)
 TryFOpen (/*[in]*/ const char *	lpszName,
 	  /*[in]*/ const char *	lpszMode);
 
-MIKTEXKPSAPI(int)
+MIKTEXKPSCEEAPI(int)
 FSeek (/*[in]*/ FILE *		stream,
        /*[in]*/ long		offset,
        /*[in]*/ int		where,
        /*[in]*/ const char *	lpszFileName);
 
-MIKTEXKPSAPI(long)
+MIKTEXKPSCEEAPI(long)
 FTell (/*[in]*/ FILE *		stream,
        /*[in]*/ const char *	lpszFileName);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 InitProg (/*[in]*/ const char *	lpszPrefix,
 	  /*[in]*/ unsigned	dpi,
 	  /*[in]*/ const char *	lpszMode,
 	  /*[in]*/ const char *	lpszFallback);
 
-MIKTEXKPSAPI(unsigned)
+MIKTEXKPSCEEAPI(unsigned)
 MagStepFix (/*[in]*/ unsigned	dpi,
 	    /*[in]*/ unsigned	bdpi,
 	    /*[out]*/ int *	pRet);
 
-MIKTEXKPSAPI(void *)
+MIKTEXKPSCEEAPI(void *)
 Malloc (/*[in]*/ size_t size);
 
-MIKTEXKPSAPI(FILE *)
+MIKTEXKPSCEEAPI(FILE *)
 OpenFile (/*[in]*/ const char *			lpszFileName,
 	  /*[in]*/ kpse_file_format_type	format);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 PutEnv (/*[in]*/ const char * lpszVarName,
 	/*[in]*/ const char * lpszValue);
 
-MIKTEXKPSAPI(void *)
+MIKTEXKPSCEEAPI(void *)
 Realloc (/*[in]*/ void *	ptr,
 	 /*[in]*/ size_t	size);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 StrDup (/*[in]*/ const char *	lpsz);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 VarValue (/*[in]*/ const char * lpszVarName);
 
 MIKTEXKPSE_END_NAMESPACE;
@@ -603,11 +599,11 @@ MIKTEXKPSE_END_NAMESPACE;
 #if defined(__cplusplus)
 MIKTEXWEB2C_BEGIN_NAMESPACE;
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 GetSecondsAndMicros (/*[out]*/ int * pSeconds,
 		     /*[out]*/ int * pMicros);
 
-MIKTEXKPSAPI(int)
+MIKTEXKPSCEEAPI(int)
 OpenInput (/*[in,out]*/ char *			lpszFileName,
 	   /*[in]*/ FILE **			ppfile,
 	   /*[in]*/ kpse_file_format_type	format,
@@ -625,65 +621,65 @@ MIKTEXWEB2C_END_NAMESPACE;
 MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
-MIKTEXKPSAPI(const char *)
+MIKTEXKPSCEEAPI(const char *)
 miktex_basename (/*[in]*/ const char * lpszFileName);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 miktex_fclose (/*[in]*/ FILE *			stream,
 	       /*[in]*/ const char *	fileName);
 
-MIKTEXKPSAPI(FILE *)
+MIKTEXKPSCEEAPI(FILE *)
 miktex_fopen (/*[in]*/ const char *	lpszName,
 	      /*[in]*/ const char *	lpszMode);
 
-MIKTEXKPSAPI(int)
+MIKTEXKPSCEEAPI(int)
 miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
 			      /*[in]*/ double	dpi2);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 miktex_kpse_find_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ kpse_file_format_type	format,
 		       /*[in]*/ int			mustExist);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 miktex_kpse_find_glyph (/*[in]*/ char *				lpszFontName,
 			/*[in]*/ unsigned			dpi,
 			/*[in]*/ kpse_file_format_type		format,
 			/*[out]*/ kpse_glyph_file_type *	glyph_file);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 miktex_kpse_init_prog (/*[in]*/ const char *	lpszPrefix,
 		       /*[in]*/ unsigned	dpi,
 		       /*[in]*/ const char *	lpszMode,
 		       /*[in]*/ const char *	lpszFallback);
 
-MIKTEXKPSAPI(unsigned)
+MIKTEXKPSCEEAPI(unsigned)
 miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 			 /*[in]*/ unsigned	bdpi,
 			 /*[out]*/ int *	pRet);
 
-MIKTEXKPSAPI(FILE *)
+MIKTEXKPSCEEAPI(FILE *)
 miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ kpse_file_format_type	format);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
 
-MIKTEXKPSAPI(LPVOID)
+MIKTEXKPSCEEAPI(LPVOID)
 miktex_malloc (/*[in]*/ size_t size);
 
-MIKTEXKPSAPI(LPVOID)
+MIKTEXKPSCEEAPI(LPVOID)
 miktex_realloc (/*[in]*/ void *	ptr,
 		/*[in]*/ size_t	size);
 
-MIKTEXKPSAPI(void)
+MIKTEXKPSCEEAPI(void)
 miktex_putenv (/*[in]*/ const char * lpszVarName,
 	       /*[in]*/ const char * lpszValue);
 
-MIKTEXKPSAPI(char *)
+MIKTEXKPSCEEAPI(char *)
 miktex_strdup (/*[in]*/ const char * s);
 
-MIKTEXKPSAPI(int)
+MIKTEXKPSCEEAPI(int)
 miktex_strcasecmp (/*[in]*/ const char * lpsz1,
 		   /*[in]*/ const char * lpsz2);
 

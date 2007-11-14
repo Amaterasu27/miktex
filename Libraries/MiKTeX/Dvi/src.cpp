@@ -1,6 +1,6 @@
 /* src.cpp: src specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -69,7 +69,6 @@ MyPathNameCompare (/*[in]*/ const PathName & path1,
    _________________________________________________________________________ */
 
 bool
-MIKTEXDVICALL
 DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 		     /*[in]*/ int		line,
 		     /*[out]*/ DviPosition &	position)
@@ -349,7 +348,6 @@ DviImpl::FindSource (/*[in]*/ const char *	lpszFileName,
 #define OFFSET(x, y) ((y) * PixelRound(maxH) + (x))
 
 bool
-MIKTEXDVICALL
 DviImpl::GetSource (/*[in]*/ const DviPosition &	pos,
 		    /*[out]*/ PathName &		fileName,
 		    /*[out]*/ int *			pLineNum)
