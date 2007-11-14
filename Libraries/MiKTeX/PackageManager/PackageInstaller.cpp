@@ -2064,21 +2064,26 @@ PackageInstallerImpl::InstallRemove ()
   bool upgrade = (toBeInstalled.size() == 0 && toBeRemoved.size() == 0);
   bool installing = (upgrade || toBeInstalled.size() > 0);
 
-  if (repositoryType == RepositoryType::Remote && installing)
+  if (installing)
     {
-      pManager->VerifyPackageRepository (repository);
-    }
-
-  if (repositoryType == RepositoryType::Unknown && installing)
-    {
-      // we must have a package repository
-      repository = pManager->PickRepositoryUrl();
-      repositoryType = RepositoryType::Remote;
+      if (repositoryType == RepositoryType::Unknown)
+	{
+	  // we must have a package repository
+	  repository = pManager->PickRepositoryUrl();
+	  repositoryType = RepositoryType::Remote;
+	}
+      else if (repositoryType == RepositoryType::Remote)
+	{
+	  pManager->VerifyPackageRepository (repository);
+	}
     }
 
   ReportLine (T_("starting package maintenance..."));
   ReportLine (T_("installation directory: %s"), Q_(destinationDirectory));
-  ReportLine (T_("package repository: %s"), Q_(repository));
+  if (installing)
+    {
+      ReportLine (T_("package repository: %s"), Q_(repository));
+    }
 
   autoFndbSync = true;
 
@@ -2582,6 +2587,10 @@ PackageInstallerImpl::UpdateDb ()
     {
       repository = pManager->PickRepositoryUrl();
       repositoryType = RepositoryType::Remote;
+    }
+  else if (repositoryType == RepositoryType::Remote)
+    {
+      pManager->VerifyPackageRepository (repository);
     }
 
   // we might need a scratch directory
