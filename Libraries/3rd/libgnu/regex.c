@@ -82,7 +82,7 @@
 
 #if defined(MIKTEX)
 #  if defined(_MSC_VER)
-#    define REGEXDLLAPI(type) __declspec(dllexport) type __stdcall
+#    define REGEXDLLAPI(type) __declspec(dllexport) type __cdecl
 #  else
 #    define REGEXDLLAPI(type) type
 #  endif

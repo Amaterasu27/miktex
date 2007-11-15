@@ -11,16 +11,16 @@
 
 #if defined(MIKTEX) && ! defined(MIKTEXPOPTAPI)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define MIKTEXPOPTAPI(type) __declspec(dllimport) type __stdcall
-#    define MIKTEXPOPTCALLBACK __stdcall
+#    define MIKTEXPOPTAPI(type) __declspec(dllimport) type __cdecl
+#    define MIKTEXPOPTCALLBACK __cdecl
 #    if defined(__cplusplus)
 #      define MIKTEXPOPTDATA(type) extern "C" __declspec(dllimport) type
 #    else
 #      define MIKTEXPOPTDATA(type) __declspec(dllimport) type
 #    endif
 #  elif defined(_MSC_VER)
-#    define MIKTEXPOPTAPI(type) type __stdcall
-#    define MIKTEXPOPTCALLBACK __stdcall
+#    define MIKTEXPOPTAPI(type) type __cdecl
+#    define MIKTEXPOPTCALLBACK __cdecl
 #    if defined(__cplusplus)
 #      define MIKTEXPOPTDATA(type) extern "C" type
 #    else

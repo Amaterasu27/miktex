@@ -35,12 +35,6 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
-#  define EXTRACTORCALL __stdcall
-#else
-#  define EXTRACTORCALL
-#endif
-
 // API decoration for exported member functions
 #define MIKTEXEXTRACTORCEEAPI(type) MIKTEXEXTRACTOREXPORT type MIKTEXCEECALL
 

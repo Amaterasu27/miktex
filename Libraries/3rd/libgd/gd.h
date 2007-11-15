@@ -34,9 +34,17 @@ extern "C" {
 #define BGD_DECLARE(rt) extern rt
 #else
 #ifdef BGDWIN32
+#if defined(MIKTEX)
+#define BGD_DECLARE(rt) __declspec(dllexport) rt __cdecl
+#else
 #define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
+#endif
+#else
+#if defined(MIKTEX)
+#define BGD_DECLARE(rt) __declspec(dllimport) rt __cdecl
 #else
 #define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
+#endif
 #endif /* BGDWIN32 */
 #endif /* NONDLL */
 

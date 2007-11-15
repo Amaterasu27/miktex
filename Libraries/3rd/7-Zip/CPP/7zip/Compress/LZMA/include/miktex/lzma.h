@@ -35,7 +35,7 @@
 #endif
 
 #if defined(_MSC_VER)
-#  define LZMACALL __stdcall
+#  define LZMACALL __cdecl
 #else
 #  define LZMACALL
 #endif

@@ -24,9 +24,9 @@
 
 #if defined(MIKTEX)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define GNUDLLAPI(type) __declspec(dllexport) type __stdcall
+#    define GNUDLLAPI(type) __declspec(dllexport) type __cdecl
 #  elif defined(_MSC_VER)
-#    define GNUDLLAPI(type) type __stdcall
+#    define GNUDLLAPI(type) type __cdecl
 #  else
 #    define GNUDLLAPI(type) type
 #  endif

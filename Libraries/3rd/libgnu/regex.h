@@ -26,7 +26,7 @@
 
 #if defined(MIKTEX) && ! defined(REGEXDLLAPI)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER) 
-#    define REGEXDLLAPI(type) __declspec(dllimport) type __stdcall
+#    define REGEXDLLAPI(type) __declspec(dllimport) type __cdecl
 #  else
 #    define REGEXDLLAPI(type) type
 #  endif
