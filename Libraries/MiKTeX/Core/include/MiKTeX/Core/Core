@@ -5835,6 +5835,16 @@ public:
     = 0;
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments)
+    = 0;
+#endif
+
 public:
   virtual
   int
@@ -6069,33 +6079,6 @@ public:
 		     /*[in]*/ const char *	lpszInfo,
 		     /*[in]*/ const char *	lpszSourceFile,
 		     /*[in]*/ int		lpszSourceLine);
-#endif
-};
-
-/* _________________________________________________________________________
-
-   Session2
-   _________________________________________________________________________ */
-
-/// The MiKTeX session interface (verison 2).
-class
-MIKTEXNOVTABLE
-Session2 : public Session
-{
-protected:
-  virtual
-  MIKTEXTHISCALL
-  ~Session2 ()
-    = 0;
-
-#if defined(MIKTEX_WINDOWS)
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  RunBatch (/*[in]*/ const char *	lpszName,
-	    /*[in]*/ const char *	lpszArguments)
-    = 0;
 #endif
 };
 

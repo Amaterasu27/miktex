@@ -742,7 +742,7 @@ public:
    _________________________________________________________________________ */
 
 class
-SessionImpl : public Session2
+SessionImpl : public Session
 {
 
   // -----------------------------------------------------------------------
@@ -1154,6 +1154,15 @@ public:
 	    /*[in]*/ const char **	argv);
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  RunBatch (/*[in]*/ const char *	lpszName,
+	    /*[in]*/ const char *	lpszArguments);
+#endif
+
 public:
   virtual
   int
@@ -1304,18 +1313,6 @@ public:
   void
   MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & path);
-
-  // -----------------------------------------------------------------------
-  // *** Session2 interface ***
-
-#if defined(MIKTEX_WINDOWS)
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  RunBatch (/*[in]*/ const char *	lpszName,
-	    /*[in]*/ const char *	lpszArguments);
-#endif
 
   // -----------------------------------------------------------------------
   // *** public ***
