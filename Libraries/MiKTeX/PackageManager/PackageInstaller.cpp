@@ -2993,7 +2993,6 @@ PackageInstallerImpl::UseLocalServer ()
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
-__stdcall
 PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
 				      /*[out]*/ LPVOID *	ppvObj)
 {
@@ -3034,7 +3033,6 @@ PackageInstallerImpl::QueryInterface (/*[in]*/ REFIID		riid,
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 ULONG
-__stdcall
 PackageInstallerImpl::AddRef ()
 {
   return (1);
@@ -3050,7 +3048,6 @@ PackageInstallerImpl::AddRef ()
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 ULONG
-__stdcall
 PackageInstallerImpl::Release ()
 {
   return (1);
@@ -3066,7 +3063,6 @@ PackageInstallerImpl::Release ()
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
-__stdcall
 PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
 {
   try
@@ -3094,7 +3090,6 @@ PackageInstallerImpl::ReportLine (/*[in]*/ BSTR line)
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
-__stdcall
 PackageInstallerImpl::OnRetryableError
 (/*[in]*/ BSTR				message,
  /*[out,retval]*/ VARIANT_BOOL *	pDoContinue)
@@ -3131,7 +3126,6 @@ PackageInstallerImpl::OnRetryableError
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 
 HRESULT
-__stdcall
 PackageInstallerImpl::OnProgress
 (/*[in]*/ LONG				nf,
  /*[out,retval]*/ VARIANT_BOOL *	pDoContinue)
