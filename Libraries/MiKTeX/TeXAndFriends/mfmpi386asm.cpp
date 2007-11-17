@@ -2,7 +2,7 @@
 
    Copyright (C) ???? Wayne Sullivan
    Copyright (C) ???? Fabrice Popineau
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -45,7 +45,7 @@
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-MIKTEXCEECALL
+__stdcall
 MiKTeX::TeXAndFriends::TakeFraction (/*[in]*/ C4P_integer	p,
 				     /*[in]*/ C4P_integer	q,
 				     /*[in]*/ C4P_boolean &	arithError)
@@ -96,7 +96,7 @@ LL3:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-MIKTEXCEECALL
+__stdcall
 MiKTeX::TeXAndFriends::TakeScaled (/*[in]*/ C4P_integer		p,
 				   /*[in]*/ C4P_integer		q,
 				   /*[in]*/ C4P_boolean &	arithError)
@@ -147,7 +147,7 @@ LL3:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-MIKTEXCEECALL
+__stdcall
 MiKTeX::TeXAndFriends::MakeScaled (/*[in]*/ C4P_integer		p,
 				   /*[in]*/ C4P_integer		q,
 				   /*[in]*/ C4P_boolean &	arithError)
@@ -211,7 +211,7 @@ LL34:
 __declspec(naked)
 __declspec(dllexport)
 C4P_integer
-MIKTEXCEECALL
+__stdcall
 MiKTeX::TeXAndFriends::MakeFraction (/*[in]*/ C4P_integer	p,
 				     /*[in]*/ C4P_integer	q,
 				     /*[in]*/ C4P_boolean &	arithError)

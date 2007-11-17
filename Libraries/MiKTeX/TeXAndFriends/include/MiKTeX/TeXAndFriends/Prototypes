@@ -38,8 +38,9 @@
 #endif
 
 // API decoration for exported member functions and data
-#define MIKTEXMFTHISAPI(type) MIKTEXMFEXPORT type MIKTEXTHISCALL
-#define MIKTEXMFCEEAPI(type) MIKTEXMFEXPORT type MIKTEXCEECALL
+#define MIKTEXAPI_(type, cc) MIKTEXMFEXPORT type cc
+#define MIKTEXMFTHISAPI(type) MIKTEXAPI_(type, MIKTEXTHISCALL)
+#define MIKTEXMFCEEAPI(type) MIKTEXAPI_(type, MIKTEXCEECALL)
 #define MIKTEXMFDATA(type) MIKTEXMFEXPORT type
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
@@ -90,22 +91,22 @@ MIKTEXMFCEEAPI(bool)
 Write18 (/*[in]*/ const char *		lpszCommand,
 	 /*[in]*/ unsigned long *	lpExitCode = 0);
 
-MIKTEXMFCEEAPI(int)
+MIKTEXAPI_(int, __stdcall)
 TakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 
-MIKTEXMFCEEAPI(int)
+MIKTEXAPI_(int, __stdcall)
 TakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
 
-MIKTEXMFCEEAPI(int)
+MIKTEXAPI_(int, __stdcall)
 MakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 
-MIKTEXMFCEEAPI(int)
+MIKTEXAPI_(int, __stdcall)
 MakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
