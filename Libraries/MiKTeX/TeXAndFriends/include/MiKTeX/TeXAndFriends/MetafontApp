@@ -200,7 +200,7 @@ public:
     Allocate ("ww", THEDATA(ww), THEDATA(pathsize));
 
 #if defined(TRAPMF)
-    Allocate ("c4p", THEDATA(c4p_free), THEDATA(memmax));
+    Allocate ("free", THEDATA(c4p_free), THEDATA(memmax));
     Allocate ("wasfree", THEDATA(wasfree), THEDATA(memmax));
 #endif
   }
