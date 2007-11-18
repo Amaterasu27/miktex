@@ -1,8 +1,7 @@
 MiKTeX 2.7
 
-       1 make sure each exported function has an explicit calling convention
-       1 update.dat goes in new miktex-update-2.7 package
-       1 Remove (uncomment) Session2 interface
        3 manual: MiKTeX-maintained TEXMF directories are a prohibited zone
        3 manual: screenshots
+       3 profile guided optimization
        4 mo: create root directory
+       5 clean up miktex-bin
