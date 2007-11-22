@@ -39,10 +39,7 @@ extern Boolean HPS_FLAG ;
 int
 add_name P2C(char *, s, struct header_list **, what)
 {
-#if defined(MIKTEX)
-  return
-#endif
-  add_name_general (s, what, NULL, NULL);
+  return (int) add_name_general (s, what, NULL, NULL);
 }
 
 /*
@@ -129,10 +126,7 @@ void checkhmem P3C(char *, s, char *, pre, char *, post)
 int
 add_header P1C(char *, s)
 {
-#if defined(MIKTEX)
-  return
-#endif
-  add_header_general (s, NULL, NULL);
+  return (int) add_header_general (s, NULL, NULL);
 }
 
 int

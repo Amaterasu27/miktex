@@ -444,19 +444,28 @@ int href_name_match P2C(char *, h, char *, n)
 
 void stamp_hps P1C(Hps_link *, pl)
 {
-  char tmpbuf[200] ;
+  char * tmpbuf;
   if (pl == NULL) {
-    error("Null pointer, oh no!") ;
+    error("stamp_hps: null pl pointer, oh no!") ;
     return ;
-  } else {
-    /* print out the proper pdfm with local page info only 
-     *  target info will be in the target dictionary */
-    (void)sprintf(tmpbuf, 
-		  " (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ", pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
-		  pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
-		  pl->color[0], pl->color[1], pl->color[2]) ;
-    cmdout(tmpbuf) ; 
-  }
+  } 
+  if(pl->title == NULL) {
+    error("stamp_hps: null pl->title pointer, oh no!") ;
+    return ;
+  } 
+
+  tmpbuf = (char *) xmalloc(strlen(pl->title)+200);
+
+  /* print out the proper pdfm with local page info only 
+   *  target info will be in the target dictionary */
+  (void)sprintf(tmpbuf, 
+		" (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ", 
+		pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
+		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
+		pl->color[0], pl->color[1], pl->color[2]) ;
+  cmdout(tmpbuf) ; 
+  free(tmpbuf);
+  
   
 }
 
@@ -465,21 +474,33 @@ void stamp_hps P1C(Hps_link *, pl)
  */
 void stamp_external P2C(char *, s, Hps_link *, pl) 
 {
-  char tmpbuf[200];
+  char *tmpbuf;
   if (pl == NULL) {
-    error("Null pointer, oh no!") ;
+    error("stamp_external: null pl pointer, oh no!") ;
     return ;
-  } else {
-    /* print out the proper pdfm with local page info only 
-     *  target info will be in the target dictionary */
-    (void)sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ", pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
-		  pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
-		  pl->color[0], pl->color[1], pl->color[2], s) ;
-    cmdout(tmpbuf) ;
-  }
+  } 
+
+  if (s == NULL) {
+    error("stamp_external: null s pointer, oh no!") ;
+    return ;
+  } 
+
+  tmpbuf = (char *) xmalloc(strlen(s) + 200);
+
+  /* print out the proper pdfm with local page info only 
+   *  target info will be in the target dictionary */
+  (void)sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
+		pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
+		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
+		pl->color[0], pl->color[1], pl->color[2], s) ;
+  cmdout(tmpbuf) ;
+  free(tmpbuf);
 }
 
 void finish_hps P1H(void) {
+  extern int dvips_debug_flag;
+  extern int debug_flag;
+
   fclose(bitfile) ;
   set_bitfile("head.tmp",1);
   do_targets() ;
@@ -492,6 +513,10 @@ void finish_hps P1H(void) {
   removecomments = 0;
   copyfile("head.tmp") ;
   copyfile("body.tmp") ;
+  if (dvips_debug_flag == 0 && debug_flag == 0) {
+     unlink("head.tmp");
+     unlink("body.tmp");
+  }
 }
 
 void set_bitfile P2C(char *, s, int, mode)

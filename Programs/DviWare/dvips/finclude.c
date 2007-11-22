@@ -57,6 +57,9 @@ extern int to_close ;
 extern integer debug_flag;
 #endif  /* DEBUG */
 
+extern char *downloadedpsnames[];
+extern int unused_top_of_psnames;
+
 /*
  * Create a font descriptor for a font included in a psfile.  There will be
  * no fontmaptype node for the resulting font descriptor until this font is
@@ -312,6 +315,10 @@ scan_fontnames P2C(char *, str, char *, psfile)
 	    infont = 0 ;
           }
           re->sent = 2 ;
+          if (unused_top_of_psnames < DOWNLOADEDPSSIZE) {
+             downloadedpsnames[unused_top_of_psnames] = xstrdup (re->PSname);
+             unused_top_of_psnames++;
+          }
         } else {
           char eb[1000];
           sprintf(eb,"Font %s used in file %s is not in the mapping file.",

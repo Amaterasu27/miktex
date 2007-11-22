@@ -1,10 +1,6 @@
 /*
  *   This is the main routine.
  */
-#ifndef DEFRES
-#define DEFRES (600)
-#endif
-
 #include "dvips.h" /* The copyright notice there is included too! */
 #if defined(MIKTEX)
 #include <bmeps.h>
@@ -47,12 +43,22 @@ extern char *strtok() ; /* some systems don't have this in strings.h */
 #include descrip
 #endif
 #endif
+
+#ifndef DEFRES
+#define DEFRES (600)
+#endif
+
 /*
  *   First we define some globals.
  */
 #ifdef VMS
     static char ofnme[252],infnme[252],pap[40],thh[20];
 #endif
+
+/* PS fonts fully downloaded as headers */ 
+char *downloadedpsnames[DOWNLOADEDPSSIZE];  
+
+int unused_top_of_psnames ;   /* unused top number of downloadedpsnames[#] */
 fontdesctype *fonthead ;      /* list of all fonts mentioned so far */
 fontdesctype *curfnt ;        /* the currently selected font */
 sectiontype *sections ;       /* sections to process document in */
@@ -335,6 +341,16 @@ help P1C(int, status)
    fputs (kpse_bug_address, f);
 #endif
 }
+
+void
+freememforpsnames(void)
+{
+   int i;
+
+   for (i = 0; i < unused_top_of_psnames && downloadedpsnames[i]; i++)
+      free (downloadedpsnames[i]);
+}
+
 /*
  *   This error routine prints an error message; if the first
  *   character is !, it aborts the job.
@@ -473,6 +489,9 @@ initialize P1H(void)
    i = 10;
    for (s="abcdef"; *s!=0; s++)
       xdig[(int)*s] = i++;
+   for(i=0 ; i < DOWNLOADEDPSSIZE; i++)
+      downloadedpsnames[i] = NULL;
+   unused_top_of_psnames = 0;
    morestrings() ;
    maxpages = 100000 ;
    numcopies = 1 ;
@@ -588,7 +607,7 @@ main P2C(int, argc, char **, argv)
 #ifdef MVSXA
    int firstext = -1 ;
 #endif
-   register sectiontype *sects ;
+   sectiontype *sects ;
 
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "dvips");
@@ -643,7 +662,7 @@ main P2C(int, argc, char **, argv)
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
         extern KPSEDLL char *kpathsea_version_string;
-        puts ("dvips(k) 5.96");
+        puts ("dvips(k) 5.96dev");
         puts (kpathsea_version_string);
         puts ("Copyright (C) 2007 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
@@ -651,7 +670,7 @@ under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
 For more information about these matters, see the files\n\
 named COPYING and dvips.h.\n\
-Primary author of Dvips: T. Rokicki; -k maintainer: T. Kacvinsky/ S. Rahtz.");
+Primary author of Dvips: T. Rokicki.");
 #if defined(MIKTEX)
 	bmeps_version(stdout);
 #endif
@@ -1487,6 +1506,7 @@ default:
 	 }
       }
    }
+   freememforpsnames() ;
    if (! sepfiles) {
 #ifdef HPS
       if (HPS_FLAG)
