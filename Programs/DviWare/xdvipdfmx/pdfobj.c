@@ -307,7 +307,15 @@ pdf_out_init (const char *filename, int do_encryption)
 
   output_stream = NULL;
 
-  pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
+  if (filename == NULL) { /* no filename: writing to stdout */
+#ifdef WIN32
+	setmode(fileno(stdout), _O_BINARY);
+#endif
+    pdf_output_file = stdout;
+  }
+  else
+    pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
+
   if (!pdf_output_file) {
     if (strlen(filename) < 128)
       ERROR("Unable to open \"%s\".", filename);

@@ -132,7 +132,7 @@ set_default_pdf_filename(void)
 }
 
 static void
-usage (void)
+usage (int exit_code)
 {
   fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
@@ -151,6 +151,7 @@ usage (void)
 #endif
   fprintf (stdout, "-f filename\tSet font map file name [t1fonts.map]\n");
   fprintf (stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
+  fprintf (stdout, "-h \t\tShow this help message\n");
   fprintf (stdout, "-l \t\tLandscape mode\n");
   fprintf (stdout, "-m number\tSet additional magnification\n");
   fprintf (stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
@@ -191,7 +192,7 @@ usage (void)
   fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
   fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
 
-  exit(1);
+  exit(exit_code);
 }
 
 
@@ -333,7 +334,7 @@ select_pages (const char *pagespec)
 /* It doesn't work as expected (due to dvi filename). */
 #define CHECK_ARG(n,m) if (argc < (n) + 1) {\
   fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
-  usage();\
+  usage(1);\
 }
 
 static void
@@ -516,9 +517,12 @@ do_args (int argc, char *argv[])
       case 'E':
         always_embed = 1;
         break;
+      case 'h':
+        usage(0);
+        break;
       default:
         fprintf (stderr, "Unknown option in \"%s\"", flag);
-        usage();
+        usage(1);
         break;
       }
     }
@@ -542,7 +546,7 @@ do_args (int argc, char *argv[])
 
   if (argc > 1) {
     fprintf(stderr, "Multiple dvi filenames?");
-    usage();
+    usage(1);
   } else if (argc > 0) {
     /*
      * The only legitimate way to have argc == 0 here is
@@ -798,12 +802,6 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  if (argc < 2) {
-    fprintf(stderr, "No dvi filename specified.");
-    usage();
-    return 1;
-  }
-
 #ifdef MIKTEX
   miktex_initialize();
 #else
@@ -835,18 +833,14 @@ main (int argc, char *argv[])
   pdf_font_set_dpi(font_dpi);
 
   if (dvi_filename == NULL) {
-    if (pdf_filename == NULL) {
-      WARN("No dvi or pdf filename specified.");
-      usage();
-      return 1;
-    }
-    else {
+    if (verbose)
+      MESG("No dvi filename specified, reading standard input.\n");
+    if (pdf_filename == NULL)
       if (verbose)
-        MESG("No dvi filename specified, reading standard input.");
-    }
+        MESG("No pdf filename specified, writing to standard output.\n");
   }
 
-  if (pdf_filename == NULL)
+  if (pdf_filename == NULL && dvi_filename != NULL)
     set_default_pdf_filename();
 
   if (do_encryption) {
@@ -874,7 +868,8 @@ main (int argc, char *argv[])
     }
   }
 
-  MESG("%s -> %s\n", dvi_filename == NULL ? "stdin" : dvi_filename, pdf_filename);
+  MESG("%s -> %s\n", dvi_filename == NULL ? "stdin" : dvi_filename,
+		     pdf_filename == NULL ? "stdout" : pdf_filename);
 
   /* Set default paper size here so that all page's can inherite it.
    * annot_grow:    Margin of annotation.
