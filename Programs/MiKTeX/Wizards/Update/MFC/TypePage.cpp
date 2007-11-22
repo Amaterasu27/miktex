@@ -1,6 +1,6 @@
 /* TypePage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -58,8 +58,8 @@ TypePage::TypePage ()
   localChoice = -1;
 
   sourceChoice =
-    SessionWrapper(true)->GetConfigValue(T_("Update"),
-					 T_("lastSource"),
+    SessionWrapper(true)->GetConfigValue("Update",
+					 "lastSource",
 					 -1);
 
   if (sourceChoice < 0)
@@ -94,16 +94,16 @@ TypePage::TypePage ()
   if (remoteChoice < 0)
     {
       remoteChoice =
-	SessionWrapper(true)->GetConfigValue(T_("Update"),
-					     T_("lastRemote"),
+	SessionWrapper(true)->GetConfigValue("Update",
+					     "lastRemote",
 					     0);
     }
   
   if (localChoice < 0)
     {
       localChoice =
-	SessionWrapper(true)->GetConfigValue(T_("Update"),
-					     T_("lastLocal"),
+	SessionWrapper(true)->GetConfigValue("Update",
+					     "lastLocal",
 					     0);
     }
 
@@ -231,6 +231,7 @@ TypePage::OnWizardNext ()
 	  ASSERT (IDC_RANDOM < IDC_CHOOSE_REPOSITORY);
 	  ProxySettings proxySettings;
 	  if (PackageManager::TryGetProxy(proxySettings)
+	      && proxySettings.useProxy
 	      && proxySettings.authenticationRequired
 	      && proxySettings.user.empty())
 	    {
@@ -329,14 +330,14 @@ TypePage::OnKillActive ()
     {
       try
 	{
-	  SessionWrapper(true)->SetUserConfigValue (T_("Update"),
-						    T_("lastSource"),
+	  SessionWrapper(true)->SetUserConfigValue ("Update",
+						    "lastSource",
 						    sourceChoice);
-	  SessionWrapper(true)->SetUserConfigValue (T_("Update"),
-						    T_("lastRemote"),
+	  SessionWrapper(true)->SetUserConfigValue ("Update",
+						    "lastRemote",
 						    remoteChoice);
-	  SessionWrapper(true)->SetUserConfigValue (T_("Update"),
-						    T_("lastLocal"),
+	  SessionWrapper(true)->SetUserConfigValue ("Update",
+						    "lastLocal",
 						    localChoice);
 	  pSheet->SetRandomRepositoryFlag (remoteChoice == 0);
 	  pSheet->SetRepositoryType (sourceChoice == 0
