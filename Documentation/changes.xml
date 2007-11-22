@@ -1,14 +1,5 @@
 <section>
 
-<title>Pre-release software</title>
-
-<para>This is pre-release software. It may contain fatal bugs or don't even
-run on your system.</para>
-
-</section>
-
-<section>
-
 <title>System requirements</title>
 
 <para>&MiKTeXCurrentSeries; requires one of the following

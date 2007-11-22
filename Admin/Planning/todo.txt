@@ -1,5 +1,8 @@
 MiKTeX 2.7
 
+       1 build & deploy Qt4
+       1 build & deploy icu 3.6
+       1 deploy vc90 runtime
        3 manual: MiKTeX-maintained TEXMF directories are a prohibited zone
        3 manual: screenshots
        3 profile guided optimization
