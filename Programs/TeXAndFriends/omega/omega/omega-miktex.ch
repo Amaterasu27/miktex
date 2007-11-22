@@ -2054,7 +2054,7 @@ if x<>mem_bot then goto bad_fmt;
 undump_int(x);
 if x<>mem_top then goto bad_fmt;
 @y
-x:=fmt_file^.int;
+undump_int(x);
 if x<>@$ then goto bad_fmt; {check that strings are the same}
 undump_int(x);
 if x<>max_halfword then goto bad_fmt; {check |max_halfword|}
