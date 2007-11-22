@@ -1,6 +1,6 @@
 /* TaskPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2007 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -142,6 +142,7 @@ TaskPage::OnWizardNext ()
 	  {
 	    ProxySettings proxySettings;
 	    if (PackageManager::TryGetProxy(proxySettings)
+		&& proxySettings.useProxy
 		&& proxySettings.authenticationRequired
 		&& proxySettings.user.empty())
 	      {

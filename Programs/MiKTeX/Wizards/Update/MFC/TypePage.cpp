@@ -1,6 +1,6 @@
 /* TypePage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2007 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -231,6 +231,7 @@ TypePage::OnWizardNext ()
 	  ASSERT (IDC_RANDOM < IDC_CHOOSE_REPOSITORY);
 	  ProxySettings proxySettings;
 	  if (PackageManager::TryGetProxy(proxySettings)
+	      && proxySettings.useProxy
 	      && proxySettings.authenticationRequired
 	      && proxySettings.user.empty())
 	    {
