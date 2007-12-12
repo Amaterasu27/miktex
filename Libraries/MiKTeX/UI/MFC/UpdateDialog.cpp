@@ -789,21 +789,26 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 		       /*[in]*/ const vector<string> &	toBeInstalled,
 		       /*[in]*/ const vector<string> &	toBeRemoved)
 {
-  string url;
-  RepositoryType repositoryType (RepositoryType::Unknown);
-  if (toBeInstalled.size() > 0
-      && PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
-      && repositoryType == RepositoryType::Remote
-      && ! ProxyAuthenticationDialog((pParent == 0
-				      ? 0
-				      : pParent->GetSafeHwnd())))
+  BEGIN_USE_MY_RESOURCES()
     {
-      return (IDCANCEL);
+      string url;
+      RepositoryType repositoryType (RepositoryType::Unknown);
+      if (toBeInstalled.size() > 0
+	  && PackageManager::TryGetDefaultPackageRepository(repositoryType,
+							    url)
+	  && repositoryType == RepositoryType::Remote
+	  && ! ProxyAuthenticationDialog(pParent == 0
+					 ? 0
+					 : pParent->GetSafeHwnd()))
+	{
+	  return (IDCANCEL);
+	}
+      UpdateDialogImpl dlg (pParent, pManager);
+      dlg.SetFileLists (toBeInstalled, toBeRemoved);
+      dlg.DoModal ();
+      return (! (dlg.GetErrorFlag() || dlg.GetCancelFlag())
+	      ? IDOK
+	      : IDCANCEL);
     }
-  UpdateDialogImpl dlg (pParent, pManager);
-  dlg.SetFileLists (toBeInstalled, toBeRemoved);
-  dlg.DoModal ();
-  return (! (dlg.GetErrorFlag() || dlg.GetCancelFlag())
-	  ? IDOK
-	  : IDCANCEL);
+  END_USE_MY_RESOURCES();
 }
