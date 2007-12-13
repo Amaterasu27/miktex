@@ -142,18 +142,11 @@ void MtSync_Init(CMtSync *p) { p->needStart = True; }
 
 #define kMtMaxValForNormalize 0xFFFFFFFF
 
-/*
-Notes:
-instead of "size_t pos" we can use "UInt32 pos".
-But MSVC++ compilers have BUG:
-sometimes they use signed extending: (size_t)pos was compiled to "movsxd	r10, edx"
-*/
-
 #define DEF_GetHeads(name, v) \
-static void GetHeads ## name(const Byte *buffer, size_t pos, \
+static void GetHeads ## name(const Byte *p, UInt32 pos, \
 UInt32 *hash, UInt32 hashMask, UInt32 *heads, UInt32 numHeads) { \
-for (; numHeads != 0; numHeads--) { const Byte *p = buffer + (size_t)pos; \
-const UInt32 value = (v); *heads++ = (UInt32)pos - hash[value]; hash[value] = (UInt32)(pos++);  } }
+for (; numHeads != 0; numHeads--) { \
+const UInt32 value = (v); p++; *heads++ = pos - hash[value]; hash[value] = pos++;  } }
 
 DEF_GetHeads(2,  (p[0] | ((UInt32)p[1] << 8)) & hashMask)
 DEF_GetHeads(3,  (g_CrcTable[p[0]] ^ p[1] ^ ((UInt32)p[2] << 8)) & hashMask)
@@ -222,6 +215,7 @@ void HashThreadFunc(CMatchFinderMt *mt)
             heads[0] += num;
           }
           mf->pos += num;
+          mf->buffer += num;
         }
       }
 
@@ -252,7 +246,7 @@ void MatchFinderMt_GetNextBlock_Hash(CMatchFinderMt *p)
 #endif
 #endif
 
-Int32 NO_INLINE GetMatchesSpecN(UInt32 lenLimit, UInt32 pos, const Byte *buffer, CLzRef *son, 
+Int32 NO_INLINE GetMatchesSpecN(UInt32 lenLimit, UInt32 pos, const Byte *cur, CLzRef *son, 
     UInt32 _cyclicBufferPos, UInt32 _cyclicBufferSize, UInt32 _cutValue, 
     UInt32 *_distances, UInt32 _maxLen, const UInt32 *hash, Int32 limit, UInt32 size, UInt32 *posRes)
 {
@@ -276,14 +270,14 @@ Int32 NO_INLINE GetMatchesSpecN(UInt32 lenLimit, UInt32 pos, const Byte *buffer,
     }
     {
       CLzRef *pair = son + ((_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ? _cyclicBufferSize : 0)) << 1);
-      const Byte *pb = buffer + curMatch;
-      const Byte *cur = buffer + pos;
+      const Byte *pb = cur - delta;
       UInt32 len = (len0 < len1 ? len0 : len1);
       if (pb[len] == cur[len])
       {
-        while(++len != lenLimit)
-          if (pb[len] != cur[len])
-            break;
+        if (++len != lenLimit && pb[len] == cur[len])
+          while(++len != lenLimit)
+            if (pb[len] != cur[len])
+              break;
         if (maxLen < len)
         {
           *distances++ = maxLen = len;
@@ -314,6 +308,7 @@ Int32 NO_INLINE GetMatchesSpecN(UInt32 lenLimit, UInt32 pos, const Byte *buffer,
   }
   pos++;
   _cyclicBufferPos++;
+  cur++;
   {
     UInt32 num = (UInt32)(distances - _distances);
     *_distances = num - 1;
@@ -372,6 +367,7 @@ void BtGetMatches(CMatchFinderMt *p, UInt32 *distances)
         curPos += num;
         cyclicBufferPos++;
         pos++;
+        p->buffer++;
       }
       #else
       {
@@ -380,6 +376,7 @@ void BtGetMatches(CMatchFinderMt *p, UInt32 *distances)
           distances + curPos, p->numHashBytes - 1, p->hashBuf + p->hashBufPos, (Int32)(limit - curPos) , size, &posRes);
         p->hashBufPos += posRes - pos;
         cyclicBufferPos += posRes - pos;
+        p->buffer += posRes - pos;
         pos = posRes;
       }
       #endif
@@ -411,7 +408,6 @@ void BtFillBlock(CMatchFinderMt *p, UInt32 globalBlockIndex)
     UInt32 subValue = p->pos - p->cyclicBufferSize;
     MatchFinder_Normalize3(subValue, p->son, p->cyclicBufferSize * 2);
     p->pos -= subValue;
-    p->buffer += subValue;
   }
 
   if (!sync->needStart)
@@ -583,7 +579,7 @@ UInt32 * MixMatches2(CMatchFinderMt *p, UInt32 matchMinPos, UInt32 *distances)
   hash[hash2Value] = lzPos;
 
   if (curMatch2 >= matchMinPos) 
-    if (cur[(size_t)curMatch2 - lzPos] == cur[0])
+    if (cur[(ptrdiff_t)curMatch2 - lzPos] == cur[0])
     {
       *distances++ = 2; 
       *distances++ = lzPos - curMatch2 - 1;
@@ -606,10 +602,10 @@ UInt32 * MixMatches3(CMatchFinderMt *p, UInt32 matchMinPos, UInt32 *distances)
   hash[kFix3HashSize + hash3Value] = 
     lzPos;
 
-  if (curMatch2 >= matchMinPos && cur[(size_t)curMatch2 - lzPos] == cur[0])
+  if (curMatch2 >= matchMinPos && cur[(ptrdiff_t)curMatch2 - lzPos] == cur[0])
   { 
     distances[1] = lzPos - curMatch2 - 1;
-    if (cur[(size_t)curMatch2 - lzPos + 2] == cur[2])
+    if (cur[(ptrdiff_t)curMatch2 - lzPos + 2] == cur[2])
     {
       distances[0] = 3;
       return distances + 2;
@@ -617,7 +613,7 @@ UInt32 * MixMatches3(CMatchFinderMt *p, UInt32 matchMinPos, UInt32 *distances)
     distances[0] = 2; 
     distances += 2;
   }
-  if (curMatch3 >= matchMinPos && cur[(size_t)curMatch3 - lzPos] == cur[0])
+  if (curMatch3 >= matchMinPos && cur[(ptrdiff_t)curMatch3 - lzPos] == cur[0])
   { 
     *distances++ = 3; 
     *distances++ = lzPos - curMatch3 - 1; 
@@ -643,21 +639,21 @@ UInt32 *MixMatches4(CMatchFinderMt *p, UInt32 matchMinPos, UInt32 *distances)
   hash[kFix4HashSize + hash4Value] = 
     lzPos;
 
-  if (curMatch2 >= matchMinPos && cur[(size_t)curMatch2 - lzPos] == cur[0])
+  if (curMatch2 >= matchMinPos && cur[(ptrdiff_t)curMatch2 - lzPos] == cur[0])
   {
     distances[1] = lzPos - curMatch2 - 1;
-    if (cur[(size_t)curMatch2 - lzPos + 2] == cur[2])
+    if (cur[(ptrdiff_t)curMatch2 - lzPos + 2] == cur[2])
     {
-      distances[0] =  (cur[(size_t)curMatch2 - lzPos + 3] == cur[3]) ? 4 : 3;
+      distances[0] =  (cur[(ptrdiff_t)curMatch2 - lzPos + 3] == cur[3]) ? 4 : 3;
       return distances + 2;
     }
     distances[0] = 2;
     distances += 2;
   }
-  if (curMatch3 >= matchMinPos && cur[(size_t)curMatch3 - lzPos] == cur[0])
+  if (curMatch3 >= matchMinPos && cur[(ptrdiff_t)curMatch3 - lzPos] == cur[0])
   {
     distances[1] = lzPos - curMatch3 - 1;
-    if (cur[(size_t)curMatch3 - lzPos + 3] == cur[3])
+    if (cur[(ptrdiff_t)curMatch3 - lzPos + 3] == cur[3])
     {
       distances[0] = 4;
       return distances + 2;
@@ -668,8 +664,8 @@ UInt32 *MixMatches4(CMatchFinderMt *p, UInt32 matchMinPos, UInt32 *distances)
 
   if (curMatch4 >= matchMinPos)
     if (
-      cur[(size_t)curMatch4 - lzPos] == cur[0] &&
-      cur[(size_t)curMatch4 - lzPos + 3] == cur[3]
+      cur[(ptrdiff_t)curMatch4 - lzPos] == cur[0] &&
+      cur[(ptrdiff_t)curMatch4 - lzPos + 3] == cur[3]
       )
     {
       *distances++ = 4;

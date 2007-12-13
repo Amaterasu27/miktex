@@ -5,11 +5,7 @@
 
 #include "IStream.h"
 
-// "23170F69-40C1-278A-0000-000400xx0000"
-#define CODER_INTERFACE(i, x) \
-DEFINE_GUID(IID_ ## i, \
-0x23170F69, 0x40C1, 0x278A, 0x00, 0x00, 0x00, 0x04, 0x00, x, 0x00, 0x00); \
-struct i: public IUnknown
+#define CODER_INTERFACE(i, x) DECL_INTERFACE(i, 4, x)
 
 CODER_INTERFACE(ICompressProgressInfo, 0x04)
 {
@@ -144,6 +140,18 @@ CODER_INTERFACE(ICryptoProperties, 0x80)
 {
   STDMETHOD(SetKey)(const Byte *data, UInt32 size) PURE;
   STDMETHOD(SetInitVector)(const Byte *data, UInt32 size) PURE;
+};
+
+/*
+CODER_INTERFACE(ICryptoResetSalt, 0x88)
+{
+  STDMETHOD(ResetSalt)() PURE;
+};
+*/
+
+CODER_INTERFACE(ICryptoResetInitVector, 0x8C)
+{
+  STDMETHOD(ResetInitVector)() PURE;
 };
 
 CODER_INTERFACE(ICryptoSetPassword, 0x90)
