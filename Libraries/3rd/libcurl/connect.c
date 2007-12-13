@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.179 2007-09-05 22:01:57 danf Exp $
+ * $Id: connect.c,v 1.184 2007-10-17 00:44:48 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -380,6 +380,7 @@ static CURLcode bindlocal(struct connectdata *conn,
         port = ntohs(((struct sockaddr_in6 *)&add)->sin6_port);
 #endif
       infof(data, "Local port: %d\n", port);
+      conn->bits.bound = TRUE;
       return CURLE_OK;
     }
     if(--portnum > 0) {
@@ -677,14 +678,44 @@ singleipconnect(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   curl_socket_t sockfd;
   CURLcode res;
+  /*
+   * Curl_sockaddr_storage, which is basically sockaddr_storage has a space
+   * for a largest possible struct sockaddr only. We should add some space for
+   * the other fields we are using. Hence the addr_storage size math.
+   */
+  char addr_storage[sizeof(struct curl_sockaddr)-
+                    sizeof(struct sockaddr)+
+                    sizeof(struct Curl_sockaddr_storage)];
+  struct curl_sockaddr *addr=(struct curl_sockaddr*)&addr_storage;
+  const void *iptoprint;
 
-  sockfd = socket(ai->ai_family, conn->socktype, ai->ai_protocol);
+  addr->family=ai->ai_family;
+  addr->socktype=conn->socktype;
+  addr->protocol=ai->ai_protocol;
+  addr->addrlen =
+    (ai->ai_addrlen < (socklen_t)sizeof(struct Curl_sockaddr_storage)) ?
+     ai->ai_addrlen : (socklen_t)sizeof(struct Curl_sockaddr_storage);
+  memcpy(&addr->addr, ai->ai_addr, addr->addrlen);
+
+  /* If set, use opensocket callback to get the socket */
+  if(data->set.fopensocket)
+    sockfd = data->set.fopensocket(data->set.opensocket_client,
+                                   CURLSOCKTYPE_IPCXN, addr);
+  else
+    sockfd = socket(addr->family, addr->socktype, addr->protocol);
   if (sockfd == CURL_SOCKET_BAD)
     return CURL_SOCKET_BAD;
 
   *connected = FALSE; /* default is not connected */
 
-  Curl_printable_address(ai, addr_buf, sizeof(addr_buf));
+  /* FIXME: do we have Curl_printable_address-like with struct sockaddr* as
+     argument? */
+  iptoprint = &((const struct sockaddr_in*)(&addr->addr))->sin_addr;
+#ifdef ENABLE_IPV6
+  if(addr->family==AF_INET6)
+    iptoprint= &((const struct sockaddr_in6*)(&addr->addr))->sin6_addr;
+#endif
+  Curl_inet_ntop(addr->family, iptoprint, addr_buf, sizeof(addr_buf));
   infof(data, "  Trying %s... ", addr_buf);
 
   if(data->set.tcp_nodelay)
@@ -715,7 +746,7 @@ singleipconnect(struct connectdata *conn,
 
   /* Connect TCP sockets, bind UDP */
   if(conn->socktype == SOCK_STREAM)
-    rc = connect(sockfd, ai->ai_addr, ai->ai_addrlen);
+    rc = connect(sockfd, &addr->addr, addr->addrlen);
   else
     rc = 0;
 
@@ -779,7 +810,7 @@ singleipconnect(struct connectdata *conn,
  */
 
 CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
-                          const struct Curl_dns_entry *remotehost, /* use this one */
+                          const struct Curl_dns_entry *remotehost,
                           curl_socket_t *sockconn,   /* the connected socket */
                           Curl_addrinfo **addr,      /* the one we used */
                           bool *connected)           /* really connected? */

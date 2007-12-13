@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostares.c,v 1.32 2007-06-11 13:35:33 bagder Exp $
+ * $Id: hostares.c,v 1.35 2007-10-20 15:11:51 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -109,7 +109,8 @@ int Curl_resolv_getsock(struct connectdata *conn,
 
 {
   struct timeval maxtime;
-  struct timeval timeout;
+  struct timeval timebuf;
+  struct timeval *timeout;
   int max = ares_getsock(conn->data->state.areschannel,
                          (int *)socks, numsocks);
 
@@ -117,10 +118,10 @@ int Curl_resolv_getsock(struct connectdata *conn,
   maxtime.tv_sec = CURL_TIMEOUT_RESOLVE;
   maxtime.tv_usec = 0;
 
-  ares_timeout(conn->data->state.areschannel, &maxtime, &timeout);
+  timeout = ares_timeout(conn->data->state.areschannel, &maxtime, &timebuf);
 
   Curl_expire(conn->data,
-              (timeout.tv_sec * 1000) + (timeout.tv_usec/1000) );
+              (timeout->tv_sec * 1000) + (timeout->tv_usec/1000));
 
   return max;
 }
@@ -254,7 +255,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
     tvp = ares_timeout(data->state.areschannel, &store, &tv);
 
     /* use the timeout period ares returned to us above */
-    ares_waitperform(conn, tv.tv_sec * 1000 + tv.tv_usec/1000);
+    ares_waitperform(conn, (int)(tvp->tv_sec * 1000 + tvp->tv_usec/1000));
 
     if(conn->async.done)
       break;
@@ -278,7 +279,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
     /* a name was not resolved */
     if((timeout < 0) || (conn->async.status == ARES_ETIMEOUT)) {
       failf(data, "Resolving host timed out: %s", conn->host.dispname);
-      rc = CURLE_OPERATION_TIMEDOUT;
+      rc = CURLE_COULDNT_RESOLVE_HOST;
     }
     else if(conn->async.done) {
       failf(data, "Could not resolve host: %s (%s)", conn->host.dispname,

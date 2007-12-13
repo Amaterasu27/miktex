@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.343 2007-08-31 19:36:33 danf Exp $
+ * $Id: urldata.h,v 1.354 2007-10-24 21:09:59 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -183,6 +183,7 @@ struct ssl_connect_data {
 #endif /* USE_GNUTLS */
 #ifdef USE_NSS
   PRFileDesc *handle;
+  char *client_nickname;
 #endif /* USE_NSS */
 #ifdef USE_QSOSSL
   SSLHandle *handle;
@@ -295,7 +296,6 @@ struct HTTP {
 
   /* For FORM posting */
   struct Form form;
-  struct Curl_chunker chunk;
 
   struct back {
     curl_read_callback fread_func; /* backup storage for fread pointer */
@@ -361,6 +361,13 @@ typedef enum {
   FTPFILE_SINGLECWD = 3  /* make one CWD, then SIZE / RETR / STOR on the file */
 } curl_ftpfile;
 
+typedef enum {
+  FTPTRANSFER_BODY, /* yes do transfer a body */
+  FTPTRANSFER_INFO, /* do still go through to get info/headers */
+  FTPTRANSFER_NONE, /* don't get anything and don't get info */
+  FTPTRANSFER_LAST  /* end of list marker, never used */
+} curl_ftptransfer;
+
 /* This FTP struct is used in the SessionHandle. All FTP data that is
    connection-oriented must be in FTP_conn to properly deal with the fact that
    perhaps the SessionHandle is changed between the times the connection is
@@ -369,10 +376,10 @@ struct FTP {
   curl_off_t *bytecountp;
   char *user;    /* user name string */
   char *passwd;  /* password string */
-  char *urlpath; /* the originally given path part of the URL */
-  char *file;    /* decoded file */
-  bool no_transfer; /* nothing was transfered, (possibly because a resumed
-                       transfer already was complete) */
+
+  /* transfer a file/body or not, done as a typedefed enum just to make
+     debuggers display the full symbol and not just the numerical value */
+  curl_ftptransfer transfer;
   curl_off_t downloadsize;
 };
 
@@ -383,6 +390,7 @@ struct ftp_conn {
   char **dirs;   /* realloc()ed array for path components */
   int dirdepth;  /* number of entries used in the 'dirs' array */
   int diralloc;  /* number of entries allocated for the 'dirs' array */
+  char *file;    /* decoded file */
   char *cache;       /* data cache between getresponse()-calls */
   curl_off_t cache_size; /* size of cache in bytes */
   bool dont_check;  /* Set to TRUE to prevent the final (post-transfer)
@@ -569,7 +577,7 @@ struct ConnectBits {
                          proxies, but can also be enabled explicitly by
                          apps */
   bool tunnel_connecting; /* TRUE while we're still waiting for a proxy CONNECT
-			   */
+                           */
   bool authneg;       /* TRUE when the auth phase has started, which means
                          that we are creating a request with an auth header,
                          but it is not the final request in the auth
@@ -600,6 +608,8 @@ struct ConnectBits {
   bool proxy_connect_closed; /* set true if a proxy disconnected the
                                 connection in a CONNECT request with auth, so
                                 that libcurl should reconnect and continue. */
+  bool bound; /* set true if bind() has already been done on this socket/
+                 connection */
 };
 
 struct hostname {
@@ -784,8 +794,13 @@ struct HandleData {
                   this syntax. */
   curl_off_t resume_from; /* continue [ftp] transfer from here */
 
-  /* Protocol specific data */
-
+  /* Protocol specific data.
+   *
+   *************************************************************************
+   * Note that this data will be REMOVED after each request, so anything that
+   * should be kept/stored on a per-connection basis and thus live for the
+   * next requst on the same connection MUST be put in the connectdata struct!
+   *************************************************************************/
   union {
     struct HTTP *http;
     struct HTTP *https;  /* alias, just for the sake of being more readable */
@@ -796,6 +811,61 @@ struct HandleData {
     void *generic;
     struct SSHPROTO *ssh;
   } proto;
+  /* current user of this HandleData instance, or NULL */
+  struct connectdata *current_conn;
+};
+
+/*
+ * Specific protocol handler.
+ */
+
+struct Curl_handler {
+  const char * scheme;        /* URL scheme name. */
+
+  /* Complement to setup_connection_internals(). */
+  CURLcode (*setup_connection)(struct connectdata *);
+
+  /* These two functions MUST be set to be protocol dependent */
+  CURLcode (*do_it)(struct connectdata *, bool *done);
+  Curl_done_func done;
+
+  /* If the curl_do() function is better made in two halves, this
+   * curl_do_more() function will be called afterwards, if set. For example
+   * for doing the FTP stuff after the PASV/PORT command.
+   */
+  Curl_do_more_func do_more;
+
+  /* This function *MAY* be set to a protocol-dependent function that is run
+   * after the connect() and everything is done, as a step in the connection.
+   * The 'done' pointer points to a bool that should be set to TRUE if the
+   * function completes before return. If it doesn't complete, the caller
+   * should call the curl_connecting() function until it is.
+   */
+  CURLcode (*connect_it)(struct connectdata *, bool *done);
+
+  /* See above. Currently only used for FTP. */
+  CURLcode (*connecting)(struct connectdata *, bool *done);
+  CURLcode (*doing)(struct connectdata *, bool *done);
+
+  /* Called from the multi interface during the PROTOCONNECT phase, and it
+     should then return a proper fd set */
+  int (*proto_getsock)(struct connectdata *conn,
+                       curl_socket_t *socks,
+                       int numsocks);
+
+  /* Called from the multi interface during the DOING phase, and it should
+     then return a proper fd set */
+  int (*doing_getsock)(struct connectdata *conn,
+                       curl_socket_t *socks,
+                       int numsocks);
+
+  /* This function *MAY* be set to a protocol-dependent function that is run
+   * by the curl_disconnect(), as a step in the disconnection.
+   */
+  CURLcode (*disconnect)(struct connectdata *);
+
+  long defport;       /* Default port. */
+  long protocol;      /* PROT_* flags concerning the protocol set */
 };
 
 /*
@@ -807,6 +877,11 @@ struct connectdata {
      caution that this might very well vary between different times this
      connection is used! */
   struct SessionHandle *data;
+
+  /* chunk is for HTTP chunked encoding, but is in the general connectdata
+     struct only because we can do just about any protocol through a HTTP proxy
+     and a HTTP proxy may in fact respond using chunked encoding */
+  struct Curl_chunker chunk;
 
   bool inuse; /* This is a marker for the connection cache logic. If this is
                  TRUE this handle is being used by an easy handle and cannot
@@ -878,50 +953,7 @@ struct connectdata {
 
   struct ConnectBits bits;    /* various state-flags for this connection */
 
-  /* These two functions MUST be set by the curl_connect() function to be
-     be protocol dependent */
-  CURLcode (*curl_do)(struct connectdata *, bool *done);
-  Curl_done_func curl_done;
-
-  /* If the curl_do() function is better made in two halves, this
-   * curl_do_more() function will be called afterwards, if set. For example
-   * for doing the FTP stuff after the PASV/PORT command.
-   */
-  Curl_do_more_func curl_do_more;
-
-  /* This function *MAY* be set to a protocol-dependent function that is run
-   * after the connect() and everything is done, as a step in the connection.
-   * The 'done' pointer points to a bool that should be set to TRUE if the
-   * function completes before return. If it doesn't complete, the caller
-   * should call the curl_connecting() function until it is.
-   */
-  CURLcode (*curl_connect)(struct connectdata *, bool *done);
-
-  /* See above. Currently only used for FTP. */
-  CURLcode (*curl_connecting)(struct connectdata *, bool *done);
-  CURLcode (*curl_doing)(struct connectdata *, bool *done);
-
-  /* Called from the multi interface during the PROTOCONNECT phase, and it
-     should then return a proper fd set */
-  int (*curl_proto_getsock)(struct connectdata *conn,
-                            curl_socket_t *socks,
-                            int numsocks);
-
-  /* Called from the multi interface during the DOING phase, and it should
-     then return a proper fd set */
-  int (*curl_doing_getsock)(struct connectdata *conn,
-                            curl_socket_t *socks,
-                            int numsocks);
-
-  /* This function *MAY* be set to a protocol-dependent function that is run
-   * by the curl_disconnect(), as a step in the disconnection.
-   */
-  CURLcode (*curl_disconnect)(struct connectdata *);
-
-  /* This function *MAY* be set to a protocol-dependent function that is run
-   * in the curl_close() function if protocol-specific cleanups are required.
-   */
-  CURLcode (*curl_close)(struct connectdata *);
+  const struct Curl_handler * handler;  /* Connection's protocol handler. */
 
   /**** curl_get() phase fields */
 
@@ -1260,7 +1292,7 @@ enum dupstring {
   STRING_KRB_LEVEL,       /* krb security level */
   STRING_NETRC_FILE,      /* if not NULL, use this instead of trying to find
                              $HOME/.netrc */
-  STRING_POSTFIELDS,      /* if POST, set the fields' values here */
+  STRING_COPYPOSTFIELDS,  /* if POST, set the fields' values here */
   STRING_PROXY,           /* proxy to use */
   STRING_PROXYUSERPWD,    /* Proxy <user:password>, if used */
   STRING_SET_RANGE,       /* range, if used */
@@ -1275,6 +1307,7 @@ enum dupstring {
   STRING_SSL_RANDOM_FILE, /* path to file containing "random" data */
   STRING_USERAGENT,       /* User-Agent string */
   STRING_USERPWD,         /* <user:password>, if used */
+  STRING_SSH_HOST_PUBLIC_KEY_MD5, /* md5 of host public key in ascii hex */
 
   /* -- end of strings -- */
   STRING_LAST /* not used, just an end-of-list marker */
@@ -1296,8 +1329,10 @@ struct UserDefined {
   long followlocation; /* as in HTTP Location: */
   long maxredirs;    /* maximum no. of http(s) redirects to follow, set to -1
                         for infinity */
+  bool post301;      /* Obey RFC 2616/10.3.2 and keep POSTs as POSTs after a 301 */
   bool free_referer; /* set TRUE if 'referer' points to a string we
                         allocated */
+  void *postfields;  /* if POST, set the fields' values here */
   curl_off_t postfieldsize; /* if POST, this might have a size to use instead
                                of strlen(), and then the data *may* be binary
                                (contain zero bytes) */
@@ -1312,6 +1347,9 @@ struct UserDefined {
   curl_ioctl_callback ioctl_func;  /* function for I/O control */
   curl_sockopt_callback fsockopt;  /* function for setting socket options */
   void *sockopt_client; /* pointer to pass to the socket options callback */
+  curl_opensocket_callback fopensocket; /* function for checking/translating
+                                           the address and opening the socket */
+  void* opensocket_client;
 
   /* the 3 curl_conv_callback functions below are used on non-ASCII hosts */
   /* function to convert from the network encoding: */

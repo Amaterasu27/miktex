@@ -279,6 +279,7 @@
 /* Define as the return type of signal handlers (int or void).  */
 #define RETSIGTYPE void
 
+#ifndef _SSIZE_T_DEFINED
 #if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__) || \
     defined(__MINGW32__)
 #elif defined(_WIN64)
@@ -286,10 +287,7 @@
 #else
 #define ssize_t int
 #endif
-
-/* Define to 'int' if socklen_t is not an available 'typedefed' type */
-#ifndef HAVE_WS2TCPIP_H
-#define socklen_t int
+#define _SSIZE_T_DEFINED
 #endif
 
 /* ---------------------------------------------------------------- */

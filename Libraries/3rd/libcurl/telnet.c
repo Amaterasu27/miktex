@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: telnet.c,v 1.91 2007-08-30 20:34:58 danf Exp $
+ * $Id: telnet.c,v 1.93 2007-10-17 16:58:32 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -125,6 +125,10 @@ static void printsub(struct SessionHandle *data,
                      size_t length);
 static void suboption(struct connectdata *);
 
+static CURLcode Curl_telnet(struct connectdata *conn, bool *done);
+static CURLcode Curl_telnet_done(struct connectdata *conn,
+                                 CURLcode, bool premature);
+
 /* For negotiation compliant to RFC 1143 */
 #define CURL_NO          0
 #define CURL_YES         1
@@ -169,6 +173,28 @@ struct TELNET {
 
   TelnetReceive telrcv_state;
 };
+
+
+/*
+ * TELNET protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_telnet = {
+  "TELNET",                             /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_telnet,                          /* do_it */
+  Curl_telnet_done,                     /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                            /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_TELNET,                          /* defport */
+  PROT_TELNET                           /* protocol */
+};
+
 
 #ifdef USE_WINSOCK
 static CURLcode
@@ -1074,7 +1100,8 @@ void telrcv(struct connectdata *conn,
   }
 }
 
-CURLcode Curl_telnet_done(struct connectdata *conn, CURLcode status, bool premature)
+static CURLcode Curl_telnet_done(struct connectdata *conn,
+                                 CURLcode status, bool premature)
 {
   struct TELNET *tn = (struct TELNET *)conn->data->reqdata.proto.telnet;
   (void)status; /* unused */
@@ -1088,7 +1115,7 @@ CURLcode Curl_telnet_done(struct connectdata *conn, CURLcode status, bool premat
   return CURLE_OK;
 }
 
-CURLcode Curl_telnet(struct connectdata *conn, bool *done)
+static CURLcode Curl_telnet(struct connectdata *conn, bool *done)
 {
   CURLcode code;
   struct SessionHandle *data = conn->data;

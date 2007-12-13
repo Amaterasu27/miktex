@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssh.c,v 1.72 2007-08-30 23:03:59 danf Exp $
+ * $Id: ssh.c,v 1.80 2007-10-22 15:05:35 bagder Exp $
  ***************************************************************************/
 
 /* #define CURL_LIBSSH2_DEBUG */
@@ -134,6 +134,63 @@ static LIBSSH2_FREE_FUNC(libssh2_free);
 
 static int get_pathname(const char **cpp, char **path);
 
+static CURLcode Curl_ssh_connect(struct connectdata *conn, bool *done);
+static CURLcode Curl_ssh_multi_statemach(struct connectdata *conn, bool *done);
+
+static CURLcode Curl_scp_do(struct connectdata *conn, bool *done);
+static CURLcode Curl_scp_done(struct connectdata *conn,
+                              CURLcode, bool premature);
+static CURLcode Curl_scp_doing(struct connectdata *conn,
+                               bool *dophase_done);
+
+static CURLcode Curl_sftp_do(struct connectdata *conn, bool *done);
+static CURLcode Curl_sftp_done(struct connectdata *conn,
+                               CURLcode, bool premature);
+static CURLcode Curl_sftp_doing(struct connectdata *conn,
+                                bool *dophase_done);
+
+/*
+ * SCP protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_scp = {
+  "SCP",                                /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_scp_do,                          /* do_it */
+  Curl_scp_done,                        /* done */
+  ZERO_NULL,                            /* do_more */
+  Curl_ssh_connect,                     /* connect_it */
+  Curl_ssh_multi_statemach,             /* connecting */
+  Curl_scp_doing,                       /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_SSH,                             /* defport */
+  PROT_SCP                              /* protocol */
+};
+
+
+/*
+ * SFTP protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_sftp = {
+  "SFTP",                               /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_sftp_do,                         /* do_it */
+  Curl_sftp_done,                       /* done */
+  ZERO_NULL,                            /* do_more */
+  Curl_ssh_connect,                     /* connect_it */
+  Curl_ssh_multi_statemach,             /* connecting */
+  Curl_sftp_doing,                      /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_SSH,                             /* defport */
+  PROT_SFTP                             /* protocol */
+};
+
+
 static void
 kbd_callback(const char *name, int name_len, const char *instruction,
              int instruction_len, int num_prompts,
@@ -229,7 +286,7 @@ static LIBSSH2_FREE_FUNC(libssh2_free)
  * SSH State machine related code
  */
 /* This is the ONLY way to change SSH state! */
-static void state(struct connectdata *conn, sshstate state)
+static void state(struct connectdata *conn, sshstate nowstate)
 {
 #if defined(CURLDEBUG) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
   /* for debug purposes */
@@ -291,13 +348,13 @@ static void state(struct connectdata *conn, sshstate state)
   struct ssh_conn *sshc = &conn->proto.sshc;
 
 #if defined(CURLDEBUG) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
-  if (sshc->state != state) {
+  if (sshc->state != nowstate) {
     infof(conn->data, "SFTP %p state change from %s to %s\n",
-          sshc, names[sshc->state], names[state]);
+          sshc, names[sshc->state], names[nowstate]);
   }
 #endif
 
-  sshc->state = state;
+  sshc->state = nowstate;
 }
 
 static CURLcode ssh_statemach_act(struct connectdata *conn)
@@ -310,7 +367,8 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
 #ifdef CURL_LIBSSH2_DEBUG
   const char *fingerprint;
 #endif /* CURL_LIBSSH2_DEBUG */
-  int rc;
+  const char *host_public_key_md5;
+  int rc,i;
   long err;
 
   switch(sshc->state) {
@@ -350,6 +408,30 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       }
       infof(data, "\n");
 #endif /* CURL_LIBSSH2_DEBUG */
+
+      /* Before we authenticate we check the hostkey's MD5 fingerprint
+       * against a known fingerprint, if available.  This implementation pulls
+       * it from the curl option.
+       */
+      if (data->set.str[STRING_SSH_HOST_PUBLIC_KEY_MD5] &&
+          strlen(data->set.str[STRING_SSH_HOST_PUBLIC_KEY_MD5]) == 32)
+      {
+        char buf[33];
+        host_public_key_md5 = libssh2_hostkey_hash(sftp_scp->ssh_session,
+                                                   LIBSSH2_HOSTKEY_HASH_MD5);
+        for (i = 0; i < 16; i++)
+          snprintf(&buf[i*2], 3, "%02x",
+                   (unsigned char) host_public_key_md5[i]);
+        if(!strequal(buf, data->set.str[STRING_SSH_HOST_PUBLIC_KEY_MD5])) {
+          failf(data,
+                "Denied establishing ssh session: mismatch md5 fingerprint. "
+                "Remote %s is not equal to %s",
+                buf, data->set.str[STRING_SSH_HOST_PUBLIC_KEY_MD5]);
+          state(conn, SSH_SESSION_FREE);
+          sshc->actualCode = CURLE_PEER_FAILED_VERIFICATION;
+          break;
+        }
+      }
 
       state(conn, SSH_AUTHLIST);
       break;
@@ -407,6 +489,9 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
           sshc->rsa_pub = aprintf("%s", data->set.str[STRING_SSH_PUBLIC_KEY]);
         else if (home)
           sshc->rsa_pub = aprintf("%s/.ssh/id_dsa.pub", home);
+        else
+          /* as a final resort, try current dir! */
+          sshc->rsa_pub = strdup("id_dsa.pub");
 
         if (sshc->rsa_pub == NULL) {
           Curl_safefree(home);
@@ -420,6 +505,9 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
           sshc->rsa = aprintf("%s", data->set.str[STRING_SSH_PRIVATE_KEY]);
         else if (home)
           sshc->rsa = aprintf("%s/.ssh/id_dsa", home);
+        else
+          /* as a final resort, try current dir! */
+          sshc->rsa = strdup("id_dsa");
 
         if (sshc->rsa == NULL) {
           Curl_safefree(home);
@@ -1688,8 +1776,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
 }
 
 /* called repeatedly until done from multi.c */
-CURLcode Curl_ssh_multi_statemach(struct connectdata *conn,
-                                  bool *done)
+static CURLcode Curl_ssh_multi_statemach(struct connectdata *conn, bool *done)
 {
   struct ssh_conn *sshc = &conn->proto.sshc;
   CURLcode result = CURLE_OK;
@@ -1752,12 +1839,16 @@ static CURLcode ssh_init(struct connectdata *conn)
  * Curl_ssh_connect() gets called from Curl_protocol_connect() to allow us to
  * do protocol-specific actions at connect-time.
  */
-CURLcode Curl_ssh_connect(struct connectdata *conn, bool *done)
+static CURLcode Curl_ssh_connect(struct connectdata *conn, bool *done)
 {
   struct SSHPROTO *ssh;
   curl_socket_t sock;
   CURLcode result;
   struct SessionHandle *data = conn->data;
+
+  /* If there already is a protocol-specific struct allocated for this
+     sessionhandle, deal with it */
+  Curl_reset_reqproto(conn);
 
   result = ssh_init(conn);
   if (result)
@@ -1842,8 +1933,8 @@ CURLcode scp_perform(struct connectdata *conn,
 }
 
 /* called from multi.c while DOing */
-CURLcode Curl_scp_doing(struct connectdata *conn,
-                         bool *dophase_done)
+static CURLcode Curl_scp_doing(struct connectdata *conn,
+                               bool *dophase_done)
 {
   CURLcode result;
   result = Curl_ssh_multi_statemach(conn, dophase_done);
@@ -1855,7 +1946,7 @@ CURLcode Curl_scp_doing(struct connectdata *conn,
 }
 
 
-CURLcode Curl_scp_do(struct connectdata *conn, bool *done)
+static CURLcode Curl_scp_do(struct connectdata *conn, bool *done)
 {
   CURLcode res;
   bool connected = 0;
@@ -1895,8 +1986,8 @@ CURLcode Curl_scp_do(struct connectdata *conn, bool *done)
   return res;
 }
 
-CURLcode Curl_scp_done(struct connectdata *conn, CURLcode status,
-                       bool premature)
+static CURLcode Curl_scp_done(struct connectdata *conn, CURLcode status,
+                              bool premature)
 {
   CURLcode result = CURLE_OK;
   bool done = FALSE;
@@ -2012,8 +2103,8 @@ CURLcode sftp_perform(struct connectdata *conn,
 }
 
 /* called from multi.c while DOing */
-CURLcode Curl_sftp_doing(struct connectdata *conn,
-                         bool *dophase_done)
+static CURLcode Curl_sftp_doing(struct connectdata *conn,
+                                bool *dophase_done)
 {
   CURLcode result;
   result = Curl_ssh_multi_statemach(conn, dophase_done);
@@ -2024,7 +2115,7 @@ CURLcode Curl_sftp_doing(struct connectdata *conn,
   return result;
 }
 
-CURLcode Curl_sftp_do(struct connectdata *conn, bool *done)
+static CURLcode Curl_sftp_do(struct connectdata *conn, bool *done)
 {
   CURLcode res;
   bool connected = 0;
@@ -2064,8 +2155,8 @@ CURLcode Curl_sftp_do(struct connectdata *conn, bool *done)
   return res;
 }
 
-CURLcode Curl_sftp_done(struct connectdata *conn, CURLcode status,
-                        bool premature)
+static CURLcode Curl_sftp_done(struct connectdata *conn, CURLcode status,
+                               bool premature)
 {
   CURLcode result = CURLE_OK;
   bool done = FALSE;

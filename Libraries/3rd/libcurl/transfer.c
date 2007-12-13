@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: transfer.c,v 1.366 2007-09-11 22:21:12 bagder Exp $
+ * $Id: transfer.c,v 1.370 2007-10-15 18:32:01 patrickm Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -233,7 +233,7 @@ CURLcode Curl_readrewind(struct connectdata *conn)
   /* We have sent away data. If not using CURLOPT_POSTFIELDS or
      CURLOPT_HTTPPOST, call app to rewind
   */
-  if(data->set.str[STRING_POSTFIELDS] ||
+  if(data->set.postfields ||
      (data->set.httpreq == HTTPREQ_POST_FORM))
     ; /* do nothing */
   else {
@@ -1262,7 +1262,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                  We DO care about this data if we are pipelining.
                  Push it back to be read on the next pass. */
 
-              dataleft = data->reqdata.proto.http->chunk.dataleft;
+              dataleft = conn->chunk.dataleft;
               if (dataleft != 0) {
                 infof(conn->data, "Leftovers after chunking. "
                       " Rewinding %d bytes\n",dataleft);
@@ -1617,7 +1617,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
     }
     else if(!(conn->bits.no_body) &&
             conn->bits.chunk &&
-            (data->reqdata.proto.http->chunk.state != CHUNK_STOP)) {
+            (conn->chunk.state != CHUNK_STOP)) {
       /*
        * In chunked mode, return an error if the connection is closed prior to
        * the empty (terminiating) chunk is read.
@@ -1750,15 +1750,15 @@ int Curl_single_getsock(const struct connectdata *conn,
 {
   const struct SessionHandle *data = conn->data;
   int bitmap = GETSOCK_BLANK;
-  unsigned index = 0;
+  unsigned sockindex = 0;
 
   if(numsocks < 2)
     /* simple check but we might need two slots */
     return GETSOCK_BLANK;
 
   if(data->reqdata.keep.keepon & KEEP_READ) {
-    bitmap |= GETSOCK_READSOCK(index);
-    sock[index] = conn->sockfd;
+    bitmap |= GETSOCK_READSOCK(sockindex);
+    sock[sockindex] = conn->sockfd;
   }
 
   if(data->reqdata.keep.keepon & KEEP_WRITE) {
@@ -1768,11 +1768,11 @@ int Curl_single_getsock(const struct connectdata *conn,
       /* only if they are not the same socket or we didn't have a readable
          one, we increase index */
       if(data->reqdata.keep.keepon & KEEP_READ)
-        index++; /* increase index if we need two entries */
-      sock[index] = conn->writesockfd;
+        sockindex++; /* increase index if we need two entries */
+      sock[sockindex] = conn->writesockfd;
     }
 
-    bitmap |= GETSOCK_WRITESOCK(index);
+    bitmap |= GETSOCK_WRITESOCK(sockindex);
   }
 
   return bitmap;
@@ -2257,10 +2257,13 @@ CURLcode Curl_follow(struct SessionHandle *data,
      * violation, many webservers expect this misbehavior. So these servers
      * often answers to a POST request with an error page.  To be sure that
      * libcurl gets the page that most user agents would get, libcurl has to
-     * force GET:
+     * force GET.
+     *
+     * This behaviour can be overriden with CURLOPT_POST301.
      */
-    if( data->set.httpreq == HTTPREQ_POST
-        || data->set.httpreq == HTTPREQ_POST_FORM) {
+    if( (data->set.httpreq == HTTPREQ_POST
+         || data->set.httpreq == HTTPREQ_POST_FORM)
+        && !data->set.post301) {
       infof(data,
             "Violate RFC 2616/10.3.2 and switch from POST to GET\n");
       data->set.httpreq = HTTPREQ_GET;

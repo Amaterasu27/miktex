@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.50 2007-08-26 05:53:26 danf Exp $
+ * $Id: dict.c,v 1.52 2007-10-17 16:58:32 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -82,6 +82,33 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+
+/*
+ * Forward declarations.
+ */
+
+static CURLcode Curl_dict(struct connectdata *conn, bool *done);
+
+/*
+ * DICT protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_dict = {
+  "DICT",                               /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_dict,                            /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                            /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_DICT,                            /* defport */
+  PROT_DICT                             /* protocol */
+};
+
 static char *unescape_word(struct SessionHandle *data, const char *inp)
 {
   char *newp;
@@ -115,7 +142,7 @@ static char *unescape_word(struct SessionHandle *data, const char *inp)
   return dictp;
 }
 
-CURLcode Curl_dict(struct connectdata *conn, bool *done)
+static CURLcode Curl_dict(struct connectdata *conn, bool *done)
 {
   char *word;
   char *eword;

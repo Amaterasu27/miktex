@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ldap.c,v 1.82 2007-08-25 12:10:30 gknauf Exp $
+ * $Id: ldap.c,v 1.88 2007-10-17 16:58:32 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -45,8 +45,16 @@
 
 #ifdef CURL_LDAP_WIN            /* Use W$ LDAP implementation. */
 # include <winldap.h>
+# ifndef LDAP_VENDOR_NAME
+#  error Your Platform SDK is NOT sufficient for LDAP support! Update your Platform SDK, or disable LDAP LDAP support!
+# else
+#  include <winber.h>
+# endif
 #else
 #define LDAP_DEPRECATED 1       /* Be sure ldap_init() is defined. */
+#ifdef HAVE_LBER_H
+# include <lber.h>
+#endif
 # include <ldap.h>
 #if (defined(HAVE_LDAP_SSL) && defined(HAVE_LDAP_SSL_H))
 # include <ldap_ssl.h>
@@ -110,7 +118,52 @@ static void _ldap_free_urldesc (LDAPURLDesc *ludp);
 #endif
 
 
-CURLcode Curl_ldap(struct connectdata *conn, bool *done)
+static CURLcode Curl_ldap(struct connectdata *conn, bool *done);
+
+/*
+ * LDAP protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_ldap = {
+  "LDAP",                               /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_ldap,                            /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                            /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_LDAP,                            /* defport */
+  PROT_LDAP                             /* protocol */
+};
+
+#ifdef HAVE_LDAP_SSL
+/*
+ * LDAPS protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_ldaps = {
+  "LDAPS",                              /* scheme */
+  ZERO_NULL,                            /* setup_connection */
+  Curl_ldap,                            /* do_it */
+  ZERO_NULL,                            /* done */
+  ZERO_NULL,                            /* do_more */
+  ZERO_NULL,                            /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_LDAPS,                           /* defport */
+  PROT_LDAP | PROT_SSL                  /* protocol */
+};
+#endif
+
+
+static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
 {
   CURLcode status = CURLE_OK;
   int rc = 0;
@@ -120,7 +173,7 @@ CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   LDAPMessage *entryIterator;
   int num = 0;
   struct SessionHandle *data=conn->data;
-  int ldap_proto;
+  int ldap_proto = LDAP_VERSION3;
   int ldap_ssl = 0;
   char *val_b64;
   size_t val_b64_sz;
@@ -153,7 +206,6 @@ CURLcode Curl_ldap(struct connectdata *conn, bool *done)
 #ifdef LDAP_OPT_NETWORK_TIMEOUT
   ldap_set_option(NULL, LDAP_OPT_NETWORK_TIMEOUT, &ldap_timeout);
 #endif
-  ldap_proto = LDAP_VERSION3;
   ldap_set_option(NULL, LDAP_OPT_PROTOCOL_VERSION, &ldap_proto);
 
   if (ldap_ssl) {
@@ -289,6 +341,9 @@ CURLcode Curl_ldap(struct connectdata *conn, bool *done)
       goto quit;
     }
   }
+#ifdef CURL_LDAP_WIN
+  ldap_set_option(server, LDAP_OPT_PROTOCOL_VERSION, &ldap_proto);
+#endif
 
   rc = ldap_simple_bind_s(server,
                           conn->bits.user_passwd ? conn->user : NULL,

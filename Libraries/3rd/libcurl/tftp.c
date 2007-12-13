@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.51 2007-09-07 20:35:37 danf Exp $
+ * $Id: tftp.c,v 1.56 2007-10-25 09:34:16 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -151,6 +151,33 @@ typedef struct tftp_state_data {
 /* Forward declarations */
 static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event) ;
 static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event) ;
+static CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done);
+static CURLcode Curl_tftp(struct connectdata *conn, bool *done);
+static CURLcode Curl_tftp_done(struct connectdata *conn,
+                               CURLcode, bool premature);
+static CURLcode Curl_tftp_setup_connection(struct connectdata * conn);
+
+
+/*
+ * TFTP protocol handler.
+ */
+
+const struct Curl_handler Curl_handler_tftp = {
+  "TFTP",                               /* scheme */
+  Curl_tftp_setup_connection,           /* setup_connection */
+  Curl_tftp,                            /* do_it */
+  Curl_tftp_done,                       /* done */
+  ZERO_NULL,                            /* do_more */
+  Curl_tftp_connect,                    /* connect_it */
+  ZERO_NULL,                            /* connecting */
+  ZERO_NULL,                            /* doing */
+  ZERO_NULL,                            /* proto_getsock */
+  ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* disconnect */
+  PORT_TFTP,                            /* defport */
+  PROT_TFTP                             /* protocol */
+};
+
 
 /**********************************************************
  *
@@ -575,16 +602,22 @@ static CURLcode tftp_state_machine(tftp_state_data_t *state,
  * The connect callback
  *
  **********************************************************/
-CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
+static CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
 {
   CURLcode code;
-  tftp_state_data_t     *state;
+  tftp_state_data_t *state;
   int rc;
 
-  state = conn->data->reqdata.proto.tftp = calloc(sizeof(tftp_state_data_t),
-                                                  1);
-  if(!state)
-    return CURLE_OUT_OF_MEMORY;
+  /* If there already is a protocol-specific struct allocated for this
+     sessionhandle, deal with it */
+  Curl_reset_reqproto(conn);
+
+  if(!(state = conn->data->reqdata.proto.tftp)) {
+    state = conn->data->reqdata.proto.tftp = calloc(sizeof(tftp_state_data_t),
+                                                    1);
+    if(!state)
+      return CURLE_OUT_OF_MEMORY;
+  }
 
   conn->bits.close = FALSE; /* keep it open if possible */
 
@@ -598,9 +631,9 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
 
   tftp_set_timeouts(state);
 
-  if(!conn->bits.reuse) {
-    /* If not reused, bind to any interface, random UDP port. If it is reused,
-     * this has already been done!
+  if(!conn->bits.bound) {
+    /* If not already bound, bind to any interface, random UDP port. If it is
+     * reused or a custom local port was desired, this has already been done!
      *
      * We once used the size of the local_addr struct as the third argument for
      * bind() to better work with IPv6 or whatever size the struct could have,
@@ -619,6 +652,7 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
             Curl_strerror(conn, SOCKERRNO));
       return CURLE_COULDNT_CONNECT;
     }
+    conn->bits.bound = TRUE;
   }
 
   Curl_pgrsStartNow(conn->data);
@@ -635,8 +669,8 @@ CURLcode Curl_tftp_connect(struct connectdata *conn, bool *done)
  * The done callback
  *
  **********************************************************/
-CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status,
-                        bool premature)
+static CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status,
+                               bool premature)
 {
   (void)status; /* unused */
   (void)premature; /* not used */
@@ -661,7 +695,7 @@ CURLcode Curl_tftp_done(struct connectdata *conn, CURLcode status,
  *
  **********************************************************/
 
-CURLcode Curl_tftp(struct connectdata *conn, bool *done)
+static CURLcode Curl_tftp(struct connectdata *conn, bool *done)
 {
   struct SessionHandle  *data = conn->data;
   tftp_state_data_t     *state =
@@ -834,5 +868,42 @@ CURLcode Curl_tftp(struct connectdata *conn, bool *done)
   else
     code = CURLE_OK;
   return code;
+}
+
+static CURLcode Curl_tftp_setup_connection(struct connectdata * conn)
+{
+  struct SessionHandle *data = conn->data;
+  char * type;
+  char command;
+
+  conn->socktype = SOCK_DGRAM;   /* UDP datagram based */
+
+  /* TFTP URLs support an extension like ";mode=<typecode>" that
+   * we'll try to get now! */
+  type = strstr(data->reqdata.path, ";mode=");
+
+  if (!type)
+    type = strstr(conn->host.rawalloc, ";mode=");
+
+  if (type) {
+    *type = 0;                   /* it was in the middle of the hostname */
+    command = (char) toupper((int) type[6]);
+
+    switch (command) {
+    case 'A': /* ASCII mode */
+    case 'N': /* NETASCII mode */
+      data->set.prefer_ascii = TRUE;
+      break;
+
+    case 'O': /* octet mode */
+    case 'I': /* binary mode */
+    default:
+      /* switch off ASCII */
+      data->set.prefer_ascii = FALSE;
+      break;
+    }
+  }
+
+  return CURLE_OK;
 }
 #endif
