@@ -8,6 +8,11 @@ set(guid_MiKTeX_Package_Manager_TLB_207 "D2EC0AB0-17F9-4815-A7E9-527BC3FF9745")
 set(guid_MiKTeX_Session_207 "68783EAC-4655-49DB-97D6-E12A9EA29555")
 set(guid_MiKTeX_Session_TLB_207 "8448CA35-07AF-4510-8381-3E96FC39FBF0")
 
+set(guid_MiKTeX_Package_Manager_208 "80405147-9003-4E8C-88DE-4DCE92E1134A")
+set(guid_MiKTeX_Package_Manager_TLB_208 "FF61470A-DC24-4526-9E7C-8B69AE558C7E")
+set(guid_MiKTeX_Session_208 "5C27CDF6-3956-4A44-A3BE-B37A5730549D")
+set(guid_MiKTeX_Session_TLB_208 "4376D3DF-049D-4471-9DF4-8D44819D3481")
+
 set(guid_MiKTeX_Package_Manager_CURVER ${guid_MiKTeX_Package_Manager_${MIKTEX_SERIES_INT}} )
 set(guid_MiKTeX_Package_Manager_TLB_CURVER ${guid_MiKTeX_Package_Manager_TLB_${MIKTEX_SERIES_INT}} )
 set(guid_MiKTeX_Session_CURVER ${guid_MiKTeX_Session_${MIKTEX_SERIES_INT}})
