@@ -1144,7 +1144,7 @@ splitFontName(char* name, char** var, char** feat, char** end, int* index)
 
 void*
 findnativefont(unsigned char* uname, integer scaled_size)
-	/* scaled_size here is in TeX points */
+	/* scaled_size here is in TeX points, or is a negative integer for 'scaled' */
 {
 	void*	rval = NULL;
 	char*	nameString;
@@ -1199,8 +1199,20 @@ findnativefont(unsigned char* uname, integer scaled_size)
 		if (path == NULL)
 			path = kpse_find_file(nameString + 1, kpse_type1_format, 0);
 		if (path != NULL) {
+			if (scaled_size < 0) {
+				font = createFontFromFile(path, index, 655360L);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
+			}
 			font = createFontFromFile(path, index, scaled_size);
 			if (font != NULL) {
+				loadedfontdesignsize = X2Fix(getDesignSize(font));
 				if (varString && strncmp(varString, "/GR", 3) == 0) {
 					rval = loadGraphiteFont(0, font, scaled_size, featString, nameString);
 					if (rval == NULL)
@@ -1236,6 +1248,18 @@ findnativefont(unsigned char* uname, integer scaled_size)
 			nameoffile[0] = ' ';
 #endif
 			strcpy((char*)nameoffile + 1, fullName);
+
+			if (scaled_size < 0) {
+				font = createFont(fontRef, scaled_size);
+				if (font != NULL) {
+					Fixed dsize = X2Fix(getDesignSize(font));
+					if (scaled_size == -1000)
+						scaled_size = dsize;
+					else
+						scaled_size = zxnoverd(dsize, -scaled_size, 1000);
+					deleteFont(font);
+				}
+			}
 	
 #ifdef XETEX_MAC
 			/* decide whether to use AAT or OpenType rendering with this font */

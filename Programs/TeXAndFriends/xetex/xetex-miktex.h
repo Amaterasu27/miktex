@@ -262,6 +262,7 @@ MAKE_GLOBAL(utf16code*, mappedtext);
 MAKE_GLOBAL(utf16code*, nameoffile16);
 MAKE_GLOBAL(voidpointer*, fontlayoutengine);
 MAKE_GLOBAL(voidpointer, loadedfontmapping);
+MAKE_GLOBAL(scaled, loadedfontdesignsize);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)
@@ -285,6 +286,7 @@ MAKE_GLOBAL(voidpointer, loadedfontmapping);
 #define xfield xField
 #define ycoord yCoord
 #define yfield yField
+#define zxnoverd xnoverd
 
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
