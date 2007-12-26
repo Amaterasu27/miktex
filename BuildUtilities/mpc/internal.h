@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2005 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MPC.
 
@@ -22,6 +22,14 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX;
 using namespace std;
+
+/* _________________________________________________________________________
+
+   Helper Macros
+   _________________________________________________________________________ */
+
+#define T_(x) MIKTEXTEXT(x)
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 /* _________________________________________________________________________
 
@@ -53,7 +61,7 @@ using namespace std;
 #define INVALID_ARGUMENT(function, param)				\
   FATAL_MIKTEX_ERROR (function, T_("Invalid argument."), param)
 
-#define OUT_OF_MEMORY(function)					\
+#define OUT_OF_MEMORY(function)						\
   FATAL_MIKTEX_ERROR(function, T_("Virtual memory exhausted."), 0)
 
 #define UNEXPECTED_CONDITION(function)				\
@@ -66,14 +74,14 @@ using namespace std;
   TraceMiKTeXError (miktexFunction,				\
                     traceMessage,				\
                     lpszInfo,					\
-                    __FILE__,				\
+                    __FILE__,					\
 		    __LINE__)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     __FILE__,				\
+			     __FILE__,					\
 			     __LINE__)
 
 #define CRT_ERROR(lpszCrtFunction, lpszInfo)		\
@@ -99,7 +107,7 @@ using namespace std;
 #  define WINDOWS_ERROR(lpszWindowsFunction, lpszInfo)		\
   TraceStream::TraceLastWin32Error (lpszWindowsFunction,	\
 				    lpszInfo,			\
-				    __FILE__,		\
+				    __FILE__,			\
 				    __LINE__)
 #endif
 
@@ -107,7 +115,7 @@ using namespace std;
 #  define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
   Session::FatalWindowsError (windowsfunction,			\
 			      lpszInfo,				\
-			      __FILE__,			\
+			      __FILE__,				\
 			      __LINE__)
 #endif
 
@@ -116,16 +124,9 @@ using namespace std;
   Session::FatalWindowsError (windowsfunction,				\
 			      errorCode,				\
 			      lpszInfo,					\
-			      __FILE__,				\
+			      __FILE__,					\
 			      __LINE__)
 #endif
-
-/* _________________________________________________________________________
-
-   Helper Macros
-   _________________________________________________________________________ */
-
-#define T_(x) MIKTEXTEXT(x)
 
 /* _________________________________________________________________________
 

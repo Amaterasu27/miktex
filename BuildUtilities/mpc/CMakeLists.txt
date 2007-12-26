@@ -25,6 +25,10 @@ set(mpc_sources
   mpc.cpp
 )
 
+if(NATIVE_WINDOWS)
+  set(mpc_sources ${mpc_sources} mpc.rc)
+endif(NATIVE_WINDOWS)
+
 add_executable(mpc ${mpc_sources})
 
 merge_trustinfo_manifest(mpc asInvoker)
@@ -40,6 +44,7 @@ target_link_libraries(mpc
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
+  ${popt_lib_name}
   ${zlib_lib_name}
 )
 

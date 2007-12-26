@@ -1,7 +1,6 @@
-/* StdAfx.h:							-*- C++ -*-
+/* mpc-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
-
+   Copyright (C) 1996-2007 Christian Schenk
    This file is part of MPC.
 
    MPC is free software; you can redistribute it and/or modify it
@@ -18,31 +17,6 @@
    along with MPC; if not, write to the Free Software Foundation, 59
    Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
-#if defined(_MSC_VER)
-// C4786: identifier was truncated to 'number' characters in the debug
-// information
-#  pragma warning (disable: 4786)
-#endif
+#define MIKTEX_COMPONENT_VERSION 2916
 
-#include <cstdarg>
-#include <cstdio>
-
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <map>
-#include <set>
-#include <string>
-#include <vector>
-
-#include <sys/stat.h>
-
-#include <popt-miktex.h>
-
-#include "mpc-version.h"
-
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/MD5>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
 #include <MiKTeX/Core/Version>
