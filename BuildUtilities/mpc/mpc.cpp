@@ -22,6 +22,7 @@
 #include "internal.h"
 
 const char * const TheNameOfTheGame = T_("MiKTeX Package Composer");
+
 #define PROGNAME "mpc"
 
 /* _________________________________________________________________________
@@ -149,16 +150,17 @@ enum Option
   OPT_ASSEMBLE_NET_DATABASE,
   OPT_ASSEMBLE_NET_PACKAGES,
   OPT_ASSEMBLE_TDS,
-  OPT_DATABASE_DIR,
   OPT_DEFAULT_LEVEL,
   OPT_DEST_DIR,
   OPT_DISASSEMBLE_PACKAGE,
   OPT_INCLUDE_PACKAGE,
-  OPT_PACKAGE_LIST,
-  OPT_ROOT_DIR,
   OPT_MIKTEX_SERIES,
+  OPT_PACKAGE_LIST,
+  OPT_REPOSITORY,
+  OPT_ROOT_DIR,
   OPT_TEXMF_PREFIX,
   OPT_TIME_PACKAGED,
+  OPT_TPM_DIR,
   OPT_TPM_FILE,
   OPT_VERBOSE,
   OPT_VERSION,
@@ -171,7 +173,7 @@ enum Option
 
 struct MpcPackageInfo : public PackageInfo
 {
-  MD5			archiveDigest;
+  MD5			archiveFileDigest;
   PathName		path;
   MpcPackageInfo ()
   {
@@ -311,18 +313,31 @@ protected:
   ConsiderP (/*[in]*/ const MpcPackageInfo &	packageInfo);
 
 protected:
+  bool
+  IsInTeXMFDirectory (/*[in]*/ const PathName &	relPath,
+		      /*[in]*/ const char * lpszDirectory);
+
+protected:
   void
   CollectFiles (/*[in]*/ const PathName &	rootDir,
 		/*[in]*/ const PathName &	subDir,
-		/*[in,out]*/ vector<string> &	files,
-		/*[in,out]*/ size_t &		size);
+		/*[out]*/ vector<string> &	runFiles,
+		/*[out]*/ size_t &		sizeRunFiles,
+		/*[out]*/ vector<string> &	docFiles,
+		/*[out]*/ size_t &		sizeDocFiles,
+		/*[out]*/ vector<string> &	sourceFiles,
+		/*[out]*/ size_t &	sizeSourceFiles);
 
 protected:
   void
   CollectSubTree (/*[in]*/ const PathName &	path,
 		  /*[in]*/ const char *		lpszSubDir,
-		  /*[out]*/ vector<string> &	files,
-		  /*[out]*/ size_t &		size);
+		  /*[out]*/ vector<string> &	runFiles,
+		  /*[out]*/ size_t &		sizeRunFiles,
+		  /*[out]*/ vector<string> &	docFiles,
+		  /*[out]*/ size_t &		sizeDocFiles,
+		  /*[out]*/ vector<string> &	sourceFiles,
+		  /*[out]*/ size_t &	sizeSourceFiles);
 
 protected:
   void
@@ -337,14 +352,14 @@ protected:
   void
   AssembleTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 	       /*[in]*/ const PathName &			destDir,
-	       /*[in,out]*/ Cfg &				cfgDbLight);
+	       /*[in,out]*/ Cfg &				dbLight);
 
 protected:
   void
   WritePackageDefinitionFiles
   (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
    /*[in]*/ const PathName &			destDir,
-   /*[in]*/ Cfg &				cfgDbLight);
+   /*[in]*/ Cfg &				dbLight);
 
 protected:
   void
@@ -360,7 +375,7 @@ protected:
   void
   WriteNetDatabase (/*[in]*/ const map<string, MpcPackageInfo> & packageTable,
 		    /*[in]*/ const PathName &			destDir,
-		    /*[in,out]*/ Cfg &				cfgDbLight);
+		    /*[in,out]*/ Cfg &				dbLight);
 
 protected:
   void
@@ -389,7 +404,7 @@ protected:
   void
   AssembleNetPackages (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
 		       /*[in]*/ const PathName &		destDir,
-		       /*[out]*/ Cfg &				cfgDbLight);
+		       /*[out]*/ Cfg &				dbLight);
 
 protected:
   void
@@ -492,18 +507,10 @@ const struct poptOption PackageComposer::options[] = {
   },
 
   {
-    "database-dir", 0,
-    POPT_ARG_STRING, 0,
-    OPT_DATABASE_DIR,
-    T_("Specify the database directory."),
-    T_("DIR")
-  },
-
-  {
     "default-level", 0,
     POPT_ARG_STRING, 0,
     OPT_DEFAULT_LEVEL,
-    T_("Specify the default package level."),
+    T_("Specify the default package level (one of: S, M, L, T)."),
     T_("LEVEL")
   },
 
@@ -536,7 +543,7 @@ const struct poptOption PackageComposer::options[] = {
     "miktex-series", 0,
     POPT_ARG_STRING, 0,
     OPT_MIKTEX_SERIES,
-    T_("Specify the MiKTeX series (one of: 2.5, 2.6, ...)."),
+    T_("Specify the MiKTeX series (one of: 2.5, 2.6, 2.7)."),
     T_("SERIES")
   },
 
@@ -546,6 +553,14 @@ const struct poptOption PackageComposer::options[] = {
     OPT_PACKAGE_LIST,
     T_("Specify the package list file."),
     T_("FILE")
+  },
+
+  {
+    "repository", 0,
+    POPT_ARG_STRING, 0,
+    OPT_REPOSITORY,
+    T_("Specify the location of the local package repository."),
+    T_("DIR")
   },
 
   {
@@ -573,10 +588,18 @@ const struct poptOption PackageComposer::options[] = {
   },
 
   {
+    "tpm-dir", 0,
+    POPT_ARG_STRING, 0,
+    OPT_TPM_DIR,
+    T_("Specify the destination directory for package definition files."),
+    T_("DIR")
+  },
+
+  {
     "tpm-file", 0,
     POPT_ARG_STRING, 0,
     OPT_TPM_FILE,
-    T_("Specify the TPM file name."),
+    T_("Specify the name of a package definition file."),
     T_("FILE")
   },
 
@@ -654,7 +677,7 @@ PackageComposer::GetDbFileName (/*[in]*/ int			id,
   PathName ret ("miktex-zzdb");
   ret.Append (NUMTOSTR(id), false);
   ret.Append ("-", false);
-  ret.Append (miktexSeries.ToString().c_str(), false);
+  ret.Append (versionNumber.ToString().c_str(), false);
   ret.AppendExtension (ArchiveFileType::GetFileNameExtension
 		       (GetDbArchiveFileType().Get()));
   return (ret);
@@ -843,7 +866,7 @@ PackageComposer::MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
       // copy file and calculate its digest
       MD5 digest = MD5CopyFile(sourcePath, destPath);
 
-      // don't add package definition files to the digest
+      // package definition files do not contribute to the TDS digest
       if (sourcePath.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
 	{
 	  continue;
@@ -853,7 +876,7 @@ PackageComposer::MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
       const char * lpszRelPath
 	= Utils::GetRelativizedPath(destPath.Get(), prefix.Get());
 
-      // remember MD5
+      // remember digest
       fileDigests[lpszRelPath] = digest;
     }
 
@@ -885,9 +908,9 @@ PackageComposer::MD5CopyFiles (/*[in]*/ const vector<string> &	files,
   // path to destination root directory
   PathName destRootDir (destDir, lpszDestSubDir);
 
-  for ( vector<string>::const_iterator it = files.begin();
-	it != files.end();
-	++ it)
+  for (vector<string>::const_iterator it = files.begin();
+       it != files.end();
+       ++ it)
     {
       // source template
       PathName sourceTemplate (sourceRootDir, *it);
@@ -929,7 +952,7 @@ void
 PackageComposer::InitializePackageDirectory
 (/*[in]*/ const PackageInfo &	packageInfo,
  /*[in]*/ const MD5 &		digest,
- /*[in]*/ const PathName &		packageDir)
+ /*[in]*/ const PathName &	packageDir)
 {
   // create package directory
   Directory::Create (packageDir);
@@ -947,7 +970,7 @@ PackageComposer::InitializePackageDirectory
   fprintf (stream.Get(), "title=%s\n", packageInfo.title.c_str());
   fprintf (stream.Get(), "version=%s\n", packageInfo.version.c_str());
   fprintf (stream.Get(), "md5=%s\n", digest.ToString().c_str());
-  for (size_t i = 0; i < packageInfo.requiredPackages.size(); ++i)
+  for (size_t i = 0; i < packageInfo.requiredPackages.size(); ++ i)
     {
       if (i > 0)
 	{
@@ -998,19 +1021,19 @@ PackageComposer::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
   FileDigestTable fileDigests;
   MD5CopyFiles (packageinfo.runFiles,
 		packageinfo.path,
-		"RunFiles",
+		"Files",
 		destDir,
 		0,
 		fileDigests);
   MD5CopyFiles (packageinfo.docFiles,
 		packageinfo.path,
-		"DocFiles",
+		"Files",
 		destDir,
 		0,
 		fileDigests);
   MD5CopyFiles (packageinfo.sourceFiles,
 		packageinfo.path,
-		"SourceFiles",
+		"Files",
 		destDir,
 		0,
 		fileDigests);
@@ -1018,7 +1041,8 @@ PackageComposer::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
   // check TDS digest
   if (! (GetTdsDigest(fileDigests) == packageinfo.digest))
     {
-      FatalError (T_("Checksum mismatch."));
+      FatalError (T_("Bad TDS digest (%s)."),
+		  packageinfo.deploymentName.c_str());
     }
 }
 
@@ -1159,14 +1183,35 @@ PackageComposer::ConsiderP (/*[in]*/ const MpcPackageInfo &	packageInfo)
 
 /* _________________________________________________________________________
 
+   PackageComposer::IsInTeXMFDirectory
+   _________________________________________________________________________ */
+
+bool
+PackageComposer::IsInTeXMFDirectory (/*[in]*/ const PathName &	relPath,
+				     /*[in]*/ const char * lpszDirectory)
+{
+  PathName texmfDirectory (texmfPrefix);
+  texmfDirectory += lpszDirectory;
+  return (PathName::Compare(texmfDirectory,
+			    relPath,
+			    texmfDirectory.GetLength())
+	  == 0);
+}
+
+/* _________________________________________________________________________
+
    PackageComposer::CollectFiles
    _________________________________________________________________________ */
 
 void
 PackageComposer::CollectFiles (/*[in]*/ const PathName &	rootDir,
 			       /*[in]*/ const PathName &	subDir,
-			       /*[in,out]*/ vector<string> &	files,
-			       /*[in,out]*/ size_t &		size)
+			       /*[out]*/ vector<string> &	runFiles,
+			       /*[out]*/ size_t &		sizeRunFiles,
+			       /*[out]*/ vector<string> &	docFiles,
+			       /*[out]*/ size_t &		sizeDocFiles,
+			       /*[out]*/ vector<string> &	sourceFiles,
+			       /*[out]*/ size_t &	sizeSourceFiles)
 {
   // directory to be inspected, e.g.:
   // /mypackages/a0poster/RunFiles/texmf/tex/latex/a0poster/
@@ -1191,15 +1236,31 @@ PackageComposer::CollectFiles (/*[in]*/ const PathName &	rootDir,
       if (dirEntry.isDirectory)
 	{
 	  // recurse into sub-directory
-	  CollectFiles (rootDir, relPath, files, size);
+	  CollectFiles (rootDir,
+			relPath,
+			runFiles, sizeRunFiles,
+			docFiles, sizeDocFiles,
+			sourceFiles, sizeSourceFiles);
 	}
       else
 	{
 	  // store file name
-	  files.push_back (relPath.ToString());
-
 	  // add file size to total size
-	  size += dirEntry.size;
+	  if (IsInTeXMFDirectory(relPath, "doc"))
+	    {
+	      docFiles.push_back (relPath.ToString());
+	      sizeDocFiles += dirEntry.size;
+	    }
+	  else if (IsInTeXMFDirectory(relPath, "source"))
+	    {
+	      sourceFiles.push_back (relPath.ToString());
+	      sizeSourceFiles += dirEntry.size;
+	    }
+	  else
+	    {
+	      runFiles.push_back (relPath.ToString());
+	      sizeRunFiles += dirEntry.size;
+	    }
 	}
     }
 
@@ -1215,11 +1276,19 @@ PackageComposer::CollectFiles (/*[in]*/ const PathName &	rootDir,
 void
 PackageComposer::CollectSubTree (/*[in]*/ const PathName &	path,
 				 /*[in]*/ const char *		lpszSubDir,
-				 /*[out]*/ vector<string> &	files,
-				 /*[out]*/ size_t &		size)
+				 /*[out]*/ vector<string> &	runFiles,
+				 /*[out]*/ size_t &		sizeRunFiles,
+				 /*[out]*/ vector<string> &	docFiles,
+				 /*[out]*/ size_t &		sizeDocFiles,
+				 /*[out]*/ vector<string> &	sourceFiles,
+				 /*[out]*/ size_t &	sizeSourceFiles)
 {
   PathName sourceDir (path, lpszSubDir);
-  CollectFiles (sourceDir, 0, files, size);
+  CollectFiles (sourceDir,
+		0,
+		runFiles, sizeRunFiles,
+		docFiles, sizeDocFiles,
+		sourceFiles, sizeSourceFiles);
 }
 
 /* _________________________________________________________________________
@@ -1238,21 +1307,13 @@ PackageComposer::CollectPackage (/*[in,out]*/ MpcPackageInfo &	packageInfo)
   packageInfo.sizeSourceFiles = 0;
   packageInfo.sourceFiles.clear ();
 
-  // collect run-time files
+  // collect files
   CollectSubTree (packageInfo.path,
-		  "RunFiles",
+		  "Files",
 		  packageInfo.runFiles,
-		  packageInfo.sizeRunFiles);
-
-  // collect document files
-  CollectSubTree (packageInfo.path,
-		  "DocFiles",
+		  packageInfo.sizeRunFiles,
 		  packageInfo.docFiles,
-		  packageInfo.sizeDocFiles);
-
-  // collect source files
-  CollectSubTree (packageInfo.path,
-		  "SourceFiles",
+		  packageInfo.sizeDocFiles,
 		  packageInfo.sourceFiles,
 		  packageInfo.sizeSourceFiles);
 }
@@ -1333,8 +1394,8 @@ PackageComposer::CollectPackages
 void
 PackageComposer::AssembleTDS
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
- /*[in]*/ const PathName &				destDir,
- /*[in,out]*/ Cfg &					cfgDbLight)
+ /*[in]*/ const PathName &			destDir,
+ /*[in,out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
        it != packageTable.end();
@@ -1351,20 +1412,20 @@ PackageComposer::AssembleTDS
       // update database records
       string level;
       level = GetPackageLevel(it->second);
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "Level",
-			   level.c_str());
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "MD5",
-			   it->second.digest.ToString().c_str());
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "TimePackaged",
-			   NUMTOSTR(timePackaged));
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"Level",
+			level.c_str());
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"MD5",
+			it->second.digest.ToString().c_str());
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"TimePackaged",
+			NUMTOSTR(timePackaged));
       if (! it->second.version.empty())
 	{
-	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			       "Version",
-			       it->second.version.c_str());
+	  dbLight.PutValue (it->second.deploymentName.c_str(),
+			    "Version",
+			    it->second.version.c_str());
 	}
     }
 }
@@ -1378,7 +1439,7 @@ void
 PackageComposer::WritePackageDefinitionFiles
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
- /*[in]*/ Cfg &					cfgDbLight)
+ /*[in]*/ Cfg &					dbLight)
 {
   // create package definition directory
   Directory::Create (destDir);
@@ -1408,7 +1469,7 @@ PackageComposer::WritePackageDefinitionFiles
       // write the package definition file
       string str;
       time_t timePackaged;
-      if (cfgDbLight.TryGetValue(it->second.deploymentName.c_str(),
+      if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
 			      "TimePackaged",
 			      str))
 	{
@@ -1448,7 +1509,7 @@ PackageComposer::ExecuteSystemCommand (/*[in]*/ const char * lpszCommand)
   if (! Process::ExecuteSystemCommand(lpszCommand, &exitCode, this, 0)
       || exitCode != 0)
     {
-      FatalError (T_("A system command failed for some reason"));
+      FatalError (T_("A system command failed for some reason."));
     }
 }
 
@@ -1494,7 +1555,7 @@ void
 PackageComposer::WriteNetDatabase
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
- /*[in,out]*/ Cfg &				cfgDbLight)
+ /*[in,out]*/ Cfg &				dbLight)
 {
   // create database directory
   Directory::Create (destDir);
@@ -1502,32 +1563,34 @@ PackageComposer::WriteNetDatabase
   // change into database directory
   Directory::SetCurrentDirectory (destDir);
 
-  // remove obsolete package records
-  char szExternalName[BufferSizes::MaxPackageName];
+  // find obsolete packages
+  char szDeploymentName[BufferSizes::MaxPackageName];
   vector<string> obsoletePackages;
-  for (const char * lpszExternalName =
-	 cfgDbLight.FirstKey(szExternalName, BufferSizes::MaxPackageName);
-       lpszExternalName != 0;
-       lpszExternalName =
-	 cfgDbLight.NextKey(szExternalName, BufferSizes::MaxPackageName))
+  for (const char * lpszDeploymentName =
+	 dbLight.FirstKey(szDeploymentName, BufferSizes::MaxPackageName);
+       lpszDeploymentName != 0;
+       lpszDeploymentName =
+	 dbLight.NextKey(szDeploymentName, BufferSizes::MaxPackageName))
     {
       map<string, MpcPackageInfo>::const_iterator
-	it = packageTable.find(lpszExternalName);
+	it = packageTable.find(lpszDeploymentName);
       if (it == packageTable.end() || ! ConsiderP(it->second))
 	{
-	  obsoletePackages.push_back (lpszExternalName);
+	  obsoletePackages.push_back (lpszDeploymentName);
 	}
     }
+
+  // remove obsolete package records
   for (vector<string>::const_iterator it = obsoletePackages.begin();
        it != obsoletePackages.end();
        ++ it)
     {
-      cfgDbLight.DeleteKey (it->c_str());
+      dbLight.DeleteKey (it->c_str());
     }
 
   // create temporary mpm.ini
   TempFile tempIni (PathName(destDir, MIKTEX_MPM_INI_FILENAME, 0));
-  cfgDbLight.Write (tempIni.GetPathName());
+  dbLight.Write (tempIni.GetPathName());
 
   // create light-weight database:
   PathName dbPath1 = GetDbLightFileName();
@@ -1543,7 +1606,7 @@ PackageComposer::WriteNetDatabase
   Directory::Create (packageDefinitionDir);
 
   // write all package definition files
-  WritePackageDefinitionFiles (packageTable, packageDefinitionDir, cfgDbLight);
+  WritePackageDefinitionFiles (packageTable, packageDefinitionDir, dbLight);
 
   // create heavy-weight database:
   PathName dbPath2 = GetDbHeavyFileName();
@@ -1734,9 +1797,9 @@ PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       Directory::SetCurrentDirectory (packageInfo.path);
       
       // path to package definition directory, e.g.:
-      // /mypackages/a0poster/Runfiles/texmf/tpm/packages/
+      // /mypackages/a0poster/Files/texmf/tpm/packages/
       PathName packageDefinitionDir (packageInfo.path);
-      packageDefinitionDir += "RunFiles";
+      packageDefinitionDir += "Files";
       packageDefinitionDir += texmfPrefix;
       packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
 
@@ -1744,7 +1807,7 @@ PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       Directory::Create (packageDefinitionDir);
       
       // path to package definition file, e.g.:
-      // /mypackages/a0poster/Runfiles/texmf/tpm/packages/a0poster.tpm
+      // /mypackages/a0poster/Files/texmf/tpm/packages/a0poster.tpm
       PathName packageDefinitionFile
 	(packageDefinitionDir,
 	 packageInfo.deploymentName.c_str(),
@@ -1783,27 +1846,9 @@ PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       command += " --files-from=/dev/null";
 #endif
       ExecuteSystemCommand (command.c_str());
-      if (Directory::Exists("RunFiles"))
+      if (Directory::Exists("Files"))
 	{
-	  RestoreCurrentDirectory restoreCurrentDirectory ("RunFiles");
-	  command = "tar --force-local -rf ";
-	  command += tarFile.ToString();
-	  command += " ";
-	  command += texmfPrefix;
-	  ExecuteSystemCommand (command.c_str());
-	}
-      if (Directory::Exists("DocFiles"))
-	{
-	  RestoreCurrentDirectory restoreCurrentDirectory ("DocFiles");
-	  command = "tar --force-local -rf ";
-	  command += tarFile.ToString();
-	  command += " ";
-	  command += texmfPrefix;
-	  ExecuteSystemCommand (command.c_str());
-	}
-      if (Directory::Exists("SourceFiles"))
-	{
-	  RestoreCurrentDirectory restoreCurrentDirectory ("SourceFiles");
+	  RestoreCurrentDirectory restoreCurrentDirectory ("Files");
 	  command = "tar --force-local -rf ";
 	  command += tarFile.ToString();
 	  command += " ";
@@ -1826,7 +1871,7 @@ PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
   packageInfo.archiveFileSize = File::GetSize(archiveFile);
 
   // get MD5 of archive file
-  packageInfo.archiveDigest = MD5::FromFile(archiveFile.Get());
+  packageInfo.archiveFileDigest = MD5::FromFile(archiveFile.Get());
 
   if (! reuseExisting)
     {
@@ -1848,7 +1893,7 @@ bool
 PackageComposer::LoadDbLight (/*[in]*/ const PathName &	directory,
 			      /*[out]*/ Cfg &		cfg)
 {
-  // path to the lightweight database file
+  // path to the light-weight database file
   PathName pathDbLight = GetDbLightFileName();
 #if defined(MIKTEX_WINDOWS)
   pathDbLight.ToUnix ();
@@ -1890,7 +1935,7 @@ void
 PackageComposer::AssembleNetPackages
 (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
- /*[out]*/ Cfg &				cfgDbLight)
+ /*[out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::iterator it = packageTable.begin();
        it != packageTable.end();
@@ -1932,15 +1977,13 @@ PackageComposer::AssembleNetPackages
       // update level field
       string level;
       level = GetPackageLevel(it->second);
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			     "Level",
-			     level.c_str());
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"Level",
+			level.c_str());
 
       // get TDS digest of already existing package
       string str;
-      if (cfgDbLight.TryGetValue(it->second.deploymentName.c_str(),
-				 "md5",
-				 str))
+      if (dbLight.TryGetValue(it->second.deploymentName.c_str(), "md5", str))
 	{
 	  // don't remake archive file if there are no changes
 	  if (MD5::Parse(str.c_str()) == it->second.digest)
@@ -1955,33 +1998,33 @@ PackageComposer::AssembleNetPackages
       ArchiveFileType archiveFileType = CreateArchiveFile(it->second, destDir);
 
       // update database records
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "MD5",
-			   it->second.digest.ToString().c_str());
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(), 
-			   "TimePackaged",
-			   NUMTOSTR(it->second.timePackaged));
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "CabSize",
-			   NUMTOSTR(it->second.archiveFileSize));
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "CabMD5",
-			   it->second.archiveDigest.ToString().c_str());
-      cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			   "Type",
-			   (archiveFileType == ArchiveFileType::MSCab
-			    ? "MSCab"
-			    : (archiveFileType == ArchiveFileType::TarBzip2
-			       ? "TarBzip2"
-			       : (archiveFileType == ArchiveFileType::TarLzma
-				  ? "TarLzma"
-				  : "unknown"))));
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"MD5",
+			it->second.digest.ToString().c_str());
+      dbLight.PutValue (it->second.deploymentName.c_str(), 
+			"TimePackaged",
+			NUMTOSTR(it->second.timePackaged));
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"CabSize",
+			NUMTOSTR(it->second.archiveFileSize));
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"CabMD5",
+			it->second.archiveFileDigest.ToString().c_str());
+      dbLight.PutValue (it->second.deploymentName.c_str(),
+			"Type",
+			(archiveFileType == ArchiveFileType::MSCab
+			 ? "MSCab"
+			 : (archiveFileType == ArchiveFileType::TarBzip2
+			    ? "TarBzip2"
+			    : (archiveFileType == ArchiveFileType::TarLzma
+			       ? "TarLzma"
+			       : "unknown"))));
 			   
       if (! it->second.version.empty())
 	{
-	  cfgDbLight.PutValue (it->second.deploymentName.c_str(),
-			       "Version",
-			       it->second.version.c_str());
+	  dbLight.PutValue (it->second.deploymentName.c_str(),
+			    "Version",
+			    it->second.version.c_str());
 	}
     }
 }
@@ -2127,9 +2170,9 @@ PackageComposer::DisassemblePackage
 
   // determine the external package name, e.g.:
   // a0poster
-  char szExternalName[BufferSizes::MaxPath];
-  packageDefinitionFile.GetFileNameWithoutExtension (szExternalName);
-  packageInfo.deploymentName = szExternalName;
+  char szDeploymentName[BufferSizes::MaxPath];
+  packageDefinitionFile.GetFileNameWithoutExtension (szDeploymentName);
+  packageInfo.deploymentName = szDeploymentName;
 
   Verbose (" %s (%u files)...",
 	   Q_(packageInfo.deploymentName.c_str()),
@@ -2147,19 +2190,19 @@ PackageComposer::DisassemblePackage
 		sourceDir,
 		0,
 		packageDir,
-		"RunFiles",
+		"Files",
 		fileDigests);
   MD5CopyFiles (packageInfo.docFiles,
 		sourceDir,
 		0,
 		packageDir,
-		"DocFiles",
+		"Files",
 		fileDigests);
   MD5CopyFiles (packageInfo.sourceFiles,
 		sourceDir,
 		0,
 		packageDir,
-		"SourceFiles",
+		"Files",
 		fileDigests);
 
   // calculate TDS digest
@@ -2171,13 +2214,13 @@ PackageComposer::DisassemblePackage
   InitializePackageDirectory (packageInfo, tdsDigest, packageDir);
   
   // write new package Definition file, e.g.:
-  // /mypackages/a0poster/RunFiles/texmf/tpm/packages/a0poster.tpm
+  // /mypackages/a0poster/Files/texmf/tpm/packages/a0poster.tpm
   MpcPackageInfo mpcPackageInfo (packageInfo);
   mpcPackageInfo.digest = tdsDigest;
   mpcPackageInfo.path = packageDir;
   CollectPackage (mpcPackageInfo);
   PathName packageDefinitionDir (packageDir);
-  packageDefinitionDir += "RunFiles";
+  packageDefinitionDir += "Files";
   packageDefinitionDir += texmfPrefix;
   packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
   Directory::Create (packageDefinitionDir);
@@ -2200,18 +2243,20 @@ PackageComposer::Run (/*[in]*/ int		argc,
 {
   vector<string> rootDirectories;
 
-  PathName databaseDir;
   PathName destDir;
   PathName packageDefinitionFile;
+  PathName repository;
+  PathName tpmDir;
 
   bool optAssembleDatabase = false;
   bool optAssembleNetDatabase = false;
   bool optAssembleNetPackages = false;
   bool optAssembleTDS = false;
-  bool optDatabaseDir = false;
+  bool optDestDir = false;
   bool optDisassemblePackage = false;
   bool optPackageDefinitionFile = false;
-  bool optDestDir = false;
+  bool optRepository = false;
+  bool optTpmDir = false;
 
   bool optVersion = false;
 
@@ -2240,10 +2285,6 @@ PackageComposer::Run (/*[in]*/ int		argc,
 	case OPT_ASSEMBLE_TDS:
 	  optAssembleTDS = true;
 	  break;
-	case OPT_DATABASE_DIR:
-	  databaseDir = lpszOptArg;
-	  optDatabaseDir = true;
-	  break;
 	case OPT_DEFAULT_LEVEL:
 	  defaultLevel = lpszOptArg[0];
 	  break;
@@ -2269,10 +2310,14 @@ PackageComposer::Run (/*[in]*/ int		argc,
 	  if (miktexSeries.CompareTo(MIKTEX_SERIES_STR) > 0)
 	    {
 	      FatalError (T_("Unsupported MiKTeX series."));
-	      }
+	    }
 	  break;
 	case OPT_PACKAGE_LIST:
 	  ReadList (lpszOptArg, packageList);
+	  break;
+	case OPT_REPOSITORY:
+	  repository = lpszOptArg;
+	  optRepository = true;
 	  break;
 	case OPT_ROOT_DIR:
 	  {
@@ -2289,6 +2334,10 @@ PackageComposer::Run (/*[in]*/ int		argc,
 	  break;
 	case OPT_TIME_PACKAGED:
 	  timePackaged = atoi(lpszOptArg);
+	  break;
+	case OPT_TPM_DIR:
+	  tpmDir = lpszOptArg;
+	  optTpmDir = true;
 	  break;
 	case OPT_TPM_FILE:
 	  packageDefinitionFile = lpszOptArg;
@@ -2348,8 +2397,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  CollectPackages (*it, packageTable);
 	}
 
-      // create empty lightweight database
-      SmartPointer<Cfg> pcfgDbLight (Cfg::Create());
+      // create clean light-weight database
+      SmartPointer<Cfg> pDbLight (Cfg::Create());
 
       if (optAssembleTDS)
 	{
@@ -2358,12 +2407,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    {
 	      FatalError (T_("No destination directory has been specified."));
 	    }
-	  AssembleTDS (packageTable, destDir, *pcfgDbLight);
+	  AssembleTDS (packageTable, destDir, *pDbLight);
 	}
       else if (optAssembleNetDatabase || optAssembleNetPackages)
 	{
-	  // load lightweight database
-	  LoadDbLight (databaseDir, *pcfgDbLight);
+	  // load light-weight database
+	  LoadDbLight (repository, *pDbLight);
 	}
 
       if (optAssembleNetPackages)
@@ -2372,18 +2421,18 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    {
 	      FatalError (T_("No destination directory has been specified."));
 	    }
-	  AssembleNetPackages (packageTable, destDir, *pcfgDbLight);
+	  AssembleNetPackages (packageTable, destDir, *pDbLight);
 	}
 
-      if (optAssembleDatabase && optDatabaseDir)
+      if (optAssembleDatabase && optTpmDir)
 	{
 	  if (! optDestDir)
 	    {
 	      FatalError (T_("No database directory has been specified."));
 	    }
 	  WritePackageDefinitionFiles (packageTable,
-				       databaseDir,
-				       *pcfgDbLight);
+				       tpmDir,
+				       *pDbLight);
 	}
 
       if (optAssembleTDS)
@@ -2393,12 +2442,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  PathName iniFile (destDir);
 	  iniFile += texmfPrefix;
 	  iniFile += MIKTEX_PATH_MPM_INI;
-	  pcfgDbLight->Write (iniFile);
+	  pDbLight->Write (iniFile);
 	}
 
-      if (optAssembleNetDatabase && optDatabaseDir)
+      if (optAssembleNetDatabase && optRepository)
 	{
-	  WriteNetDatabase (packageTable, databaseDir, *pcfgDbLight);
+	  WriteNetDatabase (packageTable, repository, *pDbLight);
 	}
     }
 }
