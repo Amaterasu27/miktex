@@ -147,6 +147,7 @@ enum Option
 {
   OPT_AAA = 300,
   OPT_BUILD_TDS,
+  OPT_CREATE_PACKAGE,
   OPT_DEFAULT_LEVEL,
   OPT_DISASSEMBLE_PACKAGE,
   OPT_MIKTEX_SERIES,
@@ -372,7 +373,13 @@ protected:
   void
   WriteDatabase (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 		 /*[in]*/ const PathName &			repository,
+		 /*[in]*/ bool				removeObsoleteRecords,
 		 /*[in,out]*/ Cfg &				dbLight);
+
+protected:
+  void
+  Extract (/*[in]*/ const PathName &	archiveFile,
+	   /*[in]*/ ArchiveFileType	archiveFileType);
 
 protected:
   void
@@ -397,10 +404,14 @@ protected:
   LoadDbLight (/*[in]*/ const PathName & repository);
 
 protected:
+  map<string, MpcPackageInfo>
+  LoadDbHeavy (/*[in]*/ const PathName & repository);
+
+protected:
   void
   UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
 		    /*[in]*/ const PathName &			repository,
-		    /*[out]*/ Cfg &				dbLight);
+		    /*[in,out]*/ Cfg &				dbLight);
 
 protected:
   void
@@ -472,6 +483,14 @@ const struct poptOption PackageComposer::options[] = {
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_BUILD_TDS,
     T_("Create a TDS hierarchy."),
+    0
+  },
+
+  {
+    "create-package", 0,
+    POPT_ARG_NONE, 0,
+    OPT_CREATE_PACKAGE,
+    T_("Create a package archive file and update the database."),
     0
   },
 
@@ -1532,6 +1551,7 @@ void
 PackageComposer::WriteDatabase
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			repository,
+ /*[in]*/ bool					removeObsoleteRecords,
  /*[in,out]*/ Cfg &				dbLight)
 {
   // create repository
@@ -1540,29 +1560,32 @@ PackageComposer::WriteDatabase
   // change into repository
   Directory::SetCurrentDirectory (repository);
 
-  // find obsolete packages
-  char szDeploymentName[BufferSizes::MaxPackageName];
-  vector<string> obsoletePackages;
-  for (const char * lpszDeploymentName =
-	 dbLight.FirstKey(szDeploymentName, BufferSizes::MaxPackageName);
-       lpszDeploymentName != 0;
-       lpszDeploymentName =
-	 dbLight.NextKey(szDeploymentName, BufferSizes::MaxPackageName))
+  if (removeObsoleteRecords)
     {
-      map<string, MpcPackageInfo>::const_iterator
-	it = packageTable.find(lpszDeploymentName);
-      if (it == packageTable.end() || ! ConsiderP(it->second))
+      // find obsolete packages
+      char szDeploymentName[BufferSizes::MaxPackageName];
+      vector<string> obsoletePackages;
+      for (const char * lpszDeploymentName =
+	     dbLight.FirstKey(szDeploymentName, BufferSizes::MaxPackageName);
+	   lpszDeploymentName != 0;
+	   lpszDeploymentName =
+	     dbLight.NextKey(szDeploymentName, BufferSizes::MaxPackageName))
 	{
-	  obsoletePackages.push_back (lpszDeploymentName);
+	  map<string, MpcPackageInfo>::const_iterator
+	    it = packageTable.find(lpszDeploymentName);
+	  if (it == packageTable.end() || ! ConsiderP(it->second))
+	    {
+	      obsoletePackages.push_back (lpszDeploymentName);
+	    }
 	}
-    }
-
-  // remove obsolete package records
-  for (vector<string>::const_iterator it = obsoletePackages.begin();
-       it != obsoletePackages.end();
-       ++ it)
-    {
-      dbLight.DeleteKey (it->c_str());
+      
+      // remove obsolete package records
+      for (vector<string>::const_iterator it = obsoletePackages.begin();
+	   it != obsoletePackages.end();
+	   ++ it)
+	{
+	  dbLight.DeleteKey (it->c_str());
+	}
     }
 
   // create temporary mpm.ini
@@ -1576,7 +1599,7 @@ PackageComposer::WriteDatabase
   // delete temporary mpm.ini
   tempIni.Delete ();
 
-  // create package definition directory
+  // create temporary package definition directory
   TempDirectory tempDir (PathName(repository, texmfPrefix, 0));
   PathName packageDefinitionDir = tempDir.GetPathName();
   packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
@@ -1591,6 +1614,39 @@ PackageComposer::WriteDatabase
 
   // delete package definition files
   tempDir.Delete ();
+}
+
+/* _________________________________________________________________________
+
+   PackageComposer::Extract
+   _________________________________________________________________________ */
+
+void
+PackageComposer::Extract (/*[in]*/ const PathName &	archiveFile,
+			  /*[in]*/ ArchiveFileType	archiveFileType)
+{
+  string command;
+  switch (archiveFileType.Get())
+    {
+    case ArchiveFileType::MSCab:
+      command = "cabextract \"";
+      command += archiveFile.Get();
+      command += "\"";
+      break;
+    case ArchiveFileType::TarBzip2:
+      command = "tar --force-local -xjf \"";
+      command += archiveFile.Get();
+      command += "\"";
+      break;
+    case ArchiveFileType::TarLzma:
+      command = "lzma d \"";
+      command += archiveFile.Get();
+      command += "\" -so | tar --force-local -xf -";
+      break;
+    default:
+      FatalError (T_("Unsupported archive file type."));
+    }
+  ExecuteSystemCommand (command.c_str());
 }
 
 /* _________________________________________________________________________
@@ -1879,7 +1935,7 @@ PackageComposer::LoadDbLight (/*[in]*/ const PathName &	repository)
   // check to see if the database file exists
   if (! File::Exists(pathDbLight))
     {
-      FatalError ("The light-weigt database does not exist.");
+      FatalError ("The light-weight database does not exist.");
     }
 
   // create a scratch directory
@@ -1904,6 +1960,66 @@ PackageComposer::LoadDbLight (/*[in]*/ const PathName &	repository)
   pDbLight->AddRef ();
 
   return (pDbLight.Get());
+}
+
+/* _________________________________________________________________________
+
+   PackageComposer::LoadDbHeavy
+   _________________________________________________________________________ */
+
+map<string, MpcPackageInfo>
+PackageComposer::LoadDbHeavy (/*[in]*/ const PathName & repository)
+{
+  map<string, MpcPackageInfo> packageTable;
+
+  // path to the heavy-weight database file
+  PathName pathDbHeavy = repository;
+  pathDbHeavy += GetDbHeavyFileName();
+#if defined(MIKTEX_WINDOWS)
+  pathDbHeavy.ToUnix ();
+#endif
+
+  // check to see if the database file exists
+  if (! File::Exists(pathDbHeavy))
+    {
+      FatalError ("The heavy-weight database does not exist.");
+    }
+
+  // create a scratch directory
+  ScratchDirectory scratchDirectory;
+
+  // change into scratch directory
+  scratchDirectory.Enter ();
+
+  // extract all package definition files
+  Extract (pathDbHeavy, GetDbArchiveFileType());
+
+  // parse all package definition files
+  PathName directory (texmfPrefix);
+  directory += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+  auto_ptr<DirectoryLister>
+    pLister (DirectoryLister::Open
+	     (directory,
+	      "*" MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX));
+  DirectoryEntry direntry;
+  while (pLister->GetNext(direntry))
+    {
+      PathName packageDefinitionFile (directory);
+      packageDefinitionFile += direntry.name;
+      PackageInfo packageInfo =
+	PackageManager::ReadPackageDefinitionFile(packageDefinitionFile.Get(),
+						  texmfPrefix.c_str());
+      char szDeploymentName[BufferSizes::MaxPath];
+      packageDefinitionFile.GetFileNameWithoutExtension (szDeploymentName);
+      packageInfo.deploymentName = szDeploymentName;
+      packageTable[packageInfo.deploymentName] = packageInfo;
+    }
+  pLister->Close ();
+
+  // leave & remove the scratch directory
+  scratchDirectory.Leave ();
+
+  return (packageTable);
 }
 
 /* _________________________________________________________________________
@@ -1961,8 +2077,10 @@ PackageComposer::UpdateRepository
 	  // don't remake archive file if there are no changes
 	  if (MD5::Parse(str.c_str()) == it->second.digest)
 	    {
+#if 0
 	      Verbose (T_("%s hasn't changed => skipping"),
 		       Q_(it->second.deploymentName.c_str()));
+#endif
 	      continue;
 	    }
 	}
@@ -2219,6 +2337,7 @@ PackageComposer::Run (/*[in]*/ int		argc,
   PathName tpmDir;
 
   bool optBuildTDS = false;
+  bool optCreatePackage = false;
   bool optDisassemblePackage = false;
   bool optUpdateRepository = false;
   bool optVersion = false;
@@ -2237,6 +2356,9 @@ PackageComposer::Run (/*[in]*/ int		argc,
 	{
 	case OPT_BUILD_TDS:
 	  optBuildTDS = true;
+	  break;
+	case OPT_CREATE_PACKAGE:
+	  optCreatePackage = true;
 	  break;
 	case OPT_DEFAULT_LEVEL:
 	  defaultLevel = lpszOptArg[0];
@@ -2306,10 +2428,29 @@ Copyright (C) 1996-2007 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	   << endl;
-      return;
     }
-
-  if (optDisassemblePackage)
+  else if (optCreatePackage)
+    {
+      if (stagingDir.Empty())
+	{
+	  stagingDir.SetToCurrentDirectory ();
+	}
+      if (repository.Empty())
+	{
+	  FatalError (T_("No repository location was specified."));
+	}
+      Verbose (T_("Loading database from %s..."), Q_(repository));
+      SmartPointer<Cfg> pDbLight (LoadDbLight(repository));
+      map<string, MpcPackageInfo> packageTable = LoadDbHeavy(repository);
+      Verbose (T_("Reading staging directory %s..."), stagingDir.Get());
+      MpcPackageInfo packageInfo = InitializePackageInfo(stagingDir.Get());
+      CollectPackage (packageInfo);
+      packageTable[packageInfo.deploymentName] = packageInfo;
+      UpdateRepository (packageTable, repository, *pDbLight);
+      Verbose (T_("Writing database to %s..."), Q_(repository));
+      WriteDatabase (packageTable, repository, false, *pDbLight);
+    }
+  else if (optDisassemblePackage)
     {
       if (packageDefinitionFile.Empty())
 	{
@@ -2374,7 +2515,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  // load light-weight database
 	  SmartPointer<Cfg> pDbLight (LoadDbLight(repository));
 	  UpdateRepository (packageTable, repository, *pDbLight);
-	  WriteDatabase (packageTable, repository, *pDbLight);
+	  WriteDatabase (packageTable, repository, true, *pDbLight);
 	}
     }
   else
