@@ -28,7 +28,7 @@
 #endif
 
 #if defined(MIKTEX)
-#include "internal.h";
+#include "internal.h"
 #else
 #include "global.h"
 #include "md5.h"
