@@ -228,7 +228,7 @@ SessionImpl::InitializeRootDirectories
   CSVList root (startupConfig.roots.c_str(), PATH_DELIMITER);
   for (unsigned u = 0; root.GetCurrent() != 0; ++ u, ++ root)
     {
-      if (StrLen(root.GetCurrent()) == 0)
+      if (strlen(root.GetCurrent()) == 0)
 	{
 	  UNEXPECTED_CONDITION
 	    ("SessionImpl::InitializeRootDirectories");

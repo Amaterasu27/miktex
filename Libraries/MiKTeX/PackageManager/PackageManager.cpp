@@ -54,8 +54,8 @@ struct ClientInfo : public Base
     : name_ ("MPM"),
       version_ (VER_FILEVERSION_STR)
   {
-    Name = &name_;
-    Version = &version_;
+    Base::Name = &name_;
+    Base::Version = &version_;
   };
 private:
   string name_;

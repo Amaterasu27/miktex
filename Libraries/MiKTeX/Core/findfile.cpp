@@ -151,7 +151,7 @@ SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
     {
       // no sub-directory is given
       const char * lpszRecInd;
-      lpszRecInd = StrStr(lpszSearchSpec, RECURSION_INDICATOR);
+      lpszRecInd = strstr(lpszSearchSpec, RECURSION_INDICATOR);
       if (lpszRecInd != 0)
 	{
 	  // decompose the SEARCHSPEC into a sub-directory and a

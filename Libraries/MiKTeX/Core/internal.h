@@ -585,16 +585,19 @@ class STRDUP : public CharBuffer<char>
 {
 public:
   STRDUP (/*[in]*/ const char * lpsz)
-    : CharBuffer (lpsz)
+    : CharBuffer<char> (lpsz)
   {
   }
 
 public:
   STRDUP (/*[in]*/ const char *	lpsz,
 	  /*[in]*/ size_t		n)
-    : CharBuffer (n + 1)
+    : CharBuffer<char> (n + 1)
   {
-    CopyString2 (GetBuffer(), GetCapacity(), lpsz, n);
+    CopyString2 (CharBuffer<char>::GetBuffer(),
+		 CharBuffer<char>::GetCapacity(),
+		 lpsz,
+		 n);
   }
 };
 

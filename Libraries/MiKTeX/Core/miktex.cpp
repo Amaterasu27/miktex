@@ -935,7 +935,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 #endif
 
   // check system requirements
-#if ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
   if (! (GetVersion() < 0x80000000))
     {
       FATAL_MIKTEX_ERROR ("SessionImpl::Initialize",

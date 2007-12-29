@@ -524,7 +524,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	     it != mapFnToMD5.end();
 	     ++ it)
 	  {
-	    md5Builder.Update (it->first.c_str(), it->first.length());
+	    PathName path (it->first);
+	    // we must dosify the path name for backward compatibility
+	    path.ToDos ();
+	    md5Builder.Update (path.Get(), path.GetLength());
 	    md5Builder.Update (it->second.GetBits(), sizeof(MD5));
 	  }
 	MD5 md5 = md5Builder.Final();

@@ -33,20 +33,28 @@ add_executable(mpc ${mpc_sources})
 
 merge_trustinfo_manifest(mpc asInvoker)
 
-target_link_libraries(mpc
-  ${bzip2_lib_name}
-  ${core_lib_name}
-  ${curl_lib_name}
-  ${expat_lib_name}
-  ${extractor_lib_name}
-  ${gnu_lib_name}
-  ${lzma_lib_name}
-  ${md5_lib_name}
-  ${mpm_lib_name}
-  ${mspack_lib_name}
-  ${popt_lib_name}
-  ${zlib_lib_name}
-)
+if(NATIVE_WINDOWS)
+  target_link_libraries(mpc
+    ${bzip2_lib_name}
+    ${core_lib_name}
+    ${curl_lib_name}
+    ${expat_lib_name}
+    ${extractor_lib_name}
+    ${gnu_lib_name}
+    ${lzma_lib_name}
+    ${md5_lib_name}
+    ${mpm_lib_name}
+    ${mspack_lib_name}
+    ${popt_lib_name}
+    ${zlib_lib_name}
+  )
+else(NATIVE_WINDOWS)
+  target_link_libraries(mpc
+    ${core_dll_name}
+    ${mpm_dll_name}
+    ${popt_dll_name}
+  )
+endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpc

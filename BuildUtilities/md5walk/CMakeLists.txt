@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -33,12 +33,19 @@ add_executable(md5walk ${md5walk_sources})
 
 merge_trustinfo_manifest(md5walk asInvoker)
 
-target_link_libraries(md5walk
-  ${bzip2_lib_name}
-  ${core_lib_name}
-  ${md5_lib_name}
-  ${popt_lib_name}
-  ${zlib_lib_name}
+if(NATIVE_WINDOWS)
+  target_link_libraries(md5walk
+    ${bzip2_lib_name}
+    ${core_lib_name}
+    ${md5_lib_name}
+    ${popt_lib_name}
+    ${zlib_lib_name}
 )
+else(NATIVE_WINDOWS)
+  target_link_libraries(md5walk
+    ${core_dll_name}
+    ${popt_dll_name}
+)
+endif(NATIVE_WINDOWS)
 
 install(TARGETS md5walk DESTINATION ${bindir})

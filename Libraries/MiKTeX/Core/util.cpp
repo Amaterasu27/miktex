@@ -30,7 +30,7 @@
 
 Tokenizer::Tokenizer (/*[in]*/ const char *	lpsz,
 		      /*[in]*/ const char *	lpszDelim)
-  : CharBuffer(lpsz)
+  : Base(lpsz)
 {
   lpszNext = GetBuffer();
   lpszCurrent = 0;
@@ -249,7 +249,7 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
     {
       if (*lpszSource > 255)
 	{
-	  INVALID_ARGUMENT ("Utils::CopyString");
+	  INVALID_ARGUMENT ("Utils::CopyString", 0);
 	}
       if ((lpszBuf[length] = lpszSource[length]) == 0)
 	{
@@ -372,7 +372,7 @@ Utils::ReplaceString (/*[out]*/ char *		lpszBuf,
       else if (lpszString1[n] == 0)
 	{
 	  lpszSource += n;
-	  n = StrLen(lpszString2);
+	  n = strlen(lpszString2);
 	  if (lpszBuf == 0)
 	    {
 	      bufSize += n;
@@ -465,7 +465,7 @@ Unhex (/*[in]*/ char x)
 MD5
 MD5::Parse (/*[in]*/ const char *	lpszHexString)
 {
-  size_t l = StrLen(lpszHexString);
+  size_t l = strlen(lpszHexString);
   if (l != 32)
     {
       FATAL_MIKTEX_ERROR ("MD5::Parse", T_("Invalid MD5."), lpszHexString);
@@ -800,10 +800,14 @@ Utils::IsAscii (/*[in]*/ const wchar_t * lpsz)
   MIKTEX_ASSERT_STRING (lpsz);
   for (; *lpsz != 0; ++ lpsz)
     {
+#if defined(_MSC_VER)
       if (! iswascii(*lpsz))
 	{
 	  return (false);
 	}
+#else
+      UNIMPLEMENTED ("Utils::IsAscii");
+#endif
     }
   return (true);
 }

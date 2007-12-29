@@ -25,6 +25,19 @@
 
 /* _________________________________________________________________________
 
+   Directory::GetCurrentDirectory
+   _________________________________________________________________________ */
+
+PathName
+Directory::GetCurrentDirectory ()
+{
+  PathName cd;
+  cd.SetToCurrentDirectory ();
+  return (cd);
+}
+
+/* _________________________________________________________________________
+
    Directory::SetCurrentDirectory
    _________________________________________________________________________ */
 
@@ -250,7 +263,7 @@ File::SetTimes (/*[in]*/ int			fd,
 		/*[in]*/ time_t			lastAccessTime,
 		/*[in]*/ time_t			lastWriteTime)
 {
-  UNUSED_ALWAYS (stream);
+  UNUSED_ALWAYS (fd);
   UNUSED_ALWAYS (creationTime);
   UNUSED_ALWAYS (lastAccessTime);
   UNUSED_ALWAYS (lastWriteTime);
@@ -303,6 +316,27 @@ File::SetTimes (/*[in]*/ const PathName &	path,
     {
       FATAL_CRT_ERROR ("utimes", path.Get());
     }
+}
+
+/* _________________________________________________________________________
+
+   File::GetTimes
+   _________________________________________________________________________ */
+
+void
+File::GetTimes (/*[in]*/ const PathName &	path,
+		/*[out]*/ time_t &		creationTime,
+		/*[out]*/ time_t &		lastAccessTime,
+		/*[out]*/ time_t &		lastWriteTime)
+{
+  struct stat stat_;
+  if (stat(path.Get(), &stat_) != 0)
+    {
+      FATAL_CRT_ERROR ("stat", path.Get());
+    }
+  creationTime = stat_.st_ctime;
+  lastAccessTime = stat_.st_atime;
+  lastWriteTime = stat_.st_mtime;
 }
 
 /* _________________________________________________________________________

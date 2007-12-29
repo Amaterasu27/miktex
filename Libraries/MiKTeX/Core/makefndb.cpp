@@ -341,7 +341,7 @@ FndbManager::PushBack (/*[in]*/ const char * lpsz)
     }
   FileNameDatabaseHeader::FndbOffset ret = GetMemTop();
   MIKTEX_ASSERT (lpsz != 0);
-  PushBack (lpsz, StrLen(lpsz));
+  PushBack (lpsz, strlen(lpsz));
   FastPushBack (null_byte);
   if (enableStringPooling)
     {
@@ -489,7 +489,7 @@ FndbManager::ProcessFolder
 	  while (*lpsz != 0)
 	    {
 	      subDirectoryNames.push_back (lpsz);
-	      lpsz += StrLen(lpsz) + 1;
+	      lpsz += strlen(lpsz) + 1;
 	    }
 	  lpsz = lpszFileNames;
 	  const char * lpsz2 = lpszFileNameInfos;
@@ -497,11 +497,11 @@ FndbManager::ProcessFolder
 	    {
 	      FILENAMEINFO filenameinfo;
 	      filenameinfo.FileName = lpsz;
-	      lpsz += StrLen(lpsz) + 1;
+	      lpsz += strlen(lpsz) + 1;
 	      if (lpsz2 != 0)
 		{
 		  filenameinfo.Info = lpsz2;
-		  lpsz2 += StrLen(lpsz2) + 1;
+		  lpsz2 += strlen(lpsz2) + 1;
 		}
 	      fileNames.push_back (filenameinfo);
 	    }

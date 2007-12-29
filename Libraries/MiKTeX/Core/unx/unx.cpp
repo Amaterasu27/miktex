@@ -152,7 +152,19 @@ SessionImpl::GetPsFontDirs (/*[out]*/ string &	psFontDirs)
 bool
 SessionImpl::GetTTFDirs (/*[out]*/ string &	ttfDirs)
 {
-#  warning Unimplemented: SessionImpl::GetPsTtfDirs
+#  warning Unimplemented: SessionImpl::GetTTFDirs
+  return (false);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetOTFDirs
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::GetOTFDirs (/*[out]*/ string &	otfDirs)
+{
+#  warning Unimplemented: SessionImpl::GetOTFDirs
   return (false);
 }
 
@@ -193,7 +205,7 @@ Utils::GetOSVersionString ()
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (getcwd(buffer, GetCapacity()) == 0)
+  if (getcwd(GetBuffer(), GetCapacity()) == 0)
     {
       FATAL_CRT_ERROR ("getcwd", 0);
     }
@@ -208,12 +220,12 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
-  if (! Utils::GetEnvironmentString("TMPDIR", buffer, GetCapacity()))
+  if (! Utils::GetEnvironmentString("TMPDIR", GetBuffer(), GetCapacity()))
     {
 #if defined(P_tmpdir)
-      Utils::CopyString (buffer, GetCapacity(), P_tmpdir);
+      Utils::CopyString (GetBuffer(), GetCapacity(), P_tmpdir);
 #else
-      Utils::CopyString (buffer, GetCapacity(), "/tmp");
+      Utils::CopyString (GetBuffer(), GetCapacity(), "/tmp");
 #endif
     }
   return (*this);
@@ -231,7 +243,7 @@ PathName::SetToTempFile ()
 
   AppendComponent ("mikXXXXXX");
 
-  int fd = mkstemp(buffer);
+  int fd = mkstemp(GetBuffer());
 
   if (fd < 0)
     {
@@ -242,8 +254,8 @@ PathName::SetToTempFile ()
 
   SessionImpl::theSession->trace_tempfile->WriteFormattedLine
     ("core",
-     T_("created temporary file \"%s\""),
-     buffer);
+     T_("created temporary file %s"),
+     Q_(GetBuffer()));
 
   return (*this);
 }
@@ -390,7 +402,6 @@ Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::RunningAsAdministrator ()
 {
   return (geteuid() == 0);
@@ -402,7 +413,6 @@ SessionImpl::RunningAsAdministrator ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 SessionImpl::IsUserAnAdministrator ()
 {
   return (getuid() == 0 || geteuid() == 0);

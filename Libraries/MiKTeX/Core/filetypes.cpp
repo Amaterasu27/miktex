@@ -99,14 +99,14 @@ public:
 	       /*[in]*/ const char *	lpszElement8 = 0)
   {
     Reserve (0
-	     + StrLen(lpszElement1)
-	     + (lpszElement2 == 0 ? 0 : StrLen(lpszElement2) + 1)
-	     + (lpszElement3 == 0 ? 0 : StrLen(lpszElement3) + 1)
-	     + (lpszElement4 == 0 ? 0 : StrLen(lpszElement4) + 1)
-	     + (lpszElement5 == 0 ? 0 : StrLen(lpszElement5) + 1)
-	     + (lpszElement6 == 0 ? 0 : StrLen(lpszElement6) + 1)
-	     + (lpszElement7 == 0 ? 0 : StrLen(lpszElement7) + 1)
-	     + (lpszElement8 == 0 ? 0 : StrLen(lpszElement8) + 1)
+	     + strlen(lpszElement1)
+	     + (lpszElement2 == 0 ? 0 : strlen(lpszElement2) + 1)
+	     + (lpszElement3 == 0 ? 0 : strlen(lpszElement3) + 1)
+	     + (lpszElement4 == 0 ? 0 : strlen(lpszElement4) + 1)
+	     + (lpszElement5 == 0 ? 0 : strlen(lpszElement5) + 1)
+	     + (lpszElement6 == 0 ? 0 : strlen(lpszElement6) + 1)
+	     + (lpszElement7 == 0 ? 0 : strlen(lpszElement7) + 1)
+	     + (lpszElement8 == 0 ? 0 : strlen(lpszElement8) + 1)
 	     + 1
 	     );
     Set (lpszElement1);

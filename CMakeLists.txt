@@ -814,15 +814,11 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_md5walk_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_md5walk_dir})
 
 add_subdirectory(${rel_mthelp_dir})
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_mpc_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_mpc_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_padout_dir})
