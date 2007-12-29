@@ -63,7 +63,7 @@ using namespace std;
    _________________________________________________________________________ */
 
 const char * MD5WALK_FILE = ".nvsbl";
-const char * NAME_CHECK_INTEGRITY = T_("chkdata");
+const char * NAME_CHECK_INTEGRITY = "chkdata";
 
 /* _________________________________________________________________________
 
@@ -174,7 +174,7 @@ int optPauseWhenFinished = false;
 
 void
 Verbose (/*[in]*/ const char *	lpszFormat,
-	 /*[in]*/			...)
+	 /*[in]*/		...)
 {
   if (! optVerbose)
     {
@@ -208,19 +208,19 @@ enum Option
 
 const struct poptOption aoption[] = {
   {
-    T_("binary"), 0, POPT_ARG_VAL, &optBinary, true,
+    "binary", 0, POPT_ARG_VAL, &optBinary, true,
     T_("Print binary MD5."), 0
   },
   {
-    T_("check"), 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CHECK,
+    "check", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CHECK,
     T_("Check the data integrity."), 0
   },
   {
-    T_("compute-digest"), 0, POPT_ARG_NONE, 0, OPT_COMPUTE_DIGEST,
+    "compute-digest", 0, POPT_ARG_NONE, 0, OPT_COMPUTE_DIGEST,
     T_("Compute the MD5."), 0,
   },
   {
-    T_("exclude"), 0, POPT_ARG_STRING, 0, OPT_EXCLUDE,
+    "exclude", 0, POPT_ARG_STRING, 0, OPT_EXCLUDE,
     T_("Files (*.EXT) to be excluded."),
     T_(".EXT")
   },
@@ -229,11 +229,11 @@ const struct poptOption aoption[] = {
     T_("Find duplicates."), 0
   },
   {
-    T_("verbose"), 0, POPT_ARG_VAL, &optVerbose, true,
+    "verbose", 0, POPT_ARG_VAL, &optVerbose, true,
     T_("Print information about what is being done."), 0
   },
   {
-    T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
+    "version", 0, POPT_ARG_NONE, 0, OPT_VERSION,
     T_("Show version information and exit."), 0
   },
   POPT_AUTOHELP
