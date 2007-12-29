@@ -33,6 +33,7 @@
 <!ENTITY LaTeX "<application>LaTeX</application>">
 <!ENTITY METAFONT "<application>METAFONT</application>">
 <!ENTITY MO "<acronym>MO</acronym>">
+<!ENTITY MPC "<acronym>MPC</acronym>">
 <!ENTITY MPM "<acronym>MPM</acronym>">
 <!ENTITY MakeIndex "<application>MakeIndex</application>">
 <!ENTITY MetaPost "<application>MetaPost</application>">
@@ -74,6 +75,7 @@
 <!ENTITY Type1 "Type&nbsp;1">
 <!ENTITY URW "<acronym>URW</acronym>">
 <!ENTITY UAC "<acronym>UAC</acronym>">
+<!ENTITY SVN "<acronym>SVN</acronym>">
 <!ENTITY WinEdt "<application>WinEdt</application>">
 <!ENTITY Windows "<application>Windows</application>">
 <!ENTITY WindowsMe "<application>Windows&nbsp;Millennium Edition</application>">
@@ -93,13 +95,20 @@
 <!ENTITY Unixlike "<application>&Unix;-like</application>">
 <!ENTITY UNIX "<application>UNIX&reg;</application>">
 <!ENTITY Yap "<application>Yap</application>">
+<!ENTITY Cygwin "<application>Cygwin</application>">
 <!ENTITY bibtex "<command>bibtex</command>">
 <!ENTITY dvicopy "<command>dvicopy</command>">
 <!ENTITY dvips "<command>dvips</command>">
 <!ENTITY eplain "<command>eplain</command>">
 <!ENTITY pdfopen "<command>pdfopen</command>">
 <!ENTITY pdfclose "<command>pdfclose</command>">
+<!ENTITY mpc "<command>mpc</command>">
 <!ENTITY findtexmf "<command>findtexmf</command>">
+<!ENTITY md5walk "<command>md5walk</command>">
+<!ENTITY cabextract "<command>cabextract</command>">
+<!ENTITY tar "<command>tar</command>">
+<!ENTITY rsync "<command>rsync</command>">
+<!ENTITY lzma "<command>lzma</command>">
 <!ENTITY gftodvi "<command>gftodvi</command>">
 <!ENTITY inimf "<command>inimf</command>">
 <!ENTITY inimpost "<command>inimpost</command>">
