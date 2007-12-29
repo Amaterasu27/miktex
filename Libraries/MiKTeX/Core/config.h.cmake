@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -22,6 +22,7 @@
 #cmakedefine CMAKE_USE_PTHREADS_INIT 1
 #cmakedefine HAVE_DIRENT_H 1
 #cmakedefine HAVE_FORK 1
+#cmakedefine HAVE_MMAP 1
 #cmakedefine HAVE_INTTYPES_H 1
 #cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
 #cmakedefine HAVE_SYS_MMAN_H 1

@@ -22,6 +22,11 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
 set(${md5_dll_name}_sources
   global.h
   internal.h

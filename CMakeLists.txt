@@ -242,6 +242,7 @@ check_function_exists(geteuid HAVE_GETEUID)
 check_function_exists(getuid HAVE_GETUID)
 check_function_exists(memcmp HAVE_MEMCMP)
 check_function_exists(memmove HAVE_MEMMOVE)
+check_function_exists(mmap HAVE_MMAP)
 check_function_exists(resolvepath HAVE_RESOLVEPATH)
 check_function_exists(setenv HAVE_SETENV)
 check_function_exists(setreuid HAVE_SETREUID)
@@ -352,6 +353,10 @@ endif(MIKTEX_ROOTS)
 if(MIKTEX_INSTALLROOT)
   add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
 endif(MIKTEX_INSTALLROOT)
+
+if(HAVE_STDINT_H)
+  add_definitions(-DHAVE_STDINT_H)
+endif(HAVE_STDINT_H)
 
 set(CMAKE_RC_FLAGS
   "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
