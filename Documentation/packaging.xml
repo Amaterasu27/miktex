@@ -150,6 +150,11 @@ the actual files of the package.</para></listitem>
 basic information about the package.</para></listitem>
 </varlistentry>
 </variablelist>
+
+<para>The <filename>Description</filename> file and the
+<filename>Files</filename> sub-directory are optional. The
+<filename>package.ini</filename> file is required.</para>
+
 <section>
 
 <title>The <filename>Files</filename> directory</title>
@@ -163,8 +168,8 @@ two files: <filename>mystuff.sty</filename> and
 <filename>mystuff.pdf</filename>:</para>
 
 <informalexample>
-<screen>C:\staging\mystuff\Files\texmf\tex\latex\mystuff\mystuff.sty
-C:\staging\mystuff\Files\texmf\doc\latex\mystuff\mystuff.pdf</screen>
+<screen>Files\texmf\tex\latex\mystuff\mystuff.sty
+Files\texmf\doc\latex\mystuff\mystuff.pdf</screen>
 </informalexample>
 
 </section>
@@ -245,6 +250,8 @@ Writing database to C:\package-repository...
 
 <prompt>&prompt;</prompt></screen>
 </informalexample>
+
+<para>&MPC; is run from the staging directory <filename>C:\packages\mystuff</filename>.</para>
 
 </section>
 
