@@ -70,15 +70,15 @@ extract files from <filename>.tar.lzma</filename> files. It is a part of the
 </varlistentry>
 <varlistentry>
 <term>&md5walk;</term>
-<listitem><para>&md5walk; is used to calculate the &TDS; digest of
-a package. The source code of &md5walk; can be obtained from
+<listitem><para>&MD5Walk; is used to calculate the fingerprint (digest) of
+a package. The source code of &MD5Walk; can be obtained from
 the &MiKTeX; project page.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>&mpc;</term>
-<listitem><para>The &MPC; utility is used to maintain the contents
+<listitem><para>The &MiKTeXPackageCreator; (&MPC;) is used to maintain the contents
 of a local package repository.
-The source code of &mpc; can be obtained from the
+The source code of &MPC; can be obtained from the
 &MiKTeX; project page.</para></listitem>
 </varlistentry>
 <varlistentry>
@@ -95,7 +95,7 @@ package archive files. It is a part of the
 </varlistentry>
 </variablelist>
 
-<para>All but &mpc; and &md5walk; are standard utilities which are
+<para>All but &MPC; and &MD5Walk; are standard utilities which are
 available on all platforms (&Windows;, &GNULinux;, &hellip;). The
 portable source code of &mpc; and &md5walk; can be obtained from the
 &MiKTeX; project page.</para>

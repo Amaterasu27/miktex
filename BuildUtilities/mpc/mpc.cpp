@@ -21,7 +21,7 @@
 #include "StdAfx.h"
 #include "internal.h"
 
-const char * const TheNameOfTheGame = T_("MiKTeX Package Composer");
+const char * const TheNameOfTheGame = T_("MiKTeX Package Creator");
 
 #define PROGNAME "mpc"
 
@@ -185,15 +185,15 @@ struct MpcPackageInfo : public PackageInfo
 
 /* _________________________________________________________________________
 
-   PackageComposer
+   PackageCreator
    _________________________________________________________________________ */
 
-class PackageComposer
+class PackageCreator
   : public IRunProcessCallback
 
 {
 public:
-  PackageComposer ()
+  PackageCreator ()
     : optVerbose (false),
       timePackaged (static_cast<time_t>(-1)),
       texmfPrefix ("texmf"),
@@ -473,10 +473,10 @@ private:
 
 /* _________________________________________________________________________
 
-   PackageComposer::options
+   PackageCreator::options
    _________________________________________________________________________ */
 
-const struct poptOption PackageComposer::options[] = {
+const struct poptOption PackageCreator::options[] = {
 
   {
     "build-tds", 0,
@@ -620,11 +620,11 @@ const struct poptOption PackageComposer::options[] = {
 
 /* _________________________________________________________________________
 
-   PackageComposer::Init
+   PackageCreator::Init
    _________________________________________________________________________ */
 
 void
-PackageComposer::Init (/*[in]*/ const char * argv0)
+PackageCreator::Init (/*[in]*/ const char * argv0)
 {
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName (argv0);
@@ -633,22 +633,22 @@ PackageComposer::Init (/*[in]*/ const char * argv0)
 
 /* _________________________________________________________________________
 
-   PackageComposer::Finalize
+   PackageCreator::Finalize
    _________________________________________________________________________ */
 
 void
-PackageComposer::Finalize ()
+PackageCreator::Finalize ()
 {
   pSession.Reset ();
 }
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetDbArchiveFileType
+   PackageCreator::GetDbArchiveFileType
    _________________________________________________________________________ */
 
 ArchiveFileType
-PackageComposer::GetDbArchiveFileType ()
+PackageCreator::GetDbArchiveFileType ()
 {
   if (miktexSeries < "2.7")
     {
@@ -662,12 +662,12 @@ PackageComposer::GetDbArchiveFileType ()
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetDbFileName
+   PackageCreator::GetDbFileName
    _________________________________________________________________________ */
 
 PathName
-PackageComposer::GetDbFileName (/*[in]*/ int			id,
-				/*[in]*/ const VersionNumber &	versionNumber)
+PackageCreator::GetDbFileName (/*[in]*/ int			id,
+			       /*[in]*/ const VersionNumber &	versionNumber)
 {
   PathName ret ("miktex-zzdb");
   ret.Append (NUMTOSTR(id), false);
@@ -680,34 +680,34 @@ PackageComposer::GetDbFileName (/*[in]*/ int			id,
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetDbLightFileName
+   PackageCreator::GetDbLightFileName
    _________________________________________________________________________ */
 
 PathName
-PackageComposer::GetDbLightFileName ()
+PackageCreator::GetDbLightFileName ()
 {
   return (GetDbFileName(1, miktexSeries));
 }
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetDbHeavyFileName
+   PackageCreator::GetDbHeavyFileName
    _________________________________________________________________________ */
 
 PathName
-PackageComposer::GetDbHeavyFileName ()
+PackageCreator::GetDbHeavyFileName ()
 {
   return (GetDbFileName(2, miktexSeries));
 }
 
 /* _________________________________________________________________________
 
-   PackageComposer::Verbose
+   PackageCreator::Verbose
    _________________________________________________________________________ */
 
 void
-PackageComposer::Verbose (/*[in]*/ const char *	lpszFormat,
-			  /*[in]*/		...)
+PackageCreator::Verbose (/*[in]*/ const char *	lpszFormat,
+			 /*[in]*/		...)
 {
   if (optVerbose)
     {
@@ -720,12 +720,12 @@ PackageComposer::Verbose (/*[in]*/ const char *	lpszFormat,
 
 /* _________________________________________________________________________
 
-   PackageComposer::FatalError
+   PackageCreator::FatalError
    _________________________________________________________________________ */
 
 void
-PackageComposer::FatalError (/*[in]*/ const char *	lpszFormat,
-			     /*[in]*/			...)
+PackageCreator::FatalError (/*[in]*/ const char *	lpszFormat,
+			    /*[in]*/			...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -738,12 +738,12 @@ PackageComposer::FatalError (/*[in]*/ const char *	lpszFormat,
 
 /* _________________________________________________________________________
 
-   PackageComposer::Warning
+   PackageCreator::Warning
    _________________________________________________________________________ */
 
 void
-PackageComposer::Warning (/*[in]*/ const char *	lpszFormat,
-			  /*[in]*/		...)
+PackageCreator::Warning (/*[in]*/ const char *	lpszFormat,
+			 /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -755,11 +755,11 @@ PackageComposer::Warning (/*[in]*/ const char *	lpszFormat,
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetTdsDigest
+   PackageCreator::GetTdsDigest
    _________________________________________________________________________ */
 
 MD5
-PackageComposer::GetTdsDigest (/*[in]*/ const FileDigestTable &	fileDigests)
+PackageCreator::GetTdsDigest (/*[in]*/ const FileDigestTable &	fileDigests)
 {
   MD5Builder md5Builder;
   for (FileDigestTable::const_iterator it = fileDigests.begin();
@@ -777,12 +777,12 @@ PackageComposer::GetTdsDigest (/*[in]*/ const FileDigestTable &	fileDigests)
 
 /* _________________________________________________________________________
 
-   PackageComposer::MD5CopyFile
+   PackageCreator::MD5CopyFile
    _________________________________________________________________________ */
 
 MD5
-PackageComposer::MD5CopyFile (/*[in]*/ const PathName &	source,
-			      /*[in]*/ const PathName &	dest)
+PackageCreator::MD5CopyFile (/*[in]*/ const PathName &	source,
+			     /*[in]*/ const PathName &	dest)
 {
   FileStream fromStream (File::Open(source,
 				    FileMode::Open,
@@ -812,14 +812,14 @@ PackageComposer::MD5CopyFile (/*[in]*/ const PathName &	source,
 
 /* _________________________________________________________________________
 
-   PackageComposer::MD5WildCopy
+   PackageCreator::MD5WildCopy
    _________________________________________________________________________ */
 
 void
-PackageComposer::MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
-			      /*[in]*/ const PathName &		destDir,
-			      /*[in]*/ const PathName &		prefix,
-			      /*[in,out]*/ FileDigestTable &	fileDigests)
+PackageCreator::MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
+			     /*[in]*/ const PathName &		destDir,
+			     /*[in]*/ const PathName &		prefix,
+			     /*[in,out]*/ FileDigestTable &	fileDigests)
 {
   PathName sourceDir (sourceTemplate);
   sourceDir.RemoveFileSpec ();
@@ -886,16 +886,16 @@ PackageComposer::MD5WildCopy (/*[in]*/ const PathName &		sourceTemplate,
 
 /* _________________________________________________________________________
 
-   PackageComposer::MD5CopyFiles
+   PackageCreator::MD5CopyFiles
    _________________________________________________________________________ */
 
 void
-PackageComposer::MD5CopyFiles (/*[in]*/ const vector<string> &	files,
-			       /*[in]*/ const PathName &	sourceDir,
-			       /*[in]*/ const char *	lpszSourceSubDir,
-			       /*[in]*/ const PathName &	destDir,
-			       /*[in]*/ const char *		lpszDestSubDir,
-			       /*[in,out]*/ FileDigestTable &	fileDigests)
+PackageCreator::MD5CopyFiles (/*[in]*/ const vector<string> &	files,
+			      /*[in]*/ const PathName &		sourceDir,
+			      /*[in]*/ const char *	lpszSourceSubDir,
+			      /*[in]*/ const PathName &		destDir,
+			      /*[in]*/ const char *		lpszDestSubDir,
+			      /*[in,out]*/ FileDigestTable &	fileDigests)
 {
   // path to source root directory
   PathName sourceRootDir (sourceDir, lpszSourceSubDir);
@@ -921,12 +921,12 @@ PackageComposer::MD5CopyFiles (/*[in]*/ const vector<string> &	files,
 
 /* _________________________________________________________________________
 
-   PackageComposer::WriteDescriptionFile
+   PackageCreator::WriteDescriptionFile
    _________________________________________________________________________ */
 
 void
-PackageComposer::WriteDescriptionFile (/*[in]*/ const string &	description,
-				       /*[in]*/ const PathName & stagingDir)
+PackageCreator::WriteDescriptionFile (/*[in]*/ const string &	description,
+				      /*[in]*/ const PathName & stagingDir)
 {
   Directory::Create (stagingDir);
   FileStream stream (File::Open(PathName(stagingDir, "Description", 0),
@@ -938,13 +938,13 @@ PackageComposer::WriteDescriptionFile (/*[in]*/ const string &	description,
 
 /* _________________________________________________________________________
 
-   PackageComposer::InitializeStagingDirectory
+   PackageCreator::InitializeStagingDirectory
 
    Write package.ini and Description.
    _________________________________________________________________________ */
 
 void
-PackageComposer::InitializeStagingDirectory
+PackageCreator::InitializeStagingDirectory
 (/*[in]*/ const PackageInfo &	packageInfo,
  /*[in]*/ const MD5 &		digest,
  /*[in]*/ const PathName &	stagingDir)
@@ -985,12 +985,12 @@ PackageComposer::InitializeStagingDirectory
 
 /* _________________________________________________________________________
 
-   PackageComposer::CopyPackage
+   PackageCreator::CopyPackage
    _________________________________________________________________________ */
 
 void
-PackageComposer::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
-			      /*[in]*/ const PathName &		destDir)
+PackageCreator::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
+			     /*[in]*/ const PathName &		destDir)
 {
   Verbose (T_("Copying %s ..."), Q_(packageinfo.deploymentName.c_str()));
 
@@ -1043,12 +1043,12 @@ PackageComposer::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
 
 /* _________________________________________________________________________
 
-   PackageComposer::ReadDescriptionFile
+   PackageCreator::ReadDescriptionFile
    _________________________________________________________________________ */
 
 void
-PackageComposer::ReadDescriptionFile (/*[in]*/ const char *	lpszStagingDir,
-				      /*[out]*/ string &	description)
+PackageCreator::ReadDescriptionFile (/*[in]*/ const char *	lpszStagingDir,
+				     /*[out]*/ string &		description)
 {
   PathName descriptionFileName (lpszStagingDir, "Description");
   if (! File::Exists(descriptionFileName))
@@ -1069,11 +1069,11 @@ PackageComposer::ReadDescriptionFile (/*[in]*/ const char *	lpszStagingDir,
 
 /* _________________________________________________________________________
 
-   PackageComposer::InitializePackageInfo
+   PackageCreator::InitializePackageInfo
    _________________________________________________________________________ */
 
 MpcPackageInfo
-PackageComposer::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
+PackageCreator::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
 {
   MpcPackageInfo packageInfo;
 
@@ -1133,11 +1133,11 @@ PackageComposer::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetPackageLevel
+   PackageCreator::GetPackageLevel
    _________________________________________________________________________ */
 
 char
-PackageComposer::GetPackageLevel (/*[in]*/ const MpcPackageInfo & packageInfo)
+PackageCreator::GetPackageLevel (/*[in]*/ const MpcPackageInfo & packageInfo)
 {
   map<string, PackageSpec>::const_iterator
     it = packageList.find(packageInfo.deploymentName);
@@ -1151,11 +1151,11 @@ PackageComposer::GetPackageLevel (/*[in]*/ const MpcPackageInfo & packageInfo)
 
 /* _________________________________________________________________________
 
-   PackageComposer::GetPackageArchiveFileType
+   PackageCreator::GetPackageArchiveFileType
    _________________________________________________________________________ */
 
 ArchiveFileType
-PackageComposer::GetPackageArchiveFileType
+PackageCreator::GetPackageArchiveFileType
 (/*[in]*/ const MpcPackageInfo &	packageInfo)
 {
   map<string, PackageSpec>::const_iterator
@@ -1170,23 +1170,23 @@ PackageComposer::GetPackageArchiveFileType
 
 /* _________________________________________________________________________
 
-   PackageComposer::ConsiderP
+   PackageCreator::ConsiderP
    _________________________________________________________________________ */
 
 bool
-PackageComposer::ConsiderP (/*[in]*/ const MpcPackageInfo &	packageInfo)
+PackageCreator::ConsiderP (/*[in]*/ const MpcPackageInfo &	packageInfo)
 {
   return (GetPackageLevel(packageInfo) != '-');
 }
 
 /* _________________________________________________________________________
 
-   PackageComposer::IsInTeXMFDirectory
+   PackageCreator::IsInTeXMFDirectory
    _________________________________________________________________________ */
 
 bool
-PackageComposer::IsInTeXMFDirectory (/*[in]*/ const PathName &	relPath,
-				     /*[in]*/ const char * lpszDirectory)
+PackageCreator::IsInTeXMFDirectory (/*[in]*/ const PathName &	relPath,
+				    /*[in]*/ const char * lpszDirectory)
 {
   PathName texmfDirectory (texmfPrefix);
   texmfDirectory += lpszDirectory;
@@ -1198,18 +1198,18 @@ PackageComposer::IsInTeXMFDirectory (/*[in]*/ const PathName &	relPath,
 
 /* _________________________________________________________________________
 
-   PackageComposer::CollectFiles
+   PackageCreator::CollectFiles
    _________________________________________________________________________ */
 
 void
-PackageComposer::CollectFiles (/*[in]*/ const PathName &	rootDir,
-			       /*[in]*/ const PathName &	subDir,
-			       /*[out]*/ vector<string> &	runFiles,
-			       /*[out]*/ size_t &		sizeRunFiles,
-			       /*[out]*/ vector<string> &	docFiles,
-			       /*[out]*/ size_t &		sizeDocFiles,
-			       /*[out]*/ vector<string> &	sourceFiles,
-			       /*[out]*/ size_t &	sizeSourceFiles)
+PackageCreator::CollectFiles (/*[in]*/ const PathName &		rootDir,
+			      /*[in]*/ const PathName &		subDir,
+			      /*[out]*/ vector<string> &	runFiles,
+			      /*[out]*/ size_t &		sizeRunFiles,
+			      /*[out]*/ vector<string> &	docFiles,
+			      /*[out]*/ size_t &		sizeDocFiles,
+			      /*[out]*/ vector<string> &	sourceFiles,
+			      /*[out]*/ size_t &	sizeSourceFiles)
 {
   // directory to be inspected, e.g.:
   // /mypackages/a0poster/RunFiles/texmf/tex/latex/a0poster/
@@ -1268,18 +1268,18 @@ PackageComposer::CollectFiles (/*[in]*/ const PathName &	rootDir,
 
 /* _________________________________________________________________________
 
-   PackageComposer::CollectSubTree
+   PackageCreator::CollectSubTree
    _________________________________________________________________________ */
 
 void
-PackageComposer::CollectSubTree (/*[in]*/ const PathName &	path,
-				 /*[in]*/ const char *		lpszSubDir,
-				 /*[out]*/ vector<string> &	runFiles,
-				 /*[out]*/ size_t &		sizeRunFiles,
-				 /*[out]*/ vector<string> &	docFiles,
-				 /*[out]*/ size_t &		sizeDocFiles,
-				 /*[out]*/ vector<string> &	sourceFiles,
-				 /*[out]*/ size_t &	sizeSourceFiles)
+PackageCreator::CollectSubTree (/*[in]*/ const PathName &	path,
+				/*[in]*/ const char *		lpszSubDir,
+				/*[out]*/ vector<string> &	runFiles,
+				/*[out]*/ size_t &		sizeRunFiles,
+				/*[out]*/ vector<string> &	docFiles,
+				/*[out]*/ size_t &		sizeDocFiles,
+				/*[out]*/ vector<string> &	sourceFiles,
+				/*[out]*/ size_t &	sizeSourceFiles)
 {
   PathName sourceDir (path, lpszSubDir);
   CollectFiles (sourceDir,
@@ -1291,11 +1291,11 @@ PackageComposer::CollectSubTree (/*[in]*/ const PathName &	path,
 
 /* _________________________________________________________________________
 
-   PackageComposer::CollectPackage
+   PackageCreator::CollectPackage
    _________________________________________________________________________ */
 
 void
-PackageComposer::CollectPackage (/*[in,out]*/ MpcPackageInfo &	packageInfo)
+PackageCreator::CollectPackage (/*[in,out]*/ MpcPackageInfo &	packageInfo)
 {
   // clear file lists
   packageInfo.sizeRunFiles = 0;
@@ -1318,11 +1318,11 @@ PackageComposer::CollectPackage (/*[in,out]*/ MpcPackageInfo &	packageInfo)
 
 /* _________________________________________________________________________
 
-   PackageComposer::CollectPackages
+   PackageCreator::CollectPackages
    _________________________________________________________________________ */
 
 void
-PackageComposer::CollectPackages
+PackageCreator::CollectPackages
 (/*[in]*/ const PathName &			stagingRoot,
  /*[in,out]*/ map<string, MpcPackageInfo> &	packageTable)
 {
@@ -1384,11 +1384,11 @@ PackageComposer::CollectPackages
 
 /* _________________________________________________________________________
 
-   PackageComposer::BuildTDS
+   PackageCreator::BuildTDS
    _________________________________________________________________________ */
 
 void
-PackageComposer::BuildTDS
+PackageCreator::BuildTDS
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
  /*[in,out]*/ Cfg &				dbLight)
@@ -1428,11 +1428,11 @@ PackageComposer::BuildTDS
 
 /* _________________________________________________________________________
 
-   PackageComposer::WritePackageDefinitionFiles
+   PackageCreator::WritePackageDefinitionFiles
    _________________________________________________________________________ */
 
 void
-PackageComposer::WritePackageDefinitionFiles
+PackageCreator::WritePackageDefinitionFiles
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			destDir,
  /*[in]*/ Cfg &					dbLight)
@@ -1483,23 +1483,23 @@ PackageComposer::WritePackageDefinitionFiles
 
 /* _________________________________________________________________________
 
-   PackageComposer::OnProcessOutput
+   PackageCreator::OnProcessOutput
    _________________________________________________________________________ */
 
 bool
-PackageComposer::OnProcessOutput (/*[in]*/ const void *	pOutput,
-				  /*[in]*/ size_t	n)
+PackageCreator::OnProcessOutput (/*[in]*/ const void *	pOutput,
+				 /*[in]*/ size_t	n)
 {
   return (true);
 }
 
 /* _________________________________________________________________________
 
-   PackageComposer::ExecuteSystemCommand
+   PackageCreator::ExecuteSystemCommand
    _________________________________________________________________________ */
 
 void
-PackageComposer::ExecuteSystemCommand (/*[in]*/ const char * lpszCommand)
+PackageCreator::ExecuteSystemCommand (/*[in]*/ const char * lpszCommand)
 {
   int exitCode = 0;
   if (! Process::ExecuteSystemCommand(lpszCommand, &exitCode, this, 0)
@@ -1511,13 +1511,13 @@ PackageComposer::ExecuteSystemCommand (/*[in]*/ const char * lpszCommand)
 
 /* _________________________________________________________________________
 
-   PackageComposer::RunArchiver
+   PackageCreator::RunArchiver
    _________________________________________________________________________ */
 
 void
-PackageComposer::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
-			      /*[in]*/ const PathName &	archiveFile,
-			      /*[in]*/ const char *	lpszFilter)
+PackageCreator::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
+			     /*[in]*/ const PathName &	archiveFile,
+			     /*[in]*/ const char *	lpszFilter)
 {
   string command;
   switch (archiveFileType.Get())
@@ -1544,11 +1544,11 @@ PackageComposer::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
 
 /* _________________________________________________________________________
 
-   PackageComposer::WriteDatabase
+   PackageCreator::WriteDatabase
    _________________________________________________________________________ */
 
 void
-PackageComposer::WriteDatabase
+PackageCreator::WriteDatabase
 (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			repository,
  /*[in]*/ bool					removeObsoleteRecords,
@@ -1618,12 +1618,12 @@ PackageComposer::WriteDatabase
 
 /* _________________________________________________________________________
 
-   PackageComposer::Extract
+   PackageCreator::Extract
    _________________________________________________________________________ */
 
 void
-PackageComposer::Extract (/*[in]*/ const PathName &	archiveFile,
-			  /*[in]*/ ArchiveFileType	archiveFileType)
+PackageCreator::Extract (/*[in]*/ const PathName &	archiveFile,
+			 /*[in]*/ ArchiveFileType	archiveFileType)
 {
   string command;
   switch (archiveFileType.Get())
@@ -1651,14 +1651,14 @@ PackageComposer::Extract (/*[in]*/ const PathName &	archiveFile,
 
 /* _________________________________________________________________________
 
-   PackageComposer::ExtractFile
+   PackageCreator::ExtractFile
    _________________________________________________________________________ */
 
 void
-PackageComposer::ExtractFile (/*[in]*/ const PathName &	archiveFile,
-			      /*[in]*/ ArchiveFileType	archiveFileType,
-			      /*[in]*/ const PathName &	toBeExtracted,
-			      /*[in]*/ const PathName &	outFile)
+PackageCreator::ExtractFile (/*[in]*/ const PathName &	archiveFile,
+			     /*[in]*/ ArchiveFileType	archiveFileType,
+			     /*[in]*/ const PathName &	toBeExtracted,
+			     /*[in]*/ const PathName &	outFile)
 {
   string command;
   switch (archiveFileType.Get())
@@ -1698,13 +1698,13 @@ PackageComposer::ExtractFile (/*[in]*/ const PathName &	archiveFile,
 
 /* _________________________________________________________________________
 
-   PackageComposer::CompressArchive
+   PackageCreator::CompressArchive
    _________________________________________________________________________ */
 
 void
-PackageComposer::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
-				  /*[in]*/ ArchiveFileType archiveFileType,
-				  /*[in]*/ const PathName &	outFile)
+PackageCreator::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
+				 /*[in]*/ ArchiveFileType archiveFileType,
+				 /*[in]*/ const PathName &	outFile)
 {
   string command;
   switch (archiveFileType.Get())
@@ -1732,12 +1732,12 @@ PackageComposer::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
 
 /* _________________________________________________________________________
 
-   PackageComposer::CreateArchiveFile
+   PackageCreator::CreateArchiveFile
    _________________________________________________________________________ */
 
 ArchiveFileType
-PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
-				    /*[in]*/ const PathName &	repository)
+PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
+				   /*[in]*/ const PathName &	repository)
 {
   PathName archiveFile;
 
@@ -1919,11 +1919,11 @@ PackageComposer::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 
 /* _________________________________________________________________________
 
-   PackageComposer::LoadDbLight
+   PackageCreator::LoadDbLight
    _________________________________________________________________________ */
 
 Cfg *
-PackageComposer::LoadDbLight (/*[in]*/ const PathName &	repository)
+PackageCreator::LoadDbLight (/*[in]*/ const PathName &	repository)
 {
   // path to the light-weight database file
   PathName pathDbLight = repository;
@@ -1964,11 +1964,11 @@ PackageComposer::LoadDbLight (/*[in]*/ const PathName &	repository)
 
 /* _________________________________________________________________________
 
-   PackageComposer::LoadDbHeavy
+   PackageCreator::LoadDbHeavy
    _________________________________________________________________________ */
 
 map<string, MpcPackageInfo>
-PackageComposer::LoadDbHeavy (/*[in]*/ const PathName & repository)
+PackageCreator::LoadDbHeavy (/*[in]*/ const PathName & repository)
 {
   map<string, MpcPackageInfo> packageTable;
 
@@ -2024,11 +2024,11 @@ PackageComposer::LoadDbHeavy (/*[in]*/ const PathName & repository)
 
 /* _________________________________________________________________________
 
-   PackageComposer::UpdateRepository
+   PackageCreator::UpdateRepository
    _________________________________________________________________________ */
 
 void
-PackageComposer::UpdateRepository
+PackageCreator::UpdateRepository
 (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
  /*[in]*/ const PathName &			repository,
  /*[out]*/ Cfg &				dbLight)
@@ -2123,12 +2123,12 @@ PackageComposer::UpdateRepository
 
 /* _________________________________________________________________________
 
-   PackageComposer::ReadList
+   PackageCreator::ReadList
    _________________________________________________________________________ */
 
 void
-PackageComposer::ReadList (/*[in]*/ const PathName &		path,
-			   /*[out]*/ map<string, PackageSpec> &	mapPackageList)
+PackageCreator::ReadList (/*[in]*/ const PathName &		path,
+			  /*[out]*/ map<string, PackageSpec> &	mapPackageList)
 {
   StreamReader reader (path);
   string line;
@@ -2190,12 +2190,12 @@ PackageComposer::ReadList (/*[in]*/ const PathName &		path,
 
 /* _________________________________________________________________________
 
-   PackageComposer::ReadList
+   PackageCreator::ReadList
    _________________________________________________________________________ */
 
 void
-PackageComposer::ReadList (/*[in]*/ const PathName &	path,
-			   /*[out]*/ set<string> &	setPackageList)
+PackageCreator::ReadList (/*[in]*/ const PathName &	path,
+			  /*[out]*/ set<string> &	setPackageList)
 {
   FileStream stream (File::Open(path,
 				FileMode::Open,
@@ -2224,11 +2224,11 @@ PackageComposer::ReadList (/*[in]*/ const PathName &	path,
 
 /* _________________________________________________________________________
 
-   PackageComposer::DisassemblePackage
+   PackageCreator::DisassemblePackage
    _________________________________________________________________________ */
 
 void
-PackageComposer::DisassemblePackage
+PackageCreator::DisassemblePackage
 (/*[in]*/ const PathName &	packageDefinitionFile,
  /*[in]*/ const PathName &	sourceDir,
  /*[in]*/ const PathName &	stagingDir)
@@ -2321,12 +2321,12 @@ PackageComposer::DisassemblePackage
 
 /* _________________________________________________________________________
 
-   PackageComposer::Run
+   PackageCreator::Run
    _________________________________________________________________________ */
 
 void
-PackageComposer::Run (/*[in]*/ int		argc,
-		      /*[in]*/ const char **	argv)
+PackageCreator::Run (/*[in]*/ int		argc,
+		     /*[in]*/ const char **	argv)
 {
   vector<string> stagingRoots;
 
@@ -2537,7 +2537,7 @@ main (/*[in]*/ int		argc,
 
   try
     {
-      PackageComposer app;
+      PackageCreator app;
       app.Init (argv[0]);
       app.Run (argc, argv);
       app.Finalize ();

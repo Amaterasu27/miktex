@@ -23,6 +23,6 @@
 #define VER_INTERNALNAME_STR "mpc"
 #define VER_ORIGINALFILENAME_STR "mpc.exe"
 
-#define VER_FILEDESCRIPTION_STR "MiKTeX Package Composer"
+#define VER_FILEDESCRIPTION_STR "MiKTeX Package Creator"
 
 #include "MiKTeX/Core/win/version.rc"
