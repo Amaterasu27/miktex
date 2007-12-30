@@ -107,4 +107,8 @@ target_link_libraries(dviscan
   ${popt_dll_name}
 )
 
-install(TARGETS ${dvi_dll_name} dviscan DESTINATION "${bindir}")
+install(TARGETS ${dvi_dll_name} dviscan
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

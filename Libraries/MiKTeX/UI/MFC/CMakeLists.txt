@@ -85,4 +85,8 @@ target_link_libraries(${ui_mfc_dll_name}
 
 rebase(${ui_mfc_dll_name})
 
-install(TARGETS ${ui_mfc_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${ui_mfc_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

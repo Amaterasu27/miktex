@@ -48,4 +48,8 @@ delay_load(${teckit_dll_name}
 
 rebase(${teckit_dll_name})
 
-install(TARGETS ${teckit_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${teckit_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

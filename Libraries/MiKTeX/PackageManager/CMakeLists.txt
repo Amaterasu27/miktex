@@ -176,4 +176,8 @@ delay_load(${mpm_dll_name}
 
 rebase(${mpm_dll_name})
 
-install(TARGETS ${mpm_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${mpm_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

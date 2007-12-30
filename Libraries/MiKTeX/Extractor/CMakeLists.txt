@@ -70,4 +70,8 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS ${extractor_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${extractor_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

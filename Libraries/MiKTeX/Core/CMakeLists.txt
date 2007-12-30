@@ -210,7 +210,10 @@ if(NATIVE_WINDOWS)
       rpcrt4
       uuid
     )
-    install(TARGETS ${core_ps_dll_name} DESTINATION "${bindir}")
+    install(TARGETS ${core_ps_dll_name}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}")
   endif(MFC_FOUND)
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
@@ -266,6 +269,10 @@ delay_load(${core_dll_name}
   
 rebase(${core_dll_name})
 
-install(TARGETS ${core_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${core_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
 
 add_subdirectory(test)

@@ -51,4 +51,8 @@ add_library(${regex_dll_name} SHARED ${${regex_dll_name}_sources})
 rebase(${gnu_dll_name})
 rebase(${regex_dll_name})
 
-install(TARGETS ${gnu_dll_name} ${regex_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${gnu_dll_name} ${regex_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

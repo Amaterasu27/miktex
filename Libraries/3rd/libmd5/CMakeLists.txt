@@ -49,4 +49,8 @@ add_library(${md5_dll_name} SHARED ${${md5_dll_name}_sources})
 
 rebase(${md5_dll_name})
 
-install(TARGETS ${md5_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${md5_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

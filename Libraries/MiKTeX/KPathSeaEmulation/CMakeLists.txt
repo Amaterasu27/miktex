@@ -93,4 +93,8 @@ target_link_libraries(${kpsemu_dll_name}
 
 rebase(${kpsemu_dll_name})
 
-install(TARGETS ${kpsemu_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${kpsemu_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

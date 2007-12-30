@@ -56,4 +56,8 @@ endif(NATIVE_WINDOWS AND MFC_FOUND)
 delay_load(${app_dll_name} ${mpm_dll_name} ${ui_mfc_dll_name})
 rebase(${app_dll_name})
 
-install(TARGETS ${app_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${app_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

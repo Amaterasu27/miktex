@@ -62,4 +62,8 @@ target_link_libraries(chunkdib
   ${popt_dll_name}
 )  
 
-install(TARGETS ${dib_dll_name} chunkdib DESTINATION "${bindir}")
+install(TARGETS ${dib_dll_name} chunkdib
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

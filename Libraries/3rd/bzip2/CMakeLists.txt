@@ -45,4 +45,8 @@ add_library(${bzip2_dll_name} SHARED ${${bzip2_dll_name}_sources})
 
 rebase(${bzip2_dll_name})
 
-install(TARGETS ${bzip2_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${bzip2_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

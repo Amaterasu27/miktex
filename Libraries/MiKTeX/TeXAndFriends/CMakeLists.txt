@@ -119,4 +119,8 @@ target_link_libraries(${texmf_dll_name}
 
 rebase(${texmf_dll_name})
 
-install(TARGETS ${texmf_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${texmf_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

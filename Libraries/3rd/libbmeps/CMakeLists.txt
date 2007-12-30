@@ -74,7 +74,11 @@ delay_load(${bmeps_dll_name}
   ${zlib_dll_name}
 )
 
-install(TARGETS ${bmeps_dll_name} DESTINATION ${bindir})
+install(TARGETS ${bmeps_dll_name}
+  RUNTIME DESTINATION ${bindir}
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
 
 set(bmeps_sources bmepsm.c)
 

@@ -61,4 +61,8 @@ target_link_libraries(${png_dll_name} ${zlib_dll_name})
 
 rebase(${png_dll_name})
 
-install(TARGETS ${png_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${png_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

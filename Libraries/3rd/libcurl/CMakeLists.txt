@@ -158,4 +158,8 @@ endif(NATIVE_WINDOWS)
 
 rebase(${curl_dll_name})
 
-install(TARGETS ${curl_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${curl_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
