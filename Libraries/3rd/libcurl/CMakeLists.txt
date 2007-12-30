@@ -23,6 +23,7 @@ add_definitions(-DBUILDING_LIBCURL)
 
 if(NATIVE_WINDOWS)
   add_definitions(-D_WIN32_WINNT=0x0501)
+  remove_definitions(-DHAVE_CONFIG_H)
 endif(NATIVE_WINDOWS)
 
 set(${curl_dll_name}_sources

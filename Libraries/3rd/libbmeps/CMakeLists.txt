@@ -22,6 +22,10 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+if(NATIVE_WINDOWS)
+  remove_definitions(-DHAVE_CONFIG_H)
+endif(NATIVE_WINDOWS)
+
 set(${bmeps_dll_name}_sources
   bmeps-version.h
   bmeps.c

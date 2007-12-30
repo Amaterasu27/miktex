@@ -1,1 +1,1 @@
-#include "MD5.h"
+#include <MiKTeX/Core/MD5.h>

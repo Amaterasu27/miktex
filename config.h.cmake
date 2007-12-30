@@ -17,5 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
+/* keep this file as minimal as possible */
+
 #cmakedefine HAVE_INTTYPES_H 1
 #cmakedefine HAVE_STDINT_H 1

@@ -39,6 +39,14 @@ configure_file(
 
 add_definitions(-DHAVE_CONFIG_H)
 
+if(MIKTEX_ROOTS)
+  add_definitions(-DMIKTEX_ROOTS=\\\"${MIKTEX_ROOTS}\\\")
+endif(MIKTEX_ROOTS)
+
+if(MIKTEX_INSTALLROOT)
+  add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
+endif(MIKTEX_INSTALLROOT)
+
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 

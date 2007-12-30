@@ -20,7 +20,6 @@
 typedef unsigned char *POINTER;
 
 #if defined(MIKTEX)
-#  include "config.h"
 #  if defined(HAVE_INTTYPES_H)
 #    include <inttypes.h>
 #  endif

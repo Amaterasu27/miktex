@@ -23,16 +23,16 @@ include_directories(
 )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/MiKTeX/Core/MD5.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/MD5.h
 )
 
 set(${md5_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/MD5.h
   global.h
   internal.h
   md5-version.h
   md5c.cpp
-  include/MiKTeX/Core/MD5
 )
 
 if(NATIVE_WINDOWS)

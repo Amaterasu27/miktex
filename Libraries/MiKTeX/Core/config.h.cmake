@@ -19,23 +19,26 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#cmakedefine CMAKE_USE_PTHREADS_INIT 1
 #cmakedefine HAVE_DIRENT_H 1
-#cmakedefine HAVE_FORK 1
-#cmakedefine HAVE_MMAP 1
 #cmakedefine HAVE_INTTYPES_H 1
-#cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
 #cmakedefine HAVE_SYS_MMAN_H 1
 #cmakedefine HAVE_SYS_STATVFS_H 1
 #cmakedefine HAVE_SYS_STAT_H 1
 #cmakedefine HAVE_SYS_UTIME_H 1
 #cmakedefine HAVE_SYS_UTSNAME_H 1
 #cmakedefine HAVE_SYS_WAIT_H 1
-#cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_UTIME_H 1
+
+#cmakedefine HAVE_FORK 1
+#cmakedefine HAVE_MMAP 1
+#cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_VFORK 1
 
-#if defined(CMAKE_USE_PTHREADS_INIT)
-#  define HAVE_PTHREAD
+#cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
+
+#cmakedefine CMAKE_USE_PTHREADS_INIT ${CMAKE_USE_PTHREADS_INIT}
+
+#if defined(CMAKE_USE_PTHREADS_INIT) && CMAKE_USE_PTHREADS_INIT
+#  define HAVE_PTHREAD 1
 #endif

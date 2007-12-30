@@ -321,6 +321,8 @@ mark_as_advanced(CMAKE_BUILD_TYPE)
 ###############################################################################
 ## add global definitions
 
+add_definitions(-DHAVE_CONFIG_H)
+
 add_definitions(-DMIKTEX)
 
 if(NATIVE_WINDOWS)
@@ -346,18 +348,6 @@ else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
 
-if(MIKTEX_ROOTS)
-  add_definitions(-DMIKTEX_ROOTS=\\\"${MIKTEX_ROOTS}\\\")
-endif(MIKTEX_ROOTS)
-
-if(MIKTEX_INSTALLROOT)
-  add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
-endif(MIKTEX_INSTALLROOT)
-
-if(HAVE_STDINT_H)
-  add_definitions(-DHAVE_STDINT_H)
-endif(HAVE_STDINT_H)
-
 set(CMAKE_RC_FLAGS
   "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 
@@ -365,8 +355,10 @@ set(CMAKE_RC_FLAGS
 ## add global include directories
 
 include_directories(
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_md5_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
@@ -429,6 +421,9 @@ link_directories(${LIBRARY_OUTPUT_PATH})
 
 file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR_NATIVE)
 file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
+
+configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake
+               ${CMAKE_BINARY_DIR}/config.h)
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)

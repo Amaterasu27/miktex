@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2007 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,11 +21,11 @@ use_static_crt()
 use_static_libraries()
 
 set(${md5_lib_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_md5_dir}//include/MiKTeX/Core/MD5.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/global.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/md5-version.h
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/md5c.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include/MiKTeX/Core/MD5
 )
 
 add_library(${md5_lib_name} STATIC ${${md5_lib_name}_sources})
