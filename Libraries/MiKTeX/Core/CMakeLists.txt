@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -246,6 +246,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
+set_target_properties(${core_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.0"
+    SOVERSION "1"
+)
+
 target_link_libraries(${core_dll_name}
   ${CMAKE_THREAD_LIBS_INIT}
   ${bzip2_dll_name}
@@ -274,5 +280,34 @@ install(TARGETS ${core_dll_name}
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
 )
+
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/Paths
+    ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/Version
+    include/MiKTeX/Core/Core
+    include/MiKTeX/Core/Debug
+    include/MiKTeX/Core/Definitions
+    include/MiKTeX/Core/Environment
+    include/MiKTeX/Core/First
+    include/MiKTeX/Core/Help
+    include/MiKTeX/Core/Registry
+    include/MiKTeX/Core/Test
+    include/MiKTeX/Core/Text
+    include/MiKTeX/Core/Trace
+    include/MiKTeX/Core/Urls
+  DESTINATION
+    ${incdir}/miktex
+)
+
+if(NATIVE_WINDOWS)
+  install(
+    FILES
+      include/MiKTeX/Core/win/DllProc
+      include/MiKTeX/Core/win/version.rc
+    DESTINATION
+      ${incdir}/miktex/win
+  )
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(test)

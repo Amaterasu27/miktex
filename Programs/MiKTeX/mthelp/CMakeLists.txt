@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -60,4 +60,8 @@ foreach(t ${exes})
   create_dll_wrapper(${t} ${mthelp_dll_name} mthelp)
 endforeach(t)
 
-install(TARGETS ${mthelp_dll_name} ${exes} DESTINATION ${bindir})
+install(TARGETS ${mthelp_dll_name} ${exes}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

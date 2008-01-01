@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,7 +23,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.ent.in
 if(BUILDING_MIKTEX)
   install(
     FILES local.txt
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/latex/00LocalGuide
+    DESTINATION ${texmfdir}/doc/latex/00LocalGuide
   )
 endif(BUILDING_MIKTEX)
 
@@ -822,7 +822,7 @@ if(NOT NATIVE_WINDOWS)
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
     DESTINATION
-	${mandir}
+	${mandir}/man1
   )
 endif(NOT NATIVE_WINDOWS)
 
