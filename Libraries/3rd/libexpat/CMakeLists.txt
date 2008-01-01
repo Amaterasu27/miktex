@@ -66,6 +66,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${expat_dll_name} SHARED ${${expat_dll_name}_sources})
 
+set_target_properties(${expat_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${expat_dll_name})
 
 install(TARGETS ${expat_dll_name}

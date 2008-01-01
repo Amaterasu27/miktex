@@ -55,6 +55,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${lzma_dll_name} SHARED ${${lzma_dll_name}_sources})
 
+set_target_properties(${lzma_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${lzma_dll_name})
 
 install(TARGETS ${lzma_dll_name}

@@ -56,6 +56,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${bmeps_dll_name} SHARED ${${bmeps_dll_name}_sources})
 
+set_target_properties(${bmeps_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${bmeps_dll_name})
 
 target_link_libraries(${bmeps_dll_name}

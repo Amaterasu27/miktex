@@ -56,6 +56,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${popt_dll_name} SHARED ${${popt_dll_name}_sources})
 
+set_target_properties(${popt_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${popt_dll_name})
 
 install(TARGETS ${popt_dll_name}

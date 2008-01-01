@@ -90,6 +90,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${pbm_dll_name} SHARED ${${pbm_dll_name}_sources})
 
+set_target_properties(${pbm_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${pbm_dll_name})
 
 foreach(e ${exes})
