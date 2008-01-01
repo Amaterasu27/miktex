@@ -41,8 +41,8 @@
 
 #include "mpc-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/MD5>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Core>
+#include <miktex/Core/MD5>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Version>

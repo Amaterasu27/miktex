@@ -21,4 +21,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2919
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

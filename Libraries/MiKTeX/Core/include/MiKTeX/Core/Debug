@@ -34,7 +34,7 @@
     }						\
   }
 
-#include <MiKTeX/Core/Text>
+#include <miktex/Core/Text>
 
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 

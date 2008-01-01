@@ -35,9 +35,9 @@
 #  include <process.h>
 #endif
 
-#include <MiKTeX/Core/Text>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Paths>
+#include <miktex/Core/Text>
+#include <miktex/Core/Core>
+#include <miktex/Core/Paths>
 #include <popt-miktex.h>
 
 #define MIKTEXTEST_BEGIN_NAMESPACE		\

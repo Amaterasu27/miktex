@@ -66,10 +66,10 @@ using stdext::hash_set;
 
 #include <cstdarg>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Environment>
-#include <MiKTeX/Core/MD5>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Environment>
+#include <miktex/Core/MD5>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
+#include <miktex/Core/Trace>

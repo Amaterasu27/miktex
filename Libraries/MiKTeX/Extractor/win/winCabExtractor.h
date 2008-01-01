@@ -23,7 +23,7 @@
 
 #if defined(ENABLE_WINDOWS_CAB_EXTRACTOR)
 
-#include "MiKTeX/Extractor/Extractor"
+#include "miktex/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
 

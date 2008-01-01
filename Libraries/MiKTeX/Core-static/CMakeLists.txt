@@ -47,14 +47,14 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/getdelim.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/graphics.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/gsinfo.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Text
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Core
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Environment
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/First
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Registry
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Test
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Trace
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Text
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Core
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Environment
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/First
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Paths
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Registry
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Test
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Trace
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/log.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/makefndb.cpp

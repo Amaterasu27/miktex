@@ -39,14 +39,14 @@
 #if ! defined(A089FEF06254514BA063DED44B70E66F_)
 #define A089FEF06254514BA063DED44B70E66F_
 
-#include <MiKTeX/Core/Definitions>
+#include <miktex/Core/Definitions>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>
 #endif
 
-#include <MiKTeX/Core/Text>
-#include <MiKTeX/Core/MD5>
+#include <miktex/Core/Text>
+#include <miktex/Core/MD5>
 
 #if defined(__cplusplus)
 #  include <cstdio>
@@ -219,7 +219,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 #if defined(__cplusplus)
 
-#include <MiKTeX/Core/Debug>
+#include <miktex/Core/Debug>
 
 /// @namespace MiKTeX::Core
 /// @brief The MiKTeX core namespace.

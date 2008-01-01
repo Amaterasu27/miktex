@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,6 +42,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${app_dll_name} SHARED ${${app_dll_name}_sources})
 
+set_target_properties(${app_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${app_dll_name}
   ${core_dll_name}
   ${mpm_dll_name}
@@ -54,10 +60,18 @@ if(NATIVE_WINDOWS AND MFC_FOUND)
 endif(NATIVE_WINDOWS AND MFC_FOUND)
 
 delay_load(${app_dll_name} ${mpm_dll_name} ${ui_mfc_dll_name})
+
 rebase(${app_dll_name})
 
 install(TARGETS ${app_dll_name}
   RUNTIME DESTINATION "${bindir}"
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/App/Application
+  DESTINATION
+    ${incdir}/miktex/App
 )

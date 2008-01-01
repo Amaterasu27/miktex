@@ -20,7 +20,7 @@
    02111-1307, USA. */
 
 #include "miktextest.h"
-#include <MiKTeX/DVI/Dvi>
+#include <miktex/DVI/Dvi>
 
 BEGIN_TEST_FUNC(1);
 {

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <MiKTeX/Core/First>
+#include <miktex/Core/First>
 
 #include <cctype>
 #include <climits>
@@ -39,8 +39,8 @@
 #include <stack>
 #include <string>
 
-#include <MiKTeX/Graphics/DibChunker>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Graphics/DibChunker>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Trace>

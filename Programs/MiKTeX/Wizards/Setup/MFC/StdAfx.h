@@ -75,14 +75,14 @@
 
 #include "Setup-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Extractor/Extractor>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Urls>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/win/DllProc>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Extractor/Extractor>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Urls>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
+#include <miktex/Core/win/DllProc>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

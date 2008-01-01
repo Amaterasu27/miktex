@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2904
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "7.17.1"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

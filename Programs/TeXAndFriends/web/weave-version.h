@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2088
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "4.4"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

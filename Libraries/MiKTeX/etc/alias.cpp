@@ -29,7 +29,7 @@
 #  define IN_PROCESS 1
 #endif
 
-#include <MiKTeX/Core/Definitions>
+#include <miktex/Core/Definitions>
 
 #if ! IN_PROCESS
 #  include <process.h>

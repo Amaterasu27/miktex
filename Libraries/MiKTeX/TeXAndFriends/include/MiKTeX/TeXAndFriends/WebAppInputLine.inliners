@@ -32,7 +32,7 @@
 #  error THEDATA not defined
 #endif
 
-#include <MiKTeX/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inliners>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

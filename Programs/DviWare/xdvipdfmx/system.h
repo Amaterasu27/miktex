@@ -26,9 +26,9 @@
 #define _SYSTEM_H_
 
 #ifdef MIKTEX
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #include "gnu-miktex.h"
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 #else
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>

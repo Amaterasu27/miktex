@@ -24,7 +24,7 @@
 #define THEDATA(x) GFTODVIDATA.m_##x
 
 #include "gftodvi.rc"
-#include <MiKTeX/TeXAndFriends/WebApp>
+#include <miktex/TeXAndFriends/WebApp>
 
 #define OPT_OVERFLOW_LABEL_OFFSET 1000
 #define OPT_TITLEFONT 1001
@@ -304,4 +304,4 @@ miktexgetlogofont ()
   return (THEAPP.GetLogoFont());
 }
 
-#include <MiKTeX/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inliners>

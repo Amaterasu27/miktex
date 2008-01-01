@@ -36,10 +36,10 @@
 #include <iostream>
 #include <vector>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Trace>
-#include <MiKTeX/Core/Environment>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/Core/Trace>
+#include <miktex/Core/Environment>
 #include <popt-miktex.h>
 #include <regex.h>
 

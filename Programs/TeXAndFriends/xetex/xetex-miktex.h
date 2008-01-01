@@ -33,8 +33,8 @@
 
 #include "xetex.rc"
 
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/TeXAndFriends/ETeXApp>
+#include <miktex/Core/Paths>
+#include <miktex/TeXAndFriends/ETeXApp>
 
 #if 0
 namespace xetex {
@@ -216,9 +216,9 @@ public:
 
 extern XETEXCLASS XETEXAPP;
 #define THEAPP XETEXAPP
-#include <MiKTeX/TeXAndFriends/ETeXApp.inliners>
+#include <miktex/TeXAndFriends/ETeXApp.inliners>
 
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 
 #include "xetex.h"
 

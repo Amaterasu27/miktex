@@ -51,23 +51,23 @@
 
 #include "mo-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/win/DllProc>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
+#include <miktex/Core/win/DllProc>
 
 #include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <MiKTeX/UI/MFC/ErrorDialog>
-#include <MiKTeX/UI/MFC/PackageTreeCtrl>
-#include <MiKTeX/UI/MFC/ProgressDialog>
-#include <MiKTeX/UI/MFC/SiteWizSheet>
-#include <MiKTeX/UI/MFC/TextViewerDialog>
-#include <MiKTeX/UI/MFC/UpdateDialog>
+#include <miktex/UI/MFC/ErrorDialog>
+#include <miktex/UI/MFC/PackageTreeCtrl>
+#include <miktex/UI/MFC/ProgressDialog>
+#include <miktex/UI/MFC/SiteWizSheet>
+#include <miktex/UI/MFC/TextViewerDialog>
+#include <miktex/UI/MFC/UpdateDialog>
 
 #if defined(_UNICODE)
 #  if defined(_M_IX86)

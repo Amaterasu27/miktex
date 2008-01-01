@@ -68,11 +68,11 @@
 
 #include <cfg.h>
 #include <getopt.h>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

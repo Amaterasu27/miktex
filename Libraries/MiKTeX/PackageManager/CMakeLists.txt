@@ -52,7 +52,7 @@ set(${mpm_dll_name}_sources
   WebFile.h
   WebSession.cpp
   WebSession.h
-  include/MiKTeX/PackageManager/PackageManager
+  include/miktex/PackageManager/PackageManager
   internal.h
   mpm-version.h
 )
@@ -148,6 +148,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
 
+set_target_properties(${mpm_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${mpm_dll_name}
   ${core_dll_name}
   ${expat_dll_name}
@@ -180,4 +186,11 @@ install(TARGETS ${mpm_dll_name}
   RUNTIME DESTINATION "${bindir}"
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/PackageManager/PackageManager
+  DESTINATION
+    ${incdir}/miktex/PackageManager
 )

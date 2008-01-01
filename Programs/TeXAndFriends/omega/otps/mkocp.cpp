@@ -23,7 +23,7 @@
 #include <memory>
 #include <string>
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 using namespace MiKTeX::Core;
 using namespace std;

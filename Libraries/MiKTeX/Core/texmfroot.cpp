@@ -23,10 +23,10 @@
 
 #include "internal.h"
 
-#include "MiKTeX/Core/Environment"
+#include "miktex/Core/Environment"
 
 #include "fnamedb.h"
-#include "MiKTeX/Core/Version"
+#include "miktex/Core/Version"
 
 // index of the hidden MPM root
 #define MPM_ROOT static_cast<unsigned>(GetNumberOfTEXMFRoots())

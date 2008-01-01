@@ -20,10 +20,10 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Text>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/DVI/Dvi>
+#include <miktex/App/Application>
+#include <miktex/Core/Text>
+#include <miktex/Core/Core>
+#include <miktex/DVI/Dvi>
 #include <popt-miktex.h>
 
 using namespace MiKTeX::App;

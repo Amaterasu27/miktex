@@ -58,11 +58,11 @@
 
 #include "mpm-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/win/DllProc>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
+#include <miktex/Core/win/DllProc>
 
 #pragma warning (push, 1)
 #pragma warning (disable: 4702)
@@ -71,11 +71,11 @@
 #include <string>
 #pragma warning (pop)
 
-#include <MiKTeX/UI/MFC/ErrorDialog>
-#include <MiKTeX/UI/MFC/ProgressDialog>
-#include <MiKTeX/UI/MFC/PropSheetPackage>
-#include <MiKTeX/UI/MFC/SiteWizSheet>
-#include <MiKTeX/UI/MFC/UpdateDialog>
+#include <miktex/UI/MFC/ErrorDialog>
+#include <miktex/UI/MFC/ProgressDialog>
+#include <miktex/UI/MFC/PropSheetPackage>
+#include <miktex/UI/MFC/SiteWizSheet>
+#include <miktex/UI/MFC/UpdateDialog>
 
 using namespace MiKTeX;
 using namespace MiKTeX::Packages;

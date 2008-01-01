@@ -26,7 +26,7 @@
 #endif
 
 #define EAD86981C92C904D808A5E6CEC64B90E
-#include "MiKTeX/Core/Core"
+#include "miktex/Core/Core"
 
 #include "core-version.h"
 
@@ -34,11 +34,11 @@
 #  include "MiKTeX/Core/win/DllProc"
 #endif
 
-#include "MiKTeX/Core/Debug"
-#include "MiKTeX/Core/Paths"
-#include "MiKTeX/Core/Registry"
-#include "MiKTeX/Core/Trace"
-#include "MiKTeX/Core/Urls"
+#include "miktex/Core/Debug"
+#include "miktex/Core/Paths"
+#include "miktex/Core/Registry"
+#include "miktex/Core/Trace"
+#include "miktex/Core/Urls"
 
 using namespace MiKTeX::Core;
 

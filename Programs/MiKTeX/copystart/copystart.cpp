@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Environment>
+#include <miktex/Core/Core>
+#include <miktex/Core/Environment>
 
 #define UNUSED_ALWAYS(x) (x)
 

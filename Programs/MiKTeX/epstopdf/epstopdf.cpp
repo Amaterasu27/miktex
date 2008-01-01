@@ -32,9 +32,9 @@
 #include <iostream>
 #include <string>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Trace>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/Core/Trace>
 #include <popt-miktex.h>
 
 #include "epstopdf-version.h"

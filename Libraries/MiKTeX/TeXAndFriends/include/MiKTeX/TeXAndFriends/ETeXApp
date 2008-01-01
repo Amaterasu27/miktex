@@ -21,7 +21,7 @@
 #  pragma once
 #endif
 
-#include <MiKTeX/TeXAndFriends/TeXApp>
+#include <miktex/TeXAndFriends/TeXApp>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

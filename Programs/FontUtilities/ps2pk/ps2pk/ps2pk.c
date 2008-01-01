@@ -193,7 +193,7 @@
 #include "pkout.h"	/* PK output functions */
 
 #if defined(MIKTEX)
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #endif
 
 /* begin interface to type 1 software */

@@ -39,4 +39,4 @@ END
 
 1 TYPELIB "${mpm_tlb_name}.tlb"
 
-#include <MiKTeX/Core/win/version.rc>
+#include <miktex/Core/win/version.rc>

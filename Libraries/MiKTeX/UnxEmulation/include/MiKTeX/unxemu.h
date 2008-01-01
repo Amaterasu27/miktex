@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#include <MiKTeX/Core/Definitions>
+#include <miktex/Core/Definitions>
 #include <sys/stat.h>
 
 // DLL import/export switch

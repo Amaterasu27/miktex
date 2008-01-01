@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -53,6 +53,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${unxemu_dll_name} SHARED ${${unxemu_dll_name}_sources})
 
+set_target_properties(${unxemu_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${unxemu_dll_name}
   ${core_dll_name}
 )
@@ -64,3 +70,18 @@ install(TARGETS ${unxemu_dll_name}
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
 )
+
+install(
+  FILES
+    include/miktex/unxemu.h
+  DESTINATION
+    ${incdir}/miktex
+)
+
+foreach(inc ${unx_includes})
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/include/${inc}
+  DESTINATION
+    ${incdir}
+  )
+endforeach(inc ${unx_includes})

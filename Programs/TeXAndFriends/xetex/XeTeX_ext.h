@@ -32,7 +32,7 @@ authorization from SIL International.
 #define __XETEXEXT_H
 
 #if defined(MIKTEX)
-#include <MiKTeX/C4P/C4P>
+#include <miktex/C4P/C4P>
 #if ! defined(COMPILING_XETEX_CC)
 #  undef input
 #  undef output

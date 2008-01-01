@@ -36,4 +36,4 @@ Publishing Company."
 
 #define VER_FILETYPE VFT_DLL
 
-#include "MiKTeX/Core/win/version.rc"
+#include "miktex/Core/win/version.rc"

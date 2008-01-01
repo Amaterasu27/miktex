@@ -474,6 +474,9 @@ private:
   PathName lzmaExe;
 
 private:
+  CharBuffer<char, 512> processOutput;
+
+private:
   // command-line options
   static const struct poptOption options[];
 };
@@ -1525,6 +1528,7 @@ bool
 PackageCreator::OnProcessOutput (/*[in]*/ const void *	pOutput,
 				 /*[in]*/ size_t	n)
 {
+  processOutput.Append (reinterpret_cast<const char*>(pOutput), n);
   return (true);
 }
 
@@ -1536,11 +1540,14 @@ PackageCreator::OnProcessOutput (/*[in]*/ const void *	pOutput,
 void
 PackageCreator::ExecuteSystemCommand (/*[in]*/ const char * lpszCommand)
 {
+  processOutput.Clear ();
   int exitCode = 0;
   if (! Process::ExecuteSystemCommand(lpszCommand, &exitCode, this, 0)
       || exitCode != 0)
     {
-      FatalError (T_("A system command failed for some reason."));
+      cerr << lpszCommand << ':' << endl;
+      cerr << processOutput.Get() << endl;
+      FatalError (T_("A system command failed."));
     }
 }
 

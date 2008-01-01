@@ -29,8 +29,8 @@
 #include <memory>
 #include <string>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/PackageManager/PackageManager>
+#include <miktex/Core/Core>
+#include <miktex/PackageManager/PackageManager>
 
 #if defined(_MSC_VER)
 #  include <hash_set>

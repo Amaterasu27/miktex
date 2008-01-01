@@ -38,8 +38,8 @@
 // API decoration for exported member functions
 #define MIKTEXEXTRACTORCEEAPI(type) MIKTEXEXTRACTOREXPORT type MIKTEXCEECALL
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Paths>
+#include <miktex/Core/Core>
+#include <miktex/Core/Paths>
 
 #define EXTRACTOR_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

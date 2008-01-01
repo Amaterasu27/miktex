@@ -32,7 +32,7 @@
 #  include <windows.h>
 #endif
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 // DLL import/export switch
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)

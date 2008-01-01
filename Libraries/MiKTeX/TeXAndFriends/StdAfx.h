@@ -29,12 +29,12 @@
 #include <iomanip>
 #include <iostream>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/UI/MFC/Prototypes>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/Trace>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/UI/MFC/Prototypes>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
+#include <miktex/Core/Trace>
 
 extern "C" {
 #include <zlib.h>

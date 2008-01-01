@@ -12,10 +12,10 @@
 "This is dvips(k) 5.96dev Copyright 2007 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #if defined(MIKTEX)
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #include <direct.h>
 #include <sys/stat.h>
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 #undef kpse_tex_hush
 #define kpse_tex_hush(what) 1
 #include <cstdlib>

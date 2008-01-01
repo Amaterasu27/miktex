@@ -26,7 +26,7 @@
 #include "PropPageFiles.h"
 #include "PropPagePackage.h"
 
-#include <MiKTeX/UI/MFC/PropSheetPackage>
+#include <miktex/UI/MFC/PropSheetPackage>
 
 /* _________________________________________________________________________
 

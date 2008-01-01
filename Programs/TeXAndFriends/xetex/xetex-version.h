@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2921
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.997 svn 543"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

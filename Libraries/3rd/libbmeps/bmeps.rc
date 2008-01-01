@@ -27,4 +27,4 @@
 
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2000-2005, Dirk Krause"
 
-#include <MiKTeX/Core/win/version.rc>
+#include <miktex/Core/win/version.rc>

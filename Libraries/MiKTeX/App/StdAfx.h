@@ -37,10 +37,10 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Core/Core>
+#include <miktex/Core/Registry>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Trace>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <MiKTeX/UI/MFC/Prototypes>

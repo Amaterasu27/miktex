@@ -82,7 +82,7 @@ macro(create_web_app _name)
       if(EXISTS ${${_short_name_l}_include_file})
       else(EXISTS ${${_short_name_l}_include_file})
 	file(WRITE ${${_short_name_l}_include_file}
-	  "#include <MiKTeX/TeXAndFriends/WebApp>
+	  "#include <miktex/TeXAndFriends/WebApp>
 using namespace MiKTeX::TeXAndFriends;
 class ${${_short_name_l}_class} : public WebApp {};"
         )

@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 using namespace MiKTeX::Core;
 

@@ -23,8 +23,8 @@
 
 #include "internal.h"
 
-#include "MiKTeX/Core/Environment"
-#include "MiKTeX/Core/Paths"
+#include "miktex/Core/Environment"
+#include "miktex/Core/Paths"
 
 #if defined(MIKTEX_WINDOWS)
 #  include "win/winRegistry.h"

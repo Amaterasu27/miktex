@@ -24,7 +24,7 @@
 #define THEDATA(x) TANGLEDATA.m_##x
 
 #include "tangle.rc"
-#include <MiKTeX/TeXAndFriends/WebApp>
+#include <miktex/TeXAndFriends/WebApp>
 
 using namespace MiKTeX::TeXAndFriends;
 using namespace MiKTeX::Core;
@@ -104,4 +104,4 @@ public:
 extern TANGLECLASS TANGLEAPP;
 #define THEAPP TANGLEAPP
 
-#include <MiKTeX/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inliners>

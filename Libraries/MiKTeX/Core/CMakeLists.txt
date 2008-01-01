@@ -18,13 +18,13 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Version.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Paths.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Paths
 )
 
 configure_file(
@@ -74,13 +74,13 @@ set(${core_dll_name}_sources
   getdelim.cpp
   graphics.cpp
   gsinfo.cpp
-  include/MiKTeX/Core/Text
-  include/MiKTeX/Core/Core
-  include/MiKTeX/Core/Environment
-  include/MiKTeX/Core/First
-  include/MiKTeX/Core/Registry
-  include/MiKTeX/Core/Test
-  include/MiKTeX/Core/Trace
+  include/miktex/Core/Text
+  include/miktex/Core/Core
+  include/miktex/Core/Environment
+  include/miktex/Core/First
+  include/miktex/Core/Registry
+  include/miktex/Core/Test
+  include/miktex/Core/Trace
   internal.h
   log.cpp
   makefndb.cpp
@@ -248,7 +248,7 @@ add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
 set_target_properties(${core_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.0"
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
     SOVERSION "1"
 )
 
@@ -283,30 +283,30 @@ install(TARGETS ${core_dll_name}
 
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/Paths
-    ${CMAKE_CURRENT_BINARY_DIR}/include/MiKTeX/Core/Version
-    include/MiKTeX/Core/Core
-    include/MiKTeX/Core/Debug
-    include/MiKTeX/Core/Definitions
-    include/MiKTeX/Core/Environment
-    include/MiKTeX/Core/First
-    include/MiKTeX/Core/Help
-    include/MiKTeX/Core/Registry
-    include/MiKTeX/Core/Test
-    include/MiKTeX/Core/Text
-    include/MiKTeX/Core/Trace
-    include/MiKTeX/Core/Urls
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version
+    include/miktex/Core/Core
+    include/miktex/Core/Debug
+    include/miktex/Core/Definitions
+    include/miktex/Core/Environment
+    include/miktex/Core/First
+    include/miktex/Core/Help
+    include/miktex/Core/Registry
+    include/miktex/Core/Test
+    include/miktex/Core/Text
+    include/miktex/Core/Trace
+    include/miktex/Core/Urls
   DESTINATION
-    ${incdir}/miktex
+    ${incdir}/miktex/Core
 )
 
 if(NATIVE_WINDOWS)
   install(
     FILES
-      include/MiKTeX/Core/win/DllProc
-      include/MiKTeX/Core/win/version.rc
+      include/miktex/Core/win/DllProc
+      include/miktex/Core/win/version.rc
     DESTINATION
-      ${incdir}/miktex/win
+      ${incdir}/miktex/Core/win
   )
 endif(NATIVE_WINDOWS)
 
