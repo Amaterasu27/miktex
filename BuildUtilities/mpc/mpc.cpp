@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MPC.
 
@@ -429,6 +429,10 @@ protected:
 		      /*[in]*/ const PathName &	sourceDir,
 		      /*[in]*/ const PathName &	stagingDir);
 
+protected:
+  PathName
+  FindLzma ();
+
 private:
   virtual
   bool
@@ -465,6 +469,9 @@ private:
 private:  
   // default archive file type
   ArchiveFileType defaultArchiveFileType;
+
+private:
+  PathName lzmaExe;
 
 private:
   // command-line options
@@ -629,6 +636,7 @@ PackageCreator::Init (/*[in]*/ const char * argv0)
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName (argv0);
   pSession.CreateSession (initInfo);
+  lzmaExe = FindLzma();
 }
 
 /* _________________________________________________________________________
@@ -640,6 +648,33 @@ void
 PackageCreator::Finalize ()
 {
   pSession.Reset ();
+}
+
+/* _________________________________________________________________________
+
+   PackageCreator::FindLzma
+   _________________________________________________________________________ */
+
+PathName
+PackageCreator::FindLzma ()
+{
+  PathName lzmaExe;
+  string path;
+  if (! Utils::GetEnvironmentString("PATH", path))
+    {
+      FatalError ("The lzma utility could not be found.");
+    }
+  if (! (pSession->FindFile("lzma_alone" MIKTEX_EXE_FILE_SUFFIX,
+			    path.c_str(),
+			    lzmaExe)
+	 || pSession->FindFile("lzma" MIKTEX_EXE_FILE_SUFFIX,
+			       path.c_str(),
+			       lzmaExe)))
+    
+    {
+      FatalError ("The lzma utility could not be found.");
+    }
+  return (lzmaExe);
 }
 
 /* _________________________________________________________________________
@@ -1523,18 +1558,18 @@ PackageCreator::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::TarBzip2:
-      command = "tar -cjf \"";
-      command += archiveFile.Get();
-      command += "\" ";
+      command = "tar -cjf ";
+      command += Q_(archiveFile);
+      command += " ";
       command += lpszFilter;
       break;
     case ArchiveFileType::TarLzma:
       command = "tar -cf - ";
       command += lpszFilter;
-      command += " | lzma e -si ";
-      command += "\"";
-      command += archiveFile.Get();
-      command += "\"";
+      command += " | ";
+      command += Q_(lzmaExe);
+      command += " e -si ";
+      command += Q_(archiveFile);
       break;
     default:
       FatalError (T_("Unsupported archive file type."));
@@ -1629,19 +1664,18 @@ PackageCreator::Extract (/*[in]*/ const PathName &	archiveFile,
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::MSCab:
-      command = "cabextract \"";
-      command += archiveFile.Get();
-      command += "\"";
+      command = "cabextract ";
+      command += Q_(archiveFile);
       break;
     case ArchiveFileType::TarBzip2:
-      command = "tar --force-local -xjf \"";
-      command += archiveFile.Get();
-      command += "\"";
+      command = "tar --force-local -xjf ";
+      command += Q_(archiveFile);
       break;
     case ArchiveFileType::TarLzma:
-      command = "lzma d \"";
-      command += archiveFile.Get();
-      command += "\" -so | tar --force-local -xf -";
+      command = Q_(lzmaExe);
+      command += " d ";
+      command += Q_(archiveFile);
+      command += " -so | tar --force-local -xf -";
       break;
     default:
       FatalError (T_("Unsupported archive file type."));
@@ -1664,31 +1698,29 @@ PackageCreator::ExtractFile (/*[in]*/ const PathName &	archiveFile,
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::MSCab:
-      command = "cabextract --filter \"";
-      command += toBeExtracted.Get();
-      command += "\" --pipe \"";
-      command += archiveFile.Get();
-      command += "\" > \"";
-      command += outFile.Get();
-      command += "\"";
+      command = "cabextract --filter ";
+      command += Q_(toBeExtracted);
+      command += " --pipe ";
+      command += Q_(archiveFile);
+      command += " > ";
+      command += Q_(outFile);
       break;
     case ArchiveFileType::TarBzip2:
-      command = "tar --force-local --to-stdout -xjf \"";
-      command += archiveFile.Get();
-      command += "\" \"";
-      command += toBeExtracted.Get();
-      command += "\" > \"";
-      command += outFile.Get();
-      command += "\"";
+      command = "tar --force-local --to-stdout -xjf ";
+      command += Q_(archiveFile);
+      command += " ";
+      command += Q_(toBeExtracted);
+      command += " > ";
+      command += Q_(outFile);
       break;
     case ArchiveFileType::TarLzma:
-      command = "lzma d \"";
-      command += archiveFile.Get();
-      command += "\" -so | tar --force-local --to-stdout -xf - \"";
-      command += toBeExtracted.Get();
-      command += "\" > \"";
-      command += outFile.Get();
-      command += "\"";
+      command = Q_(lzmaExe);
+      command += " d ";
+      command += Q_(archiveFile);
+      command += " -so | tar --force-local --to-stdout -xf - ";
+      command += Q_(toBeExtracted);
+      command += " > ";
+      command += Q_(outFile);
       break;
     default:
       FatalError (T_("Unsupported archive file type."));
@@ -1710,18 +1742,17 @@ PackageCreator::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
   switch (archiveFileType.Get())
     {
     case ArchiveFileType::TarBzip2:
-      command = "bzip2 --keep --compress --stdout \"";
-      command += toBeCompressed.Get();
-      command += "\" > \"";
-      command += outFile.Get();
-      command += "\"";
+      command = "bzip2 --keep --compress --stdout ";
+      command += Q_(toBeCompressed);
+      command += " > ";
+      command += Q_(outFile);
       break;
     case ArchiveFileType::TarLzma:
-      command = "lzma e \"";
-      command += toBeCompressed.Get();
-      command += "\" \"";
-      command += outFile.Get();
-      command += "\"";
+      command = Q_(lzmaExe);
+      command += " e ";
+      command += Q_(toBeCompressed);
+      command += " ";
+      command += Q_(outFile);
       break;
     default:
       FatalError (T_("Unsupported archive file type."));
