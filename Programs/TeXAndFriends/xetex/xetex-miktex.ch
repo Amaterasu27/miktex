@@ -571,7 +571,7 @@ function count_pdf_file_pages : integer; forward;@t\2@>@/
 @z
 
 @x
-	font_engine := find_native_font(name_of_file + 1, actual_size);
+	font_engine := find_native_font(name_of_file + 1, s);
 @y
-	font_engine := find_native_font(name_of_file, actual_size);
+	font_engine := find_native_font(name_of_file, s);
 @z
