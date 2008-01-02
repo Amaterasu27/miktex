@@ -1,6 +1,6 @@
 ## miktex-version.cmake: define the MiKTeX version number
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	7)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	2922)
+set(MIKTEX_J2000_VERSION	2923)
 
 set(MIKTEX_YEAR_VERSION         2008)
 
