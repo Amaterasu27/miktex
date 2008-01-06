@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -207,6 +207,12 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   add_library(${${_short_name_l}_dll_name}
     SHARED ${${${_short_name_l}_dll_name}_sources})
 
+  set_target_properties(${${_short_name_l}_dll_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      SOVERSION "1"
+  )
+
   target_link_libraries(${${_short_name_l}_dll_name}
     ${app_dll_name}
     ${core_dll_name}
@@ -234,7 +240,9 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   install(
     TARGETS ${_invocation_name}
-    DESTINATION ${bindir}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
   )
 
   if(${_invocation_name} STREQUAL "${_short_name_l}")
