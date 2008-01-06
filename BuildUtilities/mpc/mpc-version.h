@@ -17,6 +17,6 @@
    along with MPC; if not, write to the Free Software Foundation, 59
    Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
-#define MIKTEX_COMPONENT_VERSION 2922
+#define MIKTEX_COMPONENT_VERSION 2925
 
 #include <miktex/Core/Version>

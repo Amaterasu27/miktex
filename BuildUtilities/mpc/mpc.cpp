@@ -2457,12 +2457,20 @@ PackageCreator::Run (/*[in]*/ int		argc,
 	}
     }
 
+  if (option != -1)
+    {
+      string msg = popt.BadOption(POPT_BADOPTION_NOALIAS);
+      msg += ": ";
+      msg += popt.Strerror(option);
+      FatalError ("%s", msg.c_str());
+    }
+      
   if (optVersion)
     {
       cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					      VER_FILEVERSION_STR)
 	   << T_("\n\
-Copyright (C) 1996-2007 Christian Schenk\n\
+Copyright (C) 1996-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	   << endl;
