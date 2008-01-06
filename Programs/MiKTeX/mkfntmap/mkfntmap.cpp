@@ -1,6 +1,6 @@
 /* mkfntmap.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -389,7 +389,7 @@ MakeFontMapApp::ShowVersion ()
   cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					  VersionNumber(VER_FILEVERSION))
        << T_("\n\
-Copyright (C) 2002-2007 Christian Schenk\n\
+Copyright (C) 2002-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
        << endl;
@@ -1385,6 +1385,7 @@ static const char * const topDirs[] = {
 void
 MakeFontMapApp::BuildFontconfigCache ()
 {
+  pSession->ConfigureFile (MIKTEX_PATH_FONTCONFIG_CONFIG_FILE);
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
   configFile += MIKTEX_PATH_FONTCONFIG_LOCALFONTS_FILE;
   StreamWriter writer (configFile);
