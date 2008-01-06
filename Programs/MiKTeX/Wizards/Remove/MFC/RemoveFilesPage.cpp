@@ -1,6 +1,6 @@
 /* RemoveFilesPage.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -271,18 +271,21 @@ RemoveFilesPage::RemoveMiKTeX ()
       pSheet->ReportError (e);
     }
 
-  try
+  if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      LogFile logfile (this);
-      logfile.Process ();
-    }
-  catch (const MiKTeXException & e)
-    {
-      pSheet->ReportError (e);
-    }
-  catch (const exception & e)
-    {
-      pSheet->ReportError (e);
+      try
+	{
+	  LogFile logfile (this);
+	  logfile.Process ();
+	}
+      catch (const MiKTeXException & e)
+	{
+	  pSheet->ReportError (e);
+	}
+      catch (const exception & e)
+	{
+	  pSheet->ReportError (e);
+	}
     }
 
   try
@@ -305,22 +308,23 @@ RemoveFilesPage::RemoveMiKTeX ()
 	}
       else
 	{
-	  PathName dir =
-	    pSession->GetSpecialPath(SpecialPath::InstallRoot);
+	  PathName dir;
+	  if (! SessionWrapper(true)->IsMiKTeXDirect())
+	    {
+	      dir = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+	      dir += MIKTEX_PATH_MIKTEX_DIR;
+	      if (Directory::Exists(dir))
+		{
+		  Directory::Delete (dir, true);
+		}
+	    }
+	  dir = pSession->GetSpecialPath(SpecialPath::UserDataRoot);
 	  dir += MIKTEX_PATH_MIKTEX_DIR;
 	  if (Directory::Exists(dir))
 	    {
 	      Directory::Delete (dir, true);
 	    }
-	  dir =
-	    pSession->GetSpecialPath(SpecialPath::UserDataRoot);
-	  dir += MIKTEX_PATH_MIKTEX_DIR;
-	  if (Directory::Exists(dir))
-	    {
-	      Directory::Delete (dir, true);
-	    }
-	  dir =
-	    pSession->GetSpecialPath(SpecialPath::UserConfigRoot);
+	  dir = pSession->GetSpecialPath(SpecialPath::UserConfigRoot);
 	  dir += MIKTEX_PATH_MIKTEX_DIR;
 	  if (Directory::Exists(dir))
 	    {
@@ -342,11 +346,14 @@ RemoveFilesPage::RemoveMiKTeX ()
 		}
 	    }
 	}
-      parent = pSession->GetSpecialPath(SpecialPath::InstallRoot);
-      parent.CutOffLastComponent ();
-      if (Directory::Exists(parent))
+      if (! SessionWrapper(true)->IsMiKTeXDirect())
 	{
-	  RemoveEmptyDirectoryChain (parent);
+	  parent = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+	  parent.CutOffLastComponent ();
+	  if (Directory::Exists(parent))
+	    {
+	      RemoveEmptyDirectoryChain (parent);
+	    }
 	}
       parent = pSession->GetSpecialPath(SpecialPath::UserDataRoot);
       parent.CutOffLastComponent ();

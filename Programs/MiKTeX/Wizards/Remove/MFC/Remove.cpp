@@ -202,9 +202,12 @@ vector<PathName>
 GetRoots ()
 {
   vector<PathName> vec;
-  PathName installRoot =
-    SessionWrapper(true)->GetSpecialPath(SpecialPath::InstallRoot);
-  vec.push_back (installRoot);
+  if (! SessionWrapper(true)->IsMiKTeXDirect())
+    {
+      PathName installRoot =
+	SessionWrapper(true)->GetSpecialPath(SpecialPath::InstallRoot);
+      vec.push_back (installRoot);
+    }
   PathName userDataRoot =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::UserDataRoot);
   if (! Contains(vec, userDataRoot))

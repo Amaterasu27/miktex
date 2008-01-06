@@ -1,6 +1,6 @@
 /* Setup.cpp:
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -1546,16 +1546,17 @@ void
 RegisterUninstaller ()
 {
   // make uninstall command line
-  PathName pathCopyStart (theApp.startupConfig.installRoot,
-			  MIKTEX_PATH_COPYSTART_ADMIN_EXE);
   string commandLine;
-  commandLine += '"';
-  commandLine += pathCopyStart.Get();
-  commandLine += "\" \"";
+  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+    {
+      PathName pathCopyStart (theApp.startupConfig.installRoot,
+			      MIKTEX_PATH_COPYSTART_ADMIN_EXE);
+      commandLine += Q_(pathCopyStart.Get());
+      commandLine += " ";
+    }
   PathName pathUninstallDat (theApp.startupConfig.installRoot,
 			     MIKTEX_PATH_UNINSTALL_DAT);
-  commandLine += pathUninstallDat.Get();
-  commandLine += '"';
+  commandLine += Q_(pathUninstallDat.Get());
 
   // make icon path
   PathName iconPath (theApp.startupConfig.installRoot);
