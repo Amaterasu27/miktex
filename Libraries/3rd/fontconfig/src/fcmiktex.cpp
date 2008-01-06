@@ -1,6 +1,6 @@
 /* fcmiktex.cpp:						-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -111,9 +111,9 @@ miktex_get_fontconfig_config_dirs (/*[in,out]*/ char **	pPaths,
 	{
 	  MIKTEX_ASSERT_BUFFER (pPaths,
 				(nPaths + nConfigDirs) * sizeof(pPaths[0]));
-	  for (unsigned idx = nConfigDirs; idx > 0; -- idx, ++ nPaths)
+	  for (unsigned idx = 0; idx < nConfigDirs; ++ idx, ++ nPaths)
 	    {
-	      PathName path (SessionWrapper(true)->GetRootDirectory(idx - 1));
+	      PathName path (SessionWrapper(true)->GetRootDirectory(idx));
 	      path +=  MIKTEX_PATH_FONTCONFIG_CONFIG_DIR;
 	      pPaths[nPaths] = strdup(path.Get());
 	    }
