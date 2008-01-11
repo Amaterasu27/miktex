@@ -145,9 +145,29 @@ protected:
 	}
 
 	virtual void UniqueCacheInfo(std::wstring &, bool &, bool &);
+
 	/*------------------------------------------------------------------------------------------
 		These internal classes implement a hashmap for caching font handles.
 	------------------------------------------------------------------------------------------*/
+
+	class LogFontWrapper
+	{
+	public:
+		LogFontWrapper(LOGFONT lf)	// hopefully the constructor that will actually be used
+			: m_lf(lf)
+		{
+		}
+		LogFontWrapper()	// default constructor
+		{
+			memset(&m_lf, 0, sizeof(LOGFONT));
+		}
+
+		// This class exists to make it possible to compare two LOGFONT objects:
+		bool operator==(const LogFontWrapper & lf) const;
+
+		// member variable:
+		LOGFONT m_lf;
+	};
 
 	class LogFontHashFuncs
 	{
@@ -155,17 +175,22 @@ protected:
 		const static size_t bucket_size = 4; // copied these from hash_compare
 		const static size_t min_buckets = 8;
 
-		size_t operator() (const LOGFONT & key) const;	// hash function
-		bool operator() (const LOGFONT & key1, const LOGFONT & key2) const;	// comparison function
+		size_t operator() (const WinFont::LogFontWrapper & key) const;	// hash function
+		bool operator() (const WinFont::LogFontWrapper & key1, const WinFont::LogFontWrapper & key2) const;	// comparison function
 	};
 
-	class FontHandleCache
+	class FontHandleCache // hungarian: fhc
 	{
 	public:
 		struct FontCacheValue
 		{
 			int nRefs;   // reference count
 			HFONT hfont; // font handle
+
+			bool operator==(const FontCacheValue & val) const
+			{
+				return (hfont == val.hfont);
+			}
 		};
 
 		~FontHandleCache();
@@ -173,7 +198,7 @@ protected:
 		HFONT GetFont(LOGFONT & lf);
 		void DeleteFont(HFONT hfont);
 
-		typedef stdext::hash_map<LOGFONT, FontCacheValue, LogFontHashFuncs> FontHandleHashMap;
+		typedef stdext::hash_map<LogFontWrapper, FontCacheValue, LogFontHashFuncs> FontHandleHashMap;
 
 	protected:
 		FontHandleHashMap m_hmlffcv;
@@ -181,7 +206,7 @@ protected:
 		void ResetFontCache(); // delete all the fonts in the cache
 	};
 
-	static FontHandleCache g_fc;
+	static FontHandleCache g_fhc;
 
 }; // WinFont
 
