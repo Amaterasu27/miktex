@@ -2731,6 +2731,16 @@ public:
     return (*this);
   }
 
+public:
+  PathName &
+  RemoveExtensions ()
+  {
+    while (GetExtension())
+      {
+	SetExtension (0);
+      }
+  }
+
   /// Checks to see whether this path name ends with a directory delimiter.
   /// @return Returns true if the last character is a directory delimiter.
 public:
