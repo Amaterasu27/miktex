@@ -371,6 +371,22 @@ protected:
 
 protected:
   void
+  PackageCreator::CreateRepositoryInformationFile
+  (/*[in]*/ const PathName &	repository,
+   /*[in]*/ Cfg &		dbLight);
+
+protected:
+  void
+  CreateFileListFile
+  (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
+   /*[in]*/ const PathName &			repository);
+
+protected:
+  void
+  CleanUp (/*[in]*/ const PathName & repository);
+
+protected:
+  void
   WriteDatabase (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
 		 /*[in]*/ const PathName &			repository,
 		 /*[in]*/ bool				removeObsoleteRecords,
@@ -1586,6 +1602,192 @@ PackageCreator::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
 
 /* _________________________________________________________________________
 
+   PackageCreator::CreateRepositoryInformationFile
+   _________________________________________________________________________ */
+
+void
+PackageCreator::CreateRepositoryInformationFile
+(/*[in]*/ const PathName &	repository,
+ /*[in]*/ Cfg &			dbLight)
+{
+  int numberOfPackages = 0;
+  char szDeploymentName[BufferSizes::MaxPackageName];
+  for (const char * lpszDeploymentName =
+	 dbLight.FirstKey(szDeploymentName, BufferSizes::MaxPackageName);
+       lpszDeploymentName != 0;
+       lpszDeploymentName =
+	 dbLight.NextKey(szDeploymentName, BufferSizes::MaxPackageName))
+    {
+      numberOfPackages += 1;
+    }
+  const time_t t2000 = 946681200;
+  int days = static_cast<int>((timePackaged - t2000) / (60 * 60 * 24));
+  SmartPointer<Cfg> pCfg (Cfg::Create());
+  pCfg->PutValue ("repository", "date", NUMTOSTR(timePackaged));
+  pCfg->PutValue ("repository", "version", NUMTOSTR(days));
+  pCfg->PutValue ("repository",
+		  "lstdigest",
+		  MD5Builder().Final().ToString().c_str());
+  pCfg->PutValue ("repository", "numpkg", NUMTOSTR(numberOfPackages));
+  PathName path (repository);
+  path += "pr.ini";
+  pCfg->Write (path);
+  MD5Builder lstDigest;
+  auto_ptr<DirectoryLister> lister (DirectoryLister::Open(repository));
+  DirectoryEntry2 dirEntry;
+  vector<string> lst;
+  while (lister->GetNext(dirEntry))
+    {
+      string line = dirEntry.name;
+      line += ';';
+      line += NUMTOSTR(dirEntry.size);
+      line += '\n';
+      lst.push_back (line);
+    }
+  lister->Close ();
+  lister.reset ();
+  sort (lst.begin(), lst.end());
+  for (vector<string>::const_iterator it = lst.begin();
+       it != lst.end();
+       ++ it)
+    {
+      lstDigest.Update (it->c_str(), it->length());
+    }
+  pCfg->PutValue ("repository",
+		  "lstdigest",
+		  lstDigest.Final().ToString().c_str());
+  pCfg->Write (path);
+  pCfg = 0;
+}
+
+/* _________________________________________________________________________
+
+   PackageCreator::CreateFileListFile
+   _________________________________________________________________________ */
+
+void
+PackageCreator::CreateFileListFile
+(/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
+ /*[in]*/ const PathName &			repository)
+				    
+{
+  vector<string> lines;
+  size_t prefixLength = texmfPrefix.length();
+  if (! PathName(texmfPrefix).EndsWithDirectoryDelimiter())
+    {
+      prefixLength += 1;
+    }
+  for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
+       it != packageTable.end();
+       ++ it)
+    {
+      // ignore unwanted packages
+      if (! ConsiderP(it->second))
+	{
+	  continue;
+	}
+      for (vector<string>::const_iterator it2 = it->second.docFiles.begin();
+	   it2 != it->second.docFiles.end();
+	   ++ it2)
+	{
+	  string line = it2->c_str() + prefixLength;
+	  line += ';';
+	  line += it->second.deploymentName;
+	  lines.push_back (line);
+	}
+      for (vector<string>::const_iterator it2 = it->second.runFiles.begin();
+	   it2 != it->second.runFiles.end();
+	   ++ it2)
+	{
+	  string line = it2->c_str() + prefixLength;
+	  line += ';';
+	  line += it->second.deploymentName;
+	  lines.push_back (line);
+	}
+      for (vector<string>::const_iterator it2 = it->second.sourceFiles.begin();
+	   it2 != it->second.sourceFiles.end();
+	   ++ it2)
+	{
+	  string line = it2->c_str() + prefixLength;
+	  line += ';';
+	  line += it->second.deploymentName;
+	  lines.push_back (line);
+	}
+    }
+  sort (lines.begin(), lines.end());
+  PathName filesCsv (repository);
+  filesCsv += "files.csv";
+  PathName filesCsvLzma (filesCsv);
+  filesCsvLzma.AppendExtension (".lzma");
+  StreamWriter writer (filesCsv);
+  for (vector<string>::const_iterator it = lines.begin();
+       it != lines.end();
+       ++ it)
+    {
+      writer.WriteLine (*it);
+    }
+  writer.Close ();
+  string command = Q_(lzmaExe);
+  command += " e ";
+  command += Q_(filesCsv);
+  command += " ";
+  command += Q_(filesCsvLzma);
+  ExecuteSystemCommand (command.c_str());
+  File::Delete (filesCsv);
+}
+
+/* _________________________________________________________________________
+
+   PackageCreator::CleanUp
+   _________________________________________________________________________ */
+
+void
+PackageCreator::CleanUp (/*[in]*/ const PathName & repository)
+{
+  vector<string> toBeDeleted;
+  auto_ptr<DirectoryLister> lister (DirectoryLister::Open(repository));
+  DirectoryEntry2 dirEntry;
+  while (lister->GetNext(dirEntry))
+    {
+      PathName path (repository);
+      path += dirEntry.name;
+      PathName path2;
+      if (path.HasExtension(".cab"))
+	{
+	  path2 = path;
+	  path2.SetExtension (".tar.bz2");
+	  if (File::Exists(path2))
+	    {
+	      toBeDeleted.push_back (path.Get());
+	    }
+	  path2 = path;
+	  path2.SetExtension (".tar.lzma");
+	  if (File::Exists(path2))
+	    {
+	      toBeDeleted.push_back (path.Get());
+	    }
+	}
+      else if (path.HasExtension(".bz2"))
+	{
+	  path2 = path;
+	  path2.SetExtension (".lzma");
+	  if (File::Exists(path2))
+	    {
+	      toBeDeleted.push_back (path.Get());
+	    }
+	}
+    }
+  for (vector<string>::const_iterator it = toBeDeleted.begin();
+       it != toBeDeleted.end();
+       ++ it)
+    {
+      Verbose ("Removing %s...", Q_(*it));
+      File::Delete (*it);
+    }
+}
+
+/* _________________________________________________________________________
+
    PackageCreator::WriteDatabase
    _________________________________________________________________________ */
 
@@ -1656,6 +1858,13 @@ PackageCreator::WriteDatabase
 
   // delete package definition files
   tempDir.Delete ();
+
+  CreateFileListFile (packageTable, repository);
+
+  CleanUp (repository);
+
+  // create pr.ini
+  CreateRepositoryInformationFile (repository, dbLight);
 }
 
 /* _________________________________________________________________________
