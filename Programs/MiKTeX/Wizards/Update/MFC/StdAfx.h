@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -73,6 +73,7 @@
 #include <miktex/PackageManager/PackageManager>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
+#include <miktex/Core/Urls>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
