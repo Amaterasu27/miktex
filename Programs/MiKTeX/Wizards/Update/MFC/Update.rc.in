@@ -129,11 +129,11 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LTEXT           "Completing the MiKTeX Update Wizard",IDC_WELCOME,115,8,195,24
     LTEXT           "You have sucessfully completed the MiKTeX Update Wizard.",IDC_STATUS,115,40,195,8
-    CONTROL         "&Open the log file.",IDC_VIEW_REPORT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,79,195,10
+    LTEXT           "The packages you selected have been updated.",IDC_MESSAGE,115,55,195,8
+    CONTROL         "&Open the log file.",IDC_VIEW_REPORT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,68,195,10
+    LTEXT           "Please help keep the machinery going. Donate to the MiKTeX project!",IDC_STATIC,115,116,195,16
+    CONTROL         "&Tell me more",IDC_VISIT_WEB_SITE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,137,195,10
     LTEXT           "To exit the wizard, click Finish.",IDC_STATIC,115,178,195,8
-    LTEXT           "The packages you selected have been updated.",IDC_MESSAGE,115,55,195,16
-    LTEXT           "Please help keep the machinery going. Donate to the MiKTeX project!",IDC_STATIC,115,107,195,16
-    CONTROL         "Tell me more",IDC_VISIT_WEB_SITE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,127,195,10
 END
 
 IDD_FILECOPY DIALOGEX 0, 0, 317, 143
