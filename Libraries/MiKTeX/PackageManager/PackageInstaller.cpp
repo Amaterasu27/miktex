@@ -1803,6 +1803,10 @@ PackageInstallerImpl::Download ()
       repository = pManager->PickRepositoryUrl();
       repositoryType = RepositoryType::Remote;
     }
+  else if (repositoryType == RepositoryType::Remote)
+    {
+      pManager->VerifyPackageRepository (repository);
+    }
 
   MIKTEX_ASSERT (repositoryType == RepositoryType::Remote);
 
@@ -2053,6 +2057,10 @@ PackageInstallerImpl::UpdateDb ()
     {
       repository = pManager->PickRepositoryUrl();
       repositoryType = RepositoryType::Remote;
+    }
+  else if (repositoryType == RepositoryType::Remote)
+    {
+      pManager->VerifyPackageRepository (repository);
     }
 
   // we might need a scratch directory

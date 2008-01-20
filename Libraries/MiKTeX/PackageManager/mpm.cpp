@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1252,7 +1252,7 @@ PackageManagerImpl::DownloadRepositoryList ()
   _mtrep__GetRepositories arg;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
-  arg.maxDelay = 10;
+  arg.maxDelay = INT_MAX;
   _mtrep__GetRepositoriesResponse resp;
   if (repositorySoapProxy.GetRepositories(&arg, &resp) != SOAP_OK)
     {
