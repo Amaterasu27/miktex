@@ -1,6 +1,6 @@
 ## miktex.mak:
 ##
-## Copyright (C) 1996-2006 Christian Schenk
+## Copyright (C) 1996-2008 Christian Schenk
 ##
 ## This file is part of the MiKTeX Core Library.
 ##
@@ -173,6 +173,7 @@ $(outdir)\$(miktex_dll_name).dll $(miktex_lib): \
 		delayimp.lib \
 		htmlhelp.lib \
 		SHFolder.lib \
+		shlwapi.lib \
 		shell32.lib \
 		user32.lib \
 		winspool.lib

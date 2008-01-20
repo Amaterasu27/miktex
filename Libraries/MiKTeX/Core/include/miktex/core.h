@@ -1,6 +1,6 @@
 /* core.h: MiKTeX core API					-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1653,6 +1653,13 @@ public:
   void
   MIKTEXCALL
   RegisterMiKTeXUser ();
+
+public:
+  static
+  MIKTEXEXPORT
+  void
+  MIKTEXCALL
+  ShowWebPage (/*[in]*/ const char * lpszUrl);
 
 public:
 #if defined(MIKTEX_WINDOWS)

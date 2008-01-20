@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -42,6 +42,9 @@
 #  include <htmlhelp.h>
 #  include <shlwapi.h>
 #  include <shlobj.h>
+#  include <WinInet.h>
+#  include <tchar.h>
+#  include <strsafe.h>
 #endif
 
 #if defined(_MSC_VER)

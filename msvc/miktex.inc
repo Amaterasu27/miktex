@@ -502,9 +502,9 @@ coptflags = $(coptflags) $(ccopt_pginstrument)
 coptflags = $(coptflags) $(ccopt_pgoptimize)
 !endif
 
-## Windows version (Windows 95, Internet Explorer 5.0)
-ccdef_winver = -DWINVER=0x0400
-ccdef_winver = $(ccdef_winver) -D_WIN32_WINDOWS=0x0400
+## Windows version (Windows 98, Internet Explorer 5.0)
+ccdef_winver = -DWINVER=0x0410
+ccdef_winver = $(ccdef_winver) -D_WIN32_WINDOWS=0x0410
 ccdef_winver = $(ccdef_winver) -D_WIN32_WINNT=0x0400
 ccdef_winver = $(ccdef_winver) -D_WIN32_IE=0x0500
 

@@ -1,6 +1,6 @@
 ## miktex.mak: md5walk
 ## 
-## Copyright (C) 2001-2006 Christian Schenk
+## Copyright (C) 2001-2008 Christian Schenk
 ## 
 ## This file is part of MD5Walk.
 ## 
@@ -57,6 +57,7 @@ $(outdir)\md5walk.exe: \
 		$(linkopt_output_file)$@ \
 		$(md5walk_objects) \
 		advapi32.lib \
+		shlwapi.lib \
 		user32.lib \
 		winspool.lib \
 

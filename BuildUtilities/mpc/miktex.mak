@@ -1,6 +1,6 @@
 ## miktex.mak:
 ## 
-## Copyright (C) 2001-2006 Christian Schenk
+## Copyright (C) 2001-2008 Christian Schenk
 ## 
 ## This file is part of MPC.
 ## 
@@ -85,6 +85,7 @@ $(outdir)\mpc.exe: $(outdir) $(mpc_objects)
 			Winmm.lib \
 			Ws2_32.lib \
 			fdi.lib \
+			shlwapi.lib \
 			user32.lib \
 			wininet.lib \
 

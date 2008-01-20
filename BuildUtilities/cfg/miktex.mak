@@ -1,6 +1,6 @@
 ## miktex.mak: cfg
 ## 
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2008 Christian Schenk
 ## 
 ## This file is part of cfg.
 ## 
@@ -57,6 +57,7 @@ $(outdir)\cfg.exe: \
 		$(linkopt_output_file)$@ \
 		$(cfg_objects) \
 		advapi32.lib \
+		shlwapi.lib \
 		user32.lib \
 		winspool.lib \
 
