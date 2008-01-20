@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1067,7 +1067,7 @@ PackageManager::TryGetDefaultPackageRepository
 	  urlOrPath = GetRemotePackageRepository();
 	  repositoryType = RepositoryType::Remote;
 	}
-      else if (str == ("local"))
+      else if (str == "local")
 	{
 	  urlOrPath = GetLocalPackageRepository().Get();
 	  repositoryType = RepositoryType::Local;
@@ -1247,7 +1247,7 @@ PackageManagerImpl::DownloadRepositoryList ()
   arg.clientInfo = &clientInfo;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
-  arg.maxDelay = 10;
+  arg.maxDelay = INT_MAX;
   _mtrep3__GetRepositories2Response resp;
   if (repositorySoapProxy.GetRepositories2(&arg, &resp) != SOAP_OK)
     {
