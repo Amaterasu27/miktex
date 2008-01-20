@@ -77,7 +77,7 @@ echo s/@MIKTEX_VERSION_STR@/%verstr%/ >> tmp\scriptfile
 echo s/@MIKTEX_SERIES_STR@/%major%.%minor%/ >> tmp\scriptfile
 echo s;@top_srcdir@;%CD:\=/%; >> tmp\scriptfile
 for /F "usebackq delims=" %%d in (`bash -c date`) do (
-  echo s!@MIKTEX_DATETIME_STR@!%%d! >> tmp\scriptfile
+  echo s;@MIKTEX_DATETIME_STR@;%%d; >> tmp\scriptfile
 )
 
 sed -f tmp\scriptfile < Doxyfile.in > Doxyfile

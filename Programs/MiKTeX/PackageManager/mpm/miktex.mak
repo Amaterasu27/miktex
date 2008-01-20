@@ -1,6 +1,6 @@
 ## miktex.mak:
 ## 
-## Copyright (C) 2003-2006 Christian Schenk
+## Copyright (C) 2003-2008 Christian Schenk
 ##
 ## This file is part of MiKTeX Package Manager.
 ##
@@ -88,6 +88,7 @@ $(outdir)\mpm.com: $(outdir) $(mpm_objects)
 			Ws2_32.lib \
 			fdi.lib \
 			user32.lib \
+			shlwapi.lib \
 			wininet.lib \
 
 $(outdir)\mpm.res: \

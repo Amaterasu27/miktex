@@ -1,6 +1,6 @@
 # configure.ac:
 #
-# Copyright (C) 2005-2007 Christian Schenk
+# Copyright (C) 2005-2008 Christian Schenk
 # 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ AC_PREREQ([2.59])
 #    J2000   days since Jan 1, 2000
 #    RCNUM   release candidate number
 #  BETANUM   beta number
-AC_INIT([MiKTeX Tools],[2.5.2859])
+AC_INIT([MiKTeX Tools],[2.5.2941])
 
 # write configuration settings into ./config.h
 AC_CONFIG_HEADERS([config.h])

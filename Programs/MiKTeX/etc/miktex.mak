@@ -1,6 +1,6 @@
 ## miktex.mak:
 ## 
-## Copyright (C) 1996-2005 Christian Schenk
+## Copyright (C) 1996-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -107,6 +107,7 @@ $(outdir)\copystart.exe: \
 			advapi32.lib \
 			delayimp.lib \
 			user32.lib \
+			shlwapi.lib \
 			winspool.lib \
 			/DELAYLOAD:advapi32.dll \
 			/DELAYLOAD:user32.dll \
