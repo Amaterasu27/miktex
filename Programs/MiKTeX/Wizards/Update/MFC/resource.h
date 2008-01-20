@@ -76,6 +76,7 @@
 #define IDC_ETA                         1052
 #define IDC_ETA_TITLE                   1053
 #define IDC_STATUS                      1054
+#define IDC_VISIT_WEB_SITE              1055
 
 // Next default values for new objects
 // 

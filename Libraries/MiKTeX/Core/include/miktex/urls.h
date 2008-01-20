@@ -1,6 +1,6 @@
 /* urls.h: hard-coded urls
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -35,6 +35,8 @@
 
 #define MIKTEX_URL_WWW_REGISTRATION \
   MIKTEX_URL_WWW MIKTEXTEXT("Registration.aspx")
+
+#define MIKTEX_URL_WWW_PACKAGING MIKTEX_URL_WWW "pkg/"
 
 #define MIKTEX_URL_WWW_KNOWN_ISSUES \
   MIKTEX_URL_WWW MIKTEXTEXT(MIKTEX_SERIES_STR) MIKTEXTEXT("/Issues.aspx")

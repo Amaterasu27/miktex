@@ -1,6 +1,6 @@
 /* FinishPage.h:						-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -59,6 +59,9 @@ protected:
 
 private:
   int viewReport;
+
+private:
+  int visitWebSite;
 
 private:
   class UpdateWizard * pSheet;

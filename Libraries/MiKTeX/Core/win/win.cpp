@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -2884,18 +2884,36 @@ HINSTANCE ShellExecuteURL
 
 /* _________________________________________________________________________
 
+   Utils::ShowWebPage
+   _________________________________________________________________________ */
+
+void
+Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
+{
+  HINSTANCE hInst =
+    ShellExecuteURL(0,
+		    0,
+		    lpszUrl,
+		    0,
+		    0,
+		    SW_SHOWNORMAL);
+  if (reinterpret_cast<int>(hInst) <= 32)
+    {
+      FATAL_MIKTEX_ERROR ("Utils::ShowWebPage",
+			  T_("The web browser could not be started."),
+			  NUMTOSTR(reinterpret_cast<int>(hInst)));
+    }
+}
+
+/* _________________________________________________________________________
+
    Utils::RegisterMiKTeXUser
    _________________________________________________________________________ */
 
 void
 Utils::RegisterMiKTeXUser ()
 {
-  ShellExecute (0,
-		T_("open"),
-		T_("http://miktex.org/Registration.aspx"),
-		0,
-		0,
-		SW_SHOW);
+  ShowWebPage ("http://miktex.org/Registration.aspx");
 }
 
 /* _________________________________________________________________________
