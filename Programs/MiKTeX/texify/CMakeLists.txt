@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -38,6 +38,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${mcd_dll_name} SHARED ${${mcd_dll_name}_sources})
 
+set_target_properties(${mcd_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${mcd_dll_name}
   ${app_dll_name}
   ${core_dll_name}
@@ -51,4 +57,7 @@ rebase(${mcd_dll_name})
 create_dll_wrapper(texify ${mcd_dll_name} mcdmain)
 create_dll_wrapper(texi2dvi ${mcd_dll_name} mcdmain)
 
-install(TARGETS ${mcd_dll_name} texify texi2dvi DESTINATION ${bindir})
+install(TARGETS ${mcd_dll_name} texify texi2dvi
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}")
