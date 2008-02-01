@@ -316,6 +316,25 @@ typedef EnumWrapper<MacroLanguageEnum> MacroLanguage;
 
 /* _________________________________________________________________________
 
+   Engine
+   _________________________________________________________________________ */
+
+class EngineEnum
+{
+public:
+  enum EnumType {
+    NotSet,
+    TeX,
+    pdfTeX,
+    XeTeX,
+    Omega,
+  };
+};
+
+typedef EnumWrapper<EngineEnum> Engine;
+
+/* _________________________________________________________________________
+
    OutputType
    _________________________________________________________________________ */
 
@@ -415,6 +434,9 @@ public:
   string pdflatexProgram;
 
 public:
+  string xelatexProgram;
+
+public:
   string makeindexProgram;
 
 public:
@@ -425,6 +447,9 @@ public:
 
 public:
   string pdftexProgram;
+
+public:
+  string xetexProgram;
 
 public:
   string texindexProgram;
@@ -452,6 +477,31 @@ private:
 	str = lpszDefault;
       }
   }
+
+public:
+  Engine engine;
+
+public:
+  void
+  SetEngine (/*[in]*/ const char * lpszEngine)
+  {
+    if (StringCompare(lpszEngine, "tex", true) == 0)
+      {
+	engine = Engine::TeX;
+      }
+    else if (StringCompare(lpszEngine, "pdftex", true) == 0)
+      {
+	engine = Engine::pdfTeX;
+      }
+    else if (StringCompare(lpszEngine, "xetex", true) == 0)
+      {
+	engine = Engine::XeTeX;
+      }
+    else
+      {
+	FatalError (T_("Unknown engine: %s"), lpszEngine);
+      }
+  }
 };
 
 /* _________________________________________________________________________
@@ -471,7 +521,8 @@ Options::Options ()
 #endif
     verbose (false),
     maxIterations (5),
-    macroLanguage (MacroLanguage::None)
+    macroLanguage (MacroLanguage::None),
+    engine (Engine::NotSet)
 {
   if (regcomp(&regex_bibdata,
 	      "^\\\\bibdata",
@@ -543,6 +594,8 @@ Options::Options ()
   SetProgramName (pdftexProgram, "PDFTEX", "pdftex");
   SetProgramName (texProgram, "TEX", "tex");
   SetProgramName (texindexProgram, "TEXINDEX", "texindex");
+  SetProgramName (xelatexProgram, "XELATEX", "xelatex");
+  SetProgramName (xetexProgram, "XETEX", "xetex");
 }
 
 /* _________________________________________________________________________
@@ -718,6 +771,10 @@ private:
   RunBibTeX ();
 
 private:
+  PathName
+  GetTeXEnginePath (/*[out]*/ string & exeName);
+
+private:
   void
   RunTeX ();
 
@@ -872,7 +929,7 @@ Driver::Initialize (/*[in]*/ McdApp *		pApplication,
   this->pOptions = pOptions;
 
   pApplication->Trace (T_("Initializing driver..."));
-  
+ 
   givenFileName = lpszFileName;
   
   // Get the name of the current directory.  We want the full path
@@ -1586,30 +1643,78 @@ Driver::InstallProgram (/*[in]*/ const char *	lpszProgram)
 
 /* _________________________________________________________________________
 
+   Driver::GetTeXEnginePath
+   _________________________________________________________________________ */
+
+PathName
+Driver::GetTeXEnginePath (/*[out]*/ string & exeName)
+{
+  if (macroLanguage == MacroLanguage::Texinfo)
+    {
+      if (pOptions->outputType == OutputType::PDF)
+	{
+	  if (pOptions->engine == Engine::XeTeX)
+	    {
+	      exeName = pOptions->xetexProgram;
+	    }
+	  else
+	    {
+	      exeName = pOptions->pdftexProgram;
+	    }
+	}
+      else
+	{
+	  if (pOptions->engine == Engine::pdfTeX)
+	    {
+	      exeName = pOptions->pdftexProgram;
+	    }
+	  else
+	    {
+	      exeName = pOptions->texProgram;
+
+	    }
+	}
+    }	  
+  else
+    {
+      if (pOptions->outputType == OutputType::PDF)
+	{
+	  if (pOptions->engine == Engine::XeTeX)
+	    {
+	      exeName = pOptions->xelatexProgram;
+	    }
+	  else
+	    {
+	      exeName = pOptions->pdflatexProgram;
+	    }
+	}
+      else
+	{
+	  exeName = pOptions->latexProgram;
+	}
+    }
+  PathName pathExe;
+  if (! pSession->FindFile(exeName.c_str(), FileType::EXE, pathExe))
+    {
+      InstallProgram (exeName.c_str());
+      if (! pSession->FindFile(exeName.c_str(), FileType::EXE, pathExe))
+	{
+	  FatalError (T_("%s could not be found."), Q_(exeName));
+	}
+    }
+  return (pathExe);
+}
+
+/* _________________________________________________________________________
+
    Driver::RunTeX
    _________________________________________________________________________ */
 
 void
 Driver::RunTeX ()
 {
-  const char * lpszExeName =
-    (macroLanguage == MacroLanguage::Texinfo
-     ? (pOptions->outputType == OutputType::PDF
-	? pOptions->pdftexProgram.c_str()
-	: pOptions->texProgram.c_str())
-     : (pOptions->outputType == OutputType::PDF
-	? pOptions->pdflatexProgram.c_str()
-	: pOptions->latexProgram.c_str()));
-  
-  PathName pathExe;
-  if (! pSession->FindFile(lpszExeName, FileType::EXE, pathExe))
-    {
-      InstallProgram (lpszExeName);
-      if (! pSession->FindFile(lpszExeName, FileType::EXE, pathExe))
-	{
-	  FatalError (T_("%s could not be found."), Q_(lpszExeName));
-	}
-    }
+  string exeName;
+  PathName pathExe = GetTeXEnginePath(exeName);
   
   CommandLineBuilder commandLine;
 
@@ -1645,7 +1750,7 @@ Driver::RunTeX ()
   commandLine.AppendArgument (pathInputFile);
 	
   pApplication->Verbose (T_("Running %s %s..."),
-			 Q_(lpszExeName),
+			 Q_(exeName),
 			 commandLine.Get());
 
   int exitCode = 0;
@@ -1662,11 +1767,11 @@ Driver::RunTeX ()
 	    }
 	  catch (const exception &)
 	    {
-	      FatalError (T_("%s failed for some reason."), Q_(lpszExeName));
+	      FatalError (T_("%s failed for some reason."), Q_(exeName));
 	    }
 	}
       FatalError (T_("%s failed for some reason (see log file)."),
-		  Q_(lpszExeName));
+		  Q_(exeName));
     }
 }
 
@@ -1972,6 +2077,7 @@ enum CommandLineOptions {
   OPT_BATCH,
   OPT_CLEAN,
   OPT_DEBUG,
+  OPT_ENGINE,
   OPT_EXPAND,
   OPT_INCLUDE,
   OPT_LANGUAGE,
@@ -2028,6 +2134,14 @@ const struct poptOption optionTable[] = {
     OPT_DEBUG,
     T_("Print debug information."),
     0,
+  },
+
+  {
+    "engine", 0,
+    POPT_ARG_STRING, 0,
+    OPT_ENGINE,
+    T_("Use the specified TeX engine."),
+    T_("ENGINE"),
   },
 
   {
@@ -2126,7 +2240,7 @@ const struct poptOption optionTable[] = {
     "src", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_SRC,
-    T_("Pass option --src-specials to the TeX compiler."),
+    T_("Pass option --src-specials to the TeX engine."),
     0,
   },
 
@@ -2134,7 +2248,7 @@ const struct poptOption optionTable[] = {
     "src-specials", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
     OPT_SRC_SPECIALS,
-    T_("Pass option --src-specials[=SRCSPECIALS] to the TeX compiler."),
+    T_("Pass option --src-specials[=SRCSPECIALS] to the TeX engine."),
     T_("SRCSPECIALS"),
   },
 #endif
@@ -2143,7 +2257,7 @@ const struct poptOption optionTable[] = {
     "tex-option", 0,
     POPT_ARG_STRING, 0,
     OPT_TEX_OPTION,
-    T_("Pass OPTION to (La)TeX."),
+    T_("Pass OPTION to the TeX engine."),
     T_("OPTION"),
   },
 
@@ -2209,6 +2323,9 @@ McdApp::Run (/*[in]*/ int		argc,
 	  break;
 	case OPT_DEBUG:
 	  options.traceStreams = DEFAULT_TRACE_STREAMS;
+	  break;
+	case OPT_ENGINE:
+	  options.SetEngine (lpszOptArg);
 	  break;
 	case OPT_EXPAND:
 	  options.expand = true;
