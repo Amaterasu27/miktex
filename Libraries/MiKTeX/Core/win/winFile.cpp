@@ -1,6 +1,6 @@
 /* File.cpp: file operations
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -342,6 +342,7 @@ SystemTimeToCrtTime (/*[in]*/ const SYSTEMTIME &	systemTime)
   timeStruct.tm_hour = systemTime.wHour;
   timeStruct.tm_min = systemTime.wMinute;
   timeStruct.tm_sec = systemTime.wSecond;
+  timeStruct.tm_isdst = 0;
   time_t time = mktime(&timeStruct);
   if (time == static_cast<time_t>(-1))
     {
