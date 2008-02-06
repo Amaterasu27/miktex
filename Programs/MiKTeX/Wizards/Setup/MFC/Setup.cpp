@@ -869,7 +869,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       if (theApp.isMiKTeXDirect)
 	{
-	  theApp.setupTask = SetupTask::PrepareMiKTeXDirect;
+	  theApp.setupTask = SetupTask::InstallFromCD;
 	}
       else if (! theApp.localPackageRepository.Empty()
 	       && theApp.packageLevel != PackageLevel::None)
