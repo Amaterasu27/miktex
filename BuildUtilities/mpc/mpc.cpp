@@ -371,7 +371,7 @@ protected:
 
 protected:
   void
-  PackageCreator::CreateRepositoryInformationFile
+  CreateRepositoryInformationFile
   (/*[in]*/ const PathName &	repository,
    /*[in]*/ Cfg &		dbLight);
 
