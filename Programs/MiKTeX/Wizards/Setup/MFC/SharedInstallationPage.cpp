@@ -1,6 +1,6 @@
 /* SharedInstallationPage.cpp:
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -93,7 +93,7 @@ SharedInstallationPage::OnInitDialog ()
 	    }
 	  else
 	    {
-	      FATAL_WINDOWS_ERROR (T_("GetUserName"), 0);
+	      FATAL_WINDOWS_ERROR ("GetUserName", 0);
 	    }
 	}
       CString str;
@@ -103,13 +103,8 @@ SharedInstallationPage::OnInitDialog ()
       if (IsWindowsNT())
 	{
 	  char szDisplayName[30];
-#if defined(MIKTEX_UNICODE)
 	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
-	    getUserNameEx (T_("Secur32.dll"), T_("GetUserNameExW"));
-#else
-	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
-	    getUserNameEx (T_("Secur32.dll"), T_("GetUserNameExA"));
-#endif
+	    getUserNameEx ("Secur32.dll", "GetUserNameExA");
 	  ULONG sizeDisplayName =
 	    sizeof(szDisplayName) / sizeof(szDisplayName[0]);
 	  if (getUserNameEx(NameDisplay, szDisplayName, &sizeDisplayName))
@@ -211,7 +206,7 @@ SharedInstallationPage::OnWizardBack ()
   if (theApp.prefabricated)
     {
       prev = 
-	(theApp.packageLevel == PackageLevel::Complete
+	(theApp.prefabricatedPackageLevel == PackageLevel::Complete
 	 ? IDD_PACKAGE_SET_INSTALL
 	 : IDD_LICENSE);
     }

@@ -507,6 +507,7 @@ END_MESSAGE_MAP();
 
 SetupWizardApplication::SetupWizardApplication ()
   : packageLevel (PackageLevel::None),
+    prefabricatedPackageLevel (PackageLevel::None),
     installOnTheFly (TriState::Undetermined),
     setupTask (SetupTask::None)
 {
@@ -854,9 +855,13 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	     0);
 	}
     }
-  else if (! SearchLocalRepository(theApp.localPackageRepository,
-				   theApp.packageLevel,
-				   theApp.prefabricated))
+  else if (SearchLocalRepository(theApp.localPackageRepository,
+				 theApp.prefabricatedPackageLevel,
+				 theApp.prefabricated))
+    {
+      theApp.packageLevel = theApp.prefabricatedPackageLevel;
+    }
+  else
     {
       // check the default location
       theApp.localPackageRepository = GetDefaultLocalRepository();
@@ -2169,8 +2174,8 @@ LogV (/*[in]*/ const char *	lpszFormat,
        *lpsz != 0;
        ++ lpsz)
     {
-      if (lpsz[0] == T_('\n')
-	  || (lpsz[0] == T_('\r') && lpsz[1] == T_('\n')))
+      if (lpsz[0] == '\n'
+	  || (lpsz[0] == '\r' && lpsz[1] == '\n'))
 	{
 	  theApp.traceStream->WriteFormattedLine ("setup",
 						  "%s",
@@ -2180,7 +2185,7 @@ LogV (/*[in]*/ const char *	lpszFormat,
 	      theApp.logStream.WriteLine (currentLine);
 	    }
 	  currentLine = "";
-	  if (lpsz[0] == T_('\r'))
+	  if (lpsz[0] == '\r')
 	    {
 	      ++ lpsz;
 	    }

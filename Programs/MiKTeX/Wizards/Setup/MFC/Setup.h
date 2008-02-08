@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -23,14 +23,14 @@
 
 #include "resource.h"
 
-#define LICENSE_FILE T_("LICENSE.TXT")
-#define DOWNLOAD_INFO_FILE T_("README.TXT")
+#define LICENSE_FILE "LICENSE.TXT"
+#define DOWNLOAD_INFO_FILE "README.TXT"
 
-#define BASIC_MIKTEX T_("\"Basic MiKTeX\"")
-#define BASIC_MIKTEX_LEGACY T_("\"Small MiKTeX\"")
-#define COMPLETE_MIKTEX T_("\"Complete MiKTeX\"")
-#define COMPLETE_MIKTEX_LEGACY T_("\"Total MiKTeX\"")
-#define ESSENTIAL_MIKTEX T_("\"Essential MiKTeX\"")
+#define BASIC_MIKTEX "\"Basic MiKTeX\""
+#define BASIC_MIKTEX_LEGACY "\"Small MiKTeX\""
+#define COMPLETE_MIKTEX "\"Complete MiKTeX\""
+#define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
+#define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
 
 #define ENABLE_ADDTEXMF 0
 #define SHOW_FOLDER_PAGE 0
@@ -94,13 +94,6 @@
 
 /* _________________________________________________________________________
 
-   Helper Macros
-   _________________________________________________________________________ */
-
-#define T_(x) MIKTEXTEXT(x)
-
-/* _________________________________________________________________________
-
    TempDirectory
    _________________________________________________________________________ */
 
@@ -115,7 +108,7 @@ public:
       {
 	if (! CreateDirectory(path.Get(), 0))
 	  {
-	    FATAL_WINDOWS_ERROR (T_("CreateDirectory"), path.Get());
+	    FATAL_WINDOWS_ERROR ("CreateDirectory", path.Get());
 	  }
       }
   }
@@ -260,6 +253,9 @@ public:
 
 public:
   bool prefabricated;
+
+public:
+  PackageLevel prefabricatedPackageLevel;
 
 public:
   bool mustReboot;
