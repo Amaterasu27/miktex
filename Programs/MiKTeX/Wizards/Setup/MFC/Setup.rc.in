@@ -109,7 +109,7 @@ IDB_WATERMARK           BITMAP                  "@wiz97_watermark_bmp@"
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Setup.manifest"
+//IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Setup.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //

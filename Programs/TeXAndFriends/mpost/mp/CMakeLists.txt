@@ -23,7 +23,8 @@ include_directories(BEFORE
 )
 
 add_definitions(
-  -DMPCLASS=METAPOSTApp
+  -DMPAPP=g_METAPOSTApp
+  -DMPCLASS=METAPOST
   -DMPDATA=g_METAPOSTData
   -DMIKTEX_METAPOST
 )

@@ -336,7 +336,7 @@ END
 // RT_MANIFEST
 //
 
-IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Update.manifest"
+//IDR_MANIFEST            RT_MANIFEST             "@CMAKE_CURRENT_BINARY_DIR@/res/Update.manifest"
 
 /////////////////////////////////////////////////////////////////////////////
 //
