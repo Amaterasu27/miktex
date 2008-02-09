@@ -24,6 +24,6 @@
 
 #include <memory>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Trace>

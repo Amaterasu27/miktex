@@ -688,7 +688,7 @@ CfgImpl::GetDigest ()
       MakeLower (szKeyName,
 		 BufferSizes::MaxCfgName,
 		 it->name.c_str());
-      md5Builder.Update (szKeyName, StrLen(szKeyName));
+      md5Builder.Update (szKeyName, strlen(szKeyName));
       vector<CfgValue> values;
       values.reserve (it->valueMap.size());
       for (ValueMap::const_iterator it2 =
@@ -707,7 +707,7 @@ CfgImpl::GetDigest ()
 	  MakeLower (szValueName,
 		     BufferSizes::MaxCfgName,
 		     it2->name.c_str());
-	  md5Builder.Update (szValueName, StrLen(szValueName));
+	  md5Builder.Update (szValueName, strlen(szValueName));
 	  md5Builder.Update (it2->value.c_str(), it2->value.length());
 	}
     }
@@ -831,7 +831,7 @@ CfgImpl::Expand (/*[in]*/ const char *	lpszKeyName,
 {
   const char * lpsz = lpszIn;
   string macroName;
-  expansion.reserve (StrLen(lpsz));
+  expansion.reserve (strlen(lpsz));
   for (; *lpsz != 0; ++ lpsz)
     {
       if (lpsz[0] == '$')

@@ -1,6 +1,6 @@
 /* unxProcess.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -24,43 +24,43 @@ class unxProcess : public Process
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardInput ();
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardOutput ();
 
 public:
   virtual
   FILE *
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_StandardError ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   WaitForExit (/*[in]*/ int milliseconds);
 
 public:
   virtual
   int
-  MIKTEXCALL
+  MIKTEXTHISCALL
   get_ExitCode ();
 
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
   
 private:
@@ -68,6 +68,7 @@ private:
 
 private:
   virtual
+  MIKTEXTHISCALL
   ~unxProcess ();
 
 private:

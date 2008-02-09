@@ -3,9 +3,9 @@
 #define _SYSTEM_H_
 
 #if defined(MIKTEX)
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #include <gnu-miktex.h>
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 #endif
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>

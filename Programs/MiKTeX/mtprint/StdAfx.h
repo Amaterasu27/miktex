@@ -22,13 +22,13 @@
 
 #include "mtprint-version.h"
 
-#include <MiKTeX/Graphics/DibChunker>
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Help>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Graphics/DibChunker>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Help>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Trace>
 #include <popt-miktex.h>
 
 #include <iomanip>

@@ -40,11 +40,11 @@
 #include <malloc.h>
 
 #include <getopt.h>
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 
 #if defined(_MSC_VER)
 #  define MKTEXAPI(func) extern "C" __declspec(dllexport) int __cdecl func

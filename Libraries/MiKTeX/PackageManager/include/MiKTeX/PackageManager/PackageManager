@@ -29,7 +29,7 @@
 #if ! defined(D5760AC70396FF41BBDD7DD560BDBBBC_)
 #define D5760AC70396FF41BBDD7DD560BDBBBC_
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 #include <string>
 #include <vector>

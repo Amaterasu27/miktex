@@ -26,7 +26,7 @@
 #endif
 
 #define D0A4167033297F40884B97769F47801C
-#include "MiKTeX/KPSE/Emulation"
+#include "miktex/KPSE/Emulation"
 
 /* _________________________________________________________________________
 

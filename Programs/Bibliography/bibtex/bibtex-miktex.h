@@ -29,8 +29,8 @@
 
 #include "bibtexdefs.h"
 
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/TeXAndFriends/WebAppInputLine>
+#include <miktex/Core/Registry>
+#include <miktex/TeXAndFriends/WebAppInputLine>
 
 using namespace MiKTeX::TeXAndFriends;
 using namespace MiKTeX::Core;
@@ -253,4 +253,4 @@ miktexopenbstfile (/*[in]*/ T & f)
   return (THEAPP.OpenBstFile(f));
 }
 
-#include <MiKTeX/TeXAndFriends/WebAppInputLine.inliners>
+#include <miktex/TeXAndFriends/WebAppInputLine.inliners>

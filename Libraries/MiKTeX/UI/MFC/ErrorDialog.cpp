@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "resource.h"
 
-#include <MiKTeX/UI/MFC/ErrorDialog>
+#include <miktex/UI/MFC/ErrorDialog>
 
 /* _________________________________________________________________________
 

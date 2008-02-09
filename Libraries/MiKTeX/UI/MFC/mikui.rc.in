@@ -12,7 +12,7 @@
 #endif
 #include "afxres.h"
 #include "mikui-version.h"
-#include "MiKTeX/Core/Version"
+#include "miktex/Core/Version"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS

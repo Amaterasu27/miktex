@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,6 +42,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${dib_dll_name} SHARED ${${dib_dll_name}_sources})
 
+set_target_properties(${dib_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${dib_dll_name}
   ${core_dll_name}
 )
@@ -62,4 +68,15 @@ target_link_libraries(chunkdib
   ${popt_dll_name}
 )  
 
-install(TARGETS ${dib_dll_name} chunkdib DESTINATION "${bindir}")
+install(TARGETS ${dib_dll_name} chunkdib
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/Graphics/DibChunker
+  DESTINATION
+    ${incdir}/miktex/Graphics
+)

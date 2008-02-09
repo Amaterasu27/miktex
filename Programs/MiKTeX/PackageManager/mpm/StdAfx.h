@@ -45,11 +45,11 @@
 
 #include "mpm-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
+#include <miktex/Core/Core>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
 #include <popt-miktex.h>
-#include <MiKTeX/Core/Trace>
+#include <miktex/Core/Trace>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <MiKTeX/Core/Help>

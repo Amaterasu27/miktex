@@ -101,4 +101,8 @@ foreach(e ${exes})
   )
 endforeach(e ${exes})
 
-install(TARGETS ${exes} ${pnm_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${exes} ${pnm_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

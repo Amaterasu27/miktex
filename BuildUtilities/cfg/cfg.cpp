@@ -22,7 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #include <popt-miktex.h>
 #include "cfg-version.h"
 

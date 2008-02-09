@@ -24,7 +24,7 @@
 #define THEDATA(x) DVITOMPDATA.m_##x
 
 #include "dvitomp.rc"
-#include <MiKTeX/TeXAndFriends/WebApp>
+#include <miktex/TeXAndFriends/WebApp>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::TeXAndFriends;
@@ -61,9 +61,9 @@ public:
 extern DVITOMPCLASS DVITOMPAPP;
 #define THEAPP DVITOMPAPP
 
-#include <MiKTeX/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inliners>
 
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 
 /* _________________________________________________________________________
 

@@ -23,10 +23,10 @@
 
 #include "internal.h"
 
-#include "MiKTeX/Core/Environment"
+#include "miktex/Core/Environment"
 
 #include "fnamedb.h"
-#include "MiKTeX/Core/Version"
+#include "miktex/Core/Version"
 
 // index of the hidden MPM root
 #define MPM_ROOT static_cast<unsigned>(GetNumberOfTEXMFRoots())
@@ -228,7 +228,7 @@ SessionImpl::InitializeRootDirectories
   CSVList root (startupConfig.roots.c_str(), PATH_DELIMITER);
   for (unsigned u = 0; root.GetCurrent() != 0; ++ u, ++ root)
     {
-      if (StrLen(root.GetCurrent()) == 0)
+      if (strlen(root.GetCurrent()) == 0)
 	{
 	  UNEXPECTED_CONDITION
 	    ("SessionImpl::InitializeRootDirectories");

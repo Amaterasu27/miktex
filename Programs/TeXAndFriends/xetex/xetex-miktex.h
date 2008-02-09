@@ -33,8 +33,8 @@
 
 #include "xetex.rc"
 
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/TeXAndFriends/ETeXApp>
+#include <miktex/Core/Paths>
+#include <miktex/TeXAndFriends/ETeXApp>
 
 #if 0
 namespace xetex {
@@ -216,9 +216,9 @@ public:
 
 extern XETEXCLASS XETEXAPP;
 #define THEAPP XETEXAPP
-#include <MiKTeX/TeXAndFriends/ETeXApp.inliners>
+#include <miktex/TeXAndFriends/ETeXApp.inliners>
 
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 
 #include "xetex.h"
 
@@ -262,6 +262,7 @@ MAKE_GLOBAL(utf16code*, mappedtext);
 MAKE_GLOBAL(utf16code*, nameoffile16);
 MAKE_GLOBAL(voidpointer*, fontlayoutengine);
 MAKE_GLOBAL(voidpointer, loadedfontmapping);
+MAKE_GLOBAL(scaled, loadedfontdesignsize);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)
@@ -285,6 +286,7 @@ MAKE_GLOBAL(voidpointer, loadedfontmapping);
 #define xfield xField
 #define ycoord yCoord
 #define yfield yField
+#define zxnoverd xnoverd
 
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);

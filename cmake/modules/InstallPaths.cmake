@@ -1,6 +1,6 @@
 ## InstallPaths.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,19 +18,24 @@
 ## USA.
 
 if(NATIVE_WINDOWS)
-  set(bindir "${CMAKE_INSTALL_PREFIX}/miktex/bin")
+  set(texmfdir "${CMAKE_INSTALL_PREFIX}/texmf/")
+  set(bindir "${texmfdir}/miktex/bin")
   if(CMAKE_CL_64)
     set(bindir "${bindir}/x64")
   else(CMAKE_CL_64)
 #   set(bindir "${bindir}/x86")
   endif(CMAKE_CL_64)
 else(NATIVE_WINDOWS)
+  set(texmfdir "${CMAKE_INSTALL_PREFIX}/share/texmf")
   set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
 endif(NATIVE_WINDOWS)
 
-set(basedir "${CMAKE_INSTALL_PREFIX}/miktex/base")
-set(configdir "${CMAKE_INSTALL_PREFIX}/miktex/config")
-set(docdir "${CMAKE_INSTALL_PREFIX}/doc/miktex")
-set(formatdir "${CMAKE_INSTALL_PREFIX}/miktex/fmt")
-set(mandir "${CMAKE_INSTALL_PREFIX}/man")
-set(memdir "${CMAKE_INSTALL_PREFIX}/miktex/mem")
+set(incdir "${CMAKE_INSTALL_PREFIX}/include")
+set(libdir "${CMAKE_INSTALL_PREFIX}/lib")
+set(mandir "${CMAKE_INSTALL_PREFIX}/share/man")
+
+set(basedir "${texmfdir}/miktex/base")
+set(configdir "${texmfdir}/miktex/config")
+set(docdir "${texmfdir}/doc/miktex")
+set(formatdir "${texmfdir}/miktex/fmt")
+set(memdir "${texmfdir}/miktex/mem")

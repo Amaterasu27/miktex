@@ -25,7 +25,7 @@
 #include <string.h>
 
 #if defined(MIKTEX)
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #endif
 
 #include "ttf2tfm.h"

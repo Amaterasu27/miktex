@@ -57,4 +57,8 @@ add_library(${lzma_dll_name} SHARED ${${lzma_dll_name}_sources})
 
 rebase(${lzma_dll_name})
 
-install(TARGETS ${lzma_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${lzma_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

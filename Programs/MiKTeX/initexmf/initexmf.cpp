@@ -36,11 +36,11 @@
 
 #include "initexmf-version.h"
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
+#include <miktex/Core/Core>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 #include <popt-miktex.h>
-#include <MiKTeX/PackageManager/PackageManager>
+#include <miktex/PackageManager/PackageManager>
 
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;

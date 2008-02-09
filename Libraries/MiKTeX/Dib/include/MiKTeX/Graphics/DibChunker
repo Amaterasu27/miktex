@@ -26,7 +26,7 @@
 #if ! defined(EA12EA6239A13E40B589B41B84360852)
 #define EA12EA6239A13E40B589B41B84360852
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>

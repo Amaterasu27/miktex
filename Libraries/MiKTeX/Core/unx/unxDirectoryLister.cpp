@@ -1,6 +1,6 @@
 /* unxDirectoryLister.cpp: directory lister
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -31,7 +31,6 @@
    _________________________________________________________________________ */
 
 DirectoryLister *
-MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName & directory)
 {
   return (new unxDirectoryLister (directory, 0));
@@ -43,7 +42,6 @@ DirectoryLister::Open (/*[in]*/ const PathName & directory)
    _________________________________________________________________________ */
 
 DirectoryLister *
-MIKTEXCALL
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 		       /*[in]*/ const char *	lpszPattern)
 {
@@ -69,7 +67,6 @@ unxDirectoryLister::unxDirectoryLister
    unxDirectoryLister::~unxDirectoryLister
    _________________________________________________________________________ */
 
-MIKTEXCALL
 unxDirectoryLister::~unxDirectoryLister ()
 {
   try
@@ -87,7 +84,6 @@ unxDirectoryLister::~unxDirectoryLister ()
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 unxDirectoryLister::Close ()
 {
   DIR * pDir = this->pDir;
@@ -108,7 +104,6 @@ unxDirectoryLister::Close ()
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
 {
   DirectoryEntry2 direntry2;
@@ -127,7 +122,6 @@ unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
    _________________________________________________________________________ */
 
 bool
-MIKTEXCALL
 unxDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 {
   return (GetNext(direntry2, false));

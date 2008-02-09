@@ -20,8 +20,8 @@
 #include <cstdlib>
 #include <io.h>
 #include <exception>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Paths>
+#include <miktex/Core/Core>
+#include <miktex/Core/Paths>
 
 using namespace MiKTeX::Core;
 using namespace std;

@@ -19,4 +19,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2054
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

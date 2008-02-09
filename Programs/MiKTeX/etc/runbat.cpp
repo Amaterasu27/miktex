@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#include <MiKTeX/App/Application>
+#include <miktex/App/Application>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

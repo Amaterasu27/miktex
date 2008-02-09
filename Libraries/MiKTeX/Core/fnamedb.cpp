@@ -683,7 +683,7 @@ FileNameDatabaseHeader::FndbOffset
 FileNameDatabase::CreateString (/*[in]*/ const char * lpszName)
 {
   FileNameDatabaseHeader::FndbOffset foName;
-  size_t neededBytes = StrLen(lpszName) + 1;
+  size_t neededBytes = strlen(lpszName) + 1;
   foName = ROUND2(pHeader->size, 2);
   if (foName + neededBytes > foEnd)
     {
@@ -1049,7 +1049,7 @@ FileNameDatabase::RecursiveSearch
   else
     {
       const char * lpszRecInd =
-	StrStr(lpszSearchSpec, RECURSION_INDICATOR);
+	strstr(lpszSearchSpec, RECURSION_INDICATOR);
 
       if (lpszRecInd != 0)
 	{
@@ -1129,7 +1129,7 @@ FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
      Q_(rootDirectory),
      Q_(searchSpec.Get()));
 
-  if (StrLen(searchSpec.Get()) > BufferSizes::MaxPath)
+  if (strlen(searchSpec.Get()) > BufferSizes::MaxPath)
     {
       return (false);
     }
@@ -1150,7 +1150,7 @@ FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
     }
 
   bool found = false;
-  const char * lpszRecInd = StrStr(searchSpec.Get(), RECURSION_INDICATOR);
+  const char * lpszRecInd = strstr(searchSpec.Get(), RECURSION_INDICATOR);
   if (lpszRecInd == 0)
     {
       found =

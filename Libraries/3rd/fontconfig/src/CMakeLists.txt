@@ -79,4 +79,8 @@ target_link_libraries(${fontconfig_dll_name}
   ${unxemu_dll_name}
 )
 
-install(TARGETS ${fontconfig_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${fontconfig_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

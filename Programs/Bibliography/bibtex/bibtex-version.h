@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2541
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.99c"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

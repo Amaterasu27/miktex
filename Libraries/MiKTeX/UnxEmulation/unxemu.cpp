@@ -23,7 +23,7 @@
 
 #include <errno.h>
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 using namespace MiKTeX::Core;
 using namespace std;

@@ -24,7 +24,7 @@
 #define THEDATA(x) DVITYPEDATA.m_##x
 
 #include "dvitype.rc"
-#include <MiKTeX/TeXAndFriends/WebApp>
+#include <miktex/TeXAndFriends/WebApp>
 
 #define OPT_OUT_MODE 1000
 #define OPT_START_THERE 1001
@@ -198,4 +198,4 @@ public:
 extern DVITYPECLASS DVITYPEAPP;
 #define THEAPP DVITYPEAPP
 
-#include <MiKTeX/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inliners>

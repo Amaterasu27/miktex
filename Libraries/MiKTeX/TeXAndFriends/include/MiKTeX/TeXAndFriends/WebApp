@@ -24,7 +24,7 @@
 #if ! defined(MIKTEX__79ED517D_1F1C_42F4_B632_4CECD7C51331__)
 #define MIKTEX__79ED517D_1F1C_42F4_B632_4CECD7C51331__
 
-#include <MiKTeX/TeXAndFriends/Prototypes>
+#include <miktex/TeXAndFriends/Prototypes>
 
 #include <cstdio>
 
@@ -35,10 +35,10 @@
 #include <string>
 #include <vector>
 
-#include <MiKTeX/C4P/C4P>
+#include <miktex/C4P/C4P>
 #include <popt-miktex.h>
 
-#include <MiKTeX/App/Application>
+#include <miktex/App/Application>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

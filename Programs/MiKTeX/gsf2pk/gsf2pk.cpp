@@ -33,8 +33,8 @@
 #include <string>
 #include <vector>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
 
 #include <popt-miktex.h>
 

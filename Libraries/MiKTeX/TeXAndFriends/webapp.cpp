@@ -23,7 +23,7 @@
 
 #include "internal.h"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>
 
 /* _______________________________________________________________________
    

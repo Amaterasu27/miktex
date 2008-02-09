@@ -19,8 +19,8 @@
 
 #include <cstdlib>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/App/Application>
 
 #if ! defined(MAINFUNC)
 #  define MAINFUNC Main

@@ -226,7 +226,7 @@ endif(BUILDING_MIKTEX_TOOLS)
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
 find_package(Qt4)
-find_package(THREADS REQUIRED)
+find_package(Threads REQUIRED)
 
 if(NATIVE_WINDOWS)
   find_package(CURL QUIET)
@@ -242,6 +242,7 @@ check_function_exists(geteuid HAVE_GETEUID)
 check_function_exists(getuid HAVE_GETUID)
 check_function_exists(memcmp HAVE_MEMCMP)
 check_function_exists(memmove HAVE_MEMMOVE)
+check_function_exists(mmap HAVE_MMAP)
 check_function_exists(resolvepath HAVE_RESOLVEPATH)
 check_function_exists(setenv HAVE_SETENV)
 check_function_exists(setreuid HAVE_SETREUID)
@@ -283,7 +284,7 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
   SET(CMAKE_INSTALL_PREFIX
-    "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}/texmf"
+    "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}"
     CACHE PATH "MiKTeX install prefix." FORCE
   )
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
@@ -320,6 +321,8 @@ mark_as_advanced(CMAKE_BUILD_TYPE)
 ###############################################################################
 ## add global definitions
 
+add_definitions(-DHAVE_CONFIG_H)
+
 add_definitions(-DMIKTEX)
 
 if(NATIVE_WINDOWS)
@@ -345,14 +348,6 @@ else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
 
-if(MIKTEX_ROOTS)
-  add_definitions(-DMIKTEX_ROOTS=\\\"${MIKTEX_ROOTS}\\\")
-endif(MIKTEX_ROOTS)
-
-if(MIKTEX_INSTALLROOT)
-  add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
-endif(MIKTEX_INSTALLROOT)
-
 set(CMAKE_RC_FLAGS
   "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 
@@ -360,8 +355,10 @@ set(CMAKE_RC_FLAGS
 ## add global include directories
 
 include_directories(
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_md5_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
@@ -424,6 +421,9 @@ link_directories(${LIBRARY_OUTPUT_PATH})
 
 file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR_NATIVE)
 file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
+
+configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake
+               ${CMAKE_BINARY_DIR}/config.h)
 
 configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
                ${CMAKE_BINARY_DIR}/DoxyFile)
@@ -814,15 +814,11 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_md5walk_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_md5walk_dir})
 
 add_subdirectory(${rel_mthelp_dir})
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_mpc_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_mpc_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_padout_dir})

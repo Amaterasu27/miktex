@@ -26,7 +26,7 @@
 #endif
 
 #define DAA6476494C144C8BED9A9E8810BAABA
-#include "MiKTeX/Extractor/Extractor"
+#include "miktex/Extractor/Extractor"
 
 #include "extractor-version.h"
 
@@ -158,7 +158,7 @@ namespace MiKTeX {					\
 
 #define ARRAY_SIZE(buf) (sizeof(buf)/sizeof(buf[0]))
 
-#include "MiKTeX/Extractor/Extractor"
+#include "miktex/Extractor/Extractor"
 
 BEGIN_INTERNAL_NAMESPACE;
 

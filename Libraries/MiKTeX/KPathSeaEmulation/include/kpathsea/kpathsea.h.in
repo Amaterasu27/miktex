@@ -1,2 +1,2 @@
 #pragma once
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>

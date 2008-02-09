@@ -18,7 +18,7 @@
    along with Yap; if not, write to the Free Software Foundation, 59
    Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 
-#include <MiKTeX/Core/First>
+#include <miktex/Core/First>
 
 #if ! defined(VC_EXTRALEAN)
 #  define VC_EXTRALEAN
@@ -81,17 +81,17 @@
 
 #include "yap-version.h"
 
-#include <MiKTeX/Graphics/DibChunker>
-#include <MiKTeX/UI/MFC/ErrorDialog>
-#include <MiKTeX/UI/MFC/ProgressDialog>
-#include <MiKTeX/UI/MFC/TextViewerDialog>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Debug>
-#include <MiKTeX/DVI/Dvi>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
-#include <MiKTeX/Core/Trace>
-#include <MiKTeX/Core/win/DllProc>
+#include <miktex/Graphics/DibChunker>
+#include <miktex/UI/MFC/ErrorDialog>
+#include <miktex/UI/MFC/ProgressDialog>
+#include <miktex/UI/MFC/TextViewerDialog>
+#include <miktex/Core/Core>
+#include <miktex/Core/Debug>
+#include <miktex/DVI/Dvi>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
+#include <miktex/Core/Trace>
+#include <miktex/Core/win/DllProc>
 
 #include <popt-miktex.h>
 

@@ -39,14 +39,14 @@
 #if ! defined(A089FEF06254514BA063DED44B70E66F_)
 #define A089FEF06254514BA063DED44B70E66F_
 
-#include <MiKTeX/Core/Definitions>
+#include <miktex/Core/Definitions>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>
 #endif
 
-#include <MiKTeX/Core/Text>
-#include <MiKTeX/Core/MD5>
+#include <miktex/Core/Text>
+#include <miktex/Core/MD5>
 
 #if defined(__cplusplus)
 #  include <cstdio>
@@ -219,7 +219,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 #if defined(__cplusplus)
 
-#include <MiKTeX/Core/Debug>
+#include <miktex/Core/Debug>
 
 /// @namespace MiKTeX::Core
 /// @brief The MiKTeX core namespace.
@@ -1644,9 +1644,11 @@ public:
 #endif
 
 public:
+#if defined(MIKTEX_WINDOWS)
   static
   MIKTEXCORECEEAPI(std::wstring)
   UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
+#endif
 
 #if defined(MIKTEX_WINDOWS)
 public:
@@ -2207,6 +2209,8 @@ public:
 /// Instances of this class can be used to store path names.
 class PathName : public CharBuffer<char, BufferSizes::MaxPath>
 {
+protected:
+  typedef CharBuffer<char, BufferSizes::MaxPath> Base;
 public:
   enum {
     DosDirectoryDelimiter = '\\',
@@ -2366,7 +2370,7 @@ public:
   PathName &
   operator= (/*[in]*/ const char * lpszRhs)
   {
-    CharBuffer<char, BufferSizes::MaxPath>::operator= (lpszRhs);
+    Base::operator= (lpszRhs);
     return (*this);
   }
 
@@ -2374,7 +2378,7 @@ public:
   PathName &
   operator= (/*[in]*/ const std::basic_string<char> & rhs)
   {
-    CharBuffer<char, BufferSizes::MaxPath>::operator= (rhs);
+    Base::operator= (rhs);
     return (*this);
   }
 
@@ -2592,7 +2596,7 @@ public:
   {
     char fileName[BufferSizes::MaxPath];
     GetFileName (fileName);
-    CharBuffer::Set (fileName);
+    Base::Set (fileName);
     return (*this);
   }
 
@@ -2723,7 +2727,7 @@ public:
   PathName &
   AppendExtension (/*[in]*/ const char * lpszExtension)
   {
-    CharBuffer::Append (lpszExtension);
+    Base::Append (lpszExtension);
     return (*this);
   }
 
@@ -2735,7 +2739,8 @@ public:
     const
   {
     size_t l = GetLength();
-    return (l > 0 && IsDirectoryDelimiter(CharBuffer::operator[](l - 1)));
+    return (l > 0
+	    && (IsDirectoryDelimiter(Base::operator[](l - 1))));
   }
 
   /// Appends a character string to this path name.
@@ -2752,7 +2757,7 @@ public:
       {
 	AppendDirectoryDelimiter ();
       }
-    CharBuffer::Append (lpsz);
+    Base::Append (lpsz);
     return (*this);
   }
 
@@ -6188,7 +6193,7 @@ public:
 public:
   BasicCsvList (/*[in]*/ const CharType *	lpszValueList,
 		/*[in]*/ CharType		separator)
-    : CharBuffer (lpszValueList)
+    : CharBuffer<CharType, BUFSIZE> (lpszValueList)
   {
     if (lpszValueList == 0 || *lpszValueList == 0)
       {
@@ -6197,8 +6202,10 @@ public:
     else
       {
 	this->separator = separator;
-	lpszCurrent = GetBuffer();
-	lpszNext = const_cast<CharType*>(StrChr(Get(), separator));
+	lpszCurrent = CharBuffer<CharType, BUFSIZE>::GetBuffer();
+	lpszNext =
+	  const_cast<CharType*>(StrChr(CharBuffer<CharType, BUFSIZE>::Get(),
+				       separator));
 	if (lpszNext != 0)
 	  {
 	    *lpszNext++ = 0;
@@ -6439,6 +6446,9 @@ private:
 class Tokenizer
   : protected CharBuffer<char, 512>
 {
+protected:
+  typedef CharBuffer<char, 512> Base;
+
 public:
   MIKTEXCOREEXPORT
   MIKTEXTHISCALL
@@ -6520,12 +6530,12 @@ private:
     bool needQuotes = (StrChr(lpsz, ' ') != 0);
     if (needQuotes)
       {
-	Append ('"');
+	CharBuffer<CharType>::Append ('"');
       }
-    Append (lpsz);
+    CharBuffer<CharType>::Append (lpsz);
     if (needQuotes)
       {
-	Append ('"');
+	CharBuffer<CharType>::Append ('"');
       }
   }
 };
@@ -6696,6 +6706,13 @@ public:
 
 public:
   NumberString (/*[in]*/ int		num,
+		/*[in]*/ bool		hex)
+  {
+    Init (num, hex);
+  }
+
+public:
+  NumberString (/*[in]*/ long		num,
 		/*[in]*/ bool		hex)
   {
     Init (num, hex);

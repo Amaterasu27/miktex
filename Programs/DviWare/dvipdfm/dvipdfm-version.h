@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2628
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.13.2d"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

@@ -24,7 +24,7 @@
 #define MIKTEXDIBEXPORT __declspec(dllexport)
 
 #define CA71604DC6CF21439A421D76D5C2E5D7
-#include "MiKTeX/Graphics/DibChunker"
+#include "miktex/Graphics/DibChunker"
 
 /* _________________________________________________________________________
 

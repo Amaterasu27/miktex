@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -86,6 +86,12 @@ add_custom_command(
 
 add_library(${dvi_dll_name} SHARED ${${dvi_dll_name}_sources})
 
+set_target_properties(${dvi_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${dvi_dll_name}
   ${core_dll_name}
   ${dib_dll_name}
@@ -107,4 +113,15 @@ target_link_libraries(dviscan
   ${popt_dll_name}
 )
 
-install(TARGETS ${dvi_dll_name} dviscan DESTINATION "${bindir}")
+install(TARGETS ${dvi_dll_name} dviscan
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/DVI/Dvi
+  DESTINATION
+    ${incdir}/miktex/DVI/Dvi
+)

@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2039
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "1.2"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

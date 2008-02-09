@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2086
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "3.0"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

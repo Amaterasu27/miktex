@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -78,6 +78,12 @@ set(${ui_mfc_dll_name}_sources
 
 add_library(${ui_mfc_dll_name} SHARED ${${ui_mfc_dll_name}_sources})
 
+set_target_properties(${ui_mfc_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${ui_mfc_dll_name}
   ${core_dll_name}
   ${mpm_dll_name}
@@ -85,4 +91,22 @@ target_link_libraries(${ui_mfc_dll_name}
 
 rebase(${ui_mfc_dll_name})
 
-install(TARGETS ${ui_mfc_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${ui_mfc_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/UI/MFC/ErrorDialog
+    include/miktex/UI/MFC/PackageTreeCtrl
+    include/miktex/UI/MFC/ProgressDialog
+    include/miktex/UI/MFC/PropSheetPackage
+    include/miktex/UI/MFC/Prototypes
+    include/miktex/UI/MFC/SiteWizSheet
+    include/miktex/UI/MFC/TextViewerDialog
+    include/miktex/UI/MFC/UpdateDialog
+  DESTINATION
+    ${incdir}/miktex/UI/MFC
+)

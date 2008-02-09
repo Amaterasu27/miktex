@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,12 +22,17 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/miktex/Core/MD5.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/MD5.h
+)
+
 set(${md5_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/MD5.h
   global.h
   internal.h
   md5-version.h
   md5c.cpp
-  include/MiKTeX/Core/MD5
 )
 
 if(NATIVE_WINDOWS)
@@ -42,6 +47,24 @@ endif(NATIVE_WINDOWS)
 
 add_library(${md5_dll_name} SHARED ${${md5_dll_name}_sources})
 
+set_target_properties(${md5_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${md5_dll_name})
 
-install(TARGETS ${md5_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${md5_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/Core/MD5
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/MD5.h
+  DESTINATION
+    ${incdir}/miktex/Core
+)

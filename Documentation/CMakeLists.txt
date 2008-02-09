@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,7 +23,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.ent.in
 if(BUILDING_MIKTEX)
   install(
     FILES local.txt
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/latex/00LocalGuide
+    DESTINATION ${texmfdir}/doc/latex/00LocalGuide
   )
 endif(BUILDING_MIKTEX)
 
@@ -64,6 +64,7 @@ if(BUILDING_MIKTEX)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/faq")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/packaging")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/relnotes")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/roadmap")
 endif(BUILDING_MIKTEX)
@@ -501,6 +502,54 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
+## packaging guide
+
+if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/packaging
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/www/packaging/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/www/packaging/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/www/packaging
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir www/packaging/
+		--output ${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
+		html.xsl
+		packaging.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/packaging.xml
+	${entities_ent}
+	${html_xsl}
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
+
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/
+    DESTINATION	${docdir}/packaging/
+    PATTERN	".svn" EXCLUDE
+  )
+endif(BUILDING_MIKTEX)
+
+###############################################################################
 ## release notes
 
 if(BUILDING_MIKTEX)
@@ -773,7 +822,7 @@ if(NOT NATIVE_WINDOWS)
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
     DESTINATION
-	${mandir}
+	${mandir}/man1
   )
 endif(NOT NATIVE_WINDOWS)
 
@@ -793,6 +842,7 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
   )

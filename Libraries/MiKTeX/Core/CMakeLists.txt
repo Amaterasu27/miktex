@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,13 +18,13 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Version
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Version.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/MiKTeX/Core/Paths
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Paths.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Paths
 )
 
 configure_file(
@@ -38,6 +38,14 @@ configure_file(
 )  
 
 add_definitions(-DHAVE_CONFIG_H)
+
+if(MIKTEX_ROOTS)
+  add_definitions(-DMIKTEX_ROOTS=\\\"${MIKTEX_ROOTS}\\\")
+endif(MIKTEX_ROOTS)
+
+if(MIKTEX_INSTALLROOT)
+  add_definitions(-DMIKTEX_INSTALLROOT=\\\"${MIKTEX_INSTALLROOT}\\\")
+endif(MIKTEX_INSTALLROOT)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -66,13 +74,13 @@ set(${core_dll_name}_sources
   getdelim.cpp
   graphics.cpp
   gsinfo.cpp
-  include/MiKTeX/Core/Text
-  include/MiKTeX/Core/Core
-  include/MiKTeX/Core/Environment
-  include/MiKTeX/Core/First
-  include/MiKTeX/Core/Registry
-  include/MiKTeX/Core/Test
-  include/MiKTeX/Core/Trace
+  include/miktex/Core/Text
+  include/miktex/Core/Core
+  include/miktex/Core/Environment
+  include/miktex/Core/First
+  include/miktex/Core/Registry
+  include/miktex/Core/Test
+  include/miktex/Core/Trace
   internal.h
   log.cpp
   makefndb.cpp
@@ -202,7 +210,10 @@ if(NATIVE_WINDOWS)
       rpcrt4
       uuid
     )
-    install(TARGETS ${core_ps_dll_name} DESTINATION "${bindir}")
+    install(TARGETS ${core_ps_dll_name}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}")
   endif(MFC_FOUND)
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
@@ -235,6 +246,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
+set_target_properties(${core_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${core_dll_name}
   ${CMAKE_THREAD_LIBS_INIT}
   ${bzip2_dll_name}
@@ -258,6 +275,39 @@ delay_load(${core_dll_name}
   
 rebase(${core_dll_name})
 
-install(TARGETS ${core_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${core_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version
+    include/miktex/Core/Core
+    include/miktex/Core/Debug
+    include/miktex/Core/Definitions
+    include/miktex/Core/Environment
+    include/miktex/Core/First
+    include/miktex/Core/Help
+    include/miktex/Core/Registry
+    include/miktex/Core/Test
+    include/miktex/Core/Text
+    include/miktex/Core/Trace
+    include/miktex/Core/Urls
+  DESTINATION
+    ${incdir}/miktex/Core
+)
+
+if(NATIVE_WINDOWS)
+  install(
+    FILES
+      include/miktex/Core/win/DllProc
+      include/miktex/Core/win/version.rc
+    DESTINATION
+      ${incdir}/miktex/Core/win
+  )
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(test)

@@ -19,4 +19,4 @@
 
 #define MIKTEX_COMPONENT_VERSION 2877
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

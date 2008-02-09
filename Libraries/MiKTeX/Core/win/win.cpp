@@ -24,10 +24,10 @@
 #include "internal.h"
 #include "core-version.h"
 
-#include "MiKTeX/Core/Registry"
+#include "miktex/Core/Registry"
 #include "win/winRegistry.h"
 
-#include <MiKTeX/Core/win/DllProc>
+#include <miktex/Core/win/DllProc>
 
 #define SET_SECURITY 1
 

@@ -200,7 +200,6 @@ private:
    _________________________________________________________________________ */
 
 void
-MIKTEXCALL
 Argv::Append (/*[in]*/ const char *	lpszArguments)
 {
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
@@ -736,7 +735,7 @@ FindSystemShell ()
    Process::StartSystemCommand
    _________________________________________________________________________ */
 
-MIKTEXAPI(void)
+void
 Process::StartSystemCommand (/*[in]*/ const char * lpszCommandLine)
 {
   string arguments = "-c '";
@@ -759,7 +758,7 @@ Process::StartSystemCommand (/*[in]*/ const char * lpszCommandLine)
      /bin/sh -c 'tifftopnm "%i" | ppmtobmp -windows > "%o"'
    _________________________________________________________________________ */
 
-MIKTEXAPI(bool)
+bool
 Process::ExecuteSystemCommand (/*[in]*/ const char * lpszCommandLine,
 			       /*[out]*/ int *			pExitCode,
 			       /*[in]*/ IRunProcessCallback *	pCallback,

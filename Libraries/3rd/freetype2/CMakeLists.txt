@@ -92,4 +92,7 @@ add_library(${freetype2_dll_name} SHARED ${${freetype2_dll_name}_sources})
 
 rebase(${freetype2_dll_name})
 
-install(TARGETS ${freetype2_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${freetype2_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}")

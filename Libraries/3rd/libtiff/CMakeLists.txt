@@ -132,4 +132,8 @@ add_library(${tiff_dll_name} SHARED ${${tiff_dll_name}_sources})
 
 rebase(${tiff_dll_name})
 
-install(TARGETS ${tiff_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${tiff_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

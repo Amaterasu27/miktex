@@ -1,6 +1,6 @@
 MiKTeX Tools README
 
-Copyright (C) 2005-2006 Christian Schenk
+Copyright (C) 2005-2007 Christian Schenk
   
 This file is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -31,8 +31,10 @@ FIRST THINGS FIRST
 
 * The following utilities are included:
   - initexmf: MiKTeX Configuration Utility
+  - md5walk: calculates directory tree fingerprints
+  - mpc: MiKTeX Package Creator
   - mpm: MiKTeX Package Manager
-  - mthelp: MiKTeX Help Utility (experimental)
+  - mthelp: MiKTeX Help Utility
 
 For more information about the MiKTeX project, visit the project page
 at
@@ -65,16 +67,16 @@ COMPILING THE PACKAGE
 
 Run CMake to produce the makefiles customized for your system:
 
-    cmake
+    cmake -G "Unix Makefiles"
 
 The CMake script uses kpsewhich(1) (if available) to find existing
-TEXMF trees.  The package manager will install packages in the local
-TEXMF tree ($TEXMFLOCAL).  You can explicitly specify your prefered
-installation directory by setting the variable MIKTEX_INSTALLROOT.
-For example, to make your home TEXMF the installation directory, run
-CMake like this:
+TEXMF trees.  The MiKTeX package manager (MPM) will install packages
+in the local TEXMF tree ($TEXMFLOCAL).  You can explicitly specify
+your prefered installation directory by setting the CMake variable
+MIKTEX_INSTALLROOT.  For example, to make your home TEXMF the
+installation directory, run CMake like this:
 
-    cmake -DMIKTEX_INSTALLROOT=/home/users/me/texmf
+    cmake -G "Unix Makefiles" -DMIKTEX_INSTALLROOT=/home/users/me/texmf
 
 Run the make utility to compile MiKTeX Tools:
 

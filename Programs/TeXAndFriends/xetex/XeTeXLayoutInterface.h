@@ -28,8 +28,24 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
+#ifndef XETEX_LAYOUT_INTERFACE_H
+#define XETEX_LAYOUT_INTERFACE_H 1
+
 #ifdef XETEX_MAC
 #include <Carbon/Carbon.h>
+#endif
+
+#if ! defined(MIKTEX)
+#ifdef __cplusplus
+extern "C" {
+#endif
+#endif
+typedef struct XeTeXFont_rec* XeTeXFont;
+typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
+#if ! defined(MIKTEX)
+#ifdef __cplusplus
+};
+#endif
 #endif
 
 #include "XeTeX_ext.h"
@@ -40,9 +56,6 @@ authorization from SIL International.
 extern "C" {
 #endif
 #endif
-
-typedef struct XeTeXFont_rec* XeTeXFont;
-typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 
 extern char	gPrefEngine;
 
@@ -69,6 +82,7 @@ const char* getFullName(PlatformFontRef fontRef);
 const char* getFontFilename(XeTeXLayoutEngine engine);
 
 void getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName);
+double getDesignSize(XeTeXFont font);
 
 void deleteFont(XeTeXFont font);
 
@@ -174,3 +188,6 @@ long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, c
 };
 #endif
 #endif
+
+#endif /* XETEX_LAYOUT_INTERFACE_H */
+

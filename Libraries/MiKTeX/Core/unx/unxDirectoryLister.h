@@ -1,6 +1,6 @@
 /* unxDirectoryLister.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2007 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,19 +33,19 @@ class unxDirectoryLister : public DirectoryLister
 public:
   virtual
   void
-  MIKTEXCALL
+  MIKTEXTHISCALL
   Close ();
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry & direntry);
 
 public:
   virtual
   bool
-  MIKTEXCALL
+  MIKTEXTHISCALL
   GetNext (/*[out]*/ DirectoryEntry2 & direntry2);
 
 private:
@@ -59,6 +59,7 @@ private:
 
 private:
   virtual
+  MIKTEXTHISCALL
   ~unxDirectoryLister ();
 
 private:

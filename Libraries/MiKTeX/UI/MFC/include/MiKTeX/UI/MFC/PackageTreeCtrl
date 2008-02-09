@@ -23,9 +23,9 @@
 #  pragma once
 #endif
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/UI/MFC/Prototypes>
+#include <miktex/Core/Core>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/UI/MFC/Prototypes>
 
 #include <vector>
 

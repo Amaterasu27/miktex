@@ -34,7 +34,7 @@
 #endif
 
 #include "mp.rc"
-#include <MiKTeX/TeXAndFriends/MetafontApp>
+#include <miktex/TeXAndFriends/MetafontApp>
 
 namespace mpost {
 #include "mpost.defaults.h"
@@ -336,9 +336,9 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
   return (MiKTeX::TeXAndFriends::OpenMETAFONTFile(&f, lpszFileName));
 }
 
-#include <MiKTeX/TeXAndFriends/MetafontApp.inliners>
+#include <miktex/TeXAndFriends/MetafontApp.inliners>
 
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 
 #define fontname THEDATA(fontname)
 #define fontpsnamefixed THEDATA(fontpsnamefixed)

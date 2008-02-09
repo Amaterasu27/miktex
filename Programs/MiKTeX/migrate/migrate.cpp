@@ -22,8 +22,8 @@
 #include <stdexcept>
 #include <atlbase.h>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/Registry>
+#include <miktex/Core/Core>
+#include <miktex/Core/Registry>
 
 using namespace std;
 using namespace MiKTeX::Core;

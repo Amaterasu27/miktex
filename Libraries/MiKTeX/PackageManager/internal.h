@@ -26,7 +26,7 @@
 #endif
 
 #define F927BA187CB94546AB9CA9099D989E81
-#include "MiKTeX/PackageManager/PackageManager"
+#include "miktex/PackageManager/PackageManager"
 
 #define BEGIN_INTERNAL_NAMESPACE			\
 namespace MiKTeX {					\

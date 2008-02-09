@@ -53,7 +53,7 @@ Utils::GetRelativizedPath (/*[in]*/ const char * lpszPath,
   PathName pathRootNorm (lpszRoot);
   pathRootNorm.Normalize ();
 
-  size_t rootLen = StrLen(lpszRoot);
+  size_t rootLen = strlen(lpszRoot);
 
   MIKTEX_ASSERT (rootLen > 0);
 
@@ -357,12 +357,12 @@ bool
 Utils::IsParentDirectoryOf (/*[in]*/ const char * lpszParentDir,
 			    /*[in]*/ const char * lpszFileName)
 {
-  size_t len1 = StrLen(lpszParentDir);
+  size_t len1 = strlen(lpszParentDir);
   if (PathName::Compare(lpszParentDir, lpszFileName, len1) != 0)
     {
       return (false);
     }
-  size_t len2 = StrLen(lpszFileName);
+  size_t len2 = strlen(lpszFileName);
   if (len1 >= len2)
     {
       return (false);
@@ -466,7 +466,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
   MIKTEX_ASSERT (size > 0);
   MIKTEX_ASSERT_STRING (lpszPath);
   MIKTEX_ASSERT_CHAR_BUFFER (lpszPath, size);
-  size_t l = StrLen(lpszPath);
+  size_t l = strlen(lpszPath);
   MIKTEX_ASSERT (l < size);
   if (l > 0 && ! IsDirectoryDelimiter(lpszPath[l - 1]))
     {
@@ -487,7 +487,7 @@ AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
 MIKTEXINTERNALFUNC(void)
 RemoveDirectoryDelimiter (/*[in,out]*/ char * lpszPath)
 {
-  size_t l = StrLen(lpszPath);
+  size_t l = strlen(lpszPath);
   if (l > 1 && IsDirectoryDelimiter(lpszPath[l - 1]))
     {
 #if defined(MIKTEX_WINDOWS)
@@ -555,7 +555,7 @@ PathName::Combine (/*[out]*/ char *		lpszPath,
       n += Utils::CopyString(&lpszPath[n], sizePath - n, lpszExtension);
     }
 
-  MIKTEX_ASSERT (StrLen(lpszPath) == n);
+  MIKTEX_ASSERT (strlen(lpszPath) == n);
 }
 
 /* _________________________________________________________________________
@@ -694,9 +694,9 @@ PathName &
 PathName::AppendDirectoryDelimiter ()
 {
   size_t l = GetLength();
-  if (l == 0 || ! IsDirectoryDelimiter(CharBuffer::operator[](l - 1)))
+  if (l == 0 || ! IsDirectoryDelimiter(Base::operator[](l - 1)))
     {
-      CharBuffer::Append (DirectoryDelimiter);
+      Base::Append (DirectoryDelimiter);
     }
   return (*this);
 }
@@ -712,23 +712,23 @@ PathName::CutOffLastComponent ()
   RemoveDirectoryDelimiter (GetBuffer());
   for (size_t end = GetLength(); end > 0; -- end)
     {
-      if (end > 0 && IsDirectoryDelimiter(CharBuffer::operator[](end - 1)))
+      if (end > 0 && IsDirectoryDelimiter(Base::operator[](end - 1)))
 	{
 #if defined(MIKTEX_WINDOWS)
 	  if (end > 1
-	      && CharBuffer::operator[](end - 2) == PathName::VolumeDelimiter)
+	      && Base::operator[](end - 2) == PathName::VolumeDelimiter)
 	    {
-	      CharBuffer::operator[](end) = 0;
+	      Base::operator[](end) = 0;
 	      break;
 	    }
 #endif
 	  if (end == 1)
 	    {
-	      CharBuffer::operator[](1) = 0;
+	      Base::operator[](1) = 0;
 	    }
 	  else
 	    {
-	      CharBuffer::operator[](end - 1) = 0;
+	      Base::operator[](end - 1) = 0;
 	    }
 	  break;
 	}

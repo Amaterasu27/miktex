@@ -33,8 +33,8 @@
 
 #include "pdftex.rc"
 
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/TeXAndFriends/ETeXApp>
+#include <miktex/Core/Paths>
+#include <miktex/TeXAndFriends/ETeXApp>
 
 namespace pdftex {
 #include "pdftex.defaults.h"
@@ -297,7 +297,7 @@ public:
 
 extern PDFTEXCLASS PDFTEXAPP;
 #define THEAPP PDFTEXAPP
-#include <MiKTeX/TeXAndFriends/ETeXApp.inliners>
+#include <miktex/TeXAndFriends/ETeXApp.inliners>
 
 /* _________________________________________________________________________
 
@@ -317,7 +317,7 @@ miktexptrequal(/*[in]*/ const void * ptr1,
    Web2C Compatibility
    _________________________________________________________________________ */
 
-#include <MiKTeX/KPSE/Emulation>
+#include <miktex/KPSE/Emulation>
 #include "pdftex.h"
 
 #define printid printID

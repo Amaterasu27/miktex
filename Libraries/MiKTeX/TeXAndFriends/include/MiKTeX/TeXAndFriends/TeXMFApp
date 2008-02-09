@@ -72,8 +72,8 @@
 #  define IMPLEMENT_TCX 1
 #endif
 
-#include <MiKTeX/TeXAndFriends/WebAppInputLine>
-#include <MiKTeX/Core/Registry>
+#include <miktex/TeXAndFriends/WebAppInputLine>
+#include <miktex/Core/Registry>
 
 namespace texmfapp {
 #include <miktex/texmfapp.defaults.h>

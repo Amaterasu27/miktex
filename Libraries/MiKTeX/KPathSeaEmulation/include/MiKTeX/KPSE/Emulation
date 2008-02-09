@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 
 // DLL import/export switch
 #if ! defined(D0A4167033297F40884B97769F47801C)

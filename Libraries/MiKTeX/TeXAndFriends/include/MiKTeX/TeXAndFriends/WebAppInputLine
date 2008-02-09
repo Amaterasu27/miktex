@@ -24,7 +24,7 @@
 #if ! defined(GUARD_68E0A68C189D54439CC37B0BE0B55F36_)
 #define GUARD_68E0A68C189D54439CC37B0BE0B55F36_
 
-#include <MiKTeX/TeXAndFriends/WebApp>
+#include <miktex/TeXAndFriends/WebApp>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

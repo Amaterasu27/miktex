@@ -33,10 +33,10 @@
 
 #include "makempx.rc"
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/TeXAndFriends/TeXMFApp>
-#include <MiKTeX/Core/Registry>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/TeXAndFriends/TeXMFApp>
+#include <miktex/Core/Registry>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

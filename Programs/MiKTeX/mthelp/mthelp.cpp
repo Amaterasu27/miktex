@@ -24,11 +24,11 @@
 
 #include "mthelp-version.h"
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Registry>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 #include <popt-miktex.h>
 
 #include <iomanip>

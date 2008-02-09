@@ -21,9 +21,9 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Graphics/DibChunker>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
+#include <miktex/Graphics/DibChunker>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

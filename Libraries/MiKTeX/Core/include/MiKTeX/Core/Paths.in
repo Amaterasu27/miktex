@@ -23,12 +23,12 @@
 #  pragma once
 #endif
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>
 
 #if ! defined(MIKTEX__43B34B76_6294_45D5_B2BD_634D4B012B33__)
 #define MIKTEX__43B34B76_6294_45D5_B2BD_634D4B012B33__
 
-#include <MiKTeX/Core/Text>
+#include <miktex/Core/Text>
 
 #define MIKTEX_PATH_TEXMF_PLACEHOLDER "%R"
 #define MIKTEX_PATH_TEXMF_PLACEHOLDER_NO_MPM "%r"

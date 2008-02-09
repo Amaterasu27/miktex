@@ -22,6 +22,10 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+if(NATIVE_WINDOWS)
+  remove_definitions(-DHAVE_CONFIG_H)
+endif(NATIVE_WINDOWS)
+
 set(${bmeps_dll_name}_sources
   bmeps-version.h
   bmeps.c
@@ -70,7 +74,11 @@ delay_load(${bmeps_dll_name}
   ${zlib_dll_name}
 )
 
-install(TARGETS ${bmeps_dll_name} DESTINATION ${bindir})
+install(TARGETS ${bmeps_dll_name}
+  RUNTIME DESTINATION ${bindir}
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
 
 set(bmeps_sources bmepsm.c)
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -111,6 +111,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${texmf_dll_name} SHARED ${${texmf_dll_name}_sources})
 
+set_target_properties(${texmf_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${texmf_dll_name}
   ${app_dll_name}
   ${core_dll_name}
@@ -119,4 +125,27 @@ target_link_libraries(${texmf_dll_name}
 
 rebase(${texmf_dll_name})
 
-install(TARGETS ${texmf_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${texmf_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/TeXAndFriends/ETeXApp
+    include/miktex/TeXAndFriends/ETeXApp.inliners
+    include/miktex/TeXAndFriends/MetafontApp
+    include/miktex/TeXAndFriends/MetafontApp.inliners
+    include/miktex/TeXAndFriends/Prototypes
+    include/miktex/TeXAndFriends/TeXApp
+    include/miktex/TeXAndFriends/TeXApp.inliners
+    include/miktex/TeXAndFriends/TeXMFApp
+    include/miktex/TeXAndFriends/TeXMFApp.inliners
+    include/miktex/TeXAndFriends/WebApp
+    include/miktex/TeXAndFriends/WebApp.inliners
+    include/miktex/TeXAndFriends/WebAppInputLine
+    include/miktex/TeXAndFriends/WebAppInputLine.inliners
+  DESTINATION
+    ${incdir}/miktex/TeXAndFriends
+)

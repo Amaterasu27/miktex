@@ -87,4 +87,8 @@ delay_load(${gd_dll_name}
 
 rebase(${gd_dll_name})
 
-install(TARGETS ${gd_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${gd_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

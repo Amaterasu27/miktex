@@ -24,8 +24,8 @@
 #include <direct.h>
 #include <io.h>
 
-#include <MiKTeX/App/Application>
-#include <MiKTeX/Core/Core>
+#include <miktex/App/Application>
+#include <miktex/Core/Core>
 
 using namespace MiKTeX::App;
 using namespace MiKTeX::Core;

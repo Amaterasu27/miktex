@@ -38,8 +38,8 @@ MIKTEXSTATICFUNC(int)
 IsPrefixOf (/*[in]*/ const char *	lpsz1,
 	    /*[in]*/ const char *	lpsz2)
 {
-  size_t l1 = StrLen(lpsz1);
-  return (l1 <= StrLen(lpsz2) && StrNCmp(lpsz1, lpsz2, l1) == 0);
+  size_t l1 = strlen(lpsz1);
+  return (l1 <= strlen(lpsz2) && strncmp(lpsz1, lpsz2, l1) == 0);
 }
 
 /* _________________________________________________________________________
@@ -53,7 +53,7 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
 {
   const size_t FONT_ABBREV_LENGTH = 2;
 
-  if (StrLen(lpszFontName) <= FONT_ABBREV_LENGTH)
+  if (strlen(lpszFontName) <= FONT_ABBREV_LENGTH)
     {
       return (false);
     }
@@ -88,7 +88,7 @@ SessionImpl::FindInTypefaceMap (/*[in]*/ const char *	lpszFontName,
 	}
       ++ tok;
       if (tok.GetCurrent() == 0
-	  || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+	  || strlen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
@@ -114,7 +114,7 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const char *	lpszFontName,
 {
   const size_t SUPPLIER_ABBREV_LENGTH = 1;
 
-  if (StrLen(lpszFontName) < SUPPLIER_ABBREV_LENGTH)
+  if (strlen(lpszFontName) < SUPPLIER_ABBREV_LENGTH)
     {
       return (false);
     }
@@ -149,7 +149,7 @@ SessionImpl::FindInSupplierMap (/*[in]*/ const char *	lpszFontName,
 	}
       ++ tok;
       if (tok.GetCurrent() == 0
-	  || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+	  || strlen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
@@ -201,14 +201,14 @@ SessionImpl::FindInSpecialMap (/*[in]*/ const char *	lpszFontName,
 	  continue;
 	}
       ++ tok;
-      if (tok.GetCurrent() == 0 || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+      if (tok.GetCurrent() == 0 || strlen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
       Utils::CopyString (lpszSupplier, BufferSizes::MaxPath, tok.GetCurrent());
       ++ tok;
       if (tok.GetCurrent() == 0
-	  || StrLen(tok.GetCurrent()) >= BufferSizes::MaxPath)
+	  || strlen(tok.GetCurrent()) >= BufferSizes::MaxPath)
 	{
 	  continue;
 	}
@@ -319,7 +319,7 @@ SessionImpl::SplitFontPath (/*[in]*/ const char *	lpszFontPath,
 		       0, 0,
 		       szFileName, BufferSizes::MaxPath,
 		       0, 0);
-      char * lpsz = szFileName + StrLen(szFileName) - 1;
+      char * lpsz = szFileName + strlen(szFileName) - 1;
       while (IsDigit(*lpsz))
 	{
 	  -- lpsz;
@@ -354,7 +354,7 @@ int
 Comp2 (/*[in]*/ const char *	lpsz1,
        /*[in]*/ const char *	lpsz2)
 {
-  MIKTEX_ASSERT (StrLen(lpsz2) == 2);
+  MIKTEX_ASSERT (strlen(lpsz2) == 2);
   return (CompareFileNameChars(lpsz1[0], lpsz2[0]) == 0
 	  && CompareFileNameChars(lpsz1[1], lpsz2[1]) == 0);
 }
@@ -439,7 +439,7 @@ SessionImpl::GetFontInfo (/*[in]*/ const char *	lpszFontName,
     {
       char ptsize[BufferSizes::MaxPath];
       SplitFontPath (lpszFontName, 0, 0, 0, 0, ptsize);
-      size_t l = StrLen(ptsize);
+      size_t l = strlen(ptsize);
       if (l == 0)
 	{
 	  return (false);

@@ -99,4 +99,8 @@ foreach(e ${exes})
   target_link_libraries(${e} ${pbm_dll_name})
 endforeach(e ${exes})
 
-install(TARGETS ${exes} ${pbm_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${exes} ${pbm_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

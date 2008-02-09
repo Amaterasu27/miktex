@@ -20,4 +20,4 @@
 #define MIKTEX_COMPONENT_VERSION 2330
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2004-12-16-16:20"
 
-#include <MiKTeX/Core/Version>
+#include <miktex/Core/Version>

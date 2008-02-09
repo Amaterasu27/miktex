@@ -33,7 +33,7 @@ set(${extractor_dll_name}_sources
   TarLzmaExtractor.cpp
   TarLzmaExtractor.h
   extractor-version.h
-  include/MiKTeX/Extractor/Extractor
+  include/miktex/Extractor/Extractor
   internal.h
 )
 
@@ -50,6 +50,12 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${extractor_dll_name} SHARED ${${extractor_dll_name}_sources})
+
+set_target_properties(${extractor_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
 
 target_link_libraries(${extractor_dll_name}
   ${core_dll_name}
@@ -70,4 +76,15 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS ${extractor_dll_name} DESTINATION "${bindir}")
+install(TARGETS ${extractor_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
+
+install(
+  FILES
+    include/miktex/Extractor/Extractor
+  DESTINATION
+    ${incdir}/miktex/Extractor
+)

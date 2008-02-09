@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2007 Christian Schenk
 
    This file is part of MPC.
 
@@ -28,6 +28,8 @@
 #include <cstdio>
 
 #include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <set>
 #include <string>
@@ -35,10 +37,12 @@
 
 #include <sys/stat.h>
 
-#include <getopt.h>
+#include <popt-miktex.h>
 
-#include <MiKTeX/Core/Core>
-#include <MiKTeX/Core/MD5>
-#include <MiKTeX/PackageManager/PackageManager>
-#include <MiKTeX/Core/Paths>
-#include <MiKTeX/Core/Version>
+#include "mpc-version.h"
+
+#include <miktex/Core/Core>
+#include <miktex/Core/MD5>
+#include <miktex/PackageManager/PackageManager>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Version>

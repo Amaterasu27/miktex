@@ -26,7 +26,7 @@
 #endif
 
 #define EAD86981C92C904D808A5E6CEC64B90E
-#include "MiKTeX/Core/Core"
+#include "miktex/Core/Core"
 
 #include "core-version.h"
 
@@ -34,11 +34,11 @@
 #  include "MiKTeX/Core/win/DllProc"
 #endif
 
-#include "MiKTeX/Core/Debug"
-#include "MiKTeX/Core/Paths"
-#include "MiKTeX/Core/Registry"
-#include "MiKTeX/Core/Trace"
-#include "MiKTeX/Core/Urls"
+#include "miktex/Core/Debug"
+#include "miktex/Core/Paths"
+#include "miktex/Core/Registry"
+#include "miktex/Core/Trace"
+#include "miktex/Core/Urls"
 
 using namespace MiKTeX::Core;
 
@@ -585,16 +585,19 @@ class STRDUP : public CharBuffer<char>
 {
 public:
   STRDUP (/*[in]*/ const char * lpsz)
-    : CharBuffer (lpsz)
+    : CharBuffer<char> (lpsz)
   {
   }
 
 public:
   STRDUP (/*[in]*/ const char *	lpsz,
 	  /*[in]*/ size_t		n)
-    : CharBuffer (n + 1)
+    : CharBuffer<char> (n + 1)
   {
-    CopyString2 (GetBuffer(), GetCapacity(), lpsz, n);
+    CopyString2 (CharBuffer<char>::GetBuffer(),
+		 CharBuffer<char>::GetCapacity(),
+		 lpsz,
+		 n);
   }
 };
 

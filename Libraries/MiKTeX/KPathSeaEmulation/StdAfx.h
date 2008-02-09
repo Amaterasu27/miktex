@@ -24,12 +24,12 @@
 #include <cstdlib>
 #include <malloc.h>
 
-#include <MiKTeX/TeXAndFriends/Prototypes>
-#include <MiKTeX/Core/Core>
+#include <miktex/TeXAndFriends/Prototypes>
+#include <miktex/Core/Core>
 
 #include <gnu-miktex.h>
 
-#include <MiKTeX/C4P/C4P>
+#include <miktex/C4P/C4P>
 
 #include <string>
 
