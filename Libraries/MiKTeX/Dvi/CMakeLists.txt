@@ -123,5 +123,5 @@ install(
   FILES
     include/miktex/DVI/Dvi
   DESTINATION
-    ${incdir}/miktex/DVI/Dvi
+    ${incdir}/miktex/DVI
 )

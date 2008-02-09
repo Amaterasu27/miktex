@@ -17,6 +17,8 @@ Description:
 //:>	   Include files
 //:>********************************************************************************************
 #include "Main.h"
+#include "WinFont.h"
+#include "WinSegmentPainter.h"
 #pragma hdrstop
 // any other headers (not precompiled)
 #ifndef _WIN32

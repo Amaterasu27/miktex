@@ -46,7 +46,20 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${gnu_dll_name} SHARED ${${gnu_dll_name}_sources})
+
+set_target_properties(${gnu_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 add_library(${regex_dll_name} SHARED ${${regex_dll_name}_sources})
+
+set_target_properties(${regex_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
 
 rebase(${gnu_dll_name})
 rebase(${regex_dll_name})

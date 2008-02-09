@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager (console version)
 
-   Copyright (C) 2003-2007 Christian Schenk
+   Copyright (C) 2003-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1648,7 +1648,7 @@ Application::Main (/*[in]*/ int			argc,
       tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
 					       VersionNumber(VER_FILEVERSION))
 	    << T_("\n\
-Copyright (C) 2005-2007 Christian Schenk\n\
+Copyright (C) 2005-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    << endl;

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -47,7 +47,6 @@ include_directories(BEFORE
 set(${graphite_engine_dll_name}_sources
   ${src_dir}/generic/Debug.cpp
   ${src_dir}/generic/Util.cpp
-  ${src_dir}/segment/explicit_instantiations.cpp
   ${src_dir}/font/Font.cpp
   ${src_dir}/font/FileFont.cpp
   ${src_dir}/segment/FontCache.cpp
@@ -64,6 +63,7 @@ set(${graphite_engine_dll_name}_sources
   ${src_dir}/segment/GrSlotState.cpp
   ${src_dir}/segment/GrSlotStream.cpp
   ${src_dir}/segment/GrTableManager.cpp
+  ${src_dir}/segment/MemoryUsage.cpp
   ${src_dir}/segment/Segment.cpp
   ${src_dir}/segment/SegmentAux.cpp
   ${src_dir}/painter/SegmentPainter.cpp
@@ -88,6 +88,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${graphite_engine_dll_name}
   SHARED ${${graphite_engine_dll_name}_sources})
+
+set_target_properties(${graphite_engine_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
 
 rebase(${graphite_engine_dll_name})
 

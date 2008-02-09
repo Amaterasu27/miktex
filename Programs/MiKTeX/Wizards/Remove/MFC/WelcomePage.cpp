@@ -1,6 +1,6 @@
 /* WelcomePage.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -174,17 +174,26 @@ void
 WelcomePage::ShowItems ()
 {
   listBox.ResetContent ();
-  if (listBox.AddString(T_("Installed packages")) < 0)
+  if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+      if (listBox.AddString(T_("Installed packages")) < 0)
+	{
+	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+	}
     }
-  if (listBox.AddString(T_("Shortcuts")) < 0)
+  if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+      if (listBox.AddString(T_("Shortcuts")) < 0)
+	{
+	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+	}
     }
-  if (listBox.AddString(T_("MiKTeX registry settings")) < 0)
+  if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+      if (listBox.AddString(T_("MiKTeX registry settings")) < 0)
+	{
+	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
+	}
     }
   if (thoroughly != FALSE)
     {

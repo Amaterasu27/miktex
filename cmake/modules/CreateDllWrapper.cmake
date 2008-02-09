@@ -1,6 +1,6 @@
 ## CreateDllWrapper.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,6 +29,10 @@ macro(create_dll_wrapper _name _dll)
     COPYONLY
   )
   add_executable (${_name} ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp)
+  set_target_properties(${_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+  )
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
     COMPILE_FLAGS "-DDLLMAIN=${_dllmain}"

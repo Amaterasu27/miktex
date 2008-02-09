@@ -1,6 +1,6 @@
 /* fcmiktex.h:							-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -34,7 +34,8 @@ miktex_get_fontconfig_config_dirs (/*[in,out]*/ char ** pPaths,
 				   /*[in]*/ int nPaths);
 
 void
-miktex_close_cache_file (/*[in]*/ int fd);
+miktex_close_cache_file (/*[in]*/ int fd,
+			 /*[in]*/ const char * lpszDir);
 
 #define FONTCONFIG_PATH miktex_fontconfig_path()
 

@@ -825,7 +825,7 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
     }
 
 #if defined(MIKTEX)
-    miktex_close_cache_file (fd);
+    miktex_close_cache_file (fd, dir);
 #else
     close(fd);
 #endif

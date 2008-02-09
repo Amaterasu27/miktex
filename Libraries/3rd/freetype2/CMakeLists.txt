@@ -90,6 +90,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${freetype2_dll_name} SHARED ${${freetype2_dll_name}_sources})
 
+set_target_properties(${freetype2_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${freetype2_dll_name})
 
 install(TARGETS ${freetype2_dll_name}

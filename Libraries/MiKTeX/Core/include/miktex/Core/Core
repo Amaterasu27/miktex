@@ -1635,6 +1635,11 @@ public:
   RegisterMiKTeXUser ();
 
 public:
+  static
+  MIKTEXCORECEEAPI(void)
+  ShowWebPage (/*[in]*/ const char * lpszUrl);
+
+public:
 #if defined(MIKTEX_WINDOWS)
   static
   MIKTEXCORECEEAPI(PathName)
@@ -2729,6 +2734,16 @@ public:
   {
     Base::Append (lpszExtension);
     return (*this);
+  }
+
+public:
+  PathName &
+  RemoveExtensions ()
+  {
+    while (GetExtension())
+      {
+	SetExtension (0);
+      }
   }
 
   /// Checks to see whether this path name ends with a directory delimiter.

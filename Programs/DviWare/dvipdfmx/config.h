@@ -75,7 +75,7 @@
 #define HAVE_ZLIB 1
 
 /* Define if your zlib has the compress2 function */
-#undef HAVE_ZLIB_COMPRESS2
+#define HAVE_ZLIB_COMPRESS2 1
 
 /* Name of package */
 #define PACKAGE "dvipdfmx"

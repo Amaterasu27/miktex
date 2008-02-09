@@ -152,6 +152,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${curl_dll_name} SHARED ${${curl_dll_name}_sources})
 
+set_target_properties(${curl_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 if(NATIVE_WINDOWS)
   target_link_libraries(${curl_dll_name} winmm wsock32 Wldap32)
 endif(NATIVE_WINDOWS)

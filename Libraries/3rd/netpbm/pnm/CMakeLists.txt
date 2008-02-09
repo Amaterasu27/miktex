@@ -80,6 +80,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${pnm_dll_name} SHARED ${${pnm_dll_name}_sources})
 
+set_target_properties(${pnm_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${pnm_dll_name}
   ${pbm_dll_name}
   ${pgm_dll_name}

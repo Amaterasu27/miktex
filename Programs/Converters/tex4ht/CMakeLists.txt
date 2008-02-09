@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,15 +29,8 @@ add_definitions(
   -Dmain=Main
 )
 
-set_source_files_properties(${wrapper_cpp}
-  PROPERTIES COMPILE_FLAGS
-	"-UDOS"
-)
-
 if(NATIVE_WINDOWS)
   add_definitions(
-    -DDOS
-    -DDOS_C
     -DPLATFORM=\\\"Windows\\\"
     -DWIN32
   )

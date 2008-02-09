@@ -1,6 +1,6 @@
 /* fcmiktex.cpp:						-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <io.h>
 #include <exception>
+#include <set>
 #include <miktex/Core/Core>
 #include <miktex/Core/Paths>
 
@@ -111,9 +112,9 @@ miktex_get_fontconfig_config_dirs (/*[in,out]*/ char **	pPaths,
 	{
 	  MIKTEX_ASSERT_BUFFER (pPaths,
 				(nPaths + nConfigDirs) * sizeof(pPaths[0]));
-	  for (unsigned idx = nConfigDirs; idx > 0; -- idx, ++ nPaths)
+	  for (unsigned idx = 0; idx < nConfigDirs; ++ idx, ++ nPaths)
 	    {
-	      PathName path (SessionWrapper(true)->GetRootDirectory(idx - 1));
+	      PathName path (SessionWrapper(true)->GetRootDirectory(idx));
 	      path +=  MIKTEX_PATH_FONTCONFIG_CONFIG_DIR;
 	      pPaths[nPaths] = strdup(path.Get());
 	    }
@@ -128,21 +129,29 @@ miktex_get_fontconfig_config_dirs (/*[in,out]*/ char **	pPaths,
 
 extern "C"
 void
-miktex_close_cache_file (/*[in]*/ int fd)
+miktex_close_cache_file (/*[in]*/ int		fd,
+			 /*[in]*/ const char  *	lpszDir)
 {
-  static time_t cache_ctime = static_cast<time_t>(-1);
-  static time_t cache_atime = static_cast<time_t>(-1);
-  static time_t cache_mtime = static_cast<time_t>(-1);
   try
     {
-      if (cache_ctime == static_cast<time_t>(-1))
+      time_t dirCreationTime, dirAccessTime, dirWriteTime;
+      File::GetTimes (lpszDir,
+		      dirCreationTime,
+		      dirAccessTime,
+		      dirWriteTime);
+      time_t cache_mtime = time(0);
+      static set<time_t> modificationTimes;
+      if (cache_mtime < dirWriteTime)
 	{
-	  cache_ctime = cache_atime = cache_mtime = time(0);
+	  cache_mtime = dirWriteTime;
 	}
-      File::SetTimes (fd, cache_ctime, cache_atime, cache_mtime);
-      cache_ctime += 2;
-      cache_atime += 2;
-      cache_mtime += 2;
+      do
+	{
+	  cache_mtime += 2;
+	}
+      while (modificationTimes.find(cache_mtime) != modificationTimes.end());
+      File::SetTimes (fd, cache_mtime, cache_mtime, cache_mtime);
+      modificationTimes.insert (cache_mtime);
       _close (fd);
     }
   catch (const exception &)

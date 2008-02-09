@@ -3,7 +3,6 @@
 // Used by Update.rc
 //
 #define IDR_MANIFEST                    1
-#define IDR_MAINFRAME                   128
 #define IDS_UPDATEWIZ                   100
 #define IDS_HEADER_PACKAGE_LIST         101
 #define IDS_SUBHEADER_PACKAGE_LIST      102
@@ -32,6 +31,7 @@
 #define IDD_CONNECTION_SETTINGS         125
 #define IDD_FINISH                      126
 #define IDD_DIALOG1                     127
+#define IDR_MAINFRAME                   128
 #define IDD_PROXY_AUTHENTICATION        128
 #define IDD_FILECOPY                    129
 #define IDD_TYPE                        130
@@ -77,6 +77,7 @@
 #define IDC_ETA                         1033
 #define IDC_ETA_TITLE                   1034
 #define IDC_STATUS                      1035
+#define IDC_VISIT_WEB_SITE              1038
 
 // Next default values for new objects
 // 
@@ -84,7 +85,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           137
 #endif
 #endif

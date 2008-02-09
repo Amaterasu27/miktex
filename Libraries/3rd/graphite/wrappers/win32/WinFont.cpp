@@ -156,7 +156,7 @@ WinFont::~WinFont()
 
 	static int cDeleteObjectCalls = 0;
 	static int cDeleteObjectZero = 0;
-	g_fc.DeleteFont(m_hfont);
+	g_fhc.DeleteFont(m_hfont);
 	//char ch2[200];
 	//if (m_hfont == 0)
 	//{
@@ -615,7 +615,7 @@ GrResult WinFont::SetInternalFont(unsigned long clrFore, unsigned long clrBack)
 
 		static int cCreateFontCalls = 0;
 		static int cCreateFontZero = 0;
-		HFONT hfont = g_fc.GetFont(lf);
+		HFONT hfont = g_fhc.GetFont(lf);
 		//char ch1[200];
 		//if (hfont == 0)
 		//{
@@ -637,7 +637,7 @@ GrResult WinFont::SetInternalFont(unsigned long clrFore, unsigned long clrBack)
 			// Throw away the previous temporary one.
 			static int cDeleteObjectCalls = 0;
 			static int cDeleteObjectZero = 0;
-			g_fc.DeleteFont(m_hfont);
+			g_fhc.DeleteFont(m_hfont);
 			//char ch2[200];
 			//if (m_hfont == 0)
 			//{
@@ -710,7 +710,7 @@ GrResult WinFont::SetInternalFont(unsigned long clrFore, unsigned long clrBack)
 //:>********************************************************************************************
 
 // cache of font handles accessed by LOGFONTS.
-WinFont::FontHandleCache WinFont::g_fc;
+WinFont::FontHandleCache WinFont::g_fhc;
 
 /*----------------------------------------------------------------------------------------------
 	Destructor: free all the stored font handles before the internal HashMap itself goes
@@ -739,7 +739,7 @@ HFONT WinFont::FontHandleCache::GetFont(LOGFONT & lf)
 		fcv.nRefs++;
 
 		m_hmlffcv.erase(itFound);
-		m_hmlffcv.insert(std::pair<LOGFONT, FontCacheValue>(lf, fcv)); //, true);
+		m_hmlffcv.insert(std::pair<LogFontWrapper, FontCacheValue>(LogFontWrapper(lf), fcv)); //, true);
 	}
 	else
 	{
@@ -784,10 +784,10 @@ void WinFont::FontHandleCache::DeleteFont(HFONT hfont)
 			else
 			{
 				// Update hash map entry
-				LOGFONT lf;
-				lf = it->first;
+				LogFontWrapper lfw;
+				lfw = it->first;
 				m_hmlffcv.erase(it);
-				m_hmlffcv.insert(std::pair<LOGFONT, FontCacheValue>(lf, fcv)); // , true);
+				m_hmlffcv.insert(std::pair<LogFontWrapper, FontCacheValue>(lfw, fcv)); // , true);
 			}
 			return;
 		}
@@ -814,10 +814,10 @@ void WinFont::FontHandleCache::ResetFontCache()
 /*--------------------------------------------------------------------------------------
 	Hashing function for the LOGFONT which is the key of the hash-map.
 --------------------------------------------------------------------------------------*/
-size_t WinFont::LogFontHashFuncs::operator() (const LOGFONT & key) const
+size_t WinFont::LogFontHashFuncs::operator() (const WinFont::LogFontWrapper & key) const
 {
 	size_t nHash = 0;
-	byte * pb = (byte *)(&key);
+	byte * pb = (byte *)(&key.m_lf);
 	for (int i = 0; i < sizeof(LOGFONT); ++i)
 		nHash += (nHash << 4) + *pb++;
 	return nHash;
@@ -826,13 +826,25 @@ size_t WinFont::LogFontHashFuncs::operator() (const LOGFONT & key) const
 /*--------------------------------------------------------------------------------------
 	Comparison function for the LOGFONT which is the key of the hash-map.
 --------------------------------------------------------------------------------------*/
-bool WinFont::LogFontHashFuncs::operator() (const LOGFONT & key1, const LOGFONT & key2) const
+bool WinFont::LogFontHashFuncs::operator() (const WinFont::LogFontWrapper & key1,
+	const WinFont::LogFontWrapper & key2) const
 {
-	return (memcmp(&key1, &key2, sizeof(LOGFONT)));
+	return (key1 == key2);
 }
+
+/*--------------------------------------------------------------------------------------
+	LogFontHashFuncs calls this method to compare LOGFONT objects.
+--------------------------------------------------------------------------------------*/
+bool WinFont::LogFontWrapper::operator==(const WinFont::LogFontWrapper & lfw) const
+{
+	return memcmp(&m_lf, &(lfw.m_lf), sizeof(LOGFONT));
+}
+
 
 } // namespace gr
 
-
-template stdext::hash_map<LOGFONT, gr::WinFont::FontHandleCache::FontCacheValue, gr::WinFont::LogFontHashFuncs>;
+template stdext::hash_map<
+	gr::WinFont::LogFontWrapper,
+	gr::WinFont::FontHandleCache::FontCacheValue,
+	gr::WinFont::LogFontHashFuncs>;
 

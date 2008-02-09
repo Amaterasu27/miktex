@@ -1,6 +1,6 @@
 /* LicensePage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -98,20 +98,20 @@ LicensePage::OnInitDialog ()
       cf.bPitchAndFamily = FIXED_PITCH | FF_MODERN; 
       Utils::CopyString (cf.szFaceName,
 			 LF_FACESIZE,
-			 T_("Courier New"));
+			 "Courier New");
       cf.yHeight = 160;
       licenseControl.SetDefaultCharFormat (cf); 
       HRSRC hrsrc = FindResource(0,
 				 MAKEINTRESOURCE(IDR_LICENSE),
-				 T_("LICENSE"));
+				 "LICENSE");
       if (hrsrc == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("FindResource"), 0);
+	  FATAL_WINDOWS_ERROR ("FindResource", 0);
 	}
       HGLOBAL hglobal = LoadResource(0, hrsrc);
       if (hglobal == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("LoadResource"), 0);
+	  FATAL_WINDOWS_ERROR ("LoadResource", 0);
 	}
       pLicense = LockResource(hglobal);
       if (pLicense == 0)
@@ -121,7 +121,7 @@ LicensePage::OnInitDialog ()
       sizeLicense = SizeofResource(0, hrsrc);
       if (sizeLicense == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SizeofResource"), 0);
+	  FATAL_WINDOWS_ERROR ("SizeofResource", 0);
 	}
       offset = 0;
       EDITSTREAM editStream;
@@ -185,7 +185,7 @@ LicensePage::OnWizardNext ()
     (theApp.isMiKTeXDirect
      ? IDD_MD_TASK
      : (theApp.prefabricated
-	? (theApp.packageLevel == PackageLevel::Complete
+	? (theApp.prefabricatedPackageLevel == PackageLevel::Complete
 	   ? IDD_PACKAGE_SET_INSTALL
 	   : IDD_SHARED)
 	: IDD_TASK));

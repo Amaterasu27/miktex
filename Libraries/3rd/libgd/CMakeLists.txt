@@ -73,6 +73,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${gd_dll_name} SHARED ${${gd_dll_name}_sources})
 
+set_target_properties(${gd_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${gd_dll_name}
   ${jpeg_dll_name}
   ${png_dll_name}

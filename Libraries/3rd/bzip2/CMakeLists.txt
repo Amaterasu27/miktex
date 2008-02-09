@@ -43,6 +43,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${bzip2_dll_name} SHARED ${${bzip2_dll_name}_sources})
 
+set_target_properties(${bzip2_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${bzip2_dll_name})
 
 install(TARGETS ${bzip2_dll_name}

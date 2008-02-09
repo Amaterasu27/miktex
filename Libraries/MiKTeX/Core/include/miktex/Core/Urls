@@ -1,6 +1,6 @@
 /* MiKTeX/Core/urls: hard-coded urls				-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,6 +33,8 @@
 #define MIKTEX_URL_WWW MIKTEX_URL_WWW_NO_SLASH "/"
 
 #define MIKTEX_URL_WWW_GIVE_BACK MIKTEX_URL_WWW "giveback.aspx"
+
+#define MIKTEX_URL_WWW_PACKAGING MIKTEX_URL_WWW "pkg/"
 
 #if 1
 #  define MIKTEX_URL_WWW_REGISTRATION MIKTEX_URL_WWW_GIVE_BACK

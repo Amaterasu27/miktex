@@ -2,19 +2,18 @@
 
 setlocal
 
-set series=@MIKTEX_SERIES_STR@
-set tag=@MIKTEX_VERSION_TAG_STR@
-set srcname=miktex-%tag%-src
-set destdir=C:\MiKTeX-SRCs\%series%
+set tarname=miktex-@MIKTEX_VERSION_TAG_STR@.tar.bz2
+set srcdir=miktex-@MIKTEX_VERSION_TAG_STR@
+set destdir=C:\MiKTeX-SRCs\@MIKTEX_SERIES_STR@
 
-svn export https://miktex.svn.sourceforge.net/svnroot/miktex/miktex/tags/%tag% "%destdir%"
+svn export https://miktex.svn.sourceforge.net/svnroot/miktex/miktex/tags/@MIKTEX_VERSION_TAG_STR@ "%destdir%"
 
 pushd "%destdir%"
 cd ..
-move %series% %srcname%
-if exist %srcname%.zip del %srcname%.zip
-zip -9r %srcname%.zip %srcname%
-move %srcname% %series%
+move @MIKTEX_SERIES_STR@ %srcdir%
+if exist %tarname% del %tarname%
+tar --force-local -cvjf %tarname% %srcdir%
+move %srcdir% @MIKTEX_SERIES_STR@
 popd
 
 endlocal

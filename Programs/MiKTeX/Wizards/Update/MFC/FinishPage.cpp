@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -43,6 +43,7 @@ END_MESSAGE_MAP();
 FinishPage::FinishPage()
   : CPropertyPage (IDD),
     viewReport (BST_UNCHECKED),
+    visitWebSite (BST_CHECKED),
     pSheet (0)
 {
   m_psp.dwFlags |= PSP_HIDEHEADER;
@@ -115,6 +116,7 @@ FinishPage::OnSetActive ()
 	    }
 	  pWnd->SetWindowText (str);
 	  viewReport = BST_CHECKED;
+	  visitWebSite = BST_UNCHECKED;
 	  UpdateData (FALSE);
 	}
       CancelToClose ();
@@ -142,6 +144,7 @@ FinishPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
   DDX_Check (pDX, IDC_VIEW_REPORT, viewReport);
+  DDX_Check (pDX, IDC_VISIT_WEB_SITE, visitWebSite);
 }
 
 /* _________________________________________________________________________
@@ -160,15 +163,19 @@ FinishPage::OnWizardFinish ()
 	  if (viewReport == BST_CHECKED)
 	    {
 	      if (ShellExecute(0,
-			       T_("open"),
+			       "open",
 			       g_logFileName.Get(),
 			       0,
 			       0,
 			       SW_SHOWNORMAL)
 		  <= reinterpret_cast<HINSTANCE>(32))
 		{
-		  Process::Start (T_("notepad.exe"), g_logFileName.Get());
+		  Process::Start ("notepad.exe", g_logFileName.Get());
 		}
+	    }
+	  if (visitWebSite == BST_CHECKED)
+	    {
+	      Utils::ShowWebPage (MIKTEX_URL_WWW_PACKAGING);
 	    }
 	}
       catch (const MiKTeXException & e)

@@ -1,6 +1,6 @@
 /* makefmt.cpp: make TeX format files
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -71,7 +71,7 @@ public:
 public:
   virtual
   void
-  Run (/*[in]*/ int			argc,
+  Run (/*[in]*/ int		argc,
        /*[in]*/ const char **	argv);
 
 private:
@@ -98,19 +98,19 @@ private:
   void
   SetEngine (/*[in]*/ const char * lpszEngine)
   {
-    if (StringCompare(lpszEngine, T_("tex"), true) == 0)
+    if (StringCompare(lpszEngine, "tex", true) == 0)
       {
 	engine = Engine::TeX;
       }
-    else if (StringCompare(lpszEngine, T_("pdftex"), true) == 0)
+    else if (StringCompare(lpszEngine, "pdftex", true) == 0)
       {
 	engine = Engine::pdfTeX;
       }
-    else if (StringCompare(lpszEngine, T_("xetex"), true) == 0)
+    else if (StringCompare(lpszEngine, "xetex", true) == 0)
       {
 	engine = Engine::XeTeX;
       }
-    else if (StringCompare(lpszEngine, T_("omega"), true) == 0)
+    else if (StringCompare(lpszEngine, "omega", true) == 0)
       {
 	engine = Engine::Omega;
       }
@@ -134,13 +134,13 @@ private:
     switch (engine.Get())
       {
       case Engine::TeX:
-	return (T_("tex"));
+	return ("tex");
       case Engine::pdfTeX:
-	return (T_("pdftex"));
+	return ("pdftex");
       case Engine::XeTeX:
-	return (T_("xetex"));
+	return ("xetex");
       case Engine::Omega:
-	return (T_("omega"));
+	return ("omega");
       }
     throw (1);
   }
@@ -209,7 +209,7 @@ private:
 void
 MakeFmt::Usage ()
 {
-  OUT__ << T_("Usage: ") << Utils::GetExeName() << T_(" [OPTION]... NAME\n\
+  cout << T_("Usage: ") << Utils::GetExeName() << T_(" [OPTION]... NAME\n\
 \n\
 This program makes a format file.\n\
 \n\
@@ -227,7 +227,7 @@ Options:\n\
 --print-only, -n                    Print what commands would be executed.\n\
 --verbose, -v                       Print information on what is being done.\n\
 --version, -V                       Print the version number and exit.")
-	<< endl;
+       << endl;
 }
 
 /* _________________________________________________________________________
@@ -239,12 +239,12 @@ namespace {
   const struct option aLongOptions[] =
   {
     COMMON_OPTIONS,
-    T_("dest-name"),	required_argument,	0,	OPT_DESTNAME,
-    T_("engine"),	required_argument,	0,	OPT_ENGINE,
-    T_("engine-option"), required_argument,	0,	OPT_ENGINE_OPTION,
-    T_("job-time"),		required_argument, 0,	OPT_JOB_TIME,
-    T_("no-dump"),		no_argument,	0,	OPT_NO_DUMP,
-    T_("preload"),		required_argument, 0,	OPT_PRELOAD,
+    "dest-name",	required_argument,	0,	OPT_DESTNAME,
+    "engine",		required_argument,	0,	OPT_ENGINE,
+    "engine-option",	required_argument,	0,	OPT_ENGINE_OPTION,
+    "job-time",		required_argument,	0,	OPT_JOB_TIME,
+    "no-dump",		no_argument,		0,	OPT_NO_DUMP,
+    "preload",		required_argument,	0,	OPT_PRELOAD,
     0,			no_argument,		0,	0,
   };
 }
@@ -331,28 +331,28 @@ namespace {
   };
   const MAPPING mappings[] =
   {
-    T_("adjust_spacing"), T_("\\pdfadjustspacing=%1"),
-    T_("always_use_pdfpagebox"), T_("\\pdfoptionalwaysusepdfpagebox=%1"),
-    T_("compress_level"), T_("\\pdfcompresslevel=%1"),
-    T_("decimal_digits"), T_("\\pdfdecimaldigits=%1"),
-    T_("dest_margin"), T_("\\pdfdestmargin=%1"),
-    T_("horigin"), T_("\\pdfhorigin=%1"),
-    T_("image_resolution"), T_("\\pdfimageresolution=%1"),
-    T_("link_margin"), T_("\\pdflinkmargin=%1"),
+    "adjust_spacing", "\\pdfadjustspacing=%1",
+    "always_use_pdfpagebox", "\\pdfoptionalwaysusepdfpagebox=%1",
+    "compress_level", "\\pdfcompresslevel=%1",
+    "decimal_digits", "\\pdfdecimaldigits=%1",
+    "dest_margin", "\\pdfdestmargin=%1",
+    "horigin", "\\pdfhorigin=%1",
+    "image_resolution", "\\pdfimageresolution=%1",
+    "link_margin", "\\pdflinkmargin=%1",
 #if 0
-    T_("map"), T_("\\pdfmapfile{%1}"),
+    "map", "\\pdfmapfile{%1}",
 #endif
-    T_("move_chars"), T_("\\pdfmovechars=%1"),
-    T_("output_format"), T_("\\pdfoutput=%1"),
-    T_("page_height"), T_("\\pdfpageheight=%1"),
-    T_("page_width"), T_("\\pdfpagewidth=%1"),
-    T_("pdf_inclusion_errorlevel"), T_("\\pdfoptionpdfinclusionerrorlevel=%1"),
-    T_("pdf_minorversion"), T_("\\pdfoptionpdfminorversion=%1"),
-    T_("pk_resolution"), T_("\\pdfpkresolution=%1"),
-    T_("protrude_chars"), T_("\\pdfprotrudechars=%1"),
-    T_("thread_margin"), T_("\\pdfthreadmargin=%1"),
-    T_("unique_resname"), T_("\\pdfuniqueresname=%1"),
-    T_("vorigin"), T_("\\pdfvorigin=%1"),
+    "move_chars", "\\pdfmovechars=%1",
+    "output_format", "\\pdfoutput=%1",
+    "page_height", "\\pdfpageheight=%1",
+    "page_width", "\\pdfpagewidth=%1",
+    "pdf_inclusion_errorlevel", "\\pdfinclusionerrorlevel=%1",
+    "pdf_minorversion", "\\pdfminorversion=%1",
+    "pk_resolution", "\\pdfpkresolution=%1",
+    "protrude_chars", "\\pdfprotrudechars=%1",
+    "thread_margin", "\\pdfthreadmargin=%1",
+    "unique_resname", "\\pdfuniqueresname=%1",
+    "vorigin", "\\pdfvorigin=%1",
   };
 }
 
@@ -444,14 +444,15 @@ MakeFmt::InstallPdftexConfigTex ()
        ++ it)
     {
       writer.WriteLine (*it);
-      if (it->compare(0, 25, T_("\\pdfoptionpdfminorversion")) == 0)
+      if (it->compare(0, 25, "\\pdfoptionpdfminorversion") == 0
+	  || it->compare(0, 16, "\\pdfminorversion") == 0)
 	{
 	  havePdfMinorVersion = true;
 	}
     }
   if (! havePdfMinorVersion)
     {
-      writer.WriteLine (T_("\\pdfoptionpdfminorversion=4"));
+      writer.WriteLine ("\\pdfminorversion=4");
     }
   writer.Close ();
   if (! Fndb::FileExists(configFile))
@@ -516,7 +517,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
   // make command line
   CommandLineBuilder arguments;
   arguments.AppendOption ("--initialize");
-  arguments.AppendOption ("--interaction=", T_("nonstopmode"));
+  arguments.AppendOption ("--interaction=", "nonstopmode");
   arguments.AppendOption ("--halt-on-error");
   if (destinationName != GetEngineName())
     {
@@ -542,7 +543,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
   arguments.AppendArgument (inputFile);
   if (! noDumpPrimitive)
     {
-      arguments.AppendArgument (T_("\\dump"));
+      arguments.AppendArgument ("\\dump");
     }
 
   // start the engine

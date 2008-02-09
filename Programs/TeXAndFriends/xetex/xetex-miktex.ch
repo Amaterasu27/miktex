@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007 Christian Schenk
+%% Copyright (C) 2007-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -375,7 +375,7 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 @x
     if ot_assembly_ptr<>nil then
 @y
-    if is_null_ptr(ot_assembly_ptr) then
+    if not is_null_ptr(ot_assembly_ptr) then
 @z
 
 % _____________________________________________________________________________
@@ -386,7 +386,7 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 @x
   if ot_assembly_ptr<>nil then goto found;
 @y
-  if is_null_ptr(ot_assembly_ptr) then goto found;
+  if not is_null_ptr(ot_assembly_ptr) then goto found;
 @z
 
 % _____________________________________________________________________________

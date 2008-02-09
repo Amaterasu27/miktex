@@ -57,6 +57,12 @@ endif(NATIVE_WINDOWS)
 
 add_library(${png_dll_name} SHARED ${${png_dll_name}_sources})
 
+set_target_properties(${png_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 target_link_libraries(${png_dll_name} ${zlib_dll_name})
 
 rebase(${png_dll_name})

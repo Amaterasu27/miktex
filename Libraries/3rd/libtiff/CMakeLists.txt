@@ -130,6 +130,12 @@ add_custom_command(
 
 add_library(${tiff_dll_name} SHARED ${${tiff_dll_name}_sources})
 
+set_target_properties(${tiff_dll_name}
+  PROPERTIES
+    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    SOVERSION "1"
+)
+
 rebase(${tiff_dll_name})
 
 install(TARGETS ${tiff_dll_name}
