@@ -386,6 +386,7 @@ MAKE_GLOBAL(internalfontnumber, f);
 MAKE_GLOBAL(strnumber*, fontname);
 MAKE_GLOBAL(strnumber, outputfilename);
 MAKE_GLOBAL(C4P_integer, fixedinclusioncopyfont);
+MAKE_GLOBAL(C4P_integer, pdfpagegroupval);
 
 // todo: use MAKE_GLOBAL
 #define dim100bp THEDATA(dim100bp)

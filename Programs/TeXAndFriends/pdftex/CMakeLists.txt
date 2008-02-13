@@ -22,6 +22,7 @@ default_char_type_is_unsigned()
 set(C4P_FLAGS
   --auto-exit=10
   --chars-are-unsigned
+  --declare-c-type=longinteger
 )
 
 include_directories(BEFORE
@@ -33,6 +34,7 @@ include_directories(BEFORE
 )
 
 add_definitions(
+  -DHAVE_C4P_PRE_H
   -DpdfTeX
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
