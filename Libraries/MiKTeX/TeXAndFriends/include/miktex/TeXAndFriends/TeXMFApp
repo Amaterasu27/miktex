@@ -1,6 +1,6 @@
 /* MiKTeX/TeXAndFriends/TeXMFApp: TeX/MF common implementation	-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -716,7 +716,7 @@ public:
 #if defined(HAVE_MAIN_MEMORY)
 #  if ! defined(infmainmemory)
     const int infmainmemory = 3000;
-    const int supmainmemory = 32000000;
+    const int supmainmemory = 256000000;
 #  endif
     GETPARAMCHECK (param_main_memory,
 		   mainmemory,
