@@ -889,6 +889,8 @@ handle_subst_glyphs (CMap *cmap,
 	  for (k = 0; k < unicode_count; ++k) {
 	    len += UC_sput_UTF16BE(unicodes[k], &p, wbuf+WBUF_SIZE);
 	  }
+	  wbuf[0] = (gid >> 8) & 0xff;
+	  wbuf[1] =  gid & 0xff;
 	  CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
 	}
       }
