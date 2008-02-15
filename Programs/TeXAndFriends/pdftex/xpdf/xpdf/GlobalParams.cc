@@ -607,6 +607,13 @@ GlobalParams::GlobalParams() {
   UnicodeMap *map;
   int i;
 
+#if defined(MIKTEX)
+#  if defined(_WIN32)
+  // todo: notify upstream developer
+  winFontList = 0;
+#  endif
+#endif
+
 #if MULTITHREADED
   gInitMutex(&mutex);
   gInitMutex(&unicodeMapCacheMutex);
