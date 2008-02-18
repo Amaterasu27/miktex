@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,7 +22,6 @@ default_char_type_is_unsigned()
 set(C4P_FLAGS
   --auto-exit=10
   --chars-are-unsigned
-  --declare-c-type=longinteger
 )
 
 include_directories(BEFORE
@@ -34,7 +33,6 @@ include_directories(BEFORE
 )
 
 add_definitions(
-  -DHAVE_C4P_PRE_H
   -DpdfTeX
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX

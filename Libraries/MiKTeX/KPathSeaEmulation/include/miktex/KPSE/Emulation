@@ -1,6 +1,6 @@
 /* miktex/kpsemu.h: Web2C/KPSE emulation			-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -34,6 +34,7 @@
 #include <stdlib.h>
 
 #include <miktex/Core/Core>
+#include <miktex/Core/IntegerTypes>
 
 // DLL import/export switch
 #if ! defined(D0A4167033297F40884B97769F47801C)
@@ -351,9 +352,9 @@
 #  define xfopen miktex_fopen
 #endif
 
-#define xfseek MiKTeX::KPSE::FSeek
+#define xfseek MiKTeX::KPSE::FSeek64
 
-#define xftell MiKTeX::KPSE::FTell
+#define xftell MiKTeX::KPSE::FTell64
 
 #if defined(__cplusplus)
 #  define xmalloc MiKTeX::KPSE::Malloc
@@ -415,6 +416,7 @@ typedef enum { false = 0, true = 1 } MIKTEX_TEXK_BOOLEAN;
 #endif
 
 typedef int integer;
+typedef MIKTEX_INT64 longinteger;
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK
@@ -552,9 +554,19 @@ FSeek (/*[in]*/ FILE *		stream,
        /*[in]*/ int		where,
        /*[in]*/ const char *	lpszFileName);
 
+MIKTEXKPSCEEAPI(int)
+FSeek64 (/*[in]*/ FILE *	stream,
+	 /*[in]*/ MIKTEX_INT64	offset,
+	 /*[in]*/ int		where,
+	 /*[in]*/ const char *	lpszFileName);
+
 MIKTEXKPSCEEAPI(long)
 FTell (/*[in]*/ FILE *		stream,
        /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(MIKTEX_INT64)
+FTell64 (/*[in]*/ FILE *	stream,
+	 /*[in]*/ const char *	lpszFileName);
 
 MIKTEXKPSCEEAPI(void)
 InitProg (/*[in]*/ const char *	lpszPrefix,

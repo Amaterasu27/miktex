@@ -1,7 +1,7 @@
 /* kpsemu.cpp: texk compatibility functions
 
    Copyright (C) 1994, 95 Karl Berry
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -496,6 +496,28 @@ KPSE::FSeek (/*[in]*/ FILE *			pfile,
 
 /* _________________________________________________________________________
 
+   KPSE::FSeek64
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+KPSE::FSeek64 (/*[in]*/ FILE *			pfile,
+	       /*[in]*/ MIKTEX_INT64		offset,
+	       /*[in]*/ int			where,
+	       /*[in]*/ const char *		lpszFileName)
+{
+#if defined(_MSC_VER)
+  if (_fseeki64(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR (T_("_fseeki64"), lpszFileName);
+    }
+  return (0);
+#else
+  error Unimplemented: KPSE::FSeek64()
+#endif
+}
+
+/* _________________________________________________________________________
+
    KPSE::FTell
    _________________________________________________________________________ */
 
@@ -509,6 +531,27 @@ KPSE::FTell (/*[in]*/ FILE *		pfile,
       FATAL_CRT_ERROR (T_("ftell"), lpszFileName);
     }
   return (pos);
+}
+
+/* _________________________________________________________________________
+
+   KPSE::FTell64
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(MIKTEX_INT64)
+KPSE::FTell64 (/*[in]*/ FILE *		pfile,
+	       /*[in]*/ const char *	lpszFileName)
+{
+#if defined(_MSC_VER)
+  MIKTEX_INT64 pos = _ftelli64(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR (T_("_ftelli64"), lpszFileName);
+    }
+  return (pos);
+#else
+#  error Unimplemented: KPSE::FTell64
+#endif
 }
 
 /* _________________________________________________________________________

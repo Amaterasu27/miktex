@@ -39,20 +39,8 @@ extern "C" {
 #  include <stddef.h>
 #endif
 
-#if ! defined(HAVE_INTTYPES_H)
-#cmakedefine HAVE_INTTYPES_H
-#endif
-
-#if defined(HAVE_INTTYPES_H)
-#  include <inttypes.h>
-#endif
-
-#if ! defined(HAVE_STDINT_H)
-#cmakedefine HAVE_STDINT_H
-#endif
-
-#if defined(HAVE_STDINT_H)
-#  include <stdint.h>
+#if defined(MIKTEX)
+#  include <miktex/Core/IntegerTypes>
 #endif
 
 #if ! defined(MIKTEXMD5API)
@@ -75,13 +63,8 @@ namespace MiKTeX {
 /* MD5 context. */
 typedef struct {
 #if defined(MIKTEX)
-#  if defined(_MSC_VER)
-  unsigned __int32 state[4];
-  unsigned __int32 count[2];
-#  else
-  uint32_t state[4];
-  uint32_t count[2];
-#endif
+  MIKTEX_UINT32 state[4];
+  MIKTEX_UINT32 count[2];
 #else
   UINT4 state[4];                                   /* state (ABCD) */
   UINT4 count[2];        /* number of bits, modulo 2^64 (lsb first) */

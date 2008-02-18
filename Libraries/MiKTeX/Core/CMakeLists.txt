@@ -28,6 +28,11 @@ configure_file(
 )
 
 configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.cmake
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes
+)
+
+configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )

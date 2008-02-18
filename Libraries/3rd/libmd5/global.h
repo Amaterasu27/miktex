@@ -20,17 +20,9 @@
 typedef unsigned char *POINTER;
 
 #if defined(MIKTEX)
-#  if defined(HAVE_INTTYPES_H)
-#    include <inttypes.h>
-#  endif
-#  if defined(HAVE_STDINT_H)
-#    include <stdint.h>
-#  endif
-#  if defined(_MSC_VER)
-typedef unsigned __int32 UINT4;
-#  else
-typedef uint32_t UINT4;
-#  endif
+#  include <miktex/Core/IntegerTypes>
+typedef MIKTEX_UINT16 UINT2;
+typedef MIKTEX_UINT32 UINT4;
 #else
 /* UINT2 defines a two byte word */
 typedef unsigned short int UINT2;

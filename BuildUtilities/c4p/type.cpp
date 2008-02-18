@@ -1,6 +1,6 @@
 /* type.c: type table						-*- C++ -*-
 
-   Copyright (C) 1991-2006 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is part of C4P.
 
@@ -296,6 +296,10 @@ translate_type (pascal_type	type,
     case INTEGER_TYPE:
       NT->name->s_repr = "C4P_integer";
       out_s ("C4P_integer");
+      break;
+    case LONG_INTEGER_TYPE:
+      NT->name->s_repr = "C4P_longinteger";
+      out_s ("C4P_longinteger");
       break;
     case REAL_TYPE:
       NT->name->s_repr = "float";
