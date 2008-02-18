@@ -1,6 +1,6 @@
 /* PropPageRoots.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -90,6 +90,11 @@ protected:
 
 protected:
   afx_msg
+  void
+  OnShowHiddenRoots ();
+
+protected:
+  afx_msg
   BOOL
   OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo);
   
@@ -158,6 +163,10 @@ private:
   SetChanged (/*[in]*/ bool f);
 
 private:
+  bool
+  IsHiddenRoot (/*[in]*/ const PathName & root);
+
+private:
   CButton scanButton;
 
 private:
@@ -192,6 +201,9 @@ private:
 
 private:
   vector<PathName> roots;
+
+private:
+  BOOL showHiddenRoots;
 
 private:
   ProgressDialog * pProgressDialog;

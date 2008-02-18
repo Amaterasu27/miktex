@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999, 2001, 2005 SIL International. All rights reserved.
+Copyright (C) 1999 - 2008 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -45,7 +45,7 @@ namespace gr
 /*----------------------------------------------------------------------------------------------
 	Constructor.
 ----------------------------------------------------------------------------------------------*/
-Font::Font(const Font & fontSrc) : m_pfface(fontSrc.m_pfface)
+Font::Font(const Font & fontSrc) : m_pfface(fontSrc.m_pfface), m_fTablesCached(false)
 {
 	if (m_pfface)
 		m_pfface->IncFontCount();
@@ -66,6 +66,28 @@ Font::~Font()
 void Font::SetFlushMode(int flush)
 {
 	FontFace::SetFlushMode(flush);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Cache the common tables if necessary.
+----------------------------------------------------------------------------------------------*/
+void Font::EnsureTablesCached()
+{
+	if (m_fTablesCached)
+		return;
+
+	size_t cbBogus;
+	m_pHead = getTable(TtfUtil::TableIdTag(ktiHead), &cbBogus);
+	m_pHmtx = getTable(TtfUtil::TableIdTag(ktiHmtx), &m_cbHmtxSize);
+	m_pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &cbBogus);
+	m_pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &m_cbLocaSize);
+
+	// getTable can return 0 for the lengths if it is hard to calculate them, but it should
+	// never do that for hmtx or loca.
+	Assert(m_cbHmtxSize > 0);
+	Assert(m_cbLocaSize > 0);
+
+	m_fTablesCached = true;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -111,7 +133,7 @@ void Font::initialiseFontFace(bool fDumbFallback)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return uniquely identifying information that will be used a the key for this font
+	Return uniquely identifying information that will be used as the key for this font
 	in the font cache. This includes the font face name and the bold and italic flags.
 ----------------------------------------------------------------------------------------------*/
 void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
@@ -132,7 +154,9 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 	std::copy(src_start, src_start + cchw, rgchwFace);
 	rgchwFace[cchw] = 0;  // zero terminate
 	TtfUtil::SwapWString(rgchwFace, cchw);
-	stuFace.assign(rgchwFace, rgchwFace + cchw);
+	for (size_t ich16 = 0; ich16 < cchw; ich16++)	// to handle situation where wchar_t is 4 bytes
+		stuFace.push_back(wchar_t(rgchwFace[ich16]));
+	///stuFace.assign(rgchwFace, rgchwFace + cchw);
 
 	const void * pOs2Tbl = getTable(TtfUtil::TableIdTag(ktiOs2), &cbSize);
 	TtfUtil::FontOs2Style(pOs2Tbl, fBold, fItalic);
@@ -146,20 +170,15 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 ----------------------------------------------------------------------------------------------*/
 void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointReturn)
 {
+	EnsureTablesCached();
+
 	// Default values 
 	pointReturn.x = 0;
 	pointReturn.y = 0;
 
-	// this isn't used very often, so don't bother caching
-	size_t cbLocaSize = 0;
-	const void * pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &cbLocaSize);
-	if (pGlyf == 0)	return;
-
-	const void * pHead = getTable(TtfUtil::TableIdTag(ktiHead), &cbLocaSize);
-	if (pHead == 0) return;
-
-	const void * pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &cbLocaSize);
-	if (pLoca == 0)	return;
+	if (m_pGlyf == 0) return;
+	if (m_pHead == 0) return;
+	if (m_pLoca == 0) return;
 
 	size_t cContours;
 	size_t cPoints;
@@ -172,29 +191,31 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 	     rgnXFixedBuf[POINT_BUF_SIZE],       *rgnXHeapBuf=0,
 	     rgnYFixedBuf[POINT_BUF_SIZE],       *rgnYHeapBuf=0;
 
-	if (!TtfUtil::GlyfContourCount(glyphID, pGlyf, pLoca, cbLocaSize, pHead, cContours))
+	if (!TtfUtil::GlyfContourCount(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, cContours))
 		return;	//  can't figure it out
 
-	int * prgnEndPt = (cContours > CONTOUR_BUF_SIZE) ? rgnEndPtHeapBuf=new int[cContours] : rgnEndPtFixedBuf;
+	int * prgnEndPt = (cContours > CONTOUR_BUF_SIZE) ? 
+		rgnEndPtHeapBuf = new int[cContours] : 
+		rgnEndPtFixedBuf;
 
-	if (!TtfUtil::GlyfContourEndPoints(glyphID, pGlyf, pLoca, cbLocaSize, pHead, 
+	if (!TtfUtil::GlyfContourEndPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 
 		prgnEndPt, cContours))
 	{
 		return;	// should have been caught above
 	}
 	cPoints = prgnEndPt[cContours - 1] + 1;
 
-	bool * prgfOnCurve = (cPoints > POINT_BUF_SIZE) ? rgfOnCurveHeapBuf=new bool[cPoints] : rgfOnCurveFixedBuf;
-	int * prgnX        = (cPoints > POINT_BUF_SIZE) ? rgnXHeapBuf=new int[cPoints]  : rgnXFixedBuf;
-	int * prgnY        = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=new int[cPoints]  : rgnYFixedBuf;
+	bool* prgfOnCurve = (cPoints > POINT_BUF_SIZE) ? rgfOnCurveHeapBuf= new bool[cPoints] : rgfOnCurveFixedBuf;
+	int * prgnX       = (cPoints > POINT_BUF_SIZE) ? rgnXHeapBuf=       new int[cPoints]  : rgnXFixedBuf;
+	int * prgnY       = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=       new int[cPoints]  : rgnYFixedBuf;
 
-	if (TtfUtil::GlyfPoints(glyphID, pGlyf, pLoca, cbLocaSize, pHead, 0, 0, 
+	if (TtfUtil::GlyfPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 0, 0, 
 		prgnX, prgnY, prgfOnCurve, cPoints))
 	{
 		float nPixEmSquare;
 		getFontMetrics(0, 0, &nPixEmSquare);
 
-		const float nDesignUnitsPerPixel =  float(TtfUtil::DesignUnits(pHead)) / nPixEmSquare;
+		const float nDesignUnitsPerPixel =  float(TtfUtil::DesignUnits(m_pHead)) / nPixEmSquare;
 		pointReturn.x = prgnX[pointNum] / nDesignUnitsPerPixel;
 		pointReturn.y = prgnY[pointNum] / nDesignUnitsPerPixel;
 	}
@@ -211,6 +232,8 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 ----------------------------------------------------------------------------------------------*/
 void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & advances)
 {
+	EnsureTablesCached();
+
 	// Setup default return values in case of failiure.
 	boundingBox.left = 0;
 	boundingBox.right = 0;
@@ -219,45 +242,37 @@ void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & ad
 	advances.x = 0;
 	advances.y = 0;
 
-	// get the necessary tables.
-	size_t locaSize, hmtxSize;
-	const void * pHead = getTable(TtfUtil::TableIdTag(ktiHead), &locaSize);
-	if (pHead == 0) return;
+	if (m_pHead == 0) return;
 
-	const void * pHmtx = getTable(TtfUtil::TableIdTag(ktiHmtx), &hmtxSize);
-	if (pHmtx == 0) return;
-
-	// Calculate the number of pixels per design unit.
+	// Calculate the number of design units per pixel.
 	float pixelEmSquare;
 	getFontMetrics(0, 0, &pixelEmSquare);
-	const float pixelsPerDesignUnit = 
-		pixelEmSquare / float(TtfUtil::DesignUnits(pHead));
+	const float pixelsPerDesignUnit =
+		pixelEmSquare / float(TtfUtil::DesignUnits(m_pHead));
+
+	// getTable can return 0 for the lengths if it is hard to calculate them, but it should
+	// never do that for hmtx or loca.
+	Assert(m_cbHmtxSize > 0);
 
 	// Use the Hmtx and Head tables to find the glyph advances.
 	int lsb;
 	unsigned int advance = 0;
-	if (TtfUtil::HorMetrics(glyphID, pHmtx, hmtxSize, pHead, 
+	if (TtfUtil::HorMetrics(glyphID, m_pHmtx, m_cbHmtxSize, m_pHead,
 			lsb, advance))
 	{
 		advances.x = (advance * pixelsPerDesignUnit);
 		advances.y = 0.0f;		
 	}
 
-	const void * pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &locaSize);
-	if (pGlyf == 0)	return;
+	if (m_pGlyf == 0) return;
+	if (m_pLoca == 0) return;
+	Assert(m_cbLocaSize > 0);
 
-//	const void * pHhea = getTable(TtfUtil::TableIdTag(ktiHhea), &locaSize);
-//	if (pHhea == 0)	return;
-
-	const void * pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &locaSize);
-	if (pLoca == 0)	return;
-
-	// Fetch the glyph bounding box, GlyphBox may return false for a 
-	// whitespace glyph.
+	// Fetch the glyph bounding box. GlyphBox may return false for a whitespace glyph.
 	// Note that using GlyfBox here allows attachment points (ie, points lying outside
 	// the glyph's outline) to affect the bounding box, which might not be what we want.
 	int xMin, xMax, yMin, yMax;
-	if (TtfUtil::GlyfBox(glyphID, pGlyf, pLoca, locaSize, pHead,
+	if (TtfUtil::GlyfBox(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead,
 			xMin, yMin, xMax, yMax))
 	{
 		boundingBox.left = (xMin * pixelsPerDesignUnit);

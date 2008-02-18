@@ -1,6 +1,6 @@
 /* PropPageRoots.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(PropPageTeXMFRoots, CPropertyPage)
   ON_BN_CLICKED(IDC_MOVEDOWN, OnMovedown)
   ON_BN_CLICKED(IDC_MOVEUP, OnMoveup)
   ON_BN_CLICKED(IDC_REMOVE, OnRemove)
+  ON_BN_CLICKED(IDC_SHOW_HIDDEN_ROOTS, OnShowHiddenRoots)
   ON_BN_CLICKED(IDC_SCAN, OnScan)
   ON_NOTIFY(LVN_GETINFOTIP, IDC_LIST, OnGetInfoTip)
   ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST, OnSelectionChange)
@@ -76,7 +77,8 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
     userDataRoot (SessionWrapper(true)
 		  ->GetSpecialPath(SpecialPath::UserDataRoot)),
     userConfigRoot (SessionWrapper(true)
-		    ->GetSpecialPath(SpecialPath::UserConfigRoot))
+		    ->GetSpecialPath(SpecialPath::UserConfigRoot)),
+    showHiddenRoots (FALSE)
 {
   if (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True)
     {
@@ -133,6 +135,7 @@ void
 PropPageTeXMFRoots::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
+  DDX_Check (pDX, IDC_SHOW_HIDDEN_ROOTS, showHiddenRoots);
   DDX_Control (pDX, IDC_ADD, addButton);
   DDX_Control (pDX, IDC_LIST, listControl);
   DDX_Control (pDX, IDC_MOVEDOWN, downButton);
@@ -527,6 +530,29 @@ PropPageTeXMFRoots::OnRemove ()
 
 /* _________________________________________________________________________
 
+   PropPageTeXMFRoots::OnShowHiddenRoots
+   _________________________________________________________________________ */
+
+void
+PropPageTeXMFRoots::OnShowHiddenRoots ()
+{
+  try
+    {
+      UpdateData (TRUE);
+      Refresh ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
    PropPageTeXMFRoots::InsertColumn
    _________________________________________________________________________ */
 
@@ -569,6 +595,22 @@ PropPageTeXMFRoots::OnSelectionChange (/*[in]*/ NMHDR *		pNMHDR,
       ErrorDialog::DoModal (this, e);
     }
   *pResult = 0;
+}
+
+/* _________________________________________________________________________
+
+   PropPageTeXMFRoots::IsHiddenRoot
+   _________________________________________________________________________ */
+
+bool
+PropPageTeXMFRoots::IsHiddenRoot (/*[in]*/ const PathName & root)
+{
+  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
+  return (((policy & PolicyFlags::DataRootHighestPriority) != 0)
+	  && (root == userDataRoot
+	      || root == commonDataRoot
+	      || root == userConfigRoot
+	      || root == commonConfigRoot));
 }
 
 /* _________________________________________________________________________
@@ -682,11 +724,15 @@ PropPageTeXMFRoots::Refresh ()
     }
   roots.clear ();
   unsigned nRoots = SessionWrapper(true)->GetNumberOfTEXMFRoots();
-  for (unsigned r = 0; r < nRoots; ++ r)
+  for (unsigned rootIdx = 0; rootIdx < nRoots; ++ rootIdx)
     {
-      PathName root = SessionWrapper(true)->GetRootDirectory(r);
+      PathName root = SessionWrapper(true)->GetRootDirectory(rootIdx);
+      if (! showHiddenRoots && IsHiddenRoot(root))
+	{
+	  continue;
+	}
       LVITEMA lvitem;
-      lvitem.iItem = r;
+      lvitem.iItem = roots.size();
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
       PathName compacted;
@@ -695,7 +741,7 @@ PropPageTeXMFRoots::Refresh ()
 	  compacted = root;
 	}
       lvitem.pszText = const_cast<char*>(compacted.Get());
-      lvitem.lParam = r;
+      lvitem.lParam = roots.size();
       if (listControl.InsertItem(&lvitem) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);

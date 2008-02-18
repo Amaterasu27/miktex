@@ -898,18 +898,15 @@ void GrTableManager::InitSegmentAsEmpty(Segment * psegNew, Font * pfont,
 	int * pcbNextSegDat = &cbNextSegDat;
 
 	//	Initialization for (theoretical) next segment.
-	if (pbNextSegDat)
-	{
-		byte * pb = pbNextSegDat;
-		*pb++ = byte(lbEnd);
-		*pb++ = kdircNeutral;
-		*pb++ = kdircNeutral;
+	byte * pb = pbNextSegDat;
+	*pb++ = byte(lbEnd);
+	*pb++ = kdircNeutral;
+	*pb++ = kdircNeutral;
+	*pb++ = 0;
+	for (int ipass = 0; ipass < m_cpass; ipass++)
 		*pb++ = 0;
-		for (int ipass = 0; ipass < m_cpass; ipass++)
-			*pb++ = 0;
-		*pcbNextSegDat = 0;
-		psegNew->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
-	}
+	*pcbNextSegDat = 0;
+	psegNew->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
 
 	psegNew->SetPreContext(0);
 }
@@ -1125,23 +1122,11 @@ void GrTableManager::InitializeForNextSeg(Segment * pseg,
 	bool fNextSegNeedsContext, GrCharStream * pchstrm)
 {
 	byte pbNextSegDat[256];
-	int cbNextMax = 256;
 	int cbNextSegDat;
 	int * pcbNextSegDat = &cbNextSegDat;
 
 	std::vector<int> vcslotSkipOffsets;
 	vcslotSkipOffsets.resize(m_cpass);
-
-	if (cbNextMax == 0 || !pbNextSegDat)
-	{
-		// Caller is not interested in cross-line-boundary contextualization.
-		Assert(cbNextMax == 0);
-		Assert(!pbNextSegDat);
-		return;
-	}
-
-	if (cbNextMax < m_cpass + 4)
-		THROW(kresInvalidArg);
 
 	byte * pb = pbNextSegDat;
 
@@ -1978,7 +1963,7 @@ GrResult EngineState::GetGlyphAttrForJustification(int iGlyph, int jgat, int nLe
 	float * pValueRet)
 {
 	GrResult res;
-	int valueRetInt;
+	int valueRetInt = 0;
 	switch(jgat)
 	{
 	case kjgatWeight:

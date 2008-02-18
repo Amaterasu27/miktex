@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: epdf.h 181 2007-07-09 10:10:07Z oneiros $
+$Id: epdf.h 295 2007-11-29 14:00:45Z oneiros $
 */
 
 #if ! defined(MIKTEX)
@@ -65,6 +65,7 @@ extern "C" {
     extern integer epdf_page_box;
     extern void *epdf_doc;
     extern void *epdf_xref;
+    extern integer epdf_lastGroupObjectNum;
 
 #if ! defined(MIKTEX)
     extern integer pdfboxspecmedia;
@@ -110,6 +111,7 @@ extern "C" {
     __attribute__ ((format(printf, 1, 2)))
     extern void tex_printf(const char *, ...);
     extern void write_epdf(void);
+    extern void write_additional_epdf_objects(void);
     extern void zpdfbegindict(integer, bool);
     extern void zpdfbeginobj(integer, bool);
     extern void zpdfcreateobj(integer, integer);

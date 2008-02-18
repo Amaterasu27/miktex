@@ -1,6 +1,6 @@
 /* teckit.rc: version number						-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -24,7 +24,8 @@
 
 #define VER_FILEDESCRIPTION_STR "TECkit engine DLL"
 
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2002-2004 SIL International"
+#define VER_COMPANYNAME_STR "SIL International"
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2002-2008 SIL International"
 
 #define VER_FILETYPE VFT_DLL
 

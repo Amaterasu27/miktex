@@ -52,6 +52,7 @@
 #define IDC_INSTALL_ON_THE_FLY          1034
 #define IDC_COMBO_PAPER                 1035
 #define IDC_FMT_KEY                     1036
+#define IDC_SHOW_HIDDEN_ROOTS           1037
 #define ID_WHATS_THIS                   32771
 
 // Next default values for new objects
@@ -59,8 +60,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           110
 #define _APS_NEXT_COMMAND_VALUE         32772
+#define _APS_NEXT_CONTROL_VALUE         1038
+#define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -42,7 +42,9 @@ authorization from SIL International.
 #include "xetex-miktex.h"
 #else
 #define EXTERN extern
+#define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
+#undef Byte
 #endif
 
 #ifdef XETEX_MAC
@@ -54,8 +56,6 @@ authorization from SIL International.
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#include "zlib.h"
 
 #include "TECkit_Engine.h"
 
@@ -2886,10 +2886,11 @@ open_dvi_output(/*out*/ bytefile & dviFile)
     }
   else
     {
+      MiKTeX::Core::PathName outPath = THEAPP.GetOutputDirectory();
+      outPath +=
+	MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(THEAPP.GetNameOfFile().Get());
       MiKTeX::Core::CommandLineBuilder args;
-      args.AppendOption
-	("-o ",
-	 MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(THEAPP.GetNameOfFile().Get()));
+      args.AppendOption	("-o ", outPath);
       if (papersize != 0)
 	{
 	  args.AppendOption ("-p ", papersize);
@@ -2920,10 +2921,22 @@ open_dvi_output(FILE** fptr)
 			if (*p++ == '\"')
 				++len;
 		len += strlen(outputdriver);
-		len += 8; /* space for -o flag, quotes, NUL */
+		if (output_directory)
+			len += strlen(output_directory);
+		len += 10; /* space for -o flag, quotes, NUL */
+		for (p = (const char*)nameoffile+1; *p; p++)
+			if (*p == '\"')
+				++len;	/* allow extra space to escape quotes in filename */
 		cmd = xmalloc(len);
 		strcpy(cmd, outputdriver);
 		strcat(cmd, " -o \"");
+		if (output_directory) {
+			len = strlen(output_directory);
+			if (IS_DIR_SEP(output_directory[len-1]))
+				output_directory[len-1] = '\0';
+			strcat(cmd, output_directory);
+			strcat(cmd, "/");
+		}
 		q = cmd + strlen(cmd);
 		for (p = (const char*)nameoffile+1; *p; p++) {
 			if (*p == '\"')
@@ -2936,6 +2949,14 @@ open_dvi_output(FILE** fptr)
 			char* cmd2 = concat3(cmd, " -p ", papersize);
 			free(cmd);
 			cmd = cmd2;
+		}
+		if (output_directory) {
+			char *fullname = concat3(output_directory, "/", nameoffile+1);
+			free(nameoffile);
+			namelength = strlen(fullname);
+			nameoffile = (char*)xmalloc(namelength+2);
+			strcpy(nameoffile+1, fullname);
+			free(fullname);
 		}
 		*fptr = popen(cmd, "w");
 		free(cmd);

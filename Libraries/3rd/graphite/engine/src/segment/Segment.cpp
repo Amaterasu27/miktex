@@ -2446,6 +2446,9 @@ LNotLigature:
 		//	diCharAdj--;
 	}
 
+	if (dichw == kNegInfinity || dichw == kPosInfinity)
+		return dichw;
+
 	// This should be true because of the way the associations are set up:
 	Assert(GrCharStream::AtUnicodeCharBoundary(m_pgts, m_ichwMin + dichw)); // + diCharAdj));
 
@@ -2604,6 +2607,9 @@ void Segment::UnderlyingToPhysicalAssocs(int ichw, std::vector<int> & viginf)
 	Given an underlying character position (relative to the beginning of the string),
 	return a pointer to the vector containing the logical surface locations of
 	all the associated surface glyphs.
+
+	Returns an empty vector (not something containing infinities) if the character is
+	"invisible."
 ----------------------------------------------------------------------------------------------*/
 std::vector<int> Segment::UnderlyingToLogicalAssocs(int ichw)
 {
@@ -2901,6 +2907,10 @@ GrResult Segment::getUniscribeClusters(
 		for (ich = 0; ich < m_dichwLim - 1; ich++)
 		{
 			Assert(visloutBefore[ich] <= visloutAfter[ich]);
+			Assert(visloutBefore[ich] != kPosInfinity);
+			Assert(visloutBefore[ich] != kNegInfinity);
+			Assert(visloutAfter[ich] != kPosInfinity);
+			Assert(visloutAfter[ich] != kNegInfinity);
 			const int b1 = visloutBefore[ich];
 			const int a1 = visloutAfter[ich];
 			const int b2 = visloutBefore[ich + 1];
@@ -3381,7 +3391,7 @@ int Segment::SelectBb(std::vector<int> & viginf, bool fRTL)
 	// The idea is that it is going to be harder to hit than the bigger glyph.
 	float smallestArea = float(1000000000.0);
 	float largestArea  = 0.0;
-	size_t iiginfSmallest;
+	size_t iiginfSmallest = 0;
 	size_t iiginf;
 	for (iiginf = 0; iiginf < viginf.size(); iiginf++)
 	{
