@@ -22,11 +22,6 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/miktex/Core/MD5.h.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/MD5.h
-)
-
 set(${md5_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/MD5.h
   global.h
