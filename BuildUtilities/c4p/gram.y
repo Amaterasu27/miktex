@@ -1,6 +1,6 @@
  /* gram.y: C4P parser specification			-*- C++ -*-
 
-    Copyright (C) 1991-2005 Christian Schenk
+    Copyright (C) 1991-2008 Christian Schenk
 
     This file is part of C4P.
 
@@ -1674,15 +1674,17 @@ expression:
 	| expression relational_operator
 		{
 		  $<buf_mark>$ = get_buf_mark();
-		  out_s ("(C4P_integer)  ");
+		  out_s ("(C4P_integer)     ");
 		}
           simple_expression
 		{
 		  $$ = coerce($1, $4);
 		  if ($$ == REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_real)     ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_real)        ", 18);
 		  if ($$ == LONG_REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_longreal) ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_longreal)    ", 18);
+		  if ($$ == LONG_INTEGER_TYPE)
+		    out_buf_over ($<buf_mark>3, "(C4P_longinteger) ", 18);
 		}
 	;
 
@@ -1734,15 +1736,17 @@ simple_expression:
 	| simple_expression adding_operator
 		{
 		  $<buf_mark>$ = get_buf_mark();
-		  out_s ("(C4P_integer)  ");
+		  out_s ("(C4P_integer)     ");
 		}
 	  term
 		{
 		  $$ = coerce($1, $4);
 		  if ($$ == REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_real)     ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_real)        ", 18);
 		  if ($$ == LONG_REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_longreal) ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_longreal)    ", 18);
+		  if ($$ == LONG_INTEGER_TYPE)
+		    out_buf_over ($<buf_mark>3, "(C4P_longinteger) ", 18);
 		}
 	| simple_expression OR
 		{
@@ -1772,15 +1776,17 @@ term:
 	| term multiplying_operator
 		{
 		  $<buf_mark>$ = get_buf_mark();
-		  out_s ("(C4P_integer)  ");
+		  out_s ("(C4P_integer)     ");
 		}
 	  factor
 		{
 		  $$ = coerce($1,$4);
 		  if ($$ == REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_real)     ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_real)        ", 18);
 		  if ($$ == LONG_REAL_TYPE)
-		    out_buf_over ($<buf_mark>3, "(C4P_longreal) ", 15);
+		    out_buf_over ($<buf_mark>3, "(C4P_longreal)    ", 18);
+		  if ($$ == LONG_INTEGER_TYPE)
+		    out_buf_over ($<buf_mark>3, "(C4P_longinteger) ", 18);
 		}
 	| term AND
 		{
