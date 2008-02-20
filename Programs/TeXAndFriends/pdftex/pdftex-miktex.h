@@ -1,6 +1,6 @@
 /* pdftex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -183,42 +183,46 @@ public:
   void
   FreeMemory ()
   {
+#if defined(PDFTEX_HAS_HEAP_PROBLEM)
+    MiKTeX::Core::Utils::CheckHeap ();
+#endif
+
     ETeXApp::FreeMemory ();
 
     // pdftex
-    Free (THEDATA(destnames));
-    Free (THEDATA(objtab));
-    Free (THEDATA(pdfcharused));
-    Free (THEDATA(pdffontattr));
-    Free (THEDATA(pdffontautoexpand));
-    Free (THEDATA(pdffontblink));
-    Free (THEDATA(pdffontefbase));
-    Free (THEDATA(pdffontelink));
-    Free (THEDATA(pdffontexpandratio));
-    Free (THEDATA(pdffontknacbase));
-    Free (THEDATA(pdffontknbcbase));
-    Free (THEDATA(pdffontknbsbase));
-    Free (THEDATA(pdffontlpbase));
-    Free (THEDATA(pdffontmap));
-    Free (THEDATA(pdffontnum));
-    Free (THEDATA(pdffontrpbase));
-    Free (THEDATA(pdffontshbsbase));
-    Free (THEDATA(pdffontshrink));
-    Free (THEDATA(pdffontsize));
-    Free (THEDATA(pdffontstbsbase));
-    Free (THEDATA(pdffontstep));
-    Free (THEDATA(pdffontstretch));
-    Free (THEDATA(pdffonttype));
-    Free (THEDATA(pdfmem));
-    Free (THEDATA(pdfopbuf));
-    Free (THEDATA(pdfosbuf));
-    Free (THEDATA(pdfosobjnum));
-    Free (THEDATA(pdfosobjoff));
-    Free (THEDATA(vfdefaultfont));
-    Free (THEDATA(vfefnts));
-    Free (THEDATA(vfifnts));
-    Free (THEDATA(vflocalfontnum));
-    Free (THEDATA(vfpacketbase));
+    Free ("destnames", THEDATA(destnames));
+    Free ("objtab", THEDATA(objtab));
+    Free ("pdfcharused", THEDATA(pdfcharused));
+    Free ("pdffontattr", THEDATA(pdffontattr));
+    Free ("pdffontautoexpand", THEDATA(pdffontautoexpand));
+    Free ("pdffontblink", THEDATA(pdffontblink));
+    Free ("pdffontefbase", THEDATA(pdffontefbase));
+    Free ("pdffontelink", THEDATA(pdffontelink));
+    Free ("pdffontexpandratio", THEDATA(pdffontexpandratio));
+    Free ("pdffontknacbase", THEDATA(pdffontknacbase));
+    Free ("pdffontknbcbase", THEDATA(pdffontknbcbase));
+    Free ("pdffontknbsbase", THEDATA(pdffontknbsbase));
+    Free ("pdffontlpbase", THEDATA(pdffontlpbase));
+    Free ("pdffontmap", THEDATA(pdffontmap));
+    Free ("pdffontnum", THEDATA(pdffontnum));
+    Free ("pdffontrpbase", THEDATA(pdffontrpbase));
+    Free ("pdffontshbsbase", THEDATA(pdffontshbsbase));
+    Free ("pdffontshrink", THEDATA(pdffontshrink));
+    Free ("pdffontsize", THEDATA(pdffontsize));
+    Free ("pdffontstbsbase", THEDATA(pdffontstbsbase));
+    Free ("pdffontstep", THEDATA(pdffontstep));
+    Free ("pdffontstretch", THEDATA(pdffontstretch));
+    Free ("pdffonttype", THEDATA(pdffonttype));
+    Free ("pdfmem", THEDATA(pdfmem));
+    Free ("pdfopbuf", THEDATA(pdfopbuf));
+    Free ("pdfosbuf", THEDATA(pdfosbuf));
+    Free ("pdfosobjnum", THEDATA(pdfosobjnum));
+    Free ("pdfosobjoff", THEDATA(pdfosobjoff));
+    Free ("vfdefaultfont", THEDATA(vfdefaultfont));
+    Free ("vfefnts", THEDATA(vfefnts));
+    Free ("vfifnts", THEDATA(vfifnts));
+    Free ("vflocalfontnum", THEDATA(vflocalfontnum));
+    Free ("vfpacketbase", THEDATA(vfpacketbase));
   }
 
 public:

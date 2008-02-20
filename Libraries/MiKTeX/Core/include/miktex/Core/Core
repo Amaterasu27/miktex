@@ -1672,6 +1672,13 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXCORECEEAPI(void)
+  CheckHeap ();
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
   std::string
   UTF8ToAnsi (/*[in]*/ const char * lpszUtf8)
   {

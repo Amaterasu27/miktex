@@ -163,7 +163,7 @@ typedef int TEXMFCHARINT;
 	 MIKTEXTEXT("Parameter %s: %d"),				\
 	 #cfgname,							\
 	 static_cast<int>(THEDATA(varname)));				\
-      }									\
+    }									\
 }
 
 /* _________________________________________________________________________
@@ -575,7 +575,15 @@ public:
 	      /*[in,out]*/ T * &	p,
 	      /*[in]*/ size_t		n)
   {
-    size_t amount = (n + 1) * sizeof(T);
+    size_t amount;
+    if (n == 0)
+      {
+	amount = 0;
+      }
+    else
+      {
+	amount = (n + 1) * sizeof(T);
+      }
     if (trace_mem->IsEnabled())
       {
 	trace_mem->WriteFormattedLine
@@ -592,7 +600,7 @@ Reallocate %s: p == %p, elementSize == %u, nElements == %u, bytes == %u"),
     if (p == 0 && amount > 0)
       {
 	FatalError (MIKTEXTEXT("\
-Virtual memory exhausted while trying to reserve %u bytes for table %s."),
+Virtual memory exhausted while trying to reallocate %u bytes for table %s."),
 		    static_cast<unsigned>(amount),
 		    (lpszTableName == 0 ? "???" : lpszTableName));
       }
