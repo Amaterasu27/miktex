@@ -724,6 +724,21 @@ been commented~out.
 
 % _____________________________________________________________________________
 %
+% [6.96]
+% _____________________________________________________________________________
+
+@x
+@d check_interrupt==begin if interrupt<>0 then pause_for_instructions;
+  end
+@y
+@d check_interrupt==begin
+  miktex_check_memory_if_debug;
+  if interrupt<>0 then pause_for_instructions;
+end
+@z
+
+% _____________________________________________________________________________
+%
 % [7.109]
 % _____________________________________________________________________________
 
@@ -2049,7 +2064,7 @@ mem_min := mem_bot - extra_mem_bot;
 mem_max := mem_top + extra_mem_top;
 
 yzmem:=miktex_reallocate(yzmem, mem_max - mem_min + 2);
-zmem := yzmem;
+zmem := yzmem - mem_min;
 mem := zmem;
 @z
 
