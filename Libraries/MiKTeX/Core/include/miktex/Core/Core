@@ -1,6 +1,6 @@
 /* core.h: MiKTeX core API					-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -38,6 +38,8 @@
 
 #if ! defined(A089FEF06254514BA063DED44B70E66F_)
 #define A089FEF06254514BA063DED44B70E66F_
+
+#include <miktex/Core/First>
 
 #include <miktex/Core/Definitions>
 
@@ -1669,12 +1671,10 @@ public:
   AnsiToWideChar (/*[in]*/ const char * lpszAnsi);
 #endif
 
-#if defined(MIKTEX_WINDOWS)
 public:
   static
   MIKTEXCORECEEAPI(void)
   CheckHeap ();
-#endif
 
 #if defined(MIKTEX_WINDOWS)
 public:
@@ -6981,6 +6981,25 @@ public:
 };
 
 typedef AutoResource<unsigned int, SetErrorMode_> AutoErrorMode;
+#endif
+
+/* _________________________________________________________________________
+
+   AutoCrtDbgFlag
+   _________________________________________________________________________ */
+
+#if defined(_MSC_VER)
+class CrtSetDbgFlag_
+{
+public:
+  void
+  operator() (/*[in]*/ int flag)
+  {
+    _CrtSetDbgFlag (flag);
+  }
+};
+
+typedef AutoResource<int, CrtSetDbgFlag_> AutoCrtDbgFlag;
 #endif
 
 /* _________________________________________________________________________

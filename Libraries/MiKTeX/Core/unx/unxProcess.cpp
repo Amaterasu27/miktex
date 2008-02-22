@@ -1,6 +1,6 @@
 /* unxProcess.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -209,7 +209,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
 
   if (argv.size() == 0)
     {
-      argv.push_back (StrDup("foo"));
+      argv.push_back (MIKTEX_STRDUP("foo"));
     }
 
   string arg;
@@ -242,7 +242,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
 	{
 	  if (arg.length() > 0)
 	    {
-	      argv.push_back (StrDup(arg.c_str()));
+	      argv.push_back (MIKTEX_STRDUP(arg.c_str()));
 	      arg = "";
 	    }
 	}
@@ -272,7 +272,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
     }
   if (! arg.empty())
     {
-      argv.push_back (StrDup(arg.c_str()));
+      argv.push_back (MIKTEX_STRDUP(arg.c_str()));
     }
   argv.push_back (0);
 }

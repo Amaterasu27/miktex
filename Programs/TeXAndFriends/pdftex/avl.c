@@ -23,6 +23,10 @@
    Serra Mall, Stanford CA 94305, USA.
 */
 
+#if defined(MIKTEX)
+#  include <miktex/Core/Core>
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -778,14 +782,22 @@ void avl_destroy(struct avl_table *tree, avl_item_func * destroy)
 void *avl_malloc(struct libavl_allocator *allocator, size_t size)
 {
     assert(allocator != NULL && size > 0);
+#if defined(MIKTEX)
+    return MIKTEX_MALLOC(size);
+#else
     return malloc(size);
+#endif
 }
 
 /* Frees |block|. */
 void avl_free(struct libavl_allocator *allocator, void *block)
 {
     assert(allocator != NULL && block != NULL);
+#if defined(MIKTEX)
+    MIKTEX_FREE(block);
+#else
     free(block);
+#endif
 }
 
 /* Default memory allocator that uses |malloc()| and |free()|. */

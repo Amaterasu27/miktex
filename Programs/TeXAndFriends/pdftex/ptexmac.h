@@ -138,7 +138,11 @@ $Id: ptexmac.h 114 2007-05-23 18:23:49Z ms $
 T##_entry      *T##_ptr, *T##_array = NULL;    \
 size_t          T##_limit
 
+#if defined(MIKTEX)
+#  define xfree(p)            MIKTEX_FREE (p)
+#else
 #  define xfree(p)            do { if (p != NULL) free(p); p = NULL; } while (0)
+#endif
 #  define strend(s)           strchr(s, 0)
 #  define xtalloc             XTALLOC
 #  define xretalloc           XRETALLOC

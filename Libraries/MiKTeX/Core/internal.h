@@ -458,23 +458,6 @@ struct StringComparerIgnoringCase
   }
 };
 
-#if defined(StrDup)
-#  undef StrDup
-#endif
-
-inline
-char *
-StrDup (/*[in]*/ const char * lpsz)
-{
-  char * ret;
-  ret = strdup(lpsz);
-  if (ret == 0)
-    {
-      FATAL_CRT_ERROR ("strdup", 0);
-    }
-  return (ret);
-}
-
 /* _________________________________________________________________________
 
    GetC

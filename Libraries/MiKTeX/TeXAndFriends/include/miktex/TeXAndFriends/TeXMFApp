@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/TeXMFApp: TeX/MF common implementation	-*- C++ -*-
+/* miktex/TeXAndFriends/TeXMFApp: TeX/MF common implementation	-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
@@ -543,6 +543,34 @@ public:
 
   /* _______________________________________________________________________
      
+     CheckMemory
+     _______________________________________________________________________ */
+
+#if defined(_DEBUG)
+public:
+  virtual
+  void
+  CheckMemory ()
+  {
+#if defined(THEDATA)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(buffer));
+#  if defined(MIKTEX_TEX_COMPILER)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(yzmem));
+#else
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(mem));
+#endif
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(paramstack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(strpool));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trickbuf));
+#  if ! defined(MIKTEX_OMEGA)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(strstart));
+#  endif
+#endif
+  }
+#endif
+
+  /* _______________________________________________________________________
+     
      GetParameter
      _______________________________________________________________________ */
 
@@ -571,9 +599,11 @@ protected:
 public:
   template<typename T>
   T *
-  Reallocate (/*[in]*/ const char *	lpszTableName,
+  Reallocate (/*[in]*/ const char *	lpszArrayName,
 	      /*[in,out]*/ T * &	p,
-	      /*[in]*/ size_t		n)
+	      /*[in]*/ size_t		n,
+	      /*[in]*/ const char *	lpszFileName,
+	      /*[in]*/ int		line)
   {
     size_t amount;
     if (n == 0)
@@ -582,6 +612,7 @@ public:
       }
     else
       {
+	// one extra element becaus Pascal arrays are 1-based
 	amount = (n + 1) * sizeof(T);
       }
     if (trace_mem->IsEnabled())
@@ -590,20 +621,17 @@ public:
 	  ("libtexmf",
 	   MIKTEXTEXT("\
 Reallocate %s: p == %p, elementSize == %u, nElements == %u, bytes == %u"),
-	   (lpszTableName == 0 ? "table" : lpszTableName),
+	   (lpszArrayName == 0 ? "array" : lpszArrayName),
 	   p,
 	   static_cast<unsigned>(sizeof(T)),
 	   static_cast<unsigned>(n),
 	   static_cast<unsigned>(amount));
       }
-    p = reinterpret_cast<T *>(realloc(p, amount));
-    if (p == 0 && amount > 0)
-      {
-	FatalError (MIKTEXTEXT("\
-Virtual memory exhausted while trying to reallocate %u bytes for table %s."),
-		    static_cast<unsigned>(amount),
-		    (lpszTableName == 0 ? "???" : lpszTableName));
-      }
+    p = 
+      reinterpret_cast<T*>(MiKTeX::Debug::Realloc(p,
+						  amount,
+						  lpszFileName,
+						  line));
     if (trace_mem->IsEnabled())
       {
 	trace_mem->WriteFormattedLine
@@ -617,32 +645,18 @@ Reallocate: return %p"),
   
   /* _______________________________________________________________________
      
-     Reallocate
-     _______________________________________________________________________ */
-
-public:
-  template<typename T>
-  T *
-  Reallocate (/*[in,out]*/ T * &	p,
-	      /*[in]*/ size_t		n)
-  {
-    return (Reallocate(0, p, n));
-  }
-  
-  /* _______________________________________________________________________
-     
      Allocate
      _______________________________________________________________________ */
 
 protected:
   template<typename T>
   T *
-  Allocate (/*[in]*/ const char *	lpszTableName,
+  Allocate (/*[in]*/ const char *	lpszArrayName,
 	    /*[in,out]*/ T * &		p,
 	    /*[in]*/ size_t		n)
   {
     p = 0;
-    return (Reallocate(lpszTableName, p, n));
+    return (Reallocate(lpszArrayName, p, n, __FILE__, __LINE__));
   }
 
   /* _______________________________________________________________________
@@ -667,10 +681,10 @@ protected:
 protected:
   template<typename T>
   T *
-  Free (/*[in]*/ const char *	lpszTableName,
+  Free (/*[in]*/ const char *	lpszArrayName,
 	/*[in,out]*/ T * &	p)
   {
-    return (Reallocate(lpszTableName, p, 0));
+    return (Reallocate(lpszArrayName, p, 0, __FILE__, __LINE__));
   }
   
   /* _______________________________________________________________________
@@ -797,6 +811,7 @@ public:
 #endif
 
 #if defined(MIKTEX_TEX_COMPILER)
+    MIKTEX_ASSERT (THEDATA(membot) == 0);
     THEDATA(memtop) = THEDATA(membot) + THEDATA(mainmemory) - 1;
     THEDATA(memmin) = THEDATA(membot);
     THEDATA(memmax) = THEDATA(memtop);
@@ -821,7 +836,8 @@ public:
 	Allocate ("mem",
 		  THEDATA(yzmem),
 		  THEDATA(memtop) - THEDATA(membot) + 2);
-	THEDATA(zmem) = THEDATA(yzmem);
+	MIKTEX_ASSERT (THEDATA(membot) == 0);
+	THEDATA(zmem) = THEDATA(yzmem) - THEDATA(membot);
 	THEDATA(mem) = THEDATA(zmem);
 #  else
 	Allocate ("mem", THEDATA(mem), THEDATA(memtop) - 0/*memmin*/ + 2);
@@ -846,7 +862,11 @@ public:
   FreeMemory ()
   {
     Free (THEDATA(buffer));
+#  if defined(MIKTEX_TEX_COMPILER)
+    Free (THEDATA(yzmem));
+#else
     Free (THEDATA(mem));
+#endif
     Free (THEDATA(paramstack));
     Free (THEDATA(strpool));
     Free (THEDATA(trickbuf));

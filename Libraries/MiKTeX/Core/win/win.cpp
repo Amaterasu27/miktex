@@ -2966,7 +2966,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
 
   if (argv.size() == 0)
     {
-      argv.push_back (StrDup("foo"));
+      argv.push_back (MIKTEX_STRDUP("foo"));
     }
 
   for (const char * lpsz = lpszArguments; *lpsz != 0; )
@@ -3027,7 +3027,7 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
 	      || ((*lpsz == ' ' || *lpsz == '\t')
 		  && ! inQuotation))
 	    {
-	      argv.push_back (StrDup(arg.c_str()));
+	      argv.push_back (MIKTEX_STRDUP(arg.c_str()));
 	      break;
 	    }
 	  else if (! quoteOrUnquote)
@@ -3174,4 +3174,12 @@ Utils::CheckHeap ()
 			  0);
       break;
     }
+#if defined(_DEBUG)
+  if (_CrtCheckMemory() == 0)
+    {
+      FATAL_MIKTEX_ERROR ("Utils::CheckHeap",
+			  T_("The heap is corrupted."),
+			  0);
+    }
+#endif
 }

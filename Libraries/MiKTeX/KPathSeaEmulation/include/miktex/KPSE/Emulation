@@ -1,4 +1,4 @@
-/* miktex/kpsemu.h: Web2C/KPSE emulation			-*- C++ -*-
+/* miktex/KPSE/Emulation: Web2C/KPSE emulation			-*- C++ -*-
 
    Copyright (C) 2000-2008 Christian Schenk
 
@@ -34,6 +34,7 @@
 #include <stdlib.h>
 
 #include <miktex/Core/Core>
+#include <miktex/Core/Debug>
 #include <miktex/Core/IntegerTypes>
 
 // DLL import/export switch
@@ -357,9 +358,9 @@
 #define xftell MiKTeX::KPSE::FTell64
 
 #if defined(__cplusplus)
-#  define xmalloc MiKTeX::KPSE::Malloc
+#  define xmalloc(size) MiKTeX::Debug::Malloc((size), __FILE__, __LINE__)
 #else
-#  define xmalloc miktex_malloc
+#  define xmalloc(size) miktex_core_malloc((size), __FILE__, __LINE__)
 #endif
 
 #if defined(__cplusplus)
@@ -369,15 +370,17 @@
 #endif
 
 #if defined(__cplusplus)
-#  define xrealloc MiKTeX::KPSE::Realloc
+#  define xrealloc(ptr, size) \
+	MiKTeX::Debug::Realloc((ptr), (size), __FILE__, __LINE__)
 #else
-#  define xrealloc miktex_realloc
+#  define xrealloc(ptr, size) \
+	miktex_core_realloc((ptr), (size), __FILE__, __LINE__)
 #endif
 
 #if defined(__cplusplus)
-#  define xstrdup MiKTeX::KPSE::StrDup
+#  define xstrdup(str) MiKTeX::Debug::StrDup((str), __FILE__, __LINE__)
 #else
-#  define xstrdup miktex_strdup
+#  define xstrdup(str) miktex_core_strdup((str), __FILE__, __LINE__)
 #endif
 
 #define xmallocarray(type,size) ((type*)xmalloc((size+1)*sizeof(type)))
@@ -580,7 +583,9 @@ MagStepFix (/*[in]*/ unsigned	dpi,
 	    /*[out]*/ int *	pRet);
 
 MIKTEXKPSCEEAPI(void *)
-Malloc (/*[in]*/ size_t size);
+Malloc (/*[in]*/ size_t		size,
+	/*[in]*/ const char *	lpszFileName,
+	/*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(FILE *)
 OpenFile (/*[in]*/ const char *			lpszFileName,
@@ -592,10 +597,14 @@ PutEnv (/*[in]*/ const char * lpszVarName,
 
 MIKTEXKPSCEEAPI(void *)
 Realloc (/*[in]*/ void *	ptr,
-	 /*[in]*/ size_t	size);
+	 /*[in]*/ size_t	size,
+	 /*[in]*/ const char *	lpszFileName,
+	 /*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(char *)
-StrDup (/*[in]*/ const char *	lpsz);
+StrDup (/*[in]*/ const char *	lpsz,
+	/*[in]*/ const char *	lpszFileName,
+	/*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(char *)
 VarValue (/*[in]*/ const char * lpszVarName);
@@ -678,18 +687,24 @@ MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
 
 MIKTEXKPSCEEAPI(LPVOID)
-miktex_malloc (/*[in]*/ size_t size);
+miktex_malloc (/*[in]*/ size_t		size,
+	       /*[in]*/ const char *	lpszFileName,
+	       /*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(LPVOID)
-miktex_realloc (/*[in]*/ void *	ptr,
-		/*[in]*/ size_t	size);
+miktex_realloc (/*[in]*/ void *		ptr,
+		/*[in]*/ size_t		size,
+		/*[in]*/ const char *	lpszFileName,
+		/*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(void)
 miktex_putenv (/*[in]*/ const char * lpszVarName,
 	       /*[in]*/ const char * lpszValue);
 
 MIKTEXKPSCEEAPI(char *)
-miktex_strdup (/*[in]*/ const char * s);
+miktex_strdup (/*[in]*/ const char *	s,
+	       /*[in]*/ const char *	lpszFileName,
+	       /*[in]*/ int		line);
 
 MIKTEXKPSCEEAPI(int)
 miktex_strcasecmp (/*[in]*/ const char * lpsz1,
