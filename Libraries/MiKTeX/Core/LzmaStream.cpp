@@ -1,6 +1,6 @@
 /* FileStreamStream.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -56,9 +56,15 @@ public:
   virtual
   ~LzmaStreamHelper ()
   {
-    if (pBuffer != 0)
+    try
       {
-	free (pBuffer);
+	if (pBuffer != 0)
+	  {
+	    MIKTEX_FREE (pBuffer);
+	  }
+      }
+    catch (const exception &)
+      {
       }
   }
 
@@ -164,7 +170,7 @@ public:
 	  {
 	    sizeBuffer = newOffset + 4096;
 	    pBuffer =
-	      static_cast<unsigned char *>(realloc(pBuffer, sizeBuffer));
+	      static_cast<unsigned char*>(MIKTEX_REALLOC(pBuffer, sizeBuffer));
 	  }
 	memcpy (pBuffer + offset, pData, size);
 	offset = newOffset;
@@ -231,19 +237,33 @@ private:
 	    pSetProp = 0;
 	    UNEXPECTED_CONDITION ("LzmaStreamHelper::Uncompress");
 	  }
-	unsigned char props[5];
+	const size_t nPropBytes = 5;
+	unsigned char props[nPropBytes];
 	UInt32 n;
-	if (Read(props, 5, &n) != S_OK || n != 5)
+	if (Read(props, nPropBytes, &n) != S_OK || n != nPropBytes)
 	  {
 	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("Unexpected end of file."),
 				0);
 	  }
-	if (pSetProp->SetDecoderProperties2(props, 5) != S_OK)
+	HRESULT hr = pSetProp->SetDecoderProperties2(props, nPropBytes);
+	if (hr != S_OK)
 	  {
+	    string info = "hr=";
+	    info += NUMTOSTR(hr);
+	    info += ';';
+	    info += "props=";
+	    for (unsigned idx = 0; idx < nPropBytes; ++ idx)
+	      {
+		if (idx > 0)
+		  {
+		    info += '-';
+		  }
+		info += NUMTOSTR(props[idx]);
+	      }
 	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("LZMA decoder error."),
-				0);
+				info.c_str());
 	  }
 	UInt64 fileSize = 0;
 	for (int i = 0; i < 8; ++ i)
@@ -257,11 +277,14 @@ private:
 	      }
 	    fileSize |= (static_cast<UInt64>(b) << (8 * i));
 	  }
-	if (pCompressCoder->Code(this, this, 0, &fileSize, 0) != S_OK)
+	hr = pCompressCoder->Code(this, this, 0, &fileSize, 0);
+	if (hr != S_OK)
 	  {
+	    string info = "hr=";
+	    info += NUMTOSTR(hr);
 	    FATAL_MIKTEX_ERROR ("LzmaStreamHelper::Uncompress",
 				T_("LZMA decoder error."),
-				0);
+				info.c_str());
 	  }
       }
     catch (const exception &)
