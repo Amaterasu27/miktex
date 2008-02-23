@@ -183,10 +183,6 @@ public:
   void
   FreeMemory ()
   {
-#if defined(PDFTEX_HAS_HEAP_PROBLEM) && ! defined(_DEBUG)
-    MiKTeX::Core::Utils::CheckHeap ();
-#endif
-
     ETeXApp::FreeMemory ();
 
     // pdftex

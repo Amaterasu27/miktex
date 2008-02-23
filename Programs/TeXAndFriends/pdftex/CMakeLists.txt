@@ -38,7 +38,6 @@ add_definitions(
   -DPDFTEXCLASS=PDFTEX
   -DPDFTEXDATA=g_PDFTEXData
   -DMIKTEX_PDFTEX
-  -DPDFTEX_HAS_HEAP_PROBLEM
 )
 
 set(pdftosrc_sources
