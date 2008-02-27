@@ -1,70 +1,55 @@
-Copyright (C) 2000-2007 Christian Schenk
-  
-This file is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2, or (at your option) any
-later version.
-  
-This file is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-  
-You should have received a copy of the GNU General Public License
-along with This file; if not, write to the Free Software Foundation,
-59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-------------------------------------------------------------------------
-
 This 'README' file belongs to the MiKTeX source distribution.  It
 briefly describes the build process on Windows systems.
 
-OS REQUIREMENTS
----------------
+Minumum OS REQUIREMENTS
+-----------------------
 
-	* Microsoft Windows XP SP 2
+	* Microsoft Windows XP Service Pack 2
 
 C++ COMPILER
 ------------
 
-	* Microsoft Visual C++ 8.0 Professional
-	  The professional edition is needed. The free express edition
-	  does not include ATL/MFC.
+	* Microsoft Visual C++ 2008
+	  http://en.wikipedia.org/wiki/Visual_C_Plus_Plus
+	  You can use the Express Edition (currently gratis) to compile
+          the command-line applications. The Professional Edition is only
+          required, if you want to also build the GUI applications.
 
 WINDOWS SDK
 -----------
 
 	* Microsoft Windows SDK
-	  Don't install the C++ compiler included in the SDK.
+	  http://en.wikipedia.org/wiki/Microsoft_Windows_SDK
+	  Hint: Don't install the C++ compiler included in the SDK.
 
 BUILD SYSTEM
 ------------
 
 	* CMake
+	  http://en.wikipedia.org/wiki/Cmake
 	  The minimum required version is 2.4.6.
-	  http://www.cmake.org
 
 BUILD UTILITIES
 ---------------
 
 	* ActivePerl
-	  http://www.activestate.com
+	  http://en.wikipedia.org/wiki/ActiveState
 
 	* Cygwin
-	  Install all packages.
-	  http://www.cygwin.com
+	  http://en.wikipedia.org/wiki/Cygwin
 
 	* ImageMagick
-	  http://www.imagemagick.org
+	  http://en.wikipedia.org/wiki/Imagemagick
 
-        * Microsoft HTML Help SDK
+        * Microsoft HTML Help Workshop
+	  http://en.wikipedia.org/wiki/Microsoft_Compiled_HTML_Help
 
-	* MiKTeX 2.6
-	  Install all packages.
+	* MiKTeX 2.7
 	  http://miktex.org
+	  Hint: Install all packages.
 
-	* xsltproc
-	  http://xmlsoft.org
+	* xsltproc (part of libxml2)
+	  http://en.wikipedia.org/wiki/Libxml
 
 BUILDING MIKTEX
 ---------------
