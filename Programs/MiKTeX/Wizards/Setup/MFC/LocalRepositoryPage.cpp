@@ -1,6 +1,6 @@
 /* LocalRepositoryPag.cpp:
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -200,8 +200,10 @@ LocalRepositoryPage::OnKillActive ()
 	{
 	  if (theApp.setupTask == SetupTask::InstallFromLocalRepository)
 	    {
-	      if (! TestLocalRepository(PathName(fileName),
-					theApp.packageLevel))
+	      PackageLevel foundPackageLevel =
+		TestLocalRepository(PathName(fileName),
+				    theApp.packageLevel);
+	      if (foundPackageLevel == PackageLevel::None)
 		{
 		  CString message;
 		  AfxFormatString1 (message,
