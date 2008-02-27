@@ -1,6 +1,6 @@
 /* TarExtractor.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -46,11 +46,15 @@ GetOctal (/*[int]*/ const char *	lpszField)
 
   int ret;
 
+  MIKTEX_ASSERT_STRING (lpszField);
+
   if (SSCANF(lpszField, "%o", &ret) != 1)
     {
+      string info = "value=";
+      info += lpszField;
       FATAL_EXTRACTOR_ERROR ("TarExtractor::Extract",
 			     T_("Invalid octal field."),
-			     0);
+			     info.c_str());
     }
 
   return (ret);
