@@ -1,6 +1,7 @@
-/*
-* Copyright (C) {1997-2005}, International Business Machines Corporation and others. All Rights Reserved.
-********************************************************************************
+/*************************************************************************
+* Copyright (c) 1997-2007, International Business Machines Corporation
+* and others. All Rights Reserved.
+**************************************************************************
 *
 * File TIMEZONE.H
 *
@@ -20,7 +21,7 @@
 *                           Hashtable replaced by new static data structures.
 *   12/14/99    aliu        Made GMT public.
 *   08/15/01    grhoten     Made GMT private and added the getGMT() function
-********************************************************************************
+**************************************************************************
 */
 
 #ifndef TIMEZONE_H
@@ -305,7 +306,7 @@ public:
     static TimeZone* U_EXPORT2 createDefault(void);
 
     /**
-     * Sets the default time zone (i.e., what's returned by getDefault()) to be the
+     * Sets the default time zone (i.e., what's returned by createDefault()) to be the
      * specified time zone.  If NULL is specified for the time zone, the default time
      * zone is set to the default host time zone.  This call adopts the TimeZone object
      * passed in; the clent is no longer responsible for deleting it.
@@ -323,6 +324,14 @@ public:
      * @system
      */
     static void U_EXPORT2 setDefault(const TimeZone& zone);
+
+    /**
+     * Returns the timezone data version currently used by ICU.
+     * @param status Output param to filled in with a success or an error.
+     * @return the version string, such as "2007f"
+     * @draft ICU 3.8
+     */
+    static const char* U_EXPORT2 getTZDataVersion(UErrorCode& status);
 
     /**
      * Returns true if the two TimeZones are equal.  (The TimeZone version only compares
@@ -616,9 +625,10 @@ public:
      * the known latest daylight saving value.
      *
      * @return the amount of saving time in milliseconds
-     * @draft ICU 3.6
+     * @stable ICU 3.6
      */
     virtual int32_t getDSTSavings() const;
+
 protected:
 
     /**
@@ -660,6 +670,15 @@ protected:
     static UResourceBundle* loadRule(const UResourceBundle* top, const UnicodeString& ruleid, UResourceBundle* oldbundle, UErrorCode&status);
 
 private:
+    friend class ZoneMeta;
+
+    /**
+     * Get a canonical Olson zone ID for the given ID.  If the given ID is not valid,
+     * this method returns empty string as the result.  If the given ID is a link, then the
+     * referenced ID (canonical ID) is returned.
+     */
+    static UnicodeString& getOlsonCanonicalID(const UnicodeString &id, UnicodeString &canonical);
+
     static TimeZone*        createCustomTimeZone(const UnicodeString&); // Creates a time zone based on the string.
 
     /**

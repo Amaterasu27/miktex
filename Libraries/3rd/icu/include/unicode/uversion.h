@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2006, International Business Machines
+*   Copyright (C) 2000-2007, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -50,7 +50,7 @@
  *  @stable ICU 2.4
  */
 #define U_COPYRIGHT_STRING \
-  " Copyright (C) 2005, International Business Machines Corporation and others. All Rights Reserved. "
+  " Copyright (C) 2007, International Business Machines Corporation and others. All Rights Reserved. "
 
 /** Maximum length of the copyright string.
  *  @stable ICU 2.4
@@ -67,32 +67,32 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_MINOR_NUM 6
+#define U_ICU_VERSION_MINOR_NUM 8
 
 /** The current ICU patchlevel version as an integer.  
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 0
+#define U_ICU_VERSION_PATCHLEVEL_NUM 1
 
 /** Glued version suffix for renamers 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _3_6
+#define U_ICU_VERSION_SUFFIX _3_8
 
 /** The current ICU library version as a dotted-decimal string. The patchlevel
  *  only appears in this string if it non-zero. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "3.6"
+#define U_ICU_VERSION "3.8.1"
 
 /** The current ICU library major/minor version as a string without dots, for library name suffixes. 
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "36"
+#define U_ICU_VERSION_SHORT "38"
 
 /** An ICU version consists of up to 4 numbers from 0..255.
  *  @stable ICU 2.4
@@ -114,24 +114,67 @@
  */
 typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
 
+/*===========================================================================*/
+/* C++ namespace if supported. Versioned unless versioning is disabled.      */
+/*===========================================================================*/
+
+/**
+ * \def U_NAMESPACE_BEGIN
+ * This is used to begin a declaration of a public ICU C++ API.
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_END
+ * This is used to end a declaration of a public ICU C++ API 
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_USE
+ * This is used to specify that the rest of the code uses the
+ * public ICU C++ API namespace.
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_QUALIFIER
+ * This is used to qualify that a function or class is part of
+ * the public ICU C++ API namespace.
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/* Define namespace symbols if the compiler supports it. */
 #if U_HAVE_NAMESPACE && defined(XP_CPLUSPLUS)
-#if U_DISABLE_RENAMING
-#define U_ICU_NAMESPACE icu
-namespace U_ICU_NAMESPACE { }
+#   if U_DISABLE_RENAMING
+#       define U_ICU_NAMESPACE icu
+        namespace U_ICU_NAMESPACE { }
+#   else
+#       define U_ICU_NAMESPACE icu_3_8
+        namespace U_ICU_NAMESPACE { }
+        namespace icu = U_ICU_NAMESPACE;
+#   endif
+
+#   define U_NAMESPACE_BEGIN namespace U_ICU_NAMESPACE {
+#   define U_NAMESPACE_END  }
+#   define U_NAMESPACE_USE using namespace U_ICU_NAMESPACE;
+#   define U_NAMESPACE_QUALIFIER U_ICU_NAMESPACE::
+
+#   ifndef U_USING_ICU_NAMESPACE
+#       define U_USING_ICU_NAMESPACE 1
+#   endif
+#   if U_USING_ICU_NAMESPACE
+        U_NAMESPACE_USE
+#   endif
 #else
-#define U_ICU_NAMESPACE icu_3_6
-namespace U_ICU_NAMESPACE { }
-namespace icu = U_ICU_NAMESPACE;
-#endif
-
-#ifndef U_USING_ICU_NAMESPACE
-#   define U_USING_ICU_NAMESPACE 1
-#endif
-
-#if U_USING_ICU_NAMESPACE
-U_NAMESPACE_USE
-#endif
-
+#   define U_NAMESPACE_BEGIN
+#   define U_NAMESPACE_END
+#   define U_NAMESPACE_USE
+#   define U_NAMESPACE_QUALIFIER
 #endif
 
 
@@ -213,16 +256,6 @@ u_getVersion(UVersionInfo versionArray);
  * @stable ICU 2.4
  */
 #define UCOL_BUILDER_VERSION 7
-
-/** *** Removed *** Instead we use the data we read from FractionalUCA.txt
- * This is the version of FractionalUCA.txt tailoring rules
- * Version 1 was in ICU 1.8.1. Version two contains canonical closure for
- * supplementary code points 
- * Version 4 in ICU 2.2, following UCA=3.1.1d6, UCD=3.2.0 
- * This value may change in the subsequent releases of ICU
- * @stable ICU 2.4
- */
-/*#define UCOL_FRACTIONAL_UCA_VERSION 4*/
 
 /** This is the version of the tailorings 
  *  This value may change in the subsequent releases of ICU

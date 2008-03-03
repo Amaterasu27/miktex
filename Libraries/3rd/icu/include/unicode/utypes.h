@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2006, International Business Machines
+*   Copyright (C) 1996-2007, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -190,10 +190,10 @@
  *    Defined as a literal, not a string.
  *    Tricky Preprocessor use - ## operator replaces macro paramters with the literal string
  *                              from the corresponding macro invocation, _before_ other macro substitutions.
- *                              Need a nested #defines to get the actual version numbers rather than
+ *                              Need a nested \#defines to get the actual version numbers rather than
  *                              the literal text U_ICU_VERSION_MAJOR_NUM into the name.
  *                              The net result will be something of the form
- *                                  #define U_ICU_ENTRY_POINT icudt19_dat
+ *                                  \#define U_ICU_ENTRY_POINT icudt19_dat
  * @stable ICU 2.4
  */
 #define U_ICUDATA_ENTRY_POINT  U_DEF2_ICUDATA_ENTRY_POINT(U_ICU_VERSION_MAJOR_NUM, U_ICU_VERSION_MINOR_NUM)
@@ -374,7 +374,7 @@ typedef void* UClassID;
  * \def U_TOOLUTIL_API
  * Set to export library symbols from inside the toolutil library,
  * and to import them from outside.
- * @draft ICU 3.4
+ * @stable ICU 3.4
  */
 
 #if defined(U_COMBINED_IMPLEMENTATION)
@@ -486,9 +486,9 @@ typedef void* UClassID;
  *
  * Note: This is currently only done on Windows because
  * some Linux/Unix compilers have problems with defining global new/delete.
- * On Windows, WIN32 is defined, and it is _MSC_VER>=1200 for MSVC 6.0 and higher.
+ * On Windows, U_WINDOWS is defined, and it is _MSC_VER>=1200 for MSVC 6.0 and higher.
  */
-#if defined(XP_CPLUSPLUS) && defined(U_WINDOWS) && (_MSC_VER>=1200) && U_DEBUG && (defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_LAYOUT_IMPLEMENTATION) || defined(U_USTDIO_IMPLEMENTATION))
+#if defined(XP_CPLUSPLUS) && defined(U_WINDOWS) && U_DEBUG && U_OVERRIDE_CXX_ALLOCATION && (_MSC_VER>=1200) && !defined(U_STATIC_IMPLEMENTATION) && (defined(U_COMMON_IMPLEMENTATION) || defined(U_I18N_IMPLEMENTATION) || defined(U_IO_IMPLEMENTATION) || defined(U_LAYOUT_IMPLEMENTATION) || defined(U_LAYOUTEX_IMPLEMENTATION))
 
 #ifndef U_HIDE_INTERNAL_API
 /**
@@ -732,6 +732,7 @@ typedef enum UErrorCode {
     U_IDNA_VERIFICATION_ERROR,
     U_IDNA_LABEL_TOO_LONG_ERROR,
     U_IDNA_ZERO_LENGTH_LABEL_ERROR,
+    U_IDNA_DOMAIN_NAME_TOO_LONG_ERROR,
     U_IDNA_ERROR_LIMIT,
     /*
      * Aliases for StringPrep

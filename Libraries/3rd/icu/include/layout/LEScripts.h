@@ -1,11 +1,11 @@
 /*
  *
- * (C) Copyright IBM Corp. 1998-2006. All Rights Reserved.
+ * (C) Copyright IBM Corp. 1998-2007. All Rights Reserved.
  *
  * WARNING: THIS FILE IS MACHINE GENERATED. DO NOT HAND EDIT IT UNLESS
  * YOU REALLY KNOW WHAT YOU'RE DOING.
  *
- * Generated on: 08/21/2006 02:35:13 PM HST
+ * Generated on: 09/03/2007 08:58:55 AM HST
  */
 
 #ifndef __LESCRIPTS_H
@@ -24,7 +24,7 @@ U_NAMESPACE_BEGIN
  * Constants for Unicode script values, generated using
  * ICU4J's <code>UScript</code> class.
  *
- * @draft ICU 3.6
+ * @stable ICU 3.6
  */
 
 enum ScriptCodes {
@@ -132,8 +132,20 @@ enum ScriptCodes {
     xsuxScriptCode = 101,
     zxxxScriptCode = 102,
     zzzzScriptCode = 103,
+    cariScriptCode = 104,
+    jpanScriptCode = 105,
+    lanaScriptCode = 106,
+    lyciScriptCode = 107,
+    lydiScriptCode = 108,
+    olckScriptCode = 109,
+    rjngScriptCode = 110,
+    saurScriptCode = 111,
+    sgnwScriptCode = 112,
+    sundScriptCode = 113,
+    moonScriptCode = 114,
+    mteiScriptCode = 115,
 
-    scriptCodeCount = 104
+    scriptCodeCount = 116
 };
 
 U_NAMESPACE_END
