@@ -78,12 +78,24 @@ FatalSoapError (/*[in]*/ soap *		pSoap,
     }
   else if (pSoap->error != SOAP_OK)
     {
-      const char ** pp = soap_faultstring(pSoap);
-      Session::FatalMiKTeXError (0,
-				 (pp != 0 ? *pp : 0),
-				 0,
-				 lpszFile,
-				 line);
+      const char ** ppText = soap_faultstring(pSoap);
+      const char ** ppDetail = soap_faultdetail(pSoap);
+      switch (pSoap->error)
+	{
+	case 403:
+	case 503:
+	  FATAL_MIKTEX_ERROR (0,
+			      T_("The MiKTeX web service has rejected your \
+request. Possible reason: too many requests arriving from your IP \
+address."),
+			      (ppDetail != 0 ? *ppDetail : 0));
+	default:
+	  Session::FatalMiKTeXError (0,
+				     (ppText != 0 ? *ppText : 0),
+				     (ppDetail != 0 ? *ppDetail : 0),
+				     lpszFile,
+				     line);
+	}
     }
   else
     {
