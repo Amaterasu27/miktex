@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -98,6 +98,7 @@ set(rel_ps2pk_dir	"Programs/FontUtilities/ps2pk")
 set(rel_psutils_dir	"Programs/GraphicsUtilities/psutils")
 set(rel_remove_mfc_dir	"Programs/MiKTeX/Wizards/Remove/MFC")
 set(rel_setup_mfc_dir	"Programs/MiKTeX/Wizards/Setup/MFC")
+set(rel_synctex_dir	"Programs/TeXAndFriends/synctex")
 set(rel_teckit_dir	"Libraries/3rd/teckit")
 set(rel_tex4ht_dir	"Programs/Converters/tex4ht")
 set(rel_tex_dir		"Programs/TeXAndFriends/tex")
@@ -164,6 +165,7 @@ set(etex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex.ch")
 set(etex_miktex_post_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-post.ch")
 set(etex_miktex_pre_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-pre.ch")
 set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
+set(synctex_ch "${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.ch")
 set(tex_fallback_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-fallback.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")
 set(tex_miktex_hyph_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hyph.ch")
