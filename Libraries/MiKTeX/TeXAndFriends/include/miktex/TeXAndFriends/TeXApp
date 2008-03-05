@@ -593,6 +593,20 @@ public:
 
   /* _______________________________________________________________________
      
+     MLTeXP
+     _______________________________________________________________________ */
+
+public:
+
+  int
+  GetSynchronizationOptions ()
+    const
+  {
+    return (synchronizationOptions);
+  }
+
+  /* _______________________________________________________________________
+     
      EncTeXP
      _______________________________________________________________________ */
 
@@ -758,6 +772,9 @@ private:
 private:
   bool enableEncTeX;
   
+private:
+  int synchronizationOptions;
+
 private:
   int lastLineNum;
 

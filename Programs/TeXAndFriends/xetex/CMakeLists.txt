@@ -65,6 +65,7 @@ set(miktex_tex_change_files
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
+  ${tex_miktex_synctex_ch}
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
   ${tex_miktex_web2c_ch}

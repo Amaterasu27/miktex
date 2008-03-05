@@ -59,6 +59,7 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
   param_save_size = -1;
   param_trie_op_size = -1;
   param_trie_size = -1;
+  synchronizationOptions = 0;
 }
 
 /* _________________________________________________________________________
@@ -106,6 +107,7 @@ enum {
   OPT_NEST_SIZE,
   OPT_SAVE_SIZE,
   OPT_SRC_SPECIALS,
+  OPT_SYNCTEX,
   OPT_TRIE_OP_SIZE,
   OPT_TRIE_SIZE,
 };
@@ -156,6 +158,16 @@ Set save_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_SAVE_SIZE,
 	     required_argument,
 	     "N");
+
+  if (AmI("xetex"))
+    {
+      AddOption (T_("synctex\0\
+Set the synchronization options."),
+	     FIRST_OPTION_VAL + optBase + OPT_SYNCTEX,
+	     required_argument,
+	     "OPTIONS");
+
+    }
 
   AddOption (T_("trie-size\0\
 Set trie_size to N."),
@@ -327,6 +339,10 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
 	}
 #endif // EXPERT_SRC_SPECIALS
       break;
+    case OPT_SYNCTEX:
+      synchronizationOptions = atoi(lpszArg);
+      break;
+
     case OPT_TRIE_SIZE:
       param_trie_size = atoi(lpszArg);
       break;
