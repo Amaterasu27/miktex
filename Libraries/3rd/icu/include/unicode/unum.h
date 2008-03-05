@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 1997-2006, International Business Machines Corporation and others.
+* Copyright (C) 1997-2007, International Business Machines Corporation and others.
 * All Rights Reserved.
 * Modification History:
 *
@@ -176,9 +176,18 @@ typedef enum UNumberFormatRoundingMode {
     UNUM_ROUND_FLOOR,
     UNUM_ROUND_DOWN,
     UNUM_ROUND_UP,
+    /**
+     * Half-even rounding, misspelled name
+     * @deprecated, ICU 3.8
+     */
     UNUM_FOUND_HALFEVEN,
     UNUM_ROUND_HALFDOWN,
-    UNUM_ROUND_HALFUP
+    UNUM_ROUND_HALFUP,
+    /**
+     * Half-even rounding
+     * @stable, ICU 3.8
+     */
+    UNUM_ROUND_HALFEVEN = UNUM_FOUND_HALFEVEN
 } UNumberFormatRoundingMode;
 
 /** The possible number format pad positions. 
@@ -789,14 +798,10 @@ typedef enum UNumberFormatSymbol {
   /** Significant digit symbol
    * @stable ICU 3.0 */
   UNUM_SIGNIFICANT_DIGIT_SYMBOL = 16,
-
-#ifndef U_HIDE_DRAFT_API  
   /** The monetary grouping separator 
-   * @draft ICU 3.6
+   * @stable ICU 3.6
    */
   UNUM_MONETARY_GROUPING_SEPARATOR_SYMBOL = 17,  
-#endif /*U_HIDE_DRAFT_API*/
-
   /** count symbol constants */
   UNUM_FORMAT_SYMBOL_COUNT = 18
 } UNumberFormatSymbol;

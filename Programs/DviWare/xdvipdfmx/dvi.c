@@ -1929,13 +1929,14 @@ do_glyph_array (int yLocsPresent)
 
   if (font->rgba_color != 0xffffffff) {
     pdf_color color;
-    pdf_color_push();
+//    pdf_color_push();
     pdf_color_rgbcolor(&color,
       (double)((unsigned char)(font->rgba_color >> 24) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >> 16) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >>  8) & 0xff) / 255);
-    pdf_dev_setcolor(&color, 0); /* stroke color */
-    pdf_dev_setcolor(&color, 1); /* fill color */
+    pdf_color_push(&color, &color);
+//    pdf_dev_setcolor(&color, 0); /* stroke color */
+//    pdf_dev_setcolor(&color, 1); /* fill color */
   }
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
@@ -2037,9 +2038,7 @@ do_pic_file()
     transform is a 3x2 affine transform matrix expressed in fixed-point values
   */
   
-  if (page_no > 0)
-    --page_no; /* convert 1-based page number to 0-based index */
-  xobj_id = pdf_ximage_findresource(path, page_no, pdf_box);
+  xobj_id = pdf_ximage_findresource(path, page_no/*, pdf_box*/);
   if (xobj_id >= 0) {
       /* FIXME: this seems to work for 72dpi JPEGs, but isn't right for others;
          need to take the actual image resolution into account in pdf_dev_put_image,

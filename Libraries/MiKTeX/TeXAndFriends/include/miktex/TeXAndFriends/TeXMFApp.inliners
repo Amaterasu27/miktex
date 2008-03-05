@@ -1,6 +1,6 @@
 /*  MiKTeX/TeXAndFriends/TeXMFApp.inliners: TeX/MF inliners	-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -263,19 +263,8 @@ miktexopenpoolfile (/*[in]*/ FileType & f)
    miktexreallocate
    _________________________________________________________________________ */
 
-#if 1
 #define miktexreallocate(p, n) \
-  THEAPP.Reallocate(#p, p, n)
-#else
-template<typename T>
-inline
-T *
-miktexreallocate (/*[in,out]*/ T * &	p,
-		  /*[in]*/ size_t	n)
-{
-  return (THEAPP.Reallocate(p, n));
-}
-#endif
+  THEAPP.Reallocate(#p, p, n, __FILE__, __LINE__)
 
 /* _________________________________________________________________________
      
@@ -404,9 +393,23 @@ template<typename FileType>
 inline
 void
 miktexundumpint (/*[in]*/ FileType &	f,
-		 /*[out]*/ int &		val)
+		 /*[out]*/ int &	val)
 {
   miktexundump (f, val);
+}
+
+/* _________________________________________________________________________
+     
+   miktexcheckmemoryifdebug
+   _________________________________________________________________________ */
+
+inline
+void
+miktexcheckmemoryifdebug ()
+{
+#if defined(_DEBUG)
+  THEAPP.CheckMemory ();
+#endif
 }
 
 MIKTEXMF_END_NAMESPACE;

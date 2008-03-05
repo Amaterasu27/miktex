@@ -20,6 +20,10 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 $Id: writeimg.c 340 2008-01-14 16:46:44Z oneiros $
 */
 
+#if defined(MIKTEX)
+#  include <miktex/Core/First>
+#endif
+
 #include "ptexlib.h"
 #include "image.h"
 #include <kpathsea/c-auto.h>
@@ -468,7 +472,7 @@ void img_free()
     char *a;					\
     undumpinteger (x);				\
     if (x>0) {					\
-      a = (char*)malloc(x);			\
+      a = (char*)MIKTEX_MALLOC(x);		\
       undumpthings(*a,x);			\
       s = a ;					\
     } else { s = NULL; }			\

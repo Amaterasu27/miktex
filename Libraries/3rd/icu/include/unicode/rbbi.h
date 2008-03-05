@@ -1,6 +1,6 @@
 /*
 ***************************************************************************
-*   Copyright (C) 1999-2006 International Business Machines Corporation   *
+*   Copyright (C) 1999-2007 International Business Machines Corporation   *
 *   and others. All rights reserved.                                      *
 ***************************************************************************
 
@@ -336,7 +336,7 @@ public:
       * @param status receives any error codes.
       * @return   The current UText for this break iterator.  If an input
       *           UText was provided, it will always be returned.
-      * @draft ICU 3.4
+      * @stable ICU 3.4
       */
      virtual UText *getUText(UText *fillIn, UErrorCode &status) const;
 
@@ -368,7 +368,7 @@ public:
      *
      * @param text    The UText used to change the text.
      * @param status  Receives any error codes.
-     * @draft ICU 3.4
+     * @stable ICU 3.4
      */
     virtual void  setText(UText *text, UErrorCode &status);
 
@@ -648,6 +648,8 @@ private:
      */
     int32_t handleNext(const RBBIStateTable *statetable);
 
+protected:
+
     /**
      * This is the function that actually implements dictionary-based
      * breaking.  Covering at least the range from startPos to endPos,
@@ -663,6 +665,8 @@ private:
      * @internal
      */
     int32_t checkDictionary(int32_t startPos, int32_t endPos, UBool reverse);
+
+private:
 
     /**
      * This function returns the appropriate LanguageBreakEngine for a

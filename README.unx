@@ -1,30 +1,11 @@
-MiKTeX Tools README
-
-Copyright (C) 2005-2007 Christian Schenk
-  
-This file is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2, or (at your option) any
-later version.
-  
-This file is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-  
-You should have received a copy of the GNU General Public License
-along with This file; if not, write to the Free Software Foundation,
-59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-------------------------------------------------------------------------
-
-This 'README' file belongs to the MiKTeX Tools package.
+This 'README' file belongs to the MiKTeX source distribution.  It
+briefly describes the build process on Unix system-alikes.
 
 FIRST THINGS FIRST
 ------------------
 
-* The MiKTeX Tools package does not comprise a TeX system.
-  The package should be regarded as an addition to the TeX system
+* This package does not comprise a TeX system:
+  the package should be regarded as an addition to the TeX system
   installed on your system.
 
 * The package is meant to be compiled on Unix-like operating systems.
@@ -44,8 +25,8 @@ at
 PREREQUISITES
 -------------
 
-The MiKTeX Tools package is mostly written in C++.  It should work
-with any ANSI-compliant C++ compiler.
+MiKTeX is mostly written in C++.  It should work with any
+ANSI-compliant C++ compiler.
 
 CMake 2.4.4 (or newer) is required for building and installing MiKTeX.
 

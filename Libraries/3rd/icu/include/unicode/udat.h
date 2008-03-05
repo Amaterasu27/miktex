@@ -1,8 +1,8 @@
 /*
-*******************************************************************************
-* Copyright (C) 1996-2006, International Business Machines Corporation and others.
-* All Rights Reserved.
-*******************************************************************************
+ *******************************************************************************
+ * Copyright (C) 1996-2007, International Business Machines
+ * Corporation and others. All Rights Reserved.
+ *******************************************************************************
 */
 
 #ifndef UDAT_H
@@ -151,6 +151,19 @@ typedef enum UDateFormatStyle {
     UDAT_SHORT,
     /** Default style */
     UDAT_DEFAULT = UDAT_MEDIUM,
+
+    /** Bitfield for relative date */
+    UDAT_RELATIVE = (1 << 7),
+    
+    UDAT_FULL_RELATIVE = UDAT_FULL | UDAT_RELATIVE,
+        
+    UDAT_LONG_RELATIVE = UDAT_LONG | UDAT_RELATIVE,
+    
+    UDAT_MEDIUM_RELATIVE = UDAT_MEDIUM | UDAT_RELATIVE,
+    
+    UDAT_SHORT_RELATIVE = UDAT_SHORT | UDAT_RELATIVE,
+    
+    
     /** No style */
     UDAT_NONE = -1,
     /** for internal API use only */
@@ -342,50 +355,53 @@ typedef enum UDateFormatField {
      */
     UDAT_TIMEZONE_RFC_FIELD = 23,
 
-#ifndef U_HIDE_DRAFT_API
-
     /**
      * FieldPosition and UFieldPosition selector for 'v' field alignment,
      * corresponding to the UCAL_ZONE_OFFSET field.
-     * @draft ICU 3.4
+     * @stable ICU 3.4
      */
     UDAT_TIMEZONE_GENERIC_FIELD = 24,
     /**
      * FieldPosition selector for 'c' field alignment,
-     * corresponding to the {@link Calendar#DAY} field. 
+     * corresponding to the {@link #UCAL_DAY} field. 
      * This displays the stand alone day name, if available.
-     * @draft ICU 3.4
+     * @stable ICU 3.4
      */
     UDAT_STANDALONE_DAY_FIELD = 25,
     
     /**
      * FieldPosition selector for 'L' field alignment,
-     * corresponding to the {@link Calendar#MONTH} field.  
+     * corresponding to the {@link #UCAL_MONTH} field.  
      * This displays the stand alone month name, if available.
-     * @draft ICU 3.4
+     * @stable ICU 3.4
      */
     UDAT_STANDALONE_MONTH_FIELD = 26,
 
     /**
      * FieldPosition selector for "Q" field alignment,
      * corresponding to quarters. This is implemented
-     * using the {@link Calendar#MONTH} field. This
+     * using the {@link #UCAL_MONTH} field. This
      * displays the quarter.
-     * @draft ICU 3.6
+     * @stable ICU 3.6
      */
     UDAT_QUARTER_FIELD = 27,
 
     /**
      * FieldPosition selector for the "q" field alignment,
      * corresponding to stand-alone quarters. This is
-     * implemented using the {@link Calendar#MONTH} field.
+     * implemented using the {@link #UCAL_MONTH} field.
      * This displays the stand-alone quarter.
-     * @draft ICU 3.6
+     * @stable ICU 3.6
      */
     UDAT_STANDALONE_QUARTER_FIELD = 28,
 
-#endif /*U_HIDE_DRAFT_API*/
-   
+    /**
+     * FieldPosition and UFieldPosition selector for 'V' field alignment,
+     * corresponding to the UCAL_ZONE_OFFSET field.
+     * @stable ICU 3.8
+     */
+    UDAT_TIMEZONE_SPECIAL_FIELD = 29,
+
    /**
      * Number of FieldPosition and UFieldPosition selectors for 
      * DateFormat and UDateFormat.
@@ -394,7 +410,7 @@ typedef enum UDateFormatField {
      * in the future.
      * @stable ICU 3.0
      */
-    UDAT_FIELD_COUNT = 29
+    UDAT_FIELD_COUNT = 30
 
 } UDateFormatField;
 

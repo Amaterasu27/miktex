@@ -1,6 +1,6 @@
 /* MiKTeX/Core/Debug: MiKTeX debug macros			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -26,6 +26,18 @@
 #if ! defined(ADD61B45737D4F4ABCD5725E989A2EDA_)
 #define ADD61B45737D4F4ABCD5725E989A2EDA_
 
+#if ! defined(MIKTEXCOREEXPORT)
+#  error Core must be included before Debug
+#endif
+
+#include <miktex/Core/Text>
+
+#if defined(__cplusplus)
+#  include <cstdlib>
+#else
+#  include <stdlib.h>
+#endif
+
 #define MIKTEX_DEBUG_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace Debug {
@@ -34,8 +46,7 @@
     }						\
   }
 
-#include <miktex/Core/Text>
-
+#if defined(__cplusplus)
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
 MIKTEXCOREEXPORT
@@ -48,7 +59,96 @@ FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 		  /*[in]*/ const char *	lpszSourceFile,
 		  /*[in]*/ int		lpszSourceLine);
 
+MIKTEXCORECEEAPI(void *)
+Malloc (/*[in]*/ size_t		size,
+	/*[in]*/ const char *	lpszFileName,
+	/*[in]*/ int		line);
+
+MIKTEXCORECEEAPI(void *)
+Realloc (/*[in]*/ void *	ptr,
+	 /*[in]*/ size_t	size,
+	 /*[in]*/ const char *	lpszFileName,
+	 /*[in]*/ int		line);
+
+#if defined(_MSC_VER)
+#  pragma push_macro("StrDup")
+#  undef StrDup
+#endif
+
+MIKTEXCORECEEAPI(char *)
+StrDup (/*[in]*/ const char *	lpsz,
+	/*[in]*/ const char *	lpszFileName,
+	/*[in]*/ int		line);
+
+#if defined(_MSC_VER)
+#  pragma pop_macro("StrDup")
+#endif
+
+MIKTEXCORECEEAPI(void)
+Free (/*[in]*/ void *		ptr,
+      /*[in]*/ const char *	lpszFileName,
+      /*[in]*/ int		line);
+
 MIKTEX_DEBUG_END_NAMESPACE;
+#endif /* C++ */
+
+MIKTEX_BEGIN_EXTERN_C_BLOCK;
+
+MIKTEXCORECEEAPI(void *)
+miktex_core_malloc (/*[in]*/ size_t		size,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line);
+
+MIKTEXCORECEEAPI(void *)
+miktex_core_realloc (/*[in]*/ void *		ptr,
+		     /*[in]*/ size_t		size,
+		     /*[in]*/ const char *	lpszFileName,
+		     /*[in]*/ int		line);
+
+MIKTEXCORECEEAPI(char *)
+miktex_core_strdup (/*[in]*/ const char *	s,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line);
+
+MIKTEXCORECEEAPI(void)
+miktex_core_free (/*[in]*/ void * 	ptr,
+		  /*[in]*/ const char *	lpszFileName,
+		  /*[in]*/ int		line);
+
+MIKTEX_END_EXTERN_C_BLOCK;
+
+/* _________________________________________________________________________
+
+   MIKTEX_MALLOC
+   _________________________________________________________________________ */
+
+#define MIKTEX_MALLOC(size)				\
+  MiKTeX::Debug::Malloc((size), __FILE__, __LINE__)
+
+/* _________________________________________________________________________
+
+   MIKTEX_REALLOC
+   _________________________________________________________________________ */
+
+#define MIKTEX_REALLOC(ptr, size)				\
+  MiKTeX::Debug::Realloc((ptr), (size), __FILE__, __LINE__)
+
+/* _________________________________________________________________________
+
+   MIKTEX_STRDUP
+   _________________________________________________________________________ */
+
+#  define MIKTEX_STRDUP(str)					\
+  MiKTeX::Debug::StrDup((str), __FILE__, __LINE__)
+
+/* _________________________________________________________________________
+
+   MIKTEX_FREE
+   _________________________________________________________________________ */
+
+#define MIKTEX_FREE(ptr)				\
+  ( MiKTeX::Debug::Free((ptr), __FILE__, __LINE__),	\
+    static_cast<void>(((ptr) = 0)) )
 
 /* _________________________________________________________________________
 
@@ -66,7 +166,8 @@ MIKTEX_DEBUG_END_NAMESPACE;
             MIKTEXTEXT("Assertion failed."),	\
             #expr,				\
             __FILE__,				\
-            __LINE__)))
+            __LINE__),				\
+       0))
 
 #else
 
@@ -86,6 +187,39 @@ MIKTEX_DEBUG_END_NAMESPACE;
 #else
 
 #  define MIKTEX_ASSUME(expr)
+
+#endif
+
+/* _________________________________________________________________________
+
+   MIKTEX_ASSERT_VALID_HEAP
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_DEBUG)
+
+#  define MIKTEX_ASSERT_VALID_HEAP() MiKTeX::Debug::AssertValidHeap ()
+
+#else
+
+#  define MIKTEX_ASSERT_VALID_HEAP()
+
+#endif
+
+/* _________________________________________________________________________
+
+   MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_DEBUG)
+
+#  define MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL(ptr)	\
+  if (ptr != 0)						\
+    {							\
+      MiKTeX::Debug::AssertValidHeapPointer (ptr);	\
+    }
+#else
+
+#  define MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL()
 
 #endif
 
@@ -221,6 +355,7 @@ MIKTEX_DEBUG_END_NAMESPACE;
    AssertValidBuf
    _________________________________________________________________________ */
 
+#if defined(__cplusplus)
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
 inline
@@ -237,12 +372,14 @@ AssertValidBuf (/*[in]*/ void *		lp,
 }
 
 MIKTEX_DEBUG_END_NAMESPACE;
+#endif
 
 /* _________________________________________________________________________
 
    AssertValidString
    _________________________________________________________________________ */
 
+#if defined(__cplusplus)
 MIKTEX_DEBUG_BEGIN_NAMESPACE;
 
 inline
@@ -272,5 +409,54 @@ AssertValidString (/*[in]*/ const wchar_t *	lp,
 }
 
 MIKTEX_DEBUG_END_NAMESPACE;
+#endif
+
+/* _________________________________________________________________________
+
+   AssertValidHeap
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+MIKTEX_DEBUG_BEGIN_NAMESPACE;
+
+inline
+void
+AssertValidHeap ()
+{
+#if defined(_MSC_VER)
+#  if defined(_DEBUG)
+  MIKTEX_ASSERT (_CrtCheckMemory());
+#  else
+  int heapStatus;
+  MIKTEX_ASSERT ((heapStatus = _heapchk()) == _HEAPOK
+		 || (heapStatus == _HEAPEMPTY));
+#  endif
+#endif
+}
+
+MIKTEX_DEBUG_END_NAMESPACE;
+#endif
+
+/* _________________________________________________________________________
+
+   AssertValidHeapPointer
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+MIKTEX_DEBUG_BEGIN_NAMESPACE;
+
+inline
+void
+AssertValidHeapPointer (/*[in]*/ const void * ptr)
+{
+#if defined(_MSC_VER)
+#  if defined(_DEBUG)
+  MIKTEX_ASSERT (_CrtIsValidHeapPointer(ptr));
+#  endif
+#endif
+}
+
+MIKTEX_DEBUG_END_NAMESPACE;
+#endif
 
 #endif

@@ -609,18 +609,16 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 /* _________________________________________________________________________
 
    TestLocalRepository
-
-   Check to see whether README.TXT exists in the local repository.
    _________________________________________________________________________ */
 
-bool
+PackageLevel
 TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
-		     /*[in,out]*/ PackageLevel &	packageLevel)
+		     /*[in]*/ PackageLevel		requestedPackageLevel)
 {
   PathName pathInfoFile (pathRepository, DOWNLOAD_INFO_FILE);
   if (! File::Exists(pathInfoFile))
     {
-      return (false);
+      return (PackageLevel::None);
     }
   StreamReader stream (pathInfoFile);
   string firstLine;
@@ -628,7 +626,7 @@ TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
   stream.Close ();
   if (! haveFirstLine)
     {
-      return (false);
+      return (PackageLevel::None);
     }
   PackageLevel packageLevel_ = PackageLevel::None;
   if (firstLine.find(ESSENTIAL_MIKTEX) != string::npos)
@@ -647,18 +645,14 @@ TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
   else
     {
       // README.TXT doesn't look right
-      return (false);
+      return (PackageLevel::None);
     }
-  if (packageLevel > packageLevel_)
+  if (requestedPackageLevel > packageLevel_)
     {
       // doesn't have the requested package set
-      return (false);
+      return (PackageLevel::None);
     }
-  if (packageLevel == PackageLevel::None)
-    {
-      packageLevel = packageLevel_;
-    }
-  return (true);
+  return (packageLevel_);
 }
 
 /* _________________________________________________________________________
@@ -666,25 +660,29 @@ TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
    SearchLocalRepository
    _________________________________________________________________________ */
 
-bool
-SearchLocalRepository (/*[out]*/ PathName &		localRepository,
-		       /*[in,out]*/ PackageLevel &	packageLevel,
-		       /*[out]*/ bool &			prefabricated)
+PackageLevel
+SearchLocalRepository (/*[out]*/ PathName &	localRepository,
+		       /*[in]*/ PackageLevel	requestedPackageLevel,
+		       /*[out]*/ bool &		prefabricated)
 {
+  PackageLevel packageLevel_ = PackageLevel::None;
+
   // try current directory
   localRepository.SetToCurrentDirectory ();
-  if (TestLocalRepository(localRepository, packageLevel))
+  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
     {
       prefabricated = true;
-      return (true);
+      return (packageLevel_);
     }
 
   // try my directory
   localRepository = SessionWrapper(true)->GetMyLocation();
-  if (TestLocalRepository(localRepository, packageLevel))
+  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
     {
       prefabricated = true;
-      return (true);
+      return (packageLevel_);
     }
 
   // try ..\tm\packages
@@ -693,21 +691,25 @@ SearchLocalRepository (/*[out]*/ PathName &		localRepository,
   localRepository += "tm";
   localRepository += "packages";
   localRepository.MakeAbsolute ();
-  if (TestLocalRepository(localRepository, packageLevel))
+  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
     {
       prefabricated = true;
-      return (true);
+      return (packageLevel_);
     }
 
   // try last directory
-  if (PackageManager::TryGetLocalPackageRepository(localRepository)
-      && TestLocalRepository(localRepository, packageLevel))
+  if (PackageManager::TryGetLocalPackageRepository(localRepository))
     {
-      prefabricated = false;
-      return (true);
+      packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
+      if (packageLevel_ != PackageLevel::None)
+      {
+	prefabricated = false;
+	return (packageLevel_);
+      }
     }
 
-  return (false);
+  return (PackageLevel::None);
 }
 
 /* _________________________________________________________________________
@@ -845,28 +847,53 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   if (! cmdinfo.localPackageRepository.Empty())
     {
       theApp.localPackageRepository = cmdinfo.localPackageRepository;
-      if (cmdinfo.task != SetupTask::Download
-	  && ! TestLocalRepository(theApp.localPackageRepository,
-				   theApp.packageLevel))
+      if (cmdinfo.task != SetupTask::Download)
 	{
-	  FATAL_MIKTEX_ERROR
-	    ("SetupGlobalVars",
-	     T_("The specified local repository does not exist."),
-	     0);
+	  PackageLevel foundPackageLevel =
+	    TestLocalRepository(theApp.localPackageRepository,
+				theApp.packageLevel);
+	  if (foundPackageLevel == PackageLevel::None)
+	  {
+	    FATAL_MIKTEX_ERROR ("SetupGlobalVars",
+	      T_("The specified local repository does not exist."),
+	      0);
+	  }
+	  if (theApp.packageLevel == PackageLevel::None)
+	  {
+	    theApp.packageLevel = foundPackageLevel;
+	  }
 	}
     }
-  else if (SearchLocalRepository(theApp.localPackageRepository,
-				 theApp.prefabricatedPackageLevel,
-				 theApp.prefabricated))
-    {
-      theApp.packageLevel = theApp.prefabricatedPackageLevel;
-    }
   else
+  {
+    PackageLevel foundPackageLevel =
+      SearchLocalRepository(theApp.localPackageRepository,
+			    theApp.packageLevel,
+			    theApp.prefabricated);
+    if (foundPackageLevel != PackageLevel::None)
+    {
+      if (theApp.packageLevel == PackageLevel::None)
+      {
+	theApp.packageLevel = foundPackageLevel;
+      }
+      if (theApp.prefabricated)
+      {
+	theApp.prefabricatedPackageLevel = foundPackageLevel;
+      }
+    }
+    else
     {
       // check the default location
       theApp.localPackageRepository = GetDefaultLocalRepository();
-      TestLocalRepository (theApp.localPackageRepository, theApp.packageLevel);
+      PackageLevel foundPackageLevel =
+	TestLocalRepository(theApp.localPackageRepository,
+			    theApp.packageLevel);
+      if (theApp.packageLevel == PackageLevel::None)
+      {
+	theApp.packageLevel = foundPackageLevel;
+      }
     }
+  }
 
   // setup task
   theApp.setupTask = cmdinfo.task;

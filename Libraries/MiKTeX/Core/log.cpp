@@ -1,6 +1,6 @@
 /* log.cpp: tracing
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -220,6 +220,7 @@ SessionImpl::RegisterLibraryTraceStreams ()
   trace_filesearch.reset (TraceStream::Open(MIKTEX_TRACE_FILESEARCH));
   trace_fndb.reset (TraceStream::Open(MIKTEX_TRACE_FNDB));
   trace_fonts.reset (TraceStream::Open(MIKTEX_TRACE_FONTINFO));
+  trace_mem.reset (TraceStream::Open(MIKTEX_TRACE_MEM));
   trace_packages.reset (TraceStream::Open(MIKTEX_TRACE_PACKAGES));
   trace_process.reset (TraceStream::Open(MIKTEX_TRACE_PROCESS));
   trace_tempfile.reset (TraceStream::Open(MIKTEX_TRACE_TEMPFILE));
@@ -579,6 +580,7 @@ SessionImpl::UnregisterLibraryTraceStreams ()
   trace_filesearch->Close ();
   trace_fndb->Close ();
   trace_fonts->Close ();
+  trace_mem->Close ();
   trace_packages->Close ();
   trace_process->Close ();
   trace_tempfile->Close ();

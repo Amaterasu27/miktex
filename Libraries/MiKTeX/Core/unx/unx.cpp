@@ -1,6 +1,6 @@
 /* unx.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -416,4 +416,14 @@ bool
 SessionImpl::IsUserAnAdministrator ()
 {
   return (getuid() == 0 || geteuid() == 0);
+}
+
+/* _________________________________________________________________________
+
+   Utils::CheckHeap
+   _________________________________________________________________________ */
+
+void
+Utils::CheckHeap ()
+{
 }

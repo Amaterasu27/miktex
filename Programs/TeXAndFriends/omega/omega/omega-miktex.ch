@@ -1,6 +1,6 @@
 %% omega-miktex.ch:
 %% 
-%% Copyright (C) 1998-2007 Christian Schenk
+%% Copyright (C) 1998-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -2071,7 +2071,7 @@ mem_min := mem_bot - extra_mem_bot;
 mem_max := mem_top + extra_mem_top;
 
 yzmem:=miktex_reallocate(yzmem, mem_max - mem_min + 2);
-zmem := yzmem;
+zmem := yzmem - mem_min;
 mem := zmem;
 @z
 

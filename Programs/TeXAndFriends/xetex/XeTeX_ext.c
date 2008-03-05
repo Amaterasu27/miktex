@@ -2998,6 +2998,7 @@ int
 get_uni_c(UFILE* f)
 {
 	int	rval;
+	int c;
 
 	if (f->savedChar != -1) {
 		rval = f->savedChar;
@@ -3007,17 +3008,29 @@ get_uni_c(UFILE* f)
 
 	switch (f->encodingMode) {
 		case UTF8:
-			/* FIXME: we don't currently check for malformed UTF-8 */
-			rval = getc(f->f);
+			c = rval = getc(f->f);
 			if (rval != EOF) {
 				UInt16 extraBytes = bytesFromUTF8[rval];
 				switch (extraBytes) {	/* note: code falls through cases! */
-					case 5: rval <<= 6;	rval += getc(f->f);
-					case 4: rval <<= 6;	rval += getc(f->f);
-					case 3: rval <<= 6;	rval += getc(f->f);
-					case 2: rval <<= 6;	rval += getc(f->f);
-					case 1: rval <<= 6;	rval += getc(f->f);
-					case 0:	;
+					case 3: c = getc(f->f);
+						if (c < 0x80 || c >= 0xc0) goto bad_utf8;
+						rval <<= 6; rval += c;
+					case 2: c = getc(f->f);
+						if (c < 0x80 || c >= 0xc0) goto bad_utf8;
+						rval <<= 6; rval += c;
+					case 1: c = getc(f->f);
+						if (c < 0x80 || c >= 0xc0) goto bad_utf8;
+						rval <<= 6; rval += c;
+					case 0:
+						break;
+
+					bad_utf8:
+						if (c != EOF)
+							ungetc(c, f->f);
+					case 5:
+					case 4:
+						badutf8warning();
+						return 0xfffd;		/* return without adjusting by offsetsFromUTF8 */
 				};
 				rval -= offsetsFromUTF8[extraBytes];
 			}

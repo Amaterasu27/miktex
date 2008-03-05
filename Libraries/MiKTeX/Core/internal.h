@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -457,23 +457,6 @@ struct StringComparerIgnoringCase
     return (StringCompare(lhs.c_str(), rhs.c_str(), true) < 0);
   }
 };
-
-#if defined(StrDup)
-#  undef StrDup
-#endif
-
-inline
-char *
-StrDup (/*[in]*/ const char * lpsz)
-{
-  char * ret;
-  ret = strdup(lpsz);
-  if (ret == 0)
-    {
-      FATAL_CRT_ERROR ("strdup", 0);
-    }
-  return (ret);
-}
 
 /* _________________________________________________________________________
 
@@ -1431,6 +1414,7 @@ public:
   auto_ptr<TraceStream> trace_filesearch;
   auto_ptr<TraceStream> trace_fndb;
   auto_ptr<TraceStream> trace_fonts;
+  auto_ptr<TraceStream> trace_mem;
   auto_ptr<TraceStream> trace_packages;
   auto_ptr<TraceStream> trace_process;
   auto_ptr<TraceStream> trace_tempfile;

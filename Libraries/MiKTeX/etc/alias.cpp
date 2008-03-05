@@ -1,6 +1,6 @@
 /* alias.cpp: MiKTeX .exe alias
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -20,6 +20,7 @@
 #include <memory>
 
 #if defined(PRE_ARGV)
+#  include <crtdbg.h>
 #  include <malloc.h>
 #endif
 

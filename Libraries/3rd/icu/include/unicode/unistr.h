@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2006, International Business Machines
+*   Copyright (C) 1998-2007, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -67,7 +67,7 @@ class BreakIterator;        // unicode/brkiter.h
  *
  * @stable ICU 3.2
  */
-#define US_INV UnicodeString::kInvariant
+#define US_INV U_NAMESPACE_QUALIFIER UnicodeString::kInvariant
 
 /**
  * Unicode String literals in C++.
@@ -86,12 +86,14 @@ class BreakIterator;        // unicode/brkiter.h
  * such string variable before it is used.
  * @stable ICU 2.0
  */
-#if U_SIZEOF_WCHAR_T==U_SIZEOF_UCHAR && (U_CHARSET_FAMILY==U_ASCII_FAMILY || (U_SIZEOF_UCHAR == 2 && defined(U_WCHAR_IS_UTF16)))
-#   define UNICODE_STRING(cs, _length) UnicodeString(TRUE, (const UChar *)L ## cs, _length)
+#if defined(U_DECLARE_UTF16)
+#   define UNICODE_STRING(cs, _length) U_NAMESPACE_QUALIFIER UnicodeString(TRUE, (const UChar *)U_DECLARE_UTF16(cs), _length)
+#elif U_SIZEOF_WCHAR_T==U_SIZEOF_UCHAR && (U_CHARSET_FAMILY==U_ASCII_FAMILY || (U_SIZEOF_UCHAR == 2 && defined(U_WCHAR_IS_UTF16)))
+#   define UNICODE_STRING(cs, _length) U_NAMESPACE_QUALIFIER UnicodeString(TRUE, (const UChar *)L ## cs, _length)
 #elif U_SIZEOF_UCHAR==1 && U_CHARSET_FAMILY==U_ASCII_FAMILY
-#   define UNICODE_STRING(cs, _length) UnicodeString(TRUE, (const UChar *)cs, _length)
+#   define UNICODE_STRING(cs, _length) U_NAMESPACE_QUALIFIER UnicodeString(TRUE, (const UChar *)cs, _length)
 #else
-#   define UNICODE_STRING(cs, _length) UnicodeString(cs, _length, US_INV)
+#   define UNICODE_STRING(cs, _length) U_NAMESPACE_QUALIFIER UnicodeString(cs, _length, US_INV)
 #endif
 
 /**
@@ -107,13 +109,7 @@ class BreakIterator;        // unicode/brkiter.h
  * The string parameter must be a C string literal.
  * @stable ICU 2.0
  */
-#if U_SIZEOF_WCHAR_T==U_SIZEOF_UCHAR && (U_CHARSET_FAMILY==U_ASCII_FAMILY || (U_SIZEOF_UCHAR == 2 && defined(U_WCHAR_IS_UTF16)))
-#   define UNICODE_STRING_SIMPLE(cs) UnicodeString(TRUE, (const UChar *)L ## cs, -1)
-#elif U_SIZEOF_UCHAR==1 && U_CHARSET_FAMILY==U_ASCII_FAMILY
-#   define UNICODE_STRING_SIMPLE(cs) UnicodeString(TRUE, (const UChar *)cs, -1)
-#else
-#   define UNICODE_STRING_SIMPLE(cs) UnicodeString(cs, -1, US_INV)
-#endif
+#define UNICODE_STRING_SIMPLE(cs) UNICODE_STRING(cs, -1)
 
 /**
  * UnicodeString is a string class that stores Unicode characters directly and provides
@@ -123,7 +119,7 @@ class BreakIterator;        // unicode/brkiter.h
  * The UnicodeString class is not suitable for subclassing.
  *
  * <p>For an overview of Unicode strings in C and C++ see the
- * <a href="http://icu.sourceforge.net/userguide/strings.html">User Guide Strings chapter</a>.</p>
+ * <a href="http://icu-project.org/userguide/strings.html">User Guide Strings chapter</a>.</p>
  *
  * <p>In ICU, a Unicode string consists of 16-bit Unicode <em>code units</em>.
  * A Unicode character may be stored with either one code unit
@@ -178,7 +174,7 @@ class BreakIterator;        // unicode/brkiter.h
  * significant performance improvements.
  * Also, the internal buffer is accessible via special functions.
  * For details see the
- * <a href="http://icu.sourceforge.net/userguide/strings.html">User Guide Strings chapter</a>.</p>
+ * <a href="http://icu-project.org/userguide/strings.html">User Guide Strings chapter</a>.</p>
  *
  * @see utf.h
  * @see CharacterIterator
@@ -399,7 +395,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -418,7 +414,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -441,7 +437,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -468,7 +464,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -489,7 +485,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -512,7 +508,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -539,7 +535,7 @@ public:
 
   /**
    * Compare two Unicode strings in code point order.
-   * This is different in UTF-16 from how compare(), operator==, startsWith() etc. work
+   * The result may be different from the results of compare(), operator<, etc.
    * if supplementary characters are present:
    *
    * In UTF-16, supplementary characters (with code points U+10000 and above) are
@@ -2434,7 +2430,7 @@ public:
    * The standard titlecase iterator for the root locale implements the
    * algorithm of Unicode TR 21.
    *
-   * This function uses only the first() and next() methods of the
+   * This function uses only the setText(), first() and next() methods of the
    * provided break iterator.
    *
    * @param titleIter A break iterator to find the first characters of words
@@ -2462,7 +2458,7 @@ public:
    * The standard titlecase iterator for the root locale implements the
    * algorithm of Unicode TR 21.
    *
-   * This function uses only the first() and next() methods of the
+   * This function uses only the setText(), first() and next() methods of the
    * provided break iterator.
    *
    * @param titleIter A break iterator to find the first characters of words
@@ -2475,6 +2471,39 @@ public:
    * @stable ICU 2.1
    */
   UnicodeString &toTitle(BreakIterator *titleIter, const Locale &locale);
+
+  /**
+   * Titlecase this string, with options.
+   *
+   * Casing is locale-dependent and context-sensitive.
+   * Titlecasing uses a break iterator to find the first characters of words
+   * that are to be titlecased. It titlecases those characters and lowercases
+   * all others. (This can be modified with options.)
+   *
+   * The titlecase break iterator can be provided to customize for arbitrary
+   * styles, using rules and dictionaries beyond the standard iterators.
+   * It may be more efficient to always provide an iterator to avoid
+   * opening and closing one for each string.
+   * The standard titlecase iterator for the root locale implements the
+   * algorithm of Unicode TR 21.
+   *
+   * This function uses only the setText(), first() and next() methods of the
+   * provided break iterator.
+   *
+   * @param titleIter A break iterator to find the first characters of words
+   *                  that are to be titlecased.
+   *                  If none is provided (0), then a standard titlecase
+   *                  break iterator is opened.
+   *                  Otherwise the provided iterator is set to the string's text.
+   * @param locale    The locale to consider.
+   * @param options Options bit set, see ucasemap_open().
+   * @return A reference to this.
+   * @see U_TITLECASE_NO_LOWERCASE
+   * @see U_TITLECASE_NO_BREAK_ADJUSTMENT
+   * @see ucasemap_open
+   * @draft ICU 3.8
+   */
+  UnicodeString &toTitle(BreakIterator *titleIter, const Locale &locale, uint32_t options);
 
 #endif
 

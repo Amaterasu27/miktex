@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2007 Christian Schenk
+%% Copyright (C) 1998-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -165,6 +165,16 @@ end;
         pdf_mem := xrealloc_array(pdf_mem, integer, pdf_mem_size);
 @y
         miktex_reallocate (pdf_mem, pdf_mem_size);
+@z
+
+% _____________________________________________________________________________
+%
+% [35.679]
+% _____________________________________________________________________________
+
+@x
+pdf_os_buf_size := inf_pdf_os_buf_size;
+@y
 @z
 
 % _____________________________________________________________________________

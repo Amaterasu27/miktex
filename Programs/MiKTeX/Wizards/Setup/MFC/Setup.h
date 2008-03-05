@@ -341,9 +341,9 @@ RegisterPath95 ();
 void
 RegisterPathNT ();
 
-bool
-TestLocalRepository (/*[in]*/ const PathName &	pathRepository,
-		     /*[out]*/ PackageLevel &	packageLevel);
+PackageLevel
+TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
+		     /*[in]*/ PackageLevel		requestedPackageLevel);
 
 void
 ULogAddFile (/*[in]*/ const PathName & path);

@@ -1,6 +1,6 @@
-/* MiKTeX/TeXAndFriends/TeXApp: TeX and derivates		-*- C++ -*-
+/* miktex/TeXAndFriends/TeXApp: TeX and derivates		-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -214,6 +214,86 @@ public:
   virtual
   MIKTEXMFTHISAPI(void)
   OnTeXMFStartJob ();
+
+  /* _______________________________________________________________________
+     
+     CheckMemory
+     _______________________________________________________________________ */
+
+#if defined(_DEBUG)
+public:
+  virtual
+  void
+  CheckMemory ()
+  {
+#if defined(THEDATA)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(linestack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(inputstack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(inputfile));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fullsourcefilenamestack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(sourcefilenamestack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(nest));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(savestack));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(triec));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(triehash));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(triel));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trieo));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trier));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trietaken));
+
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(nameoffile));
+
+#if ! defined(MIKTEX_OMEGA)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyphword));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyphlist));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyphlink));
+
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trietrl));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trietro));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trietrc));
+
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(bcharlabel));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(charbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(depthbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(extenbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontarea));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontbc));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontbchar));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontcheck));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontdsize));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontec));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontfalsebchar));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontglue));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontinfo));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontname));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontparams));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontsize));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(fontused));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(heightbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyphenchar));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(italicbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(kernbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(ligkernbase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(parambase));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(skewchar));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(widthbase));
+#endif // not Omega
+
+#if defined(MIKTEX_OMEGA)
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyfdistance));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyfnext));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(hyfnum));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trie));
+
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trieophash));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trieoplang));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(trieopval));
+#endif
+#endif // THEDATA
+
+    TeXMFApp::CheckMemory ();
+  }
+#endif
 
   /* _______________________________________________________________________
      
@@ -432,67 +512,67 @@ public:
   {
     TeXMFApp::FreeMemory ();
 
-    Free (THEDATA(linestack));
-    Free (THEDATA(inputstack));
-    Free (THEDATA(inputfile));
-    Free (THEDATA(fullsourcefilenamestack));
-    Free (THEDATA(sourcefilenamestack));
-    Free (THEDATA(nest));
-    Free (THEDATA(savestack));
-    Free (THEDATA(triec));
-    Free (THEDATA(triehash));
-    Free (THEDATA(triel));
-    Free (THEDATA(trieo));
-    Free (THEDATA(trier));
-    Free (THEDATA(trietaken));
+    Free ("linestack", THEDATA(linestack));
+    Free ("inputstack", THEDATA(inputstack));
+    Free ("inputfile", THEDATA(inputfile));
+    Free ("fullsourcefilenamestack", THEDATA(fullsourcefilenamestack));
+    Free ("sourcefilenamestack", THEDATA(sourcefilenamestack));
+    Free ("nest", THEDATA(nest));
+    Free ("savestack", THEDATA(savestack));
+    Free ("triec", THEDATA(triec));
+    Free ("triehash", THEDATA(triehash));
+    Free ("triel", THEDATA(triel));
+    Free ("trieo", THEDATA(trieo));
+    Free ("trier", THEDATA(trier));
+    Free ("trietaken", THEDATA(trietaken));
 
-    Free (THEDATA(nameoffile));
+    Free ("nameoffile", THEDATA(nameoffile));
 
 #if ! defined(MIKTEX_OMEGA)
-    Free (THEDATA(hyphword));
-    Free (THEDATA(hyphlist));
-    Free (THEDATA(hyphlink));
+    Free ("hyphword", THEDATA(hyphword));
+    Free ("hyphlist", THEDATA(hyphlist));
+    Free ("hyphlink", THEDATA(hyphlink));
 
-    Free (THEDATA(trietrl));
-    Free (THEDATA(trietro));
-    Free (THEDATA(trietrc));
+    Free ("trietrl", THEDATA(trietrl));
+    Free ("trietro", THEDATA(trietro));
+    Free ("trietrc", THEDATA(trietrc));
 
-    Free (THEDATA(bcharlabel));
-    Free (THEDATA(charbase));
-    Free (THEDATA(depthbase));
-    Free (THEDATA(extenbase));
-    Free (THEDATA(fontarea));
-    Free (THEDATA(fontbc));
-    Free (THEDATA(fontbchar));
-    Free (THEDATA(fontcheck));
-    Free (THEDATA(fontdsize));
-    Free (THEDATA(fontec));
-    Free (THEDATA(fontfalsebchar));
-    Free (THEDATA(fontglue));
-    Free (THEDATA(fontinfo));
-    Free (THEDATA(fontname));
-    Free (THEDATA(fontparams));
-    Free (THEDATA(fontsize));
-    Free (THEDATA(fontused));
-    Free (THEDATA(heightbase));
-    Free (THEDATA(hyphenchar));
-    Free (THEDATA(italicbase));
-    Free (THEDATA(kernbase));
-    Free (THEDATA(ligkernbase));
-    Free (THEDATA(parambase));
-    Free (THEDATA(skewchar));
-    Free (THEDATA(widthbase));
+    Free ("bcharlabel", THEDATA(bcharlabel));
+    Free ("charbase", THEDATA(charbase));
+    Free ("depthbase", THEDATA(depthbase));
+    Free ("extenbase", THEDATA(extenbase));
+    Free ("fontarea", THEDATA(fontarea));
+    Free ("fontbc", THEDATA(fontbc));
+    Free ("fontbchar", THEDATA(fontbchar));
+    Free ("fontcheck", THEDATA(fontcheck));
+    Free ("fontdsize", THEDATA(fontdsize));
+    Free ("fontec", THEDATA(fontec));
+    Free ("fontfalsebchar", THEDATA(fontfalsebchar));
+    Free ("fontglue", THEDATA(fontglue));
+    Free ("fontinfo", THEDATA(fontinfo));
+    Free ("fontname", THEDATA(fontname));
+    Free ("fontparams", THEDATA(fontparams));
+    Free ("fontsize", THEDATA(fontsize));
+    Free ("fontused", THEDATA(fontused));
+    Free ("heightbase", THEDATA(heightbase));
+    Free ("hyphenchar", THEDATA(hyphenchar));
+    Free ("italicbase", THEDATA(italicbase));
+    Free ("kernbase", THEDATA(kernbase));
+    Free ("ligkernbase", THEDATA(ligkernbase));
+    Free ("parambase", THEDATA(parambase));
+    Free ("skewchar", THEDATA(skewchar));
+    Free ("widthbase", THEDATA(widthbase));
 #endif // not Omega
 
 #if defined(MIKTEX_OMEGA)
-    Free (THEDATA(hyfdistance));
-    Free (THEDATA(hyfnext));
-    Free (THEDATA(hyfnum));
-    Free (THEDATA(trie));
+    Free ("hyfdistance", THEDATA(hyfdistance));
+    Free ("hyfnext", THEDATA(hyfnext));
+    Free ("hyfnum", THEDATA(hyfnum));
+    Free ("trie", THEDATA(trie));
 
-    Free (THEDATA(trieophash));
-    Free (THEDATA(trieoplang));
-    Free (THEDATA(trieopval));
+    Free ("trieophash", THEDATA(trieophash));
+    Free ("trieoplang", THEDATA(trieoplang));
+    Free ("trieopval", THEDATA(trieopval));
 #endif
   }
 #endif // THEDATA

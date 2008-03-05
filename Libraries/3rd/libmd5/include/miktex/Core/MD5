@@ -1,1 +1,1 @@
-#include <miktex/Core/MD5.h>
+#include <miktex/Core/md5.h>

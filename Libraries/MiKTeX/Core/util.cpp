@@ -1,6 +1,6 @@
 /* util.cpp: generic utilities
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -698,11 +698,17 @@ Argv::Argv ()
 
 Argv::~Argv ()
 {
-  for (vector<char*>::const_iterator it = argv.begin();
-       it != argv.end() && *it != 0;
-       ++ it)
+  try
     {
-      free (*it);
+      for (vector<char*>::iterator it = argv.begin();
+	   it != argv.end() && *it != 0;
+	   ++ it)
+	{
+	  MIKTEX_FREE (*it);
+	}
+    }
+  catch (const exception &)
+    {
     }
 }
 
@@ -719,7 +725,7 @@ Argv::Build (/*[in]*/ const char *	lpszFileName,
   MIKTEX_ASSERT_STRING_OR_NIL (lpszArguments);
   MIKTEX_ASSERT (argv.size() == 1);
   argv.clear ();
-  argv.push_back (StrDup(lpszFileName));
+  argv.push_back (MIKTEX_STRDUP(lpszFileName));
   argv.push_back (0);
   if (lpszArguments != 0)
     {
@@ -876,3 +882,178 @@ miktex_replace_string (/*[out]*/ char *		lpszBuf,
 
   C_FUNC_END ();
 }
+
+/* _________________________________________________________________________
+
+   MiKTeX::Debug::Malloc
+   _________________________________________________________________________ */
+
+void *
+MIKTEXCEECALL
+MiKTeX::Debug::Malloc (/*[in]*/ size_t		size,
+		       /*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ int		line)
+{
+#if defined(MIKTEX_DEBUG)
+  Utils::CheckHeap ();
+#endif
+#if defined(_MSC_VER) && defined(_DEBUG)
+  void * ptr = _malloc_dbg(size, _NORMAL_BLOCK, lpszFileName, line);
+#else
+  void * ptr = malloc(size);
+#endif
+  if (ptr == 0)
+    {
+      OUT_OF_MEMORY ("malloc");
+    }
+  return (ptr);
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_malloc
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(void *)
+miktex_core_malloc (/*[in]*/ size_t		size,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line)
+{
+  C_FUNC_BEGIN ();
+
+  return (MiKTeX::Debug::Malloc(size, lpszFileName, line));
+
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   MiKTeX::Debug::Realloc
+   _________________________________________________________________________ */
+
+void *
+MIKTEXCEECALL
+MiKTeX::Debug::Realloc (/*[in]*/ void *		ptr,
+			/*[in]*/ size_t		size,
+			/*[in]*/ const char *	lpszFileName,
+			/*[in]*/ int		line)
+{
+#if defined(MIKTEX_DEBUG)
+  Utils::CheckHeap ();
+#endif
+#if defined(_MSC_VER) && defined(_DEBUG)
+  ptr = _realloc_dbg(ptr, size, _NORMAL_BLOCK, lpszFileName, line);
+#else
+  ptr = realloc(ptr, size);
+#endif
+  if (ptr == 0 && size > 0)
+    {
+      OUT_OF_MEMORY ("realloc");
+    }
+  return (ptr);
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_realloc
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(void *)
+miktex_core_realloc (/*[in]*/ void *		ptr,
+		     /*[in]*/ size_t		size,
+		     /*[in]*/ const char *	lpszFileName,
+		     /*[in]*/ int		line)
+{
+  C_FUNC_BEGIN();
+
+  return (MiKTeX::Debug::Realloc(ptr, size, lpszFileName, line));
+
+  C_FUNC_END();
+}
+
+/* _________________________________________________________________________
+
+   MiKTeX::Debug::StrDup
+   _________________________________________________________________________ */
+
+char *
+MIKTEXCEECALL
+MiKTeX::Debug::StrDup (/*[in]*/ const char *	lpsz,
+		       /*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ int		line)
+{
+  size_t len = StrLen(lpsz);
+  char * lpsz2 =
+    reinterpret_cast<char *>(Malloc(sizeof(*lpszFileName) * (len + 1),
+				    lpszFileName,
+				    line));
+  Utils::CopyString (lpsz2, len + 1, lpsz);
+  return (lpsz2);
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_strdup
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(char *)
+miktex_core_strdup (/*[in]*/ const char *	lpsz,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line)
+{
+  C_FUNC_BEGIN ();
+
+  return (MiKTeX::Debug::StrDup(lpsz, lpszFileName, line));
+
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   MiKTeX::Debug::Free
+   _________________________________________________________________________ */
+
+void
+MIKTEXCEECALL
+MiKTeX::Debug::Free (/*[in]*/ void * 		ptr,
+		     /*[in]*/ const char *	lpszFileName,
+		     /*[in]*/ int		line)
+{
+  int oldErrno = errno;
+#if defined(_MSC_VER) && defined(_DEBUG)
+  if (ptr != 0 && ! _CrtIsValidHeapPointer(ptr))
+    {
+      INVALID_ARGUMENT ("Debug::Free", 0);
+    }
+#endif
+#if defined(MIKTEX_DEBUG)
+  Utils::CheckHeap ();
+#endif
+#if defined(_MSC_VER) && defined(_DEBUG)
+  _free_dbg (ptr, _NORMAL_BLOCK);
+#else
+  free (ptr);
+#endif
+  if (errno != 0 && errno != oldErrno)
+    {
+      FATAL_CRT_ERROR ("free", 0);
+    }
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_free
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(void)
+miktex_core_free (/*[in]*/ void * 	ptr,
+		  /*[in]*/ const char *	lpszFileName,
+		  /*[in]*/ int		line)
+{
+  C_FUNC_BEGIN();
+
+  MiKTeX::Debug::Free (ptr, lpszFileName, line);
+
+  C_FUNC_END();
+}
+

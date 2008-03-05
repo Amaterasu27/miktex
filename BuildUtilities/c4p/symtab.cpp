@@ -1,6 +1,6 @@
 /* symtab.c: symbol table					-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is part of C4P.
 
@@ -360,6 +360,7 @@ symtab_init ()
 
   /* Pascal types */
   new_type ("integer", INTEGER_TYPE, 0, "C4P_integer");
+  new_type ("longinteger", LONG_INTEGER_TYPE, 0, "C4P_longinteger");
   new_type ("char", CHARACTER_TYPE, 0, 0);
   new_type ("boolean", BOOLEAN_TYPE, 0, "C4P_boolean");
   new_type ("real", REAL_TYPE, 0, "C4P_real");

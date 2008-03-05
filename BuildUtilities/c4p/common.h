@@ -1,6 +1,6 @@
 /* common.h: common definitions for C4P			-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is part of C4P.
 
@@ -33,6 +33,7 @@ enum pascal_type
 {
   UNKNOWN_TYPE,
   INTEGER_TYPE,
+  LONG_INTEGER_TYPE,
   BOOLEAN_TYPE,
   CHARACTER_TYPE,
   REAL_TYPE,

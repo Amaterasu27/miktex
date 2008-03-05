@@ -1,5 +1,5 @@
 /*
- * (C) Copyright IBM Corp. 1998-2006 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2007 - All Rights Reserved
  *
  */
 
@@ -223,14 +223,6 @@ protected:
     LETag fLangSysTag;
 
     /**
-     * <code>TRUE</code> if <code>mapCharsToGlyphs</code> should replace ZWJ / ZWNJ with a glyph
-     * with no contours.
-     *
-     * @internal
-     */
-    le_bool fFilterZeroWidth;
-
-    /**
      * This method does the OpenType character processing. It assigns the OpenType feature
      * tags to the characters, and may generate output characters that differ from the input
      * charcters due to insertions, deletions, or reorderings. In such cases, it will also
@@ -255,7 +247,7 @@ protected:
      *
      * @internal
      */
-    virtual le_int32 characterProcessing(const LEUnicode /*chars*/[], le_int32 offset, le_int32 count, le_int32 max, le_bool /*rightToLeft*/,
+    virtual le_int32 characterProcessing(const LEUnicode /*chars*/[], le_int32 offset, le_int32 count, le_int32 max, le_bool /*rightToLeft*/, le_bool doCanonGSUB,
             LEUnicode *&/*outChars*/, LEGlyphStorage &glyphStorage, LEErrorCode &success);
 
     /**
