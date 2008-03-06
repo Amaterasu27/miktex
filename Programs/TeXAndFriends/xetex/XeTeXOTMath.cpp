@@ -29,11 +29,10 @@ authorization from SIL International.
 \****************************************************************************/
 
 #define XETEX_OT_MATH_IMPLEMENTATION 1
-#include "XeTeXOTMath.h"
-
 #if defined(MIKTEX)
 #include "xetex-miktex.h"
 #endif
+#include "XeTeXOTMath.h"
 
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
@@ -200,7 +199,7 @@ getnativemathexparam(int f, int n)
 }
 
 int
-getotmathvariant(int f, int g, int v, int* adv, int horiz)
+getotmathvariant(int f, int g, int v, integer* adv, int horiz)
 {
 	int	rval = g;
 	*adv = -1;
