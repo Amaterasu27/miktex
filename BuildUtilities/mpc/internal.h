@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MPC.
 
@@ -203,6 +203,8 @@ public:
   TempDirectory ()
   {
     path.SetToTempDirectory ();
+    path += "AD6348B73BC24217903B34EDB8D36D24";
+    Directory::Create (path);
   }
 
 public:
@@ -227,7 +229,7 @@ public:
     if (path[0] != 0)
     {
       PathName tmp (path);
-      path = T_("");
+      path = "";
       Directory::Delete (tmp, true);
     }
   }
