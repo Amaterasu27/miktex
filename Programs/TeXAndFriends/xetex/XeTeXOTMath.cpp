@@ -28,6 +28,9 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
+#define XETEX_OT_MATH_IMPLEMENTATION 1
+#include "XeTeXOTMath.h"
+
 #if defined(MIKTEX)
 #include "xetex-miktex.h"
 #endif
@@ -35,7 +38,7 @@ authorization from SIL International.
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
 #include "XeTeXFontInst.h"
-#include "XeTeXOTMath.h"
+
 #include "CoverageTables.h"
 
 #define kMATHTableTag	0x4D415448

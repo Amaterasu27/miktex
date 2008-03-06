@@ -138,7 +138,3 @@ void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp 
 #include "trans.h"	/* functions for affine transform operations */
 #include "TECkit_Common.h" /* include this before XeTeX_ext.h */
 #include "XeTeX_ext.h" /* other extension functions */
-#if defined(MIKTEX)
-#include "XeTeXOTMath.h"
-#include "XeTeXLayoutInterface.h"
-#endif

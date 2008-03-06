@@ -37,6 +37,7 @@ authorization from SIL International.
 #include "png.h"
 #endif
 
+#include "zlib.h"
 #if defined(MIKTEX)
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
@@ -2647,13 +2648,13 @@ atsufontgetnamed(int what, ATSUStyle style)
 	
 	switch (what) {
 		case XeTeX_find_variation_by_name:
-			rval = find_axis_by_name(fontID, nameoffile + 1, namelength);
+			rval = find_axis_by_name(fontID, (const char*)nameoffile + 1, namelength);
 			if (rval == 0)
 				rval = -1;
 			break;
 		
 		case XeTeX_find_feature_by_name:
-			rval = find_feature_by_name(fontID, nameoffile + 1, namelength);
+			rval = find_feature_by_name(fontID, (const char*)nameoffile + 1, namelength);
 			if (rval == 0x0000FFFF)
 				rval = -1;
 			break;
@@ -2674,7 +2675,7 @@ atsufontgetnamed1(int what, ATSUStyle style, int param)
 	
 	switch (what) {
 		case XeTeX_find_selector_by_name:
-			rval = find_selector_by_name(fontID, param, nameoffile + 1, namelength);
+			rval = find_selector_by_name(fontID, param, (const char*)nameoffile + 1, namelength);
 			if (rval == 0x0000FFFF)
 				rval = -1;
 			break;
@@ -2951,11 +2952,11 @@ open_dvi_output(FILE** fptr)
 			cmd = cmd2;
 		}
 		if (output_directory) {
-			char *fullname = concat3(output_directory, "/", nameoffile+1);
+			char *fullname = concat3(output_directory, "/", (const char*)nameoffile+1);
 			free(nameoffile);
 			namelength = strlen(fullname);
-			nameoffile = (char*)xmalloc(namelength+2);
-			strcpy(nameoffile+1, fullname);
+			nameoffile = (unsigned char*)xmalloc(namelength+2);
+			strcpy((char*)nameoffile+1, fullname);
 			free(fullname);
 		}
 		*fptr = popen(cmd, "w");
@@ -2991,6 +2992,7 @@ dviclose(FILE* fptr)
 	}
 	else
 		return pclose(fptr);
+	return 0;
 }
 #endif
 

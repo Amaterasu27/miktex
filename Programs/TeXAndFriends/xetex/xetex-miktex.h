@@ -446,7 +446,6 @@ printutf8str (const voidpointer str, int len)
   printutf8str((const unsigned char*) str, len);
 }
 
-
 /* _________________________________________________________________________
 
    otpartisextender
