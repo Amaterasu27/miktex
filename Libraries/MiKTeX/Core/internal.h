@@ -1540,6 +1540,14 @@ private:
   PathName atmFontDir;
 #endif
 
+#if defined(MIKTEX_ATLMFC) && defined(MIKTEX_STATIC)
+private:
+  static
+  BOOL
+  AtlDllMain (/*[in]*/ DWORD	reason,
+	      /*[in]*/ LPVOID	lpReserved);
+#endif
+
 private:
   void
   SetCWDEnv ();

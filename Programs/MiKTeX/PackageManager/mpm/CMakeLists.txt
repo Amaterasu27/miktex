@@ -62,6 +62,7 @@ if(NATIVE_WINDOWS)
   target_link_libraries(mpm
     Wldap32
     fdi
+    shlwapi
     wininet
     winmm
     ws2_32

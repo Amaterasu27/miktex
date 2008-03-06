@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2007 Christian Schenk
+   Copyright (C) 2005-2008 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -267,13 +267,10 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
     {
       pPackageManager.Create ();
     }
-#if defined(MIKTEX_WINDOWS)
   static bool initUiFrameworkDone = false;
-#endif
   if (enableInstaller == TriState::Undetermined)
     {
-#if defined(MIKTEX_WINDOWS)
-      static bool initUiFrameworkDone = false;
+#if defined(MIKTEX_ATLMFC)
       if (! initUiFrameworkDone)
 	{
 	  MiKTeX::UI::MFC::InitializeFramework ();
@@ -299,7 +296,7 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
 	  return (false);
 	}
     }
-#if defined(MIKTEX_WINDOWS)
+#if defined(MIKTEX_ATLMFC)
   string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,7 +31,6 @@ endif(WIN32 AND NOT CYGWIN)
 if(NATIVE_WINDOWS)
   set(PRODUCT_NAME "MiKTeX")
   set(BUILDING_MIKTEX TRUE)
-  set(WITH_XETEX TRUE CACHE BOOL "Build XeTeX")
 else(NATIVE_WINDOWS)
   set(PRODUCT_NAME "MiKTeX Tools")
   set(BUILDING_MIKTEX_TOOLS TRUE)
@@ -225,6 +224,7 @@ endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
+
 find_package(Qt4)
 find_package(Threads REQUIRED)
 
@@ -253,7 +253,9 @@ check_function_exists(uname HAVE_UNAME_SYSCALL)
 check_function_exists(utime HAVE_UTIME)
 check_function_exists(vfork HAVE_VFORK)
 
+check_include_files(afxwin.h HAVE_AFXWIN_H)
 check_include_files(alloca.h HAVE_ALLOCA_H)
+check_include_files(atlbase.h HAVE_ATLBASE_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(float.h HAVE_FLOAT_H)
 check_include_files(limits.h HAVE_LIMITS_H)
@@ -278,6 +280,11 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
 )
+
+# work around CMake bug
+if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
+  set(MFC_FOUND "NO")
+endif(MFC_FOUND AND NOT HAVE_AFXWIN_H)
 
 ###############################################################################
 ## change default install prefix
@@ -329,6 +336,11 @@ if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
+  if(MFC_FOUND AND HAVE_ATLBASE_H)
+    add_definitions(
+      -DMIKTEX_ATLMFC
+    )
+  endif(MFC_FOUND AND HAVE_ATLBASE_H)
   # DLL export enablers
   add_definitions(
     -DZLIB_DLL
@@ -694,9 +706,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_pdftex_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX AND WITH_XETEX)
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_xetex_dir})
-endif(BUILDING_MIKTEX AND WITH_XETEX)
+endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_omegaware_dir})
@@ -824,9 +836,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_padout_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
   add_subdirectory(${rel_migrate_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_setup_mfc_dir})

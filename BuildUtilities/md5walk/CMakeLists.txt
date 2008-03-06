@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -40,7 +40,8 @@ if(NATIVE_WINDOWS)
     ${md5_lib_name}
     ${popt_lib_name}
     ${zlib_lib_name}
-)
+    shlwapi
+  )
 else(NATIVE_WINDOWS)
   target_link_libraries(md5walk
     ${core_dll_name}

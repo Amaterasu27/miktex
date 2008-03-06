@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1327,3 +1327,68 @@ miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
   return (1);
   C_FUNC_END ();
 }
+
+/* _________________________________________________________________________
+
+   DllMain
+   _________________________________________________________________________ */
+
+#if ! defined(MIKTEX_STATIC)
+
+#if defined(_MANAGED)
+#  pragma managed(push, off)
+#endif
+
+#if ! defined(MIKTEX_PREVENT_DYNAMIC_LOADS)
+#  define MIKTEX_PREVENT_DYNAMIC_LOADS 0
+#endif
+
+HINSTANCE SessionImpl::hinstDLL = 0;
+TriState SessionImpl::dynamicLoad = TriState::Undetermined;
+
+extern "C"
+BOOL
+WINAPI
+DllMain (/*[in]*/ HINSTANCE	hInstance,
+	 /*[in]*/ DWORD		reason,
+	 /*[in]*/ LPVOID	lpReserved)
+{
+  BOOL retCode = TRUE;
+
+  switch (reason)
+    {
+      // initialize primary thread
+    case DLL_PROCESS_ATTACH:
+      SessionImpl::dynamicLoad =
+	(lpReserved == 0 ? TriState::True : TriState::False);
+#if MIKTEX_PREVENT_DYNAMIC_LOADS
+      if (SessionImpl::dynamicLoad == TriState::True)
+	{
+	  retCode = FALSE;
+	}
+#endif
+      SessionImpl::hinstDLL = hInstance;
+      break;
+
+      // finalize primary thread
+    case DLL_PROCESS_DETACH:
+      SessionImpl::dynamicLoad = TriState::Undetermined;
+      SessionImpl::hinstDLL = 0;
+      break;
+    }
+
+#if defined(MIKTEX_ATLMFC) && ! defined(MIKTEX_STATIC)
+  if (retCode)
+    {
+      retCode = Session::AtlDllMain(reason, lpReserved);
+    }
+#endif
+
+  return (retCode);
+}
+
+#if defined(_MANAGED)
+#  pragma managed(pop)
+#endif
+
+#endif

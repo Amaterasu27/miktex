@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,5 +30,11 @@ target_link_libraries(copystart_admin
   ${md5_lib_name}
   ${zlib_lib_name}
 )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(copystart_admin
+    shlwapi
+  )
+endif(NATIVE_WINDOWS)
 
 install(TARGETS copystart_admin DESTINATION "${bindir}")
