@@ -1380,7 +1380,7 @@ DllMain (/*[in]*/ HINSTANCE	hInstance,
 #if defined(MIKTEX_ATLMFC) && ! defined(MIKTEX_STATIC)
   if (retCode)
     {
-      retCode = Session::AtlDllMain(reason, lpReserved);
+      retCode = SessionImpl::AtlDllMain(reason, lpReserved);
     }
 #endif
 

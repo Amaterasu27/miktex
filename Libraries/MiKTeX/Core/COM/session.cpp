@@ -30,12 +30,12 @@ using namespace MiKTeX::Core;
 
 /* _________________________________________________________________________
 
-   Session::AtlDllMain
+   SessionImpl::AtlDllMain
    _________________________________________________________________________ */
 
 BOOL
-Session::AtlDllMain (/*[in]*/ DWORD	reason,
-		     /*[in]*/ LPVOID	lpReserved)
+SessionImpl::AtlDllMain (/*[in]*/ DWORD		reason,
+			 /*[in]*/ LPVOID	lpReserved)
 {
   return (_AtlModule.DllMain(reason, lpReserved));
 }

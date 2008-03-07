@@ -87,7 +87,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
       {						\
         if (stderr != 0)			\
 	  {					\
-	    Utils::PrintException (e);	\
+	    Utils::PrintException (e);		\
 	  }					\
         exit (1);				\
       }						\
@@ -95,7 +95,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
       {						\
         if (stderr != 0)			\
 	  {					\
-	    Utils::PrintException (e);	\
+	    Utils::PrintException (e);		\
 	  }					\
         exit (1);				\
       }						\
@@ -1490,6 +1490,14 @@ public:
   PathName
   GetRelativeFilenameDatabasePathName (/*[in]*/  unsigned r);
 
+#if defined(MIKTEX_ATLMFC) && ! defined(MIKTEX_STATIC)
+public:
+  static
+  BOOL
+  AtlDllMain (/*[in]*/ DWORD	reason,
+	      /*[in]*/ LPVOID	lpReserved);
+#endif
+
   // -----------------------------------------------------------------------
   // *** private ***
 
@@ -1540,14 +1548,6 @@ private:
   PathName atmFontDir;
 #endif
 
-#if defined(MIKTEX_ATLMFC) && defined(MIKTEX_STATIC)
-private:
-  static
-  BOOL
-  AtlDllMain (/*[in]*/ DWORD	reason,
-	      /*[in]*/ LPVOID	lpReserved);
-#endif
-
 private:
   void
   SetCWDEnv ();
@@ -1559,7 +1559,7 @@ private:
 private:
   bool
   FindPerlScript (/*[in]*/ const char *	lpszName,
-		  /*[out]*/ PathName &		path);
+		  /*[out]*/ PathName &	path);
 
 #if defined(MIKTEX_WINDOWS)
 private:
