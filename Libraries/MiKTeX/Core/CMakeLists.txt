@@ -126,7 +126,7 @@ if(NATIVE_WINDOWS)
     win/winThread.cpp
     win/winThread.h
   )
-  if(MFC_FOUND)
+  if(HAVE_ATLBASE_H)
     set(sessionidl_h MiKTeX${MIKTEX_SERIES_INT}-sessionidl.h)
     set(session_idl MiKTeX${MIKTEX_SERIES_INT}-session.idl)
     configure_file(
@@ -219,7 +219,7 @@ if(NATIVE_WINDOWS)
       RUNTIME DESTINATION "${bindir}"
       LIBRARY DESTINATION "${libdir}"
       ARCHIVE DESTINATION "${libdir}")
-  endif(MFC_FOUND)
+  endif(HAVE_ATLBASE_H)
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
     PROPERTIES GENERATED TRUE
@@ -268,6 +268,7 @@ target_link_libraries(${core_dll_name}
 if(NATIVE_WINDOWS)
   target_link_libraries(${core_dll_name}
     SHFolder.lib
+    shlwapi.lib
     htmlhelp.lib
   )
 endif(NATIVE_WINDOWS)

@@ -69,7 +69,7 @@ if(NATIVE_WINDOWS)
     win/winWebSession.cpp
     win/winWebSession.h
   )
-  if(MFC_FOUND)
+  if(HAVE_ATLBASE_H)
     set(mpmidl_h MiKTeX${MIKTEX_SERIES_INT}-packagemanageridl.h)
     set(mpm_idl MiKTeX${MIKTEX_SERIES_INT}-packagemanager.idl)
     configure_file(
@@ -143,7 +143,7 @@ if(NATIVE_WINDOWS)
       uuid
     )
     install(TARGETS ${mpm_ps_dll_name} DESTINATION "${bindir}")
-  endif(MFC_FOUND)
+  endif(HAVE_ATLBASE_H)
 endif(NATIVE_WINDOWS)
 
 add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})

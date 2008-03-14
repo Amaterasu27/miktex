@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,10 +19,11 @@
 
 add_definitions(-DHAVE_LIBCURL)
 
-if(MFC_FOUND)
+include_directories(${CMAKE_BINARY_DIR}/${rel_mpmlib_dir})
+
+if(HAVE_ATLBASE_H)
   add_definitions(-DUSE_LOCAL_SERVER)
-  include_directories(${CMAKE_BINARY_DIR}/${rel_mpmlib_dir})
-endif(MFC_FOUND)
+endif(HAVE_ATLBASE_H)
 
 use_static_crt()
 use_static_libraries()

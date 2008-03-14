@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2005-2006 Christian Schenk
+   Copyright (C) 2005-2008 Christian Schenk
 
    This file is part of the MiKTeX App Library.
 
@@ -42,6 +42,6 @@
 #include <miktex/Core/Paths>
 #include <miktex/Core/Trace>
 
-#if defined(MIKTEX_WINDOWS)
+#if defined(MIKTEX_ATLMFC)
 #  include <MiKTeX/UI/MFC/Prototypes>
 #endif

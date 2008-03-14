@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -31,7 +31,6 @@
 
 #include <miktex/App/Application>
 #include <miktex/Core/Core>
-#include <miktex/UI/MFC/Prototypes>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
 #include <miktex/Core/Trace>

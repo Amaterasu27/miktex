@@ -101,7 +101,7 @@ UInt32 countGlyphs(XeTeXFont font);
 
 XeTeXLayoutEngine createLayoutEngine(PlatformFontRef fontRef, XeTeXFont font, UInt32 scriptTag, UInt32 languageTag,
 						UInt32* addFeatures, SInt32* addParams, UInt32* removeFeatures, UInt32 rgbValue,
-						float extend, float slant);
+						float extend, float slant, float embolden);
 
 void deleteLayoutEngine(XeTeXLayoutEngine engine);
 
@@ -110,6 +110,7 @@ PlatformFontRef getFontRef(XeTeXLayoutEngine engine);
 
 float getExtendFactor(XeTeXLayoutEngine engine);
 float getSlantFactor(XeTeXLayoutEngine engine);
+float getEmboldenFactor(XeTeXLayoutEngine engine);
 
 SInt32 layoutChars(XeTeXLayoutEngine engine, UInt16* chars, SInt32 offset, SInt32 count, SInt32 max,
 						char rightToLeft, float x, float y, SInt32* status);
@@ -160,7 +161,7 @@ int getFontCharRange(XeTeXLayoutEngine engine, int reqFirst);
 XeTeXLayoutEngine createGraphiteEngine(PlatformFontRef fontRef, XeTeXFont font,
 										const char* name,
 										UInt32 rgbValue, int rtl, UInt32 languageTag,
-										float extend, float slant,
+										float extend, float slant, float embolden,
 										int nFeatures, const int* featureIDs, const int* featureValues);
 int makeGraphiteSegment(XeTeXLayoutEngine engine, const UniChar* txtPtr, int txtLen);
 void getGraphiteGlyphInfo(XeTeXLayoutEngine engine, int index, UInt16* glyphID, float* x, float* y);

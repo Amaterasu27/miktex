@@ -1,6 +1,6 @@
 /* md5walk.cpp: calculate the MD5 of a file tree
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MD5Walk.
 
@@ -448,7 +448,7 @@ Main (/*[in]*/ int		argc,
 	    Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
 					    VersionNumber(VER_FILEVERSION))
 	       << T_("\n\
-Copyright (C) 2005-2007 Christian Schenk\n\
+Copyright (C) 2005-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	       << endl;
@@ -554,6 +554,7 @@ Findings: "));
 	  {
 	    PrintMD5 (md5);
 	  }
+	break;
       }
     case FindDuplicates:
       {
@@ -572,6 +573,7 @@ Findings: "));
 	    lastSize = it->first;
 	  }
 	FindDuplicateFiles (setstr);
+	break;
       }
     }
 }

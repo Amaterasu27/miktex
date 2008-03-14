@@ -13,7 +13,7 @@ C++ COMPILER
 	  http://en.wikipedia.org/wiki/Visual_C_Plus_Plus
 	  You can use the Express Edition (currently gratis) to compile
           the command-line applications. The Professional Edition is only
-          required, if you want to also build the GUI applications.
+          required, if you want to build the GUI applications.
 
 WINDOWS SDK
 -----------
@@ -46,7 +46,7 @@ BUILD UTILITIES
 
 	* MiKTeX 2.7
 	  http://miktex.org
-	  Hint: Install all packages.
+	  Hint: Install all packages or turn on the auto-install feature.
 
 	* xsltproc (part of libxml2)
 	  http://en.wikipedia.org/wiki/Libxml
@@ -63,6 +63,15 @@ Run the nmake utility to compile MiKTeX:
 
     nmake
 
-Specify the 'install' target to install the binaries:
+If you want to compile a single component, you can do it by running
+nmake in the component's sub-directory. Say you want to build XeTeX:
+
+    cd Programs\TeXAndFriends\xetex
+    nmake
+
+Specify the 'install' target, if you want to install the binaries:
 
     nmake install
+
+This will install the targets in C:\MiKTeX-Builds\2.7. The path can be
+changed by setting the CMake variable CMAKE_INSTALL_PREFIX.

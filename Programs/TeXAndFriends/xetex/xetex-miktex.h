@@ -1,6 +1,6 @@
 /* xetex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -221,6 +221,7 @@ extern XETEXCLASS XETEXAPP;
 #include <miktex/KPSE/Emulation>
 
 #include "xetex.h"
+#include "synctex.h"
 
 #if defined(COMPILING_XETEX_CC)
 #  define MAKE_GLOBAL(type, name) type & name = XETEXDATA.m_##name;
@@ -263,6 +264,15 @@ MAKE_GLOBAL(utf16code*, nameoffile16);
 MAKE_GLOBAL(voidpointer*, fontlayoutengine);
 MAKE_GLOBAL(voidpointer, loadedfontmapping);
 MAKE_GLOBAL(scaled, loadedfontdesignsize);
+MAKE_GLOBAL(memoryword*, zmem);
+#define eqtb XETEXDATA.m_eqtb
+MAKE_GLOBAL(strnumber, jobname);
+MAKE_GLOBAL(C4P_integer, synctexoption);
+MAKE_GLOBAL(C4P_integer, synctexoffset);
+MAKE_GLOBAL(instaterecord, curinput);
+MAKE_GLOBAL(C4P_integer, totalpages);
+MAKE_GLOBAL(scaled, curh);
+MAKE_GLOBAL(scaled, curv);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)
@@ -435,7 +445,6 @@ printutf8str (const voidpointer str, int len)
 {
   printutf8str((const unsigned char*) str, len);
 }
-
 
 /* _________________________________________________________________________
 

@@ -28,14 +28,16 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
+#define XETEX_OT_MATH_IMPLEMENTATION 1
 #if defined(MIKTEX)
 #include "xetex-miktex.h"
 #endif
+#include "XeTeXOTMath.h"
 
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
 #include "XeTeXFontInst.h"
-#include "XeTeXOTMath.h"
+
 #include "CoverageTables.h"
 
 #define kMATHTableTag	0x4D415448
@@ -197,7 +199,7 @@ getnativemathexparam(int f, int n)
 }
 
 int
-getotmathvariant(int f, int g, int v, int* adv, int horiz)
+getotmathvariant(int f, int g, int v, integer* adv, int horiz)
 {
 	int	rval = g;
 	*adv = -1;

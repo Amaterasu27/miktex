@@ -1,6 +1,6 @@
 /* mpm.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -29,14 +29,18 @@
 
 #define VER_FILETYPE VFT_DLL
 
+#if defined(MIKTEX_ATLMFC)
 IDR_MIKTEXPACKAGEMANAGER REGISTRY "COM/mpm.rgs"
 IDR_PACKAGEMANAGER       REGISTRY "COM/comPackageManager.rgs"
+#endif
 
 STRINGTABLE 
 BEGIN
     IDS_PROJNAME "MiKTeX Package Manager"
 END
 
+#if defined(MIKTEX_ATLMFC)
 1 TYPELIB "${mpm_tlb_name}.tlb"
+#endif
 
 #include <miktex/Core/win/version.rc>

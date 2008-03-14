@@ -76,6 +76,9 @@ typedef struct UFILE* unicodefile;
 #define FONT_FLAGS_COLORED	0x01
 #define FONT_FLAGS_VERTICAL	0x02
 
+#define kXeTeXEmboldenTag	0x10000 /* user-defined ATSUAttributeTag to carry 'embolden' value */
+
+
 /* some typedefs that XeTeX uses - on Mac OS, we get these from Apple headers,
    but otherwise we'll need these substitute definitions */
 
@@ -232,6 +235,8 @@ extern const UInt32 byteMark;
 
 #include "trans.h"
 
+#include "XeTeXLayoutInterface.h"
+
 #if ! defined(MIKTEX)
 #ifdef __cplusplus
 extern "C" {
@@ -251,6 +256,7 @@ extern "C" {
 	void* load_mapping_file(const char* s, const char* e);
 	void* findnativefont(unsigned char* name, integer scaled_size);
 	void releasefontengine(void* engine, int type_flag);
+	int readCommonFeatures(const char* feat, const char* end, float* extend, float* slant, float* embolden, float* letterspace, UInt32* rgbValue);
 
 	/* the metrics params here are really TeX 'scaled' values, but that typedef isn't available every place this is included */
 	void otgetfontmetrics(void* engine, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
@@ -279,6 +285,7 @@ extern "C" {
 	integer mapglyphtoindex(integer font);
 	integer getfontcharrange(integer font, int first);
 	void printglyphname(integer font, integer gid);
+	UInt16 get_native_glyph_id(void* pNode, unsigned index);
 
 	void grprintfontname(integer what, void* pEngine, integer param1, integer param2);
 	integer grfontgetnamed(integer what, void* pEngine);
@@ -298,6 +305,22 @@ extern "C" {
 	int input_line(UFILE* f);
 	void makeutf16name();
 
+	int initpool();
+	void terminatefontmanager();
+	int maketexstring(const char* s);
+
+#ifndef XETEX_MAC
+typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
+#endif
+
+	int atsufontget(int what, ATSUStyle style);
+	int atsufontget1(int what, ATSUStyle style, int param);
+	int atsufontget2(int what, ATSUStyle style, int param1, int param2);
+	int atsufontgetnamed(int what, ATSUStyle style);
+	int atsufontgetnamed1(int what, ATSUStyle style, int param);
+	void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
+	void atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant);
+
 #ifdef XETEX_MAC
 /* functions in XeTeX_mac.c */
 	void* loadAATfont(ATSFontRef fontRef, integer scaled_size, const char* cp1);
@@ -311,6 +334,9 @@ extern "C" {
 	float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid);
 	char* GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len);
 	int GetFontCharRange_AAT(ATSUStyle style, int reqFirst);
+	ATSUFontVariationAxis find_axis_by_name(ATSUFontID fontID, const char* name, int nameLength);
+	ATSUFontFeatureType find_feature_by_name(ATSUFontID fontID, const char* name, int nameLength);
+	ATSUFontFeatureSelector find_selector_by_name(ATSUFontID fontID, ATSUFontFeatureType featureType, const char* name, int nameLength);
 #endif
 #if defined(MIKTEX)
   typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
@@ -340,6 +366,7 @@ extern "C" {
 #endif
 #endif
 
+#include "XeTeXOTMath.h"
 
 /* some Mac OS X functions that we provide ourselves for other platforms */
 #ifndef XETEX_MAC

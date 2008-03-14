@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,6 +34,7 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include/layout
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
 )
@@ -64,6 +65,7 @@ set(miktex_tex_change_files
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
+  ${tex_miktex_synctex_ch}
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
   ${tex_miktex_web2c_ch}
@@ -71,6 +73,7 @@ set(miktex_tex_change_files
 
 set(pre_xetex_change_files
   ${etex_ch}
+  ${synctex_ch}
   ${etex_miktex_pre_ch}
   ${etex_miktex_ch}
   ${miktex_tex_change_files}
@@ -110,6 +113,7 @@ add_custom_command(
 
 set(xetex_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/sync-xetex.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
@@ -159,6 +163,7 @@ create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/numbers.c
   ${CMAKE_CURRENT_SOURCE_DIR}/pngimage.c
   ${CMAKE_CURRENT_SOURCE_DIR}/trans.c
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
 )
 
 set(${xetex_dll_name}_sources
@@ -169,6 +174,7 @@ set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mfileio.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/numbers.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pngimage.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/trans.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FontTableCache.cpp
