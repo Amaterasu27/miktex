@@ -185,6 +185,23 @@ struct MpcPackageInfo : public PackageInfo
 
 /* _________________________________________________________________________
 
+   PackagedOnReversed
+   _________________________________________________________________________ */
+
+class PackagedOnReversed
+{
+public:
+  bool
+  operator() (/*[in]*/ const MpcPackageInfo & pi1,
+	      /*[in]*/ const MpcPackageInfo & pi2)
+    const
+  {
+    return (pi1.timePackaged >= pi2.timePackaged);
+  }
+};
+
+/* _________________________________________________________________________
+
    PackageCreator
    _________________________________________________________________________ */
 
@@ -372,8 +389,9 @@ protected:
 protected:
   void
   CreateRepositoryInformationFile
-  (/*[in]*/ const PathName &	repository,
-   /*[in]*/ Cfg &		dbLight);
+  (/*[in]*/ const PathName &			repository,
+   /*[in]*/ Cfg &				dbLight,
+   /*[in]*/ const map<string, MpcPackageInfo> &	packageTable);
 
 protected:
   void
@@ -1607,8 +1625,9 @@ PackageCreator::RunArchiver (/*[in]*/ ArchiveFileType	archiveFileType,
 
 void
 PackageCreator::CreateRepositoryInformationFile
-(/*[in]*/ const PathName &	repository,
- /*[in]*/ Cfg &			dbLight)
+(/*[in]*/ const PathName &			repository,
+ /*[in]*/ Cfg &					dbLight,
+ /*[in]*/ const map<string, MpcPackageInfo> &	packageTable)
 {
   int numberOfPackages = 0;
   char szDeploymentName[BufferSizes::MaxPackageName];
@@ -1618,7 +1637,41 @@ PackageCreator::CreateRepositoryInformationFile
        lpszDeploymentName =
 	 dbLight.NextKey(szDeploymentName, BufferSizes::MaxPackageName))
     {
-      numberOfPackages += 1;
+      numberOfPackages += 1;      
+    }
+  set<MpcPackageInfo, PackagedOnReversed> packagedOnReversed;
+  for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
+       it != packageTable.end();
+       ++ it)
+    {
+      MpcPackageInfo pi = it->second;
+      time_t timePackaged;
+      string str;
+      if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
+			      "TimePackaged",
+			      str))
+	{
+	  pi.timePackaged = atoi(str.c_str());
+	}
+      else
+	{
+	  pi.timePackaged = 0;
+	}
+      packagedOnReversed.insert (pi);
+    }
+  int count = 0;
+  string lastupd;
+  for (set<MpcPackageInfo, PackagedOnReversed>::const_iterator it
+	 = packagedOnReversed.begin();
+       it != packagedOnReversed.end() && count < 20;
+       ++ count,
+       ++ it)
+    {
+      if (count > 0)
+	{
+	  lastupd += " ";
+	}
+      lastupd += it->deploymentName;
     }
   const time_t t2000 = 946681200;
   int days = static_cast<int>((timePackaged - t2000) / (60 * 60 * 24));
@@ -1629,6 +1682,7 @@ PackageCreator::CreateRepositoryInformationFile
 		  "lstdigest",
 		  MD5Builder().Final().ToString().c_str());
   pCfg->PutValue ("repository", "numpkg", NUMTOSTR(numberOfPackages));
+  pCfg->PutValue ("repository", "lastupd", lastupd.c_str());
   PathName path (repository);
   path += "pr.ini";
   pCfg->Write (path);
@@ -1864,7 +1918,7 @@ PackageCreator::WriteDatabase
   CleanUp (repository);
 
   // create pr.ini
-  CreateRepositoryInformationFile (repository, dbLight);
+  CreateRepositoryInformationFile (repository, dbLight, packageTable);
 }
 
 /* _________________________________________________________________________
