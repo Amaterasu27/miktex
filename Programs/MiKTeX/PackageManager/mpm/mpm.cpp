@@ -35,14 +35,6 @@
 
 #define MYPKG "miktex-bin"
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 #if defined(MIKTEX_WINDOWS)
 const char PATH_DELIMITER = ';';
 #define PATH_DELIMITER_STRING ";"
@@ -61,25 +53,39 @@ const char * DEFAULT_TRACE_STREAMS =
 
 /* _________________________________________________________________________
 
-   StrNCmp
+   OutputFormat
    _________________________________________________________________________ */
 
-#if defined(StrNCmp)
-#  undef StrNCmp
-#endif
-
-inline
-int
-StrNCmp (/*[in]*/ const char *	lpsz1,
-	 /*[in]*/ const char *	lpsz2,
-	 /*[in]*/ size_t		n)
+class OutputFormatEnum
 {
-#if defined(MIKTEX_UNICODE)
-  return (wcsncmp(lpsz1, lpsz2, n));
-#else
-  return (strncmp(lpsz1, lpsz2, n));
-#endif
-}
+public:
+  enum EnumType {
+    None = 0,
+    Listing,
+    CSV,
+    DeploymentNames,
+  };
+};
+
+typedef EnumWrapper<OutputFormatEnum> OutputFormat;
+
+/* _________________________________________________________________________
+
+   SortKey
+   _________________________________________________________________________ */
+
+class SortKeyEnum
+{
+public:
+  enum EnumType {
+    None = 0,
+    DeploymentName,
+    InstalledOn,
+    PackagedOn,
+  };
+};
+
+typedef EnumWrapper<SortKeyEnum> SortKey;
 
 /* _________________________________________________________________________
 
@@ -94,9 +100,32 @@ public:
 	      /*[in]*/ const PackageInfo & pi2)
     const
   {
-    return (PathName::Compare(pi1.deploymentName, pi2.deploymentName) < 0);
+    bool cmp;
+    switch (sortKey.Get())
+      {
+      case SortKey::DeploymentName:
+	cmp = (PathName::Compare(pi1.deploymentName, pi2.deploymentName) < 0);
+	break;
+      case SortKey::InstalledOn:
+	cmp = (pi1.timeInstalled < pi2.timeInstalled);
+	break;
+      case SortKey::PackagedOn:
+	cmp = (pi1.timePackaged < pi2.timePackaged);
+	break;
+      default:
+	cmp = false;
+	break;
+      }
+    return (reverse ? ! cmp : cmp);
   }
+public:
+  static SortKey sortKey;
+public:
+  static bool reverse;
 };
+
+SortKey PackageInfoComparer::sortKey (SortKey::DeploymentName);
+bool PackageInfoComparer::reverse = false;
 
 /* _________________________________________________________________________
 
@@ -243,15 +272,12 @@ private:
 
 private:
   void
-  List (/*[in]*/ bool csv);
+  List (/*[in]*/ OutputFormat	outputFormat,
+	/*[in]*/ int		maxCount);
 
 private:
   void
-  ListPackageNames ();
-
-private:
-  void
-  ListRepositories (/*[in]*/ bool csv);
+  ListRepositories (/*[in]*/ OutputFormat outputFormat);
 
 private:
   void
@@ -311,7 +337,7 @@ private:
 enum Option
 {
   OPT_AAA = 1,
-  OPT_CSV,			// experimental
+  OPT_CSV,			// deprecated
   OPT_FIND_CONFLICTS,		// internal
   OPT_FIND_UPDATES,
   OPT_HHELP,
@@ -323,6 +349,8 @@ enum Option
   OPT_LIST,
   OPT_LIST_PACKAGE_NAMES,
   OPT_LIST_REPOSITORIES,
+  OPT_MAX_COUNT,		// experimental
+  OPT_OUTPUT_FORMAT,		// experimental
   OPT_PICK_REPOSITORY_URL,
   OPT_PRINT_PACKAGE_INFO,
   OPT_PROXY,			// experimental
@@ -331,7 +359,9 @@ enum Option
   OPT_QUIET,
   OPT_REGISTER_COMPONENTS,	// experimental
   OPT_REPOSITORY,
+  OPT_REVERSE,			// experimental
   OPT_SET_REPOSITORY,
+  OPT_SORT,			// experimental
   OPT_TRACE,
   OPT_UNINSTALL,
   OPT_UNREGISTER_COMPONENTS,	// experimental
@@ -353,7 +383,7 @@ enum Option
 
 const struct poptOption Application::aoption[] = {
 
-  {				// experimental
+  {				// deprecated
     "csv", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
     T_("Output comma-separated value lists."), 0,
   },
@@ -381,7 +411,7 @@ exit when the window is closed."), 0
   {
     "import", 0, POPT_ARG_STRING, 0, OPT_IMPORT,
     T_("Import the specified package from another MiKTeX installation."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
   {
@@ -393,7 +423,7 @@ exit when the window is closed."), 0
   {
     "install", 0, POPT_ARG_STRING, 0, OPT_INSTALL,
     T_("Install the specified package."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
 #if STANDALONE
@@ -401,21 +431,22 @@ exit when the window is closed."), 0
     "install-root", 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
     T_("\
 Use the specified directory as the installation destination."),
-    "DIR"
+    T_("DIR")
   },
 #endif
 
   {
     "install-some", 0, POPT_ARG_STRING, 0, OPT_INSTALL_SOME,
     T_("Install packages listed (line-by-line) in the specified file."),
-    "FILE"
+    T_("FILE")
   },
 
   {
     "list", 0, POPT_ARG_NONE, 0, OPT_LIST,
     T_("List the contents of the package database:\
  for each package, print the installation status, the number of files,\
- the size, and the name."), 0
+ the size, and the name."),
+    0
   },
 
   {
@@ -427,39 +458,61 @@ Use the specified directory as the installation destination."),
     "list-repositories", 0, POPT_ARG_NONE, 0, OPT_LIST_REPOSITORIES,
     T_("\
 Download the list of known package repository URLs from\
- the MiKTeX project server, then print the list."), 0
+ the MiKTeX project server, then print the list."),
+    0
   },
 
   {
+    "max-count", 0, POPT_ARG_STRING, 0, OPT_MAX_COUNT,
+    T_("Stop after NUM packages."),
+    T_("NUM")
+  },
+
+  {				// experimental
+    "output-format", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_OUTPUT_FORMAT,
+    T_("Set the output format."),
+    T_("FORMAT"),
+  },
+    
+  {
     "pick-repository-url", 0, POPT_ARG_NONE, 0, OPT_PICK_REPOSITORY_URL,
     T_("\
-Pick a suitable package repository URL and print it."), 0
+Pick a suitable package repository URL and print it."),
+    0
   },
 
   {
     "print-package-info", 0, POPT_ARG_STRING, 0, OPT_PRINT_PACKAGE_INFO,
     T_("Print detailed information about the specified package."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
   {				// experimental
     "proxy", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_PROXY,
     T_("Use the specified proxy host[:port]."),
-    "HOST[:PORT]"
+    T_("HOST[:PORT]")
   },
 
   {				// experimental
     "proxy-password", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_PASSWORD,
     T_("Use the specified password for proxy authentication."),
-    "PASSWORD"
+    T_("PASSWORD")
   },
 
   {				// experimental
     "proxy-user", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_PROXY_USER,
     T_("Use the specified user for proxy authentication."),
-    "USER"
+    T_("USER")
+  },
+
+  {				// experimental
+    "sort", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SORT,
+    T_("Sort the package list."),
+    T_("KEY")
   },
 
   {
@@ -480,7 +533,14 @@ Pick a suitable package repository URL and print it."), 0
 Use the specified location as the package repository.\
   The location can be either a fully qualified path name\
  (a local package repository) or an URL (a remote package repository)."),
-    "LOCATION"
+    T_("LOCATION")
+  },
+
+  {
+    "reverse", 0, POPT_ARG_NONE, 0, OPT_REVERSE,
+    T_("\
+Reverse the result of comparisons."),
+    0
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -489,7 +549,7 @@ Use the specified location as the package repository.\
     T_("Register the location of the default package repository.\
   The location can be either a fully qualified path name\
  (a local package repository) or an URL (a remote package repository)."),
-    "LOCATION"
+    T_("LOCATION")
   },
 #endif
 
@@ -499,20 +559,21 @@ Use the specified location as the package repository.\
 Turn on tracing.\
   TRACESTREAMS, if specified, is a comma-separated list of trace stream names\
  (see the MiKTeX manual)."),
-    "TRACESTREAMS",
+    T_("TRACESTREAMS")
   },
 
   {
     "uninstall", 0, POPT_ARG_STRING, 0, OPT_UNINSTALL,
     T_("Uninstall the specified package."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
 #if defined(MIKTEX_WINDOWS)
   {
     "unregister-components", 0, POPT_ARG_NONE, 0,
     OPT_UNREGISTER_COMPONENTS,
-    T_("Unregister COMponents."), 0
+    T_("Unregister COMponents."),
+    0
   },
 #endif
 
@@ -521,7 +582,7 @@ Turn on tracing.\
     T_("Update the specified package, if an updated version\
  is available in the package repository.  Install all updateable\
  packages, if the package name is omitted."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
   {				// experimental
@@ -541,13 +602,14 @@ Turn on tracing.\
   {				// experimental
     "update-fndb", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN,
     0, OPT_UPDATE_FNDB,
-    T_("Update mpm.fndb."), 0
+    T_("Update mpm.fndb."),
+    0
   },
 
   {
     "update-some", 0, POPT_ARG_STRING, 0, OPT_UPDATE_SOME,
     T_("Update packages listed (line-by-line) in the specified file."),
-    "FILE"
+    T_("FILE")
   },
 
   {
@@ -559,7 +621,7 @@ Turn on tracing.\
     "verify", 0, POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
     0, OPT_VERIFY,
     T_("Verify the integrity of the installed packages."),
-    "PACKAGE"
+    T_("PACKAGE")
   },
 
   {				// experimental
@@ -571,7 +633,8 @@ Turn on tracing.\
 
   {
     "version", 0, POPT_ARG_NONE, 0, OPT_VERSION,
-    T_("Show version information and exit."), 0
+    T_("Show version information and exit."),
+    0
   },
 
   POPT_AUTOHELP
@@ -600,7 +663,7 @@ Application::Message (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -619,7 +682,7 @@ Application::Verbose (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcout << Utils::FormatString(lpszFormat, arglist);
+  cout << Utils::FormatString(lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -635,8 +698,8 @@ Application::Error (/*[in]*/ const char *		lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  tcerr << "mpm" << ": "
-	<< Utils::FormatString(lpszFormat, arglist) << endl;
+  cerr << "mpm" << ": "
+       << Utils::FormatString(lpszFormat, arglist) << endl;
   va_end (arglist);
   throw (1);
 }
@@ -822,12 +885,12 @@ Application::FindConflicts ()
     {
       if (it->second.size() > 1)
 	{
-	  tcout << it->first << ":" << endl;
+	  cout << it->first << ":" << endl;
 	  for (vector<string>::const_iterator it2 = it->second.begin();
 	       it2 != it->second.end();
 	       ++ it2)
 	    {
-	      tcout << "  " << *it2 << endl;
+	      cout << "  " << *it2 << endl;
 	    }
 	}
     }
@@ -941,7 +1004,7 @@ Application::ImportPackage (/*[in]*/ /*[in]*/ const string & deploymentName,
     }
   SmartPointer<Cfg> pCfg = Cfg::Create();
   pCfg->Read (packagesIni);
-  if (StrNCmp(deploymentName.c_str(), "miktex-", 7) == 0)
+  if (strncmp(deploymentName.c_str(), "miktex-", 7) == 0)
     {
       Error (T_("Cannot import package %s."), deploymentName.c_str());
     }
@@ -996,7 +1059,7 @@ Application::ImportPackages (/*[in,out]*/ vector<string> & toBeinstalled)
        lpszKey != 0;
        lpszKey = pCfg->NextKey(szKey, BufferSizes::MaxCfgName))
     {
-      if (StrNCmp(lpszKey, "miktex-", 7) == 0)
+      if (strncmp(lpszKey, "miktex-", 7) == 0)
 	{
 	  continue;
 	}
@@ -1007,7 +1070,7 @@ Application::ImportPackages (/*[in,out]*/ vector<string> & toBeinstalled)
 	{
 	  continue;
 	}
-      if (pCfg->TryGetValue(lpszKey, T_("Obsolete"), str)
+      if (pCfg->TryGetValue(lpszKey, "Obsolete", str)
 	  && str == "1")
 	{
 	  continue;
@@ -1051,7 +1114,7 @@ Application::FindUpdates ()
 	   it != updates.end();
 	   ++ it)
 	{
-	  tcout << it->deploymentName << '\n';
+	  cout << it->deploymentName << '\n';
 	}
     }
 }
@@ -1176,7 +1239,8 @@ Application::GetDirectories (/*[in]*/ const string &	deploymentName)
    _________________________________________________________________________ */
 
 void
-Application::List (/*[in]*/ bool csv)
+Application::List (/*[in]*/ OutputFormat	outputFormat,
+		   /*[in]*/ int			maxCount)
 {
   auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
   PackageInfo packageInfo;
@@ -1193,63 +1257,35 @@ Application::List (/*[in]*/ bool csv)
     {
       Message (T_("The package database files have not been installed.\n"));
     }
+  int count = 0;
   for (set<PackageInfo, PackageInfoComparer>::const_iterator
 	 it = setPi.begin();
-       it != setPi.end();
-       ++ it)
+       it != setPi.end() && count < maxCount;
+       ++ it, ++ count)
     {
-      if (csv)
+      if (outputFormat == OutputFormat::Listing)
+	{
+	  cout << (it->IsInstalled() ? 'i' : '-')
+	       << "  " << setw(5) << static_cast<int>(it->GetNumFiles())
+	       << " "
+	       << setw(10) << left << static_cast<int>(it->GetSize())
+	       << resetiosflags(ios_base::left)
+	       << "  " << it->deploymentName
+	       << endl;
+	}
+      else if (outputFormat == OutputFormat::CSV)
 	{
 	  string path =
 	    pPackageManager->GetContainerPath(it->deploymentName, false);
 	  string directories = GetDirectories(it->deploymentName);
-	  tcout << path << '\\' << it->deploymentName << ','
-		<< directories << '\n';
+	  cout << path << '\\' << it->deploymentName << ','
+	       << directories << '\n';
 	}
-      else
+      else if (outputFormat == OutputFormat::DeploymentNames)
 	{
-	  tcout << (it->IsInstalled() ? 'i' : '-')
-		<< "  " << setw(5) << static_cast<int>(it->GetNumFiles())
-		<< " "
-		<< setw(10) << left << static_cast<int>(it->GetSize())
-		<< resetiosflags(ios_base::left)
-		<< "  " << it->deploymentName
-		<< endl;
+	  cout << it->deploymentName
+	       << endl;
 	}
-    }
-  pIter->Dispose ();
-}
-
-/* _________________________________________________________________________
-
-   Application::ListPackageNames
-   _________________________________________________________________________ */
-
-void
-Application::ListPackageNames ()
-{
-  auto_ptr<PackageIterator> pIter (pPackageManager->CreateIterator());
-  PackageInfo packageInfo;
-  set<PackageInfo, PackageInfoComparer> setPi;
-  for (int idx = 0; pIter->GetNext(packageInfo); ++ idx)
-    {
-      if (packageInfo.IsPureContainer())
-	{
-	  continue;
-	}
-      setPi.insert (packageInfo);
-    }
-  if (setPi.size() == 0)
-    {
-      Message (T_("The package database files have not been installed.\n"));
-    }
-  for (set<PackageInfo, PackageInfoComparer>::const_iterator
-	 it = setPi.begin();
-       it != setPi.end();
-       ++ it)
-    {
-      tcout << it->deploymentName
-	    << endl;
     }
   pIter->Dispose ();
 }
@@ -1260,9 +1296,9 @@ Application::ListPackageNames ()
    _________________________________________________________________________ */
 
 void
-Application::ListRepositories (/*[in]*/ bool csv)
+Application::ListRepositories (/*[in]*/ OutputFormat outputFormat)
 {
-  csv;
+  outputFormat;
   pPackageManager->DownloadRepositoryList ();
   vector<RepositoryInfo> repositories = pPackageManager->GetRepositories();
   if (repositories.size() == 0)
@@ -1274,7 +1310,7 @@ Application::ListRepositories (/*[in]*/ bool csv)
        it != repositories.end();
        ++ it)
     {
-      tcout << it->url << '\n';
+      cout << it->url << '\n';
     }
 }
 
@@ -1286,7 +1322,7 @@ Application::ListRepositories (/*[in]*/ bool csv)
 void
 Application::PickRepositoryUrl ()
 {
-  tcout << pPackageManager->PickRepositoryUrl() << endl;
+  cout << pPackageManager->PickRepositoryUrl() << endl;
 }
 
 /* _________________________________________________________________________
@@ -1308,7 +1344,7 @@ Application::PrintFiles (/*[in]*/ const vector<string> & files)
 	  disp = *it;
 	}
       path += disp;
-      tcout << "  " << path.ToString() << '\n';
+      cout << "  " << path.ToString() << '\n';
     }
 }
 
@@ -1321,21 +1357,21 @@ void
 Application::PrintPackageInfo (/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = pPackageManager->GetPackageInfo(deploymentName);
-  tcout << T_("name: ") << packageInfo.deploymentName << '\n'
-	<< T_("title: ") << packageInfo.title << '\n';
+  cout << T_("name: ") << packageInfo.deploymentName << '\n'
+       << T_("title: ") << packageInfo.title << '\n';
   if (packageInfo.runFiles.size() > 0)
     {
-      tcout << T_("run-time files:\n");
+      cout << T_("run-time files:\n");
       PrintFiles (packageInfo.runFiles);
     }
   if (packageInfo.docFiles.size() > 0)
     {
-      tcout << T_("documentation files:\n");
+      cout << T_("documentation files:\n");
       PrintFiles (packageInfo.docFiles);
     }
   if (packageInfo.sourceFiles.size() > 0)
     {
-      tcout << T_("source files:\n");
+      cout << T_("source files:\n");
       PrintFiles (packageInfo.sourceFiles);
     }
 }
@@ -1419,18 +1455,17 @@ Application::Main (/*[in]*/ int			argc,
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName (argv[0]);
 
-  bool optCsv = false;
   bool optFindConflicts = false;
   bool optFindUpdates = false;
   bool optImport = false;
   bool optImportAll = false;
   bool optList = false;
-  bool optListPackageNames = false;
   bool optListRepositories = false;
   bool optPickRepositoryUrl = false;
   bool optPrintPackageInfo = false;
   bool optRegisterComponents = false;
   bool optSetRepository = false;
+  bool optSort = false;
   bool optUnregisterComponents = false;
   bool optUpdate = false;
   bool optUpdateAll = false;
@@ -1439,7 +1474,9 @@ Application::Main (/*[in]*/ int			argc,
   bool optVerify = false;
   bool optVerifyMiKTeX = false;
   bool optVersion = false;
+  int optMaxCount = INT_MAX;
   int optProxyPort = -1;
+  OutputFormat outputFormat (OutputFormat::Listing);
   string deploymentName;
   string optProxy;
   string optProxyPassword;
@@ -1466,7 +1503,7 @@ Application::Main (/*[in]*/ int			argc,
       switch (option)
 	{
 	case OPT_CSV:
-	  optCsv = true;
+	  outputFormat = OutputFormat::CSV;
 	  break;
 	case OPT_FIND_CONFLICTS:
 	  optFindConflicts = true;
@@ -1503,7 +1540,8 @@ Application::Main (/*[in]*/ int			argc,
 	  optList = true;
 	  break;
 	case OPT_LIST_PACKAGE_NAMES:
-	  optListPackageNames = true;
+	  optList = true;
+	  outputFormat = OutputFormat::DeploymentNames;
 	  break;
 	case OPT_LIST_REPOSITORIES:
 	  optListRepositories = true;
@@ -1527,6 +1565,25 @@ Application::Main (/*[in]*/ int			argc,
 	      }
 	  }
 	  break;
+	case OPT_SORT:
+	  optSort = true;
+	  if (StringCompare(lpszOptArg, "deploymentname", true) == 0)
+	    {
+	      PackageInfoComparer::sortKey = SortKey::DeploymentName;
+	    }
+	  else if (StringCompare(lpszOptArg, "installedon", true) == 0)
+	    {
+	      PackageInfoComparer::sortKey = SortKey::InstalledOn;
+	    }
+	  else if (StringCompare(lpszOptArg, "packagedon", true) == 0)
+	    {
+	      PackageInfoComparer::sortKey = SortKey::PackagedOn;
+	    }
+	  else
+	    {
+	      Error (T_("Unknown sort key."));
+	    }
+	  break;
 	case OPT_PROXY_USER:
 	  changeProxy = true;
 	  optProxyUser = lpszOptArg;
@@ -1547,8 +1604,33 @@ Application::Main (/*[in]*/ int			argc,
 	  optRegisterComponents = true;
 	  break;
 #endif
+	case OPT_MAX_COUNT:
+	  optMaxCount = atoi(lpszOptArg);
+	  break;
+	case OPT_OUTPUT_FORMAT:
+	  {
+	    if (StringCompare(lpszOptArg, "listing", true) == 0)
+	    {
+	      outputFormat = OutputFormat::Listing;
+	    }
+	  else if (StringCompare(lpszOptArg, "csv", true) == 0)
+	    {
+	      outputFormat = OutputFormat::CSV;
+	    }
+	  else if (StringCompare(lpszOptArg, "deploymentnames", true) == 0)
+	    {
+	      outputFormat = OutputFormat::DeploymentNames;
+	    }
+	  else
+	    {
+	      Error (T_("Unknown output format."));
+	    }
+	  }
 	case OPT_REPOSITORY:
 	  repository = lpszOptArg;
+	  break;
+	case OPT_REVERSE:
+	  PackageInfoComparer::reverse = true;
 	  break;
 	case OPT_SET_REPOSITORY:
 	  optSetRepository = true;
@@ -1645,13 +1727,13 @@ Application::Main (/*[in]*/ int			argc,
 
   if (optVersion)
     {
-      tcout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					       VersionNumber(VER_FILEVERSION))
-	    << T_("\n\
+      cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
+					      VersionNumber(VER_FILEVERSION))
+	   << T_("\n\
 Copyright (C) 2005-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	    << endl;
+	   << endl;
       return;
     }
 
@@ -1786,19 +1868,13 @@ with --unregister-components."));
 
   if (optList)
     {
-      List (optCsv);
-      restartWindowed = false;
-    }
-
-  if (optListPackageNames)
-    {
-      ListPackageNames ();
+      List (outputFormat, optMaxCount);
       restartWindowed = false;
     }
 
   if (optListRepositories)
     {
-      ListRepositories (optCsv);
+      ListRepositories (outputFormat);
       restartWindowed = false;
     }
 
@@ -1856,9 +1932,9 @@ main (/*[in]*/ int		argc,
   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
   if (FAILED(hr))
     {
-      tcerr << "mpm" << ": "
-	    << T_("The COM library could not be initialized.")
-	    << endl;
+      cerr << "mpm" << ": "
+	   << T_("The COM library could not be initialized.")
+	   << endl;
       return (1);
     }
 #endif
