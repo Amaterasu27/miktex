@@ -25,7 +25,7 @@
 
 #include "COM/comPackageManager.h"
 #include "COM/comPackageInstaller.h"
-#include "COM/comPackageInfoCollection.h"
+#include "COM/comPackageIterator.h"
 #include "COM/mpm.h"
 
 using namespace MiKTeX::Core;
@@ -185,92 +185,11 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 
 /* _________________________________________________________________________
 
-   comPackageManager::GetPackageInfoCollection
+   comPackageManager::CreatePackageIterator
    _________________________________________________________________________ */
 
 STDMETHODIMP
-comPackageManager::GetPackageInfoCollection
-(/*[out,retval]*/ IPackageInfoCollection ** ppCollection)
-{
-  PackageManagerImpl::localServer = true;
-  try
-    {
-      // create the IPackageInfoCollectioin object
-      CComObject<comPackageInfoCollection> * pCollection = 0;
-      HRESULT hr
-	= CComObject<comPackageInfoCollection>::CreateInstance(&pCollection);
-      if (FAILED(hr))
-	{
-	  *ppCollection = 0;
-	  return (hr);
-	}
-      
-      // increment the reference count of the new object; decrement it
-      // at the end of the block
-      CComPtr<IUnknown> pUnk (pCollection->GetUnknown());
-
-      CreateSession ();
-
-      pCollection->Initialize ();
-
-      // return the IPackageInfoCollection interface
-      return (pUnk->QueryInterface(ppCollection));
-    }
-  catch (const exception &)
-    {
-      *ppCollection = 0;
-
-      return (E_FAIL);
-    }
-}
-
-/* _________________________________________________________________________
-
-   comPackageManager::GetPackageInfoEnumerator
-   _________________________________________________________________________ */
-
-STDMETHODIMP
-comPackageManager::GetPackageInfoEnumerator
-(/*[out,retval]*/ IEnumPackageInfo ** ppEnum)
-{
-  PackageManagerImpl::localServer = true;
-  try
-    {
-      // create the IEnumPackageInfo object
-      CComObject<comEnumPackageInfo> * pEnum = 0;
-      HRESULT hr
-	= CComObject<comEnumPackageInfo>::CreateInstance(&pEnum);
-      if (FAILED(hr))
-	{
-	  *ppEnum = 0;
-	  return (hr);
-	}
-      
-      // increment the reference count of the new object; decrement it
-      // at the end of the block
-      CComPtr<IUnknown> pUnk (pEnum->GetUnknown());
-
-      CreateSession ();
-
-      pEnum->Initialize ();
-
-      // return the IEnumPackageInfo interface
-      return (pUnk->QueryInterface(ppEnum));
-    }
-  catch (const exception &)
-    {
-      *ppEnum = 0;
-      return (E_FAIL);
-    }
-}
-
-/* _________________________________________________________________________
-
-   comPackageManager::GetPackageIterator
-   _________________________________________________________________________ */
-
-STDMETHODIMP
-comPackageManager::GetPackageIterator
+comPackageManager::CreatePackageIterator
 (/*[out,retval]*/ IPackageIterator ** ppIter)
 {
   PackageManagerImpl::localServer = true;

@@ -93,8 +93,8 @@ if(NATIVE_WINDOWS)
       COM/comPackageInstaller.h
       COM/comPackageManager.cpp
       COM/comPackageManager.h
-      COM/comPackageInfoCollection.cpp
-      COM/comPackageInfoCollection.h
+      COM/comPackageIterator.cpp
+      COM/comPackageIterator.h
       COM/mpm.cpp
       COM/mpm.def
     )

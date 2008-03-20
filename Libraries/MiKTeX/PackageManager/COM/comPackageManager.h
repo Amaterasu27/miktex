@@ -90,18 +90,8 @@ public:
   (/*[in]*/ BSTR						deploymentName,
    /*[out,retval]*/ MiKTeXPackageManagerLib::PackageInfo *	pPackageInfo);
 
-
 public:
-  STDMETHOD(GetPackageInfoCollection)
-   (/*[out,retval]*/
-    MiKTeXPackageManagerLib::IPackageInfoCollection ** ppCollection);
-
-public:
-  STDMETHOD(GetPackageInfoEnumerator)
-  (/*[out,retval]*/ MiKTeXPackageManagerLib::IEnumPackageInfo ** ppEnum);
-
-public:
-  STDMETHOD(GetPackageIterator)
+  STDMETHOD(CreatePackageIterator)
   (/*[out,retval]*/ MiKTeXPackageManagerLib::IPackageIterator ** ppIter);
 
 private:
