@@ -1,6 +1,6 @@
 /* comPackageManager.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -25,6 +25,7 @@
 
 #include "COM/comPackageManager.h"
 #include "COM/comPackageInstaller.h"
+#include "COM/comPackageInfoCollection.h"
 #include "COM/mpm.h"
 
 using namespace MiKTeX::Core;
@@ -91,7 +92,8 @@ comPackageManager::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID* arr[] = 
     {
-      &__uuidof(IPackageManager)
+      &__uuidof(IPackageManager),
+      &__uuidof(IPackageManager2)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)
@@ -167,64 +169,7 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	pManager->GetPackageInfo(static_cast<const char *>
 				 (CW2A(deploymentName)));
 
-
-      _bstr_t deploymentName = packageInfo.deploymentName.c_str();
-      _bstr_t displayName = packageInfo.displayName.c_str();
-      _bstr_t title = packageInfo.title.c_str();
-      _bstr_t version = packageInfo.version.c_str();
-      _bstr_t description = packageInfo.description.c_str();
-      _bstr_t creator = packageInfo.creator.c_str();
-
-      pPackageInfo->deploymentName = deploymentName;
-      pPackageInfo->displayName = displayName;
-      pPackageInfo->title = title;
-      pPackageInfo->version = version;
-      pPackageInfo->description = description;
-      pPackageInfo->creator = creator;
-	  
-      pPackageInfo->sizeRunFiles = packageInfo.sizeRunFiles;
-      pPackageInfo->sizeDocFiles = packageInfo.sizeDocFiles;
-      pPackageInfo->sizeSourceFiles = packageInfo.sizeSourceFiles;
-
-      pPackageInfo->numRunFiles = packageInfo.runFiles.size();
-      pPackageInfo->numDocFiles = packageInfo.docFiles.size();
-      pPackageInfo->numSourceFiles = packageInfo.sourceFiles.size();
-      
-      if (packageInfo.timePackaged == static_cast<time_t>(-1)
-	  || packageInfo.timePackaged == static_cast<time_t>(0))
-	{
-	  pPackageInfo->timePackaged = COleDateTime();
-	}
-      else
-	{
-	  pPackageInfo->timePackaged = COleDateTime(packageInfo.timePackaged);
-	}
-
-      if (packageInfo.timeInstalled == static_cast<time_t>(-1)
-	  || packageInfo.timeInstalled == static_cast<time_t>(0))
-	{
-	  pPackageInfo->timeInstalled = COleDateTime();
-	  pPackageInfo->isInstalled = VARIANT_FALSE;
-	}
-      else
-	{
-	  pPackageInfo->timeInstalled =
-	    COleDateTime(packageInfo.timeInstalled);
-	  pPackageInfo->isInstalled = VARIANT_TRUE;
-	}
-
-      pPackageInfo->archiveFileSize = packageInfo.archiveFileSize;
-
-      memcpy (&pPackageInfo->digest,
-	      &packageInfo.digest,
-	      sizeof(packageInfo.digest));
-
-      deploymentName.Detach ();
-      displayName.Detach ();
-      title.Detach ();
-      version.Detach ();
-      description.Detach ();
-      creator.Detach ();
+      CopyPackageInfo (*pPackageInfo, packageInfo);
 
       return (S_OK);
     }
@@ -234,6 +179,127 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
     }
   catch (const exception &)
     {
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::GetPackageInfoCollection
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageManager::GetPackageInfoCollection
+(/*[out,retval]*/ IPackageInfoCollection ** ppCollection)
+{
+  PackageManagerImpl::localServer = true;
+  try
+    {
+      // create the IPackageInfoCollectioin object
+      CComObject<comPackageInfoCollection> * pCollection = 0;
+      HRESULT hr
+	= CComObject<comPackageInfoCollection>::CreateInstance(&pCollection);
+      if (FAILED(hr))
+	{
+	  *ppCollection = 0;
+	  return (hr);
+	}
+      
+      // increment the reference count of the new object; decrement it
+      // at the end of the block
+      CComPtr<IUnknown> pUnk (pCollection->GetUnknown());
+
+      CreateSession ();
+
+      pCollection->Initialize ();
+
+      // return the IPackageInfoCollection interface
+      return (pUnk->QueryInterface(ppCollection));
+    }
+  catch (const exception &)
+    {
+      *ppCollection = 0;
+
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::GetPackageInfoEnumerator
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageManager::GetPackageInfoEnumerator
+(/*[out,retval]*/ IEnumPackageInfo ** ppEnum)
+{
+  PackageManagerImpl::localServer = true;
+  try
+    {
+      // create the IEnumPackageInfo object
+      CComObject<comEnumPackageInfo> * pEnum = 0;
+      HRESULT hr
+	= CComObject<comEnumPackageInfo>::CreateInstance(&pEnum);
+      if (FAILED(hr))
+	{
+	  *ppEnum = 0;
+	  return (hr);
+	}
+      
+      // increment the reference count of the new object; decrement it
+      // at the end of the block
+      CComPtr<IUnknown> pUnk (pEnum->GetUnknown());
+
+      CreateSession ();
+
+      pEnum->Initialize ();
+
+      // return the IEnumPackageInfo interface
+      return (pUnk->QueryInterface(ppEnum));
+    }
+  catch (const exception &)
+    {
+      *ppEnum = 0;
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::GetPackageIterator
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageManager::GetPackageIterator
+(/*[out,retval]*/ IPackageIterator ** ppIter)
+{
+  PackageManagerImpl::localServer = true;
+  try
+    {
+      // create the IPackageIterator object
+      CComObject<comPackageIterator> * pIter = 0;
+      HRESULT hr
+	= CComObject<comPackageIterator>::CreateInstance(&pIter);
+      if (FAILED(hr))
+	{
+	  *ppIter = 0;
+	  return (hr);
+	}
+      
+      // increment the reference count of the new object; decrement it
+      // at the end of the block
+      CComPtr<IUnknown> pUnk (pIter->GetUnknown());
+
+      CreateSession ();
+
+      pIter->Initialize ();
+
+      // return the IPackageIterator interface
+      return (pUnk->QueryInterface(ppIter));
+    }
+  catch (const exception &)
+    {
+      *ppIter = 0;
       return (E_FAIL);
     }
 }

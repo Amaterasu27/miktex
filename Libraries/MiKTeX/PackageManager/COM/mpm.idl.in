@@ -1,6 +1,6 @@
 /* mpm.idl:							-*- IDL -*-
 
-   Copyright (C) 2006-2007 Christian Schenk
+   Copyright (C) 2006-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -239,6 +239,160 @@ interface IPackageManager : IDispatch
 
 /* _________________________________________________________________________
    
+   IPackageIterator
+   _________________________________________________________________________ */
+
+/// @brief Package info iterator interface.
+[
+  object,
+  uuid(D02EF17D-1CEF-450B-9C58-ABBB3AE286CC),
+  helpstring("IPackageIterator Interface"),
+  pointer_default(unique)
+]
+interface IPackageIterator : IUnknown
+{
+  /// @brief Retrieve the next package info structure.
+  /// @return Returns the next structure.
+  [
+    helpstring("method GetNextPackageInfo")
+  ]
+  HRESULT
+  GetNextPackageInfo ([out] PackageInfo * packageInfo,
+		      [out,retval] VARIANT_BOOL * done);
+};
+
+/* _________________________________________________________________________
+   
+   IEnumPackageInfo
+   _________________________________________________________________________ */
+
+/// @brief Package info enumerator interface.
+[
+  object,
+  uuid(8BD4C3EE-A863-4E5E-A77F-108D3D47ADCF),
+  helpstring("IEnumPackageInfo Interface"),
+  pointer_default(unique)
+]
+interface IEnumPackageInfo : IUnknown
+{
+  /// @brief Retrieve the next package info structures.
+  /// @param[in] count Number of structures being requested.
+  /// @param[out] packageInfo Array of size count (or larger).
+  /// @param[out] fetched Number of structures actually supplied.
+  [
+    helpstring("method Next")
+  ]
+  HRESULT
+  Next ([in] ULONG count, 
+	[out,  size_is(count), length_is(*fetched)] PackageInfo * packageInfo,
+	[out] ULONG * fetched);
+
+  /// @brief Skip over the next specified number of structures.
+  /// @param[in] count Number of structures to be skipped.
+  [
+    helpstring("method Skip")
+  ]
+  HRESULT
+  Skip ([in] ULONG count);
+
+  /// @brief Resets the enumeration sequence to the beginning.
+  [
+    helpstring("method Reset")
+  ]
+  HRESULT
+  Reset ();
+
+  /// @brief Creates another enumerator that contains the same
+  ///   enumeration state as the current one.
+  /// @param[out] other Address of IEnumPackageInfo pointer variable
+  ///   that receives the interface pointer to the enumeration object.
+  [
+    helpstring("method Clone")
+  ]
+  HRESULT
+  Clone ([out] IEnumPackageInfo ** other);
+};
+
+/* _________________________________________________________________________
+   
+   IPackageInfoCollection
+   _________________________________________________________________________ */
+
+/// @brief Package info collection interface.
+[
+  object,
+  uuid(C941F37E-439C-4215-835F-75C7AD49B80C),
+  dual,
+  nonextensible,
+  helpstring("IPackageInfoCollection Interface"),
+  pointer_default(unique)
+]
+interface IPackageInfoCollection : IDispatch
+{
+  /// @brief Creates a new enumerator interface.
+  /// @return Returns the new enumerator interface.
+  [id(DISPID_NEWENUM), propget]
+  HRESULT _NewEnum ([out, retval] IUnknown ** enumerator);
+
+  /// @brief Obtains a specific package info structure.
+  /// @param[in] index Index of package info structure to be retrieved.
+  /// @return Returns the requested package info structure.
+  [id(DISPID_VALUE), propget]
+  HRESULT Item ([in] long index, 
+		[out, retval] VARIANT * item);
+
+  /// @brief Number of package info structures in the collection.
+  /// @return Returns the number of package info structures.
+  [id(1), propget]
+  HRESULT Count([out, retval] long * count);
+};
+
+/* _________________________________________________________________________
+   
+   IPackageManager2
+   _________________________________________________________________________ */
+
+/// @brief Package manager interface (version 2).
+[
+  object,
+  uuid(847D93E9-E086-4F09-B8C5-91CDCCF12CF3),
+  dual,
+  nonextensible,
+  helpstring("IPackageManager2 Interface"),
+  pointer_default(unique)
+]
+interface IPackageManager2 : IPackageManager
+{
+  /// @brief Obtains a packageinfo  collection.
+  /// @return Returns the package info collection.
+  [
+    id(3),
+    helpstring("method GetPackageInfoCollection")
+  ]
+  HRESULT
+  GetPackageInfoCollection ([out,retval] IPackageInfoCollection ** collection);
+
+  /// @brief Obtains a packageinfo enumerator.
+  /// @return Returns the enumerator.
+  [
+    id(4),
+    helpstring("method GetPackageInfoEnumerator")
+  ]
+  HRESULT
+  GetPackageInfoEnumerator ([out,retval] IEnumPackageInfo ** enumerator);
+
+  /// @brief Obtains a package iterator.
+  /// @return Returns the iterator.
+  [
+    id(5),
+    helpstring("method GetPackageIterator")
+  ]
+  HRESULT
+  GetPackageIterator ([out,retval] IPackageIterator ** iter);
+};
+
+/* _________________________________________________________________________
+   
    MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
@@ -263,9 +417,15 @@ library MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
   ]
   coclass PackageManager@MIKTEX_SERIES_ID_STR@
   {
-    [default] interface IPackageManager;
+    interface IPackageManager;
+    [default] interface IPackageManager2;
   };
 
+  struct MD5;
+  struct PackageInfo;
   interface IPackageInstaller;
   interface IPackageInstallerCallback;
+  interface IEnumPackageInfo;
+  interface IPackageIterator;
+  interface IPackageInfoCollection;
 };
