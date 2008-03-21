@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -54,11 +54,10 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/omega.web
   COMMAND ${tie_exe}
 	-m ${CMAKE_CURRENT_BINARY_DIR}/omega.web
-	${tex_web}
-	${tex_fallback_ch}
+	${tex98_web}
 	${omfiles}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${tex_web} ${tex_fallback_ch} ${omfiles}
+  DEPENDS ${tex98_web} ${omfiles}
   VERBATIM
 )
 
