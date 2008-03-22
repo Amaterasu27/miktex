@@ -1,6 +1,6 @@
 /* mpm.idl:							-*- IDL -*-
 
-   Copyright (C) 2006-2007 Christian Schenk
+   Copyright (C) 2006-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -239,6 +239,56 @@ interface IPackageManager : IDispatch
 
 /* _________________________________________________________________________
    
+   IPackageIterator
+   _________________________________________________________________________ */
+
+/// @brief Package iterator interface.
+[
+  object,
+  uuid(D02EF17D-1CEF-450B-9C58-ABBB3AE286CC),
+  helpstring("IPackageIterator Interface"),
+  pointer_default(unique)
+]
+interface IPackageIterator : IUnknown
+{
+  /// @brief Retrieve the next package info structure.
+  /// @return Returns the next structure.
+  [
+    helpstring("method GetNextPackageInfo")
+  ]
+  HRESULT
+  GetNextPackageInfo ([out] PackageInfo * packageInfo,
+		      [out,retval] VARIANT_BOOL * done);
+};
+
+/* _________________________________________________________________________
+   
+   IPackageManager2
+   _________________________________________________________________________ */
+
+/// @brief Package manager interface (version 2).
+[
+  object,
+  uuid(847D93E9-E086-4F09-B8C5-91CDCCF12CF3),
+  dual,
+  nonextensible,
+  helpstring("IPackageManager2 Interface"),
+  pointer_default(unique)
+]
+interface IPackageManager2 : IPackageManager
+{
+  /// @brief Obtains a package iterator.
+  /// @return Returns the iterator.
+  [
+    id(3),
+    helpstring("method CreatePackageIterator")
+  ]
+  HRESULT
+  CreatePackageIterator ([out,retval] IPackageIterator ** iter);
+};
+
+/* _________________________________________________________________________
+   
    MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
@@ -263,9 +313,13 @@ library MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
   ]
   coclass PackageManager@MIKTEX_SERIES_ID_STR@
   {
-    [default] interface IPackageManager;
+    interface IPackageManager;
+    [default] interface IPackageManager2;
   };
 
+  struct MD5;
+  struct PackageInfo;
   interface IPackageInstaller;
   interface IPackageInstallerCallback;
+  interface IPackageIterator;
 };
