@@ -18,6 +18,6 @@
    USA.  */
 
 #define MIKTEX_COMPONENT_VERSION 2975
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.2.1 svn 846"
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.2.1 svn 852"
 
 #include <miktex/Core/Version>

@@ -36,7 +36,7 @@ U_NAMESPACE_BEGIN
  *
  * @internal
  */
-class KhmerOpenTypeLayoutEngine : public OpenTypeLayoutEngine
+class U_EXPORT KhmerOpenTypeLayoutEngine : public OpenTypeLayoutEngine
 {
 public:
     /**
@@ -119,7 +119,7 @@ protected:
      *
      * @internal
      */
-    virtual le_int32 characterProcessing(const LEUnicode chars[], le_int32 offset, le_int32 count, le_int32 max, le_bool rightToLeft, le_bool doCanonGSUB,
+    virtual le_int32 characterProcessing(const LEUnicode chars[], le_int32 offset, le_int32 count, le_int32 max, le_bool rightToLeft,
             LEUnicode *&outChars, LEGlyphStorage &glyphStorage, LEErrorCode &success);
 
 };
