@@ -1,0 +1,302 @@
+<ui version="4.0" >
+ <author>Christian Schenk &lt;cs@miktex.org></author>
+ <class>InstallPackageDialog</class>
+ <widget class="QDialog" name="InstallPackageDialog" >
+  <property name="windowModality" >
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>529</width>
+    <height>212</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Package Installation</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>The required file</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>16</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblMissingFile" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>TextLabel</string>
+       </property>
+       <property name="textInteractionFlags" >
+        <set>Qt::NoTextInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>is missing. It is a part of the following package:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>16</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="lblPackageName" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>TextLabel</string>
+         </property>
+         <property name="textFormat" >
+          <enum>Qt::AutoText</enum>
+         </property>
+         <property name="textInteractionFlags" >
+          <set>Qt::NoTextInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblPackageTitle" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>TextLabel</string>
+         </property>
+         <property name="openExternalLinks" >
+          <bool>false</bool>
+         </property>
+         <property name="textInteractionFlags" >
+          <set>Qt::NoTextInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_8" >
+       <property name="text" >
+        <string>The package will be installed from:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>editInstallationSource</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QLineEdit" name="editInstallationSource" >
+         <property name="enabled" >
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="whatsThis" >
+          <string>The location of the package repository. Click Change... to change the location.</string>
+         </property>
+         <property name="autoFillBackground" >
+          <bool>false</bool>
+         </property>
+         <property name="frame" >
+          <bool>true</bool>
+         </property>
+         <property name="readOnly" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>6</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnChange" >
+         <property name="whatsThis" >
+          <string>Change the package repository.</string>
+         </property>
+         <property name="text" >
+          <string>&amp;Change...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QCheckBox" name="chkDontAskAgain" >
+       <property name="text" >
+        <string>&amp;Always show this dialog before installing packages</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>611</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnInstall" >
+       <property name="whatsThis" >
+        <string>Install the required package.</string>
+       </property>
+       <property name="text" >
+        <string>Install</string>
+       </property>
+       <property name="default" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel" >
+       <property name="whatsThis" >
+        <string>Don't install the required package.</string>
+       </property>
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <tabstops>
+  <tabstop>editInstallationSource</tabstop>
+  <tabstop>btnChange</tabstop>
+  <tabstop>chkDontAskAgain</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
