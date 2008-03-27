@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -102,6 +102,7 @@ set(texmf_dll_name	"${miktex_dll_prefix}-texmf")
 set(tftopl_dll_name	"${miktex_dll_prefix}-tftopl")
 set(tiff_dll_name	"${miktex_dll_prefix}-tiff")
 set(ui_mfc_dll_name	"${miktex_dll_prefix}-ui-MFC")
+set(ui_qt_dll_name	"${miktex_dll_prefix}-ui-Qt")
 set(unxemu_dll_name	"${miktex_dll_prefix}-unxemu")
 set(vftovp_dll_name	"${miktex_dll_prefix}-vftovp")
 set(vptovf_dll_name	"${miktex_dll_prefix}-vptovf")

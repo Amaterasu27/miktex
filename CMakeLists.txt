@@ -419,6 +419,12 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
+if(QT4_FOUND)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
+  )
+endif(QT4_FOUND)
+
 if(BUILDING_MIKTEX AND MFC_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
@@ -621,6 +627,10 @@ add_subdirectory(${rel_mpmlib_dir})
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_mpmlib_dir}-static)
 endif(NATIVE_WINDOWS)
+
+if(QT4_FOUND)
+  add_subdirectory(${rel_ui_qt_dir})
+endif(QT4_FOUND)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})

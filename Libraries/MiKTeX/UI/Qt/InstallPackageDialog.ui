@@ -60,7 +60,7 @@
         </sizepolicy>
        </property>
        <property name="text" >
-        <string>TextLabel</string>
+        <string/>
        </property>
        <property name="textInteractionFlags" >
         <set>Qt::NoTextInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -111,7 +111,7 @@
           </sizepolicy>
          </property>
          <property name="text" >
-          <string>TextLabel</string>
+          <string/>
          </property>
          <property name="textFormat" >
           <enum>Qt::AutoText</enum>
@@ -130,7 +130,7 @@
           </sizepolicy>
          </property>
          <property name="text" >
-          <string>TextLabel</string>
+          <string/>
          </property>
          <property name="openExternalLinks" >
           <bool>false</bool>
@@ -245,7 +245,7 @@
    <item>
     <layout class="QHBoxLayout" >
      <item>
-      <widget class="QCheckBox" name="chkDontAskAgain" >
+      <widget class="QCheckBox" name="chkAlwaysAsk" >
        <property name="text" >
         <string>&amp;Always show this dialog before installing packages</string>
        </property>
@@ -295,8 +295,41 @@
  <tabstops>
   <tabstop>editInstallationSource</tabstop>
   <tabstop>btnChange</tabstop>
-  <tabstop>chkDontAskAgain</tabstop>
+  <tabstop>chkAlwaysAsk</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnInstall</sender>
+   <signal>clicked()</signal>
+   <receiver>InstallPackageDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>397</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>264</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>InstallPackageDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>480</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>264</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
