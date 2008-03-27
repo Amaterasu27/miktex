@@ -34,7 +34,7 @@
    _________________________________________________________________________ */
 
 InstallPackageDialog::InstallPackageDialog
-(/*[in]*/ QDialog *		pParent,
+(/*[in]*/ QWidget *		pParent,
  /*[in]*/ PackageManager *	pManager,
  /*[in]*/ const char *		lpszPackageName,
  /*[in]*/ const char *		lpszTrigger)
@@ -51,12 +51,12 @@ InstallPackageDialog::InstallPackageDialog
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
 	{
-	  lineInstallationSource->setText
+	  editInstallationSource->setText
 	    (QString::fromLocal8Bit(repository.c_str()));
 	}
       else
 	{
-	  lineInstallationSource->setText (T_("<Random package repository>"));
+	  editInstallationSource->setText (T_("<Random package repository>"));
 	}
 #if defined(MIKTEX_WINDOWS)
       // show the Windows Vista shield icon

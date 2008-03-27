@@ -1,4 +1,4 @@
-/* StdAfx.h: pre-compiled header stuff
+/* mikuiqt.rc.in:
 
    Copyright (C) 2008 Christian Schenk
 
@@ -19,15 +19,13 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#include <QtGui>
+#include "mikuiqt-version.h"
 
-#if defined(MIKTEX_WINDOWS)
-#  include <Windows.h>
-#  include <Commctrl.h>
-#endif
+#define VER_INTERNALNAME_STR "${ui_qt_dll_name}"
+#define VER_ORIGINALFILENAME_STR "${ui_qt_dll_name}.dll"
 
-#include <miktex/Core/Core>
-#include <miktex/Core/Debug>
-#include <miktex/Core/Paths>
-#include <miktex/Core/Registry>
-#include <miktex/PackageManager/PackageManager>
+#define VER_FILEDESCRIPTION_STR "MiKTeX UI Qt DLL"
+
+#define VER_FILETYPE VFT_DLL
+
+#include <miktex/Core/win/version.rc>

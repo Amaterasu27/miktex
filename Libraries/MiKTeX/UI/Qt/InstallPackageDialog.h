@@ -26,6 +26,8 @@
 #if ! defined(FA975C232D1F491C84BA4294548DFE25)
 #define FA975C232D1F491C84BA4294548DFE25
 
+#include <miktex/PackageManager/PackageManager>
+
 #include "ui_InstallPackageDialog.h"
 
 class InstallPackageDialog
@@ -37,10 +39,10 @@ private:
 
 public:
   InstallPackageDialog
-  (/*[in]*/ QWidget *		pParent,
-   /*[in]*/ PackageManager *	pManager,
-   /*[in]*/ const char *	lpszPackageName,
-   /*[in]*/ const char *	lpszTrigger);
+  (/*[in]*/ QWidget *				pParent,
+   /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+   /*[in]*/ const char *			lpszPackageName,
+   /*[in]*/ const char *			lpszTrigger);
 
 public:
   void
@@ -58,7 +60,7 @@ public:
   }
 
 public:
-  PackageManagerPtr pManager;
+  MiKTeX::Packages::PackageManagerPtr pManager;
 
 private slots:
   void on_btnChange_clicked();

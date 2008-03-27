@@ -297,6 +297,7 @@
   <tabstop>btnChange</tabstop>
   <tabstop>chkAlwaysAsk</tabstop>
  </tabstops>
+ <includes/>
  <resources/>
  <connections>
   <connection>

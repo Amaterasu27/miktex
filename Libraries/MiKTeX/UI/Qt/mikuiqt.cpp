@@ -72,7 +72,7 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
 				lpszPackageName,
 				lpszTrigger);
       dlg.SetAlwaysAsk (enableInstaller == TriState::True ? false : true);
-      DialogCode dialogCode = dlg.exec();
+      int dialogCode = dlg.exec();
       if (dialogCode != QDialog::Accepted && dialogCode != QDialog::Rejected)
 	{
 	  ret = (NO | DONTASKAGAIN);

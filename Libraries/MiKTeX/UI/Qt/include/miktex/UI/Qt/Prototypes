@@ -63,7 +63,7 @@ MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ Qt::QWidget *					pParent,
+(/*[in]*/ QWidget *					pParent,
  /*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
  /*[in]*/ const char *					lpszPackageName,
  /*[in]*/ const char *					lpszTrigger);
@@ -71,6 +71,6 @@ InstallPackageMessageBox
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog (/*[in]*/  Qt::QWidget * pParent);
+ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent);
 
 MIKUI_QT_END_NAMESPACE;
