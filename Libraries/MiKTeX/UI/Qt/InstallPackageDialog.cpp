@@ -44,6 +44,12 @@ InstallPackageDialog::InstallPackageDialog
   setupUi (this);
   try
     {
+      QPushButton * pOKButton = buttonBox->button(QDialogButtonBox::Ok);
+      if (pOKButton == 0)
+	{
+	  UNEXPECTED_CONDITION ("InstallPackageDialog::InstallPackageDialog");
+	}
+      pOKButton->text (T_("Install"));
       lblPackageName->setText (QString::fromLocal8Bit(lpszPackageName));
       lblMissingFile->setText (QString::fromLocal8Bit(lpszTrigger));
       PackageInfo packageInfo = pManager->GetPackageInfo(lpszPackageName);
@@ -51,12 +57,12 @@ InstallPackageDialog::InstallPackageDialog
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
 	{
-	  editInstallationSource->setText
+	  leInstallationSource->setText
 	    (QString::fromLocal8Bit(repository.c_str()));
 	}
       else
 	{
-	  editInstallationSource->setText (T_("<Random package repository>"));
+	  leInstallationSource->setText (T_("<Random package repository>"));
 	}
 #if defined(MIKTEX_WINDOWS)
       // show the Windows Vista shield icon
@@ -65,10 +71,11 @@ InstallPackageDialog::InstallPackageDialog
 	    || SessionWrapper(true)->IsUserAnAdministrator()));
       if (IsWindowsVista() && ! restrictedUserSetup)
 	{
-	  HWND hwnd = btnInstall->winId();
+	  HWND hwnd = pOKButton->winId();
 	  if (hwnd == 0)
 	    {
-	      UNEXPECTED_CONDITION ("InstallPackageDialog::OnInitDialog");
+	      UNEXPECTED_CONDITION
+		("InstallPackageDialog::InstallPackageDialog");
 	    }
 	  Button_SetElevationRequiredState (hwnd, TRUE);
 	}
@@ -109,7 +116,7 @@ InstallPackageDialog::on_btnChange_clicked ()
       if (pManager->TryGetDefaultPackageRepository(repositoryType,
 						   repository))
 	{
-	  editInstallationSource->setText
+	  leInstallationSource->setText
 	    (QString::fromLocal8Bit(repository.c_str()));
 	}
     }

@@ -28,9 +28,12 @@
 #define F752091EC06B4B4E827B2AACABAEE953
 #include <miktex/UI/Qt/Prototypes>
 
+#include <miktex/UI/UI>
+
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX::UI::Qt;
+using namespace MiKTeX::UI;
 using namespace std;
 
 /* _________________________________________________________________________

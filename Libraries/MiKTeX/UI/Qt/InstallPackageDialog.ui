@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <author>Christian Schenk &lt;cs@miktex.org></author>
+ <author>Christian Schenk</author>
  <class>InstallPackageDialog</class>
  <widget class="QDialog" name="InstallPackageDialog" >
   <property name="windowModality" >
@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
-    <height>212</height>
+    <width>450</width>
+    <height>224</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -149,10 +149,13 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>6</height>
       </size>
      </property>
     </spacer>
@@ -168,14 +171,14 @@
         <string>The package will be installed from:</string>
        </property>
        <property name="buddy" >
-        <cstring>editInstallationSource</cstring>
+        <cstring>leInstallationSource</cstring>
        </property>
       </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" >
        <item>
-        <widget class="QLineEdit" name="editInstallationSource" >
+        <widget class="QLineEdit" name="leInstallationSource" >
          <property name="enabled" >
           <bool>true</bool>
          </property>
@@ -234,10 +237,13 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>6</height>
       </size>
      </property>
     </spacer>
@@ -252,38 +258,9 @@
       </widget>
      </item>
      <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>611</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnInstall" >
-       <property name="whatsThis" >
-        <string>Install the required package.</string>
-       </property>
-       <property name="text" >
-        <string>Install</string>
-       </property>
-       <property name="default" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnCancel" >
-       <property name="whatsThis" >
-        <string>Don't install the required package.</string>
-       </property>
-       <property name="text" >
-        <string>Cancel</string>
+      <widget class="QDialogButtonBox" name="buttonBox" >
+       <property name="standardButtons" >
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
@@ -291,9 +268,8 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
  <tabstops>
-  <tabstop>editInstallationSource</tabstop>
+  <tabstop>leInstallationSource</tabstop>
   <tabstop>btnChange</tabstop>
   <tabstop>chkAlwaysAsk</tabstop>
  </tabstops>
@@ -301,14 +277,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>btnInstall</sender>
-   <signal>clicked()</signal>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
    <receiver>InstallPackageDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>397</x>
-     <y>189</y>
+     <x>59</x>
+     <y>24</y>
     </hint>
     <hint type="destinationlabel" >
      <x>264</x>
@@ -317,14 +293,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnCancel</sender>
-   <signal>clicked()</signal>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
    <receiver>InstallPackageDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>480</x>
-     <y>189</y>
+     <x>59</x>
+     <y>24</y>
     </hint>
     <hint type="destinationlabel" >
      <x>264</x>

@@ -270,33 +270,28 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
   static bool initUiFrameworkDone = false;
   if (enableInstaller == TriState::Undetermined)
     {
-#if defined(MIKTEX_ATLMFC)
       if (! initUiFrameworkDone)
 	{
-	  MiKTeX::UI::MFC::InitializeFramework ();
+	  MiKTeX::UI::InitializeFramework ();
 	  initUiFrameworkDone = true;
 	}
-      UINT msgBoxRet =
-	MiKTeX::UI::MFC::InstallPackageMessageBox(0,
-						  pPackageManager.Get(),
-						  lpszPackageName,
-						  lpszTrigger);
-      bool doInstall = ((msgBoxRet & MiKTeX::UI::MFC::YES) != 0);
-      if ((msgBoxRet & MiKTeX::UI::MFC::DONTASKAGAIN) != 0)
+      bool doInstall = false;
+      unsigned int msgBoxRet =
+	MiKTeX::UI::InstallPackageMessageBox(pPackageManager.Get(),
+					     lpszPackageName,
+					     lpszTrigger);
+      doInstall = ((msgBoxRet & MiKTeX::UI::YES) != 0);
+      if ((msgBoxRet & MiKTeX::UI::DONTASKAGAIN) != 0)
 	{
 	  enableInstaller =
 	    (doInstall ? TriState::True : TriState::False);
 	}
-#else
-      bool doInstall = false;
-#endif
       if (! doInstall)
 	{
 	  ignoredPackages.insert (lpszPackageName);
 	  return (false);
 	}
     }
-#if defined(MIKTEX_ATLMFC)
   string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
@@ -304,15 +299,14 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
     {
       if (! initUiFrameworkDone)
 	{
-	  MiKTeX::UI::MFC::InitializeFramework ();
+	  MiKTeX::UI::InitializeFramework ();
 	  initUiFrameworkDone = true;
 	}
-      if (! MiKTeX::UI::MFC::ProxyAuthenticationDialog(0))
+      if (! MiKTeX::UI::ProxyAuthenticationDialog())
 	{
 	  return (false);
 	}
     }
-#endif
   if (pInstaller.get() == 0)
     {
       pInstaller.reset (pPackageManager->CreateInstaller());

@@ -42,6 +42,4 @@
 #include <miktex/Core/Paths>
 #include <miktex/Core/Trace>
 
-#if defined(MIKTEX_ATLMFC)
-#  include <MiKTeX/UI/MFC/Prototypes>
-#endif
+#include <MiKTeX/UI/UI>

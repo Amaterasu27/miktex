@@ -334,6 +334,12 @@ add_definitions(-DHAVE_CONFIG_H)
 
 add_definitions(-DMIKTEX)
 
+if(QT4_FOUND)
+  add_definitions(
+    -DMIKTEX_QT
+  )
+endif(QT4_FOUND)
+
 if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS

@@ -55,22 +55,17 @@ void
 MIKTEXCEECALL
 InitializeFramework ();
 
-const unsigned int YES = 1;
-const unsigned int NO = 2;
-const unsigned int DONTASKAGAIN = 4;
-
 MIKTEXUIEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ HWND						hwndParent,
- /*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
+(/*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
  /*[in]*/ const char *					lpszPackageName,
  /*[in]*/ const char *					lpszTrigger);
 
 MIKTEXUIEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent);
+ProxyAuthenticationDialog ();
 
 MIKUI_MFC_END_NAMESPACE;

@@ -27,6 +27,8 @@ include_directories(
 set(${ui_qt_dll_name}_sources
   InstallPackageDialog.cpp
   InstallPackageDialog.h
+  ProxyAuthenticationDialog.cpp
+  ProxyAuthenticationDialog.h
   StdAfx.cpp
   StdAfx.h
   internal.h
@@ -46,10 +48,12 @@ endif(NATIVE_WINDOWS)
 
 set(${ui_qt_dll_name}_moc_sources
   InstallPackageDialog.h
+  ProxyAuthenticationDialog.h
 )
 
 set(${ui_qt_dll_name}_ui_files
   InstallPackageDialog.ui
+  ProxyAuthenticationDialog.ui
 )
 
 qt4_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})

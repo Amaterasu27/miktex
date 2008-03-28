@@ -53,13 +53,23 @@ target_link_libraries(${app_dll_name}
   ${mpm_dll_name}
 )
 
+if(QT4_FOUND)
+  target_link_libraries(${app_dll_name}
+    ${ui_qt_dll_name}
+  )
+endif(QT4_FOUND)
+
 if(MFC_FOUND)
   target_link_libraries(${app_dll_name}
     ${ui_mfc_dll_name}
   )
 endif(MFC_FOUND)
 
-delay_load(${app_dll_name} ${mpm_dll_name} ${ui_mfc_dll_name})
+delay_load(${app_dll_name}
+  ${mpm_dll_name}
+  ${ui_qt_dll_name}
+  ${ui_mfc_dll_name}
+)
 
 rebase(${app_dll_name})
 

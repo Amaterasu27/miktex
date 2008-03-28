@@ -1,6 +1,6 @@
 /* MiKTeX/UI/Qt/Prototypes:					-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -55,22 +55,17 @@ void
 MIKTEXCEECALL
 InitializeFramework ();
 
-const unsigned int YES = 1;
-const unsigned int NO = 2;
-const unsigned int DONTASKAGAIN = 4;
-
 MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ QWidget *					pParent,
- /*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
+(/*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
  /*[in]*/ const char *					lpszPackageName,
  /*[in]*/ const char *					lpszTrigger);
 
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent);
+ProxyAuthenticationDialog ();
 
 MIKUI_QT_END_NAMESPACE;

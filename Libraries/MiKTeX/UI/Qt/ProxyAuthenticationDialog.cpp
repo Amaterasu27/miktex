@@ -1,4 +1,4 @@
-/* mikuiqt.rc.in:
+/* ProxyAuthenticationDialog.cpp:
 
    Copyright (C) 2008 Christian Schenk
 
@@ -19,13 +19,22 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#include "mikuiqt-version.h"
+#include "StdAfx.h"
 
-#define VER_INTERNALNAME_STR "${ui_qt_dll_name}"
-#define VER_ORIGINALFILENAME_STR "${ui_qt_dll_name}.dll"
+#include "internal.h"
+#include "ProxyAuthenticationDialog.h"
 
-#define VER_FILEDESCRIPTION_STR "MiKTeX UI DLL (Qt)"
+/* _________________________________________________________________________
 
-#define VER_FILETYPE VFT_DLL
+   ProxyAuthenticationDialog::ProxyAuthenticationDialog
+   _________________________________________________________________________ */
 
-#include <miktex/Core/win/version.rc>
+ProxyAuthenticationDialog::ProxyAuthenticationDialog
+(/*[in]*/ QWidget *		pParent)
+  : QDialog (pParent)
+{
+  setupUi (this);
+  QRegExp namePattern ("\w+");
+  QValidator * pValidator = new QRegExpValidator(namePattern, this);
+  leName->setValidator (pValidator);
+}

@@ -29,9 +29,12 @@
 #include <miktex/UI/MFC/Prototypes>
 #include <miktex/UI/MFC/ErrorDialog>
 
+#include <miktex/UI/UI>
+
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX::UI::MFC;
+using namespace MiKTeX::UI;
 using namespace std;
 
 /* _________________________________________________________________________

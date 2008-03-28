@@ -24,9 +24,7 @@
 #include "internal.h"
 
 #include "InstallPackageDialog.h"
-#if 0
 #include "ProxyAuthenticationDialog.h"
-#endif
 
 /* _________________________________________________________________________
    
@@ -49,11 +47,11 @@ MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 MiKTeX::UI::Qt::InstallPackageMessageBox
-(/*[in]*/ QWidget *		pParent,
- /*[in]*/ PackageManager *	pManager,
+(/*[in]*/ PackageManager *	pManager,
  /*[in]*/ const char *		lpszPackageName,
  /*[in]*/ const char *		lpszTrigger)
 {
+  QWidget * pParent = 0;
   SessionWrapper pSession (true);
   TriState enableInstaller
     = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -99,8 +97,10 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-MiKTeX::UI::Qt::ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent)
+MiKTeX::UI::Qt::ProxyAuthenticationDialog ()
 {
+  QWidget * pParent = 0;
+
   ProxySettings proxySettings;
 
   bool done = true;
@@ -110,21 +110,17 @@ MiKTeX::UI::Qt::ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent)
       && proxySettings.authenticationRequired
       && proxySettings.user.empty())
     {
-#if 0				// TODO
       ::ProxyAuthenticationDialog dlg (pParent);
       if (dlg.exec() == QDialog::Accepted)
 	{
-	  proxySettings.user = dlg.GetName();
-	  proxySettings.password = dlg.GetPassword();
+	  proxySettings.user = dlg.GetName().toLocal8Bit();
+	  proxySettings.password = dlg.GetPassword().toLocal8Bit();
 	  PackageManager::SetProxy (proxySettings);
 	}
       else
 	{
 	  done = false;
 	}
-#else
-      done = false;
-#endif
     }
 
   return (done);
