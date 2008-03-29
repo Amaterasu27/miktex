@@ -1,6 +1,6 @@
 %% tex-miktex-hyph.ch:
 %% 
-%% Copyright (C) 1991-2007 Christian Schenk
+%% Copyright (C) 1991-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -187,11 +187,11 @@ arrays start at |0|.
 
 @x
 @!hyph_word:array[hyph_pointer] of str_number; {exception words}
-@!hyph_list:array[hyph_pointer] of pointer; {list of hyphen positions}
+@!hyph_list:array[hyph_pointer] of pointer; {lists of hyphen positions}
 @!hyph_count:hyph_pointer; {the number of words in the exception dictionary}
 @y
 @!hyph_word: ^str_number; {exception words}
-@!hyph_list: ^pointer; {list of hyphen positions}
+@!hyph_list: ^pointer; {lists of hyphen positions}
 @!hyph_link: ^hyph_pointer; {link array for hyphen exceptions hash table}
 @!hyph_count:integer; {the number of words in the exception dictionary}
 @!hyph_next:integer; {next free slot in hyphen exceptions hash table}

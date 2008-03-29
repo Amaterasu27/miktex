@@ -1,6 +1,6 @@
 %% mf-miktex.ch: WEB change file for METAFONT
 %% 
-%% Copyright (C) 1991-2007 Christian Schenk
+%% Copyright (C) 1991-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -489,7 +489,7 @@ end;
 
 @x
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
-@d t_open_out==rewrite(term_out,'TTY:','/O') {open the terminal for text output}
+@d t_open_out==rewrite(term_out,'TTY:','/O')
 @y
 @d t_open_in==term_in:=i@&nput
 @d t_open_out==term_out:=output
@@ -772,7 +772,7 @@ var @!p:integer; {the fraction so far}
 @!negative:boolean; {should the result be negated?}
 @!n:integer; {additional multiple of $q$}
 @!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>0|@>;
+begin @<Reduce to the case that |f>=0| and |q>=0|@>;
 if f<fraction_one then n:=0
 else  begin n:=f div fraction_one; f:=f mod fraction_one;
   if q<=el_gordo div n then n:=n*q
@@ -802,7 +802,7 @@ var @!p:integer; {the fraction so far}
 @!negative:boolean; {should the result be negated?}
 @!n:integer; {additional multiple of $q$}
 @!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>0|@>;
+begin @<Reduce to the case that |f>=0| and |q>=0|@>;
 if f<unity then n:=0
 else  begin n:=f div unity; f:=f mod unity;
   if q<=el_gordo div n then n:=n*q
