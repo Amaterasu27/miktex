@@ -518,7 +518,7 @@ if not eof(fmt_file) then goto bad_fmt
       k := 0;
       for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(name_of_file + 1);
+      system(conststringcast(name_of_file+1));
 @y
       miktex_write18(miktex_get_string_at(str_start_macro(str_ptr)));
 @z

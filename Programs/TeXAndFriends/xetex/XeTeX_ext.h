@@ -213,9 +213,6 @@ typedef struct
 } GlyphBBox;
 
 
-extern char *outputdriver;
-extern char *papersize;
-
 /* For Unicode encoding form interpretation... */
 extern const UInt32 offsetsFromUTF8[6];
 extern const UInt8 bytesFromUTF8[256];
@@ -250,7 +247,6 @@ extern "C" {
 	void linebreakstart(integer localeStrNum, const UniChar* text, integer textLength);
 	int linebreaknext();
 	int getencodingmodeandinfo(integer* info);
-	void printcstring(const char* str);
 	void printutf8str(const unsigned char* str, int len);
 	void printchars(const unsigned short* str, int len);
 	void* load_mapping_file(const char* s, const char* e);

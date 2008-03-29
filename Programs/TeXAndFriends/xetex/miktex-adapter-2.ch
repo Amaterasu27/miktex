@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007 Christian Schenk
+%% Copyright (C) 2007-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -22,19 +22,19 @@
 % _____________________________________________________________________________
 
 @x
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @y
-@d eTeX_banner_k=='This is e-TeXk, Version 3.141592',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @z
 
 @x
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
-@d TeX_banner_k=='This is TeXk, Version 3.141592' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @z
 
 @x
@@ -591,7 +591,7 @@ tini@/
 @x
       miktex_write18(miktex_get_string_at(str_start[str_ptr]));
 @y
-      system(stringcast(address_of(str_pool[str_start[str_ptr]])));
+      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
 @z
 
 % _____________________________________________________________________________
