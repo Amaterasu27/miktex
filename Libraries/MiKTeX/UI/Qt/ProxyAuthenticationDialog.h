@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(FA975C232D1F491C84BA4294548DFE25)
-#define FA975C232D1F491C84BA4294548DFE25
+#if ! defined(A0FE16072539461F90F69924CF850E73)
+#define A0FE16072539461F90F69924CF850E73
 
 #include "ui_ProxyAuthenticationDialog.h"
 
@@ -53,6 +53,9 @@ public:
   {
     return (lePassword->text());
   }
+
+private slots:
+  void on_leName_textChanged (/*[in]*/ const QString & newText);
 };
 
 #endif

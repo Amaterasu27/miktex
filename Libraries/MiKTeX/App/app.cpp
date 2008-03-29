@@ -25,6 +25,13 @@
 
 /* _________________________________________________________________________
      
+   initUiFrameworkDone
+   _________________________________________________________________________ */
+
+static bool initUiFrameworkDone = false;
+
+/* _________________________________________________________________________
+     
    cancelled
    _________________________________________________________________________ */
 
@@ -204,6 +211,11 @@ Application::Finalize ()
     }
   pSession.Reset ();
   ignoredPackages.clear ();
+  if (initUiFrameworkDone)
+    {
+      MiKTeX::UI::FinalizeFramework ();      
+      initUiFrameworkDone = false;
+    }
   initialized = false;
 }
 
@@ -267,7 +279,6 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
     {
       pPackageManager.Create ();
     }
-  static bool initUiFrameworkDone = false;
   if (enableInstaller == TriState::Undetermined)
     {
       if (! initUiFrameworkDone)

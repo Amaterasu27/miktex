@@ -54,6 +54,7 @@ public:
 public:
   bool
   GetAlwaysAsk ()
+    const
   {
     Qt::CheckState checkState = chkAlwaysAsk->checkState();
     return (checkState == Qt::Checked ? true : false);

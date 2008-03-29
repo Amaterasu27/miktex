@@ -1,6 +1,6 @@
 /* MiKTeX/UI/MFC/Prototypes:					-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -66,6 +66,13 @@ InstallPackageMessageBox
 MIKTEXUIEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog ();
+ProxyAuthenticationDialog (/*[in]*/ HWND hwnd);
+
+inline
+bool
+ProxyAuthenticationDialog ()
+{
+  return (MiKTeX::UI::MFC::ProxyAuthenticationDialog (0));
+}
 
 MIKUI_MFC_END_NAMESPACE;

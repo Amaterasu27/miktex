@@ -26,6 +26,11 @@
 #include "InstallPackageDialog.h"
 #include "ProxyAuthenticationDialog.h"
 
+static int argc = 0;
+static char ** argv = 0;
+
+static QApplication * pApplication = 0;
+
 /* _________________________________________________________________________
    
    MiKTeX::UI::Qt::InitializeFramework
@@ -36,6 +41,26 @@ void
 MIKTEXCEECALL
 MiKTeX::UI::Qt::InitializeFramework ()
 {
+#ifdef Q_WS_X11
+  bool useGUI = getenv("DISPLAY") != 0;
+#else
+  bool useGUI = true;
+#endif
+  pApplication = new QApplication (argc, argv, useGUI);
+}
+
+/* _________________________________________________________________________
+   
+   MiKTeX::UI::Qt::FinalizeFramework
+   _________________________________________________________________________ */
+
+MIKTEXUIQTEXPORT
+void
+MIKTEXCEECALL
+MiKTeX::UI::Qt::FinalizeFramework ()
+{
+  delete pApplication;
+  pApplication = 0;
 }
 
 /* _________________________________________________________________________

@@ -24,6 +24,8 @@
 #include "internal.h"
 #include "ProxyAuthenticationDialog.h"
 
+#include <miktex/UI/Qt/ErrorDialog>
+
 /* _________________________________________________________________________
 
    ProxyAuthenticationDialog::ProxyAuthenticationDialog
@@ -37,4 +39,34 @@ ProxyAuthenticationDialog::ProxyAuthenticationDialog
   QRegExp namePattern ("\w+");
   QValidator * pValidator = new QRegExpValidator(namePattern, this);
   leName->setValidator (pValidator);
+  leName->setText ("");
+}
+
+/* _________________________________________________________________________
+
+   ProxyAuthenticationDialog::on_leName_textChanged
+   _________________________________________________________________________ */
+
+void
+ProxyAuthenticationDialog::on_leName_textChanged
+(/*[in]*/ const QString & newText)
+{
+  try
+    {
+      QPushButton * pOKButton = buttonBox->button(QDialogButtonBox::Ok);
+      if (pOKButton == 0)
+	{
+	  UNEXPECTED_CONDITION
+	    ("ProxyAuthenticationDialog::on_leName_textChanged");
+	}
+      pOKButton->setEnabled (newText.length() > 0);
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
 }

@@ -415,6 +415,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 

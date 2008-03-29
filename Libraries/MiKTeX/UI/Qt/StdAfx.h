@@ -26,6 +26,9 @@
 #  include <Commctrl.h>
 #endif
 
+#include <sstream>
+#include <string>
+
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>
 #include <miktex/Core/Paths>

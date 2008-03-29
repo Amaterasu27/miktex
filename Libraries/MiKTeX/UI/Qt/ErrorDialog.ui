@@ -1,6 +1,7 @@
 <ui version="4.0" >
- <class>ErrorReportDialog</class>
- <widget class="QDialog" name="ErrorReportDialog" >
+ <author>Christian Schenk</author>
+ <class>ErrorDialog</class>
+ <widget class="QDialog" name="ErrorDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -36,6 +37,9 @@
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QPushButton" name="btnCopy" >
+         <property name="whatsThis" >
+          <string>Copy the error report to the Clipboard.</string>
+         </property>
          <property name="text" >
           <string>Copy Info</string>
          </property>
@@ -92,12 +96,13 @@
   <tabstop>buttonBox</tabstop>
   <tabstop>btnCopy</tabstop>
  </tabstops>
+ <includes/>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ErrorReportDialog</receiver>
+   <receiver>ErrorDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >

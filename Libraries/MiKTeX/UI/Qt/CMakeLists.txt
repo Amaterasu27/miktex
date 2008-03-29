@@ -25,6 +25,8 @@ include_directories(
 )
 
 set(${ui_qt_dll_name}_sources
+  ErrorDialog.cpp
+  ErrorDialog.h
   InstallPackageDialog.cpp
   InstallPackageDialog.h
   ProxyAuthenticationDialog.cpp
@@ -47,11 +49,13 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(${ui_qt_dll_name}_moc_sources
+  ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
 )
 
 set(${ui_qt_dll_name}_ui_files
+  ErrorDialog.ui
   InstallPackageDialog.ui
   ProxyAuthenticationDialog.ui
 )

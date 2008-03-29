@@ -57,7 +57,7 @@ public:
   };
 };
 
-typedef EnumWrapper<FrameworkEnum> Framework;
+typedef MiKTeX::Core::EnumWrapper<FrameworkEnum> Framework;
 
 inline
 int
@@ -103,7 +103,23 @@ InitializeFramework ()
 #endif
 }
 
-MIKUI_END_NAMESPACE;
+inline
+void
+FinalizeFramework ()
+{
+#if defined(MIKTEX_QT)
+  if (defaultFramework() == Framework::Qt)
+    {
+      Qt::FinalizeFramework ();
+    }
+#endif
+#if defined(MIKTEX_ATLMFC)
+  if (defaultFramework() == Framework::MFC)
+    {
+      //
+    }
+#endif
+}
 
 inline
 unsigned int
@@ -153,3 +169,6 @@ ProxyAuthenticationDialog ()
 #endif
   return (ret);
 }
+
+MIKUI_END_NAMESPACE;
+

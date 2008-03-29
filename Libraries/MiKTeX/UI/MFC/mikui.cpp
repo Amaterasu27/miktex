@@ -1,6 +1,6 @@
 /* mikui.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -71,7 +71,7 @@ MiKTeX::UI::MFC::InitializeFramework ()
 {
   if (! AfxWinInit(::GetModuleHandle(0), 0, ::GetCommandLine(), 0))
     {
-      Session::FatalMiKTeXError (T_("MiKTeX::UI::MFC::InitializeFramework"),
+      Session::FatalMiKTeXError ("MiKTeX::UI::MFC::InitializeFramework",
 				 T_("AfxWinInit() failed for some reason."),
 				 0,
 				 __FILE__,
@@ -92,6 +92,7 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
  /*[in]*/ const char *	lpszPackageName,
  /*[in]*/ const char *	lpszTrigger)
 {
+  CWnd * pParent = 0;
   SessionWrapper pSession (true);
   TriState enableInstaller
     = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -105,7 +106,7 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
     }
   else
     {
-      InstallPackageDialog dlg (0
+      InstallPackageDialog dlg (pParent,
 				pManager,
 				lpszPackageName,
 				lpszTrigger);
@@ -148,7 +149,7 @@ MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
       && proxySettings.authenticationRequired
       && proxySettings.user.empty())
     {
-      ::ProxyAuthenticationDialog dlg (0);
+      ::ProxyAuthenticationDialog dlg (CWnd::FromHandle(hwndParent));
       if (dlg.DoModal() == IDOK)
 	{
 	  proxySettings.user = dlg.GetName();

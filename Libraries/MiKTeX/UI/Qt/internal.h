@@ -33,7 +33,6 @@
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX::UI::Qt;
-using namespace MiKTeX::UI;
 using namespace std;
 
 /* _________________________________________________________________________

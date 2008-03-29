@@ -32,6 +32,7 @@
 
 // API decoration for exported member functions
 #define MIKTEXUIQTTHISAPI(type) MIKTEXUIQTEXPORT type MIKTEXTHISCALL
+#define MIKTEXUIQTCEEAPI(type) MIKTEXUIQTEXPORT type MIKTEXCEECALL
 
 #define MIKUI_QT_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
@@ -54,6 +55,11 @@ MIKTEXUIQTEXPORT
 void
 MIKTEXCEECALL
 InitializeFramework ();
+
+MIKTEXUIQTEXPORT
+void
+MIKTEXCEECALL
+FinalizeFramework ();
 
 MIKTEXUIQTEXPORT
 unsigned int

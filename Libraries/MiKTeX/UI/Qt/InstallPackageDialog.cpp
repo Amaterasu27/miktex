@@ -24,6 +24,8 @@
 #include "internal.h"
 #include "InstallPackageDialog.h"
 
+#include <miktex/UI/Qt/ErrorDialog>
+
 #if 0				// TODO
 #include <miktex/UI/Qt/SiteWizSheet>
 #endif
@@ -49,7 +51,7 @@ InstallPackageDialog::InstallPackageDialog
 	{
 	  UNEXPECTED_CONDITION ("InstallPackageDialog::InstallPackageDialog");
 	}
-      pOKButton->text (T_("Install"));
+      pOKButton->setText (T_("Install"));
       lblPackageName->setText (QString::fromLocal8Bit(lpszPackageName));
       lblMissingFile->setText (QString::fromLocal8Bit(lpszTrigger));
       PackageInfo packageInfo = pManager->GetPackageInfo(lpszPackageName);
@@ -83,15 +85,11 @@ InstallPackageDialog::InstallPackageDialog
     }
   catch (const MiKTeXException & e)
     {
-#if 0				// TODO
       ErrorDialog::DoModal (this, e);
-#endif
     }
   catch (const exception & e)
     {
-#if 0				// TODO
       ErrorDialog::DoModal (this, e);
-#endif
     }
 }
 
@@ -122,14 +120,10 @@ InstallPackageDialog::on_btnChange_clicked ()
     }
   catch (const MiKTeXException & e)
     {
-#if 0				// TODO
       ErrorDialog::DoModal (this, e);
-#endif
     }
   catch (const exception & e)
     {
-#if 0				// TODO
       ErrorDialog::DoModal (this, e);
-#endif
     }
 }
