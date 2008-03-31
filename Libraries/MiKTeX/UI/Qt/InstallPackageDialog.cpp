@@ -26,9 +26,7 @@
 
 #include <miktex/UI/Qt/ErrorDialog>
 
-#if 0				// TODO
 #include <miktex/UI/Qt/SiteWizSheet>
-#endif
 
 /* _________________________________________________________________________
 
@@ -103,12 +101,10 @@ InstallPackageDialog::on_btnChange_clicked ()
 {
   try
     {
-#if 0				// TODO
-      if (SiteWizSheet::DoModal(this) != ID_WIZFINISH)
+      if (SiteWizSheet::DoModal(this) != QDialog::Accepted)
 	{
 	  return;
 	}
-#endif
       string repository;
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (pManager->TryGetDefaultPackageRepository(repositoryType,

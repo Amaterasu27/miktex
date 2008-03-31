@@ -72,6 +72,14 @@ InstallPackageMessageBox
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog ();
+ProxyAuthenticationDialog (/*[in]*/ class QWidget * pParent);
+
+inline
+bool
+ProxyAuthenticationDialog ()
+{
+  return (ProxyAuthenticationDialog(static_cast<class QWidget *>(0)));
+}
+
 
 MIKUI_QT_END_NAMESPACE;

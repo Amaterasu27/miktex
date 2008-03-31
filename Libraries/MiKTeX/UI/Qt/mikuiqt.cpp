@@ -122,10 +122,8 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-MiKTeX::UI::Qt::ProxyAuthenticationDialog ()
+MiKTeX::UI::Qt::ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent)
 {
-  QWidget * pParent = 0;
-
   ProxySettings proxySettings;
 
   bool done = true;

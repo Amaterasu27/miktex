@@ -31,6 +31,10 @@ set(${ui_qt_dll_name}_sources
   InstallPackageDialog.h
   ProxyAuthenticationDialog.cpp
   ProxyAuthenticationDialog.h
+  SiteWizSheet.cpp
+  SiteWizSheet.h
+  SiteWizType.cpp
+  SiteWizType.h
   StdAfx.cpp
   StdAfx.h
   internal.h
@@ -52,12 +56,19 @@ set(${ui_qt_dll_name}_moc_sources
   ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
+  SiteWizSheet.h
+  SiteWizType.h
 )
 
 set(${ui_qt_dll_name}_ui_files
+  ConnectionSettingsDialog.ui
   ErrorDialog.ui
   InstallPackageDialog.ui
   ProxyAuthenticationDialog.ui
+  SiteWizDrive.ui
+  SiteWizLocal.ui
+  SiteWizRemote.ui
+  SiteWizType.ui
 )
 
 qt4_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})
