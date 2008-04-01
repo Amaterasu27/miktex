@@ -10,23 +10,36 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
       <string>Packages will be installed from the remote package repository selected below.</string>
      </property>
+     <property name="buddy" >
+      <cstring>tableRepositories</cstring>
+     </property>
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="tableView" />
+    <widget class="QTableWidget" name="tableRepositories" >
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior" >
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
- <includes/>
+ <customwidgets>
+  <customwidget>
+   <class>QWizardPage</class>
+   <extends>QWidget</extends>
+   <header>qwizardpage.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

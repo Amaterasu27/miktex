@@ -22,10 +22,10 @@
 #include "StdAfx.h"
 
 #include "internal.h"
+
 #include "InstallPackageDialog.h"
 
 #include <miktex/UI/Qt/ErrorDialog>
-
 #include <miktex/UI/Qt/SiteWizSheet>
 
 /* _________________________________________________________________________

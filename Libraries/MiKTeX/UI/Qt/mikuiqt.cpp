@@ -26,9 +26,6 @@
 #include "InstallPackageDialog.h"
 #include "ProxyAuthenticationDialog.h"
 
-static int argc = 0;
-static char ** argv = 0;
-
 static QApplication * pApplication = 0;
 
 /* _________________________________________________________________________
@@ -46,6 +43,8 @@ MiKTeX::UI::Qt::InitializeFramework ()
 #else
   bool useGUI = true;
 #endif
+  static int argc = 0;
+  static char ** argv = 0;
   pApplication = new QApplication (argc, argv, useGUI);
 }
 
@@ -72,11 +71,11 @@ MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 MiKTeX::UI::Qt::InstallPackageMessageBox
-(/*[in]*/ PackageManager *	pManager,
+(/*[in]*/ QWidget *		pParent,
+ /*[in]*/ PackageManager *	pManager,
  /*[in]*/ const char *		lpszPackageName,
  /*[in]*/ const char *		lpszTrigger)
 {
-  QWidget * pParent = 0;
   SessionWrapper pSession (true);
   TriState enableInstaller
     = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,

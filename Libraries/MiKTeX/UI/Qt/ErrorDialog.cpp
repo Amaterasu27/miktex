@@ -22,6 +22,7 @@
 #include "StdAfx.h"
 
 #include "internal.h"
+
 #include "ErrorDialog.h"
 
 #include <miktex/UI/Qt/ErrorDialog>

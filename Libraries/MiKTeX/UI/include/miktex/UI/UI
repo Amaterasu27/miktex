@@ -124,9 +124,9 @@ FinalizeFramework ()
 inline
 unsigned int
 InstallPackageMessageBox
-(/*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
- /*[in]*/ const char *					lpszPackageName,
- /*[in]*/ const char *					lpszTrigger)
+(/*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+ /*[in]*/ const char *				lpszPackageName,
+ /*[in]*/ const char *				lpszTrigger)
 {
   unsigned ret = NO | DONTASKAGAIN;
 #if defined(MIKTEX_QT)

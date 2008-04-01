@@ -1,4 +1,4 @@
-/* InstallPackageDialog.h:					-*- C++ -*-
+/* ConnectionSettingsDialog.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 
@@ -23,49 +23,20 @@
 #  pragma once
 #endif
 
-#if ! defined(FA975C232D1F491C84BA4294548DFE25)
-#define FA975C232D1F491C84BA4294548DFE25
+#if ! defined()
+#define 
 
-#include <miktex/PackageManager/PackageManager>
+#include "ui_ConnectionSettingsDialog.h"
 
-#include "ui_InstallPackageDialog.h"
-
-class InstallPackageDialog
+class ConnectionSettingsDialog
   : public QDialog,
-    private Ui::InstallPackageDialog
+    private Ui::ConnectionSettingsDialog
 {
 private:
   Q_OBJECT;
 
 public:
-  InstallPackageDialog
-  (/*[in]*/ QWidget *				pParent,
-   /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
-   /*[in]*/ const char *			lpszPackageName,
-   /*[in]*/ const char *			lpszTrigger);
-
-public:
-  void
-  SetAlwaysAsk (/*[in]*/ bool alwaysAsk)
-  {
-    chkAlwaysAsk->setCheckState (alwaysAsk ? Qt::Checked : Qt::Unchecked);
-  }
-
-public:
-  bool
-  GetAlwaysAsk ()
-    const
-  {
-    Qt::CheckState checkState = chkAlwaysAsk->checkState();
-    return (checkState == Qt::Checked ? true : false);
-  }
-
-private slots:
-  void
-  on_btnChange_clicked ();
-
-public:
-  MiKTeX::Packages::PackageManagerPtr pManager;
+  ConnectionSettingsDialog (/*[in]*/ QWidget * pParent);
 };
 
 #endif

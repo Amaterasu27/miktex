@@ -23,6 +23,7 @@
 
 #include "internal.h"
 
+#include "ConnectionSettingsDialog.h"
 #include "SiteWizSheet.h"
 #include "SiteWizType.h"
 
@@ -146,5 +147,16 @@ SiteWizType::validatePage ()
       ErrorDialog::DoModal (this, e);
       return (false);
     }
+}
 
+/* _________________________________________________________________________
+
+   SiteWizType::on_btnConnectionSettings_clicked
+   _________________________________________________________________________ */
+
+void
+SiteWizType::on_btnConnectionSettings_clicked ()
+{
+  ConnectionSettingsDialog dlg (this);
+  dlg.exec ();
 }

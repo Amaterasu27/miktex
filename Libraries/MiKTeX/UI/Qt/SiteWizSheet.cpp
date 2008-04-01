@@ -22,8 +22,8 @@
 #include "StdAfx.h"
 
 #include "internal.h"
-#include "SiteWizSheet.h"
 
+#include "SiteWizSheet.h"
 #include "SiteWizType.h"
 
 #if 0
@@ -39,19 +39,21 @@
    SiteWizSheetImpl::SiteWizSheetImpl
    _________________________________________________________________________ */
 
-SiteWizSheetImpl::SiteWizSheetImpl (/*[in]*/ CWnd * pParent)
-  : pManager (PackageManager::Create())
+SiteWizSheetImpl::SiteWizSheetImpl (/*[in]*/ QWidget * pParent)
+  : QWizard (pParent),
+    pManager (PackageManager::Create())
 {
+  setWindowTitle (T_("Change Package Repository"));
   SetPage (Page_Type, new SiteWizType());
 }
 
 /* _________________________________________________________________________
 
-   CSiteWizSheet::DoModal
+   SiteWizSheet::DoModal
    _________________________________________________________________________ */
 
 int
-SiteWizSheet::DoModal (/*[in]*/ QWizard * pParent)
+SiteWizSheet::DoModal (/*[in]*/ QWidget * pParent)
 {
   SiteWizSheetImpl dlg (pParent);
   return (dlg.exec());

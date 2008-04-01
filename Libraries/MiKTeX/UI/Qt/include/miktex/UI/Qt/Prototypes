@@ -23,7 +23,8 @@
 #  pragma once
 #endif
 
-#include <miktex/PackageManager/PackageManager>
+#if ! defined(EBA5A7DFCC9045069C2547EAB56654CC)
+#define EBA5A7DFCC9045069C2547EAB56654CC
 
 // DLL import/export switch
 #if ! defined(F752091EC06B4B4E827B2AACABAEE953)
@@ -33,6 +34,16 @@
 // API decoration for exported member functions
 #define MIKTEXUIQTTHISAPI(type) MIKTEXUIQTEXPORT type MIKTEXTHISCALL
 #define MIKTEXUIQTCEEAPI(type) MIKTEXUIQTEXPORT type MIKTEXCEECALL
+
+namespace MiKTeX
+{
+  namespace Packages
+  {
+    class PackageManager;
+  }
+};
+
+class QWidget;
 
 #define MIKUI_QT_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
@@ -65,21 +76,35 @@ MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
- /*[in]*/ const char *					lpszPackageName,
- /*[in]*/ const char *					lpszTrigger);
+(/*[in]*/ QWidget *				pParent
+ /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+ /*[in]*/ const char *				lpszPackageName,
+ /*[in]*/ const char *				lpszTrigger);
+
+inline
+unsigned int
+InstallPackageMessageBox
+(/*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+ /*[in]*/ const char *				lpszPackageName,
+ /*[in]*/ const char *				lpszTrigger)
+{
+  return (InstallPackageMessageBox(reinterpret_cast<QWidget*>(0),
+				   lpszPackageName,
+				   lpszTrigger));
+}
 
 MIKTEXUIQTEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog (/*[in]*/ class QWidget * pParent);
+ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent);
 
 inline
 bool
 ProxyAuthenticationDialog ()
 {
-  return (ProxyAuthenticationDialog(static_cast<class QWidget *>(0)));
+  return (ProxyAuthenticationDialog(reinterpret_cast<QWidget*>(0)));
 }
 
-
 MIKUI_QT_END_NAMESPACE;
+
+#endif

@@ -105,7 +105,16 @@ install(TARGETS ${ui_qt_dll_name}
 
 install(
   FILES
+    include/miktex/UI/Qt/ErrorDialog
+    include/miktex/UI/Qt/SiteWizSheet
     include/miktex/UI/Qt/Prototypes
   DESTINATION
     ${incdir}/miktex/UI/Qt
+)
+
+install(
+  FILES
+    include/miktex/UI/UI
+  DESTINATION
+    ${incdir}/miktex/UI
 )

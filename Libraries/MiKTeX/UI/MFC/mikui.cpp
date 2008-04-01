@@ -88,11 +88,11 @@ MIKTEXUIEXPORT
 unsigned int
 MIKTEXCEECALL
 MiKTeX::UI::MFC::InstallPackageMessageBox
-(/*[in]*/ PackageManager *	pManager,
- /*[in]*/ const char *	lpszPackageName,
- /*[in]*/ const char *	lpszTrigger)
+((/*[in]*/ CWnd *		pParent
+ /*[in]*/ PackageManager *	pManager,
+ /*[in]*/ const char *		lpszPackageName,
+ /*[in]*/ const char *		lpszTrigger)
 {
-  CWnd * pParent = 0;
   SessionWrapper pSession (true);
   TriState enableInstaller
     = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -138,7 +138,7 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
 MIKTEXUIEXPORT
 bool
 MIKTEXCEECALL
-MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
+MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ CWnd * pParent)
 {
   ProxySettings proxySettings;
 
@@ -149,7 +149,7 @@ MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent)
       && proxySettings.authenticationRequired
       && proxySettings.user.empty())
     {
-      ::ProxyAuthenticationDialog dlg (CWnd::FromHandle(hwndParent));
+      ::ProxyAuthenticationDialog dlg (pParent));
       if (dlg.DoModal() == IDOK)
 	{
 	  proxySettings.user = dlg.GetName();

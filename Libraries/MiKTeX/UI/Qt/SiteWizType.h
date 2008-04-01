@@ -26,8 +26,6 @@
 #if ! defined(E470AC5708664919BAD58B49DC624841)
 #define E470AC5708664919BAD58B49DC624841
 
-#include <miktex/PackageManager/PackageManager>
-
 #include "ui_SiteWizType.h"
 
 class SiteWizType
@@ -61,6 +59,10 @@ protected:
   virtual
   void
   validatePage () ;
+
+private slots:
+  void
+  on_btnConnectionSettings_clicked ();
 };
 
 #endif

@@ -45,11 +45,10 @@ private:
   enum { Page_Type, Page_Local, Page_Remote, Page_CD };
 
 public:
-  SiteWizSheetImpl (/*[in]*/ QWidget *		pParent);
+  SiteWizSheetImpl (/*[in]*/ QWidget *	pParent);
 
 private:
   MiKTeX::Packages::PackageManagerPtr pManager;
-
 };
 
 #endif
