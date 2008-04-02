@@ -88,7 +88,7 @@ MIKTEXUIEXPORT
 unsigned int
 MIKTEXCEECALL
 MiKTeX::UI::MFC::InstallPackageMessageBox
-((/*[in]*/ CWnd *		pParent
+(/*[in]*/ CWnd *		pParent,
  /*[in]*/ PackageManager *	pManager,
  /*[in]*/ const char *		lpszPackageName,
  /*[in]*/ const char *		lpszTrigger)
@@ -149,7 +149,7 @@ MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ CWnd * pParent)
       && proxySettings.authenticationRequired
       && proxySettings.user.empty())
     {
-      ::ProxyAuthenticationDialog dlg (pParent));
+      ::ProxyAuthenticationDialog dlg (pParent);
       if (dlg.DoModal() == IDOK)
 	{
 	  proxySettings.user = dlg.GetName();

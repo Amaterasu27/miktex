@@ -78,17 +78,17 @@ int
 SiteWizType::nextId ()
   const
 {
-  if (rbRemote->ischecked())
+  if (rbRemote->isChecked())
     {
-      return (Page_Remote);
+      return (SiteWizSheetImpl::Page_Remote);
     }
   else if (rbLocal->isChecked())
     {
-      return (Page_Local);
+      return (SiteWizSheetImpl::Page_Local);
     }
   else if (rbCD->isChecked())
     {
-      return (Page_CD);
+      return (SiteWizSheetImpl::Page_CD);
     }
   else
     {
@@ -103,6 +103,7 @@ SiteWizType::nextId ()
 
 bool
 SiteWizType::isComplete ()
+  const
 {
   return (nextId() >= 0);
 }
@@ -128,7 +129,7 @@ SiteWizType::validatePage ()
 {
   try
     {
-      if (rbRemote->ischecked())
+      if (rbRemote->isChecked())
 	{
 	  if (! ProxyAuthenticationDialog(this))
 	    {

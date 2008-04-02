@@ -1,6 +1,6 @@
 /* SiteWizType.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -201,7 +201,7 @@ SiteWizType::OnWizardNext ()
       DWORD nextPage;
       if (checked == IDC_INSTALL_FROM_INTERNET)
 	{
-	  if (! ProxyAuthenticationDialog(GetSafeHwnd()))
+	  if (! ProxyAuthenticationDialog(this))
 	    {
 	      return (-1);
 	    }

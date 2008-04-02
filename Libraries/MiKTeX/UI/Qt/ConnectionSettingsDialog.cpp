@@ -36,8 +36,49 @@ ConnectionSettingsDialog::ConnectionSettingsDialog (/*[in]*/ QWidget * pParent)
   : QDialog (pParent)
 {
   setupUi (this);
+  leAddress->setValidator (new QRegExpValidator(QRegExp(".+"), this));
+  leAddress->setText ("127.0.0.1");
+  lePort->setValidator (new QIntValidator(1, 65535, this));
+  lePort->setText ("8080");
   try
     {
+      ProxySettings proxySettings;
+      if (PackageManager::TryGetProxy(proxySettings))
+	{
+	  grpUseProxy->setChecked (proxySettings.useProxy);
+
+	    (QString::fromLocal8Bit(proxySettings.proxy.c_str()));
+	  lePort->setText (QString::number(proxySettings.port));
+	  chkAuthRequired->setChecked (proxySettings.authenticationRequired);
+	}
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (0, e);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (0, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   ConnectionSettingsDialog::accept
+   _________________________________________________________________________ */
+
+void
+ConnectionSettingsDialog::accept ()
+{
+  QDialog::accept ();
+  try
+    {
+      ProxySettings proxySettings;
+      proxySettings.useProxy = grpUseProxy->isChecked();
+      proxySettings.proxy = leAddress->text().toLocal8Bit();
+      proxySettings.port = lePort->text().toInt();
+      proxySettings.authenticationRequired = chkAuthRequired->isChecked();
+      PackageManager::SetProxy (proxySettings);
     }
   catch (const MiKTeXException & e)
     {

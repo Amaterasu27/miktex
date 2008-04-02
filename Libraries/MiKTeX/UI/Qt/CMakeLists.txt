@@ -25,6 +25,8 @@ include_directories(
 )
 
 set(${ui_qt_dll_name}_sources
+  ConnectionSettingsDialog.cpp
+  ConnectionSettingsDialog.h
   ErrorDialog.cpp
   ErrorDialog.h
   InstallPackageDialog.cpp
@@ -35,6 +37,8 @@ set(${ui_qt_dll_name}_sources
   SiteWizSheet.h
   SiteWizType.cpp
   SiteWizType.h
+  SiteWizRemote.cpp
+  SiteWizRemote.h
   StdAfx.cpp
   StdAfx.h
   internal.h
@@ -53,11 +57,13 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(${ui_qt_dll_name}_moc_sources
+  ConnectionSettingsDialog.h
   ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
   SiteWizSheet.h
   SiteWizType.h
+  SiteWizRemote.h
 )
 
 set(${ui_qt_dll_name}_ui_files
@@ -114,7 +120,7 @@ install(
 
 install(
   FILES
-    include/miktex/UI/UI
+    ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include/miktex/UI/UI
   DESTINATION
     ${incdir}/miktex/UI
 )

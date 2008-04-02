@@ -57,7 +57,7 @@ protected:
 
 protected:
   virtual
-  void
+  bool
   validatePage () ;
 
 private slots:

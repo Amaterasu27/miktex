@@ -67,7 +67,7 @@ MIKTEXUIEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ CWnd *				pWnd
+(/*[in]*/ CWnd *				pWnd,
  /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
  /*[in]*/ const char *				lpszPackageName,
  /*[in]*/ const char *				lpszTrigger);

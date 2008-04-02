@@ -1,4 +1,4 @@
-/* miktex/UI/Qt/SiteWizSheet:					-*- C++ -*-
+/* SiteWizRemote.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 
@@ -23,18 +23,34 @@
 #  pragma once
 #endif
 
-#include <miktex/UI/Qt/Prototypes>
+#if ! defined(A3643CF8B9BF477B8A6ABB24B46841B7)
+#define A3643CF8B9BF477B8A6ABB24B46841B7
 
-MIKUI_QT_BEGIN_NAMESPACE;
+#include <vector>
+#include <miktex/PackageManager/PackageManager>
 
-class
-MIKTEXNOVTABLE
-SiteWizSheet
+#include "ui_SiteWizRemote.h"
+
+class SiteWizRemote
+  : public QWizardPage,
+    private Ui::SiteWizRemote
 {
+private:
+  Q_OBJECT;
+
 public:
-  static
-  MIKTEXUIQTCEEAPI(int)
-  DoModal (/*[in]*/ QWidget * pParent);
+  SiteWizRemote (/*[in]*/ MiKTeX::Packages::PackageManager *	pManager);
+
+protected:
+  virtual
+  void
+  initializePage ();
+
+private:
+  std::vector<MiKTeX::Packages::RepositoryInfo> repositories;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
 };
 
-MIKUI_QT_END_NAMESPACE;
+#endif

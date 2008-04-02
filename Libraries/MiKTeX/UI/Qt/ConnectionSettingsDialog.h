@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined()
-#define 
+#if ! defined(C1B44147E5A740229CE88A97E1950EB7)
+#define C1B44147E5A740229CE88A97E1950EB7
 
 #include "ui_ConnectionSettingsDialog.h"
 
@@ -37,6 +37,11 @@ private:
 
 public:
   ConnectionSettingsDialog (/*[in]*/ QWidget * pParent);
+
+protected:
+  virtual
+  void
+  accept ();
 };
 
 #endif

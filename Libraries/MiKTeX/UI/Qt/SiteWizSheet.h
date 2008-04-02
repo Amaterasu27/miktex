@@ -28,7 +28,7 @@
 
 #include <miktex/PackageManager/PackageManager>
 
-#include "ui_SiteWizSheet.h"
+#include <QtGui>
 
 /* _________________________________________________________________________
 
@@ -41,8 +41,8 @@ class SiteWizSheetImpl
 private:
   Q_OBJECT;
 
-private:
-  enum { Page_Type, Page_Local, Page_Remote, Page_CD };
+public:
+  enum { Page_Start, Page_Type, Page_Local, Page_Remote, Page_CD };
 
 public:
   SiteWizSheetImpl (/*[in]*/ QWidget *	pParent);

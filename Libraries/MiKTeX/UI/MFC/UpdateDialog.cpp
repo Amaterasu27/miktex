@@ -1,6 +1,6 @@
 /* UpdateDialog.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -797,9 +797,7 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 	  && PackageManager::TryGetDefaultPackageRepository(repositoryType,
 							    url)
 	  && repositoryType == RepositoryType::Remote
-	  && ! ProxyAuthenticationDialog(pParent == 0
-					 ? 0
-					 : pParent->GetSafeHwnd()))
+	  && ! ProxyAuthenticationDialog(pParent))
 	{
 	  return (IDCANCEL);
 	}

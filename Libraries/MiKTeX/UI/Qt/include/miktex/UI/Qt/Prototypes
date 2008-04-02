@@ -76,7 +76,7 @@ MIKTEXUIQTEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ QWidget *				pParent
+(/*[in]*/ QWidget *				pParent,
  /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
  /*[in]*/ const char *				lpszPackageName,
  /*[in]*/ const char *				lpszTrigger);
@@ -89,6 +89,7 @@ InstallPackageMessageBox
  /*[in]*/ const char *				lpszTrigger)
 {
   return (InstallPackageMessageBox(reinterpret_cast<QWidget*>(0),
+				   pManager,
 				   lpszPackageName,
 				   lpszTrigger));
 }
