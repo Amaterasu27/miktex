@@ -33,12 +33,16 @@ set(${ui_qt_dll_name}_sources
   InstallPackageDialog.h
   ProxyAuthenticationDialog.cpp
   ProxyAuthenticationDialog.h
+  SiteWizDrive.cpp
+  SiteWizDrive.h
+  SiteWizLocal.cpp
+  SiteWizLocal.h
+  SiteWizRemote.cpp
+  SiteWizRemote.h
   SiteWizSheet.cpp
   SiteWizSheet.h
   SiteWizType.cpp
   SiteWizType.h
-  SiteWizRemote.cpp
-  SiteWizRemote.h
   StdAfx.cpp
   StdAfx.h
   internal.h
@@ -61,9 +65,11 @@ set(${ui_qt_dll_name}_moc_sources
   ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
+  SiteWizDrive.h
+  SiteWizLocal.h
+  SiteWizRemote.h
   SiteWizSheet.h
   SiteWizType.h
-  SiteWizRemote.h
 )
 
 set(${ui_qt_dll_name}_ui_files

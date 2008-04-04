@@ -1,13 +1,13 @@
 <ui version="4.0" >
  <author>Christian Schenk</author>
- <class>Form</class>
- <widget class="QWizardPage" name="Form" >
+ <class>SiteWizLocal</class>
+ <widget class="QWizardPage" name="SiteWizLocal" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,7 +24,7 @@
    <item>
     <layout class="QHBoxLayout" >
      <item>
-      <widget class="QLineEdit" name="lineEdit" >
+      <widget class="QLineEdit" name="leDirectory" >
        <property name="readOnly" >
         <bool>true</bool>
        </property>
@@ -47,9 +47,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton" >
+      <widget class="QPushButton" name="btnBrowse" >
        <property name="text" >
-        <string>&amp;Browse...</string>
+        <string>Bro&amp;wse...</string>
        </property>
       </widget>
      </item>
@@ -70,7 +70,13 @@
    </item>
   </layout>
  </widget>
- <includes/>
+ <customwidgets>
+  <customwidget>
+   <class>QWizardPage</class>
+   <extends>QWidget</extends>
+   <header>qwizardpage.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

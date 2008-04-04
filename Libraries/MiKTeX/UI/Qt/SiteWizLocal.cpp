@@ -1,4 +1,4 @@
-/* SiteWizType.cpp:
+/* SiteWizLocal.cpp:
 
    Copyright (C) 2008 Christian Schenk
 
@@ -23,109 +23,58 @@
 
 #include "internal.h"
 
-#include "ConnectionSettingsDialog.h"
 #include "SiteWizSheet.h"
-#include "SiteWizType.h"
+#include "SiteWizLocal.h"
 
 #include <miktex/UI/Qt/ErrorDialog>
 
 /* _________________________________________________________________________
 
-   SiteWizType::SiteWizType
+   SiteWizLocal::SiteWizLocal
    _________________________________________________________________________ */
 
-SiteWizType::SiteWizType ()
-  : QWizardPage (0)
+SiteWizLocal::SiteWizLocal (/*[in]*/ PackageManager *	pManager)
+  : QWizardPage (0),
+    pManager (pManager)
 {
   setupUi (this);
   try
     {
-      string urlOrPath;
-      RepositoryType repositoryType (RepositoryType::Unknown);
-      if (PackageManager::TryGetDefaultPackageRepository(repositoryType,
-							 urlOrPath))
+      PathName path;
+      if (pManager->TryGetLocalPackageRepository(path))
 	{
-	  switch (repositoryType.Get())
-	    {
-	    case RepositoryType::Remote:
-	      rbRemote->setChecked (true);
-	      break;
-	    case RepositoryType::Local:
-	      rbLocal->setChecked (true);
-	      break;
-	    case RepositoryType::MiKTeXDirect:
-	      rbCD->setChecked (true);
-	      break;
-	    }
+	  leDirectory->setText (QString::fromLocal8Bit(path.Get()));
 	}
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (0, e);
+      ErrorDialog::DoModal (this, e);
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (0, e);
+      ErrorDialog::DoModal (this, e);
     }
 }
 
 /* _________________________________________________________________________
 
-   SiteWizType::nextId
-   _________________________________________________________________________ */
-
-int
-SiteWizType::nextId ()
-  const
-{
-  if (rbRemote->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_Remote);
-    }
-  else if (rbLocal->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_Local);
-    }
-  else if (rbCD->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_CD);
-    }
-  else
-    {
-      return (-1);
-    }
-}
-
-/* _________________________________________________________________________
-
-   SiteWizType::isComplete
+   SiteWizLocal::isComplete
    _________________________________________________________________________ */
 
 bool
-SiteWizType::isComplete ()
+SiteWizLocal::isComplete ()
   const
 {
-  return (nextId() >= 0);
+  return (! leDirectory->text().isEmpty());
 }
 
 /* _________________________________________________________________________
 
-   SiteWizType::initializePage
-   _________________________________________________________________________ */
-
-void
-SiteWizType::initializePage ()
-{
-  emit completeChanged();
-}
-
-/* _________________________________________________________________________
-
-   SiteWizType::validatePage
+   SiteWizLocal::validatePage
    _________________________________________________________________________ */
 
 bool
-SiteWizType::validatePage ()
+SiteWizLocal::validatePage ()
 {
   try
     {
@@ -133,13 +82,30 @@ SiteWizType::validatePage ()
 	{
 	  return (false);
 	}
-      if (rbRemote->isChecked())
+      PathName directory (leDirectory->text().toLocal8Bit().data());
+      if (! Directory::Exists(directory))
 	{
-	  if (! ProxyAuthenticationDialog(this))
+	  QMessageBox::critical (this,
+				 QString(),
+				 T_("\
+The specified directory does not exist."));
+	  return (false);
+	}
+      if (! pManager->IsLocalPackageRepository(directory))
+	{
+	  PathName mpmIni (directory);
+	  mpmIni += "texmf";
+	  mpmIni += MIKTEX_PATH_MPM_INI;
+	  if (! File::Exists(mpmIni))
 	    {
+	      QMessageBox::critical (this,
+				     QString(),
+				     T_("Not a local package repository."));
 	      return (false);
 	    }
 	}
+      pManager->SetDefaultPackageRepository (RepositoryType::Local,
+					     directory.Get());
       return (true);
     }
   catch (const MiKTeXException & e)
@@ -156,12 +122,21 @@ SiteWizType::validatePage ()
 
 /* _________________________________________________________________________
 
-   SiteWizType::on_btnConnectionSettings_clicked
+   SiteWizLocal::on_btnBrowse_clicked
    _________________________________________________________________________ */
 
 void
-SiteWizType::on_btnConnectionSettings_clicked ()
+SiteWizLocal::on_btnBrowse_clicked ()
 {
-  ConnectionSettingsDialog dlg (this);
-  dlg.exec ();
+  QString directory =
+    QFileDialog::getExistingDirectory(this,
+				      QString(),
+				      leDirectory->text(),
+				      (QFileDialog::DontUseNativeDialog
+				       | QFileDialog::ShowDirsOnly));
+  if (! directory.isEmpty())
+    {
+      leDirectory->setText (directory);
+      emit completeChanged();
+    }
 }

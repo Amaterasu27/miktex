@@ -23,14 +23,11 @@
 
 #include "internal.h"
 
-#include "SiteWizSheet.h"
-#include "SiteWizType.h"
-#include "SiteWizRemote.h"
-
-#if 0
 #include "SiteWizDrive.h"
 #include "SiteWizLocal.h"
-#endif
+#include "SiteWizRemote.h"
+#include "SiteWizSheet.h"
+#include "SiteWizType.h"
 
 #include <miktex/UI/Qt/SiteWizSheet>
 
@@ -46,6 +43,8 @@ SiteWizSheetImpl::SiteWizSheetImpl (/*[in]*/ QWidget * pParent)
   setWindowTitle (T_("Change Package Repository"));
   setPage (Page_Type, new SiteWizType());
   setPage (Page_Remote, new SiteWizRemote(pManager.Get()));
+  setPage (Page_Local, new SiteWizLocal(pManager.Get()));
+  setPage (Page_CD, new SiteWizDrive(pManager.Get()));
 }
 
 /* _________________________________________________________________________

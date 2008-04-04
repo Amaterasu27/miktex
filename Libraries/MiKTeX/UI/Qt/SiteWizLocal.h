@@ -1,4 +1,4 @@
-/* SiteWizType.h:					-*- C++ -*-
+/* SiteWizLocal.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 
@@ -23,25 +23,37 @@
 #  pragma once
 #endif
 
-#if ! defined(E470AC5708664919BAD58B49DC624841)
-#define E470AC5708664919BAD58B49DC624841
+#if ! defined(E228BEC9ADEE41C98FA4CB48036D22E0)
+#define E228BEC9ADEE41C98FA4CB48036D22E0
 
-#include "ui_SiteWizType.h"
+#include <vector>
+#include <miktex/PackageManager/PackageManager>
 
-class SiteWizType
+#include "ui_SiteWizLocal.h"
+
+class SiteWizLocal
   : public QWizardPage,
-    private Ui::SiteWizType
+    private Ui::SiteWizLocal
 {
 private:
   Q_OBJECT;
 
 public:
-  SiteWizType ();
+  SiteWizLocal (/*[in]*/ MiKTeX::Packages::PackageManager *	pManager);
 
 public:
   virtual
-  void
-  initializePage ();
+  int
+  nextId ()
+    const
+  {
+    return (-1);
+  }
+
+public:
+  virtual
+  bool
+  validatePage ();
 
 public:
   virtual
@@ -49,20 +61,12 @@ public:
   isComplete ()
     const;
 
-public:
-  virtual
-  int
-  nextId ()
-    const;
-
-public:
-  virtual
-  bool
-  validatePage ();
-
 private slots:
   void
-  on_btnConnectionSettings_clicked ();
+  on_btnBrowse_clicked ();
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
 };
 
 #endif

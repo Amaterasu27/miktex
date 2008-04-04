@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>224</height>
+    <height>226</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -273,7 +273,6 @@
   <tabstop>btnChange</tabstop>
   <tabstop>chkAlwaysAsk</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -283,8 +282,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>59</x>
-     <y>24</y>
+     <x>338</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel" >
      <x>264</x>
@@ -299,8 +298,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>59</x>
-     <y>24</y>
+     <x>338</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel" >
      <x>264</x>

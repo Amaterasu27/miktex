@@ -40,7 +40,7 @@ ErrorDialogImpl::ErrorDialogImpl (/*[in]*/ QWidget *		pParent,
 {
   setupUi (this);
   tbMessage->setText (QString::fromLocal8Bit(e.what()));
-  tbInfo->setText (QString::fromLocal8Bit(e.what()));
+  tbInfo->setText (QString::fromLocal8Bit(e.GetInfo().c_str()));
 }
 
 /* _________________________________________________________________________

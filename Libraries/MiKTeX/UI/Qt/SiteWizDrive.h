@@ -1,4 +1,4 @@
-/* SiteWizType.h:					-*- C++ -*-
+/* SiteWizDrive.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 
@@ -23,20 +23,23 @@
 #  pragma once
 #endif
 
-#if ! defined(E470AC5708664919BAD58B49DC624841)
-#define E470AC5708664919BAD58B49DC624841
+#if ! defined(CD26AA1939BF4CA0862C2BA8B6C24678)
+#define CD26AA1939BF4CA0862C2BA8B6C24678
 
-#include "ui_SiteWizType.h"
+#include <vector>
+#include <miktex/PackageManager/PackageManager>
 
-class SiteWizType
+#include "ui_SiteWizDrive.h"
+
+class SiteWizDrive
   : public QWizardPage,
-    private Ui::SiteWizType
+    private Ui::SiteWizDrive
 {
 private:
   Q_OBJECT;
 
 public:
-  SiteWizType ();
+  SiteWizDrive (/*[in]*/ MiKTeX::Packages::PackageManager *	pManager);
 
 public:
   virtual
@@ -45,24 +48,48 @@ public:
 
 public:
   virtual
-  bool
-  isComplete ()
-    const;
-
-public:
-  virtual
   int
   nextId ()
-    const;
+    const
+  {
+    return (-1);
+  }
 
 public:
   virtual
   bool
   validatePage ();
 
-private slots:
+public:
+  virtual
+  bool
+  isComplete ()
+    const;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
+
+private:
+  struct Location
+  {
+    std::string directory;
+    std::string description;
+  };
+
+#if defined(MIKTEX_WINDOWS)
+private:
   void
-  on_btnConnectionSettings_clicked ();
+  FindMiKTeXCDs (/*[in,out]*/ std::vector<Location> & locations);
+#endif
+
+private:
+  std::vector<Location> locations;
+
+private:
+  bool firstVisit;
+
+private:
+  bool noDriveFound;
 };
 
 #endif

@@ -26,6 +26,7 @@
 #  include <Commctrl.h>
 #endif
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 

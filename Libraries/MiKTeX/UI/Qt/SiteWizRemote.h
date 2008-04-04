@@ -30,6 +30,7 @@
 #include <miktex/PackageManager/PackageManager>
 
 #include "ui_SiteWizRemote.h"
+#include <QThread>
 
 class SiteWizRemote
   : public QWizardPage,
@@ -41,16 +42,67 @@ private:
 public:
   SiteWizRemote (/*[in]*/ MiKTeX::Packages::PackageManager *	pManager);
 
-protected:
+public:
+  virtual
+  int
+  nextId ()
+    const
+  {
+    return (-1);
+  }
+
+public:
   virtual
   void
   initializePage ();
+
+public:
+  virtual
+  bool
+  validatePage ();
+
+public:
+  virtual
+  bool
+  isComplete ()
+    const;
+
+private:
+  void
+  SetItemText (/*[in]*/ int		row,
+	       /*[in]*/ int		column,
+	       /*[in]*/ const QString &	text);
+
+private slots:
+  void
+  FillList ();
+
+private:
+  class DownloadThread
+    : public QThread
+  {
+  public:
+    DownloadThread (/*[in]*/ SiteWizRemote * pParent)
+      : QThread (pParent)
+    {
+    }
+  public:
+    virtual
+    void
+    run ();
+  };
+
+private:
+  DownloadThread * pDownloadThread;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
 
 private:
   std::vector<MiKTeX::Packages::RepositoryInfo> repositories;
 
 private:
-  MiKTeX::Packages::PackageManagerPtr pManager;
+  bool firstVisit;
 };
 
 #endif
