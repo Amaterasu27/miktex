@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1556,6 +1556,18 @@ private:
   ConnectToServer ();
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  MyCoInitialize ();
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  MyCoUninitialize ();
+#endif
+
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_error;
 
@@ -1570,6 +1582,11 @@ private:
 
 private:
   std::vector<UpdateInfo> updates;
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  int numCoInitialize;
+#endif
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:

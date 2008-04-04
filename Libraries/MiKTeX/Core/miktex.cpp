@@ -902,6 +902,7 @@ SessionImpl::SessionImpl ()
 #if defined(MIKTEX_WINDOWS)
     runningAsPowerUser (TriState::Undetermined),
     isUserAPowerUser (TriState::Undetermined),
+    numCoInitialize (0),
 #endif
     sharedSetup (TriState::Undetermined),
     makeFonts (true),
@@ -916,6 +917,44 @@ SessionImpl::SessionImpl ()
 
 {
 }
+
+/* _________________________________________________________________________
+
+   SessionImpl::MyCoInitialize
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+void
+SessionImpl::MyCoInitialize ()
+{
+  HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+  if (FAILED(hr))
+    {
+      FATAL_MIKTEX_ERROR ("SessionImpl::MyCoInitialize",
+			  T_("The COM library could not be initialized."),
+			  NUMTOSTR(hr));
+    }
+  ++ numCoInitialize;
+}
+#endif
+
+/* _________________________________________________________________________
+
+   SessionImpl::MyCoUninitialize
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+void
+SessionImpl::MyCoUninitialize ()
+{
+  if (numCoInitialize == 0)
+    {
+      UNEXPECTED_CONDITION ("SessionImpl::MyCoUninitialize");
+    }
+  CoUninitialize ();
+  -- numCoInitialize;
+}
+#endif
 
 /* _________________________________________________________________________
 
@@ -952,13 +991,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 #if defined(MIKTEX_WINDOWS)
   if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
     {
-      HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-      if (FAILED(hr))
-	{
-	  FATAL_MIKTEX_ERROR ("",
-			      T_("The COM library could not be initialized."),
-			      NUMTOSTR(hr));
-	}
+      MyCoInitialize ();
     }
 #endif
 
@@ -1108,17 +1141,17 @@ SessionImpl::Uninitialize ()
   catch (const exception &)
     {
 #if defined(MIKTEX_WINDOWS)
-      if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
+      while (numCoInitialize > 0)
 	{
-	  CoUninitialize ();
+	  MyCoUninitialize ();
 	}
 #endif
       throw;
     }
 #if defined(MIKTEX_WINDOWS)
-  if ((initInfo.GetFlags() & InitFlags::InitializeCOM) != 0)
+  while (numCoInitialize > 0)
     {
-      CoUninitialize ();
+      MyCoUninitialize ();
     }
 #endif
 }
@@ -1163,6 +1196,15 @@ SessionImpl::ConnectToServer ()
 			&bo,
 			__uuidof(MiKTeXSessionLib::ISession),
 			reinterpret_cast<void**>(&localServer.pSession));
+	  if (hr == CO_E_NOTINITIALIZED)
+	    {
+	      MyCoInitialize ();
+	      hr =
+		CoGetObject(monikerName.c_str(),
+			    &bo,
+			    __uuidof(MiKTeXSessionLib::ISession),
+			    reinterpret_cast<void**>(&localServer.pSession));
+	    }
 	  if (FAILED(hr))
 	    {
 	      FATAL_MIKTEX_ERROR ("ConnectToServer",
@@ -1177,6 +1219,15 @@ SessionImpl::ConnectToServer ()
 	    (__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
 	     0,
 	     CLSCTX_LOCAL_SERVER);
+	  if (hr == CO_E_NOTINITIALIZED)
+	    {
+	      MyCoInitialize ();
+	      hr =
+		localServer.pSession.CoCreateInstance
+		(__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
+		 0,
+		 CLSCTX_LOCAL_SERVER);
+	    }
 	  if (FAILED(hr))
 	    {
 	      FATAL_MIKTEX_ERROR ("ConnectToServer",

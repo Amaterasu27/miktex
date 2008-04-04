@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -133,6 +133,9 @@ PackageInstallerImpl::PackageInstallerImpl
     taskPackageLevel (PackageLevel::None),
     repositoryType (RepositoryType::Unknown),
     pManager (pManager),
+#if defined(MIKTEX_WINDOWS)
+    numCoInitialize (0),
+#endif
     trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
     trace_mpm (TraceStream::Open(MIKTEX_TRACE_MPM))
 
@@ -157,6 +160,44 @@ PackageInstallerImpl::PackageInstallerImpl
   destinationDirectory =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::InstallRoot);
 }
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::MyCoInitialize
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+void
+PackageInstallerImpl::MyCoInitialize ()
+{
+  HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+  if (FAILED(hr))
+    {
+      FATAL_MIKTEX_ERROR ("PackageInstallerImpl::MyCoInitialize",
+			  T_("The COM library could not be initialized."),
+			  NUMTOSTR(hr));
+    }
+  ++ numCoInitialize;
+}
+#endif
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::MyCoUninitialize
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+void
+PackageInstallerImpl::MyCoUninitialize ()
+{
+  if (numCoInitialize == 0)
+    {
+      UNEXPECTED_CONDITION ("PackageInstallerImpl::MyCoUninitialize");
+    }
+  CoUninitialize ();
+  -- numCoInitialize;
+}
+#endif
 
 /* _________________________________________________________________________
 
@@ -1719,6 +1760,16 @@ PackageInstallerImpl::ConnectToServer ()
 			    __uuidof(MiKTeXPackageManagerLib
 				     ::IPackageManager),
 			    reinterpret_cast<void**>(&localServer.pManager));
+	      if (hr == CO_E_NOTINITIALIZED)
+		{
+		  MyCoInitialize ();
+		  hr =
+		    CoGetObject(monikerName.c_str(),
+				&bo,
+				__uuidof(MiKTeXPackageManagerLib
+					 ::IPackageManager),
+			    reinterpret_cast<void**>(&localServer.pManager));
+		}
 	      if (FAILED(hr))
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
@@ -1734,6 +1785,16 @@ PackageInstallerImpl::ConnectToServer ()
 			  MAKE_CURVER_ID(PackageManager)),
 		 0,
 		 CLSCTX_LOCAL_SERVER);
+	      if (hr == CO_E_NOTINITIALIZED)
+		{
+		  MyCoInitialize ();
+		  hr =
+		    localServer.pManager.CoCreateInstance
+		    (__uuidof(MiKTeXPackageManagerLib::
+			      MAKE_CURVER_ID(PackageManager)),
+		     0,
+		     CLSCTX_LOCAL_SERVER);
+		}
 	      if (FAILED(hr))
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
@@ -2941,6 +3002,12 @@ PackageInstallerImpl::Dispose ()
       trace_error->Close ();
       trace_error.reset ();
     }
+#if defined(MIKTEX_WINDOWS)
+  while (numCoInitialize > 0)
+    {
+      MyCoUninitialize ();
+    }
+#endif
 }
 
 /* _________________________________________________________________________

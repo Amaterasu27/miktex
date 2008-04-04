@@ -175,7 +175,7 @@ Application::Init (/*[in]*/ const char *	lpszProgramInvocationName,
     {
       initInfo.SetTheNameOfTheGame (lpszTheNameOfTheGame);
     }
-#if defined(MIKTEX_WINDOWS)
+#if defined(MIKTEX_WINDOWS) && 0
   initInfo.SetFlags (Session::InitFlags::InitializeCOM);
 #endif
   Init (initInfo);

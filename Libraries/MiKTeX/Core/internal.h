@@ -1981,6 +1981,18 @@ private:
   ConnectToServer ();
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  MyCoInitialize ();
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  MyCoUninitialize ();
+#endif
+
   // index of common data root
 private:
   unsigned commonDataRootIndex;
@@ -2027,6 +2039,11 @@ private:
 
 private:
   bool initialized;
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  int numCoInitialize;
+#endif
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
