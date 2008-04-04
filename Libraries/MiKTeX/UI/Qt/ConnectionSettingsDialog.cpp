@@ -46,7 +46,7 @@ ConnectionSettingsDialog::ConnectionSettingsDialog (/*[in]*/ QWidget * pParent)
       if (PackageManager::TryGetProxy(proxySettings))
 	{
 	  grpUseProxy->setChecked (proxySettings.useProxy);
-
+	  leAddress->setText
 	    (QString::fromLocal8Bit(proxySettings.proxy.c_str()));
 	  lePort->setText (QString::number(proxySettings.port));
 	  chkAuthRequired->setChecked (proxySettings.authenticationRequired);

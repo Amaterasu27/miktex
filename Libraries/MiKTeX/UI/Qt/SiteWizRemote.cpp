@@ -67,11 +67,12 @@ SiteWizRemote::DownloadThread::run ()
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (This, e);
+      threadMiKTeXException = e;
+      error = true;
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (This, e);
+      // todo
     }
 }
 
@@ -141,6 +142,14 @@ SiteWizRemote::FillList ()
   try
     {
       tableRepositories->clearContents ();
+
+      if (pDownloadThread != 0
+	  && pDownloadThread->isFinished()
+	  && pDownloadThread->error)
+	{
+	  throw pDownloadThread->threadMiKTeXException;
+	}
+
       tableRepositories->setRowCount (repositories.size());
 
       tableRepositories->horizontalHeader()->setVisible (true);

@@ -36,7 +36,7 @@ ProxyAuthenticationDialog::ProxyAuthenticationDialog
   : QDialog (pParent)
 {
   setupUi (this);
-  QRegExp namePattern ("\w+");
+  QRegExp namePattern ("\\w+");
   QValidator * pValidator = new QRegExpValidator(namePattern, this);
   leName->setValidator (pValidator);
   leName->setText ("");

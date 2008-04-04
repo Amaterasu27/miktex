@@ -128,12 +128,20 @@ The specified directory does not exist."));
 void
 SiteWizLocal::on_btnBrowse_clicked ()
 {
-  QString directory =
+  QString directory;
+#if 1
+  directory =
+    QFileDialog::getExistingDirectory(this,
+				      QString(),
+				      leDirectory->text());
+#else
+  directory =
     QFileDialog::getExistingDirectory(this,
 				      QString(),
 				      leDirectory->text(),
 				      (QFileDialog::DontUseNativeDialog
 				       | QFileDialog::ShowDirsOnly));
+#endif
   if (! directory.isEmpty())
     {
       leDirectory->setText (directory);

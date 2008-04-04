@@ -83,13 +83,18 @@ private:
   {
   public:
     DownloadThread (/*[in]*/ SiteWizRemote * pParent)
-      : QThread (pParent)
+      : QThread (pParent),
+	error (false)
     {
     }
   public:
     virtual
     void
     run ();
+  public:
+    MiKTeX::Core::MiKTeXException threadMiKTeXException;
+  public:
+    bool error;
   };
 
 private:
