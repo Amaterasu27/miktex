@@ -55,7 +55,8 @@ public:
   }
 
 private slots:
-  void on_leName_textChanged (/*[in]*/ const QString & newText);
+  void
+  on_leName_textChanged (/*[in]*/ const QString & newText);
 };
 
 #endif

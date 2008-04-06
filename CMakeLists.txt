@@ -167,6 +167,10 @@ endif(NATIVE_WINDOWS)
 ###############################################################################
 ## find stuff
 
+if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
+  set(HAVE_MPM_QT_SOURCES 1)
+endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
+
 set(required_programs
   cat
   cp
@@ -676,6 +680,10 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+if(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
+  add_subdirectory(${rel_mpm_qt_dir})
+endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
 

@@ -51,14 +51,14 @@ public:
 
 public:
   virtual
-  int
-  nextId ()
-    const;
+  bool
+  validatePage ();
 
 public:
   virtual
-  bool
-  validatePage ();
+  int
+  nextId ()
+    const;
 
 private slots:
   void

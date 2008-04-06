@@ -38,6 +38,18 @@ SiteWizType::SiteWizType ()
   : QWizardPage (0)
 {
   setupUi (this);
+  setTitle (T_("Installation Source"));
+  setSubTitle (T_("Choose where you want to install packages from."));
+}
+
+/* _________________________________________________________________________
+
+   SiteWizType::initializePage
+   _________________________________________________________________________ */
+
+void
+SiteWizType::initializePage ()
+{
   try
     {
       string urlOrPath;
@@ -61,38 +73,11 @@ SiteWizType::SiteWizType ()
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (0, e);
+      ErrorDialog::DoModal (this, e);
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (0, e);
-    }
-}
-
-/* _________________________________________________________________________
-
-   SiteWizType::nextId
-   _________________________________________________________________________ */
-
-int
-SiteWizType::nextId ()
-  const
-{
-  if (rbRemote->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_Remote);
-    }
-  else if (rbLocal->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_Local);
-    }
-  else if (rbCD->isChecked())
-    {
-      return (SiteWizSheetImpl::Page_CD);
-    }
-  else
-    {
-      return (-1);
+      ErrorDialog::DoModal (this, e);
     }
 }
 
@@ -106,17 +91,6 @@ SiteWizType::isComplete ()
   const
 {
   return (nextId() >= 0);
-}
-
-/* _________________________________________________________________________
-
-   SiteWizType::initializePage
-   _________________________________________________________________________ */
-
-void
-SiteWizType::initializePage ()
-{
-  emit completeChanged();
 }
 
 /* _________________________________________________________________________
@@ -151,6 +125,33 @@ SiteWizType::validatePage ()
     {
       ErrorDialog::DoModal (this, e);
       return (false);
+    }
+}
+
+/* _________________________________________________________________________
+
+   SiteWizType::nextId
+   _________________________________________________________________________ */
+
+int
+SiteWizType::nextId ()
+  const
+{
+  if (rbRemote->isChecked())
+    {
+      return (SiteWizSheetImpl::Page_Remote);
+    }
+  else if (rbLocal->isChecked())
+    {
+      return (SiteWizSheetImpl::Page_Local);
+    }
+  else if (rbCD->isChecked())
+    {
+      return (SiteWizSheetImpl::Page_CD);
+    }
+  else
+    {
+      return (-1);
     }
 }
 

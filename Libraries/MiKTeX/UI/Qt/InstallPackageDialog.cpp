@@ -83,11 +83,11 @@ InstallPackageDialog::InstallPackageDialog
     }
   catch (const MiKTeXException & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ErrorDialog::DoModal (0, e);
     }
   catch (const exception & e)
     {
-      ErrorDialog::DoModal (this, e);
+      ErrorDialog::DoModal (0, e);
     }
 }
 

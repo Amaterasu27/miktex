@@ -39,7 +39,7 @@ MIKTEXCEECALL
 MiKTeX::UI::Qt::InitializeFramework ()
 {
 #ifdef Q_WS_X11
-  bool useGUI = getenv("DISPLAY") != 0;
+  bool useGUI = (getenv("DISPLAY") != 0);
 #else
   bool useGUI = true;
 #endif

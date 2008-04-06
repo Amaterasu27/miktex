@@ -72,7 +72,6 @@ SiteWizRemote::DownloadThread::run ()
     }
   catch (const exception & e)
     {
-      // todo
     }
 }
 
@@ -88,6 +87,10 @@ SiteWizRemote::SiteWizRemote (/*[in]*/ PackageManager *	pManager)
     firstVisit (true)
 {
   setupUi (this);
+  setTitle (T_("Remote Package Repository"));
+  setSubTitle (T_("\
+Packages will be installed from the Internet. Choose \
+a remote package repository."));
 }
 
 /* _________________________________________________________________________
@@ -113,6 +116,51 @@ SiteWizRemote::initializePage ()
       connect (pDownloadThread, SIGNAL(finished()),
 	       this, SLOT(FillList()));
       pDownloadThread->start ();
+    }
+}
+
+/* _________________________________________________________________________
+
+   SiteWizRemote::isComplete
+   _________________________________________________________________________ */
+
+bool
+SiteWizRemote::isComplete ()
+  const
+{
+  return (! tableRepositories->selectedItems().isEmpty());
+}
+
+/* _________________________________________________________________________
+
+   SiteWizRemote::validatePage
+   _________________________________________________________________________ */
+
+bool
+SiteWizRemote::validatePage ()
+{
+  try
+    {
+      QList<QTableWidgetItem*> selectedItems =
+	tableRepositories->selectedItems();
+      if (! QWizardPage::validatePage() || selectedItems.isEmpty())
+	{
+	  return (false);
+	}
+      int idx = selectedItems.first()->row();
+      pManager->SetDefaultPackageRepository (RepositoryType::Remote,
+					     repositories[idx].url);
+      return (true);
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (false);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (false);
     }
 }
 
@@ -228,49 +276,3 @@ SiteWizRemote::FillList ()
       ErrorDialog::DoModal (this, e);
     }
 }
-
-/* _________________________________________________________________________
-
-   SiteWizRemote::isComplete
-   _________________________________________________________________________ */
-
-bool
-SiteWizRemote::isComplete ()
-  const
-{
-  return (! tableRepositories->selectedItems().isEmpty());
-}
-
-/* _________________________________________________________________________
-
-   SiteWizRemote::validatePage
-   _________________________________________________________________________ */
-
-bool
-SiteWizRemote::validatePage ()
-{
-  try
-    {
-      QList<QTableWidgetItem*> selectedItems =
-	tableRepositories->selectedItems();
-      if (! QWizardPage::validatePage() || selectedItems.isEmpty())
-	{
-	  return (false);
-	}
-      int idx = selectedItems.first()->row();
-      pManager->SetDefaultPackageRepository (RepositoryType::Remote,
-					     repositories[idx].url);
-      return (true);
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (false);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (false);
-    }
-}
-

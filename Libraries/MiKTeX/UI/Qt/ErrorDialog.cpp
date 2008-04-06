@@ -29,6 +29,32 @@
 
 /* _________________________________________________________________________
 
+   MiKTeX::UI::Qt::ErrorDialog::DoModal
+   _________________________________________________________________________ */
+
+int
+MiKTeX::UI::Qt::ErrorDialog::DoModal (/*[in]*/ QWidget *	pParent,
+				      /*[in]*/ const MiKTeXException &	e)
+{
+  ErrorDialogImpl dlg (pParent, e);
+  return (dlg.exec());
+}
+
+/* _________________________________________________________________________
+
+   MiKTeX::UI::Qt::ErrorDialog::DoModal
+   _________________________________________________________________________ */
+
+int
+MiKTeX::UI::Qt::ErrorDialog::DoModal (/*[in]*/ QWidget *	pParent,
+				      /*[in]*/ const exception &	e)
+{
+  ErrorDialogImpl dlg (pParent, e);
+  return (dlg.exec());
+}
+
+/* _________________________________________________________________________
+
    ErrorDialogImpl::ErrorDialogImpl
    _________________________________________________________________________ */
 
@@ -57,32 +83,6 @@ ErrorDialogImpl::ErrorDialogImpl (/*[in]*/ QWidget *		pParent,
   setupUi (this);
   tbMessage->setText (QString::fromLocal8Bit(e.what()));
   tbInfo->setText ("");
-}
-
-/* _________________________________________________________________________
-
-   MiKTeX::UI::Qt::ErrorDialog::DoModal
-   _________________________________________________________________________ */
-
-int
-MiKTeX::UI::Qt::ErrorDialog::DoModal (/*[in]*/ QWidget *	pParent,
-				      /*[in]*/ const MiKTeXException &	e)
-{
-  ErrorDialogImpl dlg (pParent, e);
-  return (dlg.exec());
-}
-
-/* _________________________________________________________________________
-
-   MiKTeX::UI::Qt::ErrorDialog::DoModal
-   _________________________________________________________________________ */
-
-int
-MiKTeX::UI::Qt::ErrorDialog::DoModal (/*[in]*/ QWidget *	pParent,
-				      /*[in]*/ const exception &	e)
-{
-  ErrorDialogImpl dlg (pParent, e);
-  return (dlg.exec());
 }
 
 /* _________________________________________________________________________

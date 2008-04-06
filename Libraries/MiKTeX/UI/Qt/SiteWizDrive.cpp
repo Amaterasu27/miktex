@@ -39,6 +39,9 @@ SiteWizDrive::SiteWizDrive (/*[in]*/ PackageManager *	pManager)
     firstVisit (true)
 {
   setupUi (this);
+  setTitle (T_("MiKTeX CD/DVD"));
+  setSubTitle (T_("\
+Packages will be installed from a MiKTeX CD/DVD."));
 }
 
 /* _________________________________________________________________________
@@ -78,6 +81,49 @@ SiteWizDrive::initializePage ()
   catch (const exception & e)
     {
       ErrorDialog::DoModal (this, e);
+    }
+}
+
+/* _________________________________________________________________________
+
+   SiteWizDrive::isComplete
+   _________________________________________________________________________ */
+
+bool
+SiteWizDrive::isComplete ()
+  const
+{
+  return (! locations.empty());
+}
+
+/* _________________________________________________________________________
+
+   SiteWizDrive::validatePage
+   _________________________________________________________________________ */
+
+bool
+SiteWizDrive::validatePage ()
+{
+  try
+    {
+      if (! QWizardPage::validatePage())
+	{
+	  return (false);
+	}
+      pManager->SetDefaultPackageRepository
+	(RepositoryType::MiKTeXDirect,
+	 locations[cbDrives->currentIndex()].directory);
+      return (true);
+    }
+  catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (false);
+    }
+  catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+      return (false);
     }
 }
 
@@ -144,46 +190,3 @@ SiteWizDrive::FindMiKTeXCDs
     }
 }
 #endif
-
-/* _________________________________________________________________________
-
-   SiteWizDrive::isComplete
-   _________________________________________________________________________ */
-
-bool
-SiteWizDrive::isComplete ()
-  const
-{
-  return (! locations.empty());
-}
-
-/* _________________________________________________________________________
-
-   SiteWizDrive::validatePage
-   _________________________________________________________________________ */
-
-bool
-SiteWizDrive::validatePage ()
-{
-  try
-    {
-      if (! QWizardPage::validatePage())
-	{
-	  return (false);
-	}
-      pManager->SetDefaultPackageRepository
-	(RepositoryType::MiKTeXDirect,
-	 locations[cbDrives->currentIndex()].directory);
-      return (true);
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (false);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (false);
-    }
-}

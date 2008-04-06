@@ -38,6 +38,19 @@ SiteWizLocal::SiteWizLocal (/*[in]*/ PackageManager *	pManager)
     pManager (pManager)
 {
   setupUi (this);
+  setTitle (T_("Local Package Repository"));
+  setSubTitle (T_("\
+Packages will be installed from a directory on your computer."));
+}
+
+/* _________________________________________________________________________
+
+   SiteWizRemote::initializePage
+   _________________________________________________________________________ */
+
+void
+SiteWizLocal::initializePage ()
+{
   try
     {
       PathName path;
@@ -128,20 +141,10 @@ The specified directory does not exist."));
 void
 SiteWizLocal::on_btnBrowse_clicked ()
 {
-  QString directory;
-#if 1
-  directory =
+  QString directory =
     QFileDialog::getExistingDirectory(this,
 				      QString(),
 				      leDirectory->text());
-#else
-  directory =
-    QFileDialog::getExistingDirectory(this,
-				      QString(),
-				      leDirectory->text(),
-				      (QFileDialog::DontUseNativeDialog
-				       | QFileDialog::ShowDirsOnly));
-#endif
   if (! directory.isEmpty())
     {
       leDirectory->setText (directory);

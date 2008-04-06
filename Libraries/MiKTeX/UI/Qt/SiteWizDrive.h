@@ -48,12 +48,9 @@ public:
 
 public:
   virtual
-  int
-  nextId ()
-    const
-  {
-    return (-1);
-  }
+  bool
+  isComplete ()
+    const;
 
 public:
   virtual
@@ -62,9 +59,12 @@ public:
 
 public:
   virtual
-  bool
-  isComplete ()
-    const;
+  int
+  nextId ()
+    const
+  {
+    return (-1);
+  }
 
 private:
   MiKTeX::Packages::PackageManagerPtr pManager;
@@ -87,9 +87,6 @@ private:
 
 private:
   bool firstVisit;
-
-private:
-  bool noDriveFound;
 };
 
 #endif

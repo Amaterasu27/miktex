@@ -44,17 +44,14 @@ public:
 
 public:
   virtual
-  int
-  nextId ()
-    const
-  {
-    return (-1);
-  }
+  void
+  initializePage ();
 
 public:
   virtual
-  void
-  initializePage ();
+  bool
+  isComplete ()
+    const;
 
 public:
   virtual
@@ -63,19 +60,22 @@ public:
 
 public:
   virtual
-  bool
-  isComplete ()
-    const;
+  int
+  nextId ()
+    const
+  {
+    return (-1);
+  }
+
+private slots:
+  void
+  FillList ();
 
 private:
   void
   SetItemText (/*[in]*/ int		row,
 	       /*[in]*/ int		column,
 	       /*[in]*/ const QString &	text);
-
-private slots:
-  void
-  FillList ();
 
 private:
   class DownloadThread

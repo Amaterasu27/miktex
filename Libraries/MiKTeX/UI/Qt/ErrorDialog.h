@@ -27,6 +27,7 @@
 #define F69294E4CE49426DA1B2DAD529AB9B74
 
 #include <miktex/Core/Core>
+
 #include "ui_ErrorDialog.h"
 
 /* _________________________________________________________________________
@@ -49,6 +50,9 @@ public:
   ErrorDialogImpl (/*[in]*/ QWidget *			pParent,
 		   /*[in]*/ const std::exception &	e);
 
+private slots:
+  void on_btnCopy_clicked ();
+
 private:
   std::string
   CreateReport ();
@@ -61,9 +65,6 @@ private:
 
 private:
   bool isMiKTeXException;
-
-private slots:
-  void on_btnCopy_clicked ();
 };
 
 #endif

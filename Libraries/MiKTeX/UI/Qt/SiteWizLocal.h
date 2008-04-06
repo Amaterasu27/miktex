@@ -43,12 +43,14 @@ public:
 
 public:
   virtual
-  int
-  nextId ()
-    const
-  {
-    return (-1);
-  }
+  void
+  initializePage ();
+
+public:
+  virtual
+  bool
+  isComplete ()
+    const;
 
 public:
   virtual
@@ -57,9 +59,12 @@ public:
 
 public:
   virtual
-  bool
-  isComplete ()
-    const;
+  int
+  nextId ()
+    const
+  {
+    return (-1);
+  }
 
 private slots:
   void

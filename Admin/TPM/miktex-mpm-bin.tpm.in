@@ -7,10 +7,12 @@
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
-      This package includes the MiKTeX Package Manager executable.
+      This package includes the GUI variant of the
+MiKTeX Package Manager.
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/mpm_mfc.exe
+texmf/miktex/bin/mpm_qt.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
