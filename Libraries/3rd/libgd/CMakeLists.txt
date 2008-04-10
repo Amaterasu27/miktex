@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,13 +17,20 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
+add_definitions(
+  -DHAVE_CONFIG_H
+)
+
+if(NATIVE_WINDOWS)
 add_definitions(
   -DBGDWIN32
-  -DHAVE_LIBJPEG
-  -DHAVE_LIBPNG
-  -DPATHSEPARATOR=\\\"\;\\\"
-  -Dinline=__inline
 )
+endif(NATIVE_WINDOWS)
 
 set(${gd_dll_name}_sources
   gd-version.h

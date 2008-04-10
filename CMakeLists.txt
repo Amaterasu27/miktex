@@ -241,6 +241,7 @@ check_function_exists(confstr HAVE_CONFSTR)
 check_function_exists(fork HAVE_FORK)
 check_function_exists(geteuid HAVE_GETEUID)
 check_function_exists(getuid HAVE_GETUID)
+check_function_exists(lsqrt HAVE_LSQRT)
 check_function_exists(memcmp HAVE_MEMCMP)
 check_function_exists(memmove HAVE_MEMMOVE)
 check_function_exists(mmap HAVE_MMAP)
@@ -259,6 +260,7 @@ check_include_file_cxx(atlbase.h HAVE_ATLBASE_H)
 
 check_include_files(alloca.h HAVE_ALLOCA_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
+check_include_files(errno.h HAVE_ERRNO_H)
 check_include_files(float.h HAVE_FLOAT_H)
 check_include_files(limits.h HAVE_LIMITS_H)
 check_include_files(mcheck.h HAVE_MCHECK_H)
@@ -272,6 +274,7 @@ check_include_files(sys/stat.h HAVE_SYS_STAT_H)
 check_include_files(unistd.h HAVE_UNISTD_H)
 check_include_files(utime.h HAVE_UTIME_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_include_files(stddef.h HAVE_STDDEF_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 
 if(HAVE_LIMITS_H)
@@ -287,6 +290,13 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
 if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
   set(MFC_FOUND "NO")
 endif(MFC_FOUND AND NOT HAVE_AFXWIN_H)
+
+# MiKTeX components
+set(HAVE_LIBPNG 1)
+set(HAVE_LIBJPEG 1)
+set(HAVE_LIBZ 1)
+set(HAVE_LIBFREETYPE 1)
+set(HAVE_LIBFONTCONFIG 1)
 
 ###############################################################################
 ## change default install prefix
