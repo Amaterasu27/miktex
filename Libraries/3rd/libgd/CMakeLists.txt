@@ -22,6 +22,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 add_definitions(
   -DHAVE_CONFIG_H
 )
@@ -87,12 +92,16 @@ set_target_properties(${gd_dll_name}
 )
 
 target_link_libraries(${gd_dll_name}
+  ${fontconfig_dll_name}
+  ${freetype2_dll_name}
   ${jpeg_dll_name}
   ${png_dll_name}
   ${zlib_dll_name}
 )
 
 delay_load(${gd_dll_name}
+  ${fontconfig_dll_name}
+  ${freetype2_dll_name}
   ${jpeg_dll_name}
   ${png_dll_name}
   ${zlib_dll_name}

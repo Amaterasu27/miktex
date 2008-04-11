@@ -297,6 +297,7 @@ set(HAVE_LIBJPEG 1)
 set(HAVE_LIBZ 1)
 set(HAVE_LIBFREETYPE 1)
 set(HAVE_LIBFONTCONFIG 1)
+set(HAVE_FT2BUILD_H 1)
 
 ###############################################################################
 ## change default install prefix

@@ -24,6 +24,7 @@
 #cmakedefine HAVE_LIBZ
 
 #cmakedefine HAVE_ERRNO_H
+#cmakedefine HAVE_FT2BUILD_H
 #cmakedefine HAVE_STDDEF_H
 
 #cmakedefine HAVE_LSQRT
