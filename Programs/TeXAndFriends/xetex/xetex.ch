@@ -69,19 +69,19 @@ authorization from SIL International.
 @z
 
 @x
-@d eTeX_banner_k=='This is e-TeXk, Version 3.141592',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.141592',eTeX_version_string
+@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
-@d TeX_banner_k=='This is TeXk, Version 3.141592' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d banner==eTeX_banner
 @d banner_k==eTeX_banner_k
 @y
-@d XeTeX_banner=='This is XeTeX, Version 3.141592',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
-@d XeTeX_banner_k=='This is XeTeXk, Version 3.141592',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner_k=='This is XeTeXk, Version 3.1415926',eTeX_version_string,XeTeX_version_string
 @#
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k
@@ -2042,9 +2042,9 @@ declared at this point.
 @z
 
 @x
-primitive("par",par_end,256); {cf. |scan_file_name|}
+primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @y
-primitive("par",par_end,too_big_char); {cf. |scan_file_name|}
+primitive("par",par_end,too_big_char); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -3874,7 +3874,7 @@ if not no_pdf_output then fflush(dvi_file);
     end else print(").");
   end else begin
     print_nl("Error "); print_int(k); print(" (");
-    if no_pdf_output then printcstring(strerror(k))
+    if no_pdf_output then print_c_string(strerror(k))
     else print("driver return code");
     print(") generating output;");
     print_nl("file "); print(output_file_name); print(" may not be valid.");
@@ -3919,7 +3919,7 @@ shift_amount(r):=0;
 @x
 @p procedure append_to_vlist(@!b:pointer);
 var d:scaled; {deficiency of space between baselines}
-@!p:pointer; {a new glue specification}
+@!p:pointer; {a new glue node}
 begin if prev_depth>ignore_depth then
   begin d:=width(baseline_skip)-prev_depth-height(b);
   if d<line_skip_limit then p:=new_param_glue(line_skip_code)
@@ -3933,7 +3933,7 @@ end;
 @y
 @p procedure append_to_vlist(@!b:pointer);
 var d:scaled; {deficiency of space between baselines}
-@!p:pointer; {a new glue specification}
+@!p:pointer; {a new glue node}
 @!upwards:boolean;
 begin upwards:=XeTeX_upwards;
   if prev_depth>ignore_depth then
@@ -7335,14 +7335,14 @@ token_show(def_ref); print_ln;
 @z
 
 @x
-      system(stringcast(address_of(str_pool[str_start[str_ptr]])));
+      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
 @y
       if name_of_file then libc_free(name_of_file);
       name_of_file := xmalloc(cur_length * 3 + 2);
       k := 0;
       for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(name_of_file + 1);
+      system(conststringcast(name_of_file+1));
 @z
 
 @x
@@ -8557,8 +8557,10 @@ end;
 function load_native_font(u: pointer; nom, aire:str_number; s: scaled): internal_font_number;
 label
 	done;
+const
+	first_math_fontdimen = 10;
 var
-	k: integer;
+	k, num_font_dimens: integer;
 	font_engine: void_pointer;	{really an ATSUStyle or XeTeXLayoutEngine}
 	actual_size: scaled;	{|s| converted to real size, if it was negative}
 	p: pointer;	{for temporary |native_char| node we'll create}
@@ -8596,7 +8598,12 @@ begin
   		    goto done;
         end;
 
-	if (font_ptr = font_max) or (fmem_ptr + 8 > font_mem_size) then begin
+	if (native_font_type_flag = otgr_font_flag) and isOpenTypeMathFont(font_engine) then
+		num_font_dimens := first_math_fontdimen + lastMathConstant
+	else
+		num_font_dimens := 8;
+
+	if (font_ptr = font_max) or (fmem_ptr + num_font_dimens > font_mem_size) then begin
 		@<Apologize for not loading the font, |goto done|@>;
 	end;
 
@@ -8626,7 +8633,8 @@ begin
 	height_base[font_ptr] := ascent;
 	depth_base[font_ptr] := -descent;
 
-	font_params[font_ptr] := 8;		{ we add an extra fontdimen: \#8 -> |cap_height| }
+	font_params[font_ptr] := num_font_dimens;	{ we add an extra fontdimen: \#8 -> |cap_height|;
+													then OT math fonts have a bunch more }
 	font_bc[font_ptr] := 0;
 	font_ec[font_ptr] := 65535;
 	font_used[font_ptr] := false;
@@ -8659,6 +8667,15 @@ begin
 	incr(fmem_ptr);
 	font_info[fmem_ptr].sc := cap_ht;								{|cap_height|}
 	incr(fmem_ptr);
+
+	if num_font_dimens = first_math_fontdimen + lastMathConstant then begin
+		font_info[fmem_ptr].int := num_font_dimens; { \fontdimen9 = number of assigned fontdimens }
+		incr(fmem_ptr);
+		for k := 0 to lastMathConstant do begin
+			font_info[fmem_ptr].sc := get_ot_math_constant(font_ptr, k);
+			incr(fmem_ptr);
+		end;
+	end;
 
 	font_mapping[font_ptr] := loaded_font_mapping;
 	font_flags[font_ptr] := loaded_font_flags;

@@ -748,7 +748,7 @@ var @!p:integer; {the fraction so far}
 @!negative:boolean; {should the result be negated?}
 @!n:integer; {additional multiple of $q$}
 @!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>0|@>;
+begin @<Reduce to the case that |f>=0| and |q>=0|@>;
 if f<fraction_one then n:=0
 else  begin n:=f div fraction_one; f:=f mod fraction_one;
   if q<=el_gordo div n then n:=n*q
@@ -778,7 +778,7 @@ var @!p:integer; {the fraction so far}
 @!negative:boolean; {should the result be negated?}
 @!n:integer; {additional multiple of $q$}
 @!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>0|@>;
+begin @<Reduce to the case that |f>=0| and |q>=0|@>;
 if f<unity then n:=0
 else  begin n:=f div unity; f:=f mod unity;
   if q<=el_gordo div n then n:=n*q

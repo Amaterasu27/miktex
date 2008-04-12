@@ -46,8 +46,8 @@ namespace xetex {
 #  include <MiKTeX/Core/Help>
 #endif
 
-extern char * papersize;
-extern char * outputdriver;
+extern const char * papersize;
+extern const char * outputdriver;
 
 /* _________________________________________________________________________
 
@@ -601,7 +601,31 @@ initgraphitebreaking (/*[in]*/ const voidpointer	p,
 
 /* _________________________________________________________________________
 
+   isopentypemathfont
+   _________________________________________________________________________ */
+
+inline
+int
+isopentypemathfont (/*[in]*/ const voidpointer	p)
+{
+  return (isOpenTypeMathFont(reinterpret_cast<XeTeXLayoutEngine>(p)));
+}
+
+/* _________________________________________________________________________
+
    findnextgraphitebreak
    _________________________________________________________________________ */
 
 #define findnextgraphitebreak findNextGraphiteBreak
+
+/* _________________________________________________________________________
+
+   printcstring
+   _________________________________________________________________________ */
+
+#define printcstring(STR)        \
+  do {                           \
+    const_string ch_ptr = (STR); \
+    while (*ch_ptr)              \
+      printchar(*(ch_ptr++));    \
+  } while (0)

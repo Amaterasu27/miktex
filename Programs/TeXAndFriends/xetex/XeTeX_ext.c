@@ -173,8 +173,8 @@ const UInt32 byteMark				= 0x00000080UL;
 
 
 /* if the user specifies a paper size or output driver program */
-string papersize;
-string outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
+const_string papersize;
+const_string outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
 
 
 void initversionstring(char **versions)
@@ -185,7 +185,7 @@ void initversionstring(char **versions)
 	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
 	FT_Int	ftMajor, ftMinor, ftPatch;
 
-	char* fmt =
+	const_string fmt =
 		"Compiled with ICU version %s [with modifications for XeTeX]\n"
 		"Compiled with zlib version %s; using %s\n"
 		"Compiled with FreeType2 version %d.%d.%d; using %d.%d.%d\n"
@@ -367,7 +367,7 @@ static char* byteBuffer = NULL;
 	return true;
 }
 
-static void die(char*s, int i)
+static void die(const_string s, int i)
 {
 	fprintf(stderr, s, i);
 	fprintf(stderr, " - exiting\n");
@@ -475,14 +475,6 @@ getencodingmodeandinfo(integer* info)
 		*info = maketexstring(name);
 		return ICUMAPPING;
 	}
-}
-
-void
-printcstring(const char* str)
-{
-	if (str != NULL)
-		while (*str)
-			printvisiblechar(*(str++));
 }
 
 void
@@ -2425,12 +2417,6 @@ double Fix2X(Fixed f)
 #endif
 
 /* these are here, not XeTeX_mac.c, because we need stubs on other platforms */
-#if ! defined(MIKTEX)
-#ifndef XETEX_MAC
-typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
-#endif
-#endif
-
 void
 atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant)
 {

@@ -29,7 +29,7 @@ boolean fontfile_found;
 boolean is_otf_font;
 char fontname_buf[FONTNAME_BUF_SIZE];
 
-boolean fontisreencoded (int f) {
+boolean fontisreencoded (fontnumber f) {
   fm_entry *fm;
   if (fontsizes[f]!=0 && hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -41,7 +41,7 @@ boolean fontisreencoded (int f) {
   return 0;
 }
 
-boolean fontisincluded (int f) {
+boolean fontisincluded (fontnumber f) {
   fm_entry *fm;
   if (fontsizes[f]!=0 && hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -53,7 +53,7 @@ boolean fontisincluded (int f) {
   return 0;
 }
 
-boolean fontissubsetted (int f) {
+boolean fontissubsetted (fontnumber f) {
   fm_entry *fm;
   if (fontsizes[f]!=0 && hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -66,7 +66,7 @@ boolean fontissubsetted (int f) {
 }
 
 
-strnumber fmencodingname (int f) {
+strnumber fmencodingname (fontnumber f) {
   enc_entry *e;
   fm_entry *fm;
   if (hasfmentry (f)) { 
@@ -86,7 +86,7 @@ strnumber fmencodingname (int f) {
   return 0;
 }
 
-strnumber fmfontname (int f) {
+strnumber fmfontname (fontnumber f) {
   fm_entry *fm;
   if (hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -106,7 +106,7 @@ strnumber fmfontname (int f) {
   return 0;
 }
 
-strnumber fmfontsubsetname (int f) {
+strnumber fmfontsubsetname (fontnumber f) {
   fm_entry *fm;
   char *s;
   if (hasfmentry (f)) { 
@@ -132,7 +132,7 @@ strnumber fmfontsubsetname (int f) {
 
 
 
-integer fmfontslant (int f) {
+integer fmfontslant (fontnumber f) {
   fm_entry *fm;
   if (hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -143,7 +143,7 @@ integer fmfontslant (int f) {
   return 0;
 }
 
-integer fmfontextend (int f) {
+integer fmfontextend (fontnumber f) {
   fm_entry *fm;
   if (hasfmentry (f)) { 
     fm = (fm_entry *) mpfontmap[f];
@@ -177,7 +177,7 @@ void mploadencodings (int lastfnum) {
 
 void mpfontencodings (int lastfnum, int encodings_only) {
   int nullfont;
-  int f,ff;
+  int f;
   enc_entry *e;
   fm_entry *fm;
   nullfont = getnullfont();
@@ -200,7 +200,6 @@ void mpfontencodings (int lastfnum, int encodings_only) {
 
 boolean dopsfont (fontnumber f)
 {
-    int i;
   fm_entry *fm_cur;
     if (mpfontmap[f] == NULL)
         pdftex_fail ("pdffontmap not initialized for font %s",

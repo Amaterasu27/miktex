@@ -1,6 +1,6 @@
-/* gd-version.h: version number					-*- C++ -*-
+/* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 2004-2008 Christian Schenk
+   Copyright (C) 2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,18 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 3022
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.0.34"
+#cmakedefine HAVE_LIBFONTCONFIG
+#cmakedefine HAVE_LIBFREETYPE
+#cmakedefine HAVE_LIBJPEG
+#cmakedefine HAVE_LIBPNG
+#cmakedefine HAVE_LIBZ
 
-#include <miktex/Core/Version>
+#cmakedefine HAVE_ERRNO_H
+#cmakedefine HAVE_FT2BUILD_H
+#cmakedefine HAVE_STDDEF_H
+
+#cmakedefine HAVE_LSQRT
+
+#if defined(MIKTEX_WINDOWS)
+#  define PATHSEPARATOR ";"
+#endif

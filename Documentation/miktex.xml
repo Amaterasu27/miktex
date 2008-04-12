@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "2988">
-<!ENTITY month "March 2008">
-<!ENTITY date "March 07, 2008">
+<!ENTITY revj2000 "3022">
+<!ENTITY month "April 2008">
+<!ENTITY date "April 10, 2008">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -481,7 +481,7 @@ pdftex "&amp;latex" sample2e</programlisting>
 
 </section>
 
-<section>
+<section id="runtimeparams">
 
 <title>Changing &TEXMF; run-time parameters</title>
 

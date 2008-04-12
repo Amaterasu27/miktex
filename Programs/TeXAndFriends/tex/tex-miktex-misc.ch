@@ -441,9 +441,11 @@ end;
 
 @x
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @y
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 \MiKTeX: standard input and output streams were prepared
@@ -466,9 +468,11 @@ by the \C4P\ runtime library.
 @x
 some instruction to the operating system.  The following macros show how
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @y
 some instruction to the operating system.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @z
 

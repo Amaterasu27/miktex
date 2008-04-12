@@ -709,7 +709,7 @@ findGlyphInPostTable(const char* buffer, int tableSize, const char* glyphName)
 	switch (SWAP(p->format)) {
 		case 0x00010000:
 			{
-				char*	cp;
+				const char*	cp;
 				while ((cp = appleGlyphNames[g]) != 0) {
 					if (strcmp(glyphName, cp) == 0)
 						return g;
@@ -1064,6 +1064,17 @@ int usingOpenType(XeTeXLayoutEngine engine)
 int usingGraphite(XeTeXLayoutEngine engine)
 {
 	return engine->grFont != NULL;
+}
+
+#define kMATHTableTag	0x4D415448 /* 'MATH' */
+
+int isOpenTypeMathFont(XeTeXLayoutEngine engine)
+{
+	if (engine->layoutEngine != NULL) {
+		if (engine->font->getFontTable(kMATHTableTag) != NULL)
+			return 1;
+	}
+	return 0;
 }
 
 int
