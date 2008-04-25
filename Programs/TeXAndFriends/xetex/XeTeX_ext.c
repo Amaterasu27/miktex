@@ -266,7 +266,14 @@ setinputfileencoding(UFILE* f, integer mode, integer encodingData)
 #endif
 				UConverter*	cnv = ucnv_open(name, &err);
 				if (cnv == NULL) {
-					fprintf(stderr, "! Error %d creating Unicode converter for %s\n", err, name);
+					begindiagnostic();
+					printnl('E');
+					printcstring("rror ");
+					printint(err);
+					printcstring(" creating Unicode converter for `");
+					printcstring(name);
+					printcstring("'; reading as raw bytes");
+					enddiagnostic(1);
 					f->encodingMode = RAW;
 				}
 				else {
@@ -290,73 +297,197 @@ uclose(UFILE* f)
 	}
 }
 
-int
-input_line_icu(UFILE* f)
+static void
+buffer_overflow()
 {
-static char* byteBuffer = NULL;
+	fprintf (stderr, "! Unable to read an entire line---bufsize=%u.\n",
+							 (unsigned) bufsize);
+	fputs ("Please increase buf_size in texmf.cnf.\n", stderr);
+	uexit (1);
+}
 
-	UInt32		bytesRead = 0;
-	int		i;
-	UConverter*	cnv;
-	int		outLen;
-#if defined(MIKTEX)
-	UErrorCode	errorCode = U_ZERO_ERROR;
+static void
+conversion_error(int errcode)
+{
+	begindiagnostic();
+	printnl('U');
+	printcstring("nicode conversion failed (ICU error code = ");
+	printint(errcode);
+	printcstring(") discarding any remaining text");
+	enddiagnostic(1);
+}
+
+#ifdef WORDS_BIGENDIAN
+#define NATIVE_UTF32	kForm_UTF32BE
 #else
-	UErrorCode	errorCode = 0;
+#define NATIVE_UTF32	kForm_UTF32LE
 #endif
 
-	if (byteBuffer == NULL)
-#if defined(MIKTEX)
-	        byteBuffer = (char *) xmalloc(bufsize + 1);
-#else
-		byteBuffer = xmalloc(bufsize + 1);
-#endif
-	/* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
-	i = getc(f->f);
-	if (f->skipNextLF) {
-		f->skipNextLF = 0;
-		if (i == '\n')
-			i = getc(f->f);
+static void
+apply_normalization(UInt32* buf, int len, int norm)
+{
+	static TECkit_Converter normalizers[2] = { NULL, NULL };
+
+	TECkit_Status status;
+	UInt32 inUsed, outUsed;
+	TECkit_Converter *normPtr = &normalizers[norm - 1];
+	if (*normPtr == NULL) {
+		status = TECkit_CreateConverter(NULL, 0, 1,
+			NATIVE_UTF32, NATIVE_UTF32 | (norm == 1 ? kForm_NFC : kForm_NFD),
+			&*normPtr);
+		if (status != kStatus_NoError) {
+			fprintf(stderr, "! Failed to create normalizer: error code = %d\n", (int)status);
+			uexit (1);
+		}
 	}
 
-	if (i != EOF && i != '\n' && i != '\r')
-		byteBuffer[bytesRead++] = i;
-	if (i != EOF && i != '\n' && i != '\r')
-		while (bytesRead < bufsize && (i = getc(f->f)) != EOF && i != '\n' && i != '\r')
-			byteBuffer[bytesRead++] = i;
-	
-	if (i == EOF && errno != EINTR && last == first)
-		return false;
+	status = TECkit_ConvertBuffer(*normPtr, (Byte*)buf, len * sizeof(UInt32), &inUsed,
+				(Byte*)&buffer[first], sizeof(*buffer) * (bufsize - first), &outUsed, 1);
+	if (status != kStatus_NoError)
+		buffer_overflow();
+	last = first + outUsed / sizeof(*buffer);
+}
 
-	if (i != EOF && i != '\n' && i != '\r') {
-		fprintf (stderr, "! Unable to read an entire line---bufsize=%u.\n",
-						 (unsigned) bufsize);
-		fputs ("Please increase buf_size in texmf.cnf.\n", stderr);
-		uexit (1);
+#ifdef WORDS_BIGENDIAN
+#define UCNV_UTF32_NativeEndian	UCNV_UTF32_BigEndian
+#else
+#define UCNV_UTF32_NativeEndian	UCNV_UTF32_LittleEndian
+#endif
+
+int
+input_line(UFILE* f)
+{
+static char* byteBuffer = NULL;
+static UInt32 *utf32Buf = NULL;
+	int	i, tmpLen;
+
+	int norm = getinputnormalizationstate();
+
+	if (f->encodingMode == ICUMAPPING) {
+		UInt32		bytesRead = 0;
+		UConverter*	cnv;
+		int		outLen;
+#if defined(MIKTEX)
+		UErrorCode	errorCode = U_ZERO_ERROR;
+#else
+		UErrorCode	errorCode = 0;
+#endif
+		
+		if (byteBuffer == NULL)
+#if defined(MIKTEX)
+			byteBuffer = (char*)xmalloc(bufsize + 1);
+#else
+			byteBuffer = xmalloc(bufsize + 1);
+#endif
+	
+		/* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
+		i = getc(f->f);
+		if (f->skipNextLF) {
+			f->skipNextLF = 0;
+			if (i == '\n')
+				i = getc(f->f);
+		}
+	
+		if (i != EOF && i != '\n' && i != '\r')
+			byteBuffer[bytesRead++] = i;
+		if (i != EOF && i != '\n' && i != '\r')
+			while (bytesRead < bufsize && (i = getc(f->f)) != EOF && i != '\n' && i != '\r')
+				byteBuffer[bytesRead++] = i;
+		
+		if (i == EOF && errno != EINTR && last == first)
+			return false;
+	
+		if (i != EOF && i != '\n' && i != '\r')
+			buffer_overflow();
+	
+		/* now apply the mapping to turn external bytes into Unicode characters in buffer */
+		cnv = (UConverter*)(f->conversionData);
+		switch (norm) {
+			case 1: // NFC
+			case 2: // NFD
+				if (utf32Buf == NULL)
+					utf32Buf = (UInt32*)xmalloc(bufsize * sizeof(*utf32Buf));
+				tmpLen = ucnv_toAlgorithmic(UCNV_UTF32_NativeEndian, cnv,
+											(char*)utf32Buf, bufsize * sizeof(*utf32Buf),
+											byteBuffer, bytesRead, &errorCode);
+				if (errorCode != 0) {
+					conversion_error((int)errorCode);
+					return false;
+				}
+				apply_normalization(utf32Buf, tmpLen / sizeof(*utf32Buf), norm); // sets 'last' correctly
+				break;
+	
+			default: // none
+				outLen = ucnv_toAlgorithmic(UCNV_UTF32_NativeEndian, cnv,
+											(char*)&buffer[first], sizeof(*buffer) * (bufsize - first),
+											byteBuffer, bytesRead, &errorCode);
+				if (errorCode != 0) {
+					conversion_error((int)errorCode);
+					return false;
+				}
+				outLen /= sizeof(*buffer);
+				last = first + outLen;
+				break;
+		}
+	}
+	else {
+		/* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
+		i = get_uni_c(f);
+		if (f->skipNextLF) {
+			f->skipNextLF = 0;
+			if (i == '\n')
+				i = get_uni_c(f);
+		}
+	
+		switch (norm) {
+			case 1: // NFC
+			case 2: // NFD
+				// read Unicode chars into utf32Buf as UTF32
+				if (utf32Buf == NULL)
+#if defined(MIKTEX)
+					utf32Buf = (UInt32*)xmalloc(bufsize * sizeof(*utf32Buf));
+#else
+					utf32Buf = xmalloc(bufsize * sizeof(*utf32Buf));
+#endif
+				tmpLen = 0;
+				if (i != EOF && i != '\n' && i != '\r')
+					utf32Buf[tmpLen++] = i;
+				if (i != EOF && i != '\n' && i != '\r')
+					while (tmpLen < bufsize && (i = get_uni_c(f)) != EOF && i != '\n' && i != '\r')
+						utf32Buf[tmpLen++] = i;
+				
+				if (i == EOF && errno != EINTR && last == first)
+					return false;
+				
+				/* We didn't get the whole line because our buffer was too small.  */
+				if (i != EOF && i != '\n' && i != '\r')
+					buffer_overflow();
+				apply_normalization(utf32Buf, tmpLen, norm);
+				break;
+				
+			default: // none
+				last = first;
+				if (last < bufsize && i != EOF && i != '\n' && i != '\r')
+					buffer[last++] = i;
+				if (i != EOF && i != '\n' && i != '\r')
+					while (last < bufsize && (i = get_uni_c(f)) != EOF && i != '\n' && i != '\r')
+						buffer[last++] = i;
+				
+				if (i == EOF && errno != EINTR && last == first)
+					return false;
+				
+				/* We didn't get the whole line because our buffer was too small.  */
+				if (i != EOF && i != '\n' && i != '\r')
+					buffer_overflow();
+				break;
+		}
 	}
 
 	/* If line ended with CR, remember to skip following LF. */
 	if (i == '\r')
 		f->skipNextLF = 1;
 	
-	/* now apply the mapping to turn external bytes into Unicode characters in buffer */
-	cnv = (UConverter*)(f->conversionData);
-#ifdef WORDS_BIGENDIAN
-#define UCNV_UTF32_NativeEndian	UCNV_UTF32_BigEndian
-#else
-#define UCNV_UTF32_NativeEndian	UCNV_UTF32_LittleEndian
-#endif
-	outLen = ucnv_toAlgorithmic(UCNV_UTF32_NativeEndian, cnv,
-								(char*)&buffer[first], sizeof(*buffer) * (bufsize - first),
-								byteBuffer, bytesRead, &errorCode);
-	if (errorCode != 0) {
-		fprintf(stderr, "! Unicode conversion failed: error code = %d\n", (int)errorCode);
-		return false;
-	}
-	outLen /= sizeof(*buffer);
-	last = first + outLen;
 	buffer[last] = ' ';
-
 	if (last >= maxbufstack)
 		maxbufstack = last;
 
@@ -395,7 +526,14 @@ linebreakstart(integer localeStrNum, const UniChar* text, integer textLength)
 		char* locale = (char*)gettexstring(localeStrNum);
 		brkIter = ubrk_open(UBRK_LINE, locale, NULL, 0, &status);
 		if (U_FAILURE(status)) {
-			fprintf(stderr, "\n! error %d creating linebreak iterator for locale \"%s\", trying default. ", status, locale);
+			begindiagnostic();
+			printnl('E');
+			printcstring("rror ");
+			printint(status);
+			printcstring(" creating linebreak iterator for locale `");
+			printcstring(locale);
+			printcstring("'; trying default locale `en_us'.");
+			enddiagnostic(1);
 			if (brkIter != NULL)
 				ubrk_close(brkIter);
 #if defined(MIKTEX)
@@ -467,7 +605,12 @@ getencodingmodeandinfo(integer* info)
 	/* try for an ICU converter */
 	cnv = ucnv_open(name, &err);
 	if (cnv == NULL) {
-		fprintf(stderr, "! unknown encoding \"%s\"; reading as raw bytes\n", name);
+		begindiagnostic();
+		printnl('U'); /* ensure message starts on a new line */
+		printcstring("nknown encoding `");
+		printcstring(name);
+		printcstring("'; reading as raw bytes");
+		enddiagnostic(1);
 		return RAW;
 	}
 	else {
@@ -2418,7 +2561,7 @@ double Fix2X(Fixed f)
 
 /* these are here, not XeTeX_mac.c, because we need stubs on other platforms */
 void
-atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant)
+atsugetfontmetrics(ATSUStyle style, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant)
 {
 #ifdef XETEX_MAC
 	*ascent = *descent = *xheight = *capheight = *slant = 0;
@@ -3086,59 +3229,6 @@ get_uni_c(UFILE* f)
 	}
 
 	return rval;
-}
-
-int
-input_line(UFILE* f)
-{
-	int i;
-	
-	if (f->encodingMode == ICUMAPPING)
-		return input_line_icu(f);
-	
-	/* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
-	i = get_uni_c(f);
-	if (f->skipNextLF) {
-		f->skipNextLF = 0;
-		if (i == '\n')
-			i = get_uni_c(f);
-	}
-
-	last = first;
-	if (last < bufsize && i != EOF && i != '\n' && i != '\r')
-		buffer[last++] = i;
-	if (i != EOF && i != '\n' && i != '\r')
-		while (last < bufsize && (i = get_uni_c(f)) != EOF && i != '\n' && i != '\r')
-			buffer[last++] = i;
-	
-	if (i == EOF && errno != EINTR && last == first)
-		return false;
-	
-	/* We didn't get the whole line because our buffer was too small.  */
-	if (i != EOF && i != '\n' && i != '\r') {
-		fprintf (stderr, "! Unable to read an entire line---bufsize=%u.\n",
-						 (unsigned) bufsize);
-#if defined(MIKTEX)
-		fputs ("Please increase buf_size.\n", stderr);
-#else
-		fputs ("Please increase buf_size in texmf.cnf.\n", stderr);
-#endif
-		uexit (1);
-	}
-	
-	buffer[last] = ' ';
-	if (last >= maxbufstack)
-		maxbufstack = last;
-	
-	/* If line ended with CR, remember to skip following LF. */
-	if (i == '\r')
-		f->skipNextLF = 1;
-	
-	/* Trim trailing whitespace.  */
-	while (last > first && ISBLANK (buffer[last - 1]))
-		--last;
-	
-	return true;
 }
 
 void

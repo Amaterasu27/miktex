@@ -43,6 +43,7 @@ add_definitions(
   -DHAVE_C4P_PRE_H
   -DLE_USE_CMEMORY
   -DMIKTEX_XETEX
+  -D__SyncTeX__
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
   -DXETEXDATA=g_XETEXData
@@ -50,13 +51,19 @@ add_definitions(
   -DXeTeX
 )
 
-#add_custom_command(
-#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/xetex.defaults.h
-#  COMMAND ${cfg_exe} --print-classes ${xetex_defaults} > xetex.defaults.h
-#  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-#  DEPENDS ${xetex_defaults}
-#  VERBATIM
-#)
+set(synctex_xetex_ch_srcs_mem_only
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-mem.ch2
+)
+
+set(synctex_xetex_ch_srcs_on
+  ${synctex_xetex_ch_srcs_mem_only}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch2
+)
 
 set(miktex_tex_change_files
   ${mltex_miktex_ch}
@@ -73,7 +80,7 @@ set(miktex_tex_change_files
 
 set(pre_xetex_change_files
   ${etex_ch}
-  ${synctex_ch}
+  ${synctex_xetex_ch_srcs_on}
   ${etex_miktex_pre_ch}
   ${etex_miktex_ch}
   ${miktex_tex_change_files}
@@ -113,7 +120,6 @@ add_custom_command(
 
 set(xetex_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/sync-xetex.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
@@ -154,6 +160,35 @@ file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
+  COMMAND ${SED_EXE}
+		s/TEX-OR-MF-OR-MP/xetex/
+		${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+		> ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+  VERBATIM
+)
+
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
+  PROPERTIES GENERATED TRUE
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.h
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xetex.h
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xetex.h
+)
+
 create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeX_ext.c
   ${CMAKE_CURRENT_SOURCE_DIR}/XeTeX_pic.c
@@ -163,7 +198,6 @@ create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/numbers.c
   ${CMAKE_CURRENT_SOURCE_DIR}/pngimage.c
   ${CMAKE_CURRENT_SOURCE_DIR}/trans.c
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
 )
 
 set(${xetex_dll_name}_sources
@@ -174,7 +208,7 @@ set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mfileio.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/numbers.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pngimage.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/trans.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FontTableCache.cpp

@@ -34,6 +34,7 @@
 
 #define ENABLE_ADDTEXMF 0
 #define SHOW_FOLDER_PAGE 0
+#define FEATURE_1874934 0
 
 /* _________________________________________________________________________
 
