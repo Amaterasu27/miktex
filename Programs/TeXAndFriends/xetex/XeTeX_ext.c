@@ -46,6 +46,7 @@ authorization from SIL International.
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
 #undef Byte
+#endif
 
 #ifdef XETEX_MAC
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
