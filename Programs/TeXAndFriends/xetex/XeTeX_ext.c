@@ -46,7 +46,6 @@ authorization from SIL International.
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
 #undef Byte
-#endif
 
 #ifdef XETEX_MAC
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
@@ -2257,8 +2256,13 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 				int i;
 				OSStatus	status = 0;
 				nGlyphs = layoutChars(engine, (UniChar*)txtPtr, 0, txtLen, txtLen, (dir == UBIDI_RTL), 0.0, 0.0, &status);
+				float maxRhs = 0.0;
+/* NO -- this is not valid in some Indic split-vowel situations
+   see http://sourceforge.net/tracker/index.php?func=detail&aid=1951292&group_id=194926&atid=951385 */
+#if 0
 				getGlyphPosition(engine, nGlyphs, &x, &y, &status);
 				node_width(node) = X2Fix(x);
+#endif
 
 				if (nGlyphs >= maxGlyphs) {
 					if (glyphs != 0) {
@@ -2291,6 +2295,9 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					realGlyphCount = 0;
 					for (i = 0; i < nGlyphs; ++i) {
 						if (glyphs[i] < 0xfffe) {
+							float rhs = positions[2*i] + getGlyphWidth(getFont(engine), glyphs[i]);
+							if (rhs > maxRhs)
+								maxRhs = rhs;
 							glyphIDs[realGlyphCount] = glyphs[i];
 							locations[realGlyphCount].x = X2Fix(positions[2*i]);
 							locations[realGlyphCount].y = X2Fix(positions[2*i+1]);
@@ -2298,7 +2305,8 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 						}
 					}
 				}
-							
+
+				node_width(node) = X2Fix(maxRhs);
 				native_glyph_count(node) = realGlyphCount;
 				native_glyph_info_ptr(node) = glyph_info;
 			}
