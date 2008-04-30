@@ -544,8 +544,16 @@ void synctexterminate(void)
 		if(NULL != the_working_syncname) {
 			strcpy(the_working_syncname, the_real_syncname);
 			strcat(the_working_syncname, synctex_working);
+#if defined(MIKTEX)
+			synctex_abort();
+#endif
 			rename(the_working_syncname,the_real_syncname);
 			SYNCTEX_FREE(the_working_syncname);
+#if defined(MIKTEX)
+			SYNCTEX_FREE(the_real_syncname);
+			SYNCTEX_FREE(tmp);
+			return;
+#endif
 		}
 	}
 	SYNCTEX_FREE(the_real_syncname);
