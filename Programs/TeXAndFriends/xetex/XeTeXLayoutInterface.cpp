@@ -440,11 +440,7 @@ long findGraphiteFeatureNamed(XeTeXLayoutEngine engine, const char* name, int na
 		gr::utf16	label[128];
 		if (engine->grFont->getFeatureLabel(features.first, 0x409, &label[0])) {
 			UText* ut1 = utext_openUTF8(NULL, name, namelength, &status);
-#if defined(MIKTEX)
-			UText* ut2 = utext_openUChars(NULL, (UChar*)&label[0], -1, &status);
-#else
-			UText* ut2 = utext_openUChars(NULL, &label[0], -1, &status);
-#endif
+			UText* ut2 = utext_openUChars(NULL, (const UChar*)&label[0], -1, &status);
 			UChar32	ch1 = 0, ch2 = 0;
 			while (ch1 != U_SENTINEL) {
 				ch1 = utext_next32(ut1);
@@ -479,11 +475,7 @@ long findGraphiteFeatureSettingNamed(XeTeXLayoutEngine engine, UInt32 feature, c
 				gr::utf16	label[128];
 				if (engine->grFont->getFeatureSettingLabel(settings.first, 0x409, &label[0])) {
 					UText* ut1 = utext_openUTF8(NULL, name, namelength, &status);
-#if defined(MIKTEX)
-					UText* ut2 = utext_openUChars(NULL, (UChar*)&label[0], -1, &status);
-#else
-					UText* ut2 = utext_openUChars(NULL, &label[0], -1, &status);
-#endif
+					UText* ut2 = utext_openUChars(NULL, (const UChar*)&label[0], -1, &status);
 					UChar32	ch1 = 0, ch2 = 0;
 					while (ch1 != U_SENTINEL) {
 						ch1 = utext_next32(ut1);

@@ -555,6 +555,7 @@ function miktex_etex_p: boolean; forward;@t\2@>@/
 function null_ptr : void_pointer; forward;@t\2@>@/
 function xmalloc_char_array : void_pointer; forward;@t\2@>@/
 function count_pdf_file_pages : integer; forward;@t\2@>@/
+function load_tfm_font_mapping : void_pointer; forward;@t\2@>@/
 
 @ Define Web2C compatibility functions.
 @z
