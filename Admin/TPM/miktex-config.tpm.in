@@ -7,7 +7,7 @@
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
-      This package contains MiKTeX configuration files.
+      This package contains various MiKTeX configuration files.
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/config/amstex.ini
@@ -24,6 +24,7 @@ texmf/miktex/config/context.ini
 texmf/miktex/config/cslatex.ini
 texmf/miktex/config/csplain.ini
 texmf/miktex/config/formats.ini
+texmf/miktex/config/formats-context.ini
 texmf/miktex/config/jadetex.ini
 texmf/miktex/config/lambda.ini
 texmf/miktex/config/latex.ini

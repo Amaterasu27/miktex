@@ -20,6 +20,7 @@
 set(inc_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/context.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm-common.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/formats-context.ini
 )
 
 set(main_ini_files
