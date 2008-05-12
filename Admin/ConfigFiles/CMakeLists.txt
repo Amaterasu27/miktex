@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,7 @@
 set(inc_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/context.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm-common.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/formats-context.ini
 )
 
 set(main_ini_files
@@ -75,8 +76,10 @@ foreach(i ${inc_ini_files})
   get_filename_component(ininame ${i} NAME)
   add_custom_command(
     OUTPUT ${i}
-    COMMAND ${CAT_EXE} header.txt> ${ininame}
-    COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body>> ${ininame}
+    COMMAND ${CAT_EXE} header.txt
+		> ${ininame}
+    COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
+		>> ${ininame}
     COMMAND ${DOS2UNIX_EXE} ${ininame}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -88,11 +91,15 @@ foreach(i ${main_ini_files})
   get_filename_component(ininame ${i} NAME)
   add_custom_command(
     OUTPUT ${i}
-    COMMAND ${CAT_EXE} header.txt> ${ininame}
-    COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body>> ${ininame}
-    COMMAND ${CAT_EXE} footer.txt>> ${ininame}
+    COMMAND ${CAT_EXE} header.txt
+		> ${ininame}
+    COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
+		>> ${ininame}
+    COMMAND ${CAT_EXE} footer.txt
+		>> ${ininame}
     COMMAND ${CP_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body tmp
-    COMMAND ${cfg_exe} tmp>> ${ininame}
+    COMMAND ${cfg_exe} tmp
+		>> ${ininame}
     COMMAND ${DOS2UNIX_EXE} ${ininame}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

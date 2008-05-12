@@ -273,6 +273,9 @@ MAKE_GLOBAL(instaterecord, curinput);
 MAKE_GLOBAL(C4P_integer, totalpages);
 MAKE_GLOBAL(scaled, curh);
 MAKE_GLOBAL(scaled, curv);
+MAKE_GLOBAL(scaled, rulewd);
+MAKE_GLOBAL(scaled, ruleht);
+MAKE_GLOBAL(scaled, ruledp);
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)

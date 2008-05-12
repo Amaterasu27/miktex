@@ -44,6 +44,9 @@ public:
       optShared (false),
       optUnattended (false),
       packageLevel (PackageLevel::None),
+#if FEATURE_1874934
+      installOnTheFly (TriState::Undetermined),
+#endif
       task (SetupTask::None)
   {
   }
@@ -83,6 +86,16 @@ public:
 
 public:
   PackageLevel packageLevel;
+
+#if FEATURE_1874934
+public:
+  TriState installOnTheFly;
+#endif
+
+#if FEATURE_1874934
+public:
+  string paperSize;
+#endif
 };
 
 /* _________________________________________________________________________
@@ -91,17 +104,17 @@ public:
    _________________________________________________________________________ */
 
 void
-AddArgument (/*[in]*/ const CString &		argument,
-	     /*[in,out]*/ int &			argc,
+AddArgument (/*[in]*/ const CString &	argument,
+	     /*[in,out]*/ int &		argc,
 	     /*[in,out]*/ char ** &	argv,
-	     /*[in,out]*/ int &			argMax)
+	     /*[in,out]*/ int &		argMax)
 {
   if (argc == argMax)
     {
       argMax += 10;
       argv =
 	reinterpret_cast<char**>(realloc(argv,
-					       argMax * sizeof(argv[0])));
+					 argMax * sizeof(argv[0])));
     }
   argv[ argc++ ] = _tcsdup(argument);
 }
@@ -114,7 +127,7 @@ AddArgument (/*[in]*/ const CString &		argument,
 void
 GetArguments (/*[in]*/ const char *		lpszCommandLine,
 	      /*[in]*/ const char *		lpszExeName,
-	      /*[in,out]*/ int &			argc,
+	      /*[in,out]*/ int &		argc,
 	      /*[in,out]*/ char ** &		argv)
 {
   argc = 0;
@@ -167,7 +180,7 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
    _________________________________________________________________________ */
 
 void
-FreeArguments (/*[in]*/ int			argc,
+FreeArguments (/*[in]*/ int		argc,
 	       /*[in,out]*/ char ** & 	argv)
 {
   for (int i = 0; i < argc; ++ i)
@@ -187,6 +200,9 @@ FreeArguments (/*[in]*/ int			argc,
 enum {
   OPT_AAA = 1000,
   OPT_ALLOW_UNATTENDED_REBOOT,
+#if FEATURE_1874934
+  OPT_AUTO_INSTALL,
+#endif
   OPT_COMMON_CONFIG,
   OPT_COMMON_DATA,
   OPT_DOWNLOAD_ONLY,
@@ -197,6 +213,9 @@ enum {
   OPT_LOCAL_PACKAGE_REPOSITORY,
   OPT_NO_ADDITIONAL_ROOTS,
   OPT_PACKAGE_SET,
+#if FEATURE_1874934
+  OPT_PAPER_SIZE,
+#endif
   OPT_PRIVATE,
   OPT_PROGRAM_FOLDER,
   OPT_REMOTE_PACKAGE_REPOSITORY,
@@ -211,6 +230,9 @@ const struct option long_options[] =
 {
   { "allow-unattended-reboot", no_argument, 0,
     OPT_ALLOW_UNATTENDED_REBOOT },
+#if FEATURE_1874934
+  { "auto-install", required_argument, 0, OPT_AUTO_INSTALL },
+#endif
   { "common-config", required_argument, 0, OPT_COMMON_CONFIG },
   { "common-data", required_argument, 0, OPT_COMMON_DATA },
   { "download-only", no_argument, 0, OPT_DOWNLOAD_ONLY },
@@ -223,6 +245,9 @@ const struct option long_options[] =
     OPT_LOCAL_PACKAGE_REPOSITORY },
   { "no-additional-roots", no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
   { "package-set", required_argument, 0, OPT_PACKAGE_SET },
+#if FEATURE_1874934
+  { "paper-size", required_argument, 0, OPT_PAPER_SIZE },
+#endif
   { "private", no_argument, 0, OPT_PRIVATE },
   { "program-folder", required_argument, 0, OPT_PROGRAM_FOLDER },
   { "remote-package-repository", required_argument, 0,
@@ -246,7 +271,14 @@ ShowHelpAndExit (/*[in]*/ int retCode = 0)
   AfxMessageBox (T_("Usage: setupwiz [OPTIONS]\r\n\
 \r\n\
 Options:\r\n\r\n\
-  --allow-unattended-reboot\r\n\
+  --allow-unattended-reboot\r\n")
+#if FEATURE_1874934
+		 T_("\
+  --auto-install=yes\r\n\
+  --auto-install=no\r\n\
+  --auto-install=ask\r\n")
+#endif
+		 T_("\
   --common-config=DIR\r\n\
   --common-data=DIR\r\n\
   --download-only\r\n\
@@ -256,7 +288,13 @@ Options:\r\n\r\n\
   --install-root=DIR\r\n\
   --local-package-repository=DIR\r\n\
   --no-additional-roots\r\n\
-  --package-set=SET\r\n\
+  --package-set=SET\r\n")
+#if FEATURE_1874934
+		 T_("\
+  --paper-size=A4\r\n\
+  --paper-size=Letter\r\n")
+#endif
+		 T_("\
   --private\r\n\
   --program-folder=NAME\r\n\
   --remote-package-repository=URL\r\n\
@@ -297,6 +335,30 @@ ParseSetupCommandLine (/*[in]*/ int				argc,
 	case OPT_ALLOW_UNATTENDED_REBOOT:
 	  cmdinfo.optAllowUnattendedReboot = true;
 	  break;
+
+#if FEATURE_1874934
+	case OPT_AUTO_INSTALL:
+	  if (StringCompare(optarg, "yes", true) == 0)
+	    {
+	      cmdinfo.installOnTheFly = TriState::True;
+	    }
+	  else if (StringCompare(optarg, "no", true) == 0)
+	    {
+	      cmdinfo.installOnTheFly = TriState::False;
+	    }
+	  else if (StringCompare(optarg, "ask", true) == 0)
+	    {
+	      cmdinfo.installOnTheFly = TriState::Undetermined;
+	    }
+	  else
+	    {
+	      FATAL_MIKTEX_ERROR
+		("ParseSetupCommandLine",
+		 T_("Value must be one of: yes, no, ask."),
+		 0);
+	    }
+	  break;
+#endif
 
 	case OPT_COMMON_CONFIG:
 	  if (IsWindowsNT()
@@ -354,6 +416,26 @@ a common data directory."),
 	case OPT_NO_ADDITIONAL_ROOTS:
 	  cmdinfo.optNoAddTEXMFDirs = true;
 	  break;
+
+#if FEATURE_1874934
+	case OPT_PAPER_SIZE:
+	  if (StringCompare(optarg, "A4", true) == 0)
+	    {
+	      cmdinfo.paperSize = "A4";
+	    }
+	  else if (StringCompare(optarg, "Letter", true) == 0)
+	    {
+	      cmdinfo.paperSize = "Letter";
+	    }
+	  else
+	    {
+	      FATAL_MIKTEX_ERROR
+		("ParseSetupCommandLine",
+		 T_("Value must be one of: A4, Letter."),
+		 0);
+	    }
+	  break;
+#endif
 
 	case OPT_PACKAGE_SET:
 	  if (StringCompare(optarg, "essential") == 0)
@@ -509,6 +591,7 @@ SetupWizardApplication::SetupWizardApplication ()
   : packageLevel (PackageLevel::None),
     prefabricatedPackageLevel (PackageLevel::None),
     installOnTheFly (TriState::Undetermined),
+    paperSize ("A4"),
     setupTask (SetupTask::None)
 {
 }
@@ -834,6 +917,22 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
      || cmdinfo.optShared
      || ! cmdinfo.startupConfig.commonDataRoot.Empty()
      || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
+
+  // auto install
+#if FEATURE_1874934
+  if (cmdinfo.installOnTheFly != TriState::Undetermined)
+    {
+      theApp.installOnTheFly = cmdinfo.installOnTheFly;
+    }
+#endif
+
+  // paper size
+#if FEATURE_1874934
+  if (! cmdinfo.paperSize.empty())
+    {
+      theApp.paperSize = cmdinfo.paperSize;
+    }
+#endif
 
   // startup menu item (default: "MiKTeX X.Y")
   theApp.folderName = cmdinfo.folderName;
@@ -2192,7 +2291,7 @@ CreateProgramIcons ()
 
 void
 LogV (/*[in]*/ const char *	lpszFormat,
-      /*[in]*/ va_list			argList)
+      /*[in]*/ va_list		argList)
 {
   CSingleLock singleLock (&theApp.criticalSectionMonitorLogStream, TRUE);
   string formatted = Utils::FormatString(lpszFormat, argList);
@@ -2231,7 +2330,7 @@ LogV (/*[in]*/ const char *	lpszFormat,
 
 void
 Log (/*[in]*/ const char *	lpszFormat,
-     /*[in]*/				...)
+     /*[in]*/			...)
 {
   va_list argList;
   va_start (argList, lpszFormat);

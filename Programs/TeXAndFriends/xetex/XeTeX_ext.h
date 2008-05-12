@@ -249,7 +249,7 @@ extern "C" {
 	int getencodingmodeandinfo(integer* info);
 	void printutf8str(const unsigned char* str, int len);
 	void printchars(const unsigned short* str, int len);
-	void* load_mapping_file(const char* s, const char* e);
+	void* load_mapping_file(const char* s, const char* e, char byteMapping);
 	void* findnativefont(unsigned char* name, integer scaled_size);
 	void releasefontengine(void* engine, int type_flag);
 	int readCommonFeatures(const char* feat, const char* end, float* extend, float* slant, float* embolden, float* letterspace, UInt32* rgbValue);
@@ -305,6 +305,10 @@ extern "C" {
 	void terminatefontmanager();
 	int maketexstring(const char* s);
 
+	void checkfortfmfontmapping();
+	void* loadtfmfontmapping();
+	int applytfmfontmapping(void* mapping, int c);
+
 #ifndef XETEX_MAC
 typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 #endif
@@ -315,7 +319,8 @@ typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 	int atsufontgetnamed(int what, ATSUStyle style);
 	int atsufontgetnamed1(int what, ATSUStyle style, int param);
 	void atsuprintfontname(int what, ATSUStyle style, int param1, int param2);
-	void atsugetfontmetrics(ATSUStyle style, Fixed* ascent, Fixed* descent, Fixed* xheight, Fixed* capheight, Fixed* slant);
+	/* the metrics params here are really TeX 'scaled' (or MacOS 'Fixed') values, but that typedef isn't available every place this is included */
+	void atsugetfontmetrics(ATSUStyle style, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
 
 #ifdef XETEX_MAC
 /* functions in XeTeX_mac.c */

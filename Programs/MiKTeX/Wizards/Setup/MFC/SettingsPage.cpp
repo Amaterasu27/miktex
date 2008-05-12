@@ -1,6 +1,6 @@
 /* SettingsPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -20,6 +20,7 @@
    02111-1307, USA. */
 
 #include "StdAfx.h"
+
 #include "Setup.h"
 
 #include "SettingsPage.h"
@@ -43,8 +44,7 @@ SettingsPage::SettingsPage ()
 		   0,
 		   IDS_HEADER_SETTINGS,
 		   IDS_SUBHEADER_SETTINGS),
-    pSheet (0),
-    installOnTheFly (2)
+    pSheet (0)
 {
 }
 
@@ -57,7 +57,23 @@ BOOL
 SettingsPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  paperSize = "A4";
+  paperSize = theApp.paperSize.c_str();
+  switch (theApp.installOnTheFly.Get())
+    {
+    case TriState::True:
+      installOnTheFly = 0;
+      break;
+    case TriState::False:
+      installOnTheFly = 1;
+      break;
+    case TriState::Undetermined:
+      installOnTheFly = 2;
+      break;
+    default:
+      ASSERT (false);
+      __assume (false);
+      break;
+    }
   BOOL ret = CPropertyPage::OnInitDialog();
   return (ret);
 }

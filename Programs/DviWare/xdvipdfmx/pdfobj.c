@@ -410,20 +410,14 @@ dump_xref_stream (void)
 
   for (i = 0; i < next_label; i++) {
     unsigned j;
-#if defined(MIKTEX)
     unsigned short f3;
-#endif
     buf[0] = output_xref[i].type;
     pos = output_xref[i].field2;
     for (j = poslen; j--; ) {
       buf[1+j] = (unsigned char) pos;
       pos >>= 8;
     }
-#if defined(MIKTEX)
     f3 = output_xref[i].field3;
-#else
-    unsigned short f3 = output_xref[i].field3;
-#endif
     buf[poslen+1] = (unsigned char) (f3 >> 8);
     buf[poslen+2] = (unsigned char) (f3);
     pdf_add_stream(xref_stream, &buf, poslen+3);
@@ -1892,48 +1886,27 @@ static void
 pdf_flush_objstm (pdf_objstm *objstm)
 {
   unsigned char pos = objstm->pos;
-  pdf_obj *stream_obj = objstm->stream;
-#if defined(MIKTEX)
+  pdf_obj *stream_obj = objstm->stream, *dict;
   pdf_stream *stream;
-  unsigned char *old_buf;
+  unsigned char i, *old_buf;
   unsigned long old_length;
-  unsigned char i;
-  pdf_obj *dict;
-#endif
   TYPECHECK(stream_obj, PDF_STREAM);
-#if defined(MIKTEX)
   stream = (pdf_stream *) stream_obj->data;
-#else
-  pdf_stream *stream = (pdf_stream *) stream_obj->data;
-#endif
 
   /* Precede stream data by offset table */
-#if defined(MIKTEX)
   old_buf = stream->stream;
   old_length = stream->stream_length;
-#else
-  unsigned char *old_buf = stream->stream;
-  unsigned long old_length = stream->stream_length;
-#endif
   /* Reserve 22 bytes for each entry (two 10 digit numbers plus two spaces) */
   stream->stream = NEW(old_length + 22*pos, unsigned char);
   stream->stream_length = 0;
   
-#if defined(MIKTEX)
-#else
-  unsigned char i;
-#endif
   for (i = 0; i < pos; i++) {
     long length = sprintf(format_buffer, "%lu %lu ",
 			  objstm->obj_label[i], objstm->obj_pos[i]);
     pdf_add_stream(stream_obj, format_buffer, length);
   }
 
-#if defined(MIKTEX)
   dict = pdf_stream_dict(stream_obj);
-#else
-  pdf_obj *dict = pdf_stream_dict(stream_obj);
-#endif
   pdf_add_dict(dict, pdf_new_name("Type"), pdf_new_name("ObjStm"));
   pdf_add_dict(dict, pdf_new_name("N"), pdf_new_number(pos));
   pdf_add_dict(dict, pdf_new_name("First"), pdf_new_number(stream->stream_length));

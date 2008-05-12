@@ -64,8 +64,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".997"
-@d XeTeX_version_string=='-0.997' {current \XeTeX\ version}
+@d XeTeX_revision==".998"
+@d XeTeX_version_string=='-0.998.2-dev' {current \XeTeX\ version}
 @z
 
 @x
@@ -106,7 +106,9 @@ authorization from SIL International.
 @d XeTeX_use_glyph_metrics_code = 3 {non-zero to use exact glyph height/depth}
 @d XeTeX_inter_char_tokens_code = 4 {non-zero to enable \\XeTeXinterchartokens insertion}
 @#
-@d XeTeX_default_input_mode_code    = 5 {input mode for newly opened files}
+@d XeTeX_input_normalization_code = 5 {normalization mode: 1 = NFC, 2 = NFD, else none}
+@#
+@d XeTeX_default_input_mode_code    = 6 {input mode for newly opened files}
 @d XeTeX_input_mode_auto    = 0
 @d XeTeX_input_mode_utf8    = 1
 @d XeTeX_input_mode_utf16be = 2
@@ -114,9 +116,9 @@ authorization from SIL International.
 @d XeTeX_input_mode_raw     = 4
 @d XeTeX_input_mode_icu_mapping = 5
 @#
-@d XeTeX_default_input_encoding_code = 6 {|str_number| of encoding name if mode = ICU}
+@d XeTeX_default_input_encoding_code = 7 {|str_number| of encoding name if mode = ICU}
 @#
-@d eTeX_states=7 {number of \eTeX\ state variables in |eqtb|}
+@d eTeX_states=8 {number of \eTeX\ state variables in |eqtb|}
 @z
 
 @x
@@ -3416,8 +3418,17 @@ file_opened:=false;
 if not b_open_in(tfm_file) then abort;
 file_opened:=true
 @y
+check_for_tfm_font_mapping;
 if b_open_in(tfm_file) then begin
   file_opened:=true
+@z
+
+@x
+fmem_ptr:=fmem_ptr+lf; font_ptr:=f; g:=f; goto done
+@y
+fmem_ptr:=fmem_ptr+lf; font_ptr:=f; g:=f;
+font_mapping[f]:=load_tfm_font_mapping;
+goto done
 @z
 
 @x
@@ -3551,6 +3562,13 @@ procedure dvi_font_def(@!f:internal_font_number);
 @z
 
 @x
+var k:pool_pointer; {index into |str_pool|}
+@y
+var k:pool_pointer; {index into |str_pool|}
+l:integer; {length of name without mapping option}
+@z
+
+@x
 begin if f<=256+font_base then
 @y
 begin if is_native_font(f) then dvi_native_font_def(f) else
@@ -3558,9 +3576,23 @@ begin if f<=256+font_base then
 @z
 
 @x
+dvi_out(length(font_name[f]));
 @<Output the font name whose internal number is |f|@>;
 @y
+if font_mapping[f]<>nil then begin
+  l:=0;
+  k:=str_start_macro(font_name[f]);
+  while (l=0) and (k<str_start_macro(font_name[f]+1)) do begin
+    if so(str_pool[k]) = ":" then l:=k-str_start_macro(font_name[f]);
+    incr(k);
+  end;
+  dvi_out(l);
+  for k:=str_start_macro(font_name[f]) to str_start_macro(font_name[f])+l-1 do
+    dvi_out(so(str_pool[k]));
+end else begin
+dvi_out(length(font_name[f]));
 @<Output the font name whose internal number is |f|@>;
+end;
 end;
 @z
 
@@ -3732,6 +3764,13 @@ while (q <> null) and (not is_char_node(q)) and (type(q) = disc_node) do
 @z
 
 @x
+  repeat f:=font(p); c:=character(p);
+@y
+  repeat f:=font(p); c:=character(p);
+  if (p<>lig_trick) and (font_mapping[f]<>nil) then c:=apply_tfm_font_mapping(font_mapping[f],c);
+@z
+
+@x
 @p procedure vlist_out; {output a |vlist_node| box}
 @y
 @p procedure vlist_out; {output a |vlist_node| box}
@@ -3745,7 +3784,9 @@ g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
+cur_v:=cur_v-height(this_box);
 @y
 @!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
 @!upwards:boolean; {whether we're stacking upwards}
@@ -3757,6 +3798,7 @@ incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
 save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+@<Start vlist {\sl Sync\TeX} information record@>;
 if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
 @z
 
@@ -3774,7 +3816,16 @@ move_past: if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 
 @x
 @<Output a box in a vlist@>=
-if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
+if list_ptr(p)=null then begin
+  cur_v:=cur_v+height(p);
+  if type(p)=vlist_node then begin
+	  @<Record void vlist {\sl Sync\TeX} information@>;
+    end
+  else begin
+      @<Record void hlist {\sl Sync\TeX} information@>;
+    end;
+  cur_v:=cur_v+depth(p);
+end
 else  begin cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
@@ -3786,9 +3837,16 @@ else  begin cur_v:=cur_v+height(p); synch_v;
   end
 @y
 @<Output a box in a vlist@>=
-if list_ptr(p)=null then
-  if upwards then cur_v:=cur_v-height(p)-depth(p)
-  else cur_v:=cur_v+height(p)+depth(p)
+if list_ptr(p)=null then begin
+  if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p);
+  if type(p)=vlist_node then begin
+	  @<Record void vlist {\sl Sync\TeX} information@>;
+    end
+  else begin
+      @<Record void hlist {\sl Sync\TeX} information@>;
+    end;
+  if upwards then cur_v:=cur_v-height(p) else cur_v:=cur_v+depth(p);
+end
 else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
@@ -3807,13 +3865,10 @@ if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 @z
 
 @x
-begin
-@<Record sheet {\sl synctex} information@>
-if tracing_output>0 then
+begin if tracing_output>0 then
 @y
 begin
 if job_name=0 then open_log_file;
-@<Record sheet {\sl synctex} information@>
 if tracing_output>0 then
 @z
 
@@ -3901,6 +3956,12 @@ label reswitch, common_ending, exit, restart;
 @!hd:eight_bits; {height and depth indices for a character}
 @!pp,@!ppp: pointer;
 @!total_chars, @!k: integer;
+@z
+
+@x
+p:=lig_trick; goto reswitch;
+@y
+p:=lig_trick; ligature_present:=true; goto reswitch;
 @z
 
 @x
@@ -4853,6 +4914,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
 @z
 
 @x
+  ligature_node: begin f:=font(lig_char(v));@/
+@y
+  ligature_node: begin f:=font(lig_char(v));@/
+    ligature_present:=true;
+@z
+
+@x
   othercases confusion("disc1")
 @y
   whatsit_node:
@@ -4863,6 +4931,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
     then break_width[1]:=break_width[1]-width(v)
 	else confusion("disc1a");
   othercases confusion("disc1")
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
 @z
 
 @x
@@ -4885,6 +4960,20 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
 @z
 
 @x
+ligature_node: begin f:=font(lig_char(cur_p));
+@y
+ligature_node: begin f:=font(lig_char(cur_p));
+  ligature_present:=true;
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
+@z
+
+@x
   othercases confusion("disc3")
 @y
   whatsit_node:
@@ -4895,6 +4984,13 @@ label done,done1,done2,done3,done4,done5,done6,continue, restart;
     then disc_width:=disc_width+width(s)
 	else confusion("disc3a");
   othercases confusion("disc3")
+@z
+
+@x
+  ligature_node: begin f:=font(lig_char(s));
+@y
+  ligature_node: begin f:=font(lig_char(s));
+    ligature_present:=true;
 @z
 
 @x
@@ -7080,8 +7176,11 @@ end else
     begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
     set_hyph_index;
     end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past(cur_p)
 @y
-@ @d adv_past(#)==@+if subtype(#)=language_node then
+@ @d adv_past_linebreak(#)==@+if subtype(#)=language_node then
     begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
     set_hyph_index;
     end
@@ -7091,6 +7190,22 @@ end else
   or (subtype(#)=pdf_node)
   then
     begin act_width:=act_width+width(#); end
+
+@<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
+adv_past_linebreak(cur_p)
+@z
+
+@x
+@ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past(s)
+@y
+@ @d adv_past_prehyph(#)==@+if subtype(#)=language_node then
+    begin cur_lang:=what_lang(#); l_hyf:=what_lhm(#); r_hyf:=what_rhm(#);
+    set_hyph_index;
+    end
+
+@<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
+adv_past_prehyph(s)
 @z
 
 @x
@@ -8212,6 +8327,8 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_usv_num;
 @d XeTeX_dash_break_state == eTeX_state(XeTeX_dash_break_code)
 @d XeTeX_dash_break_en == (XeTeX_dash_break_state>0)
 
+@d XeTeX_input_normalization_state == eTeX_state(XeTeX_input_normalization_code)
+
 @d XeTeX_default_input_mode == eTeX_state(XeTeX_default_input_mode_code)
 @d XeTeX_default_input_encoding == eTeX_state(XeTeX_default_input_encoding_code)
 @z
@@ -8225,6 +8342,7 @@ eTeX_state_code+XeTeX_upwards_code:print_esc("XeTeXupwardsmode");
 eTeX_state_code+XeTeX_use_glyph_metrics_code:print_esc("XeTeXuseglyphmetrics");
 eTeX_state_code+XeTeX_inter_char_tokens_code:print_esc("XeTeXinterchartokenstate");
 eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
+eTeX_state_code+XeTeX_input_normalization_code:print_esc("XeTeXinputnormalization");
 @z
 
 @x
@@ -8243,6 +8361,9 @@ primitive("XeTeXinterchartokenstate",assign_int,eTeX_state_base+XeTeX_inter_char
 
 primitive("XeTeXdashbreakstate",assign_int,eTeX_state_base+XeTeX_dash_break_code);
 @!@:XeTeX_dash_break_state_}{\.{\\XeTeX_dash_break_state} primitive@>
+
+primitive("XeTeXinputnormalization",assign_int,eTeX_state_base+XeTeX_input_normalization_code);
+@!@:XeTeX_input_normalization_}{\.{\\XeTeX_input_normalization} primitive@>
 
 primitive("XeTeXinputencoding",extension,XeTeX_input_encoding_extension_code);
 primitive("XeTeXdefaultencoding",extension,XeTeX_default_encoding_extension_code);
@@ -8371,6 +8492,22 @@ end;
 @y
 @!mltex_enabled_p:boolean;  {enable character substitution}
 @!native_font_type_flag:integer; {used by XeTeX font loading code to record which font technology was used}
+@z
+
+@x
+begin result:=c;  {return |c| unless it does not exist in the font}
+@y
+begin if (not ligature_present) and (font_mapping[f]<>nil) then
+  c:=apply_tfm_font_mapping(font_mapping[f],c);
+result:=c;  {return |c| unless it does not exist in the font}
+@z
+
+@x
+begin if not mltex_enabled_p then
+@y
+begin if (not ligature_present) and (font_mapping[f]<>nil) then
+  c:=apply_tfm_font_mapping(font_mapping[f],c);
+if not mltex_enabled_p then
 @z
 
 @x
@@ -8754,6 +8891,12 @@ begin
 	end;
 	print(" replaced by U+FFFD.");
 	end_diagnostic(false);
+end;
+
+function get_input_normalization_state: integer;
+begin
+	if eqtb=nil then get_input_normalization_state:=0
+	else get_input_normalization_state:=XeTeX_input_normalization_state;
 end;
 
 @z

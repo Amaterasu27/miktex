@@ -199,7 +199,7 @@ if(BUILDING_MIKTEX)
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/filetypes
     COMMAND ${findtexmf_exe}
 	--list-file-types
-	>${CMAKE_CURRENT_BINARY_DIR}/filetypes
+	> ${CMAKE_CURRENT_BINARY_DIR}/filetypes
     VERBATIM
   )
 else(BUILDING_MIKTEX)
