@@ -349,6 +349,12 @@ if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
+  # experimental: bind to latest CRT/MFC DLLs
+  add_definitions(
+    -D_BIND_TO_CURRENT_ATL_VERSION=0
+    -D_BIND_TO_CURRENT_CRT_VERSION=1
+    -D_BIND_TO_CURRENT_MFC_VERSION=1
+  )
   if(MFC_FOUND AND HAVE_ATLBASE_H)
     add_definitions(
       -DMIKTEX_ATLMFC
