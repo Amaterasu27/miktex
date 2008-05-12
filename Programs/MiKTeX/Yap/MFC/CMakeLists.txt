@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -81,10 +81,12 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/yap.rc)
 endif(NATIVE_WINDOWS)
 
+string(ASCII 35 hash)
+
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
-	echo \#define KEYBOARD_SHORTCUTS 101
+	${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/yaphelp1.h
 		> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   COMMAND
 	${MAKEHM_EXE} /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000
@@ -106,7 +108,9 @@ add_custom_command(
 	${MAKEHM_EXE} /h IDW_,HIDW_,0x50000
 		${CMAKE_CURRENT_SOURCE_DIR}/resource.h
 		>> ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resource.h
+  DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/yaphelp1.h
+	${CMAKE_CURRENT_SOURCE_DIR}/resource.h
   VERBATIM
 )
 
