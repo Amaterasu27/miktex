@@ -31,6 +31,7 @@ authorization from SIL International.
 #if defined(MIKTEX)
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
+const double M_PI = 3.14159265358979323846;
 #endif
 
 #ifdef XETEX_MAC
@@ -50,12 +51,25 @@ authorization from SIL International.
 
 #if ! defined(MIKTEX)
 extern Fixed loadedfontdesignsize;
-#endif
 
-#if defined(MIKTEX)
-#  if ! defined(M_PI)
-#    define M_PI           3.14159265358979323846
-#  endif
+// functions from the Pascal/WEB side
+extern "C" {
+	void zprintnl(int s);
+	void zprintchar(int c);
+	void zprintint(int i);
+	void zprintscaled(int sc);
+	void begindiagnostic();
+	void zenddiagnostic(int nl);
+	int gettracingfontsstate();
+};
+
+// see cpascal.h
+#define printcstring(STR)        \
+  do {                           \
+    const char* ch_ptr = (STR);  \
+    while (*ch_ptr)              \
+      zprintchar(*(ch_ptr++));    \
+  } while (0)
 #endif
 
 XeTeXFontMgr*	XeTeXFontMgr::sFontManager = NULL;
@@ -102,9 +116,31 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 {
 	std::string	nameStr(name);
 	Font*	font = NULL;
+	int tracing = gettracingfontsstate();
 	
 	int dsize = 100;
 	loadedfontdesignsize = 655360L;
+
+	if (tracing > 0) {
+		begindiagnostic();
+		zprintnl('F');
+		printcstring("ont \"");
+		printcstring(name);
+		if (variant != NULL) {
+			printcstring("/");
+			printcstring(variant);
+		}
+		printcstring("\"");
+		if (ptSize < 0) {
+			printcstring(" scaled ");
+			zprintint(X2Fix(-ptSize));
+		}
+		else {
+			printcstring(" at ");
+			zprintscaled(X2Fix(ptSize));
+			printcstring("pt");
+		}
+	}
 
 	for (int pass = 0; pass < 2; ++pass) {
 		// try full name as given
@@ -196,8 +232,13 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 		}
 	}
 	
-	if (font == NULL)
+	if (font == NULL) {
+		if (tracing > 0) {
+			printcstring(" not found");
+			zenddiagnostic(0);
+		}
 		return 0;
+	}
 	
 	Family*	parent = font->parent;
 	
@@ -403,6 +444,13 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	
 	if (font != NULL && font->opSizeInfo.designSize != 0)
 		loadedfontdesignsize = (font->opSizeInfo.designSize << 16L) / 10;
+
+	if (tracing > 0) {
+		zprintnl(' ');
+		printcstring("-> ");
+		printcstring(getPlatformFontDesc(font->fontRef).c_str());
+		zenddiagnostic(0);
+	}
 
 	return font->fontRef;
 }

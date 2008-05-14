@@ -300,6 +300,10 @@ MAKE_GLOBAL(scaled, ruledp);
 #define ycoord yCoord
 #define yfield yField
 #define zxnoverd xnoverd
+#define zenddiagnostic enddiagnostic
+#define zprintnl printnl
+#define zprintint printint
+#define zprintscaled printscaled
 
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
