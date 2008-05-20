@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -99,6 +99,7 @@ set(xdvipdfmx_sources
   type1c.c
   unicode.c
   vf.c
+  xbb.c
 )
 
 if(NATIVE_WINDOWS)
