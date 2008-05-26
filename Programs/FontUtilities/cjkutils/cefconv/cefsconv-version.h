@@ -1,6 +1,6 @@
 /* cefsconv-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 2800
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "4.7.0"
+#define MIKTEX_COMPONENT_VERSION 3068
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "4.8.0"
 
 #include <miktex/Core/Version>
