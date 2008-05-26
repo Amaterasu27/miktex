@@ -723,7 +723,7 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXKPSDATA(char *)
-miktex_program_invocation_name = "";
+miktex_program_invocation_name = 0;
 
 /* _________________________________________________________________________
 
@@ -731,7 +731,7 @@ miktex_program_invocation_name = "";
    _________________________________________________________________________ */
 
 MIKTEXKPSDATA(char *)
-miktex_kpse_bug_address = "";
+miktex_kpse_bug_address = 0;
 
 /* _________________________________________________________________________
 
@@ -913,6 +913,40 @@ miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
 
 /* _________________________________________________________________________
 
+   KPSE::SetProgramName
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+KPSE::SetProgramName (/*[in]*/ const char *	lpszArgv0,
+		      /*[in]*/ const char *	lpszProgramName)
+{
+  if (miktex_program_invocation_name != 0)
+    {
+      MIKTEX_FREE (miktex_program_invocation_name);
+    }
+  miktex_program_invocation_name = MIKTEX_STRDUP(lpszArgv0);
+  if (lpszProgramName != 0)
+    {
+      SessionWrapper(true)->PushAppName (lpszProgramName);
+    }
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpse_set_program_name
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
+			      /*[in]*/ const char *	lpszProgramName)
+{
+  C_FUNC_BEGIN ();
+  KPSE::SetProgramName (lpszArgv0, lpszProgramName);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
    KPSE::FindSuffix
    _________________________________________________________________________ */
 
@@ -1008,4 +1042,3 @@ Web2C::GetSecondsAndMicros (/*[out]*/ integer * pSeconds,
   *pSeconds = clock / 1000;
   *pMicros = clock % 1000;
 }
-

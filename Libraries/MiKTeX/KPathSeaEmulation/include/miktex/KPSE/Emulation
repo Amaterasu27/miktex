@@ -311,10 +311,17 @@
 #  define kpse_open_file miktex_kpse_open_file
 #endif
 
-#define kpse_set_progname(argv0) (program_invocation_name = argv0)
+#if defined(__cplusplus)
+#  define kpse_set_program_name(argv0, progname) \
+     MiKTeX::KPSE::SetProgramName(argv0, progname)
+#else
+#  define kpse_set_program_name(argv0, progname) \
+     miktex_kpse_set_program_name(argv0, progname)
+#endif
 
-#define kpse_set_program_name(argv0, progname) \
-  (program_invocation_name = progname)
+#define kpse_set_progname(argv0) kpse_set_program_name(argv0, 0)
+
+#define kpse_reset_program_name(progname)
 
 #if defined(__cplusplus)
 #  define kpse_var_value MiKTeX::KPSE::VarValue
@@ -601,6 +608,10 @@ Realloc (/*[in]*/ void *	ptr,
 	 /*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ int		line);
 
+MIKTEXKPSCEEAPI(void)
+SetProgramName (/*[in]*/ const char *	lpszArgv0,
+		/*[in]*/ const char *	lpszProgramName);
+
 MIKTEXKPSCEEAPI(char *)
 StrDup (/*[in]*/ const char *	lpsz,
 	/*[in]*/ const char *	lpszFileName,
@@ -682,6 +693,10 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 MIKTEXKPSCEEAPI(FILE *)
 miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ kpse_file_format_type	format);
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
+			      /*[in]*/ const char *	lpszProgramName);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
