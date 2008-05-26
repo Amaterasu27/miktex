@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.63 2008/05/20 13:05:14 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.64 2008/05/22 10:08:02 matthias Exp $
     
 	This is xdvipdfmx, an extended version of...
 
@@ -347,7 +347,7 @@ static void
 set_verbose (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
-    char *flag, *nextptr;
+    char *flag;
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       if (*flag == 'q')
@@ -804,10 +804,6 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-#if defined(MIKTEX)
-  miktex_initialize ();
-#endif
-
   if (strcmp(argv[0], "ebb") == 0)
     return extractbb(argc, argv, EBB_OUTPUT);
   else if (strcmp(argv[0], "xbb") == 0 || strcmp(argv[0], "extractbb") == 0)
@@ -819,6 +815,9 @@ main (int argc, char *argv[])
   miktex_initialize();
 #else
   kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
+#  if defined(MIKTEX)
+  kpse_set_program_name(argv[0], "dvipdfm");
+#  endif
 #endif
 
   paperinit();
@@ -925,7 +924,7 @@ main (int argc, char *argv[])
   cleanup();
 
   paperdone();
-#ifdef MIKTEX
+#ifdef MIKTEX_NO_KPATHSEA
   miktex_uninitialize ();
 #endif
 

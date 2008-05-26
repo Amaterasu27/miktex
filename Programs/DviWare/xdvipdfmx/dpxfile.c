@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.23 2008/05/18 14:12:20 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.24 2008/05/22 10:08:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -149,7 +149,7 @@ ensuresuffix (const char *basename, const char *sfx)
   return  p;
 }
 
-#ifdef  MIKTEX
+#ifdef  MIKTEX_NO_KPATHSEA
 static char *
 dpx_find__app__xyz (const char *filename,
                     const char *suffix, int is_text)
@@ -635,7 +635,7 @@ dpx_find_dfont_file (const char *filename)
   if (fqpn) {
     int len = strlen(fqpn);
     if (len > 6 && strncmp(fqpn+len-6, ".dfont", 6)) {
-      RENEW(fqpn, len+6, char);
+      fqpn = RENEW(fqpn, len+6, char);
       strcat(fqpn, "/rsrc");
     }
   }

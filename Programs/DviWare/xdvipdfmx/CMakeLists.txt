@@ -17,15 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(
-  -DCMAP_ADOBE_IDENTITY_UCS2=\\\"Adobe-Identity-UCS2\\\"
-  -DHAVE_BASENAME
-  -DHAVE_CONFIG_H
-  -DUSE_MIKTEX_EXIT
-  -Dstrncasecmp=_strnicmp
-  -DMIKTEX_2_4_COMPAT=1
-  -DXETEX
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
+
+add_definitions(-DHAVE_CONFIG_H)
+
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(xdvipdfmx_sources
   ${wrapper_cpp}
