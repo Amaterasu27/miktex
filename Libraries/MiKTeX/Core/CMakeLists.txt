@@ -64,6 +64,7 @@ set(${core_dll_name}_sources
   MemoryMappedFile.cpp
   Process.cpp
   Thread.cpp
+  Uri.cpp
   appnames.cpp
   cfg.cpp
   config.cpp
@@ -79,12 +80,12 @@ set(${core_dll_name}_sources
   getdelim.cpp
   graphics.cpp
   gsinfo.cpp
-  include/miktex/Core/Text
   include/miktex/Core/Core
   include/miktex/Core/Environment
   include/miktex/Core/First
   include/miktex/Core/Registry
   include/miktex/Core/Test
+  include/miktex/Core/Text
   include/miktex/Core/Trace
   internal.h
   log.cpp
@@ -262,6 +263,7 @@ target_link_libraries(${core_dll_name}
   ${bzip2_dll_name}
   ${lzma_dll_name}
   ${md5_dll_name}
+  ${uriparser_dll_name}
   ${zlib_dll_name}
 )
 
@@ -276,6 +278,7 @@ endif(NATIVE_WINDOWS)
 delay_load(${core_dll_name}
   ${bzip2_dll_name}
   ${lzma_dll_name}
+  ${uriparser_dll_name}
   ${zlib_dll_name}
 )
   
