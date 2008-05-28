@@ -436,6 +436,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
@@ -512,6 +513,12 @@ endforeach(tpm)
 ## add sub-directories
 
 add_subdirectory(${rel_build_tools_etc_dir})
+
+add_subdirectory(${rel_uriparser_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_uriparser_dir}-static)
+endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})

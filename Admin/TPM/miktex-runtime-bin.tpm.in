@@ -29,6 +29,7 @@ texmf/miktex/bin/${popt_dll_name}.dll
 texmf/miktex/bin/${texmf_dll_name}.dll
 texmf/miktex/bin/${ui_mfc_dll_name}.dll
 texmf/miktex/bin/${unxemu_dll_name}.dll
+texmf/miktex/bin/${uriparser_dll_name}.dll
 texmf/miktex/bin/${zlib_dll_name}.dll
 texmf/miktex/bin/runbat.exe
 texmf/miktex/bin/runperl.exe
