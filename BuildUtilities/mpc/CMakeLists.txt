@@ -46,6 +46,7 @@ if(NATIVE_WINDOWS)
     ${mpm_lib_name}
     ${mspack_lib_name}
     ${popt_lib_name}
+    ${uriparser_lib_name}
     ${zlib_lib_name}
   )
 else(NATIVE_WINDOWS)
