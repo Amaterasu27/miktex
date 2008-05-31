@@ -187,6 +187,11 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
     case kpse_ist_format:
       found = pSession->FindFile(lpszFileName, FileType::IST, result);
       break;
+    case kpse_program_binary_format:
+      found = pSession->FindFile(lpszFileName,
+				 FileType::PROGRAMBINFILE,
+				 result);
+      break;
     case kpse_program_text_format:
       found = pSession->FindFile(lpszFileName,
 				 FileType::PROGRAMTEXTFILE,
