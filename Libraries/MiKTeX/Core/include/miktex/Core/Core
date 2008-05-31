@@ -3231,6 +3231,10 @@ public:
   MIKTEXCORETHISAPI(std::string)
   GetUserInfo ();
 
+public:
+  MIKTEXCORETHISAPI(std::string)
+  GetScheme ();
+
 private:
   void * p;
 };
