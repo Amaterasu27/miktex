@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -59,7 +59,8 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
   param_save_size = -1;
   param_trie_op_size = -1;
   param_trie_size = -1;
-  synchronizationOptions = 0;
+# define SYNCTEX_NO_OPTION INT_MAX
+  synchronizationOptions = SYNCTEX_NO_OPTION;
 }
 
 /* _________________________________________________________________________
