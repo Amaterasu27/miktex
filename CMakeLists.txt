@@ -369,6 +369,8 @@ if(NATIVE_WINDOWS)
     add_definitions(
       -DMIKTEX_ATLMFC
     )
+    set(CMAKE_RC_FLAGS
+      "${CMAKE_RC_FLAGS} -DMIKTEX_ATLMFC")
   endif(MFC_FOUND AND HAVE_ATLBASE_H)
   # DLL export enablers
   add_definitions(
@@ -385,12 +387,13 @@ if(NATIVE_WINDOWS)
 #    -D_WIN32_WINNT=0x0400
 #    -D_WIN32_IE=0x0500
 #  )
+  set(CMAKE_RC_FLAGS
+    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Graphics")
+  set(CMAKE_RC_FLAGS
+    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
-
-set(CMAKE_RC_FLAGS
-  "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 
 ###############################################################################
 ## add global include directories
