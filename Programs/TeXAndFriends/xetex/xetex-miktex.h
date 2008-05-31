@@ -126,6 +126,10 @@ public:
     size_t nFonts = THEDATA(fontmax) - constfontbase;
 
     Allocate ("fontmapping", THEDATA(fontmapping), nFonts);
+    for (int idx = 0; idx < nFonts; ++ idx)
+      {
+	THEDATA(fontmapping)[idx] = 0;
+      }
     Allocate ("fontlayoutengine", THEDATA(fontlayoutengine), nFonts);
     Allocate ("fontflags", THEDATA(fontflags), nFonts);
     Allocate ("fontletterspace", THEDATA(fontletterspace), nFonts);
@@ -630,9 +634,12 @@ isopentypemathfont (/*[in]*/ const voidpointer	p)
    printcstring
    _________________________________________________________________________ */
 
-#define printcstring(STR)        \
-  do {                           \
-    const_string ch_ptr = (STR); \
-    while (*ch_ptr)              \
-      printchar(*(ch_ptr++));    \
-  } while (0)
+template<class CharType>
+void
+printcstring (const CharType * lpsz)
+{
+  for (; *lpsz != 0; ++ lpsz)
+    {
+      printchar (*lpsz);
+    }
+}
