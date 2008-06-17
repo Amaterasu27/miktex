@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,14 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(
-  -DCMAP_ADOBE_IDENTITY_UCS2=\\\"Adobe-Identity-UCS2\\\"
-  -DHAVE_BASENAME
-  -DHAVE_CONFIG_H
-  -DUSE_MIKTEX_EXIT
-  -Dstrncasecmp=_strnicmp
-  -DMIKTEX_2_4_COMPAT=1
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
+
+add_definitions(-DHAVE_CONFIG_H)
+
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(dvipdfmx_sources
   ${wrapper_cpp}
@@ -96,7 +97,10 @@ set(dvipdfmx_sources
   type1c.c
   unicode.c
   vf.c
+  xbb.c
 )
+
+set(xbb_sources ${dvipdfmx_sources})
 
 if(NATIVE_WINDOWS)
   set(dvipdfmx_sources ${dvipdfmx_sources}
@@ -119,18 +123,6 @@ target_link_libraries(dvipdfmx
 )
 
 install(TARGETS dvipdfmx DESTINATION ${bindir})
-
-set(xbb_sources
-  ${wrapper_cpp}
-  dpxfile.c
-  error.c
-  mem.c
-  mfileio.c
-  numbers.c
-  pdfobj.c
-  pdfparse.c
-  xbb.c
-)
 
 if(NATIVE_WINDOWS)
   set(xbb_sources ${xbb_sources}

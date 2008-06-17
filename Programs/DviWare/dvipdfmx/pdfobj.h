@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.22 2007/04/03 05:25:50 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.28 2008/06/07 09:54:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -45,9 +45,11 @@
 #define STREAM_COMPRESS (1 << 0)
 
 typedef struct pdf_obj  pdf_obj;
+typedef struct pdf_file pdf_file;
 
 /* External interface to pdf routines */
 
+extern int      pdf_obj_get_verbose (void);
 extern void     pdf_obj_set_verbose (void);
 extern void     pdf_error_cleanup   (void);
 
@@ -55,7 +57,6 @@ extern void     pdf_out_init      (const char *filename, int do_encryption);
 extern void     pdf_out_flush     (void);
 extern void     pdf_set_version   (unsigned version);
 extern unsigned pdf_get_version   (void);
-extern void     pdf_enable_objstm (void);
 
 extern pdf_obj *pdf_new_obj     (int type);
 extern void     pdf_release_obj (pdf_obj *object);
@@ -140,6 +141,12 @@ extern pdf_obj    *pdf_new_stream        (int flags);
 extern void        pdf_add_stream        (pdf_obj *stream,
 					  const void *stream_data_ptr,
 					  long stream_data_len);
+#if HAVE_ZLIB
+extern int         pdf_add_stream_flate  (pdf_obj *stream,
+					  const void *stream_data_ptr,
+					  long stream_data_len);
+#endif
+extern int         pdf_concat_stream     (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj    *pdf_stream_dict       (pdf_obj *stream);
 extern long        pdf_stream_length     (pdf_obj *stream);
 extern void        pdf_stream_set_flags  (pdf_obj *stream, int flags);
@@ -163,16 +170,19 @@ extern void      pdf_set_info     (pdf_obj *obj);
 extern void      pdf_set_root     (pdf_obj *obj);
 extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
 
+extern void      pdf_files_init    (void);
+extern void      pdf_files_close   (void);
 extern int      check_for_pdf     (FILE *file);
-extern pdf_obj *pdf_open          (FILE *file);
-extern void     pdf_close         (void);
+extern pdf_file *pdf_open          (char *ident, FILE *file);
+extern void      pdf_close         (pdf_file *pf);
+extern pdf_obj  *pdf_file_get_trailer (pdf_file *pf);
 
 extern pdf_obj *pdf_deref_obj     (pdf_obj *object);
 extern pdf_obj *pdf_import_object (pdf_obj *object);
 
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
-extern pdf_obj *pdf_new_ref       (unsigned long label, unsigned short generation);
+extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
 extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
 
 #endif  /* _PDFOBJ_H_ */

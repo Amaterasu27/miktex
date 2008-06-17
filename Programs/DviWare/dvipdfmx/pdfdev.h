@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.19 2006/12/11 12:46:03 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.23 2008/06/05 06:27:42 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -27,6 +27,7 @@
 
 #include "numbers.h"
 #include "pdfobj.h"
+#include "pdfcolor.h"
 
 typedef signed long spt_t;
 
@@ -69,6 +70,7 @@ typedef struct
 #define INFO_HAS_WIDTH     (1 << 1)
 #define INFO_HAS_HEIGHT    (1 << 2)
 #define INFO_DO_CLIP       (1 << 3)
+#define INFO_DO_HIDE       (1 << 4)
 extern void   transform_info_clear (transform_info *info);
 
 
@@ -202,7 +204,11 @@ extern void   pdf_dev_set_param (int param_type, int value);
  * XFrom (content grabbing) and Metapost support want them.
  */
 extern void   pdf_dev_reset_fonts (void);
-extern void   pdf_dev_reset_color (void); /* defined in pdfcolor.c */
+extern void   pdf_dev_reset_color (void);
+
+extern void   pdf_dev_set_color            (pdf_color *color);
+extern void   pdf_dev_set_strokingcolor    (pdf_color *color);
+extern void   pdf_dev_set_nonstrokingcolor (pdf_color *color);
 
 /* Initialization of transformation matrix with M and others.
  * They are called within pdf_doc_begin_page() and pdf_doc_end_page().
@@ -215,5 +221,9 @@ extern void   pdf_dev_eop (void);
  * to terminate text section. pdf_dev_flushpath() and others call this.
  */
 extern void   graphics_mode (void);
+
+extern void   pdf_dev_get_coord(double *xpos, double *ypos);
+extern void   pdf_dev_push_coord(double xpos, double ypos);
+extern void   pdf_dev_pop_coord(void);
 
 #endif /* _PDFDEV_H_ */
