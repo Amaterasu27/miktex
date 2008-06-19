@@ -1,6 +1,6 @@
 /* TarLzmaExtractor.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -30,6 +30,8 @@
 #include <miktex/lzma.h>
 
 #include "TarLzmaExtractor.h"
+
+const size_t BLOCKSIZE = 512;
 
 /* _________________________________________________________________________
 
@@ -372,7 +374,8 @@ private:
    _________________________________________________________________________ */
 
 TarLzmaExtractor::TarLzmaExtractor ()
-  : traceStream (TraceStream::Open(MIKTEX_TRACE_MPM))
+  : traceStream (TraceStream::Open(MIKTEX_TRACE_MPM)),
+    haveLongName (false)
 {
 }
 
@@ -487,12 +490,15 @@ public:
   GetFileName ()
     const
   {
+    char namez[sizeof(name) + 1];
+    memcpy (namez, name, sizeof(name));
+    namez[sizeof(name)] = 0;
     PathName ret;
     if (IsUSTAR())
       {
 	ret = prefix;
       }
-    ret += name;
+    ret += namez;
     return (ret);
   }
 
@@ -557,6 +563,8 @@ public:
     Directory = '5',
     FIFOSpecial = '6',
     Reserved = '7',
+
+    LongName = 'L'
   };
 
 private:
@@ -711,17 +719,37 @@ TarLzmaExtractor::Extract (/*[in]*/ const PathName &	tarlzmaPath,
 	  
 	  if (! header.IsNormalFile())
 	    {
-	      if (! (header.GetType() == Header::Link
-		     || header.GetType() == Header::SymbolicLink
-		     || header.GetType() == Header::Directory
-		     || header.GetType() == Header::CharacterSpecial
-		     || header.GetType() == Header::BlockSpecial
-		     || header.GetType() == Header::FIFOSpecial))
+	      if (header.GetType() == Header::LongName)
+		{
+		  if (size >= BLOCKSIZE)
+		    {
+		      UNEXPECTED_CONDITION ("TarExtractor::Extract");
+		    }
+		  char longNameData[BLOCKSIZE];
+		  if (pLzmaStream->GetData(longNameData, BLOCKSIZE)
+		      != BLOCKSIZE)
+		    {
+		      FATAL_MPM_ERROR (T_("TarLzma2Extractor::Extract"),
+				       T_("Invalid package archive file."),
+				       0);
+		    }
+		  longNameData[size] = 0;
+		  longName = longNameData;
+		  haveLongName = true;
+		}
+	      else
 		{
 		  Skip (pLzmaStream,
-			(size + sizeof(Header) - 1) / sizeof(Header));
+			(((size + sizeof(Header) - 1) / sizeof(Header))
+			 * sizeof(Header)));
 		}
 	      continue;
+	    }
+
+	  if (haveLongName)
+	    {
+	      dest = longName;
+	      haveLongName = false;
 	    }
 	  
 	  // skip directory prefix

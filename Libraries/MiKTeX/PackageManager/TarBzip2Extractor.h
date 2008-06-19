@@ -1,6 +1,6 @@
 /* TarBzip2Extractor.h:					-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -52,6 +52,12 @@ public:
   virtual
   void
   Dispose ();
+
+protected:
+  bool haveLongName;
+
+protected:
+  PathName longName;
 
 private:
   auto_ptr<TraceStream> traceStream;

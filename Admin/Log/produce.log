@@ -1,5 +1,5 @@
 -*- Compilation -*-
-C:\work3\miktex-2.5 20.01.2008 20:53:21.54
+C:\work3\miktex-2.5 19.06.2008 16:50:05,78
 
 Cleaning MiKTeX ...
 Building MiKTeX ...
@@ -6061,7 +6061,7 @@ Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunTANGLE  --include-filename=tangle-miktex.h  --one=tangle  --var-name-prefix=m_  --var-struct=g_TANGLEData  -C  tangle.p
-	type \MiKTeXTemp\nmBA8.tmp >> tangle.cc
+	type \MiKTeXTemp\nm275.tmp >> tangle.cc
 	cl /c /W4 /WX /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /FoRelease\  -DTANGLEAPP=g_TANGLEApp  -DTANGLECLASS=TANGLE  -DTANGLEDATA=g_TANGLEData  tangle.cc
 tangle.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\tangle.res tangle.rc
@@ -6073,7 +6073,7 @@ Copyright (C) Microsoft Corporation.  All rights reserved.
 Generating code
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-tangle-3.dll.manifest -outputresource:Release\MiKTeX-tangle-3.dll;2
-	type \MiKTeXTemp\nmBAC.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm279.tmp >> mywebapp.h
 	cl  /O1  /FoRelease\alias.obj   /nologo  /MD  -DDLLAPI=__stdcall  -DDLLMAIN=MiKTeX_TANGLE  C:\work3\miktex-2.5\Libraries\MiKTeX\etc\alias.cpp  /link  -out:Release\tangle.exe  Release\tangle.lib
 alias.cpp
 	mt -nologo -manifest Release\tangle.exe.manifest -outputresource:Release\tangle.exe;1
@@ -6084,7 +6084,7 @@ Writing the output file.....500.....1000.....1500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunWEAVE  --include-filename=mywebapp.h  --one=weave  --var-struct=g_WEAVEData  -C  weave.p
-	type \MiKTeXTemp\nmBAF.tmp >> weave.cc
+	type \MiKTeXTemp\nm27C.tmp >> weave.cc
 	cl  /c /W4 /WX /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\  weave.cc
 weave.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\weave.res weave.rc
@@ -6601,7 +6601,7 @@ Microsoft (R) Program Maintenance Utility Version 8.00.50727.762
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
-	type \MiKTeXTemp\nmBFD.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm2CB.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe vftovp.web vftovp-miktex.ch vftovp.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*6*10*22*30*48*66*110*118*131*135*136
@@ -6609,7 +6609,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunVFtoVP  --include-filename=mywebapp.h  --one=vftovp  --var-struct=g_VFtoVPData  -C  vftovp.p
-	type \MiKTeXTemp\nmBFE.tmp >> vftovp.cc
+	type \MiKTeXTemp\nm2CC.tmp >> vftovp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ -Tp vftovp.cc
 vftovp.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\vftovp.res vftovp.rc
@@ -6628,7 +6628,7 @@ Writing the output file.....500.....1000.
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunVPtoVF  --include-filename=mywebapp.h  --one=vptovf  --var-struct=g_VPtoVFData  -C  vptovf.p
-	type \MiKTeXTemp\nmC02.tmp >> vptovf.cc
+	type \MiKTeXTemp\nm2D0.tmp >> vptovf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ -Tp vptovf.cc
 vptovf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -6694,7 +6694,7 @@ Writing the output file.....500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunDVItype  --include-filename=dvitype-miktex.h  --one=dvitype  --var-name-prefix=m_  --var-struct=g_DVItypeData  -C  dvitype.p
-	type \MiKTeXTemp\nmC0A.tmp >> dvitype.cc
+	type \MiKTeXTemp\nm2D8.tmp >> dvitype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  -DDVITYPECLASS=CDVItypeApp  -DDVITYPEAPP=g_DVItypeApp  -DDVITYPEDATA=g_DVItypeData  /FoRelease\  dvitype.cc
 dvitype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\dvitype.res dvitype.rc
@@ -6706,7 +6706,7 @@ Copyright (C) Microsoft Corporation.  All rights reserved.
 Generating code
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-dvitype-3.dll.manifest -outputresource:Release\MiKTeX-dvitype-3.dll;2
-	type \MiKTeXTemp\nmC0E.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm2DC.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe pltotf.web pltotf-miktex.ch pltotf.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*5*17*30*36*50*67*81*109*127*146*148*149
@@ -6714,7 +6714,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunPLtoTF  --include-filename=mywebapp.h  --one=pltotf  --var-struct=g_PLtoTFData  -C  pltotf.p
-	type \MiKTeXTemp\nmC0F.tmp >> pltotf.cc
+	type \MiKTeXTemp\nm2DD.tmp >> pltotf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ pltotf.cc
 pltotf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -6757,7 +6757,7 @@ Writing the output file
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunPOOLtype  --include-filename=mywebapp.h  --one=pooltype  --var-struct=g_POOLtypeData  -C  pooltype.p
-	type \MiKTeXTemp\nmC13.tmp >> pooltype.cc
+	type \MiKTeXTemp\nm2E1.tmp >> pooltype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ pooltype.cc
 pooltype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\pooltype.res pooltype.rc
@@ -6776,7 +6776,7 @@ Writing the output file.....500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunTFtoPL  --include-filename=mywebapp.h  --one=tftopl  --var-struct=g_TFtoPLData  -C  tftopl.p
-	type \MiKTeXTemp\nmC17.tmp >> tftopl.cc
+	type \MiKTeXTemp\nm2E5.tmp >> tftopl.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\ tftopl.cc
 tftopl.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\tftopl.res tftopl.rc
@@ -6860,7 +6860,7 @@ Done.
 1053 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --chars-are-unsigned  --def-filename=texdefs.h  --dll  --entry-name=RunTeX  --include-filename=tex-miktex.h  --one=tex  --var-name-prefix=m_  --var-struct=g_TeXData  -C  tex.p
-	type \MiKTeXTemp\nmC23.tmp >> tex.cc
+	type \MiKTeXTemp\nm2F1.tmp >> tex.cc
 	sed -f dyn.sed tex.h > tex.h.new
 	del tex.h
 	move tex.h.new tex.h
@@ -6918,7 +6918,7 @@ Done.
 1053 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --chars-are-unsigned  --def-filename=triptexdefs.h  --dll  --entry-name=RunTeX  --include-filename=tex-miktex.h  --one=triptex  --var-name-prefix=m_  --var-struct=g_TeXData  -C  triptex.p
-	type \MiKTeXTemp\nmC29.tmp >> triptex.cc
+	type \MiKTeXTemp\nm2F7.tmp >> triptex.cc
 	sed -f dyn.sed triptex.h > triptex.h.new
 	del triptex.h
 	move triptex.h.new triptex.h
@@ -6952,12 +6952,12 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  20 JAN 2008 21:06
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  19 JUN 2008 17:02
 450,451c450,451
 <  (preloaded format=trip 2002.12.20)
 < 1320 strings of total length 23539
 ---
->  (preloaded format=trip 2008.1.20)
+>  (preloaded format=trip 2008.6.19)
 > 1336 strings of total length 23760
 	Release\triptex  -initialize  -buf-size=500  -error-line=64  -font-max=75  -font-mem-size=20000  -half-error-line=32  -max-in-open=6  -max-print-line=72  -max-strings=3000  -mem-bot=1  -mem-max=3000  -mem-min=1  -mem-top=3000  -nest-size=40  -param-size=60  -pool-size=32000  -save-size=600  -stack-size=200  -strict  -string-vacancies=8000  -trie-op-size=500  -trie-size=8000  <trip\triptest.s4  > trip.fot
 	diff trip\trip.fot trip.fot
@@ -6976,7 +6976,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2008.1.20)  20 JAN 2008 21:06
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2008.6.19)  19 JUN 2008 17:02
 1511c1511
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
@@ -7048,7 +7048,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 9c9
 < ' TeX output 2002.12.20:2128'
 ---
-> ' TeX output 2008.01.20:2106'
+> ' TeX output 2008.06.19:1702'
 1215d1214
 <  
 
@@ -7260,7 +7260,7 @@ Done.
 1621 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --auto-exit=10  --chars-are-unsigned  --def-filename=pdfetexdefs.h  --dll  --entry-name=RunepdfTeX  --header-file=pdfetexd.h  --include-filename=pdfetex-miktex.h  --one=pdfetex  --var-name-prefix=m_  --var-struct=g_pdfeTeXData  -C  pdfetex.p
-	type \MiKTeXTemp\nmC34.tmp >> pdfetex.cc
+	type \MiKTeXTemp\nm302.tmp >> pdfetex.cc
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed pdfetexd.h > pdfetexd.h.tmp
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\pdftex\dyn.sed pdfetexd.h.tmp > pdfetexd.h
 	sed -f C:\work3\miktex-2.5\Programs\TeXAndFriends\etex\dyn.sed pdfetexd.h > pdfetexd.h.tmp
@@ -7651,7 +7651,7 @@ Microsoft (R) Program Maintenance Utility Version 8.00.50727.762
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
 	if not exist "Release" (  cmd /c mkdir Release  )
-	type \MiKTeXTemp\nmC3B.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm309.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe odvicopy.web odvicopy-miktex.ch odvicopy.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*7*14*20*26*61*68*91*109*134*152*176*183*219*230*240*245*260*294*295
@@ -7659,7 +7659,7 @@ Writing the output file.....500.....1000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunODVIcopy  --include-filename=mywebapp.h  --one=odvicopy  --var-struct=g_ODVIcopyData  -C  odvicopy.p
-	type \MiKTeXTemp\nmC3C.tmp >> odvicopy.cc
+	type \MiKTeXTemp\nm30A.tmp >> odvicopy.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ odvicopy.cc
 odvicopy.cc
 odvicopy.cc(964) : warning C4305: 'argument' : truncation from 'long' to 'int16u'
@@ -7755,7 +7755,7 @@ Writing the output file.....500....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOFM2OPL  --include-filename=mywebapp.h  --one=ofm2opl  --var-struct=g_OFM2OPLData  -C  ofm2opl.p
-	type \MiKTeXTemp\nmC40.tmp >> ofm2opl.cc
+	type \MiKTeXTemp\nm30E.tmp >> ofm2opl.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ofm2opl.cc
 ofm2opl.cc
 ofm2opl.cc(293) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
@@ -7775,7 +7775,7 @@ Writing the output file.....500.....1000.....1500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOPL2OFM  --include-filename=mywebapp.h  --one=opl2ofm  --var-struct=g_OPL2OFMData  -C  opl2ofm.p
-	type \MiKTeXTemp\nmC44.tmp >> opl2ofm.cc
+	type \MiKTeXTemp\nm312.tmp >> opl2ofm.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ opl2ofm.cc
 opl2ofm.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'long' to 'unsigned char', possible loss of data
@@ -7810,7 +7810,7 @@ Writing the output file.....500.....1000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOVF2OVP  --include-filename=mywebapp.h  --one=ovf2ovp  --var-struct=g_OVF2OVPData  -C  ovf2ovp.p
-	type \MiKTeXTemp\nmC48.tmp >> ovf2ovp.cc
+	type \MiKTeXTemp\nm316.tmp >> ovf2ovp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ovf2ovp.cc
 ovf2ovp.cc
 ovf2ovp.cc(308) : warning C4800: 'C4P::C4P_integer' : forcing value to bool 'true' or 'false' (performance warning)
@@ -7830,7 +7830,7 @@ Writing the output file.....500.....1000.....1500.....2000..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunOVP2OVF  --include-filename=mywebapp.h  --one=ovp2ovf  --var-struct=g_OVP2OVFData  -C  ovp2ovf.p
-	type \MiKTeXTemp\nmC4C.tmp >> ovp2ovf.cc
+	type \MiKTeXTemp\nm31A.tmp >> ovp2ovf.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /Gy  /Gr  -DMIKTEX_OMEGA  -Dalloca=_alloca  -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include /FoRelease\ ovp2ovf.cc
 ovp2ovf.cc
 C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include\miktex/c4plib.h(611) : warning C4244: '=' : conversion from 'c4p_byte' to 'unsigned char', possible loss of data
@@ -8029,7 +8029,7 @@ Done.
 (No errors were found.)
 	if not exist "Release" (  cmd /c mkdir Release  )
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=omegadefs.h  --dll  --entry-name=RunOmega  --include-filename=omega-miktex.h  --one=omega  --var-name-prefix=m_  --var-struct=g_OmegaData  -C  omega.p
-	type \MiKTeXTemp\nmC63.tmp >> omega.cc
+	type \MiKTeXTemp\nm331.tmp >> omega.cc
 	copy /b C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed + omega_dyn.sed dyn.sed
 C:\work3\miktex-2.5\Programs\TeXAndFriends\tex\dyn.sed
 omega_dyn.sed
@@ -8127,7 +8127,7 @@ Writing the output file.....500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGFtoDVI  --include-filename=gftodvi-miktex.h  --one=gftodvi  --var-name-prefix=m_  --var-struct=g_GFtoDVIData  -C  gftodvi.p
-	type \MiKTeXTemp\nmC69.tmp >> gftodvi.cc
+	type \MiKTeXTemp\nm337.tmp >> gftodvi.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /FoRelease\  -DGFTODVIAPP=g_GFtoDVIApp  -DGFTODVICLASS=CGFtoDVIApp  -DGFTODVIDATA=g_GFtoDVIData  gftodvi.cc
 gftodvi.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftodvi.res gftodvi.rc
@@ -8142,7 +8142,7 @@ Finished generating code
 	cl  /O1  /FoRelease\alias.obj   /nologo  /MD  -DDLLAPI=__stdcall  -DDLLMAIN=MiKTeX_Gftodvi  C:\work3\miktex-2.5\Libraries\MiKTeX\etc\alias.cpp  /link  -out:Release\gftodvi.exe  Release\gftodvi.lib
 alias.cpp
 	mt -nologo -manifest Release\gftodvi.exe.manifest -outputresource:Release\gftodvi.exe;1
-	type \MiKTeXTemp\nmC6F.tmp >> mywebapp.h
+	type \MiKTeXTemp\nm33D.tmp >> mywebapp.h
 	C:\work3\miktex-2.5\Programs\TeXAndFriends\web\Release\tangle.exe gftopk.web gftopk-miktex.ch gftopk.p nul
 This is TANGLE, Version 4.5 (MiKTeX 2.5)
 *1*9*14*21*37*48*51*62*88*89
@@ -8150,7 +8150,7 @@ Writing the output file...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGFtoPK  --include-filename=mywebapp.h  --one=gftopk  --var-struct=g_GFtoPKData  -C  gftopk.p
-	type \MiKTeXTemp\nmC70.tmp >> gftopk.cc
+	type \MiKTeXTemp\nm33E.tmp >> gftopk.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ gftopk.cc
 gftopk.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftopk.res gftopk.rc
@@ -8172,7 +8172,7 @@ Writing the output file..
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunGftype  --include-filename=mywebapp.h  --one=gftype  --var-struct=g_GftypeData  -C  gftype.p
-	type \MiKTeXTemp\nmC76.tmp >> gftype.cc
+	type \MiKTeXTemp\nm344.tmp >> gftype.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ gftype.cc
 gftype.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\gftype.res gftype.rc
@@ -8194,7 +8194,7 @@ Writing the output file.....500....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunMFT  --include-filename=mywebapp.h  --one=mft  --var-struct=g_MFTData  -C  mft.p
-	type \MiKTeXTemp\nmC7C.tmp >> mft.cc
+	type \MiKTeXTemp\nm34A.tmp >> mft.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ mft.cc
 mft.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\mft.res mft.rc
@@ -8256,7 +8256,7 @@ Done.
 823 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=mfdefs.h  --dll  --entry-name=RunMETAFONT  --include-filename=mf-miktex.h  --one=mf  --var-name-prefix=m_  --var-struct=g_METAFONTData  -C  mf.p
-	type \MiKTeXTemp\nmC82.tmp >> mf.cc
+	type \MiKTeXTemp\nm350.tmp >> mf.cc
 	sed -f dyn.sed mf.h > mf.h.new
 	del mf.h
 	move mf.h.new mf.h
@@ -8333,7 +8333,7 @@ Done.
 823 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=trapmfdefs.h  --dll --one=trapmf  --entry-name=RunMETAFONT  --include-filename=mf-miktex.h  --var-name-prefix=m_  --var-struct=g_METAFONTData  -C  trapmf.p
-	type \MiKTeXTemp\nmC88.tmp >> trapmf.cc
+	type \MiKTeXTemp\nm356.tmp >> trapmf.cc
 	sed -f dyn.sed trapmf.h > trapmf.h.new
 	del trapmf.h
 	move trapmf.h.new trapmf.h
@@ -8375,7 +8375,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (INIMF)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  20 JAN 2008 21:09
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  19 JUN 2008 17:05
 150c150
 < String usage 26&83 (1895&21534 still untouched)
 ---
@@ -8384,7 +8384,7 @@ alias.cpp
 <  (preloaded base=trap 98.8.8)
 < 1113 strings of total length 20515
 ---
->  (preloaded base=trap 2008.1.20)
+>  (preloaded base=trap 2008.6.19)
 > 1115 strings of total length 20529
 	Release\trapmf  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=3000  -mem-top=3000  -initialize  < trap\traptest.s3  > trap.fot
 	diff --strip-trailing-cr trap\trap.fot trap.fot
@@ -8403,7 +8403,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2008.1.20)  20 JAN 2008 21:09
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2008.6.19)  19 JUN 2008 17:05
 1825c1825
 < String usage 24&92 (1863&21408 still untouched)
 ---
@@ -8437,7 +8437,7 @@ alias.cpp
 ---
 > This is GFtype, Version 3.1 (MiKTeX 2.5)
 > Mnemonic output? (default=no, ? for help): Pixel output? (default=yes, ? for help): Options selected: Mnemonic output = true; pixel output = true.
-> ' METAFONT output 2008.01.20:2109'
+> ' METAFONT output 2008.06.19:1705'
 191c191
 < Character 0: dx -950272 (-14.5), dy 393216 (6), width 2097152 (-256), loc 324
 ---
@@ -8468,7 +8468,7 @@ Writing the output file....
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --dll  --entry-name=RunDVItoMP  --include-filename=mywebapp.h  --one=dvitomp  --var-struct=g_DVItoMPData  -C  dvitomp.p
-	type \MiKTeXTemp\nmC8D.tmp >> dvitomp.cc
+	type \MiKTeXTemp\nm35B.tmp >> dvitomp.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1 /FoRelease\ dvitomp.cc
 dvitomp.cc
 	rc /r /DWIN32 /D_WIN32 /DOFFICIAL /DFINAL /DNDEBUG -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -FoRelease\dvitomp.res dvitomp.rc
@@ -8540,7 +8540,7 @@ Done.
 937 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   -C  --def-filename=mpdefs.h  --dll  --entry-name=RunMetaPost  --include-filename=mp-miktex.h  --one=mp  --var-name-prefix=m_  --var-struct=g_MetaPostData  mp.p
-	type \MiKTeXTemp\nmC99.tmp >> mp.cc
+	type \MiKTeXTemp\nm367.tmp >> mp.cc
 	sed -f dyn.sed mp.h > mp.h.new
 	del mp.h
 	move mp.h.new mp.h
@@ -8627,7 +8627,7 @@ Done.
 937 strings written to string pool file.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --def-filename=trapmpdefs.h  --dll  --entry-name=RunMetaPost  --include-filename=mp-miktex.h  --one=trapmp  --var-name-prefix=m_  --var-struct=g_MetaPostData  -C  trapmp.p
-	type \MiKTeXTemp\nmC9F.tmp >> trapmp.cc
+	type \MiKTeXTemp\nm36D.tmp >> trapmp.cc
 	sed -f dyn.sed trapmp.h > trapmp.h.new
 	del trapmp.h
 	move trapmp.h.new trapmp.h
@@ -8674,7 +8674,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:33
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  20 JAN 2008 21:09
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  19 JUN 2008 17:05
 4,5c4,5
 < Memory usage 28&13 (248962 still untouched)
 < String usage 5&29 (13797&77816 now untouched)
@@ -8956,7 +8956,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1010c1006
 < >> "%%CreationDate: 2005.05.08:1133"
 ---
-> >> "%%CreationDate: 2008.01.20:2109"
+> >> "%%CreationDate: 2008.06.19:1705"
 1015,1018c1011,1012
 < Memory usage 356&13 (247857 still untouched)
 < String usage 26&134 (13631&75135 now untouched)
@@ -9005,12 +9005,12 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\mtrap.1 mtrap.1
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\writeo writeo
 	diff --strip-trailing-cr trapdir\writeo.2 writeo.2
 	copy trapdir\trap.mp .
@@ -9023,7 +9023,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:51
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  20 JAN 2008 21:09
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  19 JUN 2008 17:05
 161,162c161,162
 < Memory usage 292&42 (248917 still untouched)
 < String usage 29&97 (13772&77743 now untouched)
@@ -9034,14 +9034,14 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 <  (mem=trap 2005.5.8)
 < at most 1236 strings of total length 22276
 ---
->  (preloaded mem=trap 2008.1.20)
+>  (preloaded mem=trap 2008.6.19)
 > at most 1233 strings of total length 22287
 	Release\trapmp  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=4500  -mem-top=4500  -initialize  -strict  <trapdir\trap2.in  >trap.fot
 	diff --strip-trailing-cr trapdir\trap.log trap.log
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (mem=trap 2005.5.8)  8 MAY 2005 14:48
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2008.1.20)  20 JAN 2008 21:09
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2008.6.19)  19 JUN 2008 17:05
 1621,1622c1621,1622
 < Memory usage 1244&115 (247843 still untouched)
 < String usage 23&88 (13736&77569 now untouched)
@@ -9119,42 +9119,42 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.6 trap.6
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.148 trap.148
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.149 trap.149
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.150 trap.150
 5c5
 < %%CreationDate: 2005.05.08:1448
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.151 trap.151
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.197 trap.197
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	diff --strip-trailing-cr trapdir\trap.200 trap.200
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2109
+> %%CreationDate: 2008.06.19:1705
 	C:\MiKTeX-Builds\2.5\texmf\miktex\bin\tftopl trap.tfm trap.pl
 This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 '000 '005 '006 '137 '140 '141 '142 '143 
@@ -9341,7 +9341,7 @@ Writing the output file.....500.....1000.....1500.....2000.....2500...
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p   --def-filename=bibtexdefs.h  --dll  --entry-name=RunBibTeX  --include-filename=bibtex-miktex.h  --one=bibtex  --var-name-prefix=m_  --var-struct=g_BibTeXData  -C  bibtex.p
-	type \MiKTeXTemp\nmCA7.tmp >> bibtex.cc
+	type \MiKTeXTemp\nm375.tmp >> bibtex.cc
 	sed -f dyn.sed bibtex.h > bibtex.h.new
 	del bibtex.h
 	move bibtex.h.new bibtex.h
@@ -12436,7 +12436,7 @@ Writing the output file.....500.....1000.
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --def-filename=dvicopydefs.h  --dll  --entry-name=RunDVIcopy  --include-filename=dvicopy-miktex.h  --one=dvicopy  --var-name-prefix=m_  --var-struct=g_DVIcopyData  -C  dvicopy.p
-	type \MiKTeXTemp\nmD0F.tmp >> dvicopy.cc
+	type \MiKTeXTemp\nm3DE.tmp >> dvicopy.cc
 	cl /c /W3 /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  -DDVICOPYAPP=g_DVIcopyApp  -DDVICOPYCLASS=CDVIcopyApp  -DDVICOPYDATA=g_DVIcopyData  -DMIKTEX_DVICOPY  /FoRelease\  dvicopy.cc
 dvicopy.cc
 dvicopy.cc(965) : warning C4305: 'argument' : truncation from 'long' to 'int16u'
@@ -15683,8 +15683,8 @@ Compile time: 0 minutes, 0 seconds
 9	Graphics
 
 
-Created c:\work3\miktex-2.5\Programs\MiKTeX\Yap\MFC\scratch\htmlhelp.chm, 206,000 bytes
-Compression decreased file by 133,993 bytes.
+Created c:\work3\miktex-2.5\Programs\MiKTeX\Yap\MFC\scratch\htmlhelp.chm, 205,998 bytes
+Compression decreased file by 133,995 bytes.
 	copy htmlhelp.chm ..\yap.chm
         1 file(s) copied.
 	cd ..
@@ -16083,8 +16083,8 @@ Compile time: 0 minutes, 0 seconds
 0	Graphics
 
 
-Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 25,218 bytes
-Compression decreased file by 22,025 bytes.
+Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 25,240 bytes
+Compression decreased file by 22,003 bytes.
 	copy htmlhelp.chm ..\faq.chm
         1 file(s) copied.
 	cd ..
@@ -16441,15 +16441,15 @@ images\caution.png
 images\mpm.png
 miktexhelp.css
 
-Compile time: 0 minutes, 1 second
+Compile time: 0 minutes, 0 seconds
 95	Topics
 1,430	Local links
 13	Internet links
 16	Graphics
 
 
-Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 429,397 bytes
-Compression decreased file by 385,084 bytes.
+Created c:\work3\miktex-2.5\Documentation\scratch\htmlhelp.chm, 429,483 bytes
+Compression decreased file by 385,007 bytes.
 	copy htmlhelp.chm ..\miktex.chm
         1 file(s) copied.
 	cd ..
@@ -16730,7 +16730,7 @@ ogram Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/Program Files/MiKT
 eX 2.5/fonts/type1/public/lm/lmss10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type
 1/public/lm/lmss9.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmss12
 .pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on install.pdf (2 pages, 157984 bytes).
+Output written on install.pdf (2 pages, 157985 bytes).
 Transcript written on install.log.
 This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5)
 entering extended mode
@@ -17370,7 +17370,7 @@ rogram Files/MiKTeX 2.5/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTe
 X 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type
 1/public/lm/lmss10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmss1
 2.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (79 pages, 1115988 bytes).
+Output written on miktex.pdf (79 pages, 1117944 bytes).
 Transcript written on miktex.log.
 This is C:\MiKTeX-Builds\2.5\texmf\miktex\bin\makeindex.EXE, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
 Scanning input file miktex.idx....done (548 entries accepted, 0 rejected).
@@ -17644,7 +17644,7 @@ rogram Files/MiKTeX 2.5/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTe
 X 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type
 1/public/lm/lmss10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmss1
 2.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (82 pages, 1274910 bytes).
+Output written on miktex.pdf (82 pages, 1276865 bytes).
 Transcript written on miktex.log.
 This is C:\MiKTeX-Builds\2.5\texmf\miktex\bin\makeindex.EXE, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
 Scanning input file miktex.idx....done (548 entries accepted, 0 rejected).
@@ -17915,7 +17915,7 @@ rogram Files/MiKTeX 2.5/fonts/type1/public/lm/lmss9.pfb><C:/Program Files/MiKTe
 X 2.5/fonts/type1/bluesky/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type
 1/public/lm/lmss10.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmss1
 2.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on miktex.pdf (82 pages, 1274928 bytes).
+Output written on miktex.pdf (82 pages, 1276881 bytes).
 Transcript written on miktex.log.
 	copy miktex.pdf ..\miktex.pdf
         1 file(s) copied.
@@ -18269,7 +18269,7 @@ nts/type1/bluesky/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/bluesky/
 cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmr10.pfb><C:
 /Program Files/MiKTeX 2.5/fonts/type1/bluesky/cm/cmr12.pfb><C:/Program Files/Mi
 KTeX 2.5/fonts/type1/bluesky/cm/cmr17.pfb>
-Output written on sample2e.pdf (3 pages, 71293 bytes).
+Output written on sample2e.pdf (3 pages, 71294 bytes).
 Transcript written on sample2e.log.
 Building MiKTeX ...
 	for %p in ( BuildUtilities\etc Libraries\3rd\7-Zip\CPP\7zip\Compress\LZMA		 Libraries\3rd\7-Zip\CPP\7zip\Compress\LZMA-static		 Libraries\3rd\bzip2			 Libraries\3rd\bzip2-static		 Libraries\3rd\libcurl		 Libraries\3rd\libcurl-static		 Libraries\3rd\libexpat		 Libraries\3rd\libexpat-static	 Libraries\3rd\libgnu		 Libraries\3rd\libgnu-static		 Libraries\3rd\libjpeg		 Libraries\3rd\libmspack		 Libraries\3rd\libmspack-static	 Libraries\3rd\libpopt		 Libraries\3rd\libpopt-static		 Libraries\3rd\libtiff		 Libraries\3rd\netpbm		 Libraries\3rd\zlib			 Libraries\3rd\zlib-static Libraries\3rd\libpng Libraries\3rd\libbmeps		 Libraries\3rd\libgd Programs\TeXAndFriends\pdftex\xpdf\goo		 Programs\TeXAndFriends\pdftex\xpdf\fofi		 Programs\TeXAndFriends\pdftex\xpdf\xpdf BuildUtilities\c4p		 BuildUtilities\cweb		 BuildUtilities\tie Libraries\3rd\libmd5		 Libraries\3rd\libmd5-static Libraries\MiKTeX\Core		 Libraries\MiKTeX\Core-static Libraries\MiKTeX\PackageManager		 Libraries\MiKTeX\PackageManager-static Libraries\MiKTeX\UI\MFC Libraries\MiKTeX\App		 Libraries\MiKTeX\TeXAndFriends Libraries\MiKTeX\Dib		 Libraries\MiKTeX\Dvi Libraries\MiKTeX\KPathSeaEmulation Programs\TeXAndFriends\web BuildUtilities\cfg Programs\MiKTeX\PackageManager\MFC		 Programs\MiKTeX\PackageManager\mpm Programs\MiKTeX\makex Programs\MiKTeX\initexmf	 Admin\ConfigFiles	 Programs\MiKTeX\findtexmf	 Programs\MiKTeX\mkfntmap	 Programs\MiKTeX\MO\MFC Programs\MiKTeX\etc Programs\TeXAndFriends\etc	 Programs\TeXAndFriends\texware	 Programs\TeXAndFriends\tex Programs\TeXAndFriends\pdftex	 Programs\TeXAndFriends\pdfetex Programs\TeXAndFriends\omega\omegaware	 Programs\TeXAndFriends\omega\otps		 Programs\TeXAndFriends\omega\omega Programs\TeXAndFriends\mfware	 Programs\TeXAndFriends\mf Programs\TeXAndFriends\mpost\mpware	 Programs\TeXAndFriends\mpost\mp Programs\Indexing\makeindex Programs\Bibliography\bibtex Programs\Bibliography\bibtex8 Programs\MiKTeX\texify Programs\Converters\texinfo Programs\Converters\tex4ht Programs\MiKTeX\mtprint Programs\MiKTeX\epstopdf	 Programs\GraphicsUtilities\pnmtopng	 Programs\GraphicsUtilities\psutils Programs\FontUtilities\cjkutils	 Programs\FontUtilities\freetype	 Programs\MiKTeX\gsf2pk	 Programs\FontUtilities\ps2pk Programs\DviWare\dvicopy	 Programs\DviWare\dvipdfm	 Programs\DviWare\dvipdfmx	 Programs\DviWare\dvipng	 Programs\DviWare\dvips Programs\MiKTeX\arctrl\win Programs\MiKTeX\Yap\MFC BuildUtilities\md5walk Programs\MiKTeX\mthelp BuildUtilities\mpc  Programs\MiKTeX\Wizards\Setup\MFC Programs\MiKTeX\Wizards\Update\MFC Programs\MiKTeX\Wizards\Remove\MFC Documentation) do			 (						 pushd "%p"				 & "C:\Program Files\Microsoft Visual Studio 8\VC\BIN\nmake.exe" -f miktex.mak install		 & popd					 & if errorlevel 1 exit /B 1			 )
@@ -19119,7 +19119,7 @@ Merging C:\work3\miktex-2.5\pgo\MiKTeX-core-3!4.pgc
 Generating code
 3422 of 3422 (100.00%) profiled functions will be compiled for speed
 3422 of 3422 functions (100.0%) were optimized using profile data
-296721545 of 296721545 instructions (100.0%) were optimized using profile data
+300621928 of 300621928 instructions (100.0%) were optimized using profile data
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-core-3.dll.manifest -outputresource:Release\MiKTeX-core-3.dll;2
 	for %f in (Release\MiKTeX-core-3.dll) do (  C:\work3\miktex-2.5\BuildUtilities\etc\install "%f" "C:\MiKTeX-Builds\2.5\texmf\miktex\bin"  )
@@ -19296,7 +19296,7 @@ Writing the output file.....500.....1000.....1500
 Done.
 (No errors were found.)
 	C:\work3\miktex-2.5\BuildUtilities\c4p\Release\c4p    --dll  --entry-name=RunWEAVE  --include-filename=mywebapp.h  --one=weave  --var-struct=g_WEAVEData  -C  weave.p
-	type \MiKTeXTemp\nmDCF.tmp >> weave.cc
+	type \MiKTeXTemp\nm49C.tmp >> weave.cc
 	cl  /c /W4 /WX /Wp64 /nologo /GF /Zi /O2 /GL -DWIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0400 -D_WIN32_IE=0x0500 /MD -DMIKTEX -DMIKTEX_WINDOWS -DMIKTEX_DLL -DAPP_DLL -DTEXMF_DLL -DGNU_DLL -DREGEX_DLL -DGSOAP_DLL -DMPM_DLL -DEXPAT_DLL -DPOPT_DLL -DOFFICIAL -DFINAL -DNDEBUG  -I. -IC:\work3\miktex-2.5\Libraries\MiKTeX\Core\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\App\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dib\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\Dvi\include -IC:\work3\miktex-2.5\Libraries\3rd\bzip2 -IC:\work3\miktex-2.5\Libraries\3rd\libgd -IC:\work3\miktex-2.5\Libraries\3rd\libgnu -IC:\work3\miktex-2.5\Libraries\MiKTeX\KPathSeaEmulation\include -IC:\work3\miktex-2.5\Libraries\3rd\libmd5\include -IC:\work3\miktex-2.5\Libraries\MiKTeX\PackageManager\include -IC:\work3\miktex-2.5\Libraries\3rd\libpng -IC:\work3\miktex-2.5\Libraries\3rd\libpopt -IC:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\include -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pbm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pgm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/pnm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm/ppm -IC:/work3/miktex-2.5/Libraries\3rd\netpbm -IC:\work3\miktex-2.5\Libraries\3rd\zlib  /TP  /EHsc -D_SECURE_SCL_THROWS=1  /TP  /FoRelease\  weave.cc
 weave.cc
 	link -INCREMENTAL:NO /NOLOGO /LTCG /RELEASE /DLL /DEBUG  -base:@C:\work3\miktex-2.5\msvc\dlls.txt,MiKTeX-weave-3  -export:MiKTeX_WEAVE  -implib:Release\weave.lib  -out:Release\MiKTeX-weave-3.dll  C:\work3\miktex-2.5\Libraries\MiKTeX\App\Release\app.lib  C:\work3\miktex-2.5\Libraries\MiKTeX\Core\Release\core.lib  Release\weave.obj  Release\weave.res  C:\work3\miktex-2.5\Libraries\3rd\libpopt\Release\popt.lib  C:\work3\miktex-2.5\Libraries\MiKTeX\TeXAndFriends\Release\texmf.lib
@@ -19843,12 +19843,12 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  20 JAN 2008 21:29
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (INITEX)  19 JUN 2008 17:23
 450,451c450,451
 <  (preloaded format=trip 2002.12.20)
 < 1320 strings of total length 23539
 ---
->  (preloaded format=trip 2008.1.20)
+>  (preloaded format=trip 2008.6.19)
 > 1336 strings of total length 23760
 	Release\triptex  -initialize  -buf-size=500  -error-line=64  -font-max=75  -font-mem-size=20000  -half-error-line=32  -max-in-open=6  -max-print-line=72  -max-strings=3000  -mem-bot=1  -mem-max=3000  -mem-min=1  -mem-top=3000  -nest-size=40  -param-size=60  -pool-size=32000  -save-size=600  -stack-size=200  -strict  -string-vacancies=8000  -trie-op-size=500  -trie-size=8000  <trip\triptest.s4  > trip.fot
 	diff trip\trip.fot trip.fot
@@ -19867,7 +19867,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 1c1
 < This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
 ---
-> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2008.1.20)  20 JAN 2008 21:29
+> This is TeX, Version 3.141592 (MiKTeX 2.5) (preloaded format=trip 2008.6.19)  19 JUN 2008 17:23
 1511c1511
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
@@ -19939,7 +19939,7 @@ This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 9c9
 < ' TeX output 2002.12.20:2128'
 ---
-> ' TeX output 2008.01.20:2129'
+> ' TeX output 2008.06.19:1723'
 1215d1214
 <  
 
@@ -20012,7 +20012,7 @@ c:\work3\miktex-2.5\programs\texandfriends\pdftex\xpdf\xpdf\object.h(95) : warni
 C:\work3\miktex-2.5\Programs\TeXAndFriends\pdftex\xpdf\xpdf\GlobalParams.cc : warning C4952: 'GString::`scalar deleting destructor'' : no profile data found in program database 'MiKTeX-pdfetex-3.pgd'
 c:\work3\miktex-2.5\programs\texandfriends\pdftex\xpdf\goo\gstring.h(38) : warning C4952: 'GString::copy' : no profile data found in program database 'MiKTeX-pdfetex-3.pgd'
 2283 of 2290 functions (99.7%) were optimized using profile data
-84836387 of 84836387 instructions (100.0%) were optimized using profile data
+84836382 of 84836382 instructions (100.0%) were optimized using profile data
 Finished generating code
 	mt -nologo -manifest Release\MiKTeX-pdfetex-3.dll.manifest -outputresource:Release\MiKTeX-pdfetex-3.dll;2
 	cl  /O1  /FoRelease\alias.obj   /nologo  /MD  -DDLLAPI=__stdcall  -DDLLMAIN=MiKTeX_pdfeTeX  C:\work3\miktex-2.5\Libraries\MiKTeX\etc\alias.cpp  /link  -out:Release\pdfetex.exe  Release\pdfetex.lib
@@ -20281,7 +20281,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (INIMF)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  20 JAN 2008 21:31
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (INIMF)  19 JUN 2008 17:24
 150c150
 < String usage 26&83 (1895&21534 still untouched)
 ---
@@ -20290,7 +20290,7 @@ alias.cpp
 <  (preloaded base=trap 98.8.8)
 < 1113 strings of total length 20515
 ---
->  (preloaded base=trap 2008.1.20)
+>  (preloaded base=trap 2008.6.19)
 > 1115 strings of total length 20529
 	Release\trapmf  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=3000  -mem-top=3000  -initialize  < trap\traptest.s3  > trap.fot
 	diff --strip-trailing-cr trap\trap.fot trap.fot
@@ -20309,7 +20309,7 @@ alias.cpp
 1c1
 < This is METAFONT, Version 2.71828 (preloaded base=trap 2002.12.23)  23 DEC 2002 11:57
 ---
-> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2008.1.20)  20 JAN 2008 21:31
+> This is METAFONT, Version 2.71828 (MiKTeX 2.5) (preloaded base=trap 2008.6.19)  19 JUN 2008 17:24
 1825c1825
 < String usage 24&92 (1863&21408 still untouched)
 ---
@@ -20343,7 +20343,7 @@ alias.cpp
 ---
 > This is GFtype, Version 3.1 (MiKTeX 2.5)
 > Mnemonic output? (default=no, ? for help): Pixel output? (default=yes, ? for help): Options selected: Mnemonic output = true; pixel output = true.
-> ' METAFONT output 2008.01.20:2131'
+> ' METAFONT output 2008.06.19:1724'
 191c191
 < Character 0: dx -950272 (-14.5), dy 393216 (6), width 2097152 (-256), loc 324
 ---
@@ -20469,7 +20469,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:33
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  20 JAN 2008 21:31
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  19 JUN 2008 17:24
 4,5c4,5
 < Memory usage 28&13 (248962 still untouched)
 < String usage 5&29 (13797&77816 now untouched)
@@ -20751,7 +20751,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1010c1006
 < >> "%%CreationDate: 2005.05.08:1133"
 ---
-> >> "%%CreationDate: 2008.01.20:2131"
+> >> "%%CreationDate: 2008.06.19:1724"
 1015,1018c1011,1012
 < Memory usage 356&13 (247857 still untouched)
 < String usage 26&134 (13631&75135 now untouched)
@@ -20800,12 +20800,12 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\mtrap.1 mtrap.1
 5c5
 < %%CreationDate: 2005.05.08:1133
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\writeo writeo
 	diff --strip-trailing-cr trapdir\writeo.2 writeo.2
 	copy trapdir\trap.mp .
@@ -20818,7 +20818,7 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (INIMP)  8 MAY 2005 11:51
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  20 JAN 2008 21:31
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (INIMP)  19 JUN 2008 17:24
 161,162c161,162
 < Memory usage 292&42 (248917 still untouched)
 < String usage 29&97 (13772&77743 now untouched)
@@ -20829,14 +20829,14 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 <  (mem=trap 2005.5.8)
 < at most 1236 strings of total length 22276
 ---
->  (preloaded mem=trap 2008.1.20)
+>  (preloaded mem=trap 2008.6.19)
 > at most 1233 strings of total length 22287
 	Release\trapmp  -error-line=64  -half-error-line=32  -max-print-line=72  -mem-max=4500  -mem-top=4500  -initialize  -strict  <trapdir\trap2.in  >trap.fot
 	diff --strip-trailing-cr trapdir\trap.log trap.log
 1c1
 < This is MetaPost, Version 0.901 (Web2C 7.5.3) (mem=trap 2005.5.8)  8 MAY 2005 14:48
 ---
-> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2008.1.20)  20 JAN 2008 21:31
+> This is MetaPost, Version 0.901 (MiKTeX 2.5) (preloaded mem=trap 2008.6.19)  19 JUN 2008 17:24
 1621,1622c1621,1622
 < Memory usage 1244&115 (247843 still untouched)
 < String usage 23&88 (13736&77569 now untouched)
@@ -20914,42 +20914,42 @@ This is PLtoTF, Version 3.5 (MiKTeX 2.5)
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.6 trap.6
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.148 trap.148
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.149 trap.149
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.150 trap.150
 5c5
 < %%CreationDate: 2005.05.08:1448
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.151 trap.151
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.197 trap.197
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	diff --strip-trailing-cr trapdir\trap.200 trap.200
 5c5
 < %%CreationDate: 2005.05.08:1152
 ---
-> %%CreationDate: 2008.01.20:2131
+> %%CreationDate: 2008.06.19:1724
 	C:\MiKTeX-Builds\2.5\texmf\miktex\bin\tftopl trap.tfm trap.pl
 This is TFtoPL, Version 3.1 (MiKTeX 2.5)
 '000 '005 '006 '137 '140 '141 '142 '143 
