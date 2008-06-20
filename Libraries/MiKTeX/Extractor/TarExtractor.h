@@ -1,6 +1,6 @@
 /* TarExtractor.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -67,7 +67,38 @@ public:
   Dispose ();
 
 protected:
+  size_t
+  Read (/*[out]*/ void *	pBuffer,
+	/*[in]*/ size_t		bytes)
+  {
+    size_t n = pStreamIn->Read(pBuffer, bytes);
+    totalBytesRead += n;
+    return (n);
+  }
+
+protected:
+  void
+  ReadBlock (/*[out]*/ void *	pBuffer);
+
+protected:
   std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
+
+protected:
+  bool haveLongName;
+
+protected:
+  MiKTeX::Core::PathName longName;
+
+protected:
+  size_t totalBytesRead;
+
+protected:
+  MiKTeX::Core::Stream * pStreamIn;
+
+protected:
+  void
+  Skip (/*[in]*/ size_t		bytes);
+
 };
 
 END_INTERNAL_NAMESPACE;
