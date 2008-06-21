@@ -1,6 +1,6 @@
 /* inputline.inl: inputln() implementation for TeX & Friends -*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -96,7 +96,7 @@ miktexopenoutputfile (/*[in]*/ T &		f,
 #if 0
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::None;
 #else
-  MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::ReadWrite;
+  MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::Read;
 #endif
   return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
 				THEDATA(nameoffile),
