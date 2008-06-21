@@ -126,10 +126,12 @@ public:
     size_t nFonts = THEDATA(fontmax) - constfontbase;
 
     Allocate ("fontmapping", THEDATA(fontmapping), nFonts);
+#if 0
     for (int idx = 0; idx < nFonts; ++ idx)
       {
 	THEDATA(fontmapping)[idx] = 0;
       }
+#endif
     Allocate ("fontlayoutengine", THEDATA(fontlayoutengine), nFonts);
     Allocate ("fontflags", THEDATA(fontflags), nFonts);
     Allocate ("fontletterspace", THEDATA(fontletterspace), nFonts);

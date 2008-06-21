@@ -1142,6 +1142,8 @@ readFeatureNumber(const char* s, const char* e, int* f, int* v)
 	return 1;
 }
 
+#ifdef XETEX_GRAPHITE
+
 #define MAX_GRAPHITE_FEATURES	64
 
 static void*
@@ -1277,6 +1279,8 @@ loadGraphiteFont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, con
 	return engine;
 }
 
+#endif /* XETEX_GRAPHITE */
+
 static void
 splitFontName(char* name, char** var, char** feat, char** end, int* index)
 {
@@ -1400,11 +1404,13 @@ findnativefont(unsigned char* uname, integer scaled_size)
 			font = createFontFromFile(path, index, scaled_size);
 			if (font != NULL) {
 				loadedfontdesignsize = X2Fix(getDesignSize(font));
+#if XETEX_GRAPHITE
 				if (varString && strncmp(varString, "/GR", 3) == 0) {
 					rval = loadGraphiteFont(0, font, scaled_size, featString, nameString);
 					if (rval == NULL)
 						graphitewarning();
 				}
+#endif
 				if (rval == NULL) /* graphite wasn't requested, or failed to initialize */
 					rval = loadOTfont(0, font, scaled_size, featString);
 				if (rval == NULL)
@@ -1463,11 +1469,13 @@ findnativefont(unsigned char* uname, integer scaled_size)
 	
 			font = createFont(fontRef, scaled_size);
 			if (font != 0) {
+#ifdef XETEX_GRAPHITE
 				if (getReqEngine() == 'G') {
 					rval = loadGraphiteFont(fontRef, font, scaled_size, featString, nameString);
 					if (rval == NULL)
 						graphitewarning();
 				}
+#endif
 				if (rval == NULL) {
 #ifdef XETEX_MAC
 					if (getReqEngine() == 'I' || getReqEngine() == 'G' ||
@@ -1565,10 +1573,12 @@ otfontget(integer what, void* pEngine)
 			return countGlyphs(fontInst);
 			break;
 		
+#ifdef XETEX_GRAPHITE
 		case XeTeX_count_features: /* ie Graphite features */
 			return countGraphiteFeatures(engine);
 			break;
-		
+#endif
+
 		case XeTeX_OT_count_scripts:
 			return countScripts(fontInst);
 			break;
@@ -1591,6 +1601,7 @@ otfontget1(integer what, void* pEngine, integer param)
 			return getIndScript(fontInst, param);
 			break;
 		
+#ifdef XETEX_GRAPHITE
 		/* for graphite fonts...*/
 		case XeTeX_feature_code:
 			return getGraphiteFeatureCode(engine, param);
@@ -1601,6 +1612,7 @@ otfontget1(integer what, void* pEngine, integer param)
 		case XeTeX_count_selectors:
 			return countGraphiteFeatureSettings(engine, param);
 			break;
+#endif
 	}
 	return 0;
 }
@@ -1620,6 +1632,7 @@ otfontget2(integer what, void* pEngine, integer param1, integer param2)
 			return countFeatures(fontInst, param1, param2);
 			break;
 
+#ifdef XETEX_GRAPHITE
 		/* for graphite fonts */
 		case XeTeX_selector_code:
 			return getGraphiteFeatureSettingCode(engine, param1, param2);
@@ -1627,6 +1640,7 @@ otfontget2(integer what, void* pEngine, integer param1, integer param2)
 		case XeTeX_is_default_selector:
 			return getGraphiteFeatureDefaultSetting(engine, param1) == param2;
 			break;
+#endif
 	}
 	
 	return 0;
@@ -1650,6 +1664,7 @@ otfontget3(integer what, void* pEngine, integer param1, integer param2, integer 
 void
 grprintfontname(integer what, void* pEngine, integer param1, integer param2)
 {
+#ifdef XETEX_GRAPHITE
 	unsigned short	name[128];	/* graphite API specifies size 128 */
 	int				n = 0;
 	XeTeXLayoutEngine	engine = (XeTeXLayoutEngine)pEngine;
@@ -1664,18 +1679,21 @@ grprintfontname(integer what, void* pEngine, integer param1, integer param2)
 	while (name[n] != 0 && n < 128)
 		++n;
 	printchars(&name[0], n);
+#endif
 }
 
 integer
 grfontgetnamed(integer what, void* pEngine)
 {
 	long	rval = -1;
+#ifdef XETEX_GRAPHITE
 	XeTeXLayoutEngine	engine = (XeTeXLayoutEngine)pEngine;
 	switch (what) {
 		case XeTeX_find_feature_by_name:
 			rval = findGraphiteFeatureNamed(engine, (const char*)nameoffile + 1, namelength);
 			break;
 	}
+#endif
 	return rval;
 }
 
@@ -1683,12 +1701,14 @@ integer
 grfontgetnamed1(integer what, void* pEngine, integer param)
 {
 	long	rval = -1;
+#ifdef XETEX_GRAPHITE
 	XeTeXLayoutEngine	engine = (XeTeXLayoutEngine)pEngine;
 	switch (what) {
 		case XeTeX_find_selector_by_name:
 			rval = findGraphiteFeatureSettingNamed(engine, param, (const char*)nameoffile + 1, namelength);
 			break;
 	}
+#endif
 	return rval;
 }
 
@@ -2383,6 +2403,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 		else { 
 			/* using Graphite */
 			void*	glyph_info = NULL;
+#ifdef XETEX_GRAPHITE
 			realGlyphCount = makeGraphiteSegment(engine, (UniChar*)txtPtr, txtLen);
 	
 			if (realGlyphCount > 0) {
@@ -2399,7 +2420,10 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			}
 						
 			node_width(node) = X2Fix(graphiteSegmentWidth(engine));
-	
+#else
+			node_width(node) = 0;
+#endif
+
 			native_glyph_count(node) = realGlyphCount;
 			native_glyph_info_ptr(node) = glyph_info;
 		}
