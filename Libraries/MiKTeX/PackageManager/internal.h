@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1988,7 +1988,14 @@ private:
   bool
   CheckArchiveFile (/*[in]*/ const MIKTEXCHAR *	lpszPackage,
 		    /*[in]*/ const MiKTeX::Core::PathName & archiveFileName,
-		    /*[in]*/ bool		mustBeOk);
+		    /*[in]*/ bool			mustBeOk);
+
+private:
+  void
+  CheckDependencies (/*[in,out]*/ std::set<std::string> &	packages,
+		     /*[in]*/ const std::string &	deploymentName,
+		     /*[in]*/ bool			force,
+		     /*[in]*/ int			level);
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:
