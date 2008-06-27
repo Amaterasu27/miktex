@@ -126,7 +126,7 @@ public:
     size_t nFonts = THEDATA(fontmax) - constfontbase;
 
     Allocate ("fontmapping", THEDATA(fontmapping), nFonts);
-#if 0
+#if 1
     for (int idx = 0; idx < nFonts; ++ idx)
       {
 	THEDATA(fontmapping)[idx] = 0;
