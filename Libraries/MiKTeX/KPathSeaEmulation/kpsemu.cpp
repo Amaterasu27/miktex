@@ -727,8 +727,14 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    miktex_program_invocation_name
    _________________________________________________________________________ */
 
+#if MIKTEX_SERIES_INT <= 207
 MIKTEXKPSDATA(char *)
 miktex_program_invocation_name = 0;
+#else
+namespace {
+  char * miktex_program_invocation_name = 0;
+}
+#endif
 
 /* _________________________________________________________________________
 
@@ -947,6 +953,35 @@ miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
 {
   C_FUNC_BEGIN ();
   KPSE::SetProgramName (lpszArgv0, lpszProgramName);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   KPSE::GetProgramInvocationName
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+KPSE::GetProgramInvocationName ()
+{
+  if (miktex_program_invocation_name == 0)
+    {
+      miktex_program_invocation_name =
+	MIKTEX_STRDUP(Utils::GetExeName().c_str());
+    }
+  return (miktex_program_invocation_name);
+}
+
+/* _________________________________________________________________________
+
+   miktex_get_program_invocation_name
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+miktex_get_program_invocation_name ()
+{
+  C_FUNC_BEGIN ();
+  KPSE::GetProgramInvocationName ();
   C_FUNC_END ();
 }
 
