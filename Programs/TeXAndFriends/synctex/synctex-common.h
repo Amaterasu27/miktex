@@ -1,10 +1,7 @@
-/* 
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+/* synctex.h
 
 This file is part of the SyncTeX package.
 
-License:
---------
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
 files (the "Software"), to deal in the Software without
@@ -26,11 +23,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE
 
-Except as contained in this notice, the name of the copyright holder  
-shall not be used in advertising or otherwise to promote the sale,  
-use or other dealings in this Software without prior written  
-authorization from the copyright holder.
-
 Acknowledgments:
 ----------------
 The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
@@ -46,19 +38,18 @@ Thu Jun 19 09:39:21 UTC 2008
 
 */
 
+#  ifndef __SYNCTEX_COMMON_HEADER__
+#    define __SYNCTEX_COMMON_HEADER__
+
+/*  Send this message to init the synctex command value to the command line option.
+ *  Sending this message too early will cause a bus error.  */
+extern void synctexinitcommand(void);
+
+/*  Send this message to clean memory, and close the file.  */
 #if defined(MIKTEX)
-#  define C4PEXTERN extern
-#  include "pdftex-miktex.h"
+extern void synctexterminate(boolean log_opened);
 #else
-#    include "pdftexd.h"
+extern void synctexterminate(int log_opened);
 #endif
 
-/*   We observe pdfoutputvalue in order to determine whether output mode is
- *   pdf or dvi.
- *   We will assume that pdf_output_value equals pdf_output before entering
- *   the synctex_sheet function below.  */
-#    undef  SYNCTEX_OFFSET_IS_PDF
-#    define SYNCTEX_OFFSET_IS_PDF (pdfoutputvalue>0)
-#    undef  SYNCTEX_OUTPUT
-#    define SYNCTEX_OUTPUT ((pdfoutputvalue>0)?"pdf":"dvi")
-
+#  endif

@@ -27,17 +27,35 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
 )
 
 add_definitions(
-  -DpdfTeX
+  -DMIKTEX_PDFTEX
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DPDFTEXDATA=g_PDFTEXData
-  -DMIKTEX_PDFTEX
+  -D__SyncTeX__
+  -DpdfTeX
+)
+
+set(synctex_pdftex_ch_srcs_mem_only
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
+)
+
+set(synctex_pdftex_ch_srcs_on
+  ${synctex_pdftex_ch_srcs_mem_only}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
 )
 
 set(pdftosrc_sources
@@ -116,6 +134,7 @@ set(miktex_tex_change_files
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
+  ${tex_miktex_synctex_ch}
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
 )
@@ -128,6 +147,7 @@ add_custom_command(
   OUTPUT ${pdftex_change_file}
   COMMAND ${tie_exe} -c ${pdftex_change_file}
 		${pdftex_web_file}
+		${synctex_pdftex_ch_srcs_on}
 		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
 #		${etex_miktex_post_ch}
@@ -167,6 +187,35 @@ typedef MiKTeX::Core::MD5_CTX md5_state_t;
 #define md5_finish(pstate, pdigest) MiKTeX::Core::MD5Final(pdigest, pstate)
 ")
 
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
+  COMMAND ${SED_EXE}
+		s/TEX-OR-MF-OR-MP/pdftex/
+		${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+		> ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+  VERBATIM
+)
+
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
+  PROPERTIES GENERATED TRUE
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.h
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdftex.h
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.h
+)
+
 create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
   ${CMAKE_CURRENT_SOURCE_DIR}/avlstuff.c
@@ -190,7 +239,6 @@ create_cpp_from_c(
 )
 
 set(${pdftex_dll_name}_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdftoepdf.cc
   ${CMAKE_CURRENT_BINARY_DIR}/avl.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/epdf.cpp
@@ -198,6 +246,7 @@ set(${pdftex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
   ${CMAKE_CURRENT_BINARY_DIR}/pkin.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/subfont.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/tounicode.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/vfpacket.cpp
@@ -211,6 +260,7 @@ set(${pdftex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/writet3.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/writettf.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/writezip.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/pdftoepdf.cc
 )
 
 set_source_files_properties(

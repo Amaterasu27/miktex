@@ -363,6 +363,7 @@ miktexptrequal(/*[in]*/ const void * ptr1,
 
 #include <miktex/KPSE/Emulation>
 #include "pdftex.h"
+#include "synctex.h"
 
 #define printid printID
 
@@ -431,6 +432,18 @@ MAKE_GLOBAL(strnumber*, fontname);
 MAKE_GLOBAL(strnumber, outputfilename);
 MAKE_GLOBAL(C4P_integer, fixedinclusioncopyfont);
 MAKE_GLOBAL(C4P_integer, pdfpagegroupval);
+MAKE_GLOBAL(C4P_integer, pdfoutputvalue);
+MAKE_GLOBAL(C4P_integer, synctexoption);
+MAKE_GLOBAL(C4P_integer, synctexoffset);
+MAKE_GLOBAL(C4P_integer, totalpages);
+MAKE_GLOBAL(instaterecord, curinput);
+MAKE_GLOBAL(scaled, curh);
+MAKE_GLOBAL(scaled, curv);
+MAKE_GLOBAL(scaled, rulewd);
+MAKE_GLOBAL(scaled, ruleht);
+MAKE_GLOBAL(scaled, ruledp);
+MAKE_GLOBAL(memoryword*, zmem);
+#define eqtb PDFTEXDATA.m_eqtb
 
 // todo: use MAKE_GLOBAL
 #define dim100bp THEDATA(dim100bp)
@@ -499,3 +512,21 @@ MAKE_GLOBAL(C4P_integer, pdfpagegroupval);
 #define tmpf THEDATA(tmpf)
 #define vfpacketbase THEDATA(vfpacketbase)
 #define vfpacketlength THEDATA(vfpacketlength)
+
+/* _________________________________________________________________________
+
+   gettexstring
+   _________________________________________________________________________ */
+
+inline
+char *
+gettexstring (/*[in]*/ strnumber stringNumber)
+{
+  int stringStart = MiKTeX::TeXAndFriends::GetTeXStringStart(stringNumber);
+  int stringLength = MiKTeX::TeXAndFriends::GetTeXStringLength(stringNumber);
+  char * lpsz = reinterpret_cast<char*>(xmalloc(stringLength + 1));
+  return (MiKTeX::TeXAndFriends::GetTeXString(lpsz,
+					      stringLength + 1,
+					      stringStart,
+					      stringLength));
+}

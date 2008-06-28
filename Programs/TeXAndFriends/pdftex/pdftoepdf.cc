@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id: pdftoepdf.cc 331 2008-01-08 15:15:40Z oneiros $
 */
 
 #include <stdlib.h>
@@ -50,6 +48,9 @@ $Id: pdftoepdf.cc 331 2008-01-08 15:15:40Z oneiros $
 #include "Error.h"
 
 #include "epdf.h"
+
+static const char _svn_version[] =
+    "$Id: pdftoepdf.cc 482 2008-06-27 15:54:50Z thanh $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/pdftoepdf.cc $";
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
@@ -373,7 +374,7 @@ static void copyProcSet(Object * obj)
 static void copyFont(char *tag, Object * fontRef)
 {
     PdfObject fontdict, subtype, basefont, fontdescRef, fontdesc, charset,
-        fontfile, ffsubtype;
+        fontfile, ffsubtype, stemV;
     GfxFont *gfont;
     fd_entry *fd;
     fm_entry *fontmap;
@@ -402,7 +403,9 @@ static void copyFont(char *tag, Object * fontRef)
                                                      &ffsubtype)->isName()
                 && !strcmp(ffsubtype->getName(), "Type1C")))
         && (fontmap = lookup_fontmap(basefont->getName())) != NULL) {
-        fd = epdf_create_fontdescriptor(fontmap);
+        // copy the value of /StemV
+        fontdesc->dictLookup("StemV", &stemV);
+        fd = epdf_create_fontdescriptor(fontmap, stemV->getInt());
         if (fontdesc->dictLookup("CharSet", &charset) &&
             charset->isString() && is_subsetable(fontmap))
             epdf_mark_glyphs(fd, charset->getString()->getCString());
@@ -922,7 +925,8 @@ void write_epdf(void)
     }
     // copy LastModified (needed when PieceInfo is there)
     if (page->getLastModified() != NULL) {
-        pdf_printf("/LastModified (%s)\n", page->getLastModified()->getCString());
+        pdf_printf("/LastModified (%s)\n",
+                   page->getLastModified()->getCString());
     }
     // write the page SeparationInfo if it's there
     if (page->getSeparationInfo() != NULL) {
@@ -962,9 +966,37 @@ void write_epdf(void)
     // write the page contents
     page->getContents(&contents);
     if (contents->isStream()) {
-        initDictFromDict(obj1, contents->streamGetDict());
-        contents->streamGetDict()->incRef();
-        copyDict(&obj1);
+
+        // Variant A: get stream and recompress under control
+        // of \pdfcompresslevel
+        //
+        // pdfbeginstream();
+        // copyStream(contents->getStream());
+        // pdfendstream();
+
+        // Variant B: copy stream without recompressing
+        //
+        contents->streamGetDict()->lookup("F", &obj1);
+        if (!obj1->isNull()) {
+            pdftex_fail("PDF inclusion: Unsupported external stream");
+        }
+        contents->streamGetDict()->lookup("Length", &obj1);
+        assert(!obj1->isNull());
+        pdf_puts("/Length ");
+        copyObject(&obj1);
+        pdf_puts("\n");
+        contents->streamGetDict()->lookup("Filter", &obj1);
+        if (!obj1->isNull()) {
+            pdf_puts("/Filter ");
+            copyObject(&obj1);
+            pdf_puts("\n");
+            contents->streamGetDict()->lookup("DecodeParms", &obj1);
+            if (!obj1->isNull()) {
+                pdf_puts("/DecodeParms ");
+                copyObject(&obj1);
+                pdf_puts("\n");
+            }
+        }
         pdf_puts(">>\nstream\n");
         copyStream(contents->getStream()->getUndecodedStream());
         pdfendstream();
