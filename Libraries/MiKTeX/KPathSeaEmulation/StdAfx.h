@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -26,6 +26,7 @@
 
 #include <miktex/TeXAndFriends/Prototypes>
 #include <miktex/Core/Core>
+#include <miktex/Core/Version>
 
 #include <gnu-miktex.h>
 

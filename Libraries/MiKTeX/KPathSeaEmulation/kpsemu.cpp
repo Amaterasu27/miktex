@@ -728,6 +728,7 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    _________________________________________________________________________ */
 
 #if MIKTEX_SERIES_INT <= 207
+extern "C"
 MIKTEXKPSDATA(char *)
 miktex_program_invocation_name = 0;
 #else
