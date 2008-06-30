@@ -461,3 +461,27 @@ function miktex_halt_on_error_p : boolean; forward;@t\2@>@/
 function miktex_ptr_equal:boolean; forward;@t\2@>@/
 function packet_byte : eight_bits; forward;@t\2@>@/
 @z
+
+% _____________________________________________________________________________
+%
+% [FIXME]
+% _____________________________________________________________________________
+
+
+@x
+        while not b_open_out(pdf_file) do
+@y
+        while not miktex_open_pdf_file(pdf_file)) do
+@z
+
+% _____________________________________________________________________________
+%
+% [FIXME]
+% _____________________________________________________________________________
+
+@x
+    if fixed_pdf_draftmode = 0 then b_close(pdf_file)
+@y
+    if fixed_pdf_draftmode = 0 then miktex_close_pdf_file(pdf_file)
+@z
+
