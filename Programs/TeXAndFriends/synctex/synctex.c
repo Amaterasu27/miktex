@@ -113,9 +113,12 @@ EXTERN char *gettexstring(int n);
  *  and *tex.web for details, the synctex_ prefix prevents name conflicts, it
  *  is some kind of namespace
 */
-#if ! defined(MIKTEX)
+#if defined(MIKTEX)
+/* #warning is a non-standard directive and MSVC does not understand
+   it */
+#else
 #   warning These structures MUST be kept in synchronization with the main program
-#endif
+#endif /* MIKTEX */
 /*  synctexoption is a global integer variable defined in *tex.web
  *  it is set to 1 by texmfmp.c if the command line has the '-synctex=1'
  *  option.  */
@@ -133,7 +136,7 @@ EXTERN char *gettexstring(int n);
 #   define SYNCTEX_VALUE eqtb[synctexoffset].c4p_P2.c4p_int
 #else
 #   define SYNCTEX_VALUE zeqtb[synctexoffset].cint
-#endif
+#endif /* MIKTEX */
 /*  if there were a mean to share the value of synctex_code between *tex.web
  *  and this file, it would be great.  */
 
@@ -184,7 +187,7 @@ EXTERN char *gettexstring(int n);
                     mem[NODE+SIZE-synchronization_field_size].cint
 #   define SYNCTEX_LINE_MODEL(NODE,SIZE)\
                     mem[NODE+SIZE-synchronization_field_size+1].cint
-#   endif
+#   endif /* MIKTEX */
 /*  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL are used to define
  *  SYNCTEX_TAG and SYNCTEX_LINE in a model independant way
  *  Both are tag and line accessors */
@@ -206,7 +209,7 @@ EXTERN char *gettexstring(int n);
 #   define SYNCTEX_TYPE(NODE) mem[NODE].c4p_P2.hh.c4p_P1.c4p_P0.b0
 #   else
 #   define SYNCTEX_TYPE(NODE) mem[NODE].hh.b0
-#endif
+#   endif /* MIKTEX */
 #   define rule_node 2
 #   define glue_node 10
 #   define kern_node 11
@@ -220,7 +223,7 @@ EXTERN char *gettexstring(int n);
 #   define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].cint
 #   define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].cint
 #   define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].cint
-#   endif
+#   endif /* MIKTEX */
 
 /*  When an hlist ships out, it can contain many different kern/glue nodes with
  *  exactly the same sync tag and line.  To reduce the size of the .synctex
@@ -388,10 +391,11 @@ static void *synctex_dot_open(void)
 		char *tmp = gettexstring(jobname);
 		/*  jobname was set by the \jobname command on the *TeX side  */
 #if defined(MIKTEX)
+		/* C++: typecast needed */
 		char * the_busy_name = (char*)xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + strlen(synctex_suffix_busy) + 1);
 #else
 		char * the_busy_name = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + strlen(synctex_suffix_busy) + 1);
-#endif
+#endif /* MIKTEX */
 		if(!the_busy_name) {
 			SYNCTEX_FREE(tmp);
 			synctex_abort();
@@ -560,10 +564,11 @@ void synctexterminate(boolean log_opened)
 #endif
 	tmp = gettexstring(jobname);
 #if defined(MIKTEX)
+	/* C++: typecast needed */
 	the_real_syncname = (char*)xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
 #else
 	the_real_syncname = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
-#endif
+#endif /* MIKTEX */
 	if(!the_real_syncname) {
 		SYNCTEX_FREE(tmp);
 		synctex_abort();
@@ -586,6 +591,16 @@ void synctexterminate(boolean log_opened)
 				gzclose((gzFile)SYNCTEX_FILE);
 			}
 			/*  renaming the working synctex file */
+#if defined(MIKTEX)
+#  if defined(_MSC_VER)
+			/* MSVC rename() requires that the new name is
+			   not the name of an existing file */
+			if(File::Exists(the_real_syncname))
+			  {
+			    File::Delete (the_real_syncname);
+			  }
+#  endif
+#endif /* MIKTEX */
 			if((0 == rename(synctex_ctxt.busy_name,the_real_syncname)) && log_opened) {
 				printf("\nSyncTeX written on %s",the_real_syncname); /* SyncTeX also refers to the contents */
 			}
