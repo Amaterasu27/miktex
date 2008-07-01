@@ -243,6 +243,12 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
     case kpse_ovp_format:
       found = pSession->FindFile(lpszFileName, FileType::OVP, result);
       break;
+    case kpse_sfd_format:
+      found = pSession->FindFile(lpszFileName, FileType::SFD, result);
+      break;
+    case kpse_cmap_format:
+      found = pSession->FindFile(lpszFileName, FileType::CMAP, result);
+      break;
     default:
       found = false;
       Session::FatalMiKTeXError

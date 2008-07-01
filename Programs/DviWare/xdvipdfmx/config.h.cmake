@@ -170,7 +170,7 @@
 #cmakedefine _LARGE_FILES
 
 /* Define if your libkpathsea supports enc formats */
-#cmakedefine __TDS_VERSION__
+#define __TDS_VERSION__ 0x200406
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const

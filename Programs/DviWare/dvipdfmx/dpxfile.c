@@ -126,7 +126,7 @@ miktex_find_psheader_file (const char *filename, char *buf)
 
 #endif /* TESTCOMPILE */
 
-#ifdef  MIKTEX
+#ifdef  MIKTEX_NO_KPATHSEA
 #ifndef PATH_SEP_CHR
 #  define PATH_SEP_CHR '\\'
 #endif
@@ -197,6 +197,9 @@ insistupdate (const char      *filename,
               kpse_file_format_type foolformat,
               kpse_file_format_type realformat)
 {
+#if defined(MIKTEX)
+  /* users are not fools */
+#else
   kpse_format_info_type *fif;
   kpse_format_info_type *fir;
   if (verbose < 1)
@@ -213,6 +216,7 @@ insistupdate (const char      *filename,
   WARN(">> Default search path for this format file is:");
   WARN(">>   %s", fir->default_path);
   WARN(">> Please read \"README\" file.");
+#endif
 }
 #endif /* TDS 1.1 */
 
@@ -405,7 +409,7 @@ dpx_find_cmap_file (const char *filename)
   };
   int    i;
 
-#if  defined(MIKTEX)
+#if  defined(MIKTEX_NO_KPATHSEA)
   /* Find in Acrobat's Resource/CMap dir */
   {
     char  _acrodir[_MAX_PATH+1];
@@ -444,7 +448,7 @@ dpx_find_cmap_file (const char *filename)
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], filename, 1);
     if (fqpn) {
-#ifndef  MIKTEX
+#ifndef  MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_cmap_format); 
@@ -479,7 +483,7 @@ dpx_find_sfd_file (const char *filename)
   int    i;
 
   q    = ensuresuffix(filename, ".sfd");
-#ifndef  MIKTEX
+#ifndef  MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_sfd_format, 0);
 #endif
@@ -487,7 +491,7 @@ dpx_find_sfd_file (const char *filename)
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
-#ifndef  MIKTEX
+#ifndef  MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
@@ -512,7 +516,7 @@ dpx_find_enc_file (const char *filename)
   int    i;
 
   q = ensuresuffix(filename, ".enc");
-#ifdef  MIKTEX
+#ifdef  MIKTEX_NO_KPATHSEA
   if (miktex_find_psheader_file(q, _tmpbuf)) {
     fqpn = NEW(strlen(_tmpbuf) + 1, char);
     strcpy(fqpn, _tmpbuf);
@@ -527,7 +531,7 @@ dpx_find_enc_file (const char *filename)
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
-#ifndef  MIKTEX
+#ifndef  MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
@@ -578,14 +582,14 @@ dpx_find_opentype_file (const char *filename)
   char  *q;
 
   q = ensuresuffix(filename, ".otf");
-#ifndef MIKTEX
+#ifndef MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
 #endif
     fqpn = dpx_foolsearch(PACKAGE, q, 0);
-#ifndef  MIKTEX
+#ifndef  MIKTEX_NO_KPATHSEA
 #if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, PACKAGE,
