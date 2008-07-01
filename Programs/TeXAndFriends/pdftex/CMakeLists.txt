@@ -297,6 +297,7 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
 		${pdftex_web_file}
+		${synctex_pdftex_ch_srcs_on}
 		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
 #		${etex_miktex_post_ch}
