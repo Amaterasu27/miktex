@@ -133,7 +133,7 @@ EXTERN char *gettexstring(int n);
  *  it is set to the offset where the primitive \synctex reads and writes its
  *  value.  */
 #if defined(MIKTEX)
-#   define SYNCTEX_VALUE eqtb[synctexoffset].c4p_P2.c4p_int
+#   define SYNCTEX_VALUE eqtb[synctexoffset - 1].c4p_P2.c4p_int
 #else
 #   define SYNCTEX_VALUE zeqtb[synctexoffset].cint
 #endif /* MIKTEX */
@@ -595,9 +595,9 @@ void synctexterminate(boolean log_opened)
 #  if defined(_MSC_VER)
 			/* MSVC rename() requires that the new name is
 			   not the name of an existing file */
-			if(File::Exists(the_real_syncname))
+			if(MiKTeX::Core::File::Exists(the_real_syncname))
 			  {
-			    File::Delete (the_real_syncname);
+			    MiKTeX::Core::File::Delete (the_real_syncname);
 			  }
 #  endif
 #endif /* MIKTEX */
