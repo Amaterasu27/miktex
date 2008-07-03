@@ -163,10 +163,10 @@ Set save_size to N."),
   if (AmI("xetex") || AmI("pdftex"))
     {
       AddOption (T_("synctex\0\
-Set the synchronization options."),
+Generate SyncTeX data for previewers if nonzero."),
 	     FIRST_OPTION_VAL + optBase + OPT_SYNCTEX,
 	     required_argument,
-	     "OPTIONS");
+	     "N");
 
     }
 

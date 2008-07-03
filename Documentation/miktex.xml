@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "3022">
-<!ENTITY month "April 2008">
-<!ENTITY date "April 10, 2008">
+<!ENTITY revj2000 "3105">
+<!ENTITY month "July 2008">
+<!ENTITY date "July 02, 2008">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -105,6 +105,7 @@
 <!ENTITY optionsrcspecials SYSTEM "Options/srcspecials.xml">
 <!ENTITY optionstacksize SYSTEM "Options/stacksize.xml">
 <!ENTITY optionstringvacancies SYSTEM "Options/stringvacancies.xml">
+<!ENTITY optionsynctex SYSTEM "Options/synctex.xml">
 <!ENTITY optiontcx SYSTEM "Options/tcx.xml">
 <!ENTITY optiontimestatistics SYSTEM "Options/timestatistics.xml">
 <!ENTITY optiontrace SYSTEM "Options/trace.xml">

@@ -133,6 +133,7 @@
 <!ENTITY omega "<command>omega</command>">
 <!ENTITY LuaTeX "<application>LuaTeX</application>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
+<!ENTITY SyncTeX "<application>SyncTeX</application>">
 <!ENTITY XeTeX "<application>XeTeX</application>">
 <!ENTITY encTeX "<application>encTeX</application>">
 <!ENTITY MLTeX "<application>MLTeX</application>">

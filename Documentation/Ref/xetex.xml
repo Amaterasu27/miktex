@@ -113,6 +113,7 @@ font weights.</para>
 &optionsrcspecials;
 &optionstacksize;
 &optionstringvacancies;
+&optionsynctex;
 &optiontimestatistics;
 &optiontrace;
 &optiontriesize;
