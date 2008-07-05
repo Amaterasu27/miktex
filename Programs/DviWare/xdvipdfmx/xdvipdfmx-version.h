@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 3041
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.6 svn 663"
+#define MIKTEX_COMPONENT_VERSION 3094
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "0.7.3 svn 738"
 
 #include <miktex/Core/Version>

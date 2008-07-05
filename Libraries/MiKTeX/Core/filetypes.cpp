@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -848,6 +848,36 @@ SessionImpl::RegisterFileTypes ()
 		 "TEXFONTS",
 		 "TEXPSHEADERS",
 		 "PSHEADERS"
+		 ));
+
+  RegisterFileType
+    (FileType::SFD,
+     "subfont definition files",
+     0,
+     ListBuilder(
+		 ".sfd"
+		 ),
+     ListBuilder(
+		 CURRENT_DIRECTORY,
+		 SearchSpecBuilder(MIKTEX_PATH_SFD_DIR)
+		 ),
+     ListBuilder(
+		 "SFDFONTS",
+		 "TEXFONTS"
+		 ));
+
+  RegisterFileType
+    (FileType::CMAP,
+     "cmap files",
+     0,
+     ListBuilder(),
+     ListBuilder(
+		 CURRENT_DIRECTORY,
+		 SearchSpecBuilder(MIKTEX_PATH_CMAP_DIR)
+		 ),
+     ListBuilder(
+		 "CMAPFONTS",
+		 "TEXFONTS"
 		 ));
 
   RegisterFileType

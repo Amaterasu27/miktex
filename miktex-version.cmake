@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	8)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	3014)
+set(MIKTEX_J2000_VERSION	3107)
 
 set(MIKTEX_YEAR_VERSION         2008)
 
@@ -36,7 +36,11 @@ set(MIKTEX_RELEASE_NUM		0)
 ##   2 (beta release)
 ##   3 (snapshot release)
 ##   4 (debug)
-set(MIKTEX_RELEASE_STATE 3)
+set(MIKTEX_RELEASE_STATE
+  3
+  CACHE STRING
+  "The MiKTeX release state."
+)
 
 ## sanity check
 if(MIKTEX_RELEASE_STATE EQUAL 0)

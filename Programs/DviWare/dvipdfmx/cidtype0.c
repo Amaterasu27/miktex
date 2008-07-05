@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.35 2007/02/14 05:56:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.38 2008/05/17 04:18:47 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -163,7 +163,6 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
   pdf_obj *w2_array, *an_array = NULL;
   long cid, prev, start;
   struct tt_VORG_table *vorg;
-  struct tt_os2__table *os2;
   struct tt_vhea_table *vhea  = NULL;
   struct tt_longMetrics *vmtx = NULL;
   double defaultAdvanceHeight, defaultVertOriginY;
@@ -184,13 +183,18 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
     sfnt_locate_table(sfont, "vmtx");
     vmtx = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
   }
-  /*
-   * OpenType font must have OS/2 table.
-   */
-  os2 = tt_read_os2__table(sfont);
-  defaultVertOriginY   = PDFUNIT(os2->sTypoAscender);
-  defaultAdvanceHeight = PDFUNIT(os2->sTypoAscender - os2->sTypoDescender);
-  RELEASE(os2);
+
+  if (sfnt_find_table_pos(sfont, "OS/2") <= 0) {
+    struct tt_os2__table *os2;
+    /* OpenType font must have OS/2 table. */
+    os2 = tt_read_os2__table(sfont);
+    defaultVertOriginY   = PDFUNIT(os2->sTypoAscender);
+    defaultAdvanceHeight = PDFUNIT(os2->sTypoAscender - os2->sTypoDescender);
+    RELEASE(os2);
+  } else {
+    /* Some TrueType fonts used in Macintosh does not have OS/2 table. */
+    defaultAdvanceHeight = 1000;
+  }
 
   w2_array = pdf_new_array();
   start = prev = 0;
@@ -472,8 +476,8 @@ CIDFont_type0_dofont (CIDFont *font)
   long   size, offset = 0;
   card8 *data;
   card16 num_glyphs, gid;
-  long   cid;
-  card16 cid_count, cs_count, last_cid;
+  long   cid, cid_count;
+  card16 cs_count, last_cid;
   int    fd, prev_fd, parent_id;
   char  *used_chars;
   unsigned char *CIDToGIDMap = NULL;
@@ -526,9 +530,9 @@ CIDFont_type0_dofont (CIDFont *font)
     ERROR("Not a CIDFont.");
 
   if (cff_dict_known(cffont->topdict, "CIDCount")) {
-    cid_count = (card16) cff_dict_get(cffont->topdict, "CIDCount", 0);
+    cid_count = (long) cff_dict_get(cffont->topdict, "CIDCount", 0);
   } else {
-    cid_count = CFF_CIDCOUNT_DEFAULT;
+    cid_count = CID_MAX + 1;
   }
 
   cff_read_charsets(cffont);
@@ -538,11 +542,6 @@ CIDFont_type0_dofont (CIDFont *font)
   cid = 0; last_cid = 0; num_glyphs = 0;
   for (cid = 0; cid <= CID_MAX; cid++) {
     if (is_used_char2(used_chars, cid)) {
-      if (cid >= cid_count) {
-	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
-	used_chars[cid/8] &= ~(1 << (7 - (cid % 8)));
-	continue;
-      }
       gid = cff_charsets_lookup(cffont, cid);
       if (cid != 0 && gid == 0) {
 	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
@@ -819,7 +818,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0)) == NULL)
     ERROR("Could not obtain neccesary font info.");
 
   if (opt->embed) {
@@ -1218,7 +1217,7 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
 
   /* getting font info. from TrueType tables */
   if ((font->descriptor
-       = tt_get_fontdesc(sfont, &(opt->embed), 0)) == NULL)
+       = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0)) == NULL)
     ERROR("Could not obtain neccesary font info.");
 
   if (opt->embed) {

@@ -311,10 +311,17 @@
 #  define kpse_open_file miktex_kpse_open_file
 #endif
 
-#define kpse_set_progname(argv0) (program_invocation_name = argv0)
+#if defined(__cplusplus)
+#  define kpse_set_program_name(argv0, progname) \
+     MiKTeX::KPSE::SetProgramName(argv0, progname)
+#else
+#  define kpse_set_program_name(argv0, progname) \
+     miktex_kpse_set_program_name(argv0, progname)
+#endif
 
-#define kpse_set_program_name(argv0, progname) \
-  (program_invocation_name = progname)
+#define kpse_set_progname(argv0) kpse_set_program_name(argv0, 0)
+
+#define kpse_reset_program_name(progname)
 
 #if defined(__cplusplus)
 #  define kpse_var_value MiKTeX::KPSE::VarValue
@@ -325,7 +332,11 @@
 #define open_input(f_ptr, filefmt, fopen_mode) \
   MiKTeX::Web2C::OpenInput(nameoffile+1, f_ptr, filefmt, fopen_mode)
 
-#define program_invocation_name miktex_program_invocation_name
+#if defined(__cplusplus)
+#  define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
+#else
+#  define program_invocation_name miktex_get_program_invocation_name()
+#endif
 
 #if ! defined(rindex)
 #  define rindex strrchr
@@ -571,6 +582,9 @@ MIKTEXKPSCEEAPI(MIKTEX_INT64)
 FTell64 (/*[in]*/ FILE *	stream,
 	 /*[in]*/ const char *	lpszFileName);
 
+MIKTEXKPSCEEAPI(const char *)
+GetProgramInvocationName ();
+
 MIKTEXKPSCEEAPI(void)
 InitProg (/*[in]*/ const char *	lpszPrefix,
 	  /*[in]*/ unsigned	dpi,
@@ -600,6 +614,10 @@ Realloc (/*[in]*/ void *	ptr,
 	 /*[in]*/ size_t	size,
 	 /*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ int		line);
+
+MIKTEXKPSCEEAPI(void)
+SetProgramName (/*[in]*/ const char *	lpszArgv0,
+		/*[in]*/ const char *	lpszProgramName);
 
 MIKTEXKPSCEEAPI(char *)
 StrDup (/*[in]*/ const char *	lpsz,
@@ -653,6 +671,9 @@ MIKTEXKPSCEEAPI(FILE *)
 miktex_fopen (/*[in]*/ const char *	lpszName,
 	      /*[in]*/ const char *	lpszMode);
 
+MIKTEXKPSCEEAPI(const char *)
+miktex_get_program_invocation_name ();
+
 MIKTEXKPSCEEAPI(int)
 miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
 			      /*[in]*/ double	dpi2);
@@ -682,6 +703,10 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 MIKTEXKPSCEEAPI(FILE *)
 miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ kpse_file_format_type	format);
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
+			      /*[in]*/ const char *	lpszProgramName);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
@@ -742,10 +767,6 @@ miktex_kpathsea_version_string;
 extern
 MIKTEXKPSDATA(char *)
 miktex_web2c_version_string;
-
-extern
-MIKTEXKPSDATA(char *)
-miktex_program_invocation_name;
 
 extern
 MIKTEXKPSDATA(unsigned)

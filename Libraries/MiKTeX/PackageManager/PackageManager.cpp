@@ -28,6 +28,8 @@
 #include "../WebServiceClients/Repository/repositoryRepositorySoapProxy.h"
 #include "../WebServiceClients/Repository/RepositorySoap.nsmap"
 
+#define WEBSVCURL "http://api.miktex.org/Repository.asmx"
+
 #include "mpm-version.h"
 
 using namespace MiKTeX::Core;
@@ -41,6 +43,15 @@ string PackageManagerImpl::proxyPassword;
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 bool PackageManagerImpl::localServer = false;
 #endif
+
+class MyRepositorySoapProxy : public RepositorySoapProxy
+{
+public:
+  MyRepositorySoapProxy ()
+  {
+    this->soap_endpoint = WEBSVCURL;
+  }
+};
 
 /* _________________________________________________________________________
 
@@ -1242,9 +1253,9 @@ PackageManagerImpl::DownloadRepositoryList ()
 {
   repositories.clear ();
 
-  RepositorySoapProxy repositorySoapProxy;
+  MyRepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
-  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+  if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
     {
       repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
       repositorySoapProxy.proxy_port = proxySettings.port;
@@ -1282,9 +1293,9 @@ PackageManagerImpl::DownloadRepositoryList ()
 string
 PackageManagerImpl::PickRepositoryUrl ()
 {
-  RepositorySoapProxy repositorySoapProxy;
+  MyRepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
-  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+  if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
     {
       repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
       repositorySoapProxy.proxy_port = proxySettings.port;
@@ -1934,8 +1945,57 @@ PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
    _________________________________________________________________________ */
 
 bool
-PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
+PackageManager::TryGetProxy (/*[in]*/ const char *	lpszDestUrl,
+			     /*[out]*/ ProxySettings &	proxySettings)
 {
+  string proxyEnv;
+  if (lpszDestUrl != 0)
+    {
+      Uri uri (lpszDestUrl);
+      string scheme = uri.GetScheme();
+      string envName;
+      if (scheme == "http")
+	{
+	  envName = "http_proxy";
+	}
+      else if (scheme == "ftp")
+	{
+	  envName = "FTP_PROXY";
+	}
+      else
+	{
+	  UNEXPECTED_CONDITION ("PackageManager::TryGetProxy");
+	}
+      Utils::GetEnvironmentString (envName.c_str(), proxyEnv);
+    }
+  if (proxyEnv.empty())
+    {
+      Utils::GetEnvironmentString("ALL_PROXY", proxyEnv);
+    }
+  if (! proxyEnv.empty())
+    {
+      Uri uri (proxyEnv.c_str());
+      proxySettings.useProxy = true;
+      proxySettings.proxy = uri.GetHost();
+      proxySettings.port = uri.GetPort();
+      string userInfo = uri.GetUserInfo();
+      if (! userInfo.empty())
+	{
+	  proxySettings.authenticationRequired = true;
+	  string::size_type idx = userInfo.find_first_of(":");
+	  if (idx == string::npos)
+	    {
+	      proxySettings.user = userInfo;
+	      proxySettings.password = "";
+	    }
+	  else
+	    {
+	      proxySettings.user = userInfo.substr(0, idx);
+	      proxySettings.password = userInfo.substr(idx + 1);
+	    }
+	}
+      return (true);
+    }
   string str;
   if (! (SessionWrapper(true)
 	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -1975,20 +2035,42 @@ PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
 
 /* _________________________________________________________________________
 
+   PackageManager::TryGetProxy
+   _________________________________________________________________________ */
+
+bool
+PackageManager::TryGetProxy (/*[out]*/ ProxySettings & proxySettings)
+{
+  return (TryGetProxy(0, proxySettings));
+}
+
+/* _________________________________________________________________________
+
    PackageManager::GetProxy
    _________________________________________________________________________ */
 
 ProxySettings
-PackageManager::GetProxy ()
+PackageManager::GetProxy (/*[in]*/ const char * lpszDestUrl)
 {
   ProxySettings proxySettings;
-  if (! TryGetProxy(proxySettings))
+  if (! TryGetProxy(lpszDestUrl, proxySettings))
     {
       FATAL_MIKTEX_ERROR ("PackageManager::GetProxy",
 			  T_("No proxy host is configured."),
 			  0);
     }
   return (proxySettings);
+}
+
+/* _________________________________________________________________________
+
+   PackageManager::GetProxy
+   _________________________________________________________________________ */
+
+ProxySettings
+PackageManager::GetProxy ()
+{
+  return (GetProxy(0));
 }
 
 /* _________________________________________________________________________
@@ -2011,9 +2093,9 @@ PackageManagerImpl::TryGetRepositoryInfo
 (/*[in]*/ const string &	url,
  /*[out]*/ RepositoryInfo &	repositoryInfo)
 {
-  RepositorySoapProxy repositorySoapProxy;
+  MyRepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
-  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+  if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
     {
       repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
       repositorySoapProxy.proxy_port = proxySettings.port;
@@ -2058,9 +2140,9 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 	}
     }
   RepositoryInfo repositoryInfo;
-  RepositorySoapProxy repositorySoapProxy;
+  MyRepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
-  if (TryGetProxy(proxySettings) && proxySettings.useProxy)
+  if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
     {
       repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
       repositorySoapProxy.proxy_port = proxySettings.port;

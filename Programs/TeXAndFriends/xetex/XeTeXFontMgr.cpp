@@ -31,6 +31,7 @@ authorization from SIL International.
 #if defined(MIKTEX)
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
+const double M_PI = 3.14159265358979323846;
 #endif
 
 #ifdef XETEX_MAC
@@ -50,12 +51,23 @@ authorization from SIL International.
 
 #if ! defined(MIKTEX)
 extern Fixed loadedfontdesignsize;
-#endif
 
-#if defined(MIKTEX)
-#  if ! defined(M_PI)
-#    define M_PI           3.14159265358979323846
-#  endif
+// functions from the Pascal/WEB side
+extern "C" {
+	void zprintnl(int s);
+	void zprintchar(int c);
+	void begindiagnostic();
+	void zenddiagnostic(int nl);
+	int gettracingfontsstate();
+};
+
+// see cpascal.h
+#define printcstring(STR)        \
+  do {                           \
+    const char* ch_ptr = (STR);  \
+    while (*ch_ptr)              \
+      zprintchar(*(ch_ptr++));    \
+  } while (0)
 #endif
 
 XeTeXFontMgr*	XeTeXFontMgr::sFontManager = NULL;
@@ -102,7 +114,6 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 {
 	std::string	nameStr(name);
 	Font*	font = NULL;
-	
 	int dsize = 100;
 	loadedfontdesignsize = 655360L;
 
@@ -403,6 +414,14 @@ XeTeXFontMgr::findFont(const char* name, char* variant, double ptSize)
 	
 	if (font != NULL && font->opSizeInfo.designSize != 0)
 		loadedfontdesignsize = (font->opSizeInfo.designSize << 16L) / 10;
+
+	if (gettracingfontsstate() > 0) {
+		begindiagnostic();
+		zprintnl(' ');
+		printcstring("-> ");
+		printcstring(getPlatformFontDesc(font->fontRef).c_str());
+		zenddiagnostic(0);
+	}
 
 	return font->fontRef;
 }

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/system.h,v 1.6 2004/01/11 02:51:33 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/system.h,v 1.7 2008/05/18 10:40:40 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -25,14 +25,14 @@
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-#ifdef MIKTEX
-#include <miktex/Core/Core>
-#include "gnu-miktex.h"
-#include <miktex/KPSE/Emulation>
-#else
+#if defined(MIKTEX)
+#  include <miktex/Core/Core>
+#  include "gnu-miktex.h"
+#  include <miktex/KPSE/Emulation>
+#endif
+
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>
-#endif
 
 #ifdef WIN32
 #  undef ERROR

@@ -187,6 +187,11 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
     case kpse_ist_format:
       found = pSession->FindFile(lpszFileName, FileType::IST, result);
       break;
+    case kpse_program_binary_format:
+      found = pSession->FindFile(lpszFileName,
+				 FileType::PROGRAMBINFILE,
+				 result);
+      break;
     case kpse_program_text_format:
       found = pSession->FindFile(lpszFileName,
 				 FileType::PROGRAMTEXTFILE,
@@ -237,6 +242,12 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
       break;
     case kpse_ovp_format:
       found = pSession->FindFile(lpszFileName, FileType::OVP, result);
+      break;
+    case kpse_sfd_format:
+      found = pSession->FindFile(lpszFileName, FileType::SFD, result);
+      break;
+    case kpse_cmap_format:
+      found = pSession->FindFile(lpszFileName, FileType::CMAP, result);
       break;
     default:
       found = false;
@@ -722,8 +733,15 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    miktex_program_invocation_name
    _________________________________________________________________________ */
 
+#if MIKTEX_SERIES_INT <= 207
+extern "C"
 MIKTEXKPSDATA(char *)
-miktex_program_invocation_name = "";
+miktex_program_invocation_name = 0;
+#else
+namespace {
+  char * miktex_program_invocation_name = 0;
+}
+#endif
 
 /* _________________________________________________________________________
 
@@ -731,7 +749,7 @@ miktex_program_invocation_name = "";
    _________________________________________________________________________ */
 
 MIKTEXKPSDATA(char *)
-miktex_kpse_bug_address = "";
+miktex_kpse_bug_address = 0;
 
 /* _________________________________________________________________________
 
@@ -913,6 +931,69 @@ miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
 
 /* _________________________________________________________________________
 
+   KPSE::SetProgramName
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+KPSE::SetProgramName (/*[in]*/ const char *	lpszArgv0,
+		      /*[in]*/ const char *	lpszProgramName)
+{
+  if (miktex_program_invocation_name != 0)
+    {
+      MIKTEX_FREE (miktex_program_invocation_name);
+    }
+  miktex_program_invocation_name = MIKTEX_STRDUP(lpszArgv0);
+  if (lpszProgramName != 0)
+    {
+      SessionWrapper(true)->PushAppName (lpszProgramName);
+    }
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpse_set_program_name
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
+			      /*[in]*/ const char *	lpszProgramName)
+{
+  C_FUNC_BEGIN ();
+  KPSE::SetProgramName (lpszArgv0, lpszProgramName);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   KPSE::GetProgramInvocationName
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+KPSE::GetProgramInvocationName ()
+{
+  if (miktex_program_invocation_name == 0)
+    {
+      miktex_program_invocation_name =
+	MIKTEX_STRDUP(Utils::GetExeName().c_str());
+    }
+  return (miktex_program_invocation_name);
+}
+
+/* _________________________________________________________________________
+
+   miktex_get_program_invocation_name
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+miktex_get_program_invocation_name ()
+{
+  C_FUNC_BEGIN ();
+  KPSE::GetProgramInvocationName ();
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
    KPSE::FindSuffix
    _________________________________________________________________________ */
 
@@ -1008,4 +1089,3 @@ Web2C::GetSecondsAndMicros (/*[out]*/ integer * pSeconds,
   *pSeconds = clock / 1000;
   *pMicros = clock % 1000;
 }
-

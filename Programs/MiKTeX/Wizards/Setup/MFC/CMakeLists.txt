@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -104,6 +104,7 @@ target_link_libraries(setup
   ${mpm_lib_name}
   ${mspack_lib_name}
   ${ui_lib_name}
+  ${uriparser_lib_name}
   ${zlib_lib_name}
 )
 

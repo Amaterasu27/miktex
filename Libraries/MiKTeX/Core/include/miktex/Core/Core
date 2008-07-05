@@ -3068,7 +3068,7 @@ public:
 
 public:
   MIKTEXCORETHISAPI(CommandLineBuilder &)
-  operator= (/*[in]*/ const CommandLineBuilder & othe);
+  operator= (/*[in]*/ const CommandLineBuilder & other);
 
 public:
   MIKTEXCORETHISAPI(void)
@@ -3182,6 +3182,58 @@ public:
 public:
   MIKTEXCORETHISAPI(const char *)
   Get ();
+
+private:
+  void * p;
+};
+
+/* _________________________________________________________________________
+
+   Uri
+   _________________________________________________________________________ */
+
+class
+Uri
+{
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  Uri ();
+
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  Uri (/*[in]*/ const Uri & other);
+
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  ~Uri ();
+
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  Uri (/*[in]*/ const char *	lpszUri);
+
+public:
+  MIKTEXCORETHISAPI(Uri &)
+  operator= (/*[in]*/ const Uri & other);
+
+public:
+  MIKTEXCORETHISAPI(std::string)
+  GetHost ();
+
+public:
+  MIKTEXCORETHISAPI(int)
+  GetPort ();
+
+public:
+  MIKTEXCORETHISAPI(std::string)
+  GetUserInfo ();
+
+public:
+  MIKTEXCORETHISAPI(std::string)
+  GetScheme ();
 
 private:
   void * p;
@@ -3485,7 +3537,9 @@ public:
 #if defined(MIKTEX_WINDOWS)
     WindowsCommandScriptFile,
 #endif
-    OTF
+    OTF,
+    SFD,
+    CMAP
   };
 };
 

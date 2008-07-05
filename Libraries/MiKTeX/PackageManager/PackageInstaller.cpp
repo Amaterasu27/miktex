@@ -2057,6 +2057,42 @@ The MiKTeX configuration utility could not be found.")),
 
 /* _________________________________________________________________________
 
+   PackageInstallerImpl::CheckDependencies
+   _________________________________________________________________________ */
+
+void
+PackageInstallerImpl::CheckDependencies
+(/*[in,out]*/ set<string> &	packages,
+ /*[in]*/ const string &	deploymentName,
+ /*[in]*/ bool			force,
+ /*[in]*/ int			level)
+{
+  if (level > 10)
+    {
+      FATAL_MPM_ERROR ("PackageInstallerImpl::CheckDependencies",
+		       T_("Cyclic dependencies detected."),
+		       0);
+    }
+  PackageInfo * pPackageInfo =
+    pManager->TryGetPackageInfo(deploymentName.c_str());
+  if (pPackageInfo != 0)
+    {
+      for (vector<string>::const_iterator it =
+	     pPackageInfo->requiredPackages.begin();
+	   it != pPackageInfo->requiredPackages.end();
+	   ++ it)
+	{
+	  CheckDependencies (packages, *it, force, level + 1);
+	}
+    }
+  if (force || ! pManager->IsPackageInstalled(deploymentName.c_str()))
+    {
+      packages.insert (deploymentName);
+    }
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::InstallRemove
    _________________________________________________________________________ */
 
@@ -2219,6 +2255,16 @@ PackageInstallerImpl::InstallRemove ()
       LoadDbLight (false);
     }
 
+  // check dependencies
+  set<string> tmp;
+  for (vector<string>::const_iterator it = toBeInstalled.begin();
+       it != toBeInstalled.end();
+       ++ it)
+    {
+      CheckDependencies (tmp, *it, true, 0);
+    }
+  toBeInstalled.assign (tmp.begin(), tmp.end());
+
   // calculate total size and more
   CalculateExpenditure ();
   
@@ -2236,6 +2282,19 @@ PackageInstallerImpl::InstallRemove ()
   for (it = toBeRemoved.begin(); it != toBeRemoved.end(); ++it)
     {
       RemovePackage (*it);
+    }
+
+  // check dependencies (install missing required packages)
+  tmp.clear ();
+  for (vector<string>::const_iterator it = toBeInstalled.begin();
+       it != toBeInstalled.end();
+       ++ it)
+    {
+      CheckDependencies (tmp, *it, false, 0);
+    }
+  for (set<string>::const_iterator it = tmp.begin(); it != tmp.end(); ++ it)
+    {
+      InstallPackage (*it);
     }
 
   if (! noPostProcessing)

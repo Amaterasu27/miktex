@@ -1,6 +1,6 @@
-% This is the cweb file hbf2gf.w of the CJK package ver. 4.7.0  17-Oct-2006
+% This is the cweb file hbf2gf.w of the CJK package ver. 4.8.0  22-May-2008
 
-% Copyright (C) 1994-2006  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2008  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@
 \def\mf{{\meta META}\-{\meta FONT}}
 \def\Om{\char "0A}                      % Omega symbol
 
-\def\title{hbf2gf (CJK Version 4.7.0)}
+\def\title{hbf2gf (CJK Version 4.8.0)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont hbf2gf} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.7.0)}
+  \centerline{(CJK Version 4.8.0)}
   \vfill}
 
 \def\botofcontents{
@@ -83,7 +83,7 @@ The ``banner line'' defined here should be changed whenever \.{hbf2gf} is
 modified.
 
 @d banner
-"hbf2gf (CJK ver. 4.7.0)"
+"hbf2gf (CJK ver. 4.8.0)"
 
 
 @

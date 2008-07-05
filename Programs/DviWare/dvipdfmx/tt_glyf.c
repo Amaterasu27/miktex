@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_glyf.c,v 1.3 2007/02/14 05:56:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_glyf.c,v 1.4 2008/05/08 18:51:59 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -219,7 +219,8 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
     ERROR("File not opened.");
 
   if (sfont->type != SFNT_TYPE_TRUETYPE &&
-      sfont->type != SFNT_TYPE_TTC)
+      sfont->type != SFNT_TYPE_TTC &&
+      sfont->type != SFNT_TYPE_DFONT)
     ERROR("Invalid font type");
 
   if (g->num_glyphs > NUM_GLYPH_LIMIT)
@@ -523,7 +524,8 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
     ERROR("File not opened.");
 
   if (sfont->type != SFNT_TYPE_TRUETYPE &&
-      sfont->type != SFNT_TYPE_TTC)
+      sfont->type != SFNT_TYPE_TTC &&
+      sfont->type != SFNT_TYPE_DFONT)
     ERROR("Invalid font type");
 
   /*

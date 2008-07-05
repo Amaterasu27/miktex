@@ -105,6 +105,7 @@ and &PNG; graphics formats.</para>
 &optionsrcspecials;
 &optionstacksize;
 &optionstringvacancies;
+&optionsynctex;
 &optiontcx;
 &optiontimestatistics;
 &optiontrace;

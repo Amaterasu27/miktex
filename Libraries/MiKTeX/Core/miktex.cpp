@@ -1384,7 +1384,7 @@ miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
    DllMain
    _________________________________________________________________________ */
 
-#if ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
 
 #if defined(_MANAGED)
 #  pragma managed(push, off)

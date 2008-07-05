@@ -139,8 +139,9 @@ include(CPack)
 include(Admin/COM/guids.cmake)
 
 include(AddLinkFlags)
-include(CheckIncludeFileCXX)
 include(CheckFunctionExists)
+include(CheckIncludeFileCXX)
+include(CheckVariableExists)
 include(CreateCppFromC)
 include(CreateDllWrapper)
 include(CreateExeAlias)
@@ -150,9 +151,9 @@ include(DelayLoad)
 include(DisableRuntimeChecks)
 include(InstallPaths)
 include(LibraryNames)
-include(MergeTrustInfoManifest)
-include(MergeManifests)
 include(MergeCommonControlsManifest)
+include(MergeManifests)
+include(MergeTrustInfoManifest)
 include(Rebase)
 include(SourcePaths)
 include(UseStaticCRT)
@@ -229,7 +230,6 @@ endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
-
 find_package(Qt4)
 find_package(Threads REQUIRED)
 
@@ -241,8 +241,10 @@ endif(NATIVE_WINDOWS)
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)
+check_function_exists(close HAVE_CLOSE)
 check_function_exists(confstr HAVE_CONFSTR)
 check_function_exists(fork HAVE_FORK)
+check_function_exists(getenv HAVE_GETENV)
 check_function_exists(geteuid HAVE_GETEUID)
 check_function_exists(getuid HAVE_GETUID)
 check_function_exists(lsqrt HAVE_LSQRT)
@@ -255,6 +257,7 @@ check_function_exists(setreuid HAVE_SETREUID)
 check_function_exists(setuid HAVE_SETUID)
 check_function_exists(statvfs HAVE_STATVFS)
 check_function_exists(strerror HAVE_STRERROR)
+check_function_exists(system HAVE_SYSTEM)
 check_function_exists(uname HAVE_UNAME_SYSCALL)
 check_function_exists(utime HAVE_UTIME)
 check_function_exists(vfork HAVE_VFORK)
@@ -266,20 +269,24 @@ check_include_files(alloca.h HAVE_ALLOCA_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(errno.h HAVE_ERRNO_H)
 check_include_files(float.h HAVE_FLOAT_H)
+check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(limits.h HAVE_LIMITS_H)
 check_include_files(mcheck.h HAVE_MCHECK_H)
+check_include_files(memory.h HAVE_MEMORY_H)
+check_include_files(stddef.h HAVE_STDDEF_H)
+check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(sys/mman.h HAVE_SYS_MMAN_H)
 check_include_files(sys/param.h HAVE_SYS_PARAM_H)
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
 check_include_files(sys/statvfs.h HAVE_SYS_STATVFS_H)
+check_include_files(sys/types.h HAVE_SYS_TYPES_H)
 check_include_files(sys/utime.h HAVE_SYS_UTIME_H)
 check_include_files(sys/utsname.h HAVE_SYS_UTSNAME_H)
 check_include_files(sys/wait.h HAVE_SYS_WAIT_H)
-check_include_files(sys/stat.h HAVE_SYS_STAT_H)
 check_include_files(unistd.h HAVE_UNISTD_H)
 check_include_files(utime.h HAVE_UTIME_H)
-check_include_files(inttypes.h HAVE_INTTYPES_H)
-check_include_files(stddef.h HAVE_STDDEF_H)
-check_include_files(stdint.h HAVE_STDINT_H)
+
+check_variable_exists(timezone HAVE_TIMEZONE)
 
 if(HAVE_LIMITS_H)
   set(STDC_HEADERS)
@@ -296,12 +303,15 @@ if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
 endif(MFC_FOUND AND NOT HAVE_AFXWIN_H)
 
 # MiKTeX components
-set(HAVE_LIBPNG 1)
-set(HAVE_LIBJPEG 1)
-set(HAVE_LIBZ 1)
-set(HAVE_LIBFREETYPE 1)
-set(HAVE_LIBFONTCONFIG 1)
 set(HAVE_FT2BUILD_H 1)
+set(HAVE_LIBFONTCONFIG 1)
+set(HAVE_LIBFREETYPE 1)
+set(HAVE_LIBJPEG 1)
+set(HAVE_LIBPNG 1)
+set(HAVE_LIBZ 1)
+set(HAVE_ZLIB 1)
+set(HAVE_ZLIB_H 1)
+set(HAVE_ZLIB_COMPRESS2 1)
 
 ###############################################################################
 ## change default install prefix
@@ -369,6 +379,8 @@ if(NATIVE_WINDOWS)
     add_definitions(
       -DMIKTEX_ATLMFC
     )
+    set(CMAKE_RC_FLAGS
+      "${CMAKE_RC_FLAGS} -DMIKTEX_ATLMFC")
   endif(MFC_FOUND AND HAVE_ATLBASE_H)
   # DLL export enablers
   add_definitions(
@@ -385,12 +397,13 @@ if(NATIVE_WINDOWS)
 #    -D_WIN32_WINNT=0x0400
 #    -D_WIN32_IE=0x0500
 #  )
+  set(CMAKE_RC_FLAGS
+    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Graphics")
+  set(CMAKE_RC_FLAGS
+    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
-
-set(CMAKE_RC_FLAGS
-  "-I${CMAKE_SOURCE_DIR}/Resources/Graphics -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 
 ###############################################################################
 ## add global include directories
@@ -437,6 +450,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
@@ -519,6 +533,12 @@ endforeach(tpm)
 ## add sub-directories
 
 add_subdirectory(${rel_build_tools_etc_dir})
+
+add_subdirectory(${rel_uriparser_dir})
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_uriparser_dir}-static)
+endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})

@@ -47,6 +47,7 @@ add_definitions(
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
   -DXETEXDATA=g_XETEXData
+  -DXETEX_GRAPHITE
   -DXETEX_OTHER
   -DXeTeX
 )
@@ -63,6 +64,10 @@ set(synctex_xetex_ch_srcs_on
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch2
+)
+
+set(xetex_post_ch_srcs_with_synctex
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch3
 )
 
 set(miktex_tex_change_files
@@ -134,6 +139,7 @@ add_custom_command(
 	${tie_exe} -m ${xetex_web_file}
 		${pre_xetex2_web_file}
 		${xetex_change_files}
+		${xetex_post_ch_srcs_with_synctex}
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS

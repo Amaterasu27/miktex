@@ -1188,8 +1188,7 @@ public:
   MIKTEXTHISCALL
   SetFileList (/*[in]*/ const std::vector<std::string> & tbi)
   {
-    this->toBeInstalled = tbi;
-    toBeRemoved.clear ();
+    SetFileLists (tbi, std::vector<std::string>());
   }
 
 public:
@@ -1543,6 +1542,13 @@ private:
   CheckArchiveFile (/*[in]*/ const char *		lpszPackage,
 		    /*[in]*/ const MiKTeX::Core::PathName & archiveFileName,
 		    /*[in]*/ bool			mustBeOk);
+
+private:
+  void
+  CheckDependencies (/*[in,out]*/ std::set<std::string> &	packages,
+		     /*[in]*/ const std::string &	deploymentName,
+		     /*[in]*/ bool			force,
+		     /*[in]*/ int			level);
 
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 private:

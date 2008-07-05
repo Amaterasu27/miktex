@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,6 +32,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/MemoryMappedFile.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Process.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Thread.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Uri.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/appnames.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/cfg.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/config.cpp

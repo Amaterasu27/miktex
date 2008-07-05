@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.64 2007/11/27 02:44:29 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.66 2008/06/05 06:27:42 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -455,7 +455,6 @@ struct dev_font {
   double   bold;  /* Boldness prameter */
 
   /* Compatibility */
-  int      remap; /* Obsolete */
   int      mapc;  /* Nasty workaround for Omega */
 
   /* There are no font metric format supporting four-bytes
@@ -873,33 +872,6 @@ static unsigned char sbuf0[FORMAT_BUF_SIZE];
 static unsigned char sbuf1[FORMAT_BUF_SIZE];
 
 static int
-handle_remap (unsigned char **str_ptr, int length)
-{
-  unsigned char *p;
-  int  i;
-
-  p = *str_ptr;
-
-#define twiddle(n) ( \
-    ( \
-     ((n) <= 9)  ? \
-        ((n) + 161) : \
-           (((n) <= 32)  ? \
-           ((n) + 163) : \
-           (((n) == 127) ? 196: (n)) \
-        ) \
-    ) \
-)
-
-  for (i = 0; i < length; i++) {
-    sbuf0[i] = twiddle(p[i]);
-  }
-
-  *str_ptr = sbuf0;
-  return 0;
-}
-
-static int
 handle_multibyte_string (struct dev_font *font,
                          unsigned char **str_ptr, int *str_len, int ctype)
 {
@@ -1004,6 +976,37 @@ handle_multibyte_string (struct dev_font *font,
   return 0;
 }
 
+
+static pdf_coord *dev_coords = NULL;
+static int num_dev_coords = 0;
+static int max_dev_coords = 0;
+
+void pdf_dev_get_coord(double *xpos, double *ypos)
+{
+  if (num_dev_coords > 0) {
+    *xpos = dev_coords[num_dev_coords-1].x;
+    *ypos = dev_coords[num_dev_coords-1].y;
+  } else {
+    *xpos = *ypos = 0.0;
+  }
+}
+
+void pdf_dev_push_coord(double xpos, double ypos)
+{
+  if (num_dev_coords >= max_dev_coords) {
+    max_dev_coords += 4;
+    dev_coords = RENEW(dev_coords, max_dev_coords, pdf_coord);
+  }
+  dev_coords[num_dev_coords].x = xpos;
+  dev_coords[num_dev_coords].y = ypos;
+  num_dev_coords++;
+}
+
+void pdf_dev_pop_coord(void)
+{
+  if (num_dev_coords > 0) num_dev_coords--;
+}
+
 /*
  * ctype:
 #ifdef XETEX
@@ -1067,12 +1070,15 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
                            (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
     }
   } else {
-    if (font->remap)
-      handle_remap(&str_ptr, length); /* length unchanged. */
     if (real_font->used_chars != NULL) {
       for (i = 0; i < length; i++)
         real_font->used_chars[str_ptr[i]] = 1;
     }
+  }
+
+  if (num_dev_coords > 0) {
+    xpos -= bpt2spt(dev_coords[num_dev_coords-1].x);
+    ypos -= bpt2spt(dev_coords[num_dev_coords-1].y);
   }
 
   /*
@@ -1191,9 +1197,10 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
   pdf_color_clear_stack();
   pdf_dev_init_gstates();
 
-  num_dev_fonts = 0;
-  max_dev_fonts = 0;
-  dev_fonts     = NULL;
+  num_dev_fonts  = max_dev_fonts = 0;
+  dev_fonts      = NULL;
+  num_dev_coords = max_dev_coords = 0;
+  dev_coords     = NULL;
 }
 
 void
@@ -1212,10 +1219,7 @@ pdf_close_device (void)
     }
     RELEASE(dev_fonts);
   }
-  dev_fonts     = NULL;
-  num_dev_fonts = 0;
-  max_dev_fonts = 0;
-
+  if (dev_coords) RELEASE(dev_coords);
   pdf_dev_clear_gstates();
 }
 
@@ -1448,8 +1452,6 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
     MESG("[slant:%g]",  mrec->opt.slant);
   if (mrec->opt.bold   != 0.0) 
     MESG("[bold:%g]",   mrec->opt.bold);
-  if (mrec->opt.flags & FONTMAP_OPT_REMAP) 
-    MESG("[remap]");
   if (mrec->opt.flags & FONTMAP_OPT_NOEMBED)
     MESG("[noemb]");
   if (mrec->opt.mapc >= 0)
@@ -1567,7 +1569,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->extend     = 1.0;
   font->slant      = 0.0;
   font->bold       = 0.0;
-  font->remap      = 0;
   font->mapc       = -1;
   font->is_unicode = 0;
   font->ucs_group  = 0;
@@ -1577,7 +1578,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
     font->extend = mrec->opt.extend;
     font->slant  = mrec->opt.slant;
     font->bold   = mrec->opt.bold;
-    font->remap  = (int) (mrec->opt.flags & FONTMAP_OPT_REMAP);
     if (mrec->opt.mapc >= 0)
       font->mapc = (mrec->opt.mapc >> 8) & 0xff;
     else {
@@ -1640,6 +1640,11 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
 {
   int    len = 0;
   double width_in_bp;
+
+  if (num_dev_coords > 0) {
+    xpos -= bpt2spt(dev_coords[num_dev_coords-1].x);
+    ypos -= bpt2spt(dev_coords[num_dev_coords-1].y);
+  }
 
   graphics_mode();
 
@@ -1860,6 +1865,11 @@ pdf_dev_put_image (int             id,
   pdf_tmatrix  M;
   pdf_rect     r;
   int          len = 0;
+
+  if (num_dev_coords > 0) {
+    ref_x -= dev_coords[num_dev_coords-1].x;
+    ref_y -= dev_coords[num_dev_coords-1].y;
+  }
 
   pdf_copymatrix(&M, &(p->matrix));
   M.e += ref_x; M.f += ref_y;

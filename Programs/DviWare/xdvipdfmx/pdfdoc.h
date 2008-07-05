@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.21 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.24 2008/06/05 06:27:42 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -33,7 +33,7 @@
 extern void     pdf_doc_set_verbose (void);
 
 extern void     pdf_open_document  (const char *filename,
-				    int do_encryption, int do_objstm,
+				    int do_encryption,
 				    double media_width, double media_height,
 				    double annot_grow_amount, int bookmark_open_depth);
 extern void     pdf_close_document (void);
@@ -99,17 +99,11 @@ extern void     pdf_doc_bookmarks_add   (pdf_obj *dict, int is_open);
 extern int      pdf_doc_bookmarks_depth (void);
 
 
-/* Form XObject */
-extern void     pdf_doc_make_xform (pdf_obj     *xform,
-				    pdf_rect    *bbox,         /* const */
-				    pdf_tmatrix *matrix,       /* const */
-				    pdf_obj     *resources_ref);
-
 /* Returns xobj_id of started xform. */
 extern int      pdf_doc_begin_grabbing (const char *ident,
 					double ref_x, double ref_y,
 					const pdf_rect *cropbox);
-extern void     pdf_doc_end_grabbing   (void);
+extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 
 /* Annotation */
@@ -123,8 +117,8 @@ extern void     pdf_doc_end_annot   (void);
 extern void     pdf_doc_break_annot (void);
 extern void     pdf_doc_expand_box  (const pdf_rect *rect);
 
-/* Thumbnail */
-extern void     pdf_doc_enable_thumbnails (int thumb_remove);
+/* Manual thumbnail */
+extern void     pdf_doc_enable_manual_thumbnails (void);
 
 /* PageLabels - */
 extern void     pdf_doc_set_pagelabel (long  page_start,

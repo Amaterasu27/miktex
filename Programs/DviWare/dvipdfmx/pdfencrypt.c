@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.9 2007/04/03 05:25:50 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.10 2008/02/12 18:44:40 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -143,8 +143,12 @@ static void compute_owner_password (void)
    */
   if (revision == 3)
     for (i = 0; i < 50; i++) {
+      /*
+       * NOTE: We truncate each MD5 hash as in the following step.
+       *       Otherwise Adobe Reader won't decrypt the PDF file.
+       */
       MD5_init(&md5_ctx);
-      MD5_write(&md5_ctx, md5_buf, MAX_KEY_LEN);
+      MD5_write(&md5_ctx, md5_buf, key_size);
       MD5_final(md5_buf, &md5_ctx);
     }
   /*
@@ -246,8 +250,12 @@ static void compute_encryption_key (unsigned char *pwd)
    */
   if (revision == 3)
     for (i = 0; i < 50; i++) {
+      /*
+       * NOTE: We truncate each MD5 hash as in the following step.
+       *       Otherwise Adobe Reader won't decrypt the PDF file.
+       */
       MD5_init(&md5_ctx);
-      MD5_write(&md5_ctx, md5_buf, MAX_KEY_LEN);
+      MD5_write(&md5_ctx, md5_buf, key_size);
       MD5_final(md5_buf, &md5_ctx);
     }
   /*

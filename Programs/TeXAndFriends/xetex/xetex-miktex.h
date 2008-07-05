@@ -126,6 +126,12 @@ public:
     size_t nFonts = THEDATA(fontmax) - constfontbase;
 
     Allocate ("fontmapping", THEDATA(fontmapping), nFonts);
+#if 1
+    for (int idx = 0; idx < nFonts; ++ idx)
+      {
+	THEDATA(fontmapping)[idx] = 0;
+      }
+#endif
     Allocate ("fontlayoutengine", THEDATA(fontlayoutengine), nFonts);
     Allocate ("fontflags", THEDATA(fontflags), nFonts);
     Allocate ("fontletterspace", THEDATA(fontletterspace), nFonts);
@@ -300,6 +306,10 @@ MAKE_GLOBAL(scaled, ruledp);
 #define ycoord yCoord
 #define yfield yField
 #define zxnoverd xnoverd
+#define zenddiagnostic enddiagnostic
+#define zprintnl printnl
+#define zprintint printint
+#define zprintscaled printscaled
 
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
@@ -626,9 +636,12 @@ isopentypemathfont (/*[in]*/ const voidpointer	p)
    printcstring
    _________________________________________________________________________ */
 
-#define printcstring(STR)        \
-  do {                           \
-    const_string ch_ptr = (STR); \
-    while (*ch_ptr)              \
-      printchar(*(ch_ptr++));    \
-  } while (0)
+template<class CharType>
+void
+printcstring (const CharType * lpsz)
+{
+  for (; *lpsz != 0; ++ lpsz)
+    {
+      printchar (*lpsz);
+    }
+}

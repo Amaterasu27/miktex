@@ -1,6 +1,6 @@
 /* MiKTeX/TeXAndFriends/WebAppInputLine:			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -96,11 +96,9 @@ bool
 miktexopenoutputfile (/*[in]*/ FileType &		f,
 		      /*[in]*/ C4P::C4P_boolean		text)
 {
-#if 0
-  MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::None;
-#else
+  // must open with read/write sharing flags
+  // cf. bug 2006511
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::ReadWrite;
-#endif
   return (THEAPP.OpenOutputFile(*static_cast<C4P::FileRoot*>(&f),
 				THEAPP.GetNameOfFile().Get(),
 				share,

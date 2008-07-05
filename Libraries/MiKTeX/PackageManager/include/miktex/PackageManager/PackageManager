@@ -1,6 +1,6 @@
 /* MiKTeX/PackageManager/PackageManager: MiKTeX package manager API -*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -657,7 +657,18 @@ public:
 public:
   static
   MIKTEXMPMCEEAPI(bool)
+  TryGetProxy (/*[in]*/ const char *	lpszDestUrl,
+	       /*[out]*/ ProxySettings & proxySettings);
+
+public:
+  static
+  MIKTEXMPMCEEAPI(bool)
   TryGetProxy (/*[out]*/ ProxySettings & proxySettings);
+
+public:
+  static
+  MIKTEXMPMCEEAPI(ProxySettings)
+  GetProxy (/*[in]*/ const char *	lpszDestUrl);
 
 public:
   static

@@ -1,6 +1,6 @@
-% This is the cweb file cefsconv.w of the CJK Package Ver. 4.7.0  17-Oct-2006
+% This is the cweb file cefsconv.w of the CJK Package Ver. 4.8.0  22-May-2008
 
-% Copyright (C) 1994-2006  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2008  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 % output rules (look at the position of braces below!) the author (it's me
 % too :-) prefer. Otherwise this file will be formatted traditionally.
 
-\def\title{cefsconv (CJK Version 4.7.0)}
+\def\title{cefsconv (CJK Version 4.8.0)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont cefsconv} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.7.0)}
+  \centerline{(CJK Version 4.8.0)}
   \vfill}
 
 \def\botofcontents{
@@ -103,7 +103,7 @@ which will see the output of \.{cefsconv} complains loudly if something is
 wrong.
 
 @d banner
-"cefsconv (CJK ver. 4.7.0)"
+"cefsconv (CJK ver. 4.8.0)"
 
 @c
 #include <ctype.h>

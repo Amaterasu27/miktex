@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: epdf.h 295 2007-11-29 14:00:45Z oneiros $
+$Id: epdf.h 443 2008-05-03 14:48:27Z oneiros $
 */
 
 #if ! defined(MIKTEX)
@@ -74,8 +74,8 @@ extern "C" {
     extern integer pdfboxspectrim;
     extern integer pdfboxspecart;
 
-    extern integer pdfstreamlength;
-    extern integer pdfptr;
+    extern longinteger pdfstreamlength;
+    extern longinteger pdfptr;
     extern integer poolptr;
     typedef unsigned char eightbits;
     extern eightbits *pdfbuf;
@@ -124,12 +124,12 @@ extern "C" {
     extern void embed_whole_font(fd_entry *);
     extern int is_subsetable(fm_entry *);
     extern void epdf_mark_glyphs(fd_entry *, char *);
-    extern fd_entry *epdf_create_fontdescriptor(fm_entry *);
+    extern fd_entry *epdf_create_fontdescriptor(fm_entry *, int);
     extern int get_fd_objnum(fd_entry *);
     extern int get_fn_objnum(fd_entry *);
 #else
     extern void epdf_mark_glyphs(struct fd_entry *, char *);
-    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *);
+    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *, int);
     extern int get_fd_objnum(struct fd_entry *);
     extern int get_fn_objnum(struct fd_entry *);
 #endif

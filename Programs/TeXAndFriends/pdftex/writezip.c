@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id: writezip.c 168 2007-07-06 20:38:42Z oneiros $
 */
 
 #include "ptexlib.h"
@@ -27,6 +25,9 @@ $Id: writezip.c 168 2007-07-06 20:38:42Z oneiros $
 #else
 #include <assert.h>
 #endif
+
+static const char _svn_version[] =
+    "$Id: writezip.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writezip.c $";
 
 #define ZIP_BUF_SIZE  32768
 

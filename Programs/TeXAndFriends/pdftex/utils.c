@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-$Id: utils.c 357 2008-01-26 21:05:51Z oneiros $
 */
 
 #include "openbsd-compat.h"
@@ -38,6 +36,9 @@ $Id: utils.c 357 2008-01-26 21:05:51Z oneiros $
 #include "ptexlib.h"
 #include "png.h"
 #include "xpdf/config.h"        /* just to get the xpdf version */
+
+static const char _svn_version[] =
+    "$Id: utils.c 405 2008-03-31 10:11:44Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/utils.c $";
 
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
@@ -433,13 +434,13 @@ void writestreamlength(integer length, longinteger offset)
 #if defined(MIKTEX)
         xfseek(pdffile, offset, SEEK_SET, jobname_cstr);
 #else
-        xfseek(pdffile, (off_t)offset, SEEK_SET, jobname_cstr);
+        xfseeko(pdffile, (off_t) offset, SEEK_SET, jobname_cstr);
 #endif
         fprintf(pdffile, "%li", (long int) length);
 #if defined(MIKTEX)
         xfseek(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
 #else
-        xfseek(pdffile, (off_t)pdfoffset(), SEEK_SET, jobname_cstr);
+        xfseeko(pdffile, (off_t) pdfoffset(), SEEK_SET, jobname_cstr);
 #endif
     }
 }
