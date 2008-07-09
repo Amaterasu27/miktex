@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2008 Christian Schenk
+## Copyright (C) 2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,30 +21,40 @@ add_definitions(
   -DHAVE_CONFIG_H
 )
 
-include_directories(BEFORE
-  ${CMAKE_CURRENT_BINARY_DIR}
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/src
 )
 
-set(fc-cache_sources
+set(fc-arch_sources
   ${wrapper_cpp}
-  fc-cache.c
+  fc-arch.c
 )
 
-if(NATIVE_WINDOWS)
-  set(fc-cache_sources ${fc-cache_sources}
-    fc-cache.rc
-  )
-endif(NATIVE_WINDOWS)
+add_executable(fc-arch ${fc-arch_sources})
 
-add_executable(fc-cache ${fc-cache_sources})
+merge_trustinfo_manifest(fc-arch asInvoker)
 
-merge_trustinfo_manifest(fc-cache asInvoker)
-
-target_link_libraries(fc-cache
+target_link_libraries(fc-arch
   ${app_dll_name}
-  ${core_dll_name}
-  ${fontconfig_dll_name}
+  $(core_dll_name)
   ${gnu_dll_name}
 )
 
-install(TARGETS fc-cache DESTINATION ${bindir})
+get_target_property(fc-arch_exe fc-arch LOCATION)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
+  COMMAND ${fc-arch_exe} x86
+	< ${CMAKE_CURRENT_SOURCE_DIR}/fcarch.tmpl.h
+	> ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
+  MAIN_DEPENDENCY fcarch.tmpl.h
+  DEPENDS
+	fc-arch
+	${CMAKE_CURRENT_SOURCE_DIR}/fcarch.tmpl.h
+  VERBATIM
+)
+
+add_custom_target(fc-arch-all ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
+)

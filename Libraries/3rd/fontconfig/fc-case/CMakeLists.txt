@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2008 Christian Schenk
+## Copyright (C) 2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,30 +21,40 @@ add_definitions(
   -DHAVE_CONFIG_H
 )
 
-include_directories(BEFORE
-  ${CMAKE_CURRENT_BINARY_DIR}
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/src
 )
 
-set(fc-cache_sources
+set(fc-case_sources
   ${wrapper_cpp}
-  fc-cache.c
+  fc-case.c
 )
 
-if(NATIVE_WINDOWS)
-  set(fc-cache_sources ${fc-cache_sources}
-    fc-cache.rc
-  )
-endif(NATIVE_WINDOWS)
+add_executable(fc-case ${fc-case_sources})
 
-add_executable(fc-cache ${fc-cache_sources})
+merge_trustinfo_manifest(fc-case asInvoker)
 
-merge_trustinfo_manifest(fc-cache asInvoker)
-
-target_link_libraries(fc-cache
+target_link_libraries(fc-case
   ${app_dll_name}
-  ${core_dll_name}
-  ${fontconfig_dll_name}
+  $(core_dll_name)
   ${gnu_dll_name}
 )
 
-install(TARGETS fc-cache DESTINATION ${bindir})
+get_target_property(fc-case_exe fc-case LOCATION)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fccase.h
+  COMMAND ${fc-case_exe} ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt
+	< ${CMAKE_CURRENT_SOURCE_DIR}/fccase.tmpl.h
+	> ${CMAKE_CURRENT_BINARY_DIR}/fccase.h
+  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt
+  DEPENDS
+	fc-case
+	${CMAKE_CURRENT_SOURCE_DIR}/fccase.tmpl.h
+  VERBATIM
+)
+
+add_custom_target(fc-case-all ALL
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/fccase.h
+)

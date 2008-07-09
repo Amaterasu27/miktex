@@ -1,35 +1,48 @@
 #
 # $RCSId:$
 #
-# Copyright © 2002 Keith Packard
+# Copyright © 2008 Neskie Manuel
 #
 # Permission to use, copy, modify, distribute, and sell this software and its
 # documentation for any purpose is hereby granted without fee, provided that
 # the above copyright notice appear in all copies and that both that
 # copyright notice and this permission notice appear in supporting
-# documentation, and that the name of Keith Packard not be used in
+# documentation, and that the name of Neskie Manuel not be used in
 # advertising or publicity pertaining to distribution of the software without
-# specific, written prior permission.  Keith Packard makes no
+# specific, written prior permission.  Neskie Manuel makes no
 # representations about the suitability of this software for any purpose.  It
 # is provided "as is" without express or implied warranty.
 #
-# KEITH PACKARD DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# NESKIE MANUEL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 # INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
-# EVENT SHALL KEITH PACKARD BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# EVENT SHALL NESKIE MANUEL BE LIABLE FOR ANY SPECIAL, INDIRECT OR
 # CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
 # DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 #
-# Tswana (TN)
+# Secwepemctsin (shs)
 #
-# Orthography from http://www.eki.ee/letter
-# and http://www.inference.phy.cam.ac.uk/dasher/download/alphabets/alphabet.Tswana.xml
-#
-0041-005a
-0061-007a
-00ca
-00ea
-00d4
-00f4
-0160-0161
+# Orthography from A Shuswap Course and
+# http://www.languagegeek.com/salishan/secwepemctsin.html
+
+0037
+0041
+0043
+0045
+0047-0049
+004B-0055
+0057-0059
+0061
+0063
+0065
+0067-0069
+006B-0075
+0077-0079
+00C1
+00C9
+00CD
+00E1
+00E9
+00ED
+0313

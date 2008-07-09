@@ -21,6 +21,10 @@ add_definitions(
   -DHAVE_CONFIG_H
 )
 
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(fc-cat_sources
   ${wrapper_cpp}
   fc-cat.c
