@@ -18,18 +18,18 @@
 ## USA.
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Version.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Version.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version.h
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Paths.in
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Paths
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Paths.h.in
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Paths.h
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.cmake
-  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.h.cmake
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.h
 )
 
 configure_file(
@@ -80,13 +80,13 @@ set(${core_dll_name}_sources
   getdelim.cpp
   graphics.cpp
   gsinfo.cpp
-  include/miktex/Core/Core
-  include/miktex/Core/Environment
-  include/miktex/Core/First
-  include/miktex/Core/Registry
-  include/miktex/Core/Test
-  include/miktex/Core/Text
-  include/miktex/Core/Trace
+  include/miktex/Core/Core.h
+  include/miktex/Core/Environment.h
+  include/miktex/Core/First.h
+  include/miktex/Core/Registry.h
+  include/miktex/Core/Test.h
+  include/miktex/Core/Text.h
+  include/miktex/Core/Trace.h
   internal.h
   log.cpp
   makefndb.cpp

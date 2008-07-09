@@ -1,1 +1,1 @@
-#include <miktex/IntegerTypes.h>
+#include <miktex/Core/IntegerTypes.h>

@@ -1,1 +1,1 @@
-#include <miktex/Trace.h>
+#include <miktex/Core/Trace.h>

@@ -1,1 +1,1 @@
-#include <miktex/Debug.h>
+#include <miktex/Core/Debug.h>

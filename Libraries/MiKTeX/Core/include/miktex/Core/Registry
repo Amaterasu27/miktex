@@ -1,1 +1,1 @@
-#include <miktex/Registry.h>
+#include <miktex/Core/Registry.h>

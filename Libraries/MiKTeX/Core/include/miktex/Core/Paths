@@ -1,1 +1,1 @@
-#include <miktex/Paths.h>
+#include <miktex/Core/Paths.h>

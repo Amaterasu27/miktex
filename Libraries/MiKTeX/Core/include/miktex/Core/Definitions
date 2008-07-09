@@ -1,1 +1,1 @@
-#include <miktex/Definitions.h>
+#include <miktex/Core/Definitions.h>

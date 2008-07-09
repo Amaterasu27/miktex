@@ -1,1 +1,1 @@
-#include <miktex/Text.h>
+#include <miktex/Core/Text.h>

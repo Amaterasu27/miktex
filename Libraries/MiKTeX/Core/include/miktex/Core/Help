@@ -1,1 +1,1 @@
-#include <miktex/Help.h>
+#include <miktex/Core/Help.h>
