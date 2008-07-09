@@ -447,7 +447,7 @@ if(MSVC)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_msinttypes_dir}/include
   )
-endif(MSCV)
+endif(MSVC)
 
 if(NATIVE_WINDOWS)
   include_directories(
