@@ -23,7 +23,6 @@ include_directories(
 )
 
 set(unx_includes
-  stdint.h
   unistd.h
   dirent.h
 )

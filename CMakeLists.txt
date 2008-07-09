@@ -443,6 +443,12 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
+if(MSVC)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_msinttypes_dir}/include
+  )
+endif(MSCV)
+
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
