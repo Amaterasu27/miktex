@@ -292,19 +292,32 @@ install(TARGETS ${core_dll_name}
 
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
     include/miktex/Core/Core
+    include/miktex/Core/Core.h
     include/miktex/Core/Debug
+    include/miktex/Core/Debug.h
     include/miktex/Core/Definitions
+    include/miktex/Core/Definitions.h
     include/miktex/Core/Environment
+    include/miktex/Core/Environment.h
     include/miktex/Core/First
+    include/miktex/Core/First.h
     include/miktex/Core/Help
+    include/miktex/Core/Help.h
+    include/miktex/Core/Paths
     include/miktex/Core/Registry
+    include/miktex/Core/Registry.h
     include/miktex/Core/Test
+    include/miktex/Core/Test.h
     include/miktex/Core/Text
+    include/miktex/Core/Text.h
     include/miktex/Core/Trace
+    include/miktex/Core/Trace.h
     include/miktex/Core/Urls
+    include/miktex/Core/Urls.h
+    include/miktex/Core/Version
   DESTINATION
     ${incdir}/miktex/Core
 )
