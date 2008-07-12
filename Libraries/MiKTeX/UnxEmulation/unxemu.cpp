@@ -48,6 +48,26 @@ struct DIR_
   }
 };
 
+struct WDIR_
+{
+  DirectoryLister * pLister;
+  struct wdirent direntry;
+  WDIR_ (/*[in]*/ const wchar_t * lpszPath)
+    : pLister (DirectoryLister::Open(lpszPath))
+  {
+  }
+  ~WDIR_ ()
+  {
+    try
+      {
+	delete pLister;
+      }
+    catch (const exception &)
+      {
+      }
+  }
+};
+
 /* _________________________________________________________________________
 
    closedir
@@ -55,6 +75,20 @@ struct DIR_
 
 MIKTEXUNXCEEAPI(int)
 closedir (/*[in]*/ DIR * pDir)
+{
+  C_FUNC_BEGIN ();
+  delete pDir;
+  return (0);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   wclosedir
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(int)
+wclosedir (/*[in]*/ WDIR * pDir)
 {
   C_FUNC_BEGIN ();
   delete pDir;
@@ -82,6 +116,24 @@ opendir (/*[in]*/ const char * lpszPath)
 
 /* _________________________________________________________________________
 
+   wopendir
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(WDIR *)
+wopendir (/*[in]*/ const wchar_t * lpszPath)
+{
+  C_FUNC_BEGIN ();
+  if (! Directory::Exists(lpszPath))
+    {
+      errno = ENOENT;
+      return (0);
+    }
+  return (new WDIR_(lpszPath));
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
    readdir
    _________________________________________________________________________ */
 
@@ -98,6 +150,28 @@ readdir (/*[in]*/ DIR * pDir)
 		     (sizeof(pDir->direntry.d_name)
 		      / sizeof(pDir->direntry.d_name[0])),
 		     directoryEntry.name.c_str());
+  return (&pDir->direntry);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   wreaddir
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(struct wdirent *)
+wreaddir (/*[in]*/ WDIR * pDir)
+{
+  C_FUNC_BEGIN ();
+  DirectoryEntry directoryEntry;
+  if (! pDir->pLister->GetNext(directoryEntry))
+    {
+      return (0);
+    }
+  Utils::CopyString (pDir->direntry.d_name,
+		     (sizeof(pDir->direntry.d_name)
+		      / sizeof(pDir->direntry.d_name[0])),
+		     directoryEntry.wname.c_str());
   return (&pDir->direntry);
   C_FUNC_END ();
 }
