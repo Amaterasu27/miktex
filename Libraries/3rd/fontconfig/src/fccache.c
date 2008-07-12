@@ -138,6 +138,11 @@ FcStat (const char *file, struct stat *statb)
 
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+/* The work-around (see above) does not work for us; undo it */
+#  define FcStat stat
+#endif
+
 static const char bin2hex[] = { '0', '1', '2', '3',
 				'4', '5', '6', '7',
 				'8', '9', 'a', 'b',
