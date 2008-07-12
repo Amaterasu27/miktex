@@ -1,6 +1,6 @@
 /* winDirectoryLister.cpp: directory lister (Windows)
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -55,7 +55,7 @@ DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 
 winDirectoryLister::winDirectoryLister
 (/*[in]*/ const PathName &	directory,
- /*[in]*/ const char *	lpszPattern)
+ /*[in]*/ const char *		lpszPattern)
   : directory (directory),
     pattern (lpszPattern == 0 ? "" : lpszPattern),
     handle (INVALID_HANDLE_VALUE)
@@ -112,8 +112,29 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
       return (false);
     }
   direntry.name = direntry2.name;
+  direntry.wname = direntry2.wname;
   direntry.isDirectory = direntry2.isDirectory;
   return (true);
+}
+
+/* _________________________________________________________________________
+
+   IsDotDirectory
+   _________________________________________________________________________ */
+
+inline
+bool
+IsDotDirectory (/*[in]*/ const wchar_t * lpszDirectory)
+{
+  if (lpszDirectory[0] != L'.')
+  {
+    return (false);
+  }
+  if (lpszDirectory[1] == 0)
+  {
+    return (true);
+  }
+  return (lpszDirectory[1] == L'.' && lpszDirectory[2] == 0);
 }
 
 /* _________________________________________________________________________
@@ -124,13 +145,13 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry & direntry)
 bool
 winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 {
-  WIN32_FIND_DATA ffdat;
+  WIN32_FIND_DATAW ffdat;
   do
     {
       if (handle == INVALID_HANDLE_VALUE)
 	{
 	  PathName pathPattern (directory);
-	  if (pattern.length() == 0)
+	  if (pattern.empty())
 	    {
 	      pathPattern += "*";
 	    }
@@ -138,34 +159,32 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      pathPattern += pattern.c_str();
 	    }
-	  handle = FindFirstFileA(pathPattern.Get(), &ffdat);
+	  handle = FindFirstFileW(Utils::AnsiToWideChar(pathPattern.Get()).c_str(), &ffdat);
 	  if (handle == INVALID_HANDLE_VALUE)
 	    {
 	      if (::GetLastError() != ERROR_FILE_NOT_FOUND)
 		{
-		  FATAL_WINDOWS_ERROR ("FindFirstFileA", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindFirstFileW", directory.Get());
 		}
 	      return (false);
 	    }
 	}
       else
 	{
-	  if (! FindNextFileA(handle, &ffdat))
+	  if (! FindNextFileW(handle, &ffdat))
 	    {
 	      if (::GetLastError() != ERROR_NO_MORE_FILES)
 		{
-		  FATAL_WINDOWS_ERROR ("FindNextFileA", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindNextFileW", directory.Get());
 		}
 	      return (false);
 	    }
 	}
     }
   while (((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-	 && ((MiKTeX::Core::StringCompare(ffdat.cFileName, CURRENT_DIRECTORY)
-	      == 0)
-	     || (MiKTeX::Core::StringCompare(ffdat.cFileName, PARENT_DIRECTORY)
-		 == 0)));
-  direntry2.name = ffdat.cFileName;
+    && IsDotDirectory(ffdat.cFileName));
+  direntry2.wname = ffdat.cFileName;
+  direntry2.name = Utils::WideCharToAnsi(ffdat.cFileName);
   direntry2.isDirectory =
     ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
   direntry2.size = ffdat.nFileSizeLow;

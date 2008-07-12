@@ -101,11 +101,17 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK;
 
    C API
 
-   The C API is deprecated and undocumented.  It's sole purpose is to
-   support utilities which cannot be compiled with a C++ compiler.
+   Support utilities which cannot be compiled with a C++ compiler.
    _________________________________________________________________________ */
 
 #define MIKTEXCEEAPI(type) MIKTEXCOREEXPORT type MIKTEXCEECALL
+
+#if defined(MIKTEX_WINDOWS)
+MIKTEXCEEAPI(char*)
+miktex_ansi_to_utf8 (/*[in]*/ const char *	lpszAnsi,
+		     /*[in]*/ size_t		sizeUtf8,
+		     /*[out]*/ char *		lpszUtf8);
+#endif
 
 MIKTEXCEEAPI(void)
 miktex_create_temp_file_name (/*[out]*/ char *	lpszFileName);
@@ -200,6 +206,23 @@ miktex_start_process (/*[in]*/ const char *	lpszFileName,
 MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut);
+
+#if defined(MIKTEX_WINDOWS)
+MIKTEXCEEAPI(char*)
+miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
+		     /*[in]*/ size_t		sizeAnsi,
+		     /*[out]*/ char *		lpszAnsi);
+#endif
+
+MIKTEXCEEAPI(wchar_t*)
+miktex_utf8_to_wide_char (/*[in]*/ const char *	lpszUtf8,
+			  /*[in]*/ size_t	sizeWideChar,
+			  /*[out]*/ wchar_t *	lpszWideChar);
+
+MIKTEXCEEAPI(char*)
+miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
+			  /*[in]*/ size_t	    sizeUtf8,
+			  /*[out]*/ char *	    lpszUtf8);
 
 #if defined(MIKTEX_2_4_COMPAT)
 #  define miktex_find_app_input_file(progname, name, result) \
@@ -1418,6 +1441,18 @@ public:
 	      /*[in]*/ size_t		bufSize,
 	      /*[in]*/ const char *	lpszSource);
 
+  /// Copies a wide string into another wide string.
+  /// @param[out] lpszBuf The destination string buffer.
+  /// @param bufSize Size (in characters) of the destination string buffer.
+  /// @param lpszSource The null-terminated string to be copied.
+  /// @return Returns the length (in characters) of the result.
+public:
+  static
+  MIKTEXCORECEEAPI(size_t)
+  CopyString (/*[out]*/ wchar_t *	lpszBuf,
+	      /*[in]*/ size_t		bufSize,
+	      /*[in]*/ const wchar_t *	lpszSource);
+
   /// Copies a wide string into a single-byte string.
   /// @param[out] lpszBuf The destination string buffer.
   /// @param bufSize Size (in characters) of the destination string buffer.
@@ -1655,6 +1690,13 @@ public:
   static
   MIKTEXCORECEEAPI(std::wstring)
   UTF8ToWideChar (/*[in]*/ const char * lpszUtf8);
+#endif
+
+public:
+#if defined(MIKTEX_WINDOWS)
+  static
+  MIKTEXCORECEEAPI(std::string)
+  WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -4537,6 +4579,10 @@ struct DirectoryEntry
 {
   /// Name of the entry.
   std::string name;
+#if defined(MIKTEX_WINDOWS)
+  /// Native (Unicode) name of the entry.
+  std::wstring wname;
+#endif
   /// Indicates whether the entry is a sub-directory.
   bool isDirectory;
 };

@@ -181,13 +181,14 @@ Utils::AppendString (/*[in,out]*/ char *	lpszBuf,
 
 /* _________________________________________________________________________
 
-   Utils::CopyString
+   GenericCopyString
    _________________________________________________________________________ */
 
+template<typename CharType>
 size_t
-Utils::CopyString (/*[out]*/ char *		lpszBuf,
+GenericCopyString (/*[out]*/ CharType *		lpszBuf,
 		   /*[in]*/ size_t		bufSize,
-		   /*[in]*/ const char *	lpszSource)
+		   /*[in]*/ const CharType *	lpszSource)
 {
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
@@ -208,6 +209,32 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
     }
 
   return (length);
+}
+
+/* _________________________________________________________________________
+
+   Utils::CopyString
+   _________________________________________________________________________ */
+
+size_t
+Utils::CopyString (/*[out]*/ char *		lpszBuf,
+		   /*[in]*/ size_t		bufSize,
+		   /*[in]*/ const char *	lpszSource)
+{
+  return (GenericCopyString(lpszBuf, bufSize, lpszSource));
+}
+
+/* _________________________________________________________________________
+
+   Utils::CopyString
+   _________________________________________________________________________ */
+
+size_t
+Utils::CopyString (/*[out]*/ wchar_t *		lpszBuf,
+		   /*[in]*/ size_t		bufSize,
+		   /*[in]*/ const wchar_t *	lpszSource)
+{
+  return (GenericCopyString(lpszBuf, bufSize, lpszSource));
 }
 
 /* _________________________________________________________________________
