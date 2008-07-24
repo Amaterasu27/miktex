@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include <miktex/App/Application>

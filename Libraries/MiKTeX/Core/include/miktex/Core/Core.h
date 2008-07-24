@@ -51,12 +51,13 @@
 #include <miktex/Core/MD5>
 
 #if defined(__cplusplus)
-#  include <cstdio>
 #  include <cstdarg>
+#  include <cstdio>
 #  include <cstdlib>
+#  include <cstring>
 #  include <ctime>
-#  include <string>
 #  include <stdexcept>
+#  include <string>
 #  include <vector>
 #else
 #  include <stdio.h>

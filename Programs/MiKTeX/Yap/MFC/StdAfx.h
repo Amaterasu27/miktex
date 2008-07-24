@@ -1,6 +1,6 @@
 /* StdAfx.h: includes precompiled header files			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of Yap.
 
@@ -62,6 +62,7 @@
 #include <algorithm>
 #include <stack>
 #include <map>
+#include <memory>
 #include <vector>
 #include <string>
 

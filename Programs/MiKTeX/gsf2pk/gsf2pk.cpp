@@ -1,6 +1,6 @@
 /* gsf2pk.cpp: Gsf-to-Pk converter (based on gsftopk)
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
    Copyright (C) 1993-2000  Paul Vojta
    
    Permission is hereby granted, free of charge, to any person
@@ -30,6 +30,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 

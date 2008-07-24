@@ -1,6 +1,6 @@
 /* makempx.cpp: making mpx files
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of MakeMpx.
 
@@ -22,6 +22,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <memory>
 
 #include <cstdio>
 #include <cassert>

@@ -170,6 +170,7 @@ using __gnu_cxx::hash_map;
 #include <functional>
 #include <locale>
 #include <map>
+#include <memory>
 #include <set>
 #include <stack>
 #include <sstream>
