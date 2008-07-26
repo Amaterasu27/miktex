@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -33,7 +33,7 @@ set(${extractor_dll_name}_sources
   TarLzmaExtractor.cpp
   TarLzmaExtractor.h
   extractor-version.h
-  include/miktex/Extractor/Extractor
+  include/miktex/Extractor/Extractor.h
   internal.h
 )
 
@@ -85,6 +85,7 @@ install(TARGETS ${extractor_dll_name}
 install(
   FILES
     include/miktex/Extractor/Extractor
+    include/miktex/Extractor/Extractor.h
   DESTINATION
     ${incdir}/miktex/Extractor
 )
