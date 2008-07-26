@@ -74,6 +74,14 @@ set(${ui_mfc_dll_name}_sources
   mikui.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/mikui.rc
   resource.h
+  include/miktex/UI/MFC/ErrorDialog.h
+  include/miktex/UI/MFC/PackageTreeCtrl.h
+  include/miktex/UI/MFC/ProgressDialog.h
+  include/miktex/UI/MFC/PropSheetPackage.h
+  include/miktex/UI/MFC/Prototypes.h
+  include/miktex/UI/MFC/SiteWizSheet.h
+  include/miktex/UI/MFC/TextViewerDialog.h
+  include/miktex/UI/MFC/UpdateDialog.h
 )
 
 add_library(${ui_mfc_dll_name} SHARED ${${ui_mfc_dll_name}_sources})
@@ -100,13 +108,21 @@ install(TARGETS ${ui_mfc_dll_name}
 install(
   FILES
     include/miktex/UI/MFC/ErrorDialog
+    include/miktex/UI/MFC/ErrorDialog.h
     include/miktex/UI/MFC/PackageTreeCtrl
+    include/miktex/UI/MFC/PackageTreeCtrl.h
     include/miktex/UI/MFC/ProgressDialog
+    include/miktex/UI/MFC/ProgressDialog.h
     include/miktex/UI/MFC/PropSheetPackage
+    include/miktex/UI/MFC/PropSheetPackage.h
     include/miktex/UI/MFC/Prototypes
+    include/miktex/UI/MFC/Prototypes.h
     include/miktex/UI/MFC/SiteWizSheet
+    include/miktex/UI/MFC/SiteWizSheet.h
     include/miktex/UI/MFC/TextViewerDialog
+    include/miktex/UI/MFC/TextViewerDialog.h
     include/miktex/UI/MFC/UpdateDialog
+    include/miktex/UI/MFC/UpdateDialog.h
   DESTINATION
     ${incdir}/miktex/UI/MFC
 )
