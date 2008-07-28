@@ -177,6 +177,13 @@
 /* Define FT_EXPORT_DEF and FT_EXPORT_FUNC as needed to build e.g. a DLL.*/
 /* All variables and functions visible from outside have these prefixes. */
 
+#if defined(MIKTEX)
+#  if defined(_MSC_VER)
+#    define EXPORT_DEF __declspec(dllimport)
+#    define EXPORT_FUNC __declspec(dllexport)
+#  endif
+#endif
+
 /* Backward compatibility only. Don't use for new code. */
 #ifdef EXPORT_DEF
 #define FT_EXPORT_DEF(  type )   EXPORT_DEF  type

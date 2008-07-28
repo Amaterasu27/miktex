@@ -1,6 +1,6 @@
 /* wrapper.cpp: wrap a main function
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -16,6 +16,14 @@
    along with this file; if not, write to the Free Software
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
+
+#if defined(HAVE_STDAFX_H)
+#  include "StdAfx.h"
+#endif
+
+#if defined(HAVE_CONFIG_H)
+#  include "config.h"
+#endif
 
 #include <cstdlib>
 

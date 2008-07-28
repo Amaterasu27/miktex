@@ -19,10 +19,10 @@
 
 add_definitions(
   -DANSI
-  -DAPPNAME=\\\"TEX4HT\\\"
   -DCDECL=__cdecl
   -DCPLUSPLUSMAIN
   -DDISABLE_INSTALLER
+  -DHAVE_CONFIG_H
   -DHAVE_IO_H
   -DHAVE_STRING_H
   -DKPATHSEA
@@ -31,7 +31,6 @@ add_definitions(
 
 if(NATIVE_WINDOWS)
   add_definitions(
-    -DPLATFORM=\\\"Windows\\\"
     -DWIN32
   )
 endif(NATIVE_WINDOWS)
@@ -45,6 +44,7 @@ create_cpp_from_c(
 set(htcmd_sources
   ${CMAKE_CURRENT_BINARY_DIR}/htcmd.cpp
   ${wrapper_cpp}
+  config.h
   htcmd-version.h
 )
 
@@ -70,6 +70,7 @@ install(TARGETS htcmd DESTINATION ${bindir})
 set(t4ht_sources
   ${CMAKE_CURRENT_BINARY_DIR}/t4ht.cpp
   ${wrapper_cpp}
+  config.h
   t4ht-version.h
 )
 
@@ -95,6 +96,7 @@ install(TARGETS t4ht DESTINATION ${bindir})
 set(tex4ht_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tex4ht.cpp
   ${wrapper_cpp}
+  config.h
   tex4ht-version.h
 )
 
