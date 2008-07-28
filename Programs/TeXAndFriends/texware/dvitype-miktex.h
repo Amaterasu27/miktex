@@ -198,4 +198,4 @@ public:
 extern DVITYPECLASS DVITYPEAPP;
 #define THEAPP DVITYPEAPP
 
-#include <miktex/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inl>

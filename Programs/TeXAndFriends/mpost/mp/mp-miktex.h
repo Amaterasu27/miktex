@@ -1,6 +1,6 @@
 /* mp-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -336,7 +336,7 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
   return (MiKTeX::TeXAndFriends::OpenMETAFONTFile(&f, lpszFileName));
 }
 
-#include <miktex/TeXAndFriends/MetafontApp.inliners>
+#include <miktex/TeXAndFriends/MetafontApp.inl>
 
 #include <miktex/KPSE/Emulation>
 

@@ -1,6 +1,6 @@
 /* tex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -129,4 +129,4 @@ extern TEXCLASS TEXAPP;
 #define THEAPP TEXAPP
 #endif
 
-#include <miktex/TeXAndFriends/TeXApp.inliners>
+#include <miktex/TeXAndFriends/TeXApp.inl>
