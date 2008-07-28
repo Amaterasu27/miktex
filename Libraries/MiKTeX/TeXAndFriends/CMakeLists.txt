@@ -32,18 +32,18 @@ set(${texmf_dll_name}_sources
   c4pstart.cpp
   etexapp.cpp
   include/miktex/TeXAndFriends/ETeXApp.h
-  include/miktex/TeXAndFriends/ETeXApp.inliners
+  include/miktex/TeXAndFriends/ETeXApp.inl
   include/miktex/TeXAndFriends/MetafontApp.h
-  include/miktex/TeXAndFriends/MetafontApp.inliners
+  include/miktex/TeXAndFriends/MetafontApp.inl
   include/miktex/TeXAndFriends/Prototypes.h
   include/miktex/TeXAndFriends/TeXApp.h
-  include/miktex/TeXAndFriends/TeXApp.inliners
+  include/miktex/TeXAndFriends/TeXApp.inl
   include/miktex/TeXAndFriends/TeXMFApp.h
-  include/miktex/TeXAndFriends/TeXMFApp.inliners
+  include/miktex/TeXAndFriends/TeXMFApp.inl
   include/miktex/TeXAndFriends/WebApp.h
-  include/miktex/TeXAndFriends/WebApp.inliners
+  include/miktex/TeXAndFriends/WebApp.inl
   include/miktex/TeXAndFriends/WebAppInputLine.h
-  include/miktex/TeXAndFriends/WebAppInputLine.inliners
+  include/miktex/TeXAndFriends/WebAppInputLine.inl
   inputline.cpp
   internal.h
   mfapp.cpp
@@ -148,24 +148,24 @@ install(
   FILES
     include/miktex/TeXAndFriends/ETeXApp
     include/miktex/TeXAndFriends/ETeXApp.h
-    include/miktex/TeXAndFriends/ETeXApp.inliners
+    include/miktex/TeXAndFriends/ETeXApp.inl
     include/miktex/TeXAndFriends/MetafontApp
     include/miktex/TeXAndFriends/MetafontApp.h
-    include/miktex/TeXAndFriends/MetafontApp.inliners
+    include/miktex/TeXAndFriends/MetafontApp.inl
     include/miktex/TeXAndFriends/Prototypes
     include/miktex/TeXAndFriends/Prototypes.h
     include/miktex/TeXAndFriends/TeXApp
     include/miktex/TeXAndFriends/TeXApp.h
-    include/miktex/TeXAndFriends/TeXApp.inliners
+    include/miktex/TeXAndFriends/TeXApp.inl
     include/miktex/TeXAndFriends/TeXMFApp
     include/miktex/TeXAndFriends/TeXMFApp.h
-    include/miktex/TeXAndFriends/TeXMFApp.inliners
+    include/miktex/TeXAndFriends/TeXMFApp.inl
     include/miktex/TeXAndFriends/WebApp
     include/miktex/TeXAndFriends/WebApp.h
-    include/miktex/TeXAndFriends/WebApp.inliners
+    include/miktex/TeXAndFriends/WebApp.inl
     include/miktex/TeXAndFriends/WebAppInputLine
     include/miktex/TeXAndFriends/WebAppInputLine.h
-    include/miktex/TeXAndFriends/WebAppInputLine.inliners
+    include/miktex/TeXAndFriends/WebAppInputLine.inl
   DESTINATION
     ${incdir}/miktex/TeXAndFriends
 )

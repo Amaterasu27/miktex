@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/TeXApp.inliners: : inliners for TeX	-*- C++ -*-
+/* MiKTeX/TeXAndFriends/TeXApp.inl: : inliners for TeX	-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
@@ -32,7 +32,7 @@
 #  error THEDATA not defined
 #endif
 
-#include <miktex/TeXAndFriends/TeXMFApp.inliners>
+#include <miktex/TeXAndFriends/TeXMFApp.inl>
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
