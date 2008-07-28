@@ -612,14 +612,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_bmeps_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_gd_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
   add_subdirectory(${rel_xpdf_goo_dir})
   add_subdirectory(${rel_xpdf_fofi_dir})
   add_subdirectory(${rel_xpdf_xpdf_dir})
@@ -693,6 +685,14 @@ endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_fontconfig_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_gd_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_bmeps_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
