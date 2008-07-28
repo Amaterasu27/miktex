@@ -54,7 +54,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(fc-case-all ALL
+add_custom_target(fccase_h ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/fccase.h
 )

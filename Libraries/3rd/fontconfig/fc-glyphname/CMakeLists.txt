@@ -54,7 +54,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(fc-glyphname-all ALL
+add_custom_target(fcglyphname_h ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/fcglyphname.h
 )

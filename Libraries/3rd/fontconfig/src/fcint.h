@@ -50,10 +50,12 @@
 #include <fontconfig/fcprivate.h>
 #include "fcdeprecate.h"
 
-#if defined(MIKTEX) && defined(MIKTEX_WINDOWS)
+#if defined(MIKTEX)
 #  include "fcmiktex.h"
-#  include <direct.h>
-#  include <io.h>
+#  if defined(MIKTEX_WINDOWS)
+#    include <direct.h>
+#    include <io.h>
+#  endif
 #endif
 
 #ifndef FC_CONFIG_PATH

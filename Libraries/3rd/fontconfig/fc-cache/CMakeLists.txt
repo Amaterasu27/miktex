@@ -26,8 +26,14 @@ include_directories(BEFORE
 )
 
 set(fc-cache_sources
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${wrapper_cpp}
   fc-cache.c
+)
+
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  PROPERTIES GENERATED TRUE
 )
 
 if(NATIVE_WINDOWS)

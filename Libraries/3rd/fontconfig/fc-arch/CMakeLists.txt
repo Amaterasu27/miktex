@@ -43,7 +43,7 @@ target_link_libraries(fc-arch
 get_target_property(fc-arch_exe fc-arch LOCATION)
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
+  OUTPUT ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   COMMAND ${fc-arch_exe} x86
 	< ${CMAKE_CURRENT_SOURCE_DIR}/fcarch.tmpl.h
 	> ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
@@ -54,7 +54,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(fc-arch-all ALL
+add_custom_target(fcarch_h ALL
     DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
+	${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
 )

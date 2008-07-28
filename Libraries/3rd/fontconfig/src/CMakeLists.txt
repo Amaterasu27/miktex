@@ -28,6 +28,7 @@ add_definitions(
 )
 
 set(${fontconfig_dll_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
@@ -39,25 +40,31 @@ set(${fontconfig_dll_name}_sources
   fccharset.c
   fcdbg.c
   fcdefault.c
+  fcdeprecate.h
   fcdir.c
   fcfreetype.c
   fcfs.c
+  fcftint.h
   fcinit.c
+  fcint.h
   fclang.c
   fclist.c
   fcmatch.c
   fcmatrix.c
+  fcmiktex.cpp
+  fcmiktex.h
   fcname.c
   fcpat.c
   fcserialize.c
   fcstr.c
   fcxml.c
-  ftglue.h
+  fontconfig-version.h
   ftglue.c
-  fcmiktex.cpp
+  ftglue.h
 )
 
 set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h

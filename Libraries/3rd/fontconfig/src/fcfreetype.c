@@ -1735,6 +1735,9 @@ FcFreeTypeQuery(const FcChar8	*file,
 		FcBlanks	*blanks,
 		int		*count)
 {
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+  char ansibuf[FC_MAX_FILE_LEN];
+#endif
     FT_Face	    face;
     FT_Library	    ftLibrary;
     FcPattern	    *pat = NULL;
@@ -1742,8 +1745,19 @@ FcFreeTypeQuery(const FcChar8	*file,
     if (FT_Init_FreeType (&ftLibrary))
 	return NULL;
     
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    if (FT_New_Face(
+      ftLibrary,
+      miktex_utf8_to_ansi((const char *)file, FC_MAX_FILE_LEN, ansibuf),
+      id,
+      &face))
+    {
+      goto bail;
+    }
+#else
     if (FT_New_Face (ftLibrary, (char *) file, id, &face))
 	goto bail;
+#endif
 
     *count = face->num_faces;
 

@@ -44,3 +44,7 @@ miktex_close_cache_file (/*[in]*/ int fd,
 #define FC_DEFAULT_FONTS miktex_fc_default_fonts()
 
 #define FONTCONFIG_FILE miktex_fontconfig_file()
+
+#if defined(MIKTEX_WINDOWS)
+#  define MIKTEX_USE_UTF8_FILE_NAMES 1
+#endif

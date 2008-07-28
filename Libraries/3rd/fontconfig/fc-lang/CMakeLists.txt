@@ -261,7 +261,7 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_target(fc-lang-all ALL
+add_custom_target(fclang_h ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/fclang.h
 )
