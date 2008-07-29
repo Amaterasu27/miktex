@@ -1,6 +1,6 @@
 /* freetype2-version.h:						-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 2841
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.3.5"
+#define MIKTEX_COMPONENT_VERSION 3132
+#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.3.7"
 
 #include <miktex/Core/Version>
