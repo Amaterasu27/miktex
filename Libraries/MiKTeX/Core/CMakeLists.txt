@@ -57,6 +57,7 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(${core_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
   CommandLine.cpp
@@ -88,7 +89,6 @@ set(${core_dll_name}_sources
   include/miktex/Core/Environment.h
   include/miktex/Core/First.h
   include/miktex/Core/Help.h
-  include/miktex/Core/IntegerTypes.h
   include/miktex/Core/Registry.h
   include/miktex/Core/Test.h
   include/miktex/Core/Text.h
