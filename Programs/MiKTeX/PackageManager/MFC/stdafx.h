@@ -1,6 +1,6 @@
 /* stdafx.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -67,6 +67,7 @@
 #pragma warning (push, 1)
 #pragma warning (disable: 4702)
 #include <map>
+#include <memory>
 #include <vector>
 #include <string>
 #pragma warning (pop)

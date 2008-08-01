@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,9 +21,19 @@ add_definitions(
   -DHAVE_CONFIG_H
 )
 
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 set(fc-cache_sources
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${wrapper_cpp}
   fc-cache.c
+)
+
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  PROPERTIES GENERATED TRUE
 )
 
 if(NATIVE_WINDOWS)

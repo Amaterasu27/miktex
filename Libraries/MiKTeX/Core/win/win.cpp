@@ -3042,41 +3042,179 @@ Argv::Append (/*[in]*/ const char *	lpszArguments)
 
 /* _________________________________________________________________________
 
+   UTF8ToWideChar
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(wchar_t*)
+UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
+		/*[in,out]*/ size_t & sizeWideChar,
+		/*[out]*/ wchar_t *   lpszWideChar)
+{
+  MIKTEX_ASSERT (Utils::IsUTF8(lpszUtf8));
+  MIKTEX_ASSERT (sizeWideChar == 0 || lpszWideChar != 0);
+  MIKTEX_ASSERT (sizeWideChar != 0 || lpszWideChar == 0);
+  MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszWideChar, sizeWideChar);
+  if (*lpszUtf8 == 0)
+    {
+      if (lpszWideChar != 0 && sizeWideChar > 0)
+      {
+	*lpszWideChar = 0;
+      }
+      sizeWideChar = 0;
+      return (lpszWideChar);
+    }
+  else if (sizeWideChar == 0)
+  {
+    int len = MultiByteToWideChar(
+      CP_UTF8,
+      MB_ERR_INVALID_CHARS,
+      lpszUtf8,
+      -1,
+      0,
+      0);
+    if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
+    }
+    sizeWideChar = len;
+    return (0);
+  }
+  else
+  {
+    int len = MultiByteToWideChar(
+      CP_UTF8,
+      MB_ERR_INVALID_CHARS,
+      lpszUtf8,
+      -1,
+      lpszWideChar,
+      sizeWideChar);
+    if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
+    }
+    sizeWideChar = len;
+    return (lpszWideChar);
+  }
+}
+
+/* _________________________________________________________________________
+
+   WideCharToUTF8
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(char*)
+WideCharToUTF8 (/*[in]*/ const wchar_t *  lpszWideChar,
+		/*[in,out]*/ size_t &	  sizeUtf8,
+		/*[out]*/ char *	  lpszUtf8)
+{
+  MIKTEX_ASSERT (sizeUtf8 == 0 || lpszUtf8 != 0);
+  MIKTEX_ASSERT (sizeUtf8 != 0 || lpszUtf8 == 0);
+  MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszUtf8, sizeUtf8);
+  if (*lpszWideChar == 0)
+    {
+      if (lpszUtf8 != 0 && sizeUtf8 > 0)
+      {
+	*lpszUtf8 = 0;
+      }
+      sizeUtf8 = 0;
+      return (lpszUtf8);
+    }
+  else if (sizeUtf8 == 0)
+  {
+    int len = WideCharToMultiByte(
+      CP_UTF8,
+      0,
+      lpszWideChar,
+      -1,
+      0,
+      0,
+      0,
+      0);
+    if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
+    }
+    sizeUtf8 = len;
+    return (0);
+  }
+  else
+  {
+    int len = WideCharToMultiByte(
+      CP_UTF8,
+      0,
+      lpszWideChar,
+      -1,
+      lpszUtf8,
+      sizeUtf8,
+      0,
+      0);
+    if (len <= 0)
+    {
+      FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
+    }
+    sizeUtf8 = len;
+    return (lpszUtf8);
+  }
+}
+
+/* _________________________________________________________________________
+
    Utils::UTF8ToWideChar
    _________________________________________________________________________ */
 
 wstring
 Utils::UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 {
-  MIKTEX_ASSERT (IsUTF8(lpszUtf8));
-  if (*lpszUtf8 == 0)
-    {
-      return (L"");
-    }
-  int len =
-    MultiByteToWideChar(CP_UTF8,
-			MB_ERR_INVALID_CHARS,
-			lpszUtf8,
-			-1,
-			0,
-			0);
-  if (len <= 0)
-    {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
-    }
-  CharBuffer<wchar_t, 200> buf (len + 1);
-  len =
-    MultiByteToWideChar(CP_UTF8,
-			MB_ERR_INVALID_CHARS,
-			lpszUtf8,
-			-1,
-			buf.GetBuffer(),
-			buf.GetCapacity());
-  if (len <= 0)
-    {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
-    }
+  size_t len = 0;
+  ::UTF8ToWideChar (lpszUtf8, len, 0);
+  CharBuffer<wchar_t, 200> buf (len);
+  ::UTF8ToWideChar (lpszUtf8, len, buf.GetBuffer());
   return (buf.Get());
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_to_wide_char
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(wchar_t*)
+miktex_utf8_to_wide_char (/*[in]*/ const char *	lpszUtf8,
+			  /*[in]*/ size_t	sizeWideChar,
+			  /*[out]*/ wchar_t *	lpszWideChar)
+{
+  C_FUNC_BEGIN();
+  return (UTF8ToWideChar(lpszUtf8, sizeWideChar, lpszWideChar));
+  C_FUNC_END();
+}
+
+/* _________________________________________________________________________
+
+   Utils::WideCharToUTF8
+   _________________________________________________________________________ */
+
+string
+Utils::WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
+{
+  size_t len = 0;
+  ::WideCharToUTF8 (lpszWideChar, len, 0);
+  CharBuffer<char, 200> buf (len);
+  ::WideCharToUTF8 (lpszWideChar, len, buf.GetBuffer());
+  return (buf.Get());
+}
+
+/* _________________________________________________________________________
+
+   miktex_wide_char_to_utf8
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(char*)
+miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
+			  /*[in]*/ size_t	    sizeUtf8,
+			  /*[out]*/ char *	    lpszUtf8)
+{
+  C_FUNC_BEGIN();
+  return (WideCharToUTF8(lpszWideChar, sizeUtf8, lpszUtf8));
+  C_FUNC_END();
 }
 
 /* _________________________________________________________________________
@@ -3100,7 +3238,7 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
      buf.GetBuffer(),
      buf.GetCapacity(),
      0,
-     FALSE);
+     0);
   if (n == 0)
     {
       FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
@@ -3182,4 +3320,38 @@ Utils::CheckHeap ()
 			  0);
     }
 #endif
+}
+
+/* _________________________________________________________________________
+
+   miktex_ansi_to_utf8 
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(char*)
+miktex_ansi_to_utf8 (/*[in]*/ const char *	lpszAnsi,
+		     /*[in]*/ size_t		sizeUtf8,
+		     /*[out]*/ char *		lpszUtf8)
+{
+  C_FUNC_BEGIN ();
+  string utf8 = Utils::AnsiToUTF8(lpszAnsi);
+  Utils::CopyString (lpszUtf8, sizeUtf8, utf8.c_str());
+  return (lpszUtf8);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_to_ansi
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(char*)
+miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
+		     /*[in]*/ size_t		sizeAnsi,
+		     /*[out]*/ char *		lpszAnsi)
+{
+  C_FUNC_BEGIN ();
+  string ansi = Utils::UTF8ToAnsi(lpszUtf8);
+  Utils::CopyString (lpszAnsi, sizeAnsi, ansi.c_str());
+  return (lpszAnsi);
+  C_FUNC_END ();
 }

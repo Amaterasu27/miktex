@@ -20,6 +20,13 @@
 #ifndef FT_CONF_H
 #define FT_CONF_H
 
+#if defined(MIKTEX)
+#  if defined(_MSC_VER)
+#    define EXPORT_DEF __declspec(dllimport)
+#    define EXPORT_FUNC __declspec(dllexport)
+#  endif
+#endif
+
 #ifndef WIN32
 #define WIN32
 #endif

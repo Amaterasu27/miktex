@@ -30,6 +30,9 @@ ANSI-compliant C++ compiler.
 
 CMake 2.4.4 (or newer) is required for building and installing MiKTeX.
 
+Lynx (text-based web browser) and xsltproc (XSLT processor) are
+required for building the reference pages.
+
 The package depends on the availability of pthreads libraries and
 header files.
 

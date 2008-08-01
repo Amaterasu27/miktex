@@ -22,17 +22,17 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-file(WRITE
-  ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
-  "\n"
-)
-
 add_definitions(
   -DDLL_EXPORT
   -DHAVE_CONFIG_H
 )
 
 set(${fontconfig_dll_name}_sources
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h
   fcatomic.c
   fcblanks.c
   fccache.c
@@ -40,22 +40,36 @@ set(${fontconfig_dll_name}_sources
   fccharset.c
   fcdbg.c
   fcdefault.c
+  fcdeprecate.h
   fcdir.c
   fcfreetype.c
   fcfs.c
+  fcftint.h
   fcinit.c
+  fcint.h
   fclang.c
   fclist.c
   fcmatch.c
   fcmatrix.c
+  fcmiktex.cpp
+  fcmiktex.h
   fcname.c
   fcpat.c
   fcserialize.c
   fcstr.c
   fcxml.c
-  ftglue.h
+  fontconfig-version.h
   ftglue.c
-  fcmiktex.cpp
+  ftglue.h
+)
+
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
+  ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h
+  PROPERTIES GENERATED TRUE
 )
 
 if(NATIVE_WINDOWS)
@@ -83,6 +97,30 @@ target_link_libraries(${fontconfig_dll_name}
   ${expat_dll_name}
   ${freetype2_dll_name}
   ${unxemu_dll_name}
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h
+  VERBATIM
 )
 
 install(TARGETS ${fontconfig_dll_name}

@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -69,6 +69,7 @@
 #include <comip.h>
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include <getopt.h>

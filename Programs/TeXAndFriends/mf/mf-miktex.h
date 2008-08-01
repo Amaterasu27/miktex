@@ -1,6 +1,6 @@
 /* mf-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1991-2006 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -272,4 +272,4 @@ miktexopenbasefile (/*[in]*/ wordfile &		f,
   return (THEAPP.OpenMemoryDumpFile(f, renew));
 }
 
-#include <miktex/TeXAndFriends/MetafontApp.inliners>
+#include <miktex/TeXAndFriends/MetafontApp.inl>

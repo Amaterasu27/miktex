@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -36,6 +36,7 @@
 #  include <hash_map>
 #endif
 #include <map>
+#include <memory>
 #include <stack>
 #include <string>
 

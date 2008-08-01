@@ -135,8 +135,15 @@ cmpstringp(const void *p1, const void *p2)
 FcCache *
 FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
 {
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    WDIR		*d;
+    struct wdirent	*e;
+    wchar_t wdirbuf[FC_MAX_FILE_LEN];
+    wchar_t * wdir = miktex_utf8_to_wide_char(dir, FC_MAX_FILE_LEN, wdirbuf);
+#else
     DIR			*d;
     struct dirent	*e;
+#endif
     FcStrSet		*files;
     FcStrSet		*dirs;
     FcChar8		*file;
@@ -146,6 +153,7 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     int			i;
     FcBlanks		*blanks = FcConfigGetBlanks (config);
     FcCache		*cache = NULL;
+    struct stat		dir_stat;
 
     if (FcDebug () & FC_DBG_FONTSET)
     	printf ("cache scan dir %s\n", dir);
@@ -164,7 +172,11 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     if (FcDebug () & FC_DBG_SCAN)
 	printf ("\tScanning dir %s\n", dir);
 	
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    d = wopendir(wdir);
+#else
     d = opendir ((char *) dir);
+#endif
     if (!d)
     {
 	/* Don't complain about missing directories */
@@ -172,6 +184,11 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
 	    ret = FcTrue;
 	else
 	    ret = FcFalse;
+	goto bail_1;
+    }
+    if (stat ((char *) dir, &dir_stat) < 0)
+    {
+	ret = FcFalse;
 	goto bail_1;
     }
 
@@ -188,6 +205,22 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
 	ret = FcFalse;
 	goto bail1;
     }
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    while ((e = wreaddir(d)))
+    {
+      if (e->d_name[0] != L'.')
+      {
+	miktex_wide_char_to_utf8 (
+	  e->d_name,
+	  FC_MAX_FILE_LEN,
+	  (char*) base);
+	if (!FcStrSetAdd (files, file)) {
+	  ret = FcFalse;
+	  goto bail2;
+	}
+      }
+    }
+#else
     while ((e = readdir (d)))
     {
 	if (e->d_name[0] != '.' && strlen (e->d_name) < FC_MAX_FILE_LEN)
@@ -199,6 +232,7 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
 	    }
 	}
     }
+#endif
 
     /*
      * Sort files to make things prettier
@@ -218,7 +252,7 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     /*
      * Build the cache object
      */
-    cache = FcDirCacheBuild (set, dir, dirs);
+    cache = FcDirCacheBuild (set, dir, &dir_stat, dirs);
     if (!cache)
 	goto bail3;
     
@@ -235,7 +269,11 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     FcFontSetDestroy (set);
     
  bail0:
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    wclosedir (d);
+#else
     closedir (d);
+#endif
     
  bail_1:
     free (file);

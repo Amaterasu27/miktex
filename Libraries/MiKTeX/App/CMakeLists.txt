@@ -17,16 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(${app_dll_name}_sources
   StdAfx.cpp
   StdAfx.h
   app-version.h
   app.cpp
+  include/miktex/App/Application.h
   internal.h
 )
 
@@ -82,6 +81,7 @@ install(TARGETS ${app_dll_name}
 install(
   FILES
     include/miktex/App/Application
+    include/miktex/App/Application.h
   DESTINATION
     ${incdir}/miktex/App
 )

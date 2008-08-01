@@ -28,3 +28,8 @@
 #endif /* ! OS2 */
 #endif /* ! MSDOS && ! WINNT */
 
+#if defined(MIKTEX)
+#  if ! defined(PAPER)
+#    define PAPER "a4"
+#  endif
+#endif

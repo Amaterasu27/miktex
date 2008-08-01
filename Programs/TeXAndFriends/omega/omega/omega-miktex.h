@@ -1,6 +1,6 @@
 /* omega-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -263,7 +263,7 @@ public:
 #if defined(MIKTEX_OMEGA)
 extern OMEGACLASS OMEGAAPP;
 #define THEAPP OMEGAAPP
-#include <miktex/TeXAndFriends/TeXApp.inliners>
+#include <miktex/TeXAndFriends/TeXApp.inl>
 #endif
 
 inline

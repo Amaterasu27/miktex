@@ -62,6 +62,7 @@
 #endif
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "Update-version.h"

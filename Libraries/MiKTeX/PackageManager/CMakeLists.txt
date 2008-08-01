@@ -52,7 +52,7 @@ set(${mpm_dll_name}_sources
   WebFile.h
   WebSession.cpp
   WebSession.h
-  include/miktex/PackageManager/PackageManager
+  include/miktex/PackageManager/PackageManager.h
   internal.h
   mpm-version.h
 )
@@ -193,6 +193,7 @@ install(TARGETS ${mpm_dll_name}
 install(
   FILES
     include/miktex/PackageManager/PackageManager
+    include/miktex/PackageManager/PackageManager.h
   DESTINATION
     ${incdir}/miktex/PackageManager
 )

@@ -1,7 +1,7 @@
 
 /* StdAfx.h: pre-compiled header stuff
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -43,6 +43,7 @@
 #include <algorithm>
 #include <locale>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>

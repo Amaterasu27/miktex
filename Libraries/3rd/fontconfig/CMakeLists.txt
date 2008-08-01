@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,6 +21,10 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+add_subdirectory(fc-arch)
+add_subdirectory(fc-case)
+add_subdirectory(fc-lang)
+add_subdirectory(fc-glyphname)
 add_subdirectory(src)
 add_subdirectory(fc-cache)
 add_subdirectory(fc-cat)

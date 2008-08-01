@@ -1,6 +1,6 @@
 /* epstopdf.cpp: epstopdf
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
    Copyright (C) 1998-2001 by Sebastian Rahtz et al.
 
    This file is part of EPStoPDF.
@@ -30,6 +30,7 @@
 #include <cstring>
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include <miktex/App/Application>

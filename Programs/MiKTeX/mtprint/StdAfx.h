@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2007 Christian Schenk
+   Copyright (C) 2003-2008 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -33,6 +33,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 using namespace MiKTeX::App;

@@ -69,6 +69,7 @@ endforeach(inc ${kpathsea_includes})
 set(${kpsemu_dll_name}_sources
   StdAfx.cpp
   StdAfx.h
+  include/miktex/KPSE/Emulation.h
   internal.h
   kpsemu-version.h
   kpsemu.cpp
@@ -108,6 +109,7 @@ install(TARGETS ${kpsemu_dll_name}
 install(
   FILES
     include/miktex/KPSE/Emulation
+    include/miktex/KPSE/Emulation.h
   DESTINATION
     ${incdir}/miktex/KPSE
 )

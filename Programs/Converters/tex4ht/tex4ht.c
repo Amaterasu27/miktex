@@ -149,6 +149,11 @@
 #endif
 #endif
 
+#if defined(MIKTEX)
+#  if defined(_WIN32)
+#    define PLATFORM "Windows"
+#  endif
+#endif
 
 
 #include <stdio.h>   

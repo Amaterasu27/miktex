@@ -104,4 +104,4 @@ public:
 extern TANGLECLASS TANGLEAPP;
 #define THEAPP TANGLEAPP
 
-#include <miktex/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inl>

@@ -59,10 +59,11 @@
 #include <regstr.h>
 #include <shlwapi.h>
 
-#include <vector>
-#include <set>
 #include <algorithm>
+#include <memory>
+#include <set>
 #include <string>
+#include <vector>
 
 #include "Remove-version.h"
 

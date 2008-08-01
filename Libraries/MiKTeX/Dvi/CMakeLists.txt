@@ -54,6 +54,7 @@ set(${dvi_dll_name}_sources
   dvi-version.h
   graphics.cpp
   hypertex.cpp
+  include/miktex/DVI/Dvi.h
   inliners.h
   ps.cpp
   special.cpp
@@ -122,6 +123,7 @@ install(TARGETS ${dvi_dll_name} dviscan
 install(
   FILES
     include/miktex/DVI/Dvi
+    include/miktex/DVI/Dvi.h
   DESTINATION
     ${incdir}/miktex/DVI
 )

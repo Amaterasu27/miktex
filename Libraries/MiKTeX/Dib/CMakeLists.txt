@@ -27,6 +27,7 @@ set(${dib_dll_name}_sources
   StdAfx.cpp
   StdAfx.h
   dib-version.h
+  include/miktex/Graphics/DibChunker.h
   internal.h
 )
 
@@ -77,6 +78,7 @@ install(TARGETS ${dib_dll_name} chunkdib
 install(
   FILES
     include/miktex/Graphics/DibChunker
+    include/miktex/Graphics/DibChunker.h
   DESTINATION
     ${incdir}/miktex/Graphics
 )

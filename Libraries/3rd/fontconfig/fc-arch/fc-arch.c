@@ -21,6 +21,10 @@
  * OF THIS SOFTWARE.
  */
 
+#if defined(MIKTEX)
+#  define main __cdecl Main
+#endif /* MIKTEX */
+
 #include "fcint.h"
 #include <ctype.h>
 
@@ -75,6 +79,12 @@ main (int argc, char **argv)
     if (argc != 2)
 	fprintf (stderr, "Usage: %s <architecture>|auto < fcarch.tmpl.h > fcarch.h\n",
 		 argv[0]);
+#if defined(MIKTEX)
+    if (argc != 2)
+      {
+	return (1);
+      }
+#endif
     arch = argv[1];
     /*
      * Scan the input until the marker is found

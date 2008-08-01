@@ -126,10 +126,12 @@ typedef struct
 	UInt32	maxMemType1;
 } POSTTable;
 
+#if ! defined(MIKTEX)
 enum {
     LE_MAXP_TABLE_TAG = 0x6D617870UL, /**< 'maxp' */
     LE_POST_TABLE_TAG = 0x706F7374UL, /**< 'post' */
 };
+#endif
 
 /* tables/values used in UTF-8 interpretation - 
    code is based on ConvertUTF.[ch] sample code
@@ -394,7 +396,7 @@ static UInt32 *utf32Buf = NULL;
 			while (bytesRead < bufsize && (i = getc(f->f)) != EOF && i != '\n' && i != '\r')
 				byteBuffer[bytesRead++] = i;
 		
-		if (i == EOF && errno != EINTR && last == first)
+		if (i == EOF && errno != EINTR && bytesRead == 0)
 			return false;
 	
 		if (i != EOF && i != '\n' && i != '\r')
@@ -456,7 +458,7 @@ static UInt32 *utf32Buf = NULL;
 					while (tmpLen < bufsize && (i = get_uni_c(f)) != EOF && i != '\n' && i != '\r')
 						utf32Buf[tmpLen++] = i;
 				
-				if (i == EOF && errno != EINTR && last == first)
+				if (i == EOF && errno != EINTR && tmpLen == 0)
 					return false;
 				
 				/* We didn't get the whole line because our buffer was too small.  */

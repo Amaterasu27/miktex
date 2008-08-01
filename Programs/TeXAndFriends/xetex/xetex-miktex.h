@@ -222,7 +222,7 @@ public:
 
 extern XETEXCLASS XETEXAPP;
 #define THEAPP XETEXAPP
-#include <miktex/TeXAndFriends/ETeXApp.inliners>
+#include <miktex/TeXAndFriends/ETeXApp.inl>
 
 #include <miktex/KPSE/Emulation>
 

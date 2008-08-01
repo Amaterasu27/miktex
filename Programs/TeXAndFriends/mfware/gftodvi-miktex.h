@@ -1,6 +1,6 @@
 /* gftodvi-miktex.h:					-*- C++ -*-
 
-   Copyright (C) 1991-2005 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -304,4 +304,4 @@ miktexgetlogofont ()
   return (THEAPP.GetLogoFont());
 }
 
-#include <miktex/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inl>

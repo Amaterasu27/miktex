@@ -1,6 +1,6 @@
-/* MiKTeX/TeXAndFriends/WebApp.inliners: 			-*- C++ -*-
+/* MiKTeX/TeXAndFriends/WebApp.inl: 			-*- C++ -*-
 
-   Copyright (C) 1996-200y Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published

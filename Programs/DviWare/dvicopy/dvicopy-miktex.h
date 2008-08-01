@@ -1,6 +1,6 @@
 /* dvicopy-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of DVIcopy.
 
@@ -230,4 +230,4 @@ setupoptions ()
   THEAPP.SetupOptions ();
 }
 
-#include <miktex/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inl>

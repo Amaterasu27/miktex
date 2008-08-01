@@ -1,6 +1,6 @@
 /* dvitomp-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -61,7 +61,7 @@ public:
 extern DVITOMPCLASS DVITOMPAPP;
 #define THEAPP DVITOMPAPP
 
-#include <miktex/TeXAndFriends/WebApp.inliners>
+#include <miktex/TeXAndFriends/WebApp.inl>
 
 #include <miktex/KPSE/Emulation>
 

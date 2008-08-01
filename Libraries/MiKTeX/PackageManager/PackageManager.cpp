@@ -928,7 +928,7 @@ PackageManagerImpl::DetermineRepositoryType
     }
 
   FATAL_MPM_ERROR ("PackageManagerImpl::DetermineRepositoryType",
-		   T_("Invalide MiKTeX configuration."),
+		   T_("Not a package repository."),
 		   repository.c_str());
 }
 

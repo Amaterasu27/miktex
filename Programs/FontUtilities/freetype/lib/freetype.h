@@ -48,6 +48,13 @@
 /* To make freetype.h independent from configuration files we check      */
 /* whether FT_EXPORT_DEF has been defined already.                       */
 
+#if defined(MIKTEX)
+#  if defined(_MSC_VER)
+#    define EXPORT_DEF __declspec(dllimport)
+#    define EXPORT_FUNC __declspec(dllexport)
+#  endif
+#endif
+
 /* Backward compatibility only. Don't use for new code. */
 #ifdef EXPORT_DEF 
 #define FT_EXPORT_DEF( type )   EXPORT_DEF  type
