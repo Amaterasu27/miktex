@@ -1,4 +1,4 @@
-/* MiKTeX/UI/Qt/ErrorDialog:					-*- C++ -*-
+/* MiKTeX/UI/Qt/ErrorDialog.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 

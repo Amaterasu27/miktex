@@ -1,4 +1,4 @@
-/* MiKTeX/UI/Qt/Prototypes:					-*- C++ -*-
+/* MiKTeX/UI/Qt/Prototypes.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 

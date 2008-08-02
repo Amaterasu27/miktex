@@ -1,4 +1,4 @@
-/* miktex/UI/Qt/SiteWizSheet:					-*- C++ -*-
+/* miktex/UI/Qt/SiteWizSheet.h:					-*- C++ -*-
 
    Copyright (C) 2008 Christian Schenk
 

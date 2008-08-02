@@ -1,4 +1,4 @@
-/* miktex/UI/UI:						-*- C++ -*-
+/* miktex/UI/UI.h:						-*- C++ -*-
 
    Copyright (C) 2000-2008 Christian Schenk
 
@@ -23,12 +23,15 @@
 #  pragma once
 #endif
 
+#if ! defined(DD977A74EEC1466EAF194BE92B20C9C4)
+#define DD977A74EEC1466EAF194BE92B20C9C4
+
 #if defined(MIKTEX_ATLMFC)
 #  include <miktex/UI/MFC/Prototypes>
 #endif
 
 #if defined(MIKTEX_QT)
-#  include <miktex/UI/QT/Prototypes>
+#  include <miktex/UI/Qt/Prototypes>
 #endif
 
 #include <miktex/Core/Registry>
@@ -172,3 +175,4 @@ ProxyAuthenticationDialog ()
 
 MIKUI_END_NAMESPACE;
 
+#endif

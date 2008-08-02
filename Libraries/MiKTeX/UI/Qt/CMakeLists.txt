@@ -45,6 +45,9 @@ set(${ui_qt_dll_name}_sources
   SiteWizType.h
   StdAfx.cpp
   StdAfx.h
+  include/miktex/UI/Qt/ErrorDialog.h
+  include/miktex/UI/Qt/Prototypes.h
+  include/miktex/UI/Qt/SiteWizSheet.h
   internal.h
   mikuiqt-version.h
   mikuiqt.cpp
@@ -118,8 +121,11 @@ install(TARGETS ${ui_qt_dll_name}
 install(
   FILES
     include/miktex/UI/Qt/ErrorDialog
+    include/miktex/UI/Qt/ErrorDialog.h
     include/miktex/UI/Qt/SiteWizSheet
+    include/miktex/UI/Qt/SiteWizSheet.h
     include/miktex/UI/Qt/Prototypes
+    include/miktex/UI/Qt/Prototypes.h
   DESTINATION
     ${incdir}/miktex/UI/Qt
 )
@@ -127,6 +133,7 @@ install(
 install(
   FILES
     ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include/miktex/UI/UI
+    ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include/miktex/UI/UI.h
   DESTINATION
     ${incdir}/miktex/UI
 )
