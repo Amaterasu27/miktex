@@ -1,6 +1,6 @@
-/* MiKTeX/UI/MFC/Prototypes:					-*- C++ -*-
+/* MiKTeX/UI/MFC/Prototypes.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -23,8 +23,6 @@
 #  pragma once
 #endif
 
-#include <miktex/PackageManager/PackageManager>
-
 // DLL import/export switch
 #if ! defined(MIKTEXUI__77F15D3E_7C53_4571_B9D9_2E57DAD53055__)
 #  define MIKTEXUIEXPORT __declspec(dllimport)
@@ -32,6 +30,16 @@
 
 // API decoration for exported member functions
 #define MIKTEXUITHISAPI(type) MIKTEXUIEXPORT type MIKTEXTHISCALL
+
+namespace MiKTeX
+{
+  namespace Packages
+  {
+    class PackageManager;
+  }
+};
+
+class CWnd;
 
 #define MIKUI_MFC_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
@@ -63,14 +71,34 @@ MIKTEXUIEXPORT
 unsigned int
 MIKTEXCEECALL
 InstallPackageMessageBox
-(/*[in]*/ HWND						hwndParent,
- /*[in]*/ class MiKTeX::Packages::PackageManager *	pManager,
- /*[in]*/ const char *					lpszPackageName,
- /*[in]*/ const char *					lpszTrigger);
+(/*[in]*/ CWnd *				pWnd,
+ /*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+ /*[in]*/ const char *				lpszPackageName,
+ /*[in]*/ const char *				lpszTrigger);
+
+inline
+unsigned int
+InstallPackageMessageBox
+(/*[in]*/ MiKTeX::Packages::PackageManager *	pManager,
+ /*[in]*/ const char *				lpszPackageName,
+ /*[in]*/ const char *				lpszTrigger)
+{
+  return (InstallPackageMessageBox(reinterpret_cast<CWnd*>(0),
+				   pManager,
+				   lpszPackageName,
+				   lpszTrigger));
+}
 
 MIKTEXUIEXPORT
 bool
 MIKTEXCEECALL
-ProxyAuthenticationDialog (/*[in]*/ HWND hwndParent);
+ProxyAuthenticationDialog (/*[in]*/ CWnd * pWnd);
+
+inline
+bool
+ProxyAuthenticationDialog ()
+{
+  return (ProxyAuthenticationDialog (reinterpret_cast<CWnd*>(0)));
+}
 
 MIKUI_MFC_END_NAMESPACE;

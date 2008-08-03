@@ -1,6 +1,6 @@
 /* MiKTeX/Core/Registry: MiKTeX settings			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -82,6 +82,7 @@
 #define MIKTEX_REGVAL_ENABLE_WRITE18 "EnableWrite18"
 #define MIKTEX_REGVAL_FORCE_LOCAL_SERVER "ForceLocalServer"
 #define MIKTEX_REGVAL_FTP_MODE "FTPMode"
+#define MIKTEX_REGVAL_GUI_FRAMEWORK "GUIFramework"
 #define MIKTEX_REGVAL_INSTALL "Install"
 #define MIKTEX_REGVAL_LOCAL_REPOSITORY "LocalRepository"
 #define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT "MiKTeXDirectRoot"
