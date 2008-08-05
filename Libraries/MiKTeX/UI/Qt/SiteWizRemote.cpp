@@ -91,6 +91,10 @@ SiteWizRemote::SiteWizRemote (/*[in]*/ PackageManager *	pManager)
   setSubTitle (T_("\
 Packages will be installed from the Internet. Choose \
 a remote package repository."));
+  connect (tableRepositories,
+    SIGNAL(clicked(const QModelIndex &)),
+    this,
+    SIGNAL(completeChanged()));
 }
 
 /* _________________________________________________________________________

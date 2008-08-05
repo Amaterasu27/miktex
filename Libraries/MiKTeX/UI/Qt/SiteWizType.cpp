@@ -40,6 +40,9 @@ SiteWizType::SiteWizType ()
   setupUi (this);
   setTitle (T_("Installation Source"));
   setSubTitle (T_("Choose where you want to install packages from."));
+  connect (rbRemote, SIGNAL(clicked()), this, SIGNAL(completeChanged()));
+  connect (rbLocal, SIGNAL(clicked()), this, SIGNAL(completeChanged()));
+  connect (rbCD, SIGNAL(clicked()), this, SIGNAL(completeChanged()));
 }
 
 /* _________________________________________________________________________
@@ -70,6 +73,12 @@ SiteWizType::initializePage ()
 	      break;
 	    }
 	}
+#if 0
+      else
+      {
+	rbRemote->setChecked (true);
+      }
+#endif
     }
   catch (const MiKTeXException & e)
     {
@@ -90,7 +99,9 @@ bool
 SiteWizType::isComplete ()
   const
 {
-  return (nextId() >= 0);
+  return (rbRemote->isChecked()
+    || rbLocal->isChecked()
+    || rbCD->isChecked());
 }
 
 /* _________________________________________________________________________
@@ -151,7 +162,7 @@ SiteWizType::nextId ()
     }
   else
     {
-      return (-1);
+      return (4444);
     }
 }
 
