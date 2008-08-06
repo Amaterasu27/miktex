@@ -33,6 +33,8 @@ set(${ui_qt_dll_name}_sources
   InstallPackageDialog.h
   ProxyAuthenticationDialog.cpp
   ProxyAuthenticationDialog.h
+  RepositoryTableModel.cpp
+  RepositoryTableModel.h
   SiteWizDrive.cpp
   SiteWizDrive.h
   SiteWizLocal.cpp
@@ -68,6 +70,7 @@ set(${ui_qt_dll_name}_moc_sources
   ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
+  RepositoryTablemodel.h
   SiteWizDrive.h
   SiteWizLocal.h
   SiteWizRemote.h

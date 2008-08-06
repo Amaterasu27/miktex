@@ -38,8 +38,6 @@ SiteWizType::SiteWizType ()
   : QWizardPage (0)
 {
   setupUi (this);
-  setTitle (T_("Installation Source"));
-  setSubTitle (T_("Choose where you want to install packages from."));
   connect (rbRemote, SIGNAL(clicked()), this, SIGNAL(completeChanged()));
   connect (rbLocal, SIGNAL(clicked()), this, SIGNAL(completeChanged()));
   connect (rbCD, SIGNAL(clicked()), this, SIGNAL(completeChanged()));

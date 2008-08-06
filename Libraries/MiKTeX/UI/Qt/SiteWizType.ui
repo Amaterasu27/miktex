@@ -10,6 +10,12 @@
     <height>220</height>
    </rect>
   </property>
+  <property name="title" >
+   <string>Installation Source</string>
+  </property>
+  <property name="subTitle" >
+   <string>Choose where you want to install packages from.</string>
+  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QRadioButton" name="rbRemote" >
@@ -28,7 +34,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>15</width>
          <height>20</height>
@@ -51,7 +57,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -80,7 +86,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
@@ -90,13 +96,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWizardPage</class>
-   <extends>QWidget</extends>
-   <header>qwizardpage.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

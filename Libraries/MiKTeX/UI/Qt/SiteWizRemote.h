@@ -32,6 +32,8 @@
 #include "ui_SiteWizRemote.h"
 #include <QThread>
 
+class QSortFilterProxyModel;
+
 class SiteWizRemote
   : public QWizardPage,
     private Ui::SiteWizRemote
@@ -108,6 +110,9 @@ private:
 
 private:
   bool firstVisit;
+
+private:
+  QSortFilterProxyModel * pProxyModel;
 };
 
 #endif

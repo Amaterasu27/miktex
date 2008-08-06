@@ -23,30 +23,12 @@
 
 #include "internal.h"
 
+#include "RepositoryTableModel.h"
+
 #include "SiteWizSheet.h"
 #include "SiteWizRemote.h"
 
 #include <miktex/UI/Qt/ErrorDialog>
-
-/* _________________________________________________________________________
-
-   CountryComparer
-   _________________________________________________________________________ */
-
-class CountryComparer
-{
-public:
-  inline
-  bool
-  operator() (/*[in]*/ const RepositoryInfo &	lhs,
-	      /*[in]*/ const RepositoryInfo &	rhs)
-  {
-    return (StringCompare(lhs.country.c_str(),
-			  rhs.country.c_str(),
-			  true)
-	    < 0);
-  }
-};
 
 /* _________________________________________________________________________
 
@@ -61,16 +43,13 @@ SiteWizRemote::DownloadThread::run ()
     {
       This->pManager->DownloadRepositoryList ();
       This->repositories = This->pManager->GetRepositories();
-      sort (This->repositories.begin(),
-	    This->repositories.end(),
-	    CountryComparer());
     }
   catch (const MiKTeXException & e)
     {
       threadMiKTeXException = e;
       error = true;
     }
-  catch (const exception & e)
+  catch (const exception &)
     {
     }
 }
@@ -84,14 +63,11 @@ SiteWizRemote::SiteWizRemote (/*[in]*/ PackageManager *	pManager)
   : QWizardPage (0),
     pDownloadThread (0),
     pManager (pManager),
-    firstVisit (true)
+    firstVisit (true),
+    pProxyModel (0)
 {
   setupUi (this);
-  setTitle (T_("Remote Package Repository"));
-  setSubTitle (T_("\
-Packages will be installed from the Internet. Choose \
-a remote package repository."));
-  connect (tableRepositories,
+  connect (treeView,
     SIGNAL(clicked(const QModelIndex &)),
     this,
     SIGNAL(completeChanged()));
@@ -108,14 +84,6 @@ SiteWizRemote::initializePage ()
   if (firstVisit)
     {
       firstVisit = false;
-      tableRepositories->horizontalHeader()->setVisible (false);
-      tableRepositories->horizontalHeader()->setStretchLastSection (true);
-      tableRepositories->verticalHeader()->setVisible (false);
-      tableRepositories->setRowCount (1);
-      tableRepositories->setColumnCount (1);
-      QTableWidgetItem * pItem = new QTableWidgetItem(T_("Connecting..."));
-      pItem->setFlags (Qt::ItemIsEnabled);
-      tableRepositories->setItem (0, 0, pItem);
       pDownloadThread = new DownloadThread(this);
       connect (pDownloadThread, SIGNAL(finished()),
 	       this, SLOT(FillList()));
@@ -132,7 +100,8 @@ bool
 SiteWizRemote::isComplete ()
   const
 {
-  return (! tableRepositories->selectedItems().isEmpty());
+  return (treeView->selectionModel() != 0
+    && treeView->selectionModel()->selectedRows().count() == 1);
 }
 
 /* _________________________________________________________________________
@@ -145,13 +114,13 @@ SiteWizRemote::validatePage ()
 {
   try
     {
-      QList<QTableWidgetItem*> selectedItems =
-	tableRepositories->selectedItems();
-      if (! QWizardPage::validatePage() || selectedItems.isEmpty())
+      QModelIndexList selectedRows =
+	treeView->selectionModel()->selectedRows();
+      if (! QWizardPage::validatePage() || selectedRows.count() != 1)
 	{
 	  return (false);
 	}
-      int idx = selectedItems.first()->row();
+      int idx = pProxyModel->mapToSource(selectedRows.first()).row();
       pManager->SetDefaultPackageRepository (RepositoryType::Remote,
 					     repositories[idx].url);
       return (true);
@@ -170,21 +139,6 @@ SiteWizRemote::validatePage ()
 
 /* _________________________________________________________________________
 
-   SiteWizRemote::SetItemText
-   _________________________________________________________________________ */
-
-void
-SiteWizRemote::SetItemText (/*[in]*/ int		row,
-			    /*[in]*/ int		column,
-			    /*[in]*/ const QString &	text)
-{
-  QTableWidgetItem * pItem = new QTableWidgetItem(text);
-  pItem->setFlags (Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  tableRepositories->setItem (row, column, pItem);
-}
-
-/* _________________________________________________________________________
-
    SiteWizRemote::FillList
    _________________________________________________________________________ */
 
@@ -193,8 +147,6 @@ SiteWizRemote::FillList ()
 {
   try
     {
-      tableRepositories->clearContents ();
-
       if (pDownloadThread != 0
 	  && pDownloadThread->isFinished()
 	  && pDownloadThread->error)
@@ -202,30 +154,27 @@ SiteWizRemote::FillList ()
 	  throw pDownloadThread->threadMiKTeXException;
 	}
 
-      tableRepositories->setRowCount (repositories.size());
+      RepositoryTableModel * pModel = new RepositoryTableModel(this);
+      pModel->SetRepositories (repositories);
 
-      tableRepositories->horizontalHeader()->setVisible (true);
+      pProxyModel = new QSortFilterProxyModel(this);
+      pProxyModel->setSourceModel (pModel);
 
-      tableRepositories->setColumnCount (5);
-      tableRepositories->setHorizontalHeaderItem
-	(0, new QTableWidgetItem(T_("Country")));
-      tableRepositories->setHorizontalHeaderItem
-	(1, new QTableWidgetItem(T_("Protocol")));
-      tableRepositories->setHorizontalHeaderItem
-	(2, new QTableWidgetItem(T_("Host")));
-      tableRepositories->setHorizontalHeaderItem
-	(3, new QTableWidgetItem(T_("Version")));
-      tableRepositories->setHorizontalHeaderItem
-	(4, new QTableWidgetItem(T_("Description")));
+      treeView->setModel (pProxyModel);
+      treeView->sortByColumn (0, Qt::AscendingOrder);
+
+      treeView->header()->resizeSections(QHeaderView::ResizeToContents);
 
       string selected;
 
       if (! pManager->TryGetRemotePackageRepository(selected))
 	{
-	  selected = "";
+#if 0
+	  selected = pManager->PickRepositoryUrl();
+#endif
 	}
 
-      QTableWidgetItem * pSelectedItem = 0;
+      QModelIndex selectedItem;
       
       int row = 0;
       for (vector<RepositoryInfo>::const_iterator it = repositories.begin();
@@ -238,37 +187,19 @@ SiteWizRemote::FillList ()
 	      continue;
 	    }
 #endif
-
-	  QUrl url (QString::fromLocal8Bit(it->url.c_str()));
-
-	  SetItemText (row, 0, QString::fromLocal8Bit(it->country.c_str()));
-	  SetItemText (row, 1, url.scheme().toUpper());
-	  SetItemText (row, 2, url.host());
-      	  SetItemText (row,
-		       3,
-		       QDateTime::fromTime_t
-		       (it->timeDate).toString("yyyy-MM-dd"));
-	  SetItemText (row,
-		       4,
-		       QString::fromLocal8Bit(it->description.c_str()));
 	  if (it->url == selected)
 	    {
-	      tableRepositories->selectRow (row);
-	      pSelectedItem = tableRepositories->item(row, 0);
+	      selectedItem = pProxyModel->mapFromSource(pModel->index(row, 0));
+	      treeView->selectionModel()->select (selectedItem,
+		QItemSelectionModel::Select
+		| QItemSelectionModel::Rows);
 	      emit completeChanged();
 	    }
 	}
 
-      tableRepositories->horizontalHeader()
-	->resizeSections(QHeaderView::ResizeToContents);
-      tableRepositories->horizontalHeader()->setStretchLastSection (true);
-
-      tableRepositories->verticalHeader()
-	->resizeSections(QHeaderView::ResizeToContents);
-
-      if (pSelectedItem != 0)
+      if (selectedItem.isValid())
 	{
-	  tableRepositories->scrollToItem (pSelectedItem);
+	  treeView->scrollTo (selectedItem);
 	}
     }
   catch (const MiKTeXException & e)

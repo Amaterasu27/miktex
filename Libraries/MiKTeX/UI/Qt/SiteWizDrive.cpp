@@ -39,9 +39,6 @@ SiteWizDrive::SiteWizDrive (/*[in]*/ PackageManager *	pManager)
     firstVisit (true)
 {
   setupUi (this);
-  setTitle (T_("MiKTeX CD/DVD"));
-  setSubTitle (T_("\
-Packages will be installed from a MiKTeX CD/DVD."));
 }
 
 /* _________________________________________________________________________

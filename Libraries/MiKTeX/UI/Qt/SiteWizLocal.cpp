@@ -38,9 +38,6 @@ SiteWizLocal::SiteWizLocal (/*[in]*/ PackageManager *	pManager)
     pManager (pManager)
 {
   setupUi (this);
-  setTitle (T_("Local Package Repository"));
-  setSubTitle (T_("\
-Packages will be installed from a directory on your computer."));
 }
 
 /* _________________________________________________________________________

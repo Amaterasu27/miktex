@@ -10,6 +10,12 @@
     <height>220</height>
    </rect>
   </property>
+  <property name="title" >
+   <string>MiKTeX CD/DVD</string>
+  </property>
+  <property name="subTitle" >
+   <string>Packages will be installed from a MiKTeX CD/DVD.</string>
+  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QLabel" name="label" >
@@ -29,7 +35,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
@@ -39,13 +45,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWizardPage</class>
-   <extends>QWidget</extends>
-   <header>qwizardpage.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
