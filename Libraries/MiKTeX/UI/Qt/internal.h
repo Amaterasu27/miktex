@@ -23,7 +23,11 @@
 #  pragma once
 #endif
 
-#define MIKTEXUIQTEXPORT __declspec(dllexport)
+#if defined(_MSC_VER)
+#  define MIKTEXUIQTEXPORT __declspec(dllexport)
+#else
+#  define MIKTEXUIQTEXPORT
+#endif
 
 #define F752091EC06B4B4E827B2AACABAEE953
 #include <miktex/UI/Qt/Prototypes>

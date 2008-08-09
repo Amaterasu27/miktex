@@ -136,17 +136,16 @@ ErrorDialogImpl::CreateReport ()
 	  s << "MiKTeX: "
 	    << Utils::GetMiKTeXVersionString() << endl
 	    << "OS: " << Utils::GetOSVersionString() << endl;
-	  if (IsWindowsNT())
-	    {
-	      s << "SystemAdmin: " << (pSession->RunningAsAdministrator()
-				       ? T_("yes")
-				       : T_("no"))
-		<< endl;
-	      s << "PowerUser: " << (pSession->RunningAsPowerUser()
-				     ? T_("yes")
-				     : T_("no"))
-		<< endl;
-	    }
+	  s << "SystemAdmin: " << (pSession->RunningAsAdministrator()
+				   ? T_("yes")
+				   : T_("no"))
+	    << endl;
+#if defined(MIKTEX_WINDOWS)
+	  s << "PowerUser: " << (pSession->RunningAsPowerUser()
+				 ? T_("yes")
+				 : T_("no"))
+	    << endl;
+#endif
 	  s << "SharedSetup: " << (sharedSetup == TriState::True
 				   ? T_("yes")
 				   : (sharedSetup == TriState::False

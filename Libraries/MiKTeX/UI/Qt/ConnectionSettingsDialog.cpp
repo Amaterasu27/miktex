@@ -75,7 +75,7 @@ ConnectionSettingsDialog::accept ()
     {
       ProxySettings proxySettings;
       proxySettings.useProxy = grpUseProxy->isChecked();
-      proxySettings.proxy = leAddress->text().toLocal8Bit();
+      proxySettings.proxy = leAddress->text().toLocal8Bit().constData();
       proxySettings.port = lePort->text().toInt();
       proxySettings.authenticationRequired = chkAuthRequired->isChecked();
       PackageManager::SetProxy (proxySettings);

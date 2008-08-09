@@ -135,8 +135,8 @@ MiKTeX::UI::Qt::ProxyAuthenticationDialog (/*[in]*/ QWidget * pParent)
       ::ProxyAuthenticationDialog dlg (pParent);
       if (dlg.exec() == QDialog::Accepted)
 	{
-	  proxySettings.user = dlg.GetName().toLocal8Bit();
-	  proxySettings.password = dlg.GetPassword().toLocal8Bit();
+	  proxySettings.user = dlg.GetName().toLocal8Bit().constData();
+	  proxySettings.password = dlg.GetPassword().toLocal8Bit().constData();
 	  PackageManager::SetProxy (proxySettings);
 	}
       else

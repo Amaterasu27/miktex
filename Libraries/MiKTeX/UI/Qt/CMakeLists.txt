@@ -70,7 +70,7 @@ set(${ui_qt_dll_name}_moc_sources
   ErrorDialog.h
   InstallPackageDialog.h
   ProxyAuthenticationDialog.h
-  RepositoryTablemodel.h
+  RepositoryTableModel.h
   SiteWizDrive.h
   SiteWizLocal.h
   SiteWizRemote.h

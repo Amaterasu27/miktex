@@ -28,7 +28,11 @@
 
 // DLL import/export switch
 #if ! defined(F752091EC06B4B4E827B2AACABAEE953)
-#  define MIKTEXUIQTEXPORT __declspec(dllimport)
+#  if defined(_MSC_VER)
+#    define MIKTEXUIQTEXPORT __declspec(dllimport)
+#  else
+#    define MIKTEXUIQTEXPORT
+#  endif
 #endif
 
 // API decoration for exported member functions

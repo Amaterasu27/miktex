@@ -42,4 +42,4 @@
 #include <miktex/Core/Paths>
 #include <miktex/Core/Trace>
 
-#include <MiKTeX/UI/UI>
+#include <miktex/UI/UI>
