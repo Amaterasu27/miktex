@@ -531,13 +531,14 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 {
   bool haveValue = false;
 
+  // iterate over application names, e.g.: miktex;latex;tex
   for (CSVList app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
        ++ app)
     {
       Cfg * pCfg = 0;
 
-      // read configuration file
+      // read configuration files
       if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
 	{
 	  ConfigurationSettings::iterator it =
@@ -578,12 +579,12 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 	}
 #endif
       
+      // try environment variable
+      // MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
       {
 	string envVarName;
 	envVarName.reserve (100);
 	
-	// try environment variable
-	// MIKTEX_<APPLICATIONNAME>_<SECTIONNAME>_<VALUENAME>
 	envVarName = MIKTEX_ENV_PREFIX_;
 	AppendToEnvVarName (envVarName, app.GetCurrent());
 	envVarName += '_';
@@ -598,6 +599,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
       }
       
 #if defined(MIKTEX_WINDOWS)
+      // try registry value
       if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
 					   lpszSectionName2,
 					   lpszValueName,
@@ -879,32 +881,45 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
 				 /*[in]*/ const char * lpszValueName,
 				 /*[in]*/ const char * lpszValue)
 {
+  MIKTEX_ASSERT_STRING (lpszSectionName);
+
+  PathName pathConfigFile = GetSpecialPath(SpecialPath::UserConfigRoot);
+  pathConfigFile += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+  pathConfigFile += MIKTEX_INI_FILE;
+
+  SmartPointer<Cfg> pCfg (Cfg::Create());
+
+  if (File::Exists(pathConfigFile))
+  {
+    pCfg->Read (pathConfigFile);
+  }
+
 #if defined(MIKTEX_WINDOWS)
-  winRegistry::SetRegistryValue (TriState::False,
-				 lpszSectionName,
-				 lpszValueName,
-				 lpszValue);
-  string newValue;
-  if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
+  else
+  {
+    winRegistry::SetRegistryValue (TriState::False,
+      lpszSectionName,
+      lpszValueName,
+      lpszValue);
+    string newValue;
+    if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
     {
       if (newValue != lpszValue)
-	{
-	  FATAL_MIKTEX_ERROR
-	    ("SessionImpl::SetUserConfigValue",
-	     T_("The configuration value could not be changed. Possibly an \
+      {
+	FATAL_MIKTEX_ERROR
+	  ("SessionImpl::SetUserConfigValue",
+	  T_("\
+The configuration value could not be changed. Possibly an \
 environment variable definition is in the way."),
-	     lpszValueName);
-	}
+          lpszValueName);
+      }
     }
-#else
-  UNUSED_ALWAYS (lpszSectionName);
-  trace_error->WriteFormattedLine ("core",
-				   T_("cannot set %s to %s"),
-				   lpszValueName,
-				   lpszValue);
-#  warning Unimplemented: SessionImpl::SetUserConfigValue()
-  UNIMPLEMENTED ("SessionImpl::SetUserConfigValue");
+    return;
+  }
 #endif
+
+  pCfg->PutValue (lpszSectionName, lpszValueName, lpszValue);
+  pCfg->Write (pathConfigFile);
 }
 
 /* _________________________________________________________________________

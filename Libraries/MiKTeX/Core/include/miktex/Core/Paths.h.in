@@ -566,6 +566,7 @@
 #define MIKTEX_FAQ_HELP_FILE "faq.chm"
 #define MIKTEX_LATEX_HELP_FILE "latex2e.chm"
 #define MIKTEX_YAP_HELP_FILE "yap.chm"
+#define MIKTEX_INI_FILE "miktex.ini"
 
 #define MIKTEX_CORE_DLL "@core_dll_name@" MIKTEX_SHARED_LIB_FILE_SUFFIX
 #define MIKTEX_CORE_PS_DLL "@core_ps_dll_name@" MIKTEX_SHARED_LIB_FILE_SUFFIX
