@@ -1034,6 +1034,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   Utils::GetEnvironmentString (MIKTEX_ENV_PACKAGE_LIST_FILE,
 			       packageHistoryFile);
 
+  PushAppName ("miktex");
   PushAppName (Utils::GetExeName().c_str());
   
   string miktexCwd;
