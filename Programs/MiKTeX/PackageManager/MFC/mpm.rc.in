@@ -267,10 +267,10 @@ STRINGTABLE
 BEGIN
     ID_INSTALL              "Installs the selected packages.\nInstall"
     ID_UNINSTALL            "Uninstalls the selected packages.\nUninstall"
-    ID_PROPERTIES           "Shows Package Properties.\nProperties"
+    ID_PROPERTIES           "Shows package properties.\nProperties"
     ID_SITE_WIZARD          "Starts the repository wizard.\nChange Package Repository"
     ID_UPDATE_DATABASE      "Synchronizes the package database.\nSynchronize"
-    ID_SELECT_ALL           "Select all packages.\nSelect All"
+    ID_SELECT_ALL           "Selects all packages.\nSelect All"
     ID_SELECT_INSTALLABLE_PACKAGES 
                             "Selects packages which are not yet installed.\nSelect Installable Packages"
     ID_SELECT_UPDATEABLE_PACKAGES 
