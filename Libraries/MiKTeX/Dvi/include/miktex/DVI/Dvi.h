@@ -1,6 +1,6 @@
-/* MiKTeX/DVI/Dvi: DVI interfaces				-*- C++ -*-
+/* miktex/DVI/Dvi.h: DVI interfaces				-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 

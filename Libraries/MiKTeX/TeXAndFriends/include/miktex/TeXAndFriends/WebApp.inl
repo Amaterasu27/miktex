@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/WebApp.inl: 			-*- C++ -*-
+/* miktex/TeXAndFriends/WebApp.inl:				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

@@ -1,6 +1,6 @@
-/* MiKTeX/App/Application:					-*- C++ -*-
+/* miktex/App/Application.h:					-*- C++ -*-
 
-   Copyright (C) 2005-2007 Christian Schenk
+   Copyright (C) 2005-2008 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 

@@ -1,4 +1,4 @@
-/* MiKTeX/Core/urls: hard-coded urls				-*- C++ -*-
+/* miktex/Core/urls.h: hard-coded urls				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

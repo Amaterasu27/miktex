@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/WebAppInputLine.inl:			-*- C++ -*-
+/* miktex/TeXAndFriends/WebAppInputLine.inl:			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

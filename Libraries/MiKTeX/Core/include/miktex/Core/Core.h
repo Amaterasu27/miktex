@@ -1,4 +1,4 @@
-/* core.h: MiKTeX core API					-*- C++ -*-
+/* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

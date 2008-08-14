@@ -1,4 +1,4 @@
-/* MiKTeX/Core/IntegerTypes:					-*- C++ -*-
+/* miktex/Core/IntegerTypes.h:					-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

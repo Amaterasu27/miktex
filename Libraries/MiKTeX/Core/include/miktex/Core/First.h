@@ -1,4 +1,4 @@
-/* MiKTeX/Core/First:						-*- C++ -*-
+/* miktex/Core/First.h:						-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

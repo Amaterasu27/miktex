@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/MetafontApp.inl: inliners for META* -*- C++ -*-
+/* miktex/TeXAndFriends/MetafontApp.inl:			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

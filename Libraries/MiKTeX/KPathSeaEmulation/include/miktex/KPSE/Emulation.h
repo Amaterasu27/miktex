@@ -1,4 +1,4 @@
-/* miktex/KPSE/Emulation: Web2C/KPSE emulation			-*- C++ -*-
+/* miktex/KPSE/Emulation.h: Web2C/KPSE emulation		-*- C++ -*-
 
    Copyright (C) 2000-2008 Christian Schenk
 

@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/WebAppInputLine: inputln() implementation  -*- C++ -*-
+/* miktex/TeXAndFriends/WebAppInputLine.h:			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
