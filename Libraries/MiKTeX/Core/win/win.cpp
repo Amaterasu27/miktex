@@ -29,6 +29,8 @@
 
 #include <miktex/Core/win/DllProc>
 
+#include <regstr.h>
+
 #define SET_SECURITY 1
 
 /* _________________________________________________________________________
@@ -3355,3 +3357,200 @@ miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
   return (lpszAnsi);
   C_FUNC_END ();
 }
+
+/* _________________________________________________________________________
+
+   CheckPath
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(bool)
+CheckPath (/*[in]*/ const string &	oldPath,
+	   /*[out]*/ string &		newPath)
+{
+  bool modified = false;
+  bool found = false;
+  newPath = "";
+  PathName binDir =
+    SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
+  binDir.AppendDirectoryDelimiter ();
+  for (CSVList entry (oldPath.c_str(), PathName::PathNameDelimiter);
+       entry.GetCurrent() != 0;
+       ++ entry)
+    {
+      PathName dir (entry.GetCurrent());
+      dir.AppendDirectoryDelimiter ();
+      if (binDir == dir)
+	{
+	  if (found)
+	    {
+	      // prevent duplicates
+	      continue;
+	    }
+	  found = true;
+	}
+      else
+	{
+	  PathName otherPdfTeX (dir);
+	  otherPdfTeX += "pdftex.exe";
+	  if (! found && File::Exists(otherPdfTeX))
+	    {
+	      int exitCode;
+	      CharBuffer<char> versionInfo (4096);
+	      size_t n = static_cast<unsigned>(versionInfo.GetCapacity());
+	      bool isOtherPdfTeX = true;
+	      if (Process::Run(otherPdfTeX.Get(),
+			       "--version",
+			       versionInfo.GetBuffer(),
+			       &n,
+			       &exitCode)
+		  && exitCode == 0)
+		{
+		  versionInfo.GetBuffer()[versionInfo.GetCapacity() - 1] = 0;
+		  if (strstr(versionInfo.Get(), "MiKTeX") != 0)
+		    {
+		      isOtherPdfTeX = false;
+		    }
+		}
+	      if (isOtherPdfTeX)
+		{
+		  // another TeX system is in our way; push it out
+		  // from this place
+		  if (! newPath.empty())
+		    {
+		      newPath += PathName::PathNameDelimiter;
+		    }
+		  newPath += binDir.Get();
+		  found = true;
+		  modified = true;
+		}
+	    }
+	}
+      if (! newPath.empty())
+	{
+	  newPath += PathName::PathNameDelimiter;
+	}
+      newPath += entry.GetCurrent();
+    }
+  if (! found)
+    {
+      // MiKTeX is not yet in the PATH
+      if (! newPath.empty())
+	{
+	  newPath += PathName::PathNameDelimiter;
+	}
+      newPath += binDir.Get();
+      modified = true;
+    }
+  return (! modified);
+}
+
+/* _________________________________________________________________________
+
+   Utils::CheckPath
+   _________________________________________________________________________ */
+
+bool
+Utils::CheckPath (/*[in]*/ bool repair)
+{
+#define REGSTR_KEY_ENVIRONMENT_COMMON \
+   REGSTR_PATH_CURRENTCONTROLSET "\\Control\\Session Manager\\Environment"
+#define REGSTR_KEY_ENVIRONMENT_USER "Environment"
+  
+  SessionWrapper pSession (true);
+
+  bool shared = (pSession->IsSharedMiKTeXSetup() == TriState::True);
+
+  HKEY hkey;
+
+  LONG result =
+    RegOpenKeyExA((shared
+		   ? HKEY_LOCAL_MACHINE
+		   : HKEY_CURRENT_USER),
+		  (shared
+		   ? REGSTR_KEY_ENVIRONMENT_COMMON
+		   : REGSTR_KEY_ENVIRONMENT_USER),
+		  0,
+		  (repair
+		   ? KEY_QUERY_VALUE | KEY_SET_VALUE
+		   : KEY_QUERY_VALUE),
+		  &hkey);
+
+  if (result != ERROR_SUCCESS)
+    {
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExA", result, 0);
+    }
+
+  AutoHKEY autoHKEY (hkey);
+
+  DWORD type;
+  CharBuffer<char> value (32 * 1024);
+  DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
+
+  result =
+    RegQueryValueExA(hkey,
+		     "Path",
+		     0,
+		     &type,
+		     reinterpret_cast<LPBYTE>(value.GetBuffer()),
+		     &valueSize);
+  
+  bool havePath = (result == ERROR_SUCCESS);
+
+  bool okay = false;
+
+  if (havePath)
+    {
+      string path = value.Get();
+      string newPath;
+      okay = ::CheckPath(path, newPath);
+      if (! okay && ! repair)
+	{
+	  SessionImpl::GetSession()->trace_error->WriteLine
+	    ("core",
+	     T_("\
+Something is wrong with the PATH:"));
+	  SessionImpl::GetSession()->trace_error->WriteLine
+	    ("core",
+	     path.c_str());
+	}
+      else if (! okay && repair)
+	{
+	  SessionImpl::GetSession()->trace_error->WriteLine
+	    ("core",
+	     T_("\
+Setting new PATH:"));
+	  SessionImpl::GetSession()->trace_error->WriteLine
+	    ("core",
+	     newPath.c_str());
+	  result =
+	    RegSetValueExA(hkey,
+			   "Path",
+			   0,
+			   type,
+			   reinterpret_cast<const BYTE *>(newPath.c_str()),
+			   static_cast<DWORD>(newPath.length() + 1));	  
+	  if (result != ERROR_SUCCESS)
+	    {
+	      FATAL_WINDOWS_ERROR_2 ("RegSetValueExA", result, 0);
+	    }
+	  DWORD sendMessageResult;
+	  if (SendMessageTimeoutA(HWND_BROADCAST,
+				  WM_SETTINGCHANGE,
+				  0,
+				  reinterpret_cast<LPARAM>("Environment"),
+				  SMTO_ABORTIFHUNG,
+				  5000,
+				  &sendMessageResult)
+	      == 0)
+	    {
+	      if (::GetLastError() != ERROR_SUCCESS)
+		{
+		  FATAL_WINDOWS_ERROR ("SendMessageTimeoutA", 0);
+		}
+	    }
+	}
+    }
+
+  return (okay);
+}
+

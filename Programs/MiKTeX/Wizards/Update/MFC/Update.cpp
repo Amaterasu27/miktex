@@ -1,6 +1,6 @@
 /* Update.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -267,6 +267,31 @@ UpdateWizardApplication::InitInstance ()
     {
       SessionWrapper pSession (Session::InitInfo(T_("update")));
 
+      if (! Utils::CheckPath(false))
+	{
+	  if (AfxMessageBox(T_("\
+MiKTeX is not correctly configured: the location of the MiKTeX executables \
+is not known to the operating system.\r\n\r\n\
+Click OK to repair the MiKTeX configuration."),
+			    MB_OKCANCEL)
+	      == IDOK)
+	    {
+	      Utils::CheckPath (true);
+	    }
+	  else
+	    {
+	      if (SessionWrapper(true)
+		  ->GetConfigValue(MIKTEX_REGKEY_CORE,
+				   MIKTEX_REGVAL_INSIST_ON_REPAIR,
+				   true))
+		{
+		  FATAL_MIKTEX_ERROR ("UpdateWizardApplication::InitInstance",
+				      T_("Broken MiKTeX configuration."),
+				      0);
+		}
+	    }
+	}
+      
       g_pManager = PackageManager::Create();
 
       // get command-line arguments

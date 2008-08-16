@@ -1762,6 +1762,13 @@ public:
   {
     return (IsUTF8(lpsz, true));
   }
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  CheckPath (/*[in]*/ bool repair);
+#endif
 };
 
 /* _________________________________________________________________________
