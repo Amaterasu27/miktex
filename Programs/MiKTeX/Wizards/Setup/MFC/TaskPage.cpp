@@ -1,6 +1,6 @@
 /* TaskPage.cpp:
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -218,9 +218,20 @@ TaskPage::OnKillActive ()
 void
 TaskPage::OnDownloadOnly ()
 {
-  task = 0;
-  EnableButtons ();
-  pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
+  try
+    {
+      task = 0;
+      EnableButtons ();
+      pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
 }
 
 /* _________________________________________________________________________
@@ -231,9 +242,20 @@ TaskPage::OnDownloadOnly ()
 void
 TaskPage::OnInstallFromLocalRepository ()
 {
-  task = 1;
-  EnableButtons ();
-  pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
+  try
+    {
+      task = 1;
+      EnableButtons ();
+      pSheet->SetWizardButtons (PSWIZB_BACK | PSWIZB_NEXT);
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
 }
 
 /* _________________________________________________________________________
@@ -255,8 +277,19 @@ TaskPage::OnInstallFromRemoteRepository ()
 void
 TaskPage::OnConnectionSettings ()
 {
-  ConnectionSettingsDialog dlg (this);
-  dlg.DoModal ();
+  try
+    {
+      ConnectionSettingsDialog dlg (this);
+      dlg.DoModal ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
 }
 
 /* _________________________________________________________________________

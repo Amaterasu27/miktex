@@ -484,6 +484,17 @@ TypePage::GetControl (/*[in]*/ UINT	controlId)
 void
 TypePage::OnConnectionSettings ()
 {
-  ConnectionSettingsDialog dlg (this);
-  dlg.DoModal ();
+  try
+    {
+      ConnectionSettingsDialog dlg (this);
+      dlg.DoModal ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
 }
