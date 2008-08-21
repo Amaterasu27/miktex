@@ -28,7 +28,7 @@ PREREQUISITES
 MiKTeX is mostly written in C++.  It should work with any
 ANSI-compliant C++ compiler.
 
-CMake 2.4.4 (or newer) is required for building and installing MiKTeX.
+CMake 2.4.6 (or newer) is required for building and installing MiKTeX.
 
 Lynx (text-based web browser) and xsltproc (XSLT processor) are
 required for building the reference pages.
@@ -43,7 +43,7 @@ usable, i.e.,
 
 should output a line similar to this:
 
-    libcurl 7.11.1
+    libcurl 7.18.2
 
 
 COMPILING THE PACKAGE
@@ -70,6 +70,9 @@ Specify the 'install' target to install the binaries, libraries,
 header files, and reference pages:
 
     make install
+
+It may be necessary to run ldconfig to update the links and cache to
+reflect the new libraries installed during the install.
 
 USING THE MIKTEX CONFIGURATION UTILITY
 --------------------------------------
