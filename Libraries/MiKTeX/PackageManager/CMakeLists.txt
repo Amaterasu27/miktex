@@ -22,6 +22,8 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
 )  
 
+add_definitions(-D_ATL_DLL)
+
 add_definitions(-DHAVE_LIBCURL)
 
 include_directories(BEFORE

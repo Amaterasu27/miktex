@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/TeXApp.inl: : inliners for TeX	-*- C++ -*-
+/* miktex/TeXAndFriends/TeXApp.inl:				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

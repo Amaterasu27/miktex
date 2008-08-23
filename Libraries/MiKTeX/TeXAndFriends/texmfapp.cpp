@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -853,6 +853,20 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
       if (! haveIt)
 	{
 	  renew = true;
+	}
+      else if (pSession->GetConfigValue(MIKTEX_REGKEY_TEXMF,
+					MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE,
+					true))
+	{
+	  PathName pathPackagesIni
+	    (pSession->GetSpecialPath(SpecialPath::InstallRoot),
+	     MIKTEX_PATH_PACKAGES_INI,
+	     0);
+	  if (File::Exists(pathPackagesIni))
+	    {
+	      renew = (File::GetLastWriteTime(pathPackagesIni)
+		       > File::GetLastWriteTime(path));
+	    }
 	}
     }
   

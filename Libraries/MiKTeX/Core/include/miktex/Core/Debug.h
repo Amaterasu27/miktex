@@ -1,4 +1,4 @@
-/* MiKTeX/Core/Debug: MiKTeX debug macros			-*- C++ -*-
+/* miktex/Core/Debug.h: MiKTeX debug macros			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

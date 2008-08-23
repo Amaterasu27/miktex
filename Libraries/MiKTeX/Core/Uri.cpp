@@ -84,11 +84,18 @@ Uri::Uri (/*[in]*/ const char * lpszUri)
   : p (new Data)
 {
   pData->state.uri = &pData->uri;
-  if (uriParseUriA(&pData->state, lpszUri) != URI_SUCCESS)
+  int result = uriParseUriA(&pData->state, lpszUri);
+  if (result == URI_ERROR_SYNTAX)
+    {
+      string uri = "http://";
+      uri += lpszUri;
+      result = uriParseUriA(&pData->state, uri.c_str());
+    }
+  if (result != URI_SUCCESS)
     {
       delete pData;
       p = 0;
-      FATAL_MIKTEX_ERROR ("Uri::Uri", T_("Bad URI."), 0);
+      FATAL_MIKTEX_ERROR ("Uri::Uri", T_("Bad URI."), lpszUri);
     }
 }
 

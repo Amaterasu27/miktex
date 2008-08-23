@@ -369,9 +369,10 @@ if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
-  # experimental: bind to latest CRT/MFC DLLs
+  # better bind to latest CRT/MFC DLLs if redistributing as private
+  # assemblies
   add_definitions(
-    -D_BIND_TO_CURRENT_ATL_VERSION=0
+    -D_BIND_TO_CURRENT_ATL_VERSION=1
     -D_BIND_TO_CURRENT_CRT_VERSION=1
     -D_BIND_TO_CURRENT_MFC_VERSION=1
   )
@@ -390,13 +391,6 @@ if(NATIVE_WINDOWS)
   #add_definitions(
   #  -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1
   #)
-  # Windows version macros
-#  add_definitions(
-#    -DWINVER=0x0400
-#    -D_WIN32_WINDOWS=0x0400
-#    -D_WIN32_WINNT=0x0400
-#    -D_WIN32_IE=0x0500
-#  )
   set(CMAKE_RC_FLAGS
     "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Graphics")
   set(CMAKE_RC_FLAGS

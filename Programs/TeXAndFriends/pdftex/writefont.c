@@ -21,7 +21,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: writefont.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writefont.c $";
+    "$Id: writefont.c 496 2008-08-12 16:19:42Z thanh $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writefont.c $";
 
 /**********************************************************************/
 
@@ -81,7 +81,7 @@ fd_entry *new_fd_entry(void)
     fd->fn_objnum = 0;
     fd->all_glyphs = false;
     fd->write_ttf_glyph_names = false;
-    for (i = 0; i < INT_KEYS_NUM; i++) {
+    for (i = 0; i < FONT_KEYS_NUM; i++) {
         fd->font_dim[i].val = 0;
         fd->font_dim[i].set = false;
     }

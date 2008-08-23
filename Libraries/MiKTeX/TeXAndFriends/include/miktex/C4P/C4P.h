@@ -1,4 +1,4 @@
-/* MiKTeX/C4P/C4P: Pascalish run-time support			-*- C++ -*-
+/* miktex/C4P/C4P.h: Pascalish run-time support			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

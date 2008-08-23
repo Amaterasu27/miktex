@@ -1,6 +1,6 @@
-/* MiKTeX/Graphics/DibChumnker:					-*- C++ -*-
+/* miktex/Graphics/DibChunker.h:				-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of the MiKTeX DibChunker Library.
 

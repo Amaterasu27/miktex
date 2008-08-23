@@ -1,4 +1,4 @@
-/* MiKTeX/UI/MFC/Prototypes.h:					-*- C++ -*-
+/* miktex/UI/MFC/Prototypes.h:					-*- C++ -*-
 
    Copyright (C) 2000-2008 Christian Schenk
 

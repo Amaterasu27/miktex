@@ -1,6 +1,6 @@
 /* mo.cpp: MiKTeX Options
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -82,6 +82,31 @@ MiKTeXOptionsApplication::InitInstance ()
   try
     {
       SessionWrapper pSession (Session::InitInfo("mo"));
+
+      if (! Utils::CheckPath(false))
+	{
+	  if (AfxMessageBox(T_("\
+MiKTeX is not correctly configured: the location of the MiKTeX executables \
+is not known to the operating system.\r\n\r\n\
+Click OK to repair the MiKTeX configuration."),
+			    MB_OKCANCEL)
+	      == IDOK)
+	    {
+	      Utils::CheckPath (true);
+	    }
+	  else
+	    {
+	      if (SessionWrapper(true)
+		  ->GetConfigValue(MIKTEX_REGKEY_CORE,
+				   MIKTEX_REGVAL_INSIST_ON_REPAIR,
+				   false))
+		{
+		  FATAL_MIKTEX_ERROR ("MiKTeXOptionsApplication::InitInstance",
+				      T_("Broken MiKTeX configuration."),
+				      0);
+		}
+	    }
+	}
       
       PackageManagerPtr pManager (PackageManager::Create());
       

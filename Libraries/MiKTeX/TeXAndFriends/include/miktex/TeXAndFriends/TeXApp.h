@@ -1,4 +1,4 @@
-/* miktex/TeXAndFriends/TeXApp: TeX and derivates		-*- C++ -*-
+/* miktex/TeXAndFriends/TeXApp.h:				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

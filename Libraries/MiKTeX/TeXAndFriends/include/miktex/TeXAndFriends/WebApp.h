@@ -1,6 +1,6 @@
-/* MiKTeX/TeXAndFriends/WebApp:				       	-*- C++ -*-
+/* miktex/TeXAndFriends/WebApp.h:			       	-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published

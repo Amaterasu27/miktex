@@ -1,6 +1,6 @@
-/* MiKTeX/UI/MFC/UpdateDialog:					-*- C++ -*-
+/* miktex/UI/MFC/UpdateDialog.h:				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 

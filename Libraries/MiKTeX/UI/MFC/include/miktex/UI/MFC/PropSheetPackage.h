@@ -1,6 +1,6 @@
-/* MiKTeX/UI/MFC/PropSheetPackage:				-*- C++ -*-
+/* miktex/UI/MFC/PropSheetPackage.h:				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 

@@ -579,6 +579,7 @@ if trie_not_ready then begin {initex without format loaded}
   {Allocate and initialize font arrays}
   font_bc:=xmalloc_array(eight_bits, font_max);
   font_ec:=xmalloc_array(eight_bits, font_max);
+  param_base[null_font]:=-1;
 end;
 tini@/
 @z

@@ -1,4 +1,4 @@
-/* MiKTeX/PackageManager/PackageManager: MiKTeX package manager API -*- C++ -*-
+/* miktex/PackageManager/PackageManager.h: package manager API	-*- C++ -*-
 
    Copyright (C) 2001-2008 Christian Schenk
 

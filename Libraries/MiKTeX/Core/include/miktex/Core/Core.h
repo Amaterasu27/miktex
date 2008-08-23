@@ -1,4 +1,4 @@
-/* core.h: MiKTeX core API					-*- C++ -*-
+/* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
@@ -1762,6 +1762,13 @@ public:
   {
     return (IsUTF8(lpsz, true));
   }
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  CheckPath (/*[in]*/ bool repair);
+#endif
 };
 
 /* _________________________________________________________________________

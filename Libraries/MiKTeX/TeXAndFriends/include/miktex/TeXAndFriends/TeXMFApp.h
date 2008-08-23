@@ -1,4 +1,4 @@
-/* miktex/TeXAndFriends/TeXMFApp: TeX/MF common implementation	-*- C++ -*-
+/* miktex/TeXAndFriends/TeXMFApp:				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

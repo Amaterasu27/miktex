@@ -1,4 +1,4 @@
-/*  MiKTeX/TeXAndFriends/TeXMFApp.inl: TeX/MF inliners	-*- C++ -*-
+/* miktex/TeXAndFriends/TeXMFApp.inl:				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

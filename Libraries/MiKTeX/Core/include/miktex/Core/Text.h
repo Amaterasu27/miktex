@@ -1,6 +1,6 @@
-/* MiKTeX/Core/Text: MiKTeX message text wrapper		-*- C++ -*-
+/* miktex/Core/Text.h: MiKTeX message text wrapper		-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 

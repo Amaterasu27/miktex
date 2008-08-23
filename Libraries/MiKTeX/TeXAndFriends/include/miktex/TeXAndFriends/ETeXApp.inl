@@ -1,4 +1,4 @@
-/* MiKTeX/TeXAndFriends/ETeXApp.inl:			-*- C++ -*-
+/* miktex/TeXAndFriends/ETeXApp.inl:			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 

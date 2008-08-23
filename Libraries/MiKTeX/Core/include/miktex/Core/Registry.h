@@ -1,4 +1,4 @@
-/* MiKTeX/Core/Registry: MiKTeX settings			-*- C++ -*-
+/* miktex/Core/Registry.h: MiKTeX settings			-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
@@ -62,6 +62,7 @@
 #define MIKTEX_REGKEY_MIGRATE "Migrate"
 #define MIKTEX_REGKEY_PACKAGE_MANAGER "MPM"
 #define MIKTEX_REGKEY_SETTINGS "Settings"
+#define MIKTEX_REGKEY_TEXMF "TeXMF"
 #define MIKTEX_REGKEY_YAP "Yap"
 #define MIKTEX_REGKEY_YAP_SETTINGS \
   MIKTEX_REGKEY_YAP "\\" MIKTEX_REGKEY_SETTINGS
@@ -83,6 +84,7 @@
 #define MIKTEX_REGVAL_FORCE_LOCAL_SERVER "ForceLocalServer"
 #define MIKTEX_REGVAL_FTP_MODE "FTPMode"
 #define MIKTEX_REGVAL_GUI_FRAMEWORK "GUIFramework"
+#define MIKTEX_REGVAL_INSIST_ON_REPAIR "InsistOnRepair"
 #define MIKTEX_REGVAL_INSTALL "Install"
 #define MIKTEX_REGVAL_LOCAL_REPOSITORY "LocalRepository"
 #define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT "MiKTeXDirectRoot"
@@ -92,6 +94,7 @@
 #define MIKTEX_REGVAL_PROXY_HOST "ProxyHost"
 #define MIKTEX_REGVAL_PROXY_PORT "ProxyPort"
 #define MIKTEX_REGVAL_REMOTE_REPOSITORY "RemoteRepository"
+#define MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE "RenewFormatsOnUpdate"
 #define MIKTEX_REGVAL_REPOSITORY_TYPE "RepositoryType"
 #define MIKTEX_REGVAL_ROOTS "Roots"
 #define MIKTEX_REGVAL_SHARED_SETUP "SharedSetup"

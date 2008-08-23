@@ -305,7 +305,7 @@ comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
       rme.szKey = 0;
       rme.szData = 0;
       regMapEntries.push_back (rme);
-#if defined(_AFX_DLL)
+#if defined(_ATL_DLL)
       hr =
 	_AtlModule.UpdateRegistryFromResourceD(IDR_PACKAGEMANAGER,
 					       doRegister,

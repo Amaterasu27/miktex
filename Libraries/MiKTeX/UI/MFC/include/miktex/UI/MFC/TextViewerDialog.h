@@ -1,6 +1,6 @@
-/* MiKTeX/UI/MFC/TextViewerDialog:					-*- C++ -*-
+/* miktex/UI/MFC/TextViewerDialog.h:				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 

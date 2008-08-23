@@ -1,6 +1,6 @@
-/* Extractor.h:							-*- C++ -*-
+/* miktex/Extractor/Extractor.h:				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
