@@ -934,12 +934,26 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     }
 #endif
 
-  // check system requirements
+  // check minimum system requirements (which is Windows 2000 atm)
 #if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-  if (! (GetVersion() < 0x80000000))
+  DWORD version = GetVersion();
+  bool nt = version < 0x80000000;
+  DWORD major = LOBYTE(LOWORD(version));
+  DWORD minor = HIBYTE(LOWORD(version));
+  if ((! nt)			// Windows 9x/Me
+      || (major < 5))		// Windows NT 3.x/4.x
     {
+      string msg = T_("Unsupported operation system version (");
+      if (nt)
+	{
+	  msg += "NT ";
+	}
+      msg += NUMTOSTR(major);
+      msg += ".";
+      msg += NUMTOSTR(minor);
+      msg += ").";
       FATAL_MIKTEX_ERROR ("SessionImpl::Initialize",
-			  T_("This platform is not supported."),
+			  msg.c_str(),
 			  0);
     }
 #endif
