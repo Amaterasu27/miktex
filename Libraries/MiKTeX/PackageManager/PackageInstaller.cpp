@@ -791,7 +791,7 @@ PackageInstallerImpl::RemoveFiles
        it != toBeRemoved.end();
        ++ it)
     {
-      Notify ();
+      Notify (Notification::RemoveFileStart);
 
       // only consider texmf files
       string fileName;
@@ -873,7 +873,7 @@ PackageInstallerImpl::RemoveFiles
 	}
       
       // notify client
-      Notify ();
+      Notify (Notification::RemoveFileEnd);
     }
 }
 
@@ -890,6 +890,7 @@ PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
 				 Q_(deploymentName));
 
   // notify client
+  Notify (Notification::RemovePackageStart);
   ReportLine (T_("removing package %s..."), Q_(deploymentName));
 
   // get package info
@@ -952,7 +953,7 @@ PackageInstallerImpl::RemovePackage (/*[in]*/ const string &	deploymentName)
   MIKTEX_UNLOCK();
 
   // notify client
-  Notify ();
+  Notify (Notification::RemovePackageEnd);
 }
 
 /* _________________________________________________________________________

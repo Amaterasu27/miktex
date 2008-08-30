@@ -1,6 +1,6 @@
 /* UpdateDialog.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -578,35 +578,54 @@ bool
 UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
 {
   CSingleLock (&criticalSectionMonitor, TRUE);
+  bool visibleProgress =
+    (nf == Notification::DownloadPackageEnd
+     || nf == Notification::InstallFileEnd
+     || nf == Notification::InstallPackageEnd
+     || nf == Notification::RemoveFileEnd
+     || nf == Notification::RemovePackageEnd);
   PackageInstaller::ProgressInfo progressInfo = pInstaller->GetProgressInfo();
   sharedData.progressInfo = progressInfo;
   if (nf == Notification::InstallPackageStart
       || nf == Notification::DownloadPackageStart)
     {
+      visibleProgress = true;
       sharedData.newPackage = true;
       sharedData.packageName = progressInfo.displayName;
     }
   if (progressInfo.cbPackageDownloadTotal > 0)
     {
+      int oldValue = sharedData.progress1Pos;
       sharedData.progress1Pos
 	= static_cast<int>
 	(((static_cast<double>(progressInfo.cbPackageDownloadCompleted)
 	   / progressInfo.cbPackageDownloadTotal)
 	  * PROGRESS_MAX));
+      visibleProgress =
+	(visibleProgress || (sharedData.progress1Pos != oldValue));
     }
   if (progressInfo.cbDownloadTotal > 0)
     {
+      int oldValue = sharedData.progress2Pos;
       sharedData.progress2Pos
 	= static_cast<int>
 	(((static_cast<double>(progressInfo.cbDownloadCompleted)
 	   / progressInfo.cbDownloadTotal)
 	  * PROGRESS_MAX));
+      visibleProgress =
+	(visibleProgress || (sharedData.progress2Pos != oldValue));
     }
+  DWORD oldValue = sharedData.secondsRemaining;
   sharedData.secondsRemaining
     = static_cast<DWORD>(progressInfo.timeRemaining / 1000);
-  if (! PostMessage(WM_PROGRESS))
+  visibleProgress =
+    (visibleProgress || (sharedData.secondsRemaining != oldValue));
+  if (visibleProgress)
     {
-      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
+      if (! PostMessage(WM_PROGRESS))
+	{
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
+	}
     }
   return (! (GetErrorFlag() || GetCancelFlag()));
 }
