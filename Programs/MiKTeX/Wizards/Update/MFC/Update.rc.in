@@ -170,7 +170,7 @@ BEGIN
                     "Button",BS_AUTORADIOBUTTON,21,78,289,10
     CONTROL         "I want to get updated packages from a &MiKTeX CD/DVD.",IDC_INSTALL_FROM_CD,
                     "Button",BS_AUTORADIOBUTTON,21,123,289,10
-    CONTROL         "Pick out a random repository.",IDC_RANDOM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,32,15,278,10
+    CONTROL         "Use the nearest package repository.",IDC_RANDOM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,32,15,278,10
     CONTROL         "Last used remote package repository.",IDC_LAST_USED_REPOSITORY,
                     "Button",BS_AUTORADIOBUTTON,32,29,278,10
     CONTROL         "Let me choose a remote package repository.",IDC_CHOOSE_REPOSITORY,
