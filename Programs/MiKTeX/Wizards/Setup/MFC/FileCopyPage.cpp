@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -513,11 +513,14 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
   CSingleLock (&criticalSectionMonitor, TRUE);
 
+  bool visibleProgress = false;
+
   PackageInstaller::ProgressInfo progressInfo = pInstaller->GetProgressInfo();
 
   if (nf == Notification::InstallPackageStart
       || nf == Notification::DownloadPackageStart)
     {
+      visibleProgress = true;
       sharedData.newPackage = true;
       sharedData.packageName = progressInfo.displayName;
     }
@@ -526,22 +529,31 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
     {
       if (progressInfo.cbPackageDownloadTotal > 0)
 	{
+	  int oldValue = sharedData.progress1Pos;
 	  sharedData.progress1Pos
 	    = static_cast<int>(
 	      ((static_cast<double>(progressInfo.cbPackageDownloadCompleted)
 		/ progressInfo.cbPackageDownloadTotal)
 	       * PROGRESS_MAX));
+	  visibleProgress =
+	    (visibleProgress || (sharedData.progress1Pos != oldValue));
 	}
       if (progressInfo.cbDownloadTotal > 0)
 	{
+	  int oldValue = sharedData.progress2Pos;
 	  sharedData.progress2Pos
 	    = static_cast<int>(
 	      ((static_cast<double>(progressInfo.cbDownloadCompleted)
 		/ progressInfo.cbDownloadTotal)
 	       * PROGRESS_MAX));
+	  visibleProgress =
+	    (visibleProgress || (sharedData.progress2Pos != oldValue));
 	}
+      DWORD oldValue = sharedData.secondsRemaining;
       sharedData.secondsRemaining
 	= static_cast<DWORD>(progressInfo.timeRemaining / 1000);
+      visibleProgress =
+	(visibleProgress || (sharedData.secondsRemaining != oldValue));
     }
   else if ((theApp.setupTask == SetupTask::InstallFromLocalRepository
 	    || theApp.setupTask == SetupTask::InstallFromCD)
@@ -556,22 +568,31 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
       overallExpenditure = totalSize + uSizeExtra;
       if (progressInfo.cbPackageInstallTotal)
 	{
+	  int oldValue = sharedData.progress1Pos;
 	  sharedData.progress1Pos
 	    = static_cast<int>(
 	      ((static_cast<double>(progressInfo.cbPackageInstallCompleted)
 		/ progressInfo.cbPackageInstallTotal)
 	       * PROGRESS_MAX));
+	  visibleProgress =
+	    (visibleProgress || (sharedData.progress1Pos != oldValue));
 	}
+      int oldValue = sharedData.progress2Pos;
       sharedData.progress2Pos
 	= static_cast<int>(
 	  ((static_cast<double>(progressInfo.cbInstallCompleted)
 	    / overallExpenditure)
 	   * PROGRESS_MAX));
+      visibleProgress =
+	(visibleProgress || (sharedData.progress2Pos != oldValue));
     }
 
-  if (! PostMessage(WM_PROGRESS))
+  if (visibleProgress)
     {
-      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
+      if (! PostMessage(WM_PROGRESS))
+	{
+	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
+	}
     }
 
   return (! (pSheet->GetErrorFlag() || pSheet->GetCancelFlag()));

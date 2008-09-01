@@ -1084,6 +1084,8 @@ DllGetVersion (/*[out]*/ DLLVERSIONINFO * pdvi)
 /* _________________________________________________________________________
 
    Utils::GetOSVersionString
+
+   We assume that the minimum system requirements have been checked.
    _________________________________________________________________________ */
 
 typedef void (WINAPI * PGNSI) (/*[out]*/ LPSYSTEM_INFO);
@@ -1093,542 +1095,328 @@ typedef BOOL (WINAPI * PGPI) (/*[in]*/ DWORD,
 			      /*[in]*/ DWORD,
 			      /*[out]*/ DWORD *);
 
-#if ! defined(PRODUCT_UNLICENSED)
-#  define PRODUCT_UNLICENSED 0xABCDABCD
-#endif
+inline
+void
+NeedBlank (/*[in,out]*/ string & str)
+{
+  if (! str.empty() && str[str.length() - 1] != ' ')
+    {
+      str += ' ';
+    }
+}
 
-#if ! defined(SM_SERVERR2)
-#  define SM_SERVERR2 89
-#endif
-
-#if ! defined(PRODUCT_BUSINESS)
-#  define PRODUCT_BUSINESS 0x00000006
-#endif
-
-#if ! defined(PRODUCT_BUSINESS_N)
-#  define PRODUCT_BUSINESS_N 0x00000010
-#endif
-
-#if ! defined(PRODUCT_CLUSTER_SERVER)
-#  define PRODUCT_CLUSTER_SERVER 0x00000012
-#endif
-
-#if ! defined(PRODUCT_DATACENTER_SERVER)
-#  define PRODUCT_DATACENTER_SERVER 0x00000008
-#endif
-
-#if ! defined(PRODUCT_DATACENTER_SERVER_CORE)
-#  define PRODUCT_DATACENTER_SERVER_CORE 0x0000000C
-#endif
-
-#if ! defined(PRODUCT_ENTERPRISE)
-#  define PRODUCT_ENTERPRISE 0x00000004
-#endif
-
-#if ! defined(PRODUCT_ENTERPRISE_SERVER)
-#  define PRODUCT_ENTERPRISE_SERVER 0x0000000A
-#endif
-
-#if ! defined(PRODUCT_ENTERPRISE_SERVER_CORE)
-#  define PRODUCT_ENTERPRISE_SERVER_CORE 0x0000000E
-#endif
-
-#if ! defined(PRODUCT_ENTERPRISE_SERVER_IA64)
-#  define PRODUCT_ENTERPRISE_SERVER_IA64 0x0000000F
-#endif
-
-#if ! defined(PRODUCT_HOME_BASIC)
-#  define PRODUCT_HOME_BASIC 0x00000002
-#endif
-
-#if ! defined(PRODUCT_HOME_BASIC_N)
-#  define PRODUCT_HOME_BASIC_N 0x00000005
-#endif
-
-#if ! defined(PRODUCT_HOME_PREMIUM)
-#  define PRODUCT_HOME_PREMIUM 0x00000003
-#endif
-
-#if ! defined(PRODUCT_HOME_SERVER)
-#  define PRODUCT_HOME_SERVER 0x00000013
-#endif
-
-#if ! defined(PRODUCT_SERVER_FOR_SMALLBUSINESS)
-#  define PRODUCT_SERVER_FOR_SMALLBUSINESS 0x00000018
-#endif
-
-#if ! defined(PRODUCT_SMALLBUSINESS_SERVER)
-#  define PRODUCT_SMALLBUSINESS_SERVER 0x00000009
-#endif
-
-#if ! defined(PRODUCT_SMALLBUSINESS_SERVER_PREMIUM)
-#  define PRODUCT_SMALLBUSINESS_SERVER_PREMIUM 0x00000019
-#endif
-
-#if ! defined(PRODUCT_STANDARD_SERVER)
-#  define PRODUCT_STANDARD_SERVER 0x00000007
-#endif
-
-#if ! defined(PRODUCT_STANDARD_SERVER_CORE )
-#  define PRODUCT_STANDARD_SERVER_CORE  0x0000000D
-#endif
-
-#if ! defined(PRODUCT_STARTER)
-#  define PRODUCT_STARTER 0x0000000B
-#endif
-
-#if ! defined(PRODUCT_STORAGE_ENTERPRISE_SERVER)
-#  define PRODUCT_STORAGE_ENTERPRISE_SERVER 0x00000017
-#endif
-
-#if ! defined(PRODUCT_STORAGE_EXPRESS_SERVER)
-#  define PRODUCT_STORAGE_EXPRESS_SERVER 0x00000014
-#endif
-
-#if ! defined(PRODUCT_STORAGE_STANDARD_SERVER)
-#  define PRODUCT_STORAGE_STANDARD_SERVER 0x00000015
-#endif
-
-#if ! defined(PRODUCT_STORAGE_WORKGROUP_SERVER)
-#  define PRODUCT_STORAGE_WORKGROUP_SERVER 0x00000016
-#endif
-
-#if ! defined(PRODUCT_UNDEFINED)
-#  define PRODUCT_UNDEFINED 0x00000000
-#endif
-
-#if ! defined(PRODUCT_ULTIMATE)
-#  define PRODUCT_ULTIMATE 0x00000001
-#endif
-
-#if ! defined(PRODUCT_WEB_SERVER)
-#  define PRODUCT_WEB_SERVER 0x00000011
-#endif
+inline
+HMODULE
+GetKernel32Module ()
+{
+  HMODULE h = GetModuleHandleA("kernel32.dll");
+  if (h == 0)
+    {
+      UNEXPECTED_CONDITION ("GetKernel32Module");
+    }
+  return (h);
+}
 
 string
 Utils::GetOSVersionString ()
 {
   // get Windows version information
-  OSVERSIONINFOEX osvi;
+  OSVERSIONINFOEXA osvi;
   ZeroMemory (&osvi, sizeof(OSVERSIONINFOEX));
-  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  BOOL haveOsVersionInfoEx =
-    GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&osvi));
-  if (! haveOsVersionInfoEx)
+  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
+  if (! GetVersionEx(reinterpret_cast<OSVERSIONINFOA*>(&osvi)))
     {
-      osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-      if (! GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&osvi)))
-	{
-	  FATAL_WINDOWS_ERROR ("GetVersionEx", 0);
-	}
+      UNSUPPORTED_PLATFORM ();
     }
-  
+
+  // get system information
   SYSTEM_INFO si;
   ZeroMemory (&si, sizeof(si));
-  bool haveSystemInfo = false;
+  PGNSI pGNSI =
+    reinterpret_cast<PGNSI>
+    (GetProcAddress(GetKernel32Module(), "GetNativeSystemInfo"));
+  if (pGNSI != 0)
+    {
+      pGNSI (&si);
+    }
+  else
+    {
+      // Windows 2000
+      GetSystemInfo (&si);
+    }
 
   // build version string
   string str;
   switch (osvi.dwPlatformId)
      {
-     case VER_PLATFORM_WIN32_NT: // Windows NT product family
+     case VER_PLATFORM_WIN32_NT:
+       // Windows NT product family
+       str += "Microsoft Windows";
+       NeedBlank (str);
        if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
-	       str += "Microsoft Windows Vista ";
+	       str += "Vista";
 	     }
 	   else
 	     {
-	       str += "Microsoft Windows Server \"Longhorn\" ";
+	       str += "Server 2008";
 	     }
 	   PGPI pGPI =
 	     reinterpret_cast<PGPI>
-	     (GetProcAddress(GetModuleHandle("kernel32.dll"),
-			     "GetProductInfo"));
-	   DWORD dwProductType;
-	   if (pGPI != 0 && pGPI(6, 0, 0, 0, &dwProductType))
+	     (GetProcAddress(GetKernel32Module(), "GetProductInfo"));
+	   if (pGPI == 0)
 	     {
-	       switch (dwProductType)
-		 {
-		 case PRODUCT_UNLICENSED:
-		   str += T_("(not activated, grace period expired) ");
-		   break;
-		 case PRODUCT_BUSINESS:
-		   str += "Business Edition ";
-		   break;
-		 case PRODUCT_BUSINESS_N:
-		   str += "Business N Edition ";
-		   break;
-		 case PRODUCT_CLUSTER_SERVER:
-		   str += "Cluster Server Edition ";
-		   break;
-		 case PRODUCT_DATACENTER_SERVER:
-		   str += "Server Datacenter Edition (full installation) ";
-		   break;
-		 case PRODUCT_DATACENTER_SERVER_CORE:
-		   str += "Server Datacenter Edition (core installation) ";
-		   break;
-		 case PRODUCT_ENTERPRISE:
-		   str += "Enterprise Edition ";
-		   break;
-		 case PRODUCT_ENTERPRISE_SERVER:
-		   str += "Server Enterprise Edition (full installation) ";
-		   break;
-		 case PRODUCT_ENTERPRISE_SERVER_CORE:
-		   str += "Server Enterprise Edition (core installation) ";
-		   break;
-		 case PRODUCT_ENTERPRISE_SERVER_IA64:
-		   str +=
-		     ("Server Enterprise Edition "
-		      "for Itanium-based Systems ");
-		   break;
-		 case PRODUCT_HOME_BASIC:
-		   str += "Home Basic Edition ";
-		   break;
-		 case PRODUCT_HOME_BASIC_N:
-		   str += "Home Basic N Edition ";
-		   break;
-		 case PRODUCT_HOME_PREMIUM:
-		   str += "Home Premium Edition ";
-		   break;
-		 case PRODUCT_HOME_SERVER:
-		   str += "Home Server Edition ";
-		   break;
-		 case PRODUCT_SERVER_FOR_SMALLBUSINESS:
-		   str += "Server for Small Business Edition ";
-		   break;
-		 case PRODUCT_SMALLBUSINESS_SERVER:
-		   str += "Small Business Server ";
-		   break;
-		 case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-		   str += "Small Business Server Premium Edition ";
-		   break;
-		 case PRODUCT_STANDARD_SERVER:
-		   str +=
-		     "Server Standard Edition (full installation) ";
-		   break;
-		 case PRODUCT_STANDARD_SERVER_CORE :
-		   str +=
-		     "Server Standard Edition (core installation) ";
-		   break;
-		 case PRODUCT_STARTER:
-		   str += "Starter Edition ";
-		   break;
-		 case PRODUCT_STORAGE_ENTERPRISE_SERVER:
-		   str += "Storage Server Enterprise Edition ";
-		   break;
-		 case PRODUCT_STORAGE_EXPRESS_SERVER:
-		   str += "Storage Server Express Edition ";
-		   break;
-		 case PRODUCT_STORAGE_STANDARD_SERVER:
-		   str += "Storage Server Standard Edition ";
-		   break;
-		 case PRODUCT_STORAGE_WORKGROUP_SERVER:
-		   str += "Storage Server Workgroup Edition ";
-		   break;
-		 case PRODUCT_UNDEFINED:
-		   str += T_("(unknown product) ");
-		   break;
-		 case PRODUCT_ULTIMATE:
-		   str += "Ultimate Edition ";
-		   break;
-		 case PRODUCT_WEB_SERVER:
-		   str += "Web Server Edition ";
-		   break;
-		 }
+	       UNEXPECTED_CONDITION ("Utils::GetOSVersionString");
+	     }
+	   DWORD productType;
+	   if (! pGPI(6, 0, 0, 0, &productType))
+	     {
+	       UNEXPECTED_CONDITION ("Utils::GetOSVersionString");
+	     }
+	   NeedBlank (str);
+	   switch (productType)
+	     {
+	     case PRODUCT_UNLICENSED:
+	       str += T_("(not activated, grace period expired)");
+	       break;
+	     case PRODUCT_BUSINESS:
+	       str += "Business Edition";
+	       break;
+	     case PRODUCT_BUSINESS_N:
+	       str += "Business N Edition";
+	       break;
+	     case PRODUCT_CLUSTER_SERVER:
+	       str += "Cluster Server Edition";
+	       break;
+	     case PRODUCT_DATACENTER_SERVER:
+	       str += "Server Datacenter Edition";
+	       break;
+	     case PRODUCT_DATACENTER_SERVER_CORE:
+	       str += "Server Datacenter Edition (core installation)";
+	       break;
+	     case PRODUCT_ENTERPRISE:
+	       str += "Enterprise Edition";
+	       break;
+	     case PRODUCT_ENTERPRISE_SERVER:
+	       str += "Server Enterprise Edition";
+	       break;
+	     case PRODUCT_ENTERPRISE_SERVER_CORE:
+	       str += "Server Enterprise Edition (core installation)";
+	       break;
+	     case PRODUCT_ENTERPRISE_SERVER_IA64:
+	       str += "Server Enterprise Edition for Itanium-based Systems";
+	       break;
+	     case PRODUCT_HOME_BASIC:
+	       str += "Home Basic Edition";
+	       break;
+	     case PRODUCT_HOME_BASIC_N:
+	       str += "Home Basic N Edition";
+	       break;
+	     case PRODUCT_HOME_PREMIUM:
+	       str += "Home Premium Edition";
+	       break;
+	     case PRODUCT_HOME_SERVER:
+	       str += "Home Server Edition";
+	       break;
+	     case PRODUCT_SERVER_FOR_SMALLBUSINESS:
+	       str += "Server for Small Business Edition";
+	       break;
+	     case PRODUCT_SMALLBUSINESS_SERVER:
+	       str += "Small Business Server";
+	       break;
+	     case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+	       str += "Small Business Server Premium Edition";
+	       break;
+	     case PRODUCT_STANDARD_SERVER:
+	       str += "Server Standard Edition";
+	       break;
+	     case PRODUCT_STANDARD_SERVER_CORE :
+	       str += "Server Standard Edition (core installation)";
+	       break;
+	     case PRODUCT_STARTER:
+	       str += "Starter Edition";
+	       break;
+	     case PRODUCT_STORAGE_ENTERPRISE_SERVER:
+	       str += "Storage Server Enterprise Edition";
+	       break;
+	     case PRODUCT_STORAGE_EXPRESS_SERVER:
+	       str += "Storage Server Express Edition";
+	       break;
+	     case PRODUCT_STORAGE_STANDARD_SERVER:
+	       str += "Storage Server Standard Edition";
+	       break;
+	     case PRODUCT_STORAGE_WORKGROUP_SERVER:
+	       str += "Storage Server Workgroup Edition";
+	       break;
+	     case PRODUCT_UNDEFINED:
+	       str += T_("(unknown product)");
+	       break;
+	     case PRODUCT_ULTIMATE:
+	       str += "Ultimate Edition";
+	       break;
+	     case PRODUCT_WEB_SERVER:
+	       str += "Web Server Edition";
+	       break;
+	     }
+	   if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+	     {
+	       str += ", 64-bit";
+	     }
+	   else
+	     {
+	       str += ", 32-bit";
 	     }
 	 }
        else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
 	 {
-	   // use GetProcAddress to avoid load issues on Windows 2000
-	   PGNSI pGNSI =
-	     reinterpret_cast<PGNSI>
-	     (GetProcAddress(GetModuleHandle("kernel32.dll"),
-			     "GetNativeSystemInfo"));
-	   if (pGNSI != 0)
-	     {
-	       pGNSI (&si);
-	       haveSystemInfo = true;
-	     }
 	   if (GetSystemMetrics(SM_SERVERR2))
 	     {
-	       str += "Microsoft Windows Server 2003 \"R2\" ";
+	       str += "Server 2003 R2";
+	     }
+	   else if (osvi.wSuiteMask == VER_SUITE_STORAGE_SERVER)
+	     {
+	       str += "Storage Server 2003";
 	     }
 	   else if (osvi.wProductType == VER_NT_WORKSTATION
-		    && haveSystemInfo
 		    && (si.wProcessorArchitecture
 			== PROCESSOR_ARCHITECTURE_AMD64))
 	     {
-	       str += "Microsoft Windows XP Professional x64 Edition ";
+	       str += "XP Professional x64 Edition";
 	     }
 	   else
 	     {
-	       str += "Microsoft Windows Server 2003 ";
+	       str += "Server 2003";
 	     }
-	 }
+
+         // test for the server type
+         if (osvi.wProductType != VER_NT_WORKSTATION)
+	   {
+	     str += ", ";
+	     if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+	       {
+		 if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
+		   {
+		     str += "Datacenter Edition for Itanium-based Systems";
+		   }
+		 else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
+		   {
+		     str += "Enterprise Edition for Itanium-based Systems";
+		   }
+	       }
+	     else if (si.wProcessorArchitecture
+		      == PROCESSOR_ARCHITECTURE_AMD64)
+	       {
+		 if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
+		   {
+		     str += "Datacenter x64 Edition";
+		   }
+		 else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
+		   {
+		     str += "Enterprise x64 Edition";
+		   }
+		 else
+		   {
+		     str += "Standard x64 Edition";
+		   }
+	       }
+	     else if ((osvi.wSuiteMask & VER_SUITE_COMPUTE_SERVER) != 0)
+	       {
+		 str += "Compute Cluster Edition";
+	       }
+	     else if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
+	       {
+		 str += "Datacenter Edition";
+	       }
+	     else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
+	       {
+		 str += "Enterprise Edition";
+	       }
+	     else if ((osvi.wSuiteMask & VER_SUITE_BLADE) != 0)
+	       {
+		 str += "Web Edition";
+	       }
+	     else
+	       {
+		 str += "Standard Edition";
+	       }
+	   }
+         }
        else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
 	 {
-	   str += "Microsoft Windows XP ";
+	   str += "XP";
+	   NeedBlank (str);
+	   if ((osvi.wSuiteMask & VER_SUITE_PERSONAL) != 0)
+	     {
+	       str += "Home Edition";
+	     }
+	   else
+	     {
+	       str += "Professional";
+	     }
 	 }
        else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
 	 {
-	   str += "Microsoft Windows 2000 ";
-	 }
-       else if (osvi.dwMajorVersion <= 4)
-	 {
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	   str += "Microsoft Windows NT ";
-#else
-	   UNIMPLEMENTED ("Utils::GetOSVersionString");
-#endif
-	 }
-       if (haveOsVersionInfoEx)
-	 {
-	   // test for the workstation type
-	   if (osvi.dwMajorVersion < 6
-	       && osvi.wProductType == VER_NT_WORKSTATION
-	       && ! (haveSystemInfo
-		     && (si.wProcessorArchitecture
-			 == PROCESSOR_ARCHITECTURE_AMD64)))
+	   str += "2000";
+	   NeedBlank (str);
+	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
-	       if (osvi.dwMajorVersion == 4)
-		 {
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-		   str += "Workstation 4.0 ";
-#else
-		   UNIMPLEMENTED ("Utils::GetOSVersionString");
-#endif
-		 }
-	       else if ((osvi.wSuiteMask & VER_SUITE_PERSONAL) != 0)
-		 {
-		   str += "Home Edition ";
-		 }
-	       else
-		 {
-		   str += T_("Professional " );
-		 }
+	       str +="Professional";
 	     }
-
-	   // test for the server type
-	   else if (osvi.wProductType == VER_NT_SERVER
-		    || osvi.wProductType == VER_NT_DOMAIN_CONTROLLER)
+	   else if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
 	     {
-	       if (osvi.dwMajorVersion == 6)
-		 {
-		   // see above
-		 }
-	       else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
-		 {
-		   if (haveSystemInfo
-		       && (si.wProcessorArchitecture
-			   == PROCESSOR_ARCHITECTURE_IA64))
-		     {
-		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
-			 {
-			   str +=
-			     "Datacenter Edition"
-			     " for Itanium-based Systems ";
-			 }
-		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
-			 {
-			   str +=
-			     "Enterprise Edition"
-			     " for Itanium-based Systems ";
-			 }
-		     }
-		   else if (haveSystemInfo
-			    && (si.wProcessorArchitecture
-				== PROCESSOR_ARCHITECTURE_AMD64))
-		     {
-		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
-			 {
-			   str += "Datacenter x64 Edition ";
-			 }
-		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
-			 {
-			   str += "Enterprise x64 Edition ";
-			 }
-		       else
-			 {
-			   str += "Standard x64 Edition ";
-			 }
-		     }
-		   else
-		     {
-		       if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
-			 {
-			   str += "Datacenter Edition ";
-			 }
-		       else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
-			 {
-			   str+= "Enterprise Edition ";
-			 }
-		       else if ((osvi.wSuiteMask == VER_SUITE_BLADE) != 0)
-			 {
-			   str += "Web Edition ";
-			 }
-		       else
-			 {
-			   str += "Standard Edition ";
-			 }
-		     }
-		 }
-	       else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
-		 {
-		   if ((osvi.wSuiteMask & VER_SUITE_DATACENTER) != 0)
-		     {
-		       str += "Datacenter Server ";
-		     }
-		   else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
-		     {
-		       str += "Advanced Server ";
-		     }
-		   else
-		     {
-		       str += "Server ";
-		     }
-		 }
-	       else		// Windows NT 4.0
-		 {
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-		   if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
-		     {
-		       str += T_("Server 4.0, Enterprise Edition " );
-		     }
-		   else
-		     {
-		       str += "Server 4.0 ";
-		     }
-#else
-		   UNIMPLEMENTED ("Utils::GetOSVersionString");
-#endif
-		 }
+               str += "Datacenter Server";
 	     }
-	 }
-       else  // test for specific product on Windows NT 4.0 SP5 and earlier
-	 {
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	   AutoHKEY hKey;
-	   LONG lRet;
-	   lRet =
-	     RegOpenKeyExA(HKEY_LOCAL_MACHINE,
-			   ("SYSTEM\\CurrentControlSet\\Control"
-			    "\\ProductOptions"),
-			   0,
-			   KEY_QUERY_VALUE,
-			   &hKey);
-	   if (lRet != ERROR_SUCCESS)
+	   else if ((osvi.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
 	     {
-	       FATAL_WINDOWS_ERROR ("RegOpenKeyExA", 0);
-	     }
-	   char szProductType[80];
-	   unsigned long dwBufLen = ARRAY_SIZE(szProductType);
-	   lRet =
-	     RegQueryValueExA(hKey.Get(),
-			      "ProductType",
-			      0,
-			      0,
-			      reinterpret_cast<LPBYTE>(szProductType),
-			      &dwBufLen);
-	   if (lRet != ERROR_SUCCESS)
-	     {
-	       FATAL_WINDOWS_ERROR ("RegQueryValueExA", 0);
-	     }
-	   if (dwBufLen > ARRAY_SIZE(szProductType))
-	     {
-	       BUF_TOO_SMALL ("GetWindowsVersion");
-	     }
-	   else if (_tcsicmp("WINNT", szProductType) == 0)
-	     {
-	       str += "Workstation ";
-	     }
-	   else if (_tcsicmp("LANMANNT", szProductType) == 0)
-	     {
-	       str += "Server ";
-	     }
-	   else if (_tcsicmp ("SERVERNT", szProductType) == 0)
-	     {
-	       str += "Advanced Server ";
-	     }
-	   str += NUMTOSTR(osvi.dwMajorVersion);
-	   str += '.';
-	   str += NUMTOSTR(osvi.dwMinorVersion);
-	   str += ' ';
-#else
-	   UNIMPLEMENTED ("Utils::GetOSVersionString");
-#endif
-	 }
-     
-       // get service pack (if any) and build number
-       if (osvi.dwMajorVersion == 4
-	   && _tcsicmp(osvi.szCSDVersion, "Service Pack 6") == 0)
-	 {
-	   HKEY hKey;
-	   LONG lRet;
-	 
-	   // test for SP6 versus SP6a
-	   lRet =
-	     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			  ("SOFTWARE\\Microsoft\\Windows NT"
-			   "\\CurrentVersion\\Hotfix\\Q246009"),
-			  0,
-			  KEY_QUERY_VALUE,
-			  &hKey);
-	   if (lRet == ERROR_SUCCESS)
-	     {
-	       RegCloseKey (hKey);
-	       str += "Service Pack 6a (Build ";
-	       str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	       str += ')';
+	       str += "Advanced Server";
 	     }
 	   else
 	     {
-	       str += osvi.szCSDVersion;
-	       str += " (Build ";
-	       str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	       str += ')';
-	     }
-	 }
-       else // Windows NT 3.51 and earlier or Windows 2000 and later
-	 {
-	   if (osvi.szCSDVersion[0] != 0)
-	     {
-	       str += osvi.szCSDVersion;
-	       str += ' ';
-	     }
-	   str += "(Build ";
-	   str += NUMTOSTR(osvi.dwBuildNumber & 0xFFFF);
-	   str += ')';
-	 }
-       break;
-     
-     case VER_PLATFORM_WIN32_WINDOWS: // Windows 95 product family
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-       if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
-         {
-	   str += "Microsoft Windows 95";
-	   if (osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B')
-	     {
-	       str += " OSR2";
+	       str += "Server";
 	     }
          }
-       else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
-         {
-	   str += "Microsoft Windows 98";
-	   if ( osvi.szCSDVersion[1] == 'A')
-	     {
-	       str += " SE";
-	     }
-         } 
-       else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
-         {
-	   str += "Microsoft Windows Millennium Edition";
-         } 
+       else
+	 {
+	   // unknown Windows version
+	   MIKTEX_ASSERT (false);
+	   str += NUMTOSTR(osvi.dwMajorVersion);
+	   str += ".";
+	   str += NUMTOSTR(osvi.dwMinorVersion);
+	 }
+
+       // service pack
+       if (osvi.szCSDVersion[0] != 0)
+	 {
+	   NeedBlank (str);
+	   str += osvi.szCSDVersion;
+	 }
+
+       // build number
+       NeedBlank (str);
+       str += "(build";
+       NeedBlank (str);
+       str += NUMTOSTR(osvi.dwBuildNumber);
+       str += ")";
+
        break;
-#else
-       UNIMPLEMENTED ("Utils::GetOSVersionString");
-#endif
+     
+     case VER_PLATFORM_WIN32s:
+       // nearly impossible
+       UNEXPECTED_CONDITION ("Utils::GetOSVersionString");
+
+     case VER_PLATFORM_WIN32_WINDOWS:
+       // Windows 95 product family
+       UNSUPPORTED_PLATFORM ();
+
+     default:
+       // unknown platform
+       MIKTEX_ASSERT (false);
+       str += "unknown platform (";
+       str += NUMTOSTR(osvi.dwPlatformId);
+       str += ")";
+       break;
      }
 
   return (str);
