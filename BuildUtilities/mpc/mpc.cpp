@@ -196,7 +196,7 @@ public:
 	      /*[in]*/ const MpcPackageInfo & pi2)
     const
   {
-    return (pi1.timePackaged >= pi2.timePackaged);
+    return (pi1.timePackaged > pi2.timePackaged);
   }
 };
 
