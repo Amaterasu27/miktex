@@ -1,6 +1,6 @@
 ## MergeTrustInfoManifest.cmake
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -27,7 +27,7 @@ macro(merge_trustinfo_manifest _target _level)
         COMMAND ${MT_EXE} -nologo
 	  -manifest ${CMAKE_SOURCE_DIR}/Resources/Manifests/${_level}.manifest
 	  -updateresource:${_target_exe}\;1
-      VERBATIM
+#      VERBATIM
     )
   endif(NATIVE_WINDOWS)
 endmacro(merge_trustinfo_manifest)
