@@ -28,31 +28,35 @@ string
 ToString (/*[in]*/ const UriTextRangeA & textRange)
 {
   string ret;
-  if (textRange.first == 0)
+  if (textRange.first != 0)
     {
-      return (ret);
+      MIKTEX_ASSERT (textRange.afterLast > textRange.first);
+      ret.assign (textRange.first, textRange.afterLast - textRange.first);
     }
-  ret.assign (textRange.first, textRange.afterLast - textRange.first);
   return (ret);
 }
 
 /* _________________________________________________________________________
 
-   Data
+   MyUriData
    _________________________________________________________________________ */
 
-struct Data
+class MyUriData
 {
+public:
   UriParserStateA state;
+
+public:
   UriUriA uri;
 
-  ~Data ()
+public:
+  ~MyUriData ()
   {
     uriFreeUriMembersA (&uri);
   }
 };
 
-#define pData reinterpret_cast<Data*>(this->p)
+#define pData static_cast<MyUriData*>(this->p)
 
 /* _________________________________________________________________________
 
@@ -70,7 +74,6 @@ Uri::Uri ()
    _________________________________________________________________________ */
 
 Uri::Uri (/*[in]*/ const Uri & other)
-  : p (0)
 {
   this->operator= (other);
 }
@@ -81,7 +84,7 @@ Uri::Uri (/*[in]*/ const Uri & other)
    _________________________________________________________________________ */
 
 Uri::Uri (/*[in]*/ const char * lpszUri)
-  : p (new Data)
+  : p (new MyUriData ())
 {
   pData->state.uri = &pData->uri;
   int result = uriParseUriA(&pData->state, lpszUri);
@@ -111,7 +114,6 @@ Uri::~Uri ()
       if (pData != 0)
 	{
 	  delete pData;
-	  p = 0;
 	}
     }
   catch (const exception &)
@@ -128,8 +130,7 @@ Uri::~Uri ()
 Uri &
 Uri::operator= (/*[in]*/ const Uri & other)
 {
-  // todo
-  return (*this);
+  UNIMPLEMENTED ("Uri::operator=");
 }
 
 /* _________________________________________________________________________
