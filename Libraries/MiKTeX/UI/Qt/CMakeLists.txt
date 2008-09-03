@@ -47,9 +47,12 @@ set(${ui_qt_dll_name}_sources
   SiteWizType.h
   StdAfx.cpp
   StdAfx.h
+  UpdateDialog.cpp
+  UpdateDialog.h
   include/miktex/UI/Qt/ErrorDialog.h
   include/miktex/UI/Qt/Prototypes.h
   include/miktex/UI/Qt/SiteWizSheet.h
+  include/miktex/UI/Qt/UpdateDialog.h
   internal.h
   mikuiqt-version.h
   mikuiqt.cpp
@@ -76,6 +79,7 @@ set(${ui_qt_dll_name}_moc_sources
   SiteWizRemote.h
   SiteWizSheet.h
   SiteWizType.h
+  UpdateDialog.h
 )
 
 set(${ui_qt_dll_name}_ui_files
@@ -87,6 +91,7 @@ set(${ui_qt_dll_name}_ui_files
   SiteWizLocal.ui
   SiteWizRemote.ui
   SiteWizType.ui
+  UpdateDialog.ui
 )
 
 qt4_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})
@@ -129,6 +134,8 @@ install(
     include/miktex/UI/Qt/SiteWizSheet.h
     include/miktex/UI/Qt/Prototypes
     include/miktex/UI/Qt/Prototypes.h
+    include/miktex/UI/Qt/UpdateDialog
+    include/miktex/UI/Qt/UpdateDialog.h
   DESTINATION
     ${incdir}/miktex/UI/Qt
 )
