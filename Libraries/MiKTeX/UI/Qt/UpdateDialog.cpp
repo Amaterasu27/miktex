@@ -361,7 +361,7 @@ UpdateDialogImpl::ShowProgress ()
 	  / 1024.0)));
       }
     }
-    MIKTEX_UNLOCK(sharedData);
+    MIKTEX_UNLOCK();
   }
   catch (const MiKTeXException & e)
   {
@@ -403,4 +403,3 @@ UpdateDialogImpl::Cancel ()
       ReportError (e);
     }
 }
-
