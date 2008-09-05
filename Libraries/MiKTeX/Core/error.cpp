@@ -1,6 +1,6 @@
 /* error.cpp: error handling
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -236,10 +236,23 @@ Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
   string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
-      TraceStream::TraceLastCRTError (lpszCrtFunction,
-				      lpszInfo,
-				      lpszSourceFile,
-				      sourceLine);
+      SessionImpl::GetSession()->trace_error->WriteFormattedLine
+	("core",
+	 T_("\
+CRT function %s failed for the following reason:\n\
+%s\n\
+Result: %u\n\
+Info: %s\n\
+Source: %s\n\
+Line: %d"),
+	 lpszCrtFunction,
+	 errorMessage.c_str(),
+	 errorCode,
+	 (lpszInfo == 0
+	  ? ""
+	  : lpszInfo),
+	 lpszSourceFile,
+	 sourceLine);
       programInvocationName =
 	SessionImpl::GetSession()->initInfo.GetProgramInvocationName();
     }

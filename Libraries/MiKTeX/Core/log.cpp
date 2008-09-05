@@ -503,7 +503,7 @@ void
 TraceStream::TraceLastCRTError (/*[in]*/ const char *	lpszCrtFunction,
 				/*[in]*/ const char *	lpszInfo,
 				/*[in]*/ const char *	lpszSourceFile,
-				/*[in]*/ int		lpszSourceLine)
+				/*[in]*/ int		sourceLine)
 {
   int lastError = errno;
   string errorMessage;
@@ -527,7 +527,7 @@ Line: %d"),
       ? ""
       : lpszInfo),
      lpszSourceFile,
-     lpszSourceLine);
+     sourceLine);
 }
 
 /* _________________________________________________________________________
