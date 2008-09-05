@@ -29,7 +29,7 @@ BEGIN_TEST_FUNCTION(1);
 				    FileMode::Open,
 				    FileAccess::Read,
 				    false));
-  FileStream outFile (File::Open("@CMAKE_CURRENT_SOURCE_DIR@/test1.txt",
+  FileStream outFile (File::Open("@CMAKE_CURRENT_BINARY_DIR@/test1.txt",
 				 FileMode::Create,
 				 FileAccess::Write,
 				 false));
