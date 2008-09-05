@@ -17,7 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_executable(core_compression_test1 1.cpp)
+configure_file (1.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/1.cpp)
+
+add_executable(core_compression_test1
+  ${CMAKE_CURRENT_BINARY_DIR}/1.cpp)
 
 merge_trustinfo_manifest(core_compression_test1 asInvoker)
 

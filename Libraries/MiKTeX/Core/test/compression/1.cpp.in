@@ -1,6 +1,6 @@
-/* 1.cpp:
+/* 1.cpp.in:							-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -25,12 +25,11 @@ BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
 {
-  printf ("%d\n", __LINE__);
-  FileStream lzmaFile (File::Open("./test1.txt.lzma",
+  FileStream lzmaFile (File::Open("@CMAKE_CURRENT_SOURCE_DIR@/test1.txt.lzma",
 				    FileMode::Open,
 				    FileAccess::Read,
 				    false));
-  FileStream outFile (File::Open("./test1.txt",
+  FileStream outFile (File::Open("@CMAKE_CURRENT_SOURCE_DIR@/test1.txt",
 				 FileMode::Create,
 				 FileAccess::Write,
 				 false));

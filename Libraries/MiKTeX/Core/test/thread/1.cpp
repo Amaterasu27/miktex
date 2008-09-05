@@ -1,6 +1,6 @@
 /* 1.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -21,17 +21,22 @@
 
 #include <miktex/Core/Test>
 
-#define N 1000
+#define N 1000000
+
+#define RECURSIVE 0
 
 BEGIN_TEST_SCRIPT();
 
-bool stopped;
-
-int n;
-int n1;
-int n2;
-
+MIKTEX_DEFINE_LOCK(started);
+MIKTEX_DEFINE_LOCK(stopped);
 MIKTEX_DEFINE_LOCK(n);
+
+volatile bool started;
+volatile bool stopped;
+
+volatile int n;
+volatile int n1;
+volatile int n2;
 
 BEGIN_TEST_FUNCTION(1);
 {
@@ -43,42 +48,112 @@ END_TEST_FUNCTION();
 void
 Incrementer1 ()
 {
-  while (! stopped)
+  for (;;)
     {
-      MIKTEX_LOCK(n)
+      MIKTEX_LOCK(started)
 	{
-	  if (n == N)
+	  if (started)
 	    {
-	      return;
+	      break;
 	    }
-	  ++ n;
-	  ++ n1;
 	}
       MIKTEX_UNLOCK();
       MiKTeX::Core::Thread::Sleep (0);
+    }
+  for (;;)
+    {
+      MIKTEX_LOCK(stopped)
+	{
+	  if (stopped)
+	    {
+	      break;
+	    }
+	}
+      MIKTEX_UNLOCK();
+      unsigned wait = 0;
+      MIKTEX_LOCK(n)
+	{
+#if RECURSIVE
+	  MIKTEX_LOCK(n)
+	    {
+	      MIKTEX_LOCK(n)
+		{
+#endif
+		  if (n == N)
+		    {
+		      return;
+		    }
+		  ++ n;
+		  ++ n1;
+		  if (n % 7 == 0)
+		    {
+		      wait = 1;
+		    }
+#if RECURSIVE
+		}
+	      MIKTEX_UNLOCK();
+	    }
+	  MIKTEX_UNLOCK();
+#endif
+	}
+      MIKTEX_UNLOCK();
+      MiKTeX::Core::Thread::Sleep (wait);
     }
 }
 
 void
 Incrementer2()
 {
-  while (! stopped)
+  for (;;)
     {
-      MIKTEX_LOCK(n)
+      MIKTEX_LOCK(started)
 	{
-	  MIKTEX_LOCK(n)
+	  if (started)
 	    {
-	      if (n == N)
-		{
-		  return;
-		}
-	      ++ n;
-	      ++ n2;
+	      break;
 	    }
-	  MIKTEX_UNLOCK();
 	}
       MIKTEX_UNLOCK();
       MiKTeX::Core::Thread::Sleep (0);
+    }
+  for (;;)
+    {
+      MIKTEX_LOCK(stopped)
+	{
+	  if (stopped)
+	    {
+	      break;
+	    }
+	}
+      MIKTEX_UNLOCK();
+      unsigned wait = 0;
+      MIKTEX_LOCK(n)
+	{
+#if RECURSIVE
+	  MIKTEX_LOCK(n)
+	    {
+	      MIKTEX_LOCK(n)
+		{
+#endif
+		  if (n == N)
+		    {
+		      return;
+		    }
+		  ++ n;
+		  ++ n2;
+		  if (n % 7 == 0)
+		    {
+		      wait = 1;
+		    }
+#if RECURSIVE
+		}
+	      MIKTEX_UNLOCK();
+	    }
+	  MIKTEX_UNLOCK();
+#endif
+	}
+      MIKTEX_UNLOCK();
+      MiKTeX::Core::Thread::Sleep (wait);
     }
 }
 
@@ -132,16 +207,23 @@ ThreadFunc2 (/*[in]*/ void * p)
 
 BEGIN_TEST_PROGRAM();
 {
+  started = false;
   stopped = false;
   n = 0;
   n1 = 0;
   n2 = 0;
 
-  std::auto_ptr<MiKTeX::Core::Thread> thread1 (MiKTeX::Core::Thread::Start(ThreadFunc1,
-							       this));
+  std::auto_ptr<MiKTeX::Core::Thread> thread1
+    (MiKTeX::Core::Thread::Start(ThreadFunc1, this));
 					 
-  std::auto_ptr<MiKTeX::Core::Thread> thread2 (MiKTeX::Core::Thread::Start(ThreadFunc2,
-							       this));
+  std::auto_ptr<MiKTeX::Core::Thread> thread2
+    (MiKTeX::Core::Thread::Start(ThreadFunc2, this));
+
+  MIKTEX_LOCK(started)
+    {
+      started = true;
+    }
+  MIKTEX_UNLOCK();
 
   thread1->Join ();
   thread2->Join ();
@@ -155,3 +237,4 @@ END_TEST_PROGRAM();
 END_TEST_SCRIPT();
 
 RUN_TEST_SCRIPT ();
+
