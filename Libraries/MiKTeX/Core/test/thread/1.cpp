@@ -20,6 +20,7 @@
    02111-1307, USA. */
 
 #include <miktex/Core/Test>
+#include <memory>
 
 #define N 1000000
 
