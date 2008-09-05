@@ -40,8 +40,8 @@
 #define A089FEF06254514BA063DED44B70E66F_
 
 #include <miktex/Core/First>
-
 #include <miktex/Core/Definitions>
+#include <miktex/Core/config.h>
 
 #if defined(MIKTEX_WINDOWS)
 #  include <windows.h>

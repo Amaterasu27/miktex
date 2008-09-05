@@ -33,6 +33,11 @@ configure_file(
 )
 
 configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/config.h.cmake
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/config.h
+)
+
+configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
@@ -62,6 +67,7 @@ set(${core_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/config.h
   CommandLine.cpp
   FileStream.cpp
   FormatInfo.cpp
@@ -302,8 +308,10 @@ install(TARGETS ${core_dll_name}
 
 install(
   FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
     ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
     ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/config.h
     include/miktex/Core/Core
     include/miktex/Core/Core.h
     include/miktex/Core/Debug
