@@ -14,7 +14,8 @@ FIRST THINGS FIRST
   - initexmf: MiKTeX Configuration Utility
   - md5walk: calculates directory tree fingerprints
   - mpc: MiKTeX Package Creator
-  - mpm: MiKTeX Package Manager
+  - mpm: MiKTeX Package Manager (console application)
+  - mpm_qt: MiKTeX Package Manager (GUI application)
   - mthelp: MiKTeX Help Utility
 
 For more information about the MiKTeX project, visit the project page
@@ -29,6 +30,9 @@ MiKTeX is mostly written in C++.  It should work with any
 ANSI-compliant C++ compiler.
 
 CMake 2.4.6 (or newer) is required for building and installing MiKTeX.
+
+Qt 4.4.0 (or newer) is required, if you intend to build GUI applications
+(e.g., the package manager).
 
 Lynx (text-based web browser) and xsltproc (XSLT processor) are
 required for building the reference pages.
