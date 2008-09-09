@@ -561,6 +561,7 @@
 #define MIKTEX_UNINSTALL_LOG "uninst.log"
 #define MIKTEX_UPDATE_DAT "update.dat"
 #define MIKTEX_MPM_MFC_EXE "mpm_mfc" MIKTEX_EXE_FILE_SUFFIX
+#define MIKTEX_MPM_MFC_QT "mpm_qt" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MPM_EXE "mpm" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAIN_HELP_FILE "miktex.chm"
 #define MIKTEX_FAQ_HELP_FILE "faq.chm"

@@ -26,28 +26,29 @@ at
 PREREQUISITES
 -------------
 
-MiKTeX is mostly written in C++.  It should work with any
-ANSI-compliant C++ compiler.
+[ ] MiKTeX is mostly written in C++.  It should work with any
+    ANSI-compliant C++ compiler.
 
-CMake 2.4.6 (or newer) is required for building and installing MiKTeX.
+[ ] CMake 2.4.6 (or newer) is required for building and installing
+    MiKTeX.
 
-Qt 4.4.0 (or newer) is required, if you intend to build GUI applications
-(e.g., the package manager).
+[ ] Qt 4.4.0 (or newer) is required, if you intend to build GUI
+    applications (e.g., the GUI variant of the package manager).
 
-Lynx (text-based web browser) and xsltproc (XSLT processor) are
-required for building the reference pages.
+[ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are
+    required for building the reference pages.
 
-The package depends on the availability of pthreads libraries and
-header files.
+[ ] MiKTeX depends on the availability of pthreads libraries and header
+    files.
 
-It is required that libCURL (curl-devel package) is installed and
-usable, i.e.,
+[ ] It is required that libCURL (curl-devel package) is installed and
+    usable, i.e.,
 
-    curl-config --version
+        curl-config --version
 
-should output a line similar to this:
+    should output a line similar to this:
 
-    libcurl 7.18.2
+        libcurl 7.18.2
 
 
 COMPILING THE PACKAGE
@@ -66,7 +67,7 @@ installation directory, run CMake like this:
 
     cmake -G "Unix Makefiles" -DMIKTEX_INSTALLROOT=/home/users/me/texmf
 
-Run the make utility to compile MiKTeX Tools:
+Run the make utility to compile MiKTeX:
 
     make
 
@@ -95,6 +96,8 @@ MiKTeX users.  But the program can be helpful for users of other TeX
 systems too, because many of the MiKTeX packages are
 system-independent.
 
+There are two variants of the package manager: console and GUI.
+
 First of all you should install the package database files on your
 system.  To do this, run
 
@@ -102,6 +105,17 @@ system.  To do this, run
 
 This command retrieves the package database files from a remote
 package repository and installs them in the installation directory.
+
+You are now ready to browse and install packages. Run
+
+    mpm
+
+to start the GUI variant of the package manager. You will be presented
+with a list of packages.
+
+The rest of this section describes the console variant of the package
+manager.
+
 To list the contents of the just installed package database, run
 
     mpm --list
@@ -135,9 +149,6 @@ mthelp.1.
 BUGS & ISSUES
 -------------
 
-Cygwin users: g++ 3.4.4 produces non-working executables; please use
-g++ 3.3.3 instead.
-
 Please visit the MiKTeX project page (www.miktex.org), if you find it
-difficult to install/use the package.  You will find references to
+difficult to install/use the MiKTeX.  You will find references to
 online forums, mailing lists and issue trackers.

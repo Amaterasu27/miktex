@@ -1,0 +1,4 @@
+Read README.unx, if you want to build for a Unix system-alike (GNU
+Linux, Mac OS, Solaris, ...).
+
+Read README.win, if you want to build for a Microsoft Windows system.

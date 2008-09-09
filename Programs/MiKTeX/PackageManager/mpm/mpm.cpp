@@ -291,11 +291,9 @@ private:
   void
   PrintPackageInfo (/*[in]*/ const string & deploymentName);
 
-#if defined(MIKTEX_WINDOWS)
 private:
   void
   RestartWindowed ();
-#endif
 
 private:
   void
@@ -1381,44 +1379,33 @@ Application::PrintPackageInfo (/*[in]*/ const string & deploymentName)
    Application::RestartWindowed
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_WINDOWS)
 void
 Application::RestartWindowed ()
 {
   Verbose (T_("Restarting in windowed mode...\n"));
 
-  // locate mpm.exe
-  PathName mpm;
+  PathName mpmgui;
+
+#if defined(MIKTEX_ATLMFC)
+  // locate mpm_mfc
   if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_MFC_EXE,
 				       FileType::EXE,
-				       mpm))
+				       mpmgui))
     {
       Error (T_("Could not restart in windowed mode."));
     }
-
-  // start mpm.exe
-  PROCESS_INFORMATION processInformation;
-  STARTUPINFO startupInformation;
-  ZeroMemory (&startupInformation, sizeof(startupInformation));
-  BOOL done =
-    CreateProcess(0,
-		  mpm.GetBuffer(),
-		  0,
-		  0,
-		  TRUE,
-		  0,
-		  0,
-		  0,
-		  &startupInformation,
-		  &processInformation);
-  CloseHandle (processInformation.hThread);
-  CloseHandle (processInformation.hProcess);
-  if (! done)
+#else
+  // locate mpm_qt
+  if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_QT_EXE,
+				       FileType::EXE,
+				       mpmgui))
     {
       Error (T_("Could not restart in windowed mode."));
     }
-}
 #endif
+
+  Process::Start (mpmgui);
+}
 
 /* _________________________________________________________________________
 
@@ -1890,12 +1877,10 @@ with --unregister-components."));
       restartWindowed = false;
     }
   
-#if ! STANDALONE
   if (restartWindowed)
     {
       RestartWindowed ();
     }
-#endif
   
   pPackageManager.Release ();
   pSession.Reset ();

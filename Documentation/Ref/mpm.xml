@@ -36,7 +36,7 @@ because many of the &MiKTeX; packages are system-independent.</para>
 
 <refsect1>
 
-<title>Windows specific</title>
+<title>Two variants</title>
 
 <para>The package manager can be run in two modes:</para>
 <variablelist>
