@@ -32,8 +32,9 @@ PREREQUISITES
 [ ] CMake 2.4.6 (or newer) is required for building and installing
     MiKTeX.
 
-[ ] Qt 4.4.0 (or newer) is required, if you intend to build GUI
-    applications (e.g., the GUI variant of the package manager).
+[ ] The Qt development kit (version 4.4.0 or newer) is required, if
+    you intend to build GUI applications (e.g., the GUI variant of the
+    package manager). A common name for this package is libqt4-devel.
 
 [ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are
     required for building the reference pages.
@@ -41,15 +42,8 @@ PREREQUISITES
 [ ] MiKTeX depends on the availability of pthreads libraries and header
     files.
 
-[ ] It is required that libCURL (curl-devel package) is installed and
-    usable, i.e.,
-
-        curl-config --version
-
-    should output a line similar to this:
-
-        libcurl 7.18.2
-
+[ ] libCURL libraries and header files. A common name for this package
+    is libcurl-devel.
 
 COMPILING THE PACKAGE
 ---------------------
@@ -59,9 +53,9 @@ Run CMake to produce the makefiles customized for your system:
     cmake -G "Unix Makefiles"
 
 The CMake script uses kpsewhich(1) (if available) to find existing
-TEXMF trees.  The MiKTeX package manager (MPM) will install packages
-in the local TEXMF tree ($TEXMFLOCAL).  You can explicitly specify
-your prefered installation directory by setting the CMake variable
+TEXMF trees.  The MiKTeX package manager will install packages in the
+local TEXMF tree ($TEXMFLOCAL).  You can explicitly specify your
+prefered installation directory by setting the CMake variable
 MIKTEX_INSTALLROOT.  For example, to make your home TEXMF the
 installation directory, run CMake like this:
 
@@ -96,8 +90,6 @@ MiKTeX users.  But the program can be helpful for users of other TeX
 systems too, because many of the MiKTeX packages are
 system-independent.
 
-There are two variants of the package manager: console and GUI.
-
 First of all you should install the package database files on your
 system.  To do this, run
 
@@ -106,7 +98,8 @@ system.  To do this, run
 This command retrieves the package database files from a remote
 package repository and installs them in the installation directory.
 
-You are now ready to browse and install packages. Run
+You are now ready to browse and install packages.  There are two
+variants of the package manager: console and GUI. Run
 
     mpm
 

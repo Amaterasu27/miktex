@@ -1490,7 +1490,7 @@ public:
   PathName
   GetRelativeFilenameDatabasePathName (/*[in]*/  unsigned r);
 
-#if defined(MIKTEX_ATLMFC) && ! defined(MIKTEX_STATIC)
+#if defined(HAVE_ATLBASE_H) && ! defined(MIKTEX_STATIC)
 public:
   static
   BOOL

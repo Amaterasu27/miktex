@@ -25,6 +25,7 @@
 
 #include "core-version.h"
 #include "Resource.h"
+#include "config.h"
 
 #define VER_INTERNALNAME_STR "${core_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${core_dll_name}.dll"
@@ -33,7 +34,7 @@
 
 #define VER_FILETYPE VFT_DLL
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(HAVE_ATLBASE_H)
 IDR_MIKTEXSESSIONMODULE REGISTRY "COM/session.rgs"
 IDR_MIKTEXSESSIONOBJECT REGISTRY "COM/comSession.rgs"
 #endif
@@ -43,7 +44,7 @@ BEGIN
     IDS_PROJNAME "MiKTeX Session"
 END
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(HAVE_ATLBASE_H)
 1 TYPELIB "${session_tlb_name}.tlb"
 #endif
 

@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -19,6 +19,7 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
+#cmakedefine HAVE_ATLBASE_H
 #cmakedefine HAVE_DIRENT_H 1
 #cmakedefine HAVE_INTTYPES_H 1
 #cmakedefine HAVE_SYS_MMAN_H 1

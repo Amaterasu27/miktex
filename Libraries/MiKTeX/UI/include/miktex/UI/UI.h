@@ -36,6 +36,14 @@
 
 #include <miktex/Core/Registry>
 
+namespace MiKTeX
+{
+  namespace Packages
+  {
+    class PackageManager;
+  }
+};
+
 #define MIKUI_BEGIN_NAMESPACE			\
   namespace MiKTeX {				\
     namespace UI {				

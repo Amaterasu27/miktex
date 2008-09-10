@@ -24,7 +24,7 @@
 #endif
 
 #if defined(HAVE_CONFIG_H)
-#  include <config.h>
+#  include "config.h"
 #endif
 
 #include "mpm-version.h"
@@ -43,7 +43,7 @@
 #  include <Sddl.h>
 #endif
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(HAVE_ATLBASE_H)
 #  define _ATL_FREE_THREADED
 #  define _ATL_NO_AUTOMATIC_NAMESPACE
 #  define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS

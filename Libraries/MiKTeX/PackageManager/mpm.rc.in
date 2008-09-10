@@ -21,6 +21,7 @@
 
 #include "mpm-version.h"
 #include "Resource.h"
+#include "config.h"
 
 #define VER_INTERNALNAME_STR "${mpm_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${mpm_dll_name}.dll"
@@ -29,7 +30,7 @@
 
 #define VER_FILETYPE VFT_DLL
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(HAVE_ATLBASE_H)
 IDR_MIKTEXPACKAGEMANAGER REGISTRY "COM/mpm.rgs"
 IDR_PACKAGEMANAGER       REGISTRY "COM/comPackageManager.rgs"
 #endif
@@ -39,7 +40,7 @@ BEGIN
     IDS_PROJNAME "MiKTeX Package Manager"
 END
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(HAVE_ATLBASE_H)
 1 TYPELIB "${mpm_tlb_name}.tlb"
 #endif
 
