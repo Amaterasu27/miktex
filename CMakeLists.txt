@@ -20,7 +20,7 @@
 set(CMAKE_COLOR_MAKEFILE FALSE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
-cmake_minimum_required(VERSION 2.4.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
@@ -40,11 +40,18 @@ project(miktex)
 
 enable_testing()
 
+## user options
+option(
+  WITH_MPC
+  "Build mpc (MiKTeX Package Composer)?"
+  ${NATIVE_WINDOWS}
+)
+
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
 set(LIBRARY_OUTPUT_PATH "${outdir}")
 
-## autotools compability names
+## autotools compatibility names
 set(PACKAGE_NAME ${PRODUCT_NAME})
 set(top_srcdir "${CMAKE_SOURCE_DIR}")
 
@@ -894,7 +901,9 @@ add_subdirectory(${rel_md5walk_dir})
 
 add_subdirectory(${rel_mthelp_dir})
 
-add_subdirectory(${rel_mpc_dir})
+if(WITH_MPC)
+  add_subdirectory(${rel_mpc_dir})
+endif(WITH_MPC)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_padout_dir})
