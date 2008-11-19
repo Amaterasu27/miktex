@@ -14,7 +14,7 @@ trie_op_size=35111
 
 ;; Space for hyphenation patterns; should be larger for
 ;; INITEX than it is in production versions of TeX.
-trie_size=300000
+trie_size=700000
 
 ;; Maximum internal font number; must not exceed 5000.
 font_max=2000
