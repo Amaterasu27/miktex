@@ -6,16 +6,16 @@ max_in_open=50
 nest_size=500
 
 ;; Space for saving values outside current group.
-save_size=5000
+save_size=50000
 
 ;; Space for hyphenation patterns.
-trie_size=300000
+trie_size=700000
 
 ;; Total number of fonts.
-font_max=2000
+font_max=5000
 
 ;; Words of font info for TeX (total size of all TFM files, approximately).
-font_mem_size=1200000
+font_mem_size=3000000
 
 ;; prime number of hyphenation exceptions.
 hyph_size=8191
