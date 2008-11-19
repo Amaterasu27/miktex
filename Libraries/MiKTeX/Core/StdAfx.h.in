@@ -37,6 +37,7 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
+#  define _WIN32_DCOM
 #  include <windows.h>
 #  include <Sddl.h>
 #  include <aclapi.h>
@@ -56,6 +57,7 @@
 #  include <atlbase.h>
 #  include <ATLComTime.h>
 #  include <atlcom.h>
+#  include <objidl.h>
 using namespace ATL;
 #endif
 
