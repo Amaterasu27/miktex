@@ -1661,14 +1661,14 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
    RegisterUninstaller
    _________________________________________________________________________ */
 
-#define UNINST_HELP_LINK "http://miktex.org/Support.aspx"
+#define UNINST_HELP_LINK "http://miktex.org/support"
 #define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
 #define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
 #define UNINST_DISPLAY_STRING				\
   (theApp.setupTask == SetupTask::PrepareMiKTeXDirect	\
    ? UNINST_DISPLAY_NAME_MIKTEXDIRECT			\
    : UNINST_DISPLAY_NAME)
-#define UNINST_ABOUT_URL "http://miktex.org/About.aspx"
+#define UNINST_ABOUT_URL "http://miktex.org/about"
 #define UNINST_UPDATE_URL "http://miktex.org"
 #define UNINST_COMMENT T_("Uninstall MiKTeX")
 #define UNINST_README MIKTEX_URL_WWW_KNOWN_ISSUES

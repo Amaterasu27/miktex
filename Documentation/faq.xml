@@ -133,7 +133,7 @@ url="http://www.debian.org/social_contract#guidelines">Debian Free
 Software Guidelines</ulink>.  This means that &MiKTeX; may be freely
 used, copied, modified, and redistributed.</para>
 <para>Please visit <ulink
-url="http://miktex.org/Copying.aspx">this page</ulink>,
+url="http://miktex.org/copying">this page</ulink>,
 for more information</para>
 </answer>
 </qandaentry>
@@ -259,7 +259,7 @@ directory <filename>systems/win32/miktex</filename>.</para>
 <qandaentry>
 <question><para>How do I get support?</para></question>
 <answer>
-<para>Please visit <ulink url="http://www.miktex.org/Support.aspx"></ulink>,
+<para>Please visit <ulink url="http://www.miktex.org/support"></ulink>,
 for an overview of available support options.</para>
 </answer>
 </qandaentry>
@@ -354,7 +354,7 @@ steps (see <xref linkend="editing"/>).</para>
 </question>
 <answer>
 <para>Links to recommendable freeware &TeX; shells (editors) can be found
-on <ulink url="http://miktex.org/Links.aspx">this page</ulink>.</para>
+on <ulink url="http://miktex.org/links">this page</ulink>.</para>
 </answer>
 </qandaentry>
 
