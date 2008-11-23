@@ -639,6 +639,10 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cfg_dir})
 endif(BUILDING_MIKTEX)
 
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_touch_dir})
+endif(BUILDING_MIKTEX)
+
 add_subdirectory(${rel_extractor_dir})
 
 if(NATIVE_WINDOWS)
