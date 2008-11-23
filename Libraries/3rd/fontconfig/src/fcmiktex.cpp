@@ -41,8 +41,14 @@ miktex_fontconfig_path ()
 	}
       return (path.Get());
     }
-  catch (const exception &)
+  catch (const MiKTeXException & e)
     {
+      Utils::PrintException (e);
+      exit (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
       exit (1);
     }
 }
@@ -61,8 +67,14 @@ miktex_fc_cachedir()
 	}
       return (path.Get());
     }
-  catch (const exception &)
+  catch (const MiKTeXException & e)
     {
+      Utils::PrintException (e);
+      exit (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
       exit (1);
     }
 }
@@ -87,8 +99,14 @@ miktex_fc_default_fonts ()
 	}
       return (path.Get());
     }
-  catch (const exception &)
+  catch (const MiKTeXException & e)
     {
+      Utils::PrintException (e);
+      exit (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
       exit (1);
     }
 }
@@ -121,8 +139,14 @@ miktex_get_fontconfig_config_dirs (/*[in,out]*/ char **	pPaths,
 	}
       return (static_cast<int>(nConfigDirs));
     }
-  catch (const exception &)
+  catch (const MiKTeXException & e)
     {
+      Utils::PrintException (e);
+      exit (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
       exit (1);
     }
 }
@@ -141,7 +165,8 @@ miktex_close_cache_file (/*[in]*/ int		fd,
 		      dirWriteTime);
       time_t cache_mtime = time(0);
       static set<time_t> modificationTimes;
-      if (cache_mtime < dirWriteTime)
+      if (dirWriteTime != static_cast<time_t>(-1)
+	  && cache_mtime < dirWriteTime)
 	{
 	  cache_mtime = dirWriteTime;
 	}
@@ -154,8 +179,14 @@ miktex_close_cache_file (/*[in]*/ int		fd,
       modificationTimes.insert (cache_mtime);
       _close (fd);
     }
-  catch (const exception &)
+  catch (const MiKTeXException & e)
     {
+      Utils::PrintException (e);
+      exit (1);
+    }
+  catch (const exception & e)
+    {
+      Utils::PrintException (e);
       exit (1);
     }
 }
