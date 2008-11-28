@@ -3856,6 +3856,15 @@ public:
   static
   MIKTEXCORECEEAPI(bool)
   Exists (/*[in]*/ const PathName &	path);
+
+  /// Set directory time-stamps.
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  SetTimes (/*[in]*/ const PathName &		path,
+	    /*[in]*/ time_t			creationTime,
+	    /*[in]*/ time_t			lastAccessTime,
+	    /*[in]*/ time_t			lastWriteTime);
 };
 
 /* _________________________________________________________________________

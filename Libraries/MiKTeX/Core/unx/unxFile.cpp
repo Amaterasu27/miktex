@@ -1,6 +1,6 @@
 /* unxFile.cpp: file operations
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -316,6 +316,20 @@ File::SetTimes (/*[in]*/ const PathName &	path,
     {
       FATAL_CRT_ERROR ("utimes", path.Get());
     }
+}
+
+/* _________________________________________________________________________
+
+   Directory::SetTimes
+   _________________________________________________________________________ */
+
+void
+Directory::SetTimes (/*[in]*/ const PathName &	path,
+		     /*[in]*/ time_t		creationTime,
+		     /*[in]*/ time_t		lastAccessTime,
+		     /*[in]*/ time_t		lastWriteTime)
+{
+  File::SetTimes (path, creationTime, lastAccessTime, lastWriteTime);
 }
 
 /* _________________________________________________________________________

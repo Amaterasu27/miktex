@@ -284,120 +284,100 @@ File::GetSize (/*[in]*/ const PathName &	path)
 
 /* _________________________________________________________________________
 
-   LocalTime
+   UniversalCrtTimeToFileTime
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(struct tm)
-LocalTime (/*[in]*/ time_t			time)
-{
-  struct tm timeStruct;
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_localtime64_s(&timeStruct, &time) != 0)
-    {
-      FATAL_CRT_ERROR ("_localtime64_s", 0);
-    }
-#else
-  struct tm * pTm = localtime(&time);
-  if (pTm == 0)
-    {
-      FATAL_CRT_ERROR ("localtime", 0);
-    }
-  timeStruct = *pTm;
-#endif
-  return (timeStruct);
-}
+/*
+ * Number of 100 nanosecond units from 1/1/1601 to 1/1/1970
+ */
+const LONGLONG EPOCH_BIAS = 116444736000000000;
 
-/* _________________________________________________________________________
 
-   CrtTimeToSystemTime
-   _________________________________________________________________________ */
+// 1601-01-01 00:00:00 as Unx time
+const LONGLONG MIN_TIME_T = -11644473600;
 
-MIKTEXSTATICFUNC(SYSTEMTIME)
-CrtTimeToSystemTime (/*[in]*/ time_t	time)
-{
-  struct tm timeStruct = LocalTime(time);
-  SYSTEMTIME systemTime;
-  systemTime.wYear = static_cast<WORD>(timeStruct.tm_year + 1900);
-  systemTime.wMonth = static_cast<WORD>(timeStruct.tm_mon + 1);
-  systemTime.wDay = static_cast<WORD>(timeStruct.tm_mday);
-  systemTime.wHour = static_cast<WORD>(timeStruct.tm_hour);
-  systemTime.wMinute = static_cast<WORD>(timeStruct.tm_min);
-  systemTime.wSecond = static_cast<WORD>(timeStruct.tm_sec);
-  systemTime.wMilliseconds = 0;
-  return (systemTime);
-}
-
-/* _________________________________________________________________________
-
-   SystemTimeToCrtTime
-   _________________________________________________________________________ */
-
-MIKTEXSTATICFUNC(time_t)
-SystemTimeToCrtTime (/*[in]*/ const SYSTEMTIME &	systemTime)
-{
-  struct tm timeStruct;
-  timeStruct.tm_year = systemTime.wYear - 1900;
-  timeStruct.tm_mon = systemTime.wMonth - 1;
-  timeStruct.tm_mday = systemTime.wDay;
-  timeStruct.tm_hour = systemTime.wHour;
-  timeStruct.tm_min = systemTime.wMinute;
-  timeStruct.tm_sec = systemTime.wSecond;
-  timeStruct.tm_isdst = 0;
-  time_t time = mktime(&timeStruct);
-  if (time == static_cast<time_t>(-1))
-    {
-      FATAL_CRT_ERROR ("mktime", 0);
-    }
-  return (time);
-}
-
-/* _________________________________________________________________________
-
-   CrtTimeToFileTime
-   _________________________________________________________________________ */
+// 30827-12-31 23:59:59 as Unx time
+const LONGLONG MAX_TIME_T = 910670515199;
 
 MIKTEXSTATICFUNC(FILETIME)
-CrtTimeToFileTime (/*[in]*/ time_t	time)
+UniversalCrtTimeToFileTime (/*[in]*/ time_t time)
 {
-  SYSTEMTIME systemTime = CrtTimeToSystemTime(time);
-  FILETIME localFileTime;
-  if (! SystemTimeToFileTime(&systemTime, &localFileTime))
-    {
-      FATAL_WINDOWS_ERROR ("SystemTimeToFileTime", 0);
-    }
   FILETIME fileTime;
-  if (! LocalFileTimeToFileTime(&localFileTime, &fileTime))
+  if (time == static_cast<time_t>(-1)
+      || time < MIN_TIME_T
+      || time > MAX_TIME_T)
+    
     {
-      FATAL_WINDOWS_ERROR ("LocalFileTimeToFileTime", 0);
+      fileTime.dwLowDateTime = 0;
+      fileTime.dwHighDateTime = 0;
+    }
+  else
+    {
+      LONGLONG ll = static_cast<LONGLONG>(time) * 10000000 + EPOCH_BIAS;
+      fileTime.dwLowDateTime = static_cast<DWORD>(ll);
+      fileTime.dwHighDateTime = ll >> 32;
     }
   return (fileTime);
 }
 
 /* _________________________________________________________________________
 
-   FileTimeToCrtTime
+   FileTimeToUniversalCrtTime
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(time_t)
-FileTimeToCrtTime (/*[in]*/ FILETIME	fileTime)
+FileTimeToUniversalCrtTime (/*[in]*/ FILETIME	fileTime)
 {
   if (fileTime.dwLowDateTime == 0 && fileTime.dwHighDateTime == 0)
     {
       return (static_cast<time_t>(-1));
     }
-  FILETIME localFileTime;
-  if (! FileTimeToLocalFileTime(&fileTime, &localFileTime))
-    {
-      FATAL_WINDOWS_ERROR ("FileTimeToLocalFileTime", 0);
-    }
-  SYSTEMTIME systemTime;
-  if (! FileTimeToSystemTime(&localFileTime, &systemTime))
-    {
-      FATAL_WINDOWS_ERROR ("FileTimeToSystemTime", 0);
-    }
-  return (SystemTimeToCrtTime(systemTime));
+  ULARGE_INTEGER uli;
+  uli.LowPart = fileTime.dwLowDateTime;
+  uli.HighPart = fileTime.dwHighDateTime;
+  return ((uli.QuadPart / 10000000) - EPOCH_BIAS);
 }
 
+/* _________________________________________________________________________
+
+   SetTimesInternal
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(void)
+SetTimesInternal (/*[in]*/ HANDLE		handle,
+		  /*[in]*/ time_t		creationTime,
+		  /*[in]*/ time_t		lastAccessTime,
+		  /*[in]*/ time_t		lastWriteTime)
+{
+  FILETIME creationFileTime;
+  FILETIME lastAccessFileTime;
+  FILETIME lastWriteFileTime;
+  if (creationTime != static_cast<time_t>(-1))
+    {
+      creationFileTime = UniversalCrtTimeToFileTime(creationTime);
+    }
+  if (lastAccessTime != static_cast<time_t>(-1))
+    {
+      lastAccessFileTime = UniversalCrtTimeToFileTime(lastAccessTime);
+    }
+  if (lastWriteTime != static_cast<time_t>(-1))
+    {
+      lastWriteFileTime = UniversalCrtTimeToFileTime(lastWriteTime);
+    }
+  if (! SetFileTime(handle,
+		    (creationTime != static_cast<time_t>(-1)
+		     ? &creationFileTime
+		     : 0),
+		    (lastAccessTime != static_cast<time_t>(-1)
+		     ? &lastAccessFileTime
+		     : 0),
+		    (lastWriteTime != static_cast<time_t>(-1)
+		     ? &lastWriteFileTime
+		     : 0)))
+    {
+      FATAL_WINDOWS_ERROR ("SetFileTime", 0);
+    }
+}
 
 /* _________________________________________________________________________
 
@@ -413,34 +393,10 @@ File::SetTimes (/*[in]*/ int		fd,
 		/*[in]*/ time_t		lastAccessTime,
 		/*[in]*/ time_t		lastWriteTime)
 {
-  FILETIME creationFileTime;
-  FILETIME lastAccessFileTime;
-  FILETIME lastWriteFileTime;
-  if (creationTime != static_cast<time_t>(-1))
-    {
-      creationFileTime = CrtTimeToFileTime(creationTime);
-    }
-  if (lastAccessTime != static_cast<time_t>(-1))
-    {
-      lastAccessFileTime = CrtTimeToFileTime(lastAccessTime);
-    }
-  if (lastWriteTime != static_cast<time_t>(-1))
-    {
-      lastWriteFileTime = CrtTimeToFileTime(lastWriteTime);
-    }
-  if (! SetFileTime(GET_OSFHANDLE(fd),
-		    (creationTime != static_cast<time_t>(-1)
-		     ? &creationFileTime
-		     : 0),
-		    (lastAccessTime != static_cast<time_t>(-1)
-		     ? &lastAccessFileTime
-		     : 0),
-		    (lastWriteTime != static_cast<time_t>(-1)
-		     ? &lastWriteFileTime
-		     : 0)))
-    {
-      FATAL_WINDOWS_ERROR ("SetFileTime", 0);
-    }
+  SetTimesInternal (GET_OSFHANDLE(fd),
+		    creationTime,
+		    lastAccessTime,
+		    lastWriteTime);
 }
 
 /* _________________________________________________________________________
@@ -478,6 +434,33 @@ File::SetTimes (/*[in]*/ const PathName &	path,
 
 /* _________________________________________________________________________
 
+   Directory::SetTimes
+   _________________________________________________________________________ */
+
+void
+Directory::SetTimes (/*[in]*/ const PathName &	path,
+		     /*[in]*/ time_t		creationTime,
+		     /*[in]*/ time_t		lastAccessTime,
+		     /*[in]*/ time_t		lastWriteTime)
+{
+  HANDLE h =
+    CreateFileA(path.Get(),
+		FILE_WRITE_ATTRIBUTES,
+		0,
+		0,
+		OPEN_EXISTING,
+		FILE_FLAG_BACKUP_SEMANTICS,
+		0);
+  if (h == INVALID_HANDLE_VALUE)
+    {
+      FATAL_WINDOWS_ERROR ("CreateFileA", path.Get());
+    }
+  AutoHANDLE autoClose (h);
+  SetTimesInternal (h, creationTime, lastAccessTime, lastWriteTime);
+}
+
+/* _________________________________________________________________________
+
    File::GetTimes
    _________________________________________________________________________ */
 
@@ -497,9 +480,9 @@ File::GetTimes (/*[in]*/ const PathName &	path,
     {
       FATAL_WINDOWS_ERROR ("FindClose", 0);
     }
-  creationTime = FileTimeToCrtTime(findData.ftCreationTime);
-  lastAccessTime = FileTimeToCrtTime(findData.ftLastAccessTime);
-  lastWriteTime = FileTimeToCrtTime(findData.ftLastWriteTime);
+  creationTime = FileTimeToUniversalCrtTime(findData.ftCreationTime);
+  lastAccessTime = FileTimeToUniversalCrtTime(findData.ftLastAccessTime);
+  lastWriteTime = FileTimeToUniversalCrtTime(findData.ftLastWriteTime);
 }
 
 /* _________________________________________________________________________
