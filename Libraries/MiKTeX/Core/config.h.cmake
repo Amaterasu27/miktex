@@ -31,8 +31,11 @@
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_UTIME_H 1
 
+#cmakedefine HAVE_CHOWN 1
+#cmakedefine HAVE_CONFSTR 1
 #cmakedefine HAVE_FORK 1
 #cmakedefine HAVE_MMAP 1
+#cmakedefine HAVE_STATVFS 1
 #cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_VFORK 1
 
