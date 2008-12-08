@@ -25,6 +25,7 @@ use_static_libraries()
 
 set(${core_lib_name}_sources
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/StdAfx.h
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.h
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Paths.h
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/CommandLine.cpp
@@ -55,7 +56,6 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Environment.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/First.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Help.h
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/IntegerTypes.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Registry.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Test.h
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Text.h
