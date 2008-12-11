@@ -2174,7 +2174,7 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       // create the .tar file
       command = "tar --force-local -cf ";
       command += tarFile.ToString();
-#if defined(MIKTEX_WINDOWS)
+#if defined(MIKTEX_WINDOWS) && 0
       command += " --files-from=nul";
 #else
       command += " --files-from=/dev/null";
