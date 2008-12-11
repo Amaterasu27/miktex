@@ -185,7 +185,6 @@ set(required_programs
   lynx
   perl
   sed
-  touch
   xsltproc
 )
 

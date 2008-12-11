@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,7 +34,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
 		${CMAKE_CURRENT_BINARY_DIR}/tangle.pool
   COMMAND
-	${TOUCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+	${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
