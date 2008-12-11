@@ -97,7 +97,7 @@ foreach(i ${main_ini_files})
 		>> ${ininame}
     COMMAND ${CAT_EXE} footer.txt
 		>> ${ininame}
-    COMMAND ${CP_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body tmp
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body tmp
     COMMAND ${cfg_exe} tmp
 		>> ${ininame}
     COMMAND ${DOS2UNIX_EXE} ${ininame}

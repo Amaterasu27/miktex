@@ -23,7 +23,7 @@ macro(create_cpp_from_c)
     set(_cpp ${_n}.cpp)
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
-      COMMAND ${CP_EXE}
+      COMMAND ${CMAKE_COMMAND} -E copy
 	${_c}
 	${CMAKE_CURRENT_BINARY_DIR}/${_cpp}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

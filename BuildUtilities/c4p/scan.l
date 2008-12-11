@@ -29,7 +29,7 @@
 #include "gram.h"
 
 extern YYSTYPE yylval;
-long yylineno = 1;
+/*long yylineno = 1;*/
 
 namespace {
   int last_tok;

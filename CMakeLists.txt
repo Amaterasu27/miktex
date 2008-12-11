@@ -22,6 +22,8 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
+project(miktex)
+
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
 else(WIN32 AND NOT CYGWIN)
@@ -35,8 +37,6 @@ else(NATIVE_WINDOWS)
   set(PRODUCT_NAME "MiKTeX Tools")
   set(BUILDING_MIKTEX_TOOLS TRUE)
 endif(NATIVE_WINDOWS)
-
-project(miktex)
 
 enable_testing()
 
@@ -181,7 +181,6 @@ endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
 
 set(required_programs
   cat
-  cp
   date
   lynx
   perl

@@ -250,7 +250,7 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
    Constants
    _________________________________________________________________________ */
 
-const unsigned PAGESIZE = 0x1000;
+const unsigned FNDB_PAGESIZE = 0x1000;
 
 #define TEXMF_PLACEHOLDER "%R"
 

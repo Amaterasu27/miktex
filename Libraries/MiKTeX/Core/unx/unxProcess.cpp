@@ -707,7 +707,7 @@ FindSystemShell ()
     {
       FATAL_CRT_ERROR ("confstr", 0);
     }
-  CharBuffer pathList (n);
+  CharBuffer<char> pathList (n);
   n = confstr(_CS_PATH, pathList.GetBuffer(), n);
   if (n == 0)
     {

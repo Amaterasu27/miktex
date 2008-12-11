@@ -164,7 +164,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		-f ${_sed_script}
 		${${_short_name_l}_header_file}
 		> tmp
-    COMMAND ${CP_EXE} tmp ${${_short_name_l}_header_file}
+    COMMAND ${CMAKE_COMMAND} -E copy tmp ${${_short_name_l}_header_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
     VERBATIM
