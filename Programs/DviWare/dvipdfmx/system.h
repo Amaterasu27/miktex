@@ -27,7 +27,6 @@
 
 #ifdef MIKTEX
 #include <miktex/Core/Core>
-#include "gnu-miktex.h"
 #include <miktex/KPSE/Emulation>
 #else
 #include <kpathsea/c-auto.h>

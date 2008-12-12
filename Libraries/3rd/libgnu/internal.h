@@ -1,6 +1,6 @@
 /* internal.h: internal stuff					-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX GNU Library (gnu.dll).
 
@@ -36,6 +36,3 @@
 #else
 #  define GNUDLLAPI(type) type
 #endif
-
-#define MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__
-#include "gnu-miktex.h"

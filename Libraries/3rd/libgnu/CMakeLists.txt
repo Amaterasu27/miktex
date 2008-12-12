@@ -20,7 +20,6 @@
 set(${gnu_dll_name}_sources
   getopt.c
   getopt1.c
-  substring.c
 )
 
 set(${regex_dll_name}_sources

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #if defined(MIKTEX)
 #define NO_C4P
 #include <miktex/Core/Core>
-#include <gnu-miktex.h>
 #include <miktex/KPSE/Emulation>
 #include <stdio.h>
 #include <stdlib.h>

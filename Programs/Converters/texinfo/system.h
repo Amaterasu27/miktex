@@ -27,15 +27,10 @@
 
 #ifdef MIKTEX
 #include <miktex/Core/Core>
-#include <gnu-miktex.h>
 #define FLOAT HIDE_FLOAT
 #define S_ISDIR(x) ((x)&_S_IFDIR) 
-#else
-/* MiKTeX defines substring() in a separate DLL, where it has its
-   own __declspec declaration.  We don't want to try to duplicate 
-   this Microsoft-ism here.  */
-extern char *substring (const char *, const char *);
 #endif
+extern char *substring (const char *, const char *);
 
 /* We follow the order of header inclusion from Autoconf's
    ac_includes_default, more or less.  */

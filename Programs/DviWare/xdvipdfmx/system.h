@@ -27,7 +27,6 @@
 
 #if defined(MIKTEX)
 #  include <miktex/Core/Core>
-#  include "gnu-miktex.h"
 #  include <miktex/KPSE/Emulation>
 #endif
 

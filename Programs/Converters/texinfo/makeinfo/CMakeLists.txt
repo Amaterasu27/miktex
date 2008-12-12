@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,7 @@ add_definitions(
 
 set(makeinfo_sources
   ${CMAKE_SOURCE_DIR}/${rel_texinfo_dir}/config.h
+  ${CMAKE_SOURCE_DIR}/${rel_texinfo_dir}/lib/substring.c
   ${CMAKE_SOURCE_DIR}/${rel_texinfo_dir}/system.h
   ${wrapper_cpp}
   cmds.c

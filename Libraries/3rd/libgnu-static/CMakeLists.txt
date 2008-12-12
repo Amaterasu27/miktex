@@ -23,7 +23,6 @@ use_static_libraries()
 set(${gnu_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt.c
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt1.c
-  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/substring.c
 )
 
 set(${regex_lib_name}_sources

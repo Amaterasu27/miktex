@@ -28,8 +28,6 @@
 #include <miktex/Core/Core>
 #include <miktex/Core/Version>
 
-#include <gnu-miktex.h>
-
 #include <miktex/C4P/C4P>
 
 #include <string>
