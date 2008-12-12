@@ -119,7 +119,6 @@ typedef	int	bool;
 #endif
 #if defined(MIKTEX)
 #include <miktex/Core/Core>
-#include <gnu-miktex.h>
 #define	PATH_DELIMITER ';'
 #define	HasDrive(fn)	(isalpha((fn)[0]) && (fn)[1] == ':')
 #define RelativeFileName(fn)	(! HasDrive(fn) && \
@@ -666,6 +665,31 @@ reg	int	size;
 #endif /* not MiKTeX */
 }
 
+#if defined(MIKTEX)
+static
+const char *
+xbasename (/*[in]*/ const char * lpszFileName)
+{
+  const char * lpsz = lpszFileName + strlen(lpszFileName);
+  while (lpsz != lpszFileName)
+    {
+      -- lpsz;
+#if defined(MIKTEX_WINDOWS)
+      if (*lpsz == '/' || *lpsz == '\\' || *lpsz == ':')
+	{
+	  return (lpsz + 1);
+	}
+#else
+      if (*lpsz == '/')
+	{
+	  return (lpsz + 1);
+	}
+#endif
+    }
+  return (lpszFileName);
+}
+#endif
+
 static BM_FILE *
 find_file(hbf, filename)
 	HBF_STRUCT *hbf;
@@ -683,7 +707,7 @@ reg	BM_FILE	*file;
 
 	for (fp = &(hbf->bm_file); *fp != NULL; fp = &((*fp)->bmf_next)) {
 #if defined(MIKTEX)
-		bmfname = basename((*fp)->bmf_name);
+		bmfname = xbasename((*fp)->bmf_name);
 #else
 		bmfname = strrchr((*fp)->bmf_name, '/');
 #endif

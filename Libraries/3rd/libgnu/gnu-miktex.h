@@ -1,6 +1,6 @@
 /* gnu-miktex.h: GNUish utilities			-*- C++ -*-
 
-   Copyright (C) 2000-2004 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX GNU Library (gnu.dll).
 
@@ -40,7 +40,6 @@ extern "C" {
 #  endif
 #endif
 
-GNUDLLAPI(char *) basename (const char * lspszFileName);
 GNUDLLAPI(char *) substring (const char * lpszStart, const char * lpszEnd);
 
 #if defined(__cplusplus)

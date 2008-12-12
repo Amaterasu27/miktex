@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,7 +73,6 @@ merge_trustinfo_manifest(hbf2gf asInvoker)
 target_link_libraries(hbf2gf
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
   ${texmf_dll_name}
 )
 

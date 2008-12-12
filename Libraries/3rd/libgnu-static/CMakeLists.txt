@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,7 +21,6 @@ use_static_crt()
 use_static_libraries()
 
 set(${gnu_lib_name}_sources
-  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/basename.c
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt.c
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt1.c
   ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/substring.c

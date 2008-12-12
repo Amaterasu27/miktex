@@ -25,7 +25,7 @@
 
 #include "dvipng.h"
 #ifdef MIKTEX
-# include <gnu-miktex.h>
+# define basename xbasename
 # define SLEEP    Sleep(1000)
 #else  /* MIKTEX */
 # ifdef HAVE_LIBGEN_H

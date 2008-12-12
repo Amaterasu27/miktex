@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,7 +18,6 @@
 ## USA.
 
 set(${gnu_dll_name}_sources
-  basename.c
   getopt.c
   getopt1.c
   substring.c
