@@ -24,11 +24,11 @@
 
 #include <sys/types.h>
 
-#if defined(MIKTEX) && ! defined(REGEXDLLAPI)
+#if defined(MIKTEX) && ! defined(MIKTEXREGEXAPI)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER) 
-#    define REGEXDLLAPI(type) __declspec(dllimport) type __cdecl
+#    define MIKTEXREGEXAPI(type) __declspec(dllimport) type __cdecl
 #  else
-#    define REGEXDLLAPI(type) type
+#    define MIKTEXREGEXAPI(type) type
 #  endif
 #endif
 
@@ -192,11 +192,11 @@ typedef unsigned long int reg_syntax_t;
    stored in the pattern buffer, so changing this does not affect
    already-compiled regexps.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(reg_syntax_t*) REGEXDLL_re_syntax_options ();
-#  if defined(MIKTEXREGEX__5260CBFC_E98B_4740_AAF7_3D0B0952E273__)
+MIKTEXREGEXAPI(reg_syntax_t*) MIKTEX_REGEX_re_syntax_options ();
+#  if defined(FFDD20CC_DCBC_4DF2_977F_0C507D12FE73)
 extern reg_syntax_t re_syntax_options;
 #  else
-#    define re_syntax_options (*REGEXDLL_re_syntax_options())
+#    define re_syntax_options (*MIKTEX_REGEX_re_syntax_options())
 #  endif
 #else
 extern reg_syntax_t re_syntax_options;
@@ -489,7 +489,7 @@ typedef struct
 /* Sets the current default syntax to SYNTAX, and return the old syntax.
    You can also simply assign to the `re_syntax_options' variable.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(reg_syntax_t) re_set_syntax _RE_ARGS ((reg_syntax_t syntax));
+MIKTEXREGEXAPI(reg_syntax_t) re_set_syntax _RE_ARGS ((reg_syntax_t syntax));
 #else
 extern reg_syntax_t re_set_syntax _RE_ARGS ((reg_syntax_t syntax));
 #endif
@@ -498,7 +498,7 @@ extern reg_syntax_t re_set_syntax _RE_ARGS ((reg_syntax_t syntax));
    and syntax given by the global `re_syntax_options', into the buffer
    BUFFER.  Return NULL if successful, and an error string if not.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(const char *) re_compile_pattern
+MIKTEXREGEXAPI(const char *) re_compile_pattern
 #else
 extern const char *re_compile_pattern
 #endif
@@ -510,7 +510,7 @@ extern const char *re_compile_pattern
    accelerate searches.  Return 0 if successful and -2 if was an
    internal error.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 re_compile_fastmap _RE_ARGS ((struct re_pattern_buffer *buffer));
 #else
 extern int re_compile_fastmap _RE_ARGS ((struct re_pattern_buffer *buffer));
@@ -522,7 +522,7 @@ extern int re_compile_fastmap _RE_ARGS ((struct re_pattern_buffer *buffer));
    match, or -2 for an internal error.  Also return register
    information in REGS (if REGS and BUFFER->no_sub are nonzero).  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int) re_search
+MIKTEXREGEXAPI(int) re_search
 #else
 extern int re_search
 #endif
@@ -533,7 +533,7 @@ extern int re_search
 /* Like `re_search', but search in the concatenation of STRING1 and
    STRING2.  Also, stop searching at index START + STOP.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int) re_search_2
+MIKTEXREGEXAPI(int) re_search_2
 #else
 extern int re_search_2
 #endif
@@ -545,7 +545,7 @@ extern int re_search_2
 /* Like `re_search', but return how many characters in STRING the regexp
    in BUFFER matched, starting at position START.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int) re_match
+MIKTEXREGEXAPI(int) re_match
 #else
 extern int re_match
 #endif
@@ -555,7 +555,7 @@ extern int re_match
 
 /* Relates to `re_match' as `re_search_2' relates to `re_search'.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int) re_match_2
+MIKTEXREGEXAPI(int) re_match_2
 #else
 extern int re_match_2
 #endif
@@ -577,7 +577,7 @@ extern int re_match_2
    PATTERN_BUFFER will allocate its own register data, without
    freeing the old data.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(void) re_set_registers
+MIKTEXREGEXAPI(void) re_set_registers
 #else
 extern void re_set_registers
 #endif
@@ -588,8 +588,8 @@ extern void re_set_registers
 # ifndef _CRAY
 /* 4.2 bsd compatibility.  */
 #  if defined(MIKTEX)
-REGEXDLLAPI(char *) re_comp _RE_ARGS ((const char *));
-REGEXDLLAPI(int) re_exec _RE_ARGS ((const char *));
+MIKTEXREGEXAPI(char *) re_comp _RE_ARGS ((const char *));
+MIKTEXREGEXAPI(int) re_exec _RE_ARGS ((const char *));
 #  else
 extern char *re_comp _RE_ARGS ((const char *));
 extern int re_exec _RE_ARGS ((const char *));
@@ -619,7 +619,7 @@ extern int re_exec _RE_ARGS ((const char *));
 
 /* POSIX compatibility.  */
 #if defined(MIKTEX)
-REGEXDLLAPI(int) regcomp _RE_ARGS ((regex_t *__restrict __preg,
+MIKTEXREGEXAPI(int) regcomp _RE_ARGS ((regex_t *__restrict __preg,
 			      const char *__restrict __pattern,
 			      int __cflags));
 #else
@@ -629,7 +629,7 @@ extern int regcomp _RE_ARGS ((regex_t *__restrict __preg,
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int) regexec _RE_ARGS ((const regex_t *__restrict __preg,
+MIKTEXREGEXAPI(int) regexec _RE_ARGS ((const regex_t *__restrict __preg,
 			      const char *__restrict __string, size_t __nmatch,
 			      regmatch_t __pmatch[__restrict_arr],
 			      int __eflags));
@@ -641,7 +641,7 @@ extern int regexec _RE_ARGS ((const regex_t *__restrict __preg,
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(size_t) regerror _RE_ARGS ((int __errcode, const regex_t *__preg,
+MIKTEXREGEXAPI(size_t) regerror _RE_ARGS ((int __errcode, const regex_t *__preg,
 				  char *__errbuf, size_t __errbuf_size));
 #else
 extern size_t regerror _RE_ARGS ((int __errcode, const regex_t *__preg,
@@ -649,7 +649,7 @@ extern size_t regerror _RE_ARGS ((int __errcode, const regex_t *__preg,
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(void) regfree _RE_ARGS ((regex_t *__preg));
+MIKTEXREGEXAPI(void) regfree _RE_ARGS ((regex_t *__preg));
 #else
 extern void regfree _RE_ARGS ((regex_t *__preg));
 #endif

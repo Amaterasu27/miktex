@@ -24,13 +24,13 @@
 
 #if defined(MIKTEX)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define GNUDLLAPI(type) __declspec(dllexport) type __cdecl
+#    define MIKTEXGETOPTAPI(type) __declspec(dllexport) type __cdecl
 #  elif defined(_MSC_VER)
-#    define GNUDLLAPI(type) type __cdecl
+#    define MIKTEXGETOPTAPI(type) type __cdecl
 #  else
-#    define GNUDLLAPI(type) type
+#    define MIKTEXGETOPTAPI(type) type
 #  endif
-#  define MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__
+#  define DD8F4232_5316_4DA9_9EF5_E0B47647A406
 #endif
 
 #ifdef _LIBC
@@ -72,7 +72,7 @@
 #endif
 
 #if defined(MIKTEX)
-GNUDLLAPI(int)
+MIKTEXGETOPTAPI(int)
 #else
 int
 #endif
@@ -97,7 +97,7 @@ _getopt_long_r (int argc, char *const *argv, const char *options,
    instead.  */
 
 #if defined(MIKTEX)
-GNUDLLAPI(int)
+MIKTEXGETOPTAPI(int)
 #else
 int
 #endif

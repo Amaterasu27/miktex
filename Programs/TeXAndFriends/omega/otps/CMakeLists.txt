@@ -65,7 +65,7 @@ merge_trustinfo_manifest(outocp asInvoker)
 target_link_libraries(outocp
   ${app_dll_namen}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
 )
@@ -126,7 +126,7 @@ merge_trustinfo_manifest(otp2ocp asInvoker)
 target_link_libraries(otp2ocp
   ${app_dll_namen}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
 )

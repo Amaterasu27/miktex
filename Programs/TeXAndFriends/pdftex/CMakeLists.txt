@@ -77,7 +77,7 @@ target_link_libraries(pdftosrc
   ${app_dll_name}
   ${core_dll_name}
   ${fofi_lib_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${goo_lib_name}
   ${xpdf_lib_name}
 )
@@ -112,7 +112,7 @@ merge_trustinfo_manifest(ttf2afm asInvoker)
 target_link_libraries(ttf2afm
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
 )

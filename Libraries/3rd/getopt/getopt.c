@@ -102,13 +102,13 @@
 
 #if defined(MIKTEX)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define GNUDLLAPI(type) __declspec(dllexport) type __cdecl
+#    define MIKTEXGETOPTAPI(type) __declspec(dllexport) type __cdecl
 #  elif defined(_MSC_VER)
-#    define GNUDLLAPI(type) type __cdecl
+#    define MIKTEXGETOPTAPI(type) type __cdecl
 #  else
-#    define GNUDLLAPI(type) type
+#    define MIKTEXGETOPTAPI(type) type
 #  endif
-#  define MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__
+#  define DD8F4232_5316_4DA9_9EF5_E0B47647A406
 #endif
 
 #include "getopt.h"
@@ -122,7 +122,7 @@
 
 char *optarg;
 #if defined(MIKTEX)
-GNUDLLAPI(char**) GNUDLL_optarg() { return (&optarg); }
+MIKTEXGETOPTAPI(char**) MIKTEX_GETOPT_optarg() { return (&optarg); }
 #endif
 
 /* Index in ARGV of the next element to be scanned.
@@ -140,7 +140,7 @@ GNUDLLAPI(char**) GNUDLL_optarg() { return (&optarg); }
 /* 1003.2 says this must be 1 before any call.  */
 int optind = 1;
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_optind() { return (&optind); }
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_optind() { return (&optind); }
 #endif
 
 /* Callers store zero here to inhibit the error message
@@ -148,7 +148,7 @@ GNUDLLAPI(int*) GNUDLL_optind() { return (&optind); }
 
 int opterr = 1;
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_opterr() { return (&opterr); }
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_opterr() { return (&opterr); }
 #endif
 
 /* Set to an option character which was unrecognized.
@@ -157,7 +157,7 @@ GNUDLLAPI(int*) GNUDLL_opterr() { return (&opterr); }
 
 int optopt = '?';
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_optopt() { return (&opterr); }
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_optopt() { return (&opterr); }
 #endif
 
 /* Keep a global copy of all internal members of getopt_data.  */
@@ -1201,7 +1201,7 @@ _getopt_internal (int argc, char *const *argv, const char *optstring,
 }
 
 #if defined(MIKTEX)
-GNUDLLAPI(int)
+MIKTEXGETOPTAPI(int)
 #else
 int
 #endif

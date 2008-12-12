@@ -20,14 +20,9 @@
 use_static_crt()
 use_static_libraries()
 
-set(${gnu_lib_name}_sources
-  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt.c
-  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/getopt1.c
+set(${getopt_lib_name}_sources
+  ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/getopt.c
+  ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/getopt1.c
 )
 
-set(${regex_lib_name}_sources
-  ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}/regex.c
-)
-
-add_library(${gnu_lib_name} STATIC ${${gnu_lib_name}_sources})
-add_library(${regex_lib_name} STATIC ${${regex_lib_name}_sources})
+add_library(${getopt_lib_name} STATIC ${${getopt_lib_name}_sources})

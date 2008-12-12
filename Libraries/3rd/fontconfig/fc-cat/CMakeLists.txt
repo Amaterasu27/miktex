@@ -50,7 +50,7 @@ target_link_libraries(fc-cat
   ${app_dll_name}
   ${core_dll_name}
   ${fontconfig_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
 )
 
 install(TARGETS fc-cat DESTINATION ${bindir})

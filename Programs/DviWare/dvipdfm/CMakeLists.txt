@@ -46,7 +46,7 @@ merge_trustinfo_manifest(ebb asInvoker)
 target_link_libraries(ebb
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
   ${texmf_dll_name}
@@ -99,7 +99,7 @@ merge_trustinfo_manifest(dvipdfm asInvoker)
 target_link_libraries(dvipdfm
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
   ${texmf_dll_name}

@@ -51,7 +51,7 @@ merge_trustinfo_manifest(texindex asInvoker)
 target_link_libraries(texindex
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${texmf_dll_name}
 )
 

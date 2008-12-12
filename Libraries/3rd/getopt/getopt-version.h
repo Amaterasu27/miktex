@@ -1,4 +1,4 @@
-/* gnu-version.h: version number			-*- C++ -*-
+/* getopt-version.h: version number				-*- C++ -*-
 
    Copyright (C) 1996-2008 Christian Schenk
 
@@ -17,6 +17,6 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 3267
+#define MIKTEX_COMPONENT_VERSION 3268
 
 #include <miktex/Core/Version>

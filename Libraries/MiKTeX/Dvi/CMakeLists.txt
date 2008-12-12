@@ -110,7 +110,7 @@ target_link_libraries(dviscan
   ${app_dll_name}
   ${core_dll_name}
   ${dvi_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${popt_dll_name}
 )
 

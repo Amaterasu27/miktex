@@ -81,7 +81,7 @@ target_link_libraries(t1asm
   ${app_dll_name}
   ${core_dll_name}
   ${freetype_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${texmf_dll_name}
 )
 

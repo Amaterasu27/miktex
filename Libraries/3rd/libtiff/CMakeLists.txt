@@ -117,7 +117,7 @@ add_executable(mkg3states EXCLUDE_FROM_ALL
 
 merge_trustinfo_manifest(mkg3states asInvoker)
 
-target_link_libraries(mkg3states ${gnu_dll_name})
+target_link_libraries(mkg3states ${getopt_dll_name})
 
 get_target_property(mkg3states_exe mkg3states LOCATION)
 

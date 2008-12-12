@@ -67,7 +67,7 @@ merge_trustinfo_manifest(bibtex8 asInvoker)
 target_link_libraries(bibtex8
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
 )
 

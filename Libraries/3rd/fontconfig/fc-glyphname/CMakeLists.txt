@@ -37,7 +37,7 @@ merge_trustinfo_manifest(fc-glyphname asInvoker)
 target_link_libraries(fc-glyphname
   ${app_dll_name}
   $(core_dll_name)
-  ${gnu_dll_name}
+  ${getopt_dll_name}
 )
 
 get_target_property(fc-glyphname_exe fc-glyphname LOCATION)

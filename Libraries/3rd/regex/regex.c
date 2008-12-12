@@ -82,11 +82,11 @@
 
 #if defined(MIKTEX)
 #  if defined(_MSC_VER)
-#    define REGEXDLLAPI(type) __declspec(dllexport) type __cdecl
+#    define MIKTEXREGEXAPI(type) __declspec(dllexport) type __cdecl
 #  else
-#    define REGEXDLLAPI(type) type
+#    define MIKTEXREGEXAPI(type) type
 #  endif
-#  define MIKTEXREGEX__5260CBFC_E98B_4740_AAF7_3D0B0952E273__
+#  define FFDD20CC_DCBC_4DF2_977F_0C507D12FE73
 #endif
 
 #include <regex.h>

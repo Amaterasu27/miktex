@@ -89,7 +89,7 @@ merge_trustinfo_manifest(makeinfo asInvoker)
 target_link_libraries(makeinfo
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${texmf_dll_name}
 )
 

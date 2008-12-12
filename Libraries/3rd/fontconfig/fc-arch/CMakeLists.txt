@@ -37,7 +37,7 @@ merge_trustinfo_manifest(fc-arch asInvoker)
 target_link_libraries(fc-arch
   ${app_dll_name}
   $(core_dll_name)
-  ${gnu_dll_name}
+  ${getopt_dll_name}
 )
 
 get_target_property(fc-arch_exe fc-arch LOCATION)

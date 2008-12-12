@@ -229,7 +229,7 @@ const size_t __re_error_msgid_idx[] attribute_hidden =
    are set in BUFP on entry.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(const char *)
+MIKTEXREGEXAPI(const char *)
 #else
 const char *
 #endif
@@ -265,7 +265,7 @@ weak_alias (__re_compile_pattern, re_compile_pattern)
    become read-only after dumping.  */
 reg_syntax_t re_syntax_options;
 #if defined(MIKTEX)
-REGEXDLLAPI(reg_syntax_t*) REGEXDLL_re_syntax_options()
+MIKTEXREGEXAPI(reg_syntax_t*) MIKTEX_REGEX_re_syntax_options()
 {
   return (&re_syntax_options);
 }
@@ -279,7 +279,7 @@ REGEXDLLAPI(reg_syntax_t*) REGEXDLL_re_syntax_options()
    defined in regex.h.  We return the old syntax.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(reg_syntax_t)
+MIKTEXREGEXAPI(reg_syntax_t)
 #else
 reg_syntax_t
 #endif
@@ -296,7 +296,7 @@ weak_alias (__re_set_syntax, re_set_syntax)
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -477,7 +477,7 @@ re_compile_fastmap_iter (bufp, init_state, fastmap)
    the return codes and their meanings.)  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -547,7 +547,7 @@ weak_alias (__regcomp, regcomp)
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(size_t)
+MIKTEXREGEXAPI(size_t)
 #else
 size_t
 #endif
@@ -655,7 +655,7 @@ free_dfa_content (re_dfa_t *dfa)
 /* Free dynamically allocated space used by PREG.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(void)
+MIKTEXREGEXAPI(void)
 #else
 void
 #endif
@@ -687,7 +687,7 @@ weak_alias (__regfree, regfree)
 static struct re_pattern_buffer re_comp_buf;
 
 #if defined(MIKTEX)
-REGEXDLLAPI(char *)
+MIKTEXREGEXAPI(char *)
 #else
 char *
 #endif

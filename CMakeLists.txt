@@ -461,7 +461,8 @@ endif(MSVC)
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
-    ${CMAKE_SOURCE_DIR}/${rel_gnu_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
+    ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   )
 endif(NATIVE_WINDOWS)
@@ -585,8 +586,12 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_gnu_dir})
-  add_subdirectory(${rel_gnu_dir}-static)
+  add_subdirectory(${rel_getopt_dir})
+  add_subdirectory(${rel_getopt_dir}-static)
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_regex_dir})
 endif(NATIVE_WINDOWS)
 
 if(BUILDING_MIKTEX)

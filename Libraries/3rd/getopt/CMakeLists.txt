@@ -17,52 +17,34 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(${gnu_dll_name}_sources
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(${getopt_dll_name}_sources
   getopt.c
   getopt1.c
 )
 
-set(${regex_dll_name}_sources
-  regex.c
-)
-
 if(NATIVE_WINDOWS)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/gnu.rc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/gnu.rc
+    ${CMAKE_CURRENT_SOURCE_DIR}/getopt.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/getopt.rc
   )
-  set(${gnu_dll_name}_sources ${${gnu_dll_name}_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/gnu.rc
-  )
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/regex.rc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/regex.rc
-  )
-  set(${regex_dll_name}_sources ${${regex_dll_name}_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/regex.rc
+  set(${getopt_dll_name}_sources ${${getopt_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/getopt.rc
   )
 endif(NATIVE_WINDOWS)
 
-add_library(${gnu_dll_name} SHARED ${${gnu_dll_name}_sources})
+add_library(${getopt_dll_name} SHARED ${${getopt_dll_name}_sources})
 
-set_target_properties(${gnu_dll_name}
+set_target_properties(${getopt_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
     SOVERSION "1"
 )
 
-add_library(${regex_dll_name} SHARED ${${regex_dll_name}_sources})
+rebase(${getopt_dll_name})
 
-set_target_properties(${regex_dll_name}
-  PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
-    SOVERSION "1"
-)
-
-rebase(${gnu_dll_name})
-rebase(${regex_dll_name})
-
-install(TARGETS ${gnu_dll_name} ${regex_dll_name}
+install(TARGETS ${getopt_dll_name}
   RUNTIME DESTINATION "${bindir}"
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"

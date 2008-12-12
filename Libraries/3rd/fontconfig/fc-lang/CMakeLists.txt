@@ -237,7 +237,7 @@ merge_trustinfo_manifest(fc-lang asInvoker)
 target_link_libraries(fc-lang
   ${app_dll_name}
   $(core_dll_name)
-  ${gnu_dll_name}
+  ${getopt_dll_name}
 )
 
 add_custom_command(

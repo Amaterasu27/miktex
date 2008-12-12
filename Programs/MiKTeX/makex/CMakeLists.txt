@@ -48,7 +48,7 @@ add_library(${makex_dll_name} SHARED ${${makex_dll_name}_sources})
 target_link_libraries(${makex_dll_name}
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${texmf_dll_name}
 )
 

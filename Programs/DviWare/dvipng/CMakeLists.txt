@@ -62,7 +62,7 @@ target_link_libraries(dvipng
   ${core_dll_name}
   ${freetype2_dll_name}
   ${gd_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
 )

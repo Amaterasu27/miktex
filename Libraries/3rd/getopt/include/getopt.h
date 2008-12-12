@@ -46,13 +46,13 @@
 # endif
 #endif
 
-#if defined(MIKTEX) && ! defined(GNUDLLAPI)
+#if defined(MIKTEX) && ! defined(MIKTEXGETOPTAPI)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
-#    define GNUDLLAPI(type) __declspec(dllimport) type __cdecl
+#    define MIKTEXGETOPTAPI(type) __declspec(dllimport) type __cdecl
 #  elif defined(_MSC_VER)
-#    define GNUDLLAPI(type) type __cdecl
+#    define MIKTEXGETOPTAPI(type) type __cdecl
 #  else
-#    define GNUDLLAPI(type) type
+#    define MIKTEXGETOPTAPI(type) type
 #  endif
 #endif
 
@@ -67,11 +67,11 @@ extern "C" {
    each non-option ARGV-element is returned here.  */
 
 #if defined(MIKTEX)
-GNUDLLAPI(char**) GNUDLL_optarg ();
-#  if defined(MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__)
+MIKTEXGETOPTAPI(char**) MIKTEX_GETOPT_optarg ();
+#  if defined(DD8F4232_5316_4DA9_9EF5_E0B47647A406)
 extern char *optarg;
 #  else
-#    define optarg (*GNUDLL_optarg())
+#    define optarg (*MIKTEX_GETOPT_optarg())
 #  endif
 #else
 extern char *optarg;
@@ -90,11 +90,11 @@ extern char *optarg;
    how much of ARGV has been scanned so far.  */
 
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_optind ();
-#  if defined(MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__)
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_optind ();
+#  if defined(DD8F4232_5316_4DA9_9EF5_E0B47647A406)
 extern int optind;
 #  else
-#    define optind (*GNUDLL_optind())
+#    define optind (*MIKTEX_GETOPT_optind())
 #  endif
 #else
 extern int optind;
@@ -104,11 +104,11 @@ extern int optind;
    for unrecognized options.  */
 
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_opterr ();
-#  if defined(MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__)
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_opterr ();
+#  if defined(DD8F4232_5316_4DA9_9EF5_E0B47647A406)
 extern int opterr;
 #  else
-#    define opterr (*GNUDLL_opterr())
+#    define opterr (*MIKTEX_GETOPT_opterr())
 # endif
 #else
 extern int opterr;
@@ -117,11 +117,11 @@ extern int opterr;
 /* Set to an option character which was unrecognized.  */
 
 #if defined(MIKTEX)
-GNUDLLAPI(int*) GNUDLL_optopt ();
-#  if  defined(MIKTEXGNU__DD8F4232_5316_4DA9_9EF5_E0B47647A406__)
+MIKTEXGETOPTAPI(int*) MIKTEX_GETOPT_optopt ();
+#  if  defined(DD8F4232_5316_4DA9_9EF5_E0B47647A406)
 extern int optopt;
 #  else
-#    define optopt (*GNUDLL_optopt())
+#    define optopt (*MIKTEX_GETOPT_optopt())
 #  endif
 #else
 extern int optopt;
@@ -199,7 +199,7 @@ extern int getopt (int ___argc, char *const *___argv, const char *__shortopts)
        __THROW;
 #else /* not __GNU_LIBRARY__ */
 #if defined(MIKTEX)
-GNUDLLAPI(int)
+MIKTEXGETOPTAPI(int)
 getopt (int ___argc, char *const *___argv, const char *__shortopts)
        __THROW;
 #else
@@ -209,11 +209,11 @@ extern int getopt ();
 
 #ifndef __need_getopt
 #if defined(MIKTEX)
-GNUDLLAPI(int) getopt_long (int ___argc, char *const *___argv,
+MIKTEXGETOPTAPI(int) getopt_long (int ___argc, char *const *___argv,
 			const char *__shortopts,
 		        const struct option *__longopts, int *__longind)
        __THROW;
-GNUDLLAPI(int) getopt_long_only (int ___argc, char *const *___argv,
+MIKTEXGETOPTAPI(int) getopt_long_only (int ___argc, char *const *___argv,
 			     const char *__shortopts,
 		             const struct option *__longopts, int *__longind)
        __THROW;

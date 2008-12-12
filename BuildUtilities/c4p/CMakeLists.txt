@@ -81,4 +81,4 @@ add_executable(c4p ${c4p_sources})
 
 merge_trustinfo_manifest(c4p asInvoker)
 
-target_link_libraries(c4p ${gnu_lib_name})
+target_link_libraries(c4p ${getopt_lib_name})

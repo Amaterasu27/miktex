@@ -207,7 +207,7 @@ static reg_errcode_t extend_buffers (re_match_context_t *mctx) internal_function
    We return 0 if we find a match and REG_NOMATCH if not.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -293,7 +293,7 @@ compat_symbol (libc, __compat_regexec, regexec, GLIBC_2_0);
    match was found and -2 indicates an internal error.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -310,7 +310,7 @@ weak_alias (__re_match, re_match)
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -327,7 +327,7 @@ weak_alias (__re_search, re_search)
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -345,7 +345,7 @@ weak_alias (__re_match_2, re_match_2)
 #endif
 
 #if defined(MIKTEX)
-REGEXDLLAPI(int)
+MIKTEXREGEXAPI(int)
 #else
 int
 #endif
@@ -559,7 +559,7 @@ re_copy_regs (regs, pmatch, nregs, regs_allocated)
    freeing the old data.  */
 
 #if defined(MIKTEX)
-REGEXDLLAPI(void)
+MIKTEXREGEXAPI(void)
 #else
 void
 #endif

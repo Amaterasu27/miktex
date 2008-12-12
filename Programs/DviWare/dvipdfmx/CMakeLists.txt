@@ -115,7 +115,7 @@ merge_trustinfo_manifest(dvipdfmx asInvoker)
 target_link_libraries(dvipdfmx
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
   ${texmf_dll_name}
@@ -137,7 +137,7 @@ merge_trustinfo_manifest(xbb asInvoker)
 target_link_libraries(xbb
   ${app_dll_name}
   ${core_dll_name}
-  ${gnu_dll_name}
+  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
   ${texmf_dll_name}
