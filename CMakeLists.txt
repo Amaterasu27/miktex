@@ -46,6 +46,11 @@ option(
   "Build mpc (MiKTeX Package Composer)?"
   ${NATIVE_WINDOWS}
 )
+option(
+  WITH_PDFTEX
+  "Build pdfTeX?"
+  ${BUILDING_MIKTEX}
+)
 
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
@@ -274,10 +279,12 @@ check_include_files(alloca.h HAVE_ALLOCA_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(errno.h HAVE_ERRNO_H)
 check_include_files(float.h HAVE_FLOAT_H)
+check_include_files(getopt.h HAVE_GETOPT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(limits.h HAVE_LIMITS_H)
 check_include_files(mcheck.h HAVE_MCHECK_H)
 check_include_files(memory.h HAVE_MEMORY_H)
+check_include_files(regex.h HAVE_REGEX_H)
 check_include_files(stddef.h HAVE_STDDEF_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(sys/mman.h HAVE_SYS_MMAN_H)
@@ -458,11 +465,21 @@ if(MSVC)
   )
 endif(MSVC)
 
+if(NOT HAVE_GETOPT_H)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
+  )
+endif(NOT HAVE_GETOPT_H)
+
+if(NOT HAVE_REGEX_H)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
+  )
+endif(NOT HAVE_REGEX_H)
+
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
-    ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
-    ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   )
 endif(NATIVE_WINDOWS)
@@ -585,14 +602,16 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_graphite_engine_dir})
 endif(BUILDING_MIKTEX)
 
-if(NATIVE_WINDOWS)
+if(NOT HAVE_GETOPT_H)
   add_subdirectory(${rel_getopt_dir})
-  add_subdirectory(${rel_getopt_dir}-static)
-endif(NATIVE_WINDOWS)
+  if(NATIVE_WINDOWS)
+    add_subdirectory(${rel_getopt_dir}-static)
+  endif(NATIVE_WINDOWS)
+endif(NOT HAVE_GETOPT_H)
 
-if(NATIVE_WINDOWS)
+if(NOT HAVE_REGEX_H)
   add_subdirectory(${rel_regex_dir})
-endif(NATIVE_WINDOWS)
+endif(NOT HAVE_REGEX_H)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_jpeg_dir})
@@ -632,11 +651,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_png_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_xpdf_goo_dir})
-  add_subdirectory(${rel_xpdf_fofi_dir})
-  add_subdirectory(${rel_xpdf_xpdf_dir})
-endif(BUILDING_MIKTEX)
+if(WITH_PDFTEX)
+  add_subdirectory(${rel_xpdf_dir})
+endif(WITH_PDFTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_c4p_dir})
@@ -780,9 +797,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX)
+if(WITH_PDFTEX)
   add_subdirectory(${rel_pdftex_dir})
-endif(BUILDING_MIKTEX)
+endif(WITH_PDFTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_xetex_dir})

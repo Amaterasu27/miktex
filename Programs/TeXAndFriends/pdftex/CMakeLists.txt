@@ -25,6 +25,7 @@ set(C4P_FLAGS
 )
 
 include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_xpdf_dir}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}

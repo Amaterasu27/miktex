@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,26 +17,19 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DPDF_PARSER_ONLY)
+if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/aconf-win32.h
+    ${CMAKE_CURRENT_BINARY_DIR}/aconf.h
+    COPYONLY
+  )
+endif(NATIVE_WINDOWS)
 
-set(${goo_lib_name}_sources
-  FixedPoint.cc
-  FixedPoint.h
-  GHash.cc
-  GHash.h
-  GList.cc
-  GList.h
-  GMutex.h
-  GString.cc
-  GString.h
-  gfile.cc
-  gfile.h
-  gmem.cc
-  gmem.h
-  gmempp.cc
-  gtypes.h
-  parseargs.c
-  parseargs.h
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_library(${goo_lib_name} STATIC ${${goo_lib_name}_sources})
+add_subdirectory(goo)
+add_subdirectory(fofi)
+add_subdirectory(xpdf)

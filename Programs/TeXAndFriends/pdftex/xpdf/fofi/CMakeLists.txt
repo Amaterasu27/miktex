@@ -18,7 +18,6 @@
 ## USA.
 
 include_directories(
-  ..
   ../goo
 )
 

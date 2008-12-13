@@ -26,7 +26,6 @@ add_definitions(
 )
 
 include_directories(
-  ..
   ../goo
   ../fofi
 )
