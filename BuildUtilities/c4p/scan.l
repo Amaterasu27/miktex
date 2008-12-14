@@ -1,6 +1,6 @@
  /* scan.l: C4P Lexical Scanner Specification		-*- C++ -*-
 
-    Copyright (C) 1991-2006 Christian Schenk
+    Copyright (C) 1991-2008 Christian Schenk
 
     This file is part of C4P.
 
@@ -23,7 +23,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
-#include <io.h>
+#if defined(MIKTEX_WINDOWS)
+#  include <io.h>
+#endif
 
 #include "common.h"
 #include "gram.h"

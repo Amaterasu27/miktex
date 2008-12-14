@@ -79,20 +79,35 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/util.cpp
 )
 
-set(${core_lib_name}_sources ${${core_lib_name}_sources}
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/DllProc.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/win.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.h
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winFile.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winMemoryMappedFile.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winMemoryMappedFile.h
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winProcess.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winProcess.h
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winRegistry.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winRegistry.h
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.cpp
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.h
+if(NATIVE_WINDOWS)
+  set(${core_lib_name}_sources ${${core_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/DllProc.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/win.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winDirectoryLister.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winFile.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winMemoryMappedFile.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winMemoryMappedFile.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winProcess.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winProcess.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winRegistry.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winRegistry.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.h
 )
+else(NATIVE_WINDOWS)
+  set(${core_lib_name}_sources ${${core_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unx.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxDirectoryLister.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxDirectoryLister.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxFile.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxMemoryMappedFile.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxMemoryMappedFile.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxProcess.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxProcess.h
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxThread.cpp
+    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxThread.h
+  )
+endif(NATIVE_WINDOWS)
 
 add_library(${core_lib_name} STATIC ${${core_lib_name}_sources})

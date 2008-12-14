@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,7 +24,6 @@ use_static_crt()
 use_static_libraries()
 
 add_definitions(
-  -DCOMPRESS_MF_MT
   -D_7ZIP_LARGE_PAGES
 )
 
@@ -32,8 +31,6 @@ set(${lzma_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/7zCrc.c
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Alloc.c
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Compress/Lz/MatchFinder.c
-  ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Compress/Lz/MatchFinderMt.c
-  ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Threads.c
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/CPP/7zip/Common/InBuffer.cpp
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/CPP/7zip/Common/OutBuffer.cpp
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/CPP/7zip/Common/StreamUtils.cpp
@@ -43,5 +40,15 @@ set(${lzma_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/CPP/7zip/Compress/LZMA/LZMAEncoder.cpp
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/CPP/7zip/Compress/LZMA/lzma-miktex.cpp
 )
+
+if(NATIVE_WINDOWS)
+  add_definitions(
+    -DCOMPRESS_MF_MT
+  )
+  set(${lzma_lib_name}_sources ${${lzma_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Compress/Lz/MatchFinderMt.c
+    ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}/C/Threads.c
+  )
+endif(NATIVE_WINDOWS)
 
 add_library(${lzma_lib_name} STATIC ${${lzma_lib_name}_sources})

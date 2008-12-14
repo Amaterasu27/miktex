@@ -23,7 +23,12 @@
 #include <cstdlib>
 #include <cctype>
 #include <climits>
-#include <malloc.h>
+#if defined(MIKTEX_WINDOWS)
+#  include <malloc.h>
+#  define alloca _alloca
+#else
+#  include <alloca.h>
+#endif
 
 #include "c4p.rc"
 #include "common.h"
@@ -36,6 +41,8 @@ namespace {
   FILE * name_file;
   std::string current_fast_vars;
 }
+
+const size_t MY_PATH_MAX = 8192;
 
 /* _________________________________________________________________________
 
@@ -57,7 +64,7 @@ generate_file_header ()
 void
 open_name_file ()
 {
-  char name_file_name[_MAX_FNAME];
+  char name_file_name[MY_PATH_MAX];
   sprintf (name_file_name, "%s.nam", prog_symbol->s_repr);
 #if 0
   if ((name_file = fopen(name_file_name, "w")) == 0)
@@ -88,7 +95,7 @@ close_name_file ()
 void
 open_header_file ()
 {
-  char szHeaderFileName[_MAX_FNAME];
+  char szHeaderFileName[MY_PATH_MAX];
   if (h_file_name.length() > 0)
     {
       strcpy (szHeaderFileName, h_file_name.c_str());
@@ -201,7 +208,7 @@ void
 begin_new_c_file (const char *file_name, int is_main)
 
 {
-  char cfile_name[_MAX_FNAME];
+  char cfile_name[MY_PATH_MAX];
 
   sprintf (cfile_name, "%s%s", file_name, c_ext.length() > 0 ? c_ext.c_str() : ".c");
 
@@ -288,7 +295,7 @@ begin_new_c_file (const char *file_name, int is_main)
 void
 check_c_file_size ()
 {
-  char name[_MAX_FNAME];
+  char name[MY_PATH_MAX];
 
   if (c_file_count == 0
       || (!one_c_file && c_file_line_count + 20 > max_lines_per_c_file))
@@ -350,7 +357,7 @@ remember_fast_var (const char * s)
 void
 declare_fast_var_macro (unsigned routine_handle)
 {
-  char * buf = reinterpret_cast<char*>(_alloca(current_fast_vars.length() + 1));
+  char * buf = reinterpret_cast<char*>(alloca(current_fast_vars.length() + 1));
   strcpy (buf, current_fast_vars.c_str());
   char * v = strtok(buf, " ");
   redir_file (H_FILE_NUM);

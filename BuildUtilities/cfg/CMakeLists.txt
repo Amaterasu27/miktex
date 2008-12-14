@@ -34,11 +34,12 @@ add_executable(cfg ${cfg_sources})
 merge_trustinfo_manifest(cfg asInvoker)
 
 target_link_libraries(cfg
-  ${bzip2_lib_name}
   ${core_lib_name}
-  ${md5_lib_name}
+    ${bzip2_lib_name}
+    ${md5_lib_name}
+    ${zlib_lib_name}
   ${popt_lib_name}
-  ${zlib_lib_name}
+  
 )
 
 if(NATIVE_WINDOWS)

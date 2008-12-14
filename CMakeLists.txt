@@ -558,26 +558,17 @@ endforeach(tpm)
 add_subdirectory(${rel_build_tools_etc_dir})
 
 add_subdirectory(${rel_uriparser_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_uriparser_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_uriparser_dir}-static)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_lzmalib_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_lzmalib_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_lzmalib_dir}-static)
 
 add_subdirectory(${rel_bzip2_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_bzip2_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_bzip2_dir}-static)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_curl_dir})
@@ -585,10 +576,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_expat_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_expat_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_expat_dir}-static)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype2_dir})
@@ -604,9 +592,7 @@ endif(BUILDING_MIKTEX)
 
 if(NOT HAVE_GETOPT_H)
   add_subdirectory(${rel_getopt_dir})
-  if(NATIVE_WINDOWS)
-    add_subdirectory(${rel_getopt_dir}-static)
-  endif(NATIVE_WINDOWS)
+  add_subdirectory(${rel_getopt_dir}-static)
 endif(NOT HAVE_GETOPT_H)
 
 if(NOT HAVE_REGEX_H)
@@ -618,16 +604,10 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_mspack_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_mspack_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_mspack_dir}-static)
 
 add_subdirectory(${rel_popt_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_popt_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_popt_dir}-static)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tiff_dir})
@@ -638,10 +618,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_zlib_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_zlib_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_zlib_dir}-static)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
@@ -651,13 +628,13 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_png_dir})
 endif(BUILDING_MIKTEX)
 
-if(WITH_PDFTEX)
-  add_subdirectory(${rel_xpdf_dir})
-endif(WITH_PDFTEX)
-
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_c4p_dir})
+  add_subdirectory(${rel_xpdf_dir})
 endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
+  add_subdirectory(${rel_c4p_dir})
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cweb_dir})
@@ -668,36 +645,24 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_md5_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_md5_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_md5_dir}-static)
 
 add_subdirectory(${rel_core_dir})
+add_subdirectory(${rel_core_dir}-static)
 
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_core_dir}-static)
-endif(NATIVE_WINDOWS)
-
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_cfg_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_touch_dir})
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_extractor_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_extractor_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_extractor_dir}-static)
 
 add_subdirectory(${rel_mpmlib_dir})
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_mpmlib_dir}-static)
-endif(NATIVE_WINDOWS)
+add_subdirectory(${rel_mpmlib_dir}-static)
 
 if(QT4_FOUND)
   add_subdirectory(${rel_ui_qt_dir})
@@ -709,9 +674,9 @@ endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_app_dir})
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_texmf_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dib_dir})
@@ -741,9 +706,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bmeps_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_web_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})

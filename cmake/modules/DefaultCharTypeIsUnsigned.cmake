@@ -1,6 +1,6 @@
 ## DefaultCharTypeIsUnsigned.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,6 +28,9 @@ macro(default_char_type_is_unsigned)
       set(CMAKE_CXX_FLAGS${c} "${CMAKE_CXX_FLAGS${c}} /J")
     endforeach(c)
   else(MSVC)
-    message(FATAL_ERROR "Unimplemented macro: default_char_type_is_unsigned")
+    foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
+      set(CMAKE_C_FLAGS${c} "${CMAKE_C_FLAGS${c}} -funsigned-char")
+      set(CMAKE_CXX_FLAGS${c} "${CMAKE_CXX_FLAGS${c}} -funsigned-char")
+    endforeach(c)
   endif(MSVC)
 endmacro(default_char_type_is_unsigned)

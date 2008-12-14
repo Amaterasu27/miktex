@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -41,7 +41,6 @@ set(c4p_sources
   subrange.cpp
   symtab.cpp
   type.cpp
-  unistd.h
 )
 
 set_source_files_properties(
@@ -81,4 +80,6 @@ add_executable(c4p ${c4p_sources})
 
 merge_trustinfo_manifest(c4p asInvoker)
 
-target_link_libraries(c4p ${getopt_lib_name})
+if(NATIVE_WINDOWS)
+  target_link_libraries(c4p ${getopt_lib_name})
+endif(NATIVE_WINDOWS)

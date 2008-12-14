@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -49,7 +49,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/popt.rc
   )
 else(NATIVE_WINDOWS)
-  set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
+  set(${popt_dll_name}_sources ${${popt_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/config.h
   )
 endif(NATIVE_WINDOWS)

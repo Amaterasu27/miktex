@@ -40,7 +40,7 @@ set(${lzma_dll_name}_sources
 
 if(NATIVE_WINDOWS)
   add_definitions(
-    -D_7ZIP_LARGE_PAGES
+    -DCOMPRESS_MF_MT
   )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/liblzma.rc.in

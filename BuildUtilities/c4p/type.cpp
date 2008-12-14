@@ -141,7 +141,7 @@ new_type_node (pascal_type	what_kind,
       ARR->component_type = UNKNOWN_TYPE;
       break;
     case POINTER_NODE:
-      PTR->component_type = va_arg(ap, pascal_type);
+      PTR->component_type = static_cast<pascal_type>(va_arg(ap, int));
       PTR->component_type_ptr = va_arg(ap, void *);
       PTR->array_node_ptr
 	= reinterpret_cast<array_node*>(new_type_node(ARRAY_NODE, 0, LONG_MAX));
@@ -166,7 +166,7 @@ new_type_node (pascal_type	what_kind,
       break;
     case RECORD_SECTION_NODE:
       RS->name = va_arg(ap, declarator_node *);
-      RS->type = va_arg(ap, pascal_type);
+      RS->type = static_cast<pascal_type>(va_arg(ap, int));
       RS->type_ptr = va_arg(ap, void *);
       RS->next = 0;
       break;
@@ -190,7 +190,7 @@ new_type_node (pascal_type	what_kind,
       DCL->next = 0;
       break;
     case FILE_NODE:
-      FIL->type = va_arg(ap, pascal_type);
+      FIL->type = static_cast<pascal_type>(va_arg(ap, int));
       FIL->type_ptr = va_arg(ap, void *);
       break;
     default:

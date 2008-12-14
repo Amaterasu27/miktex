@@ -1,6 +1,6 @@
 /* main.c: Pascal-to-C Translator				-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is part of C4P.
 
@@ -22,8 +22,6 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <climits>
-
-#include <tchar.h>
 
 #include <getopt.h>
 
@@ -68,7 +66,7 @@ unsigned max_lines_per_c_file;
 
 int yyparse ();
 extern int yylineno;
-extern _TCHAR * yytext;
+extern char * yytext;
 
 /* _________________________________________________________________________
 
@@ -87,13 +85,13 @@ yywrap ()
    _________________________________________________________________________ */
 
 void
-yyerror (/*[in]*/ const _TCHAR * s)
+yyerror (/*[in]*/ const char * s)
 {
-  _ftprintf (stderr,
-	     _T("%s:%ld: parse error before `%s'\n"),
-	     pascal_file_name.c_str(),
-	     yylineno,
-	     yytext);
+  fprintf (stderr,
+	   T_("%s:%ld: parse error before `%s'\n"),
+	   pascal_file_name.c_str(),
+	   yylineno,
+	   yytext);
   exit (1);
 }
 
@@ -103,18 +101,18 @@ yyerror (/*[in]*/ const _TCHAR * s)
    _________________________________________________________________________ */
 
 void
-c4p_error (/*[in]*/ const _TCHAR *	fmt,
+c4p_error (/*[in]*/ const char *	fmt,
 	   /*[in]*/			...)
 {
-  _ftprintf (stderr,
-	     _T("%s:%ld: "),
-	     pascal_file_name.c_str(),
-	     yylineno);
+  fprintf (stderr,
+	   "%s:%ld: ",
+	   pascal_file_name.c_str(),
+	   yylineno);
   va_list ap;
   va_start (ap, fmt);
-  _vftprintf (stderr, fmt, ap);
+  vfprintf (stderr, fmt, ap);
   va_end (ap);
-  fputc (_T('\n'), stderr);
+  fputc ('\n', stderr);
   exit (2);
 }
 
@@ -124,20 +122,20 @@ c4p_error (/*[in]*/ const _TCHAR *	fmt,
    _________________________________________________________________________ */
 
 void
-c4p_warning (/*[in]*/ const _TCHAR *	fmt,
+c4p_warning (/*[in]*/ const char *	fmt,
 	     /*[in]*/			...)
 {
   if (verbose_flag)
     {
-      _ftprintf (stderr,
-		 _T("\n%s:%ld: warning: "),
-		 pascal_file_name.c_str(), 
-		 yylineno);
+      fprintf (stderr,
+	       T_("\n%s:%ld: warning: "),
+	       pascal_file_name.c_str(), 
+	       yylineno);
       va_list ap;
       va_start (ap, fmt);
-      _vftprintf (stderr, fmt, ap);
+      vfprintf (stderr, fmt, ap);
       va_end (ap);
-      fputc (_T('\n'), stderr);
+      fputc ('\n', stderr);
     }
 }
 
@@ -149,7 +147,7 @@ c4p_warning (/*[in]*/ const _TCHAR *	fmt,
 void
 banner ()
 {
-  _tprintf (_T("This is C4P version %s\n"), VER_FILEVERSION_STR);
+  printf (T_("This is C4P version %s\n"), VER_FILEVERSION_STR);
 }
 
 /* _________________________________________________________________________
@@ -160,7 +158,7 @@ banner ()
 void
 usage ()
 {
-  _putts (_T("\
+  puts (T_("\
 Usage: c4p [options] filename\n\
 Options:\n\
   -1 FILENAME, --one FILENAME\n\
@@ -210,32 +208,32 @@ Options:\n\
 namespace {
   const struct option longopts[] =
   {
-    _T("auto-exit-label"), required_argument, 0, OPT_AUTO_EXIT_LABEL,
-    _T("base-class"), required_argument, 0, OPT_BASE_CLASS,
-    _T("chars-are-unsigned"), no_argument, 0, OPT_CHARS_ARE_UNSIGNED,
-    _T("class"), required_argument, 0, OPT_CLASS,
-    _T("class-include"), required_argument, 0, OPT_CLASS_INCLUDE,
-    _T("c-plus-plus"), no_argument, 0, _T('C'),
-    _T("declare-c-type"), required_argument, 0, OPT_DECLARE_C_TYPE,
-    _T("def-filename"), required_argument, 0, OPT_DEF_FILENAME,
-    _T("dll"), no_argument, 0, OPT_DLL,
-    _T("entry-name"), required_argument, 0, OPT_ENTRY_NAME,
-    _T("fast-var"), required_argument, 0, _T('f'),
-    _T("header-file"), required_argument, 0, OPT_HEADER_FILE,
-    _T("help"), no_argument, 0, _T('h'),
-    _T("include-filename"), required_argument, 0, _T('i'),
-    _T("lines"), required_argument, 0, _T('l'),
-    _T("one"), optional_argument, 0, _T('1'),
-    _T("output-prefix"), required_argument, 0, _T('p'),
-    _T("rename"), required_argument, 0, _T('r'),
-    _T("using-namespace"), required_argument, 0, OPT_USING_NAMESPACE,
-    _T("var-name-prefix"), required_argument, 0, OPT_VAR_NAME_PREFIX,
-    _T("var-struct"), required_argument, 0, OPT_VAR_STRUCT,
-    _T("var-struct-class"), required_argument, 0, OPT_VAR_STRUCT_CLASS,
-    { _T("var-struct-base-class"), required_argument, 0,
+    T_("auto-exit-label"), required_argument, 0, OPT_AUTO_EXIT_LABEL,
+    T_("base-class"), required_argument, 0, OPT_BASE_CLASS,
+    T_("chars-are-unsigned"), no_argument, 0, OPT_CHARS_ARE_UNSIGNED,
+    T_("class"), required_argument, 0, OPT_CLASS,
+    T_("class-include"), required_argument, 0, OPT_CLASS_INCLUDE,
+    T_("c-plus-plus"), no_argument, 0, 'C',
+    T_("declare-c-type"), required_argument, 0, OPT_DECLARE_C_TYPE,
+    T_("def-filename"), required_argument, 0, OPT_DEF_FILENAME,
+    T_("dll"), no_argument, 0, OPT_DLL,
+    T_("entry-name"), required_argument, 0, OPT_ENTRY_NAME,
+    T_("fast-var"), required_argument, 0, 'f',
+    T_("header-file"), required_argument, 0, OPT_HEADER_FILE,
+    T_("help"), no_argument, 0, 'h',
+    T_("include-filename"), required_argument, 0, 'i',
+    T_("lines"), required_argument, 0, 'l',
+    T_("one"), optional_argument, 0, '1',
+    T_("output-prefix"), required_argument, 0, 'p',
+    T_("rename"), required_argument, 0, 'r',
+    T_("using-namespace"), required_argument, 0, OPT_USING_NAMESPACE,
+    T_("var-name-prefix"), required_argument, 0, OPT_VAR_NAME_PREFIX,
+    T_("var-struct"), required_argument, 0, OPT_VAR_STRUCT,
+    T_("var-struct-class"), required_argument, 0, OPT_VAR_STRUCT_CLASS,
+    { T_("var-struct-base-class"), required_argument, 0,
       OPT_VAR_STRUCT_BASE_CLASS, },
-    _T("verbose"), no_argument, 0, _T('v'),
-    _T("version"), no_argument, 0, _T('V'),
+    T_("verbose"), no_argument, 0, 'v',
+    T_("version"), no_argument, 0, 'V',
     0, 0, 0, 0,
   };
 }
@@ -247,7 +245,7 @@ namespace {
 
 void
 option_handler (/*[in]*/ int		argc,
-		/*[in]*/ _TCHAR **	argv)
+		/*[in]*/ char **	argv)
 {
   myname = argv[0];
   max_lines_per_c_file = 1000;
@@ -257,22 +255,22 @@ option_handler (/*[in]*/ int		argc,
   string new_name;
 
   optind = 0;
-  while ((opt = getopt_long(argc, argv, _T("C1:hi:l:r:Vf:"), longopts, 0))
+  while ((opt = getopt_long(argc, argv, "C1:hi:l:r:Vf:", longopts, 0))
 	 != EOF)
     {
       switch (opt)
 	{
-	case _T('h'):
+	case 'h':
 	  usage ();
 	  exit (0);
 	  break;
-	case _T('v'):
+	case 'v':
 	  verbose_flag = true;
 	  break;
 	case OPT_CLASS:
 	  class_name = optarg;
 	  class_name_scope = optarg;
-	  class_name_scope += _T("::");
+	  class_name_scope += "::";
 	  break;
 	case OPT_DEF_FILENAME:
 	  def_filename = optarg;
@@ -316,31 +314,31 @@ option_handler (/*[in]*/ int		argc,
 	case OPT_VAR_NAME_PREFIX:
 	  var_name_prefix = optarg;
 	  break;
-	case _T('C'):
-	  c_ext = _T(".cc");
+	case 'C':
+	  c_ext = ".cc";
 	  break;
-	case _T('i'):
+	case 'i':
 	  include_filename = optarg;
 	  break;
-	case _T('l'):
+	case 'l':
 	  max_lines_per_c_file = static_cast<unsigned>(atoi(optarg));
 	  break;
-	case _T('r'):
-	  new_name = _T("c4p_");
+	case 'r':
+	  new_name = "c4p_";
 	  new_name += optarg;
 	  new_mapping (optarg, new_name.c_str());
 	  break;
-	case _T('f'):
+	case 'f':
 	  new_fast_var (optarg);
 	  break;
-	case _T('p'):
+	case 'p':
 	  c_file_name = optarg;
 	  break;
-	case _T('V'):
+	case 'V':
 	  banner ();
 	  exit (0);
 	  break;
-	case _T('1'):
+	case '1':
 	  one_c_file = true;
 	  if (optarg)
 	    {
@@ -355,12 +353,12 @@ option_handler (/*[in]*/ int		argc,
   
   if (var_struct_class_name.length() == 0)
     {
-      var_struct_class_name = _T("c4pdata");
+      var_struct_class_name = "c4pdata";
     }
 
   if (entry_name.length() == 0)
     {
-      entry_name = _T("c4pmain");
+      entry_name = "c4pmain";
     }
 
   if (optind == argc - 1)
@@ -375,8 +373,8 @@ option_handler (/*[in]*/ int		argc,
    _________________________________________________________________________ */
 
 int
-main (/*[in]*/ int		argc,
-      /*[in]*/ _TCHAR **	argv)
+main (/*[in]*/ int	argc,
+      /*[in]*/ char **	argv)
 {
   symtab_init ();
 
@@ -384,16 +382,16 @@ main (/*[in]*/ int		argc,
 
   if (pascal_file_name.length() == 0)
     {
-      _ftprintf (stderr, _T("%s: no input file specified\n"), myname.c_str());
+      fprintf (stderr, T_("%s: no input file specified\n"), myname.c_str());
       exit (4);
     }
 
-  if (freopen(pascal_file_name.c_str(), _T("r"), stdin) == 0)
+  if (freopen(pascal_file_name.c_str(), "r", stdin) == 0)
     {
-      _ftprintf (stderr,
-		 _T("%s: can't open %s\n"),
-		 myname.c_str(),
-		 pascal_file_name.c_str());
+      fprintf (stderr,
+	       T_("%s: can't open %s\n"),
+	       myname.c_str(),
+	       pascal_file_name.c_str());
       exit (5);
     }
 

@@ -17,6 +17,15 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat_config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
+  )
+
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+
+add_definitions(-DHAVE_EXPAT_CONFIG_H)
+
 if(NATIVE_WINDOWS)
   add_definitions(-DCOMPILED_FROM_DSP)
 endif(NATIVE_WINDOWS)

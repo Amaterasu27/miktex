@@ -20,14 +20,11 @@
 
 #pragma once
 
-// C4786: identifier was truncated to 'number' characters in the debug information
-// C4251: 'identifier' : class 'type' needs to have dll-interface to be used by clients
-//        of class 'type2'
-#pragma warning ( disable : 4786 4251 )
-
 #include <string>
 #include <vector>
 #include <stack>
+
+#define T_(x) x
 
 enum pascal_type
 {
