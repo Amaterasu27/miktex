@@ -270,6 +270,5 @@ int yyparse ();
 void yyerror (const char *);
 int yylex ();
 
-/*extern long yylineno;*/
 extern char * yytext;
 extern "C" int yywrap ();
