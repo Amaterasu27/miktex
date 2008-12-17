@@ -185,8 +185,11 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
 endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
 
 set(required_programs
+  bison
   cat
   date
+  diff
+  flex
   lynx
   perl
   sed
@@ -195,10 +198,7 @@ set(required_programs
 
 if(BUILDING_MIKTEX)
   set(required_programs ${required_programs}
-    bison
-    diff
     dos2unix
-    flex
     texify
   )
   if(NATIVE_WINDOWS)
@@ -686,9 +686,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvi_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_kpsemu_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})

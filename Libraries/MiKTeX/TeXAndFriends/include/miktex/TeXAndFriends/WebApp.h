@@ -30,7 +30,6 @@
 
 #include <algorithm>
 #include <bitset>
-#include <hash_set>
 #include <memory>
 #include <string>
 #include <vector>
@@ -600,7 +599,7 @@ dllentry (/*[in]*/ int			argc,				\
           /*[in]*/ const char **	argv)				\
 {									\
   SET_PROGRAM_INFO__423C8217_4CFC_41B7_9F89_EA3C4F729FD1 (app);		\
-  ZeroMemory (&data, sizeof(data));					\
+  memset (&data, 0, sizeof(data));					\
   try									\
     {									\
       app.Init (argv[0]);						\

@@ -146,7 +146,7 @@ public:
 
 public:
   FILE *
-  operator-> ()
+  operator -> ()
   {
     return (pFile);
   }
@@ -211,7 +211,7 @@ public:
 
 public:
   const ElementType &
-  operator* ()
+  operator * ()
     const
   {
     return (bufref());
@@ -219,7 +219,7 @@ public:
 
 public:
   ElementType &
-  operator* ()
+  operator * ()
   {
     return (bufref());
   }
@@ -258,17 +258,17 @@ public:
     return (false);
   }
 
-public:
+protected:
   void
-  Read (/*[out]*/ ElementType *	pBuf,
-	/*[in]*/ size_t		n)
+  ReadInternal (/*[out]*/ ElementType *	pBuf,
+		/*[in]*/ size_t		n)
   {
     AssertValid ();
     MIKTEX_ASSERT_BUFFER (pBuf, n);
     if (feof(*this) != 0)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
-	  (MIKTEXTEXT("BufferedFile::read"),
+	  ("BufferedFile::ReadInternal",
 	   MIKTEXTEXT("Read operation failed."),
 	   0,
 	   __FILE__,
@@ -277,7 +277,7 @@ public:
     if (fread(pBuf, sizeof(ElementType), n, *this) != n)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
-	  (MIKTEXTEXT("BufferedFile::read"),
+	  ("BufferedFile::ReadInternal",
 	   MIKTEXTEXT("Read operation failed."),
 	   0,
 	   __FILE__,
@@ -288,6 +288,14 @@ public:
 	MiKTeX::Core::Session::FatalCrtError
 	  ("fread", 0, __FILE__, __LINE__);
       }
+  }
+
+public:
+  void
+  Read (/*[out]*/ ElementType *	pBuf,
+	/*[in]*/ size_t		n)
+  {
+    ReadInternal (pBuf, n);
     if (IsPascalFileIO())
       {
 	currentElement = pBuf[n - 1];
@@ -298,22 +306,8 @@ public:
   void
   Read ()
   {
-    AssertValid ();
     PascalFileIO (true);
-    if (feof(*this) != 0)
-      {
-	MiKTeX::Core::Session::FatalMiKTeXError
-	  (MIKTEXTEXT("BufferedFile::read"),
-	   MIKTEXTEXT("Read operation failed."),
-	   0,
-	   __FILE__,
-	   __LINE__);
-      }
-    fread (&currentElement, sizeof(ElementType), 1, *this);
-    if (ferror(*this) != 0)
-      {
-	MiKTeX::Core::Session::FatalCrtError ("fread", 0, __FILE__, __LINE__);
-      }
+    ReadInternal (&currentElement, 1);
   }
 
 public:

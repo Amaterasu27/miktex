@@ -1,6 +1,6 @@
 /* c4plib.cpp: C4P runtime routines
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -112,7 +112,7 @@ GetReal (/*[in]*/ C4P_text & /*textfile*/)
    _________________________________________________________________________ */
 
 bool
-FileRoot::Open (/*[in]*/ LPCTSTR	lpszPath,
+FileRoot::Open (/*[in]*/ const char *	lpszPath,
 		/*[in]*/ FileMode	mode,
 		/*[in]*/ FileAccess	access,
 		/*[in]*/ FileShare	share,

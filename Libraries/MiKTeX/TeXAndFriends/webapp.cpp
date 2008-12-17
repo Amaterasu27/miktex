@@ -1,6 +1,6 @@
 /* webapp.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -72,7 +72,7 @@ WebApp::Finalize ()
 		    FileMode::Create,
 		    FileAccess::Write));
       vector<FileInfoRecord> fileInfoRecords = pSession->GetFileInfoRecords();
-      stdext::hash_set<string> packages;
+      set<string> packages;
       for (vector<FileInfoRecord>::const_iterator it = fileInfoRecords.begin();
 	   it != fileInfoRecords.end();
 	   ++ it)
@@ -82,7 +82,7 @@ WebApp::Finalize ()
 	      packages.insert (it->packageName);
 	    }
 	}
-      for (stdext::hash_set<string>::const_iterator it2 = packages.begin();
+      for (set<string>::const_iterator it2 = packages.begin();
 	   it2 != packages.end();
 	   ++ it2)
 	{
@@ -301,8 +301,8 @@ Print version information and exit."),
 Show the manual page in an HTMLHelp window and exit when the\
  window is closed."),
 		 FIRST_OPTION_VAL + optBase + OPT_HHELP);
-#endif
     }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -347,10 +347,12 @@ WebApp::ProcessOption (/*[in]*/ int		opt,
     case OPT_HELP:
       ShowHelp ();
       throw (0);
+#if defined(MIKTEX_WINDOWS)
     case OPT_HHELP:
       MIKTEX_ASSERT (GetHelpId() > 0);
       pSession->ShowManualPageAndWait (0, GetHelpId());
       throw (0);
+#endif
     case OPT_RECORD_PACKAGE_USAGES:
       pSession->StartFileInfoRecorder (true);
       packageListFileName = lpszArg;

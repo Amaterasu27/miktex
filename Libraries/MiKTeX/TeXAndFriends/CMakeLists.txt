@@ -31,6 +31,7 @@ set(${texmf_dll_name}_sources
   c4plib.cpp
   c4pstart.cpp
   etexapp.cpp
+  include/miktex/C4P/C4P.h
   include/miktex/TeXAndFriends/ETeXApp.h
   include/miktex/TeXAndFriends/ETeXApp.inl
   include/miktex/TeXAndFriends/MetafontApp.h
@@ -47,13 +48,18 @@ set(${texmf_dll_name}_sources
   inputline.cpp
   internal.h
   mfapp.cpp
-  mfmpi386asm.cpp
   texapp.cpp
   texmf-version.h
   texmfapp.cpp
   texmflib.cpp
   webapp.cpp
 )
+
+if(NATIVE_WINDOWS)
+  set(${texmf_dll_name}_sources ${${texmf_dll_name}_sources}
+    mfmpi386asm.cpp
+  )
+endif(NATIVE_WINDOWS)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/mfapp.defaults.h

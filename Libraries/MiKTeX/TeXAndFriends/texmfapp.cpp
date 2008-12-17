@@ -39,6 +39,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
   fprintf (stderr,
 	   T_("gross execution time: %u ms\n"),
 	   static_cast<unsigned>(clockSinceStart));
+#if defined(MIKTEX_WINDOWS)
   if (! IsWindowsNT())
     {
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
@@ -85,6 +86,7 @@ TraceExecutionTime (/*[in]*/ TraceStream *	trace_time,
 	   static_cast<unsigned>(tUser),
 	   static_cast<unsigned>(tKernel),
 	   static_cast<unsigned>(tUser + tKernel));
+#endif // MIKTEX_WINDOWS
 }
 
 /* _________________________________________________________________________
@@ -988,7 +990,7 @@ void
 TeXMFApp::GetDefaultMemoryDumpFileName (/*[out]*/ char * lpszPath)
   const
 {
-  MIKTEX_ASSERT_BUFFER (lpszPath, _MAX_PATH);
+  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
   PathName name;
   if (memoryDumpFileName.length() > 0)
     {
@@ -1192,7 +1194,7 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
   string defaultEditor =
     pSession->GetConfigValue(MIKTEX_REGKEY_YAP_SETTINGS,
 			     MIKTEX_REGVAL_EDITOR,
-			     T_("notepad.exe \"%f\""));
+			     "notepad.exe \"%f\"");
   // </fixme>
 
   string templ =
@@ -1251,29 +1253,8 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 	  ++ lpszCommandLineTemplate;
 	}
     }
-      
-  STARTUPINFO si;
-  memset (&si, 0, sizeof(si));
-  si.cb = sizeof(si);
-  
-  STRDUP commandLineDup (commandLine);
-  PROCESS_INFORMATION pi;
-  if (CreateProcess(0,
-		    commandLineDup.GetBuffer(),
-		    0,
-		    0,
-		    FALSE,
-		    0,
-		    0,
-		    0,
-		    &si,
-		    &pi)
-      == 0)
-    {
-      FATAL_MIKTEX_ERROR ("TeXMFApp::InvokeEditorIfNecessary",
-			  T_("The editor could not be started."),
-			  commandLine.c_str());
-    }
+
+  Process::StartSystemCommand (commandLine.c_str());
 }
 
 /* _________________________________________________________________________
