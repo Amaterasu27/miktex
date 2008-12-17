@@ -89,7 +89,7 @@ xchr[123]:='{';xchr[124]:='|';xchr[125]:='}';xchr[126]:='~';
 xchr[0]:=' ';xchr[127]:=' ';{:14}{17:}for i:=1 to 31 do xchr[i]:=chr(i);
 for i:=128 to 255 do xchr[i]:=chr(i);
 {:17}{18:}for i:=-128 to 127 do xord[chr(i)]:=32;
-for i:=1 to 255 do xord[xchr[i]]:=i;xord[' ']:=32;
+for i:=1 to 255 do xord[xchr[i]]:=i;xord[' ']:=32;xord[xchr[13]]:=32;
 {:18}{21:}termout:=output;
 {:21}{26:}if(c4pargc<5)then begin writeln(termout);
 write(termout,'Usage: tangle inputfile changefile outputfile poolfile');

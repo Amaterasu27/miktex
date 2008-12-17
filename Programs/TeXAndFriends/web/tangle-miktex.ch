@@ -1,6 +1,6 @@
 %% tangle-miktex.ch: WEB change file for TANGLE
 %% 
-%% Copyright (C) 1991-2005 Christian Schenk
+%% Copyright (C) 1991-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -100,6 +100,18 @@ for i:=@'200 to @'377 do xchr[i]:=' ';
 @y
 for i:=1 to @'37 do xchr[i]:=chr(i);
 for i:=@'200 to @'377 do xchr[i]:=chr(i);
+@z
+
+% _____________________________________________________________________________
+%
+% [2.18]
+% _____________________________________________________________________________
+
+@x
+xord[' ']:=" ";
+@y
+xord[' ']:=" ";
+xord[xchr[carriage_return]]:=" ";
 @z
 
 % _____________________________________________________________________________
