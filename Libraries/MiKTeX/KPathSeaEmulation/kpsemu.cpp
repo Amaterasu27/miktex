@@ -521,8 +521,14 @@ KPSE::FSeek64 (/*[in]*/ FILE *			pfile,
       FATAL_CRT_ERROR ("_fseeki64", lpszFileName);
     }
   return (0);
+#elif defined(HAVE_FSEEKO64)
+  if (fseeko64(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR ("fseeko64", lpszFileName);
+    }
+  return (0);
 #else
-  error Unimplemented: KPSE::FSeek64()
+#  error Unimplemented: KPSE::FSeek64()
 #endif
 }
 
@@ -559,6 +565,14 @@ KPSE::FTell64 (/*[in]*/ FILE *		pfile,
       FATAL_CRT_ERROR ("_ftelli64", lpszFileName);
     }
   return (pos);
+#elif defined(HAVE_FTELLO64)
+  MIKTEX_INT64 pos = ftello64(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR ("ftello64", lpszFileName);
+    }
+  return (pos);
+  
 #else
 #  error Unimplemented: KPSE::FTell64
 #endif
@@ -1034,13 +1048,8 @@ KPSE::VarValue (/*[in]*/ const char * lpszVarName)
   const char * lpszRet = 0;
   if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
     {
-      if (GetModuleFileName(0,
-			    path.GetBuffer(),
-			    static_cast<DWORD>(path.GetCapacity()))
-	  != 0)
-	{
-	  lpszRet = path.Get();
-	}
+      path = SessionWrapper(true)->GetMyLocation();
+      lpszRet = path.Get();
     }
   else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, val))
     {
@@ -1085,7 +1094,14 @@ MIKTEXKPSCEEAPI(void)
 Web2C::GetSecondsAndMicros (/*[out]*/ integer * pSeconds,
 			    /*[out]*/ integer * pMicros)
 {
+#if defined(MIKTEX_WINDOWS)
   unsigned long clock = GetTickCount();
   *pSeconds = clock / 1000;
   *pMicros = clock % 1000;
+#else
+  struct timeval tv;
+  gettimeofday (&tv, 0);
+  *pSeconds = tv.tv_sec;
+  *pMicros = tv.tv_usec;
+#endif
 }

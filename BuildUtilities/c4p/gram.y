@@ -178,18 +178,19 @@ program_block:
 		      if (dll_flag)
 			{
 			  redir_file (H_FILE_NUM);
-			  out_form ("\n#ifdef __cplusplus\n\
-extern \"C++\" int __cdecl %s (int argc, const char * * argv);\n\
+			  out_form ("\n\
+#ifdef __cplusplus\n\
+extern \"C++\" int C4PCEECALL %s (int argc, const char * * argv);\n\
 #endif\n",
 				    entry_name.c_str());
 			  redir_file (C_FILE_NUM);
-			  out_form ("\
-\nextern \"C++\" int __cdecl %s (int argc, const char * * argv)\n\n",
+			  out_form ("\n\
+extern \"C++\" int C4PCEECALL %s (int argc, const char * * argv)\n\n",
 				    entry_name.c_str());
 			}
 		      else
-			out_s ("\
-\nvoid __cdecl int main (int argc, const char * * argv)\n\n");
+			out_s ("\n\
+void C4PCEECALL int main (int argc, const char * * argv)\n\n");
 		    }
 		  else
 		    {

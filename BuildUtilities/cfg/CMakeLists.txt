@@ -35,6 +35,7 @@ merge_trustinfo_manifest(cfg asInvoker)
 
 target_link_libraries(cfg
   ${core_lib_name}
+    ${CMAKE_THREAD_LIBS_INIT}
     ${bzip2_lib_name}
     ${md5_lib_name}
     ${zlib_lib_name}

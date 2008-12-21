@@ -93,25 +93,33 @@ MIKTEXMFCEEAPI(bool)
 Write18 (/*[in]*/ const char *		lpszCommand,
 	 /*[in]*/ unsigned long *	lpExitCode = 0);
 
+#if defined(MIKTEX_WINDOWS)
 MIKTEXAPI_(int, __stdcall)
 TakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
+#endif
 
+#if defined(MIKTEX_WINDOWS)
 MIKTEXAPI_(int, __stdcall)
 TakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
+#endif
 
+#if defined(MIKTEX_WINDOWS)
 MIKTEXAPI_(int, __stdcall)
 MakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
+#endif
 
+#if defined(MIKTEX_WINDOWS)
 MIKTEXAPI_(int, __stdcall)
 MakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
+#endif
 
 MIKTEXMF_END_NAMESPACE;
 

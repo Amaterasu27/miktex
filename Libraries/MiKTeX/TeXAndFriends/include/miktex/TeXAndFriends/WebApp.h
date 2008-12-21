@@ -589,10 +589,16 @@ private:
 #  define SET_PROGRAM_INFO__423C8217_4CFC_41B7_9F89_EA3C4F729FD1(app)
 #endif
 
+#if defined(_MSC_VER)
+#  define MIKTEX_WEBAPP_EXPORT __declspec(dllexport)
+#else
+#  define MIKTEX_WEBAPP_EXPORT
+#endif
+
 #define MIKTEX_DEFINE_WEBAPP(dllentry, appclass, app, program, data)	\
 appclass app;								\
 extern "C"								\
-__declspec(dllexport)							\
+MIKTEX_WEBAPP_EXPORT							\
 int									\
 MIKTEXCEECALL								\
 dllentry (/*[in]*/ int			argc,				\

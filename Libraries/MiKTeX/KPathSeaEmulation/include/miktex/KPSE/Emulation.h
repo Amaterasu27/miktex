@@ -711,12 +711,12 @@ miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
 MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
 
-MIKTEXKPSCEEAPI(LPVOID)
+MIKTEXKPSCEEAPI(void *)
 miktex_malloc (/*[in]*/ size_t		size,
 	       /*[in]*/ const char *	lpszFileName,
 	       /*[in]*/ int		line);
 
-MIKTEXKPSCEEAPI(LPVOID)
+MIKTEXKPSCEEAPI(void *)
 miktex_realloc (/*[in]*/ void *		ptr,
 		/*[in]*/ size_t		size,
 		/*[in]*/ const char *	lpszFileName,

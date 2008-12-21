@@ -86,8 +86,10 @@ namespace texmfapp {
 
 #include <csignal>
 
+#if 0
 #include <fcntl.h>
 #include <io.h>
+#endif
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

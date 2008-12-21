@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -22,11 +22,13 @@
 #if defined(_MSC_VER)
 #  define MIKTEXKPSEXPORT __declspec(dllexport)
 #else
-#  define MIKTEXKPSEXPORTT
+#  define MIKTEXKPSEXPORT
 #endif
 
 #define D0A4167033297F40884B97769F47801C
 #include "miktex/KPSE/Emulation"
+
+#include "config.h"
 
 /* _________________________________________________________________________
 

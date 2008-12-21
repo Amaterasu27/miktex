@@ -23,6 +23,9 @@
 
 #include <cstdlib>
 #include <malloc.h>
+#if defined(MIKTEX_UNIX)
+#include <sys/time.h>
+#endif
 
 #include <miktex/TeXAndFriends/Prototypes>
 #include <miktex/Core/Core>

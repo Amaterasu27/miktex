@@ -51,6 +51,8 @@
 #define C4PCEEAPI(type) C4PEXPORT type MIKTEXCEECALL
 #define C4PDATA(type) C4PEXPORT type
 
+#define C4PCEECALL MIKTEXCEECALL
+
 #define C4P_BEGIN_NAMESPACE namespace C4P {
 #define C4P_END_NAMESPACE }
 

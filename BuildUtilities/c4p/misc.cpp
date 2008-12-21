@@ -30,7 +30,7 @@
 #  include <alloca.h>
 #endif
 
-#include "c4p.rc"
+#include "c4p-version.h"
 #include "common.h"
 
 using namespace std;
