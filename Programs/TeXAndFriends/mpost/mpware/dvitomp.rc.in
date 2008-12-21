@@ -19,13 +19,9 @@
 
 #include "dvitomp-version.h"
 
+#define VER_FILEDESCRIPTION_STR "DVI-to-MetaPost Converter DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${dvitomp_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${dvitomp_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "DVI-to-MetaPost Converter DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Public domain"
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

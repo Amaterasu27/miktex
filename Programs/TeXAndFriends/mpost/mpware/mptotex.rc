@@ -1,6 +1,6 @@
 /* mptotex.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "mptotex-version.h"
 
+#define VER_FILEDESCRIPTION_STR "MetaPost Label Extractor"
 #define VER_INTERNALNAME_STR "mpto"
 #define VER_ORIGINALFILENAME_STR "mpto.exe"
-
-#define VER_FILEDESCRIPTION_STR "MetaPost Label Extractor"
-
-#define VER_LEGALCOPYRIGHT_STR "Public domain"
 
 #include "MiKTeX/Core/win/version.rc"

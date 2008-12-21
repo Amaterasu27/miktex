@@ -1018,9 +1018,12 @@ EpsToPdfApp::Run (/*[in]*/ int			argc,
 	  break;
 	case OPT_VERSION:
 	  cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					       VersionNumber(VER_FILEVERSION))
+						  VersionNumber(MIKTEX_MAJOR_VERSION,
+								MIKTEX_MINOR_VERSION,
+								MIKTEX_COMP_J2000_VERSION,
+								0))
 	       << T_("\n\
-Copyright (C) 2000-2007 Christian Schenk\n\
+Copyright (C) 2000-2008 Christian Schenk\n\
 Copyright (C) 1998-2001 by Sebastian Rahtz et al.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")

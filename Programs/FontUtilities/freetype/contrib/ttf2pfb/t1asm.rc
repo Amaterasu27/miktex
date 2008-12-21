@@ -1,6 +1,6 @@
 /* t1asm.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "t1asm-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Type-1 Assembler"
 #define VER_INTERNALNAME_STR "t1asm"
 #define VER_ORIGINALFILENAME_STR "t1asm.exe"
-
-#define VER_FILEDESCRIPTION_STR "Type-1 Assembler"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1992 by I. Lee Hetherington, all rights reserved."
 
 #include "MiKTeX/Core/win/version.rc"

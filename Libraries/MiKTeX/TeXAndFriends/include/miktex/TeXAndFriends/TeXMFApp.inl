@@ -407,7 +407,7 @@ inline
 void
 miktexcheckmemoryifdebug ()
 {
-#if defined(_DEBUG)
+#if defined(MIKTEX_DEBUG)
   THEAPP.CheckMemory ();
 #endif
 }

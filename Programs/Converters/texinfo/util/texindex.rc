@@ -1,6 +1,6 @@
 /* texindex.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2004 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "texindex-version.h"
 
+#define VER_FILEDESCRIPTION_STR "TeX Index Generator"
 #define VER_INTERNALNAME_STR "texindex"
 #define VER_ORIGINALFILENAME_STR "texindex.exe"
-
-#define VER_FILEDESCRIPTION_STR "TeX Index Generator"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1987, 91-92, 1996-2004 Free Software Foundation, Inc."
 
 #include "MiKTeX/Core/win/version.rc"

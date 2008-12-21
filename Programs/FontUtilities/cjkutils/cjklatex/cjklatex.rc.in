@@ -1,6 +1,6 @@
 /* cjklatex.rc: cjklatex resources				-*- C++ -*-
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
 
    This file is part of CJKLaTeX.
 
@@ -21,11 +21,9 @@
 
 #include "cjklatex-version.h"
 
+#define VER_FILEDESCRIPTION_STR "MiKTeX CJKLaTeX DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${cjklatex_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${cjklatex_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "MiKTeX CJKLaTeX DLL"
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

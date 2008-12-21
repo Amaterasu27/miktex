@@ -702,7 +702,10 @@ void
 McdApp::Version ()
 {
   cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					  VersionNumber(VER_FILEVERSION))
+					  VersionNumber(MIKTEX_MAJOR_VERSION,
+							MIKTEX_MINOR_VERSION,
+							MIKTEX_COMP_J2000_VERSION,
+							0))
        << T_("\n\
 Copyright (C) 1998-2008 Christian Schenk\n\
 Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,\n\

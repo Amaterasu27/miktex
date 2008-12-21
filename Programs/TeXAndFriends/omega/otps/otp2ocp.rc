@@ -19,14 +19,8 @@
 
 #include "otp2ocp-version.h"
 
+#define VER_FILEDESCRIPTION_STR "OTP-to-OCP Converter"
 #define VER_INTERNALNAME_STR "otp2ocp"
 #define VER_ORIGINALFILENAME_STR "otp2ocp.exe"
-
-#define VER_FILEDESCRIPTION_STR "OTP-to-OCP Converter"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1994-1997 John Plaice and Yannis Haralambous"
-
-#define VER_LEGALTRADEMARKS_STR "TeX is a trademark of the American \
-Mathematical Society."
 
 #include "MiKTeX/Core/win/version.rc"

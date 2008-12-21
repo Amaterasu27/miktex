@@ -1,6 +1,6 @@
 /* curl.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2005-2007 Christian Schenk
+   Copyright (C) 2005-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "curl-version.h"
 
+#define VER_FILEDESCRIPTION_STR "libcurl Shared Library"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${curl_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${curl_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "libcurl Shared Library"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1998 - 2007, Daniel Stenberg, et al."
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

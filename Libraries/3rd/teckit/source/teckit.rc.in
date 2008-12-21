@@ -19,14 +19,9 @@
 
 #include "teckit-version.h"
 
+#define VER_FILEDESCRIPTION_STR "TECkit engine DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${teckit_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${teckit_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "TECkit engine DLL"
-
-#define VER_COMPANYNAME_STR "SIL International"
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2002-2008 SIL International"
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

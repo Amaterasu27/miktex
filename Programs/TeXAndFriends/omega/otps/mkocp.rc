@@ -1,6 +1,6 @@
 /* mkocp.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2002-2005 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,9 +19,8 @@
 
 #include "mkocp-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Make OCP"
 #define VER_INTERNALNAME_STR "mkocp"
 #define VER_ORIGINALFILENAME_STR "mkocp.exe"
-
-#define VER_FILEDESCRIPTION_STR "Make OCP"
 
 #include "MiKTeX/Core/win/version.rc"

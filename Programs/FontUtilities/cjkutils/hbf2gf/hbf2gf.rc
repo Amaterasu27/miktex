@@ -1,6 +1,6 @@
 /* hbf2gf.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "hbf2gf-version.h"
 
+#define VER_FILEDESCRIPTION_STR "HBF-to-GF Converter"
 #define VER_INTERNALNAME_STR "hbf2gf"
 #define VER_ORIGINALFILENAME_STR "hbf2gf.exe"
-
-#define VER_FILEDESCRIPTION_STR "HBF-to-GF Converter"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1996-1998 Werner Lemberg"
 
 #include "MiKTeX/Core/win/version.rc"

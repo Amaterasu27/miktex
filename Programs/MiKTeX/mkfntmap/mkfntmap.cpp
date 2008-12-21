@@ -387,7 +387,10 @@ void
 MakeFontMapApp::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					  VersionNumber(VER_FILEVERSION))
+					  VersionNumber(MIKTEX_MAJOR_VERSION,
+							MIKTEX_MINOR_VERSION,
+							MIKTEX_COMP_J2000_VERSION,
+							0))
        << T_("\n\
 Copyright (C) 2002-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\

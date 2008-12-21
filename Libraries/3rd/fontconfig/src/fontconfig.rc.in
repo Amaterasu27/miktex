@@ -1,6 +1,6 @@
 /* fontconfig.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "fontconfig-version.h"
 
+#define VER_FILEDESCRIPTION_STR "FontConfig DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${fontconfig_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${fontconfig_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "FontConfig DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright © 2001,2003 Keith Packard"
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

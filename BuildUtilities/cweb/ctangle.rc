@@ -1,6 +1,6 @@
 /* ctangle.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2002 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "ctangle-version.h"
 
+#define VER_FILEDESCRIPTION_STR "CTangle"
 #define VER_INTERNALNAME_STR "ctangle"
 #define VER_ORIGINALFILENAME_STR "ctangle.exe"
-
-#define VER_FILEDESCRIPTION_STR "CTangle"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth"
 
 #include <MiKTeX/Core/win/version.rc>

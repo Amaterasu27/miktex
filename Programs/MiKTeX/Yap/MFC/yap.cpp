@@ -1,6 +1,6 @@
 /* yap.cpp: Yet Another Previewer
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of Yap.
 
@@ -386,7 +386,7 @@ YapApplication::InitInstance ()
 	}
       
       // change the registry key under which our settings are stored
-      SetRegistryKey (MIKTEX_COMPANYNAME_STR
+      SetRegistryKey (MIKTEX_COMP_COMPANY_STR
 		      "\\"
 		      MIKTEX_PRODUCTNAME_STR
 		      "\\"
@@ -545,9 +545,9 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
   if (! pDX->m_bSaveAndValidate)
     {
       CString str;
-      str.Format (T_(T_("Yet Another Previewer %s")), VER_FILEVERSION_STR);
+      str.Format (T_(T_("Yet Another Previewer %s")), MIKTEX_COMPONENT_VERSION_STR);
       str += "\r\n";
-      str += MIKTEX_LEGALCOPYRIGHT_STR;
+      str += MIKTEX_COMP_COPYRIGHT_STR;
       GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
     }
 }

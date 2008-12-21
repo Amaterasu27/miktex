@@ -1,6 +1,6 @@
 /* cjklatex.cpp:
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
    Copyright (C) 2001 Fabrice Popineau
 
    This file is part of CJKLaTeX.
@@ -192,9 +192,9 @@ void
 CJKLaTeXApp::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
-					   VER_FILEVERSION_STR)
+					   MIKTEX_COMPONENT_VERSION_STR)
        << T_("\n\
-Copyright (C) 2004-2007 Christian Schenk\n\
+Copyright (C) 2004-2008 Christian Schenk\n\
 Copyright (C) 2001 Fabrice Popineau\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")

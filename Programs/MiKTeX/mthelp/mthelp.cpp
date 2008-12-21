@@ -1,6 +1,6 @@
 /* mthelp.cpp:
 
-   Copyright (C) 2004-2007 Christian Schenk
+   Copyright (C) 2004-2008 Christian Schenk
 
    This file is a part of MTHelp.
 
@@ -253,9 +253,9 @@ void
 MiKTeXHelp::ShowVersion ()
 {
   tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					   VER_FILEVERSION_STR)
+					   MIKTEX_COMPONENT_VERSION_STR)
 	<< "\n"
-	<< T_("Copyright (C) 2004-2006 Christian Schenk\n\
+	<< T_("Copyright (C) 2004-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;

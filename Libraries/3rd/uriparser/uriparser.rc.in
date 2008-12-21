@@ -19,13 +19,9 @@
 
 #include "uriparser-version.h"
 
+#define VER_FILEDESCRIPTION_STR "XML Parser DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${uriparser_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${uriparser_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "XML Parser DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2007, Weijia Song <songweijia@gmail.com>, Sebastian Pipping <webmaster@hartwork.org>"
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

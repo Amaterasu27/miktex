@@ -2713,9 +2713,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   if (optVersion)
     {
       tcout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					       VER_FILEVERSION_STR)
+					       MIKTEX_COMPONENT_VERSION_STR)
 	    << T_("\n\
-Copyright (C) 1996-2006 Christian Schenk\n\
+Copyright (C) 1996-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	    << endl;

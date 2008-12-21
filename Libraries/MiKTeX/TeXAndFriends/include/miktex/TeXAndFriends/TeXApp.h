@@ -220,7 +220,7 @@ public:
      CheckMemory
      _______________________________________________________________________ */
 
-#if defined(_DEBUG)
+#if defined(MIKTEX_DEBUG)
 public:
   virtual
   void

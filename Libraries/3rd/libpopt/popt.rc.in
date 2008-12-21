@@ -1,6 +1,6 @@
 /* popt.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU Library General Public License as
@@ -18,13 +18,9 @@
 
 #include "popt-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Option Parser DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${popt_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${popt_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "Option Parser DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "(C) 1998-2000 Red Hat, Inc."
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

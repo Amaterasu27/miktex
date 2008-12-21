@@ -19,13 +19,9 @@
 
 #include "vftovp-version.h"
 
+#define VER_FILEDESCRIPTION_STR "VF Disassembler DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${vftovp_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${vftovp_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "VF Disassembler DLL"
-
-#define VER_LEGALCOPYRIGHT_STR ""
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

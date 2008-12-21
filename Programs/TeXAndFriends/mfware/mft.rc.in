@@ -1,6 +1,6 @@
 /* mft.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "mft-version.h"
 
+#define VER_FILEDESCRIPTION_STR "MF Beautifier DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${mft_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${mft_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "MF Beautifier DLL"
-
-#define VER_LEGALCOPYRIGHT_STR ""
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

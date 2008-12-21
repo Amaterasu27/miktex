@@ -1,6 +1,6 @@
 /* common.cpp: common stuff
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -200,9 +200,12 @@ void
 MakeUtility::ShowVersion ()
 {
   OUT__ << Utils::MakeProgramVersionString(Utils::GetExeName().c_str(),
-					   VersionNumber(VER_FILEVERSION))
+					   VersionNumber(MIKTEX_MAJOR_VERSION,
+							 MIKTEX_MINOR_VERSION,
+							 MIKTEX_COMP_J2000_VERSION,
+							 0))
 	<< T_("\n\
-Copyright (C) 1998-2006 Christian Schenk\n\
+Copyright (C) 1998-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;

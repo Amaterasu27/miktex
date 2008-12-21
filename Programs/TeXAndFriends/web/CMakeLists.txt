@@ -53,4 +53,4 @@ create_web_app(Tangle)
 create_web_app(Weave)
 
 add_dependencies(${tangle_dll_name} bootstrap)
-add_dependencies(${weave_dll_name} tangle)
+add_dependencies(${weave_dll_name} ${miktex_prefix}tangle)

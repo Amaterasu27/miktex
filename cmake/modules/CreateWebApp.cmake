@@ -32,9 +32,11 @@ macro(create_web_app _name)
   string(TOUPPER "${_short_name}" _short_name_u)
 
   if(${ARGC} GREATER 2)
-    set(_invocation_name ${ARGV2})
+    set(_invocation_name ${miktex_prefix}${ARGV2})
+    set(_alt_invocation_name ${ARGV2})
   else(${ARGC} GREATER 2)
-    set(_invocation_name ${_short_name_l})
+    set(_invocation_name ${miktex_prefix}${_short_name_l})
+    set(_alt_invocation_name ${_short_name_l})
   endif(${ARGC} GREATER 2)
 
   if(${ARGC} GREATER 3)
@@ -245,21 +247,36 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     ARCHIVE DESTINATION "${libdir}"
   )
 
-  if(${_invocation_name} STREQUAL "${_short_name_l}")
-  else(${_invocation_name} STREQUAL "${_short_name_l}")
-    add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
-    merge_trustinfo_manifest(${_short_name} asInvoker)
-    merge_common_controls_manifest(${_short_name})
-    install(
-      TARGETS ${_short_name_l}
-      DESTINATION ${bindir}
-    )
-    add_dependencies(${_short_name_l} ${${_short_name_l}_dll_name})
-    target_link_libraries(${_short_name_l}
+  if(BUILDING_MIKTEX)
+    if(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
+    else(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
+      add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
+      merge_trustinfo_manifest(${_short_name_l} asInvoker)
+      merge_common_controls_manifest(${_short_name_l})
+      install(
+        TARGETS ${_short_name_l}
+        DESTINATION ${bindir}
+      )
+      add_dependencies(${_short_name_l} ${${_short_name_l}_dll_name})
+      target_link_libraries(${_short_name_l}
+        ${core_dll_name}
+        ${${_short_name_l}_dll_name}
+      )
+    endif(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
+
+    add_executable(${_alt_invocation_name} ${_short_name_l}wrapper.cpp)
+    target_link_libraries(${_alt_invocation_name}
       ${core_dll_name}
       ${${_short_name_l}_dll_name}
     )
-  endif(${_invocation_name} STREQUAL "${_short_name_l}")
+    merge_manifests(${_alt_invocation_name} asInvoker)
+    install(
+      TARGETS ${_alt_invocation_name}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}"
+    )
+  endif(BUILDING_MIKTEX)
 
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool

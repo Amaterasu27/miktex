@@ -571,18 +571,18 @@ private:
    MIKTEX_DEFINE_WEBAPP
    _________________________________________________________________________ */
 
-#if defined(VER_FILEVERSION_STR)
-#  if defined(VER_LEGALTRADEMARKS_STR)
+#if defined(MIKTEX_COMPONENT_VERSION_STR)
+#  if defined(MIKTEX_COMP_TM_STR)
 #    define SET_PROGRAM_INFO__423C8217_4CFC_41B7_9F89_EA3C4F729FD1(app)	\
       app.SetProgramInfo (app.TheNameOfTheGame(),			\
-			  VER_FILEVERSION_STR,				\
-			  VER_LEGALCOPYRIGHT_STR,			\
-			  VER_LEGALTRADEMARKS_STR)
+			  MIKTEX_COMPONENT_VERSION_STR,			\
+			  MIKTEX_COMP_COPYRIGHT_STR,		\
+			  MIKTEX_COMP_TM_STR)
 #  else
 #    define SET_PROGRAM_INFO__423C8217_4CFC_41B7_9F89_EA3C4F729FD1(app)	\
       app.SetProgramInfo (app.TheNameOfTheGame(),			\
-			  VER_FILEVERSION_STR,				\
-			  VER_LEGALCOPYRIGHT_STR,			\
+			  MIKTEX_COMPONENT_VERSION_STR,			\
+			  MIKTEX_COMP_COPYRIGHT_STR,		\
 			  "")
 #  endif
 #else

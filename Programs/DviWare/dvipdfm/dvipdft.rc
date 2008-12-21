@@ -1,6 +1,6 @@
 /* dvipdft.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is part of dvipdfm.
 
@@ -21,9 +21,8 @@
 
 #include "dvipdft-version.h"
 
+#define VER_FILEDESCRIPTION_STR "DVI-to-PDF Thumbnail Converter"
 #define VER_INTERNALNAME_STR "dvipdft"
 #define VER_ORIGINALFILENAME_STR "dvipdft.exe"
-
-#define VER_FILEDESCRIPTION_STR "DVI-to-PDF Thumbnail Converter"
 
 #include "MiKTeX/Core/win/version.rc"

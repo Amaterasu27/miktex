@@ -1,6 +1,6 @@
 /* mkpsres.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2002 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "mkpsres-version.h"
 
+#define VER_FILEDESCRIPTION_STR "PS Resource Database Creator"
 #define VER_INTERNALNAME_STR "mkpsres"
 #define VER_ORIGINALFILENAME_STR "mkpsres.exe"
-
-#define VER_FILEDESCRIPTION_STR "PS Resource Database Creator"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1991, 1994 Adobe Systems Incorporated"
 
 #include "MiKTeX/Core/win/version.rc"

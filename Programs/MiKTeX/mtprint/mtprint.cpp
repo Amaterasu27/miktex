@@ -1,6 +1,6 @@
 /* mtprint.cpp: MiKTeX Print Utility
 
-   Copyright (C) 2003-2007 Christian Schenk
+   Copyright (C) 2003-2008 Christian Schenk
 
    This file is part of MiKTeX Print Utility.
 
@@ -699,9 +699,9 @@ void
 PrintUtility::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					   VER_FILEVERSION_STR)
+					  MIKTEX_COMPONENT_VERSION_STR)
        << "\n"
-       << T_("Copyright (C) 2003-2007 Christian Schenk\n\
+       << T_("Copyright (C) 2003-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
        << endl;

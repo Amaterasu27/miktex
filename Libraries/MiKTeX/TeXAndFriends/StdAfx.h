@@ -28,6 +28,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <set>
 
 #include <miktex/App/Application>
 #include <miktex/Core/Core>

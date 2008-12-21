@@ -1,6 +1,6 @@
 /* mf.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1991-2007 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -25,15 +25,9 @@ IDR_MFSCREEN ICON DISCARDABLE "miktex.ico"
 
 #include "mf-version.h"
 
+#define VER_FILEDESCRIPTION_STR "METAFONT DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${mf_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${mf_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "METAFONT DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1984 by D. E. Knuth"
-#define VER_LEGALTRADEMARKS_STR "METAFONT is a trademark of Addison-Wesley \
-Publishing Company."
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

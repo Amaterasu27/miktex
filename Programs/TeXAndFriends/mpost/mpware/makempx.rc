@@ -1,6 +1,6 @@
 /* makempx.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1998-2005 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of MakeMpx.
 
@@ -20,9 +20,8 @@
 
 #include "makempx-version.h"
 
+#define VER_FILEDESCRIPTION_STR "MetaPost Label Processor"
 #define VER_INTERNALNAME_STR "makempx"
 #define VER_ORIGINALFILENAME_STR "makempx.exe"
-
-#define VER_FILEDESCRIPTION_STR "MetaPost Label Processor"
 
 #include "MiKTeX/Core/win/version.rc"

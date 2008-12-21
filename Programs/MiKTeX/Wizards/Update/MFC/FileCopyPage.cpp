@@ -782,7 +782,7 @@ FileCopyPage::OpenLog ()
 
   // log general info
   Log (T_("MiKTeX Update Wizard Report\n\n"));
-  Log (T_("Version: %s\n"), VER_FILEVERSION_STR);
+  Log (T_("Version: %s\n"), MIKTEX_COMPONENT_VERSION_STR);
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
   Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
 }

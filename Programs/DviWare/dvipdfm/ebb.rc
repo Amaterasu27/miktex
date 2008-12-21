@@ -1,6 +1,6 @@
 /* ebb.rc: ebb resources				-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of dvipdfm.
 
@@ -21,11 +21,8 @@
 
 #include "ebb-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Bounding Box Extractor"
 #define VER_INTERNALNAME_STR "ebb"
 #define VER_ORIGINALFILENAME_STR "ebb.exe"
-
-#define VER_FILEDESCRIPTION_STR "Bounding Box Extractor"
-
-#define VER_LEGALCOPYRIGHT_STRMark "Copyright (C) 1998, 99 Mark Wicks"
 
 #include "MiKTeX/Core/win/version.rc"

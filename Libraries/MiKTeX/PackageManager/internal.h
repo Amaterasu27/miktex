@@ -184,7 +184,7 @@ BEGIN_INTERNAL_NAMESPACE;
 
 const time_t Y2000 = 946681200;
 
-const char * const MPM_AGENT = "MPM/" VER_FILEVERSION_STR;
+const char * const MPM_AGENT = "MPM/" MIKTEX_COMPONENT_VERSION_STR;
 
 const char * const MPMSVC = "mpmsvc";
 

@@ -1073,7 +1073,12 @@ DllGetVersion (/*[out]*/ DLLVERSIONINFO * pdvi)
     {
       return (E_INVALIDARG);
     }
-  unsigned a[4] = { VER_FILEVERSION };
+  unsigned a[4] = {
+    MIKTEX_MAJOR_VERSION,
+    MIKTEX_MINOR_VERSION,
+    MIKTEX_COMP_J2000_VERSION,
+    0
+  };
   pdvi->dwMajorVersion = a[0];
   pdvi->dwMinorVersion = a[1];
   pdvi->dwBuildNumber = a[2];

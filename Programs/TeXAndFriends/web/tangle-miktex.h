@@ -23,6 +23,7 @@
 
 #define THEDATA(x) TANGLEDATA.m_##x
 
+#include "tangle-version.h"
 #include <miktex/TeXAndFriends/WebApp>
 
 using namespace MiKTeX::TeXAndFriends;

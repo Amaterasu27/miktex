@@ -11,6 +11,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/${pdftex_dll_name}.dll
+texmf/miktex/bin/@miktex_prefix@pdftex.exe
 texmf/miktex/bin/pdftex.exe
 texmf/miktex/config/pdftex.ini
 texmf/miktex/fmt/pdftex.pool

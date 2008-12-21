@@ -1,6 +1,6 @@
 /* findtexmf.cpp: finding TeXMF related files
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of FindTeXMF.
 
@@ -362,9 +362,9 @@ void
 FindTeXMF::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					   VER_FILEVERSION_STR)
+					  MIKTEX_COMPONENT_VERSION_STR)
 	<< "\n"
-	<< T_("Copyright (C) 2001-2007 Christian Schenk\n\
+	<< T_("Copyright (C) 2001-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;

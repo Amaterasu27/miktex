@@ -1,6 +1,6 @@
 /* ttf2tfm.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "ttf2tfm-version.h"
 
+#define VER_FILEDESCRIPTION_STR "TTF-to-TFM"
 #define VER_INTERNALNAME_STR "ttf2tfm"
 #define VER_ORIGINALFILENAME_STR "ttf2tfm.exe"
-
-#define VER_FILEDESCRIPTION_STR "TTF-to-TFM"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1997-1999 by Frederic Loyer and Werner Lemberg"
 
 #include "MiKTeX/Core/win/version.rc"

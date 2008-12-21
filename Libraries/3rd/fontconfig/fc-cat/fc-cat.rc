@@ -1,6 +1,6 @@
 /* fc-cat.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -19,11 +19,8 @@
 
 #include "fc-cat-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Read font information cache files"
 #define VER_INTERNALNAME_STR "fc-cat"
 #define VER_ORIGINALFILENAME_STR "fc-cat.exe"
-
-#define VER_FILEDESCRIPTION_STR "Read font information cache files"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright © 2002 Keith Packard"
 
 #include "MiKTeX/Core/win/version.rc"

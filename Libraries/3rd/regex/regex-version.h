@@ -17,6 +17,9 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 3268
+#define MIKTEX_COMP_J2000_VERSION 3275
+
+#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2002, 2003 Free Software Foundation, Inc."
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2002, 2003 Free Software Foundation, Inc."
 
 #include <miktex/Core/Version>

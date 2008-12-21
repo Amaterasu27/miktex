@@ -148,7 +148,7 @@
 
 /* Version number of package */
 #include "xdvipdfmx-version.h"
-#define VERSION  MIKTEX_COMPONENT_ORIGINAL_VERSION_STR
+#define VERSION MIKTEX_COMP_ORIG_VERSION_STR
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

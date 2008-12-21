@@ -1,6 +1,6 @@
 /* xdvipdfmx.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "xdvipdfmx-version.h"
 
+#define VER_FILEDESCRIPTION_STR "DVI-to-PDF Converter"
 #define VER_INTERNALNAME_STR "xdvipdfmx"
 #define VER_ORIGINALFILENAME_STR "xdvipdfmx.exe"
-
-#define VER_FILEDESCRIPTION_STR "DVI-to-PDF Converter"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 2006 SIL International and Jin-Hwan Cho"
 
 #include "MiKTeX/Core/win/version.rc"

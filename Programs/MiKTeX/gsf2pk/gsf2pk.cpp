@@ -1668,7 +1668,7 @@ Converter::WritePkFile (/*[in]*/ const char *	lpszPkFile)
   // read version number / write id string
   Expect ("V", &line);
   string id = "gsf2pk ";
-  id += VER_FILEVERSION_STR;
+  id += MIKTEX_COMPONENT_VERSION_STR;
   int gsVersion;
   if (SScanF(line.c_str(), "V %d", &gsVersion) == 1)
     {
@@ -1800,9 +1800,12 @@ Converter::Main (/*[in]*/ int			argc,
 	  break;
 	case OPT_VERSION:
 	  cout << Utils::MakeProgramVersionString("gsf2pk",
-					   VersionNumber(VER_FILEVERSION))
+						  VersionNumber(MIKTEX_MAJOR_VERSION,
+								MIKTEX_MINOR_VERSION,
+								MIKTEX_COMP_J2000_VERSION,
+								0))
 	       << T_("\n\
-Copyright (C) 2004-2007 Christian Schenk\n\
+Copyright (C) 2004-2008 Christian Schenk\n\
 Copyright (C) 1993-2000  Paul Vojta\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")

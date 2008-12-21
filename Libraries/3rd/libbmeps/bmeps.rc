@@ -1,6 +1,6 @@
 /* bmeps.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2008 Christian Schenk
 
    This file is part of bmeps.
 
@@ -20,11 +20,8 @@
 
 #include "bmeps-version.h"
 
+#define VER_FILEDESCRIPTION_STR "Bitmap-to-EPS Converter"
 #define VER_INTERNALNAME_STR "bmeps"
 #define VER_ORIGINALFILENAME_STR "bmeps.exe"
-
-#define VER_FILEDESCRIPTION_STR "Bitmap-to-EPS Converter"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 2000-2005, Dirk Krause"
 
 #include <miktex/Core/win/version.rc>

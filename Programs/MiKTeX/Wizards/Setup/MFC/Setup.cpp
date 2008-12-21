@@ -1662,7 +1662,7 @@ AddUninstallerRegValue (/*[in]*/ HKEY			hkey,
    _________________________________________________________________________ */
 
 #define UNINST_HELP_LINK "http://miktex.org/support"
-#define UNINST_PUBLISHER MIKTEX_COMPANYNAME_STR
+#define UNINST_PUBLISHER MIKTEX_COMP_COMPANY_STR
 #define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
 #define UNINST_DISPLAY_STRING				\
   (theApp.setupTask == SetupTask::PrepareMiKTeXDirect	\
@@ -2353,7 +2353,7 @@ LogHeader ()
     }
   Log (T_("%s %s Report\n\n"),
        static_cast<const char *>(banner),
-       VER_FILEVERSION_STR);
+       MIKTEX_COMPONENT_VERSION_STR);
   CTime t = CTime::GetCurrentTime();
   Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
   Log (T_("Time: %s\n"), t.Format(T_("%H:%M:%S")));

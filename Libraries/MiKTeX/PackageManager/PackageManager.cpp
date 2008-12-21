@@ -63,7 +63,7 @@ struct ClientInfo : public Base
 {
   ClientInfo ()
     : name_ ("MPM"),
-      version_ (VER_FILEVERSION_STR)
+      version_ (MIKTEX_COMPONENT_VERSION_STR)
   {
     Base::Name = &name_;
     Base::Version = &version_;
@@ -138,7 +138,7 @@ PackageManagerImpl::PackageManagerImpl ()
 {
   trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("initializing MPM library version %s"),
-				 VER_FILEVERSION_STR);
+				 MIKTEX_COMPONENT_VERSION_STR);
 }
 
 /* _________________________________________________________________________

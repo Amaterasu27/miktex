@@ -29,11 +29,11 @@ if(NATIVE_WINDOWS)
   set(touch_sources ${touch_sources} touch.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(miktex-touch ${touch_sources})
+add_executable(${miktex_prefix}touch ${touch_sources})
 
-merge_trustinfo_manifest(miktex-touch asInvoker)
+merge_trustinfo_manifest(${miktex_prefix}touch asInvoker)
 
-target_link_libraries(miktex-touch
+target_link_libraries(${miktex_prefix}touch
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}

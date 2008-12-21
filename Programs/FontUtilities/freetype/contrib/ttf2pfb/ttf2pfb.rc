@@ -1,6 +1,6 @@
 /* ttf2pfb.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "ttf2pfb-version.h"
 
+#define VER_FILEDESCRIPTION_STR "TTF-to-Type1"
 #define VER_INTERNALNAME_STR "ttf2pfb"
 #define VER_ORIGINALFILENAME_STR "ttf2pfb.exe"
-
-#define VER_FILEDESCRIPTION_STR "TTF-to-Type1"
-
-#define VER_LEGALCOPYRIGHT_STR ""
 
 #include "MiKTeX/Core/win/version.rc"

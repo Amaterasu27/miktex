@@ -1,6 +1,6 @@
 /* libpng.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "libpng-version.h"
 
+#define VER_FILEDESCRIPTION_STR "PNG API DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${png_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${png_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "PNG API DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.; Copyright (c) 1996, 1997 Andreas Dilger; Copyright (c) 1998-2007 Glenn Randers-Pehrson"
-
-#define VER_FILETYPE VFT_DLL
 
 #include <miktex/Core/win/version.rc>

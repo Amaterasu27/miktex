@@ -1,6 +1,6 @@
 /* htcmd.rc: version number				-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,11 +19,8 @@
 
 #include "htcmd-version.h"
 
+#define VER_FILEDESCRIPTION_STR "TeX4ht: LaTeX and TeX for Hypertext"
 #define VER_INTERNALNAME_STR "htcmd"
 #define VER_ORIGINALFILENAME_STR "htcmd.exe"
-
-#define VER_FILEDESCRIPTION_STR "TeX4ht: LaTeX and TeX for Hypertext"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1996-2004 Eitan M. Gurari"
 
 #include "MiKTeX/Core/win/version.rc"

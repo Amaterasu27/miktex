@@ -1,6 +1,6 @@
 /* dvicopy.rc: version number
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of DVIcopy.
 
@@ -21,13 +21,9 @@
 
 #include "dvicopy-version.h"
 
+#define VER_FILEDESCRIPTION_STR "DVI Flattener DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${dvicopy_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${dvicopy_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "DVI Flattener DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1990,95 Peter Breitenlohner"
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

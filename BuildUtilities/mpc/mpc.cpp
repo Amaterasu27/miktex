@@ -2731,7 +2731,10 @@ PackageCreator::Run (/*[in]*/ int		argc,
   if (optVersion)
     {
       cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					      VER_FILEVERSION_STR)
+					      VersionNumber(MIKTEX_MAJOR_VERSION,
+							    MIKTEX_MINOR_VERSION,
+							    MIKTEX_COMP_J2000_VERSION,
+							    0))
 	   << T_("\n\
 Copyright (C) 1996-2008 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\

@@ -1,6 +1,6 @@
 /* bibtex.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "bibtex-version.h"
 
+#define VER_FILEDESCRIPTION_STR "BibTeX DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${bibtex_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${bibtex_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "BibTeX DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright (C) 1985 by Oren Patashnik; all rights reserved."
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

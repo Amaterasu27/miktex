@@ -1,6 +1,6 @@
 /* misc.c: C4P utilities					-*- C++ -*-
 
-   Copyright (C) 1991-2001 Christian Schenk
+   Copyright (C) 1991-2008 Christian Schenk
 
    This file is part of C4P.
 
@@ -53,7 +53,7 @@ void
 generate_file_header ()
 {
   out_form ("/* generated from %s by C4P version %s */\n",
-	    pascal_file_name.c_str(), VER_FILEVERSION_STR);
+	    pascal_file_name.c_str(), MIKTEX_COMPONENT_VERSION_STR);
 }
 
 /* _________________________________________________________________________

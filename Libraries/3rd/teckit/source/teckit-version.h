@@ -17,7 +17,11 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 2967
-#define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "2.5.1 (svn 68)"
+#define MIKTEX_COMP_J2000_VERSION 3275
+#define MIKTEX_COMP_ORIG_VERSION_STR "2.5.1 (svn 68)"
+
+#define MIKTEX_COMP_COMPANY_STR "SIL International"
+#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2002-2008 SIL International"
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2002-2008 SIL International"
 
 #include <miktex/Core/Version>

@@ -1,6 +1,6 @@
 /* fc-list.rc: version number					-*- C++ -*-
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -19,11 +19,8 @@
 
 #include "fc-list-version.h"
 
+#define VER_FILEDESCRIPTION_STR "List available fonts"
 #define VER_INTERNALNAME_STR "fc-list"
 #define VER_ORIGINALFILENAME_STR "fc-list.exe"
-
-#define VER_FILEDESCRIPTION_STR "List available fonts"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright © 2002 Keith Packard"
 
 #include "MiKTeX/Core/win/version.rc"

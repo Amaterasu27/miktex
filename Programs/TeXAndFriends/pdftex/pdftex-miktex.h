@@ -294,7 +294,7 @@ public:
     return (MIKTEXHELP_PDFTEX);
   }
 
-#if defined(_DEBUG)
+#if defined(MIKTEX_DEBUG)
 public:
   virtual
   void

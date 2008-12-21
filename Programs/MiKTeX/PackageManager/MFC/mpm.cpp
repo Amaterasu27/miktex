@@ -1,6 +1,6 @@
 /* mpm.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2008 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -81,7 +81,7 @@ PackageManagerApplication::InitInstance ()
       pSession.CreateSession (Session::InitInfo("mpm"));
       TraceStream::SetTraceFlags ("error,mpm,config");
       
-      SetRegistryKey (MIKTEX_COMPANYNAME_STR
+      SetRegistryKey (MIKTEX_COMP_COMPANY_STR
 		      "\\"
 		      MIKTEX_PRODUCTNAME_STR
 		      "\\"
@@ -191,9 +191,9 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	{
 	  CString str;
 	  str.Format (T_("MiKTeX Package Manager (windowed mode) version %s"),
-		      VER_FILEVERSION_STR);
+		      MIKTEX_COMPONENT_VERSION_STR);
 	  str += "\r\n";
-	  str += MIKTEX_LEGALCOPYRIGHT_STR;
+	  str += MIKTEX_COMP_COPYRIGHT_STR;
 	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);
 	  if (pWnd == 0)
 	    {

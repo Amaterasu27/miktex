@@ -17,9 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(rel_7zip_dir	"Libraries/3rd/7-Zip")
+set(miktex_prefix	"miktex-")
 
 # directories
+set(rel_7zip_dir	"Libraries/3rd/7-Zip")
 set(rel_app_dir		"Libraries/MiKTeX/App")
 set(rel_arctrl_win_dir	"Programs/MiKTeX/arctrl/win")
 set(rel_bibtex8_dir	"Programs/Bibliography/bibtex8")
@@ -204,11 +205,11 @@ set(pltotf_exe "${outdir}/${CMAKE_CFG_INTDIR}/pltotf${exe_suffix}")
 set(rmtree_perl "${CMAKE_SOURCE_DIR}/${rel_build_tools_etc_dir}/rmtree.perl")
 set(runhhc_perl "${CMAKE_BINARY_DIR}/${rel_build_tools_etc_dir}/runhhc.perl")
 set(runxsltproc_perl "${CMAKE_BINARY_DIR}/${rel_build_tools_etc_dir}/runxsltproc.perl")
-set(tangle_exe "${outdir}/${CMAKE_CFG_INTDIR}/tangle${exe_suffix}")
-set(tftopl_exe "${outdir}/${CMAKE_CFG_INTDIR}/tftopl${exe_suffix}")
-set(tie_exe "${outdir}/${CMAKE_CFG_INTDIR}/tie${exe_suffix}")
-set(trapmf_exe "${outdir}/${CMAKE_CFG_INTDIR}/trapmf${exe_suffix}")
-set(trapmp_exe "${outdir}/${CMAKE_CFG_INTDIR}/trapmp${exe_suffix}")
-set(triptex_exe "${outdir}/${CMAKE_CFG_INTDIR}/triptex${exe_suffix}")
+set(tangle_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}tangle${exe_suffix}")
+set(tftopl_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}tftopl${exe_suffix}")
+set(tie_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}tie${exe_suffix}")
+set(trapmf_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}trapmf${exe_suffix}")
+set(trapmp_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}trapmp${exe_suffix}")
+set(triptex_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}triptex${exe_suffix}")
 set(webn_exe "${outdir}/${CMAKE_CFG_INTDIR}/web-n${exe_suffix}")
 set(mkdllbases_exe "${outdir}/${CMAKE_CFG_INTDIR}/mkdllbases${exe_suffix}")

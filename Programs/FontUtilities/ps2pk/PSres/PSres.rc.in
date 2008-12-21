@@ -1,6 +1,6 @@
 /* PSres.rc: version number				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,13 +19,9 @@
 
 #include "PSres-version.h"
 
+#define VER_FILEDESCRIPTION_STR "PS Resource Database DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${psres_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${psres_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "PS Resource Database DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1991, 1994 Adobe Systems Incorporated"
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

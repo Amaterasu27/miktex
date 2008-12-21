@@ -1,6 +1,6 @@
 /* mp.rc: version number					-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,15 +19,9 @@
 
 #include "mp-version.h"
 
+#define VER_FILEDESCRIPTION_STR "MetaPost DLL"
+#define VER_FILETYPE VFT_DLL
 #define VER_INTERNALNAME_STR "${mp_dll_name}"
 #define VER_ORIGINALFILENAME_STR "${mp_dll_name}.dll"
-
-#define VER_FILEDESCRIPTION_STR "MetaPost DLL"
-
-#define VER_LEGALCOPYRIGHT_STR "Copyright 1990 - 1995 by AT&T Bell Laboratories"
-
-#define VER_LEGALTRADEMARKS_STR "TeX is a trademark of the American Mathematical Society. METAFONT is a trademark of Addison-Wesley Publishing Company. PostScript is a trademark of Adobe Systems Incorporated."
-
-#define VER_FILETYPE VFT_DLL
 
 #include "miktex/Core/win/version.rc"

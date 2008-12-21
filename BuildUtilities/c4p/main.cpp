@@ -147,7 +147,7 @@ c4p_warning (/*[in]*/ const char *	fmt,
 void
 banner ()
 {
-  printf (T_("This is C4P version %s\n"), VER_FILEVERSION_STR);
+  printf (T_("This is C4P version %s\n"), MIKTEX_COMPONENT_VERSION_STR);
 }
 
 /* _________________________________________________________________________

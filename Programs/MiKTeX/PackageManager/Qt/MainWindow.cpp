@@ -397,7 +397,7 @@ MainWindow::AboutDialog ()
   QString message;
   message = tr("MiKTeX Package Manager");
   message += " ";
-  message += VER_FILEVERSION_STR;
+  message += MIKTEX_COMPONENT_VERSION_STR;
   message += "\n\n";
   message += tr("MiKTeX Package Manager is free software. \
 You are welcome to redistribute it under certain conditions. \
