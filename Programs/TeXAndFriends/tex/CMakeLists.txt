@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -51,8 +51,10 @@ set(tex_change_file ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.ch)
 
 create_web_app(TeX)
 
-create_exe_alias(initex tex --initialize)
-create_exe_alias(virtex tex)
+if(NATIVE_WINDOWS)
+  create_exe_alias(initex tex --initialize)
+  create_exe_alias(virtex tex)
+endif(NATIVE_WINDOWS)
 
 set(triptex_dll_name "triptex_")
 

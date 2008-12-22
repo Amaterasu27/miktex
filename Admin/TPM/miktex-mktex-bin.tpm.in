@@ -11,13 +11,19 @@
       MakeFMT, MakeMF, MakePK, and MakeTFM.
     </TPM:Description>
     <TPM:RunFiles>
+texmf/miktex/bin/${makex_dll_name}.dll
+texmf/miktex/bin/${miktex_prefix}makebase.exe
+texmf/miktex/bin/${miktex_prefix}makefmt.exe
+texmf/miktex/bin/${miktex_prefix}makemem.exe
+texmf/miktex/bin/${miktex_prefix}makemf.exe
+texmf/miktex/bin/${miktex_prefix}makepk.exe
+texmf/miktex/bin/${miktex_prefix}maketfm.exe
 texmf/miktex/bin/makebase.exe
 texmf/miktex/bin/makefmt.exe
 texmf/miktex/bin/makemem.exe
 texmf/miktex/bin/makemf.exe
 texmf/miktex/bin/makepk.exe
 texmf/miktex/bin/maketfm.exe
-texmf/miktex/bin/${makex_dll_name}.dll
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

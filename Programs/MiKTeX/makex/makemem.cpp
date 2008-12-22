@@ -1,6 +1,6 @@
 /* makemem.cpp:
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -197,7 +197,7 @@ MakeMem::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (name);
     }
-  if (! RunProcess("mp", arguments.Get()))
+  if (! RunProcess(MIKTEX_MPOST_EXE, arguments.Get()))
     {
       FatalError (T_("MetaPost failed on %s."), Q_(name));
     }

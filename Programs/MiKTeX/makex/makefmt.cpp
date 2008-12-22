@@ -146,6 +146,24 @@ private:
   }
 
 private:
+  const char *
+  GetEngineExeName ()
+  {
+    switch (engine.Get())
+      {
+      case Engine::TeX:
+	return (MIKTEX_TEX_EXE);
+      case Engine::pdfTeX:
+	return (MIKTEX_PDFTEX_EXE);
+      case Engine::XeTeX:
+	return (MIKTEX_XETEX_EXE);
+      case Engine::Omega:
+	return (MIKTEX_OMEGA_EXE);
+      }
+    throw (1);
+  }
+
+private:
   void
   FindInputFile (/*[in]*/ const PathName &	inputName,
 		 /*[out]*/ PathName &		inputFile);
@@ -547,9 +565,9 @@ MakeFmt::Run (/*[in]*/ int			argc,
     }
 
   // start the engine
-  if (! RunProcess(GetEngineName(), arguments.Get()))
+  if (! RunProcess(GetEngineExeName(), arguments.Get()))
     {
-      FatalError (T_("%s failed on %s."), GetEngineName(), Q_(name));
+      FatalError (T_("%s failed on %s."), GetEngineExeName(), Q_(name));
     }
 
   // install format file

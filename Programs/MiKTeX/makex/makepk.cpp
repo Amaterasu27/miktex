@@ -1,6 +1,6 @@
 /* makepk.c:
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -397,7 +397,7 @@ MakePk::RunGSF2PK (/*[in]*/ const FontMapEntry &	mapEntry,
   arguments.AppendArgument (mapEntry.fontFile);
   arguments.AppendArgument (NUMTOSTR(dpi));
   arguments.AppendArgument (lpszPkName);
-  if (! RunProcess("gsf2pk", arguments.Get()))
+  if (! RunProcess(MIKTEX_GSF2PK_EXE, arguments.Get()))
     {
       FatalError (T_("GSF2PK failed on %s."), Q_(mapEntry.fontFile));
     }
@@ -435,7 +435,7 @@ MakePk::RunPS2PK (/*[in]*/ const FontMapEntry &	mapEntry,
 
   arguments.AppendArgument (lpszPkName);
 
-  if (! RunProcess("ps2pk", arguments.Get()))
+  if (! RunProcess(MIKTEX_PS2PK_EXE, arguments.Get()))
     {
       FatalError (T_("PS2PK failed on %s."), Q_(mapEntry.fontFile));
     }
@@ -655,7 +655,7 @@ MakePk::Run (/*[in]*/ int			argc,
 	  arguments.AppendOption ("--print-only");
 	}
       arguments.AppendArgument (name);
-      if (RunProcess(T_("makemf"), arguments.Get()))
+      if (RunProcess(MIKTEX_MAKEMF_EXE, arguments.Get()))
 	{
 	  haveSource = true;
 	}
@@ -668,7 +668,7 @@ MakePk::Run (/*[in]*/ int			argc,
       arguments.AppendOption ("-q"); // suppress informational output
       arguments.AppendOption ("-t"); // test for font (returns 0 on succ.)
       arguments.AppendArgument (name);
-      if (RunProcess("ttf2pk", arguments.Get()))
+      if (RunProcess(MIKTEX_TTF2PK_EXE, arguments.Get()))
 	{
 	  arguments.Clear ();
 	  if (! debug)
@@ -678,7 +678,7 @@ MakePk::Run (/*[in]*/ int			argc,
 	  arguments.AppendOption ("-n"); // only use '.pk' as extension
 	  arguments.AppendArgument (name);
 	  arguments.AppendArgument (NUMTOSTR(dpi));
-	  if (RunProcess("ttf2pk", arguments.Get()))
+	  if (RunProcess(MIKTEX_TTF2PK_EXE, arguments.Get()))
 	    {
 	      isTTF = true;
 	      modeless = true;
@@ -698,7 +698,7 @@ MakePk::Run (/*[in]*/ int			argc,
       arguments.AppendOption ("-p");
       arguments.AppendArgument (name);
       arguments.AppendArgument (NUMTOSTR(dpi));
-      if (RunProcess("hbf2gf", arguments.Get()))
+      if (RunProcess(MIKTEX_HBF2GF_EXE, arguments.Get()))
 	{
 	  isHBF = true;
 	  modeless = true;
@@ -726,7 +726,7 @@ MakePk::Run (/*[in]*/ int			argc,
   MakePKFilename (name.c_str(), bdpi, dpi, pkName);
       
   // make fully qualified destination file name
-  PathName pathDest (0, destinationDirectory.Get(), pkName.Get(), 0);
+  PathName pathDest (destinationDirectory.Get(), pkName.Get());
 
   // quit, if destination file already exists
   if (File::Exists(pathDest))
@@ -753,7 +753,7 @@ MakePk::Run (/*[in]*/ int			argc,
 	  CommandLineBuilder arguments;
 	  arguments.AppendArgument (gfName);
 	  arguments.AppendArgument (pkName);
-	  if (! RunProcess(T_("gftopk"), arguments.Get()))
+	  if (! RunProcess(MIKTEX_GFTOPK_EXE, arguments.Get()))
 	    {
 	      FatalError (T_("GFtoPK failed on %s."), Q_(gfName));
 	    }
@@ -788,7 +788,7 @@ MakePk::Run (/*[in]*/ int			argc,
       CommandLineBuilder arguments;
       arguments.AppendArgument (gfName);
       arguments.AppendArgument (pkName);
-      if (! RunProcess(T_("gftopk"), arguments.Get()))
+      if (! RunProcess(MIKTEX_GFTOPK_EXE, arguments.Get()))
 	{
 	  FatalError (T_("GFtoPK failed on %s."), Q_(gfName));
 	}

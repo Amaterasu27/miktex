@@ -1,6 +1,6 @@
 /* makebase.cpp:
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -199,7 +199,7 @@ MakeBase::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (name);
     }
-  if (! RunProcess("mf", arguments.Get()))
+  if (! RunProcess(MIKTEX_MF_EXE, arguments.Get()))
     {
       FatalError (T_("METAFONT failed on %s."), Q_(name));
     }

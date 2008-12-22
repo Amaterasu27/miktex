@@ -1,6 +1,6 @@
 /* maketfm.cpp:
 
-   Copyright (C) 1998-2006 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -170,7 +170,7 @@ MakeTfm::MakeFromHBF (/*[in]*/ const char * lpszName)
   arguments.AppendOption ("-g");
   arguments.AppendArgument (lpszName);
   arguments.AppendArgument (NUMTOSTR(300));
-  if (! RunProcess("hbf2gf", arguments.Get()))
+  if (! RunProcess(MIKTEX_HBF2GF_EXE, arguments.Get()))
     {
       return (false);
     }
@@ -179,7 +179,7 @@ MakeTfm::MakeFromHBF (/*[in]*/ const char * lpszName)
   arguments.Clear ();
   arguments.AppendArgument (PathName(0, lpszName, ".pl"));
   arguments.AppendArgument (PathName(0, lpszName, ".tfm"));
-  if (! RunProcess(T_("pltotf"), arguments.Get()))
+  if (! RunProcess(MIKTEX_PLTOTF_EXE, arguments.Get()))
     {
       FatalError (T_("PLtoTF failed on %s."), Q_(lpszName));
     }
@@ -244,7 +244,7 @@ MakeTfm::Run (/*[in]*/ int			argc,
 	  arguments.AppendOption ("--print-only");
 	}
       arguments.AppendArgument (name);
-      if (! RunProcess(T_("makemf"), arguments.Get()))
+      if (! RunProcess(MIKTEX_MAKEMF_EXE, arguments.Get()))
 	{
 	  // no METAFONT input file; try to make from HBF file
 	  if (! MakeFromHBF(name.c_str()))

@@ -722,9 +722,9 @@ endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_makex_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 add_subdirectory(${rel_initexmf_dir})
 

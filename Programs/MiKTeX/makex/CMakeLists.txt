@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2008 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -48,13 +48,29 @@ add_library(${makex_dll_name} SHARED ${${makex_dll_name}_sources})
 target_link_libraries(${makex_dll_name}
   ${app_dll_name}
   ${core_dll_name}
-  ${getopt_dll_name}
   ${texmf_dll_name}
 )
 
+if(NATIVE_WINDOWS)
+target_link_libraries(${makex_dll_name}
+  ${getopt_dll_name}
+)
+endif(NATIVE_WINDOWS)
+
 rebase(${makex_dll_name})
-  
-set(exes makebase makefmt makemem makemf makepk maketfm)
+
+set(exes
+  ${miktex_prefix}makebase
+  ${miktex_prefix}makefmt
+  ${miktex_prefix}makemem
+  ${miktex_prefix}makemf
+  ${miktex_prefix}makepk
+  ${miktex_prefix}maketfm
+)
+
+if(NATIVE_WINDOWS)
+  set(exes makebase makefmt makemem makemf makepk maketfm)
+endif(NATIVE_WINDOWS)
 
 foreach(t ${exes})
   create_dll_wrapper(${t} ${makex_dll_name})

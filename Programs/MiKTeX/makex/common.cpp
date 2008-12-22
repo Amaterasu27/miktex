@@ -90,7 +90,7 @@ MakeUtility::RunMETAFONT (/*[in]*/ const char *	lpszName,
     }
   arguments += T_("input ");
   arguments += lpszName;
-  int exitCode = RunProcess("mf", arguments.c_str());
+  int exitCode = RunProcess(MIKTEX_MF_EXE, arguments.c_str());
   if (exitCode != 0)
     {
       Verbose (T_("METAFONT failed for some reason\n"));

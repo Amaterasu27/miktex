@@ -1721,15 +1721,15 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const char * lpszFormatKey)
 
   if (formatInfo.compiler == "mf")
     {
-      maker = T_("makebase");
+      maker = MIKTEX_MAKEBASE_EXE;
     }
   else if (formatInfo.compiler == T_("mpost"))
     {
-      maker = T_("makemem");
+      maker = MIKTEX_MAKEMEM_EXE;
     }
   else
     {
-      maker = T_("makefmt");
+      maker = MIKTEX_MAKEFMT_EXE;
       arguments.AppendOption ("--engine=", formatInfo.compiler);
     }
     

@@ -10,8 +10,9 @@
       This package includes the TeX executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/initex.exe
+texmf/miktex/bin/${miktex_prefix}tex.exe
 texmf/miktex/bin/${tex_dll_name}.dll
+texmf/miktex/bin/initex.exe
 texmf/miktex/bin/tex.exe
 texmf/miktex/bin/virtex.exe
 texmf/miktex/config/tex.ini

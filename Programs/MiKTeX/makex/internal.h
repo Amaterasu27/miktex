@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2007 Christian Schenk
+   Copyright (C) 1998-2008 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -185,7 +185,7 @@ bool
 HasPrefix (/*[in]*/ const char * lpsz1,
 	   /*[in]*/ const char * lpsz2)
 {
-  return (_strnicmp(lpsz1, lpsz2, strlen(lpsz2)) == 0);
+  return (PathName::Compare(lpsz1, lpsz2) == 0);
 }
 
 /* _________________________________________________________________________
@@ -331,7 +331,7 @@ protected:
 
 #define BEGIN_OPTION_MAP(cls)				\
 void							\
-cls::HandleOption (int	ch,		\
+HandleOption (int	ch,		\
 		   const char *	lpszOptArg,	\
 		   bool &		bHandled)	\
 {							\

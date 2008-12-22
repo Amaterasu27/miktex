@@ -11,9 +11,10 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/base/mf.pool
+texmf/miktex/bin/${mf_dll_name}.dll
+texmf/miktex/bin/${miktex_prefix}mf.exe
 texmf/miktex/bin/inimf.exe
 texmf/miktex/bin/mf.exe
-texmf/miktex/bin/${mf_dll_name}.dll
 texmf/miktex/bin/virmf.exe
     </TPM:RunFiles>
   </rdf:Description>
