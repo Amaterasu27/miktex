@@ -18,12 +18,17 @@
 ## USA.
 
 if(NATIVE_WINDOWS)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/aconf-win32.h
-    ${CMAKE_CURRENT_BINARY_DIR}/aconf.h
-    COPYONLY
-  )
-endif(NATIVE_WINDOWS)
+  set(FREETYPE2 TRUE)
+  set(HAVE_FREETYPE_FREETYPE_H TRUE)
+  set(MULTITHREADED TRUE)
+endif(NATIVE_WINDOWS TRUE)
+
+set(USE_EXCEPTIONS TRUE)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/aconf.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/aconf.h
+)
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}

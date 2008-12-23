@@ -875,7 +875,7 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
   if (renew)
     {
       PathName exe;
-      if (! pSession->FindFile("initexmf", FileType::EXE, exe))
+      if (! pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, exe))
 	{
 	  FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
 			      (T_("\
