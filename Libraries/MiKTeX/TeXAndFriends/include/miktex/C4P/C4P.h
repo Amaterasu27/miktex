@@ -26,6 +26,8 @@
 #if ! defined(D8041ED6B5CDA942BA2AEEA8E29FD1D9)
 #define D8041ED6B5CDA942BA2AEEA8E29FD1D9
 
+#include <miktex/C4P/config.h>
+
 #include <miktex/Core/First>
 
 #include <cstdio>
@@ -1149,12 +1151,14 @@ succ (/*[in]*/ T x)
   return (x + 1);
 }
 
+#if ! defined(HAVE_TRUNC)
 inline
 int
 trunc (/*[in]*/ double x)
 {
   return (static_cast<int>(x));
 }
+#endif
 
 C4P_END_NAMESPACE;
 

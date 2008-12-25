@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h.cmake
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h
+)
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
