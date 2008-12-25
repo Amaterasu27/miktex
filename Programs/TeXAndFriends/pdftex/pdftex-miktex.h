@@ -17,7 +17,12 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#pragma once
+#if defined(_MSC_VER)
+#  pragma once
+#endif
+
+#if ! defined(B9AE601D_55FC_414A_8D93_C81CF3517D1A)
+#define B9AE601D_55FC_414A_8D93_C81CF3517D1A
 
 #include "pdftexdefs.h"
 
@@ -31,7 +36,7 @@
 #  define THEDATA(x) PDFTEXDATA.m_##x
 #endif
 
-#include "pdftex.rc"
+#include "pdftex-version.h"
 
 #include <miktex/Core/Paths>
 #include <miktex/TeXAndFriends/ETeXApp>
@@ -40,7 +45,7 @@ namespace pdftex {
 #include "pdftex.defaults.h"
 }
 
-#if ! defined(MIKTEXHELP_PDFTEX)
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEXHELP_PDFTEX)
 #  include <MiKTeX/Core/Help>
 #endif
 
@@ -284,6 +289,7 @@ public:
     return ("pdfTeX");
   }
 
+#if defined(MIKTEX_WINDOWS)
 public:
   virtual
   unsigned long
@@ -293,6 +299,7 @@ public:
   {
     return (MIKTEXHELP_PDFTEX);
   }
+#endif
 
 #if defined(MIKTEX_DEBUG)
 public:
@@ -530,3 +537,5 @@ gettexstring (/*[in]*/ strnumber stringNumber)
 					      stringStart,
 					      stringLength));
 }
+
+#endif

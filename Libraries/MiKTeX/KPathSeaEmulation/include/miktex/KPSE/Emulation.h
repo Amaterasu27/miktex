@@ -23,12 +23,16 @@
 #  pragma once
 #endif
 
+#if ! defined(DF03C93E_3151_47A6_AEEE_6CFC30D01E42)
+#define DF03C93E_3151_47A6_AEEE_6CFC30D01E42
+
 #if defined(_MSC_VER)
 #  include <io.h>
 #  include <fcntl.h>
 #endif
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -332,10 +336,12 @@
 #define open_input(f_ptr, filefmt, fopen_mode) \
   MiKTeX::Web2C::OpenInput(nameoffile+1, f_ptr, filefmt, fopen_mode)
 
-#if defined(__cplusplus)
-#  define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
-#else
-#  define program_invocation_name miktex_get_program_invocation_name()
+#if ! defined(__USE_GNU)
+#  if defined(__cplusplus)
+#    define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
+#  else
+#    define program_invocation_name miktex_get_program_invocation_name()
+#  endif
 #endif
 
 #if ! defined(rindex)
@@ -780,3 +786,5 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #undef MIKTEX_BEGIN_EXTERN_C_BLOCK
 #undef MIKTEX_END_EXTERN_C_BLOCK
+
+#endif

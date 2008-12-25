@@ -18,6 +18,17 @@
 
 % _____________________________________________________________________________
 %
+% [3.9]
+% _____________________________________________________________________________
+
+@x
+    if ((*(k++) = c) != ' ') limit = k;
+@y
+    if ((*(k++) = c) != ' ' && c != '\r') limit = k;
+@z
+
+% _____________________________________________________________________________
+%
 % [3.10]
 % _____________________________________________________________________________
 
@@ -35,11 +46,19 @@
 @x
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
 @y
+#if defined(MIKTEX_WINDOWS)
         else if (*s=='/' || *s=='\\' || *s == ':') dot_pos=NULL,name_pos=++s;
+#else
+        else if (*s=='/') dot_pos=NULL,name_pos=++s;
+#endif
 @z
 
 @x
   if (found_change<=0) strcpy(change_file_name,"/dev/null");
 @y
+#if defined(MIKTEX_WINDOWS)
   if (found_change<=0) strcpy(change_file_name,"nul");
+#else
+  if (found_change<=0) strcpy(change_file_name,"/dev/null");
+#endif
 @z

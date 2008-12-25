@@ -172,12 +172,14 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
+#if defined(MIKTEX_WINDOWS)
 #include <direct.h>
 #include <sys/stat.h>
 #define stat _stat
 #define getcwd _getcwd
 #define snprintf _snprintf
 #define __attribute__(x)
+#endif
 ")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sysexits.h "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/md5.h "#include <miktex/Core/MD5>

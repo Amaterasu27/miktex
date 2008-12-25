@@ -1125,12 +1125,14 @@ rewrite (/*[in]*/ T & f)
   f.Rewrite ();
 }
 
+#if ! defined(HAVE_ROUND)
 inline
 int
 round (/*[in]*/ double r)
 {
   return (C4P::Round(r));
 }
+#endif
 
 inline
 double

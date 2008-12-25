@@ -1404,7 +1404,7 @@ public:
 #if defined(THEDATA)
   static
   void
-  __cdecl
+  MIKTEXCEECALL
   OnKeybordInterrupt (/*[in]*/ int)
   {
     signal (SIGINT, SIG_IGN);

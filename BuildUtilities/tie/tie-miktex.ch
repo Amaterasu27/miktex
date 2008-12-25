@@ -1,6 +1,6 @@
 %% tie-miktex.ch: WEB change file for Tie
 %% 
-%% Copyright (C) 2000-2005 Christian Schenk
+%% Copyright (C) 2000-2008 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -16,15 +16,48 @@
 %% along with This file; if not, write to the Free Software Foundation,
 %% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+% _____________________________________________________________________________
+%
+% [1.5]
+% _____________________________________________________________________________
+
 @x
 #define max_file_index 9
 @y
 #define max_file_index 100
 @z
 
- @x
+% _____________________________________________________________________________
+%
+% [2.11]
+% _____________________________________________________________________________
+
+@x
+@d nl_mark    @'\n' /* \ASCII{} code used as line end marker */
+@y
+@d cr_mark    @'\r' /* \ASCII{} code used as carriage return marker */
+@d nl_mark    @'\n' /* \ASCII{} code used as line end marker */
+@z
+
+% _____________________________________________________________________________
+%
+% [2.13]
+% _____________________________________________________________________________
+
+@x
+xchr[nl_mark]='\n';
+@y
+xchr[cr_mark]='\r';
+xchr[nl_mark]='\n';
+@z
+
+% _____________________________________________________________________________
+%
+% [5.27]
+% _____________________________________________________________________________
+
+@x
    if (c!=@' ' && c!=tab_mark)
-      final_limit=inp_desc->limit;
- @y
-   final_limit=inp_desc->limit;
- @z
+@y
+   if (c!=@' ' && c!=tab_mark && c!=cr_mark)
+@z

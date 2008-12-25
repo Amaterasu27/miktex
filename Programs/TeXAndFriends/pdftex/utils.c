@@ -36,6 +36,9 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include "png.h"
 #include "xpdf/config.h"        /* just to get the xpdf version */
+#if defined(MIKTEX)
+#  include <sys/stat.h>
+#endif
 
 static const char _svn_version[] =
     "$Id: utils.c 405 2008-03-31 10:11:44Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/utils.c $";

@@ -1,23 +1,23 @@
 /*1:*/
-#line 58 "common.w"
+#line 58 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 /*5:*/
-#line 102 "common.w"
+#line 102 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 #include <ctype.h> 
 
 /*:5*//*8:*/
-#line 165 "common.w"
+#line 165 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 #include <stdio.h> 
 
 /*:8*//*22:*/
-#line 470 "common.w"
+#line 470 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 #include <stdlib.h>  
 
 /*:22*/
-#line 59 "common.w"
+#line 59 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 #define ctangle 0
 #define cweave 1 \
@@ -121,16 +121,16 @@ err_print("! Include file name too long") ;goto restart;} \
 #define C_putc(c) putc(c,C_file)  \
 
 
-#line 60 "common.w"
+#line 60 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 /*2:*/
-#line 73 "common.w"
+#line 73 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 typedef short boolean;
 boolean program;
 
 /*:2*//*7:*/
-#line 159 "common.w"
+#line 159 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 char buffer[long_buf_size];
 char*buffer_end= buffer+buf_size-2;
@@ -138,7 +138,7 @@ char*limit= buffer;
 char*loc= buffer;
 
 /*:7*//*10:*/
-#line 214 "common.w"
+#line 214 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int include_depth;
 FILE*file[max_include_depth];
@@ -155,7 +155,7 @@ boolean changing;
 boolean web_file_open= 0;
 
 /*:10*//*20:*/
-#line 418 "common.w"
+#line 418 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 typedef unsigned short sixteen_bits;
 sixteen_bits section_count;
@@ -165,17 +165,17 @@ boolean change_pending;
 boolean print_where= 0;
 
 /*:20*//*27:*/
-#line 588 "common.w"
+#line 588 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 typedef struct name_info{
 char*byte_start;
 /*31:*/
-#line 625 "common.w"
+#line 625 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 struct name_info*link;
 
 /*:31*//*40:*/
-#line 724 "common.w"
+#line 724 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 union{
 struct name_info*Rlink;
@@ -184,12 +184,12 @@ char Ilk;
 }dummy;
 
 /*:40*//*55:*/
-#line 1056 "common.w"
+#line 1056 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 char*equiv_or_xref;
 
 /*:55*/
-#line 591 "common.w"
+#line 591 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 }name_info;
 typedef name_info*name_pointer;
@@ -199,13 +199,13 @@ name_info name_dir[max_names];
 name_pointer name_dir_end= name_dir+max_names-1;
 
 /*:27*//*29:*/
-#line 611 "common.w"
+#line 611 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 name_pointer name_ptr;
 char*byte_ptr;
 
 /*:29*//*32:*/
-#line 638 "common.w"
+#line 638 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 typedef name_pointer*hash_pointer;
 name_pointer hash[hash_size];
@@ -213,12 +213,12 @@ hash_pointer hash_end= hash+hash_size-1;
 hash_pointer h;
 
 /*:32*//*56:*/
-#line 1076 "common.w"
+#line 1076 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int history= spotless;
 
 /*:56*//*67:*/
-#line 1214 "common.w"
+#line 1214 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int argc;
 char**argv;
@@ -229,7 +229,7 @@ char scn_file_name[max_file_name_length];
 boolean flags[128];
 
 /*:67*//*77:*/
-#line 1364 "common.w"
+#line 1364 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 FILE*C_file;
 FILE*tex_file;
@@ -238,64 +238,64 @@ FILE*scn_file;
 FILE*active_file;
 
 /*:77*/
-#line 61 "common.w"
+#line 61 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 /*3:*/
-#line 83 "common.w"
+#line 83 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 int phase;
 
 /*:3*//*11:*/
-#line 240 "common.w"
+#line 240 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 char change_buffer[buf_size];
 char*change_limit;
 
 /*:11*/
-#line 62 "common.w"
+#line 62 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 /*33:*/
-#line 644 "common.w"
+#line 644 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 extern int names_match();
 
 /*:33*//*38:*/
-#line 697 "common.w"
+#line 697 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void init_p();
 
 /*:38*//*46:*/
-#line 846 "common.w"
+#line 846 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 extern void init_node();
 
 /*:46*//*53:*/
-#line 1011 "common.w"
+#line 1011 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int section_name_cmp();
 
 /*:53*//*57:*/
-#line 1086 "common.w"
+#line 1086 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void err_print();
 
 /*:57*//*60:*/
-#line 1134 "common.w"
+#line 1134 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int wrap_up();
 extern void print_stats();
 
 /*:60*//*63:*/
-#line 1167 "common.w"
+#line 1167 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void fatal(),overflow();
 
 /*:63*//*69:*/
-#line 1245 "common.w"
+#line 1245 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void scan_args();
 
 /*:69*//*81:*/
-#line 1405 "common.w"
+#line 1405 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 extern int strlen();
 extern int strcmp();
@@ -304,45 +304,45 @@ extern int strncmp();
 extern char*strncpy();
 
 /*:81*/
-#line 63 "common.w"
+#line 63 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 
 /*:1*//*4:*/
-#line 89 "common.w"
+#line 89 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 common_init()
 {
 /*30:*/
-#line 615 "common.w"
+#line 615 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 name_dir->byte_start= byte_ptr= byte_mem;
 name_ptr= name_dir+1;
 name_ptr->byte_start= byte_mem;
 
 /*:30*//*34:*/
-#line 649 "common.w"
+#line 649 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 for(h= hash;h<=hash_end;*h++= NULL);
 
 /*:34*//*41:*/
-#line 731 "common.w"
+#line 731 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 root= NULL;
 
 /*:41*/
-#line 93 "common.w"
+#line 93 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*68:*/
-#line 1227 "common.w"
+#line 1227 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 show_banner= show_happiness= show_progress= 1;
 
 /*:68*/
-#line 94 "common.w"
+#line 94 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*78:*/
-#line 1371 "common.w"
+#line 1371 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 scan_args();
 if(program==ctangle){
@@ -356,12 +356,12 @@ fatal("! Cannot open output file ",tex_file_name);
 }
 
 /*:78*/
-#line 95 "common.w"
+#line 95 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 
 /*:4*//*9:*/
-#line 172 "common.w"
+#line 172 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int input_ln(fp)
 FILE*fp;
@@ -371,7 +371,9 @@ register char*k;
 if(feof(fp))return(0);
 limit= k= buffer;
 while(k<=buffer_end&&(c= getc(fp))!=EOF&&c!='\n')
-if((*(k++)= c)!=' ')limit= k;
+#line 27 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common-miktex.ch"
+if((*(k++)= c)!=' '&&c!='\r')limit= k;
+#line 182 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 if(k> buffer_end)
 if((c= getc(fp))!=EOF&&c!='\n'){
 ungetc(c,fp);loc= buffer;err_print("! Input line too long");
@@ -383,14 +385,14 @@ return(1);
 }
 
 /*:9*//*12:*/
-#line 251 "common.w"
+#line 251 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 prime_the_change_buffer()
 {
 change_limit= change_buffer;
 /*13:*/
-#line 265 "common.w"
+#line 265 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 while(1){
 change_line++;
@@ -407,10 +409,10 @@ err_print("! Missing @x in change file");
 }
 
 /*:13*/
-#line 256 "common.w"
+#line 256 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*14:*/
-#line 282 "common.w"
+#line 282 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 do{
 change_line++;
@@ -422,10 +424,10 @@ return;
 }while(limit==buffer);
 
 /*:14*/
-#line 257 "common.w"
+#line 257 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*15:*/
-#line 292 "common.w"
+#line 292 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 change_limit= change_buffer-buffer+limit;
@@ -433,12 +435,12 @@ strncpy(change_buffer,buffer,limit-buffer+1);
 }
 
 /*:15*/
-#line 258 "common.w"
+#line 258 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 
 /*:12*//*16:*/
-#line 320 "common.w"
+#line 320 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 check_change()
@@ -461,7 +463,7 @@ return;
 if(limit> buffer+1&&buffer[0]=='@'){
 if(xisupper(buffer[1]))buffer[1]= tolower(buffer[1]);
 /*17:*/
-#line 358 "common.w"
+#line 358 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 if(buffer[1]=='x'||buffer[1]=='z'){
 loc= buffer+2;err_print("! Where is the matching @y?");
@@ -479,11 +481,11 @@ return;
 }
 
 /*:17*/
-#line 342 "common.w"
+#line 342 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 /*15:*/
-#line 292 "common.w"
+#line 292 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 change_limit= change_buffer-buffer+limit;
@@ -491,7 +493,7 @@ strncpy(change_buffer,buffer,limit-buffer+1);
 }
 
 /*:15*/
-#line 344 "common.w"
+#line 344 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 changing= 0;cur_line++;
 while(!input_ln(cur_file)){
@@ -507,14 +509,14 @@ if(lines_dont_match)n++;
 }
 
 /*:16*//*18:*/
-#line 378 "common.w"
+#line 378 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 reset_input()
 {
 limit= buffer;loc= buffer+1;buffer[0]= ' ';
 /*19:*/
-#line 393 "common.w"
+#line 393 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 if((web_file= fopen(web_file_name,"r"))==NULL){
 strcpy(web_file_name,alt_web_file_name);
@@ -528,7 +530,7 @@ if((change_file= fopen(change_file_name,"r"))==NULL)
 fatal("! Cannot open change file ",change_file_name);
 
 /*:19*/
-#line 383 "common.w"
+#line 383 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 include_depth= 0;cur_line= 0;change_line= 0;
 change_depth= include_depth;
@@ -537,14 +539,14 @@ limit= buffer;loc= buffer+1;buffer[0]= ' ';input_has_ended= 0;
 }
 
 /*:18*//*21:*/
-#line 426 "common.w"
+#line 426 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int get_line()
 {
 restart:
 if(changing&&include_depth==change_depth)
 /*25:*/
-#line 531 "common.w"
+#line 531 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 {
 change_line++;
 if(!input_ln(change_file)){
@@ -575,11 +577,11 @@ prime_the_change_buffer();changing= !changing;print_where= 1;
 }
 
 /*:25*/
-#line 431 "common.w"
+#line 431 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(!changing||include_depth> change_depth){
 /*24:*/
-#line 514 "common.w"
+#line 514 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 {
 cur_line++;
 while(!input_ln(cur_file)){
@@ -598,7 +600,7 @@ if(change_limit> change_buffer)check_change();
 }
 
 /*:24*/
-#line 433 "common.w"
+#line 433 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(changing&&include_depth==change_depth)goto restart;
 }
@@ -618,7 +620,7 @@ goto restart;
 }
 include_depth++;
 /*23:*/
-#line 473 "common.w"
+#line 473 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 {
 char temp_file_name[max_file_name_length];
 char*cur_file_name_end= cur_file_name+max_file_name_length-1;
@@ -661,14 +663,14 @@ include_depth--;err_print("! Cannot open include file");goto restart;
 }
 
 /*:23*/
-#line 451 "common.w"
+#line 451 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 return(!input_has_ended);
 }
 
 /*:21*//*26:*/
-#line 563 "common.w"
+#line 563 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 check_complete(){
@@ -682,7 +684,7 @@ err_print("! Change file entry did not match");
 }
 
 /*:26*//*35:*/
-#line 654 "common.w"
+#line 654 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 name_pointer
 id_lookup(first,last,t)
@@ -697,17 +699,17 @@ name_pointer p;
 if(last==NULL)for(last= first;*last!='\0';last++);
 l= last-first;
 /*36:*/
-#line 677 "common.w"
+#line 677 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 h= (unsigned char)*i;
 while(++i<last)h= (h+h+(int)((unsigned char)*i))%hash_size;
 
 
 /*:36*/
-#line 667 "common.w"
+#line 667 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*37:*/
-#line 685 "common.w"
+#line 685 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 p= hash[h];
 while(p&&!names_match(p,first,l,t))p= p->link;
@@ -717,10 +719,10 @@ p->link= hash[h];hash[h]= p;
 }
 
 /*:37*/
-#line 668 "common.w"
+#line 668 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(p==name_ptr)/*39:*/
-#line 700 "common.w"
+#line 700 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 {
 if(byte_ptr+l> byte_mem_end)overflow("byte memory");
 if(name_ptr>=name_dir_end)overflow("name");
@@ -730,13 +732,13 @@ if(program==cweave)init_p(p,t);
 }
 
 /*:39*/
-#line 669 "common.w"
+#line 669 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 return(p);
 }
 
 /*:35*//*42:*/
-#line 758 "common.w"
+#line 758 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 print_section_name(p)
@@ -757,7 +759,7 @@ if(q)term_write("...",3);
 }
 
 /*:42*//*43:*/
-#line 777 "common.w"
+#line 777 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 sprint_section_name(dest,p)
@@ -780,7 +782,7 @@ s= p->byte_start;
 }
 
 /*:43*//*44:*/
-#line 798 "common.w"
+#line 798 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 print_prefix_name(p)
@@ -793,7 +795,7 @@ if(s+l<(p+1)->byte_start)term_write("...",3);
 }
 
 /*:44*//*45:*/
-#line 819 "common.w"
+#line 819 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int web_strcmp(j,j_len,k,k_len)
 char*j,*k;
@@ -809,7 +811,7 @@ else return greater;
 }
 
 /*:45*//*47:*/
-#line 849 "common.w"
+#line 849 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 name_pointer
 add_section_name(par,c,first,last,ispref)
@@ -840,7 +842,7 @@ return par==NULL?(root= p):c==less?(par->llink= p):(par->rlink= p);
 }
 
 /*:47*//*48:*/
-#line 878 "common.w"
+#line 878 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 extend_section_name(p,first,last,ispref)
@@ -864,7 +866,7 @@ if(ispref)*(byte_ptr-1)= ' ';
 }
 
 /*:48*//*49:*/
-#line 906 "common.w"
+#line 906 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 name_pointer
 section_lookup(first,last,ispref)
@@ -879,7 +881,7 @@ name_pointer par= NULL;
 
 int name_len= last-first+1;
 /*50:*/
-#line 930 "common.w"
+#line 930 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 while(p){
 c= web_strcmp(first,name_len,first_chunk(p),prefix_length(p));
@@ -906,19 +908,19 @@ p= q,q= NULL;
 }
 
 /*:50*/
-#line 920 "common.w"
+#line 920 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*51:*/
-#line 955 "common.w"
+#line 955 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 if(r==NULL)
 return add_section_name(par,c,first,last+1,ispref);
 
 /*:51*/
-#line 921 "common.w"
+#line 921 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 /*52:*/
-#line 963 "common.w"
+#line 963 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 switch(section_name_cmp(&first,name_len,r)){
 
@@ -952,12 +954,12 @@ return r;
 }
 
 /*:52*/
-#line 922 "common.w"
+#line 922 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 
 /*:49*//*54:*/
-#line 1014 "common.w"
+#line 1014 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int section_name_cmp(pfirst,len,r)
 char**pfirst;
@@ -991,7 +993,7 @@ default:return c;
 }
 
 /*:54*//*58:*/
-#line 1089 "common.w"
+#line 1089 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 err_print(s)
@@ -1000,7 +1002,7 @@ char*s;
 char*k,*l;
 printf(*s=='!'?"\n%s":"%s",s);
 if(web_file_open)/*59:*/
-#line 1109 "common.w"
+#line 1109 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {if(changing&&include_depth==change_depth)
 printf(". (l. %d of change file)\n",change_line);
@@ -1020,20 +1022,20 @@ putchar(' ');
 }
 
 /*:59*/
-#line 1096 "common.w"
+#line 1096 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 update_terminal;mark_error;
 }
 
 /*:58*//*61:*/
-#line 1144 "common.w"
+#line 1144 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 int wrap_up(){
 putchar('\n');
 if(show_stats)
 print_stats();
 /*62:*/
-#line 1154 "common.w"
+#line 1154 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 switch(history){
 case spotless:if(show_happiness)printf("(No errors were found.)\n");break;
@@ -1045,14 +1047,14 @@ case fatal_message:printf("(That was a fatal error, my friend.)\n");
 }
 
 /*:62*/
-#line 1149 "common.w"
+#line 1149 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(history> harmless_message)return(1);
 else return(0);
 }
 
 /*:61*//*64:*/
-#line 1173 "common.w"
+#line 1173 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 void
 fatal(s,t)
 char*s,*t;
@@ -1063,7 +1065,7 @@ history= fatal_message;exit(wrap_up());
 }
 
 /*:64*//*65:*/
-#line 1184 "common.w"
+#line 1184 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 void
 overflow(t)
 char*t;
@@ -1073,7 +1075,7 @@ printf("\n! Sorry, %s capacity exceeded",t);fatal("","");
 
 
 /*:65*//*70:*/
-#line 1248 "common.w"
+#line 1248 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 void
 scan_args()
@@ -1087,7 +1089,7 @@ boolean flag_change;
 
 while(--argc> 0){
 if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*74:*/
-#line 1338 "common.w"
+#line 1338 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(**argv=='-')flag_change= 0;
@@ -1097,29 +1099,33 @@ flags[*dot_pos]= flag_change;
 }
 
 /*:74*/
-#line 1260 "common.w"
+#line 1260 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 else{
 s= name_pos= *argv;dot_pos= NULL;
 while(*s){
 if(*s=='.')dot_pos= s++;
-#line 38 "common-miktex.ch"
+#line 49 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common-miktex.ch"
+#if defined(MIKTEX_WINDOWS)
 else if(*s=='/'||*s=='\\'||*s==':')dot_pos= NULL,name_pos= ++s;
-#line 1266 "common.w"
-else s++;
+#else
+else if(*s=='/')dot_pos= NULL,name_pos= ++s;
+#endif
+#line 1266 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
+ else s++;
 }
 if(!found_web)/*71:*/
-#line 1286 "common.w"
+#line 1286 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(s-*argv> max_file_name_length-5)
 /*76:*/
-#line 1358 "common.w"
+#line 1358 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 fatal("! Filename too long\n",*argv);
 
 
 /*:76*/
-#line 1289 "common.w"
+#line 1289 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(dot_pos==NULL)
 sprintf(web_file_name,"%s.w",*argv);
@@ -1136,22 +1142,22 @@ found_web= 1;
 }
 
 /*:71*/
-#line 1269 "common.w"
+#line 1269 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 else if(!found_change)/*72:*/
-#line 1304 "common.w"
+#line 1304 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(strcmp(*argv,"-")==0)found_change= -1;
 else{
 if(s-*argv> max_file_name_length-4)
 /*76:*/
-#line 1358 "common.w"
+#line 1358 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 fatal("! Filename too long\n",*argv);
 
 
 /*:76*/
-#line 1309 "common.w"
+#line 1309 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(dot_pos==NULL)
 sprintf(change_file_name,"%s.ch",*argv);
@@ -1161,20 +1167,20 @@ found_change= 1;
 }
 
 /*:72*/
-#line 1270 "common.w"
+#line 1270 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 else if(!found_out)/*73:*/
-#line 1317 "common.w"
+#line 1317 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(s-*argv> max_file_name_length-5)
 /*76:*/
-#line 1358 "common.w"
+#line 1358 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 fatal("! Filename too long\n",*argv);
 
 
 /*:76*/
-#line 1320 "common.w"
+#line 1320 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 if(dot_pos==NULL){
 sprintf(tex_file_name,"%s.tex",*argv);
@@ -1194,10 +1200,10 @@ found_out= 1;
 }
 
 /*:73*/
-#line 1271 "common.w"
+#line 1271 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 else/*75:*/
-#line 1346 "common.w"
+#line 1346 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(program==ctangle)
@@ -1211,12 +1217,12 @@ else fatal(
 }
 
 /*:75*/
-#line 1272 "common.w"
+#line 1272 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
 }
 }
 if(!found_web)/*75:*/
-#line 1346 "common.w"
+#line 1346 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 
 {
 if(program==ctangle)
@@ -1230,11 +1236,15 @@ else fatal(
 }
 
 /*:75*/
-#line 1275 "common.w"
+#line 1275 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 ;
-#line 44 "common-miktex.ch"
+#line 59 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common-miktex.ch"
+#if defined(MIKTEX_WINDOWS)
 if(found_change<=0)strcpy(change_file_name,"nul");
-#line 1277 "common.w"
+#else
+if(found_change<=0)strcpy(change_file_name,"/dev/null");
+#endif
+#line 1277 "/home/mik/work/miktex-2.8/BuildUtilities/cweb/common.w"
 }
 
 /*:70*/

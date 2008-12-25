@@ -998,7 +998,7 @@ void usage()
 }
 
 #if defined(MIKTEX)
-#  define main __cdecl Main
+#  define main MIKTEXCEEAPI Main
 #endif
 int main(int argc, char **argv)
 {

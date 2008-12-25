@@ -60,20 +60,34 @@ endif(NATIVE_WINDOWS)
 rebase(${makex_dll_name})
 
 set(exes
-  ${miktex_prefix}makebase
-  ${miktex_prefix}makefmt
-  ${miktex_prefix}makemem
-  ${miktex_prefix}makemf
-  ${miktex_prefix}makepk
-  ${miktex_prefix}maketfm
+  makebase
+  makefmt
+  makemem
+  makemf
+  makepk
+  maketfm
 )
 
-if(NATIVE_WINDOWS)
-  set(exes makebase makefmt makemem makemf makepk maketfm)
-endif(NATIVE_WINDOWS)
+install(TARGETS ${makex_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)
 
 foreach(t ${exes})
-  create_dll_wrapper(${t} ${makex_dll_name})
+  create_dll_wrapper(${miktex_prefix}${t} ${makex_dll_name} ${t})
+  install(TARGETS ${miktex_prefix}${t}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+  if(NATIVE_WINDOWS)
+    create_dll_wrapper(${t} ${makex_dll_name})
+    install(TARGETS ${t}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}"
+    )
+  endif(NATIVE_WINDOWS)
 endforeach(t)
 
-install(TARGETS ${makex_dll_name} ${exes} DESTINATION ${bindir})
