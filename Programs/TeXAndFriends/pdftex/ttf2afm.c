@@ -34,6 +34,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #if defined(MIKTEX)
 #include <ptexmac.h>
 #include <getopt.h>
+#include <limits.h>
 #include <writettf.h>
 #define assert MIKTEX_ASSERT
 #else
@@ -103,6 +104,7 @@ TTF_LONG FontBBox3 = 0;
 TTF_LONG FontBBox4 = 0;
 TTF_LONG UnderlinePosition = 0;
 TTF_LONG UnderlineThickness = 0;
+
 TTF_LONG CapHeight = 0;
 TTF_LONG XHeight = 0;
 TTF_LONG Ascender = 0;
@@ -998,7 +1000,7 @@ void usage()
 }
 
 #if defined(MIKTEX)
-#  define main MIKTEXCEEAPI Main
+#  define main MIKTEXCEECALL Main
 #endif
 int main(int argc, char **argv)
 {

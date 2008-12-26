@@ -25,7 +25,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <ctype.h>
 #include <aconf.h>
 #if defined(MIKTEX)
-#include <MiKTeX/Core/Core>
+#include <miktex/Core/Core>
 #define assert MIKTEX_ASSERT
 #else
 #include <assert.h>

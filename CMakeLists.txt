@@ -249,6 +249,8 @@ else(NATIVE_WINDOWS)
   find_package(CURL REQUIRED)
 endif(NATIVE_WINDOWS)
 
+set(CMAKE_REQUIRED_LIBRARIES "m")
+
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)
 check_function_exists(close HAVE_CLOSE)
@@ -628,9 +630,9 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
-if(BUILDING_MIKTEX)
+if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_png_dir})
-endif(BUILDING_MIKTEX)
+endif(BUILDING_MIKTEX OR WITH_PDFTEX)
 
 if(BUILDING_MIKTEX OR WITH_PDFTEX)
   add_subdirectory(${rel_xpdf_dir})

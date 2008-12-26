@@ -75,13 +75,18 @@ add_executable(pdftosrc ${pdftosrc_sources})
 merge_trustinfo_manifest(pdftosrc asInvoker)
 
 target_link_libraries(pdftosrc
+  ${xpdf_lib_name}
+    ${fofi_lib_name}
+    ${goo_lib_name}
   ${app_dll_name}
   ${core_dll_name}
-  ${fofi_lib_name}
-  ${getopt_dll_name}
-  ${goo_lib_name}
-  ${xpdf_lib_name}
 )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(pdftosrc
+    ${getopt_dll_name}
+  )
+endif(NATIVE_WINDOWS)
 
 install(TARGETS pdftosrc DESTINATION ${bindir})
 
@@ -113,10 +118,15 @@ merge_trustinfo_manifest(ttf2afm asInvoker)
 target_link_libraries(ttf2afm
   ${app_dll_name}
   ${core_dll_name}
-  ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
 )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(ttf2afm
+    ${getopt_dll_name}
+  )
+endif(NATIVE_WINDOWS)
 
 install(TARGETS ttf2afm DESTINATION ${bindir})
 
@@ -283,9 +293,14 @@ target_link_libraries(${pdftex_dll_name}
   ${goo_lib_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
-  ${regex_dll_name}
   ${xpdf_lib_name}
 )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(${pdftex_dll_name}
+    ${regex_dll_name}
+  )
+endif(NATIVE_WINDOWS)
 
 delay_load(${pdftex_dll_name}
   ${png_dll_name}
