@@ -29,7 +29,7 @@ PREREQUISITES
 [ ] MiKTeX is mostly written in C++.  It should work with any ANSI-compliant
     C++ compiler.
 
-[ ] CMake 2.4.6 (or newer) is required for building and installing MiKTeX.
+[ ] CMake 2.6 (or newer) is required for building and installing MiKTeX.
 
 [ ] The Qt development kit (version 4.4.0 or newer) is required, if you intend
     to build GUI applications (e.g., the GUI variant of the package
@@ -50,13 +50,14 @@ Run CMake to produce the makefiles customized for your system:
 
     cmake -G "Unix Makefiles"
 
-The CMake script uses kpsewhich(1) (if available) to find existing TEXMF
-trees.  The MiKTeX package manager will install packages in the local TEXMF
-tree ($TEXMFLOCAL).  You can explicitly specify your prefered installation
-directory by setting the CMake variable MIKTEX_INSTALLROOT.  For example, to
-make your home TEXMF the installation directory, run CMake like this:
+The CMake script uses kpsewhich(1) (if available) to find existing
+TEXMF trees.  The MiKTeX package manager will install packages in the
+user MiKTeX directory (~/.miktex).  You can explicitly specify your
+prefered installation directory by setting the CMake variable
+MIKTEX_INSTALLROOT.  For example, you can run CMake like this:
 
-    cmake -G "Unix Makefiles" -DMIKTEX_INSTALLROOT=/home/users/me/texmf
+    cmake -G "Unix Makefiles" \
+      -DMIKTEX_INSTALLROOT=/usr/local/share/miktex-texmf
 
 Run the make utility to compile MiKTeX:
 

@@ -24,6 +24,8 @@ cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
 project(miktex)
 
+set(miktex_prefix "miktex-")
+
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
 else(WIN32 AND NOT CYGWIN)
@@ -229,13 +231,6 @@ if(BUILDING_MIKTEX_TOOLS)
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   endif(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
-  if(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
-    execute_process(
-      COMMAND kpsewhich --expand-path \$TEXMFLOCAL
-      OUTPUT_VARIABLE MIKTEX_INSTALLROOT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  endif(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
 endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
@@ -249,7 +244,9 @@ else(NATIVE_WINDOWS)
   find_package(CURL REQUIRED)
 endif(NATIVE_WINDOWS)
 
-set(CMAKE_REQUIRED_LIBRARIES "m")
+if(UNIX_ALIKE)
+  set(CMAKE_REQUIRED_LIBRARIES "m")
+endif(UNIX_ALIKE)
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)

@@ -17,8 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(miktex_prefix	"miktex-")
-
 # directories
 set(rel_7zip_dir	"Libraries/3rd/7-Zip")
 set(rel_app_dir		"Libraries/MiKTeX/App")

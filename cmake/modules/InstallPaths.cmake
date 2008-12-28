@@ -26,7 +26,7 @@ if(NATIVE_WINDOWS)
 #   set(bindir "${bindir}/x86")
   endif(CMAKE_CL_64)
 else(NATIVE_WINDOWS)
-  set(texmfdir "${CMAKE_INSTALL_PREFIX}/share/texmf")
+  set(texmfdir "${CMAKE_INSTALL_PREFIX}/share/${miktex_prefix}texmf")
   set(bindir "${CMAKE_INSTALL_PREFIX}/bin")
 endif(NATIVE_WINDOWS)
 

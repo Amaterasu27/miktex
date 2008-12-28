@@ -226,10 +226,17 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   install(
     TARGETS ${${_short_name_l}_dll_name}
-    DESTINATION ${bindir}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
   )
 
   add_executable(${_invocation_name} ${_short_name_l}wrapper.cpp)
+
+  set_target_properties(${_invocation_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+  )
 
   add_dependencies(${_invocation_name} ${${_short_name_l}_dll_name})
 
@@ -251,11 +258,17 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     if(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
     else(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
       add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
+      set_target_properties(${_short_name_l}
+	PROPERTIES
+	VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      )
       merge_trustinfo_manifest(${_short_name_l} asInvoker)
       merge_common_controls_manifest(${_short_name_l})
       install(
         TARGETS ${_short_name_l}
-        DESTINATION ${bindir}
+	RUNTIME DESTINATION "${bindir}"
+	LIBRARY DESTINATION "${libdir}"
+	ARCHIVE DESTINATION "${libdir}"
       )
       add_dependencies(${_short_name_l} ${${_short_name_l}_dll_name})
       target_link_libraries(${_short_name_l}
@@ -265,6 +278,10 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     endif(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
 
     add_executable(${_alt_invocation_name} ${_short_name_l}wrapper.cpp)
+    set_target_properties(${_alt_invocation_name}
+      PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    )
     target_link_libraries(${_alt_invocation_name}
       ${core_dll_name}
       ${${_short_name_l}_dll_name}
