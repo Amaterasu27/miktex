@@ -40,16 +40,16 @@ endif(NATIVE_WINDOWS)
 
 enable_testing()
 
-## user options
 option(
   WITH_MPC
   "Build mpc (MiKTeX Package Composer)?"
   ${NATIVE_WINDOWS}
 )
+
 option(
   WITH_PDFTEX
   "Build pdfTeX?"
-  ${BUILDING_MIKTEX}
+  TRUE
 )
 
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
@@ -630,25 +630,17 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_png_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_png_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_xpdf_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_xpdf_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_c4p_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_c4p_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_cweb_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_inipool_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_tie_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_cweb_dir})
+
+add_subdirectory(${rel_tie_dir})
 
 add_subdirectory(${rel_md5_dir})
 add_subdirectory(${rel_md5_dir}-static)
@@ -656,9 +648,7 @@ add_subdirectory(${rel_md5_dir}-static)
 add_subdirectory(${rel_core_dir})
 add_subdirectory(${rel_core_dir}-static)
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_cfg_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_cfg_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_touch_dir})
@@ -680,9 +670,7 @@ endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_app_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_texmf_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_texmf_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dib_dir})
@@ -692,9 +680,7 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvi_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_kpsemu_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_kpsemu_dir})
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})
@@ -712,9 +698,7 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bmeps_dir})
 endif(BUILDING_MIKTEX)
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_web_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_web_dir})
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})
@@ -726,9 +710,7 @@ endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
 
-if(BUILDING_MIKTEX OR WITH_PDFTEX)
-  add_subdirectory(${rel_makex_dir})
-endif(BUILDING_MIKTEX OR WITH_PDFTEX)
+add_subdirectory(${rel_makex_dir})
 
 add_subdirectory(${rel_initexmf_dir})
 

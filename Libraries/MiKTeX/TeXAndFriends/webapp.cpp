@@ -458,7 +458,7 @@ void
 WebApp::ShowProgramVersion ()
   const
 {
-  cout << MIKTEX_PRODUCTNAME_STR << '-' << TheNameOfTheGame()
+  cout << "MiKTeX" << '-' << TheNameOfTheGame()
        << ' ' << version
        << " (" << Utils::GetMiKTeXBannerString() << ')' << '\n'
        << copyright << '\n';

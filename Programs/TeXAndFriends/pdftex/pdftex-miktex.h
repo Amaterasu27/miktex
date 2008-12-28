@@ -520,6 +520,8 @@ MAKE_GLOBAL(memoryword*, zmem);
 #define vfpacketbase THEDATA(vfpacketbase)
 #define vfpacketlength THEDATA(vfpacketlength)
 
+int miktexloadpoolstrings (int size);
+
 /* _________________________________________________________________________
 
    gettexstring

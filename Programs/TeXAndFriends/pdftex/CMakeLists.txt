@@ -175,6 +175,20 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
 )
 
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/pdftex.pool
+		pdftex-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/pdftex.pool
+)
+
 file(READ ${tex_dyn_sed} tex_dyn_sed_contents)
 file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 
@@ -257,6 +271,7 @@ set(${pdftex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/epdf.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
+  ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pkin.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/subfont.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
