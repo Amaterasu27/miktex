@@ -3336,6 +3336,9 @@ public:
   std::string roots;
 
 public:
+  PathName userInstallRoot;
+
+public:
   PathName userDataRoot;
 
 public:
@@ -3348,7 +3351,7 @@ public:
   PathName commonConfigRoot;
 
 public:
-  PathName installRoot;
+  PathName commonInstallRoot;
 };
 
 /* _________________________________________________________________________
@@ -3397,8 +3400,11 @@ class SpecialPathEnum
 {
 public:
   enum EnumType {
-    /// The installation root directory.
-    InstallRoot,
+    /// The common installation root directory.
+    CommonInstallRoot,
+
+    // The installation directory of the user.
+    UserInstallRoot,
 
     /// The common data root directory.
     CommonDataRoot,
@@ -3408,6 +3414,7 @@ public:
 
     CommonConfigRoot,
     UserConfigRoot,
+    InstallRoot,
 
     /// The prefered data root directory. For a shared MiKTeX setup
     /// this is equivalent to the common data directory. For a private
@@ -6666,7 +6673,7 @@ private:
   void
   Quote (/*[in]*/ const CharType * lpsz)
   {
-    bool needQuotes = (StrChr(lpsz, ' ') != 0);
+    bool needQuotes = (*lpsz == 0 || StrChr(lpsz, ' ') != 0);
     if (needQuotes)
       {
 	CharBuffer<CharType>::Append ('"');

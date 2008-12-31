@@ -72,8 +72,8 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
   : CPropertyPage (PropPageTeXMFRoots::IDD),
     isModified (false),
     pProgressDialog (0),
-    installRoot (SessionWrapper(true)
-		 ->GetSpecialPath(SpecialPath::InstallRoot)),
+    userInstallRoot (SessionWrapper(true)
+		      ->GetSpecialPath(SpecialPath::UserInstallRoot)),
     userDataRoot (SessionWrapper(true)
 		  ->GetSpecialPath(SpecialPath::UserDataRoot)),
     userConfigRoot (SessionWrapper(true)
@@ -86,6 +86,8 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
 	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);
       commonConfigRoot =
 	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonConfigRoot);
+      commonInstallRoot =
+	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
     }
   m_psp.dwFlags &= ~(PSP_HASHELP);
 }
@@ -659,7 +661,7 @@ PropPageTeXMFRoots::EnableButtons ()
 	      canMoveDown = false;
 	    }
 	}
-      if (root == installRoot)
+      if (root == commonInstallRoot || root == userInstallRoot)
 	{
 	  canRemove = false;
 	}
@@ -747,13 +749,21 @@ PropPageTeXMFRoots::Refresh ()
 	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
 	}
       string description;
-      if (root == installRoot)
+      if (root == userInstallRoot)
 	{
 	  if (! description.empty())
 	    {
 	      description += ", ";
 	    }
-	  description += "Install";
+	  description += "UserInstall";
+	}
+      if (root == commonInstallRoot)
+	{
+	  if (! description.empty())
+	    {
+	      description += ", ";
+	    }
+	  description += "CommonInstall";
 	}
       if (root == userDataRoot)
 	{
@@ -955,15 +965,21 @@ PropPageTeXMFRoots::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
       PathName path = roots[pInfoTip->iItem];
       string info = path.Get();
       bool maintainedByMiKTeX =
-	(path == installRoot
+	(path == userInstallRoot
+	 || path == commonInstallRoot
 	 || path == userDataRoot
 	 || path == commonDataRoot
 	 || path == userConfigRoot
 	 || path == commonConfigRoot);
-      if (path == installRoot)
+      if (path == userInstallRoot)
 	{
 	  info += T_("\r\n\r\n\
-This is the installation directory.");
+This is the per-user installation directory.");
+	}
+      if (path == commonInstallRoot)
+	{
+	  info += T_("\r\n\r\n\
+This is the per-machine installation directory.");
 	}
       if (path == userDataRoot)
 	{

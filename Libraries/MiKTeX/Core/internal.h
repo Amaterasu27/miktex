@@ -1705,6 +1705,14 @@ public:
   unsigned
   GetInstallRoot ();
 
+public:
+  unsigned
+  GetCommonInstallRoot ();
+
+public:
+  unsigned
+  GetUserInstallRoot ();
+
 private:
   bool
   IsManagedRoot (/*[in]*/ unsigned root);
@@ -2001,9 +2009,13 @@ private:
 private:
   unsigned userDataRootIndex;
 
-  // index of install root
+  // index of common install root
 private:
-  unsigned installRootIndex;
+  unsigned commonInstallRootIndex;
+
+  // index of user install root
+private:
+  unsigned userInstallRootIndex;
 
   // index of common config root
 private:

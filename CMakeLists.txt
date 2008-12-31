@@ -884,7 +884,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
-  add_subdirectory(${rel_migrate_dir})
+  #add_subdirectory(${rel_migrate_dir})
 endif(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)

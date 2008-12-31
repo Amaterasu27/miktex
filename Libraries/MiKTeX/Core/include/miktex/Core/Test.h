@@ -178,12 +178,12 @@ public:
 
 #if defined(INSTALLROOT) && defined(DATAROOT)
 	startupConfig.userDataRoot = DATAROOT;
-	startupConfig.installRoot = INSTALLROOT;
+	startupConfig.userInstallRoot = INSTALLROOT;
 	initInfo.SetStartupConfig (startupConfig);
 #else
 	startupConfig.roots = rootDirectories;
 	startupConfig.userDataRoot = dataRoot;
-	startupConfig.installRoot = installRoot;
+	startupConfig.userInstallRoot = installRoot;
 	initInfo.SetStartupConfig (startupConfig);
 #endif
 

@@ -1,6 +1,6 @@
 /* InfoListPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -229,21 +229,21 @@ InfoListPage::CreateReport ()
       if (theApp.prefabricated)
 	{
 	  info += (T_("Install ") + packageSet + T_(" to ") + CRLF
-		   + TAB + theApp.startupConfig.installRoot.Get());
+		   + TAB + theApp.GetInstallRoot().Get());
 	}
       else
 	{
 	  info += (T_("Install ") + packageSet + T_(" from ") + CRLF
 		   + TAB + theApp.localPackageRepository.Get() + CRLF
 		   + T_(" to ") + CRLF
-		   + TAB + theApp.startupConfig.installRoot.Get());
+		   + TAB + theApp.GetInstallRoot().Get());
 	}
       break;
     case SetupTask::InstallFromRemoteRepository:
       info += (T_("Install ") + packageSet + T_(" from ") + CRLF
 	       + TAB + theApp.remotePackageRepository.c_str() + CRLF
 	       + T_(" to ") + CRLF
-	       + TAB + theApp.startupConfig.installRoot.Get());
+	       + TAB + theApp.GetInstallRoot().Get());
       break;
     case SetupTask::PrepareMiKTeXDirect:
       info += T_("Prepare to run MiKTeX from ");

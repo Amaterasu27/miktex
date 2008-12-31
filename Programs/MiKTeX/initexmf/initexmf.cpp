@@ -547,7 +547,7 @@ enum Option
 
   OPT_COMMON_CONFIG,		// <internal/>
   OPT_COMMON_DATA,		// <internal/>
-  OPT_INSTALL_ROOT,		// <internal/>
+  OPT_COMMON_INSTALL,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_DEFAULT_PAPER_SIZE,	// <internal/>
   OPT_RMFNDB,			// <internal/>
@@ -555,6 +555,7 @@ enum Option
   OPT_SHARED_SETUP,		// <internal/>
   OPT_USER_CONFIG,		// <internal/>
   OPT_USER_DATA,		// <internal/>
+  OPT_USER_INSTALL,		// <internal/>
 
 };
 
@@ -779,6 +780,14 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
   },
 
   {
+    T_("common-install"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_INSTALL,
+    T_("Register the common installation directory."),
+    T_("DIR")
+  },
+
+  {
     "csv", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_CSV,
@@ -834,14 +843,6 @@ Open the specified configuration file in an editor.\
     OPT_FORCE,
     T_("Force --mklinks to overwrite existing files."),
     0,
-  },
-
-  {
-    T_("install-root"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_INSTALL_ROOT,
-    T_("Register the installation TEXMF directory."),
-    T_("DIR")
   },
 
   {
@@ -977,6 +978,14 @@ Open the specified configuration file in an editor.\
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_USER_DATA,
     T_("Register the user data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("user-install"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_INSTALL,
+    T_("Register the user installation directory."),
     T_("DIR")
   },
 
@@ -1040,6 +1049,14 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
   },
 
   {
+    T_("common-install"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_INSTALL,
+    T_("Register the common installation directory."),
+    T_("DIR")
+  },
+
+  {
     "csv", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_CSV,
@@ -1095,14 +1112,6 @@ Open the specified configuration file in an editor.\
     OPT_FORCE,
     T_("Force --mklinks to overwrite existing files."),
     0,
-  },
-
-  {
-    T_("install-root"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_INSTALL_ROOT,
-    T_("Register the installation TEXMF directory."),
-    T_("DIR")
   },
 
   {
@@ -1238,6 +1247,14 @@ Open the specified configuration file in an editor.\
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_USER_DATA,
     T_("Register the user data directory."),
+    T_("DIR")
+  },
+
+  {
+    T_("user-install"), 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_USER_INSTALL,
+    T_("Register the user installation directory."),
     T_("DIR")
   },
 
@@ -1644,13 +1661,14 @@ void
 IniTeXMFApp::SetTeXMFRootDirectories ()
 {
   Verbose (T_("Registering root directories..."));
-  PrintOnly (T_("regroots %s %s %s %s %s %s"),
+  PrintOnly (T_("regroots %s %s %s %s %s %s %s"),
 	     Q_(startupConfig.roots),
 	     Q_(startupConfig.userDataRoot),
 	     Q_(startupConfig.userConfigRoot),
 	     Q_(startupConfig.commonDataRoot),
 	     Q_(startupConfig.commonConfigRoot),
-	     Q_(startupConfig.installRoot));
+	     Q_(startupConfig.commonInstallRoot),
+	     Q_(startupConfig.userInstallRoot));
   if (! printOnly)
     {
       pSession
@@ -2181,9 +2199,9 @@ IniTeXMFApp::ReportRoots ()
 	  xmlWriter.StartElement (T_("path"));
 	  PathName root = pSession->GetRootDirectory(idx);
 	  xmlWriter.AddAttribute (T_("index"), NUMTOSTR(idx));
-	  if (root == pSession->GetSpecialPath(SpecialPath::InstallRoot))
+	  if (root == pSession->GetSpecialPath(SpecialPath::UserInstallRoot))
 	    {
-	      xmlWriter.AddAttribute (T_("install"), T_("true"));
+	      xmlWriter.AddAttribute (T_("userinstall"), T_("true"));
 	    }
 	  if (root == pSession->GetSpecialPath(SpecialPath::UserDataRoot))
 	    {
@@ -2195,6 +2213,11 @@ IniTeXMFApp::ReportRoots ()
 	    }
 	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
 	    {
+	      if (root
+		  == pSession->GetSpecialPath(SpecialPath::CommonInstallRoot))
+		{
+		  xmlWriter.AddAttribute (T_("commoninstall"), T_("true"));
+		}
 	      if (root
 		  == pSession->GetSpecialPath(SpecialPath::CommonDataRoot))
 		{
@@ -2218,9 +2241,9 @@ IniTeXMFApp::ReportRoots ()
 	  PathName root = pSession->GetRootDirectory(idx);
 	  tcout << T_("Root") << idx << ": " << root.Get() << endl;
 	}
-      tcout << T_("Install: ")
-	    << pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
-	<< endl;
+      tcout << T_("UserInstall: ")
+	    << pSession->GetSpecialPath(SpecialPath::UserInstallRoot).Get()
+	    << endl;
       tcout << T_("UserData: ")
 	    << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
 	    << endl;
@@ -2229,6 +2252,9 @@ IniTeXMFApp::ReportRoots ()
 	    << endl;
       if (pSession->IsSharedMiKTeXSetup() == TriState::True)
 	{
+	  tcout << T_("CommonInstall: ")
+		<< pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get()
+		<< endl;
 	  tcout << T_("CommonData: ")
 		<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
 		<< endl;
@@ -2573,9 +2599,14 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optForce = true;
 	  break;
 
-	case OPT_INSTALL_ROOT:
+	case OPT_COMMON_INSTALL:
 
-	  startupConfig.installRoot = lpszOptArg;
+	  startupConfig.commonInstallRoot = lpszOptArg;
+	  break;
+
+	case OPT_USER_INSTALL:
+
+	  startupConfig.userInstallRoot = lpszOptArg;
 	  break;
 
 	case OPT_LIST_DIRECTORY:
@@ -2757,9 +2788,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   if (! startupConfig.roots.empty()
       || ! startupConfig.userDataRoot.Empty()
       || ! startupConfig.userConfigRoot.Empty()
+      || ! startupConfig.userInstallRoot.Empty()
       || ! startupConfig.commonDataRoot.Empty()
       || ! startupConfig.commonConfigRoot.Empty()
-      || ! startupConfig.installRoot.Empty())
+      || ! startupConfig.commonInstallRoot.Empty())
     {
       SetTeXMFRootDirectories ();
     }

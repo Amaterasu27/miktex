@@ -1,6 +1,6 @@
 /* InstallDirPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -57,7 +57,7 @@ InstallDirPage::InstallDirPage ()
 BOOL
 InstallDirPage::OnInitDialog ()
 {
-  m_strInstallDir = theApp.startupConfig.installRoot.Get();
+  m_strInstallDir = theApp.GetInstallRoot().Get();
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
   return (CPropertyPage::OnInitDialog());
 }
@@ -175,7 +175,7 @@ InstallDirPage::OnKillActive ()
 	    }
 	  if (ret)
 	    {
-	      theApp.startupConfig.installRoot = m_strInstallDir;
+	      theApp.SetInstallRoot (static_cast<const char*>(m_strInstallDir));
 	    }
 	}
       catch (const MiKTeXException & e)

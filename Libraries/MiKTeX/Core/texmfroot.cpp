@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2008 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -115,9 +115,13 @@ MergeStartupConfig (/*[in,out]*/ StartupConfig &	startupConfig,
     {
       startupConfig.roots = defaults.roots;
     }
-  if (startupConfig.installRoot.Empty())
+  if (startupConfig.commonInstallRoot.Empty())
     {
-      startupConfig.installRoot = defaults.installRoot;
+      startupConfig.commonInstallRoot = defaults.commonInstallRoot;
+    }
+  if (startupConfig.userInstallRoot.Empty())
+    {
+      startupConfig.userInstallRoot = defaults.userInstallRoot;
     }
   if (startupConfig.commonDataRoot.Empty())
     {
@@ -157,13 +161,14 @@ SessionImpl::InitializeRootDirectories ()
   // check for MiKTeX CD/DVD
   if (IsMiKTeXDirect())
     {
-      startupConfig.installRoot = GetMyLocation();
+      startupConfig.commonInstallRoot = GetMyLocation();
 #if defined(MIKTEX_WINDOWS_32)
-      startupConfig.installRoot += PARENT_PARENT_DIRECTORY;
+      startupConfig.commonInstallRoot += PARENT_PARENT_DIRECTORY;
 #else
-      startupConfig.installRoot += PARENT_PARENT_PARENT_DIRECTORY;
+      startupConfig.commonInstallRoot += PARENT_PARENT_PARENT_DIRECTORY;
 #endif
-      startupConfig.installRoot.MakeAbsolute ();
+      startupConfig.commonInstallRoot.MakeAbsolute ();
+      startupConfig.userInstallRoot = startupConfig.commonInstallRoot;
     }
   else
     {
@@ -212,16 +217,18 @@ SessionImpl::InitializeRootDirectories
 {
   rootDirectories.clear ();
 
-  installRootIndex = INVALID_ROOT_INDEX;
+  commonInstallRootIndex = INVALID_ROOT_INDEX;
+  userInstallRootIndex = INVALID_ROOT_INDEX;
   commonDataRootIndex = INVALID_ROOT_INDEX;
   userDataRootIndex = INVALID_ROOT_INDEX;
   commonConfigRootIndex = INVALID_ROOT_INDEX;
   userConfigRootIndex = INVALID_ROOT_INDEX;
 
   // first pass through roots
+  bool haveCommonInstallRoot = false;
   bool haveCommonConfigRoot = false;
   bool haveCommonDataRoot = false;
-  bool haveInstallRoot = false;
+  bool haveUserInstallRoot = false;
   bool haveUserConfigRoot = false;
   bool haveUserDataRoot = false;
   vector<PathName> vec;
@@ -256,9 +263,9 @@ SessionImpl::InitializeRootDirectories
 	    }
 	  haveCommonDataRoot = true;
 	}
-      if (startupConfig.installRoot == root.GetCurrent())
+      if (startupConfig.commonInstallRoot == root.GetCurrent())
 	{
-	  haveInstallRoot = true;
+	  haveCommonInstallRoot = true;
 	}
       if (startupConfig.userConfigRoot == root.GetCurrent())
 	{
@@ -278,6 +285,10 @@ SessionImpl::InitializeRootDirectories
 	    }
 	  haveUserDataRoot = true;
 	}
+      if (startupConfig.userInstallRoot == root.GetCurrent())
+	{
+	  haveUserInstallRoot = true;
+	}
       vec.push_back (root.GetCurrent());
     }
 
@@ -287,34 +298,40 @@ SessionImpl::InitializeRootDirectories
       && ! startupConfig.userConfigRoot.Empty())
     {
       userConfigRootIndex =
-	RegisterRootDirectory (startupConfig.userConfigRoot);
+	RegisterRootDirectory(startupConfig.userConfigRoot);
     }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
        || ! haveUserDataRoot)
       && ! startupConfig.userDataRoot.Empty())
     {
       userDataRootIndex =
-	RegisterRootDirectory (startupConfig.userDataRoot);
+	RegisterRootDirectory(startupConfig.userDataRoot);
     }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
        || ! haveCommonConfigRoot)
       && ! startupConfig.commonConfigRoot.Empty())
     {
       commonConfigRootIndex =
-	RegisterRootDirectory (startupConfig.commonConfigRoot);
+	RegisterRootDirectory(startupConfig.commonConfigRoot);
     }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
        || ! haveCommonDataRoot)
       && ! startupConfig.commonDataRoot.Empty())
     {
       commonDataRootIndex =
-	RegisterRootDirectory (startupConfig.commonDataRoot);
+	RegisterRootDirectory(startupConfig.commonDataRoot);
     }
-  if (! haveInstallRoot
-      && ! startupConfig.installRoot.Empty())
+  if (! haveUserInstallRoot
+      && ! startupConfig.userInstallRoot.Empty())
     {
-      installRootIndex =
-	RegisterRootDirectory (startupConfig.installRoot);
+      userInstallRootIndex =
+	RegisterRootDirectory(startupConfig.userInstallRoot);
+    }
+  if (! haveCommonInstallRoot
+      && ! startupConfig.commonInstallRoot.Empty())
+    {
+      commonInstallRootIndex =
+	RegisterRootDirectory(startupConfig.commonInstallRoot);
     }
 
   // second pass through roots
@@ -331,9 +348,13 @@ SessionImpl::InitializeRootDirectories
 	{
 	  commonDataRootIndex = idx;
 	}
-      if (startupConfig.installRoot == *it)
+      if (startupConfig.commonInstallRoot == *it)
 	{
-	  installRootIndex = idx;
+	  commonInstallRootIndex = idx;
+	}
+      if (startupConfig.userInstallRoot == *it)
+	{
+	  userInstallRootIndex = idx;
 	}
       if (startupConfig.userConfigRoot == *it)
 	{
@@ -350,11 +371,6 @@ SessionImpl::InitializeRootDirectories
       UNEXPECTED_CONDITION ("SessionImpl::InitializeRootDirectories");
     }
 
-  if (installRootIndex == INVALID_ROOT_INDEX)
-    {
-      installRootIndex = 0;
-    }
-  
   if (commonDataRootIndex == INVALID_ROOT_INDEX
       && IsSharedMiKTeXSetup() == TriState::True)
     {
@@ -377,6 +393,17 @@ SessionImpl::InitializeRootDirectories
       userConfigRootIndex = userDataRootIndex;
     }
 
+  if (commonInstallRootIndex == INVALID_ROOT_INDEX
+      && IsSharedMiKTeXSetup() == TriState::True)
+    {
+      commonInstallRootIndex = commonConfigRootIndex;
+    }
+
+  if (userInstallRootIndex == INVALID_ROOT_INDEX)
+    {
+      userInstallRootIndex = userConfigRootIndex;
+    }
+
   RegisterRootDirectory (MPM_ROOT_PATH);
 
   trace_config->WriteFormattedLine ("core",
@@ -388,6 +415,10 @@ SessionImpl::InitializeRootDirectories
      "UserConfig: %s",
      GetRootDirectory(userConfigRootIndex).Get());
 
+  trace_config->WriteFormattedLine ("core",
+				    "UserInstall: %s",
+				    GetRootDirectory(userInstallRootIndex).Get());
+
   if (IsSharedMiKTeXSetup() == TriState::True)
     {
       trace_config->WriteFormattedLine
@@ -398,11 +429,11 @@ SessionImpl::InitializeRootDirectories
 	("core",
 	 "CommonConfig: %s",
 	 GetRootDirectory(commonConfigRootIndex).Get());
+      trace_config->WriteFormattedLine
+	("core",
+	 "CommonInstall: %s",
+	 GetRootDirectory(commonInstallRootIndex).Get());
     }
-
-  trace_config->WriteFormattedLine ("core",
-				    "Install: %s",
-				    GetRootDirectory(installRootIndex).Get());
 }
 
 /* _________________________________________________________________________
@@ -456,15 +487,48 @@ SessionImpl::GetMpmRoot ()
 /* _________________________________________________________________________
 
    SessionImpl::GetInstallRoot
-
-   Get the index of the main (install) TEXMF root.
    _________________________________________________________________________ */
 
 unsigned
 SessionImpl::GetInstallRoot ()
 {
+  if (IsSharedMiKTeXSetup() == TriState::True)
+    {
+      return (GetCommonInstallRoot());
+    }
+  else
+    {
+      return (GetUserInstallRoot());
+    }
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetCommonInstallRoot
+
+   Get the index of the common installation root.
+   _________________________________________________________________________ */
+
+unsigned
+SessionImpl::GetCommonInstallRoot ()
+{
+  MIKTEX_ASSERT (IsSharedMiKTeXSetup() == TriState::True);
   InitializeRootDirectories ();
-  return (installRootIndex);
+  return (commonInstallRootIndex);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetUserInstallRoot
+
+   Get the index of the user installation root.
+   _________________________________________________________________________ */
+
+unsigned
+SessionImpl::GetUserInstallRoot ()
+{
+  InitializeRootDirectories ();
+  return (userInstallRootIndex);
 }
 
 /* _________________________________________________________________________
@@ -498,9 +562,13 @@ SessionImpl::SaveRootDirectories ()
 	}
       startupConfig.roots += this->rootDirectories[idx].get_Path().Get();
     }
-  if (installRootIndex != INVALID_ROOT_INDEX)
+  if (commonInstallRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.installRoot = GetRootDirectory(installRootIndex);
+      startupConfig.commonInstallRoot = GetRootDirectory(commonInstallRootIndex);
+    }
+  if (userInstallRootIndex != INVALID_ROOT_INDEX)
+    {
+      startupConfig.userInstallRoot = GetRootDirectory(userInstallRootIndex);
     }
   if (commonDataRootIndex != INVALID_ROOT_INDEX)
     {
@@ -603,14 +671,13 @@ SessionImpl::RegisterRootDirectories
 
   StartupConfig startupConfig = startupConfig_;
 
-  if (startupConfig.installRoot.Empty()
-      && installRootIndex != INVALID_ROOT_INDEX)
-    {
-      startupConfig.installRoot = GetRootDirectory(installRootIndex);
-    }
-
   if (IsSharedMiKTeXSetup() == TriState::True)
     {
+      if (startupConfig.commonInstallRoot.Empty()
+	  && commonInstallRootIndex != INVALID_ROOT_INDEX)
+	{
+	  startupConfig.commonInstallRoot = GetRootDirectory(commonInstallRootIndex);
+	}
       if (startupConfig.commonDataRoot.Empty()
 	  && commonDataRootIndex != INVALID_ROOT_INDEX)
 	{
@@ -625,8 +692,15 @@ SessionImpl::RegisterRootDirectories
     }
   else
     {
+      MIKTEX_ASSERT (startupConfig.commonInstallRoot.Empty());
       MIKTEX_ASSERT (startupConfig.commonDataRoot.Empty());
       MIKTEX_ASSERT (startupConfig.commonConfigRoot.Empty());
+    }
+
+  if (startupConfig.userInstallRoot.Empty()
+      && userInstallRootIndex != INVALID_ROOT_INDEX)
+    {
+      startupConfig.userInstallRoot = GetRootDirectory(userInstallRootIndex);
     }
 
   if (startupConfig.userDataRoot.Empty()
@@ -1207,11 +1281,12 @@ SessionImpl::SplitTEXMFPath (/*[in]*/  const PathName &		path,
 bool
 SessionImpl::IsManagedRoot (/*[in]*/ unsigned root)
 {
-  return (root == GetInstallRoot()
+  return (root == GetUserInstallRoot()
 	  || root == GetUserConfigRoot()
 	  || root == GetUserDataRoot()
 	  || (IsSharedMiKTeXSetup() == TriState::True
-	      && (root == GetCommonConfigRoot()
+	      && (root == GetCommonInstallRoot()
+	          || root == GetCommonConfigRoot()
 		  || root == GetCommonDataRoot())));
 }
 

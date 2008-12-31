@@ -239,12 +239,19 @@ SessionImpl::ReadStartupConfigFile ()
 	}
       
       if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_INSTALL,
+			    MIKTEX_REGVAL_COMMON_INSTALL,
 			    str))
 	{
-	  ret.installRoot = str;
+	  ret.commonInstallRoot = str;
 	}
-      
+ 
+      if (pcfg->TryGetValue("Paths",
+			    MIKTEX_REGVAL_USER_INSTALL,
+			    str))
+	{
+	  ret.userInstallRoot = str;
+	}
+
       if (pcfg->TryGetValue("Paths",
 			    MIKTEX_REGVAL_COMMON_DATA,
 			    str))
@@ -300,12 +307,20 @@ SessionImpl::WriteStartupConfigFile
 		  MIKTEX_REGVAL_ROOTS,
 		  startupConfig.roots.c_str());
 
-  if (! startupConfig.installRoot.Empty()
-      && startupConfig.installRoot != defaultConfig.installRoot)
+  if (! startupConfig.commonInstallRoot.Empty()
+      && startupConfig.commonInstallRoot != defaultConfig.commonInstallRoot)
     {
       pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_INSTALL,
-		      startupConfig.installRoot.Get());
+		      MIKTEX_REGVAL_COMMON_INSTALL,
+		      startupConfig.commonInstallRoot.Get());
+    }
+
+  if (! startupConfig.userInstallRoot.Empty()
+      && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
+    {
+      pcfg->PutValue ("Paths",
+		      MIKTEX_REGVAL_USER_INSTALL,
+		      startupConfig.userInstallRoot.Get());
     }
 
   if (! startupConfig.commonDataRoot.Empty()
@@ -367,9 +382,14 @@ SessionImpl::ReadEnvironment ()
       ret.roots = str;
     }
 
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_INSTALL, str))
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_INSTALL, str))
     {
-      ret.installRoot = str;
+      ret.userInstallRoot = str;
+    }
+
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_INSTALL, str))
+    {
+      ret.commonInstallRoot = str;
     }
 
   if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_DATA, str))
@@ -1067,7 +1087,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 	    {
 	      string value;
 	      readingName = false;
-	      if (name == MIKTEX_ENV_INSTALL)
+	      if (name == "MIKTEX_INSTALL")
 		{
 		  value = GetSpecialPath(SpecialPath::InstallRoot).Get();
 		}

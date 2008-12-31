@@ -402,7 +402,8 @@ a common data directory."),
 	  break;
 
 	case OPT_INSTALL_ROOT:
-	  cmdinfo.startupConfig.installRoot = optarg;
+	  cmdinfo.startupConfig.commonInstallRoot = optarg;
+	  cmdinfo.startupConfig.userInstallRoot = optarg;
 	  break;
 
 	case OPT_INSTALL_FROM_LOCAL_REPOSITORY:
@@ -598,17 +599,17 @@ SetupWizardApplication::SetupWizardApplication ()
 
 /* _________________________________________________________________________
 
-   FindInstallDir
+   FindCommonInstallDir
    _________________________________________________________________________ */
 
 PathName
-FindInstallDir ()
+FindCommonInstallDir ()
 {
   // probe the registry
   string path;
   if (SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_INSTALL,
+			  MIKTEX_REGVAL_COMMON_INSTALL,
 			  path))
     {
       return (path);
@@ -675,9 +676,10 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
     {
       if (! (theApp.startupConfig.userDataRoot == path.GetCurrent()
 	     || theApp.startupConfig.userConfigRoot == path.GetCurrent()
+	     || theApp.startupConfig.userInstallRoot == path.GetCurrent()
 	     || theApp.startupConfig.commonDataRoot == path.GetCurrent()
 	     || theApp.startupConfig.commonConfigRoot == path.GetCurrent()
-	     || theApp.startupConfig.installRoot == path.GetCurrent()))
+	     || theApp.startupConfig.commonInstallRoot == path.GetCurrent()))
 	{
 	  if (vec.size() > 0)
 	    {
@@ -896,9 +898,9 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 
   // startup configuration
   theApp.startupConfig = cmdinfo.startupConfig;
-  if (theApp.startupConfig.installRoot.Empty())
+  if (theApp.startupConfig.commonInstallRoot.Empty())
     {
-      theApp.startupConfig.installRoot = FindInstallDir();
+      theApp.startupConfig.commonInstallRoot = FindCommonInstallDir();
     }
   if (theApp.startupConfig.roots.empty())
     {
@@ -915,6 +917,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.commonUserSetup =
     ((IsWindowsNT() && SessionWrapper(true)->RunningAsAdministrator())
      || cmdinfo.optShared
+     || ! cmdinfo.startupConfig.commonInstallRoot.Empty()
      || ! cmdinfo.startupConfig.commonDataRoot.Empty()
      || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
 
@@ -1124,9 +1127,9 @@ CloseLog (/*[in]*/ bool cancel)
 	  || theApp.setupTask == SetupTask::InstallFromLocalRepository
 	  || theApp.setupTask == SetupTask::InstallFromRemoteRepository)
 	{
-	  if (Directory::Exists(theApp.startupConfig.installRoot))
+	  if (Directory::Exists(theApp.GetInstallRoot()))
 	    {
-	      pathLogDir.Set (theApp.startupConfig.installRoot,
+	      pathLogDir.Set (theApp.GetInstallRoot(),
 			      MIKTEX_PATH_MIKTEX_CONFIG_DIR);
 	    }
 	  else
@@ -1271,11 +1274,12 @@ SetupWizardApplication::InitInstance ()
 
       // create a MiKTeX session
       StartupConfig startupConfig;
+      startupConfig.userInstallRoot = scratchRoot.Get();
       startupConfig.userDataRoot = scratchRoot.Get();
       startupConfig.userConfigRoot = scratchRoot.Get();
       startupConfig.commonDataRoot = scratchRoot.Get();
       startupConfig.commonConfigRoot = scratchRoot.Get();
-      startupConfig.installRoot = scratchRoot.Get();
+      startupConfig.commonInstallRoot = scratchRoot.Get();
       Session::InitInfo initInfo ("setup",
 				  Session::InitFlags::NoConfigFiles);
       initInfo.SetStartupConfig (startupConfig);
@@ -1447,7 +1451,7 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
     }
   else
     {
-      pathBinDir.Set (theApp.startupConfig.installRoot, MIKTEX_PATH_BIN_DIR);
+      pathBinDir.Set (theApp.GetInstallRoot(), MIKTEX_PATH_BIN_DIR);
     }
   CSVList bindir (lpszPath, ';');
   for (; bindir.GetCurrent() != 0; ++ bindir)
@@ -1562,7 +1566,7 @@ GetLogFileName ()
     }
   else
     {
-      ret = theApp.startupConfig.installRoot;
+      ret = theApp.GetInstallRoot();
       ret += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
     }
   Directory::Create (ret);
@@ -1680,17 +1684,17 @@ RegisterUninstaller ()
   string commandLine;
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      PathName pathCopyStart (theApp.startupConfig.installRoot,
+      PathName pathCopyStart (theApp.GetInstallRoot(),
 			      MIKTEX_PATH_COPYSTART_ADMIN_EXE);
       commandLine += Q_(pathCopyStart.Get());
       commandLine += " ";
     }
-  PathName pathUninstallDat (theApp.startupConfig.installRoot,
+  PathName pathUninstallDat (theApp.GetInstallRoot(),
 			     MIKTEX_PATH_UNINSTALL_DAT);
   commandLine += Q_(pathUninstallDat.Get());
 
   // make icon path
-  PathName iconPath (theApp.startupConfig.installRoot);
+  PathName iconPath (theApp.GetInstallRoot());
   iconPath += MIKTEX_PATH_BIN_DIR;
   iconPath += MIKTEX_MO_EXE;
   iconPath.Append (",0", false);
@@ -1715,7 +1719,7 @@ RegisterUninstaller ()
   AutoHKEY autoHKEY (hkey);
   
   // set values
-  PathName installRoot (theApp.startupConfig.installRoot);
+  PathName installRoot (theApp.GetInstallRoot());
   AddUninstallerRegValue (hkey, "Comment", UNINST_COMMENT);
   AddUninstallerRegValue (hkey, "DisplayIcon", iconPath.Get());
   AddUninstallerRegValue (hkey, "DisplayName", UNINST_DISPLAY_STRING); 
@@ -1828,7 +1832,7 @@ RegisterPathNT ()
     }
   else
     {
-      pathBinDir.Set (theApp.startupConfig.installRoot, MIKTEX_PATH_BIN_DIR);
+      pathBinDir.Set (theApp.GetInstallRoot(), MIKTEX_PATH_BIN_DIR);
     }
 
   Log (T_("Registering bin dir: %s\n"), Q_(pathBinDir));
@@ -1931,7 +1935,7 @@ RegisterPath95 ()
     }
   else
     {
-      pathBinDir.Set (theApp.startupConfig.installRoot, MIKTEX_PATH_BIN_DIR);
+      pathBinDir.Set (theApp.GetInstallRoot(), MIKTEX_PATH_BIN_DIR);
     }
   Utils::RemoveBlanksFromPathName (pathBinDir);
   StreamWriter writer (File::Open("c:\\autoexec.bat", // <fixme/>
@@ -1975,7 +1979,7 @@ RegisterMiKTeXFileTypes ()
 	  || SessionWrapper(true)->RunningAsAdministrator()
 	  || SessionWrapper(true)->RunningAsPowerUser()))
     {
-      PathName yap (theApp.startupConfig.installRoot);
+      PathName yap (theApp.GetInstallRoot());
       yap += MIKTEX_PATH_BIN_DIR;
       yap += MIKTEX_YAP_EXE;
       Process::Run (yap.Get(), "--register");
@@ -1989,14 +1993,14 @@ RegisterMiKTeXFileTypes ()
 
 CString &
 Expand (/*[in]*/ const char *	lpszSource,
-	/*[out]*/ CString &		dest)
+	/*[out]*/ CString &	dest)
 {
   dest = lpszSource;
   int pos;
   while ((pos = dest.Find("%MIKTEX_INSTALL%")) >= 0)
     {
       dest.Delete (pos, 16);
-      dest.Insert (pos, theApp.startupConfig.installRoot.Get());
+      dest.Insert (pos, theApp.GetInstallRoot().Get());
     }
   return (dest);
 }
@@ -2397,7 +2401,7 @@ LogHeader ()
 	   (theApp.startupConfig.commonConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonConfigRoot.Get()));
-      Log (T_("\nInstallation: %s\n"), theApp.startupConfig.installRoot.Get());
+      Log (T_("\nInstallation: %s\n"), theApp.GetInstallRoot().Get());
     }
 }
 

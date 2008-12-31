@@ -75,6 +75,7 @@
 #define MIKTEX_REGVAL_AUTO_INSTALL "AutoInstall"
 #define MIKTEX_REGVAL_COMMON_CONFIG "CommonConfig"
 #define MIKTEX_REGVAL_COMMON_DATA "CommonData"
+#define MIKTEX_REGVAL_COMMON_INSTALL "CommonInstall"
 #define MIKTEX_REGVAL_C_STYLE_ERRORS "CStyleErrors"
 #define MIKTEX_REGVAL_DESTDIR "DestDir"
 #define MIKTEX_REGVAL_DOC_EXTENSIONS "DocExtensions"
@@ -85,7 +86,6 @@
 #define MIKTEX_REGVAL_FTP_MODE "FTPMode"
 #define MIKTEX_REGVAL_GUI_FRAMEWORK "GUIFramework"
 #define MIKTEX_REGVAL_INSIST_ON_REPAIR "InsistOnRepair"
-#define MIKTEX_REGVAL_INSTALL "Install"
 #define MIKTEX_REGVAL_LOCAL_REPOSITORY "LocalRepository"
 #define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT "MiKTeXDirectRoot"
 #define MIKTEX_REGVAL_PARSE_FIRST_LINE "ParseFirstLine"
@@ -104,6 +104,7 @@
 #define MIKTEX_REGVAL_TRACE "Trace"
 #define MIKTEX_REGVAL_USER_CONFIG "UserConfig"
 #define MIKTEX_REGVAL_USER_DATA "UserData"
+#define MIKTEX_REGVAL_USER_INSTALL "UserInstall"
 #define MIKTEX_REGVAL_USE_PROXY "UseProxy"
 #define MIKTEX_REGVAL_VERSION "Version"
 

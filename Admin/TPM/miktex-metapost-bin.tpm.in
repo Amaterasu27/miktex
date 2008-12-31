@@ -15,7 +15,7 @@ texmf/miktex/bin/${mp_dll_name}.dll
 texmf/miktex/bin/dvitomp.exe
 texmf/miktex/bin/makempx.exe
 texmf/miktex/bin/mp.exe
-texmf/miktex/bin/mpost${miktex_prefix}.exe
+texmf/miktex/bin/${miktex_prefix}mpost.exe
 texmf/miktex/bin/mpost.exe
 texmf/miktex/bin/mpto.exe
     </TPM:RunFiles>

@@ -109,11 +109,11 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
   ret.roots = MIKTEX_ROOTS;
 #endif
 #if defined(MIKTEX_INSTALLROOT)
-  ret.installRoot = MIKTEX_INSTALLROOT;
+  ret.userInstallRoot = MIKTEX_INSTALLROOT;
 #endif
-  if (ret.installRoot.Empty())
+  if (ret.userInstallRoot.Empty())
     {
-      ret.installRoot = defaultPath;
+      ret.userInstallRoot = defaultPath;
     }
 #if defined(MIKTEX_DATAROOT)
   ret.userDataRoot = MIKTEX_DATAROOT;

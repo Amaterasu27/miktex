@@ -612,7 +612,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 
   if (theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
     {
-      theApp.startupConfig.installRoot = theApp.MiKTeXDirectTeXMFRoot;
+      theApp.SetInstallRoot (theApp.MiKTeXDirectTeXMFRoot);
     }
 
   bool comInit = false;
@@ -803,8 +803,15 @@ FileCopyPage::DoTheInstallation ()
 
   // register installation directory
   StartupConfig startupConfig;
-  startupConfig.roots = theApp.startupConfig.installRoot.Get();
-  startupConfig.installRoot = theApp.startupConfig.installRoot;
+  startupConfig.roots = theApp.GetInstallRoot().Get();
+  if (theApp.commonUserSetup)
+  {
+    startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
+  }
+  else
+  {
+    startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
+  }
   SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
 
   // parse package definition files
@@ -838,12 +845,12 @@ FileCopyPage::DoTheInstallation ()
 	    (theApp.localPackageRepository);
 	}
     }
-  pInstaller->SetDestination (theApp.startupConfig.installRoot);
+  pInstaller->SetDestination (theApp.GetInstallRoot());
   pInstaller->SetPackageLevel (theApp.packageLevel);
   pInstaller->SetCallback (this);
 
   // create the destination directory
-  Directory::Create (theApp.startupConfig.installRoot);
+  Directory::Create (theApp.GetInstallRoot());
 
   // open the uninstall script
   ULogOpen ();
@@ -940,7 +947,7 @@ FileCopyPage::GetIniTeXMFRunSize ()
 void
 FileCopyPage::ConfigureMiKTeX ()
 {
-  PathName initexmf (theApp.startupConfig.installRoot);
+  PathName initexmf (theApp.GetInstallRoot());
   initexmf += MIKTEX_PATH_BIN_DIR;
   initexmf += MIKTEX_INITEXMF_EXE;
 
@@ -978,8 +985,11 @@ FileCopyPage::ConfigureMiKTeX ()
 
       // [2] define roots & remove old fndbs
       cmdLine.Clear ();
-      cmdLine.AppendOption ("--install-root=",
-			    theApp.startupConfig.installRoot);
+      if (! theApp.startupConfig.userInstallRoot.Empty())
+	{
+	  cmdLine.AppendOption ("--user-install=",
+				theApp.startupConfig.userInstallRoot);
+	}
       if (! theApp.startupConfig.userDataRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-data=",
@@ -1000,8 +1010,13 @@ FileCopyPage::ConfigureMiKTeX ()
 	  cmdLine.AppendOption ("--common-config=",
 				theApp.startupConfig.commonConfigRoot);
 	}
+      if (! theApp.startupConfig.commonInstallRoot.Empty())
+	{
+	  cmdLine.AppendOption ("--common-install=",
+				theApp.startupConfig.commonInstallRoot);
+	}
       string rootDirectories;
-      rootDirectories += theApp.startupConfig.installRoot.Get();
+      rootDirectories += theApp.GetInstallRoot().Get();
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
 	{
 	  rootDirectories += ";";
@@ -1090,7 +1105,7 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 {
   // make absolute exe path name
   PathName exePath;
-  exePath = theApp.startupConfig.installRoot;
+  exePath = theApp.GetInstallRoot();
   exePath += MIKTEX_PATH_BIN_DIR;
   exePath += MIKTEX_INITEXMF_EXE;
 
@@ -1140,7 +1155,7 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 {
   // make absolute exe path name
   PathName exePath;
-  exePath = theApp.startupConfig.installRoot;
+  exePath = theApp.GetInstallRoot();
   exePath += MIKTEX_PATH_BIN_DIR;
   exePath += MIKTEX_MPM_EXE;
 
@@ -1264,7 +1279,7 @@ FileCopyPage::RemoveObsoleteFiles ()
   extern const char * g_apszObsoleteFiles[];
   for (size_t i = 0; g_apszObsoleteFiles[i] != 0; ++ i)
     {
-      PathName path (theApp.startupConfig.installRoot, g_apszObsoleteFiles[i]);
+      PathName path (theApp.GetInstallRoot(), g_apszObsoleteFiles[i]);
       // <todo/>
     }
 }

@@ -1518,7 +1518,8 @@ Application::Main (/*[in]*/ int			argc,
 	  toBeInstalled.push_back (lpszOptArg);
 	  break;
 	case OPT_INSTALL_ROOT:
-	  startupConfig.installRoot = lpszOptArg;
+	  startupConfig.commonInstallRoot = lpszOptArg;
+	  startupConfig.userInstallRoot = lpszOptArg;
 	  break;
 	case OPT_INSTALL_SOME:
 	  installSome.push_back (lpszOptArg);

@@ -889,7 +889,8 @@ SessionImpl::SetEnvironmentVariables ()
 
 SessionImpl::SessionImpl ()
   : initialized (false),
-    installRootIndex (INVALID_ROOT_INDEX),
+    commonInstallRootIndex (INVALID_ROOT_INDEX),
+    userInstallRootIndex (INVALID_ROOT_INDEX),
     triMiKTeXDirect (TriState::Undetermined),
     commonDataRootIndex (INVALID_ROOT_INDEX),
     userDataRootIndex (INVALID_ROOT_INDEX),

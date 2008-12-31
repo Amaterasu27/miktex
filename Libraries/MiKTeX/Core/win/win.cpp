@@ -117,22 +117,10 @@ SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
 {
   StartupConfig ret;
   string product = (IsMiKTeXDirect() ? "MiKTeXDirect" : "MiKTeX");
-  if (sharedSetup
-      || ! IsWindowsNT()
-      || IsUserAnAdministrator()
-      || IsUserAPowerUser())
-    {
-      ret.installRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-      ret.installRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
-    }
-  else
-    {
-      ret.installRoot =
-	Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-      ret.installRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
-    }
   if (sharedSetup)
     {
+      ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
+      ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
       ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
       ret.commonDataRoot += product;
       ret.commonDataRoot += MIKTEX_SERIES_STR;
@@ -146,6 +134,15 @@ SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
     Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
   ret.userConfigRoot += product;
   ret.userConfigRoot += MIKTEX_SERIES_STR;
+  if (! sharedSetup && (IsUserAnAdministrator() || IsUserAPowerUser()))
+  {
+    ret.userInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
+    ret.userInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+  }
+  else
+  {
+    ret.userInstallRoot = ret.userConfigRoot;
+  }
   return (ret);
 }
 
@@ -176,11 +173,20 @@ SessionImpl::ReadRegistry ()
 
   if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
 				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_INSTALL,
+				       MIKTEX_REGVAL_COMMON_INSTALL,
 				       str,
 				       0))
     {
-      ret.installRoot = str;
+      ret.commonInstallRoot = str;
+    }
+  
+  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
+				       MIKTEX_REGKEY_CORE,
+				       MIKTEX_REGVAL_USER_INSTALL,
+				       str,
+				       0))
+    {
+      ret.userInstallRoot = str;
     }
   
   if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
@@ -242,7 +248,10 @@ SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
 				       MIKTEX_REGVAL_ROOTS);
   winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
 				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_INSTALL);
+				       MIKTEX_REGVAL_COMMON_INSTALL);
+  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
+				       MIKTEX_REGKEY_CORE,
+				       MIKTEX_REGVAL_USER_INSTALL);
   winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
 				       MIKTEX_REGKEY_CORE,
 				       MIKTEX_REGVAL_COMMON_DATA);
@@ -259,7 +268,8 @@ SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
   // try very hard to keep the registry clean
 
   if (! startupConfig.roots.empty()
-      && startupConfig.roots != startupConfig.installRoot)
+      && startupConfig.roots != startupConfig.commonInstallRoot
+      && startupConfig.roots != startupConfig.userInstallRoot)
     {
       winRegistry::SetRegistryValue (TriState::Undetermined,
 				     MIKTEX_REGKEY_CORE,
@@ -267,13 +277,22 @@ SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
 				     startupConfig.roots.c_str());
     }
 
-  if (! startupConfig.installRoot.Empty()
-      && startupConfig.installRoot != defaultConfig.installRoot)
+  if (! startupConfig.commonInstallRoot.Empty()
+      && startupConfig.commonInstallRoot != defaultConfig.commonInstallRoot)
     {
       winRegistry::SetRegistryValue (TriState::Undetermined,
 				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_INSTALL,
-				     startupConfig.installRoot.Get());
+				     MIKTEX_REGVAL_COMMON_INSTALL,
+				     startupConfig.commonInstallRoot.Get());
+    }
+
+  if (! startupConfig.userInstallRoot.Empty()
+      && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
+    {
+      winRegistry::SetRegistryValue (TriState::Undetermined,
+				     MIKTEX_REGKEY_CORE,
+				     MIKTEX_REGVAL_USER_INSTALL,
+				     startupConfig.userInstallRoot.Get());
     }
 
   if (! startupConfig.commonDataRoot.Empty()

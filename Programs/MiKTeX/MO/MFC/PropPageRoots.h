@@ -185,7 +185,10 @@ private:
   CListCtrl listControl;
 
 private:
-  PathName installRoot;
+  PathName commonInstallRoot;
+
+private:
+  PathName userInstallRoot;
 
 private:
   PathName commonDataRoot;

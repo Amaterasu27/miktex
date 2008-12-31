@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2008 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -200,7 +200,7 @@ FinishPage::OnWizardFinish ()
 		}
 	      else
 		{
-		  PathName pathRelNotes (theApp.startupConfig.installRoot,
+		  PathName pathRelNotes (theApp.GetInstallRoot(),
 					 MIKTEX_PATH_RELNOTES_HTML);
 		  if (ShellExecute(0,
 				   T_("open"),

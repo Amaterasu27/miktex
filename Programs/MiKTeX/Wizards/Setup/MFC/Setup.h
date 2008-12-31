@@ -220,6 +220,27 @@ public:
   StartupConfig startupConfig;
 
 public:
+  PathName GetInstallRoot () const
+  {
+    return (commonUserSetup
+      ? startupConfig.commonInstallRoot
+      : startupConfig.userInstallRoot);
+  }
+
+public:
+  void SetInstallRoot (/*[in]*/ const PathName & path)
+  {
+    if (commonUserSetup)
+    {
+      startupConfig.commonInstallRoot = path;
+    }
+    else
+    {
+      startupConfig.userInstallRoot = path;
+    }
+  }
+
+public:
   PathName localPackageRepository;
 
 public:
