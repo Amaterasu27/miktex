@@ -1,6 +1,6 @@
 /* FormatInfo.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -195,10 +195,12 @@ SessionImpl::ReadFormatsIni ()
   bool readSomething = false;
   for (unsigned r = GetNumberOfTEXMFRoots(); r > 0; -- r)
     {
+#if 0
       if (! IsManagedRoot(r - 1))
 	{
 	  continue;
 	}
+#endif
       PathName formatsIni = GetRootDirectory(r - 1);
       formatsIni += MIKTEX_PATH_FORMATS_INI;
       if (File::Exists(formatsIni))

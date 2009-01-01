@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -191,6 +191,7 @@ set(required_programs
   cat
   date
   diff
+  dos2unix
   flex
   lynx
   perl
@@ -200,7 +201,6 @@ set(required_programs
 
 if(BUILDING_MIKTEX)
   set(required_programs ${required_programs}
-    dos2unix
     texify
   )
   if(NATIVE_WINDOWS)
@@ -231,6 +231,11 @@ if(BUILDING_MIKTEX_TOOLS)
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   endif(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
+  if(MIKTEX_ROOTS)
+    set(MIKTEX_ROOTS "${MIKTEX_ROOTS}:${texmfdir}")
+  else(MIKTEX_ROOTS)
+    set(MIKTEX_ROOTS "${texmfdir}")
+  endif(MIKTEX_ROOTS)  
 endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
@@ -711,9 +716,7 @@ add_subdirectory(${rel_makex_dir})
 
 add_subdirectory(${rel_initexmf_dir})
 
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_config_dir})
-endif(BUILDING_MIKTEX)
+add_subdirectory(${rel_config_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_findtexmf_dir})

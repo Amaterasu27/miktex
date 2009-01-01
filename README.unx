@@ -19,6 +19,8 @@ FIRST THINGS FIRST
 
   - mthelp: MiKTeX Help Utility
 
+  - mitex-pdftex: the MiKTeX implementation of the pdfTeX engine
+
 For more information about the MiKTeX project, visit the project page at
 
 			    www.miktex.org
@@ -42,6 +44,9 @@ PREREQUISITES
 
 [ ] libCURL libraries and header files are required. A common name for this
     package is libcurl-devel.
+
+[ ] dos2unix is used to remove DOS line-endings from source
+    files. This utility is a part of the 'tofrodos' package.
 
 COMPILING THE PACKAGE
 ---------------------

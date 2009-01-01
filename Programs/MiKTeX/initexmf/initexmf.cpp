@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -1833,7 +1833,10 @@ IniTeXMFApp::MakeFormatFilesByName
 	{
 	  if (PathName::Compare(formatInfo.name, *it) == 0
 	      && (engine.empty()
-		  || PathName::Compare(formatInfo.compiler, engine) == 0))
+		  || (StringCompare(formatInfo.compiler.c_str(),
+				   engine.c_str(),
+				   true)
+		      == 0)))
 	    {
 	      MakeFormatFile (formatInfo.key.c_str());
 	      done = true;
