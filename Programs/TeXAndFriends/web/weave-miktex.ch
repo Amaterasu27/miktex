@@ -1,6 +1,6 @@
 %% weave-miktex.ch: WEB change file for WEAVE
 %% 
-%% Copyright (C) 1991-2005 Christian Schenk
+%% Copyright (C) 1991-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -89,6 +89,18 @@
 @d text_char == char {the data type of characters in text files}
 @d first_text_char=-128 {ordinal number of the smallest element of |text_char|}
 @d last_text_char=127 {ordinal number of the largest element of |text_char|}
+@z
+
+% _____________________________________________________________________________
+%
+% [2.18]
+% _____________________________________________________________________________
+
+@x
+xord[' ']:=" ";
+@y
+xord[' ']:=" ";
+xord[xchr[carriage_return]]:=" ";
 @z
 
 % _____________________________________________________________________________
