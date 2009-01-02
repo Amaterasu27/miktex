@@ -40,7 +40,7 @@ add_library(${mcd_dll_name} SHARED ${${mcd_dll_name}_sources})
 
 set_target_properties(${mcd_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 

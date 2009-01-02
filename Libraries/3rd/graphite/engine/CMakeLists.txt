@@ -91,7 +91,7 @@ add_library(${graphite_engine_dll_name}
 
 set_target_properties(${graphite_engine_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 

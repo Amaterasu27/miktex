@@ -60,7 +60,7 @@ add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
 
 set_target_properties(${zlib_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 

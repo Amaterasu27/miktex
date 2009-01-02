@@ -17,7 +17,7 @@ FIRST THINGS FIRST
 
   - mpm_qt: MiKTeX Package Manager (GUI application)
 
-  - mthelp: MiKTeX Help Utility
+  - mthelp: MiKTeX Help Utility (a texdoc alternative)
 
   - mitex-pdftex: the MiKTeX implementation of the pdfTeX engine
 
@@ -84,6 +84,17 @@ database.  You use the MiKTeX configuration utility to create the file name
 database files:
 
     initexmf -u
+
+USING MIKTEX-PDFTEX
+-------------------
+
+The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. You invoke
+it as follows:
+
+  miktex-pdftex --undump=latex sample2e
+
+With the --undump option you specify the format to be loaded
+(undumped) by the engine.
 
 USING THE PACKAGE MANAGER
 -------------------------

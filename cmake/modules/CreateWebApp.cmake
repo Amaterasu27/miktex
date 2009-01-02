@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -211,7 +211,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   set_target_properties(${${_short_name_l}_dll_name}
     PROPERTIES
-      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      VERSION "${MIKTEX_SERIES_STR}"
       SOVERSION "1"
   )
 
@@ -235,7 +235,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   set_target_properties(${_invocation_name}
     PROPERTIES
-      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      VERSION "${MIKTEX_SERIES_STR}"
   )
 
   add_dependencies(${_invocation_name} ${${_short_name_l}_dll_name})
@@ -260,7 +260,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
       add_executable(${_short_name_l} ${_short_name_l}wrapper.cpp)
       set_target_properties(${_short_name_l}
 	PROPERTIES
-	VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+	VERSION "${MIKTEX_SERIES_STR}"
       )
       merge_trustinfo_manifest(${_short_name_l} asInvoker)
       merge_common_controls_manifest(${_short_name_l})
@@ -280,7 +280,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     add_executable(${_alt_invocation_name} ${_short_name_l}wrapper.cpp)
     set_target_properties(${_alt_invocation_name}
       PROPERTIES
-      VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+      VERSION "${MIKTEX_SERIES_STR}"
     )
     target_link_libraries(${_alt_invocation_name}
       ${core_dll_name}

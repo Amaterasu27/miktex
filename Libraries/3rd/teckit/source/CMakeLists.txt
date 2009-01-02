@@ -40,7 +40,7 @@ add_library(${teckit_dll_name} SHARED ${${teckit_dll_name}_sources})
 
 set_target_properties(${teckit_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 

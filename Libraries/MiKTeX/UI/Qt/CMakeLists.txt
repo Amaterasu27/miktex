@@ -108,7 +108,7 @@ add_library(${ui_qt_dll_name} SHARED
 
 set_target_properties(${ui_qt_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 

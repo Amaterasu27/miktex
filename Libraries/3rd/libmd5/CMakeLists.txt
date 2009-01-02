@@ -44,7 +44,7 @@ add_library(${md5_dll_name} SHARED ${${md5_dll_name}_sources})
 
 set_target_properties(${md5_dll_name}
   PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
+    VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
 
