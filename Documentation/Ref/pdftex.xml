@@ -3,19 +3,19 @@
 <?dbhh topicname="MIKTEXHELP_PDFTEX" topicid="0"?>
 
 <refmeta>
-<refentrytitle>pdftex</refentrytitle>
+<refentrytitle>miktex-pdftex</refentrytitle>
 <manvolnum>1</manvolnum>
 </refmeta>
 
 <refnamediv>
-<refname>pdftex</refname>
+<refname>miktex-pdftex</refname>
 <refpurpose>&DVI;/&PDF; output from &TeX;</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 
 <cmdsynopsis>
-&pdftex;
+&miktexpdftex;
 <arg choice="opt" rep="repeat"><replaceable>option</replaceable></arg>
 <group>
 <arg choice="opt"><replaceable>file</replaceable></arg>
@@ -124,7 +124,7 @@ and &PNG; graphics formats.</para>
 <varlistentry>
 <term><filename>pdftex.cfg</filename></term>
 <listitem>
-<para>The &pdfTeX; configuration file.</para>
+<para>The &MiKTeXpdfTeX; configuration file.</para>
 </listitem>
 </varlistentry>
 </variablelist>

@@ -132,6 +132,7 @@
 <!ENTITY networkfolder "\\server\miktex">
 <!ENTITY omega "<command>omega</command>">
 <!ENTITY LuaTeX "<application>LuaTeX</application>">
+<!ENTITY MiKTeXpdfTeX "<application>MiKTeX-pdfTeX</application>">
 <!ENTITY pdfTeX "<application>pdfTeX</application>">
 <!ENTITY SyncTeX "<application>SyncTeX</application>">
 <!ENTITY XeTeX "<application>XeTeX</application>">
@@ -140,6 +141,7 @@
 <!ENTITY pdfeTeX "<application>pdf-e-TeX</application>">
 <!ENTITY pdfinitex "<command>pdfinitex</command>">
 <!ENTITY pdflatex "<command>pdflatex</command>">
+<!ENTITY miktexpdftex "<command>miktex-pdftex</command>">
 <!ENTITY pdftex "<command>pdftex</command>">
 <!ENTITY xdvipdfmx "<command>xdvipdfmx</command>">
 <!ENTITY xetex "<command>xetex</command>">

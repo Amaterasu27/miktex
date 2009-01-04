@@ -13,13 +13,13 @@ FIRST THINGS FIRST
 
   - initexmf: MiKTeX Configuration Utility
 
+  - miktex-pdftex: the MiKTeX implementation of the pdfTeX engine
+
   - mpm: MiKTeX Package Manager (console application)
 
   - mpm_qt: MiKTeX Package Manager (GUI application)
 
   - mthelp: MiKTeX Help Utility (a texdoc alternative)
-
-  - mitex-pdftex: the MiKTeX implementation of the pdfTeX engine
 
 For more information about the MiKTeX project, visit the project page at
 
@@ -68,8 +68,11 @@ Run the make utility to compile MiKTeX:
 
     make
 
-Specify the 'install' target to install the binaries, libraries, header files,
-and reference pages:
+INSTALLING THE PACKAGE
+----------------------
+
+Specify the 'install' target to install the binaries, libraries,
+header files, and reference pages:
 
     make install
 
@@ -88,13 +91,25 @@ database files:
 USING MIKTEX-PDFTEX
 -------------------
 
-The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. You invoke
-it as follows:
+The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. The MiKTeX
+package manager is integrated into the engine, i.e., missing packages
+will be installed on the-fly (after confirmation).
+
+You invoke MiKTeX-pdfTeX as follows:
 
   miktex-pdftex --undump=latex sample2e
 
-With the --undump option you specify the format to be loaded
-(undumped) by the engine.
+The --undump option must be used to specify the format.  If you prefer
+shortcuts, You can create symbolic links to the MiKTeX-pdfTeX engine:
+
+  cd /usr/local/bin
+  ln -s miktex-pdftex pdftex
+  ln -s miktex-pdftex latex
+  ln -s miktex-pdftex pdflatex
+
+Then You can invoke the engine as usual:
+
+  latex sample2e
 
 USING THE PACKAGE MANAGER
 -------------------------

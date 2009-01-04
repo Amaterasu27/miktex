@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -796,6 +796,7 @@ endif(BUILDING_MIKTEX)
 if(NOT NATIVE_WINDOWS)
   add_custom_command(
     OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/${miktex_prefix}pdftex.1
 	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
@@ -809,6 +810,7 @@ if(NOT NATIVE_WINDOWS)
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/initexmf.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mpm.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mthelp.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Ref/pdftex.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Styles/manpages.xsl
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex.xml
 	${entities_ent}
@@ -818,6 +820,7 @@ if(NOT NATIVE_WINDOWS)
   )
   install(
     FILES
+	${CMAKE_CURRENT_BINARY_DIR}/${miktex_prefix}pdftex.1
 	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
@@ -851,6 +854,7 @@ endif(BUILDING_MIKTEX)
 if(NOT NATIVE_WINDOWS)
   add_custom_target(all-man ALL
     DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/${miktex_prefix}pdftex.1
 	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
