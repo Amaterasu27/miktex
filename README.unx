@@ -1,11 +1,11 @@
-This 'README' file belongs to the MiKTeX source distribution.  It briefly
-describes the build process on Unix system-alikes.
+This 'README' file belongs to the MiKTeX source distribution.  It
+briefly describes the build process on Unix system-alikes.
 
 FIRST THINGS FIRST
 ------------------
 
-* This package does not comprise a TeX system: the package should be regarded
-  as an addition to the TeX system installed on your system.
+* This package does not comprise a TeX system: the package should be
+  regarded as an addition to the TeX system installed on your system.
 
 * The package is meant to be compiled on Unix-like operating systems.
 
@@ -21,29 +21,30 @@ FIRST THINGS FIRST
 
   - mthelp: MiKTeX Help Utility (a texdoc alternative)
 
-For more information about the MiKTeX project, visit the project page at
-
-			    www.miktex.org
+For more information about the MiKTeX project, visit the project page
+at www.miktex.org.
 
 PREREQUISITES
 -------------
 
-[ ] MiKTeX is mostly written in C++.  It should work with any ANSI-compliant
-    C++ compiler.
+[ ] MiKTeX is mostly written in C++.  It should work with any
+    ANSI-compliant C++ compiler.
 
-[ ] CMake 2.6 (or newer) is required for building and installing MiKTeX.
+[ ] CMake 2.6 (or newer) is required for building and installing
+    MiKTeX.
 
-[ ] The Qt development kit (version 4.4.0 or newer) is required, if you intend
-    to build GUI applications (e.g., the GUI variant of the package
-    manager). A common name for this package is libqt4-devel.
+[ ] The Qt development kit (version 4.4.0 or newer) is required, if
+    you intend to build GUI applications (e.g., the GUI variant of the
+    package manager). A common name for this package is libqt4-devel.
 
-[ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are required
-    for building the reference pages.
+[ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are
+    required for building the reference pages.
 
-[ ] MiKTeX depends on the availability of pthreads libraries and header files.
+[ ] MiKTeX depends on the availability of pthreads libraries and
+    header files.
 
-[ ] libCURL libraries and header files are required. A common name for this
-    package is libcurl-devel.
+[ ] libCURL libraries and header files are required. A common name for
+    this package is libcurl-devel.
 
 [ ] dos2unix is used to remove DOS line-endings from source
     files. This utility is a part of the 'tofrodos' package.
@@ -76,65 +77,68 @@ header files, and reference pages:
 
     make install
 
-It may be necessary to run ldconfig to update the links and cache to reflect
-the new libraries installed during the install.
+It may be necessary to run ldconfig to update the links and cache to
+reflect the new libraries installed during the install.
 
 USING THE MIKTEX CONFIGURATION UTILITY
 --------------------------------------
 
-The MiKTeX utilities may not work properly without the MiKTeX file name
-database.  You use the MiKTeX configuration utility to create the file name
-database files:
+The MiKTeX utilities may not work properly without the MiKTeX file
+name database.  You use the MiKTeX configuration utility to create the
+file name database files:
 
     initexmf -u
 
 USING MIKTEX-PDFTEX
 -------------------
 
-The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. The MiKTeX
-package manager is integrated into the engine, i.e., missing packages
-will be installed on the-fly (after confirmation).
+The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. The engine
+features integrated package management, i.e., missing packages will be
+installed on the-fly (after confirmation).
 
 You invoke MiKTeX-pdfTeX as follows:
 
-  miktex-pdftex --undump=latex sample2e
+    miktex-pdftex --undump=latex sample2e
 
-The --undump option must be used to specify the format.  If you prefer
+The --undump option must be used to specify the format.  See the
+reference page miktex-pdftex(1), for more information.  If you prefer
 shortcuts, You can create symbolic links to the MiKTeX-pdfTeX engine:
 
-  cd /usr/local/bin
-  ln -s miktex-pdftex pdftex
-  ln -s miktex-pdftex latex
-  ln -s miktex-pdftex pdflatex
+    cd /usr/local/bin
+    ln -s miktex-pdftex pdftex
+    ln -s miktex-pdftex latex
+    ln -s miktex-pdftex pdflatex
 
 Then You can invoke the engine as usual:
 
-  latex sample2e
+    latex sample2e
 
 USING THE PACKAGE MANAGER
 -------------------------
 
-MPM (MiKTeX Package Manager) was originally intended to be a tool for MiKTeX
-users.  But the program can be helpful for users of other TeX systems too,
-because many of the MiKTeX packages are system-independent.
+MPM (MiKTeX Package Manager) was originally intended to be a tool for
+MiKTeX users.  But the program can be helpful for users of other TeX
+systems too, because many of the MiKTeX packages are
+system-independent.
 
-First of all you should install the package database files on your system.  To
-do this, run
+First of all you should install the package database files on your
+system.  To do this, run
 
     mpm --update-db
 
-This command retrieves the package database files from a remote package
-repository and installs them in the installation directory.
+This command retrieves the package database files from a remote
+package repository and installs them in the installation directory.
 
-You are now ready to browse and install packages.  There are two variants of
-the package manager: console and GUI. Run
+You are now ready to browse and install packages.  There are two
+variants of the package manager: console and GUI. Run
 
     mpm
 
-to start the GUI variant of the package manager. You will be presented with a
-list of packages.
+to start the GUI variant of the package manager. You will be presented
+with a list of packages.
 
-The rest of this section describes the console variant of the package manager.
+The rest of this section describes the console variant of the package
+manager.
 
 To list the contents of the just installed package database, run
 
@@ -157,17 +161,18 @@ Run
 
     mthelp PACKAGE
 
-to view an HTML page wich contains links to the documentation files of a
-package.
+to view an HTML page wich contains links to the documentation files of
+a package.
 
 DOCUMENTATION
 -------------
 
-The following reference pages are in included: initexmf.1, mpm.1, mthelp.1.
+The following reference pages are available: initexmf.1,
+miktex-pdftex.1, mpm.1, mthelp.1.
 
 BUGS & ISSUES
 -------------
 
 Please visit the MiKTeX project page (www.miktex.org), if you find it
-difficult to install/use the MiKTeX.  You will find references to online
-forums, mailing lists and issue trackers.
+difficult to install/use the MiKTeX.  You will find references to
+online forums, mailing lists and issue trackers.

@@ -360,11 +360,22 @@ execute_process(
 
 ###############################################################################
 ## set the build type
+##
+## the build type is derived from the MiKTeX release state; see
+## miktex-version.cmake
 
 if(MIKTEX_RELEASE_STATE EQUAL 0)
-  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+  if(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+  else(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
+  endif(NATIVE_WINDOWS)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
-  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+  if(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+  else(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
+  endif(NATIVE_WINDOWS)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
   if(NATIVE_WINDOWS)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
@@ -373,8 +384,12 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 2)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
   endif(NATIVE_WINDOWS)
 elseif(MIKTEX_RELEASE_STATE EQUAL 3)
-  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
-  add_definitions(-DMIKTEX_DEBUG)
+  if(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
+    add_definitions(-DMIKTEX_DEBUG)
+  else(NATIVE_WINDOWS)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
+  endif(NATIVE_WINDOWS)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "The build type." FORCE)
   add_definitions(-DMIKTEX_DEBUG)
