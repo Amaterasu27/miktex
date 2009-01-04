@@ -1,6 +1,6 @@
 /* 1.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -26,7 +26,7 @@ BEGIN_TEST_SCRIPT();
 BEGIN_TEST_FUNCTION(2);
 {
   TEST (FindFile("a.txt", "."));
-  TEST (RunSystemCommand("1-1") == 0);
+  TEST (RunSystemCommand("core_scratchdir_test1_1") == 0);
 }
 END_TEST_FUNCTION();
 
@@ -55,7 +55,7 @@ BEGIN_TEST_FUNCTION(1);
   dir.MakeAbsolute ();
   MiKTeX::Core::Directory::Create (dir);
   Touch ("x/y/z/a.txt");
-  pSession->AddWorkingDirectory (dir.Get(), true);
+  pSession->AddInputDirectory (dir.Get(), true);
   EnterMany (21);
   scratchDir.Leave ();
   TEST (! MiKTeX::Core::Directory::Exists(scratch1));

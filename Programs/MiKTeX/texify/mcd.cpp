@@ -1,6 +1,6 @@
 /* mcd.cpp: MiKTeX compiler driver
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,
    2002, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -951,7 +951,7 @@ Driver::Initialize (/*[in]*/ McdApp *		pApplication,
   inputName.RemoveDirectorySpec ();
 
   // create a super-temp directory
-  ScratchDirectory::Create (tempDirectory);
+  tempDirectory = ScratchDirectory::Create();
   madeTempDirectory = true;
 
   // create scratch directory
@@ -1176,16 +1176,16 @@ Driver::TexinfoUncomment (/*[in]*/ const PathName &	pathFrom,
 void
 Driver::SetIncludeDirectories ()
 {
-  pSession->AddWorkingDirectory (pOptions->startDirectory.Get(), true);
+  pSession->AddInputDirectory (pOptions->startDirectory.Get(), true);
   if (originalInputDirectory != pOptions->startDirectory)
     {
-      pSession->AddWorkingDirectory (originalInputDirectory.Get(), true);
+      pSession->AddInputDirectory (originalInputDirectory.Get(), true);
     }
   for (vector<string>::iterator it = pOptions->includeDirectories.begin();
        it != pOptions->includeDirectories.end();
        ++ it)
     {
-      pSession->AddWorkingDirectory (it->c_str(), true);
+      pSession->AddInputDirectory (it->c_str(), true);
     }
 }
 

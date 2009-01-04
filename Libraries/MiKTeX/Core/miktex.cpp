@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -730,11 +730,11 @@ SessionImpl::SetCWDEnv ()
 {
   string str;
   str.reserve (256);
-  for (deque<PathName>::const_iterator it = workingDirectories.begin();
-       it != workingDirectories.end();
+  for (deque<PathName>::const_iterator it = inputDirectories.begin();
+       it != inputDirectories.end();
        ++ it)
     {
-      if (it != workingDirectories.begin())
+      if (it != inputDirectories.begin())
 	{
 	  str += PATH_DELIMITER;
 	}
@@ -745,18 +745,18 @@ SessionImpl::SetCWDEnv ()
 
 /* _________________________________________________________________________
 
-   SessionImpl::AddWorkingDirectory
+   SessionImpl::AddInputDirectory
    _________________________________________________________________________ */
 
 void
-SessionImpl::AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
-				  /*[in]*/ bool			atEnd)
+SessionImpl::AddInputDirectory (/*[in]*/ const char *	lpszPath,
+				/*[in]*/ bool		atEnd)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
-      INVALID_ARGUMENT ("SessionImpl::AddWorkingDirectory", lpszPath);
+      INVALID_ARGUMENT ("SessionImpl::AddInputDirectory", lpszPath);
     }
 
   // clear the search path cache
@@ -764,36 +764,16 @@ SessionImpl::AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
 
   if (atEnd)
     {
-      workingDirectories.push_back (lpszPath);
+      inputDirectories.push_back (lpszPath);
     }
   else
     {
-      workingDirectories.push_front (lpszPath);
-    }
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::RemoveWorkingDirectory
-   _________________________________________________________________________ */
-
-void
-SessionImpl::RemoveWorkingDirectory (/*[in]*/ const char * lpszPath)
-{
-  // clear the search path cache
-  ClearSearchVectors ();
-
-  deque<PathName>::iterator it =
-    find(workingDirectories.begin(),
-	 workingDirectories.end(),
-	 lpszPath);
-
-  if (it == workingDirectories.end())
-    {
-      INVALID_ARGUMENT ("SessionImpl::RemoveWorkingDirectory", lpszPath);
+      inputDirectories.push_front (lpszPath);
     }
 
-  workingDirectories.erase (it);
+#if 1
+  SetCWDEnv ();
+#endif
 }
 
 /* _________________________________________________________________________
@@ -805,21 +785,22 @@ bool
 SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
 				  /*[out]*/ PathName &	path)
 {
-  if (n == 0)
-    {
-      path.SetToCurrentDirectory ();
-      return (true);
-    }
-  -- n;
-  if (n == workingDirectories.size())
-    {
-      return (false);
-    }
-  if (n > workingDirectories.size())
-    {
-      INVALID_ARGUMENT ("GetWorkingDirectory", NUMTOSTR(n));
-    }
-  path = workingDirectories[n];
+  if (n == scratchDirectories.size() + inputDirectories.size())
+  {
+    return (false);
+  }
+  if (n > scratchDirectories.size() + inputDirectories.size())
+  {
+    INVALID_ARGUMENT ("GetWorkingDirectory", NUMTOSTR(n));
+  }
+  if (n < scratchDirectories.size())
+  {
+    path = scratchDirectories[scratchDirectories.size() - n - 1];
+  }
+  else
+  {
+    path = inputDirectories[n - scratchDirectories.size()];
+  }
   return (true);
 }
 
@@ -1052,6 +1033,9 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   PushAppName ("miktex");
   PushAppName (Utils::GetExeName().c_str());
   
+  // the process start directory is the initial scratch directory
+  scratchDirectories.push_back (PathName().SetToCurrentDirectory());
+
   string miktexCwd;
   if (Utils::GetEnvironmentString(MIKTEX_ENV_CWD_LIST, miktexCwd))
     {
@@ -1059,7 +1043,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 	   cwd.GetCurrent() != 0;
 	   ++ cwd)
 	{
-	  AddWorkingDirectory (cwd.GetCurrent(), true);
+	  AddInputDirectory (cwd.GetCurrent(), true);
 	}
     }
   
@@ -1139,19 +1123,8 @@ SessionImpl::Uninitialize ()
 				      T_("uninitializing core library"));
       CheckOpenFiles ();
       WritePackageHistory ();
-      size_t n = scratchDirectoryStack.size();
-      if (n > 0)
-	{
-	  trace_error->WriteFormattedLine
-	    ("core",
-	     T_("there are %u scratch directories in use"),
-	     static_cast<unsigned>(n));
-	  while (! scratchDirectoryStack.empty())
-	    {
-	      scratchDirectoryStack.pop ();
-	    }
-	}
-      workingDirectories.clear ();
+      scratchDirectories.clear ();
+      inputDirectories.clear ();
       UnregisterLibraryTraceStreams ();
     }
   catch (const exception &)

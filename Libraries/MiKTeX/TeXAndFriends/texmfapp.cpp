@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -530,7 +530,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 			      T_("The specified directory does not exist."),
 			      auxDirectory.Get());
 	}
-      pSession->AddWorkingDirectory (auxDirectory.Get(), true);
+      pSession->AddInputDirectory (auxDirectory.Get(), true);
       break;
 
     case OPT_BUF_SIZE:
@@ -654,7 +654,7 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
 	{
 	  auxDirectory = outputDirectory;
 	}
-      pSession->AddWorkingDirectory (outputDirectory.Get(), true);
+      pSession->AddInputDirectory (outputDirectory.Get(), true);
       break;
 
     case OPT_PARAM_SIZE:

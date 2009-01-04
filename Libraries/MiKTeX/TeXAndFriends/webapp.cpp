@@ -1,6 +1,6 @@
 /* webapp.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -341,7 +341,7 @@ WebApp::ProcessOption (/*[in]*/ int		opt,
 	{
 	  PathName path (lpszArg);
 	  path.MakeAbsolute ();
-	  pSession->AddWorkingDirectory (path.Get(), true);
+	  pSession->AddInputDirectory (path.Get(), true);
 	}
       break;
     case OPT_HELP:

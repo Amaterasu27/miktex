@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -361,9 +361,11 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
       return (false);
     }
 
+#if 0
   // get the current directory
   PathName pathCWD;
   pathCWD.SetToCurrentDirectory ();
+#endif
 
   // search along vector
   bool found = false;
@@ -371,6 +373,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
        ! found && it != vec.end();
        ++ it)
     {
+#if 0
       if (PathName::Compare(*it, pathCWD) == 0)
 	{
 	  // special case: path is the current working directory
@@ -381,7 +384,9 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
 	      return (true);
 	    }
 	}
+#endif
 
+#if 0
       PathName pathWD;
       for (unsigned idx = 1; GetWorkingDirectory(idx, pathWD); ++ idx)
 	{
@@ -397,6 +402,7 @@ SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
 		}
 	    }
 	}
+#endif
 
       FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
       if (pFndb != 0)

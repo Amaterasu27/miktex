@@ -1,6 +1,6 @@
 /* dvipdft.cpp: run dvipdfm-gswin32-dvipdfm
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of dvipdm.
 
@@ -84,7 +84,7 @@ class TempDirectory
 public:
   TempDirectory ()
   {
-    ScratchDirectory::Create (path);
+    path = ScratchDirectory::Create();
   }
 
 public:

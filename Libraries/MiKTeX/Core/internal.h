@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -765,8 +765,8 @@ public:
   virtual
   void
   MIKTEXTHISCALL
-  AddWorkingDirectory (/*[in]*/ const char *	lpszPath,
-		       /*[in]*/ bool			bAtEnd);
+  AddInputDirectory (/*[in]*/ const char *	lpszPath,
+		     /*[in]*/ bool		atEnd);
 
 public:
   virtual
@@ -1337,10 +1337,6 @@ public:
   GetTempDirectory ();
 
 public:
-  void
-  RemoveWorkingDirectory (/*[in]*/ const char * lpszPath);
-  
-public:
   PathName
   GetMyProgramFile ();
 
@@ -1424,18 +1420,40 @@ public:
 public:
   locale defaultLocale;
 
-public:
-  struct ScratchDirectoryInfo
-  {
-    // previous directory
-    string previous;
-    
-    // fully qualified & resolved path to scratch directory
-    string scratchDirectory;
-  };
+private:
+  std::vector<PathName> scratchDirectories;
 
 public:
-  std::stack<ScratchDirectoryInfo> scratchDirectoryStack;
+  size_t
+  GetNumberOfScratchDirectories ()
+  {
+    return (scratchDirectories.size());
+  }
+
+public:
+  PathName
+  GetScratchDirectory ()
+  {
+    MIKTEX_ASSERT (! scratchDirectories.empty());
+    return (scratchDirectories.back());
+  }
+
+public:
+  void
+  PushScratchDirectory (/*[in]*/ const PathName & dir)
+  {
+    scratchDirectories.push_back (dir);
+    ClearSearchVectors ();
+  }
+
+public:
+  void
+  PopScratchDirectory ()
+  {
+    MIKTEX_ASSERT (! scratchDirectories.empty());
+    scratchDirectories.pop_back ();
+    ClearSearchVectors ();
+  }
 
 #if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
 public:
@@ -1667,7 +1685,7 @@ private:
 		      /*[in,out]*/ Cfg *		pCfg);
 
 private:
-  deque<PathName> workingDirectories;
+  std::deque<PathName> inputDirectories;
 
 public:
   void

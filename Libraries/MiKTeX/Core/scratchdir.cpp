@@ -1,6 +1,6 @@
 /* scratchdir.cpp: managing scratch directories
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -172,8 +172,8 @@ namespace {
   MIKTEX_DEFINE_LOCK(ScratchDirectory);
 }
 
-PathName &
-ScratchDirectory::Create (/*[out]*/ PathName & path)
+PathName
+ScratchDirectory::Create ()
 {
   // get temp directory
   PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
@@ -197,9 +197,8 @@ ScratchDirectory::Create (/*[out]*/ PathName & path)
 	  if (! NameExists(pathScratchDirectory.Get()))
 	    {
 	      // create scratch directory
-	      path = pathScratchDirectory;
-	      Directory::Create (path);
-	      return (path);
+	      Directory::Create (pathScratchDirectory);
+	      return (pathScratchDirectory);
 	    }
 	  else
 	    {
@@ -255,34 +254,22 @@ void
 ScratchDirectory::Enter (/*[in]*/ const char *	lpszPrefix)
 {
   UNUSED_ALWAYS (lpszPrefix);
-
-  SessionImpl::ScratchDirectoryInfo scratchDirectoryInfo;
-
-  // get current working directory
-  scratchDirectoryInfo.previous = PathName().SetToCurrentDirectory().Get();
-
-  // create a scratch directory
-  PathName scratchDirectory;
-  scratchDirectoryInfo.scratchDirectory = Create(scratchDirectory).Get();
-
-  SessionImpl::GetSession()
-    ->scratchDirectoryStack.push (scratchDirectoryInfo);
-  
-  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-    ("core",
-     T_("entering scratch directory %s"),
-     Q_(scratchDirectoryInfo.scratchDirectory));
-  
-  // change working directory
-  Directory::SetCurrentDirectory
-    (scratchDirectoryInfo.scratchDirectory.c_str());
-  
-  // we're in
-  entered = true;
-  
-  // add the previous directory to the input path
-  SessionImpl::GetSession()
-    ->AddWorkingDirectory (scratchDirectoryInfo.previous.c_str(), false);
+  PathName scratchDirectory = Create();
+  try
+  {
+    SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine(
+      "core",
+      T_("entering scratch directory %s"),
+      Q_(scratchDirectory));
+    Directory::SetCurrentDirectory (scratchDirectory);
+    SessionImpl::GetSession()->PushScratchDirectory (scratchDirectory);
+    entered = true;
+  }
+  catch (const std::exception &)
+  {
+    Directory::Delete (scratchDirectory);
+    throw;
+  }
 }
 
 /* _________________________________________________________________________
@@ -298,42 +285,52 @@ ScratchDirectory::Leave ()
       return;
     }
 
-  if (SessionImpl::GetSession()->scratchDirectoryStack.empty())
+  // must have something to leave; the first entry is the process
+  // start directory (which can never be left)
+  if (SessionImpl::GetSession()->GetNumberOfScratchDirectories() < 2)
     {
       FATAL_MIKTEX_ERROR ("ScratchDirectory::Leave",
 			  T_("The scratch directory could not be left."),
 			  T_("empty stack"));
     }
 
-  SessionImpl::ScratchDirectoryInfo scratchdir =
-    SessionImpl::GetSession()->scratchDirectoryStack.top();
-  SessionImpl::GetSession()->scratchDirectoryStack.pop ();
+  PathName scratchDirectory =
+    SessionImpl::GetSession()->GetScratchDirectory();
 
-  // remove the previous directory from the input path
-  SessionImpl::GetSession()
-    ->RemoveWorkingDirectory (scratchdir.previous.c_str());
-
-  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
-    ("core",
-     T_("leaving scratch directory %s"),
-     Q_(scratchdir.scratchDirectory));
-  
   // sanity check
-  PathName pathCwd;
-  pathCwd.SetToCurrentDirectory ();
-  PathName pathScratchDir (scratchdir.scratchDirectory.c_str());
-  if (PathName::Compare(pathCwd, pathScratchDir) != 0)
+  PathName cwd;
+  cwd.SetToCurrentDirectory ();
+  if (PathName::Compare(cwd, scratchDirectory) != 0)
     {
-      FATAL_MIKTEX_ERROR ("ScratchDirectory::Leave",
-			  T_("The scratch directory could not be left."),
-			  pathScratchDir.Get());
+      FATAL_MIKTEX_ERROR (
+	"ScratchDirectory::Leave",
+	T_("The scratch directory could not be left."),
+	scratchDirectory.Get());
     }
-  
+
+  SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine (
+    "core",
+    T_("leaving scratch directory %s"),
+    Q_(scratchDirectory));
+
+  SessionImpl::GetSession()->PopScratchDirectory ();
+
   // change directory
-  Directory::SetCurrentDirectory (scratchdir.previous.c_str());
+  Directory::SetCurrentDirectory
+    (SessionImpl::GetSession()->GetScratchDirectory());
+
+  // sanity check
+  cwd.SetToCurrentDirectory ();
+  if (PathName::Compare(cwd, scratchDirectory) == 0)
+    {
+      FATAL_MIKTEX_ERROR (
+	"ScratchDirectory::Leave",
+	T_("The scratch directory could not be erased."),
+	scratchDirectory.Get());
+    }
 
   entered = false;
   
   // remove scratch directory
-  Directory::Delete (scratchdir.scratchDirectory.c_str(), true);
+  Directory::Delete (scratchDirectory, true);
 }
