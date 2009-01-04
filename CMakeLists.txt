@@ -54,6 +54,12 @@ option(
   TRUE
 )
 
+option(
+  WITH_SYNCTEX
+  "Enable SyncTeX extensions."
+  TRUE
+)
+
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
 set(LIBRARY_OUTPUT_PATH "${outdir}")

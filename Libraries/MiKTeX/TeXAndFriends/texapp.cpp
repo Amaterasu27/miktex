@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -160,6 +160,7 @@ Set save_size to N."),
 	     required_argument,
 	     "N");
 
+#if WITH_SYNCTEX
   if (AmI("xetex") || AmI("pdftex"))
     {
       AddOption (T_("synctex\0\
@@ -169,6 +170,7 @@ Generate SyncTeX data for previewers if nonzero."),
 	     "N");
 
     }
+#endif
 
   AddOption (T_("trie-size\0\
 Set trie_size to N."),

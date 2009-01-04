@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/Prototypes.h:				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -23,12 +23,12 @@
 #  pragma once
 #endif
 
-#include <miktex/Core/First>
-
-#include <miktex/Core/Core>
-
 #if ! defined(GUARD_EA5A87F23904AC44BC85743B1568911C_)
 #define GUARD_EA5A87F23904AC44BC85743B1568911C_
+
+#include <miktex/Core/First>
+#include <miktex/Core/Core>
+#include <miktex/TeXAndFriends/config.h>
 
 // DLL import/export switch
 #if ! defined(B8C7815676699B4EA2DE96F0BD727276)

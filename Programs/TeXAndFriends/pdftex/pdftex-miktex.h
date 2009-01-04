@@ -1,6 +1,6 @@
 /* pdftex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -370,7 +370,9 @@ miktexptrequal(/*[in]*/ const void * ptr1,
 
 #include <miktex/KPSE/Emulation>
 #include "pdftex.h"
+#if WITH_SYNCTEX
 #include "synctex.h"
+#endif
 
 #define printid printID
 
@@ -440,8 +442,10 @@ MAKE_GLOBAL(strnumber, outputfilename);
 MAKE_GLOBAL(C4P_integer, fixedinclusioncopyfont);
 MAKE_GLOBAL(C4P_integer, pdfpagegroupval);
 MAKE_GLOBAL(C4P_integer, pdfoutputvalue);
+#if WITH_SYNCTEX
 MAKE_GLOBAL(C4P_integer, synctexoption);
 MAKE_GLOBAL(C4P_integer, synctexoffset);
+#endif
 MAKE_GLOBAL(C4P_integer, totalpages);
 MAKE_GLOBAL(instaterecord, curinput);
 MAKE_GLOBAL(scaled, curh);

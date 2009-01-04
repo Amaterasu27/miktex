@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -39,9 +39,12 @@ add_definitions(
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DPDFTEXDATA=g_PDFTEXData
-  -D__SyncTeX__
   -DpdfTeX
 )
+
+if(WITH_SYNCTEX)
+  add_definitions(-D__SyncTeX__)
+endif(WITH_SYNCTEX)
 
 set(synctex_pdftex_ch_srcs_mem_only
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
@@ -50,14 +53,16 @@ set(synctex_pdftex_ch_srcs_mem_only
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
 )
 
-set(synctex_pdftex_ch_srcs_on
-  ${synctex_pdftex_ch_srcs_mem_only}
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
-)
+if(WITH_SYNCTEX)
+  set(synctex_pdftex_ch_srcs_on
+    ${synctex_pdftex_ch_srcs_mem_only}
+    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
+    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
+    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
+    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
+    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
+  )
+endif(WITH_SYNCTEX)
 
 set(pdftosrc_sources
   pdftosrc.cc
@@ -138,6 +143,10 @@ add_custom_command(
   VERBATIM
 )
 
+if(WITH_SYNCTEX)
+  set(miktex_synctex_changefiles ${tex_miktex_synctex_ch})
+endif(WITH_SYNCTEX)
+
 set(miktex_tex_change_files
   ${mltex_miktex_ch}
   ${enctex_miktex_ch}
@@ -145,7 +154,7 @@ set(miktex_tex_change_files
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
-  ${tex_miktex_synctex_ch}
+  ${miktex_synctex_changefiles}
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
 )
@@ -274,7 +283,6 @@ set(${pdftex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/pkin.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/subfont.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/tounicode.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/vfpacket.cpp
@@ -290,6 +298,13 @@ set(${pdftex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/writezip.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/pdftoepdf.cc
 )
+
+if(WITH_SYNCTEX)
+  set(${pdftex_dll_name}_sources
+    ${${pdftex_dll_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
+  )
+endif(WITH_SYNCTEX)
 
 set_source_files_properties(
   ${${pdftex_dll_name}_sources}

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,11 @@
 configure_file(
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h.cmake
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include/miktex/TeXAndFriends/config.h.cmake
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/TeXAndFriends/config.h
 )
 
 include_directories(
