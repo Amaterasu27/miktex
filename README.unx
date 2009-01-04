@@ -105,7 +105,6 @@ reference page miktex-pdftex(1), for more information.  If you prefer
 shortcuts, You can create symbolic links to the MiKTeX-pdfTeX engine:
 
     cd /usr/local/bin
-    ln -s miktex-pdftex pdftex
     ln -s miktex-pdftex latex
     ln -s miktex-pdftex pdflatex
 

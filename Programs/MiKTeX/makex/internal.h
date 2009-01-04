@@ -1,6 +1,6 @@
 /* internal.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -204,7 +204,6 @@ public:
       printOnly (false),
       stdoutStderr (true)
   {
-    TraceStream::SetTraceFlags (T_("error,config,fndb,process"));
   }
 
 public:
@@ -216,7 +215,7 @@ public:
 public:
   virtual
   void
-  Run (/*[in]*/ int			argc,
+  Run (/*[in]*/ int		argc,
        /*[in]*/ const char **	argv)
     = 0;
       
