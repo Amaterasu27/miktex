@@ -102,13 +102,13 @@ You invoke MiKTeX-pdfTeX as follows:
 
 The --undump option must be used to specify the format.  See the
 reference page miktex-pdftex(1), for more information.  If you prefer
-shortcuts, You can create symbolic links to the MiKTeX-pdfTeX engine:
+shortcuts, you can create symbolic links to the MiKTeX-pdfTeX engine:
 
     cd /usr/local/bin
     ln -s miktex-pdftex latex
     ln -s miktex-pdftex pdflatex
 
-Then You can invoke the engine as usual:
+Then you can invoke the engine in the usual way:
 
     latex sample2e
 
