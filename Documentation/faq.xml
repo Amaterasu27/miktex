@@ -6,9 +6,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.7.2856">
-<!ENTITY date "October 27, 2007">
-<!ENTITY month "October 2007">
+<!ENTITY rev "2.8.3295">
+<!ENTITY date "January 08, 2009">
+<!ENTITY month "January 2009">
 ]>
 
 <article>
@@ -25,7 +25,7 @@
 </author>
 
 <copyright>
-<year>2001&ndash;2007</year>
+<year>2001&ndash;2009</year>
 <holder>Christian Schenk</holder>
 </copyright>
 
@@ -103,6 +103,12 @@ url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
 systems:</para>
 <itemizedlist>
 <listitem>
+<para>&WindowsServer2008;</para>
+</listitem>
+<listitem>
+<para>&WindowsVista;</para>
+</listitem>
+<listitem>
 <para>&WindowsServer2003;</para>
 </listitem>
 <listitem>
@@ -112,10 +118,10 @@ systems:</para>
 <para>&Windows2000;</para>
 </listitem>
 <listitem>
-<para>&WindowsMe;</para>
+<para>&WindowsMe; (&MiKTeX;&nbsp;2.6 only)</para>
 </listitem>
 <listitem>
-<para>&Windows98;, &Windows98SE;</para>
+<para>&Windows98;, &Windows98SE;  (&MiKTeX;&nbsp;2.6 only)</para>
 </listitem>
 </itemizedlist>
 </answer>
@@ -155,12 +161,12 @@ for more information</para>
 <answer>
 <para>It is recommended that you download the
 <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=20003"><quote>&BasicMiKTeXInstaller;</quote></ulink>.
+url="http://miktex.org/current/setup"><quote>&BasicMiKTeXInstaller;</quote></ulink>.
 This allows you set up a basic &MiKTeX; system
 (see <xref linkend="basicmiktex"/>).</para>
 <para>Download the
 <ulink
-url="http://sourceforge.net/project/showfiles.php?group_id=10783&amp;package_id=25532"><quote>&MiKTeXNetInstaller;</quote></ulink>, if you want
+url="http://miktex.org/current/setup"><quote>&MiKTeXNetInstaller;</quote></ulink>, if you want
 to set up a complete &MiKTeX; system
 (see <xref linkend="netinstaller"/>).</para>
 </answer>

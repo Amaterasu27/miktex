@@ -88,6 +88,7 @@
 <!ENTITY WindowsNT40 "<application>Windows&nbsp;NT&nbsp;4.0</application>">
 <!ENTITY Windows2000 "<application>Windows&nbsp;2000</application>">
 <!ENTITY WindowsServer2003 "<application>Windows Server&nbsp;2003</application>">
+<!ENTITY WindowsServer2008 "<application>Windows Server&nbsp;2008</application>">
 <!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
 <!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">
 <!ENTITY GNU "<application>GNU</application>">
