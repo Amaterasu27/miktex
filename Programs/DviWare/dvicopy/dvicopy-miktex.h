@@ -1,6 +1,6 @@
 /* dvicopy-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of DVIcopy.
 
@@ -22,7 +22,13 @@
 #  pragma once
 #endif
 
-#define THEDATA(x) DVICOPYDATA.m_##x
+#include <miktex/TeXAndFriends/config.h>
+
+#if USE_C4P_DATA_STRUCT
+#  define THEDATA(x) DVICOPYDATA.m_##x
+#else
+#  define THEDATA(x) x
+#endif
 
 #include "dvicopy.rc"
 #include "dvicopydefs.h"

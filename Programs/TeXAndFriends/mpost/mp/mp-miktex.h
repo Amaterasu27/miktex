@@ -1,6 +1,6 @@
 /* mp-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,12 +21,22 @@
 #  pragma once
 #endif
 
+#include <miktex/TeXAndFriends/config.h>
+
 #if defined(MIKTEX_TRAPMP)
 #  include "trapmpdefs.h"
-#define THEDATA(x) TRAPMPDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) TRAPMPDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #else
 #  include "mpdefs.h"
-#define THEDATA(x) MPDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) MPDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #endif
 
 #if ! defined(C4PEXTERN)
@@ -340,6 +350,8 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 
 #include <miktex/KPSE/Emulation>
 
+#if USE_C4P_DATA_STRUCT
+
 #define fontname THEDATA(fontname)
 #define fontpsnamefixed THEDATA(fontpsnamefixed)
 #define fontsizes THEDATA(fontsizes)
@@ -355,5 +367,7 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 #define strpool THEDATA(strpool)
 #define strref THEDATA(strref)
 #define strstart THEDATA(strstart)
+
+#endif // USE_C4P_DATA_STRUCT
 
 #include "mplib.h"

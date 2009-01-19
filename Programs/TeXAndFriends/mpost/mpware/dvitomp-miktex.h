@@ -1,6 +1,6 @@
 /* dvitomp-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,7 +21,13 @@
 #  pragma once
 #endif
 
-#define THEDATA(x) DVITOMPDATA.m_##x
+#include <miktex/TeXAndFriends/config.h>
+
+#if USE_C4P_DATA_STRUCT
+#  define THEDATA(x) DVITOMPDATA.m_##x
+#else
+#  define THEDATA(x) x
+#endif
 
 #include "dvitomp.rc"
 #include <miktex/TeXAndFriends/WebApp>

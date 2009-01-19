@@ -1,6 +1,6 @@
 /* omega-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,6 +21,8 @@
 #  pragma once
 #endif
 
+#include <miktex/TeXAndFriends/config.h>
+
 #if defined(MIKTEX_OMEGA)
 #  include "omegadefs.h"
 #endif
@@ -34,7 +36,11 @@
 #endif
 
 #if ! defined(THEDATA)
-#  define THEDATA(x) OMEGADATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) OMEGADATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #endif
 
 #if defined(MIKTEX_OMEGA)
@@ -282,6 +288,8 @@ miktexopenonmfile (/*[in]*/ alphafile &		f,
   return (THEAPP.OpenONMFile(f, n));
 }
 
+#if USE_C4P_DATA_STRUCT
+
 #define first THEDATA(first)
 #define fmtfile THEDATA(fmtfile)
 #define fontsorttables THEDATA(fontsorttables)
@@ -295,6 +303,8 @@ miktexopenonmfile (/*[in]*/ alphafile &		f,
 #define otpinputend THEDATA(otpinputend)
 #define otpoutputbuf THEDATA(otpoutputbuf)
 #define otpoutputend THEDATA(otpoutputend)
+
+#endif // USE_C4P_DATA_STRUCT
 
 #include <miktex/KPSE/Emulation>
 

@@ -1,6 +1,6 @@
 /* mf-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,12 +21,22 @@
 #  pragma once
 #endif
 
+#include <miktex/TeXAndFriends/config.h>
+
 #if defined(MIKTEX_TRAPMF)
 #  include "trapmfdefs.h"
-#define THEDATA(x) TRAPMFDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) TRAPMFDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #else
 #  include "mfdefs.h"
-#define THEDATA(x) MFDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) MFDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #endif
 
 #include "mf.rc"

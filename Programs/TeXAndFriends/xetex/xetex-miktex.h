@@ -1,6 +1,6 @@
 /* xetex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 2007-2008 Christian Schenk
+   Copyright (C) 2007-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -25,10 +25,16 @@
 #  define C4PEXTERN extern
 #endif
 
+#include <miktex/TeXAndFriends/config.h>
+
 #include "xetexd.h"
 
 #if ! defined(THEDATA)
-#  define THEDATA(x) XETEXDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) XETEXDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #endif
 
 #include "xetex.rc"
@@ -229,21 +235,23 @@ extern XETEXCLASS XETEXAPP;
 #include "xetex.h"
 #include "synctex.h"
 
-#if defined(COMPILING_XETEX_CC)
-#  define MAKE_GLOBAL(type, name) type & name = XETEXDATA.m_##name;
-#else
-#  define MAKE_GLOBAL(type, name) extern type & name;
-#endif
-
 // special case: Web2C likes to add 1 to the nameoffile base address
 inline
 utf8code *
 GetNameOfFileForWeb2C ()
 {
-  return ((&XETEXDATA.m_nameoffile[-1]));
+  return (&((THEDATA(nameoffile))[-1]));
 }
 
 #define nameoffile (GetNameOfFileForWeb2C())
+
+#if USE_C4P_DATA_STRUCT
+
+#if defined(COMPILING_XETEX_CC)
+#  define MAKE_GLOBAL(type, name) type & name = XETEXDATA.m_##name;
+#else
+#  define MAKE_GLOBAL(type, name) extern type & name;
+#endif
 
 MAKE_GLOBAL(C4P_boolean, nopdfoutput);
 MAKE_GLOBAL(C4P_integer*, depthbase);
@@ -282,6 +290,9 @@ MAKE_GLOBAL(scaled, curv);
 MAKE_GLOBAL(scaled, rulewd);
 MAKE_GLOBAL(scaled, ruleht);
 MAKE_GLOBAL(scaled, ruledp);
+
+#endif // USE_C4P_DATA_STRUCT
+
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)

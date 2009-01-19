@@ -60,6 +60,12 @@ option(
   TRUE
 )
 
+option(
+  USE_C4P_DATA_STRUCT
+  "Create a struct containing all global variables."
+  FALSE
+)
+
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
 set(LIBRARY_OUTPUT_PATH "${outdir}")

@@ -31,5 +31,6 @@
 
 #cmakedefine WITH_PDFTEX 1
 #cmakedefine WITH_SYNCTEX 1
+#cmakedefine USE_C4P_DATA_STRUCT 1
 
 #endif

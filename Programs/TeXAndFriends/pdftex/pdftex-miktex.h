@@ -24,6 +24,8 @@
 #if ! defined(B9AE601D_55FC_414A_8D93_C81CF3517D1A)
 #define B9AE601D_55FC_414A_8D93_C81CF3517D1A
 
+#include <miktex/TeXAndFriends/config.h>
+
 #include "pdftexdefs.h"
 
 #if ! defined(C4PEXTERN)
@@ -33,7 +35,11 @@
 #include "pdftexd.h"
 
 #if ! defined(THEDATA)
-#  define THEDATA(x) PDFTEXDATA.m_##x
+#  if USE_C4P_DATA_STRUCT
+#    define THEDATA(x) PDFTEXDATA.m_##x
+#  else
+#    define THEDATA(x) x
+#  endif
 #endif
 
 #include "pdftex-version.h"
@@ -410,16 +416,25 @@ getbyte (/*[in]*/ bytefile & f)
    Gloabel Variables
    _________________________________________________________________________ */
 
+C4PEXTERN C4P_integer k;
+
+// special case: Web2C likes to add 1 to the nameoffile base address
+inline
+char *
+GetNameOfFileForWeb2C ()
+{
+  return (&((THEDATA(nameoffile))[-1]));
+}
+
+#define nameoffile (GetNameOfFileForWeb2C())
+
+#if USE_C4P_DATA_STRUCT
+
 #if defined(COMPILING_PDFTEX_CC)
 #  define MAKE_GLOBAL(type, name) type & name = PDFTEXDATA.m_##name;
 #else
 #  define MAKE_GLOBAL(type, name) extern type & name;
 #endif
-
-// special case: Web2C likes to add 1 to the nameoffile base address
-#define nameoffile (&PDFTEXDATA.m_nameoffile[-1])
-
-C4PEXTERN C4P_integer k;
 
 MAKE_GLOBAL(C4P_boolean, pdfosmode);
 MAKE_GLOBAL(C4P_integer*, vfefnts);
@@ -523,6 +538,8 @@ MAKE_GLOBAL(memoryword*, zmem);
 #define tmpf THEDATA(tmpf)
 #define vfpacketbase THEDATA(vfpacketbase)
 #define vfpacketlength THEDATA(vfpacketlength)
+
+#endif // USE_C4P_DATA_STRUCT
 
 int miktexloadpoolstrings (int size);
 

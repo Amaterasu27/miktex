@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebApp.h:			       	-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -595,6 +595,8 @@ private:
 #  define MIKTEX_WEBAPP_EXPORT
 #endif
 
+#if USE_C4P_DATA_STRUCT
+
 #define MIKTEX_DEFINE_WEBAPP(dllentry, appclass, app, program, data)	\
 appclass app;								\
 extern "C"								\
@@ -624,6 +626,39 @@ dllentry (/*[in]*/ int			argc,				\
       return (1);							\
     }									\
 }
+
+#else
+
+#define MIKTEX_DEFINE_WEBAPP(dllentry, appclass, app, program)		\
+appclass app;								\
+extern "C"								\
+MIKTEX_WEBAPP_EXPORT							\
+int									\
+MIKTEXCEECALL								\
+dllentry (/*[in]*/ int			argc,				\
+          /*[in]*/ const char **	argv)				\
+{									\
+  SET_PROGRAM_INFO__423C8217_4CFC_41B7_9F89_EA3C4F729FD1 (app);		\
+  try									\
+    {									\
+      app.Init (argv[0]);						\
+      int exitCode = program(argc, argv);				\
+      app.Finalize ();							\
+      return (exitCode);						\
+    }									\
+  catch (const MiKTeX::Core::MiKTeXException & e)			\
+    {									\
+      MiKTeX::Core::Utils::PrintException (e);				\
+      return (1);							\
+    }									\
+  catch (const std::exception & e)					\
+    {									\
+      MiKTeX::Core::Utils::PrintException (e);				\
+      return (1);							\
+    }									\
+}
+
+#endif // USE_C4P_DATA_STRUCT
 
 MIKTEXMF_END_NAMESPACE;
 
