@@ -426,7 +426,9 @@ GetNameOfFileForWeb2C ()
   return (&((THEDATA(nameoffile))[-1]));
 }
 
-#define nameoffile (GetNameOfFileForWeb2C())
+#if ! defined(COMPILING_PDFTEX_CC)
+#  define nameoffile (GetNameOfFileForWeb2C())
+#endif
 
 #if USE_C4P_DATA_STRUCT
 

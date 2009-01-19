@@ -1,7 +1,7 @@
 /* inipool.cpp: WEB pool to C ( based on makecpool)
 
    Copyright (C) 2007, 2008 Taco Hoekwater.
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    You may freely use, modify and/or distribute this file. */
 
@@ -100,22 +100,22 @@ main (int	argc,
 	  "  strnumber g=0;\n"
 	  "  int i=0, j=0;\n"
 	  "  while ((s = poolfilearr[j++])) {\n"
-	  "    int l = strlen (s);\n"
+	  "    int l = strlen(s);\n"
 	  "    i += l;\n"
 	  "    if (i>=spare_size) return (0);\n");
   if (is_luatex)
     {
-      printf("    while (l-- > 0) str_pool[pool_ptr++] = *s++;\n"
+      printf("    while (l-- > 0) THEDATA(str_pool)[THEDATA(pool_ptr)++] = *s++;\n"
 	     "    g = make_string();\n");
     }
   else
     {
-      printf("    while (l-- > 0) strpool[poolptr++] = *s++;\n"
+      printf("    while (l-- > 0) THEDATA(strpool)[THEDATA(poolptr)++] = *s++;\n"
 	     "    g = makestring();\n");
     }
   if (is_metapost || is_metafont)
     {
-      printf("    strref[g] = 127;\n");
+      printf("    THEDATA(strref)[g] = 127;\n");
     }
   printf ("  }\n"
 	  "  return (g);\n"

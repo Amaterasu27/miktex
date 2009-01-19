@@ -1,6 +1,6 @@
 /* common.h: common definitions for C4P			-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is part of C4P.
 
@@ -265,6 +265,7 @@ extern bool auto_exit_label_flag;
 extern std::vector<std::string> using_namespace;
 extern std::string var_name_prefix;
 extern bool chars_are_unsigned;
+extern std::string name_space;
 
 int yyparse ();
 void yyerror (const char *);

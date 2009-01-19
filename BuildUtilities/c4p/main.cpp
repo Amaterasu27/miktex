@@ -1,6 +1,6 @@
 /* main.c: Pascal-to-C Translator				-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is part of C4P.
 
@@ -63,6 +63,7 @@ unsigned c_file_line_count;
 unsigned curly_brace_level;
 unsigned extra_indent;
 unsigned max_lines_per_c_file;
+string name_space;
 
 int yyparse ();
 extern int yylineno;
@@ -199,6 +200,7 @@ Options:\n\
 #define OPT_VAR_NAME_PREFIX 13
 #define OPT_CHARS_ARE_UNSIGNED 14
 #define OPT_DECLARE_C_TYPE 15
+#define OPT_NAMESPACE 16
 
 /* _________________________________________________________________________
 
@@ -223,6 +225,7 @@ namespace {
     T_("help"), no_argument, 0, 'h',
     T_("include-filename"), required_argument, 0, 'i',
     T_("lines"), required_argument, 0, 'l',
+    T_("namespace"), required_argument, 9, OPT_NAMESPACE,
     T_("one"), optional_argument, 0, '1',
     T_("output-prefix"), required_argument, 0, 'p',
     T_("rename"), required_argument, 0, 'r',
@@ -313,6 +316,9 @@ option_handler (/*[in]*/ int		argc,
 	  break;
 	case OPT_VAR_NAME_PREFIX:
 	  var_name_prefix = optarg;
+	  break;
+	case OPT_NAMESPACE:
+	  name_space = optarg;
 	  break;
 	case 'C':
 	  c_ext = ".cc";

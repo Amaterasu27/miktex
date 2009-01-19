@@ -1,6 +1,6 @@
  /* gram.y: C4P parser specification			-*- C++ -*-
 
-    Copyright (C) 1991-2008 Christian Schenk
+    Copyright (C) 1991-2009 Christian Schenk
 
     This file is part of C4P.
 
@@ -164,6 +164,10 @@ program_block:
 		      out_form ("struct %s %s;\n",
 				var_struct_class_name.c_str(),
 				var_struct_name.c_str());
+		    }
+		  if (nglobalvars > 0 && name_space.length() > 0)
+		    {
+		      out_s ("};\n");
 		    }
 		  redir_file (C_FILE_NUM);
 		}
@@ -968,6 +972,10 @@ variable_declaration:
 				      var_struct_base_class_name.c_str());
 			  out_s (" {\n");
 			}
+		      if (nglobalvars == 0 && name_space.length() > 0)
+			{
+			  out_form ("namespace %s {\n", name_space.c_str());
+			}
 		      nglobalvars += 1;
 		    }
 	          declare_var_list (reinterpret_cast<declarator_node*>($1),
@@ -1452,6 +1460,10 @@ for_statement:
 		      && $2->s_kind == VARIABLE_IDENTIFIER
 		      && ! ($2->s_flags & S_PREDEFINED))
 		    {
+		      if (name_space.length() > 0)
+			{
+			  out_form ("%s::", name_space.c_str());
+			}
 		      if (var_struct_name.length() > 0)
 			out_form ("%s.", var_struct_name.c_str());
 		      out_s (var_name_prefix.c_str());
@@ -1475,6 +1487,10 @@ for_statement:
 		      && $2->s_kind == VARIABLE_IDENTIFIER
 		      && ! ($2->s_flags & S_PREDEFINED))
 		    {
+		      if (name_space.length() > 0)
+			{
+			  out_form ("%s::", name_space.c_str());
+			}
 		      if (var_struct_name.length() > 0)
 			out_form ("%s.", var_struct_name.c_str());
 		      out_s (var_name_prefix.c_str());
@@ -1581,6 +1597,10 @@ variable_identifier:
 			      && $1->s_kind == VARIABLE_IDENTIFIER
 			      && ! ($1->s_flags & S_PREDEFINED))
 			    {
+			      if (name_space.length() > 0)
+				{
+				  out_form ("%s::", name_space.c_str());
+				}
 			      if (var_struct_name.length() > 0)
 				out_form ("%s.", var_struct_name.c_str());
 			      out_s (var_name_prefix.c_str());

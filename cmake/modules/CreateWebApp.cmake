@@ -99,7 +99,7 @@ class ${${_short_name_l}_class} : public WebApp {};"
     "#define C4PEXTERN extern
 #include \"${${_short_name_l}_header_file}\"
 #include \"${${_short_name_l}_include_file}\"
-#if USE_C4P_DATA_STRUCT)
+#if USE_C4P_DATA_STRUCT
 MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		     ${${_short_name_l}_class},
 		     ${${_short_name_l}_app},
@@ -111,6 +111,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		     ${${_short_name_l}_app},
                      ${${_short_name_l}_entry})
 #endif
+"
   )
 
   configure_file(

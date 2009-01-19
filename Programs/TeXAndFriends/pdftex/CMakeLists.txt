@@ -20,6 +20,7 @@
 default_char_type_is_unsigned()
 
 set(C4P_FLAGS
+  --rename remainder
   --auto-exit=10
   --chars-are-unsigned
 )
