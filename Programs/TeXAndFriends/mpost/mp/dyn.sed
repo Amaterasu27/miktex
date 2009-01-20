@@ -1,6 +1,6 @@
 ## dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1991-2007 Christian Schenk
+## Copyright (C) 1991-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,25 +16,25 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^\([_A-Za-z0-9]*\) \(m_bisectstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_buffer\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_c4p_free\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_delta\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_deltax\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_deltay\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_fontinfo\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_inputstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_ligkern\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_mem\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_nextstr\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_paramstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_psi\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strpool\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strref\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strstart\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_theta\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trickbuf\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_uu\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_vv\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_wasfree\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_ww\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(bisectstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(buffer\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(c4p_free\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(delta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(deltax\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(deltay\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(fontinfo\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(inputstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(ligkern\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(mem\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(nextstr\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(paramstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(psi\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strref\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strstart\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(theta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trickbuf\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(uu\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(vv\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(wasfree\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(ww\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

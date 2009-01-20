@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/TeXMFApp:				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -886,16 +886,18 @@ public:
 
 protected:
 
-#if defined(THEDATA)
+#if defined(poolsize) || defined(THEDATA)
   void
-  CheckPoolPointer (/*[in]*/ int	poolptr,
+  CheckPoolPointer (/*[in]*/ int	poolPtr,
 		    /*[in]*/ size_t	len)
     const
   {
-#if ! defined(poolsize)
-    const size_t poolsize = THEDATA(poolsize);
+#if defined(poolsize)
+    const size_t poolSize = poolsize;
+#else
+    const size_t poolSize = THEDATA(poolsize);
 #endif
-    if (poolptr + len >= poolsize)
+    if (poolPtr + len >= poolSize)
       {
 	MiKTeX::Core::Session::FatalMiKTeXError
 	  ("TeXMFApp::CheckPoolPointer",

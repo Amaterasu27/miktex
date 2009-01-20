@@ -161,7 +161,6 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   if(USE_C4P_DATA_STRUCT)
     set(C4P_${_short_name_u}DATA_OPTS
-	--var-name-prefix=m_
 	--var-struct=${${_short_name_l}_data}
     )
   endif(USE_C4P_DATA_STRUCT)
@@ -179,6 +178,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	--header-file=${${_short_name_l}_header_file}
 	--one=${_short_name_l}
 	--using-namespace=MiKTeX::TeXAndFriends
+	--var-name-prefix=${C4P_VAR_NAME_PREFIX}
 	${C4P_${_short_name_u}DATA_OPTS}
 	-C
 	${C4P_FLAGS}

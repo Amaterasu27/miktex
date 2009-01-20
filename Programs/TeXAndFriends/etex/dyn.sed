@@ -16,6 +16,6 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(eofseen\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(grpstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(ifstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_eofseen\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_grpstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_ifstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

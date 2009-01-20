@@ -66,6 +66,13 @@ option(
   FALSE
 )
 
+## check all dyn.sed files, if you alter C4P_VAR_NAME_PREFIX
+if(USE_C4P_DATA_STRUCT)
+  set(C4P_VAR_NAME_PREFIX "m_")
+else(USE_C4P_DATA_STRUCT)
+  set(C4P_VAR_NAME_PREFIX "g_")
+endif(USE_C4P_DATA_STRUCT)
+
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
 set(LIBRARY_OUTPUT_PATH "${outdir}")

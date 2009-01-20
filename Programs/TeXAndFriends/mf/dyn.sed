@@ -1,6 +1,6 @@
 ## dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1991-2005 Christian Schenk
+## Copyright (C) 1991-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,28 +16,28 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^\([_A-Za-z0-9]*\) \(m_after\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_before\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_bisectstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_buffer\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_c4p_free\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_delta\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_deltax\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_deltay\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_envmove\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_inputstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_ligkern\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_mem\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_move\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_nodetoround\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_paramstack\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_psi\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strpool\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strref\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_strstart\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_theta\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trickbuf\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_uu\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_vv\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_wasfree\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_ww\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_after\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_before\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_bisectstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_buffer\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_c4p_free\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_delta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_deltax\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_deltay\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_envmove\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_inputstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_ligkern\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_mem\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_move\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_nodetoround\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_paramstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_psi\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_strref\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_strstart\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_theta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_trickbuf\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_uu\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_vv\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_wasfree\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm]_ww\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

@@ -1,6 +1,6 @@
 ## omega_dyn.sed: make dynamic arrays
 ## 
-## Copyright (C) 1998-2007 Christian Schenk
+## Copyright (C) 1998-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,17 +16,17 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^\([_a-zA-Z0-9]*\) \(m_fonttables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/\1 **\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_ocptables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/\1 **\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_strstartar\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_ocplistinfo\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_ocplstackinfo\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_ocplistlist\)\[ [a-zA-Z0-9]* \];$/\1 *\2;/
-s/^\([_a-zA-Z0-9]*\) \(m_fontsorttables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/\1 **\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieophash\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieoplang\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trieopval\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfdistance\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfnum\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_hyfnext\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
-s/^\([_A-Za-z0-9]*\) \(m_trie\)\[ [A-Za-z0-9]* \];$/\1 *\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(fonttables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 **\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(ocptables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 **\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(strstartar\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(ocplistinfo\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(ocplstackinfo\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(ocplistlist\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_a-zA-Z0-9]*\) \(fontsorttables\)\(\[ [a-zA-Z0-9]* \]\)\[ [a-zA-Z0-9]* \];$/C4PEXTERN \1 **\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trieophash\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trieoplang\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trieopval\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(hyfdistance\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(hyfnum\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(hyfnext\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trie\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

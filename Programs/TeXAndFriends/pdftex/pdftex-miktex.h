@@ -35,11 +35,7 @@
 #include "pdftexd.h"
 
 #if ! defined(THEDATA)
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) PDFTEXDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "pdftex-version.h"
@@ -416,7 +412,7 @@ getbyte (/*[in]*/ bytefile & f)
    Gloabel Variables
    _________________________________________________________________________ */
 
-C4PEXTERN C4P_integer k;
+#if ! defined(COMPILING_PDFTEX_CC)
 
 // special case: Web2C likes to add 1 to the nameoffile base address
 inline
@@ -426,79 +422,59 @@ GetNameOfFileForWeb2C ()
   return (&((THEDATA(nameoffile))[-1]));
 }
 
-#if ! defined(COMPILING_PDFTEX_CC)
-#  define nameoffile (GetNameOfFileForWeb2C())
-#endif
+#define nameoffile (GetNameOfFileForWeb2C())
 
-#if USE_C4P_DATA_STRUCT
-
-#if defined(COMPILING_PDFTEX_CC)
-#  define MAKE_GLOBAL(type, name) type & name = PDFTEXDATA.m_##name;
-#else
-#  define MAKE_GLOBAL(type, name) extern type & name;
-#endif
-
-MAKE_GLOBAL(C4P_boolean, pdfosmode);
-MAKE_GLOBAL(C4P_integer*, vfefnts);
-MAKE_GLOBAL(C4P_integer, fixedgentounicode);
-MAKE_GLOBAL(C4P_integer, fixedpdfdraftmode);
-MAKE_GLOBAL(C4P_integer, fontmax);
-MAKE_GLOBAL(C4P_integer, objptr);
-MAKE_GLOBAL(C4P_integer, pdfboxspecart);
-MAKE_GLOBAL(C4P_integer, pdfboxspecbleed);
-MAKE_GLOBAL(C4P_integer, pdfboxspeccrop);
-MAKE_GLOBAL(C4P_integer, pdfboxspecmedia);
-MAKE_GLOBAL(C4P_integer, pdfboxspectrim);
-MAKE_GLOBAL(C4P_integer, pdfbufsize);
-MAKE_GLOBAL(C4P_integer, pdflastbyte);
-MAKE_GLOBAL(eightbits*, pdfbuf);
-MAKE_GLOBAL(internalfontnumber*, vfifnts);
-MAKE_GLOBAL(internalfontnumber, f);
-MAKE_GLOBAL(strnumber*, fontname);
-MAKE_GLOBAL(strnumber, outputfilename);
-MAKE_GLOBAL(C4P_integer, fixedinclusioncopyfont);
-MAKE_GLOBAL(C4P_integer, pdfpagegroupval);
-MAKE_GLOBAL(C4P_integer, pdfoutputvalue);
 #if WITH_SYNCTEX
-MAKE_GLOBAL(C4P_integer, synctexoption);
-MAKE_GLOBAL(C4P_integer, synctexoffset);
+#define synctexoption THEDATA(synctexoption)
+#define synctexoffset THEDATA(synctexoffset)
 #endif
-MAKE_GLOBAL(C4P_integer, totalpages);
-MAKE_GLOBAL(instaterecord, curinput);
-MAKE_GLOBAL(scaled, curh);
-MAKE_GLOBAL(scaled, curv);
-MAKE_GLOBAL(scaled, rulewd);
-MAKE_GLOBAL(scaled, ruleht);
-MAKE_GLOBAL(scaled, ruledp);
-MAKE_GLOBAL(memoryword*, zmem);
-#define eqtb PDFTEXDATA.m_eqtb
 
-// todo: use MAKE_GLOBAL
+C4PEXTERN C4P_integer k;
+
+#define curh THEDATA(curh)
+#define curinput THEDATA(curinput)
+#define curv THEDATA(curv)
 #define dim100bp THEDATA(dim100bp)
 #define dim100in THEDATA(dim100in)
 #define dim1bp THEDATA(dim1bp)
 #define dim1in THEDATA(dim1in)
 #define dim1inoverpkres THEDATA(dim1inoverpkres)
+#define eqtb THEDATA(eqtb)
+#define f THEDATA(f)
 #define fixedcompresslevel THEDATA(fixedcompresslevel)
 #define fixeddecimaldigits THEDATA(fixeddecimaldigits)
 #define fixedgamma THEDATA(fixedgamma)
+#define fixedgentounicode THEDATA(fixedgentounicode)
 #define fixedimageapplygamma THEDATA(fixedimageapplygamma)
 #define fixedimagegamma THEDATA(fixedimagegamma)
 #define fixedimagehicolor THEDATA(fixedimagehicolor)
+#define fixedinclusioncopyfont THEDATA(fixedinclusioncopyfont)
 #define fixedmovechars THEDATA(fixedmovechars)
+#define fixedpdfdraftmode THEDATA(fixedpdfdraftmode)
 #define fixedpdfminorversion THEDATA(fixedpdfminorversion)
 #define fixedpkresolution THEDATA(fixedpkresolution)
 #define fontbc THEDATA(fontbc)
 #define fontdsize THEDATA(fontdsize)
 #define fontec THEDATA(fontec)
+#define fontmax THEDATA(fontmax)
+#define fontname THEDATA(fontname)
 #define fontptr THEDATA(fontptr)
 #define fontsize THEDATA(fontsize)
 #define fontused THEDATA(fontused)
 #define formatident THEDATA(formatident)
 #define jobname THEDATA(jobname)
 #define lasttokensstring THEDATA(lasttokensstring)
+#define objptr THEDATA(objptr)
 #define objtab THEDATA(objtab)
 #define onehundredbp THEDATA(onehundredbp)
+#define outputfilename THEDATA(outputfilename)
+#define pdfboxspecart THEDATA(pdfboxspecart)
+#define pdfboxspecbleed THEDATA(pdfboxspecbleed)
+#define pdfboxspeccrop THEDATA(pdfboxspeccrop)
+#define pdfboxspecmedia THEDATA(pdfboxspecmedia)
+#define pdfboxspectrim THEDATA(pdfboxspectrim)
+#define pdfbuf THEDATA(pdfbuf)
+#define pdfbufsize THEDATA(pdfbufsize)
 #define pdfcharmap THEDATA(pdfcharmap)
 #define pdfcharused THEDATA(pdfcharused)
 #define pdfcryptdate THEDATA(pdfcryptdate)
@@ -526,8 +502,12 @@ MAKE_GLOBAL(memoryword*, zmem);
 #define pdffontstbsbase THEDATA(pdffontstbsbase)
 #define pdfgone THEDATA(pdfgone)
 #define pdfimageprocset THEDATA(pdfimageprocset)
+#define pdflastbyte THEDATA(pdflastbyte)
 #define pdflastpdfboxspec THEDATA(pdflastpdfboxspec)
 #define pdfmem THEDATA(pdfmem)
+#define pdfosmode THEDATA(pdfosmode)
+#define pdfoutputvalue THEDATA(pdfoutputvalue)
+#define pdfpagegroupval THEDATA(pdfpagegroupval)
 #define pdfptr THEDATA(pdfptr)
 #define pdfsaveoffset THEDATA(pdfsaveoffset)
 #define pdfstreamlength THEDATA(pdfstreamlength)
@@ -535,13 +515,20 @@ MAKE_GLOBAL(memoryword*, zmem);
 #define pkscalefactor THEDATA(pkscalefactor)
 #define poolptr THEDATA(poolptr)
 #define poolsize THEDATA(poolsize)
+#define ruledp THEDATA(ruledp)
+#define ruleht THEDATA(ruleht)
+#define rulewd THEDATA(rulewd)
 #define strpool THEDATA(strpool)
 #define strstart THEDATA(strstart)
 #define tmpf THEDATA(tmpf)
+#define totalpages THEDATA(totalpages)
+#define vfefnts THEDATA(vfefnts)
+#define vfifnts THEDATA(vfifnts)
 #define vfpacketbase THEDATA(vfpacketbase)
 #define vfpacketlength THEDATA(vfpacketlength)
+#define zmem THEDATA(zmem)
 
-#endif // USE_C4P_DATA_STRUCT
+#endif // ! COMPILING_PDFTEX_CC
 
 int miktexloadpoolstrings (int size);
 
