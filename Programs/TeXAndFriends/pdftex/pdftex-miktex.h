@@ -402,7 +402,7 @@ getbyte (/*[in]*/ bytefile & f)
 #if defined(vfbopenin)
 #  undef vfbopenin
 #  define vfbopenin(f) \
-    miktexopenvffile(f, THEDATA(nameoffile))
+    miktexopenvffile(f, nameoffile)
 #endif
 
 #define __attribute__(x)
@@ -411,8 +411,6 @@ getbyte (/*[in]*/ bytefile & f)
 
    Gloabel Variables
    _________________________________________________________________________ */
-
-#if ! defined(COMPILING_PDFTEX_CC)
 
 // special case: Web2C likes to add 1 to the nameoffile base address
 inline
@@ -527,8 +525,6 @@ C4PEXTERN C4P_integer k;
 #define vfpacketbase THEDATA(vfpacketbase)
 #define vfpacketlength THEDATA(vfpacketlength)
 #define zmem THEDATA(zmem)
-
-#endif // ! COMPILING_PDFTEX_CC
 
 int miktexloadpoolstrings (int size);
 

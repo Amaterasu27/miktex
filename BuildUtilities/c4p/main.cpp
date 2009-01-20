@@ -225,7 +225,7 @@ namespace {
     T_("help"), no_argument, 0, 'h',
     T_("include-filename"), required_argument, 0, 'i',
     T_("lines"), required_argument, 0, 'l',
-    T_("namespace"), required_argument, 9, OPT_NAMESPACE,
+    T_("namespace"), required_argument, 0, OPT_NAMESPACE,
     T_("one"), optional_argument, 0, '1',
     T_("output-prefix"), required_argument, 0, 'p',
     T_("rename"), required_argument, 0, 'r',

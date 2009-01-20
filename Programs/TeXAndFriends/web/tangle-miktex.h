@@ -21,10 +21,10 @@
 #  pragma once
 #endif
 
-#if USE_C4P_DATA_STRUCT
-#  define THEDATA(x) TANGLEDATA.m_##x
-#else
-#  define THEDATA(x) x
+#include <miktex/TeXAndFriends/config.h>
+
+#if ! defined(THEDATA)
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "tangle-version.h"

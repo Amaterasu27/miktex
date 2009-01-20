@@ -35,13 +35,6 @@
 
 #cmakedefine C4P_VAR_NAME_PREFIX ${C4P_VAR_NAME_PREFIX}
 
-#if defined(C4P_VAR_NAME_PREFIX)
-#  define C4P_VAR_NAME_PREFIX_() C4P_VAR_NAME_PREFIX
-#else
-#  define C4P_VAR_NAME_PREFIX_()
-#endif
-
-#  define C4P_VAR(name) C4P_VAR_NAME_PREFIX_()name
-#endif
+#define C4P_VAR(name) ${C4P_VAR_NAME_PREFIX}##name
 
 #endif
