@@ -459,6 +459,8 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ FileType	fileType,
 		       /*[out]*/ PathName &	result)
 {
+  AutoTraceTime att ("SessionImpl::FindFile", lpszFileName);
+
   // try to derive the file type
   if (fileType == FileType::None)
     {

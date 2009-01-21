@@ -2089,6 +2089,48 @@ private:
 
 /* _________________________________________________________________________
 
+   AutoTraceTime
+   _________________________________________________________________________ */
+
+class AutoTraceTime
+{
+public:
+  AutoTraceTime (/*[in]*/ const char * lpsz1,
+		 /*[in]*/ const char * lpsz2)
+    : start(clock()),
+      str1 (lpsz1),
+      str2 (lpsz2)
+  {
+  }
+public:
+  ~AutoTraceTime ()
+  {
+    try
+      {
+	if (SessionImpl::GetSession()->trace_time->IsEnabled())
+	  {
+	    SessionImpl::GetSession()->trace_time->WriteFormattedLine
+	      ("core",
+	       "%s %s %s clock ticks",
+	       str1.c_str(),
+	       str2.c_str(),
+	       NUMTOSTR(clock() - start));
+	  }
+      }
+    catch (const std::exception &)
+      {
+      }
+  }
+private:
+  clock_t start;
+private:
+  std::string str1;
+private:
+  std::string str2;
+};
+
+/* _________________________________________________________________________
+
    CTYPE_FACET
    _________________________________________________________________________ */
 
