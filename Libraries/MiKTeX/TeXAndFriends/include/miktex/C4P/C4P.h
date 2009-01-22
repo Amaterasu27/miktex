@@ -1008,8 +1008,22 @@ GetSecond ();
 #define c4pminute C4P::GetMinute()
 #define c4psecond C4P::GetSecond()
 
-#define C4P_PROC_ENTRY(handle)
-#define C4P_PROC_EXIT(handle) C4P_LABEL_PROC_EXIT:
+template<int handle>
+inline
+void
+c4p_proc_entry ()
+{
+}
+
+template<int handle>
+inline
+void
+c4p_proc_exit ()
+{
+}
+
+#define C4P_PROC_ENTRY(handle) c4p_proc_entry<handle> ();
+#define C4P_PROC_EXIT(handle) C4P_LABEL_PROC_EXIT: c4p_proc_exit<handle> ();
 
 C4PCEEAPI(void)
 SetStartUpTime (/*[in]*/ time_t time);
@@ -1071,6 +1085,20 @@ get (/*[in]*/ T & f)
 {
   f.Read ();
 }
+
+#if 1 // optimization?
+template<>
+inline
+void
+get<BufferedFile<C4P_unsigned8> > (/*[in]*/ BufferedFile<C4P_unsigned8> & f)
+{
+  *f = getc(f);
+  if (*f == EOF)
+    {
+      MiKTeX::Core::Session::FatalCrtError ("getc", 0, __FILE__, __LINE__);
+    }
+}
+#endif
 
 inline
 double

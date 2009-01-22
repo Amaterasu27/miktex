@@ -51,6 +51,30 @@ namespace pdftex {
 #  include <MiKTeX/Core/Help>
 #endif
 
+#if 0
+namespace C4P
+{
+  C4PEXTERN clock_t start_readfontinfo;
+
+  template<>
+  inline
+  void
+  c4p_proc_entry<C4P_HANDLE_readfontinfo> ()
+  {
+    start_readfontinfo = clock();
+  }
+  
+  template<>
+  inline
+  void
+  c4p_proc_exit<C4P_HANDLE_readfontinfo> ()
+  {
+    fprintf (stderr, "\nreadfontinfo: %d\n", clock() - start_readfontinfo);
+  }
+  
+}
+#endif
+
 /* _________________________________________________________________________
 
    pdfTeXApp
@@ -184,6 +208,7 @@ public:
     Allocate ("vfifnts", THEDATA(vfifnts), nFonts);
     Allocate ("vflocalfontnum", THEDATA(vflocalfontnum), nFonts);
     Allocate ("vfpacketbase", THEDATA(vfpacketbase), nFonts);
+
   }
 
 public:

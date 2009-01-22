@@ -391,6 +391,10 @@ void
 begin_routine (prototype_node *	proto,
 	       unsigned		handle)
 {
+  redir_file (DEF_FILE_NUM);
+  out_form ("#define C4P_HANDLE_%s %d\n", proto->name->s_repr, handle);
+  redir_file (C_FILE_NUM);
+
   check_c_file_size ();
   out_s ("\n");
   ++ block_level;
@@ -419,6 +423,7 @@ begin_routine (prototype_node *	proto,
 #if 0
   fprintf (name_file, "%u %s\n", handle, proto -> name -> s_repr);
 #endif
+  
   auto_exit_label_flag = (auto_exit_label >= 0);
 }
 

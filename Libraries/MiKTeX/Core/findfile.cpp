@@ -441,6 +441,8 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ const char *	lpszPathList,
 		       /*[out]*/ PathName &	result)
 {
+  AutoTraceTime att ("SessionImpl::FindFile", lpszFileName);
+
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING (lpszPathList);
 
