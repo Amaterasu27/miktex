@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(GUARD_EA5A87F23904AC44BC85743B1568911C_)
-#define GUARD_EA5A87F23904AC44BC85743B1568911C_
+#if ! defined(EA5A87F23904AC44BC85743B1568911C)
+#define EA5A87F23904AC44BC85743B1568911C
 
 #include <miktex/Core/First>
 #include <miktex/Core/Core>
@@ -34,15 +34,29 @@
 #if ! defined(B8C7815676699B4EA2DE96F0BD727276)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXMFEXPORT __declspec(dllimport)
+#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#    define MIKTEXMFEXPORT __attribute__((visibility("default")))
 #  else
 #    define MIKTEXMFEXPORT
 #  endif
 #endif
 
-// API decoration for exported member functions and data
-#define MIKTEXAPI_(type, cc) MIKTEXMFEXPORT type cc
-#define MIKTEXMFTHISAPI(type) MIKTEXAPI_(type, MIKTEXTHISCALL)
-#define MIKTEXMFCEEAPI(type) MIKTEXAPI_(type, MIKTEXCEECALL)
+#define MIKTEXMFAPI_(type, cc) MIKTEXMFEXPORT type cc
+
+// API decoration for exported member functions
+#define MIKTEXMFTHISAPI(type) MIKTEXMFEXPORT type MIKTEXTHISCALL
+
+// API decoration for exported functions
+#define MIKTEXMFCEEAPI(type) MIKTEXMFEXPORT type MIKTEXCEECALL
+
+// API decoration for exported types
+#if defined(_MSC_VER)
+#  define MIKTEXMFTYPEAPI(type) type
+#else
+#  define MIKTEXMFTYPEAPI(type) MIKTEXMFEXPORT type
+#endif
+
+// API decoration for exported data
 #define MIKTEXMFDATA(type) MIKTEXMFEXPORT type
 
 #define MIKTEXMF_BEGIN_NAMESPACE		\
@@ -94,28 +108,28 @@ Write18 (/*[in]*/ const char *		lpszCommand,
 	 /*[in]*/ unsigned long *	lpExitCode = 0);
 
 #if defined(MIKTEX_WINDOWS)
-MIKTEXAPI_(int, __stdcall)
+MIKTEXMFAPI_(int, __stdcall)
 TakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-MIKTEXAPI_(int, __stdcall)
+MIKTEXMFAPI_(int, __stdcall)
 TakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-MIKTEXAPI_(int, __stdcall)
+MIKTEXMFAPI_(int, __stdcall)
 MakeFraction (/*[in]*/ int	p,
 	      /*[in]*/ int	q,
 	      /*[in]*/ bool &	arithError);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-MIKTEXAPI_(int, __stdcall)
+MIKTEXMFAPI_(int, __stdcall)
 MakeScaled (/*[in]*/ int	p,
 	    /*[in]*/ int	q,
 	    /*[in]*/ bool &	arithError);

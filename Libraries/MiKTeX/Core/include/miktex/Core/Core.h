@@ -36,8 +36,8 @@
 #  pragma once
 #endif
 
-#if ! defined(A089FEF06254514BA063DED44B70E66F_)
-#define A089FEF06254514BA063DED44B70E66F_
+#if ! defined(A089FEF06254514BA063DED44B70E66F)
+#define A089FEF06254514BA063DED44B70E66F
 
 #include <miktex/Core/First>
 #include <miktex/Core/Definitions>
@@ -79,6 +79,8 @@
 #if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXCOREEXPORT __declspec(dllimport)
+#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#    define MIKTEXCOREEXPORT __attribute__((visibility("default")))
 #  else
 #    define MIKTEXCOREEXPORT
 #  endif
@@ -86,7 +88,12 @@
 
 // API decoration for exported member functions
 #define MIKTEXCORETHISAPI(type) MIKTEXCOREEXPORT type MIKTEXTHISCALL
+
+// API decoration for exported functions
 #define MIKTEXCORECEEAPI(type) MIKTEXCOREEXPORT type MIKTEXCEECALL
+
+// API decoration for exported types
+#define MIKTEXCORETYPEAPI(type) MIKTEXCOREEXPORT type
 
 #define MIKTEX_CORE_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
@@ -3994,7 +4001,8 @@ public:
 
 /// FileStream class. Encapsulates a stdio file stream pointer (FILE*).
 class
-FileStream : public Stream
+MIKTEXCORETYPEAPI(FileStream)
+  : public Stream
 {
 public:
   FileStream ()

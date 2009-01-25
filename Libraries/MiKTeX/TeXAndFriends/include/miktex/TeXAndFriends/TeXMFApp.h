@@ -298,7 +298,7 @@ GetTeXString (/*[out]*/ CharType *	lpsz,
 
 class
 MIKTEXNOVTABLE
-TeXMFApp
+MIKTEXMFTYPEAPI(TeXMFApp)
 
   : public WebAppInputLine
 

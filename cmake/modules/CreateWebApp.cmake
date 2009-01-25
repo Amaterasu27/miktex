@@ -19,6 +19,8 @@
 
 macro(create_web_app _name)
 
+  hide_symbols()
+
   string(TOLOWER "${_name}" _name_l)
   string(TOUPPER "${_name}" _name_u)
 
@@ -44,10 +46,6 @@ macro(create_web_app _name)
   else(${ARGC} GREATER 3)
     set(_pool_dir ${formatdir})
   endif(${ARGC} GREATER 3)
-
-  if(USE_C4P_DATA_STRUCT)
-    set(${_short_name_l}_data g_${_name_u}Data)
-  endif(USE_C4P_DATA_STRUCT)
 
   set(${_short_name_l}_app g_${_name_u}App)
   set(${_short_name_l}_class ${_name_u})
@@ -99,18 +97,10 @@ class ${${_short_name_l}_class} : public WebApp {};"
     "#define C4PEXTERN extern
 #include \"${${_short_name_l}_header_file}\"
 #include \"${${_short_name_l}_include_file}\"
-#if USE_C4P_DATA_STRUCT
-MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
-		     ${${_short_name_l}_class},
-		     ${${_short_name_l}_app},
-                     ${${_short_name_l}_entry},
-                     ${${_short_name_l}_data})
-#else
 MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		     ${${_short_name_l}_class},
 		     ${${_short_name_l}_app},
                      ${${_short_name_l}_entry})
-#endif
 "
   )
 
@@ -133,16 +123,12 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     PROPERTIES GENERATED TRUE
   )
 
-  if(USE_C4P_DATA_STRUCT)
-    set(${_short_name_u}DATA_DEF -D${_short_name_u}DATA=${${_short_name_l}_data})
-  endif(USE_C4P_DATA_STRUCT)
-
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.cc
     ${${_short_name_l}_header_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}main.cpp
     PROPERTIES COMPILE_FLAGS
-      "-DMIKTEX_${_name_u} -DMIKTEX_${_short_name_u} -D${_short_name_u}APP=${${_short_name_l}_app} -D${_short_name_u}CLASS=${${_short_name_l}_class} ${${_short_name_u}DATA_DEF}"
+      "-DMIKTEX_${_name_u} -DMIKTEX_${_short_name_u} -D${_short_name_u}APP=${${_short_name_l}_app} -D${_short_name_u}CLASS=${${_short_name_l}_class}"
   )
 
   set_source_files_properties(
@@ -159,12 +145,6 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     set(_sed_script /dev/null)
   endif(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)
 
-  if(USE_C4P_DATA_STRUCT)
-    set(C4P_${_short_name_u}DATA_OPTS
-	--var-struct=${${_short_name_l}_data}
-    )
-  endif(USE_C4P_DATA_STRUCT)
-
   add_custom_command(
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.cc
@@ -179,7 +159,6 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	--one=${_short_name_l}
 	--using-namespace=MiKTeX::TeXAndFriends
 	--var-name-prefix=${C4P_VAR_NAME_PREFIX}
-	${C4P_${_short_name_u}DATA_OPTS}
 	-C
 	${C4P_FLAGS}
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p

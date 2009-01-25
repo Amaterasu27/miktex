@@ -1,6 +1,6 @@
 /* miktex/C4P/C4P.h: Pascalish run-time support			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -43,15 +43,18 @@
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define C4PEXPORT __declspec(dllimport)
+#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >= 4
+#    define C4PEXPORT __attribute__((visibility("default")))
 #  else
 #    define C4PEXPORT
 #  endif
 #endif
 
-// API decoration for exported functions and data
+// API decoration for exported member functions
 #define C4PTHISAPI(type) C4PEXPORT type MIKTEXTHISCALL
+
+// API decoration for exported functions
 #define C4PCEEAPI(type) C4PEXPORT type MIKTEXCEECALL
-#define C4PDATA(type) C4PEXPORT type
 
 #define C4PCEECALL MIKTEXCEECALL
 

@@ -243,6 +243,10 @@
 #  endif
 #endif
 
+#if defined(MIKTEX) && ! defined(ZEXTERN) && __GNUC__ >= 4
+#  define ZEXTERN __attribute__((visibility("default")))
+#endif
+
 #ifndef ZEXTERN
 #  define ZEXTERN extern
 #endif

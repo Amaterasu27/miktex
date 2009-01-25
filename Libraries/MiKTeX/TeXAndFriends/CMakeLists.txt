@@ -27,6 +27,8 @@ configure_file(
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/TeXAndFriends/config.h
 )
 
+hide_symbols()
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -46,6 +46,8 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
 )  
+
+hide_symbols()
 
 add_definitions(-DHAVE_CONFIG_H)
 

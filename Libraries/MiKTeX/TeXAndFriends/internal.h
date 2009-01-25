@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -23,16 +23,19 @@
 #  pragma once
 #endif
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
-#  define MIKTEXMFEXPORT __declspec(dllexport)
+#if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #  define C4PEXPORT __declspec(dllexport)
+#  define MIKTEXMFEXPORT __declspec(dllexport)
+#elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#  define C4PEXPORT __attribute__((visibility("default")))
+#  define MIKTEXMFEXPORT __attribute__((visibility("default")))
 #else
-#  define MIKTEXMFEXPORT
 #  define C4PEXPORT
+#  define MIKTEXMFEXPORT
 #endif
 
-#define C1F0C63F01D5114A90DDF8FC10FF410B
 #define B8C7815676699B4EA2DE96F0BD727276
+#define C1F0C63F01D5114A90DDF8FC10FF410B
 #include "miktex/C4P/C4P"
 #include "miktex/TeXAndFriends/MetafontApp"
 #include "miktex/TeXAndFriends/ETeXApp"

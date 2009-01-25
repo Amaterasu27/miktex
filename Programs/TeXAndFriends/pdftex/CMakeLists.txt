@@ -19,6 +19,8 @@
 
 default_char_type_is_unsigned()
 
+hide_symbols()
+
 set(C4P_FLAGS
   --auto-exit=10
   --chars-are-unsigned
@@ -38,7 +40,6 @@ add_definitions(
   -DMIKTEX_PDFTEX
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
-  -DPDFTEXDATA=g_PDFTEXData
   -DpdfTeX
 )
 
@@ -211,7 +212,9 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #define stat _stat
 #define getcwd _getcwd
 #define snprintf _snprintf
-#define __attribute__(x)
+#if ! defined(__GNUC__)
+#  define __attribute__(x)
+#endif
 #endif
 ")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sysexits.h "")
@@ -329,6 +332,12 @@ target_link_libraries(${pdftex_dll_name}
 if(NATIVE_WINDOWS)
   target_link_libraries(${pdftex_dll_name}
     ${regex_dll_name}
+    ${zlib_dll_name}
+  )
+else(NATIVE_WINDOWS)
+  target_link_libraries(${pdftex_dll_name}
+    ${regex_dll_name}
+    ${zlib_dll_name}
   )
 endif(NATIVE_WINDOWS)
 

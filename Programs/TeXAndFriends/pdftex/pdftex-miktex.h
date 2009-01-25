@@ -17,12 +17,12 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#if defined(_MSC_VER)
+#if defined(HAVE_PRAGMA_ONCE)
 #  pragma once
 #endif
 
-#if ! defined(B9AE601D_55FC_414A_8D93_C81CF3517D1A)
-#define B9AE601D_55FC_414A_8D93_C81CF3517D1A
+#if ! defined(B9AE601D55FC414A8D93C81CF3517D1A)
+#define B9AE601D55FC414A8D93C81CF3517D1A
 
 #include <miktex/TeXAndFriends/config.h>
 
@@ -430,7 +430,9 @@ getbyte (/*[in]*/ bytefile & f)
     miktexopenvffile(f, nameoffile)
 #endif
 
-#define __attribute__(x)
+#if ! defined(__GNUC__)
+#  define __attribute__(x)
+#endif
 
 /* _________________________________________________________________________
 

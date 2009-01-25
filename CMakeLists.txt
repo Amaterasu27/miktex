@@ -60,18 +60,8 @@ option(
   TRUE
 )
 
-option(
-  USE_C4P_DATA_STRUCT
-  "Create a struct containing all global variables."
-  FALSE
-)
-
 ## check all dyn.sed files, if you alter C4P_VAR_NAME_PREFIX
-if(USE_C4P_DATA_STRUCT)
-  set(C4P_VAR_NAME_PREFIX "m_")
-else(USE_C4P_DATA_STRUCT)
-  set(C4P_VAR_NAME_PREFIX "g_")
-endif(USE_C4P_DATA_STRUCT)
+set(C4P_VAR_NAME_PREFIX "g_")
 
 set(outdir "${CMAKE_BINARY_DIR}/binlib")
 set(EXECUTABLE_OUTPUT_PATH "${outdir}")
@@ -172,6 +162,8 @@ include(CPack)
 include(Admin/COM/guids.cmake)
 
 include(AddLinkFlags)
+include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 include(CheckFunctionExists)
 include(CheckIncludeFileCXX)
 include(CheckVariableExists)
@@ -278,6 +270,13 @@ endif(NATIVE_WINDOWS)
 if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
 endif(UNIX_ALIKE)
+
+check_c_compiler_flag(-fvisibility=hidden HAVE_C_VISIBILITY_OPTION)
+check_cxx_compiler_flag(-fvisibility=hidden HAVE_CXX_VISIBILITY_OPTION)
+
+if(MSVC)
+  set(HAVE_PRAGMA_ONCE TRUE)
+endif(MSVC)
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)

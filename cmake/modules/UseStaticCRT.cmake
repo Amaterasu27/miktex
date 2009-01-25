@@ -18,6 +18,30 @@
 ## USA.
 
 ###############################################################################
+# add_cxx_flag
+# 
+# Add the specified C++ compiler flag.
+###############################################################################
+
+macro(add_cxx_flag _flag)
+  foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
+    set(CMAKE_CXX_FLAGS${c} "${CMAKE_CXX_FLAGS${c}} ${_flag}")
+  endforeach(c)
+endmacro(add_cxx_flag)
+
+###############################################################################
+# add_c_flag
+# 
+# Add the specified C compiler flag.
+###############################################################################
+
+macro(add_c_flag _flag)
+  foreach(c "" "_DEBUG" "_RELEASE" "_MINSIZEREL" "_RELWITHDEBINFO")
+    set(CMAKE_C_FLAGS${c} "${CMAKE_C_FLAGS${c}} ${_flag}")
+  endforeach(c)
+endmacro(add_c_flag)
+
+###############################################################################
 # remove_cxx_flag
 # 
 # Remove the specified C++ compiler flag (a regular expression).
@@ -46,6 +70,18 @@ macro(remove_c_flag _flag_regex)
            "${CMAKE_C_FLAGS${c}}")
   endforeach(c)
 endmacro(remove_c_flag)
+
+###############################################################################
+# hide_symbols
+###############################################################################
+
+macro(hide_symbols)
+  if(HAVE_CXX_VISIBILITY_OPTION)
+    add_c_flag(-fvisibility=hidden)
+    add_cxx_flag(-fvisibility=hidden)
+    add_cxx_flag(-fvisibility-inlines-hidden)
+  endif(HAVE_CXX_VISIBILITY_OPTION)
+endmacro(hide_symbols)
 
 ###############################################################################
 # use_static_crt

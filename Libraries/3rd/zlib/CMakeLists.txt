@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,6 +18,8 @@
 ## USA.
 
 disable_runtime_checks()
+
+hide_symbols()
 
 set(${zlib_dll_name}_sources
   adler32.c

@@ -19,8 +19,10 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #  define MIKTEXCOREEXPORT __declspec(dllexport)
+#elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#  define MIKTEXCOREEXPORT __attribute__((visibility("default")))
 #else
 #  define MIKTEXCOREEXPORT
 #endif
