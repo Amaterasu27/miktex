@@ -53,9 +53,7 @@ if(NATIVE_WINDOWS)
   )
 else(NATIVE_WINDOWS)
   target_link_libraries(mpm
-    ${core_dll_name}
-    ${mpm_dll_name}
-    ${popt_dll_name}
+    ${MIKTEX_STATIC_LINK_LIBRARIES}
   )
 endif(NATIVE_WINDOWS)
 

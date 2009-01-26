@@ -17,6 +17,8 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+add_definitions(-fvisibility=hidden)
+
 configure_file(
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h.cmake
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/C4P/config.h
@@ -140,50 +142,61 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_library(${texmf_dll_name} SHARED ${${texmf_dll_name}_sources})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_library(${texmf_dll_name} SHARED ${${texmf_dll_name}_sources})
 
-set_target_properties(${texmf_dll_name}
-  PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}"
-    SOVERSION "1"
-)
+  set_target_properties(${texmf_dll_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}"
+      SOVERSION "1"
+  )
 
-target_link_libraries(${texmf_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${popt_dll_name}
-)
+  target_link_libraries(${texmf_dll_name}
+    ${app_dll_name}
+    ${core_dll_name}
+    ${popt_dll_name}
+  )
 
-rebase(${texmf_dll_name})
+  rebase(${texmf_dll_name})
 
-install(TARGETS ${texmf_dll_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+  install(TARGETS ${texmf_dll_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
-install(
-  FILES
-    include/miktex/TeXAndFriends/ETeXApp
-    include/miktex/TeXAndFriends/ETeXApp.h
-    include/miktex/TeXAndFriends/ETeXApp.inl
-    include/miktex/TeXAndFriends/MetafontApp
-    include/miktex/TeXAndFriends/MetafontApp.h
-    include/miktex/TeXAndFriends/MetafontApp.inl
-    include/miktex/TeXAndFriends/Prototypes
-    include/miktex/TeXAndFriends/Prototypes.h
-    include/miktex/TeXAndFriends/TeXApp
-    include/miktex/TeXAndFriends/TeXApp.h
-    include/miktex/TeXAndFriends/TeXApp.inl
-    include/miktex/TeXAndFriends/TeXMFApp
-    include/miktex/TeXAndFriends/TeXMFApp.h
-    include/miktex/TeXAndFriends/TeXMFApp.inl
-    include/miktex/TeXAndFriends/WebApp
-    include/miktex/TeXAndFriends/WebApp.h
-    include/miktex/TeXAndFriends/WebApp.inl
-    include/miktex/TeXAndFriends/WebAppInputLine
-    include/miktex/TeXAndFriends/WebAppInputLine.h
-    include/miktex/TeXAndFriends/WebAppInputLine.inl
-  DESTINATION
-    ${incdir}/miktex/TeXAndFriends
+if(INSTALL_MIKTEX_HEADERS)
+  install(
+    FILES
+      include/miktex/TeXAndFriends/ETeXApp
+      include/miktex/TeXAndFriends/ETeXApp.h
+      include/miktex/TeXAndFriends/ETeXApp.inl
+      include/miktex/TeXAndFriends/MetafontApp
+      include/miktex/TeXAndFriends/MetafontApp.h
+      include/miktex/TeXAndFriends/MetafontApp.inl
+      include/miktex/TeXAndFriends/Prototypes
+      include/miktex/TeXAndFriends/Prototypes.h
+      include/miktex/TeXAndFriends/TeXApp
+      include/miktex/TeXAndFriends/TeXApp.h
+      include/miktex/TeXAndFriends/TeXApp.inl
+      include/miktex/TeXAndFriends/TeXMFApp
+      include/miktex/TeXAndFriends/TeXMFApp.h
+      include/miktex/TeXAndFriends/TeXMFApp.inl
+      include/miktex/TeXAndFriends/WebApp
+      include/miktex/TeXAndFriends/WebApp.h
+      include/miktex/TeXAndFriends/WebApp.inl
+      include/miktex/TeXAndFriends/WebAppInputLine
+      include/miktex/TeXAndFriends/WebAppInputLine.h
+      include/miktex/TeXAndFriends/WebAppInputLine.inl
+    DESTINATION
+      ${incdir}/miktex/TeXAndFriends
+  )
+endif(INSTALL_MIKTEX_HEADERS)
+
+add_custom_target(all-defaults ALL
+  DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/mfapp.defaults.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/texapp.defaults.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/texmfapp.defaults.h
 )

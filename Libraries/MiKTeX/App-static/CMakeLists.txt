@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,33 +17,25 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(BEFORE ${CMAKE_BINARY_DIR}/${rel_app_dir})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR}/${rel_app_dir})
+
 use_static_crt()
 use_static_libraries()
 
-set(md5walk_sources
-  md5walk-version.h
-  md5walk.cpp
+set(${app_lib_name}_sources
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/StdAfx.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/StdAfx.h
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/app-version.h
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/app.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include/miktex/App/Application.h
+  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/internal.h
 )
 
-if(NATIVE_WINDOWS)
-  set(md5walk_sources ${md5walk_sources} md5walk.rc)
-endif(NATIVE_WINDOWS)
+add_library(${app_lib_name} STATIC ${${app_lib_name}_sources})
 
-add_executable(md5walk ${md5walk_sources})
-
-merge_trustinfo_manifest(md5walk asInvoker)
-
-if(NATIVE_WINDOWS)
-  target_link_libraries(md5walk
-    ${bzip2_lib_name}
-    ${core_lib_name}
-    ${md5_lib_name}
-    ${popt_lib_name}
-    ${zlib_lib_name}
-    shlwapi
-  )
-else(NATIVE_WINDOWS)
-  target_link_libraries(md5walk ${MIKTEX_STATIC_LINK_LIBRARIES})
-endif(NATIVE_WINDOWS)
-
-install(TARGETS md5walk DESTINATION ${bindir})
+install(TARGETS ${app_lib_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}"
+)

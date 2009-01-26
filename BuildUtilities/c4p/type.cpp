@@ -1,6 +1,6 @@
 /* type.c: type table						-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is part of C4P.
 
@@ -414,7 +414,8 @@ void
 generate_routine_head (prototype_node * proto)
 {
   out_s ("\n");
-  out_form ("%s%s\n%s%s (",
+  out_form ("C4P%sAPI(%s%s)\n%s%s (",
+	    prog_symbol->s_repr,
 	    ((class_name_scope.length() > 0
 	      && proto->result_type != 0
 	      && ! (proto->result_type->s_flags & S_PREDEFINED))
@@ -428,8 +429,8 @@ generate_routine_head (prototype_node * proto)
 	    class_name_scope.c_str(),
 	    proto->name->s_repr);
   redir_file (H_FILE_NUM);
-  out_form ("%s%s %s (",
-	    (one_c_file ? "" : ""), /* static */
+  out_form ("C4P%sAPI(%s) %s (",
+	    prog_symbol->s_repr,
 	    (proto->result_type == 0
 	     ? "void"
 	     : (proto->result_type->s_translated_type

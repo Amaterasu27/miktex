@@ -90,31 +90,35 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_library(${kpsemu_dll_name} SHARED ${${kpsemu_dll_name}_sources})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_library(${kpsemu_dll_name} SHARED ${${kpsemu_dll_name}_sources})
 
-set_target_properties(${kpsemu_dll_name}
-  PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}"
-    SOVERSION "1"
-)
+  set_target_properties(${kpsemu_dll_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}"
+      SOVERSION "1"
+  )
 
-target_link_libraries(${kpsemu_dll_name}
-  ${core_dll_name}
-  ${texmf_dll_name}
-)
+  target_link_libraries(${kpsemu_dll_name}
+    ${core_dll_name}
+    ${texmf_dll_name}
+  )
 
-rebase(${kpsemu_dll_name})
+  rebase(${kpsemu_dll_name})
 
-install(TARGETS ${kpsemu_dll_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+  install(TARGETS ${kpsemu_dll_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
-install(
-  FILES
-    include/miktex/KPSE/Emulation
-    include/miktex/KPSE/Emulation.h
-  DESTINATION
-    ${incdir}/miktex/KPSE
-)
+if(INSTALL_MIKTEX_HEADERS)
+  install(
+    FILES
+      include/miktex/KPSE/Emulation
+      include/miktex/KPSE/Emulation.h
+    DESTINATION
+      ${incdir}/miktex/KPSE
+  )
+endif(INSTALL_MIKTEX_HEADERS)

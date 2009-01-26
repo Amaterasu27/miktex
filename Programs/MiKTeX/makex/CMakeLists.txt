@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,12 +17,23 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(LINK_EVERYTHING_STATICALLY)
+  use_static_crt()
+  use_static_libraries()
+endif(LINK_EVERYTHING_STATICALLY)
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-set(${makex_dll_name}_sources
+if(LINK_EVERYTHING_STATICALLY)
+  set(makex_target_name ${makex_lib_name})
+else(LINK_EVERYTHING_STATICALLY)
+  set(makex_target_name ${makex_dll_name})
+endif(LINK_EVERYTHING_STATICALLY)
+
+set(${makex_target_name}_sources
   common.cpp
   internal.h
   makebase.cpp
@@ -40,24 +51,28 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_SOURCE_DIR}/makex.rc.in
     ${CMAKE_CURRENT_BINARY_DIR}/makex.rc
   )
-  set(${makex_dll_name}_sources ${${makex_dll_name}_sources} ${CMAKE_CURRENT_BINARY_DIR}/makex.rc)
+  set(${makex_target_name}_sources
+    ${${makex_target_name}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/makex.rc
+  )
 endif(NATIVE_WINDOWS)
 
-add_library(${makex_dll_name} SHARED ${${makex_dll_name}_sources})
-
-target_link_libraries(${makex_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${texmf_dll_name}
-)
-
-if(NATIVE_WINDOWS)
-target_link_libraries(${makex_dll_name}
-  ${getopt_dll_name}
-)
-endif(NATIVE_WINDOWS)
-
-rebase(${makex_dll_name})
+if(LINK_EVERYTHING_STATICALLY)
+  add_library(${makex_target_name} STATIC ${${makex_target_name}_sources})
+else(LINK_EVERYTHING_STATICALLY)
+  add_library(${makex_target_name} SHARED ${${makex_target_name}_sources})
+  target_link_libraries(${makex_target_name}
+    ${app_dll_name}
+    ${core_dll_name}
+    ${texmf_dll_name}
+  )
+  if(NATIVE_WINDOWS)
+    target_link_libraries(${makex_target_name}
+      ${getopt_dll_name}
+  )
+  endif(NATIVE_WINDOWS)
+  rebase(${makex_target_name})
+endif(LINK_EVERYTHING_STATICALLY)
 
 set(exes
   makebase
@@ -68,21 +83,29 @@ set(exes
   maketfm
 )
 
-install(TARGETS ${makex_dll_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+if(NOT LINK_EVERYTHING_STATICALLY OR INSTALL_STATIC_LIBRARIES)
+  install(TARGETS ${makex_target_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(NOT LINK_EVERYTHING_STATICALLY OR INSTALL_STATIC_LIBRARIES)
 
 foreach(t ${exes})
-  create_dll_wrapper(${miktex_prefix}${t} ${makex_dll_name} ${t})
+  create_dll_wrapper(${miktex_prefix}${t} ${makex_target_name} ${t})
+  if(LINK_EVERYTHING_STATICALLY)
+    target_link_libraries(
+      ${makex_target_name}
+      ${MIKTEX_STATIC_LINK_LIBRARIES}
+    )
+  endif(LINK_EVERYTHING_STATICALLY)
   install(TARGETS ${miktex_prefix}${t}
     RUNTIME DESTINATION "${bindir}"
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
   if(NATIVE_WINDOWS)
-    create_dll_wrapper(${t} ${makex_dll_name})
+    create_dll_wrapper(${t} ${makex_target_name})
     install(TARGETS ${t}
       RUNTIME DESTINATION "${bindir}"
       LIBRARY DESTINATION "${libdir}"

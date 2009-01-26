@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include(${QT_USE_FILE})
+if(LINK_EVERYTHING_STATICALLY)
+  use_static_crt()
+  use_static_libraries()
+endif(LINK_EVERYTHING_STATICALLY)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -67,12 +70,16 @@ add_executable(mpm_qt
   ${mpm_qt_rcc_sources}
 )
 
-target_link_libraries(mpm_qt
-  ${core_dll_name}
-  ${mpm_dll_name}
-  ${ui_qt_dll_name}
-  ${QT_LIBRARIES}
-)
+if(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(mpm_qt ${MIKTEX_STATIC_LINK_LIBRARIES})
+else(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(mpm_qt
+    ${core_dll_name}
+    ${mpm_dll_name}
+    ${ui_qt_dll_name}
+    ${QT_LIBRARIES}
+  )
+endif(LINK_EVERYTHING_STATICALLY)
 
 merge_trustinfo_manifest(mpm_qt asInvoker)
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(LINK_EVERYTHING_STATICALLY)
+  use_static_crt()
+  use_static_libraries()
+endif(LINK_EVERYTHING_STATICALLY)
+
 set(initexmf_sources
   initexmf-version.h
   initexmf.cpp
@@ -30,11 +35,15 @@ add_executable(initexmf ${initexmf_sources})
 
 install(TARGETS initexmf DESTINATION ${bindir})
 
-target_link_libraries(initexmf
-  ${core_dll_name}
-  ${mpm_dll_name}
-  ${popt_dll_name}
-)
+if(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(initexmf ${MIKTEX_STATIC_LINK_LIBRARIES})
+else(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(initexmf
+    ${core_dll_name}
+    ${mpm_dll_name}
+    ${popt_dll_name}
+  )
+endif(LINK_EVERYTHING_STATICALLY)
 
 if(BUILDING_MIKTEX)
   target_link_libraries(initexmf

@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(LINK_EVERYTHING_STATICALLY)
+  use_static_crt()
+  use_static_libraries()
+endif(LINK_EVERYTHING_STATICALLY)
+
 default_char_type_is_unsigned()
 
 hide_symbols()
@@ -41,6 +46,7 @@ add_definitions(
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DpdfTeX
+  -fvisibility=hidden
 )
 
 if(WITH_SYNCTEX)
@@ -76,25 +82,23 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_executable(pdftosrc ${pdftosrc_sources})
-
-merge_trustinfo_manifest(pdftosrc asInvoker)
-
-target_link_libraries(pdftosrc
-  ${xpdf_lib_name}
+if(BUILDING_MIKTEX)
+  add_executable(pdftosrc ${pdftosrc_sources})
+  merge_trustinfo_manifest(pdftosrc asInvoker)
+  target_link_libraries(pdftosrc
+    ${xpdf_lib_name}
     ${fofi_lib_name}
     ${goo_lib_name}
-  ${app_dll_name}
-  ${core_dll_name}
-)
-
-if(NATIVE_WINDOWS)
-  target_link_libraries(pdftosrc
-    ${getopt_dll_name}
+    ${app_dll_name}
+    ${core_dll_name}
   )
-endif(NATIVE_WINDOWS)
-
-install(TARGETS pdftosrc DESTINATION ${bindir})
+  if(NATIVE_WINDOWS)
+    target_link_libraries(pdftosrc
+      ${getopt_dll_name}
+    )
+  endif(NATIVE_WINDOWS)
+  install(TARGETS pdftosrc DESTINATION ${bindir})
+endif(BUILDING_MIKTEX)
 
 create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/ttf2afm.c
@@ -117,24 +121,22 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_executable(ttf2afm ${ttf2afm_sources})
-
-merge_trustinfo_manifest(ttf2afm asInvoker)
-
-target_link_libraries(ttf2afm
-  ${app_dll_name}
-  ${core_dll_name}
-  ${kpsemu_dll_name}
-  ${texmf_dll_name}
-)
-
-if(NATIVE_WINDOWS)
+if(BUILDING_MIKTEX)
+  add_executable(ttf2afm ${ttf2afm_sources})
+  merge_trustinfo_manifest(ttf2afm asInvoker)
   target_link_libraries(ttf2afm
-    ${getopt_dll_name}
+    ${app_dll_name}
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${texmf_dll_name}
   )
-endif(NATIVE_WINDOWS)
-
-install(TARGETS ttf2afm DESTINATION ${bindir})
+  if(NATIVE_WINDOWS)
+    target_link_libraries(ttf2afm
+      ${getopt_dll_name}
+    )
+  endif(NATIVE_WINDOWS)
+  install(TARGETS ttf2afm DESTINATION ${bindir})
+endif(BUILDING_MIKTEX)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
@@ -277,7 +279,13 @@ create_cpp_from_c(
   ${CMAKE_CURRENT_SOURCE_DIR}/writezip.c
 )
 
-set(${pdftex_dll_name}_sources
+if(LINK_EVERYTHING_STATICALLY)
+  set(pdftex_target_name ${pdftex_lib_name})
+else(LINK_EVERYTHING_STATICALLY)
+  set(pdftex_target_name ${pdftex_dll_name})
+endif(LINK_EVERYTHING_STATICALLY)
+
+set(${pdftex_target_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/avl.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/epdf.cpp
@@ -303,14 +311,14 @@ set(${pdftex_dll_name}_sources
 )
 
 if(WITH_SYNCTEX)
-  set(${pdftex_dll_name}_sources
-    ${${pdftex_dll_name}_sources}
+  set(${pdftex_target_name}_sources
+    ${${pdftex_target_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
   )
 endif(WITH_SYNCTEX)
 
 set_source_files_properties(
-  ${${pdftex_dll_name}_sources}
+  ${${pdftex_target_name}_sources}
   PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
 )
 
@@ -321,31 +329,44 @@ set_source_files_properties(
   PROPERTIES COMPILE_FLAGS "-DCOMPILING_PDFTEX_CC"
 )
 
-target_link_libraries(${pdftex_dll_name}
-  ${fofi_lib_name}
-  ${goo_lib_name}
-  ${kpsemu_dll_name}
-  ${png_dll_name}
-  ${xpdf_lib_name}
-)
-
-if(NATIVE_WINDOWS)
-  target_link_libraries(${pdftex_dll_name}
-    ${regex_dll_name}
-    ${zlib_dll_name}
+if(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(${miktex_prefix}pdftex
+    ${xpdf_lib_name}
+      ${fofi_lib_name}
+      ${goo_lib_name}
+    ${kpsemu_lib_name}
+    ${png_lib_name}
   )
-else(NATIVE_WINDOWS)
+else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${pdftex_dll_name}
-    ${regex_dll_name}
-    ${zlib_dll_name}
+    ${fofi_lib_name}
+    ${goo_lib_name}
+    ${kpsemu_dll_name}
+    ${png_dll_name}
+    ${xpdf_lib_name}
   )
-endif(NATIVE_WINDOWS)
+endif(LINK_EVERYTHING_STATICALLY)
 
-delay_load(${pdftex_dll_name}
-  ${png_dll_name}
-  ${regex_dll_name}
-)
-  
+if(NOT LINK_EVERYTHING_STATICALLY)
+  if(NATIVE_WINDOWS)
+    target_link_libraries(${pdftex_target_name}
+      ${regex_dll_name}
+      ${zlib_dll_name}
+      )
+  else(NATIVE_WINDOWS)
+    target_link_libraries(${pdftex_target_name}
+      ${zlib_lib_name}
+      )
+  endif(NATIVE_WINDOWS)
+endif(NOT LINK_EVERYTHING_STATICALLY)
+
+if(NOT LINK_EVERYTHING_STATICALLY)
+  delay_load(${pdftex_target_name}
+    ${png_dll_name}
+    ${regex_dll_name}
+  )
+endif(NOT LINK_EVERYTHING_STATICALLY)
+
 ## dev targets
 
 add_custom_command(

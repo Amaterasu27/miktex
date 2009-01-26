@@ -260,89 +260,95 @@ else(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
 
-set_target_properties(${core_dll_name}
-  PROPERTIES
+  set_target_properties(${core_dll_name}
+    PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
-)
-
-target_link_libraries(${core_dll_name}
-  ${CMAKE_THREAD_LIBS_INIT}
-  ${bzip2_dll_name}
-  ${lzma_dll_name}
-  ${md5_dll_name}
-  ${uriparser_dll_name}
-  ${zlib_dll_name}
-)
-
-if(NATIVE_WINDOWS)
-  target_link_libraries(${core_dll_name}
-    SHFolder.lib
-    shlwapi.lib
-    htmlhelp.lib
-  )
-endif(NATIVE_WINDOWS)
-
-delay_load(${core_dll_name}
-  ${bzip2_dll_name}
-  ${lzma_dll_name}
-  ${uriparser_dll_name}
-  ${zlib_dll_name}
-)
+    )
   
-rebase(${core_dll_name})
+  target_link_libraries(${core_dll_name}
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${bzip2_dll_name}
+    ${lzma_dll_name}
+    ${md5_dll_name}
+    ${uriparser_dll_name}
+    ${zlib_dll_name}
+    )
+  
+  if(NATIVE_WINDOWS)
+    target_link_libraries(${core_dll_name}
+      SHFolder.lib
+      shlwapi.lib
+      htmlhelp.lib
+      )
+  endif(NATIVE_WINDOWS)
+  
+  delay_load(${core_dll_name}
+    ${bzip2_dll_name}
+    ${lzma_dll_name}
+    ${uriparser_dll_name}
+    ${zlib_dll_name}
+    )
+  
+  rebase(${core_dll_name})
+  
+  install(TARGETS ${core_dll_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
-install(TARGETS ${core_dll_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
-
-install(
-  FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
-    ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/config.h
-    include/miktex/Core/Core
-    include/miktex/Core/Core.h
-    include/miktex/Core/Debug
-    include/miktex/Core/Debug.h
-    include/miktex/Core/Definitions
-    include/miktex/Core/Definitions.h
-    include/miktex/Core/Environment
-    include/miktex/Core/Environment.h
-    include/miktex/Core/First
-    include/miktex/Core/First.h
-    include/miktex/Core/Help
-    include/miktex/Core/Help.h
-    include/miktex/Core/Paths
-    include/miktex/Core/Registry
-    include/miktex/Core/Registry.h
-    include/miktex/Core/Test
-    include/miktex/Core/Test.h
-    include/miktex/Core/Text
-    include/miktex/Core/Text.h
-    include/miktex/Core/Trace
-    include/miktex/Core/Trace.h
-    include/miktex/Core/Urls
-    include/miktex/Core/Urls.h
-    include/miktex/Core/Version
-  DESTINATION
-    ${incdir}/miktex/Core
-)
-
-if(NATIVE_WINDOWS)
+if(INSTALL_MIKTEX_HEADERS)
   install(
     FILES
-      include/miktex/Core/win/DllProc
-      include/miktex/Core/win/DllProc.h
-      include/miktex/Core/win/version.rc
+      ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Version.h
+      ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/config.h
+      include/miktex/Core/Core
+      include/miktex/Core/Core.h
+      include/miktex/Core/Debug
+      include/miktex/Core/Debug.h
+      include/miktex/Core/Definitions
+      include/miktex/Core/Definitions.h
+      include/miktex/Core/Environment
+      include/miktex/Core/Environment.h
+      include/miktex/Core/First
+      include/miktex/Core/First.h
+      include/miktex/Core/Help
+      include/miktex/Core/Help.h
+      include/miktex/Core/Paths
+      include/miktex/Core/Registry
+      include/miktex/Core/Registry.h
+      include/miktex/Core/Test
+      include/miktex/Core/Test.h
+      include/miktex/Core/Text
+      include/miktex/Core/Text.h
+      include/miktex/Core/Trace
+      include/miktex/Core/Trace.h
+      include/miktex/Core/Urls
+      include/miktex/Core/Urls.h
+      include/miktex/Core/Version
     DESTINATION
-      ${incdir}/miktex/Core/win
+      ${incdir}/miktex/Core
   )
-endif(NATIVE_WINDOWS)
 
-add_subdirectory(test)
+  if(NATIVE_WINDOWS)
+    install(
+      FILES
+        include/miktex/Core/win/DllProc
+        include/miktex/Core/win/DllProc.h
+        include/miktex/Core/win/version.rc
+      DESTINATION
+        ${incdir}/miktex/Core/win
+    )
+  endif(NATIVE_WINDOWS)
+endif(INSTALL_MIKTEX_HEADERS)
+
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(test)
+endif(NOT LINK_EVERYTHING_STATICALLY)

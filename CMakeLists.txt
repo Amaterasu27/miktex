@@ -60,6 +60,18 @@ option(
   TRUE
 )
 
+option(
+  LINK_EVERYTHING_STATICALLY
+  "Don't use shared objects."
+  ${UNIX_ALIKE}
+)
+
+option(
+  INSTALL_MIKTEX_HEADERS
+  "Install the MiKTeX header files."
+  FALSE
+)
+
 ## check all dyn.sed files, if you alter C4P_VAR_NAME_PREFIX
 set(C4P_VAR_NAME_PREFIX "g_")
 
@@ -259,6 +271,9 @@ endif(BUILDING_MIKTEX_TOOLS)
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
 find_package(Qt4)
+if(QT4_FOUND)
+  include(${QT_USE_FILE})
+endif(QT4_FOUND)
 find_package(Threads REQUIRED)
 
 if(NATIVE_WINDOWS)
@@ -464,6 +479,27 @@ else(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 ###############################################################################
+## 
+
+set(MIKTEX_STATIC_LINK_LIBRARIES
+  ${texmf_lib_name}
+  ${app_lib_name}
+  ${ui_qt_lib_name}
+  ${QT_LIBRARIES}
+  ${mpm_lib_name}
+  ${extractor_lib_name}
+  ${core_lib_name}
+  ${mspack_lib_name}
+  ${lzma_lib_name}
+  ${expat_lib_name}
+  ${uriparser_lib_name}
+  ${md5_lib_name}
+  ${CURL_LIBRARIES}
+  ${bzip2_lib_name}
+  ${popt_lib_name}
+)
+
+###############################################################################
 ## add global include directories
 
 include_directories(
@@ -609,17 +645,23 @@ endforeach(tpm)
 
 add_subdirectory(${rel_build_tools_etc_dir})
 
-add_subdirectory(${rel_uriparser_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_uriparser_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_uriparser_dir}-static)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})
 endif(NATIVE_WINDOWS)
 
-add_subdirectory(${rel_lzmalib_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_lzmalib_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_lzmalib_dir}-static)
 
-add_subdirectory(${rel_bzip2_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_bzip2_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_bzip2_dir}-static)
 
 if(NATIVE_WINDOWS)
@@ -627,7 +669,9 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_curl_dir}-static)
 endif(NATIVE_WINDOWS)
 
-add_subdirectory(${rel_expat_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_expat_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_expat_dir}-static)
 
 if(BUILDING_MIKTEX)
@@ -655,10 +699,14 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_jpeg_dir})
 endif(BUILDING_MIKTEX)
 
-add_subdirectory(${rel_mspack_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_mspack_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_mspack_dir}-static)
 
-add_subdirectory(${rel_popt_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_popt_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_popt_dir}-static)
 
 if(BUILDING_MIKTEX)
@@ -669,14 +717,19 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_netpbm_dir})
 endif(BUILDING_MIKTEX)
 
-add_subdirectory(${rel_zlib_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_zlib_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_zlib_dir}-static)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
-add_subdirectory(${rel_png_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_png_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
+add_subdirectory(${rel_png_dir}-static)
 
 add_subdirectory(${rel_xpdf_dir})
 
@@ -688,7 +741,9 @@ add_subdirectory(${rel_cweb_dir})
 
 add_subdirectory(${rel_tie_dir})
 
-add_subdirectory(${rel_md5_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_md5_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_md5_dir}-static)
 
 add_subdirectory(${rel_core_dir})
@@ -700,23 +755,32 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_touch_dir})
 endif(BUILDING_MIKTEX)
 
-add_subdirectory(${rel_extractor_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_extractor_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_extractor_dir}-static)
 
 add_subdirectory(${rel_mpmlib_dir})
 add_subdirectory(${rel_mpmlib_dir}-static)
 
 if(QT4_FOUND)
-  add_subdirectory(${rel_ui_qt_dir})
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_ui_qt_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_ui_qt_dir}-static)
 endif(QT4_FOUND)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})
 endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-add_subdirectory(${rel_app_dir})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_app_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
+add_subdirectory(${rel_app_dir}-static)
 
 add_subdirectory(${rel_texmf_dir})
+add_subdirectory(${rel_texmf_dir}-static)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dib_dir})
@@ -727,6 +791,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_kpsemu_dir})
+add_subdirectory(${rel_kpsemu_dir}-static)
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})

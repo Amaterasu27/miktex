@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+if(LINK_EVERYTHING_STATICALLY)
+  use_static_crt()
+  use_static_libraries()
+endif(LINK_EVERYTHING_STATICALLY)
+  
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -52,5 +57,10 @@ add_custom_target(
 create_web_app(Tangle)
 create_web_app(Weave)
 
-add_dependencies(${tangle_dll_name} bootstrap)
-add_dependencies(${weave_dll_name} ${miktex_prefix}tangle)
+if(LINK_EVERYTHING_STATICALLY)
+  add_dependencies(${tangle_lib_name} bootstrap)
+  add_dependencies(${weave_lib_name} ${miktex_prefix}tangle)
+else(LINK_EVERYTHING_STATICALLY)
+  add_dependencies(${tangle_dll_name} bootstrap)
+  add_dependencies(${weave_dll_name} ${miktex_prefix}tangle)
+endif(LINK_EVERYTHING_STATICALLY)

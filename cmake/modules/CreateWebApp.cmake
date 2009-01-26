@@ -110,8 +110,14 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     COPYONLY
   )
 
-  set(${${_short_name_l}_dll_name}_sources
-    ${${${_short_name_l}_dll_name}_sources}
+  if(LINK_EVERYTHING_STATICALLY)
+    set(_target_name ${${_short_name_l}_lib_name})
+  else(LINK_EVERYTHING_STATICALLY)
+    set(_target_name ${${_short_name_l}_dll_name})
+  endif(LINK_EVERYTHING_STATICALLY)
+
+  set(${_target_name}_sources
+    ${${_target_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.cc
     ${${_short_name_l}_header_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}main.cpp
@@ -191,8 +197,8 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   if(NATIVE_WINDOWS)
     if(EXISTS ${_short_name_l}.rc)
-      set(${${_short_name_l}_dll_name}_sources
-	${${${_short_name_l}_dll_name}_sources}
+      set(${_target_name}_sources
+	${${_target_name}_sources}
 	${_short_name_l}.rc)
     endif(EXISTS ${_short_name_l}.rc)
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in)
@@ -200,32 +206,34 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.rc
       )
-      set(${${_short_name_l}_dll_name}_sources
-	${${${_short_name_l}_dll_name}_sources}
+      set(${_target_name}_sources
+	${${_target_name}_sources}
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.rc)
     endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${_short_name_l}.rc.in)
   endif(NATIVE_WINDOWS)
 
-  add_library(${${_short_name_l}_dll_name}
-    SHARED ${${${_short_name_l}_dll_name}_sources})
-
-  set_target_properties(${${_short_name_l}_dll_name}
-    PROPERTIES
+  if(LINK_EVERYTHING_STATICALLY)
+    add_library(${_target_name}
+      STATIC ${${_target_name}_sources})
+  else(LINK_EVERYTHING_STATICALLY)
+    add_library(${_target_name}
+      SHARED ${${_target_name}_sources})
+    set_target_properties(${_target_name}
+      PROPERTIES
       VERSION "${MIKTEX_SERIES_STR}"
       SOVERSION "1"
-  )
-
-  target_link_libraries(${${_short_name_l}_dll_name}
-    ${app_dll_name}
-    ${core_dll_name}
-    ${popt_dll_name}
-    ${texmf_dll_name}
-  )
-
-  rebase(${${_short_name_l}_dll_name})
+      )
+    target_link_libraries(${_target_name}
+      ${app_dll_name}
+      ${core_dll_name}
+      ${popt_dll_name}
+      ${texmf_dll_name}
+      )
+    rebase(${_target_name})
+  endif(LINK_EVERYTHING_STATICALLY)
 
   install(
-    TARGETS ${${_short_name_l}_dll_name}
+    TARGETS ${_target_name}
     RUNTIME DESTINATION "${bindir}"
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
@@ -238,12 +246,19 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
       VERSION "${MIKTEX_SERIES_STR}"
   )
 
-  add_dependencies(${_invocation_name} ${${_short_name_l}_dll_name})
+  add_dependencies(${_invocation_name} ${_target_name})
 
-  target_link_libraries(${_invocation_name}
-    ${core_dll_name}
-    ${${_short_name_l}_dll_name}
-  )
+  if(LINK_EVERYTHING_STATICALLY)
+    target_link_libraries(${_invocation_name}
+      ${_target_name}
+      ${MIKTEX_STATIC_LINK_LIBRARIES}
+    )
+  else(LINK_EVERYTHING_STATICALLY)
+    target_link_libraries(${_invocation_name}
+      ${core_dll_name}
+      ${_target_name}
+    )
+  endif(LINK_EVERYTHING_STATICALLY)
 
   merge_manifests(${_invocation_name} asInvoker)
 
@@ -270,10 +285,10 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 	LIBRARY DESTINATION "${libdir}"
 	ARCHIVE DESTINATION "${libdir}"
       )
-      add_dependencies(${_short_name_l} ${${_short_name_l}_dll_name})
+      add_dependencies(${_short_name_l} ${_target_name})
       target_link_libraries(${_short_name_l}
         ${core_dll_name}
-        ${${_short_name_l}_dll_name}
+        ${_target_name}
       )
     endif(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
 
@@ -284,7 +299,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     )
     target_link_libraries(${_alt_invocation_name}
       ${core_dll_name}
-      ${${_short_name_l}_dll_name}
+      ${_target_name}
     )
     merge_manifests(${_alt_invocation_name} asInvoker)
     install(

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -155,52 +155,56 @@ if(NATIVE_WINDOWS)
   endif(HAVE_ATLBASE_H)
 endif(NATIVE_WINDOWS)
 
-add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
 
-set_target_properties(${mpm_dll_name}
-  PROPERTIES
-    VERSION "${MIKTEX_SERIES_STR}"
-    SOVERSION "1"
-)
+  set_target_properties(${mpm_dll_name}
+    PROPERTIES
+      VERSION "${MIKTEX_SERIES_STR}"
+      SOVERSION "1"
+  )
 
-target_link_libraries(${mpm_dll_name}
-  ${core_dll_name}
-  ${expat_dll_name}
-  ${extractor_dll_name}
-  ${md5_dll_name}
-)
-
-if(NATIVE_WINDOWS)
   target_link_libraries(${mpm_dll_name}
+    ${core_dll_name}
+    ${expat_dll_name}
+    ${extractor_dll_name}
+    ${md5_dll_name}
+  )
+
+  if(NATIVE_WINDOWS)
+    target_link_libraries(${mpm_dll_name}
+      ${curl_dll_name}
+      Ws2_32
+      wininet
+    )
+  else(NATIVE_WINDOWS)
+    target_link_libraries(${mpm_dll_name}
+      ${CURL_LIBRARIES}
+    )
+  endif(NATIVE_WINDOWS)
+
+  delay_load(${mpm_dll_name}
     ${curl_dll_name}
+    ${extractor_dll_name}
     Ws2_32
     wininet
   )
-else(NATIVE_WINDOWS)
-  target_link_libraries(${mpm_dll_name}
-    ${CURL_LIBRARIES}
+
+  rebase(${mpm_dll_name})
+
+  install(TARGETS ${mpm_dll_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
   )
-endif(NATIVE_WINDOWS)
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
-delay_load(${mpm_dll_name}
-  ${curl_dll_name}
-  ${extractor_dll_name}
-  Ws2_32
-  wininet
-)
-
-rebase(${mpm_dll_name})
-
-install(TARGETS ${mpm_dll_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
-
-install(
-  FILES
-    include/miktex/PackageManager/PackageManager
-    include/miktex/PackageManager/PackageManager.h
-  DESTINATION
-    ${incdir}/miktex/PackageManager
-)
+if(INSTALL_MIKTEX_HEADERS)
+  install(
+    FILES
+      include/miktex/PackageManager/PackageManager
+      include/miktex/PackageManager/PackageManager.h
+    DESTINATION
+      ${incdir}/miktex/PackageManager
+  )
+endif(INSTALL_MIKTEX_HEADERS)

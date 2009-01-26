@@ -24,7 +24,7 @@
 #include "internal.h"
 
 #include <CPP/Common/MyWindows.h>
-#include <CPP/Common/MyInitGuid.h>
+#include <CPP/Common/MyGuidDef.h>
 #include <CPP/7zip/ICoder.h>
 
 #include <miktex/lzma.h>

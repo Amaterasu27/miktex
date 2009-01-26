@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -120,6 +120,7 @@ set(icule_dll_name	"icule")
 set(icuuc_dll_name	"icuuc")
 
 ## static library names
+set(app_lib_name	"app-static")
 set(bzip2_lib_name	"bzip2-static")
 set(core_lib_name	"core-static")
 set(curl_lib_name	"curl-static")
@@ -129,12 +130,21 @@ set(fofi_lib_name	"fofi-static")
 set(getopt_lib_name	"getopt-static")
 set(goo_lib_name	"goo-static")
 set(graphite_engine_lib_name	"graphite-engine-static")
+set(kpsemu_lib_name	"kpseweb2cemu-static")
 set(lzma_lib_name	"lzma-static")
+set(makex_lib_name	"make-static")
 set(md5_lib_name	"md5-static")
 set(mpm_lib_name	"mpm-static")
 set(mspack_lib_name	"mspack-static")
+set(mthelp_lib_name	"mthelp-static")
+set(pdftex_lib_name	"pdftex-static")
+set(png_lib_name	"png-static")
 set(popt_lib_name	"popt-static")
 set(regex_lib_name	"regex-static")
+set(tangle_lib_name	"tangle-static")
+set(texmf_lib_name	"texmf-static")
+set(ui_qt_lib_name	"ui-Qt-static")
 set(uriparser_lib_name	"uriparser-static")
+set(weave_lib_name	"weave-static")
 set(xpdf_lib_name	"xpdf-static")
 set(zlib_lib_name	"zlib-static")

@@ -1,6 +1,6 @@
 /* misc.c: C4P utilities					-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2009 Christian Schenk
 
    This file is part of C4P.
 
@@ -32,6 +32,10 @@
 
 #include "c4p-version.h"
 #include "common.h"
+
+#if defined(_MSC_VER)
+//#  define EMIT_OPTIMIZE_PRAGMA 1
+#endif
 
 using namespace std;
 
@@ -123,6 +127,9 @@ open_header_file ()
     {
       out_form ("#include <%s>\n", def_filename.c_str());
     }
+  out_form ("#if !defined(C4P%sAPI)\n", prog_symbol->s_repr);
+  out_form ("#  define C4P%sAPI(type) type\n", prog_symbol->s_repr);
+  out_form ("#endif\n");
   if (class_name.length() == 0)
     {
       out_form ("#ifdef __cplusplus\n");
@@ -228,6 +235,10 @@ begin_new_c_file (const char *file_name, int is_main)
   redir_file (C_FILE_NUM);
   generate_file_header ();
 
+  out_form ("#if !defined(C4P%sAPI)\n", prog_symbol->s_repr);
+  out_form ("#  define C4P%sAPI(type) C4PCEEAPI(type)\n", prog_symbol->s_repr);
+  out_form ("#endif\n");
+  
   if (using_namespace.size() > 0)
     {
       out_form ("#ifdef __cplusplus\n");
@@ -401,6 +412,7 @@ begin_routine (prototype_node *	proto,
   mark_symbol_table ();
   mark_string_table ();
   mark_type_table ();
+#if EMIT_OPTIMIZE_PRAGMA
   out_form ("#if defined (C4P_OPT_%s) && ! defined (C4P_OPT_%u)\n",
 	    proto->name->s_repr, handle);
   out_form ("#define C4P_OPT_%u C4P_OPT_%s\n", handle, proto->name->s_repr);
@@ -411,6 +423,7 @@ begin_routine (prototype_node *	proto,
   out_form ("#ifdef C4P_NOOPT_%s\n", proto->name->s_repr);
   out_form ("#pragma optimize (\"\", off)\n");
   out_s ("#endif\n");
+#endif
   generate_routine_head (proto);
   out_s ("\n");
   out_s ("{\n");
@@ -450,7 +463,9 @@ end_routine (unsigned handle)
     {
       declare_fast_var_macro (handle);
     }
+#if EMIT_OPTIMIZE_PRAGMA
   out_s ("#pragma optimize (\"\", on)\n");
+#endif
 }
 
 /* _________________________________________________________________________
