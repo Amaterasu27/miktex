@@ -21,7 +21,9 @@ add_executable(bintoc bintoc.cpp)
 
 merge_trustinfo_manifest(bintoc asInvoker)
 
-install(TARGETS bintoc DESTINATION "${bindir}")
+if(BUILDING_MIKTEX)
+  install(TARGETS bintoc DESTINATION "${bindir}")
+endif(BUILDING_MIKTEX)
 
 if(NATIVE_WINDOWS)
   add_executable(headerguard headerguard.cpp)
@@ -34,7 +36,9 @@ add_executable(j2000 j2000.cpp)
 
 merge_trustinfo_manifest(j2000 asInvoker)
 
-install(TARGETS j2000 DESTINATION "${bindir}")
+if(BUILDING_MIKTEX)
+  install(TARGETS j2000 DESTINATION "${bindir}")
+endif(BUILDING_MIKTEX)
 
 if(NATIVE_WINDOWS)
   add_executable(mkdllbases mkdllbases.cpp)
@@ -48,7 +52,9 @@ add_executable(web-n web-n.cpp)
 
 merge_trustinfo_manifest(web-n asInvoker)
 
-install(TARGETS web-n DESTINATION "${bindir}")
+if(BUILDING_MIKTEX)
+  install(TARGETS web-n DESTINATION "${bindir}")
+endif(BUILDING_MIKTEX)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/runhhc.perl.in

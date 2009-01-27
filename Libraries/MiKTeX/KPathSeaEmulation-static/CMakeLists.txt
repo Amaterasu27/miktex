@@ -34,8 +34,10 @@ set(${kpsemu_lib_name}_sources
 
 add_library(${kpsemu_lib_name} STATIC ${${kpsemu_lib_name}_sources})
 
-install(TARGETS ${kpsemu_lib_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+if(INSTALL_STATIC_LIBRARIES)
+  install(TARGETS ${kpsemu_lib_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(INSTALL_STATIC_LIBRARIES)

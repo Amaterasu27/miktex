@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -84,4 +84,6 @@ add_executable(cweave ${cweave_sources})
 
 merge_trustinfo_manifest(cweave asInvoker)
 
-install(TARGETS ctangle cweave DESTINATION "${bindir}")
+if(BUILDING_MIKTEX)
+  install(TARGETS ctangle cweave DESTINATION "${bindir}")
+endif(BUILDING_MIKTEX)

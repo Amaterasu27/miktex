@@ -72,6 +72,12 @@ option(
   FALSE
 )
 
+option(
+  INSTALL_STATIC_LIBRARIES
+  "Install static libraries."
+  FALSE
+)
+
 ## check all dyn.sed files, if you alter C4P_VAR_NAME_PREFIX
 set(C4P_VAR_NAME_PREFIX "g_")
 

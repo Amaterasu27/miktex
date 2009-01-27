@@ -58,8 +58,10 @@ set(${texmf_lib_name}_sources
 
 add_library(${texmf_lib_name} STATIC ${${texmf_lib_name}_sources})
 
-install(TARGETS ${texmf_lib_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+if(INSTALL_STATIC_LIBRARIES)
+  install(TARGETS ${texmf_lib_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(INSTALL_STATIC_LIBRARIES)

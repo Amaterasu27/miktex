@@ -97,8 +97,10 @@ add_library(${ui_qt_lib_name} STATIC
   ${${ui_qt_lib_name}_ui_mocs}
 )
 
-install(TARGETS ${ui_qt_lib_name}
-  RUNTIME DESTINATION "${bindir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
-)
+if(INSTALL_STATIC_LIBRARIES)
+  install(TARGETS ${ui_qt_lib_name}
+    RUNTIME DESTINATION "${bindir}"
+    LIBRARY DESTINATION "${libdir}"
+    ARCHIVE DESTINATION "${libdir}"
+  )
+endif(INSTALL_STATIC_LIBRARIES)

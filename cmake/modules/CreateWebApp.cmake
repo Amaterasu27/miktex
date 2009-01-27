@@ -232,12 +232,14 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     rebase(${_target_name})
   endif(LINK_EVERYTHING_STATICALLY)
 
-  install(
-    TARGETS ${_target_name}
-    RUNTIME DESTINATION "${bindir}"
-    LIBRARY DESTINATION "${libdir}"
-    ARCHIVE DESTINATION "${libdir}"
-  )
+  if(LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
+    install(
+      TARGETS ${_target_name}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}"
+    )
+  endif(LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
 
   add_executable(${_invocation_name} ${_short_name_l}wrapper.cpp)
 
