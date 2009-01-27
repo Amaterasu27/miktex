@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -586,6 +586,10 @@ SessionImpl::SaveRootDirectories ()
     {
       startupConfig.userConfigRoot = GetRootDirectory(userConfigRootIndex);
     }
+#if ! defined(MIKTEX_WINDOWS)
+  // force creation of the startup configuration file
+  haveStartupConfigFile = true;
+#endif
   if (haveStartupConfigFile)
     {
       WriteStartupConfigFile (startupConfig);
