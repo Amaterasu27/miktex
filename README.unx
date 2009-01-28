@@ -1,19 +1,18 @@
-This 'README' file belongs to the MiKTeX source distribution.  It
-briefly describes the build process on Unix system-alikes.
+This 'README' file belongs to the "MiKTeX Tools" source distribution
+for Unix-alike systems.
 
 FIRST THINGS FIRST
 ------------------
 
-* This package does not comprise a TeX system: the package should be
-  regarded as an addition to the TeX system installed on your system.
+* "MiKTeX Tools" (this package) does not comprise a TeX system: it
+  should be regarded as an addition to the TeX system installed on
+  your system.
 
 * The package is meant to be compiled on Unix-like operating systems.
 
-* The following utilities are included in this package:
+* The following utilities are included:
 
-  - initexmf: MiKTeX Configuration Utility
-
-  - miktex-pdftex: the MiKTeX implementation of the pdfTeX engine
+  - miktex-pdftex: MiKTeX implementation of the pdfTeX engine
 
   - mpm: MiKTeX Package Manager (console application)
 
@@ -21,27 +20,29 @@ FIRST THINGS FIRST
 
   - mthelp: MiKTeX Help Utility (a texdoc alternative)
 
+  - initexmf: the MiKTeX Configuration Utility
+
 For more information about the MiKTeX project, visit the project page
 at www.miktex.org.
 
 PREREQUISITES
 -------------
 
-[ ] MiKTeX is mostly written in C++.  It should work with any
+[ ] "MiKTeX Tools" is mostly written in C++.  It should work with any
     ANSI-compliant C++ compiler.
 
 [ ] CMake 2.6 (or newer) is required for building and installing
-    MiKTeX.
+    "MiKTeX Tools".
 
 [ ] The Qt development kit (version 4.4.0 or newer) is required, if
-    you intend to build GUI applications (e.g., the GUI variant of the
-    package manager). A common name for this package is libqt4-devel.
+    you intend to enable GUI features (e.g., the auto-installer
+    message box). A common name for this package is libqt4-devel.
 
 [ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are
     required for building the reference pages.
 
-[ ] MiKTeX depends on the availability of pthreads libraries and
-    header files.
+[ ] "MiKTeX Tools" depends on the availability of pthreads libraries
+    and header files.
 
 [ ] libCURL libraries and header files are required. A common name for
     this package is libcurl-devel.
@@ -56,44 +57,37 @@ Run CMake to produce the makefiles customized for your system:
 
     cmake -G "Unix Makefiles"
 
-The CMake script uses kpsewhich(1) (if available) to find existing
-TEXMF trees.  The MiKTeX package manager will install packages in the
-user TEXMF directory (~/texmf).  You can explicitly specify your
-prefered installation directory by setting the CMake variable
-MIKTEX_INSTALLROOT.  For example, you can run CMake like this:
-
-    cmake -G "Unix Makefiles" \
-      -DMIKTEX_INSTALLROOT=`kpsewhich --expand-path \$TEXMFLOCAL`
-
-Run the make utility to compile MiKTeX:
+Run the make utility to build everything:
 
     make
 
 INSTALLING THE PACKAGE
 ----------------------
 
-Specify the 'install' target to install the binaries, libraries,
-header files, and reference pages:
+Specify the 'install' target to install the binaries and reference
+pages:
 
     make install
 
-It may be necessary to run ldconfig to update the links and cache to
-reflect the new libraries installed during the install.
+RUN-TIME CONFIGURATION
+----------------------
 
-USING THE MIKTEX CONFIGURATION UTILITY
---------------------------------------
+You use the MiKTeX configuration utility to configure "MiKTeX Tools":
 
-The MiKTeX utilities may not work properly without the MiKTeX file
-name database.  You use the MiKTeX configuration utility to create the
-file name database files:
+    initexmf --verbose --configure
 
-    initexmf -u
+This is what happens when you configure "MiKTeX Tools":
+
+- kpsewich(1) is used to find existing TEXMF trees; the information is
+  written to ~/.miktex/miktex/config/miktexstartup.ini
+- the file name database is created
+- the package database is downloaded from the MiKTeX package repository
 
 USING MIKTEX-PDFTEX
 -------------------
 
-The MiKTeX-pdfTeX engine is an alternative pdfTeX engine. The engine
-features integrated package management, i.e., missing packages will be
+MiKTeX-pdfTeX is an alternative pdfTeX engine. The engine features
+integrated package management, i.e., missing packages will be
 installed on the-fly (after confirmation).
 
 You invoke MiKTeX-pdfTeX as follows:
@@ -101,8 +95,10 @@ You invoke MiKTeX-pdfTeX as follows:
     miktex-pdftex --undump=latex sample2e
 
 The --undump option must be used to specify the format.  See the
-reference page miktex-pdftex(1), for more information.  If you prefer
-shortcuts, you can create symbolic links to the MiKTeX-pdfTeX engine:
+reference page miktex-pdftex(1), for more information.
+
+If you prefer shortcuts, you can create symbolic links to the
+MiKTeX-pdfTeX engine:
 
     cd /usr/local/bin
     ln -s miktex-pdftex latex
@@ -110,7 +106,7 @@ shortcuts, you can create symbolic links to the MiKTeX-pdfTeX engine:
 
 Then you can invoke the engine in the usual way:
 
-    latex sample2e
+     pdflatex sample2e
 
 USING THE PACKAGE MANAGER
 -------------------------
@@ -129,7 +125,7 @@ This command retrieves the package database files from a remote
 package repository and installs them in the installation directory.
 
 You are now ready to browse and install packages.  There are two
-variants of the package manager: console and GUI. Run
+variants of the package manager: GUI and console. Run
 
     mpm
 

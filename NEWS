@@ -1,0 +1,25 @@
+ _____________________________________________________________________________
+
+ MiKTeX Tools 2.8 Beta 2                                         February 2009
+ _____________________________________________________________________________
+
+
+ * MiKTeX-pdfTeX, the MiKTeX variant of the pdfTeX angine, has been
+   ported. The engine features integrated package management, i.e.,
+   missing packages will be installed on-the-fly (after confirmation).
+
+ * Run-time configuration: the MiKTeX configuration utility uses
+   kpsewhich(1) to find existing TEXMF trees.
+
+ * Link everything statically (don't build shared objects).
+
+
+ _____________________________________________________________________________
+
+ MiKTeX Tools 2.8 Beta 1                                        September 2008
+ _____________________________________________________________________________
+
+
+ * The MiKTeX package manager graphical user interface (GUI) has been
+   ported to GNU/Linux using the Qt widget toolkit.
+

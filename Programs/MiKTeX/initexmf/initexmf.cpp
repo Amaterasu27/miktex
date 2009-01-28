@@ -155,6 +155,12 @@ public:
     return (output.c_str());
   }
 public:
+  void
+  Clear ()
+  {
+    output = "";
+  }
+public:
   virtual
   bool
   MIKTEXTHISCALL
@@ -312,7 +318,8 @@ configShortcuts[] = {
 
 class IniTeXMFApp
   : public ICreateFndbCallback,
-    public IEnumerateFndbCallback
+    public IEnumerateFndbCallback,
+    public PackageInstallerCallback
 {
 public:
   IniTeXMFApp ();
@@ -484,6 +491,24 @@ private:
 	      /*[in]*/ const char *	lpszInfo,
 	      /*[in]*/  bool		isDirectory);
 
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  ReportLine (/*[in]*/ const char * lpszLine);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  OnRetryableError (/*[in]*/ const char * lpszMessage);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  OnProgress (/*[in]*/ Notification	nf);
+
 private:
   PathName enumDir;
 
@@ -612,7 +637,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     OPT_CONFIGURE,
     T_("Configure MiKTeX on this system."),
     0,
-  }
+  },
 #endif
 
   {
@@ -2465,6 +2490,41 @@ IniTeXMFApp::ReportBrokenPackages ()
 
 /* _________________________________________________________________________
 
+   IniTeXMFApp::ReportLine
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ReportLine (/*[in]*/ const char * lpszLine)
+{
+  Verbose ("%s", lpszLine);
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::OnRetryableError
+   _________________________________________________________________________ */
+
+bool
+IniTeXMFApp::OnRetryableError (/*[in]*/ const char * lpszMessage)
+{
+  lpszMessage;
+  return (false);
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::OnProgress
+   _________________________________________________________________________ */
+
+bool
+IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
+{
+  nf;
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    IniTeXMFApp::Configure
    _________________________________________________________________________ */
 
@@ -2475,26 +2535,40 @@ IniTeXMFApp::Configure ()
   ProcessOutput output;
   int exitCode;
   StartupConfig startupConfig;
-  ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMF",
-			&exitCode,
-			&output,
-			0);
+  Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMF",
+				 &exitCode,
+				 &output,
+				 0);
   if (exitCode == 0)
     {
       startupConfig.roots = output.Get();
+      Verbose (T_("Found $TEXMF: %s"), Q_(startupConfig.roots));
     }
   string installRoot;
-  ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMFHOME",
-			&exitCode,
-			&output,
-			0);
+  output.Clear ();
+  Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMFHOME",
+				 &exitCode,
+				 &output,
+				 0);
   if (exitCode == 0)
     {
       startupConfig.userInstallRoot = output.Get();
+      Verbose (T_("Found $TEXMFHOME: %s"), Q_(startupConfig.userInstallRoot));
     }
   SetTeXMFRootDirectories ();
+  unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
+  for (unsigned r = 0; r < nRoots; ++ r)
+    {
+      UpdateFilenameDatabase (r);
+    }
+  auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
+  pInstaller->SetCallback (this);
+  Verbose (T_("Creating package database..."));
+  pInstaller->UpdateDb ();
+  pInstaller->Dispose ();
+  pManager->CreateMpmFndb ();
 }
-#enduf
+#endif
 
 /* _________________________________________________________________________
 

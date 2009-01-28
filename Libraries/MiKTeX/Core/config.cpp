@@ -132,6 +132,16 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
     }
 #endif
 
+#if ! defined(MIKTEX_STANDALONE)
+  StartupConfig defaultStartupConfig = DefaultConfig(false);
+  path = defaultStartupConfig.userConfigRoot;
+  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+  if (File::Exists(path))
+    {
+      return (true);
+    }
+#endif
+
   PathName bindir = GetMyLocation();
 
 #if defined(MIKTEX_WINDOWS)
@@ -357,7 +367,27 @@ SessionImpl::WriteStartupConfigFile
 
   if (startupConfigFile.Empty())
     {
+#if ! defined(MIKTEX_STANDALONE)
+      if (! startupConfig.userConfigRoot.Empty())
+	{
+	  startupConfigFile = startupConfig.userConfigRoot;
+	}
+      else
+	{
+	  startupConfigFile = defaultConfig.userConfigRoot;
+	}
+      if (startupConfigFile.Empty())
+	{
+	  UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
+	}
+      startupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+      PathName dir;
+      dir = startupConfigFile;
+      dir.RemoveFileSpec ();
+      Directory::Create (dir);
+#else
       UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
+#endif
     }
 
   pcfg->Write (startupConfigFile.Get());
