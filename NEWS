@@ -5,8 +5,13 @@
 
 
  * MiKTeX-pdfTeX, the MiKTeX variant of the pdfTeX angine, has been
-   ported. The engine features integrated package management, i.e.,
-   missing packages will be installed on-the-fly (after confirmation).
+   ported to UNIX system-like platforms.
+
+   The engine features integrated package management, i.e., missing
+   packages will be installed on-the-fly (after confirmation).
+
+   The binary is installed as miktex-pdftex so that it can coexist
+   with the system-installed pdftex binary.
 
  * Run-time configuration: the MiKTeX configuration utility uses
    kpsewhich(1) to find existing TEXMF trees.

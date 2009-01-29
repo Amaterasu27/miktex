@@ -93,9 +93,9 @@
 <!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">
 <!ENTITY GNU "<application>GNU</application>">
 <!ENTITY GNULinux "&GNU;/Linux">
-<!ENTITY Unix "<application>Unix</application>">
-<!ENTITY Unixlike "<application>&Unix;-like</application>">
-<!ENTITY UNIX "<application>UNIX&reg;</application>">
+<!ENTITY UNIXsystemlike "<application>&UNIX; system-like</application>">
+<!ENTITY UNIXreg "<application>UNIX&reg;</application>">
+<!ENTITY UNIX "<application>UNIX</application>">
 <!ENTITY Yap "<application>Yap</application>">
 <!ENTITY Cygwin "<application>Cygwin</application>">
 <!ENTITY bibtex "<command>bibtex</command>">
@@ -106,6 +106,7 @@
 <!ENTITY pdfclose "<command>pdfclose</command>">
 <!ENTITY mpc "<command>mpc</command>">
 <!ENTITY findtexmf "<command>findtexmf</command>">
+<!ENTITY kpsewhich "<command>kpsewhich</command>">
 <!ENTITY md5walk "<command>md5walk</command>">
 <!ENTITY MD5Walk "<application>MD5Walk</application>">
 <!ENTITY cabextract "<command>cabextract</command>">

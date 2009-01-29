@@ -35,6 +35,24 @@
 
 <variablelist>
 <varlistentry>
+<term><option>--configure</option></term>
+<listitem>
+<indexterm>
+<primary>--configure</primary>
+</indexterm>
+<para>This option is only available on &UNIXsystemlike;
+platforms. Configure &MiKTeX;:</para>
+<itemizedlist>
+<listitem><para>&kpsewhich; is run to find existing &TEXMF; trees; the
+information is written to
+<filename>~/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
+<listitem><para>the file name database is created</para></listitem>
+<listitem><para>the package database is downloaded from the &MiKTeX;
+package repository</para></listitem>
+</itemizedlist>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--dump</option></term>
 <listitem>
 <indexterm>

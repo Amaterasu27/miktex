@@ -1,5 +1,6 @@
 This 'README' file belongs to the "MiKTeX Tools" source distribution
-for Unix-alike systems.
+for UNIX syste-like platforms (GNU/Linux, Mac OS X, ...).
+
 
 FIRST THINGS FIRST
 ------------------
@@ -8,7 +9,7 @@ FIRST THINGS FIRST
   should be regarded as an addition to the TeX system installed on
   your system.
 
-* The package is meant to be compiled on Unix-like operating systems.
+* The package is meant to be compiled on UNIX system-like platforms.
 
 * The following utilities are included:
 
@@ -25,6 +26,7 @@ FIRST THINGS FIRST
 For more information about the MiKTeX project, visit the project page
 at www.miktex.org.
 
+
 PREREQUISITES
 -------------
 
@@ -36,7 +38,7 @@ PREREQUISITES
 
 [ ] The Qt development kit (version 4.4.0 or newer) is required, if
     you intend to enable GUI features (e.g., the auto-installer
-    message box). A common name for this package is libqt4-devel.
+    message box).  A common name for this package is libqt4-devel.
 
 [ ] Lynx (text-based web browser) and xsltproc (XSLT processor) are
     required for building the reference pages.
@@ -44,11 +46,27 @@ PREREQUISITES
 [ ] "MiKTeX Tools" depends on the availability of pthreads libraries
     and header files.
 
-[ ] libCURL libraries and header files are required. A common name for
-    this package is libcurl-devel.
+[ ] libCURL libraries and header files are required.  A common name
+    for this package is libcurl-devel.
 
-[ ] dos2unix is used to remove DOS line-endings from source
-    files. This utility is a part of the 'tofrodos' package.
+[ ] dos2unix is used to remove DOS line-endings from source files.
+    This utility is a part of the 'tofrodos' package.
+
+
+QUICK START
+-----------
+
+Only if you want to avoid reading the rest: execute these commands to
+build and install "MiKTeX Tools":
+
+   cmake -G "Unix Makefiles"
+   make install
+   initexmf --verbose --configure
+
+Execute this command to run a quick test:
+
+   miktex-pdftex --undump=pdflatex sample2e
+
 
 COMPILING THE PACKAGE
 ---------------------
@@ -61,6 +79,7 @@ Run the make utility to build everything:
 
     make
 
+
 INSTALLING THE PACKAGE
 ----------------------
 
@@ -69,10 +88,11 @@ pages:
 
     make install
 
+
 RUN-TIME CONFIGURATION
 ----------------------
 
-You use the MiKTeX configuration utility to configure "MiKTeX Tools":
+Run the MiKTeX configuration utility to configure "MiKTeX Tools":
 
     initexmf --verbose --configure
 
@@ -83,10 +103,11 @@ This is what happens when you configure "MiKTeX Tools":
 - the file name database is created
 - the package database is downloaded from the MiKTeX package repository
 
+
 USING MIKTEX-PDFTEX
 -------------------
 
-MiKTeX-pdfTeX is an alternative pdfTeX engine. The engine features
+MiKTeX-pdfTeX is an alternative pdfTeX engine.  The engine features
 integrated package management, i.e., missing packages will be
 installed on the-fly (after confirmation).
 
@@ -107,6 +128,7 @@ MiKTeX-pdfTeX engine:
 Then you can invoke the engine in the usual way:
 
      pdflatex sample2e
+
 
 USING THE PACKAGE MANAGER
 -------------------------
@@ -147,6 +169,7 @@ If you want to install a package, run
 
     mpm --install=PACKAGE
 
+
 USING THE MTHELP UTILITY
 ------------------------
 
@@ -159,11 +182,13 @@ Run
 to view an HTML page wich contains links to the documentation files of
 a package.
 
+
 DOCUMENTATION
 -------------
 
 The following reference pages are available: initexmf.1,
 miktex-pdftex.1, mpm.1, mthelp.1.
+
 
 BUGS & ISSUES
 -------------
