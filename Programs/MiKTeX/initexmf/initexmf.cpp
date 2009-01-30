@@ -149,10 +149,25 @@ public:
   {
   }
 public:
+  void
+  RemoveTrailingNewline ()
+  {
+    if (output.length() > 0 && output[output.length() - 1] == '\n')
+      {
+	output.erase (output.length() - 1);
+      }
+  }
+public:
   const char *
   Get ()
   {
     return (output.c_str());
+  }
+public:
+  size_t
+  GetLength ()
+  {
+    return (output.length());
   }
 public:
   void
@@ -2534,26 +2549,31 @@ IniTeXMFApp::Configure ()
 {
   ProcessOutput output;
   int exitCode;
-  StartupConfig startupConfig;
-  Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMF",
-				 &exitCode,
-				 &output,
-				 0);
-  if (exitCode == 0)
-    {
-      startupConfig.roots = output.Get();
-      Verbose (T_("Found $TEXMF: %s"), Q_(startupConfig.roots));
-    }
-  string installRoot;
   output.Clear ();
   Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMFHOME",
 				 &exitCode,
 				 &output,
 				 0);
-  if (exitCode == 0)
+  output.RemoveTrailingNewline ();
+  if (exitCode == 0 && output.GetLength() > 0)
     {
+      Verbose (T_("Found $TEXMFHOME: %s"), Q_(output.Get()));
       startupConfig.userInstallRoot = output.Get();
-      Verbose (T_("Found $TEXMFHOME: %s"), Q_(startupConfig.userInstallRoot));
+    }
+  output.Clear ();
+  Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMF",
+				 &exitCode,
+				 &output,
+				 0);
+  output.RemoveTrailingNewline ();
+  if (exitCode == 0 && output.GetLength() > 0)
+    {
+      Verbose (T_("Found $TEXMF: %s"), Q_(output.Get()));
+      if (! startupConfig.roots.empty())
+	{
+	  startupConfig.roots += PathName::PathNameDelimiter;
+	}
+      startupConfig.roots = output.Get();
     }
   SetTeXMFRootDirectories ();
   unsigned nRoots = pSession->GetNumberOfTEXMFRoots();

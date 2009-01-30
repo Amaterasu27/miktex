@@ -252,26 +252,7 @@ foreach(p ${required_programs})
 endforeach(p)
 
 if(BUILDING_MIKTEX_TOOLS)
-  find_program(KPSEWHICH_EXE NAMES kpsewhich)
-  if(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
-    execute_process(
-      COMMAND kpsewhich --expand-path \$TEXMF
-      OUTPUT_VARIABLE MIKTEX_ROOTS
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  endif(KPSEWHICH_EXE AND NOT MIKTEX_ROOTS)
-  if(MIKTEX_ROOTS)
-    set(MIKTEX_ROOTS "${MIKTEX_ROOTS}:${texmfdir}")
-  else(MIKTEX_ROOTS)
-    set(MIKTEX_ROOTS "${texmfdir}")
-  endif(MIKTEX_ROOTS)  
-  if(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
-    execute_process(
-      COMMAND kpsewhich --expand-path \$TEXMFHOME
-      OUTPUT_VARIABLE MIKTEX_INSTALLROOT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  endif(KPSEWHICH_EXE AND NOT MIKTEX_INSTALLROOT)
+  set(MIKTEX_TEXMF "${texmfdir}")
 endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)

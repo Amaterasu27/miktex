@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -39,9 +39,7 @@
 #cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_VFORK 1
 
-#cmakedefine MIKTEX_ROOTS "${MIKTEX_ROOTS}"
-
-#cmakedefine MIKTEX_INSTALLROOT "${MIKTEX_INSTALLROOT}"
+#cmakedefine MIKTEX_TEXMF "${MIKTEX_TEXMF}"
 
 #cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
 

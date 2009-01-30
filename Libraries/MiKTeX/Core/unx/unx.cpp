@@ -103,32 +103,12 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
 			  T_("Environment variable HOME is not set."),
 			  0);
     }
-  PathName defaultPath (home);
-  defaultPath += ".miktex";
-#if defined(MIKTEX_ROOTS)
-  ret.roots = MIKTEX_ROOTS;
-#endif
-#if defined(MIKTEX_INSTALLROOT)
-  ret.userInstallRoot = MIKTEX_INSTALLROOT;
-#endif
-  if (ret.userInstallRoot.Empty())
-    {
-      ret.userInstallRoot = defaultPath;
-    }
-#if defined(MIKTEX_DATAROOT)
-  ret.userDataRoot = MIKTEX_DATAROOT;
-#endif
-  if (ret.userDataRoot.Empty())
-    {
-      ret.userDataRoot = defaultPath;
-    }
-#if defined(MIKTEX_CONFIGROOT)
-  ret.userConfigRoot = MIKTEX_CONFIGROOT;
-#endif
-  if (ret.userConfigRoot.Empty())
-    {
-      ret.userConfigRoot = defaultPath;
-    }
+  PathName homeMiKTeX (home);
+  homeMiKTeX += ".miktex";
+  ret.roots = MIKTEX_TEXMF;
+  ret.userInstallRoot = homeMiKTeX;
+  ret.userDataRoot = homeMiKTeX;
+  ret.userConfigRoot = homeMiKTeX;
   return (ret);
 }
 

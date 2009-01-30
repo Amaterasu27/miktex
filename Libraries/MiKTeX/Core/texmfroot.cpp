@@ -237,31 +237,47 @@ SessionImpl::InitializeRootDirectories
     {
       if (strlen(root.GetCurrent()) == 0)
 	{
+#if 1
+	  continue;
+#else
 	  UNEXPECTED_CONDITION
 	    ("SessionImpl::InitializeRootDirectories");
+#endif
 	}
       if (find(vec.begin(), vec.end(), root.GetCurrent()) != vec.end())
 	{
+#if 1
+	  continue;
+#else
 	  UNEXPECTED_CONDITION
 	    ("SessionImpl::InitializeRootDirectories");
+#endif
 	}
       if (startupConfig.commonConfigRoot == root.GetCurrent())
 	{
+#if 1
+	  continue;
+#else
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveCommonConfigRoot = true;
+#endif
 	}
       if (startupConfig.commonDataRoot == root.GetCurrent())
 	{
+#if 1
+	  continue;
+#else
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveCommonDataRoot = true;
+#endif
 	}
       if (startupConfig.commonInstallRoot == root.GetCurrent())
 	{
@@ -269,21 +285,29 @@ SessionImpl::InitializeRootDirectories
 	}
       if (startupConfig.userConfigRoot == root.GetCurrent())
 	{
+#if 1
+	  continue;
+#else
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveUserConfigRoot = true;
+#endif
 	}
       if (startupConfig.userDataRoot == root.GetCurrent())
 	{
+#if 1
+	  continue;
+#else
 	  if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("SessionImpl::InitializeRootDirectories");
 	    }
 	  haveUserDataRoot = true;
+#endif
 	}
       if (startupConfig.userInstallRoot == root.GetCurrent())
 	{
@@ -333,6 +357,14 @@ SessionImpl::InitializeRootDirectories
       commonInstallRootIndex =
 	RegisterRootDirectory(startupConfig.commonInstallRoot);
     }
+
+#if defined(MIKTEX_TEXMF)
+  if (find(vec.begin(), vec.end(), MIKTEX_TEXMF) == vec.end()
+      && Directory::Exists(MIKTEX_TEXMF))
+    {
+      vec.push_back (MIKTEX_TEXMF);
+    }
+#endif
 
   // second pass through roots
   for (vector<PathName>::const_iterator it = vec.begin();
