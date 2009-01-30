@@ -97,11 +97,12 @@ pages:
 RUN-TIME CONFIGURATION
 ----------------------
 
-Run the MiKTeX configuration utility to configure "MiKTeX Tools":
+Run the MiKTeX configuration utility to configure "MiKTeX Tools" for
+the current user:
 
     initexmf --verbose --configure
 
-This is what happens when you configure "MiKTeX Tools":
+This is what happens:
 
 - kpsewich(1) is used to find existing TEXMF trees; the information is
   written to ~/.miktex/miktex/config/miktexstartup.ini

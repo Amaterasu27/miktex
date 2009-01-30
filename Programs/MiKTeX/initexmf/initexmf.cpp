@@ -650,7 +650,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     "configure", 0,
     POPT_ARG_NONE, 0,
     OPT_CONFIGURE,
-    T_("Configure MiKTeX on this system."),
+    T_("Configure MiKTeX for the current user."),
     0,
   },
 #endif
