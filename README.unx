@@ -63,9 +63,14 @@ build and install "MiKTeX Tools":
    make install
    initexmf --verbose --configure
 
-Execute this command to run a quick test:
+Execute these commands to test it:
 
-   miktex-pdftex --undump=pdflatex sample2e
+   mpm
+   miktex-pdftex --undump=pdflatex miktex-test.tex
+
+The first command will start the package manager. The second will run
+pdfTeX on the file miktex-test.tex.  If this file does not yet exist,
+then it will trigger the installation of the miktex-test package.
 
 
 COMPILING THE PACKAGE

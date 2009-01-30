@@ -56,6 +56,13 @@ set(${texmf_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/webapp.cpp
 )
 
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/mfapp.defaults.h
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include/miktex/texapp.defaults.h
+  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/miktex/texmfapp.defaults.h
+  PROPERTIES GENERATED TRUE
+)
+
 add_library(${texmf_lib_name} STATIC ${${texmf_lib_name}_sources})
 
 if(INSTALL_STATIC_LIBRARIES)
