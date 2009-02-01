@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -47,7 +47,6 @@ add_definitions(
   -D__SyncTeX__
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
-  -DXETEXDATA=g_XETEXData
   -DXETEX_GRAPHITE
   -DXETEX_OTHER
   -DXeTeX

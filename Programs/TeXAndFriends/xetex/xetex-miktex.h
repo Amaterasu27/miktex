@@ -30,11 +30,7 @@
 #include "xetexd.h"
 
 #if ! defined(THEDATA)
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) XETEXDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "xetex.rc"
@@ -243,58 +239,46 @@ GetNameOfFileForWeb2C ()
   return (&((THEDATA(nameoffile))[-1]));
 }
 
-#if ! defined(COMPILING_XETEX_CC)
-#  define nameoffile (GetNameOfFileForWeb2C())
-#endif
+#define nameoffile (GetNameOfFileForWeb2C())
 
-#if USE_C4P_DATA_STRUCT
-
-#if defined(COMPILING_XETEX_CC)
-#  define MAKE_GLOBAL(type, name) type & name = XETEXDATA.m_##name;
-#else
-#  define MAKE_GLOBAL(type, name) extern type & name;
-#endif
-
-MAKE_GLOBAL(C4P_boolean, nopdfoutput);
-MAKE_GLOBAL(C4P_integer*, depthbase);
-MAKE_GLOBAL(C4P_integer*, heightbase);
-MAKE_GLOBAL(C4P_integer*, parambase);
-MAKE_GLOBAL(C4P_integer, bufsize);
-MAKE_GLOBAL(C4P_integer, nativefonttypeflag);
-MAKE_GLOBAL(C4P_signed16, namelength);
-MAKE_GLOBAL(C4P_signed16, namelength16);
-MAKE_GLOBAL(C4P_signed32, first);
-MAKE_GLOBAL(C4P_signed32, last);
-MAKE_GLOBAL(C4P_signed32, maxbufstack);
-MAKE_GLOBAL(char*, fontflags);
-MAKE_GLOBAL(char*, xdvbuffer);
-MAKE_GLOBAL(char, loadedfontflags);
-MAKE_GLOBAL(memoryword*, fontinfo);
-MAKE_GLOBAL(scaled*, fontletterspace);
-MAKE_GLOBAL(scaled*, fontsize);
-MAKE_GLOBAL(scaled, loadedfontletterspace);
-MAKE_GLOBAL(strnumber*, fontarea);
-MAKE_GLOBAL(unicodescalar*, buffer);
-MAKE_GLOBAL(utf16code*, mappedtext);
-MAKE_GLOBAL(utf16code*, nameoffile16);
-MAKE_GLOBAL(voidpointer*, fontlayoutengine);
-MAKE_GLOBAL(voidpointer, loadedfontmapping);
-MAKE_GLOBAL(scaled, loadedfontdesignsize);
-MAKE_GLOBAL(memoryword*, zmem);
-#define eqtb XETEXDATA.m_eqtb
-MAKE_GLOBAL(strnumber, jobname);
-MAKE_GLOBAL(C4P_integer, synctexoption);
-MAKE_GLOBAL(C4P_integer, synctexoffset);
-MAKE_GLOBAL(instaterecord, curinput);
-MAKE_GLOBAL(C4P_integer, totalpages);
-MAKE_GLOBAL(scaled, curh);
-MAKE_GLOBAL(scaled, curv);
-MAKE_GLOBAL(scaled, rulewd);
-MAKE_GLOBAL(scaled, ruleht);
-MAKE_GLOBAL(scaled, ruledp);
-
-#endif // USE_C4P_DATA_STRUCT
-
+#define eqtb THEDATA(eqtb)
+#define nopdfoutput THEDATA(nopdfoutput)
+#define depthbase THEDATA(depthbase)
+#define heightbase THEDATA(heightbase)
+#define parambase THEDATA(parambase)
+#define bufsize THEDATA(bufsize)
+#define nativefonttypeflag THEDATA(nativefonttypeflag)
+#define namelength THEDATA(namelength)
+#define namelength16 THEDATA(namelength16)
+#define first THEDATA(first)
+#define last THEDATA(last)
+#define maxbufstack THEDATA(maxbufstack)
+#define fontflags THEDATA(fontflags)
+#define xdvbuffer THEDATA(xdvbuffer)
+#define loadedfontflags THEDATA(loadedfontflags)
+#define fontinfo THEDATA(fontinfo)
+#define fontletterspace THEDATA(fontletterspace)
+#define fontsize THEDATA(fontsize)
+#define loadedfontletterspace THEDATA(loadedfontletterspace)
+#define fontarea THEDATA(fontarea)
+#define buffer THEDATA(buffer)
+#define mappedtext THEDATA(mappedtext)
+#define nameoffile16 THEDATA(nameoffile16)
+#define fontlayoutengine THEDATA(fontlayoutengine)
+#define loadedfontmapping THEDATA(loadedfontmapping)
+#define loadedfontdesignsize THEDATA(loadedfontdesignsize)
+#define zmem THEDATA(zmem)
+#define eq THEDATA(eq)
+#define jobname THEDATA(jobname)
+#define synctexoption THEDATA(synctexoption)
+#define synctexoffset THEDATA(synctexoffset)
+#define curinput THEDATA(curinput)
+#define totalpages THEDATA(totalpages)
+#define curh THEDATA(curh)
+#define curv THEDATA(curv)
+#define rulewd THEDATA(rulewd)
+#define ruleht THEDATA(ruleht)
+#define ruledp THEDATA(ruledp)
 
 #define c4p_sizeof(x) sizeof(x)
 #define addressof(x) &(x)

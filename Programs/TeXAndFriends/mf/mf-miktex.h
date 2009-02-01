@@ -25,18 +25,12 @@
 
 #if defined(MIKTEX_TRAPMF)
 #  include "trapmfdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) TRAPMFDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
 #else
 #  include "mfdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) MFDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
+#endif
+
+#if ! defined(THEDATA)
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "mf.rc"

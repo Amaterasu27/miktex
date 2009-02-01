@@ -32,7 +32,7 @@ authorization from SIL International.
 
 #define	native_node_size	6
 #if defined(MIKTEX)
-#define native_node_text(p)	((unsigned short*)(&(g_XETEXData.m_mem[(p) + native_node_size])))
+#define native_node_text(p)	((unsigned short*)(&(g_mem[(p) + native_node_size])))
 #else
 #define native_node_text(p)	((unsigned short*)(&(mem[(p) + native_node_size])))
 #endif
@@ -41,47 +41,47 @@ authorization from SIL International.
 
 /* p is native_word node; g is XeTeX_use_glyph_metrics flag */
 #if defined(MIKTEX)
-#define setnativemetrics(p,g)					measure_native_node(&(g_XETEXData.m_mem[p]), g)
+#define setnativemetrics(p,g)					measure_native_node(&(g_mem[p]), g)
 #else
 #define setnativemetrics(p,g)					measure_native_node(&(mem[p]), g)
 #endif
 
 #if defined(MIKTEX)
-#define setnativeglyphmetrics(p,g)				measure_native_glyph(&(g_XETEXData.m_mem[p]), g)
+#define setnativeglyphmetrics(p,g)				measure_native_glyph(&(g_mem[p]), g)
 #else
 #define setnativeglyphmetrics(p,g)				measure_native_glyph(&(mem[p]), g)
 #endif
 
 #if defined(MIKTEX)
-#define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(g_XETEXData.m_mem[p]))
+#define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(g_mem[p]))
 #else
 #define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(mem[p]))
 #endif
 
 #if defined(MIKTEX)
-#define getnativeitaliccorrection(p)			get_native_ital_corr(&(g_XETEXData.m_mem[p]))
+#define getnativeitaliccorrection(p)			get_native_ital_corr(&(g_mem[p]))
 #else
 #define getnativeitaliccorrection(p)			get_native_ital_corr(&(mem[p]))
 #endif
 #if defined(MIKTEX)
-#define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(g_XETEXData.m_mem[p]))
+#define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(g_mem[p]))
 #else
 #define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(mem[p]))
 #endif
 
 #if defined(MIKTEX)
-#define getnativeglyph(p,i)						get_native_glyph_id(&(g_XETEXData.m_mem[p]), i)
+#define getnativeglyph(p,i)						get_native_glyph_id(&(g_mem[p]), i)
 #else
 #define getnativeglyph(p,i)						get_native_glyph_id(&(mem[p]), i)
 #endif
 
 #if defined(MIKTEX)
-#define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(g_XETEXData.m_mem[p]))
+#define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(g_mem[p]))
 #else
 #define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
 #endif
 #if defined(MIKTEX)
-#define xdvbufferbyte(i)						g_XETEXData.m_xdvbuffer[i]
+#define xdvbufferbyte(i)						g_xdvbuffer[i]
 #else
 #define xdvbufferbyte(i)						xdvbuffer[i]
 #endif
@@ -95,7 +95,7 @@ void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp 
 #define findpicfile(a,b,c,d)	find_pic_file(a, b, c, d)
 
 #if defined(MIKTEX)
-#define picpathbyte(p,i)		((unsigned char*)&(g_XETEXData.m_mem[p+pic_node_size]))[i]
+#define picpathbyte(p,i)		((unsigned char*)&(g_mem[p+pic_node_size]))[i]
 #else
 #define picpathbyte(p,i)		((unsigned char*)&(mem[p+pic_node_size]))[i]
 #endif

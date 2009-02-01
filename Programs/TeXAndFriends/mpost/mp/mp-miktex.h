@@ -25,18 +25,12 @@
 
 #if defined(MIKTEX_TRAPMP)
 #  include "trapmpdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) TRAPMPDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
 #else
 #  include "mpdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) MPDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
+#endif
+
+#if ! defined(THEDATA)
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #if ! defined(C4PEXTERN)
@@ -350,8 +344,6 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 
 #include <miktex/KPSE/Emulation>
 
-#if USE_C4P_DATA_STRUCT
-
 #define fontname THEDATA(fontname)
 #define fontpsnamefixed THEDATA(fontpsnamefixed)
 #define fontsizes THEDATA(fontsizes)
@@ -367,7 +359,5 @@ miktexopenmetafontfile (/*[in]*/ alphafile &		f,
 #define strpool THEDATA(strpool)
 #define strref THEDATA(strref)
 #define strstart THEDATA(strstart)
-
-#endif // USE_C4P_DATA_STRUCT
 
 #include "mplib.h"

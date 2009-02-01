@@ -414,8 +414,7 @@ void
 generate_routine_head (prototype_node * proto)
 {
   out_s ("\n");
-  out_form ("C4P%sAPI(%s%s)\n%s%s (",
-	    prog_symbol->s_repr,
+  out_form ("%s%s\n%s%s (",
 	    ((class_name_scope.length() > 0
 	      && proto->result_type != 0
 	      && ! (proto->result_type->s_flags & S_PREDEFINED))
@@ -429,8 +428,7 @@ generate_routine_head (prototype_node * proto)
 	    class_name_scope.c_str(),
 	    proto->name->s_repr);
   redir_file (H_FILE_NUM);
-  out_form ("C4P%sAPI(%s) %s (",
-	    prog_symbol->s_repr,
+  out_form ("%s %s (",
 	    (proto->result_type == 0
 	     ? "void"
 	     : (proto->result_type->s_translated_type

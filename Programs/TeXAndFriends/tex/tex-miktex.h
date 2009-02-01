@@ -25,18 +25,12 @@
 
 #if defined(MIKTEX_TRIPTEX)
 #  include "triptexdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) TRIPTEXDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
 #else
 #  include "texdefs.h"
-#  if USE_C4P_DATA_STRUCT
-#    define THEDATA(x) TEXDATA.m_##x
-#  else
-#    define THEDATA(x) x
-#  endif
+#endif
+
+#if ! defined(THEDATA)
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "tex.rc"

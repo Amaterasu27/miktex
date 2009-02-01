@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -86,7 +86,7 @@ create_cpp_from_c(${CMAKE_CURRENT_SOURCE_DIR}/omegabis.c)
 set_source_files_properties(
   ${${omega_dll_name}_sources}
   PROPERTIES COMPILE_FLAGS
-	"-DC4PEXTERN=extern -DMIKTEX_OMEGA -DOMEGADATA=g_OMEGAData"
+	"-DC4PEXTERN=extern -DMIKTEX_OMEGA"
 
 )
 

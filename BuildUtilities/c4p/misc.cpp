@@ -127,9 +127,6 @@ open_header_file ()
     {
       out_form ("#include <%s>\n", def_filename.c_str());
     }
-  out_form ("#if !defined(C4P%sAPI)\n", prog_symbol->s_repr);
-  out_form ("#  define C4P%sAPI(type) type\n", prog_symbol->s_repr);
-  out_form ("#endif\n");
   if (class_name.length() == 0)
     {
       out_form ("#ifdef __cplusplus\n");
@@ -235,10 +232,6 @@ begin_new_c_file (const char *file_name, int is_main)
   redir_file (C_FILE_NUM);
   generate_file_header ();
 
-  out_form ("#if !defined(C4P%sAPI)\n", prog_symbol->s_repr);
-  out_form ("#  define C4P%sAPI(type) C4PCEEAPI(type)\n", prog_symbol->s_repr);
-  out_form ("#endif\n");
-  
   if (using_namespace.size() > 0)
     {
       out_form ("#ifdef __cplusplus\n");

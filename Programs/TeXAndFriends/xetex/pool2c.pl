@@ -30,8 +30,8 @@ print OUT <<__EOT__;
 #include <stdio.h>
 
 #if defined(MIKTEX)
-#  define poolptr XETEXDATA.m_poolptr
-#  define strpool XETEXDATA.m_strpool
+#  define poolptr g_poolptr
+#  define strpool g_strpool
 #endif
 
 static unsigned char POOL[] =

@@ -23,10 +23,8 @@
 
 #include <miktex/TeXAndFriends/config.h>
 
-#if USE_C4P_DATA_STRUCT
-#  define THEDATA(x) DVITYPEDATA.m_##x
-#else
-#  define THEDATA(x) x
+#if ! defined(THEDATA)
+#  define THEDATA(x) C4P_VAR(x)
 #endif
 
 #include "dvitype.rc"

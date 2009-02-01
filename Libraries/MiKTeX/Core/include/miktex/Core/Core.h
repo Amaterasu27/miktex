@@ -79,7 +79,7 @@
 #if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXCOREEXPORT __declspec(dllimport)
-#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >= 4
 #    define MIKTEXCOREEXPORT __attribute__((visibility("default")))
 #  else
 #    define MIKTEXCOREEXPORT
@@ -93,7 +93,11 @@
 #define MIKTEXCORECEEAPI(type) MIKTEXCOREEXPORT type MIKTEXCEECALL
 
 // API decoration for exported types
-#define MIKTEXCORETYPEAPI(type) MIKTEXCOREEXPORT type
+#if __GNUC__ >= 4
+#  define MIKTEXCORETYPEAPI(type) MIKTEXCOREEXPORT type
+#else
+#  define MIKTEXCORETYPEAPI(type) type
+#endif
 
 #define MIKTEX_CORE_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\

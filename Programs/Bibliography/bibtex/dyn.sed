@@ -16,11 +16,11 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(bibfile\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(biblist\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(spreamble\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(entryints\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(entrystrs\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(wizfunctions\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(fieldinfo\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]bibfile\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]biblist\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]spreamble\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]entryints\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]entrystrs\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]wizfunctions\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]fieldinfo\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

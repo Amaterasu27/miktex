@@ -16,25 +16,25 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(bisectstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(buffer\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(c4p_free\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(delta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(deltax\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(deltay\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(fontinfo\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(inputstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(ligkern\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(mem\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(nextstr\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(paramstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(psi\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strref\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(strstart\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(theta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(trickbuf\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(uu\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(vv\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(wasfree\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
-s/^C4PEXTERN \([_A-Za-z0-9]*\) \(ww\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]bisectstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]buffer\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]c4p_free\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]delta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]deltax\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]deltay\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]fontinfo\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]inputstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]ligkern\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]mem\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]nextstr\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]paramstack\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]psi\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]strpool\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]strref\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]strstart\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]theta\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]trickbuf\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]uu\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]vv\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]wasfree\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/
+s/^C4PEXTERN \([_A-Za-z0-9]*\) \([gm_]ww\)\[ [A-Za-z0-9]* \];$/C4PEXTERN \1 *\2;/

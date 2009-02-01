@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -39,7 +39,7 @@ create_web_app(METAFONT mf mf ${basedir})
 set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
   PROPERTIES COMPILE_FLAGS
-	"-DMIKTEX_METAFONT -DMIKTEX_MF -DMFCLASS=${mf_class} -DMFAPP=${mf_app} -DMFDATA=${mf_data}"
+	"-DMIKTEX_METAFONT -DMIKTEX_MF -DMFCLASS=${mf_class} -DMFAPP=${mf_app}"
 )
 
 create_exe_alias(inimf mf --initialize)

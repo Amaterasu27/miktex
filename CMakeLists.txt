@@ -273,8 +273,10 @@ if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
 endif(UNIX_ALIKE)
 
-check_c_compiler_flag(-fvisibility=hidden HAVE_C_VISIBILITY_OPTION)
-check_cxx_compiler_flag(-fvisibility=hidden HAVE_CXX_VISIBILITY_OPTION)
+if(NOT MSVC)
+  check_c_compiler_flag(-fvisibility=hidden HAVE_C_VISIBILITY_OPTION)
+  check_cxx_compiler_flag(-fvisibility=hidden HAVE_CXX_VISIBILITY_OPTION)
+endif(NOT MSVC)
 
 if(MSVC)
   set(HAVE_PRAGMA_ONCE TRUE)

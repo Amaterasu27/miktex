@@ -46,7 +46,6 @@ add_definitions(
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DpdfTeX
-  -fvisibility=hidden
 )
 
 if(WITH_SYNCTEX)
