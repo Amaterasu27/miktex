@@ -7,8 +7,8 @@
  * MiKTeX-pdfTeX, the MiKTeX variant of the pdfTeX angine, has been
    ported to UNIX system-like platforms.
 
-   The engine features integrated package management, i.e., missing
-   packages will be installed on-the-fly (after confirmation).
+   The engine features integrated package management: missing packages
+   will be installed on-the-fly (after confirmation).
 
    The binary is installed as miktex-pdftex so that it can coexist
    with the system-installed pdftex binary.
@@ -26,5 +26,5 @@
 
 
  * The MiKTeX package manager graphical user interface (GUI) has been
-   ported to GNU/Linux using the Qt widget toolkit.
+   ported to UNIX system-like platforms using the Qt widget toolkit.
 

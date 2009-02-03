@@ -801,6 +801,16 @@ Open the specified configuration file in an editor.\
     T_("ROOT")
   },
 
+#if ! defined(MIKTEX_STANDALONE)
+  {
+    "user-install", 0,
+    POPT_ARG_STRING, 0,
+    OPT_USER_INSTALL,
+    T_("Register the user installation directory."),
+    T_("DIR")
+  },
+#endif
+
   {
     "verbose", 'v',
     POPT_ARG_NONE, 0,
@@ -2550,17 +2560,6 @@ IniTeXMFApp::Configure ()
   ProcessOutput output;
   int exitCode;
   output.Clear ();
-  Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMFHOME",
-				 &exitCode,
-				 &output,
-				 0);
-  output.RemoveTrailingNewline ();
-  if (exitCode == 0 && output.GetLength() > 0)
-    {
-      Verbose (T_("Found $TEXMFHOME: %s"), Q_(output.Get()));
-      startupConfig.userInstallRoot = output.Get();
-    }
-  output.Clear ();
   Process::ExecuteSystemCommand ("kpsewhich --expand-path \\$TEXMF",
 				 &exitCode,
 				 &output,
@@ -2573,7 +2572,7 @@ IniTeXMFApp::Configure ()
 	{
 	  startupConfig.roots += PathName::PathNameDelimiter;
 	}
-      startupConfig.roots = output.Get();
+      startupConfig.roots += output.Get();
     }
   SetTeXMFRootDirectories ();
   unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
@@ -2974,7 +2973,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       || ! startupConfig.commonConfigRoot.Empty()
       || ! startupConfig.commonInstallRoot.Empty())
     {
+#if ! defined(MIKTEX_STANDALONE)
+      optConfigure = true;
+#else
       SetTeXMFRootDirectories ();
+#endif
     }
 
   if (! defaultPaperSize.empty())

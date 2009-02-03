@@ -812,6 +812,7 @@ SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
 void
 SessionImpl::SetEnvironmentVariables ()
 {
+#if MIKTEX_STANDALONE
   Utils::SetEnvironmentString ("GSC", MIKTEX_GS_EXE);
   Utils::SetEnvironmentString ("TEXSYSTEM", "miktex");
   Utils::SetEnvironmentString ("TEXMFLOCAL",
@@ -832,6 +833,7 @@ SessionImpl::SetEnvironmentVariables ()
   str +=  "fonts";
   AppendToSearchPath (searchPath, str);
   Utils::SetEnvironmentString ("MIKTEX_GS_LIB", searchPath.c_str());
+#endif
 
   PathName path = GetTempDirectory();
 
