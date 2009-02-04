@@ -43,6 +43,12 @@ endif(NATIVE_WINDOWS)
 enable_testing()
 
 option(
+  NO_GUI
+  "Build without GUI components."
+  FALSE
+)
+
+option(
   WITH_MPC
   "Build mpc (MiKTeX Package Composer)?"
   ${NATIVE_WINDOWS}
@@ -220,11 +226,11 @@ set(required_programs
   cat
   date
   diff
-  dos2unix
   flex
   lynx
   perl
   sed
+  tr
   xsltproc
 )
 
@@ -362,6 +368,18 @@ set(HAVE_ZLIB 1)
 set(HAVE_ZLIB_H 1)
 set(HAVE_ZLIB_COMPRESS2 1)
 
+if(NOT NO_GUI AND NOT MFC_FOUND)
+  message(FATAL_ERROR
+    "Qt4 is required unless you enable the NO_GUI option."
+  )
+endif(NOT NO_GUI AND NOT MFC_FOUND)
+
+if(NOT NO_GUI AND NOT QT4_FOUND)
+  message(FATAL_ERROR
+    "MFC is required unless you enable the NO_GUI option."
+  )
+endif(NOT NO_GUI AND NOT QT4_FOUND)
+
 ###############################################################################
 ## change default install prefix
 
@@ -473,7 +491,6 @@ endif(NATIVE_WINDOWS)
 set(MIKTEX_STATIC_LINK_LIBRARIES
   ${texmf_lib_name}
   ${app_lib_name}
-  ${ui_qt_lib_name}
   ${QT_LIBRARIES}
   ${mpm_lib_name}
   ${extractor_lib_name}
@@ -487,6 +504,13 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${bzip2_lib_name}
   ${popt_lib_name}
 )
+
+if(QT4_FOUND)
+  set(MIKTEX_STATIC_LINK_LIBRARIES
+    ${MIKTEX_STATIC_LINK_LIBRARIES}
+    ${ui_qt_lib_name}
+  )
+endif(QT4_FOUND)
 
 ###############################################################################
 ## add global include directories

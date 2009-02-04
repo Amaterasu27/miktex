@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -75,12 +75,12 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/footer.txt"
 foreach(i ${inc_ini_files})
   get_filename_component(ininame ${i} NAME)
   add_custom_command(
-    OUTPUT ${i}
+    OUTPUT ${i} ${i}.dos
     COMMAND ${CAT_EXE} header.txt
-		> ${ininame}
+		> ${i}.dos
     COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
-		>> ${ininame}
-    COMMAND ${DOS2UNIX_EXE} ${ininame}
+		>> ${i}.dos
+    COMMAND ${TR_EXE} -d '\\r' < ${i}.dos > ${i}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
@@ -90,17 +90,17 @@ endforeach(i)
 foreach(i ${main_ini_files})
   get_filename_component(ininame ${i} NAME)
   add_custom_command(
-    OUTPUT ${i}
+    OUTPUT ${i} ${i}.dos
     COMMAND ${CAT_EXE} header.txt
-		> ${ininame}
+		> ${i}.dos
     COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
-		>> ${ininame}
+		>> ${i}.dos
     COMMAND ${CAT_EXE} footer.txt
-		>> ${ininame}
+		>> ${i}.dos
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body tmp
     COMMAND ${cfg_exe} tmp
-		>> ${ininame}
-    COMMAND ${DOS2UNIX_EXE} ${ininame}
+		>> ${i}.dos
+    COMMAND ${TR_EXE} -d '\\r' < ${i}.dos > ${i}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM

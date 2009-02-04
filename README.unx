@@ -49,9 +49,6 @@ PREREQUISITES
 [ ] libCURL libraries and header files are required.  A common name
     for this package is libcurl-devel.
 
-[ ] dos2unix is used to remove DOS line-endings from source files.
-    This utility is a part of the 'tofrodos' package.
-
 
 QUICK START
 -----------
