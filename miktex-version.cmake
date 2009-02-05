@@ -25,6 +25,9 @@ set(MIKTEX_MINOR_VERSION	8)
 ## days since January 1, 2000
 set(MIKTEX_J2000_VERSION	3318)
 
+## the version of the Debian package
+set(MIKTEX_PACKAGE_REVISION	1)
+
 set(MIKTEX_YEAR_VERSION         2009)
 
 ## the release number; only meaningful for rc/beta builds

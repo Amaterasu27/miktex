@@ -22,10 +22,6 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
-project(miktex)
-
-set(miktex_prefix "miktex-")
-
 if(WIN32 AND NOT CYGWIN)
   set(NATIVE_WINDOWS 1)
 else(WIN32 AND NOT CYGWIN)
@@ -33,12 +29,16 @@ else(WIN32 AND NOT CYGWIN)
 endif(WIN32 AND NOT CYGWIN)
 
 if(NATIVE_WINDOWS)
+  project(miktex)
   set(PRODUCT_NAME "MiKTeX")
   set(BUILDING_MIKTEX TRUE)
 else(NATIVE_WINDOWS)
+  project(miktex-tools)
   set(PRODUCT_NAME "MiKTeX Tools")
   set(BUILDING_MIKTEX_TOOLS TRUE)
 endif(NATIVE_WINDOWS)
+
+set(miktex_prefix "miktex-")
 
 enable_testing()
 
@@ -181,8 +181,6 @@ if(NOT MIKTEX_FULL_VERSION_STR)
       FORCE)
 endif(NOT MIKTEX_FULL_VERSION_STR)
 
-include(CPack)
-
 include(Admin/COM/guids.cmake)
 
 include(AddLinkFlags)
@@ -220,6 +218,8 @@ endif(NATIVE_WINDOWS)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
   set(HAVE_MPM_QT_SOURCES 1)
 endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
+
+find_program(rpmbuild RPMBUILD_EXE)
 
 set(required_programs
   bison
@@ -368,17 +368,11 @@ set(HAVE_ZLIB 1)
 set(HAVE_ZLIB_H 1)
 set(HAVE_ZLIB_COMPRESS2 1)
 
-if(NOT NO_GUI AND NOT MFC_FOUND)
+if(NOT NO_GUI AND NOT MFC_FOUND AND NOT QT4_FOUND)
   message(FATAL_ERROR
     "Qt4 is required unless you enable the NO_GUI option."
   )
-endif(NOT NO_GUI AND NOT MFC_FOUND)
-
-if(NOT NO_GUI AND NOT QT4_FOUND)
-  message(FATAL_ERROR
-    "MFC is required unless you enable the NO_GUI option."
-  )
-endif(NOT NO_GUI AND NOT QT4_FOUND)
+endif(NOT NO_GUI AND NOT MFC_FOUND AND NOT QT4_FOUND)
 
 ###############################################################################
 ## change default install prefix
@@ -1027,3 +1021,24 @@ endif(BUILDING_MIKTEX AND MFC_FOUND)
 add_subdirectory(${rel_doc_dir})
 
 add_subdirectory(${rel_mtrep_dir} EXCLUDE_FROM_ALL)
+
+###############################################################################
+## packaging
+
+find_program(rpmbuild RPMBUILD_EXE)
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.unx")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: enhance your TeX system")
+set(CPACK_PACKAGE_CONTACT "Christian Schenk <cs@miktex.org>")
+set(CPACK_PACKAGE_VENDOR "MiKTeX.org")
+set(CPACK_PACKAGE_VERSION_MAJOR ${MIKTEX_MAJOR_VERSION})
+set(CPACK_PACKAGE_VERSION_MINOR ${MIKTEX_MINOR_VERSION})
+set(CPACK_PACKAGE_VERSION_PATCH ${MIKTEX_J2000_VERSION})
+set(CPACK_PACKAGE_VERSION "${MIKTEX_VERSION_TAG_STR}-${MIKTEX_PACKAGE_REVISION}")
+
+set(CPACK_DEBIAN_PACKAGE_DEPENDS
+  "libqt4-core (>=4.2.0), libqt4-gui (>=4.2.0), libcurl3 (>= 7.15.0)")
+set(CPACK_DEBIAN_PACKAGE_SECTION "TeX Authoring")
+
+include(CPack)

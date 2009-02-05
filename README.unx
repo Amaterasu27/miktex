@@ -36,7 +36,7 @@ PREREQUISITES
 [ ] CMake 2.6 (or newer) is required for building and installing
     "MiKTeX Tools".
 
-[ ] The Qt development kit (version 4.4.0 or newer) is required, if
+[ ] The Qt development kit (version 4.2 or newer) is required, if
     you intend to enable GUI features (e.g., the auto-installer
     message box).  A common name for this package is libqt4-devel.
 
