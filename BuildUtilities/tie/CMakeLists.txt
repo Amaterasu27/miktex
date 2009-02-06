@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -44,9 +44,8 @@ add_executable(${miktex_prefix}tie ${tie_sources})
 
 merge_trustinfo_manifest(${miktex_prefix}tie asInvoker)
 
-install(TARGETS ${miktex_prefix}tie DESTINATION "${bindir}")
-
 if(BUILDING_MIKTEX)
+  install(TARGETS ${miktex_prefix}tie DESTINATION "${bindir}")
   add_executable(tie ${tie_sources})
   merge_trustinfo_manifest(tie asInvoker)
   install(TARGETS tie DESTINATION "${bindir}")

@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -136,6 +136,12 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
   StartupConfig defaultStartupConfig = DefaultConfig(false);
   path = defaultStartupConfig.userConfigRoot;
   path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+#if 0				// todo
+  if (! File::Exists(path))
+    {
+      CreateStartupConfigFile (path);
+    }
+#endif
   if (File::Exists(path))
     {
       return (true);

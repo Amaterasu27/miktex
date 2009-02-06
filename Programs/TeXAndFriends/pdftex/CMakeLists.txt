@@ -321,7 +321,7 @@ set_source_files_properties(
   PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
 )
 
-create_web_app(pdfTeX)
+create_web_app(pdfTeX pdfTeX pdftex FALSE)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex.cc

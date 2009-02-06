@@ -54,8 +54,13 @@ add_custom_target(
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
 )
 
-create_web_app(Tangle)
-create_web_app(Weave)
+if(BUILDING_MIKTEX)
+  create_web_app(Tangle)
+  create_web_app(Weave)
+else(BUILDING_MIKTEX)
+  create_web_app(Tangle Tangle tangle FALSE FALSE)
+  create_web_app(Weave Weave weave FALSE FALSE)
+endif(BUILDING_MIKTEX)
 
 if(LINK_EVERYTHING_STATICALLY)
   add_dependencies(${tangle_lib_name} bootstrap)

@@ -219,8 +219,6 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
   set(HAVE_MPM_QT_SOURCES 1)
 endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
 
-find_program(rpmbuild RPMBUILD_EXE)
-
 set(required_programs
   bison
   cat
@@ -1025,9 +1023,14 @@ add_subdirectory(${rel_mtrep_dir} EXCLUDE_FROM_ALL)
 ###############################################################################
 ## packaging
 
-find_program(rpmbuild RPMBUILD_EXE)
+find_program(RPMBUILD_EXE NAMES rpmbuild)
 
-set(CPACK_GENERATOR "DEB")
+set(CPACK_GENERATOR "DEB;TGZ")
+
+if(RPMBUILD_EXE)
+  set(CPACK_GENERATOR "${CPACK_GENERATOR};RPM")
+endif(RPMBUILD_EXE)
+
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.unx")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: enhance your TeX system")
 set(CPACK_PACKAGE_CONTACT "Christian Schenk <cs@miktex.org>")
@@ -1035,10 +1038,23 @@ set(CPACK_PACKAGE_VENDOR "MiKTeX.org")
 set(CPACK_PACKAGE_VERSION_MAJOR ${MIKTEX_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${MIKTEX_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${MIKTEX_J2000_VERSION})
-set(CPACK_PACKAGE_VERSION "${MIKTEX_VERSION_TAG_STR}-${MIKTEX_PACKAGE_REVISION}")
+string(REPLACE "-" "_" CPACK_PACKAGE_VERSION "${MIKTEX_VERSION_TAG_STR}")
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS
-  "libqt4-core (>=4.2.0), libqt4-gui (>=4.2.0), libcurl3 (>= 7.15.0)")
+set(
+  CPACK_DEBIAN_PACKAGE_VERSION
+  "${MIKTEX_VERSION_TAG_STR}-${MIKTEX_PACKAGE_REVISION}")
+set(
+  CPACK_DEBIAN_PACKAGE_DEPENDS
+  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0)"
+)
 set(CPACK_DEBIAN_PACKAGE_SECTION "TeX Authoring")
+
+set(CPACK_RPM_PACKAGE_RELEASE ${MIKTEX_PACKAGE_REVISION})
+set(
+  CPACK_RPM_PACKAGE_REQUIRES
+  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0)"
+)
+
+set(CPACK_STRIP_SYMBOLS TRUE)
 
 include(CPack)

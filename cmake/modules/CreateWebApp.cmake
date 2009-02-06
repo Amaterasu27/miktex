@@ -47,6 +47,12 @@ macro(create_web_app _name)
     set(_pool_dir ${formatdir})
   endif(${ARGC} GREATER 3)
 
+  if(${ARGC} GREATER 4)
+    set(_do_install ${ARGV4})
+  else(${ARGC} GREATER 4)
+    set(_do_install TRUE)
+  endif(${ARGC} GREATER 4)
+
   set(${_short_name_l}_app g_${_name_u}App)
   set(${_short_name_l}_class ${_name_u})
   set(${_short_name_l}_entry Run${_name_u})
@@ -232,14 +238,14 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     rebase(${_target_name})
   endif(LINK_EVERYTHING_STATICALLY)
 
-  if(LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
+  if(_do_install AND LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
     install(
       TARGETS ${_target_name}
       RUNTIME DESTINATION "${bindir}"
       LIBRARY DESTINATION "${libdir}"
       ARCHIVE DESTINATION "${libdir}"
     )
-  endif(LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
+  endif(_do_install AND LINK_EVERYTHING_STATICALLY AND INSTALL_STATIC_LIBRARIES)
 
   add_executable(${_invocation_name} ${_short_name_l}wrapper.cpp)
 
@@ -264,12 +270,14 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   merge_manifests(${_invocation_name} asInvoker)
 
-  install(
-    TARGETS ${_invocation_name}
-    RUNTIME DESTINATION "${bindir}"
-    LIBRARY DESTINATION "${libdir}"
-    ARCHIVE DESTINATION "${libdir}"
-  )
+  if(_do_install)
+    install(
+      TARGETS ${_invocation_name}
+      RUNTIME DESTINATION "${bindir}"
+      LIBRARY DESTINATION "${libdir}"
+      ARCHIVE DESTINATION "${libdir}"
+    )
+  endif(_do_install)
 
   if(BUILDING_MIKTEX)
     if(${_invocation_name} STREQUAL "${_short_name_l}" OR ${_alt_invocation_name} STREQUAL "${_short_name_l}")
@@ -312,9 +320,11 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     )
   endif(BUILDING_MIKTEX)
 
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
-    DESTINATION ${_pool_dir}
-  )
+  if(_do_install AND ${_pool_dir})
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
+      DESTINATION ${_pool_dir}
+    )
+  endif(_do_install AND ${_pool_dir})
     
 endmacro(create_web_app _name)
