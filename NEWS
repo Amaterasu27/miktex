@@ -18,6 +18,9 @@
 
  * Link everything statically (don't build shared objects).
 
+ * Binary packages (.rpm/.deb/.tgz) are now available for GNU/Linux
+   systems.  See http://miktex.org/unx/ for more information.
+
 
  _____________________________________________________________________________
 

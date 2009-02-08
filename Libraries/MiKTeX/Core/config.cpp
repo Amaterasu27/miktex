@@ -99,6 +99,27 @@ FindConfigMapping (/*[in]*/ const char *	lpszConfigSection,
 
 /* _________________________________________________________________________
 
+   SessionImpl::GetMyPrefix
+   _________________________________________________________________________ */
+
+PathName
+SessionImpl::GetMyPrefix ()
+{
+  PathName bindir = GetMyLocation();
+
+  RemoveDirectoryDelimiter (bindir.GetBuffer());
+
+  PathName prefix (bindir);
+
+  // /usr/local/bin => /usr/local
+  // /usr/bin => /usr
+  prefix.CutOffLastComponent ();
+
+  return (prefix);
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::FindStartupConfigFile
 
    Try to find the MiKTeX startup file.
@@ -173,46 +194,19 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
 
 #elif defined(MIKTEX_UNIX)
 
-  RemoveDirectoryDelimiter (bindir.GetBuffer());
+  PathName prefix = GetMyPrefix();
 
-  if (PathName::Compare(bindir, "/usr/local/bin") == 0
-      || PathName::Compare(bindir, "/usr/bin") == 0)
+  // /usr/local/share/miktex-texmf/config/paths.ini
+  // /usr/share/miktex-texmf/config/paths.ini
+  path = prefix;
+  path += MIKTEX_TEXMF;
+  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+  
+  if (File::Exists(path))
     {
-      PathName root (bindir);
-
-      // /usr/local/bin => /usr/local
-      // /usr/bin => /usr
-      root.CutOffLastComponent ();
-
-      // /usr/local/share/texmf/miktex/config/paths.ini
-      // /usr/share/texmf/miktex/config/paths.ini
-      path = root;
-      path += "share/texmf";
-      path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-
-      if (File::Exists(path))
-	{
-	  return (true);
-	}
-
-      // /usr/local/texmf/miktex/config/paths.ini
-      // /usr/texmf/miktex/config/paths.ini
-      path = root;
-      path += "texmf";
-      path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-
-      if (File::Exists(path))
-	{
-	  return (true);
-	}
-
-      return (false);
+      return (true);
     }
-  else
-    {
-      return (false);
-    }
-
+  
 #else
 
 #  error Unimplemented: SessionImpl::FindStartupConfigFile()

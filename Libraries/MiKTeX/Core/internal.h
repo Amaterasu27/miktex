@@ -1342,6 +1342,10 @@ public:
   PathName
   GetMyProgramFile ();
 
+private:
+  PathName
+  GetMyPrefix ();
+
 public:
   bool
   GetPsFontDirs (/*[out]*/ string &	psFontDirs);

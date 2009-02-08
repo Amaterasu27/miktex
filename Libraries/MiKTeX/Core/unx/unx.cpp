@@ -1,6 +1,6 @@
 /* unx.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -105,7 +105,10 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
     }
   PathName homeMiKTeX (home);
   homeMiKTeX += ".miktex";
-  ret.roots = MIKTEX_TEXMF;
+  // /usr/share/miktex-texmf
+  PathName miktexTeXMF = GetMyPrefix();
+  miktexTeXMF += MIKTEX_TEXMF;
+  ret.roots = miktexTeXMF.Get();
   ret.userInstallRoot = homeMiKTeX;
   ret.userDataRoot = homeMiKTeX;
   ret.userConfigRoot = homeMiKTeX;
