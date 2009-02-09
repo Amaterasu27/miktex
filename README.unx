@@ -101,7 +101,7 @@ the current user:
 
 This is what happens:
 
-- kpsewich(1) is used to find existing TEXMF trees; the information is
+- kpsewhich(1) is used to find existing TEXMF trees; the information is
   written to ~/.miktex/miktex/config/miktexstartup.ini
 - the file name database is created
 - the package database is downloaded from the MiKTeX package repository

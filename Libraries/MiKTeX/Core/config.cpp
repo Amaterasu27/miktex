@@ -192,26 +192,9 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
       return (false);
     }
 
-#elif defined(MIKTEX_UNIX)
-
-  PathName prefix = GetMyPrefix();
-
-  // /usr/local/share/miktex-texmf/config/paths.ini
-  // /usr/share/miktex-texmf/config/paths.ini
-  path = prefix;
-  path += MIKTEX_TEXMF;
-  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-  
-  if (File::Exists(path))
-    {
-      return (true);
-    }
-  
-#else
-
-#  error Unimplemented: SessionImpl::FindStartupConfigFile()
-
 #endif
+
+  return (false);
 }
 
 /* _________________________________________________________________________

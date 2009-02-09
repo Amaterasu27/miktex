@@ -103,15 +103,14 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
 			  T_("Environment variable HOME is not set."),
 			  0);
     }
-  PathName homeMiKTeX (home);
-  homeMiKTeX += ".miktex";
-  // /usr/share/miktex-texmf
-  PathName miktexTeXMF = GetMyPrefix();
-  miktexTeXMF += MIKTEX_TEXMF;
-  ret.roots = miktexTeXMF.Get();
-  ret.userInstallRoot = homeMiKTeX;
-  ret.userDataRoot = homeMiKTeX;
-  ret.userConfigRoot = homeMiKTeX;
+  PathName home_miktex (home);
+  home_miktex += ".miktex";
+  PathName prefix_miktex_texmf = GetMyPrefix();
+  prefix_miktex_texmf += MIKTEX_TEXMF;
+  ret.roots = prefix_miktex_texmf.Get();
+  ret.userInstallRoot = home_miktex;
+  ret.userDataRoot = home_miktex;
+  ret.userConfigRoot = home_miktex;
   return (ret);
 }
 

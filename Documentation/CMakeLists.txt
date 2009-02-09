@@ -168,6 +168,7 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/gftodvi.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/initexmf.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mf.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Ref/miktex-tools.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mpm.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mpost.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Ref/mthelp.xml
@@ -798,6 +799,7 @@ if(NOT NATIVE_WINDOWS)
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${miktex_prefix}pdftex.1
 	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
+	${CMAKE_CURRENT_BINARY_DIR}/miktex-tools.7
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
     COMMAND
@@ -808,6 +810,7 @@ if(NOT NATIVE_WINDOWS)
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/filetypes
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/initexmf.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Ref/miktex-tools.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mpm.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/mthelp.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Ref/pdftex.xml
@@ -826,6 +829,12 @@ if(NOT NATIVE_WINDOWS)
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
     DESTINATION
 	${mandir}/man1
+  )
+  install(
+    FILES
+	${CMAKE_CURRENT_BINARY_DIR}/miktex-tools.7
+    DESTINATION
+	${mandir}/man7
   )
 endif(NOT NATIVE_WINDOWS)
 
@@ -856,6 +865,7 @@ if(NOT NATIVE_WINDOWS)
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/${miktex_prefix}pdftex.1
 	${CMAKE_CURRENT_BINARY_DIR}/initexmf.1
+	${CMAKE_CURRENT_BINARY_DIR}/miktex-tools.7
 	${CMAKE_CURRENT_BINARY_DIR}/mpm.1
 	${CMAKE_CURRENT_BINARY_DIR}/mthelp.1
   )

@@ -1618,6 +1618,7 @@ bool
 IniTeXMFApp::OnProgress (/*[in]*/ unsigned	level,
 			 /*[in]*/ const char *	lpszDirectory)
 {
+#if 0
   if (verbose && level == 1)
     {
       Verbose (T_("Scanning %s"), Q_(lpszDirectory));
@@ -1626,6 +1627,7 @@ IniTeXMFApp::OnProgress (/*[in]*/ unsigned	level,
     {
       Message (".");
     }
+#endif
   return (true);
 }
 
@@ -1649,7 +1651,6 @@ IniTeXMFApp::UpdateFilenameDatabase (/*[in]*/ const PathName & root)
   PathName path = pSession->GetFilenameDatabasePathName(rootIdx);
   if (File::Exists(path))
     {
-      Verbose (T_("Deleting %s..."), Q_(path));
       PrintOnly ("rm %s", Q_(path));
       if (! printOnly)
 	{
@@ -1659,16 +1660,11 @@ IniTeXMFApp::UpdateFilenameDatabase (/*[in]*/ const PathName & root)
 
   // create the FNDB file
   PathName fndbPath = pSession->GetFilenameDatabasePathName(rootIdx);
-  Verbose (T_("Creating %s..."), Q_(fndbPath));
+  Verbose (T_("Creating fndb (%s)..."), Q_(root));
   PrintOnly ("fndbcreate %s %s", Q_(fndbPath), Q_(root));
   if (! printOnly)
     {
       Fndb::Create (fndbPath, root, this);
-    }
-
-  if (! verbose)
-    {
-      Message ("\n");
     }
 }
 
@@ -1737,7 +1733,8 @@ IniTeXMFApp::RemoveFndb ()
       PrintOnly ("rm %s", Q_(path));
       if (! printOnly && File::Exists(path))
 	{
-	  Verbose (T_("Deleting %s..."), Q_(path));
+	  Verbose (T_("Removing fndb (%s)..."),
+		   Q_(pSession->GetRootDirectory(r)));
 	  File::Delete (path, true);
 	}
     }
@@ -2557,6 +2554,16 @@ IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
 void
 IniTeXMFApp::Configure ()
 {
+  PathName prefix = pSession->GetSpecialPath(SpecialPath::BinDirectory);
+  prefix.CutOffLastComponent ();
+  PathName miktex_texmf = prefix;
+  miktex_texmf += MIKTEX_TEXMF;
+  if (! startupConfig.roots.empty())
+    {
+      startupConfig.roots += PathName::PathNameDelimiter;
+    }
+  startupConfig.roots += miktex_texmf.Get();
+
   ProcessOutput output;
   int exitCode;
   output.Clear ();
@@ -2567,7 +2574,6 @@ IniTeXMFApp::Configure ()
   output.RemoveTrailingNewline ();
   if (exitCode == 0 && output.GetLength() > 0)
     {
-      Verbose (T_("Found $TEXMF: %s"), Q_(output.Get()));
       if (! startupConfig.roots.empty())
 	{
 	  startupConfig.roots += PathName::PathNameDelimiter;

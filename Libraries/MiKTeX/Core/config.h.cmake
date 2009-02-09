@@ -39,8 +39,6 @@
 #cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_VFORK 1
 
-#cmakedefine MIKTEX_TEXMF "${MIKTEX_TEXMF}"
-
 #cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
 
 #cmakedefine CMAKE_USE_PTHREADS_INIT ${CMAKE_USE_PTHREADS_INIT}

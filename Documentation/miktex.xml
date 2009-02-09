@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "3317">
-<!ENTITY month "January 2009">
-<!ENTITY date "January 29, 2009">
+<!ENTITY revj2000 "3327">
+<!ENTITY month "February 2009">
+<!ENTITY date "February 09, 2009">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -43,6 +43,7 @@
 <!ENTITY mangftodvi SYSTEM "Ref/gftodvi.xml">
 <!ENTITY maninitexmf SYSTEM "Ref/initexmf.xml">
 <!ENTITY manmf SYSTEM "Ref/mf.xml">
+<!ENTITY manmiktextools SYSTEM "Ref/miktex-tools.xml">
 <!ENTITY manmpm SYSTEM "Ref/mpm.xml">
 <!ENTITY manmpost SYSTEM "Ref/mpost.xml">
 <!ENTITY manmthelp SYSTEM "Ref/mthelp.xml">
@@ -560,6 +561,7 @@ option of &initexmf; to edit the configuration file, e.g.:</para>
 &mangftodvi;
 &maninitexmf;
 &manmf;
+&manmiktextools;
 &manmpm;
 &manmpost;
 &manmthelp;

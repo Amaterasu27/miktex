@@ -1,0 +1,14 @@
+"MiKTeX Tools" should be regarded as an addition to the TeX system
+installed on your system.
+
+The following utilities are included:
+
+  - miktex-pdftex: an alternative pdfTeX engine featuring integrated
+    package management (missing packages will be installed on-the-fly)
+
+  - mpm: MiKTeX Package Manager
+
+  - mthelp: MiKTeX Help Utility (a texdoc alternative)
+
+For more information about the MiKTeX project, visit the project page
+at www.miktex.org.

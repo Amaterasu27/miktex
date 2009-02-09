@@ -1,6 +1,6 @@
 /* miktex/Core/Paths.h: hard-coded path names			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -43,6 +43,10 @@
 #endif
 
 #define MIKTEX_PREFIX "@miktex_prefix@"
+
+#if ! MIKTEX_STANDALONE
+#  define MIKTEX_TEXMF "@MIKTEX_TEXMF@"
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define MIKTEX_EXE_FILE_SUFFIX ".exe"

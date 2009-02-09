@@ -1031,8 +1031,10 @@ if(RPMBUILD_EXE)
   set(CPACK_GENERATOR "${CPACK_GENERATOR};RPM")
 endif(RPMBUILD_EXE)
 
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.unx")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: enhance your TeX system")
+set(miktex_tools_slogan "just another needless package")
+
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/Documentation/miktex-tools.txt")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: ${miktex_tools_slogan}")
 set(CPACK_PACKAGE_CONTACT "Christian Schenk <cs@miktex.org>")
 set(CPACK_PACKAGE_VENDOR "MiKTeX.org")
 set(CPACK_PACKAGE_VERSION_MAJOR ${MIKTEX_MAJOR_VERSION})
