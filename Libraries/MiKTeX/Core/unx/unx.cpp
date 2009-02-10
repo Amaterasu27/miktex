@@ -105,10 +105,12 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
     }
   PathName home_miktex (home);
   home_miktex += ".miktex";
+  PathName home_miktex_texmf (home);
+  home_miktex_texmf += "miktex-texmf";
   PathName prefix_miktex_texmf = GetMyPrefix();
   prefix_miktex_texmf += MIKTEX_TEXMF;
   ret.roots = prefix_miktex_texmf.Get();
-  ret.userInstallRoot = home_miktex;
+  ret.userInstallRoot = home_miktex_texmf;
   ret.userDataRoot = home_miktex;
   ret.userConfigRoot = home_miktex;
   return (ret);

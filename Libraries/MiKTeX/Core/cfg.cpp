@@ -1,6 +1,6 @@
 /* cfg.cpp: configuration files
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -83,6 +83,12 @@ public:
   bool expanded;
 
 public:
+  string documentation;
+
+public:
+  bool commentedOut;
+
+public:
   string expandedValue;
 
 public:
@@ -96,7 +102,8 @@ private:
 
 public:
   CfgValue ()
-    : expanded (false)
+    : expanded (false),
+      commentedOut (false)
   {
     value.reserve (INITIAL_VALUE_SIZE);
   }
@@ -173,8 +180,7 @@ public:
 
 public:
   void
-  WriteValues (/*[in]*/ StreamWriter &		writer,
-	       /*[in]*/ bool			noKey);
+  WriteValues (/*[in]*/ StreamWriter &		writer);
 };
 
 inline
@@ -210,9 +216,9 @@ CfgKey::FindValue (/*[in]*/ const char * lpszValueName)
    _________________________________________________________________________ */
 
 void
-CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer,
-		     /*[in]*/ bool			noKey)
+CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
 {
+  bool noKey = false;
   for (ValueMap::iterator it = valueMap.begin();
        it != valueMap.end();
        ++ it)
@@ -223,7 +229,30 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer,
 	  writer.WriteFormattedLine ("[%s]", name.c_str());
 	  noKey = true;
 	}
-      writer.WriteFormattedLine ("%s=%s",
+      if (! it->second.documentation.empty())
+	{
+	  writer.WriteLine ();
+	  bool start = true;
+	  for (string::const_iterator it2 = it->second.documentation.begin();
+	       it2 != it->second.documentation.end();
+	       ++ it2)
+	    {
+	      if (start)
+		{
+		  writer.Write (";; ");
+		}
+	      writer.Write (*it2);
+	      start = (*it2 == '\n');
+	    }
+	  if (! start)
+	    {
+	      writer.WriteLine ();
+	    }
+	}
+      writer.WriteFormattedLine ("%s%s=%s",
+				 (it->second.commentedOut
+				  ? ";"
+				  : ""),
 				 it->second.name.c_str(),
 				 it->second.value.c_str());
     }
@@ -327,6 +356,16 @@ public:
   PutValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName,
 	    /*[in]*/ const char *	lpszValue);
+  
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  PutValue (/*[in]*/ const char *	lpszKey,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const char *	lpszValue,
+	    /*[in]*/ const char *	lpszDocumentation,
+	    /*[in]*/ bool		commentedOut);
   
 public:
   virtual
@@ -476,7 +515,9 @@ private:
   PutValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName,
 	    /*[in]*/ const char *	lpszValue,
-	    /*[in]*/ PutMode		putMode);
+	    /*[in]*/ PutMode		putMode,
+	    /*[in]*/ const char *	lpszDocumentation,
+	    /*[in]*/ bool		commentedOut);
 
 private:
   int lineno;
@@ -636,7 +677,7 @@ CfgImpl::WriteKeys (/*[in]*/ StreamWriter & writer)
        it != keyMap.end();
        ++ it)
     {
-      it->second.WriteValues (writer, false);
+      it->second.WriteValues (writer);
     }
   if (tracking)
     {
@@ -933,7 +974,7 @@ CfgImpl::TryGetValue (/*[in]*/ const char *	lpszKey,
 
   CfgValue * pcfgvalue = pcfgkey->FindValue(lpszValueName);
 
-  if (pcfgvalue == 0)
+  if (pcfgvalue == 0 || pcfgvalue->commentedOut)
     {
       return (false);
     }
@@ -1022,7 +1063,9 @@ void
 CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
 		   /*[in]*/ const char *	lpszValueName,
 		   /*[in]*/ const char *	lpszValue,
-		   /*[in]*/ CfgImpl::PutMode	putMode)
+		   /*[in]*/ CfgImpl::PutMode	putMode,
+		   /*[in]*/ const char *	lpszDocumentation,
+		   /*[in]*/ bool		commentedOut)
 {
   char szDefaultKey[BufferSizes::MaxCfgName];
 
@@ -1048,6 +1091,8 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
   CfgValue cfgvalue;
   cfgvalue.name = lpszValueName;
   cfgvalue.value = lpszValue;
+  cfgvalue.documentation = (lpszDocumentation == 0 ? "" : lpszDocumentation);
+  cfgvalue.commentedOut = commentedOut;
 
   pair<ValueMap::iterator, bool> pair2
     = (itstrkey->second.valueMap
@@ -1087,7 +1132,27 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
 		   /*[in]*/ const char *	lpszValueName,
 		   /*[in]*/ const char *	lpszValue)
 {
-  return (PutValue(lpszKey, lpszValueName, lpszValue, None));
+  return (PutValue(lpszKey, lpszValueName, lpszValue, None, 0, false));
+}
+
+/* _________________________________________________________________________
+
+   CfgImpl::PutValue
+   _________________________________________________________________________ */
+
+void
+CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
+		   /*[in]*/ const char *	lpszValueName,
+		   /*[in]*/ const char *	lpszValue,
+		   /*[in]*/ const char *	lpszDocumentation,
+		   /*[in]*/ bool		commentedOut)
+{
+  return (PutValue(lpszKey,
+		   lpszValueName,
+		   lpszValue,
+		   None,
+		   lpszDocumentation,
+		   commentedOut));
 }
 
 /* _________________________________________________________________________
@@ -1145,11 +1210,18 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
   lineno = 0;
   currentFile = path;
 
+  string documentation;
+
   while (reader.ReadLine(line))
     {
       ++ lineno;
-      if (line[0] == '@')
+      if (line.empty())
 	{
+	  documentation = "";
+	}
+      else if (line[0] == '@')
+	{
+	  documentation = "";
 	  if (wasEmpty && level == 0)
 	    {
 	      originalDigest = MD5::Parse(line.c_str() + 1);
@@ -1158,6 +1230,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	}
       else if (line[0] == '!')
 	{
+	  documentation = "";
 	  Tokenizer tok (line.c_str() + 1, " \t");
 	  const char * lpsz = tok.GetCurrent();
 	  if (lpsz == 0)
@@ -1188,6 +1261,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	}
       else if (line[0] == '[')
 	{
+	  documentation = "";
 	  Tokenizer tok (line.c_str() + 1, "]");
 	  const char * lpsz = tok.GetCurrent();
 	  if (lpsz == 0)
@@ -1197,17 +1271,34 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	    }
 	  Utils::CopyString (szKeyName, BufferSizes::MaxCfgName, lpsz);
 	}
-      else if (IsAlNum(line[0]) || line[0] == '.')
+      else if (line[0] == ';' && line[1] == ';' && line[2] == ' ')
+	{
+	  if (! documentation.empty())
+	    {
+	      documentation += '\n';
+	    }
+	  documentation += &line[3];
+	}
+      else if ((line[0] == ';' && (IsAlNum(line[1]) || line[1] == '.'))
+	       || IsAlNum(line[0]) || line[0] == '.')
 	{
 	  string valueName;
 	  string value;
 	  PutMode putMode;
-	  if (! ParseValueDefinition(line, valueName, value, putMode))
+	  if (! ParseValueDefinition(line[0] == ';' ? &line[1] : &line[0],
+				     valueName,
+				     value,
+				     putMode))
 	    {
 	      FATAL_CFG_ERROR ("CfgImpl::Read",
 			       T_("invalid value definition"));
 	    }
-	  PutValue (szKeyName, valueName.c_str(), value.c_str(), putMode);
+	  PutValue (szKeyName,
+		    valueName.c_str(),
+		    value.c_str(),
+		    putMode,
+		    documentation.c_str(),
+		    line[0] == ';');
 	}
     }
 

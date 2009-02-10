@@ -21,6 +21,16 @@
  * Binary packages (.rpm/.deb/.tgz) are now available for GNU/Linux
    systems.  See http://miktex.org/unx/ for more information.
 
+ Restrictions:
+
+ * Only per-user configuration is supported at the momement (all
+   configuration settings are stored under $HOME/.miktex).
+
+ * Packages will be installed for the current user only.  A better
+   approach would be to install packages in the /usr/ hierarchy.  In
+   order to get there, the package manager has to be implemented as a
+   daemon.  This is on the TODO list.
+
 
  _____________________________________________________________________________
 
@@ -30,4 +40,3 @@
 
  * The MiKTeX package manager graphical user interface (GUI) has been
    ported to UNIX system-like platforms using the Qt widget toolkit.
-

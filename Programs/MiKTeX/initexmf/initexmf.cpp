@@ -446,9 +446,11 @@ private:
   void
   ReportFndbFiles ();
 
+#if defined(MIKTEX_WINDOWS)
 private:
   void
   ReportEnvironmentVariables ();
+#endif
 
 private:
   void
@@ -458,7 +460,7 @@ private:
   void
   WriteReport ();
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
   void
   Configure ();
 #endif
@@ -645,7 +647,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("FILE")
   },
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
   {
     "configure", 0,
     POPT_ARG_NONE, 0,
@@ -801,7 +803,7 @@ Open the specified configuration file in an editor.\
     T_("ROOT")
   },
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
   {
     "user-install", 0,
     POPT_ARG_STRING, 0,
@@ -2423,39 +2425,36 @@ IniTeXMFApp::ReportFndbFiles ()
    IniTeXMFApp::ReportEnvironmentVariables
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
 void
 IniTeXMFApp::ReportEnvironmentVariables ()
 {
-#if defined(MIKTEX_WINDOWS)
-  if (xml)
+  LPTSTR lpszEnv = reinterpret_cast<LPTSTR>(GetEnvironmentStrings ());
+  if (lpszEnv == 0)
     {
-      LPTSTR lpszEnv = reinterpret_cast<LPTSTR>(GetEnvironmentStrings ());
-      if (lpszEnv == 0)
+      return;
+    }
+  xmlWriter.StartElement ("environment");
+  for (LPTSTR p = lpszEnv; *p != 0; p += strlen(p) + 1)
+    {
+      Tokenizer tok (p, "=");
+      if (tok.GetCurrent() == 0)
 	{
-	  return;
+	  continue;
 	}
-      xmlWriter.StartElement ("environment");
-      for (LPTSTR p = lpszEnv; *p != 0; p += strlen(p) + 1)
+      xmlWriter.StartElement ("env");
+      xmlWriter.AddAttribute ("name", tok.GetCurrent());
+      ++ tok;
+      if (tok.GetCurrent() != 0)
 	{
-	  Tokenizer tok (p, "=");
-	  if (tok.GetCurrent() == 0)
-	    {
-	      continue;
-	    }
-	  xmlWriter.StartElement ("env");
-	  xmlWriter.AddAttribute ("name", tok.GetCurrent());
-	  ++ tok;
-	  if (tok.GetCurrent() != 0)
-	    {
-	      xmlWriter.Text (tok.GetCurrent());
-	    }
-	  xmlWriter.EndElement ();
+	  xmlWriter.Text (tok.GetCurrent());
 	}
       xmlWriter.EndElement ();
-      FreeEnvironmentStrings (lpszEnv);
     }
-#endif
+  xmlWriter.EndElement ();
+  FreeEnvironmentStrings (lpszEnv);
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -2550,7 +2549,7 @@ IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
    IniTeXMFApp::Configure
    _________________________________________________________________________ */
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
 void
 IniTeXMFApp::Configure ()
 {
@@ -2613,8 +2612,16 @@ IniTeXMFApp::WriteReport ()
   ReportMiKTeXVersion ();
   ReportOSVersion ();
   ReportRoots ();
-  ReportFndbFiles ();
-  ReportEnvironmentVariables ();
+  if (xml)
+    {
+      ReportFndbFiles ();
+    }
+#if defined(MIKTEX_WINDOWS)
+  if (xml)
+    {
+      ReportEnvironmentVariables ();
+    }
+#endif
   ReportBrokenPackages ();
   if (xml)
     {
@@ -2705,7 +2712,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
   TriState triSharedSetup (TriState::Undetermined);
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
   bool optConfigure = false;
 #endif
 
@@ -2741,7 +2748,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  addFiles.push_back (lpszOptArg);
 	  break;
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
 	case OPT_CONFIGURE:
 	  optConfigure = true;
 	  break;
@@ -2979,7 +2986,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       || ! startupConfig.commonConfigRoot.Empty()
       || ! startupConfig.commonInstallRoot.Empty())
     {
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
       optConfigure = true;
 #else
       SetTeXMFRootDirectories ();
@@ -3103,7 +3110,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       ListMetafontModes ();
     }
 
-#if ! defined(MIKTEX_STANDALONE)
+#if MIKTEX_STANDALONE
   if (optConfigure)
     {
       Configure ();

@@ -3740,6 +3740,18 @@ public:
 	    /*[in]*/ const char *	lpszValue)
     = 0;
     
+  /// Sets a configuration value.
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  PutValue (/*[in]*/ const char *	lpszKey,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const char *	lpszValue,
+	    /*[in]*/ const char *	lpszDocumentation,
+	    /*[in]*/ bool		commentedOut)
+    = 0;
+    
   /// Reads configuration values from a file.
 public:
   virtual

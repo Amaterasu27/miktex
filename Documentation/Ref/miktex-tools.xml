@@ -9,7 +9,7 @@
 
 <refnamediv>
 <refname>miktex-tools</refname>
-<refpurpose>&MiKTeXTools;</refpurpose>
+<refpurpose>experimental &TeX; additions</refpurpose>
 </refnamediv>
 
 <refsect1>
@@ -32,7 +32,7 @@ system installed on your system.</para>
 
 <refsect1>
 
-<title>Per-user configuration</title>
+<title>Configuration</title>
 
 <para>In order to configure &MiKTeXTools;, you have to run the
 &MiKTeX; configuration utility:</para>
@@ -47,11 +47,15 @@ initexmf --verbose --configure
 <listitem><para><command>kpsewhich</command> is used to find existing
 TEXMF trees; the information is written
 to
-<filename>~/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
+    <filename><envar>$HOME</envar>/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
 <listitem><para>the file name database is created</para></listitem>
 <listitem><para>the package database is downloaded
 from the &MiKTeX; package repository</para></listitem>
 </itemizedlist>
+
+<para>Only per-user configuration is supported at the moment:
+all configuration settings are stored
+under <filename><envar>$HOME</envar>/.miktex</filename>.</para>
 
 </refsect1>
 
@@ -109,13 +113,13 @@ mpm --update-db
 package repository and installs them in the installation directory.</para>
 
 <para>You are now ready to browse and install packages.  There are two
-variants of the package manager: GUI and console. Run</para>
+variants of the package manager: &GUI; and console. Run</para>
 
 <programlisting>
 mpm
 </programlisting>
 
-<para>to start the GUI variant of the package manager. You will be
+<para>to start the &GUI; variant of the package manager. You will be
 presented with a list of packages.</para>
 
 <para>The rest of this section describes the console variant of the
@@ -154,8 +158,20 @@ documentation.</para>
 mthelp <replaceable>package</replaceable>
 </programlisting>
 
-<para>to view an <acronym>HTML</acronym> page wich contains links to
+<para>to view an &HTML; page wich contains links to
 the documentation files of a package.</para>
+
+</refsect1>
+
+<refsect1>
+
+<title>Caveats</title>
+
+<para>Packages will be installed in the user home directory.
+A better approach would be to install packages in the
+<filename>/usr/</filename> hierarchy.  In order to get there, the
+package manager has to be implemented as a daemon.  This is on the TODO
+list.</para>
 
 </refsect1>
 
@@ -163,7 +179,12 @@ the documentation files of a package.</para>
 
 <title>See also</title>
 
-<para><ulink url="http://www.miktex.org">MiKTeX Project Page</ulink></para>
+<para><citerefentry><refentrytitle>initexmf</refentrytitle>
+<manvolnum>1</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>miktex-pdftex</refentrytitle>
+<manvolnum>1</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>mpm</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>mthelp</refentrytitle><manvolnum>1</manvolnum></citerefentry></para>
 
 </refsect1>
 

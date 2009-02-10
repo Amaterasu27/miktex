@@ -1031,7 +1031,7 @@ if(RPMBUILD_EXE)
   set(CPACK_GENERATOR "${CPACK_GENERATOR};RPM")
 endif(RPMBUILD_EXE)
 
-set(miktex_tools_slogan "just another needless package")
+set(miktex_tools_slogan "experimental TeX additions")
 
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/Documentation/miktex-tools.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: ${miktex_tools_slogan}")

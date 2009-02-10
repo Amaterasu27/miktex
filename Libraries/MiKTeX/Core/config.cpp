@@ -298,54 +298,68 @@ SessionImpl::WriteStartupConfigFile
 
   pcfg->PutValue ("Paths",
 		  MIKTEX_REGVAL_ROOTS,
-		  startupConfig.roots.c_str());
+		  startupConfig.roots.c_str(),
+		  T_("TEXMF root directories"),
+		  false);
 
-  if (! startupConfig.commonInstallRoot.Empty()
-      && startupConfig.commonInstallRoot != defaultConfig.commonInstallRoot)
+  if (! startupConfig.commonInstallRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_INSTALL,
-		      startupConfig.commonInstallRoot.Get());
+		      startupConfig.commonInstallRoot.Get(),
+		      T_("shared install root"),
+		      (startupConfig.commonInstallRoot
+		       == defaultConfig.commonInstallRoot));
     }
 
-  if (! startupConfig.userInstallRoot.Empty()
-      && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
+  if (! startupConfig.userInstallRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_INSTALL,
-		      startupConfig.userInstallRoot.Get());
+		      startupConfig.userInstallRoot.Get(),
+		      T_("user install root"),
+		      (startupConfig.userInstallRoot
+		       == defaultConfig.userInstallRoot));
     }
 
-  if (! startupConfig.commonDataRoot.Empty()
-      && startupConfig.commonDataRoot != defaultConfig.commonDataRoot)
+  if (! startupConfig.commonDataRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_DATA,
-		      startupConfig.commonDataRoot.Get());
+		      startupConfig.commonDataRoot.Get(),
+		      T_("shared data root"),
+		      (startupConfig.commonDataRoot
+		       == defaultConfig.commonDataRoot));
     }
 
-  if (! startupConfig.userDataRoot.Empty()
-      && startupConfig.userDataRoot != defaultConfig.userDataRoot)
+  if (! startupConfig.userDataRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_DATA,
-		      startupConfig.userDataRoot.Get());
+		      startupConfig.userDataRoot.Get(),
+		      T_("user data root"),
+		      (startupConfig.userDataRoot
+		       == defaultConfig.userDataRoot));
     }
 
-  if (! startupConfig.commonConfigRoot.Empty()
-      && startupConfig.commonConfigRoot != defaultConfig.commonConfigRoot)
+  if (! startupConfig.commonConfigRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_CONFIG,
-		      startupConfig.commonConfigRoot.Get());
+		      startupConfig.commonConfigRoot.Get(),
+		      T_(""),
+		      (startupConfig.commonConfigRoot
+		       == defaultConfig.commonConfigRoot));
     }
 
-  if (! startupConfig.userConfigRoot.Empty()
-      && startupConfig.userConfigRoot != defaultConfig.userConfigRoot)
+  if (! startupConfig.userConfigRoot.Empty())
     {
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_CONFIG,
-		      startupConfig.userConfigRoot.Get());
+		      startupConfig.userConfigRoot.Get(),
+		      T_(""),
+		      (startupConfig.userConfigRoot
+		       == defaultConfig.userConfigRoot));
     }
 
   if (startupConfigFile.Empty())
