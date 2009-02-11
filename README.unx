@@ -107,90 +107,16 @@ This is what happens:
 - the package database is downloaded from the MiKTeX package repository
 
 
-USING MIKTEX-PDFTEX
--------------------
-
-MiKTeX-pdfTeX is an alternative pdfTeX engine.  The engine features
-integrated package management, i.e., missing packages will be
-installed on the-fly (after confirmation).
-
-You invoke MiKTeX-pdfTeX as follows:
-
-    miktex-pdftex --undump=latex sample2e
-
-The --undump option must be used to specify the format.  See the
-reference page miktex-pdftex(1), for more information.
-
-If you prefer shortcuts, you can create symbolic links to the
-MiKTeX-pdfTeX engine:
-
-    cd /usr/local/bin
-    ln -s miktex-pdftex latex
-    ln -s miktex-pdftex pdflatex
-
-Then you can invoke the engine in the usual way:
-
-     pdflatex sample2e
-
-
-USING THE PACKAGE MANAGER
--------------------------
-
-MPM (MiKTeX Package Manager) was originally intended to be a tool for
-MiKTeX users.  But the program can be helpful for users of other TeX
-systems too, because many of the MiKTeX packages are
-system-independent.
-
-First of all you should install the package database files on your
-system.  To do this, run
-
-    mpm --update-db
-
-This command retrieves the package database files from a remote
-package repository and installs them in the installation directory.
-
-You are now ready to browse and install packages.  There are two
-variants of the package manager: GUI and console. Run
-
-    mpm
-
-to start the GUI variant of the package manager. You will be presented
-with a list of packages.
-
-The rest of this section describes the console variant of the package
-manager.
-
-To list the contents of the just installed package database, run
-
-    mpm --list
-
-To get detailed information about a package, run
-
-    mpm --print-package-info=PACKAGE
-
-If you want to install a package, run
-
-    mpm --install=PACKAGE
-
-
-USING THE MTHELP UTILITY
-------------------------
-
-The MTHELP utility can be used to lookup package documentation.
-
-Run
-
-    mthelp PACKAGE
-
-to view an HTML page wich contains links to the documentation files of
-a package.
-
-
 DOCUMENTATION
 -------------
 
-The following reference pages are available: initexmf.1,
-miktex-pdftex.1, mpm.1, mthelp.1.
+The following reference pages are available:
+
+- initexmf.1,
+- miktex-pdftex.1
+- miktex-tools.7
+- mpm.1
+- mthelp.1
 
 
 BUGS & ISSUES

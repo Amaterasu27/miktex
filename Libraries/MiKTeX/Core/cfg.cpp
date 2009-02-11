@@ -30,6 +30,9 @@
      (string(Q_(currentFile)) + ":" + NUMTOSTR(lineno) + ": "	\
       + message + ".").c_str())
 
+const char COMMENT_CHAR = ';';
+const char * COMMENT_CHAR_STR = ";";
+
 /* _________________________________________________________________________
 
    GetBaseNameSansExt
@@ -113,7 +116,9 @@ public:
     : expanded (other.expanded),
       expandedValue (other.expandedValue),
       name (other.name),
-      value (other.value)
+      value (other.value),
+      documentation (other.documentation),
+      commentedOut (other.commentedOut)
   {
   }
 
@@ -239,7 +244,7 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
 	    {
 	      if (start)
 		{
-		  writer.Write (";; ");
+		  writer.WriteFormatted ("%c%c ", COMMENT_CHAR, COMMENT_CHAR);
 		}
 	      writer.Write (*it2);
 	      start = (*it2 == '\n');
@@ -249,12 +254,36 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
 	      writer.WriteLine ();
 	    }
 	}
-      writer.WriteFormattedLine ("%s%s=%s",
-				 (it->second.commentedOut
-				  ? ";"
-				  : ""),
-				 it->second.name.c_str(),
-				 it->second.value.c_str());
+      if (! it->second.value.empty()
+	  && Utils::IsAbsolutePath(it->second.value.c_str())
+	  && (it->second.value.find_first_of(PATH_DELIMITER) != string::npos))
+	{
+	  writer.WriteFormattedLine ("%s%s=",
+				     (it->second.commentedOut
+				      ? COMMENT_CHAR_STR
+				      : ""),
+				     it->second.name.c_str());
+	  for (CSVList root (it->second.value.c_str(), PATH_DELIMITER);
+	       root.GetCurrent() != 0;
+	       ++ root)
+	    {
+	      writer.WriteFormattedLine ("%s%s;=%s",
+					 (it->second.commentedOut
+					  ? COMMENT_CHAR_STR
+					  : ""),
+					 it->second.name.c_str(),
+					 root.GetCurrent());
+	    }
+	}
+      else
+	{
+	  writer.WriteFormattedLine ("%s%s=%s",
+				     (it->second.commentedOut
+				      ? COMMENT_CHAR_STR
+				      : ""),
+				     it->second.name.c_str(),
+				     it->second.value.c_str());
+	}
     }
 }
 
@@ -1100,9 +1129,15 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
 
   if (! pair2.second)
     {
+      // modify existing value
       ValueMap::iterator itstrval = pair2.first;
       itstrval->second.expanded = false;
       itstrval->second.expandedValue = "";
+      if (lpszDocumentation != 0 && itstrval->second.documentation.empty())
+	{
+	  itstrval->second.documentation = lpszDocumentation;
+	}
+      itstrval->second.commentedOut = commentedOut;
       if (putMode == Append)
 	{
 	  itstrval->second.value += lpszValue;
@@ -1271,7 +1306,9 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	    }
 	  Utils::CopyString (szKeyName, BufferSizes::MaxCfgName, lpsz);
 	}
-      else if (line[0] == ';' && line[1] == ';' && line[2] == ' ')
+      else if (line[0] == COMMENT_CHAR
+	       && line[1] == COMMENT_CHAR
+	       && line[2] == ' ')
 	{
 	  if (! documentation.empty())
 	    {
@@ -1279,13 +1316,15 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	    }
 	  documentation += &line[3];
 	}
-      else if ((line[0] == ';' && (IsAlNum(line[1]) || line[1] == '.'))
+      else if ((line[0] == COMMENT_CHAR && (IsAlNum(line[1]) || line[1] == '.'))
 	       || IsAlNum(line[0]) || line[0] == '.')
 	{
 	  string valueName;
 	  string value;
 	  PutMode putMode;
-	  if (! ParseValueDefinition(line[0] == ';' ? &line[1] : &line[0],
+	  if (! ParseValueDefinition((line[0] == COMMENT_CHAR
+				      ? &line[1]
+				      : &line[0]),
 				     valueName,
 				     value,
 				     putMode))
@@ -1298,7 +1337,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 		    value.c_str(),
 		    putMode,
 		    documentation.c_str(),
-		    line[0] == ';');
+		    line[0] == COMMENT_CHAR);
 	}
     }
 

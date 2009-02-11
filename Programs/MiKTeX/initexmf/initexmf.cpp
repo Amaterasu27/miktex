@@ -460,7 +460,7 @@ private:
   void
   WriteReport ();
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
   void
   Configure ();
 #endif
@@ -647,7 +647,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("FILE")
   },
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
   {
     "configure", 0,
     POPT_ARG_NONE, 0,
@@ -803,7 +803,7 @@ Open the specified configuration file in an editor.\
     T_("ROOT")
   },
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
   {
     "user-install", 0,
     POPT_ARG_STRING, 0,
@@ -2549,7 +2549,7 @@ IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
    IniTeXMFApp::Configure
    _________________________________________________________________________ */
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
 void
 IniTeXMFApp::Configure ()
 {
@@ -2712,7 +2712,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
   TriState triSharedSetup (TriState::Undetermined);
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
   bool optConfigure = false;
 #endif
 
@@ -2748,7 +2748,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  addFiles.push_back (lpszOptArg);
 	  break;
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
 	case OPT_CONFIGURE:
 	  optConfigure = true;
 	  break;
@@ -2986,7 +2986,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       || ! startupConfig.commonConfigRoot.Empty()
       || ! startupConfig.commonInstallRoot.Empty())
     {
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
       optConfigure = true;
 #else
       SetTeXMFRootDirectories ();
@@ -3110,7 +3110,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       ListMetafontModes ();
     }
 
-#if MIKTEX_STANDALONE
+#if ! MIKTEX_STANDALONE
   if (optConfigure)
     {
       Configure ();

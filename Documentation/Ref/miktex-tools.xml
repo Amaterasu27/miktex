@@ -5,6 +5,9 @@
 <refmeta>
 <refentrytitle>miktex-tools</refentrytitle>
 <manvolnum>7</manvolnum>
+<refmiscinfo class="source">&PACKAGE_NAME;</refmiscinfo>
+<refmiscinfo class="version">&miktexrev;</refmiscinfo>
+<refmiscinfo class="manual">Miscellanea</refmiscinfo>
 </refmeta>
 
 <refnamediv>
@@ -47,7 +50,7 @@ initexmf --verbose --configure
 <listitem><para><command>kpsewhich</command> is used to find existing
 TEXMF trees; the information is written
 to
-    <filename><envar>$HOME</envar>/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
+<filename><envar>$HOME</envar>/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
 <listitem><para>the file name database is created</para></listitem>
 <listitem><para>the package database is downloaded
 from the &MiKTeX; package repository</para></listitem>

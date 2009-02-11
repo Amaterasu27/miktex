@@ -307,7 +307,7 @@ SessionImpl::WriteStartupConfigFile
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_INSTALL,
 		      startupConfig.commonInstallRoot.Get(),
-		      T_("shared install root"),
+		      T_("common install root"),
 		      (startupConfig.commonInstallRoot
 		       == defaultConfig.commonInstallRoot));
     }
@@ -327,7 +327,7 @@ SessionImpl::WriteStartupConfigFile
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_DATA,
 		      startupConfig.commonDataRoot.Get(),
-		      T_("shared data root"),
+		      T_("common data root"),
 		      (startupConfig.commonDataRoot
 		       == defaultConfig.commonDataRoot));
     }
@@ -347,7 +347,7 @@ SessionImpl::WriteStartupConfigFile
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_COMMON_CONFIG,
 		      startupConfig.commonConfigRoot.Get(),
-		      T_(""),
+		      T_("common config root"),
 		      (startupConfig.commonConfigRoot
 		       == defaultConfig.commonConfigRoot));
     }
@@ -357,7 +357,7 @@ SessionImpl::WriteStartupConfigFile
       pcfg->PutValue ("Paths",
 		      MIKTEX_REGVAL_USER_CONFIG,
 		      startupConfig.userConfigRoot.Get(),
-		      T_(""),
+		      T_("user config root"),
 		      (startupConfig.userConfigRoot
 		       == defaultConfig.userConfigRoot));
     }
