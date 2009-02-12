@@ -105,7 +105,7 @@ FindConfigMapping (/*[in]*/ const char *	lpszConfigSection,
 PathName
 SessionImpl::GetMyPrefix ()
 {
-  PathName bindir = GetMyLocation();
+  PathName bindir = GetMyLocation(true);
 
   RemoveDirectoryDelimiter (bindir.GetBuffer());
 
@@ -169,10 +169,9 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
     }
 #endif
 
-  PathName bindir = GetMyLocation();
-
 #if defined(MIKTEX_WINDOWS)
 
+  PathName bindir = GetMyLocation();
   path = bindir;
 
 #  if defined(MIKTEX_WINDOWS_32)
@@ -459,8 +458,7 @@ SessionImpl::IsMiKTeXDirect ()
 {
   if (triMiKTeXDirect == TriState::Undetermined)
     {
-      PathName path;
-      path = GetMyLocation();
+      PathName path = GetMyLocation(false);
 #if defined(MIKTEX_WINDOWS_32)
       path += PARENT_PARENT_DIRECTORY;
 #else
@@ -504,12 +502,8 @@ SessionImpl::GetBinDirectory ()
       ret = initInfo.GetBinDirectory();
       if (ret.Empty())
 	{
-#if defined(MIKTEX_PATH_BIN_DIR)
 	  ret = GetRootDirectory(GetInstallRoot());
 	  ret += MIKTEX_PATH_BIN_DIR;
-#else
-	  ret = GetMyLocation();
-#endif
 	}
     }
   return (ret);

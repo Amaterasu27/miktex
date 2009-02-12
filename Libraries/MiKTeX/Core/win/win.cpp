@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -97,14 +97,29 @@ MyGetFolderPath (/*[in]*/ int	nFolder,
    _________________________________________________________________________ */
 
 PathName
-SessionImpl::GetMyProgramFile ()
+SessionImpl::GetMyProgramFile (/*[in]*/ canonicalized)
 {
-  PathName path;
-  if (GetModuleFileNameA(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
+  // we do this once
+  if (myProgramFile.GetLength() == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
+      if (GetModuleFileNameA(0,
+			     myProgramfile.GetBuffer(),
+			     BufferSizes::MaxPath)
+	  == 0)
+	{
+	  FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
+	}
+      myProgramFileCanon = myProgramFile;
+      myProgramFileCanon.Canonicalize ();
     }
-  return (path);
+  if (canonicalized)
+    {
+      return (myProgramFileCanon);
+    }
+  else
+    {
+      return (myProgramFile);
+    }
 }
 
 /* _________________________________________________________________________
@@ -3366,3 +3381,13 @@ Setting new PATH:"));
   return (okay);
 }
 
+/* _________________________________________________________________________
+
+   Utils::CanonicalizePathName
+   _________________________________________________________________________ */
+
+void
+Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
+{
+#  warning Unimplemented: Utils::CanonicalizePathName()
+}

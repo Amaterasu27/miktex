@@ -1,6 +1,6 @@
 ## InstallPaths.cmake
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,15 +18,20 @@
 ## USA.
 
 if(NATIVE_WINDOWS)
-  set(texmfdir "${CMAKE_INSTALL_PREFIX}/texmf/")
-  set(bindir "${texmfdir}/miktex/bin")
-  if(CMAKE_CL_64)
-    set(bindir "${bindir}/x64")
-  else(CMAKE_CL_64)
-#   set(bindir "${bindir}/x86")
-  endif(CMAKE_CL_64)
+  set(texmfdir "texmf")
 else(NATIVE_WINDOWS)
   set(texmfdir "share/${miktex_prefix}texmf")
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
+  set(miktex_bindir "${texmfdir}/miktex/bin")
+else(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
+  set(miktex_bindir "${texmfdir}/miktex/${target_system_tag}/bin")
+endif(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
+
+if(NATIVE_WINDOWS)
+  set(bindir ${miktex_bindir})
+else(NATIVE_WINDOWS)
   set(bindir "bin")
 endif(NATIVE_WINDOWS)
 

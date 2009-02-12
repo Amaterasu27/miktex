@@ -1210,7 +1210,7 @@ public:
   virtual
   PathName
   MIKTEXTHISCALL
-  GetMyLocation ();
+  GetMyLocation (/*[in]*/ bool canonicalized);
 
 public:
   virtual
@@ -1340,7 +1340,7 @@ public:
 
 public:
   PathName
-  GetMyProgramFile ();
+  GetMyProgramFile (/*[in]*/ bool canonicalized);
 
 private:
   PathName
@@ -2069,6 +2069,7 @@ private:
   // fully qualified path to the running application file
 private:
   PathName myProgramFile;
+  PathName myProgramFileCanon;
 
 private:
   int refCount;

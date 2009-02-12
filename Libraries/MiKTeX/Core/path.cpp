@@ -271,6 +271,11 @@ PathName::Convert (/*[in]*/ ConvertPathNameFlags	flags)
     }
 #endif
 
+  if ((flags & ConvertPathNameFlags::Canonicalize) != 0)
+    {
+      Utils::CanonicalizePathName (*this);
+    }
+
   for (char * lpsz = GetBuffer(); *lpsz != 0; ++ lpsz)
     {
       if (toUnix && *lpsz == PathName::DosDirectoryDelimiter)

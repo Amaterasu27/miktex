@@ -354,22 +354,18 @@
   "texmf"					\
   MIKTEX_FNDB_FILE_SUFFIX
 
-#if defined(_WIN32) || defined(_WIN64)
-#  if defined(_MSC_VER) && defined(_M_IX86)
-#      define MIKTEX_PATH_BIN_DIR		\
+#if defined(_WIN32) && ! defined(_WIN64)	\
+#define MIKTEX_PATH_BIN_DIR			\
   MIKTEX_PATH_MIKTEX_DIR			\
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
   "bin"
-#  elif defined(_MSC_VER) && defined(_M_AMD64)
-#    define MIKTEX_PATH_BIN_DIR			\
+#else
+#define MIKTEX_PATH_BIN_DIR			\
   MIKTEX_PATH_MIKTEX_DIR			\
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
-  "bin"
+  "${target_system_tag}"			\
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
-  "amd64"
-#  else
-#    error Unimplemented: MIKTEX_PATH_BIN_DIR
-#  endif
+  "bin"
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)

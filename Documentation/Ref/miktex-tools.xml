@@ -171,10 +171,17 @@ the documentation files of a package.</para>
 <title>Caveats</title>
 
 <para>Packages will be installed in the user home directory.
-A better approach would be to install packages in the
-<filename>/usr/</filename> hierarchy.  In order to get there, the
-package manager has to be implemented as a daemon.  This is on the TODO
-list.</para>
+A better approach would be to enhance the auto-install dialog box:</para>
+<orderedlist>
+<listitem><para>add a new check box:
+<guilabel>Install package in /usr/share/miktex-texmf</guilabel></para></listitem>
+<listitem><para>A password dialog pops up, if the user has chosen to
+install the package in the <filename>/usr/</filename> directory.</para></listitem>
+<listitem><para>the package manager is run with root privileges, if the
+the user entered the root password.</para></listitem>
+</orderedlist>
+
+<para>This will be implemented in one of the next beta releases.</para>
 
 </refsect1>
 

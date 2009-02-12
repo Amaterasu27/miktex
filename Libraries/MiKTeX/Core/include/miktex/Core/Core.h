@@ -864,6 +864,8 @@ public:
     MakeRelative = 32,
     /// Makes the path name absolute.
     MakeAbsolute = 64,
+    /// Resolve symbolic links.
+    Canonicalize = 128,
   };
 };
 
@@ -1729,6 +1731,11 @@ public:
   static
   MIKTEXCORECEEAPI(void)
   CheckHeap ();
+
+public:
+  static
+  void
+  CanonicalizePathName (/*[in,out]*/ PathName & path);
 
 #if defined(MIKTEX_WINDOWS)
 public:
@@ -2727,6 +2734,14 @@ public:
     // already normalized
     return (*this);
 #endif
+  }
+
+public:
+  PathName &
+  Canonicalize ()
+  {
+    Convert (ConvertPathNameFlags::Canonicalize);
+    return (*this);
   }
 
   /// Converts this path name into an absolute path name.
@@ -6087,8 +6102,15 @@ public:
   virtual
   PathName
   MIKTEXTHISCALL
-  GetMyLocation ()
+  GetMyLocation (/*[in]*/ bool canonicalized)
     = 0;
+
+public:
+  PathName
+  GetMyLocation ()
+  {
+    return (GetMyLocation(false));
+  }
 
 public:
   virtual

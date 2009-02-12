@@ -76,7 +76,7 @@ Utils::GetExeName ()
 {
   char szName[BufferSizes::MaxPath];
   SessionImpl::GetSession()
-    ->GetMyProgramFile().GetFileNameWithoutExtension (szName);
+    ->GetMyProgramFile(false).GetFileNameWithoutExtension (szName);
   return (szName);
 }
 
@@ -89,9 +89,9 @@ Utils::GetExeName ()
    _________________________________________________________________________ */
 
 PathName
-SessionImpl::GetMyLocation ()
+SessionImpl::GetMyLocation (/*[in]*/ bool canonicalized)
 {
-  return (GetMyProgramFile().RemoveFileSpec());
+  return (GetMyProgramFile(canonicalized).RemoveFileSpec());
 }
 
 /* _________________________________________________________________________
@@ -1069,7 +1069,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   
   trace_core->WriteFormattedLine ("core",
 				  T_("program file: %s"),
-				  GetMyProgramFile().Get());
+				  GetMyProgramFile(true).Get());
 
   trace_config->WriteFormattedLine ("core",
 				    T_("session locale: %s"),

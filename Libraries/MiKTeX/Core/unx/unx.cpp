@@ -32,7 +32,7 @@
    _________________________________________________________________________ */
 
 PathName
-SessionImpl::GetMyProgramFile ()
+SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
 {
   // we do this once
   if (myProgramFile.GetLength() == 0)
@@ -82,8 +82,17 @@ The invoked program could not be found in the PATH."),
 				  0);
 	    }
 	}
+      myProgramFileCanon = myProgramFile;
+      myProgramFileCanon.Canonicalize ();
     }
-  return (myProgramFile);
+  if (canonicalized)
+    {
+      return (myProgramFileCanon);
+    }
+  else
+    {
+      return (myProgramFile);
+    }
 }
 
 /* _________________________________________________________________________
@@ -410,4 +419,20 @@ SessionImpl::IsUserAnAdministrator ()
 void
 Utils::CheckHeap ()
 {
+}
+
+/* _________________________________________________________________________
+
+   Utils::CanonicalizePathName
+   _________________________________________________________________________ */
+
+void
+Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
+{
+  char resolved[PATH_MAX];
+  if (realpath(path.Get(), resolved) == 0)
+    {
+      FATAL_CRT_ERROR ("realpath", path.Get());
+    }
+  path = resolved;
 }
