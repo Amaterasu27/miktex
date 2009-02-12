@@ -354,7 +354,7 @@
   "texmf"					\
   MIKTEX_FNDB_FILE_SUFFIX
 
-#if defined(_WIN32) && ! defined(_WIN64)	\
+#if defined(_WIN32) && ! defined(_WIN64)
 #define MIKTEX_PATH_BIN_DIR			\
   MIKTEX_PATH_MIKTEX_DIR			\
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\

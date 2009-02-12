@@ -57,7 +57,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES "BSD/OS")
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
   set(system_cpu "i386")
 else(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
-  string(TOLOWER "${CMAKE_STSTEM_PROCESSOR}" system_cpu)
+  string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_cpu)
 endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
 
 set(target_system_tag "${system_cpu}-${system_name}")

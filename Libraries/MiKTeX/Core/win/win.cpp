@@ -97,13 +97,13 @@ MyGetFolderPath (/*[in]*/ int	nFolder,
    _________________________________________________________________________ */
 
 PathName
-SessionImpl::GetMyProgramFile (/*[in]*/ canonicalized)
+SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
 {
   // we do this once
   if (myProgramFile.GetLength() == 0)
     {
       if (GetModuleFileNameA(0,
-			     myProgramfile.GetBuffer(),
+			     myProgramFile.GetBuffer(),
 			     BufferSizes::MaxPath)
 	  == 0)
 	{
@@ -3389,5 +3389,18 @@ Setting new PATH:"));
 void
 Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
 {
-#  warning Unimplemented: Utils::CanonicalizePathName()
+  PathName resolved;
+  DWORD n = GetFullPathNameA(path.Get(),
+			     resolved.GetCapacity(),
+			     resolved.GetBuffer(),
+			     0);
+  if (n == 0)
+    {
+      FATAL_WINDOWS_ERROR ("GetFullPathNameA", path.Get());
+    }
+  if (n >= resolved.GetCapacity())
+    {
+      BUF_TOO_SMALL ("Utils::CanonicalizePathName");
+    }
+  path = resolved;
 }

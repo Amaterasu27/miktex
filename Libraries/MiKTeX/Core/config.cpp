@@ -171,7 +171,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
 
 #if defined(MIKTEX_WINDOWS)
 
-  PathName bindir = GetMyLocation();
+  PathName bindir = GetMyLocation(false);
   path = bindir;
 
 #  if defined(MIKTEX_WINDOWS_32)
