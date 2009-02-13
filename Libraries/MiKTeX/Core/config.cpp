@@ -120,6 +120,38 @@ SessionImpl::GetMyPrefix ()
 
 /* _________________________________________________________________________
 
+   GetPathNamePrefix
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(bool)
+GetPathNamePrefix (/*[in]*/ const PathName &	path_,
+		   /*[in]*/ const PathName &	suffix_,
+		   /*[out]*/ PathName &		prefix)
+{
+  PathName path (path_);
+  PathName suffix (suffix_);
+  
+  while (! suffix.Empty());
+    {
+      char p[BufferSizes::MaxPath];
+      char s[BufferSizes::MaxPath];
+      path.GetFileName (p);
+      suffix.GetFileName (s);
+      if (p != s)
+	{
+	  return (false);
+	}
+      path.CutOffLastComponent ();
+      suffix.CutOffLastComponent ();
+    }
+
+  prefix = path;
+
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::FindStartupConfigFile
 
    Try to find the MiKTeX startup file.
@@ -141,7 +173,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
       return (true);
     }
 
-#if defined(MIKTEX_WINDOWS)
+#if ! NO_REGISTRY
   if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
 				       MIKTEX_REGKEY_CORE,
 				       MIKTEX_REGVAL_STARTUP_FILE,
@@ -153,44 +185,39 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
     }
 #endif
 
-#if ! defined(MIKTEX_STANDALONE)
   StartupConfig defaultStartupConfig = DefaultConfig(false);
+
+  // try user config directory
   path = defaultStartupConfig.userConfigRoot;
   path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-#if 0				// todo
-  if (! File::Exists(path))
-    {
-      CreateStartupConfigFile (path);
-    }
-#endif
   if (File::Exists(path))
     {
       return (true);
     }
-#endif
 
-#if defined(MIKTEX_WINDOWS)
-
-  PathName bindir = GetMyLocation(false);
-  path = bindir;
-
-#  if defined(MIKTEX_WINDOWS_32)
-  path += PARENT_PARENT_DIRECTORY;
-#  else
-  path += PARENT_PARENT_PARENT_DIRECTORY;
-#  endif
-
+  // try the prefix of the bin directory
+  PathName myloc = GetMyLocation(true);
+  RemoveDirectoryDelimiter (myloc.GetBuffer());
+  PathName bindir (MIKTEX_PATH_BIN_DIR);
+  RemoveDirectoryDelimiter (bindir.GetBuffer());
+  PathName prefix;
+  if (GetPathNamePrefix(myloc, bindir, prefix))
+    {
+      path = prefix;
+      path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+      if (File::Exists(path))
+	{
+	  return (true);
+	}
+    }
+#if MIKTEX_UNIX
+  prefix = GetMyPrefix();
+  path = prefix;
   path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
   if (File::Exists(path))
     {
-      path.MakeAbsolute ();
       return (true);
     }
-  else
-    {
-      return (false);
-    }
-
 #endif
 
   return (false);
@@ -361,9 +388,19 @@ SessionImpl::WriteStartupConfigFile
 		       == defaultConfig.userConfigRoot));
     }
 
-  if (startupConfigFile.Empty())
+  if (IsSharedMiKTeXSetup())
     {
-#if ! defined(MIKTEX_STANDALONE)
+      if (! startupConfig.commonConfigRoot.Empty())
+	{
+	  startupConfigFile = startupConfig.commonConfigRoot;
+	}
+      else
+	{
+	  startupConfigFile = defaultConfig.commonConfigRoot;
+	}
+    }
+  else
+    {
       if (! startupConfig.userConfigRoot.Empty())
 	{
 	  startupConfigFile = startupConfig.userConfigRoot;
@@ -372,20 +409,18 @@ SessionImpl::WriteStartupConfigFile
 	{
 	  startupConfigFile = defaultConfig.userConfigRoot;
 	}
-      if (startupConfigFile.Empty())
-	{
-	  UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
-	}
-      startupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-      PathName dir;
-      dir = startupConfigFile;
-      dir.RemoveFileSpec ();
-      Directory::Create (dir);
-#else
-      UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
-#endif
     }
+  if (startupConfigFile.Empty())
+    {
+      UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
+    }
+  startupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
+  PathName dir;
+  dir = startupConfigFile;
+  dir.RemoveFileSpec ();
+  Directory::Create (dir);
+  
   pcfg->Write (startupConfigFile.Get());
 }
 
@@ -449,8 +484,8 @@ SessionImpl::ReadEnvironment ()
    the running program is located in:
 
    D:\texmf\miktex\bin\				(Windows 32-bit)
-   D:\texmf\miktex\bin\amd64			(Windows 64-bit)	
-   /cdrom/texmf/miktex/bin/i386-linux		(Linux 32-bit)
+   D:\texmf\miktex\amd64-windows\bin		(Windows 64-bit)	
+   /cdrom/texmf/miktex/i386-linux\bin		(Linux 32-bit)
    _________________________________________________________________________ */
 
 bool
@@ -914,7 +949,7 @@ SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 
    SessionImpl::SetUserConfigValue
 
-   Set a configuration parameter.
+   Set a per-user configuration parameter.
    _________________________________________________________________________ */
 
 void
@@ -930,33 +965,35 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
 
   SmartPointer<Cfg> pCfg (Cfg::Create());
 
-  if (File::Exists(pathConfigFile))
-  {
-    pCfg->Read (pathConfigFile);
-  }
+  bool haveConfigFile = File::Exists(pathConfigFile);
 
-#if defined(MIKTEX_WINDOWS)
-  else
-  {
-    winRegistry::SetRegistryValue (TriState::False,
-      lpszSectionName,
-      lpszValueName,
-      lpszValue);
-    string newValue;
-    if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
+  if (haveConfigFile)
     {
-      if (newValue != lpszValue)
-      {
-	FATAL_MIKTEX_ERROR
-	  ("SessionImpl::SetUserConfigValue",
-	  T_("\
-The configuration value could not be changed. Possibly an \
-environment variable definition is in the way."),
-          lpszValueName);
-      }
+      pCfg->Read (pathConfigFile);
     }
-    return;
-  }
+
+#if ! NO_REGISTRY
+  if (! haveConfigFile)
+    {
+      winRegistry::SetRegistryValue (TriState::False,
+				     lpszSectionName,
+				     lpszValueName,
+				     lpszValue);
+      string newValue;
+      if (GetSessionValue(lpszSectionName, lpszValueName, newValue, 0))
+	{
+	  if (newValue != lpszValue)
+	    {
+	      FATAL_MIKTEX_ERROR
+		("SessionImpl::SetUserConfigValue",
+		 T_("\
+The configuration value could not be changed. Possible reason: an \
+environment variable definition is in the way."),
+		 lpszValueName);
+	    }
+	}
+      return;
+    }
 #endif
 
   pCfg->PutValue (lpszSectionName, lpszValueName, lpszValue);
@@ -1017,7 +1054,7 @@ SessionImpl::SharedMiKTeXSetup (/*[in]*/ bool shared,
 {
   if (! sessionOnly)
     {
-#if defined(MIKTEX_WINDOWS)
+#if ! NO_REGISTRY
       winRegistry::SetRegistryValue (TriState::True,
 				     MIKTEX_REGKEY_CORE,
 				     MIKTEX_REGVAL_SHARED_SETUP,
@@ -1040,7 +1077,7 @@ SessionImpl::IsSharedMiKTeXSetup ()
 {
   if (sharedSetup == TriState::Undetermined)
     {
-#if defined(MIKTEX_WINDOWS)
+#if ! NO_REGISTRY
       if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
 	{
 	  string value;
@@ -1055,7 +1092,7 @@ SessionImpl::IsSharedMiKTeXSetup ()
 	    }
 	}
 #else
-#  warning Unimplemented: SessionImpl::IsSharedMiKTeXSetup()
+      sharedSetup = TriState::False;
 #endif
     }
   return (sharedSetup);

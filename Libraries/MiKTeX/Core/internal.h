@@ -42,6 +42,10 @@
 #include "miktex/Core/Trace"
 #include "miktex/Core/Urls"
 
+#if MIKTEX_UNIX
+#  define NO_REGISTRY 1
+#endif
+
 using namespace MiKTeX::Core;
 
 #define BEGIN_INTERNAL_NAMESPACE		\

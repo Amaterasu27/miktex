@@ -812,7 +812,7 @@ SessionImpl::GetWorkingDirectory (/*[in]*/ unsigned	n,
 void
 SessionImpl::SetEnvironmentVariables ()
 {
-#if MIKTEX_STANDALONE
+#if MIKTEX_WINDOWS
   Utils::SetEnvironmentString ("GSC", MIKTEX_GS_EXE);
   Utils::SetEnvironmentString ("TEXSYSTEM", "miktex");
   Utils::SetEnvironmentString ("TEXMFLOCAL",

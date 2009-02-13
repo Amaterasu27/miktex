@@ -188,7 +188,7 @@ SessionImpl::InitializeRootDirectories ()
 	}
 #endif
       
-#if defined(MIKTEX_WINDOWS)
+#if ! NO_REGISTRY
       // read the registry, if we don't have a startup config file
       if (! haveStartupConfigFile)
 	{
@@ -358,14 +358,6 @@ SessionImpl::InitializeRootDirectories
 	RegisterRootDirectory(startupConfig.commonInstallRoot);
     }
 
-#if defined(MIKTEX_TEXMF)
-  if (find(vec.begin(), vec.end(), MIKTEX_TEXMF) == vec.end()
-      && Directory::Exists(MIKTEX_TEXMF))
-    {
-      vec.push_back (MIKTEX_TEXMF);
-    }
-#endif
-
   // second pass through roots
   for (vector<PathName>::const_iterator it = vec.begin();
        it != vec.end();
@@ -447,9 +439,10 @@ SessionImpl::InitializeRootDirectories
      "UserConfig: %s",
      GetRootDirectory(userConfigRootIndex).Get());
 
-  trace_config->WriteFormattedLine ("core",
-				    "UserInstall: %s",
-				    GetRootDirectory(userInstallRootIndex).Get());
+  trace_config->WriteFormattedLine
+    ("core",
+     "UserInstall: %s",
+     GetRootDirectory(userInstallRootIndex).Get());
 
   if (IsSharedMiKTeXSetup() == TriState::True)
     {
@@ -544,7 +537,6 @@ SessionImpl::GetInstallRoot ()
 unsigned
 SessionImpl::GetCommonInstallRoot ()
 {
-  MIKTEX_ASSERT (IsSharedMiKTeXSetup() == TriState::True);
   InitializeRootDirectories ();
   return (commonInstallRootIndex);
 }
@@ -596,7 +588,8 @@ SessionImpl::SaveRootDirectories ()
     }
   if (commonInstallRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.commonInstallRoot = GetRootDirectory(commonInstallRootIndex);
+      startupConfig.commonInstallRoot =
+	GetRootDirectory(commonInstallRootIndex);
     }
   if (userInstallRootIndex != INVALID_ROOT_INDEX)
     {
@@ -618,7 +611,7 @@ SessionImpl::SaveRootDirectories ()
     {
       startupConfig.userConfigRoot = GetRootDirectory(userConfigRootIndex);
     }
-#if ! defined(MIKTEX_WINDOWS)
+#if NO_REGISTRY
   // force creation of the startup configuration file
   haveStartupConfigFile = true;
 #endif
@@ -628,7 +621,7 @@ SessionImpl::SaveRootDirectories ()
     }
   else
     {
-#if defined(MIKTEX_WINDOWS)
+#if ! NO_REGISTRY
       WriteRegistry (startupConfig);
 #else
       FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
@@ -712,7 +705,8 @@ SessionImpl::RegisterRootDirectories
       if (startupConfig.commonInstallRoot.Empty()
 	  && commonInstallRootIndex != INVALID_ROOT_INDEX)
 	{
-	  startupConfig.commonInstallRoot = GetRootDirectory(commonInstallRootIndex);
+	  startupConfig.commonInstallRoot =
+	    GetRootDirectory(commonInstallRootIndex);
 	}
       if (startupConfig.commonDataRoot.Empty()
 	  && commonDataRootIndex != INVALID_ROOT_INDEX)
@@ -790,7 +784,6 @@ SessionImpl::GetDataRoot ()
 unsigned
 SessionImpl::GetCommonDataRoot ()
 {
-  MIKTEX_ASSERT (IsSharedMiKTeXSetup() == TriState::True);
   InitializeRootDirectories ();
   return (commonDataRootIndex);
 }
@@ -833,7 +826,6 @@ SessionImpl::GetConfigRoot ()
 unsigned
 SessionImpl::GetCommonConfigRoot ()
 {
-  MIKTEX_ASSERT (IsSharedMiKTeXSetup() == TriState::True);
   InitializeRootDirectories ();
   return (commonConfigRootIndex);
 }
@@ -1320,10 +1312,9 @@ SessionImpl::IsManagedRoot (/*[in]*/ unsigned root)
   return (root == GetUserInstallRoot()
 	  || root == GetUserConfigRoot()
 	  || root == GetUserDataRoot()
-	  || (IsSharedMiKTeXSetup() == TriState::True
-	      && (root == GetCommonInstallRoot()
-	          || root == GetCommonConfigRoot()
-		  || root == GetCommonDataRoot())));
+	  || root == GetCommonInstallRoot()
+	  || root == GetCommonConfigRoot()
+	  || root == GetCommonDataRoot());
 }
 
 /* _________________________________________________________________________

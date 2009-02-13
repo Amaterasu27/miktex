@@ -220,6 +220,27 @@ CfgKey::FindValue (/*[in]*/ const char * lpszValueName)
    CfgKey::WriteValues
    _________________________________________________________________________ */
 
+static const char * const knownSearchPathValues[] = {
+  "path",
+  "extensions",
+  MIKTEX_REGVAL_ROOTS,
+};
+
+bool
+IsSearchPathValue (/*[in]*/ const char * lpszValueName)
+{
+  for (int idx = 0;
+       idx != sizeof(knownSearchPathValues) / sizeof(knownSearchPathValues[0]);
+       ++ idx)
+    {
+      if (StringCompare(lpszValueName, knownSearchPathValues[idx], true) == 0)
+	{
+	  return (true);
+	}
+    }
+  return (false);
+}
+
 void
 CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
 {
@@ -254,8 +275,7 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
 	      writer.WriteLine ();
 	    }
 	}
-      if (! it->second.value.empty()
-	  && Utils::IsAbsolutePath(it->second.value.c_str())
+      if (IsSearchPathValue(it->second.value.c_str())
 	  && (it->second.value.find_first_of(PATH_DELIMITER) != string::npos))
 	{
 	  writer.WriteFormattedLine ("%s%s=",
