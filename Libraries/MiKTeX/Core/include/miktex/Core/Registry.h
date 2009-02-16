@@ -1,6 +1,6 @@
 /* miktex/Core/Registry.h: MiKTeX settings			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -76,6 +76,7 @@
 #define MIKTEX_REGVAL_COMMON_CONFIG "CommonConfig"
 #define MIKTEX_REGVAL_COMMON_DATA "CommonData"
 #define MIKTEX_REGVAL_COMMON_INSTALL "CommonInstall"
+#define MIKTEX_REGVAL_COMMON_ROOTS "CommonRoots"
 #define MIKTEX_REGVAL_C_STYLE_ERRORS "CStyleErrors"
 #define MIKTEX_REGVAL_DESTDIR "DestDir"
 #define MIKTEX_REGVAL_DOC_EXTENSIONS "DocExtensions"
@@ -96,7 +97,6 @@
 #define MIKTEX_REGVAL_REMOTE_REPOSITORY "RemoteRepository"
 #define MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE "RenewFormatsOnUpdate"
 #define MIKTEX_REGVAL_REPOSITORY_TYPE "RepositoryType"
-#define MIKTEX_REGVAL_ROOTS "Roots"
 #define MIKTEX_REGVAL_SHARED_SETUP "SharedSetup"
 #define MIKTEX_REGVAL_STARTUP_FILE "StartupFile"
 #define MIKTEX_REGVAL_TEMPDIR "TempDir"
@@ -105,6 +105,7 @@
 #define MIKTEX_REGVAL_USER_CONFIG "UserConfig"
 #define MIKTEX_REGVAL_USER_DATA "UserData"
 #define MIKTEX_REGVAL_USER_INSTALL "UserInstall"
+#define MIKTEX_REGVAL_USER_ROOTS "UserRoots"
 #define MIKTEX_REGVAL_USE_PROXY "UseProxy"
 #define MIKTEX_REGVAL_VERSION "Version"
 

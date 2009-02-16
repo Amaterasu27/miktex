@@ -120,45 +120,14 @@ SessionImpl::GetMyPrefix ()
 
 /* _________________________________________________________________________
 
-   GetPathNamePrefix
-   _________________________________________________________________________ */
-
-MIKTEXSTATICFUNC(bool)
-GetPathNamePrefix (/*[in]*/ const PathName &	path_,
-		   /*[in]*/ const PathName &	suffix_,
-		   /*[out]*/ PathName &		prefix)
-{
-  PathName path (path_);
-  PathName suffix (suffix_);
-  
-  while (! suffix.Empty());
-    {
-      char p[BufferSizes::MaxPath];
-      char s[BufferSizes::MaxPath];
-      path.GetFileName (p);
-      suffix.GetFileName (s);
-      if (p != s)
-	{
-	  return (false);
-	}
-      path.CutOffLastComponent ();
-      suffix.CutOffLastComponent ();
-    }
-
-  prefix = path;
-
-  return (true);
-}
-
-/* _________________________________________________________________________
-
    SessionImpl::FindStartupConfigFile
 
    Try to find the MiKTeX startup file.
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
+SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
+				    /*[out]*/ PathName &  path)
 {
   if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) != 0)
     {
@@ -167,58 +136,73 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
 
   string str;
 
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_STARTUP_FILE, str))
+  if (Utils::GetEnvironmentString(common
+				  ? MIKTEX_ENV_COMMON_STARTUP_FILE,
+				  : MIKTEX_ENV_USER_STARTUP_FILE,
+				  str))
     {
       path = str;
+      // don't check for existence; it's a fatal error (detected later)
+      // if the environment value is incorrect
       return (true);
     }
 
 #if ! NO_REGISTRY
-  if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
+  if (winRegistry::TryGetRegistryValue(common ? TriState::True : TriState::False,
 				       MIKTEX_REGKEY_CORE,
 				       MIKTEX_REGVAL_STARTUP_FILE,
 				       str,
 				       0))
     {
+      // don't check for existence; it's a fatal error (detected later)
+      // if the registry value is incorrect
       path = str;
       return (true);
     }
 #endif
 
-  StartupConfig defaultStartupConfig = DefaultConfig(false);
+  StartupConfig defaultStartupConfig = DefaultConfig();
 
-  // try user config directory
-  path = defaultStartupConfig.userConfigRoot;
-  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-  if (File::Exists(path))
-    {
-      return (true);
-    }
-
-  // try the prefix of the bin directory
-  PathName myloc = GetMyLocation(true);
-  RemoveDirectoryDelimiter (myloc.GetBuffer());
-  PathName bindir (MIKTEX_PATH_BIN_DIR);
-  RemoveDirectoryDelimiter (bindir.GetBuffer());
-  PathName prefix;
-  if (GetPathNamePrefix(myloc, bindir, prefix))
+  if (common)
+  {
+    // try the prefix of the bin directory
+    PathName myloc = GetMyLocation(true);
+    RemoveDirectoryDelimiter (myloc.GetBuffer());
+    PathName bindir (MIKTEX_PATH_BIN_DIR);
+    RemoveDirectoryDelimiter (bindir.GetBuffer());
+    PathName prefix;
+    if (Utils::GetPathNamePrefix(myloc, bindir, prefix))
     {
       path = prefix;
       path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
       if (File::Exists(path))
-	{
-	  return (true);
-	}
+      {
+	return (true);
+      }
     }
 #if MIKTEX_UNIX
-  prefix = GetMyPrefix();
-  path = prefix;
-  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-  if (File::Exists(path))
+    // try /usr/share/miktex-texmf/miktex/config/miktexstartup.ini
+    prefix = GetMyPrefix();
+    path = prefix;
+    path += MIKTEX_TEXMF;
+    path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+    if (File::Exists(path))
     {
       return (true);
     }
 #endif
+  }
+  else
+  {
+    // try $HOME/.miktex/miktex/config/miktexstartup.ini
+    path = defaultStartupConfig.userConfigRoot;
+    path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+    if (File::Exists(path))
+    {
+      return (true);
+    }
+  }
+
 
   return (false);
 }
@@ -231,7 +215,7 @@ SessionImpl::FindStartupConfigFile (/*[out]*/ PathName & path)
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::ReadStartupConfigFile ()
+SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
@@ -239,7 +223,7 @@ SessionImpl::ReadStartupConfigFile ()
 
   StartupConfig ret;
 
-  if (FindStartupConfigFile(path))
+  if (FindStartupConfigFile(common, path))
     {
       haveStartupConfigFile = true;
       startupConfigFile = path;
@@ -249,56 +233,61 @@ SessionImpl::ReadStartupConfigFile ()
       pcfg->Read (path);
 
       string str;
-      
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_ROOTS,
-			    str))
+
+      if (common)
+      {      
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_COMMON_ROOTS,
+	  str))
 	{
-	  ret.roots = str;
+	  ret.commonRoots = str;
 	}
-      
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_COMMON_INSTALL,
-			    str))
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_COMMON_INSTALL,
+	  str))
 	{
 	  ret.commonInstallRoot = str;
 	}
- 
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_USER_INSTALL,
-			    str))
-	{
-	  ret.userInstallRoot = str;
-	}
-
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_COMMON_DATA,
-			    str))
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_COMMON_DATA,
+	  str))
 	{
 	  ret.commonDataRoot = str;
 	}
-      
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_USER_DATA,
-			    str))
-	{
-	  ret.userDataRoot = str;
-	}
-      
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_COMMON_CONFIG,
-			    str))
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_COMMON_CONFIG,
+	  str))
 	{
 	  ret.commonConfigRoot = str;
 	}
-      
-      if (pcfg->TryGetValue("Paths",
-			    MIKTEX_REGVAL_USER_CONFIG,
-			    str))
+      }
+      else
+      {
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_USER_ROOTS,
+	  str))
+	{
+	  ret.userRoots = str;
+	}
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_USER_INSTALL,
+	  str))
+	{
+	  ret.userInstallRoot = str;
+	}
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_USER_DATA,
+	  str))
+	{
+	  ret.userDataRoot = str;
+	}
+	if (pcfg->TryGetValue("Paths",
+	  MIKTEX_REGVAL_USER_CONFIG,
+	  str))
 	{
 	  ret.userConfigRoot = str;
 	}
-      
+      }      
       pcfg.Release ();
     }
 
@@ -314,106 +303,107 @@ SessionImpl::ReadStartupConfigFile ()
 
 void
 SessionImpl::WriteStartupConfigFile
-(/*[in]*/ const StartupConfig & startupConfig)
+  (/*[in]*/ bool		  common
+   /*[in]*/ const StartupConfig & startupConfig)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
-  StartupConfig defaultConfig = DefaultConfig(true);
+  StartupConfig defaultConfig = DefaultConfig();
 
   SmartPointer<Cfg> pcfg (Cfg::Create());
 
-  pcfg->PutValue ("Paths",
-		  MIKTEX_REGVAL_ROOTS,
-		  startupConfig.roots.c_str(),
-		  T_("TEXMF root directories"),
-		  false);
-
-  if (! startupConfig.commonInstallRoot.Empty())
+  if (common)
+  {
+    pcfg->PutValue ("Paths",
+      MIKTEX_REGVAL_COMMON_ROOTS,
+      startupConfig.commonRoots.c_str(),
+      T_("common TEXMF root directories"),
+      false);
+    if (! startupConfig.commonInstallRoot.Empty())
     {
       pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_COMMON_INSTALL,
-		      startupConfig.commonInstallRoot.Get(),
-		      T_("common install root"),
-		      (startupConfig.commonInstallRoot
-		       == defaultConfig.commonInstallRoot));
+	MIKTEX_REGVAL_COMMON_INSTALL,
+	startupConfig.commonInstallRoot.Get(),
+	T_("common install root"),
+	(startupConfig.commonInstallRoot
+	== defaultConfig.commonInstallRoot));
     }
-
-  if (! startupConfig.userInstallRoot.Empty())
+    if (! startupConfig.commonDataRoot.Empty())
     {
       pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_USER_INSTALL,
-		      startupConfig.userInstallRoot.Get(),
-		      T_("user install root"),
-		      (startupConfig.userInstallRoot
-		       == defaultConfig.userInstallRoot));
+	MIKTEX_REGVAL_COMMON_DATA,
+	startupConfig.commonDataRoot.Get(),
+	T_("common data root"),
+	(startupConfig.commonDataRoot
+	== defaultConfig.commonDataRoot));
     }
-
-  if (! startupConfig.commonDataRoot.Empty())
+    if (! startupConfig.commonConfigRoot.Empty())
     {
       pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_COMMON_DATA,
-		      startupConfig.commonDataRoot.Get(),
-		      T_("common data root"),
-		      (startupConfig.commonDataRoot
-		       == defaultConfig.commonDataRoot));
+	MIKTEX_REGVAL_COMMON_CONFIG,
+	startupConfig.commonConfigRoot.Get(),
+	T_("common config root"),
+	(startupConfig.commonConfigRoot
+	== defaultConfig.commonConfigRoot));
     }
-
-  if (! startupConfig.userDataRoot.Empty())
+    if (! startupConfig.commonConfigRoot.Empty())
     {
-      pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_USER_DATA,
-		      startupConfig.userDataRoot.Get(),
-		      T_("user data root"),
-		      (startupConfig.userDataRoot
-		       == defaultConfig.userDataRoot));
+      startupConfigFile = startupConfig.commonConfigRoot;
     }
-
-  if (! startupConfig.commonConfigRoot.Empty())
+    else
     {
-      pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_COMMON_CONFIG,
-		      startupConfig.commonConfigRoot.Get(),
-		      T_("common config root"),
-		      (startupConfig.commonConfigRoot
-		       == defaultConfig.commonConfigRoot));
+      startupConfigFile = defaultConfig.commonConfigRoot;
     }
-
-  if (! startupConfig.userConfigRoot.Empty())
-    {
-      pcfg->PutValue ("Paths",
-		      MIKTEX_REGVAL_USER_CONFIG,
-		      startupConfig.userConfigRoot.Get(),
-		      T_("user config root"),
-		      (startupConfig.userConfigRoot
-		       == defaultConfig.userConfigRoot));
-    }
-
-  if (IsSharedMiKTeXSetup())
-    {
-      if (! startupConfig.commonConfigRoot.Empty())
-	{
-	  startupConfigFile = startupConfig.commonConfigRoot;
-	}
-      else
-	{
-	  startupConfigFile = defaultConfig.commonConfigRoot;
-	}
-    }
+  }
   else
+  {
+    pcfg->PutValue ("Paths",
+      MIKTEX_REGVAL_USER_ROOTS,
+      startupConfig.userRoots.c_str(),
+      T_("user TEXMF root directories"),
+      false);
+    if (! startupConfig.userInstallRoot.Empty())
     {
-      if (! startupConfig.userConfigRoot.Empty())
-	{
-	  startupConfigFile = startupConfig.userConfigRoot;
-	}
-      else
-	{
-	  startupConfigFile = defaultConfig.userConfigRoot;
-	}
+      pcfg->PutValue ("Paths",
+	MIKTEX_REGVAL_USER_INSTALL,
+	startupConfig.userInstallRoot.Get(),
+	T_("user install root"),
+	(startupConfig.userInstallRoot
+	== defaultConfig.userInstallRoot));
     }
+    if (! startupConfig.userDataRoot.Empty())
+    {
+      pcfg->PutValue ("Paths",
+	MIKTEX_REGVAL_USER_DATA,
+	startupConfig.userDataRoot.Get(),
+	T_("user data root"),
+	(startupConfig.userDataRoot
+	== defaultConfig.userDataRoot));
+    }
+    if (! startupConfig.userConfigRoot.Empty())
+    {
+      pcfg->PutValue ("Paths",
+	MIKTEX_REGVAL_USER_CONFIG,
+	startupConfig.userConfigRoot.Get(),
+	T_("user config root"),
+	(startupConfig.userConfigRoot
+	== defaultConfig.userConfigRoot));
+    }
+    if (! startupConfig.userConfigRoot.Empty())
+    {
+      startupConfigFile = startupConfig.userConfigRoot;
+    }
+    else
+    {
+      startupConfigFile = defaultConfig.userConfigRoot;
+    }
+  }
+
   if (startupConfigFile.Empty())
     {
       UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
     }
+
   startupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
   PathName dir;
@@ -438,9 +428,14 @@ SessionImpl::ReadEnvironment ()
 
   string str;
 
-  if (Utils::GetEnvironmentString (MIKTEX_ENV_ROOTS, str))
+  if (Utils::GetEnvironmentString (MIKTEX_ENV_USER_ROOTS, str))
     {
-      ret.roots = str;
+      ret.userRoots = str;
+    }
+
+  if (Utils::GetEnvironmentString (MIKTEX_ENV_COMMON_ROOTS, str))
+    {
+      ret.commonRoots = str;
     }
 
   if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_INSTALL, str))
@@ -492,25 +487,28 @@ bool
 SessionImpl::IsMiKTeXDirect ()
 {
   if (triMiKTeXDirect == TriState::Undetermined)
+  {
+    PathName myloc = GetMyLocation(false);
+    RemoveDirectoryDelimiter (myloc.GetBuffer());
+    PathName bindir = MIKTEX_PATH_BIN_DIR;
+    RemoveDirectoryDelimiter (bindir.GetBuffer());
+    PathName prefix;
+    if (! Utils::GetPathNamePrefix(myloc, bindir, prefix))
     {
-      PathName path = GetMyLocation(false);
-#if defined(MIKTEX_WINDOWS_32)
-      path += PARENT_PARENT_DIRECTORY;
-#else
-      path += PARENT_PARENT_PARENT_DIRECTORY;
-#endif
-      path += MIKTEX_PATH_MD_INI;
-      triMiKTeXDirect =
-	((File::Exists(path)
-	  && ((File::GetAttributes(path) & FileAttributes::ReadOnly) != 0))
-	 ? TriState::True
-	 : TriState::False);
-      if (triMiKTeXDirect == TriState::True)
-	{
-	  trace_config->WriteLine (0, T_("*** MiKTeXDirect setup ***"));
-	}
+      return (false);
     }
-
+    PathName path (prefix);
+    path += MIKTEX_PATH_MD_INI;
+    triMiKTeXDirect =
+      ((File::Exists(path)
+      && ((File::GetAttributes(path) & FileAttributes::ReadOnly) != 0))
+      ? TriState::True
+      : TriState::False);
+    if (triMiKTeXDirect == TriState::True)
+    {
+      trace_config->WriteLine (0, T_("*** MiKTeXDirect setup ***"));
+    }
+  }
   return (triMiKTeXDirect == TriState::True);
 }
 

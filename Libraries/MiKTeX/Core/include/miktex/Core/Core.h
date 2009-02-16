@@ -1734,8 +1734,15 @@ public:
 
 public:
   static
-  void
+  MIKTEXCORECEEAPI(void)
   CanonicalizePathName (/*[in,out]*/ PathName & path);
+
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  GetPathNamePrefix (/*[in]*/ const PathName &	path_,
+		     /*[in]*/ const PathName &	suffix_,
+		     /*[out]*/ PathName &	prefix);
 
 #if defined(MIKTEX_WINDOWS)
 public:
@@ -3359,7 +3366,7 @@ typedef EnumWrapper<PolicyFlagsEnum> PolicyFlags;
 struct StartupConfig
 {
 public:
-  std::string roots;
+  std::string userRoots;
 
 public:
   PathName userInstallRoot;
@@ -3369,6 +3376,9 @@ public:
 
 public:
   PathName userConfigRoot;
+
+public:
+  std::string commonRoots;
 
 public:
   PathName commonDataRoot;

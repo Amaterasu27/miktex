@@ -1,6 +1,6 @@
 /* path.cpp: path name utilities
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -865,6 +865,38 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
       break;
     }
   return (path);
+}
+
+/* _________________________________________________________________________
+
+   Utils::GetPathNamePrefix
+   _________________________________________________________________________ */
+
+bool
+Utils::GetPathNamePrefix (/*[in]*/ const PathName &	path,
+			  /*[in]*/ const PathName &	suffix,
+			  /*[out]*/ PathName &		prefix)
+{
+  MIKTEX_ASSERT (! Utils::IsAbsolutePath(suffix.Get()));
+
+  PathName path_ (path);
+  PathName suffix_ (suffix);
+
+  while (! suffix_.Empty());
+  {
+    char p[BufferSizes::MaxPath];
+    char s[BufferSizes::MaxPath];
+    if (PathName::Compare(path_.GetFileName(p), suffix_.GetFileName(s)) != 0)
+    {
+      return (false);
+    }
+    path_.CutOffLastComponent ();
+    suffix_.CutOffLastComponent ();
+  }
+
+  prefix = path_;
+
+  return (true);
 }
 
 /* _________________________________________________________________________

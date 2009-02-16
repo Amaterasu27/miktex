@@ -602,7 +602,8 @@ struct RootDirectory
 public:
   RootDirectory ()
     : noFndb (false),
-      pFndb (0)
+      pFndb (0),
+      common (false)
   {
   }
 
@@ -610,7 +611,8 @@ public:
   RootDirectory (/*[in]*/ const PathName &	path)
     : noFndb (false),
       pFndb (0),
-      path (path)
+      path (path),
+      common (false)
   {
   }
 
@@ -618,7 +620,8 @@ public:
   RootDirectory (/*[in]*/ const RootDirectory & other)
     : noFndb (other.noFndb),
       pFndb (0),
-      path (other.path)
+      path (other.path),
+      common (other.common)
   {
     SetFndb (other.GetFndb());
   }
@@ -632,6 +635,7 @@ public:
   {
     noFndb = rhs.noFndb;
     path = rhs.path;
+    common = rhs.common;
     SetFndb (rhs.GetFndb());
     return (*this);
   }
@@ -661,6 +665,21 @@ public:
 
 public:
   void
+  set_Common (/*[in]*/ bool common)
+  {
+    this->common = common;
+  }
+
+public:
+  bool
+  IsCommon ()
+    const
+  {
+    return (common);
+  }
+
+public:
+  void
   SetFndb (/*[in]*/ class FileNameDatabase * pFndb);
 
 public:
@@ -682,6 +701,10 @@ private:
   // true, if an FNDB doesn't exist
 private:
   bool noFndb;
+
+  // true, if this is a shared root directory
+private:
+  bool common;
 };
 
 /* _________________________________________________________________________
@@ -1751,11 +1774,12 @@ private:
 
 private:
   bool
-  FindStartupConfigFile (/*[out]*/ PathName & path);
+  FindStartupConfigFile (/*[in]*/ bool common,
+			 /*[out]*/ PathName & path);
 
 private:
   StartupConfig
-  ReadStartupConfigFile ();
+  ReadStartupConfigFile (/*[in]*/ bool common);
 
 private:
   void
@@ -1779,7 +1803,7 @@ private:
 
 private:
   StartupConfig
-  DefaultConfig (/*[in]*/ bool sharedSetup);
+  DefaultConfig ();
 
 private:
   void

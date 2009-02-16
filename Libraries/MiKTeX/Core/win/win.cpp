@@ -128,19 +128,16 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
+SessionImpl::DefaultConfig ()
 {
   StartupConfig ret;
   string product = (IsMiKTeXDirect() ? "MiKTeXDirect" : "MiKTeX");
-  if (sharedSetup)
-    {
-      ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-      ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
-      ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
-      ret.commonDataRoot += product;
-      ret.commonDataRoot += MIKTEX_SERIES_STR;
-      ret.commonConfigRoot = ret.commonDataRoot;
-    }
+  ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
+  ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+  ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
+  ret.commonDataRoot += product;
+  ret.commonDataRoot += MIKTEX_SERIES_STR;
+  ret.commonConfigRoot = ret.commonDataRoot;
   ret.userDataRoot =
     Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
   ret.userDataRoot += product;
@@ -149,15 +146,7 @@ SessionImpl::DefaultConfig (/*[in]*/ bool sharedSetup)
     Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
   ret.userConfigRoot += product;
   ret.userConfigRoot += MIKTEX_SERIES_STR;
-  if (! sharedSetup && (IsUserAnAdministrator() || IsUserAPowerUser()))
-  {
-    ret.userInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-    ret.userInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
-  }
-  else
-  {
-    ret.userInstallRoot = ret.userConfigRoot;
-  }
+  ret.userInstallRoot = ret.userConfigRoot;
   return (ret);
 }
 
@@ -255,7 +244,7 @@ SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
-  StartupConfig defaultConfig = DefaultConfig(true);
+  StartupConfig defaultConfig = DefaultConfig();
 
   // clean registry values in HKLM and HKCU
   winRegistry::TryDeleteRegistryValue (TriState::Undetermined,

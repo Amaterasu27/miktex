@@ -98,12 +98,18 @@ The invoked program could not be found in the PATH."),
 /* _________________________________________________________________________
 
    SessionImpl::DefaultConfig
+
+   UserInstall:	  $HOME/miktex-texmf
+   UserConfig:	  $HOME/.miktex
+   UserData:	  $HOME/.miktex
+   CommonInstall: /usr/share/miktex-texmf
+   CommonConfig:  /var/lib/miktex-texmf
+   CommonData:	  /var/cache/miktex-texmf
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::DefaultConfig (/*[in]*/ bool shared)
+SessionImpl::DefaultConfig ()
 {
-  UNUSED_ALWAYS (shared);
   StartupConfig ret;
   string home;
   if (! Utils::GetEnvironmentString("HOME", home))
@@ -116,12 +122,13 @@ SessionImpl::DefaultConfig (/*[in]*/ bool shared)
   home_miktex += ".miktex";
   PathName home_miktex_texmf (home);
   home_miktex_texmf += "miktex-texmf";
-  PathName prefix_miktex_texmf = GetMyPrefix();
-  prefix_miktex_texmf += MIKTEX_TEXMF;
-  ret.roots = prefix_miktex_texmf.Get();
   ret.userInstallRoot = home_miktex_texmf;
-  ret.userDataRoot = home_miktex;
   ret.userConfigRoot = home_miktex;
+  ret.userDataRoot = home_miktex;
+  ret.commonInstallRoot = GetMyPrefix();
+  ret.commonInstallRoot += MIKTEX_TEXMF;
+  ret.commonConfigRoot = "/var/cache/miktex-texmf";
+  ret.commonDataRoot = "/var/lib/miktex-texmf";
   return (ret);
 }
 
