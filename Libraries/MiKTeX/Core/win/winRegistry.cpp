@@ -273,19 +273,9 @@ winRegistry::SetRegistryValue (/*[in]*/ TriState		shared,
 
   if (shared == TriState::Undetermined)
     {
-      shared = SessionImpl::GetSession()->IsSharedMiKTeXSetup();
-      if (shared == TriState::Undetermined)
-	{
-	  if (! IsWindowsNT()
-	      || SessionImpl::GetSession()->RunningAsAdministrator())
-	    {
-	      shared = TriState::True;
-	    }
-	  else
-	    {
-	      shared = TriState::False;
-	    }
-	}
+      shared = (SessionImpl::GetSession()->IsAdminMode()
+	? TriState::True
+	: TriState::False);
       // <recursivecall>
       SetRegistryValue (shared, lpszKeyName, lpszValueName, lpszValue);
       // </recursivecall>

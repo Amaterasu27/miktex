@@ -125,6 +125,13 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
 /* _________________________________________________________________________
 
    SessionImpl::DefaultConfig
+
+   UserInstall:	  %USERPROFILE%\AppData\Roaming\MiKTeX\X.Y\
+   UserConfig:	  %USERPROFILE%\AppData\Roaming\MiKTeX\X.Y\
+   UserData:	  %USERPROFILE%\AppData\Local\MiKTeX\X.Y\
+   CommonInstall: C:\Program Files\MiKTeX X.Y\
+   CommonConfig:  C:\ProgramData\MiKTeX\X.Y\
+   CommonData:	  C:\ProgramData\MiKTeX\X.Y\
    _________________________________________________________________________ */
 
 StartupConfig
@@ -158,7 +165,7 @@ SessionImpl::DefaultConfig ()
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::ReadRegistry ()
+SessionImpl::ReadRegistry (/*[in]*/ bool common)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
@@ -166,68 +173,76 @@ SessionImpl::ReadRegistry ()
 
   string str;
 
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_ROOTS,
-				       str,
-				       0))
+  if (common)
+  {
+    if (winRegistry::TryGetRegistryValue(TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_ROOTS,
+      str,
+      0))
     {
-      ret.roots = str;
+      ret.commonRoots = str;
     }
-
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_INSTALL,
-				       str,
-				       0))
+    if (winRegistry::TryGetRegistryValue(TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_INSTALL,
+      str,
+      0))
     {
       ret.commonInstallRoot = str;
     }
-  
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_INSTALL,
-				       str,
-				       0))
-    {
-      ret.userInstallRoot = str;
-    }
-  
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_DATA,
-				       str,
-				       0))
+    if (winRegistry::TryGetRegistryValue(TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_DATA,
+      str,
+      0))
     {
       ret.commonDataRoot = str;
     }
-
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_DATA,
-				       str,
-				       0))
-    {
-      ret.userDataRoot = str;
-    }
-
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_CONFIG,
-				       str,
-				       0))
+    if (winRegistry::TryGetRegistryValue(TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_CONFIG,
+      str,
+      0))
     {
       ret.commonConfigRoot = str;
     }
-
-  if (winRegistry::TryGetRegistryValue(IsSharedMiKTeXSetup(),
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_CONFIG,
-				       str,
-				       0))
+  }
+  else
+  {
+    if (winRegistry::TryGetRegistryValue(TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_ROOTS,
+      str,
+      0))
+    {
+      ret.commonRoots = str;
+    }
+    if (winRegistry::TryGetRegistryValue(TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_INSTALL,
+      str,
+      0))
+    {
+      ret.userInstallRoot = str;
+    }
+    if (winRegistry::TryGetRegistryValue(TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_DATA,
+      str,
+      0))
+    {
+      ret.userDataRoot = str;
+    }
+    if (winRegistry::TryGetRegistryValue(TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_CONFIG,
+      str,
+      0))
     {
       ret.userConfigRoot = str;
     }
+  }
 
   return (ret);
 }
@@ -240,100 +255,115 @@ SessionImpl::ReadRegistry ()
    _________________________________________________________________________ */
 
 void
-SessionImpl::WriteRegistry (/*[in]*/ const StartupConfig & startupConfig)
+SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
+			    /*[in]*/ const StartupConfig &  startupConfig)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
   StartupConfig defaultConfig = DefaultConfig();
 
-  // clean registry values in HKLM and HKCU
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_ROOTS);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_INSTALL);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_INSTALL);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_DATA);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_DATA);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_COMMON_CONFIG);
-  winRegistry::TryDeleteRegistryValue (TriState::Undetermined,
-				       MIKTEX_REGKEY_CORE,
-				       MIKTEX_REGVAL_USER_CONFIG);
+  // clean registry values
+  if (common)
+  {
+    winRegistry::TryDeleteRegistryValue (TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_ROOTS);
+    winRegistry::TryDeleteRegistryValue (TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_INSTALL);
+    winRegistry::TryDeleteRegistryValue (TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_DATA);
+    winRegistry::TryDeleteRegistryValue (TriState::True,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_COMMON_CONFIG);
+  }
+  else
+  {
+    winRegistry::TryDeleteRegistryValue (TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_ROOTS);
+    winRegistry::TryDeleteRegistryValue (TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_INSTALL);
+    winRegistry::TryDeleteRegistryValue (TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_DATA);
+    winRegistry::TryDeleteRegistryValue (TriState::False,
+      MIKTEX_REGKEY_CORE,
+      MIKTEX_REGVAL_USER_CONFIG);
+  }
 
-  // try very hard to keep the registry clean
-
-  if (! startupConfig.roots.empty()
-      && startupConfig.roots != startupConfig.commonInstallRoot
-      && startupConfig.roots != startupConfig.userInstallRoot)
+  if (common)
+  {
+    if (! startupConfig.commonRoots.empty()
+      && startupConfig.commonRoots != startupConfig.commonInstallRoot)
     {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_ROOTS,
-				     startupConfig.roots.c_str());
+      winRegistry::SetRegistryValue (TriState::True,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_COMMON_ROOTS,
+	startupConfig.commonRoots.c_str());
     }
-
-  if (! startupConfig.commonInstallRoot.Empty()
+    if (! startupConfig.commonInstallRoot.Empty()
       && startupConfig.commonInstallRoot != defaultConfig.commonInstallRoot)
     {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_COMMON_INSTALL,
-				     startupConfig.commonInstallRoot.Get());
+      winRegistry::SetRegistryValue (TriState::True,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_COMMON_INSTALL,
+	startupConfig.commonInstallRoot.Get());
     }
-
-  if (! startupConfig.userInstallRoot.Empty()
-      && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
-    {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_USER_INSTALL,
-				     startupConfig.userInstallRoot.Get());
-    }
-
-  if (! startupConfig.commonDataRoot.Empty()
+    if (! startupConfig.commonDataRoot.Empty()
       && startupConfig.commonDataRoot != defaultConfig.commonDataRoot)
     {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_COMMON_DATA,
-				     startupConfig.commonDataRoot.Get());
+      winRegistry::SetRegistryValue (TriState::True,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_COMMON_DATA,
+	startupConfig.commonDataRoot.Get());
     }
-
-  if (! startupConfig.userDataRoot.Empty()
-       && startupConfig.userDataRoot != defaultConfig.userDataRoot)
-   {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_USER_DATA,
-				     startupConfig.userDataRoot.Get());
-    }
-
-  if (! startupConfig.commonConfigRoot.Empty()
+    if (! startupConfig.commonConfigRoot.Empty()
       && startupConfig.commonConfigRoot != defaultConfig.commonConfigRoot)
     {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_COMMON_CONFIG,
-				     startupConfig.commonConfigRoot.Get());
+      winRegistry::SetRegistryValue (TriState::True,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_COMMON_CONFIG,
+	startupConfig.commonConfigRoot.Get());
     }
-
-  if (! startupConfig.userConfigRoot.Empty()
+  }
+  else
+  {
+    if (! startupConfig.userRoots.empty()
+      && startupConfig.userRoots != startupConfig.userInstallRoot)
+    {
+      winRegistry::SetRegistryValue (TriState::False,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_USER_ROOTS,
+	startupConfig.userRoots.c_str());
+    }
+    if (! startupConfig.userInstallRoot.Empty()
+      && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
+    {
+      winRegistry::SetRegistryValue (TriState::False,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_USER_INSTALL,
+	startupConfig.userInstallRoot.Get());
+    }
+    if (! startupConfig.userDataRoot.Empty()
+      && startupConfig.userDataRoot != defaultConfig.userDataRoot)
+    {
+      winRegistry::SetRegistryValue (TriState::False,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_USER_DATA,
+	startupConfig.userDataRoot.Get());
+    }
+    if (! startupConfig.userConfigRoot.Empty()
       && startupConfig.userConfigRoot != defaultConfig.userConfigRoot)
     {
-      winRegistry::SetRegistryValue (TriState::Undetermined,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_USER_CONFIG,
-				     startupConfig.userConfigRoot.Get());
+      winRegistry::SetRegistryValue (TriState::False,
+	MIKTEX_REGKEY_CORE,
+	MIKTEX_REGVAL_USER_CONFIG,
+	startupConfig.userConfigRoot.Get());
     }
+  }
 }
 
 /* _________________________________________________________________________
@@ -2487,7 +2517,7 @@ CreateDirectoryPath (/*[in]*/ const char *	lpszPath)
 #if SET_SECURITY
   // create the directory itself
   if (IsWindowsNT()
-      && pSession->IsSharedMiKTeXSetup() == TriState::True
+      && pSession->IsAdminMode()
       && (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot) == lpszPath
 	  || pSession->GetSpecialPath(SpecialPath::CommonDataRoot) == lpszPath)
       && pSession->RunningAsAdministrator())
@@ -3274,7 +3304,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
   
   SessionWrapper pSession (true);
 
-  bool shared = (pSession->IsSharedMiKTeXSetup() == TriState::True);
+  bool shared = pSession->IsAdminMode();
 
   HKEY hkey;
 

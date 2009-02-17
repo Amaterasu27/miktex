@@ -702,7 +702,7 @@ private:
 private:
   bool noFndb;
 
-  // true, if this is a shared root directory
+  // true, if this is a common root directory
 private:
   bool common;
 };
@@ -950,19 +950,6 @@ public:
 		      /*[in]*/ const char *	lpszValueName,
 		      /*[in]*/ int			value);
 
-public:
-  virtual
-  void
-  MIKTEXTHISCALL
-  SharedMiKTeXSetup (/*[in]*/ bool shared);
-
-public:
-  virtual
-  void
-  MIKTEXTHISCALL
-  SharedMiKTeXSetup (/*[in]*/ bool shared,
-		     /*[in]*/ bool sessionOnly);
-  
 public:
   virtual
   FILE *
@@ -1247,9 +1234,9 @@ public:
 
 public:
   virtual
-  TriState
+  bool
   MIKTEXTHISCALL
-  IsSharedMiKTeXSetup ();
+  IsAdminMode ();
 
 public:
   virtual
@@ -1770,7 +1757,8 @@ private:
 
 private:
   unsigned
-  RegisterRootDirectory (/*[in]*/ const PathName & root);
+  RegisterRootDirectory (/*[in]*/ const PathName & root,
+			 /*[in]*/ bool common);
 
 private:
   bool
@@ -1783,22 +1771,24 @@ private:
 
 private:
   void
-  WriteStartupConfigFile (/*[in]*/ const StartupConfig & startupConfig);
+  WriteStartupConfigFile (/*[in]*/ bool			 common,
+			  /*[in]*/ const StartupConfig & startupConfig);
 
 private:
   StartupConfig
-  ReadEnvironment ();
+  ReadEnvironment (/*[in]*/ bool common);
 
 #if defined(MIKTEX_WINDOWS)
 private:
   StartupConfig
-  ReadRegistry ();
+  ReadRegistry (/*[in]*/ bool common);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
 private:
   void
-  WriteRegistry (/*[in]*/ const StartupConfig & startupConfig);
+  WriteRegistry (/*[in]*/ bool			common,
+		 /*[in]*/ const StartupConfig &	startupConfig);
 #endif
 
 private:
@@ -1986,7 +1976,7 @@ private:
   InitInfo initInfo;
 
 private:
-  TriState sharedSetup;
+  bool adminMode;
 
 private:
   TriState runningAsAdministrator;
@@ -2078,7 +2068,10 @@ private:
   unsigned userConfigRootIndex;
 
 private:
-  bool haveStartupConfigFile;
+  bool haveCommonStartupConfigFile;
+
+private:
+  bool haveUserStartupConfigFile;
 
   // fully qualified path to paths.ini; valid only if haveStartupConfigFile
 private:

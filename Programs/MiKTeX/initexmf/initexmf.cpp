@@ -2188,7 +2188,6 @@ IniTeXMFApp::EditConfigFile (/*[in]*/ const char * lpszName)
 void
 IniTeXMFApp::ReportMiKTeXVersion ()
 {
-  TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
   if (xml)
     {
       xmlWriter.StartElement ("setup");
@@ -2209,14 +2208,6 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 				  (pSession->IsUserAPowerUser()
 				   ? "true"
 				   : "false"));
-	  xmlWriter.EndElement ();
-	  xmlWriter.StartElement ("sharedsetup");
-	  xmlWriter.AddAttribute ("value",
-				  (sharedSetup == TriState::True
-				   ? "true"
-				   : (sharedSetup == TriState::False
-				      ? "false"
-				      : "indeterminate")));
 	  xmlWriter.EndElement ();
 	  xmlWriter.StartElement ("bindir");
 	  xmlWriter.Text (pSession->GetSpecialPath(SpecialPath::BinDirectory)
@@ -2242,13 +2233,7 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 	       << endl;
 	}
 #endif
-      cout << "SharedSetup: " << (sharedSetup == TriState::True
-				      ? T_("yes")
-				      : (sharedSetup == TriState::False
-					 ? T_("no")
-					 : T_("unknown")))
-	   << endl
-	   << "BinDir: "
+      cout << "BinDir: "
 	   << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
 	   << endl;
     }
@@ -2304,24 +2289,21 @@ IniTeXMFApp::ReportRoots ()
 	    {
 	      xmlWriter.AddAttribute ("userconfig", "true");
 	    }
-	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
-	    {
-	      if (root
-		  == pSession->GetSpecialPath(SpecialPath::CommonInstallRoot))
-		{
-		  xmlWriter.AddAttribute ("commoninstall", "true");
-		}
-	      if (root
-		  == pSession->GetSpecialPath(SpecialPath::CommonDataRoot))
-		{
-		  xmlWriter.AddAttribute ("commondata", "true");
-		}
-	      if (root
-		  == pSession->GetSpecialPath(SpecialPath::CommonConfigRoot))
-		{
-		  xmlWriter.AddAttribute ("commonconfig", "true");
-		}
-	    }
+	  if (root
+	    == pSession->GetSpecialPath(SpecialPath::CommonInstallRoot))
+	  {
+	    xmlWriter.AddAttribute ("commoninstall", "true");
+	  }
+	  if (root
+	    == pSession->GetSpecialPath(SpecialPath::CommonDataRoot))
+	  {
+	    xmlWriter.AddAttribute ("commondata", "true");
+	  }
+	  if (root
+	    == pSession->GetSpecialPath(SpecialPath::CommonConfigRoot))
+	  {
+	    xmlWriter.AddAttribute ("commonconfig", "true");
+	  }
 	  xmlWriter.Text (root.Get());
 	  xmlWriter.EndElement ();
 	}
@@ -2343,19 +2325,15 @@ IniTeXMFApp::ReportRoots ()
       cout << "UserConfig: "
 	   << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
 	   << endl;
-      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
-	{
-	  cout << "CommonInstall: "
-	       << pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get()
-	       << endl;
-	  cout << "CommonData: "
-	       << pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
-	       << endl;
-	  cout << "CommonConfig: "
-	       << (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot)
-		   .Get())
-	       << endl;
-	}
+      cout << "CommonInstall: "
+	<< pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get()
+	<< endl;
+      cout << "CommonData: "
+	<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+	<< endl;
+      cout << "CommonConfig: "
+	<< (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get())
+	<< endl;
     }
 }
 

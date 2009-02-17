@@ -3452,7 +3452,7 @@ public:
     UserConfigRoot,
     InstallRoot,
 
-    /// The prefered data root directory. For a shared MiKTeX setup
+    /// The prefered data root directory. For a common MiKTeX setup
     /// this is equivalent to the common data directory. For a private
     /// MiKTeX setup this is equivalent to the user data directory.
     DataRoot,
@@ -5380,6 +5380,8 @@ public:
       /// Initialize the COM library.
       InitializeCOM = 2,
 #endif
+      /// run in administration mode
+      AdminMode = 4,
     };
   };
 
@@ -5764,21 +5766,6 @@ public:
 
 public:
   virtual
-  void
-  MIKTEXTHISCALL
-  SharedMiKTeXSetup (/*[in]*/ bool shared)
-    = 0;
-
-public:
-  virtual
-  void
-  MIKTEXTHISCALL
-  SharedMiKTeXSetup (/*[in]*/ bool shared,
-		     /*[in]*/ bool sessionOnly)
-    = 0;
-
-public:
-  virtual
   FILE *
   MIKTEXTHISCALL
   OpenFile (/*[in]*/ const char *	lpszPath,
@@ -6131,9 +6118,9 @@ public:
 
 public:
   virtual
-  TriState
+  bool
   MIKTEXTHISCALL
-  IsSharedMiKTeXSetup ()
+  IsAdminMode ()
     = 0;
 
 public:

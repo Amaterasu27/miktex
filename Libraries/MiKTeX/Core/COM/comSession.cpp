@@ -1,6 +1,6 @@
 /* comSession.cpp: MiKTeX session
 
-   Copyright (C) 2006-2007 Christian Schenk
+   Copyright (C) 2006-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -248,24 +248,15 @@ comSession::GetMiKTeXSetupInfo (/*[out,retval]*/ MiKTeXSetupInfo * setupInfo)
 	pSession->GetSpecialPath(SpecialPath::InstallRoot).Get();
       _bstr_t commonConfigRoot;
       _bstr_t commonDataRoot;
-      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
-	{
-	  commonConfigRoot =
-	    pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get();
-	  commonDataRoot =
-	    pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get();
-	}
-      else
-	{
-	  commonConfigRoot = L"";
-	  commonDataRoot = L"";
-	}
+      commonConfigRoot =
+	pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get();
+      commonDataRoot =
+	pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get();
       _bstr_t userConfigRoot =
 	pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get();
       _bstr_t userDataRoot =
 	pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get();
-      setupInfo->sharedSetup =
-	(pSession->IsSharedMiKTeXSetup() == TriState::True);
+      setupInfo->sharedSetup = TriState::Undetermined;
       setupInfo->series = MIKTEX_SERIES_INT;
       setupInfo->numRoots = pSession->GetNumberOfTEXMFRoots();
       setupInfo->version = version.Detach();
@@ -408,7 +399,9 @@ comSession::CreateSession ()
       if (pSession == 0)
 	{
 	  // we are running standalone; create a new session
-	  pSession = Session::Get(Session::InitInfo(SESSIONSVC));
+	  Session::InitInfo initInfo (SESSIONSVC);
+	  initInfo.SetFlags (Session::InitFlags::AdminMode);
+	  pSession = Session::Get(initInfo);
 	}
     }
 }

@@ -137,7 +137,7 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
   string str;
 
   if (Utils::GetEnvironmentString(common
-				  ? MIKTEX_ENV_COMMON_STARTUP_FILE,
+				  ? MIKTEX_ENV_COMMON_STARTUP_FILE
 				  : MIKTEX_ENV_USER_STARTUP_FILE,
 				  str))
     {
@@ -225,7 +225,15 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 
   if (FindStartupConfigFile(common, path))
     {
-      haveStartupConfigFile = true;
+      if (common)
+      {
+	haveCommonStartupConfigFile = true;
+      }
+      else
+      {
+	haveUserStartupConfigFile = true;
+      }
+
       startupConfigFile = path;
 
       SmartPointer<Cfg> pcfg (Cfg::Create());
@@ -303,7 +311,7 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 
 void
 SessionImpl::WriteStartupConfigFile
-  (/*[in]*/ bool		  common
+  (/*[in]*/ bool		  common,
    /*[in]*/ const StartupConfig & startupConfig)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
@@ -420,7 +428,7 @@ SessionImpl::WriteStartupConfigFile
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::ReadEnvironment ()
+SessionImpl::ReadEnvironment (/*[in]*/ bool common)
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
@@ -428,45 +436,44 @@ SessionImpl::ReadEnvironment ()
 
   string str;
 
-  if (Utils::GetEnvironmentString (MIKTEX_ENV_USER_ROOTS, str))
-    {
-      ret.userRoots = str;
-    }
-
-  if (Utils::GetEnvironmentString (MIKTEX_ENV_COMMON_ROOTS, str))
+  if (common)
+  {
+    if (Utils::GetEnvironmentString (MIKTEX_ENV_COMMON_ROOTS, str))
     {
       ret.commonRoots = str;
     }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_INSTALL, str))
-    {
-      ret.userInstallRoot = str;
-    }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_INSTALL, str))
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_INSTALL, str))
     {
       ret.commonInstallRoot = str;
     }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_DATA, str))
-    {
-      ret.userDataRoot = str;
-    }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_DATA, str))
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_DATA, str))
     {
       ret.commonDataRoot = str;
     }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_CONFIG, str))
-    {
-      ret.userConfigRoot = str;
-    }
-
-  if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_CONFIG, str))
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_CONFIG, str))
     {
       ret.commonConfigRoot = str;
     }
+  }
+  else
+  {
+    if (Utils::GetEnvironmentString (MIKTEX_ENV_USER_ROOTS, str))
+    {
+      ret.userRoots = str;
+    }
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_INSTALL, str))
+    {
+      ret.userInstallRoot = str;
+    }
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_DATA, str))
+    {
+      ret.userDataRoot = str;
+    }
+    if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_CONFIG, str))
+    {
+      ret.userConfigRoot = str;
+    }
+  }
 
   return (ret);
 }
@@ -1032,68 +1039,13 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 
 /* _________________________________________________________________________
 
-   SessionImpl::SharedMiKTeXSetup
+   SessionImpl::IsAdminMode
    _________________________________________________________________________ */
 
-void
-SessionImpl::SharedMiKTeXSetup (/*[in]*/ bool shared)
+bool
+SessionImpl::IsAdminMode ()
 {
-  SharedMiKTeXSetup (shared, false);
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::SharedMiKTeXSetup
-   _________________________________________________________________________ */
-
-void
-SessionImpl::SharedMiKTeXSetup (/*[in]*/ bool shared,
-				/*[in]*/ bool sessionOnly)
-{
-  if (! sessionOnly)
-    {
-#if ! NO_REGISTRY
-      winRegistry::SetRegistryValue (TriState::True,
-				     MIKTEX_REGKEY_CORE,
-				     MIKTEX_REGVAL_SHARED_SETUP,
-				     NUMTOSTR(shared));
-#else
-#  warning Unimplemented: SessionImpl::SharedMiKTeXSetup()
-      UNIMPLEMENTED ("SessionImpl::SharedMiKTeXSetup");
-#endif
-    }
-  sharedSetup = (shared ? TriState::True : TriState::False);
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::IsSharedMiKTeXSetup
-   _________________________________________________________________________ */
-
-TriState
-SessionImpl::IsSharedMiKTeXSetup ()
-{
-  if (sharedSetup == TriState::Undetermined)
-    {
-#if ! NO_REGISTRY
-      if ((initInfo.GetFlags() & InitFlags::NoConfigFiles) == 0)
-	{
-	  string value;
-	  if (winRegistry::TryGetRegistryValue(TriState::True,
-					       MIKTEX_REGKEY_CORE,
-					       MIKTEX_REGVAL_SHARED_SETUP,
-					       value,
-					       0))
-	    {
-	      sharedSetup =
-		((value == "0") ? TriState::False : TriState::True);
-	    }
-	}
-#else
-      sharedSetup = TriState::False;
-#endif
-    }
-  return (sharedSetup);
+  return (adminMode);
 }
 
 /* _________________________________________________________________________

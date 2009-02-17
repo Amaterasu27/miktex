@@ -584,7 +584,7 @@ Fndb::FileExists (/*[in]*/ const PathName &	path)
   unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(path);
 
   FileNameDatabase * pFndb =
-    SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::False);
+    SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::True);
 
   if (pFndb == 0)
     {
@@ -883,15 +883,16 @@ SessionImpl::SessionImpl ()
     recordingPackageNames (false),
     refCount (0),
     runningAsAdministrator (TriState::Undetermined),
+    adminMode (false),
 #if defined(MIKTEX_WINDOWS)
     runningAsPowerUser (TriState::Undetermined),
     isUserAPowerUser (TriState::Undetermined),
     numCoInitialize (0),
 #endif
-    sharedSetup (TriState::Undetermined),
     makeFonts (true),
     pInstallPackageCallback (0),
-    haveStartupConfigFile (false),
+    haveCommonStartupConfigFile (false),
+    haveUserStartupConfigFile (false),
     isUserAnAdministrator (TriState::Undetermined),
 
     // passing an empty string to the locale constructor is ok; it
@@ -949,6 +950,8 @@ void
 SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 {
   string val;
+
+  adminMode = ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
 
 #if defined(_MSC_VER)
   if (Utils::GetEnvironmentString("MIKTEX_DEBUG_ON_STD_EXCEPTION", val))
@@ -1249,7 +1252,7 @@ SessionImpl::UseLocalServer ()
 #if defined(MIKTEX_WINDOWS)
   bool elevationRequired =
     (IsWindowsVista()
-     && IsSharedMiKTeXSetup() == TriState::True
+     && IsAdminMode()
      && ! SessionWrapper(true)->RunningAsAdministrator());
   return (elevationRequired);
 #else

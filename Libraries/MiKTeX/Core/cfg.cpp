@@ -223,7 +223,8 @@ CfgKey::FindValue (/*[in]*/ const char * lpszValueName)
 static const char * const knownSearchPathValues[] = {
   "path",
   "extensions",
-  MIKTEX_REGVAL_ROOTS,
+  MIKTEX_REGVAL_COMMON_ROOTS,
+  MIKTEX_REGVAL_USER_ROOTS,
 };
 
 bool

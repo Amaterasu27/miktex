@@ -83,20 +83,24 @@ RootDirectory::SetFndb (/*[in]*/ FileNameDatabase * pFndb)
    _________________________________________________________________________ */
 
 unsigned
-SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root)
+SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root,
+				    /*[in]*/ bool	      common)
 {
   unsigned idx;
   for (idx = 0; idx < rootDirectories.size(); ++ idx)
     {
       if (root == rootDirectories[idx].get_Path())
 	{
+	  // already registered
 	  return (idx);
 	}
     }
   trace_config->WriteFormattedLine ("core",
-				    T_("registering TEXMF root: %s"),
+				    T_("registering %s TEXMF root: %s"),
+				    common ? "common" : "user",
 				    root.Get());
   RootDirectory rootDirectory (root);
+  rootDirectory.set_Common (common);
   rootDirectories.reserve (10);
   rootDirectories.push_back (rootDirectory);
   return (idx);
@@ -111,9 +115,13 @@ MIKTEXSTATICFUNC(void)
 MergeStartupConfig (/*[in,out]*/ StartupConfig &	startupConfig,
 		    /*[in]*/ const StartupConfig &	defaults)
 {
-  if (startupConfig.roots.empty())
+  if (startupConfig.commonRoots.empty())
     {
-      startupConfig.roots = defaults.roots;
+      startupConfig.commonRoots = defaults.commonRoots;
+    }
+  if (startupConfig.userRoots.empty())
+    {
+      startupConfig.userRoots = defaults.userRoots;
     }
   if (startupConfig.commonInstallRoot.Empty())
     {
@@ -175,8 +183,11 @@ SessionImpl::InitializeRootDirectories ()
     // evaluate init info
     MergeStartupConfig (startupConfig, initInfo.GetStartupConfig());
 
-    // read environment variables
-    MergeStartupConfig (startupConfig, ReadEnvironment());
+    // read common environment variables
+    MergeStartupConfig (startupConfig, ReadEnvironment(true));
+
+    // read user environment variables
+    MergeStartupConfig (startupConfig, ReadEnvironment(false));
 
     // read common startup config file
     MergeStartupConfig (startupConfig, ReadStartupConfigFile(true));
@@ -186,9 +197,13 @@ SessionImpl::InitializeRootDirectories ()
 
 #if ! NO_REGISTRY
     // read the registry, if we don't have a startup config file
-    if (! haveStartupConfigFile)
+    if (! haveCommonStartupConfigFile)
     {
-      MergeStartupConfig (startupConfig, ReadRegistry());
+      MergeStartupConfig (startupConfig, ReadRegistry(true));
+    }
+    if (! haveUserStartupConfigFile)
+    {
+      MergeStartupConfig (startupConfig, ReadRegistry(false));
     }
 #endif
   }
@@ -223,19 +238,17 @@ SessionImpl::InitializeRootDirectories
   bool haveCommonInstallRoot = false;
   bool haveCommonConfigRoot = false;
   bool haveCommonDataRoot = false;
-  bool haveUserInstallRoot = false;
-  bool haveUserConfigRoot = false;
-  bool haveUserDataRoot = false;
-  vector<PathName> vec;
-  CSVList root (startupConfig.roots.c_str(), PATH_DELIMITER);
-  for (unsigned u = 0; root.GetCurrent() != 0; ++ u, ++ root)
+  vector<PathName> vecCommon;
+  for (CSVList root (startupConfig.commonRoots.c_str(), PATH_DELIMITER);
+    root.GetCurrent() != 0;
+    ++ root)
   {
     if (*root.GetCurrent() == 0)
     {
       // empty
       continue;
     }
-    if (find(vec.begin(), vec.end(), root.GetCurrent()) != vec.end())
+    if (find(vecCommon.begin(), vecCommon.end(), root.GetCurrent()) != vecCommon.end())
     {
       // duplicate
       continue;
@@ -266,6 +279,26 @@ SessionImpl::InitializeRootDirectories
     {
       haveCommonInstallRoot = true;
     }
+    vecCommon.push_back (root.GetCurrent());
+  }
+  bool haveUserInstallRoot = false;
+  bool haveUserConfigRoot = false;
+  bool haveUserDataRoot = false;
+  vector<PathName> vecUser;
+  for (CSVList root (startupConfig.userRoots.c_str(), PATH_DELIMITER);
+    root.GetCurrent() != 0;
+    ++ root)
+  {
+    if (*root.GetCurrent() == 0)
+    {
+      // empty
+      continue;
+    }
+    if (find(vecUser.begin(), vecUser.end(), root.GetCurrent()) != vecUser.end())
+    {
+      // duplicate
+      continue;
+    }
     if (startupConfig.userConfigRoot == root.GetCurrent())
     {
       if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
@@ -292,7 +325,7 @@ SessionImpl::InitializeRootDirectories
     {
       haveUserInstallRoot = true;
     }
-    vec.push_back (root.GetCurrent());
+    vecUser.push_back (root.GetCurrent());
   }
 
   // register special roots:
@@ -307,60 +340,48 @@ SessionImpl::InitializeRootDirectories
     && ! startupConfig.userConfigRoot.Empty())
   {
     userConfigRootIndex =
-      RegisterRootDirectory(startupConfig.userConfigRoot);
+      RegisterRootDirectory(startupConfig.userConfigRoot, false);
   }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
     || ! haveUserDataRoot)
     && ! startupConfig.userDataRoot.Empty())
   {
     userDataRootIndex =
-      RegisterRootDirectory(startupConfig.userDataRoot);
+      RegisterRootDirectory(startupConfig.userDataRoot, false);
   }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
     || ! haveCommonConfigRoot)
     && ! startupConfig.commonConfigRoot.Empty())
   {
     commonConfigRootIndex =
-      RegisterRootDirectory(startupConfig.commonConfigRoot);
+      RegisterRootDirectory(startupConfig.commonConfigRoot, true);
   }
   if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
     || ! haveCommonDataRoot)
     && ! startupConfig.commonDataRoot.Empty())
   {
     commonDataRootIndex =
-      RegisterRootDirectory(startupConfig.commonDataRoot);
+      RegisterRootDirectory(startupConfig.commonDataRoot, true);
   }
   if (! haveUserInstallRoot
     && ! startupConfig.userInstallRoot.Empty())
   {
     userInstallRootIndex =
-      RegisterRootDirectory(startupConfig.userInstallRoot);
+      RegisterRootDirectory(startupConfig.userInstallRoot, false);
   }
   if (! haveCommonInstallRoot
     && ! startupConfig.commonInstallRoot.Empty())
   {
     commonInstallRootIndex =
-      RegisterRootDirectory(startupConfig.commonInstallRoot);
+      RegisterRootDirectory(startupConfig.commonInstallRoot, true);
   }
 
   // second pass through roots: remember special root indexes
-  for (vector<PathName>::const_iterator it = vec.begin();
-    it != vec.end();
+  for (vector<PathName>::const_iterator it = vecUser.begin();
+    it != vecUser.end();
     ++ it)
   {
-    unsigned idx = RegisterRootDirectory(*it);
-    if (startupConfig.commonConfigRoot == *it)
-    {
-      commonConfigRootIndex = idx;
-    }
-    if (startupConfig.commonDataRoot == *it)
-    {
-      commonDataRootIndex = idx;
-    }
-    if (startupConfig.commonInstallRoot == *it)
-    {
-      commonInstallRootIndex = idx;
-    }
+    unsigned idx = RegisterRootDirectory(*it, false);
     if (startupConfig.userInstallRoot == *it)
     {
       userInstallRootIndex = idx;
@@ -372,6 +393,24 @@ SessionImpl::InitializeRootDirectories
     if (startupConfig.userDataRoot == *it)
     {
       userDataRootIndex = idx;
+    }
+  }
+  for (vector<PathName>::const_iterator it = vecCommon.begin();
+    it != vecCommon.end();
+    ++ it)
+  {
+    unsigned idx = RegisterRootDirectory(*it, true);
+    if (startupConfig.commonConfigRoot == *it)
+    {
+      commonConfigRootIndex = idx;
+    }
+    if (startupConfig.commonDataRoot == *it)
+    {
+      commonDataRootIndex = idx;
+    }
+    if (startupConfig.commonInstallRoot == *it)
+    {
+      commonInstallRootIndex = idx;
     }
   }
 
@@ -410,7 +449,7 @@ SessionImpl::InitializeRootDirectories
     userInstallRootIndex = userConfigRootIndex;
   }
 
-  RegisterRootDirectory (MPM_ROOT_PATH);
+  RegisterRootDirectory (MPM_ROOT_PATH, true);
 
   trace_config->WriteFormattedLine ("core",
     "UserData: %s",
@@ -493,7 +532,7 @@ SessionImpl::GetMpmRoot ()
 unsigned
 SessionImpl::GetInstallRoot ()
 {
-  if (IsSharedMiKTeXSetup() == TriState::True)
+  if (IsAdminMode())
     {
       return (GetCommonInstallRoot());
     }
@@ -544,23 +583,41 @@ SessionImpl::SaveRootDirectories ()
   MIKTEX_ASSERT (! IsMiKTeXDirect());
   StartupConfig startupConfig;
   unsigned n = GetNumberOfTEXMFRoots();
-  startupConfig.roots.reserve (n * 30);
+  startupConfig.commonRoots.reserve (n * 30);
+  startupConfig.userRoots.reserve (n * 30);
   for (unsigned idx = 0; idx < n; ++ idx)
     {
-      if ((idx == commonDataRootIndex
-	   || idx == userDataRootIndex
-	   || idx == commonConfigRootIndex
-	   || idx == userConfigRootIndex)
+      const RootDirectory rootDirectory = this->rootDirectories[idx];
+      if (rootDirectory.IsCommon())
+      {
+	if ((idx == commonDataRootIndex
+	  || idx == commonConfigRootIndex)
 	  && (GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
 	{
 	  // data/config roots are implicitly defined
 	  continue;
 	}
-      if (! startupConfig.roots.empty())
+	if (! startupConfig.commonRoots.empty())
 	{
-	  startupConfig.roots += PATH_DELIMITER;
+	  startupConfig.commonRoots += PATH_DELIMITER;
 	}
-      startupConfig.roots += this->rootDirectories[idx].get_Path().Get();
+	startupConfig.commonRoots += rootDirectory.get_Path().Get();
+      }
+      else
+      {
+	if ((idx == userDataRootIndex
+	  || idx == userConfigRootIndex)
+	  && (GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
+	{
+	  // data/config roots are implicitly defined
+	  continue;
+	}
+	if (! startupConfig.userRoots.empty())
+	{
+	  startupConfig.userRoots += PATH_DELIMITER;
+	}
+	startupConfig.userRoots += rootDirectory.get_Path().Get();
+      }
     }
   if (commonInstallRootIndex != INVALID_ROOT_INDEX)
     {
@@ -589,22 +646,49 @@ SessionImpl::SaveRootDirectories ()
     }
 #if NO_REGISTRY
   // force creation of the startup configuration file
-  haveStartupConfigFile = true;
-#endif
-  if (haveStartupConfigFile)
-    {
-      WriteStartupConfigFile (startupConfig);
-    }
+  if (IsAdminMode())
+  {
+    haveCommonStartupConfigFile = true;
+  }
   else
+  {
+    haveUserStartupConfigFile = true;
+  }
+#endif
+  if (IsAdminMode())
+  {
+    if (haveCommonStartupConfigFile)
+    {
+      WriteStartupConfigFile (true, startupConfig);
+    }
+    else
     {
 #if ! NO_REGISTRY
-      WriteRegistry (startupConfig);
+      WriteRegistry (true, startupConfig);
 #else
       FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
-			  T_("The startup configuration cannot be saved."),
-			  0);
+	T_("The startup configuration cannot be saved."),
+	0);
 #endif
     }
+  }
+  else
+  {
+    if (haveUserStartupConfigFile)
+    {
+      WriteStartupConfigFile (false, startupConfig);
+    }
+    else
+    {
+#if ! NO_REGISTRY
+      WriteRegistry (false, startupConfig);
+#else
+      FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
+	T_("The startup configuration cannot be saved."),
+	0);
+#endif
+    }
+  }
 }
 
 /* _______________________________________________________________________
@@ -648,7 +732,14 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
 #endif
 
   StartupConfig startupConfig;
-  startupConfig.roots = roots;
+  if (IsAdminMode())
+  {
+    startupConfig.commonRoots = roots;
+  }
+  else
+  {
+    startupConfig.userRoots = roots;
+  }
   RegisterRootDirectories (startupConfig, false);
 }
 
@@ -732,7 +823,7 @@ SessionImpl::RegisterRootDirectories
 unsigned
 SessionImpl::GetDataRoot ()
 {
-  if (IsSharedMiKTeXSetup() == TriState::True)
+  if (IsAdminMode())
     {
       return (GetCommonDataRoot());
     }
@@ -774,7 +865,7 @@ SessionImpl::GetUserDataRoot ()
 unsigned
 SessionImpl::GetConfigRoot ()
 {
-  if (IsSharedMiKTeXSetup() == TriState::True)
+  if (IsAdminMode())
     {
       return (GetCommonConfigRoot());
     }
@@ -818,7 +909,8 @@ SessionImpl::GetUserConfigRoot ()
 bool
 SessionImpl::IsTeXMFReadOnly (/*[in]*/ unsigned r)
 {
-  return (IsMiKTeXDirect() && r == GetInstallRoot());
+  return (IsMiKTeXDirect() && r == GetInstallRoot()
+    || rootDirectories[r].IsCommon() && ! IsAdminMode());
 }
 
 /* _________________________________________________________________________
@@ -879,17 +971,15 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
 PathName
 SessionImpl::GetFilenameDatabasePathName (/*[in]*/ unsigned	r)
 {
-  PathName path;
-  if (IsSharedMiKTeXSetup() == TriState::True
-      && r != userDataRootIndex
-      && r != userConfigRootIndex)
-    {
-      path = GetSpecialPath(SpecialPath::CommonDataRoot);
-    }
+  PathName path = rootDirectories[r].get_Path();
+  if (rootDirectories[r].IsCommon())
+  {
+    path = GetSpecialPath(SpecialPath::CommonDataRoot);
+  }
   else
-    {
-      path = GetSpecialPath(SpecialPath::UserDataRoot);
-    }
+  {
+    path = GetSpecialPath(SpecialPath::UserDataRoot);
+  }
   path += GetRelativeFilenameDatabasePathName(r);
   return (path);
 }
@@ -981,7 +1071,8 @@ SessionImpl::GetFileNameDatabase (/*[in]*/ unsigned	r,
 	{
 	  if (triReadOnly == TriState::False && root.GetFndb()->IsInvariable())
 	    {
-	      // we have to reload the database
+	      // we say we indend to modify the fndb; but the fndb is opened readonly
+	      // => we have to reload the database
 	      if (! UnloadFilenameDatabaseInternal(r, false))
 		{
 		  return (0);
