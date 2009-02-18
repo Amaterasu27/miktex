@@ -5380,7 +5380,7 @@ public:
       /// Initialize the COM library.
       InitializeCOM = 2,
 #endif
-      /// run in administration mode
+      /// start in administration mode
       AdminMode = 4,
     };
   };
@@ -5399,6 +5399,7 @@ public:
       : flags (InitFlags::None)
     {
     }
+
     /// Initializes a new init info struct.
     /// @param lpszProgramInvocationName Name of the invoked program.
   public:
@@ -5592,6 +5593,13 @@ public:
   PathName
   MIKTEXTHISCALL
   GetRootDirectory (/*[in]*/ unsigned	r)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  IsCommonRootDirectory (/*[in]*/ unsigned r)
     = 0;
 
   /// Gets the path name of the MPM file name database.
@@ -6114,6 +6122,13 @@ public:
   bool
   MIKTEXTHISCALL
   RunningAsAdministrator ()
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetAdminMode (/*[in]*/ bool adminMode)
     = 0;
 
 public:

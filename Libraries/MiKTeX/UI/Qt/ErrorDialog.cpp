@@ -1,6 +1,6 @@
 /* ErrorDialog.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -132,7 +132,6 @@ ErrorDialogImpl::CreateReport ()
     {
       try
 	{
-	  TriState sharedSetup = pSession->IsSharedMiKTeXSetup();
 	  s << "MiKTeX: "
 	    << Utils::GetMiKTeXVersionString() << endl
 	    << "OS: " << Utils::GetOSVersionString() << endl;
@@ -146,13 +145,7 @@ ErrorDialogImpl::CreateReport ()
 				 : T_("no"))
 	    << endl;
 #endif
-	  s << "SharedSetup: " << (sharedSetup == TriState::True
-				   ? T_("yes")
-				   : (sharedSetup == TriState::False
-				      ? T_("no")
-				      : T_("unknown")))
-	    << endl
-	    << "BinDir: "
+	  s << "BinDir: "
 	    << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
 	    << endl;
 	  for (unsigned idx = 0;
@@ -163,8 +156,8 @@ ErrorDialogImpl::CreateReport ()
 	      PathName root = pSession->GetRootDirectory(idx);
 	      s << "Root" << idx << ": " << root.Get() << endl;
 	    }
-	  s << "Install: "
-	    << pSession->GetSpecialPath(SpecialPath::InstallRoot).Get()
+	  s << "UserInstall: "
+	    << pSession->GetSpecialPath(SpecialPath::UserInstallRoot).Get()
 	    << endl;
 	  s << "UserConfig: "
 	    << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
@@ -172,16 +165,15 @@ ErrorDialogImpl::CreateReport ()
 	  s << "UserData: "
 	    << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
 	    << endl;
-	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
-	    {
-	      s << "CommonConfig: "
-		<< (pSession
-		    ->GetSpecialPath(SpecialPath::CommonConfigRoot).Get())
-		<< endl;
-	      s << "CommonData: "
-		<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
-		<< endl;
-	    }
+	  s << "CommonInstall: "
+	    << pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get()
+	    << endl;
+	  s << "CommonConfig: "
+	    << (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get())
+	    << endl;
+	  s << "CommonData: "
+	    << pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
+	    << endl;
 	}
       catch (const exception &)
 	{

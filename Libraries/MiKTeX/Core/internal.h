@@ -817,6 +817,12 @@ public:
 
 public:
   virtual
+  bool
+  MIKTEXTHISCALL
+  IsCommonRootDirectory (/*[in]*/ unsigned r);
+
+public:
+  virtual
   PathName
   MIKTEXTHISCALL
   GetMpmDatabasePathName ();
@@ -1231,6 +1237,12 @@ public:
   bool
   MIKTEXTHISCALL
   RunningAsAdministrator ();
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetAdminMode (/*[in]*/ bool adminMode);
 
 public:
   virtual

@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -245,34 +245,52 @@ void
 PackageManagerImpl::LoadVariablePackageTable ()
 {
   // only load once
-  if (variablePackageTable.Get() != 0)
-    {
-      return;
-    }
+  if (commonVariablePackageTable.Get() != 0)
+  {
+    return;
+  }
 
-  variablePackageTable = Cfg::Create();
+  commonVariablePackageTable = Cfg::Create();
+  userVariablePackageTable = Cfg::Create();
 
-  PathName pathPackagesIni
-    (pSession->GetSpecialPath(SpecialPath::InstallRoot),
-     MIKTEX_PATH_PACKAGES_INI,
-     0);
+  bool done = false;
 
-  if (! File::Exists(pathPackagesIni))
-    {
-      trace_mpm->WriteFormattedLine
-	("libmpm",
-	 T_("variable package table does not exist (%s)"),
-	 Q_(pathPackagesIni));
-      variablePackageTable->SetModified (false);
-      return;
-    }
+  PathName pathCommonPackagesIni (
+    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
+    MIKTEX_PATH_PACKAGES_INI,
+    0);
 
-  trace_mpm->WriteFormattedLine ("libmpm",
-				 T_("loading variable package table (%s)"),
-				 Q_(pathPackagesIni));
+  if (File::Exists(pathCommonPackagesIni))
+  {
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("loading common variable package table (%s)"),
+      Q_(pathCommonPackagesIni));
+    commonVariablePackageTable->Read (pathCommonPackagesIni);
+    commonVariablePackageTable->SetModified (false);
+    done = true;
+  }
 
-  variablePackageTable->Read (pathPackagesIni);
-  variablePackageTable->SetModified (false);
+  PathName pathUserPackagesIni (
+    pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+    MIKTEX_PATH_PACKAGES_INI,
+    0);
+
+  if (pathCommonPackagesIni != pathUserPackagesIni
+    && File::Exists(pathUserPackagesIni))
+  {
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("loading user variable package table (%s)"),
+      Q_(pathUserPackagesIni));
+    userVariablePackageTable->Read (pathUserPackagesIni);
+    userVariablePackageTable->SetModified (false);
+    done = true;
+  }
+
+  if (! done)
+  {
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("variable package table does not exist"));
+  }
 }
 
 /* _________________________________________________________________________
@@ -285,22 +303,30 @@ PackageManagerImpl::LoadVariablePackageTable ()
 void
 PackageManagerImpl::FlushVariablePackageTable ()
 {
-  if (variablePackageTable.Get() == 0
-      || ! variablePackageTable->IsModified())
-    {
-      return;
-    }
-
-  PathName pathPackagesIni
-    (pSession->GetSpecialPath(SpecialPath::InstallRoot),
-     MIKTEX_PATH_PACKAGES_INI,
-     0);
-
-  trace_mpm->WriteFormattedLine ("libmpm",
-				 T_("flushing variable package table (%s)"),
-				 Q_(pathPackagesIni));
-  
-  variablePackageTable->Write (pathPackagesIni);
+  if (commonVariablePackageTable.Get() != 0
+    && commonVariablePackageTable->IsModified())
+  {
+    PathName pathPackagesIni (
+      pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
+      MIKTEX_PATH_PACKAGES_INI,
+      0);
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("flushing common variable package table (%s)"),
+      Q_(pathPackagesIni));
+    commonVariablePackageTable->Write (pathPackagesIni);
+  }
+  if (userVariablePackageTable.Get() != 0
+    && userVariablePackageTable->IsModified())
+  {
+    PathName pathPackagesIni (
+      pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+      MIKTEX_PATH_PACKAGES_INI,
+      0);
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("flushing user variable package table (%s)"),
+      Q_(pathPackagesIni));
+    userVariablePackageTable->Write (pathPackagesIni);
+  }
 }
 
 /* _________________________________________________________________________
@@ -312,18 +338,23 @@ PackageManagerImpl::FlushVariablePackageTable ()
    _________________________________________________________________________ */
 
 time_t
-PackageManagerImpl::GetTimeInstalled
-(/*[in]*/ const char * lpszDeploymentName)
+PackageManagerImpl::GetTimeInstalled (/*[in]*/ const char * lpszDeploymentName)
 {
   LoadVariablePackageTable ();
   string str;
-  if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-					  "TimeInstalled",
-					  str))
-    {
-      return (0);
-    }
-  return (atoi(str.c_str()));
+  if (userVariablePackageTable->TryGetValue(lpszDeploymentName,
+					    "TimeInstalled",
+					    str)
+      || commonVariablePackageTable->TryGetValue(lpszDeploymentName,
+						 "TimeInstalled",
+						 str))
+  {
+    return (0);
+  }
+  else
+  {
+    return (atoi(str.c_str()));
+  }
 }
 
 /* _________________________________________________________________________
@@ -333,7 +364,7 @@ PackageManagerImpl::GetTimeInstalled
 
 bool
 PackageManagerImpl::IsPackageInstalled
-(/*[in]*/ const char *	lpszDeploymentName)
+  (/*[in]*/ const char * lpszDeploymentName)
 {
   return (GetTimeInstalled(lpszDeploymentName) > 0);
 }
@@ -345,17 +376,23 @@ PackageManagerImpl::IsPackageInstalled
 
 bool
 PackageManagerImpl::IsPackageObsolete
-(/*[in]*/ const char *	lpszDeploymentName)
+  (/*[in]*/ const char * lpszDeploymentName)
 {
   LoadVariablePackageTable ();
   string str;
-  if (! variablePackageTable->TryGetValue(lpszDeploymentName,
-					  "Obsolete",
-					  str))
-    {
-      return (false);
-    }
-  return (atoi(str.c_str()) != 0);
+  if (userVariablePackageTable->TryGetValue(lpszDeploymentName,
+					    "Obsolete",
+					    str)
+      || commonVariablePackageTable->TryGetValue(lpszDeploymentName,
+					         "Obsolete",
+						 str))
+  {
+    return (atoi(str.c_str()) != 0);
+  }
+  else
+  {
+    return (false);
+  }
 }
 
 /* _________________________________________________________________________
@@ -369,9 +406,20 @@ PackageManagerImpl::DeclarePackageObsolete
  /*[in]*/ bool			obsolete)
 {
   LoadVariablePackageTable ();
-  variablePackageTable->PutValue (lpszDeploymentName,
-				  "Obsolete",
-				  (obsolete ? "1" : "0"));
+  if (pSession->IsAdminMode())
+  {
+    commonVariablePackageTable->PutValue (
+      lpszDeploymentName,
+      "Obsolete",
+      (obsolete ? "1" : "0"));
+  }
+  else
+  {
+    userVariablePackageTable->PutValue (
+      lpszDeploymentName,
+      "Obsolete",
+      (obsolete ? "1" : "0"));
+  }
 }
 
 /* _________________________________________________________________________
@@ -385,9 +433,20 @@ PackageManagerImpl::SetTimeInstalled
  /*[in]*/ time_t		timeInstalled)
 {
   LoadVariablePackageTable ();
-  variablePackageTable->PutValue (lpszDeploymentName,
-				  "TimeInstalled",
-				  NUMTOSTR(timeInstalled));
+  if (pSession->IsAdminMode())
+  {
+    commonVariablePackageTable->PutValue (
+      lpszDeploymentName,
+      "TimeInstalled",
+      NUMTOSTR(timeInstalled));
+  }
+  else
+  {
+    userVariablePackageTable->PutValue (
+      lpszDeploymentName,
+      "TimeInstalled",
+      NUMTOSTR(timeInstalled));
+  }
 }
 
 /* _________________________________________________________________________
@@ -466,7 +525,7 @@ PackageManagerImpl::DefinePackage
 
 void
 PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
-(/*[in]*/ const PathName &	directory)
+  (/*[in]*/ const PathName &	directory)
 {
   trace_mpm->WriteFormattedLine
     ("libmpm",
@@ -641,13 +700,24 @@ void
 PackageManagerImpl::ParseAllPackageDefinitionFiles ()
 {
   if (parsedAllPackageDefinitionFiles)
-    {
-      return;
-    }
+  {
+    return;
+  }
+  PathName userInstallRoot =
+    pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
   ParseAllPackageDefinitionFilesInDirectory
-    (PathName(pSession->GetSpecialPath(SpecialPath::InstallRoot),
-	      MIKTEX_PATH_PACKAGE_DEFINITION_DIR,
-	      0));
+    (PathName(userInstallRoot,
+    MIKTEX_PATH_PACKAGE_DEFINITION_DIR,
+    0));
+  PathName commonInstallRoot =
+    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+  if (userInstallRoot != commonInstallRoot)
+  {
+    ParseAllPackageDefinitionFilesInDirectory
+      (PathName(commonInstallRoot,
+      MIKTEX_PATH_PACKAGE_DEFINITION_DIR,
+      0));
+  }
   parsedAllPackageDefinitionFiles = true;
 }
 
@@ -709,9 +779,13 @@ PackageManagerImpl::ClearAll ()
 {
   packageTable.clear ();
   installedFileInfoTable.clear ();
-  if (variablePackageTable.Get() != 0)
+  if (commonVariablePackageTable.Get() != 0)
     {
-      variablePackageTable.Release ();
+      commonVariablePackageTable.Release ();
+    }
+  if (userVariablePackageTable.Get() != 0)
+    {
+      userVariablePackageTable.Release ();
     }
   parsedAllPackageDefinitionFiles = false;
 }

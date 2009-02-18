@@ -1039,6 +1039,17 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 
 /* _________________________________________________________________________
 
+   SessionImpl::SetAdminMode
+   _________________________________________________________________________ */
+
+void
+SessionImpl::SetAdminMode (/*[in]*/ bool adminMode)
+{
+  this->adminMode = adminMode;
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::IsAdminMode
    _________________________________________________________________________ */
 

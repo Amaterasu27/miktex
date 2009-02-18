@@ -38,6 +38,14 @@
 
 <variablelist>
 <varlistentry>
+<term><option>--admin</option></term>
+<listitem>
+<indexterm>
+<primary>--admin</primary>
+</indexterm>
+<para>Run in admin mode.</para></listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--configure</option></term>
 <listitem>
 <indexterm>

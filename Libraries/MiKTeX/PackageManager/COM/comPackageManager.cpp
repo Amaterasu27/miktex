@@ -1,6 +1,6 @@
 /* comPackageManager.cpp:
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -232,14 +232,16 @@ void
 comPackageManager::CreateSession ()
 {
   if (pSession == 0)
+  {
+    pSession = Session::TryGet();
+    if (pSession == 0)
     {
-      pSession = Session::TryGet();
-      if (pSession == 0)
-	{
-	  // we are running standalone; create a new session
-	  pSession = Session::Get(Session::InitInfo(MPMSVC));
-	}
+      // we are running standalone; create a new admin session
+      Session::InitInfo initInfo (MPMSVC);
+      initInfo.SetFlags (Session::InitFlags::AdminMode);
+      pSession = Session::Get(initInfo);
     }
+  }
 }
 
 /* _________________________________________________________________________

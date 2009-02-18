@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -777,7 +777,10 @@ private:
   bool parsedAllPackageDefinitionFiles;
 
 private:
-  MiKTeX::Core::SmartPointer<MiKTeX::Core::Cfg> variablePackageTable;
+  MiKTeX::Core::SmartPointer<MiKTeX::Core::Cfg> commonVariablePackageTable;
+
+private:
+  MiKTeX::Core::SmartPointer<MiKTeX::Core::Cfg> userVariablePackageTable;
 
 private:
   MiKTeX::Core::SessionWrapper pSession;

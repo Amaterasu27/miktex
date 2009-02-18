@@ -1,6 +1,6 @@
 /* InstallPackageDialog.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -66,10 +66,7 @@ InstallPackageDialog::InstallPackageDialog
 	}
 #if defined(MIKTEX_WINDOWS)
       // show the Windows Vista shield icon
-      bool restrictedUserSetup =
-	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	    || SessionWrapper(true)->IsUserAnAdministrator()));
-      if (IsWindowsVista() && ! restrictedUserSetup)
+      if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
 	{
 	  HWND hwnd = pOKButton->winId();
 	  if (hwnd == 0)

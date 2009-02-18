@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -258,7 +258,7 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
   
   if (expectedSize > 0)
     {
-      ReportLine (T_("downloading %s (%u bytes)..."),
+      ReportLine (T_("downloading %s (expecting %u bytes)..."),
 		  Q_(url),
 		  static_cast<unsigned>(expectedSize));
     }
@@ -365,8 +365,8 @@ PackageInstallerImpl::Download (/*[in]*/ const string &	url,
 
 void
 PackageInstallerImpl::OnBeginFileExtraction
-(/*[in]*/ const char *	lpszFileName,
- /*[in]*/ size_t		uncompressedSize)
+  (/*[in]*/ const char *	lpszFileName,
+   /*[in]*/ size_t		uncompressedSize)
 {
   UNUSED_ALWAYS (uncompressedSize);
 
@@ -397,8 +397,8 @@ PackageInstallerImpl::OnBeginFileExtraction
 
 void
 PackageInstallerImpl::OnEndFileExtraction
-(/*[in]*/ const char *	lpszFileName,
- /*[in]*/ size_t		uncompressedSize)
+  (/*[in]*/ const char *	lpszFileName,
+   /*[in]*/ size_t		uncompressedSize)
 {
   // update file name database
   if (autoFndbSync && lpszFileName != 0)
@@ -443,8 +443,8 @@ PackageInstallerImpl::OnError (/*[in]*/ const char *	lpszMessage)
 
 void
 PackageInstallerImpl::ExtractFiles
-(/*[in]*/ const PathName &	archiveFileName,
- /*[in]*/ ArchiveFileType	archiveFileType)
+  (/*[in]*/ const PathName &	archiveFileName,
+   /*[in]*/ ArchiveFileType	archiveFileType)
 {
   auto_ptr<MiKTeX::Extractor::Extractor>
     pExtractor
@@ -475,7 +475,7 @@ PackageInstallerImpl::InstallDbLight ()
       repositoryType = RepositoryType::Remote;
     }
 
-  ReportLine (T_("opening repository %s..."), Q_(repository));
+  ReportLine (T_("visiting repository %s..."), Q_(repository));
   ReportLine (T_("repository type: %s"),
 	      (repositoryType == RepositoryType::Remote
 	       ? T_("remote package repository")
@@ -493,7 +493,7 @@ PackageInstallerImpl::InstallDbLight ()
       // Internet
       ScratchDirectory scratchDirectory;
 
-      ReportLine (T_("loading lightweight database file..."));
+      ReportLine (T_("loading lightweight database..."));
 
       // full path to the database file
       PathName pathZzdb1;
@@ -569,7 +569,7 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
   // path to mpm.ini
   PathName pathMpmIni (destinationDirectory, MIKTEX_PATH_MPM_INI);
 
-  // install if necessary
+  // install (if necessary)
   if (download || ! File::Exists(pathMpmIni))
     {
       InstallDbLight ();
@@ -580,7 +580,7 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
   
   // report digest
   MD5 md5 = MD5::FromFile(pathMpmIni.Get());
-  ReportLine (T_("DBlight digest: %s"),
+  ReportLine (T_("lightweight database digest: %s"),
 	      dbLight.GetDigest().ToString().c_str());
 }
 
@@ -648,14 +648,14 @@ CompareSerieses (/*[in]*/ const string &	ver1,
 void
 PackageInstallerImpl::FindUpdates ()
 {
-  trace_mpm->WriteLine ("libmpm", T_("searching for updated packages"));
+  trace_mpm->WriteLine ("libmpm", T_("searching for updateable packages"));
 
   // force a download of the lightweight database
   LoadDbLight (true);
 
   updates.clear ();
 
-  // read lightweight database
+  // package iteration
   char szPackage[BufferSizes::MaxPackageName];
   for (const char * lpszPackage = dbLight.FirstPackage(szPackage);
        lpszPackage != 0;
@@ -744,7 +744,7 @@ PackageInstallerImpl::FindUpdates ()
 	      // server has a newer package
 	      trace_mpm->WriteFormattedLine
 		("libmpm",
-		 T_("%s: server has updated package"),
+		 T_("%s: server has new version"),
 		 lpszPackage);
 	    }
 	  else
@@ -752,7 +752,7 @@ PackageInstallerImpl::FindUpdates ()
 	      // server has a newer version
 	      trace_mpm->WriteFormattedLine
 		("libmpm",
-		 T_("%s: server has newer version"),
+		 T_("%s: server has new version"),
 		 lpszPackage);
 	    }
 	  updates.push_back (updateInfo);
@@ -825,8 +825,8 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 
 void
 PackageInstallerImpl::RemoveFiles
-(/*[in]*/ const vector<string> &	toBeRemoved,
- /*[in]*/ bool				silently)
+  (/*[in]*/ const vector<string> &	toBeRemoved,
+   /*[in]*/ bool			silently)
 {
   for (vector<string>::const_iterator it = toBeRemoved.begin();
        it != toBeRemoved.end();
@@ -1274,9 +1274,9 @@ GetFiles (/*[in]*/ const PackageInfo &	packageInfo,
 
 void
 PackageInstallerImpl::UpdateMpmFndb
-(/*[in]*/ const vector<string> &	installedFiles,
- /*[in]*/ const vector<string> &	removedFiles,
- /*[in]*/ const char *		lpszPackageName)
+  (/*[in]*/ const vector<string> &	installedFiles,
+   /*[in]*/ const vector<string> &	removedFiles,
+   /*[in]*/ const char *		lpszPackageName)
 {
 #if 0
   ReportLine (T_("updating MPM file name database:"));
@@ -1696,9 +1696,9 @@ PackageInstallerImpl::OnProgress (/*[in]*/ unsigned		level,
 
 bool
 PackageInstallerImpl::CheckArchiveFile
-(/*[in]*/ const char *	lpszPackage,
- /*[in]*/ const PathName &	archiveFileName,
- /*[in]*/ bool			mustBeOk)
+  (/*[in]*/ const char *	lpszPackage,
+   /*[in]*/ const PathName &	archiveFileName,
+   /*[in]*/ bool		mustBeOk)
 {
   if (! File::Exists(archiveFileName))
     {
@@ -1827,9 +1827,9 @@ PackageInstallerImpl::ConnectToServer ()
 
 void
 PackageInstallerImpl::RegisterComponent
-(/*[in]*/ bool			doRegister,
- /*[in]*/ const PathName &	path,
- /*[in]*/ bool			mustSucceed)
+  (/*[in]*/ bool			doRegister,
+   /*[in]*/ const PathName &		path,
+   /*[in]*/ bool			mustSucceed)
 {
   ReportLine ("%s %s",
 	      (doRegister
@@ -1892,8 +1892,8 @@ static const char * const toBeConfigured[] = {
 
 void
 PackageInstallerImpl::RegisterComponents
-(/*[in]*/ bool				doRegister,
- /*[in]*/ const vector<string> &	packages)
+  (/*[in]*/ bool			doRegister,
+   /*[in]*/ const vector<string> &	packages)
 {
   for (vector<string>::const_iterator it = packages.begin();
        it != packages.end();
@@ -2041,10 +2041,11 @@ PackageInstallerImpl::RunIniTeXMF (/*[in]*/ const char *	lpszArguments)
 				       FileType::EXE,
 				       exe))
     {
-      FATAL_MPM_ERROR ("PackageInstallerImpl::RunIniTeXMF",
-			  (T_("\
+      FATAL_MPM_ERROR (
+	"PackageInstallerImpl::RunIniTeXMF",
+	(T_("\
 The MiKTeX configuration utility could not be found.")),
-			  0);
+	0);
     }
 
   // run initexmf.exe
@@ -2063,10 +2064,10 @@ The MiKTeX configuration utility could not be found.")),
 
 void
 PackageInstallerImpl::CheckDependencies
-(/*[in,out]*/ set<string> &	packages,
- /*[in]*/ const string &	deploymentName,
- /*[in]*/ bool			force,
- /*[in]*/ int			level)
+  (/*[in,out]*/ set<string> &	packages,
+   /*[in]*/ const string &	deploymentName,
+   /*[in]*/ bool		force,
+   /*[in]*/ int			level)
 {
   if (level > 10)
     {
@@ -2568,7 +2569,7 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 
 void
 PackageInstallerImpl::SetUpPackageDefinitionFiles
-(/*[in]*/ const PathName &	directory)
+  (/*[in]*/ const PathName &	directory)
 {
   // path to the database file
   PathName pathDatabase;
@@ -3089,10 +3090,7 @@ PackageInstallerImpl::UseLocalServer ()
     {
       return (false);
     }
-  bool restrictedUserSetup =
-    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	|| SessionWrapper(true)->IsUserAnAdministrator()));
-  if (restrictedUserSetup)
+  if (! SessionWrapper(true)->IsAdminMode())
     {
       return (false);
     }

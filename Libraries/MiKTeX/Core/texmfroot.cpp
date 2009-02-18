@@ -515,6 +515,23 @@ SessionImpl::GetRootDirectory (/*[in]*/ unsigned	r)
 
 /* _________________________________________________________________________
 
+   SessionImpl::IsCommonRootDirectory
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::IsCommonRootDirectory (/*[in]*/ unsigned	r)
+{
+  unsigned n = GetNumberOfTEXMFRoots();
+  if (r == INVALID_ROOT_INDEX || r >= n)
+    {
+      INVALID_ARGUMENT ("SessionImpl::IsCommonRootDirectory", NUMTOSTR(r));
+    }
+  return (rootDirectories[r].IsCommon());
+}
+
+
+/* _________________________________________________________________________
+
    SessionImpl::GetMpmRoot
    _________________________________________________________________________ */
 

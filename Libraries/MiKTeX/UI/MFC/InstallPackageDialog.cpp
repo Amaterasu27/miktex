@@ -1,6 +1,6 @@
 /* InstallPackageDialog.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -95,10 +95,7 @@ InstallPackageDialog::OnInitDialog ()
 			     "%s",
 			     T_("<Random package repository>"));
 	}
-      bool restrictedUserSetup =
-	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	    || SessionWrapper(true)->IsUserAnAdministrator()));
-      if (IsWindowsVista() && ! restrictedUserSetup)
+      if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
 	{
 	  HWND hwnd = ::GetDlgItem(m_hWnd, IDOK);
 	  if (hwnd == 0)

@@ -595,6 +595,7 @@ enum Option
 
   OPT_CONFIGURE,		// ! MIKTEX_STANDALONE
 
+  OPT_ADMIN,
   OPT_DUMP,
   OPT_DUMP_BY_NAME,
   OPT_EDIT_CONFIG_FILE,
@@ -607,6 +608,7 @@ enum Option
   OPT_QUIET,
   OPT_REPORT,
   OPT_UPDATE_FNDB,
+  OPT_USER_ROOTS,
   OPT_VERBOSE,
   OPT_VERSION,
 
@@ -621,15 +623,13 @@ enum Option
   OPT_COMMON_CONFIG,		// <internal/>
   OPT_COMMON_DATA,		// <internal/>
   OPT_COMMON_INSTALL,		// <internal/>
+  OPT_COMMON_ROOTS,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_DEFAULT_PAPER_SIZE,	// <internal/>
   OPT_RMFNDB,			// <internal/>
-  OPT_ROOTS,			// <internal/>
-  OPT_SHARED_SETUP,		// <internal/>
   OPT_USER_CONFIG,		// <internal/>
   OPT_USER_DATA,		// <internal/>
   OPT_USER_INSTALL,		// <internal/>
-
 };
 
 /* _________________________________________________________________________
@@ -647,6 +647,14 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     T_("FILE")
   },
 
+  {
+    "admin", 0,
+    POPT_ARG_NONE, 0,
+    OPT_ADMIN,
+    T_("Run in admin mode."),
+    0
+  },
+  
 #if ! MIKTEX_STANDALONE
   {
     "configure", 0,
@@ -814,6 +822,14 @@ Open the specified configuration file in an editor.\
 #endif
 
   {
+    "user-roots", 'r',
+    POPT_ARG_STRING, 0,
+    OPT_USER_ROOTS,
+    T_("Register user root directories."),
+    T_("DIRS")
+  },
+
+  {
     "verbose", 'v',
     POPT_ARG_NONE, 0,
     OPT_VERBOSE,
@@ -857,6 +873,14 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
   },
 
   {
+    "admin", 0,
+    POPT_ARG_NONE, 0,
+    OPT_ADMIN,
+    T_("Run in admin mode."),
+    0
+  },
+  
+  {
     "common-config", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_COMMON_CONFIG,
@@ -878,6 +902,14 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
     OPT_COMMON_INSTALL,
     T_("Register the common installation directory."),
     T_("DIR")
+  },
+
+  {
+    "common-roots", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_ROOTS,
+    T_("Register common root directories."),
+    T_("DIRS")
   },
 
   {
@@ -1035,22 +1067,6 @@ Open the specified configuration file in an editor.\
   },
 
   {
-    "roots", 'r',
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_ROOTS,
-    T_("Register root directories."),
-    T_("DIRS")
-  },
-    
-  {
-    "shared-setup", 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_SHARED_SETUP,
-    T_("Set up a shared MiKTeX system."),
-    0
-  },
-  
-  {
     "update-fndb", 'u',
     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
     OPT_UPDATE_FNDB,
@@ -1082,6 +1098,14 @@ Open the specified configuration file in an editor.\
     T_("DIR")
   },
 
+  {
+    "user-roots", 'r',
+    POPT_ARG_STRING, 0,
+    OPT_USER_ROOTS,
+    T_("Register user root directories."),
+    T_("DIRS")
+  },
+    
   {
     "verbose", 'v',
     POPT_ARG_NONE, 0,
@@ -1126,6 +1150,14 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
   },
 
   {
+    "admin", 0,
+    POPT_ARG_NONE, 0,
+    OPT_ADMIN,
+    T_("Run in admin mode."),
+    0
+  },
+  
+  {
     "common-config", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_COMMON_CONFIG,
@@ -1147,6 +1179,14 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
     OPT_COMMON_INSTALL,
     T_("Register the common installation directory."),
     T_("DIR")
+  },
+
+  {
+    "common-roots", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_COMMON_ROOTS,
+    T_("Register common root directories."),
+    T_("DIRS")
   },
 
   {
@@ -1304,22 +1344,6 @@ Open the specified configuration file in an editor.\
   },
 
   {
-    "roots", 'r',
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_ROOTS,
-    T_("Register root directories."),
-    T_("DIRS")
-  },
-    
-  {
-    "shared-setup", 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_SHARED_SETUP,
-    T_("Set up a shared MiKTeX system."),
-    0
-  },
-  
-  {
     "update-fndb", 'u',
     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
     OPT_UPDATE_FNDB,
@@ -1351,6 +1375,14 @@ Open the specified configuration file in an editor.\
     T_("DIR")
   },
 
+  {
+    "user-roots", 'r',
+    POPT_ARG_STRING, 0,
+    OPT_USER_ROOTS,
+    T_("Register user root directories."),
+    T_("DIRS")
+  },
+    
   {
     "verbose", 'v',
     POPT_ARG_NONE, 0,
@@ -1649,7 +1681,7 @@ IniTeXMFApp::UpdateFilenameDatabase (/*[in]*/ const PathName & root)
 
   unsigned rootIdx = pSession->DeriveTEXMFRoot(root);
 
-  // remove the old FNDB file(s)
+  // remove the old FNDB file
   PathName path = pSession->GetFilenameDatabasePathName(rootIdx);
   if (File::Exists(path))
     {
@@ -1751,19 +1783,19 @@ void
 IniTeXMFApp::SetTeXMFRootDirectories ()
 {
   Verbose (T_("Registering root directories..."));
-  PrintOnly ("regroots %s %s %s %s %s %s %s",
-	     Q_(startupConfig.roots),
-	     Q_(startupConfig.userDataRoot),
-	     Q_(startupConfig.userConfigRoot),
-	     Q_(startupConfig.commonDataRoot),
-	     Q_(startupConfig.commonConfigRoot),
-	     Q_(startupConfig.commonInstallRoot),
-	     Q_(startupConfig.userInstallRoot));
+  PrintOnly ("regroots ur=%s ud=%s uc=%s ui=%s cr=%s cd=%s cc=%s ci=%s",
+    Q_(startupConfig.userRoots),
+    Q_(startupConfig.userDataRoot),
+    Q_(startupConfig.userConfigRoot),
+    Q_(startupConfig.userInstallRoot),
+    Q_(startupConfig.commonRoots),
+    Q_(startupConfig.commonDataRoot),
+    Q_(startupConfig.commonConfigRoot),
+    Q_(startupConfig.commonInstallRoot));
   if (! printOnly)
-    {
-      pSession
-	->RegisterRootDirectories (startupConfig, false);
-    }
+  {
+    pSession->RegisterRootDirectories (startupConfig, false);
+  }
 }
 
 /* _________________________________________________________________________
@@ -2535,12 +2567,22 @@ IniTeXMFApp::Configure ()
   prefix.CutOffLastComponent ();
   PathName miktex_texmf = prefix;
   miktex_texmf += MIKTEX_TEXMF;
-  if (! startupConfig.roots.empty())
+  if (pSession->IsAdminMode())
+  {
+    if (! startupConfig.commonRoots.empty())
     {
-      startupConfig.roots += PathName::PathNameDelimiter;
+      startupConfig.commonRoots += PathName::PathNameDelimiter;
     }
-  startupConfig.roots += miktex_texmf.Get();
-
+    startupConfig.commonRoots += miktex_texmf.Get();
+  }
+  else
+  {
+    if (! startupConfig.userRoots.empty())
+    {
+      startupConfig.userRoots += PathName::PathNameDelimiter;
+    }
+    startupConfig.userRoots += miktex_texmf.Get();
+  }
   ProcessOutput output;
   int exitCode;
   output.Clear ();
@@ -2551,17 +2593,31 @@ IniTeXMFApp::Configure ()
   output.RemoveTrailingNewline ();
   if (exitCode == 0 && output.GetLength() > 0)
     {
-      if (! startupConfig.roots.empty())
+      if (pSession->IsAdminMode())
+      {
+	if (! startupConfig.commonRoots.empty())
 	{
-	  startupConfig.roots += PathName::PathNameDelimiter;
+	  startupConfig.commonRoots += PathName::PathNameDelimiter;
 	}
-      startupConfig.roots += output.Get();
+	startupConfig.commonRoots += output.Get();
+      }
+      else
+      {
+	if (! startupConfig.userRoots.empty())
+	{
+	  startupConfig.userRoots += PathName::PathNameDelimiter;
+	}
+	startupConfig.userRoots += output.Get();
+      }
     }
   SetTeXMFRootDirectories ();
   unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
   for (unsigned r = 0; r < nRoots; ++ r)
     {
-      UpdateFilenameDatabase (r);
+      if (pSession->IsAdminMode() || ! pSession->IsCommonRoot(r))
+      {
+	UpdateFilenameDatabase (r);
+      }
     }
   auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
   pInstaller->SetCallback (this);
@@ -2688,12 +2744,12 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   string engine;
   string logFile;
 
-  TriState triSharedSetup (TriState::Undetermined);
 
 #if ! MIKTEX_STANDALONE
   bool optConfigure = false;
 #endif
 
+  bool optAdminMode = false;
   bool optDump = false;
   bool optDumpByName = false;
   bool optForce = false;
@@ -2860,17 +2916,19 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  removeFndb = true;
 	  break;
 
-	case OPT_ROOTS:
+	case OPT_COMMON_ROOTS:
 
-	  startupConfig.roots = lpszOptArg;
+	  startupConfig.commonRoots = lpszOptArg;
 	  break;
 
-	case OPT_SHARED_SETUP:
+	case OPT_USER_ROOTS:
 
-	  triSharedSetup =
-	    (StringCompare(lpszOptArg, "0") == 0
-	     ? TriState::False
-	     : TriState::True);
+	  startupConfig.userRoots = lpszOptArg;
+	  break;
+
+	case OPT_ADMIN:
+
+	  optAdminMode = true;
 	  break;
 
 	case OPT_UPDATE_FNDB:
@@ -2938,38 +2996,26 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  if (triSharedSetup != TriState::Undetermined)
+  if (optAdminMode)
     {
-      TriState old = pSession->IsSharedMiKTeXSetup();
-      if ((old.Get() == TriState::True && triSharedSetup == TriState::False)
-	  || triSharedSetup == TriState::True)
-	{
-#if defined(MIKTEX_WINDOWS)
-	  if (IsWindowsNT()
-	      && ! (pSession->RunningAsAdministrator()
-		    || pSession->RunningAsPowerUser()))
-	    {
-	      FatalError (T_("Administrator privileges required."));
-	    }
-#endif
-	  pSession->SharedMiKTeXSetup (triSharedSetup.Get() == TriState::True);
-	}
+      pSession->SetAdminMode (true);
     }
 
-  if (! startupConfig.roots.empty()
-      || ! startupConfig.userDataRoot.Empty()
-      || ! startupConfig.userConfigRoot.Empty()
-      || ! startupConfig.userInstallRoot.Empty()
-      || ! startupConfig.commonDataRoot.Empty()
-      || ! startupConfig.commonConfigRoot.Empty()
-      || ! startupConfig.commonInstallRoot.Empty())
-    {
+  if (! startupConfig.userRoots.empty()
+    || ! startupConfig.userDataRoot.Empty()
+    || ! startupConfig.userConfigRoot.Empty()
+    || ! startupConfig.userInstallRoot.Empty()
+    || ! startupConfig.commonRoots.empty()
+    || ! startupConfig.commonDataRoot.Empty()
+    || ! startupConfig.commonConfigRoot.Empty()
+    || ! startupConfig.commonInstallRoot.Empty())
+  {
 #if ! MIKTEX_STANDALONE
-      optConfigure = true;
+    optConfigure = true;
 #else
-      SetTeXMFRootDirectories ();
+    SetTeXMFRootDirectories ();
 #endif
-    }
+  }
 
   if (! defaultPaperSize.empty())
     {
@@ -3048,7 +3094,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
 	  for (unsigned r = 0; r < nRoots; ++ r)
 	    {
-	      UpdateFilenameDatabase (r);
+	      if (pSession->IsAdminMode() || ! pSession->IsCommonRootDirectory(r))
+	      {
+		UpdateFilenameDatabase (r);
+	      }
 	    }
 	  pManager->CreateMpmFndb ();
 	}
