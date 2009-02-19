@@ -449,7 +449,7 @@ SessionImpl::InitializeRootDirectories
     userInstallRootIndex = userConfigRootIndex;
   }
 
-  RegisterRootDirectory (MPM_ROOT_PATH, true);
+  RegisterRootDirectory (MPM_ROOT_PATH, IsAdminMode());
 
   trace_config->WriteFormattedLine ("core",
     "UserData: %s",
@@ -941,27 +941,68 @@ bool
 SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
 				   /*[out]*/ PathName &		path)
 {
-  if (r == MPM_ROOT)
-    {
-      path = GetMpmDatabasePathName();
-    }
-  else if (r >= GetNumberOfTEXMFRoots())
+  if (! (r < GetNumberOfTEXMFRoots() || r == MPM_ROOT))
     {
       INVALID_ARGUMENT ("SessionImpl::FindFilenameDatabase", NUMTOSTR(r));
     }
+
+  vector<PathName> fndbFiles = GetFilenameDatabasePathNames(r);
+
+  for (vector<PathName>::const_iterator it = fndbFiles.begin();
+       it != fndbFiles.end();
+       ++ it)
+    {
+      if (File::Exists(*it))
+	{
+	  return (true);
+	}
+    }
+
+  return (false);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetFilenameDatabasePathName
+
+   Determine the prefered fndb path for a given TEXMF root.
+   _________________________________________________________________________ */
+
+PathName
+SessionImpl::GetFilenameDatabasePathName (/*[in]*/ unsigned	r)
+{
+  return (GetFilenameDatabasePathNames(r)[0]);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetFilenameDatabasePathNames
+
+   Determine the possible fndb paths for a given TEXMF root.
+   _________________________________________________________________________ */
+
+vector<PathName>
+SessionImpl::GetFilenameDatabasePathNames (/*[in]*/ unsigned r)
+{
+  vector<PathName> result;
+
+  // preferred pathname
+  PathName path = rootDirectories[r].get_Path();
+  if (rootDirectories[r].IsCommon())
+    {
+      path = GetSpecialPath(SpecialPath::CommonDataRoot);
+    }
   else
     {
-      path = GetFilenameDatabasePathName(r);
+      path = GetSpecialPath(SpecialPath::UserDataRoot);
     }
+  path += GetRelativeFilenameDatabasePathName(r);
+  result.push_back (path);
 
-  if (File::Exists(path))
-    {
-      return (true);
-    }
-
+  // alternative pathname
   if (r == MPM_ROOT)
     {
-      // try INSTALL\miktex\conig\mpm.fndb
+      // INSTALL\miktex\conig\mpm.fndb
       if (GetInstallRoot() == INVALID_ROOT_INDEX)
 	{
 	  UNEXPECTED_CONDITION ("SessionImpl::FindFilenameDatabase");
@@ -971,34 +1012,12 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
     }
   else
     {
-      // try ROOT\miktex\conig\texmf.fndb
+      // ROOT\miktex\conig\texmf.fndb
       path.Set (rootDirectories[r].get_Path(), MIKTEX_PATH_TEXMF_FNDB);
     }
-
-  return (File::Exists(path));
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::GetFilenameDatabasePathName
-
-   Determine the fndb path for a given TEXMF root.
-   _________________________________________________________________________ */
-
-PathName
-SessionImpl::GetFilenameDatabasePathName (/*[in]*/ unsigned	r)
-{
-  PathName path = rootDirectories[r].get_Path();
-  if (rootDirectories[r].IsCommon())
-  {
-    path = GetSpecialPath(SpecialPath::CommonDataRoot);
-  }
-  else
-  {
-    path = GetSpecialPath(SpecialPath::UserDataRoot);
-  }
-  path += GetRelativeFilenameDatabasePathName(r);
-  return (path);
+  result.push_back (path);
+  
+  return (result);
 }
 
 /* _________________________________________________________________________
@@ -1012,6 +1031,17 @@ PathName
 SessionImpl::GetMpmDatabasePathName ()
 {
   return (GetFilenameDatabasePathName(MPM_ROOT));
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetMpmRootPath
+   _________________________________________________________________________ */
+
+PathName
+SessionImpl::GetMpmRootPath ()
+{
+  return (MPM_ROOT_PATH);
 }
 
 /* _________________________________________________________________________
@@ -1398,8 +1428,8 @@ SessionImpl::IsManagedRoot (/*[in]*/ unsigned root)
    Check to see if a path starts with "\\MiKTeX\[MPM]\"
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(bool)
-IsMpmFile (/*[in]*/ const char * lpszPath)
+bool
+SessionImpl::IsMpmFile (/*[in]*/ const char * lpszPath)
 {
   return ((PathName::Compare(MPM_ROOT_PATH,
 			     lpszPath,

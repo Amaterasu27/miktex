@@ -127,8 +127,8 @@ SessionImpl::DefaultConfig ()
   ret.userDataRoot = home_miktex;
   ret.commonInstallRoot = GetMyPrefix();
   ret.commonInstallRoot += MIKTEX_TEXMF;
-  ret.commonConfigRoot = "/var/cache/miktex-texmf";
-  ret.commonDataRoot = "/var/lib/miktex-texmf";
+  ret.commonConfigRoot = "/var/lib/miktex-texmf";
+  ret.commonDataRoot = "/var/cache/miktex-texmf";
   return (ret);
 }
 
@@ -437,7 +437,7 @@ void
 Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
 {
   char resolved[PATH_MAX];
-  if (realpath(path.Get(), resolved) == 0)
+  if (realpath(path.Get(), resolved) == 0 && errno != ENOENT)
     {
       FATAL_CRT_ERROR ("realpath", path.Get());
     }

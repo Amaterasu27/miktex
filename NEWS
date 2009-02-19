@@ -13,23 +13,10 @@
    The binary is installed as miktex-pdftex so that it can coexist
    with the system-installed pdftex binary.
 
- * Run-time configuration: the MiKTeX configuration utility uses
-   kpsewhich(1) to find existing TEXMF trees.
-
- * Link everything statically (don't build shared objects).
-
  * Binary packages (.rpm/.deb/.tgz) are now available for GNU/Linux
    systems.  See http://miktex.org/unx/ for more information.
 
- Restrictions:
-
- * Only per-user configuration is supported at the momement (all
-   configuration settings are stored under $HOME/.miktex).
-
- * Packages will be installed for the current user only.  A better
-   approach would be to install packages in the /usr/ hierarchy.  In
-   order to get there, the package manager has to be implemented as a
-   daemon.  This is on the TODO list.
+ * Link everything statically (don't build shared objects).
 
 
  _____________________________________________________________________________

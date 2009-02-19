@@ -122,7 +122,7 @@ SessionImpl::GetMyPrefix ()
 
    SessionImpl::FindStartupConfigFile
 
-   Try to find the MiKTeX startup file.
+   Try to find the MiKTeX startup file in the usual places.
    _________________________________________________________________________ */
 
 bool
@@ -136,9 +136,9 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
 
   string str;
 
-  if (Utils::GetEnvironmentString(common
-				  ? MIKTEX_ENV_COMMON_STARTUP_FILE
-				  : MIKTEX_ENV_USER_STARTUP_FILE,
+  if (Utils::GetEnvironmentString((common
+				   ? MIKTEX_ENV_COMMON_STARTUP_FILE
+				   : MIKTEX_ENV_USER_STARTUP_FILE),
 				  str))
     {
       path = str;
@@ -148,7 +148,9 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
     }
 
 #if ! NO_REGISTRY
-  if (winRegistry::TryGetRegistryValue(common ? TriState::True : TriState::False,
+  if (winRegistry::TryGetRegistryValue((common
+					? TriState::True
+					: TriState::False),
 				       MIKTEX_REGKEY_CORE,
 				       MIKTEX_REGVAL_STARTUP_FILE,
 				       str,
@@ -164,45 +166,51 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
   StartupConfig defaultStartupConfig = DefaultConfig();
 
   if (common)
-  {
-    // try the prefix of the bin directory
-    PathName myloc = GetMyLocation(true);
-    RemoveDirectoryDelimiter (myloc.GetBuffer());
-    PathName bindir (MIKTEX_PATH_BIN_DIR);
-    RemoveDirectoryDelimiter (bindir.GetBuffer());
-    PathName prefix;
-    if (Utils::GetPathNamePrefix(myloc, bindir, prefix))
     {
-      path = prefix;
+      // try the prefix of the bin directory
+      PathName myloc = GetMyLocation(true);
+      RemoveDirectoryDelimiter (myloc.GetBuffer());
+      PathName bindir (MIKTEX_PATH_BIN_DIR);
+      RemoveDirectoryDelimiter (bindir.GetBuffer());
+      PathName prefix;
+      if (Utils::GetPathNamePrefix(myloc, bindir, prefix))
+	{
+	  path = prefix;
+	  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+	  if (File::Exists(path))
+	    {
+	      return (true);
+	    }
+	}
+      // try /var/lib/miktex-texmf/miktex/config/miktexstartup.ini
+      path = defaultStartupConfig.commonConfigRoot;
       path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
       if (File::Exists(path))
-      {
-	return (true);
-      }
-    }
+	{
+	  return (true);
+	}
 #if MIKTEX_UNIX
-    // try /usr/share/miktex-texmf/miktex/config/miktexstartup.ini
-    prefix = GetMyPrefix();
-    path = prefix;
-    path += MIKTEX_TEXMF;
-    path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-    if (File::Exists(path))
-    {
-      return (true);
-    }
+      // try /usr/share/miktex-texmf/miktex/config/miktexstartup.ini
+      prefix = GetMyPrefix();
+      path = prefix;
+      path += MIKTEX_TEXMF;
+      path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+      if (File::Exists(path))
+	{
+	  return (true);
+	}
 #endif
-  }
-  else
-  {
-    // try $HOME/.miktex/miktex/config/miktexstartup.ini
-    path = defaultStartupConfig.userConfigRoot;
-    path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-    if (File::Exists(path))
-    {
-      return (true);
     }
-  }
-
+  else
+    {
+      // try $HOME/.miktex/miktex/config/miktexstartup.ini
+      path = defaultStartupConfig.userConfigRoot;
+      path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+      if (File::Exists(path))
+	{
+	  return (true);
+	}
+    }
 
   return (false);
 }

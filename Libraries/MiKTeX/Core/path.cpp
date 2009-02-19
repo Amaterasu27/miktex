@@ -882,7 +882,7 @@ Utils::GetPathNamePrefix (/*[in]*/ const PathName &	path,
   PathName path_ (path);
   PathName suffix_ (suffix);
 
-  while (! suffix_.Empty());
+  while (! suffix_.Empty())
   {
     char p[BufferSizes::MaxPath];
     char s[BufferSizes::MaxPath];

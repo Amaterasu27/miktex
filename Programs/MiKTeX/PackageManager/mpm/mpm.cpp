@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager (console version)
 
-   Copyright (C) 2003-2008 Christian Schenk
+   Copyright (C) 2003-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -28,9 +28,9 @@
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-#  define STANDALONE 0
+#  define ENABLE_OPT_INSTALL_ROOT 0
 #else
-#  define STANDALONE 1
+#  define ENABLE_OPT_INSTALL_ROOT 1
 #endif
 
 #define MYPKG "miktex-bin"
@@ -335,6 +335,7 @@ private:
 enum Option
 {
   OPT_AAA = 1,
+  OPT_ADMIN,
   OPT_CSV,			// deprecated
   OPT_FIND_CONFLICTS,		// internal
   OPT_FIND_UPDATES,
@@ -342,7 +343,7 @@ enum Option
   OPT_IMPORT,
   OPT_IMPORT_ALL,
   OPT_INSTALL,
-  OPT_INSTALL_ROOT,
+  OPT_INSTALL_ROOT,		// deprecated
   OPT_INSTALL_SOME,
   OPT_LIST,
   OPT_LIST_PACKAGE_NAMES,
@@ -380,6 +381,11 @@ enum Option
    _________________________________________________________________________ */
 
 const struct poptOption Application::aoption[] = {
+
+  {
+    "admin", 0, POPT_ARG_NONE, 0, OPT_ADMIN,
+    T_("Run in administration mode."), 0,
+  },
 
   {				// deprecated
     "csv", 0, POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_CSV,
@@ -419,13 +425,13 @@ exit when the window is closed."), 0
   },
 
   {
-    "install", 0, POPT_ARG_STRING, 0, OPT_INSTALL,
+    "install", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_INSTALL,
     T_("Install the specified package."),
     T_("PACKAGE")
   },
 
-#if STANDALONE
-  {
+#if ENABLE_OPT_INSTALL_ROOT
+  {				// deprecated
     "install-root", 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
     T_("\
 Use the specified directory as the installation destination."),
@@ -1404,7 +1410,14 @@ Application::RestartWindowed ()
     }
 #endif
 
-  Process::Start (mpmgui);
+  if (pSession->IsAdminMode())
+    {
+      Process::Start (mpmgui, "--admin");
+    }
+  else
+    {
+      Process::Start (mpmgui);
+    }
 }
 
 /* _________________________________________________________________________
@@ -1442,6 +1455,7 @@ Application::Main (/*[in]*/ int			argc,
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName (argv[0]);
 
+  bool optAdmin = false;
   bool optFindConflicts = false;
   bool optFindUpdates = false;
   bool optImport = false;
@@ -1489,6 +1503,9 @@ Application::Main (/*[in]*/ int			argc,
       const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
+	case OPT_ADMIN:
+	  optAdmin = true;
+	  break;
 	case OPT_CSV:
 	  outputFormat = OutputFormat::CSV;
 	  break;
@@ -1715,17 +1732,24 @@ Application::Main (/*[in]*/ int			argc,
 
   if (optVersion)
     {
-      cout << Utils::MakeProgramVersionString(THE_NAME_OF_THE_GAME,
-					      VersionNumber(MIKTEX_MAJOR_VERSION,
-							    MIKTEX_MINOR_VERSION,
-							    MIKTEX_COMP_J2000_VERSION,
-							    0))
-	   << T_("\n\
-Copyright (C) 2005-2008 Christian Schenk\n\
+      cout
+	<< (Utils::MakeProgramVersionString
+	    (THE_NAME_OF_THE_GAME,
+	     VersionNumber(MIKTEX_MAJOR_VERSION,
+			   MIKTEX_MINOR_VERSION,
+			   MIKTEX_COMP_J2000_VERSION,
+			   0)))
+	<< T_("\n\
+Copyright (C) 2005-2009 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	   << endl;
+	<< endl;
       return;
+    }
+
+  if (optAdmin)
+    {
+      initInfo.SetFlags (initInfo.GetFlags() | Session::InitFlags::AdminMode);
     }
 
   initInfo.SetStartupConfig (startupConfig);

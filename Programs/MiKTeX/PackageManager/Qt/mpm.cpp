@@ -1,6 +1,6 @@
 /* mpm.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -24,8 +24,28 @@
 
 #include "MainWindow.h"
 
+#include <popt-miktex.h>
+
 using namespace MiKTeX::Core;
 using namespace std;
+
+enum {
+  OPT_AAA = 1,
+
+  OPT_ADMIN,
+};
+
+namespace {
+  struct poptOption const aoption[] = {
+    {
+      "admin", 0,
+      POPT_ARG_NONE, 0,
+      OPT_ADMIN,
+      "Run in administration mode.", 0
+    },
+    POPT_TABLEEND
+  };
+}
 
 int
 main (int	argc,
@@ -35,8 +55,23 @@ main (int	argc,
   int ret = 0;
   try
     {
-      SessionWrapper pSession;
       Session::InitInfo initInfo;
+      Cpopt popt (argc,
+		  const_cast<const char**>(argv),
+		  aoption);
+      int option;
+      while ((option = popt.GetNextOpt()) >= 0)
+	{
+	  const char * lpszOptArg = popt.GetOptArg();
+	  switch (option)
+	    {
+	    case OPT_ADMIN:
+	      initInfo.SetFlags(initInfo.GetFlags()
+				| Session::InitFlags::AdminMode);
+	      break;
+	    }
+	}
+      SessionWrapper pSession;
       initInfo.SetProgramInvocationName (argv[0]);
       pSession.CreateSession (initInfo);
       MainWindow mainWindow;

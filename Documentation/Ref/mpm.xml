@@ -107,17 +107,6 @@ The root directory must be specified via
 <para>Install the specified package.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><option>--install-root=<replaceable>directory</replaceable></option></term>
-<listitem>
-<indexterm>
-<primary>--install-root</primary>
-</indexterm>
-<para>Use the specified directory as the installation destination.
-The directory must be the root of a &TDS;-compliant
-directory tree.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
 <term><option>--install-some=<replaceable>file</replaceable></option></term>
 <listitem>
 <indexterm>

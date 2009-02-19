@@ -1467,7 +1467,7 @@ RememberFileNameInfo (/*[in]*/ const string &	prefixedFileName,
     }
 
   // initialize root path: "//MiKTeX/[MPM]"
-  PathName path (MPM_ROOT_PATH);
+  PathName path = SessionWrapper(true)->GetMpmRootPath();
   //  path += CURRENT_DIRECTORY;
 
   // lpsz1: current path name component
@@ -1587,6 +1587,15 @@ PackageManagerImpl::OnProgress (/*[in]*/ unsigned	level,
 void
 PackageManagerImpl::CreateMpmFndb ()
 {
+#if 0
+  if (! pSession->IsAdminMode())
+    {
+      FATAL_MPM_ERROR ("PackageManagerImpl::CreateMpmFndb",
+		       T_("Not running in administration mode."),
+		       0);
+    }
+#endif
+
   ParseAllPackageDefinitionFiles ();
 
   // collect the file names
@@ -1618,7 +1627,7 @@ PackageManagerImpl::CreateMpmFndb ()
 
   // create the database
   Fndb::Create (pSession->GetMpmDatabasePathName().Get(),
-	        MPM_ROOT_PATH,
+	        pSession->GetMpmRootPath().Get(),
 		this,
 		true,
 		true);

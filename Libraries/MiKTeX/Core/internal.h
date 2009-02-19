@@ -286,6 +286,37 @@ const char * const RECURSION_INDICATOR = "//";
 const size_t RECURSION_INDICATOR_LENGTH = 2;
 const char * const SESSIONSVC = "sessionsvc";
 
+// The virtual TEXMF root MPM_ROOT_PATH is assigned to the MiKTeX
+// package manager.  We make sure that MPM_ROOT_PATH is a valid path
+// name.  On the other hand, it must not interfere with an existing
+// file system.
+#if defined(MIKTEX_WINDOWS)
+// An UNC path with an impossible share name suits our needs: `['
+// isn't a valid character in a share name (KB236388)
+const char * const COMMON_MPM_ROOT_PATH = "\\\\MiKTeX\\[MPM]";
+const char * const USER_MPM_ROOT_PATH   = "\\\\MiKTeX\\]MPM[";
+const size_t MPM_ROOT_PATH_LEN_ = 14;
+#else
+const char * const COMMON_MPM_ROOT_PATH = "//MiKTeX/[MPM]";
+const char * const USER_MPM_ROOT_PATH   = "//MiKTeX/]MPM[";
+const size_t MPM_ROOT_PATH_LEN_ = 14;
+#endif
+
+#define MPM_ROOT_PATH				\
+  IsAdminMode()					\
+  ? COMMON_MPM_ROOT_PATH			\
+  : USER_MPM_ROOT_PATH
+
+#if defined(MIKTEX_DEBUG)
+#define MPM_ROOT_PATH_LEN						\
+  static_cast<size_t>(MIKTEX_ASSERT(MiKTeX::Core::StrLen(MPM_ROOT_PATH)	\
+		             == MPM_ROOT_PATH_LEN_),			\
+                      MPM_ROOT_PATH_LEN_)
+#else
+const size_t MPM_ROOT_PATH_LEN = MPM_ROOT_PATH_LEN_;
+#endif
+
+
 /* _________________________________________________________________________
 
    U32
@@ -825,6 +856,12 @@ public:
   virtual
   PathName
   MIKTEXTHISCALL
+  GetMpmRootPath ();
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
   GetMpmDatabasePathName ();
 
 public:
@@ -1234,6 +1271,12 @@ public:
 
 public:
   virtual
+  PathName
+  MIKTEXTHISCALL
+  GetMyPrefix ();
+
+public:
+  virtual
   bool
   MIKTEXTHISCALL
   RunningAsAdministrator ();
@@ -1367,10 +1410,6 @@ public:
 public:
   PathName
   GetMyProgramFile (/*[in]*/ bool canonicalized);
-
-private:
-  PathName
-  GetMyPrefix ();
 
 public:
   bool
@@ -1724,8 +1763,16 @@ public:
   SetEnvironmentVariables ();
 
 private:
+  std::vector<PathName>
+  GetFilenameDatabasePathNames (/*[in]*/ unsigned r);
+
+private:
   unsigned
   GetMpmRoot ();
+
+private:
+  bool
+  IsMpmFile (/*[in]*/ const char * lpszPath);
 
 public:
   unsigned

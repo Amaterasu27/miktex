@@ -3403,29 +3403,6 @@ const size_t MAX_TEXMF_ROOT_PATH = 100;
 // relative TEXMF paths shouldn't be longer than this
 const size_t MAX_TEXMF_REL_PATH = 150;
 
-// The virtual TEXMF root MPM_ROOT_PATH is assigned to the MiKTeX
-// package manager.  We make sure that MPM_ROOT_PATH is a valid path
-// name.  On the other hand, it must not interfere with an existing
-// file system.
-#if defined(MIKTEX_WINDOWS)
-// An UNC path with an impossible share name suits our needs: `['
-// isn't a valid character in a share name (KB236388)
-const char * const MPM_ROOT_PATH = "\\\\MiKTeX\\[MPM]";
-const size_t MPM_ROOT_PATH_LEN_ = 14;
-#else
-const char * const MPM_ROOT_PATH = "//MiKTeX/[MPM]";
-const size_t MPM_ROOT_PATH_LEN_ = 14;
-#endif
-
-#if defined(MIKTEX_DEBUG)
-#define MPM_ROOT_PATH_LEN						\
-  static_cast<size_t>(MIKTEX_ASSERT(MiKTeX::Core::StrLen(MPM_ROOT_PATH)	\
-		             == MPM_ROOT_PATH_LEN_),			\
-                      MPM_ROOT_PATH_LEN_)
-#else
-const size_t MPM_ROOT_PATH_LEN = MPM_ROOT_PATH_LEN_;
-#endif
-
 /* _________________________________________________________________________
 
    SpecialPath
@@ -5602,6 +5579,14 @@ public:
   IsCommonRootDirectory (/*[in]*/ unsigned r)
     = 0;
 
+  /// Gets the path name of the virtual MPM TEXMF root.
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetMpmRootPath ()
+    = 0;
+
   /// Gets the path name of the MPM file name database.
 public:
   virtual
@@ -6116,6 +6101,13 @@ public:
   {
     return (GetMyLocation(false));
   }
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetMyPrefix ()
+    = 0;
 
 public:
   virtual

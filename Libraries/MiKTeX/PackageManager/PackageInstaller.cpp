@@ -897,9 +897,9 @@ PackageInstallerImpl::RemoveFiles
 	  
       // remove from MPM FNDB
 #if 0
-      if (autoFndbSync && Fndb::Exists(PathName(MPM_ROOT_PATH, fileName)))
+      if (autoFndbSync && Fndb::Exists(PathName(SessionWrapper(true)->GetMpmRootPath(), fileName)))
 	{
-	  Fndb::Remove (PathName(MPM_ROOT_PATH, fileName));
+	  Fndb::Remove (PathName(SessionWrapper(true)->GetMpmRootPath(), fileName));
 	}
 #endif
       
@@ -1286,7 +1286,7 @@ PackageInstallerImpl::UpdateMpmFndb
   vector<string>::const_iterator it;
   for (it = installedFiles.begin(); it != installedFiles.end(); ++ it)
     {
-      PathName path (MPM_ROOT_PATH, *it);
+      PathName path (SessionWrapper(true)->GetMpmRootPath(), *it);
       if (! Fndb::FileExists(path))
 	{
 	  Fndb::Add (path, lpszPackageName);
@@ -1300,7 +1300,7 @@ PackageInstallerImpl::UpdateMpmFndb
      }
   for (it = removedFiles.begin(); it != removedFiles.end(); ++ it)
     {
-      PathName path (MPM_ROOT_PATH, *it);
+      PathName path (SessionWrapper(true)->GetMpmRootPath(), *it);
       if (Fndb::FileExists(path))
 	{
 	  Fndb::Remove (path);
@@ -2184,7 +2184,7 @@ PackageInstallerImpl::InstallRemove ()
       ReportLine (T_("package repository: %s"), Q_(repository));
     }
 
-  autoFndbSync = true;
+  SetAutoFndbSync (true);
 
   // make sure that mpm.fndb exists
   if (autoFndbSync
@@ -2705,6 +2705,15 @@ PackageInstallerImpl::UpdateDb ()
     }
 #endif
 
+#if 0
+  if (! SessionWrapper(true)->IsAdminMode())
+    {
+      FATAL_MPM_ERROR ("PackageManagerImpl::CreateMpmFndb",
+		       T_("Not running in administration mode."),
+		       0);
+    }
+#endif
+
   if (repositoryType == RepositoryType::Unknown)
     {
       repository = pManager->PickRepositoryUrl();
@@ -2873,11 +2882,11 @@ PackageInstallerImpl::UpdateDbThread (/*[in]*/ void * pv)
 
 void
 PackageInstallerImpl::StartTaskThread
-(/*[in]*/ void (MIKTEXCALLBACK * pFunc) (void *))
+  (/*[in]*/ void (MIKTEXCALLBACK * pFunc) (void *))
 {
   progressInfo = ProgressInfo ();
   timeStarted = clock();
-  autoFndbSync = false;
+  SetAutoFndbSync (false);
   pThread = Thread::Start(pFunc, this);
 }
 

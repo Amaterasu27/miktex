@@ -1397,6 +1397,21 @@ private:
   bool autoFndbSync;
 
 private:
+  void
+  SetAutoFndbSync (/*[in]*/ bool autoFndbSync)
+  {
+    if (this->autoFndbSync == autoFndbSync)
+      {
+	return;
+      }
+    trace_mpm->WriteFormattedLine
+      ("libmpm",
+       T_("turning %s autoFndbSync"),
+       (autoFndbSync ? "on" : "off"));
+    this->autoFndbSync = autoFndbSync;
+  }
+
+private:
   bool noPostProcessing;
   
 private:

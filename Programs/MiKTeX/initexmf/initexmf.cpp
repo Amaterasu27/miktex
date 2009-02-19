@@ -651,7 +651,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     "admin", 0,
     POPT_ARG_NONE, 0,
     OPT_ADMIN,
-    T_("Run in admin mode."),
+    T_("Run in administration mode."),
     0
   },
   
@@ -876,7 +876,7 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
     "admin", 0,
     POPT_ARG_NONE, 0,
     OPT_ADMIN,
-    T_("Run in admin mode."),
+    T_("Run in administration mode."),
     0
   },
   
@@ -1153,7 +1153,7 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
     "admin", 0,
     POPT_ARG_NONE, 0,
     OPT_ADMIN,
-    T_("Run in admin mode."),
+    T_("Run in administration mode."),
     0
   },
   
@@ -2391,7 +2391,7 @@ IniTeXMFApp::ReportFndbFiles ()
 	      xmlWriter.EndElement ();
 	    }
 	}
-      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      unsigned r = pSession->DeriveTEXMFRoot(pSession->GetMpmRootPath());
       PathName path;
       if (pSession->FindFilenameDatabase(r, path))
 	{
@@ -2416,7 +2416,7 @@ IniTeXMFApp::ReportFndbFiles ()
 	      cout << T_("<does not exist>") << endl;
 	    }
 	}
-      unsigned r = pSession->DeriveTEXMFRoot(MPM_ROOT_PATH);
+      unsigned r = pSession->DeriveTEXMFRoot(pSession->GetMpmRootPath());
       PathName path;
       cout << "fndbmpm: ";
       if (pSession->FindFilenameDatabase(r, path))
@@ -2563,26 +2563,6 @@ IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
 void
 IniTeXMFApp::Configure ()
 {
-  PathName prefix = pSession->GetSpecialPath(SpecialPath::BinDirectory);
-  prefix.CutOffLastComponent ();
-  PathName miktex_texmf = prefix;
-  miktex_texmf += MIKTEX_TEXMF;
-  if (pSession->IsAdminMode())
-  {
-    if (! startupConfig.commonRoots.empty())
-    {
-      startupConfig.commonRoots += PathName::PathNameDelimiter;
-    }
-    startupConfig.commonRoots += miktex_texmf.Get();
-  }
-  else
-  {
-    if (! startupConfig.userRoots.empty())
-    {
-      startupConfig.userRoots += PathName::PathNameDelimiter;
-    }
-    startupConfig.userRoots += miktex_texmf.Get();
-  }
   ProcessOutput output;
   int exitCode;
   output.Clear ();
@@ -2614,17 +2594,11 @@ IniTeXMFApp::Configure ()
   unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
   for (unsigned r = 0; r < nRoots; ++ r)
     {
-      if (pSession->IsAdminMode() || ! pSession->IsCommonRoot(r))
-      {
-	UpdateFilenameDatabase (r);
-      }
+      if (pSession->IsAdminMode() || ! pSession->IsCommonRootDirectory(r))
+	{
+	  UpdateFilenameDatabase (r);
+	}
     }
-  auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
-  pInstaller->SetCallback (this);
-  Verbose (T_("Creating package database..."));
-  pInstaller->UpdateDb ();
-  pInstaller->Dispose ();
-  pManager->CreateMpmFndb ();
 }
 #endif
 
@@ -2749,7 +2723,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optConfigure = false;
 #endif
 
-  bool optAdminMode = false;
+  bool optAdmin = false;
   bool optDump = false;
   bool optDumpByName = false;
   bool optForce = false;
@@ -2928,7 +2902,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
 	case OPT_ADMIN:
 
-	  optAdminMode = true;
+	  optAdmin = true;
 	  break;
 
 	case OPT_UPDATE_FNDB:
@@ -2996,7 +2970,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  if (optAdminMode)
+  if (optAdmin)
     {
       pSession->SetAdminMode (true);
     }
