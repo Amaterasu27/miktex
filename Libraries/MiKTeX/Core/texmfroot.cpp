@@ -954,6 +954,7 @@ SessionImpl::FindFilenameDatabase (/*[in]*/ unsigned		r,
     {
       if (File::Exists(*it))
 	{
+	  path = *it;
 	  return (true);
 	}
     }

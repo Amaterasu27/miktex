@@ -13,8 +13,9 @@
    The binary is installed as miktex-pdftex so that it can coexist
    with the system-installed pdftex binary.
 
- * Binary packages (.rpm/.deb/.tgz) are now available for GNU/Linux
-   systems.  See http://miktex.org/unx/ for more information.
+ * Binary packages (.rpm/.deb/.tgz) are now available for i386
+   GNU/Linux systems.  See http://miktex.org/unx/ for more
+   information.
 
  * Link everything statically (don't build shared objects).
 

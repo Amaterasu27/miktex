@@ -38,10 +38,12 @@ system installed on your system.</para>
 <title>Configuration</title>
 
 <para>In order to configure &MiKTeXTools;, you have to run the
-&MiKTeX; configuration utility:</para>
+&MiKTeX; configuration utility (&initexmf;) and the &MiKTeX; package
+manager (&mpm;):</para>
 
 <programlisting>
-initexmf --verbose --configure
+sudo initexmf --admin --configure
+sudo mpm --admin --update-db
 </programlisting>
 
 <para>This is what happens:</para>
@@ -50,15 +52,21 @@ initexmf --verbose --configure
 <listitem><para><command>kpsewhich</command> is used to find existing
 TEXMF trees; the information is written
 to
-<filename><envar>$HOME</envar>/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
-<listitem><para>the file name database is created</para></listitem>
+<filename>/var/lib/miktex-texmf/miktex/config/miktexstartup.ini</filename></para></listitem>
+<listitem><para>the per-system file name database is created</para></listitem>
 <listitem><para>the package database is downloaded
 from the &MiKTeX; package repository</para></listitem>
 </itemizedlist>
 
-<para>Only per-user configuration is supported at the moment:
-all configuration settings are stored
-under <filename><envar>$HOME</envar>/.miktex</filename>.</para>
+<para>Once you have configured &MiKTeX; for the system, each user should
+  create the per-user file name database:</para>
+
+<programlisting>
+initexmf --update-fndb
+</programlisting>
+
+<para>Without this step, the on-the-fly package installer will not
+work.</para>
 
 </refsect1>
 
@@ -109,7 +117,7 @@ system-independent.</para>
 system.  To do this, run</para>
 
 <programlisting>
-mpm --update-db
+sudo mpm --admin --update-db
 </programlisting>
 
 <para>This command retrieves the package database files from a remote
@@ -170,8 +178,9 @@ the documentation files of a package.</para>
 
 <title>Caveats</title>
 
-<para>Packages will be installed in the user home directory.
-A better approach would be to enhance the auto-install dialog box:</para>
+<para>The integrated package manager installs packages in the user
+home directory under <filename>~/miktex-texmf/</filename>.  A better
+approach would be to enhance the auto-install dialog box:</para>
 <orderedlist>
 <listitem><para>add a new check box:
 <guilabel>Install package in /usr/share/miktex-texmf</guilabel></para></listitem>

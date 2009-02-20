@@ -57,8 +57,11 @@ Only if you want to avoid reading the rest: execute these commands to
 build and install "MiKTeX Tools":
 
    cmake -G "Unix Makefiles"
-   make install
-   initexmf --verbose --configure
+   make
+   sudo make install
+   sudo initexmf --admin --configure
+   sudo mpm --admin --update-db
+   initexmf --update-fndb
 
 You can run these commands, if you want to check to see if it works:
 
@@ -88,23 +91,30 @@ INSTALLING THE PACKAGE
 Specify the 'install' target to install the binaries and reference
 pages:
 
-    make install
+    sudo make install
 
 
-RUN-TIME CONFIGURATION
-----------------------
+CONFIGURATION
+-------------
 
-Run the MiKTeX configuration utility to configure "MiKTeX Tools" for
-the current user:
+You use the MiKTeX configuration utility (initexmf) and the MiKTeX
+package manager (mpm) to configure "MiKTeX Tools":
 
-    initexmf --verbose --configure
+    sudo initexmf --admin --configure
+    sudo mpm --admin --update-db
 
 This is what happens:
 
 - kpsewhich(1) is used to find existing TEXMF trees; the information is
-  written to ~/.miktex/miktex/config/miktexstartup.ini
-- the file name database is created
-- the package database is downloaded from the MiKTeX package repository
+  written to /var/lib/miktex-texmf/miktex/config/miktexstartup.ini
+- the per-system file name database is created
+
+Once you have configured MiKTeX for the system, each user should
+create the per-user file name database:
+
+    initexmf --update-fndb
+
+Without this step, the on-the-fly package installer will not work.
 
 
 DOCUMENTATION

@@ -660,7 +660,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     "configure", 0,
     POPT_ARG_NONE, 0,
     OPT_CONFIGURE,
-    T_("Configure MiKTeX for the current user."),
+    T_("Configure MiKTeX."),
     0,
   },
 #endif
@@ -2574,29 +2574,39 @@ IniTeXMFApp::Configure ()
   if (exitCode == 0 && output.GetLength() > 0)
     {
       if (pSession->IsAdminMode())
-      {
-	if (! startupConfig.commonRoots.empty())
 	{
-	  startupConfig.commonRoots += PathName::PathNameDelimiter;
+	  if (! startupConfig.commonRoots.empty())
+	    {
+	      startupConfig.commonRoots += PathName::PathNameDelimiter;
+	    }
+	  startupConfig.commonRoots += output.Get();
 	}
-	startupConfig.commonRoots += output.Get();
-      }
       else
-      {
-	if (! startupConfig.userRoots.empty())
 	{
-	  startupConfig.userRoots += PathName::PathNameDelimiter;
+	  if (! startupConfig.userRoots.empty())
+	    {
+	      startupConfig.userRoots += PathName::PathNameDelimiter;
+	    }
+	  startupConfig.userRoots += output.Get();
 	}
-	startupConfig.userRoots += output.Get();
-      }
+      SetTeXMFRootDirectories ();
     }
-  SetTeXMFRootDirectories ();
   unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
   for (unsigned r = 0; r < nRoots; ++ r)
     {
-      if (pSession->IsAdminMode() || ! pSession->IsCommonRootDirectory(r))
+      if (pSession->IsAdminMode())
 	{
-	  UpdateFilenameDatabase (r);
+	  if (pSession->IsCommonRootDirectory(r))
+	    {
+	      UpdateFilenameDatabase (r);
+	    }
+	}
+      else
+	{
+	  if (! pSession->IsCommonRootDirectory(r))
+	    {
+	      UpdateFilenameDatabase (r);
+	    }
 	}
     }
 }
@@ -3068,10 +3078,20 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	  unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
 	  for (unsigned r = 0; r < nRoots; ++ r)
 	    {
-	      if (pSession->IsAdminMode() || ! pSession->IsCommonRootDirectory(r))
-	      {
-		UpdateFilenameDatabase (r);
-	      }
+	      if (pSession->IsAdminMode())
+		{
+		  if (pSession->IsCommonRootDirectory(r))
+		    {
+		      UpdateFilenameDatabase (r);
+		    }
+		}
+	      else
+		{
+		  if (! pSession->IsCommonRootDirectory(r))
+		    {
+		      UpdateFilenameDatabase (r);
+		    }
+		}
 	    }
 	  pManager->CreateMpmFndb ();
 	}

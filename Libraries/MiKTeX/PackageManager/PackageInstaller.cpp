@@ -2705,7 +2705,7 @@ PackageInstallerImpl::UpdateDb ()
     }
 #endif
 
-#if 0
+#if 1
   if (! SessionWrapper(true)->IsAdminMode())
     {
       FATAL_MPM_ERROR ("PackageManagerImpl::CreateMpmFndb",

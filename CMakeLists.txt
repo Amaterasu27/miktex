@@ -67,6 +67,12 @@ set(miktex_prefix "miktex-")
 enable_testing()
 
 option(
+  INSTALL_PACKAGE_DATABASE
+  "Install the package database."
+  FALSE
+)
+
+option(
   NO_GUI
   "Build without GUI components."
   FALSE
@@ -1045,6 +1051,56 @@ add_subdirectory(${rel_doc_dir})
 add_subdirectory(${rel_mtrep_dir} EXCLUDE_FROM_ALL)
 
 ###############################################################################
+## package database
+
+if(INSTALL_PACKAGE_DATABASE)
+  set(remote_repository
+    "http://ctan.miktex.org/systems/win32/miktex/tm/packages/")
+
+  execute_process(
+    COMMAND
+      wget ${remote_repository}/miktex-zzdb1-2.8.tar.lzma
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+  )
+  
+  execute_process(
+    COMMAND
+      lzma --decompress --stdout miktex-zzdb1-2.8.tar.lzma
+    COMMAND
+      tar -xvf -
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+  execute_process(
+    COMMAND
+      wget ${remote_repository}/miktex-zzdb2-2.8.tar.lzma
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+  )
+  
+  execute_process(
+    COMMAND
+      lzma --decompress --stdout miktex-zzdb2-2.8.tar.lzma
+    COMMAND
+      tar -xvf -
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/mpm.ini
+    DESTINATION ${texmfdir}/miktex/config
+  )
+
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/texmf/tpm/packages/
+    DESTINATION ${texmfdir}/tpm/packages
+  )
+endif(INSTALL_PACKAGE_DATABASE)
+
+###############################################################################
 ## packaging
 
 find_program(RPMBUILD_EXE NAMES rpmbuild)
@@ -1057,7 +1113,8 @@ endif(RPMBUILD_EXE)
 
 set(miktex_tools_slogan "experimental TeX additions")
 
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/Documentation/miktex-tools.txt")
+set(CPACK_PACKAGE_DESCRIPTION_FILE
+  "${CMAKE_SOURCE_DIR}/Documentation/miktex-tools.txt")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MiKTeX Tools: ${miktex_tools_slogan}")
 set(CPACK_PACKAGE_CONTACT "Christian Schenk <cs@miktex.org>")
 set(CPACK_PACKAGE_VENDOR "MiKTeX.org")
@@ -1072,14 +1129,13 @@ set(
 set(
   CPACK_DEBIAN_PACKAGE_DEPENDS
   "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0)"
-)
+  )
 set(CPACK_DEBIAN_PACKAGE_SECTION "TeX Authoring")
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
+  "${CMAKE_SOURCE_DIR}/Packaging/deb/postinst")
 
 set(CPACK_RPM_PACKAGE_RELEASE ${MIKTEX_PACKAGE_REVISION})
-set(
-  CPACK_RPM_PACKAGE_REQUIRES
-  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0)"
-)
+set(CPACK_RPM_SPEC_INSTALL_POST "initexmf --admin --configure")
 
 set(CPACK_STRIP_SYMBOLS TRUE)
 
