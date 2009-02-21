@@ -1,6 +1,6 @@
 /* findtexmf.cpp: finding TeXMF related files
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of FindTeXMF.
 
@@ -442,17 +442,16 @@ void
 FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 {
   bool first = true;
+  PathName mpmRootPath = pSession->GetMpmRootPath();
+  size_t mpmRootPathLen = mpmRootPath.GetLength();
   for (CSVList p (lpszSearchPath, ';');
        p.GetCurrent() != 0;
        ++ p)
     {
       const char * lpszPath = p.GetCurrent();
-      if ((PathName::Compare(lpszPath,
-			     MPM_ROOT_PATH,
-			     static_cast<DWORD>(MPM_ROOT_PATH_LEN))
-	   == 0)
-	  && (lpszPath[MPM_ROOT_PATH_LEN] == 0
-	      || IsDirectoryDelimiter(lpszPath[MPM_ROOT_PATH_LEN])))
+      if ((PathName::Compare(lpszPath, mpmRootPath, mpmRootPathLen) == 0)
+	  && (lpszPath[mpmRootPathLen] == 0
+	      || IsDirectoryDelimiter(lpszPath[mpmRootPathLen])))
 	{
 	  continue;
 	}

@@ -33,6 +33,37 @@
 </refsect1>
 
 <refsect1>
+<title>User mode vs. administrative mode</title>
+
+<para>This utility can be run in two modes:</para>
+
+<variablelist>
+<varlistentry>
+<term>User mode (default)</term>
+<listitem>
+<para>Only user related &MiKTeX; configuration and data files are
+modified.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Administrative mode</term>
+<listitem>
+<para>Only system-wide &MiKTeX; configuration and data files are
+modified. The utility should be run as the system administrator.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>By default, the utility runs in user mode. You can turn on
+administrative mode with the <option>--admin</option> option. For
+example, if you want to update the system-wide file name database, you
+invoke the utility as follows:</para>
+
+<programlisting>initexmf --admin --update-fndb</programlisting>
+
+</refsect1>
+
+<refsect1>
 
 <title>Options</title>
 
@@ -43,7 +74,7 @@
 <indexterm>
 <primary>--admin</primary>
 </indexterm>
-<para>Run in admin mode.</para></listitem>
+<para>Run in administrative mode.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--configure</option></term>
@@ -54,12 +85,13 @@
 <para>This option is only available on &UNIXsystemlike;
 platforms. Configure &MiKTeX;:</para>
 <itemizedlist>
-<listitem><para>&kpsewhich; is run to find existing &TEXMF; trees; the
-information is written to
-<filename>~/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
-<listitem><para>the file name database is created</para></listitem>
-<listitem><para>the package database is downloaded from the &MiKTeX;
-package repository</para></listitem>
+<listitem><para>&kpsewhich; is run to find existing &TEXMF; trees;
+the information is written to
+<filename>/var/lib/miktex-texmf/miktex/config/miktexstartup.ini</filename>,
+if administrative mode is turned on; otherwise the information
+is written to <filename>~/.miktex/miktex/config/miktexstartup.ini</filename></para></listitem>
+<listitem><para>the system-wide (per-user) file name database is created, if
+administrative mode is turned on (off)</para></listitem>
 </itemizedlist>
 </listitem>
 </varlistentry>

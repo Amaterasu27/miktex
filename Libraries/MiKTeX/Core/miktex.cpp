@@ -951,6 +951,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 {
   string val;
 
+  bool oldAdminMode = adminMode;
   adminMode = ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
 
 #if defined(_MSC_VER)
@@ -1029,6 +1030,9 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     {
       TraceStream::SetTraceFlags (traceOptions.c_str());
     }
+
+  adminMode = oldAdminMode;
+  SetAdminMode ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
 
   InitializeRootDirectories ();
 

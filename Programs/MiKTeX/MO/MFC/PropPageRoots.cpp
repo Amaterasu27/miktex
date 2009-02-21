@@ -1,6 +1,6 @@
 /* PropPageRoots.cpp:
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -78,17 +78,14 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
 		  ->GetSpecialPath(SpecialPath::UserDataRoot)),
     userConfigRoot (SessionWrapper(true)
 		    ->GetSpecialPath(SpecialPath::UserConfigRoot)),
+    commonInstallRoot (SessionWrapper(true)
+		       ->GetSpecialPath(SpecialPath::CommonInstallRoot)),
+    commonDataRoot (SessionWrapper(true)
+                    ->GetSpecialPath(SpecialPath::CommonDataRoot)),
+    commonConfigRoot (SessionWrapper(true)
+		      ->GetSpecialPath(SpecialPath::CommonConfigRoot)),
     showHiddenRoots (FALSE)
 {
-  if (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True)
-    {
-      commonDataRoot =
-	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);
-      commonConfigRoot =
-	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonConfigRoot);
-      commonInstallRoot =
-	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
-    }
   m_psp.dwFlags &= ~(PSP_HASHELP);
 }
 
@@ -627,19 +624,10 @@ PropPageTeXMFRoots::EnableButtons ()
 
   UINT nSelected = listControl.GetSelectedCount();
 
-  bool isAdmin =
-    (! IsWindowsNT()
-     || IsWindowsVista()
-     || SessionWrapper(true)->IsUserAnAdministrator()
-     || SessionWrapper(true)->IsUserAPowerUser());
-
-  bool shared =
-    (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True);
-
-  bool canAdd = (! shared || isAdmin);
-  bool canRemove = (! shared || isAdmin);
-  bool canMoveUp = (! shared || isAdmin);
-  bool canMoveDown = (! shared || isAdmin);
+  bool canAdd = true;
+  bool canRemove = true;
+  bool canMoveUp = true;
+  bool canMoveDown = true;
 
   int idx = -1;
 
@@ -1036,11 +1024,7 @@ This directory can be used for local additions.");
 void
 PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
 {
-  bool restrictedUserSetup =
-    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	|| ! IsWindowsNT()
-	|| SessionWrapper(true)->IsUserAnAdministrator()));
-  if (IsWindowsVista() && ! restrictedUserSetup)
+  if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
     {
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)

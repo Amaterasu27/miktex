@@ -1,6 +1,6 @@
 /* PropPagePackages.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -142,10 +142,7 @@ PropPagePackages::OnApply ()
       str2.Format (_T("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
-      bool restrictedUserSetup =
-	(! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	    || SessionWrapper(true)->IsUserAnAdministrator()));
-      if (IsWindowsVista() && ! restrictedUserSetup)
+      if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
 	{
 	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
 	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
@@ -581,10 +578,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 void
 PropPagePackages::SetElevationRequired (/*[in]*/ bool f)
 {
-  bool restrictedUserSetup =
-    (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-	|| SessionWrapper(true)->IsUserAnAdministrator()));
-  if (IsWindowsVista() && ! restrictedUserSetup)
+  if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
     {
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)

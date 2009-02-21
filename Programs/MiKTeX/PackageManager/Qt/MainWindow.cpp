@@ -1,6 +1,6 @@
 /* MainWindow.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -78,6 +78,10 @@ MainWindow::MainWindow ()
   : pManager (PackageManager::Create())
 {
   setupUi (this);
+  if (SessionWrapper(true)->IsAdminMode())
+  {
+    setWindowTitle (windowTitle() + " (admin)");
+  }
   pModel = new PackageTableModel(pManager.Get(), this);
   pProxyModel = new QSortFilterProxyModel(this);
   pProxyModel->setSourceModel (pModel);
@@ -231,10 +235,7 @@ MainWindow::Install ()
       + tr("%n package(s) will be installed\n", "", toBeInstalled.size())
       + tr("%n package(s) will be removed", "", toBeRemoved.size());
 #if defined(MIKTEX_WINDOWS)
-    bool restrictedUserSetup =
-      (! (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True
-      || SessionWrapper(true)->IsUserAnAdministrator()));
-    if (IsWindowsVista() && ! restrictedUserSetup)
+    if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
     {
       DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
 	taskDialogIndirect ("comctl32.dll", "TaskDialogIndirect");

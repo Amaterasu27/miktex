@@ -1053,6 +1053,13 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
 void
 SessionImpl::SetAdminMode (/*[in]*/ bool adminMode)
 {
+  if (this->adminMode == adminMode)
+  {
+    return;
+  }
+  trace_config->WriteFormattedLine ("core",
+    T_("turning %s administrative mode"),
+    (adminMode ? "on" : "off"));
   this->adminMode = adminMode;
 }
 

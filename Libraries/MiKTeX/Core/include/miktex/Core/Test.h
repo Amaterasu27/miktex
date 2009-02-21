@@ -1,6 +1,6 @@
 /* miktex/Core/test.h: test framework				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -181,7 +181,7 @@ public:
 	startupConfig.userInstallRoot = INSTALLROOT;
 	initInfo.SetStartupConfig (startupConfig);
 #else
-	startupConfig.roots = rootDirectories;
+	startupConfig.userRoots = rootDirectories;
 	startupConfig.userDataRoot = dataRoot;
 	startupConfig.userInstallRoot = installRoot;
 	initInfo.SetStartupConfig (startupConfig);

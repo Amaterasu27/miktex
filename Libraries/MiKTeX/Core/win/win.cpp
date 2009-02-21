@@ -67,10 +67,22 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 	      flags,
 	      ret.GetBuffer());
     }
+  if (hr == S_FALSE)
+    {
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+			  T_("A required file system folder does not exist."),
+			  NUMTOSTR(nFolder));
+    }
+  if (hr == E_INVALIDARG)
+    {
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+			  T_("Unsupported Windows product."),
+			  NUMTOSTR(nFolder));
+    }
   if (hr != S_OK)
     {
       FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
-			  T_("The file system path could not be retrieved."),
+			  T_("A required file system path could not be retrieved."),
 			  NUMTOSTR(nFolder));
     }
   return (ret);

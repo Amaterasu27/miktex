@@ -384,7 +384,7 @@ const struct poptOption Application::aoption[] = {
 
   {
     "admin", 0, POPT_ARG_NONE, 0, OPT_ADMIN,
-    T_("Run in administration mode."), 0,
+    T_("Run in administrative mode."), 0,
   },
 
   {				// deprecated
@@ -1747,14 +1747,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       return;
     }
 
-  if (optAdmin)
-    {
-      initInfo.SetFlags (initInfo.GetFlags() | Session::InitFlags::AdminMode);
-    }
-
   initInfo.SetStartupConfig (startupConfig);
 
   pSession.CreateSession (initInfo);
+
+  if (optAdmin)
+  {
+    if (! pSession->RunningAsAdministrator())
+    {
+#if defined(MIKTEX_WINDOWS)
+      Error (T_("Not running as administrator."));
+#else
+      Error (T_("Not running as root."));
+#endif
+    }
+    pSession->SetAdminMode (true);
+  }
 
   pPackageManager.Create ();
 

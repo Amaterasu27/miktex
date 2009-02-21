@@ -651,7 +651,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     "admin", 0,
     POPT_ARG_NONE, 0,
     OPT_ADMIN,
-    T_("Run in administration mode."),
+    T_("Run in administrative mode."),
     0
   },
   
@@ -2981,9 +2981,17 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     }
 
   if (optAdmin)
+  {
+    if (! pSession->RunningAsAdministrator())
     {
-      pSession->SetAdminMode (true);
+#if defined(MIKTEX_WINDOWS)
+      FatalError (T_("Not running as administrator."));
+#else
+      FatalError (T_("Not running as root."));
+#endif
     }
+    pSession->SetAdminMode (true);
+  }
 
   if (! startupConfig.userRoots.empty()
     || ! startupConfig.userDataRoot.Empty()

@@ -1034,17 +1034,20 @@ if(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
   #add_subdirectory(${rel_migrate_dir})
 endif(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
-  add_subdirectory(${rel_setup_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+#todo
+#if(BUILDING_MIKTEX AND MFC_FOUND)
+#  add_subdirectory(${rel_setup_mfc_dir})
+#endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
-  add_subdirectory(${rel_update_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+#todo
+#if(BUILDING_MIKTEX AND MFC_FOUND)
+#  add_subdirectory(${rel_update_mfc_dir})
+#endif(BUILDING_MIKTEX AND MFC_FOUND)
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
-  add_subdirectory(${rel_remove_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+#todo
+#if(BUILDING_MIKTEX AND MFC_FOUND)
+#  add_subdirectory(${rel_remove_mfc_dir})
+#endif(BUILDING_MIKTEX AND MFC_FOUND)
 
 add_subdirectory(${rel_doc_dir})
 

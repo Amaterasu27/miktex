@@ -76,6 +76,7 @@ else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(mpm_qt
     ${core_dll_name}
     ${mpm_dll_name}
+    ${popt_dll_name}
     ${ui_qt_dll_name}
     ${QT_LIBRARIES}
   )

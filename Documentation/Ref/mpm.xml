@@ -66,6 +66,14 @@ command-line options (see <xref linkend="mpmgui"/>).</para>
 
 <variablelist>
 <varlistentry>
+<term><option>--admin</option></term>
+<listitem>
+<indexterm>
+<primary>--admin</primary>
+</indexterm>
+<para>Run in administrative mode.</para></listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--find-updates</option></term>
 <listitem>
 <indexterm>

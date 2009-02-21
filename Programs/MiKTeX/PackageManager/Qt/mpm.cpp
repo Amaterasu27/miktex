@@ -20,6 +20,7 @@
    02111-1307, USA. */
 
 #include <QApplication>
+#include <QtGui>
 #include <miktex/Core/Core>
 
 #include "MainWindow.h"
@@ -41,7 +42,7 @@ namespace {
       "admin", 0,
       POPT_ARG_NONE, 0,
       OPT_ADMIN,
-      "Run in administration mode.", 0
+      "Run in administrative mode.", 0
     },
     POPT_TABLEEND
   };
@@ -53,6 +54,7 @@ main (int	argc,
 {
   QApplication application (argc, argv);
   int ret = 0;
+  bool optAdmin = false;
   try
     {
       Session::InitInfo initInfo;
@@ -66,14 +68,28 @@ main (int	argc,
 	  switch (option)
 	    {
 	    case OPT_ADMIN:
-	      initInfo.SetFlags(initInfo.GetFlags()
-				| Session::InitFlags::AdminMode);
+	      optAdmin = true;
 	      break;
 	    }
 	}
       SessionWrapper pSession;
       initInfo.SetProgramInvocationName (argv[0]);
       pSession.CreateSession (initInfo);
+      if (optAdmin)
+      {
+	if (! pSession->RunningAsAdministrator())
+	{
+#if defined(MIKTEX_WINDOWS)
+	  QMessageBox::critical (0, "MiKTeX Package Manager",
+	    "Not running as administrator.");
+#else
+	  QMessageBox::critical (0, "MiKTeX Package Manager",
+	    "Not running as root.");
+#endif
+	  return (1);;
+	}
+	pSession->SetAdminMode (true);
+      }
       MainWindow mainWindow;
       mainWindow.show ();
       ret = application.exec();

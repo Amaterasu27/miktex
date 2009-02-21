@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual update process
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -945,6 +945,9 @@ static const char * const configDirs[] = {
 void
 FileCopyPage::RemoveFalseConfigFiles ()
 {
+#if 1
+  UNEXPECTED_CONDITION ("FileCopyPage::RemoveFalseConfigFiles");
+#else
   SessionWrapper pSession (true);
   PathName installRoot = pSession->GetSpecialPath(SpecialPath::InstallRoot);
   PathName configRoot = pSession->GetSpecialPath(SpecialPath::ConfigRoot);
@@ -976,6 +979,7 @@ FileCopyPage::RemoveFalseConfigFiles ()
 	    }
 	}
     }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -986,6 +990,9 @@ FileCopyPage::RemoveFalseConfigFiles ()
 void
 FileCopyPage::RemoveOldRegistrySettings ()
 {
+#if 1
+  UNEXPECTED_CONDITION ("FileCopyPage::RemoveOldRegistrySettings");
+#else
   SessionWrapper pSession (true);
 
   CRegKey root25;
@@ -1041,6 +1048,7 @@ FileCopyPage::RemoveOldRegistrySettings ()
       regRoot.RecurseDeleteKey (subKey.c_str());
       regRoot.Close ();
     }
+#endif
 }
 
 /* _________________________________________________________________________
