@@ -63,7 +63,7 @@ from the &MiKTeX; package repository</para></listitem>
 
 <title>Per-user configuration</title>
 
-<para>Once you have configured &MiKTeX; for the system, each user should
+<para>Once you have configured &MiKTeXTools; for the system, each user should
   create the per-user file name database:</para>
 
 <programlisting>
