@@ -19,7 +19,7 @@
 
 <title>Description</title>
 
-<para>&MiKTeXTools; should be regarded as an addition to the &TeX;
+<para>&MiKTeXTools; should be regarded as an addition to the host &TeX;
 system installed on your system.</para>
 
 <para>The following utilities are included:</para>
@@ -35,9 +35,9 @@ system installed on your system.</para>
 
 <refsect1>
 
-<title>Configuration</title>
+<title>System-wide configuration</title>
 
-<para>In order to configure &MiKTeXTools;, you have to run the
+<para>In order to configure &MiKTeXTools; for your system, you run the
 &MiKTeX; configuration utility (&initexmf;) and the &MiKTeX; package
 manager (&mpm;):</para>
 
@@ -49,14 +49,19 @@ sudo mpm --admin --update-db
 <para>This is what happens:</para>
 
 <itemizedlist>
-<listitem><para><command>kpsewhich</command> is used to find existing
-TEXMF trees; the information is written
-to
+<listitem><para>The &TEXMF; trees of the host &TeX; system are collected;
+the information is written to
 <filename>/var/lib/miktex-texmf/miktex/config/miktexstartup.ini</filename></para></listitem>
-<listitem><para>the per-system file name database is created</para></listitem>
+<listitem><para>the system-wide file name database is created</para></listitem>
 <listitem><para>the package database is downloaded
 from the &MiKTeX; package repository</para></listitem>
 </itemizedlist>
+
+</refsect1>
+
+<refsect1>
+
+<title>Per-user configuration</title>
 
 <para>Once you have configured &MiKTeX; for the system, each user should
   create the per-user file name database:</para>
