@@ -803,13 +803,14 @@ FileCopyPage::DoTheInstallation ()
   // register installation directory
   StartupConfig startupConfig;
   if (theApp.commonUserSetup)
-  {
-    startupConfig.commonRoots = theApp.startupConfig.commonInstallRoot;
-    startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
+    {
+      startupConfig.commonRoots =
+	theApp.startupConfig.commonInstallRoot.Get();
+      startupConfig.commonInstallRoot =	theApp.startupConfig.commonInstallRoot;
   }
   else
   {
-    startupConfig.userRoots = theApp.startupConfig.userInstallRoot;
+    startupConfig.userRoots = theApp.startupConfig.userInstallRoot.Get();
     startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
   }
   SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
@@ -975,7 +976,7 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       // [1] set shared flag
       cmdLine.Clear ();
-      if (SessionWrapper(true)->IsAdminMode()
+      if (SessionWrapper(true)->IsAdminMode())
       {
       cmdLine.AppendOption ("--admin");
       RunIniTeXMF (cmdLine);
@@ -983,6 +984,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	{
 	  return;
 	}
+      }
 
       // [2] define roots & remove old fndbs
       cmdLine.Clear ();

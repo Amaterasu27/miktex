@@ -237,7 +237,7 @@ const struct option long_options[] =
 #endif
   { "common-config", required_argument, 0, OPT_COMMON_CONFIG },
   { "common-data", required_argument, 0, OPT_COMMON_DATA },
-  { "common-install", required_argument, 0, OPT_COMMON_ROOT },
+  { "common-install", required_argument, 0, OPT_COMMON_INSTALL },
   { "common-roots", required_argument, 0, OPT_COMMON_ROOTS },
   { "download-only", no_argument, 0, OPT_DOWNLOAD_ONLY },
   { "dry-run", no_argument, 0, OPT_DRY_RUN },
@@ -259,7 +259,7 @@ const struct option long_options[] =
   { "unattended", no_argument, 0, OPT_UNATTENDED },
   { "user-config", required_argument, 0, OPT_USER_CONFIG },
   { "user-data", required_argument, 0, OPT_USER_DATA },
-  { "user-install", required_argument, 0, OPT_USER_ROOT },
+  { "user-install", required_argument, 0, OPT_USER_INSTALL },
   { "user-roots", required_argument, 0, OPT_USER_ROOTS },
   { 0, no_argument, 0, 0 }
 };
