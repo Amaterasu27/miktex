@@ -26,7 +26,7 @@ system installed on your system.</para>
 
 <itemizedlist>
 <listitem><para>&miktexpdftex;: &MiKTeX; implementation of the &pdfTeX;
-    engine</para></listitem>
+ engine</para></listitem>
 <listitem><para>&mpm;: &MiKTeXPackageManager;</para></listitem>
 <listitem><para>&mthelp;: &MiKTeX; Help Utility</para></listitem>
 </itemizedlist>
@@ -96,9 +96,11 @@ format.  See the &miktexpdftex; reference page, for more information.</para>
 &MiKTeXpdfTeX; engine:</para>
 
 <programlisting>
-cd /usr/bin
-ln -s miktex-pdftex latex
-ln -s miktex-pdftex pdflatex
+mkdir ~/bin
+cd ~/bin
+ln -s /usr/bin/miktex-pdftex latex
+ln -s /usr/bin/miktex-pdftex pdflatex
+PATH=~/bin:$PATH
 </programlisting>
 
 <para>Then you can invoke the engine in the usual way:</para>
@@ -106,6 +108,9 @@ ln -s miktex-pdftex pdflatex
 <programlisting>
 pdflatex sample2e
 </programlisting>
+
+<para>Of course, you can replace <filename>~/bin</filename> with a
+more suitable directory.</para>
 
 </refsect1>
 
@@ -118,18 +123,8 @@ tool for &MiKTeX; users.  But the program can be helpful for users of
 other &TeX; systems too, because many of the &MiKTeX; packages are
 system-independent.</para>
 
-<para>First of all you should install the package database files on your
-system.  To do this, run</para>
-
-<programlisting>
-sudo mpm --admin --update-db
-</programlisting>
-
-<para>This command retrieves the package database files from a remote
-package repository and installs them in the installation directory.</para>
-
-<para>You are now ready to browse and install packages.  There are two
-variants of the package manager: &GUI; and console. Run</para>
+<para>There are two variants of the package manager: &GUI; and
+console. Run</para>
 
 <programlisting>
 mpm
@@ -141,7 +136,7 @@ presented with a list of packages.</para>
 <para>The rest of this section describes the console variant of the
 package manager.</para>
 
-<para>To list the contents of the just installed package database, run</para>
+<para>To list the contents of the package database, run</para>
 
 <programlisting>
 mpm --list

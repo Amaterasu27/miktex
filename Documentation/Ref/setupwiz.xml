@@ -109,6 +109,18 @@ This option requires administrator privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
+<term><option>--common-install=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the common installation root directory directory.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--common-roots=<replaceable>dirs</replaceable></option></term>
+<listitem><para>Register additional common &TEXMF; root directories.
+<replaceable>dirs</replaceable> must be a semicolon-separated list of fully
+qualified path names.</para></listitem>
+</varlistentry>
+	
+<varlistentry>
 <term><option>--download-only</option></term>
 <listitem><para>Download all required packages, but do not otherwise
 install &MiKTeX;.</para></listitem>
@@ -126,11 +138,6 @@ downloaded and/or installed.</para></listitem>
 with the <option>--local-package-repository</option> option).</para></listitem>
 </varlistentry>
 	
-<varlistentry>
-<term><option>--install-root=<replaceable>dir</replaceable></option></term>
-<listitem><para>Install &MiKTeX; in the specified directory.</para></listitem>
-</varlistentry>
-
 <varlistentry>
 <term><option>--local-package-repository=<replaceable>dir</replaceable></option></term>
 <listitem><para>Download into (Install from) the specified directory.</para></listitem>
@@ -174,13 +181,6 @@ current user only.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>--roots=<replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional &TEXMF; root directories.
-<replaceable>dirs</replaceable> must be a semicolon-separated list of fully
-qualified path names.</para></listitem>
-</varlistentry>
-	
-<varlistentry>
 <term><option>--shared</option></term>
 <listitem><para>Install &MiKTeX; for everyone using this computer.  This option
 <indexterm>
@@ -209,6 +209,18 @@ the current user.</para></listitem>
 the current user.</para></listitem>
 </varlistentry>
 
+<varlistentry>
+<term><option>--user-install=<replaceable>dir</replaceable></option></term>
+<listitem><para>Set the user installation root directory directory.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>--user-roots=<replaceable>dirs</replaceable></option></term>
+<listitem><para>Register additional user &TEXMF; root directories.
+<replaceable>dirs</replaceable> must be a semicolon-separated list of fully
+qualified path names.</para></listitem>
+</varlistentry>
+	
 </variablelist>
       
 </refsect1>

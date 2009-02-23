@@ -78,9 +78,13 @@ EditTEXMFPage::OnSetActive ()
       try
 	{
 	  listBox.ResetContent ();
-	  if (! theApp.startupConfig.roots.empty())
+	  const string roots =
+	    theApp.commonUserSetup
+	    ? theApp.startupConfig.commonRoots
+	    : theApp.startupConfig.userRoots;
+	  if (! roots.empty())
 	    {
-	      for (CSVList root (theApp.startupConfig.roots.c_str(), ';');
+	      for (CSVList root (roots.c_str(), ';');
 		   root.GetCurrent();
 		   ++ root)
 		{
@@ -160,7 +164,7 @@ EditTEXMFPage::OnKillActive ()
     {
       try
 	{
-	  theApp.startupConfig.roots = "";
+	  string roots = "";
 	  int count = listBox.GetCount();
 	  if (count == LB_ERR)
 	    {
@@ -170,13 +174,22 @@ EditTEXMFPage::OnKillActive ()
 	    {
 	      CString str;
 	      listBox.GetText (i, str);
-	      theApp.startupConfig.roots += str;
+	      roots += str;
 	      if (i + 1 < count)
 		{
-		  theApp.startupConfig.roots += ';';
+		  roots += ';';
 		}
 	    }
-	  CheckAddTEXMFDirs (theApp.startupConfig.roots, theApp.addTEXMFDirs);
+	  if (theApp.commonUserSetup)
+	  {
+	    theApp.startupConfig.commonRoots = roots;
+	    CheckAddTEXMFDirs (theApp.startupConfig.commonRoots, theApp.addTEXMFDirs);
+	  }
+	  else
+	  {
+	    theApp.startupConfig.userRoots = roots;
+	    CheckAddTEXMFDirs (theApp.startupConfig.userRoots, theApp.addTEXMFDirs);
+	  }
 	}
       catch (const MiKTeXException & e)
 	{

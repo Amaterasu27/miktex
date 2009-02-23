@@ -1,6 +1,6 @@
 /* Remove.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -220,7 +220,7 @@ GetRoots ()
     {
       vec.push_back (userConfigRoot);
     }
-  if (SessionWrapper(true)->IsSharedMiKTeXSetup() == TriState::True)
+  if (SessionWrapper(true)->IsAdminMode())
     {
       PathName commonDataRoot =
 	SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);

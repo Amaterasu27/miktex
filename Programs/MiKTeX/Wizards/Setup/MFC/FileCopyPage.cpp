@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -95,6 +95,7 @@ FileCopyPage::OnInitDialog ()
   reportControl.LimitText (100000);
   try
     {
+      SessionWrapper(true)->SetAdminMode (theApp.commonUserSetup);
       pInstaller =
 	auto_ptr<PackageInstaller>(theApp.pManager->CreateInstaller());
       pInstaller->SetNoPostProcessing (true);
@@ -799,17 +800,16 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
 void
 FileCopyPage::DoTheInstallation ()
 {
-  SessionWrapper(true)->SharedMiKTeXSetup (theApp.commonUserSetup, true);
-
   // register installation directory
   StartupConfig startupConfig;
-  startupConfig.roots = theApp.GetInstallRoot().Get();
   if (theApp.commonUserSetup)
   {
+    startupConfig.commonRoots = theApp.startupConfig.commonInstallRoot;
     startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
   }
   else
   {
+    startupConfig.userRoots = theApp.startupConfig.userInstallRoot;
     startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
   }
   SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
@@ -975,8 +975,9 @@ FileCopyPage::ConfigureMiKTeX ()
     {
       // [1] set shared flag
       cmdLine.Clear ();
-      cmdLine.AppendOption ("--shared-setup=",
-			    (theApp.commonUserSetup ? "1"  : "0"));
+      if (SessionWrapper(true)->IsAdminMode()
+      {
+      cmdLine.AppendOption ("--admin");
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
 	{
@@ -1015,14 +1016,22 @@ FileCopyPage::ConfigureMiKTeX ()
 	  cmdLine.AppendOption ("--common-install=",
 				theApp.startupConfig.commonInstallRoot);
 	}
-      string rootDirectories;
-      rootDirectories += theApp.GetInstallRoot().Get();
-      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.roots.empty())
+      string commonRootDirectories;
+      commonRootDirectories += theApp.startupConfig.commonInstallRoot.Get();
+      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
 	{
-	  rootDirectories += ";";
-	  rootDirectories += theApp.startupConfig.roots.c_str();
+	  commonRootDirectories += ";";
+	  commonRootDirectories += theApp.startupConfig.commonRoots;
 	}
-      cmdLine.AppendOption ("--roots=", rootDirectories);
+      cmdLine.AppendOption ("--common-roots=", commonRootDirectories);
+      string userRootDirectories;
+      userRootDirectories += theApp.startupConfig.userInstallRoot.Get();
+      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.userRoots.empty())
+	{
+	  userRootDirectories += ";";
+	  userRootDirectories += theApp.startupConfig.userRoots;
+	}
+      cmdLine.AppendOption ("--user-roots=", userRootDirectories);
       cmdLine.AppendOption ("--rmfndb");
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())

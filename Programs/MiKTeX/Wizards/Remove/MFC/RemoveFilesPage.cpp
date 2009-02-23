@@ -1,6 +1,6 @@
 /* RemoveFilesPage.cpp:
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -330,7 +330,7 @@ RemoveFilesPage::RemoveMiKTeX ()
 	    {
 	      Directory::Delete (dir, true);
 	    }
-	  if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+	  if (pSession->IsAdminMode())
 	    {
 	      dir = pSession->GetSpecialPath(SpecialPath::CommonDataRoot);
 	      dir += MIKTEX_PATH_MIKTEX_DIR;
@@ -367,7 +367,7 @@ RemoveFilesPage::RemoveMiKTeX ()
 	{
 	  RemoveEmptyDirectoryChain (parent);
 	}
-      if (pSession->IsSharedMiKTeXSetup() == TriState::True)
+      if (pSession->IsAdminMode())
 	{
 	  parent = pSession->GetSpecialPath(SpecialPath::CommonDataRoot);
 	  parent.CutOffLastComponent ();

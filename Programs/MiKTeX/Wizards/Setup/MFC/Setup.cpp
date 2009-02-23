@@ -1,6 +1,6 @@
 /* Setup.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -205,11 +205,12 @@ enum {
 #endif
   OPT_COMMON_CONFIG,
   OPT_COMMON_DATA,
+  OPT_COMMON_INSTALL,
+  OPT_COMMON_ROOTS,
   OPT_DOWNLOAD_ONLY,
   OPT_DRY_RUN,
   OPT_HELP,
   OPT_INSTALL_FROM_LOCAL_REPOSITORY,
-  OPT_INSTALL_ROOT,
   OPT_LOCAL_PACKAGE_REPOSITORY,
   OPT_NO_ADDITIONAL_ROOTS,
   OPT_PACKAGE_SET,
@@ -219,11 +220,12 @@ enum {
   OPT_PRIVATE,
   OPT_PROGRAM_FOLDER,
   OPT_REMOTE_PACKAGE_REPOSITORY,
-  OPT_ROOTS,
   OPT_SHARED,
   OPT_UNATTENDED,
   OPT_USER_CONFIG,
   OPT_USER_DATA,
+  OPT_USER_INSTALL,
+  OPT_USER_ROOTS,
 };
 
 const struct option long_options[] =
@@ -235,12 +237,13 @@ const struct option long_options[] =
 #endif
   { "common-config", required_argument, 0, OPT_COMMON_CONFIG },
   { "common-data", required_argument, 0, OPT_COMMON_DATA },
+  { "common-install", required_argument, 0, OPT_COMMON_ROOT },
+  { "common-roots", required_argument, 0, OPT_COMMON_ROOTS },
   { "download-only", no_argument, 0, OPT_DOWNLOAD_ONLY },
   { "dry-run", no_argument, 0, OPT_DRY_RUN },
   { "help", no_argument, 0, OPT_HELP },
   { "install-from-local-repository", no_argument, 0,
     OPT_INSTALL_FROM_LOCAL_REPOSITORY },
-  { "install-root", required_argument, 0, OPT_INSTALL_ROOT },
   { "local-package-repository", required_argument, 0,
     OPT_LOCAL_PACKAGE_REPOSITORY },
   { "no-additional-roots", no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
@@ -252,11 +255,12 @@ const struct option long_options[] =
   { "program-folder", required_argument, 0, OPT_PROGRAM_FOLDER },
   { "remote-package-repository", required_argument, 0,
     OPT_REMOTE_PACKAGE_REPOSITORY },
-  { "roots", required_argument, 0, OPT_ROOTS },
   { "shared", no_argument, 0, OPT_SHARED },
   { "unattended", no_argument, 0, OPT_UNATTENDED },
   { "user-config", required_argument, 0, OPT_USER_CONFIG },
   { "user-data", required_argument, 0, OPT_USER_DATA },
+  { "user-install", required_argument, 0, OPT_USER_ROOT },
+  { "user-roots", required_argument, 0, OPT_USER_ROOTS },
   { 0, no_argument, 0, 0 }
 };
 
@@ -281,11 +285,12 @@ Options:\r\n\r\n\
 		 T_("\
   --common-config=DIR\r\n\
   --common-data=DIR\r\n\
+  --common-install=DIR\r\n\
+  --common-roots=DIRS\r\n\
   --download-only\r\n\
   --dry-run\r\n\
   --help\r\n\
   --install-from-local-repository\r\n\
-  --install-root=DIR\r\n\
   --local-package-repository=DIR\r\n\
   --no-additional-roots\r\n\
   --package-set=SET\r\n")
@@ -298,11 +303,12 @@ Options:\r\n\r\n\
   --private\r\n\
   --program-folder=NAME\r\n\
   --remote-package-repository=URL\r\n\
-  --roots=DIRS\r\n\
   --shared\r\n\
   --unattended\r\n\
   --user-config=DIR\r\n\
   --user-data=DIR\r\n\
+  --user-install=DIR\r\n\
+  --user-roots=DIRS\r\n\
 \r\n\
 setupwiz reads its arguments from setupwiz.opt, if such a file exists.\r\n\
 See the MiKTeX Manual for more information."));
@@ -388,6 +394,34 @@ a common data directory."),
 	  cmdinfo.startupConfig.commonDataRoot = optarg;
 	  break;
 
+	case OPT_COMMON_INSTALL:
+	  if (IsWindowsNT()
+	      && ! (SessionWrapper(true)->RunningAsAdministrator()
+		    || SessionWrapper(true)->RunningAsPowerUser()))
+	    {
+	      FATAL_MIKTEX_ERROR
+		("ParseSetupCommandLine",
+		 T_("You must have administrator privileges to set up \
+a common installation directory."),
+		 0);
+	    }
+	  cmdinfo.startupConfig.commonInstallRoot = optarg;
+	  break;
+
+	case OPT_COMMON_ROOTS:
+	  if (IsWindowsNT()
+	      && ! (SessionWrapper(true)->RunningAsAdministrator()
+		    || SessionWrapper(true)->RunningAsPowerUser()))
+	    {
+	      FATAL_MIKTEX_ERROR
+		("ParseSetupCommandLine",
+		 T_("You must have administrator privileges to set up \
+common root directories."),
+		 0);
+	    }
+	  cmdinfo.startupConfig.commonRoots = optarg;
+	  break;
+
 	case OPT_DOWNLOAD_ONLY:
 	  cmdinfo.task = SetupTask::Download;
 	  break;
@@ -399,11 +433,6 @@ a common data directory."),
 	case OPT_HELP:
 	  FreeArguments (argc, argv);
 	  ShowHelpAndExit ();
-	  break;
-
-	case OPT_INSTALL_ROOT:
-	  cmdinfo.startupConfig.commonInstallRoot = optarg;
-	  cmdinfo.startupConfig.userInstallRoot = optarg;
 	  break;
 
 	case OPT_INSTALL_FROM_LOCAL_REPOSITORY:
@@ -476,10 +505,6 @@ a common data directory."),
 	  cmdinfo.remotePackageRepository = optarg;
 	  break;
 
-	case OPT_ROOTS:
-	  cmdinfo.startupConfig.roots = optarg;
-	  break;
-
 	case OPT_SHARED:
 	  if (IsWindowsNT()
 	      && ! (SessionWrapper(true)->RunningAsAdministrator()
@@ -504,6 +529,14 @@ a shared MiKTeX system."),
 
 	case OPT_USER_DATA:
 	  cmdinfo.startupConfig.userDataRoot = optarg;
+	  break;
+
+	case OPT_USER_INSTALL:
+	  cmdinfo.startupConfig.userInstallRoot = optarg;
+	  break;
+
+	case OPT_USER_ROOTS:
+	  cmdinfo.startupConfig.userRoots = optarg;
 	  break;
 
 	default:
@@ -617,23 +650,10 @@ FindCommonInstallDir ()
   else
     {
       // return the default location (usually "C:\Program Files\MiKTeX X.Y")
-      PathName path;
-      if (! IsWindowsNT()
-	  || SessionWrapper(true)->IsUserAnAdministrator()
-	  || SessionWrapper(true)->IsUserAPowerUser())
-	{
-	  path =
+      PathName path =
 	    Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
 				 CSIDL_PROGRAM_FILES,
 				 true);
-	}
-      else
-	{
-	  path =
-	    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA,
-				 CSIDL_APPDATA,
-				 true);
-	}
       path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
       return (path);
     }
@@ -641,16 +661,64 @@ FindCommonInstallDir ()
 
 /* _________________________________________________________________________
 
-   FindAddTEXMFDirs
+   FindUserInstallDir
+   _________________________________________________________________________ */
+
+PathName
+FindUserInstallDir ()
+{
+  // probe the registry
+  string path;
+  if (SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
+			  MIKTEX_REGVAL_USER_INSTALL,
+			  path))
+    {
+      return (path);
+    }
+  else
+    {
+      // return the default location
+      PathName path =
+	    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA,
+				 CSIDL_APPDATA,
+				 true);
+      path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
+      return (path);
+    }
+}
+
+/* _________________________________________________________________________
+
+   FindCommonRoots
    _________________________________________________________________________ */
 
 string
-FindAddTEXMFDirs ()
+FindCommonRoots ()
 {
   string directories;
   if (! SessionWrapper(true)
       ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_ROOTS,
+			  MIKTEX_REGVAL_COMMON_ROOTS,
+			  directories))
+    {
+      directories = "";
+    }
+  return (directories);
+}
+
+/* _________________________________________________________________________
+
+   FindUserRoots
+   _________________________________________________________________________ */
+
+string
+FindUserRoots ()
+{
+  string directories;
+  if (! SessionWrapper(true)
+      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
+			  MIKTEX_REGVAL_USER_ROOTS,
 			  directories))
     {
       directories = "";
@@ -902,13 +970,25 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       theApp.startupConfig.commonInstallRoot = FindCommonInstallDir();
     }
-  if (theApp.startupConfig.roots.empty())
+  if (theApp.startupConfig.userInstallRoot.Empty())
     {
-      theApp.startupConfig.roots = FindAddTEXMFDirs();
+      theApp.startupConfig.userInstallRoot = FindUserInstallDir();
     }
-  if (! theApp.startupConfig.roots.empty())
+  if (theApp.startupConfig.commonRoots.empty())
     {
-      CheckAddTEXMFDirs (theApp.startupConfig.roots, theApp.addTEXMFDirs);
+      theApp.startupConfig.commonRoots = FindCommonRoots();
+    }
+  if (theApp.startupConfig.userRoots.empty())
+    {
+      theApp.startupConfig.userRoots = FindUserRoots();
+    }
+  if (! theApp.startupConfig.commonRoots.empty())
+    {
+      CheckAddTEXMFDirs (theApp.startupConfig.commonRoots, theApp.addTEXMFDirs);
+    }
+  if (! theApp.startupConfig.userRoots.empty())
+    {
+      CheckAddTEXMFDirs (theApp.startupConfig.userRoots, theApp.addTEXMFDirs);
     }
 
   theApp.noAddTEXMFDirs = cmdinfo.optNoAddTEXMFDirs;
@@ -917,6 +997,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.commonUserSetup =
     ((IsWindowsNT() && SessionWrapper(true)->RunningAsAdministrator())
      || cmdinfo.optShared
+     || ! cmdinfo.startupConfig.commonRoots.empty()
      || ! cmdinfo.startupConfig.commonInstallRoot.Empty()
      || ! cmdinfo.startupConfig.commonDataRoot.Empty()
      || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
@@ -2381,10 +2462,10 @@ LogHeader ()
   Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
   if (theApp.setupTask != SetupTask::Download)
     {
-      Log (T_("Roots: %s\n"),
-	   (theApp.noAddTEXMFDirs || theApp.startupConfig.roots.empty()
+      Log (T_("UserRoots: %s\n"),
+	  (theApp.noAddTEXMFDirs || theApp.startupConfig.userRoots.empty()
 	    ? T_("<none specified>")
-	    : theApp.startupConfig.roots.c_str()));
+	    : theApp.startupConfig.userRoots.c_str()));
       Log ("UserData: %s\n",
 	   (theApp.startupConfig.userDataRoot.Empty()
 	    ? T_("<none specified>")
@@ -2393,6 +2474,10 @@ LogHeader ()
 	   (theApp.startupConfig.userConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userConfigRoot.Get()));
+      Log (T_("CommonRoots: %s\n"),
+	  (theApp.noAddTEXMFDirs || theApp.startupConfig.commonRoots.empty()
+	    ? T_("<none specified>")
+	    : theApp.startupConfig.commonRoots.c_str()));
       Log ("CommonData: %s\n",
 	   (theApp.startupConfig.commonDataRoot.Empty()
 	    ? T_("<none specified>")

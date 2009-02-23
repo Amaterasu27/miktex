@@ -1,5 +1,5 @@
 This 'README' file belongs to the "MiKTeX Tools" source distribution
-for UNIX system-like platforms (GNU/Linux, Mac OS X, ...).
+for UNIX system-like platforms.
 
 
 FIRST THINGS FIRST
@@ -65,12 +65,11 @@ build and install "MiKTeX Tools":
 
 You can run these commands, if you want to check to see if it works:
 
-   mpm
    miktex-pdftex --undump=pdflatex miktex-test.tex
 
-The first command starts the package manager.  The second command runs
-pdflatex on the file miktex-test.tex.  This file triggers the package
-manager.
+This command runs pdflatex on the file miktex-test.tex.  The
+integrated package manager is triggered, if the miktex-test package is
+not yet installed.
 
 
 COMPILING THE PACKAGE
@@ -98,16 +97,16 @@ CONFIGURATION
 -------------
 
 You use the MiKTeX configuration utility (initexmf) and the MiKTeX
-package manager (mpm) to configure "MiKTeX Tools":
+package manager (mpm) to configure "MiKTeX Tools" system-wide:
 
     sudo initexmf --admin --configure
     sudo mpm --admin --update-db
 
 This is what happens:
 
-- kpsewhich(1) is used to find existing TEXMF trees; the information is
+- information about the TEXMF roots of the host TeX system is
   written to /var/lib/miktex-texmf/miktex/config/miktexstartup.ini
-- the per-system file name database is created
+- the system-wide file name database is created
 
 Once you have configured MiKTeX for the system, each user should
 create the per-user file name database:
