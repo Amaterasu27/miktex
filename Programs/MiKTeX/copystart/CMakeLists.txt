@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,6 +22,7 @@ use_static_libraries()
 
 add_executable(copystart_admin WIN32 copystart.cpp)
 
+# todo: requireAdministrator
 merge_trustinfo_manifest(copystart_admin highestAvailable)
 
 target_link_libraries(copystart_admin

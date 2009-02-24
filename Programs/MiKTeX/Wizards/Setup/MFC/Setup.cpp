@@ -649,7 +649,7 @@ FindCommonInstallDir ()
     }
   else
     {
-      // return the default location (usually "C:\Program Files\MiKTeX X.Y")
+      // return the default location: "C:\Program Files\MiKTeX X.Y"
       PathName path =
 	    Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
 				 CSIDL_PROGRAM_FILES,
@@ -678,7 +678,7 @@ FindUserInstallDir ()
     }
   else
     {
-      // return the default location
+      // return the default location: %HOME%\AppData\Local\MiKTeX X.Z
       PathName path =
 	    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA,
 				 CSIDL_APPDATA,
@@ -1400,12 +1400,14 @@ SetupWizardApplication::InitInstance ()
 	}
       if (cmdinfo.optPrivate
 	  && ! (cmdinfo.startupConfig.commonDataRoot.Empty()
+		&& cmdinfo.startupConfig.commonRoots.empty()
+		&& cmdinfo.startupConfig.commonInstallRoot.Empty()
 		&& cmdinfo.startupConfig.commonConfigRoot.Empty()))
 	{
 	  FATAL_MIKTEX_ERROR
 	    ("SetupWizardApplication::InitInstance",
 	     T_("You cannot specify --private along with \
---common-data and/or --common-config."),
+--common-config, common-data, --common-install or --common-roots."),
 	     0);
 	}
       SetupGlobalVars (cmdinfo);
@@ -2462,7 +2464,7 @@ LogHeader ()
   Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
   if (theApp.setupTask != SetupTask::Download)
     {
-      Log (T_("UserRoots: %s\n"),
+      Log ("UserRoots: %s\n",
 	  (theApp.noAddTEXMFDirs || theApp.startupConfig.userRoots.empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userRoots.c_str()));
@@ -2474,7 +2476,7 @@ LogHeader ()
 	   (theApp.startupConfig.userConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userConfigRoot.Get()));
-      Log (T_("CommonRoots: %s\n"),
+      Log ("CommonRoots: %s\n",
 	  (theApp.noAddTEXMFDirs || theApp.startupConfig.commonRoots.empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonRoots.c_str()));
@@ -2486,7 +2488,7 @@ LogHeader ()
 	   (theApp.startupConfig.commonConfigRoot.Empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonConfigRoot.Get()));
-      Log (T_("\nInstallation: %s\n"), theApp.GetInstallRoot().Get());
+      Log ("\nInstallation: %s\n", theApp.GetInstallRoot().Get());
     }
 }
 

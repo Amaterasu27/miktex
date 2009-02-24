@@ -1,6 +1,6 @@
 /* InstallDirPage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -289,7 +289,7 @@ InstallDirPage::OnBrowse ()
       browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
       browseInfo.lpfn = BrowseCallbackProc;
       browseInfo.lParam = reinterpret_cast<LPARAM>(this);
-      browseInfo.lpszTitle = T_("Select the MiKTEX installation directory:");
+      browseInfo.lpszTitle = T_("Select the MiKTeX installation directory:");
       LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
       if (pidl == 0)
 	{
@@ -300,7 +300,7 @@ InstallDirPage::OnBrowse ()
       CoTaskMemFree (pidl);
       if (! done)
 	{
-	  FATAL_WINDOWS_ERROR (T_("SHGetPathFromIDList"), 0);
+	  FATAL_WINDOWS_ERROR ("SHGetPathFromIDList", 0);
 	}
       CWnd * pWnd = GetDlgItem(IDC_PATHNAME);
       if (pWnd == 0)

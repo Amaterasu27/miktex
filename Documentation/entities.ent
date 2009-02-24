@@ -91,6 +91,7 @@
 <!ENTITY WindowsServer2008 "<application>Windows Server&nbsp;2008</application>">
 <!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
 <!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">
+<!ENTITY Windows7 "<application>Windows&nbsp;7</application>">
 <!ENTITY GNU "<application>GNU</application>">
 <!ENTITY GNULinux "&GNU;/Linux">
 <!ENTITY UNIXsystemlike "<application>&UNIX; system-like</application>">

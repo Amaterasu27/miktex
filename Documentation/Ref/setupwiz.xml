@@ -115,9 +115,10 @@ This option requires administrator privileges.</para></listitem>
 
 <varlistentry>
 <term><option>--common-roots=<replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional common &TEXMF; root directories.
-<replaceable>dirs</replaceable> must be a semicolon-separated list of fully
-qualified path names.</para></listitem>
+<listitem><para>Register additional root directories for all users.
+<replaceable>dirs</replaceable> must be a semicolon-separated list of
+fully qualified path names. This option requires administrator
+privileges.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
@@ -160,7 +161,7 @@ This must be one of
 <option>complete</option>.
 </para></listitem>
 </varlistentry>
-	
+
 <varlistentry>
 <term><option>--private</option></term>
 <listitem><para>Install &MiKTeX; for the
@@ -216,7 +217,7 @@ the current user.</para></listitem>
 
 <varlistentry>
 <term><option>--user-roots=<replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional user &TEXMF; root directories.
+<listitem><para>Register additional root directories for the current user.
 <replaceable>dirs</replaceable> must be a semicolon-separated list of fully
 qualified path names.</para></listitem>
 </varlistentry>

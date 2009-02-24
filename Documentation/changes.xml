@@ -6,6 +6,8 @@
 &Windows; platforms:</para>
 
 <itemizedlist>
+<listitem><para>&Windows7;</para></listitem>
+<listitem><para>&WindowsServer2008;</para></listitem>
 <listitem><para>&WindowsVista;</para></listitem>
 <listitem><para>&WindowsServer2003;</para></listitem>
 <listitem><para>&WindowsXP;</para></listitem>
@@ -18,66 +20,7 @@
 
 <title>Breaking changes</title>
 
-<para>&MiKTeXCurrentSeries; does not work on legacy &Windows; platforms
-(&Windows9xMeNT;).</para>
-
-<para>The following command-line options have been removed in
-&MiKTeXCurrentSeries;:</para>
-
-<itemizedlist>
-<listitem><para><option>-mem-bot=<replaceable>n</replaceable></option></para></listitem>
-<listitem><para><option>-mem-max=<replaceable>n</replaceable></option></para></listitem>
-<listitem><para><option>-mem-min=<replaceable>n</replaceable></option></para></listitem>
-<listitem><para><option>-mem-top=<replaceable>n</replaceable></option></para></listitem>
-<listitem><para><option>-terminal=oem</option></para></listitem>
-</itemizedlist>
-
-</section>
-
-<section>
-
-<title>Memory settings</title>
-
-<para>New command-line parameters have been introduced to control the sizes
-of internal arrays:</para>
-
-<variablelist>
-&optionextramembot;
-&optionextramemtop;
-&optionmainmemory;
-</variablelist>
-
-</section>
-
-<section>
-
-<title>&XeTeX;</title>
-
-<para>&XeTeX; version 0.997 has been integrated into the &MiKTeX;
-distribution. If you are looking for a Unicode-based &TeX; engine, or
-if want immediate access to your &Windows; fonts, then you should give
-&XeTeX; a try.</para>
-
-<para>Here is a sample (<filename>arialtest.tex</filename>) which uses
-<application>Arial</application> as the main font:</para>
-
-<informalexample>
-<programlisting>\documentclass{article}
-\usepackage{fontspec}
-\setmainfont{Arial}
-\begin{document}
-The quick brown fox jumps over the lazy dog.
-\textbf{The quick brown fox jumps over the lazy dog.}
-\emph{The quick brown fox jumps over the lazy dog.}
-\end{document}
-</programlisting>
-</informalexample>
-
-<para>You run &xelatex; on this sample to produce a &PDF; file:</para>
-
-<informalexample>
-<screen><prompt>&prompt;</prompt><userinput>xelatex arialtest.tex</userinput></screen>
-</informalexample>
+<para></para>
 
 </section>
 
@@ -85,7 +28,7 @@ The quick brown fox jumps over the lazy dog.
 
 <title>&pdfTeX;</title>
 
-<para>&pdfTeX; is now at upstream version 1.40.4.</para>
+<para>&pdfTeX; is now at upstream version 1.40.9.</para>
 
 </section>
 
@@ -94,29 +37,6 @@ The quick brown fox jumps over the lazy dog.
 <title>&MetaPost;</title>
 
 <para>&MetaPost; is now at upstream version 1.001.</para>
-
-</section>
-
-<section>
-
-<title>&Yap;</title>
-
-<variablelist>
-<varlistentry>
-<term>Feature request
-#<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1581199&amp;group_id=10783&amp;atid=360783">1581199</ulink></term>
-<listitem><para>The render method is now deduced from the &DVI; file:
-<guilabel>Pk</guilabel> is used, if the &DVI; file contains no
-&PostScript; instructions. Otherwise, <guilabel>Dvips</guilabel>
-is used.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Feature request
-#<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1186638&amp;group_id=10783&amp;atid=360783">1186638</ulink></term>
-<listitem><para>&Yap; now detects changes to the &DVI; file
-and immediately shows the new version.</para></listitem>
-</varlistentry>
-</variablelist>
 
 </section>
 
