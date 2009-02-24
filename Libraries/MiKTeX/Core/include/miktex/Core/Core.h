@@ -3770,6 +3770,15 @@ public:
   Write (/*[in]*/ const PathName & 	path)
     = 0;
 
+  /// Write configuration settings into a file.
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Write (/*[in]*/ const PathName & 	path,
+	 /*[in]*/ const char *		lpszHeader)
+    = 0;
+
   /// Starts a key iteration.
 public:
   virtual

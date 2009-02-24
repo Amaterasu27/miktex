@@ -427,7 +427,7 @@ SessionImpl::WriteStartupConfigFile
   dir.RemoveFileSpec ();
   Directory::Create (dir);
   
-  pcfg->Write (startupConfigFile.Get());
+  pcfg->Write (startupConfigFile.Get(), T_("MiKTeX startup information"));
 }
 
 /* _________________________________________________________________________

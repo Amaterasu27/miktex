@@ -1756,9 +1756,9 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     if (! pSession->RunningAsAdministrator())
     {
 #if defined(MIKTEX_WINDOWS)
-      Error (T_("Not running as administrator."));
+      Error (T_("Option --admin requires administrator privileges."));
 #else
-      Error (T_("Not running as root."));
+      Error (T_("Option --admin requires root privileges."));
 #endif
     }
     pSession->SetAdminMode (true);
