@@ -696,7 +696,7 @@ FileCopyPage::DoTheDownload ()
 
   // initialize installer
   pInstaller->SetRepository (theApp.remotePackageRepository.c_str());
-  pInstaller->SetDestination (theApp.localPackageRepository);
+  pInstaller->SetDownloadDirectory (theApp.localPackageRepository);
   pInstaller->SetPackageLevel (theApp.packageLevel);
   pInstaller->SetCallback (this);
 
@@ -808,11 +808,8 @@ FileCopyPage::DoTheInstallation ()
 	theApp.startupConfig.commonInstallRoot.Get();
       startupConfig.commonInstallRoot =	theApp.startupConfig.commonInstallRoot;
   }
-  else
-  {
-    startupConfig.userRoots = theApp.startupConfig.userInstallRoot.Get();
-    startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
-  }
+  startupConfig.userRoots = theApp.startupConfig.userInstallRoot.Get();
+  startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
   SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
 
   // parse package definition files
@@ -846,7 +843,6 @@ FileCopyPage::DoTheInstallation ()
 	    (theApp.localPackageRepository);
 	}
     }
-  pInstaller->SetDestination (theApp.GetInstallRoot());
   pInstaller->SetPackageLevel (theApp.packageLevel);
   pInstaller->SetCallback (this);
 

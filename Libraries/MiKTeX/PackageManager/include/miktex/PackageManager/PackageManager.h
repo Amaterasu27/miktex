@@ -847,12 +847,12 @@ public:
   SetRepository (/*[in]*/ const std::string & repository)
     = 0;
 
-  /// Sets the installation directory for this package installer.
+  /// Sets the download directory for this package installer.
 public:
   virtual
   void
   MIKTEXTHISCALL
-  SetDestination (/*[in]*/ const MiKTeX::Core::PathName & destinationDirectory)
+  SetDownloadDirectory (/*[in]*/ const MiKTeX::Core::PathName & directory)
     = 0;
 
 public:

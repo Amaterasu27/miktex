@@ -1,6 +1,6 @@
 /* miktex/App/Application.h:					-*- C++ -*-
 
-   Copyright (C) 2005-2008 Christian Schenk
+   Copyright (C) 2005-2009 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -149,8 +149,9 @@ public:
   
   virtual
   MIKTEXAPPTHISAPI(bool)
-  InstallPackage (/*[in]*/ const char *	lpszPackageName,
-		  /*[in]*/ const char *	lpszTrigger);
+  InstallPackage (/*[in]*/ const char *			lpszPackageName,
+		  /*[in]*/ const char *			lpszTrigger,
+		  /*[out]*/ MiKTeX::Core::PathName &	installRoot);
 
   /* _______________________________________________________________________
      

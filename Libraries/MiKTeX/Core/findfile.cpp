@@ -51,27 +51,17 @@ SessionImpl::CheckCandidate (/*[in,out]*/ PathName &	path,
   if (IsMpmFile(path.Get()))
   {
     PathName trigger (Utils::GetRelativizedPath(path.Get(), MPM_ROOT_PATH));
-    // install the package
-    if (lpszFileInfo != 0
-      && pInstallPackageCallback != 0
-      && pInstallPackageCallback->InstallPackage(lpszFileInfo, trigger.Get()))
+    PathName installRoot;
+    if (lpszFileInfo != 0 && pInstallPackageCallback != 0
+	&& pInstallPackageCallback->InstallPackage(
+	      lpszFileInfo, trigger.Get(), installRoot))
     {
-      PathName temp = GetSpecialPath(SpecialPath::UserInstallRoot);
+      PathName temp = installRoot;
       temp += path.Get() + MPM_ROOT_PATH_LEN;
       if (File::Exists(temp))
       {
 	path = temp;
 	found = true;
-      }
-      else
-      {
-	PathName temp2 = GetSpecialPath(SpecialPath::CommonInstallRoot);
-	temp2 += path.Get() + MPM_ROOT_PATH_LEN;
-	if (temp != temp2 && File::Exists(temp2))
-	{
-	  path = temp2;
-	  found = true;
-	}
       }
     }
   }

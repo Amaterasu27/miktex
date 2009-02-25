@@ -3456,13 +3456,16 @@ IFindFileCallback
 {
   /// Request to install package. Called by the FindFile machinery.
   /// @param lpszPackageName Package to be installed.
+  /// @param lpszTrigger File name that triggered the auto-installer.
+  /// @param[out] installRoot Installation root directory.
   /// @return Returns true, if the package has been installed.
 public:
   virtual
   bool
   MIKTEXTHISCALL
   InstallPackage (/*[in]*/ const char *	lpszPackageName,
-		  /*[in]*/ const char *	lpszTrigger)
+		  /*[in]*/ const char *	lpszTrigger,
+		  /*[out]*/ PathName &	installRoot)
     = 0;
 };
 

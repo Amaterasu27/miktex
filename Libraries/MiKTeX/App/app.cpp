@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2008 Christian Schenk
+   Copyright (C) 2005-2009 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -265,7 +265,8 @@ Application::OnProgress (/*[in]*/ Notification		nf)
 
 bool
 Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
-			     /*[in]*/ const char * lpszTrigger)
+			     /*[in]*/ const char * lpszTrigger,
+	    		     /*[out]*/ PathName &  installRoot)
 {
   if (ignoredPackages.find(lpszPackageName) != ignoredPackages.end())
     {
@@ -336,6 +337,7 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
   try
     {
       pInstaller->InstallRemove ();
+      installRoot = pSession->GetSpecialPath(SpecialPath::InstallRoot);
       done = true;
     }
   catch (const MiKTeXException & e)

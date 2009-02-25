@@ -1070,9 +1070,9 @@ public:
   virtual
   void
   MIKTEXTHISCALL
-  SetDestination (/*[in]*/ const MiKTeX::Core::PathName & destinationDirectory)
+  SetDownloadDirectory (/*[in]*/ const MiKTeX::Core::PathName & directory)
   {
-    this->destinationDirectory = destinationDirectory;
+    this->downloadDirectory = directory;
   }
 
 public:
@@ -1313,7 +1313,7 @@ private:
   std::string repository;
   
 private:
-  MiKTeX::Core::PathName destinationDirectory;
+  MiKTeX::Core::PathName downloadDirectory;
   
 private:
   DbLight dbLight;
@@ -1419,6 +1419,9 @@ private:
   
 private:
   ProgressInfo progressInfo;
+
+private:
+  MiKTeX::Core::SessionWrapper pSession;
 
 private:
   MiKTeX::Core::MiKTeXException threadMiKTeXException;
