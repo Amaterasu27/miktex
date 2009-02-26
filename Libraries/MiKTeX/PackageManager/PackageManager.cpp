@@ -276,7 +276,8 @@ PackageManagerImpl::LoadVariablePackageTable ()
 	(pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
 	 MIKTEX_PATH_PACKAGES_INI,
 	 0);
-      if (pathCommonPackagesIni != pathUserPackagesIni
+      if (pathCommonPackagesIni.Canonicalize()
+	      != pathUserPackagesIni.Canonicalize()
 	  && File::Exists(pathUserPackagesIni))
 	{
 	  trace_mpm->WriteFormattedLine
@@ -707,19 +708,25 @@ PackageManagerImpl::ParseAllPackageDefinitionFiles ()
 {
   if (parsedAllPackageDefinitionFiles)
     {
+      // we do this once
       return;
     }
+  PathName userInstallRoot =
+    pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+  PathName commonInstallRoot =
+    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
   if (! pSession->IsAdminMode())
     {
-      PathName userInstallRoot =
-	pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
       ParseAllPackageDefinitionFilesInDirectory
 	(PathName(userInstallRoot,
 		  MIKTEX_PATH_PACKAGE_DEFINITION_DIR,
 		  0));
+      if (userInstallRoot.Canonicalize() == commonInstallRoot.Canonicalize())
+      {
+	parsedAllPackageDefinitionFiles = true;
+	return;
+      }
     }
-  PathName commonInstallRoot =
-    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
   ParseAllPackageDefinitionFilesInDirectory
     (PathName(commonInstallRoot,
 	      MIKTEX_PATH_PACKAGE_DEFINITION_DIR,
@@ -992,7 +999,7 @@ IsUrl (/*[in]*/ const string & url)
 
 RepositoryType
 PackageManagerImpl::DetermineRepositoryType
-(/*[in]*/ const string & repository)
+  (/*[in]*/ const string & repository)
 {
   if (IsUrl(repository))
     {
@@ -1173,8 +1180,8 @@ PackageManager::SetMiKTeXDirectRoot (/*[in]*/ const PathName & path)
 
 bool
 PackageManager::TryGetDefaultPackageRepository
-(/*[out]*/ RepositoryType &	repositoryType,
- /*[out]*/ string &		urlOrPath)
+  (/*[out]*/ RepositoryType &	repositoryType,
+   /*[out]*/ string &		urlOrPath)
 {
   string str;
   if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
@@ -1241,8 +1248,8 @@ PackageManager::GetDefaultPackageRepository (/*[out]*/ string &	urlOrPath)
 
 void
 PackageManager::SetDefaultPackageRepository
-(/*[in]*/ RepositoryType	repositoryType,
- /*[in]*/ const string &	urlOrPath)
+  (/*[in]*/ RepositoryType	repositoryType,
+   /*[in]*/ const string &	urlOrPath)
 {
   if (repositoryType == RepositoryType::Unknown)
     {
@@ -1656,7 +1663,7 @@ PackageManagerImpl::CreateMpmFndb ()
 
 void
 PackageManagerImpl::GetAllPackageDefinitions
-(/*[out]*/ vector<PackageInfo> & packages)
+  (/*[out]*/ vector<PackageInfo> & packages)
 {
   ParseAllPackageDefinitionFiles ();
   for (PackageDefinitionTable::const_iterator it = packageTable.begin();
@@ -1674,7 +1681,7 @@ PackageManagerImpl::GetAllPackageDefinitions
 
 InstalledFileInfo *
 PackageManagerImpl::GetInstalledFileInfo
-(/*[in]*/ const char * lpszPath)
+  (/*[in]*/ const char * lpszPath)
 {
   ParseAllPackageDefinitionFiles ();
   InstalledFileInfoTable::iterator it = installedFileInfoTable.find(lpszPath);
@@ -1715,8 +1722,8 @@ PackageManager::IsLocalPackageRepository (/*[in]*/ const PathName & path)
 
 PackageInfo
 PackageManager::ReadPackageDefinitionFile
-(/*[in]*/ const PathName &	path,
- /*[in]*/ const char *	lpszTeXMFPrefix)
+  (/*[in]*/ const PathName &	path,
+   /*[in]*/ const char *	lpszTeXMFPrefix)
 {
   TpmParser tpmParser;
   tpmParser.Parse (path, lpszTeXMFPrefix);
@@ -1846,9 +1853,9 @@ private:
 
 void
 PackageManager::WritePackageDefinitionFile
-(/*[in]*/ const PathName &	path,
- /*[in]*/ const PackageInfo &	packageInfo,
- /*[in]*/ time_t		timePackaged)
+  (/*[in]*/ const PathName &	path,
+   /*[in]*/ const PackageInfo &	packageInfo,
+   /*[in]*/ time_t		timePackaged)
 {
   FileStream stream (File::Open(path,
 				FileMode::Create,
@@ -2186,8 +2193,8 @@ PackageManagerImpl::OnProgress ()
 
 bool
 PackageManagerImpl::TryGetRepositoryInfo
-(/*[in]*/ const string &	url,
- /*[out]*/ RepositoryInfo &	repositoryInfo)
+  (/*[in]*/ const string &	url,
+   /*[out]*/ RepositoryInfo &	repositoryInfo)
 {
   MyRepositorySoapProxy repositorySoapProxy;
   ProxySettings proxySettings;
@@ -2277,9 +2284,9 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 
 bool
 PackageManagerImpl::TryVerifyInstalledPackageHelper
-(/*[in]*/ const string &	fileName,
- /*[out]*/ bool &		haveDigest,
- /*[out]*/ MD5 &		digest)
+  (/*[in]*/ const string &	fileName,
+   /*[out]*/ bool &		haveDigest,
+   /*[out]*/ MD5 &		digest)
 {
   string unprefixed;
   if (! StripTeXMFPrefix(fileName, unprefixed))
@@ -2313,7 +2320,7 @@ PackageManagerImpl::TryVerifyInstalledPackageHelper
 
 bool
 PackageManagerImpl::TryVerifyInstalledPackage
-(/*[in]*/ const string & deploymentName)
+  (/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = GetPackageInfo(deploymentName);
 

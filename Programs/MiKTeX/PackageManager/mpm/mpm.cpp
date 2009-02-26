@@ -425,14 +425,15 @@ exit when the window is closed."), 0
   },
 
   {
-    "install", 0, POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_INSTALL,
+    "install", 0, POPT_ARG_STRING, 0, OPT_INSTALL,
     T_("Install the specified package."),
     T_("PACKAGE")
   },
 
 #if ENABLE_OPT_INSTALL_ROOT
   {				// deprecated
-    "install-root", 0, POPT_ARG_STRING, 0, OPT_INSTALL_ROOT,
+    "install-root", 0,
+      POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0, OPT_INSTALL_ROOT,
     T_("\
 Use the specified directory as the installation destination."),
     T_("DIR")

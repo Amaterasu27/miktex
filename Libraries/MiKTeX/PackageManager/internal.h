@@ -1479,6 +1479,10 @@ private:
   void
   HandleObsoletePackageDefinitionFiles
   (/*[in]*/ const MiKTeX::Core::PathName & temporaryDirectory);
+
+private:
+  void
+  CleanUpUserDatabase ();
   
 private:
   void

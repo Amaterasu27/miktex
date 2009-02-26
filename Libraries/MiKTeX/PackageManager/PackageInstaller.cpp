@@ -481,7 +481,9 @@ PackageInstallerImpl::InstallDbLight ()
 		  : "MiKTeXDirect")));
   
   // path to config dir
-  PathName pathConfigDir (pSession->GetSpecialPath(SpecialPath::InstallRoot), MIKTEX_PATH_MIKTEX_CONFIG_DIR);
+  PathName pathConfigDir (
+    pSession->GetSpecialPath(SpecialPath::InstallRoot),
+    MIKTEX_PATH_MIKTEX_CONFIG_DIR);
 
   if (repositoryType == RepositoryType::Remote
       || repositoryType == RepositoryType::Local)
@@ -2608,6 +2610,79 @@ PackageInstallerImpl::SetUpPackageDefinitionFiles
 
 /* _________________________________________________________________________
 
+   PackageInstallerImpl::CleanUpUserDatabase
+   _________________________________________________________________________ */
+
+void
+PackageInstallerImpl::CleanUpUserDatabase ()
+{
+  PathName userDir
+    (pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+      MIKTEX_PATH_PACKAGE_DEFINITION_DIR);
+
+  PathName commonDir
+    (pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
+      MIKTEX_PATH_PACKAGE_DEFINITION_DIR);
+
+  if (! Directory::Exists(userDir) || ! Directory::Exists(commonDir))
+  {
+    return;
+  }
+
+  if (userDir.Canonicalize() == commonDir.Canonicalize())
+  {
+    return;
+  }
+
+  vector<PathName> toBeRemoved;
+
+  // check all package definition files
+  auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(userDir));
+  DirectoryEntry direntry;
+  while (pLister->GetNext(direntry))
+  {
+    PathName name (direntry.name);
+
+    if (direntry.isDirectory
+      || ! name.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
+    {
+      continue;
+    }
+
+    // check to see whether the system-wide file exists
+    PathName commonPackageDefinitionFile (commonDir, name);
+    if (! File::Exists(commonPackageDefinitionFile))
+    {
+      continue;
+    }
+
+    // compare files
+    PathName userPackageDefinitionFile (userDir, name);
+    if (File::GetSize(userPackageDefinitionFile)
+	  == File::GetSize(commonPackageDefinitionFile)
+	&& MD5::FromFile(userPackageDefinitionFile.Get())
+	  == MD5::FromFile(commonPackageDefinitionFile.Get()))
+    {
+      // files are identical; remove user file later
+      toBeRemoved.push_back (userPackageDefinitionFile);
+    }
+  }
+  pLister->Close ();
+
+  // remove redundant user package definition files
+  for (vector<PathName>::const_iterator it = toBeRemoved.begin();
+    it != toBeRemoved.end();
+    ++ it)
+  {
+    trace_mpm->WriteFormattedLine ("libmpm",
+      T_("removing redundant package definition file: %s"),
+      Q_(*it));
+    File::Delete (*it, true);
+  }
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
    _________________________________________________________________________ */
 
@@ -2710,15 +2785,6 @@ PackageInstallerImpl::UpdateDb ()
 				     errorInfo.sourceLine);
 	}
       return;
-    }
-#endif
-
-#if 0
-  if (! pSession->IsAdminMode())
-    {
-      FATAL_MPM_ERROR ("PackageInstallerImpl::UpdateDb",
-		       T_("Not running in administrative mode."),
-		       0);
     }
 #endif
 
@@ -2842,6 +2908,12 @@ PackageInstallerImpl::UpdateDb ()
     {
       scratchDirectory.Leave ();
     }
+
+  // clean up the user database
+  if (! pSession->IsAdminMode())
+  {
+    CleanUpUserDatabase ();
+  }
 
   // install mpm.ini
   InstallDbLight ();

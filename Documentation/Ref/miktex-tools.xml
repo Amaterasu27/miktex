@@ -116,7 +116,7 @@ more suitable directory.</para>
 
 <refsect1>
 
-<title>Using the package manager</title>
+<title>Using the &MiKTeX; package manager</title>
 
 <para>&MPM; (&MiKTeXPackageManager;) was originally intended to be a
 tool for &MiKTeX; users.  But the program can be helpful for users of

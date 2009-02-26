@@ -2209,7 +2209,21 @@ IniTeXMFApp::EditConfigFile (/*[in]*/ const char * lpszName)
     }
   CommandLineBuilder commandLine;
   commandLine.AppendArgument (configFile);
-  Process::Start ("notepad.exe", commandLine.Get());
+  string editor;
+  const char * lpszEditor = getenv("EDITOR");
+  if (lpszEditor != 0)
+  {
+    editor = lpszEditor;
+  }
+  else
+  {
+#if defined(MIKTEX_WINDOWS)
+    editor = "notepad.exe";
+#else
+    FatalError (T_("Environment variable EDITOR is not defined."));
+#endif
+  }
+  Process::Start (editor.c_str(), commandLine.Get());
 }
 
 /* _________________________________________________________________________
