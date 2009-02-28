@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2005-2008 Christian Schenk
+   Copyright (C) 2005-2009 Christian Schenk
 
    This file is part of the MiKTeX App Library.
 
@@ -30,6 +30,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
+#  include <shlobj.h>
 #endif
 
 #include <signal.h>

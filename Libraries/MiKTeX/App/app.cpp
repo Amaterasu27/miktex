@@ -144,12 +144,57 @@ InstallSignalHandler (/*[in]*/ int sig)
 
 /* _________________________________________________________________________
      
+   Setup
+   _________________________________________________________________________ */
+
+static
+void
+Setup ()
+{
+  system ("initexmf --update-fndb");
+}
+
+/* _________________________________________________________________________
+     
+   Is1stRun
+   _________________________________________________________________________ */
+
+static
+bool
+Is1stRun ()
+{
+  PathName testDir;
+#if defined(MIKTEX_WINDOWS)
+  testDir = Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
+  testDir += "MiKTeX";
+  testDir += MIKTEX_SERIES_STR;
+#else
+  const char * lpszHome = getenv("HOME");
+  if (lpszHome == 0)
+  {
+    return (false);
+  }
+  testDir = lpszHome;
+  testDir += ".miktex";
+#endif
+  return (! Directory::Exists(testDir));
+}
+
+/* _________________________________________________________________________
+     
    Application::Init
    _________________________________________________________________________ */
 
 void
 Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 {
+#if 1
+  // kludge
+  if (Is1stRun())
+  {
+    Setup ();
+  }
+#ensif
   initialized = true;
   pSession.CreateSession (initInfo);
   beQuiet = false;
