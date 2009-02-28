@@ -194,7 +194,7 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
   {
     Setup ();
   }
-#ensif
+#endif
   initialized = true;
   pSession.CreateSession (initInfo);
   beQuiet = false;
