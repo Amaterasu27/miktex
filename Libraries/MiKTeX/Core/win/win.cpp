@@ -1223,15 +1223,31 @@ Utils::GetOSVersionString ()
        // Windows NT product family
        str += "Microsoft Windows";
        NeedBlank (str);
-       if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+       if (osvi.dwMajorVersion == 6
+	   && (osvi.dwMinorVersion == 0
+	       || osvi.dwMinorVersion == 1))
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
-	       str += "Vista";
+	       if (osvi.dwMinorVersion == 0)
+		 {
+		   str += "Vista";
+		 }
+	       else if (osvi.dwMinorVersion == 1)
+		 {
+		   str += "7";
+		 }
 	     }
 	   else
 	     {
-	       str += "Server 2008";
+	       if (osvi.dwMinorVersion == 0)
+		 {
+		   str += "Server 2008";
+		 }
+	       else if (osvi.dwMinorVersion == 1)
+		 {
+		   str += "Server 2008 R2";
+		 }
 	     }
 	   PGPI pGPI =
 	     reinterpret_cast<PGPI>
