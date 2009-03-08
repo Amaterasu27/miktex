@@ -266,7 +266,7 @@ PackageInstallerImpl::Download (/*[in]*/ const string &		url,
 
   // open the remote file
   auto_ptr<WebFile>
-    webFile (pManager->GetWebSession()->OpenUrl(url.c_str(), this));
+    webFile (pManager->GetWebSession()->OpenUrl(url.c_str()));
 
   // open the local file
   TempFile downloadedFile;

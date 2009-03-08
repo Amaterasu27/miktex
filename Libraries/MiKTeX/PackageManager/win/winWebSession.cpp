@@ -1,6 +1,6 @@
 /* winWebSession.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -66,10 +66,8 @@ winWebSession::~winWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-winWebSession::OpenUrl (/*[in]*/ const char *		lpszUrl,
-			/*[in]*/ IProgressNotify_ *	pIProgressNotify)
+winWebSession::OpenUrl (/*[in]*/ const char * lpszUrl)
 {
-  UNUSED_ALWAYS (pIProgressNotify);
   if (hInternet == 0)
     {
       // check to see if computer is connected to the Internet

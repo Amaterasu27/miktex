@@ -134,7 +134,7 @@ PackageManagerImpl::PackageManagerImpl ()
     trace_error (TraceStream::Open(MIKTEX_TRACE_ERROR)),
     trace_mpm (TraceStream::Open(MIKTEX_TRACE_MPM)),
     pSession (true),
-    webSession (WebSession::Create())
+    webSession (WebSession::Create(this))
 {
   trace_mpm->WriteFormattedLine ("libmpm",
 				 T_("initializing MPM library version %s"),

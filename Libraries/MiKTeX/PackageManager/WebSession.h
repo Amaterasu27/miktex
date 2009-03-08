@@ -1,6 +1,6 @@
 /* WebSession.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -53,8 +53,7 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const char *	lpszUrl,
-	   /*[in]*/ IProgressNotify_ *	pIProgressNotify)
+  OpenUrl (/*[in]*/ const char * lpszUrl)
     = 0;
 
 public:
@@ -66,7 +65,7 @@ public:
 public:
   static
   WebSession *
-  Create ();
+  Create (/*[in]*/ IProgressNotify_ * pIProgressNotify);
 };
 
 END_INTERNAL_NAMESPACE;

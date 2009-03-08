@@ -1,6 +1,6 @@
 /* CurlWebFile.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -36,8 +36,7 @@ CurlWebFile : public WebFile
 {
 public:
   CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
-	       /*[in]*/ const char *		lpszUrl,
-	       /*[in]*/ IProgressNotify_ *	pIProgressNotify);
+	       /*[in]*/ const char *		lpszUrl);
 
 public:
   virtual
@@ -63,59 +62,16 @@ private:
 		 /*[in]*/ void *		pv);
 
 private:
-  static
-  int
-  ProgressCallback (/*[in]*/ void *		pv,
-		    /*[in]*/ double		dltotal,
-		    /*[in]*/ double		dlnow,
-		    /*[in]*/ double		ultotal,
-		    /*[in]*/ double		ulnow);
-
-private:
   void
   TakeData (/*[in]*/ const void *	pData,
 	    /*[in]*/ size_t		size);
 
 private:
   void
-  Perform ();
+  Initialize ();
 
 private:
-  void
-  SetOptions ();
-
-private:
-  void
-  CurlInit ();
-
-private:
-  void
-  Connect ();
-
-private:
-  void
-  ReadInformationals ();
-
-private:
-  std::string
-  GetCurlErrorString (/*[in]*/ CURLMcode code)
-    const
-  {
-#if LIBCURL_VERSION_NUM >= 0x70c00
-    return (curl_multi_strerror(code));
-#else
-    std::string str =
-      T_("The CURL multi interface returned an error code: ");
-    str += NUMTOSTR(code);
-    return (str);
-#endif
-  }
-
-private:
-  CURLM * pCurlm;
-
-private:
-  bool handleAdded;
+  bool initialized;
 
 private:
   CurlWebSession * pSession;
@@ -125,12 +81,6 @@ private:
 
 private:
   std::vector<char> buffer;
-
-private:
-  int runningHandles;
-
-private:
-  IProgressNotify_ * pIProgressNotify;
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;

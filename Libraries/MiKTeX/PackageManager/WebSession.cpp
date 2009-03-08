@@ -1,6 +1,6 @@
 /* WebSession.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -60,7 +60,7 @@ WebFile::~WebFile ()
    _________________________________________________________________________ */
 
 WebSession *
-WebSession::Create ()
+WebSession::Create (/*[in]*/ IProgressNotify_ * pIProgressNotify)
 {
 #if defined (MIKTEX_WINDOWS)
   if (USE_WININET)
@@ -69,7 +69,7 @@ WebSession::Create ()
     }
 #endif
 #if defined(HAVE_LIBCURL)
-  return (new CurlWebSession);
+  return (new CurlWebSession (pIProgressNotify));
 #else
 #  warning Unimplemented: WebSession::Create()
   FATAL_MIKTEX_ERROR ("WebSession::Create",

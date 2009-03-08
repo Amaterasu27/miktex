@@ -1,6 +1,6 @@
 /* winWebSession.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -35,8 +35,7 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const char *	lpszUrl,
-	   /*[in]*/ IProgressNotify_ *	pIProgressNotify);
+  OpenUrl (/*[in]*/ const char * lpszUrl);
 
 public:
   virtual

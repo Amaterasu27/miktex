@@ -1,6 +1,6 @@
 /* CurlWebSession.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -32,7 +32,7 @@ class
 CurlWebSession : public WebSession
 {
 public:
-  CurlWebSession ();
+  CurlWebSession (/*[in]*/ IProgressNotify_ * pIProgressNotify);
 
 public:
   virtual
@@ -41,24 +41,76 @@ public:
 public:
   virtual
   WebFile *
-  OpenUrl (/*[in]*/ const char *	lpszUrl,
-	   /*[in]*/ IProgressNotify_ *	pIProgressNotify);
+  OpenUrl (/*[in]*/ const char * lpszUrl);
 
 public:
   virtual
   void
   Dispose ();
 
+public:
+  void
+  SendReceive ();
+
+public:
+  void
+  Perform ();
+
+private:
+  void
+  ReadInformationals ();
+
+public:
+  std::string
+  GetCurlErrorString (/*[in]*/ CURLMcode code)
+    const
+  {
+#if LIBCURL_VERSION_NUM >= 0x70c00
+    return (curl_multi_strerror(code));
+#else
+    std::string str =
+      T_("The CURL multi interface returned an error code: ");
+    str += NUMTOSTR(code);
+    return (str);
+#endif
+  }
+
 private:
   CURL * pCurl;
 
+private:
+  CURLM * pCurlm;
+
+private:
+  int runningHandles;
+
+private:
+  IProgressNotify_ * pIProgressNotify;
+
+public:
+  bool
+  IsReady ()
+    const
+  {
+    return (runningHandles == 0);
+  }
+
 public:
   CURL *
-  GetHandle ()
+  GetEasyHandle ()
     const
     throw ()
   {
     return (pCurl);
+  }
+
+public:
+  CURLM *
+  GetMultiHandle ()
+    const
+    throw ()
+  {
+    return (pCurlm);
   }
 
 public:
@@ -98,6 +150,15 @@ private:
 private:
   static
   int
+  ProgressCallback (/*[in]*/ void *		pv,
+		    /*[in]*/ double		dltotal,
+		    /*[in]*/ double		dlnow,
+		    /*[in]*/ double		ultotal,
+		    /*[in]*/ double		ulnow);
+
+private:
+  static
+  int
   DebugCallback (/*[in]*/ CURL *		pCurl,
 		 /*[in]*/ curl_infotype		infoType,
 		 /*[in]*/ char *		pData,
@@ -112,6 +173,9 @@ private:
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_curl;
+
+private:
+  std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 };
 
 END_INTERNAL_NAMESPACE;

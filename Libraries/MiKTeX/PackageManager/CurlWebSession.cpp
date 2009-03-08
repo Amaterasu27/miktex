@@ -1,6 +1,6 @@
 /* CurlWebSession.cpp:
 
-   Copyright (C) 2001-2006 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -34,15 +34,18 @@ using namespace std;
 
 const long DEFAULT_CONNECTION_TIMEOUT_SECONDS = 30;
 const long DEFAULT_FTP_RESPONSE_TIMEOUT_SECONDS = 30;
-const long DEFAULT_TIMEOUT_SECONDS = 60 * 60;
 
 /* _________________________________________________________________________
 
    CurlWebSession::CurlWebSession
    _________________________________________________________________________ */
 
-CurlWebSession::CurlWebSession ()
+CurlWebSession::CurlWebSession (/*[in]*/ IProgressNotify_ * pIProgressNotify)
   : pCurl (0),
+    pCurlm (0),
+    pIProgressNotify (pIProgressNotify),
+    runningHandles (-1),
+    trace_mpm (TraceStream::Open(MIKTEX_TRACE_MPM)),
     trace_curl (TraceStream::Open(MIKTEX_TRACE_CURL))
 {
 }
@@ -60,6 +63,16 @@ CurlWebSession::Initialize ()
      T_("initializing cURL library version %s"),
      LIBCURL_VERSION);
 
+  pCurlm = curl_multi_init();
+
+  if (pCurlm == 0)
+    {
+      FATAL_MPM_ERROR
+	("CurlWebSession::Initialize",
+	 T_("The cURL multi interface could not be initialized."),
+	 0);
+    }
+
   pCurl = curl_easy_init();
 
   if (pCurl == 0)
@@ -75,9 +88,12 @@ CurlWebSession::Initialize ()
   string ftpMode =
     SessionWrapper(true)->GetConfigValue(0,
 					 MIKTEX_REGVAL_FTP_MODE,
-					 "pasv");
+					 "default");
 
-  if (ftpMode == "port")
+  if (ftpMode == "default")
+    {
+    }
+  else if (ftpMode == "port")
     {
       SetOption (CURLOPT_FTPPORT, "-");
     }
@@ -96,6 +112,10 @@ CurlWebSession::Initialize ()
 		       MIKTEX_REGVAL_FTP_MODE);
     }
 
+  SetOption (CURLOPT_PROGRESSDATA, reinterpret_cast<void*>(this));
+  curl_progress_callback progressCallback = ProgressCallback;
+  SetOption (CURLOPT_PROGRESSFUNCTION, progressCallback);
+
   if (trace_curl->IsEnabled())
     {
       SetOption (CURLOPT_VERBOSE, static_cast<long>(true));
@@ -109,9 +129,6 @@ CurlWebSession::Initialize ()
     }
 
   SetOption (CURLOPT_CONNECTTIMEOUT, DEFAULT_CONNECTION_TIMEOUT_SECONDS);
-#if 0
-  SetOption (CURLOPT_TIMEOUT, DEFAULT_TIMEOUT_SECONDS);
-#endif
 
 #if LIBCURL_VERSION_NUM >= 0x70a08
   SetOption (CURLOPT_FTP_RESPONSE_TIMEOUT,
@@ -176,17 +193,16 @@ CurlWebSession::~CurlWebSession ()
    _________________________________________________________________________ */
 
 WebFile *
-CurlWebSession::OpenUrl (/*[in]*/ const char *		lpszUrl,
-			 /*[in]*/ IProgressNotify_ *	pIProgressNotify)
+CurlWebSession::OpenUrl (/*[in]*/ const char * lpszUrl)
 {
   if (pCurl == 0)
     {
       Initialize ();
     }
-  trace_curl->WriteFormattedLine ("libmpm",
-				  T_("going to download %s"),
-				  Q_(lpszUrl));
-  return (new CurlWebFile (this, lpszUrl, pIProgressNotify));
+  trace_mpm->WriteFormattedLine ("libmpm",
+				 T_("going to download %s"),
+				 Q_(lpszUrl));
+  return (new CurlWebFile (this, lpszUrl));
 }
 
 /* _________________________________________________________________________
@@ -203,6 +219,226 @@ CurlWebSession::Dispose ()
       curl_easy_cleanup (pCurl);
       pCurl = 0;
     }
+  if (pCurlm != 0)
+  {
+    trace_curl->WriteLine ("libmpm", T_("releasing cURL multi handle"));
+    CURLMcode code = curl_multi_cleanup(pCurlm);
+    pCurlm = 0;
+    if (code != CURLM_OK)
+    {
+      FATAL_MPM_ERROR (
+	"CurlWebSession::Dispose",
+	GetCurlErrorString(code).c_str(),
+	0);
+    }
+  }
+}
+
+/* _________________________________________________________________________
+
+   CurlWebSession::SendReceive
+   _________________________________________________________________________ */
+
+void
+CurlWebSession::SendReceive ()
+{
+  CURLMcode code;
+  do
+  {
+    int oldRunningHandles = runningHandles;
+    code = curl_multi_perform(pCurlm, &runningHandles);
+    if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
+    {
+      FATAL_MPM_ERROR ("CurlWebSession::SendReceive",
+	GetCurlErrorString(code).c_str(),
+	0);
+    }
+    if ((oldRunningHandles < 0 && runningHandles == 0)
+      || (oldRunningHandles > 0 && runningHandles < oldRunningHandles))
+    {
+      ReadInformationals ();
+    }
+    if (pIProgressNotify != 0)
+    {
+      pIProgressNotify->OnProgress ();
+    }
+  }
+  while (code == CURLM_CALL_MULTI_PERFORM);
+}
+
+/* _________________________________________________________________________
+
+   CurlWebSession::Perform
+   _________________________________________________________________________ */
+
+void
+CurlWebSession::Perform ()
+{
+  SendReceive ();
+
+  if (runningHandles == 0)
+  {
+    return;
+  }
+
+  fd_set fdread;
+  fd_set fdwrite;
+  fd_set fdexcep;
+
+  FD_ZERO (&fdread);
+  FD_ZERO (&fdwrite);
+  FD_ZERO (&fdexcep);
+
+  int maxfd;
+
+  CURLMcode code
+    = curl_multi_fdset(pCurlm, &fdread, &fdwrite, &fdexcep, &maxfd);
+
+  if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
+  {
+    FATAL_MPM_ERROR ("CurlWebSession::Perform",
+      GetCurlErrorString(code).c_str(),
+      0);
+  }
+
+  long timeout;
+
+#if LIBCURL_VERSION_NUM >= 0x70f04
+  code = curl_multi_timeout(pCurlm, &timeout);
+
+  if (code != CURLM_OK)
+  {
+    FATAL_MPM_ERROR ("CurlWebSession::Perform",
+      GetCurlErrorString(code).c_str(),
+      0);
+  }
+#else
+  timeout = -1;
+#endif
+
+  if (timeout < 0)
+  {
+    timeout = 100;
+  }
+
+  if (maxfd < 0)
+  {
+    Thread::Sleep (timeout);
+  }
+  else
+  {
+    struct timeval tv;
+    tv.tv_sec = timeout / 1000;
+    tv.tv_usec = (timeout % 1000) * 1000;
+
+    int n = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &tv);
+
+    if (n < 0)
+    {
+      FATAL_MPM_ERROR ("CurlWebSession::Perform",
+	T_("select() failed for some reason."),
+	NUMTOSTR(n));
+    }
+
+    if (n > 0)
+    {
+      SendReceive ();
+    }
+  }
+}
+
+/* _________________________________________________________________________
+
+   CurlWebSession::ReadInformationals
+   _________________________________________________________________________ */
+
+void
+CurlWebSession::ReadInformationals ()
+{
+  CURLMsg * pCurlMsg;
+  int remaining;
+  while ((pCurlMsg = curl_multi_info_read(pCurlm, &remaining)) != 0)
+    {
+      if (pCurlMsg->msg != CURLMSG_DONE)
+	{
+	  FATAL_MPM_ERROR ("CurlWebFile::ReadInformationals",
+			   T_("Unexpected cURL message."),
+			   NUMTOSTR(pCurlMsg->msg));
+	}
+      if (pCurlMsg->data.result != CURLE_OK)
+	{
+	  FATAL_MPM_ERROR
+	    ("CurlWebFile::ReadInformationals",
+	     GetCurlErrorString(pCurlMsg->data.result).c_str(),
+	     0);
+	}
+      long responseCode;
+      CURLcode r;
+#if LIBCURL_VERSION_NUM >= 0x70a08
+      r = curl_easy_getinfo(pCurlMsg->easy_handle,
+			    CURLINFO_RESPONSE_CODE,
+			    &responseCode);
+#else
+      r = curl_easy_getinfo(pCurlMsg->easy_handle,
+			    CURLINFO_HTTP_CODE,
+			    &responseCode);
+#endif
+      if (r != CURLE_OK)
+	{
+	  FATAL_MPM_ERROR
+	    ("CurlWebFile::ReadInformationals",
+	     GetCurlErrorString(r).c_str(),
+	     0);
+	}
+      trace_mpm->WriteFormattedLine ("libmpm",
+				     T_("response code: %ld"),
+				     responseCode);
+      if (responseCode >= 400)
+	{
+	  string msg = T_("Error response from server: ");
+	  msg += NUMTOSTR(responseCode);
+	  FATAL_MPM_ERROR
+	    ("CurlWebFile::ReadInformationals",
+	     msg.c_str(),
+	     0);
+	}
+    }
+}
+
+/* _________________________________________________________________________
+
+   CurlWebSession::ProgressCallback
+   _________________________________________________________________________ */
+
+int
+CurlWebSession::ProgressCallback (/*[in]*/ void *		pv,
+				  /*[in]*/ double		dltotal,
+				  /*[in]*/ double		dlnow,
+				  /*[in]*/ double		ultotal,
+				  /*[in]*/ double		ulnow)
+{
+  UNUSED_ALWAYS (dltotal);
+  UNUSED_ALWAYS (dlnow);
+  UNUSED_ALWAYS (ultotal);
+  UNUSED_ALWAYS (ulnow);
+#if 1
+  UNUSED_ALWAYS (pv);
+  return (0);
+#else
+  try
+    {
+      CurlWebFile * This = reinterpret_cast<CurlWebSession*>(pv);
+      if (This->pIProgressNotify != 0)
+	{
+	  This->pIProgressNotify->OnProgress ();
+	}
+      return (0);
+    }
+  catch (const exception &)
+    {
+      return (-1);
+    }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -225,7 +461,7 @@ CurlWebSession::DebugCallback (/*[in]*/ CURL *		pCurl,
 	{
 	  MIKTEX_ASSERT (pData != 0);
 	  string text (pData, sizeData);
-	  This->trace_curl->Write ("curl", text.c_str());
+	  This->trace_curl->Write ("libmpm", text.c_str());
 	}
     }
   catch (const exception &)
