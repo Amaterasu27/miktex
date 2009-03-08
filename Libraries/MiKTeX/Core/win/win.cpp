@@ -1155,7 +1155,7 @@ Utils::GetOSVersionString ()
        NeedBlank (str);
        if (osvi.dwMajorVersion == 6
 	   && (osvi.dwMinorVersion == 0
-	       || osvi.dwMinorVersion == 1)
+	       || osvi.dwMinorVersion == 1))
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
