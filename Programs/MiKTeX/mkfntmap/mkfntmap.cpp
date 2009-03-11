@@ -1,6 +1,6 @@
 /* mkfntmap.cpp:
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -63,12 +63,21 @@ using namespace std;
 
 enum Option
 {
+  OPT_ADMIN,
   OPT_OUTPUT_DIRECTORY,
   OPT_VERBOSE,
   OPT_VERSION,
 };
 
 const struct poptOption aoption[] = {
+  {
+    "admin", 0,
+    POPT_ARG_NONE, 0,
+    OPT_ADMIN,
+    T_("Run in administrative mode."),
+    0,
+  },
+
   {
     "output-directory", 0,
     POPT_ARG_STRING, 0,
@@ -392,7 +401,7 @@ MakeFontMapApp::ShowVersion ()
 							MIKTEX_COMP_J2000_VERSION,
 							0))
        << T_("\n\
-Copyright (C) 2002-2008 Christian Schenk\n\
+Copyright (C) 2002-2009 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
        << endl;
@@ -415,6 +424,9 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int		argc,
     {
       switch (option)
 	{
+	case OPT_ADMIN:
+	  pSession->SetAdminMode (true);
+	  break;
 	case OPT_OUTPUT_DIRECTORY:
 	  outputDirectory = popt.GetOptArg();
 	  break;

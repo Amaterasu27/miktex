@@ -551,6 +551,9 @@ private:
   bool removeFndb;
 
 private:
+  bool adminMode;
+
+private:
   StartupConfig startupConfig;
   
 private:
@@ -1423,6 +1426,7 @@ IniTeXMFApp::IniTeXMFApp ()
     xml (false),
     recursive (false),
     removeFndb (false),
+    adminMode (false),
     verbose (false)
 {
 }
@@ -1832,6 +1836,11 @@ IniTeXMFApp::RunMakeTeX (/*[in]*/ const char *			lpszMakeProg,
       xArguments.AppendOption ("--quiet");
     }
 
+  if (adminMode)
+  {
+    xArguments.AppendOption ("--admin");
+  }
+
   Process::Run (exe, xArguments.Get());
 }
 
@@ -2154,6 +2163,10 @@ IniTeXMFApp::MakeMaps ()
     {
       arguments.AppendOption ("--verbose");
     }
+  if (adminMode)
+  {
+    arguments.AppendOption ("--admin");
+  }
   if (printOnly)
     {
       PrintOnly ("mkfntmap %s", arguments.Get());
@@ -2747,7 +2760,6 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optConfigure = false;
 #endif
 
-  bool optAdmin = false;
   bool optDump = false;
   bool optDumpByName = false;
   bool optForce = false;
@@ -2926,7 +2938,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
 	case OPT_ADMIN:
 
-	  optAdmin = true;
+	  adminMode = true;
 	  break;
 
 	case OPT_UPDATE_FNDB:
@@ -2994,7 +3006,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	}
     }
 
-  if (optAdmin)
+  if (adminMode)
   {
     if (! pSession->RunningAsAdministrator())
     {

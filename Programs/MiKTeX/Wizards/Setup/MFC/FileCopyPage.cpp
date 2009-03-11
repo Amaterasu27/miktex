@@ -1118,6 +1118,10 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
+  if (theApp.commonUserSetup)
+  {
+    cmdLine.AppendOption ("--admin");
+  }
   cmdLine.AppendOption ("--log-file=", GetLogFileName());
   cmdLine.AppendOption ("--verbose");
 
@@ -1168,6 +1172,10 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
+  if (theApp.commonUserSetup)
+  {
+    cmdLine.AppendOption ("--admin");
+  }
   cmdLine.AppendOption ("--verbose");
 
   // run mpm.exe
