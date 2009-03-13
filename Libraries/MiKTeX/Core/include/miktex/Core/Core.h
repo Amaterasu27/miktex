@@ -5422,6 +5422,20 @@ public:
     {
       return (flags);
     }
+    /// Adds init flags.
+  public:
+    void
+    AddFlags (/*[in]*/ unsigned long	flags)
+    {
+      this->flags |= flags;
+    }
+    /// Removes init flags.
+  public:
+    void
+    RemoveFlags (/*[in]*/ unsigned long	flags)
+    {
+      this->flags &= ~ flags;
+    }
     /// Sets the name of the invoked program.
   public:
     void

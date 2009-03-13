@@ -30,6 +30,8 @@
 #include <miktex/Core/Core>
 #include <miktex/App/Application>
 
+#include <vector>
+
 #if ! defined(MAINFUNC)
 #  define MAINFUNC Main
 #endif
@@ -61,7 +63,14 @@ main (/*[in]*/ int	argc,
       MiKTeX::Core::PushAppName (APPNAME);
 #endif
 
-      app.Init (argv[0]);
+      std::vector<const char *> args;
+      args.reserve (argv);
+      for (int idx = 0; idx < argc; ++ idx)
+      {
+	args.push_back (argv[idx]);
+      }
+
+      app.Init (args);
       
 #if defined(DISABLE_INSTALLER)
       app.EnableInstaller (MiKTeX::Core::TriState::False);
@@ -71,7 +80,7 @@ main (/*[in]*/ int	argc,
       app.SetQuietFlag (true);
 #endif
 
-      int exitCode = MAINFUNC(argc, argv);
+      int exitCode = MAINFUNC(args.size(), &args[0]);
       
       app.Finalize ();
 

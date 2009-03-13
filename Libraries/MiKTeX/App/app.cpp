@@ -212,6 +212,31 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 void
+Application::Init (/*[in]*/ vector<const char *> args)
+{
+  Session::InitInfo initInfo (args[0]);
+  vector<const char *>::iterator it = args.begin();
+  while (it != args.end())
+  {
+    if (strcmp(*it, "--miktex-admin") == 0)
+    {
+      initInfo.AddFlags (Session::InitFlags::AdminMode);
+      it = args.erase(it);
+    }
+    else
+    {
+      ++ it;
+    }
+  }
+  Init (initInfo);
+}
+
+/* _________________________________________________________________________
+     
+   Application::Init
+   _________________________________________________________________________ */
+
+void
 Application::Init (/*[in]*/ const char *	lpszProgramInvocationName,
 		   /*[in]*/ const char *	lpszTheNameOfTheGame)
 {

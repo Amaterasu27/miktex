@@ -38,6 +38,8 @@
 #  include <set>
 #endif
 
+#include <vector>
+
 // DLL import/export switch
 #if ! defined(BDF6E2537F116547846406B5B2B65949)
 #  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
@@ -105,6 +107,17 @@ public:
   virtual
   MIKTEXAPPTHISAPI(void)
   Init (/*[in]*/ const MiKTeX::Core::Session::InitInfo & initInfo);
+
+  /* _______________________________________________________________________
+     
+     Init
+     _______________________________________________________________________ */
+
+public:
+
+  virtual
+  MIKTEXAPPTHISAPI(void)
+  Init (std::vector<const char *> args);
 
   /* _______________________________________________________________________
      

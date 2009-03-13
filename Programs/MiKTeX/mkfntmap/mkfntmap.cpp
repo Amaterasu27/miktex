@@ -135,6 +135,7 @@ public:
       dvipsPreferOutline (true),
       pdftexDownloadBase14 (true),
       verbose (false),
+      adminMode (false),
       namingConvention (URWkb)
   {
   }
@@ -368,6 +369,9 @@ private:
   string outputDirectory;
 
 private:
+  bool adminMode;
+
+private:
   SessionWrapper pSession;
 
 private:
@@ -425,7 +429,7 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int		argc,
       switch (option)
 	{
 	case OPT_ADMIN:
-	  pSession->SetAdminMode (true);
+	  adminMode = true;
 	  break;
 	case OPT_OUTPUT_DIRECTORY:
 	  outputDirectory = popt.GetOptArg();
@@ -1467,6 +1471,10 @@ MakeFontMapApp::BuildFontconfigCache ()
       Abort (T_("The fc-cache executable could not be found."));
     }
   CommandLineBuilder arguments;
+  if (adminMode)
+  {
+    arguments.AppendOption ("--miktex-admin");
+  }
   arguments.AppendOption ("--force");
   if (verbose)
     {
@@ -1593,8 +1601,13 @@ void
 MakeFontMapApp::Run (/*[in]*/ int		argc,
 		     /*[in]*/ const char **	argv)
 {
-  pSession.CreateSession (Session::InitInfo(argv[0]));
   ProcessOptions (argc, argv);
+  Session::InitInfo initInfo (argv[0]);
+  if (adminMode)
+  {
+    initInfo.AddFlags (Session::InitFlags::AdminMode);
+  }
+  pSession.CreateSession (initInfo);
   Initialize ();
   MakeMaps ();
   pSession.Reset ();
