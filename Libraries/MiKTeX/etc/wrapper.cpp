@@ -55,7 +55,7 @@ MiKTeX::App::Application app;
 int
 MIKTEXCEECALL
 main (/*[in]*/ int	argc,
-      /*[in]*/ char **	argv)
+      /*[in]*/ char *	argv[])
 {
   try
     {
@@ -63,8 +63,8 @@ main (/*[in]*/ int	argc,
       MiKTeX::Core::PushAppName (APPNAME);
 #endif
 
-      std::vector<const char *> args;
-      args.reserve (argv);
+      std::vector<char *> args;
+      args.reserve (argc);
       for (int idx = 0; idx < argc; ++ idx)
       {
 	args.push_back (argv[idx]);

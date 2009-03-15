@@ -151,7 +151,7 @@ static
 void
 Setup ()
 {
-  system ("initexmf --update-fndb");
+  system ("initexmf --quiet --update-fndb");
 }
 
 /* _________________________________________________________________________
@@ -212,10 +212,10 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 void
-Application::Init (/*[in]*/ vector<const char *> args)
+Application::Init (/*[in]*/ vector</*[const]*/ char *> args)
 {
   Session::InitInfo initInfo (args[0]);
-  vector<const char *>::iterator it = args.begin();
+  vector</*[const]*/ char *>::iterator it = args.begin();
   while (it != args.end())
   {
     if (strcmp(*it, "--miktex-admin") == 0)
