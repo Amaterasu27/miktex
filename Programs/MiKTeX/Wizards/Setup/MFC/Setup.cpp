@@ -2166,6 +2166,12 @@ void
 CreateShellLink (/*[in]*/ const PathName &		pathFolder,
 		 /*[in]*/ const ShellLinkData &		ld)
 {
+  if ((ld.flags & LD_IFCOMMON) != 0 && ! theApp.commonUserSetup)
+  {
+    // ignore system-wide command if this is a per-user setup
+    return;
+  }
+
   PathName pathLink;
 
   if (ld.subFolderID > 0)

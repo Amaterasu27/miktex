@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -78,11 +78,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/Update.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(update WIN32 ${update_mfc_sources})
-
-merge_trustinfo_manifest(update highestAvailable)
-
-target_link_libraries(update
+set(libs
   ${bzip2_lib_name}
   ${core_lib_name}
   ${curl_lib_name}
@@ -99,7 +95,7 @@ target_link_libraries(update
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(update
+  set(libs ${libs}
     Wldap32
     fdi
     version
@@ -109,11 +105,17 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-get_target_property(update_mfc_exe update LOCATION)
+add_executable(update_mfc WIN32 ${update_mfc_sources})
+
+merge_trustinfo_manifest(update_mfc asInvoker)
+
+target_link_libraries(update_mfc ${libs})
+
+get_target_property(update_mfc_exe update_mfc LOCATION)
 
 if(NATIVE_WINDOWS)
   add_custom_command(
-    TARGET update
+    TARGET update_mfc
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Update.manifest
@@ -122,10 +124,33 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-get_target_property(update_exe update LOCATION)
-
 install(
-  FILES ${update_exe}
+  FILES ${update_mfc_exe}
   DESTINATION ${configdir}
   RENAME update.dat
+)
+
+add_executable(update_admin_mfc WIN32 ${update_mfc_sources})
+
+merge_trustinfo_manifest(update_admin_mfc requireAdministrator)
+
+target_link_libraries(update_admin_mfc ${libs})
+
+get_target_property(update_admin_mfc_exe update_admin_mfc LOCATION)
+
+if(NATIVE_WINDOWS)
+  add_custom_command(
+    TARGET update_admin_mfc
+    POST_BUILD
+    COMMAND ${MT_EXE} -nologo
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Update.manifest
+	-updateresource:${update_admin_mfc_exe}\;1
+    VERBATIM
+  )
+endif(NATIVE_WINDOWS)
+
+install(
+  FILES ${update_admin_mfc_exe}
+  DESTINATION ${configdir}
+  RENAME update_admin.dat
 )

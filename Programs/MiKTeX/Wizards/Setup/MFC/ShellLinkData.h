@@ -1,6 +1,6 @@
 /* ShellLinkData.h: shell link data				-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -24,12 +24,6 @@
 struct ShellLinkData  
 {
   bool isUrl;
-#define LD_USEDESC     0x00000001
-#define LD_USEARGS     0x00000002
-#define LD_USEICON     0x00000004
-#define LD_USEWORKDIR  0x00000008
-#define LD_USEHOTKEY   0x00000010
-#define LD_USESHOWCMD  0x00000020
   UINT subFolderID;
   UINT nameID;
   const char * lpszPathName;
@@ -42,6 +36,14 @@ struct ShellLinkData
   int showCmd;
   WORD hotKey;
 };
+
+#define LD_USEDESC     0x00000001
+#define LD_USEARGS     0x00000002
+#define LD_USEICON     0x00000004
+#define LD_USEWORKDIR  0x00000008
+#define LD_USEHOTKEY   0x00000010
+#define LD_USESHOWCMD  0x00000020
+#define LD_IFCOMMON    0x00000040
 
 extern const ShellLinkData shellLinks[];
 extern size_t nShellLinks;

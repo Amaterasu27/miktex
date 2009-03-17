@@ -69,6 +69,7 @@ main (/*[in]*/ int	argc,
       {
 	args.push_back (argv[idx]);
       }
+      args.push_back (0);
 
       app.Init (args);
       

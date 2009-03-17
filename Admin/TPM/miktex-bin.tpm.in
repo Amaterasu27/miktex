@@ -15,6 +15,7 @@ texmf/miktex/bin/findexe.exe
 texmf/miktex/bin/mpm.exe
 texmf/miktex/config/uninstall.dat
 texmf/miktex/config/update.dat
+texmf/miktex/config/update_admin.dat
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

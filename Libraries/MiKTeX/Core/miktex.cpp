@@ -951,8 +951,26 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 {
   string val;
 
+  bool forceAdminMode =
+    (initInfo.GetProgramInvocationName().find("_admin") != string::npos);
+
+#if defined(MIKTEX_WINDOWS)
+  if (! forceAdminMode)
+  {
+    forceAdminMode = (strstr(GetMyProgramFile(false).Get(), "_admin") != 0);
+  }
+#endif
+
   bool oldAdminMode = adminMode;
-  adminMode = ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
+
+  if (forceAdminMode)
+  {
+    adminMode = true;
+  }
+  else
+  {
+    adminMode = ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
+  }
 
 #if defined(_MSC_VER)
   if (Utils::GetEnvironmentString("MIKTEX_DEBUG_ON_STD_EXCEPTION", val))
@@ -1031,8 +1049,11 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
       TraceStream::SetTraceFlags (traceOptions.c_str());
     }
 
-  adminMode = oldAdminMode;
-  SetAdminMode ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
+  if (! forceAdminMode)
+  {
+    adminMode = oldAdminMode;
+    SetAdminMode ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
+  }
 
   InitializeRootDirectories ();
 

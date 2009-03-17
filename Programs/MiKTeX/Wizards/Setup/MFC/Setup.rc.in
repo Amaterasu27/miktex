@@ -574,6 +574,8 @@ BEGIN
     IDS_BROWSE_LOCAL        "Local package repository:"
     IDS_HEADER_LICENSE      "Copying Conditions"
     IDS_SUBHEADER_LICENSE   "MiKTeX is freely redistributable under certain conditions."
+    IDS_MAINTENANCE         "Maintenance (current user)"
+    IDS_MAINTENANCE_ADMIN   "Maintenance (system-wide)"
 END
 
 STRINGTABLE 

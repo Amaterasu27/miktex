@@ -57,7 +57,9 @@
 #define IDS_HEADER_LICENSE              149
 #define IDS_SUBHEADER_LICENSE           150
 #define IDD_WELCOME                     151
+#define IDS_MAINTENANCE                 151
 #define IDD_INSTALLDIR                  152
+#define IDS_MAINTENANCE_ADMIN           152
 #define IDD_ADD_TEXMFROOTS              153
 #define IDD_INFOLIST                    154
 #define IDD_FINISH                      155

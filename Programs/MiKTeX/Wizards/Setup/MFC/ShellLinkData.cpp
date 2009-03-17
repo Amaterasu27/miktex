@@ -1,6 +1,6 @@
 /* ShellLinkData.cpp: shell link data
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -51,10 +51,10 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Settings"
+  // "Maintenance (current user)->Settings"
   {
     false,
-    0,
+    IDS_MAINTENANCE,
     IDS_OPTIONS,
     EXEPATH(MIKTEX_MO_EXE),
     LD_USESHOWCMD,
@@ -67,12 +67,12 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Update"
+  // "Maintenance (current user)->Update"
   {
     false,
-    0,
+    IDS_MAINTENANCE,
     IDS_UPDATEWIZ,
-    EXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
+    EXEPATH(MIKTEX_COPYSTART_EXE),
     LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
     "\"" CONFIGPATH(MIKTEX_UPDATE_DAT) "\"",
@@ -83,10 +83,10 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Browse Packages"
+  // "Maintenance (current user)->Browse Packages"
   {
     false,
-    0,
+    IDS_MAINTENANCE,
     IDS_MPM,
     EXEPATH(MIKTEX_MPM_MFC_EXE),
     LD_USESHOWCMD,
@@ -99,6 +99,53 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
+  // "Maintenance (system-wide)->Settings"
+  {
+    false,
+    IDS_MAINTENANCE,
+    IDS_OPTIONS,
+    EXEPATH(MIKTEX_MO_ADMIN_EXE),
+    LD_IFCOMMON | LD_USESHOWCMD,
+    0,
+    0,
+    0,
+    0,
+    0,
+    SW_SHOWNORMAL,
+    0,
+  },
+
+  // "Maintenance (system-wide)->Update"
+  {
+    false,
+    IDS_MAINTENANCE,
+    IDS_UPDATEWIZ,
+    EXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
+    LD_IFCOMMON | LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
+    0,
+    "\"" CONFIGPATH(MIKTEX_UPDATE_ADMIN_DAT) "\"",
+    CONFIGPATH(MIKTEX_UPDATE_ADMIN_DAT),
+    0,
+    0,
+    SW_SHOWNORMAL,
+    0,
+  },
+
+  // "Maintenance (system-wide)->Browse Packages"
+  {
+    false,
+    IDS_MAINTENANCE,
+    IDS_MPM,
+    EXEPATH(MIKTEX_MPM_ADMIN_MFC_EXE),
+    LD_IFCOMMON | LD_USESHOWCMD,
+    0,
+    0,
+    0,
+    0,
+    0,
+    SW_SHOWNORMAL,
+    0,
+  },
 
   // "Help->Manual"
   {
