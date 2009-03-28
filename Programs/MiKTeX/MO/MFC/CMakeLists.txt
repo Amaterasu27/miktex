@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -69,14 +69,16 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/mo.rc)
 endif(NATIVE_WINDOWS)
 
+set(libs
+  ${core_dll_name}
+  ${ui_mfc_dll_name}
+)
+
 add_executable(mo WIN32 ${mo_mfc_sources})
 
 merge_trustinfo_manifest(mo asInvoker)
 
-target_link_libraries(mo
-  ${core_dll_name}
-  ${ui_mfc_dll_name}
-)
+target_link_libraries(mo ${libs})
 
 get_target_property(mo_mfc_exe mo LOCATION)
 
@@ -92,3 +94,24 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 install(TARGETS mo DESTINATION ${bindir})
+
+add_executable(mo${miktex_admin_suffix} WIN32 ${mo_mfc_sources})
+
+merge_trustinfo_manifest(mo${miktex_admin_suffix} requireAdministrator)
+
+target_link_libraries(mo${miktex_admin_suffix} ${libs})
+
+get_target_property(mo_mfc_admin_exe mo${miktex_admin_suffix} LOCATION)
+
+if(NATIVE_WINDOWS)
+  add_custom_command(
+    TARGET mo${miktex_admin_suffix}
+    POST_BUILD
+    COMMAND ${MT_EXE} -nologo
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
+	-updateresource:${mo_mfc_admin_exe}\;1
+    VERBATIM
+  )
+endif(NATIVE_WINDOWS)
+
+install(TARGETS mo${miktex_admin_suffix} DESTINATION ${bindir})

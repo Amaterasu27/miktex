@@ -224,11 +224,11 @@ SessionImpl::ReadRegistry (/*[in]*/ bool common)
   {
     if (winRegistry::TryGetRegistryValue(TriState::False,
       MIKTEX_REGKEY_CORE,
-      MIKTEX_REGVAL_COMMON_ROOTS,
+      MIKTEX_REGVAL_USER_ROOTS,
       str,
       0))
     {
-      ret.commonRoots = str;
+      ret.userRoots = str;
     }
     if (winRegistry::TryGetRegistryValue(TriState::False,
       MIKTEX_REGKEY_CORE,

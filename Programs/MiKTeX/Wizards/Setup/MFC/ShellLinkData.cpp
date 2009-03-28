@@ -25,13 +25,13 @@
 #include "ShellLinkData.h"
 
 #define EXEPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_BIN_DIR "\\" name
+ "%MIKTEX_INSTALL%\\" MIKTEX_PATH_BIN_DIR "\\" name
 
-#define CONFIGPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_CONFIG_DIR "\\" name
+#define INTEXEPATH(name) \
+ "%MIKTEX_INSTALL%\\" MIKTEX_PATH_INTERNAL_BIN_DIR "\\" name
 
 #define DOCPATH(name) \
- T_("%MIKTEX_INSTALL%\\") MIKTEX_PATH_MIKTEX_DOC_DIR "\\" name
+ "%MIKTEX_INSTALL%\\" MIKTEX_PATH_MIKTEX_DOC_DIR "\\" name
 
 const ShellLinkData shellLinks[] = {
 
@@ -72,18 +72,18 @@ const ShellLinkData shellLinks[] = {
     false,
     IDS_MAINTENANCE,
     IDS_UPDATEWIZ,
-    EXEPATH(MIKTEX_COPYSTART_EXE),
+    INTEXEPATH(MIKTEX_COPYSTART_EXE),
     LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
-    "\"" CONFIGPATH(MIKTEX_UPDATE_DAT) "\"",
-    CONFIGPATH(MIKTEX_UPDATE_DAT),
+    "\"" INTEXEPATH(MIKTEX_UPDATE_EXE) "\"",
+    INTEXEPATH(MIKTEX_UPDATE_EXE),
     0,
     0,
     SW_SHOWNORMAL,
     0,
   },
 
-  // "Maintenance (current user)->Browse Packages"
+  // "Maintenance (current user)->Package Manager"
   {
     false,
     IDS_MAINTENANCE,
@@ -102,7 +102,7 @@ const ShellLinkData shellLinks[] = {
   // "Maintenance (system-wide)->Settings"
   {
     false,
-    IDS_MAINTENANCE,
+    IDS_MAINTENANCE_ADMIN,
     IDS_OPTIONS,
     EXEPATH(MIKTEX_MO_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD,
@@ -118,25 +118,25 @@ const ShellLinkData shellLinks[] = {
   // "Maintenance (system-wide)->Update"
   {
     false,
-    IDS_MAINTENANCE,
+    IDS_MAINTENANCE_ADMIN,
     IDS_UPDATEWIZ,
-    EXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
+    INTEXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
-    "\"" CONFIGPATH(MIKTEX_UPDATE_ADMIN_DAT) "\"",
-    CONFIGPATH(MIKTEX_UPDATE_ADMIN_DAT),
+    "\"" INTEXEPATH(MIKTEX_UPDATE_ADMIN_EXE) "\"",
+    INTEXEPATH(MIKTEX_UPDATE_ADMIN_EXE),
     0,
     0,
     SW_SHOWNORMAL,
     0,
   },
 
-  // "Maintenance (system-wide)->Browse Packages"
+  // "Maintenance (system-wide)->Package Manager"
   {
     false,
-    IDS_MAINTENANCE,
+    IDS_MAINTENANCE_ADMIN,
     IDS_MPM,
-    EXEPATH(MIKTEX_MPM_ADMIN_MFC_EXE),
+    EXEPATH(MIKTEX_MPM_MFC_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD,
     0,
     0,

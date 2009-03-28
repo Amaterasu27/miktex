@@ -951,13 +951,20 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
 {
   string val;
 
+  PathName programInvocationName = initInfo.GetProgramInvocationName();
+  programInvocationName = programInvocationName.GetFileNameWithoutExtension();
+  const char * lpsz = strstr(programInvocationName.Get(), MIKTEX_ADMIN_SUFFIX);
   bool forceAdminMode =
-    (initInfo.GetProgramInvocationName().find("_admin") != string::npos);
+    (lpsz != 0 && strlen(lpsz) == strlen(MIKTEX_ADMIN_SUFFIX));
 
 #if defined(MIKTEX_WINDOWS)
   if (! forceAdminMode)
   {
-    forceAdminMode = (strstr(GetMyProgramFile(false).Get(), "_admin") != 0);
+    programInvocationName =
+      GetMyProgramFile(false).Normalize().GetFileNameWithoutExtension().Get();
+    lpsz = strstr(programInvocationName.Get(), MIKTEX_ADMIN_SUFFIX);
+    forceAdminMode =
+      (lpsz != 0 && strlen(lpsz) == strlen(MIKTEX_ADMIN_SUFFIX));      
   }
 #endif
 

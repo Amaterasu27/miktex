@@ -126,31 +126,31 @@ endif(NATIVE_WINDOWS)
 
 install(
   FILES ${update_mfc_exe}
-  DESTINATION ${configdir}
-  RENAME update.dat
+  DESTINATION ${miktex_internal_bindir}
+  RENAME update.exe
 )
 
-add_executable(update_admin_mfc WIN32 ${update_mfc_sources})
+add_executable(update_mfc_admin WIN32 ${update_mfc_sources})
 
-merge_trustinfo_manifest(update_admin_mfc requireAdministrator)
+merge_trustinfo_manifest(update_mfc_admin requireAdministrator)
 
-target_link_libraries(update_admin_mfc ${libs})
+target_link_libraries(update_mfc_admin ${libs})
 
-get_target_property(update_admin_mfc_exe update_admin_mfc LOCATION)
+get_target_property(update_mfc_admin_exe update_mfc_admin LOCATION)
 
 if(NATIVE_WINDOWS)
   add_custom_command(
-    TARGET update_admin_mfc
+    TARGET update_mfc_admin
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Update.manifest
-	-updateresource:${update_admin_mfc_exe}\;1
+	-updateresource:${update_mfc_admin_exe}\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
 
 install(
-  FILES ${update_admin_mfc_exe}
-  DESTINATION ${configdir}
-  RENAME update_admin.dat
+  FILES ${update_mfc_admin_exe}
+  DESTINATION ${miktex_internal_bindir}
+  RENAME update${miktex_admin_suffix}.exe
 )

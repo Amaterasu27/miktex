@@ -5625,6 +5625,13 @@ public:
   virtual
   unsigned
   MIKTEXTHISCALL
+  TryDeriveTEXMFRoot (/*[in]*/ const PathName & path)
+    = 0;
+
+public:
+  virtual
+  unsigned
+  MIKTEXTHISCALL
   DeriveTEXMFRoot (/*[in]*/ const PathName & path)
     = 0;
 

@@ -10,12 +10,14 @@
       This package contains essential MiKTeX executables.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/copystart_admin.exe
+${miktex_internal_bindir}/copystart${miktex_admin_suffix}.exe
+${miktex_internal_bindir}/copystart.exe
+${miktex_internal_bindir}/uninstall${miktex_admin_suffix}.exe
+${miktex_internal_bindir}/uninstall.exe
+${miktex_internal_bindir}/update${miktex_admin_suffix}.exe
+${miktex_internal_bindir}/update.exe
 texmf/miktex/bin/findexe.exe
 texmf/miktex/bin/mpm.exe
-texmf/miktex/config/uninstall.dat
-texmf/miktex/config/update.dat
-texmf/miktex/config/update_admin.dat
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

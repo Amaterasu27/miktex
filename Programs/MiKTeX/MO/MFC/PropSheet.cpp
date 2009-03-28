@@ -1,6 +1,6 @@
 /* PropSheet.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -34,6 +34,7 @@ IMPLEMENT_DYNAMIC(PropSheet, CPropertySheet);
 PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
   : mustBuildFormats (false),
     pProgressDialog (0),
+    pSession (true),
     pManager (pManager),
     generalPage (pManager),
     packagesPage (pManager)
@@ -44,7 +45,14 @@ PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
   AddPage (&formatsPage);
   AddPage (&languagesPage);
   AddPage (&packagesPage);
-  SetTitle (T_("MiKTeX Options"));
+  if (pSession->IsAdminMode())
+  {
+    SetTitle (T_("# MiKTeX Options"));
+  }
+  else
+  {
+    SetTitle (T_("MiKTeX Options"));
+  }
 }
 
 /* _________________________________________________________________________
@@ -116,12 +124,13 @@ PropSheet::OnProcessOutput
 
 bool
 PropSheet::RunIniTeXMF
-(/*[in]*/ const char *		lpszTitle,
- /*[in]*/ const CommandLineBuilder &	cmdLine,
- /*[in]*/ ProgressDialog *		pProgressDialog)
+  (/*[in]*/ const char *		lpszTitle,
+   /*[in]*/ const CommandLineBuilder &	cmdLine,
+   /*[in]*/ ProgressDialog *		pProgressDialog)
 {
   PathName exePath;
-  if (! SessionWrapper(true)->FindFile(T_("initexmf"), FileType::EXE, exePath))
+
+  if (! pSession->FindFile("initexmf", FileType::EXE, exePath))
     {
       FATAL_MIKTEX_ERROR ("PropSheet::RunIniTeXMF",
 			  T_("\
@@ -133,6 +142,11 @@ The MiKTeX configuration utility could not be found."),
 
   commandLine.AppendOption ("--verbose");
 
+  if (pSession->IsAdminMode())
+  {
+    commandLine.AppendOption ("--admin");
+  }
+
   this->pProgressDialog = pProgressDialog;
 
   if (pProgressDialog->HasUserCancelled())
@@ -142,7 +156,7 @@ The MiKTeX configuration utility could not be found."),
 
   pProgressDialog->SetLine (2, lpszTitle);
 
-  SessionWrapper(true)->UnloadFilenameDatabase ();
+  pSession->UnloadFilenameDatabase ();
 
   processOutput = "";
   int exitCode;
@@ -181,11 +195,11 @@ PropSheet::BuildFormats ()
 {
   auto_ptr<ProgressDialog> pProgDlg (ProgressDialog::Create());
   pProgDlg->StartProgressDialog (GetSafeHwnd());
-  pProgDlg->SetTitle (T_("MiKTeX Format File Maintenance"));
+  pProgDlg->SetTitle (T_("MiKTeX Maintenance"));
   pProgDlg->SetLine (1, T_("Creating format file for:"));
   FormatInfo formatInfo;
   for (unsigned idx = 0;
-       SessionWrapper(true)->GetFormatInfo(idx, formatInfo);
+       pSession->GetFormatInfo(idx, formatInfo);
        ++ idx)
     {  
       if (formatInfo.exclude)

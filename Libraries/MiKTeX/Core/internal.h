@@ -865,6 +865,13 @@ public:
   GetMpmDatabasePathName ();
 
 public:
+  virtual
+  unsigned
+  MIKTEXTHISCALL
+  TryDeriveTEXMFRoot (/*[in]*/ const PathName & path);
+
+public:
+  virtual
   unsigned
   MIKTEXTHISCALL
   DeriveTEXMFRoot (/*[in]*/ const PathName & path);
@@ -1373,10 +1380,6 @@ public:
 
   // -----------------------------------------------------------------------
   // *** public ***
-
-public:
-  unsigned
-  TryDeriveTEXMFRoot (/*[in]*/ const PathName & path);
 
 public:
   bool

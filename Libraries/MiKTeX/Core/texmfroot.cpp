@@ -234,184 +234,68 @@ SessionImpl::InitializeRootDirectories
   commonConfigRootIndex = INVALID_ROOT_INDEX;
   userConfigRootIndex = INVALID_ROOT_INDEX;
 
-  // first pass through roots
-  bool haveCommonInstallRoot = false;
-  bool haveCommonConfigRoot = false;
-  bool haveCommonDataRoot = false;
-  vector<PathName> vecCommon;
-  for (CSVList root (startupConfig.commonRoots.c_str(), PATH_DELIMITER);
-    root.GetCurrent() != 0;
-    ++ root)
-  {
-    if (*root.GetCurrent() == 0)
-    {
-      // empty
-      continue;
-    }
-    if (find(vecCommon.begin(), vecCommon.end(), root.GetCurrent()) != vecCommon.end())
-    {
-      // duplicate
-      continue;
-    }
-    if (startupConfig.commonConfigRoot == root.GetCurrent())
-    {
-      if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
-      {
-	continue;
-      }
-      else
-      {
-	haveCommonConfigRoot = true;
-      }
-    }
-    if (startupConfig.commonDataRoot == root.GetCurrent())
-    {
-      if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
-      {
-	continue;
-      }
-      else
-      {
-	haveCommonDataRoot = true;
-      }
-    }
-    if (startupConfig.commonInstallRoot == root.GetCurrent())
-    {
-      haveCommonInstallRoot = true;
-    }
-    vecCommon.push_back (root.GetCurrent());
-  }
-  bool haveUserInstallRoot = false;
-  bool haveUserConfigRoot = false;
-  bool haveUserDataRoot = false;
-  vector<PathName> vecUser;
-  for (CSVList root (startupConfig.userRoots.c_str(), PATH_DELIMITER);
-    root.GetCurrent() != 0;
-    ++ root)
-  {
-    if (*root.GetCurrent() == 0)
-    {
-      // empty
-      continue;
-    }
-    if (find(vecUser.begin(), vecUser.end(), root.GetCurrent()) != vecUser.end())
-    {
-      // duplicate
-      continue;
-    }
-    if (startupConfig.userConfigRoot == root.GetCurrent())
-    {
-      if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
-      {
-	continue;
-      }
-      else
-      {
-	haveUserConfigRoot = true;
-      }
-    }
-    if (startupConfig.userDataRoot == root.GetCurrent())
-    {
-      if ((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
-      {
-	continue;
-      }
-      else
-      {
-	haveUserDataRoot = true;
-      }
-    }
-    if (startupConfig.userInstallRoot == root.GetCurrent())
-    {
-      haveUserInstallRoot = true;
-    }
-    vecUser.push_back (root.GetCurrent());
-  }
-
-  // register special roots:
-  //   UserConfig
-  //   UserData
-  //   CommonConfig
-  //   CommonData
-  //   UserInstall
-  //   CommonInstall
-  if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
-    || ! haveUserConfigRoot)
-    && ! startupConfig.userConfigRoot.Empty())
+  // UserConfig
+  if (! startupConfig.userConfigRoot.Empty())
   {
     userConfigRootIndex =
       RegisterRootDirectory(startupConfig.userConfigRoot, false);
   }
-  if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
-    || ! haveUserDataRoot)
-    && ! startupConfig.userDataRoot.Empty())
+
+  // UserData
+  if (! startupConfig.userDataRoot.Empty())
   {
     userDataRootIndex =
       RegisterRootDirectory(startupConfig.userDataRoot, false);
   }
-  if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
-    || ! haveCommonConfigRoot)
-    && ! startupConfig.commonConfigRoot.Empty())
+
+  // UserRoots
+  for (CSVList root (startupConfig.userRoots.c_str(), PATH_DELIMITER);
+       root.GetCurrent() != 0;
+       ++ root)
   {
-    commonConfigRootIndex =
-      RegisterRootDirectory(startupConfig.commonConfigRoot, true);
+    if (*root.GetCurrent() != 0)
+    {
+      RegisterRootDirectory(root.GetCurrent(), false);
+    }
   }
-  if (((GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0
-    || ! haveCommonDataRoot)
-    && ! startupConfig.commonDataRoot.Empty())
-  {
-    commonDataRootIndex =
-      RegisterRootDirectory(startupConfig.commonDataRoot, true);
-  }
-  if (! haveUserInstallRoot
-    && ! startupConfig.userInstallRoot.Empty())
+
+  // UserInstall
+  if (! startupConfig.userInstallRoot.Empty())
   {
     userInstallRootIndex =
       RegisterRootDirectory(startupConfig.userInstallRoot, false);
   }
-  if (! haveCommonInstallRoot
-    && ! startupConfig.commonInstallRoot.Empty())
+
+  // CommonConfig
+  if (! startupConfig.commonConfigRoot.Empty())
+  {
+    commonConfigRootIndex =
+      RegisterRootDirectory(startupConfig.commonConfigRoot, true);
+  }
+
+  // CommonData
+  if (! startupConfig.commonDataRoot.Empty())
+  {
+    commonDataRootIndex =
+      RegisterRootDirectory(startupConfig.commonDataRoot, true);
+  }
+
+  // CommonRoots
+  for (CSVList root (startupConfig.commonRoots.c_str(), PATH_DELIMITER);
+       root.GetCurrent() != 0;
+       ++ root)
+  {
+    if (*root.GetCurrent() != 0)
+    {
+      RegisterRootDirectory(root.GetCurrent(), true);
+    }
+  }
+
+  // CommonInstall
+  if (! startupConfig.commonInstallRoot.Empty())
   {
     commonInstallRootIndex =
       RegisterRootDirectory(startupConfig.commonInstallRoot, true);
-  }
-
-  // second pass through roots: remember special root indexes
-  for (vector<PathName>::const_iterator it = vecUser.begin();
-    it != vecUser.end();
-    ++ it)
-  {
-    unsigned idx = RegisterRootDirectory(*it, false);
-    if (startupConfig.userInstallRoot == *it)
-    {
-      userInstallRootIndex = idx;
-    }
-    if (startupConfig.userConfigRoot == *it)
-    {
-      userConfigRootIndex = idx;
-    }
-    if (startupConfig.userDataRoot == *it)
-    {
-      userDataRootIndex = idx;
-    }
-  }
-  for (vector<PathName>::const_iterator it = vecCommon.begin();
-    it != vecCommon.end();
-    ++ it)
-  {
-    unsigned idx = RegisterRootDirectory(*it, true);
-    if (startupConfig.commonConfigRoot == *it)
-    {
-      commonConfigRootIndex = idx;
-    }
-    if (startupConfig.commonDataRoot == *it)
-    {
-      commonDataRootIndex = idx;
-    }
-    if (startupConfig.commonInstallRoot == *it)
-    {
-      commonInstallRootIndex = idx;
-    }
   }
 
   if (rootDirectories.size() == 0)
@@ -607,11 +491,11 @@ SessionImpl::SaveRootDirectories ()
       const RootDirectory rootDirectory = this->rootDirectories[idx];
       if (rootDirectory.IsCommon())
       {
-	if ((idx == commonDataRootIndex
-	  || idx == commonConfigRootIndex)
-	  && (GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
+	if (idx == commonDataRootIndex
+	    || idx == commonConfigRootIndex
+	    || idx == commonInstallRootIndex)
 	{
-	  // data/config roots are implicitly defined
+	  // implicitly defined
 	  continue;
 	}
 	if (! startupConfig.commonRoots.empty())
@@ -622,11 +506,11 @@ SessionImpl::SaveRootDirectories ()
       }
       else
       {
-	if ((idx == userDataRootIndex
-	  || idx == userConfigRootIndex)
-	  && (GetPolicyFlags() & PolicyFlags::DataRootHighestPriority) != 0)
+	if (idx == userDataRootIndex
+	    || idx == userConfigRootIndex
+	    || idx == userInstallRootIndex)
 	{
-	  // data/config roots are implicitly defined
+	  // implicitly defined
 	  continue;
 	}
 	if (! startupConfig.userRoots.empty())

@@ -1183,7 +1183,7 @@ MpmView::OnUpdateWizard ()
   try
     {
       PathName updateDat = pSession->GetSpecialPath(SpecialPath::InstallRoot);
-      updateDat += MIKTEX_PATH_UPDATE_DAT;
+      updateDat += MIKTEX_PATH_UPDATE_EXE;
       if (! File::Exists(updateDat))
 	{
 	  FATAL_MIKTEX_ERROR ("MpmView::OnUpdateWizard",

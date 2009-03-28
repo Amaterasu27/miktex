@@ -839,7 +839,7 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
 	pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
       pathPackageDefinitionFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
       pathPackageDefinitionFile += deploymentName;
-      pathPackageDefinitionFile.SetExtension
+      pathPackageDefinitionFile.AppendExtension
 	(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
       havePackageInfoFile = File::Exists(pathPackageDefinitionFile);
     }
@@ -849,7 +849,7 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
 	pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
       pathPackageDefinitionFile += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
       pathPackageDefinitionFile += deploymentName;
-      pathPackageDefinitionFile.SetExtension
+      pathPackageDefinitionFile.AppendExtension
 	(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
       havePackageInfoFile = File::Exists(pathPackageDefinitionFile);
     }

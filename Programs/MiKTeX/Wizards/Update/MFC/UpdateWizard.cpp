@@ -1,6 +1,6 @@
 /* UpdateWizard.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -57,11 +57,11 @@ UpdateWizard::UpdateWizard ()
     }
   if (! SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0))
     {
-      FATAL_WINDOWS_ERROR (T_("SystemParametersInfo"), 0);
+      FATAL_WINDOWS_ERROR ("SystemParametersInfo", 0);
     }
   LOGFONT TitleLogFont = ncm.lfMessageFont;
   TitleLogFont.lfWeight = FW_BOLD;
-  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, T_("Verdana Bold"));
+  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, "Verdana Bold");
   HDC hdc = ::GetDC(0);
   TitleLogFont.lfHeight = 0 - GetDeviceCaps(hdc, LOGPIXELSY) * 12 / 72;
   ::ReleaseDC (0, hdc);
@@ -111,10 +111,14 @@ UpdateWizard::OnInitDialog ()
 	{
 	  FATAL_WINDOWS_ERROR ("CString::LoadString", 0);
 	}
+      if (SessionWrapper(true)->IsAdminMode())
+      {
+	title = CString("# ") + title;
+      }
       SetTitle (title);
       if (! g_upgrading
-	  && SessionWrapper(true)->GetConfigValue(T_("Update"),
-						  T_("alwaysWelcome"),
+	  && SessionWrapper(true)->GetConfigValue("Update",
+						  "alwaysWelcome",
 						  false))
 	{
 	  SetActivePage (&welcomePage);

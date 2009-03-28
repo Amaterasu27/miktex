@@ -1768,12 +1768,16 @@ RegisterUninstaller ()
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
       PathName pathCopyStart (theApp.GetInstallRoot(),
-			      MIKTEX_PATH_COPYSTART_ADMIN_EXE);
+			      (theApp.commonUserSetup
+			       ? MIKTEX_PATH_COPYSTART_ADMIN_EXE
+			       : MIKTEX_PATH_COPYSTART_EXE));
       commandLine += Q_(pathCopyStart.Get());
       commandLine += " ";
     }
   PathName pathUninstallDat (theApp.GetInstallRoot(),
-			     MIKTEX_PATH_UNINSTALL_DAT);
+			     (theApp.commonUserSetup
+			      ? MIKTEX_PATH_UNINSTALL_ADMIN_EXE
+			      : MIKTEX_PATH_UNINSTALL_EXE));
   commandLine += Q_(pathUninstallDat.Get());
 
   // make icon path

@@ -217,8 +217,8 @@ PropPageGeneral::OnRefreshFndb ()
     {
       auto_ptr<ProgressDialog> pProgressDialog (ProgressDialog::Create());
       pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
-      pProgressDialog->SetTitle (T_("Refresh File Name Database"));
-      pProgressDialog->SetLine (1, T_("Scanning directories..."));
+      pProgressDialog->SetTitle (T_("MiKTeX Maintenance"));
+      pProgressDialog->SetLine (1, T_("Collecting file information..."));
       this->pProgressDialog = pProgressDialog.get();
       Fndb::Refresh (this);
       if (! pProgressDialog->HasUserCancelled())

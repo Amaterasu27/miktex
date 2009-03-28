@@ -35,6 +35,8 @@ else(NATIVE_WINDOWS)
   set(bindir "bin")
 endif(NATIVE_WINDOWS)
 
+set(miktex_internal_bindir "${texmfdir}/miktex/bin/internal")
+
 set(incdir "include")
 set(libdir "lib")
 set(mandir "share/man")

@@ -63,17 +63,10 @@ qt4_wrap_cpp(mpm_qt_ui_mocs ${mpm_qt_ui_headers})
 
 qt4_add_resources(mpm_qt_rcc_sources ${mpm_qt_rcs_files})
 
-add_executable(mpm_qt
-  ${mpm_qt_sources}
-  ${mpm_qt_mocs}
-  ${mpm_qt_ui_mocs}
-  ${mpm_qt_rcc_sources}
-)
-
 if(LINK_EVERYTHING_STATICALLY)
-  target_link_libraries(mpm_qt ${MIKTEX_STATIC_LINK_LIBRARIES})
+  set(libs ${MIKTEX_STATIC_LINK_LIBRARIES})
 else(LINK_EVERYTHING_STATICALLY)
-  target_link_libraries(mpm_qt
+  set(libs
     ${core_dll_name}
     ${mpm_dll_name}
     ${popt_dll_name}
@@ -82,6 +75,28 @@ else(LINK_EVERYTHING_STATICALLY)
   )
 endif(LINK_EVERYTHING_STATICALLY)
 
+add_executable(mpm_qt
+  ${mpm_qt_sources}
+  ${mpm_qt_mocs}
+  ${mpm_qt_ui_mocs}
+  ${mpm_qt_rcc_sources}
+)
+
+target_link_libraries(mpm_qt ${libs})
+
 merge_trustinfo_manifest(mpm_qt asInvoker)
 
 install(TARGETS mpm_qt DESTINATION ${bindir})
+
+add_executable(mpm_qt${miktex_admin_suffix}
+  ${mpm_qt_sources}
+  ${mpm_qt_mocs}
+  ${mpm_qt_ui_mocs}
+  ${mpm_qt_rcc_sources}
+)
+
+target_link_libraries(mpm_qt${miktex_admin_suffix} ${libs})
+
+merge_trustinfo_manifest(mpm_qt${miktex_admin_suffix} requireAdministrator)
+
+install(TARGETS mpm_qt${miktex_admin_suffix} DESTINATION ${bindir})

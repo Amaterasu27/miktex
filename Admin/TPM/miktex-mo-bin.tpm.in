@@ -13,6 +13,7 @@
 texmf/miktex/bin/initexmf.exe
 texmf/miktex/bin/mktexlsr.exe
 texmf/miktex/bin/mo.exe
+texmf/miktex/bin/mo${miktex_admin_suffix}.exe
 texmf/miktex/bin/texhash.exe
 texmf/miktex/bin/texlinks.exe
     </TPM:RunFiles>

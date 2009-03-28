@@ -88,7 +88,7 @@ GetArguments (/*[in]*/ const char *	lpszCommandLine,
 
   CString argument;
   bool copying = false;
-  bool inQuotedArg = false;
+    bool inQuotedArg = false;
 
   for (const char * lpsz = lpszCommandLine; *lpsz != 0; ++ lpsz)
     {

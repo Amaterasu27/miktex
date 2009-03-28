@@ -72,12 +72,7 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
   : CPropertyPage (PropPageTeXMFRoots::IDD),
     isModified (false),
     pProgressDialog (0),
-    userInstallRoot (SessionWrapper(true)
-		      ->GetSpecialPath(SpecialPath::UserInstallRoot)),
-    userDataRoot (SessionWrapper(true)
-		  ->GetSpecialPath(SpecialPath::UserDataRoot)),
-    userConfigRoot (SessionWrapper(true)
-		    ->GetSpecialPath(SpecialPath::UserConfigRoot)),
+    pSession(true),
     commonInstallRoot (SessionWrapper(true)
 		       ->GetSpecialPath(SpecialPath::CommonInstallRoot)),
     commonDataRoot (SessionWrapper(true)
@@ -86,6 +81,15 @@ PropPageTeXMFRoots::PropPageTeXMFRoots ()
 		      ->GetSpecialPath(SpecialPath::CommonConfigRoot)),
     showHiddenRoots (FALSE)
 {
+  if (! pSession->IsAdminMode())
+  {
+    userInstallRoot =
+      pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+    userDataRoot =
+      pSession->GetSpecialPath(SpecialPath::UserDataRoot);
+    userConfigRoot =
+      pSession->GetSpecialPath(SpecialPath::UserConfigRoot);
+  }
   m_psp.dwFlags &= ~(PSP_HASHELP);
 }
 
@@ -152,30 +156,41 @@ void
 PropPageTeXMFRoots::OnScan ()
 {
   try
+  {
+    auto_ptr<ProgressDialog> pProgressDialog (ProgressDialog::Create());
+    pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
+    pProgressDialog->SetTitle (T_("MiKTeX Maintenance"));
+    pProgressDialog->SetLine (1, T_("Collecting file information..."));
+    POSITION pos = listControl.GetFirstSelectedItemPosition();
+    this->pProgressDialog = pProgressDialog.get();
+    MIKTEX_ASSERT (pos != 0);
+    while (pos != 0)
     {
-      auto_ptr<ProgressDialog> pProgressDialog (ProgressDialog::Create());
-      pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
-      pProgressDialog->SetTitle (T_("MiKTeX FNDB Maintenance"));
-      pProgressDialog->SetLine (1, T_("Scanning directories..."));
-      POSITION pos = listControl.GetFirstSelectedItemPosition();
-      this->pProgressDialog = pProgressDialog.get();
-      MIKTEX_ASSERT (pos != 0);
-      while (pos != 0)
-	{
-	  int idx = listControl.GetNextSelectedItem(pos);
-	  Fndb::Refresh (roots[idx], this);
-	}
-      pProgressDialog->StopProgressDialog ();
-      pProgressDialog.reset ();
+      int idx = listControl.GetNextSelectedItem(pos);
+      int rootOrdinal = pSession->TryDeriveTEXMFRoot(roots[idx]);
+      if (rootOrdinal == INVALID_ROOT_INDEX)
+      {
+	continue;
+      }
+      bool isCommonRoot = (pSession->IsCommonRootDirectory(rootOrdinal));
+      if (pSession->IsAdminMode() && ! isCommonRoot
+	|| ! pSession->IsAdminMode() && isCommonRoot)
+      {
+	continue;
+      }
+      Fndb::Refresh (roots[idx], this);
     }
+    pProgressDialog->StopProgressDialog ();
+    pProgressDialog.reset ();
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   pProgressDialog = 0;
 }
 
@@ -504,7 +519,7 @@ PropPageTeXMFRoots::OnRemove ()
   try
     {
       UINT n = listControl.GetSelectedCount();
-      for (UINT i = 0; i < n; ++i)
+      for (UINT i = 0; i < n; ++ i)
 	{
 	  int idx = GetSelectedItem();
 	  if (! listControl.DeleteItem(idx))
@@ -604,12 +619,23 @@ PropPageTeXMFRoots::OnSelectionChange (/*[in]*/ NMHDR *		pNMHDR,
 bool
 PropPageTeXMFRoots::IsHiddenRoot (/*[in]*/ const PathName & root)
 {
-  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
-  return (((policy & PolicyFlags::DataRootHighestPriority) != 0)
-	  && (root == userDataRoot
-	      || root == commonDataRoot
-	      || root == userConfigRoot
-	      || root == commonConfigRoot));
+  int rootOrdinal = pSession->TryDeriveTEXMFRoot(root);
+  if (rootOrdinal == INVALID_ROOT_INDEX)
+  {
+    return (false);
+  }
+  if (! pSession->IsAdminMode()
+      && (pSession->IsCommonRootDirectory(rootOrdinal)
+	  || root == userInstallRoot
+	  || root == userConfigRoot
+	  || root == userDataRoot))
+  {
+    return (true);
+  }
+  return (
+    root == commonInstallRoot
+	  || root == commonConfigRoot
+	  || root == commonDataRoot);
 }
 
 /* _________________________________________________________________________
@@ -628,58 +654,65 @@ PropPageTeXMFRoots::EnableButtons ()
   bool canRemove = true;
   bool canMoveUp = true;
   bool canMoveDown = true;
+  bool canScan = true;
 
   int idx = -1;
-
-  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
 
   for (POSITION pos = listControl.GetFirstSelectedItemPosition();
        pos != 0;
        )
+  {
+    idx = listControl.GetNextSelectedItem(pos);
+    PathName root = roots[idx];
+    int rootOrdinal = pSession->TryDeriveTEXMFRoot(root);
+    if (rootOrdinal == INVALID_ROOT_INDEX)
     {
-      idx = listControl.GetNextSelectedItem(pos);
-      PathName root = roots[idx];
-      if (root == userDataRoot || root == commonDataRoot
-	  || root == userConfigRoot || root == commonConfigRoot)
-	{
-	  canRemove = false;
-	  if ((policy & PolicyFlags::DataRootHighestPriority) != 0)
-	    {
-	      canMoveUp = false;
-	      canMoveDown = false;
-	    }
-	}
-      if (root == commonInstallRoot || root == userInstallRoot)
-	{
-	  canRemove = false;
-	}
-      if (idx > 0 && ((policy & PolicyFlags::DataRootHighestPriority) != 0))
-	{
-	  PathName prevRoot = roots[idx - 1];
-	  if (prevRoot == userDataRoot || prevRoot == commonDataRoot
-	      || prevRoot == userConfigRoot || prevRoot == commonConfigRoot)
-	    {
-	      canMoveUp = false;
-	    }
-	}
+      canScan = false;
     }
+    else
+    {
+      bool isCommonRoot = pSession->IsCommonRootDirectory(rootOrdinal);
+      if (pSession->IsAdminMode() && ! isCommonRoot
+	  || ! pSession->IsAdminMode() && isCommonRoot)
+      {
+	canScan = false;
+      }
+    }
+    if (IsHiddenRoot(root))
+    {
+      canRemove = false;
+      canMoveUp = false;
+      canMoveDown = false;
+    }
+    else
+    {
+      if (idx > 0 && IsHiddenRoot(roots[idx - 1]))
+      {
+	canMoveUp = false;
+      }
+      if (idx < roots.size() - 1 && IsHiddenRoot(roots[idx + 1]))
+      {
+	canMoveDown = false;
+      }
+    }
+  }
 
-  scanButton.EnableWindow (nSelected > 0);
+  scanButton.EnableWindow (canScan && nSelected > 0);
 
-  upButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
+  upButton.EnableWindow (! pSession->IsMiKTeXDirect()
 			 && canMoveUp
 			 && nSelected == 1
 			 && idx > 0);
 
-  downButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
+  downButton.EnableWindow (! pSession->IsMiKTeXDirect()
 			   && canMoveDown
 			   && nSelected == 1
 			   && idx + 1 < nItems);
 
-  addButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
+  addButton.EnableWindow (! pSession->IsMiKTeXDirect()
 			  && canAdd);
 
-  removeButton.EnableWindow (! SessionWrapper(true)->IsMiKTeXDirect()
+  removeButton.EnableWindow (! pSession->IsMiKTeXDirect()
 			     && canRemove
 			     && nSelected > 0);
 }
@@ -709,94 +742,98 @@ void
 PropPageTeXMFRoots::Refresh ()
 {
   if (! listControl.DeleteAllItems())
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
+  }
   roots.clear ();
-  unsigned nRoots = SessionWrapper(true)->GetNumberOfTEXMFRoots();
-  for (unsigned rootIdx = 0; rootIdx < nRoots; ++ rootIdx)
+  unsigned nRoots = pSession->GetNumberOfTEXMFRoots();
+  for (unsigned rootOrd = 0; rootOrd < nRoots; ++ rootOrd)
+  {
+    if (pSession->IsAdminMode() && ! pSession->IsCommonRootDirectory(rootOrd))
     {
-      PathName root = SessionWrapper(true)->GetRootDirectory(rootIdx);
-      if (! showHiddenRoots && IsHiddenRoot(root))
-	{
-	  continue;
-	}
-      LVITEMA lvitem;
-      lvitem.iItem = roots.size();
-      lvitem.mask = LVIF_TEXT | LVIF_PARAM;
-      lvitem.iSubItem = 0;
-      PathName compacted;
-      if (! PathCompactPathEx(compacted.GetBuffer(), root.Get(), 45, 0))
-	{
-	  compacted = root;
-	}
-      lvitem.pszText = const_cast<char*>(compacted.Get());
-      lvitem.lParam = roots.size();
-      if (listControl.InsertItem(&lvitem) < 0)
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
-	}
-      string description;
-      if (root == userInstallRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "UserInstall";
-	}
-      if (root == commonInstallRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "CommonInstall";
-	}
-      if (root == userDataRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "UserData";
-	}
-      if (root == commonDataRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "CommonData";
-	}
-      if (root == userConfigRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "UserConfig";
-	}
-      if (root == commonConfigRoot)
-	{
-	  if (! description.empty())
-	    {
-	      description += ", ";
-	    }
-	  description += "CommonConfig";
-	}
-      if (! description.empty())
-	{
-	  lvitem.mask = LVIF_TEXT;
-	  lvitem.iSubItem = 1;
-	  lvitem.pszText = const_cast<char*>(description.c_str());
-	  if (! listControl.SetItem(&lvitem))
-	    {
-	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
-	    }
-	}
-      roots.push_back (root);
+      continue;
     }
+    PathName root = pSession->GetRootDirectory(rootOrd);
+    if (! showHiddenRoots && IsHiddenRoot(root))
+    {
+      continue;
+    }
+    LVITEMA lvitem;
+    lvitem.iItem = roots.size();
+    lvitem.mask = LVIF_TEXT | LVIF_PARAM;
+    lvitem.iSubItem = 0;
+    PathName compacted;
+    if (! PathCompactPathEx(compacted.GetBuffer(), root.Get(), 45, 0))
+    {
+      compacted = root;
+    }
+    lvitem.pszText = const_cast<char*>(compacted.Get());
+    lvitem.lParam = roots.size();
+    if (listControl.InsertItem(&lvitem) < 0)
+    {
+      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
+    }
+    string description;
+    if (root == userInstallRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "UserInstall";
+    }
+    if (root == commonInstallRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "CommonInstall";
+    }
+    if (root == userDataRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "UserData";
+    }
+    if (root == commonDataRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "CommonData";
+    }
+    if (root == userConfigRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "UserConfig";
+    }
+    if (root == commonConfigRoot)
+    {
+      if (! description.empty())
+      {
+	description += ", ";
+      }
+      description += "CommonConfig";
+    }
+    if (! description.empty())
+    {
+      lvitem.mask = LVIF_TEXT;
+      lvitem.iSubItem = 1;
+      lvitem.pszText = const_cast<char*>(description.c_str());
+      if (! listControl.SetItem(&lvitem))
+      {
+	FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
+      }
+    }
+    roots.push_back (root);
+  }
   EnableButtons ();
 }
 
@@ -809,63 +846,59 @@ BOOL
 PropPageTeXMFRoots::OnApply ()
 {
   if (isModified)
+  {
+    try
     {
-      try
+      if (pSession->IsMiKTeXDirect())
+      {
+	UNEXPECTED_CONDITION ("PropPageTeXMFRoots::OnApply");
+      }
+
+      string str;
+
+      for (vector<PathName>::const_iterator it = roots.begin();
+	it != roots.end();
+	++ it)
+      {
+	if (IsHiddenRoot(*it))
 	{
-	  if (SessionWrapper(true)->IsMiKTeXDirect())
-	    {
-	      UNEXPECTED_CONDITION ("PropPageTeXMFRoots::OnApply");
-	    }
-	  
-	  PolicyFlags policy = SessionWrapper(true)->GetPolicyFlags();
-	  
-	  string str;
-
-	  for (vector<PathName>::const_iterator it = roots.begin();
-	       it != roots.end();
-	       ++ it)
-	    {
-	      if (((policy & PolicyFlags::DataRootHighestPriority) != 0)
-		  && (*it == userDataRoot || *it == commonDataRoot
-		      || *it == userConfigRoot || *it == commonConfigRoot))
-		{
-		  continue;
-		}
-	      if (! str.empty())
-		{
-		  str += ';';
-		}
-	      str += it->Get();
-	    }
-
-	  SessionWrapper(true)->RegisterRootDirectories (str);
-
-	  auto_ptr<ProgressDialog>
-	    pProgressDialog (ProgressDialog::Create());
-
-	  pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
-	  pProgressDialog->SetTitle (T_("MiKTeX FNDB Maintenance"));
-	  pProgressDialog->SetLine (1, T_("Scanning directories..."));
-	  this->pProgressDialog = pProgressDialog.get();
-
-	  isModified = ! Fndb::Refresh(this);
-
-	  pProgressDialog->StopProgressDialog ();
-	  pProgressDialog.reset ();
-
-	  SetElevationRequired (isModified);
+	  continue;
 	}
-      catch (const MiKTeXException & e)
+	if (! str.empty())
 	{
-	  ErrorDialog::DoModal (this, e);
+	  str += ';';
 	}
-      catch (const exception & e)
-	{
-	  ErrorDialog::DoModal (this, e);
-	}
+	str += it->Get();
+      }
 
-      pProgressDialog = 0;
+      pSession->RegisterRootDirectories (str);
+
+      auto_ptr<ProgressDialog>
+	pProgressDialog (ProgressDialog::Create());
+
+      pProgressDialog->StartProgressDialog (GetParent()->GetSafeHwnd());
+      pProgressDialog->SetTitle (T_("MiKTeX Maintenance"));
+      pProgressDialog->SetLine (1, T_("Collecting file information..."));
+      this->pProgressDialog = pProgressDialog.get();
+
+      isModified = ! Fndb::Refresh(this);
+
+      pProgressDialog->StopProgressDialog ();
+      pProgressDialog.reset ();
+
+      SetElevationRequired (isModified);
     }
+    catch (const MiKTeXException & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+    catch (const exception & e)
+    {
+      ErrorDialog::DoModal (this, e);
+    }
+
+    pProgressDialog = 0;
+  }
   return (! isModified);
 }
 
@@ -967,7 +1000,7 @@ This is the per-user installation directory.");
       if (path == commonInstallRoot)
 	{
 	  info += T_("\r\n\r\n\
-This is the per-machine installation directory.");
+This is the system-wide installation directory.");
 	}
       if (path == userDataRoot)
 	{
@@ -977,7 +1010,7 @@ This is the per-user data directory.");
       if (path == commonDataRoot)
 	{
 	  info += T_("\r\n\r\n\
-This is the per-machine data directory.");
+This is the system-wide data directory.");
 	}
       if (path == userConfigRoot)
 	{
@@ -988,7 +1021,7 @@ This is the per-user configuration directory.");
 	{
 	  info +=
 	    T_("\r\n\r\n\
-This is the per-machine configuration directory.");
+This is the system-wide configuration directory.");
 	}
       if (maintainedByMiKTeX)
 	{
@@ -1024,7 +1057,7 @@ This directory can be used for local additions.");
 void
 PropPageTeXMFRoots::SetElevationRequired (/*[in]*/ bool f)
 {
-  if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
+  if (IsWindowsVista() && pSession->IsAdminMode())
     {
       HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
       if (hwnd == 0)

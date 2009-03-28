@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -58,15 +58,17 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/mpm.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
-
-merge_trustinfo_manifest(mpm_mfc asInvoker)
-
-target_link_libraries(mpm_mfc
+set(libs
   ${core_dll_name}
   ${mpm_dll_name}
   ${ui_mfc_dll_name}
 )
+
+add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
+
+merge_trustinfo_manifest(mpm_mfc asInvoker)
+
+target_link_libraries(mpm_mfc ${libs})
 
 get_target_property(mpm_mfc_exe mpm_mfc LOCATION)
 
@@ -82,3 +84,24 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 install(TARGETS mpm_mfc DESTINATION ${bindir})
+
+add_executable(mpm_mfc${miktex_admin_suffix} WIN32 ${mpm_mfc_sources})
+
+merge_trustinfo_manifest(mpm_mfc${miktex_admin_suffix} requireAdministrator)
+
+target_link_libraries(mpm_mfc${miktex_admin_suffix} ${libs})
+
+get_target_property(mpm_mfc_admin_exe mpm_mfc${miktex_admin_suffix} LOCATION)
+
+if(NATIVE_WINDOWS)
+  add_custom_command(
+    TARGET mpm_mfc${miktex_admin_suffix}
+    POST_BUILD
+    COMMAND ${MT_EXE} -nologo
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mpm.manifest
+	-updateresource:${mpm_mfc_admin_exe}\;1
+    VERBATIM
+  )
+endif(NATIVE_WINDOWS)
+
+install(TARGETS mpm_mfc${miktex_admin_suffix} DESTINATION ${bindir})

@@ -212,11 +212,11 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
    _________________________________________________________________________ */
 
 void
-Application::Init (/*[in]*/ vector</*[const]*/ char *> args)
+Application::Init (/*[in,out]*/ vector</*[const]*/ char *> & args)
 {
   Session::InitInfo initInfo (args[0]);
   vector</*[const]*/ char *>::iterator it = args.begin();
-  while (it != args.end())
+  while (it != args.end() && *it != 0)
   {
     if (strcmp(*it, "--miktex-admin") == 0)
     {

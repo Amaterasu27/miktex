@@ -559,7 +559,7 @@ BEGIN
     IDS_SUBHEADER_PACKAGE_SET "Select the packages you want installed."
     IDS_HEADER_REMOTE_REPOSITORY "Download Source"
     IDS_SUBHEADER_REMOTE_REPOSITORY "Choose a download source."
-    IDS_MPM                 "Browse Packages"
+    IDS_MPM                 "Package Manager"
     IDP_NOT_LOCAL_REPOSITORY 
                             "The directory\n\n%1\n\nis not a valid installation source."
     IDS_DOWNLOAD_COMPLETE   "MiKTeX has been downloaded successfully.  You can install MiKTeX by running the wizard again."
@@ -575,7 +575,7 @@ BEGIN
     IDS_HEADER_LICENSE      "Copying Conditions"
     IDS_SUBHEADER_LICENSE   "MiKTeX is freely redistributable under certain conditions."
     IDS_MAINTENANCE         "Maintenance (current user)"
-    IDS_MAINTENANCE_ADMIN   "Maintenance (system-wide)"
+    IDS_MAINTENANCE_ADMIN   "Maintenance (all users)"
 END
 
 STRINGTABLE 

@@ -63,6 +63,7 @@ using namespace std;
 
 enum Option
 {
+  OPT_AAA = 1,
   OPT_ADMIN,
   OPT_OUTPUT_DIRECTORY,
   OPT_VERBOSE,
@@ -896,10 +897,12 @@ MakeFontMapApp::LocateMap (/*[in]*/ const char *	lpszFileName,
     {
       Abort (T_("Font map file %s could not be found."), Q_(lpszFileName));
     }
+#if 0
   if (! found)
     {
       Verbose (T_("Not using map file %s"), Q_(lpszFileName));
     }
+#endif
   return (found);
 }
 
@@ -1605,6 +1608,7 @@ MakeFontMapApp::Run (/*[in]*/ int		argc,
   Session::InitInfo initInfo (argv[0]);
   if (adminMode)
   {
+    Verbose (T_("Entering administrative mode..."));
     initInfo.AddFlags (Session::InitFlags::AdminMode);
   }
   pSession.CreateSession (initInfo);

@@ -20,12 +20,7 @@
 use_static_crt()
 use_static_libraries()
 
-add_executable(copystart_admin WIN32 copystart.cpp)
-
-# todo: requireAdministrator
-merge_trustinfo_manifest(copystart_admin highestAvailable)
-
-target_link_libraries(copystart_admin
+set(libs
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}
@@ -33,9 +28,29 @@ target_link_libraries(copystart_admin
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(copystart_admin
+  set(libs ${libs}
     shlwapi
   )
 endif(NATIVE_WINDOWS)
 
-install(TARGETS copystart_admin DESTINATION "${bindir}")
+add_executable(copystart WIN32 copystart.cpp)
+
+merge_trustinfo_manifest(copystart asInvoker)
+
+target_link_libraries(copystart ${libs})
+
+install(
+  TARGETS copystart
+  DESTINATION "${miktex_internal_bindir}"
+)
+
+add_executable(copystart${miktex_admin_suffix} WIN32 copystart.cpp)
+
+merge_trustinfo_manifest(copystart${miktex_admin_suffix} requireAdministrator)
+
+target_link_libraries(copystart${miktex_admin_suffix} ${libs})
+
+install(
+  TARGETS copystart${miktex_admin_suffix}
+  DESTINATION "${miktex_internal_bindir}"
+)

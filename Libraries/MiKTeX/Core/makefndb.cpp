@@ -790,17 +790,22 @@ bool
 Fndb::Refresh (/*[in]*/ ICreateFndbCallback *	pCallback)
 {
   unsigned n = SessionImpl::GetSession()->GetNumberOfTEXMFRoots();
-  for (unsigned idx = 0; idx < n; ++ idx)
+  for (unsigned ord = 0; ord < n; ++ ord)
+  {
+    if ((SessionImpl::GetSession()->IsAdminMode()
+	 && ! SessionImpl::GetSession()->IsCommonRootDirectory(ord))
+        || (! SessionImpl::GetSession()->IsAdminMode()
+	    && SessionImpl::GetSession()->IsCommonRootDirectory(ord)))
     {
-      PathName pathFndbPath =
-	SessionImpl::GetSession()->GetFilenameDatabasePathName(idx);
-      if (! Fndb::Create(pathFndbPath.Get(),
-			 (SessionImpl::GetSession()
-			  ->GetRootDirectory(idx).Get()),
-			 pCallback))
-	{
-	  return (false);
-	}
+      continue;
     }
+    PathName rootDirectory =  SessionImpl::GetSession()->GetRootDirectory(ord);
+    PathName pathFndbPath =
+      SessionImpl::GetSession()->GetFilenameDatabasePathName(ord);
+    if (! Fndb::Create(pathFndbPath, rootDirectory, pCallback))
+    {
+      return (false);
+    }
+  }
   return (true);
 }

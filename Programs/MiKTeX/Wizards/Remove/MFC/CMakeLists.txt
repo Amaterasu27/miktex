@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -52,11 +52,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/Remove.rc)
 endif(NATIVE_WINDOWS)
 
-add_executable(remove WIN32 ${remove_mfc_sources})
-
-merge_trustinfo_manifest(remove highestAvailable)
-
-target_link_libraries(remove
+set(libs
   ${bzip2_lib_name}
   ${core_lib_name}
   ${curl_lib_name}
@@ -73,7 +69,7 @@ target_link_libraries(remove
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(remove
+  set(libs ${libs}
     Wldap32
     fdi
     version
@@ -83,11 +79,17 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-get_target_property(remove_mfc_exe remove LOCATION)
+add_executable(remove_mfc WIN32 ${remove_mfc_sources})
+
+merge_trustinfo_manifest(remove_mfc asInvoker)
+
+target_link_libraries(remove_mfc ${libs})
+
+get_target_property(remove_mfc_exe remove_mfc LOCATION)
 
 if(NATIVE_WINDOWS)
   add_custom_command(
-    TARGET remove
+    TARGET remove_mfc
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
@@ -96,10 +98,33 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-get_target_property(remove_exe remove LOCATION)
+install(
+  FILES ${remove_mfc_exe}
+  DESTINATION ${miktex_internal_bindir}
+  RENAME uninstall.exe
+)
+
+add_executable(remove_mfc${miktex_admin_suffix} WIN32 ${remove_mfc_sources})
+
+merge_trustinfo_manifest(remove_mfc${miktex_admin_suffix} requireAdministrator)
+
+target_link_libraries(remove_mfc${miktex_admin_suffix} ${libs})
+
+get_target_property(remove_mfc_admin_exe remove_mfc${miktex_admin_suffix} LOCATION)
+
+if(NATIVE_WINDOWS)
+  add_custom_command(
+    TARGET remove_mfc${miktex_admin_suffix}
+    POST_BUILD
+    COMMAND ${MT_EXE} -nologo
+	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
+	-updateresource:${remove_mfc_admin_exe}\;1
+    VERBATIM
+  )
+endif(NATIVE_WINDOWS)
 
 install(
-  FILES ${remove_exe}
-  DESTINATION ${configdir}
-  RENAME uninstall.dat
+  FILES ${remove_mfc_admin_exe}
+  DESTINATION ${miktex_internal_bindir}
+  RENAME uninstall${miktex_admin_suffix}.exe
 )

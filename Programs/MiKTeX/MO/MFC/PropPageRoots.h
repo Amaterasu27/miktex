@@ -1,6 +1,6 @@
 /* PropPageRoots.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -210,4 +210,7 @@ private:
 
 private:
   ProgressDialog * pProgressDialog;
+
+private:
+  SessionWrapper pSession;
 };

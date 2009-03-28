@@ -63,6 +63,7 @@ endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
 set(target_system_tag "${system_cpu}-${system_name}")
 
 set(miktex_prefix "miktex-")
+set(miktex_admin_suffix "_admin")
 
 enable_testing()
 

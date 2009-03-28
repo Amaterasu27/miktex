@@ -12,7 +12,9 @@ MiKTeX Package Manager.
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/mpm_mfc.exe
+texmf/miktex/bin/mpm_mfc${miktex_admin_suffix}.exe
 texmf/miktex/bin/mpm_qt.exe
+texmf/miktex/bin/mpm_qt${miktex_admin_suffix}.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

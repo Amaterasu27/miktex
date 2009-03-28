@@ -1,6 +1,6 @@
 /* wrapper.cpp: wrap a main function
 
-   Copyright (C) 2004-2008 Christian Schenk
+   Copyright (C) 2004-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -81,7 +81,7 @@ main (/*[in]*/ int	argc,
       app.SetQuietFlag (true);
 #endif
 
-      int exitCode = MAINFUNC(args.size(), &args[0]);
+      int exitCode = MAINFUNC(args.size() - 1, &args[0]);
       
       app.Finalize ();
 

@@ -117,7 +117,7 @@ public:
 
   virtual
   MIKTEXAPPTHISAPI(void)
-  Init (std::vector</*[const]*/ char *> args);
+  Init (/*[in,out]*/ std::vector</*[const]*/ char *> & args);
 
   /* _______________________________________________________________________
      
