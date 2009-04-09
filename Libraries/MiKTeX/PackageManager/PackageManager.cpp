@@ -2293,15 +2293,20 @@ PackageManagerImpl::TryVerifyInstalledPackageHelper
     {
       return (true);
     }
-  PathName path = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  PathName path = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
   path += unprefixed;
   if (! File::Exists(path))
     {
-      trace_mpm->WriteFormattedLine
-	("libmpm",
-	 T_("package verification failed: file %s does not exist"),
-	 Q_(path));
-      return (false);
+      path = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+      path += unprefixed;
+      if (! File::Exists(path))
+	{
+	  trace_mpm->WriteFormattedLine
+	    ("libmpm",
+	     T_("package verification failed: file %s does not exist"),
+	     Q_(path));
+	  return (false);
+	}
     }
   if (path.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
     {

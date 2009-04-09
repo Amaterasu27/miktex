@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2008 Christian Schenk
+%% Copyright (C) 2007-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -42,6 +42,17 @@
 @y
 @d banner==eTeX_banner
 @d banner_k==eTeX_banner_k
+@z
+
+% _____________________________________________________________________________
+%
+% [2.23]
+% _____________________________________________________________________________
+
+@x
+for i:=0 to 127 do mubyte_cswrite[i]:=null;
+@y
+for i:=0 to 128 do mubyte_cswrite[i]:=null;
 @z
 
 % _____________________________________________________________________________

@@ -320,11 +320,11 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     )
   endif(BUILDING_MIKTEX)
 
-  if(_do_install AND ${_pool_dir})
+  if(_do_install AND _pool_dir)
     install(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
       DESTINATION ${_pool_dir}
     )
-  endif(_do_install AND ${_pool_dir})
+  endif(_do_install AND _pool_dir)
     
 endmacro(create_web_app _name)
