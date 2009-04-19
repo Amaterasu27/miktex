@@ -1,6 +1,6 @@
 /* yap.cpp: Yet Another Previewer
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of Yap.
 
@@ -126,7 +126,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 
   Argv argv;
 
-  argv.Build (T_("yap"), lpszCommandLine);
+  argv.Build ("yap", lpszCommandLine);
 
   Cpopt popt (argv.GetArgc(),
 	      const_cast<const char **>(argv.GetArgv()),
@@ -339,9 +339,9 @@ YapApplication::InitInstance ()
   try
     {
       // initialize MiKTeX Library
-      pSession.CreateSession (Session::InitInfo(T_("yap")));
+      pSession.CreateSession (Session::InitInfo("yap"));
       
-      trace_yap = auto_ptr<TraceStream>(TraceStream::Open(T_("yap")));
+      trace_yap = auto_ptr<TraceStream>(TraceStream::Open("yap"));
       trace_error = auto_ptr<TraceStream>(TraceStream::Open(T_("error")));
       
       // get command-line arguments
@@ -386,11 +386,14 @@ YapApplication::InitInstance ()
 	}
       
       // change the registry key under which our settings are stored
-      SetRegistryKey (MIKTEX_COMP_COMPANY_STR
-		      "\\"
-		      MIKTEX_PRODUCTNAME_STR
-		      "\\"
-		      MIKTEX_SERIES_STR);
+      if (! pSession->IsMiKTeXPortable())
+      {
+	SetRegistryKey (MIKTEX_COMP_COMPANY_STR
+	  "\\"
+	  MIKTEX_PRODUCTNAME_STR
+	  "\\"
+	  MIKTEX_SERIES_STR);
+      }
       
       // load standard ini file options (including MRU)
       LoadStdProfileSettings ();
@@ -426,7 +429,8 @@ YapApplication::InitInstance ()
       YapApplication::EnableShellOpen ();
       
       // check to see if Yap is the default viewer
-      if ((registering || g_pYapConfig->checkFileTypeAssociations)
+      if (! pSession->IsMiKTeXPortable()
+	  && (registering || g_pYapConfig->checkFileTypeAssociations)
 	  && ! unregistering)
 	{
 	  char szClass[BufferSizes::MaxPath];
@@ -452,7 +456,10 @@ YapApplication::InitInstance ()
 	}
       
       // register .dvi file association
-      RegisterShellFileTypes (TRUE);
+      if (! pSession->IsMiKTeXPortable())
+      {
+	RegisterShellFileTypes (TRUE);
+      }
       
       // dispatch commands specified on the command line
       if (! ProcessShellCommand(cmdInfo))
@@ -694,7 +701,7 @@ YapApplication::ActivateFirstInstance
 
   CString ddeCommand;
   ddeCommand.Format (T_("[open(\"%s\")]"), path.Get());
-  DdeExecute (T_("yap"), T_("system"), ddeCommand);
+  DdeExecute ("yap", T_("system"), ddeCommand);
   
   // delegate DVI search
   if (cmdInfo.sourceLineNum >= 0)
@@ -702,7 +709,7 @@ YapApplication::ActivateFirstInstance
       ddeCommand.Format (T_("[findsrc(\"%d %s\")]"),
 			 static_cast<int>(cmdInfo.sourceLineNum),
 			 static_cast<const char *>(cmdInfo.sourceFile));
-      DdeExecute (T_("yap"), T_("system"), ddeCommand);
+      DdeExecute ("yap", T_("system"), ddeCommand);
     }
   
   // delegate hyper-goto
@@ -710,7 +717,7 @@ YapApplication::ActivateFirstInstance
     {
       ddeCommand.Format (T_("[gotohyperlabel(\"%s\")]"),
 			 static_cast<const char *>(cmdInfo.hyperLabel));
-      DdeExecute (T_("yap"), T_("system"), ddeCommand);
+      DdeExecute ("yap", T_("system"), ddeCommand);
     }
   
   return (true);
@@ -1090,7 +1097,7 @@ VYapLog (/*[in]*/ const char *	lpszFormat,
 {
   if (theApp.trace_yap.get() != 0)
     {
-      theApp.trace_yap->VTrace (T_("yap"), lpszFormat, argptr);
+      theApp.trace_yap->VTrace ("yap", lpszFormat, argptr);
     }
 }
 
@@ -1125,7 +1132,7 @@ TraceError (/*[in]*/ const char *	lpszFormat,
     {
       va_list argptr;
       va_start (argptr, lpszFormat);
-      theApp.trace_error->VTrace (T_("yap"), lpszFormat, argptr);
+      theApp.trace_error->VTrace ("yap", lpszFormat, argptr);
       va_end (argptr);
     }
 }

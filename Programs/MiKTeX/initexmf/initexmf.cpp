@@ -461,9 +461,14 @@ private:
   WriteReport ();
 
 #if ! MIKTEX_STANDALONE
+private:
   void
   Configure ();
 #endif
+
+private:
+  void
+  CreatePortableSetup (/*[in]*/ const PathName & portableRoot);
 
 public:
   void
@@ -629,6 +634,7 @@ enum Option
   OPT_COMMON_ROOTS,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_DEFAULT_PAPER_SIZE,	// <internal/>
+  OPT_PORTABLE,	    		// <internal/>
   OPT_RMFNDB,			// <internal/>
   OPT_USER_CONFIG,		// <internal/>
   OPT_USER_DATA,		// <internal/>
@@ -755,6 +761,14 @@ Open the specified configuration file in an editor.\
     POPT_ARG_NONE, 0,
     OPT_MKMAPS,
     T_("Create font map files."),
+    0
+  },
+
+  {
+    "portable", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_PORTABLE,
+    T_("Create a portable setup."),
     0
   },
 
@@ -1018,6 +1032,14 @@ Open the specified configuration file in an editor.\
     POPT_ARG_NONE, 0,
     OPT_MKMAPS,
     T_("Create font map files."),
+    0
+  },
+
+  {
+    "portable", 0,
+    POPT_ARG_STRING, 0,
+    OPT_PORTABLE,
+    T_("Create a portable setup."),
     0
   },
 
@@ -2641,6 +2663,24 @@ IniTeXMFApp::Configure ()
 
 /* _________________________________________________________________________
 
+   IniTeXMFApp::CreatePortableSetup
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::CreatePortableSetup (/*[in]*/ const PathName & portableRoot)
+{
+  SmartPointer<Cfg> pConfig (Cfg::Create());
+  pConfig->PutValue ("Auto", "Config", "Portable");
+  PathName configDir (portableRoot);
+  configDir += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+  Directory::Create (configDir);
+  PathName startupFile (portableRoot);
+  startupFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+  pConfig->Write (startupFile);
+}
+
+/* _________________________________________________________________________
+
    IniTeXMFApp::WriteReport
      
    Show configuration settings.
@@ -2754,7 +2794,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   string defaultPaperSize;
   string engine;
   string logFile;
-
+  string portableRoot;
 
 #if ! MIKTEX_STANDALONE
   bool optConfigure = false;
@@ -2767,6 +2807,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optListFormats = false;
   bool optListModes = false;
   bool optMakeLinks = false;
+  bool optPortable = false;
   bool optReport = false;
   bool optUpdateFilenameDatabase = false;
   bool optVersion = false;
@@ -2896,6 +2937,12 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optMakeMaps = true;
 	  break;
 
+	case OPT_PORTABLE:
+
+	  portableRoot = lpszOptArg;
+	  optPortable = true;
+	  break;
+
 	case OPT_PRINT_ONLY:
 
 	  printOnly = true;
@@ -3017,6 +3064,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 #endif
     }
     pSession->SetAdminMode (true);
+  }
+
+  if (optPortable)
+  {
+    CreatePortableSetup (portableRoot);
   }
 
   if (! startupConfig.userRoots.empty()

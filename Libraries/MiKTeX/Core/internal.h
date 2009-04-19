@@ -926,6 +926,12 @@ public:
   virtual
   bool
   MIKTEXTHISCALL
+  IsMiKTeXPortable ();
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
   GetMETAFONTMode (/*[in]*/ unsigned		idx,
 		   /*[out]*/ MIKTEXMFMODE *	pMode);
 
@@ -2033,6 +2039,9 @@ private:
 
 private:
   vector<FormatInfo_> formats;
+
+private:
+  StartupConfig startupConfig;
 
 private:
   InitInfo initInfo;

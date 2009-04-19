@@ -174,7 +174,14 @@ LocalRepositoryPage::OnWizardBack ()
       prev = IDD_REMOTE_REPOSITORY;
       break;
     case SetupTask::InstallFromLocalRepository:
-      prev = IDD_SHARED;
+      if (theApp.portable)
+      {
+	prev = IDD_PACKAGE_SET_INSTALL;
+      }
+      else
+      {
+	prev = IDD_SHARED;
+      }
       break;
     default:
       ASSERT (false);

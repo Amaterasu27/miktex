@@ -41,6 +41,7 @@ public:
       optDryRun (false),
       optNoAddTEXMFDirs (false),
       optPrivate (false),
+      optPortable (false),
       optShared (false),
       optUnattended (false),
       packageLevel (PackageLevel::None),
@@ -80,6 +81,9 @@ public:
 
 public:
   bool optPrivate;
+
+public:
+  bool optPortable;
 
 public:
   bool optUnattended;
@@ -217,6 +221,7 @@ enum {
 #if FEATURE_1874934
   OPT_PAPER_SIZE,
 #endif
+  OPT_PORTABLE,
   OPT_PRIVATE,
   OPT_PROGRAM_FOLDER,
   OPT_REMOTE_PACKAGE_REPOSITORY,
@@ -251,6 +256,7 @@ const struct option long_options[] =
 #if FEATURE_1874934
   { "paper-size", required_argument, 0, OPT_PAPER_SIZE },
 #endif
+  { "portable", no_argument, 0, OPT_PORTABLE },
   { "private", no_argument, 0, OPT_PRIVATE },
   { "program-folder", required_argument, 0, OPT_PROGRAM_FOLDER },
   { "remote-package-repository", required_argument, 0,
@@ -491,6 +497,10 @@ common root directories."),
 		 T_("Invalid package set."),
 		 0);
 	    }
+	  break;
+
+	case OPT_PORTABLE:
+	  cmdinfo.optPortable = true;
 	  break;
 
 	case OPT_PRIVATE:
@@ -955,6 +965,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.showLogFileOnExit = false;
   theApp.unattended = cmdinfo.optUnattended;
   theApp.packageLevel = cmdinfo.packageLevel;
+  theApp.portable = cmdinfo.optPortable;
 
   // check to see whether setup is started from a MiKTeXDirect location
   theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(theApp.MiKTeXDirectRoot);

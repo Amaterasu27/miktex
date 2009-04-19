@@ -250,6 +250,23 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 
       string str;
 
+      if (pcfg->TryGetValue("Auto", "Config", str) && str == "Portable")
+      {
+	PathName dir (path);
+	dir.RemoveFileSpec ();
+	PathName prefix;
+	if (! Utils::GetPathNamePrefix(dir, MIKTEX_PATH_MIKTEX_CONFIG_DIR, prefix))
+	{
+	  UNEXPECTED_CONDITION ("SessionImpl::ReadStartupConfigFile");
+	}
+	ret.portable = true;
+	ret.commonConfigRoot = prefix;
+	ret.commonDataRoot = prefix;
+	ret.commonInstallRoot = prefix;
+	ret.userConfigRoot = prefix;
+	ret.userDataRoot = prefix;
+	ret.userInstallRoot = prefix;
+      }
       if (common)
       {      
 	if (pcfg->TryGetValue("Paths",
@@ -529,6 +546,17 @@ SessionImpl::IsMiKTeXDirect ()
 
 /* _________________________________________________________________________
 
+   SessionImpl::IsMiKTeXPortable
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::IsMiKTeXPortable ()
+{
+  return (startupConfig.portable);
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::GetBinDirectory
 
    Get the fully qualified path to the MiKTeX bin directory.  Consider
@@ -689,7 +717,8 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
       
 #if defined(MIKTEX_WINDOWS)
       // try registry value
-      if (winRegistry::TryGetRegistryValue(TriState::Undetermined,
+      if (! IsMiKTeXPortable()
+	  && winRegistry::TryGetRegistryValue(TriState::Undetermined,
 					   lpszSectionName2,
 					   lpszValueName,
 					   value,
@@ -986,7 +1015,7 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
     }
 
 #if ! NO_REGISTRY
-  if (! haveConfigFile)
+  if (! haveConfigFile && ! IsMiKTeXPortable())
     {
       winRegistry::SetRegistryValue (TriState::False,
 				     lpszSectionName,

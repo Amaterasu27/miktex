@@ -164,8 +164,6 @@ SessionImpl::InitializeRootDirectories ()
     return;
   }
 
-  StartupConfig startupConfig;
-
   // check for MiKTeX CD/DVD
   if (IsMiKTeXDirect())
   {
@@ -871,18 +869,23 @@ SessionImpl::GetFilenameDatabasePathNames (/*[in]*/ unsigned r)
 {
   vector<PathName> result;
 
-  // preferred pathname
-  PathName path = rootDirectories[r].get_Path();
-  if (rootDirectories[r].IsCommon())
+  if (! IsMiKTeXPortable())
+  {
+    // preferred pathname
+    PathName path = rootDirectories[r].get_Path();
+    if (rootDirectories[r].IsCommon())
     {
       path = GetSpecialPath(SpecialPath::CommonDataRoot);
     }
-  else
+    else
     {
       path = GetSpecialPath(SpecialPath::UserDataRoot);
     }
-  path += GetRelativeFilenameDatabasePathName(r);
-  result.push_back (path);
+    path += GetRelativeFilenameDatabasePathName(r);
+    result.push_back (path);
+  }
+
+  PathName path;
 
   // alternative pathname
   if (r == MPM_ROOT)

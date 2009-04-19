@@ -712,10 +712,11 @@ PathName::AppendDirectoryDelimiter ()
    _________________________________________________________________________ */
 
 PathName &
-PathName::CutOffLastComponent ()
+PathName::CutOffLastComponent (/*[in]*/ bool allowSelfCutting)
 {
   RemoveDirectoryDelimiter (GetBuffer());
-  for (size_t end = GetLength(); end > 0; -- end)
+  bool noCut = true;
+  for (size_t end = GetLength(); noCut && end > 0; -- end)
     {
       if (end > 0 && IsDirectoryDelimiter(Base::operator[](end - 1)))
 	{
@@ -724,8 +725,8 @@ PathName::CutOffLastComponent ()
 	      && Base::operator[](end - 2) == PathName::VolumeDelimiter)
 	    {
 	      Base::operator[](end) = 0;
-	      break;
 	    }
+	  else
 #endif
 	  if (end == 1)
 	    {
@@ -735,9 +736,13 @@ PathName::CutOffLastComponent ()
 	    {
 	      Base::operator[](end - 1) = 0;
 	    }
-	  break;
+	  noCut = false;
 	}
     }
+  if (noCut && allowSelfCutting)
+  {
+    Base::operator[](0) = 0;
+  }
   return (*this);
 }
 
@@ -890,8 +895,8 @@ Utils::GetPathNamePrefix (/*[in]*/ const PathName &	path,
     {
       return (false);
     }
-    path_.CutOffLastComponent ();
-    suffix_.CutOffLastComponent ();
+    path_.CutOffLastComponent (true);
+    suffix_.CutOffLastComponent (true);
   }
 
   prefix = path_;

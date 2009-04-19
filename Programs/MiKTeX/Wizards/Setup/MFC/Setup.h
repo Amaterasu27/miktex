@@ -292,6 +292,9 @@ public:
   bool unattended;
 
 public:
+  bool portable;
+
+public:
   StreamWriter uninstStream;
 };
 

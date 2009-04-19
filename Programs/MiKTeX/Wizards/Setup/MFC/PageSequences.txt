@@ -16,7 +16,7 @@ Install From CD:
 	License
 	MDTask
 	PackageSet
-	Shared
+	[ Shared ]
 	InstallDir
 	[ Folder ]
 	Settings

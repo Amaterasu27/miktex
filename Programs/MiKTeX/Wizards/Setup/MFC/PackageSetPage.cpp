@@ -115,13 +115,34 @@ PackageSetPage::OnWizardNext ()
       next = IDD_REMOTE_REPOSITORY;
       break;
     case SetupTask::InstallFromCD:
-      next = IDD_SHARED;
+      if (theApp.portable)
+      {
+	next = IDD_INSTALLDIR;
+      }
+      else
+      {
+	next = IDD_SHARED;
+      }
       break;
     case SetupTask::InstallFromLocalRepository:
-      next = IDD_SHARED;
+      if (theApp.portable)
+      {
+	next = IDD_LOCAL_REPOSITORY;
+      }
+      else
+      {
+	next = IDD_SHARED;
+      }
       break;
     case SetupTask::InstallFromRemoteRepository:
-      next = IDD_SHARED;
+      if (theApp.portable)
+      {
+	next = IDD_REMOTE_REPOSITORY;
+      }
+      else
+      {
+	next = IDD_SHARED;
+      }
       break;
     default:
       ASSERT (false);

@@ -770,12 +770,18 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
   ConfigureMiKTeX ();
 
   // create shell links
-  CreateProgramIcons ();
+  if (! theApp.portable)
+  {
+    CreateProgramIcons ();
+  }
 
-  RegisterMiKTeXFileTypes ();
+  if (! theApp.portable)
+  {
+    RegisterMiKTeXFileTypes ();
+  }
 
   // register path
-  if (theApp.registerPath && ! IsPathRegistered())
+  if (! theApp.portable && theApp.registerPath && ! IsPathRegistered())
     {
       if (IsWindowsNT())
 	{
@@ -894,9 +900,15 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // create shell links
-  CreateProgramIcons ();
+  if (! theApp.portable)
+  {
+    CreateProgramIcons ();
+  }
 
-  RegisterMiKTeXFileTypes ();
+  if (! theApp.portable)
+  {
+    RegisterMiKTeXFileTypes ();
+  }
 
   if (pSheet->GetCancelFlag())
     {
@@ -904,7 +916,7 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // register path
-  if (theApp.registerPath && ! IsPathRegistered())
+  if (! theApp.portable && theApp.registerPath && ! IsPathRegistered())
     {
       if (IsWindowsNT())
 	{
@@ -970,50 +982,46 @@ FileCopyPage::ConfigureMiKTeX ()
 
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      // [1] set shared flag
+      // [1] define roots & remove old fndbs
       cmdLine.Clear ();
-      if (SessionWrapper(true)->IsAdminMode())
+      if (theApp.portable)
       {
-      cmdLine.AppendOption ("--admin");
-      RunIniTeXMF (cmdLine);
-      if (pSheet->GetCancelFlag())
-	{
-	  return;
-	}
+	cmdLine.AppendOption ("--portable=",
+	  theApp.startupConfig.commonInstallRoot);
       }
-
-      // [2] define roots & remove old fndbs
-      cmdLine.Clear ();
-      if (! theApp.startupConfig.userInstallRoot.Empty())
+      else
+      {
+	if (! theApp.startupConfig.userInstallRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-install=",
-				theApp.startupConfig.userInstallRoot);
+	    theApp.startupConfig.userInstallRoot);
 	}
-      if (! theApp.startupConfig.userDataRoot.Empty())
+	if (! theApp.startupConfig.userDataRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-data=",
-				theApp.startupConfig.userDataRoot);
+	    theApp.startupConfig.userDataRoot);
 	}
-      if (! theApp.startupConfig.userConfigRoot.Empty())
+	if (! theApp.startupConfig.userConfigRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-config=",
-				theApp.startupConfig.userConfigRoot);
+	    theApp.startupConfig.userConfigRoot);
 	}
-      if (! theApp.startupConfig.commonDataRoot.Empty())
+	if (! theApp.startupConfig.commonDataRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-data=",
-				theApp.startupConfig.commonDataRoot);
+	    theApp.startupConfig.commonDataRoot);
 	}
-      if (! theApp.startupConfig.commonConfigRoot.Empty())
+	if (! theApp.startupConfig.commonConfigRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-config=",
-				theApp.startupConfig.commonConfigRoot);
+	    theApp.startupConfig.commonConfigRoot);
 	}
-      if (! theApp.startupConfig.commonInstallRoot.Empty())
+	if (! theApp.startupConfig.commonInstallRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-install=",
-				theApp.startupConfig.commonInstallRoot);
+	    theApp.startupConfig.commonInstallRoot);
 	}
+      }
       string commonRootDirectories;
       commonRootDirectories += theApp.startupConfig.commonInstallRoot.Get();
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
@@ -1037,10 +1045,10 @@ FileCopyPage::ConfigureMiKTeX ()
 	  return;
 	}
       
-      // [3] register components, configure files
+      // [2] register components, configure files
       RunMpm ("--register-components");
 
-      // [4] create filename database files
+      // [3] create filename database files
       cmdLine.Clear ();
       cmdLine.AppendOption ("--update-fndb");
       RunIniTeXMF (cmdLine);
@@ -1049,15 +1057,14 @@ FileCopyPage::ConfigureMiKTeX ()
 	  return;
 	}
 
-
-      // [5] create latex.exe, context.exe, ...
+      // [4] create latex.exe, context.exe, ...
       RunIniTeXMF (CommandLineBuilder("--force", "--mklinks"));
       if (pSheet->GetCancelFlag())
 	{
 	  return;
 	}
       
-      // [6] create font map files
+      // [5] create font map files
       RunIniTeXMF ("--mkmaps");
       if (pSheet->GetCancelFlag())
 	{
@@ -1065,7 +1072,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
     }
       
-  // [7] set paper size
+  // [6] set paper size
   if (! theApp.paperSize.empty())
     {
       cmdLine.Clear ();
@@ -1086,7 +1093,7 @@ FileCopyPage::ConfigureMiKTeX ()
       
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
-      // [8] refresh file name database again
+      // [7] refresh file name database again
       RunIniTeXMF ("--update-fndb");
       if (pSheet->GetCancelFlag())
 	{
@@ -1094,7 +1101,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
     }
       
-  // [9] create report
+  // [8] create report
   RunIniTeXMF ("--report");
   if (pSheet->GetCancelFlag())
     {
@@ -1220,7 +1227,7 @@ FileCopyPage::CalculateExpenditure ()
   if (theApp.setupTask == SetupTask::InstallFromLocalRepository
       || theApp.setupTask == SetupTask::InstallFromCD)
     {
-      totalIniTeXMFRuns = 9;
+      totalIniTeXMFRuns = 8;
     }
   else
     {

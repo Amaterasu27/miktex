@@ -2910,7 +2910,16 @@ public:
   /// @return Returns a reference to this object.
 public:
   MIKTEXCORETHISAPI(PathName &)
-  CutOffLastComponent ();
+  CutOffLastComponent (/*[in]*/ bool allowSelfCutting);
+
+  /// Cuts off the last component from the path name.
+  /// @return Returns a reference to this object.
+public:
+  PathName &
+  CutOffLastComponent ()
+  {
+    return (CutOffLastComponent(false));
+  }
 
   /// Makes sure that this path name ends with a directory delimiter.
   /// @return Returns a reference to this object.
@@ -3366,6 +3375,12 @@ typedef EnumWrapper<PolicyFlagsEnum> PolicyFlags;
 struct StartupConfig
 {
 public:
+  StartupConfig ()
+    : portable (false)
+  {
+  }
+
+public:
   std::string userRoots;
 
 public:
@@ -3388,6 +3403,9 @@ public:
 
 public:
   PathName commonInstallRoot;
+
+public:
+  bool portable;
 };
 
 /* _________________________________________________________________________
@@ -5700,6 +5718,13 @@ public:
   bool
   MIKTEXTHISCALL
   IsMiKTeXDirect ()
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  IsMiKTeXPortable ()
     = 0;
 
 public:
