@@ -108,9 +108,14 @@ The invoked program could not be found in the PATH."),
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::DefaultConfig ()
+SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
 {
   StartupConfig ret;
+  if (config == MiKTeXConfiguration::None)
+  {
+    config = MiKTeXConfiguration::Regular;
+  }
+  ret.config = config;
   string home;
   if (! Utils::GetEnvironmentString("HOME", home))
     {

@@ -1861,7 +1861,18 @@ private:
 
 private:
   StartupConfig
-  DefaultConfig ();
+  DefaultConfig (/*[in]*/ MiKTeXConfiguration config);
+
+private:
+  StartupConfig
+  DefaultConfig ()
+  {
+    return (DefaultConfig(MiKTeXConfiguration::Regular));
+  }
+
+private:
+  void
+  DoStartupConfig ();
 
 private:
   void

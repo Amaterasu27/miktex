@@ -883,17 +883,29 @@ SearchLocalRepository (/*[out]*/ PathName &	localRepository,
 bool
 IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 {
-  // check ..\texmf\miktex\config\md.ini
+  // check ..\texmf\miktex\config\miktexstartup.ini
   MiKTeXDirectRoot = SessionWrapper(true)->GetMyLocation();
   MiKTeXDirectRoot += "..";
   MiKTeXDirectRoot.MakeAbsolute ();
-  PathName pathMdIni = MiKTeXDirectRoot;
-  pathMdIni += "texmf";
-  pathMdIni += MIKTEX_PATH_MD_INI;
-  if (! File::Exists(pathMdIni))
-    {
-      return (false);
-    }
+  PathName pathStartupConfig = MiKTeXDirectRoot;
+  pathStartupConfig += "texmf";
+  pathStartupConfig += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+  if (! File::Exists(pathStartupConfig))
+  {
+    return (false);
+  }
+  FileAttributes attributes = File::GetAttributes(pathStartupConfig);
+  if (((attributes & FileAttributes::ReadOnly) != 0) == 0)
+  {
+    return (false);
+  }
+  SmartPointer<Cfg> pcfg (Cfg::Create());      
+  pcfg->Read (path);
+  string str;
+  if (! pcfg->TryGetValue("Auto", "Config", str) || str != "Direct")
+  {
+    return (false);
+  }
   Log (T_("started from MiKTeXDirect location\n"));
   return (true);
 }

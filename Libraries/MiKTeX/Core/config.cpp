@@ -225,8 +225,6 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
 StartupConfig
 SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 {
-  MIKTEX_ASSERT (! IsMiKTeXDirect());
-
   PathName path;
 
   StartupConfig ret;
@@ -250,22 +248,38 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common)
 
       string str;
 
-      if (pcfg->TryGetValue("Auto", "Config", str) && str == "Portable")
+      if (pcfg->TryGetValue("Auto", "Config", str))
       {
-	PathName dir (path);
-	dir.RemoveFileSpec ();
-	PathName prefix;
-	if (! Utils::GetPathNamePrefix(dir, MIKTEX_PATH_MIKTEX_CONFIG_DIR, prefix))
+	if (common)
 	{
-	  UNEXPECTED_CONDITION ("SessionImpl::ReadStartupConfigFile");
+	  ret.commonConfigRoot = "";
+	  ret.commonDataRoot = "";
+	  ret.commonInstallRoot = "";
 	}
-	ret.portable = true;
-	ret.commonConfigRoot = prefix;
-	ret.commonDataRoot = prefix;
-	ret.commonInstallRoot = prefix;
-	ret.userConfigRoot = prefix;
-	ret.userDataRoot = prefix;
-	ret.userInstallRoot = prefix;
+	else
+	{
+	  ret.userConfigRoot = "";
+	  ret.userDataRoot = "";
+	  ret.userInstallRoot = "";
+	}
+	if (str == "Regular")
+	{
+	  ret.config = MiKTeXConfiguration::Regular;
+	}
+	else if (str == "Portable")
+	{
+	  ret.config = MiKTeXConfiguration::Portable;
+	}
+	else if (str == "Direct")
+	{
+	  ret.config = MiKTeXConfiguration::Direct;
+	}
+	else
+	{
+	  FATAL_MIKTEX_ERROR ("SessionImpl::ReadStartupConfigFile",
+	    T_("Invalid configuration value."),
+	    str.c_str());
+	}
       }
       if (common)
       {      
@@ -518,30 +532,8 @@ SessionImpl::ReadEnvironment (/*[in]*/ bool common)
 bool
 SessionImpl::IsMiKTeXDirect ()
 {
-  if (triMiKTeXDirect == TriState::Undetermined)
-  {
-    PathName myloc = GetMyLocation(false);
-    RemoveDirectoryDelimiter (myloc.GetBuffer());
-    PathName bindir = MIKTEX_PATH_BIN_DIR;
-    RemoveDirectoryDelimiter (bindir.GetBuffer());
-    PathName prefix;
-    if (! Utils::GetPathNamePrefix(myloc, bindir, prefix))
-    {
-      return (false);
-    }
-    PathName path (prefix);
-    path += MIKTEX_PATH_MD_INI;
-    triMiKTeXDirect =
-      ((File::Exists(path)
-      && ((File::GetAttributes(path) & FileAttributes::ReadOnly) != 0))
-      ? TriState::True
-      : TriState::False);
-    if (triMiKTeXDirect == TriState::True)
-    {
-      trace_config->WriteLine (0, T_("*** MiKTeXDirect setup ***"));
-    }
-  }
-  return (triMiKTeXDirect == TriState::True);
+  DoStartupConfig ();
+  return (startupConfig.config == MiKTeXConfiguration::Direct);
 }
 
 /* _________________________________________________________________________
@@ -552,7 +544,8 @@ SessionImpl::IsMiKTeXDirect ()
 bool
 SessionImpl::IsMiKTeXPortable ()
 {
-  return (startupConfig.portable);
+  DoStartupConfig ();
+  return (startupConfig.config == MiKTeXConfiguration::Portable);
 }
 
 /* _________________________________________________________________________

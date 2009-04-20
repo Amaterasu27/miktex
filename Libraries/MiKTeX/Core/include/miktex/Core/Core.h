@@ -464,7 +464,7 @@ public:
     return (this->value == value);
   }
 
-  /// Compares the ancapsulated enum value to another value.
+  /// Compares the encapsulated enum value to another value.
   /// @param value The other enum value.
   /// @return Returns true, if this values is less than the other.
 public:
@@ -475,7 +475,7 @@ public:
     return (this->value < other.value);
   }
 
-  /// Compares the ancapsulated enum value to another value.
+  /// Compares the encapsulated enum value to another value.
   /// @param value The other enum value.
   /// @return Returns true, if this values is greater than the other.
 public:
@@ -3372,11 +3372,29 @@ typedef EnumWrapper<PolicyFlagsEnum> PolicyFlags;
    StartupConfig
    _________________________________________________________________________ */
 
+/* _________________________________________________________________________
+
+   CommandLineBuilder
+   _________________________________________________________________________ */
+
+class MiKTeXConfigurationEnum
+{
+public:
+  enum EnumType {
+    None,
+    Regular,
+    Direct,
+    Portable,
+  };
+};
+
+typedef EnumWrapper<MiKTeXConfigurationEnum> MiKTeXConfiguration;
+
 struct StartupConfig
 {
 public:
   StartupConfig ()
-    : portable (false)
+    : config (MiKTeXConfiguration::None)
   {
   }
 
@@ -3405,7 +3423,7 @@ public:
   PathName commonInstallRoot;
 
 public:
-  bool portable;
+  MiKTeXConfiguration config;
 };
 
 /* _________________________________________________________________________

@@ -147,25 +147,63 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::DefaultConfig ()
+SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
 {
   StartupConfig ret;
-  string product = (IsMiKTeXDirect() ? "MiKTeXDirect" : "MiKTeX");
-  ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-  ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
-  ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
-  ret.commonDataRoot += product;
-  ret.commonDataRoot += MIKTEX_SERIES_STR;
-  ret.commonConfigRoot = ret.commonDataRoot;
-  ret.userDataRoot =
-    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-  ret.userDataRoot += product;
-  ret.userDataRoot += MIKTEX_SERIES_STR;
-  ret.userConfigRoot =
-    Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
-  ret.userConfigRoot += product;
-  ret.userConfigRoot += MIKTEX_SERIES_STR;
-  ret.userInstallRoot = ret.userConfigRoot;
+  if (config == MiKTeXConfiguration::None)
+  {
+    config = MiKTeXConfiguration::Regular;
+  }
+  ret.config = config;
+  if (config == MiKTeXConfiguration::Portable)
+  {
+    PathName myloc (GetMyLocation(false));
+    PathName prefix;
+    if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix))
+    {
+      UNEXPECTED_CONDITION ("SessionImpl::DefaultConfig");
+    }
+    ret.commonConfigRoot = prefix;
+    ret.commonDataRoot = prefix;
+    ret.commonInstallRoot = prefix;
+    ret.userConfigRoot = prefix;
+    ret.userDataRoot = prefix;
+    ret.userInstallRoot = prefix;
+  }
+  else
+  {
+    string product;
+    if config == MiKTeXConfiguration::Direct)
+    {
+      product = "MiKTeXDirect";
+      PathName myloc (GetMyLocation(false));
+      PathName prefix;
+      if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix))
+      {
+	UNEXPECTED_CONDITION ("SessionImpl::DefaultConfig");
+      }
+      ret.commonInstallRoot = prefix;
+    }
+    else
+    {
+      product = "MiKTeX";
+      ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
+      ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+    }
+    ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
+    ret.commonDataRoot += product;
+    ret.commonDataRoot += MIKTEX_SERIES_STR;
+    ret.commonConfigRoot = ret.commonDataRoot;
+    ret.userDataRoot =
+      Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
+    ret.userDataRoot += product;
+    ret.userDataRoot += MIKTEX_SERIES_STR;
+    ret.userConfigRoot =
+      Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
+    ret.userConfigRoot += product;
+    ret.userConfigRoot += MIKTEX_SERIES_STR;
+    ret.userInstallRoot = ret.userConfigRoot;
+  }
   return (ret);
 }
 

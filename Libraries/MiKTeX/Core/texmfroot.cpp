@@ -115,6 +115,10 @@ MIKTEXSTATICFUNC(void)
 MergeStartupConfig (/*[in,out]*/ StartupConfig &	startupConfig,
 		    /*[in]*/ const StartupConfig &	defaults)
 {
+  if (startupConfig.config == MiKTeXConfiguration::None)
+  {
+    startupConfig.config = defaults.config;
+  }
   if (startupConfig.commonRoots.empty())
     {
       startupConfig.commonRoots = defaults.commonRoots;
@@ -151,6 +155,53 @@ MergeStartupConfig (/*[in,out]*/ StartupConfig &	startupConfig,
 
 /* _________________________________________________________________________
 
+   SessionImpl::DoStartupConfig
+   _________________________________________________________________________ */
+
+void
+SessionImpl::DoStartupConfig ()
+{
+  if (startupConfig.config != MiKTeXConfiguration::None)
+  {
+    return;
+  }
+
+  // evaluate init info
+  MergeStartupConfig (startupConfig, initInfo.GetStartupConfig());
+
+  // read common environment variables
+  MergeStartupConfig (startupConfig, ReadEnvironment(true));
+
+  // read user environment variables
+  MergeStartupConfig (startupConfig, ReadEnvironment(false));
+
+  // read common startup config file
+  MergeStartupConfig (startupConfig, ReadStartupConfigFile(true));
+
+  // read user startup config file
+  MergeStartupConfig (startupConfig, ReadStartupConfigFile(false));
+
+#if ! NO_REGISTRY
+  if (startupConfig.config == MiKTeXConfiguration::Portable)
+  {
+    // read the registry, if we don't have a startup config file
+    if (! haveCommonStartupConfigFile)
+    {
+      MergeStartupConfig (startupConfig, ReadRegistry(true));
+    }
+    if (! haveUserStartupConfigFile)
+    {
+      MergeStartupConfig (startupConfig, ReadRegistry(false));
+    }
+  }
+#endif
+
+  // merge in the default settings
+  MergeStartupConfig (startupConfig, DefaultConfig(startupConfig.config));
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::InitializeRootDirectories
 
    Initialize the root directory list.
@@ -164,50 +215,7 @@ SessionImpl::InitializeRootDirectories ()
     return;
   }
 
-  // check for MiKTeX CD/DVD
-  if (IsMiKTeXDirect())
-  {
-    PathName myloc = GetMyLocation(true);
-    PathName prefix;
-    if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix))
-    {
-      UNEXPECTED_CONDITION ("SessionImpl::InitializeRootDirectories");
-    }
-    startupConfig.commonInstallRoot = prefix;
-    startupConfig.userInstallRoot = startupConfig.commonInstallRoot;
-  }
-  else
-  {
-    // evaluate init info
-    MergeStartupConfig (startupConfig, initInfo.GetStartupConfig());
-
-    // read common environment variables
-    MergeStartupConfig (startupConfig, ReadEnvironment(true));
-
-    // read user environment variables
-    MergeStartupConfig (startupConfig, ReadEnvironment(false));
-
-    // read common startup config file
-    MergeStartupConfig (startupConfig, ReadStartupConfigFile(true));
-
-    // read user startup config file
-    MergeStartupConfig (startupConfig, ReadStartupConfigFile(false));
-
-#if ! NO_REGISTRY
-    // read the registry, if we don't have a startup config file
-    if (! haveCommonStartupConfigFile)
-    {
-      MergeStartupConfig (startupConfig, ReadRegistry(true));
-    }
-    if (! haveUserStartupConfigFile)
-    {
-      MergeStartupConfig (startupConfig, ReadRegistry(false));
-    }
-#endif
-  }
-
-  // merge in the default settings
-  MergeStartupConfig (startupConfig, DefaultConfig());
+  DoStartupConfig ();
 
   InitializeRootDirectories (startupConfig);
 }
@@ -1337,13 +1345,20 @@ Utils::IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root)
 {
   PathName path (root);
   path += MIKTEXDIRECT_PREFIX_DIR;
-  path += MIKTEX_PATH_MD_INI;
+  path += MIKTEX_PATH_STARTUP_CONFIG_FILE;
   if (! File::Exists(path))
-    {
-      return (false);
-    }
+  {
+    return (false);
+  }
   FileAttributes attributes = File::GetAttributes(path);
-  return ((attributes & FileAttributes::ReadOnly) != 0);
+  if (((attributes & FileAttributes::ReadOnly) != 0) == 0)
+  {
+    return (false);
+  }
+  SmartPointer<Cfg> pcfg (Cfg::Create());      
+  pcfg->Read (path);
+  string str;
+  return (pcfg->TryGetValue("Auto", "Config", str) && str == "Direct");
 }
 
 /* _________________________________________________________________________
